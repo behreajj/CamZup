@@ -883,14 +883,16 @@ public class Transform2 extends Transform {
       final StringBuilder svgp = new StringBuilder(96);
       svgp.append("transform=\"translate(");
       svgp.append(Utils.toFixed(this.location.x, 6));
-      svgp.append(',').append(' ');
+      svgp.append(',');
+      svgp.append(' ');
       svgp.append(Utils.toFixed(this.location.y, 6));
       svgp.append(") rotate(");
       svgp.append(Utils.toFixed(Utils.modRadians(this.rotation)
          * IUtils.RAD_TO_DEG, 0));
       svgp.append(") scale(");
       svgp.append(Utils.toFixed(this.scale.x, 6));
-      svgp.append(',').append(' ');
+      svgp.append(',');
+      svgp.append(' ');
       svgp.append(Utils.toFixed(this.scale.y, 6));
       svgp.append(")\"");
       return svgp.toString();
@@ -1237,7 +1239,7 @@ public class Transform2 extends Transform {
 
    /**
     * Eases an array through a series of transforms according to a step in
-    * [0.0, 1.0].
+    * [0.0, 1.0] .
     *
     * @param frames the frames
     * @param step   the step

@@ -2677,8 +2677,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       float minDist = Float.MAX_VALUE;
       float maxDist = Float.MIN_VALUE;
       for ( int i = 0; i < vertLen; ++i ) {
-         final Vert2 vert = verts[i];
-         final float distSq = Vec2.distSq(vert.coord, p);
+         final float distSq = Vec2.distSq(verts[i].coord, p);
          dists[i] = distSq;
          minDist = distSq < minDist ? distSq : minDist;
          maxDist = distSq > maxDist ? distSq : maxDist;
@@ -3002,9 +3001,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Restructures the mesh so that each face index refers to unique data,
     * indifferent to redundancies. As a consequence, coordinate and texture
-    * coordinate are of equal length and face indices are easier to read and
-    * understand. Useful for making a mesh similar to those in Unity or p5.
-    * Similar to 'ripping' vertices or 'tearing' edges in Blender.
+    * coordinate arrays are of equal length and face indices are easier to
+    * read and understand. Useful for making a mesh similar to those in Unity
+    * or p5. Similar to 'ripping' vertices or 'tearing' edges in Blender.
     *
     * @param source the source mesh
     * @param target the target mesh
@@ -3117,7 +3116,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * The type of polygon produced by the static polygon function.
+    * The type of polygon, or face, produced by a mesh function.
     */
    public enum PolyType {
 

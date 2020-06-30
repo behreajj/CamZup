@@ -41,17 +41,6 @@ void draw() {
   graphics.handles(entity, 1.25);
 }
 
-//void mouseReleased() {
-//if (mouseButton == LEFT) {
-//  Curve2.random(rng, 8,
-//    -0.75, 0.75, false, curve);
-//} else if (mouseButton == RIGHT) {
-//  String result = graphics.toSvgString(entity, mat);
-//  saveStrings("data/curve.svg", new String[] { result });
-//  println("Saved to svg.");
-//}
-//}
-
 void keyReleased() {
   if (key == ' ') {
     Curve2.random(rng, 8,

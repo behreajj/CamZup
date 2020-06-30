@@ -2647,18 +2647,20 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                   final int tokenLen = faceTokens.length;
                   final int k = j - 1;
 
-                  /* Indices in .obj file start at 1, not 0. */
+                  /* Vertex coordinate index. */
                   if ( tokenLen > 0 ) {
                      final String vIdx = faceTokens[0];
                      if ( vIdx == null || vIdx.isEmpty() ) {
                         missingVs = true;
                      } else {
+                        /* Indices in .obj file start at 1, not 0. */
                         indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
                      }
                   } else {
                      missingVs = true;
                   }
 
+                  /* Texture coordinate index. */
                   if ( tokenLen > 1 ) {
                      final String vtIdx = faceTokens[1];
                      if ( vtIdx == null || vtIdx.isEmpty() ) {
@@ -2670,6 +2672,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                      missingVts = true;
                   }
 
+                  /* Normal index. */
                   if ( tokenLen > 2 ) {
                      final String vnIdx = faceTokens[2];
                      if ( vnIdx == null || vnIdx.isEmpty() ) {
@@ -2964,7 +2967,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int texCoordLen = texCoordArr.length;
          final int normalLen = normalArr.length;
 
-         /* Convert from hash map of groups to meshes. */
+         /* Convert from hash map to meshes. */
          final Iterator < Entry < String, ArrayList < int[][] > > > itr
             = faceGroups.entrySet().iterator();
 
@@ -3394,8 +3397,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       float minDist = Float.MAX_VALUE;
       float maxDist = Float.MIN_VALUE;
       for ( int i = 0; i < vertLen; ++i ) {
-         final Vert3 vert = verts[i];
-         final float distSq = Vec3.distSq(vert.coord, p);
+         final float distSq = Vec3.distSq(verts[i].coord, p);
          dists[i] = distSq;
          minDist = distSq < minDist ? distSq : minDist;
          maxDist = distSq > maxDist ? distSq : maxDist;
@@ -3817,10 +3819,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Restructures the mesh so that each face index refers to unique data,
-    * indifferent to redundancies. As a consequence, coordinates and texture
-    * coordinate are of equal length and face indices are easier to read and
-    * understand. Useful for making a mesh similar to those in Unity or p5js .
-    * Similar to 'ripping' vertices or 'tearing' edges in Blender.
+    * indifferent to redundancies. As a consequence, coordinate, texture
+    * coordinate and normal arrays are of equal length and face indices are
+    * easier to read and understand. Useful for making a mesh similar to those
+    * in Unity or p5js . Similar to 'ripping' vertices or 'tearing' edges in
+    * Blender.
     *
     * @param source the source mesh
     * @param target the target mesh

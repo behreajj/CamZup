@@ -10,10 +10,10 @@ Complex zn = new Complex();
 Complex exp = new Complex(2.0, 0.0);
 Complex seed = Complex.rect(seedr, seedphi, new Complex());
 
-Gradient grd = new Gradient(#322020, #dbcab8, #fff7d5);
+Gradient grd = Gradient.paletteViridis(new Gradient());
 
 void settings() {
-  size(512, 256, "camzup.pfriendly.Yup2");
+  size(512, 256, Yup2.PATH_STR);
 }
 
 void draw() {

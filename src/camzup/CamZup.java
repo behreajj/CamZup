@@ -1,6 +1,6 @@
 package camzup;
 
-import camzup.core.Utils;
+import camzup.core.Mat4;
 
 import processing.core.PApplet;
 
@@ -51,22 +51,18 @@ public class CamZup {
     * @param args the string of arguments
     */
    public static void main ( final String[] args ) {
-      // final Color a = new Color(0.8f, 0.6f, 0.4f, 0.2f);
-      // new Color(0.9f, 0.1f, 0.3f, 0.5f);
-      // final Color target = new Color();
-      //
-      // Color.fromHex(~Color.toHexInt(a), target);
-      //
-      // System.out.println(target);
-      // System.out.println(Color.bitNot(a, target));
 
       // final Rng rng = new Rng();
-      // final Vec3 dir = Vec3.random(rng, new Vec3());
-      // System.out.println(dir);
-      // new Transform3();
 
-      System.out.println(Utils.floor(0.0f));
-      System.out.println(Utils.floor(-0.0f));
+      // Mesh3 m3 = new Mesh3();
+      // Mesh3.icosahedron(m3);
+      // MeshEntity3 me3 = new MeshEntity3();
+      // me3.append(m3);
+      // String str = me3.toBlenderCode();
+      // System.out.println(str);
+
+      final Mat4 a = new Mat4(0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0);
+      System.out.println(Mat4.rotateElmsCw(a, new Mat4()).toStringCol());
    }
 
    /**

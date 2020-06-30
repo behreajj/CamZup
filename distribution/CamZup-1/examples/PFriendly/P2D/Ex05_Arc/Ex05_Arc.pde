@@ -26,7 +26,7 @@ void draw() {
   arc(0.0, 0.0,
     150.0, 150.0,
     start, stop,
-    CHORD);
+    PIE);
 
   stroke(#ff2020);
   strokeWeight(12.0);

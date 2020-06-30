@@ -1317,7 +1317,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return epsilon
     */
-   @Experimental
    public static Vec4 epsilon ( final Vec4 target ) {
 
       return target.set(IUtils.DEFAULT_EPSILON, IUtils.DEFAULT_EPSILON,
@@ -2307,7 +2306,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
       final Vec4 target ) {
 
       final float msq = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
-      if ( scalar != 0.0f && msq != 0.0f ) {
+      if ( scalar != 0.0f && msq > 0.0f ) {
          final float sclMg = scalar * Utils.invSqrtUnchecked(msq);
          return target.set(v.x * sclMg, v.y * sclMg, v.z * sclMg, v.w * sclMg);
       } else {
@@ -2332,12 +2331,12 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    public static Vec4 rescale ( final Vec4 v, final float scalar,
       final Vec4 target, final Vec4 normalized ) {
 
-      if ( scalar == 0.0f ) {
-         normalized.reset();
-         return target.reset();
+      if ( scalar != 0.0f ) {
+         Vec4.normalize(v, normalized);
+         return Vec4.mul(normalized, scalar, target);
       }
-      Vec4.normalize(v, normalized);
-      return Vec4.mul(normalized, scalar, target);
+      normalized.reset();
+      return target.reset();
    }
 
    /**

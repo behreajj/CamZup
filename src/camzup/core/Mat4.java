@@ -97,6 +97,37 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    public Mat4 ( ) {}
 
    /**
+    * Constructs a matrix from boolean values.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m03 row 0, column 3
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    * @param m13 row 1, column 3
+    * @param m20 row 2, column 0
+    * @param m21 row 2, column 1
+    * @param m22 row 2, column 2
+    * @param m23 row 2, column 3
+    * @param m30 row 3, column 0
+    * @param m31 row 3, column 1
+    * @param m32 row 3, column 2
+    * @param m33 row 3, column 3
+    */
+   public Mat4 ( final boolean m00, final boolean m01, final boolean m02,
+      final boolean m03, final boolean m10, final boolean m11,
+      final boolean m12, final boolean m13, final boolean m20,
+      final boolean m21, final boolean m22, final boolean m23,
+      final boolean m30, final boolean m31, final boolean m32,
+      final boolean m33 ) {
+
+      this.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30,
+         m31, m32, m33);
+   }
+
+   /**
     * Constructs a matrix from float values.
     *
     * @param m00 row 0, column 0
@@ -571,6 +602,58 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
 
       return this.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
          0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Sets the components of this matrix.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m03 row 0, column 3
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    * @param m13 row 1, column 3
+    * @param m20 row 2, column 0
+    * @param m21 row 2, column 1
+    * @param m22 row 2, column 2
+    * @param m23 row 2, column 3
+    * @param m30 row 3, column 0
+    * @param m31 row 3, column 1
+    * @param m32 row 3, column 2
+    * @param m33 row 3, column 3
+    *
+    * @return this matrix
+    */
+   public Mat4 set ( final boolean m00, final boolean m01, final boolean m02,
+      final boolean m03, final boolean m10, final boolean m11,
+      final boolean m12, final boolean m13, final boolean m20,
+      final boolean m21, final boolean m22, final boolean m23,
+      final boolean m30, final boolean m31, final boolean m32,
+      final boolean m33 ) {
+
+      this.m00 = m00 ? 1.0f : 0.0f;
+      this.m01 = m01 ? 1.0f : 0.0f;
+      this.m02 = m02 ? 1.0f : 0.0f;
+      this.m03 = m03 ? 1.0f : 0.0f;
+
+      this.m10 = m10 ? 1.0f : 0.0f;
+      this.m11 = m11 ? 1.0f : 0.0f;
+      this.m12 = m12 ? 1.0f : 0.0f;
+      this.m13 = m13 ? 1.0f : 0.0f;
+
+      this.m20 = m20 ? 1.0f : 0.0f;
+      this.m21 = m21 ? 1.0f : 0.0f;
+      this.m22 = m22 ? 1.0f : 0.0f;
+      this.m23 = m23 ? 1.0f : 0.0f;
+
+      this.m30 = m30 ? 1.0f : 0.0f;
+      this.m31 = m31 ? 1.0f : 0.0f;
+      this.m32 = m32 ? 1.0f : 0.0f;
+      this.m33 = m33 ? 1.0f : 0.0f;
+
+      return this;
    }
 
    /**
@@ -1097,6 +1180,65 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
          a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23,
          a.m30 + b.m30, a.m31 + b.m31, a.m32 + b.m32, a.m33 + b.m33);
       /* @formatter:on */
+   }
+
+   /**
+    * Tests to see if all the matrix's components are non-zero.
+    *
+    * @param m the input matrix
+    *
+    * @return the evaluation
+    */
+   public static boolean all ( final Mat4 m ) {
+
+      return m.m00 != 0.0f && m.m01 != 0.0f && m.m02 != 0.0f && m.m03 != 0.0f
+         && m.m10 != 0.0f && m.m11 != 0.0f && m.m12 != 0.0f && m.m13 != 0.0f
+         && m.m20 != 0.0f && m.m21 != 0.0f && m.m22 != 0.0f && m.m23 != 0.0f
+         && m.m30 != 0.0f && m.m31 != 0.0f && m.m32 != 0.0f && m.m33 != 0.0f;
+   }
+
+   /**
+    * Evaluates two matrices like booleans, using the AND logic gate.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    *
+    * @see Utils#and(float, float)
+    */
+   public static Mat4 and ( final Mat4 a, final Mat4 b, final Mat4 target ) {
+
+      /* @formatter:off */
+      return target.set(
+         Utils.and(a.m00, b.m00), Utils.and(a.m01, b.m01),
+         Utils.and(a.m02, b.m02), Utils.and(a.m03, b.m03),
+
+         Utils.and(a.m10, b.m10), Utils.and(a.m11, b.m11),
+         Utils.and(a.m12, b.m12), Utils.and(a.m13, b.m13),
+
+         Utils.and(a.m20, b.m20), Utils.and(a.m21, b.m21),
+         Utils.and(a.m22, b.m22), Utils.and(a.m23, b.m23),
+
+         Utils.and(a.m30, b.m30), Utils.and(a.m31, b.m31),
+         Utils.and(a.m32, b.m32), Utils.and(a.m33, b.m33));
+      /* @formatter:on */
+   }
+
+   /**
+    * Tests to see if any of the matrix's components are non-zero.
+    *
+    * @param m the input matrix
+    *
+    * @return the evaluation
+    */
+   public static boolean any ( final Mat4 m ) {
+
+      return m.m00 != 0.0f || m.m01 != 0.0f || m.m02 != 0.0f || m.m03 != 0.0f
+         || m.m10 != 0.0f || m.m11 != 0.0f || m.m12 != 0.0f || m.m13 != 0.0f
+         || m.m20 != 0.0f || m.m21 != 0.0f || m.m22 != 0.0f || m.m23 != 0.0f
+         || m.m30 != 0.0f || m.m31 != 0.0f || m.m32 != 0.0f || m.m33 != 0.0f;
    }
 
    /**
@@ -1679,6 +1821,43 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
+    * Evaluates whether the left comparisand is greater than the right
+    * comparisand.
+    *
+    * @param a      left comparisand
+    * @param b      right comparisand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    */
+   public static Mat4 gt ( final Mat4 a, final Mat4 b, final Mat4 target ) {
+
+      return target.set(a.m00 > b.m00, a.m01 > b.m01, a.m02 > b.m02, a.m03
+         > b.m03, a.m10 > b.m10, a.m11 > b.m11, a.m12 > b.m12, a.m13 > b.m13,
+         a.m20 > b.m20, a.m21 > b.m21, a.m22 > b.m22, a.m23 > b.m23, a.m30
+            > b.m30, a.m31 > b.m31, a.m32 > b.m32, a.m33 > b.m33);
+   }
+
+   /**
+    * Evaluates whether the left comparisand is greater than or equal to the
+    * right comparisand.
+    *
+    * @param a      left comparisand
+    * @param b      right comparisand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    */
+   public static Mat4 gtEq ( final Mat4 a, final Mat4 b, final Mat4 target ) {
+
+      return target.set(a.m00 >= b.m00, a.m01 >= b.m01, a.m02 >= b.m02, a.m03
+         >= b.m03, a.m10 >= b.m10, a.m11 >= b.m11, a.m12 >= b.m12, a.m13
+            >= b.m13, a.m20 >= b.m20, a.m21 >= b.m21, a.m22 >= b.m22, a.m23
+               >= b.m23, a.m30 >= b.m30, a.m31 >= b.m31, a.m32 >= b.m32, a.m33
+                  >= b.m33);
+   }
+
+   /**
     * Returns the identity matrix:
     *
     * <pre>
@@ -1764,6 +1943,43 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
           && m.m12 == 0.0f && m.m13 == 0.0f && m.m20 == 0.0f && m.m21 == 0.0f
           && m.m23 == 0.0f && m.m30 == 0.0f && m.m31 == 0.0f && m.m32 == 0.0f;
       /* @formatter:on */
+   }
+
+   /**
+    * Evaluates whether the left comparisand is less than the right
+    * comparisand.
+    *
+    * @param a      left comparisand
+    * @param b      right comparisand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    */
+   public static Mat4 lt ( final Mat4 a, final Mat4 b, final Mat4 target ) {
+
+      return target.set(a.m00 < b.m00, a.m01 < b.m01, a.m02 < b.m02, a.m03
+         < b.m03, a.m10 < b.m10, a.m11 < b.m11, a.m12 < b.m12, a.m13 < b.m13,
+         a.m20 < b.m20, a.m21 < b.m21, a.m22 < b.m22, a.m23 < b.m23, a.m30
+            < b.m30, a.m31 < b.m31, a.m32 < b.m32, a.m33 < b.m33);
+   }
+
+   /**
+    * Evaluates whether the left comparisand is less than or equal to the
+    * right comparisand.
+    *
+    * @param a      left comparisand
+    * @param b      right comparisand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    */
+   public static Mat4 ltEq ( final Mat4 a, final Mat4 b, final Mat4 target ) {
+
+      return target.set(a.m00 <= b.m00, a.m01 <= b.m01, a.m02 <= b.m02, a.m03
+         <= b.m03, a.m10 <= b.m10, a.m11 <= b.m11, a.m12 <= b.m12, a.m13
+            <= b.m13, a.m20 <= b.m20, a.m21 <= b.m21, a.m22 <= b.m22, a.m23
+               <= b.m23, a.m30 <= b.m30, a.m31 <= b.m31, a.m32 <= b.m32, a.m33
+                  <= b.m33);
    }
 
    /**
@@ -1988,8 +2204,6 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    public static Vec3 mulPoint ( final Mat4 a, final Vec2 b,
       final Vec3 target ) {
 
-      // TEST
-
       final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
       if ( w != 0.0f ) {
          final float wInv = 1.0f / w;
@@ -2013,8 +2227,6 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    @Experimental
    public static Vec3 mulPoint ( final Mat4 a, final Vec3 b,
       final Vec3 target ) {
-
-      // TEST
 
       final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
       if ( w != 0.0f ) {
@@ -2041,8 +2253,6 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    public static Vec3 mulVector ( final Mat4 a, final Vec2 b,
       final Vec3 target ) {
 
-      // TEST
-
       final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
       if ( w != 0.0f ) {
          final float wInv = 1.0f / w;
@@ -2067,8 +2277,6 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    public static Vec3 mulVector ( final Mat4 a, final Vec3 b,
       final Vec3 target ) {
 
-      // TEST
-
       final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
       if ( w != 0.0f ) {
          final float wInv = 1.0f / w;
@@ -2077,6 +2285,50 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
                + a.m21 * b.y + a.m22 * b.z ) * wInv);
       }
       return target.reset();
+   }
+
+   /**
+    * Tests to see if all the matrix's components are zero.
+    *
+    * @param m the input matrix
+    *
+    * @return the evaluation
+    */
+   public static boolean none ( final Mat4 m ) {
+
+      return m.m00 == 0.0f && m.m01 == 0.0f && m.m02 == 0.0f && m.m03 == 0.0f
+         && m.m10 == 0.0f && m.m11 == 0.0f && m.m12 == 0.0f && m.m13 == 0.0f
+         && m.m20 == 0.0f && m.m21 == 0.0f && m.m22 == 0.0f && m.m23 == 0.0f
+         && m.m30 == 0.0f && m.m31 == 0.0f && m.m32 == 0.0f && m.m33 == 0.0f;
+   }
+
+   /**
+    * Evaluates two matrices like booleans, using the OR logic gate.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    *
+    * @see Utils#or(float, float)
+    */
+   public static Mat4 or ( final Mat4 a, final Mat4 b, final Mat4 target ) {
+
+      /* @formatter:off */
+      return target.set(
+         Utils.or(a.m00, b.m00), Utils.or(a.m01, b.m01),
+         Utils.or(a.m02, b.m02), Utils.or(a.m03, b.m03),
+
+         Utils.or(a.m10, b.m10), Utils.or(a.m11, b.m11),
+         Utils.or(a.m12, b.m12), Utils.or(a.m13, b.m13),
+
+         Utils.or(a.m20, b.m20), Utils.or(a.m21, b.m21),
+         Utils.or(a.m22, b.m22), Utils.or(a.m23, b.m23),
+
+         Utils.or(a.m30, b.m30), Utils.or(a.m31, b.m31),
+         Utils.or(a.m32, b.m32), Utils.or(a.m33, b.m33));
+      /* @formatter:on */
    }
 
    /**
@@ -2137,6 +2389,44 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
+    * Rotates the elements of the input matrix 90 degrees counter-clockwise.
+    *
+    * @param m      the input matrix
+    * @param target the output matrix
+    *
+    * @return the rotated matrix
+    */
+   public static Mat4 rotateElmsCcw ( final Mat4 m, final Mat4 target ) {
+
+      /* @formatter:off */
+      return target.set(
+         m.m03, m.m13, m.m23, m.m33,
+         m.m02, m.m12, m.m22, m.m32,
+         m.m01, m.m11, m.m21, m.m31,
+         m.m00, m.m10, m.m20, m.m30);
+      /* @formatter:on */
+   }
+
+   /**
+    * Rotates the elements of the input matrix 90 degrees clockwise.
+    *
+    * @param m      the input matrix
+    * @param target the output matrix
+    *
+    * @return the rotated matrix
+    */
+   public static Mat4 rotateElmsCw ( final Mat4 m, final Mat4 target ) {
+
+      /* @formatter:off */
+      return target.set(
+         m.m30, m.m20, m.m10, m.m00,
+         m.m31, m.m21, m.m11, m.m01,
+         m.m32, m.m22, m.m12, m.m02,
+         m.m33, m.m23, m.m13, m.m03);
+      /* @formatter:on */
+   }
+
+   /**
     * Subtracts the right matrix from the left matrix.
     *
     * @param a      the left operand
@@ -2172,6 +2462,36 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
          m.m01, m.m11, m.m21, m.m31,
          m.m02, m.m12, m.m22, m.m32,
          m.m03, m.m13, m.m23, m.m33);
+      /* @formatter:on */
+   }
+
+   /**
+    * Evaluates two matrices like booleans, using the exclusive or (XOR) logic
+    * gate.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    *
+    * @see Utils#xor(float, float)
+    */
+   public static Mat4 xor ( final Mat4 a, final Mat4 b, final Mat4 target ) {
+
+      /* @formatter:off */
+      return target.set(
+         Utils.xor(a.m00, b.m00), Utils.xor(a.m01, b.m01),
+         Utils.xor(a.m02, b.m02), Utils.xor(a.m03, b.m03),
+
+         Utils.xor(a.m10, b.m10), Utils.xor(a.m11, b.m11),
+         Utils.xor(a.m12, b.m12), Utils.xor(a.m13, b.m13),
+
+         Utils.xor(a.m20, b.m20), Utils.xor(a.m21, b.m21),
+         Utils.xor(a.m22, b.m22), Utils.xor(a.m23, b.m23),
+
+         Utils.xor(a.m30, b.m30), Utils.xor(a.m31, b.m31),
+         Utils.xor(a.m32, b.m32), Utils.xor(a.m33, b.m33));
       /* @formatter:on */
    }
 

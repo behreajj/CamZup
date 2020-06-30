@@ -465,7 +465,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
 
       this.x = x;
       this.y = y;
-
       return this;
    }
 
@@ -1417,12 +1416,17 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static Vec2[] flat ( final Vec2[][] arr ) {
 
+      /* Sum the lengths of inner arrays. */
       int totalLen = 0;
       final int sourceLen = arr.length;
       for ( int i = 0; i < sourceLen; ++i ) {
          totalLen += arr[i].length;
       }
 
+      /*
+       * Copy each inner array to the result array, then move the cursor by the
+       * length of each array.
+       */
       final Vec2[] result = new Vec2[totalLen];
       for ( int j = 0, i = 0; i < sourceLen; ++i ) {
          final Vec2[] arrInner = arr[i];
@@ -2719,9 +2723,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
    public static Vec2 rescale ( final Vec2 v, final float scalar,
       final Vec2 target ) {
 
-      final float msq = v.x * v.x + v.y * v.y;
-      if ( scalar != 0.0f && msq != 0.0f ) {
-         final float sclMg = scalar * Utils.invSqrtUnchecked(msq);
+      final float mSq = v.x * v.x + v.y * v.y;
+      if ( scalar != 0.0f && mSq > 0.0f ) {
+         final float sclMg = scalar * Utils.invSqrtUnchecked(mSq);
          return target.set(v.x * sclMg, v.y * sclMg);
       }
       return target.reset();
@@ -2744,12 +2748,12 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
    public static Vec2 rescale ( final Vec2 v, final float scalar,
       final Vec2 target, final Vec2 normalized ) {
 
-      if ( scalar == 0.0f ) {
-         normalized.reset();
-         return target.reset();
+      if ( scalar != 0.0f ) {
+         Vec2.normalize(v, normalized);
+         return Vec2.mul(normalized, scalar, target);
       }
-      Vec2.normalize(v, normalized);
-      return Vec2.mul(normalized, scalar, target);
+      normalized.reset();
+      return target.reset();
    }
 
    /**
@@ -2935,7 +2939,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static Vec2 sign ( final Vec2 v, final Vec2 target ) {
 
-      /* sign returns an integer; this is inlined to avoid cast. */
+      /* Sign returns an integer; this is inlined to avoid cast. */
       return target.set(v.x < -0.0f ? -1.0f : v.x > 0.0f ? 1.0f : 0.0f, v.y
          < -0.0f ? -1.0f : v.y > 0.0f ? 1.0f : 0.0f);
    }
@@ -3274,6 +3278,58 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
          final double us = 1.0d - ts;
          return target.set(( float ) ( us * origin.x + ts * dest.x ),
             ( float ) ( us * origin.y + ts * dest.y ));
+      }
+
+   }
+
+   /**
+    * Compares two vectors on the x axis.
+    */
+   public static class SortX extends AbstrComparator {
+
+      /**
+       * The default constructor.
+       */
+      public SortX ( ) { super(); }
+
+      /**
+       * The compare function.
+       *
+       * @param a the left comparisand
+       * @param b the right comparisand
+       *
+       * @return the comparison
+       */
+      @Override
+      public int compare ( final Vec2 a, final Vec2 b ) {
+
+         return a.x > b.x ? 1 : a.x < b.x ? -1 : 0;
+      }
+
+   }
+
+   /**
+    * Compares two vectors on the y axis.
+    */
+   public static class SortY extends AbstrComparator {
+
+      /**
+       * The default constructor.
+       */
+      public SortY ( ) { super(); }
+
+      /**
+       * The compare function.
+       *
+       * @param a the left comparisand
+       * @param b the right comparisand
+       *
+       * @return the comparison
+       */
+      @Override
+      public int compare ( final Vec2 a, final Vec2 b ) {
+
+         return a.y > b.y ? 1 : a.y < b.y ? -1 : 0;
       }
 
    }

@@ -62,6 +62,26 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    public Mat3 ( ) {}
 
    /**
+    * Constructs a matrix from boolean values.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    * @param m20 row 2, column 0
+    * @param m21 row 2, column 1
+    * @param m22 row 2, column 2
+    */
+   public Mat3 ( final boolean m00, final boolean m01, final boolean m02,
+      final boolean m10, final boolean m11, final boolean m12,
+      final boolean m20, final boolean m21, final boolean m22 ) {
+
+      this.set(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+   }
+
+   /**
     * Constructs a matrix from float values.
     *
     * @param m00 row 0, column 0
@@ -463,6 +483,40 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    public Mat3 reset ( ) {
 
       return this.set(1.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Sets the components of this matrix.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    * @param m20 row 2, column 0
+    * @param m21 row 2, column 1
+    * @param m22 row 2, column 2
+    *
+    * @return this matrix
+    */
+   public Mat3 set ( final boolean m00, final boolean m01, final boolean m02,
+      final boolean m10, final boolean m11, final boolean m12,
+      final boolean m20, final boolean m21, final boolean m22 ) {
+
+      this.m00 = m00 ? 1.0f : 0.0f;
+      this.m01 = m01 ? 1.0f : 0.0f;
+      this.m02 = m02 ? 1.0f : 0.0f;
+
+      this.m10 = m10 ? 1.0f : 0.0f;
+      this.m11 = m11 ? 1.0f : 0.0f;
+      this.m12 = m12 ? 1.0f : 0.0f;
+
+      this.m20 = m20 ? 1.0f : 0.0f;
+      this.m21 = m21 ? 1.0f : 0.0f;
+      this.m22 = m22 ? 1.0f : 0.0f;
+
+      return this;
    }
 
    /**
@@ -884,6 +938,53 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
+    * Tests to see if all the matrix's components are non-zero.
+    *
+    * @param m the input matrix
+    *
+    * @return the evaluation
+    */
+   public static boolean all ( final Mat3 m ) {
+
+      return m.m00 != 0.0f && m.m01 != 0.0f && m.m02 != 0.0f && m.m10 != 0.0f
+         && m.m11 != 0.0f && m.m12 != 0.0f && m.m20 != 0.0f && m.m21 != 0.0f
+         && m.m22 != 0.0f;
+   }
+
+   /**
+    * Evaluates two matrices like booleans, using the AND logic gate.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    *
+    * @see Utils#and(float, float)
+    */
+   public static Mat3 and ( final Mat3 a, final Mat3 b, final Mat3 target ) {
+
+      return target.set(Utils.and(a.m00, b.m00), Utils.and(a.m01, b.m01), Utils
+         .and(a.m02, b.m02), Utils.and(a.m10, b.m10), Utils.and(a.m11, b.m11),
+         Utils.and(a.m12, b.m12), Utils.and(a.m20, b.m20), Utils.and(a.m21,
+            b.m21), Utils.and(a.m22, b.m22));
+   }
+
+   /**
+    * Tests to see if any of the matrix's components are non-zero.
+    *
+    * @param m the input matrix
+    *
+    * @return the evaluation
+    */
+   public static boolean any ( final Mat3 m ) {
+
+      return m.m00 != 0.0f || m.m01 != 0.0f || m.m02 != 0.0f || m.m10 != 0.0f
+         || m.m11 != 0.0f || m.m12 != 0.0f || m.m20 != 0.0f || m.m21 != 0.0f
+         || m.m22 != 0.0f;
+   }
+
+   /**
     * Decomposes a matrix into its constituent transforms: translation,
     * rotation and scale. Rotation is returned from the function, while
     * translation and scale are loaded into out parameters.
@@ -1065,6 +1166,40 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
+    * Evaluates whether the left comparisand is greater than the right
+    * comparisand.
+    *
+    * @param a      left comparisand
+    * @param b      right comparisand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    */
+   public static Mat3 gt ( final Mat3 a, final Mat3 b, final Mat3 target ) {
+
+      return target.set(a.m00 > b.m00, a.m01 > b.m01, a.m02 > b.m02, a.m10
+         > b.m10, a.m11 > b.m11, a.m12 > b.m12, a.m20 > b.m20, a.m21 > b.m21,
+         a.m22 > b.m22);
+   }
+
+   /**
+    * Evaluates whether the left comparisand is greater than or equal to the
+    * right comparisand.
+    *
+    * @param a      left comparisand
+    * @param b      right comparisand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    */
+   public static Mat3 gtEq ( final Mat3 a, final Mat3 b, final Mat3 target ) {
+
+      return target.set(a.m00 >= b.m00, a.m01 >= b.m01, a.m02 >= b.m02, a.m10
+         >= b.m10, a.m11 >= b.m11, a.m12 >= b.m12, a.m20 >= b.m20, a.m21
+            >= b.m21, a.m22 >= b.m22);
+   }
+
+   /**
     * Returns the identity matrix,
     *
     * <pre>
@@ -1130,6 +1265,40 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
           && m.m01 == 0.0f && m.m02 == 0.0f && m.m10 == 0.0f
           && m.m12 == 0.0f && m.m20 == 0.0f && m.m21 == 0.0f;
       /* @formatter:on */
+   }
+
+   /**
+    * Evaluates whether the left comparisand is less than the right
+    * comparisand.
+    *
+    * @param a      left comparisand
+    * @param b      right comparisand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    */
+   public static Mat3 lt ( final Mat3 a, final Mat3 b, final Mat3 target ) {
+
+      return target.set(a.m00 < b.m00, a.m01 < b.m01, a.m02 < b.m02, a.m10
+         < b.m10, a.m11 < b.m11, a.m12 < b.m12, a.m20 < b.m20, a.m21 < b.m21,
+         a.m22 < b.m22);
+   }
+
+   /**
+    * Evaluates whether the left comparisand is less than or equal to the
+    * right comparisand.
+    *
+    * @param a      left comparisand
+    * @param b      right comparisand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    */
+   public static Mat3 ltEq ( final Mat3 a, final Mat3 b, final Mat3 target ) {
+
+      return target.set(a.m00 <= b.m00, a.m01 <= b.m01, a.m02 <= b.m02, a.m10
+         <= b.m10, a.m11 <= b.m11, a.m12 <= b.m12, a.m20 <= b.m20, a.m21
+            <= b.m21, a.m22 <= b.m22);
    }
 
    /**
@@ -1262,12 +1431,6 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    public static Vec2 mulPoint ( final Mat3 a, final Vec2 b,
       final Vec2 target ) {
 
-      // TEST
-
-      // return target.set(
-      // a.m00 * b.x + a.m01 * b.y + a.m02,
-      // a.m10 * b.x + a.m11 * b.y + a.m12);
-
       final float w = a.m20 * b.x + a.m21 * b.y + a.m22;
       if ( w != 0.0f ) {
          final float wInv = 1.0f / w;
@@ -1292,12 +1455,6 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    public static Vec2 mulVector ( final Mat3 a, final Vec2 b,
       final Vec2 target ) {
 
-      // TEST
-
-      // return target.set(
-      // a.m00 * b.x + a.m01 * b.y,
-      // a.m10 * b.x + a.m11 * b.y);
-
       final float w = a.m20 * b.x + a.m21 * b.y + a.m22;
       if ( w != 0.0f ) {
          final float wInv = 1.0f / w;
@@ -1305,6 +1462,67 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
             + a.m11 * b.y ) * wInv);
       }
       return target.reset();
+   }
+
+   /**
+    * Tests to see if all the matrix's components are zero.
+    *
+    * @param m the input matrix
+    *
+    * @return the evaluation
+    */
+   public static boolean none ( final Mat3 m ) {
+
+      return m.m00 == 0.0f && m.m01 == 0.0f && m.m02 == 0.0f && m.m10 == 0.0f
+         && m.m11 == 0.0f && m.m12 == 0.0f && m.m20 == 0.0f && m.m21 == 0.0f
+         && m.m22 == 0.0f;
+   }
+
+   /**
+    * Evaluates two matrices like booleans, using the OR logic gate.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    *
+    * @see Utils#or(float, float)
+    */
+   public static Mat3 or ( final Mat3 a, final Mat3 b, final Mat3 target ) {
+
+      return target.set(Utils.or(a.m00, b.m00), Utils.or(a.m01, b.m01), Utils
+         .or(a.m02, b.m02), Utils.or(a.m10, b.m10), Utils.or(a.m11, b.m11),
+         Utils.or(a.m12, b.m12), Utils.or(a.m20, b.m20), Utils.or(a.m21, b.m21),
+         Utils.or(a.m22, b.m22));
+   }
+
+   /**
+    * Rotates the elements of the input matrix 90 degrees counter-clockwise.
+    *
+    * @param m      the input matrix
+    * @param target the output matrix
+    *
+    * @return the rotated matrix
+    */
+   public static Mat3 rotateElmsCcw ( final Mat3 m, final Mat3 target ) {
+
+      return target.set(m.m02, m.m12, m.m22, m.m01, m.m11, m.m21, m.m00, m.m10,
+         m.m20);
+   }
+
+   /**
+    * Rotates the elements of the input matrix 90 degrees clockwise.
+    *
+    * @param m      the input matrix
+    * @param target the output matrix
+    *
+    * @return the rotated matrix
+    */
+   public static Mat3 rotateElmsCw ( final Mat3 m, final Mat3 target ) {
+
+      return target.set(m.m20, m.m10, m.m00, m.m21, m.m11, m.m01, m.m22, m.m12,
+         m.m02);
    }
 
    /**
@@ -1338,6 +1556,26 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
 
       return target.set(m.m00, m.m10, m.m20, m.m01, m.m11, m.m21, m.m02, m.m12,
          m.m22);
+   }
+
+   /**
+    * Evaluates two matrices like booleans, using the exclusive or (XOR) logic
+    * gate.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target the output matrix
+    *
+    * @return the evaluation
+    *
+    * @see Utils#xor(float, float)
+    */
+   public static Mat3 xor ( final Mat3 a, final Mat3 b, final Mat3 target ) {
+
+      return target.set(Utils.xor(a.m00, b.m00), Utils.xor(a.m01, b.m01), Utils
+         .xor(a.m02, b.m02), Utils.xor(a.m10, b.m10), Utils.xor(a.m11, b.m11),
+         Utils.xor(a.m12, b.m12), Utils.xor(a.m20, b.m20), Utils.xor(a.m21,
+            b.m21), Utils.xor(a.m22, b.m22));
    }
 
    /**

@@ -529,7 +529,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
       this.x = x;
       this.y = y;
       this.z = z;
-
       return this;
    }
 
@@ -2935,11 +2934,15 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static Vec3 reject ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
+      // TODO: Does this make sense for 2D and 4D vectors?
+
       final float bSq = Vec3.magSq(b);
-      if ( bSq == 0.0f ) { return target.set(a); }
-      final float scprj = Vec3.dot(a, b) / bSq;
-      return target.set(a.x - b.x * scprj, a.y - b.y * scprj, a.z - b.z
-         * scprj);
+      if ( bSq != 0.0f ) {
+         final float scprj = Vec3.dot(a, b) / bSq;
+         return target.set(a.x - b.x * scprj, a.y - b.y * scprj, a.z - b.z
+            * scprj);
+      }
+      return target.set(a);
    }
 
    /**
@@ -2982,9 +2985,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    public static Vec3 rescale ( final Vec3 v, final float scalar,
       final Vec3 target ) {
 
-      final float msq = v.x * v.x + v.y * v.y + v.z * v.z;
-      if ( scalar != 0.0f && msq != 0.0f ) {
-         final float sclMg = scalar * Utils.invSqrtUnchecked(msq);
+      final float mSq = v.x * v.x + v.y * v.y + v.z * v.z;
+      if ( scalar != 0.0f && mSq > 0.0f ) {
+         final float sclMg = scalar * Utils.invSqrtUnchecked(mSq);
          return target.set(v.x * sclMg, v.y * sclMg, v.z * sclMg);
       } else {
          return target.reset();
@@ -3008,12 +3011,12 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    public static Vec3 rescale ( final Vec3 v, final float scalar,
       final Vec3 target, final Vec3 normalized ) {
 
-      if ( scalar == 0.0f ) {
-         normalized.reset();
-         return target.reset();
+      if ( scalar != 0.0f ) {
+         Vec3.normalize(v, normalized);
+         return Vec3.mul(normalized, scalar, target);
       }
-      Vec3.normalize(v, normalized);
-      return Vec3.mul(normalized, scalar, target);
+      normalized.reset();
+      return target.reset();
    }
 
    /**
@@ -3688,6 +3691,84 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
          return target.set(( float ) ( us * origin.x + ts * dest.x ),
             ( float ) ( us * origin.y + ts * dest.y ), ( float ) ( us * origin.z
                + ts * dest.z ));
+      }
+
+   }
+
+   /**
+    * Compares two vectors on the x axis.
+    */
+   public static class SortX extends AbstrComparator {
+
+      /**
+       * The default constructor.
+       */
+      public SortX ( ) { super(); }
+
+      /**
+       * The compare function.
+       *
+       * @param a the left comparisand
+       * @param b the right comparisand
+       *
+       * @return the comparison
+       */
+      @Override
+      public int compare ( final Vec3 a, final Vec3 b ) {
+
+         return a.x > b.x ? 1 : a.x < b.x ? -1 : 0;
+      }
+
+   }
+
+   /**
+    * Compares two vectors on the y axis.
+    */
+   public static class SortY extends AbstrComparator {
+
+      /**
+       * The default constructor.
+       */
+      public SortY ( ) { super(); }
+
+      /**
+       * The compare function.
+       *
+       * @param a the left comparisand
+       * @param b the right comparisand
+       *
+       * @return the comparison
+       */
+      @Override
+      public int compare ( final Vec3 a, final Vec3 b ) {
+
+         return a.y > b.y ? 1 : a.y < b.y ? -1 : 0;
+      }
+
+   }
+
+   /**
+    * Compares two vectors on the z axis.
+    */
+   public static class SortZ extends AbstrComparator {
+
+      /**
+       * The default constructor.
+       */
+      public SortZ ( ) { super(); }
+
+      /**
+       * The compare function.
+       *
+       * @param a the left comparisand
+       * @param b the right comparisand
+       *
+       * @return the comparison
+       */
+      @Override
+      public int compare ( final Vec3 a, final Vec3 b ) {
+
+         return a.z > b.z ? 1 : a.z < b.z ? -1 : 0;
       }
 
    }

@@ -561,11 +561,11 @@ public class Transform3 extends Transform {
     */
    public Transform3 rotateTo ( final Quaternion rotNew ) {
 
-      if ( Quaternion.none(rotNew) ) { return this; }
-
-      this.rotPrev.set(this.rotation);
-      this.rotation.set(rotNew);
-      this.updateAxes();
+      if ( Quaternion.any(rotNew) ) {
+         this.rotPrev.set(this.rotation);
+         this.rotation.set(rotNew);
+         this.updateAxes();
+      }
       return this;
    }
 
@@ -595,10 +595,11 @@ public class Transform3 extends Transform {
    public Transform3 rotateTo ( final Quaternion rotNew, final float step,
       final Quaternion.AbstrEasing easingFunc ) {
 
-      if ( Quaternion.none(rotNew) ) { return this; }
-      this.rotPrev.set(this.rotation);
-      easingFunc.apply(this.rotPrev, rotNew, step, this.rotation);
-      this.updateAxes();
+      if ( Quaternion.any(rotNew) ) {
+         this.rotPrev.set(this.rotation);
+         easingFunc.apply(this.rotPrev, rotNew, step, this.rotation);
+         this.updateAxes();
+      }
       return this;
    }
 
@@ -1522,7 +1523,7 @@ public class Transform3 extends Transform {
 
       /**
        * Eases between an origin and destination transform by a step in [0.0,
-       * 1.0].
+       * 1.0] .
        *
        * @param origin the origin
        * @param dest   the destination
@@ -1541,7 +1542,8 @@ public class Transform3 extends Transform {
       }
 
       /**
-       * Eases between transforms in an array by a step in the range [0.0, 1.0].
+       * Eases between transforms in an array by a step in the range [0.0, 1.0]
+       * .
        *
        * @param arr    the transform array
        * @param step   the step
@@ -1562,7 +1564,7 @@ public class Transform3 extends Transform {
 
       /**
        * Eases between an origin and destination transform by a step in [0.0,
-       * 1.0].
+       * 1.0] .
        *
        * @param origin the origin
        * @param dest   the destination

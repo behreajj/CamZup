@@ -765,13 +765,14 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
       final Complex target ) {
 
       final float bAbsSq = Complex.absSq(b);
-      if ( bAbsSq == 0.0f ) { return target.reset(); }
-
-      final float bInvAbsSq = 1.0f / bAbsSq;
-      final float cReal = b.real * bInvAbsSq;
-      final float cImag = -b.imag * bInvAbsSq;
-      return target.set(a.real * cReal - a.imag * cImag, a.real * cImag + a.imag
-         * cReal);
+      if ( bAbsSq != 0.0f ) {
+         final float bInvAbsSq = 1.0f / bAbsSq;
+         final float cReal = b.real * bInvAbsSq;
+         final float cImag = -b.imag * bInvAbsSq;
+         return target.set(a.real * cReal - a.imag * cImag, a.real * cImag
+            + a.imag * cReal);
+      }
+      return target.reset();
    }
 
    /**
@@ -808,10 +809,11 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    public static Complex div ( final Complex a, final float b,
       final Complex target ) {
 
-      if ( b == 0.0f ) { return target.reset(); }
-
-      final float bInv = 1.0f / b;
-      return target.set(a.real * bInv, a.imag * bInv);
+      if ( b != 0.0f ) {
+         final float bInv = 1.0f / b;
+         return target.set(a.real * bInv, a.imag * bInv);
+      }
+      return target.reset();
    }
 
    /**
@@ -829,10 +831,11 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
       final Complex target ) {
 
       final float bAbsSq = Complex.absSq(b);
-      if ( bAbsSq == 0.0f ) { return target.reset(); }
-
-      final float abInvAbsSq = a / bAbsSq;
-      return target.set(b.real * abInvAbsSq, -b.imag * abInvAbsSq);
+      if ( bAbsSq != 0.0f ) {
+         final float abInvAbsSq = a / bAbsSq;
+         return target.set(b.real * abInvAbsSq, -b.imag * abInvAbsSq);
+      }
+      return target.reset();
    }
 
    /**
@@ -868,9 +871,11 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    public static Complex inverse ( final Complex z, final Complex target ) {
 
       final float absSq = Complex.absSq(z);
-      if ( absSq == 0.0f ) { return target.reset(); }
-      final float invAbsSq = 1.0f / absSq;
-      return target.set(z.real * invAbsSq, -z.imag * invAbsSq);
+      if ( absSq != 0.0f ) {
+         final float invAbsSq = 1.0f / absSq;
+         return target.set(z.real * invAbsSq, -z.imag * invAbsSq);
+      }
+      return target.reset();
    }
 
    /**
@@ -889,10 +894,12 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
       final Complex conj ) {
 
       final float absSq = Complex.absSq(z);
-      if ( absSq == 0.0f ) { return target.reset(); }
-      Complex.conj(z, conj);
-      final float invAbsSq = 1.0f / absSq;
-      return target.set(conj.real * invAbsSq, conj.imag * invAbsSq);
+      if ( absSq != 0.0f ) {
+         Complex.conj(z, conj);
+         final float invAbsSq = 1.0f / absSq;
+         return target.set(conj.real * invAbsSq, conj.imag * invAbsSq);
+      }
+      return target.reset();
    }
 
    /**
