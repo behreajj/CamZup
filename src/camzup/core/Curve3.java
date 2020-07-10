@@ -639,11 +639,11 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 scale ( final float scale ) {
 
-      if ( scale == 0.0f ) { return this; }
-
-      final Iterator < Knot3 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().scale(scale);
+      if ( scale != 0.0f ) {
+         final Iterator < Knot3 > itr = this.knots.iterator();
+         while ( itr.hasNext() ) {
+            itr.next().scale(scale);
+         }
       }
 
       return this;
@@ -661,11 +661,11 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 scale ( final Vec3 scale ) {
 
-      if ( Vec3.none(scale) ) { return this; }
-
-      final Iterator < Knot3 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().scale(scale);
+      if ( Vec3.all(scale) ) {
+         final Iterator < Knot3 > itr = this.knots.iterator();
+         while ( itr.hasNext() ) {
+            itr.next().scale(scale);
+         }
       }
 
       return this;
@@ -884,19 +884,21 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       pyCd.append(uRes);
       pyCd.append(", \"knots\": [");
 
-      final Iterator < Knot3 > itr = this.knots.iterator();
       int i = 0;
       final int len = this.knots.size();
       final float toPercent = 1.0f / ( this.closedLoop ? len : len - 1.0f );
+      final Iterator < Knot3 > itr = this.knots.iterator();
+
       while ( itr.hasNext() ) {
          final float t = i * toPercent;
          final float ang = ( 1.0f - t ) * tiltStart + t * tiltEnd;
          pyCd.append(itr.next().toBlenderCode(1.0f, 1.0f, ang));
          if ( itr.hasNext() ) { pyCd.append(',').append(' '); }
-         i++;
+         ++i;
       }
 
-      pyCd.append(']').append('}');
+      pyCd.append(']');
+      pyCd.append('}');
       return pyCd.toString();
    }
 
@@ -1063,7 +1065,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0], returning a knot on the curve.
+    * Evaluates a step in the range [0.0, 1.0] , returning a knot on the
+    * curve.
     *
     * @param curve  the curve
     * @param step   the step
@@ -1122,7 +1125,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0], returning a ray. The ray's
+    * Evaluates a step in the range [0.0, 1.0] , returning a ray. The ray's
     * origin will be a coordinate on the curve while its direction will be a
     * normalized tangent.
     *
@@ -1142,7 +1145,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0], returning a coordinate on the
+    * Evaluates a step in the range [0.0, 1.0] , returning a coordinate on the
     * curve and a tangent. The tangent will be normalized, to be of unit
     * length.
     *
@@ -1528,7 +1531,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          Knot3.fromSegLinear(radius * Utils.scNorm(theta1), radius * Utils
             .scNorm(theta1 - 0.25f), 0.0f, prev, curr);
          prev = curr;
-         i++;
+         ++i;
       }
       Knot3.fromSegLinear(first.coord, prev, first);
 
@@ -1692,6 +1695,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       }
 
       if ( target.closedLoop ) {
+         // TODO: Optimize by caching first before prev, then retaining curr
+         // which should be the last knot.
          final Knot3 first = knots.get(0);
          final Knot3 last = knots.get(knotLength - 1);
          Curve3.lerp13(first.coord, last.coord, first.rearHandle);

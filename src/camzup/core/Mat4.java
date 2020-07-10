@@ -563,6 +563,15 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    public void minusAssign ( final Mat4 b ) { Mat4.sub(this, b, this); }
 
    /**
+    * Returns a new matrix with the boolean opposite of the instance. For
+    * interoperability with Kotlin: <code>!a</code> . <em>Does not mutate the
+    * matrix in place</em>.
+    *
+    * @return the opposite matrix
+    */
+   public Mat4 not ( ) { return Mat4.not(this, new Mat4()); }
+
+   /**
     * Returns a new matrix with the addition of the right operand to the
     * instance. For interoperability with Kotlin: <code>a + b</code> .
     * <em>Does not mutate the matrix in place</em>.
@@ -970,11 +979,19 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    public void timesAssign ( final Mat4 b ) { Mat4.mul(this, b, this); }
 
    /**
-    * Returns a float array of length 16 containing this matrix's components.
+    * Returns a float array containing this matrix's components.
     *
     * @return the array
     */
-   public float[] toArray ( ) {
+   public float[] toArray ( ) { return this.toArray1(); }
+
+   /**
+    * Returns a 1D float array containing this matrix's components in row
+    * major order.
+    *
+    * @return the array
+    */
+   public float[] toArray1 ( ) {
 
       /* @formatter:off */
       return new float[] {
@@ -982,6 +999,22 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
          this.m10, this.m11, this.m12, this.m13,
          this.m20, this.m21, this.m22, this.m23,
          this.m30, this.m31, this.m32, this.m33 };
+      /* @formatter:on */
+   }
+
+   /**
+    * Returns a 2D float array containing this matrix's components.
+    *
+    * @return the array
+    */
+   public float[][] toArray2 ( ) {
+
+      /* @formatter:off */
+      return new float[][] {
+         { this.m00, this.m01, this.m02, this.m03 },
+         { this.m10, this.m11, this.m12, this.m13 },
+         { this.m20, this.m21, this.m22, this.m23 },
+         { this.m30, this.m31, this.m32, this.m33 } };
       /* @formatter:on */
    }
 
@@ -1095,6 +1128,24 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
          .toString();
       /* @formatter:on */
    }
+
+   /**
+    * Returns a new matrix with the negation of the instance. For
+    * interoperability with Kotlin: <code>-a</code> . <em>Does not mutate the
+    * matrix in place</em>.
+    *
+    * @return the negation
+    */
+   public Mat4 unaryMinus ( ) { return Mat4.negate(this, new Mat4()); }
+
+   /**
+    * Returns a new matrix with the positive copy of the instance. For
+    * interoperability with Kotlin: <code>+a</code> . <em>Does not mutate the
+    * matrix in place</em>.
+    *
+    * @return the positive
+    */
+   public Mat4 unaryPlus ( ) { return new Mat4(this); }
 
    /**
     * Tests for equivalence between this and another matrix.
@@ -1760,8 +1811,13 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    public static Mat4 fromTranslation ( final Vec2 translation,
       final Mat4 target ) {
 
-      return target.set(1.0f, 0.0f, 0.0f, translation.x, 0.0f, 1.0f, 0.0f,
-         translation.y, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      return target.set(
+         1.0f, 0.0f, 0.0f, translation.x,
+         0.0f, 1.0f, 0.0f, translation.y,
+         0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -2288,6 +2344,25 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
+    * Negates the input matrix.
+    *
+    * @param m      the input matrix
+    * @param target the output matrix
+    *
+    * @return the negation
+    */
+   public static Mat4 negate ( final Mat4 m, final Mat4 target ) {
+
+      /* @formatter:off */
+      return target.set(
+         -m.m00, -m.m01, -m.m02, -m.m03,
+         -m.m10, -m.m11, -m.m12, -m.m13,
+         -m.m20, -m.m21, -m.m22, -m.m23,
+         -m.m30, -m.m31, -m.m32, -m.m33);
+      /* @formatter:on */
+   }
+
+   /**
     * Tests to see if all the matrix's components are zero.
     *
     * @param m the input matrix
@@ -2300,6 +2375,32 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
          && m.m10 == 0.0f && m.m11 == 0.0f && m.m12 == 0.0f && m.m13 == 0.0f
          && m.m20 == 0.0f && m.m21 == 0.0f && m.m22 == 0.0f && m.m23 == 0.0f
          && m.m30 == 0.0f && m.m31 == 0.0f && m.m32 == 0.0f && m.m33 == 0.0f;
+   }
+
+   /**
+    * Evaluates a matrix like a boolean, where n != 0.0 is true.
+    *
+    * @param m      the input matrix
+    * @param target the output matrix
+    *
+    * @return the truth table opposite
+    */
+   public static Mat4 not ( final Mat4 m, final Mat4 target ) {
+
+      /* @formatter:off */
+      return target.set(
+         m.m00 != 0.0f ? 0.0f : 1.0f, m.m01 != 0.0f ? 0.0f : 1.0f,
+         m.m02 != 0.0f ? 0.0f : 1.0f, m.m03 != 0.0f ? 0.0f : 1.0f,
+
+         m.m10 != 0.0f ? 0.0f : 1.0f, m.m11 != 0.0f ? 0.0f : 1.0f,
+         m.m12 != 0.0f ? 0.0f : 1.0f, m.m13 != 0.0f ? 0.0f : 1.0f,
+
+         m.m20 != 0.0f ? 0.0f : 1.0f, m.m21 != 0.0f ? 0.0f : 1.0f,
+         m.m22 != 0.0f ? 0.0f : 1.0f, m.m23 != 0.0f ? 0.0f : 1.0f,
+
+         m.m30 != 0.0f ? 0.0f : 1.0f, m.m31 != 0.0f ? 0.0f : 1.0f,
+         m.m32 != 0.0f ? 0.0f : 1.0f, m.m33 != 0.0f ? 0.0f : 1.0f);
+      /* @formatter:on */
    }
 
    /**

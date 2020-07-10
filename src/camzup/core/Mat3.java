@@ -446,6 +446,15 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    public void minusAssign ( final Mat3 b ) { Mat3.sub(this, b, this); }
 
    /**
+    * Returns a new matrix with the boolean opposite of the instance. For
+    * interoperability with Kotlin: <code>!a</code> . <em>Does not mutate the
+    * matrix in place</em>.
+    *
+    * @return the opposite matrix
+    */
+   public Mat3 not ( ) { return Mat3.not(this, new Mat3()); }
+
+   /**
     * Returns a new matrix with the addition of the right operand to the
     * instance. For interoperability with Kotlin: <code>a + b</code> .
     * <em>Does not mutate the matrix in place</em>.
@@ -772,18 +781,33 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    public void timesAssign ( final Mat3 b ) { Mat3.mul(this, b, this); }
 
    /**
-    * Returns a float array of length 9 containing this matrix's components.
+    * Returns a float array containing this matrix's components.
     *
     * @return the array
     */
-   public float[] toArray ( ) {
+   public float[] toArray ( ) { return this.toArray1(); }
 
-      /* @formatter:off */
-      return new float[] {
-         this.m00, this.m01, this.m02,
-         this.m10, this.m11, this.m12,
-         this.m20, this.m21, this.m22 };
-      /* @formatter:on */
+   /**
+    * Returns a 1D float array containing this matrix's components in row
+    * major order.
+    *
+    * @return the array
+    */
+   public float[] toArray1 ( ) {
+
+      return new float[] { this.m00, this.m01, this.m02, this.m10, this.m11,
+         this.m12, this.m20, this.m21, this.m22 };
+   }
+
+   /**
+    * Returns a 2D float array containing this matrix's components.
+    *
+    * @return the array
+    */
+   public float[][] toArray2 ( ) {
+
+      return new float[][] { { this.m00, this.m01, this.m02 }, { this.m10,
+         this.m11, this.m12 }, { this.m20, this.m21, this.m22 } };
    }
 
    /**
@@ -873,6 +897,24 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
          .toString();
       /* @formatter:on */
    }
+
+   /**
+    * Returns a new matrix with the negation of the instance. For
+    * interoperability with Kotlin: <code>-a</code> . <em>Does not mutate the
+    * matrix in place</em>.
+    *
+    * @return the negation
+    */
+   public Mat3 unaryMinus ( ) { return Mat3.negate(this, new Mat3()); }
+
+   /**
+    * Returns a new matrix with the positive copy of the instance. For
+    * interoperability with Kotlin: <code>+a</code> . <em>Does not mutate the
+    * matrix in place</em>.
+    *
+    * @return the positive
+    */
+   public Mat3 unaryPlus ( ) { return new Mat3(this); }
 
    /**
     * Tests for equivalence between this and another matrix.
@@ -1465,6 +1507,20 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
+    * Negates the input matrix.
+    *
+    * @param m      the input matrix
+    * @param target the output matrix
+    *
+    * @return the negation
+    */
+   public static Mat3 negate ( final Mat3 m, final Mat3 target ) {
+
+      return target.set(-m.m00, -m.m01, -m.m02, -m.m10, -m.m11, -m.m12, -m.m20,
+         -m.m21, -m.m22);
+   }
+
+   /**
     * Tests to see if all the matrix's components are zero.
     *
     * @param m the input matrix
@@ -1476,6 +1532,23 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
       return m.m00 == 0.0f && m.m01 == 0.0f && m.m02 == 0.0f && m.m10 == 0.0f
          && m.m11 == 0.0f && m.m12 == 0.0f && m.m20 == 0.0f && m.m21 == 0.0f
          && m.m22 == 0.0f;
+   }
+
+   /**
+    * Evaluates a matrix like a boolean, where n != 0.0 is true.
+    *
+    * @param m      the input matrix
+    * @param target the output matrix
+    *
+    * @return the truth table opposite
+    */
+   public static Mat3 not ( final Mat3 m, final Mat3 target ) {
+
+      return target.set(m.m00 != 0.0f ? 0.0f : 1.0f, m.m01 != 0.0f ? 0.0f
+         : 1.0f, m.m02 != 0.0f ? 0.0f : 1.0f, m.m10 != 0.0f ? 0.0f : 1.0f, m.m11
+            != 0.0f ? 0.0f : 1.0f, m.m12 != 0.0f ? 0.0f : 1.0f, m.m20 != 0.0f
+               ? 0.0f : 1.0f, m.m21 != 0.0f ? 0.0f : 1.0f, m.m22 != 0.0f ? 0.0f
+                  : 1.0f);
    }
 
    /**

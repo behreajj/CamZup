@@ -542,11 +542,11 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public Curve2 scale ( final float scale ) {
 
-      if ( scale == 0.0f ) { return this; }
-
-      final Iterator < Knot2 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().scale(scale);
+      if ( scale != 0.0f ) {
+         final Iterator < Knot2 > itr = this.knots.iterator();
+         while ( itr.hasNext() ) {
+            itr.next().scale(scale);
+         }
       }
       return this;
    }
@@ -562,12 +562,13 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public Curve2 scale ( final Vec2 scale ) {
 
-      if ( Vec2.none(scale) ) { return this; }
-
-      final Iterator < Knot2 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().scale(scale);
+      if ( Vec2.all(scale) ) {
+         final Iterator < Knot2 > itr = this.knots.iterator();
+         while ( itr.hasNext() ) {
+            itr.next().scale(scale);
+         }
       }
+
       return this;
    }
 
@@ -1121,8 +1122,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0], returning a knot on the curve.
-    * The knot's fore handle and rear handle are mirrored.
+    * Evaluates a step in the range [0.0, 1.0] , returning a knot on the
+    * curve. The knot's fore handle and rear handle are mirrored.
     *
     * @param curve  the curve
     * @param step   the step
@@ -1181,7 +1182,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0], returning a ray. The ray's
+    * Evaluates a step in the range [0.0, 1.0] , returning a ray. The ray's
     * origin will be a coordinate on the curve while its direction will be a
     * normalized tangent.
     *
@@ -1201,7 +1202,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Evaluates a step in the range [0.0, 1.0], returning a coordinate on the
+    * Evaluates a step in the range [0.0, 1.0] , returning a coordinate on the
     * curve and a tangent. The tangent will be normalized, to be of unit
     * length.
     *
@@ -1592,7 +1593,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          Knot2.fromSegLinear(radius * Utils.scNorm(theta1), radius * Utils
             .scNorm(theta1 - 0.25f), prev, curr);
          prev = curr;
-         i++;
+         ++i;
       }
       Knot2.fromSegLinear(first.coord, prev, first);
 
@@ -2021,6 +2022,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       }
 
       if ( target.closedLoop ) {
+         // TODO: Optimize by caching first before prev, then retaining curr
+         // which should be the last knot.
          final Knot2 first = knots.get(0);
          final Knot2 last = knots.get(knotLength - 1);
          Curve2.lerp13(first.coord, last.coord, first.rearHandle);

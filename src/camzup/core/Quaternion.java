@@ -673,11 +673,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       target.real = a.real + b.real;
 
       final float mSq = Quaternion.magSq(target);
-      if ( mSq == 0.0f ) { return target.reset(); }
-
-      final float mInv = Utils.invSqrtUnchecked(mSq);
-      final Vec3 i = target.imag;
-      return target.set(target.real * mInv, i.x * mInv, i.y * mInv, i.z * mInv);
+      if ( mSq != 0.0f ) {
+         final float mInv = Utils.invSqrtUnchecked(mSq);
+         final Vec3 i = target.imag;
+         return target.set(target.real * mInv, i.x * mInv, i.y * mInv, i.z
+            * mInv);
+      }
+      return target.reset();
    }
 
    /**
@@ -2102,11 +2104,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       target.real = a.real - b.real;
 
       final float mSq = Quaternion.magSq(target);
-      if ( mSq == 0.0f ) { return target.reset(); }
-
-      final float mInv = Utils.invSqrtUnchecked(mSq);
-      final Vec3 i = target.imag;
-      return target.set(target.real * mInv, i.x * mInv, i.y * mInv, i.z * mInv);
+      if ( mSq != 0.0f ) {
+         final float mInv = Utils.invSqrtUnchecked(mSq);
+         final Vec3 i = target.imag;
+         return target.set(target.real * mInv, i.x * mInv, i.y * mInv, i.z
+            * mInv);
+      }
+      return target.reset();
    }
 
    /**

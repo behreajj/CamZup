@@ -918,12 +918,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public Mesh2 scale ( final float scale ) {
 
-      if ( scale == 0.0f ) { return this; }
-
-      final int len = this.coords.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec2 c = this.coords[i];
-         Vec2.mul(c, scale, c);
+      if ( scale != 0.0f ) {
+         final int len = this.coords.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec2 c = this.coords[i];
+            Vec2.mul(c, scale, c);
+         }
       }
 
       return this;
@@ -941,12 +941,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public Mesh2 scale ( final Vec2 scale ) {
 
-      if ( Vec2.none(scale) ) { return this; }
-
-      final int len = this.coords.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec2 c = this.coords[i];
-         Vec2.mul(c, scale, c);
+      if ( Vec2.all(scale) ) {
+         final int len = this.coords.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec2 c = this.coords[i];
+            Vec2.mul(c, scale, c);
+         }
       }
 
       return this;

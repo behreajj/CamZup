@@ -2934,10 +2934,10 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static Vec3 reject ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
-      // TODO: Does this make sense for 2D and 4D vectors?
+      // TODO: Does this make sense to add to 2D and 4D vectors?
 
       final float bSq = Vec3.magSq(b);
-      if ( bSq != 0.0f ) {
+      if ( bSq > 0.0f ) {
          final float scprj = Vec3.dot(a, b) / bSq;
          return target.set(a.x - b.x * scprj, a.y - b.y * scprj, a.z - b.z
             * scprj);

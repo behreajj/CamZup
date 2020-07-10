@@ -16,7 +16,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
    public final Color clr;
 
    /**
-    * The key's step, expected to be in the range [0.0, 1.0].
+    * The key's step, expected to be in the range [0.0, 1.0] .
     */
    public float step = 0.0f;
 
@@ -232,7 +232,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
 
       final StringBuilder sb = new StringBuilder(96);
       sb.append("{ step: ");
-      sb.append(Utils.toFixed(this.step, 6));
+      sb.append(Utils.toFixed(this.step, places));
       sb.append(", clr: ");
       sb.append(this.clr.toString(places));
       sb.append(' ');

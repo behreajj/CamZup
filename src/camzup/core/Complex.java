@@ -661,7 +661,7 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
-    * Tests to see if all the complex number's components are non-zero.
+    * Tests to see if all of the complex number's components are non-zero.
     *
     * @param z the complex number
     *
@@ -673,7 +673,7 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
-    * Tests to see if all the complex number's components are non-zero.
+    * Tests to see if any of the complex number's components are non-zero.
     *
     * @param z the complex number
     *
@@ -721,7 +721,7 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
 
    /**
     * Finds the conjugate of the complex number, where the imaginary component
-    * is negates.
+    * is negated.
     *
     * @param z      the input complex number
     * @param target the output complex number
@@ -1039,7 +1039,7 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
-    * Finds the signed phase of a complex number. Similar to a vector's
+    * Finds the signed phase of a complex number. Similar to a 2D vector's
     * heading.
     *
     * @param z the complex number
@@ -1086,8 +1086,12 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
-    * Raises a complex number to the power of another. Discloses the product
-    * and log.
+    * Raises a complex number to the power of another. Uses the formula<br>
+    * <br>
+    * pow ( <em>a</em>, <em>b</em> ) := exp ( <em>b</em> log ( <em>a</em> )
+    * )<br>
+    * <br>
+    * Discloses the product and log.
     *
     * @param a      the left operand
     * @param b      the right operand
@@ -1138,7 +1142,7 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
-    * Raises a float to the power of a complex number.
+    * Raises a real number to the power of a complex number.
     *
     * @param a      the real number
     * @param b      the complex exponent
@@ -1170,7 +1174,7 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
-    * Creates a complex number with an absolute of 1.0.
+    * Creates a random complex number.
     *
     * @param rng    the random number generator
     * @param rMin   the radius minimum
@@ -1239,12 +1243,12 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     */
    public static Complex sqrt ( final float a, final Complex target ) {
 
-      return a > 0.0f ? target.set(Utils.sqrtUnchecked(a), 0.0f) : a < 0.0f
+      return a > 0.0f ? target.set(Utils.sqrtUnchecked(a), 0.0f) : a < -0.0f
          ? target.set(0.0f, Utils.sqrtUnchecked(-a)) : target.reset();
    }
 
    /**
-    * Subtracts two complex numbers.
+    * Subtracts the left complex number from the right.
     *
     * @param a      the left operand
     * @param b      the right operand

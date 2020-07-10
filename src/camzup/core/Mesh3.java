@@ -1096,12 +1096,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 scale ( final float scale ) {
 
-      if ( scale == 0.0f ) { return this; }
-
-      final int len = this.coords.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.coords[i];
-         Vec3.mul(c, scale, c);
+      if ( scale != 0.0f ) {
+         final int len = this.coords.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec3 c = this.coords[i];
+            Vec3.mul(c, scale, c);
+         }
       }
 
       return this;
@@ -1119,12 +1119,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 scale ( final Vec3 scale ) {
 
-      if ( Vec3.none(scale) ) { return this; }
-
-      final int len = this.coords.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.coords[i];
-         Vec3.mul(c, scale, c);
+      if ( Vec3.all(scale) ) {
+         final int len = this.coords.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec3 c = this.coords[i];
+            Vec3.mul(c, scale, c);
+         }
       }
 
       return this;

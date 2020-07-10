@@ -1743,7 +1743,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public static float mag ( final Vec4 v ) {
 
-      return Utils.sqrtUnchecked(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
+      return Utils.sqrtUnchecked(Vec4.magSq(v));
    }
 
    /**

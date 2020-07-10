@@ -152,8 +152,8 @@ For those reasons, the following functions may be confusing if used in Processin
 
 | Kotlin Operator |            Interop Method | Mutator | Core Support                             |
 | --------------: | ------------------------: | :-----: | :--------------------------------------- |
-|            `+a` |         `T a.unaryPlus()` |         | Vec2,3,4 Color Complex Quaternion        |
-|            `-a` |        `T a.unaryMinus()` |         | Vec2,3,4                                 |
+|            `+a` |         `T a.unaryPlus()` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
+|            `-a` |        `T a.unaryMinus()` |         | Vec2,3,4                          Mat3,4 |
 |            `!a` |               `T a.not()` |         | Vec2,3,4                                 |
 |    `++a`, `a++` |               `T a.inc()` |         | Vec2,3,4 Color Complex                   |
 |    `--a`, `a--` |               `T a.dec()` |         | Vec2,3,4 Color Complex                   |
@@ -169,7 +169,7 @@ For those reasons, the following functions may be confusing if used in Processin
 |        `a %= b` |   `void a.remAssign(U b)` |    X    | Vec2,3,4 Color                           |
 |        `a in b` | `boolean b.contains(U a)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
 |          `a[i]` |          `U a.get(int i)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|          `a[i]` |       `void a.set(int i)` |    X    | Mat3,4                                   |
+|          `a[i]` |       `void a.set(int i)` |    X    |                                   Mat3,4 |
 
 Operations between all the objects above are subject to ambiguity. Do not, for example, assume commutativity for operators (meaning, do not assume that `a * b` will yield a result equal in value to `b * a`). Even when an operator is not supported by `core`, Kotlin may infer a viable alternative, e.g., `+` may coerce both the left and right operand to a collection, then concatenate the two.
 
