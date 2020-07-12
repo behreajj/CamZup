@@ -1848,8 +1848,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
       // ( float ) ( rhoCosPhi * Math.sin(azd) ), ( float ) ( rd * -Math.sin(
       // ind) ));
 
-      // TEST
-
       final float azNorm = azimuth * IUtils.ONE_TAU;
       final float inclNorm = inclination * IUtils.ONE_TAU;
       final float rhoCosPhi = radius * Utils.scNorm(inclNorm);

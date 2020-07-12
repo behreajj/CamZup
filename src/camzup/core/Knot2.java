@@ -922,6 +922,63 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    }
 
    /**
+    * Returns a coordinate given two knots and a step.
+    *
+    * @param a      the origin knot
+    * @param b      the destination knot
+    * @param step   the step
+    * @param target the output coordinate
+    *
+    * @return the coordinate
+    *
+    * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
+    */
+   public static Vec2 bezierPoint ( final Knot2 a, final Knot2 b,
+      final float step, final Vec2 target ) {
+
+      return Vec2.bezierPoint(a.coord, a.foreHandle, b.rearHandle, b.coord,
+         step, target);
+   }
+
+   /**
+    * Returns a tangent given two knots and a step.
+    *
+    * @param a      the origin knot
+    * @param b      the destination knot
+    * @param step   the step
+    * @param target the output coordinate
+    *
+    * @return the coordinate
+    *
+    * @see Vec2#bezierTangent(Vec2, Vec2, Vec2, Vec2, float, Vec2)
+    */
+   public static Vec2 bezierTangent ( final Knot2 a, final Knot2 b,
+      final float step, final Vec2 target ) {
+
+      return Vec2.bezierTangent(a.coord, a.foreHandle, b.rearHandle, b.coord,
+         step, target);
+   }
+
+   /**
+    * Returns a normalized tangent given two knots and a step.
+    *
+    * @param a      the origin knot
+    * @param b      the destination knot
+    * @param step   the step
+    * @param target the output coordinate
+    *
+    * @return the coordinate
+    *
+    * @see Vec2#bezierTanUnit(Vec2, Vec2, Vec2, Vec2, float, Vec2)
+    */
+   public static Vec2 bezierTanUnit ( final Knot2 a, final Knot2 b,
+      final float step, final Vec2 target ) {
+
+      return Vec2.bezierTanUnit(a.coord, a.foreHandle, b.rearHandle, b.coord,
+         step, target);
+   }
+
+   /**
     * Gets the fore handle of a knot as a direction, rather than as a point.
     *
     * @param knot   the knot
@@ -1029,9 +1086,22 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    public static Knot2 fromSegLinear ( final float xNextAnchor,
       final float yNextAnchor, final Knot2 prev, final Knot2 next ) {
 
-      next.coord.set(xNextAnchor, yNextAnchor);
-      Vec2.mix(prev.coord, next.coord, IUtils.ONE_THIRD, prev.foreHandle);
-      Vec2.mix(next.coord, prev.coord, IUtils.ONE_THIRD, next.rearHandle);
+      // Vec2.mix(prev.coord, next.coord, IUtils.ONE_THIRD, prev.foreHandle);
+      // Vec2.mix(next.coord, prev.coord, IUtils.ONE_THIRD, next.rearHandle);
+
+      final Vec2 prevCoord = prev.coord;
+      final Vec2 nextCoord = next.coord;
+
+      nextCoord.set(xNextAnchor, yNextAnchor);
+
+      prev.foreHandle.set(prevCoord.x * IUtils.ONE_THIRD + nextCoord.x
+         * IUtils.TWO_THIRDS, prevCoord.y * IUtils.ONE_THIRD + nextCoord.y
+            * IUtils.TWO_THIRDS);
+
+      next.rearHandle.set(nextCoord.x * IUtils.ONE_THIRD + prevCoord.x
+         * IUtils.TWO_THIRDS, nextCoord.y * IUtils.ONE_THIRD + prevCoord.y
+            * IUtils.TWO_THIRDS);
+
       return next;
    }
 

@@ -385,6 +385,23 @@ public class Edge2 implements Comparable < Edge2 > {
    }
 
    /**
+    * Transforms this edge by a transform.
+    *
+    * @param tr the transform
+    *
+    * @return this edge
+    *
+    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
+    */
+   public Edge2 transform ( final Transform2 tr ) {
+
+      Transform2.mulPoint(tr, this.origin.coord, this.origin.coord);
+      Transform2.mulPoint(tr, this.dest.coord, this.dest.coord);
+
+      return this;
+   }
+
+   /**
     * Translates the coordinates of this edge. The texture coordinates are
     * unaffected.
     *

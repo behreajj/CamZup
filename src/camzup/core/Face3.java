@@ -301,12 +301,12 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     */
    public Face3 scaleGlobal ( final float scale ) {
 
-      if ( scale == 0.0f ) { return this; }
-
-      final int len = this.vertices.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
-         Vec3.mul(c, scale, c);
+      if ( scale != 0.0f ) {
+         final int len = this.vertices.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec3 c = this.vertices[i].coord;
+            Vec3.mul(c, scale, c);
+         }
       }
 
       return this;
@@ -327,12 +327,12 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     */
    public Face3 scaleGlobal ( final Vec3 scale ) {
 
-      if ( Vec3.none(scale) ) { return this; }
-
-      final int len = this.vertices.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
-         Vec3.mul(c, scale, c);
+      if ( Vec3.all(scale) ) {
+         final int len = this.vertices.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec3 c = this.vertices[i].coord;
+            Vec3.mul(c, scale, c);
+         }
       }
 
       return this;
@@ -460,6 +460,26 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
       for ( int i = 0; i < len; ++i ) {
          final Vec3 c = this.vertices[i].coord;
          Mat4.mulPoint(m, c, c);
+      }
+
+      return this;
+   }
+
+   /**
+    * Transforms all coordinates in the face by a transform.
+    *
+    * @param tr the matrix
+    *
+    * @return this face
+    *
+    * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
+    */
+   public Face3 transform ( final Transform3 tr ) {
+
+      final int len = this.vertices.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec3 c = this.vertices[i].coord;
+         Transform3.mulPoint(tr, c, c);
       }
 
       return this;

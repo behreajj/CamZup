@@ -259,6 +259,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 getSegment ( final int i, final Curve3 target ) {
 
+      // TODO: Redo this to not clear the knots, but rather to resize the
+      // curve??
       final int len = this.knots.size();
 
       if ( this.closedLoop ) {
@@ -334,7 +336,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          final Knot3 knot = knItr.next();
          if ( knot != null ) {
             this.knots.add(k, knot);
-            k++;
+            ++k;
          }
       }
 
@@ -359,7 +361,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          final Knot3 knot = kn[j];
          if ( knot != null ) {
             this.knots.add(k, knot);
-            k++;
+            ++k;
          }
       }
 
@@ -417,7 +419,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          final Knot3 knot = knItr.next();
          if ( knot != null ) {
             this.knots.add(i, knot);
-            i++;
+            ++i;
          }
       }
       return this;
@@ -439,7 +441,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          final Knot3 knot = kn[i];
          if ( knot != null ) {
             this.knots.add(j, knot);
-            j++;
+            ++j;
          }
       }
       return this;
@@ -1187,8 +1189,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       }
 
       final float t = tScaled - i;
-      Curve3.bezierPoint(a, b, t, coord);
-      Curve3.bezierTanUnit(a, b, t, tangent);
+      Knot3.bezierPoint(a, b, t, coord);
+      Knot3.bezierTanUnit(a, b, t, tangent);
 
       return coord;
    }
@@ -1514,6 +1516,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public static Curve3 polygon ( final float offsetAngle, final float radius,
       final int knotCount, final Curve3 target ) {
 
+      // TODO: overload with defaults for radius and offset angle, switch
+      // knotCount to first param because it doesn't take default arg?
+
       final float off1 = offsetAngle * IUtils.ONE_TAU;
       final int vknct = knotCount < 3 ? 3 : knotCount;
       target.resize(vknct);
@@ -1748,48 +1753,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       Vec3.add(tco, trh, trh);
 
       return target;
-   }
-
-   /**
-    * A helper function for evaluation. Returns a coordinate given two knots
-    * and a step. Assumes the step has already been checked, and that the
-    * knots are in sequence along the curve.
-    *
-    * @param a      the origin knot
-    * @param b      the destination knot
-    * @param step   the step
-    * @param target the output coordinate
-    *
-    * @return the coordinate
-    *
-    * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float, Vec3)
-    */
-   static Vec3 bezierPoint ( final Knot3 a, final Knot3 b, final float step,
-      final Vec3 target ) {
-
-      return Vec3.bezierPoint(a.coord, a.foreHandle, b.rearHandle, b.coord,
-         step, target);
-   }
-
-   /**
-    * A helper function for evaluation. Returns a normalized tangent given two
-    * knots and a step. Assumes the step has already been checked, and that
-    * the knots are in sequence along the curve.
-    *
-    * @param a      the origin knot
-    * @param b      the destination knot
-    * @param step   the step
-    * @param target the output tangent
-    *
-    * @return the normalized tangent
-    *
-    * @see Vec3#bezierTanUnit(Vec3, Vec3, Vec3, Vec3, float, Vec3)
-    */
-   static Vec3 bezierTanUnit ( final Knot3 a, final Knot3 b, final float step,
-      final Vec3 target ) {
-
-      return Vec3.bezierTanUnit(a.coord, a.foreHandle, b.rearHandle, b.coord,
-         step, target);
    }
 
    /**

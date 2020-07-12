@@ -2235,6 +2235,32 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       return Vec3.sub(ub, lb, target);
    }
 
+   public static Mesh3 cone ( final float depth, final float radius,
+      final int sectors, final Mesh3 target ) {
+
+      // TODO: WIP
+
+      target.name = "Cone";
+
+      /* Validate arguments. */
+      final int vsect = sectors < 3 ? 3 : sectors;
+      Utils.min(depth, IUtils.DEFAULT_EPSILON);
+      Utils.min(radius, IUtils.DEFAULT_EPSILON);
+
+      /* Calculate vertices, faces and normals. */
+      final int vertCount = vsect + 2;
+      final int faceCount = vsect + vsect;
+      final int normalCount = vsect + 1;
+
+      /* Reallocate arrays. */
+      target.coords = Vec3.resize(target.coords, vertCount);
+      target.texCoords = Vec2.resize(target.texCoords, vertCount);
+      target.normals = Vec3.resize(target.normals, normalCount);
+      target.faces = new int[faceCount][3][3];
+
+      return target;
+   }
+
    /**
     * Generates a cube mesh. In the context of Platonic solids, also known as
     * a hexahedron, as it has 6 faces and 8 vertices.

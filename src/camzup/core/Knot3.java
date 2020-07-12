@@ -1099,6 +1099,63 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
+    * Returns a coordinate given two knots and a step.
+    *
+    * @param a      the origin knot
+    * @param b      the destination knot
+    * @param step   the step
+    * @param target the output coordinate
+    *
+    * @return the coordinate
+    *
+    * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float, Vec3)
+    */
+   public static Vec3 bezierPoint ( final Knot3 a, final Knot3 b,
+      final float step, final Vec3 target ) {
+
+      return Vec3.bezierPoint(a.coord, a.foreHandle, b.rearHandle, b.coord,
+         step, target);
+   }
+
+   /**
+    * Returns a tangent given two knots and a step.
+    *
+    * @param a      the origin knot
+    * @param b      the destination knot
+    * @param step   the step
+    * @param target the output coordinate
+    *
+    * @return the coordinate
+    *
+    * @see Vec3#bezierTangent(Vec3, Vec3, Vec3, Vec3, float, Vec3)
+    */
+   public static Vec3 bezierTangent ( final Knot3 a, final Knot3 b,
+      final float step, final Vec3 target ) {
+
+      return Vec3.bezierTanUnit(a.coord, a.foreHandle, b.rearHandle, b.coord,
+         step, target);
+   }
+
+   /**
+    * Returns a normalized tangent given two knots and a step.
+    *
+    * @param a      the origin knot
+    * @param b      the destination knot
+    * @param step   the step
+    * @param target the output coordinate
+    *
+    * @return the coordinate
+    *
+    * @see Vec3#bezierTanUnit(Vec3, Vec3, Vec3, Vec3, float, Vec3)
+    */
+   public static Vec3 bezierTanUnit ( final Knot3 a, final Knot3 b,
+      final float step, final Vec3 target ) {
+
+      return Vec3.bezierTanUnit(a.coord, a.foreHandle, b.rearHandle, b.coord,
+         step, target);
+   }
+
+   /**
     * Gets the fore handle of a knot as a direction, rather than as a point.
     *
     * @param knot   the knot
@@ -1214,9 +1271,20 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float yNextAnchor, final float zNextAnchor, final Knot3 prev,
       final Knot3 next ) {
 
-      next.coord.set(xNextAnchor, yNextAnchor, zNextAnchor);
-      Vec3.mix(prev.coord, next.coord, IUtils.ONE_THIRD, prev.foreHandle);
-      Vec3.mix(next.coord, prev.coord, IUtils.ONE_THIRD, next.rearHandle);
+      final Vec3 prevCoord = prev.coord;
+      final Vec3 nextCoord = next.coord;
+
+      nextCoord.set(xNextAnchor, yNextAnchor, zNextAnchor);
+
+      prev.foreHandle.set(prevCoord.x * IUtils.ONE_THIRD + nextCoord.x
+         * IUtils.TWO_THIRDS, prevCoord.y * IUtils.ONE_THIRD + nextCoord.y
+            * IUtils.TWO_THIRDS, prevCoord.z * IUtils.ONE_THIRD + nextCoord.z
+               * IUtils.TWO_THIRDS);
+
+      next.rearHandle.set(nextCoord.x * IUtils.ONE_THIRD + prevCoord.x
+         * IUtils.TWO_THIRDS, nextCoord.y * IUtils.ONE_THIRD + prevCoord.y
+            * IUtils.TWO_THIRDS, nextCoord.z * IUtils.ONE_THIRD + prevCoord.z
+               * IUtils.TWO_THIRDS);
 
       return next;
    }

@@ -429,6 +429,23 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
+    * Transforms this edge by a transform.
+    *
+    * @param tr the transform
+    *
+    * @return this edge
+    *
+    * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
+    */
+   public Edge3 transform ( final Transform3 tr ) {
+
+      Transform3.mulPoint(tr, this.origin.coord, this.origin.coord);
+      Transform3.mulPoint(tr, this.dest.coord, this.dest.coord);
+
+      return this;
+   }
+
+   /**
     * Translates the coordinates of this edge. The texture coordinates and
     * normals are unaffected.
     *

@@ -1,7 +1,5 @@
 package camzup;
 
-import camzup.core.Mat4;
-
 import processing.core.PApplet;
 
 /**
@@ -61,8 +59,6 @@ public class CamZup {
       // String str = me3.toBlenderCode();
       // System.out.println(str);
 
-      final Mat4 a = new Mat4(0, 1, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 0, 0);
-      System.out.println(Mat4.rotateElmsCw(a, new Mat4()).toStringCol());
    }
 
    /**

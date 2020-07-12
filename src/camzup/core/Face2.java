@@ -243,12 +243,12 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     */
    public Face2 scaleGlobal ( final float scale ) {
 
-      if ( scale == 0.0f ) { return this; }
-
-      final int len = this.vertices.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec2 c = this.vertices[i].coord;
-         Vec2.mul(c, scale, c);
+      if ( scale != 0.0f ) {
+         final int len = this.vertices.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec2 c = this.vertices[i].coord;
+            Vec2.mul(c, scale, c);
+         }
       }
 
       return this;
@@ -267,12 +267,12 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     */
    public Face2 scaleGlobal ( final Vec2 scale ) {
 
-      if ( Vec2.none(scale) ) { return this; }
-
-      final int len = this.vertices.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec2 c = this.vertices[i].coord;
-         Vec2.mul(c, scale, c);
+      if ( Vec2.all(scale) ) {
+         final int len = this.vertices.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec2 c = this.vertices[i].coord;
+            Vec2.mul(c, scale, c);
+         }
       }
 
       return this;
@@ -398,6 +398,26 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
       for ( int i = 0; i < len; ++i ) {
          final Vec2 c = this.vertices[i].coord;
          Mat3.mulPoint(m, c, c);
+      }
+
+      return this;
+   }
+
+   /**
+    * Transforms all coordinates in the face by a transform.
+    *
+    * @param tr the matrix
+    *
+    * @return this face
+    *
+    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
+    */
+   public Face2 transform ( final Transform2 tr ) {
+
+      final int len = this.vertices.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec2 c = this.vertices[i].coord;
+         Transform2.mulPoint(tr, c, c);
       }
 
       return this;
