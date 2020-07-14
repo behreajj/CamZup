@@ -250,39 +250,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public Knot3 getLast ( ) { return this.knots.get(this.knots.size() - 1); }
 
    /**
-    * Gets a segment with two knots from this curve.
-    *
-    * @param i      the index
-    * @param target the output curve
-    *
-    * @return the segment
-    */
-   public Curve3 getSegment ( final int i, final Curve3 target ) {
-
-      // TODO: Redo this to not clear the knots, but rather to resize the
-      // curve??
-      final int len = this.knots.size();
-
-      if ( this.closedLoop ) {
-
-         target.closedLoop = false;
-         target.knots.clear();
-         target.knots.add(new Knot3(this.knots.get(Utils.mod(i, len))));
-         target.knots.add(new Knot3(this.knots.get(Utils.mod(i + 1, len))));
-
-      } else if ( i > -1 && i < len - 1 ) {
-
-         target.closedLoop = false;
-         target.knots.clear();
-         target.knots.add(new Knot3(this.knots.get(i)));
-         target.knots.add(new Knot3(this.knots.get(i + 1)));
-
-      }
-
-      return target;
-   }
-
-   /**
     * Calculates this curve's hash code based on its knots and on whether it
     * is a closed loop.
     *
@@ -405,7 +372,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Prepend an collection of knots to the curve's list of knots.
+    * Prepend a collection of knots to the curve's list of knots.
     *
     * @param kn the collection of knots
     *
@@ -718,19 +685,48 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Returns a 3D array representation of this curve.
+    * Sets the coordinate of a knot at a given index.
     *
-    * @return the array
+    * @param i the index
+    * @param v the coordinate
+    *
+    * @return this knot
     */
-   public float[][][] toArray ( ) {
+   @Experimental
+   public Curve3 setKnotCoord ( final int i, final Vec3 v ) {
 
-      final float[][][] result = new float[this.knots.size()][][];
-      final Iterator < Knot3 > itr = this.knots.iterator();
-      int i = 0;
-      while ( itr.hasNext() ) {
-         result[i++] = itr.next().toArray();
-      }
-      return result;
+      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
+      return this.setKnotCoord(j, v.x, v.y, v.z);
+   }
+
+   /**
+    * Sets the fore handle of a knot at a given index.
+    *
+    * @param i the index
+    * @param v the fore handle
+    *
+    * @return this knot
+    */
+   @Experimental
+   public Curve3 setKnotForeHandle ( final int i, final Vec3 v ) {
+
+      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
+      return this.setKnotForeHandle(j, v.x, v.y, v.z);
+   }
+
+   /**
+    * Sets the rear handle of a knot at a given index.
+    *
+    * @param i the index
+    * @param v the rear handle
+    *
+    * @return this knot
+    */
+   @Experimental
+   public Curve3 setKnotRearHandle ( final int i, final Vec3 v ) {
+
+      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
+      return this.setKnotRearHandle(j, v.x, v.y, v.z);
    }
 
    /**
@@ -774,7 +770,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @param m the matrix
     *
-    * @return this knot
+    * @return this curve
     *
     * @see Knot3#transform(Mat4)
     */
@@ -800,7 +796,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @param tr the transform
     *
-    * @return this mesh
+    * @return this curve
     */
    public Curve3 transform ( final Transform3 tr ) {
 
@@ -861,6 +857,107 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
             this.knots.add(new Knot3());
          }
       }
+      return this;
+   }
+
+   /**
+    * Sets the coordinate of a knot at a given index.<br>
+    * <br>
+    * Access is package level to facilitate editing the curve with a graphic
+    * user interface (GUI).
+    *
+    * @param i the index
+    * @param x the coordinate x
+    * @param y the coordinate y
+    * @param z the coordinate z
+    *
+    * @return this knot
+    */
+   @Experimental
+   Curve3 setKnotCoord ( final int i, final float x, final float y,
+      final float z ) {
+
+      this.knots.get(i).coord.set(x, y, z);
+      return this;
+   }
+
+   /**
+    * Sets the fore handle of a knot at a given index.<br>
+    * <br>
+    * Access is package level to facilitate editing the curve with a graphic
+    * user interface (GUI).
+    *
+    * @param i the index
+    * @param x the fore handle x
+    * @param y the fore handle y
+    * @param z the fore handle z
+    *
+    * @return this knot
+    */
+   @Experimental
+   Curve3 setKnotForeHandle ( final int i, final float x, final float y,
+      final float z ) {
+
+      this.knots.get(i).foreHandle.set(x, y, z);
+      return this;
+   }
+
+   /**
+    * Sets the rear handle of a knot at a given index.<br>
+    * <br>
+    * Access is package level to facilitate editing the curve with a graphic
+    * user interface (GUI).
+    *
+    * @param i the index
+    * @param x the rear handle x
+    * @param y the rear handle y
+    * @param z the rear handle z
+    *
+    * @return this knot
+    */
+   @Experimental
+   Curve3 setKnotRearHandle ( final int i, final float x, final float y,
+      final float z ) {
+
+      this.knots.get(i).rearHandle.set(x, y, z);
+      return this;
+   }
+
+   /**
+    * Relocates a knot at a given index to a coordinate. Maintains
+    * relationship between knot coordinate and handles.
+    * 
+    * @param i the index
+    * @param v the coordinate
+    * 
+    * @return this curve
+    */
+   @Experimental
+   public Curve3 relocateKnot ( final int i, final Vec3 v ) {
+
+      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
+      return this.relocateKnot(j, v.x, v.y, v.z);
+   }
+
+   /**
+    * Relocates a knot to a coordinate. Maintains relationship between knot
+    * coordinate and handles.<br>
+    * <br>
+    * Access is package level to facilitate editing the curve with a graphical
+    * user interface (GUI).
+    * 
+    * @param i the index
+    * @param x the coordinate x
+    * @param y the coordinate y
+    * @param z the coordinate z
+    * 
+    * @return this curve
+    */
+   @Experimental
+   Curve3 relocateKnot ( final int i, final float x, final float y,
+      final float z ) {
+
+      this.knots.get(i).relocate(x, y, z);
       return this;
    }
 
@@ -1605,6 +1702,44 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Samples a segment from a source curve into a target.
+    *
+    * @param i      the index
+    * @param source the input curve
+    * @param target the output curve
+    *
+    * @return the segment
+    */
+   public static Curve3 sampleSegment ( final int i, final Curve3 source,
+      final Curve3 target ) {
+
+      target.closedLoop = false;
+      target.resize(2);
+
+      final List < Knot3 > targetKnots = target.knots;
+      final List < Knot3 > sourceKnots = source.knots;
+      final int len = sourceKnots.size();
+
+      Knot3 a = null;
+      Knot3 b = null;
+
+      if ( source.closedLoop ) {
+         a = sourceKnots.get(Utils.mod(i, len));
+         b = sourceKnots.get(Utils.mod(i + 1, len));
+      } else if ( i > -1 && i < len - 1 ) {
+         a = sourceKnots.get(i);
+         b = sourceKnots.get(i + 1);
+      } else {
+         return target;
+      }
+
+      targetKnots.get(0).set(a);
+      targetKnots.get(1).set(b);
+
+      return target;
+   }
+
+   /**
     * Adjusts knot handles so as to create a smooth, continuous curve.
     *
     * @param target the output curve
@@ -1896,7 +2031,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       }
 
       /**
-       * Eases between curves in an array by a step in the range [0.0, 1.0].
+       * Eases between curves in an array by a step in the range [0.0, 1.0] .
        *
        * @param arr    the curve array
        * @param step   the step

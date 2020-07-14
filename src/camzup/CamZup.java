@@ -59,6 +59,11 @@ public class CamZup {
       // String str = me3.toBlenderCode();
       // System.out.println(str);
 
+      // CurveEntity3 ce3 = new CurveEntity3(new Transform3(), Curve3.infinity(
+      // new Curve3()));
+      // String pyCd = ce3.toBlenderCode();
+      // System.out.println(pyCd);
+
    }
 
    /**

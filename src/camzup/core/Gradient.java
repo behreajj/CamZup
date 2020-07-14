@@ -311,8 +311,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
    /**
     * Cycles the steps of a color gradient. The number of places can be
-    * positive or negative, indicating which direction to shift the array:
-    * positive numbers shift to the right; negative, to the left.
+    * positive or negative, indicating which direction to shift: positive
+    * numbers shift to the right; negative, to the left.
     *
     * @param places the number of places
     *
@@ -320,6 +320,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     */
    public Gradient cycle ( final int places ) {
 
+      /* Load from tree set into an array. */
       final int len = this.keys.size();
       final Iterator < ColorKey > itr = this.keys.iterator();
       final ColorKey[] arr = new ColorKey[len];
@@ -329,11 +330,13 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
          ++i;
       }
 
+      /* Cycle the array with three reverses. */
       final int k = Utils.mod(-places, len);
       Gradient.reverse(arr, 0, len - 1);
       Gradient.reverse(arr, 0, k - 1);
       Gradient.reverse(arr, k, len - 1);
 
+      /* Reintroduce shifted keys to tree set. */
       this.keys.clear();
       for ( int m = 0; m < len; ++m ) {
          this.keys.add(arr[m]);
@@ -1644,15 +1647,20 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final Gradient target ) {
 
       if ( source == target ) {
+
          final Iterator < ColorKey > kyItr = source.keys.iterator();
          while ( kyItr.hasNext() ) {
             final Color clr = kyItr.next().clr;
             Color.inverse(clr, clr);
          }
+
       } else {
+
          final TreeSet < ColorKey > trgKeys = target.keys;
-         trgKeys.clear();
          final Iterator < ColorKey > srcItr = source.keys.iterator();
+
+         trgKeys.clear();
+
          while ( srcItr.hasNext() ) {
             final ColorKey trgKey = new ColorKey(srcItr.next());
             final Color clr = trgKey.clr;

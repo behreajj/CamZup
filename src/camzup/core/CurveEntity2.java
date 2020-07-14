@@ -69,7 +69,6 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
     */
    public CurveEntity2 append ( final Curve2 curve ) {
 
-      // if ( curve != null && curve.length() > 0 ) { this.curves.add(curve); }
       if ( curve != null ) { this.curves.add(curve); }
       return this;
    }
@@ -151,6 +150,25 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public int length ( ) { return this.curves.size(); }
 
    /**
+    * @param curveIndex the curve index
+    * @param knotIndex  the knot index
+    * @param global     the point in global space
+    * @param local      the point in curve local space
+    *
+    * @return this entity
+    *
+    * @see Transform2#invMulPoint(Transform2, Vec2, Vec2)
+    */
+   @Experimental
+   public CurveEntity2 relocateKnot ( final int curveIndex, final int knotIndex,
+      final Vec2 global, final Vec2 local ) {
+
+      Transform2.invMulPoint(this.transform, global, local);
+      this.get(curveIndex).relocateKnot(knotIndex, local);
+      return this;
+   }
+
+   /**
     * Scales the entity by a scalar.
     *
     * @param scalar the scalar
@@ -222,6 +240,78 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    }
 
    /**
+    * Sets the coordinate of a knot for a given curve at an index. Multiplies
+    * the input coordinate in global space by the transform's inverse.<br>
+    * <br>
+    * To facilitate editing the curve with a graphical user interface (GUI).
+    *
+    * @param curveIndex the curve index
+    * @param knotIndex  the knot index
+    * @param global     the point in global space
+    * @param local      the point in curve local space
+    *
+    * @return this entity
+    *
+    * @see Transform2#invMulPoint(Transform2, Vec2, Vec2)
+    */
+   @Experimental
+   public CurveEntity2 setKnotCoord ( final int curveIndex, final int knotIndex,
+      final Vec2 global, final Vec2 local ) {
+
+      Transform2.invMulPoint(this.transform, global, local);
+      this.get(curveIndex).setKnotCoord(knotIndex, local);
+      return this;
+   }
+
+   /**
+    * Sets the fore handle of a knot for a given curve at an index. Multiplies
+    * the input coordinate in global space by the transform's inverse.<br>
+    * <br>
+    * To facilitate editing the curve with a graphical user interface (GUI).
+    *
+    * @param curveIndex the curve index
+    * @param knotIndex  the knot index
+    * @param global     the point in global space
+    * @param local      the point in curve local space
+    *
+    * @return this entity
+    *
+    * @see Transform2#invMulPoint(Transform2, Vec2, Vec2)
+    */
+   @Experimental
+   public CurveEntity2 setKnotForeHandle ( final int curveIndex,
+      final int knotIndex, final Vec2 global, final Vec2 local ) {
+
+      Transform2.invMulPoint(this.transform, global, local);
+      this.get(curveIndex).setKnotForeHandle(knotIndex, local);
+      return this;
+   }
+
+   /**
+    * Sets the rear handle of a knot for a given curve at an index. Multiplies
+    * the input coordinate in global space by the transform's inverse.<br>
+    * <br>
+    * To facilitate editing the curve with a graphical user interface (GUI).
+    *
+    * @param curveIndex the curve index
+    * @param knotIndex  the knot index
+    * @param global     the point in global space
+    * @param local      the point in curve local space
+    *
+    * @return this entity
+    *
+    * @see Transform2#invMulPoint(Transform2, Vec2, Vec2)
+    */
+   @Experimental
+   public CurveEntity2 setKnotRearHandle ( final int curveIndex,
+      final int knotIndex, final Vec2 global, final Vec2 local ) {
+
+      Transform2.invMulPoint(this.transform, global, local);
+      this.get(curveIndex).setKnotRearHandle(knotIndex, local);
+      return this;
+   }
+
+   /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
@@ -263,12 +353,13 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
       int curveIndex = 0;
       final int curveLast = this.curves.size() - 1;
+      final float zoff = 0.0f;
       final Iterator < Curve2 > curveItr = this.curves.iterator();
       while ( curveItr.hasNext() ) {
-         final float zoff = 0.0001f * curveIndex;
+         // final float zoff = 0.0001f * curveIndex;
          pyCd.append(curveItr.next().toBlenderCode(uRes, zoff));
          if ( curveIndex < curveLast ) { pyCd.append(',').append(' '); }
-         curveIndex++;
+         ++curveIndex;
       }
 
       pyCd.append("]}\n\ncrv_data = D.curves.new(");
@@ -447,7 +538,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
          }
 
          svgp.append(curve.toSvgPath(iddot + Utils.toPadded(i, 4)));
-         i++;
+         ++i;
 
          /* Close out material group. */
          if ( includesMats ) { svgp.append("</g>\n"); }

@@ -92,7 +92,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     */
    public MeshEntity2 append ( final Mesh2 mesh ) {
 
-      // if ( mesh != null && mesh.length() > 0 ) { this.meshes.add(mesh); }
       if ( mesh != null ) { this.meshes.add(mesh); }
       return this;
    }
@@ -233,6 +232,30 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
+    * Sets a coordinate in a mesh. Multiplies the input coordinate in global
+    * space by the transform's inverse.<br>
+    * <br>
+    * To facilitate editing the mesh with a graphical user interface (GUI).
+    *
+    * @param meshIndex  the mesh index
+    * @param coordIndex the coordinate index
+    * @param global     the point in global space
+    * @param local      the point in mesh local space
+    *
+    * @return this entity
+    */
+   @Experimental
+   public MeshEntity2 setCoord ( final int meshIndex, final int coordIndex,
+      final Vec2 global, final Vec2 local ) {
+
+      Transform2.invMulPoint(this.transform, global, local);
+      final Vec2[] coords = this.get(meshIndex).coords;
+      final int j = Utils.mod(coordIndex, coords.length);
+      coords[j].set(local);
+      return this;
+   }
+
+   /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes.
     *
@@ -283,7 +306,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       final float specular, final float clearcoat, final float clearcoatRough,
       final float extrude, final float offset ) {
 
-      this.meshes.size();
       final boolean autoSmoothNormals = true;
       final boolean addVertGroups = true;
       final boolean includeUvs = true;
@@ -303,7 +325,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       final Iterator < Mesh2 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
-         // final float zoff = 0.0001f * meshIndex;
          pyCd.append(meshItr.next().toBlenderCode(includeUvs, 0.0f));
          if ( meshItr.hasNext() ) { pyCd.append(',').append(' '); }
       }
@@ -321,9 +342,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       } else {
          pyCd.append(MaterialSolid.defaultBlenderMaterial(gamma));
       }
-
-      // TODO: Can this be replaced with a string that is replaced by ANT /
-      // build properties?
 
       pyCd.append("]}\n\nd_objs = D.objects\n");
       pyCd.append("parent_obj = d_objs.new(");

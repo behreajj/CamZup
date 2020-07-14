@@ -92,7 +92,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     */
    public MeshEntity3 append ( final Mesh3 mesh ) {
 
-      // if ( mesh != null && mesh.length() > 0 ) { this.meshes.add(mesh); }
       if ( mesh != null ) { this.meshes.add(mesh); }
       return this;
    }
@@ -240,6 +239,30 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    }
 
    /**
+    * Sets a coordinate in a mesh. Multiplies the input coordinate in global
+    * space by the transform's inverse.<br>
+    * <br>
+    * To facilitate editing the mesh with a graphical user interface (GUI).
+    *
+    * @param meshIndex  the mesh index
+    * @param coordIndex the coordinate index
+    * @param global     the point in global space
+    * @param local      the point in mesh local space
+    *
+    * @return this entity
+    */
+   @Experimental
+   public MeshEntity3 setCoord ( final int meshIndex, final int coordIndex,
+      final Vec3 global, final Vec3 local ) {
+
+      Transform3.invMulPoint(this.transform, global, local);
+      final Vec3[] coords = this.get(meshIndex).coords;
+      final int j = Utils.mod(coordIndex, coords.length);
+      coords[j].set(local);
+      return this;
+   }
+
+   /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes.
     *
@@ -287,7 +310,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       final float specular, final float clearcoat,
       final float clearcoatRough ) {
 
-      this.meshes.size();
       final boolean addVertGroups = true;
       final boolean includeNormals = true;
       final boolean includeUvs = true;
@@ -320,10 +342,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
          for ( int i = 0; i < matLen; ++i ) {
             pyCd.append(materials[i].toBlenderCode(gamma, metallic, roughness,
                specular, clearcoat, clearcoatRough));
-            if ( i < matLast ) {
-               pyCd.append(',');
-               pyCd.append(' ');
-            }
+            if ( i < matLast ) { pyCd.append(',').append(' '); }
          }
       } else {
          pyCd.append(MaterialSolid.defaultBlenderMaterial(gamma));

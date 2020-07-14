@@ -69,7 +69,6 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
     */
    public CurveEntity3 append ( final Curve3 curve ) {
 
-      // if ( curve != null && curve.length() > 0 ) { this.curves.add(curve); }
       if ( curve != null ) { this.curves.add(curve); }
       return this;
    }
@@ -220,6 +219,97 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    }
 
    /**
+    * @param curveIndex the curve index
+    * @param knotIndex  the knot index
+    * @param global     the point in global space
+    * @param local      the point in curve local space
+    * 
+    * @return this entity
+    * 
+    * @see Transform3#invMulPoint(Transform3, Vec3, Vec3)
+    */
+   @Experimental
+   public CurveEntity3 relocateKnot ( final int curveIndex, final int knotIndex,
+      final Vec3 global, final Vec3 local ) {
+
+      Transform3.invMulPoint(this.transform, global, local);
+      this.get(curveIndex).relocateKnot(knotIndex, local);
+      return this;
+   }
+
+   /**
+    * Sets the coordinate of a knot for a given curve at an index. Multiplies
+    * the input coordinate in global space by the transform's inverse.<br>
+    * <br>
+    * To facilitate editing the curve with a graphical user interface (GUI).
+    *
+    * @param curveIndex the curve index
+    * @param knotIndex  the knot index
+    * @param global     the point in global space
+    * @param local      the point in curve local space
+    *
+    * @return this entity
+    *
+    * @see Transform3#invMulPoint(Transform3, Vec3, Vec3)
+    */
+   @Experimental
+   public CurveEntity3 setKnotCoord ( final int curveIndex, final int knotIndex,
+      final Vec3 global, final Vec3 local ) {
+
+      Transform3.invMulPoint(this.transform, global, local);
+      this.get(curveIndex).setKnotCoord(knotIndex, local);
+      return this;
+   }
+
+   /**
+    * Sets the fore handle of a knot for a given curve at an index. Multiplies
+    * the input coordinate in global space by the transform's inverse.<br>
+    * <br>
+    * To facilitate editing the curve with a graphical user interface (GUI).
+    *
+    * @param curveIndex the curve index
+    * @param knotIndex  the knot index
+    * @param global     the point in global space
+    * @param local      the point in curve local space
+    *
+    * @return this entity
+    *
+    * @see Transform3#invMulPoint(Transform3, Vec3, Vec3)
+    */
+   @Experimental
+   public CurveEntity3 setKnotForeHandle ( final int curveIndex,
+      final int knotIndex, final Vec3 global, final Vec3 local ) {
+
+      Transform3.invMulPoint(this.transform, global, local);
+      this.get(curveIndex).setKnotForeHandle(knotIndex, local);
+      return this;
+   }
+
+   /**
+    * Sets the rear handle of a knot for a given curve at an index. Multiplies
+    * the input coordinate in global space by the transform's inverse.<br>
+    * <br>
+    * To facilitate editing the curve with a graphical user interface (GUI).
+    *
+    * @param curveIndex the curve index
+    * @param knotIndex  the knot index
+    * @param global     the point in global space
+    * @param local      the point in curve local space
+    *
+    * @return this entity
+    *
+    * @see Transform3#invMulPoint(Transform3, Vec3, Vec3)
+    */
+   @Experimental
+   public CurveEntity3 setKnotRearHandle ( final int curveIndex,
+      final int knotIndex, final Vec3 global, final Vec3 local ) {
+
+      Transform3.invMulPoint(this.transform, global, local);
+      this.get(curveIndex).setKnotRearHandle(knotIndex, local);
+      return this;
+   }
+
+   /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
@@ -267,7 +357,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
       while ( curveItr.hasNext() ) {
          pyCd.append(curveItr.next().toBlenderCode(uRes, tiltStart, tiltEnd));
          if ( curveIndex < curveLast ) { pyCd.append(',').append(' '); }
-         curveIndex++;
+         ++curveIndex;
       }
 
       pyCd.append("]}\n\ncrv_data = D.curves.new(");

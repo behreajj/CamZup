@@ -390,6 +390,20 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
+    * Relocates the knot to a new location while maintaining the relationship
+    * between the central coordinate and its two handles.
+    *
+    * @param v the location
+    *
+    * @return this knot
+    */
+   @Experimental
+   public Knot3 relocate ( final Vec3 v ) {
+
+      return this.relocate(v.x, v.y, v.z);
+   }
+
+   /**
     * Reverses the knot's direction by swapping the fore- and rear-handles.
     *
     * @return this knot
@@ -932,20 +946,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Returns a 2D array representation of this knot. The coordinate is the
-    * first element; fore handle, the second; rear handle, the third.
-    *
-    * @return the array
-    *
-    * @see Vec3#toArray()
-    */
-   public float[][] toArray ( ) {
-
-      return new float[][] { this.coord.toArray(), this.foreHandle.toArray(),
-         this.rearHandle.toArray() };
-   }
-
-   /**
     * Returns a string representation of this knot.
     *
     * @return the string
@@ -1024,6 +1024,52 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       Vec3.add(this.coord, v, this.coord);
       Vec3.add(this.foreHandle, v, this.foreHandle);
       Vec3.add(this.rearHandle, v, this.rearHandle);
+
+      return this;
+   }
+
+   /**
+    * Relocates the knot to a new location while maintaining the relationship
+    * between the central coordinate and its two handles.<br>
+    * <br>
+    * Access is package level to facilitate editing the curve with a graphic
+    * user interface (GUI).
+    *
+    * @param v the location
+    *
+    * @return this knot
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    */
+   @Experimental
+   Knot3 relocate ( final float x, final float y, final float z ) {
+
+      Vec3.sub(this.foreHandle, this.coord, this.foreHandle);
+      Vec3.sub(this.rearHandle, this.coord, this.rearHandle);
+      this.coord.set(x, y, z);
+      Vec3.add(this.foreHandle, this.coord, this.foreHandle);
+      Vec3.add(this.rearHandle, this.coord, this.rearHandle);
+
+      // this.foreHandle.x -= this.coord.x;
+      // this.foreHandle.y -= this.coord.y;
+      // this.foreHandle.z -= this.coord.z;
+      //
+      // this.rearHandle.x -= this.coord.x;
+      // this.rearHandle.y -= this.coord.y;
+      // this.rearHandle.z -= this.coord.z;
+      //
+      // this.coord.x = x;
+      // this.coord.y = y;
+      // this.coord.z = z;
+      //
+      // this.foreHandle.x += x;
+      // this.foreHandle.y += y;
+      // this.foreHandle.z += z;
+      //
+      // this.rearHandle.x += x;
+      // this.rearHandle.y += y;
+      // this.rearHandle.z += z;
 
       return this;
    }

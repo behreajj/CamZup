@@ -1018,7 +1018,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
       final float u = 1.0f - step;
       final float t3 = step + step + step;
 
-      // TODO: Is this the correct shortcut for these coefficients?
       final float usq3 = u * ( u + u + u );
       final float tsq3 = step * t3;
       final float ut6 = u * ( t3 + t3 );

@@ -307,7 +307,7 @@ public class Edge2 implements Comparable < Edge2 > {
 
    /**
     * Sets the origin and destination coordinate, texture coordinate and
-    * normal data.
+    * normal data by reference.
     *
     * @param coOrigin origin coordinate
     * @param txOrigin origin texture coordinate
@@ -512,7 +512,7 @@ public class Edge2 implements Comparable < Edge2 > {
 
    /**
     * Projects a vector, representing a point, onto an edge. The scalar
-    * projection is clamped to the range [0.0, 1.0], meaning the projection
+    * projection is clamped to the range [0.0, 1.0] , meaning the projection
     * will not exceed the edge's origin and destination.
     *
     * @param edge   the edge

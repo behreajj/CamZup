@@ -241,35 +241,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public Knot2 getLast ( ) { return this.knots.get(this.knots.size() - 1); }
 
    /**
-    * Gets a segment with two knots from this curve.
-    *
-    * @param i      the index
-    * @param target the output curve
-    *
-    * @return the segment
-    */
-   public Curve2 getSegment ( final int i, final Curve2 target ) {
-
-      final int len = this.knots.size();
-
-      // TODO: Redo this to not clear the knots, but rather to resize the
-      // curve??
-      if ( this.closedLoop ) {
-         target.closedLoop = false;
-         target.knots.clear();
-         target.knots.add(new Knot2(this.knots.get(Utils.mod(i, len))));
-         target.knots.add(new Knot2(this.knots.get(Utils.mod(i + 1, len))));
-      } else if ( i > -1 && i < len - 1 ) {
-         target.closedLoop = false;
-         target.knots.clear();
-         target.knots.add(new Knot2(this.knots.get(i)));
-         target.knots.add(new Knot2(this.knots.get(i + 1)));
-      }
-
-      return target;
-   }
-
-   /**
     * Calculates this curve's hash code based on its knots and on whether it
     * is a closed loop.
     *
@@ -393,7 +364,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Prepend an collection of knots to the curve's list of knots.
+    * Prepend a collection of knots to the curve's list of knots.
     *
     * @param kn the collection of knots
     *
@@ -583,8 +554,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public Curve2 set ( final Curve2 source ) {
 
-      this.resize(source.length());
-      final Iterator < Knot2 > srcItr = source.iterator();
+      final List < Knot2 > sourceKnots = source.knots;
+      this.resize(sourceKnots.size());
+      final Iterator < Knot2 > srcItr = sourceKnots.iterator();
       final Iterator < Knot2 > trgItr = this.knots.iterator();
       while ( srcItr.hasNext() ) {
          trgItr.next().set(srcItr.next());
@@ -596,19 +568,64 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Returns a 3D array representation of this curve.
-    *
-    * @return the array
+    * Relocates a knot at a given index to a coordinate. Maintains
+    * relationship between knot coordinate and handles.
+    * 
+    * @param i the index
+    * @param v the coordinate
+    * 
+    * @return this curve
     */
-   public float[][][] toArray ( ) {
+   @Experimental
+   public Curve2 relocateKnot ( final int i, final Vec2 v ) {
 
-      final float[][][] result = new float[this.knots.size()][][];
-      final Iterator < Knot2 > itr = this.knots.iterator();
-      int index = 0;
-      while ( itr.hasNext() ) {
-         result[index++] = itr.next().toArray();
-      }
-      return result;
+      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
+      return this.relocateKnot(j, v.x, v.y);
+   }
+
+   /**
+    * Sets the coordinate of a knot at a given index.
+    *
+    * @param i the index
+    * @param v the coordinate
+    *
+    * @return this knot
+    */
+   @Experimental
+   public Curve2 setKnotCoord ( final int i, final Vec2 v ) {
+
+      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
+      return this.setKnotCoord(j, v.x, v.y);
+   }
+
+   /**
+    * Sets the fore handle of a knot at a given index.
+    *
+    * @param i the index
+    * @param v the fore handle
+    *
+    * @return this knot
+    */
+   @Experimental
+   public Curve2 setKnotForeHandle ( final int i, final Vec2 v ) {
+
+      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
+      return this.setKnotForeHandle(j, v.x, v.y);
+   }
+
+   /**
+    * Sets the rear handle of a knot at a given index.
+    *
+    * @param i the index
+    * @param v the rear handle
+    *
+    * @return this knot
+    */
+   @Experimental
+   public Curve2 setKnotRearHandle ( final int i, final Vec2 v ) {
+
+      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
+      return this.setKnotRearHandle(j, v.x, v.y);
    }
 
    /**
@@ -723,7 +740,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @param m the matrix
     *
-    * @return this knot
+    * @return this curve
     *
     * @see Knot2#transform(Mat3)
     */
@@ -748,7 +765,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @param tr the transform
     *
-    * @return this mesh
+    * @return this curve
     */
    public Curve2 transform ( final Transform2 tr ) {
 
@@ -807,6 +824,83 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
             this.knots.add(new Knot2());
          }
       }
+      return this;
+   }
+
+   /**
+    * Relocates a knot to a coordinate. Maintains relationship between knot
+    * coordinate and handles.<br>
+    * <br>
+    * Access is package level to facilitate editing the curve with a graphical
+    * user interface (GUI).
+    * 
+    * @param i the index
+    * @param x the coordinate x
+    * @param y the coordinate y
+    * 
+    * @return this curve
+    */
+   @Experimental
+   Curve2 relocateKnot ( final int i, final float x, final float y ) {
+
+      this.knots.get(i).relocate(x, y);
+      return this;
+   }
+
+   /**
+    * Sets the coordinate of a knot at a given index.<br>
+    * <br>
+    * Access is package level to facilitate editing the curve with a graphical
+    * user interface (GUI).
+    *
+    * @param i the index
+    * @param x the coordinate x
+    * @param y the coordinate y
+    *
+    * @return this knot
+    */
+   @Experimental
+   Curve2 setKnotCoord ( final int i, final float x, final float y ) {
+
+      this.knots.get(i).coord.set(x, y);
+      return this;
+   }
+
+   /**
+    * Sets the fore handle of a knot at a given index.<br>
+    * <br>
+    * Access is package level to facilitate editing the curve with a graphical
+    * user interface (GUI).
+    *
+    * @param i the index
+    * @param x the fore handle x
+    * @param y the fore handle y
+    *
+    * @return this knot
+    */
+   @Experimental
+   Curve2 setKnotForeHandle ( final int i, final float x, final float y ) {
+
+      this.knots.get(i).foreHandle.set(x, y);
+      return this;
+   }
+
+   /**
+    * Sets the rear handle of a knot at a given index.<br>
+    * <br>
+    * Access is package level to facilitate editing the curve with a graphical
+    * user interface (GUI).
+    *
+    * @param i the index
+    * @param x the rear handle x
+    * @param y the rear handle y
+    *
+    * @return this knot
+    */
+   @Experimental
+   Curve2 setKnotRearHandle ( final int i, final float x, final float y ) {
+
+      this.knots.get(i).rearHandle.set(x, y);
       return this;
    }
 
@@ -1932,6 +2026,44 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
+    * Samples a segment from a source curve into a target.
+    *
+    * @param i      the index
+    * @param source the input curve
+    * @param target the output curve
+    *
+    * @return the segment
+    */
+   public static Curve2 sampleSegment ( final int i, final Curve2 source,
+      final Curve2 target ) {
+
+      target.closedLoop = false;
+      target.resize(2);
+
+      final List < Knot2 > targetKnots = target.knots;
+      final List < Knot2 > sourceKnots = source.knots;
+      final int len = sourceKnots.size();
+
+      Knot2 a = null;
+      Knot2 b = null;
+
+      if ( source.closedLoop ) {
+         a = sourceKnots.get(Utils.mod(i, len));
+         b = sourceKnots.get(Utils.mod(i + 1, len));
+      } else if ( i > -1 && i < len - 1 ) {
+         a = sourceKnots.get(i);
+         b = sourceKnots.get(i + 1);
+      } else {
+         return target;
+      }
+
+      targetKnots.get(0).set(a);
+      targetKnots.get(1).set(b);
+
+      return target;
+   }
+
+   /**
     * Adjusts knot handles so as to create a smooth, continuous curve.
     *
     * @param target the output curve
@@ -2278,7 +2410,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       }
 
       /**
-       * Eases between curves in an array by a step in the range [0.0, 1.0].
+       * Eases between curves in an array by a step in the range [0.0, 1.0] .
        *
        * @param arr    the curve array
        * @param step   the step
