@@ -21,6 +21,7 @@ void draw() {
 
   float hNorm = 1.0 / (height - 1.0);
   float wNorm = 1.0 / (width - 1.0);
+  float aspect = width / (float)height;
 
   if (mousePressed) {
     seedphi += 0.05;
@@ -35,7 +36,7 @@ void draw() {
     for (int x = 0; x < width; ++x, ++idx) {
       float xNorm = x * wNorm;
       st.real = xNorm + xNorm - 1.0;
-      st.real += st.real;
+      st.real *= aspect;
 
       float fac = julia(seed, st, exp, itr, zn);
       pixels[idx] = Gradient.eval(grd, fac);
@@ -45,12 +46,14 @@ void draw() {
 }
 
 float julia(
-  Complex seed, Complex z,
-  Complex exp, int itr,
+  Complex seed,
+  Complex z,
+  Complex exp,
+  int itr,
   Complex target) {
 
-  int i = 0;
   target.set(z);
+  int i = 0;
   for (; i < itr && Complex.absSq(target) < 4.0; ++i) {
     Complex.pow(target, exp, target);
     Complex.add(seed, target, target);

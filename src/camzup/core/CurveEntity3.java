@@ -148,6 +148,25 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public int length ( ) { return this.curves.size(); }
 
    /**
+    * @param curveIndex the curve index
+    * @param knotIndex  the knot index
+    * @param global     the point in global space
+    * @param local      the point in curve local space
+    *
+    * @return this entity
+    *
+    * @see Transform3#invMulPoint(Transform3, Vec3, Vec3)
+    */
+   @Experimental
+   public CurveEntity3 relocateKnot ( final int curveIndex, final int knotIndex,
+      final Vec3 global, final Vec3 local ) {
+
+      Transform3.invMulPoint(this.transform, global, local);
+      this.get(curveIndex).relocateKnot(knotIndex, local);
+      return this;
+   }
+
+   /**
     * Scales the entity by a scalar.
     *
     * @param scalar the scalar
@@ -215,25 +234,6 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public CurveEntity3 scaleTo ( final Vec3 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
-      return this;
-   }
-
-   /**
-    * @param curveIndex the curve index
-    * @param knotIndex  the knot index
-    * @param global     the point in global space
-    * @param local      the point in curve local space
-    * 
-    * @return this entity
-    * 
-    * @see Transform3#invMulPoint(Transform3, Vec3, Vec3)
-    */
-   @Experimental
-   public CurveEntity3 relocateKnot ( final int curveIndex, final int knotIndex,
-      final Vec3 global, final Vec3 local ) {
-
-      Transform3.invMulPoint(this.transform, global, local);
-      this.get(curveIndex).relocateKnot(knotIndex, local);
       return this;
    }
 

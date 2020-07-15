@@ -217,14 +217,14 @@ public interface IUtils {
    double ONE_THIRD_D = 0.3333333333333333d;
 
    /**
-    * An approximation of \u03c6, or ( 1.0 + \u221a 5.0 ) / 2.0 ,
-    * {@value IUtils#PHI} .
+    * The golden ratio. An approximation of \u03c6, or ( 1.0 + \u221a 5.0 ) /
+    * 2.0 , {@value IUtils#PHI} .
     */
    float PHI = 1.618034f;
 
    /**
-    * An approximation of \u03c6, or ( 1.0 + \u221a 5.0 ) / 2.0 ,
-    * {@value IUtils#PHI_D} .
+    * The golden ratio. An approximation of \u03c6, or ( 1.0 + \u221a 5.0 ) /
+    * 2.0 , {@value IUtils#PHI_D} .
     */
    double PHI_D = 1.618033988749895d;
 

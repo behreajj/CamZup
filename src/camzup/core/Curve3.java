@@ -415,6 +415,22 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Relocates a knot at a given index to a coordinate. Maintains
+    * relationship between knot coordinate and handles.
+    *
+    * @param i the index
+    * @param v the coordinate
+    *
+    * @return this curve
+    */
+   @Experimental
+   public Curve3 relocateKnot ( final int i, final Vec3 v ) {
+
+      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
+      return this.relocateKnot(j, v.x, v.y, v.z);
+   }
+
+   /**
     * Returns and removes a knot at a given index.
     *
     * @param i the index
@@ -828,6 +844,28 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Relocates a knot to a coordinate. Maintains relationship between knot
+    * coordinate and handles.<br>
+    * <br>
+    * Access is package level to facilitate editing the curve with a graphical
+    * user interface (GUI).
+    *
+    * @param i the index
+    * @param x the coordinate x
+    * @param y the coordinate y
+    * @param z the coordinate z
+    *
+    * @return this curve
+    */
+   @Experimental
+   Curve3 relocateKnot ( final int i, final float x, final float y,
+      final float z ) {
+
+      this.knots.get(i).relocate(x, y, z);
+      return this;
+   }
+
+   /**
     * For internal (package-level) use. Resizes a curve to the specified
     * length. The length may be no less than 2. When the new length is greater
     * than the old, new <code>Knot2</code>s are added.<br>
@@ -920,44 +958,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final float z ) {
 
       this.knots.get(i).rearHandle.set(x, y, z);
-      return this;
-   }
-
-   /**
-    * Relocates a knot at a given index to a coordinate. Maintains
-    * relationship between knot coordinate and handles.
-    * 
-    * @param i the index
-    * @param v the coordinate
-    * 
-    * @return this curve
-    */
-   @Experimental
-   public Curve3 relocateKnot ( final int i, final Vec3 v ) {
-
-      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
-      return this.relocateKnot(j, v.x, v.y, v.z);
-   }
-
-   /**
-    * Relocates a knot to a coordinate. Maintains relationship between knot
-    * coordinate and handles.<br>
-    * <br>
-    * Access is package level to facilitate editing the curve with a graphical
-    * user interface (GUI).
-    * 
-    * @param i the index
-    * @param x the coordinate x
-    * @param y the coordinate y
-    * @param z the coordinate z
-    * 
-    * @return this curve
-    */
-   @Experimental
-   Curve3 relocateKnot ( final int i, final float x, final float y,
-      final float z ) {
-
-      this.knots.get(i).relocate(x, y, z);
       return this;
    }
 
@@ -1502,9 +1502,13 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final int vertsLen = face.length;
       final Vec3[] vs = mesh.coords;
 
+      final StringBuilder sb = new StringBuilder(64);
+      sb.append(mesh.name);
+      sb.append('.');
+      sb.append(Utils.toPadded(i, 4));
+
+      target.name = sb.toString();
       target.closedLoop = true;
-      target.name = new StringBuilder(64).append(mesh.name).append('.').append(
-         Utils.toPadded(i, 4)).toString();
       target.materialIndex = mesh.materialIndex;
       target.resize(vertsLen);
 

@@ -1943,6 +1943,44 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
+    * Generates a 1D array of vectors placed on the surface of a sphere,
+    * distributed according to the golden ratio, {@value IUtils#PHI}.
+    *
+    * @param count  number of vectors
+    * @param radius radius of sphere
+    *
+    * @return the array
+    * 
+    * @see IUtils#PHI
+    */
+   public static Vec3[] gridFibonacci ( final int count, final float radius ) {
+
+      final int vcount = count < 3 ? 3 : count;
+      final float vrad = Utils.max(IUtils.DEFAULT_EPSILON, radius);
+
+      final Vec3[] result = new Vec3[vcount];
+      final float toStep = 2.0f / vcount;
+      for ( int i = 0; i < vcount; ++i ) {
+
+         /*
+          * A few calculations can be saved by using normalized angle instead of
+          * an angle in [0.0, TAU] .
+          */
+         final float t = i;
+         final float azNorm = IUtils.PHI * t;
+         final float inclNorm = IUtils.ONE_TAU * Utils.asin(1.0f - t * toStep);
+         final float rhoCosPhi = vrad * Utils.scNorm(inclNorm);
+
+         /* Convert from spherical coordinates to Cartesian. */
+         result[i] = new Vec3(rhoCosPhi * Utils.scNorm(azNorm), rhoCosPhi
+            * Utils.scNorm(azNorm - 0.25f), vrad * -Utils.scNorm(inclNorm
+               - 0.25f));
+      }
+
+      return result;
+   }
+
+   /**
     * Generates a 3D array of vectors. The array is ordered by layers,
     * latitudes, then longitudes; the parameters are supplied in reverse
     * order.

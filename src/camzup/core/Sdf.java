@@ -195,11 +195,14 @@ public abstract class Sdf {
       final float k1 = Utils.hypot(Utils.div(point.x, bounds.x * bounds.x),
          Utils.div(point.y, bounds.y * bounds.y), Utils.div(point.z, bounds.z
             * bounds.z));
-      if ( k1 == 0.0f ) { return 0.0f; }
 
-      final float k0 = Utils.hypot(Utils.div(point.x, bounds.x), Utils.div(
-         point.y, bounds.y), Utils.div(point.z, bounds.z));
-      return k0 * ( k0 - 1.0f ) / k1;
+      if ( k1 != 0.0f ) {
+         final float k0 = Utils.hypot(Utils.div(point.x, bounds.x), Utils.div(
+            point.y, bounds.y), Utils.div(point.z, bounds.z));
+         return k0 * ( k0 - 1.0f ) / k1;
+      }
+
+      return 0.0f;
    }
 
    /**
