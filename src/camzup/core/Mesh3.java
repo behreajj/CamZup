@@ -2235,30 +2235,157 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       return Vec3.sub(ub, lb, target);
    }
 
+   /**
+    * Creates a cylinder on the z axis, where its pointed end is on +z and its
+    * base is on -z at a radius.
+    *
+    * @param depth   cone height
+    * @param radius  base radius
+    * @param sectors sectors in base
+    * @param target  output mesh
+    *
+    * @return the cone
+    */
    public static Mesh3 cone ( final float depth, final float radius,
       final int sectors, final Mesh3 target ) {
-
-      // TODO: WIP
 
       target.name = "Cone";
 
       /* Validate arguments. */
       final int vsect = sectors < 3 ? 3 : sectors;
-      Utils.min(depth, IUtils.DEFAULT_EPSILON);
-      Utils.min(radius, IUtils.DEFAULT_EPSILON);
+      final float vdepth = Utils.max(depth, IUtils.DEFAULT_EPSILON);
+      final float vrad = Utils.max(radius, IUtils.DEFAULT_EPSILON);
 
       /* Calculate vertices, faces and normals. */
       final int vertCount = vsect + 2;
+      final int texCount = vsect + 1;
       final int faceCount = vsect + vsect;
-      final int normalCount = vsect + 1;
+      final int normalCount = vsect + 2;
+      // final int normalCount = vsect + vsect + 1;
 
       /* Reallocate arrays. */
       target.coords = Vec3.resize(target.coords, vertCount);
-      target.texCoords = Vec2.resize(target.texCoords, vertCount);
+      target.texCoords = Vec2.resize(target.texCoords, texCount);
       target.normals = Vec3.resize(target.normals, normalCount);
       target.faces = new int[faceCount][3][3];
 
+      /* Cache shortcuts. */
+      final Vec3[] vs = target.coords;
+      final Vec2[] vts = target.texCoords;
+      final Vec3[] vns = target.normals;
+      final int[][][] fs = target.faces;
+
+      /* Set center points at either extent of the cone. */
+      final float halfDepth = vdepth * 0.5f;
+
+      /* The base and center of the triangle fan is index 0. */
+      vs[0].set(0.0f, 0.0f, -halfDepth);
+      Vec2.uvCenter(vts[0]);
+      Vec3.down(vns[0]);
+
+      vs[1].set(0.0f, 0.0f, halfDepth);
+      Vec3.up(vns[1]);
+
+      final float toTheta = 1.0f / vsect;
+      for ( int i = 0, k = vsect; i < vsect; ++i, ++k ) {
+         final int vCurrent = 2 + i;
+         final int vtCurrent = 1 + i;
+         // final int vnCurrent = 1 + i;
+
+         final int imod = ( i + 1 ) % vsect;
+         final int vNext = 2 + imod;
+         final int vtNext = 1 + imod;
+         // final int vnNext = 1 + imod;
+
+         final float theta = i * toTheta;
+         final float cost = Utils.scNorm(theta);
+         final float sint = Utils.scNorm(theta - 0.25f);
+         final Vec3 rim = vs[vCurrent];
+         rim.set(cost * vrad, sint * vrad, -halfDepth);
+         vts[vtCurrent].set(cost * 0.5f + 0.5f, sint * 0.5f + 0.5f);
+
+         // TODO: How to calculate smooth normals of a cone? Maybe normalized
+         // lerp from normal at n to normal at (n + 1) % sectors for tip of
+         // cone.
+
+         /*
+          * Mix rim and tip by factor of 0.5. Since the tip is 0.0 for x and y,
+          * and since the 0.5 multiplication is nullified by the normalization
+          * anyway, this is simplified.
+          */
+         final Vec3 norm = vns[vCurrent];
+         norm.set(rim.x, rim.y, rim.z + halfDepth);
+         Vec3.normalize(norm, norm);
+
+         /* Indices are zero by default. */
+         final int[][] base = fs[i];
+         // final int[] base0 = base[0];
+         final int[] base1 = base[1];
+         final int[] base2 = base[2];
+
+         // base0[0] = 0;
+         // base0[1] = 0;
+         // base0[2] = 0;
+
+         base1[0] = vCurrent;
+         base1[1] = vtCurrent;
+         // base1[2] = 0;
+
+         base2[0] = vNext;
+         base2[1] = vtNext;
+         // base2[2] = 0;
+
+         final int[][] side = fs[k];
+         final int[] side0 = side[0];
+         final int[] side1 = side[1];
+         final int[] side2 = side[2];
+
+         side0[0] = 1;
+         // side0[1] = 0;
+         side0[2] = vCurrent;
+
+         side1[0] = vCurrent;
+         side1[1] = vtCurrent;
+         side1[2] = vCurrent;
+
+         side2[0] = vNext;
+         side2[1] = vtNext;
+         side2[2] = vCurrent;
+      }
+
       return target;
+   }
+
+   /**
+    * Creates a cylinder on the z axis, where its pointed end is on +z and its
+    * base is on -z at a radius. The number of sectors defaults to
+    * {@value IMesh#DEFAULT_CIRCLE_SECTORS}.
+    *
+    * @param depth  cone height
+    * @param radius base radius
+    * @param target output mesh
+    *
+    * @return the cone
+    */
+   public static Mesh3 cone ( final float depth, final float radius,
+      final Mesh3 target ) {
+
+      return Mesh3.cone(depth, radius, IMesh.DEFAULT_CIRCLE_SECTORS, target);
+   }
+
+   /**
+    * Creates a cylinder on the z axis, where its pointed end is on +z and its
+    * base is on -z at a radius. Defaults to a height, or depth, of 1.0 and a
+    * radius of 0.5. The number of sectors defaults to
+    * {@value IMesh#DEFAULT_CIRCLE_SECTORS}.
+    *
+    * @param target the output mesh
+    *
+    * @return the cone
+    */
+   public static Mesh3 cone ( final Mesh3 target ) {
+
+      return Mesh3.cone(1.0f, 0.5f, target);
    }
 
    /**
@@ -3968,6 +4095,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       for ( int k0 = 1, k1 = 1, h = 1, i = 0; i < lats; ++h, ++i ) {
          // final float v = h * toV;
          final float v = 1.0f - h * toV;
+
+         /*
+          * The expected range of phi is [-HALF_PI, HALF_PI], so subtract 0.25
+          * to shift the range.
+          */
          final float phi = h * toPhi - 0.25f;
          final float cosPhi = Utils.scNorm(phi);
          final float sinPhi = Utils.scNorm(phi - 0.25f);

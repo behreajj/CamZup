@@ -13,25 +13,25 @@ void setup() {
   graphics3 = (Zup3)getGraphics();
 
   materials = new MaterialSolid[] {
-    new MaterialSolid().setFill(#e8455d), 
-    new MaterialSolid().setFill(#ffabb1), 
-    new MaterialSolid().setFill(#f6c89a), 
-    new MaterialSolid().setFill(#0cc0de), 
+    new MaterialSolid().setFill(#e8455d),
+    new MaterialSolid().setFill(#ffabb1),
+    new MaterialSolid().setFill(#f6c89a),
+    new MaterialSolid().setFill(#0cc0de),
     new MaterialSolid().setFill(#113b49)
   };
 
   entities = new MeshEntity3[] {
     new MeshEntity3()
-    .append(Mesh3.tetrahedron(new Mesh3())), 
+    .append(Mesh3.tetrahedron(new Mesh3())),
 
     new MeshEntity3()
-    .append(Mesh3.cube(new Mesh3())), 
+    .append(Mesh3.cube(new Mesh3())),
 
     new MeshEntity3()
-    .append(Mesh3.octahedron(new Mesh3())), 
+    .append(Mesh3.octahedron(new Mesh3())),
 
     new MeshEntity3()
-    .append(Mesh3.dodecahedron(new Mesh3())), 
+    .append(Mesh3.dodecahedron(new Mesh3())),
 
     new MeshEntity3()
     .append(Mesh3.icosahedron(new Mesh3()))
@@ -57,9 +57,9 @@ void draw() {
   graphics3.lights();
   graphics3.background();
   graphics3.origin(75.0, 1.0);
-  
+
   for (MeshEntity3 me3 : entities) {
-    me3.rotateZ(0.01);
+    me3.rotateX(0.01);
     graphics3.shape(me3, materials);
   }
 }

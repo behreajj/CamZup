@@ -1944,14 +1944,12 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
 
    /**
     * Generates a 1D array of vectors placed on the surface of a sphere,
-    * distributed according to the golden ratio, {@value IUtils#PHI}.
+    * distributed according to the golden ratio {@link IUtils#PHI}.
     *
     * @param count  number of vectors
     * @param radius radius of sphere
     *
     * @return the array
-    * 
-    * @see IUtils#PHI
     */
    public static Vec3[] gridFibonacci ( final int count, final float radius ) {
 
@@ -1981,9 +1979,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
-    * Generates a 3D array of vectors. The array is ordered by layers,
-    * latitudes, then longitudes; the parameters are supplied in reverse
-    * order.
+    * Generates a 3D array of vectors arranged on a UV Sphere. The array is
+    * ordered by layers, latitudes, then longitudes; the parameters are
+    * supplied in reverse order.
     *
     * @param longitudes the longitudes, azimuths
     * @param latitudes  the latitudes, inclinations
@@ -1997,9 +1995,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
-    * Generates a 3D array of vectors. The array is ordered by layers,
-    * latitudes, then longitudes; the parameters are supplied in reverse
-    * order.
+    * Generates a 3D array of vectors arranged on a UV Sphere. The array is
+    * ordered by layers, latitudes, then longitudes; the parameters are
+    * supplied in reverse order.
     *
     * @param longitudes   the longitudes, azimuths
     * @param latitudes    the latitudes, inclinations
@@ -2015,9 +2013,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
-    * Generates a 3D array of vectors. The array is ordered by layers,
-    * latitudes, then longitudes; the parameters are supplied in reverse
-    * order.
+    * Generates a 3D array of vectors arranged on a UV Sphere. The array is
+    * ordered by layers, latitudes, then longitudes; the parameters are
+    * supplied in reverse order.
     *
     * @param longitudes the longitudes, azimuths
     * @param latitudes  the latitudes, inclinations
@@ -2036,9 +2034,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
-    * Generates a 3D array of vectors. The array is ordered by layers,
-    * latitudes, then longitudes; the parameters are supplied in reverse
-    * order.
+    * Generates a 3D array of vectors arranged on a UV Sphere. The array is
+    * ordered by layers, latitudes, then longitudes; the parameters are
+    * supplied in reverse order.
     *
     * @param longitudes   the longitudes, azimuths
     * @param latitudes    the latitudes, inclinations
