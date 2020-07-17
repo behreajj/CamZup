@@ -231,7 +231,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @return this knot
     *
     * @see Utils#hypot(float, float, float)
-    * @see Utils#invHypot(float, float, float)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public Knot3 alignHandlesBackward ( ) {
 
@@ -243,16 +243,17 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float rearDiry = this.rearHandle.y - coy;
       final float rearDirz = this.rearHandle.z - coz;
 
-      final float foreDirx = this.foreHandle.x - cox;
-      final float foreDiry = this.foreHandle.y - coy;
-      final float foreDirz = this.foreHandle.z - coz;
+      final float rmsq = rearDirx * rearDirx + rearDiry * rearDiry + rearDirz
+         * rearDirz;
+      if ( rmsq > 0.0f ) {
+         final float flipRescale = -Utils.hypot(this.foreHandle.x - cox,
+            this.foreHandle.y - coy, this.foreHandle.z - coz) * Utils
+               .invSqrtUnchecked(rmsq);
 
-      final float flipRescale = -Utils.hypot(foreDirx, foreDiry, foreDirz)
-         * Utils.invHypot(rearDirx, rearDiry, rearDirz);
-
-      this.foreHandle.x = rearDirx * flipRescale + cox;
-      this.foreHandle.y = rearDiry * flipRescale + coy;
-      this.foreHandle.z = rearDirz * flipRescale + coz;
+         this.foreHandle.x = rearDirx * flipRescale + cox;
+         this.foreHandle.y = rearDiry * flipRescale + coy;
+         this.foreHandle.z = rearDirz * flipRescale + coz;
+      }
 
       return this;
    }
@@ -264,7 +265,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @return this knot
     *
     * @see Utils#hypot(float, float, float)
-    * @see Utils#invHypot(float, float, float)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public Knot3 alignHandlesForward ( ) {
 
@@ -272,20 +273,21 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float coy = this.coord.y;
       final float coz = this.coord.z;
 
-      final float rearDirx = this.rearHandle.x - cox;
-      final float rearDiry = this.rearHandle.y - coy;
-      final float rearDirz = this.rearHandle.z - coz;
-
       final float foreDirx = this.foreHandle.x - cox;
       final float foreDiry = this.foreHandle.y - coy;
       final float foreDirz = this.foreHandle.z - coz;
 
-      final float flipRescale = -Utils.hypot(rearDirx, rearDiry, rearDirz)
-         * Utils.invHypot(foreDirx, foreDiry, foreDirz);
+      final float fmsq = foreDirx * foreDirx + foreDiry * foreDiry + foreDirz
+         * foreDirz;
+      if ( fmsq > 0.0f ) {
+         final float flipRescale = -Utils.hypot(this.rearHandle.x - cox,
+            this.rearHandle.y - coy, this.rearHandle.z - coz) * Utils
+               .invSqrtUnchecked(fmsq);
 
-      this.rearHandle.x = foreDirx * flipRescale + cox;
-      this.rearHandle.y = foreDiry * flipRescale + coy;
-      this.rearHandle.z = foreDirz * flipRescale + coz;
+         this.rearHandle.x = foreDirx * flipRescale + cox;
+         this.rearHandle.y = foreDiry * flipRescale + coy;
+         this.rearHandle.z = foreDirz * flipRescale + coz;
+      }
 
       return this;
    }

@@ -6,15 +6,6 @@ package camzup.core;
 public interface IOriented3 {
 
    /**
-    * Rotates this object by a quaternion.
-    *
-    * @param rot the quaternion
-    *
-    * @return this object
-    */
-   IOriented3 rotateBy ( final Quaternion rot );
-
-   /**
     * Rotates this object to a quaternion.
     *
     * @param rotNew the new rotation

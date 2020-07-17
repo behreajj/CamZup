@@ -196,7 +196,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * @return this knot
     *
     * @see Utils#hypot(float, float)
-    * @see Utils#invHypot(float, float)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public Knot2 alignHandlesBackward ( ) {
 
@@ -206,14 +206,14 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float rearDirx = this.rearHandle.x - cox;
       final float rearDiry = this.rearHandle.y - coy;
 
-      final float foreDirx = this.foreHandle.x - cox;
-      final float foreDiry = this.foreHandle.y - coy;
+      final float rmsq = rearDirx * rearDirx + rearDiry * rearDiry;
+      if ( rmsq > 0.0f ) {
+         final float flipRescale = -Utils.hypot(this.foreHandle.x - cox,
+            this.foreHandle.y - coy) * Utils.invSqrtUnchecked(rmsq);
 
-      final float flipRescale = -Utils.hypot(foreDirx, foreDiry) * Utils
-         .invHypot(rearDirx, rearDiry);
-
-      this.foreHandle.x = rearDirx * flipRescale + cox;
-      this.foreHandle.y = rearDiry * flipRescale + coy;
+         this.foreHandle.x = rearDirx * flipRescale + cox;
+         this.foreHandle.y = rearDiry * flipRescale + coy;
+      }
 
       return this;
    }
@@ -225,43 +225,24 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     * @return this knot
     *
     * @see Utils#hypot(float, float)
-    * @see Utils#invHypot(float, float)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public Knot2 alignHandlesForward ( ) {
 
       final float cox = this.coord.x;
       final float coy = this.coord.y;
 
-      /*
-       * The rear handle is a point in space. Subtract the coordinate from the
-       * rear handle to create a rear handle direction relative to the
-       * coordinate, which now serves as an origin, or pivot.
-       */
-      final float rearDirx = this.rearHandle.x - cox;
-      final float rearDiry = this.rearHandle.y - coy;
-
-      /*
-       * Subtract the coordinate from the foreHandle to get the foreHandle
-       * direction.
-       */
       final float foreDirx = this.foreHandle.x - cox;
       final float foreDiry = this.foreHandle.y - coy;
 
-      /*
-       * Find the magnitude of the rear direction. Align the rear handle with
-       * the fore by changing its direction while preserving its magnitude. The
-       * negative sign indicates that the rear handle is 180 degrees opposite
-       * the forehandle.
-       */
-      final float flipRescale = -Utils.hypot(rearDirx, rearDiry) * Utils
-         .invHypot(foreDirx, foreDiry);
+      final float fmsq = foreDirx * foreDirx + foreDiry * foreDiry;
+      if ( fmsq > 0.0f ) {
+         final float flipRescale = -Utils.hypot(this.rearHandle.x - cox,
+            this.rearHandle.y - coy) * Utils.invSqrtUnchecked(fmsq);
 
-      /*
-       * Add the coordinate back to the new rear direction to convert it from a
-       * direction to a point.
-       */
-      this.rearHandle.x = foreDirx * flipRescale + cox;
-      this.rearHandle.y = foreDiry * flipRescale + coy;
+         this.rearHandle.x = foreDirx * flipRescale + cox;
+         this.rearHandle.y = foreDiry * flipRescale + coy;
+      }
 
       return this;
    }

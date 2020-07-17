@@ -1,8 +1,5 @@
 package camzup;
 
-import camzup.core.Mesh3;
-import camzup.core.MeshEntity3;
-
 import processing.core.PApplet;
 
 /**
@@ -61,18 +58,6 @@ public class CamZup {
       // me3.append(m3);
       // String str = me3.toBlenderCode();
       // System.out.println(str);
-
-      // CurveEntity3 ce3 = new CurveEntity3(new Transform3(), Curve3.infinity(
-      // new Curve3()));
-      // String pyCd = ce3.toBlenderCode();
-      // System.out.println(pyCd);
-
-      MeshEntity3 me3 = new MeshEntity3();
-      Mesh3 mesh3 = new Mesh3();
-      Mesh3.cone(1.0f, 0.5f, 32, mesh3);
-      me3.append(mesh3);
-      String pyCd = me3.toBlenderCode();
-      System.out.println(pyCd);
    }
 
    /**

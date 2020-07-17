@@ -531,20 +531,22 @@ public class Transform3 extends Transform {
    }
 
    /**
-    * Rotates the transform by adding a rotation, then normalizing. Updates
-    * the transform's axes.
+    * Rotates the transform by adding a rotation. Updates the transform's
+    * axes.
     *
-    * @param rot the rotation
+    * @param angle the angle
+    * @param axis  the axis
     *
     * @return this transform
     *
-    * @see Quaternion#addNorm(Quaternion, Quaternion, Quaternion)
+    * @see Quaternion#rotate(Quaternion, float, Vec3, Quaternion)
     * @see Transform3#updateAxes()
     */
-   public Transform3 rotateBy ( final Quaternion rot ) {
+   @Experimental
+   public Transform3 rotateBy ( final float angle, final Vec3 axis ) {
 
       this.rotPrev.set(this.rotation);
-      Quaternion.addNorm(this.rotPrev, rot, this.rotation);
+      Quaternion.rotate(this.rotPrev, angle, axis, this.rotation);
       this.updateAxes();
       return this;
    }

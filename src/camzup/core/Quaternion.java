@@ -1023,6 +1023,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Quaternion fromAngle ( final float radians,
       final Quaternion target ) {
 
+      // TODO: Mod radians by TAU?
       final float halfRadians = radians * 0.5f;
       return target.set(Utils.cos(halfRadians), 0.0f, 0.0f, Utils.sin(
          halfRadians));
@@ -1154,7 +1155,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final Vec3 axis, final Quaternion target ) {
 
       final float amSq = Vec3.magSq(axis);
-      if ( amSq != 0.0f ) {
+      if ( amSq > 0.0f ) {
 
          float nx = axis.x;
          float ny = axis.y;
@@ -1167,8 +1168,10 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
             nz *= amInv;
          }
 
-         final float halfAngle = 0.5f * radians;
+         final float modRad = radians % IUtils.TAU;
+         final float halfAngle = 0.5f * modRad;
          final float sinHalf = Utils.sin(halfAngle);
+
          return target.set(Utils.cos(halfAngle), nx * sinHalf, ny * sinHalf, nz
             * sinHalf);
       }
@@ -1923,16 +1926,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Quaternion rotate ( final Quaternion q, final float radians,
       final Vec3 axis, final Quaternion target ) {
 
-      // TODO: Seems to routinely return a quaternion with one of its
-      // components set to zero.
-
       final float mSq = Quaternion.magSq(q);
       if ( mSq > 0.0f ) {
          final float wNorm = q.real * Utils.invSqrtUnchecked(mSq);
          final float halfAngle = Utils.acos(wNorm);
 
-         return Quaternion.fromAxisAngle( ( halfAngle + halfAngle + radians )
-            % IUtils.TAU, axis, target);
+         return Quaternion.fromAxisAngle(halfAngle + halfAngle + radians, axis,
+            target);
       }
       return Quaternion.fromAxisAngle(radians, axis, target);
    }
@@ -1971,6 +1971,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Quaternion rotateX ( final Quaternion q, final float radians,
       final Quaternion target ) {
 
+      // TODO: Mod radians by TAU?
       final double halfAngle = radians * 0.5d;
       return Quaternion.rotateX(q, ( float ) Math.cos(halfAngle), ( float ) Math
          .sin(halfAngle), target);
@@ -2010,6 +2011,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Quaternion rotateY ( final Quaternion q, final float radians,
       final Quaternion target ) {
 
+      // TODO: Mod radians by TAU?
       final double halfAngle = radians * 0.5d;
       return Quaternion.rotateY(q, ( float ) Math.cos(halfAngle), ( float ) Math
          .sin(halfAngle), target);
@@ -2049,6 +2051,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public static Quaternion rotateZ ( final Quaternion q, final float radians,
       final Quaternion target ) {
 
+      // TODO: Mod radians by TAU?
       final double halfAngle = radians * 0.5d;
       return Quaternion.rotateZ(q, ( float ) Math.cos(halfAngle), ( float ) Math
          .sin(halfAngle), target);
@@ -2200,7 +2203,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       final float mSq = Quaternion.magSq(q);
 
-      if ( mSq == 0.0f ) {
+      if ( mSq <= 0.0f ) {
          Vec3.forward(axis);
          return 0.0f;
       }
@@ -2225,7 +2228,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       final float amSq = ax * ax + ay * ay + az * az;
 
-      if ( amSq == 0.0f ) {
+      if ( amSq <= 0.0f ) {
          Vec3.forward(axis);
          return angle;
       }

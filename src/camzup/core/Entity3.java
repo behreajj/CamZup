@@ -150,20 +150,6 @@ public class Entity3 extends Entity implements IOriented3, ISpatial3 {
    }
 
    /**
-    * Rotates this entity by a quaternion.
-    *
-    * @param rot the quaternion
-    *
-    * @return this entity
-    */
-   @Override
-   public Entity3 rotateBy ( final Quaternion rot ) {
-
-      this.transform.rotateBy(rot);
-      return this;
-   }
-
-   /**
     * Rotates this entity to a quaternion.
     *
     * @param rotNew the new rotation

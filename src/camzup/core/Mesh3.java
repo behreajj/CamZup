@@ -2261,7 +2261,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int texCount = vsect + 1;
       final int faceCount = vsect + vsect;
       final int normalCount = vsect + 2;
-      // final int normalCount = vsect + vsect + 1;
 
       /* Reallocate arrays. */
       target.coords = Vec3.resize(target.coords, vertCount);
@@ -2290,12 +2289,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       for ( int i = 0, k = vsect; i < vsect; ++i, ++k ) {
          final int vCurrent = 2 + i;
          final int vtCurrent = 1 + i;
-         // final int vnCurrent = 1 + i;
+         final int vnCurrent = 2 + i;
 
          final int imod = ( i + 1 ) % vsect;
          final int vNext = 2 + imod;
          final int vtNext = 1 + imod;
-         // final int vnNext = 1 + imod;
+         final int vnNext = 2 + imod;
 
          final float theta = i * toTheta;
          final float cost = Utils.scNorm(theta);
@@ -2303,10 +2302,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec3 rim = vs[vCurrent];
          rim.set(cost * vrad, sint * vrad, -halfDepth);
          vts[vtCurrent].set(cost * 0.5f + 0.5f, sint * 0.5f + 0.5f);
-
-         // TODO: How to calculate smooth normals of a cone? Maybe normalized
-         // lerp from normal at n to normal at (n + 1) % sectors for tip of
-         // cone.
 
          /*
           * Mix rim and tip by factor of 0.5. Since the tip is 0.0 for x and y,
@@ -2342,15 +2337,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          side0[0] = 1;
          // side0[1] = 0;
-         side0[2] = vCurrent;
+         side0[2] = 1;
 
          side1[0] = vCurrent;
          side1[1] = vtCurrent;
-         side1[2] = vCurrent;
+         side1[2] = vnCurrent;
 
          side2[0] = vNext;
          side2[1] = vtNext;
-         side2[2] = vCurrent;
+         side2[2] = vnNext;
       }
 
       return target;
