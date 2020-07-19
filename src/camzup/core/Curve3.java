@@ -135,7 +135,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 append ( final Knot3 knot ) {
 
-      if ( knot != null ) { this.knots.add(knot); }
+      // if ( knot != null ) { this.knots.add(knot); }
+      this.knots.add(knot);
       return this;
    }
 
@@ -275,11 +276,15 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 insert ( final int i, final Knot3 knot ) {
 
-      if ( knot != null ) {
-         final int k = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
-            : i;
-         this.knots.add(k, knot);
-      }
+      // if ( knot != null ) {
+      // final int k = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
+      // : i;
+      // this.knots.add(k, knot);
+      // }
+
+      final int k = this.closedLoop ? Utils.mod(i, this.knots.size() + 1) : i;
+      this.knots.add(k, knot);
+
       return this;
    }
 
@@ -301,10 +306,13 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       int k = vidx;
       while ( knItr.hasNext() ) {
          final Knot3 knot = knItr.next();
-         if ( knot != null ) {
-            this.knots.add(k, knot);
-            ++k;
-         }
+         // if ( knot != null ) {
+         // this.knots.add(k, knot);
+         // ++k;
+         // }
+
+         this.knots.add(k, knot);
+         ++k;
       }
 
       return this;
@@ -326,10 +334,13 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          : i;
       for ( int j = 0, k = vidx; j < len; ++j ) {
          final Knot3 knot = kn[j];
-         if ( knot != null ) {
-            this.knots.add(k, knot);
-            ++k;
-         }
+         // if ( knot != null ) {
+         // this.knots.add(k, knot);
+         // ++k;
+         // }
+
+         this.knots.add(k, knot);
+         ++k;
       }
 
       return this;
@@ -367,7 +378,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 prepend ( final Knot3 knot ) {
 
-      if ( knot != null ) { this.knots.add(0, knot); }
+      // if ( knot != null ) { this.knots.add(0, knot); }
+      this.knots.add(0, knot);
       return this;
    }
 
@@ -384,10 +396,13 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Iterator < Knot3 > knItr = kn.iterator();
       while ( knItr.hasNext() ) {
          final Knot3 knot = knItr.next();
-         if ( knot != null ) {
-            this.knots.add(i, knot);
-            ++i;
-         }
+         // if ( knot != null ) {
+         // this.knots.add(i, knot);
+         // ++i;
+         // }
+
+         this.knots.add(i, knot);
+         ++i;
       }
       return this;
    }
@@ -406,10 +421,13 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final int len = kn.length;
       for ( int i = 0, j = 0; i < len; ++i ) {
          final Knot3 knot = kn[i];
-         if ( knot != null ) {
-            this.knots.add(j, knot);
-            ++j;
-         }
+         // if ( knot != null ) {
+         // this.knots.add(j, knot);
+         // ++j;
+         // }
+
+         this.knots.add(j, knot);
+         ++j;
       }
       return this;
    }

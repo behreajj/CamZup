@@ -380,9 +380,9 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   public Knot2 rotateForeHandleZ ( final float radians ) {
+   public Knot2 rotateForeHandle ( final float radians ) {
 
-      return this.rotateForeHandleZ(Utils.cos(radians), Utils.sin(radians));
+      return this.rotateForeHandle(Utils.cos(radians), Utils.sin(radians));
    }
 
    /**
@@ -393,7 +393,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   public Knot2 rotateForeHandleZ ( final float cosa, final float sina ) {
+   public Knot2 rotateForeHandle ( final float cosa, final float sina ) {
 
       Vec2.sub(this.coord, this.foreHandle, this.foreHandle);
       Vec2.rotateZ(this.foreHandle, cosa, sina, this.foreHandle);
@@ -409,9 +409,9 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   public Knot2 rotateHandlesZ ( final float radians ) {
+   public Knot2 rotateHandles ( final float radians ) {
 
-      return this.rotateHandlesZ(Utils.cos(radians), Utils.sin(radians));
+      return this.rotateHandles(Utils.cos(radians), Utils.sin(radians));
    }
 
    /**
@@ -423,10 +423,10 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   public Knot2 rotateHandlesZ ( final float cosa, final float sina ) {
+   public Knot2 rotateHandles ( final float cosa, final float sina ) {
 
-      this.rotateForeHandleZ(cosa, sina);
-      this.rotateRearHandleZ(cosa, sina);
+      this.rotateForeHandle(cosa, sina);
+      this.rotateRearHandle(cosa, sina);
 
       return this;
    }
@@ -438,9 +438,9 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   public Knot2 rotateRearHandleZ ( final float radians ) {
+   public Knot2 rotateRearHandle ( final float radians ) {
 
-      return this.rotateForeHandleZ(Utils.cos(radians), Utils.sin(radians));
+      return this.rotateRearHandle(Utils.cos(radians), Utils.sin(radians));
    }
 
    /**
@@ -451,7 +451,7 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   public Knot2 rotateRearHandleZ ( final float cosa, final float sina ) {
+   public Knot2 rotateRearHandle ( final float cosa, final float sina ) {
 
       Vec2.sub(this.coord, this.rearHandle, this.rearHandle);
       Vec2.rotateZ(this.rearHandle, cosa, sina, this.rearHandle);

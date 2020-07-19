@@ -263,9 +263,7 @@ abstract class PngParser {
     * In hexadecimal format:
     *
     * <pre>
-    * <code>
-    * { 0x31, 0x2c, 0x29, 0x36 }
-    * </code>
+    * <code>{ 0x31, 0x2c, 0x29, 0x36 }</code>
     * </pre>
     *
     * When the bytes are cast to characters, they spell out the signature,
@@ -289,9 +287,7 @@ abstract class PngParser {
     * In hexadecimal format:
     *
     * <pre>
-    * <code>
-    * { 0x49, 0x45, 0x4e, 0x44 }
-    * </code>
+    * <code>{ 0x49, 0x45, 0x4e, 0x44 }</code>
     * </pre>
     *
     * When the bytes are cast to characters, they spell out the signature,
@@ -340,9 +336,7 @@ abstract class PngParser {
     * In hexadecimal format:
     *
     * <pre>
-    * <code>
-    * { 0x70, 0x48, 0x59, 0x73 }
-    * </code>
+    * <code>{ 0x70, 0x48, 0x59, 0x73 }</code>
     * </pre>
     *
     * When the bytes are cast to characters, they spell out the signature,
@@ -366,7 +360,7 @@ abstract class PngParser {
     * In hexadecimal format:
     *
     * <pre>
-   * <code>{ 0x50, 0x4c, 0x54, 0x45 }</code>
+    * <code>{ 0x50, 0x4c, 0x54, 0x45 }</code>
     * </pre>
     *
     * When the bytes are cast to characters, they spell out the signature,
