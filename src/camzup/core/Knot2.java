@@ -395,9 +395,10 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     */
    public Knot2 rotateForeHandle ( final float cosa, final float sina ) {
 
-      Vec2.sub(this.coord, this.foreHandle, this.foreHandle);
+      // TODO: TEST
+      Vec2.sub(this.foreHandle, this.coord, this.foreHandle);
       Vec2.rotateZ(this.foreHandle, cosa, sina, this.foreHandle);
-      Vec2.add(this.coord, this.foreHandle, this.foreHandle);
+      Vec2.add(this.foreHandle, this.coord, this.foreHandle);
 
       return this;
    }
@@ -453,9 +454,10 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     */
    public Knot2 rotateRearHandle ( final float cosa, final float sina ) {
 
-      Vec2.sub(this.coord, this.rearHandle, this.rearHandle);
+      // TODO: TEST
+      Vec2.sub(this.rearHandle, this.coord, this.rearHandle);
       Vec2.rotateZ(this.rearHandle, cosa, sina, this.rearHandle);
-      Vec2.add(this.coord, this.rearHandle, this.rearHandle);
+      Vec2.add(this.rearHandle, this.coord, this.rearHandle);
 
       return this;
    }

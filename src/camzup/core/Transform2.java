@@ -1021,6 +1021,7 @@ public class Transform2 extends Transform {
 
       Transform2.fromDir(ray.dir, handedness, target);
       target.moveTo(ray.origin);
+      // TODO: Reset scale?
       return target;
    }
 

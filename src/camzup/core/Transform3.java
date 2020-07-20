@@ -392,6 +392,7 @@ public class Transform3 extends Transform {
          this.forward, this.up);
       Quaternion.mix(this.rotPrev, this.rotation, step, this.rotation);
       this.updateAxes();
+
       return this;
    }
 
@@ -1142,6 +1143,7 @@ public class Transform3 extends Transform {
    public static Transform3 fromDir ( final Ray3 ray,
       final Handedness handedness, final Transform3 target ) {
 
+      // TODO: Reset scale?
       Transform3.fromDir(ray.dir, handedness, target);
       target.moveTo(ray.origin);
       return target;

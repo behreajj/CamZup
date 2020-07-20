@@ -120,7 +120,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Creates a knot from a series of vectors.
+    * Creates a knot from a series of 2D vectors.
     *
     * @param coord      the coordinate
     * @param foreHandle the fore handle
@@ -483,9 +483,10 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     */
    public Knot3 rotateForeHandle ( final Quaternion q ) {
 
-      Vec3.sub(this.coord, this.foreHandle, this.foreHandle);
+      // TODO: TEST
+      Vec3.sub(this.foreHandle, this.coord, this.foreHandle);
       Quaternion.mulVector(q, this.foreHandle, this.foreHandle);
-      Vec3.add(this.coord, this.foreHandle, this.foreHandle);
+      Vec3.add(this.foreHandle, this.coord, this.foreHandle);
 
       return this;
    }
@@ -516,9 +517,10 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     */
    public Knot3 rotateRearHandle ( final Quaternion q ) {
 
-      Vec3.sub(this.coord, this.rearHandle, this.rearHandle);
+      // TODO: TEST
+      Vec3.sub(this.rearHandle, this.coord, this.rearHandle);
       Quaternion.mulVector(q, this.rearHandle, this.rearHandle);
-      Vec3.add(this.coord, this.rearHandle, this.rearHandle);
+      Vec3.add(this.rearHandle, this.coord, this.rearHandle);
 
       return this;
    }
@@ -884,7 +886,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Sets this knot from a series of vectors.
+    * Sets this knot from a series of 2D vectors.
     *
     * @param coord      the coordinate
     * @param foreHandle the fore handle
@@ -944,6 +946,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       this.coord.set(coord);
       this.foreHandle.set(foreHandle);
       this.rearHandle.set(rearHandle);
+
       return this;
    }
 
@@ -1459,7 +1462,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     */
    public static float rearMag ( final Knot3 knot ) {
 
-      return Vec3.distEuclidean(knot.coord, knot.rearHandle);
+      return Vec3.distEuclidean(knot.rearHandle, knot.coord);
    }
 
    /**

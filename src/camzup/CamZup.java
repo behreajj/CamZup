@@ -1,5 +1,7 @@
 package camzup;
 
+import camzup.core.Rng;
+
 import processing.core.PApplet;
 
 /**
@@ -50,7 +52,7 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // final Rng rng = new Rng();
+      final Rng rng = new Rng();
 
       // Mesh3 m3 = new Mesh3();
       // Mesh3.icosahedron(m3);
@@ -58,6 +60,9 @@ public class CamZup {
       // me3.append(m3);
       // String str = me3.toBlenderCode();
       // System.out.println(str);
+
+      // System.out.println(b);
+
    }
 
    /**
