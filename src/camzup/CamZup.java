@@ -1,5 +1,7 @@
 package camzup;
 
+import camzup.core.Mesh3;
+import camzup.core.MeshEntity3;
 import camzup.core.Rng;
 
 import processing.core.PApplet;
@@ -63,6 +65,12 @@ public class CamZup {
 
       // System.out.println(b);
 
+      Mesh3 m = new Mesh3();
+      Mesh3.uvSphere(m);
+      MeshEntity3 me = new MeshEntity3();
+      me.append(m);
+      String pyCd = me.toBlenderCode();
+      System.out.println(pyCd);
    }
 
    /**

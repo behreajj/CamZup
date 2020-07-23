@@ -298,7 +298,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int vertsLen = face.length;
 
       final int j = Utils.mod(edgeIdx, vertsLen);
-      final int k = Utils.mod(edgeIdx + 1, vertsLen);
+      final int k = ( j + 1 ) % vertsLen;
       final int[] idxOrigin = face[j];
       final int[] idxDest = face[k];
 
@@ -361,8 +361,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       Vec2.add(vtOrigin, vtPerp, vtNewOrigin);
       Vec2.add(vtDest, vtPerp, vtNewDest);
 
-      final int[][][] faceNew = { { { idxV0, idxVt0, idxVn1 }, { idxV1, idxVt1,
-         idxVn1 }, { idxV2, idxVt2, idxVn1 }, { idxV3, idxVt3, idxVn1 } } };
+      final int[][][] faceNew = { { { idxV1, idxVt1, idxVn1 }, { idxV2, idxVt2,
+         idxVn1 }, { idxV3, idxVt3, idxVn1 }, { idxV0, idxVt0, idxVn1 } } };
 
       this.coords = Vec3.concat(this.coords, new Vec3[] { vNewOrigin,
          vNewDest });
@@ -942,7 +942,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
       final int len = face.length;
       final int jOrigin = Utils.mod(j, len);
-      final int jDest = Utils.mod(j + 1, len);
+      // final int jDest = Utils.mod(j + 1, len);
+      final int jDest = ( jOrigin + 1 ) % len;
 
       final int[] temp = face[jOrigin];
       face[jOrigin] = face[jDest];
@@ -964,8 +965,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
       final int len = face.length;
       final int halfLen = len >> 1;
+      final int last = len - 1;
       for ( int j = 0; j < halfLen; ++j ) {
-         final int reverse = len - j - 1;
+         final int reverse = last - j;
          final int[] temp = face[j];
          face[j] = face[reverse];
          face[reverse] = temp;
@@ -989,8 +991,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      final int len0 = this.coords.length;
-      for ( int i = 0; i < len0; ++i ) {
+      final int len = this.coords.length;
+      for ( int i = 0; i < len; ++i ) {
          final Vec3 c = this.coords[i];
          Vec3.rotate(c, cosa, sina, axis, c);
       }
@@ -1007,8 +1009,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 rotate ( final Quaternion q ) {
 
-      final int len0 = this.coords.length;
-      for ( int i = 0; i < len0; ++i ) {
+      final int len = this.coords.length;
+      for ( int i = 0; i < len; ++i ) {
          final Vec3 c = this.coords[i];
          Quaternion.mulVector(q, c, c);
       }
@@ -1030,8 +1032,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      final int len0 = this.coords.length;
-      for ( int i = 0; i < len0; ++i ) {
+      final int len = this.coords.length;
+      for ( int i = 0; i < len; ++i ) {
          final Vec3 c = this.coords[i];
          Vec3.rotateX(c, cosa, sina, c);
       }
@@ -1053,8 +1055,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      final int len0 = this.coords.length;
-      for ( int i = 0; i < len0; ++i ) {
+      final int len = this.coords.length;
+      for ( int i = 0; i < len; ++i ) {
          final Vec3 c = this.coords[i];
          Vec3.rotateY(c, cosa, sina, c);
       }
@@ -1076,8 +1078,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      final int len0 = this.coords.length;
-      for ( int i = 0; i < len0; ++i ) {
+      final int len = this.coords.length;
+      for ( int i = 0; i < len; ++i ) {
          final Vec3 c = this.coords[i];
          Vec3.rotateZ(c, cosa, sina, c);
       }
@@ -1561,7 +1563,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 subdivFacesCenter ( final int itr ) {
 
-      for ( int i = 0; i < itr; ++i ) {
+      final int vitr = itr < 1 ? 1 : itr;
+      for ( int i = 0; i < vitr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
@@ -1582,7 +1585,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 subdivFacesFan ( final int itr ) {
 
-      for ( int i = 0; i < itr; ++i ) {
+      final int vitr = itr < 1 ? 1 : itr;
+      for ( int i = 0; i < vitr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
@@ -1603,7 +1607,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 subdivFacesInscribe ( final int itr ) {
 
-      for ( int i = 0; i < itr; ++i ) {
+      final int vitr = itr < 1 ? 1 : itr;
+      for ( int i = 0; i < vitr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
@@ -2235,6 +2240,39 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       return Vec3.sub(ub, lb, target);
    }
 
+   public static Mesh3 capsule ( final int longitudes, final int latitudes,
+      final float depth, final float radius, final Mesh3 target ) {
+
+      // TODO: WIP
+
+      /* Validate arguments */
+      // final int lons = longitudes < 3 ? 3 : longitudes;
+      // final int lats = latitudes < 1 ? 1 : latitudes;
+      // final float vdepth = Utils.max(depth, IUtils.DEFAULT_EPSILON);
+      // final float vrad = Utils.max(radius, IUtils.DEFAULT_EPSILON);
+
+      /* UV coordinates require an extra longitude. */
+      // final int lons1 = lons + 1;
+      // final int lats1 = lats + 1;
+
+      /* Reallocate arrays. */
+      // final int vLen = lons * lats + 2;
+      // final int vtLen = lons1 * lats + 2;
+      // final Vec3[] vs = target.coords = Vec3.resize(target.coords, vLen);
+      // final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
+      // vtLen);
+      // final Vec3[] vns = target.normals = Vec3.resize(target.normals, vLen);
+      //
+      // final float toU = 1.0f / lons;
+      // final float toV = 1.0f / lats1;
+      // final float toTheta = 1.0f / lons;
+      // final float toPhi = 0.5f / lats1;
+
+      target.name = "Capsule";
+
+      return target;
+   }
+
    /**
     * Creates a cylinder on the z axis, where its pointed end is on +z and its
     * base is on -z at a radius.
@@ -2248,6 +2286,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public static Mesh3 cone ( final float depth, final float radius,
       final int sectors, final Mesh3 target ) {
+
+      // QUERY Should either depth or radius be relative, and the other removed?
+      // To make the API between this and torus consistent, where 0.5 is assumed
+      // to be the default.
 
       target.name = "Cone";
 
@@ -2913,7 +2955,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       String objName = "Mesh3";
 
       final int len = lines.length;
-      final int capacity = len == 0 ? 32 : len / 4;
+      final int capacity = len != 0 ? len / 4 : 32;
       final ArrayList < Vec3 > coordList = new ArrayList <>(capacity);
       final ArrayList < Vec2 > texCoordList = new ArrayList <>(capacity);
       final ArrayList < Vec3 > normalList = new ArrayList <>(capacity);
@@ -3489,7 +3531,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          Mat4.mul(projection, promoted, promoted);
 
          /* Do not flip screen y, like Processing's screen does. */
-         final float wInv = promoted.w == 0.0f ? 0.0f : 1.0f / promoted.w;
+         final float wInv = promoted.w != 0.0f ? 1.0f / promoted.w : 0.0f;
          final Vec2 vTrg = vsTarget[i];
          vTrg.set(promoted.x * 0.5f * wInv, promoted.y * 0.5f * wInv);
       }
@@ -3687,14 +3729,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       /* Values for array accesses. */
       final int vsect1 = vsect + 1;
       final int vpanl1 = vpanl + 1;
-      final int len0 = vpanl * vsect;
-      final int len1 = vpanl1 * vsect1;
+      final int vLen = vpanl * vsect;
+      final int vtLen = vpanl1 * vsect1;
 
       /* Reallocate arrays. */
-      target.coords = Vec3.resize(target.coords, len0);
-      target.texCoords = Vec2.resize(target.texCoords, len1);
-      target.normals = Vec3.resize(target.normals, len0);
-      target.faces = new int[len0 + len0][3][3];
+      target.coords = Vec3.resize(target.coords, vLen);
+      target.texCoords = Vec2.resize(target.texCoords, vtLen);
+      target.normals = Vec3.resize(target.normals, vLen);
+      target.faces = new int[vLen + vLen][3][3];
 
       /* Cache shortcuts. */
       final Vec3[] vs = target.coords;
@@ -4042,20 +4084,21 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* UV coordinates require an extra longitude. */
       final int lons1 = lons + 1;
+      final int lats1 = lats + 1;
 
-      /* The 2 comes from the poles. */
-      final int len0 = lons * lats + 2;
-      final int len1 = lons1 * lats + 2;
-      final Vec3[] vs = target.coords = Vec3.resize(target.coords, len0);
-      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords, len1);
-      final Vec3[] vns = target.normals = Vec3.resize(target.normals, len0);
+      /* Reallocate arrays. The 2 comes from the poles. */
+      final int vLen = lons * lats + 2;
+      final int vtLen = lons1 * lats + 2;
+      final Vec3[] vs = target.coords = Vec3.resize(target.coords, vLen);
+      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
+         vtLen);
+      final Vec3[] vns = target.normals = Vec3.resize(target.normals, vLen);
 
       /*
        * Because of the two poles, the linear interpolation between latitudes is
-       * not i / (lats - 1.0); it is (i + 1) / (lats + 1.0) . Phi is half the
-       * range as theta (either TAU / 2.0 or 1.0 / 2.0) .
+       * not i / (latitudes - 1.0); it is (i + 1) / (latitudes + 1.0) . Phi is
+       * half the range as theta (either TAU / 2.0 or 1.0 / 2.0) .
        */
-      final int lats1 = lats + 1;
       final float toU = 1.0f / lons;
       final float toV = 1.0f / lats1;
       final float toTheta = 1.0f / lons;
@@ -4092,8 +4135,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final float v = 1.0f - h * toV;
 
          /*
-          * The expected range of phi is [-HALF_PI, HALF_PI], so subtract 0.25
-          * to shift the range.
+          * The expected range of phi is [-HALF_PI, HALF_PI], so subtract
+          * QUARTER_PI, or 0.25 for normalized angles, to shift the range.
           */
          final float phi = h * toPhi - 0.25f;
          final float cosPhi = Utils.scNorm(phi);
@@ -4102,7 +4145,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          /* Loop over coordinates and normals. */
          for ( int j = 0; j < lons; ++j, ++k0 ) {
 
-            // TODO: Double check, are these right?
+            // TODO: Double check, are these normals right?
             final Vec3 nrm = vns[k0].set(cosPhi * costs[j], cosPhi * sints[j],
                sinPhi);
             Vec3.mul(nrm, 0.5f, vs[k0]);
@@ -4115,8 +4158,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       /* Set North pole. */
-      final int last0 = len0 - 1;
-      final int last1 = len1 - 1;
+      final int last0 = vLen - 1;
+      final int last1 = vtLen - 1;
       vs[last0].set(0.0f, 0.0f, 0.5f);
       vts[last1].set(0.5f, 0.0f);
       vns[last0].set(0.0f, 0.0f, 1.0f);
@@ -4128,15 +4171,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int latsn1 = lats - 1;
       final int fsLen = lons + lons + latsn1 * lons * 2;
       final int[][][] fs = target.faces = new int[fsLen][3][3];
-      int idx = 0;
+      int idx = -1;
 
       /* South cap. */
       for ( int h = 0, k = 1; h < lons; ++h, ++k ) {
          final int i = 1 + h;
          final int j = 1 + k % lons;
 
-         // TODO: Start at -1, then pre-increment, for this and ensuing uses?
-         final int[][] tri = fs[idx++];
+         final int[][] tri = fs[++idx];
          final int[] a = tri[0];
          final int[] b = tri[1];
 
@@ -4177,12 +4219,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final int vt11 = nextLat1 + k;
             final int vt01 = nextLat1 + j;
 
-            final int[][] tri0 = fs[idx++];
+            final int[][] tri0 = fs[++idx];
             final int[] a0 = tri0[0];
             final int[] b0 = tri0[1];
             final int[] c0 = tri0[2];
 
-            final int[][] tri1 = fs[idx++];
+            final int[][] tri1 = fs[++idx];
             final int[] a1 = tri1[0];
             final int[] b1 = tri1[1];
             final int[] c1 = tri1[2];
@@ -4203,7 +4245,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       for ( int h = 0, k = 1; h < lons; ++h, ++k ) {
          final int j = k % lons;
 
-         final int[][] tri = fs[idx++];
+         final int[][] tri = fs[++idx];
          final int[] a = tri[0];
          final int[] b = tri[1];
          final int[] c = tri[2];
@@ -4357,9 +4399,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
        * modulo operator takes care of wrapping the faces (i % coordsLen returns
        * to 0 when i == coordsLen), in UV coordinates, 0.0 == 1.0 .
        */
+      final float toTheta = 1.0f / sec;
       // float toU = 1.0f / sectors;
       // float toTheta = TAU / sectors;
-      final float toTheta = 1.0f / sec;
       for ( int i = 0, j = sec1; i < sec1; ++i, ++j ) {
          // final float u = i * toTheta;
          final float u = 1.0f - i * toTheta;

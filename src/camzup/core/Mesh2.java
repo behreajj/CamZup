@@ -410,7 +410,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int vertsLen = face.length;
 
       final int j = Utils.mod(edgeIdx, vertsLen);
-      final int k = Utils.mod(edgeIdx + 1, vertsLen);
+      final int k = ( j + 1 ) % vertsLen;
       final int[] idxOrigin = face[j];
       final int[] idxDest = face[k];
 
@@ -456,9 +456,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       Vec2.add(vtOrigin, vtPerp, vtNewOrigin);
       Vec2.add(vtDest, vtPerp, vtNewDest);
 
-      final int[][][] faceNew = { { { idxV0, idxVt0 }, { idxV1, idxVt1 }, {
-         idxV2, idxVt2 }, { idxV3, idxVt3 } } };
-
+      final int[][][] faceNew = { { { idxV1, idxVt1 }, { idxV2, idxVt2 }, {
+         idxV3, idxVt3 }, { idxV0, idxVt0 } } };
       this.coords = Vec2.concat(this.coords, new Vec2[] { vNewOrigin,
          vNewDest });
       this.texCoords = Vec2.concat(this.texCoords, new Vec2[] { vtNewOrigin,
@@ -852,7 +851,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
       final int len = face.length;
       final int jOrigin = Utils.mod(j, len);
-      final int jDest = Utils.mod(j + 1, len);
+      // final int jDest = Utils.mod(j + 1, len);
+      final int jDest = ( jOrigin + 1 ) % len;
 
       final int[] temp = face[jOrigin];
       face[jOrigin] = face[jDest];
@@ -874,8 +874,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
       final int len = face.length;
       final int halfLen = len >> 1;
+      final int last = len - 1;
       for ( int j = 0; j < halfLen; ++j ) {
-         final int reverse = len - j - 1;
+         final int reverse = last - j;
          final int[] temp = face[j];
          face[j] = face[reverse];
          face[reverse] = temp;
@@ -1269,7 +1270,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public Mesh2 subdivFacesCenter ( final int itr ) {
 
-      for ( int i = 0; i < itr; ++i ) {
+      final int vitr = itr < 1 ? 1 : itr;
+      for ( int i = 0; i < vitr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;

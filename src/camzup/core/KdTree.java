@@ -3,6 +3,7 @@ package camzup.core;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 import java.util.function.BiFunction;
 
@@ -21,10 +22,11 @@ abstract class KdTree < T extends Comparable < T > > {
    public Node < T > root;
 
    /**
-    * Constructs a tree from an array of elements and
+    * Constructs a tree from an array of elements and a list of comparators
+    * that specifies its axes.
     *
-    * @param arr
-    * @param axes
+    * @param arr  the array
+    * @param axes the axes
     */
    public KdTree ( final T[] arr, final List < Comparator < T > > axes ) {
 
@@ -173,16 +175,15 @@ abstract class KdTree < T extends Comparable < T > > {
    public String toString ( ) {
 
       final StringBuilder sb = new StringBuilder(1024);
-      final int axesLen = this.axes.size();
-      final int axesLast = axesLen - 1;
-
       sb.append("{ axes: [ ");
-      for ( int i = 0; i < axesLen; ++i ) {
-         sb.append(this.axes.get(i));
-         if ( i < axesLast ) { sb.append(',').append(' '); }
+
+      final Iterator < Comparator < T > > axesItr = this.axes.iterator();
+      while ( axesItr.hasNext() ) {
+         sb.append(axesItr.next().toString());
+         if ( axesItr.hasNext() ) { sb.append(',').append(' '); }
       }
       sb.append(" ], root: ");
-      sb.append(this.root);
+      sb.append(this.root.toString());
       sb.append(' ');
       sb.append('}');
       return sb.toString();
@@ -320,16 +321,16 @@ abstract class KdTree < T extends Comparable < T > > {
          sb.append("{ depth: ");
          sb.append(Utils.toPadded(this.depth, 1));
          sb.append(", data: ");
-         sb.append(this.data);
+         sb.append(this.data.toString());
 
          if ( this.left != null ) {
             sb.append(", left: ");
-            sb.append(this.left);
+            sb.append(this.left.toString());
          }
 
          if ( this.right != null ) {
             sb.append(", right: ");
-            sb.append(this.right);
+            sb.append(this.right.toString());
          }
 
          sb.append(' ');
