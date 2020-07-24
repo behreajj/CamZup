@@ -2659,8 +2659,10 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     *
     * @return the reflected vector
     *
+    * @see Vec2#magSq(Vec2)
     * @see Vec2#dot(Vec2, Vec2)
-    * @see Math#sqrt(double)
+    * @see Utils#abs(float)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec2 reflect ( final Vec2 incident, final Vec2 normal,
       final Vec2 target ) {

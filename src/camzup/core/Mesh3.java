@@ -2246,31 +2246,275 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       // TODO: WIP
 
       /* Validate arguments */
-      // final int lons = longitudes < 3 ? 3 : longitudes;
-      // final int lats = latitudes < 1 ? 1 : latitudes;
-      // final float vdepth = Utils.max(depth, IUtils.DEFAULT_EPSILON);
-      // final float vrad = Utils.max(radius, IUtils.DEFAULT_EPSILON);
+      final int lons = longitudes < 3 ? 3 : longitudes;
+      final int lats = latitudes < 1 ? 1 : latitudes;
+      final float vdepth = Utils.max(depth, IUtils.DEFAULT_EPSILON);
+      final float vrad = Utils.max(radius, IUtils.DEFAULT_EPSILON);
 
       /* UV coordinates require an extra longitude. */
-      // final int lons1 = lons + 1;
-      // final int lats1 = lats + 1;
+      final int lons1 = lons + 1;
+      final int lats1 = lats + 1;
+
+      /* Ratio of cylindrical body to rounded ends is 2:1 . */
+      final float halfDepth = vdepth * 0.5f;
+
+      /* Determine array lengths. */
+      final int vMidPoint = lons * lats;
+      final int vtMidPoint = lons1 * lats;
+      final int vLen = vMidPoint * 2 + 2;
+      final int vtLen = vtMidPoint * 2 + 2;
 
       /* Reallocate arrays. */
-      // final int vLen = lons * lats + 2;
-      // final int vtLen = lons1 * lats + 2;
-      // final Vec3[] vs = target.coords = Vec3.resize(target.coords, vLen);
-      // final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
-      // vtLen);
-      // final Vec3[] vns = target.normals = Vec3.resize(target.normals, vLen);
-      //
-      // final float toU = 1.0f / lons;
-      // final float toV = 1.0f / lats1;
-      // final float toTheta = 1.0f / lons;
-      // final float toPhi = 0.5f / lats1;
+      final Vec3[] vs = target.coords = Vec3.resize(target.coords, vLen);
+      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
+         vtLen);
+      final Vec3[] vns = target.normals = Vec3.resize(target.normals, vLen);
+
+      /* To convert iterations to spherical coordinates, UVs. */
+      final float toU = 1.0f / lons;
+      final float toV = 0.25f / lats1;
+      final float toTheta = 1.0f / lons;
+      final float toPhi = 0.25f / lats1;
+
+      /* Set South pole. Offset subsequent vertex indices by 1. */
+      vs[0].set(0.0f, 0.0f, -halfDepth - vrad);
+      vts[0].set(0.5f, 1.0f);
+      vns[0].set(0.0f, 0.0f, -1.0f);
+
+      /* Calculate sine & cosine of theta separately. */
+      final float[] costs = new float[lons];
+      final float[] sints = new float[lons];
+      for ( int j = 0; j < lons; ++j ) {
+         final float theta = j * toTheta;
+         costs[j] = Utils.scNorm(theta);
+         sints[j] = Utils.scNorm(theta - 0.25f);
+      }
+
+      /* Calculate the texture coordinate u's separately. */
+      final float[] tcxs = new float[lons1];
+      for ( int j = 0; j < lons1; ++j ) {
+         tcxs[j] = j * toU;
+      }
+
+      /* Phi range should be [0.0, PI / 4.0] . */
+      final float[] cosps = new float[lats];
+      final float[] sinps = new float[lats];
+      for ( int h = 1, i = 0; i < lats; ++i, ++h ) {
+         final float phi = h * toPhi;
+         cosps[i] = Utils.scNorm(phi);
+         sinps[i] = Utils.scNorm(phi - 0.25f);
+      }
+
+      final float[] tcys = new float[lats1];
+      for ( int h = 1, i = 0; i < lats; ++i, ++h ) {
+         tcys[i] = 1.0f - h * toV;
+      }
+
+      int k0 = vMidPoint;
+      int k1 = vMidPoint + 1;
+
+      int vtk0 = vtMidPoint;
+      int vtk1 = vtMidPoint + 1;
+
+      for ( int i = 0; i < lats; ++i ) {
+
+         final float cosPhi = cosps[i];
+         final float sinPhi = sinps[i];
+         final float rhoCosPhi = vrad * cosPhi;
+         final float rhoSinPhi = vrad * sinPhi;
+         final float tcy = tcys[i];
+
+         /* Set coordinates and normals. */
+         for ( int j = 0; j < lons; ++j ) {
+            final Vec3 vBottom = vs[k0];
+            final Vec3 vTop = vs[k1];
+
+            final float cosTheta = costs[j];
+            final float sinTheta = sints[j];
+
+            vBottom.set(rhoCosPhi * cosTheta, rhoCosPhi * sinTheta, -halfDepth
+               - rhoSinPhi);
+            vTop.set(vBottom.x, vBottom.y, -vBottom.z);
+
+            final Vec3 vnBottom = vns[k0];
+            final Vec3 vnTop = vns[k1];
+
+            vnBottom.set(cosPhi * cosTheta, sinPhi * sinTheta, -sinPhi);
+            vnTop.set(vnBottom.x, vnBottom.y, -vnBottom.z);
+
+            --k0;
+            ++k1;
+         }
+
+         /* Set texture coordinates. */
+         for ( int j = 0; j < lons1; ++j ) {
+            final float tcx = tcxs[j];
+
+            vts[vtk0].set(tcx, 1.0f - tcy);
+            vts[vtk1].set(tcx, tcy);
+
+            --vtk0;
+            ++vtk1;
+         }
+      }
+
+      /* Set North pole. */
+      final int vsLast = vLen - 1;
+      final int vtsLast = vtLen - 1;
+      vs[vsLast].set(0.0f, 0.0f, halfDepth + vrad);
+      vts[vtsLast].set(0.5f, 0.0f);
+      vns[vsLast].set(0.0f, 0.0f, 1.0f);
+
+      /* Accumulate the current index in a variable outside loop. */
+      int idx = -1;
+
+      /*
+       * South ring accounts for (latsn1 * lons * 2) . Multiply by 2 for the
+       * north ring. North and south cap account for lons * 2. Side panels
+       * account for lons * 2.
+       */
+      final int latsn1 = lats - 1;
+      final int fsLen = lons * 4 + latsn1 * lons * 4;
+      final int[][][] fs = target.faces = new int[fsLen][3][3];
+
+      /* South cap. */
+      for ( int h = 0, k = 1; h < lons; ++h, ++k ) {
+         final int i = 1 + h;
+         final int j = 1 + k % lons;
+
+         final int[][] tri = fs[++idx];
+         final int[] a = tri[0];
+         final int[] b = tri[1];
+
+         a[0] = j;
+         a[1] = 1 + k;
+         a[2] = j;
+
+         b[0] = i;
+         b[1] = i;
+         b[2] = i;
+
+         /* c should default to zero. */
+         // final int[] c = tri[2]; c[0] = 0; c[1] = 0; c[2] = 0;
+      }
+
+      /* South ring. */
+      for ( int i = 0, h = 1; i < latsn1; ++i, ++h ) {
+
+         /* For coordinates and normals. */
+         final int currentLat0 = 1 + i * lons;
+         final int nextLat0 = 1 + h * lons;
+
+         /* For texture coordinates. */
+         final int currentLat1 = 1 + i * lons1;
+         final int nextLat1 = 1 + h * lons1;
+
+         for ( int j = 0, k = 1; j < lons; ++j, ++k ) {
+
+            /* Wrap around to first longitude at last. */
+            final int currLon0 = j % lons;
+            final int nextLon0 = k % lons;
+
+            /* Coordinate and normal indices. */
+            final int v00 = currentLat0 + currLon0;
+            final int v10 = currentLat0 + nextLon0;
+            final int v11 = nextLat0 + nextLon0;
+            final int v01 = nextLat0 + currLon0;
+
+            /* Texture coordinate indices. */
+            final int vt00 = currentLat1 + j;
+            final int vt10 = currentLat1 + k;
+            final int vt11 = nextLat1 + k;
+            final int vt01 = nextLat1 + j;
+
+            final int[][] tri0 = fs[++idx];
+            final int[] a0 = tri0[0];
+            final int[] b0 = tri0[1];
+            final int[] c0 = tri0[2];
+
+            final int[][] tri1 = fs[++idx];
+            final int[] a1 = tri1[0];
+            final int[] b1 = tri1[1];
+            final int[] c1 = tri1[2];
+
+            a0[0] = v00;
+            a0[1] = vt00;
+            a0[2] = v00;
+
+            b0[0] = v10;
+            b0[1] = vt10;
+            b0[2] = v10;
+
+            c0[0] = v11;
+            c0[1] = vt11;
+            c0[2] = v11;
+
+            a1[0] = v00;
+            a1[1] = vt00;
+            a1[2] = v00;
+
+            b1[0] = v11;
+            b1[1] = vt11;
+            b1[2] = v11;
+
+            c1[0] = v01;
+            c1[1] = vt01;
+            c1[2] = v01;
+         }
+      }
+
+      /* Side panels. */
+      for ( int j = 0; j < lons; ++j ) {
+         final int[][] tri0 = fs[++idx];
+         final int[] a0 = tri0[0];
+         final int[] b0 = tri0[1];
+         final int[] c0 = tri0[2];
+
+         final int[][] tri1 = fs[++idx];
+         final int[] a1 = tri1[0];
+         final int[] b1 = tri1[1];
+         final int[] c1 = tri1[2];
+      }
+
+      /* North cap. */
+      final int vIdxOff = vsLast - lons;
+      final int vtIdxOff = vtsLast - lons1;
+      for ( int h = 0, k = 1; h < lons; ++h, ++k ) {
+         final int j = k % lons;
+
+         final int[][] tri = fs[++idx];
+         final int[] a = tri[0];
+         final int[] b = tri[1];
+         final int[] c = tri[2];
+
+         a[0] = vIdxOff + h;
+         a[1] = vtIdxOff + h;
+         a[2] = vIdxOff + h;
+
+         b[0] = vIdxOff + j;
+         b[1] = vtIdxOff + k;
+         b[2] = vIdxOff + j;
+
+         c[0] = vsLast;
+         c[1] = vtsLast;
+         c[2] = vsLast;
+      }
 
       target.name = "Capsule";
 
       return target;
+   }
+
+   public static Mesh3 capsule ( final int longitudes, final int latitudes,
+      final Mesh3 target ) {
+
+      return Mesh3.capsule(longitudes, latitudes, 1.0f, 0.5f, target);
+   }
+
+   public static Mesh3 capsule ( final Mesh3 target ) {
+
+      return Mesh3.capsule(IMesh.DEFAULT_CIRCLE_SECTORS >> 1,
+         IMesh.DEFAULT_CIRCLE_SECTORS >> 2, 1.0f, 0.5f, target);
    }
 
    /**
@@ -4145,10 +4389,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          /* Loop over coordinates and normals. */
          for ( int j = 0; j < lons; ++j, ++k0 ) {
 
-            // TODO: Double check, are these normals right?
-            final Vec3 nrm = vns[k0].set(cosPhi * costs[j], cosPhi * sints[j],
+            // TODO: Double check, are these normals right? Shouldn't it be
+            // -sinPhi?
+            final Vec3 vn = vns[k0].set(cosPhi * costs[j], cosPhi * sints[j],
                sinPhi);
-            Vec3.mul(nrm, 0.5f, vs[k0]);
+            Vec3.mul(vn, 0.5f, vs[k0]);
          }
 
          /* Loop over texture coordinates. */
@@ -4165,12 +4410,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       vns[last0].set(0.0f, 0.0f, 1.0f);
 
       /*
-       * Set faces. Accumulate the current index in a variable outside of any
-       * for loop.
+       * The length of the faces array comes from the north and south cap being
+       * triangle fans around the longitudes (2 * lons) and the middle being
+       * triangles (latsn1 * lons * 2), or (latsn1 * lons) for quads.
        */
       final int latsn1 = lats - 1;
       final int fsLen = lons + lons + latsn1 * lons * 2;
       final int[][][] fs = target.faces = new int[fsLen][3][3];
+
+      /* Accumulate the current index in a variable outside loop. */
       int idx = -1;
 
       /* South cap. */
@@ -4190,7 +4438,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          // final int[] c = tri[2]; c[0] = 0; c[1] = 0; c[2] = 0;
       }
 
-      /* Middle */
+      /* Middle. */
       for ( int i = 0, h = 1; i < latsn1; ++i, ++h ) {
 
          /* For coordinates and normals. */
@@ -4439,16 +4687,16 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          v1.z += zDest;
 
          /* Store shortcuts to first triangle. */
-         final int[][] triangle0 = fs[i];
-         final int[] vert00 = triangle0[0];
-         final int[] vert01 = triangle0[1];
-         final int[] vert02 = triangle0[2];
+         final int[][] tri0 = fs[i];
+         final int[] vert00 = tri0[0];
+         final int[] vert01 = tri0[1];
+         final int[] vert02 = tri0[2];
 
          /* Store shortcuts to second triangle. */
-         final int[][] triangle1 = fs[j];
-         final int[] vert10 = triangle1[0];
-         final int[] vert11 = triangle1[1];
-         final int[] vert12 = triangle1[2];
+         final int[][] tri1 = fs[j];
+         final int[] vert10 = tri1[0];
+         final int[] vert11 = tri1[1];
+         final int[] vert12 = tri1[2];
 
          /* The next vertex in the ring. */
          final int n0 = ( i + 1 ) % sec;

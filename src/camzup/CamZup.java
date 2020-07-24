@@ -66,7 +66,8 @@ public class CamZup {
       // System.out.println(b);
 
       Mesh3 m = new Mesh3();
-      Mesh3.uvSphere(m);
+      Mesh3.capsule(m);
+      // System.out.println(m);
       MeshEntity3 me = new MeshEntity3();
       me.append(m);
       String pyCd = me.toBlenderCode();
