@@ -2721,7 +2721,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Creates a regular convex polygon with an opening in its center. The
     * oculus describes the relative size of this opening. When the polygon
-    * type is {@link PolyType#QUAD}, the ring will be composed of
+    * type is {@link Mesh.PolyType#QUAD}, the ring will be composed of
     * quadrilaterals; otherwise, triangles.
     *
     * @param oculus  the size of the opening
@@ -3114,33 +3114,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
        */
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
-
-   }
-
-   /**
-    * The type of polygon, or face, produced by a mesh function.
-    */
-   public enum PolyType {
-
-      /**
-       * Create an n-sided polygon.
-       */
-      NGON ( ),
-
-      /**
-       * Create a quadrilateral.
-       */
-      QUAD ( ),
-
-      /**
-       * Create a triangle.
-       */
-      TRI ( );
-
-      /**
-       * The default constructor.
-       */
-      private PolyType ( ) {}
 
    }
 

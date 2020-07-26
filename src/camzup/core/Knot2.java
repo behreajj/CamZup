@@ -1332,8 +1332,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float backx = -coCurr.x;
       final float backy = -coCurr.y;
 
-      final float forex = coNext.x - coCurr.x;
-      final float forey = coNext.y - coCurr.y;
+      final float forex = coNext.x + backx;
+      final float forey = coNext.y + backy;
 
       final float bmSq = backx * backx + backy * backy;
       final float bmInv = Utils.invSqrt(bmSq);
@@ -1377,11 +1377,11 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final Vec2 coCurr = curr.coord;
       final Vec2 coPrev = prev.coord;
 
-      final float backx = coPrev.x - coCurr.x;
-      final float backy = coPrev.y - coCurr.y;
-
       final float forex = -coCurr.x;
       final float forey = -coCurr.y;
+
+      final float backx = coPrev.x + forex;
+      final float backy = coPrev.y + forey;
 
       final float bmSq = backx * backx + backy * backy;
       final float bmInv = Utils.invSqrt(bmSq);

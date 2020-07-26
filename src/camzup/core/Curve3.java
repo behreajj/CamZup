@@ -1831,11 +1831,11 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       final List < Knot3 > knots = target.knots;
       final int knotLength = knots.size();
-      if ( knotLength < 2 ) { return target; }
 
-      if ( knotLength == 2 ) {
+      if ( knotLength < 2 ) { return target; }
+      if ( knotLength < 3 ) {
          final Knot3 first = knots.get(0);
-         final Knot3 last = knots.get(knotLength - 1);
+         final Knot3 last = knots.get(1);
 
          Curve3.lerp13(first.coord, last.coord, first.foreHandle);
          first.mirrorHandlesForward();
@@ -1847,8 +1847,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       }
 
       final Iterator < Knot3 > itr = knots.iterator();
+      final Knot3 first = itr.next();
       Knot3 prev = null;
-      Knot3 curr = itr.next();
+      Knot3 curr = first;
       while ( itr.hasNext() ) {
          prev = curr;
          curr = itr.next();
@@ -1857,15 +1858,11 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       }
 
       if ( target.closedLoop ) {
-         // TODO: Optimize by caching first before prev, then retaining curr
-         // which should be the last knot.
-         final Knot3 first = knots.get(0);
-         final Knot3 last = knots.get(knotLength - 1);
-         Curve3.lerp13(first.coord, last.coord, first.rearHandle);
-         Curve3.lerp13(last.coord, first.coord, last.foreHandle);
+         Curve3.lerp13(first.coord, curr.coord, first.rearHandle);
+         Curve3.lerp13(curr.coord, first.coord, curr.foreHandle);
       } else {
-         knots.get(0).mirrorHandlesForward();
-         knots.get(knotLength - 1).mirrorHandlesBackward();
+         first.mirrorHandlesForward();
+         curr.mirrorHandlesBackward();
       }
 
       return target;

@@ -2957,37 +2957,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     * )<br>
     * <br>
     * the subtraction of the projection of <em>a</em> onto <em>b</em> from
-    * <em>a</em>. If <em>b</em> is zero, returns <em>a</em>.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target the output vector
-    *
-    * @return the rejection
-    *
-    * @see Vec3#magSq(Vec3)
-    * @see Vec3#dot(Vec3, Vec3)
-    */
-   public static Vec3 reject ( final Vec3 a, final Vec3 b, final Vec3 target ) {
-
-      // TODO: Does this make sense to add to 2D and 4D vectors?
-
-      final float bSq = Vec3.magSq(b);
-      if ( bSq > 0.0f ) {
-         final float scprj = Vec3.dot(a, b) / bSq;
-         return target.set(a.x - b.x * scprj, a.y - b.y * scprj, a.z - b.z
-            * scprj);
-      }
-      return target.set(a);
-   }
-
-   /**
-    * Finds the rejection of <em>b</em> from <em>a</em>. Defined as<br>
-    * <br>
-    * reject ( <em>a</em> , <em>b</em> ) := a - proj ( <em>a</em>, <em>b</em>
-    * )<br>
-    * <br>
-    * the subtraction of the projection of <em>a</em> onto <em>b</em> from
     * <em>a</em>. Emits the projection as an output.
     *
     * @param a          left operand

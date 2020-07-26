@@ -314,6 +314,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       final boolean includeNormals = true;
       final boolean includeUvs = true;
       final boolean calcTangents = true;
+      // final boolean calcTangents = false;
       final boolean useBMesh = includeUvs;
       final boolean useMaterials = materials != null && materials.length > 0;
 
@@ -422,7 +423,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
          if ( calcTangents ) {
             pyCd.append("    bmesh.ops.triangulate(bm, faces=bm.faces,");
-            pyCd.append(" quad_method=\"SHORT_EDGE\",");
+            pyCd.append(" quad_method=\"FIXED\",");
             pyCd.append(" ngon_method=\"EAR_CLIP\")\n");
          }
 

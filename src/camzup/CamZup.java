@@ -2,7 +2,6 @@ package camzup;
 
 import camzup.core.Mesh3;
 import camzup.core.MeshEntity3;
-import camzup.core.Rng;
 
 import processing.core.PApplet;
 
@@ -54,23 +53,13 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      final Rng rng = new Rng();
-
-      // Mesh3 m3 = new Mesh3();
-      // Mesh3.icosahedron(m3);
-      // MeshEntity3 me3 = new MeshEntity3();
-      // me3.append(m3);
-      // String str = me3.toBlenderCode();
-      // System.out.println(str);
-
-      // System.out.println(b);
-
-      Mesh3 m = new Mesh3();
-      Mesh3.capsule(m);
+      final Mesh3 m = new Mesh3();
+      // Mesh3.uvSphere(32, 16, PolyType.QUAD, m);
+      Mesh3.icosphere(3, m);
       // System.out.println(m);
-      MeshEntity3 me = new MeshEntity3();
+      final MeshEntity3 me = new MeshEntity3();
       me.append(m);
-      String pyCd = me.toBlenderCode();
+      final String pyCd = me.toBlenderCode();
       System.out.println(pyCd);
    }
 

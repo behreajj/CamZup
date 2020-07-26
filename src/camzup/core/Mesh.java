@@ -13,7 +13,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     * organized by
     * <ol>
     * <li>the number of faces;</li>
-    * <li>the number of vertices per faces;</li>
+    * <li>the number of vertices per face;</li>
     * <li>the information per vertex;</li>
     * </ol>
     * The inner most array, information per face, may vary with each mesh; 3D
@@ -377,6 +377,33 @@ public abstract class Mesh extends EntityData implements IMesh {
       System.arraycopy(insert, 0, result, valIdx, blen);
       System.arraycopy(arr, idxOff, result, valIdx + blen, alen - idxOff);
       return result;
+   }
+
+   /**
+    * The type of polygon, or face, produced by a mesh function.
+    */
+   public enum PolyType {
+
+      /**
+       * Create an n-sided polygon.
+       */
+      NGON ( ),
+
+      /**
+       * Create a quadrilateral.
+       */
+      QUAD ( ),
+
+      /**
+       * Create a triangle.
+       */
+      TRI ( );
+
+      /**
+       * The default constructor.
+       */
+      private PolyType ( ) {}
+
    }
 
    /**

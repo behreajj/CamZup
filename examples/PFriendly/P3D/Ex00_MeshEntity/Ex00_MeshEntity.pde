@@ -53,8 +53,11 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  graphics3.ortho();
+  
   graphics3.lights();
+  graphics3.camera();
+  graphics3.ortho();
+
   graphics3.background();
   graphics3.origin(75.0, 1.0);
 

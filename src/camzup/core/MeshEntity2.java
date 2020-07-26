@@ -421,7 +421,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
          if ( calcTangents ) {
             pyCd.append("    bmesh.ops.triangulate(bm, faces=bm.faces,");
-            pyCd.append(" quad_method=\"SHORT_EDGE\",");
+            pyCd.append(" quad_method=\"FIXED\",");
             pyCd.append(" ngon_method=\"EAR_CLIP\")\n");
          }
          pyCd.append("    bm.to_mesh(mesh_data)\n");
