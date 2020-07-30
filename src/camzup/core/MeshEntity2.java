@@ -392,7 +392,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       pyCd.append("    fc_idcs = mesh[\"faces\"]\n");
       pyCd.append("    mesh_data = d_meshes.new(name)\n");
       pyCd.append("    mesh_data.from_pydata(vert_dat, [], fc_idcs)\n");
-      pyCd.append("    mesh_data.validate()\n");
+      pyCd.append("    mesh_data.validate(verbose=True)\n");
 
       if ( autoSmoothNormals ) {
          pyCd.append("    mesh_data.use_auto_smooth = True\n");
@@ -417,7 +417,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
          pyCd.append("            uv_idx = faceuvidcs[curr_loop]\n");
          pyCd.append("            uv_co = uv_dat[uv_idx]\n");
          pyCd.append("            bmvt.uv = uv_co\n");
-         pyCd.append("            curr_loop = curr_loop + 1\n");
+         pyCd.append("            curr_loop += 1\n");
 
          if ( calcTangents ) {
             pyCd.append("    bmesh.ops.triangulate(bm, faces=bm.faces,");

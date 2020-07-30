@@ -314,7 +314,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       final boolean includeNormals = true;
       final boolean includeUvs = true;
       final boolean calcTangents = true;
-      // final boolean calcTangents = false;
       final boolean useBMesh = includeUvs;
       final boolean useMaterials = materials != null && materials.length > 0;
 
@@ -398,7 +397,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       pyCd.append("    fc_idcs = mesh[\"faces\"]\n");
       pyCd.append("    mesh_data = d_meshes.new(name)\n");
       pyCd.append("    mesh_data.from_pydata(vert_dat, [], fc_idcs)\n");
-      pyCd.append("    mesh_data.validate()\n\n");
+      pyCd.append("    mesh_data.validate(verbose=True)\n\n");
 
       if ( useBMesh ) {
          pyCd.append("    bm = bmesh.new()\n");
@@ -418,7 +417,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
             pyCd.append("            uv_idx = faceuvidcs[curr_loop]\n");
             pyCd.append("            uv_co = uv_dat[uv_idx]\n");
             pyCd.append("            bmvt.uv = uv_co\n");
-            pyCd.append("            curr_loop = curr_loop + 1\n");
+            pyCd.append("            curr_loop += 1\n");
          }
 
          if ( calcTangents ) {
