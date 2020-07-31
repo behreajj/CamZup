@@ -220,7 +220,6 @@ public class Vert3 implements Comparable < Vert3 > {
     *
     * @return the orientation
     */
-   @Experimental
    public static Ray3 orientation ( final Vert3 vert, final Ray3 target ) {
 
       return target.set(vert.coord, vert.normal);

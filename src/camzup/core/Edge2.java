@@ -77,7 +77,7 @@ public class Edge2 implements Comparable < Edge2 > {
       if ( this == obj ) { return true; }
       if ( obj == null ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
-      return this.equalsSigned(( Edge2 ) obj);
+      return this.equals(( Edge2 ) obj);
    }
 
    /**
@@ -116,49 +116,89 @@ public class Edge2 implements Comparable < Edge2 > {
     * @param radians the angle
     *
     * @return this edge
+    *
+    * @see Edge2#rotateZGlobal(float, float)
     */
    public Edge2 rotateZGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
+      return this.rotateZGlobal(cosa, sina);
+   }
+
+   /**
+    * Rotates the coordinates of this edge by the sine and cosine of an angle
+    * around the z axis. Uses global coordinates, i.e. doesn't consider the
+    * edge's position. The texture coordinates are unaffected.
+    *
+    * @param cosa cosine of the angle
+    * @param sina sine of the angle
+    *
+    * @return this edge
+    *
+    * @see Vec2#rotateZ(Vec2, float, float, Vec2)
+    */
+   public Edge2 rotateZGlobal ( final float cosa, final float sina ) {
+
       Vec2.rotateZ(this.origin.coord, cosa, sina, this.origin.coord);
       Vec2.rotateZ(this.dest.coord, cosa, sina, this.dest.coord);
+
+      return this;
+   }
+
+   /**
+    * Rotates the coordinates of this edge by the sine and cosine of an angle
+    * around the z axis. The edge's center (midpoint) acts as a pivot. The
+    * texture coordinates are unaffected.
+    *
+    * @param cosa   cosine of the angle
+    * @param sina   sine of the angle
+    * @param center the center
+    *
+    * @return this edge
+    *
+    * @see Vec2#sub(Vec2, Vec2, Vec2)
+    * @see Vec2#rotateZ(Vec2, float, float, Vec2)
+    * @see Vec2#add(Vec2, Vec2, Vec2)
+    */
+   public Edge2 rotateZLocal ( final float cosa, final float sina,
+      final Vec2 center ) {
+
+      final Vec2 coOrigin = this.origin.coord;
+      final Vec2 coDest = this.dest.coord;
+
+      center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+         * 0.5f);
+
+      Vec2.sub(coOrigin, center, coOrigin);
+      Vec2.rotateZ(coOrigin, cosa, sina, coOrigin);
+      Vec2.add(coOrigin, center, coOrigin);
+
+      Vec2.sub(coDest, center, coDest);
+      Vec2.rotateZ(coDest, cosa, sina, coDest);
+      Vec2.add(coDest, center, coDest);
+
       return this;
    }
 
    /**
     * Rotates the coordinates of this edge by an angle in radians around the z
-    * axis. The edge's midpoint acts as a pivot. The texture coordinates are
-    * unaffected.
+    * axis. The edge's center (midpoint) acts as a pivot. The texture
+    * coordinates are unaffected.
     *
     * @param radians the angle
+    * @param center  the center
     *
     * @return this edge
+    *
+    * @see Edge2#rotateZLocal(float, float, Vec2)
     */
-   public Edge2 rotateZLocal ( final float radians ) {
+   public Edge2 rotateZLocal ( final float radians, final Vec2 center ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
-
-      final Vec2 coOrigin = this.origin.coord;
-      final Vec2 coDest = this.dest.coord;
-
-      /* @formatter:off */
-      final Vec2 mp = new Vec2(
-         ( coOrigin.x + coDest.x ) * 0.5f,
-         ( coOrigin.y + coDest.y ) * 0.5f);
-      /* @formatter:on */
-
-      Vec2.sub(coOrigin, mp, coOrigin);
-      Vec2.rotateZ(coOrigin, cosa, sina, coOrigin);
-      Vec2.add(coOrigin, mp, coOrigin);
-
-      Vec2.sub(coDest, mp, coDest);
-      Vec2.rotateZ(coDest, cosa, sina, coDest);
-      Vec2.add(coDest, mp, coDest);
-
-      return this;
+      return this.rotateZLocal(cosa, sina, center);
    }
 
    /**
@@ -224,18 +264,20 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public Edge2 scaleGlobal ( final Vec2 scalar ) {
 
-      if ( Vec2.none(scalar) ) { return this; }
+      if ( Vec2.all(scalar) ) {
+         Vec2.mul(this.origin.coord, scalar, this.origin.coord);
+         Vec2.mul(this.dest.coord, scalar, this.dest.coord);
+      }
 
-      Vec2.mul(this.origin.coord, scalar, this.origin.coord);
-      Vec2.mul(this.dest.coord, scalar, this.dest.coord);
       return this;
    }
 
    /**
     * Scales the coordinates of this edge. Subtracts the edge's mean center
-    * from each vertex, scales, then adds the mean center.
+    * (midpoint) from each vertex, scales, then adds the mean center.
     *
     * @param scalar the uniform scalar
+    * @param center the edge center
     *
     * @return this edge
     *
@@ -243,35 +285,34 @@ public class Edge2 implements Comparable < Edge2 > {
     * @see Vec2#mul(Vec2, float, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   public Edge2 scaleLocal ( final float scalar ) {
+   public Edge2 scaleLocal ( final float scalar, final Vec2 center ) {
 
-      if ( scalar == 0.0f ) { return this; }
+      if ( scalar != 0.0f ) {
 
-      final Vec2 coOrigin = this.origin.coord;
-      final Vec2 coDest = this.dest.coord;
+         final Vec2 coOrigin = this.origin.coord;
+         final Vec2 coDest = this.dest.coord;
 
-      /* @formatter:off */
-      final Vec2 mp = new Vec2(
-         ( coOrigin.x + coDest.x ) * 0.5f,
-         ( coOrigin.y + coDest.y ) * 0.5f);
-      /* @formatter:on */
+         center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+            * 0.5f);
 
-      Vec2.sub(coOrigin, mp, coOrigin);
-      Vec2.mul(coOrigin, scalar, coOrigin);
-      Vec2.add(coOrigin, mp, coOrigin);
+         Vec2.sub(coOrigin, center, coOrigin);
+         Vec2.mul(coOrigin, scalar, coOrigin);
+         Vec2.add(coOrigin, center, coOrigin);
 
-      Vec2.sub(coDest, mp, coDest);
-      Vec2.mul(coDest, scalar, coDest);
-      Vec2.add(coDest, mp, coDest);
+         Vec2.sub(coDest, center, coDest);
+         Vec2.mul(coDest, scalar, coDest);
+         Vec2.add(coDest, center, coDest);
+      }
 
       return this;
    }
 
    /**
-    * Scales the coordinates of this edge. Subtracts the edge's center from
-    * each vertex, scales, then adds the center.
+    * Scales the coordinates of this edge. Subtracts the edge's center
+    * (midpoint) from each vertex, scales, then adds the center.
     *
     * @param scalar the nonuniform scalar
+    * @param center the edge center
     *
     * @return this edge
     *
@@ -281,26 +322,24 @@ public class Edge2 implements Comparable < Edge2 > {
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
    @Experimental
-   public Edge2 scaleLocal ( final Vec2 scalar ) {
+   public Edge2 scaleLocal ( final Vec2 scalar, final Vec2 center ) {
 
-      if ( Vec2.none(scalar) ) { return this; }
+      if ( Vec2.all(scalar) ) {
 
-      final Vec2 coOrigin = this.origin.coord;
-      final Vec2 coDest = this.dest.coord;
+         final Vec2 coOrigin = this.origin.coord;
+         final Vec2 coDest = this.dest.coord;
 
-      /* @formatter:off */
-      final Vec2 mp = new Vec2(
-         ( coOrigin.x + coDest.x ) * 0.5f,
-         ( coOrigin.y + coDest.y ) * 0.5f);
-      /* @formatter:on */
+         center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+            * 0.5f);
 
-      Vec2.sub(coOrigin, mp, coOrigin);
-      Vec2.mul(coOrigin, scalar, coOrigin);
-      Vec2.add(coOrigin, mp, coOrigin);
+         Vec2.sub(coOrigin, center, coOrigin);
+         Vec2.mul(coOrigin, scalar, coOrigin);
+         Vec2.add(coOrigin, center, coOrigin);
 
-      Vec2.sub(coDest, mp, coDest);
-      Vec2.mul(coDest, scalar, coDest);
-      Vec2.add(coDest, mp, coDest);
+         Vec2.sub(coDest, center, coDest);
+         Vec2.mul(coDest, scalar, coDest);
+         Vec2.add(coDest, center, coDest);
+      }
 
       return this;
    }
@@ -425,7 +464,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return the evaluation
     */
-   protected boolean equalsSigned ( final Edge2 edge2 ) {
+   protected boolean equals ( final Edge2 edge2 ) {
 
       if ( this.dest == null ) {
          if ( edge2.dest != null ) { return false; }
@@ -436,6 +475,58 @@ public class Edge2 implements Comparable < Edge2 > {
       } else if ( !this.origin.equals(edge2.origin) ) { return false; }
 
       return true;
+   }
+
+   /**
+    * Evaluates whether two edges are complements or neighbors, i.e., whether
+    * one edge's origin is the other's destination.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean areNeighbors ( final Edge2 a, final Edge2 b ) {
+
+      return Vert2.approxCoord(a.dest, b.origin) && Vert2.approxCoord(a.origin,
+         b.dest);
+   }
+
+   /**
+    * Finds the distance between an edge and a point.
+    *
+    * @param a the edge
+    * @param b the point
+    *
+    * @return the distance
+    */
+   @Experimental
+   public static float dist ( final Edge2 a, final Vec2 b ) {
+
+      // TEST
+
+      /*
+       * The magnitude of the rejection of u from v, where u equals b -
+       * a.origin.
+       */
+      final Vec2 aOrigin = a.origin.coord;
+      final Vec2 aDest = a.dest.coord;
+
+      /* Represent edge as point and vector. */
+      final float vx = aDest.x - aOrigin.x;
+      final float vy = aDest.y - aOrigin.y;
+      final float dotvv = vx * vx + vy * vy;
+      if ( dotvv <= 0.0f ) { return 0.0f; }
+
+      /* Find difference between point and edge origin. */
+      final float ux = b.x - aOrigin.x;
+      final float uy = b.y - aOrigin.y;
+
+      /* Cross difference with edge vector. */
+      final float az = ux * vy - uy * vx;
+      final float dotaa = az * az;
+
+      return Utils.sqrtUnchecked(dotaa / dotvv);
    }
 
    /**

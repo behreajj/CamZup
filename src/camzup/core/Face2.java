@@ -174,6 +174,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * face's mean center is used as the pivot point.
     *
     * @param radians the angle in radians
+    * @param center  the center
     *
     * @return this mesh
     *
@@ -184,9 +185,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @see Vec2#rotateZ(Vec2, float, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   public Face2 rotateZLocal ( final float radians ) {
+   public Face2 rotateZLocal ( final float radians, final Vec2 center ) {
 
-      final Vec2 center = new Vec2();
       Face2.centerMean(this, center);
 
       final float cosa = Utils.cos(radians);
@@ -282,7 +282,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * Scales all coordinates in the face by a scalar; subtracts the face's
     * center from each vertex, scales, then adds the center.
     *
-    * @param scale the scalar
+    * @param scale  the scalar
+    * @param center the center
     *
     * @return this face
     *
@@ -291,19 +292,18 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @see Vec2#mul(Vec2, float, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   public Face2 scaleLocal ( final float scale ) {
+   public Face2 scaleLocal ( final float scale, final Vec2 center ) {
 
-      if ( scale == 0.0f ) { return this; }
-
-      final Vec2 center = new Vec2();
       Face2.centerMean(this, center);
 
-      final int len = this.vertices.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec2 c = this.vertices[i].coord;
-         Vec2.sub(c, center, c);
-         Vec2.mul(c, scale, c);
-         Vec2.add(c, center, c);
+      if ( scale != 0.0f ) {
+         final int len = this.vertices.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec2 c = this.vertices[i].coord;
+            Vec2.sub(c, center, c);
+            Vec2.mul(c, scale, c);
+            Vec2.add(c, center, c);
+         }
       }
 
       return this;
@@ -313,7 +313,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * Scales all coordinates in the face by a scalar; subtracts the face's
     * center from each vertex, scales, then adds the center.
     *
-    * @param scale the nonuniform scalar
+    * @param scale  the nonuniform scalar
+    * @param center the center
     *
     * @return this face
     *
@@ -323,19 +324,18 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
-   public Face2 scaleLocal ( final Vec2 scale ) {
+   public Face2 scaleLocal ( final Vec2 scale, final Vec2 center ) {
 
-      if ( Vec2.none(scale) ) { return this; }
-
-      final Vec2 center = new Vec2();
       Face2.centerMean(this, center);
 
-      final int len = this.vertices.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec2 c = this.vertices[i].coord;
-         Vec2.sub(c, center, c);
-         Vec2.mul(c, scale, c);
-         Vec2.add(c, center, c);
+      if ( Vec2.all(scale) ) {
+         final int len = this.vertices.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec2 c = this.vertices[i].coord;
+            Vec2.sub(c, center, c);
+            Vec2.mul(c, scale, c);
+            Vec2.add(c, center, c);
+         }
       }
 
       return this;

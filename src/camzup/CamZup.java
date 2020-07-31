@@ -56,24 +56,12 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       final Mesh3 m = new Mesh3();
-      capsule(32, 16, 0, 1.0f, 0.5f, m);
-      // Mesh3.uvSphere(16, 8, m);
+      // capsule(32, 16, 0, 1.0f, 0.5f, m);
+      Mesh3.uvSphere(16, 8, m);
       final MeshEntity3 me = new MeshEntity3();
       me.append(m);
       final String pyCd = me.toBlenderCode();
       System.out.println(pyCd);
-   }
-
-   protected static Mesh3 capsule ( final int latitudes, final int longitudes,
-      final int rings, final float depth, final float radius, Mesh3 target ) {
-      
-      final int lons = longitudes < 3 ? 3 : longitudes;
-      final int lats = latitudes < 1 ? 1 : latitudes;
-      final int midSections = rings < 0 ? 0 : rings;
-      final float vDepth = Utils.max(IUtils.DEFAULT_EPSILON, depth);
-      final float vRad = Utils.max(IUtils.DEFAULT_EPSILON, radius);
-
-      return target;
    }
 
    /**
@@ -82,5 +70,18 @@ public class CamZup {
     * @return the version
     */
    public static String version ( ) { return CamZup.VERSION; }
+
+   protected static Mesh3 capsule ( final int latitudes, final int longitudes,
+      final int rings, final float depth, final float radius,
+      final Mesh3 target ) {
+
+      final int lons = longitudes < 3 ? 3 : longitudes;
+      final int lats = latitudes < 1 ? 1 : latitudes;
+      final int midSections = rings < 0 ? 0 : rings;
+      final float vDepth = Utils.max(IUtils.DEFAULT_EPSILON, depth);
+      final float vRad = Utils.max(IUtils.DEFAULT_EPSILON, radius);
+
+      return target;
+   }
 
 }

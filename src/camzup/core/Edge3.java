@@ -79,7 +79,7 @@ public class Edge3 implements Comparable < Edge3 > {
       if ( this == obj ) { return true; }
       if ( obj == null ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
-      return this.equalsSigned(( Edge3 ) obj);
+      return this.equals(obj);
    }
 
    /**
@@ -96,6 +96,27 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
+    * Rotates the coordinates and normals of this edge by the cosine and sine
+    * of an angle and an axis. The texture coordinates are unaffected.
+    *
+    * @param cosa cosine of the angle
+    * @param sina sine of the angle
+    * @param axis axis
+    *
+    * @return this edge
+    *
+    * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
+    */
+   public Edge3 rotateGlobal ( final float cosa, final float sina,
+      final Vec3 axis ) {
+
+      Vec3.rotate(this.origin.coord, cosa, sina, axis, this.origin.coord);
+      Vec3.rotate(this.dest.coord, cosa, sina, axis, this.dest.coord);
+
+      return this;
+   }
+
+   /**
     * Rotates the coordinates and normals of this edge by an angle and axis.
     * The texture coordinates are unaffected.
     *
@@ -104,17 +125,14 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return this edge
     *
-    * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
+    * @see Edge3#rotateGlobal(float, float, Vec3)
     */
-   public Edge3 rotate ( final float radians, final Vec3 axis ) {
+   public Edge3 rotateGlobal ( final float radians, final Vec3 axis ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
 
-      Vec3.rotate(this.origin.coord, cosa, sina, axis, this.origin.coord);
-      Vec3.rotate(this.dest.coord, cosa, sina, axis, this.dest.coord);
-
-      return this;
+      return this.rotateGlobal(cosa, sina, axis);
    }
 
    /**
@@ -127,10 +145,100 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     */
-   public Edge3 rotate ( final Quaternion q ) {
+   public Edge3 rotateGlobal ( final Quaternion q ) {
 
       Quaternion.mulVector(q, this.origin.coord, this.origin.coord);
       Quaternion.mulVector(q, this.dest.coord, this.dest.coord);
+
+      return this;
+   }
+
+   /**
+    * Rotates the coordinates and normals of this edge by the sine and cosine
+    * of an angle and an axis. The edge's center (midpoint) acts as a pivot.
+    * The texture coordinates are unaffected.
+    *
+    * @param cosa   cosine of the angle
+    * @param sina   sine of the angle
+    * @param axis   axis
+    * @param center center
+    *
+    * @return this edge
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    */
+   public Edge3 rotateLocal ( final float cosa, final float sina,
+      final Vec3 axis, final Vec3 center ) {
+
+      final Vec3 coOrigin = this.origin.coord;
+      final Vec3 coDest = this.dest.coord;
+
+      center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+         * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+
+      Vec3.sub(coOrigin, center, coOrigin);
+      Vec3.rotate(coOrigin, cosa, sina, axis, coOrigin);
+      Vec3.add(coOrigin, center, coOrigin);
+
+      Vec3.sub(coDest, center, coDest);
+      Vec3.rotate(coDest, cosa, sina, axis, coDest);
+      Vec3.add(coDest, center, coDest);
+
+      return this;
+   }
+
+   /**
+    * Rotates the coordinates and normals of this edge by an angle and axis.
+    * The edge's center (midpoint) acts as a pivot. The texture coordinates
+    * are unaffected.
+    *
+    * @param radians angle
+    * @param axis    axis
+    * @param center  center
+    *
+    * @return this edge
+    *
+    * @see Edge3#rotateLocal(float, float, Vec3, Vec3)
+    */
+   public Edge3 rotateLocal ( final float radians, final Vec3 axis,
+      final Vec3 center ) {
+
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
+
+      return this.rotateLocal(cosa, sina, axis, center);
+   }
+
+   /**
+    * Rotates the coordinates of this edge by a quaternion. The edge's center
+    * (midpoint) acts as a pivot. The texture coordinates are unaffected.
+    *
+    * @param q      the quaternion
+    * @param center the edge center
+    *
+    * @return this edge
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    */
+   public Edge3 rotateLocal ( final Quaternion q, final Vec3 center ) {
+
+      final Vec3 coOrigin = this.origin.coord;
+      final Vec3 coDest = this.dest.coord;
+
+      center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+         * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+
+      Vec3.sub(coOrigin, center, coOrigin);
+      Quaternion.mulVector(q, coOrigin, coOrigin);
+      Vec3.add(coOrigin, center, coOrigin);
+
+      Vec3.sub(coDest, center, coDest);
+      Quaternion.mulVector(q, coDest, coDest);
+      Vec3.add(coDest, center, coDest);
 
       return this;
    }
@@ -143,17 +251,88 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return this edge
     *
-    * @see Vec3#rotateX(Vec3, float, float, Vec3)
+    * @see Edge3#rotateXGlobal(float, float)
     */
-   public Edge3 rotateX ( final float radians ) {
+   public Edge3 rotateXGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
+
+      return this.rotateXGlobal(cosa, sina);
+   }
+
+   /**
+    * Rotates the coordinates of this edge by the sine and cosine of an angle
+    * around the x axis. The texture coordinates are unaffected.
+    *
+    * @param cosa cosine of the angle
+    * @param sina sine of the angle
+    *
+    * @return this edge
+    *
+    * @see Vec3#rotateX(Vec3, float, float, Vec3)
+    */
+   public Edge3 rotateXGlobal ( final float cosa, final float sina ) {
 
       Vec3.rotateX(this.origin.coord, cosa, sina, this.origin.coord);
       Vec3.rotateX(this.dest.coord, cosa, sina, this.dest.coord);
 
       return this;
+   }
+
+   /**
+    * Rotates the coordinates of this edge by the sine and cosine of an angle
+    * around the x axis. The edge's center (midpoint) acts as a pivot. The
+    * texture coordinates are unaffected.
+    *
+    * @param cosa   cosine of the angle
+    * @param sina   sine of the angle
+    * @param center the center
+    *
+    * @return this edge
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Vec3#rotateX(Vec3, float, float, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    */
+   public Edge3 rotateXLocal ( final float cosa, final float sina,
+      final Vec3 center ) {
+
+      final Vec3 coOrigin = this.origin.coord;
+      final Vec3 coDest = this.dest.coord;
+
+      center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+         * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+
+      Vec3.sub(coOrigin, center, coOrigin);
+      Vec3.rotateX(coOrigin, cosa, sina, coOrigin);
+      Vec3.add(coOrigin, center, coOrigin);
+
+      Vec3.sub(coDest, center, coDest);
+      Vec3.rotateX(coDest, cosa, sina, coDest);
+      Vec3.add(coDest, center, coDest);
+
+      return this;
+   }
+
+   /**
+    * Rotates the coordinates of this edge by an angle in radians around the x
+    * axis. The edge's center (midpoint) acts as a pivot. The texture
+    * coordinates are unaffected.
+    *
+    * @param radians the angle
+    * @param center  the center
+    *
+    * @return this edge
+    *
+    * @see Edge3#rotateXLocal(float, float, Vec3)
+    */
+   public Edge3 rotateXLocal ( final float radians, final Vec3 center ) {
+
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
+
+      return this.rotateXLocal(cosa, sina, center);
    }
 
    /**
@@ -164,17 +343,88 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return this edge
     *
-    * @see Vec3#rotateY(Vec3, float, float, Vec3)
+    * @see Edge3#rotateYGlobal(float, float)
     */
-   public Edge3 rotateY ( final float radians ) {
+   public Edge3 rotateYGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
+
+      return this.rotateYGlobal(cosa, sina);
+   }
+
+   /**
+    * Rotates the coordinates of this edge by the sine and cosine of an angle
+    * around the y axis. The texture coordinates are unaffected.
+    *
+    * @param cosa cosine of the angle
+    * @param sina sine of the angle
+    *
+    * @return this edge
+    *
+    * @see Vec3#rotateY(Vec3, float, float, Vec3)
+    */
+   public Edge3 rotateYGlobal ( final float cosa, final float sina ) {
 
       Vec3.rotateY(this.origin.coord, cosa, sina, this.origin.coord);
       Vec3.rotateY(this.dest.coord, cosa, sina, this.dest.coord);
 
       return this;
+   }
+
+   /**
+    * Rotates the coordinates of this edge by the sine and cosine of an angle
+    * around the y axis. The edge's center (midpoint) acts as a pivot. The
+    * texture coordinates are unaffected.
+    *
+    * @param cosa   cosine of the angle
+    * @param sina   sine of the angle
+    * @param center the center
+    *
+    * @return this edge
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Vec3#rotateY(Vec3, float, float, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    */
+   public Edge3 rotateYLocal ( final float cosa, final float sina,
+      final Vec3 center ) {
+
+      final Vec3 coOrigin = this.origin.coord;
+      final Vec3 coDest = this.dest.coord;
+
+      center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+         * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+
+      Vec3.sub(coOrigin, center, coOrigin);
+      Vec3.rotateY(coOrigin, cosa, sina, coOrigin);
+      Vec3.add(coOrigin, center, coOrigin);
+
+      Vec3.sub(coDest, center, coDest);
+      Vec3.rotateY(coDest, cosa, sina, coDest);
+      Vec3.add(coDest, center, coDest);
+
+      return this;
+   }
+
+   /**
+    * Rotates the coordinates of this edge by an angle in radians around the y
+    * axis. The edge's center (midpoint) acts as a pivot. The texture
+    * coordinates are unaffected.
+    *
+    * @param radians the angle
+    * @param center  the center
+    *
+    * @return this edge
+    *
+    * @see Edge3#rotateYLocal(float, float, Vec3)
+    */
+   public Edge3 rotateYLocal ( final float radians, final Vec3 center ) {
+
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
+
+      return this.rotateYLocal(cosa, sina, center);
    }
 
    /**
@@ -185,17 +435,88 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return this edge
     *
-    * @see Vec3#rotateZ(Vec3, float, float, Vec3)
+    * @see Edge3#rotateZGlobal(float, float)
     */
-   public Edge3 rotateZ ( final float radians ) {
+   public Edge3 rotateZGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
+
+      return this.rotateZGlobal(cosa, sina);
+   }
+
+   /**
+    * Rotates the coordinates of this edge by the sine and cosine of an angle
+    * around the z axis. The texture coordinates are unaffected.
+    *
+    * @param cosa cosine of the angle
+    * @param sina sine of the angle
+    *
+    * @return this edge
+    *
+    * @see Vec3#rotateZ(Vec3, float, float, Vec3)
+    */
+   public Edge3 rotateZGlobal ( final float cosa, final float sina ) {
 
       Vec3.rotateZ(this.origin.coord, cosa, sina, this.origin.coord);
       Vec3.rotateZ(this.dest.coord, cosa, sina, this.dest.coord);
 
       return this;
+   }
+
+   /**
+    * Rotates the coordinates of this edge by the sine and cosine of an angle
+    * around the z axis. The edge's center (midpoint) acts as a pivot. The
+    * texture coordinates are unaffected.
+    *
+    * @param cosa   cosine of the angle
+    * @param sina   sine of the angle
+    * @param center the center
+    *
+    * @return this edge
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Vec3#rotateZ(Vec3, float, float, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    */
+   public Edge3 rotateZLocal ( final float cosa, final float sina,
+      final Vec3 center ) {
+
+      final Vec3 coOrigin = this.origin.coord;
+      final Vec3 coDest = this.dest.coord;
+
+      center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+         * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+
+      Vec3.sub(coOrigin, center, coOrigin);
+      Vec3.rotateZ(coOrigin, cosa, sina, coOrigin);
+      Vec3.add(coOrigin, center, coOrigin);
+
+      Vec3.sub(coDest, center, coDest);
+      Vec3.rotateZ(coDest, cosa, sina, coDest);
+      Vec3.add(coDest, center, coDest);
+
+      return this;
+   }
+
+   /**
+    * Rotates the coordinates of this edge by an angle in radians around the z
+    * axis. The edge's center (midpoint) acts as a pivot. The texture
+    * coordinates are unaffected.
+    *
+    * @param radians the angle
+    * @param center  the center
+    *
+    * @return this edge
+    *
+    * @see Edge3#rotateZLocal(float, float, Vec3)
+    */
+   public Edge3 rotateZLocal ( final float radians, final Vec3 center ) {
+
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
+
+      return this.rotateZLocal(cosa, sina, center);
    }
 
    /**
@@ -261,18 +582,20 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 scaleGlobal ( final Vec3 scalar ) {
 
-      if ( Vec3.none(scalar) ) { return this; }
+      if ( Vec3.all(scalar) ) {
+         Vec3.mul(this.origin.coord, scalar, this.origin.coord);
+         Vec3.mul(this.dest.coord, scalar, this.dest.coord);
+      }
 
-      Vec3.mul(this.origin.coord, scalar, this.origin.coord);
-      Vec3.mul(this.dest.coord, scalar, this.dest.coord);
       return this;
    }
 
    /**
     * Scales the coordinates of this edge. Subtracts the edge's mean center
-    * from each vertex, scales, then adds the mean center.
+    * (midpoint) from each vertex, scales, then adds the mean center.
     *
     * @param scalar the uniform scalar
+    * @param center the edge center
     *
     * @return this edge
     *
@@ -280,38 +603,34 @@ public class Edge3 implements Comparable < Edge3 > {
     * @see Vec3#mul(Vec3, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-   public Edge3 scaleLocal ( final float scalar ) {
+   public Edge3 scaleLocal ( final float scalar, final Vec3 center ) {
 
-      // TEST
+      if ( scalar != 0.0f ) {
 
-      if ( scalar == 0.0f ) { return this; }
+         final Vec3 coOrigin = this.origin.coord;
+         final Vec3 coDest = this.dest.coord;
 
-      final Vec3 coOrigin = this.origin.coord;
-      final Vec3 coDest = this.dest.coord;
+         center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+            * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
 
-      /* @formatter:off */
-      final Vec3 mp = new Vec3(
-         ( coOrigin.x + coDest.x ) * 0.5f,
-         ( coOrigin.y + coDest.y ) * 0.5f,
-         ( coOrigin.z + coDest.z ) * 0.5f);
-      /* @formatter:on */
+         Vec3.sub(coOrigin, center, coOrigin);
+         Vec3.mul(coOrigin, scalar, coOrigin);
+         Vec3.add(coOrigin, center, coOrigin);
 
-      Vec3.sub(coOrigin, mp, coOrigin);
-      Vec3.mul(coOrigin, scalar, coOrigin);
-      Vec3.add(coOrigin, mp, coOrigin);
-
-      Vec3.sub(coDest, mp, coDest);
-      Vec3.mul(coDest, scalar, coDest);
-      Vec3.add(coDest, mp, coDest);
+         Vec3.sub(coDest, center, coDest);
+         Vec3.mul(coDest, scalar, coDest);
+         Vec3.add(coDest, center, coDest);
+      }
 
       return this;
    }
 
    /**
     * Scales the coordinates of this edge. Subtracts the edge's mean center
-    * from each vertex, scales, then adds the mean center.
+    * (midpoint) from each vertex, scales, then adds the mean center.
     *
     * @param scalar the nonuniform scalar
+    * @param center the edge's center
     *
     * @return this edge
     *
@@ -320,29 +639,24 @@ public class Edge3 implements Comparable < Edge3 > {
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-   public Edge3 scaleLocal ( final Vec3 scalar ) {
+   public Edge3 scaleLocal ( final Vec3 scalar, final Vec3 center ) {
 
-      // TEST
+      if ( Vec3.all(scalar) ) {
 
-      if ( Vec3.none(scalar) ) { return this; }
+         final Vec3 coOrigin = this.origin.coord;
+         final Vec3 coDest = this.dest.coord;
 
-      final Vec3 coOrigin = this.origin.coord;
-      final Vec3 coDest = this.dest.coord;
+         center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+            * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
 
-      /* @formatter:off */
-      final Vec3 mp = new Vec3(
-         ( coOrigin.x + coDest.x ) * 0.5f,
-         ( coOrigin.y + coDest.y ) * 0.5f,
-         ( coOrigin.z + coDest.z ) * 0.5f);
-      /* @formatter:on */
+         Vec3.sub(coOrigin, center, coOrigin);
+         Vec3.mul(coOrigin, scalar, coOrigin);
+         Vec3.add(coOrigin, center, coOrigin);
 
-      Vec3.sub(coOrigin, mp, coOrigin);
-      Vec3.mul(coOrigin, scalar, coOrigin);
-      Vec3.add(coOrigin, mp, coOrigin);
-
-      Vec3.sub(coDest, mp, coDest);
-      Vec3.mul(coDest, scalar, coDest);
-      Vec3.add(coDest, mp, coDest);
+         Vec3.sub(coDest, center, coDest);
+         Vec3.mul(coDest, scalar, coDest);
+         Vec3.add(coDest, center, coDest);
+      }
 
       return this;
    }
@@ -469,7 +783,7 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return the evaluation
     */
-   protected boolean equalsSigned ( final Edge3 edge3 ) {
+   protected boolean equals ( final Edge3 edge3 ) {
 
       if ( this.dest == null ) {
          if ( edge3.dest != null ) { return false; }
@@ -480,6 +794,21 @@ public class Edge3 implements Comparable < Edge3 > {
       } else if ( !this.origin.equals(edge3.origin) ) { return false; }
 
       return true;
+   }
+
+   /**
+    * Evaluates whether two edges are complements or neighbors, i.e., whether
+    * one edge's origin is the other's destination.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean areNeighbors ( final Edge3 a, final Edge3 b ) {
+
+      return Vert3.approxCoord(a.dest, b.origin) && Vert3.approxCoord(a.origin,
+         b.dest);
    }
 
    /**
@@ -497,6 +826,47 @@ public class Edge3 implements Comparable < Edge3 > {
       final Vec3 dest = edge.dest.coord;
       final Vec3 origin = edge.origin.coord;
       return Utils.atan2(dest.y - origin.y, dest.x - origin.x);
+   }
+
+   /**
+    * Finds the distance between an edge and a point.
+    *
+    * @param a the edge
+    * @param b the point
+    *
+    * @return the distance
+    */
+   @Experimental
+   public static float dist ( final Edge3 a, final Vec3 b ) {
+
+      // TEST
+
+      /*
+       * The magnitude of the rejection of u from v, where u equals b -
+       * a.origin.
+       */
+      final Vec3 aOrigin = a.origin.coord;
+      final Vec3 aDest = a.dest.coord;
+
+      /* Represent edge as point and vector. */
+      final float vx = aDest.x - aOrigin.x;
+      final float vy = aDest.y - aOrigin.y;
+      final float vz = aDest.z - aOrigin.z;
+      final float dotvv = vx * vx + vy * vy + vz * vz;
+      if ( dotvv <= 0.0f ) { return 0.0f; }
+
+      /* Find difference between point and edge origin. */
+      final float ux = b.x - aOrigin.x;
+      final float uy = b.y - aOrigin.y;
+      final float uz = b.z - aOrigin.z;
+
+      /* Cross difference with edge vector. */
+      final float ax = uy * vz - uz * vy;
+      final float ay = uz * vx - ux * vz;
+      final float az = ux * vy - uy * vx;
+      final float dotaa = ax * ax + ay * ay + az * az;
+
+      return Utils.sqrtUnchecked(dotaa / dotvv);
    }
 
    /**

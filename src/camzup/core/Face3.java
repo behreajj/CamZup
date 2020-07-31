@@ -144,7 +144,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Utils#sin(float)
     * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
     */
-   public Face3 rotate ( final float radians, final Vec3 axis ) {
+   public Face3 rotateGlobal ( final float radians, final Vec3 axis ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
@@ -168,7 +168,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     */
-   public Face3 rotate ( final Quaternion q ) {
+   public Face3 rotateGlobal ( final Quaternion q ) {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
@@ -191,7 +191,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Utils#sin(float)
     * @see Vec3#rotateX(Vec3, float, Vec3)
     */
-   public Face3 rotateX ( final float radians ) {
+   public Face3 rotateXGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
@@ -217,7 +217,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Utils#sin(float)
     * @see Vec3#rotateY(Vec3, float, Vec3)
     */
-   public Face3 rotateY ( final float radians ) {
+   public Face3 rotateYGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
@@ -243,7 +243,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Utils#sin(float)
     * @see Vec3#rotateZ(Vec3, float, Vec3)
     */
-   public Face3 rotateZ ( final float radians ) {
+   public Face3 rotateZGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
@@ -342,7 +342,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * Scales all coordinates in the face by a scalar; subtracts the face's
     * center from each vertex, scales, then adds the center.
     *
-    * @param scale the scalar
+    * @param scale  the scalar
+    * @param center the center
     *
     * @return this face
     *
@@ -351,19 +352,18 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Vec3#mul(Vec3, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-   public Face3 scaleLocal ( final float scale ) {
+   public Face3 scaleLocal ( final float scale, final Vec3 center ) {
 
-      if ( scale == 0.0f ) { return this; }
-
-      final Vec3 center = new Vec3();
       Face3.centerMean(this, center);
 
-      final int len = this.vertices.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
-         Vec3.sub(c, center, c);
-         Vec3.mul(c, scale, c);
-         Vec3.add(c, center, c);
+      if ( scale != 0.0f ) {
+         final int len = this.vertices.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec3 c = this.vertices[i].coord;
+            Vec3.sub(c, center, c);
+            Vec3.mul(c, scale, c);
+            Vec3.add(c, center, c);
+         }
       }
 
       return this;
@@ -376,7 +376,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * Beware, non-uniform scaling requires that normals be recalculated for
     * correct shading.
     *
-    * @param scale the nonuniform scalar
+    * @param scale  the nonuniform scalar
+    * @param center the center
     *
     * @return this face
     *
@@ -385,19 +386,18 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
-   public Face3 scaleLocal ( final Vec3 scale ) {
+   public Face3 scaleLocal ( final Vec3 scale, final Vec3 center ) {
 
-      if ( Vec3.none(scale) ) { return this; }
-
-      final Vec3 center = new Vec3();
       Face3.centerMean(this, center);
 
-      final int len = this.vertices.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
-         Vec3.sub(c, center, c);
-         Vec3.mul(c, scale, c);
-         Vec3.add(c, center, c);
+      if ( Vec3.all(scale) ) {
+         final int len = this.vertices.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec3 c = this.vertices[i].coord;
+            Vec3.sub(c, center, c);
+            Vec3.mul(c, scale, c);
+            Vec3.add(c, center, c);
+         }
       }
 
       return this;

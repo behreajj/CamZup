@@ -55,17 +55,11 @@ public class Voronoi extends Generative {
       float yHsh = 0.0f;
 
       for ( float j = -1.0f; j < 2.0f; ++j ) {
-         // for ( int ji = -1; ji < 2; ++ji ) {
-         // final float j = ji;
-
          final float sumy = yCell + j;
          final float sumysq = sumy * sumy;
          final int vybit = Float.floatToIntBits(sumy);
 
          for ( float i = -1.0f; i < 2.0f; ++i ) {
-            // for ( int ii = -1; ii < 2; ++ii ) {
-            // final float i = ii;
-
             final float sumx = xCell + i;
             final float sumxsq = sumx * sumx;
 
@@ -166,25 +160,16 @@ public class Voronoi extends Generative {
       float zHsh = 0.0f;
 
       for ( float k = -1.0f; k < 2.0f; ++k ) {
-         // for ( int ki = -1; ki < 2; ++ki ) {
-         // final float k = ki;
-
          final float sumz = zCell + k;
          final float sumzsq = sumz * sumz;
          final int vzbit = Float.floatToIntBits(sumz);
 
          for ( float j = -1.0f; j < 2.0f; ++j ) {
-            // for ( int ji = -1; ji < 2; ++ji ) {
-            // final float j = ji;
-
             final float sumy = yCell + j;
             final float sumysq = sumy * sumy;
             final int vybit = Float.floatToIntBits(sumy);
 
             for ( float i = -1.0f; i < 2.0f; ++i ) {
-               // for ( int ii = -1; ii < 2; ++ii ) {
-               // final float i = ii;
-
                final float sumx = xCell + i;
                final float sumxsq = sumx * sumx;
                final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(sumx);
@@ -297,33 +282,21 @@ public class Voronoi extends Generative {
       float wHsh = 0.0f;
 
       for ( float m = -1.0f; m < 2.0f; ++m ) {
-         // for ( int mi = -1; mi < 2; ++mi ) {
-         // final float m = mi;
-
          final float sumw = wCell + m;
          final float sumwsq = sumw * sumw;
          final int vwbit = Float.floatToIntBits(sumw);
 
          for ( float k = -1.0f; k < 2.0f; ++k ) {
-            // for ( int ki = -1; ki < 2; ++ki ) {
-            // final float k = ki;
-
             final float sumz = zCell + k;
             final float sumzsq = sumz * sumz;
             final int vzbit = Float.floatToIntBits(sumz);
 
             for ( float j = -1.0f; j < 2.0f; ++j ) {
-               // for ( int ji = -1; ji < 2; ++ji ) {
-               // final float j = ji;
-
                final float sumy = yCell + j;
                final float sumysq = sumy * sumy;
                final int vybit = Float.floatToIntBits(sumy);
 
                for ( float i = -1.0f; i < 2.0f; ++i ) {
-                  // for ( int ii = -1; ii < 2; ++ii ) {
-                  // final float i = ii;
-
                   final float sumx = xCell + i;
                   final float sumxsq = sumx * sumx;
                   final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(
