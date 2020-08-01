@@ -548,12 +548,11 @@ public class ZImage extends PImage {
       final int vClr = ( fillClr >> 0x18 & 0xff ) != 0 ? 0x00ffffff & fillClr
          : 0x00ffffff;
 
-      /*
-       * Carriage returns, or line breaks, could come in 3 variations: \r, \n,
-       * or \r\n .
-       */
+      /* Carriage returns, or line breaks, have 3 variants: \r, \n, or \r\n . */
       final String[] linesSplit = ZImage.PATTERN_LN_BR.split(vTxt, 0);
       final int lineCount = linesSplit.length;
+
+      /* 3D array: lines contain words which contain letters. */
       final char[][][] characters = new char[lineCount][][];
       for ( int i = 0; i < lineCount; ++i ) {
          final String[] words = ZImage.PATTERN_SPACE.split(linesSplit[i], 0);
@@ -969,12 +968,13 @@ public class ZImage extends PImage {
    public static PImage tint ( final PImage source, final int tintClr,
       final float fac ) {
 
-      /* Right operand. */
+      /* Right operand. Decompose tint color. */
       final int ya = tintClr >> 0x18 & 0xff;
       final int yr = tintClr >> 0x10 & 0xff;
       final int yg = tintClr >> 0x8 & 0xff;
       final int yb = tintClr & 0xff;
 
+      /* Convert from [0, 255] to [0.0, 1.0] . */
       final float yaf = ya * IUtils.ONE_255;
       final float yrf = yr * IUtils.ONE_255;
       final float ygf = yg * IUtils.ONE_255;
@@ -1006,14 +1006,12 @@ public class ZImage extends PImage {
             for ( int i = 0; i < len; ++i ) {
                final int rgb = pixels[i];
 
-               // final int xr = rgb >> 0x10 & 0xff;
-               // final int xg = rgb >> 0x8 & 0xff;
-               // final int xb = rgb & 0xff;
-
+               /* Left operand. Decompose color. */
                final float xrf = ( rgb >> 0x10 & 0xff ) * IUtils.ONE_255;
                final float xgf = ( rgb >> 0x8 & 0xff ) * IUtils.ONE_255;
                final float xbf = ( rgb & 0xff ) * IUtils.ONE_255;
 
+               /* Lerp from left to right by factor t. */
                final float zrf = u * xrf + t * yrf;
                final float zgf = u * xgf + t * ygf;
                final float zbf = u * xbf + t * ybf;
@@ -1033,33 +1031,17 @@ public class ZImage extends PImage {
             for ( int i = 0; i < len; ++i ) {
                final int rgb = pixels[i];
 
-               // final int xa = rgb >> 0x18 & 0xff;
-               // final int xr = rgb >> 0x10 & 0xff;
-               // final int xg = rgb >> 0x8 & 0xff;
-               // final int xb = rgb & 0xff;
-
+               /* Left operand. Decompose color. */
                final float xaf = ( rgb >> 0x18 & 0xff ) * IUtils.ONE_255;
                final float xrf = ( rgb >> 0x10 & 0xff ) * IUtils.ONE_255;
                final float xgf = ( rgb >> 0x8 & 0xff ) * IUtils.ONE_255;
                final float xbf = ( rgb & 0xff ) * IUtils.ONE_255;
 
+               /* Lerp from left to right by factor t. */
                final float zaf = u * xaf + t * yaf;
                final float zrf = u * xrf + t * yrf;
                final float zgf = u * xgf + t * ygf;
                final float zbf = u * xbf + t * ybf;
-
-               // Simple averaging approach.
-               // final int za = xa + ya >> 1 << 0x18;
-               // final int zr = xr + yr >> 1 << 0x10;
-               // final int zg = xg + yg >> 1 << 0x8;
-               // final int zb = xb + yb >> 1;
-               // pixels[i] = za | zr | zg | zb;
-
-               // final int za = ( int ) ( zaf * 0xff + 0.5f ) << 0x18;
-               // final int zr = ( int ) ( zrf * 0xff + 0.5f ) << 0x10;
-               // final int zg = ( int ) ( zgf * 0xff + 0.5f ) << 0x8;
-               // final int zb = ( int ) ( zbf * 0xff + 0.5f );
-               // pixels[i] = za | zr | zg | zb;
 
                /* @formatter:off */
                pixels[i] = ( int ) ( zaf * 0xff + 0.5f ) << 0x18 |

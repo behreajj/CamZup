@@ -12,7 +12,7 @@ import java.util.TreeSet;
 public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
 
    /**
-    * The array of vertices in a face.
+    * The array of vertices in the face's edge loop.
     */
    public Vert2[] vertices;
 
@@ -20,6 +20,13 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * The default constructor. When used, initializes an empty array.
     */
    public Face2 ( ) { this.vertices = new Vert2[] {}; }
+
+   /**
+    * Creates a face from an array of edges.
+    *
+    * @param edges the edges
+    */
+   public Face2 ( final Edge2... edges ) { this.set(edges); }
 
    /**
     * Creates a face from an array of vertices.
@@ -85,8 +92,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    public Edge2 getEdge ( final int i, final Edge2 target ) {
 
       final int len = this.vertices.length;
-      return target.set(this.vertices[Utils.mod(i, len)], this.vertices[Utils
-         .mod(i + 1, len)]);
+      final int j = Utils.mod(i, len);
+      return target.set(this.vertices[j], this.vertices[ ( j + 1 ) % len]);
    }
 
    /**
@@ -146,24 +153,69 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
-    * Rotates all coordinates in the face by an angle around the z axis. Does
-    * not consider the face's pivot or present orientation.
+    * Rotates all coordinates in the face by an angle around the z axis.
     *
     * @param radians the angle in radians
     *
     * @return this mesh
     *
-    * @see Vec2#rotateZ(Vec2, float, Vec2)
+    * @see Face2#rotateZGlobal(float, float)
     */
    public Face2 rotateZGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
+      return this.rotateZGlobal(cosa, sina);
+   }
+
+   /**
+    * Rotates all coordinates in the face by the sine and cosine of an angle
+    * around the z axis.
+    *
+    * @param cosa cosine of the angle
+    * @param sina sine of the angle
+    *
+    * @return this face
+    *
+    * @see Vec2#rotateZ(Vec2, float, Vec2)
+    */
+   public Face2 rotateZGlobal ( final float cosa, final float sina ) {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
          final Vec2 c = this.vertices[i].coord;
          Vec2.rotateZ(c, cosa, sina, c);
+      }
+
+      return this;
+   }
+
+   /**
+    * Rotates all coordinates in the face by the sine and cosine of an angle
+    * around the z axis. The face's mean center is used as the pivot point.
+    *
+    * @param cosa   cosine of the angle
+    * @param sina   sine of the angle
+    * @param center the center
+    *
+    * @return this face
+    *
+    * @see Face2#centerMean(Face2, Vec2)
+    * @see Vec2#sub(Vec2, Vec2, Vec2)
+    * @see Vec2#rotateZ(Vec2, float, Vec2)
+    * @see Vec2#add(Vec2, Vec2, Vec2)
+    */
+   public Face2 rotateZLocal ( final float cosa, final float sina,
+      final Vec2 center ) {
+
+      Face2.centerMean(this, center);
+
+      final int len = this.vertices.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec2 c = this.vertices[i].coord;
+         Vec2.sub(c, center, c);
+         Vec2.rotateZ(c, cosa, sina, c);
+         Vec2.add(c, center, c);
       }
 
       return this;
@@ -178,29 +230,13 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @return this mesh
     *
-    * @see Face2#centerMean(Face2, Vec2)
-    * @see Utils#cos(float)
-    * @see Utils#sin(float)
-    * @see Vec2#sub(Vec2, Vec2, Vec2)
-    * @see Vec2#rotateZ(Vec2, float, Vec2)
-    * @see Vec2#add(Vec2, Vec2, Vec2)
+    * @see Face2#rotateZLocal(float, float, Vec2)
     */
    public Face2 rotateZLocal ( final float radians, final Vec2 center ) {
 
-      Face2.centerMean(this, center);
-
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
-
-      final int len = this.vertices.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec2 c = this.vertices[i].coord;
-         Vec2.sub(c, center, c);
-         Vec2.rotateZ(c, cosa, sina, c);
-         Vec2.add(c, center, c);
-      }
-
-      return this;
+      return this.rotateZLocal(cosa, sina, center);
    }
 
    /**
@@ -342,7 +378,27 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
-    * Sets this face's vertices to refer to a an array.
+    * Sets this face's vertices to refer to those in an array of edges.
+    * Assumes that each edge's origin matches the preceding edge's
+    * destination, and so only the origins need to be registered.
+    *
+    * @param edges
+    *
+    * @return this face
+    */
+   public Face2 set ( final Edge2... edges ) {
+
+      final int len = edges.length;
+      this.vertices = new Vert2[len];
+      for ( int i = 0; i < len; ++i ) {
+         this.vertices[i] = edges[i].origin;
+      }
+
+      return this;
+   }
+
+   /**
+    * Sets this face's vertices to refer to a an array of vertices.
     *
     * @param vertices the array of vertices
     *

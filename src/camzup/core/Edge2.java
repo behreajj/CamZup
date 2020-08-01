@@ -248,6 +248,7 @@ public class Edge2 implements Comparable < Edge2 > {
          Vec2.mul(this.origin.coord, scalar, this.origin.coord);
          Vec2.mul(this.dest.coord, scalar, this.dest.coord);
       }
+
       return this;
    }
 
@@ -532,7 +533,7 @@ public class Edge2 implements Comparable < Edge2 > {
    /**
     * Finds a point on the edge given a step in the range [0.0, 1.0] . Uses
     * linear interpolation from the origin coordinate to that of the
-    * destination.
+    * destination. To find an edge's midpoint, use the step 0.5 .
     *
     * @param edge   the edge
     * @param step   the step

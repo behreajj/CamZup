@@ -485,10 +485,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float ac = ap0 + cp1;
       final float bna = cp0 - ap0;
 
-      /* @formatter:off */
-      return t3 * t * ( b2 + cp0 + ap1 - ( ac + cp1 + cp1 ) ) +
-         ( t3 + t3 ) * ( ac - b2 ) + ( bna + bna + bna );
-      /* @formatter:on */
+      return t3 * t * ( b2 + cp0 + ap1 - ( ac + cp1 + cp1 ) ) + ( t3 + t3 )
+         * ( ac - b2 ) + ( bna + bna + bna );
    }
 
    /**
@@ -3701,11 +3699,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    protected void colorCalc ( final Color c ) {
 
+      /* Clamp values to the range [0.0, 1.0] . */
       this.calcR = c.r < 0.0f ? 0.0f : c.r > 1.0f ? 1.0f : c.r;
       this.calcG = c.g < 0.0f ? 0.0f : c.g > 1.0f ? 1.0f : c.g;
       this.calcB = c.b < 0.0f ? 0.0f : c.b > 1.0f ? 1.0f : c.b;
       this.calcA = c.a < 0.0f ? 0.0f : c.a > 1.0f ? 1.0f : c.a;
 
+      /* Convert from [0.0, 1.0] to [0, 255] . */
       this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
       this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
       this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
@@ -3738,9 +3738,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    protected void colorCalc ( final float x, final float y, final float z,
       final float w ) {
 
-      this.calcG = Utils.clamp01(y * this.invColorModeY);
-      this.calcB = Utils.clamp01(z * this.invColorModeZ);
+      /* Regardless of RGB or HSV, channels 1 and 2 are linear. */
       this.calcA = Utils.clamp01(w * this.invColorModeA);
+      this.calcB = Utils.clamp01(z * this.invColorModeZ);
+      this.calcG = Utils.clamp01(y * this.invColorModeY);
 
       switch ( this.colorMode ) {
 

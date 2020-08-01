@@ -106,15 +106,16 @@ Here is a brief list of issues with this library and differences which may be un
   - In making this conversion, support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.
   - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles. It no longer responds to [ellipseMode](https://processing.org/reference/ellipseMode_.html); `RADIUS` is the default behavior. When given nonuniform scales, the minimum is taken.
   - [textMode](https://processing.org/reference/textMode_.html) `SHAPE` is not supported. However you can retrieve glyph outlines from a [PFont](https://processing.org/reference/PFont.html) with the `TextShape` class from the `pfriendly` package. (Reminder: the `PFont` needs to be loaded with [createFont](https://processing.org/reference/createFont_.html)).
-  - The [PShape](https://processing.org/reference/PShape.html) interface has numerous problems stemming from both its implementation and its design. This library uses `Curve` and `Mesh` objects instead. [shapeMode](https://processing.org/reference/shapeMode_.html) is not supported.
+  - `Curve`s and `Mesh`es do not distinguish between an outline and contour shape. This means they do not properly handle glyphs for characters like 'o', 'p', and 'q'.
+  - The [PShape](https://processing.org/reference/PShape.html) interface has numerous problems stemming from both its implementation and its design. This library uses `Curve` and `Mesh` objects instead.
+  - [shapeMode](https://processing.org/reference/shapeMode_.html) is not supported.
   
 ### 2D
   - `YupJ2`'s `point` supports `strokeCap(SQUARE)` at the expense of performance.
-  - The `image` function for `PGraphicsJava2D` is ineffective, both in terms of frame rate and appearance. I recommend that an OpenGL renderer be used instead. Alternatively, rescale images to display size and tint them in an external application that specializes in raster image manipulation (e.g., [GIMP](https://www.gimp.org/)). I have made an image function which removes some of the padding around the native renderer's image function in casses where a `PImage` can be converted to an AWT image in `setup`.
+  - The `image` function for `PGraphicsJava2D` is ineffective, both in terms of frame rate and appearance. I recommend that an OpenGL renderer be used instead. Alternatively, rescale images to display size and tint them in an external application that specializes in raster image manipulation (e.g., [GIMP](https://www.gimp.org/)). I have made an image function which removes some of the padding around the native renderer's image function in cases where a `PImage` can be converted to an AWT image in `setup`.
   - As a consequence of how `image` function works above, dynamic `tint`ing is no longer supported in `YupJ2`.
   - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter. A discussion the Processing forum about this issue can be found [here](https://discourse.processing.org/t/text-seems-jittery-when-moving-in-a-circular-pattern/19548).
   - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), `ellipseMode` and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with these renderers. For that reason, `CENTER` is the default alignment.
-  - `Curve`s and `Mesh`es do not distinguish between an outline and contour shape. This means they do not properly handle glyphs for characters like 'o', 'p', and 'q'.
   
 ### 3D
   - A z-up axis changes the relationship between a 2D vector's polar coordinates and a 3D vector's spherical coordinates: a 3D vector's azimuth matches a 2D vector's heading.
@@ -169,7 +170,7 @@ For those reasons, the following functions may be confusing if used in Processin
 |        `a %= b` |   `void a.remAssign(U b)` |    X    | Vec2,3,4 Color                           |
 |        `a in b` | `boolean b.contains(U a)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
 |          `a[i]` |          `U a.get(int i)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|          `a[i]` |       `void a.set(int i)` |    X    |                                   Mat3,4 |
+|          `a[i]` |  `void a.set(int i, U b)` |    X    | Mat3,4                                   |
 
 Operations between all the objects above are subject to ambiguity. Do not, for example, assume commutativity for operators (meaning, do not assume that `a * b` will yield a result equal in value to `b * a`). Even when an operator is not supported by `core`, Kotlin may infer a viable alternative, e.g., `+` may coerce both the left and right operand to a collection, then concatenate the two.
 

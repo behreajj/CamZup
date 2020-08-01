@@ -681,9 +681,11 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       /* @formatter:on */
 
       /* Convert from homogeneous coordinate to point by dividing by w. */
-      if ( bw == 1.0f ) { return target.set(bx, by); }
-      final float wInv = 1.0f / bw;
-      return target.set(bx * wInv, by * wInv);
+      if ( bw != 1.0f ) {
+         final float wInv = 1.0f / bw;
+         return target.set(bx * wInv, by * wInv);
+      }
+      return target.set(bx, by);
    }
 
    /**

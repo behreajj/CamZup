@@ -12,7 +12,7 @@ import java.util.TreeSet;
 public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
    /**
-    * The array of vertices in a face.
+    * The array of vertices in the face's edge loop.
     */
    public Vert3[] vertices;
 
@@ -20,6 +20,13 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * The default constructor. When used, initializes an empty array.
     */
    public Face3 ( ) { this.vertices = new Vert3[] {}; }
+
+   /**
+    * Creates a face from an array of edges.
+    *
+    * @param edges the edges
+    */
+   public Face3 ( final Edge3... edges ) { this.set(edges); }
 
    /**
     * Creates a face from an array of vertices.
@@ -86,8 +93,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    public Edge3 getEdge ( final int i, final Edge3 target ) {
 
       final int len = this.vertices.length;
-      return target.set(this.vertices[Utils.mod(i, len)], this.vertices[Utils
-         .mod(i + 1, len)]);
+      final int j = Utils.mod(i, len);
+      return target.set(this.vertices[j], this.vertices[ ( j + 1 ) % len]);
    }
 
    /**
@@ -132,27 +139,35 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    public int length ( ) { return this.vertices.length; }
 
    /**
-    * Rotates all coordinates in the mesh by an angle around an arbitrary
-    * axis.
+    * Rotates this face by a quaternion.
     *
-    * @param radians the angle in radians
-    * @param axis    the axis of rotation
+    * @param q the quaternion
     *
-    * @return this mesh
-    *
-    * @see Utils#cos(float)
-    * @see Utils#sin(float)
-    * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
+    * @return this face
     */
-   public Face3 rotateGlobal ( final float radians, final Vec3 axis ) {
+   public Face3 rotate ( final Quaternion q ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      return this.rotateGlobal(q);
+   }
+
+   /**
+    * Rotates all coordinates in the mesh by the sine and cosine of an angle
+    * around an arbitrary axis.
+    *
+    * @param cosa cosine of the angle
+    * @param sina sine of the angle
+    * @param axis the axis
+    *
+    * @return this face
+    *
+    * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
+    */
+   public Face3 rotateGlobal ( final float cosa, final float sina,
+      final Vec3 axis ) {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vert3 vt3 = this.vertices[i];
-         final Vec3 c = vt3.coord;
+         final Vec3 c = this.vertices[i].coord;
          Vec3.rotate(c, cosa, sina, axis, c);
       }
 
@@ -160,11 +175,29 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
+    * Rotates all coordinates in the mesh by an angle around an arbitrary
+    * axis.
+    *
+    * @param radians the angle in radians
+    * @param axis    the axis of rotation
+    *
+    * @return this face
+    *
+    * @see Face3#rotateGlobal(float, float, Vec3)
+    */
+   public Face3 rotateGlobal ( final float radians, final Vec3 axis ) {
+
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
+      return this.rotateGlobal(cosa, sina, axis);
+   }
+
+   /**
     * Rotates all coordinates in the face by a quaternion.
     *
     * @param q the quaternion
     *
-    * @return the mesh
+    * @return this face
     *
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     */
@@ -172,9 +205,83 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vert3 vt3 = this.vertices[i];
-         final Vec3 c = vt3.coord;
+         final Vec3 c = this.vertices[i].coord;
          Quaternion.mulVector(q, c, c);
+      }
+
+      return this;
+   }
+
+   /**
+    * Rotates all coordinates in the mesh by the sine and cosine of an angle
+    * around an arbitrary axis. The face's mean center acts as a pivot point.
+    *
+    * @param cosa   cosine of the angle
+    * @param sina   sine of the angle
+    * @param axis   the axis
+    * @param center the center
+    *
+    * @return this face
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    */
+   public Face3 rotateLocal ( final float cosa, final float sina,
+      final Vec3 axis, final Vec3 center ) {
+
+      Face3.centerMean(this, center);
+
+      final int len = this.vertices.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec3 c = this.vertices[i].coord;
+         Vec3.sub(c, center, c);
+         Vec3.rotate(c, cosa, sina, axis, c);
+         Vec3.add(c, center, c);
+      }
+
+      return this;
+   }
+
+   /**
+    * Rotates all coordinates in the mesh by an angle around an arbitrary
+    * axis. The face's mean center acts as a pivot point.
+    *
+    * @param radians the angle
+    * @param axis    the axis
+    * @param center  the center
+    *
+    * @return this face
+    *
+    * @see Face3#rotateLocal(float, float, Vec3, Vec3)
+    */
+   public Face3 rotateLocal ( final float radians, final Vec3 axis,
+      final Vec3 center ) {
+
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
+      return this.rotateLocal(cosa, sina, axis, center);
+   }
+
+   /**
+    * Rotates all coordinates in the face by a quaternion. The face's mean
+    * center acts as a pivot point.
+    *
+    * @param q      the quaternion
+    * @param center the center
+    *
+    * @return this face
+    */
+   public Face3 rotateLocal ( final Quaternion q, final Vec3 center ) {
+
+      Face3.centerMean(this, center);
+
+      final int len = this.vertices.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec3 c = this.vertices[i].coord;
+         Vec3.sub(c, center, c);
+         Quaternion.mulVector(q, c, c);
+         Vec3.add(c, center, c);
       }
 
       return this;
@@ -185,21 +292,33 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @param radians the angle in radians
     *
-    * @return this mesh
+    * @return this face
     *
-    * @see Utils#cos(float)
-    * @see Utils#sin(float)
-    * @see Vec3#rotateX(Vec3, float, Vec3)
+    * @see Face3#rotateXGlobal(float, float)
     */
    public Face3 rotateXGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
+      return this.rotateXGlobal(cosa, sina);
+   }
+
+   /**
+    * Rotates all coordinates in the face by the sine and cosine of an angle
+    * around the x axis.
+    *
+    * @param cosa cosine of the angle
+    * @param sina sine of the angle
+    *
+    * @return this face
+    *
+    * @see Vec3#rotateX(Vec3, float, Vec3)
+    */
+   public Face3 rotateXGlobal ( final float cosa, final float sina ) {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vert3 vt3 = this.vertices[i];
-         final Vec3 c = vt3.coord;
+         final Vec3 c = this.vertices[i].coord;
          Vec3.rotateX(c, cosa, sina, c);
       }
 
@@ -207,25 +326,85 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
+    * Rotates all coordinates in the face by the sine and cosine of an angle
+    * around the x axis. The face's mean center acts as a pivot point.
+    *
+    * @param cosa   cosine of the angle
+    * @param sina   sine of the angle
+    * @param center the center
+    *
+    * @return this face
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Vec3#rotateX(Vec3, float, float, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    */
+   public Face3 rotateXLocal ( final float cosa, final float sina,
+      final Vec3 center ) {
+
+      Face3.centerMean(this, center);
+
+      final int len = this.vertices.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec3 c = this.vertices[i].coord;
+         Vec3.sub(c, center, c);
+         Vec3.rotateX(c, cosa, sina, c);
+         Vec3.add(c, center, c);
+      }
+
+      return this;
+   }
+
+   /**
+    * Rotates all coordinates in the mesh by an angle around the x axis. The
+    * face's mean center acts as a pivot point.
+    *
+    * @param radians the angle
+    * @param center  the center
+    *
+    * @return this face
+    *
+    * @see Face3#rotateXLocal(float, float, Vec3)
+    */
+   public Face3 rotateXLocal ( final float radians, final Vec3 center ) {
+
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
+      return this.rotateXLocal(cosa, sina, center);
+   }
+
+   /**
     * Rotates all coordinates in the face by an angle around the y axis.
     *
     * @param radians the angle in radians
     *
-    * @return this mesh
+    * @return this face
     *
-    * @see Utils#cos(float)
-    * @see Utils#sin(float)
-    * @see Vec3#rotateY(Vec3, float, Vec3)
+    * @see Face3#rotateYGlobal(float, float)
     */
    public Face3 rotateYGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
+      return this.rotateYGlobal(cosa, sina);
+   }
+
+   /**
+    * Rotates all coordinates in the face by the sine and cosine of an angle
+    * around the y axis.
+    *
+    * @param cosa cosine of the angle
+    * @param sina sine of the angle
+    *
+    * @return this face
+    *
+    * @see Vec3#rotateY(Vec3, float, Vec3)
+    */
+   public Face3 rotateYGlobal ( final float cosa, final float sina ) {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vert3 vt3 = this.vertices[i];
-         final Vec3 c = vt3.coord;
+         final Vec3 c = this.vertices[i].coord;
          Vec3.rotateY(c, cosa, sina, c);
       }
 
@@ -233,29 +412,137 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
+    * Rotates all coordinates in the face by the sine and cosine of an angle
+    * around the y axis. The face's mean center acts as a pivot point.
+    *
+    * @param cosa   cosine of the angle
+    * @param sina   sine of the angle
+    * @param center the center
+    *
+    * @return this face
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Vec3#rotateY(Vec3, float, float, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    */
+   public Face3 rotateYLocal ( final float cosa, final float sina,
+      final Vec3 center ) {
+
+      Face3.centerMean(this, center);
+
+      final int len = this.vertices.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec3 c = this.vertices[i].coord;
+         Vec3.sub(c, center, c);
+         Vec3.rotateY(c, cosa, sina, c);
+         Vec3.add(c, center, c);
+      }
+
+      return this;
+   }
+
+   /**
+    * Rotates all coordinates in the mesh by an angle around the y axis. The
+    * face's mean center acts as a pivot point.
+    *
+    * @param radians the angle
+    * @param center  the center
+    *
+    * @return this face
+    *
+    * @see Face3#rotateYLocal(float, float, Vec3)
+    */
+   public Face3 rotateYLocal ( final float radians, final Vec3 center ) {
+
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
+      return this.rotateYLocal(cosa, sina, center);
+   }
+
+   /**
     * Rotates all coordinates in the face by an angle around the z axis.
     *
     * @param radians the angle in radians
     *
-    * @return this mesh
+    * @return this face
     *
-    * @see Utils#cos(float)
-    * @see Utils#sin(float)
-    * @see Vec3#rotateZ(Vec3, float, Vec3)
+    * @see Face3#rotateZGlobal(float, float)
     */
    public Face3 rotateZGlobal ( final float radians ) {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
+      return this.rotateZGlobal(cosa, sina);
+   }
+
+   /**
+    * Rotates all coordinates in the face by the sine and cosine of an angle
+    * around the z axis.
+    *
+    * @param cosa cosine of the angle
+    * @param sina sine of the angle
+    *
+    * @return this face
+    *
+    * @see Vec3#rotateZ(Vec3, float, Vec3)
+    */
+   public Face3 rotateZGlobal ( final float cosa, final float sina ) {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vert3 vt3 = this.vertices[i];
-         final Vec3 c = vt3.coord;
+         final Vec3 c = this.vertices[i].coord;
          Vec3.rotateZ(c, cosa, sina, c);
       }
 
       return this;
+   }
+
+   /**
+    * Rotates all coordinates in the face by the sine and cosine of an angle
+    * around the z axis. The face's mean center acts as a pivot point.
+    *
+    * @param cosa   cosine of the angle
+    * @param sina   sine of the angle
+    * @param center the center
+    *
+    * @return this face
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Vec3#rotateZ(Vec3, float, float, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    */
+   public Face3 rotateZLocal ( final float cosa, final float sina,
+      final Vec3 center ) {
+
+      Face3.centerMean(this, center);
+
+      final int len = this.vertices.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec3 c = this.vertices[i].coord;
+         Vec3.sub(c, center, c);
+         Vec3.rotateZ(c, cosa, sina, c);
+         Vec3.add(c, center, c);
+      }
+
+      return this;
+   }
+
+   /**
+    * Rotates all coordinates in the mesh by an angle around the z axis. The
+    * face's mean center acts as a pivot point.
+    *
+    * @param radians the angle
+    * @param center  the center
+    *
+    * @return this face
+    *
+    * @see Face3#rotateZLocal(float, float, Vec3)
+    */
+   public Face3 rotateZLocal ( final float radians, final Vec3 center ) {
+
+      final float cosa = Utils.cos(radians);
+      final float sina = Utils.sin(radians);
+      return this.rotateZLocal(cosa, sina, center);
    }
 
    /**
@@ -404,7 +691,27 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Sets this face's vertices to refer to a an array.
+    * Sets this face's vertices to refer to those in an array of edges.
+    * Assumes that each edge's origin matches the preceding edge's
+    * destination, and so only the origins need to be registered.
+    *
+    * @param edges
+    *
+    * @return this face
+    */
+   public Face3 set ( final Edge3... edges ) {
+
+      final int len = edges.length;
+      this.vertices = new Vert3[len];
+      for ( int i = 0; i < len; ++i ) {
+         this.vertices[i] = edges[i].origin;
+      }
+
+      return this;
+   }
+
+   /**
+    * Sets this face's vertices to refer to a an array of vertices.
     *
     * @param vertices the array of vertices
     *
@@ -697,7 +1004,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @return the transform
     */
-   @Experimental
    public static Ray3 orientation ( final Face3 face, final Ray3 target ) {
 
       Face3.centerMean(face, target.origin);

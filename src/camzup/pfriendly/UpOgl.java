@@ -407,10 +407,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float ac = ap0 + cp1;
       final float bna = cp0 - ap0;
 
-      /* @formatter:off */
-      return t3 * t * ( b2 + cp0 + ap1 - ( ac + cp1 + cp1 ) ) +
-           ( t3 + t3 ) * ( ac - b2 ) + ( bna + bna + bna );
-      /* @formatter:on */
+      return t3 * t * ( b2 + cp0 + ap1 - ( ac + cp1 + cp1 ) ) + ( t3 + t3 )
+         * ( ac - b2 ) + ( bna + bna + bna );
    }
 
    /**
@@ -441,11 +439,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void colorCalc ( final Color c ) {
 
+      /* Clamp values to the range [0.0, 1.0] . */
       this.calcR = c.r < 0.0f ? 0.0f : c.r > 1.0f ? 1.0f : c.r;
       this.calcG = c.g < 0.0f ? 0.0f : c.g > 1.0f ? 1.0f : c.g;
       this.calcB = c.b < 0.0f ? 0.0f : c.b > 1.0f ? 1.0f : c.b;
       this.calcA = c.a < 0.0f ? 0.0f : c.a > 1.0f ? 1.0f : c.a;
 
+      /* Convert from [0.0, 1.0] to [0, 255] . */
       this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
       this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
       this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
@@ -556,6 +556,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void colorPreCalc ( final float x, final float y, final float z,
       final float a ) {
 
+      /* Regardless of RGB or HSV, channels 1 and 2 are linear. */
       this.calcA = Utils.clamp01(a * this.invColorModeA);
       this.calcB = Utils.clamp01(z * this.invColorModeZ);
       this.calcG = Utils.clamp01(y * this.invColorModeY);
@@ -3300,7 +3301,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float yDir, final float zDir ) {
 
       /*
-       * Applying normal matrix to the light direction vector, which is the
+       * Apply normal matrix to the light direction vector, which is the
        * transpose of the inverse of the model view.
        */
 
@@ -3510,10 +3511,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       /* @formatter:on */
 
       /* Convert from homogeneous coordinate to point by dividing by w. */
-      if ( bw == 1.0f ) { return target.set(bx, by, bz); }
-
-      final float wInv = 1.0f / bw;
-      return target.set(bx * wInv, by * wInv, bz * wInv);
+      if ( bw != 1.0f ) {
+         final float wInv = 1.0f / bw;
+         return target.set(bx * wInv, by * wInv, bz * wInv);
+      }
+      return target.set(bx, by, bz);
    }
 
    /**
@@ -3842,7 +3844,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final float wInv = 1.0f / bw;
          return target.set(bx * wInv, by * wInv, bz * wInv);
       }
-
       return target.set(bx, by, bz);
    }
 

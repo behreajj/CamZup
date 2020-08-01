@@ -129,6 +129,25 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    }
 
    /**
+    * Transforms all meshes in this mesh entity by its transform, then resets
+    * the entity's transform to the identity.
+    *
+    * @return this mesh entity
+    *
+    * @see Mesh3#transform(Transform3)
+    * @see Transform3#identity(Transform3)
+    */
+   public MeshEntity3 consumeTransform ( ) {
+
+      final Iterator < Mesh3 > itr = this.meshes.iterator();
+      while ( itr.hasNext() ) {
+         itr.next().transform(this.transform);
+      }
+      Transform3.identity(this.transform);
+      return this;
+   }
+
+   /**
     * Gets a mesh from this mesh entity.
     *
     * @param i the index

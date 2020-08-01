@@ -106,6 +106,25 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    }
 
    /**
+    * Transforms all curves in this curve entity by its transform, then resets
+    * the entity's transform to the identity.
+    *
+    * @return this curve entity
+    *
+    * @see Curve3#transform(Transform3)
+    * @see Transform3#identity(Transform3)
+    */
+   public CurveEntity3 consumeTransform ( ) {
+
+      final Iterator < Curve3 > itr = this.curves.iterator();
+      while ( itr.hasNext() ) {
+         itr.next().transform(this.transform);
+      }
+      Transform3.identity(this.transform);
+      return this;
+   }
+
+   /**
     * Evaluates whether a curve is contained by this curve entity.
     *
     * @param c the curve
@@ -353,9 +372,9 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
 
       int curveIndex = 0;
       final int curveLast = this.curves.size() - 1;
-      final Iterator < Curve3 > curveItr = this.curves.iterator();
-      while ( curveItr.hasNext() ) {
-         pyCd.append(curveItr.next().toBlenderCode(uRes, tiltStart, tiltEnd));
+      final Iterator < Curve3 > itr = this.curves.iterator();
+      while ( itr.hasNext() ) {
+         pyCd.append(itr.next().toBlenderCode(uRes, tiltStart, tiltEnd));
          if ( curveIndex < curveLast ) { pyCd.append(',').append(' '); }
          ++curveIndex;
       }
@@ -394,8 +413,8 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
       pyCd.append("        knot.weight_softbody = knot_raw[\"weight\"]\n");
       pyCd.append("        knot.radius = knot_raw[\"radius\"]\n");
       pyCd.append("        knot.tilt = knot_raw[\"tilt\"]\n");
-      pyCd.append("        knt_index = knt_index + 1\n");
-      pyCd.append("    crv_index = crv_index + 1\n\n");
+      pyCd.append("        knt_index += 1\n");
+      pyCd.append("    crv_index += 1\n\n");
       pyCd.append("crv_obj = D.objects.new(crv_data.name, crv_data)\n");
       pyCd.append("tr = curve_entity[\"transform\"]\n");
       pyCd.append("crv_obj.location = tr[\"location\"]\n");

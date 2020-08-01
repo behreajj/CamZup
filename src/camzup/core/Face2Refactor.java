@@ -24,44 +24,6 @@ public class Face2Refactor implements Comparable < Face2Refactor > {
 
    public int length ( ) { return this.edges.length; }
 
-   public Face2Refactor rotateZ ( final float radians ) {
-
-      return this.rotateZGlobal(radians);
-   }
-
-   public Face2Refactor rotateZGlobal ( final float radians ) {
-
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
-
-      final int len = this.edges.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec2 c = this.edges[i].origin.coord;
-         Vec2.rotateZ(c, cosa, sina, c);
-      }
-
-      return this;
-   }
-
-   public Face2Refactor rotateZLocal ( final float radians,
-      final Vec2 center ) {
-
-      Face2Refactor.centerMean(this, center);
-
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
-
-      final int len = this.edges.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec2 c = this.edges[i].origin.coord;
-         Vec2.sub(c, center, c);
-         Vec2.rotateZ(c, cosa, sina, c);
-         Vec2.add(c, center, c);
-      }
-
-      return this;
-   }
-
    public Face2Refactor scale ( final float scale ) {
 
       return this.scaleGlobal(scale);

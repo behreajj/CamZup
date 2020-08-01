@@ -96,8 +96,20 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Rotates the coordinates and normals of this edge by the cosine and sine
-    * of an angle and an axis. The texture coordinates are unaffected.
+    * Rotates this edge by a quaternion.
+    *
+    * @param q the quaternion
+    *
+    * @return this edge
+    */
+   public Edge3 rotate ( final Quaternion q ) {
+
+      return this.rotateGlobal(q);
+   }
+
+   /**
+    * Rotates the coordinates of this edge by the cosine and sine of an angle
+    * and an axis. The texture coordinates are unaffected.
     *
     * @param cosa cosine of the angle
     * @param sina sine of the angle
@@ -117,8 +129,8 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Rotates the coordinates and normals of this edge by an angle and axis.
-    * The texture coordinates are unaffected.
+    * Rotates the coordinates of this edge by an angle and axis. The texture
+    * coordinates are unaffected.
     *
     * @param radians angle
     * @param axis    axis
@@ -131,7 +143,6 @@ public class Edge3 implements Comparable < Edge3 > {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
-
       return this.rotateGlobal(cosa, sina, axis);
    }
 
@@ -154,9 +165,9 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Rotates the coordinates and normals of this edge by the sine and cosine
-    * of an angle and an axis. The edge's center (midpoint) acts as a pivot.
-    * The texture coordinates are unaffected.
+    * Rotates the coordinates of this edge by the sine and cosine of an angle
+    * and an axis. The edge's center (midpoint) acts as a pivot. The texture
+    * coordinates are unaffected.
     *
     * @param cosa   cosine of the angle
     * @param sina   sine of the angle
@@ -190,9 +201,9 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Rotates the coordinates and normals of this edge by an angle and axis.
-    * The edge's center (midpoint) acts as a pivot. The texture coordinates
-    * are unaffected.
+    * Rotates the coordinates of this edge by an angle and axis. The edge's
+    * center (midpoint) acts as a pivot. The texture coordinates are
+    * unaffected.
     *
     * @param radians angle
     * @param axis    axis
@@ -257,7 +268,6 @@ public class Edge3 implements Comparable < Edge3 > {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
-
       return this.rotateXGlobal(cosa, sina);
    }
 
@@ -331,7 +341,6 @@ public class Edge3 implements Comparable < Edge3 > {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
-
       return this.rotateXLocal(cosa, sina, center);
    }
 
@@ -349,7 +358,6 @@ public class Edge3 implements Comparable < Edge3 > {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
-
       return this.rotateYGlobal(cosa, sina);
    }
 
@@ -423,7 +431,6 @@ public class Edge3 implements Comparable < Edge3 > {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
-
       return this.rotateYLocal(cosa, sina, center);
    }
 
@@ -441,7 +448,6 @@ public class Edge3 implements Comparable < Edge3 > {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
-
       return this.rotateZGlobal(cosa, sina);
    }
 
@@ -515,13 +521,12 @@ public class Edge3 implements Comparable < Edge3 > {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
-
       return this.rotateZLocal(cosa, sina, center);
    }
 
    /**
-    * Scales the coordinates of this edge. The texture coordinates and normals
-    * are unaffected.
+    * Scales the coordinates of this edge. The texture coordinates are
+    * unaffected.
     *
     * @param scalar uniform scalar
     *
@@ -535,8 +540,8 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Scales the coordinates of this edge. The texture coordinates and normals
-    * are unaffected.
+    * Scales the coordinates of this edge. The texture coordinates are
+    * unaffected.
     *
     * @param scalar non uniform scalar
     *
@@ -566,6 +571,7 @@ public class Edge3 implements Comparable < Edge3 > {
          Vec3.mul(this.origin.coord, scalar, this.origin.coord);
          Vec3.mul(this.dest.coord, scalar, this.dest.coord);
       }
+
       return this;
    }
 
@@ -872,7 +878,7 @@ public class Edge3 implements Comparable < Edge3 > {
    /**
     * Finds a point on the edge given a step in the range [0.0, 1.0] . Uses
     * linear interpolation from the origin coordinate to that of the
-    * destination.
+    * destination. To find an edge's midpoint, use the step 0.5 .
     *
     * @param edge   the edge
     * @param step   the step
