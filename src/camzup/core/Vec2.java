@@ -2760,12 +2760,11 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
    /**
     * Resizes an array of vectors to a requested length. If the new length is
     * greater than the current length, the new elements are filled with new
-    * vectors. If the new length equals the old, the input array is
-    * returned.<br>
+    * vectors.<br>
     * <br>
     * This does <em>not</em> use
-    * {@link System#arraycopy(Object, int, Object, int, int)} because it
-    * iterates through the entire array checking for null entries.
+    * {@link System#arraycopy(Object, int, Object, int, int)} because this
+    * function iterates through the entire array checking for null entries.
     *
     * @param arr the array
     * @param sz  the new size

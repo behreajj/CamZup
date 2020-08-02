@@ -429,14 +429,12 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
             pyCd.append("    for face in bm.faces:\n");
             pyCd.append("        bmfcidx = face.index\n");
             pyCd.append("        faceuvidcs = uv_idcs[bmfcidx]\n");
-            pyCd.append("        curr_loop = 0\n");
-            pyCd.append("        for loop in face.loops:\n");
+            pyCd.append("        for i, loop in enumerate(face.loops):\n");
             pyCd.append("            vert = loop.vert\n");
             pyCd.append("            bmvt = loop[uv_layer]\n");
-            pyCd.append("            uv_idx = faceuvidcs[curr_loop]\n");
+            pyCd.append("            uv_idx = faceuvidcs[i]\n");
             pyCd.append("            uv_co = uv_dat[uv_idx]\n");
             pyCd.append("            bmvt.uv = uv_co\n");
-            pyCd.append("            curr_loop += 1\n");
          }
 
          if ( calcTangents ) {
@@ -478,14 +476,11 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
          pyCd.append("    vert_group = mesh_obj.vertex_groups.new(name=\"");
          pyCd.append(vertGroupName);
          pyCd.append("\")\n");
-         pyCd.append("    fc_len = len(fc_idcs)\n");
-         pyCd.append("    fc_itr = range(0, fc_len)\n");
-         pyCd.append("    to_weight = 1.0\n");
-         pyCd.append("    if fc_len > 1:\n");
-         pyCd.append("        to_weight = 1.0 / (fc_len - 1.0)\n");
-         pyCd.append("    for i in fc_itr:\n");
-         pyCd.append("        fc_idx = fc_idcs[i]\n");
-         pyCd.append("        weight = i * to_weight\n");
+         pyCd.append("    fc_ln = len(fc_idcs)\n");
+         pyCd.append("    to_wgt = 1.0 / (fc_ln - 1.0)");
+         pyCd.append(" if fc_ln > 1 else 1.0\n");
+         pyCd.append("    for i, fc_idx in enumerate(fc_idcs):\n");
+         pyCd.append("        weight = i * to_wgt\n");
          pyCd.append("        vert_group.add(fc_idx, weight, \"REPLACE\")\n");
       }
 
