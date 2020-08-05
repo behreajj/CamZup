@@ -127,7 +127,7 @@ public class ImageEntity2 extends MeshEntity2 {
 
    public ImageEntity2 setTint ( final Color clr ) {
 
-      this.material.tint.set(clr);
+      this.material.setTint(clr);
       return this;
    }
 
@@ -141,7 +141,7 @@ public class ImageEntity2 extends MeshEntity2 {
 
    public ImageEntity2 setTint ( final int clr ) {
 
-      Color.fromHex(clr, this.material.tint);
+      this.material.setTint(clr);
       return this;
    }
 

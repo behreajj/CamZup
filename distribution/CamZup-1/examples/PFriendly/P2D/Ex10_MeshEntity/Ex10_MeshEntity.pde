@@ -4,11 +4,9 @@ import camzup.pfriendly.*;
 YupJ2 rndr;
 
 MaterialSolid material = new MaterialSolid()
-  .setStroke(true)
-  .setStroke(#817d6c)
+  .setStroke(false)
   .setFill(true)
-  .setFill(#202020)
-  .setStrokeWeight(1.0);
+  .setFill(#202020);
 
 Transform2 transform = new Transform2()
   .moveTo(new Vec2(-100.0, -50.0))
@@ -29,7 +27,7 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  entity.rotateZ(0.01);
+  entity.rotateZ(0.02);
   entity.transform.moveByLocal(new Vec2(0.005, 0.0));
   rndr.background();
   rndr.origin();

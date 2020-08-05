@@ -281,7 +281,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.arcMode = ArcMode.PIE;
       }
 
-      /* This nonuniform scaling distorts the angle. */
       this.transform.moveTo(this.tr2Loc.set(x, y));
       this.transform.rotateTo(0.0f);
       this.transform.scaleTo(this.tr2Scale.set(w, h));
@@ -2988,11 +2987,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          for ( int j = 0; j < flen1; ++j ) {
 
             final int[] data = f[j];
-            final int vIndex = data[0];
-            final int vtIndex = data[1];
-
-            Transform2.mulPoint(tr, vs[vIndex], v);
-            Transform2.mulTexCoord(uvtr, vts[vtIndex], vt);
+            Transform2.mulPoint(tr, vs[data[0]], v);
+            Transform2.mulTexCoord(uvtr, vts[data[1]], vt);
 
             this.vertexImpl(v.x, v.y, 0.0f, vt.x, vt.y);
          }
@@ -3065,13 +3061,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          for ( int j = 0; j < flen1; ++j ) {
 
             final int[] data = f[j];
-            final int vIndex = data[0];
-            final int vtIndex = data[1];
-            final int vnIndex = data[2];
-
-            Transform3.mulPoint(tr, vs[vIndex], v);
-            Transform2.mulTexCoord(uvtr, vts[vtIndex], vt);
-            Transform3.mulDir(tr, vns[vnIndex], vn);
+            Transform3.mulPoint(tr, vs[data[0]], v);
+            Transform2.mulTexCoord(uvtr, vts[data[1]], vt);
+            Transform3.mulDir(tr, vns[data[2]], vn);
 
             this.normal(vn.x, vn.y, vn.z);
             this.vertexImpl(v.x, v.y, v.z, vt.x, vt.y);
@@ -3106,11 +3098,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          for ( int j = 0; j < flen1; ++j ) {
 
             final int[] data = f[j];
-            final int vIndex = data[0];
-            final int vnIndex = data[2];
-
-            Transform3.mulPoint(tr, vs[vIndex], v);
-            Transform3.mulDir(tr, vns[vnIndex], vn);
+            Transform3.mulPoint(tr, vs[data[0]], v);
+            Transform3.mulDir(tr, vns[data[2]], vn);
 
             this.normal(vn.x, vn.y, vn.z);
             this.vertexImpl(v.x, v.y, v.z, this.textureU, this.textureV);

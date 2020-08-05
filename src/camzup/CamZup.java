@@ -3,9 +3,8 @@ package camzup;
 import camzup.core.IUtils;
 import camzup.core.Mesh;
 import camzup.core.Mesh.PolyType;
-import camzup.core.Mesh2;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity2;
+import camzup.core.MeshEntity3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -53,36 +52,7 @@ public class CamZup {
     */
    public final static String VERSION = "##library.prettyVersion##";
 
-   /**
-    * The main function.
-    *
-    * @param args the string of arguments
-    */
-   public static void main ( final String[] args ) {
-
-      // final Mesh3 m = new Mesh3();
-      // CamZup.capsule(32, 16, 1, 1.0f, 0.5f, Mesh.PolyType.QUAD, m);
-      // final MeshEntity3 me = new MeshEntity3();
-      // me.append(m);
-      // final String pyCd = me.toBlenderCode();
-      // System.out.println(pyCd);
-
-      final Mesh2 m = new Mesh2();
-      Mesh2.arc(IUtils.THIRD_PI, m);
-      final MeshEntity2 me = new MeshEntity2();
-      me.append(m);
-      final String pyCd = me.toBlenderCode();
-      System.out.println(pyCd);
-   }
-
-   /**
-    * Gets the version of the library.
-    *
-    * @return the version
-    */
-   public static String version ( ) { return CamZup.VERSION; }
-
-   protected static Mesh3 capsule ( final int longitudes, final int latitudes,
+   public static Mesh3 capsule ( final int longitudes, final int latitudes,
       final int rings, final float depth, final float radius,
       final Mesh.PolyType poly, final Mesh3 target ) {
 
@@ -427,38 +397,78 @@ public class CamZup {
       }
 
       /* Calculate texture coordinates. */
-      int idx_vt_north_cap = 0;
-      int idx_vt_north = idx_vt_north_cap + v_lons;
-      int idx_vt_n_equator = idx_vt_north + ( ( v_lons + 1 ) * half_lat_n2 );
-      int idx_vt_cyl = idx_vt_n_equator + ( v_lons + 1 );
+      final int idx_vt_north_cap = 0;
+      final int idx_vt_north = idx_vt_north_cap + v_lons;
+      final int idx_vt_n_equator = idx_vt_north + ( v_lons + 1 ) * half_lat_n2;
+      final int idx_vt_cyl = idx_vt_n_equator + v_lons + 1;
       int idx_vt_s_equator = idx_vt_cyl;
-      if ( calc_mid ) idx_vt_s_equator += ( v_lons + 1 ) * v_sections;
-      int idx_vt_south = idx_vt_s_equator + ( v_lons + 1 );
-      int idx_vt_south_cap = idx_vt_south + ( ( v_lons + 1 ) * half_lat_n2 );
-      int idx_vt_south_pole = idx_vt_south_cap + v_lons;
+      if ( calc_mid ) { idx_vt_s_equator += ( v_lons + 1 ) * v_sections; }
+      final int idx_vt_south = idx_vt_s_equator + v_lons + 1;
+      final int idx_vt_south_cap = idx_vt_south + ( v_lons + 1 ) * half_lat_n2;
+      final int idx_vt_south_pole = idx_vt_south_cap + v_lons;
 
       /* Resize texture coordinates array. */
-      int len_vts = idx_vt_south_pole + 1;
+      final int len_vts = idx_vt_south_pole + 1;
       final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
          len_vts);
 
       /* Horizontal. */
-      int v_lons_p1 = v_lons + 1;
-      float to_tex_s = 1.0f / v_lons;
-      float[] tc_s = new float[v_lons_p1];
+      final int v_lons_p1 = v_lons + 1;
+      final float to_tex_s = 1.0f / v_lons;
+      final float[] tc_s = new float[v_lons_p1];
       for ( int j = 0; j < v_lons_p1; ++j ) {
          tc_s[j] = j * to_tex_s;
       }
 
       /* Vertical. */
-      int v_lats_p1 = v_lats + 1;
-      float to_tex_t = 1.0f / ( v_lats + 1 );
-      float[] tc_t = new float[v_lats_p1];
+      final int v_lats_p1 = v_lats + 1;
+      final float to_tex_t = 1.0f / ( v_lats + 1 );
+      final float[] tc_t = new float[v_lats_p1];
       for ( int i = 0; i < v_lats_p1; ++i ) {
          tc_t[i] = ( 1.0f + i ) * to_tex_t;
       }
 
+      /* Calculate polar uvs. */
+      for ( int j = 0; j < v_lons; ++j ) {
+         final float s_tex = ( j + 0.5f ) * to_tex_s;
+         vts[j].set(s_tex, 0.0f);
+         vts[idx_vt_south_cap + j].set(s_tex, 1.0f);
+      }
+
+      /* Calculate equatorial uvs. */
+      for ( int j = 0; j < v_lons_p1; ++j ) {
+      }
+
       return target;
    }
+
+   /**
+    * The main function.
+    *
+    * @param args the string of arguments
+    */
+   public static void main ( final String[] args ) {
+
+      final Mesh3 m = new Mesh3();
+      CamZup.capsule(32, 16, 1, 1.0f, 0.5f, Mesh.PolyType.QUAD, m);
+      final MeshEntity3 me = new MeshEntity3();
+      me.append(m);
+      final String pyCd = me.toBlenderCode();
+      System.out.println(pyCd);
+
+      // final Mesh2 m = new Mesh2();
+      // Mesh2.arc(IUtils.THIRD_PI, m);
+      // final MeshEntity2 me = new MeshEntity2();
+      // me.append(m);
+      // final String pyCd = me.toBlenderCode();
+      // System.out.println(pyCd);
+   }
+
+   /**
+    * Gets the version of the library.
+    *
+    * @return the version
+    */
+   public static String version ( ) { return CamZup.VERSION; }
 
 }

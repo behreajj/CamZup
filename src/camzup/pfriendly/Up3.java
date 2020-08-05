@@ -1,7 +1,6 @@
 package camzup.pfriendly;
 
 import java.util.Iterator;
-import java.util.List;
 
 import camzup.core.Color;
 import camzup.core.Curve3;
@@ -435,8 +434,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final float swCoord = swFore * 1.25f;
 
       final Transform3 tr = ce.transform;
-      final List < Curve3 > curves = ce.curves;
-      final Iterator < Curve3 > curveItr = curves.iterator();
+      final Iterator < Curve3 > curveItr = ce.iterator();
 
       final Vec3 rh = new Vec3();
       final Vec3 co = new Vec3();
@@ -817,8 +815,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    public void shape ( final CurveEntity3 entity ) {
 
       final Transform3 tr = entity.transform;
-      final List < Curve3 > curves = entity.curves;
-      final Iterator < Curve3 > curveItr = curves.iterator();
+      final Iterator < Curve3 > curveItr = entity.iterator();
 
       final Vec3 v0 = new Vec3();
       final Vec3 v1 = new Vec3();
@@ -902,8 +899,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final MaterialSolid[] materials ) {
 
       final Transform3 tr = entity.transform;
-      final List < Curve3 > curves = entity.curves;
-      final Iterator < Curve3 > curveItr = curves.iterator();
+      final Iterator < Curve3 > curveItr = entity.iterator();
 
       final Vec3 v0 = new Vec3();
       final Vec3 v1 = new Vec3();
@@ -974,8 +970,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    public void shape ( final MeshEntity3 entity ) {
 
       final Transform3 tr = entity.transform;
-      final List < Mesh3 > meshes = entity.meshes;
-      final Iterator < Mesh3 > meshItr = meshes.iterator();
+      final Iterator < Mesh3 > meshItr = entity.iterator();
 
       final Vec3 v = new Vec3();
       final Vec3 vn = new Vec3();
@@ -1003,8 +998,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final MaterialPImage material ) {
 
       final Transform3 tr = entity.transform;
-      final List < Mesh3 > meshes = entity.meshes;
-      final Iterator < Mesh3 > meshItr = meshes.iterator();
+      final Iterator < Mesh3 > meshItr = entity.iterator();
 
       final Vec3 v = new Vec3();
       final Vec2 vt = new Vec2();
@@ -1028,8 +1022,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final MaterialPImage[] materials ) {
 
       final Transform3 tr = entity.transform;
-      final List < Mesh3 > meshes = entity.meshes;
-      final Iterator < Mesh3 > meshItr = meshes.iterator();
+      final Iterator < Mesh3 > meshItr = entity.iterator();
 
       final Vec3 v = new Vec3();
       final Vec2 vt = new Vec2();
@@ -1070,8 +1063,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final MaterialSolid[] materials ) {
 
       final Transform3 tr = entity.transform;
-      final List < Mesh3 > meshes = entity.meshes;
-      final Iterator < Mesh3 > meshItr = meshes.iterator();
+      final Iterator < Mesh3 > meshItr = entity.iterator();
 
       final Vec3 v = new Vec3();
       final Vec3 vn = new Vec3();
@@ -1470,8 +1462,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    void directionalLight ( final int clr, final float xDir, final float yDir,
       final float zDir ) {
 
-      // TODO These are all package level because overridden lights functions
-      // cause major glitching on graphics renderer....
+      // These are all package level because overridden lights functions
+      // cause major glitches on graphics renderer....
 
       this.enableLighting();
       if ( this.lightCount >= IUpOgl.MAX_LIGHTS ) { return; }

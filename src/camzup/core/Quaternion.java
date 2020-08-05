@@ -2360,7 +2360,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       /* Normalize the quaternion's real component */
       final float mSq = Quaternion.magSq(a);
-      if ( mSq == 0.0f ) { return target.reset(); }
+      if ( mSq <= 0.0f ) { return target.reset(); }
 
       double m = mSq;
       double wNorm = a.real;
@@ -2686,7 +2686,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        *
        * @param origin the origin quaternion
        * @param dest   the destination quaternion
-       * @param step   a factor in [0.0, 1.0]
+       * @param step   a factor
        * @param target the output quaternion
        *
        * @return the eased quaternion

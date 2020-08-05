@@ -1,7 +1,6 @@
 package camzup.pfriendly;
 
 import java.util.Iterator;
-import java.util.List;
 
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
@@ -483,8 +482,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final float swCoord = swFore * 1.25f;
 
       final Transform2 tr = ce.transform;
-      final List < Curve2 > curves = ce.curves;
-      final Iterator < Curve2 > curveItr = curves.iterator();
+      final Iterator < Curve2 > curveItr = ce.iterator();
 
       final Vec2 rh = new Vec2();
       final Vec2 co = new Vec2();
@@ -946,8 +944,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    public void shape ( final CurveEntity2 entity ) {
 
       final Transform2 tr = entity.transform;
-      final List < Curve2 > curves = entity.curves;
-      final Iterator < Curve2 > curveItr = curves.iterator();
+      final Iterator < Curve2 > curveItr = entity.iterator();
 
       final Vec2 v0 = new Vec2();
       final Vec2 v1 = new Vec2();
@@ -1029,15 +1026,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    public void shape ( final CurveEntity2 entity,
       final MaterialSolid[] materials ) {
 
-      /*
-       * For performance, seems better to use classes not interfaces, i.e.
-       * ArrayList or LinkedList instead of List. However, a generic list is
-       * easier on implementation.
-       */
-
       final Transform2 tr = entity.transform;
-      final List < Curve2 > curves = entity.curves;
-      final Iterator < Curve2 > curveItr = curves.iterator();
+      final Iterator < Curve2 > curveItr = entity.iterator();
 
       final Vec2 v0 = new Vec2();
       final Vec2 v1 = new Vec2();
@@ -1109,8 +1099,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    public void shape ( final MeshEntity2 entity ) {
 
       final Transform2 tr = entity.transform;
-      final List < Mesh2 > meshes = entity.meshes;
-      final Iterator < Mesh2 > meshItr = meshes.iterator();
+      final Iterator < Mesh2 > meshItr = entity.iterator();
       final Vec2 v = new Vec2();
 
       while ( meshItr.hasNext() ) {
@@ -1128,8 +1117,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final MaterialPImage material ) {
 
       final Transform2 tr = entity.transform;
-      final List < Mesh2 > meshes = entity.meshes;
-      final Iterator < Mesh2 > meshItr = meshes.iterator();
+      final Iterator < Mesh2 > meshItr = entity.iterator();
       final Vec2 v = new Vec2();
       final Vec2 vt = new Vec2();
 
@@ -1151,8 +1139,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final MaterialPImage[] materials ) {
 
       final Transform2 tr = entity.transform;
-      final List < Mesh2 > meshes = entity.meshes;
-      final Iterator < Mesh2 > meshItr = meshes.iterator();
+      final Iterator < Mesh2 > meshItr = entity.iterator();
       final Vec2 v = new Vec2();
       final Vec2 vt = new Vec2();
 
@@ -1191,8 +1178,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final MaterialSolid[] materials ) {
 
       final Transform2 tr = entity.transform;
-      final List < Mesh2 > meshes = entity.meshes;
-      final Iterator < Mesh2 > meshItr = meshes.iterator();
+      final Iterator < Mesh2 > meshItr = entity.iterator();
       final Vec2 v = new Vec2();
 
       while ( meshItr.hasNext() ) {

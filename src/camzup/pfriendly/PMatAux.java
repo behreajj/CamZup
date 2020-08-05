@@ -4,7 +4,6 @@ import camzup.core.IUtils;
 import camzup.core.Quaternion;
 import camzup.core.Utils;
 import camzup.core.Vec3;
-import camzup.core.Vec4;
 
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
@@ -806,26 +805,6 @@ public abstract class PMatAux {
                   * b.m03 + a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33);
 
       return target;
-   }
-
-   /**
-    * Multiplies a matrix with a four dimensional vector. This is useful when
-    * the w component needs to be stored for diagnostic purposes (rather than
-    * demoting the vector to a 3D point).
-    *
-    * @param m      the matrix
-    * @param v      the input vector
-    * @param target the output vector
-    *
-    * @return the product
-    */
-   public static Vec4 mul ( final PMatrix3D m, final Vec4 v,
-      final Vec4 target ) {
-
-      return target.set(m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
-         m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13 * v.w, m.m20 * v.x
-            + m.m21 * v.y + m.m22 * v.z + m.m23 * v.w, m.m30 * v.x + m.m31 * v.y
-               + m.m32 * v.z + m.m33 * v.w);
    }
 
    /**

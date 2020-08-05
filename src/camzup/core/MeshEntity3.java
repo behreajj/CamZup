@@ -15,10 +15,10 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    /**
     * The list of meshes held by the entity.
     */
-   public final List < Mesh3 > meshes;
+   public final ArrayList < Mesh3 > meshes;
 
    {
-      this.meshes = new ArrayList <>();
+      this.meshes = new ArrayList <>(IEntity.DEFAULT_CAPACITY);
    }
 
    /**

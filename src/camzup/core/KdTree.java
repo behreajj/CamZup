@@ -317,7 +317,7 @@ abstract class KdTree < T extends Comparable < T > > {
       @Override
       public String toString ( ) {
 
-         final StringBuilder sb = new StringBuilder();
+         final StringBuilder sb = new StringBuilder(1024);
          sb.append("{ depth: ");
          sb.append(Utils.toPadded(this.depth, 1));
          sb.append(", data: ");

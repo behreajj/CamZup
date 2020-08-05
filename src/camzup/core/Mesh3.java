@@ -179,7 +179,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /*
        * Visit all data arrays with the faces array. Any data not used by any
-       * face will thus be left out.
+       * face will be left out.
        */
       final int facesLen = this.faces.length;
       for ( int i = 0; i < facesLen; ++i ) {
@@ -575,7 +575,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                this.normals[fOrigin[2]], this.coords[fDest[0]],
                this.texCoords[fDest[1]], this.normals[fDest[2]]);
 
-            // if ( !result.contains(trial) ) {
             if ( result.indexOf(trial) < 0 ) {
                result.add(trial);
                trial = new Edge3();
@@ -678,7 +677,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             trial.set(this.coords[f[0]], this.texCoords[f[1]],
                this.normals[f[2]]);
 
-            // if ( !result.contains(trial) ) {
             if ( result.indexOf(trial) < 0 ) {
                result.add(trial);
                trial = new Vert3();
@@ -942,7 +940,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
       final int len = face.length;
       final int jOrigin = Utils.mod(j, len);
-      // final int jDest = Utils.mod(j + 1, len);
       final int jDest = ( jOrigin + 1 ) % len;
 
       final int[] temp = face[jOrigin];
@@ -1149,6 +1146,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       this.coords = coords;
       this.texCoords = texCoords;
       this.normals = normals;
+
       return this;
    }
 
@@ -3806,29 +3804,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final int[] b1 = tri1[1];
             final int[] c1 = tri1[2];
 
-            a0[0] = v00;
-            a0[1] = vt00;
-            a0[2] = v00;
+            /* @formatter:off */
+            a0[0] = v00; a0[1] = vt00; a0[2] = v00;
+            b0[0] = v10; b0[1] = vt10; b0[2] = v10;
+            c0[0] = v11; c0[1] = vt11; c0[2] = v11;
 
-            b0[0] = v10;
-            b0[1] = vt10;
-            b0[2] = v10;
-
-            c0[0] = v11;
-            c0[1] = vt11;
-            c0[2] = v11;
-
-            a1[0] = v00;
-            a1[1] = vt00;
-            a1[2] = v00;
-
-            b1[0] = v11;
-            b1[1] = vt11;
-            b1[2] = v11;
-
-            c1[0] = v01;
-            c1[1] = vt01;
-            c1[2] = v01;
+            a1[0] = v00; a1[1] = vt00; a1[2] = v00;
+            b1[0] = v11; b1[1] = vt11; b1[2] = v11;
+            c1[0] = v01; c1[1] = vt01; c1[2] = v01;
+            /* @formatter:on */
          }
       }
 
@@ -3896,15 +3880,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3 tracePerimeter ( final Mesh3 source, final int count,
       final float offset, final Mesh3 target ) {
 
-      // TODO: Normals do not come out correctly in this approach.
-
       target.name = "Trace";
 
       final int vcount = count < 3 ? 3 : count;
 
       final Vec3[] vsSrc = source.coords;
       final Vec2[] vtsSrc = source.texCoords;
-      // final Vec3[] vnsSrc = source.normals;
       final int[][][] fsSrc = source.faces;
       final int fsSrcLen = fsSrc.length;
       final int trgLen = fsSrcLen * vcount;
@@ -3912,8 +3893,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec3[] vsTrg = target.coords = Vec3.resize(target.coords, trgLen);
       final Vec2[] vtsTrg = target.texCoords = Vec2.resize(target.texCoords,
          trgLen);
-      // final Vec3[] vnsTrg = target.normals = Vec3.resize(
-      // target.normals, trgLen);
       final int[][][] fsTrg = target.faces = new int[fsSrcLen][vcount][3];
 
       final float toStep = 1.0f / vcount;
@@ -3941,20 +3920,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final Vec2 vtaSrc = vtsSrc[a[1]];
             final Vec2 vtbSrc = vtsSrc[b[1]];
 
-            // final Vec3 vnaSrc = vnsSrc[a[2]];
-            // final Vec3 vnbSrc = vnsSrc[b[2]];
-
             vsTrg[k].set(u * vaSrc.x + t * vbSrc.x, u * vaSrc.y + t * vbSrc.y, u
                * vaSrc.z + t * vbSrc.z);
 
             vtsTrg[k].set(u * vtaSrc.x + t * vtbSrc.x, u * vtaSrc.y + t
                * vtbSrc.y);
-
-            // vnsTrg[k].set(
-            // u * vnaSrc.x + t * vnbSrc.x,
-            // u * vnaSrc.y + t * vnbSrc.y,
-            // u * vnaSrc.z + t * vnbSrc.z);
-            // Vec3.normalize(vnsTrg[k], vnsTrg[k]);
 
             fTrg[j][0] = k;
             fTrg[j][1] = k;
@@ -4106,6 +4076,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          costs[j] = Utils.scNorm(theta);
          sints[j] = Utils.scNorm(theta - 0.25f);
 
+         /* Texture coordinates at poles. */
          final float sTex = ( jf + 0.5f ) * toTexS;
          vts[j].set(sTex, 0.0f);
          vts[k].set(sTex, 1.0f);
@@ -4178,6 +4149,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* South cap. */
       for ( int h = 0, k = 1; h < lons; ++h, ++k ) {
+         // TODO: Couldn't quadrilaterals be used if longitude is even?
          final int i = 1 + h;
          final int j = 1 + k % lons;
          final int m = lons + h;
@@ -4195,9 +4167,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          b[2] = i;
 
          final int[] c = tri[2];
-         c[0] = 0;
+         // c[0] = 0;
          c[1] = h;
-         c[2] = 0;
+         // c[2] = 0;
       }
 
       /* Middle. */
@@ -4214,15 +4186,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          for ( int j = 0, k = 1; j < lons; ++j, ++k ) {
 
             /* Wrap around to first longitude at last. */
-            // final int currLon0 = j;
             final int nextLon0 = k % lons;
 
             /* Coordinate and normal indices. */
-            // final int v00 = currentLat0 + currLon0;
             final int v00 = currentLat0 + j;
             final int v10 = currentLat0 + nextLon0;
             final int v11 = nextLat0 + nextLon0;
-            // final int v01 = nextLat0 + currLon0;
             final int v01 = nextLat0 + j;
 
             /* Texture coordinate indices. */

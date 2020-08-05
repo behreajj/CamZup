@@ -355,7 +355,13 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    @Experimental
    public Knot2 relocate ( final Vec2 v ) {
 
-      return this.relocate(v.x, v.y);
+      Vec2.sub(this.foreHandle, this.coord, this.foreHandle);
+      Vec2.sub(this.rearHandle, this.coord, this.rearHandle);
+      this.coord.set(v);
+      Vec2.add(this.foreHandle, this.coord, this.foreHandle);
+      Vec2.add(this.rearHandle, this.coord, this.rearHandle);
+
+      return this;
    }
 
    /**
@@ -852,47 +858,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       Vec2.add(this.coord, v, this.coord);
       Vec2.add(this.foreHandle, v, this.foreHandle);
       Vec2.add(this.rearHandle, v, this.rearHandle);
-
-      return this;
-   }
-
-   /**
-    * Relocates the knot to a new location while maintaining the relationship
-    * between the central coordinate and its two handles.<br>
-    * <br>
-    * Access is package level to facilitate editing the curve with a graphic
-    * user interface (GUI).
-    *
-    * @param v the location
-    *
-    * @return this knot
-    *
-    * @see Vec2#sub(Vec2, Vec2, Vec2)
-    * @see Vec2#add(Vec2, Vec2, Vec2)
-    */
-   @Experimental
-   Knot2 relocate ( final float x, final float y ) {
-
-      Vec2.sub(this.foreHandle, this.coord, this.foreHandle);
-      Vec2.sub(this.rearHandle, this.coord, this.rearHandle);
-      this.coord.set(x, y);
-      Vec2.add(this.foreHandle, this.coord, this.foreHandle);
-      Vec2.add(this.rearHandle, this.coord, this.rearHandle);
-
-      // this.foreHandle.x -= this.coord.x;
-      // this.foreHandle.y -= this.coord.y;
-      //
-      // this.rearHandle.x -= this.coord.x;
-      // this.rearHandle.y -= this.coord.y;
-      //
-      // this.coord.x = x;
-      // this.coord.y = y;
-      //
-      // this.foreHandle.x += x;
-      // this.foreHandle.y += y;
-      //
-      // this.rearHandle.x += x;
-      // this.rearHandle.y += y;
 
       return this;
    }

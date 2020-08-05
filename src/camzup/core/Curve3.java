@@ -11,24 +11,19 @@ import camzup.core.Utils.EasingFuncArr;
 import camzup.core.Utils.EasingFuncObj;
 
 /**
- * Organizes a 3D Bezier curve into a list of knots. Provides a function to
- * retrieve a point and tangent on a curve from a step in the range [0.0,
- * 1.0] .
+ * Organizes a 3D cubic Bezier curve into a list of knots. Provides a
+ * function to retrieve a point and tangent on a curve from a step in the
+ * range [0.0, 1.0] .
  */
 public class Curve3 extends Curve implements Iterable < Knot3 > {
 
    /**
     * The list of knots contained by the curve.
     */
-   private final List < Knot3 > knots;
+   private final ArrayList < Knot3 > knots;
 
    {
-      /*
-       * Seems to perform better when the class is used instead of the
-       * interface. Problem is that it's hard to decide one whether to use an
-       * array or linked list.
-       */
-      this.knots = new ArrayList <>();
+      this.knots = new ArrayList <>(ICurve.KNOT_CAPACITY);
    }
 
    /**
@@ -445,7 +440,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public Curve3 relocateKnot ( final int i, final Vec3 v ) {
 
       final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
-      return this.relocateKnot(j, v.x, v.y, v.z);
+      return this.relocateKnot(j, v);
    }
 
    /**
@@ -705,9 +700,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 set ( final Curve3 source ) {
 
-      final List < Knot3 > sourceKnots = source.knots;
-      this.resize(sourceKnots.size());
-      final Iterator < Knot3 > srcItr = sourceKnots.iterator();
+      this.resize(source.length());
+      final Iterator < Knot3 > srcItr = source.iterator();
       final Iterator < Knot3 > trgItr = this.knots.iterator();
       while ( srcItr.hasNext() ) {
          trgItr.next().set(srcItr.next());
@@ -716,51 +710,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       this.closedLoop = source.closedLoop;
       this.materialIndex = source.materialIndex;
       return this;
-   }
-
-   /**
-    * Sets the coordinate of a knot at a given index.
-    *
-    * @param i the index
-    * @param v the coordinate
-    *
-    * @return this knot
-    */
-   @Experimental
-   public Curve3 setKnotCoord ( final int i, final Vec3 v ) {
-
-      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
-      return this.setKnotCoord(j, v.x, v.y, v.z);
-   }
-
-   /**
-    * Sets the fore handle of a knot at a given index.
-    *
-    * @param i the index
-    * @param v the fore handle
-    *
-    * @return this knot
-    */
-   @Experimental
-   public Curve3 setKnotForeHandle ( final int i, final Vec3 v ) {
-
-      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
-      return this.setKnotForeHandle(j, v.x, v.y, v.z);
-   }
-
-   /**
-    * Sets the rear handle of a knot at a given index.
-    *
-    * @param i the index
-    * @param v the rear handle
-    *
-    * @return this knot
-    */
-   @Experimental
-   public Curve3 setKnotRearHandle ( final int i, final Vec3 v ) {
-
-      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
-      return this.setKnotRearHandle(j, v.x, v.y, v.z);
    }
 
    /**
@@ -862,28 +811,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Relocates a knot to a coordinate. Maintains relationship between knot
-    * coordinate and handles.<br>
-    * <br>
-    * Access is package level to facilitate editing the curve with a graphical
-    * user interface (GUI).
-    *
-    * @param i the index
-    * @param x the coordinate x
-    * @param y the coordinate y
-    * @param z the coordinate z
-    *
-    * @return this curve
-    */
-   @Experimental
-   Curve3 relocateKnot ( final int i, final float x, final float y,
-      final float z ) {
-
-      this.knots.get(i).relocate(x, y, z);
-      return this;
-   }
-
-   /**
     * For internal (package-level) use. Resizes a curve to the specified
     * length. The length may be no less than 2. When the new length is greater
     * than the old, new <code>Knot2</code>s are added.<br>
@@ -913,69 +840,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
             this.knots.add(new Knot3());
          }
       }
-      return this;
-   }
-
-   /**
-    * Sets the coordinate of a knot at a given index.<br>
-    * <br>
-    * Access is package level to facilitate editing the curve with a graphic
-    * user interface (GUI).
-    *
-    * @param i the index
-    * @param x the coordinate x
-    * @param y the coordinate y
-    * @param z the coordinate z
-    *
-    * @return this knot
-    */
-   @Experimental
-   Curve3 setKnotCoord ( final int i, final float x, final float y,
-      final float z ) {
-
-      this.knots.get(i).coord.set(x, y, z);
-      return this;
-   }
-
-   /**
-    * Sets the fore handle of a knot at a given index.<br>
-    * <br>
-    * Access is package level to facilitate editing the curve with a graphic
-    * user interface (GUI).
-    *
-    * @param i the index
-    * @param x the fore handle x
-    * @param y the fore handle y
-    * @param z the fore handle z
-    *
-    * @return this knot
-    */
-   @Experimental
-   Curve3 setKnotForeHandle ( final int i, final float x, final float y,
-      final float z ) {
-
-      this.knots.get(i).foreHandle.set(x, y, z);
-      return this;
-   }
-
-   /**
-    * Sets the rear handle of a knot at a given index.<br>
-    * <br>
-    * Access is package level to facilitate editing the curve with a graphic
-    * user interface (GUI).
-    *
-    * @param i the index
-    * @param x the rear handle x
-    * @param y the rear handle y
-    * @param z the rear handle z
-    *
-    * @return this knot
-    */
-   @Experimental
-   Curve3 setKnotRearHandle ( final int i, final float x, final float y,
-      final float z ) {
-
-      this.knots.get(i).rearHandle.set(x, y, z);
       return this;
    }
 
@@ -1084,7 +948,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          * IUtils.FOUR_THIRDS;
 
       target.resize(knotCount);
-      final List < Knot3 > knots = target.knots;
+      final ArrayList < Knot3 > knots = target.knots;
       for ( int i = 0; i < knotCount; ++i ) {
          final Knot3 knot = knots.get(i);
          final float step = i * toStep;
@@ -1195,7 +1059,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public static Knot3 eval ( final Curve3 curve, final float step,
       final Knot3 target ) {
 
-      final List < Knot3 > knots = curve.knots;
+      final ArrayList < Knot3 > knots = curve.knots;
       final int knotLength = knots.size();
 
       float tScaled = 0.0f;
@@ -1279,7 +1143,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public static Vec3 eval ( final Curve3 curve, final float step,
       final Vec3 coord, final Vec3 tangent ) {
 
-      final List < Knot3 > knots = curve.knots;
+      final ArrayList < Knot3 > knots = curve.knots;
       final int knotLength = knots.size();
 
       float tScaled = 0.0f;
@@ -1738,8 +1602,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       target.closedLoop = false;
       target.resize(2);
 
-      final List < Knot3 > targetKnots = target.knots;
-      final List < Knot3 > sourceKnots = source.knots;
+      final ArrayList < Knot3 > targetKnots = target.knots;
+      final ArrayList < Knot3 > sourceKnots = source.knots;
       final int len = sourceKnots.size();
 
       Knot3 a = null;
@@ -1776,7 +1640,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public static Curve3 smoothHandles ( final Curve3 target ) {
 
-      final List < Knot3 > knots = target.knots;
+      final ArrayList < Knot3 > knots = target.knots;
       final int knotLength = knots.size();
       if ( knotLength < 3 ) { return target; }
 
@@ -1829,7 +1693,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public static Curve3 straightenHandles ( final Curve3 target ) {
 
-      final List < Knot3 > knots = target.knots;
+      final ArrayList < Knot3 > knots = target.knots;
       final int knotLength = knots.size();
 
       if ( knotLength < 2 ) { return target; }
@@ -2084,8 +1948,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       public Curve3 applyUnclamped ( final Curve3 origin, final Curve3 dest,
          final float step, final Curve3 target ) {
 
-         final List < Knot3 > orKn = origin.knots;
-         final List < Knot3 > dsKn = dest.knots;
+         final ArrayList < Knot3 > orKn = origin.knots;
+         final ArrayList < Knot3 > dsKn = dest.knots;
 
          if ( orKn.size() == dsKn.size() && origin.closedLoop
             == dest.closedLoop ) {

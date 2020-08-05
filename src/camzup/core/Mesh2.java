@@ -305,7 +305,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       /*
        * Visit all data arrays with the faces array. Any data not used by any
-       * face will thus be left out.
+       * face will be left out.
        */
       final int facesLen = this.faces.length;
       for ( int i = 0; i < facesLen; ++i ) {
@@ -511,7 +511,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             trial.set(this.coords[fOrigin[0]], this.texCoords[fOrigin[1]],
                this.coords[fDest[0]], this.texCoords[fDest[1]]);
 
-            // if ( !result.contains(trial) ) {
             if ( result.indexOf(trial) < 0 ) {
                result.add(trial);
                trial = new Edge2();
@@ -610,7 +609,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             final int[] f = fs[j];
             trial.set(this.coords[f[0]], this.texCoords[f[1]]);
 
-            // if ( !result.contains(trial) ) {
             if ( result.indexOf(trial) < 0 ) {
                result.add(trial);
                trial = new Vert2();
@@ -851,7 +849,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
       final int len = face.length;
       final int jOrigin = Utils.mod(j, len);
-      // final int jDest = Utils.mod(j + 1, len);
       final int jDest = ( jOrigin + 1 ) % len;
 
       final int[] temp = face[jOrigin];
@@ -968,6 +965,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       this.faces = faces;
       this.coords = coords;
       this.texCoords = texCoords;
+
       return this;
    }
 

@@ -28,7 +28,6 @@ void settings() {
 
 void setup() {
   rndr = (YupJ2)getGraphics();
-
   Curve2.infinity(curve2);
   ce2.append(curve2);
   ce2.scaleTo((rndr.width + rndr.height) * 0.495);

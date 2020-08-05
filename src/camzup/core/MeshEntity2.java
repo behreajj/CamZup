@@ -15,10 +15,10 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    /**
     * The list of meshes held by the entity.
     */
-   public final List < Mesh2 > meshes;
+   public final ArrayList < Mesh2 > meshes;
 
    {
-      this.meshes = new ArrayList <>();
+      this.meshes = new ArrayList <>(IEntity.DEFAULT_CAPACITY);
    }
 
    /**

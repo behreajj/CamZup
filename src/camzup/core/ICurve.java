@@ -46,6 +46,11 @@ public interface ICurve extends Cloneable, IEntityData {
    double HNDL_MAG_ORTHO_D = 0.552285d;
 
    /**
+    * Default number of knots to expect when creating an array list in curves.
+    */
+   int KNOT_CAPACITY = 8;
+
+   /**
     * Default number of cubic Bezier knots used to approximate a circle.
     */
    int KNOTS_PER_CIRCLE = 4;

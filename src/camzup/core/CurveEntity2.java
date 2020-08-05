@@ -15,10 +15,10 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    /**
     * The list of curves held by the entity.
     */
-   public final List < Curve2 > curves;
+   public final ArrayList < Curve2 > curves;
 
    {
-      this.curves = new ArrayList <>();
+      this.curves = new ArrayList <>(IEntity.DEFAULT_CAPACITY);
    }
 
    /**
@@ -278,7 +278,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       final Vec2 global, final Vec2 local ) {
 
       Transform2.invMulPoint(this.transform, global, local);
-      this.get(curveIndex).setKnotCoord(knotIndex, local);
+      this.get(curveIndex).get(knotIndex).coord.set(local);
       return this;
    }
 
@@ -302,7 +302,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       final int knotIndex, final Vec2 global, final Vec2 local ) {
 
       Transform2.invMulPoint(this.transform, global, local);
-      this.get(curveIndex).setKnotForeHandle(knotIndex, local);
+      this.get(curveIndex).get(knotIndex).foreHandle.set(local);
       return this;
    }
 
@@ -326,7 +326,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       final int knotIndex, final Vec2 global, final Vec2 local ) {
 
       Transform2.invMulPoint(this.transform, global, local);
-      this.get(curveIndex).setKnotRearHandle(knotIndex, local);
+      this.get(curveIndex).get(knotIndex).rearHandle.set(local);
       return this;
    }
 
@@ -667,7 +667,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       target.transform.set(me.transform);
 
       final Iterator < Mesh2 > meshItr = me.meshes.iterator();
-      final List < Curve2 > curves = target.curves;
+      final ArrayList < Curve2 > curves = target.curves;
       curves.clear();
 
       while ( meshItr.hasNext() ) {
