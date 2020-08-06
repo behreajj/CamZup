@@ -523,6 +523,54 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    public Vert2Iterator vertIterator ( ) { return new Vert2Iterator(this); }
 
    /**
+    * Finds the area of a face.
+    *
+    * @param face the face
+    *
+    * @return the area
+    */
+   public static float area ( final Face2 face ) {
+
+      return Face2.areaUnsigned(face);
+   }
+
+   /**
+    * Finds the signed area of a face.
+    *
+    * @param face the face
+    *
+    * @return the signed area
+    */
+   public static float areaSigned ( final Face2 face ) {
+
+      // TODO: Test...
+
+      final Vert2[] verts = face.vertices;
+      final int last = verts.length - 1;
+      float sum = verts[0].coord.x * ( verts[1].coord.y - verts[last].coord.y );
+      for ( int i = 1; i < last; ++i ) {
+         sum += verts[i].coord.x * ( verts[i + 1].coord.y - verts[i
+            - 1].coord.y );
+      }
+      sum += verts[last].coord.x * ( verts[0].coord.y - verts[last
+         - 1].coord.y );
+
+      return sum * 0.5f;
+   }
+
+   /**
+    * Finds the unsigned area of a face.
+    *
+    * @param face the face
+    *
+    * @return the unsigned area
+    */
+   public static float areaUnsigned ( final Face2 face ) {
+
+      return Utils.abs(Face2.areaSigned(face));
+   }
+
+   /**
     * Finds the center of a face by averaging all the coordinates in its list
     * of vertices.
     *

@@ -1163,12 +1163,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public static float distManhattan ( final Vec4 a, final Vec4 b ) {
 
-      /* @formatter:off */
-      return Utils.diff(a.x, b.x) +
-             Utils.diff(a.y, b.y) +
-             Utils.diff(a.z, b.z) +
-             Utils.diff(a.w, b.w);
-      /* @formatter:on */
+      return Utils.diff(a.x, b.x) + Utils.diff(a.y, b.y) + Utils.diff(a.z, b.z)
+         + Utils.diff(a.w, b.w);
    }
 
    /**

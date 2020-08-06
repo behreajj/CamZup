@@ -81,14 +81,6 @@ public abstract class Utils implements IUtils {
       float ret = ( 0.074261f - 0.0187293f * x ) * x - 0.2121144f;
       ret = ( ret * x + IUtils.HALF_PI ) * Utils.sqrtUnchecked(1.0f - x);
       return ltZero ? IUtils.PI - ret : ret;
-
-      // if ( y < -0.0f ) {
-      // return IUtils.PI - Utils.sqrtUnchecked(1.0f + y) * ( IUtils.HALF_PI
-      // + ( 0.2121144f + y * ( 0.074261f + 0.0187293f * y ) ) * y );
-      // } else {
-      // return Utils.sqrtUnchecked(1.0f - y) * ( ( ( 0.074261f - 0.0187293f
-      // * y ) * y - 0.2121144f ) * y + IUtils.HALF_PI );
-      // }
    }
 
    /**
@@ -593,8 +585,7 @@ public abstract class Utils implements IUtils {
     */
    public static float fmod ( final float a, final float b ) {
 
-      if ( b != 0.0f ) { return a % b; }
-      return a;
+      return b != 0.0f ? a % b : a;
    }
 
    /**
@@ -608,8 +599,7 @@ public abstract class Utils implements IUtils {
     */
    public static int fmod ( final int a, final int b ) {
 
-      if ( b != 0 ) { return a % b; }
-      return a;
+      return b != 0 ? a % b : a;
    }
 
    /**

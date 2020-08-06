@@ -1445,11 +1445,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static float distManhattan ( final Vec3 a, final Vec3 b ) {
 
-      /* @formatter:off */
-      return Utils.diff(a.x, b.x) +
-             Utils.diff(a.y, b.y) +
-             Utils.diff(a.z, b.z);
-      /* @formatter:on */
+      return Utils.diff(a.x, b.x) + Utils.diff(a.y, b.y) + Utils.diff(a.z, b.z);
    }
 
    /**

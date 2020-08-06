@@ -6,7 +6,6 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
-import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -199,9 +198,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       /* Use a tree set to filter out similar vectors. */
-      final SortedSet < Vec3 > coordsTree = new TreeSet <>(Mesh.SORT_3);
-      final SortedSet < Vec2 > texCoordsTree = new TreeSet <>(Mesh.SORT_2);
-      final SortedSet < Vec3 > normalsTree = new TreeSet <>(Mesh.SORT_3);
+      final TreeSet < Vec3 > coordsTree = new TreeSet <>(Mesh.SORT_3);
+      final TreeSet < Vec2 > texCoordsTree = new TreeSet <>(Mesh.SORT_2);
+      final TreeSet < Vec3 > normalsTree = new TreeSet <>(Mesh.SORT_3);
 
       /* Dictionary's keys are no longer needed; just values. */
       coordsTree.addAll(usedCoords.values());
@@ -3486,17 +3485,16 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec4 promoted = new Vec4();
       for ( int i = 0; i < vsLen; ++i ) {
 
-         final Vec3 vSrc = vsSource[i];
-         promoted.set(vSrc, 1.0f);
+         promoted.set(vsSource[i], 1.0f);
          Mat4.mul(modelview, promoted, promoted);
          Mat4.mul(projection, promoted, promoted);
 
          /* Do not flip screen y, like Processing's screen does. */
          final float wInv = promoted.w != 0.0f ? 1.0f / promoted.w : 0.0f;
-         final Vec2 vTrg = vsTarget[i];
-         vTrg.set(promoted.x * 0.5f * wInv, promoted.y * 0.5f * wInv);
+         vsTarget[i].set(promoted.x * 0.5f * wInv, promoted.y * 0.5f * wInv);
       }
 
+      /* Copy faces. */
       final int[][][] fsSource = source.faces;
       final int facesLen = fsSource.length;
       final int[][][] fsTarget = target.faces = new int[facesLen][][];
@@ -3512,6 +3510,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          }
       }
 
+      /* Sort faces according to 3D vectors. */
       Arrays.sort(fsTarget, new Mesh3.SortIndices3(vsSource));
 
       return target;
@@ -4150,6 +4149,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       /* South cap. */
       for ( int h = 0, k = 1; h < lons; ++h, ++k ) {
          // TODO: Couldn't quadrilaterals be used if longitude is even?
+         // TODO: Consolidate north and south cap?
          final int i = 1 + h;
          final int j = 1 + k % lons;
          final int m = lons + h;
@@ -4333,6 +4333,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final float zDest, final int sectors, final boolean includeCaps,
       final float radius, final Mesh3 target ) {
 
+      target.name = "Cylinder";
+
       /* Find difference between destination and origin. */
       float x0 = xDest - xOrigin;
       float y0 = yDest - yOrigin;
@@ -4345,8 +4347,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          y0 = x0;
          z0 = x0;
       }
-
-      target.name = "Cylinder";
 
       /* Validate arguments. */
       final int sec = sectors < 3 ? 3 : sectors;

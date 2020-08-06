@@ -72,7 +72,7 @@ void setup() {
     ms.setStroke(false);
     Gradient.eval(grd, percent, ms.fill);
 
-    i++;
+    ++i;
   }
 }
 
@@ -92,7 +92,7 @@ void draw() {
       rndr.strafe(mouse1);
     }
   }
-  
+
   rndr.lights();
   rndr.perspective(Utils.PI * 0.125);
   rndr.camera();

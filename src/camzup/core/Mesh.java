@@ -260,15 +260,12 @@ public abstract class Mesh extends EntityData implements IMesh {
       final int end ) {
 
       int st = start;
-      int ed = end;
-      while ( st < ed ) {
+      for ( int ed = end; st < ed; --ed ) {
          final int[] temp = arr[st];
          arr[st] = arr[ed];
          arr[ed] = temp;
          ++st;
-         --ed;
       }
-
       return arr;
    }
 
@@ -285,15 +282,12 @@ public abstract class Mesh extends EntityData implements IMesh {
       final int end ) {
 
       int st = start;
-      int ed = end;
-      while ( st < ed ) {
+      for ( int ed = end; st < ed; --ed ) {
          final int[][] temp = arr[st];
          arr[st] = arr[ed];
          arr[ed] = temp;
          ++st;
-         --ed;
       }
-
       return arr;
    }
 

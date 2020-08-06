@@ -3367,11 +3367,14 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
          Color.rgbaToHsba(origin, this.aHsb);
          Color.rgbaToHsba(dest, this.bHsb);
 
-         this.hsbaNew.set(this.hueFunc.apply(this.aHsb.x, this.bHsb.x, step),
-            this.satFunc.apply(this.aHsb.y, this.bHsb.y, step), this.briFunc
-               .apply(this.aHsb.z, this.bHsb.z, step), ( 1.0f - step )
-                  * this.aHsb.w + step * this.bHsb.w);
+         /* @formatter:off */
+         this.hsbaNew.set(
+            this.hueFunc.apply(this.aHsb.x, this.bHsb.x, step),
+            this.satFunc.apply(this.aHsb.y, this.bHsb.y, step),
+            this.briFunc.apply(this.aHsb.z, this.bHsb.z, step),
+            ( 1.0f - step ) * this.aHsb.w + step * this.bHsb.w);
          return Color.hsbaToRgba(this.hsbaNew, target);
+         /* @formatter:on */
       }
 
       /**

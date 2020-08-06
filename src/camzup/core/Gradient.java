@@ -32,8 +32,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
        * TreeSet's constructor, as it leads to bugs when an unknown number of
        * keys are supplied to the gradient.
        */
-
-      // TODO: Could this be replaced with a TreeMap?
       this.keys = new TreeSet <>();
       this.query = new ColorKey();
    }
@@ -122,7 +120,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
    /**
     * Creates a gradient from a list of color integers; the resultant keys are
-    * evenly distributed over the range [0.0, 1.0].
+    * evenly distributed over the range [0.0, 1.0] .
     *
     * @param colors the colors
     */
@@ -199,11 +197,9 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final int oldLen = this.keys.size();
       final float denom = 1.0f / ( oldLen + len - 1.0f );
 
-      int i = 0;
       final Iterator < Color > clrItr = colors.iterator();
-      while ( clrItr.hasNext() ) {
+      for ( int i = 0; clrItr.hasNext(); ++i ) {
          this.keys.add(new ColorKey( ( oldLen + i ) * denom, clrItr.next()));
-         ++i;
       }
 
       return this;
@@ -324,10 +320,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final int len = this.keys.size();
       final Iterator < ColorKey > itr = this.keys.iterator();
       final ColorKey[] arr = new ColorKey[len];
-      int i = 0;
-      while ( itr.hasNext() ) {
+      for ( int i = 0; itr.hasNext(); ++i ) {
          arr[i] = itr.next();
-         ++i;
       }
 
       /* Cycle the array with three reverses. */
@@ -358,14 +352,11 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final ArrayList < ColorKey > keyArr = new ArrayList <>();
       keyArr.addAll(this.keys);
       this.keys.clear();
-      float incr = 0.0f;
       final Iterator < ColorKey > itr = keyArr.iterator();
       final float denom = 1.0f / ( keyArr.size() - 1.0f );
-      ColorKey key;
-      while ( itr.hasNext() ) {
-         key = itr.next();
-         key.step = incr * denom;
-         ++incr;
+
+      for ( float incr = 0.0f; itr.hasNext(); ++incr ) {
+         itr.next().step = incr * denom;
       }
 
       this.keys.addAll(keyArr);
@@ -580,11 +571,9 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       this.compressKeysRight(len);
       final float denom = 1.0f / ( this.keys.size() + len - 1.0f );
 
-      int i = 0;
       final Iterator < Color > clrItr = colors.iterator();
-      while ( clrItr.hasNext() ) {
+      for ( int i = 0; clrItr.hasNext(); ++i ) {
          this.keys.add(new ColorKey(i * denom, clrItr.next()));
-         ++i;
       }
 
       return this;
@@ -733,17 +722,15 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final int len = this.keys.size();
       final Iterator < ColorKey > itr = this.keys.iterator();
       final ColorKey[] arr = new ColorKey[len];
-      int i = 0;
-      while ( itr.hasNext() ) {
+      for ( int i = 0; itr.hasNext(); ++i ) {
          arr[i] = itr.next();
-         ++i;
       }
 
       Gradient.reverse(arr, 0, len - 1);
 
       this.keys.clear();
-      for ( int m = 0; m < len; ++m ) {
-         this.keys.add(arr[m]);
+      for ( int i = 0; i < len; ++i ) {
+         this.keys.add(arr[i]);
       }
 
       return this;
@@ -792,13 +779,11 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final float[] steps = new float[len];
       final ArrayList < Color > clrList = new ArrayList <>(len);
 
-      int j = 0;
       final Iterator < ColorKey > keyItr = this.keys.iterator();
-      while ( keyItr.hasNext() ) {
+      for ( int i = 0; keyItr.hasNext(); ++i ) {
          final ColorKey key = keyItr.next();
-         steps[j] = key.step;
+         steps[i] = key.step;
          clrList.add(key.clr);
-         ++j;
       }
 
       /* Clear out the gradient's key set now that separation is complete. */
@@ -808,11 +793,9 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       Collections.sort(clrList, sorter);
 
       /* Reconstitute the keys from the steps and colors. */
-      int i = 0;
       final Iterator < Color > clrItr = clrList.iterator();
-      while ( clrItr.hasNext() ) {
+      for ( int i = 0; clrItr.hasNext(); ++i ) {
          this.keys.add(new ColorKey(steps[i], clrItr.next()));
-         ++i;
       }
 
       return this;
@@ -1189,14 +1172,13 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     */
    protected Gradient compressKeysLeft ( final int added ) {
 
-      int i = 0;
       final Iterator < ColorKey > itr = this.keys.iterator();
       final float scalar = 1.0f / ( this.keys.size() + added - 1.0f );
-      while ( itr.hasNext() ) {
+      for ( int i = 0; itr.hasNext(); ++i ) {
          final ColorKey key = itr.next();
          key.step = key.step * i * scalar;
-         ++i;
       }
+
       return this;
    }
 
@@ -1237,15 +1219,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    }
 
    /**
-    * The default easing function, lerp RGBA.
-    */
-   private static Color.AbstrEasing EASING;
-
-   static {
-      Gradient.EASING = new Color.LerpRgba();
-   }
-
-   /**
     * Finds a color given a step in the range [0.0, 1.0] . When the step falls
     * between color keys, the resultant color is generated by an easing
     * function.<br>
@@ -1276,13 +1249,18 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
       final Color origin = next.clr;
       final Color dest = prev.clr;
-      final float t = Utils.div(step - next.step, prev.step - next.step);
-      final float u = 1.0f - t;
 
-      return ( int ) ( ( u * origin.a + t * dest.a ) * 0xff + 0.5f ) << 0x18
-         | ( int ) ( ( u * origin.r + t * dest.r ) * 0xff + 0.5f ) << 0x10
-         | ( int ) ( ( u * origin.g + t * dest.g ) * 0xff + 0.5f ) << 0x8
-         | ( int ) ( ( u * origin.b + t * dest.b ) * 0xff + 0.5f );
+      final float denom = prev.step - next.step;
+      if ( denom != 0.0f ) {
+         final float t = ( step - next.step ) / denom;
+         final float u = 1.0f - t;
+         return ( int ) ( ( u * origin.a + t * dest.a ) * 0xff + 0.5f ) << 0x18
+            | ( int ) ( ( u * origin.r + t * dest.r ) * 0xff + 0.5f ) << 0x10
+            | ( int ) ( ( u * origin.g + t * dest.g ) * 0xff + 0.5f ) << 0x8
+            | ( int ) ( ( u * origin.b + t * dest.b ) * 0xff + 0.5f );
+      }
+
+      return Color.toHexInt(origin);
    }
 
    /**
@@ -1304,7 +1282,26 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
    public static Color eval ( final Gradient grd, final float step,
       final Color target ) {
 
-      return Gradient.eval(grd, step, Gradient.EASING, target);
+      grd.query.step = step;
+
+      final ColorKey prev = grd.keys.floor(grd.query);
+      if ( prev == null ) { return target.set(grd.keys.first().clr); }
+
+      final ColorKey next = grd.keys.ceiling(grd.query);
+      if ( next == null ) { return target.set(grd.keys.last().clr); }
+
+      final Color origin = next.clr;
+      final Color dest = prev.clr;
+
+      final float denom = prev.step - next.step;
+      if ( denom != 0.0f ) {
+         final float t = ( step - next.step ) / denom;
+         final float u = 1.0f - t;
+         return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g,
+            u * origin.b + t * dest.b, u * origin.a + t * dest.a);
+      }
+
+      return target.set(origin);
    }
 
    /**
@@ -1350,7 +1347,13 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
     */
    public static Color[] evalRange ( final Gradient grd, final int count ) {
 
-      return Gradient.evalRange(grd, count, Gradient.EASING);
+      final int vCount = count < 2 ? 2 : count;
+      final Color[] result = new Color[vCount];
+      final float toPercent = 1.0f / ( vCount - 1.0f );
+      for ( int i = 0; i < vCount; ++i ) {
+         result[i] = Gradient.eval(grd, i * toPercent, new Color());
+      }
+      return result;
    }
 
    /**
@@ -1483,7 +1486,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
          /* Search for segment within which the step falls. */
 
-         // TEST Why was this commented out??
+         // TEST Why was this commented out?
          segSearch: for ( int m = 0; m < keyLen; ++m ) {
             seg = keyArr[m];
             if ( seg[0] <= step && step <= seg[2] ) { break segSearch; }
@@ -1623,16 +1626,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       }
 
       return target.appendAll(clrs);
-   }
-
-   /**
-    * Gets the string representation of the default gradient easing function.
-    *
-    * @return the string
-    */
-   public static String getEasingString ( ) {
-
-      return Gradient.EASING.toString();
    }
 
    /**
@@ -1820,17 +1813,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       keys.add(new ColorKey(1.0f, 0.992157f, 0.905882f, 0.145098f));
 
       return target;
-   }
-
-   /**
-    * Sets the easing function by which colors in the gradient are
-    * interpolated.
-    *
-    * @param easing the easing function
-    */
-   public static void setEasing ( final Color.AbstrEasing easing ) {
-
-      if ( easing != null ) { Gradient.EASING = easing; }
    }
 
    /**
@@ -2063,15 +2045,12 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       final int end ) {
 
       int st = start;
-      int ed = end;
-      while ( st < ed ) {
+      for ( int ed = end; st < ed; --ed ) {
          final float temp = arr[st].step;
          arr[st].step = arr[ed].step;
          arr[ed].step = temp;
          ++st;
-         --ed;
       }
-
       return arr;
    }
 

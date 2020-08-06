@@ -2086,7 +2086,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void printMatrix ( final int p ) {
 
       final AffineTransform tr = this.g2.getTransform();
-      final StringBuilder sb = new StringBuilder();
+      final StringBuilder sb = new StringBuilder(128);
       sb.append('\n');
       sb.append('[');
       sb.append(' ');

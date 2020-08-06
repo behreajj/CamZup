@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.SortedSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -323,8 +322,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       }
 
       /* Use a tree set to filter out similar vectors. */
-      final SortedSet < Vec2 > coordsTree = new TreeSet <>(Mesh.SORT_2);
-      final SortedSet < Vec2 > texCoordsTree = new TreeSet <>(Mesh.SORT_2);
+      final TreeSet < Vec2 > coordsTree = new TreeSet <>(Mesh.SORT_2);
+      final TreeSet < Vec2 > texCoordsTree = new TreeSet <>(Mesh.SORT_2);
 
       /* Dictionary's keys are no longer needed; just values. */
       coordsTree.addAll(usedCoords.values());
