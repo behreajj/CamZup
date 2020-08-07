@@ -146,16 +146,16 @@ public abstract class Mesh extends EntityData implements IMesh {
     * vertex to all non-adjacent vertices.
     *
     * @return this mesh
+    *
+    * @see Mesh#triangulate(int)
     */
    public Mesh triangulate ( ) {
 
       final int facesLen = this.faces.length;
       for ( int i = 0, k = 0; i < facesLen; ++i ) {
          final int faceLen = this.faces[k].length;
-         if ( faceLen > 2 ) {
-            this.triangulate(k);
-            k += faceLen - 2;
-         }
+         this.triangulate(k);
+         k += faceLen - 2;
       }
       return this;
    }
@@ -177,6 +177,10 @@ public abstract class Mesh extends EntityData implements IMesh {
 
       if ( faceLen < 4 ) { return this; }
 
+      /*
+       * Use first vertex to determine how much data is in each (i.e., whether
+       * it is a 2D vertex or a 3D vertex).
+       */
       final int[] vert0 = face[0];
       final int vertLen = vert0.length;
       final int lastNonAdj = faceLen - 2;
@@ -195,6 +199,7 @@ public abstract class Mesh extends EntityData implements IMesh {
             fNew[2][m] = vertn1[m];
          }
       }
+
       this.faces = Mesh.splice(this.faces, i, 1, fsNew);
       return this;
    }

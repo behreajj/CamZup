@@ -8,7 +8,11 @@ public class Voronoi extends Generative {
    /**
     * Discourage overriding with a private constructor.
     */
-   private Voronoi ( ) {}
+   private Voronoi ( ) {
+
+      // TODO: Is it worth investing in a smooth voronoi function which reduces
+      // discontinuities? Search for this, it was addressed by Bourke or Quilez.
+   }
 
    /**
     * Generates 2D Voronoi noise. Returns the minimum Euclidean distance; the
@@ -23,9 +27,6 @@ public class Voronoi extends Generative {
     */
    public static float eval ( final Vec2 coord, final int seed,
       final float scale, final Vec2 target ) {
-
-      // TODO: Is it worth investing in a smooth voronoi function which reduces
-      // discontinuities? Search for this, it was addressed by Bourke or Quilez.
 
       /*
        * As many functions as is reasonable are inlined for performance purposes

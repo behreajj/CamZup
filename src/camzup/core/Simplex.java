@@ -11,7 +11,7 @@ package camzup.core;
  * which in turn references the work of
  * <a href="https://www.cs.ubc.ca/~rbridson/">Robert Bridson</a>.<br>
  * <br>
- * This implementation introduces the following variations:
+ * This implementation uses the following variations:
  * <ul>
  * <li><code>n</code> and <code>t</code> factors are multiplied later in
  * the noise evaluation function so that a calculation does not need to be

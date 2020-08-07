@@ -5,7 +5,7 @@ package camzup.core;
  * and texture coordinate such that they can be edited together. This is
  * not used by a mesh internally; it is created upon retrieval from a mesh.
  * All of its components should be treated as references to data within the
- * mesh, not as unique values.
+ * mesh, not as independent values.
  */
 public class Vert3 implements Comparable < Vert3 > {
 

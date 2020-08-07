@@ -171,7 +171,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-   @Experimental
    public Knot3 adoptForeHandle ( final Knot3 source ) {
 
       this.foreHandle.set(this.coord.x + source.foreHandle.x - source.coord.x,
@@ -188,7 +187,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-   @Experimental
    public Knot3 adoptHandles ( final Knot3 source ) {
 
       this.adoptForeHandle(source);
@@ -204,7 +202,6 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     */
-   @Experimental
    public Knot3 adoptRearHandle ( final Knot3 source ) {
 
       this.rearHandle.set(this.coord.x + source.rearHandle.x - source.coord.x,
@@ -1208,10 +1205,11 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Sets two knots from a segment of the cubic curve. Assumes that that the
-    * previous knot's coordinate is set to the first anchor point. The
-    * previous knot's fore handle, the next knot's rear handle and the next
-    * knot's coordinate are set by this function.
+    * Sets two knots from a segment of the cubic curve. Assumes that the
+    * previous knot's coordinate is set to the first anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
     *
     * @param xPrevControl the previous control point x
     * @param yPrevControl the previous control point y
@@ -1242,10 +1240,11 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Sets two knots from a segment of the cubic curve. Assumes that that the
-    * previous knot's coordinate is set to the first anchor point. The
-    * previous knot's fore handle, the next knot's rear handle and the next
-    * knot's coordinate are set by this function.
+    * Sets two knots from a segment of the cubic curve. Assumes that the
+    * previous knot's coordinate is set to the first anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
     *
     * @param prevControl the previous control point
     * @param nextControl the next control point
@@ -1265,10 +1264,11 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Sets a knot from line segment. Assumes that that the previous knot's
-    * coordinate is set to the first anchor point. The previous knot's fore
-    * handle, the next knot's rear handle and the next knot's coordinate are
-    * set by this function.
+    * Sets a knot from line segment. Assumes that the previous knot's
+    * coordinate is set to the first anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
     *
     * @param xNextAnchor the next anchor x
     * @param yNextAnchor the next anchor y
@@ -1301,10 +1301,11 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Sets a knot from line segment. Assumes that that the previous knot's
-    * coordinate is set to the first anchor point. The previous knot's fore
-    * handle, the next knot's rear handle and the next knot's coordinate are
-    * set by this function.
+    * Sets a knot from line segment. Assumes that the previous knot's
+    * coordinate is set to the first anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
     *
     * @param nextAnchor the next anchor
     * @param prev       the previous knot
@@ -1320,10 +1321,11 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Sets two knots from a segment of the quadratic curve. Assumes that that
-    * the previous knot's coordinate is set to the first anchor point. The
-    * previous knot's fore handle, the next knot's rear handle and the next
-    * knot's coordinate are set by this function.
+    * Sets two knots from a segment of the quadratic curve. Assumes that the
+    * previous knot's coordinate is set to the first anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
     *
     * @param xControl    the control point x
     * @param yControl    the control point y
@@ -1360,10 +1362,11 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    }
 
    /**
-    * Sets two knots from a segment of the quadratic curve. Assumes that that
-    * the previous knot's coordinate is set to the first anchor point. The
-    * previous knot's fore handle, the next knot's rear handle and the next
-    * knot's coordinate are set by this function.
+    * Sets two knots from a segment of the quadratic curve. Assumes that the
+    * previous knot's coordinate is set to the first anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
     *
     * @param control    the control point
     * @param nextAnchor the next anchor point

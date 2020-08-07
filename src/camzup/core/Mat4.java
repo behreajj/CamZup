@@ -2246,6 +2246,50 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
+    * Multiplies a matrix and a normal. Calculates the inverse of the matrix.
+    *
+    * @param n      the normal
+    * @param m      the matrix
+    * @param h      the inverse
+    * @param target the output normal
+    *
+    * @return the transformed normal
+    *
+    * @see Mat4#inverse(Mat4, Mat4)
+    */
+   @Experimental
+   public static Vec3 mulNormal ( final Vec3 n, final Mat4 m, final Mat4 h,
+      final Vec3 target ) {
+
+      Mat4.inverse(m, h);
+      return Mat4.mulNormal(n, h, target);
+   }
+
+   /**
+    * Multiplies a matrix and a normal. Assumes the inverse of the matrix has
+    * already been calculated.
+    *
+    * @param n      the normal
+    * @param h      the inverse
+    * @param target the output normal
+    *
+    * @return the transformed normal
+    *
+    * @see Mat4#inverse(Mat4, Mat4)
+    */
+   @Experimental
+   public static Vec3 mulNormal ( final Vec3 n, final Mat4 h,
+      final Vec3 target ) {
+
+      /*
+       * Cf. Eric Lengyel, Foundations of Game Engine Development I.
+       * Mathematics, page 106.
+       */
+      return target.set(n.x * h.m00 + n.y * h.m10 + n.z * h.m20, n.x * h.m01
+         + n.y * h.m11 + n.z * h.m21, n.x * h.m02 + n.y * h.m12 + n.z * h.m22);
+   }
+
+   /**
     * Multiplies a matrix and a point. The z component of the point is assumed
     * to be 0.0 . The w component of the point is assumed to be 1.0 , so the
     * point is impacted by the matrix's translation.

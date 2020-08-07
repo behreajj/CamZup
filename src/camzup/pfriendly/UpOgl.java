@@ -3099,7 +3099,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             final int[] data = f[j];
             Transform3.mulPoint(tr, vs[data[0]], v);
-            Transform3.mulDir(tr, vns[data[2]], vn);
+            Transform3.mulNormal(tr, vns[data[2]], vn);
 
             this.normal(vn.x, vn.y, vn.z);
             this.vertexImpl(v.x, v.y, v.z, this.textureU, this.textureV);

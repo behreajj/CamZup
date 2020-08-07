@@ -5,7 +5,7 @@ Vec2 st = new Vec2();
 Gradient gr = Gradient.paletteViridis(new Gradient());
 
 void settings() {
-  size(350, 350, YupJ2.PATH_STR);
+  size(512, 512, YupJ2.PATH_STR);
 }
 
 void setup() {

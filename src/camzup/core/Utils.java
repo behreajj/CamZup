@@ -50,10 +50,9 @@ public abstract class Utils implements IUtils {
     * 0.0; 0.0 when the input is greater than or equal to 1.0.<br>
     * <br>
     * {@link Math#acos(double) } defers to {@link StrictMath#acos(double) },
-    * which is implemented natively. It should <em>not</em> be assumed that
-    * this method is faster than that.<br>
+    * which is implemented natively. This is not a "fast" alternative.<br>
     * <br>
-    * Based on the algorithm at the
+    * Based on the algorithm in
     * <a href="https://developer.download.nvidia.com/cg/acos.html">Nvidia Cg
     * 3.1 Toolkit Documentation</a>. This cites M. Abramowitz and I.A. Stegun,
     * Eds., <em>Handbook of Mathematical Functions</em>, possibly p. 83, which
@@ -140,10 +139,9 @@ public abstract class Utils implements IUtils {
     * 1.0.<br>
     * <br>
     * {@link Math#asin(double) } defers to {@link StrictMath#asin(double) },
-    * which is implemented natively. It should <em>not</em> be assumed that
-    * this method is faster than that.<br>
+    * which is implemented natively. This is not a "fast" alternative.<br>
     * <br>
-    * Based on the algorithm at the
+    * Based on the algorithm in
     * <a href="https://developer.download.nvidia.com/cg/asin.html">Nvidia Cg
     * 3.1 Toolkit Documentation</a> . This cites M. Abramowitz and I.A.
     * Stegun, Eds., <em>Handbook of Mathematical Functions</em>, possibly p.
@@ -177,11 +175,15 @@ public abstract class Utils implements IUtils {
 
    /**
     * Finds a single precision approximation of a signed angle given a
-    * vertical and horizontal component. The vertical component
-    * <em>precedes</em> the horizontal. The return value falls in the range
-    * [-\u03c0, \u03c0] . An alternative to {@link Math#atan2(double, double)}
-    * . Based on the algorithm at the
-    * <a href= "https://developer.download.nvidia.com/cg/atan2.html">Nvidia Cg
+    * vertical and horizontal component. The vertical component precedes the
+    * horizontal. The return value falls in the range [-\u03c0, \u03c0] .<br>
+    * <br>
+    * {@link Math#atan2(double,double) } defers to
+    * {@link StrictMath#atan2(double, double) }, which is implemented
+    * natively. This is not a "fast" alternative.<br>
+    * <br>
+    * Based on the algorithm in
+    * <a href="https://developer.download.nvidia.com/cg/atan2.html">Nvidia Cg
     * 3.1 Toolkit Documentation</a> .
     *
     * @param y the y coordinate (the ordinate)
@@ -190,12 +192,6 @@ public abstract class Utils implements IUtils {
     * @return the angle in radians
     */
    public static float atan2 ( final float y, final float x ) {
-
-      /*
-       * When stored independently as floats, magic numbers are truncated to
-       * different values. 0.121239071f -> 0.12123907f, 0.195635925f ->
-       * 0.19563593f, 0.332994597f -> 0.3329946f, 0.99999563f -> 0.99999565f .
-       */
 
       final boolean yLtZero = y < -0.0f;
       final boolean xLtZero = x < -0.0f;
@@ -399,13 +395,13 @@ public abstract class Utils implements IUtils {
 
    /**
     * Finds the single-precision cosine of an angle in radians. Returns a
-    * value in the range [-1.0, 1.0] .
+    * value in the range [-1.0, 1.0] .<br>
+    * <br>
+    * Wraps around {@link Math#cos(double)}.
     *
     * @param radians the angle in radians
     *
     * @return the cosine of the angle
-    *
-    * @see Math#cos(double)
     */
    public static float cos ( final float radians ) {
 
@@ -524,7 +520,7 @@ public abstract class Utils implements IUtils {
 
    /**
     * Floors a real number to the next least integer. An alternative to
-    * {@link Math#floor(double)} . Returns 0.0 when the input value is NaN .
+    * {@link Math#floor(double)} .
     *
     * @param value the input value
     *
@@ -538,7 +534,7 @@ public abstract class Utils implements IUtils {
 
    /**
     * Floors a real number to the next least integer. An alternative to
-    * {@link Math#floor(double)} . Returns 0.0 when the input value is NaN .
+    * {@link Math#floor(double)} .
     *
     * @param value the input value
     *
@@ -564,19 +560,12 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Applies the modulo operator (%) to the operands, which implicitly uses
-    * the formula fmod ( <em>a</em>, <em>b</em> ) := <em>a</em> - <em>b</em>
-    * trunc ( <em>a</em> / <em>b</em> ) .<br>
-    * <br>
-    * When the left operand is negative and the right operand is positive, the
-    * result will be negative. For periodic values, such as an angle, where
-    * the direction of change could be either clockwise or counterclockwise,
-    * use {@link Utils#mod(float, float)} .<br>
-    * <br>
-    * If the right operand is one, use {@link Utils#fract(float)} or
-    * <em>a</em> - trunc ( <em>a</em> ) instead.<br>
-    * <br>
-    * If the right operand is zero or NaN, returns the left operand.
+    * Applies the modulo operator (<code>%</code>) to the operands. An
+    * analogous formula would be fmod ( <em>a</em>, <em>b</em> ) := <em>a</em>
+    * - <em>b</em> trunc ( <em>a</em> / <em>b</em> ) . When <em>b</em> is
+    * zero, returns <em>a</em>. When <em>a</em> is negative and <em>b</em> is
+    * positive, the result will be negative. If <em>b</em> is one, use
+    * {@link Utils#fract(float)} or <em>a</em> - trunc ( <em>a</em> ).
     *
     * @param a the left operand
     * @param b the right operand
@@ -589,8 +578,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Applies the modulo operator (%) to the operands. If the right operand is
-    * zero, returns the left operand.
+    * Applies the modulo operator (%) to the operands. When <em>b</em> is
+    * zero, returns <em>a</em>.
     *
     * @param a the left operand
     * @param b the right operand
@@ -711,8 +700,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * The inverse square root implementation based on the 'evil bit hack' from
-    * <em>Quake 3</em>, as described by Chris Lomont in
+    * An inverse square root implementation for single precision real numbers
+    * based on the 'evil bit hack' from <em>Quake 3</em>, as described by
+    * Chris Lomont in
     * "<a href= "http://www.lomont.org/papers/2003/InvSqrt.pdf">Fast Inverse
     * Square Root</a>." For accuracy, the result is refined three times with
     * the Newton-Raphson method.<br>
@@ -720,7 +710,7 @@ public abstract class Utils implements IUtils {
     * Useful when normalizing vectors or quaternions. Prefer this over
     * {@link Utils#sqrt(float)}, which depends on this function.<br>
     * <br>
-    * It should not be assumed that this is faster than
+    * Contrary to its name, this should not be assumed to be faster than
     * {@link Math#sqrt(double)}.
     *
     * @param x the value
@@ -977,10 +967,9 @@ public abstract class Utils implements IUtils {
    /**
     * Applies floor modulo to the operands, and therefore uses the formula mod
     * ( <em>a</em>, <em>b</em> ) := <em>a</em> - <em>b</em> * floor (
-    * <em>a</em> / <em>b</em> ) . If the right operand is one, use
-    * {@link Utils#mod1(float)} or <em>a</em> - floor(<em>a</em>) instead. If
-    * the right operand is zero, returns the left operand instead of throwing
-    * a java.lang.ArithmeticException for division by zero.
+    * <em>a</em> / <em>b</em> ) . When <em>b</em> is zero, returns <em>a</em>.
+    * If <em>b</em> is one, use {@link Utils#mod1(float)} or <em>a</em> -
+    * floor(<em>a</em>) instead.
     *
     * @param a the left operand
     * @param b the right operand
@@ -1256,10 +1245,10 @@ public abstract class Utils implements IUtils {
     * A helper method to facilitate the approximate sine and cosine of an
     * angle with single precision real numbers. The radians supplied to this
     * function should be normalized through division by \u03c4 ,
-    * {@link IUtils#ONE_TAU}, approximately {@value IUtils#ONE_TAU}. Subtract
-    * 0.25 from the input value to return the sine instead of the cosine.<br>
+    * {@link IUtils#ONE_TAU}. Subtract <code>0.25</code> from the input value
+    * to return the sine instead of the cosine.<br>
     * <br>
-    * This is based on the algorithm described at
+    * This is based on the algorithm described in
     * <a href="https://developer.download.nvidia.com/cg/sin.html">Nvidia Cg
     * 3.1 Toolkit Documentation</a> .
     *
@@ -1329,13 +1318,13 @@ public abstract class Utils implements IUtils {
 
    /**
     * Finds the single precision sine of an angle in radians. Returns a value
-    * in the range [-1.0, 1.0] .
+    * in the range [-1.0, 1.0] .<br>
+    * <br>
+    * Wraps around {@link Math#sin(double)}.
     *
     * @param radians the angle in radians
     *
     * @return the sine of the angle
-    *
-    * @see Math#sin(double)
     */
    public static float sin ( final float radians ) {
 

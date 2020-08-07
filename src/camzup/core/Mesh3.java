@@ -144,16 +144,16 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             curr = this.coords[currIndex];
             next = this.coords[nextIndex];
 
-            // TODO: Needs further trial and error.
-
-            // Vec3.sub(prev, curr, edge0);
-            Vec3.sub(curr, prev, edge0);
-
-            Vec3.sub(next, curr, edge1);
-            // Vec3.sub(curr, next, edge1);
-
-            // Vec3.crossNorm(edge0, edge1, normal);
-            Vec3.crossNorm(edge1, edge0, normal);
+            /*
+             * Cf. Eric Lengyel, Foundations of Game Engine Development I.
+             * Mathematics, page 101: ( p1 - p0 ) x ( p2 - p0 ) .
+             */
+            Vec3.sub(prev, curr, edge0);
+            Vec3.sub(curr, next, edge1);
+            Vec3.crossNorm(edge0, edge1, normal);
+            // Vec3.sub(curr, prev, edge0);
+            // Vec3.sub(next, curr, edge1);
+            // Vec3.crossNorm(edge1, edge0, normal);
 
             prev = curr;
          }
@@ -386,7 +386,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    @Experimental
    public Mesh3 extrudeFace ( final int faceIdx, final float amt ) {
 
-      // QUERY Extrude by vertex normal, not by calculating center normal?
+      // TODO See calcNormals for way to find face normal by which to
+      // extrude.
 
       if ( amt == 0.0f ) { return this; }
 
@@ -469,6 +470,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          /* Create face for side. */
          final int[][] sideFace = fsNew[j] = new int[4][3];
+
+         // TODO: Does this need to reallocate new arrays, shouldn't they be in
+         // place with the 3 specified above?
          final int[] v00 = sideFace[0] = new int[3];
          final int[] v10 = sideFace[1] = new int[3];
          final int[] v11 = sideFace[2] = new int[3];
@@ -541,8 +545,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       final int[][] f0 = this.faces[Utils.mod(i, this.faces.length)];
       final int f0len = f0.length;
-      final int[] f1 = f0[Utils.mod(j, f0len)];
-      final int[] f2 = f0[Utils.mod(j + 1, f0len)];
+      final int k = Utils.mod(j, f0len);
+      final int[] f1 = f0[k];
+      final int[] f2 = f0[ ( k + 1 ) % f0len];
 
       return target.set(this.coords[f1[0]], this.texCoords[f1[1]],
          this.normals[f1[2]], this.coords[f2[0]], this.texCoords[f2[1]],
@@ -887,9 +892,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public int length ( ) { return this.faces.length; }
 
    /**
-    * Centers the mesh about the origin, (0.0, 0.0) and rescales it to the
-    * range [-0.5, 0.5] . Emits a transform which records the mesh's center
-    * point and original dimension. The transform's rotation is reset.
+    * Centers the mesh about the origin, (0.0, 0.0, 0.0), and rescales it to
+    * the range [-0.5, 0.5] . Emits a transform which records the mesh's
+    * center point and original dimension. The transform's rotation is reset.
     *
     * @param tr the output transform
     *
@@ -1171,8 +1176,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec2[] sourcevts = source.texCoords;
       final int vtslen = sourcevts.length;
       this.texCoords = Vec2.resize(this.texCoords, vtslen);
-      for ( int j = 0; j < vtslen; ++j ) {
-         this.texCoords[j].set(sourcevts[j]);
+      for ( int i = 0; i < vtslen; ++i ) {
+         this.texCoords[i].set(sourcevts[i]);
       }
 
       /* Append one normal. */
@@ -1452,9 +1457,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Subdivides a convex face by cutting each of its edges once to create a
-    * midpoint, then connecting them. This generates peripheral triangles and
-    * a new central face with the same number of edges as the original. This
-    * is best suited to meshes made of triangles.
+    * midpoint, then connecting each midpoint. This generates peripheral
+    * triangles and a new central face with the same number of edges as the
+    * original. This is best suited to meshes made of triangles.
     *
     * @param faceIdx the face index
     *
@@ -1557,6 +1562,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param itr iterations
     *
     * @return this mesh
+    *
+    * @see Mesh3#subdivFaceCenter(int)
     */
    public Mesh3 subdivFacesCenter ( final int itr ) {
 
@@ -1579,6 +1586,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param itr iterations
     *
     * @return this mesh
+    *
+    * @see Mesh3#subdivFaceFan(int)
     */
    public Mesh3 subdivFacesFan ( final int itr ) {
 
@@ -1601,6 +1610,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param itr iterations
     *
     * @return this mesh
+    *
+    * @see Mesh3#subdivFaceInscribe(int)
     */
    public Mesh3 subdivFacesInscribe ( final int itr ) {
 
@@ -1702,7 +1713,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Centers the mesh about the origin, (0.0, 0.0), by calculating its
+    * Centers the mesh about the origin, (0.0, 0.0, 0.0), by calculating its
     * dimensions then subtracting the center point. Emits a transform which
     * records the mesh's center point. The transform's rotation and scale are
     * reset.
@@ -2125,7 +2136,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec3 vnOrigin = this.normals[vert0Idx[2]];
 
       /* Find edge destination vertex. */
-      final int j1 = Utils.mod(edgeIndex + 1, faceLen);
+      final int j1 = ( j0 + 1 ) % faceLen;
       final int[] vert1Idx = face[j1];
       final Vec3 vDest = this.coords[vert1Idx[0]];
       final Vec2 vtDest = this.texCoords[vert1Idx[1]];
@@ -3549,8 +3560,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       for ( int i = 0; i < vertLen; ++i ) {
          final float distSq = Vec3.distSq(verts[i].coord, p);
          dists[i] = distSq;
-         minDist = distSq < minDist ? distSq : minDist;
-         maxDist = distSq > maxDist ? distSq : maxDist;
+         if ( distSq < minDist ) { minDist = distSq; }
+         if ( distSq > maxDist ) { maxDist = distSq; }
       }
 
       /*
@@ -3730,8 +3741,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final float sinTheta = sints[j];
 
             vs[k].set(rhoCosPhi * cosTheta, -rhoSinPhi, rhoCosPhi * sinTheta);
-
-            // TODO: Rework normals?
             vns[k].set(cosPhi * cosTheta, -sinPhi, cosPhi * sinTheta);
          }
       }
@@ -3743,17 +3752,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          uvxs[j] = j * toU;
       }
 
-      /* Calculate texture coordinates v separately. */
-      // final float[] uvys = new float[vpanl1];
-      final float toV = 1.0f / vpanl;
-      // for ( int i = 0; i < vpanl1; ++i ) {
-      // uvys[i] = i * toV;
-      // }
-
       /* Combine into texture coordinates. */
+      final float toV = 1.0f / vpanl;
       for ( int k = 0, i = 0; i < vpanl1; ++i ) {
-         // final float y = uvys[i];
-         final float y = i * toV;
+         final float y = 1.0f - i * toV;
          for ( int j = 0; j < vsect1; ++j, ++k ) {
             vts[k].set(uvxs[j], y);
          }
@@ -3761,8 +3763,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* Set faces. */
       for ( int k = 0, m = 1, i = 0; i < vpanl; ++i ) {
-         // final int iVtNext = i + 1;
-         // final int iVNext = iVtNext % vpanl;
          final int iVNext = ( i + 1 ) % vpanl;
 
          /* For converting from 2D to 1D array (idx = y * width + x) . */
@@ -3770,7 +3770,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int vOffNext = iVNext * vsect;
 
          final int vtOffCurr = i * vsect1;
-         // final int vtOffNext = iVtNext * vsect1;
          final int vtOffNext = vtOffCurr + vsect1;
 
          for ( int j = 0; j < vsect; ++j, k += 2, m += 2 ) {
@@ -4056,12 +4055,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* Set North pole. Offset subsequent vertex indices by 1. */
       vs[0].set(0.0f, 0.0f, 0.5f);
-      vns[0].set(0.0f, 0.0f, 1.0f);
+      // vns[0].set(0.0f, 0.0f, 1.0f);
+      vns[0].set(0.0f, 0.0f, -1.0f);
 
       /* Set South pole. */
       final int last0 = vLen - 1;
       vs[last0].set(0.0f, 0.0f, -0.5f);
-      vns[last0].set(0.0f, 0.0f, -1.0f);
+      // vns[last0].set(0.0f, 0.0f, -1.0f);
+      vns[last0].set(0.0f, 0.0f, 1.0f);
 
       /*
        * Calculate sine & cosine of theta separately. Calculate texture
@@ -4116,7 +4117,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final Vec3 vn = vns[vIdx];
 
             v.set(rhoCosPhi * cosTheta, rhoCosPhi * sinTheta, -rhoSinPhi);
-            vn.set(cosPhi * cosTheta, cosPhi * sinTheta, -sinPhi);
+            // vn.set(cosPhi * cosTheta, cosPhi * sinTheta, -sinPhi);
+            vn.set(-cosPhi * cosTheta, -cosPhi * sinTheta, sinPhi);
          }
 
          /* Loop over texture coordinates. */
@@ -4150,7 +4152,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       for ( int h = 0, k = 1; h < lons; ++h, ++k ) {
          // TODO: Couldn't quadrilaterals be used if longitude is even?
          // TODO: Consolidate north and south cap?
-         final int i = 1 + h;
          final int j = 1 + k % lons;
          final int m = lons + h;
 
@@ -4162,9 +4163,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          a[2] = j;
 
          final int[] b = tri[1];
-         b[0] = i;
+         b[0] = k;
          b[1] = m;
-         b[2] = i;
+         b[2] = k;
 
          final int[] c = tri[2];
          // c[0] = 0;
@@ -4350,8 +4351,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* Validate arguments. */
       final int sec = sectors < 3 ? 3 : sectors;
-      final float rad = radius < IUtils.DEFAULT_EPSILON ? IUtils.DEFAULT_EPSILON
-         : radius;
+      final float rad = Utils.max(IUtils.DEFAULT_EPSILON, radius);
 
       /* Normalize forward. */
       final float mInv0 = Utils.invSqrtUnchecked(m0);

@@ -261,7 +261,6 @@ public class Ray2 implements Cloneable {
     *
     * @see Ray2#intersectLineSeg(Ray2, Vec2, Vec2)
     */
-   @Experimental
    public static float intersectEdge ( final Ray2 ray, final Edge2 edge ) {
 
       return Ray2.intersectLineSeg(ray, edge.origin.coord, edge.dest.coord);

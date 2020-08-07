@@ -236,13 +236,15 @@ public abstract class Convert {
    public static PMatrix2D toPMatrix2D ( final Transform2 tr2,
       final TransformOrder order, PMatrix2D target ) {
 
-      if ( target == null ) { target = new PMatrix2D(); }
+      if ( target == null ) {
+         target = new PMatrix2D();
+      } else {
+         target.reset();
+      }
 
       final Vec2 dim = tr2.getScale(new Vec2());
       final Vec2 loc = tr2.getLocation(new Vec2());
       final float angle = tr2.getRotation();
-
-      target.reset();
 
       switch ( order ) {
 
@@ -424,13 +426,15 @@ public abstract class Convert {
    public static PMatrix3D toPMatrix3D ( final Transform3 tr3,
       final TransformOrder order, PMatrix3D target ) {
 
-      if ( target == null ) { target = new PMatrix3D(); }
+      if ( target == null ) {
+         target = new PMatrix3D();
+      } else {
+         target.reset();
+      }
 
       final Quaternion q = tr3.getRotation(new Quaternion());
       final Vec3 dim = tr3.getScale(new Vec3());
       final Vec3 loc = tr3.getLocation(new Vec3());
-
-      target.reset();
 
       switch ( order ) {
 
@@ -531,6 +535,50 @@ public abstract class Convert {
    }
 
    /**
+    * Converts a 2D mesh to a PShape. Returns a {@link PConstants#GROUP} which
+    * contains, as a child, each face of the source mesh. Each child is of the
+    * type {@link PShape#PATH}. Child shapes record only 2D coordinates, not
+    * texture coordinates.
+    *
+    * @param rndr   the renderer
+    * @param source the source mesh
+    *
+    * @return the PShape
+    */
+   public static PShape toPShape ( final PGraphics rndr, final Mesh2 source ) {
+
+      /* Decompose source mesh elements. */
+      final Vec2[] vs = source.coords;
+      final int[][][] faces = source.faces;
+
+      /* Create output target. */
+      final boolean dim = rndr.is3D();
+      final PShape target = new PShape(rndr, PConstants.GROUP);
+      target.setName(source.name);
+      target.set3D(dim);
+
+      final int facesLen = faces.length;
+      for ( int i = 0; i < facesLen; ++i ) {
+         final int[][] verts = faces[i];
+         final int vertsLen = verts.length;
+
+         final PShape face = new PShape(rndr, PShape.PATH);
+         face.setName("face." + Utils.toPadded(i, 3));
+         face.set3D(dim);
+
+         face.beginShape(PConstants.POLYGON);
+         for ( int j = 0; j < vertsLen; ++j ) {
+            final Vec2 v = vs[verts[j][0]];
+            face.vertex(v.x, v.y);
+         }
+         face.endShape(PConstants.CLOSE);
+         target.addChild(face);
+      }
+
+      return target;
+   }
+
+   /**
     * Converts a 2D mesh entity to a PShape. The entity's transform is
     * converted to a matrix which is applied to the shape.
     *
@@ -539,43 +587,16 @@ public abstract class Convert {
     *
     * @return the PShape
     */
-   @Experimental
    public static PShape toPShape ( final PGraphics rndr,
       final MeshEntity2 source ) {
 
-      final boolean dim = rndr.is3D();
       final PShape shape = new PShape(rndr, PConstants.GROUP);
       shape.setName(source.name);
-      shape.set3D(dim);
+      shape.set3D(rndr.is3D());
 
       final Iterator < Mesh2 > itr = source.meshes.iterator();
       while ( itr.hasNext() ) {
-         final Mesh2 srcMesh = itr.next();
-         final Vec2[] vs = srcMesh.coords;
-         final int[][][] faces = srcMesh.faces;
-
-         final PShape trgMesh = new PShape(rndr, PConstants.GROUP);
-         trgMesh.setName(srcMesh.name);
-         trgMesh.set3D(dim);
-
-         final int facesLen = faces.length;
-         for ( int i = 0; i < facesLen; ++i ) {
-            final int[][] verts = faces[i];
-            final int vertsLen = verts.length;
-
-            final PShape face = new PShape(rndr, PShape.PATH);
-            face.setName("face." + Utils.toPadded(i, 4));
-            face.set3D(dim);
-
-            face.beginShape(PConstants.POLYGON);
-            for ( int j = 0; j < vertsLen; ++j ) {
-               final Vec2 v = vs[verts[j][0]];
-               face.vertex(v.x, v.y);
-            }
-            face.endShape(PConstants.CLOSE);
-            trgMesh.addChild(face);
-         }
-         shape.addChild(trgMesh);
+         shape.addChild(Convert.toPShape(rndr, itr.next()));
       }
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
@@ -593,6 +614,105 @@ public abstract class Convert {
    }
 
    /**
+    * Converts a 2D mesh to a PShape. Returns a {@link PConstants#GROUP} which
+    * contains, as a child, each face of the source mesh. Each child is of the
+    * type {@link PShape#GEOMETRY}. Child shapes record coordinates and
+    * texture coordinates.
+    *
+    * @param rndr   the renderer
+    * @param source the source mesh
+    *
+    * @return the PShape
+    */
+   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
+      final Mesh2 source ) {
+
+      /* Decompose source mesh elements. */
+      final Vec2[] vs = source.coords;
+      final Vec2[] vts = source.texCoords;
+      final int[][][] faces = source.faces;
+
+      /* Create output target. */
+      final boolean dim = rndr.is3D();
+      final PShapeOpenGL target = new PShapeOpenGL(rndr, PConstants.GROUP);
+      target.setName(source.name);
+      target.set3D(dim);
+
+      final int facesLen = faces.length;
+      for ( int i = 0; i < facesLen; ++i ) {
+         final int[][] verts = faces[i];
+         final int vertsLen = verts.length;
+
+         final PShapeOpenGL face = new PShapeOpenGL(rndr, PShape.GEOMETRY);
+         face.setName("face." + Utils.toPadded(i, 3));
+         face.set3D(dim);
+
+         face.beginShape(PConstants.POLYGON);
+         for ( int j = 0; j < vertsLen; ++j ) {
+            final int[] vert = verts[j];
+            final Vec2 v = vs[vert[0]];
+            final Vec2 vt = vts[vert[1]];
+            face.vertex(v.x, v.y, vt.x, vt.y);
+         }
+         face.endShape(PConstants.CLOSE);
+         target.addChild(face);
+      }
+
+      return target;
+   }
+
+   /**
+    * Converts a 3D mesh to a PShape. Returns a {@link PConstants#GROUP} which
+    * contains, as a child, each face of the source mesh. Each child is of the
+    * type {@link PShape#GEOMETRY}. Child shapes record coordinates, texture
+    * coordinates and normals.
+    *
+    * @param rndr   the renderer
+    * @param source the source mesh
+    *
+    * @return the PShape
+    */
+   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
+      final Mesh3 source ) {
+
+      /* Decompose source mesh elements. */
+      final Vec3[] vs = source.coords;
+      final Vec2[] vts = source.texCoords;
+      final Vec3[] vns = source.normals;
+      final int[][][] faces = source.faces;
+
+      /* Create output target. */
+      final boolean dim = rndr.is3D();
+      final PShapeOpenGL target = new PShapeOpenGL(rndr, PConstants.GROUP);
+      target.setName(source.name);
+      target.set3D(dim);
+
+      final int facesLen = faces.length;
+      for ( int i = 0; i < facesLen; ++i ) {
+         final int[][] verts = faces[i];
+         final int vertsLen = verts.length;
+
+         final PShapeOpenGL face = new PShapeOpenGL(rndr, PShape.GEOMETRY);
+         face.setName("face." + Utils.toPadded(i, 3));
+         face.set3D(dim);
+
+         face.beginShape(PConstants.POLYGON);
+         for ( int j = 0; j < vertsLen; ++j ) {
+            final int[] vert = verts[j];
+            final Vec3 v = vs[vert[0]];
+            final Vec2 vt = vts[vert[1]];
+            final Vec3 vn = vns[vert[2]];
+            face.normal(vn.x, vn.y, vn.z);
+            face.vertex(v.x, v.y, v.z, vt.x, vt.y);
+         }
+         face.endShape(PConstants.CLOSE);
+         target.addChild(face);
+      }
+
+      return target;
+   }
+
+   /**
     * Converts a 2D mesh entity to a PShapeOpenGL. Requires a PGraphicsOpenGL
     * renderer. The entity's transform is converted to a matrix which is
     * applied to the shape.
@@ -606,42 +726,13 @@ public abstract class Convert {
    public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
       final MeshEntity2 source ) {
 
-      final boolean dim = rndr.is3D();
       final PShapeOpenGL shape = new PShapeOpenGL(rndr, PConstants.GROUP);
       shape.setName(source.name);
-      shape.set3D(dim);
+      shape.set3D(rndr.is3D());
 
       final Iterator < Mesh2 > itr = source.meshes.iterator();
       while ( itr.hasNext() ) {
-         final Mesh2 srcMesh = itr.next();
-         final Vec2[] vs = srcMesh.coords;
-         final Vec2[] vts = srcMesh.texCoords;
-         final int[][][] faces = srcMesh.faces;
-
-         final PShapeOpenGL trgMesh = new PShapeOpenGL(rndr, PConstants.GROUP);
-         trgMesh.setName(srcMesh.name);
-         trgMesh.set3D(dim);
-
-         final int facesLen = faces.length;
-         for ( int i = 0; i < facesLen; ++i ) {
-            final int[][] verts = faces[i];
-            final int vertsLen = verts.length;
-
-            final PShapeOpenGL face = new PShapeOpenGL(rndr, PShape.GEOMETRY);
-            face.setName("face." + Utils.toPadded(i, 4));
-            face.set3D(dim);
-
-            face.beginShape(PConstants.POLYGON);
-            for ( int j = 0; j < vertsLen; ++j ) {
-               final int[] vert = verts[j];
-               final Vec2 v = vs[vert[0]];
-               final Vec2 vt = vts[vert[1]];
-               face.vertex(v.x, v.y, vt.x, vt.y);
-            }
-            face.endShape(PConstants.CLOSE);
-            trgMesh.addChild(face);
-         }
-         shape.addChild(trgMesh);
+         shape.addChild(Convert.toPShape(rndr, itr.next()));
       }
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
@@ -672,44 +763,12 @@ public abstract class Convert {
    public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
       final MeshEntity3 source ) {
 
-      final boolean dim = rndr.is3D();
       final PShapeOpenGL shape = new PShapeOpenGL(rndr, PConstants.GROUP);
-      shape.set3D(dim);
+      shape.set3D(rndr.is3D());
 
       final Iterator < Mesh3 > itr = source.meshes.iterator();
       while ( itr.hasNext() ) {
-         final Mesh3 srcMesh = itr.next();
-         final Vec3[] vs = srcMesh.coords;
-         final Vec2[] vts = srcMesh.texCoords;
-         final Vec3[] vns = srcMesh.normals;
-         final int[][][] faces = srcMesh.faces;
-
-         final PShapeOpenGL trgMesh = new PShapeOpenGL(rndr, PConstants.GROUP);
-         trgMesh.setName(srcMesh.name);
-         trgMesh.set3D(dim);
-
-         final int facesLen = faces.length;
-         for ( int i = 0; i < facesLen; ++i ) {
-            final int[][] verts = faces[i];
-            final int vertsLen = verts.length;
-
-            final PShapeOpenGL face = new PShapeOpenGL(rndr, PShape.GEOMETRY);
-            face.setName("face." + Utils.toPadded(i, 4));
-            face.set3D(dim);
-
-            face.beginShape(PConstants.POLYGON);
-            for ( int j = 0; j < vertsLen; ++j ) {
-               final int[] vert = verts[j];
-               final Vec3 v = vs[vert[0]];
-               final Vec2 vt = vts[vert[1]];
-               final Vec3 vn = vns[vert[2]];
-               face.normal(vn.x, vn.y, vn.z);
-               face.vertex(v.x, v.y, v.z, vt.x, vt.y);
-            }
-            face.endShape(PConstants.CLOSE);
-            trgMesh.addChild(face);
-         }
-         shape.addChild(trgMesh);
+         shape.addChild(Convert.toPShape(rndr, itr.next()));
       }
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
@@ -780,7 +839,8 @@ public abstract class Convert {
    }
 
    /**
-    * Converts from a PVector to a Vec2.
+    * Converts from a PVector to a Vec2. This will omit any data in the
+    * PVector's z component, which is presumed to be zero.
     *
     * @param source the source vector
     * @param target the target vector
@@ -806,7 +866,8 @@ public abstract class Convert {
    }
 
    /**
-    * Converts from a PVector to a Vec4.
+    * Converts from a PVector to a Vec4. The w component is assumed to be
+    * zero.
     *
     * @param source the source vector
     * @param target the target vector

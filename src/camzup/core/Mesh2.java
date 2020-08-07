@@ -479,8 +479,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final int[][] f0 = this.faces[Utils.mod(i, this.faces.length)];
       final int f0len = f0.length;
-      final int[] f1 = f0[Utils.mod(j, f0len)];
-      final int[] f2 = f0[Utils.mod(j + 1, f0len)];
+      final int k = Utils.mod(j, f0len);
+      final int[] f1 = f0[k];
+      final int[] f2 = f0[ ( k + 1 ) % f0len];
 
       return target.set(this.coords[f1[0]], this.texCoords[f1[1]],
          this.coords[f2[0]], this.texCoords[f2[1]]);
@@ -799,7 +800,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public int length ( ) { return this.faces.length; }
 
    /**
-    * Centers the mesh about the origin, (0.0, 0.0) and rescales it to the
+    * Centers the mesh about the origin, (0.0, 0.0), and rescales it to the
     * range [-0.5, 0.5] . Emits a transform which records the mesh's center
     * point and original dimension. The transform's rotation is reset.
     *
@@ -990,8 +991,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Vec2[] sourcevts = source.texCoords;
       final int vtslen = sourcevts.length;
       this.texCoords = Vec2.resize(this.texCoords, vtslen);
-      for ( int j = 0; j < vtslen; ++j ) {
-         this.texCoords[j].set(sourcevts[j]);
+      for ( int i = 0; i < vtslen; ++i ) {
+         this.texCoords[i].set(sourcevts[i]);
       }
 
       /* Copy faces. */
@@ -1174,9 +1175,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Subdivides a convex face by cutting each of its edges once to create a
-    * midpoint, then connecting them. This generates peripheral triangles and
-    * a new central face with the same number of edges as the original. This
-    * is best suited to meshes made of triangles.
+    * midpoint, then connecting each midpoint. This generates peripheral
+    * triangles and a new central face with the same number of edges as the
+    * original. This is best suited to meshes made of triangles.
     *
     * @param faceIdx the face index
     *
@@ -1264,6 +1265,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @param itr iterations
     *
     * @return this mesh
+    *
+    * @see Mesh2#subdivFaceCenter(int)
     */
    public Mesh2 subdivFacesCenter ( final int itr ) {
 
@@ -1286,6 +1289,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @param itr iterations
     *
     * @return this mesh
+    *
+    * @see Mesh2#subdivFaceFan(int)
     */
    public Mesh2 subdivFacesFan ( final int itr ) {
 
@@ -1308,6 +1313,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @param itr iterations
     *
     * @return this mesh
+    *
+    * @see Mesh2#subdivFaceInscribe(int)
     */
    public Mesh2 subdivFacesInscribe ( final int itr ) {
 
@@ -1782,7 +1789,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Vec2 vtOrigin = this.texCoords[vert0Idx[1]];
 
       /* Find edge destination vertex. */
-      final int j1 = Utils.mod(edgeIndex + 1, faceLen);
+      final int j1 = ( j0 + 1 ) % faceLen;
       final int[] vert1Idx = face[j1];
       final Vec2 vDest = this.coords[vert1Idx[0]];
       final Vec2 vtDest = this.texCoords[vert1Idx[1]];
@@ -2390,7 +2397,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
             for ( int k = 0, i = 0; i < rval; ++i ) {
                final int noff0 = i * cval1;
-               final int noff1 = ( i + 1 ) * cval1;
+               final int noff1 = noff0 + cval1;
 
                for ( int j = 0; j < cval; ++j, ++k ) {
                   final int n00 = noff0 + j;
@@ -2424,7 +2431,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
             for ( int k = 0, i = 0; i < rval; ++i ) {
                final int noff0 = i * cval1;
-               final int noff1 = ( i + 1 ) * cval1;
+               final int noff1 = noff0 + cval1;
 
                for ( int j = 0; j < cval; ++j, k += 2 ) {
                   final int n00 = noff0 + j;
@@ -2678,8 +2685,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       for ( int i = 0; i < vertLen; ++i ) {
          final float distSq = Vec2.distSq(verts[i].coord, p);
          dists[i] = distSq;
-         minDist = distSq < minDist ? distSq : minDist;
-         maxDist = distSq > maxDist ? distSq : maxDist;
+         if ( distSq < minDist ) { minDist = distSq; }
+         if ( distSq > maxDist ) { maxDist = distSq; }
       }
 
       /*

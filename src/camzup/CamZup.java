@@ -3,8 +3,10 @@ package camzup;
 import camzup.core.IUtils;
 import camzup.core.Mesh;
 import camzup.core.Mesh.PolyType;
+import camzup.core.Mesh2;
 import camzup.core.Mesh3;
 import camzup.core.MeshEntity3;
+import camzup.core.Rng;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -449,19 +451,20 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      final Mesh3 m = new Mesh3();
-      CamZup.capsule(32, 16, 1, 1.0f, 0.5f, Mesh.PolyType.QUAD, m);
+      final Rng rng = new Rng();
+
+      final Mesh2 m = new Mesh2();
+      Mesh2.plane(16, m);
+      m.triangulate();
+
+      final Mesh3 m3 = new Mesh3(m);
+      // CamZup.capsule(32, 16, 1, 1.0f, 0.5f, Mesh.PolyType.QUAD, m);
+      // Mesh3.dodecahedron(m);
       final MeshEntity3 me = new MeshEntity3();
-      me.append(m);
+      me.append(m3);
       final String pyCd = me.toBlenderCode();
       System.out.println(pyCd);
 
-      // final Mesh2 m = new Mesh2();
-      // Mesh2.arc(IUtils.THIRD_PI, m);
-      // final MeshEntity2 me = new MeshEntity2();
-      // me.append(m);
-      // final String pyCd = me.toBlenderCode();
-      // System.out.println(pyCd);
    }
 
    /**

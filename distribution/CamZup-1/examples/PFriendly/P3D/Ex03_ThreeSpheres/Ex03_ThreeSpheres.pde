@@ -56,8 +56,7 @@ void setup() {
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
-  //rndr.lights();
-  rndr.directionalLight(255.0, 245.0, 215.0, 0.0, -0.6, 0.8);
+  rndr.lights();
   rndr.camera();
   rndr.perspective();
 

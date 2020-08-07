@@ -194,7 +194,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
       final int len = colors.size();
       this.compressKeysLeft(len);
-      final int oldLen = this.keys.size();
+      final float oldLen = this.keys.size();
       final float denom = 1.0f / ( oldLen + len - 1.0f );
 
       final Iterator < Color > clrItr = colors.iterator();
@@ -1078,7 +1078,8 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
       final Iterator < ColorKey > itr = this.keys.iterator();
       while ( itr.hasNext() ) {
-         sb.append(itr.next().clr.toGplString()).append('\n');
+         sb.append(itr.next().clr.toGplString());
+         sb.append('\n');
       }
 
       return sb.toString();
@@ -1592,7 +1593,7 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
       final int len = lines.length;
       String[] tokens;
-      final ArrayList < Color > clrs = new ArrayList <>();
+      final ArrayList < Color > clrs = new ArrayList <>(16);
 
       final Pattern ptrn = Pattern.compile("\\s+");
       for ( int i = 0; i < len; ++i ) {
@@ -1683,19 +1684,19 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       keys.add(new ColorKey(0.13333333f, 0.984314f, 0.694118f, 0.446275f));
       keys.add(new ColorKey(0.2f, 0.981176f, 0.548235f, 0.35451f));
 
-      keys.add(new ColorKey(0.26666667f, 0.962353f, 0.412549f, 0.301176f));
-      keys.add(new ColorKey(0.33333333f, 0.912418f, 0.286275f, 0.298039f));
+      keys.add(new ColorKey(0.26666668f, 0.962353f, 0.412549f, 0.301176f));
+      keys.add(new ColorKey(0.33333334f, 0.912418f, 0.286275f, 0.298039f));
       keys.add(new ColorKey(0.4f, 0.824314f, 0.198431f, 0.334902f));
       keys.add(new ColorKey(0.46666667f, 0.703268f, 0.142484f, 0.383007f));
 
-      keys.add(new ColorKey(0.53333333f, 0.584052f, 0.110588f, 0.413856f));
+      keys.add(new ColorKey(0.5333333f, 0.584052f, 0.110588f, 0.413856f));
       keys.add(new ColorKey(0.6f, 0.471373f, 0.080784f, 0.430588f));
-      keys.add(new ColorKey(0.66666667f, 0.36732f, 0.045752f, 0.43268f));
-      keys.add(new ColorKey(0.73333333f, 0.267974f, 0.002353f, 0.416732f));
+      keys.add(new ColorKey(0.6666667f, 0.36732f, 0.045752f, 0.43268f));
+      keys.add(new ColorKey(0.73333335f, 0.267974f, 0.002353f, 0.416732f));
 
       keys.add(new ColorKey(0.8f, 0.174118f, 0.006275f, 0.357647f));
-      keys.add(new ColorKey(0.86666667f, 0.093856f, 0.036863f, 0.232941f));
-      keys.add(new ColorKey(0.93333333f, 0.040784f, 0.028758f, 0.110327f));
+      keys.add(new ColorKey(0.8666667f, 0.093856f, 0.036863f, 0.232941f));
+      keys.add(new ColorKey(0.93333334f, 0.040784f, 0.028758f, 0.110327f));
       keys.add(new ColorKey(1.0f, 0.0f, 0.0f, 0.019608f));
 
       return target;
@@ -1716,10 +1717,10 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
       keys.add(new ColorKey(0.0f, 1.0f, 0.0f, 0.0f));
       keys.add(new ColorKey(0.16666667f, 1.0f, 1.0f, 0.0f));
-      keys.add(new ColorKey(0.33333333f, 0.0f, 1.0f, 0.0f));
+      keys.add(new ColorKey(0.33333334f, 0.0f, 1.0f, 0.0f));
       keys.add(new ColorKey(0.5f, 0.0f, 1.0f, 1.0f));
-      keys.add(new ColorKey(0.66666667f, 0.0f, 0.0f, 1.0f));
-      keys.add(new ColorKey(0.83333333f, 1.0f, 0.0f, 1.0f));
+      keys.add(new ColorKey(0.6666667f, 0.0f, 0.0f, 1.0f));
+      keys.add(new ColorKey(0.8333333f, 1.0f, 0.0f, 1.0f));
       keys.add(new ColorKey(1.0f, 1.0f, 0.0f, 0.0f));
 
       return target;
@@ -1797,19 +1798,19 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
       keys.add(new ColorKey(0.13333333f, 0.276078f, 0.184575f, 0.487582f));
       keys.add(new ColorKey(0.2f, 0.254902f, 0.265882f, 0.527843f));
 
-      keys.add(new ColorKey(0.26666667f, 0.221961f, 0.340654f, 0.549281f));
-      keys.add(new ColorKey(0.33333333f, 0.192157f, 0.405229f, 0.554248f));
+      keys.add(new ColorKey(0.26666668f, 0.221961f, 0.340654f, 0.549281f));
+      keys.add(new ColorKey(0.33333334f, 0.192157f, 0.405229f, 0.554248f));
       keys.add(new ColorKey(0.4f, 0.164706f, 0.469804f, 0.556863f));
       keys.add(new ColorKey(0.46666667f, 0.139869f, 0.534379f, 0.553464f));
 
-      keys.add(new ColorKey(0.53333333f, 0.122092f, 0.595033f, 0.543007f));
+      keys.add(new ColorKey(0.5333333f, 0.122092f, 0.595033f, 0.543007f));
       keys.add(new ColorKey(0.6f, 0.139608f, 0.658039f, 0.516863f));
-      keys.add(new ColorKey(0.66666667f, 0.210458f, 0.717647f, 0.471895f));
-      keys.add(new ColorKey(0.73333333f, 0.326797f, 0.773595f, 0.407582f));
+      keys.add(new ColorKey(0.6666667f, 0.210458f, 0.717647f, 0.471895f));
+      keys.add(new ColorKey(0.73333335f, 0.326797f, 0.773595f, 0.407582f));
 
       keys.add(new ColorKey(0.8f, 0.477647f, 0.821961f, 0.316863f));
-      keys.add(new ColorKey(0.86666667f, 0.648366f, 0.858039f, 0.208889f));
-      keys.add(new ColorKey(0.93333333f, 0.825098f, 0.884967f, 0.114771f));
+      keys.add(new ColorKey(0.8666667f, 0.648366f, 0.858039f, 0.208889f));
+      keys.add(new ColorKey(0.93333334f, 0.825098f, 0.884967f, 0.114771f));
       keys.add(new ColorKey(1.0f, 0.992157f, 0.905882f, 0.145098f));
 
       return target;

@@ -138,7 +138,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Experimental
    public Knot2 adoptForeHandle ( final Knot2 source ) {
 
       this.foreHandle.set(this.coord.x + source.foreHandle.x - source.coord.x,
@@ -154,7 +153,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Experimental
    public Knot2 adoptHandles ( final Knot2 source ) {
 
       this.adoptForeHandle(source);
@@ -170,7 +168,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     *
     * @return this knot
     */
-   @Experimental
    public Knot2 adoptRearHandle ( final Knot2 source ) {
 
       this.rearHandle.set(this.coord.x + source.rearHandle.x - source.coord.x,
@@ -401,7 +398,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     */
    public Knot2 rotateForeHandle ( final float cosa, final float sina ) {
 
-      // TODO: TEST
       Vec2.sub(this.foreHandle, this.coord, this.foreHandle);
       Vec2.rotateZ(this.foreHandle, cosa, sina, this.foreHandle);
       Vec2.add(this.foreHandle, this.coord, this.foreHandle);
@@ -460,7 +456,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
     */
    public Knot2 rotateRearHandle ( final float cosa, final float sina ) {
 
-      // TODO: TEST
       Vec2.sub(this.rearHandle, this.coord, this.rearHandle);
       Vec2.rotateZ(this.rearHandle, cosa, sina, this.rearHandle);
       Vec2.add(this.rearHandle, this.coord, this.rearHandle);
@@ -1009,10 +1004,11 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    }
 
    /**
-    * Sets two knots from a segment of the cubic curve. Assumes that that the
-    * previous knot's coordinate is set to the first anchor point. The
-    * previous knot's fore handle, the next knot's rear handle and the next
-    * knot's coordinate are set by this function.
+    * Sets two knots from a segment of the cubic curve. Assumes that the
+    * previous knot's coordinate is set to the first anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
     *
     * @param xPrevControl the previous control point x
     * @param yPrevControl the previous control point y
@@ -1038,10 +1034,11 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    }
 
    /**
-    * Sets two knots from a segment of the cubic curve. Assumes that that the
-    * previous knot's coordinate is set to the first anchor point. The
-    * previous knot's fore handle, the next knot's rear handle and the next
-    * knot's coordinate are set by this function.
+    * Sets two knots from a segment of the cubic curve. Assumes that the
+    * previous knot's coordinate is set to the first anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
     *
     * @param prevControl the previous control point
     * @param nextControl the next control point
@@ -1060,10 +1057,11 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    }
 
    /**
-    * Sets a knot from line segment. Assumes that that the previous knot's
-    * coordinate is set to the first anchor point. The previous knot's fore
-    * handle, the next knot's rear handle and the next knot's coordinate are
-    * set by this function.
+    * Sets a knot from line segment. Assumes that the previous knot's
+    * coordinate is set to the first anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
     *
     * @param xNextAnchor the next anchor x
     * @param yNextAnchor the next anchor y
@@ -1095,10 +1093,11 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    }
 
    /**
-    * Sets a knot from line segment. Assumes that that the previous knot's
-    * coordinate is set to the first anchor point. The previous knot's fore
-    * handle, the next knot's rear handle and the next knot's coordinate are
-    * set by this function.
+    * Sets a knot from line segment. Assumes that the previous knot's
+    * coordinate is set to the first anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
     *
     * @param nextAnchor the next anchor
     * @param prev       the previous knot
@@ -1113,10 +1112,11 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    }
 
    /**
-    * Sets two knots from a segment of the quadratic curve. Assumes that that
-    * the previous knot's coordinate is set to the first anchor point. The
-    * previous knot's fore handle, the next knot's rear handle and the next
-    * knot's coordinate are set by this function.
+    * Sets two knots from a segment of the quadratic curve. Assumes that the
+    * previous knot's coordinate is set to the first anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
     *
     * @param xControl    the control point x
     * @param yControl    the control point y
@@ -1153,10 +1153,11 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
    }
 
    /**
-    * Sets two knots from a segment of the quadratic curve. Assumes that that
-    * the previous knot's coordinate is set to the first anchor point. The
-    * previous knot's fore handle, the next knot's rear handle and the next
-    * knot's coordinate are set by this function.
+    * Sets two knots from a segment of the quadratic curve. Assumes that the
+    * previous knot's coordinate is set to the first anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
     *
     * @param control    the control point
     * @param nextAnchor the next anchor point

@@ -1391,6 +1391,29 @@ public class Transform3 extends Transform {
    }
 
    /**
+    * Multiplies a normal by a transform. This divides the normal by the
+    * transform's scale and then rotates it by the transform's rotation.
+    *
+    * @param t      the transform
+    * @param source the input normal
+    * @param target the output normal
+    *
+    * @return the normal
+    *
+    * @see Vec3#div(Vec3, Vec3, Vec3)
+    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
+    */
+   @Experimental
+   public static Vec3 mulNormal ( final Transform3 t, final Vec3 source,
+      final Vec3 target ) {
+
+      // TODO: invMulNormal?
+      Vec3.div(source, t.scale, target);
+      Quaternion.mulVector(t.rotation, target, target);
+      return target;
+   }
+
+   /**
     * Multiplies a point by a transform. This rotates the point, multiplies
     * the point by the scale, then adds the translation.
     *

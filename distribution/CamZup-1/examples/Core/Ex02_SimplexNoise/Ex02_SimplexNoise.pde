@@ -49,7 +49,7 @@ void draw() {
         float fac = Simplex.fbm(noise, Simplex.DEFAULT_SEED,
           octaves, lacunarity, persist);
         fac = fac * 0.5 + 0.5;
-        clr.set(fac, fac, fac, 1.0);
+        clr.set(fac, fac, fac);
         pixels[idx] = Color.toHexInt(clr);
       } else {
         Simplex.fbm(noise, Simplex.DEFAULT_SEED,
