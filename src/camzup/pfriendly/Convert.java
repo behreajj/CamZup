@@ -839,20 +839,6 @@ public abstract class Convert {
    }
 
    /**
-    * Converts from a PVector to a Vec2. This will omit any data in the
-    * PVector's z component, which is presumed to be zero.
-    *
-    * @param source the source vector
-    * @param target the target vector
-    *
-    * @return the vector
-    */
-   public static Vec2 toVec2 ( final PVector source, final Vec2 target ) {
-
-      return target.set(source.x, source.y);
-   }
-
-   /**
     * Converts from a PVector to a Vec3.
     *
     * @param source the source vector

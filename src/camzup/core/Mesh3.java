@@ -104,14 +104,75 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Recalculates this mesh's normals per vertex. If the normals array is
-    * null, or if its length is not equal to the length of coordinates, the
-    * normals array is reallocated.
+    * Calculates the normals of a mesh. Defaults to flat shading.
+    *
+    * @return this mesh
+    */
+   public Mesh3 calcNormals ( ) { return this.calcNormalsFlat(); }
+
+   /**
+    * Calculates this mesh's normals per face, resulting in flat shading. If
+    * the normals array is null, or if its length is not equal to the length
+    * of coordinates, the normals array is reallocated.
+    *
+    * @return this mesh
+    */
+   public Mesh3 calcNormalsFlat ( ) {
+
+      final int[][][] fs = this.faces;
+      final int fsLen = fs.length;
+      this.normals = Vec3.resize(this.normals, fsLen);
+
+      Vec3 prev = null;
+      Vec3 curr = null;
+      Vec3 next = null;
+
+      final Vec3 edge0 = new Vec3();
+      final Vec3 edge1 = new Vec3();
+      final Vec3 vertNorm = new Vec3();
+
+      for ( int i = 0; i < fsLen; ++i ) {
+         final int[][] f = fs[i];
+         final int fLen = f.length;
+         prev = this.coords[f[fLen - 1][0]];
+
+         /* Reset normal, as it will be an average. */
+         final Vec3 vn = this.normals[i];
+         vn.reset();
+
+         for ( int j = 0; j < fLen; ++j ) {
+
+            curr = this.coords[f[j][0]];
+            next = this.coords[f[ ( j + 1 ) % fLen][0]];
+
+            // TODO: Will results be the same if this is not normalized?
+            Vec3.sub(prev, curr, edge0);
+            Vec3.sub(curr, next, edge1);
+            Vec3.crossNorm(edge0, edge1, vertNorm);
+            Vec3.add(vn, vertNorm, vn);
+
+            prev = curr;
+         }
+         Vec3.div(vn, fsLen, vn);
+
+         /* Refresh face indices to point to same normal for each face. */
+         for ( int j = 0; j < fLen; ++j ) {
+            f[j][2] = i;
+         }
+      }
+
+      return this;
+   }
+
+   /**
+    * Calculates this mesh's normals per vertex, resulting in smooth shading.
+    * If the normals array is null, or if its length is not equal to the
+    * length of coordinates, the normals array is reallocated.
     *
     * @return this mesh
     */
    @Experimental
-   public Mesh3 calcNormals ( ) {
+   public Mesh3 calcNormalsSmooth ( ) {
 
       this.normals = Vec3.resize(this.normals, this.coords.length);
 
@@ -131,11 +192,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int fLen = f.length;
          prev = this.coords[f[fLen - 1][0]];
 
-         for ( int j = 0, k = 1; j < fLen; ++j, ++k ) {
+         for ( int j = 0; j < fLen; ++j ) {
 
             final int[] vert = f[j];
             final int currIndex = vert[0];
-            final int nextIndex = f[k % fLen][0];
+            final int nextIndex = f[ ( j + 1 ) % fLen][0];
 
             /* Acquire normal and update face index reference to it. */
             normal = this.normals[currIndex];
@@ -146,11 +207,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
             /*
              * Cf. Eric Lengyel, Foundations of Game Engine Development I.
-             * Mathematics, page 101: ( p1 - p0 ) x ( p2 - p0 ) .
+             * Mathematics, p. 101: ( p1 - p0 ) x ( p2 - p0 ) .
              */
             Vec3.sub(prev, curr, edge0);
             Vec3.sub(curr, next, edge1);
             Vec3.crossNorm(edge0, edge1, normal);
+
             // Vec3.sub(curr, prev, edge0);
             // Vec3.sub(next, curr, edge1);
             // Vec3.crossNorm(edge1, edge0, normal);
@@ -329,12 +391,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec3 vnOrigin = this.normals[idxVn0];
       final Vec3 vnDest = this.normals[idxVn3];
 
-      /* @formatter:off */
-      final Vec3 vnDiff = new Vec3(
-         ( vnDest.x + vnOrigin.x ) * 0.5f,
-         ( vnDest.y + vnOrigin.y ) * 0.5f,
-         ( vnDest.z + vnOrigin.z ) * 0.5f);
-      /* @formatter:on */
+      final Vec3 vnDiff = new Vec3( ( vnDest.x + vnOrigin.x ) * 0.5f, ( vnDest.y
+         + vnOrigin.y ) * 0.5f, ( vnDest.z + vnOrigin.z ) * 0.5f);
       Vec3.normalize(vnDiff, vnDiff);
 
       final Vec3 vDiff = new Vec3();
@@ -375,8 +433,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Extrudes a face by an amount. Creates quadrilateral sides to connect
-    * extruded face to original. Does not check as to whether a face is an
-    * bordered by other faces; best used on disconnected faces.
+    * extruded face to original. Does not check whether a face is bordered by
+    * other faces; best used on disconnected faces.
     *
     * @param faceIdx the face index
     * @param amt     the amount
@@ -471,7 +529,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          /* Create face for side. */
          final int[][] sideFace = fsNew[j] = new int[4][3];
 
-         // TODO: Does this need to reallocate new arrays, shouldn't they be in
+         // TODO: Does this need to reallocate new arrays? Shouldn't they be in
          // place with the 3 specified above?
          final int[] v00 = sideFace[0] = new int[3];
          final int[] v10 = sideFace[1] = new int[3];
@@ -1169,7 +1227,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int vslen = sourcevs.length;
       this.coords = Vec3.resize(this.coords, vslen);
       for ( int i = 0; i < vslen; ++i ) {
-         this.coords[i].set(sourcevs[i]);
+         this.coords[i].set(sourcevs[i], 0.0f);
       }
 
       /* Copy texture coordinates. */
@@ -1567,8 +1625,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 subdivFacesCenter ( final int itr ) {
 
-      final int vitr = itr < 1 ? 1 : itr;
-      for ( int i = 0; i < vitr; ++i ) {
+      for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
@@ -1591,8 +1648,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 subdivFacesFan ( final int itr ) {
 
-      final int vitr = itr < 1 ? 1 : itr;
-      for ( int i = 0; i < vitr; ++i ) {
+      for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
@@ -1615,8 +1671,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 subdivFacesInscribe ( final int itr ) {
 
-      final int vitr = itr < 1 ? 1 : itr;
-      for ( int i = 0; i < vitr; ++i ) {
+      for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
@@ -2084,6 +2139,39 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Casts all vertices and normals of this mesh to a sphere. This is
+    * protected because instance functions let the user decide when to
+    * calculate normals and which shading type (flat or smooth) to use.
+    *
+    * @return this mesh
+    */
+   protected Mesh3 castToSphere ( ) {
+
+      final Vec3[] vs = this.coords;
+      final int vsLen = vs.length;
+      final Vec3[] vns = this.normals = Vec3.resize(this.normals, vsLen);
+      for ( int i = 0; i < vsLen; ++i ) {
+         final Vec3 v = vs[i];
+         final Vec3 vn = vns[i];
+         Vec3.normalize(v, vn);
+         Vec3.mul(vn, 0.5f, v);
+      }
+
+      /* Reassign normal indices. */
+      final int[][][] fs = this.faces;
+      final int fsLen = fs.length;
+      for ( int i = 0; i < fsLen; ++i ) {
+         final int[][] f = fs[i];
+         final int fLen = f.length;
+         for ( int j = 0; j < fLen; ++j ) {
+            f[j][2] = f[j][0];
+         }
+      }
+
+      return this;
+   }
+
+   /**
     * Tests this mesh for equivalence with another.
     *
     * @param mesh3 the mesh
@@ -2208,6 +2296,17 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * {@value Mesh3#DEFAULT_CUBE_SIZE} .
     */
    public static final float DEFAULT_CUBE_SIZE = 0.35355338f;
+
+   /**
+    * Type of polygon to draw when it is not supplied to the polygon function.
+    */
+   public static final PolyType DEFAULT_POLY_TYPE = PolyType.TRI;
+
+   /**
+    * Default number of subdivision iterations to use when creating a sphere
+    * from a cube or icosahedron.
+    */
+   public static final int DEFAULT_SPHERE_ITR = 3;
 
    /**
     * Calculates the dimensions of an Axis-Aligned Bounding Box (AABB)
@@ -2404,12 +2503,28 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * Generates a cube mesh. In the context of Platonic solids, also known as
     * a hexahedron, as it has 6 faces and 8 vertices.
     *
-    * @param size   the corner scalar
+    * @param size   the scalar
     * @param target the output mesh
     *
     * @return the cube
     */
    public static Mesh3 cube ( final float size, final Mesh3 target ) {
+
+      return Mesh3.cube(size, PolyType.QUAD, target);
+   }
+
+   /**
+    * Generates a cube mesh. In the context of Platonic solids, also known as
+    * a hexahedron, as it has 6 faces and 8 vertices.
+    *
+    * @param size   the scalar
+    * @param poly   the polygon type
+    * @param target the output mesh
+    *
+    * @return the cube
+    */
+   public static Mesh3 cube ( final float size, final PolyType poly,
+      final Mesh3 target ) {
 
       final float vsz = Utils.max(IUtils.DEFAULT_EPSILON, size);
 
@@ -2439,15 +2554,45 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals[4].set(-1.0f, 0.0f, 0.0f);
       target.normals[5].set(0.0f, 1.0f, 0.0f);
 
-      /* @formatter:off */
-      target.faces = new int[][][] {
-         { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
-         { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } },
-         { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0, 2 } },
-         { { 4, 2, 3 }, { 5, 3, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
-         { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
-         { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 }, { 6, 1, 5 } } };
-      /* @formatter:on */
+      switch ( poly ) {
+
+         case TRI:
+
+            /* @formatter:off */
+            target.faces = new int[][][] {
+               { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 } },
+               { { 6, 2, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
+               { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 } },
+               { { 7, 1, 1 }, { 1, 3, 1 }, { 5, 0, 1 } },
+               { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 } },
+               { { 2, 1, 2 }, { 4, 3, 2 }, { 0, 0, 2 } },
+               { { 4, 2, 3 }, { 5, 3, 3 }, { 1, 0, 3 } },
+               { { 4, 2, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
+               { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 } },
+               { { 0, 2, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
+               { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 } },
+               { { 2, 2, 5 }, { 7, 0, 5 }, { 6, 1, 5 } } };
+            /* @formatter:on */
+
+            break;
+
+         case NGON:
+
+         case QUAD:
+
+         default:
+
+            /* @formatter:off */
+            target.faces = new int[][][] {
+               { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
+               { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } },
+               { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0, 2 } },
+               { { 4, 2, 3 }, { 5, 3, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
+               { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
+               { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 }, { 6, 1, 5 } } };
+            /* @formatter:on */
+
+      }
 
       return target;
    }
@@ -2463,7 +2608,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public static Mesh3 cube ( final Mesh3 target ) {
 
-      return Mesh3.cube(Mesh3.DEFAULT_CUBE_SIZE, target);
+      return Mesh3.cube(Mesh3.DEFAULT_CUBE_SIZE, PolyType.QUAD, target);
    }
 
    /**
@@ -2475,32 +2620,54 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param target the output mesh
     *
     * @return the cube sphere
-    *
-    * @see Mesh3#triangulate()
-    * @see Mesh3#calcNormals()
     */
-   @Experimental
    public static Mesh3 cubeSphere ( final int itrs, final Mesh3 target ) {
+
+      return Mesh3.cubeSphere(itrs, Mesh3.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates a cube, subdivides, casts the vertices to a sphere, then
+    * triangulates its faces. The higher the iteration, the more spherical the
+    * result at the cost of performance.
+    *
+    * @param itrs   iterations
+    * @param poly   the polygon type
+    * @param target the output mesh
+    *
+    * @return the cube sphere
+    *
+    * @see Mesh3#subdivFacesCenter(int)
+    */
+   public static Mesh3 cubeSphere ( final int itrs, final PolyType poly,
+      final Mesh3 target ) {
 
       /*
        * Sort has to be done first to merge newly created vertices before
        * normals are calculated.
        */
-      Mesh3.cube(0.5f, target);
+      Mesh3.cube(0.5f, PolyType.QUAD, target);
       target.subdivFacesCenter(itrs);
+      if ( poly == PolyType.TRI ) { target.triangulate(); }
       target.clean();
-
-      final int vsLen = target.coords.length;
-      final Vec3[] vs = target.coords;
-      for ( int i = 0; i < vsLen; ++i ) {
-         final Vec3 v = vs[i];
-         Vec3.rescale(v, 0.5f, v);
-      }
-
-      target.calcNormals();
-      target.triangulate();
+      target.castToSphere();
       target.name = "Sphere";
       return target;
+   }
+
+   /**
+    * Creates a cube, subdivides, casts the vertices to a sphere. For
+    * iterations, uses {@link Mesh3#DEFAULT_SPHERE_ITR},
+    * {@value Mesh3#DEFAULT_SPHERE_ITR}.
+    *
+    * @param target the output mesh
+    *
+    * @return the cube sphere
+    */
+   public static Mesh3 cubeSphere ( final Mesh3 target ) {
+
+      return Mesh3.cubeSphere(Mesh3.DEFAULT_SPHERE_ITR, Mesh3.DEFAULT_POLY_TYPE,
+         target);
    }
 
    /**
@@ -3378,7 +3545,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Creates an icosahedron, subdivides through inscription, then casts the
     * vertices to a sphere. The higher the iteration, the more sphere-like the
-    * result.
+    * result at the cost of performance.
     *
     * @param itrs   iterations
     * @param target the output mesh
@@ -3386,7 +3553,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the icosphere
     *
     * @see Mesh3#subdivFaceInscribe(int)
-    * @see Mesh3#calcNormals()
     */
    public static Mesh3 icosphere ( final int itrs, final Mesh3 target ) {
 
@@ -3397,17 +3563,23 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       Mesh3.icosahedron(target);
       target.subdivFacesInscribe(itrs);
       target.clean();
-
-      final int vsLen = target.coords.length;
-      for ( int i = 0; i < vsLen; ++i ) {
-         final Vec3 v = target.coords[i];
-         Vec3.rescale(v, 0.5f, v);
-      }
-
-      target.calcNormals();
-
+      target.castToSphere();
       target.name = "Icosphere";
       return target;
+   }
+
+   /**
+    * Creates an icosahedron, subdivides through inscription, then casts the
+    * vertices to a sphere. For iterations, uses
+    * {@link Mesh3#DEFAULT_SPHERE_ITR}, {@value Mesh3#DEFAULT_SPHERE_ITR}.
+    *
+    * @param target the output mesh
+    *
+    * @return the icosphere
+    */
+   public static Mesh3 icosphere ( final Mesh3 target ) {
+
+      return Mesh3.icosphere(Mesh3.DEFAULT_SPHERE_ITR, target);
    }
 
    /**
@@ -3930,7 +4102,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          }
       }
 
-      target.calcNormals();
+      target.calcNormalsSmooth();
       return target;
    }
 
@@ -4002,7 +4174,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3 uvSphere ( final int longitudes, final int latitudes,
       final Mesh3 target ) {
 
-      return Mesh3.uvSphere(longitudes, latitudes, PolyType.TRI, target);
+      return Mesh3.uvSphere(longitudes, latitudes, Mesh3.DEFAULT_POLY_TYPE,
+         target);
    }
 
    /**
@@ -4150,7 +4323,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* South cap. */
       for ( int h = 0, k = 1; h < lons; ++h, ++k ) {
-         // TODO: Couldn't quadrilaterals be used if longitude is even?
          // TODO: Consolidate north and south cap?
          final int j = 1 + k % lons;
          final int m = lons + h;
@@ -4210,21 +4382,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                final int[] c = quad[2];
                final int[] d = quad[3];
 
-               a[0] = v00;
-               a[1] = vt00;
-               a[2] = v00;
-
-               b[0] = v10;
-               b[1] = vt10;
-               b[2] = v10;
-
-               c[0] = v11;
-               c[1] = vt11;
-               c[2] = v11;
-
-               d[0] = v01;
-               d[1] = vt01;
-               d[2] = v01;
+               /* @formatter:off */
+               a[0] = v00; a[1] = vt00; a[2] = v00;
+               b[0] = v10; b[1] = vt10; b[2] = v10;
+               c[0] = v11; c[1] = vt11; c[2] = v11;
+               d[0] = v01; d[1] = vt01; d[2] = v01;
+               /* @formatter:on */
 
             } else {
 
@@ -4233,35 +4396,20 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                final int[] b0 = tri0[1];
                final int[] c0 = tri0[2];
 
-               a0[0] = v00;
-               a0[1] = vt00;
-               a0[2] = v00;
-
-               b0[0] = v10;
-               b0[1] = vt10;
-               b0[2] = v10;
-
-               c0[0] = v11;
-               c0[1] = vt11;
-               c0[2] = v11;
+               /* @formatter:off */
+               a0[0] = v00; a0[1] = vt00; a0[2] = v00;
+               b0[0] = v10; b0[1] = vt10; b0[2] = v10;
+               c0[0] = v11; c0[1] = vt11; c0[2] = v11;
 
                final int[][] tri1 = fs[++idx];
                final int[] a1 = tri1[0];
                final int[] b1 = tri1[1];
                final int[] c1 = tri1[2];
 
-               a1[0] = v00;
-               a1[1] = vt00;
-               a1[2] = v00;
-
-               b1[0] = v11;
-               b1[1] = vt11;
-               b1[2] = v11;
-
-               c1[0] = v01;
-               c1[1] = vt01;
-               c1[2] = v01;
-
+               a1[0] = v00; a1[1] = vt00; a1[2] = v00;
+               b1[0] = v11; b1[1] = vt11; b1[2] = v11;
+               c1[0] = v01; c1[1] = vt01; c1[2] = v01;
+               /* @formatter:on */
             }
          }
       }
@@ -4359,15 +4507,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final float ky = y0 * mInv0;
       final float kz = z0 * mInv0;
 
-      /* Assume that the world's up direction is (0.0, 0.0, 1.0) . */
-      float refx = 0.0f;
-      float refy = 0.0f;
-      float refz = 1.0f;
-
-      /* Find the cross product of forward and up. */
-      float x1 = refy * kz - refz * ky;
-      float y1 = refz * kx - refx * kz;
-      float z1 = refx * ky - refy * kx;
+      /* Find the cross product of forward and reference (0.0, 0.0, 1.0). */
+      float x1 = -ky;
+      float y1 = kx;
+      float z1 = 0.0f;
 
       /* Forward and up are parallel if the cross product is zero. */
       if ( Utils.approx(x1, 0.0f, IUtils.DEFAULT_EPSILON) && Utils.approx(y1,
@@ -4375,17 +4518,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             IUtils.DEFAULT_EPSILON) ) {
 
          /*
-          * If forward and up are parallel, assume that the world's up direction
-          * is (0.0, 1.0, 0.0) instead.
+          * If forward and up are parallel, recalculate the cross product
+          * between forward and reference (0.0, 1.0, 0.0).
           */
-         refx = 0.0f;
-         refy = 1.0f;
-         refz = 0.0f;
-
-         /* Recalculate the cross product. */
-         x1 = refy * kz - refz * ky;
-         y1 = refz * kx - refx * kz;
-         z1 = refx * ky - refy * kx;
+         x1 = kz;
+         y1 = 0.0f;
+         z1 = -kx;
       }
 
       /* The cross product is the right axis. Normalize right. */

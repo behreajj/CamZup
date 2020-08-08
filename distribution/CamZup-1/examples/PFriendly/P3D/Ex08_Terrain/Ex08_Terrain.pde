@@ -41,7 +41,7 @@ void setup() {
   }
 
   plane3.triangulate();
-  plane3.calcNormals();
+  plane3.calcNormalsSmooth();
 }
 
 void draw() {

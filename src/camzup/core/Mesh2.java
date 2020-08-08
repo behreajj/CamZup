@@ -1270,8 +1270,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public Mesh2 subdivFacesCenter ( final int itr ) {
 
-      final int vitr = itr < 1 ? 1 : itr;
-      for ( int i = 0; i < vitr; ++i ) {
+      for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
@@ -1294,8 +1293,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public Mesh2 subdivFacesFan ( final int itr ) {
 
-      final int vitr = itr < 1 ? 1 : itr;
-      for ( int i = 0; i < vitr; ++i ) {
+      for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
@@ -1318,8 +1316,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public Mesh2 subdivFacesInscribe ( final int itr ) {
 
-      final int vitr = itr < 1 ? 1 : itr;
-      for ( int i = 0; i < vitr; ++i ) {
+      for ( int i = 0; i < itr; ++i ) {
          final int len = this.faces.length;
          for ( int j = 0, k = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
