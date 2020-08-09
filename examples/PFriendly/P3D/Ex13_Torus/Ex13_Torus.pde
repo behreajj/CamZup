@@ -54,11 +54,11 @@ void draw() {
   lons = Utils.lerp(3, 48, mouse.x);
   lats = Utils.lerp(1, 24, mouse.y);
 
-  Mesh3.torus(0.25, lons, lats, smooth);
+  Mesh3.torus(0.375, lons, lats, smooth);
   flat.set(smooth);
   skele.set(smooth);
 
-  flat.calcNormalsFlat();
+  flat.shadeFlat();
 
   me1.rotateZ(0.005);
   me2.rotateY(0.005);

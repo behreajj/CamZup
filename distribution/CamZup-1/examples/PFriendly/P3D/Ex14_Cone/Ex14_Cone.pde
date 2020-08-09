@@ -1,7 +1,6 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-int lats = 16;
 int lons = 32;
 Vec3 mouse = new Vec3();
 
@@ -52,9 +51,8 @@ void draw() {
 
   rndr.mouse1u(mouse);
   lons = Utils.lerp(3, 48, mouse.x);
-  lats = Utils.lerp(1, 24, mouse.y);
 
-  Mesh3.torus(0.375, lons, lats, smooth);
+  Mesh3.cone(1.0, 0.5, lons, smooth);
   flat.set(smooth);
   skele.set(smooth);
 

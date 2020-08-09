@@ -828,14 +828,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Returns an vertex iterator for this face, which allows its vertices to
-    * be accessed in an enhanced for-loop.
-    *
-    * @return the iterator
-    */
-   public Vert3Iterator vertIterator ( ) { return new Vert3Iterator(this); }
-
-   /**
     * Translates the face in local space. This is done by (1) finding the
     * orientation of the face; (2) multiplying the input vector by the
     * orientation; (3) subtracting the face's center point from the face's
@@ -847,9 +839,10 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @return the face
     */
    @Experimental
-   Face3 translateLocal ( final Vec3 v, final Handedness handedness ) {
+   public Face3 translateLocal ( final Vec3 v, final Handedness handedness ) {
 
-      // TEST
+      // TODO: Are normals defaulting to left-handed? That seems to contribute
+      // to what makes this difficult to debug?
 
       final Transform3 tr = Face3.orientation(this, handedness,
          new Transform3());
@@ -865,6 +858,14 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       return this;
    }
+
+   /**
+    * Returns an vertex iterator for this face, which allows its vertices to
+    * be accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
+   public Vert3Iterator vertIterator ( ) { return new Vert3Iterator(this); }
 
    /**
     * Finds the center of a face by averaging all the coordinates in its list
@@ -931,9 +932,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    @Experimental
    public static Vec3 normal ( final Face3 face, final Vec3 target ) {
 
-      // RESEARCH: Should this depend not on the pre-calculated normals but
-      // instead calculate upon request?
-
       target.reset();
       final Vert3[] verts = face.vertices;
       final int len = verts.length;
@@ -942,6 +940,28 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
       }
       Vec3.div(target, len, target);
       return Vec3.normalize(target, target);
+
+      // target.reset();
+      // Vec3 prev = null;
+      // Vec3 curr = null;
+      // Vec3 next = null;
+      // final Vec3 edge0 = new Vec3();
+      // final Vec3 edge1 = new Vec3();
+      // final Vec3 vertNorm = new Vec3();
+      // final Vert3[] verts = face.vertices;
+      // final int len = verts.length;
+      // prev = verts[len - 1].coord;
+      // for ( int i = 0; i < len; ++i ) {
+      // curr = verts[i].coord;
+      // next = verts[ ( i + 1 ) % len].coord;
+      // Vec3.sub(prev, curr, edge0);
+      // Vec3.sub(curr, next, edge1);
+      // Vec3.crossNorm(edge0, edge1, vertNorm);
+      // Vec3.add(target, vertNorm, target);
+      // prev = curr;
+      // }
+      // Vec3.div(target, len, target);
+      // return target;
    }
 
    /**

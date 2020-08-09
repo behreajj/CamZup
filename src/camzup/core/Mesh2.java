@@ -691,8 +691,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       }
 
       /* Average. */
-      Vec2.div(vCenter, faceLen, vCenter);
-      Vec2.div(vtCenter, faceLen, vtCenter);
+      if ( faceLen > 0 ) {
+         final float flInv = 1.0f / faceLen;
+         Vec2.mul(vCenter, flInv, vCenter);
+         Vec2.mul(vtCenter, flInv, vtCenter);
+      }
 
       final Vec2[] vsNew = new Vec2[faceLen];
       final Vec2[] vtsNew = new Vec2[faceLen];
@@ -1101,7 +1104,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             ( vtCurr.x + vtNext.x ) * 0.5f,
             ( vtCurr.y + vtNext.y ) * 0.5f);
 
-
          fsNew[j] = new int[][] {
             {   vCenterIdx,   vtCenterIdx },
             { vsOldLen + j, vtsOldLen + j },
@@ -1110,8 +1112,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          /* @formatter:on */
       }
 
-      Vec2.div(vCenter, faceLen, vCenter);
-      Vec2.div(vtCenter, faceLen, vtCenter);
+      /* Average. */
+      if ( faceLen > 0 ) {
+         final float flInv = 1.0f / faceLen;
+         Vec2.mul(vCenter, flInv, vCenter);
+         Vec2.mul(vtCenter, flInv, vtCenter);
+      }
 
       this.coords = Vec2.concat(this.coords, vsNew);
       this.texCoords = Vec2.concat(this.texCoords, vtsNew);
@@ -1163,8 +1169,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             vtCurrIdx }, { vertNext[0], vertNext[1] } };
       }
 
-      Vec2.div(vCenter, faceLen, vCenter);
-      Vec2.div(vtCenter, faceLen, vtCenter);
+      /* Average. */
+      if ( faceLen > 0 ) {
+         final float flInv = 1.0f / faceLen;
+         Vec2.mul(vCenter, flInv, vCenter);
+         Vec2.mul(vtCenter, flInv, vtCenter);
+      }
 
       this.coords = Vec2.concat(this.coords, new Vec2[] { vCenter });
       this.texCoords = Vec2.concat(this.texCoords, new Vec2[] { vtCenter });
@@ -2198,6 +2208,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Creates an array of meshes, each with one face from the source mesh.
+    * Leaves the source mesh unaltered. New meshes are created through
+    * visitation of each face in the source, so they may contain redundant
+    * data to be removed with {@link Mesh2#clean()}.
     *
     * @param source the source mesh
     *
@@ -2656,10 +2669,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * mutates a vertex's properties by such a factor can be applied to the
     * collection.<br>
     * <br>
-    * However, the Euclidean distance from a point is unsigned, so two points
-    * may have approximately the same distance from the point yet be in
-    * different quadrants of the Cartesian coordinate system, i.e. not
-    * organized by proximity to each other.
+    * The Euclidean distance from a point is unsigned, so two points may have
+    * approximately the same distance from the point yet be in different
+    * quadrants of the Cartesian coordinate system, i.e. not organized by
+    * proximity to each other.
     *
     * @param m         the mesh
     * @param p         the point

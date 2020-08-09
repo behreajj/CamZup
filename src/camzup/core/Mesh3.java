@@ -104,127 +104,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Calculates the normals of a mesh. Defaults to flat shading.
-    *
-    * @return this mesh
-    */
-   public Mesh3 calcNormals ( ) { return this.calcNormalsFlat(); }
-
-   /**
-    * Calculates this mesh's normals per face, resulting in flat shading. If
-    * the normals array is null, or if its length is not equal to the length
-    * of coordinates, the normals array is reallocated.
-    *
-    * @return this mesh
-    */
-   public Mesh3 calcNormalsFlat ( ) {
-
-      final int[][][] fs = this.faces;
-      final int fsLen = fs.length;
-      this.normals = Vec3.resize(this.normals, fsLen);
-
-      Vec3 prev = null;
-      Vec3 curr = null;
-      Vec3 next = null;
-
-      final Vec3 edge0 = new Vec3();
-      final Vec3 edge1 = new Vec3();
-      final Vec3 vertNorm = new Vec3();
-
-      for ( int i = 0; i < fsLen; ++i ) {
-         final int[][] f = fs[i];
-         final int fLen = f.length;
-         prev = this.coords[f[fLen - 1][0]];
-
-         /* Reset normal, as it will be an average. */
-         final Vec3 vn = this.normals[i];
-         vn.reset();
-
-         for ( int j = 0; j < fLen; ++j ) {
-
-            curr = this.coords[f[j][0]];
-            next = this.coords[f[ ( j + 1 ) % fLen][0]];
-
-            // TODO: Will results be the same if this is not normalized?
-            Vec3.sub(prev, curr, edge0);
-            Vec3.sub(curr, next, edge1);
-            Vec3.crossNorm(edge0, edge1, vertNorm);
-            Vec3.add(vn, vertNorm, vn);
-
-            prev = curr;
-         }
-         Vec3.div(vn, fsLen, vn);
-
-         /* Refresh face indices to point to same normal for each face. */
-         for ( int j = 0; j < fLen; ++j ) {
-            f[j][2] = i;
-         }
-      }
-
-      return this;
-   }
-
-   /**
-    * Calculates this mesh's normals per vertex, resulting in smooth shading.
-    * If the normals array is null, or if its length is not equal to the
-    * length of coordinates, the normals array is reallocated.
-    *
-    * @return this mesh
-    */
-   @Experimental
-   public Mesh3 calcNormalsSmooth ( ) {
-
-      this.normals = Vec3.resize(this.normals, this.coords.length);
-
-      Vec3 prev = null;
-      Vec3 curr = null;
-      Vec3 next = null;
-      Vec3 normal = null;
-
-      final Vec3 edge0 = new Vec3();
-      final Vec3 edge1 = new Vec3();
-
-      final int[][][] fs = this.faces;
-      final int fsLen = fs.length;
-      for ( int i = 0; i < fsLen; ++i ) {
-
-         final int[][] f = fs[i];
-         final int fLen = f.length;
-         prev = this.coords[f[fLen - 1][0]];
-
-         for ( int j = 0; j < fLen; ++j ) {
-
-            final int[] vert = f[j];
-            final int currIndex = vert[0];
-            final int nextIndex = f[ ( j + 1 ) % fLen][0];
-
-            /* Acquire normal and update face index reference to it. */
-            normal = this.normals[currIndex];
-            vert[2] = currIndex;
-
-            curr = this.coords[currIndex];
-            next = this.coords[nextIndex];
-
-            /*
-             * Cf. Eric Lengyel, Foundations of Game Engine Development I.
-             * Mathematics, p. 101: ( p1 - p0 ) x ( p2 - p0 ) .
-             */
-            Vec3.sub(prev, curr, edge0);
-            Vec3.sub(curr, next, edge1);
-            Vec3.crossNorm(edge0, edge1, normal);
-
-            // Vec3.sub(curr, prev, edge0);
-            // Vec3.sub(next, curr, edge1);
-            // Vec3.crossNorm(edge1, edge0, normal);
-
-            prev = curr;
-         }
-      }
-
-      return this;
-   }
-
-   /**
     * Removes elements from the coordinate, texture coordinate and normal
     * arrays of the mesh which are not visited by the face indices.
     *
@@ -300,7 +179,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       this.texCoords = newTexCoords;
       this.normals = newNormals;
 
-      /* Sort faces by centroid. */
+      /* Sort faces by center. */
       Arrays.sort(this.faces, new Mesh3.SortIndices3(this.coords));
 
       return this;
@@ -444,9 +323,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    @Experimental
    public Mesh3 extrudeFace ( final int faceIdx, final float amt ) {
 
-      // TODO See calcNormals for way to find face normal by which to
-      // extrude.
-
       if ( amt == 0.0f ) { return this; }
 
       /* Validate face index, find face. */
@@ -487,7 +363,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec3[] vnsExtruded = new Vec3[faceLen + faceLen];
 
       final int[][][] fsNew = new int[faceLen + 1][][];
-      final int[][] extrudedFace = fsNew[faceLen] = new int[faceLen][];
+      final int[][] extrudedFace = fsNew[faceLen] = new int[faceLen][3];
 
       for ( int j = 0; j < faceLen; ++j ) {
 
@@ -521,7 +397,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          Vec3.crossNorm(vBase, extrusion, vnSide);
          final int sideIdx = vnsOldLen + faceLen + j;
 
-         final int[] extrudedVert = extrudedFace[j] = new int[3];
+         final int[] extrudedVert = extrudedFace[j];
          extrudedVert[0] = vsOldLen + j;
          extrudedVert[1] = vtCurrIdx;
          extrudedVert[2] = vnsOldLen + j;
@@ -529,12 +405,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          /* Create face for side. */
          final int[][] sideFace = fsNew[j] = new int[4][3];
 
-         // TODO: Does this need to reallocate new arrays? Shouldn't they be in
-         // place with the 3 specified above?
-         final int[] v00 = sideFace[0] = new int[3];
-         final int[] v10 = sideFace[1] = new int[3];
-         final int[] v11 = sideFace[2] = new int[3];
-         final int[] v01 = sideFace[3] = new int[3];
+         final int[] v00 = sideFace[0];
+         final int[] v10 = sideFace[1];
+         final int[] v11 = sideFace[2];
+         final int[] v01 = sideFace[3];
 
          /* Top-left corner, origin of edge on extruded face. */
          v00[0] = vsOldLen + j;
@@ -826,10 +700,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       /* Average. */
-      Vec3.div(vCenter, faceLen, vCenter);
-      Vec2.div(vtCenter, faceLen, vtCenter);
-      Vec3.div(vnCenter, faceLen, vnCenter);
-      Vec3.normalize(vnCenter, vnCenter);
+      if ( faceLen > 0 ) {
+         final float flInv = 1.0f / faceLen;
+         Vec3.mul(vCenter, flInv, vCenter);
+         Vec2.mul(vtCenter, flInv, vtCenter);
+         Vec3.mul(vnCenter, flInv, vnCenter);
+         Vec3.normalize(vnCenter, vnCenter);
+      }
 
       final Vec3[] vsNew = new Vec3[faceLen];
       final Vec2[] vtsNew = new Vec2[faceLen];
@@ -1338,6 +1215,127 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Calculates the normals of a mesh. Defaults to flat shading.
+    *
+    * @return this mesh
+    */
+   public Mesh3 shade ( ) { return this.shadeFlat(); }
+
+   /**
+    * Calculates this mesh's normals per face, resulting in flat shading. If
+    * the normals array is null, or if its length is not equal to the length
+    * of coordinates, the normals array is reallocated.
+    *
+    * @return this mesh
+    */
+   public Mesh3 shadeFlat ( ) {
+
+      final int[][][] fs = this.faces;
+      final int fsLen = fs.length;
+      this.normals = Vec3.resize(this.normals, fsLen);
+
+      Vec3 prev = null;
+      Vec3 curr = null;
+      Vec3 next = null;
+
+      final Vec3 edge0 = new Vec3();
+      final Vec3 edge1 = new Vec3();
+      final Vec3 vertNorm = new Vec3();
+
+      for ( int i = 0; i < fsLen; ++i ) {
+         final int[][] f = fs[i];
+         final int fLen = f.length;
+         prev = this.coords[f[fLen - 1][0]];
+
+         /* Reset normal, as it will be an average. */
+         final Vec3 vn = this.normals[i];
+         vn.reset();
+
+         for ( int j = 0; j < fLen; ++j ) {
+
+            curr = this.coords[f[j][0]];
+            next = this.coords[f[ ( j + 1 ) % fLen][0]];
+
+            // TODO: Will results be the same if this is not normalized?
+            Vec3.sub(prev, curr, edge0);
+            Vec3.sub(curr, next, edge1);
+            Vec3.crossNorm(edge0, edge1, vertNorm);
+            Vec3.add(vn, vertNorm, vn);
+
+            prev = curr;
+         }
+         Vec3.div(vn, fsLen, vn);
+
+         /* Refresh face indices to point to same normal for each face. */
+         for ( int j = 0; j < fLen; ++j ) {
+            f[j][2] = i;
+         }
+      }
+
+      return this;
+   }
+
+   /**
+    * Calculates this mesh's normals per vertex, resulting in smooth shading.
+    * If the normals array is null, or if its length is not equal to the
+    * length of coordinates, the normals array is reallocated.
+    *
+    * @return this mesh
+    */
+   @Experimental
+   public Mesh3 shadeSmooth ( ) {
+
+      this.normals = Vec3.resize(this.normals, this.coords.length);
+
+      Vec3 prev = null;
+      Vec3 curr = null;
+      Vec3 next = null;
+      Vec3 normal = null;
+
+      final Vec3 edge0 = new Vec3();
+      final Vec3 edge1 = new Vec3();
+
+      final int[][][] fs = this.faces;
+      final int fsLen = fs.length;
+      for ( int i = 0; i < fsLen; ++i ) {
+
+         final int[][] f = fs[i];
+         final int fLen = f.length;
+         prev = this.coords[f[fLen - 1][0]];
+
+         for ( int j = 0; j < fLen; ++j ) {
+
+            final int[] vert = f[j];
+            final int currIndex = vert[0];
+            final int nextIndex = f[ ( j + 1 ) % fLen][0];
+
+            /* Acquire normal and update face index reference to it. */
+            normal = this.normals[currIndex];
+            vert[2] = currIndex;
+
+            curr = this.coords[currIndex];
+            next = this.coords[nextIndex];
+
+            /*
+             * Cf. Eric Lengyel, Foundations of Game Engine Development I.
+             * Mathematics, p. 101: ( p1 - p0 ) x ( p2 - p0 ) .
+             */
+            Vec3.sub(prev, curr, edge0);
+            Vec3.sub(curr, next, edge1);
+            Vec3.crossNorm(edge0, edge1, normal);
+
+            // Vec3.sub(curr, prev, edge0);
+            // Vec3.sub(next, curr, edge1);
+            // Vec3.crossNorm(edge1, edge0, normal);
+
+            prev = curr;
+         }
+      }
+
+      return this;
+   }
+
+   /**
     * Subdivides a convex face. Defaults to center-based subdivision.
     *
     * @param faceIdx the face index
@@ -1383,14 +1381,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec3[] vnsNew = new Vec3[faceLen + 1];
       final int[][][] fsNew = new int[faceLen][4][3];
 
-      /* Centroid is last element of new array. */
-      final Vec3 vCentroid = vsNew[faceLen] = new Vec3();
-      final Vec2 vtCentroid = vtsNew[faceLen] = new Vec2();
-      final Vec3 vnCentroid = vnsNew[faceLen] = new Vec3();
+      /* Center is last element of new array. */
+      final Vec3 vCenter = vsNew[faceLen] = new Vec3();
+      final Vec2 vtCenter = vtsNew[faceLen] = new Vec2();
+      final Vec3 vnCenter = vnsNew[faceLen] = new Vec3();
 
-      final int vCentroidIdx = vsOldLen + faceLen;
-      final int vtCentroidIdx = vtsOldLen + faceLen;
-      final int vnCentroidIdx = vnsOldLen + faceLen;
+      final int vCenterIdx = vsOldLen + faceLen;
+      final int vtCenterIdx = vtsOldLen + faceLen;
+      final int vnCenterIdx = vnsOldLen + faceLen;
 
       for ( int j = 0; j < faceLen; ++j ) {
          final int k = ( j + 1 ) % faceLen;
@@ -1403,9 +1401,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec3 vnCurr = this.normals[vertCurr[2]];
 
          /* Sum vertex for center. */
-         Vec3.add(vCentroid, vCurr, vCentroid);
-         Vec2.add(vtCentroid, vtCurr, vtCentroid);
-         Vec3.add(vnCentroid, vnCurr, vnCentroid);
+         Vec3.add(vCenter, vCurr, vCenter);
+         Vec2.add(vtCenter, vtCurr, vtCenter);
+         Vec3.add(vnCenter, vnCurr, vnCenter);
 
          /* @formatter:off */
          final int vNextIdx = vertNext[0];
@@ -1430,17 +1428,20 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          Vec3.normalize(vn, vn);
 
          fsNew[j] = new int[][] {
-            { vCentroidIdx, vtCentroidIdx, vnCentroidIdx },
+            { vCenterIdx, vtCenterIdx, vnCenterIdx },
             { vsOldLen + j, vtsOldLen + j, vnsOldLen + j },
             {     vNextIdx,     vtNextIdx,     vnNextIdx },
             { vsOldLen + k, vtsOldLen + k, vnsOldLen + k } };
          /* @formatter:on */
       }
 
-      Vec3.div(vCentroid, faceLen, vCentroid);
-      Vec2.div(vtCentroid, faceLen, vtCentroid);
-      Vec3.div(vnCentroid, faceLen, vnCentroid);
-      Vec3.normalize(vnCentroid, vnCentroid);
+      if ( faceLen > 0 ) {
+         final float flInv = 1.0f / faceLen;
+         Vec3.mul(vCenter, flInv, vCenter);
+         Vec2.mul(vtCenter, flInv, vtCenter);
+         Vec3.mul(vnCenter, flInv, vnCenter);
+         Vec3.normalize(vnCenter, vnCenter);
+      }
 
       this.coords = Vec3.concat(this.coords, vsNew);
       this.texCoords = Vec2.concat(this.texCoords, vtsNew);
@@ -1468,13 +1469,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int faceLen = face.length;
 
       final int[][][] fsNew = new int[faceLen][3][3];
-      final Vec3 vCentroid = new Vec3();
-      final Vec2 vtCentroid = new Vec2();
-      final Vec3 vnCentroid = new Vec3();
+      final Vec3 vCenter = new Vec3();
+      final Vec2 vtCenter = new Vec2();
+      final Vec3 vnCenter = new Vec3();
 
-      final int vCentroidIdx = this.coords.length;
-      final int vtCentroidIdx = this.texCoords.length;
-      final int vnCentroidIdx = this.normals.length;
+      final int vCenterIdx = this.coords.length;
+      final int vtCenterIdx = this.texCoords.length;
+      final int vnCenterIdx = this.normals.length;
 
       for ( int j = 0; j < faceLen; ++j ) {
          final int k = ( j + 1 ) % faceLen;
@@ -1491,23 +1492,26 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec3 vnCurr = this.normals[vnCurrIdx];
 
          /* Sum vertex for center. */
-         Vec3.add(vCentroid, vCurr, vCentroid);
-         Vec2.add(vtCentroid, vtCurr, vtCentroid);
-         Vec3.add(vnCentroid, vnCurr, vnCentroid);
+         Vec3.add(vCenter, vCurr, vCenter);
+         Vec2.add(vtCenter, vtCurr, vtCenter);
+         Vec3.add(vnCenter, vnCurr, vnCenter);
 
-         fsNew[j] = new int[][] { { vCentroidIdx, vtCentroidIdx,
-            vnCentroidIdx }, { vCurrIdx, vtCurrIdx, vnCurrIdx }, { vertNext[0],
-               vertNext[1], vertNext[2] } };
+         fsNew[j] = new int[][] { { vCenterIdx, vtCenterIdx, vnCenterIdx }, {
+            vCurrIdx, vtCurrIdx, vnCurrIdx }, { vertNext[0], vertNext[1],
+               vertNext[2] } };
       }
 
-      Vec3.div(vCentroid, faceLen, vCentroid);
-      Vec2.div(vtCentroid, faceLen, vtCentroid);
-      Vec3.div(vnCentroid, faceLen, vnCentroid);
-      Vec3.normalize(vnCentroid, vnCentroid);
+      if ( faceLen > 0 ) {
+         final float flInv = 1.0f / faceLen;
+         Vec3.mul(vCenter, flInv, vCenter);
+         Vec2.mul(vtCenter, flInv, vtCenter);
+         Vec3.mul(vnCenter, flInv, vnCenter);
+         Vec3.normalize(vnCenter, vnCenter);
+      }
 
-      this.coords = Vec3.concat(this.coords, new Vec3[] { vCentroid });
-      this.texCoords = Vec2.concat(this.texCoords, new Vec2[] { vtCentroid });
-      this.normals = Vec3.concat(this.normals, new Vec3[] { vnCentroid });
+      this.coords = Vec3.concat(this.coords, new Vec3[] { vCenter });
+      this.texCoords = Vec2.concat(this.texCoords, new Vec2[] { vtCenter });
+      this.normals = Vec3.concat(this.normals, new Vec3[] { vnCenter });
       this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
       return this;
@@ -2555,9 +2559,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals[5].set(0.0f, 1.0f, 0.0f);
 
       switch ( poly ) {
-
          case TRI:
-
             /* @formatter:off */
             target.faces = new int[][][] {
                { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 } },
@@ -2573,15 +2575,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 } },
                { { 2, 2, 5 }, { 7, 0, 5 }, { 6, 1, 5 } } };
             /* @formatter:on */
-
             break;
 
          case NGON:
-
          case QUAD:
-
          default:
-
             /* @formatter:off */
             target.faces = new int[][][] {
                { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
@@ -2591,7 +2589,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
                { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 }, { 6, 1, 5 } } };
             /* @formatter:on */
-
       }
 
       return target;
@@ -2759,7 +2756,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Returns an array of meshes with one face from the source per mesh.
+    * Creates an array of meshes, each with one face from the source mesh.
+    * Leaves the source mesh unaltered. New meshes are created through
+    * visitation of each face in the source, so they may contain redundant
+    * data to be removed with {@link Mesh3#clean()}.
     *
     * @param source the source mesh
     *
@@ -3706,10 +3706,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * mutates a vertex's properties by such a factor can be applied to the
     * collection.<br>
     * <br>
-    * However, the Euclidean distance from a point is unsigned, so two points
-    * may have approximately the same distance from the point yet be in
-    * different quadrants of the Cartesian coordinate system, i.e. not
-    * organized by proximity to each other.
+    * The Euclidean distance from a point is unsigned, so two points may have
+    * approximately the same distance from the point yet be in different
+    * quadrants of the Cartesian coordinate system, i.e. not organized by
+    * proximity to each other.
     *
     * @param m         the mesh
     * @param p         the point
@@ -4102,7 +4102,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          }
       }
 
-      target.calcNormalsSmooth();
+      target.shadeSmooth();
       return target;
    }
 
@@ -4599,8 +4599,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             * sina, iz * cosa + jz * sina);
 
          /*
-          * Keep separate in case you want to try tapering the cylinder by
-          * providing two radii.
+          * In case you want to try tapering the cylinder by providing two
+          * radii.
           */
          final Vec3 v0 = Vec3.mul(vn, rad, vs[i]);
          v0.x += xOrigin;
