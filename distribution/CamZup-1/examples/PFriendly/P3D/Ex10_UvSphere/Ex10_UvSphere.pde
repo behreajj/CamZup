@@ -58,7 +58,7 @@ void draw() {
   flat.set(smooth);
   skele.set(smooth);
 
-  flat.calcNormalsFlat();
+  flat.shadeFlat();
 
   me1.rotateZ(0.005);
   me2.rotateY(0.005);

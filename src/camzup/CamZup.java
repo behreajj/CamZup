@@ -456,10 +456,11 @@ public class CamZup {
       // m2.triangulate();
 
       final Mesh3 m3 = new Mesh3();
-      Mesh3.cube(0.5f, m3);
-      m3.triangulate();
+      Mesh3.octahedron(m3);
+      // m3.triangulate();
+      m3.clean();
       Mesh3.uniformData(m3, m3);
-      System.out.println(m3.toString(6));
+      System.out.println(m3.toUnityCode());
       // final MeshEntity3 me = new MeshEntity3();
       // me.append(m3);
       // final String pyCd = me.toBlenderCode();

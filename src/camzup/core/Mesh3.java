@@ -1926,6 +1926,97 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Renders the mesh as a string representing Unity code. This is brittle,
+    * it is used internally to compare results to other graphics engines.
+    *
+    * @return the string
+    */
+   @Experimental
+   public String toUnityCode ( ) {
+
+      final boolean calcTangents = true;
+      final boolean optimize = true;
+
+      final StringBuilder sb = new StringBuilder(4096);
+      sb.append("Mesh mesh = new Mesh();\n");
+
+      final StringBuilder vs = new StringBuilder(1024).append(
+         "Vector3[] vs = { \n");
+
+      final StringBuilder vts = new StringBuilder(1024).append(
+         "Vector2[] vts = { \n");
+
+      final StringBuilder vns = new StringBuilder(1024).append(
+         "Vector3[] vns = { \n");
+
+      final StringBuilder tris = new StringBuilder(1024).append(
+         "int[] tris = { \n");
+
+      final int fsLen = this.faces.length;
+      final int fsLast = fsLen - 1;
+      boolean triFlag = false;
+      for ( int k = 0, i = 0; i < fsLen; ++i ) {
+         final int[][] f = this.faces[i];
+         final int fLen = f.length;
+         if ( fLen != 3 && !triFlag ) {
+            System.err.println(
+               "Mesh has not been triangulated; it will be malformed in Unity.");
+            triFlag = true;
+         }
+         final int fLast = fLen - 1;
+         for ( int j = 0; j < fLen; ++j, ++k ) {
+            final int[] vert = f[j];
+
+            final Vec3 v = this.coords[vert[0]];
+            final Vec2 vt = this.texCoords[vert[1]];
+            final Vec3 vn = this.normals[vert[2]];
+
+            vs.append(v.toUnityCode());
+            vts.append(vt.toUnityCode());
+            vns.append(vn.toUnityCode());
+            tris.append(k);
+
+            if ( j < fLast ) {
+               vs.append(',').append(' ').append('\n');
+               vts.append(',').append(' ').append('\n');
+               vns.append(',').append(' ').append('\n');
+               tris.append(',').append(' ');
+            }
+         }
+
+         if ( i < fsLast ) {
+            vs.append(',').append(' ').append('\n').append('\n');
+            vts.append(',').append(' ').append('\n').append('\n');
+            vns.append(',').append(' ').append('\n').append('\n');
+            tris.append(',').append(' ').append('\n');
+         }
+      }
+
+      vs.append(' ').append('}').append(';');
+      vts.append(' ').append('}').append(';');
+      vns.append(' ').append('}').append(';');
+      tris.append(' ').append('}').append(';');
+
+      sb.append(vs.toString());
+      sb.append('\n').append('\n');
+      sb.append(vts.toString());
+      sb.append('\n').append('\n');
+      sb.append(vns.toString());
+      sb.append('\n').append('\n');
+      sb.append(tris.toString());
+      sb.append('\n').append('\n');
+
+      sb.append("mesh.vertices = vs;\n");
+      sb.append("mesh.uv = vts;\n");
+      sb.append("mesh.normals = vns;\n");
+      sb.append("mesh.triangles = tris;\n\n");
+
+      if ( calcTangents ) { sb.append("mesh.RecalculateTangents();\n"); }
+      if ( optimize ) { sb.append("mesh.Optimize();\n"); }
+      return sb.toString();
+   }
+
+   /**
     * Transforms all coordinates in the mesh by a matrix.
     *
     * @param m the matrix

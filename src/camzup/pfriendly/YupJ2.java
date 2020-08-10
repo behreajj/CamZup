@@ -1979,7 +1979,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void origin ( final float lineLength, final float sw,
       final int xColor, final int yColor ) {
 
-      final double vl = lineLength > YupJ2.EPS_D ? lineLength : YupJ2.EPS_D;
+      final double vl = lineLength > IUtils.DEFAULT_EPSILON ? lineLength
+         : YupJ2.EPS_D;
 
       this.pushStyle();
       this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND, sw);
@@ -3526,26 +3527,29 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float h, final float startAngle, final float stopAngle,
       final int arcMode ) {
 
-      /*
-       * The Arc2D object uses double precision real numbers -- regardless of
-       * whether the "Float" version is used or not. So if nothing else, using
-       * doubles spares (float) casts.
-       */
-
+      /* Convert start angle to [0.0, 1.0] , then floor mod. */
       final double aNorm = startAngle * IUtils.ONE_TAU_D;
       final double a = 1.0d - ( aNorm > 0.0d ? aNorm - ( int ) aNorm : aNorm
          < 0.0d ? aNorm - ( ( int ) aNorm - 1.0d ) : 0.0d );
 
+      /* Convert stop angle to [0.0, 1.0] , then floor mod. */
       final double bNorm = stopAngle * IUtils.ONE_TAU_D;
       final double b = 1.0d - ( bNorm > 0.0d ? bNorm - ( int ) bNorm : bNorm
          < 0.0d ? bNorm - ( ( int ) bNorm - 1.0d ) : 0.0d );
 
+      /*
+       * Convert from start-stop to start plus angle sweep. Convert from radians
+       * to degrees, then floor mod.
+       */
       final double c = 360.0d * b;
-
       final double abSub = a - b;
       final double d = abSub > 0.0d ? 360.0d * ( abSub - ( int ) abSub ) : abSub
          < 0.0d ? 360.0d * ( abSub - ( ( int ) abSub - 1.0d ) ) : 0.0d;
 
+      /*
+       * Depending on whether or not fill and stroke are enabled, two curves
+       * could be displayed.
+       */
       int fillMode = Arc2D.PIE;
       int strokeMode = Arc2D.OPEN;
 
@@ -3571,6 +3575,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             fillMode = Arc2D.OPEN;
       }
 
+      /* Promote floats to doubles. */
       final double xd = x;
       final double yd = y;
       final double wd = w;
@@ -3691,7 +3696,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     *
     * @see Utils#clamp01(float)
     */
-   protected void colorCalc ( final Color c ) {
+   public void colorCalc ( final Color c ) {
 
       /* Clamp values to the range [0.0, 1.0] . */
       this.calcR = c.r < 0.0f ? 0.0f : c.r > 1.0f ? 1.0f : c.r;
@@ -3708,9 +3713,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       /* @formatter:off */
       this.calcColor = this.calcAi << 0x18
-         | this.calcRi << 0x10
-         | this.calcGi << 0x8
-         | this.calcBi;
+                     | this.calcRi << 0x10
+                     | this.calcGi << 0x8
+                     | this.calcBi;
       /* @formatter:on */
    }
 
@@ -3760,6 +3765,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       }
 
+      /* Convert from [0.0, 1.0] to [0, 255] . */
       this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
       this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
       this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
@@ -3768,9 +3774,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       /* @formatter:off */
       this.calcColor = this.calcAi << 0x18
-         | this.calcRi << 0x10
-         | this.calcGi << 0x8
-         | this.calcBi;
+                     | this.calcRi << 0x10
+                     | this.calcGi << 0x8
+                     | this.calcBi;
       /* @formatter:on */
    }
 

@@ -2,8 +2,14 @@ package camzup.pfriendly;
 
 import java.util.Iterator;
 
+import camzup.core.Curve2;
+import camzup.core.Curve3;
+import camzup.core.CurveEntity2;
+import camzup.core.CurveEntity3;
 import camzup.core.Experimental;
 import camzup.core.Img;
+import camzup.core.Knot2;
+import camzup.core.Knot3;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
 import camzup.core.Mesh2;
@@ -535,6 +541,94 @@ public abstract class Convert {
    }
 
    /**
+    * Converts a 2D curve to a PShape. Returns a {@link PConstants#PATH}.
+    *
+    * @param rndr   the renderer
+    * @param source the source mesh
+    *
+    * @return the PShape
+    */
+   public static PShape toPShape ( final PGraphics rndr, final Curve2 source ) {
+
+      final boolean dim = rndr.is3D();
+      final PShape target = new PShape(rndr, PShape.PATH);
+      target.setName(source.name);
+      target.set3D(dim);
+
+      final Iterator < Knot2 > itr = source.iterator();
+
+      final Knot2 firstKnot = itr.next();
+      Knot2 prevKnot = firstKnot;
+      Knot2 currKnot = null;
+
+      Vec2 coord = prevKnot.coord;
+      Vec2 foreHandle = null;
+      Vec2 rearHandle = null;
+
+      target.beginShape(PConstants.POLYGON);
+      target.vertex(coord.x, coord.y);
+
+      while ( itr.hasNext() ) {
+         currKnot = itr.next();
+         foreHandle = prevKnot.foreHandle;
+         rearHandle = currKnot.rearHandle;
+         coord = currKnot.coord;
+         target.bezierVertex(foreHandle.x, foreHandle.y, rearHandle.x,
+            rearHandle.y, coord.x, coord.y);
+         prevKnot = currKnot;
+      }
+
+      if ( source.closedLoop ) {
+         foreHandle = prevKnot.foreHandle;
+         rearHandle = firstKnot.rearHandle;
+         coord = firstKnot.coord;
+
+         target.bezierVertex(foreHandle.x, foreHandle.y, rearHandle.x,
+            rearHandle.y, coord.x, coord.y);
+         target.endShape(PConstants.CLOSE);
+      } else {
+         target.endShape(PConstants.OPEN);
+      }
+
+      return target;
+   }
+
+   /**
+    * Converts a 2D curve entity to a PShape. The entity's transform is
+    * converted to a matrix which is applied to the shape.
+    *
+    * @param rndr   the renderer
+    * @param source the source entity
+    *
+    * @return the PShape
+    */
+   public static PShape toPShape ( final PGraphics rndr,
+      final CurveEntity2 source ) {
+
+      final PShape shape = new PShape(rndr, PConstants.GROUP);
+      shape.setName(source.name);
+      shape.set3D(rndr.is3D());
+
+      final Iterator < Curve2 > itr = source.curves.iterator();
+      while ( itr.hasNext() ) {
+         shape.addChild(Convert.toPShape(rndr, itr.next()));
+      }
+
+      /* Use loose float version of apply matrix to avoid PShape bug. */
+      final Transform2 srctr = source.transform;
+      final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
+         new PMatrix2D());
+      // shape.resetMatrix();
+      shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
+
+      /* Stroke weight is scaled with the transform above. */
+      final float maxDim = Transform2.maxDimension(srctr);
+      shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
+      shape.disableStyle();
+      return shape;
+   }
+
+   /**
     * Converts a 2D mesh to a PShape. Returns a {@link PConstants#GROUP} which
     * contains, as a child, each face of the source mesh. Each child is of the
     * type {@link PShape#PATH}. Child shapes record only 2D coordinates, not
@@ -603,11 +697,193 @@ public abstract class Convert {
       final Transform2 srctr = source.transform;
       final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
          new PMatrix2D());
-      shape.resetMatrix();
+      // shape.resetMatrix();
       shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
 
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
+      shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
+      shape.disableStyle();
+      return shape;
+   }
+
+   /**
+    * Converts a 2D curve to a PShape. Returns {@link PShape#GEOMETRY}.
+    *
+    * @param rndr   the renderer
+    * @param source the source mesh
+    *
+    * @return the PShape
+    */
+   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
+      final Curve2 source ) {
+
+      final boolean dim = rndr.is3D();
+      final PShapeOpenGL target = new PShapeOpenGL(rndr, PShape.GEOMETRY);
+      target.setName(source.name);
+      target.set3D(dim);
+
+      final Iterator < Knot2 > itr = source.iterator();
+
+      final Knot2 firstKnot = itr.next();
+      Knot2 prevKnot = firstKnot;
+      Knot2 currKnot = null;
+
+      Vec2 coord = prevKnot.coord;
+      Vec2 foreHandle = null;
+      Vec2 rearHandle = null;
+
+      target.beginShape(PConstants.POLYGON);
+      target.vertex(coord.x, coord.y);
+
+      while ( itr.hasNext() ) {
+         currKnot = itr.next();
+         foreHandle = prevKnot.foreHandle;
+         rearHandle = currKnot.rearHandle;
+         coord = currKnot.coord;
+         target.bezierVertex(foreHandle.x, foreHandle.y, rearHandle.x,
+            rearHandle.y, coord.x, coord.y);
+         prevKnot = currKnot;
+      }
+
+      if ( source.closedLoop ) {
+         foreHandle = prevKnot.foreHandle;
+         rearHandle = firstKnot.rearHandle;
+         coord = firstKnot.coord;
+
+         target.bezierVertex(foreHandle.x, foreHandle.y, rearHandle.x,
+            rearHandle.y, coord.x, coord.y);
+         target.endShape(PConstants.CLOSE);
+      } else {
+         target.endShape(PConstants.OPEN);
+      }
+
+      return target;
+   }
+
+   /**
+    * Converts a 3D curve to a PShape. Returns {@link PShape#GEOMETRY}.
+    *
+    * @param rndr   the renderer
+    * @param source the source mesh
+    *
+    * @return the PShape
+    */
+   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
+      final Curve3 source ) {
+
+      final boolean dim = rndr.is3D();
+      final PShapeOpenGL target = new PShapeOpenGL(rndr, PShape.GEOMETRY);
+      target.setName(source.name);
+      target.set3D(dim);
+
+      final Iterator < Knot3 > itr = source.iterator();
+
+      final Knot3 firstKnot = itr.next();
+      Knot3 prevKnot = firstKnot;
+      Knot3 currKnot = null;
+
+      Vec3 coord = prevKnot.coord;
+      Vec3 foreHandle = null;
+      Vec3 rearHandle = null;
+
+      target.beginShape(PConstants.POLYGON);
+      target.vertex(coord.x, coord.y, coord.z);
+
+      while ( itr.hasNext() ) {
+         currKnot = itr.next();
+         foreHandle = prevKnot.foreHandle;
+         rearHandle = currKnot.rearHandle;
+         coord = currKnot.coord;
+         target.bezierVertex(foreHandle.x, foreHandle.y, foreHandle.z,
+            rearHandle.x, rearHandle.y, rearHandle.z, coord.x, coord.y,
+            coord.z);
+         prevKnot = currKnot;
+      }
+
+      if ( source.closedLoop ) {
+         foreHandle = prevKnot.foreHandle;
+         rearHandle = firstKnot.rearHandle;
+         coord = firstKnot.coord;
+
+         target.bezierVertex(foreHandle.x, foreHandle.y, foreHandle.z,
+            rearHandle.x, rearHandle.y, rearHandle.z, coord.x, coord.y,
+            coord.z);
+         target.endShape(PConstants.CLOSE);
+      } else {
+         target.endShape(PConstants.OPEN);
+      }
+
+      return target;
+   }
+
+   /**
+    * Converts a 2D curve entity to a PShapeOpenGL. Requires a PGraphicsOpenGL
+    * renderer. The entity's transform is converted to a matrix which is
+    * applied to the shape.
+    *
+    * @param rndr   the renderer
+    * @param source the source entity
+    *
+    * @return the PShape
+    */
+   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
+      final CurveEntity2 source ) {
+
+      final PShapeOpenGL shape = new PShapeOpenGL(rndr, PConstants.GROUP);
+      shape.setName(source.name);
+      shape.set3D(rndr.is3D());
+
+      final Iterator < Curve2 > itr = source.curves.iterator();
+      while ( itr.hasNext() ) {
+         shape.addChild(Convert.toPShape(rndr, itr.next()));
+      }
+
+      /* Use loose float version of apply matrix to avoid PShape bug. */
+      final Transform2 srctr = source.transform;
+      final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
+         new PMatrix2D());
+      // shape.resetMatrix();
+      shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
+
+      /* Stroke weight is scaled with the transform above. */
+      final float maxDim = Transform2.maxDimension(srctr);
+      shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
+      shape.disableStyle();
+      return shape;
+   }
+
+   /**
+    * Converts a 3D curve entity to a PShapeOpenGL. Requires a PGraphicsOpenGL
+    * renderer. The entity's transform is converted to a matrix which is
+    * applied to the shape.
+    *
+    * @param rndr   the renderer
+    * @param source the source entity
+    *
+    * @return the PShape
+    */
+   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
+      final CurveEntity3 source ) {
+
+      final PShapeOpenGL shape = new PShapeOpenGL(rndr, PConstants.GROUP);
+      shape.set3D(rndr.is3D());
+
+      final Iterator < Curve3 > itr = source.curves.iterator();
+      while ( itr.hasNext() ) {
+         shape.addChild(Convert.toPShape(rndr, itr.next()));
+      }
+
+      /* Use loose float version of apply matrix to avoid PShape bug. */
+      final Transform3 srctr = source.transform;
+      final PMatrix3D m = Convert.toPMatrix3D(srctr, TransformOrder.RST,
+         new PMatrix3D());
+      // shape.resetMatrix();
+      shape.applyMatrix(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12, m.m13,
+         m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
+
+      /* Stroke weight is scaled with the transform above. */
+      final float maxDim = Transform3.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
       shape.disableStyle();
       return shape;
@@ -739,7 +1015,7 @@ public abstract class Convert {
       final Transform2 srctr = source.transform;
       final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
          new PMatrix2D());
-      shape.resetMatrix();
+      // shape.resetMatrix();
       shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
 
       /* Stroke weight is scaled with the transform above. */
@@ -750,7 +1026,7 @@ public abstract class Convert {
    }
 
    /**
-    * Converts a 2D mesh entity to a PShapeOpenGL. Requires a PGraphicsOpenGL
+    * Converts a 3D mesh entity to a PShapeOpenGL. Requires a PGraphicsOpenGL
     * renderer. The entity's transform is converted to a matrix which is
     * applied to the shape.
     *
@@ -759,7 +1035,6 @@ public abstract class Convert {
     *
     * @return the PShape
     */
-   @Experimental
    public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
       final MeshEntity3 source ) {
 
@@ -775,7 +1050,7 @@ public abstract class Convert {
       final Transform3 srctr = source.transform;
       final PMatrix3D m = Convert.toPMatrix3D(srctr, TransformOrder.RST,
          new PMatrix3D());
-      shape.resetMatrix();
+      // shape.resetMatrix();
       shape.applyMatrix(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12, m.m13,
          m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
 

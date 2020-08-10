@@ -5,6 +5,8 @@ Zup3 rndr;
 
 Mesh3 mesh = new Mesh3();
 MeshEntity3 entity = new MeshEntity3();
+MaterialSolid material = new MaterialSolid()
+  .setFill(#ff2828);
 
 void settings() {
   size(720, 405, Zup3.PATH_STR);
@@ -13,21 +15,21 @@ void settings() {
 void setup() {
   rndr = (Zup3)getGraphics();
 
-  Mesh3.icosphere(2, mesh);
+  Mesh3.icosphere(1, mesh);
   mesh.subdivFacesCenter(1);
   mesh.shadeFlat();
   Mesh3.uniformData(mesh, mesh);
 
   Vec3 center = new Vec3();
   for (Face3 f : mesh) {
-    f.scaleLocal(0.875, center);
+    f.scaleLocal(0.91, center);
   }
-  
-  mesh.extrudeFaces(0.025);
+
+  mesh.extrudeFaces(0.02);
   mesh.clean();
 
   entity.append(mesh);
-  entity.scaleTo(new Vec3(256, 256, 256));
+  entity.scaleTo(384.0);
 }
 
 void draw() {
@@ -35,10 +37,9 @@ void draw() {
 
   entity.rotateZ(0.01);
 
-  //rndr.lights();
+  rndr.lights();
   rndr.ortho();
   rndr.camera();
   rndr.background();
-  rndr.pointLight(255.0, 245.0, 215.0, 0.0, 0.0, 0.0);
-  rndr.shape(entity);
+  rndr.shape(entity, material);
 }

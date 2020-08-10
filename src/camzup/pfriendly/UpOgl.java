@@ -476,39 +476,21 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void colorCalc ( final float x, final float y, final float z,
       final float a, final boolean premul ) {
 
-      if ( premul ) {
-         if ( a <= 0.0f ) {
-            this.calcAlpha = false;
-            this.calcColor = 0x00000000;
+      this.colorPreCalc(x, y, z, a);
 
-            this.calcR = 0.0f;
-            this.calcG = 0.0f;
-            this.calcB = 0.0f;
-            this.calcA = 0.0f;
-
-            this.calcRi = 0;
-            this.calcGi = 0;
-            this.calcBi = 0;
-            this.calcAi = 0;
-
-            return;
-         }
-
-         this.colorPreCalc(x, y, z, a);
-
-         if ( this.calcA < 1.0f ) {
-            this.calcR *= this.calcA;
-            this.calcG *= this.calcA;
-            this.calcB *= this.calcA;
-         }
-      } else {
-         this.colorPreCalc(x, y, z, a);
+      /* Pre-multiply alpha. */
+      if ( premul && this.calcA < 1.0f ) {
+         this.calcR *= this.calcA;
+         this.calcG *= this.calcA;
+         this.calcB *= this.calcA;
       }
 
+      /* Convert from [0.0, 1.0] to [0, 255] . */
       this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
       this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
       this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
       this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
+      this.calcAlpha = this.calcAi != 0xff;
 
       /* @formatter:off */
       this.calcColor = this.calcAi << 0x18
@@ -516,7 +498,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
                      | this.calcGi << 0x8
                      | this.calcBi;
       /* @formatter:on */
-      this.calcAlpha = this.calcAi != 0xff;
    }
 
    /**

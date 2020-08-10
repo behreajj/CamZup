@@ -21,7 +21,7 @@ public abstract class MaterialUv extends Material implements IOriented2,
       /*
        * This doesn't implement Cloneable because all things with transforms
        * allow it to be set by reference with their constructors, making it
-       * ambiguous what the copy functions will do!
+       * ambiguous what the copy functions will do.
        */
 
       this.tint = Color.white(new Color());

@@ -699,6 +699,48 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
    }
 
    /**
+    * Returns a String formatted as C# code for the Unity API; creates a
+    * <code>Vector2</code>.
+    *
+    * @param z the z component
+    *
+    * @return the string
+    */
+   @Experimental
+   String toUnityCode ( ) {
+
+      final StringBuilder sb = new StringBuilder(96);
+      sb.append("new Vector2(");
+      sb.append(this.x);
+      sb.append("f, ");
+      sb.append(this.y);
+      sb.append("f)");
+      return sb.toString();
+   }
+
+   /**
+    * Returns a String formatted as C# code for the Unity API; creates a
+    * <code>Vector3</code>.
+    *
+    * @param z the z component
+    *
+    * @return the string
+    */
+   @Experimental
+   String toUnityCode ( final float z ) {
+
+      final StringBuilder sb = new StringBuilder(96);
+      sb.append("new Vector3(");
+      sb.append(this.x);
+      sb.append("f, ");
+      sb.append(this.y);
+      sb.append("f, ");
+      sb.append(z);
+      sb.append("f)");
+      return sb.toString();
+   }
+
+   /**
     * Tests equivalence between this and another vector. For rough equivalence
     * of floating point components, use the static approximation function
     * instead.

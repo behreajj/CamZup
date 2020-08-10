@@ -762,6 +762,26 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
+    * Returns a String formatted as C# code for the Unity API; creates a
+    * <code>Vector3</code>.
+    *
+    * @return the string
+    */
+   @Experimental
+   String toUnityCode ( ) {
+
+      final StringBuilder sb = new StringBuilder(96);
+      sb.append("new Vector3(");
+      sb.append(this.x);
+      sb.append("f, ");
+      sb.append(this.y);
+      sb.append("f, ");
+      sb.append(this.z);
+      sb.append("f)");
+      return sb.toString();
+   }
+
+   /**
     * Tests equivalence between this and another vector. For rough equivalence
     * of floating point components, use the static approximate function
     * instead.
