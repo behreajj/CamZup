@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * An entity which contains a transform that is applied to a list of
- * curves. The curves may references a list of materials by index.
+ * curves.
  */
 public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    IVolume3 {

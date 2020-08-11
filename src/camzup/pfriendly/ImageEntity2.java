@@ -1,6 +1,7 @@
 package camzup.pfriendly;
 
 import camzup.core.Color;
+import camzup.core.Mesh;
 import camzup.core.Mesh2;
 import camzup.core.MeshEntity2;
 import camzup.core.Transform2;
@@ -13,7 +14,9 @@ import processing.core.PImage;
 /**
  * A convenience to create image planes. Creates a mesh entity with a
  * rectangular mesh scaled to the dimensions of an input image and a
- * textured material. Not intended for use with the AWT renderer.
+ * textured material.<br>
+ * <br>
+ * <em>Not intended for use with the AWT renderer.</em>
  */
 public class ImageEntity2 extends MeshEntity2 {
 
@@ -109,7 +112,7 @@ public class ImageEntity2 extends MeshEntity2 {
          default:
       }
 
-      final Mesh2 mesh = Mesh2.square(Mesh2.PolyType.NGON, new Mesh2());
+      final Mesh2 mesh = Mesh2.square(Mesh.PolyType.QUAD, new Mesh2());
       mesh.scale(meshDim);
       mesh.translate(meshOff);
       this.transform.scaleTo(scale * longEdge);

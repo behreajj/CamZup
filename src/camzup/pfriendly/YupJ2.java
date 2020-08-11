@@ -527,25 +527,29 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void camera ( final float x, final float y, final float radians,
       final float zx, final float zy ) {
 
+      /* Update renderer fields. */
       this.cameraX = x;
       this.cameraY = y;
       this.cameraRot = radians;
       this.cameraZoomX = Utils.abs(zx) < IUtils.DEFAULT_EPSILON ? 1.0f : zx;
       this.cameraZoomY = Utils.abs(zy) < IUtils.DEFAULT_EPSILON ? 1.0f : zy;
 
+      /* Promote floats to doubles. */
       final double cxd = x;
       final double cyd = y;
-      final double czxd = this.cameraZoomX;
-      final double czyd = this.cameraZoomY;
-      final double negr = -radians;
+      final double xdZoom = this.cameraZoomX;
+      final double ydZoom = this.cameraZoomY;
+      final double radNeg = -radians;
 
-      final double c = Math.cos(negr);
-      final double s = Math.sin(negr);
-      final double m00 = c * czxd;
-      final double m01 = -s * czyd;
-      final double m10 = s * czxd;
-      final double m11 = c * czyd;
+      /* Calculate the right and up axes. */
+      final double c = Math.cos(radNeg);
+      final double s = Math.sin(radNeg);
+      final double m00 = c * xdZoom;
+      final double m01 = -s * ydZoom;
+      final double m10 = s * xdZoom;
+      final double m11 = c * ydZoom;
 
+      /* Apply the transform. */
       this.affineNative.setTransform(m00, -m10, m01, -m11, this.width * 0.5d
          - cxd * m00 - cyd * m01, this.height * 0.5d + cxd * m10 + cyd * m11);
       this.g2.setTransform(this.affineNative);
@@ -607,6 +611,36 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void circle ( final Vec2 coord, final float size ) {
 
       this.ellipse(coord.x, coord.y, size, size);
+   }
+
+   /**
+    * Calculates the color channels from a color object.
+    *
+    * @param c the color
+    *
+    * @see Utils#clamp01(float)
+    */
+   public void colorCalc ( final Color c ) {
+
+      /* Clamp values to the range [0.0, 1.0] . */
+      this.calcR = c.r < 0.0f ? 0.0f : c.r > 1.0f ? 1.0f : c.r;
+      this.calcG = c.g < 0.0f ? 0.0f : c.g > 1.0f ? 1.0f : c.g;
+      this.calcB = c.b < 0.0f ? 0.0f : c.b > 1.0f ? 1.0f : c.b;
+      this.calcA = c.a < 0.0f ? 0.0f : c.a > 1.0f ? 1.0f : c.a;
+
+      /* Convert from [0.0, 1.0] to [0, 255] . */
+      this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
+      this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
+      this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
+      this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
+      this.calcAlpha = this.calcAi != 0xff;
+
+      /* @formatter:off */
+      this.calcColor = this.calcAi << 0x18
+                     | this.calcRi << 0x10
+                     | this.calcGi << 0x8
+                     | this.calcBi;
+      /* @formatter:on */
    }
 
    /**
@@ -1632,8 +1666,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          case CENTER:
          default:
 
-            wDisp = (x1i < 2 ? 2 : x1i) / 2;
-            hDisp = (y1i < 2 ? 2 : y1i) / 2;
+            wDisp = x1i < 2 ? 1 : x1i / 2;
+            hDisp = y1i < 2 ? 1 : y1i / 2;
             this.imageSource(img,
                x0i - wDisp, y0i - hDisp, x0i + wDisp, y0i + hDisp,
                u0, v0, u1, v1);
@@ -2581,6 +2615,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param m10 right axis y
     * @param m11 up axis y
     * @param m12 translation y
+    *
+    * @see AffineTransform#setTransform(double, double, double, double,
+    *      double, double)
+    * @see Graphics2D#setTransform(AffineTransform)
     */
    public void setMatrix ( final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12 ) {
@@ -2598,9 +2636,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     *
     * @param source a 3 x 3 matrix
     *
-    * @see AffineTransform#setTransform(double, double, double, double,
-    *      double, double)
-    * @see Graphics2D#setTransform(AffineTransform)
+    * @see YupJ2#setMatrix(float, float, float, float, float, float)
     */
    public void setMatrix ( final Mat3 source ) {
 
@@ -2611,16 +2647,28 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    /**
     * Sets the renderer matrix.
     *
-    * @param source a 3 x 3 matrix
+    * @param source a 3 x 2 matrix
     *
-    * @see AffineTransform#setTransform(double, double, double, double,
-    *      double, double)
-    * @see Graphics2D#setTransform(AffineTransform)
+    * @see YupJ2#setMatrix(float, float, float, float, float, float)
     */
    @Override
    public void setMatrix ( final PMatrix2D source ) {
 
       this.setMatrix(source.m00, source.m01, source.m02, source.m10, source.m11,
+         source.m12);
+   }
+
+   /**
+    * Sets the renderer matrix. Ignores the matrix's z column and z row.
+    *
+    * @param source a 4 x 4 matrix
+    *
+    * @see YupJ2#setMatrix(float, float, float, float, float, float)
+    */
+   @Override
+   public void setMatrix ( final PMatrix3D source ) {
+
+      this.setMatrix(source.m00, source.m01, source.m03, source.m10, source.m11,
          source.m12);
    }
 
@@ -3687,36 +3735,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             this.strokeJoin = PConstants.ROUND; /* 2 */
             this.joinNative = BasicStroke.JOIN_ROUND; /* 1 */
       }
-   }
-
-   /**
-    * Calculates the color channels from a color object.
-    *
-    * @param c the color
-    *
-    * @see Utils#clamp01(float)
-    */
-   public void colorCalc ( final Color c ) {
-
-      /* Clamp values to the range [0.0, 1.0] . */
-      this.calcR = c.r < 0.0f ? 0.0f : c.r > 1.0f ? 1.0f : c.r;
-      this.calcG = c.g < 0.0f ? 0.0f : c.g > 1.0f ? 1.0f : c.g;
-      this.calcB = c.b < 0.0f ? 0.0f : c.b > 1.0f ? 1.0f : c.b;
-      this.calcA = c.a < 0.0f ? 0.0f : c.a > 1.0f ? 1.0f : c.a;
-
-      /* Convert from [0.0, 1.0] to [0, 255] . */
-      this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
-      this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
-      this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
-      this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
-      this.calcAlpha = this.calcAi != 0xff;
-
-      /* @formatter:off */
-      this.calcColor = this.calcAi << 0x18
-                     | this.calcRi << 0x10
-                     | this.calcGi << 0x8
-                     | this.calcBi;
-      /* @formatter:on */
    }
 
    /**

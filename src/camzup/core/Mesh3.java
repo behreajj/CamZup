@@ -704,7 +704,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final float flInv = 1.0f / faceLen;
          Vec3.mul(vCenter, flInv, vCenter);
          Vec2.mul(vtCenter, flInv, vtCenter);
-         Vec3.mul(vnCenter, flInv, vnCenter);
+         // Vec3.mul(vnCenter, flInv, vnCenter);
          Vec3.normalize(vnCenter, vnCenter);
       }
 
@@ -738,10 +738,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             u * vtCurr.x + fac * vtCenter.x,
             u * vtCurr.y + fac * vtCenter.y);
 
-         vnsNew[j] = new Vec3(
+         final Vec3 vnNew = vnsNew[j] = new Vec3(
             u * vnCurr.x + fac * vnCenter.x,
             u * vnCurr.y + fac * vnCenter.y,
             u * vnCurr.z + fac * vnCenter.z);
+         Vec3.normalize(vnNew, vnNew);
 
          final int vSubdivIdx = vsOldLen + j;
          final int vtSubdivIdx = vtsOldLen + j;
@@ -1505,7 +1506,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final float flInv = 1.0f / faceLen;
          Vec3.mul(vCenter, flInv, vCenter);
          Vec2.mul(vtCenter, flInv, vtCenter);
-         Vec3.mul(vnCenter, flInv, vnCenter);
+         // Vec3.mul(vnCenter, flInv, vnCenter);
          Vec3.normalize(vnCenter, vnCenter);
       }
 
@@ -1940,17 +1941,17 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final StringBuilder sb = new StringBuilder(4096);
       sb.append("Mesh mesh = new Mesh();\n");
 
-      final StringBuilder vs = new StringBuilder(1024).append(
-         "Vector3[] vs = { \n");
+      final StringBuilder vs = new StringBuilder(1024);
+      vs.append("Vector3[] vs = { \n");
 
-      final StringBuilder vts = new StringBuilder(1024).append(
-         "Vector2[] vts = { \n");
+      final StringBuilder vts = new StringBuilder(1024);
+      vts.append("Vector2[] vts = { \n");
 
-      final StringBuilder vns = new StringBuilder(1024).append(
-         "Vector3[] vns = { \n");
+      final StringBuilder vns = new StringBuilder(1024);
+      vns.append("Vector3[] vns = { \n");
 
-      final StringBuilder tris = new StringBuilder(1024).append(
-         "int[] tris = { \n");
+      final StringBuilder tris = new StringBuilder(1024);
+      tris.append("int[] tris = { \n");
 
       final int fsLen = this.faces.length;
       final int fsLast = fsLen - 1;
@@ -3857,14 +3858,28 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates a square. Useful when representing an image plane with a mesh
-    * entity.
+    * Creates a square.
     *
     * @param target the output mesh
     *
     * @return the square
     */
    public static final Mesh3 square ( final Mesh3 target ) {
+
+      return Mesh3.square(Mesh3.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates a square. Useful when representing an image plane with a mesh
+    * entity.
+    *
+    * @param poly   the polygon type
+    * @param target the output mesh
+    *
+    * @return the square
+    */
+   public static final Mesh3 square ( final PolyType poly,
+      final Mesh3 target ) {
 
       /* Retained to make image planes easier to create in 3D. */
 
@@ -3885,8 +3900,20 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals = Vec3.resize(target.normals, 1);
       Vec3.up(target.normals[0]);
 
-      target.faces = new int[][][] { { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 }, {
-         3, 3, 0 } } };
+      /* @formatter:off */
+      switch ( poly ) {
+         case NGON:
+         case QUAD:
+            target.faces = new int[][][] {
+               { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 }, { 3, 3, 0 } } };
+            break;
+         case TRI:
+         default:
+            target.faces = new int[][][] {
+               { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } },
+               { { 0, 0, 0 }, { 2, 2, 0 }, { 3, 3, 0 } } };
+      }
+      /* @formatter:on */
 
       return target;
    }

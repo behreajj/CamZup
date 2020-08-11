@@ -230,10 +230,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       final float w = this.cameraInv.m32 * z + this.cameraInv.m33;
       if ( w != 0.0f ) {
-         final float wInv = 1.0f / w;
-         final float xLocal = this.cameraInv.m02 * z * wInv;
-         final float yLocal = this.cameraInv.m12 * z * wInv;
-         final float zLocal = this.cameraInv.m22 * z * wInv;
+         final float zwInv = z / w;
+         final float xLocal = this.cameraInv.m02 * zwInv;
+         final float yLocal = this.cameraInv.m12 * zwInv;
+         final float zLocal = this.cameraInv.m22 * zwInv;
 
          this.camera(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
             + zLocal, this.lookTarget.x + xLocal, this.lookTarget.y + yLocal,
@@ -691,13 +691,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    @Override
    public void pedestal ( final float y ) {
 
-      final PMatrix3D ci = this.cameraInv;
-      final float w = ci.m31 * y + ci.m33;
+      final float w = this.cameraInv.m31 * y + this.cameraInv.m33;
       if ( w != 0.0f ) {
-         final float wInv = 1.0f / w;
-         final float xLocal = ci.m01 * y * wInv;
-         final float yLocal = ci.m11 * y * wInv;
-         final float zLocal = ci.m21 * y * wInv;
+         final float ywInv = y / w;
+         final float xLocal = this.cameraInv.m01 * ywInv;
+         final float yLocal = this.cameraInv.m11 * ywInv;
+         final float zLocal = this.cameraInv.m21 * ywInv;
 
          this.camera(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
             + zLocal, this.lookTarget.x + xLocal, this.lookTarget.y + yLocal,
@@ -1032,8 +1031,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.noStroke();
       while ( meshItr.hasNext() ) {
          final Mesh3 mesh = meshItr.next();
-         final MaterialPImage mat = materials[mesh.materialIndex];
-         this.drawMesh3(mesh, tr, mat, v, vt, vn);
+         this.drawMesh3(mesh, tr, materials[mesh.materialIndex], v, vt, vn);
       }
       this.popStyle();
    }
@@ -1310,10 +1308,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       final float w = this.cameraInv.m30 * x + this.cameraInv.m33;
       if ( w != 0.0f ) {
-         final float wInv = 1.0f / w;
-         final float xLocal = this.cameraInv.m00 * x * wInv;
-         final float yLocal = this.cameraInv.m10 * x * wInv;
-         final float zLocal = this.cameraInv.m20 * x * wInv;
+         final float xwInv = x / w;
+         final float xLocal = this.cameraInv.m00 * xwInv;
+         final float yLocal = this.cameraInv.m10 * xwInv;
+         final float zLocal = this.cameraInv.m20 * xwInv;
 
          this.camera(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
             + zLocal, this.lookTarget.x + xLocal, this.lookTarget.y + yLocal,
@@ -1619,7 +1617,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    protected void updateCameraInv ( ) {
 
-      /* @formatter:off */
       final float m00 = this.i.x;
       final float m01 = this.i.y;
       final float m02 = this.i.z;
@@ -1633,11 +1630,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final float m22 = this.k.z;
 
       /* Set inverse by column. */
+      /* @formatter:off */
       this.cameraInv.set(
-         m00, m10, m20, this.cameraX,
-         m01, m11, m21, this.cameraY,
-         m02, m12, m22, this.cameraZ,
-         0.0f, 0.0f, 0.0f, 1.0f);
+          m00,  m10,  m20, this.cameraX,
+          m01,  m11,  m21, this.cameraY,
+          m02,  m12,  m22, this.cameraZ,
+         0.0f, 0.0f, 0.0f,         1.0f);
 
       /*
        * Set matrix to axes by row. Translate by a negative location after the
@@ -1651,12 +1649,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          m20, m21, m22,
          -this.cameraX * m20 - this.cameraY * m21 - this.cameraZ * m22,
          0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
 
       /* Set model view to camera. */
       this.modelview.set(this.camera);
       this.modelviewInv.set(this.cameraInv);
       PMatAux.mul(this.projection, this.modelview, this.projmodelview);
-      /* @formatter:on */
    }
 
    /**

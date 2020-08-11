@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * An entity which contains a transform that is applied to a list of
- * meshes. The meshes may references a list of materials by index.
+ * meshes.
  */
 public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    IVolume2, ISvgWritable {
@@ -577,7 +577,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       svgp.append(this.transform.toSvgString());
       svgp.append(">\n");
 
-      final float scale = zoom * Transform2.minDimension(this.transform);
       int matLen = 0;
       boolean includesMats = false;
       if ( materials != null ) {
@@ -586,6 +585,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       }
 
       /* If no materials are present, use a default instead. */
+      final float scale = zoom * Transform2.minDimension(this.transform);
       if ( !includesMats ) {
          svgp.append(MaterialSolid.defaultSvgMaterial(scale));
       }

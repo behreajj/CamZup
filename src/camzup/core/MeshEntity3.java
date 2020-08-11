@@ -7,7 +7,7 @@ import java.util.List;
 
 /**
  * An entity which contains a transform that is applied to a list of
- * meshes. The meshes may references a list of materials by index.
+ * meshes.
  */
 public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    IVolume3 {

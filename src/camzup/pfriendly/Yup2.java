@@ -142,10 +142,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
 
       this.cameraX = x;
       this.cameraY = y;
+      this.cameraZ = this.height < 128 ? 128.0f : this.height;
       this.cameraRot = radians;
       this.cameraZoomX = Utils.abs(zx) < IUtils.DEFAULT_EPSILON ? 1.0f : zx;
       this.cameraZoomY = Utils.abs(zy) < IUtils.DEFAULT_EPSILON ? 1.0f : zy;
-      final float zDist = this.height < 128 ? 128 : this.height;
 
       /*
        * this.modelview.reset(); this.modelview.scale( this.cameraZoomX,
@@ -162,14 +162,19 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final float m10 = s * this.cameraZoomX;
       final float m11 = c * this.cameraZoomY;
 
-      this.modelview.set(m00, m01, 0.0f, -this.cameraX * m00 - this.cameraY
-         * m01, m10, m11, 0.0f, -this.cameraX * m10 - this.cameraY * m11, 0.0f,
-         0.0f, 1.0f, -zDist, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      this.modelview.set(
+          m00,  m01, 0.0f, -this.cameraX * m00 - this.cameraY * m01,
+          m10,  m11, 0.0f, -this.cameraX * m10 - this.cameraY * m11,
+         0.0f, 0.0f, 1.0f,                            -this.cameraZ,
+         0.0f, 0.0f, 0.0f,                                     1.0f);
 
-      /* PMatAux.invert(this.modelview, this.modelviewInv); */
-      this.modelviewInv.set(c / this.cameraZoomX, s / this.cameraZoomX, 0.0f,
-         this.cameraX, -s / this.cameraZoomY, c / this.cameraZoomY, 0.0f,
-         this.cameraY, 0.0f, 0.0f, 1.0f, zDist, 0.0f, 0.0f, 0.0f, 1.0f);
+      this.modelviewInv.set(
+          c / this.cameraZoomX, s / this.cameraZoomX, 0.0f, this.cameraX,
+         -s / this.cameraZoomY, c / this.cameraZoomY, 0.0f, this.cameraY,
+                          0.0f,                 0.0f, 1.0f, this.cameraZ,
+                          0.0f,                 0.0f, 0.0f,         1.0f);
+      /* @formatter:on */
 
       this.camera.set(this.modelview);
       this.cameraInv.set(this.modelviewInv);

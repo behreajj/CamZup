@@ -479,7 +479,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.colorPreCalc(x, y, z, a);
 
       /* Pre-multiply alpha. */
-      if ( premul && this.calcA < 1.0f ) {
+      if ( premul ) {
          this.calcR *= this.calcA;
          this.calcG *= this.calcA;
          this.calcB *= this.calcA;
@@ -1399,7 +1399,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * Since width and height are divided by half, zoomInv includes that
        * factor.
        */
-      final float zoomInv = zoom == 0.0f ? 1.0f : 0.5f / zoom;
+      final float zoomInv = zoom != 0.0f ? 0.5f / zoom : 1.0f;
       final float right = this.width < 128 ? IUp.DEFAULT_HALF_WIDTH : zoomInv
          * this.width;
       final float top = this.height < 128 ? IUp.DEFAULT_HALF_HEIGHT : zoomInv
@@ -1868,6 +1868,20 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
          source.m22, source.m23, source.m30, source.m31, source.m32,
          source.m33);
+   }
+
+   /**
+    * Sets the renderer matrix to the source.
+    *
+    * @param source the source matrix
+    */
+   @Override
+   public void setMatrix ( final PMatrix2D source ) {
+
+      this.resetMatrix();
+      this.applyMatrixImpl(source.m00, source.m01, 0.0f, source.m02, source.m10,
+         source.m11, 0.0f, source.m12, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+         1.0f);
    }
 
    /**
