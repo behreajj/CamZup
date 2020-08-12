@@ -1856,13 +1856,12 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    public static Vec3 fromSpherical ( final float azimuth,
       final float inclination, final float radius, final Vec3 target ) {
 
-      // final double rd = radius;
-      // final double azd = azimuth;
-      // final double ind = inclination;
-      // final double rhoCosPhi = rd * Math.cos(ind);
-      // return target.set(( float ) ( rhoCosPhi * Math.cos(azd) ),
-      // ( float ) ( rhoCosPhi * Math.sin(azd) ), ( float ) ( rd * -Math.sin(
-      // ind) ));
+      /*
+       * final double rd = radius; final double azd = azimuth; final double ind
+       * = inclination; final double rhoCosPhi = rd * Math.cos(ind); return
+       * target.set(( float ) ( rhoCosPhi * Math.cos(azd) ), ( float ) (
+       * rhoCosPhi * Math.sin(azd) ), ( float ) ( rd * -Math.sin( ind) ));
+       */
 
       final float azNorm = azimuth * IUtils.ONE_TAU;
       final float inclNorm = inclination * IUtils.ONE_TAU;

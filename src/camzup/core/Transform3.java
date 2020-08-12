@@ -210,6 +210,7 @@ public class Transform3 extends Transform {
       r.set(this.right);
       f.set(this.forward);
       u.set(this.up);
+
       return this;
    }
 
@@ -379,16 +380,38 @@ public class Transform3 extends Transform {
     * @return this transform
     *
     * @see Vec3#sub(Vec3, Vec3, Vec3)
-    * @see Quaternion#fromDir(Vec3, Handedness, Quaternion, Vec3, Vec3, Vec3)
-    * @see Quaternion#mix(Quaternion, Quaternion, float, Quaternion)
+    * @see Transform3#lookIn(Vec3, float, Handedness)
     */
    public Transform3 lookAt ( final Vec3 point, final float step,
       final Handedness handedness ) {
 
       Vec3.sub(point, this.location, this.forward);
+      return this.lookIn(this.forward, step, handedness);
+   }
 
+   /**
+    * Orients the transform to look toward a direction.<br>
+    * <br>
+    * The transform eases toward the look at rotation because discontinuities
+    * arise with using a look at matrix when a transform's look direction is
+    * parallel with the world up axis.
+    *
+    * @param dir        the direction
+    * @param step       the step
+    * @param handedness the handedness
+    *
+    * @return this transform
+    *
+    * @see Quaternion#fromDir(Vec3, Handedness, Quaternion, Vec3, Vec3, Vec3)
+    * @see Quaternion#mix(Quaternion, Quaternion, float, Quaternion)
+    * @see Transform3#updateAxes()
+    */
+   public Transform3 lookIn ( final Vec3 dir, final float step,
+      final Handedness handedness ) {
+
+      /* Quaternion#fromDir will normalize direction. */
       this.rotPrev.set(this.rotation);
-      Quaternion.fromDir(this.forward, handedness, this.rotation, this.right,
+      Quaternion.fromDir(dir, handedness, this.rotation, this.right,
          this.forward, this.up);
       Quaternion.mix(this.rotPrev, this.rotation, step, this.rotation);
       this.updateAxes();
@@ -497,6 +520,7 @@ public class Transform3 extends Transform {
 
       this.locPrev.set(this.location);
       easingFunc.apply(this.locPrev, locNew, step, this.location);
+
       return this;
    }
 
@@ -603,6 +627,7 @@ public class Transform3 extends Transform {
          easingFunc.apply(this.rotPrev, rotNew, step, this.rotation);
          this.updateAxes();
       }
+
       return this;
    }
 
@@ -625,6 +650,7 @@ public class Transform3 extends Transform {
       this.rotPrev.set(this.rotation);
       Quaternion.rotateX(this.rotPrev, radians, this.rotation);
       this.updateAxes();
+
       return this;
    }
 
@@ -647,6 +673,7 @@ public class Transform3 extends Transform {
       this.rotPrev.set(this.rotation);
       Quaternion.rotateY(this.rotPrev, radians, this.rotation);
       this.updateAxes();
+
       return this;
    }
 
@@ -669,6 +696,7 @@ public class Transform3 extends Transform {
       this.rotPrev.set(this.rotation);
       Quaternion.rotateZ(this.rotPrev, radians, this.rotation);
       this.updateAxes();
+
       return this;
    }
 
@@ -687,13 +715,12 @@ public class Transform3 extends Transform {
          this.scalePrev.set(this.scale);
          Vec3.mul(this.scalePrev, scalar, this.scale);
       }
+
       return this;
    }
 
    /**
-    * Scales the transform by a non-uniform scalar.<br>
-    * <br>
-    * Non-uniform scaling may lead to improper shading of a mesh when lit.
+    * Scales the transform by a non-uniform scalar.
     *
     * @param nonUniformScale the scale
     *
@@ -708,6 +735,7 @@ public class Transform3 extends Transform {
          this.scalePrev.set(this.scale);
          Vec3.mul(this.scalePrev, nonUniformScale, this.scale);
       }
+
       return this;
    }
 
@@ -724,13 +752,12 @@ public class Transform3 extends Transform {
          this.scalePrev.set(this.scale);
          this.scale.set(scalar, scalar, scalar);
       }
+
       return this;
    }
 
    /**
-    * Scales the transform to a non-uniform size.<br>
-    * <br>
-    * Non-uniform scaling may lead to improper shading of a mesh when lit.
+    * Scales the transform to a non-uniform size.
     *
     * @param scaleNew the new scale
     *
@@ -744,14 +771,13 @@ public class Transform3 extends Transform {
          this.scalePrev.set(this.scale);
          this.scale.set(scaleNew);
       }
+
       return this;
    }
 
    /**
     * Eases the transform to a scale by a step. The static easing function is
-    * used.<br>
-    * <br>
-    * Non-uniform scaling may lead to improper shading of a mesh when lit.
+    * used.
     *
     * @param scaleNew the new scale
     * @param step     the step in [0.0, 1.0]
@@ -765,14 +791,13 @@ public class Transform3 extends Transform {
       if ( Vec3.all(scaleNew) ) {
          return this.scaleTo(scaleNew, step, Transform3.EASING.scale);
       }
+
       return this;
    }
 
    /**
     * Eases the transform to a scale by a step. The kind of easing is
-    * specified by a Vec3 easing function.<br>
-    * <br>
-    * Non-uniform scaling may lead to improper shading of a mesh when lit.
+    * specified by a Vec3 easing function.
     *
     * @param scaleNew   the new scale
     * @param step       the step in [0.0, 1.0]
@@ -790,6 +815,7 @@ public class Transform3 extends Transform {
          this.scalePrev.set(this.scale);
          easingFunc.apply(this.scalePrev, scaleNew, step, this.scale);
       }
+
       return this;
    }
 
@@ -982,6 +1008,7 @@ public class Transform3 extends Transform {
 
       this.locPrev.set(this.location);
       Vec3.wrap(this.locPrev, lb, ub, this.location);
+
       return this;
    }
 
@@ -1240,7 +1267,28 @@ public class Transform3 extends Transform {
       final Vec3 target ) {
 
       Quaternion.invMulVector(t.rotation, source, target);
+      return target;
+   }
 
+   /**
+    * Multiplies a normal by a transform's inverse. This rotates the normal by
+    * the inverse quaternion, then multiplies the normal by the scale.
+    * 
+    * @param t      the transform
+    * @param source the input normal
+    * @param target the output normal
+    * 
+    * @return the normal
+    * 
+    * @see Quaternion#invMulVector(Quaternion, Vec3, Vec3)
+    * @see Vec3#mul(Vec3, Vec3, Vec3)
+    */
+   @Experimental
+   public static Vec3 invMulNormal ( final Transform3 t, final Vec3 source,
+      final Vec3 target ) {
+
+      Quaternion.invMulVector(t.rotation, source, target);
+      Vec3.mul(target, t.scale, target);
       return target;
    }
 
@@ -1265,7 +1313,6 @@ public class Transform3 extends Transform {
       Vec3.sub(source, t.location, target);
       Vec3.div(target, t.scale, target);
       Quaternion.invMulVector(t.rotation, target, target);
-
       return target;
    }
 
@@ -1287,7 +1334,6 @@ public class Transform3 extends Transform {
 
       Vec3.div(source, t.scale, target);
       Quaternion.invMulVector(t.rotation, target, target);
-
       return target;
    }
 
@@ -1407,7 +1453,6 @@ public class Transform3 extends Transform {
    public static Vec3 mulNormal ( final Transform3 t, final Vec3 source,
       final Vec3 target ) {
 
-      // TODO: invMulNormal?
       Vec3.div(source, t.scale, target);
       Quaternion.mulVector(t.rotation, target, target);
       return target;

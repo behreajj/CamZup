@@ -11,7 +11,7 @@ import processing.opengl.PGraphicsOpenGL;
  * An entity which updates a renderer's camera according to its transform.
  */
 @Experimental
-public class CamEntity3 extends Entity3 {
+public class CamEntity3 extends Entity3 implements ICamEntity {
 
    /**
     * The default constructor.
@@ -55,8 +55,6 @@ public class CamEntity3 extends Entity3 {
     */
    public CamEntity3 update ( final PGraphicsOpenGL rndr ) {
 
-      // TODO: Does this need to add frustum, orthographic and perspective?
-
       /* Get data from transform. */
       final Vec3 right = new Vec3();
       final Vec3 forward = new Vec3();
@@ -64,7 +62,7 @@ public class CamEntity3 extends Entity3 {
       this.transform.getAxes(right, forward, up);
       final Vec3 loc = this.transform.getLocation(new Vec3());
 
-      /* Update renderer data. */
+      /* Define matrix elements. */
       final float m00 = right.x;
       final float m01 = right.y;
       final float m02 = right.z;
@@ -107,4 +105,5 @@ public class CamEntity3 extends Entity3 {
 
       return this;
    }
+
 }

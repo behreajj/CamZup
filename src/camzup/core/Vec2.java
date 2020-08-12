@@ -1608,9 +1608,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static Vec2 fromPolar ( final float heading, final Vec2 target ) {
 
-      /*
-       * return target.set( Utils.cos(heading), Utils.sin(heading));
-       */
+      /* return target.set( Utils.cos(heading), Utils.sin(heading)); */
 
       final float nrm = heading * IUtils.ONE_TAU;
       return target.set(Utils.scNorm(nrm), Utils.scNorm(nrm - 0.25f));

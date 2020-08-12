@@ -4,10 +4,13 @@ import camzup.core.IUtils;
 import camzup.core.Mesh;
 import camzup.core.Mesh.PolyType;
 import camzup.core.Mesh3;
+import camzup.core.Quaternion;
 import camzup.core.Rng;
+import camzup.core.Transform3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
+import camzup.core.Vec4;
 
 import processing.core.PApplet;
 
@@ -29,6 +32,93 @@ public class CamZup {
     * @param parent the parent applet
     */
    public CamZup ( final PApplet parent ) { this.parent = parent; }
+
+   public Vec4[] calcTangents ( final Mesh3 m ) {
+
+      final Vec3[] vs = m.coords;
+      final Vec2[] vts = m.texCoords;
+
+      // Should be the size of normals?
+      final Vec4[] result = new Vec4[0];
+
+      final int[][][] faces = m.faces;
+      final int facesLen = faces.length;
+      final int tanLen = facesLen * 3;
+
+      final Vec3[] tangent = new Vec3[tanLen];
+      final Vec3[] bitangent = new Vec3[tanLen];
+
+      for ( int i = 0; i < tanLen; ++i ) {
+         tangent[i] = new Vec3();
+         bitangent[i] = new Vec3();
+      }
+
+      final Vec3 e1 = new Vec3();
+      final Vec3 e2 = new Vec3();
+
+      final Vec2 et1 = new Vec2();
+      final Vec2 et2 = new Vec2();
+
+      final Vec3 t = new Vec3();
+      final Vec3 tTemp0 = new Vec3();
+      final Vec3 tTemp1 = new Vec3();
+
+      final Vec3 b = new Vec3();
+      final Vec3 bTemp0 = new Vec3();
+      final Vec3 bTemp1 = new Vec3();
+
+      for ( int i = 0; i < facesLen; ++i ) {
+         final int[][] face = faces[i];
+         final int faceLen = face.length;
+         if ( faceLen != 3 ) { continue; }
+
+         final int[] vert0 = face[0];
+         final int[] vert1 = face[1];
+         final int[] vert2 = face[2];
+
+         final int vIdx0 = vert0[0];
+         final int vIdx1 = vert1[0];
+         final int vIdx2 = vert2[0];
+
+         final int vtIdx0 = vert0[1];
+         final int vtIdx1 = vert1[1];
+         final int vtIdx2 = vert2[1];
+
+         final Vec3 p0 = vs[vIdx0];
+         final Vec3 p1 = vs[vIdx1];
+         final Vec3 p2 = vs[vIdx2];
+
+         final Vec2 w0 = vts[vtIdx0];
+         final Vec2 w1 = vts[vtIdx1];
+         final Vec2 w2 = vts[vtIdx2];
+
+         Vec3.sub(p1, p0, e1);
+         Vec3.sub(p2, p0, e2);
+
+         Vec2.sub(w1, w0, et1);
+         Vec2.sub(w2, w0, et2);
+
+         final float r = 1.0f / ( et1.x * et2.y - et2.x * et1.y );
+
+         Vec3.mul(e1, et2.y, tTemp0);
+         Vec3.mul(e2, et1.y, tTemp1);
+         Vec3.sub(tTemp0, tTemp1, t);
+         Vec3.mul(t, r, t);
+
+         Vec3.mul(e2, et1.x, bTemp0);
+         Vec3.mul(e1, et2.x, bTemp1);
+         Vec3.sub(bTemp0, bTemp1, b);
+         Vec3.mul(b, r, b);
+
+         // Sum t to tangent
+         // Sum b to bitangent
+      }
+
+      // for all tangents, binormals and normals, result[i].xyz =
+      // norm(reject(t,n)), result[i].w = dot(cross(t,b),n) > 0.0 ? 1.0 : -1.0
+
+      return result;
+   }
 
    /**
     * Returns a string representation of the CamZup class.
@@ -451,16 +541,28 @@ public class CamZup {
 
       final Rng rng = new Rng();
 
+      Vec3 v = Vec3.random(rng, new Vec3());
+      Transform3 t = new Transform3(Vec3.randomCartesian(rng, -1.0f, 1.0f,
+         new Vec3()), Quaternion.random(rng, new Quaternion()), Vec3
+            .randomCartesian(rng, 0.25f, 3.0f, new Vec3()));
+
+      Vec3 transformed = Transform3.mulNormal(t, v, new Vec3());
+      Vec3 untransformed = Transform3.invMulNormal(t, transformed, new Vec3());
+
+      System.out.println(v);
+      System.out.println(transformed);
+      System.out.println(untransformed);
+
       // final Mesh2 m2 = new Mesh2();
       // Mesh2.plane(16, m2);
       // m2.triangulate();
 
-      final Mesh3 m3 = new Mesh3();
-      Mesh3.octahedron(m3);
+      // final Mesh3 m3 = new Mesh3();
+      // Mesh3.octahedron(m3);
       // m3.triangulate();
-      m3.clean();
-      Mesh3.uniformData(m3, m3);
-      System.out.println(m3.toUnityCode());
+      // m3.clean();
+      // Mesh3.uniformData(m3, m3);
+      // System.out.println(m3.toUnityCode());
       // final MeshEntity3 me = new MeshEntity3();
       // me.append(m3);
       // final String pyCd = me.toBlenderCode();

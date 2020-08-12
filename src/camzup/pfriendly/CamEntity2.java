@@ -15,7 +15,7 @@ import processing.opengl.PGraphicsOpenGL;
  * An entity which updates a renderer's camera according to its transform.
  */
 @Experimental
-public class CamEntity2 extends Entity2 {
+public class CamEntity2 extends Entity2 implements ICamEntity {
 
    /**
     * The default constructor.
@@ -39,8 +39,6 @@ public class CamEntity2 extends Entity2 {
     */
    public CamEntity2 ( final String name, final Transform2 transform ) {
 
-      // TODO: zoom in, zoom out, etc. which adds to scale rather than
-      // multiplying.
       super(name, transform);
    }
 
@@ -96,12 +94,6 @@ public class CamEntity2 extends Entity2 {
     * @return this entity
     */
    public CamEntity2 update ( final PGraphicsOpenGL rndr ) {
-
-      /* Ensure orthographic camera projection. */
-      final float rEdge = rndr.width < 128 ? 64.0f : 0.5f * rndr.width;
-      final float tEdge = rndr.height < 128 ? 64.0f : 0.5f * rndr.height;
-      PMatAux.orthographic(-rEdge, rEdge, -tEdge, tEdge, IUp.DEFAULT_NEAR_CLIP,
-         IUp.DEFAULT_FAR_CLIP, rndr.projection);
 
       /* Get data from transform. */
       final Vec2 loc = this.transform.getLocation(new Vec2());

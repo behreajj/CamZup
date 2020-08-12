@@ -107,6 +107,24 @@ public class Entity3 extends Entity implements IOriented3, ISpatial3 {
    }
 
    /**
+    * Orients the entity to look in a direction.
+    * 
+    * @param dir        the direction
+    * @param step       the step
+    * @param handedness the handedness
+    * 
+    * @return this transform
+    * 
+    * @see Transform3#lookIn(Vec3, float, Handedness)
+    */
+   public Entity3 lookIn ( final Vec3 dir, final float step,
+      final Handedness handedness ) {
+
+      this.transform.lookIn(dir, step, handedness);
+      return this;
+   }
+
+   /**
     * Moves this entity by a vector.
     *
     * @param dir the vector

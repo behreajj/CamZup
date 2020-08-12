@@ -854,8 +854,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void frustum ( final float left, final float right,
       final float bottom, final float top, final float near, final float far ) {
 
-      // this.cameraFOV = fov;
-      // this.cameraAspect = aspect;
       this.cameraNear = near;
       this.cameraFar = far;
 

@@ -1047,8 +1047,8 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     *
     * @return the quaternion
     *
-    * @see Math#copySign(float, float)
-    * @see Math#sqrt(double)
+    * @see Utils#copySign(float, float)
+    * @see Utils#sqrt(float)
     */
    public static Quaternion fromAxes ( final float xRight, final float yForward,
       final float zUp, final float zForward, final float yUp, final float xUp,

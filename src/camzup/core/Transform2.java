@@ -333,6 +333,8 @@ public class Transform2 extends Transform {
    public Transform2 lookAt ( final Vec2 point, final float step,
       final Handedness handedness ) {
 
+      // TODO: A 2D version of lookIn?
+
       /* The right axis is used as a temporary container. */
       Vec2.sub(point, this.location, this.right);
 
@@ -565,6 +567,7 @@ public class Transform2 extends Transform {
       this.rotPrev = this.rotation;
       this.rotation += radians;
       this.updateAxes();
+
       return this;
    }
 
@@ -583,6 +586,7 @@ public class Transform2 extends Transform {
          this.scalePrev.set(this.scale);
          Vec2.mul(this.scalePrev, scalar, this.scale);
       }
+
       return this;
    }
 
@@ -602,6 +606,7 @@ public class Transform2 extends Transform {
          this.scalePrev.set(this.scale);
          Vec2.mul(this.scalePrev, nonUniformScale, this.scale);
       }
+
       return this;
    }
 
@@ -618,6 +623,7 @@ public class Transform2 extends Transform {
          this.scalePrev.set(this.scale);
          this.scale.set(scalar, scalar);
       }
+
       return this;
    }
 
@@ -636,6 +642,7 @@ public class Transform2 extends Transform {
          this.scalePrev.set(this.scale);
          this.scale.set(scaleNew);
       }
+
       return this;
    }
 
@@ -655,6 +662,7 @@ public class Transform2 extends Transform {
       if ( Vec2.all(scaleNew) ) {
          return this.scaleTo(scaleNew, step, Transform2.EASING.scale);
       }
+
       return this;
    }
 
@@ -678,6 +686,7 @@ public class Transform2 extends Transform {
          this.scalePrev.set(this.scale);
          easingFunc.apply(this.scalePrev, scaleNew, step, this.scale);
       }
+
       return this;
    }
 
@@ -830,6 +839,7 @@ public class Transform2 extends Transform {
 
       this.locPrev.set(this.location);
       Vec2.wrap(this.locPrev, lb, ub, this.location);
+
       return this;
    }
 
@@ -1427,7 +1437,7 @@ public class Transform2 extends Transform {
 
       /**
        * Eases between an origin and destination transform by a step in [0.0,
-       * 1.0].
+       * 1.0] .
        *
        * @param origin the origin
        * @param dest   the destination

@@ -16,10 +16,10 @@ Cam Z-Up is a Java-based library for the creative coding environment [Processing
 
 If you can flip the y-axis by either
 
-  - supplying `-1` to [scale](https://processing.org/reference/scale_.html)'s y parameter or 
+  - supplying -1.0 to [scale](https://processing.org/reference/scale_.html)'s y parameter or 
   - supplying (0.0, -1.0, 0.0) to the final parameters of [camera](https://processing.org/reference/camera_.html)
   
-without negative impact to your sketch, then it's likely you don't need this library. While Cam Z-Up can help with more complex sketches, it is a general purpose library: its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as other, more specialized libraries. For an easy mouse-controlled orbital camera with GUI support, I would recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
+without negative impact to your sketch, chances are you don't need this library. While Cam Z-Up can help with more complex sketches, it is a general purpose library. Its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as specialist libraries. For an easy mouse-controlled orbital camera with GUI support, I recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
 
 Cam Z-Up is split into two packages: `pfriendly` and `core`. The `pfriendly` package contains code (mostly) compatible with Processing's API. Inside it, you'll find four graphics renderers:
 
@@ -28,7 +28,7 @@ Cam Z-Up is split into two packages: `pfriendly` and `core`. The `pfriendly` pac
 - `YupJ2`, which extends `PGraphicsJava2D`, a.k.a. `JAVA2D`, the default Processing renderer based on the Java AWT library;
 - `Yup2`, which extends `PGraphicsOpenGL`, like `P2D`, a "2.5D" renderer;
 
-The `FX2D` renderer, based on Java FX, is not fully supported by Processing, and is not supported here.
+The `FX2D` renderer, based on Java FX, is not fully supported by Processing, so it's not supported here.
 
 This library's `core` package includes basic utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3` and `Quaternion`. The division between `pfriendly` and `core` is a protective measure. The aim is to retain the library's usefulness even as bugs in `pfriendly`, or changes to the underlying `Processing` library, cause trouble.
 
@@ -40,9 +40,9 @@ Cam Z-Up is tested with Processing version [4.0 alpha 1](https://github.com/proc
 
 To install this library from Github, 
   1. Click on the green `Clone or download` button in the upper right corner of this repository. 
-  2. Select `Download ZIP` to start the download in your browser. (If you know Git or have [Github Desktop](https://desktop.github.com/), you can do that as well.)
+  2. Select `Download ZIP` to start the download in your browser. (If you know Git or have [Github Desktop](https://desktop.github.com/), you can go one of those routes.)
   3. Unzip the download.
-  4. Navigate the directory `distribution/Camzup-1/download` until you find a `CamZup-1.zip` file.
+  4. Navigate through the directory `distribution/Camzup-1/download` until you find a `CamZup-1.zip` file.
   5. Extract the `.zip` file to to your `Processing/libraries/` folder.
      1. You've got the right folder if it contains the sub-folders `examples`, `library`, `reference`, `src` and the file `library.properties`.
      2. If you don't know the location of your `Processing/libraries` folder, look up the information in the Processing IDE by going to `File > Preferences`.
@@ -140,7 +140,6 @@ With the exception of creating nullable objects, the goal of this library is to 
 - When providing functionality for affine transforms, `Transform2` and `Transform3` are given priority over `Mat3` and `Mat4` in `core`. This is related to the fact that `pfriendly` classes require `PMatrix2D`, `PMatrix3D` or AWT's `AffineTransform`: any functionality added to `Processing` matrix implementations must be copied to `core` matrices, even though the latter aren't used as much.
 - Quaternions, when used to store rotations, are typically expected to be of unit length. Care should be taken that any operation which alters a quaternion's magnitude is followed by `normalize`.
 - Any given `vector` implementation may represent a direction, a vector, a point, a quaternion's imaginary component, a non-uniform scalar, a color and/or a collection of elements. As a consequence, it is difficult to balance clarity with concision when designing multiplication between (1.) quaternions and vectors, (2.) matrices and vectors, (3.) transforms and vectors. See the documentation when encountering ambiguities.
-- I am not an expert in color science, nor do I pretend to be. `Color` and `Gradient`, and all of their operations, are _very_ basic: all math operations are done in linear RGB unless otherwise stated; the result's alpha is the source alpha. Any underlying issues with Processing's blending functions will not be improved by this library.
 - The convention established by Java's `indexOf` function is to return `-1` when an array or collection does not contain a query. Some collections in this library, particularly `Mesh`s and `Curve`s, match Pythonic idiom insofar as they accept negative indices to `get` functions. For example, `curve.get(-1)` will return the last `Knot` in a curve, provided that it is a `closedLoop`. As a consequence, the reciprocity between Java's `indexOf` and `get` is broken. For example: `curve.get(curve.knots.indexOf(elmNotInCurve)) != elmNotInCurve`. For this reason, `contains` should always be preferred over `indexOf`, and no custom `contains` method should depend on `indexOf` unless `get`s definition is guaranteed.
 
 ## Kotlin Interoperability
