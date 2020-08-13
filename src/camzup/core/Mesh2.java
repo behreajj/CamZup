@@ -803,6 +803,72 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public int length ( ) { return this.faces.length; }
 
    /**
+    * Miters a selected corner of this mesh by a factor in the range [0.0,
+    * 1.0] , replacing it with an edge.
+    *
+    * @param faceIdx   the face index
+    * @param cornerIdx the corner index
+    * @param step      the step
+    *
+    * @return this mesh
+    */
+   @Experimental
+   public Mesh2 miterCorner ( final int faceIdx, final int cornerIdx,
+      final float step ) {
+
+      // TODO: WIP
+      // For miterCorners, it would be better to just replace entire coords and
+      // texCoords arrays.
+
+      final int facesLen = this.faces.length;
+      final int i = Utils.mod(faceIdx, facesLen);
+      final int[][] face = this.faces[i];
+      final int faceLen = face.length;
+
+      final int j = Utils.mod(cornerIdx, faceLen);
+      final int prevIdx = Utils.mod(j - 1, faceLen);
+      final int nextIdx = ( j + 1 ) % faceLen;
+
+      final int[] currVert = face[j];
+      final int[] prevVert = face[prevIdx];
+      final int[] nextVert = face[nextIdx];
+
+      final float t = Utils.clamp(step, IUtils.DEFAULT_EPSILON, 1.0f
+         - IUtils.DEFAULT_EPSILON);
+      final float u = 1.0f - t;
+
+      final Vec2 vcurr = this.coords[currVert[0]];
+      final Vec2 vprev = this.coords[prevVert[0]];
+      final Vec2 vnext = this.coords[nextVert[0]];
+
+      final float uvx = u * vcurr.x;
+      final float uvy = u * vcurr.y;
+
+      vcurr.set(uvx + t * vprev.x, uvy + t * vprev.y);
+      final int v1Idx = this.coords.length;
+      final Vec2 v1 = new Vec2(uvx + t * vnext.x, uvy + t * vnext.y);
+
+      final Vec2 vtcurr = this.texCoords[currVert[1]];
+      final Vec2 vtprev = this.texCoords[prevVert[1]];
+      final Vec2 vtnext = this.texCoords[nextVert[1]];
+
+      final float uvtx = u * vtcurr.x;
+      final float uvty = u * vtcurr.y;
+
+      vtcurr.set(uvtx + t * vtprev.x, uvty + t * vtprev.y);
+      final int vt1Idx = this.texCoords.length;
+      final Vec2 vt1 = new Vec2(uvtx + t * vtnext.x, uvty + t * vtnext.y);
+
+      final int[][] v1Vert = { { v1Idx, vt1Idx } };
+
+      this.faces[i] = Mesh.splice(face, nextIdx, 0, v1Vert);
+      this.coords = Vec2.append(this.coords, v1);
+      this.texCoords = Vec2.append(this.texCoords, vt1);
+
+      return this;
+   }
+
+   /**
     * Centers the mesh about the origin, (0.0, 0.0), and rescales it to the
     * range [-0.5, 0.5] . Emits a transform which records the mesh's center
     * point and original dimension. The transform's rotation is reset.
@@ -1033,9 +1099,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @param faceIdx the face index
     *
-    * @return the new face indices
+    * @return this mesh
     */
-   public int[][][] subdivFace ( final int faceIdx ) {
+   public Mesh2 subdivFace ( final int faceIdx ) {
 
       return this.subdivFaceCenter(faceIdx);
    }
@@ -1048,10 +1114,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @param faceIdx the face index
     *
-    * @return the new face indices
+    * @return this mesh
     */
    @Experimental
-   public int[][][] subdivFaceCenter ( final int faceIdx ) {
+   public Mesh2 subdivFaceCenter ( final int faceIdx ) {
 
       /* Validate face index, find face. */
       final int facesLen = this.faces.length;
@@ -1123,7 +1189,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       this.texCoords = Vec2.concat(this.texCoords, vtsNew);
       this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
-      return fsNew;
+      // return fsNew;
+      return this;
    }
 
    /**
@@ -1176,8 +1243,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          Vec2.mul(vtCenter, flInv, vtCenter);
       }
 
-      this.coords = Vec2.concat(this.coords, new Vec2[] { vCenter });
-      this.texCoords = Vec2.concat(this.texCoords, new Vec2[] { vtCenter });
+      this.coords = Vec2.append(this.coords, vCenter);
+      this.texCoords = Vec2.append(this.texCoords, vtCenter);
       this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
       return this;

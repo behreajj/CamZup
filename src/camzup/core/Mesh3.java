@@ -1510,9 +1510,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          Vec3.normalize(vnCenter, vnCenter);
       }
 
-      this.coords = Vec3.concat(this.coords, new Vec3[] { vCenter });
-      this.texCoords = Vec2.concat(this.texCoords, new Vec2[] { vtCenter });
-      this.normals = Vec3.concat(this.normals, new Vec3[] { vnCenter });
+      this.coords = Vec3.append(this.coords, vCenter);
+      this.texCoords = Vec2.append(this.texCoords, vtCenter);
+      this.normals = Vec3.append(this.normals, vnCenter);
       this.faces = Mesh.splice(this.faces, i, 1, fsNew);
 
       return this;

@@ -890,6 +890,34 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
    }
 
    /**
+    * Appends a vector to a one-dimensional vector array, returning a new
+    * array.
+    *
+    * @param a the array
+    * @param b the vector
+    *
+    * @return a new array
+    */
+   public static Vec2[] append ( final Vec2[] a, final Vec2 b ) {
+
+      final boolean anull = a == null;
+      final boolean bnull = b == null;
+      if ( anull && bnull ) { return new Vec2[] {}; }
+      if ( anull ) { return new Vec2[] { b }; }
+      if ( bnull ) {
+         final Vec2[] result = new Vec2[a.length];
+         System.arraycopy(a, 0, result, 0, a.length);
+         return result;
+      }
+
+      final int alen = a.length;
+      final Vec2[] result = new Vec2[alen + 1];
+      System.arraycopy(a, 0, result, 0, alen);
+      result[alen] = b;
+      return result;
+   }
+
+   /**
     * Tests to see if two vectors approximate each other.
     *
     * @param a left operand
@@ -1726,23 +1754,23 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
       for ( int i = 0; i < vcnt; ++i ) {
          final Vec2[] row = result[i];
 
-         final float ifl = i;
-         final float step = ifl * toStep;
+         final float step = i * toStep;
          final float y = ( 1.0f - step ) * lb75 + step * ub75;
 
          /* Shift alternating cells by positive or negative offset. */
-         final float xoff = i % 2 == 0 ? w : -w;
+         final float xoff = i % 2 != 0 ? -w : w;
+         // final int joff = i / 2 + 1;
+         // final int joff = Utils.ceilToInt(i * 0.5f);
 
-         // TODO: Why not just take ((i / 2) + 1)?
-         final int joff = Utils.ceilToInt(ifl * 0.5f);
          for ( int j = 0; j < vcnt; ++j ) {
 
             /*
              * Shift indices so that they move smoothly along a diagonal between
              * hex edges, not along a jagged, orthogonal path.
              */
-            final int k = Utils.mod(j - joff, vcnt);
-            row[k] = new Vec2(xoff + xs[j], y);
+            // final int k = Utils.mod(j - joff, vcnt);
+            // row[k] = new Vec2(xoff + xs[j], y);
+            row[j] = new Vec2(xoff + xs[j], y);
          }
       }
       return result;

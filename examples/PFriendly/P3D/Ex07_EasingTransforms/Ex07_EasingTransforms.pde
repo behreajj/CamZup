@@ -5,6 +5,7 @@ Zup3 rndr;
 Mesh3 mesh = new Mesh3();
 MeshEntity3 entity = new MeshEntity3();
 Vec3 mouse1 = new Vec3();
+Rng rng = new Rng();
 
 MaterialSolid mat = new MaterialSolid()
   .setFill(#007fff)
@@ -15,32 +16,8 @@ Transform3.Easing mixer = new Transform3.Easing(
   new Quaternion.Slerp(),
   new Vec3.SmoothStep());
 
-Transform3[] frames = {
-  new Transform3(
-  new Vec3(-256.0, 256.0, 50.0),
-  new Quaternion(1.0, 0.0, 0.0, 0.0),
-  new Vec3(200.0, 200.0, 200.0)),
-
-  new Transform3(
-  new Vec3(-256.0, -256.0, -50.0),
-  new Quaternion(0.0, 1.0, 0.0, 0.0),
-  new Vec3(300.0, 100.0, 200.0)),
-
-  new Transform3(
-  new Vec3(256.0, -256.0, 50.0),
-  new Quaternion(0.0, 0.0, 1.0, 0.0),
-  new Vec3(200.0, 300.0, 100.0)),
-
-  new Transform3(
-  new Vec3(256.0, 256.0, -50.0),
-  new Quaternion(0.0, 0.0, 0.0, 1.0),
-  new Vec3(100.0, 200.0, 300.0)),
-
-  new Transform3(
-  new Vec3(-256.0, 256.0, 50.0),
-  new Quaternion(1.0, 0.0, 0.0, 0.0),
-  new Vec3(200.0, 200.0, 200.0))
-};
+int fCount = 8;
+Transform3[] frames = new Transform3[fCount];
 
 void settings() {
   size(720, 405, Zup3.PATH_STR);
@@ -50,6 +27,14 @@ void setup() {
   rndr = (Zup3)getGraphics();
   Mesh3.cube(mesh);
   entity.append(mesh);
+
+  for (int i = 0; i < fCount - 1; ++i) {
+    frames[i] = Transform3.random(rng,
+      -512.0, 512.0,
+      50.0, 300.0,
+      new Transform3());
+  }
+  frames[fCount - 1] = frames[0];
 }
 
 void draw() {

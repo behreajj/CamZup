@@ -1073,6 +1073,26 @@ public class Transform3 extends Transform {
    }
 
    /**
+    * Default random location lower bound for creating a random transform.
+    */
+   public static final float DEFAULT_RND_LOC_LB = -1.0f;
+
+   /**
+    * Default random location upper bound for creating a random transform.
+    */
+   public static final float DEFAULT_RND_LOC_UB = 1.0f;
+
+   /**
+    * Default random scale lower bound for creating a random transform.
+    */
+   public static final float DEFAULT_RND_SCL_LB = IUtils.ONE_SQRT_3;
+
+   /**
+    * Default random scale upper bound for creating a random transform.
+    */
+   public static final float DEFAULT_RND_SCL_UB = IUtils.SQRT_3;
+
+   /**
     * The default easing function.
     */
    private static Easing EASING;
@@ -1273,13 +1293,13 @@ public class Transform3 extends Transform {
    /**
     * Multiplies a normal by a transform's inverse. This rotates the normal by
     * the inverse quaternion, then multiplies the normal by the scale.
-    * 
+    *
     * @param t      the transform
     * @param source the input normal
     * @param target the output normal
-    * 
+    *
     * @return the normal
-    * 
+    *
     * @see Quaternion#invMulVector(Quaternion, Vec3, Vec3)
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
@@ -1499,6 +1519,86 @@ public class Transform3 extends Transform {
 
       Quaternion.mulVector(t.rotation, source, target);
       Vec3.mul(target, t.scale, target);
+      return target;
+   }
+
+   /**
+    * Creates a random transform. Uses
+    * {@link Vec3#randomCartesian(java.util.Random, float, float, Vec3)} for
+    * location and scale.
+    *
+    * @param rng    the random number generator
+    * @param lbLoc  the location lower bound
+    * @param ubLoc  the location upper bound
+    * @param lbScl  the scale lower bound
+    * @param ubScl  the scale upper bound
+    * @param target the output transform
+    *
+    * @return the random transform
+    */
+   public static Transform3 random ( final java.util.Random rng,
+      final float lbLoc, final float ubLoc, final float lbScl,
+      final float ubScl, final Transform3 target ) {
+
+      target.locPrev.set(target.location);
+      Vec3.randomCartesian(rng, lbLoc, ubLoc, target.location);
+
+      target.rotPrev.set(target.rotation);
+      Quaternion.random(rng, target.rotation);
+
+      target.scalePrev.set(target.scale);
+      Vec3.randomCartesian(rng, lbScl, ubScl, target.scale);
+
+      return target;
+   }
+
+   /**
+    * Creates a random transform. The location range is
+    * [{@value Transform3#DEFAULT_RND_LOC_LB},
+    * {@value Transform3#DEFAULT_RND_LOC_UB}] . The scale range is
+    * [{@value Transform3#DEFAULT_RND_SCL_LB},
+    * {@value Transform3#DEFAULT_RND_SCL_UB}] .
+    *
+    * @param rng    the random number generator
+    * @param target the output transform
+    *
+    * @return the random transform
+    */
+   public static Transform3 random ( final java.util.Random rng,
+      final Transform3 target ) {
+
+      return Transform3.random(rng, Transform3.DEFAULT_RND_LOC_LB,
+         Transform3.DEFAULT_RND_LOC_UB, Transform3.DEFAULT_RND_SCL_LB,
+         Transform3.DEFAULT_RND_SCL_UB, target);
+   }
+
+   /**
+    * Creates a random transform. Uses
+    * {@link Vec3#randomCartesian(java.util.Random, Vec3, Vec3, Vec3)} for
+    * location and scale.
+    *
+    * @param rng    the random number generator
+    * @param lbLoc  the location lower bound
+    * @param ubLoc  the location upper bound
+    * @param lbScl  the scale lower bound
+    * @param ubScl  the scale upper bound
+    * @param target the output transform
+    *
+    * @return the random transform
+    */
+   public static Transform3 random ( final java.util.Random rng,
+      final Vec3 lbLoc, final Vec3 ubLoc, final Vec3 lbScl, final Vec3 ubScl,
+      final Transform3 target ) {
+
+      target.locPrev.set(target.location);
+      Vec3.randomCartesian(rng, lbLoc, ubLoc, target.location);
+
+      target.rotPrev.set(target.rotation);
+      Quaternion.random(rng, target.rotation);
+
+      target.scalePrev.set(target.scale);
+      Vec3.randomCartesian(rng, lbScl, ubScl, target.scale);
+
       return target;
    }
 

@@ -55,6 +55,8 @@ public class CamEntity3 extends Entity3 implements ICamEntity {
     */
    public CamEntity3 update ( final PGraphicsOpenGL rndr ) {
 
+      // TODO: Do these axes need to be flipped?
+
       /* Get data from transform. */
       final Vec3 right = new Vec3();
       final Vec3 forward = new Vec3();

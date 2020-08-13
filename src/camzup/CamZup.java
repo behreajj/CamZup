@@ -3,10 +3,9 @@ package camzup;
 import camzup.core.IUtils;
 import camzup.core.Mesh;
 import camzup.core.Mesh.PolyType;
+import camzup.core.Mesh2;
 import camzup.core.Mesh3;
-import camzup.core.Quaternion;
-import camzup.core.Rng;
-import camzup.core.Transform3;
+import camzup.core.MeshEntity2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -539,23 +538,16 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      final Rng rng = new Rng();
+      // final Rng rng = new Rng();
 
-      Vec3 v = Vec3.random(rng, new Vec3());
-      Transform3 t = new Transform3(Vec3.randomCartesian(rng, -1.0f, 1.0f,
-         new Vec3()), Quaternion.random(rng, new Quaternion()), Vec3
-            .randomCartesian(rng, 0.25f, 3.0f, new Vec3()));
-
-      Vec3 transformed = Transform3.mulNormal(t, v, new Vec3());
-      Vec3 untransformed = Transform3.invMulNormal(t, transformed, new Vec3());
-
-      System.out.println(v);
-      System.out.println(transformed);
-      System.out.println(untransformed);
-
-      // final Mesh2 m2 = new Mesh2();
-      // Mesh2.plane(16, m2);
-      // m2.triangulate();
+      final Mesh2 m2 = new Mesh2();
+      Mesh2.polygon(6, m2);
+      m2.miterCorner(0, 0, 0.25f);
+      System.out.println(m2);
+      final MeshEntity2 me2 = new MeshEntity2();
+      me2.append(m2);
+      final String pyCd = me2.toBlenderCode();
+      // System.out.println(pyCd);
 
       // final Mesh3 m3 = new Mesh3();
       // Mesh3.octahedron(m3);

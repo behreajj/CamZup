@@ -934,6 +934,34 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
+    * Appends a vector to a one-dimensional vector array, returning a new
+    * array.
+    *
+    * @param a the array
+    * @param b the vector
+    *
+    * @return a new array
+    */
+   public static Vec3[] append ( final Vec3[] a, final Vec3 b ) {
+
+      final boolean anull = a == null;
+      final boolean bnull = b == null;
+      if ( anull && bnull ) { return new Vec3[] {}; }
+      if ( anull ) { return new Vec3[] { b }; }
+      if ( bnull ) {
+         final Vec3[] result = new Vec3[a.length];
+         System.arraycopy(a, 0, result, 0, a.length);
+         return result;
+      }
+
+      final int alen = a.length;
+      final Vec3[] result = new Vec3[alen + 1];
+      System.arraycopy(a, 0, result, 0, alen);
+      result[alen] = b;
+      return result;
+   }
+
+   /**
     * Tests to see if two vectors approximate each other.
     *
     * @param a left comparisand

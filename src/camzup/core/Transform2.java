@@ -947,6 +947,26 @@ public class Transform2 extends Transform {
    }
 
    /**
+    * Default random location lower bound for creating a random transform.
+    */
+   public static final float DEFAULT_RND_LOC_LB = -1.0f;
+
+   /**
+    * Default random location upper bound for creating a random transform.
+    */
+   public static final float DEFAULT_RND_LOC_UB = 1.0f;
+
+   /**
+    * Default random scale lower bound for creating a random transform.
+    */
+   public static final float DEFAULT_RND_SCL_LB = IUtils.ONE_SQRT_2;
+
+   /**
+    * Default random scale upper bound for creating a random transform.
+    */
+   public static final float DEFAULT_RND_SCL_UB = IUtils.SQRT_2;
+
+   /**
     * The default easing function.
     */
    private static Easing EASING;
@@ -1346,6 +1366,93 @@ public class Transform2 extends Transform {
 
       Vec2.rotateZ(source, t.right.x, t.right.y, target);
       Vec2.mul(target, t.scale, target);
+      return target;
+   }
+
+   /**
+    * Creates a random transform. Uses
+    * {@link Vec2#randomCartesian(java.util.Random, float, float, Vec2)} for
+    * location and scale.
+    *
+    * @param rng    the random number generator
+    * @param lbLoc  the location lower bound
+    * @param ubLoc  the location upper bound
+    * @param lbRot  the rotation lower bound
+    * @param ubRot  the rotation upper bound
+    * @param lbScl  the scale lower bound
+    * @param ubScl  the scale upper bound
+    * @param target the output transform
+    *
+    * @return the random transform
+    */
+   public static Transform2 random ( final java.util.Random rng,
+      final float lbLoc, final float ubLoc, final float lbRot,
+      final float ubRot, final float lbScl, final float ubScl,
+      final Transform2 target ) {
+
+      target.locPrev.set(target.location);
+      Vec2.randomCartesian(rng, lbLoc, ubLoc, target.location);
+
+      final float t = rng.nextFloat();
+      target.rotPrev = target.rotation;
+      target.rotation = ( 1.0f - t ) * lbRot + t * ubRot;
+
+      target.scalePrev.set(target.scale);
+      Vec2.randomCartesian(rng, lbScl, ubScl, target.scale);
+
+      return target;
+   }
+
+   /**
+    * Creates a random transform. The location range is
+    * [{@value Transform2#DEFAULT_RND_LOC_LB},
+    * {@value Transform2#DEFAULT_RND_LOC_UB}] . The scale range is
+    * [{@value Transform2#DEFAULT_RND_SCL_LB},
+    * {@value Transform2#DEFAULT_RND_SCL_UB}] .
+    *
+    * @param rng    the random number generator
+    * @param target the output transform
+    *
+    * @return the random transform
+    */
+   public static Transform2 random ( final java.util.Random rng,
+      final Transform2 target ) {
+
+      return Transform2.random(rng, Transform2.DEFAULT_RND_LOC_LB,
+         Transform2.DEFAULT_RND_LOC_UB, -IUtils.PI, IUtils.PI,
+         Transform2.DEFAULT_RND_SCL_LB, Transform2.DEFAULT_RND_SCL_UB, target);
+   }
+
+   /**
+    * Creates a random transform. Uses
+    * {@link Vec2#randomCartesian(java.util.Random, Vec2, Vec2, Vec2)} for
+    * location and scale.
+    *
+    * @param rng    the random number generator
+    * @param lbLoc  the location lower bound
+    * @param ubLoc  the location upper bound
+    * @param lbRot  the rotation lower bound
+    * @param ubRot  the rotation upper bound
+    * @param lbScl  the scale lower bound
+    * @param ubScl  the scale upper bound
+    * @param target the output transform
+    *
+    * @return the transform
+    */
+   public static Transform2 random ( final java.util.Random rng,
+      final Vec2 lbLoc, final Vec2 ubLoc, final float lbRot, final float ubRot,
+      final Vec2 lbScl, final Vec2 ubScl, final Transform2 target ) {
+
+      target.locPrev.set(target.location);
+      Vec2.randomCartesian(rng, lbLoc, ubLoc, target.location);
+
+      final float t = rng.nextFloat();
+      target.rotPrev = target.rotation;
+      target.rotation = ( 1.0f - t ) * lbRot + t * ubRot;
+
+      target.scalePrev.set(target.scale);
+      Vec2.randomCartesian(rng, lbScl, ubScl, target.scale);
+
       return target;
    }
 

@@ -18,7 +18,7 @@ public interface ICamEntity {
     * @param top    the top edge of the window
     * @param near   the near clip plane
     * @param far    the far clip plane
-    * 
+    *
     * @return this entity
     */
    default ICamEntity frustum ( final PGraphicsOpenGL rndr, final float left,
@@ -36,9 +36,9 @@ public interface ICamEntity {
    /**
     * Sets a renderer projection to orthographic, where objects maintain their
     * size regardless of distance from the camera.
-    * 
+    *
     * @param rndr the renderer
-    * 
+    *
     * @return this entity
     */
    default ICamEntity ortho ( final PGraphicsOpenGL rndr ) {
@@ -57,13 +57,13 @@ public interface ICamEntity {
    /**
     * Sets a renderer projection to orthographic, where objects maintain their
     * size regardless of distance from the camera.
-    * 
+    *
     * @param rndr   the renderer
     * @param left   the left edge of the window
     * @param right  the right edge of the window
     * @param bottom the bottom edge of the window
     * @param top    the top edge of the window
-    * 
+    *
     * @return this entity
     */
    default ICamEntity ortho ( final PGraphicsOpenGL rndr, final float left,
@@ -89,7 +89,7 @@ public interface ICamEntity {
     * @param top    the top edge of the window
     * @param near   the near clip plane
     * @param far    the far clip plane
-    * 
+    *
     * @return this entity
     */
    default ICamEntity ortho ( final PGraphicsOpenGL rndr, final float left,
@@ -110,7 +110,7 @@ public interface ICamEntity {
     * camera appear larger than objects distant from the camera.
     *
     * @param rndr the renderer
-    * 
+    *
     * @return this entity
     */
    default ICamEntity perspective ( final PGraphicsOpenGL rndr ) {
@@ -133,7 +133,7 @@ public interface ICamEntity {
     *
     * @param rndr the renderer
     * @param fov  the field of view
-    * 
+    *
     * @return this entity
     */
    default ICamEntity perspective ( final PGraphicsOpenGL rndr,
@@ -158,7 +158,7 @@ public interface ICamEntity {
     * @param rndr   the renderer
     * @param fov    the field of view
     * @param aspect the aspect ratio, width over height
-    * 
+    *
     * @return this entity
     */
    default ICamEntity perspective ( final PGraphicsOpenGL rndr, final float fov,
@@ -184,7 +184,7 @@ public interface ICamEntity {
     * @param aspect the aspect ratio, width over height
     * @param near   the near clip plane
     * @param far    the far clip plane
-    * 
+    *
     * @return this entity
     */
    default ICamEntity perspective ( final PGraphicsOpenGL rndr, final float fov,
