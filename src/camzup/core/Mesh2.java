@@ -808,62 +808,178 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @param faceIdx   the face index
     * @param cornerIdx the corner index
-    * @param step      the step
+    * @param radius    the corner radius
+    * @param count     corner resolution
     *
     * @return this mesh
     */
    @Experimental
    public Mesh2 miterCorner ( final int faceIdx, final int cornerIdx,
-      final float step ) {
+      final float radius, final int count ) {
 
       // TODO: WIP
-      // For miterCorners, it would be better to just replace entire coords and
-      // texCoords arrays.
+      // https://stackoverflow.com/questions/24771828/algorithm-for-creating-rounded-corners-in-a-polygon
+
+      // Do not change or remove the original point. You don't know if it's
+      // being used elsewhere.
 
       final int facesLen = this.faces.length;
       final int i = Utils.mod(faceIdx, facesLen);
       final int[][] face = this.faces[i];
       final int faceLen = face.length;
 
-      final int j = Utils.mod(cornerIdx, faceLen);
-      final int prevIdx = Utils.mod(j - 1, faceLen);
-      final int nextIdx = ( j + 1 ) % faceLen;
+      final int currIdx = Utils.mod(cornerIdx, faceLen);
+      final int prevIdx = Utils.mod(currIdx - 1, faceLen);
+      final int nextIdx = ( currIdx + 1 ) % faceLen;
 
-      final int[] currVert = face[j];
+      /* Acquire vertices. */
+      final int[] currVert = face[currIdx];
       final int[] prevVert = face[prevIdx];
       final int[] nextVert = face[nextIdx];
 
-      final float t = Utils.clamp(step, IUtils.DEFAULT_EPSILON, 1.0f
-         - IUtils.DEFAULT_EPSILON);
-      final float u = 1.0f - t;
-
+      /* Acquire corner (current), next and previous coordinate. */
       final Vec2 vcurr = this.coords[currVert[0]];
       final Vec2 vprev = this.coords[prevVert[0]];
       final Vec2 vnext = this.coords[nextVert[0]];
 
-      final float uvx = u * vcurr.x;
-      final float uvy = u * vcurr.y;
+      /* Coordinate edge 0. */
+      final float d0x = vcurr.x - vprev.x;
+      final float d0y = vcurr.y - vprev.y;
+      final float d0Heading = Utils.atan2(d0y, d0x);
+      final float d0MagSq = d0x * d0x + d0y * d0y;
+      final float d0InvMag = Utils.invSqrtUnchecked(d0MagSq);
+      final float d0Mag = d0MagSq * d0InvMag;
 
-      vcurr.set(uvx + t * vprev.x, uvy + t * vprev.y);
-      final int v1Idx = this.coords.length;
-      final Vec2 v1 = new Vec2(uvx + t * vnext.x, uvy + t * vnext.y);
+      /* Coordinate edge 1. */
+      final float d1x = vcurr.x - vnext.x;
+      final float d1y = vcurr.y - vnext.y;
+      final float d1Heading = Utils.atan2(d1y, d1x);
+      final float d1MagSq = d1x * d1x + d1y * d1y;
+      final float d1InvMag = Utils.invSqrtUnchecked(d1MagSq);
+      final float d1Mag = d1MagSq * d1InvMag;
 
+      final float vTan = Utils.abs(Utils.tan( ( d0Heading - d1Heading )
+         * 0.5f));
+      float vRad = radius;
+      float vSeg = Utils.div(vRad, vTan);
+      final float vLen = Utils.min(d0Mag, d1Mag);
+      if ( vSeg > vLen ) {
+         vSeg = vLen;
+         vRad = vLen * vTan;
+      }
+
+      /* Find new coordinate corners. */
+      final float fac0 = vSeg * d0InvMag;
+      final float fac1 = vSeg * d1InvMag;
+      final Vec2 vCorner0 = new Vec2(vcurr.x - d0x * fac0, vcurr.y - d0y
+         * fac0);
+      final Vec2 vCorner1 = new Vec2(vcurr.x - d1x * fac1, vcurr.y - d1y
+         * fac1);
+
+      /* Acquire corner (current), next and previous texture coordinate. */
       final Vec2 vtcurr = this.texCoords[currVert[1]];
       final Vec2 vtprev = this.texCoords[prevVert[1]];
       final Vec2 vtnext = this.texCoords[nextVert[1]];
 
-      final float uvtx = u * vtcurr.x;
-      final float uvty = u * vtcurr.y;
+      /* Texture coordinate edge 0. */
+      final float dt0x = vtcurr.x - vtprev.x;
+      final float dt0y = vtcurr.y - vtprev.y;
+      final float dt0Heading = Utils.atan2(dt0y, dt0x);
+      final float dt0MagSq = dt0x * dt0x + dt0y * dt0y;
+      final float dt0InvMag = Utils.invSqrtUnchecked(dt0MagSq);
+      final float dt0Mag = dt0MagSq * dt0InvMag;
 
-      vtcurr.set(uvtx + t * vtprev.x, uvty + t * vtprev.y);
-      final int vt1Idx = this.texCoords.length;
-      final Vec2 vt1 = new Vec2(uvtx + t * vtnext.x, uvty + t * vtnext.y);
+      /* Texture coordinate edge 1. */
+      final float dt1x = vtcurr.x - vtnext.x;
+      final float dt1y = vtcurr.y - vtnext.y;
+      final float dt1Heading = Utils.atan2(dt1y, dt1x);
+      final float dt1MagSq = dt1x * dt1x + dt1y * dt1y;
+      final float dt1InvMag = Utils.invSqrtUnchecked(dt1MagSq);
+      final float dt1Mag = dt1MagSq * dt1InvMag;
 
-      final int[][] v1Vert = { { v1Idx, vt1Idx } };
+      final float vtTan = Utils.abs(Utils.tan( ( dt0Heading - dt1Heading )
+         * 0.5f));
+      float vtRad = radius;
+      float vtSeg = Utils.div(vtRad, vtTan);
+      final float vtLen = Utils.min(dt0Mag, dt1Mag);
+      if ( vtSeg > vtLen ) {
+         vtSeg = vtLen;
+         vtRad = vtLen * vtTan;
+      }
 
-      this.faces[i] = Mesh.splice(face, nextIdx, 0, v1Vert);
-      this.coords = Vec2.append(this.coords, v1);
-      this.texCoords = Vec2.append(this.texCoords, vt1);
+      /* Find new coordinate corners. */
+      final float fact0 = vtSeg * dt0InvMag;
+      final float fact1 = vtSeg * dt1InvMag;
+      final Vec2 vtCorner0 = new Vec2(vtcurr.x - dt0x * fact0, vtcurr.y - dt0y
+         * fact0);
+      final Vec2 vtCorner1 = new Vec2(vtcurr.x - dt1x * fact1, vtcurr.y - dt1y
+         * fact1);
+
+      /* If resolution is less than 1, draw a straight line segment. */
+      if ( count < 1 ) {
+
+         final int v0Idx = this.coords.length;
+         final int v1Idx = v0Idx + 1;
+
+         final int vt0Idx = this.texCoords.length;
+         final int vt1Idx = vt0Idx + 1;
+
+         final int[] v0Vert = { v0Idx, vt0Idx };
+         final int[] v1Vert = { v1Idx, vt1Idx };
+
+         final int[][] newEdge = { v0Vert, v1Vert };
+         final Vec2[] newCoords = { vCorner0, vCorner1 };
+         final Vec2[] newTexCoords = { vtCorner0, vtCorner1 };
+
+         this.faces[i] = Mesh.splice(face, currIdx, 1, newEdge);
+         this.coords = Vec2.concat(this.coords, newCoords);
+         this.texCoords = Vec2.concat(this.texCoords, newTexCoords);
+
+         return this;
+      }
+
+      final float xdelta = vcurr.x + vcurr.x - vCorner0.x - vCorner1.x;
+      final float ydelta = vcurr.y + vcurr.y - vCorner0.y - vCorner1.y;
+      final float factor = Utils.hypot(vSeg, vRad) * Utils.invSqrtUnchecked(
+         xdelta * xdelta + ydelta * ydelta);
+
+      /*
+       * Find origin of circle. Create an object in case this is helpful in the
+       * future, e.g., is included in triangle fan.
+       */
+      final Vec2 vOrigin = new Vec2(vcurr.x - xdelta * factor, vcurr.y - ydelta
+         * factor);
+
+      final int countn1 = count - 1;
+      final int countn2 = count - 2;
+      final float toStep = 1.0f / countn1;
+      final Vec2[] newCoords = new Vec2[count];
+      final int[][] newIndices = new int[count][2];
+      final int newCoordIdx = this.coords.length;
+
+      /* Add initial coordinate to new coordinates. */
+      newCoords[0] = vCorner0;
+      newIndices[0] = new int[] { newCoordIdx, 0 };
+
+      for ( int j = 0, k = 1; j < countn2; ++j, ++k ) {
+         final float step = k * toStep;
+         final Vec2 v = newCoords[k] = new Vec2();
+
+         /* Lerp, subtract pivot, normalize, re-scale, add pivot. */
+         Vec2.mix(vCorner0, vCorner1, step, v);
+         Vec2.sub(v, vOrigin, v);
+         Vec2.rescale(v, vRad, v);
+         Vec2.add(v, vOrigin, v);
+
+         newIndices[k] = new int[] { newCoordIdx + k, 0 };
+      }
+
+      /* Add final corner to new coordinates. */
+      newCoords[countn1] = vCorner1;
+      newIndices[countn1] = new int[] { newCoordIdx + countn1, 0 };
+
+      this.faces[i] = Mesh.splice(face, currIdx, 1, newIndices);
+      this.coords = Vec2.concat(this.coords, newCoords);
 
       return this;
    }
@@ -1689,6 +1805,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final Vec2 c = this.coords[i];
          Mat3.mulPoint(m, c, c);
       }
+
       return this;
    }
 
@@ -1713,6 +1830,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final Vec2 c = this.coords[i];
          Transform2.mulPoint(tr, c, c);
       }
+
       return this;
    }
 

@@ -902,23 +902,26 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
-    * Finds the angle between two vectors.
+    * Finds the angle between two vectors. Returns zero when either vector is
+    * zero.
     *
     * @param a the first vector
     * @param b the second vector
     *
     * @return the angle
     *
-    * @see Vec3#none(Vec3)
+    * @see Vec3#any(Vec3)
     * @see Vec3#dot(Vec3, Vec3)
+    * @see Vec3#magSq(Vec3)
+    * @see Utils#invSqrtUnchecked(float)
     * @see Vec3#mag(Vec3)
     * @see Utils#acos(float)
     */
    public static float angleBetween ( final Vec3 a, final Vec3 b ) {
 
-      return Vec3.none(a) || Vec3.none(b) ? 0.0f : Utils.acos(Vec3.dot(a, b)
-         * Utils.invSqrtUnchecked(Vec3.magSq(a)) * Utils.invSqrtUnchecked(Vec3
-            .magSq(b)));
+      return Vec3.any(a) && Vec3.any(b) ? Utils.acos(Vec3.dot(a, b) * Utils
+         .invSqrtUnchecked(Vec3.magSq(a)) * Utils.invSqrtUnchecked(Vec3.magSq(
+            b))) : 0.0f;
    }
 
    /**

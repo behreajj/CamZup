@@ -5,8 +5,10 @@ Zup3 rndr;
 
 boolean wireframe = true;
 Vec3 mouse1 = new Vec3();
+int count = 64;
 
-Mesh3 plane3 = new Mesh3(Mesh2.plane(64, new Mesh2()));
+Mesh3 plane3 = new Mesh3(Mesh2.plane(
+  count, count, Mesh.PolyType.TRI, new Mesh2()));
 
 MeshEntity3 entity = new MeshEntity3()
   .append(plane3);
@@ -40,8 +42,7 @@ void setup() {
     co.z = elev * fac1;
   }
 
-  plane3.triangulate();
-  plane3.calcNormalsSmooth();
+  plane3.shadeSmooth();
 }
 
 void draw() {

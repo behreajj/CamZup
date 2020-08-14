@@ -51,6 +51,7 @@ void setup() {
     
     Mesh3 mesh = new Mesh3();
     Mesh3.cylinder(origin, dest, 6, true, 0.05, mesh);
+    mesh.shadeFlat();
     mesh.materialIndex = i;
     me3.append(mesh);
 

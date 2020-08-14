@@ -2033,6 +2033,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec3 c = this.coords[i];
          Mat4.mulPoint(m, c, c);
       }
+
       return this;
    }
 
@@ -2057,6 +2058,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec3 c = this.coords[i];
          Transform3.mulPoint(tr, c, c);
       }
+
       return this;
    }
 
@@ -2076,6 +2078,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec3 c = this.coords[i];
          Vec3.add(c, v, c);
       }
+
       return this;
    }
 

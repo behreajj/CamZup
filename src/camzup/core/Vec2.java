@@ -858,23 +858,25 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
    }
 
    /**
-    * Finds the angle between two vectors.
+    * Finds the angle between two vectors. Returns zero when either vector is
+    * zero.
     *
     * @param a the first vector
     * @param b the second vector
     *
     * @return the angle
     *
-    * @see Vec2#none(Vec2)
+    * @see Vec2#any(Vec2)
     * @see Vec2#dot(Vec2, Vec2)
-    * @see Vec2#mag(Vec2)
+    * @see Vec2#magSq(Vec2)
+    * @see Utils#invSqrtUnchecked(float)
     * @see Utils#acos(float)
     */
    public static float angleBetween ( final Vec2 a, final Vec2 b ) {
 
-      return Vec2.none(a) || Vec2.none(b) ? 0.0f : Utils.acos(Vec2.dot(a, b)
-         * Utils.invSqrtUnchecked(Vec2.magSq(a)) * Utils.invSqrtUnchecked(Vec2
-            .magSq(b)));
+      return Vec2.any(a) && Vec2.any(b) ? Utils.acos(Vec2.dot(a, b) * Utils
+         .invSqrtUnchecked(Vec2.magSq(a)) * Utils.invSqrtUnchecked(Vec2.magSq(
+            b))) : 0.0f;
    }
 
    /**

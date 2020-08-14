@@ -540,14 +540,20 @@ public class CamZup {
 
       // final Rng rng = new Rng();
 
+      final Vec2 a = new Vec2(0, 1);
+      final Vec2 b = new Vec2(1, 0);
+      System.out.println(Vec2.angleBetween(a, b));
+
       final Mesh2 m2 = new Mesh2();
       Mesh2.polygon(6, m2);
-      m2.miterCorner(0, 0, 0.25f);
-      System.out.println(m2);
+      // Mesh2.square(m2);
+      // m2.scale(new Vec2(1.25f, 0.75f));
+      m2.miterCorner(0, 3, 0.125f, 16);
+      // System.out.println(m2);
       final MeshEntity2 me2 = new MeshEntity2();
       me2.append(m2);
       final String pyCd = me2.toBlenderCode();
-      // System.out.println(pyCd);
+      System.out.println(pyCd);
 
       // final Mesh3 m3 = new Mesh3();
       // Mesh3.octahedron(m3);
