@@ -1,6 +1,7 @@
 package camzup;
 
 import camzup.core.IUtils;
+import camzup.core.Mat3;
 import camzup.core.Mesh;
 import camzup.core.Mesh.PolyType;
 import camzup.core.Mesh2;
@@ -540,15 +541,20 @@ public class CamZup {
 
       // final Rng rng = new Rng();
 
-      final Vec2 a = new Vec2(0, 1);
-      final Vec2 b = new Vec2(1, 0);
-      System.out.println(Vec2.angleBetween(a, b));
-
       final Mesh2 m2 = new Mesh2();
-      Mesh2.polygon(6, m2);
-      // Mesh2.square(m2);
-      // m2.scale(new Vec2(1.25f, 0.75f));
-      m2.miterCorner(0, 3, 0.125f, 16);
+      // Mesh2.polygon(3, m2);
+      Mesh2.square(m2);
+      Mat3 tr = new Mat3();
+      Mat3 skew = Mat3.fromSkew(IUtils.THIRD_PI / 3, Vec2.right(new Vec2()),
+         Vec2.forward(new Vec2()), new Mat3());
+      Mat3 scale = Mat3.fromScale(new Vec2(1.0f, 0.5f), new Mat3());
+      Mat3.mul(scale, skew, tr);
+      m2.transform(tr);
+      m2.roundCorners(0, 0.075f, 32);
+      m2.clean();
+      // m2.roundCorners(0, 0.075f, 16);
+      // m2.clean();
+      m2.calcUvs();
       // System.out.println(m2);
       final MeshEntity2 me2 = new MeshEntity2();
       me2.append(m2);

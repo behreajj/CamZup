@@ -1454,7 +1454,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final StringBuilder sb = new StringBuilder(64);
       sb.append(mesh.name);
       sb.append('.');
-      sb.append(Utils.toPadded(i, 4));
+      sb.append(Utils.toPadded(i, 3));
 
       target.name = sb.toString();
       target.closedLoop = true;

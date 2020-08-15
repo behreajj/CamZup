@@ -2059,20 +2059,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Unsupported by this renderer, as it is known to raise errors.
-    */
-   @Override
-   public void smooth ( ) { PApplet.showMethodWarning("smooth"); }
-
-   /**
-    * Unsupported by this renderer, as it is known to raise errors.
-    *
-    * @param q the quality
-    */
-   @Override
-   public void smooth ( final int q ) { PApplet.showMethodWarning("smooth"); }
-
-   /**
     * Unsupported by this renderer. Use a MeshEntity and Mesh instead.
     *
     * @param r the radius

@@ -1195,6 +1195,29 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
+    * Creates skew, or shear, matrix from an angle and axes. Vectors
+    * <em>a</em> and <em>b</em> are expected to be orthonormal, i.e.
+    * perpendicular and of unit length.
+    *
+    * @param radians the angle in radians
+    * @param a       the skew axis
+    * @param b       the orthonormal axis
+    * @param target  the output matrix
+    *
+    * @return the skew matrix
+    */
+   public static Mat3 fromSkew ( final float radians, final Vec2 a,
+      final Vec2 b, final Mat3 target ) {
+
+      final float t = Utils.tan(radians);
+      final float tax = a.x * t;
+      final float tay = a.y * t;
+
+      return target.set(tax * b.x + 1.0f, tax * b.y, 0.0f, tay * b.x, tay * b.y
+         + 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+   }
+
+   /**
     * Creates a translation matrix from a vector.
     *
     * @param tr     the translation

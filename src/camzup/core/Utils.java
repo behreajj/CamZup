@@ -70,16 +70,18 @@ public abstract class Utils implements IUtils {
     */
    public static float acos ( final float y ) {
 
-      if ( y <= -1.0f ) { return IUtils.PI; }
-      if ( y >= 1.0f ) { return 0.0f; }
-
-      // return ( float ) Math.acos(y);
-
-      final boolean ltZero = y < -0.0f;
-      final float x = ltZero ? -y : y;
-      float ret = ( 0.074261f - 0.0187293f * x ) * x - 0.2121144f;
-      ret = ( ret * x + IUtils.HALF_PI ) * Utils.sqrtUnchecked(1.0f - x);
-      return ltZero ? IUtils.PI - ret : ret;
+      if ( y <= -1.0f ) {
+         return IUtils.PI;
+      } else if ( y >= 1.0f ) {
+         return 0.0f;
+      } else {
+         // return ( float ) Math.acos(y);
+         final boolean ltZero = y < -0.0f;
+         final float x = ltZero ? -y : y;
+         float ret = ( 0.074261f - 0.0187293f * x ) * x - 0.2121144f;
+         ret = ( ret * x + IUtils.HALF_PI ) * Utils.sqrtUnchecked(1.0f - x);
+         return ltZero ? IUtils.PI - ret : ret;
+      }
    }
 
    /**
@@ -160,17 +162,19 @@ public abstract class Utils implements IUtils {
     */
    public static float asin ( final float y ) {
 
-      if ( y <= -1.0f ) { return -IUtils.HALF_PI; }
-      if ( y >= 1.0f ) { return IUtils.HALF_PI; }
-
-      // return ( float ) Math.asin(y);
-
-      final boolean ltZero = y < -0.0f;
-      final float x = ltZero ? -y : y;
-      float ret = ( 0.074261f - 0.0187293f * x ) * x - 0.2121144f;
-      ret = ret * x + IUtils.HALF_PI;
-      ret = IUtils.HALF_PI - ret * Utils.sqrtUnchecked(1.0f - x);
-      return ltZero ? -ret : ret;
+      if ( y <= -1.0f ) {
+         return -IUtils.HALF_PI;
+      } else if ( y >= 1.0f ) {
+         return IUtils.HALF_PI;
+      } else {
+         // return ( float ) Math.asin(y);
+         final boolean ltZero = y < -0.0f;
+         final float x = ltZero ? -y : y;
+         float ret = ( 0.074261f - 0.0187293f * x ) * x - 0.2121144f;
+         ret = ret * x + IUtils.HALF_PI;
+         ret = IUtils.HALF_PI - ret * Utils.sqrtUnchecked(1.0f - x);
+         return ltZero ? -ret : ret;
+      }
    }
 
    /**
@@ -1403,14 +1407,15 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Equivalent to dividing the sine of the angle by the cosine. Finds the
-    * approximate tangent of an angle in radians. An alternative to the double
-    * precision {@link Math#tan(double)} , this function uses single-precision
-    * numbers.
+    * Finds the tangent of an angle. Equivalent to dividing the sine of the
+    * angle by the cosine. An alternative to the double precision
+    * {@link Math#tan(double)} , this function uses single-precision numbers.
     *
     * @param radians the angle in radians
     *
     * @return the tangent
+    *
+    * @see Utils#scNorm(float)
     */
    public static float tan ( final float radians ) {
 

@@ -938,7 +938,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
       for ( int i = 0; i < len; ++i ) {
          Vec3.add(target, verts[i].normal, target);
       }
-      Vec3.div(target, len, target);
+      // Vec3.div(target, len, target);
       return Vec3.normalize(target, target);
 
       // target.reset();

@@ -3463,7 +3463,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             current = new Mesh3(new int[0][0][3], new Vec3[0], new Vec2[0],
                new Vec3[0]);
             current.materialIndex = matIdxPrm;
-            current.name = "Mesh." + Utils.toPadded(matIdxPrm, 6);
+            current.name = "Mesh." + Utils.toPadded(matIdxPrm, 3);
             dict.put(matIdxObj, current);
          }
 

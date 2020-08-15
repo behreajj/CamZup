@@ -1801,6 +1801,31 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
+    * Creates skew, or shear, matrix from an angle and axes. Vectors
+    * <em>a</em> and <em>b</em> are expected to be orthonormal, i.e.
+    * perpendicular and of unit length.
+    *
+    * @param radians the angle in radians
+    * @param a       the skew axis
+    * @param b       the orthonormal axis
+    * @param target  the output matrix
+    *
+    * @return the skew matrix
+    */
+   public static Mat4 fromSkew ( final float radians, final Vec3 a,
+      final Vec3 b, final Mat4 target ) {
+
+      final float t = Utils.tan(radians);
+      final float tax = a.x * t;
+      final float tay = a.y * t;
+      final float taz = a.z * t;
+
+      return target.set(tax * b.x + 1.0f, tax * b.y, tax * b.z, 0.0f, tay * b.x,
+         tay * b.y + 1.0f, tay * b.z, 0.0f, taz * b.x, taz * b.y, taz * b.z
+            + 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+   }
+
+   /**
     * Creates a translation matrix from a vector.
     *
     * @param translation the translation
