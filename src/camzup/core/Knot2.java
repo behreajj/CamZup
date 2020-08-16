@@ -1497,10 +1497,8 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
 
          target.coord.set(u * orCo.x + step * deCo.x, u * orCo.y + step
             * deCo.y);
-
          target.foreHandle.set(u * orFh.x + step * deFh.x, u * orFh.y + step
             * deFh.y);
-
          target.rearHandle.set(u * orRh.x + step * deRh.x, u * orRh.y + step
             * deRh.y);
 

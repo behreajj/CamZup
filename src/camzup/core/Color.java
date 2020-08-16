@@ -774,46 +774,125 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public void timesAssign ( final float c ) { Color.mul(this, c, this); }
 
    /**
-    * Returns this color represented as an array. Defaults to an array of
-    * floats where the alpha channel is the last element.
+    * Returns a float array of length 4 containing this color's components.
+    * Defaults to {@link Color.ChannelOrder#ARGB}.
     *
     * @return the array
     */
-   public float[] toArray ( ) { return this.toArrayFloat(false); }
+   public float[] toArray ( ) {
+
+      return this.toArray(ChannelOrder.ARGB);
+   }
 
    /**
-    * Returns an array of <code>byte</code>s. The flag determines whether the
-    * alpha channel is the first or last element.
+    * Puts the colors's components into an existing array at the index
+    * provided. Consumes four elements, but the ordering depends on the
+    * {@link Color.ChannelOrder}.
     *
-    * @param alphaFirst the alpha flag
+    * @param arr   the array
+    * @param i     the index
+    * @param order the channel order
     *
     * @return the array
     */
-   public byte[] toArrayByte ( final boolean alphaFirst ) {
+   public byte[] toArray ( final byte[] arr, final int i,
+      final ChannelOrder order ) {
 
       final byte rb = ( byte ) ( this.r * 0xff + 0.5f );
       final byte gb = ( byte ) ( this.g * 0xff + 0.5f );
       final byte bb = ( byte ) ( this.b * 0xff + 0.5f );
       final byte ab = ( byte ) ( this.a * 0xff + 0.5f );
 
-      if ( alphaFirst ) { return new byte[] { ab, rb, gb, bb }; }
-      return new byte[] { rb, gb, bb, ab };
+      switch ( order ) {
+
+         case ABGR:
+
+            arr[i] = ab;
+            arr[i + 1] = bb;
+            arr[i + 2] = gb;
+            arr[i + 3] = rb;
+
+            break;
+
+         case ARGB:
+            arr[i] = ab;
+            arr[i + 1] = rb;
+            arr[i + 2] = gb;
+            arr[i + 3] = bb;
+
+            break;
+
+         case RGBA:
+
+         default:
+
+            arr[i] = rb;
+            arr[i + 1] = gb;
+            arr[i + 2] = bb;
+            arr[i + 3] = ab;
+
+      }
+
+      return arr;
    }
 
    /**
-    * Returns an array of <code>float</code>s. The flag determines whether the
-    * alpha channel is the first or last element.
+    * Returns a float array of length 4 containing this color's components.
     *
-    * @param alphaFirst the alpha flag
+    * @param order the channel order
     *
     * @return the array
     */
-   public float[] toArrayFloat ( final boolean alphaFirst ) {
+   public float[] toArray ( final ChannelOrder order ) {
 
-      if ( alphaFirst ) {
-         return new float[] { this.a, this.r, this.g, this.b };
+      return this.toArray(new float[4], 0, order);
+   }
+
+   /**
+    * Puts the colors's components into an existing array at the index
+    * provided. Consumes four elements, but the ordering depends on the
+    * {@link Color.ChannelOrder}.
+    *
+    * @param arr   the array
+    * @param i     the index
+    * @param order the channel order
+    *
+    * @return the array
+    */
+   public float[] toArray ( final float[] arr, final int i,
+      final ChannelOrder order ) {
+
+      switch ( order ) {
+
+         case ABGR:
+
+            arr[i] = this.a;
+            arr[i + 1] = this.b;
+            arr[i + 2] = this.g;
+            arr[i + 3] = this.r;
+
+            break;
+
+         case ARGB:
+            arr[i] = this.a;
+            arr[i + 1] = this.r;
+            arr[i + 2] = this.g;
+            arr[i + 3] = this.b;
+
+            break;
+
+         case RGBA:
+
+         default:
+
+            arr[i] = this.r;
+            arr[i + 1] = this.g;
+            arr[i + 2] = this.b;
+            arr[i + 3] = this.a;
+
       }
-      return new float[] { this.r, this.g, this.b, this.a };
+
+      return arr;
    }
 
    /**
@@ -2789,6 +2868,34 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
        */
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
+
+   }
+
+   /**
+    * Order in which to arrange color channels when flattening color to an
+    * array.
+    */
+   public enum ChannelOrder {
+
+      /**
+       * Alpha, Blue, Green, Red.
+       */
+      ABGR ( ),
+
+      /**
+       * Alpha, Red, Green, Blue.
+       */
+      ARGB ( ),
+
+      /**
+       * Red, Green, Blue, Alpha.
+       */
+      RGBA ( );
+
+      /**
+       * The default constructor.
+       */
+      private ChannelOrder ( ) {}
 
    }
 

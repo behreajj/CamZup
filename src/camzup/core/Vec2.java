@@ -572,7 +572,24 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     *
     * @return the array
     */
-   public float[] toArray ( ) { return new float[] { this.x, this.y }; }
+   public float[] toArray ( ) { return this.toArray(new float[2], 0); }
+
+   /**
+    * Puts the vector's components into an existing array at the index
+    * provided. The vector's x component is assigned to element
+    * <code>i</code>; its y component, to element <code>i + 1</code>.
+    *
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the array
+    */
+   public float[] toArray ( final float[] arr, final int i ) {
+
+      arr[i] = this.x;
+      arr[i + 1] = this.y;
+      return arr;
+   }
 
    /**
     * Returns a string representation of this vector as a space separated

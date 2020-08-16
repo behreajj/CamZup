@@ -669,9 +669,25 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     *
     * @return the array
     */
-   public float[] toArray ( ) {
+   public float[] toArray ( ) { return this.toArray(new float[3], 0); }
 
-      return new float[] { this.x, this.y, this.z };
+   /**
+    * Puts the vector's components into an existing array at the index
+    * provided. The vector's x component is assigned to element
+    * <code>i</code>; its y component, to element <code>i + 1</code>; its z
+    * component, to element <code>i + 2</code>.
+    *
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the array
+    */
+   public float[] toArray ( final float[] arr, final int i ) {
+
+      arr[i] = this.x;
+      arr[i + 1] = this.y;
+      arr[i + 2] = this.z;
+      return arr;
    }
 
    /**

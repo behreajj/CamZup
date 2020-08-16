@@ -506,9 +506,23 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     *
     * @return the array
     */
-   public float[] toArray ( ) {
+   public float[] toArray ( ) { return this.toArray(new float[2], 0); }
 
-      return new float[] { this.real, this.imag };
+   /**
+    * Puts the complex number's components into an existing array at the index
+    * provided. The real component is assigned to element <code>i</code>; the
+    * imaginary component, to element <code>i + 1</code>.
+    *
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the array
+    */
+   public float[] toArray ( final float[] arr, final int i ) {
+
+      arr[i] = this.real;
+      arr[i + 1] = this.imag;
+      return arr;
    }
 
    /**

@@ -1950,15 +1950,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Displays a PShape. Use of this function is discouraged by this renderer.
-    * See mesh and curve entities instead.
+    * Displays a PShape.
     *
     * @param psh the PShape
     */
    @Override
    public void shape ( final PShape psh ) {
 
-      PApplet.showVariationWarning("shape");
       if ( psh.isVisible() ) {
          this.flush();
          psh.draw(this);
@@ -1966,8 +1964,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Displays a PShape. Use of this function is discouraged by this renderer.
-    * See mesh and curve entities instead.
+    * Displays a PShape. Ignores the coordinates supplied to the function.
     *
     * @param psh the PShape
     * @param x   the x coordinate
@@ -1980,8 +1977,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Displays a PShape. Use of this function is discouraged by this renderer.
-    * See mesh and curve entities instead.
+    * Displays a PShape. Ignores the coordinates supplied to the function.
     *
     * @param psh the PShape
     * @param x   the x coordinate
@@ -1996,9 +1992,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Displays a PShape. The meaning of the four parameters depends on
-    * shapeMode. Use of this function is discouraged by this renderer. See
-    * mesh and curve entities instead.
+    * Displays a PShape. Ignores the coordinates supplied to the function.
     *
     * @param psh the PShape
     * @param x1  the first x coordinate

@@ -2481,39 +2481,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       return false;
    }
 
-   public static Mesh2 convexHull ( final Vec2[] points, final Mesh2 target ) {
-
-      // TODO: WIP look up Jarvis march.
-
-      final int len = points.length;
-      if ( len < 3 ) { return target; }
-
-      target.name = "Mesh";
-
-      if ( len < 4 ) {
-         target.faces = new int[][][] { { { 0, 0 }, { 1, 0 }, { 2, 0 } } };
-         final Vec2[] vs = target.coords = Vec2.resize(target.coords, 3);
-         vs[0].set(points[0]);
-         vs[1].set(points[1]);
-         vs[2].set(points[2]);
-         target.calcUvs();
-         return target;
-      }
-
-      /* Find x minimum. */
-      Vec2 startPos = points[0];
-      for ( int i = 1; i < len; ++i ) {
-         final Vec2 testPos = points[i];
-         if ( testPos.x < startPos.x || testPos.y < startPos.y && Utils.approx(
-            testPos.x, startPos.x) ) {
-            startPos = testPos;
-         }
-      }
-
-      target.calcUvs();
-      return target;
-   }
-
    /**
     * Creates an array of meshes, each with one face from the source mesh.
     * Leaves the source mesh unaltered. New meshes are created through

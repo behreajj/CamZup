@@ -530,12 +530,35 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     */
    public float[] toArray ( final boolean wFirst ) {
 
-      if ( wFirst ) {
-         return new float[] { this.real, this.imag.x, this.imag.y,
-            this.imag.z };
-      }
+      return this.toArray(new float[4], 0, wFirst);
+   }
 
-      return new float[] { this.imag.x, this.imag.y, this.imag.z, this.real };
+   /**
+    * Puts the quaternion's components into an existing array at the index
+    * provided. When the argument supplied is true, w is returned as the first
+    * element, not the last.
+    * 
+    * @param arr    the array
+    * @param i      the index
+    * @param wFirst issue w as the first element
+    * 
+    * @return the array
+    */
+   public float[] toArray ( final float[] arr, final int i,
+      final boolean wFirst ) {
+
+      if ( wFirst ) {
+         arr[i] = this.real;
+         arr[i + 1] = this.imag.x;
+         arr[i + 2] = this.imag.y;
+         arr[i + 3] = this.imag.z;
+      } else {
+         arr[i] = this.imag.x;
+         arr[i + 1] = this.imag.y;
+         arr[i + 2] = this.imag.z;
+         arr[i + 3] = this.real;
+      }
+      return arr;
    }
 
    /**
@@ -673,7 +696,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       target.real = a.real + b.real;
 
       final float mSq = Quaternion.magSq(target);
-      if ( mSq != 0.0f ) {
+      if ( mSq > 0.0f ) {
          final float mInv = Utils.invSqrtUnchecked(mSq);
          final Vec3 i = target.imag;
          return target.set(target.real * mInv, i.x * mInv, i.y * mInv, i.z
@@ -2107,7 +2130,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       target.real = a.real - b.real;
 
       final float mSq = Quaternion.magSq(target);
-      if ( mSq != 0.0f ) {
+      if ( mSq > 0.0f ) {
          final float mInv = Utils.invSqrtUnchecked(mSq);
          final Vec3 i = target.imag;
          return target.set(target.real * mInv, i.x * mInv, i.y * mInv, i.z
