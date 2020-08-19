@@ -55,9 +55,6 @@ public class CamEntity3 extends Entity3 implements ICamEntity {
     */
    public CamEntity3 update ( final PGraphicsOpenGL rndr ) {
 
-      // TODO: Do these axes need to be flipped? Or do camera and cameraInv need
-      // to be opposite?
-
       /* Get data from transform. */
       final Vec3 right = new Vec3();
       final Vec3 forward = new Vec3();
@@ -74,9 +71,10 @@ public class CamEntity3 extends Entity3 implements ICamEntity {
       final float m11 = up.y;
       final float m12 = up.z;
 
-      final float m20 = forward.x;
-      final float m21 = forward.y;
-      final float m22 = forward.z;
+      /* Look backwards. */
+      final float m20 = -forward.x;
+      final float m21 = -forward.y;
+      final float m22 = -forward.z;
 
       final float m30 = rndr.cameraX = loc.x;
       final float m31 = rndr.cameraY = loc.y;

@@ -1420,12 +1420,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             ( vtCurr.x + vtNext.x ) * 0.5f,
             ( vtCurr.y + vtNext.y ) * 0.5f);
 
+         /* Is it necessary to divide by half if normalization follows? */
          final int vnNextIdx = vertNext[2];
          final Vec3 vnNext = this.normals[vnNextIdx];
          final Vec3 vn = vnsNew[j] = new Vec3(
-            ( vnCurr.x + vnNext.x ) * 0.5f,
-            ( vnCurr.y + vnNext.y ) * 0.5f,
-            ( vnCurr.z + vnNext.z ) * 0.5f);
+            vnCurr.x + vnNext.x, // * 0.5f,
+            vnCurr.y + vnNext.y, // * 0.5f,
+            vnCurr.z + vnNext.z); // * 0.5f);
          Vec3.normalize(vn, vn);
 
          fsNew[j] = new int[][] {
@@ -4242,42 +4243,64 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public static Mesh3 uniformData ( final Mesh3 source, final Mesh3 target ) {
 
-      target.name = source.name;
+      /* Find length of uniform data. */
+      int uniformLen = 0;
+      final int[][][] fsSrc = source.faces;
+      final int fsSrcLen = fsSrc.length;
+      for ( int i = 0; i < fsSrcLen; ++i ) {
+         uniformLen += fsSrc[i].length;
+      }
 
-      /* Predict how many vertices will be in result. */
-      final int len0 = source.faces.length;
-      final int capacity = len0 * 4;
+      /* Allocate new arrays. */
+      final int[][][] fsTrg = new int[fsSrcLen][][];
+      final boolean same = source == target;
+      final Vec3[] vsTrg = same ? new Vec3[uniformLen] : Vec3.resize(
+         target.coords, uniformLen);
+      final Vec2[] vtsTrg = same ? new Vec2[uniformLen] : Vec2.resize(
+         target.texCoords, uniformLen);
+      final Vec3[] vnsTrg = same ? new Vec3[uniformLen] : Vec3.resize(
+         target.normals, uniformLen);
 
-      /* Has to be a new array for the case source == target. */
-      final int[][][] trgfs = new int[len0][][];
-      final ArrayList < Vec3 > vs = new ArrayList <>(capacity);
-      final ArrayList < Vec2 > vts = new ArrayList <>(capacity);
-      final ArrayList < Vec3 > vns = new ArrayList <>(capacity);
-
-      for ( int k = 0, i = 0; i < len0; ++i ) {
-
-         final int[][] fs0 = source.faces[i];
-         final int len1 = fs0.length;
-         final int[][] trgfs0 = trgfs[i] = new int[len1][3];
-
-         for ( int j = 0; j < len1; ++j, ++k ) {
-
-            final int[] fs1 = fs0[j];
-
-            vs.add(new Vec3(source.coords[fs1[0]]));
-            vts.add(new Vec2(source.texCoords[fs1[1]]));
-            vns.add(new Vec3(source.normals[fs1[2]]));
-
-            trgfs0[j][0] = k;
-            trgfs0[j][1] = k;
-            trgfs0[j][2] = k;
+      /* Account for scenario where source and target are same. */
+      if ( same ) {
+         for ( int i = 0; i < uniformLen; ++i ) {
+            vsTrg[i] = new Vec3();
+            vtsTrg[i] = new Vec2();
+            vnsTrg[i] = new Vec3();
          }
       }
 
-      target.coords = vs.toArray(new Vec3[vs.size()]);
-      target.texCoords = vts.toArray(new Vec2[vts.size()]);
-      target.normals = vns.toArray(new Vec3[vns.size()]);
-      target.faces = trgfs;
+      /* Cache shortcuts to old arrays. */
+      final Vec3[] vsSrc = source.coords;
+      final Vec2[] vtsSrc = source.texCoords;
+      final Vec3[] vnsSrc = source.normals;
+
+      /* Reassign. */
+      for ( int k = 0, i = 0; i < fsSrcLen; ++i ) {
+         final int[][] fSrc = fsSrc[i];
+         final int fLen = fSrc.length;
+         final int[][] fTrg = fsTrg[i] = new int[fLen][3];
+         for ( int j = 0; j < fLen; ++j, ++k ) {
+            final int[] vertSrc = fSrc[j];
+            final int[] vertTrg = fTrg[j];
+
+            vsTrg[k].set(vsSrc[vertSrc[0]]);
+            vtsTrg[k].set(vtsSrc[vertSrc[1]]);
+            vnsTrg[k].set(vnsSrc[vertSrc[2]]);
+
+            /* Update face indices. */
+            vertTrg[0] = k;
+            vertTrg[1] = k;
+            vertTrg[2] = k;
+         }
+      }
+
+      /* Update references. */
+      target.coords = vsTrg;
+      target.texCoords = vtsTrg;
+      target.normals = vnsTrg;
+      target.faces = fsTrg;
+
       return target;
    }
 
@@ -4460,10 +4483,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          b[1] = m;
          b[2] = k;
 
-         final int[] c = tri[2];
-         // c[0] = 0;
-         c[1] = h;
-         // c[2] = 0;
+         // final int[] c = tri[2]; c[0] = 0; c[1] = h; c[2] = 0;
+         tri[2][1] = h;
       }
 
       /* Middle. */

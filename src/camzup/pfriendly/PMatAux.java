@@ -395,6 +395,7 @@ public abstract class PMatAux {
 
       if ( target == null ) { target = new PMatrix3D(); }
 
+      // TODO: Remove the use of this static object.
       Quaternion.inverse(q, PMatAux.ROT_INV);
       final float w = PMatAux.ROT_INV.real;
       final Vec3 i = PMatAux.ROT_INV.imag;

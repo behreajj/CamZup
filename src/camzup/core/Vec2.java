@@ -106,76 +106,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public boolean contains ( final float v ) {
 
-      if ( Utils.approx(this.y, v) ) { return true; }
-      if ( Utils.approx(this.x, v) ) { return true; }
-      return false;
-   }
-
-   /**
-    * Returns a new vector decremented by one. For interoperability with
-    * Kotlin: <code>--a</code> (prefix) or <code>a--</code> (postfix). Per the
-    * specification, <em>does not mutate the vector in place</em>.
-    *
-    * @return the decremented vector
-    */
-   public Vec2 dec ( ) { return new Vec2(this.x - 1.0f, this.y - 1.0f); }
-
-   /**
-    * Returns a new vector with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the quotient
-    */
-   public Vec2 div ( final float b ) {
-
-      if ( b != 0.0f ) { return new Vec2(this.x / b, this.y / b); }
-      return new Vec2(0.0f, 0.0f);
-   }
-
-   /**
-    * Returns a new vector with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the quotient
-    */
-   public Vec2 div ( final Vec2 b ) {
-
-      return new Vec2(Utils.div(this.x, b.x), Utils.div(this.y, b.y));
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the vector in place).
-    * For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void divAssign ( final float b ) {
-
-      if ( b != 0.0f ) {
-         this.x /= b;
-         this.y /= b;
-      } else {
-         this.x = 0.0f;
-         this.y = 0.0f;
-      }
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the vector in place).
-    * For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void divAssign ( final Vec2 b ) {
-
-      this.x = Utils.div(this.x, b.x);
-      this.y = Utils.div(this.y, b.y);
+      return Utils.approx(this.y, v) || Utils.approx(this.x, v);
    }
 
    /**
@@ -235,15 +166,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new vector incremented by one. For interoperability with
-    * Kotlin: <code>++a</code> (prefix) or <code>a++</code> (postfix). Per the
-    * specification, <em>does not mutate the vector in place</em>.
-    *
-    * @return the incremented vector
-    */
-   public Vec2 inc ( ) { return new Vec2(this.x + 1.0f, this.y + 1.0f); }
-
-   /**
     * Returns an iterator for this vector, which allows its components to be
     * accessed in an enhanced for-loop.
     *
@@ -258,177 +180,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     * @return the length
     */
    public int length ( ) { return 2; }
-
-   /**
-    * Returns a new vector with the subtraction of the right operand from the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
-    * <em>Does not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the subtraction
-    */
-   public Vec2 minus ( final float b ) {
-
-      return new Vec2(this.x - b, this.y - b);
-   }
-
-   /**
-    * Returns a new vector with the subtraction of the right operand from the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
-    * <em>Does not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the subtraction
-    */
-   public Vec2 minus ( final Vec2 b ) {
-
-      return new Vec2(this.x - b.x, this.y - b.y);
-   }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the vector in
-    * place). For interoperability with Kotlin: <code>a -= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void minusAssign ( final float b ) {
-
-      this.x -= b;
-      this.y -= b;
-   }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the vector in
-    * place). For interoperability with Kotlin: <code>a -= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void minusAssign ( final Vec2 b ) {
-
-      this.x -= b.x;
-      this.y -= b.y;
-   }
-
-   /**
-    * Returns a new vector with the boolean opposite of the instance. For
-    * interoperability with Kotlin: <code>!a</code> . <em>Does not mutate the
-    * vector in place</em>.
-    *
-    * @return the opposite vector
-    */
-   public Vec2 not ( ) { return new Vec2(this.x == 0.0f, this.y == 0.0f); }
-
-   /**
-    * Returns a new vector with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the sum
-    */
-   public Vec2 plus ( final float b ) {
-
-      return new Vec2(this.x + b, this.y + b);
-   }
-
-   /**
-    * Returns a new vector with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the sum
-    */
-   public Vec2 plus ( final Vec2 b ) {
-
-      return new Vec2(this.x + b.x, this.y + b.y);
-   }
-
-   /**
-    * Adds the right operand to the instance (mutates the vector in place).
-    * For interoperability with Kotlin: <code>a += b</code> .
-    *
-    * @param b the right operand
-    */
-   public void plusAssign ( final float b ) {
-
-      this.x += b;
-      this.y += b;
-   }
-
-   /**
-    * Adds the right operand to the instance (mutates the vector in place).
-    * For interoperability with Kotlin: <code>a += b</code> .
-    *
-    * @param b the right operand
-    */
-   public void plusAssign ( final Vec2 b ) {
-
-      this.x += b.x;
-      this.y += b.y;
-   }
-
-   /**
-    * Returns a new vector with the signed remainder (<code>fmod</code>) of
-    * the instance and the right operand. For interoperability with Kotlin:
-    * <code>a % b</code> . <em>Does not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the signed remainder
-    */
-   public Vec2 rem ( final float b ) {
-
-      if ( b != 0.0f ) { return new Vec2(this.x % b, this.y % b); }
-      return new Vec2(this.x, this.y);
-   }
-
-   /**
-    * Returns a new vector with the signed remainder (<code>fmod</code>) of
-    * the instance and the right operand. For interoperability with Kotlin:
-    * <code>a % b</code> . <em>Does not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the signed remainder
-    */
-   public Vec2 rem ( final Vec2 b ) {
-
-      return new Vec2(b.x != 0.0f ? this.x % b.x : this.x, b.y != 0.0f ? this.y
-         % b.y : this.y);
-   }
-
-   /**
-    * Assigns the signed remainder (<code>fmod</code>) of the instance and the
-    * right operand to the instance (mutates the vector in place). For
-    * interoperability with Kotlin: <code>a %= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void remAssign ( final float b ) {
-
-      if ( b != 0.0f ) {
-         this.x %= b;
-         this.y %= b;
-      }
-   }
-
-   /**
-    * Assigns the signed remainder (<code>fmod</code>) of the instance and the
-    * right operand to the instance (mutates the vector in place). For
-    * interoperability with Kotlin: <code>a %= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void remAssign ( final Vec2 b ) {
-
-      if ( b.x != 0.0f ) { this.x %= b.x; }
-      if ( b.y != 0.0f ) { this.y %= b.y; }
-   }
 
    /**
     * Resets this vector to an initial state, ( 0.0, 0.0 ) .
@@ -516,58 +267,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new vector with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the product
-    */
-   public Vec2 times ( final float b ) {
-
-      return new Vec2(this.x * b, this.y * b);
-   }
-
-   /**
-    * Returns a new vector with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the product
-    */
-   public Vec2 times ( final Vec2 b ) {
-
-      return new Vec2(this.x * b.x, this.y * b.y);
-   }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the vector in
-    * place). For interoperability with Kotlin: <code>a *= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void timesAssign ( final float b ) {
-
-      this.x *= b;
-      this.y *= b;
-   }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the vector in
-    * place). For interoperability with Kotlin: <code>a *= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void timesAssign ( final Vec2 b ) {
-
-      this.x *= b.x;
-      this.y *= b.y;
-   }
-
-   /**
     * Returns a float array of length 2 containing this vector's components.
     *
     * @return the array
@@ -632,24 +331,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
       sb.append('}');
       return sb.toString();
    }
-
-   /**
-    * Returns a new vector with the negation of the instance. For
-    * interoperability with Kotlin: <code>-a</code> . <em>Does not mutate the
-    * vector in place</em>.
-    *
-    * @return the negation
-    */
-   public Vec2 unaryMinus ( ) { return new Vec2(-this.x, -this.y); }
-
-   /**
-    * Returns a new vector with the positive copy of the instance. For
-    * interoperability with Kotlin: <code>+a</code> . <em>Does not mutate the
-    * vector in place</em>.
-    *
-    * @return the positive
-    */
-   public Vec2 unaryPlus ( ) { return new Vec2(+this.x, +this.y); }
 
    /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
@@ -772,8 +453,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    protected boolean equals ( final Vec2 v ) {
 
-      return Float.floatToIntBits(this.y) == Float.floatToIntBits(v.y) && Float
-         .floatToIntBits(this.x) == Float.floatToIntBits(v.x);
+      /* With {@link Float.floatToIntBits(float)}, -0.0f != 0.0f. */
+      return this.y == v.y && this.x == v.x;
    }
 
    /**
@@ -3368,6 +3049,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
       }
 
    }
+
+
 
    /**
     * Compares two vectors on the x axis.

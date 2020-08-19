@@ -1,15 +1,10 @@
 package camzup;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-
 import camzup.core.IUtils;
-import camzup.core.Mat3;
 import camzup.core.Mesh;
 import camzup.core.Mesh.PolyType;
-import camzup.core.Mesh2;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity2;
+import camzup.core.Rng;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -36,7 +31,29 @@ public class CamZup {
     */
    public CamZup ( final PApplet parent ) { this.parent = parent; }
 
-   public Vec4[] calcTangents ( final Mesh3 m ) {
+   /**
+    * Returns a string representation of the CamZup class.
+    *
+    * @return the string
+    */
+   @Override
+   public String toString ( ) {
+
+      final StringBuilder sb = new StringBuilder(64);
+      sb.append("{ version: ");
+      sb.append(CamZup.VERSION);
+      sb.append(", parent: ");
+      sb.append(this.parent);
+      sb.append(" }");
+      return sb.toString();
+   }
+
+   /**
+    * The library's current version.
+    */
+   public final static String VERSION = "##library.prettyVersion##";
+
+   public static Vec4[] calcTangents ( final Mesh3 m ) {
 
       final Vec3[] vs = m.coords;
       final Vec2[] vts = m.texCoords;
@@ -122,28 +139,6 @@ public class CamZup {
 
       return result;
    }
-
-   /**
-    * Returns a string representation of the CamZup class.
-    *
-    * @return the string
-    */
-   @Override
-   public String toString ( ) {
-
-      final StringBuilder sb = new StringBuilder(64);
-      sb.append("{ version: ");
-      sb.append(CamZup.VERSION);
-      sb.append(", parent: ");
-      sb.append(this.parent);
-      sb.append(" }");
-      return sb.toString();
-   }
-
-   /**
-    * The library's current version.
-    */
-   public final static String VERSION = "##library.prettyVersion##";
 
    public static Mesh3 capsule ( final int longitudes, final int latitudes,
       final int rings, final float depth, final float radius,
@@ -535,74 +530,6 @@ public class CamZup {
       return target;
    }
 
-   public static Mesh2 convexHull ( final Vec2[] coords, final Mesh2 target ) {
-
-      // TODO: WIP look up Jarvis march.
-
-      final int len = coords.length;
-      if ( len < 3 ) { return target; }
-
-      target.name = "Mesh";
-
-      if ( len < 4 ) {
-         target.faces = new int[][][] { { { 0, 0 }, { 1, 0 }, { 2, 0 } } };
-         final Vec2[] vs = target.coords = Vec2.resize(target.coords, 3);
-         vs[0].set(coords[0]);
-         vs[1].set(coords[1]);
-         vs[2].set(coords[2]);
-         target.calcUvs();
-         return target;
-      }
-
-      final ArrayList < Vec2 > points = new ArrayList <>(len);
-      final ArrayList < Vec2 > convexHull = new ArrayList <>(len);
-      final ArrayList < Vec2 > leftSet = new ArrayList <>(len);
-      final ArrayList < Vec2 > rightSet = new ArrayList <>(len);
-
-      int idxMin = -1;
-      int idxMax = -1;
-      float xMin = Float.MAX_VALUE;
-      float xMax = Float.MIN_VALUE;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec2 comparisand = coords[i];
-         final float x = comparisand.x;
-
-         if ( x < xMin ) {
-            xMin = x;
-            idxMin = i;
-         }
-
-         if ( x > xMax ) {
-            xMax = x;
-            idxMax = i;
-         }
-
-         points.add(comparisand);
-      }
-
-      final Vec2 A = coords[idxMin];
-      final Vec2 B = coords[idxMax];
-
-      convexHull.add(A);
-      convexHull.add(B);
-
-      points.remove(A);
-      points.remove(B);
-
-      final float xExtent = B.x - A.x;
-      final float yExtent = B.y - A.y;
-      final Iterator < Vec2 > pointsItr = points.iterator();
-      while ( pointsItr.hasNext() ) {
-         final Vec2 P = pointsItr.next();
-         final float cross = xExtent * ( P.y - A.y ) - yExtent * ( P.x - A.x );
-         if ( cross > 0.0f ) { rightSet.add(P); }
-         if ( cross < -0.0f ) { leftSet.add(P); }
-      }
-
-      target.calcUvs();
-      return target;
-   }
-
    /**
     * The main function.
     *
@@ -610,39 +537,20 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // final Rng rng = new Rng();
+      final Rng rng = new Rng();
 
-      final Mesh2 m2 = new Mesh2();
-      // Mesh2.polygon(3, m2);
-      Mesh2.square(m2);
-      final Mat3 tr = new Mat3();
-      final Mat3 skew = Mat3.fromSkew(IUtils.THIRD_PI / 3, Vec2.right(
-         new Vec2()), Vec2.forward(new Vec2()), new Mat3());
-      final Mat3 scale = Mat3.fromScale(new Vec2(1.0f, 0.5f), new Mat3());
-      Mat3.mul(scale, skew, tr);
-      m2.transform(tr);
-      m2.roundCorners(0, 0.075f, 32);
-      m2.clean();
-      // m2.roundCorners(0, 0.075f, 16);
-      // m2.clean();
-      m2.calcUvs();
-      // System.out.println(m2);
-      final MeshEntity2 me2 = new MeshEntity2();
-      me2.append(m2);
-      final String pyCd = me2.toBlenderCode();
-      System.out.println(pyCd);
+      final Vec2 a = new Vec2(1.0f, -0.0f);
+      final Vec2 b = new Vec2(1.0f, 0.0f);
+      System.out.println(a.equals(b));
 
       // final Mesh3 m3 = new Mesh3();
-      // Mesh3.octahedron(m3);
-      // m3.triangulate();
-      // m3.clean();
-      // Mesh3.uniformData(m3, m3);
-      // System.out.println(m3.toUnityCode());
-      // final MeshEntity3 me = new MeshEntity3();
-      // me.append(m3);
-      // final String pyCd = me.toBlenderCode();
-      // System.out.println(pyCd);
-
+      // Mesh3.square(Mesh.PolyType.TRI, m3);
+      // final Mesh3Fixed m3f = new Mesh3Fixed(m3);
+      // System.out.println(m3f);
+      //
+      // for ( int i = 0; i < m3f.indexBuffer.limit(); ++i ) {
+      // System.out.println(m3f.indexBuffer.get(i));
+      // }
    }
 
    /**

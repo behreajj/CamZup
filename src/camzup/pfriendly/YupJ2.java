@@ -731,7 +731,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.imageMode(PConstants.CENTER);
       this.shapeMode = PConstants.CENTER;
 
-      this.autoNormal = true;
       this.textFont = null;
       this.textSize = IUp.DEFAULT_TEXT_SIZE;
       this.textLeading = IUp.DEFAULT_TEXT_LEADING;
@@ -782,7 +781,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.ellipseMode ) {
 
-         case RADIUS:
+         case PConstants.RADIUS:
 
             xc = x;
             yc = y;
@@ -794,7 +793,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case CORNER:
+         case PConstants.CORNER:
 
             extapw = 0.5d * w;
             extcpw = ICurve.HNDL_MAG_ORTHO_2_D * w;
@@ -806,7 +805,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case CORNERS:
+         case PConstants.CORNERS:
 
             final double wcalc = Math.abs(w - x);
             final double hcalc = Math.abs(h - y);
@@ -821,7 +820,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case CENTER:
+         case PConstants.CENTER:
 
          default:
 
@@ -1031,7 +1030,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          ( float ) tr.getScaleX(),
          ( float ) tr.getShearX(),
          ( float ) tr.getTranslateX(),
-
          ( float ) tr.getShearY(),
          ( float ) tr.getScaleY(),
          ( float ) tr.getTranslateY());
@@ -1059,12 +1057,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          ( float ) tr.getShearX(),
          0.0f,
          ( float ) tr.getTranslateX(),
-
          ( float ) tr.getShearY(),
          ( float ) tr.getScaleY(),
          0.0f,
          ( float ) tr.getTranslateY(),
-
          0.0f, 0.0f, 1.0f, 0.0f,
          0.0f, 0.0f, 0.0f, 1.0f);
       return target;
@@ -1544,25 +1540,25 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       /* @formatter:off */
       switch ( this.imageMode ) {
-         case CORNERS:
+         case PConstants.CORNERS:
             this.imageSource(img,
                x0, y0, x0 + w, y0 + h,
                0, 0, w, h);
             break;
 
-         case CORNER:
+         case PConstants.CORNER:
             this.imageSource(img,
                x0, y0 - h, x0 + w,
                y0, 0, 0, w, h);
             break;
 
-         case RADIUS:
+         case PConstants.RADIUS:
             this.imageSource(img,
                x0 - w, y0 - h, x0 + w, y0 + h,
                0, 0, w, h);
             break;
 
-         case CENTER:
+         case PConstants.CENTER:
          default:
             final int wh = w / 2;
             final int hh = h / 2;
@@ -1637,14 +1633,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       /* @formatter:off */
       switch ( this.imageMode ) {
-         case CORNERS:
+         case PConstants.CORNERS:
 
             this.imageSource(img,
                x0i, y0i, x1i, y1i,
                u0, v0, u1, v1);
             break;
 
-         case CORNER:
+         case PConstants.CORNER:
             final int xdiff = x0i - x1i;
             final int ydiff = y0i - y1i;
             wDisp = xdiff < 0 ? -xdiff : xdiff;
@@ -1654,7 +1650,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
                u0, v0, u1, v1);
             break;
 
-         case RADIUS:
+         case PConstants.RADIUS:
 
             wDisp = x1i < 1 ? 1 : x1i;
             hDisp = y1i < 1 ? 1 : y1i;
@@ -1663,7 +1659,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
                u0, v0, u1, v1);
             break;
 
-         case CENTER:
+         case PConstants.CENTER:
          default:
 
             wDisp = x1i < 2 ? 1 : x1i / 2;
@@ -1877,11 +1873,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.colorMode ) {
 
-         case HSB:
+         case PConstants.HSB:
 
             return IUp.MIXER_HSB.apply(origin, dest, step, target);
 
-         case RGB:
+         case PConstants.RGB:
 
          default:
 
@@ -1965,6 +1961,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          this.fillColorObject = new java.awt.Color(coreFll.r, coreFll.g,
             coreFll.b, coreFll.a);
       }
+   }
+
+   /**
+    * Normal is not supported by this renderer.
+    */
+   @Override
+   public void normal ( final float x, final float y, final float z ) {
+
+      PApplet.showMissingWarning("normal");
    }
 
    /**
@@ -3115,19 +3120,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.textAlignY ) {
 
-         case BOTTOM:
+         case PConstants.BOTTOM:
 
             yMut += this.textDescent();
 
             break;
 
-         case TOP:
+         case PConstants.TOP:
 
             yMut -= this.textAscent();
 
             break;
 
-         case CENTER:
+         case PConstants.CENTER:
 
          default:
 
@@ -3679,21 +3684,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( cap ) {
 
-         case PROJECT:
+         case PConstants.PROJECT:
 
             this.strokeCap = PConstants.PROJECT; /* 4 */
             this.capNative = BasicStroke.CAP_SQUARE; /* 2 */
 
             break;
 
-         case SQUARE:
+         case PConstants.SQUARE:
 
             this.strokeCap = PConstants.SQUARE; /* 1 */
             this.capNative = BasicStroke.CAP_BUTT; /* 0 */
 
             break;
 
-         case ROUND:
+         case PConstants.ROUND:
 
          default:
 
@@ -3714,21 +3719,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( join ) {
 
-         case BEVEL:
+         case PConstants.BEVEL:
 
             this.strokeJoin = PConstants.BEVEL; /* 32 */
             this.joinNative = BasicStroke.JOIN_BEVEL; /* 2 */
 
             break;
 
-         case MITER:
+         case PConstants.MITER:
 
             this.strokeJoin = PConstants.MITER; /* 8 */
             this.joinNative = BasicStroke.JOIN_MITER; /* 0 */
 
             break;
 
-         case ROUND:
+         case PConstants.ROUND:
 
          default:
 
@@ -4040,7 +4045,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          final float x0 = x + lextent * this.textSize;
          final float x1 = x0 + wGlyph * this.textSize;
-
          final float y0 = y + textent * this.textSize;
          final float y1 = y0 - hGlyph * this.textSize;
 

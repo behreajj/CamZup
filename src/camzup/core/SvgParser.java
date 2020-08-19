@@ -735,6 +735,15 @@ abstract class SvgParser {
             newCurves.add(SvgParser.parseEllipse(node, new Curve2()));
             break;
 
+         case -397519558:
+            /* "polygon" */
+
+         case 561938880:
+            /* "polyline" */
+
+            newCurves.add(SvgParser.parsePoly(node, new Curve2()));
+            break;
+
          case 3321844:
             /* "line" */
 
@@ -745,18 +754,10 @@ abstract class SvgParser {
             /* "path" */
 
             final Curve2[] cs = SvgParser.parsePath(node);
-            for ( int i = 0; i < cs.length; ++i ) {
+            final int csLen = cs.length;
+            for ( int i = 0; i < csLen; ++i ) {
                newCurves.add(cs[i]);
             }
-            break;
-
-         case -397519558:
-            /* "polygon" */
-
-         case 561938880:
-            /* "polyline" */
-
-            newCurves.add(SvgParser.parsePoly(node, new Curve2()));
             break;
 
          case 3496420:
@@ -881,7 +882,7 @@ abstract class SvgParser {
             target.clear();
             result.add(target);
 
-            for ( int l = 0, cursor = 0; l < cmdLen; ++l ) {
+            for ( int l = 0, cursor = -1; l < cmdLen; ++l ) {
                final PathCommand command = commands[l];
                switch ( command ) {
 
@@ -895,8 +896,8 @@ abstract class SvgParser {
                   case MoveToAbs:
 
                      // if ( datLen > cursor + 1 ) {
-                     coxStr = dataTokens[cursor++]; /* 1 */
-                     coyStr = dataTokens[cursor++]; /* 2 */
+                     coxStr = dataTokens[++cursor]; /* 1 */
+                     coyStr = dataTokens[++cursor]; /* 2 */
 
                      /* A curve may be empty due to malformed commands. */
                      if ( !initialMove ) {
@@ -929,8 +930,8 @@ abstract class SvgParser {
                   case MoveToRel:
 
                      // if ( datLen > cursor + 1 ) {
-                     coxStr = dataTokens[cursor++]; /* 1 */
-                     coyStr = dataTokens[cursor++]; /* 2 */
+                     coxStr = dataTokens[++cursor]; /* 1 */
+                     coyStr = dataTokens[++cursor]; /* 2 */
 
                      /* A curve may be empty due to malformed commands. */
                      if ( !initialMove ) {
@@ -965,8 +966,8 @@ abstract class SvgParser {
                   case LineToAbs:
 
                      // if ( datLen > cursor + 1 ) {
-                     coxStr = dataTokens[cursor++]; /* 1 */
-                     coyStr = dataTokens[cursor++]; /* 2 */
+                     coxStr = dataTokens[++cursor]; /* 1 */
+                     coyStr = dataTokens[++cursor]; /* 2 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -985,8 +986,8 @@ abstract class SvgParser {
                   case LineToRel:
 
                      // if ( datLen > cursor + 1 ) {
-                     coxStr = dataTokens[cursor++]; /* 1 */
-                     coyStr = dataTokens[cursor++]; /* 2 */
+                     coxStr = dataTokens[++cursor]; /* 1 */
+                     coyStr = dataTokens[++cursor]; /* 2 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -1007,7 +1008,7 @@ abstract class SvgParser {
                   case HorizAbs:
 
                      // if ( datLen > cursor ) {
-                     coxStr = dataTokens[cursor++]; /* 1 */
+                     coxStr = dataTokens[++cursor]; /* 1 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -1026,7 +1027,7 @@ abstract class SvgParser {
                   case HorizRel:
 
                      // if ( datLen > cursor ) {
-                     coxStr = dataTokens[cursor++]; /* 1 */
+                     coxStr = dataTokens[++cursor]; /* 1 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -1047,7 +1048,7 @@ abstract class SvgParser {
                   case VertAbs:
 
                      // if ( datLen > cursor ) {
-                     coyStr = dataTokens[cursor++]; /* 1 */
+                     coyStr = dataTokens[++cursor]; /* 1 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -1066,7 +1067,7 @@ abstract class SvgParser {
                   case VertRel:
 
                      // if ( datLen > cursor ) {
-                     coyStr = dataTokens[cursor++]; /* 1 */
+                     coyStr = dataTokens[++cursor]; /* 1 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -1087,10 +1088,10 @@ abstract class SvgParser {
                   case QuadraticToAbs:
 
                      // if ( datLen > cursor + 3 ) {
-                     mhxStr = dataTokens[cursor++]; /* 1 */
-                     mhyStr = dataTokens[cursor++]; /* 2 */
-                     coxStr = dataTokens[cursor++]; /* 3 */
-                     coyStr = dataTokens[cursor++]; /* 4 */
+                     mhxStr = dataTokens[++cursor]; /* 1 */
+                     mhyStr = dataTokens[++cursor]; /* 2 */
+                     coxStr = dataTokens[++cursor]; /* 3 */
+                     coyStr = dataTokens[++cursor]; /* 4 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -1111,10 +1112,10 @@ abstract class SvgParser {
                   case QuadraticToRel:
 
                      // if ( datLen > cursor + 3 ) {
-                     mhxStr = dataTokens[cursor++]; /* 1 */
-                     mhyStr = dataTokens[cursor++]; /* 2 */
-                     coxStr = dataTokens[cursor++]; /* 3 */
-                     coyStr = dataTokens[cursor++]; /* 4 */
+                     mhxStr = dataTokens[++cursor]; /* 1 */
+                     mhyStr = dataTokens[++cursor]; /* 2 */
+                     coxStr = dataTokens[++cursor]; /* 3 */
+                     coyStr = dataTokens[++cursor]; /* 4 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -1139,8 +1140,8 @@ abstract class SvgParser {
                   case ReflectQuadraticAbs:
 
                      // if ( datLen > cursor + 1 ) {
-                     coxStr = dataTokens[cursor++]; /* 1 */
-                     coyStr = dataTokens[cursor++]; /* 2 */
+                     coxStr = dataTokens[++cursor]; /* 1 */
+                     coyStr = dataTokens[++cursor]; /* 2 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -1167,8 +1168,8 @@ abstract class SvgParser {
                   case ReflectQuadraticRel:
 
                      // if ( datLen > cursor + 1 ) {
-                     coxStr = dataTokens[cursor++]; /* 1 */
-                     coyStr = dataTokens[cursor++]; /* 2 */
+                     coxStr = dataTokens[++cursor]; /* 1 */
+                     coyStr = dataTokens[++cursor]; /* 2 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -1192,12 +1193,12 @@ abstract class SvgParser {
                   case CubicToAbs:
 
                      // if ( datLen > cursor + 5 ) {
-                     fhxStr = dataTokens[cursor++]; /* 1 */
-                     fhyStr = dataTokens[cursor++]; /* 2 */
-                     rhxStr = dataTokens[cursor++]; /* 3 */
-                     rhyStr = dataTokens[cursor++]; /* 4 */
-                     coxStr = dataTokens[cursor++]; /* 5 */
-                     coyStr = dataTokens[cursor++]; /* 6 */
+                     fhxStr = dataTokens[++cursor]; /* 1 */
+                     fhyStr = dataTokens[++cursor]; /* 2 */
+                     rhxStr = dataTokens[++cursor]; /* 3 */
+                     rhyStr = dataTokens[++cursor]; /* 4 */
+                     coxStr = dataTokens[++cursor]; /* 5 */
+                     coyStr = dataTokens[++cursor]; /* 6 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -1218,12 +1219,12 @@ abstract class SvgParser {
                   case CubicToRel:
 
                      // if ( datLen > cursor + 5 ) {
-                     fhxStr = dataTokens[cursor++]; /* 1 */
-                     fhyStr = dataTokens[cursor++]; /* 2 */
-                     rhxStr = dataTokens[cursor++]; /* 3 */
-                     rhyStr = dataTokens[cursor++]; /* 4 */
-                     coxStr = dataTokens[cursor++]; /* 5 */
-                     coyStr = dataTokens[cursor++]; /* 6 */
+                     fhxStr = dataTokens[++cursor]; /* 1 */
+                     fhyStr = dataTokens[++cursor]; /* 2 */
+                     rhxStr = dataTokens[++cursor]; /* 3 */
+                     rhyStr = dataTokens[++cursor]; /* 4 */
+                     coxStr = dataTokens[++cursor]; /* 5 */
+                     coyStr = dataTokens[++cursor]; /* 6 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -1248,10 +1249,10 @@ abstract class SvgParser {
                   case ReflectCubicAbs:
 
                      // if ( datLen > cursor + 2 ) {
-                     rhxStr = dataTokens[cursor++]; /* 1 */
-                     rhyStr = dataTokens[cursor++]; /* 2 */
-                     coxStr = dataTokens[cursor++]; /* 3 */
-                     coyStr = dataTokens[cursor++]; /* 4 */
+                     rhxStr = dataTokens[++cursor]; /* 1 */
+                     rhyStr = dataTokens[++cursor]; /* 2 */
+                     coxStr = dataTokens[++cursor]; /* 3 */
+                     coyStr = dataTokens[++cursor]; /* 4 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -1271,10 +1272,10 @@ abstract class SvgParser {
                   case ReflectCubicRel:
 
                      // if ( datLen > cursor + 2 ) {
-                     rhxStr = dataTokens[cursor++]; /* 1 */
-                     rhyStr = dataTokens[cursor++]; /* 2 */
-                     coxStr = dataTokens[cursor++]; /* 3 */
-                     coyStr = dataTokens[cursor++]; /* 4 */
+                     rhxStr = dataTokens[++cursor]; /* 1 */
+                     rhyStr = dataTokens[++cursor]; /* 2 */
+                     coxStr = dataTokens[++cursor]; /* 3 */
+                     coyStr = dataTokens[++cursor]; /* 4 */
 
                      prev = curr;
                      curr = new Knot2();
@@ -1297,13 +1298,13 @@ abstract class SvgParser {
                   case ArcToAbs:
 
                      // if ( datLen > cursor + 5 ) {
-                     rx = dataTokens[cursor++]; /* 1 */
-                     ry = dataTokens[cursor++]; /* 2 */
-                     angle = dataTokens[cursor++]; /* 3 */
-                     fa = dataTokens[cursor++]; /* 4 */
-                     fs = dataTokens[cursor++]; /* 5 */
-                     coxStr = dataTokens[cursor++]; /* 6 */
-                     coyStr = dataTokens[cursor++]; /* 7 */
+                     rx = dataTokens[++cursor]; /* 1 */
+                     ry = dataTokens[++cursor]; /* 2 */
+                     angle = dataTokens[++cursor]; /* 3 */
+                     fa = dataTokens[++cursor]; /* 4 */
+                     fs = dataTokens[++cursor]; /* 5 */
+                     coxStr = dataTokens[++cursor]; /* 6 */
+                     coyStr = dataTokens[++cursor]; /* 7 */
 
                      prev = curr;
 
@@ -1322,13 +1323,13 @@ abstract class SvgParser {
                   case ArcToRel:
 
                      // if ( datLen > cursor + 5 ) {
-                     rx = dataTokens[cursor++]; /* 1 */
-                     ry = dataTokens[cursor++]; /* 2 */
-                     angle = dataTokens[cursor++]; /* 3 */
-                     fa = dataTokens[cursor++]; /* 4 */
-                     fs = dataTokens[cursor++]; /* 5 */
-                     coxStr = dataTokens[cursor++]; /* 6 */
-                     coyStr = dataTokens[cursor++]; /* 7 */
+                     rx = dataTokens[++cursor]; /* 1 */
+                     ry = dataTokens[++cursor]; /* 2 */
+                     angle = dataTokens[++cursor]; /* 3 */
+                     fa = dataTokens[++cursor]; /* 4 */
+                     fs = dataTokens[++cursor]; /* 5 */
+                     coxStr = dataTokens[++cursor]; /* 6 */
+                     coyStr = dataTokens[++cursor]; /* 7 */
 
                      prev = curr;
 
@@ -1470,19 +1471,19 @@ abstract class SvgParser {
             : "0,0";
          final String[] coords = ptsstr.split("\\s+|,");
 
-         int i = 0;
+         int i = -1;
          final int coordLen = coords.length;
          final int halfLen = coordLen / 2;
          target.resize(halfLen);
          final Iterator < Knot2 > itr = target.iterator();
          final Knot2 first = itr.next();
-         first.coord.set(SvgParser.parseFloat(coords[i++], 0.0f), SvgParser
-            .parseFloat(coords[i++], 0.0f));
+         first.coord.set(SvgParser.parseFloat(coords[++i], 0.0f), SvgParser
+            .parseFloat(coords[++i], 0.0f));
 
          Knot2 prev = first;
          while ( itr.hasNext() ) {
-            final String xstr = coords[i++];
-            final String ystr = coords[i++];
+            final String xstr = coords[++i];
+            final String ystr = coords[++i];
             final float x = SvgParser.parseFloat(xstr, 0.0f);
             final float y = SvgParser.parseFloat(ystr, 0.0f);
             final Knot2 curr = itr.next();

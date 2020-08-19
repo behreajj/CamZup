@@ -255,72 +255,6 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
-    * Returns a new matrix with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the matrix in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the quotient
-    *
-    * @see Mat4#mul(Mat4, float, Mat4)
-    * @see Mat4#inverse(Mat4, Mat4)
-    */
-   public Mat4 div ( final float b ) {
-
-      if ( b != 0.0f ) { return Mat4.mul(this, 1.0f / b, new Mat4()); }
-      return new Mat4();
-   }
-
-   /**
-    * Returns a new matrix with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the matrix in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the quotient
-    *
-    * @see Mat4#mul(Mat4, Mat4, Mat4)
-    * @see Mat4#inverse(Mat4, Mat4)
-    */
-   public Mat4 div ( final Mat4 b ) {
-
-      return Mat4.mul(this, Mat4.inverse(b, new Mat4()), new Mat4());
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the matrix in place).
-    * For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param b the right operand
-    *
-    * @see Mat4#mul(Mat4, float, Mat4)
-    */
-   public void divAssign ( final float b ) {
-
-      if ( b != 0.0f ) {
-         Mat4.mul(this, 1.0f / b, this);
-      } else {
-         Mat4.identity(this);
-      }
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the matrix in place).
-    * For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param b the right operand
-    *
-    * @see Mat4#mul(Mat4, Mat4, Mat4)
-    * @see Mat4#inverse(Mat4, Mat4)
-    */
-   public void divAssign ( final Mat4 b ) {
-
-      Mat4.mul(this, Mat4.inverse(b, new Mat4()), this);
-   }
-
-   /**
     * Tests this matrix for equivalence with another object.
     *
     * @param obj the object
@@ -350,6 +284,7 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
     */
    public Vec4 get ( final int j ) {
 
+      // TODO: Move to KtMat4.
       return this.getCol(j, new Vec4());
    }
 
@@ -539,59 +474,6 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
     * @return the length
     */
    public int length ( ) { return 16; }
-
-   /**
-    * Returns a new matrix with the subtraction of the right operand from the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
-    * <em>Does not mutate the matrix in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the subtraction
-    */
-   public Mat4 minus ( final Mat4 b ) {
-
-      return Mat4.sub(this, b, new Mat4());
-   }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the matrix in
-    * place). For interoperability with Kotlin: <code>a -= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void minusAssign ( final Mat4 b ) { Mat4.sub(this, b, this); }
-
-   /**
-    * Returns a new matrix with the boolean opposite of the instance. For
-    * interoperability with Kotlin: <code>!a</code> . <em>Does not mutate the
-    * matrix in place</em>.
-    *
-    * @return the opposite matrix
-    */
-   public Mat4 not ( ) { return Mat4.not(this, new Mat4()); }
-
-   /**
-    * Returns a new matrix with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the matrix in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the sum
-    */
-   public Mat4 plus ( final Mat4 b ) {
-
-      return Mat4.add(this, b, new Mat4());
-   }
-
-   /**
-    * Adds the right operand to the instance (mutates the matrix in place).
-    * For interoperability with Kotlin: <code>a += b</code> .
-    *
-    * @param b the right operand
-    */
-   public void plusAssign ( final Mat4 b ) { Mat4.add(this, b, this); }
 
    /**
     * Resets this matrix to an initial state:
@@ -922,63 +804,6 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
-    * Returns a new matrix with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the matrix in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the product
-    */
-   public Mat4 times ( final float b ) {
-
-      return Mat4.mul(this, b, new Mat4());
-   }
-
-   /**
-    * Returns a new matrix with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the matrix in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the product
-    */
-   public Mat4 times ( final Mat4 b ) {
-
-      return Mat4.mul(this, b, new Mat4());
-   }
-
-   /**
-    * Multiplies this matrix and a vector. For interoperability with Kotlin:
-    * <code>a * b</code> .
-    *
-    * @param b the vector
-    *
-    * @return the product
-    */
-   public Vec4 times ( final Vec4 b ) {
-
-      return Mat4.mul(this, b, new Vec4());
-   }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the matrix in
-    * place). For interoperability with Kotlin: <code>a *= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void timesAssign ( final float b ) { Mat4.mul(this, b, this); }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the matrix in
-    * place). For interoperability with Kotlin: <code>a *= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void timesAssign ( final Mat4 b ) { Mat4.mul(this, b, this); }
-
-   /**
     * Returns a float array containing this matrix's components.
     *
     * @return the array
@@ -1130,24 +955,6 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
-    * Returns a new matrix with the negation of the instance. For
-    * interoperability with Kotlin: <code>-a</code> . <em>Does not mutate the
-    * matrix in place</em>.
-    *
-    * @return the negation
-    */
-   public Mat4 unaryMinus ( ) { return Mat4.negate(this, new Mat4()); }
-
-   /**
-    * Returns a new matrix with the positive copy of the instance. For
-    * interoperability with Kotlin: <code>+a</code> . <em>Does not mutate the
-    * matrix in place</em>.
-    *
-    * @return the positive
-    */
-   public Mat4 unaryPlus ( ) { return new Mat4(this); }
-
-   /**
     * Tests for equivalence between this and another matrix.
     *
     * @param n the matrix
@@ -1158,59 +965,13 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
     */
    protected boolean equals ( final Mat4 n ) {
 
-      if ( Float.floatToIntBits(this.m00) != Float.floatToIntBits(n.m00) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m01) != Float.floatToIntBits(n.m01) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m02) != Float.floatToIntBits(n.m02) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m03) != Float.floatToIntBits(n.m03) ) {
-         return false;
-      }
-
-      if ( Float.floatToIntBits(this.m10) != Float.floatToIntBits(n.m10) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m11) != Float.floatToIntBits(n.m11) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m12) != Float.floatToIntBits(n.m12) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m13) != Float.floatToIntBits(n.m13) ) {
-         return false;
-      }
-
-      if ( Float.floatToIntBits(this.m20) != Float.floatToIntBits(n.m20) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m21) != Float.floatToIntBits(n.m21) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m22) != Float.floatToIntBits(n.m22) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m23) != Float.floatToIntBits(n.m23) ) {
-         return false;
-      }
-
-      if ( Float.floatToIntBits(this.m30) != Float.floatToIntBits(n.m30) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m31) != Float.floatToIntBits(n.m31) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m32) != Float.floatToIntBits(n.m32) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m33) != Float.floatToIntBits(n.m33) ) {
-         return false;
-      }
-
-      return true;
+      /* With {@link Float.floatToIntBits(float)}, -0.0f != 0.0f. */
+      return this.m00 == n.m00 && this.m01 == n.m01 && this.m02 == n.m02
+         && this.m03 == n.m03 && this.m10 == n.m10 && this.m11 == n.m11
+         && this.m12 == n.m12 && this.m13 == n.m13 && this.m20 == n.m20
+         && this.m21 == n.m21 && this.m22 == n.m22 && this.m23 == n.m23
+         && this.m30 == n.m30 && this.m31 == n.m31 && this.m32 == n.m32
+         && this.m33 == n.m33;
    }
 
    /**

@@ -878,7 +878,6 @@ public abstract class Convert {
       final Transform3 srctr = source.transform;
       final PMatrix3D m = Convert.toPMatrix3D(srctr, TransformOrder.RST,
          new PMatrix3D());
-      // shape.resetMatrix();
       shape.applyMatrix(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12, m.m13,
          m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
 
@@ -1015,7 +1014,6 @@ public abstract class Convert {
       final Transform2 srctr = source.transform;
       final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
          new PMatrix2D());
-      // shape.resetMatrix();
       shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
 
       /* Stroke weight is scaled with the transform above. */

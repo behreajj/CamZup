@@ -82,169 +82,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Bevels a corner of a face in the mesh. The factor interpolates from the
-    * corner to the midpoint of an edge. For line segments of unequal length
-    * joined at a corner, the cut will be uneven. Uses Chaikin's corner
-    * cutting method.<br>
-    * <br>
-    * This leaves the old corner in the mesh's data in case the corner is used
-    * by other faces.
-    *
-    * @param faceIdx the face index
-    * @param vertIdx the vertex index
-    * @param fac     the factor
-    *
-    * @return the new faces
-    */
-   @Experimental
-   public Mesh2 bevelCorner ( final int faceIdx, final int vertIdx,
-      final float fac ) {
-
-      final int facesLen = this.faces.length;
-      final int i = Utils.mod(faceIdx, facesLen);
-      final int[][] face = this.faces[i];
-      final int faceLen = face.length;
-
-      final int v0Idx = Utils.mod(vertIdx - 1, faceLen);
-      final int v1Idx = Utils.mod(vertIdx, faceLen);
-      final int v2Idx = Utils.mod(vertIdx + 1, faceLen);
-
-      final int[] vert0 = face[v0Idx];
-      final int[] vert1 = face[v1Idx];
-      final int[] vert2 = face[v2Idx];
-
-      final Vec2 v0 = this.coords[vert0[0]];
-      final Vec2 v1 = this.coords[vert1[0]];
-      final Vec2 v2 = this.coords[vert2[0]];
-
-      final Vec2 vt0 = this.texCoords[vert0[1]];
-      final Vec2 vt1 = this.texCoords[vert1[1]];
-      final Vec2 vt2 = this.texCoords[vert2[1]];
-
-      final Vec2[] vsNew = new Vec2[2];
-      final Vec2[] vtsNew = new Vec2[2];
-
-      final Vec2 v0New = vsNew[0] = new Vec2();
-      final Vec2 v1New = vsNew[1] = new Vec2();
-      final Vec2 vt0New = vtsNew[0] = new Vec2();
-      final Vec2 vt1New = vtsNew[1] = new Vec2();
-
-      final float t = 0.5f * Utils.clamp(fac, IUtils.DEFAULT_EPSILON, 1.0f
-         - IUtils.DEFAULT_EPSILON);
-      final float u = 1.0f - t;
-
-      v0New.set(t * v0.x + u * v1.x, t * v0.y + u * v1.y);
-      v1New.set(u * v1.x + t * v2.x, u * v1.y + t * v2.y);
-      vt0New.set(t * vt0.x + u * vt1.x, t * vt0.y + u * vt1.y);
-      vt1New.set(u * vt1.x + t * vt2.x, u * vt1.y + t * vt2.y);
-
-      final int vsOldLen = this.coords.length;
-      final int vtsOldLen = this.texCoords.length;
-      final int[][] fNew = new int[2][2];
-      fNew[0][0] = vsOldLen;
-      fNew[0][1] = vtsOldLen;
-      fNew[1][0] = vsOldLen + 1;
-      fNew[1][1] = vtsOldLen + 1;
-
-      this.coords = Vec2.concat(this.coords, vsNew);
-      this.texCoords = Vec2.concat(this.texCoords, vtsNew);
-      this.faces[i] = Mesh.splice(face, v1Idx, 1, fNew);
-
-      return this;
-   }
-
-   /**
-    * Bevels all corners of a given face in the mesh. The factor interpolates
-    * from the corner to the midpoint of an edge. For line segments of unequal
-    * length joined at a corner, the cut will be uneven. Uses Chaikin's corner
-    * cutting method.<br>
-    * <br>
-    * This leaves the old corner in the mesh's data in case the corner is used
-    * by other faces.
-    *
-    * @param faceIdx the face index
-    * @param fac     the factor
-    *
-    * @return this mesh
-    */
-   @Experimental
-   public Mesh2 bevelCorners ( final int faceIdx, final float fac ) {
-
-      final int facesLen = this.faces.length;
-      final int i = Utils.mod(faceIdx, facesLen);
-      final int[][] faceOld = this.faces[i];
-      final int faceLen = faceOld.length;
-
-      final int len2 = faceLen + faceLen;
-      final Vec2[] vsNew = new Vec2[len2];
-      final Vec2[] vtsNew = new Vec2[len2];
-
-      final float t = 0.5f * Utils.clamp(fac, IUtils.DEFAULT_EPSILON, 1.0f
-         - IUtils.DEFAULT_EPSILON);
-      final float u = 1.0f - t;
-      final int vsOldLen = this.coords.length;
-      final int vtsOldLen = this.texCoords.length;
-      final int[][] faceNew = new int[len2][2];
-
-      for ( int j = 0, k = 0, m = 1; j < faceLen; ++j, k += 2, m += 2 ) {
-
-         final int v0Idx = Utils.mod(j - 1, faceLen);
-         final int v2Idx = Utils.mod(j + 1, faceLen);
-
-         final int[] vert0 = faceOld[v0Idx];
-         final int[] vert1 = faceOld[j];
-         final int[] vert2 = faceOld[v2Idx];
-
-         final Vec2 v0 = this.coords[vert0[0]];
-         final Vec2 v1 = this.coords[vert1[0]];
-         final Vec2 v2 = this.coords[vert2[0]];
-
-         final Vec2 vt0 = this.texCoords[vert0[1]];
-         final Vec2 vt1 = this.texCoords[vert1[1]];
-         final Vec2 vt2 = this.texCoords[vert2[1]];
-
-         final Vec2 v0New = vsNew[k] = new Vec2();
-         final Vec2 v1New = vsNew[m] = new Vec2();
-         final Vec2 vt0New = vtsNew[k] = new Vec2();
-         final Vec2 vt1New = vtsNew[m] = new Vec2();
-
-         v0New.set(t * v0.x + u * v1.x, t * v0.y + u * v1.y);
-         v1New.set(u * v1.x + t * v2.x, u * v1.y + t * v2.y);
-         vt0New.set(t * vt0.x + u * vt1.x, t * vt0.y + u * vt1.y);
-         vt1New.set(u * vt1.x + t * vt2.x, u * vt1.y + t * vt2.y);
-
-         faceNew[k][0] = vsOldLen + k;
-         faceNew[k][1] = vtsOldLen + k;
-         faceNew[m][0] = vsOldLen + m;
-         faceNew[m][1] = vtsOldLen + m;
-      }
-
-      this.coords = Vec2.concat(this.coords, vsNew);
-      this.texCoords = Vec2.concat(this.texCoords, vtsNew);
-      this.faces[i] = faceNew;
-
-      return this;
-   }
-
-   /**
-    * Bevels all corners of a given face in the mesh.
-    *
-    * @param faceIdx the face index
-    * @param fac     the factor
-    * @param itr     the number of iterations
-    *
-    * @return this mesh
-    */
-   public Mesh2 bevelCorners ( final int faceIdx, final float fac,
-      final int itr ) {
-
-      for ( int i = 0; i < itr; ++i ) {
-         this.bevelCorners(faceIdx, fac);
-      }
-      return this;
-   }
-
-   /**
     * Calculates texture coordinates (UVs) for this mesh. Finds the
     * object-space dimensions of each coordinate, then using the frame as a
     * reference for new UVs, such that the shape acts as a mask for the
@@ -3303,38 +3140,57 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public static Mesh2 uniformData ( final Mesh2 source, final Mesh2 target ) {
 
-      target.name = source.name;
+      /* Find length of uniform data. */
+      int uniformLen = 0;
+      final int[][][] fsSrc = source.faces;
+      final int fsSrcLen = fsSrc.length;
+      for ( int i = 0; i < fsSrcLen; ++i ) {
+         uniformLen += fsSrc[i].length;
+      }
 
-      /* Predict how many vertices will be in result. */
-      final int len0 = source.faces.length;
-      final int capacity = len0 * 4;
+      /* Allocate new arrays. */
+      final int[][][] fsTrg = new int[fsSrcLen][][];
+      final boolean same = source == target;
+      final Vec2[] vsTrg = same ? new Vec2[uniformLen] : Vec2.resize(
+         target.coords, uniformLen);
+      final Vec2[] vtsTrg = same ? new Vec2[uniformLen] : Vec2.resize(
+         target.texCoords, uniformLen);
 
-      /* Has to be a new array for the case source == target. */
-      final int[][][] trgfs = new int[len0][][];
-      final ArrayList < Vec2 > vs = new ArrayList <>(capacity);
-      final ArrayList < Vec2 > vts = new ArrayList <>(capacity);
-
-      for ( int k = 0, i = 0; i < len0; ++i ) {
-
-         final int[][] fs0 = source.faces[i];
-         final int len1 = fs0.length;
-         final int[][] trgfs0 = trgfs[i] = new int[len1][2];
-
-         for ( int j = 0; j < len1; ++j, ++k ) {
-
-            final int[] fs1 = fs0[j];
-
-            vs.add(new Vec2(source.coords[fs1[0]]));
-            vts.add(new Vec2(source.texCoords[fs1[1]]));
-
-            trgfs0[j][0] = k;
-            trgfs0[j][1] = k;
+      /* Account for scenario where source and target are same. */
+      if ( same ) {
+         for ( int i = 0; i < uniformLen; ++i ) {
+            vsTrg[i] = new Vec2();
+            vtsTrg[i] = new Vec2();
          }
       }
 
-      target.coords = vs.toArray(new Vec2[vs.size()]);
-      target.texCoords = vts.toArray(new Vec2[vts.size()]);
-      target.faces = trgfs;
+      /* Cache shortcuts to old arrays. */
+      final Vec2[] vsSrc = source.coords;
+      final Vec2[] vtsSrc = source.texCoords;
+
+      /* Reassign. */
+      for ( int k = 0, i = 0; i < fsSrcLen; ++i ) {
+         final int[][] fSrc = fsSrc[i];
+         final int fLen = fSrc.length;
+         final int[][] fTrg = fsTrg[i] = new int[fLen][2];
+         for ( int j = 0; j < fLen; ++j, ++k ) {
+            final int[] vertSrc = fSrc[j];
+            final int[] vertTrg = fTrg[j];
+
+            vsTrg[k].set(vsSrc[vertSrc[0]]);
+            vtsTrg[k].set(vtsSrc[vertSrc[1]]);
+
+            /* Update face indices. */
+            vertTrg[0] = k;
+            vertTrg[1] = k;
+         }
+      }
+
+      /* Update references. */
+      target.coords = vsTrg;
+      target.texCoords = vtsTrg;
+      target.faces = fsTrg;
+
       return target;
    }
 

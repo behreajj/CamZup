@@ -5,6 +5,7 @@ import java.util.Iterator;
 import camzup.core.ArcMode;
 import camzup.core.Color;
 import camzup.core.Curve2;
+import camzup.core.Experimental;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Mat3;
@@ -23,6 +24,7 @@ import camzup.core.Vec4;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
+import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
@@ -225,7 +227,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( this.ellipseMode ) {
 
-         case CORNERS:
+         case PConstants.CORNERS:
 
             // w = Utils.diff(x0, x1);
             // h = Utils.diff(y0, y1);
@@ -233,19 +235,19 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             // y += h * 0.5f;
             // break;
 
-         case RADIUS:
+         case PConstants.RADIUS:
 
             // w = Utils.abs(x1 + x1);
             // h = Utils.abs(y1 + y1);
             // break;
 
-         case CORNER:
+         case PConstants.CORNER:
 
             // x += Utils.abs(x1) * 0.5f;
             // y -= Utils.abs(y1) * 0.5f;
             // break;
 
-         case CENTER:
+         case PConstants.CENTER:
 
             // w = Utils.abs(x1);
             // h = Utils.abs(y1);
@@ -543,7 +545,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( this.colorMode ) {
 
-         case HSB:
+         case PConstants.HSB:
 
             this.calcR = x * this.invColorModeX;
 
@@ -556,7 +558,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case RGB:
+         case PConstants.RGB:
 
          default:
 
@@ -649,22 +651,26 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void defaultSettings ( ) {
 
+      /* Color. */
       this.colorMode(PConstants.RGB, IUp.DEFAULT_COLOR_MAX);
       this.fill(IUp.DEFAULT_FILL_COLOR);
+      this.blendMode(PConstants.BLEND);
+      if ( this.primaryGraphics ) { this.background(IUp.DEFAULT_BKG_COLOR); }
 
+      /* Stroke. */
       this.stroke(IUp.DEFAULT_STROKE_COLOR);
       this.strokeWeight(IUp.DEFAULT_STROKE_WEIGHT);
       this.strokeJoin(PConstants.ROUND);
       this.strokeCap(PConstants.ROUND);
       this.stroke = true;
 
-      this.shape = 0;
+      /* Shape. */
       this.rectMode(PConstants.CENTER);
       this.ellipseMode(PConstants.CENTER);
       this.imageMode(PConstants.CENTER);
       this.shapeMode = PConstants.CENTER;
 
-      this.autoNormal = true;
+      /* Text. */
       this.textFont = null;
       this.textSize = IUp.DEFAULT_TEXT_SIZE;
       this.textLeading = IUp.DEFAULT_TEXT_LEADING;
@@ -672,13 +678,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.textAlignY = PConstants.CENTER;
       this.textMode = PConstants.MODEL;
 
-      if ( this.primaryGraphics ) { this.background(IUp.DEFAULT_BKG_COLOR); }
-
-      this.blendMode(PConstants.BLEND);
-
+      /* Textures. */
       this.textureMode = PConstants.NORMAL;
       this.textureWrap = PConstants.REPEAT;
 
+      /* Lights and material properties. */
       this.ambient(this.colorModeX * IUpOgl.DEFAULT_AMB_R, this.colorModeY
          * IUpOgl.DEFAULT_AMB_G, this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
       this.specular(this.colorModeX * IUpOgl.DEFAULT_SPEC_R, this.colorModeY
@@ -686,16 +690,25 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.emissive(0.0f, 0.0f, 0.0f);
       this.shininess(0.0f);
 
+      /* Camera. */
       this.cameraAspect = this.defCameraAspect = IUp.DEFAULT_ASPECT;
       this.cameraFOV = this.defCameraFOV = IUp.DEFAULT_FOV;
       this.cameraNear = this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
       this.cameraFar = this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
 
+      /* Normals. */
+      this.autoNormal = false;
+      this.normalMode = PGraphics.NORMAL_MODE_SHAPE;
+      this.normalX = 0.0f;
+      this.normalY = 0.0f;
+      this.normalZ = 1.0f;
+
+      /* Control flow flags. */
+      this.shape = 0;
       this.setAmbient = false;
       this.manipulatingCamera = false;
       this.settingsInited = true;
       this.reapplySettings = false;
-
       // this.hint(PConstants.DISABLE_OPENGL_ERRORS);
    }
 
@@ -778,7 +791,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * Paired constants have signed values: PConstants#ENABLE_DEPTH_MASK has a
        * negative value.
        */
-
       this.hints[PConstants.DISABLE_DEPTH_MASK] = false;
       this.flush();
       this.pgl.depthMask(true);
@@ -793,7 +805,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * Paired constants have signed values: PConstants#ENABLE_DEPTH_TEST has a
        * negative value.
        */
-
       this.hints[PConstants.DISABLE_DEPTH_TEST] = false;
       this.flush();
       this.pgl.enable(PGL.DEPTH_TEST);
@@ -808,7 +819,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * Paired constants have signed values: PConstants#ENABLE_TEXTURE_MIPMAPS
        * has a negative value.
        */
-
       this.hints[PConstants.DISABLE_TEXTURE_MIPMAPS] = false;
    }
 
@@ -821,7 +831,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * Paired constants have signed values: PConstants#ENABLE_OPTIMIZED_STROKE
        * has a negative value.
        */
-
       this.hints[PConstants.DISABLE_OPTIMIZED_STROKE] = false;
       this.flush();
       this.flushMode = PGraphicsOpenGL.FLUSH_WHEN_FULL;
@@ -859,6 +868,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       PMatAux.frustum(left, right, bottom, top, near, far, this.projection);
    }
+
+   /**
+    * Gets whether or not normals are calculated in
+    * {@link PGraphicsOpenGL#vertex(float, float, float)} and variants.
+    *
+    * @return the flag
+    */
+   public boolean getAutoNormal ( ) { return this.autoNormal; }
 
    /**
     * Gets this renderer's background color.
@@ -929,7 +946,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Gets the renderer model view matrix.
+    * Gets the renderer model view matrix. For use with 2.5D renderers, where
+    * it's assumed only 2D transforms will have been applied to the 3D model
+    * view.
     *
     * @param target the output matrix
     *
@@ -957,6 +976,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       if ( target == null ) { target = new PMatrix3D(); }
       target.set(this.modelview);
       return target;
+   }
+
+   /**
+    * Gets the current normal mode.
+    *
+    * @return the normal mode
+    */
+   public NormalMode getNormalMode ( ) {
+
+      return NormalMode.fromValue(this.normalMode);
    }
 
    /**
@@ -1237,10 +1266,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        */
 
       switch ( mode ) {
-         case CORNER:
-         case CORNERS:
-         case CENTER:
-         case RADIUS:
+         case PConstants.CORNER:
+         case PConstants.CORNERS:
+         case PConstants.CENTER:
+         case PConstants.RADIUS:
             this.imageMode = mode;
             break;
 
@@ -1368,6 +1397,30 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public Vec3 model ( final Vec3 source, final Vec3 target ) {
 
       return this.model(source.x, source.y, source.z, target);
+   }
+
+   /**
+    * Sets the normal for a shape at a given vertex.
+    */
+   @Override
+   @Experimental
+   public void normal ( final float x, final float y, final float z ) {
+
+      this.normalX = x;
+      this.normalY = y;
+      this.normalZ = z;
+
+      // if drawing a shape and the normal hasn't been set yet,
+      // then we need to set the normals for each vertex so far
+      // if ( this.shape != 0 ) {
+      // if ( this.normalMode == PGraphics.NORMAL_MODE_AUTO ) {
+      // One normal per begin/end shape
+      // this.normalMode = PGraphics.NORMAL_MODE_SHAPE;
+      // } else if ( this.normalMode == PGraphics.NORMAL_MODE_SHAPE ) {
+      // a separate normal for each vertex
+      // this.normalMode = PGraphics.NORMAL_MODE_VERTEX;
+      // }
+      // }
    }
 
    /**
@@ -1842,6 +1895,19 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Sets whether or not to automatically calculate normals when
+    * {@link PGraphicsOpenGL#vertex(float, float, float)} and variants are
+    * called.
+    *
+    * @param value the flag
+    */
+   @Experimental
+   public void setAutoNormal ( final boolean value ) {
+
+      this.autoNormal = value;
+   }
+
+   /**
     * Sets the renderer matrix to the source.
     *
     * @param source the source matrix
@@ -1895,6 +1961,18 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
          source.m22, source.m23, source.m30, source.m31, source.m32,
          source.m33);
+   }
+
+   /**
+    * Sets the current normal mode for vertex calls. Corresponds to
+    * {@link PGraphics#NORMAL_MODE_AUTO}, {@link PGraphics#NORMAL_MODE_SHAPE}
+    * or {@link PGraphics#NORMAL_MODE_VERTEX}.
+    *
+    * @param mode the mode
+    */
+   public void setNormalMode ( final NormalMode mode ) {
+
+      this.normalMode = mode.getVal();
    }
 
    /**
@@ -2917,9 +2995,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       }
 
       PMatAux.catmullBasis(this.curveTightness, this.curveBasisMatrix);
-
       this.splineForward(this.curveDetail, this.curveDrawMatrix);
-
       PMatAux.mul(this.bezierBasisInverse, this.curveBasisMatrix,
          this.curveToBezierMatrix);
       PMatAux.mul(this.curveDrawMatrix, this.curveBasisMatrix,
@@ -2946,18 +3022,18 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final Vec2[] vs = mesh.coords;
       final Vec2[] vts = mesh.texCoords;
       final int[][][] fs = mesh.faces;
-      final int flen0 = fs.length;
+      final int fsLen = fs.length;
 
-      for ( int i = 0; i < flen0; ++i ) {
+      for ( int i = 0; i < fsLen; ++i ) {
 
          final int[][] f = fs[i];
-         final int flen1 = f.length;
+         final int fLen = f.length;
 
          this.beginShape(PConstants.POLYGON);
          this.normal(0.0f, 0.0f, 1.0f);
          this.texture(pimg);
 
-         for ( int j = 0; j < flen1; ++j ) {
+         for ( int j = 0; j < fLen; ++j ) {
 
             final int[] data = f[j];
             Transform2.mulPoint(tr, vs[data[0]], v);
@@ -2982,17 +3058,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       final Vec2[] vs = mesh.coords;
       final int[][][] fs = mesh.faces;
-      final int flen0 = fs.length;
+      final int fsLen = fs.length;
 
-      for ( int i = 0; i < flen0; ++i ) {
+      for ( int i = 0; i < fsLen; ++i ) {
 
          final int[][] f = fs[i];
-         final int flen1 = f.length;
+         final int fLen = f.length;
 
          this.beginShape(PConstants.POLYGON);
          this.normal(0.0f, 0.0f, 1.0f);
-
-         for ( int j = 0; j < flen1; ++j ) {
+         for ( int j = 0; j < fLen; ++j ) {
             Transform2.mulPoint(tr, vs[f[j][0]], v);
             this.vertexImpl(v.x, v.y, 0.0f, this.textureU, this.textureV);
          }
@@ -3022,16 +3097,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final Vec3[] vns = mesh.normals;
       final Vec2[] vts = mesh.texCoords;
       final int[][][] fs = mesh.faces;
-      final int flen0 = fs.length;
+      final int fsLen = fs.length;
 
-      for ( int i = 0; i < flen0; ++i ) {
+      for ( int i = 0; i < fsLen; ++i ) {
 
          final int[][] f = fs[i];
-         final int flen1 = f.length;
+         final int fLen = f.length;
          this.beginShape(PConstants.POLYGON);
          this.texture(pimg);
 
-         for ( int j = 0; j < flen1; ++j ) {
+         for ( int j = 0; j < fLen; ++j ) {
 
             final int[] data = f[j];
             Transform3.mulPoint(tr, vs[data[0]], v);
@@ -3060,15 +3135,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final Vec3[] vs = mesh.coords;
       final Vec3[] vns = mesh.normals;
       final int[][][] fs = mesh.faces;
-      final int flen0 = fs.length;
+      final int fsLen = fs.length;
 
-      for ( int i = 0; i < flen0; ++i ) {
+      for ( int i = 0; i < fsLen; ++i ) {
 
          final int[][] f = fs[i];
-         final int flen1 = f.length;
+         final int fLen = f.length;
          this.beginShape(PConstants.POLYGON);
 
-         for ( int j = 0; j < flen1; ++j ) {
+         for ( int j = 0; j < fLen; ++j ) {
 
             final int[] data = f[j];
             Transform3.mulPoint(tr, vs[data[0]], v);
@@ -3581,7 +3656,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       float h = 0.0f;
 
       switch ( this.rectMode ) {
-         case CORNER:
+         case PConstants.CORNER:
 
             w = Utils.abs(c);
             h = Utils.abs(d);
@@ -3593,7 +3668,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case CORNERS:
+         case PConstants.CORNERS:
 
             w = Utils.abs(c - a);
             h = Utils.abs(b - d);
@@ -3606,7 +3681,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case RADIUS:
+         case PConstants.RADIUS:
 
             w = Utils.abs(c);
             h = Utils.abs(d);
@@ -3618,7 +3693,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case CENTER:
+         case PConstants.CENTER:
          default:
 
             w = Utils.abs(c);
@@ -3840,13 +3915,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( this.textMode ) {
 
-         case SHAPE:
+         case PConstants.SHAPE:
 
             this.textCharShapeImpl(ch, x, y);
 
             break;
 
-         case MODEL:
+         case PConstants.MODEL:
 
          default:
 

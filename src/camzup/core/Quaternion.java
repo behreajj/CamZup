@@ -128,64 +128,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Returns a new quaternion with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the quaternion in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the quotient
-    *
-    * @see Quaternion#div(Quaternion, float, Quaternion)
-    */
-   public Quaternion div ( final float b ) {
-
-      return Quaternion.div(this, b, new Quaternion());
-   }
-
-   /**
-    * Returns a new quaternion with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the quaternion in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the quotient
-    *
-    * @see Quaternion#div(Quaternion, Quaternion, Quaternion)
-    */
-   public Quaternion div ( final Quaternion b ) {
-
-      return Quaternion.div(this, b, new Quaternion());
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the quaternion in
-    * place). For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param b the right operand
-    *
-    * @see Quaternion#div(Quaternion, float, Quaternion)
-    */
-   public void divAssign ( final float b ) {
-
-      Quaternion.div(this, b, this);
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the quaternion in
-    * place). For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param b the right operand
-    *
-    * @see Quaternion#div(Quaternion, Quaternion, Quaternion)
-    */
-   public void divAssign ( final Quaternion b ) {
-
-      Quaternion.div(this, b, this);
-   }
-
-   /**
     * Tests this quaternion for equivalence with another object.
     *
     * @param obj the object
@@ -307,64 +249,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    public int length ( ) { return 4; }
 
    /**
-    * Returns a new quaternion with the subtraction of the right operand from
-    * the instance. For interoperability with Kotlin: <code>a - b</code> .
-    * <em>Does not mutate the quaternion in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the subtraction
-    *
-    * @see Quaternion#sub(Quaternion, Quaternion, Quaternion)
-    */
-   public Quaternion minus ( final Quaternion b ) {
-
-      return Quaternion.sub(this, b, new Quaternion());
-   }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the quaternion in
-    * place). For interoperability with Kotlin: <code>a -= b</code> .
-    *
-    * @param b the right operand
-    *
-    * @see Quaternion#sub(Quaternion, Quaternion, Quaternion)
-    */
-   public void minusAssign ( final Quaternion b ) {
-
-      Quaternion.sub(this, b, this);
-   }
-
-   /**
-    * Returns a new quaternion with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the quaternion in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the subtraction
-    *
-    * @see Quaternion#add(Quaternion, Quaternion, Quaternion)
-    */
-   public Quaternion plus ( final Quaternion b ) {
-
-      return Quaternion.add(this, b, new Quaternion());
-   }
-
-   /**
-    * Adds the right operand to the instance (mutates the quaternion in
-    * place). For interoperability with Kotlin: <code>a += b</code> .
-    *
-    * @param b the right operand
-    *
-    * @see Quaternion#add(Quaternion, Quaternion, Quaternion)
-    */
-   public void plusAssign ( final Quaternion b ) {
-
-      Quaternion.add(this, b, this);
-   }
-
-   /**
     * Resets this quaternion to an initial state, ( 1.0, 0.0, 0.0, 0.0 ) .
     *
     * @return this quaternion
@@ -454,64 +338,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    }
 
    /**
-    * Returns a new quaternion with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the quaternion in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the product
-    *
-    * @see Quaternion#mul(Quaternion, float, Quaternion)
-    */
-   public Quaternion times ( final float b ) {
-
-      return Quaternion.mul(this, b, new Quaternion());
-   }
-
-   /**
-    * Returns a new quaternion with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the quaternion in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the product
-    *
-    * @see Quaternion#mul(Quaternion, Quaternion, Quaternion)
-    */
-   public Quaternion times ( final Quaternion b ) {
-
-      return Quaternion.mul(this, b, new Quaternion());
-   }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the quaternion
-    * in place). For interoperability with Kotlin: <code>a *= b</code> .
-    *
-    * @param b the right operand
-    *
-    * @see Quaternion#mul(Quaternion, float, Quaternion)
-    */
-   public void timesAssign ( final float b ) {
-
-      Quaternion.mul(this, b, this);
-   }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the quaternion
-    * in place). For interoperability with Kotlin: <code>a *= b</code> .
-    *
-    * @param b the right operand
-    *
-    * @see Quaternion#mul(Quaternion, Quaternion, Quaternion)
-    */
-   public void timesAssign ( final Quaternion b ) {
-
-      Quaternion.mul(this, b, this);
-   }
-
-   /**
     * Returns a float array of length 4 containing this quaternion's
     * components. Defaults to returning w as the first element.
     *
@@ -537,11 +363,11 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * Puts the quaternion's components into an existing array at the index
     * provided. When the argument supplied is true, w is returned as the first
     * element, not the last.
-    * 
+    *
     * @param arr    the array
     * @param i      the index
     * @param wFirst issue w as the first element
-    * 
+    *
     * @return the array
     */
    public float[] toArray ( final float[] arr, final int i,
@@ -586,18 +412,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       sb.append(' ');
       sb.append('}');
       return sb.toString();
-   }
-
-   /**
-    * Returns a new quaternion with the positive copy of the instance. For
-    * interoperability with Kotlin: <code>+a</code> . <em>Does not mutate the
-    * quaternion in place</em>.
-    *
-    * @return the positive
-    */
-   public Quaternion unaryPlus ( ) {
-
-      return new Quaternion(+this.real, this.imag.unaryPlus());
    }
 
    /**
@@ -646,7 +460,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          if ( q.imag != null ) { return false; }
       } else if ( !this.imag.equals(q.imag) ) { return false; }
 
-      return Float.floatToIntBits(this.real) == Float.floatToIntBits(q.real);
+      return this.real == q.real;
    }
 
    /**
@@ -878,7 +692,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       float byInv = -by;
       float bzInv = -bz;
 
-      if ( !Utils.approx(bmSq, 1.0f) ) {
+      if ( bmSq != 1.0f ) {
          final float bmSqInv = 1.0f / bmSq;
          bwInv *= bmSqInv;
          bxInv *= bmSqInv;
@@ -1417,22 +1231,22 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       float any = origin.y;
       float anz = origin.z;
       final float amsq = anx * anx + any * any + anz * anz;
-      if ( amsq == 0.0f ) { return target.reset(); }
+      if ( amsq <= 0.0f ) { return target.reset(); }
 
       float bnx = dest.x;
       float bny = dest.y;
       float bnz = dest.z;
       final float bmsq = bnx * bnx + bny * bny + bnz * bnz;
-      if ( bmsq == 0.0f ) { return target.reset(); }
+      if ( bmsq <= 0.0f ) { return target.reset(); }
 
-      if ( !Utils.approx(amsq, 1.0f, IUtils.DEFAULT_EPSILON) ) {
+      if ( amsq != 1.0f ) {
          final float aminv = Utils.invSqrtUnchecked(amsq);
          anx *= aminv;
          any *= aminv;
          anz *= aminv;
       }
 
-      if ( !Utils.approx(bmsq, 1.0f, IUtils.DEFAULT_EPSILON) ) {
+      if ( bmsq != 1.0f ) {
          final float bminv = Utils.invSqrtUnchecked(bmsq);
          bnx *= bminv;
          bny *= bminv;
@@ -1444,6 +1258,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       i.x = any * bnz - anz * bny;
       i.y = anz * bnx - anx * bnz;
       i.z = anx * bny - any * bnx;
+
       return target;
    }
 

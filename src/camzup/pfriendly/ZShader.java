@@ -94,7 +94,7 @@ public class ZShader extends PShader {
     */
    public void set ( final String name, final Mat3 m ) {
 
-      this.setUniformImpl(name, ZShader.MAT3_IDX, m.toArray());
+      this.setUniformImpl(name, ZShader.MAT3_IDX, m.toArray1());
    }
 
    /**
@@ -105,7 +105,7 @@ public class ZShader extends PShader {
     */
    public void set ( final String name, final Mat4 m ) {
 
-      this.setUniformImpl(name, ZShader.MAT4_IDX, m.toArray());
+      this.setUniformImpl(name, ZShader.MAT4_IDX, m.toArray1());
    }
 
    /**

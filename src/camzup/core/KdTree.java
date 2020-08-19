@@ -3,8 +3,10 @@ package camzup.core;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.function.BiFunction;
 
 @Experimental
@@ -106,65 +108,43 @@ abstract class KdTree < T extends Comparable < T > > {
     * metric. The distance metric should return a single precision scalar
     * given two input elements.
     *
-    * @param query  the query
-    * @param count  number of elements
-    * @param metric the distance metric
+    * @param query      the query
+    * @param count      number of elements
+    * @param distMetric distance metric
     *
     * @return the list
     */
-   public abstract ArrayList < T > nearest ( final T query, final int count,
-      final BiFunction < T, T, Float > metric );
+   public ArrayList < T > nearest ( final T query, final int count,
+      final BiFunction < T, T, Float > distMetric ) {
 
-   // public ArrayList < T > nearest ( final T query, final int count,
-   // final BiFunction < T, T, Float > metric ) {
-   //
-   // final ArrayList < T > neighbors = new ArrayList <>(count);
-   // if ( query == null || this.root == null ) { return neighbors; }
-   //
-   // /* Wrap the distance metric in a node comparator. */
-   // final Comparator < Node < T > > cmp = metric == null ? null
-   // : new Comparator < >() {
-   //
-   // @Override
-   // public int compare ( final Node < T > a, final Node < T > b ) {
-   //
-   // final float aDist = metric.apply(query, a.data);
-   // final float bDist = metric.apply(query, b.data);
-   // return aDist < bDist ? -1 : aDist > bDist ? 1 : 0;
-   // }
-   //
-   // };
-   //
-   // /* Use the comparator as a basis for a tree set. */
-   // final TreeSet < Node < T > > tree = new TreeSet <>(cmp);
-   //
-   // Node < T > prev = null;
-   // Node < T > node = this.root;
-   // while ( node != null ) {
-   // final int depth = node.depth;
-   // final Comparator < T > axis = this.getAxis(depth);
-   // final int comparison = axis.compare(query, node.data);
-   // prev = node;
-   // node = comparison > 0 ? node.right : node.left;
-   // }
-   //
-   // final Node < T > leaf = prev;
-   // if ( leaf != null ) {
-   // final Set < Node < T > > examined = new HashSet <>();
-   // node = leaf;
-   // while ( node != null ) {
-   // // this.search(query, node, count, tree, examined, metric);
-   // node = node.parent;
-   // }
-   // }
-   //
-   // /* Flatten tree set to a list. */
-   // final Iterator < Node < T > > treeItr = tree.iterator();
-   // while ( treeItr.hasNext() ) {
-   // neighbors.add(treeItr.next().data);
-   // }
-   // return neighbors;
-   // }
+      final ArrayList < T > neighbors = new ArrayList <>(count);
+      if ( query == null || this.root == null ) { return neighbors; }
+
+      final NodeComparator cmp = new NodeComparator(query, distMetric);
+      final TreeSet < Node < T > > tree = new TreeSet <>(cmp);
+
+      Node < T > prev = null;
+      Node < T > node = this.root;
+      while ( node != null ) {
+         final int depth = node.depth;
+         final Comparator < T > axis = this.getAxis(depth);
+         final int comparison = axis.compare(query, node.data);
+         prev = node;
+         node = comparison > 0 ? node.right : node.left;
+      }
+      final Node < T > leaf = prev;
+
+      if ( leaf != null ) {
+         final HashSet < Node < T > > examined = new HashSet <>();
+         node = leaf;
+         while ( node != null ) {
+            this.search(query, node, count, tree, examined, distMetric);
+            node = node.parent;
+         }
+      }
+
+      return null;
+   }
 
    /**
     * Returns a string representation of this tree.
@@ -236,6 +216,45 @@ abstract class KdTree < T extends Comparable < T > > {
 
       return node;
    }
+
+   protected void search ( final T value, final Node < T > node, final int k,
+      final TreeSet < Node < T > > results, final HashSet < Node <
+         T > > examined, final BiFunction < T, T, Float > distMetric ) {
+
+      Node < T > lastNode = null;
+      Float lastDistance = Float.MAX_VALUE;
+      if ( results.size() > 0 ) {
+         lastNode = results.last();
+         lastDistance = distMetric.apply(value, lastNode.data);
+      }
+
+      final Float nodeDistance = distMetric.apply(value, node.data);
+      final int comparison = nodeDistance.compareTo(lastDistance);
+      if ( comparison < 0 ) {
+         if ( results.size() == k && lastNode != null ) {
+            results.remove(lastNode);
+         }
+         results.add(node);
+      } else if ( comparison == 0 ) {
+         results.add(node);
+      } else if ( results.size() < k ) { results.add(node); }
+
+      lastNode = results.last();
+      lastDistance = distMetric.apply(value, lastNode.data);
+
+      final Comparator < T > axis = this.getAxis(node.depth);
+      Node < T > lesser = node.left;
+      Node < T > greater = node.right;
+
+      if ( lesser != null && !examined.contains(lesser) ) {
+         examined.add(lesser);
+
+         float nodePoint = Float.MIN_VALUE;
+         float valuePlusDistance = Float.MIN_VALUE;
+
+      }
+   }
+
 
    /**
     * A node in the k dimensional Tree. Holds a piece of data.
@@ -345,6 +364,27 @@ abstract class KdTree < T extends Comparable < T > > {
        * @return the evaluation
        */
       boolean isRoot ( ) { return this.parent == null; }
+
+   }
+
+   public class NodeComparator implements Comparator < Node < T > > {
+      protected final BiFunction < T, T, Float > distMetric;
+      protected final T locus;
+
+      public NodeComparator ( final T locus, final BiFunction < T, T,
+         Float > distMetric ) {
+
+         this.locus = locus;
+         this.distMetric = distMetric;
+      }
+
+      @Override
+      public int compare ( final Node < T > a, final Node < T > b ) {
+
+         final float aEval = this.distMetric.apply(this.locus, a.data);
+         final float bEval = this.distMetric.apply(this.locus, b.data);
+         return aEval > bEval ? 1 : aEval < bEval ? -1 : 0;
+      }
 
    }
 

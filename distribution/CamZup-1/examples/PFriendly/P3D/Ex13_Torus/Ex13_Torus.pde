@@ -25,7 +25,7 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
-  rndr.textureSampling(TextureSampling.TRILINEAR);
+  rndr.textureSampling(TextureSampling.BILINEAR);
 
   txtr = loadImage("diagnostic.png");
   textured = new MaterialPImage(txtr);

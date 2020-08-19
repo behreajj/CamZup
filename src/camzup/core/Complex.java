@@ -103,77 +103,6 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new complex number decremented by one. For interoperability
-    * with Kotlin: <code>--a</code> (prefix) or <code>a--</code> (postfix).
-    * Per the specification, <em>does not mutate the complex number in
-    * place</em>.
-    *
-    * @return the decremented vector
-    */
-   public Complex dec ( ) {
-
-      return new Complex(this.real - 1.0f, this.imag - 1.0f);
-   }
-
-   /**
-    * Returns a new complex number with the division of the instance by the
-    * right operand. For interoperability with Kotlin: <code>a / b</code> .
-    * <em>Does not mutate the complex number in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the quotient
-    *
-    * @see Complex#div(Complex, Complex, Complex)
-    */
-   public Complex div ( final Complex b ) {
-
-      return Complex.div(this, b, new Complex());
-   }
-
-   /**
-    * Returns a new complex number with the division of the instance by the
-    * right operand. For interoperability with Kotlin: <code>a / b</code> .
-    * <em>Does not mutate the complex number in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the quotient
-    *
-    * @see Complex#div(Complex, float, Complex)
-    */
-   public Complex div ( final float b ) {
-
-      return Complex.div(this, b, new Complex());
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the complex number in
-    * place). For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param b the right operand
-    *
-    * @see Complex#div(Complex, Complex, Complex)
-    */
-   public void divAssign ( final Complex b ) {
-
-      Complex.div(this, b, this);
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the complex number in
-    * place). For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param b the right operand
-    *
-    * @see Complex#div(Complex, float, Complex)
-    */
-   public void divAssign ( final float b ) {
-
-      Complex.div(this, b, this);
-   }
-
-   /**
     * Tests this complex number for equivalence with another object.
     *
     * @param obj the object
@@ -230,19 +159,6 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new complex number incremented by one. For interoperability
-    * with Kotlin: <code>++a</code> (prefix) or <code>a++</code> (postfix).
-    * Per the specification, <em>does not mutate the complex number in
-    * place</em>.
-    *
-    * @return the incremented vector
-    */
-   public Complex inc ( ) {
-
-      return new Complex(this.real + 1.0f, this.imag + 1.0f);
-   }
-
-   /**
     * Returns an iterator for this complex number, which allows its components
     * to be accessed in an enhanced for-loop.
     *
@@ -257,110 +173,6 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     * @return the size
     */
    public int length ( ) { return 2; }
-
-   /**
-    * Returns a new complex number with the subtraction of the right operand
-    * from the instance. For interoperability with Kotlin: <code>a - b</code>
-    * . <em>Does not mutate the complex number in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the subtraction
-    */
-   public Complex minus ( final Complex b ) {
-
-      return new Complex(this.real - b.real, this.imag - b.imag);
-   }
-
-   /**
-    * Returns a new complex number with the subtraction of the right operand
-    * from the instance. For interoperability with Kotlin: <code>a - b</code>
-    * . <em>Does not mutate the complex number in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the subtraction
-    */
-   public Complex minus ( final float b ) {
-
-      return new Complex(this.real - b, this.imag);
-   }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the complex
-    * number in place). For interoperability with Kotlin: <code>a -= b</code>
-    * .
-    *
-    * @param b the right operand
-    */
-   public void minusAssign ( final Complex b ) {
-
-      this.real -= b.real;
-      this.imag -= b.imag;
-   }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the complex
-    * number in place). For interoperability with Kotlin: <code>a -= b</code>
-    * .
-    *
-    * @param b the right operand
-    */
-   public void minusAssign ( final float b ) {
-
-      this.real -= b;
-   }
-
-   /**
-    * Returns a new complex number with the addition of the right operand to
-    * the instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the complex number in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the sum
-    */
-   public Complex plus ( final Complex b ) {
-
-      return new Complex(this.real + b.real, this.imag + b.imag);
-   }
-
-   /**
-    * Returns a new complex number with the addition of the right operand to
-    * the instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the complex number in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the sum
-    */
-   public Complex plus ( final float b ) {
-
-      return new Complex(this.real + b, this.imag);
-   }
-
-   /**
-    * Adds the right operand to the instance (mutates the complex number in
-    * place). For interoperability with Kotlin: <code>a += b</code> .
-    *
-    * @param b the right operand
-    */
-   public void plusAssign ( final Complex b ) {
-
-      this.real += b.real;
-      this.imag += b.imag;
-   }
-
-   /**
-    * Adds the right operand to the instance (mutates the complex number in
-    * place). For interoperability with Kotlin: <code>a += b</code> .
-    *
-    * @param b the right operand
-    */
-   public void plusAssign ( final float b ) {
-
-      this.real += b;
-   }
 
    /**
     * Resets this complex number to an initial state ( 0.0, 0.0 ) .
@@ -438,69 +250,6 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new complex number with the product of the instance and the
-    * right operand. For interoperability with Kotlin: <code>a * b</code> .
-    * <em>Does not mutate the complex number in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the product
-    *
-    * @see Complex#mul(Complex, Complex, Complex)
-    */
-   public Complex times ( final Complex b ) {
-
-      return new Complex(this.real * b.real - this.imag * b.imag, this.real
-         * b.imag + this.imag * b.real);
-   }
-
-   /**
-    * Returns a new complex number with the product of the instance and the
-    * right operand. For interoperability with Kotlin: <code>a * b</code> .
-    * <em>Does not mutate the complex number in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the product
-    *
-    * @see Complex#mul(Complex, float, Complex)
-    */
-   public Complex times ( final float b ) {
-
-      return new Complex(this.real * b, this.imag * b);
-   }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the complex
-    * number in place). For interoperability with Kotlin: <code>a *= b</code>
-    * .
-    *
-    * @param b the right operand
-    *
-    * @see Complex#mul(Complex, Complex, Complex)
-    */
-   public void timesAssign ( final Complex b ) {
-
-      this.set(this.real * b.real - this.imag * b.imag, this.real * b.imag
-         + this.imag * b.real);
-   }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the complex
-    * number in place). For interoperability with Kotlin: <code>a *= b</code>
-    * .
-    *
-    * @param b the right operand
-    *
-    * @see Complex#mul(Complex, float, Complex)
-    */
-   public void timesAssign ( final float b ) {
-
-      this.real *= b;
-      this.imag *= b;
-   }
-
-   /**
     * Returns a float array of length 2 containing this complex number's
     * components.
     *
@@ -555,18 +304,6 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new complex number with the positive copy of the instance. For
-    * interoperability with Kotlin: <code>+a</code> . <em>Does not mutate the
-    * complex number in place</em>.
-    *
-    * @return the positive
-    */
-   public Complex unaryPlus ( ) {
-
-      return new Complex(+this.real, +this.imag);
-   }
-
-   /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes.
     *
@@ -600,8 +337,8 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     */
    protected boolean equals ( final Complex z ) {
 
-      return Float.floatToIntBits(this.imag) == Float.floatToIntBits(z.imag)
-         && Float.floatToIntBits(this.real) == Float.floatToIntBits(z.real);
+      /* With {@link Float.floatToIntBits(float)}, -0.0f != 0.0f. */
+      return this.imag == z.imag && this.real == z.real;
    }
 
    /**

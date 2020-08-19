@@ -177,72 +177,6 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
-    * Returns a new matrix with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the matrix in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the quotient
-    *
-    * @see Mat3#mul(Mat3, float, Mat3)
-    * @see Mat3#inverse(Mat3, Mat3)
-    */
-   public Mat3 div ( final float b ) {
-
-      if ( b != 0.0f ) { return Mat3.mul(this, 1.0f / b, new Mat3()); }
-      return new Mat3();
-   }
-
-   /**
-    * Returns a new matrix with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the matrix in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the quotient
-    *
-    * @see Mat3#mul(Mat3, Mat3, Mat3)
-    * @see Mat3#inverse(Mat3, Mat3)
-    */
-   public Mat3 div ( final Mat3 b ) {
-
-      return Mat3.mul(this, Mat3.inverse(b, new Mat3()), new Mat3());
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the matrix in place).
-    * For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param b the right operand
-    *
-    * @see Mat3#mul(Mat3, float, Mat3)
-    */
-   public void divAssign ( final float b ) {
-
-      if ( b != 0.0f ) {
-         Mat3.mul(this, 1.0f / b, this);
-      } else {
-         Mat3.identity(this);
-      }
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the matrix in place).
-    * For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param b the right operand
-    *
-    * @see Mat3#mul(Mat3, Mat3, Mat3)
-    * @see Mat3#inverse(Mat3, Mat3)
-    */
-   public void divAssign ( final Mat3 b ) {
-
-      Mat3.mul(this, Mat3.inverse(b, new Mat3()), this);
-   }
-
-   /**
     * Tests this matrix for equivalence with another object.
     *
     * @param obj the object
@@ -272,6 +206,7 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
     */
    public Vec3 get ( final int j ) {
 
+      // TODO: Move to KtMat3
       return this.getCol(j, new Vec3());
    }
 
@@ -424,59 +359,6 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    public int length ( ) { return 9; }
 
    /**
-    * Returns a new matrix with the subtraction of the right operand from the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
-    * <em>Does not mutate the matrix in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the subtraction
-    */
-   public Mat3 minus ( final Mat3 b ) {
-
-      return Mat3.sub(this, b, new Mat3());
-   }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the matrix in
-    * place). For interoperability with Kotlin: <code>a -= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void minusAssign ( final Mat3 b ) { Mat3.sub(this, b, this); }
-
-   /**
-    * Returns a new matrix with the boolean opposite of the instance. For
-    * interoperability with Kotlin: <code>!a</code> . <em>Does not mutate the
-    * matrix in place</em>.
-    *
-    * @return the opposite matrix
-    */
-   public Mat3 not ( ) { return Mat3.not(this, new Mat3()); }
-
-   /**
-    * Returns a new matrix with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the matrix in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the sum
-    */
-   public Mat3 plus ( final Mat3 b ) {
-
-      return Mat3.add(this, b, new Mat3());
-   }
-
-   /**
-    * Adds the right operand to the instance (mutates the matrix in place).
-    * For interoperability with Kotlin: <code>a += b</code> .
-    *
-    * @param b the right operand
-    */
-   public void plusAssign ( final Mat3 b ) { Mat3.add(this, b, this); }
-
-   /**
     * Resets this matrix to an initial state,
     *
     * <pre>
@@ -587,9 +469,8 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
       this.m00 = m00; this.m10 = m10; this.m20 = m20;
       this.m01 = m01; this.m11 = m11; this.m21 = m21;
       this.m02 = m02; this.m12 = m12; this.m22 = m22;
-      /* @formatter:on */
-
       return this;
+      /* @formatter:on */
    }
 
    /**
@@ -724,63 +605,6 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
-    * Returns a new matrix with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the matrix in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the product
-    */
-   public Mat3 times ( final float b ) {
-
-      return Mat3.mul(this, b, new Mat3());
-   }
-
-   /**
-    * Returns a new matrix with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the matrix in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the product
-    */
-   public Mat3 times ( final Mat3 b ) {
-
-      return Mat3.mul(this, b, new Mat3());
-   }
-
-   /**
-    * Multiplies this matrix and a vector. For interoperability with Kotlin:
-    * <code>a * b</code> .
-    *
-    * @param b the vector
-    *
-    * @return the product
-    */
-   public Vec3 times ( final Vec3 b ) {
-
-      return Mat3.mul(this, b, new Vec3());
-   }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the matrix in
-    * place). For interoperability with Kotlin: <code>a *= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void timesAssign ( final float b ) { Mat3.mul(this, b, this); }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the matrix in
-    * place). For interoperability with Kotlin: <code>a *= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void timesAssign ( final Mat3 b ) { Mat3.mul(this, b, this); }
-
-   /**
     * Returns a float array containing this matrix's components.
     *
     * @return the array
@@ -899,24 +723,6 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    }
 
    /**
-    * Returns a new matrix with the negation of the instance. For
-    * interoperability with Kotlin: <code>-a</code> . <em>Does not mutate the
-    * matrix in place</em>.
-    *
-    * @return the negation
-    */
-   public Mat3 unaryMinus ( ) { return Mat3.negate(this, new Mat3()); }
-
-   /**
-    * Returns a new matrix with the positive copy of the instance. For
-    * interoperability with Kotlin: <code>+a</code> . <em>Does not mutate the
-    * matrix in place</em>.
-    *
-    * @return the positive
-    */
-   public Mat3 unaryPlus ( ) { return new Mat3(this); }
-
-   /**
     * Tests for equivalence between this and another matrix.
     *
     * @param n the matrix
@@ -927,37 +733,10 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
     */
    protected boolean equals ( final Mat3 n ) {
 
-      if ( Float.floatToIntBits(this.m00) != Float.floatToIntBits(n.m00) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m01) != Float.floatToIntBits(n.m01) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m02) != Float.floatToIntBits(n.m02) ) {
-         return false;
-      }
-
-      if ( Float.floatToIntBits(this.m10) != Float.floatToIntBits(n.m10) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m11) != Float.floatToIntBits(n.m11) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m12) != Float.floatToIntBits(n.m12) ) {
-         return false;
-      }
-
-      if ( Float.floatToIntBits(this.m20) != Float.floatToIntBits(n.m20) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m21) != Float.floatToIntBits(n.m21) ) {
-         return false;
-      }
-      if ( Float.floatToIntBits(this.m22) != Float.floatToIntBits(n.m22) ) {
-         return false;
-      }
-
-      return true;
+      /* With {@link Float.floatToIntBits(float)}, -0.0f != 0.0f. */
+      return this.m00 == n.m00 && this.m01 == n.m01 && this.m02 == n.m02
+         && this.m10 == n.m10 && this.m11 == n.m11 && this.m12 == n.m12
+         && this.m20 == n.m20 && this.m21 == n.m21 && this.m22 == n.m22;
    }
 
    /**
@@ -1484,7 +1263,7 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
 
    /**
     * Multiplies a matrix and a point. The z component of the point is assumed
-    * to be 1.0 , so the point is impacted by the matrix's translation.
+    * to be 1.0, so the point is impacted by the matrix's translation.
     *
     * @param a      the matrix
     * @param b      the point

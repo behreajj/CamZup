@@ -69,10 +69,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @param c the source color
     */
-   public Color ( final Color c ) {
-
-      this.set(c);
-   }
+   public Color ( final Color c ) { this.set(c); }
 
    /**
     * Creates a color out of red, green and blue channels. The alpha channel
@@ -153,6 +150,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param c the comparisand
     *
     * @return the numeric code
+    *
+    * @see Color#toHexInt(Color)
     */
    @Override
    public int compareTo ( final Color c ) {
@@ -171,79 +170,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     */
    public boolean contains ( final float v ) {
 
-      if ( Utils.approx(this.a, v) ) { return true; }
-      if ( Utils.approx(this.b, v) ) { return true; }
-      if ( Utils.approx(this.g, v) ) { return true; }
-      if ( Utils.approx(this.r, v) ) { return true; }
-      return false;
+      return Utils.approx(this.a, v) || Utils.approx(this.b, v) || Utils.approx(
+         this.g, v) || Utils.approx(this.r, v);
    }
-
-   /**
-    * Returns a new color decremented by {@link IUtils#ONE_255},
-    * {@value IUtils#ONE_255}. For interoperability with Kotlin:
-    * <code>--a</code> (prefix) or <code>a--</code> (postfix). Per the
-    * specification, <em>does not mutate the color in place</em>.
-    *
-    * @return the decremented vector
-    *
-    * @see Color#sub(Color, float, Color)
-    */
-   public Color dec ( ) {
-
-      return Color.sub(this, IUtils.ONE_255, new Color());
-   }
-
-   /**
-    * Returns a new color with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the color in place</em>.
-    *
-    * @param c the right operand
-    *
-    * @return the quotient
-    *
-    * @see Color#div(Color, Color, Color)
-    */
-   public Color div ( final Color c ) {
-
-      return Color.div(this, c, new Color());
-   }
-
-   /**
-    * Returns a new color with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the color in place</em>.
-    *
-    * @param c the right operand
-    *
-    * @return the quotient
-    *
-    * @see Color#div(Color, float, Color)
-    */
-   public Color div ( final float c ) {
-
-      return Color.div(this, c, new Color());
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the color in place).
-    * For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param c the right operand
-    *
-    * @see Color#div(Color, Color, Color)
-    */
-   public void divAssign ( final Color c ) { Color.div(this, c, this); }
-
-   /**
-    * Divides the instance by the right operand (mutates the color in place).
-    * For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param c the right operand
-    *
-    * @see Color#div(Color, float, Color)
-    */
-   public void divAssign ( final float c ) { Color.div(this, c, this); }
 
    /**
     * Tests this color for equivalence to another based on its hexadecimal
@@ -355,26 +284,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * Returns a hash code for this color based on its hexadecimal value.
     *
     * @return the hash code
-    *
-    * @see Float#floatToIntBits(float)
     */
    @Override
    public int hashCode ( ) { return Color.toHexInt(this); }
-
-   /**
-    * Returns a new color incremented by {@link IUtils#ONE_255},
-    * {@value IUtils#ONE_255}. For interoperability with Kotlin:
-    * <code>++a</code> (prefix) or <code>a++</code> (postfix). Per the
-    * specification, <em>does not mutate the color in place</em>.
-    *
-    * @return the incremented color
-    *
-    * @see Color#add(Color, float, Color)
-    */
-   public Color inc ( ) {
-
-      return Color.add(this, IUtils.ONE_255, new Color());
-   }
 
    /**
     * Returns an iterator for this color, which allows its components to be
@@ -391,170 +303,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @return the length
     */
    public int length ( ) { return 4; }
-
-   /**
-    * Returns a new color with the subtraction of the right operand from the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
-    * <em>Does not mutate the color in place</em>.
-    *
-    * @param c the right operand
-    *
-    * @return the subtraction
-    *
-    * @see Color#sub(Color, Color, Color)
-    */
-   public Color minus ( final Color c ) {
-
-      return Color.sub(this, c, new Color());
-   }
-
-   /**
-    * Returns a new color with the subtraction of the right operand from the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
-    * <em>Does not mutate the color in place</em>.
-    *
-    * @param c the right operand
-    *
-    * @return the subtraction
-    *
-    * @see Color#sub(Color, Color, Color)
-    */
-   public Color minus ( final float c ) {
-
-      return Color.sub(this, c, new Color());
-   }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the vector in
-    * place). For interoperability with Kotlin: <code>a -= b</code> .
-    *
-    * @param c the right operand
-    *
-    * @see Color#sub(Color, Color, Color)
-    */
-   public void minusAssign ( final Color c ) { Color.sub(this, c, this); }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the vector in
-    * place). For interoperability with Kotlin: <code>a -= b</code> .
-    *
-    * @param c the right operand
-    *
-    * @see Color#sub(Color, float, Color)
-    */
-   public void minusAssign ( final float c ) { Color.sub(this, c, this); }
-
-   /**
-    * Returns a new color with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the color in place</em>.
-    *
-    * @param c the right operand
-    *
-    * @return the subtraction
-    *
-    * @see Color#add(Color, Color, Color)
-    */
-   public Color plus ( final Color c ) {
-
-      return Color.add(this, c, new Color());
-   }
-
-   /**
-    * Returns a new color with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the color in place</em>.
-    *
-    * @param c the right operand
-    *
-    * @return the subtraction
-    *
-    * @see Color#add(Color, float, Color)
-    */
-   public Color plus ( final float c ) {
-
-      return Color.add(this, c, new Color());
-   }
-
-   /**
-    * Adds the right operand to the instance (mutates the vector in place).
-    * For interoperability with Kotlin: <code>a += b</code> .
-    *
-    * @param c the right operand
-    *
-    * @see Color#add(Color, Color, Color)
-    */
-   public void plusAssign ( final Color c ) { Color.add(this, c, this); }
-
-   /**
-    * Adds the right operand to the instance (mutates the vector in place).
-    * For interoperability with Kotlin: <code>a += b</code> .
-    *
-    * @param c the right operand
-    *
-    * @see Color#add(Color, float, Color)
-    */
-   public void plusAssign ( final float c ) { Color.add(this, c, this); }
-
-   /**
-    * Returns a new color with the unsigned remainder (<code>mod</code>) of
-    * the instance and the right operand. For interoperability with Kotlin:
-    * <code>a % b</code> . <em>Does not mutate the color in place</em>.
-    *
-    * @param right the right operand
-    *
-    * @return the signed remainder
-    *
-    * @see Color#mod(Color, Color, Color)
-    */
-   public Color rem ( final Color right ) {
-
-      return Color.mod(this, right, new Color());
-   }
-
-   /**
-    * Returns a new color with the unsigned remainder (<code>mod</code>) of
-    * the instance and the right operand. For interoperability with Kotlin:
-    * <code>a % b</code> . <em>Does not mutate the color in place</em>.
-    *
-    * @param right the right operand
-    *
-    * @return the signed remainder
-    *
-    * @see Color#mod(Color, float, Color)
-    */
-   public Color rem ( final float right ) {
-
-      return Color.mod(this, right, new Color());
-   }
-
-   /**
-    * Assigns the unsigned remainder (<code>mod</code>) of the instance and
-    * the right operand to the instance (mutates the vector in place). For
-    * interoperability with Kotlin: <code>a %= b</code> .
-    *
-    * @param right the right operand
-    *
-    * @see Color#mod(Color, Color, Color)
-    */
-   public void remAssign ( final Color right ) {
-
-      Color.mod(this, right, this);
-   }
-
-   /**
-    * Assigns the unsigned remainder (<code>mod</code>) of the instance and
-    * the right operand to the instance (mutates the vector in place). For
-    * interoperability with Kotlin: <code>a %= b</code> .
-    *
-    * @param right the right operand
-    *
-    * @see Color#mod(Color, Color, Color)
-    */
-   public void remAssign ( final float right ) {
-
-      Color.mod(this, right, this);
-   }
 
    /**
     * Resets this color to the color white.
@@ -658,8 +406,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param bstr the blue string
     *
     * @return this color
-    *
-    * @see Float#parseFloat(String)
     */
    public Color set ( final String rstr, final String gstr,
       final String bstr ) {
@@ -722,58 +468,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new color with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the color in place</em>.
-    *
-    * @param c the right operand
-    *
-    * @return the product
-    *
-    * @see Color#mul(Color, Color, Color)
-    */
-   public Color times ( final Color c ) {
-
-      return Color.mul(this, c, new Color());
-   }
-
-   /**
-    * Returns a new color with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the color in place</em>.
-    *
-    * @param c the right operand
-    *
-    * @return the product
-    *
-    * @see Color#mul(Color, Color, Color)
-    */
-   public Color times ( final float c ) {
-
-      return Color.mul(this, c, new Color());
-   }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the color in
-    * place). For interoperability with Kotlin: <code>a *= b</code> .
-    *
-    * @param c the right operand
-    *
-    * @see Color#mul(Color, float, Color)
-    */
-   public void timesAssign ( final Color c ) { Color.mul(this, c, this); }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the color in
-    * place). For interoperability with Kotlin: <code>a *= b</code> .
-    *
-    * @param c the right operand
-    *
-    * @see Color#mul(Color, Color, Color)
-    */
-   public void timesAssign ( final float c ) { Color.mul(this, c, this); }
-
-   /**
     * Returns a float array of length 4 containing this color's components.
     * Defaults to {@link Color.ChannelOrder#ARGB}.
     *
@@ -815,6 +509,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
             break;
 
          case ARGB:
+
             arr[i] = ab;
             arr[i + 1] = rb;
             arr[i + 2] = gb;
@@ -874,6 +569,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
             break;
 
          case ARGB:
+
             arr[i] = this.a;
             arr[i + 1] = this.r;
             arr[i + 2] = this.g;
@@ -927,18 +623,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new color with the positive copy of the instance. For
-    * interoperability with Kotlin: <code>+a</code> . <em>Does not mutate the
-    * color in place</em>.
-    *
-    * @return the positive
-    */
-   public Color unaryPlus ( ) {
-
-      return new Color(+this.r, +this.g, +this.b, +this.a);
-   }
-
-   /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how curve geometry looks in Blender (the control) versus in the
@@ -953,6 +637,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param inclAlpha include the alpha channel
     *
     * @return the string
+    *
+    * @see Utils#pow(float, float)
     */
    String toBlenderCode ( final float gamma, final boolean inclAlpha ) {
 
@@ -1030,24 +716,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Adds the left and right operand, except for the alpha channel, then
-    * clamps the sum to [0.0, 1.0] . The left operand's alpha channel is
-    * retained. For that reason, color addition is <em>not</em> commutative.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target output color
-    *
-    * @return the sum
-    */
-   public static Color add ( final Color a, final Color b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(a.r + b.r), Utils.clamp01(a.g + b.g),
-         Utils.clamp01(a.b + b.b), Utils.clamp01(a.a));
-   }
-
-   /**
     * Tests to see if all color channels are greater than zero.
     *
     * @param c the color
@@ -1078,26 +746,23 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output color
     *
     * @return the result
-    *
-    * @see Color#fromHex(int, Color)
-    * @see Color#toHexInt(Color)
     */
    public static Color bitAnd ( final Color a, final Color b,
       final Color target ) {
 
       // return Color.fromHex(Color.toHexInt(a) & Color.toHexInt(b), target);
 
-      final int cr = ( int ) ( a.r * 0xff + 0.5f ) & ( int ) ( b.r * 0xff
-         + 0.5f );
-      final int cg = ( int ) ( a.g * 0xff + 0.5f ) & ( int ) ( b.g * 0xff
-         + 0.5f );
-      final int cb = ( int ) ( a.b * 0xff + 0.5f ) & ( int ) ( b.b * 0xff
-         + 0.5f );
-      final int ca = ( int ) ( a.a * 0xff + 0.5f ) & ( int ) ( b.a * 0xff
-         + 0.5f );
-
-      return target.set(cr * IUtils.ONE_255, cg * IUtils.ONE_255, cb
-         * IUtils.ONE_255, ca * IUtils.ONE_255);
+      /* @formatter:off */
+      return target.set(
+         ( ( int ) ( a.r * 0xff + 0.5f ) &
+           ( int ) ( b.r * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.g * 0xff + 0.5f ) &
+           ( int ) ( b.g * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.b * 0xff + 0.5f ) &
+           ( int ) ( b.b * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.a * 0xff + 0.5f ) &
+           ( int ) ( b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
+      /* @formatter:on */
    }
 
    /**
@@ -1108,21 +773,18 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output color
     *
     * @return the negation
-    *
-    * @see Color#fromHex(int, Color)
-    * @see Color#toHexInt(Color)
     */
    public static Color bitNot ( final Color a, final Color target ) {
 
       // return Color.fromHex(~Color.toHexInt(a), target);
 
-      final int cr = ~( int ) ( a.r * 0xff + 0.5f ) & 0xff;
-      final int cg = ~( int ) ( a.g * 0xff + 0.5f ) & 0xff;
-      final int cb = ~( int ) ( a.b * 0xff + 0.5f ) & 0xff;
-      final int ca = ~( int ) ( a.a * 0xff + 0.5f ) & 0xff;
-
-      return target.set(cr * IUtils.ONE_255, cg * IUtils.ONE_255, cb
-         * IUtils.ONE_255, ca * IUtils.ONE_255);
+      /* @formatter:off */
+      return target.set(
+         ( ~( int ) ( a.r * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255,
+         ( ~( int ) ( a.g * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255,
+         ( ~( int ) ( a.b * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255,
+         ( ~( int ) ( a.a * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255);
+      /* @formatter:on */
    }
 
    /**
@@ -1134,26 +796,23 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output color
     *
     * @return the color
-    *
-    * @see Color#fromHex(int, Color)
-    * @see Color#toHexInt(Color)
     */
    public static Color bitOr ( final Color a, final Color b,
       final Color target ) {
 
       // return Color.fromHex(Color.toHexInt(a) | Color.toHexInt(b), target);
 
-      final int cr = ( int ) ( a.r * 0xff + 0.5f ) | ( int ) ( b.r * 0xff
-         + 0.5f );
-      final int cg = ( int ) ( a.g * 0xff + 0.5f ) | ( int ) ( b.g * 0xff
-         + 0.5f );
-      final int cb = ( int ) ( a.b * 0xff + 0.5f ) | ( int ) ( b.b * 0xff
-         + 0.5f );
-      final int ca = ( int ) ( a.a * 0xff + 0.5f ) | ( int ) ( b.a * 0xff
-         + 0.5f );
-
-      return target.set(cr * IUtils.ONE_255, cg * IUtils.ONE_255, cb
-         * IUtils.ONE_255, ca * IUtils.ONE_255);
+      /* @formatter:off */
+      return target.set(
+         ( ( int ) ( a.r * 0xff + 0.5f ) |
+           ( int ) ( b.r * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.g * 0xff + 0.5f ) |
+           ( int ) ( b.g * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.b * 0xff + 0.5f ) |
+           ( int ) ( b.b * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.a * 0xff + 0.5f ) |
+           ( int ) ( b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
+      /* @formatter:on */
    }
 
    /**
@@ -1166,6 +825,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output color
     *
     * @return the rotated color
+    *
+    * @see Color#fromHex(int, Color)
+    * @see Color#toHexInt(Color)
     */
    public static Color bitRotateLeft ( final Color a, final int places,
       final Color target ) {
@@ -1184,6 +846,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output color
     *
     * @return the rotated color
+    *
+    * @see Color#fromHex(int, Color)
+    * @see Color#toHexInt(Color)
     */
    public static Color bitRotateRight ( final Color a, final int places,
       final Color target ) {
@@ -1261,26 +926,23 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output color
     *
     * @return the color
-    *
-    * @see Color#fromHex(int, Color)
-    * @see Color#toHexInt(Color)
     */
    public static Color bitXor ( final Color a, final Color b,
       final Color target ) {
 
       // return Color.fromHex(Color.toHexInt(a) ^ Color.toHexInt(b), target);
 
-      final int cr = ( int ) ( a.r * 0xff + 0.5f ) ^ ( int ) ( b.r * 0xff
-         + 0.5f );
-      final int cg = ( int ) ( a.g * 0xff + 0.5f ) ^ ( int ) ( b.g * 0xff
-         + 0.5f );
-      final int cb = ( int ) ( a.b * 0xff + 0.5f ) ^ ( int ) ( b.b * 0xff
-         + 0.5f );
-      final int ca = ( int ) ( a.a * 0xff + 0.5f ) ^ ( int ) ( b.a * 0xff
-         + 0.5f );
-
-      return target.set(cr * IUtils.ONE_255, cg * IUtils.ONE_255, cb
-         * IUtils.ONE_255, ca * IUtils.ONE_255);
+      /* @formatter:off */
+      return target.set(
+         ( ( int ) ( a.r * 0xff + 0.5f ) ^
+           ( int ) ( b.r * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.g * 0xff + 0.5f ) ^
+           ( int ) ( b.g * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.b * 0xff + 0.5f ) ^
+           ( int ) ( b.b * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.a * 0xff + 0.5f ) ^
+           ( int ) ( b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
+      /* @formatter:on */
    }
 
    /**
@@ -1328,8 +990,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Ensures that the values of the color are clamped to the range [0.0,
-    * 1.0].
+    * Ensures that the values of the color are clamped to the range [0.0, 1.0]
+    * .
     *
     * @param a      the color
     * @param target the output color
@@ -1381,65 +1043,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Divides the left operand by the right, except for the alpha channel,
-    * then clamps the product to [0.0, 1.0] . The left operand's alpha channel
-    * is retained.
-    *
-    * @param a      left operand, numerator
-    * @param b      right operand, denominator
-    * @param target output color
-    *
-    * @return the quotient
-    */
-   public static Color div ( final Color a, final Color b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(Utils.div(a.r, b.r)), Utils.clamp01(Utils
-         .div(a.g, b.g)), Utils.clamp01(Utils.div(a.b, b.b)), Utils.clamp01(
-            a.a));
-   }
-
-   /**
-    * Divides the left operand by the right, except for the alpha channel,
-    * then clamps the product to [0.0, 1.0] . The left operand's alpha channel
-    * is retained.
-    *
-    * @param a      left operand, numerator
-    * @param b      right operand, denominator
-    * @param target output color
-    *
-    * @return the quotient
-    */
-   public static Color div ( final Color a, final float b,
-      final Color target ) {
-
-      if ( b != 0.0f ) {
-         final float bInv = 1.0f / b;
-         return target.set(Utils.clamp01(a.r * bInv), Utils.clamp01(a.g * bInv),
-            Utils.clamp01(a.b * bInv), Utils.clamp01(a.a));
-      }
-      return target.set(0.0f, 0.0f, 0.0f, Utils.clamp01(a.a));
-   }
-
-   /**
-    * Divides the left operand by the right, except for the alpha channel,
-    * then clamps the product to [0.0, 1.0] . The left operand is also
-    * supplied to the alpha channel.
-    *
-    * @param a      left operand, numerator
-    * @param b      right operand, denominator
-    * @param target output color
-    *
-    * @return the quotient
-    */
-   public static Color div ( final float a, final Color b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(Utils.div(a, b.r)), Utils.clamp01(Utils
-         .div(a, b.g)), Utils.clamp01(Utils.div(a, b.b)), Utils.clamp01(a));
-   }
-
-   /**
     * Converts a direction to a color. Normalizes the direction, multiplies it
     * by 0.5, then adds 0.5 .
     *
@@ -1447,6 +1050,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output color
     *
     * @return the color
+    *
+    * @see Vec2#magSq(Vec2)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Color fromDir ( final Vec2 v, final Color target ) {
 
@@ -1466,6 +1072,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output color
     *
     * @return the color
+    *
+    * @see Vec3#magSq(Vec3)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Color fromDir ( final Vec3 v, final Color target ) {
 
@@ -1486,6 +1095,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output color
     *
     * @return the color
+    *
+    * @see Vec4#magSq(Vec4)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Color fromDir ( final Vec4 v, final Color target ) {
 
@@ -1506,8 +1118,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output color
     *
     * @return the color
-    *
-    * @see IUtils#ONE_255
     */
    public static Color fromHex ( final int c, final Color target ) {
 
@@ -1664,67 +1274,66 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
 
       final int hsh = keyword.toLowerCase().trim().hashCode();
       switch ( hsh ) {
+         case -1081301904:
+            /* "maroon" */
+            return target.set(0.5f, 0.0f, 0.0f, 1.0f);
 
-         case 3002044:
-         case 3068707:
-            /* "aqua" or "cyan" */
-            return Color.cyan(target);
+         case -976943172:
+            /* "purple" */
+            return target.set(0.5f, 0.0f, 0.5f, 1.0f);
 
-         case 93818879:
-            return Color.black(target);
+         case -902311155:
+            /* "silver" */
+            return target.set(0.75f, 0.75f, 0.75f, 1.0f);
 
-         case 3027034:
-            return Color.blue(target);
+         case -734239628:
+            return Color.yellow(target);
 
          case -519653673:
          case 828922025:
             /* "fuchsia" or "magenta" */
             return Color.magenta(target);
 
+         case 112785:
+            return Color.red(target);
+
+         case 3002044:
+         case 3068707:
+            /* "aqua" or "cyan" */
+            return Color.cyan(target);
+
+         case 3027034:
+            return Color.blue(target);
+
          case 3181155:
             /* "gray" */
             return target.set(0.5f, 0.5f, 0.5f, 1.0f);
-
-         case 98619139:
-            /* "green" */
-            return target.set(0.0f, 0.5f, 0.0f, 1.0f);
 
          case 3321813:
             /* "lime" */
             return Color.green(target);
 
-         case -1081301904:
-            /* "maroon" */
-            return target.set(0.5f, 0.0f, 0.0f, 1.0f);
-
          case 3374006:
             /* "navy" */
             return target.set(0.0f, 0.0f, 0.5f, 1.0f);
-
-         case 105832923:
-            /* "olive" */
-            return target.set(0.5f, 0.5f, 0.0f, 1.0f);
-
-         case -976943172:
-            /* "purple" */
-            return target.set(0.5f, 0.0f, 0.5f, 1.0f);
-
-         case 112785:
-            return Color.red(target);
-
-         case -902311155:
-            /* "silver" */
-            return target.set(0.75f, 0.75f, 0.75f, 1.0f);
 
          case 3555932:
             /* "teal" */
             return target.set(0.0f, 0.5f, 0.5f, 1.0f);
 
+         case 93818879:
+            return Color.black(target);
+
+         case 98619139:
+            /* "green" */
+            return target.set(0.0f, 0.5f, 0.0f, 1.0f);
+
+         case 105832923:
+            /* "olive" */
+            return target.set(0.5f, 0.5f, 0.0f, 1.0f);
+
          case 113101865:
             return Color.white(target);
-
-         case -734239628:
-            return Color.yellow(target);
 
          default:
             return target.reset();
@@ -1818,6 +1427,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output color
     *
     * @return the inverse
+    *
+    * @see Utils#max(float, float)
     */
    public static Color inverse ( final Color c, final Color target ) {
 
@@ -1944,115 +1555,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Wraps the left operand to the range of the right, then clamps the result
-    * to [0.0, 1.0] . The left operand's alpha channel is retained.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target output color
-    *
-    * @return the wrapped color
-    */
-   public static Color mod ( final Color a, final Color b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(Utils.mod(a.r, b.r)), Utils.clamp01(Utils
-         .mod(a.g, b.g)), Utils.clamp01(Utils.mod(a.b, b.b)), Utils.clamp01(
-            a.a));
-   }
-
-   /**
-    * Wraps the left operand to the range of the right, then clamps the result
-    * to [0.0, 1.0] . The left operand's alpha channel is retained.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target output color
-    *
-    * @return the wrapped color
-    */
-   public static Color mod ( final Color a, final float b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(Utils.mod(a.r, b)), Utils.clamp01(Utils
-         .mod(a.g, b)), Utils.clamp01(Utils.mod(a.b, b)), Utils.clamp01(a.a));
-   }
-
-   /**
-    * Wraps the left operand to the range of the right, then clamps the result
-    * to [0.0, 1.0] . The left operand's alpha channel is retained.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target output color
-    *
-    * @return the wrapped color
-    */
-   public static Color mod ( final float a, final Color b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(Utils.mod(a, b.r)), Utils.clamp01(Utils
-         .mod(a, b.g)), Utils.clamp01(Utils.mod(a, b.b)), Utils.clamp01(a));
-   }
-
-   /**
-    * Multiplies the left and right operand, except for the alpha channel,
-    * then clamps the product to [0.0, 1.0] . The left operand's alpha channel
-    * is retained. For that reason, color multiplication is <em>not</em>
-    * commutative.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target output color
-    *
-    * @return the product
-    */
-   public static Color mul ( final Color a, final Color b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(a.r * b.r), Utils.clamp01(a.g * b.g),
-         Utils.clamp01(a.b * b.b), Utils.clamp01(a.a));
-   }
-
-   /**
-    * Multiplies the left and right operand, except for the alpha channel,
-    * then clamps the product to [0.0, 1.0] . The left operand's alpha channel
-    * is retained. For that reason, color multiplication is <em>not</em>
-    * commutative.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target output color
-    *
-    * @return the product
-    */
-   public static Color mul ( final Color a, final float b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(a.r * b), Utils.clamp01(a.g * b), Utils
-         .clamp01(a.b * b), Utils.clamp01(a.a));
-   }
-
-   /**
-    * Multiplies the left and right operand, except for the alpha channel,
-    * then clamps the product to [0.0, 1.0] . The left operand is also
-    * supplied to the alpha channel. For that reason, color multiplication is
-    * <em>not</em> commutative.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target output color
-    *
-    * @return the product
-    */
-   public static Color mul ( final float a, final Color b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(a * b.r), Utils.clamp01(a * b.g), Utils
-         .clamp01(a * b.b), Utils.clamp01(a));
-   }
-
-   /**
     * Tests to see if the alpha channel of this color is less than or equal to
     * zero, i.e., if it is completely transparent.
     *
@@ -2091,9 +1593,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     */
    public static Color preMul ( final Color c, final Color target ) {
 
-      if ( c.a <= 0.0f ) {
-         return target.set(0.0f, 0.0f, 0.0f, 0.0f);
-      } else if ( c.a >= 1.0f ) { return target.set(c.r, c.g, c.b, 1.0f); }
+      if ( c.a <= 0.0f ) { return target.set(0.0f, 0.0f, 0.0f, 0.0f); }
+      if ( c.a >= 1.0f ) { return target.set(c.r, c.g, c.b, 1.0f); }
 
       return target.set(c.r * c.a, c.g * c.a, c.b * c.a, c.a);
    }
@@ -2216,6 +1717,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @return the color
     *
+    * @see Vec4#randomCartesian(java.util.Random, Vec4, Vec4, Vec4)
     * @see Color#hsbaToRgba(Vec4, Color)
     */
    public static Color randomHsba ( final java.util.Random rng,
@@ -2343,6 +1845,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output vector
     *
     * @return the HSBA vector
+    *
+    * @see Color#rgbaToHsba(float, float, float, float, Vec4)
     */
    public static Vec4 rgbaToHsba ( final Color c, final Vec4 target ) {
 
@@ -2363,7 +1867,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     *
     * @see Utils#max
     * @see Utils#min
-    * @see IUtils#ONE_SIX
     */
    public static Vec4 rgbaToHsba ( final float red, final float green,
       final float blue, final float alpha, final Vec4 target ) {
@@ -2397,6 +1900,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output vector
     *
     * @return the XYZ color
+    *
+    * @see Color#rgbaToXyzw(float, float, float, float, Vec4)
     */
    public static Vec4 rgbaToXyzw ( final Color c, final Vec4 target ) {
 
@@ -2406,7 +1911,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    /**
     * Converts a color from RGB to CIE XYZ. References Pharr, Jakob, and
     * Humphreys' <a href="http://www.pbr-book.org/">Physically Based
-    * Rendering</a>.
+    * Rendering</a>, page 328.
     *
     * @param r      the red component
     * @param g      the green component
@@ -2462,6 +1967,10 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param hsba   the color in HSB
     *
     * @return the shifted color
+    *
+    * @see Utils#clamp01(float)
+    * @see Color#rgbaToHsba(Color, Vec4)
+    * @see Color#hsbaToRgba(Vec4, Color)
     */
    public static Color shiftBri ( final Color c, final float shift,
       final Color target, final Vec4 hsba ) {
@@ -2481,6 +1990,10 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param hsba   the color in HSB
     *
     * @return the shifted color
+    *
+    * @see Utils#clamp01(float)
+    * @see Color#rgbaToHsba(Color, Vec4)
+    * @see Color#hsbaToRgba(Vec4, Color)
     */
    public static Color shiftHsb ( final Color c, final Vec4 shift,
       final Color target, final Vec4 hsba ) {
@@ -2502,6 +2015,10 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param hsba   the color in HSB
     *
     * @return the shifted color
+    *
+    * @see Utils#clamp01(float)
+    * @see Color#rgbaToHsba(Color, Vec4)
+    * @see Color#hsbaToRgba(Vec4, Color)
     */
    public static Color shiftHsba ( final Color c, final Vec4 shift,
       final Color target, final Vec4 hsba ) {
@@ -2525,6 +2042,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param hsba   the color in HSB
     *
     * @return the shifted color
+    *
+    * @see Color#rgbaToHsba(Color, Vec4)
+    * @see Color#hsbaToRgba(Vec4, Color)
     */
    public static Color shiftHue ( final Color c, final float shift,
       final Color target, final Vec4 hsba ) {
@@ -2545,6 +2065,10 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param hsba   the color in HSB
     *
     * @return the shifted color
+    *
+    * @see Utils#clamp01(float)
+    * @see Color#rgbaToHsba(Color, Vec4)
+    * @see Color#hsbaToRgba(Vec4, Color)
     */
    public static Color shiftSat ( final Color c, final float shift,
       final Color target, final Vec4 hsba ) {
@@ -2552,24 +2076,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
       Color.rgbaToHsba(c, hsba);
       hsba.y = Utils.clamp01(hsba.y + shift);
       return Color.hsbaToRgba(hsba, target);
-   }
-
-   /**
-    * Subtracts the right operand from the left operand, except for the alpha
-    * channel, then clamps the sum to [0.0, 1.0] . The left operand's alpha
-    * channel is retained.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target output color
-    *
-    * @return the difference
-    */
-   public static Color sub ( final Color a, final Color b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(a.r - b.r), Utils.clamp01(a.g - b.g),
-         Utils.clamp01(a.b - b.b), Utils.clamp01(a.a));
    }
 
    /**
@@ -2591,12 +2097,14 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Converts a color to an integer where hexadecimal represents the ARGB
-    * color channels: 0xAARRGGB .
+    * Converts a color to an <code>long</code> where hexadecimal represents
+    * the ARGB color channels: 0xAARRGGB .
     *
     * @param c the input color
     *
     * @return the color in hexadecimal
+    *
+    * @see Color#toHexInt(Color)
     */
    public static long toHexLong ( final Color c ) {
 
@@ -2610,6 +2118,9 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param c the color
     *
     * @return the string
+    *
+    * @see Color#toHexInt(Color)
+    * @see Color#toHexString(int)
     */
    public static String toHexString ( final Color c ) {
 
@@ -2617,8 +2128,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a Java-friendly representation of the color as a hexadecimal
-    * code, preceded by a '0x', in the format AARRGGBB.
+    * Returns a representation of the color as a hexadecimal code, preceded by
+    * a '0x', in the format AARRGGBB.
     *
     * @param c the color
     *
@@ -2638,6 +2149,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param c the color
     *
     * @return the string
+    *
+    * @see Color#toHexString(byte)
     */
    public static String toHexWeb ( final Color c ) {
 
@@ -2662,6 +2175,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param c the color
     *
     * @return the string
+    *
+    * @see Color#toHexString(byte)
     */
    public static String toHexWeb ( final int c ) {
 
@@ -2692,7 +2207,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    /**
     * Converts a color from CIE XYZ to RGB. References Pharr, Jakob, and
     * Humphreys' <a href="http://www.pbr-book.org/">Physically Based
-    * Rendering</a>.
+    * Rendering</a>, page 327.
     *
     * @param x      the x coordinate
     * @param y      the y coordinate
@@ -2717,6 +2232,8 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
     * @param target the output color
     *
     * @return the color
+    *
+    * @see Color#xyzwToRgba(float, float, float, float, Color)
     */
    public static Color xyzwToRgba ( final Vec4 v, final Color target ) {
 
@@ -2733,47 +2250,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public static Color yellow ( final Color target ) {
 
       return target.set(1.0f, 1.0f, 0.0f, 1.0f);
-   }
-
-   /**
-    * Adds the left and right operand, except for the alpha channel, then
-    * clamps the sum to [0.0, 1.0] . The left operand's alpha channel is
-    * retained. For that reason, color addition is <em>not</em>
-    * commutative.<br>
-    * <br>
-    * An internal function in support of Kotlin operator overloads.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target output color
-    *
-    * @return the sum
-    */
-   protected static Color add ( final Color a, final float b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(a.r + b), Utils.clamp01(a.g + b), Utils
-         .clamp01(a.b + b), Utils.clamp01(a.a));
-   }
-
-   /**
-    * Subtracts the right operand from the left operand, except for the alpha
-    * channel, then clamps the sum to [0.0, 1.0] . The left operand's alpha
-    * channel is retained.<br>
-    * <br>
-    * An internal function in support of Kotlin operator overloads.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target output color
-    *
-    * @return the difference
-    */
-   protected static Color sub ( final Color a, final float b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(a.r - b), Utils.clamp01(a.g - b), Utils
-         .clamp01(a.b - b), Utils.clamp01(a.a));
    }
 
    /**

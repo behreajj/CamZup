@@ -330,7 +330,7 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
     */
    protected boolean equals ( final ColorKey key ) {
 
-      return Float.floatToIntBits(this.step) == Float.floatToIntBits(key.step);
+      return this.step == key.step;
    }
 
    /**

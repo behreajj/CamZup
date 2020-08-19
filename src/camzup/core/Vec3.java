@@ -137,88 +137,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public boolean contains ( final float v ) {
 
-      if ( Utils.approx(this.z, v) ) { return true; }
-      if ( Utils.approx(this.y, v) ) { return true; }
-      if ( Utils.approx(this.x, v) ) { return true; }
-      return false;
-   }
-
-   /**
-    * Returns a new vector decremented by one. For interoperability with
-    * Kotlin: <code>--a</code> (prefix) or <code>a--</code> (postfix). Per the
-    * specification, <em>does not mutate the vector in place</em>.
-    *
-    * @return the decremented vector
-    */
-   public Vec3 dec ( ) {
-
-      return new Vec3(this.x - 1.0f, this.y - 1.0f, this.z - 1.0f);
-   }
-
-   /**
-    * Returns a new vector with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the quotient
-    */
-   public Vec3 div ( final float b ) {
-
-      if ( b != 0.0f ) {
-         final float bInv = 1.0f / b;
-         return new Vec3(this.x * bInv, this.y * bInv, this.z * bInv);
-      }
-      return new Vec3(0.0f, 0.0f, 0.0f);
-   }
-
-   /**
-    * Returns a new vector with the division of the instance by the right
-    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
-    * not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the quotient
-    */
-   public Vec3 div ( final Vec3 b ) {
-
-      return new Vec3(Utils.div(this.x, b.x), Utils.div(this.y, b.y), Utils.div(
-         this.z, b.z));
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the vector in place).
-    * For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void divAssign ( final float b ) {
-
-      if ( b != 0.0f ) {
-         final float bInv = 1.0f / b;
-         this.x *= bInv;
-         this.y *= bInv;
-         this.z *= bInv;
-      } else {
-         this.x = 0.0f;
-         this.y = 0.0f;
-         this.z = 0.0f;
-      }
-   }
-
-   /**
-    * Divides the instance by the right operand (mutates the vector in place).
-    * For interoperability with Kotlin: <code>a /= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void divAssign ( final Vec3 b ) {
-
-      this.x = Utils.div(this.x, b.x);
-      this.y = Utils.div(this.y, b.y);
-      this.z = Utils.div(this.z, b.z);
+      return Utils.approx(this.z, v) || Utils.approx(this.y, v) || Utils.approx(
+         this.x, v);
    }
 
    /**
@@ -283,18 +203,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new vector incremented by one. For interoperability with
-    * Kotlin: <code>++a</code> (prefix) or <code>a++</code> (postfix). Per the
-    * specification, <em>does not mutate the vector in place</em>.
-    *
-    * @return the incremented vector
-    */
-   public Vec3 inc ( ) {
-
-      return new Vec3(this.x + 1.0f, this.y + 1.0f, this.z + 1.0f);
-   }
-
-   /**
     * Returns an iterator for this vector, which allows its components to be
     * accessed in an enhanced for-loop.
     *
@@ -309,186 +217,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     * @return the length
     */
    public int length ( ) { return 3; }
-
-   /**
-    * Returns a new vector with the subtraction of the right operand from the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
-    * <em>Does not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the subtraction
-    */
-   public Vec3 minus ( final float b ) {
-
-      return new Vec3(this.x - b, this.y - b, this.z - b);
-   }
-
-   /**
-    * Returns a new vector with the subtraction of the right operand from the
-    * instance. For interoperability with Kotlin: <code>a - b</code> .
-    * <em>Does not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the subtraction
-    */
-   public Vec3 minus ( final Vec3 b ) {
-
-      return new Vec3(this.x - b.x, this.y - b.y, this.z - b.z);
-   }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the vector in
-    * place). For interoperability with Kotlin: <code>a -= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void minusAssign ( final float b ) {
-
-      this.x -= b;
-      this.y -= b;
-      this.z -= b;
-   }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the vector in
-    * place). For interoperability with Kotlin: <code>a -= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void minusAssign ( final Vec3 b ) {
-
-      this.x -= b.x;
-      this.y -= b.y;
-      this.z -= b.z;
-   }
-
-   /**
-    * Returns a new vector with the boolean opposite of the instance. For
-    * interoperability with Kotlin: <code>!a</code> . <em>Does not mutate the
-    * vector in place</em>.
-    *
-    * @return the opposite vector
-    */
-   public Vec3 not ( ) {
-
-      return new Vec3(this.x == 0.0f, this.y == 0.0f, this.z == 0.0f);
-   }
-
-   /**
-    * Returns a new vector with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the sum
-    */
-   public Vec3 plus ( final float b ) {
-
-      return new Vec3(this.x + b, this.y + b, this.z + b);
-   }
-
-   /**
-    * Returns a new vector with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the sum
-    */
-   public Vec3 plus ( final Vec3 b ) {
-
-      return new Vec3(this.x + b.x, this.y + b.y, this.z + b.z);
-   }
-
-   /**
-    * Adds the right operand to the instance (mutates the vector in place).
-    * For interoperability with Kotlin: <code>a += b</code> .
-    *
-    * @param b the right operand
-    */
-   public void plusAssign ( final float b ) {
-
-      this.x += b;
-      this.y += b;
-      this.z += b;
-   }
-
-   /**
-    * Adds the right operand to the instance (mutates the vector in place).
-    * For interoperability with Kotlin: <code>a += b</code> .
-    *
-    * @param b the right operand
-    */
-   public void plusAssign ( final Vec3 b ) {
-
-      this.x += b.x;
-      this.y += b.y;
-      this.z += b.z;
-   }
-
-   /**
-    * Returns a new vector with the signed remainder (<code>fmod</code>) of
-    * the instance and the right operand. For interoperability with Kotlin:
-    * <code>a % b</code> . <em>Does not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the signed remainder
-    */
-   public Vec3 rem ( final float b ) {
-
-      if ( b != 0.0f ) { return new Vec3(this.x % b, this.y % b, this.z % b); }
-      return new Vec3(this.x, this.y, this.z);
-   }
-
-   /**
-    * Returns a new vector with the signed remainder (<code>fmod</code>) of
-    * the instance and the right operand. For interoperability with Kotlin:
-    * <code>a % b</code> . <em>Does not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the signed remainder
-    */
-   public Vec3 rem ( final Vec3 b ) {
-
-      return new Vec3(b.x != 0.0f ? this.x % b.x : this.x, b.y != 0.0f ? this.y
-         % b.y : this.y, b.z != 0.0f ? this.z % b.z : this.z);
-   }
-
-   /**
-    * Assigns the signed remainder (<code>fmod</code>) of the instance and the
-    * right operand to the instance (mutates the vector in place). For
-    * interoperability with Kotlin: <code>a %= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void remAssign ( final float b ) {
-
-      if ( b != 0.0f ) {
-         this.x %= b;
-         this.y %= b;
-         this.z %= b;
-      }
-   }
-
-   /**
-    * Assigns the signed remainder (<code>fmod</code>) of the instance and the
-    * right operand to the instance (mutates the vector in place). For
-    * interoperability with Kotlin: <code>a %= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void remAssign ( final Vec3 b ) {
-
-      if ( b.x != 0.0f ) { this.x %= b.x; }
-      if ( b.y != 0.0f ) { this.y %= b.y; }
-      if ( b.z != 0.0f ) { this.z %= b.z; }
-   }
 
    /**
     * Resets this vector to an initial state, ( 0.0, 0.0, 0.0 ) .
@@ -611,60 +339,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new vector with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the product
-    */
-   public Vec3 times ( final float b ) {
-
-      return new Vec3(this.x * b, this.y * b, this.z * b);
-   }
-
-   /**
-    * Returns a new vector with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the vector in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the product
-    */
-   public Vec3 times ( final Vec3 b ) {
-
-      return new Vec3(this.x * b.x, this.y * b.y, this.z * b.z);
-   }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the vector in
-    * place). For interoperability with Kotlin: <code>a *= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void timesAssign ( final float b ) {
-
-      this.x *= b;
-      this.y *= b;
-      this.z *= b;
-   }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the vector in
-    * place). For interoperability with Kotlin: <code>a *= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void timesAssign ( final Vec3 b ) {
-
-      this.x *= b.x;
-      this.y *= b.y;
-      this.z *= b.z;
-   }
-
-   /**
     * Returns a float array of length 3 containing this vector's components.
     *
     * @return the array
@@ -737,24 +411,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new vector with the negation of the instance. For
-    * interoperability with Kotlin: <code>-a</code> . <em>Does not mutate the
-    * vector in place</em>.
-    *
-    * @return the negation
-    */
-   public Vec3 unaryMinus ( ) { return new Vec3(-this.x, -this.y, -this.z); }
-
-   /**
-    * Returns a new vector with the positive copy of the instance. For
-    * interoperability with Kotlin: <code>+a</code> . <em>Does not mutate the
-    * vector in place</em>.
-    *
-    * @return the positive
-    */
-   public Vec3 unaryPlus ( ) { return new Vec3(+this.x, +this.y, +this.z); }
-
-   /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes. This is
     * formatted as a three-tuple.
@@ -812,9 +468,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    protected boolean equals ( final Vec3 v ) {
 
-      return Float.floatToIntBits(this.z) == Float.floatToIntBits(v.z) && Float
-         .floatToIntBits(this.y) == Float.floatToIntBits(v.y) && Float
-            .floatToIntBits(this.x) == Float.floatToIntBits(v.x);
+      /* With {@link Float.floatToIntBits(float)}, -0.0f != 0.0f. */
+      return this.z == v.z && this.y == v.y && this.x == v.x;
    }
 
    /**
@@ -3760,6 +3415,8 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
       }
 
    }
+
+
 
    /**
     * Compares two vectors on the x axis.

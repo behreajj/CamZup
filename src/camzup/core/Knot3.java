@@ -483,6 +483,10 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param q the quaternion
     *
     * @return this knot
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    public Knot3 rotateForeHandle ( final Quaternion q ) {
 
@@ -501,6 +505,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param q the quaternion
     *
     * @return this knot
+    *
+    * @see Knot3#rotateForeHandle(Quaternion)
+    * @see Knot3#rotateRearHandle(Quaternion)
     */
    public Knot3 rotateHandles ( final Quaternion q ) {
 
@@ -517,6 +524,10 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param q the quaternion
     *
     * @return this knot
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    public Knot3 rotateRearHandle ( final Quaternion q ) {
 
@@ -534,6 +545,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param radians the angle
     *
     * @return this knot
+    *
+    * @see Knot3#rotateX(float, float)
     */
    public Knot3 rotateX ( final float radians ) {
 
@@ -549,6 +562,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param sina sine of the angle
     *
     * @return this knot
+    *
+    * @see Vec3#rotateX(Vec3, float, float, Vec3)
     */
    public Knot3 rotateX ( final float cosa, final float sina ) {
 
@@ -565,6 +580,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param radians the angle
     *
     * @return this knot
+    *
+    * @see Knot3#rotateY(float, float)
     */
    public Knot3 rotateY ( final float radians ) {
 
@@ -580,6 +597,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param sina sine of the angle
     *
     * @return this knot
+    *
+    * @see Vec3#rotateY(Vec3, float, float, Vec3)
     */
    public Knot3 rotateY ( final float cosa, final float sina ) {
 
@@ -596,6 +615,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param radians the angle
     *
     * @return this knot
+    *
+    * @see Knot3#rotateZ(float, float)
     */
    public Knot3 rotateZ ( final float radians ) {
 
@@ -611,6 +632,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param sina sine of the angle
     *
     * @return this knot
+    *
+    * @see Vec3#rotateZ(Vec3, float, float, Vec3)
     */
    public Knot3 rotateZ ( final float cosa, final float sina ) {
 
@@ -627,6 +650,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param scale the factor
     *
     * @return this knot
+    *
+    * @see Vec3#mul(Vec3, float, Vec3)
     */
    public Knot3 scale ( final float scale ) {
 
@@ -643,6 +668,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param scale the non-uniform scalar
     *
     * @return this knot
+    *
+    * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
    public Knot3 scale ( final Vec3 scale ) {
 
@@ -679,6 +706,10 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param magnitude the magnitude
     *
     * @return this knot
+    *
+    * @see Vec3#subNorm(Vec3, Vec3, Vec3)
+    * @see Vec3#mul(Vec3, float, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    public Knot3 scaleForeHandleTo ( final float magnitude ) {
 
@@ -695,6 +726,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param scalar the scalar
     *
     * @return this knot
+    *
+    * @see Knot3#scaleForeHandleBy(float)
+    * @see Knot3#scaleRearHandleBy(float)
     */
    public Knot3 scaleHandlesBy ( final float scalar ) {
 
@@ -770,7 +804,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     *
     * @return this knot
     *
-    * @see Math#copySign(float, float)
+    * @see Utils#copySign(float, float)
     */
    public Knot3 set ( final float xCoord, final float yCoord,
       final float zCoord ) {
@@ -1170,6 +1204,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param target the output vector
     *
     * @return the fore handle vector
+    *
+    * @see Vec3#subNorm(Vec3, Vec3, Vec3)
     */
    public static Vec3 foreDir ( final Knot3 knot, final Vec3 target ) {
 
@@ -1198,6 +1234,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param target the output vector
     *
     * @return the fore handle vector
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    public static Vec3 foreVec ( final Knot3 knot, final Vec3 target ) {
 
@@ -1253,6 +1291,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param next        the next knot
     *
     * @return the next knot
+    *
+    * @see Knot3#fromSegCubic(float, float, float, float, float, float, float,
+    *      float, float, Knot3, Knot3)
     */
    public static Knot3 fromSegCubic ( final Vec3 prevControl,
       final Vec3 nextControl, final Vec3 nextAnchor, final Knot3 prev,
@@ -1312,6 +1353,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param next       the next knot
     *
     * @return the next knot
+    *
+    * @see Knot3#fromSegLinear(float, float, float, Knot3, Knot3)
     */
    public static Knot3 fromSegLinear ( final Vec3 nextAnchor, final Knot3 prev,
       final Knot3 next ) {
@@ -1374,6 +1417,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param next       the next knot
     *
     * @return the next knot
+    *
+    * @see Knot3#fromSegQuadratic(float, float, float, float, float, float,
+    *      Knot3, Knot3)
     */
    public static Knot3 fromSegQuadratic ( final Vec3 control,
       final Vec3 nextAnchor, final Knot3 prev, final Knot3 next ) {
@@ -1407,6 +1453,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param target the output vector
     *
     * @return the rear handle vector
+    *
+    * @see Vec3#subNorm(Vec3, Vec3, Vec3)
     */
    public static Vec3 rearDir ( final Knot3 knot, final Vec3 target ) {
 
@@ -1435,6 +1483,8 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
     * @param target the output vector
     *
     * @return the rear handle vector
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    public static Vec3 rearVec ( final Knot3 knot, final Vec3 target ) {
 
@@ -1467,6 +1517,7 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
       final float forey = coNext.y - coCurr.y;
       final float forez = coNext.z - coCurr.z;
 
+      // TODO: Can these use the unchecked version?
       final float bmSq = backx * backx + backy * backy + backz * backz;
       final float bmInv = Utils.invSqrt(bmSq);
 

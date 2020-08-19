@@ -146,30 +146,30 @@ With the exception of creating nullable objects, the goal of this library is to 
 
 This library's `core` was originally designed to affiliate with Processing's code design. With exceptions, classes are defined to be mutable and extensible. Methods are at most `protected` and fields are public (no getters or setters). `static` methods are preferred where possible, and use the out parameter antipattern.
 
-As of v 0.0.6, this library provides limited interoperability with [Kotlin](https://kotlinlang.org/), specifically [operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html). Kotlin does not use `static` methods; instance methods do not always mutate the instance in place; and naming conventions differ to those of this library.
+As of v 0.6, this library provides limited interoperability with [Kotlin](https://kotlinlang.org/), specifically [operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html). As of v 0.7, this support is sectioned off in `camzup.kotlin`, where a Kotlin friendly class extends a core class; for example, `KtVec2` is a child of `Vec2`. Kotlin does not use `static` methods; instance methods do not always mutate the instance in place; and naming conventions differ to those of this library.
 
 For those reasons, the following functions may be confusing if used in Processing-Java.
 
-| Kotlin Operator |            Interop Method | Mutator | Core Support                             |
-| --------------: | ------------------------: | :-----: | :--------------------------------------- |
-|            `+a` |         `T a.unaryPlus()` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|            `-a` |        `T a.unaryMinus()` |         | Vec2,3,4                          Mat3,4 |
-|            `!a` |               `T a.not()` |         | Vec2,3,4                                 |
-|    `++a`, `a++` |               `T a.inc()` |         | Vec2,3,4 Color Complex                   |
-|    `--a`, `a--` |               `T a.dec()` |         | Vec2,3,4 Color Complex                   |
-|         `a + b` |           `T a.plus(U b)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|         `a - b` |          `T a.minus(U b)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|         `a * b` |          `T a.times(U b)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|         `a / b` |            `T a.div(U b)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|         `a % b` |            `T a.rem(U b)` |         | Vec2,3,4 Color                           |
-|        `a += b` |  `void a.plusAssign(U b)` |    X    | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|        `a -= b` | `void a.minusAssign(U b)` |    X    | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|        `a *= b` | `void a.timesAssign(U b)` |    X    | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|        `a /= b` |   `void a.divAssign(U b)` |    X    | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|        `a %= b` |   `void a.remAssign(U b)` |    X    | Vec2,3,4 Color                           |
-|        `a in b` | `boolean b.contains(U a)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|          `a[i]` |          `U a.get(int i)` |         | Vec2,3,4 Color Complex Quaternion Mat3,4 |
-|          `a[i]` |  `void a.set(int i, U b)` |    X    | Mat3,4                                   |
+| Kotlin Operator |            Interop Method | Mutator | KtVec | KtComplex | KtQuat | KtClr | KtMat |
+| --------------: | ------------------------: | :-----: | :---: | :-------: | :----: | :---: | :---: |
+|            `+a` |         `T a.unaryPlus()` |         |   X   |     X     |   X    |   X   |   X   |
+|            `-a` |        `T a.unaryMinus()` |         |   X   |     X     |   X    |   X   |   X   |
+|            `!a` |               `T a.not()` |         |   X   |           |        |       |   X   |
+|    `++a`, `a++` |               `T a.inc()` |         |   X   |           |        |   X   |       |
+|    `--a`, `a--` |               `T a.dec()` |         |   X   |           |        |   X   |       |
+|         `a + b` |           `T a.plus(U b)` |         |   X   |     X     |   X    |   X   |   X   |
+|         `a - b` |          `T a.minus(U b)` |         |   X   |     X     |   X    |   X   |   X   |
+|         `a * b` |          `T a.times(U b)` |         |   X   |     X     |   X    |   X   |   X   |
+|         `a / b` |            `T a.div(U b)` |         |   X   |     X     |   X    |   X   |   X   |
+|         `a % b` |            `T a.rem(U b)` |         |   X   |           |        |   X   |       |
+|        `a += b` |  `void a.plusAssign(U b)` |    X    |   X   |     X     |   X    |   X   |   X   |
+|        `a -= b` | `void a.minusAssign(U b)` |    X    |   X   |     X     |   X    |   X   |   X   |
+|        `a *= b` | `void a.timesAssign(U b)` |    X    |   X   |     X     |   X    |   X   |   X   |
+|        `a /= b` |   `void a.divAssign(U b)` |    X    |   X   |     X     |   X    |   X   |   X   |
+|        `a %= b` |   `void a.remAssign(U b)` |    X    |   X   |           |        |   X   |       |
+|        `a in b` | `boolean b.contains(U a)` |         |   X   |     X     |   X    |   X   |   X   |
+|          `a[i]` |          `U a.get(int i)` |         |   X   |     X     |   X    |   X   |   X   |
+|          `a[i]` |  `void a.set(int i, U b)` |    X    |       |           |        |       |   X   |
 
 Operations between all the objects above are subject to ambiguity. Do not, for example, assume commutativity for operators (meaning, do not assume that `a * b` will yield a result equal in value to `b * a`). Even when an operator is not supported by `core`, Kotlin may infer a viable alternative, e.g., `+` may coerce both the left and right operand to a collection, then concatenate the two.
 

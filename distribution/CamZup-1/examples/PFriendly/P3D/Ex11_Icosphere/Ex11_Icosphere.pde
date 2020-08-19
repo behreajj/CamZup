@@ -23,9 +23,8 @@ void settings() {
 }
 
 void setup() {
-  frameRate(1000);
   rndr = (Zup3)getGraphics();
-  rndr.textureSampling(TextureSampling.LINEAR);
+  rndr.textureSampling(TextureSampling.BILINEAR);
 
   txtr = loadImage("icosanet.png");
   textured = new MaterialPImage(txtr);
