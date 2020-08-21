@@ -251,17 +251,19 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int[] idxDest = face[k];
 
       final int idxV0 = idxOrigin[0];
-      final int idxV3 = idxDest[0];
       final int idxVt0 = idxOrigin[1];
+
+      final int idxV3 = idxDest[0];
       final int idxVt3 = idxDest[1];
 
       final int vsOldLen = this.coords.length;
       final int vtsOldLen = this.texCoords.length;
 
       final int idxV1 = vsOldLen;
+      final int idxVt2 = vtsOldLen + 1;
+
       final int idxV2 = vsOldLen + 1;
       final int idxVt1 = vtsOldLen;
-      final int idxVt2 = vtsOldLen + 1;
 
       final Vec2 vOrigin = this.coords[idxV0];
       final Vec2 vDest = this.coords[idxV3];
@@ -802,28 +804,28 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int[] nextVert = face[nextIdx];
 
       /* Acquire corner (current), next and previous coordinate. */
-      final Vec2 vcurr = this.coords[currVert[0]];
-      final Vec2 vprev = this.coords[prevVert[0]];
-      final Vec2 vnext = this.coords[nextVert[0]];
+      final Vec2 vCurr = this.coords[currVert[0]];
+      final Vec2 vPrev = this.coords[prevVert[0]];
+      final Vec2 vNext = this.coords[nextVert[0]];
 
       /* Coordinate edge 0. */
-      final float d0x = vcurr.x - vprev.x;
-      final float d0y = vcurr.y - vprev.y;
+      final float d0x = vCurr.x - vPrev.x;
+      final float d0y = vCurr.y - vPrev.y;
       final float d0Heading = Utils.atan2(d0y, d0x);
       final float d0MagSq = d0x * d0x + d0y * d0y;
       final float d0InvMag = Utils.invSqrtUnchecked(d0MagSq);
       final float d0Mag = d0MagSq * d0InvMag;
 
       /* Coordinate edge 1. */
-      final float d1x = vcurr.x - vnext.x;
-      final float d1y = vcurr.y - vnext.y;
+      final float d1x = vCurr.x - vNext.x;
+      final float d1y = vCurr.y - vNext.y;
       final float d1Heading = Utils.atan2(d1y, d1x);
       final float d1MagSq = d1x * d1x + d1y * d1y;
       final float d1InvMag = Utils.invSqrtUnchecked(d1MagSq);
       final float d1Mag = d1MagSq * d1InvMag;
 
       /* Validate radius on lower bound. */
-      final float rad = Utils.max(IUtils.DEFAULT_EPSILON, radius);
+      final float rad = Utils.max(IUtils.EPSILON, radius);
 
       /* Ensure that radius is not longer than edge. */
       final float vTan = Utils.abs(Utils.tan( ( d0Heading - d1Heading )
@@ -839,9 +841,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       /* Find new coordinate corners. */
       final float fac0 = vSeg * d0InvMag;
       final float fac1 = vSeg * d1InvMag;
-      final Vec2 vCorner0 = new Vec2(vcurr.x - d0x * fac0, vcurr.y - d0y
+      final Vec2 vCorner0 = new Vec2(vCurr.x - d0x * fac0, vCurr.y - d0y
          * fac0);
-      final Vec2 vCorner1 = new Vec2(vcurr.x - d1x * fac1, vcurr.y - d1y
+      final Vec2 vCorner1 = new Vec2(vCurr.x - d1x * fac1, vCurr.y - d1y
          * fac1);
 
       /* Acquire corner (current), next and previous texture coordinate. */
@@ -907,11 +909,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
        * Find origin of circle. Create an object in case this is helpful in the
        * future, e.g., is included in triangle fan.
        */
-      final float vxdelta = vcurr.x + vcurr.x - vCorner0.x - vCorner1.x;
-      final float vydelta = vcurr.y + vcurr.y - vCorner0.y - vCorner1.y;
+      final float vxdelta = vCurr.x + vCurr.x - vCorner0.x - vCorner1.x;
+      final float vydelta = vCurr.y + vCurr.y - vCorner0.y - vCorner1.y;
       final float vfac = Utils.hypot(vSeg, vRad) * Utils.invSqrtUnchecked(
          vxdelta * vxdelta + vydelta * vydelta);
-      final Vec2 vOrigin = new Vec2(vcurr.x - vxdelta * vfac, vcurr.y - vydelta
+      final Vec2 vOrigin = new Vec2(vCurr.x - vxdelta * vfac, vCurr.y - vydelta
          * vfac);
 
       /* For texture coordinate. */
@@ -2021,8 +2023,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
          sctCount2);
 
-      final float annul = Utils.clamp(oculus, IUtils.DEFAULT_EPSILON, 1.0f
-         - IUtils.DEFAULT_EPSILON);
+      final float annul = Utils.clamp(oculus, IUtils.EPSILON, 1.0f
+         - IUtils.EPSILON);
       final double annRad = annul * 0.5d;
 
       final double toStep = 1.0d / ( sctCount - 1.0d );
@@ -2865,8 +2867,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final boolean isQuad = poly == PolyType.QUAD || poly == PolyType.NGON;
       final int seg = sectors < 3 ? 3 : sectors;
       final int seg2 = seg + seg;
-      final float ocul = Utils.clamp(oculus, IUtils.DEFAULT_EPSILON, 1.0f
-         - IUtils.DEFAULT_EPSILON);
+      final float ocul = Utils.clamp(oculus, IUtils.EPSILON, 1.0f
+         - IUtils.EPSILON);
 
       final double toTheta = IUtils.TAU_D / seg;
       final double oculRad = ocul * 0.5d;
@@ -3092,8 +3094,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             vtsTrg[k].set(u * vtaSrc.x + t * vtbSrc.x, u * vtaSrc.y + t
                * vtbSrc.y);
 
-            fTrg[j][0] = k;
-            fTrg[j][1] = k;
+            final int[] vertTrg = fTrg[j];
+            vertTrg[0] = k;
+            vertTrg[1] = k;
          }
       }
 

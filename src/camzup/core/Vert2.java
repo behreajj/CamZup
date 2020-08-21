@@ -130,7 +130,7 @@ public class Vert2 implements Comparable < Vert2 > {
 
    /**
     * Tests to see if two vertices share the same coordinate according to the
-    * default tolerance, {@link IUtils#DEFAULT_EPSILON}.
+    * default tolerance, {@link IUtils#EPSILON}.
     *
     * @param a the left comparisand
     * @param b the right comparisand
@@ -139,7 +139,7 @@ public class Vert2 implements Comparable < Vert2 > {
     */
    public static boolean approxCoord ( final Vert2 a, final Vert2 b ) {
 
-      return Vert2.approxCoord(a, b, IUtils.DEFAULT_EPSILON);
+      return Vert2.approxCoord(a, b, IUtils.EPSILON);
    }
 
    /**

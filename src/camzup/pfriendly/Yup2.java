@@ -2,6 +2,7 @@ package camzup.pfriendly;
 
 import java.util.Iterator;
 
+import camzup.core.Bounds2;
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
 import camzup.core.Experimental;
@@ -115,6 +116,26 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    }
 
    /**
+    * Draws a bounding area.
+    *
+    * @param b the bounds
+    */
+   @Override
+   public void bounds ( final Bounds2 b ) {
+
+      final Vec2 min = b.min;
+      final Vec2 max = b.max;
+
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 0.0f, 1.0f);
+      this.vertexImpl(min.x, min.y, 0.0f, 0.0f, 0.0f);
+      this.vertexImpl(max.x, min.y, 0.0f, 1.0f, 0.0f);
+      this.vertexImpl(max.x, max.y, 0.0f, 1.0f, 1.0f);
+      this.vertexImpl(min.x, max.y, 0.0f, 0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+   }
+
+   /**
     * Sets the camera to the renderer defaults.
     */
    @Override
@@ -144,8 +165,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       this.cameraY = y;
       this.cameraZ = this.height < 128 ? 128.0f : this.height;
       this.cameraRot = radians;
-      this.cameraZoomX = Utils.abs(zx) < IUtils.DEFAULT_EPSILON ? 1.0f : zx;
-      this.cameraZoomY = Utils.abs(zy) < IUtils.DEFAULT_EPSILON ? 1.0f : zy;
+      this.cameraZoomX = Utils.abs(zx) < IUtils.EPSILON ? 1.0f : zx;
+      this.cameraZoomY = Utils.abs(zy) < IUtils.EPSILON ? 1.0f : zy;
 
       /*
        * this.modelview.reset(); this.modelview.scale( this.cameraZoomX,
@@ -782,8 +803,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    public void origin ( final float lineLength, final float sw,
       final int xColor, final int yColor ) {
 
-      final float vl = lineLength > IUtils.DEFAULT_EPSILON ? lineLength
-         : IUtils.DEFAULT_EPSILON;
+      final float vl = lineLength > IUtils.EPSILON ? lineLength
+         : IUtils.EPSILON;
 
       this.pushStyle();
       this.strokeWeight(sw);

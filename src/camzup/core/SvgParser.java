@@ -299,7 +299,7 @@ abstract class SvgParser {
       final boolean sweep, final float x2, final float y2 ) {
 
       if ( Utils.approx(prior.coord.x, x2) && Utils.approx(prior.coord.y, y2)
-         || major < IUtils.DEFAULT_EPSILON || minor < IUtils.DEFAULT_EPSILON ) {
+         || major < IUtils.EPSILON || minor < IUtils.EPSILON ) {
          return new Knot2[] { new Knot2(x2, y2) };
       }
 
@@ -912,10 +912,8 @@ abstract class SvgParser {
                      curr.coord.set(SvgParser.parseFloat(coxStr), SvgParser
                         .parseFloat(coyStr));
 
-                     xOff = Utils.copySign(IUtils.DEFAULT_EPSILON,
-                        curr.coord.x);
-                     yOff = Utils.copySign(IUtils.DEFAULT_EPSILON,
-                        curr.coord.y);
+                     xOff = Utils.copySign(IUtils.EPSILON, curr.coord.x);
+                     yOff = Utils.copySign(IUtils.EPSILON, curr.coord.y);
 
                      curr.foreHandle.set(curr.coord.x + xOff, curr.coord.y
                         + yOff);
@@ -948,10 +946,8 @@ abstract class SvgParser {
                         .parseFloat(coyStr));
                      Vec2.add(relative, curr.coord, curr.coord);
 
-                     xOff = Utils.copySign(IUtils.DEFAULT_EPSILON,
-                        curr.coord.x);
-                     yOff = Utils.copySign(IUtils.DEFAULT_EPSILON,
-                        curr.coord.y);
+                     xOff = Utils.copySign(IUtils.EPSILON, curr.coord.x);
+                     yOff = Utils.copySign(IUtils.EPSILON, curr.coord.y);
 
                      curr.foreHandle.set(curr.coord.x + xOff, curr.coord.y
                         + yOff);
@@ -1547,7 +1543,7 @@ abstract class SvgParser {
           * vertical rounding.
           */
          final float rAvg = ( rx + ry ) * 0.5f;
-         if ( rAvg < IUtils.DEFAULT_EPSILON ) {
+         if ( rAvg < IUtils.EPSILON ) {
             Curve2.rect(x, y, x + w, y + h, target);
          } else {
             Curve2.rect(x, y, x + w, y + h, rAvg, target);

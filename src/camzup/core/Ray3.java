@@ -83,16 +83,11 @@ public class Ray3 implements Cloneable {
    @Override
    public int hashCode ( ) {
 
-      /*
-       * The hash code includes only the ray's origin so that, in a flow field,
-       * a ray can be retrieved using its origin as a key.
-       */
-
       int hash = IUtils.HASH_BASE;
       hash = hash * IUtils.HASH_MUL ^ ( this.origin == null ? 0 : this.origin
          .hashCode() );
-      // hash = (hash * HASH_MUL)
-      // ^ (this.dir == null ? 0 : this.dir.hashCode());
+      hash = hash * IUtils.HASH_MUL ^ ( this.dir == null ? 0 : this.dir
+         .hashCode() );
       return hash;
    }
 
@@ -188,9 +183,9 @@ public class Ray3 implements Cloneable {
     */
    protected boolean equals ( final Ray3 ray ) {
 
-      // if ( this.dir == null ) {
-      // if ( ray.dir != null ) { return false; }
-      // } else if ( !this.dir.equals(ray.dir) ) { return false; }
+      if ( this.dir == null ) {
+         if ( ray.dir != null ) { return false; }
+      } else if ( !this.dir.equals(ray.dir) ) { return false; }
 
       if ( this.origin == null ) {
          if ( ray.origin != null ) { return false; }

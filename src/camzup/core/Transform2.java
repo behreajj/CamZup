@@ -6,7 +6,8 @@ import camzup.core.Utils.EasingFuncObj;
 /**
  * Facilitates 2D affine transformations for entities.
  */
-public class Transform2 extends Transform {
+public class Transform2 extends Transform implements ISpatial2, IOriented2,
+   IVolume2 {
 
    /**
     * The transform's forward axis.
@@ -195,6 +196,7 @@ public class Transform2 extends Transform {
     *
     * @return the location
     */
+   @Override
    public Vec2 getLocation ( final Vec2 target ) {
 
       return target.set(this.location);
@@ -229,6 +231,7 @@ public class Transform2 extends Transform {
     *
     * @return the rotation
     */
+   @Override
    public float getRotation ( ) { return this.rotation; }
 
    /**
@@ -245,6 +248,7 @@ public class Transform2 extends Transform {
     *
     * @return the scale
     */
+   @Override
    public Vec2 getScale ( final Vec2 target ) {
 
       return target.set(this.scale);
@@ -349,6 +353,7 @@ public class Transform2 extends Transform {
     *
     * @see Transform2#moveByGlobal(Vec2)
     */
+   @Override
    public Transform2 moveBy ( final Vec2 dir ) {
 
       return this.moveByGlobal(dir);
@@ -402,6 +407,7 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
+   @Override
    public Transform2 moveTo ( final Vec2 locNew ) {
 
       this.locPrev.set(this.location);
@@ -419,6 +425,7 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
+   @Override
    public Transform2 moveTo ( final Vec2 locNew, final float step ) {
 
       return this.moveTo(locNew, step, Transform2.EASING.loc);
@@ -479,6 +486,7 @@ public class Transform2 extends Transform {
     *
     * @see Transform2#updateAxes()
     */
+   @Override
    public Transform2 rotateTo ( final float rotNew ) {
 
       this.rotPrev = this.rotation;
@@ -496,6 +504,7 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
+   @Override
    public Transform2 rotateTo ( final float radians, final float step ) {
 
       return this.rotateTo(radians, step, Transform2.EASING.rot);
@@ -533,6 +542,7 @@ public class Transform2 extends Transform {
     *
     * @see Transform2#updateAxes()
     */
+   @Override
    public Transform2 rotateZ ( final float radians ) {
 
       this.rotPrev = this.rotation;
@@ -551,6 +561,7 @@ public class Transform2 extends Transform {
     *
     * @see Vec2#mul(Vec2, float, Vec2)
     */
+   @Override
    public Transform2 scaleBy ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
@@ -571,6 +582,7 @@ public class Transform2 extends Transform {
     * @see Vec2#all(Vec2)
     * @see Vec2#mul(Vec2, Vec2, Vec2)
     */
+   @Override
    public Transform2 scaleBy ( final Vec2 nonUniformScale ) {
 
       if ( Vec2.all(nonUniformScale) ) {
@@ -588,6 +600,7 @@ public class Transform2 extends Transform {
     *
     * @return this transform
     */
+   @Override
    public Transform2 scaleTo ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
@@ -607,6 +620,7 @@ public class Transform2 extends Transform {
     *
     * @see Vec2#all(Vec2)
     */
+   @Override
    public Transform2 scaleTo ( final Vec2 scaleNew ) {
 
       if ( Vec2.all(scaleNew) ) {
@@ -628,6 +642,7 @@ public class Transform2 extends Transform {
     *
     * @see Vec2#all(Vec2)
     */
+   @Override
    public Transform2 scaleTo ( final Vec2 scaleNew, final float step ) {
 
       if ( Vec2.all(scaleNew) ) {

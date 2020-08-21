@@ -428,6 +428,9 @@ public class Img implements Cloneable, Iterable < Color > {
     * @param target the output image
     *
     * @return the cropped image
+    *
+    * @see Img#reallocate(int, int)
+    * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Img crop ( final int x0, final int y0, final int x1,
       final int y1, final Img source, final Img target ) {
@@ -482,6 +485,8 @@ public class Img implements Cloneable, Iterable < Color > {
     * @param target the output image
     *
     * @return the cropped image
+    *
+    * @see Img#crop(int, int, int, int, Img, Img)
     */
    public static Img crop ( final Vec2 tl, final Vec2 br, final Img source,
       final Img target ) {
@@ -524,6 +529,8 @@ public class Img implements Cloneable, Iterable < Color > {
     *
     * @return the image
     *
+    * @see System#arraycopy(Object, int, Object, int, int)
+    * @see Img#reallocate(int, int)
     * @see Color#luminance(int)
     * @see Gradient#eval(Gradient, float)
     */
@@ -555,6 +562,8 @@ public class Img implements Cloneable, Iterable < Color > {
     * @param target the target image
     *
     * @return the image
+    *
+    * @see Gradient#eval(Gradient, float)
     */
    public static Img fill ( final Gradient grd, final Img target ) {
 
@@ -584,6 +593,10 @@ public class Img implements Cloneable, Iterable < Color > {
     * @param target  the output image
     *
     * @return the image
+    *
+    * @see Utils#max(float, float)
+    * @see Utils#clamp01(float)
+    * @see Gradient#eval(Gradient, float)
     */
    public static Img linear ( final float xOrigin, final float yOrigin,
       final float xDest, final float yDest, final Gradient grd,
@@ -598,8 +611,7 @@ public class Img implements Cloneable, Iterable < Color > {
 
       final float bx = xOrigin - xDest;
       final float by = yOrigin - yDest;
-      final float bbInv = 1.0f / Utils.max(IUtils.DEFAULT_EPSILON, bx * bx + by
-         * by);
+      final float bbInv = 1.0f / Utils.max(IUtils.EPSILON, bx * bx + by * by);
 
       for ( int i = 0, y = 0; y < h; ++y ) {
 
@@ -629,6 +641,8 @@ public class Img implements Cloneable, Iterable < Color > {
     * @param target the output image
     *
     * @return the image
+    *
+    * @see Img#linear(float, float, float, float, Gradient, Img)
     */
    public static Img linear ( final Vec2 origin, final Vec2 dest,
       final Gradient grd, final Img target ) {
@@ -645,6 +659,8 @@ public class Img implements Cloneable, Iterable < Color > {
     * @param target the target image
     *
     * @return this image
+    *
+    * @see Img#reallocate(int, int)
     */
    public static Img opaque ( final Img source, final Img target ) {
 
@@ -682,6 +698,9 @@ public class Img implements Cloneable, Iterable < Color > {
     * @param target  the output image
     *
     * @return the image
+    *
+    * @see Utils#max(float, float)
+    * @see Gradient#eval(Gradient, float)
     */
    public static Img radial ( final float xOrigin, final float yOrigin,
       final float radius, final Gradient grd, final Img target ) {
@@ -694,7 +713,7 @@ public class Img implements Cloneable, Iterable < Color > {
       final float wInv = 1.0f / ( w - 1.0f );
 
       final float r2 = radius + radius;
-      final float invrsq = 1.0f / Utils.max(IUtils.DEFAULT_EPSILON, r2 * r2);
+      final float invrsq = 1.0f / Utils.max(IUtils.EPSILON, r2 * r2);
 
       for ( int i = 0, y = 0; y < h; ++y ) {
 
@@ -723,6 +742,8 @@ public class Img implements Cloneable, Iterable < Color > {
     * @param target the output image
     *
     * @return the image
+    *
+    * @see Img#radial(float, float, float, Gradient, Img)
     */
    public static Img radial ( final Vec2 origin, final float radius,
       final Gradient grd, final Img target ) {
@@ -787,6 +808,8 @@ public class Img implements Cloneable, Iterable < Color > {
     * @param target the target image
     *
     * @return the target image
+    *
+    * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Img wrap ( final int dx, final int dy, final Img source,
       final Img target ) {
@@ -834,6 +857,8 @@ public class Img implements Cloneable, Iterable < Color > {
     * @param target the target image
     *
     * @return the target image
+    *
+    * @see Img#wrap(int, int, Img, Img)
     */
    public static Img wrap ( final Vec2 st, final Img source,
       final Img target ) {

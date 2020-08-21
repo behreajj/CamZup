@@ -349,7 +349,7 @@ public class MaterialSolid extends Material implements Cloneable {
     */
    public MaterialSolid setStrokeWeight ( final float strokeWeight ) {
 
-      this.strokeWeight = Utils.max(IUtils.DEFAULT_EPSILON, strokeWeight);
+      this.strokeWeight = Utils.max(IUtils.EPSILON, strokeWeight);
       return this;
    }
 
@@ -499,8 +499,8 @@ public class MaterialSolid extends Material implements Cloneable {
        * This needs to be printed to a high precision because of small meshes
        * which are blown up by scale.
        */
-      final String strokeStr = Utils.toFixed(Utils.max(IUtils.DEFAULT_EPSILON,
-         Utils.div(this.strokeWeight, scale)), 6);
+      final String strokeStr = Utils.toFixed(Utils.max(IUtils.EPSILON, Utils
+         .div(this.strokeWeight, scale)), 6);
       final StringBuilder svgp = new StringBuilder(256);
       svgp.append("id=\"");
       svgp.append(this.name);
@@ -561,8 +561,8 @@ public class MaterialSolid extends Material implements Cloneable {
        * This needs to be printed to a higher precision, six, because of small
        * meshes which are blown up by scale.
        */
-      final String strokeStr = Utils.toFixed(Utils.max(IUtils.DEFAULT_EPSILON,
-         Utils.div(IUp.DEFAULT_STROKE_WEIGHT, scale)), 6);
+      final String strokeStr = Utils.toFixed(Utils.max(IUtils.EPSILON, Utils
+         .div(IUp.DEFAULT_STROKE_WEIGHT, scale)), 6);
 
       final StringBuilder svgp = new StringBuilder(256);
       svgp.append("<g id=\"material\" stroke-width=\"");

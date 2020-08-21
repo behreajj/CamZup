@@ -320,8 +320,8 @@ public abstract class TextShape {
        * and rear-handles share a mid point; the 'pen' draws a curved line with
        * different fore- and rear-handles; the pen lifts and stops drawing.
        */
-      final PathIterator itr = detail < IUtils.DEFAULT_EPSILON ? shp
-         .getPathIterator(transform) : shp.getPathIterator(transform, detail);
+      final PathIterator itr = detail < IUtils.EPSILON ? shp.getPathIterator(
+         transform) : shp.getPathIterator(transform, detail);
 
       /*
        * A double precision array is filled with values by the iterator when
@@ -577,7 +577,7 @@ public abstract class TextShape {
 
       final GlyphVector gv = font.createGlyphVector(frc, characters);
       final Shape shp = gv.getOutline();
-      final float vdetail = Utils.min(IUtils.DEFAULT_EPSILON, detail);
+      final float vdetail = Utils.min(IUtils.EPSILON, detail);
       final PathIterator itr = shp.getPathIterator(transform, vdetail);
       final double[] itrpts = new double[6];
       final float fontSize = font.getSize2D();

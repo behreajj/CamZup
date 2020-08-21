@@ -162,6 +162,19 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
+    * Gets this mesh entity's scale.
+    *
+    * @param target the output vector
+    *
+    * @return the scale
+    */
+   @Override
+   public Vec2 getScale ( final Vec2 target ) {
+
+      return this.transform.getScale(target);
+   }
+
+   /**
     * Returns an iterator, which allows an enhanced for-loop to access the
     * meshes in the mesh entity.
     *

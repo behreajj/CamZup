@@ -87,16 +87,11 @@ public class Ray2 implements Cloneable {
    @Override
    public int hashCode ( ) {
 
-      /*
-       * The hash code includes only the ray's origin so that, in a flow field,
-       * a ray can be retrieved using its origin as a key.
-       */
-
       int hash = IUtils.HASH_BASE;
       hash = hash * IUtils.HASH_MUL ^ ( this.origin == null ? 0 : this.origin
          .hashCode() );
-      // hash = (hash * HASH_MUL)
-      // ^ (this.dir == null ? 0 : this.dir.hashCode());
+      hash = hash * IUtils.HASH_MUL ^ ( this.dir == null ? 0 : this.dir
+         .hashCode() );
       return hash;
    }
 
@@ -195,9 +190,9 @@ public class Ray2 implements Cloneable {
     */
    protected boolean equals ( final Ray2 ray ) {
 
-      // if ( this.dir == null ) {
-      // if ( ray.dir != null ) { return false; }
-      // } else if ( !this.dir.equals(ray.dir) ) { return false; }
+      if ( this.dir == null ) {
+         if ( ray.dir != null ) { return false; }
+      } else if ( !this.dir.equals(ray.dir) ) { return false; }
 
       if ( this.origin == null ) {
          if ( ray.origin != null ) { return false; }
@@ -301,7 +296,7 @@ public class Ray2 implements Cloneable {
          Vec2.perpendicularCCW(ray.dir, v3);
 
          final float dot = Vec2.dot(v2, v3);
-         if ( !Utils.approx(dot, 0.0f, IUtils.DEFAULT_EPSILON) ) {
+         if ( !Utils.approx(dot, 0.0f, IUtils.EPSILON) ) {
             final float t1 = Vec2.cross(v2, v1) / dot;
             final float t2 = Vec2.dot(v1, v3) / dot;
             if ( t1 >= 0.0f && t2 >= 0.0f && t2 <= 1.0f ) {

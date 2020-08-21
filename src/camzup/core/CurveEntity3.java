@@ -149,6 +149,19 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    }
 
    /**
+    * Gets this curve entity's scale.
+    *
+    * @param target the output vector
+    *
+    * @return the scale
+    */
+   @Override
+   public Vec3 getScale ( final Vec3 target ) {
+
+      return this.transform.getScale(target);
+   }
+
+   /**
     * Returns an iterator, which allows an enhanced for-loop to access the
     * curves in the entity.
     *

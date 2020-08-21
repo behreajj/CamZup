@@ -1,11 +1,14 @@
 package camzup.pfriendly;
 
+import camzup.core.Bounds2;
 import camzup.core.Color;
 import camzup.core.CurveEntity2;
 import camzup.core.IUtils;
 import camzup.core.MaterialSolid;
 import camzup.core.MeshEntity2;
+import camzup.core.Quadtree;
 import camzup.core.Ray2;
+import camzup.core.Recursive;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 
@@ -51,6 +54,31 @@ public interface IYup2 extends IUp {
     * @param ap1 the next anchor point
     */
    void bezierVertex ( final Vec2 cp0, final Vec2 cp1, final Vec2 ap1 );
+
+   /**
+    * Draws a bounding area.
+    *
+    * @param b the bounds
+    */
+   void bounds ( final Bounds2 b );
+
+   /**
+    * Draws a quad tree.
+    *
+    * @param qt the quad tree
+    */
+   @Recursive
+   default void bounds ( final Quadtree qt ) {
+
+      if ( qt.isLeaf() ) {
+         this.bounds(qt.bounds);
+      } else {
+         this.bounds(qt.bl);
+         this.bounds(qt.br);
+         this.bounds(qt.tl);
+         this.bounds(qt.tr);
+      }
+   }
 
    /**
     * Sets the camera to a location, rotation and zoom level.

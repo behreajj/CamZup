@@ -149,8 +149,8 @@ public class CamZup {
       final int v_lats = latitudes < 2 ? 2 : latitudes % 2 != 0 ? latitudes + 1
          : latitudes;
       final int v_sections = rings < 0 ? 0 : rings;
-      final float v_depth = Utils.max(IUtils.DEFAULT_EPSILON, depth);
-      final float v_rad = Utils.max(IUtils.DEFAULT_EPSILON, radius);
+      final float v_depth = Utils.max(IUtils.EPSILON, depth);
+      final float v_rad = Utils.max(IUtils.EPSILON, radius);
 
       /* Boolean flags that change number of faces and vertices. */
       final boolean use_quads = poly == PolyType.QUAD;
@@ -530,6 +530,36 @@ public class CamZup {
       return target;
    }
 
+   public static Mesh3 crossCube ( final float cubeSize ) {
+
+      final Vec3[] coords = new Vec3[] { new Vec3(-cubeSize, -cubeSize,
+         -cubeSize), new Vec3(-cubeSize, -cubeSize, cubeSize), new Vec3(
+            -cubeSize, cubeSize, -cubeSize), new Vec3(-cubeSize, cubeSize,
+               cubeSize), new Vec3(cubeSize, -cubeSize, -cubeSize), new Vec3(
+                  cubeSize, -cubeSize, cubeSize), new Vec3(cubeSize, cubeSize,
+                     -cubeSize), new Vec3(cubeSize, cubeSize, cubeSize) };
+
+      final Vec3[] normals = new Vec3[] { new Vec3(1.0f, 0.0f, 0.0f), new Vec3(
+         0.0f, 0.0f, 1.0f), new Vec3(0.0f, 0.0f, -1.0f), new Vec3(0.0f, -1.0f,
+            0.0f), new Vec3(-1.0f, -0.0f, 0.0f), new Vec3(0.0f, 1.0f, 0.0f) };
+
+      final Vec2[] texCoords = new Vec2[] { new Vec2(0.625f, 0.0f), new Vec2(
+         0.375f, 0.0f), new Vec2(0.375f, 0.75f), new Vec2(0.625f, 0.75f),
+         new Vec2(0.375f, 1.0f), new Vec2(0.625f, 1.0f), new Vec2(0.625f, 0.5f),
+         new Vec2(0.375f, 0.5f), new Vec2(0.625f, 0.25f), new Vec2(0.375f,
+            0.25f), new Vec2(0.125f, 0.5f), new Vec2(0.125f, 0.25f), new Vec2(
+               0.875f, 0.25f), new Vec2(0.875f, 0.5f) };
+
+      final int[][][] faces = new int[][][] { { { 0, 4, 4 }, { 1, 5, 4 }, { 3,
+         3, 4 }, { 2, 2, 4 } }, { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 6, 5 }, { 6, 7,
+            5 } }, { { 6, 7, 0 }, { 7, 6, 0 }, { 5, 8, 0 }, { 4, 9, 0 } }, { {
+               4, 9, 3 }, { 5, 8, 3 }, { 1, 0, 3 }, { 0, 1, 3 } }, { { 2, 10,
+                  2 }, { 6, 7, 2 }, { 4, 9, 2 }, { 0, 11, 2 } }, { { 7, 6, 1 },
+                     { 3, 13, 1 }, { 1, 12, 1 }, { 5, 8, 1 } } };
+
+      return new Mesh3(faces, coords, texCoords, normals);
+   }
+
    /**
     * The main function.
     *
@@ -539,18 +569,53 @@ public class CamZup {
 
       final Rng rng = new Rng();
 
-      final Vec2 a = new Vec2(1.0f, -0.0f);
-      final Vec2 b = new Vec2(1.0f, 0.0f);
-      System.out.println(a.equals(b));
+   }
 
-      // final Mesh3 m3 = new Mesh3();
-      // Mesh3.square(Mesh.PolyType.TRI, m3);
-      // final Mesh3Fixed m3f = new Mesh3Fixed(m3);
-      // System.out.println(m3f);
-      //
-      // for ( int i = 0; i < m3f.indexBuffer.limit(); ++i ) {
-      // System.out.println(m3f.indexBuffer.get(i));
-      // }
+   public static Mesh3 unityCube ( ) {
+
+      final Vec3[] coords = new Vec3[] { new Vec3(0.5f, -0.5f, 0.5f), new Vec3(
+         -0.5f, -0.5f, 0.5f), new Vec3(0.5f, 0.5f, 0.5f), new Vec3(-0.5f, 0.5f,
+            0.5f), new Vec3(0.5f, 0.5f, -0.5f), new Vec3(-0.5f, 0.5f, -0.5f),
+         new Vec3(0.5f, -0.5f, -0.5f), new Vec3(-0.5f, -0.5f, -0.5f), new Vec3(
+            0.5f, 0.5f, 0.5f), new Vec3(-0.5f, 0.5f, 0.5f), new Vec3(0.5f, 0.5f,
+               -0.5f), new Vec3(-0.5f, 0.5f, -0.5f), new Vec3(0.5f, -0.5f,
+                  -0.5f), new Vec3(0.5f, -0.5f, 0.5f), new Vec3(-0.5f, -0.5f,
+                     0.5f), new Vec3(-0.5f, -0.5f, -0.5f), new Vec3(-0.5f,
+                        -0.5f, 0.5f), new Vec3(-0.5f, 0.5f, 0.5f), new Vec3(
+                           -0.5f, 0.5f, -0.5f), new Vec3(-0.5f, -0.5f, -0.5f),
+         new Vec3(0.5f, -0.5f, -0.5f), new Vec3(0.5f, 0.5f, -0.5f), new Vec3(
+            0.5f, 0.5f, 0.5f), new Vec3(0.5f, -0.5f, 0.5f) };
+
+      final Vec2[] texCoords = new Vec2[] { new Vec2(0f, 0f), new Vec2(1f, 0f),
+         new Vec2(0f, 1f), new Vec2(1f, 1f), new Vec2(0f, 1f), new Vec2(1f, 1f),
+         new Vec2(0f, 1f), new Vec2(1f, 1f), new Vec2(0f, 0f), new Vec2(1f, 0f),
+         new Vec2(0f, 0f), new Vec2(1f, 0f), new Vec2(0f, 0f), new Vec2(0f, 1f),
+         new Vec2(1f, 1f), new Vec2(1f, 0f), new Vec2(0f, 0f), new Vec2(0f, 1f),
+         new Vec2(1f, 1f), new Vec2(1f, 0f), new Vec2(0f, 0f), new Vec2(0f, 1f),
+         new Vec2(1f, 1f), new Vec2(1f, 0f) };
+
+      final Vec3[] normals = new Vec3[] { new Vec3(0f, 0f, 1f), new Vec3(0f, 0f,
+         1f), new Vec3(0f, 0f, 1f), new Vec3(0f, 0f, 1f), new Vec3(0f, 1f, 0f),
+         new Vec3(0f, 1f, 0f), new Vec3(0f, 0f, -1f), new Vec3(0f, 0f, -1f),
+         new Vec3(0f, 1f, 0f), new Vec3(0f, 1f, 0f), new Vec3(0f, 0f, -1f),
+         new Vec3(0f, 0f, -1f), new Vec3(0f, -1f, 0f), new Vec3(0f, -1f, 0f),
+         new Vec3(0f, -1f, 0f), new Vec3(0f, -1f, 0f), new Vec3(-1f, 0f, 0f),
+         new Vec3(-1f, 0f, 0f), new Vec3(-1f, 0f, 0f), new Vec3(-1f, 0f, 0f),
+         new Vec3(1f, 0f, 0f), new Vec3(1f, 0f, 0f), new Vec3(1f, 0f, 0f),
+         new Vec3(1f, 0f, 0f) };
+
+      final int[][][] faces = new int[][][] { { { 0, 0, 0 }, { 2, 2, 2 }, { 3,
+         3, 3 } }, { { 0, 0, 0 }, { 3, 3, 3 }, { 1, 1, 1 } }, { { 8, 8, 8 }, {
+            4, 4, 4 }, { 5, 5, 5 } }, { { 8, 8, 8 }, { 5, 5, 5 }, { 9, 9, 9 } },
+         { { 10, 10, 10 }, { 6, 6, 6 }, { 7, 7, 7 } }, { { 10, 10, 10 }, { 7, 7,
+            7 }, { 11, 11, 11 } }, { { 12, 12, 12 }, { 13, 13, 13 }, { 14, 14,
+               14 } }, { { 12, 12, 12 }, { 14, 14, 14 }, { 15, 15, 15 } }, { {
+                  16, 16, 16 }, { 17, 17, 17 }, { 18, 18, 18 } }, { { 16, 16,
+                     16 }, { 18, 18, 18 }, { 19, 19, 19 } }, { { 20, 20, 20 }, {
+                        21, 21, 21 }, { 22, 22, 22 } }, { { 20, 20, 20 }, { 22,
+                           22, 22 }, { 23, 23, 23 } } };
+
+      return new Mesh3(faces, coords, texCoords, normals);
    }
 
    /**

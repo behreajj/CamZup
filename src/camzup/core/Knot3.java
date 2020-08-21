@@ -809,9 +809,9 @@ public class Knot3 implements Cloneable, Comparable < Knot3 > {
    public Knot3 set ( final float xCoord, final float yCoord,
       final float zCoord ) {
 
-      final float xOff = Utils.copySign(IUtils.DEFAULT_EPSILON, xCoord);
-      final float yOff = Utils.copySign(IUtils.DEFAULT_EPSILON, yCoord);
-      final float zOff = Utils.copySign(IUtils.DEFAULT_EPSILON, zCoord);
+      final float xOff = Utils.copySign(IUtils.EPSILON, xCoord);
+      final float yOff = Utils.copySign(IUtils.EPSILON, yCoord);
+      final float zOff = Utils.copySign(IUtils.EPSILON, zCoord);
 
       return this.set(xCoord, yCoord, zCoord, xCoord + xOff, yCoord + yOff,
          zCoord + zOff, xCoord - xOff, yCoord - yOff, zCoord - zOff);

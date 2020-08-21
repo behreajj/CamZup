@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import camzup.core.Color;
 import camzup.core.MaterialUv;
 import camzup.core.Transform2;
+import camzup.core.Vec2;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -68,6 +69,43 @@ public class MaterialPImage extends MaterialUv {
 
       super(name, transform, tint);
       this.setTexture(texture);
+   }
+
+   /**
+    * Gets this material's transform's texture coordinate location.
+    *
+    * @param target the output vector
+    *
+    * @return the location
+    */
+   @Override
+   public Vec2 getLocation ( final Vec2 target ) {
+
+      return this.transform.getLocation(target);
+   }
+
+   /**
+    * Gets this material's transform's texture coordinate location.
+    *
+    * @return the rotation
+    */
+   @Override
+   public float getRotation ( ) {
+
+      return this.transform.getRotation();
+   }
+
+   /**
+    * Gets this material's transform's scale.
+    *
+    * @param target the output vector
+    *
+    * @return the scale
+    */
+   @Override
+   public Vec2 getScale ( final Vec2 target ) {
+
+      return this.transform.getScale(target);
    }
 
    /**

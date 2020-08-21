@@ -151,6 +151,19 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    }
 
    /**
+    * Gets this curve entity's scale.
+    *
+    * @param target the output vector
+    *
+    * @return the scale
+    */
+   @Override
+   public Vec2 getScale ( final Vec2 target ) {
+
+      return this.transform.getScale(target);
+   }
+
+   /**
     * /** Returns an iterator, which allows an enhanced for-loop to access the
     * curves in the entity.
     *

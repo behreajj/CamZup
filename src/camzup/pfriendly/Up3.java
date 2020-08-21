@@ -2,6 +2,7 @@ package camzup.pfriendly;
 
 import java.util.Iterator;
 
+import camzup.core.Bounds3;
 import camzup.core.Color;
 import camzup.core.Curve3;
 import camzup.core.CurveEntity3;
@@ -123,6 +124,79 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       this.bezierVertexImpl(cp0.x, cp0.y, cp0.z, cp1.x, cp1.y, cp1.z, ap1.x,
          ap1.y, ap1.z);
+   }
+
+   /**
+    * Draws a bounding volume
+    *
+    * @param b the bounds
+    */
+   @Override
+   public void bounds ( final Bounds3 b ) {
+
+      final Vec3 min = b.min;
+      final float x0 = min.x;
+      final float y0 = min.y;
+      final float z0 = min.z;
+
+      final Vec3 max = b.max;
+      final float x1 = max.x;
+      final float y1 = max.y;
+      final float z1 = max.z;
+
+      /* Left. */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(-1.0f, 0.0f, 0.0f);
+      this.vertexImpl(x0, y0, z0, 1.0f, 1.0f);
+      this.vertexImpl(x0, y0, z1, 1.0f, 0.0f);
+      this.vertexImpl(x0, y1, z1, 0.0f, 0.0f);
+      this.vertexImpl(x0, y1, z0, 0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Right. */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(1.0f, 0.0f, 0.0f);
+      this.vertexImpl(x1, y1, z0, 1.0f, 1.0f);
+      this.vertexImpl(x1, y1, z1, 1.0f, 0.0f);
+      this.vertexImpl(x1, y0, z1, 0.0f, 0.0f);
+      this.vertexImpl(x1, y0, z0, 0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Back. */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, -1.0f, 0.0f);
+      this.vertexImpl(x1, y0, z0, 1.0f, 1.0f);
+      this.vertexImpl(x1, y0, z1, 1.0f, 0.0f);
+      this.vertexImpl(x0, y0, z1, 0.0f, 0.0f);
+      this.vertexImpl(x0, y0, z0, 0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Up. */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 1.0f, 0.0f);
+      this.vertexImpl(x0, y1, z0, 1.0f, 1.0f);
+      this.vertexImpl(x0, y1, z1, 1.0f, 0.0f);
+      this.vertexImpl(x1, y1, z1, 0.0f, 0.0f);
+      this.vertexImpl(x1, y1, z0, 0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Down. */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 0.0f, -1.0f);
+      this.vertexImpl(x0, y1, z0, 0.0f, 1.0f);
+      this.vertexImpl(x1, y1, z0, 1.0f, 1.0f);
+      this.vertexImpl(x1, y0, z0, 1.0f, 0.0f);
+      this.vertexImpl(x0, y0, z0, 0.0f, 0.0f);
+      this.endShape(PConstants.CLOSE);
+
+      /* Up. */
+      this.beginShape(PConstants.POLYGON);
+      this.normal(0.0f, 0.0f, 1.0f);
+      this.vertexImpl(x1, y1, z1, 0.0f, 1.0f);
+      this.vertexImpl(x0, y1, z1, 1.0f, 1.0f);
+      this.vertexImpl(x0, y0, z1, 1.0f, 0.0f);
+      this.vertexImpl(x1, y0, z1, 0.0f, 0.0f);
+      this.endShape(PConstants.CLOSE);
    }
 
    /**
@@ -659,7 +733,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    public void origin ( final float lineLength, final float sw,
       final int xColor, final int yColor, final int zColor ) {
 
-      final float vl = Utils.max(IUtils.DEFAULT_EPSILON, lineLength);
+      final float vl = Utils.max(IUtils.EPSILON, lineLength);
 
       this.disableDepthMask();
       this.disableDepthTest();

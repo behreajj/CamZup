@@ -243,10 +243,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int[] idxDest = face[k];
 
       final int idxV0 = idxOrigin[0];
-      final int idxV3 = idxDest[0];
       final int idxVt0 = idxOrigin[1];
-      final int idxVt3 = idxDest[1];
       final int idxVn0 = idxOrigin[2];
+
+      final int idxV3 = idxDest[0];
+      final int idxVt3 = idxDest[1];
       final int idxVn3 = idxDest[2];
 
       final int vsOldLen = this.coords.length;
@@ -254,20 +255,18 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int vnsOldLen = this.normals.length;
 
       final int idxV1 = vsOldLen;
-      final int idxV2 = vsOldLen + 1;
-
       final int idxVt1 = vtsOldLen;
-      final int idxVt2 = vtsOldLen + 1;
-
       final int idxVn1 = vnsOldLen;
 
+      final int idxV2 = vsOldLen + 1;
+      final int idxVt2 = vtsOldLen + 1;
+
       final Vec3 vOrigin = this.coords[idxV0];
-      final Vec3 vDest = this.coords[idxV3];
-
       final Vec2 vtOrigin = this.texCoords[idxVt0];
-      final Vec2 vtDest = this.texCoords[idxVt3];
-
       final Vec3 vnOrigin = this.normals[idxVn0];
+
+      final Vec3 vDest = this.coords[idxV3];
+      final Vec2 vtDest = this.texCoords[idxVt3];
       final Vec3 vnDest = this.normals[idxVn3];
 
       final Vec3 vnDiff = new Vec3( ( vnDest.x + vnOrigin.x ) * 0.5f, ( vnDest.y
@@ -2422,6 +2421,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Vec3 calcDimensions ( final Mesh3 mesh, final Vec3 target,
       final Vec3 lb, final Vec3 ub ) {
 
+      // TODO: Overload to support bounds. Or do calcfrompoints in bounds.
+
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
       ub.set(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
 
@@ -2469,8 +2470,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* Validate arguments. */
       final int vsect = sectors < 3 ? 3 : sectors;
-      final float vdepth = Utils.max(depth, IUtils.DEFAULT_EPSILON);
-      final float vrad = Utils.max(radius, IUtils.DEFAULT_EPSILON);
+      final float vdepth = Utils.max(depth, IUtils.EPSILON);
+      final float vrad = Utils.max(radius, IUtils.EPSILON);
 
       /* Calculate vertices, faces and normals. */
       final int vertCount = vsect + 2;
@@ -2626,7 +2627,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3 cube ( final float size, final PolyType poly,
       final Mesh3 target ) {
 
-      final float vsz = Utils.max(IUtils.DEFAULT_EPSILON, size);
+      final float vsz = Utils.max(IUtils.EPSILON, size);
 
       target.name = "Cube";
 
@@ -3974,12 +3975,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param thickness tube thickness
     * @param sectors   number of sectors
     * @param panels    number of panels
+    * @param poly      the polygon type
     * @param target    the output mesh
     *
     * @return the torus
     */
    public static Mesh3 torus ( final float thickness, final int sectors,
-      final int panels, final Mesh3 target ) {
+      final int panels, final Mesh.PolyType poly, final Mesh3 target ) {
 
       target.name = "Torus";
 
@@ -3987,20 +3989,22 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int vsect = sectors < 3 ? 3 : sectors;
       final int vpanl = panels < 3 ? 3 : panels;
       final float rho0 = 0.5f;
-      final float rho1 = rho0 * Utils.clamp(thickness, IUtils.DEFAULT_EPSILON,
-         1.0f - IUtils.DEFAULT_EPSILON);
+      final float rho1 = rho0 * Utils.clamp(thickness, IUtils.EPSILON, 1.0f
+         - IUtils.EPSILON);
 
       /* Values for array accesses. */
       final int vsect1 = vsect + 1;
       final int vpanl1 = vpanl + 1;
       final int vLen = vpanl * vsect;
       final int vtLen = vpanl1 * vsect1;
+      final boolean isTri = poly == PolyType.TRI;
+      final int fsLen = isTri ? vLen + vLen : vLen;
 
       /* Reallocate arrays. */
       target.coords = Vec3.resize(target.coords, vLen);
       target.texCoords = Vec2.resize(target.texCoords, vtLen);
       target.normals = Vec3.resize(target.normals, vLen);
-      target.faces = new int[vLen + vLen][3][3];
+      target.faces = isTri ? new int[fsLen][3][3] : new int[fsLen][4][3];
 
       /* Cache shortcuts. */
       final Vec3[] vs = target.coords;
@@ -4056,7 +4060,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       /* Set faces. */
-      for ( int k = 0, m = 1, i = 0; i < vpanl; ++i ) {
+      final int faceStride = isTri ? 2 : 1;
+      for ( int k = 0, i = 0; i < vpanl; ++i ) {
          final int iVNext = ( i + 1 ) % vpanl;
 
          /* For converting from 2D to 1D array (idx = y * width + x) . */
@@ -4066,7 +4071,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int vtOffCurr = i * vsect1;
          final int vtOffNext = vtOffCurr + vsect1;
 
-         for ( int j = 0; j < vsect; ++j, k += 2, m += 2 ) {
+         for ( int j = 0; j < vsect; ++j, k += faceStride ) {
             final int jVtNext = j + 1;
             final int jVNext = jVtNext % vsect;
 
@@ -4082,29 +4087,44 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final int vt11 = vtOffNext + jVtNext;
             final int vt01 = vtOffNext + j;
 
-            // TODO: Provide option for quadrilaterals vs. triangles?
+            if ( isTri ) {
+               /* Triangle 0 */
+               final int[][] tri0 = fs[k];
+               final int[] a0 = tri0[0];
+               final int[] b0 = tri0[1];
+               final int[] c0 = tri0[2];
 
-            /* Triangle 0 */
-            final int[][] tri0 = fs[k];
-            final int[] a0 = tri0[0];
-            final int[] b0 = tri0[1];
-            final int[] c0 = tri0[2];
+               /* Triangle 1 */
+               final int[][] tri1 = fs[k + 1];
+               final int[] a1 = tri1[0];
+               final int[] b1 = tri1[1];
+               final int[] c1 = tri1[2];
 
-            /* Triangle 1 */
-            final int[][] tri1 = fs[m];
-            final int[] a1 = tri1[0];
-            final int[] b1 = tri1[1];
-            final int[] c1 = tri1[2];
+               /* @formatter:off */
+               a0[0] = v00; a0[1] = vt00; a0[2] = v00;
+               b0[0] = v10; b0[1] = vt10; b0[2] = v10;
+               c0[0] = v11; c0[1] = vt11; c0[2] = v11;
 
-            /* @formatter:off */
-            a0[0] = v00; a0[1] = vt00; a0[2] = v00;
-            b0[0] = v10; b0[1] = vt10; b0[2] = v10;
-            c0[0] = v11; c0[1] = vt11; c0[2] = v11;
+               a1[0] = v00; a1[1] = vt00; a1[2] = v00;
+               b1[0] = v11; b1[1] = vt11; b1[2] = v11;
+               c1[0] = v01; c1[1] = vt01; c1[2] = v01;
+               /* @formatter:on */
 
-            a1[0] = v00; a1[1] = vt00; a1[2] = v00;
-            b1[0] = v11; b1[1] = vt11; b1[2] = v11;
-            c1[0] = v01; c1[1] = vt01; c1[2] = v01;
-            /* @formatter:on */
+            } else {
+
+               final int[][] quad = fs[k];
+               final int[] a = quad[0];
+               final int[] b = quad[1];
+               final int[] c = quad[2];
+               final int[] d = quad[3];
+
+               /* @formatter:off */
+               a[0] = v00; a[1] = vt00; a[2] = v00;
+               b[0] = v10; b[1] = vt10; b[2] = v10;
+               c[0] = v11; c[1] = vt11; c[2] = v11;
+               d[0] = v01; d[1] = vt01; d[2] = v01;
+               /* @formatter:on */
+            }
          }
       }
 
@@ -4122,7 +4142,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3 torus ( final float thickness, final Mesh3 target ) {
 
       return Mesh3.torus(thickness, IMesh.DEFAULT_CIRCLE_SECTORS,
-         IMesh.DEFAULT_CIRCLE_SECTORS >> 1, target);
+         IMesh.DEFAULT_CIRCLE_SECTORS >> 1, Mesh3.DEFAULT_POLY_TYPE, target);
    }
 
    /**
@@ -4137,7 +4157,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3 torus ( final int sectors, final int panels,
       final Mesh3 target ) {
 
-      return Mesh3.torus(IMesh.DEFAULT_OCULUS, sectors, panels, target);
+      return Mesh3.torus(IMesh.DEFAULT_OCULUS, sectors, panels,
+         Mesh3.DEFAULT_POLY_TYPE, target);
    }
 
    /**
@@ -4150,7 +4171,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3 torus ( final Mesh3 target ) {
 
       return Mesh3.torus(IMesh.DEFAULT_OCULUS, IMesh.DEFAULT_CIRCLE_SECTORS,
-         IMesh.DEFAULT_CIRCLE_SECTORS >> 1, target);
+         IMesh.DEFAULT_CIRCLE_SECTORS >> 1, Mesh3.DEFAULT_POLY_TYPE, target);
    }
 
    /**
@@ -4218,13 +4239,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             vtsTrg[k].set(u * vtaSrc.x + t * vtbSrc.x, u * vtaSrc.y + t
                * vtbSrc.y);
 
-            fTrg[j][0] = k;
-            fTrg[j][1] = k;
-            fTrg[j][2] = k;
+            final int[] vertTrg = fTrg[j];
+            vertTrg[0] = k;
+            vertTrg[1] = k;
+            vertTrg[2] = k;
          }
       }
 
-      target.shadeSmooth();
+      target.shadeFlat();
       return target;
    }
 
@@ -4633,15 +4655,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* If difference's length is zero, invalid inputs. */
       final float m0 = x0 * x0 + y0 * y0 + z0 * z0;
-      if ( Utils.approx(m0, 0.0f, IUtils.DEFAULT_EPSILON) ) {
-         x0 = IUtils.DEFAULT_EPSILON * 2.0f;
+      if ( Utils.approx(m0, 0.0f, IUtils.EPSILON) ) {
+         x0 = IUtils.EPSILON * 2.0f;
          y0 = x0;
          z0 = x0;
       }
 
       /* Validate arguments. */
       final int sec = sectors < 3 ? 3 : sectors;
-      final float rad = Utils.max(IUtils.DEFAULT_EPSILON, radius);
+      final float rad = Utils.max(IUtils.EPSILON, radius);
 
       /* Normalize forward. */
       final float mInv0 = Utils.invSqrtUnchecked(m0);
@@ -4655,9 +4677,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       float z1 = 0.0f;
 
       /* Forward and up are parallel if the cross product is zero. */
-      if ( Utils.approx(x1, 0.0f, IUtils.DEFAULT_EPSILON) && Utils.approx(y1,
-         0.0f, IUtils.DEFAULT_EPSILON) && Utils.approx(z1, 0.0f,
-            IUtils.DEFAULT_EPSILON) ) {
+      if ( Utils.approx(x1, 0.0f, IUtils.EPSILON) && Utils.approx(y1, 0.0f,
+         IUtils.EPSILON) && Utils.approx(z1, 0.0f, IUtils.EPSILON) ) {
 
          /*
           * If forward and up are parallel, recalculate the cross product

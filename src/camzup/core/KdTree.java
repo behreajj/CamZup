@@ -243,18 +243,17 @@ abstract class KdTree < T extends Comparable < T > > {
       lastDistance = distMetric.apply(value, lastNode.data);
 
       final Comparator < T > axis = this.getAxis(node.depth);
-      Node < T > lesser = node.left;
-      Node < T > greater = node.right;
+      final Node < T > lesser = node.left;
+      final Node < T > greater = node.right;
 
       if ( lesser != null && !examined.contains(lesser) ) {
          examined.add(lesser);
 
-         float nodePoint = Float.MIN_VALUE;
-         float valuePlusDistance = Float.MIN_VALUE;
+         final float nodePoint = Float.MIN_VALUE;
+         final float valuePlusDistance = Float.MIN_VALUE;
 
       }
    }
-
 
    /**
     * A node in the k dimensional Tree. Holds a piece of data.

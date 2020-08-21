@@ -3707,10 +3707,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       }
 
       final float limit = Utils.min(w, h) * 0.5f;
-      final float tl = Utils.clamp(topLeft, IUtils.DEFAULT_EPSILON, limit);
-      final float tr = Utils.clamp(topRight, IUtils.DEFAULT_EPSILON, limit);
-      final float br = Utils.clamp(bottomRight, IUtils.DEFAULT_EPSILON, limit);
-      final float bl = Utils.clamp(bottomLeft, IUtils.DEFAULT_EPSILON, limit);
+      final float tl = Utils.clamp(topLeft, IUtils.EPSILON, limit);
+      final float tr = Utils.clamp(topRight, IUtils.EPSILON, limit);
+      final float br = Utils.clamp(bottomRight, IUtils.EPSILON, limit);
+      final float bl = Utils.clamp(bottomLeft, IUtils.EPSILON, limit);
 
       this.beginShape(PConstants.POLYGON);
       this.normal(0.0f, 0.0f, 1.0f);

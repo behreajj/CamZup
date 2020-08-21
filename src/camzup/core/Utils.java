@@ -100,8 +100,8 @@ public abstract class Utils implements IUtils {
    /**
     * A quick approximation test. Tests to see if the absolute of the
     * difference between two values is less than or equal to
-    * {@link IUtils#DEFAULT_EPSILON}, {@value IUtils#DEFAULT_EPSILON}. Does
-    * not handle edge cases.
+    * {@link IUtils#EPSILON}, {@value IUtils#EPSILON}. Does not handle edge
+    * cases.
     *
     * @param a the left comparisand
     * @param b the right comparisand
@@ -112,7 +112,7 @@ public abstract class Utils implements IUtils {
     */
    public static boolean approx ( final float a, final float b ) {
 
-      return Utils.approx(a, b, IUtils.DEFAULT_EPSILON);
+      return Utils.approx(a, b, IUtils.EPSILON);
    }
 
    /**
@@ -2132,7 +2132,7 @@ public abstract class Utils implements IUtils {
        */
       public void setRange ( final float range ) {
 
-         this.range = Utils.max(Utils.abs(range), IUtils.DEFAULT_EPSILON);
+         this.range = Utils.max(Utils.abs(range), IUtils.EPSILON);
          this.halfRange = range * 0.5f;
       }
 

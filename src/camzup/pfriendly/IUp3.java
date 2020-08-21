@@ -1,5 +1,6 @@
 package camzup.pfriendly;
 
+import camzup.core.Bounds3;
 import camzup.core.Handedness;
 import camzup.core.Ray3;
 import camzup.core.Utils;
@@ -35,6 +36,13 @@ public interface IUp3 extends IUp {
     * @param ap1 the next anchor point
     */
    void bezierVertex ( final Vec3 cp0, final Vec3 cp1, final Vec3 ap1 );
+
+   /**
+    * Draws a bounding volume.
+    *
+    * @param b the bounds
+    */
+   void bounds ( final Bounds3 b );
 
    /**
     * Looks at the center point from the eye point, using a default reference

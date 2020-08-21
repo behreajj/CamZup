@@ -35,15 +35,6 @@ public interface IUtils {
    }
 
    /**
-    * The smallest positive non-zero value, \u03b5. Useful for testing
-    * approximation between two floats. Set to {@value IUtils#DEFAULT_EPSILON}
-    * .
-    *
-    * @see Utils#approx(float, float)
-    */
-   float DEFAULT_EPSILON = 0.000001f;
-
-   /**
     * An angle in degrees is multiplied by this constant to convert it to
     * radians. \u03c0 / 180.0 , approximately {@value IUtils#DEG_TO_RAD} .
     */
@@ -54,6 +45,14 @@ public interface IUtils {
     * radians. \u03c0 / 180.0 , approximately {@value IUtils#DEG_TO_RAD_D} .
     */
    double DEG_TO_RAD_D = 0.017453292519943295d;
+
+   /**
+    * The smallest positive non-zero value, \u03b5. Useful for testing
+    * approximation between two floats. Set to {@value IUtils#EPSILON} .
+    *
+    * @see Utils#approx(float, float)
+    */
+   float EPSILON = 0.000001f;
 
    /**
     * Four-thirds, 4.0 / 3.0 . Approximately {@value IUtils#FOUR_THIRDS} .

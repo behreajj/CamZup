@@ -75,6 +75,32 @@ public class Entity3 extends Entity implements IOriented3, ISpatial3 {
    }
 
    /**
+    * Gets this entity's location.
+    *
+    * @param target the output vector
+    *
+    * @returns the location
+    */
+   @Override
+   public Vec3 getLocation ( final Vec3 target ) {
+
+      return this.transform.getLocation(target);
+   }
+
+   /**
+    * Gets this entity's rotation.
+    *
+    * @param target the output quaternion
+    *
+    * @return the rotation
+    */
+   @Override
+   public Quaternion getRotation ( final Quaternion target ) {
+
+      return this.transform.getRotation(target);
+   }
+
+   /**
     * Returns a hash code for this entity.
     *
     * @return the hash code

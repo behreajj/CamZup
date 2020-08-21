@@ -579,7 +579,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     */
    public static boolean approx ( final Quaternion a, final Quaternion b ) {
 
-      return Quaternion.approx(a, b, IUtils.DEFAULT_EPSILON);
+      return Quaternion.approx(a, b, IUtils.EPSILON);
    }
 
    /**
@@ -619,7 +619,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     */
    public static boolean approxMag ( final Quaternion a, final float b ) {
 
-      return Quaternion.approxMag(a, b, IUtils.DEFAULT_EPSILON);
+      return Quaternion.approxMag(a, b, IUtils.EPSILON);
    }
 
    /**
@@ -998,7 +998,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          float ny = axis.y;
          float nz = axis.z;
 
-         if ( !Utils.approx(amSq, 1.0f, IUtils.DEFAULT_EPSILON) ) {
+         if ( !Utils.approx(amSq, 1.0f, IUtils.EPSILON) ) {
             final float amInv = Utils.invSqrtUnchecked(amSq);
             nx *= amInv;
             ny *= amInv;
@@ -1053,9 +1053,9 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       final float z1 = isRight ? 0.0f : xForward;
 
       /* Polarity: an infinite number of orientations is possible. */
-      final boolean parallel = Utils.approx(x1, 0.0f, IUtils.DEFAULT_EPSILON)
-         && Utils.approx(y1, 0.0f, IUtils.DEFAULT_EPSILON) && Utils.approx(z1,
-            0.0f, IUtils.DEFAULT_EPSILON);
+      final boolean parallel = Utils.approx(x1, 0.0f, IUtils.EPSILON) && Utils
+         .approx(y1, 0.0f, IUtils.EPSILON) && Utils.approx(z1, 0.0f,
+            IUtils.EPSILON);
 
       if ( parallel ) {
          if ( isRight ) {
@@ -1148,7 +1148,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
       }
 
       /* Polarity: an infinite number of orientations is possible. */
-      if ( Vec3.approxMag(right, 0.0f, IUtils.DEFAULT_EPSILON) ) {
+      if ( Vec3.approxMag(right, 0.0f, IUtils.EPSILON) ) {
 
          if ( isRight ) {
 
@@ -2071,7 +2071,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          return angle;
       }
 
-      if ( Utils.approx(amSq, 1.0f, IUtils.DEFAULT_EPSILON) ) {
+      if ( Utils.approx(amSq, 1.0f, IUtils.EPSILON) ) {
          axis.set(ax, ay, az);
          return angle;
       }

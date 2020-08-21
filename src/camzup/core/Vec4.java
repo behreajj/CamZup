@@ -584,7 +584,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public static boolean approx ( final Vec4 a, final Vec4 b ) {
 
-      return Vec4.approx(a, b, IUtils.DEFAULT_EPSILON);
+      return Vec4.approx(a, b, IUtils.EPSILON);
    }
 
    /**
@@ -623,7 +623,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public static boolean approxMag ( final Vec4 a, final float b ) {
 
-      return Vec4.approxMag(a, b, IUtils.DEFAULT_EPSILON);
+      return Vec4.approxMag(a, b, IUtils.EPSILON);
    }
 
    /**
@@ -962,8 +962,8 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     */
    public static Vec4 epsilon ( final Vec4 target ) {
 
-      return target.set(IUtils.DEFAULT_EPSILON, IUtils.DEFAULT_EPSILON,
-         IUtils.DEFAULT_EPSILON, IUtils.DEFAULT_EPSILON);
+      return target.set(IUtils.EPSILON, IUtils.EPSILON, IUtils.EPSILON,
+         IUtils.EPSILON);
    }
 
    /**

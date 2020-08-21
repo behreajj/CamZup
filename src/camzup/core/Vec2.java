@@ -627,7 +627,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static boolean approx ( final Vec2 a, final Vec2 b ) {
 
-      return Vec2.approx(a, b, IUtils.DEFAULT_EPSILON);
+      return Vec2.approx(a, b, IUtils.EPSILON);
    }
 
    /**
@@ -664,7 +664,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static boolean approxMag ( final Vec2 a, final float b ) {
 
-      return Vec2.approxMag(a, b, IUtils.DEFAULT_EPSILON);
+      return Vec2.approxMag(a, b, IUtils.EPSILON);
    }
 
    /**
@@ -695,7 +695,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static boolean areParallel ( final Vec2 a, final Vec2 b ) {
 
-      return Vec2.areParallel(a, b, IUtils.DEFAULT_EPSILON);
+      return Vec2.areParallel(a, b, IUtils.EPSILON);
    }
 
    /**
@@ -1155,7 +1155,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static Vec2 epsilon ( final Vec2 target ) {
 
-      return target.set(IUtils.DEFAULT_EPSILON, IUtils.DEFAULT_EPSILON);
+      return target.set(IUtils.EPSILON, IUtils.EPSILON);
    }
 
    /**
@@ -1548,10 +1548,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
       final float angNorm = Utils.mod1(angOffset * IUtils.ONE_TAU);
 
       final boolean oneRing = vring == 1;
-      final float vrMax = Utils.max(IUtils.DEFAULT_EPSILON, radiusMin,
-         radiusMax);
-      final float vrMin = oneRing ? vrMax : Utils.max(IUtils.DEFAULT_EPSILON,
-         Utils.min(radiusMin, radiusMax));
+      final float vrMax = Utils.max(IUtils.EPSILON, radiusMin, radiusMax);
+      final float vrMin = oneRing ? vrMax : Utils.max(IUtils.EPSILON, Utils.min(
+         radiusMin, radiusMax));
 
       final int ringLen = includeCenter ? rings + 1 : rings;
       final Vec2[][] result = new Vec2[ringLen][vsect];
@@ -2438,7 +2437,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
       // TEST
 
       final float nMSq = Vec2.magSq(normal);
-      if ( Utils.abs(nMSq) < IUtils.DEFAULT_EPSILON ) { return target.reset(); }
+      if ( Utils.abs(nMSq) < IUtils.EPSILON ) { return target.reset(); }
 
       if ( Utils.approx(nMSq, 1.0f) ) {
          final float scalar = 2.0f * Vec2.dot(normal, incident);
@@ -3049,8 +3048,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
       }
 
    }
-
-
 
    /**
     * Compares two vectors on the x axis.

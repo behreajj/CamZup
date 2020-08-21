@@ -75,8 +75,8 @@ public interface ISvgWritable {
    default String toSvgString ( final String id, final float xOrigin,
       final float yOrigin, final float width, final float height ) {
 
-      final float vw = Utils.max(IUtils.DEFAULT_EPSILON, width);
-      final float vh = Utils.max(IUtils.DEFAULT_EPSILON, height);
+      final float vw = Utils.max(IUtils.EPSILON, width);
+      final float vh = Utils.max(IUtils.EPSILON, height);
       final String widthStr = Utils.toFixed(vw, 6);
       final String heightStr = Utils.toFixed(vh, 6);
       final float x = Utils.clamp01(xOrigin);

@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup2 graphics2;
+YupJ2 graphics2;
 
 // Number of inscriptions (rows).
 int inscrip = 6;
@@ -10,7 +10,7 @@ int inscrip = 6;
 int count = 6;
 
 // Control for animation.
-float time = 0.25;
+float time = IUtils.ONE_THIRD;
 float timeIncr = 1.0 / 256.0;
 
 // Scale of the shape
@@ -36,11 +36,11 @@ MaterialSolid trgMaterial = new MaterialSolid()
   .setStrokeWeight(1.75);
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {
-  graphics2 = (Yup2)getGraphics();
+  graphics2 = (YupJ2)getGraphics();
 
   // Determine horizontal extents of grid.
   Vec2 ubx = new Vec2(width * 0.4, 0.0);
@@ -90,7 +90,8 @@ void setup() {
 
       // Subdivide the polygon as desired.
       srcMesh.subdivFacesFan(1);
-      srcMesh.subdivFacesInscribe(1);
+      srcMesh.subdivFacesCenter(1);
+      //srcMesh.subdivFacesInscribe(1);
 
       meSrc.append(srcMesh);
 

@@ -160,6 +160,19 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    }
 
    /**
+    * Gets this mesh entity's scale.
+    *
+    * @param target the output vector
+    *
+    * @return the scale
+    */
+   @Override
+   public Vec3 getScale ( final Vec3 target ) {
+
+      return this.transform.getScale(target);
+   }
+
+   /**
     * Returns an iterator, which allows an enhanced for-loop to access the
     * meshes in the mesh entity.
     *
@@ -330,7 +343,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       final float clearcoatRough ) {
 
       final boolean addVertGroups = true;
-      final boolean includeNormals = true;
+      final boolean includeNormals = false;
       final boolean includeUvs = true;
       final boolean calcTangents = true;
       final boolean useBMesh = includeUvs;

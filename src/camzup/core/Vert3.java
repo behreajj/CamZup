@@ -143,7 +143,7 @@ public class Vert3 implements Comparable < Vert3 > {
 
    /**
     * Tests to see if two vertices share the same coordinate according to the
-    * default tolerance, {@link IUtils#DEFAULT_EPSILON}.
+    * default tolerance, {@link IUtils#EPSILON}.
     *
     * @param a the left comparisand
     * @param b the right comparisand
@@ -152,7 +152,7 @@ public class Vert3 implements Comparable < Vert3 > {
     */
    public static boolean approxCoord ( final Vert3 a, final Vert3 b ) {
 
-      return Vert3.approxCoord(a, b, IUtils.DEFAULT_EPSILON);
+      return Vert3.approxCoord(a, b, IUtils.EPSILON);
    }
 
    /**

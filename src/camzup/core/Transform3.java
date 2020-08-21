@@ -6,7 +6,8 @@ import camzup.core.Utils.EasingFuncObj;
 /**
  * Facilitates 3D affine transformations for entities.
  */
-public class Transform3 extends Transform {
+public class Transform3 extends Transform implements ISpatial3, IOriented3,
+   IVolume3 {
 
    /**
     * The transform's forward axis.
@@ -214,6 +215,7 @@ public class Transform3 extends Transform {
     *
     * @return the location
     */
+   @Override
    public Vec3 getLocation ( final Vec3 target ) {
 
       return target.set(this.location);
@@ -250,6 +252,7 @@ public class Transform3 extends Transform {
     *
     * @return the rotation
     */
+   @Override
    public Quaternion getRotation ( final Quaternion target ) {
 
       return target.set(this.rotation);
@@ -288,6 +291,7 @@ public class Transform3 extends Transform {
     *
     * @return the scale
     */
+   @Override
    public Vec3 getScale ( final Vec3 target ) {
 
       return target.set(this.scale);
@@ -394,6 +398,7 @@ public class Transform3 extends Transform {
     *
     * @see Transform3#moveByGlobal(Vec3)
     */
+   @Override
    public Transform3 moveBy ( final Vec3 dir ) {
 
       return this.moveByGlobal(dir);
@@ -447,6 +452,7 @@ public class Transform3 extends Transform {
     *
     * @return this transform
     */
+   @Override
    public Transform3 moveTo ( final Vec3 locNew ) {
 
       this.locPrev.set(this.location);
@@ -464,6 +470,7 @@ public class Transform3 extends Transform {
     *
     * @return this transform
     */
+   @Override
    public Transform3 moveTo ( final Vec3 locNew, final float step ) {
 
       return this.moveTo(locNew, step, Transform3.EASING.loc);
@@ -552,6 +559,7 @@ public class Transform3 extends Transform {
     *
     * @see Transform3#updateAxes()
     */
+   @Override
    public Transform3 rotateTo ( final Quaternion rotNew ) {
 
       if ( Quaternion.any(rotNew) ) {
@@ -570,6 +578,7 @@ public class Transform3 extends Transform {
     *
     * @return this transform
     */
+   @Override
    public Transform3 rotateTo ( final Quaternion rotNew, final float step ) {
 
       return this.rotateTo(rotNew, step, Transform3.EASING.rot);
@@ -611,6 +620,7 @@ public class Transform3 extends Transform {
     * @see Quaternion#rotateX(Quaternion, float, Quaternion)
     * @see Transform3#updateAxes()
     */
+   @Override
    public Transform3 rotateX ( final float radians ) {
 
       this.rotPrev.set(this.rotation);
@@ -634,6 +644,7 @@ public class Transform3 extends Transform {
     * @see Quaternion#rotateY(Quaternion, float, Quaternion)
     * @see Transform3#updateAxes()
     */
+   @Override
    public Transform3 rotateY ( final float radians ) {
 
       this.rotPrev.set(this.rotation);
@@ -657,6 +668,7 @@ public class Transform3 extends Transform {
     * @see Quaternion#rotateZ(Quaternion, float, Quaternion)
     * @see Transform3#updateAxes()
     */
+   @Override
    public Transform3 rotateZ ( final float radians ) {
 
       this.rotPrev.set(this.rotation);
@@ -675,6 +687,7 @@ public class Transform3 extends Transform {
     *
     * @see Vec3#mul(Vec3, float, Vec3)
     */
+   @Override
    public Transform3 scaleBy ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
@@ -695,6 +708,7 @@ public class Transform3 extends Transform {
     * @see Vec3#all(Vec3)
     * @see Vec3#mul(Vec3, Vec3, Vec3)
     */
+   @Override
    public Transform3 scaleBy ( final Vec3 nonUniformScale ) {
 
       if ( Vec3.all(nonUniformScale) ) {
@@ -712,6 +726,7 @@ public class Transform3 extends Transform {
     *
     * @return this transform
     */
+   @Override
    public Transform3 scaleTo ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
@@ -731,6 +746,7 @@ public class Transform3 extends Transform {
     *
     * @see Vec3#all(Vec3)
     */
+   @Override
    public Transform3 scaleTo ( final Vec3 scaleNew ) {
 
       if ( Vec3.all(scaleNew) ) {
@@ -752,6 +768,7 @@ public class Transform3 extends Transform {
     *
     * @see Vec3#all(Vec3)
     */
+   @Override
    public Transform3 scaleTo ( final Vec3 scaleNew, final float step ) {
 
       if ( Vec3.all(scaleNew) ) {

@@ -6,6 +6,13 @@ package camzup.core;
 public interface IOriented2 {
 
    /**
+    * Gets the object's rotation.
+    *
+    * @return the rotation
+    */
+   float getRotation ( );
+
+   /**
     * Rotates this object to an angle.
     *
     * @param rotNew the rotation

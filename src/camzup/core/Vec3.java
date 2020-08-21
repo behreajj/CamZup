@@ -645,7 +645,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static boolean approx ( final Vec3 a, final Vec3 b ) {
 
-      return Vec3.approx(a, b, IUtils.DEFAULT_EPSILON);
+      return Vec3.approx(a, b, IUtils.EPSILON);
    }
 
    /**
@@ -683,7 +683,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static boolean approxMag ( final Vec3 a, final float b ) {
 
-      return Vec3.approxMag(a, b, IUtils.DEFAULT_EPSILON);
+      return Vec3.approxMag(a, b, IUtils.EPSILON);
    }
 
    /**
@@ -715,7 +715,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static boolean areParallel ( final Vec3 a, final Vec3 b ) {
 
-      return Vec3.areParallel(a, b, IUtils.DEFAULT_EPSILON);
+      return Vec3.areParallel(a, b, IUtils.EPSILON);
    }
 
    /**
@@ -1319,8 +1319,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static Vec3 epsilon ( final Vec3 target ) {
 
-      return target.set(IUtils.DEFAULT_EPSILON, IUtils.DEFAULT_EPSILON,
-         IUtils.DEFAULT_EPSILON);
+      return target.set(IUtils.EPSILON, IUtils.EPSILON, IUtils.EPSILON);
    }
 
    /**
@@ -1671,7 +1670,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    public static Vec3[] gridFibonacci ( final int count, final float radius ) {
 
       final int vcount = count < 3 ? 3 : count;
-      final float vrad = Utils.max(IUtils.DEFAULT_EPSILON, radius);
+      final float vrad = Utils.max(IUtils.EPSILON, radius);
 
       final Vec3[] result = new Vec3[vcount];
       final float toStep = 2.0f / vcount;
@@ -1773,10 +1772,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
       final int vlayers = layers < 1 ? 1 : layers;
 
       final boolean oneLayer = vlayers == 1;
-      final float vrMax = Utils.max(IUtils.DEFAULT_EPSILON, radiusMin,
-         radiusMax);
-      final float vrMin = oneLayer ? vrMax : Utils.max(IUtils.DEFAULT_EPSILON,
-         Utils.min(radiusMin, radiusMax));
+      final float vrMax = Utils.max(IUtils.EPSILON, radiusMin, radiusMax);
+      final float vrMin = oneLayer ? vrMax : Utils.max(IUtils.EPSILON, Utils
+         .min(radiusMin, radiusMax));
 
       final int latLen = includePoles ? vlats + 2 : vlats;
       final Vec3[][][] result = new Vec3[vlayers][latLen][];
@@ -2625,7 +2623,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
       final Vec3 target ) {
 
       final float nMSq = Vec3.magSq(normal);
-      if ( Utils.abs(nMSq) < IUtils.DEFAULT_EPSILON ) { return target.reset(); }
+      if ( Utils.abs(nMSq) < IUtils.EPSILON ) { return target.reset(); }
 
       if ( Utils.approx(nMSq, 1.0f) ) {
          final float scalar = 2.0f * Vec3.dot(normal, incident);
@@ -3415,8 +3413,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
       }
 
    }
-
-
 
    /**
     * Compares two vectors on the x axis.

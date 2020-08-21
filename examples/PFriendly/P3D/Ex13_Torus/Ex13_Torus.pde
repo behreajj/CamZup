@@ -54,7 +54,7 @@ void draw() {
   lons = Utils.lerp(3, 48, mouse.x);
   lats = Utils.lerp(1, 24, mouse.y);
 
-  Mesh3.torus(0.375, lons, lats, smooth);
+  Mesh3.torus(0.375, lons, lats, Mesh.PolyType.QUAD, smooth);
   flat.set(smooth);
   skele.set(smooth);
 

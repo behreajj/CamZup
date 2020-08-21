@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
 import java.awt.image.WritableRaster;
 
+import camzup.core.Bounds2;
 import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
@@ -503,6 +504,31 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * Draws a bounding area.
+    *
+    * @param b the bounds
+    */
+   @Override
+   public void bounds ( final Bounds2 b ) {
+
+      final Vec2 min = b.min;
+      final Vec2 max = b.max;
+
+      final double x0 = min.x;
+      final double x1 = max.x;
+      final double y0 = min.y;
+      final double y1 = max.y;
+
+      this.gp.reset();
+      this.gp.moveTo(x0, y0);
+      this.gp.lineTo(x1, y0);
+      this.gp.lineTo(x1, y1);
+      this.gp.lineTo(x0, y1);
+      this.gp.closePath();
+      this.drawShapeSolid(this.gp);
+   }
+
+   /**
     * Sets the camera to the renderer defaults.
     */
    @Override
@@ -531,8 +557,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.cameraX = x;
       this.cameraY = y;
       this.cameraRot = radians;
-      this.cameraZoomX = Utils.abs(zx) < IUtils.DEFAULT_EPSILON ? 1.0f : zx;
-      this.cameraZoomY = Utils.abs(zy) < IUtils.DEFAULT_EPSILON ? 1.0f : zy;
+      this.cameraZoomX = Utils.abs(zx) < IUtils.EPSILON ? 1.0f : zx;
+      this.cameraZoomY = Utils.abs(zy) < IUtils.EPSILON ? 1.0f : zy;
 
       /* Promote floats to doubles. */
       final double cxd = x;
@@ -2018,8 +2044,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void origin ( final float lineLength, final float sw,
       final int xColor, final int yColor ) {
 
-      final double vl = lineLength > IUtils.DEFAULT_EPSILON ? lineLength
-         : YupJ2.EPS_D;
+      final double vl = lineLength > IUtils.EPSILON ? lineLength : YupJ2.EPS_D;
 
       this.pushStyle();
       this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND, sw);
@@ -3099,8 +3124,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * The lower bound of the stroke weight has to be < 1.0 because of
        * scaling's impact on stroke weight.
        */
-      this.strokeWeight = weight > IUtils.DEFAULT_EPSILON ? weight
-         : IUtils.DEFAULT_EPSILON;
+      this.strokeWeight = weight > IUtils.EPSILON ? weight : IUtils.EPSILON;
       this.strokeImpl();
    }
 
@@ -3997,7 +4021,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * The lower bound of the stroke weight has to be < 1.0 because of stroke
        * scaling issues.
        */
-      this.strokeWeight = Utils.max(IUtils.DEFAULT_EPSILON, strokeWeight);
+      this.strokeWeight = Utils.max(IUtils.EPSILON, strokeWeight);
       this.chooseStrokeCap(strokeCap);
       this.chooseStrokeJoin(strokeJoin);
       this.strokeImpl();

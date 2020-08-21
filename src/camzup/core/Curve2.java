@@ -1749,10 +1749,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float y1 = uby < lby ? uby : lby;
 
       /* Validate corner insetting. */
-      final float vtl = Utils.max(Utils.abs(tl), IUtils.DEFAULT_EPSILON);
-      final float vtr = Utils.max(Utils.abs(tr), IUtils.DEFAULT_EPSILON);
-      final float vbr = Utils.max(Utils.abs(br), IUtils.DEFAULT_EPSILON);
-      final float vbl = Utils.max(Utils.abs(bl), IUtils.DEFAULT_EPSILON);
+      final float vtl = Utils.max(Utils.abs(tl), IUtils.EPSILON);
+      final float vtr = Utils.max(Utils.abs(tr), IUtils.EPSILON);
+      final float vbr = Utils.max(Utils.abs(br), IUtils.EPSILON);
+      final float vbl = Utils.max(Utils.abs(bl), IUtils.EPSILON);
 
       /* Top edge. */
       final Knot2 k0 = itr.next().set(x0 + vtl, y0, 0.0f, 0.0f, 0.0f, 0.0f);
@@ -2160,7 +2160,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    static Curve2 ellipse ( final float radius, final float aspect,
       final float xCenter, final float yCenter, final Curve2 target ) {
 
-      final float vrad = Utils.max(radius, IUtils.DEFAULT_EPSILON);
+      final float vrad = Utils.max(radius, IUtils.EPSILON);
       final float ry = vrad * aspect;
 
       final float right = xCenter + vrad;

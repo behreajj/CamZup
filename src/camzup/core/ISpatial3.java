@@ -7,6 +7,15 @@ package camzup.core;
 public interface ISpatial3 {
 
    /**
+    * Gets the spatial object's location.
+    *
+    * @param target the output vector
+    *
+    * @return the location
+    */
+   Vec3 getLocation ( final Vec3 target );
+
+   /**
     * Moves this object by a vector.
     *
     * @param dir the vector

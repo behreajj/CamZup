@@ -445,7 +445,7 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     */
    public static boolean approx ( final Complex a, final Complex b ) {
 
-      return Complex.approx(a, b, IUtils.DEFAULT_EPSILON);
+      return Complex.approx(a, b, IUtils.EPSILON);
    }
 
    /**
@@ -716,7 +716,7 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
       final float czdi = c.real * z.imag + c.imag * z.real + d.imag;
       final float mSq = czdr * czdr + czdi * czdi;
 
-      if ( mSq < IUtils.DEFAULT_EPSILON ) { return target.reset(); }
+      if ( mSq < IUtils.EPSILON ) { return target.reset(); }
 
       /* Find numerator. */
       final float azbr = a.real * z.real - a.imag * z.imag + b.real;

@@ -6,6 +6,15 @@ package camzup.core;
 public interface IVolume2 extends IVolume {
 
    /**
+    * Gets the nonuniform scale of the volume.
+    *
+    * @param target the output target
+    *
+    * @return the scale
+    */
+   Vec2 getScale ( final Vec2 target );
+
+   /**
     * Scales the object by a non-uniform scalar.
     *
     * @param scalar the scalar
