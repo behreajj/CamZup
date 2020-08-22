@@ -3815,8 +3815,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the collection
     *
-    * @see Mesh2#getVertices()
-    * @see Vec2#distSq(Vec2, Vec2)
+    * @see Mesh3#getVertices()
+    * @see Vec3#distSq(Vec3, Vec3)
     */
    public static TreeMap < Float, Vert3 > proximity ( final Mesh3 m,
       final Vec3 p, final float nearBound, final float farBound ) {

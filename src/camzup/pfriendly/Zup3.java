@@ -7,7 +7,6 @@ import camzup.core.Vec3;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
-import processing.core.PGraphics;
 
 import processing.opengl.PGraphicsOpenGL;
 
@@ -122,6 +121,10 @@ public class Zup3 extends Up3 {
     * @param xUp     world up axis x
     * @param yUp     world up axis y
     * @param zUp     world up axis z
+    *
+    * @see Vec3#normalize(Vec3, Vec3)
+    * @see Vec3#crossNorm(Vec3, Vec3, Vec3)
+    * @see Vec3#mag(Vec3)
     */
    @Override
    public void camera ( final float xEye, final float yEye, final float zEye,
@@ -233,10 +236,6 @@ public class Zup3 extends Up3 {
 
    /**
     * Sets default camera and calls the camera function.
-    *
-    * @see PGraphicsOpenGL#defCameraX
-    * @see PGraphicsOpenGL#defCameraY
-    * @see PGraphicsOpenGL#defCameraZ
     */
    @Override
    public void defaultCamera ( ) {
@@ -331,33 +330,6 @@ public class Zup3 extends Up3 {
    }
 
    /**
-    * Sets the current normal used by the renderer.
-    *
-    * @param nx the x component
-    * @param ny the y component
-    * @param nz the z component
-    */
-   @Override
-   public void normal ( final float nx, final float ny, final float nz ) {
-
-      this.normalX = nx;
-      this.normalY = ny;
-      this.normalZ = nz;
-
-      if ( this.shape != 0 ) {
-         if ( this.normalMode == PGraphics.NORMAL_MODE_AUTO ) {
-
-            /* One normal per begin/end shape. */
-            this.normalMode = PGraphics.NORMAL_MODE_SHAPE;
-         } else if ( this.normalMode == PGraphics.NORMAL_MODE_SHAPE ) {
-
-            /* A separate normal for each vertex. */
-            this.normalMode = PGraphics.NORMAL_MODE_VERTEX;
-         }
-      }
-   }
-
-   /**
     * Set size is the last function called by size, createGraphics,
     * makeGraphics, etc. when initializing the graphics renderer. Therefore,
     * any additional values that need initialization can be attempted here.
@@ -382,8 +354,7 @@ public class Zup3 extends Up3 {
    public String toString ( ) { return Zup3.PATH_STR; }
 
    /**
-    * Sets lighting normals. Overrides the default by swapping and negating to
-    * accommodate Z-up camera.
+    * Sets lighting normals.
     *
     * @param num  the index
     * @param xDir the direction x

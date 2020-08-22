@@ -1026,13 +1026,10 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
       return target.set(
          Utils.and(a.m00, b.m00), Utils.and(a.m01, b.m01),
          Utils.and(a.m02, b.m02), Utils.and(a.m03, b.m03),
-
          Utils.and(a.m10, b.m10), Utils.and(a.m11, b.m11),
          Utils.and(a.m12, b.m12), Utils.and(a.m13, b.m13),
-
          Utils.and(a.m20, b.m20), Utils.and(a.m21, b.m21),
          Utils.and(a.m22, b.m22), Utils.and(a.m23, b.m23),
-
          Utils.and(a.m30, b.m30), Utils.and(a.m31, b.m31),
          Utils.and(a.m32, b.m32), Utils.and(a.m33, b.m33));
       /* @formatter:on */
@@ -2221,13 +2218,10 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
       return target.set(
          m.m00 != 0.0f ? 0.0f : 1.0f, m.m01 != 0.0f ? 0.0f : 1.0f,
          m.m02 != 0.0f ? 0.0f : 1.0f, m.m03 != 0.0f ? 0.0f : 1.0f,
-
          m.m10 != 0.0f ? 0.0f : 1.0f, m.m11 != 0.0f ? 0.0f : 1.0f,
          m.m12 != 0.0f ? 0.0f : 1.0f, m.m13 != 0.0f ? 0.0f : 1.0f,
-
          m.m20 != 0.0f ? 0.0f : 1.0f, m.m21 != 0.0f ? 0.0f : 1.0f,
          m.m22 != 0.0f ? 0.0f : 1.0f, m.m23 != 0.0f ? 0.0f : 1.0f,
-
          m.m30 != 0.0f ? 0.0f : 1.0f, m.m31 != 0.0f ? 0.0f : 1.0f,
          m.m32 != 0.0f ? 0.0f : 1.0f, m.m33 != 0.0f ? 0.0f : 1.0f);
       /* @formatter:on */
@@ -2250,13 +2244,10 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
       return target.set(
          Utils.or(a.m00, b.m00), Utils.or(a.m01, b.m01),
          Utils.or(a.m02, b.m02), Utils.or(a.m03, b.m03),
-
          Utils.or(a.m10, b.m10), Utils.or(a.m11, b.m11),
          Utils.or(a.m12, b.m12), Utils.or(a.m13, b.m13),
-
          Utils.or(a.m20, b.m20), Utils.or(a.m21, b.m21),
          Utils.or(a.m22, b.m22), Utils.or(a.m23, b.m23),
-
          Utils.or(a.m30, b.m30), Utils.or(a.m31, b.m31),
          Utils.or(a.m32, b.m32), Utils.or(a.m33, b.m33));
       /* @formatter:on */
@@ -2414,13 +2405,10 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
       return target.set(
          Utils.xor(a.m00, b.m00), Utils.xor(a.m01, b.m01),
          Utils.xor(a.m02, b.m02), Utils.xor(a.m03, b.m03),
-
          Utils.xor(a.m10, b.m10), Utils.xor(a.m11, b.m11),
          Utils.xor(a.m12, b.m12), Utils.xor(a.m13, b.m13),
-
          Utils.xor(a.m20, b.m20), Utils.xor(a.m21, b.m21),
          Utils.xor(a.m22, b.m22), Utils.xor(a.m23, b.m23),
-
          Utils.xor(a.m30, b.m30), Utils.xor(a.m31, b.m31),
          Utils.xor(a.m32, b.m32), Utils.xor(a.m33, b.m33));
       /* @formatter:on */

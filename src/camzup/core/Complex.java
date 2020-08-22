@@ -50,8 +50,6 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     *
     * @param realstr the real string
     * @param imagstr the imaginary string
-    *
-    * @see Float#parseFloat(String)
     */
    public Complex ( final String realstr, final String imagstr ) {
 

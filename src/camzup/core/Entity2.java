@@ -154,6 +154,18 @@ public class Entity2 extends Entity implements IOriented2, ISpatial2 {
    }
 
    /**
+    * Resets the entity to an initial state by setting its transform to the
+    * identity.
+    *
+    * @return this entity
+    */
+   public Entity2 reset ( ) {
+
+      Transform2.identity(this.transform);
+      return this;
+   }
+
+   /**
     * Rotates this entity to an angle.
     *
     * @param rotNew the rotation

@@ -617,7 +617,7 @@ public class Bounds3 implements Cloneable, Comparable < Bounds3 > {
    }
 
    /**
-    * Evaluates whether two bounding areas intersect.
+    * Evaluates whether two bounding volumes intersect.
     *
     * @param a left comparisand
     * @param b right comparisand
@@ -626,12 +626,12 @@ public class Bounds3 implements Cloneable, Comparable < Bounds3 > {
     */
    public static boolean intersect ( final Bounds3 a, final Bounds3 b ) {
 
-      return a.min.x > b.max.x || a.max.x < b.min.x || a.min.y > b.max.y
-         || a.max.y < b.min.y || a.min.z > b.max.z || a.max.z < b.min.z;
+      return a.max.x > b.min.x || a.min.x < b.max.x || a.max.y > b.min.y
+         || a.min.y < b.max.y || a.max.z > b.min.z || a.min.z < b.max.z;
    }
 
    /**
-    * Evaluates whether two bounding areas intersect. A boolean vector holds
+    * Evaluates whether two bounding volumes intersect. A boolean vector holds
     * the evaluation.
     *
     * @param a      left comparisand
@@ -643,9 +643,44 @@ public class Bounds3 implements Cloneable, Comparable < Bounds3 > {
    public static Vec3 intersect ( final Bounds3 a, final Bounds3 b,
       final Vec3 target ) {
 
-      return target.set(a.min.x > b.max.x || a.max.x < b.min.x, a.min.y
-         > b.max.y || a.max.y < b.min.y, a.min.z > b.max.z || a.max.z
-            < b.min.z);
+      return target.set(a.max.x > b.min.x || a.min.x < b.max.x, a.max.y
+         > b.min.y || a.min.y < b.max.y, a.max.z > b.min.z || a.min.z
+            < b.max.z);
+   }
+
+   /**
+    * Evaluates whether a bounding area intersects a sphere.
+    *
+    * @param a      the bounding area
+    * @param origin the sphere origin
+    * @param radius the sphere radius
+    *
+    * @return the evaluation
+    */
+   public static boolean intersect ( final Bounds3 a, final Vec3 origin,
+      final float radius ) {
+
+      float xQuery = origin.x;
+      float yQuery = origin.y;
+      float zQuery = origin.z;
+
+      if ( origin.x < a.min.x ) {
+         xQuery = a.min.x;
+      } else if ( origin.x > a.max.x ) { xQuery = a.max.x; }
+
+      if ( origin.y < a.min.y ) {
+         yQuery = a.min.y;
+      } else if ( origin.y > a.max.y ) { yQuery = a.max.y; }
+
+      if ( origin.z < a.min.z ) {
+         zQuery = a.min.z;
+      } else if ( origin.z > a.max.z ) { zQuery = a.max.z; }
+
+      final float xDist = origin.x - xQuery;
+      final float yDist = origin.y - yQuery;
+      final float zDist = origin.z - zQuery;
+      return Utils.sqrtUnchecked(xDist * xDist + yDist * yDist + zDist * zDist)
+         < radius;
    }
 
    /**

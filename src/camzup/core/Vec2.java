@@ -50,8 +50,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     *
     * @param xstr the x string
     * @param ystr the y string
-    *
-    * @see Float#parseFloat(String)
     */
    public Vec2 ( final String xstr, final String ystr ) {
 
@@ -3045,6 +3043,51 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
          final double us = 1.0d - ts;
          return target.set(( float ) ( us * origin.x + ts * dest.x ),
             ( float ) ( us * origin.y + ts * dest.y ));
+      }
+
+   }
+
+   /**
+    * Compares two vectors against a locus with squared Euclidean distance.
+    */
+   public static class SortDistSq extends AbstrComparator {
+
+      /**
+       * The point against which distances are compared.
+       */
+      public final Vec2 locus = new Vec2();
+
+      /**
+       * The default constructor.
+       */
+      public SortDistSq ( ) { super(); }
+
+      /**
+       * Constructs a sorting function with a locus against which points are
+       * compared in sorting.
+       *
+       * @param locus the locus
+       */
+      public SortDistSq ( final Vec2 locus ) {
+
+         super();
+         this.locus.set(locus);
+      }
+
+      /**
+       * The compare function.
+       *
+       * @param a the left comparisand
+       * @param b the right comparisand
+       *
+       * @return the comparison
+       */
+      @Override
+      public int compare ( final Vec2 a, final Vec2 b ) {
+
+         final float ad = Vec2.distSq(this.locus, a);
+         final float bd = Vec2.distSq(this.locus, b);
+         return ad < bd ? -1 : ad > bd ? 1 : 0;
       }
 
    }

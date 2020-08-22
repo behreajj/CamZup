@@ -10,27 +10,71 @@ import camzup.core.Vec3;
  * vectors.
  */
 public class KtVec3 extends Vec3 {
+
+   /**
+    * The default vector constructor.
+    */
    public KtVec3 ( ) { super(); }
 
+   /**
+    * Constructs a vector from boolean values.
+    *
+    * @param x the x component
+    * @param y the y component
+    * @param z the z component
+    */
    public KtVec3 ( final boolean x, final boolean y, final boolean z ) {
 
       super(x, y, z);
    }
 
+   /**
+    * Constructs a vector from float values.
+    *
+    * @param x the x component
+    * @param y the y component
+    * @param z the z component
+    */
    public KtVec3 ( final float x, final float y, final float z ) {
 
       super(x, y, z);
    }
 
+   /**
+    * Attempts to construct a vector from Strings using
+    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
+    * the component is set to zero.
+    *
+    * @param xstr the x string
+    * @param ystr the y string
+    * @param zstr the z string
+    */
    public KtVec3 ( final String xstr, final String ystr, final String zstr ) {
 
       super(xstr, ystr, zstr);
    }
 
+   /**
+    * Promotes a Vec2 to a KtVec3.
+    *
+    * @param v2 the vector
+    */
    public KtVec3 ( final Vec2 v2 ) { super(v2); }
 
+   /**
+    * Promotes a Vec2 to a KtVec3 with an extra component.
+    *
+    * @param v2 the vector
+    * @param z  the z component
+    */
    public KtVec3 ( final Vec2 v2, final float z ) { super(v2, z); }
 
+   /**
+    * Promotes a Vec2 to a Vec3 with an extra component.
+    *
+    * @param v2 the vector
+    * @param z  the z component
+    */
    public KtVec3 ( final Vec3 source ) { super(source); }
 
    /**

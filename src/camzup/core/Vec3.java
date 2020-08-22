@@ -64,8 +64,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     * @param xstr the x string
     * @param ystr the y string
     * @param zstr the z string
-    *
-    * @see Float#parseFloat(String)
     */
    public Vec3 ( final String xstr, final String ystr, final String zstr ) {
 
@@ -3410,6 +3408,51 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
          return target.set(( float ) ( us * origin.x + ts * dest.x ),
             ( float ) ( us * origin.y + ts * dest.y ), ( float ) ( us * origin.z
                + ts * dest.z ));
+      }
+
+   }
+
+   /**
+    * Compares two vectors against a locus with squared Euclidean distance.
+    */
+   public static class SortDistSq extends AbstrComparator {
+
+      /**
+       * The point against which distances are compared.
+       */
+      public final Vec3 locus = new Vec3();
+
+      /**
+       * The default constructor.
+       */
+      public SortDistSq ( ) { super(); }
+
+      /**
+       * Constructs a sorting function with a locus against which points are
+       * compared in sorting.
+       * 
+       * @param locus the locus
+       */
+      public SortDistSq ( final Vec3 locus ) {
+
+         super();
+         this.locus.set(locus);
+      }
+
+      /**
+       * The compare function.
+       *
+       * @param a the left comparisand
+       * @param b the right comparisand
+       *
+       * @return the comparison
+       */
+      @Override
+      public int compare ( final Vec3 a, final Vec3 b ) {
+
+         final float ad = Vec3.distSq(this.locus, a);
+         final float bd = Vec3.distSq(this.locus, b);
+         return ad < bd ? -1 : ad > bd ? 1 : 0;
       }
 
    }

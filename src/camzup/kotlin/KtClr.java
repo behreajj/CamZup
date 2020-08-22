@@ -5,41 +5,105 @@ import camzup.core.IUtils;
 import camzup.core.Utils;
 
 /**
- * Provides Kotlin operator overloading support for colors.
+ * Provides Kotlin operator overloading support for colors. Color
+ * operations retain the alpha channel of the left operand, or of the color
+ * they are mutating, so these operations are not commutative.
  */
 public class KtClr extends Color {
 
+   /**
+    * The default constructor. Creates a white color.
+    */
    public KtClr ( ) { super(); }
 
+   /**
+    * Creates a color from bytes. In Java, bytes are signed, within the range
+    * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .
+    *
+    * @param red   the red channel
+    * @param green the green channel
+    * @param blue  the blue channel
+    */
    public KtClr ( final byte red, final byte green, final byte blue ) {
 
       super(red, green, blue);
    }
 
+   /**
+    * Creates a color from bytes. In Java, bytes are signed, within the range
+    * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .
+    *
+    * @param red   the red channel
+    * @param green the green channel
+    * @param blue  the blue channel
+    * @param alpha the alpha channel
+    */
    public KtClr ( final byte red, final byte green, final byte blue,
       final byte alpha ) {
 
       super(red, green, blue, alpha);
    }
 
+   /**
+    * Creates a color from a source.
+    *
+    * @param c the source color
+    */
    public KtClr ( final Color c ) { super(c); }
 
+   /**
+    * Creates a color out of red, green and blue channels. The alpha channel
+    * defaults to 1.0 .
+    *
+    * @param red   the red channel
+    * @param green the green channel
+    * @param blue  the blue channel
+    */
    public KtClr ( final float red, final float green, final float blue ) {
 
       super(red, green, blue);
    }
 
+   /**
+    * Creates a color out of red, green, blue and alpha channels.
+    *
+    * @param red   the red channel
+    * @param green the green channel
+    * @param blue  the blue channel
+    * @param alpha the alpha channel
+    */
    public KtClr ( final float red, final float green, final float blue,
       final float alpha ) {
 
       super(red, green, blue, alpha);
    }
 
+   /**
+    * Attempts to construct a color from Strings using
+    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
+    * the component is set to zero. If a NumberFormatException is thrown, the
+    * component is set to zero for red, green and blue; to one for alpha.
+    *
+    * @param rstr the red string
+    * @param gstr the green string
+    * @param bstr the blue string
+    */
    public KtClr ( final String rstr, final String gstr, final String bstr ) {
 
       super(rstr, gstr, bstr);
    }
 
+   /**
+    * Attempts to construct a color from Strings using
+    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
+    * the component is set to zero. If a NumberFormatException is thrown, the
+    * component is set to zero for red, green and blue; to one for alpha.
+    *
+    * @param rstr the red string
+    * @param gstr the green string
+    * @param bstr the blue string
+    * @param astr the alpha string
+    */
    public KtClr ( final String rstr, final String gstr, final String bstr,
       final String astr ) {
 
@@ -66,6 +130,8 @@ public class KtClr extends Color {
     * @param c the right operand
     *
     * @return the quotient
+    *
+    * @see Utils#clamp01(float)
     */
    public KtClr div ( final Color c ) {
 
@@ -82,6 +148,8 @@ public class KtClr extends Color {
     * @param c the right operand
     *
     * @return the quotient
+    *
+    * @see Utils#clamp01(float)
     */
    public KtClr div ( final float c ) {
 
@@ -95,6 +163,9 @@ public class KtClr extends Color {
     * For interoperability with Kotlin: <code>a /= b</code> .
     *
     * @param c the right operand
+    *
+    * @see Utils#div(float, float)
+    * @see Utils#clamp01(float)
     */
    public void divAssign ( final Color c ) {
 
@@ -109,6 +180,8 @@ public class KtClr extends Color {
     * For interoperability with Kotlin: <code>a /= b</code> .
     *
     * @param c the right operand
+    *
+    * @see Utils#clamp01(float)
     */
    public void divAssign ( final float c ) {
 
@@ -145,6 +218,8 @@ public class KtClr extends Color {
     * @param c the right operand
     *
     * @return the subtraction
+    *
+    * @see Utils#clamp01(float)
     */
    public KtClr minus ( final Color c ) {
 
@@ -160,6 +235,8 @@ public class KtClr extends Color {
     * @param c the right operand
     *
     * @return the subtraction
+    *
+    * @see Utils#clamp01(float)
     */
    public KtClr minus ( final float c ) {
 
@@ -172,6 +249,8 @@ public class KtClr extends Color {
     * place). For interoperability with Kotlin: <code>a -= b</code> .
     *
     * @param c the right operand
+    *
+    * @see Utils#clamp01(float)
     */
    public void minusAssign ( final Color c ) {
 
@@ -186,6 +265,8 @@ public class KtClr extends Color {
     * place). For interoperability with Kotlin: <code>a -= b</code> .
     *
     * @param c the right operand
+    *
+    * @see Utils#clamp01(float)
     */
    public void minusAssign ( final float c ) {
 
@@ -203,6 +284,8 @@ public class KtClr extends Color {
     * @param c the right operand
     *
     * @return the subtraction
+    *
+    * @see Utils#clamp01(float)
     */
    public KtClr plus ( final Color c ) {
 
@@ -218,6 +301,8 @@ public class KtClr extends Color {
     * @param c the right operand
     *
     * @return the subtraction
+    *
+    * @see Utils#clamp01(float)
     */
    public KtClr plus ( final float c ) {
 
@@ -230,6 +315,8 @@ public class KtClr extends Color {
     * For interoperability with Kotlin: <code>a += b</code> .
     *
     * @param c the right operand
+    *
+    * @see Utils#clamp01(float)
     */
    public void plusAssign ( final Color c ) {
 
@@ -244,6 +331,8 @@ public class KtClr extends Color {
     * For interoperability with Kotlin: <code>a += b</code> .
     *
     * @param c the right operand
+    *
+    * @see Utils#clamp01(float)
     */
    public void plusAssign ( final float c ) {
 
@@ -261,6 +350,9 @@ public class KtClr extends Color {
     * @param c the right operand
     *
     * @return the signed remainder
+    *
+    * @see Utils#mod(float, float)
+    * @see Utils#clamp01(float)
     */
    public KtClr rem ( final Color c ) {
 
@@ -277,6 +369,9 @@ public class KtClr extends Color {
     * @param c the right operand
     *
     * @return the signed remainder
+    *
+    * @see Utils#modUnchecked(float, float)
+    * @see Utils#clamp01(float)
     */
    public KtClr rem ( final float c ) {
 
@@ -295,6 +390,9 @@ public class KtClr extends Color {
     * interoperability with Kotlin: <code>a %= b</code> .
     *
     * @param c the right operand
+    *
+    * @see Utils#mod(float, float)
+    * @see Utils#clamp01(float)
     */
    public void remAssign ( final Color c ) {
 
@@ -310,6 +408,9 @@ public class KtClr extends Color {
     * interoperability with Kotlin: <code>a %= b</code> .
     *
     * @param c the right operand
+    *
+    * @see Utils#modUnchecked(float, float)
+    * @see Utils#clamp01(float)
     */
    public void remAssign ( final float c ) {
 
@@ -334,6 +435,8 @@ public class KtClr extends Color {
     * @param c the right operand
     *
     * @return the product
+    *
+    * @see Utils#clamp01(float)
     */
    public KtClr times ( final Color c ) {
 
@@ -349,6 +452,8 @@ public class KtClr extends Color {
     * @param c the right operand
     *
     * @return the product
+    *
+    * @see Utils#clamp01(float)
     */
    public KtClr times ( final float c ) {
 
@@ -361,6 +466,8 @@ public class KtClr extends Color {
     * place). For interoperability with Kotlin: <code>a *= b</code> .
     *
     * @param c the right operand
+    *
+    * @see Utils#clamp01(float)
     */
    public void timesAssign ( final Color c ) {
 
@@ -375,6 +482,8 @@ public class KtClr extends Color {
     * place). For interoperability with Kotlin: <code>a *= b</code> .
     *
     * @param c the right operand
+    *
+    * @see Utils#clamp01(float)
     */
    public void timesAssign ( final float c ) {
 
@@ -391,6 +500,8 @@ public class KtClr extends Color {
     * color in place</em>.
     *
     * @return the negative
+    *
+    * @see Utils#max(float, float)
     */
    public KtClr unaryMinus ( ) {
 
@@ -404,6 +515,8 @@ public class KtClr extends Color {
     * color in place</em>.
     *
     * @return the positive
+    *
+    * @see Utils#clamp01(float)
     */
    public KtClr unaryPlus ( ) {
 

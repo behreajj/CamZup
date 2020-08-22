@@ -21,6 +21,7 @@ import camzup.core.Vec3;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
+import processing.core.PGraphics;
 import processing.core.PMatrix3D;
 
 import processing.opengl.PGraphicsOpenGL;
@@ -146,7 +147,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       /* Left. */
       this.beginShape(PConstants.POLYGON);
-      this.normal(-1.0f, 0.0f, 0.0f);
+      this.normalPerShape(-1.0f, 0.0f, 0.0f);
       this.vertexImpl(x0, y0, z0, 1.0f, 1.0f);
       this.vertexImpl(x0, y0, z1, 1.0f, 0.0f);
       this.vertexImpl(x0, y1, z1, 0.0f, 0.0f);
@@ -155,7 +156,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       /* Right. */
       this.beginShape(PConstants.POLYGON);
-      this.normal(1.0f, 0.0f, 0.0f);
+      this.normalPerShape(1.0f, 0.0f, 0.0f);
       this.vertexImpl(x1, y1, z0, 1.0f, 1.0f);
       this.vertexImpl(x1, y1, z1, 1.0f, 0.0f);
       this.vertexImpl(x1, y0, z1, 0.0f, 0.0f);
@@ -164,7 +165,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       /* Back. */
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, -1.0f, 0.0f);
+      this.normalPerShape(0.0f, -1.0f, 0.0f);
       this.vertexImpl(x1, y0, z0, 1.0f, 1.0f);
       this.vertexImpl(x1, y0, z1, 1.0f, 0.0f);
       this.vertexImpl(x0, y0, z1, 0.0f, 0.0f);
@@ -173,7 +174,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       /* Up. */
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 1.0f, 0.0f);
+      this.normalPerShape(0.0f, 1.0f, 0.0f);
       this.vertexImpl(x0, y1, z0, 1.0f, 1.0f);
       this.vertexImpl(x0, y1, z1, 1.0f, 0.0f);
       this.vertexImpl(x1, y1, z1, 0.0f, 0.0f);
@@ -182,7 +183,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       /* Down. */
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, -1.0f);
+      this.normalPerShape(0.0f, 0.0f, -1.0f);
       this.vertexImpl(x0, y1, z0, 0.0f, 1.0f);
       this.vertexImpl(x1, y1, z0, 1.0f, 1.0f);
       this.vertexImpl(x1, y0, z0, 1.0f, 0.0f);
@@ -191,7 +192,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       /* Up. */
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, 1.0f);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
       this.vertexImpl(x1, y1, z1, 0.0f, 1.0f);
       this.vertexImpl(x0, y1, z1, 1.0f, 1.0f);
       this.vertexImpl(x0, y0, z1, 1.0f, 0.0f);
@@ -682,6 +683,31 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    public void moveByLocal ( final Vec3 v ) {
 
       this.moveByLocal(v.x, v.y, v.z);
+   }
+
+   /**
+    * Sets the current normal and normal mode used by the renderer.
+    *
+    * @param nx the x component
+    * @param ny the y component
+    * @param nz the z component
+    */
+   @Override
+   public void normal ( final float nx, final float ny, final float nz ) {
+
+      this.normalX = nx;
+      this.normalY = ny;
+      this.normalZ = nz;
+
+      if ( this.shape != 0 ) {
+         if ( this.normalMode == PGraphics.NORMAL_MODE_AUTO ) {
+            /* One normal per begin/end shape. */
+            this.normalMode = PGraphics.NORMAL_MODE_SHAPE;
+         } else if ( this.normalMode == PGraphics.NORMAL_MODE_SHAPE ) {
+            /* A separate normal for each vertex. */
+            this.normalMode = PGraphics.NORMAL_MODE_VERTEX;
+         }
+      }
    }
 
    /**

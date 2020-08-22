@@ -3,8 +3,9 @@ package camzup;
 import camzup.core.IUtils;
 import camzup.core.Mesh;
 import camzup.core.Mesh.PolyType;
+import camzup.core.Mesh2;
 import camzup.core.Mesh3;
-import camzup.core.Rng;
+import camzup.core.MeshEntity2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -567,7 +568,10 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      final Rng rng = new Rng();
+      final Mesh2 mesh2 = new Mesh2();
+      final MeshEntity2 entity2 = new MeshEntity2();
+      entity2.append(mesh2);
+      Mesh2.square(mesh2);
 
    }
 

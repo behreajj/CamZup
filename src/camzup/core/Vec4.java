@@ -74,8 +74,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     * @param ystr the y string
     * @param zstr the z string
     * @param wstr the w string
-    *
-    * @see Float#parseFloat(String)
     */
    public Vec4 ( final String xstr, final String ystr, final String zstr,
       final String wstr ) {

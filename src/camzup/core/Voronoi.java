@@ -10,8 +10,8 @@ public class Voronoi extends Generative {
     */
    private Voronoi ( ) {
 
-      // TODO: Is it worth investing in a smooth voronoi function which reduces
-      // discontinuities? Search for this, it was addressed by Bourke or Quilez.
+      // QUERY Smooth voronoi function to reduce discontinuities?
+      // https://www.iquilezles.org/www/articles/smoothvoronoi/smoothvoronoi.htm
    }
 
    /**

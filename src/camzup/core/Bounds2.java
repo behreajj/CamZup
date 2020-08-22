@@ -601,8 +601,8 @@ public class Bounds2 implements Cloneable, Comparable < Bounds2 > {
     */
    public static boolean intersect ( final Bounds2 a, final Bounds2 b ) {
 
-      return a.min.x > b.max.x || a.max.x < b.min.x || a.min.y > b.max.y
-         || a.max.y < b.min.y;
+      return a.max.x > b.min.x || a.min.x < b.max.x || a.max.y > b.min.y
+         || a.min.y < b.max.y;
    }
 
    /**
@@ -618,8 +618,37 @@ public class Bounds2 implements Cloneable, Comparable < Bounds2 > {
    public static Vec2 intersect ( final Bounds2 a, final Bounds2 b,
       final Vec2 target ) {
 
-      return target.set(a.min.x > b.max.x || a.max.x < b.min.x, a.min.y
-         > b.max.y || a.max.y < b.min.y);
+      return target.set(a.max.x > b.min.x || a.min.x < b.max.x, a.max.y
+         > b.min.y || a.min.y < b.max.y);
+   }
+
+   /**
+    * Evaluates whether a bounding area intersects a circle. Intersection is
+    * boundary inclusive.
+    *
+    * @param a      the bounding area
+    * @param origin the circle origin
+    * @param radius the circle radius
+    *
+    * @return the evaluation
+    */
+   public static boolean intersect ( final Bounds2 a, final Vec2 origin,
+      final float radius ) {
+
+      float xQuery = origin.x;
+      float yQuery = origin.y;
+
+      if ( origin.x < a.min.x ) {
+         xQuery = a.min.x;
+      } else if ( origin.x > a.max.x ) { xQuery = a.max.x; }
+
+      if ( origin.y < a.min.y ) {
+         yQuery = a.min.y;
+      } else if ( origin.y > a.max.y ) { yQuery = a.max.y; }
+
+      final float xDist = origin.x - xQuery;
+      final float yDist = origin.y - yQuery;
+      return Utils.sqrtUnchecked(xDist * xDist + yDist * yDist) < radius;
    }
 
    /**

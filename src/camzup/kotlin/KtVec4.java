@@ -10,32 +10,86 @@ import camzup.core.Vec4;
  * vectors.
  */
 public class KtVec4 extends Vec4 {
+
+   /**
+    * The default vector constructor.
+    */
    public KtVec4 ( ) { super(); }
 
+   /**
+    * Constructs a vector from boolean values.
+    *
+    * @param x the x component
+    * @param y the y component
+    * @param z the z component
+    * @param w the w component
+    */
    public KtVec4 ( final boolean x, final boolean y, final boolean z,
       final boolean w ) {
 
       super(x, y, z, w);
    }
 
+   /**
+    * Constructs a vector from float values.
+    *
+    * @param x the x component
+    * @param y the y component
+    * @param z the z component
+    * @param w the w component
+    */
    public KtVec4 ( final float x, final float y, final float z,
       final float w ) {
 
       super(x, y, z, w);
    }
 
+   /**
+    * Attempts to construct a vector from Strings using
+    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
+    * the component is set to zero.
+    *
+    * @param xstr the x string
+    * @param ystr the y string
+    * @param zstr the z string
+    * @param wstr the w string
+    */
    public KtVec4 ( final String xstr, final String ystr, final String zstr,
       final String wstr ) {
 
       super(xstr, ystr, zstr, wstr);
    }
 
+   /**
+    * Promotes a Vec2 to a KtVec4.
+    *
+    * @param v2 the vector
+    */
    public KtVec4 ( final Vec2 v2 ) { super(v2); }
 
+   /**
+    * Promotes a Vec3 to a KtVec4.
+    *
+    * @param v3 the vector
+    */
    public KtVec4 ( final Vec3 v3 ) { super(v3); }
 
+   /**
+    * Promotes a Vec3 to a KtVec4 with an extra component.<br>
+    * <br>
+    * Useful for multiplying a 4 x 4 matrix with either a 3D vector or a 3D
+    * point. (For points, w is 1.0; for vectors, w is 0.0 .)
+    *
+    * @param v3 the vector
+    * @param w  the w component
+    */
    public KtVec4 ( final Vec3 v3, final float w ) { super(v3, w); }
 
+   /**
+    * Constructs a vector from a source vector's components.
+    *
+    * @param source the source vector
+    */
    public KtVec4 ( final Vec4 source ) { super(source); }
 
    /**

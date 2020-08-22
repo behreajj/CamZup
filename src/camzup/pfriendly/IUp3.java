@@ -2,7 +2,9 @@ package camzup.pfriendly;
 
 import camzup.core.Bounds3;
 import camzup.core.Handedness;
+import camzup.core.Octree;
 import camzup.core.Ray3;
+import camzup.core.Recursive;
 import camzup.core.Utils;
 import camzup.core.Vec3;
 
@@ -43,6 +45,28 @@ public interface IUp3 extends IUp {
     * @param b the bounds
     */
    void bounds ( final Bounds3 b );
+
+   /**
+    * Draws an octree.
+    *
+    * @param ot the octree
+    */
+   @Recursive
+   default void bounds ( final Octree ot ) {
+
+      if ( ot.isLeaf() ) {
+         this.bounds(ot.bounds);
+      } else {
+         this.bounds(ot.bbl);
+         this.bounds(ot.bbr);
+         this.bounds(ot.btl);
+         this.bounds(ot.btr);
+         this.bounds(ot.fbl);
+         this.bounds(ot.fbr);
+         this.bounds(ot.ftl);
+         this.bounds(ot.ftr);
+      }
+   }
 
    /**
     * Looks at the center point from the eye point, using a default reference
@@ -453,6 +477,22 @@ public interface IUp3 extends IUp {
       this.moveTo(u * this.getLocX() + step * locNew.x, u * this.getLocY()
          + step * locNew.y, u * this.getLocZ() + step * locNew.z);
    }
+
+   /**
+    * Assigns a normal to a vertex.
+    *
+    * @param x the x component
+    * @param y the y component
+    * @param z the z component
+    */
+   void normal ( float x, float y, float z );
+
+   /**
+    * Assigns a normal to a vertex.
+    *
+    * @param n the normal
+    */
+   default void normal ( final Vec3 n ) { this.normal(n.x, n.y, n.z); }
 
    /**
     * Boom or pedestal the camera, moving it on its local y axis, up or down.

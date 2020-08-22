@@ -25,7 +25,7 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
-  rndr.textureSampling(TextureSampling.BILINEAR);
+  rndr.textureSampling(TextureSampling.TRILINEAR);
 
   txtr = loadImage("diagnostic.png");
   textured = new MaterialPImage(txtr);
@@ -54,7 +54,7 @@ void draw() {
   lons = Utils.lerp(3, 48, mouse.x);
   lats = Utils.lerp(1, 24, mouse.y);
 
-  Mesh3.torus(0.375, lons, lats, Mesh.PolyType.QUAD, smooth);
+  Mesh3.torus(0.375, lons, lats, Mesh.PolyType.TRI, smooth);
   flat.set(smooth);
   skele.set(smooth);
 

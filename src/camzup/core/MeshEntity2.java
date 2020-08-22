@@ -193,6 +193,42 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public int length ( ) { return this.meshes.size(); }
 
    /**
+    * Removes a mesh from this mesh entity. Returns <code>true</code> if this
+    * request was filled, <code>false</code> if not.
+    *
+    * @param mesh the mesh to remove.
+    *
+    * @return the evaluation
+    */
+   public boolean remove ( final Mesh2 mesh ) {
+
+      return this.meshes.remove(mesh);
+   }
+
+   /**
+    * Removes a mesh at a given index.
+    *
+    * @param i the index
+    *
+    * @return the mesh
+    */
+   public Mesh2 removeAt ( final int i ) { return this.meshes.remove(i); }
+
+   /**
+    * Resets the mesh entity to an initial state. Sets the transform to an
+    * identity and clears the list of meshes.
+    *
+    * @return this entity
+    */
+   @Override
+   public MeshEntity2 reset ( ) {
+
+      super.reset();
+      this.meshes.clear();
+      return this;
+   }
+
+   /**
     * Scales the entity by a scalar.
     *
     * @param scalar the scalar

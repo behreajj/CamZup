@@ -194,6 +194,18 @@ public class Entity3 extends Entity implements IOriented3, ISpatial3 {
    }
 
    /**
+    * Resets the entity to an initial state by setting its transform to the
+    * identity.
+    *
+    * @return this entity
+    */
+   public Entity3 reset ( ) {
+
+      Transform3.identity(this.transform);
+      return this;
+   }
+
+   /**
     * Rotates this entity to a quaternion.
     *
     * @param rotNew the new rotation

@@ -9,8 +9,31 @@ import camzup.core.Vec4;
  */
 public class KtMat4 extends Mat4 {
 
+   /**
+    * The default constructor. Creates an identity matrix.
+    */
    public KtMat4 ( ) { super(); }
 
+   /**
+    * Constructs a matrix from boolean values.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m03 row 0, column 3
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    * @param m13 row 1, column 3
+    * @param m20 row 2, column 0
+    * @param m21 row 2, column 1
+    * @param m22 row 2, column 2
+    * @param m23 row 2, column 3
+    * @param m30 row 3, column 0
+    * @param m31 row 3, column 1
+    * @param m32 row 3, column 2
+    * @param m33 row 3, column 3
+    */
    public KtMat4 ( final boolean m00, final boolean m01, final boolean m02,
       final boolean m03, final boolean m10, final boolean m11,
       final boolean m12, final boolean m13, final boolean m20,
@@ -22,6 +45,19 @@ public class KtMat4 extends Mat4 {
          m31, m32, m33);
    }
 
+   /**
+    * Constructs a matrix from float values.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    * @param m20 row 2, column 0
+    * @param m21 row 2, column 1
+    * @param m22 row 2, column 2
+    */
    public KtMat4 ( final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12, final float m20,
       final float m21, final float m22 ) {
@@ -29,6 +65,22 @@ public class KtMat4 extends Mat4 {
       super(m00, m01, m02, m10, m11, m12, m20, m21, m22);
    }
 
+   /**
+    * Constructs a matrix from float values.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m03 row 0, column 3
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    * @param m13 row 1, column 3
+    * @param m20 row 2, column 0
+    * @param m21 row 2, column 1
+    * @param m22 row 2, column 2
+    * @param m23 row 2, column 3
+    */
    public KtMat4 ( final float m00, final float m01, final float m02,
       final float m03, final float m10, final float m11, final float m12,
       final float m13, final float m20, final float m21, final float m22,
@@ -37,6 +89,26 @@ public class KtMat4 extends Mat4 {
       super(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23);
    }
 
+   /**
+    * Constructs a matrix from float values.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m03 row 0, column 3
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    * @param m13 row 1, column 3
+    * @param m20 row 2, column 0
+    * @param m21 row 2, column 1
+    * @param m22 row 2, column 2
+    * @param m23 row 2, column 3
+    * @param m30 row 3, column 0
+    * @param m31 row 3, column 1
+    * @param m32 row 3, column 2
+    * @param m33 row 3, column 3
+    */
    public KtMat4 ( final float m00, final float m01, final float m02,
       final float m03, final float m10, final float m11, final float m12,
       final float m13, final float m20, final float m21, final float m22,
@@ -47,6 +119,11 @@ public class KtMat4 extends Mat4 {
          m31, m32, m33);
    }
 
+   /**
+    * Constructs a matrix from a source matrix's components.
+    *
+    * @param source the source matrix
+    */
    public KtMat4 ( final Mat4 source ) { super(source); }
 
    /**

@@ -327,7 +327,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float ap1y ) {
 
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, 1.0f);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
+
       this.vertexImpl(ap0x, ap0y, 0.0f, this.textureU, this.textureV);
       this.bezierVertexImpl(cp0x, cp0y, 0.0f, cp1x, cp1y, 0.0f, ap1x, ap1y,
          0.0f);
@@ -357,7 +358,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float ap1z ) {
 
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, 1.0f);
+      /* Retain auto normal for bezier 3d. */
+      super.normal(0.0f, 0.0f, 1.0f);
       this.vertexImpl(ap0x, ap0y, ap0z, this.textureU, this.textureV);
       this.bezierVertexImpl(cp0x, cp0y, cp0z, cp1x, cp1y, cp1z, ap1x, ap1y,
          ap1z);
@@ -588,7 +590,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float y4 ) {
 
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, 1.0f);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
       this.curveVertexImpl(x1, y1, 0.0f);
       this.curveVertexImpl(x2, y2, 0.0f);
       this.curveVertexImpl(x3, y3, 0.0f);
@@ -622,7 +624,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float z4 ) {
 
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, 1.0f);
+      /* Retain auto normal for curve 3d. */
+      super.normal(0.0f, 0.0f, 1.0f);
+
       this.curveVertexImpl(x1, y1, z1);
       this.curveVertexImpl(x2, y2, z2);
       this.curveVertexImpl(x3, y3, z3);
@@ -1155,7 +1159,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.textureWrap(PConstants.CLAMP);
 
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, 1.0f);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
       this.texture(img);
       switch ( this.imageMode ) {
 
@@ -1400,27 +1404,34 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Sets the normal for a shape at a given vertex.
+    * Sets the normal for a shape at a given vertex. This does <em>not</em>
+    * set the normal mode.
     */
    @Override
-   @Experimental
    public void normal ( final float x, final float y, final float z ) {
 
       this.normalX = x;
       this.normalY = y;
       this.normalZ = z;
+   }
 
-      // if drawing a shape and the normal hasn't been set yet,
-      // then we need to set the normals for each vertex so far
-      // if ( this.shape != 0 ) {
-      // if ( this.normalMode == PGraphics.NORMAL_MODE_AUTO ) {
-      // One normal per begin/end shape
-      // this.normalMode = PGraphics.NORMAL_MODE_SHAPE;
-      // } else if ( this.normalMode == PGraphics.NORMAL_MODE_SHAPE ) {
-      // a separate normal for each vertex
-      // this.normalMode = PGraphics.NORMAL_MODE_VERTEX;
-      // }
-      // }
+   /**
+    * Assigns a normal per begin- and end- shape.
+    * {@link PGraphicsOpenGL#beginShape()} sets the
+    * {@link PGraphics#normalMode} to {@link PGraphics#NORMAL_MODE_AUTO}, so
+    * this must be invoked after that call.
+    *
+    * @param nx the x component
+    * @param ny the y component
+    * @param nz the z component
+    */
+   public void normalPerShape ( final float nx, final float ny,
+      final float nz ) {
+
+      this.normalMode = PGraphics.NORMAL_MODE_SHAPE;
+      this.normalX = nx;
+      this.normalY = ny;
+      this.normalZ = nz;
    }
 
    /**
@@ -1649,7 +1660,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float dy ) {
 
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, 1.0f);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
       this.vertexImpl(ax, ay, 0.0f, 0.0f, 0.0f);
       this.vertexImpl(bx, by, 0.0f, 1.0f, 0.0f);
       this.vertexImpl(cx, cy, 0.0f, 1.0f, 1.0f);
@@ -1728,7 +1739,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       }
 
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, 1.0f);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
       this.vertexImpl(a0, b0, 0.0f, 0.0f, 0.0f);
       this.vertexImpl(a1, b0, 0.0f, 1.0f, 0.0f);
       this.vertexImpl(a1, b1, 0.0f, 1.0f, 1.0f);
@@ -2903,7 +2914,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.transform(tr2, trOrder);
 
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, 1.0f);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
       this.vertexImpl(coord.x, coord.y, 0.0f, this.textureU, this.textureV);
 
       while ( itr.hasNext() ) {
@@ -3030,7 +3041,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final int fLen = f.length;
 
          this.beginShape(PConstants.POLYGON);
-         this.normal(0.0f, 0.0f, 1.0f);
+         this.normalPerShape(0.0f, 0.0f, 1.0f);
          this.texture(pimg);
 
          for ( int j = 0; j < fLen; ++j ) {
@@ -3066,7 +3077,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          final int fLen = f.length;
 
          this.beginShape(PConstants.POLYGON);
-         this.normal(0.0f, 0.0f, 1.0f);
+         this.normalPerShape(0.0f, 0.0f, 1.0f);
+
          for ( int j = 0; j < fLen; ++j ) {
             Transform2.mulPoint(tr, vs[f[j][0]], v);
             this.vertexImpl(v.x, v.y, 0.0f, this.textureU, this.textureV);
@@ -3103,7 +3115,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          final int[][] f = fs[i];
          final int fLen = f.length;
+
+         /* beginShape sets normal mode to NORMAL_MODE_AUTO. */
          this.beginShape(PConstants.POLYGON);
+         this.normalMode = PGraphics.NORMAL_MODE_VERTEX;
          this.texture(pimg);
 
          for ( int j = 0; j < fLen; ++j ) {
@@ -3113,7 +3128,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             Transform2.mulTexCoord(uvtr, vts[data[1]], vt);
             Transform3.mulDir(tr, vns[data[2]], vn);
 
-            this.normal(vn.x, vn.y, vn.z);
+            this.normalX = vn.x;
+            this.normalY = vn.y;
+            this.normalZ = vn.z;
             this.vertexImpl(v.x, v.y, v.z, vt.x, vt.y);
          }
          this.endShape(PConstants.CLOSE);
@@ -3136,12 +3153,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final Vec3[] vns = mesh.normals;
       final int[][][] fs = mesh.faces;
       final int fsLen = fs.length;
+      final int oldMode = this.normalMode;
 
       for ( int i = 0; i < fsLen; ++i ) {
 
          final int[][] f = fs[i];
          final int fLen = f.length;
+
+         /* beginShape sets normal mode to NORMAL_MODE_AUTO. */
          this.beginShape(PConstants.POLYGON);
+         this.normalMode = PGraphics.NORMAL_MODE_VERTEX;
 
          for ( int j = 0; j < fLen; ++j ) {
 
@@ -3149,11 +3170,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             Transform3.mulPoint(tr, vs[data[0]], v);
             Transform3.mulNormal(tr, vns[data[2]], vn);
 
-            this.normal(vn.x, vn.y, vn.z);
+            this.normalX = vn.x;
+            this.normalY = vn.y;
+            this.normalZ = vn.z;
             this.vertexImpl(v.x, v.y, v.z, this.textureU, this.textureV);
          }
          this.endShape(PConstants.CLOSE);
       }
+
+      this.normalMode = oldMode;
    }
 
    /**
@@ -3713,7 +3738,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float bl = Utils.clamp(bottomLeft, IUtils.EPSILON, limit);
 
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, 1.0f);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
 
       this.vertexImpl(x2 - tr, y1, 0.0f, this.textureU, this.textureV);
       this.quadraticVertexImpl(x2, y1, 0.0f, x2, y1 + tr, 0.0f);
@@ -3982,7 +4007,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          /* Draw polygon. */
          this.beginShape(PConstants.POLYGON);
-         this.normal(0.0f, 0.0f, 1.0f);
+         this.normalPerShape(0.0f, 0.0f, 1.0f);
          this.texture(glyph.image);
          this.vertexImpl(x0, y0, z, 0.0f, 0.0f);
          this.vertexImpl(x1, y0, z, 1.0f, 0.0f);

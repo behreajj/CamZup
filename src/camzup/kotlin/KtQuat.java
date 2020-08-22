@@ -8,18 +8,51 @@ import camzup.core.Vec3;
  */
 public class KtQuat extends Quaternion {
 
+   /**
+    * The default constructor. Defaults to the identity, (1.0, 0.0, 0.0, 0.0)
+    * .
+    */
    public KtQuat ( ) { super(); }
 
+   /**
+    * Constructs a quaternion by float component.
+    *
+    * @param real  the real component (w)
+    * @param xImag the x component
+    * @param yImag the y component
+    * @param zImag the z component
+    */
    public KtQuat ( final float real, final float xImag, final float yImag,
       final float zImag ) {
 
       super(real, xImag, yImag, zImag);
    }
 
+   /**
+    * Constructs a quaternion by real component and imaginary vector.
+    *
+    * @param real the real component
+    * @param imag the imaginary component
+    */
    public KtQuat ( final float real, final Vec3 imag ) { super(real, imag); }
 
+   /**
+    * A copy constructor.
+    *
+    * @param source the source quaternion
+    */
    public KtQuat ( final Quaternion source ) { super(source); }
 
+   /**
+    * Attempts to construct a quaternion from Strings using
+    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
+    * the component is set to zero.
+    *
+    * @param real  the w string
+    * @param xImag the x string
+    * @param yImag the y string
+    * @param zImag the z string
+    */
    public KtQuat ( final String real, final String xImag, final String yImag,
       final String zImag ) {
 

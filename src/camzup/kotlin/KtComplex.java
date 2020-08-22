@@ -7,15 +7,37 @@ import camzup.core.Complex;
  */
 public class KtComplex extends Complex {
 
+   /**
+    * The default constructor.
+    */
    public KtComplex ( ) { super(); }
 
+   /**
+    * Constructs a complex number from the source's components.
+    *
+    * @param source the source complex number
+    */
    public KtComplex ( final Complex source ) { super(source); }
 
+   /**
+    * Constructs a complex number from float values.
+    *
+    * @param real the real component
+    * @param imag the imaginary component
+    */
    public KtComplex ( final float real, final float imag ) {
 
       super(real, imag);
    }
 
+   /**
+    * Attempts to construct a complex numbers from Strings using
+    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
+    * the component is set to zero.
+    *
+    * @param realstr the real string
+    * @param imagstr the imaginary string
+    */
    public KtComplex ( final String realstr, final String imagstr ) {
 
       super(realstr, imagstr);

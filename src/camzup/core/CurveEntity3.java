@@ -199,6 +199,42 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    }
 
    /**
+    * Removes a curve from this curve entity. Returns <code>true</code> if
+    * this request was filled, <code>false</code> if not.
+    *
+    * @param curve the curve to remove
+    *
+    * @return the evaluation
+    */
+   public boolean remove ( final Curve3 curve ) {
+
+      return this.curves.remove(curve);
+   }
+
+   /**
+    * Removes a curve at a given index.
+    *
+    * @param i the index
+    *
+    * @return the curve
+    */
+   public Curve3 removeAt ( final int i ) { return this.curves.remove(i); }
+
+   /**
+    * Resets the curve entity to an initial state. Sets the transform to an
+    * identity and clears the list of curves.
+    *
+    * @return this entity
+    */
+   @Override
+   public CurveEntity3 reset ( ) {
+
+      super.reset();
+      this.curves.clear();
+      return this;
+   }
+
+   /**
     * Scales the entity by a scalar.
     *
     * @param scalar the scalar

@@ -63,9 +63,9 @@ public interface IYup2 extends IUp {
    void bounds ( final Bounds2 b );
 
    /**
-    * Draws a quad tree.
+    * Draws a quadtree.
     *
-    * @param qt the quad tree
+    * @param qt the quadtree
     */
    @Recursive
    default void bounds ( final Quadtree qt ) {

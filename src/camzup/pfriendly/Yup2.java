@@ -127,7 +127,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final Vec2 max = b.max;
 
       this.beginShape(PConstants.POLYGON);
-      this.normal(0.0f, 0.0f, 1.0f);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
       this.vertexImpl(min.x, min.y, 0.0f, 0.0f, 0.0f);
       this.vertexImpl(max.x, min.y, 0.0f, 1.0f, 0.0f);
       this.vertexImpl(max.x, max.y, 0.0f, 1.0f, 1.0f);
