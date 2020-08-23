@@ -224,4 +224,42 @@ class Indices3 implements Cloneable, Comparable < Indices3 > {
       return this.vn == idx.vn && this.v == idx.v && this.vt == idx.vt;
    }
 
+   /**
+    * Resizes an array of indices to a requested length. If the new length is
+    * greater than the current length, the new elements are filled with new
+    * indices.<br>
+    * <br>
+    * This does <em>not</em> use
+    * {@link System#arraycopy(Object, int, Object, int, int)} because this
+    * function iterates through the entire array checking for null entries.
+    *
+    * @param arr the array
+    * @param sz  the new size
+    *
+    * @return the array
+    */
+   public static Indices3[] resize ( final Indices3[] arr, final int sz ) {
+
+      if ( sz < 1 ) { return new Indices3[] {}; }
+      final Indices3[] result = new Indices3[sz];
+
+      if ( arr == null ) {
+         for ( int i = 0; i < sz; ++i ) {
+            result[i] = new Indices3();
+         }
+         return result;
+      }
+
+      final int last = arr.length - 1;
+      for ( int i = 0; i < sz; ++i ) {
+         if ( i > last || arr[i] == null ) {
+            result[i] = new Indices3();
+         } else {
+            result[i] = arr[i];
+         }
+      }
+
+      return result;
+   }
+
 }

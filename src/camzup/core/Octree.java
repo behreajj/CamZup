@@ -8,20 +8,25 @@ import java.util.Iterator;
  * Partitions space to improve collision and intersection tests. An octree
  * node holds a list of points up to a given capacity; when that capacity
  * is exceeded, the node is split into eight children nodes (octants) and
- * its list of points is emptied into the children.
+ * its list of points is emptied into them. The octants are indexed in an
+ * array as follows:
+ *
+ * <pre>
+ *           **|-----|-----|
+ *       ******|   6 |   7 |
+ *   **********| FNW | FNE |
+ * |-----|-----|-----|-----|
+ * |   2 |   3 |   4 |   5 |
+ * | BNW | BNE | FSW | FSE |
+ * |-----|-----|-----|-----|
+ * |   0 |   1 |**********
+ * | BSW | BSE |******
+ * |-----|-----|**
+ * </pre>
+ *
+ * forming a backwards z pattern.
  */
-@Experimental
 public class Octree implements Iterable < Vec3 > {
-
-   /**
-    * The back bottom left octree.
-    */
-   public Octree bbl;
-
-   /**
-    * The back bottom right octree.
-    */
-   public Octree bbr;
 
    /**
     * The bounding volume.
@@ -29,34 +34,9 @@ public class Octree implements Iterable < Vec3 > {
    public Bounds3 bounds;
 
    /**
-    * The back top left octree.
+    * Children nodes.
     */
-   public Octree btl;
-
-   /**
-    * The back top right octree.
-    */
-   public Octree btr;
-
-   /**
-    * The front bottom left octree.
-    */
-   public Octree fbl;
-
-   /**
-    * The front bottom right octree.
-    */
-   public Octree fbr;
-
-   /**
-    * The front top left octree.
-    */
-   public Octree ftl;
-
-   /**
-    * The front top right octree.
-    */
-   public Octree ftr;
+   public final Octree[] children = new Octree[8];
 
    /**
     * The number of elements an octree can hold before it is split into child
@@ -133,20 +113,23 @@ public class Octree implements Iterable < Vec3 > {
     * @param point the point
     *
     * @return the insertion success
+    *
+    * @see Bounds3#contains(Bounds3, Vec3)
     */
    @Recursive
    public boolean insert ( final Vec3 point ) {
 
+      /* Lower bound inclusive, upper bound exclusive. */
       if ( Bounds3.contains(this.bounds, point) ) {
          if ( this.isLeaf() ) {
             this.points.add(point);
             if ( this.points.size() > this.capacity ) { this.split(); }
             return true;
          }
-         return this.bbl.insert(point) || this.bbr.insert(point) || this.btl
-            .insert(point) || this.btr.insert(point) || this.fbl.insert(point)
-            || this.fbr.insert(point) || this.ftl.insert(point) || this.ftr
-               .insert(point);
+
+         for ( int i = 0; i < 8; ++i ) {
+            if ( this.children[i].insert(point) ) { return true; }
+         }
       }
       return false;
    }
@@ -175,9 +158,10 @@ public class Octree implements Iterable < Vec3 > {
     */
    public boolean isLeaf ( ) {
 
-      return this.bbl == null && this.bbr == null && this.btl == null
-         && this.btr == null && this.fbl == null && this.fbr == null && this.ftl
-            == null && this.ftr == null;
+      for ( int i = 0; i < 8; ++i ) {
+         if ( this.children[i] != null ) { return false; }
+      }
+      return true;
    }
 
    /**
@@ -235,14 +219,9 @@ public class Octree implements Iterable < Vec3 > {
    public Octree reset ( ) {
 
       this.points.clear();
-      this.bbl = null;
-      this.bbr = null;
-      this.btl = null;
-      this.btr = null;
-      this.fbl = null;
-      this.fbr = null;
-      this.ftl = null;
-      this.ftr = null;
+      for ( int i = 0; i < 8; ++i ) {
+         this.children[i] = null;
+      }
 
       return this;
    }
@@ -255,39 +234,35 @@ public class Octree implements Iterable < Vec3 > {
    public Octree split ( ) {
 
       final int nextLevel = this.level + 1;
-      this.bbl = new Octree(new Bounds3(), this.capacity, nextLevel);
-      this.bbr = new Octree(new Bounds3(), this.capacity, nextLevel);
-      this.btl = new Octree(new Bounds3(), this.capacity, nextLevel);
-      this.btr = new Octree(new Bounds3(), this.capacity, nextLevel);
-      this.fbl = new Octree(new Bounds3(), this.capacity, nextLevel);
-      this.fbr = new Octree(new Bounds3(), this.capacity, nextLevel);
-      this.ftl = new Octree(new Bounds3(), this.capacity, nextLevel);
-      this.ftr = new Octree(new Bounds3(), this.capacity, nextLevel);
+      for ( int i = 0; i < 8; ++i ) {
+         this.children[i] = new Octree(new Bounds3(), this.capacity, nextLevel);
+      }
 
       Iterator < Vec3 > itr;
-
       // Vec3 mean = new Vec3();
       // itr = this.points.iterator();
       // while ( itr.hasNext() ) {
       // Vec3.add(mean, itr.next(), mean);
       // }
       // Vec3.div(mean, this.points.size(), mean);
-      // Bounds3.split(this.bounds, mean, this.bbl.bounds, this.bbr.bounds,
-      // this.btl.bounds, this.btr.bounds, this.fbl.bounds, this.fbr.bounds,
-      // this.ftl.bounds, this.ftr.bounds);
 
-      Bounds3.split(this.bounds, this.bbl.bounds, this.bbr.bounds,
-         this.btl.bounds, this.btr.bounds, this.fbl.bounds, this.fbr.bounds,
-         this.ftl.bounds, this.ftr.bounds);
+      Bounds3.split(this.bounds, 0.5f, 0.5f, 0.5f,
+         this.children[Octree.BACK_SOUTH_WEST].bounds,
+         this.children[Octree.BACK_SOUTH_EAST].bounds,
+         this.children[Octree.BACK_NORTH_WEST].bounds,
+         this.children[Octree.BACK_NORTH_EAST].bounds,
+         this.children[Octree.FRONT_SOUTH_WEST].bounds,
+         this.children[Octree.FRONT_SOUTH_EAST].bounds,
+         this.children[Octree.FRONT_NORTH_WEST].bounds,
+         this.children[Octree.FRONT_NORTH_EAST].bounds);
 
       /* Pass on points to children. */
       itr = this.points.iterator();
       while ( itr.hasNext() ) {
          final Vec3 v = itr.next();
-         if ( !this.bbl.insert(v) && !this.bbr.insert(v) && !this.btl.insert(v)
-            && !this.btr.insert(v) && !this.fbl.insert(v) && !this.fbr.insert(v)
-            && !this.ftl.insert(v) ) {
-            this.ftr.insert(v);
+         boolean flag = false;
+         for ( int i = 0; i < 8 && !flag; ++i ) {
+            flag = this.children[i].insert(v);
          }
       }
       this.points.clear();
@@ -326,22 +301,12 @@ public class Octree implements Iterable < Vec3 > {
          }
          sb.append(" ]");
       } else {
-         sb.append(", bbl: ");
-         sb.append(this.bbl.toString(places));
-         sb.append(", bbr: ");
-         sb.append(this.bbr.toString(places));
-         sb.append(", btl: ");
-         sb.append(this.btl.toString(places));
-         sb.append(", btr: ");
-         sb.append(this.btr.toString(places));
-         sb.append(", fbl: ");
-         sb.append(this.fbl.toString(places));
-         sb.append(", fbr: ");
-         sb.append(this.fbr.toString(places));
-         sb.append(", ftl: ");
-         sb.append(this.ftl.toString(places));
-         sb.append(", ftr: ");
-         sb.append(this.ftr.toString(places));
+         sb.append(", children: [ ");
+         for ( int i = 0; i < 8; ++i ) {
+            sb.append(this.children[i].toString(places));
+            if ( i < 7 ) { sb.append(", "); }
+         }
+         sb.append(" ]");
       }
 
       sb.append(" }");
@@ -356,6 +321,9 @@ public class Octree implements Iterable < Vec3 > {
     * @param found the output list
     *
     * @return found points
+    *
+    * @see Bounds3#intersect(Bounds3, Bounds3)
+    * @see Bounds3#containsInclusive(Bounds3, Vec3)
     */
    @Recursive
    protected ArrayList < Vec3 > query ( final Bounds3 range, final ArrayList <
@@ -366,17 +334,14 @@ public class Octree implements Iterable < Vec3 > {
             final Iterator < Vec3 > itr = this.points.iterator();
             while ( itr.hasNext() ) {
                final Vec3 point = itr.next();
-               if ( Bounds3.contains(range, point) ) { found.add(point); }
+               if ( Bounds3.containsInclusive(range, point) ) {
+                  found.add(point);
+               }
             }
          } else {
-            this.bbl.query(range, found);
-            this.bbr.query(range, found);
-            this.btl.query(range, found);
-            this.btr.query(range, found);
-            this.fbl.query(range, found);
-            this.fbr.query(range, found);
-            this.ftl.query(range, found);
-            this.ftr.query(range, found);
+            for ( int i = 0; i < 8; ++i ) {
+               this.children[i].query(range, found);
+            }
          }
       }
 
@@ -392,6 +357,9 @@ public class Octree implements Iterable < Vec3 > {
     * @param found  the output list
     *
     * @return found points
+    *
+    * @see Bounds3#intersect(Bounds3, Vec3, float)
+    * @see Vec3#distSq(Vec3, Vec3)
     */
    @Recursive
    protected ArrayList < Vec3 > query ( final Vec3 origin, final float radius,
@@ -406,14 +374,9 @@ public class Octree implements Iterable < Vec3 > {
                if ( Vec3.distSq(origin, point) <= rsq ) { found.add(point); }
             }
          } else {
-            this.bbl.query(origin, radius, found);
-            this.bbr.query(origin, radius, found);
-            this.btl.query(origin, radius, found);
-            this.btr.query(origin, radius, found);
-            this.fbl.query(origin, radius, found);
-            this.fbr.query(origin, radius, found);
-            this.ftl.query(origin, radius, found);
-            this.ftr.query(origin, radius, found);
+            for ( int i = 0; i < 8; ++i ) {
+               this.children[i].query(origin, radius, found);
+            }
          }
       }
 
@@ -421,8 +384,48 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
+    * Bottom North East index for array of children nodes.
+    */
+   public static final int BACK_NORTH_EAST = 3;
+
+   /**
+    * Bottom North West index for array of children nodes.
+    */
+   public static final int BACK_NORTH_WEST = 2;
+
+   /**
+    * Bottom South East index for array of children nodes.
+    */
+   public static final int BACK_SOUTH_EAST = 1;
+
+   /**
+    * Bottom South West index for array of children nodes.
+    */
+   public static final int BACK_SOUTH_WEST = 0;
+
+   /**
     * The default capacity.
     */
    public static final int DEFAULT_CAPACITY = 8;
+
+   /**
+    * Top North East index for array of children nodes.
+    */
+   public static final int FRONT_NORTH_EAST = 7;
+
+   /**
+    * Top North West index for array of children nodes.
+    */
+   public static final int FRONT_NORTH_WEST = 6;
+
+   /**
+    * Top South East index for array of children nodes.
+    */
+   public static final int FRONT_SOUTH_EAST = 5;
+
+   /**
+    * Top South West index for array of children nodes.
+    */
+   public static final int FRONT_SOUTH_WEST = 4;
 
 }

@@ -79,7 +79,7 @@ public class Entity2 extends Entity implements IOriented2, ISpatial2 {
     *
     * @param target the output vector
     *
-    * @returns the location
+    * @return the location
     */
    @Override
    public Vec2 getLocation ( final Vec2 target ) {

@@ -576,6 +576,39 @@ public class Bounds2 implements Cloneable, Comparable < Bounds2 > {
    }
 
    /**
+    * Sets a bounding volume to encompass an array of points.
+    *
+    * @param points the points
+    * @param target the output volume
+    *
+    * @return the volume
+    */
+   public static Bounds2 fromPoints ( final Vec2[] points,
+      final Bounds2 target ) {
+
+      final Vec2 lb = target.min;
+      final Vec2 ub = target.max;
+
+      lb.set(Float.MAX_VALUE, Float.MAX_VALUE);
+      ub.set(Float.MIN_VALUE, Float.MIN_VALUE);
+
+      final int len = points.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec2 p = points[i];
+         final float x = p.x;
+         final float y = p.y;
+
+         /* Minimum, maximum need separate if checks, not if-else. */
+         if ( x < lb.x ) { lb.x = x; }
+         if ( x > ub.x ) { ub.x = x; }
+         if ( y < lb.y ) { lb.y = y; }
+         if ( y > ub.y ) { ub.y = y; }
+      }
+
+      return target;
+   }
+
+   /**
     * Finds half the extent of the bounds.
     *
     * @param b      the bounds
@@ -635,19 +668,10 @@ public class Bounds2 implements Cloneable, Comparable < Bounds2 > {
    public static boolean intersect ( final Bounds2 a, final Vec2 origin,
       final float radius ) {
 
-      float xQuery = origin.x;
-      float yQuery = origin.y;
-
-      if ( origin.x < a.min.x ) {
-         xQuery = a.min.x;
-      } else if ( origin.x > a.max.x ) { xQuery = a.max.x; }
-
-      if ( origin.y < a.min.y ) {
-         yQuery = a.min.y;
-      } else if ( origin.y > a.max.y ) { yQuery = a.max.y; }
-
-      final float xDist = origin.x - xQuery;
-      final float yDist = origin.y - yQuery;
+      final float xDist = origin.x < a.min.x ? origin.x - a.min.x : origin.x
+         > origin.x - a.max.x ? a.max.x : 0.0f;
+      final float yDist = origin.y < a.min.y ? origin.y - a.min.y : origin.y
+         > origin.y - a.max.y ? a.max.y : 0.0f;
       return Utils.sqrtUnchecked(xDist * xDist + yDist * yDist) < radius;
    }
 

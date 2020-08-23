@@ -3,7 +3,7 @@ package camzup.core;
 import java.util.Arrays;
 import java.util.TreeSet;
 
-public class Face2Refactor implements Comparable < Face2Refactor > {
+class Face2Refactor implements Comparable < Face2Refactor > {
    public Edge2[] edges;
 
    public Face2Refactor ( ) { this.edges = new Edge2[] {}; }
@@ -177,6 +177,16 @@ public class Face2Refactor implements Comparable < Face2Refactor > {
       return Vec2.div(target, len, target);
    }
 
+   public static Vec2 eval ( final Face2Refactor face, final float step,
+      final Vec2 target ) {
+
+      final Edge2[] edges = face.edges;
+      final int len = edges.length;
+      final float tScaled = len * Utils.mod1(step);
+      final int i = ( int ) tScaled;
+      return Edge2.eval(edges[i], tScaled - i, target);
+   }
+
    public static boolean isCCW ( final Face2Refactor face ) {
 
       return Face2Refactor.winding(face) > 0.0f;
@@ -240,6 +250,7 @@ public class Face2Refactor implements Comparable < Face2Refactor > {
          prev = curr;
          curr = next;
       }
+
       return wn;
    }
 

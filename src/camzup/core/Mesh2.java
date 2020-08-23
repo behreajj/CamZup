@@ -2016,7 +2016,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          return Mesh2.ring(oculus, sectors, poly, target);
       }
 
-      final int sctCount = Utils.ceilToInt(1 + ( sectors < 3 ? 3 : sectors )
+      final int sctCount = Utils.ceil(1 + ( sectors < 3 ? 3 : sectors )
          * ( float ) arcLen1);
       final int sctCount2 = sctCount + sctCount;
       final Vec2[] vs = target.coords = Vec2.resize(target.coords, sctCount2);

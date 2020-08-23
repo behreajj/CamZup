@@ -72,8 +72,7 @@ public class KtVec3 extends Vec3 {
    /**
     * Promotes a Vec2 to a Vec3 with an extra component.
     *
-    * @param v2 the vector
-    * @param z  the z component
+    * @param source the vector
     */
    public KtVec3 ( final Vec3 source ) { super(source); }
 

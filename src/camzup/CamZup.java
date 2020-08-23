@@ -3,9 +3,8 @@ package camzup;
 import camzup.core.IUtils;
 import camzup.core.Mesh;
 import camzup.core.Mesh.PolyType;
-import camzup.core.Mesh2;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity2;
+import camzup.core.MeshEntity3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -568,58 +567,11 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      final Mesh2 mesh2 = new Mesh2();
-      final MeshEntity2 entity2 = new MeshEntity2();
-      entity2.append(mesh2);
-      Mesh2.square(mesh2);
+      final Mesh3 mesh3 = new Mesh3();
+      final MeshEntity3 entity3 = new MeshEntity3();
+      entity3.append(mesh3);
+      Mesh3.cube(mesh3);
 
-   }
-
-   public static Mesh3 unityCube ( ) {
-
-      final Vec3[] coords = new Vec3[] { new Vec3(0.5f, -0.5f, 0.5f), new Vec3(
-         -0.5f, -0.5f, 0.5f), new Vec3(0.5f, 0.5f, 0.5f), new Vec3(-0.5f, 0.5f,
-            0.5f), new Vec3(0.5f, 0.5f, -0.5f), new Vec3(-0.5f, 0.5f, -0.5f),
-         new Vec3(0.5f, -0.5f, -0.5f), new Vec3(-0.5f, -0.5f, -0.5f), new Vec3(
-            0.5f, 0.5f, 0.5f), new Vec3(-0.5f, 0.5f, 0.5f), new Vec3(0.5f, 0.5f,
-               -0.5f), new Vec3(-0.5f, 0.5f, -0.5f), new Vec3(0.5f, -0.5f,
-                  -0.5f), new Vec3(0.5f, -0.5f, 0.5f), new Vec3(-0.5f, -0.5f,
-                     0.5f), new Vec3(-0.5f, -0.5f, -0.5f), new Vec3(-0.5f,
-                        -0.5f, 0.5f), new Vec3(-0.5f, 0.5f, 0.5f), new Vec3(
-                           -0.5f, 0.5f, -0.5f), new Vec3(-0.5f, -0.5f, -0.5f),
-         new Vec3(0.5f, -0.5f, -0.5f), new Vec3(0.5f, 0.5f, -0.5f), new Vec3(
-            0.5f, 0.5f, 0.5f), new Vec3(0.5f, -0.5f, 0.5f) };
-
-      final Vec2[] texCoords = new Vec2[] { new Vec2(0f, 0f), new Vec2(1f, 0f),
-         new Vec2(0f, 1f), new Vec2(1f, 1f), new Vec2(0f, 1f), new Vec2(1f, 1f),
-         new Vec2(0f, 1f), new Vec2(1f, 1f), new Vec2(0f, 0f), new Vec2(1f, 0f),
-         new Vec2(0f, 0f), new Vec2(1f, 0f), new Vec2(0f, 0f), new Vec2(0f, 1f),
-         new Vec2(1f, 1f), new Vec2(1f, 0f), new Vec2(0f, 0f), new Vec2(0f, 1f),
-         new Vec2(1f, 1f), new Vec2(1f, 0f), new Vec2(0f, 0f), new Vec2(0f, 1f),
-         new Vec2(1f, 1f), new Vec2(1f, 0f) };
-
-      final Vec3[] normals = new Vec3[] { new Vec3(0f, 0f, 1f), new Vec3(0f, 0f,
-         1f), new Vec3(0f, 0f, 1f), new Vec3(0f, 0f, 1f), new Vec3(0f, 1f, 0f),
-         new Vec3(0f, 1f, 0f), new Vec3(0f, 0f, -1f), new Vec3(0f, 0f, -1f),
-         new Vec3(0f, 1f, 0f), new Vec3(0f, 1f, 0f), new Vec3(0f, 0f, -1f),
-         new Vec3(0f, 0f, -1f), new Vec3(0f, -1f, 0f), new Vec3(0f, -1f, 0f),
-         new Vec3(0f, -1f, 0f), new Vec3(0f, -1f, 0f), new Vec3(-1f, 0f, 0f),
-         new Vec3(-1f, 0f, 0f), new Vec3(-1f, 0f, 0f), new Vec3(-1f, 0f, 0f),
-         new Vec3(1f, 0f, 0f), new Vec3(1f, 0f, 0f), new Vec3(1f, 0f, 0f),
-         new Vec3(1f, 0f, 0f) };
-
-      final int[][][] faces = new int[][][] { { { 0, 0, 0 }, { 2, 2, 2 }, { 3,
-         3, 3 } }, { { 0, 0, 0 }, { 3, 3, 3 }, { 1, 1, 1 } }, { { 8, 8, 8 }, {
-            4, 4, 4 }, { 5, 5, 5 } }, { { 8, 8, 8 }, { 5, 5, 5 }, { 9, 9, 9 } },
-         { { 10, 10, 10 }, { 6, 6, 6 }, { 7, 7, 7 } }, { { 10, 10, 10 }, { 7, 7,
-            7 }, { 11, 11, 11 } }, { { 12, 12, 12 }, { 13, 13, 13 }, { 14, 14,
-               14 } }, { { 12, 12, 12 }, { 14, 14, 14 }, { 15, 15, 15 } }, { {
-                  16, 16, 16 }, { 17, 17, 17 }, { 18, 18, 18 } }, { { 16, 16,
-                     16 }, { 18, 18, 18 }, { 19, 19, 19 } }, { { 20, 20, 20 }, {
-                        21, 21, 21 }, { 22, 22, 22 } }, { { 20, 20, 20 }, { 22,
-                           22, 22 }, { 23, 23, 23 } } };
-
-      return new Mesh3(faces, coords, texCoords, normals);
    }
 
    /**

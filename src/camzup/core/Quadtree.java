@@ -8,15 +8,22 @@ import java.util.Iterator;
  * Partitions space to improve collision and intersection tests. A quadtree
  * node holds a list of points up to a given capacity; when that capacity
  * is exceeded, the node is split into four children nodes (quadrants) and
- * its list of points is emptied into the children.
+ * its list of points is emptied into them. The quadrants are indexed in an
+ * array as follows
+ *
+ * <pre>
+ * |----|----|
+ * |  2 |  3 |
+ * | NW | NE |
+ * |----|----|
+ * |  0 |  1 |
+ * | SW | SE |
+ * |----|----|
+ * </pre>
+ *
+ * forming a backwards z pattern.
  */
-@Experimental
 public class Quadtree implements Iterable < Vec2 > {
-
-   /**
-    * The bottom left quadtree.
-    */
-   public Quadtree bl;
 
    /**
     * The bounding area.
@@ -24,19 +31,9 @@ public class Quadtree implements Iterable < Vec2 > {
    public Bounds2 bounds;
 
    /**
-    * The bottom right quadtree.
+    * Children nodes.
     */
-   public Quadtree br;
-
-   /**
-    * The top left quadtree.
-    */
-   public Quadtree tl;
-
-   /**
-    * The top right quadtree.
-    */
-   public Quadtree tr;
+   public final Quadtree[] children = new Quadtree[4];
 
    /**
     * The number of elements a quadtree can hold before it is split into child
@@ -113,18 +110,23 @@ public class Quadtree implements Iterable < Vec2 > {
     * @param point the point
     *
     * @return the insertion success
+    *
+    * @see Bounds2#contains(Bounds2, Vec2)
     */
    @Recursive
    public boolean insert ( final Vec2 point ) {
 
+      /* Lower bound inclusive, upper bound exclusive. */
       if ( Bounds2.contains(this.bounds, point) ) {
          if ( this.isLeaf() ) {
             this.points.add(point);
             if ( this.points.size() > this.capacity ) { this.split(); }
             return true;
          }
-         return this.bl.insert(point) || this.br.insert(point) || this.tl
-            .insert(point) || this.tr.insert(point);
+
+         for ( int i = 0; i < 4; ++i ) {
+            if ( this.children[i].insert(point) ) { return true; }
+         }
       }
       return false;
    }
@@ -153,8 +155,10 @@ public class Quadtree implements Iterable < Vec2 > {
     */
    public boolean isLeaf ( ) {
 
-      return this.bl == null && this.br == null && this.tl == null && this.tr
-         == null;
+      for ( int i = 0; i < 4; ++i ) {
+         if ( this.children[i] != null ) { return false; }
+      }
+      return true;
    }
 
    /**
@@ -212,10 +216,9 @@ public class Quadtree implements Iterable < Vec2 > {
    public Quadtree reset ( ) {
 
       this.points.clear();
-      this.bl = null;
-      this.br = null;
-      this.tl = null;
-      this.tr = null;
+      for ( int i = 0; i < 4; ++i ) {
+         this.children[i] = null;
+      }
 
       return this;
    }
@@ -228,32 +231,32 @@ public class Quadtree implements Iterable < Vec2 > {
    public Quadtree split ( ) {
 
       final int nextLevel = this.level + 1;
-
-      this.bl = new Quadtree(new Bounds2(), this.capacity, nextLevel);
-      this.br = new Quadtree(new Bounds2(), this.capacity, nextLevel);
-      this.tl = new Quadtree(new Bounds2(), this.capacity, nextLevel);
-      this.tr = new Quadtree(new Bounds2(), this.capacity, nextLevel);
+      for ( int i = 0; i < 4; ++i ) {
+         this.children[i] = new Quadtree(new Bounds2(), this.capacity,
+            nextLevel);
+      }
 
       Iterator < Vec2 > itr;
-
       // Vec2 mean = new Vec2();
       // itr = this.points.iterator();
       // while(itr.hasNext()) {
       // Vec2.add(mean, itr.next(), mean);
       // }
       // Vec2.div(mean, this.points.size(), mean);
-      // Bounds2.split(this.bounds, mean, this.bl.bounds, this.br.bounds,
-      // this.tl.bounds, this.tr.bounds);
 
-      Bounds2.split(this.bounds, this.bl.bounds, this.br.bounds, this.tl.bounds,
-         this.tr.bounds);
+      Bounds2.split(this.bounds, 0.5f, 0.5f,
+         this.children[Quadtree.SOUTH_WEST].bounds,
+         this.children[Quadtree.SOUTH_EAST].bounds,
+         this.children[Quadtree.NORTH_WEST].bounds,
+         this.children[Quadtree.NORTH_EAST].bounds);
 
       /* Pass on points to children. */
       itr = this.points.iterator();
       while ( itr.hasNext() ) {
          final Vec2 v = itr.next();
-         if ( !this.bl.insert(v) && !this.br.insert(v) && !this.tl.insert(v) ) {
-            this.tr.insert(v);
+         boolean flag = false;
+         for ( int i = 0; i < 8 && !flag; ++i ) {
+            flag = this.children[i].insert(v);
          }
       }
 
@@ -293,14 +296,12 @@ public class Quadtree implements Iterable < Vec2 > {
          }
          sb.append(" ]");
       } else {
-         sb.append(", bl: ");
-         sb.append(this.bl.toString(places));
-         sb.append(", br: ");
-         sb.append(this.br.toString(places));
-         sb.append(", tl: ");
-         sb.append(this.tl.toString(places));
-         sb.append(", tr: ");
-         sb.append(this.tr.toString(places));
+         sb.append(", children: [ ");
+         for ( int i = 0; i < 4; ++i ) {
+            sb.append(this.children[i].toString(places));
+            if ( i < 3 ) { sb.append(", "); }
+         }
+         sb.append(" ]");
       }
 
       sb.append(" }");
@@ -315,6 +316,9 @@ public class Quadtree implements Iterable < Vec2 > {
     * @param found the output list
     *
     * @return found points
+    *
+    * @see Bounds2#intersect(Bounds2, Bounds2)
+    * @see Bounds2#containsInclusive(Bounds2, Vec2)
     */
    @Recursive
    protected ArrayList < Vec2 > query ( final Bounds2 range, final ArrayList <
@@ -325,13 +329,14 @@ public class Quadtree implements Iterable < Vec2 > {
             final Iterator < Vec2 > itr = this.points.iterator();
             while ( itr.hasNext() ) {
                final Vec2 point = itr.next();
-               if ( Bounds2.contains(range, point) ) { found.add(point); }
+               if ( Bounds2.containsInclusive(range, point) ) {
+                  found.add(point);
+               }
             }
          } else {
-            this.bl.query(range, found);
-            this.br.query(range, found);
-            this.tl.query(range, found);
-            this.tr.query(range, found);
+            for ( int i = 0; i < 4; ++i ) {
+               this.children[i].query(range, found);
+            }
          }
       }
 
@@ -347,6 +352,9 @@ public class Quadtree implements Iterable < Vec2 > {
     * @param found  the output list
     *
     * @return found points
+    *
+    * @see Bounds2#intersect(Bounds2, Vec2, float)
+    * @see Vec2#distSq(Vec2, Vec2)
     */
    @Recursive
    protected ArrayList < Vec2 > query ( final Vec2 origin, final float radius,
@@ -361,10 +369,9 @@ public class Quadtree implements Iterable < Vec2 > {
                if ( Vec2.distSq(origin, point) <= rsq ) { found.add(point); }
             }
          } else {
-            this.bl.query(origin, radius, found);
-            this.br.query(origin, radius, found);
-            this.tl.query(origin, radius, found);
-            this.tr.query(origin, radius, found);
+            for ( int i = 0; i < 4; ++i ) {
+               this.children[i].query(origin, radius, found);
+            }
          }
       }
 
@@ -375,5 +382,25 @@ public class Quadtree implements Iterable < Vec2 > {
     * The default capacity.
     */
    public static final int DEFAULT_CAPACITY = 8;
+
+   /**
+    * North East index for array of children nodes.
+    */
+   public static final int NORTH_EAST = 3;
+
+   /**
+    * North West index for array of children nodes.
+    */
+   public static final int NORTH_WEST = 2;
+
+   /**
+    * South East index for array of children nodes.
+    */
+   public static final int SOUTH_EAST = 1;
+
+   /**
+    * South West index for array of children nodes.
+    */
+   public static final int SOUTH_WEST = 0;
 
 }

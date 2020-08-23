@@ -57,14 +57,9 @@ public interface IUp3 extends IUp {
       if ( ot.isLeaf() ) {
          this.bounds(ot.bounds);
       } else {
-         this.bounds(ot.bbl);
-         this.bounds(ot.bbr);
-         this.bounds(ot.btl);
-         this.bounds(ot.btr);
-         this.bounds(ot.fbl);
-         this.bounds(ot.fbr);
-         this.bounds(ot.ftl);
-         this.bounds(ot.ftr);
+         for ( int i = 0; i < 8; ++i ) {
+            this.bounds(ot.children[i]);
+         }
       }
    }
 

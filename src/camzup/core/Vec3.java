@@ -3430,7 +3430,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
       /**
        * Constructs a sorting function with a locus against which points are
        * compared in sorting.
-       * 
+       *
        * @param locus the locus
        */
       public SortDistSq ( final Vec3 locus ) {

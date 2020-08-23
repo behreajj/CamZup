@@ -328,7 +328,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       this.beginShape(PConstants.POLYGON);
       this.normalPerShape(0.0f, 0.0f, 1.0f);
-
       this.vertexImpl(ap0x, ap0y, 0.0f, this.textureU, this.textureV);
       this.bezierVertexImpl(cp0x, cp0y, 0.0f, cp1x, cp1y, 0.0f, ap1x, ap1y,
          0.0f);
@@ -358,8 +357,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float ap1z ) {
 
       this.beginShape(PConstants.POLYGON);
-      /* Retain auto normal for bezier 3d. */
-      super.normal(0.0f, 0.0f, 1.0f);
       this.vertexImpl(ap0x, ap0y, ap0z, this.textureU, this.textureV);
       this.bezierVertexImpl(cp0x, cp0y, cp0z, cp1x, cp1y, cp1z, ap1x, ap1y,
          ap1z);
@@ -624,9 +621,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float z4 ) {
 
       this.beginShape(PConstants.POLYGON);
-      /* Retain auto normal for curve 3d. */
-      super.normal(0.0f, 0.0f, 1.0f);
-
       this.curveVertexImpl(x1, y1, z1);
       this.curveVertexImpl(x2, y2, z2);
       this.curveVertexImpl(x3, y3, z3);
@@ -1799,8 +1793,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * gimbal lock. Instead, rotate by an angle around an axis.
     *
     * @param radians the angle
-    *
-    * @see Up3#rotate(float, float, float, float)
     */
    @Override
    public void rotateX ( final float radians ) {
@@ -1821,8 +1813,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * gimbal lock. Instead, rotate by an angle around an axis.
     *
     * @param radians the angle
-    *
-    * @see Up3#rotate(float, float, float, float)
     */
    @Override
    public void rotateY ( final float radians ) {
@@ -1843,8 +1833,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * gimbal lock. Instead, rotate by an angle around an axis.
     *
     * @param radians the angle
-    *
-    * @see Up3#rotate(float, float, float, float)
     */
    @Override
    public void rotateZ ( final float radians ) {
@@ -3153,7 +3141,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final Vec3[] vns = mesh.normals;
       final int[][][] fs = mesh.faces;
       final int fsLen = fs.length;
-      final int oldMode = this.normalMode;
 
       for ( int i = 0; i < fsLen; ++i ) {
 
@@ -3177,8 +3164,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          }
          this.endShape(PConstants.CLOSE);
       }
-
-      this.normalMode = oldMode;
    }
 
    /**

@@ -382,7 +382,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * Assumes that each edge's origin matches the preceding edge's
     * destination, and so only the origins need to be registered.
     *
-    * @param edges
+    * @param edges the edges
     *
     * @return this face
     */

@@ -1256,7 +1256,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             curr = this.coords[f[j][0]];
             next = this.coords[f[ ( j + 1 ) % fLen][0]];
 
-            // TODO: Will results be the same if this is not normalized?
             Vec3.sub(prev, curr, edge0);
             Vec3.sub(curr, next, edge1);
             Vec3.crossNorm(edge0, edge1, vertNorm);
@@ -1419,13 +1418,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             ( vtCurr.x + vtNext.x ) * 0.5f,
             ( vtCurr.y + vtNext.y ) * 0.5f);
 
-         /* Is it necessary to divide by half if normalization follows? */
+         /* Multiply by 0.5 removed because normalize takes care of it. */
          final int vnNextIdx = vertNext[2];
          final Vec3 vnNext = this.normals[vnNextIdx];
          final Vec3 vn = vnsNew[j] = new Vec3(
-            vnCurr.x + vnNext.x, // * 0.5f,
-            vnCurr.y + vnNext.y, // * 0.5f,
-            vnCurr.z + vnNext.z); // * 0.5f);
+            vnCurr.x + vnNext.x,
+            vnCurr.y + vnNext.y,
+            vnCurr.z + vnNext.z);
          Vec3.normalize(vn, vn);
 
          fsNew[j] = new int[][] {
@@ -1506,7 +1505,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final float flInv = 1.0f / faceLen;
          Vec3.mul(vCenter, flInv, vCenter);
          Vec2.mul(vtCenter, flInv, vtCenter);
-         // Vec3.mul(vnCenter, flInv, vnCenter);
          Vec3.normalize(vnCenter, vnCenter);
       }
 
@@ -1569,12 +1567,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             ( vtCurr.x + vtNext.x ) * 0.5f,
             ( vtCurr.y + vtNext.y ) * 0.5f);
 
+         /* Multiply by 0.5 removed because normalize takes care of it. */
          final int vnNextIdx = vertNext[2];
          final Vec3 vnNext = this.normals[vnNextIdx];
          final Vec3 vn = vnsNew[j] = new Vec3(
-            ( vnCurr.x + vnNext.x ) * 0.5f,
-            ( vnCurr.y + vnNext.y ) * 0.5f,
-            ( vnCurr.z + vnNext.z ) * 0.5f);
+            vnCurr.x + vnNext.x,
+            vnCurr.y + vnNext.y,
+            vnCurr.z + vnNext.z);
          Vec3.normalize(vn, vn);
 
          final int vSubdivIdx = vsOldLen + j;
@@ -2420,8 +2419,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public static Vec3 calcDimensions ( final Mesh3 mesh, final Vec3 target,
       final Vec3 lb, final Vec3 ub ) {
-
-      // TODO: Overload to support bounds. Or do calcfrompoints in bounds.
 
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
       ub.set(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);

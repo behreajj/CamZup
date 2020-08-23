@@ -237,7 +237,7 @@ public class Rng extends java.util.Random implements IUtils {
    public int uniform ( final int lower, final int upper ) {
 
       final float r = this.nextFloat();
-      return Utils.floorToInt( ( 1.0f - r ) * lower + r * upper);
+      return Utils.floor( ( 1.0f - r ) * lower + r * upper);
    }
 
    /**

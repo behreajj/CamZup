@@ -695,7 +695,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * Assumes that each edge's origin matches the preceding edge's
     * destination, and so only the origins need to be registered.
     *
-    * @param edges
+    * @param edges the edges
     *
     * @return this face
     */

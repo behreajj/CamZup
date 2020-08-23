@@ -940,7 +940,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       if ( arcLen1 <= 0.00139f ) { return target; }
 
       final float destAngle1 = a1 + arcLen1;
-      final int knotCount = Utils.ceilToInt(1 + 4 * arcLen1);
+      final int knotCount = Utils.ceil(1 + 4 * arcLen1);
       final float toStep = 1.0f / ( knotCount - 1.0f );
 
       final float hndtn = 0.25f * toStep * arcLen1;

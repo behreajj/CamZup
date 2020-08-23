@@ -297,23 +297,10 @@ public abstract class Utils implements IUtils {
     *
     * @return the raised value.
     */
-   public static float ceil ( final float value ) {
+   public static int ceil ( final float value ) {
 
-      return value > 0.0f ? ( int ) value + 1.0f : value < 0.0f ? ( int ) value
-         : 0.0f;
-   }
-
-   /**
-    * Raises a real number to the next greatest integer.
-    *
-    * @param x the input value
-    *
-    * @return the integer
-    */
-   public static int ceilToInt ( final float x ) {
-
-      final int y = ( int ) x;
-      return x > y ? y + 1 : y;
+      return value > 0.0f ? ( int ) value + 1 : value < 0.0f ? ( int ) value
+         : 0;
    }
 
    /**
@@ -544,23 +531,10 @@ public abstract class Utils implements IUtils {
     *
     * @return the floored value.
     */
-   public static float floor ( final float value ) {
+   public static int floor ( final float value ) {
 
-      return value > 0.0f ? ( int ) value : value < 0.0f ? ( int ) value - 1.0f
-         : 0.0f;
-   }
-
-   /**
-    * Floors a real number to the next least integer.
-    *
-    * @param x the input value
-    *
-    * @return the integer
-    */
-   public static int floorToInt ( final float x ) {
-
-      final int y = ( int ) x;
-      return x < y ? y - 1 : y;
+      return value > 0.0f ? ( int ) value : value < 0.0f ? ( int ) value - 1
+         : 0;
    }
 
    /**

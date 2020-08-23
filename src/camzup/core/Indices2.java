@@ -199,4 +199,42 @@ class Indices2 implements Cloneable, Comparable < Indices2 > {
       return this.v == idx.v && this.vt == idx.vt;
    }
 
+   /**
+    * Resizes an array of indices to a requested length. If the new length is
+    * greater than the current length, the new elements are filled with new
+    * indices.<br>
+    * <br>
+    * This does <em>not</em> use
+    * {@link System#arraycopy(Object, int, Object, int, int)} because this
+    * function iterates through the entire array checking for null entries.
+    *
+    * @param arr the array
+    * @param sz  the new size
+    *
+    * @return the array
+    */
+   public static Indices2[] resize ( final Indices2[] arr, final int sz ) {
+
+      if ( sz < 1 ) { return new Indices2[] {}; }
+      final Indices2[] result = new Indices2[sz];
+
+      if ( arr == null ) {
+         for ( int i = 0; i < sz; ++i ) {
+            result[i] = new Indices2();
+         }
+         return result;
+      }
+
+      final int last = arr.length - 1;
+      for ( int i = 0; i < sz; ++i ) {
+         if ( i > last || arr[i] == null ) {
+            result[i] = new Indices2();
+         } else {
+            result[i] = arr[i];
+         }
+      }
+
+      return result;
+   }
+
 }
