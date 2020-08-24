@@ -746,6 +746,13 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
          return target.set(ap0);
       } else if ( step >= 1.0f ) { return target.set(ap1); }
 
+      /*
+       * QUADRATIC: final float u = 1.0f - step; final float usq = u * u; final
+       * float tsq = step * step; final float ut2 = u * step * 2.0f; return
+       * target.set(usq * ap0.x + ut2 * cp.x + tsq * ap1.x, usq * ap0.y + ut2 *
+       * cp.y + tsq * ap1.y);
+       */
+
       final float u = 1.0f - step;
       float tcb = step * step;
       float ucb = u * u;

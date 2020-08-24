@@ -89,7 +89,6 @@ void draw() {
   rndr.point(lookWorld);
 }
 
-
 void mouseControls() {
   if (mousePressed) {
 

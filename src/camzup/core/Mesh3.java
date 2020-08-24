@@ -2396,6 +2396,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static final float DEFAULT_CUBE_SIZE = 0.35355338f;
 
    /**
+    * The default texture coordinate (UV) profile to use when making a cube.
+    */
+   public static final CubeUvProfile DEFAULT_CUBE_UV_PROFILE
+      = CubeUvProfile.PER_FACE;
+
+   /**
     * Type of polygon to draw when it is not supplied to the polygon function.
     */
    public static final PolyType DEFAULT_POLY_TYPE = PolyType.TRI;
@@ -2608,21 +2614,23 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public static Mesh3 cube ( final float size, final Mesh3 target ) {
 
-      return Mesh3.cube(size, PolyType.QUAD, target);
+      return Mesh3.cube(size, PolyType.QUAD, Mesh3.DEFAULT_CUBE_UV_PROFILE,
+         target);
    }
 
    /**
     * Generates a cube mesh. In the context of Platonic solids, also known as
     * a hexahedron, as it has 6 faces and 8 vertices.
     *
-    * @param size   the scalar
-    * @param poly   the polygon type
-    * @param target the output mesh
+    * @param size    the scalar
+    * @param poly    the polygon type
+    * @param profile the texture profile
+    * @param target  the output mesh
     *
     * @return the cube
     */
    public static Mesh3 cube ( final float size, final PolyType poly,
-      final Mesh3 target ) {
+      final CubeUvProfile profile, final Mesh3 target ) {
 
       final float vsz = Utils.max(IUtils.EPSILON, size);
 
@@ -2638,12 +2646,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.coords[6].set(vsz, vsz, -vsz);
       target.coords[7].set(vsz, vsz, vsz);
 
-      target.texCoords = Vec2.resize(target.texCoords, 4);
-      target.texCoords[0].set(0.0f, 0.0f);
-      target.texCoords[1].set(0.0f, 1.0f);
-      target.texCoords[2].set(1.0f, 1.0f);
-      target.texCoords[3].set(1.0f, 0.0f);
-
       target.normals = Vec3.resize(target.normals, 6);
       target.normals[0].set(1.0f, 0.0f, 0.0f);
       target.normals[1].set(0.0f, 0.0f, 1.0f);
@@ -2652,40 +2654,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals[4].set(-1.0f, 0.0f, 0.0f);
       target.normals[5].set(0.0f, 1.0f, 0.0f);
 
-      switch ( poly ) {
-         case TRI:
-            /* @formatter:off */
-            target.faces = new int[][][] {
-               { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 } },
-               { { 6, 2, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
-               { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 } },
-               { { 7, 1, 1 }, { 1, 3, 1 }, { 5, 0, 1 } },
-               { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 } },
-               { { 2, 1, 2 }, { 4, 3, 2 }, { 0, 0, 2 } },
-               { { 4, 2, 3 }, { 5, 3, 3 }, { 1, 0, 3 } },
-               { { 4, 2, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
-               { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 } },
-               { { 0, 2, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
-               { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 } },
-               { { 2, 2, 5 }, { 7, 0, 5 }, { 6, 1, 5 } } };
-            /* @formatter:on */
-            break;
-
-         case NGON:
-         case QUAD:
-         default:
-            /* @formatter:off */
-            target.faces = new int[][][] {
-               { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
-               { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } },
-               { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0, 2 } },
-               { { 4, 2, 3 }, { 5, 3, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
-               { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
-               { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 }, { 6, 1, 5 } } };
-            /* @formatter:on */
-      }
-
-      return target;
+      return Mesh3.cubeTexCoords(poly, profile, target);
    }
 
    /**
@@ -2699,7 +2668,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public static Mesh3 cube ( final Mesh3 target ) {
 
-      return Mesh3.cube(Mesh3.DEFAULT_CUBE_SIZE, PolyType.QUAD, target);
+      return Mesh3.cube(Mesh3.DEFAULT_CUBE_SIZE, PolyType.QUAD,
+         Mesh3.DEFAULT_CUBE_UV_PROFILE, target);
    }
 
    /**
@@ -2714,7 +2684,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public static Mesh3 cubeSphere ( final int itrs, final Mesh3 target ) {
 
-      return Mesh3.cubeSphere(itrs, Mesh3.DEFAULT_POLY_TYPE, target);
+      return Mesh3.cubeSphere(itrs, Mesh3.DEFAULT_POLY_TYPE,
+         Mesh3.DEFAULT_CUBE_UV_PROFILE, target);
    }
 
    /**
@@ -2722,22 +2693,23 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * triangulates its faces. The higher the iteration, the more spherical the
     * result at the cost of performance.
     *
-    * @param itrs   iterations
-    * @param poly   the polygon type
-    * @param target the output mesh
+    * @param itrs    iterations
+    * @param poly    the polygon type
+    * @param profile the texture coordinate profile
+    * @param target  the output mesh
     *
     * @return the cube sphere
     *
     * @see Mesh3#subdivFacesCenter(int)
     */
    public static Mesh3 cubeSphere ( final int itrs, final PolyType poly,
-      final Mesh3 target ) {
+      final CubeUvProfile profile, final Mesh3 target ) {
 
       /*
        * Sort has to be done first to merge newly created vertices before
        * normals are calculated.
        */
-      Mesh3.cube(0.5f, PolyType.QUAD, target);
+      Mesh3.cube(0.5f, PolyType.QUAD, profile, target);
       target.subdivFacesCenter(itrs);
       if ( poly == PolyType.TRI ) { target.triangulate(); }
       target.clean();
@@ -2758,7 +2730,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3 cubeSphere ( final Mesh3 target ) {
 
       return Mesh3.cubeSphere(Mesh3.DEFAULT_SPHERE_ITR, Mesh3.DEFAULT_POLY_TYPE,
-         target);
+         Mesh3.DEFAULT_CUBE_UV_PROFILE, target);
    }
 
    /**
@@ -4391,13 +4363,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* Set North pole. Offset subsequent vertex indices by 1. */
       vs[0].set(0.0f, 0.0f, 0.5f);
-      // vns[0].set(0.0f, 0.0f, 1.0f);
       vns[0].set(0.0f, 0.0f, -1.0f);
 
       /* Set South pole. */
       final int last0 = vLen - 1;
       vs[last0].set(0.0f, 0.0f, -0.5f);
-      // vns[last0].set(0.0f, 0.0f, -1.0f);
       vns[last0].set(0.0f, 0.0f, 1.0f);
 
       /*
@@ -4453,7 +4423,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final Vec3 vn = vns[vIdx];
 
             v.set(rhoCosPhi * cosTheta, rhoCosPhi * sinTheta, -rhoSinPhi);
-            // vn.set(cosPhi * cosTheta, cosPhi * sinTheta, -sinPhi);
             vn.set(-cosPhi * cosTheta, -cosPhi * sinTheta, sinPhi);
          }
 
@@ -4481,33 +4450,59 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int[][][] fs = target.faces = isQuad ? new int[fsLen][][]
          : new int[fsLen][3][3];
 
-      /* Accumulate the current index in a variable outside loop. */
-      int idx = -1;
+      /* Offsets for south cap. */
+      final int vIdxOff = last0 - lons;
+      final int vtPoleOff = vtLen - lons;
+      final int vtIdxOff = vtPoleOff - lons1;
+      final int fsIdxOff = fsLen - lons;
 
-      /* South cap. */
-      for ( int h = 0, k = 1; h < lons; ++h, ++k ) {
-         // TODO: Consolidate north and south cap?
-         final int j = 1 + k % lons;
-         final int m = lons + h;
+      /* Polar caps. */
+      for ( int i = 0; i < lons; ++i ) {
+         final int k = i + 1;
+         final int n = k % lons;
+         final int j = 1 + n;
+         final int m = lons + i;
 
-         final int[][] tri = isQuad ? fs[++idx] = new int[3][3] : fs[++idx];
+         final int[][] northTri = isQuad ? fs[i] = new int[3][3] : fs[i];
+         final int[][] southTri = isQuad ? fs[fsIdxOff + i] = new int[3][3]
+            : fs[fsIdxOff + i];
 
-         final int[] a = tri[0];
-         a[0] = j;
-         a[1] = m + 1;
-         a[2] = j;
+         final int[] north0 = northTri[0];
+         north0[0] = j;
+         north0[1] = m + 1;
+         north0[2] = j;
 
-         final int[] b = tri[1];
-         b[0] = k;
-         b[1] = m;
-         b[2] = k;
+         final int[] north1 = northTri[1];
+         north1[0] = k;
+         north1[1] = m;
+         north1[2] = k;
 
-         // final int[] c = tri[2]; c[0] = 0; c[1] = h; c[2] = 0;
-         tri[2][1] = h;
+         /* Polar vertex. */
+         final int[] north2 = northTri[2];
+         // cNorth[0] = 0;
+         north2[1] = i;
+         // cNorth[2] = 0;
+
+         final int[] south0 = southTri[0];
+         south0[0] = vIdxOff + i;
+         south0[1] = vtIdxOff + i;
+         south0[2] = vIdxOff + i;
+
+         final int[] south1 = southTri[1];
+         south1[0] = vIdxOff + n;
+         south1[1] = vtIdxOff + k;
+         south1[2] = vIdxOff + n;
+
+         /* Polar vertex. */
+         final int[] south2 = southTri[2];
+         south2[0] = last0;
+         south2[1] = vtPoleOff + i;
+         south2[2] = last0;
       }
 
       /* Middle. */
-      for ( int i = 0; i < latsn1; ++i ) {
+      final int stride = isQuad ? 1 : 2;
+      for ( int i = 0, k = lons; i < latsn1; ++i ) {
 
          /* For coordinates and normals. */
          final int currentLat0 = 1 + i * lons;
@@ -4517,10 +4512,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int currentLat1 = lons + i * lons1;
          final int nextLat1 = currentLat1 + lons1;
 
-         for ( int j = 0, k = 1; j < lons; ++j, ++k ) {
+         for ( int j = 0; j < lons; ++j, k += stride ) {
 
             /* Wrap around to first longitude at last. */
-            final int nextLon0 = k % lons;
+            final int nextLon1 = j + 1;
+            final int nextLon0 = nextLon1 % lons;
 
             /* Coordinate and normal indices. */
             final int v00 = currentLat0 + j;
@@ -4530,75 +4526,49 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
             /* Texture coordinate indices. */
             final int vt00 = currentLat1 + j;
-            final int vt10 = currentLat1 + k;
-            final int vt11 = nextLat1 + k;
+            final int vt10 = currentLat1 + nextLon1;
+            final int vt11 = nextLat1 + nextLon1;
             final int vt01 = nextLat1 + j;
 
             if ( isQuad ) {
 
-               final int[][] quad = fs[++idx] = new int[4][3];
+               final int[][] quad = fs[k] = new int[4][3];
 
-               final int[] a = quad[0];
-               final int[] b = quad[1];
-               final int[] c = quad[2];
-               final int[] d = quad[3];
+               final int[] q0 = quad[0];
+               final int[] q1 = quad[1];
+               final int[] q2 = quad[2];
+               final int[] q3 = quad[3];
 
                /* @formatter:off */
-               a[0] = v00; a[1] = vt00; a[2] = v00;
-               b[0] = v10; b[1] = vt10; b[2] = v10;
-               c[0] = v11; c[1] = vt11; c[2] = v11;
-               d[0] = v01; d[1] = vt01; d[2] = v01;
+               q0[0] = v00; q0[1] = vt00; q0[2] = v00;
+               q1[0] = v10; q1[1] = vt10; q1[2] = v10;
+               q2[0] = v11; q2[1] = vt11; q2[2] = v11;
+               q3[0] = v01; q3[1] = vt01; q3[2] = v01;
                /* @formatter:on */
 
             } else {
 
-               final int[][] tri0 = fs[++idx];
-               final int[] a0 = tri0[0];
-               final int[] b0 = tri0[1];
-               final int[] c0 = tri0[2];
+               final int[][] tri0 = fs[k];
+               final int[] tri00 = tri0[0];
+               final int[] tri01 = tri0[1];
+               final int[] tri02 = tri0[2];
+
+               final int[][] tri1 = fs[k + 1];
+               final int[] tri10 = tri1[0];
+               final int[] tri11 = tri1[1];
+               final int[] tri12 = tri1[2];
 
                /* @formatter:off */
-               a0[0] = v00; a0[1] = vt00; a0[2] = v00;
-               b0[0] = v10; b0[1] = vt10; b0[2] = v10;
-               c0[0] = v11; c0[1] = vt11; c0[2] = v11;
+               tri00[0] = v00; tri00[1] = vt00; tri00[2] = v00;
+               tri01[0] = v10; tri01[1] = vt10; tri01[2] = v10;
+               tri02[0] = v11; tri02[1] = vt11; tri02[2] = v11;
 
-               final int[][] tri1 = fs[++idx];
-               final int[] a1 = tri1[0];
-               final int[] b1 = tri1[1];
-               final int[] c1 = tri1[2];
-
-               a1[0] = v00; a1[1] = vt00; a1[2] = v00;
-               b1[0] = v11; b1[1] = vt11; b1[2] = v11;
-               c1[0] = v01; c1[1] = vt01; c1[2] = v01;
+               tri10[0] = v00; tri10[1] = vt00; tri10[2] = v00;
+               tri11[0] = v11; tri11[1] = vt11; tri11[2] = v11;
+               tri12[0] = v01; tri12[1] = vt01; tri12[2] = v01;
                /* @formatter:on */
             }
          }
-      }
-
-      /* North cap. */
-      final int vIdxOff = last0 - lons;
-      final int vtPoleOff = vtLen - lons;
-      final int vtIdxOff = vtPoleOff - lons1;
-
-      for ( int h = 0, k = 1; h < lons; ++h, ++k ) {
-         final int j = k % lons;
-
-         final int[][] tri = isQuad ? fs[++idx] = new int[3][3] : fs[++idx];
-
-         final int[] a = tri[0];
-         a[0] = vIdxOff + h;
-         a[1] = vtIdxOff + h;
-         a[2] = vIdxOff + h;
-
-         final int[] b = tri[1];
-         b[0] = vIdxOff + j;
-         b[1] = vtIdxOff + k;
-         b[2] = vIdxOff + j;
-
-         final int[] c = tri[2];
-         c[0] = last0;
-         c[1] = vtPoleOff + h;
-         c[2] = last0;
       }
 
       return target;
@@ -4618,6 +4588,119 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       return Mesh3.uvSphere(IMesh.DEFAULT_CIRCLE_SECTORS,
          IMesh.DEFAULT_CIRCLE_SECTORS >> 1, target);
+   }
+
+   /**
+    * An internal helper function that reassigns a cube's texture coordinates
+    * and face indices based on the desired polygon type and UV profile.
+    *
+    * @param poly    the polygon type
+    * @param profile the uv profile
+    * @param target  the output mesh
+    *
+    * @return the updated mesh
+    */
+   private static Mesh3 cubeTexCoords ( final PolyType poly,
+      final CubeUvProfile profile, final Mesh3 target ) {
+
+      switch ( profile ) {
+         case CROSS:
+
+            target.texCoords = Vec2.resize(target.texCoords, 14);
+            target.texCoords[0].set(0.625f, 0.0f);
+            target.texCoords[1].set(0.375f, 0.0f);
+            target.texCoords[2].set(0.375f, 0.75f);
+            target.texCoords[3].set(0.625f, 0.75f);
+            target.texCoords[4].set(0.375f, 1.0f);
+            target.texCoords[5].set(0.625f, 1.0f);
+            target.texCoords[6].set(0.625f, 0.5f);
+            target.texCoords[7].set(0.375f, 0.5f);
+            target.texCoords[8].set(0.625f, 0.25f);
+            target.texCoords[9].set(0.375f, 0.25f);
+            target.texCoords[10].set(0.125f, 0.5f);
+            target.texCoords[11].set(0.125f, 0.25f);
+            target.texCoords[12].set(0.875f, 0.25f);
+            target.texCoords[13].set(0.875f, 0.5f);
+
+            switch ( poly ) {
+               case TRI:
+                  /* @formatter:off */
+                  target.faces = new int[][][] {
+                     { { 6,  7, 0 }, { 7,  6, 0 }, { 5,  8, 0 } },
+                     { { 6,  7, 0 }, { 5,  8, 0 }, { 4,  9, 0 } },
+                     { { 7,  6, 1 }, { 3, 13, 1 }, { 1, 12, 1 } },
+                     { { 7,  6, 1 }, { 1, 12, 1 }, { 5,  8, 1 } },
+                     { { 2, 10, 2 }, { 6,  7, 2 }, { 4,  9, 2 } },
+                     { { 2, 10, 2 }, { 4,  9, 2 }, { 0, 11, 2 } },
+                     { { 4,  9, 3 }, { 5,  8, 3 }, { 1,  0, 3 } },
+                     { { 4,  9, 3 }, { 1,  0, 3 }, { 0,  1, 3 } },
+                     { { 0,  4, 4 }, { 1,  5, 4 }, { 3,  3, 4 } },
+                     { { 0,  4, 4 }, { 3,  3, 4 }, { 2,  2, 4 } },
+                     { { 2,  2, 5 }, { 3,  3, 5 }, { 7,  6, 5 } },
+                     { { 2,  2, 5 }, { 7,  6, 5 }, { 6,  7, 5 } }, };
+                  /* @formatter:on */
+                  break;
+
+               case NGON:
+               case QUAD:
+               default:
+                  /* @formatter:off */
+                  target.faces = new int[][][] {
+                     { { 6,  7, 0 }, { 7,  6, 0 }, { 5,  8, 0 }, { 4,  9, 0 } },
+                     { { 7,  6, 1 }, { 3, 13, 1 }, { 1, 12, 1 }, { 5,  8, 1 } },
+                     { { 2, 10, 2 }, { 6,  7, 2 }, { 4,  9, 2 }, { 0, 11, 2 } },
+                     { { 4,  9, 3 }, { 5,  8, 3 }, { 1,  0, 3 }, { 0,  1, 3 } },
+                     { { 0,  4, 4 }, { 1,  5, 4 }, { 3,  3, 4 }, { 2,  2, 4 } },
+                     { { 2,  2, 5 }, { 3,  3, 5 }, { 7,  6, 5 }, { 6,  7, 5 } } };
+                  /* @formatter:on */
+            }
+
+            break;
+
+         case PER_FACE:
+         default:
+
+            target.texCoords = Vec2.resize(target.texCoords, 4);
+            target.texCoords[0].set(0.0f, 0.0f);
+            target.texCoords[1].set(0.0f, 1.0f);
+            target.texCoords[2].set(1.0f, 1.0f);
+            target.texCoords[3].set(1.0f, 0.0f);
+
+            switch ( poly ) {
+               case TRI:
+                  /* @formatter:off */
+                  target.faces = new int[][][] {
+                     { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 } },
+                     { { 6, 2, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
+                     { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 } },
+                     { { 7, 1, 1 }, { 1, 3, 1 }, { 5, 0, 1 } },
+                     { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 } },
+                     { { 2, 1, 2 }, { 4, 3, 2 }, { 0, 0, 2 } },
+                     { { 4, 2, 3 }, { 5, 3, 3 }, { 1, 0, 3 } },
+                     { { 4, 2, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
+                     { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 } },
+                     { { 0, 2, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
+                     { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 } },
+                     { { 2, 2, 5 }, { 7, 0, 5 }, { 6, 1, 5 } } };
+                  /* @formatter:on */
+                  break;
+
+               case NGON:
+               case QUAD:
+               default:
+                  /* @formatter:off */
+                  target.faces = new int[][][] {
+                     { { 6, 2, 0 }, { 7, 3, 0 }, { 5, 0, 0 }, { 4, 1, 0 } },
+                     { { 7, 1, 1 }, { 3, 2, 1 }, { 1, 3, 1 }, { 5, 0, 1 } },
+                     { { 2, 1, 2 }, { 6, 2, 2 }, { 4, 3, 2 }, { 0, 0, 2 } },
+                     { { 4, 2, 3 }, { 5, 3, 3 }, { 1, 0, 3 }, { 0, 1, 3 } },
+                     { { 0, 2, 4 }, { 1, 3, 4 }, { 3, 0, 4 }, { 2, 1, 4 } },
+                     { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 0, 5 }, { 6, 1, 5 } } };
+                  /* @formatter:on */
+            }
+      }
+
+      return target;
    }
 
    /**
@@ -4894,6 +4977,29 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          target = 0;
       }
       return target;
+   }
+
+   /**
+    * Enumerates which texture (UV) coordinate pattern to use when creating a
+    * cube.
+    */
+   public enum CubeUvProfile {
+
+      /**
+       * Cross pattern that wraps around cube.
+       */
+      CROSS ( ),
+
+      /**
+       * Each cube face repeats the same square texture.
+       */
+      PER_FACE ( );
+
+      /**
+       * The default constructor.
+       */
+      private CubeUvProfile ( ) {}
+
    }
 
    /**

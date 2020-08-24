@@ -19,14 +19,16 @@ If you can flip the y-axis by either
   - supplying -1.0 to [scale](https://processing.org/reference/scale_.html)'s y parameter or 
   - supplying (0.0, -1.0, 0.0) to the final parameters of [camera](https://processing.org/reference/camera_.html)
   
-without negative impact to your sketch, chances are you don't need this library. While Cam Z-Up can help with more complex sketches, it is a general purpose library. Its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as specialist libraries. For an easy mouse-controlled orbital camera with GUI support, I recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
+without negative impact to your sketch, chances are you don't need this library.
 
-Cam Z-Up is split into two packages: `pfriendly` and `core`. The `pfriendly` package contains code (mostly) compatible with Processing's API. Inside it, you'll find four graphics renderers:
+While Cam Z-Up can help with more complex sketches, it is a general purpose library. Its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as specialist libraries. For an easy mouse-controlled orbital camera with GUI support, I recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
 
-- `Zup3`, which extends `PGraphicsOpenGL`, like `P3D`;
+Cam Z-Up is split into three packages: `pfriendly`, `core` and `kotlin`. The `pfriendly` package contains code compatible with Processing's API. Inside it, you'll find four graphics renderers:
+
+- `Zup3`, which extends `PGraphicsOpenGL`, similar to `P3D`;
 - `Yup3`, which also extends `PGraphicsOpenGL`;
 - `YupJ2`, which extends `PGraphicsJava2D`, a.k.a. `JAVA2D`, the default Processing renderer based on the Java AWT library;
-- `Yup2`, which extends `PGraphicsOpenGL`, like `P2D`, a "2.5D" renderer;
+- `Yup2`, which extends `PGraphicsOpenGL`, similar `P2D`, a "2.5D" renderer;
 
 The `FX2D` renderer, based on Java FX, is not fully supported by Processing, so it's not supported here.
 
@@ -81,7 +83,7 @@ void setup() {
 }
 ```
 
-Both `createGraphics` and `getGraphics` return `PGraphics`; the result needs to be cast to the specific renderer. The benefit of accessing Cam Z-Up renderers directly, rather than through `PApplet` functions, is that the renderers offer a few more conveniences. For example, in the following snippet,
+Both `createGraphics` and `getGraphics` return `PGraphics`; the result needs to be cast to the specific renderer. The benefit of accessing Cam Z-Up renderers directly, rather than through `PApplet` functions, is that the renderers offer convenience functions. For example, in the following snippet,
 
 ```java
 rndr.beginDraw();
@@ -91,7 +93,7 @@ rndr.ellipse(new Vec2(), new Vec2(25.0, 25.0));
 rndr.endDraw();
 ```
 
-`background` and `stroke` use default color arguments, while `ellipse` and `image` support `Vec2` arguments.
+`background` and `stroke` use default colors, while `ellipse` and `image` support `Vec2` arguments.
 
 ## Differences, Problems
 
@@ -101,20 +103,19 @@ Here is a brief list of issues with this library and differences which may be un
 
 ### 2D & 3D
   - Flipping the axes changes the default rotational direction of a positive angle from clockwise to counter-clockwise.
-  - [smooth](https://processing.org/reference/smooth_.html) is disabled for OpenGL renderers.
-  - [textureMode](https://processing.org/reference/textureMode_.html) `IMAGE` is not supported by OpenGL renderers; `NORMAL` is the default. This is for three reasons: (1.) the belief that `IMAGE` is _harder_, not easier, to understand; (2.) recognition that `NORMAL` is the standard; (3.) redundant operations in `PGraphicsOpenGL` that interfere with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT` and cannot be overidden by this library.
+  - [textureMode](https://processing.org/reference/textureMode_.html) `IMAGE` is not supported by OpenGL renderers; `NORMAL` is the default. This is for three reasons: (1.) the belief that `IMAGE` is _harder_, not easier, to understand; (2.) recognition that `NORMAL` is standard; (3.) redundant operations in `PGraphicsOpenGL` that interfere with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT` and cannot be overidden by this library.
   - In making this conversion, support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.
   - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles. It no longer responds to [ellipseMode](https://processing.org/reference/ellipseMode_.html); `RADIUS` is the default behavior. When given nonuniform scales, the minimum is taken.
+  - The [PShape](https://processing.org/reference/PShape.html) interface has numerous problems stemming from both its implementation and its design. This library uses `Curve` and `Mesh` objects instead.
   - [textMode](https://processing.org/reference/textMode_.html) `SHAPE` is not supported. However you can retrieve glyph outlines from a [PFont](https://processing.org/reference/PFont.html) with the `TextShape` class from the `pfriendly` package. (Reminder: the `PFont` needs to be loaded with [createFont](https://processing.org/reference/createFont_.html)).
   - `Curve`s and `Mesh`es do not distinguish between an outline and contour shape. This means they do not properly handle glyphs for characters like 'o', 'p', and 'q'.
-  - The [PShape](https://processing.org/reference/PShape.html) interface has numerous problems stemming from both its implementation and its design. This library uses `Curve` and `Mesh` objects instead.
   - [shapeMode](https://processing.org/reference/shapeMode_.html) is not supported.
   
 ### 2D
   - `YupJ2`'s `point` supports `strokeCap(SQUARE)` at the expense of performance.
   - The `image` function for `PGraphicsJava2D` is ineffective, both in terms of frame rate and appearance. I recommend that an OpenGL renderer be used instead. Alternatively, rescale images to display size and tint them in an external application that specializes in raster image manipulation (e.g., [GIMP](https://www.gimp.org/)). I have made an image function which removes some of the padding around the native renderer's image function in cases where a `PImage` can be converted to an AWT image in `setup`.
   - As a consequence of how `image` function works above, dynamic `tint`ing is no longer supported in `YupJ2`.
-  - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter. A discussion the Processing forum about this issue can be found [here](https://discourse.processing.org/t/text-seems-jittery-when-moving-in-a-circular-pattern/19548).
+  - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter.
   - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), `ellipseMode` and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with these renderers. For that reason, `CENTER` is the default alignment.
   
 ### 3D

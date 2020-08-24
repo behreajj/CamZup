@@ -5,7 +5,7 @@ Zup3 rndr;
 
 boolean wireframe = true;
 int count = 64;
-float elev = 0.15;
+float elev = 0.175;
 float roughness = 3.0;
 
 Vec3 mouse1 = new Vec3();
@@ -31,29 +31,34 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
-  entity.scaleTo(Utils.max(rndr.width, rndr.height));
+  entity.scaleTo(2.0 * Utils.min(rndr.width, rndr.height));
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
-  Mesh2.plane(count, count, Mesh.PolyType.QUAD, plane2);
+  rndr.mouse1s(mouse1);
+  Mesh2.plane(count, count, Mesh.PolyType.TRI, plane2);
   plane3.set(plane2);
 
-  float zOff = frameCount * 0.005;
+  float zOff = frameCount * 0.01;
   Vec3 noiseIn = new Vec3();
+  Vec3 voronoi = new Vec3();
   for (Vec3 co : plane3.coords) {
-    co.z = zOff;
     Vec3.mul(co, roughness, noiseIn);
+    noiseIn.z = zOff;
     float fac1 = Simplex.fbm(
       noiseIn, Simplex.DEFAULT_SEED,
       16, 2.0, 0.3375);
-    co.z = elev * fac1;
+    float fac0 = Voronoi.eval(
+      co, Simplex.DEFAULT_SEED,
+      0.25, voronoi);
+    float fac = Utils.lerp(fac0, fac1, 0.75);
+    co.z = elev * fac;
   }
   plane3.shadeSmooth();
 
   if (mousePressed) {
-    rndr.mouse1s(mouse1);
     if (mouseButton == LEFT) {
       Vec3.mul(mouse1, 100.0, mouse1);
       rndr.moveByLocal(mouse1);

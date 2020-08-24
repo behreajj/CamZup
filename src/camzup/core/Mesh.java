@@ -189,14 +189,14 @@ public abstract class Mesh extends EntityData implements IMesh {
 
       for ( int k = 0; k < lastNonAdj; ++k ) {
 
-         final int[] vertn0 = face[k + 1];
-         final int[] vertn1 = face[k + 2];
+         final int[] vert1 = face[1 + k];
+         final int[] vert2 = face[2 + k];
          final int[][] fNew = fsNew[k];
 
          for ( int m = 0; m < vertLen; ++m ) {
             fNew[0][m] = vert0[m];
-            fNew[1][m] = vertn0[m];
-            fNew[2][m] = vertn1[m];
+            fNew[1][m] = vert1[m];
+            fNew[2][m] = vert2[m];
          }
       }
 
@@ -217,6 +217,97 @@ public abstract class Mesh extends EntityData implements IMesh {
    static {
       SORT_2 = new SortQuantized2();
       SORT_3 = new SortQuantized3();
+   }
+
+   /**
+    * Evaluates whether two edges are permutations of each other. This is
+    * based on whether they refer to the same coordinates, but do so in a
+    * different sequence.<br>
+    * <br>
+    * Because edge indices are assumed to be positive integers, a sum and
+    * product algorithm is used.
+    *
+    * @param a    the left comparisand
+    * @param aIdx the b edge index
+    * @param b    the right comparisand
+    * @param bIdx the b edge index
+    *
+    * @return the evaluation
+    */
+   @Experimental
+   public static boolean edgesPermute ( final int[][] a, final int aIdx,
+      final int[][] b, final int bIdx ) {
+
+      final int aLen = a.length;
+      final int aIdx0 = Utils.mod(aIdx, aLen);
+      final int aIdx1 = ( aIdx0 + 1 ) % aLen;
+      final int av0 = a[aIdx0][0];
+      final int av1 = a[aIdx1][0];
+
+      final int bLen = b.length;
+      final int bIdx0 = Utils.mod(bIdx, bLen);
+      final int bIdx1 = ( bIdx0 + 1 ) % bLen;
+      final int bv0 = b[bIdx0][0];
+      final int bv1 = b[bIdx1][0];
+
+      int aMul = 1;
+      final int aSum = av0 + av1;
+      int aZeroes = 0;
+
+      int bMul = 1;
+      final int bSum = bv0 + bv1;
+      int bZeroes = 0;
+
+      /* @formatter:off */
+      if ( av0 != 0 ) { aMul *= av0; } else { ++aZeroes; }
+      if ( av1 != 0 ) { aMul *= av1; } else { ++aZeroes; }
+      if ( bv0 != 0 ) { bMul *= bv0; } else { ++bZeroes; }
+      if ( bv1 != 0 ) { bMul *= bv1; } else { ++bZeroes; }
+      /* @formatter:on */
+
+      return aMul == bMul && aSum == bSum && aZeroes == bZeroes;
+   }
+
+   /**
+    * Evaluates whether two faces are permutations of each other. This is
+    * based on whether they refer to the same coordinates, but do so in a
+    * different sequence.<br>
+    * <br>
+    * Because face indices are assumed to be positive integers, a sum and
+    * product algorithm is used.
+    *
+    * @param a the left comparisand
+    * @param b the right comparisand
+    *
+    * @return the evaluation
+    */
+   @Experimental
+   public static boolean facesPermute ( final int[][] a, final int[][] b ) {
+
+      final int aLen = a.length;
+      final int bLen = b.length;
+      if ( aLen != bLen ) { return false; }
+
+      int aMul = 1;
+      int aSum = 0;
+      int aZeroes = 0;
+
+      int bMul = 1;
+      int bSum = 0;
+      int bZeroes = 0;
+
+      /* @formatter:off */
+      for ( int i = 0; i < aLen; ++i ) {
+         final int av = a[i][0];
+         final int bv = b[i][0];
+         aSum += av;
+         bSum += bv;
+         if ( av != 0 ) { aMul *= av; } else { ++aZeroes; }
+         if ( bv != 0 ) { bMul *= bv; } else { ++bZeroes; }
+      }
+      /* @formatter:on */
+
+      return aMul == bMul && aSum == bSum && aZeroes == bZeroes;
    }
 
    /**

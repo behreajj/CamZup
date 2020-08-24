@@ -22,7 +22,7 @@ void setup() {
 
   Vec3 center = new Vec3();
   for (Face3 f : mesh) {
-    f.scaleLocal(0.91, center);
+    f.scaleLocal(0.875, center);
   }
 
   mesh.extrudeFaces(0.02);

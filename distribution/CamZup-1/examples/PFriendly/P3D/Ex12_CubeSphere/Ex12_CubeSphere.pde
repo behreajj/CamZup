@@ -8,7 +8,6 @@ Zup3 rndr;
 
 Mesh3 smooth = new Mesh3();
 Mesh3 flat = new Mesh3();
-Mesh3 skele = new Mesh3();
 
 MeshEntity3 me1 = new MeshEntity3();
 MeshEntity3 me2 = new MeshEntity3();
@@ -26,7 +25,8 @@ void setup() {
   rndr = (Zup3)getGraphics();
   rndr.textureSampling(TextureSampling.BILINEAR);
 
-  txtr = loadImage("diagnostic.png");
+  txtr = createImage(512, 512, ARGB);
+  ZImage.rgb(txtr);
   textured = new MaterialPImage(txtr);
 
   wire.setStroke(true)
@@ -36,7 +36,7 @@ void setup() {
 
   me1.append(smooth);
   me2.append(flat);
-  me3.append(skele);
+  me3.append(smooth);
 
   me1.scaleTo(256);
   me2.scaleTo(256);
@@ -52,10 +52,12 @@ void draw() {
   rndr.mouse1u(mouse);
   itr = Utils.lerp(0, 4, mouse.x);
 
-  Mesh3.cubeSphere(itr, Mesh.PolyType.QUAD, smooth);
-  flat.set(smooth);
-  skele.set(smooth);
+  Mesh3.cubeSphere(itr,
+    Mesh.PolyType.QUAD,
+    Mesh3.CubeUvProfile.CROSS,
+    smooth);
 
+  flat.set(smooth);
   flat.shadeFlat();
 
   me1.rotateZ(0.005);
@@ -66,7 +68,7 @@ void draw() {
   rndr.ortho();
   rndr.camera();
   rndr.background();
-  
+
   rndr.shape(me1, textured);
   rndr.shape(me2, textured);
   rndr.shape(me3, wire);

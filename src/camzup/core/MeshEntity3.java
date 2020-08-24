@@ -344,24 +344,11 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
    /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes.
-    *
-    * @param ms the materials
-    *
-    * @return the string
-    */
-   @Experimental
-   public String toBlenderCode ( final MaterialSolid[] ms ) {
-
-      return this.toBlenderCode(ms, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0001f);
-   }
-
-   /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how mesh geometry looks in Blender (the control) versus in the
     * library (the test).
     *
+    * @param calcTangents   calculate tangents
     * @param materials      the materials
     * @param gamma          color gamma adjustment
     * @param metallic       metallic factor
@@ -373,15 +360,14 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * @return the string
     */
    @Experimental
-   public String toBlenderCode ( final MaterialSolid[] materials,
-      final float gamma, final float metallic, final float roughness,
-      final float specular, final float clearcoat,
+   public String toBlenderCode ( final boolean calcTangents,
+      final MaterialSolid[] materials, final float gamma, final float metallic,
+      final float roughness, final float specular, final float clearcoat,
       final float clearcoatRough ) {
 
       final boolean addVertGroups = true;
       final boolean includeNormals = false;
       final boolean includeUvs = true;
-      final boolean calcTangents = true;
       final boolean useBMesh = includeUvs;
       final boolean useMaterials = materials != null && materials.length > 0;
 
@@ -534,6 +520,21 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       }
 
       return pyCd.toString();
+   }
+
+   /**
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes.
+    *
+    * @param ms the materials
+    *
+    * @return the string
+    */
+   @Experimental
+   public String toBlenderCode ( final MaterialSolid[] ms ) {
+
+      return this.toBlenderCode(false, ms, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.0001f);
    }
 
    /**

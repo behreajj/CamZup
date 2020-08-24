@@ -173,7 +173,12 @@ public class Voronoi extends Generative {
             for ( float i = -1.0f; i < 2.0f; ++i ) {
                final float sumx = xCell + i;
                final float sumxsq = sumx * sumx;
-               final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(sumx);
+
+               // TEST
+               // final int mulvx = IUtils.MUL_BASE ^
+               // Float.floatToIntBits(sumx);
+               final int mulvx = ( IUtils.MUL_BASE ^ Float.floatToIntBits(
+                  sumx) ) * IUtils.HASH_MUL;
 
                /*
                 * Calculate an offset step for the vector. This has to be done
@@ -187,12 +192,16 @@ public class Voronoi extends Generative {
                   + st) ) * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit;
 
                /* Create a hash for the y component. */
-               final int bhsh = ( mulvx * IUtils.HASH_MUL ^ Float
-                  .floatToIntBits(sumy + st) ) * IUtils.HASH_MUL ^ vzbit;
+               // final int bhsh = ( mulvx * IUtils.HASH_MUL ^ Float
+               // .floatToIntBits(sumy + st) ) * IUtils.HASH_MUL ^ vzbit;
+               final int bhsh = ( mulvx ^ Float.floatToIntBits(sumy + st) )
+                  * IUtils.HASH_MUL ^ vzbit;
 
                /* Create a hash for the z component. */
-               final int chsh = ( mulvx * IUtils.HASH_MUL ^ vybit )
-                  * IUtils.HASH_MUL ^ Float.floatToIntBits(sumz + st);
+               // final int chsh = ( mulvx * IUtils.HASH_MUL ^ vybit )
+               // * IUtils.HASH_MUL ^ Float.floatToIntBits(sumz + st);
+               final int chsh = ( mulvx ^ vybit ) * IUtils.HASH_MUL ^ Float
+                  .floatToIntBits(sumz + st);
 
                /*
                 * Create a random vector in the range [0.0, 1.0] . Add the cell
@@ -300,8 +309,12 @@ public class Voronoi extends Generative {
                for ( float i = -1.0f; i < 2.0f; ++i ) {
                   final float sumx = xCell + i;
                   final float sumxsq = sumx * sumx;
+
+                  // TEST
                   final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(
                      sumx);
+                  final int hashmulvx = ( mulvx * IUtils.HASH_MUL ^ vybit )
+                     * IUtils.HASH_MUL;
 
                   /* Calculate an offset step for the vector. */
                   final float st = Simplex.STEP_4 * Utils.sqrtUnchecked(sumxsq
@@ -318,14 +331,12 @@ public class Voronoi extends Generative {
                      * IUtils.HASH_MUL ^ vwbit;
 
                   /* Create a hash for the z component. */
-                  final int chsh = ( ( mulvx * IUtils.HASH_MUL ^ vybit )
-                     * IUtils.HASH_MUL ^ Float.floatToIntBits(sumz + st) )
-                     * IUtils.HASH_MUL ^ vwbit;
+                  final int chsh = ( hashmulvx ^ Float.floatToIntBits(sumz
+                     + st) ) * IUtils.HASH_MUL ^ vwbit;
 
                   /* Create a hash for the w component. */
-                  final int dhsh = ( ( mulvx * IUtils.HASH_MUL ^ vybit )
-                     * IUtils.HASH_MUL ^ vzbit ) * IUtils.HASH_MUL ^ Float
-                        .floatToIntBits(sumw + st);
+                  final int dhsh = ( hashmulvx ^ vzbit ) * IUtils.HASH_MUL
+                     ^ Float.floatToIntBits(sumw + st);
 
                   /*
                    * Create a random vector in the range [0.0, 1.0] . Add the

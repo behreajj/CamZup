@@ -8,7 +8,6 @@ import camzup.core.MeshEntity3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
-import camzup.core.Vec4;
 
 import processing.core.PApplet;
 
@@ -53,93 +52,6 @@ public class CamZup {
     */
    public final static String VERSION = "##library.prettyVersion##";
 
-   public static Vec4[] calcTangents ( final Mesh3 m ) {
-
-      final Vec3[] vs = m.coords;
-      final Vec2[] vts = m.texCoords;
-
-      // Should be the size of normals?
-      final Vec4[] result = new Vec4[0];
-
-      final int[][][] faces = m.faces;
-      final int facesLen = faces.length;
-      final int tanLen = facesLen * 3;
-
-      final Vec3[] tangent = new Vec3[tanLen];
-      final Vec3[] bitangent = new Vec3[tanLen];
-
-      for ( int i = 0; i < tanLen; ++i ) {
-         tangent[i] = new Vec3();
-         bitangent[i] = new Vec3();
-      }
-
-      final Vec3 e1 = new Vec3();
-      final Vec3 e2 = new Vec3();
-
-      final Vec2 et1 = new Vec2();
-      final Vec2 et2 = new Vec2();
-
-      final Vec3 t = new Vec3();
-      final Vec3 tTemp0 = new Vec3();
-      final Vec3 tTemp1 = new Vec3();
-
-      final Vec3 b = new Vec3();
-      final Vec3 bTemp0 = new Vec3();
-      final Vec3 bTemp1 = new Vec3();
-
-      for ( int i = 0; i < facesLen; ++i ) {
-         final int[][] face = faces[i];
-         final int faceLen = face.length;
-         if ( faceLen != 3 ) { continue; }
-
-         final int[] vert0 = face[0];
-         final int[] vert1 = face[1];
-         final int[] vert2 = face[2];
-
-         final int vIdx0 = vert0[0];
-         final int vIdx1 = vert1[0];
-         final int vIdx2 = vert2[0];
-
-         final int vtIdx0 = vert0[1];
-         final int vtIdx1 = vert1[1];
-         final int vtIdx2 = vert2[1];
-
-         final Vec3 p0 = vs[vIdx0];
-         final Vec3 p1 = vs[vIdx1];
-         final Vec3 p2 = vs[vIdx2];
-
-         final Vec2 w0 = vts[vtIdx0];
-         final Vec2 w1 = vts[vtIdx1];
-         final Vec2 w2 = vts[vtIdx2];
-
-         Vec3.sub(p1, p0, e1);
-         Vec3.sub(p2, p0, e2);
-
-         Vec2.sub(w1, w0, et1);
-         Vec2.sub(w2, w0, et2);
-
-         final float r = 1.0f / ( et1.x * et2.y - et2.x * et1.y );
-
-         Vec3.mul(e1, et2.y, tTemp0);
-         Vec3.mul(e2, et1.y, tTemp1);
-         Vec3.sub(tTemp0, tTemp1, t);
-         Vec3.mul(t, r, t);
-
-         Vec3.mul(e2, et1.x, bTemp0);
-         Vec3.mul(e1, et2.x, bTemp1);
-         Vec3.sub(bTemp0, bTemp1, b);
-         Vec3.mul(b, r, b);
-
-         // Sum t to tangent
-         // Sum b to bitangent
-      }
-
-      // for all tangents, binormals and normals, result[i].xyz =
-      // norm(reject(t,n)), result[i].w = dot(cross(t,b),n) > 0.0 ? 1.0 : -1.0
-
-      return result;
-   }
-
    public static Mesh3 capsule ( final int longitudes, final int latitudes,
       final int rings, final float depth, final float radius,
       final Mesh.PolyType poly, final Mesh3 target ) {
@@ -175,9 +87,9 @@ public class CamZup {
       final Vec3[] vs = target.coords = Vec3.resize(target.coords, len_vs);
 
       /* Find index offsets for normals. */
-      final int idx_vn_north = 1 + v_lons;
-      final int idx_vn_equator = idx_vn_north + v_lons * half_lat_n2;
-      final int idx_vn_south = idx_vn_equator + v_lons;
+      // final int idx_vn_north = 1 + v_lons;
+      // final int idx_vn_equator = idx_vn_north + v_lons * half_lat_n2;
+      final int idx_vn_south = idx_v_n_equator + v_lons;
       final int idx_vn_south_cap = idx_vn_south + v_lons * half_lat_n2;
       final int idx_vn_south_pole = idx_vn_south_cap + v_lons;
 
@@ -216,7 +128,7 @@ public class CamZup {
          vs[idx_v_s_equator + j].set(x, y, -half_depth);
 
          /* Set equatorial normals. */
-         vns[idx_vn_equator + j].set(cos_theta, sin_theta, 0.0f);
+         vns[idx_v_n_equator + j].set(cos_theta, sin_theta, 0.0f);
       }
 
       /* Divide latitudes into hemispheres. */
@@ -310,7 +222,7 @@ public class CamZup {
          final int[][] north_tri = fs[j] = new int[3][3];
          north_tri[0][0] = 1 + j_next;
          north_tri[1][0] = 1 + j;
-         north_tri[2][0] = 0;
+         // north_tri[2][0] = 0;
 
          /* South coordinates indices. */
          final int[][] south_tri = fs[idx_fs_south_hemi + j] = new int[3][3];
@@ -321,15 +233,13 @@ public class CamZup {
          /* North normals. */
          north_tri[0][2] = 1 + j_next;
          north_tri[1][2] = 1 + j;
-         north_tri[2][2] = 0;
+         // north_tri[2][2] = 0;
 
          /* South normals. */
          south_tri[0][2] = idx_vn_south_pole;
          south_tri[1][2] = idx_vn_south_cap + j;
          south_tri[2][2] = idx_vn_south_cap + j_next;
       }
-
-      // TODO: Fix normal indices in this next section...
 
       /* Hemisphere indices. */
       for ( int k = 0, i = 0; i < half_lat_n1; ++i ) {
@@ -344,12 +254,12 @@ public class CamZup {
          final int v_next_lat_s = v_curr_lat_s + v_lons;
 
          /* North normal index offset. */
-         // final int vn_curr_lat_n = 1 + i_v_lons;
-         // final int vn_next_lat_n = vn_curr_lat_n + v_lons;
+         final int vn_curr_lat_n = 1 + i_v_lons;
+         final int vn_next_lat_n = vn_curr_lat_n + v_lons;
 
          /* South normal index offset. */
-         // final int vn_curr_lat_s = idx_vn_equator + i_v_lons;
-         // final int vn_next_lat_s = vn_curr_lat_s + v_lons;
+         final int vn_curr_lat_s = idx_v_n_equator + i_v_lons;
+         final int vn_next_lat_s = vn_curr_lat_s + v_lons;
 
          for ( int j = 0; j < v_lons; ++j ) {
             final int v_next_lon = ( j + 1 ) % v_lons;
@@ -367,16 +277,16 @@ public class CamZup {
             final int s01 = v_next_lat_s + j;
 
             /* North normal indices. */
-            // final int nn00 = vn_curr_lat_n + j;
-            // final int nn10 = vn_curr_lat_n + v_next_lon;
-            // final int nn11 = vn_next_lat_n + v_next_lon;
-            // final int nn01 = vn_next_lat_n + j;
+            final int nn00 = vn_curr_lat_n + j;
+            final int nn10 = vn_curr_lat_n + v_next_lon;
+            final int nn11 = vn_next_lat_n + v_next_lon;
+            final int nn01 = vn_next_lat_n + j;
 
             /* South normal indices. */
-            // final int sn00 = vn_curr_lat_s + j;
-            // final int sn10 = vn_curr_lat_s + v_next_lon;
-            // final int sn11 = vn_next_lat_s + v_next_lon;
-            // final int sn01 = vn_next_lat_s + j;
+            final int sn00 = vn_curr_lat_s + j;
+            final int sn10 = vn_curr_lat_s + v_next_lon;
+            final int sn11 = vn_next_lat_s + v_next_lon;
+            final int sn01 = vn_next_lat_s + j;
 
             if ( use_quads ) {
                final int[][] quad_n = fs[v_lons + k] = new int[4][3];
@@ -396,16 +306,16 @@ public class CamZup {
                quad_s[3][0] = s01;
 
                /* North normal quad. */
-               // quad_n[0][2] = nn00;
-               // quad_n[1][2] = nn10;
-               // quad_n[2][2] = nn11;
-               // quad_n[3][2] = nn01;
+               quad_n[0][2] = nn00;
+               quad_n[1][2] = nn10;
+               quad_n[2][2] = nn11;
+               quad_n[3][2] = nn01;
 
                /* South normal quad. */
-               // quad_s[0][2] = sn00;
-               // quad_s[1][2] = sn10;
-               // quad_s[2][2] = sn11;
-               // quad_s[3][2] = sn01;
+               quad_s[0][2] = sn00;
+               quad_s[1][2] = sn10;
+               quad_s[2][2] = sn11;
+               quad_s[3][2] = sn01;
 
                k += 1;
             } else {
@@ -437,6 +347,26 @@ public class CamZup {
                tri_s1[1][0] = s11;
                tri_s1[2][0] = s01;
 
+               /* North normal triangle 0. */
+               tri_n0[0][2] = nn00;
+               tri_n0[1][2] = nn10;
+               tri_n0[2][2] = nn11;
+
+               /* North normal triangle 1. */
+               tri_n1[0][2] = nn00;
+               tri_n1[1][2] = nn11;
+               tri_n1[2][2] = nn01;
+
+               /* South normal triangle 0. */
+               tri_n0[0][2] = sn00;
+               tri_n0[1][2] = sn10;
+               tri_n0[2][2] = sn11;
+
+               /* South normal triangle 1. */
+               tri_n1[0][2] = sn00;
+               tri_n1[1][2] = sn11;
+               tri_n1[2][2] = sn01;
+
                k += 2;
             }
          }
@@ -450,6 +380,10 @@ public class CamZup {
          for ( int j = 0; j < v_lons; ++j ) {
             final int v_next_lon = ( j + 1 ) % v_lons;
 
+            /* Normal corners. */
+            final int vn0 = idx_v_n_equator + j;
+            final int vn1 = idx_v_n_equator + v_next_lon;
+
             /* Coordinate corners. */
             final int v00 = v_curr_ring + j;
             final int v10 = v_curr_ring + v_next_lon;
@@ -459,10 +393,17 @@ public class CamZup {
             if ( use_quads ) {
                final int[][] quad = fs[idx_fs_cyl + k] = new int[4][3];
 
+               /* Coordinates. */
                quad[0][0] = v00;
                quad[1][0] = v10;
                quad[2][0] = v11;
                quad[3][0] = v01;
+
+               /* Normals. */
+               quad[0][2] = vn0;
+               quad[1][2] = vn1;
+               quad[2][2] = vn1;
+               quad[3][2] = vn0;
 
                k += 1;
             } else {
@@ -471,6 +412,7 @@ public class CamZup {
                final int[][] tri_0 = fs[idx_fs_cyl + k] = new int[3][3];
                final int[][] tri_1 = fs[idx_fs_cyl + k_next] = new int[3][3];
 
+               /* Coordinates. */
                tri_0[0][0] = v00;
                tri_0[1][0] = v10;
                tri_0[2][0] = v11;
@@ -478,6 +420,15 @@ public class CamZup {
                tri_1[0][0] = v00;
                tri_1[1][0] = v11;
                tri_1[2][0] = v01;
+
+               /* Normals. */
+               tri_0[0][2] = vn0;
+               tri_0[1][2] = vn1;
+               tri_0[2][2] = vn1;
+
+               tri_1[0][2] = vn0;
+               tri_1[1][2] = vn1;
+               tri_1[2][2] = vn0;
 
                k += 2;
             }
@@ -530,36 +481,6 @@ public class CamZup {
       return target;
    }
 
-   public static Mesh3 crossCube ( final float cubeSize ) {
-
-      final Vec3[] coords = new Vec3[] { new Vec3(-cubeSize, -cubeSize,
-         -cubeSize), new Vec3(-cubeSize, -cubeSize, cubeSize), new Vec3(
-            -cubeSize, cubeSize, -cubeSize), new Vec3(-cubeSize, cubeSize,
-               cubeSize), new Vec3(cubeSize, -cubeSize, -cubeSize), new Vec3(
-                  cubeSize, -cubeSize, cubeSize), new Vec3(cubeSize, cubeSize,
-                     -cubeSize), new Vec3(cubeSize, cubeSize, cubeSize) };
-
-      final Vec3[] normals = new Vec3[] { new Vec3(1.0f, 0.0f, 0.0f), new Vec3(
-         0.0f, 0.0f, 1.0f), new Vec3(0.0f, 0.0f, -1.0f), new Vec3(0.0f, -1.0f,
-            0.0f), new Vec3(-1.0f, -0.0f, 0.0f), new Vec3(0.0f, 1.0f, 0.0f) };
-
-      final Vec2[] texCoords = new Vec2[] { new Vec2(0.625f, 0.0f), new Vec2(
-         0.375f, 0.0f), new Vec2(0.375f, 0.75f), new Vec2(0.625f, 0.75f),
-         new Vec2(0.375f, 1.0f), new Vec2(0.625f, 1.0f), new Vec2(0.625f, 0.5f),
-         new Vec2(0.375f, 0.5f), new Vec2(0.625f, 0.25f), new Vec2(0.375f,
-            0.25f), new Vec2(0.125f, 0.5f), new Vec2(0.125f, 0.25f), new Vec2(
-               0.875f, 0.25f), new Vec2(0.875f, 0.5f) };
-
-      final int[][][] faces = new int[][][] { { { 0, 4, 4 }, { 1, 5, 4 }, { 3,
-         3, 4 }, { 2, 2, 4 } }, { { 2, 2, 5 }, { 3, 3, 5 }, { 7, 6, 5 }, { 6, 7,
-            5 } }, { { 6, 7, 0 }, { 7, 6, 0 }, { 5, 8, 0 }, { 4, 9, 0 } }, { {
-               4, 9, 3 }, { 5, 8, 3 }, { 1, 0, 3 }, { 0, 1, 3 } }, { { 2, 10,
-                  2 }, { 6, 7, 2 }, { 4, 9, 2 }, { 0, 11, 2 } }, { { 7, 6, 1 },
-                     { 3, 13, 1 }, { 1, 12, 1 }, { 5, 8, 1 } } };
-
-      return new Mesh3(faces, coords, texCoords, normals);
-   }
-
    /**
     * The main function.
     *
@@ -567,11 +488,31 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      final Mesh3 mesh3 = new Mesh3();
-      final MeshEntity3 entity3 = new MeshEntity3();
-      entity3.append(mesh3);
-      Mesh3.cube(mesh3);
+      // final Mesh3 a = new Mesh3();
+      // final Mesh3 b = new Mesh3();
+      // Mesh3.cube(a);
+      // Mesh3.cube(b);
+      // a.cycleVerts(0, 2);
+      //
+      // System.out.println(a);
+      // System.out.println(b);
+      // System.out.println(Mesh.facesPermute(a.faces[0], b.faces[0]));
 
+      final int longitudes = 4;
+      final int latitudes = 3;
+      final int rings = 2;
+      final float depth = 1.0f;
+      final float radius = 0.5f;
+      final Mesh.PolyType poly = Mesh.PolyType.QUAD;
+      final Mesh3 target = new Mesh3();
+      CamZup.capsule(longitudes, latitudes, rings, depth, radius, poly, target);
+      // System.out.println(target);
+      // System.out.println("");
+
+      final MeshEntity3 entity3 = new MeshEntity3();
+      entity3.append(target);
+      final String pyCd = entity3.toBlenderCode();
+      System.out.println(pyCd);
    }
 
    /**
