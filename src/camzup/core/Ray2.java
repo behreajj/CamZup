@@ -6,7 +6,7 @@ import java.util.List;
 /**
  * A direction that extends from an originating point.
  */
-public class Ray2 implements Cloneable {
+public class Ray2 {
 
    /**
     * The ray's direction.
@@ -44,21 +44,6 @@ public class Ray2 implements Cloneable {
    public Ray2 ( final Vec2 origin, final Vec2 dir ) {
 
       this.set(origin, dir);
-   }
-
-   /**
-    * Returns a new ray with this ray's components. Java's cloneable interface
-    * is problematic; use set or a copy constructor instead.
-    *
-    * @return a new ray
-    *
-    * @see Ray2#set(Ray2)
-    * @see Ray2#Ray2(Ray2)
-    */
-   @Override
-   public Ray2 clone ( ) {
-
-      return new Ray2(this.origin, this.dir);
    }
 
    /**
@@ -400,27 +385,12 @@ public class Ray2 implements Cloneable {
     * An abstract class that may serve as an umbrella for any custom
     * comparators of Ray2 s.
     */
-   public static abstract class AbstrComparator implements Comparator < Ray2 > {
+   public abstract static class AbstrComparator implements Comparator < Ray2 > {
 
       /**
        * The default constructor.
        */
       public AbstrComparator ( ) {}
-
-      /**
-       * The compare function which must be implemented by sub- (child) classes
-       * of this class. Negative one should be returned when the left
-       * comparisand, a, is less than the right comparisand, b, by a measure.
-       * One should be returned when it is greater. Zero should be returned as a
-       * last resort, when a and b are equal or incomparable.
-       *
-       * @param a the left comparisand
-       * @param b the right comparisand
-       *
-       * @return the comparison
-       */
-      @Override
-      public abstract int compare ( final Ray2 a, final Ray2 b );
 
       /**
        * Returns the simple name of this class.

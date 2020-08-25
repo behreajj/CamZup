@@ -8,8 +8,7 @@ import java.util.Iterator;
  * Supports conversion to and from integers where color channels are in the
  * format 0xAARRGGBB (Java).
  */
-public class Color implements Comparable < Color >, Cloneable, Iterable <
-   Float > {
+public class Color implements Comparable < Color >, Iterable < Float > {
 
    /**
     * The alpha channel (opacity).
@@ -129,18 +128,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
 
       this.set(rstr, gstr, bstr, astr);
    }
-
-   /**
-    * Returns a new color with this color's components. Java's cloneable
-    * interface is problematic; use set or a copy constructor instead.
-    *
-    * @return a new color
-    *
-    * @see Color#set(Color)
-    * @see Color#Color(Color)
-    */
-   @Override
-   public Color clone ( ) { return new Color(this.r, this.g, this.b, this.a); }
 
    /**
     * Returns -1 when this color is less than the comparisand; 1 when it is
@@ -430,10 +417,10 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    public Color set ( final String rstr, final String gstr, final String bstr,
       final String astr ) {
 
-      float xprs = 1.0f;
-      float yprs = 1.0f;
-      float zprs = 1.0f;
-      float wprs = 1.0f;
+      float xprs;
+      float yprs;
+      float zprs;
+      float wprs;
 
       try {
          xprs = Float.parseFloat(rstr);
@@ -1182,7 +1169,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
 
       try {
          String longform = "";
-         int cint = 0xffffffff;
+         int cint;
 
          // This doesn't seem like it's worth optimizing...
          // Pattern p = Pattern.compile("^(.)(.)(.)$");
@@ -2295,7 +2282,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    /**
     * An abstract class to facilitate the creation of color easing functions.
     */
-   public static abstract class AbstrEasing implements Utils.EasingFuncObj <
+   public abstract static class AbstrEasing implements Utils.EasingFuncObj <
       Color > {
 
       /**
@@ -2462,7 +2449,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    /**
     * An abstract class to facilitate the creation of HSB comparators.
     */
-   public static abstract class ComparatorHsb implements Comparator < Color > {
+   public abstract static class ComparatorHsb implements Comparator < Color > {
 
       /**
        * Holds the HSB conversion of the left comparisand.
@@ -2478,17 +2465,6 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
        * The default constructor.
        */
       public ComparatorHsb ( ) { super(); }
-
-      /**
-       * The comparison function.
-       *
-       * @param a the left comparisand
-       * @param b the right comparisand
-       *
-       * @return the comparison
-       */
-      @Override
-      public abstract int compare ( final Color a, final Color b );
 
       /**
        * Returns this class's simple name as a string
@@ -2645,7 +2621,7 @@ public class Color implements Comparable < Color >, Cloneable, Iterable <
    /**
     * An abstract parent class for hue easing functions.
     */
-   public static abstract class HueEasing implements Utils.EasingFuncPrm <
+   public abstract static class HueEasing implements Utils.EasingFuncPrm <
       Float > {
 
       /**

@@ -5,7 +5,7 @@ package camzup.core;
  * a vertex. Includes indices for a coordinate, and a texture coordinate.
  */
 @Experimental
-class Indices2 implements Cloneable, Comparable < Indices2 > {
+class Indices2 implements Comparable < Indices2 > {
 
    /**
     * The coordinate index.
@@ -39,12 +39,6 @@ class Indices2 implements Cloneable, Comparable < Indices2 > {
 
       this.set(vIdx, vtIdx);
    }
-
-   /**
-    * Returns a new indices set with this indices set's components.
-    */
-   @Override
-   public Indices2 clone ( ) { return new Indices2(this.v, this.vt); }
 
    /**
     * Returns -1 when this indices set is less than the comparisand; 1 when it

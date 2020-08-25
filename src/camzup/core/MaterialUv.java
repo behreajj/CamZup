@@ -71,6 +71,46 @@ public abstract class MaterialUv extends Material implements IOriented2,
    }
 
    /**
+    * Tests this material for equivalence with an object.
+    *
+    * @param obj the object
+    *
+    * @return the equivalence
+    */
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if ( this == obj ) { return true; }
+      if ( !super.equals(obj) ) { return false; }
+      if ( this.getClass() != obj.getClass() ) { return false; }
+      final MaterialUv other = ( MaterialUv ) obj;
+      if ( this.tint == null ) {
+         if ( other.tint != null ) { return false; }
+      } else if ( !this.tint.equals(other.tint) ) { return false; }
+      if ( this.transform == null ) {
+         if ( other.transform != null ) { return false; }
+      } else if ( !this.transform.equals(other.transform) ) { return false; }
+      return true;
+   }
+
+   /**
+    * Returns the hash code for this material.
+    *
+    * @return the hash code
+    */
+   @Override
+   public int hashCode ( ) {
+
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ( this.tint == null ? 0 : this.tint
+         .hashCode() );
+      result = prime * result + ( this.transform == null ? 0 : this.transform
+         .hashCode() );
+      return result;
+   }
+
+   /**
     * Moves this material by a vector.
     *
     * @param dir the vector

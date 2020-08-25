@@ -7,8 +7,7 @@ import java.util.Iterator;
  * A two-dimensional complex number. The <code>imag</code> component is a
  * coefficient of <em>i</em>, or the square-root of negative one.
  */
-public class Complex implements Comparable < Complex >, Cloneable, Iterable <
-   Float > {
+public class Complex implements Comparable < Complex >, Iterable < Float > {
 
    /**
     * The coefficient of the imaginary component <em>i</em>.
@@ -57,16 +56,6 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
    }
 
    /**
-    * Returns a new complex number with this complex number's components.
-    * Java's cloneable interface is problematic; use set or a copy constructor
-    * instead.
-    *
-    * @return a new complex number
-    */
-   @Override
-   public Complex clone ( ) { return new Complex(this.real, this.imag); }
-
-   /**
     * Returns -1 when this complex number is less than the comparisand; 1 when
     * it is greater than; 0 when the two are 'equal'. The implementation of
     * this method allows collections of complex number to be sorted.
@@ -95,9 +84,7 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     */
    public boolean contains ( final float v ) {
 
-      if ( Utils.approx(this.real, v) ) { return true; }
-      if ( Utils.approx(this.imag, v) ) { return true; }
-      return false;
+      return Utils.approx(this.real, v) || Utils.approx(this.imag, v);
    }
 
    /**
@@ -226,8 +213,8 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
 
    public Complex set ( final String realstr, final String imagstr ) {
 
-      float rlstr = 0.0f;
-      float imstr = 0.0f;
+      float rlstr;
+      float imstr;
 
       try {
          rlstr = Float.parseFloat(realstr);
@@ -1057,28 +1044,13 @@ public class Complex implements Comparable < Complex >, Cloneable, Iterable <
     * An abstract class that may serve as an umbrella for any custom
     * comparators of complex numbers.
     */
-   public static abstract class AbstrComparator implements Comparator <
+   public abstract static class AbstrComparator implements Comparator <
       Complex > {
 
       /**
        * The default constructor.
        */
       public AbstrComparator ( ) {}
-
-      /**
-       * The compare function which must be implemented by sub- (child) classes
-       * of this class. Negative one should be returned when the left
-       * comparisand, a, is less than the right comparisand, b, by a measure.
-       * One should be returned when it is greater. Zero should be returned as a
-       * last resort, when a and b are equal or incomparable.
-       *
-       * @param a the left comparisand
-       * @param b the right comparisand
-       *
-       * @return the comparison
-       */
-      @Override
-      public abstract int compare ( final Complex a, final Complex b );
 
       /**
        * Returns the simple name of this class.

@@ -418,7 +418,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @return the model view
     */
    @Override
-   public PMatrix3D getMatrix ( ) { return this.getMatrix(( PMatrix3D ) null); }
+   public PMatrix3D getMatrix ( ) { return this.getMatrix(new PMatrix3D()); }
 
    /**
     * Gets the reference up axis of the camera.

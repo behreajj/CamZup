@@ -52,6 +52,8 @@ public class Vert2 implements Comparable < Vert2 > {
    /**
     * Tests this vertex for equivalence with another object.
     *
+    * @param obj the object
+    *
     * @return the evaluation
     */
    @Override

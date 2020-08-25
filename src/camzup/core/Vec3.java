@@ -9,8 +9,7 @@ import java.util.Iterator;
  * three-dimensional graphics programs. Instance methods are limited, while
  * most static methods require an explicit output variable to be provided.
  */
-public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
-   Float > {
+public class Vec3 implements Comparable < Vec3 >, Iterable < Float > {
 
    /**
     * Component on the x axis in the Cartesian coordinate system.
@@ -91,18 +90,6 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     * @param source the source vector
     */
    public Vec3 ( final Vec3 source ) { this.set(source); }
-
-   /**
-    * Returns a new vector with this vector's components. Java's cloneable
-    * interface is problematic; use set or a copy constructor instead.
-    *
-    * @return a new vector
-    *
-    * @see Vec3#set(Vec3)
-    * @see Vec3#Vec3(Vec3)
-    */
-   @Override
-   public Vec3 clone ( ) { return new Vec3(this.x, this.y, this.z); }
 
    /**
     * Returns -1 when this vector is less than the comparisand; 1 when it is
@@ -273,9 +260,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public Vec3 set ( final String xstr, final String ystr, final String zstr ) {
 
-      float xprs = 0.0f;
-      float yprs = 0.0f;
-      float zprs = 0.0f;
+      float xprs;
+      float yprs;
+      float zprs;
 
       try {
          xprs = Float.parseFloat(xstr);
@@ -949,7 +936,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    }
 
    /**
-    * Concatenates two one-dimensional Vec2 arrays.
+    * Concatenates two one-dimensional Vec3 arrays.
     *
     * @param a the first array
     * @param b the second array
@@ -960,28 +947,28 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     */
    public static Vec3[] concat ( final Vec3[] a, final Vec3[] b ) {
 
-      final boolean anull = a == null;
-      final boolean bnull = b == null;
+      final boolean aNull = a == null;
+      final boolean bNull = b == null;
 
-      if ( anull && bnull ) { return new Vec3[] {}; }
+      if ( aNull && bNull ) { return new Vec3[] {}; }
 
-      if ( anull ) {
-         final Vec3[] result = new Vec3[b.length];
-         System.arraycopy(b, 0, result, 0, b.length);
-         return result;
+      if ( aNull ) {
+         final Vec3[] result0 = new Vec3[b.length];
+         System.arraycopy(b, 0, result0, 0, b.length);
+         return result0;
       }
 
-      if ( bnull ) {
-         final Vec3[] result = new Vec3[a.length];
-         System.arraycopy(a, 0, result, 0, a.length);
-         return result;
+      if ( bNull ) {
+         final Vec3[] result1 = new Vec3[a.length];
+         System.arraycopy(a, 0, result1, 0, a.length);
+         return result1;
       }
 
-      final int alen = a.length;
-      final int blen = b.length;
-      final Vec3[] result = new Vec3[alen + blen];
-      System.arraycopy(a, 0, result, 0, alen);
-      System.arraycopy(b, 0, result, alen, blen);
+      final int aLen = a.length;
+      final int bLen = b.length;
+      final Vec3[] result = new Vec3[aLen + bLen];
+      System.arraycopy(a, 0, result, 0, aLen);
+      System.arraycopy(b, 0, result, aLen, bLen);
       return result;
    }
 
@@ -1353,8 +1340,13 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
          totalLen += arr[i].length;
       }
 
+      /*
+       * Copy each inner array to the result array, then move the cursor by the
+       * length of each array.
+       */
+      int j = 0;
       final Vec3[] result = new Vec3[totalLen];
-      for ( int j = 0, i = 0; i < sourceLen; ++i ) {
+      for ( int i = 0; i < sourceLen; ++i ) {
          final Vec3[] arrInner = arr[i];
          final int len = arrInner.length;
          System.arraycopy(arrInner, 0, result, j, len);
@@ -1383,9 +1375,9 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
          }
       }
 
+      int k = 0;
       final Vec3[] result = new Vec3[totalLen];
-
-      for ( int k = 0, i = 0; i < sourceLen0; ++i ) {
+      for ( int i = 0; i < sourceLen0; ++i ) {
          final Vec3[][] arrInner1 = arr[i];
          final int sourceLen1 = arrInner1.length;
          for ( int j = 0; j < sourceLen1; ++j ) {
@@ -3256,7 +3248,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
     * An abstract class that may serve as an umbrella for any custom
     * comparators of Vec3 s.
     */
-   public static abstract class AbstrComparator implements Comparator < Vec3 > {
+   public abstract static class AbstrComparator implements Comparator < Vec3 > {
 
       /**
        * The default constructor.
@@ -3291,7 +3283,7 @@ public class Vec3 implements Comparable < Vec3 >, Cloneable, Iterable <
    /**
     * An abstract class to facilitate the creation of vector easing functions.
     */
-   public static abstract class AbstrEasing implements Utils.EasingFuncObj <
+   public abstract static class AbstrEasing implements Utils.EasingFuncObj <
       Vec3 > {
 
       /**

@@ -4,7 +4,7 @@ package camzup.core;
  * An axis aligned bounding box (AABB) for a 2D area, represented with a
  * minimum and maximum coordinate.
  */
-public class Bounds2 implements Cloneable, Comparable < Bounds2 > {
+public class Bounds2 implements Comparable < Bounds2 > {
 
    /**
     * The maximum corner.
@@ -54,15 +54,6 @@ public class Bounds2 implements Cloneable, Comparable < Bounds2 > {
     * @param max the maximum
     */
    public Bounds2 ( final Vec2 min, final Vec2 max ) { this.set(min, max); }
-
-   /**
-    * Returns a new bounds with this bounds' components. Java's cloneable
-    * interface is problematic; use set or a copy constructor instead.
-    *
-    * @return the clone
-    */
-   @Override
-   public Bounds2 clone ( ) { return new Bounds2(this.min, this.max); }
 
    /**
     * Compares two bounds according to their center points. Evaluates the y

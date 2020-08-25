@@ -10,7 +10,7 @@ import java.util.Iterator;
  * directly mutated.
  */
 @Experimental
-public class Img implements Cloneable, Iterable < Color > {
+public class Img implements Iterable < Color > {
 
    /**
     * The image's height.
@@ -89,12 +89,6 @@ public class Img implements Cloneable, Iterable < Color > {
          this.pixels[i] = fill;
       }
    }
-
-   /**
-    * Creates a new image from this one.
-    */
-   @Override
-   public Img clone ( ) { return new Img(this); }
 
    /**
     * Gets a pixel color at an index in the pixel array. The color is

@@ -32,6 +32,11 @@ import processing.awt.PGraphicsJava2D;
 public abstract class TextShape {
 
    /**
+    * Discourage overriding with a private constructor.
+    */
+   private TextShape ( ) {}
+
+   /**
     * Converts a list of characters to a an array of curve entities. When the
     * level of detail is 0, uses Bezier curves; when the detail is non-zero,
     * approximates the glyph with a series of straight line segments. The

@@ -71,11 +71,6 @@ public class Zup3 extends Up3 {
    @Override
    public void camera ( ) {
 
-      /*
-       * Never use defCameraXXX values. They are not actual constants and may
-       * not have been initialized.
-       */
-
       this.camera(this.cameraX, this.cameraY, this.cameraZ, this.lookTarget.x,
          this.lookTarget.y, this.lookTarget.z);
    }
@@ -98,11 +93,6 @@ public class Zup3 extends Up3 {
    @Override
    public void camera ( final float xEye, final float yEye, final float zEye,
       final float xCenter, final float yCenter, final float zCenter ) {
-
-      /*
-       * Never use defCameraXXX values. They are not actual constants and may
-       * not have been initialized.
-       */
 
       this.camera(xEye, yEye, zEye, xCenter, yCenter, zCenter, this.refUp.x,
          this.refUp.y, this.refUp.z);

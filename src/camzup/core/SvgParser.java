@@ -654,9 +654,7 @@ abstract class SvgParser {
 
          }
 
-      } catch ( final Exception e ) {
-         x = def;
-      }
+      } catch ( final Exception e ) {}
 
       return x;
    }

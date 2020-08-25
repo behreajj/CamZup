@@ -12,7 +12,7 @@ public class Rng extends java.util.Random implements IUtils {
    /**
     * The random number generator's seed.
     */
-   private long publicSeed;
+   private final long publicSeed;
 
    /**
     * The default constructor. Sets the seed to the system's current time in
@@ -144,18 +144,6 @@ public class Rng extends java.util.Random implements IUtils {
          result[i] = sum * ( x[i + 2] - x[i + 1] );
       }
       return result;
-   }
-
-   /**
-    * Sets the seed of this random number generator.
-    *
-    * @param seed the seed
-    */
-   @Override
-   public void setSeed ( final long seed ) {
-
-      super.setSeed(seed);
-      this.publicSeed = seed;
    }
 
    /**

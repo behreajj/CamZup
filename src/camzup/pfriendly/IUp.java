@@ -40,11 +40,6 @@ public interface IUp {
    void camera ( );
 
    /**
-    * Sets the camera to the renderer defaults.
-    */
-   void defaultCamera ( );
-
-   /**
     * Sets the renderer's default styling.
     */
    void defaultSettings ( );

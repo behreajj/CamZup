@@ -5,13 +5,14 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
 
 /**
- * Organizes data needed to draw a three dimensional shape using vertices
+ * Organizes data needed to draw a three dimensional shape with vertices
  * and faces. Given that a mesh is primarily a collection of references, it
  * is initialized with null arrays (coordinates, texture coordinates and
  * indices). These are not final, and so can be reassigned.
@@ -19,7 +20,7 @@ import java.util.regex.Pattern;
 public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
-    * An array of coordinates in the mesh.
+    * An array of coordinates.
     */
    public Vec3[] coords;
 
@@ -31,7 +32,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * The texture (UV) coordinates that describe how an image is mapped onto
-    * the geometry of the mesh. Typically in the range [0.0, 1.0].
+    * the mesh. Typically in the range [0.0, 1.0] .
     */
    public Vec2[] texCoords;
 
@@ -322,6 +323,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    @Experimental
    public Mesh3 extrudeFace ( final int faceIdx, final float amt ) {
 
+      // TODO: Make capping or not the bottom face an option.
+
       if ( amt == 0.0f ) { return this; }
 
       /* Validate face index, find face. */
@@ -454,8 +457,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    @Experimental
    public Mesh3 extrudeFaces ( final float amt ) {
 
+      int k = 0;
       final int facesLen = this.faces.length;
-      for ( int i = 0, k = 0; i < facesLen; ++i ) {
+      for ( int i = 0; i < facesLen; ++i ) {
          final int faceLen = this.faces[k].length;
          this.extrudeFace(k, amt);
          k += faceLen + 2;
@@ -1136,12 +1140,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final int fslen2 = source2.length;
             final int[] target2 = new int[fslen2 + 1];
             target1[j] = target2;
-
-            /* Normal data is appended at the end. */
-            for ( int k = 0; k < fslen2; ++k ) {
-               target2[k] = source2[k];
-            }
-            target2[fslen2] = 0;
+            System.arraycopy(source2, 0, target2, 0, fslen2);
          }
       }
 
@@ -1203,9 +1202,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final int[] target2 = new int[fslen2];
             target1[j] = target2;
 
-            for ( int k = 0; k < fslen2; ++k ) {
-               target2[k] = source2[k];
-            }
+            System.arraycopy(source2, 0, target2, 0, fslen2);
          }
       }
 
@@ -1376,8 +1373,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* Create arrays to hold new data. */
       final Vec3[] vsNew = new Vec3[faceLen + 1];
-      final Vec2[] vtsNew = new Vec2[faceLen + 1];
-      final Vec3[] vnsNew = new Vec3[faceLen + 1];
+      final Vec2[] vtsNew = new Vec2[vsNew.length];
+      final Vec3[] vnsNew = new Vec3[vsNew.length];
       final int[][][] fsNew = new int[faceLen][4][3];
 
       /* Center is last element of new array. */
@@ -1439,7 +1436,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final float flInv = 1.0f / faceLen;
          Vec3.mul(vCenter, flInv, vCenter);
          Vec2.mul(vtCenter, flInv, vtCenter);
-         Vec3.mul(vnCenter, flInv, vnCenter);
          Vec3.normalize(vnCenter, vnCenter);
       }
 
@@ -1585,9 +1581,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             { vsOldLen + k, vtsOldLen + k, vnsOldLen + k } };
          /* @formatter:on */
 
-         centerFace[j][0] = vSubdivIdx;
-         centerFace[j][1] = vtSubdivIdx;
-         centerFace[j][2] = vnSubdivIdx;
+         final int[] centerVert = centerFace[j];
+         centerVert[0] = vSubdivIdx;
+         centerVert[1] = vtSubdivIdx;
+         centerVert[2] = vnSubdivIdx;
       }
 
       this.coords = Vec3.concat(this.coords, vsNew);
@@ -1630,8 +1627,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public Mesh3 subdivFacesCenter ( final int itr ) {
 
       for ( int i = 0; i < itr; ++i ) {
+         int k = 0;
          final int len = this.faces.length;
-         for ( int j = 0, k = 0; j < len; ++j ) {
+         for ( int j = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
             this.subdivFaceCenter(k);
             k += vertLen;
@@ -1653,8 +1651,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public Mesh3 subdivFacesFan ( final int itr ) {
 
       for ( int i = 0; i < itr; ++i ) {
+         int k = 0;
          final int len = this.faces.length;
-         for ( int j = 0, k = 0; j < len; ++j ) {
+         for ( int j = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
             this.subdivFaceFan(k);
             k += vertLen;
@@ -1676,8 +1675,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public Mesh3 subdivFacesInscribe ( final int itr ) {
 
       for ( int i = 0; i < itr; ++i ) {
+         int k = 0;
          final int len = this.faces.length;
-         for ( int j = 0, k = 0; j < len; ++j ) {
+         for ( int j = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
             this.subdivFaceInscribe(k);
             k += vertLen + 1;
@@ -2245,6 +2245,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    protected Mesh3 castToSphere ( ) {
 
+      // TODO: Convert to a public static function.
       final Vec3[] vs = this.coords;
       final int vsLen = vs.length;
       final Vec3[] vns = this.normals = Vec3.resize(this.normals, vsLen);
@@ -2278,10 +2279,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    protected boolean equals ( final Mesh3 mesh3 ) {
 
-      if ( !Arrays.equals(this.coords, mesh3.coords) ) { return false; }
-      if ( !Arrays.deepEquals(this.faces, mesh3.faces) ) { return false; }
-
-      return true;
+      return Arrays.equals(this.coords, mesh3.coords) && Arrays.deepEquals(
+         this.faces, mesh3.faces);
    }
 
    /**
@@ -2801,8 +2800,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3 cylinder ( final Vec3 origin, final Vec3 dest,
       final int sectors, final Mesh3 target ) {
 
-      return Mesh3.cylinder(origin, dest, IMesh.DEFAULT_CIRCLE_SECTORS, true,
-         target);
+      return Mesh3.cylinder(origin, dest, sectors, true, target);
    }
 
    /**
@@ -3195,6 +3193,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                   /* "g" */
                   final String name = objName + "." + tokens[1];
                   if ( !faceGroups.containsKey(name) ) {
+                     // TODO: Replace with new ArrayList <>() ?
                      faceGroups.put(name, new ArrayList < int[][] >());
                   }
                   currentIndices = faceGroups.get(name);
@@ -3787,8 +3786,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @see Mesh3#getVertices()
     * @see Vec3#distSq(Vec3, Vec3)
     */
-   public static TreeMap < Float, Vert3 > proximity ( final Mesh3 m,
-      final Vec3 p, final float nearBound, final float farBound ) {
+   public static Map < Float, Vert3 > proximity ( final Mesh3 m, final Vec3 p,
+      final float nearBound, final float farBound ) {
 
       final Vert3[] verts = m.getVertices();
       final int vertLen = verts.length;
@@ -3934,6 +3933,52 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          { { 0, 1, 3 }, { 3, 0, 3 }, { 2, 2, 3 } },
          { { 1, 2, 2 }, { 2, 1, 2 }, { 3, 0, 2 } } };
       /* @formatter:on */
+
+      return target;
+   }
+
+   /**
+    * Creates a flat representation of a a mesh's texture coordinates as a
+    * net, or map.
+    *
+    * @param source the source mesh
+    * @param target the output mesh
+    *
+    * @return the texture map
+    */
+   @Experimental
+   public static Mesh2 textureMap ( final Mesh3 source, final Mesh2 target ) {
+
+      final Vec2[] vtsSrc = source.texCoords;
+      final int[][][] fsSrc = source.faces;
+
+      final int vtsSrcLen = vtsSrc.length;
+      final int fsSrcLen = fsSrc.length;
+
+      final Vec2[] vsTrg = target.coords = Vec2.resize(target.coords,
+         vtsSrcLen);
+      final Vec2[] vtsTrg = target.texCoords = Vec2.resize(target.texCoords,
+         vtsSrcLen);
+
+      /* Copy texture coordinates to target coordinates. */
+      for ( int i = 0; i < vtsSrcLen; ++i ) {
+         final Vec2 vtSrc = vtsSrc[i];
+         vsTrg[i].set(vtSrc);
+         vtsTrg[i].set(vtSrc);
+      }
+
+      final int[][][] fsTrg = target.faces = new int[fsSrcLen][][];
+      for ( int i = 0; i < fsSrcLen; ++i ) {
+         final int[][] fSrc = fsSrc[i];
+         final int fSrcLen = fSrc.length;
+         final int[][] fTrg = fsTrg[i] = new int[fSrcLen][2];
+         for ( int j = 0; j < fSrcLen; ++j ) {
+            final int[] vertSrc = fSrc[j];
+            final int[] vertTrg = fTrg[j];
+            vertTrg[0] = vertSrc[1];
+            vertTrg[1] = vertSrc[1];
+         }
+      }
 
       return target;
    }

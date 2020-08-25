@@ -574,9 +574,9 @@ public interface IUp3 extends IUp {
 
          this.strokeWeight(lnwgt);
 
-         float dx = 0.0f;
-         float dy = 0.0f;
-         float dz = 0.0f;
+         float dx;
+         float dy;
+         float dz;
 
          if ( Utils.approx(mSq, 1.0f, 0.0001f) ) {
 

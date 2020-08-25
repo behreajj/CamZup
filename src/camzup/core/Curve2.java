@@ -160,20 +160,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Clones this curve.
-    *
-    * @return the cloned curve
-    */
-   @Override
-   public Curve2 clone ( ) {
-
-      final Curve2 c = new Curve2(this);
-      c.name = this.name;
-      c.materialIndex = this.materialIndex;
-      return c;
-   }
-
-   /**
     * Evaluates whether a knot is contained by this curve.
     *
     * @param kn the knot
@@ -317,7 +303,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final int len = kn.length;
       final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
          : i;
-      for ( int j = 0, k = vidx; j < len; ++j ) {
+      int k = vidx;
+      for ( int j = 0; j < len; ++j ) {
          final Knot2 knot = kn[j];
          // if ( knot != null ) {
          // this.knots.add(k, knot);
@@ -403,8 +390,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public Curve2 prependAll ( final Knot2... kn ) {
 
+      int j = 0;
       final int len = kn.length;
-      for ( int i = 0, j = 0; i < len; ++i ) {
+      for ( int i = 0; i < len; ++i ) {
          final Knot2 knot = kn[i];
          // if ( knot != null ) {
          // this.knots.add(j, knot);
@@ -1122,7 +1110,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final ArrayList < Knot2 > knots = curve.knots;
       final int knotLength = knots.size();
 
-      float tScaled = 0.0f;
+      float tScaled;
       int i = 0;
       Knot2 a = null;
       Knot2 b = null;
@@ -1206,7 +1194,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final ArrayList < Knot2 > knots = curve.knots;
       final int knotLength = knots.size();
 
-      float tScaled = 0.0f;
+      float tScaled;
       int i = 0;
       Knot2 a = null;
       Knot2 b = null;

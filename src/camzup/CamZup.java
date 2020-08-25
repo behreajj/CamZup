@@ -4,7 +4,6 @@ import camzup.core.IUtils;
 import camzup.core.Mesh;
 import camzup.core.Mesh.PolyType;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -50,7 +49,7 @@ public class CamZup {
    /**
     * The library's current version.
     */
-   public final static String VERSION = "##library.prettyVersion##";
+   public static final String VERSION = "##library.prettyVersion##";
 
    public static Mesh3 capsule ( final int longitudes, final int latitudes,
       final int rings, final float depth, final float radius,
@@ -488,31 +487,31 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // final Mesh3 a = new Mesh3();
-      // final Mesh3 b = new Mesh3();
-      // Mesh3.cube(a);
-      // Mesh3.cube(b);
-      // a.cycleVerts(0, 2);
-      //
-      // System.out.println(a);
-      // System.out.println(b);
-      // System.out.println(Mesh.facesPermute(a.faces[0], b.faces[0]));
-
-      final int longitudes = 4;
-      final int latitudes = 3;
-      final int rings = 2;
-      final float depth = 1.0f;
-      final float radius = 0.5f;
-      final Mesh.PolyType poly = Mesh.PolyType.QUAD;
-      final Mesh3 target = new Mesh3();
-      CamZup.capsule(longitudes, latitudes, rings, depth, radius, poly, target);
+      // final int longitudes = 4;
+      // final int latitudes = 3;
+      // final int rings = 2;
+      // final float depth = 1.0f;
+      // final float radius = 0.5f;
+      // final Mesh.PolyType poly = Mesh.PolyType.QUAD;
+      // final Mesh3 target = new Mesh3();
+      // CamZup.capsule(longitudes, latitudes, rings, depth, radius, poly,
+      // target);
       // System.out.println(target);
       // System.out.println("");
 
-      final MeshEntity3 entity3 = new MeshEntity3();
-      entity3.append(target);
-      final String pyCd = entity3.toBlenderCode();
-      System.out.println(pyCd);
+      // final MeshEntity3 entity3 = new MeshEntity3();
+      // entity3.append(target);
+      // final String pyCd = entity3.toBlenderCode();
+      // System.out.println(pyCd);
+
+      // Mesh3 m3 = new Mesh3();
+      // Mesh3.cube(0.5f, Mesh.PolyType.QUAD, Mesh3.CubeUvProfile.CROSS, m3);
+      // Mesh2 net = new Mesh2();
+      // Mesh3.textureMap(m3, net);
+      // MeshEntity2 entity2 = new MeshEntity2();
+      // entity2.append(net);
+      // String pyCd = entity2.toBlenderCode();
+      // System.out.println(pyCd);
    }
 
    /**

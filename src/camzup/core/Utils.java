@@ -94,7 +94,8 @@ public abstract class Utils implements IUtils {
     */
    public static int and ( final float a, final float b ) {
 
-      return ( a != 0.0f && a == a ? 1 : 0 ) & ( b != 0.0f && b == b ? 1 : 0 );
+      return ( a != 0.0f && a != Float.NaN ? 1 : 0 ) & ( b != 0.0f && b
+         != Float.NaN ? 1 : 0 );
    }
 
    /**
@@ -857,7 +858,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the maximum value
     */
-   public final static float max ( final float... fs ) {
+   public static float max ( final float... fs ) {
 
       float max = Float.MIN_VALUE;
       final int len = fs.length;
@@ -878,7 +879,7 @@ public abstract class Utils implements IUtils {
     */
    public static float max ( final float a, final float b ) {
 
-      return a >= b ? a : a < b ? b : 0.0f;
+      return a >= b ? a : b;
    }
 
    /**
@@ -892,8 +893,8 @@ public abstract class Utils implements IUtils {
     */
    public static float max ( final float a, final float b, final float c ) {
 
-      final float d = a >= b ? a : a < b ? b : 0.0f;
-      return d >= c ? d : d < c ? c : 0.0f;
+      final float d = a >= b ? a : b;
+      return d >= c ? d : c;
    }
 
    /**
@@ -903,7 +904,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the minimum value
     */
-   public final static float min ( final float... fs ) {
+   public static float min ( final float... fs ) {
 
       float min = Float.MAX_VALUE;
       final int len = fs.length;
@@ -924,7 +925,7 @@ public abstract class Utils implements IUtils {
     */
    public static float min ( final float a, final float b ) {
 
-      return a <= b ? a : a > b ? b : 0.0f;
+      return a <= b ? a : b;
    }
 
    /**
@@ -938,8 +939,8 @@ public abstract class Utils implements IUtils {
     */
    public static float min ( final float a, final float b, final float c ) {
 
-      final float d = a <= b ? a : a > b ? b : 0.0f;
-      return d <= c ? d : d > c ? c : 0.0f;
+      final float d = a <= b ? a : b;
+      return d <= c ? d : c;
    }
 
    /**
@@ -1076,7 +1077,7 @@ public abstract class Utils implements IUtils {
     */
    public static int not ( final float value ) {
 
-      return value == 0.0f || value != value ? 1 : 0;
+      return value == 0.0f || value == Float.NaN ? 1 : 0;
    }
 
    /**
@@ -1090,7 +1091,8 @@ public abstract class Utils implements IUtils {
     */
    public static int or ( final float a, final float b ) {
 
-      return ( a != 0.0f && a == a ? 1 : 0 ) | ( b != 0.0f && b == b ? 1 : 0 );
+      return ( a != 0.0f && a != Float.NaN ? 1 : 0 ) | ( b != 0.0f && b
+         != Float.NaN ? 1 : 0 );
    }
 
    /**
@@ -1653,8 +1655,8 @@ public abstract class Utils implements IUtils {
       final float ub ) {
 
       final float span = ub - lb;
-      float vlb = 0.0f;
-      float vub = 0.0f;
+      float vlb;
+      float vub;
       if ( span < 0.0f ) {
          vlb = ub;
          vub = lb;
@@ -1680,7 +1682,8 @@ public abstract class Utils implements IUtils {
     */
    public static int xor ( final float a, final float b ) {
 
-      return ( a != 0.0f && a == a ? 1 : 0 ) ^ ( b != 0.0f && b == b ? 1 : 0 );
+      return ( a != 0.0f && a != Float.NaN ? 1 : 0 ) ^ ( b != 0.0f && b
+         != Float.NaN ? 1 : 0 );
    }
 
    /**
@@ -2013,7 +2016,7 @@ public abstract class Utils implements IUtils {
     * and hues in HSV color space. Allows the range to be set to, for example,
     * TAU radians, 360.0 degrees or 1.0 color channel.
     */
-   public static abstract class PeriodicEasing implements Utils.EasingFuncPrm <
+   public abstract static class PeriodicEasing implements Utils.EasingFuncPrm <
       Float > {
 
       /**

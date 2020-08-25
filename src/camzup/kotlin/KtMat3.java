@@ -92,6 +92,23 @@ public class KtMat3 extends Mat3 {
    public KtMat3 ( final Mat3 source ) { super(source); }
 
    /**
+    * Gets a column vector from this matrix. For interoperability with Kotlin:
+    * <code>b = a[i]</code> .
+    *
+    * @param j the column index
+    *
+    * @return the column vector
+    *
+    * @see Mat3#getCol(int, Vec3)
+    */
+   public KtVec3 get ( final int j ) {
+
+      final KtVec3 result = new KtVec3();
+      this.getCol(j, result);
+      return result;
+   }
+
+   /**
     * Returns a new matrix with the subtraction of the right operand from the
     * instance. For interoperability with Kotlin: <code>a - b</code> .
     * <em>Does not mutate the matrix in place</em>.

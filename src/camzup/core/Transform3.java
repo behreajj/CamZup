@@ -137,17 +137,6 @@ public class Transform3 extends Transform implements ISpatial3, IOriented3,
    }
 
    /**
-    * Creates a new transform with the components of this transform.
-    *
-    * @return the cloned transform
-    */
-   @Override
-   public Transform3 clone ( ) {
-
-      return new Transform3(this.location, this.rotation, this.scale);
-   }
-
-   /**
     * Tests this transform for equivalence with an object.
     *
     * @param obj the object
@@ -1111,13 +1100,9 @@ public class Transform3 extends Transform implements ISpatial3, IOriented3,
       final float zRight, final float yRight, final float xForward,
       final Transform3 target ) {
 
-      // target.locPrev.reset();
-      // target.rotPrev.reset();
-      // Vec3.one(target.scalePrev);
-
-      target.scalePrev.set(target.scale);
       target.locPrev.set(target.location);
       target.rotPrev.set(target.rotation);
+      target.scalePrev.set(target.scale);
 
       Quaternion.fromAxes(xRight, yForward, zUp, zForward, yUp, xUp, zRight,
          yRight, xForward, target.rotation);
@@ -1234,10 +1219,6 @@ public class Transform3 extends Transform implements ISpatial3, IOriented3,
     * @see Vec3#up(Vec3)
     */
    public static Transform3 identity ( final Transform3 target ) {
-
-      // target.locPrev.reset();
-      // target.rotPrev.reset();
-      // Vec3.one(target.scalePrev);
 
       target.locPrev.set(target.location);
       target.rotPrev.set(target.rotation);

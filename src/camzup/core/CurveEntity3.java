@@ -137,6 +137,26 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    }
 
    /**
+    * Tests this entity for equivalence with another object.
+    *
+    * @param obj the object
+    *
+    * @return the evaluation
+    */
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if ( this == obj ) { return true; }
+      if ( !super.equals(obj) ) { return false; }
+      if ( this.getClass() != obj.getClass() ) { return false; }
+      final CurveEntity3 other = ( CurveEntity3 ) obj;
+      if ( this.curves == null ) {
+         if ( other.curves != null ) { return false; }
+      } else if ( !this.curves.equals(other.curves) ) { return false; }
+      return true;
+   }
+
+   /**
     * Gets a curve from this curve entity.
     *
     * @param i the index
@@ -159,6 +179,21 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public Vec3 getScale ( final Vec3 target ) {
 
       return this.transform.getScale(target);
+   }
+
+   /**
+    * Returns a hash code for this entity based on its array of entity data.
+    *
+    * @return the hash
+    */
+   @Override
+   public int hashCode ( ) {
+
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ( this.curves == null ? 0 : this.curves
+         .hashCode() );
+      return result;
    }
 
    /**

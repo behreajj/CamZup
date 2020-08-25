@@ -151,8 +151,9 @@ public abstract class Mesh extends EntityData implements IMesh {
     */
    public Mesh triangulate ( ) {
 
+      int k = 0;
       final int facesLen = this.faces.length;
-      for ( int i = 0, k = 0; i < facesLen; ++i ) {
+      for ( int i = 0; i < facesLen; ++i ) {
          final int faceLen = this.faces[k].length;
          this.triangulate(k);
          k += faceLen - 2;
@@ -405,29 +406,29 @@ public abstract class Mesh extends EntityData implements IMesh {
    public static int[][][] splice ( final int[][][] arr, final int index,
       final int deletions, final int[][][] insert ) {
 
-      final int alen = arr.length;
+      final int aLen = arr.length;
 
-      if ( deletions >= alen ) {
-         final int[][][] result = new int[insert.length][][];
-         System.arraycopy(insert, 0, result, 0, insert.length);
-         return result;
+      if ( deletions >= aLen ) {
+         final int[][][] result0 = new int[insert.length][][];
+         System.arraycopy(insert, 0, result0, 0, insert.length);
+         return result0;
       }
 
-      final int blen = insert.length;
-      final int valIdx = Utils.mod(index, alen + 1);
+      final int bLen = insert.length;
+      final int valIdx = Utils.mod(index, aLen + 1);
       if ( deletions < 1 ) {
-         final int[][][] result = new int[alen + blen][][];
-         System.arraycopy(arr, 0, result, 0, valIdx);
-         System.arraycopy(insert, 0, result, valIdx, blen);
-         System.arraycopy(arr, valIdx, result, valIdx + blen, alen - valIdx);
-         return result;
+         final int[][][] result1 = new int[aLen + bLen][][];
+         System.arraycopy(arr, 0, result1, 0, valIdx);
+         System.arraycopy(insert, 0, result1, valIdx, bLen);
+         System.arraycopy(arr, valIdx, result1, valIdx + bLen, aLen - valIdx);
+         return result1;
       }
 
       final int idxOff = valIdx + deletions;
-      final int[][][] result = new int[alen + blen - deletions][][];
+      final int[][][] result = new int[aLen + bLen - deletions][][];
       System.arraycopy(arr, 0, result, 0, valIdx);
-      System.arraycopy(insert, 0, result, valIdx, blen);
-      System.arraycopy(arr, idxOff, result, valIdx + blen, alen - idxOff);
+      System.arraycopy(insert, 0, result, valIdx, bLen);
+      System.arraycopy(arr, idxOff, result, valIdx + bLen, aLen - idxOff);
       return result;
    }
 
@@ -446,10 +447,10 @@ public abstract class Mesh extends EntityData implements IMesh {
    protected static int[][] insert ( final int[][] arr, final int index,
       final int[][] insert ) {
 
-      final int alen = arr.length;
-      final int blen = insert.length;
-      final int valIdx = Utils.mod(index, alen + 1);
-      final int[][] result = new int[alen + blen][];
+      final int aLen = arr.length;
+      final int bLen = insert.length;
+      final int valIdx = Utils.mod(index, aLen + 1);
+      final int[][] result = new int[aLen + bLen][];
 
       /*
        * (1.) Copy values from source array into result up to insert point. (2.)
@@ -458,8 +459,8 @@ public abstract class Mesh extends EntityData implements IMesh {
        * the point after the length of the insertion.
        */
       System.arraycopy(arr, 0, result, 0, valIdx);
-      System.arraycopy(insert, 0, result, valIdx, blen);
-      System.arraycopy(arr, valIdx, result, valIdx + blen, alen - valIdx);
+      System.arraycopy(insert, 0, result, valIdx, bLen);
+      System.arraycopy(arr, valIdx, result, valIdx + bLen, aLen - valIdx);
 
       return result;
    }
@@ -544,27 +545,27 @@ public abstract class Mesh extends EntityData implements IMesh {
       /**
        * Quantization level.
        */
-      final public int levels;
+      public final int levels;
 
       /**
        * Quantization level cast to a float.
        */
-      final protected float levf;
+      protected final float levf;
 
       /**
        * Inverse of the quantization level.
        */
-      final protected float levInv;
+      protected final float levInv;
 
       /**
        * Internal vector to hold quantized left operand.
        */
-      final protected Vec2 qa;
+      protected final Vec2 qa;
 
       /**
        * Internal vector to hold quantized right operand.
        */
-      final protected Vec2 qb;
+      protected final Vec2 qb;
 
       {
          this.qa = new Vec2();
@@ -640,27 +641,27 @@ public abstract class Mesh extends EntityData implements IMesh {
       /**
        * Quantization level.
        */
-      final public int levels;
+      public final int levels;
 
       /**
        * Quantization level cast to a float.
        */
-      final protected float levf;
+      protected final float levf;
 
       /**
        * Inverse of the quantization level.
        */
-      final protected float levInv;
+      protected final float levInv;
 
       /**
        * Internal vector to hold quantized left operand.
        */
-      final protected Vec3 qa;
+      protected final Vec3 qa;
 
       /**
        * Internal vector to hold quantized right operand.
        */
-      final protected Vec3 qb;
+      protected final Vec3 qb;
 
       {
          this.qa = new Vec3();

@@ -110,17 +110,6 @@ public class Transform2 extends Transform implements ISpatial2, IOriented2,
    }
 
    /**
-    * Creates a new transform with the components of this transform.
-    *
-    * @return the cloned transform
-    */
-   @Override
-   public Transform2 clone ( ) {
-
-      return new Transform2(this.location, this.rotation, this.scale);
-   }
-
-   /**
     * Tests this transform for equivalence with an object.
     *
     * @param obj the object
@@ -976,10 +965,6 @@ public class Transform2 extends Transform implements ISpatial2, IOriented2,
    public static Transform2 fromAxes ( final float xRight, final float yForward,
       final float yRight, final float xForward, final Transform2 target ) {
 
-      // target.locPrev.reset();
-      // target.rotPrev = 0.0f;
-      // Vec2.one(target.scalePrev);
-
       target.locPrev.set(target.location);
       target.rotPrev = target.rotation;
       target.scalePrev.set(target.scale);
@@ -1054,10 +1039,6 @@ public class Transform2 extends Transform implements ISpatial2, IOriented2,
    public static Transform2 fromDir ( final Vec2 dir,
       final Handedness handedness, final Transform2 target ) {
 
-      // target.locPrev.reset();
-      // target.rotPrev = 0.0f;
-      // Vec2.one(target.scalePrev);
-
       target.locPrev.set(target.location);
       target.rotPrev = target.rotation;
       target.scalePrev.set(target.scale);
@@ -1102,10 +1083,6 @@ public class Transform2 extends Transform implements ISpatial2, IOriented2,
     * @see Vec2#forward(Vec2)
     */
    public static Transform2 identity ( final Transform2 target ) {
-
-      // target.locPrev.reset();
-      // target.rotPrev = 0.0f;
-      // Vec2.one(target.scalePrev);
 
       target.locPrev.set(target.location);
       target.rotPrev = target.rotation;

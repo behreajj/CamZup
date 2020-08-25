@@ -6,7 +6,7 @@ package camzup.core;
  * normal.
  */
 @Experimental
-class Indices3 implements Cloneable, Comparable < Indices3 > {
+class Indices3 implements Comparable < Indices3 > {
 
    /**
     * The coordinate index.
@@ -46,12 +46,6 @@ class Indices3 implements Cloneable, Comparable < Indices3 > {
 
       this.set(vIdx, vtIdx, vnIdx);
    }
-
-   /**
-    * Returns a new indices set with this indices set's components.
-    */
-   @Override
-   public Indices3 clone ( ) { return new Indices3(this.v, this.vt, this.vn); }
 
    /**
     * Returns -1 when this indices set is less than the comparisand; 1 when it

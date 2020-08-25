@@ -5,7 +5,7 @@ package camzup.core;
  * anchor point), fore handle (the following control point) and rear handle
  * (the preceding control point).
  */
-public class Knot2 implements Cloneable, Comparable < Knot2 > {
+public class Knot2 implements Comparable < Knot2 > {
 
    /**
     * The spatial coordinate of the knot.
@@ -242,17 +242,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       }
 
       return this;
-   }
-
-   /**
-    * Creates a new knot with the coordinate and handles of this knot.
-    *
-    * @return a new knot
-    */
-   @Override
-   public Knot2 clone ( ) {
-
-      return new Knot2(this.coord, this.foreHandle, this.rearHandle);
    }
 
    /**
@@ -1301,7 +1290,6 @@ public class Knot2 implements Cloneable, Comparable < Knot2 > {
       final float forex = coNext.x - coCurr.x;
       final float forey = coNext.y - coCurr.y;
 
-      // TODO: Can these use unchecked inv sqrt instead?
       final float bmSq = backx * backx + backy * backy;
       final float bmInv = Utils.invSqrt(bmSq);
 

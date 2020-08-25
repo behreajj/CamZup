@@ -7,7 +7,7 @@ import java.util.Comparator;
  * Equality and hash are based solely on the step, not on the color it
  * holds.
  */
-public class ColorKey implements Comparable < ColorKey >, Cloneable {
+public class ColorKey implements Comparable < ColorKey > {
 
    /**
     * The key's color. Abbreviated to 'clr' because 'color' is a data type in
@@ -103,17 +103,6 @@ public class ColorKey implements Comparable < ColorKey >, Cloneable {
 
       this.set(step, red, green, blue, alpha);
    }
-
-   /**
-    * Returns a new color with this color's components. Java's cloneable
-    * interface is problematic; use set or a copy constructor instead.
-    *
-    * @return a new key
-    *
-    * @see ColorKey#set(ColorKey)
-    */
-   @Override
-   public ColorKey clone ( ) { return new ColorKey(this.step, this.clr); }
 
    /**
     * Returns -1 when this key is less than the comparisand; 1 when it is

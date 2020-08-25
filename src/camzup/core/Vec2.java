@@ -9,8 +9,7 @@ import java.util.Iterator;
  * two-dimensional graphics programs. Instance methods are limited, while
  * most static methods require an explicit output variable to be provided.
  */
-public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
-   Float > {
+public class Vec2 implements Comparable < Vec2 >, Iterable < Float > {
 
    /**
     * Component on the x axis in the Cartesian coordinate system.
@@ -62,18 +61,6 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     * @param v the source vector
     */
    public Vec2 ( final Vec2 v ) { this.set(v); }
-
-   /**
-    * Returns a new vector with this vector's components. Java's cloneable
-    * interface is problematic; use set or a copy constructor instead.
-    *
-    * @return a new vector
-    *
-    * @see Vec2#set(Vec2)
-    * @see Vec2#Vec2(Vec2)
-    */
-   @Override
-   public Vec2 clone ( ) { return new Vec2(this.x, this.y); }
 
    /**
     * Returns -1 when this vector is less than the comparisand; 1 when it is
@@ -231,8 +218,8 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public Vec2 set ( final String xstr, final String ystr ) {
 
-      float xprs = 0.0f;
-      float yprs = 0.0f;
+      float xprs;
+      float yprs;
 
       try {
          xprs = Float.parseFloat(xstr);
@@ -893,28 +880,28 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     */
    public static Vec2[] concat ( final Vec2[] a, final Vec2[] b ) {
 
-      final boolean anull = a == null;
-      final boolean bnull = b == null;
+      final boolean aNull = a == null;
+      final boolean bNull = b == null;
 
-      if ( anull && bnull ) { return new Vec2[] {}; }
+      if ( aNull && bNull ) { return new Vec2[] {}; }
 
-      if ( anull ) {
-         final Vec2[] result = new Vec2[b.length];
-         System.arraycopy(b, 0, result, 0, b.length);
-         return result;
+      if ( aNull ) {
+         final Vec2[] result0 = new Vec2[b.length];
+         System.arraycopy(b, 0, result0, 0, b.length);
+         return result0;
       }
 
-      if ( bnull ) {
-         final Vec2[] result = new Vec2[a.length];
-         System.arraycopy(a, 0, result, 0, a.length);
-         return result;
+      if ( bNull ) {
+         final Vec2[] result1 = new Vec2[a.length];
+         System.arraycopy(a, 0, result1, 0, a.length);
+         return result1;
       }
 
-      final int alen = a.length;
-      final int blen = b.length;
-      final Vec2[] result = new Vec2[alen + blen];
-      System.arraycopy(a, 0, result, 0, alen);
-      System.arraycopy(b, 0, result, alen, blen);
+      final int aLen = a.length;
+      final int bLen = b.length;
+      final Vec2[] result = new Vec2[aLen + bLen];
+      System.arraycopy(a, 0, result, 0, aLen);
+      System.arraycopy(b, 0, result, aLen, bLen);
       return result;
    }
 
@@ -1201,8 +1188,9 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
        * Copy each inner array to the result array, then move the cursor by the
        * length of each array.
        */
+      int j = 0;
       final Vec2[] result = new Vec2[totalLen];
-      for ( int j = 0, i = 0; i < sourceLen; ++i ) {
+      for ( int i = 0; i < sourceLen; ++i ) {
          final Vec2[] arrInner = arr[i];
          final int len = arrInner.length;
          System.arraycopy(arrInner, 0, result, j, len);
@@ -1464,17 +1452,12 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
 
          /* Shift alternating cells by positive or negative offset. */
          final float xoff = i % 2 != 0 ? -w : w;
-         // final int joff = i / 2 + 1;
-         // final int joff = Utils.ceilToInt(i * 0.5f);
-
          for ( int j = 0; j < vcnt; ++j ) {
 
             /*
              * Shift indices so that they move smoothly along a diagonal between
              * hex edges, not along a jagged, orthogonal path.
              */
-            // final int k = Utils.mod(j - joff, vcnt);
-            // row[k] = new Vec2(xoff + xs[j], y);
             row[j] = new Vec2(xoff + xs[j], y);
          }
       }
@@ -2900,27 +2883,12 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
     * An abstract class that may serve as an umbrella for any custom
     * comparators of Vec2 s.
     */
-   public static abstract class AbstrComparator implements Comparator < Vec2 > {
+   public abstract static class AbstrComparator implements Comparator < Vec2 > {
 
       /**
        * The default constructor.
        */
       public AbstrComparator ( ) {}
-
-      /**
-       * The compare function which must be implemented by sub- (child) classes
-       * of this class. Negative one should be returned when the left
-       * comparisand, a, is less than the right comparisand, b, by a measure.
-       * One should be returned when it is greater. Zero should be returned as a
-       * last resort, when a and b are equal or incomparable.
-       *
-       * @param a the left comparisand
-       * @param b the right comparisand
-       *
-       * @return the comparison
-       */
-      @Override
-      public abstract int compare ( final Vec2 a, final Vec2 b );
 
       /**
        * Returns the simple name of this class.
@@ -2935,7 +2903,7 @@ public class Vec2 implements Comparable < Vec2 >, Cloneable, Iterable <
    /**
     * An abstract class to facilitate the creation of vector easing functions.
     */
-   public static abstract class AbstrEasing implements Utils.EasingFuncObj <
+   public abstract static class AbstrEasing implements Utils.EasingFuncObj <
       Vec2 > {
 
       /**

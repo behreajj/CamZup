@@ -9,11 +9,6 @@ import processing.opengl.PGL;
 public interface IUpOgl extends IUp {
 
    /**
-    * Sets default perspective and calls a perspective function.
-    */
-   void defaultPerspective ( );
-
-   /**
     * Returns whether or not the renderer is 2D.
     *
     * @return the evaluation

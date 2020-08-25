@@ -9,7 +9,7 @@ import java.util.Iterator;
  * Instance methods are limited, while most static methods require an
  * explicit output variable to be provided.
  */
-public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
+public class Mat3 implements Iterable < Float > {
 
    /**
     * Component in row 0, column 0. The right axis x component.
@@ -139,23 +139,6 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
    public Mat3 ( final Mat3 source ) { this.set(source); }
 
    /**
-    * Returns a new matrix with this matrix's components. Java's cloneable
-    * interface is problematic; use set or a copy constructor instead.
-    *
-    * @return a new matrix
-    */
-   @Override
-   public Mat3 clone ( ) {
-
-      /* @formatter:off */
-      return new Mat3(
-         this.m00, this.m01, this.m02,
-         this.m10, this.m11, this.m12,
-         this.m20, this.m21, this.m22);
-      /* @formatter:on */
-   }
-
-   /**
     * Tests to see if the matrix contains a value.
     *
     * @param v the value
@@ -172,8 +155,7 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
       if ( Utils.approx(this.m12, v) ) { return true; }
       if ( Utils.approx(this.m20, v) ) { return true; }
       if ( Utils.approx(this.m21, v) ) { return true; }
-      if ( Utils.approx(this.m22, v) ) { return true; }
-      return false;
+      return Utils.approx(this.m22, v);
    }
 
    /**
@@ -192,22 +174,6 @@ public class Mat3 implements IUtils, Cloneable, Iterable < Float > {
       if ( obj == null ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
       return this.equals(( Mat3 ) obj);
-   }
-
-   /**
-    * Gets a column vector from this matrix. For interoperability with Kotlin:
-    * <code>b = a[i]</code> .
-    *
-    * @param j the column index
-    *
-    * @return the column vector
-    *
-    * @see Mat3#getCol(int, Vec3)
-    */
-   public Vec3 get ( final int j ) {
-
-      // TODO: Move to KtMat3
-      return this.getCol(j, new Vec3());
    }
 
    /**

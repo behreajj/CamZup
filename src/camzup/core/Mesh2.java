@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -17,13 +18,13 @@ import java.util.TreeSet;
 public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
-    * An array of coordinates in the mesh.
+    * An array of coordinates.
     */
    public Vec2[] coords;
 
    /**
     * The texture (UV) coordinates that describe how an image is mapped onto
-    * the geometry of the mesh. Typically in the range [0.0, 1.0].
+    * the mesh. Typically in the range [0.0, 1.0] .
     */
    public Vec2[] texCoords;
 
@@ -615,8 +616,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public Mesh2 insetFaces ( final int itr, final float fac ) {
 
       for ( int i = 0; i < itr; ++i ) {
+         int k = 0;
          final int len = this.faces.length;
-         for ( int j = 0, k = 0; j < len; ++j ) {
+         for ( int j = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
             this.insetFace(k, fac);
             k += vertLen + 1;
@@ -1012,8 +1014,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int i = Utils.mod(faceIdx, this.faces.length);
       final int faceLen = this.faces[i].length;
       final int vcount = count < 1 ? 1 : count;
-
-      for ( int j = 0, k = 0; j < faceLen; ++j ) {
+      int k = 0;
+      for ( int j = 0; j < faceLen; ++j ) {
          this.roundCorner(faceIdx, k, radius, vcount);
          k += vcount;
       }
@@ -1129,9 +1131,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             final int[] target2 = new int[fslen2];
             target1[j] = target2;
 
-            for ( int k = 0; k < fslen2; ++k ) {
-               target2[k] = source2[k];
-            }
+            System.arraycopy(source2, 0, target2, 0, fslen2);
          }
       }
 
@@ -1350,8 +1350,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             { vsOldLen + k, vtsOldLen + k } };
          /* @formatter:on */
 
-         centerFace[j][0] = vSubdivIdx;
-         centerFace[j][1] = vtSubdivIdx;
+         final int[] centerVert = centerFace[j];
+         centerVert[0] = vSubdivIdx;
+         centerVert[1] = vtSubdivIdx;
       }
 
       this.coords = Vec2.concat(this.coords, vsNew);
@@ -1393,8 +1394,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public Mesh2 subdivFacesCenter ( final int itr ) {
 
       for ( int i = 0; i < itr; ++i ) {
+         int k = 0;
          final int len = this.faces.length;
-         for ( int j = 0, k = 0; j < len; ++j ) {
+         for ( int j = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
             this.subdivFaceCenter(k);
             k += vertLen;
@@ -1416,8 +1418,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public Mesh2 subdivFacesFan ( final int itr ) {
 
       for ( int i = 0; i < itr; ++i ) {
+         int k = 0;
          final int len = this.faces.length;
-         for ( int j = 0, k = 0; j < len; ++j ) {
+         for ( int j = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
             this.subdivFaceFan(k);
             k += vertLen;
@@ -1439,8 +1442,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public Mesh2 subdivFacesInscribe ( final int itr ) {
 
       for ( int i = 0; i < itr; ++i ) {
+         int k = 0;
          final int len = this.faces.length;
-         for ( int j = 0, k = 0; j < len; ++j ) {
+         for ( int j = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
             this.subdivFaceInscribe(k);
             k += vertLen + 1;
@@ -1869,10 +1873,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    protected boolean equals ( final Mesh2 mesh2 ) {
 
-      if ( !Arrays.equals(this.coords, mesh2.coords) ) { return false; }
-      if ( !Arrays.deepEquals(this.faces, mesh2.faces) ) { return false; }
-
-      return true;
+      return Arrays.equals(this.coords, mesh2.coords) && Arrays.deepEquals(
+         this.faces, mesh2.faces);
    }
 
    /**
@@ -2762,23 +2764,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Returns a collection of mesh vertices organized by their proximity to a
     * point. The proximity is expressed as a factor where the nearest vertex
-    * is on the nearBound; the farthest is on the farBound.
-    *
-    * @param m the mesh
-    * @param p the point
-    *
-    * @return the collection
-    */
-   @Experimental
-   public static TreeMap < Float, Vert2 > proximity ( final Mesh2 m,
-      final Vec2 p ) {
-
-      return Mesh2.proximity(m, p, 1.0f, 0.0f);
-   }
-
-   /**
-    * Returns a collection of mesh vertices organized by their proximity to a
-    * point. The proximity is expressed as a factor where the nearest vertex
     * is on the nearBound; the farthest is on the farBound. Any function which
     * mutates a vertex's properties by such a factor can be applied to the
     * collection.<br>
@@ -2798,8 +2783,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @see Mesh2#getVertices()
     * @see Vec2#distSq(Vec2, Vec2)
     */
-   public static TreeMap < Float, Vert2 > proximity ( final Mesh2 m,
-      final Vec2 p, final float nearBound, final float farBound ) {
+   public static Map < Float, Vert2 > proximity ( final Mesh2 m, final Vec2 p,
+      final float nearBound, final float farBound ) {
 
       final Vert2[] verts = m.getVertices();
       final int vertLen = verts.length;

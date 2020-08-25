@@ -148,6 +148,26 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
+    * Tests this entity for equivalence with another object.
+    *
+    * @param obj the object
+    *
+    * @return the evaluation
+    */
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if ( this == obj ) { return true; }
+      if ( !super.equals(obj) ) { return false; }
+      if ( this.getClass() != obj.getClass() ) { return false; }
+      final MeshEntity2 other = ( MeshEntity2 ) obj;
+      if ( this.meshes == null ) {
+         if ( other.meshes != null ) { return false; }
+      } else if ( !this.meshes.equals(other.meshes) ) { return false; }
+      return true;
+   }
+
+   /**
     * Gets a mesh from this mesh entity.
     *
     * @param i the index
@@ -172,6 +192,21 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public Vec2 getScale ( final Vec2 target ) {
 
       return this.transform.getScale(target);
+   }
+
+   /**
+    * Returns a hash code for this entity based on its array of entity data.
+    *
+    * @return the hash
+    */
+   @Override
+   public int hashCode ( ) {
+
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ( this.meshes == null ? 0 : this.meshes
+         .hashCode() );
+      return result;
    }
 
    /**

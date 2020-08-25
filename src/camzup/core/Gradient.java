@@ -14,7 +14,7 @@ import java.util.regex.Pattern;
  * colors at steps in the range [0.0, 1.0] . Allows smooth color
  * transitions to be evaluated by a factor.
  */
-public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
+public class Gradient implements IUtils, Iterable < ColorKey > {
 
    /**
     * The set of keys.
@@ -284,14 +284,6 @@ public class Gradient implements IUtils, Cloneable, Iterable < ColorKey > {
 
       return this;
    }
-
-   /**
-    * Creates a clone of this gradient
-    *
-    * @return the clone
-    */
-   @Override
-   public Gradient clone ( ) { return new Gradient(this); }
 
    /**
     * Checks to see if this gradient contains a specified key.

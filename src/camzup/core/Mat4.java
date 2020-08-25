@@ -9,7 +9,7 @@ import java.util.Iterator;
  * 1.0) . Instance methods are limited, while most static methods require
  * an explicit output variable to be provided.
  */
-public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
+public class Mat4 implements Iterable < Float > {
 
    /**
     * Component in row 0, column 0. The right axis x component.
@@ -209,24 +209,6 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
    public Mat4 ( final Mat4 source ) { this.set(source); }
 
    /**
-    * Returns a new matrix with this matrix's components. Java's cloneable
-    * interface is problematic; use set or a copy constructor instead.
-    *
-    * @return a new matrix
-    */
-   @Override
-   public Mat4 clone ( ) {
-
-      /* @formatter:off */
-      return new Mat4(
-         this.m00, this.m01, this.m02, this.m03,
-         this.m10, this.m11, this.m12, this.m13,
-         this.m20, this.m21, this.m22, this.m23,
-         this.m30, this.m31, this.m32, this.m33);
-      /* @formatter:on */
-   }
-
-   /**
     * Tests to see if the matrix contains a value.
     *
     * @param v the value
@@ -250,8 +232,7 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
       if ( Utils.approx(this.m30, v) ) { return true; }
       if ( Utils.approx(this.m31, v) ) { return true; }
       if ( Utils.approx(this.m32, v) ) { return true; }
-      if ( Utils.approx(this.m33, v) ) { return true; }
-      return false;
+      return Utils.approx(this.m33, v);
    }
 
    /**
@@ -270,22 +251,6 @@ public class Mat4 implements IUtils, Cloneable, Iterable < Float > {
       if ( obj == null ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
       return this.equals(( Mat4 ) obj);
-   }
-
-   /**
-    * Gets a column vector from this matrix. For interoperability with Kotlin:
-    * <code>b = a[i]</code> .
-    *
-    * @param j the column index
-    *
-    * @return the column vector
-    *
-    * @see Mat4#getCol(int, Vec4)
-    */
-   public Vec4 get ( final int j ) {
-
-      // TODO: Move to KtMat4.
-      return this.getCol(j, new Vec4());
    }
 
    /**

@@ -250,6 +250,10 @@ public class ZImage extends PImage {
    public static PImage falseColor ( final Gradient grd, final Function <
       Integer, Float > clrEval, final PImage target ) {
 
+      // TODO Refactor this code to use the more specialised Functional
+      // Interface 'IntFunction<Float>'
+      // sonarlint(java:S4276)
+
       target.loadPixels();
       final int[] px = target.pixels;
       final int len = px.length;

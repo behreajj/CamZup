@@ -401,7 +401,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @return the model view
     */
    @Override
-   public PMatrix2D getMatrix ( ) { return this.getMatrix(( PMatrix2D ) null); }
+   public PMatrix2D getMatrix ( ) { return this.getMatrix(new PMatrix2D()); }
 
    /**
     * Gets the renderer model view matrix.
@@ -1224,7 +1224,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * by PShapes.
     */
    @Override
-   public void shapeMode ( final int mode ) {}
+   public void shapeMode ( final int mode ) { /* Unsupported. */ }
 
    /**
     * Draws a square at a location.

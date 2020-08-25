@@ -36,16 +36,6 @@ public abstract class PMatAux {
    }
 
    /**
-    * Returns a matrix set to the Bezier curve basis inverse.
-    *
-    * @return the Bezier basis
-    */
-   public static PMatrix3D bezierBasisInverse ( ) {
-
-      return PMatAux.bezierBasisInverse(( PMatrix3D ) null);
-   }
-
-   /**
     * Returns a matrix set to the Bezier curve basis inverse:
     *
     * <pre>
@@ -59,9 +49,7 @@ public abstract class PMatAux {
     *
     * @return the Bezier basis
     */
-   public static PMatrix3D bezierBasisInverse ( PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+   public static PMatrix3D bezierBasisInverse ( final PMatrix3D target ) {
 
       target.set(0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.33333334f, 1.0f, 0.0f,
          0.33333334f, 0.66666666f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
@@ -73,27 +61,13 @@ public abstract class PMatAux {
     * Returns a matrix set to the Catmull-Rom basis, according to a curve
     * tightness.
     *
-    * @param s the curve tightness
-    *
-    * @return the basis
-    */
-   public static PMatrix3D catmullBasis ( final float s ) {
-
-      return PMatAux.catmullBasis(s, ( PMatrix3D ) null);
-   }
-
-   /**
-    * Returns a matrix set to the Catmull-Rom basis, according to a curve
-    * tightness.
-    *
     * @param s      the curve tightness
     * @param target the output matrix
     *
     * @return the basis
     */
-   public static PMatrix3D catmullBasis ( final float s, PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+   public static PMatrix3D catmullBasis ( final float s,
+      final PMatrix3D target ) {
 
       final float u = 1.0f - s;
       final float sh = s * 0.5f;
@@ -127,11 +101,8 @@ public abstract class PMatAux {
     * @return the matrix
     */
    public static PMatrix3D compoundRotate ( final float c, final float s,
-      final float xAxis, final float yAxis, final float zAxis, PMatrix3D m,
-      PMatrix3D mInv ) {
-
-      if ( m == null ) { m = new PMatrix3D(); }
-      if ( mInv == null ) { mInv = new PMatrix3D(); }
+      final float xAxis, final float yAxis, final float zAxis,
+      final PMatrix3D m, final PMatrix3D mInv ) {
 
       final float sax = s * xAxis;
       final float say = s * yAxis;
@@ -229,10 +200,7 @@ public abstract class PMatAux {
     * @return the rotated matrix
     */
    public static PMatrix3D compoundRotateZ ( final float c, final float s,
-      PMatrix3D m, PMatrix3D mInv ) {
-
-      if ( m == null ) { m = new PMatrix3D(); }
-      if ( mInv == null ) { mInv = new PMatrix3D(); }
+      final PMatrix3D m, final PMatrix3D mInv ) {
 
       /* @formatter:off */
       m.set(
@@ -274,34 +242,13 @@ public abstract class PMatAux {
     * @param top    the top edge of the window
     * @param near   the near clip plane
     * @param far    the far clip plane
-    *
-    * @return the view frustum
-    */
-   public static PMatrix3D frustum ( final float left, final float right,
-      final float bottom, final float top, final float near, final float far ) {
-
-      return PMatAux.frustum(left, right, bottom, top, near, far,
-         ( PMatrix3D ) null);
-   }
-
-   /**
-    * Creates a view frustum given the edges of the view port.
-    *
-    * @param left   the left edge of the window
-    * @param right  the right edge of the window
-    * @param bottom the bottom edge of the window
-    * @param top    the top edge of the window
-    * @param near   the near clip plane
-    * @param far    the far clip plane
     * @param target the output matrix
     *
     * @return the view frustum
     */
    public static PMatrix3D frustum ( final float left, final float right,
       final float bottom, final float top, final float near, final float far,
-      PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final PMatrix3D target ) {
 
       final float n2 = near + near;
 
@@ -391,9 +338,8 @@ public abstract class PMatAux {
     *
     * @return the matrix
     */
-   public static PMatrix3D invRotate ( final Quaternion q, PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+   public static PMatrix3D invRotate ( final Quaternion q,
+      final PMatrix3D target ) {
 
       // TODO: Remove the use of this static object.
       Quaternion.inverse(q, PMatAux.ROT_INV);
@@ -451,19 +397,6 @@ public abstract class PMatAux {
     * Inverse rotates a matrix in place by an angle in radians around the x
     * axis.
     *
-    * @param radians the angle in radians
-    *
-    * @return the rotated matrix
-    */
-   public static PMatrix3D invRotateX ( final float radians ) {
-
-      return PMatAux.invRotateX(radians, ( PMatrix3D ) null);
-   }
-
-   /**
-    * Inverse rotates a matrix in place by an angle in radians around the x
-    * axis.
-    *
     * @param c      the cosine of the angle
     * @param s      the sine of the angle
     * @param target the output matrix
@@ -471,9 +404,7 @@ public abstract class PMatAux {
     * @return the rotated matrix
     */
    public static PMatrix3D invRotateX ( final float c, final float s,
-      PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final PMatrix3D target ) {
 
       /* @formatter:off */
       target.set(
@@ -512,19 +443,6 @@ public abstract class PMatAux {
     * Inverse rotates a matrix in place by an angle in radians around the y
     * axis.
     *
-    * @param radians the angle in radians
-    *
-    * @return the rotated matrix
-    */
-   public static PMatrix3D invRotateY ( final float radians ) {
-
-      return PMatAux.invRotateY(radians, ( PMatrix3D ) null);
-   }
-
-   /**
-    * Inverse rotates a matrix in place by an angle in radians around the y
-    * axis.
-    *
     * @param c      the cosine of the angle
     * @param s      the sine of the angle
     * @param target the output matrix
@@ -532,9 +450,7 @@ public abstract class PMatAux {
     * @return the rotated matrix
     */
    public static PMatrix3D invRotateY ( final float c, final float s,
-      PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final PMatrix3D target ) {
 
       /* @formatter:off */
       target.set(
@@ -573,19 +489,6 @@ public abstract class PMatAux {
     * Inverse rotates a matrix in place by an angle in radians around the z
     * axis.
     *
-    * @param radians the angle in radians
-    *
-    * @return the rotated matrix
-    */
-   public static PMatrix3D invRotateZ ( final float radians ) {
-
-      return PMatAux.invRotateZ(radians, ( PMatrix3D ) null);
-   }
-
-   /**
-    * Inverse rotates a matrix in place by an angle in radians around the z
-    * axis.
-    *
     * @param c      the cosine of the angle
     * @param s      the sine of the angle
     * @param target the output matrix
@@ -593,9 +496,7 @@ public abstract class PMatAux {
     * @return the rotated matrix
     */
    public static PMatrix3D invRotateZ ( final float c, final float s,
-      PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final PMatrix3D target ) {
 
       /* @formatter:off */
       target.set(
@@ -643,9 +544,7 @@ public abstract class PMatAux {
     * @return the scaled matrix
     */
    public static PMatrix3D invScale ( final float xScale, final float yScale,
-      final float zScale, PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final float zScale, final PMatrix3D target ) {
 
       final float x = xScale != 0.0f ? 1.0f / xScale : 1.0f;
       final float y = yScale != 0.0f ? 1.0f / yScale : 1.0f;
@@ -707,9 +606,7 @@ public abstract class PMatAux {
     * @return the translated matrix
     */
    public static PMatrix3D invTranslate ( final float tx, final float ty,
-      final float tz, PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final float tz, final PMatrix3D target ) {
 
       /* @formatter:off */
       target.set(
@@ -753,24 +650,6 @@ public abstract class PMatAux {
     * commutative, so the PMatrix3D class calls in-place multiplication
     * "apply" and "preApply."
     *
-    * @param a the left operand
-    * @param b the right operand
-    *
-    * @return the product
-    *
-    * @see PMatrix3D#apply(PMatrix3D)
-    * @see PMatrix3D#preApply(PMatrix3D)
-    */
-   public static PMatrix3D mul ( final PMatrix3D a, final PMatrix3D b ) {
-
-      return PMatAux.mul(a, b, ( PMatrix3D ) null);
-   }
-
-   /**
-    * Multiplies two matrices together. Matrix multiplication is not
-    * commutative, so the PMatrix3D class calls in-place multiplication
-    * "apply" and "preApply."
-    *
     * @param a      the left operand
     * @param b      the right operand
     * @param target the output matrix
@@ -781,9 +660,7 @@ public abstract class PMatAux {
     * @see PMatrix3D#preApply(PMatrix3D)
     */
    public static PMatrix3D mul ( final PMatrix3D a, final PMatrix3D b,
-      PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final PMatrix3D target ) {
 
       target.set(a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30,
          a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21 + a.m03 * b.m31, a.m00
@@ -901,35 +778,13 @@ public abstract class PMatAux {
     * @param top    the top edge of the window
     * @param near   the near clip plane
     * @param far    the far clip plane
-    *
-    * @return the orthographic projection
-    */
-   public static PMatrix3D orthographic ( final float left, final float right,
-      final float bottom, final float top, final float near, final float far ) {
-
-      return PMatAux.orthographic(left, right, bottom, top, near, far,
-         ( PMatrix3D ) null);
-   }
-
-   /**
-    * Creates an orthographic projection matrix, where objects maintain their
-    * size regardless of distance from the camera.
-    *
-    * @param left   the left edge of the window
-    * @param right  the right edge of the window
-    * @param bottom the bottom edge of the window
-    * @param top    the top edge of the window
-    * @param near   the near clip plane
-    * @param far    the far clip plane
     * @param target the output matrix
     *
     * @return the orthographic projection
     */
    public static PMatrix3D orthographic ( final float left, final float right,
       final float bottom, final float top, final float near, final float far,
-      PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final PMatrix3D target ) {
 
       float w = right - left;
       float h = top - bottom;
@@ -957,31 +812,12 @@ public abstract class PMatAux {
     * @param aspect the aspect ratio, width over height
     * @param near   the near clip plane
     * @param far    the far clip plane
-    *
-    * @return the perspective projection
-    */
-   public static PMatrix3D perspective ( final float fov, final float aspect,
-      final float near, final float far ) {
-
-      return PMatAux.perspective(fov, aspect, near, far, ( PMatrix3D ) null);
-   }
-
-   /**
-    * Creates a perspective projection matrix, where objects nearer to the
-    * camera appear larger than objects distant from the camera.
-    *
-    * @param fov    the field of view
-    * @param aspect the aspect ratio, width over height
-    * @param near   the near clip plane
-    * @param far    the far clip plane
     * @param target the output matrix
     *
     * @return the perspective projection
     */
    public static PMatrix3D perspective ( final float fov, final float aspect,
-      final float near, final float far, PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final float near, final float far, final PMatrix3D target ) {
 
       final float cotfov = Utils.cot(fov * 0.5f);
       final float d = Utils.div(1.0f, far - near);
@@ -990,23 +826,6 @@ public abstract class PMatAux {
             * -d, 0.0f, 0.0f, -1.0f, 0.0f);
 
       return target;
-   }
-
-   /**
-    * Rotates a matrix in place around an arbitrary axis by the sine and
-    * cosine of an angle. Does not check that the axis is normalized.
-    *
-    * @param radians the angle in radians
-    * @param xAxis   the axis x component
-    * @param yAxis   the axis y component
-    * @param zAxis   the axis z component
-    *
-    * @return the rotated matrix
-    */
-   public static PMatrix3D rotate ( final float radians, final float xAxis,
-      final float yAxis, final float zAxis ) {
-
-      return PMatAux.rotate(radians, xAxis, yAxis, zAxis, ( PMatrix3D ) null);
    }
 
    /**
@@ -1024,9 +843,7 @@ public abstract class PMatAux {
     */
    public static PMatrix3D rotate ( final float c, final float s,
       final float xAxis, final float yAxis, final float zAxis,
-      PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final PMatrix3D target ) {
 
       final float t = 1.0f - c;
       final float tax = t * xAxis;
@@ -1096,18 +913,6 @@ public abstract class PMatAux {
    }
 
    /**
-    * Rotates a matrix by a quaternion in place.
-    *
-    * @param q the quaternion
-    *
-    * @return the matrix
-    */
-   public static PMatrix3D rotate ( final Quaternion q ) {
-
-      return PMatAux.rotate(q, ( PMatrix3D ) null);
-   }
-
-   /**
     * Rotates a matrix by a quaternion in place. Does so by converting the
     * quaternion to a matrix, then multiplying the input matrix and the
     * conversion.
@@ -1117,9 +922,8 @@ public abstract class PMatAux {
     *
     * @return the matrix
     */
-   public static PMatrix3D rotate ( final Quaternion q, PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+   public static PMatrix3D rotate ( final Quaternion q,
+      final PMatrix3D target ) {
 
       final float w = q.real;
       final Vec3 i = q.imag;
@@ -1181,19 +985,6 @@ public abstract class PMatAux {
     * PMatrix3D's instance methods for rotating around orthonormal axes defer
     * to rotation about an arbitrary axis. This is not necessary for rotate X.
     *
-    * @param radians the angle in radians
-    *
-    * @return the rotation matrix
-    */
-   public static PMatrix3D rotateX ( final float radians ) {
-
-      return PMatAux.rotateX(radians, ( PMatrix3D ) null);
-   }
-
-   /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer
-    * to rotation about an arbitrary axis. This is not necessary for rotate X.
-    *
     * @param c      the cosine of the angle
     * @param s      the sine of the angle
     * @param target the matrix
@@ -1201,9 +992,7 @@ public abstract class PMatAux {
     * @return the mutated matrix
     */
    public static PMatrix3D rotateX ( final float c, final float s,
-      PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final PMatrix3D target ) {
 
       float t1 = target.m01;
       float t2 = target.m02;
@@ -1255,19 +1044,6 @@ public abstract class PMatAux {
     * PMatrix3D's instance methods for rotating around orthonormal axes defer
     * to rotation about an arbitrary axis. This is not necessary for rotate Y.
     *
-    * @param radians the angle in radians
-    *
-    * @return the rotation matrix
-    */
-   public static PMatrix3D rotateY ( final float radians ) {
-
-      return PMatAux.rotateY(radians, ( PMatrix3D ) null);
-   }
-
-   /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer
-    * to rotation about an arbitrary axis. This is not necessary for rotate Y.
-    *
     * @param c      the cosine of the angle
     * @param s      the sine of the angle
     * @param target the matrix
@@ -1275,9 +1051,7 @@ public abstract class PMatAux {
     * @return the mutated matrix
     */
    public static PMatrix3D rotateY ( final float c, final float s,
-      PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final PMatrix3D target ) {
 
       float t0 = target.m00;
       float t2 = target.m02;
@@ -1329,19 +1103,6 @@ public abstract class PMatAux {
     * PMatrix3D's instance methods for rotating around orthonormal axes defer
     * to rotation about an arbitrary axis. This is not necessary for rotate Z.
     *
-    * @param radians the angle in radians
-    *
-    * @return the rotation matrix
-    */
-   public static PMatrix3D rotateZ ( final float radians ) {
-
-      return PMatAux.rotateZ(radians, ( PMatrix3D ) null);
-   }
-
-   /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer
-    * to rotation about an arbitrary axis. This is not necessary for rotate Z.
-    *
     * @param c      the cosine of the angle
     * @param s      the sine of the angle
     * @param target the matrix
@@ -1349,9 +1110,7 @@ public abstract class PMatAux {
     * @return the mutated matrix
     */
    public static PMatrix3D rotateZ ( final float c, final float s,
-      PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final PMatrix3D target ) {
 
       float t0 = target.m00;
       float t1 = target.m01;

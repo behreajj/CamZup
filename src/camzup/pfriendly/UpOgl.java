@@ -26,6 +26,7 @@ import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PGraphics;
 import processing.core.PImage;
+import processing.core.PMatrix;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
@@ -101,7 +102,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    {
       this.arc = new Curve2();
       this.aTemp = new Color();
-      this.bezierBasisInverse = PMatAux.bezierBasisInverse();
+      this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
       this.bTemp = new Color();
       this.cTemp = new Color();
       this.curveToBezierMatrix = new PMatrix3D();
@@ -629,20 +630,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Sets default camera and calls the camera function. Exposes the protected
-    * Processing function to public usage.
-    */
-   @Override
-   public abstract void defaultCamera ( );
-
-   /**
-    * Sets default perspective and calls a perspective function. Exposes the
-    * protected Processing function to public usage.
-    */
-   @Override
-   public abstract void defaultPerspective ( );
-
-   /**
     * Sets the renderer's default styling. This includes color mode, fill,
     * stroke, shape modes, fonts, textures and camera.
     */
@@ -926,6 +913,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public float getLocZ ( ) { return this.cameraZ; }
 
    /**
+    * Retrieves the renderer's matrix.
+    */
+   @Override
+   public PMatrix getMatrix ( ) { return this.getMatrix(new PMatrix3D()); }
+
+   /**
     * Gets the renderer model view matrix.
     *
     * @param target the output matrix
@@ -953,9 +946,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @return the model view
     */
    @Override
-   public PMatrix2D getMatrix ( PMatrix2D target ) {
+   public PMatrix2D getMatrix ( final PMatrix2D target ) {
 
-      if ( target == null ) { target = new PMatrix2D(); }
       target.set(this.modelview.m00, this.modelview.m01, this.modelview.m03,
          this.modelview.m10, this.modelview.m11, this.modelview.m13);
       return target;
@@ -969,9 +961,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @return the model view
     */
    @Override
-   public PMatrix3D getMatrix ( PMatrix3D target ) {
+   public PMatrix3D getMatrix ( final PMatrix3D target ) {
 
-      if ( target == null ) { target = new PMatrix3D(); }
       target.set(this.modelview);
       return target;
    }
@@ -1277,18 +1268,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Returns whether or not the renderer is 2D.
-    */
-   @Override
-   public abstract boolean is2D ( );
-
-   /**
-    * Returns whether or not the renderer is 3D.
-    */
-   @Override
-   public abstract boolean is3D ( );
-
-   /**
     * Returns whether or not depth sorting is enabled.
     *
     * @return the evaluation
@@ -1427,12 +1406,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.normalY = ny;
       this.normalZ = nz;
    }
-
-   /**
-    * Draws the world origin.
-    */
-   @Override
-   public abstract void origin ( );
 
    /**
     * Sets the renderer projection to orthographic, where objects maintain
@@ -1675,13 +1648,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void rect ( final float x1, final float y1, final float x2,
       final float y2 ) {
 
-      float a0 = 0.0f;
-      float b0 = 0.0f;
-      float a1 = 0.0f;
-      float b1 = 0.0f;
+      float a0;
+      float b0;
+      float a1;
+      float b1;
 
-      float w = 0.0f;
-      float h = 0.0f;
+      float w;
+      float h;
 
       switch ( this.rectMode ) {
 
@@ -3200,9 +3173,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * This will have to go untested... as this code is being written on a low
        * density monitor.
        */
-      final int pd = img.pixelDensity;
+      final float pd = img.pixelDensity;
       this.image(img, x1, y1, x2, y2, 0.0f, u1 * pd, v1 * pd, u2 * pd, v2 * pd);
-
       this.textureMode = savedTextureMode;
    }
 
@@ -3657,13 +3629,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float d, final float topLeft, final float topRight,
       final float bottomRight, final float bottomLeft ) {
 
-      float x1 = 0.0f;
-      float y1 = 0.0f;
-      float x2 = 0.0f;
-      float y2 = 0.0f;
+      float x1;
+      float y1;
+      float x2;
+      float y2;
 
-      float w = 0.0f;
-      float h = 0.0f;
+      float w;
+      float h;
 
       switch ( this.rectMode ) {
          case PConstants.CORNER:

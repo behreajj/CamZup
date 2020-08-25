@@ -81,9 +81,7 @@ public abstract class Convert {
 
          case PConstants.ARGB:
 
-            for ( int i = 0; i < pxLen; ++i ) {
-               pxTrg[i] = pxSrc[i];
-            }
+            System.arraycopy(pxSrc, 0, pxTrg, 0, pxLen);
 
             break;
 
@@ -177,24 +175,10 @@ public abstract class Convert {
       final int pxLen = pxSrc.length;
       final int[] pxTrg = pimg.pixels;
       pimg.loadPixels();
-      for ( int i = 0; i < pxLen; ++i ) {
-         pxTrg[i] = pxSrc[i];
-      }
+      System.arraycopy(pxSrc, 0, pxTrg, 0, pxLen);
       pimg.updatePixels();
 
       return pimg;
-   }
-
-   /**
-    * Converts a 3 x 3 matrix to a PMatrix2D.
-    *
-    * @param source the source matrix
-    *
-    * @return the PMatrix2D
-    */
-   public static PMatrix2D toPMatrix2D ( final Mat3 source ) {
-
-      return Convert.toPMatrix2D(source, ( PMatrix2D ) null);
    }
 
    /**
@@ -205,27 +189,12 @@ public abstract class Convert {
     *
     * @return the PMatrix2D
     */
-   public static PMatrix2D toPMatrix2D ( final Mat3 source, PMatrix2D target ) {
-
-      if ( target == null ) { target = new PMatrix2D(); }
+   public static PMatrix2D toPMatrix2D ( final Mat3 source,
+      final PMatrix2D target ) {
 
       target.set(source.m00, source.m01, source.m02, source.m01, source.m11,
          source.m12);
       return target;
-   }
-
-   /**
-    * Converts a 2D transform to a PMatrix2D.
-    *
-    * @param tr2   the transform
-    * @param order the transform order
-    *
-    * @return the matrix
-    */
-   public static PMatrix2D toPMatrix2D ( final Transform2 tr2,
-      final TransformOrder order ) {
-
-      return Convert.toPMatrix2D(tr2, order, ( PMatrix2D ) null);
    }
 
    /**
@@ -238,13 +207,9 @@ public abstract class Convert {
     * @return the matrix
     */
    public static PMatrix2D toPMatrix2D ( final Transform2 tr2,
-      final TransformOrder order, PMatrix2D target ) {
+      final TransformOrder order, final PMatrix2D target ) {
 
-      if ( target == null ) {
-         target = new PMatrix2D();
-      } else {
-         target.reset();
-      }
+      target.reset();
 
       final Vec2 dim = tr2.getScale(new Vec2());
       final Vec2 loc = tr2.getLocation(new Vec2());
@@ -354,26 +319,12 @@ public abstract class Convert {
     * Converts a quaternion to a PMatrix3D.
     *
     * @param source the quaternion
-    *
-    * @return the matrix
-    */
-   public static PMatrix3D toPMatrix3D ( final Quaternion source ) {
-
-      return Convert.toPMatrix3D(source, ( PMatrix3D ) null);
-   }
-
-   /**
-    * Converts a quaternion to a PMatrix3D.
-    *
-    * @param source the quaternion
     * @param target the matrix
     *
     * @return the matrix
     */
    public static PMatrix3D toPMatrix3D ( final Quaternion source,
-      PMatrix3D target ) {
-
-      if ( target == null ) { target = new PMatrix3D(); }
+      final PMatrix3D target ) {
 
       final float w = source.real;
       final Vec3 i = source.imag;
@@ -407,20 +358,6 @@ public abstract class Convert {
    /**
     * Converts a transform to a PMatrix3D.
     *
-    * @param tr3   the transform
-    * @param order the transform order
-    *
-    * @return the transform
-    */
-   public static PMatrix3D toPMatrix3D ( final Transform3 tr3,
-      final TransformOrder order ) {
-
-      return Convert.toPMatrix3D(tr3, order, ( PMatrix3D ) null);
-   }
-
-   /**
-    * Converts a transform to a PMatrix3D.
-    *
     * @param tr3    the transform
     * @param order  the transform order
     * @param target the output PMatrix3D
@@ -428,13 +365,9 @@ public abstract class Convert {
     * @return the transform
     */
    public static PMatrix3D toPMatrix3D ( final Transform3 tr3,
-      final TransformOrder order, PMatrix3D target ) {
+      final TransformOrder order, final PMatrix3D target ) {
 
-      if ( target == null ) {
-         target = new PMatrix3D();
-      } else {
-         target.reset();
-      }
+      target.reset();
 
       final Quaternion q = tr3.getRotation(new Quaternion());
       final Vec3 dim = tr3.getScale(new Vec3());
@@ -725,11 +658,11 @@ public abstract class Convert {
 
       final Knot2 firstKnot = itr.next();
       Knot2 prevKnot = firstKnot;
-      Knot2 currKnot = null;
+      Knot2 currKnot;
 
       Vec2 coord = prevKnot.coord;
-      Vec2 foreHandle = null;
-      Vec2 rearHandle = null;
+      Vec2 foreHandle;
+      Vec2 rearHandle;
 
       target.beginShape(PConstants.POLYGON);
       target.vertex(coord.x, coord.y);
@@ -1063,25 +996,12 @@ public abstract class Convert {
     * Converts a Vec2 to a PVector.
     *
     * @param source the source vector
-    *
-    * @return the vector
-    */
-   public static PVector toPVector ( final Vec2 source ) {
-
-      return Convert.toPVector(source, ( PVector ) null);
-   }
-
-   /**
-    * Converts a Vec2 to a PVector.
-    *
-    * @param source the source vector
     * @param target the target vector
     *
     * @return the vector
     */
-   public static PVector toPVector ( final Vec2 source, PVector target ) {
+   public static PVector toPVector ( final Vec2 source, final PVector target ) {
 
-      if ( target == null ) { target = new PVector(); }
       return target.set(source.x, source.y, 0.0f);
    }
 
@@ -1089,25 +1009,12 @@ public abstract class Convert {
     * Converts a Vec3 to a PVector.
     *
     * @param source the source vector
-    *
-    * @return the vector
-    */
-   public static PVector toPVector ( final Vec3 source ) {
-
-      return Convert.toPVector(source, ( PVector ) null);
-   }
-
-   /**
-    * Converts a Vec3 to a PVector.
-    *
-    * @param source the source vector
     * @param target the target vector
     *
     * @return the vector
     */
-   public static PVector toPVector ( final Vec3 source, PVector target ) {
+   public static PVector toPVector ( final Vec3 source, final PVector target ) {
 
-      if ( target == null ) { target = new PVector(); }
       return target.set(source.x, source.y, source.z);
    }
 

@@ -8,8 +8,7 @@ import java.util.Iterator;
  * serve as a parent class for colors. Instance methods are limited, while
  * most static methods require an explicit output variable to be provided.
  */
-public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
-   Float > {
+public class Vec4 implements Comparable < Vec4 >, Iterable < Float > {
 
    /**
     * Component on the w axis. Commonly used to store 1.0 for points and 0.0
@@ -112,18 +111,6 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     * @param source the source vector
     */
    public Vec4 ( final Vec4 source ) { this.set(source); }
-
-   /**
-    * Returns a new vector with this vector's components. Java's cloneable
-    * interface is problematic; use set or a copy constructor instead.
-    *
-    * @return a new vector
-    *
-    * @see Vec4#set(Vec4)
-    * @see Vec4#Vec4(Vec4)
-    */
-   @Override
-   public Vec4 clone ( ) { return new Vec4(this.x, this.y, this.z, this.w); }
 
    /**
     * Returns -1 when this vector is less than the comparisand; 1 when it is
@@ -310,10 +297,10 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    public Vec4 set ( final String xstr, final String ystr, final String zstr,
       final String wstr ) {
 
-      float xprs = 0.0f;
-      float yprs = 0.0f;
-      float zprs = 0.0f;
-      float wprs = 0.0f;
+      float xprs;
+      float yprs;
+      float zprs;
+      float wprs;
 
       try {
          xprs = Float.parseFloat(xstr);
@@ -774,9 +761,17 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
       final float yd = Utils.diff(a.y, b.y);
       final float zd = Utils.diff(a.z, b.z);
       final float wd = Utils.diff(a.w, b.w);
-      final float c0 = xd >= yd ? xd : xd < yd ? yd : 0.0f;
-      final float c1 = c0 >= zd ? c0 : c0 < zd ? zd : 0.0f;
-      return c1 >= wd ? c1 : c1 < wd ? wd : 0.0f;
+
+      // final float c0 = xd >= yd ? xd : xd < yd ? yd : 0.0f; // xd < yd always
+      // evals to true.
+      // final float c1 = c0 >= zd ? c0 : c0 < zd ? zd : 0.0f; // c0 < zd always
+      // evals to true.
+      // return c1 >= wd ? c1 : c1 < wd ? wd : 0.0f; // c1 < wd always evals to
+      // true.
+
+      final float c0 = xd >= yd ? xd : yd;
+      final float c1 = c0 >= zd ? c0 : zd;
+      return c1 >= wd ? c1 : wd;
    }
 
    /**
@@ -997,8 +992,13 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
          totalLen += arr[i].length;
       }
 
+      /*
+       * Copy each inner array to the result array, then move the cursor by the
+       * length of each array.
+       */
+      int j = 0;
       final Vec4[] result = new Vec4[totalLen];
-      for ( int j = 0, i = 0; i < sourceLen; ++i ) {
+      for ( int i = 0; i < sourceLen; ++i ) {
          final Vec4[] arrInner = arr[i];
          final int len = arrInner.length;
          System.arraycopy(arrInner, 0, result, j, len);
@@ -1027,9 +1027,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
          }
       }
 
+      int k = 0;
       final Vec4[] result = new Vec4[totalLen];
-
-      for ( int k = 0, i = 0; i < sourceLen0; ++i ) {
+      for ( int i = 0; i < sourceLen0; ++i ) {
          final Vec4[][] arrInner1 = arr[i];
          final int sourceLen1 = arrInner1.length;
          for ( int j = 0; j < sourceLen1; ++j ) {
@@ -1066,9 +1066,9 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
          }
       }
 
+      int m = 0;
       final Vec4[] result = new Vec4[totalLen];
-
-      for ( int m = 0, i = 0; i < sourceLen0; ++i ) {
+      for ( int i = 0; i < sourceLen0; ++i ) {
          final Vec4[][][] arrInner1 = arr[i];
          final int sourceLen1 = arrInner1.length;
          for ( int j = 0; j < sourceLen1; ++j ) {
@@ -1657,7 +1657,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return negative one
     */
-   public final static Vec4 negOne ( final Vec4 target ) {
+   public static Vec4 negOne ( final Vec4 target ) {
 
       return target.set(-1.0f, -1.0f, -1.0f, -1.0f);
    }
@@ -1715,7 +1715,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return one
     */
-   public final static Vec4 one ( final Vec4 target ) {
+   public static Vec4 one ( final Vec4 target ) {
 
       return target.set(1.0f, 1.0f, 1.0f, 1.0f);
    }
@@ -1988,7 +1988,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return the right vector
     */
-   public final static Vec4 right ( final Vec4 target ) {
+   public static Vec4 right ( final Vec4 target ) {
 
       return target.set(1.0f, 0.0f, 0.0f, 0.0f);
    }
@@ -2145,7 +2145,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     *
     * @return the zero vector
     */
-   public final static Vec4 zero ( final Vec4 target ) {
+   public static Vec4 zero ( final Vec4 target ) {
 
       return target.set(0.0f, 0.0f, 0.0f, 0.0f);
    }
@@ -2241,27 +2241,12 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
     * An abstract class that may serve as an umbrella for any custom
     * comparators of Vec4 s.
     */
-   public static abstract class AbstrComparator implements Comparator < Vec4 > {
+   public abstract static class AbstrComparator implements Comparator < Vec4 > {
 
       /**
        * The default constructor.
        */
       public AbstrComparator ( ) {}
-
-      /**
-       * The compare function which must be implemented by sub- (child) classes
-       * of this class. Negative one should be returned when the left
-       * comparisand, a, is less than the right comparisand, b, by a measure.
-       * One should be returned when it is greater. Zero should be returned as a
-       * last resort, when a and b are equal or incomparable.
-       *
-       * @param a the left comparisand
-       * @param b the right comparisand
-       *
-       * @return the comparison
-       */
-      @Override
-      public abstract int compare ( final Vec4 a, final Vec4 b );
 
       /**
        * Returns the simple name of this class.
@@ -2276,7 +2261,7 @@ public class Vec4 implements Comparable < Vec4 >, Cloneable, Iterable <
    /**
     * An abstract class to facilitate the creation of vector easing functions.
     */
-   public static abstract class AbstrEasing implements Utils.EasingFuncObj <
+   public abstract static class AbstrEasing implements Utils.EasingFuncObj <
       Vec4 > {
 
       /**

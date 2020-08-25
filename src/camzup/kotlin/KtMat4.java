@@ -127,6 +127,23 @@ public class KtMat4 extends Mat4 {
    public KtMat4 ( final Mat4 source ) { super(source); }
 
    /**
+    * Gets a column vector from this matrix. For interoperability with Kotlin:
+    * <code>b = a[i]</code> .
+    *
+    * @param j the column index
+    *
+    * @return the column vector
+    *
+    * @see Mat4#getCol(int, Vec4)
+    */
+   public KtVec4 get ( final int j ) {
+
+      final KtVec4 result = new KtVec4();
+      this.getCol(j, result);
+      return result;
+   }
+
+   /**
     * Returns a new matrix with the subtraction of the right operand from the
     * instance. For interoperability with Kotlin: <code>a - b</code> .
     * <em>Does not mutate the matrix in place</em>.

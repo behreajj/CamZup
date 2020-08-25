@@ -90,7 +90,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * A Java AWT arc object. This uses double precision, as Arc2D.Float simply
     * casts between float and double anyway.
     */
-   protected final Arc2D.Double arc;
+   protected final Arc2D.Double arcd;
 
    /**
     * A placeholder color used during lerpColor.
@@ -160,20 +160,20 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    /**
     * A placeholder transform used during transform.
     */
-   protected final Transform2 transform;
+   protected final Transform2 trCore;
 
    {
       this.affineNative = new AffineTransform();
-      this.arc = new Arc2D.Double();
+      this.arcd = new Arc2D.Double();
       this.aTemp = new Color();
-      this.bezierBasisInverse = PMatAux.bezierBasisInverse();
+      this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
       this.bTemp = new Color();
       this.cTemp = new Color();
       this.curveToBezierMatrix = new PMatrix3D();
       this.gp = new Path2D.Double();
       this.tr2Loc = new Vec2();
       this.tr2Scale = new Vec2();
-      this.transform = new Transform2();
+      this.trCore = new Transform2();
    }
 
    /**
@@ -312,10 +312,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          return;
       }
 
-      float x = x0;
-      float y = y0;
-      float w = x1;
-      float h = y1;
+      float x;
+      float y;
+      float w;
+      float h;
 
       switch ( this.ellipseMode ) {
 
@@ -723,7 +723,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Sets default camera and calls the camera function. This is for parity
     * with OpenGL renderers.
     */
-   @Override
    public void defaultCamera ( ) {
 
       this.cameraX = IUp.DEFAULT_LOC_X;
@@ -798,12 +797,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void ellipse ( final float x, final float y, final float w,
       final float h ) {
 
-      double extapw = 0.0d;
-      double extaph = 0.0d;
-      double extcpw = 0.0d;
-      double extcph = 0.0d;
-      double xc = 0.0d;
-      double yc = 0.0d;
+      double extapw;
+      double extaph;
+      double extcpw;
+      double extcph;
+      double xc;
+      double yc;
 
       switch ( this.ellipseMode ) {
 
@@ -984,7 +983,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Retrieves the renderer's matrix.
     */
    @Override
-   public PMatrix2D getMatrix ( ) { return this.getMatrix(( PMatrix2D ) null); }
+   public PMatrix2D getMatrix ( ) { return this.getMatrix(new PMatrix2D()); }
 
    /**
     * Retrieves the renderer's matrix.
@@ -1047,10 +1046,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see Graphics2D#getTransform()
     */
    @Override
-   public PMatrix2D getMatrix ( PMatrix2D target ) {
+   public PMatrix2D getMatrix ( final PMatrix2D target ) {
 
       /* @formatter:off */
-      if ( target == null ) { target = new PMatrix2D(); }
       final AffineTransform tr = this.g2.getTransform();
       target.set(
          ( float ) tr.getScaleX(),
@@ -1073,10 +1071,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see Graphics2D#getTransform()
     */
    @Override
-   public PMatrix3D getMatrix ( PMatrix3D target ) {
+   public PMatrix3D getMatrix ( final PMatrix3D target ) {
 
       /* @formatter:off */
-      if ( target == null ) { target = new PMatrix3D(); }
       final AffineTransform tr = this.g2.getTransform();
       target.set(
          ( float ) tr.getScaleX(),
@@ -2305,13 +2302,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * It is simpler to draw straight lines than to defer to the
        * rounded-corner rectImpl.
        */
-      double x0 = 0.0d;
-      double y0 = 0.0d;
-      double x1 = 0.0d;
-      double y1 = 0.0d;
-
-      double w = 0.0d;
-      double h = 0.0d;
+      double x0;
+      double y0;
+      double x1;
+      double y1;
+      double w;
+      double h;
 
       switch ( this.rectMode ) {
 
@@ -3026,7 +3022,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * by PShapes.
     */
    @Override
-   public void shapeMode ( final int mode ) {}
+   public void shapeMode ( final int mode ) { /* Unsupported. */ }
 
    /**
     * Applies a shear transform to the renderer.
@@ -3277,16 +3273,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param mode the mode
     */
    @Override
-   public void textureMode ( final int mode ) {
-
-      PApplet.showMethodWarning("textureMode");
-   }
+   public void textureMode ( final int mode ) { /* Unsupported. */ }
 
    /**
     * Texture wrap is unused by this renderer.
     */
    @Override
-   public void textureWrap ( final int wrap ) {}
+   public void textureWrap ( final int wrap ) { /* Unsupported. */ }
 
    /**
     * Sets the renderer's current stroke to the tint.
@@ -3659,15 +3652,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final double hd = h;
 
       if ( this.fill ) {
-         this.arc.setArc(xd, yd, wd, hd, c, d, fillMode);
+         this.arcd.setArc(xd, yd, wd, hd, c, d, fillMode);
          this.g2.setColor(this.fillColorObject);
-         this.g2.fill(this.arc);
+         this.g2.fill(this.arcd);
       }
 
       if ( this.stroke ) {
-         this.arc.setArc(xd, yd, wd, hd, c, d, strokeMode);
+         this.arcd.setArc(xd, yd, wd, hd, c, d, strokeMode);
          this.g2.setColor(this.strokeColorObject);
-         this.g2.draw(this.arc);
+         this.g2.draw(this.arcd);
       }
    }
 
@@ -3690,6 +3683,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.backgroundGi = this.calcGi;
       this.backgroundBi = this.calcBi;
       this.backgroundAi = isRgb ? 255 : this.calcAi;
+      // TODO: Throws an error in sonar lint.
       this.backgroundAlpha = isRgb ? false : this.calcAlpha;
       this.backgroundColor = this.calcColor;
 
@@ -3924,12 +3918,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float d, final float rTl, final float rTr, final float rBr,
       final float rBl ) {
 
-      double x1 = 0.0d;
-      double y1 = 0.0d;
-      double x2 = 0.0d;
-      double y2 = 0.0d;
-      double w = 0.0d;
-      double h = 0.0d;
+      double x1;
+      double y1;
+      double x2;
+      double y2;
+      double w;
+      double h;
 
       switch ( this.rectMode ) {
 

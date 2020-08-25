@@ -13,8 +13,8 @@ import java.util.Iterator;
  * objects from one orientation to another over minimal distance without
  * suffering gimbal lock.
  */
-public class Quaternion implements Comparable < Quaternion >, Cloneable,
-   Iterable < Float > {
+public class Quaternion implements Comparable < Quaternion >, Iterable <
+   Float > {
 
    /**
     * The coefficients of the imaginary components <em>i</em>, <em>j</em> and
@@ -84,19 +84,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
 
       this.set(real, xImag, yImag, zImag);
    }
-
-   /**
-    * Returns a new quaternion with this quaternion's components. Java's
-    * cloneable interface is problematic; use set or a copy constructor
-    * instead.
-    *
-    * @return a new quaternion
-    *
-    * @see Quaternion#set(Quaternion)
-    * @see Quaternion#Quaternion(Quaternion)
-    */
-   @Override
-   public Quaternion clone ( ) { return new Quaternion(this.real, this.imag); }
 
    /**
     * Returns -1 when this quaternion is less than the comparisand; 1 when it
@@ -665,17 +652,16 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
    /**
     * Divides a scalar by a quaternion.
     *
-    * @param a        the numerator
-    * @param b        the denominator
-    * @param target   the output quaternion
-    * @param inverted the inverse
+    * @param a      the numerator
+    * @param b      the denominator
+    * @param target the output quaternion
     *
     * @return the quotient
     *
     * @see Utils#approx(float, float)
     */
    public static Quaternion div ( final float a, final Quaternion b,
-      final Quaternion target, final Quaternion inverted ) {
+      final Quaternion target ) {
 
       final Vec3 bi = b.imag;
       final float bw = b.real;
@@ -2259,28 +2245,13 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * An abstract class that may serve as an umbrella for any custom
     * comparators of Quaternions.
     */
-   public static abstract class AbstrComparator implements Comparator <
+   public abstract static class AbstrComparator implements Comparator <
       Quaternion > {
 
       /**
        * The default constructor.
        */
       public AbstrComparator ( ) { super(); }
-
-      /**
-       * The compare function which must be implemented by sub- (child) classes
-       * of this class. Negative one should be returned when the left
-       * comparisand, a, is less than the right comparisand, b, by a measure.
-       * One should be returned when it is greater. Zero should be returned as a
-       * last resort, when a and b are equal or incomparable.
-       *
-       * @param a the left comparisand
-       * @param b the right comparisand
-       *
-       * @return the comparison
-       */
-      @Override
-      public abstract int compare ( final Quaternion a, final Quaternion b );
 
       /**
        * Returns the simple name of this class.
@@ -2296,7 +2267,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * An abstract class to facilitate the creation of quaternion easing
     * functions.
     */
-   public static abstract class AbstrEasing implements Utils.EasingFuncObj <
+   public abstract static class AbstrEasing implements Utils.EasingFuncObj <
       Quaternion > {
 
       /**
@@ -2461,7 +2432,7 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
     * enhanced for loop. This class is abstract, and serves as a parent for
     * other, more specific iterators.
     */
-   public static abstract class QIterator implements Iterator < Float > {
+   public abstract static class QIterator implements Iterator < Float > {
 
       /**
        * The current index.
@@ -2487,14 +2458,6 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
        */
       @Override
       public boolean hasNext ( ) { return this.index < this.quat.length(); }
-
-      /**
-       * Gets the next value in the iterator.
-       *
-       * @return the value
-       */
-      @Override
-      public abstract Float next ( );
 
       /**
        * Returns the simple name of this class.
@@ -2575,10 +2538,10 @@ public class Quaternion implements Comparable < Quaternion >, Cloneable,
          final double stepd = step;
 
          /* The complementary step, i.e., 1.0 - step. */
-         double u = 1.0d;
+         double u;
 
          /* The step. */
-         double v = 0.0d;
+         double v;
 
          if ( sinTheta > AbstrEasing.EPS_D ) {
             final double sInv = 1.0d / sinTheta;

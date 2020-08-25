@@ -143,19 +143,19 @@ public abstract class Simplex extends Generative {
     * Factor added to 2D noise when returning a Vec2. <code>1.0 /
     * Math.sqrt(2.0)</code>; approximately {@value Simplex#STEP_2} .
     */
-   public final static float STEP_2 = IUtils.ONE_SQRT_2;
+   public static final float STEP_2 = IUtils.ONE_SQRT_2;
 
    /**
     * Factor added to 3D noise when returning a Vec3. <code>1.0 /
     * Math.sqrt(3.0)</code>; approximately {@value Simplex#STEP_3} .
     */
-   public final static float STEP_3 = IUtils.ONE_SQRT_3;
+   public static final float STEP_3 = IUtils.ONE_SQRT_3;
 
    /**
     * Factor added to 4D noise when returning a Vec4. <code>1.0 /
     * Math.sqrt(4.0)</code>; {@value Simplex#STEP_4} .
     */
-   public final static float STEP_4 = 0.5f;
+   public static final float STEP_4 = 0.5f;
 
    /**
     * 2D simplex gradient look-up table.
@@ -374,7 +374,6 @@ public abstract class Simplex extends Generative {
     *
     * @return the noise value
     *
-    * @see Utils#floorToInt(float)
     * @see Simplex#F4
     * @see Simplex#G4
     * @see Simplex#PERMUTE
@@ -580,7 +579,6 @@ public abstract class Simplex extends Generative {
     *
     * @return the noise value
     *
-    * @see Utils#floorToInt(float)
     * @see Simplex#F3
     * @see Simplex#G3
     * @see Simplex#SCALE_3
@@ -753,7 +751,6 @@ public abstract class Simplex extends Generative {
     *
     * @return the noise value
     *
-    * @see Utils#floorToInt(float)
     * @see Simplex#F2
     * @see Simplex#G2
     * @see Simplex#SCALE_2

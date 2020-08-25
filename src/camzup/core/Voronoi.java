@@ -52,8 +52,8 @@ public class Voronoi extends Generative {
       final float yLocal = yScaled - yCell;
 
       float minDistSq = Float.MAX_VALUE;
-      float xHsh = 0.0f;
-      float yHsh = 0.0f;
+      float xHsh;
+      float yHsh;
 
       for ( float j = -1.0f; j < 2.0f; ++j ) {
          final float sumy = yCell + j;
@@ -156,9 +156,9 @@ public class Voronoi extends Generative {
       final float zLocal = zScaled - zCell;
 
       float minDistSq = Float.MAX_VALUE;
-      float xHsh = 0.0f;
-      float yHsh = 0.0f;
-      float zHsh = 0.0f;
+      float xHsh;
+      float yHsh;
+      float zHsh;
 
       for ( float k = -1.0f; k < 2.0f; ++k ) {
          final float sumz = zCell + k;
@@ -286,10 +286,10 @@ public class Voronoi extends Generative {
       final float wLocal = wScaled - wCell;
 
       float minDist = Float.MAX_VALUE;
-      float xHsh = 0.0f;
-      float yHsh = 0.0f;
-      float zHsh = 0.0f;
-      float wHsh = 0.0f;
+      float xHsh;
+      float yHsh;
+      float zHsh;
+      float wHsh;
 
       for ( float m = -1.0f; m < 2.0f; ++m ) {
          final float sumw = wCell + m;
