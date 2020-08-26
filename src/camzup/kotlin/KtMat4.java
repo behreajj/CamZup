@@ -1,13 +1,17 @@
 package camzup.kotlin;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import camzup.core.Mat4;
+import camzup.core.Vec3;
 import camzup.core.Vec4;
 
 /**
  * Provides Kotlin operator overloading support for four dimensional
  * matrices.
  */
-public class KtMat4 extends Mat4 {
+public class KtMat4 extends Mat4 implements Iterable < KtVec4 > {
 
    /**
     * The default constructor. Creates an identity matrix.
@@ -144,6 +148,15 @@ public class KtMat4 extends Mat4 {
    }
 
    /**
+    * Returns an iterator for this matrix, which allows its components to be
+    * accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
+   @Override
+   public Iterator < KtVec4 > iterator ( ) { return new M4Iterator(this); }
+
+   /**
     * Returns a new matrix with the subtraction of the right operand from the
     * instance. For interoperability with Kotlin: <code>a - b</code> .
     * <em>Does not mutate the matrix in place</em>.
@@ -251,6 +264,34 @@ public class KtMat4 extends Mat4 {
       this.m31 += b.m31;
       this.m32 += b.m32;
       this.m33 += b.m33;
+   }
+
+   /**
+    * Sets a column vector for this matrix. For interoperability with Kotlin:
+    * <code>a[i] = b</code>.
+    *
+    * @param j     the column index
+    * @param value the column vector
+    *
+    * @see Mat4#setCol(int, Vec3)
+    */
+   public void set ( final int j, final Vec3 value ) {
+
+      this.setCol(j, value);
+   }
+
+   /**
+    * Sets a column vector for this matrix. For interoperability with Kotlin:
+    * <code>a[i] = b</code>.
+    *
+    * @param j     the column index
+    * @param value the column vector
+    *
+    * @see Mat4#setCol(int, Vec4)
+    */
+   public void set ( final int j, final Vec4 value ) {
+
+      this.setCol(j, value);
    }
 
    /**
@@ -411,6 +452,61 @@ public class KtMat4 extends Mat4 {
       return new KtMat4(this.m00, this.m01, this.m02, this.m03, this.m10,
          this.m11, this.m12, this.m13, this.m20, this.m21, this.m22, this.m23,
          this.m30, this.m31, this.m32, this.m33);
+   }
+
+   /**
+    * An iterator, which allows a matrix's components to be accessed in an
+    * enhanced for loop.
+    */
+   public static final class M4Iterator implements Iterator < KtVec4 > {
+
+      /**
+       * The current index.
+       */
+      private int index = -1;
+
+      /**
+       * The vector being iterated over.
+       */
+      private final KtMat4 mat;
+
+      /**
+       * The default constructor.
+       *
+       * @param m the matrix to iterate
+       */
+      public M4Iterator ( final KtMat4 m ) { this.mat = m; }
+
+      /**
+       * Tests to see if the iterator has another value.
+       *
+       * @return the evaluation
+       */
+      @Override
+      public boolean hasNext ( ) { return this.index < 3; }
+
+      /**
+       * Gets the next value in the iterator.
+       *
+       * @return the value
+       *
+       * @see KtMat4#get(int)
+       */
+      @Override
+      public KtVec4 next ( ) {
+
+         if ( !this.hasNext() ) { throw new NoSuchElementException(); }
+         return this.mat.get(++this.index);
+      }
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
    }
 
 }

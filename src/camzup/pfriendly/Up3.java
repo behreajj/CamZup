@@ -1081,9 +1081,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       final boolean oldStroke = this.stroke;
       if ( this.fill ) { this.stroke = false; }
-      while ( meshItr.hasNext() ) {
-         this.drawMesh3(meshItr.next(), tr, v, vn);
-      }
+      while ( meshItr.hasNext() ) { this.drawMesh3(meshItr.next(), tr, v, vn); }
       this.stroke = oldStroke;
    }
 

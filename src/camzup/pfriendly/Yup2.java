@@ -1128,9 +1128,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final Iterator < Mesh2 > meshItr = entity.iterator();
       final Vec2 v = new Vec2();
 
-      while ( meshItr.hasNext() ) {
-         this.drawMesh2(meshItr.next(), tr, v);
-      }
+      while ( meshItr.hasNext() ) { this.drawMesh2(meshItr.next(), tr, v); }
    }
 
    /**

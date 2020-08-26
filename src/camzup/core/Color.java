@@ -2396,7 +2396,7 @@ public class Color implements Comparable < Color >, Iterable < Float > {
       /**
        * Gets the next value in the iterator.
        *
-       * @see Vec4#get(int)
+       * @see Color#get(int)
        *
        * @return the value
        */

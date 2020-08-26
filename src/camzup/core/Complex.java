@@ -1,13 +1,12 @@
 package camzup.core;
 
 import java.util.Comparator;
-import java.util.Iterator;
 
 /**
  * A two-dimensional complex number. The <code>imag</code> component is a
  * coefficient of <em>i</em>, or the square-root of negative one.
  */
-public class Complex implements Comparable < Complex >, Iterable < Float > {
+public class Complex implements Comparable < Complex > {
 
    /**
     * The coefficient of the imaginary component <em>i</em>.
@@ -47,12 +46,12 @@ public class Complex implements Comparable < Complex >, Iterable < Float > {
     * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
     * the component is set to zero.
     *
-    * @param realstr the real string
-    * @param imagstr the imaginary string
+    * @param real the real string
+    * @param imag the imaginary string
     */
-   public Complex ( final String realstr, final String imagstr ) {
+   public Complex ( final String real, final String imag ) {
 
-      this.set(realstr, imagstr);
+      this.set(real, imag);
    }
 
    /**
@@ -106,29 +105,6 @@ public class Complex implements Comparable < Complex >, Iterable < Float > {
    }
 
    /**
-    * Simulates bracket subscript access in an array..
-    *
-    * @param index the index
-    *
-    * @return the component at that index
-    */
-   public float get ( final int index ) {
-
-      switch ( index ) {
-         case 0:
-         case -1:
-            return this.real;
-
-         case 1:
-         case -2:
-            return this.imag;
-
-         default:
-            return 0.0f;
-      }
-   }
-
-   /**
     * Returns a hash code for this complex number based on its real and
     * imaginary components.
     *
@@ -142,15 +118,6 @@ public class Complex implements Comparable < Complex >, Iterable < Float > {
       return ( IUtils.MUL_BASE ^ Float.floatToIntBits(this.real) )
          * IUtils.HASH_MUL ^ Float.floatToIntBits(this.imag);
    }
-
-   /**
-    * Returns an iterator for this complex number, which allows its components
-    * to be accessed in an enhanced for-loop.
-    *
-    * @return the iterator
-    */
-   @Override
-   public Iterator < Float > iterator ( ) { return new CIterator(this); }
 
    /**
     * Gets the number of components held by the complex number.
@@ -203,27 +170,27 @@ public class Complex implements Comparable < Complex >, Iterable < Float > {
     * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
     * the component is set to zero.
     *
-    * @param realstr the real string
-    * @param imagstr the imaginary string
+    * @param real the real string
+    * @param imag the imaginary string
     *
     * @return this complex number
     *
     * @see Float#parseFloat(String)
     */
 
-   public Complex set ( final String realstr, final String imagstr ) {
+   public Complex set ( final String real, final String imag ) {
 
       float rlstr;
       float imstr;
 
       try {
-         rlstr = Float.parseFloat(realstr);
+         rlstr = Float.parseFloat(real);
       } catch ( final Exception e ) {
          rlstr = 0.0f;
       }
 
       try {
-         imstr = Float.parseFloat(imagstr);
+         imstr = Float.parseFloat(imag);
       } catch ( final Exception e ) {
          imstr = 0.0f;
       }
@@ -1051,57 +1018,6 @@ public class Complex implements Comparable < Complex >, Iterable < Float > {
        * The default constructor.
        */
       public AbstrComparator ( ) {}
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
-
-   }
-
-   /**
-    * An iterator, which allows a complex number's components to be accessed
-    * in an enhanced for loop.
-    */
-   public final class CIterator implements Iterator < Float > {
-
-      /**
-       * The current index.
-       */
-      private int index = 0;
-
-      /**
-       * The complex number being iterated over.
-       */
-      private final Complex z;
-
-      /**
-       * The default constructor.
-       *
-       * @param z the complex number to iterator
-       */
-      public CIterator ( final Complex z ) { this.z = z; }
-
-      /**
-       * Tests to see if the iterator has another value.
-       *
-       * @return the evaluation
-       */
-      @Override
-      public boolean hasNext ( ) { return this.index < this.z.length(); }
-
-      /**
-       * Gets the next value in the iterator
-       *
-       * @return the value
-       *
-       * @see Complex#get(int)
-       */
-      @Override
-      public Float next ( ) { return this.z.get(this.index++); }
 
       /**
        * Returns the simple name of this class.

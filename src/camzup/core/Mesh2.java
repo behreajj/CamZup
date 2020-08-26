@@ -119,9 +119,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       for ( int i = 0; i < facesLen; ++i ) {
          final int[][] verts = this.faces[i];
          final int vertsLen = verts.length;
-         for ( int j = 0; j < vertsLen; ++j ) {
-            verts[j][1] = verts[j][0];
-         }
+         for ( int j = 0; j < vertsLen; ++j ) { verts[j][1] = verts[j][0]; }
       }
 
       return this;
@@ -1100,9 +1098,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Vec2[] sourcevs = source.coords;
       final int vslen = sourcevs.length;
       this.coords = Vec2.resize(this.coords, vslen);
-      for ( int i = 0; i < vslen; ++i ) {
-         this.coords[i].set(sourcevs[i]);
-      }
+      for ( int i = 0; i < vslen; ++i ) { this.coords[i].set(sourcevs[i]); }
 
       /* Copy texture coordinates. */
       final Vec2[] sourcevts = source.texCoords;
@@ -2399,9 +2395,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final Vec2[] vsSrc = source.coords;
          final int vsLen = vsSrc.length;
          final Vec2[] vsCopy = new Vec2[vsLen];
-         for ( int j = 0; j < vsLen; ++j ) {
-            vsCopy[j] = new Vec2(vsSrc[j]);
-         }
+         for ( int j = 0; j < vsLen; ++j ) { vsCopy[j] = new Vec2(vsSrc[j]); }
 
          /* Copy source texture coordinates. */
          final Vec2[] vtsSrc = source.texCoords;
@@ -2439,9 +2433,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       /* Convert dictionary values to an array; clean meshes of excess data. */
       final Mesh2[] result = dict.values().toArray(new Mesh2[dict.size()]);
       final int trgLen = result.length;
-      for ( int i = 0; i < trgLen; ++i ) {
-         result[i].clean();
-      }
+      for ( int i = 0; i < trgLen; ++i ) { result[i].clean(); }
       return result;
    }
 
@@ -3132,9 +3124,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       int uniformLen = 0;
       final int[][][] fsSrc = source.faces;
       final int fsSrcLen = fsSrc.length;
-      for ( int i = 0; i < fsSrcLen; ++i ) {
-         uniformLen += fsSrc[i].length;
-      }
+      for ( int i = 0; i < fsSrcLen; ++i ) { uniformLen += fsSrc[i].length; }
 
       /* Allocate new arrays. */
       final int[][][] fsTrg = new int[fsSrcLen][][];

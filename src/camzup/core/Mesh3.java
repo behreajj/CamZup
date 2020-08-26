@@ -1163,9 +1163,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec3[] sourcevs = source.coords;
       final int vslen = sourcevs.length;
       this.coords = Vec3.resize(this.coords, vslen);
-      for ( int i = 0; i < vslen; ++i ) {
-         this.coords[i].set(sourcevs[i]);
-      }
+      for ( int i = 0; i < vslen; ++i ) { this.coords[i].set(sourcevs[i]); }
 
       /* Copy texture coordinates. */
       final Vec2[] sourcevts = source.texCoords;
@@ -1179,9 +1177,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec3[] sourcevns = source.normals;
       final int vnslen = sourcevns.length;
       this.normals = Vec3.resize(this.normals, vnslen);
-      for ( int k = 0; k < vnslen; ++k ) {
-         this.normals[k].set(sourcevns[k]);
-      }
+      for ( int k = 0; k < vnslen; ++k ) { this.normals[k].set(sourcevns[k]); }
 
       /* Copy faces. */
       final int[][][] sourcefs = source.faces;
@@ -1263,9 +1259,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          Vec3.div(vn, fsLen, vn);
 
          /* Refresh face indices to point to same normal for each face. */
-         for ( int j = 0; j < fLen; ++j ) {
-            f[j][2] = i;
-         }
+         for ( int j = 0; j < fLen; ++j ) { f[j][2] = i; }
       }
 
       return this;
@@ -2228,9 +2222,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       for ( int i = 0; i < facesLen; ++i ) {
          final int[][] verts = this.faces[i];
          final int vertsLen = verts.length;
-         for ( int j = 0; j < vertsLen; ++j ) {
-            verts[j][1] = verts[j][0];
-         }
+         for ( int j = 0; j < vertsLen; ++j ) { verts[j][1] = verts[j][0]; }
       }
 
       return this;
@@ -2262,9 +2254,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       for ( int i = 0; i < fsLen; ++i ) {
          final int[][] f = fs[i];
          final int fLen = f.length;
-         for ( int j = 0; j < fLen; ++j ) {
-            f[j][2] = f[j][0];
-         }
+         for ( int j = 0; j < fLen; ++j ) { f[j][2] = f[j][0]; }
       }
 
       return this;
@@ -2974,9 +2964,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final ArrayList < Vec3 > normalList = new ArrayList <>(capacity);
       final ArrayList < int[][] > faceList = new ArrayList <>(capacity);
 
-      boolean missingVs = false;
-      boolean missingVts = false;
-      boolean missingVns = false;
+      boolean vsMissing = false;
+      boolean vtsMissing = false;
+      boolean vnsMissing = false;
 
       boolean usesMaterial = false;
       String mtlFileName = "";
@@ -3039,37 +3029,37 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                   if ( tokenLen > 0 ) {
                      final String vIdx = faceTokens[0];
                      if ( vIdx == null || vIdx.isEmpty() ) {
-                        missingVs = true;
+                        vsMissing = true;
                      } else {
                         /* Indices in .obj file start at 1, not 0. */
                         indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
                      }
                   } else {
-                     missingVs = true;
+                     vsMissing = true;
                   }
 
                   /* Texture coordinate index. */
                   if ( tokenLen > 1 ) {
                      final String vtIdx = faceTokens[1];
                      if ( vtIdx == null || vtIdx.isEmpty() ) {
-                        missingVts = true;
+                        vtsMissing = true;
                      } else {
                         indices[k][1] = Mesh3.intFromStr(vtIdx) - 1;
                      }
                   } else {
-                     missingVts = true;
+                     vtsMissing = true;
                   }
 
                   /* Normal index. */
                   if ( tokenLen > 2 ) {
                      final String vnIdx = faceTokens[2];
                      if ( vnIdx == null || vnIdx.isEmpty() ) {
-                        missingVns = true;
+                        vnsMissing = true;
                      } else {
                         indices[k][2] = Mesh3.intFromStr(vnIdx) - 1;
                      }
                   } else {
-                     missingVns = true;
+                     vnsMissing = true;
                   }
                }
 
@@ -3085,21 +3075,21 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       faceList.toArray(faceArr);
 
       Vec3[] coordArr = new Vec3[coordList.size()];
-      if ( missingVs && coordArr.length < 1 ) {
+      if ( vsMissing && coordArr.length < 1 ) {
          coordArr = new Vec3[] { Vec3.zero(new Vec3()) };
       } else {
          coordList.toArray(coordArr);
       }
 
       Vec2[] texCoordArr = new Vec2[texCoordList.size()];
-      if ( missingVts && texCoordArr.length < 1 ) {
+      if ( vtsMissing && texCoordArr.length < 1 ) {
          texCoordArr = new Vec2[] { Vec2.uvCenter(new Vec2()) };
       } else {
          texCoordList.toArray(texCoordArr);
       }
 
       Vec3[] normalArr = new Vec3[normalList.size()];
-      if ( missingVns && normalArr.length < 1 ) {
+      if ( vnsMissing && normalArr.length < 1 ) {
          normalArr = new Vec3[] { Vec3.up(new Vec3()) };
       } else {
          normalList.toArray(normalArr);
@@ -3126,18 +3116,18 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates a list of meshes from an array of strings representing a
-    * WaveFront obj file with groups.<br>
+    * Creates an array of meshes from an array of strings representing a
+    * WaveFront .obj file with groups.<br>
     * <br>
     * Files supplied to this parser should always include information for
     * coordinates, texture coordinates and normals. Material data from a .mtl
     * file is not parsed by this function, and should be done separately.<br>
     * <br>
-    * Because vertex grouping is not supported by the Mesh3 class, an option
-    * to pool data is provided. If data is pooled between meshes, then all
-    * will references the same coordinate, texture coordinate and normal
-    * array. If not, each mesh will receive a copy of the data parsed from the
-    * .obj file; the mesh will then be cleaned to remove unused data.
+    * Because vertex groups are not supported by the Mesh3 class, an option to
+    * pool data is provided. If data is pooled between meshes, then all will
+    * reference the same coordinate, texture coordinate and normal array. If
+    * not, each mesh will receive a copy of the data parsed from the .obj
+    * file; the mesh will then be cleaned to remove unused data.
     *
     * @param lines    the strings
     * @param poolData whether to share data
@@ -3161,10 +3151,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          = new HashMap <>();
       ArrayList < int[][] > currentIndices = new ArrayList <>();
 
-      boolean missingVs = false;
-      boolean missingVts = false;
-      boolean missingVns = false;
-      boolean missingGroups = true;
+      boolean vsMissing = false;
+      boolean vtsMissing = false;
+      boolean vnsMissing = false;
+      boolean groupsMissing = true;
 
       boolean usesMaterial = false;
       String mtlFileName = "";
@@ -3183,24 +3173,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
             switch ( hsh ) {
 
-               case 111:
-                  /* "o" */
-                  objName = tokens[1];
-
-                  break;
-
-               case 103:
-                  /* "g" */
-                  final String name = objName + "." + tokens[1];
-                  if ( !faceGroups.containsKey(name) ) {
-                     // TODO: Replace with new ArrayList <>() ?
-                     faceGroups.put(name, new ArrayList < int[][] >());
-                  }
-                  currentIndices = faceGroups.get(name);
-                  missingGroups = false;
-
-                  break;
-
                case -1063936832:
                   /* "mtllib" */
                   usesMaterial = true;
@@ -3212,24 +3184,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                   /* "usemtl" */
                   usesMaterial = true;
                   materialNames.add(tokens[1]);
-
-                  break;
-
-               case 118:
-                  /* "v" */
-                  coordList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
-
-                  break;
-
-               case 3774:
-                  /* "vt" */
-                  texCoordList.add(new Vec2(tokens[1], tokens[2]));
-
-                  break;
-
-               case 3768:
-                  /* "vn" */
-                  normalList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
 
                   break;
 
@@ -3251,40 +3205,75 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                      if ( tokenLen > 0 ) {
                         final String vIdx = faceTokens[0];
                         if ( vIdx == null || vIdx.isEmpty() ) {
-                           missingVs = true;
+                           vsMissing = true;
                         } else {
                            indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
                         }
                      } else {
-                        missingVs = true;
+                        vsMissing = true;
                      }
 
                      /* Attempt to read texture coordinate index. */
                      if ( tokenLen > 1 ) {
                         final String vtIdx = faceTokens[1];
                         if ( vtIdx == null || vtIdx.isEmpty() ) {
-                           missingVts = true;
+                           vtsMissing = true;
                         } else {
                            indices[k][1] = Mesh3.intFromStr(vtIdx) - 1;
                         }
                      } else {
-                        missingVts = true;
+                        vtsMissing = true;
                      }
 
                      /* Attempt to read normal index. */
                      if ( tokenLen > 2 ) {
                         final String vnIdx = faceTokens[2];
                         if ( vnIdx == null || vnIdx.isEmpty() ) {
-                           missingVns = true;
+                           vnsMissing = true;
                         } else {
                            indices[k][2] = Mesh3.intFromStr(vnIdx) - 1;
                         }
                      } else {
-                        missingVns = true;
+                        vnsMissing = true;
                      }
                   }
 
                   currentIndices.add(indices);
+
+                  break;
+
+               case 103:
+                  /* "g" */
+                  final String name = objName + "." + tokens[1];
+                  if ( !faceGroups.containsKey(name) ) {
+                     faceGroups.put(name, new ArrayList <>());
+                  }
+                  currentIndices = faceGroups.get(name);
+                  groupsMissing = false;
+
+                  break;
+
+               case 111:
+                  /* "o" */
+                  objName = tokens[1];
+
+                  break;
+
+               case 118:
+                  /* "v" */
+                  coordList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
+
+                  break;
+
+               case 3768:
+                  /* "vn" */
+                  normalList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
+
+                  break;
+
+               case 3774:
+                  /* "vt" */
+                  texCoordList.add(new Vec2(tokens[1], tokens[2]));
 
                   break;
 
@@ -3295,21 +3284,21 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* Convert to fixed-sized array. */
       Vec3[] coordArr = new Vec3[coordList.size()];
-      if ( missingVs && coordArr.length < 1 ) {
+      if ( vsMissing && coordArr.length < 1 ) {
          coordArr = new Vec3[] { Vec3.zero(new Vec3()) };
       } else {
          coordList.toArray(coordArr);
       }
 
       Vec2[] texCoordArr = new Vec2[texCoordList.size()];
-      if ( missingVts && texCoordArr.length < 1 ) {
+      if ( vtsMissing && texCoordArr.length < 1 ) {
          texCoordArr = new Vec2[] { Vec2.uvCenter(new Vec2()) };
       } else {
          texCoordList.toArray(texCoordArr);
       }
 
       Vec3[] normalArr = new Vec3[normalList.size()];
-      if ( missingVns && normalArr.length < 1 ) {
+      if ( vnsMissing && normalArr.length < 1 ) {
          normalArr = new Vec3[] { Vec3.up(new Vec3()) };
       } else {
          normalList.toArray(normalArr);
@@ -3335,7 +3324,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int groupsLen = faceGroups.size() < 1 ? 1 : faceGroups.size();
       final Mesh3[] result = new Mesh3[groupsLen];
 
-      if ( missingGroups ) {
+      if ( groupsMissing ) {
 
          final Mesh3 mesh = result[0] = new Mesh3();
          mesh.name = objName;
@@ -3441,9 +3430,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec3[] vsSrc = source.coords;
          final int vsLen = vsSrc.length;
          final Vec3[] vsCopy = new Vec3[vsLen];
-         for ( int j = 0; j < vsLen; ++j ) {
-            vsCopy[j] = new Vec3(vsSrc[j]);
-         }
+         for ( int j = 0; j < vsLen; ++j ) { vsCopy[j] = new Vec3(vsSrc[j]); }
 
          /* Copy source texture coordinates. */
          final Vec2[] vtsSrc = source.texCoords;
@@ -3492,9 +3479,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       /* Convert dictionary values to an array; clean meshes of excess data. */
       final Mesh3[] result = dict.values().toArray(new Mesh3[dict.size()]);
       final int trgLen = result.length;
-      for ( int i = 0; i < trgLen; ++i ) {
-         result[i].clean();
-      }
+      for ( int i = 0; i < trgLen; ++i ) { result[i].clean(); }
       return result;
    }
 
@@ -3725,9 +3710,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          vtsLen);
 
       /* Copy texture coordinates. */
-      for ( int i = 0; i < vtsLen; ++i ) {
-         vtsTarget[i].set(vtsSource[i]);
-      }
+      for ( int i = 0; i < vtsLen; ++i ) { vtsTarget[i].set(vtsSource[i]); }
 
       /* Project coordinates to 2D screen. */
       final Vec4 promoted = new Vec4();
@@ -4060,17 +4043,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       /* Calculate texture coordinates u separately. */
       final float[] uvxs = new float[vsect1];
       final float toU = 1.0f / vsect;
-      for ( int j = 0; j < vsect1; ++j ) {
-         uvxs[j] = j * toU;
-      }
+      for ( int j = 0; j < vsect1; ++j ) { uvxs[j] = j * toU; }
 
       /* Combine into texture coordinates. */
       final float toV = 1.0f / vpanl;
       for ( int k = 0, i = 0; i < vpanl1; ++i ) {
          final float y = 1.0f - i * toV;
-         for ( int j = 0; j < vsect1; ++j, ++k ) {
-            vts[k].set(uvxs[j], y);
-         }
+         for ( int j = 0; j < vsect1; ++j, ++k ) { vts[k].set(uvxs[j], y); }
       }
 
       /* Set faces. */
@@ -4283,9 +4262,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       int uniformLen = 0;
       final int[][][] fsSrc = source.faces;
       final int fsSrcLen = fsSrc.length;
-      for ( int i = 0; i < fsSrcLen; ++i ) {
-         uniformLen += fsSrc[i].length;
-      }
+      for ( int i = 0; i < fsSrcLen; ++i ) { uniformLen += fsSrc[i].length; }
 
       /* Allocate new arrays. */
       final int[][][] fsTrg = new int[fsSrcLen][][];
@@ -4435,9 +4412,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* Calculate the texture coordinate u's separately. */
       final float[] tcxs = new float[lons1];
-      for ( int j = 0; j < lons1; ++j ) {
-         tcxs[j] = j * toTexS;
-      }
+      for ( int j = 0; j < lons1; ++j ) { tcxs[j] = j * toTexS; }
 
       /* Loop over the latitudes. */
       final float radius = 0.5f;

@@ -57,9 +57,7 @@ public interface IUp3 extends IUp {
       if ( ot.isLeaf() ) {
          this.bounds(ot.bounds);
       } else {
-         for ( int i = 0; i < 8; ++i ) {
-            this.bounds(ot.children[i]);
-         }
+         for ( int i = 0; i < 8; ++i ) { this.bounds(ot.children[i]); }
       }
    }
 
@@ -257,25 +255,19 @@ public interface IUp3 extends IUp {
       /* Draw x plane (y and z vary, x is constant). */
       for ( int h = 0; h < vcount; ++h ) {
          final float z = zs[h];
-         for ( int i = 0; i < vcount; ++i ) {
-            this.point(left, ys[i], z);
-         }
+         for ( int i = 0; i < vcount; ++i ) { this.point(left, ys[i], z); }
       }
 
       /* Draw y plane (x and z vary, y is constant). */
       for ( int h = 0; h < vcount; ++h ) {
          final float z = zs[h];
-         for ( int j = 0; j < vcount; ++j ) {
-            this.point(xs[j], bottom, z);
-         }
+         for ( int j = 0; j < vcount; ++j ) { this.point(xs[j], bottom, z); }
       }
 
       /* Draw z plane (x and y vary, z is constant). */
       for ( int i = 0; i < vcount; ++i ) {
          final float y = ys[i];
-         for ( int j = 0; j < vcount; ++j ) {
-            this.point(xs[j], y, far);
-         }
+         for ( int j = 0; j < vcount; ++j ) { this.point(xs[j], y, far); }
       }
 
       this.popStyle();

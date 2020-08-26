@@ -145,9 +145,7 @@ public class Octree implements Iterable < Vec3 > {
 
       final int len = pts.length;
       boolean flag = true;
-      for ( int i = 0; i < len; ++i ) {
-         flag &= this.insert(pts[i]);
-      }
+      for ( int i = 0; i < len; ++i ) { flag &= this.insert(pts[i]); }
       return flag;
    }
 
@@ -219,9 +217,7 @@ public class Octree implements Iterable < Vec3 > {
    public Octree reset ( ) {
 
       this.points.clear();
-      for ( int i = 0; i < 8; ++i ) {
-         this.children[i] = null;
-      }
+      for ( int i = 0; i < 8; ++i ) { this.children[i] = null; }
 
       return this;
    }

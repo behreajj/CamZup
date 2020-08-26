@@ -155,9 +155,7 @@ public class Mesh3Fixed extends Mesh3 {
 
          /* Should be 3 in all cases. */
          final int fLen = f.length;
-         for ( int j = 0; j < fLen; ++j, ++k ) {
-            idcs[k] = f[j][0];
-         }
+         for ( int j = 0; j < fLen; ++j, ++k ) { idcs[k] = f[j][0]; }
       }
 
       this.indexBuffer = ByteBuffer.allocateDirect(idcsLen * Integer.BYTES)

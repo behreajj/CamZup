@@ -1,14 +1,13 @@
 package camzup.core;
 
 import java.util.Comparator;
-import java.util.Iterator;
 
 /**
  * A mutable, extensible class influenced by GLSL. This is intended to
  * serve as a parent class for colors. Instance methods are limited, while
  * most static methods require an explicit output variable to be provided.
  */
-public class Vec4 implements Comparable < Vec4 >, Iterable < Float > {
+public class Vec4 implements Comparable < Vec4 > {
 
    /**
     * Component on the w axis. Commonly used to store 1.0 for points and 0.0
@@ -69,15 +68,15 @@ public class Vec4 implements Comparable < Vec4 >, Iterable < Float > {
     * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
     * the component is set to zero.
     *
-    * @param xstr the x string
-    * @param ystr the y string
-    * @param zstr the z string
-    * @param wstr the w string
+    * @param x the x string
+    * @param y the y string
+    * @param z the z string
+    * @param w the w string
     */
-   public Vec4 ( final String xstr, final String ystr, final String zstr,
-      final String wstr ) {
+   public Vec4 ( final String x, final String y, final String z,
+      final String w ) {
 
-      this.set(xstr, ystr, zstr, wstr);
+      this.set(x, y, z, w);
    }
 
    /**
@@ -168,38 +167,6 @@ public class Vec4 implements Comparable < Vec4 >, Iterable < Float > {
    }
 
    /**
-    * Simulates bracket subscript access in an array. When the provided index
-    * is 3 or -1, returns w; 2 or -2, z; 1 or -3, y; 0 or -4, x.
-    *
-    * @param index the index
-    *
-    * @return the component at that index
-    */
-   public float get ( final int index ) {
-
-      switch ( index ) {
-         case 0:
-         case -4:
-            return this.x;
-
-         case 1:
-         case -3:
-            return this.y;
-
-         case 2:
-         case -2:
-            return this.z;
-
-         case 3:
-         case -1:
-            return this.w;
-
-         default:
-            return 0.0f;
-      }
-   }
-
-   /**
     * Returns a hash code for this vector based on its x, y, z and w
     * components.
     *
@@ -215,15 +182,6 @@ public class Vec4 implements Comparable < Vec4 >, Iterable < Float > {
          ^ Float.floatToIntBits(this.z) ) * IUtils.HASH_MUL ^ Float
             .floatToIntBits(this.w);
    }
-
-   /**
-    * Returns an iterator for this vector, which allows its components to be
-    * accessed in an enhanced for-loop.
-    *
-    * @return the iterator
-    */
-   @Override
-   public Iterator < Float > iterator ( ) { return new V4Iterator(this); }
 
    /**
     * Gets the number of components held by this vector.
@@ -285,17 +243,17 @@ public class Vec4 implements Comparable < Vec4 >, Iterable < Float > {
     * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
     * the component is set to zero.
     *
-    * @param xstr the x string
-    * @param ystr the y string
-    * @param zstr the z string
-    * @param wstr the w string
+    * @param x the x string
+    * @param y the y string
+    * @param z the z string
+    * @param w the w string
     *
     * @return this vector
     *
     * @see Float#parseFloat(String)
     */
-   public Vec4 set ( final String xstr, final String ystr, final String zstr,
-      final String wstr ) {
+   public Vec4 set ( final String x, final String y, final String z,
+      final String w ) {
 
       float xprs;
       float yprs;
@@ -303,25 +261,25 @@ public class Vec4 implements Comparable < Vec4 >, Iterable < Float > {
       float wprs;
 
       try {
-         xprs = Float.parseFloat(xstr);
+         xprs = Float.parseFloat(x);
       } catch ( final Exception e ) {
          xprs = 0.0f;
       }
 
       try {
-         yprs = Float.parseFloat(ystr);
+         yprs = Float.parseFloat(y);
       } catch ( final Exception e ) {
          yprs = 0.0f;
       }
 
       try {
-         zprs = Float.parseFloat(zstr);
+         zprs = Float.parseFloat(z);
       } catch ( final Exception e ) {
          zprs = 0.0f;
       }
 
       try {
-         wprs = Float.parseFloat(wstr);
+         wprs = Float.parseFloat(w);
       } catch ( final Exception e ) {
          wprs = 0.0f;
       }
@@ -988,9 +946,7 @@ public class Vec4 implements Comparable < Vec4 >, Iterable < Float > {
 
       final int sourceLen = arr.length;
       int totalLen = 0;
-      for ( int i = 0; i < sourceLen; ++i ) {
-         totalLen += arr[i].length;
-      }
+      for ( int i = 0; i < sourceLen; ++i ) { totalLen += arr[i].length; }
 
       /*
        * Copy each inner array to the result array, then move the cursor by the
@@ -2012,9 +1968,7 @@ public class Vec4 implements Comparable < Vec4 >, Iterable < Float > {
       if ( places > 7 ) { return target.set(v); }
 
       int n = 10;
-      for ( int i = 1; i < places; ++i ) {
-         n *= 10;
-      }
+      for ( int i = 1; i < places; ++i ) { n *= 10; }
       final float nf = n;
       final float nInv = 1.0f / nf;
       return target.set(Utils.round(v.x * nf) * nInv, Utils.round(v.y * nf)
@@ -2344,57 +2298,6 @@ public class Vec4 implements Comparable < Vec4 >, Iterable < Float > {
             ( float ) ( ud * origin.y + td * dest.y ), ( float ) ( ud * origin.z
                + td * dest.z ), ( float ) ( ud * origin.w + td * dest.w ));
       }
-
-   }
-
-   /**
-    * An iterator, which allows a vector's components to be accessed in an
-    * enhanced for loop.
-    */
-   public static final class V4Iterator implements Iterator < Float > {
-
-      /**
-       * The current index.
-       */
-      private int index = 0;
-
-      /**
-       * The vector being iterated over.
-       */
-      private final Vec4 vec;
-
-      /**
-       * The default constructor.
-       *
-       * @param vec the vector to iterate
-       */
-      public V4Iterator ( final Vec4 vec ) { this.vec = vec; }
-
-      /**
-       * Tests to see if the iterator has another value.
-       *
-       * @return the evaluation
-       */
-      @Override
-      public boolean hasNext ( ) { return this.index < this.vec.length(); }
-
-      /**
-       * Gets the next value in the iterator.
-       *
-       * @see Vec4#get(int)
-       *
-       * @return the value
-       */
-      @Override
-      public Float next ( ) { return this.vec.get(this.index++); }
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

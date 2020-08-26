@@ -135,9 +135,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public Curve2 appendAll ( final Collection < Knot2 > kn ) {
 
       final Iterator < Knot2 > knItr = kn.iterator();
-      while ( knItr.hasNext() ) {
-         this.append(knItr.next());
-      }
+      while ( knItr.hasNext() ) { this.append(knItr.next()); }
 
       return this;
    }
@@ -152,9 +150,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public Curve2 appendAll ( final Knot2... kn ) {
 
       final int len = kn.length;
-      for ( int i = 0; i < len; ++i ) {
-         this.append(kn[i]);
-      }
+      for ( int i = 0; i < len; ++i ) { this.append(kn[i]); }
 
       return this;
    }
@@ -273,19 +269,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
          : i;
-      final Iterator < Knot2 > knItr = kn.iterator();
-      int k = vidx;
-      while ( knItr.hasNext() ) {
-         final Knot2 knot = knItr.next();
-         // if ( knot != null ) {
-         // this.knots.add(k, knot);
-         // ++k;
-         // }
-
-         this.knots.add(k, knot);
-         ++k;
-      }
-
+      this.knots.addAll(vidx, kn);
       return this;
    }
 
@@ -306,11 +290,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       int k = vidx;
       for ( int j = 0; j < len; ++j ) {
          final Knot2 knot = kn[j];
-         // if ( knot != null ) {
-         // this.knots.add(k, knot);
-         // ++k;
-         // }
-
          this.knots.add(k, knot);
          ++k;
       }
@@ -350,7 +329,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public Curve2 prepend ( final Knot2 knot ) {
 
-      // if ( knot != null ) { this.knots.add(0, knot); }
       this.knots.add(0, knot);
       return this;
    }
@@ -364,18 +342,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public Curve2 prependAll ( final Collection < Knot2 > kn ) {
 
-      int i = 0;
-      final Iterator < Knot2 > knItr = kn.iterator();
-      while ( knItr.hasNext() ) {
-         final Knot2 knot = knItr.next();
-         // if ( knot != null ) {
-         // this.knots.add(i, knot);
-         // ++i;
-         // }
-
-         this.knots.add(i, knot);
-         ++i;
-      }
+      this.knots.addAll(0, kn);
       return this;
    }
 
@@ -394,11 +361,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final int len = kn.length;
       for ( int i = 0; i < len; ++i ) {
          final Knot2 knot = kn[i];
-         // if ( knot != null ) {
-         // this.knots.add(j, knot);
-         // ++j;
-         // }
-
          this.knots.add(j, knot);
          ++j;
       }
@@ -491,9 +453,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       Collections.reverse(this.knots);
 
       final Iterator < Knot2 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().reverse();
-      }
+      while ( itr.hasNext() ) { itr.next().reverse(); }
 
       return this;
    }
@@ -513,9 +473,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float sina = Utils.sin(radians);
 
       final Iterator < Knot2 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().rotateZ(cosa, sina);
-      }
+      while ( itr.hasNext() ) { itr.next().rotateZ(cosa, sina); }
       return this;
    }
 
@@ -532,9 +490,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       if ( scale != 0.0f ) {
          final Iterator < Knot2 > itr = this.knots.iterator();
-         while ( itr.hasNext() ) {
-            itr.next().scale(scale);
-         }
+         while ( itr.hasNext() ) { itr.next().scale(scale); }
       }
       return this;
    }
@@ -552,9 +508,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       if ( Vec2.all(scale) ) {
          final Iterator < Knot2 > itr = this.knots.iterator();
-         while ( itr.hasNext() ) {
-            itr.next().scale(scale);
-         }
+         while ( itr.hasNext() ) { itr.next().scale(scale); }
       }
 
       return this;
@@ -572,9 +526,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       this.resize(source.length());
       final Iterator < Knot2 > srcItr = source.iterator();
       final Iterator < Knot2 > trgItr = this.knots.iterator();
-      while ( srcItr.hasNext() ) {
-         trgItr.next().set(srcItr.next());
-      }
+      while ( srcItr.hasNext() ) { trgItr.next().set(srcItr.next()); }
 
       this.closedLoop = source.closedLoop;
       this.materialIndex = source.materialIndex;
@@ -700,9 +652,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public Curve2 transform ( final Mat3 m ) {
 
       final Iterator < Knot2 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().transform(m);
-      }
+      while ( itr.hasNext() ) { itr.next().transform(m); }
       return this;
    }
 
@@ -723,9 +673,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public Curve2 transform ( final Transform2 tr ) {
 
       final Iterator < Knot2 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().transform(tr);
-      }
+      while ( itr.hasNext() ) { itr.next().transform(tr); }
       return this;
    }
 
@@ -741,9 +689,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public Curve2 translate ( final Vec2 v ) {
 
       final Iterator < Knot2 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().translate(v);
-      }
+      while ( itr.hasNext() ) { itr.next().translate(v); }
       return this;
    }
 
@@ -769,13 +715,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final int diff = vlen - oldLen;
       if ( diff < 0 ) {
          final int last = oldLen - 1;
-         for ( int i = 0; i < -diff; ++i ) {
-            this.knots.remove(last - i);
-         }
+         for ( int i = 0; i < -diff; ++i ) { this.knots.remove(last - i); }
       } else if ( diff > 0 ) {
-         for ( int i = 0; i < diff; ++i ) {
-            this.knots.add(new Knot2());
-         }
+         for ( int i = 0; i < diff; ++i ) { this.knots.add(new Knot2()); }
       }
       return this;
    }

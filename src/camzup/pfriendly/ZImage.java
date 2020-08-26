@@ -1,6 +1,6 @@
 package camzup.pfriendly;
 
-import java.util.function.Function;
+import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 
 import camzup.core.Color;
@@ -247,12 +247,8 @@ public class ZImage extends PImage {
     *
     * @return the augmented image
     */
-   public static PImage falseColor ( final Gradient grd, final Function <
-      Integer, Float > clrEval, final PImage target ) {
-
-      // TODO Refactor this code to use the more specialised Functional
-      // Interface 'IntFunction<Float>'
-      // sonarlint(java:S4276)
+   public static PImage falseColor ( final Gradient grd, final IntFunction <
+      Float > clrEval, final PImage target ) {
 
       target.loadPixels();
       final int[] px = target.pixels;
@@ -338,9 +334,7 @@ public class ZImage extends PImage {
       target.loadPixels();
       final int[] px = target.pixels;
       final int len = px.length;
-      for ( int i = 0; i < len; ++i ) {
-         px[i] = fll;
-      }
+      for ( int i = 0; i < len; ++i ) { px[i] = fll; }
       target.updatePixels();
       return target;
    }

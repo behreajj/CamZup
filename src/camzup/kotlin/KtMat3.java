@@ -1,13 +1,17 @@
 package camzup.kotlin;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import camzup.core.Mat3;
+import camzup.core.Vec2;
 import camzup.core.Vec3;
 
 /**
  * Provides Kotlin operator overloading support for three dimensional
  * matrices.
  */
-public class KtMat3 extends Mat3 {
+public class KtMat3 extends Mat3 implements Iterable < KtVec3 > {
 
    /**
     * The default constructor. Creates an identity matrix.
@@ -109,6 +113,15 @@ public class KtMat3 extends Mat3 {
    }
 
    /**
+    * Returns an iterator for this matrix, which allows its components to be
+    * accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
+   @Override
+   public Iterator < KtVec3 > iterator ( ) { return new M3Iterator(this); }
+
+   /**
     * Returns a new matrix with the subtraction of the right operand from the
     * instance. For interoperability with Kotlin: <code>a - b</code> .
     * <em>Does not mutate the matrix in place</em>.
@@ -194,6 +207,34 @@ public class KtMat3 extends Mat3 {
       this.m20 += b.m20;
       this.m21 += b.m21;
       this.m22 += b.m22;
+   }
+
+   /**
+    * Sets a column vector for this matrix. For interoperability with Kotlin:
+    * <code>a[i] = b</code>.
+    *
+    * @param j     the column index
+    * @param value the column vector
+    *
+    * @see Mat3#setCol(int, Vec2)
+    */
+   public void set ( final int j, final Vec2 value ) {
+
+      this.setCol(j, value);
+   }
+
+   /**
+    * Sets a column vector for this matrix. For interoperability with Kotlin:
+    * <code>a[i] = b</code>.
+    *
+    * @param j     the column index
+    * @param value the column vector
+    *
+    * @see Mat3#setCol(int, Vec3)
+    */
+   public void set ( final int j, final Vec3 value ) {
+
+      this.setCol(j, value);
    }
 
    /**
@@ -312,6 +353,61 @@ public class KtMat3 extends Mat3 {
 
       return new KtMat3(this.m00, this.m01, this.m02, this.m10, this.m11,
          this.m12, this.m20, this.m21, this.m22);
+   }
+
+   /**
+    * An iterator, which allows a matrix's components to be accessed in an
+    * enhanced for loop.
+    */
+   public static final class M3Iterator implements Iterator < KtVec3 > {
+
+      /**
+       * The current index.
+       */
+      private int index = -1;
+
+      /**
+       * The vector being iterated over.
+       */
+      private final KtMat3 mat;
+
+      /**
+       * The default constructor.
+       *
+       * @param m the matrix to iterate
+       */
+      public M3Iterator ( final KtMat3 m ) { this.mat = m; }
+
+      /**
+       * Tests to see if the iterator has another value.
+       *
+       * @return the evaluation
+       */
+      @Override
+      public boolean hasNext ( ) { return this.index < 2; }
+
+      /**
+       * Gets the next value in the iterator.
+       *
+       * @return the value
+       *
+       * @see KtMat3#get(int)
+       */
+      @Override
+      public KtVec3 next ( ) {
+
+         if ( !this.hasNext() ) { throw new NoSuchElementException(); }
+         return this.mat.get(++this.index);
+      }
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
    }
 
 }

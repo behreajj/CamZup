@@ -1,7 +1,5 @@
 package camzup.core;
 
-import java.util.Iterator;
-
 /**
  * A mutable, extensible class influenced by GLSL, OSL and Processing's
  * PMatrix3D. Although this is a 4 x 4 matrix, it is generally assumed to
@@ -9,7 +7,7 @@ import java.util.Iterator;
  * 1.0) . Instance methods are limited, while most static methods require
  * an explicit output variable to be provided.
  */
-public class Mat4 implements Iterable < Float > {
+public class Mat4 {
 
    /**
     * Component in row 0, column 0. The right axis x component.
@@ -425,22 +423,6 @@ public class Mat4 implements Iterable < Float > {
    }
 
    /**
-    * Returns an iterator for this matrix, which allows its components to be
-    * accessed in an enhanced for-loop.
-    *
-    * @return the iterator
-    */
-   @Override
-   public Iterator < Float > iterator ( ) { return new M4Iterator(this); }
-
-   /**
-    * Returns the number of elements in the matrix.
-    *
-    * @return the length
-    */
-   public int length ( ) { return 16; }
-
-   /**
     * Resets this matrix to an initial state:
     *
     * <pre>
@@ -599,34 +581,6 @@ public class Mat4 implements Iterable < Float > {
       this.m03 = m03; this.m13 = m13; this.m23 = m23; this.m33 = m33;
       return this;
       /* @formatter:on */
-   }
-
-   /**
-    * Sets a column of this matrix with an index and vector. For
-    * interoperability with Kotlin: <code>a[i] = b</code> .
-    *
-    * @param j      the column index
-    * @param source the source vector
-    *
-    * @see Mat4#setCol(int, Vec3)
-    */
-   public void set ( final int j, final Vec3 source ) {
-
-      this.setCol(j, source);
-   }
-
-   /**
-    * Sets a column of this matrix with an index and vector. For
-    * interoperability with Kotlin: <code>a[i] = b</code> .
-    *
-    * @param j      the column index
-    * @param source the source vector
-    *
-    * @see Mat4#setCol(int, Vec4)
-    */
-   public void set ( final int j, final Vec4 source ) {
-
-      this.setCol(j, source);
    }
 
    /**
@@ -2377,57 +2331,6 @@ public class Mat4 implements Iterable < Float > {
          Utils.xor(a.m30, b.m30), Utils.xor(a.m31, b.m31),
          Utils.xor(a.m32, b.m32), Utils.xor(a.m33, b.m33));
       /* @formatter:on */
-   }
-
-   /**
-    * An iterator, which allows a matrix's components to be accessed in an
-    * enhanced for loop.
-    */
-   public static final class M4Iterator implements Iterator < Float > {
-
-      /**
-       * The current index.
-       */
-      private int index = 0;
-
-      /**
-       * The matrix being iterated over.
-       */
-      private final Mat4 mtx;
-
-      /**
-       * The default constructor.
-       *
-       * @param mtx the matrix to iterate
-       */
-      public M4Iterator ( final Mat4 mtx ) { this.mtx = mtx; }
-
-      /**
-       * Tests to see if the iterator has another value.
-       *
-       * @return the evaluation
-       */
-      @Override
-      public boolean hasNext ( ) { return this.index < this.mtx.length(); }
-
-      /**
-       * Gets the next value in the iterator.
-       *
-       * @return the value
-       *
-       * @see Mat4#getElm(int)
-       */
-      @Override
-      public Float next ( ) { return this.mtx.getElm(this.index++); }
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
-
    }
 
 }

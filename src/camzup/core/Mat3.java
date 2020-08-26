@@ -1,7 +1,5 @@
 package camzup.core;
 
-import java.util.Iterator;
-
 /**
  * A mutable, extensible class influenced by GLSL, OSL and Processing's
  * PMatrix2D. Although this is a 3 x 3 matrix, it is generally assumed to
@@ -9,7 +7,7 @@ import java.util.Iterator;
  * Instance methods are limited, while most static methods require an
  * explicit output variable to be provided.
  */
-public class Mat3 implements Iterable < Float > {
+public class Mat3 {
 
    /**
     * Component in row 0, column 0. The right axis x component.
@@ -309,22 +307,6 @@ public class Mat3 implements Iterable < Float > {
    }
 
    /**
-    * Returns an iterator for this matrix, which allows its components to be
-    * accessed in an enhanced for-loop.
-    *
-    * @return the iterator
-    */
-   @Override
-   public Iterator < Float > iterator ( ) { return new M3Iterator(this); }
-
-   /**
-    * Returns the number of elements in the matrix.
-    *
-    * @return the length
-    */
-   public int length ( ) { return 9; }
-
-   /**
     * Resets this matrix to an initial state,
     *
     * <pre>
@@ -437,34 +419,6 @@ public class Mat3 implements Iterable < Float > {
       this.m02 = m02; this.m12 = m12; this.m22 = m22;
       return this;
       /* @formatter:on */
-   }
-
-   /**
-    * Sets a column of this matrix with an index and vector. For
-    * interoperability with Kotlin: <code>a[i] = b</code> .
-    *
-    * @param j      the column index
-    * @param source the source vector
-    *
-    * @see Mat3#setCol(int, Vec2)
-    */
-   public void set ( final int j, final Vec2 source ) {
-
-      this.setCol(j, source);
-   }
-
-   /**
-    * Sets a column of this matrix with an index and vector. For
-    * interoperability with Kotlin: <code>a[i] = b</code> .
-    *
-    * @param j      the column index
-    * @param source the source vector
-    *
-    * @see Mat3#setCol(int, Vec3)
-    */
-   public void set ( final int j, final Vec3 source ) {
-
-      this.setCol(j, source);
    }
 
    /**
@@ -1489,57 +1443,6 @@ public class Mat3 implements Iterable < Float > {
       final Mat3 target ) {
 
       return target.set(1.0f, 0.0f, tx, 0.0f, 1.0f, ty, 0.0f, 0.0f, 1.0f);
-   }
-
-   /**
-    * An iterator, which allows a matrix's components to be accessed in an
-    * enhanced for loop.
-    */
-   public static final class M3Iterator implements Iterator < Float > {
-
-      /**
-       * The current index.
-       */
-      private int index = 0;
-
-      /**
-       * The matrix being iterated over.
-       */
-      private final Mat3 mtx;
-
-      /**
-       * The default constructor.
-       *
-       * @param mtx the matrix to iterate
-       */
-      public M3Iterator ( final Mat3 mtx ) { this.mtx = mtx; }
-
-      /**
-       * Tests to see if the iterator has another value.
-       *
-       * @return the evaluation
-       */
-      @Override
-      public boolean hasNext ( ) { return this.index < this.mtx.length(); }
-
-      /**
-       * Gets the next value in the iterator.
-       *
-       * @return the value
-       *
-       * @see Mat3#getElm(int)
-       */
-      @Override
-      public Float next ( ) { return this.mtx.getElm(this.index++); }
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
-
    }
 
 }

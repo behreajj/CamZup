@@ -703,9 +703,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final int len = edges.length;
       this.vertices = new Vert3[len];
-      for ( int i = 0; i < len; ++i ) {
-         this.vertices[i] = edges[i].origin;
-      }
+      for ( int i = 0; i < len; ++i ) { this.vertices[i] = edges[i].origin; }
 
       return this;
    }
@@ -1069,16 +1067,12 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
       final TreeSet < Vec3 > aList = new TreeSet <>(Mesh.SORT_3);
       final Vert3[] aVerts = a.vertices;
       final int aLen = aVerts.length;
-      for ( int i = 0; i < aLen; ++i ) {
-         aList.add(aVerts[i].coord);
-      }
+      for ( int i = 0; i < aLen; ++i ) { aList.add(aVerts[i].coord); }
 
       final TreeSet < Vec3 > bList = new TreeSet <>(Mesh.SORT_3);
       final Vert3[] bVerts = b.vertices;
       final int bLen = bVerts.length;
-      for ( int j = 0; j < bLen; ++j ) {
-         bList.add(bVerts[j].coord);
-      }
+      for ( int j = 0; j < bLen; ++j ) { bList.add(bVerts[j].coord); }
 
       aList.retainAll(bList);
 

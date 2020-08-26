@@ -142,9 +142,7 @@ public class Quadtree implements Iterable < Vec2 > {
 
       final int len = pts.length;
       boolean flag = true;
-      for ( int i = 0; i < len; ++i ) {
-         flag &= this.insert(pts[i]);
-      }
+      for ( int i = 0; i < len; ++i ) { flag &= this.insert(pts[i]); }
       return flag;
    }
 
@@ -216,9 +214,7 @@ public class Quadtree implements Iterable < Vec2 > {
    public Quadtree reset ( ) {
 
       this.points.clear();
-      for ( int i = 0; i < 4; ++i ) {
-         this.children[i] = null;
-      }
+      for ( int i = 0; i < 4; ++i ) { this.children[i] = null; }
 
       return this;
    }

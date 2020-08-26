@@ -1,5 +1,8 @@
 package camzup.kotlin;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -9,7 +12,7 @@ import camzup.core.Vec4;
  * Provides Kotlin operator overloading support for four dimensional
  * vectors.
  */
-public class KtVec4 extends Vec4 {
+public class KtVec4 extends Vec4 implements Iterable < Float > {
 
    /**
     * The default vector constructor.
@@ -49,15 +52,15 @@ public class KtVec4 extends Vec4 {
     * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
     * the component is set to zero.
     *
-    * @param xstr the x string
-    * @param ystr the y string
-    * @param zstr the z string
-    * @param wstr the w string
+    * @param x the x string
+    * @param y the y string
+    * @param z the z string
+    * @param w the w string
     */
-   public KtVec4 ( final String xstr, final String ystr, final String zstr,
-      final String wstr ) {
+   public KtVec4 ( final String x, final String y, final String z,
+      final String w ) {
 
-      super(xstr, ystr, zstr, wstr);
+      super(x, y, z, w);
    }
 
    /**
@@ -164,6 +167,38 @@ public class KtVec4 extends Vec4 {
    }
 
    /**
+    * Simulates bracket subscript access in an array. When the provided index
+    * is 3 or -1, returns w; 2 or -2, z; 1 or -3, y; 0 or -4, x.
+    *
+    * @param index the index
+    *
+    * @return the component at that index
+    */
+   public float get ( final int index ) {
+
+      switch ( index ) {
+         case 0:
+         case -4:
+            return this.x;
+
+         case 1:
+         case -3:
+            return this.y;
+
+         case 2:
+         case -2:
+            return this.z;
+
+         case 3:
+         case -1:
+            return this.w;
+
+         default:
+            return 0.0f;
+      }
+   }
+
+   /**
     * Returns a new vector incremented by one. For interoperability with
     * Kotlin: <code>++a</code> (prefix) or <code>a++</code> (postfix). Per the
     * specification, <em>does not mutate the vector in place</em>.
@@ -171,6 +206,15 @@ public class KtVec4 extends Vec4 {
     * @return the incremented vector
     */
    public KtVec4 inc ( ) { return this.plus(1.0f); }
+
+   /**
+    * Returns an iterator for this vector, which allows its components to be
+    * accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
+   @Override
+   public Iterator < Float > iterator ( ) { return new V4Iterator(this); }
 
    /**
     * Returns a new vector with the subtraction of the right operand from the
@@ -361,6 +405,40 @@ public class KtVec4 extends Vec4 {
    }
 
    /**
+    * Simulates bracket subscript access in an array. When the provided index
+    * is 3 or -1, sets w; 2 or -2, z; 1 or -3, y; 0 or -4, x.
+    *
+    * @param index the index
+    * @param value the value
+    */
+   public void set ( final int index, final float value ) {
+
+      switch ( index ) {
+         case 0:
+         case -4:
+            this.x = value;
+            break;
+
+         case 1:
+         case -3:
+            this.y = value;
+            break;
+
+         case 2:
+         case -2:
+            this.z = value;
+            break;
+
+         case 3:
+         case -1:
+            this.w = value;
+            break;
+
+         default:
+      }
+   }
+
+   /**
     * Returns a new vector with the product of the instance and the right
     * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
     * not mutate the vector in place</em>.
@@ -438,6 +516,61 @@ public class KtVec4 extends Vec4 {
    public KtVec4 unaryPlus ( ) {
 
       return new KtVec4(this.x, this.y, this.z, this.w);
+   }
+
+   /**
+    * An iterator, which allows a vector's components to be accessed in an
+    * enhanced for loop.
+    */
+   public static final class V4Iterator implements Iterator < Float > {
+
+      /**
+       * The current index.
+       */
+      private int index = 0;
+
+      /**
+       * The vector being iterated over.
+       */
+      private final KtVec4 vec;
+
+      /**
+       * The default constructor.
+       *
+       * @param vec the vector to iterate
+       */
+      public V4Iterator ( final KtVec4 vec ) { this.vec = vec; }
+
+      /**
+       * Tests to see if the iterator has another value.
+       *
+       * @return the evaluation
+       */
+      @Override
+      public boolean hasNext ( ) { return this.index < this.vec.length(); }
+
+      /**
+       * Gets the next value in the iterator.
+       *
+       * @return the value
+       *
+       * @see KtVec4#get(int)
+       */
+      @Override
+      public Float next ( ) {
+
+         if ( !this.hasNext() ) { throw new NoSuchElementException(); }
+         return this.vec.get(this.index++);
+      }
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
    }
 
 }

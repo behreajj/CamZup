@@ -390,9 +390,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
 
       final int len = edges.length;
       this.vertices = new Vert2[len];
-      for ( int i = 0; i < len; ++i ) {
-         this.vertices[i] = edges[i].origin;
-      }
+      for ( int i = 0; i < len; ++i ) { this.vertices[i] = edges[i].origin; }
 
       return this;
    }
@@ -722,16 +720,12 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
       final TreeSet < Vec2 > aList = new TreeSet <>(Mesh.SORT_2);
       final Vert2[] aVerts = a.vertices;
       final int aLen = aVerts.length;
-      for ( int i = 0; i < aLen; ++i ) {
-         aList.add(aVerts[i].coord);
-      }
+      for ( int i = 0; i < aLen; ++i ) { aList.add(aVerts[i].coord); }
 
       final TreeSet < Vec2 > bList = new TreeSet <>(Mesh.SORT_2);
       final Vert2[] bVerts = b.vertices;
       final int bLen = bVerts.length;
-      for ( int j = 0; j < bLen; ++j ) {
-         bList.add(bVerts[j].coord);
-      }
+      for ( int j = 0; j < bLen; ++j ) { bList.add(bVerts[j].coord); }
 
       aList.retainAll(bList);
 

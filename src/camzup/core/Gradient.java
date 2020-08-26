@@ -312,9 +312,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final int len = this.keys.size();
       final Iterator < ColorKey > itr = this.keys.iterator();
       final ColorKey[] arr = new ColorKey[len];
-      for ( int i = 0; itr.hasNext(); ++i ) {
-         arr[i] = itr.next();
-      }
+      for ( int i = 0; itr.hasNext(); ++i ) { arr[i] = itr.next(); }
 
       /* Cycle the array with three reverses. */
       final int k = Utils.mod(-places, len);
@@ -324,9 +322,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       /* Reintroduce shifted keys to tree set. */
       this.keys.clear();
-      for ( int m = 0; m < len; ++m ) {
-         this.keys.add(arr[m]);
-      }
+      for ( int m = 0; m < len; ++m ) { this.keys.add(arr[m]); }
 
       return this;
    }
@@ -714,16 +710,12 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final int len = this.keys.size();
       final Iterator < ColorKey > itr = this.keys.iterator();
       final ColorKey[] arr = new ColorKey[len];
-      for ( int i = 0; itr.hasNext(); ++i ) {
-         arr[i] = itr.next();
-      }
+      for ( int i = 0; itr.hasNext(); ++i ) { arr[i] = itr.next(); }
 
       Gradient.reverse(arr, 0, len - 1);
 
       this.keys.clear();
-      for ( int i = 0; i < len; ++i ) {
-         this.keys.add(arr[i]);
-      }
+      for ( int i = 0; i < len; ++i ) { this.keys.add(arr[i]); }
 
       return this;
    }
@@ -739,9 +731,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       this.keys.clear();
       final Iterator < ColorKey > srcItr = source.keys.iterator();
-      while ( srcItr.hasNext() ) {
-         this.keys.add(new ColorKey(srcItr.next()));
-      }
+      while ( srcItr.hasNext() ) { this.keys.add(new ColorKey(srcItr.next())); }
       return this;
    }
 
@@ -1147,9 +1137,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       svgp.append("\">");
 
       final Iterator < ColorKey > itr = this.keys.iterator();
-      while ( itr.hasNext() ) {
-         svgp.append(itr.next().toSvgString());
-      }
+      while ( itr.hasNext() ) { svgp.append(itr.next().toSvgString()); }
 
       svgp.append("</linearGradient>");
       return svgp.toString();

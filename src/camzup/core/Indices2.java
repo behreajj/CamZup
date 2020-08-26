@@ -213,9 +213,7 @@ class Indices2 implements Comparable < Indices2 > {
       final Indices2[] result = new Indices2[sz];
 
       if ( arr == null ) {
-         for ( int i = 0; i < sz; ++i ) {
-            result[i] = new Indices2();
-         }
+         for ( int i = 0; i < sz; ++i ) { result[i] = new Indices2(); }
          return result;
       }
 

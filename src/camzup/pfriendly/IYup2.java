@@ -73,9 +73,7 @@ public interface IYup2 extends IUp {
       if ( qt.isLeaf() ) {
          this.bounds(qt.bounds);
       } else {
-         for ( int i = 0; i < 4; ++i ) {
-            this.bounds(qt.children[i]);
-         }
+         for ( int i = 0; i < 4; ++i ) { this.bounds(qt.children[i]); }
       }
    }
 

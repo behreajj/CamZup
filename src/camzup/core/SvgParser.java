@@ -193,9 +193,7 @@ abstract class SvgParser {
 
          if ( Vec2.any(shift) ) {
             final Iterator < Curve2 > itr = result.curves.iterator();
-            while ( itr.hasNext() ) {
-               itr.next().translate(shift);
-            }
+            while ( itr.hasNext() ) { itr.next().translate(shift); }
 
             Vec2.negate(shift, shift);
             result.moveTo(shift);
@@ -753,9 +751,7 @@ abstract class SvgParser {
 
             final Curve2[] cs = SvgParser.parsePath(node);
             final int csLen = cs.length;
-            for ( int i = 0; i < csLen; ++i ) {
-               newCurves.add(cs[i]);
-            }
+            for ( int i = 0; i < csLen; ++i ) { newCurves.add(cs[i]); }
             break;
 
          case 3496420:

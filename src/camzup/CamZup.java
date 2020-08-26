@@ -454,9 +454,7 @@ public class CamZup {
       final int v_lons_p1 = v_lons + 1;
       final float to_tex_s = 1.0f / v_lons;
       final float[] tc_s = new float[v_lons_p1];
-      for ( int j = 0; j < v_lons_p1; ++j ) {
-         tc_s[j] = j * to_tex_s;
-      }
+      for ( int j = 0; j < v_lons_p1; ++j ) { tc_s[j] = j * to_tex_s; }
 
       /* Vertical. */
       final int v_lats_p1 = v_lats + 1;
@@ -474,8 +472,7 @@ public class CamZup {
       }
 
       /* Calculate equatorial uvs. */
-      for ( int j = 0; j < v_lons_p1; ++j ) {
-      }
+      for ( int j = 0; j < v_lons_p1; ++j ) {}
 
       return target;
    }
@@ -498,20 +495,6 @@ public class CamZup {
       // target);
       // System.out.println(target);
       // System.out.println("");
-
-      // final MeshEntity3 entity3 = new MeshEntity3();
-      // entity3.append(target);
-      // final String pyCd = entity3.toBlenderCode();
-      // System.out.println(pyCd);
-
-      // Mesh3 m3 = new Mesh3();
-      // Mesh3.cube(0.5f, Mesh.PolyType.QUAD, Mesh3.CubeUvProfile.CROSS, m3);
-      // Mesh2 net = new Mesh2();
-      // Mesh3.textureMap(m3, net);
-      // MeshEntity2 entity2 = new MeshEntity2();
-      // entity2.append(net);
-      // String pyCd = entity2.toBlenderCode();
-      // System.out.println(pyCd);
    }
 
    /**

@@ -238,9 +238,7 @@ class Indices3 implements Comparable < Indices3 > {
       final Indices3[] result = new Indices3[sz];
 
       if ( arr == null ) {
-         for ( int i = 0; i < sz; ++i ) {
-            result[i] = new Indices3();
-         }
+         for ( int i = 0; i < sz; ++i ) { result[i] = new Indices3(); }
          return result;
       }
 

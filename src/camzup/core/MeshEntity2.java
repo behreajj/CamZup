@@ -106,9 +106,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public MeshEntity2 appendAll ( final Collection < Mesh2 > app ) {
 
       final Iterator < Mesh2 > itr = app.iterator();
-      while ( itr.hasNext() ) {
-         this.append(itr.next());
-      }
+      while ( itr.hasNext() ) { this.append(itr.next()); }
       return this;
    }
 
@@ -122,9 +120,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public MeshEntity2 appendAll ( final Mesh2... app ) {
 
       final int len = app.length;
-      for ( int i = 0; i < len; ++i ) {
-         this.append(app[i]);
-      }
+      for ( int i = 0; i < len; ++i ) { this.append(app[i]); }
       return this;
    }
 
@@ -140,9 +136,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public MeshEntity2 consumeTransform ( ) {
 
       final Iterator < Mesh2 > itr = this.meshes.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().transform(this.transform);
-      }
+      while ( itr.hasNext() ) { itr.next().transform(this.transform); }
       Transform2.identity(this.transform);
       return this;
    }

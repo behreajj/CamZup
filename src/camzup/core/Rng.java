@@ -133,9 +133,7 @@ public class Rng extends java.util.Random implements IUtils {
       final float[] x = new float[count + 2];
       x[0] = 0.0f;
       x[count] = 1.0f;
-      for ( int i = 1; i < count; ++i ) {
-         x[i] = this.nextFloat();
-      }
+      for ( int i = 1; i < count; ++i ) { x[i] = this.nextFloat(); }
 
       Arrays.sort(x);
 

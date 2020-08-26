@@ -342,9 +342,7 @@ public abstract class Mesh extends EntityData implements IMesh {
          for ( int j = 0; j < vstride; ++j, ++k ) {
             final int idx = indices[k];
             final int[] vert = face[j];
-            for ( int m = 0; m < vdim; ++m ) {
-               vert[m] = idx;
-            }
+            for ( int m = 0; m < vdim; ++m ) { vert[m] = idx; }
          }
       }
       return result;
@@ -545,7 +543,7 @@ public abstract class Mesh extends EntityData implements IMesh {
       /**
        * Quantization level.
        */
-      public final int levels;
+      protected final int levels;
 
       /**
        * Quantization level cast to a float.
@@ -620,7 +618,7 @@ public abstract class Mesh extends EntityData implements IMesh {
        *
        * @return the level
        */
-      public int getLevel ( ) { return this.levels; }
+      public int getLevels ( ) { return this.levels; }
 
       /**
        * Returns the simple name of this class.
@@ -641,7 +639,7 @@ public abstract class Mesh extends EntityData implements IMesh {
       /**
        * Quantization level.
        */
-      public final int levels;
+      protected final int levels;
 
       /**
        * Quantization level cast to a float.
@@ -719,7 +717,7 @@ public abstract class Mesh extends EntityData implements IMesh {
        *
        * @return the level
        */
-      public int getLevel ( ) { return this.levels; }
+      public int getLevels ( ) { return this.levels; }
 
       /**
        * Returns the simple name of this class.

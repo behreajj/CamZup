@@ -83,9 +83,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public CurveEntity3 appendAll ( final Collection < Curve3 > app ) {
 
       final Iterator < Curve3 > itr = app.iterator();
-      while ( itr.hasNext() ) {
-         this.append(itr.next());
-      }
+      while ( itr.hasNext() ) { this.append(itr.next()); }
       return this;
    }
 
@@ -99,9 +97,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public CurveEntity3 appendAll ( final Curve3... app ) {
 
       final int len = app.length;
-      for ( int i = 0; i < len; ++i ) {
-         this.append(app[i]);
-      }
+      for ( int i = 0; i < len; ++i ) { this.append(app[i]); }
       return this;
    }
 
@@ -117,9 +113,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public CurveEntity3 consumeTransform ( ) {
 
       final Iterator < Curve3 > itr = this.curves.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().transform(this.transform);
-      }
+      while ( itr.hasNext() ) { itr.next().transform(this.transform); }
       Transform3.identity(this.transform);
       return this;
    }

@@ -1,7 +1,6 @@
 package camzup.core;
 
 import java.util.Comparator;
-import java.util.Iterator;
 
 /**
  * A mutable, extensible class influenced by GLSL, OSL and Processing's
@@ -9,7 +8,7 @@ import java.util.Iterator;
  * three-dimensional graphics programs. Instance methods are limited, while
  * most static methods require an explicit output variable to be provided.
  */
-public class Vec3 implements Comparable < Vec3 >, Iterable < Float > {
+public class Vec3 implements Comparable < Vec3 > {
 
    /**
     * Component on the x axis in the Cartesian coordinate system.
@@ -60,13 +59,13 @@ public class Vec3 implements Comparable < Vec3 >, Iterable < Float > {
     * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
     * the component is set to zero.
     *
-    * @param xstr the x string
-    * @param ystr the y string
-    * @param zstr the z string
+    * @param x the x string
+    * @param y the y string
+    * @param z the z string
     */
-   public Vec3 ( final String xstr, final String ystr, final String zstr ) {
+   public Vec3 ( final String x, final String y, final String z ) {
 
-      this.set(xstr, ystr, zstr);
+      this.set(x, y, z);
    }
 
    /**
@@ -145,34 +144,6 @@ public class Vec3 implements Comparable < Vec3 >, Iterable < Float > {
    }
 
    /**
-    * Simulates bracket subscript access in an array. When the provided index
-    * is 2 or -1, returns z; 1 or -2, y; 0 or -3, x.
-    *
-    * @param index the index
-    *
-    * @return the component at that index
-    */
-   public float get ( final int index ) {
-
-      switch ( index ) {
-         case 0:
-         case -3:
-            return this.x;
-
-         case 1:
-         case -2:
-            return this.y;
-
-         case 2:
-         case -1:
-            return this.z;
-
-         default:
-            return 0.0f;
-      }
-   }
-
-   /**
     * Returns a hash code for this vector based on its x, y and z components.
     *
     * @return the hash code
@@ -186,15 +157,6 @@ public class Vec3 implements Comparable < Vec3 >, Iterable < Float > {
          * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y) ) * IUtils.HASH_MUL
          ^ Float.floatToIntBits(this.z);
    }
-
-   /**
-    * Returns an iterator for this vector, which allows its components to be
-    * accessed in an enhanced for-loop.
-    *
-    * @return the iterator
-    */
-   @Override
-   public Iterator < Float > iterator ( ) { return new V3Iterator(this); }
 
    /**
     * Gets the number of components held by this vector.
@@ -250,34 +212,34 @@ public class Vec3 implements Comparable < Vec3 >, Iterable < Float > {
     * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
     * the component is set to zero.
     *
-    * @param xstr the x string
-    * @param ystr the y string
-    * @param zstr the z string
+    * @param x the x string
+    * @param y the y string
+    * @param z the z string
     *
     * @return this vector
     *
     * @see Float#parseFloat(String)
     */
-   public Vec3 set ( final String xstr, final String ystr, final String zstr ) {
+   public Vec3 set ( final String x, final String y, final String z ) {
 
       float xprs;
       float yprs;
       float zprs;
 
       try {
-         xprs = Float.parseFloat(xstr);
+         xprs = Float.parseFloat(x);
       } catch ( final Exception e ) {
          xprs = 0.0f;
       }
 
       try {
-         yprs = Float.parseFloat(ystr);
+         yprs = Float.parseFloat(y);
       } catch ( final Exception e ) {
          yprs = 0.0f;
       }
 
       try {
-         zprs = Float.parseFloat(zstr);
+         zprs = Float.parseFloat(z);
       } catch ( final Exception e ) {
          zprs = 0.0f;
       }
@@ -1336,9 +1298,7 @@ public class Vec3 implements Comparable < Vec3 >, Iterable < Float > {
 
       final int sourceLen = arr.length;
       int totalLen = 0;
-      for ( int i = 0; i < sourceLen; ++i ) {
-         totalLen += arr[i].length;
-      }
+      for ( int i = 0; i < sourceLen; ++i ) { totalLen += arr[i].length; }
 
       /*
        * Copy each inner array to the result array, then move the cursor by the
@@ -2749,9 +2709,7 @@ public class Vec3 implements Comparable < Vec3 >, Iterable < Float > {
       final Vec3[] result = new Vec3[sz];
 
       if ( arr == null ) {
-         for ( int i = 0; i < sz; ++i ) {
-            result[i] = new Vec3();
-         }
+         for ( int i = 0; i < sz; ++i ) { result[i] = new Vec3(); }
          return result;
       }
 
@@ -3001,9 +2959,7 @@ public class Vec3 implements Comparable < Vec3 >, Iterable < Float > {
       if ( places > 7 ) { return target.set(v); }
 
       int n = 10;
-      for ( int i = 1; i < places; ++i ) {
-         n *= 10;
-      }
+      for ( int i = 1; i < places; ++i ) { n *= 10; }
       final float nf = n;
       final float nInv = 1.0f / nf;
       return target.set(Utils.round(v.x * nf) * nInv, Utils.round(v.y * nf)
@@ -3235,9 +3191,7 @@ public class Vec3 implements Comparable < Vec3 >, Iterable < Float > {
             final Vec3[] row = layer[i];
             final float y = ys[i];
 
-            for ( int j = 0; j < cval; ++j ) {
-               row[j] = new Vec3(xs[j], y, z);
-            }
+            for ( int j = 0; j < cval; ++j ) { row[j] = new Vec3(xs[j], y, z); }
          }
       }
 
@@ -3524,57 +3478,6 @@ public class Vec3 implements Comparable < Vec3 >, Iterable < Float > {
 
          return a.z > b.z ? 1 : a.z < b.z ? -1 : 0;
       }
-
-   }
-
-   /**
-    * An iterator, which allows a vector's components to be accessed in an
-    * enhanced for loop.
-    */
-   public static final class V3Iterator implements Iterator < Float > {
-
-      /**
-       * The current index.
-       */
-      private int index = 0;
-
-      /**
-       * The vector being iterated over.
-       */
-      private final Vec3 vec;
-
-      /**
-       * The default constructor.
-       *
-       * @param vec the vector to iterate
-       */
-      public V3Iterator ( final Vec3 vec ) { this.vec = vec; }
-
-      /**
-       * Tests to see if the iterator has another value.
-       *
-       * @return the evaluation
-       */
-      @Override
-      public boolean hasNext ( ) { return this.index < this.vec.length(); }
-
-      /**
-       * Gets the next value in the iterator.
-       *
-       * @return the value
-       *
-       * @see Vec3#get(int)
-       */
-      @Override
-      public Float next ( ) { return this.vec.get(this.index++); }
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

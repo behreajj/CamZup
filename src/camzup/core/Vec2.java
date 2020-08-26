@@ -1,7 +1,6 @@
 package camzup.core;
 
 import java.util.Comparator;
-import java.util.Iterator;
 
 /**
  * A mutable, extensible class influenced by GLSL, OSL and Processing's
@@ -9,7 +8,7 @@ import java.util.Iterator;
  * two-dimensional graphics programs. Instance methods are limited, while
  * most static methods require an explicit output variable to be provided.
  */
-public class Vec2 implements Comparable < Vec2 >, Iterable < Float > {
+public class Vec2 implements Comparable < Vec2 > {
 
    /**
     * Component on the x axis in the Cartesian coordinate system.
@@ -47,13 +46,10 @@ public class Vec2 implements Comparable < Vec2 >, Iterable < Float > {
     * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
     * the component is set to zero.
     *
-    * @param xstr the x string
-    * @param ystr the y string
+    * @param x the x string
+    * @param y the y string
     */
-   public Vec2 ( final String xstr, final String ystr ) {
-
-      this.set(xstr, ystr);
-   }
+   public Vec2 ( final String x, final String y ) { this.set(x, y); }
 
    /**
     * Constructs a vector from a source vector's components.
@@ -113,30 +109,6 @@ public class Vec2 implements Comparable < Vec2 >, Iterable < Float > {
    }
 
    /**
-    * Simulates bracket subscript access in an array. When the provided index
-    * is 1 or -1, returns y; 0 or -2, x.
-    *
-    * @param index the index
-    *
-    * @return the component at that index
-    */
-   public float get ( final int index ) {
-
-      switch ( index ) {
-         case 0:
-         case -2:
-            return this.x;
-
-         case 1:
-         case -1:
-            return this.y;
-
-         default:
-            return 0.0f;
-      }
-   }
-
-   /**
     * Returns a hash code for this vector based on its x and y components.
     *
     * @return the hash code
@@ -149,15 +121,6 @@ public class Vec2 implements Comparable < Vec2 >, Iterable < Float > {
       return ( IUtils.MUL_BASE ^ Float.floatToIntBits(this.x) )
          * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y);
    }
-
-   /**
-    * Returns an iterator for this vector, which allows its components to be
-    * accessed in an enhanced for-loop.
-    *
-    * @return the iterator
-    */
-   @Override
-   public Iterator < Float > iterator ( ) { return new V2Iterator(this); }
 
    /**
     * Gets the number of components held by this vector.
@@ -209,26 +172,26 @@ public class Vec2 implements Comparable < Vec2 >, Iterable < Float > {
     * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
     * the component is set to zero.
     *
-    * @param xstr the x string
-    * @param ystr the y string
+    * @param x the x string
+    * @param y the y string
     *
     * @return this vector
     *
     * @see Float#parseFloat(String)
     */
-   public Vec2 set ( final String xstr, final String ystr ) {
+   public Vec2 set ( final String x, final String y ) {
 
       float xprs;
       float yprs;
 
       try {
-         xprs = Float.parseFloat(xstr);
+         xprs = Float.parseFloat(x);
       } catch ( final Exception e ) {
          xprs = 0.0f;
       }
 
       try {
-         yprs = Float.parseFloat(ystr);
+         yprs = Float.parseFloat(y);
       } catch ( final Exception e ) {
          yprs = 0.0f;
       }
@@ -1180,9 +1143,7 @@ public class Vec2 implements Comparable < Vec2 >, Iterable < Float > {
       /* Sum the lengths of inner arrays. */
       int totalLen = 0;
       final int sourceLen = arr.length;
-      for ( int i = 0; i < sourceLen; ++i ) {
-         totalLen += arr[i].length;
-      }
+      for ( int i = 0; i < sourceLen; ++i ) { totalLen += arr[i].length; }
 
       /*
        * Copy each inner array to the result array, then move the cursor by the
@@ -2532,9 +2493,7 @@ public class Vec2 implements Comparable < Vec2 >, Iterable < Float > {
       final Vec2[] result = new Vec2[sz];
 
       if ( arr == null ) {
-         for ( int i = 0; i < sz; ++i ) {
-            result[i] = new Vec2();
-         }
+         for ( int i = 0; i < sz; ++i ) { result[i] = new Vec2(); }
          return result;
       }
 
@@ -2658,9 +2617,7 @@ public class Vec2 implements Comparable < Vec2 >, Iterable < Float > {
       if ( places > 7 ) { return target.set(v); }
 
       int n = 10;
-      for ( int i = 1; i < places; ++i ) {
-         n *= 10;
-      }
+      for ( int i = 1; i < places; ++i ) { n *= 10; }
       final float nf = n;
       final float nInv = 1.0f / nf;
       return target.set(Utils.round(v.x * nf) * nInv, Utils.round(v.y * nf)
@@ -2871,9 +2828,7 @@ public class Vec2 implements Comparable < Vec2 >, Iterable < Float > {
          final float step = i * iToStep;
          final float y = ( 1.0f - step ) * lby + step * uby;
 
-         for ( int j = 0; j < cval; ++j ) {
-            row[j] = new Vec2(xs[j], y);
-         }
+         for ( int j = 0; j < cval; ++j ) { row[j] = new Vec2(xs[j], y); }
       }
 
       return result;
@@ -3116,57 +3071,6 @@ public class Vec2 implements Comparable < Vec2 >, Iterable < Float > {
 
          return a.y > b.y ? 1 : a.y < b.y ? -1 : 0;
       }
-
-   }
-
-   /**
-    * An iterator, which allows a vector's components to be accessed in an
-    * enhanced for loop.
-    */
-   public static final class V2Iterator implements Iterator < Float > {
-
-      /**
-       * The current index.
-       */
-      private int index = 0;
-
-      /**
-       * The vector being iterated over.
-       */
-      private final Vec2 vec;
-
-      /**
-       * The default constructor.
-       *
-       * @param vec the vector to iterate
-       */
-      public V2Iterator ( final Vec2 vec ) { this.vec = vec; }
-
-      /**
-       * Tests to see if the iterator has another value.
-       *
-       * @return the evaluation
-       */
-      @Override
-      public boolean hasNext ( ) { return this.index < this.vec.length(); }
-
-      /**
-       * Gets the next value in the iterator.
-       *
-       * @return the value
-       *
-       * @see Vec2#get(int)
-       */
-      @Override
-      public Float next ( ) { return this.vec.get(this.index++); }
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

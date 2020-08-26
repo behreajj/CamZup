@@ -85,9 +85,7 @@ public class Img implements Iterable < Color > {
 
       this(w, h);
       final int len = this.pixels.length;
-      for ( int i = 0; i < len; ++i ) {
-         this.pixels[i] = fill;
-      }
+      for ( int i = 0; i < len; ++i ) { this.pixels[i] = fill; }
    }
 
    /**
@@ -269,9 +267,7 @@ public class Img implements Iterable < Color > {
          this.reallocate(source.width, source.height);
          final int[] pxSrc = source.pixels;
          final int srcLen = pxSrc.length;
-         for ( int i = 0; i < srcLen; ++i ) {
-            this.pixels[i] = pxSrc[i];
-         }
+         for ( int i = 0; i < srcLen; ++i ) { this.pixels[i] = pxSrc[i]; }
       }
    }
 
@@ -505,6 +501,8 @@ public class Img implements Iterable < Color > {
     */
    public static Img falseColor ( final Gradient grd, final Img target ) {
 
+      // TODO: False color with external function? See ZImage.
+
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
@@ -673,9 +671,7 @@ public class Img implements Iterable < Color > {
 
          final int[] px = target.pixels;
          final int len = px.length;
-         for ( int i = 0; i < len; ++i ) {
-            px[i] = 0xff000000 | px[i];
-         }
+         for ( int i = 0; i < len; ++i ) { px[i] = 0xff000000 | px[i]; }
          return target;
 
       }

@@ -1,5 +1,8 @@
 package camzup.kotlin;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import camzup.core.Quaternion;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -9,7 +12,7 @@ import camzup.core.Vec3;
  * Provides Kotlin operator overloading support for three dimensional
  * vectors.
  */
-public class KtVec3 extends Vec3 {
+public class KtVec3 extends Vec3 implements Iterable < Float > {
 
    /**
     * The default vector constructor.
@@ -45,13 +48,13 @@ public class KtVec3 extends Vec3 {
     * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
     * the component is set to zero.
     *
-    * @param xstr the x string
-    * @param ystr the y string
-    * @param zstr the z string
+    * @param x the x string
+    * @param y the y string
+    * @param z the z string
     */
-   public KtVec3 ( final String xstr, final String ystr, final String zstr ) {
+   public KtVec3 ( final String x, final String y, final String z ) {
 
-      super(xstr, ystr, zstr);
+      super(x, y, z);
    }
 
    /**
@@ -146,6 +149,34 @@ public class KtVec3 extends Vec3 {
    }
 
    /**
+    * Simulates bracket subscript access in an array. When the provided index
+    * is 2 or -1, returns z; 1 or -2, y; 0 or -3, x.
+    *
+    * @param index the index
+    *
+    * @return the component at that index
+    */
+   public float get ( final int index ) {
+
+      switch ( index ) {
+         case 0:
+         case -3:
+            return this.x;
+
+         case 1:
+         case -2:
+            return this.y;
+
+         case 2:
+         case -1:
+            return this.z;
+
+         default:
+            return 0.0f;
+      }
+   }
+
+   /**
     * Returns a new vector incremented by one. For interoperability with
     * Kotlin: <code>++a</code> (prefix) or <code>a++</code> (postfix). Per the
     * specification, <em>does not mutate the vector in place</em>.
@@ -153,6 +184,15 @@ public class KtVec3 extends Vec3 {
     * @return the incremented vector
     */
    public KtVec3 inc ( ) { return this.plus(1.0f); }
+
+   /**
+    * Returns an iterator for this vector, which allows its components to be
+    * accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
+   @Override
+   public Iterator < Float > iterator ( ) { return new V3Iterator(this); }
 
    /**
     * Returns a new vector with the subtraction of the right operand from the
@@ -335,6 +375,35 @@ public class KtVec3 extends Vec3 {
    }
 
    /**
+    * Simulates bracket subscript access in an array. When the provided index
+    * is 3 or -1, sets w; 2 or -2, z; 1 or -3, y; 0 or -4, x.
+    *
+    * @param index the index
+    * @param value the value
+    */
+   public void set ( final int index, final float value ) {
+
+      switch ( index ) {
+         case 0:
+         case -3:
+            this.x = value;
+            break;
+
+         case 1:
+         case -2:
+            this.y = value;
+            break;
+
+         case 2:
+         case -1:
+            this.z = value;
+            break;
+
+         default:
+      }
+   }
+
+   /**
     * Returns a new vector with the product of the instance and the right
     * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
     * not mutate the vector in place</em>.
@@ -429,6 +498,61 @@ public class KtVec3 extends Vec3 {
    public KtVec3 unaryPlus ( ) {
 
       return new KtVec3(this.x, this.y, this.z);
+   }
+
+   /**
+    * An iterator, which allows a vector's components to be accessed in an
+    * enhanced for loop.
+    */
+   public static final class V3Iterator implements Iterator < Float > {
+
+      /**
+       * The current index.
+       */
+      private int index = 0;
+
+      /**
+       * The vector being iterated over.
+       */
+      private final KtVec3 vec;
+
+      /**
+       * The default constructor.
+       *
+       * @param vec the vector to iterate
+       */
+      public V3Iterator ( final KtVec3 vec ) { this.vec = vec; }
+
+      /**
+       * Tests to see if the iterator has another value.
+       *
+       * @return the evaluation
+       */
+      @Override
+      public boolean hasNext ( ) { return this.index < this.vec.length(); }
+
+      /**
+       * Gets the next value in the iterator.
+       *
+       * @return the value
+       *
+       * @see KtVec3#get(int)
+       */
+      @Override
+      public Float next ( ) {
+
+         if ( !this.hasNext() ) { throw new NoSuchElementException(); }
+         return this.vec.get(this.index++);
+      }
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
    }
 
 }

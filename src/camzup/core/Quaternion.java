@@ -1,7 +1,6 @@
 package camzup.core;
 
 import java.util.Comparator;
-import java.util.Iterator;
 
 /**
  * A four-dimensional complex number. The <em>x</em>, <em>y</em> and
@@ -13,8 +12,7 @@ import java.util.Iterator;
  * objects from one orientation to another over minimal distance without
  * suffering gimbal lock.
  */
-public class Quaternion implements Comparable < Quaternion >, Iterable <
-   Float > {
+public class Quaternion implements Comparable < Quaternion > {
 
    /**
     * The coefficients of the imaginary components <em>i</em>, <em>j</em> and
@@ -133,80 +131,6 @@ public class Quaternion implements Comparable < Quaternion >, Iterable <
    }
 
    /**
-    * Simulates bracket subscript access in an array. Alias for retrieving w,
-    * or the real component, as the first element.
-    *
-    * @param index the index
-    *
-    * @return the component at that index
-    *
-    * @see Quaternion#getWFirst(int)
-    */
-   public float get ( final int index ) { return this.getWFirst(index); }
-
-   /**
-    * Gets an element by index, assuming that w is the first.
-    *
-    * @param index the index
-    *
-    * @return the component at that index
-    */
-   public float getWFirst ( final int index ) {
-
-      switch ( index ) {
-         case 0:
-         case -4:
-            return this.real;
-
-         case 1:
-         case -3:
-            return this.imag.x;
-
-         case 2:
-         case -2:
-            return this.imag.y;
-
-         case 3:
-         case -1:
-            return this.imag.z;
-
-         default:
-            return 0.0f;
-      }
-   }
-
-   /**
-    * Gets an element by index, assuming that w is the last.
-    *
-    * @param index the index
-    *
-    * @return the component at that index
-    */
-   public float getWLast ( final int index ) {
-
-      switch ( index ) {
-         case 0:
-         case -4:
-            return this.imag.x;
-
-         case 1:
-         case -3:
-            return this.imag.y;
-
-         case 2:
-         case -2:
-            return this.imag.z;
-
-         case 3:
-         case -1:
-            return this.real;
-
-         default:
-            return 0.0f;
-      }
-   }
-
-   /**
     * Returns a hash code for this quaternion based on its real and imaginary
     * components.
     *
@@ -220,13 +144,6 @@ public class Quaternion implements Comparable < Quaternion >, Iterable <
       return ( IUtils.MUL_BASE ^ Float.floatToIntBits(this.real) )
          * IUtils.HASH_MUL ^ ( this.imag == null ? 0 : this.imag.hashCode() );
    }
-
-   /**
-    * Returns an iterator for this quaternion, which allows its components to
-    * be accessed in an enhanced for-loop.
-    */
-   @Override
-   public Iterator < Float > iterator ( ) { return new IteratorWFirst(this); }
 
    /**
     * Gets the number of components held by the quaternion.
@@ -2325,52 +2242,6 @@ public class Quaternion implements Comparable < Quaternion >, Iterable <
    }
 
    /**
-    * An iterator, which allows a quaternion's components to be accessed in an
-    * enhanced for loop. The 'w' component is listed first.
-    */
-   public static final class IteratorWFirst extends QIterator {
-
-      /**
-       * The default constructor.
-       *
-       * @param q the quaternion to iterate
-       */
-      public IteratorWFirst ( final Quaternion q ) { super(q); }
-
-      /**
-       * Gets the next value in the iterator.
-       *
-       * @return the value
-       */
-      @Override
-      public Float next ( ) { return this.quat.getWFirst(this.index++); }
-
-   }
-
-   /**
-    * An iterator, which allows a quaternion's components to be accessed in an
-    * enhanced for loop. The 'w' component is listed last.
-    */
-   public static final class IteratorWLast extends QIterator {
-
-      /**
-       * The default constructor.
-       *
-       * @param q the quaternion to iterate
-       */
-      public IteratorWLast ( final Quaternion q ) { super(q); }
-
-      /**
-       * Gets the next value in the iterator.
-       *
-       * @return the value
-       */
-      @Override
-      public Float next ( ) { return this.quat.getWLast(this.index++); }
-
-   }
-
-   /**
     * A functional class to ease between two quaternions by linear
     * interpolation (lerp).
     */
@@ -2424,48 +2295,6 @@ public class Quaternion implements Comparable < Quaternion >, Iterable <
          return target.set(( float ) ( cw * mInv ), ( float ) ( cx * mInv ),
             ( float ) ( cy * mInv ), ( float ) ( cz * mInv ));
       }
-
-   }
-
-   /**
-    * An iterator, which allows a quaternion's components to be accessed in an
-    * enhanced for loop. This class is abstract, and serves as a parent for
-    * other, more specific iterators.
-    */
-   public abstract static class QIterator implements Iterator < Float > {
-
-      /**
-       * The current index.
-       */
-      protected int index = 0;
-
-      /**
-       * The quaternion being iterated over.
-       */
-      protected final Quaternion quat;
-
-      /**
-       * The default constructor.
-       *
-       * @param q the quaternion to iterate
-       */
-      public QIterator ( final Quaternion q ) { this.quat = q; }
-
-      /**
-       * Tests to see if the iterator has another value.
-       *
-       * @return the evaluation
-       */
-      @Override
-      public boolean hasNext ( ) { return this.index < this.quat.length(); }
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

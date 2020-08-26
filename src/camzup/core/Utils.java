@@ -862,9 +862,7 @@ public abstract class Utils implements IUtils {
 
       float max = Float.MIN_VALUE;
       final int len = fs.length;
-      for ( int i = 0; i < len; ++i ) {
-         if ( fs[i] > max ) { max = fs[i]; }
-      }
+      for ( int i = 0; i < len; ++i ) { if ( fs[i] > max ) { max = fs[i]; } }
       return max;
    }
 
@@ -908,9 +906,7 @@ public abstract class Utils implements IUtils {
 
       float min = Float.MAX_VALUE;
       final int len = fs.length;
-      for ( int i = 0; i < len; ++i ) {
-         if ( fs[i] < min ) { min = fs[i]; }
-      }
+      for ( int i = 0; i < len; ++i ) { if ( fs[i] < min ) { min = fs[i]; } }
       return min;
    }
 
@@ -1213,9 +1209,7 @@ public abstract class Utils implements IUtils {
       if ( places > 7 ) { return value; }
 
       int n = 10;
-      for ( int i = 1; i < places; ++i ) {
-         n *= 10;
-      }
+      for ( int i = 1; i < places; ++i ) { n *= 10; }
 
       final float nf = n;
       return Utils.round(value * nf) / nf;
@@ -1522,9 +1516,7 @@ public abstract class Utils implements IUtils {
       final StringBuilder sb = new StringBuilder(16);
       if ( isNeg ) { sb.append('-'); }
       final int vplaces = filled > places ? filled : places;
-      for ( int n = vplaces - 1; n > -1; --n ) {
-         sb.append(digits[n]);
-      }
+      for ( int n = vplaces - 1; n > -1; --n ) { sb.append(digits[n]); }
 
       return sb.toString();
    }

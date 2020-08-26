@@ -202,9 +202,7 @@ class Face2Refactor implements Comparable < Face2Refactor > {
       float sum = 0.0f;
       final Edge2[] edges = face.edges;
       final int len = edges.length;
-      for ( int i = 0; i < len; ++i ) {
-         sum += Edge2.mag(edges[i]);
-      }
+      for ( int i = 0; i < len; ++i ) { sum += Edge2.mag(edges[i]); }
       return sum;
    }
 
@@ -214,16 +212,12 @@ class Face2Refactor implements Comparable < Face2Refactor > {
       final TreeSet < Vec2 > aList = new TreeSet <>(Mesh.SORT_2);
       final Edge2[] aEdges = a.edges;
       final int aLen = aEdges.length;
-      for ( int i = 0; i < aLen; ++i ) {
-         aList.add(aEdges[i].origin.coord);
-      }
+      for ( int i = 0; i < aLen; ++i ) { aList.add(aEdges[i].origin.coord); }
 
       final TreeSet < Vec2 > bList = new TreeSet <>(Mesh.SORT_2);
       final Edge2[] bEdges = b.edges;
       final int bLen = bEdges.length;
-      for ( int j = 0; j < bLen; ++j ) {
-         bList.add(bEdges[j].origin.coord);
-      }
+      for ( int j = 0; j < bLen; ++j ) { bList.add(bEdges[j].origin.coord); }
 
       aList.retainAll(bList);
 
