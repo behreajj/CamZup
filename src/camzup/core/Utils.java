@@ -75,7 +75,6 @@ public abstract class Utils implements IUtils {
       } else if ( y >= 1.0f ) {
          return 0.0f;
       } else {
-         // return ( float ) Math.acos(y);
          final boolean ltZero = y < -0.0f;
          final float x = ltZero ? -y : y;
          float ret = ( 0.074261f - 0.0187293f * x ) * x - 0.2121144f;
@@ -168,7 +167,6 @@ public abstract class Utils implements IUtils {
       } else if ( y >= 1.0f ) {
          return IUtils.HALF_PI;
       } else {
-         // return ( float ) Math.asin(y);
          final boolean ltZero = y < -0.0f;
          final float x = ltZero ? -y : y;
          float ret = ( 0.074261f - 0.0187293f * x ) * x - 0.2121144f;

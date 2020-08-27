@@ -187,20 +187,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Clones this mesh.
-    *
-    * @return the cloned mesh
-    */
-   @Override
-   public Mesh3 clone ( ) {
-
-      final Mesh3 m = new Mesh3(this);
-      m.name = this.name;
-      m.materialIndex = this.materialIndex;
-      return m;
-   }
-
-   /**
     * Tests this mesh for equivalence with an object.
     *
     * @param obj the object
@@ -270,9 +256,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec2 vtDest = this.texCoords[idxVt3];
       final Vec3 vnDest = this.normals[idxVn3];
 
-      final Vec3 vnDiff = new Vec3( ( vnDest.x + vnOrigin.x ) * 0.5f, ( vnDest.y
-         + vnOrigin.y ) * 0.5f, ( vnDest.z + vnOrigin.z ) * 0.5f);
-      Vec3.normalize(vnDiff, vnDiff);
+      final Vec3 vnDiff = Vec3.addNorm(vnDest, vnOrigin, new Vec3());
 
       final Vec3 vDiff = new Vec3();
       Vec3.sub(vDest, vOrigin, vDiff);
@@ -1412,11 +1396,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          /* Multiply by 0.5 removed because normalize takes care of it. */
          final int vnNextIdx = vertNext[2];
          final Vec3 vnNext = this.normals[vnNextIdx];
-         final Vec3 vn = vnsNew[j] = new Vec3(
-            vnCurr.x + vnNext.x,
-            vnCurr.y + vnNext.y,
-            vnCurr.z + vnNext.z);
-         Vec3.normalize(vn, vn);
+         vnsNew[j] = Vec3.addNorm(vnCurr, vnNext, new Vec3());
 
          fsNew[j] = new int[][] {
             { vCenterIdx, vtCenterIdx, vnCenterIdx },
@@ -5125,6 +5105,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
        */
       protected SortIndices3 ( final Vec3[] coords ) {
 
+         // TODO: Rename SortLoops, move to its own class file.
          this.coords = coords;
       }
 

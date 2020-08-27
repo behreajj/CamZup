@@ -1507,13 +1507,6 @@ public class Vec3 implements Comparable < Vec3 > {
    public static Vec3 fromSpherical ( final float azimuth,
       final float inclination, final float radius, final Vec3 target ) {
 
-      /*
-       * final double rd = radius; final double azd = azimuth; final double ind
-       * = inclination; final double rhoCosPhi = rd * Math.cos(ind); return
-       * target.set(( float ) ( rhoCosPhi * Math.cos(azd) ), ( float ) (
-       * rhoCosPhi * Math.sin(azd) ), ( float ) ( rd * -Math.sin( ind) ));
-       */
-
       final float azNorm = azimuth * IUtils.ONE_TAU;
       final float inclNorm = inclination * IUtils.ONE_TAU;
       final float rhoCosPhi = radius * Utils.scNorm(inclNorm);
@@ -2794,9 +2787,6 @@ public class Vec3 implements Comparable < Vec3 > {
    public static Vec3 rotate ( final Vec3 v, final float radians,
       final Vec3 axis, final Vec3 target ) {
 
-      // final float c = Utils.cos(radians);
-      // final float s = Utils.sin(radians);
-
       final float n = radians * IUtils.ONE_TAU;
       final float c = Utils.scNorm(n);
       final float s = Utils.scNorm(n - 0.25f);
@@ -2838,9 +2828,6 @@ public class Vec3 implements Comparable < Vec3 > {
     */
    public static Vec3 rotateX ( final Vec3 v, final float radians,
       final Vec3 target ) {
-
-      // final float c = Utils.cos(radians);
-      // final float s = Utils.sin(radians);
 
       final float n = radians * IUtils.ONE_TAU;
       final float c = Utils.scNorm(n);
@@ -2884,9 +2871,6 @@ public class Vec3 implements Comparable < Vec3 > {
    public static Vec3 rotateY ( final Vec3 v, final float radians,
       final Vec3 target ) {
 
-      // final float c = Utils.cos(radians);
-      // final float s = Utils.sin(radians);
-
       final float n = radians * IUtils.ONE_TAU;
       final float c = Utils.scNorm(n);
       final float s = Utils.scNorm(n - 0.25f);
@@ -2928,9 +2912,6 @@ public class Vec3 implements Comparable < Vec3 > {
     */
    public static Vec3 rotateZ ( final Vec3 v, final float radians,
       final Vec3 target ) {
-
-      // final float c = Utils.cos(radians);
-      // final float s = Utils.sin(radians);
 
       final float n = radians * IUtils.ONE_TAU;
       final float c = Utils.scNorm(n);
@@ -3208,21 +3189,6 @@ public class Vec3 implements Comparable < Vec3 > {
        * The default constructor.
        */
       public AbstrComparator ( ) {}
-
-      /**
-       * The compare function which must be implemented by sub- (child) classes
-       * of this class. Negative one should be returned when the left
-       * comparisand, a, is less than the right comparisand, b, by a measure.
-       * One should be returned when it is greater. Zero should be returned as a
-       * last resort, when a and b are equal or incomparable.
-       *
-       * @param a the left comparisand
-       * @param b the right comparisand
-       *
-       * @return the comparison
-       */
-      @Override
-      public abstract int compare ( final Vec3 a, final Vec3 b );
 
       /**
        * Returns the simple name of this class.

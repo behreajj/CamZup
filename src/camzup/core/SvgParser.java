@@ -2,6 +2,7 @@ package camzup.core;
 
 import java.io.File;
 
+import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
@@ -148,8 +149,10 @@ abstract class SvgParser {
       final CurveEntity2 result = new CurveEntity2();
 
       try {
-         final DocumentBuilder db = DocumentBuilderFactory.newInstance()
-            .newDocumentBuilder();
+         DocumentBuilderFactory df = DocumentBuilderFactory.newInstance();
+         df.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
+         df.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
+         DocumentBuilder db = df.newDocumentBuilder();
          final File file = new File(fileName);
          final Document doc = db.parse(file);
          doc.normalizeDocument();
@@ -262,7 +265,6 @@ abstract class SvgParser {
          }
 
       } catch ( final Exception e ) {
-         x = def;
       }
 
       return x;
@@ -1101,7 +1103,6 @@ abstract class SvgParser {
 
                   case QuadraticToRel:
 
-                     // if ( datLen > cursor + 3 ) {
                      mhxStr = dataTokens[++cursor]; /* 1 */
                      mhyStr = dataTokens[++cursor]; /* 2 */
                      coxStr = dataTokens[++cursor]; /* 3 */
@@ -1123,13 +1124,11 @@ abstract class SvgParser {
                      Curve2.lerp13(mh, curr.coord, curr.rearHandle);
 
                      relative.set(curr.coord);
-                     // }
 
                      break;
 
                   case ReflectQuadraticAbs:
 
-                     // if ( datLen > cursor + 1 ) {
                      coxStr = dataTokens[++cursor]; /* 1 */
                      coyStr = dataTokens[++cursor]; /* 2 */
 
@@ -1151,13 +1150,11 @@ abstract class SvgParser {
                      Curve2.lerp13(mh, curr.coord, curr.rearHandle);
 
                      relative.set(curr.coord);
-                     // }
 
                      break;
 
                   case ReflectQuadraticRel:
 
-                     // if ( datLen > cursor + 1 ) {
                      coxStr = dataTokens[++cursor]; /* 1 */
                      coyStr = dataTokens[++cursor]; /* 2 */
 
@@ -1176,13 +1173,11 @@ abstract class SvgParser {
                      Curve2.lerp13(mh, curr.coord, curr.rearHandle);
 
                      relative.set(curr.coord);
-                     // }
 
                      break;
 
                   case CubicToAbs:
 
-                     // if ( datLen > cursor + 5 ) {
                      fhxStr = dataTokens[++cursor]; /* 1 */
                      fhyStr = dataTokens[++cursor]; /* 2 */
                      rhxStr = dataTokens[++cursor]; /* 3 */
@@ -1202,13 +1197,11 @@ abstract class SvgParser {
                         .parseFloat(coyStr));
 
                      relative.set(curr.coord);
-                     // }
 
                      break;
 
                   case CubicToRel:
 
-                     // if ( datLen > cursor + 5 ) {
                      fhxStr = dataTokens[++cursor]; /* 1 */
                      fhyStr = dataTokens[++cursor]; /* 2 */
                      rhxStr = dataTokens[++cursor]; /* 3 */
@@ -1232,13 +1225,11 @@ abstract class SvgParser {
                      Vec2.add(relative, curr.coord, curr.coord);
 
                      relative.set(curr.coord);
-                     // }
 
                      break;
 
                   case ReflectCubicAbs:
 
-                     // if ( datLen > cursor + 2 ) {
                      rhxStr = dataTokens[++cursor]; /* 1 */
                      rhyStr = dataTokens[++cursor]; /* 2 */
                      coxStr = dataTokens[++cursor]; /* 3 */
@@ -1255,13 +1246,11 @@ abstract class SvgParser {
                         .parseFloat(coyStr));
 
                      relative.set(curr.coord);
-                     // }
 
                      break;
 
                   case ReflectCubicRel:
 
-                     // if ( datLen > cursor + 2 ) {
                      rhxStr = dataTokens[++cursor]; /* 1 */
                      rhyStr = dataTokens[++cursor]; /* 2 */
                      coxStr = dataTokens[++cursor]; /* 3 */
@@ -1281,13 +1270,11 @@ abstract class SvgParser {
                      Vec2.add(relative, curr.coord, curr.coord);
 
                      relative.set(curr.coord);
-                     // }
 
                      break;
 
                   case ArcToAbs:
 
-                     // if ( datLen > cursor + 5 ) {
                      rx = dataTokens[++cursor]; /* 1 */
                      ry = dataTokens[++cursor]; /* 2 */
                      angle = dataTokens[++cursor]; /* 3 */
@@ -1306,13 +1293,11 @@ abstract class SvgParser {
 
                      curr = target.get(target.length() - 1);
                      relative.set(curr.coord);
-                     // }
 
                      break;
 
                   case ArcToRel:
 
-                     // if ( datLen > cursor + 5 ) {
                      rx = dataTokens[++cursor]; /* 1 */
                      ry = dataTokens[++cursor]; /* 2 */
                      angle = dataTokens[++cursor]; /* 3 */
@@ -1332,7 +1317,6 @@ abstract class SvgParser {
 
                      curr = target.get(target.length() - 1);
                      relative.set(curr.coord);
-                     // }
 
                      break;
 
@@ -1352,8 +1336,6 @@ abstract class SvgParser {
 
             /* Deal with first and last knots in open versus closed loop. */
             final Iterator < Curve2 > resultItr = result.iterator();
-            // final ArrayList < Curve2 > emptyCurves = new ArrayList <>(2);
-            // int emptyCurvesFound = 0;
             while ( resultItr.hasNext() ) {
                final Curve2 curve = resultItr.next();
                final int len = curve.length();
@@ -1368,24 +1350,8 @@ abstract class SvgParser {
                      last.mirrorHandlesBackward();
                   }
                } else {
-                  // emptyCurvesFound++;
-                  // emptyCurves.add(curve);
                }
             }
-
-            // if ( emptyCurvesFound > 0 ) {
-            // final Iterator < Curve2 > emptyItr = emptyCurves.iterator();
-            // while ( emptyItr.hasNext() ) {
-            // result.remove(emptyItr.next());
-            // }
-            //
-            // // final StringBuilder sb = new StringBuilder(64);
-            // // sb.append("The parser found ");
-            // // sb.append(Utils.toPadded(emptyCurvesFound, 2));
-            // // sb.append(" empty curves when parsing this SVG.");
-            // // sb.append(" Check for malformed path data.");
-            // // System.err.println(sb.toString());
-            // }
          }
       }
 

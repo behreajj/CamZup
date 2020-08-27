@@ -1269,11 +1269,6 @@ public class Vec2 implements Comparable < Vec2 > {
    public static Vec2 fromPolar ( final float heading, final float radius,
       final Vec2 target ) {
 
-      /*
-       * return target.set( radius * Utils.cos(heading), radius *
-       * Utils.sin(heading));
-       */
-
       final float nrm = heading * IUtils.ONE_TAU;
       return target.set(radius * Utils.scNorm(nrm), radius * Utils.scNorm(nrm
          - 0.25f));
@@ -1289,8 +1284,6 @@ public class Vec2 implements Comparable < Vec2 > {
     * @return the vector
     */
    public static Vec2 fromPolar ( final float heading, final Vec2 target ) {
-
-      /* return target.set( Utils.cos(heading), Utils.sin(heading)); */
 
       final float nrm = heading * IUtils.ONE_TAU;
       return target.set(Utils.scNorm(nrm), Utils.scNorm(nrm - 0.25f));
@@ -2383,8 +2376,6 @@ public class Vec2 implements Comparable < Vec2 > {
    public static Vec2 reflect ( final Vec2 incident, final Vec2 normal,
       final Vec2 target ) {
 
-      // TEST
-
       final float nMSq = Vec2.magSq(normal);
       if ( Utils.abs(nMSq) < IUtils.EPSILON ) { return target.reset(); }
 
@@ -2416,8 +2407,6 @@ public class Vec2 implements Comparable < Vec2 > {
     */
    public static Vec2 refract ( final Vec2 incident, final Vec2 normal,
       final float eta, final Vec2 target ) {
-
-      // TEST
 
       final float nDotI = Vec2.dot(normal, incident);
       final float k = 1.0f - eta * eta * ( 1.0f - nDotI * nDotI );
@@ -2586,10 +2575,6 @@ public class Vec2 implements Comparable < Vec2 > {
     */
    public static Vec2 rotateZ ( final Vec2 v, final float radians,
       final Vec2 target ) {
-
-      // return Vec2.rotateZ(v,
-      // Utils.cos(radians),
-      // Utils.sin(radians), target);
 
       final float nrm = radians * IUtils.ONE_TAU;
       final float cosa = Utils.scNorm(nrm);

@@ -25,8 +25,7 @@ void setup() {
   rndr = (Zup3)getGraphics();
   rndr.textureSampling(TextureSampling.BILINEAR);
 
-  txtr = createImage(512, 512, ARGB);
-  ZImage.rgb(txtr);
+  txtr = loadImage("texture.png");
   textured = new MaterialPImage(txtr);
 
   wire.setStroke(true)

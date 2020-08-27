@@ -175,8 +175,6 @@ public class Voronoi extends Generative {
                final float sumxsq = sumx * sumx;
 
                // TEST
-               // final int mulvx = IUtils.MUL_BASE ^
-               // Float.floatToIntBits(sumx);
                final int mulvx = ( IUtils.MUL_BASE ^ Float.floatToIntBits(
                   sumx) ) * IUtils.HASH_MUL;
 
@@ -192,14 +190,10 @@ public class Voronoi extends Generative {
                   + st) ) * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit;
 
                /* Create a hash for the y component. */
-               // final int bhsh = ( mulvx * IUtils.HASH_MUL ^ Float
-               // .floatToIntBits(sumy + st) ) * IUtils.HASH_MUL ^ vzbit;
                final int bhsh = ( mulvx ^ Float.floatToIntBits(sumy + st) )
                   * IUtils.HASH_MUL ^ vzbit;
 
                /* Create a hash for the z component. */
-               // final int chsh = ( mulvx * IUtils.HASH_MUL ^ vybit )
-               // * IUtils.HASH_MUL ^ Float.floatToIntBits(sumz + st);
                final int chsh = ( mulvx ^ vybit ) * IUtils.HASH_MUL ^ Float
                   .floatToIntBits(sumz + st);
 

@@ -6,7 +6,7 @@ import camzup.core.Utils.EasingFuncObj;
 /**
  * Facilitates 3D affine transformations for entities.
  */
-public class Transform3 extends Transform implements ISpatial3, IOriented3,
+public class Transform3 implements ISpatial3, IOriented3,
    IVolume3 {
 
    /**
@@ -428,7 +428,6 @@ public class Transform3 extends Transform implements ISpatial3, IOriented3,
 
       this.locPrev.set(this.location);
       Quaternion.mulVector(this.rotation, dir, this.location);
-      // Vec3.mul(this.location, this.scale, this.location);
       Vec3.add(this.locPrev, this.location, this.location);
 
       return this;
@@ -1038,7 +1037,6 @@ public class Transform3 extends Transform implements ISpatial3, IOriented3,
     *
     * @see Quaternion#toAxes(Quaternion, Vec3, Vec3, Vec3)
     */
-   @Override
    protected void updateAxes ( ) {
 
       Quaternion.toAxes(this.rotation, this.right, this.forward, this.up);

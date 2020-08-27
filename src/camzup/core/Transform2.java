@@ -6,7 +6,7 @@ import camzup.core.Utils.EasingFuncObj;
 /**
  * Facilitates 2D affine transformations for entities.
  */
-public class Transform2 extends Transform implements ISpatial2, IOriented2,
+public class Transform2 implements ISpatial2, IOriented2,
    IVolume2 {
 
    /**
@@ -383,7 +383,6 @@ public class Transform2 extends Transform implements ISpatial2, IOriented2,
 
       this.locPrev.set(this.location);
       Vec2.rotateZ(dir, this.right.x, this.right.y, this.location);
-      // Vec2.mul(this.location, this.scale, this.location);
       Vec2.add(this.locPrev, this.location, this.location);
 
       return this;
@@ -909,7 +908,6 @@ public class Transform2 extends Transform implements ISpatial2, IOriented2,
     * @see Vec2#fromPolar(float, Vec2)
     * @see Vec2#perpendicularCCW(Vec2, Vec2)
     */
-   @Override
    protected void updateAxes ( ) {
 
       Vec2.fromPolar(this.rotation, this.right);

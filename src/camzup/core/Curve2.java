@@ -243,12 +243,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public Curve2 insert ( final int i, final Knot2 knot ) {
 
-      // if ( knot != null ) {
-      // final int k = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
-      // : i;
-      // this.knots.add(k, knot);
-      // }
-
       final int k = this.closedLoop ? Utils.mod(i, this.knots.size() + 1) : i;
       this.knots.add(k, knot);
 

@@ -130,7 +130,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 append ( final Knot3 knot ) {
 
-      // if ( knot != null ) { this.knots.add(knot); }
       this.knots.add(knot);
       return this;
    }
@@ -252,12 +251,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @return the curve
     */
    public Curve3 insert ( final int i, final Knot3 knot ) {
-
-      // if ( knot != null ) {
-      // final int k = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
-      // : i;
-      // this.knots.add(k, knot);
-      // }
 
       final int k = this.closedLoop ? Utils.mod(i, this.knots.size() + 1) : i;
       this.knots.add(k, knot);

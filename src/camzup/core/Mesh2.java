@@ -195,20 +195,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Clones this mesh.
-    *
-    * @return the cloned mesh
-    */
-   @Override
-   public Mesh2 clone ( ) {
-
-      final Mesh2 m = new Mesh2(this);
-      m.name = this.name;
-      m.materialIndex = this.materialIndex;
-      return m;
-   }
-
-   /**
     * Tests this mesh for equivalence with an object.
     *
     * @param obj the object
@@ -3275,6 +3261,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
        */
       protected SortIndices2 ( final Vec2[] coords ) {
 
+         // TODO: Rename SortLoops, move to its own class file.
          this.coords = coords;
       }
 
