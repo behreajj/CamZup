@@ -538,8 +538,7 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Appends a vector to a one-dimensional vector array, returning a new
-    * array.
+    * Appends a vector to a one-dimensional vector array. Returns a new array.
     *
     * @param a the array
     * @param b the vector
@@ -548,21 +547,21 @@ public class Vec2 implements Comparable < Vec2 > {
     */
    public static Vec2[] append ( final Vec2[] a, final Vec2 b ) {
 
-      final boolean anull = a == null;
-      final boolean bnull = b == null;
-      if ( anull && bnull ) { return new Vec2[] {}; }
-      if ( anull ) { return new Vec2[] { b }; }
-      if ( bnull ) {
-         final Vec2[] result = new Vec2[a.length];
-         System.arraycopy(a, 0, result, 0, a.length);
-         return result;
+      final boolean aNull = a == null;
+      final boolean bNull = b == null;
+      if ( aNull && bNull ) { return new Vec2[] {}; }
+      if ( aNull ) { return new Vec2[] { b }; }
+      if ( bNull ) {
+         final Vec2[] result0 = new Vec2[a.length];
+         System.arraycopy(a, 0, result0, 0, a.length);
+         return result0;
       }
 
-      final int alen = a.length;
-      final Vec2[] result = new Vec2[alen + 1];
-      System.arraycopy(a, 0, result, 0, alen);
-      result[alen] = b;
-      return result;
+      final int aLen = a.length;
+      final Vec2[] result1 = new Vec2[aLen + 1];
+      System.arraycopy(a, 0, result1, 0, aLen);
+      result1[aLen] = b;
+      return result1;
    }
 
    /**

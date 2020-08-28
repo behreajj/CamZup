@@ -6,8 +6,7 @@ import camzup.core.Utils.EasingFuncObj;
 /**
  * Facilitates 3D affine transformations for entities.
  */
-public class Transform3 implements ISpatial3, IOriented3,
-   IVolume3 {
+public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
 
    /**
     * The transform's forward axis.

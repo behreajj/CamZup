@@ -82,14 +82,15 @@ public class CamZup {
       final int idx_v_south_cap = idx_v_south + vLons * halfLatn2;
       final int idx_v_south_pole = idx_v_south_cap + vLons;
 
-      /* Find index offsets for texture coordinates. */
-      final int idx_vt_n_equator = vLons + vLonsp1 * halfLatn2;
-      final int idx_vt_cyl = idx_vt_n_equator + vLonsp1;
-      int idx_vt_s_equator = idx_vt_cyl;
+      // TODO: Face indices are probably linking to the wrong texture
+      // coordinates -- at the equator -- when forming topmost triangle.
+      final int idx_vt_n_cap = 0;
+      final int idx_vt_n_hemi = idx_vt_n_cap + vLons;
+      final int idx_vt_n_equator = idx_vt_n_hemi + vLonsp1 * halfLatn2;
+      int idx_vt_s_equator = idx_vt_n_equator + vLonsp1;
       if ( calcMid ) { idx_vt_s_equator += vLonsp1 * vSections; }
-      final int idx_vt_south = idx_vt_s_equator + vLonsp1;
-      final int idx_vt_south_cap = idx_vt_south + vLonsp1 * halfLatn2;
-      final int idx_vt_south_pole = idx_vt_south_cap + vLons;
+      final int idx_vt_s_hemi = idx_vt_s_equator + vLonsp1;
+      final int idx_vt_s_cap = idx_vt_s_hemi + vLonsp1 * halfLatn2;
 
       /* Resize coordinates to new length. */
       final int len_vs = idx_v_south_pole + 1;
@@ -246,10 +247,10 @@ public class CamZup {
          triNorth[1][2] = 1 + j;
          triNorth[2][2] = 0;
 
-         /* South texture coordinate indices. */
-         triSouth[0][1] = idx_vt_south_cap + j;
-         triSouth[1][1] = ( idx_vt_south_cap - vLonsp1 ) + j;
-         triSouth[2][1] = ( idx_vt_south_cap - vLonsp1 ) + j + 1;
+         // /* South texture coordinate indices. */
+         // triSouth[0][1] = idx_vt_south_cap + j;
+         // triSouth[1][1] = idx_vt_south_cap - vLonsp1 + j;
+         // triSouth[2][1] = idx_vt_south_cap - vLonsp1 + j + 1;
 
          /* South normals. */
          triSouth[0][2] = idx_vn_south_pole;
@@ -270,13 +271,12 @@ public class CamZup {
          final int v_next_lat_s = v_curr_lat_s + vLons;
 
          /* North texture coordinate index offset. */
-         final int vt_curr_lat_n = ( vLons ) + ( i * vLonsp1 );
+         final int vt_curr_lat_n = idx_vt_n_hemi + i * vLonsp1;
          final int vt_next_lat_n = vt_curr_lat_n + vLonsp1;
 
          /* South texture coordinate index offset, */
-         final int vt_curr_lat_s = ( idx_vt_s_equator - vLonsp1 ) + ( i
-            * vLonsp1 );
-         final int vt_next_lat_s = vt_curr_lat_s + vLonsp1;
+         // final int vt_curr_lat_s = idx_vt_s_equator - vLonsp1 + i * vLonsp1;
+         // final int vt_next_lat_s = vt_curr_lat_s + vLonsp1;
 
          /* North normal index offset. */
          final int vn_curr_lat_n = 1 + i_v_lons;
@@ -308,10 +308,10 @@ public class CamZup {
             final int vtn01 = vt_next_lat_n + j;
 
             /* South texture coordinate indices. */
-            final int vts00 = vt_curr_lat_s + j;
-            final int vts10 = vt_curr_lat_s + j + 1;
-            final int vts11 = vt_next_lat_s + j + 1;
-            final int vts01 = vt_next_lat_s + j;
+            // final int vts00 = vt_curr_lat_s + j;
+            // final int vts10 = vt_curr_lat_s + j + 1;
+            // final int vts11 = vt_next_lat_s + j + 1;
+            // final int vts01 = vt_next_lat_s + j;
 
             /* North normal indices. */
             final int vnn00 = vn_curr_lat_n + j;
@@ -348,10 +348,10 @@ public class CamZup {
                nQuad[3][1] = vtn01;
 
                /* South texture coordinate quad. */
-               sQuad[0][1] = vts00;
-               sQuad[1][1] = vts10;
-               sQuad[2][1] = vts11;
-               sQuad[3][1] = vts01;
+               // sQuad[0][1] = vts00;
+               // sQuad[1][1] = vts10;
+               // sQuad[2][1] = vts11;
+               // sQuad[3][1] = vts01;
 
                /* North normal quad. */
                nQuad[0][2] = vnn00;
@@ -405,15 +405,14 @@ public class CamZup {
                nTri1[2][1] = vtn01;
 
                /* South texture coordinate triangle 0. */
-               sTri0[0][1] = vts00;
-               sTri0[1][1] = vts10;
-               sTri0[2][1] = vts11;
+               // sTri0[0][1] = vts00;
+               // sTri0[1][1] = vts10;
+               // sTri0[2][1] = vts11;
 
                /* South texture coordinate triangle 1. */
-               sTri1[0][1] = vts00;
-               sTri1[1][1] = vts11;
-               sTri1[2][1] = vts01;
-
+               // sTri1[0][1] = vts00;
+               // sTri1[1][1] = vts11;
+               // sTri1[2][1] = vts01;
 
                /* North normal triangle 0. */
                nTri0[0][2] = vnn00;
@@ -504,7 +503,7 @@ public class CamZup {
       }
 
       /* Resize texture coordinates array. */
-      final int len_vts = idx_vt_south_pole;
+      final int len_vts = idx_vt_s_cap + vLons;
       final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
          len_vts);
 
@@ -513,27 +512,40 @@ public class CamZup {
       final float[] tc_s = new float[vLonsp1];
       for ( int j = 0; j < vLonsp1; ++j ) { tc_s[j] = j * to_tex_s; }
 
-      /* Vertical. */
-      final int v_lats_p1 = vLats + 1;
-      final float to_tex_t = 1.0f / ( vLats + 1 );
-      final float[] tc_t = new float[v_lats_p1];
-      for ( int i = 0; i < v_lats_p1; ++i ) {
-         tc_t[i] = ( 1.0f + i ) * to_tex_t;
-      }
+      final float vtNorthPole = 0.0f;
+      final float vtNorthHemi = 0.25f;
+      final float vtSouthHemi = 0.75f;
+      final float vtSouthPole = 1.0f;
 
       /* Calculate polar texture coordinates. */
       for ( int j = 0; j < vLons; ++j ) {
          final float s_tex = ( j + 0.5f ) * to_tex_s;
-         vts[j].set(s_tex, 0.0f);
-         vts[idx_vt_south_cap + j].set(s_tex, 1.0f);
+         vts[idx_vt_n_cap + j].set(s_tex, vtNorthPole);
+         vts[idx_vt_s_cap + j].set(s_tex, vtSouthPole);
+      }
+
+      /* Calculate hemisphere texture coordinates. */
+      for ( int k = 0, i = 0; i < half_lat_n1; ++i ) {
+         final float yFac = ( i + 1.0f ) / ( half_lat_n1 - 1.0f );
+         final float complyFac = 1.0f - yFac;
+
+         for ( int j = 0; j < vLonsp1; ++j, ++k ) {
+            vts[idx_vt_n_hemi + k].set(tc_s[j], complyFac * vtNorthPole + yFac
+               * vtNorthHemi);
+            // vts[idx_vt_south + k].set(tc_s[j], complyFac * vtSouthHemi + yFac
+            // * vtSouthPole);
+         }
       }
 
       /* Calculate equatorial texture coordinates. */
       for ( int j = 0; j < vLonsp1; ++j ) {
          final float s = tc_s[j];
-         vts[idx_vt_n_equator + j].set(s, 0.25f);
-         vts[idx_vt_s_equator + j].set(s, 0.75f);
+         vts[idx_vt_n_equator + j].set(s, vtNorthHemi);
+         vts[idx_vt_s_equator + j].set(s, vtSouthHemi);
       }
+
+      // TODO: This is wrong, between the polar caps and the equator, we have
+      // the hemispheres...
 
       /* Calculate sections of cylinder in middle. */
       if ( calcMid ) {
@@ -546,8 +558,9 @@ public class CamZup {
                final Vec2 vtNorth = vts[idx_vt_n_equator + j];
                final Vec2 vtSouth = vts[idx_vt_s_equator + j];
 
-               vts[idx_vt_cyl + k].set(cmpl_fac * vtNorth.x + fac * vtSouth.x,
-                  cmpl_fac * vtNorth.y + fac * vtSouth.y);
+               // vts[idx_vt_n_equator + k].set(cmpl_fac * vtNorth.x + fac
+               // * vtSouth.x,
+               // cmpl_fac * vtNorthHemi + fac * vtSouthHemi);
             }
          }
       }
@@ -562,17 +575,18 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      final int longitudes = 8;
-      final int latitudes = 8;
-      final int rings = 2;
-      final float depth = 1.0f;
-      final float radius = 0.5f;
-      final Mesh.PolyType poly = Mesh.PolyType.QUAD;
-      final Mesh3 target = new Mesh3();
-      CamZup.capsule(longitudes, latitudes, rings, depth, radius, poly, target);
-      // System.out.println(target);
-      System.out.println("");
-      System.out.println(new MeshEntity3().append(target).toBlenderCode());
+      // Mesh2 mesh2 = new Mesh2();
+      // Mesh2.square(Mesh.PolyType.TRI, mesh2);
+      // Mesh2.uniformData(mesh2, mesh2);
+      Mesh3 mesh3 = new Mesh3();
+      MeshEntity3 entity3 = new MeshEntity3();
+      entity3.append(mesh3);
+      Mesh3.icosphere(1, mesh3);
+      mesh3.insetFaces(1, 0.5f);
+      mesh3.extrudeFaces(0.25f, false);
+      // capsule(8, 6, 2, 1f, 0.5f, Mesh.PolyType.QUAD, mesh3);
+      // System.out.println(mesh3);
+      System.out.println(entity3.toBlenderCode());
    }
 
    /**

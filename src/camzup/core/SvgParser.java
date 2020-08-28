@@ -149,10 +149,10 @@ abstract class SvgParser {
       final CurveEntity2 result = new CurveEntity2();
 
       try {
-         DocumentBuilderFactory df = DocumentBuilderFactory.newInstance();
+         final DocumentBuilderFactory df = DocumentBuilderFactory.newInstance();
          df.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
          df.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
-         DocumentBuilder db = df.newDocumentBuilder();
+         final DocumentBuilder db = df.newDocumentBuilder();
          final File file = new File(fileName);
          final Document doc = db.parse(file);
          doc.normalizeDocument();
@@ -264,8 +264,7 @@ abstract class SvgParser {
 
          }
 
-      } catch ( final Exception e ) {
-      }
+      } catch ( final Exception e ) {}
 
       return x;
    }
@@ -1349,8 +1348,7 @@ abstract class SvgParser {
                      first.mirrorHandlesForward();
                      last.mirrorHandlesBackward();
                   }
-               } else {
-               }
+               } else {}
             }
          }
       }

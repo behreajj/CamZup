@@ -2,7 +2,6 @@ package camzup.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -189,7 +188,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       this.coords = newCoords;
       this.texCoords = newTexCoords;
-      Arrays.sort(this.faces, new Mesh2.SortIndices2(this.coords));
+      Arrays.sort(this.faces, new SortLoops2(this.coords));
 
       return this;
    }
@@ -3214,81 +3213,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       public Face2 next ( final Face2 target ) {
 
          return this.mesh.getFace(this.index++, target);
-      }
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
-
-   }
-
-   /**
-    * Compares two face indices (an array of vertex indices) by averaging the
-    * vectors referenced by them, then comparing the averages.
-    */
-   protected static final class SortIndices2 implements Comparator < int[][] > {
-
-      /**
-       * The coordinates array.
-       */
-      final Vec2[] coords;
-
-      /**
-       * Internal vector used to store the average coordinate for the left
-       * comparisand.
-       */
-      protected final Vec2 aAvg;
-
-      /**
-       * Internal vector used to store the average coordinate for the right
-       * comparisand.
-       */
-      protected final Vec2 bAvg;
-
-      {
-         this.aAvg = new Vec2();
-         this.bAvg = new Vec2();
-      }
-
-      /**
-       * The default constructor.
-       *
-       * @param coords the coordinate array.
-       */
-      protected SortIndices2 ( final Vec2[] coords ) {
-
-         // TODO: Rename SortLoops, move to its own class file.
-         this.coords = coords;
-      }
-
-      /**
-       * Compares two faces indices.
-       *
-       * @param a the left comparisand
-       * @param b the right comparisandS
-       */
-      @Override
-      public int compare ( final int[][] a, final int[][] b ) {
-
-         this.aAvg.reset();
-         final int aLen = a.length;
-         for ( int i = 0; i < aLen; ++i ) {
-            Vec2.add(this.aAvg, this.coords[a[i][0]], this.aAvg);
-         }
-         Vec2.div(this.aAvg, aLen, this.aAvg);
-
-         this.bAvg.reset();
-         final int bLen = b.length;
-         for ( int i = 0; i < bLen; ++i ) {
-            Vec2.add(this.bAvg, this.coords[b[i][0]], this.bAvg);
-         }
-         Vec2.div(this.bAvg, bLen, this.bAvg);
-
-         return this.aAvg.compareTo(this.bAvg);
       }
 
       /**
