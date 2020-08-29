@@ -798,7 +798,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final float d0y = vCurr.y - vPrev.y;
       final float d0Heading = Utils.atan2(d0y, d0x);
       final float d0MagSq = d0x * d0x + d0y * d0y;
-      final float d0InvMag = Utils.invSqrtUnchecked(d0MagSq);
+      final float d0InvMag = Utils.invSqrt(d0MagSq);
       final float d0Mag = d0MagSq * d0InvMag;
 
       /* Coordinate edge 1. */
@@ -806,7 +806,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final float d1y = vCurr.y - vNext.y;
       final float d1Heading = Utils.atan2(d1y, d1x);
       final float d1MagSq = d1x * d1x + d1y * d1y;
-      final float d1InvMag = Utils.invSqrtUnchecked(d1MagSq);
+      final float d1InvMag = Utils.invSqrt(d1MagSq);
       final float d1Mag = d1MagSq * d1InvMag;
 
       /* Validate radius on lower bound. */
@@ -841,7 +841,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final float dt0y = vtcurr.y - vtprev.y;
       final float dt0Heading = Utils.atan2(dt0y, dt0x);
       final float dt0MagSq = dt0x * dt0x + dt0y * dt0y;
-      final float dt0InvMag = Utils.invSqrtUnchecked(dt0MagSq);
+      final float dt0InvMag = Utils.invSqrt(dt0MagSq);
       final float dt0Mag = dt0MagSq * dt0InvMag;
 
       /* Texture coordinate edge 1. */
@@ -849,7 +849,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final float dt1y = vtcurr.y - vtnext.y;
       final float dt1Heading = Utils.atan2(dt1y, dt1x);
       final float dt1MagSq = dt1x * dt1x + dt1y * dt1y;
-      final float dt1InvMag = Utils.invSqrtUnchecked(dt1MagSq);
+      final float dt1InvMag = Utils.invSqrt(dt1MagSq);
       final float dt1Mag = dt1MagSq * dt1InvMag;
 
       /* Ensure that texture coordinate radius is not longer than edge. */
@@ -896,16 +896,16 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
        */
       final float vxdelta = vCurr.x + vCurr.x - vCorner0.x - vCorner1.x;
       final float vydelta = vCurr.y + vCurr.y - vCorner0.y - vCorner1.y;
-      final float vfac = Utils.hypot(vSeg, vRad) * Utils.invSqrtUnchecked(
-         vxdelta * vxdelta + vydelta * vydelta);
+      final float vfac = Utils.hypot(vSeg, vRad) * Utils.invSqrt(vxdelta
+         * vxdelta + vydelta * vydelta);
       final Vec2 vOrigin = new Vec2(vCurr.x - vxdelta * vfac, vCurr.y - vydelta
          * vfac);
 
       /* For texture coordinate. */
       final float vtxdelta = vtcurr.x + vtcurr.x - vtCorner0.x - vtCorner1.x;
       final float vtydelta = vtcurr.y + vtcurr.y - vtCorner0.y - vtCorner1.y;
-      final float vtfac = Utils.hypot(vtSeg, vtRad) * Utils.invSqrtUnchecked(
-         vtxdelta * vtxdelta + vtydelta * vtydelta);
+      final float vtfac = Utils.hypot(vtSeg, vtRad) * Utils.invSqrt(vtxdelta
+         * vtxdelta + vtydelta * vtydelta);
       final Vec2 vtOrigin = new Vec2(vtcurr.x - vtxdelta * vtfac, vtcurr.y
          - vtydelta * vtfac);
 
@@ -2345,6 +2345,126 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       }
 
       return meshes;
+   }
+
+   /**
+    * Generates a grid of hexagons arranged in rings around a central cell.
+    * The number of cells follows the formula n = 1 + (rings - 1) * 3 * rings,
+    * meaning
+    *
+    * <pre>
+    * 1 ring :  1 cell,
+    * 2 rings:  7 cells,
+    * 3 rings: 19 cells,
+    * 4 rings: 37 cells,
+    * 5 rings: 61 cells
+    * </pre>
+    *
+    * @param rings      the number of rings
+    * @param cellRadius the cell radius
+    * @param margin     the margin between cells
+    * @param target     the output mesh
+    *
+    * @return the hexagon grid
+    */
+   public static Mesh2 gridHex ( final int rings, final float cellRadius,
+      final float margin, final Mesh2 target ) {
+
+      final int vRings = rings < 1 ? 1 : rings;
+      final float vRad = Utils.max(IUtils.EPSILON, cellRadius);
+
+      final float altitude = IUtils.SQRT_3 * vRad;
+      final float halfAlt = altitude * 0.5f;
+
+      final float rad15 = vRad * 1.5f;
+      final float padRad = Utils.max(IUtils.EPSILON, vRad - margin);
+      final float halfRad = padRad * 0.5f;
+      final float radrt32 = padRad * IUtils.SQRT_3_2;
+
+      final int iMax = vRings - 1;
+      final int iMin = -iMax;
+
+      final int fsLen = 1 + iMax * vRings * 3;
+      final Vec2[] vs = target.coords = Vec2.resize(target.coords, fsLen * 6);
+      final int[][][] fs = target.faces = new int[fsLen][6][2];
+      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords, 6);
+      vts[0].set(0.5f, 1.0f);
+      vts[1].set(0.0669873f, 0.75f);
+      vts[2].set(0.0669873f, 0.25f);
+      vts[3].set(0.5f, 0.0f);
+      vts[4].set(0.9330127f, 0.25f);
+      vts[5].set(0.9330127f, 0.75f);
+
+      int vIdx = 0;
+      int fIdx = 0;
+      for ( int i = iMin; i <= iMax; ++i ) {
+         final int jMin = Math.max(iMin, iMin - i);
+         final int jMax = Math.min(iMax, iMax - i);
+         final float iAlt = i * altitude;
+
+         for ( int j = jMin; j <= jMax; ++j ) {
+            final float jf = j;
+            final float x = iAlt + jf * halfAlt;
+            final float y = jf * rad15;
+
+            final float left = x - radrt32;
+            final float right = x + radrt32;
+            final float top = y + halfRad;
+            final float bottom = y - halfRad;
+
+            /* @formatter:off */
+            vs[vIdx    ].set(x    , y + padRad);
+            vs[vIdx + 1].set(left , top);
+            vs[vIdx + 2].set(left , bottom);
+            vs[vIdx + 3].set(x    , y - padRad);
+            vs[vIdx + 4].set(right, bottom);
+            vs[vIdx + 5].set(right, top   );
+
+            final int[][] f = fs[fIdx];
+            final int[] vert0 = f[0]; vert0[0] = vIdx    ;
+            final int[] vert1 = f[1]; vert1[0] = vIdx + 1; vert1[1] = 1;
+            final int[] vert2 = f[2]; vert2[0] = vIdx + 2; vert2[1] = 2;
+            final int[] vert3 = f[3]; vert3[0] = vIdx + 3; vert3[1] = 3;
+            final int[] vert4 = f[4]; vert4[0] = vIdx + 4; vert4[1] = 4;
+            final int[] vert5 = f[5]; vert5[0] = vIdx + 5; vert5[1] = 5;
+
+            ++fIdx;
+            vIdx += 6;
+            /* @formatter:on */
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Generates a grid of hexagons arranged in rings around a central cell.
+    * The number of cells follows the formula n = 1 + (rings - 1) * 3 * rings.
+    *
+    * @param rings      the number of rings
+    * @param cellRadius the cell radius
+    * @param target     the output mesh
+    *
+    * @return the hexagon grid
+    */
+   public static Mesh2 gridHex ( final int rings, final float cellRadius,
+      final Mesh2 target ) {
+
+      return Mesh2.gridHex(rings, cellRadius, 0.0f, target);
+   }
+
+   /**
+    * Generates a grid of hexagons arranged in rings around a central cell.
+    * The number of cells follows the formula n = 1 + (rings - 1) * 3 * rings.
+    *
+    * @param rings  the number of rings
+    * @param target the output mesh
+    *
+    * @return the hexagon grid
+    */
+   public static Mesh2 gridHex ( final int rings, final Mesh2 target ) {
+
+      return Mesh2.gridHex(rings, 0.5f, target);
    }
 
    /**

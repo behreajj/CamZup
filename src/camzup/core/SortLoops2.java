@@ -31,7 +31,7 @@ public class SortLoops2 implements Comparator < int[][] > {
    }
 
    /**
-    * The default constructor.
+    * Constructs a comparator with reference to the mesh's coordinates.
     *
     * @param coords the coordinate array.
     */
@@ -41,10 +41,10 @@ public class SortLoops2 implements Comparator < int[][] > {
    }
 
    /**
-    * Compares two faces indices.
+    * Compares two face loops' indices.
     *
     * @param a the left comparisand
-    * @param b the right comparisandS
+    * @param b the right comparisand
     */
    @Override
    public int compare ( final int[][] a, final int[][] b ) {

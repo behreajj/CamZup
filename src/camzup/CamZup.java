@@ -4,7 +4,6 @@ import camzup.core.IUtils;
 import camzup.core.Mesh;
 import camzup.core.Mesh.PolyType;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity3;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -575,18 +574,13 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // Mesh2 mesh2 = new Mesh2();
-      // Mesh2.square(Mesh.PolyType.TRI, mesh2);
-      // Mesh2.uniformData(mesh2, mesh2);
-      Mesh3 mesh3 = new Mesh3();
-      MeshEntity3 entity3 = new MeshEntity3();
-      entity3.append(mesh3);
-      Mesh3.icosphere(1, mesh3);
-      mesh3.insetFaces(1, 0.5f);
-      mesh3.extrudeFaces(0.25f, false);
-      // capsule(8, 6, 2, 1f, 0.5f, Mesh.PolyType.QUAD, mesh3);
-      // System.out.println(mesh3);
-      System.out.println(entity3.toBlenderCode());
+      // Mesh2 m2 = new Mesh2();
+      // Mesh2.hexGrid(8, 1f, 0.05f, m2);
+      // m2.calcUvs();
+      // MeshEntity2 me2 = new MeshEntity2();
+      // me2.append(m2);
+      // String pyCd = me2.toBlenderCode();
+      // System.out.println(pyCd);
    }
 
    /**

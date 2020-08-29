@@ -31,14 +31,14 @@ public class SortLoops3 implements Comparator < int[][] > {
    }
 
    /**
-    * The default constructor.
+    * Constructs a comparator with reference to the mesh's coordinates.
     *
     * @param coords the coordinate array.
     */
    protected SortLoops3 ( final Vec3[] coords ) { this.coords = coords; }
 
    /**
-    * Compares two faces indices.
+    * Compares two face loops' indices.
     *
     * @param a the left comparisand
     * @param b the right comparisandS

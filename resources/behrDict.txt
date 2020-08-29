@@ -133,3 +133,4 @@ miters
 octants
 octree
 quadtree
+hexagons

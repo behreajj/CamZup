@@ -1407,8 +1407,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          /* Multiply by 0.5 removed because normalize takes care of it. */
          final int vnNextIdx = vertNext[2];
-         final Vec3 vnNext = this.normals[vnNextIdx];
-         vnsNew[j] = Vec3.addNorm(vnCurr, vnNext, new Vec3());
+         vnsNew[j] = Vec3.addNorm(vnCurr, this.normals[vnNextIdx], new Vec3());
 
          fsNew[j] = new int[][] {
             { vCenterIdx, vtCenterIdx, vnCenterIdx },
@@ -1445,8 +1444,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    @Experimental
    public Mesh3 subdivFaceFan ( final int faceIdx ) {
 
-      // TODO: Needs more testing...
-
       final int facesLen = this.faces.length;
       final int i = Utils.mod(faceIdx, facesLen);
       final int[][] face = this.faces[i];
@@ -1469,7 +1466,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          final int vCurrIdx = vertCurr[0];
          final int vtCurrIdx = vertCurr[1];
-         final int vnCurrIdx = vertCurr[1];
+         final int vnCurrIdx = vertCurr[2];
 
          final Vec3 vCurr = this.coords[vCurrIdx];
          final Vec2 vtCurr = this.texCoords[vtCurrIdx];
@@ -1535,7 +1532,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int[] vertCurr = face[j];
          final Vec3 vCurr = this.coords[vertCurr[0]];
          final Vec2 vtCurr = this.texCoords[vertCurr[1]];
-         final Vec3 vnCurr = this.normals[vertCurr[2]];
 
          final int k = ( j + 1 ) % faceLen;
          final int[] vertNext = face[k];
@@ -1556,12 +1552,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          /* Multiply by 0.5 removed because normalize takes care of it. */
          final int vnNextIdx = vertNext[2];
-         final Vec3 vnNext = this.normals[vnNextIdx];
-         final Vec3 vn = vnsNew[j] = new Vec3(
-            vnCurr.x + vnNext.x,
-            vnCurr.y + vnNext.y,
-            vnCurr.z + vnNext.z);
-         Vec3.normalize(vn, vn);
+         vnsNew[j] = Vec3.addNorm(
+            this.normals[vertCurr[2]],
+            this.normals[vnNextIdx],
+            new Vec3());
 
          final int vSubdivIdx = vsOldLen + j;
          final int vtSubdivIdx = vtsOldLen + j;
@@ -1623,6 +1617,30 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          for ( int j = 0; j < len; ++j ) {
             final int vertLen = this.faces[k].length;
             this.subdivFaceCenter(k);
+            k += vertLen;
+         }
+      }
+      return this;
+   }
+
+   /**
+    * Subdivides all faces in the mesh by a number of iterations. Uses the
+    * triangle fan method.
+    *
+    * @param itr iterations
+    *
+    * @return this mesh
+    *
+    * @see Mesh3#subdivFaceFan(int)
+    */
+   public Mesh3 subdivFacesFan ( final int itr ) {
+
+      for ( int i = 0; i < itr; ++i ) {
+         int k = 0;
+         final int len = this.faces.length;
+         for ( int j = 0; j < len; ++j ) {
+            final int vertLen = this.faces[k].length;
+            this.subdivFaceFan(k);
             k += vertLen;
          }
       }

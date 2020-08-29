@@ -843,6 +843,7 @@ public abstract class Convert {
       final boolean dim = rndr.is3D();
       final PShapeOpenGL target = new PShapeOpenGL(rndr, PConstants.GROUP);
       target.setName(source.name);
+      // target.setTextureMode(PConstants.NORMAL);
       target.set3D(dim);
 
       final int facesLen = faces.length;
@@ -852,6 +853,7 @@ public abstract class Convert {
 
          final PShapeOpenGL face = new PShapeOpenGL(rndr, PShape.GEOMETRY);
          face.setName("face." + Utils.toPadded(i, 3));
+         // face.setTextureMode(PConstants.NORMAL);
          face.set3D(dim);
 
          face.beginShape(PConstants.POLYGON);
@@ -892,6 +894,7 @@ public abstract class Convert {
       final boolean dim = rndr.is3D();
       final PShapeOpenGL target = new PShapeOpenGL(rndr, PConstants.GROUP);
       target.setName(source.name);
+      // target.setTextureMode(PConstants.NORMAL);
       target.set3D(dim);
 
       final int facesLen = faces.length;
@@ -901,6 +904,7 @@ public abstract class Convert {
 
          final PShapeOpenGL face = new PShapeOpenGL(rndr, PShape.GEOMETRY);
          face.setName("face." + Utils.toPadded(i, 3));
+         // face.setTextureMode(PConstants.NORMAL);
          face.set3D(dim);
 
          face.beginShape(PConstants.POLYGON);
