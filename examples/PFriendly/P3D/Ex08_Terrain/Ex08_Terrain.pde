@@ -38,7 +38,7 @@ void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
   rndr.mouse1s(mouse1);
-  Mesh2.plane(count, count, Mesh.PolyType.TRI, plane2);
+  Mesh2.plane(count, count, PolyType.TRI, plane2);
   plane3.set(plane2);
 
   float zOff = frameCount * 0.01;

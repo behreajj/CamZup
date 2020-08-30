@@ -1,9 +1,9 @@
 package camzup.pfriendly;
 
 import camzup.core.Color;
-import camzup.core.Mesh;
 import camzup.core.Mesh2;
 import camzup.core.MeshEntity2;
+import camzup.core.PolyType;
 import camzup.core.Transform2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -112,7 +112,7 @@ public class ImageEntity2 extends MeshEntity2 {
          default:
       }
 
-      final Mesh2 mesh = Mesh2.square(Mesh.PolyType.QUAD, new Mesh2());
+      final Mesh2 mesh = Mesh2.square(PolyType.QUAD, new Mesh2());
       mesh.scale(meshDim);
       mesh.translate(meshOff);
       this.transform.scaleTo(scale * longEdge);

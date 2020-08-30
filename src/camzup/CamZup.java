@@ -1,9 +1,8 @@
 package camzup;
 
 import camzup.core.IUtils;
-import camzup.core.Mesh;
-import camzup.core.Mesh.PolyType;
 import camzup.core.Mesh3;
+import camzup.core.PolyType;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -53,7 +52,7 @@ public class CamZup {
 
    public static Mesh3 capsule ( final int longitudes, final int latitudes,
       final int rings, final float depth, final float radius,
-      final Mesh.PolyType poly, final Mesh3 target ) {
+      final PolyType poly, final Mesh3 target ) {
 
       /* Validate input arguments. */
       final int vLons = longitudes < 3 ? 3 : longitudes;

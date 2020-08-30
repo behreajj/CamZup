@@ -2,6 +2,7 @@ package camzup.core;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 import java.util.TreeSet;
 
 /**
@@ -70,11 +71,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
       if ( this == obj ) { return true; }
       if ( obj == null ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
-      if ( !Arrays.equals(this.vertices, ( ( Face2 ) obj ).vertices) ) {
-         return false;
-      }
-
-      return true;
+      return Arrays.equals(this.vertices, ( ( Face2 ) obj ).vertices);
    }
 
    /**
@@ -799,6 +796,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
       @Override
       public Edge2 next ( ) {
 
+         if ( !this.hasNext() ) { throw new NoSuchElementException(); }
          return this.face.getEdge(this.index++, new Edge2());
       }
 
@@ -849,7 +847,11 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
        * @return the value
        */
       @Override
-      public Vert2 next ( ) { return this.face.vertices[this.index++]; }
+      public Vert2 next ( ) {
+
+         if ( !this.hasNext() ) { throw new NoSuchElementException(); }
+         return this.face.vertices[this.index++];
+      }
 
       /**
        * Returns the simple name of this class.

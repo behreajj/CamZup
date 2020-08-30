@@ -264,7 +264,7 @@ abstract class SvgParser {
 
          }
 
-      } catch ( final Exception e ) {}
+      } catch ( final Exception e ) { /* Do nothing. */ }
 
       return x;
    }
@@ -653,7 +653,7 @@ abstract class SvgParser {
 
          }
 
-      } catch ( final Exception e ) {}
+      } catch ( final Exception e ) { /* Do nothing. */ }
 
       return x;
    }
@@ -838,32 +838,32 @@ abstract class SvgParser {
             Knot2 prev = null;
 
             /* Coordinate token. */
-            String coxStr = "0";
-            String coyStr = "0";
+            String coxStr;
+            String coyStr;
 
             /* Cubic curve rear handle. */
-            String rhxStr = "0";
-            String rhyStr = "0";
+            String rhxStr;
+            String rhyStr;
 
             /* Cubic curve fore handle. */
-            String fhxStr = "0";
-            String fhyStr = "0";
+            String fhxStr;
+            String fhyStr;
 
             /* Quadratic curve midpoint. */
-            String mhxStr = "0";
-            String mhyStr = "0";
+            String mhxStr;
+            String mhyStr;
 
             /* Arc. */
-            String rx = "0";
-            String ry = "0";
-            String angle = "0";
-            String fa = "0";
-            String fs = "0";
+            String rx;
+            String ry;
+            String angle;
+            String fa;
+            String fs;
 
             final Vec2 relative = new Vec2();
             final Vec2 mh = new Vec2();
-            float xOff = 0.0f;
-            float yOff = 0.0f;
+            float xOff;
+            float yOff;
             boolean closedLoop = false;
 
             /*
@@ -1348,7 +1348,7 @@ abstract class SvgParser {
                      first.mirrorHandlesForward();
                      last.mirrorHandlesBackward();
                   }
-               } else {}
+               }
             }
          }
       }

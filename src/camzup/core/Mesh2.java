@@ -496,7 +496,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final int vsOldLen = this.coords.length;
       final int vtsOldLen = this.texCoords.length;
-      final int[][][] fsNew = new int[faceLen + 1][][];
+      final int[][][] fsNew = new int[faceLen + 1][4][2];
       final int[][] centerFace = fsNew[faceLen] = new int[faceLen][2];
 
       final Vec2 vCenter = new Vec2();
@@ -548,16 +548,21 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final int vSubdivIdx = vsOldLen + j;
          final int vtSubdivIdx = vtsOldLen + j;
 
-         fsNew[j] = new int[][] {
-            {   vCornerIdx,   vtCornerIdx },
-            {  vertNext[0],   vertNext[1] },
-            { vsOldLen + k, vtsOldLen + k },
-            {   vSubdivIdx,   vtSubdivIdx } };
+         final int[][] fNew = fsNew[j];
+         final int[] n0 = fNew[0];
+         final int[] n1 = fNew[1];
+         final int[] n2 = fNew[2];
+         final int[] n3 = fNew[3];
+
+         n0[0] = vCornerIdx;   n0[1] = vtCornerIdx;
+         n1[0] = vertNext[0];  n1[1] = vertNext[1];
+         n2[0] = vsOldLen + k; n2[1] = vtsOldLen + k;
+         n3[0] = vSubdivIdx;   n3[1] = vtSubdivIdx;
          /* @formatter:on */
 
-         centerFace[j][0] = vSubdivIdx;
-         centerFace[j][1] = vtSubdivIdx;
-
+         final int[] centerVert = centerFace[j];
+         centerVert[0] = vSubdivIdx;
+         centerVert[1] = vtSubdivIdx;
       }
 
       this.coords = Vec2.concat(this.coords, vsNew);
@@ -1197,11 +1202,16 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             ( vtCurr.x + vtNext.x ) * 0.5f,
             ( vtCurr.y + vtNext.y ) * 0.5f);
 
-         fsNew[j] = new int[][] {
-            {   vCenterIdx,   vtCenterIdx },
-            { vsOldLen + j, vtsOldLen + j },
-            {     vNextIdx,     vtNextIdx },
-            { vsOldLen + k, vtsOldLen + k } };
+         final int[][] fNew = fsNew[j];
+         final int[] n0 = fNew[0];
+         final int[] n1 = fNew[1];
+         final int[] n2 = fNew[2];
+         final int[] n3 = fNew[3];
+
+         n0[0] = vCenterIdx;   n0[1] = vtCenterIdx;
+         n1[0] = vsOldLen + j; n1[1] = vtsOldLen + j;
+         n2[0] = vNextIdx;     n2[1] = vtNextIdx;
+         n3[0] = vsOldLen + k; n3[1] = vtsOldLen + k;
          /* @formatter:on */
       }
 
@@ -1251,15 +1261,21 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          final int vCurrIdx = vertCurr[0];
          final int vtCurrIdx = vertCurr[1];
-         final Vec2 vCurr = this.coords[vCurrIdx];
-         final Vec2 vtCurr = this.texCoords[vtCurrIdx];
 
          /* Sum vertex for center. */
-         Vec2.add(vCenter, vCurr, vCenter);
-         Vec2.add(vtCenter, vtCurr, vtCenter);
+         Vec2.add(vCenter, this.coords[vCurrIdx], vCenter);
+         Vec2.add(vtCenter, this.texCoords[vtCurrIdx], vtCenter);
 
-         fsNew[j] = new int[][] { { vCenterIdx, vtCenterIdx }, { vCurrIdx,
-            vtCurrIdx }, { vertNext[0], vertNext[1] } };
+         final int[][] fNew = fsNew[j];
+         final int[] n0 = fNew[0];
+         final int[] n1 = fNew[1];
+         final int[] n2 = fNew[2];
+
+         /* @formatter:off */
+         n0[0] = vCenterIdx;  n0[1] = vtCenterIdx;
+         n1[0] = vCurrIdx;    n1[1] = vtCurrIdx;
+         n2[0] = vertNext[0]; n2[1] = vertNext[1];
+         /* @formatter:on */
       }
 
       /* Average. */
@@ -1299,7 +1315,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final Vec2[] vsNew = new Vec2[faceLen];
       final Vec2[] vtsNew = new Vec2[faceLen];
-      final int[][][] fsNew = new int[faceLen + 1][][];
+      final int[][][] fsNew = new int[faceLen + 1][3][2];
       final int[][] centerFace = fsNew[faceLen] = new int[faceLen][2];
 
       for ( int j = 0; j < faceLen; ++j ) {
@@ -1325,12 +1341,19 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          final int vSubdivIdx = vsOldLen + j;
          final int vtSubdivIdx = vtsOldLen + j;
-         fsNew[j] = new int[][] {
-            {   vSubdivIdx,   vtSubdivIdx },
-            {     vNextIdx,     vtNextIdx },
-            { vsOldLen + k, vtsOldLen + k } };
+
+         /* Update peripheral face. */
+         final int[][] fNew = fsNew[j];
+         final int[] n0 = fNew[0];
+         final int[] n1 = fNew[1];
+         final int[] n2 = fNew[2];
+
+         n0[0] = vSubdivIdx;   n0[1] = vtSubdivIdx;
+         n1[0] = vNextIdx;     n1[1] = vtNextIdx;
+         n2[0] = vsOldLen + k; n2[1] = vtsOldLen + k;
          /* @formatter:on */
 
+         /* Update vertex of central face. */
          final int[] centerVert = centerFace[j];
          centerVert[0] = vSubdivIdx;
          centerVert[1] = vtSubdivIdx;
@@ -1919,19 +1942,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final float step = toStep + k * toStep;
          final float u = 1.0f - step;
 
-         final Vec2 v = new Vec2();
-         final Vec2 vt = new Vec2();
+         vsNew[k] = new Vec2(u * vOrigin.x + step * vDest.x, u * vOrigin.y
+            + step * vDest.y);
+         vtsNew[k] = new Vec2(u * vtOrigin.x + step * vtDest.x, u * vtOrigin.y
+            + step * vtDest.y);
 
-         v.set(u * vOrigin.x + step * vDest.x, u * vOrigin.y + step * vDest.y);
-         vt.set(u * vtOrigin.x + step * vtDest.x, u * vtOrigin.y + step
-            * vtDest.y);
-
-         vsNew[k] = v;
-         vtsNew[k] = vt;
-
-         final int[] newf = fsNew[k];
-         newf[0] = vsOldLen + k;
-         newf[1] = vtsOldLen + k;
+         final int[] fNew = fsNew[k];
+         fNew[0] = vsOldLen + k;
+         fNew[1] = vtsOldLen + k;
       }
 
       /*
@@ -2238,8 +2256,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @see Mesh2#polygon(int, PolyType, Mesh2)
     */
-   public static Mesh2 circle ( final Mesh2.PolyType poly,
-      final Mesh2 target ) {
+   public static Mesh2 circle ( final PolyType poly, final Mesh2 target ) {
 
       return Mesh2.polygon(IMesh.DEFAULT_CIRCLE_SECTORS, poly, target);
    }
@@ -2384,9 +2401,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int iMax = vRings - 1;
       final int iMin = -iMax;
 
-      final int fsLen = 1 + iMax * vRings * 3;
-      final Vec2[] vs = target.coords = Vec2.resize(target.coords, fsLen * 6);
-      final int[][][] fs = target.faces = new int[fsLen][6][2];
+      /* Hard code texture coordinates. */
       final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords, 6);
       vts[0].set(0.5f, 1.0f);
       vts[1].set(0.0669873f, 0.75f);
@@ -2394,6 +2409,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       vts[3].set(0.5f, 0.0f);
       vts[4].set(0.9330127f, 0.25f);
       vts[5].set(0.9330127f, 0.75f);
+
+      final int fsLen = 1 + iMax * vRings * 3;
+      final Vec2[] vs = target.coords = Vec2.resize(target.coords, fsLen * 6);
+      final int[][][] fs = target.faces = new int[fsLen][6][2];
 
       int vIdx = 0;
       int fIdx = 0;
@@ -2931,7 +2950,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Creates a regular convex polygon with an opening in its center. The
     * oculus describes the relative size of this opening. When the polygon
-    * type is {@link Mesh.PolyType#QUAD}, the ring will be composed of
+    * type is {@link PolyType#QUAD}, the ring will be composed of
     * quadrilaterals; otherwise, triangles.
     *
     * @param oculus  the size of the opening

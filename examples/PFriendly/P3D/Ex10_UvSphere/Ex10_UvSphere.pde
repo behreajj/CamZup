@@ -56,7 +56,7 @@ void draw() {
 
   Mesh3.uvSphere(
     lons, lats,
-    Mesh.PolyType.QUAD,
+    PolyType.QUAD,
     smooth);
 
   flat.set(smooth);

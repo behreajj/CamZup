@@ -508,33 +508,6 @@ public abstract class Mesh extends EntityData implements IMesh {
    }
 
    /**
-    * The type of polygon, or face, produced by a mesh function.
-    */
-   public enum PolyType {
-
-      /**
-       * Create an n-sided polygon.
-       */
-      NGON ( ),
-
-      /**
-       * Create a quadrilateral.
-       */
-      QUAD ( ),
-
-      /**
-       * Create a triangle.
-       */
-      TRI ( );
-
-      /**
-       * The default constructor.
-       */
-      private PolyType ( ) {}
-
-   }
-
-   /**
     * Compares two vectors by their quantized y component, then by their x
     * component.
     */

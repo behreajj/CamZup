@@ -293,19 +293,19 @@ public class Octree implements Iterable < Vec3 > {
          final Iterator < Vec3 > itr = this.points.iterator();
          while ( itr.hasNext() ) {
             sb.append(itr.next().toString(places));
-            if ( itr.hasNext() ) { sb.append(", "); }
+            if ( itr.hasNext() ) { sb.append(',').append(' '); }
          }
-         sb.append(" ]");
+         sb.append(' ').append(']');
       } else {
          sb.append(", children: [ ");
          for ( int i = 0; i < 8; ++i ) {
             sb.append(this.children[i].toString(places));
-            if ( i < 7 ) { sb.append(", "); }
+            if ( i < 7 ) { sb.append(',').append(' '); }
          }
-         sb.append(" ]");
+         sb.append(' ').append(']');
       }
 
-      sb.append(" }");
+      sb.append(' ').append('}');
       return sb.toString();
    }
 

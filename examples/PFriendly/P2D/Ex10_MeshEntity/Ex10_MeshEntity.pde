@@ -12,7 +12,7 @@ Transform2 transform = new Transform2()
   .moveTo(new Vec2(-100.0, -50.0))
   .scaleTo(150.0);
 
-Mesh2 mesh = Mesh2.ring(0.5, 6, Mesh2.PolyType.TRI, new Mesh2());
+Mesh2 mesh = Mesh2.ring(0.5, 6, PolyType.TRI, new Mesh2());
 
 MeshEntity2 entity = new MeshEntity2("Example", transform)
   .append(mesh);

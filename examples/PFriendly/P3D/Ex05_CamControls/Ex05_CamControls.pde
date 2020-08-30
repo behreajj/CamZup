@@ -76,7 +76,7 @@ void draw() {
 
   mouseControls();
 
-  rndr.background(#202020);
+  rndr.background(#101010);
   rndr.lights();
 
   if (showGrid) {

@@ -13,7 +13,6 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
-  rndr.hint(ENABLE_DEPTH_SORT);
 
   String[] strs = loadStrings("debug.obj");
   Mesh3.fromObj(strs, diagnostic);

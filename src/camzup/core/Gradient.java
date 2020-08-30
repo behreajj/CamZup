@@ -1487,7 +1487,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          final float mid = ( segm - segl ) * denom;
          final float pos = ( step - segl ) * denom;
 
-         float f = 0.0f;
+         float f;
          if ( pos <= mid ) {
             f = 0.5f * Utils.div(pos, mid);
          } else {
@@ -1579,13 +1579,13 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       for ( int i = 0; i < len; ++i ) {
          final String line = lines[i].trim().toLowerCase();
          if ( line.equals("GIMP palette") ) {
-            continue;
+            /* Skip. */
          } else if ( line.indexOf("name:") > -1 ) {
-            continue;
+            /* Skip. */
          } else if ( line.indexOf("columns:") > -1 ) {
-            continue;
+            /* Skip. */
          } else if ( line.indexOf('#') == 0 ) {
-            continue;
+            /* Skip. */
          } else {
             tokens = ptrn.split(line, 0);
             if ( tokens.length > 2 ) {

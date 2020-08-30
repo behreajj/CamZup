@@ -16,7 +16,7 @@ float timeIncr = 1.0 / 256.0;
 // Scale of the shape
 float scale = 62.0;
 
-Mesh2.PolyType poly = Mesh2.PolyType.NGON;
+PolyType poly = PolyType.NGON;
 
 MeshEntity2[][] srcEntities = new MeshEntity2[count][inscrip];
 MeshEntity2[][] trgEntities = new MeshEntity2[count][inscrip];

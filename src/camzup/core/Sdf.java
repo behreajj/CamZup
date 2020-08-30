@@ -146,8 +146,8 @@ public abstract class Sdf {
    /**
     * Draws a conic gradient.
     *
-    * @param pointx  the x coordinate
-    * @param pointy  the y coordinate
+    * @param xPoint  the x coordinate
+    * @param yPoint  the y coordinate
     * @param radians the angular offset
     *
     * @return the factor
@@ -155,7 +155,7 @@ public abstract class Sdf {
     * @see Utils#mod1(float)
     * @see Utils#atan2(float, float)
     */
-   public static float conic ( final float pointx, final float pointy,
+   public static float conic ( final float xPoint, final float yPoint,
       final float radians ) {
 
       /*
@@ -163,7 +163,7 @@ public abstract class Sdf {
        * Math#atan2 with double precision is necessary.
        */
 
-      return Utils.mod1(( float ) ( ( Math.atan2(pointy, pointx) - radians )
+      return Utils.mod1(( float ) ( ( Math.atan2(yPoint, xPoint) - radians )
          * IUtils.ONE_TAU_D ));
    }
 

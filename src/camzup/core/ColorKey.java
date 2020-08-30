@@ -330,7 +330,7 @@ public class ColorKey implements Comparable < ColorKey > {
       /**
        * Quantization level.
        */
-      final public int level;
+      public final int level;
 
       /**
        * The default constructor.

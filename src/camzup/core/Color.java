@@ -737,8 +737,6 @@ public class Color implements Comparable < Color >, Iterable < Float > {
    public static Color bitAnd ( final Color a, final Color b,
       final Color target ) {
 
-      // return Color.fromHex(Color.toHexInt(a) & Color.toHexInt(b), target);
-
       /* @formatter:off */
       return target.set(
          ( ( int ) ( a.r * 0xff + 0.5f ) &
@@ -763,8 +761,6 @@ public class Color implements Comparable < Color >, Iterable < Float > {
     */
    public static Color bitNot ( final Color a, final Color target ) {
 
-      // return Color.fromHex(~Color.toHexInt(a), target);
-
       /* @formatter:off */
       return target.set(
          ( ~( int ) ( a.r * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255,
@@ -786,8 +782,6 @@ public class Color implements Comparable < Color >, Iterable < Float > {
     */
    public static Color bitOr ( final Color a, final Color b,
       final Color target ) {
-
-      // return Color.fromHex(Color.toHexInt(a) | Color.toHexInt(b), target);
 
       /* @formatter:off */
       return target.set(
@@ -916,8 +910,6 @@ public class Color implements Comparable < Color >, Iterable < Float > {
     */
    public static Color bitXor ( final Color a, final Color b,
       final Color target ) {
-
-      // return Color.fromHex(Color.toHexInt(a) ^ Color.toHexInt(b), target);
 
       /* @formatter:off */
       return target.set(

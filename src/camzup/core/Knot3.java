@@ -1670,7 +1670,7 @@ public class Knot3 implements Comparable < Knot3 > {
    /**
     * An abstract class to facilitate the creation of knot easing functions.
     */
-   public static abstract class AbstrEasing implements Utils.EasingFuncObj <
+   public abstract static class AbstrEasing implements Utils.EasingFuncObj <
       Knot3 > {
 
       /**

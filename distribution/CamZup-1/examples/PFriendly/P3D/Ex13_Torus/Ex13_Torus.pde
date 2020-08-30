@@ -57,7 +57,7 @@ void draw() {
   Mesh3.torus(
     0.375,
     lons, lats,
-    Mesh.PolyType.TRI,
+    PolyType.TRI,
     smooth);
     
   flat.set(smooth);

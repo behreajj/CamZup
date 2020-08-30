@@ -92,7 +92,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     */
    public MeshEntity2 append ( final Mesh2 mesh ) {
 
-      if ( mesh != null ) { this.meshes.add(mesh); }
+      this.meshes.add(mesh);
       return this;
    }
 

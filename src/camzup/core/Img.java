@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 /**
  * An experimental class to store image data. Simplifies
@@ -265,9 +266,8 @@ public class Img implements Iterable < Color > {
 
       if ( this != source ) {
          this.reallocate(source.width, source.height);
-         final int[] pxSrc = source.pixels;
-         final int srcLen = pxSrc.length;
-         for ( int i = 0; i < srcLen; ++i ) { this.pixels[i] = pxSrc[i]; }
+         System.arraycopy(source.pixels, 0, this.pixels, 0,
+            source.pixels.length);
       }
    }
 
@@ -563,6 +563,8 @@ public class Img implements Iterable < Color > {
       final int w = target.width;
       final int[] pixels = target.pixels;
 
+      // TEST Is there a more efficient way to do this? Fill a one dimensional
+      // array with the horizontal evaluation then replicate across pixels?
       final float wInv = 1.0f / ( w - 1.0f );
       for ( int i = 0, y = 0; y < h; ++y ) {
          for ( int x = 0; x < w; ++x, ++i ) {
@@ -609,13 +611,14 @@ public class Img implements Iterable < Color > {
 
          final float yn = y * hInv;
          final float ay = yOrigin - ( 1.0f - ( yn + yn ) );
+         final float ayby = ay * by;
 
          for ( int x = 0; x < w; ++x, ++i ) {
 
             final float xn = x * wInv;
             final float ax = xOrigin - ( xn + xn - 1.0f );
 
-            pixels[i] = Gradient.eval(grd, Utils.clamp01( ( ax * bx + ay * by )
+            pixels[i] = Gradient.eval(grd, Utils.clamp01( ( ax * bx + ayby )
                * bbInv));
          }
       }
@@ -891,12 +894,16 @@ public class Img implements Iterable < Color > {
       /**
        * Gets the next value in the iterator.
        *
-       * @see Vec4#get(int)
+       * @see Img#get(int, Color)
        *
        * @return the value
        */
       @Override
-      public Color next ( ) { return this.img.get(this.index++, new Color()); }
+      public Color next ( ) {
+
+         if ( !this.hasNext() ) { throw new NoSuchElementException(); }
+         return this.img.get(this.index++, new Color());
+      }
 
       /**
        * Returns the simple name of this class.

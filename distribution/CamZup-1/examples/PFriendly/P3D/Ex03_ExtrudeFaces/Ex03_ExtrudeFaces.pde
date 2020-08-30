@@ -3,15 +3,17 @@ import camzup.pfriendly.*;
 
 Zup3 rndr;
 
+float roughness = 2.375;
+float taper = 0.85;
 Mesh3 mesh = new Mesh3();
 MeshEntity3 entity = new MeshEntity3();
 MaterialSolid[] materials;
 Gradient grd = new Gradient(
   #d5dfff,
   #ffdf15,
-  #ff2828, 
-  #101010, 
-  #303030);
+  #ff2828,
+  #101010,
+  #333333);
 
 void settings() {
   size(720, 405, Zup3.PATH_STR);
@@ -20,14 +22,15 @@ void settings() {
 void setup() {
   rndr = (Zup3)getGraphics();
 
-  Mesh3.dodecahedron(mesh);
-  mesh.subdivFacesCenter(3);
-  mesh.subdivFacesFan(2);
+  Mesh3.icosahedron(mesh);
+  mesh.subdivFacesInscribe(2);
+  mesh.subdivFacesCenter(2);
+  mesh.subdivFacesFan(1);
 
   Mesh3.castToSphere(mesh, mesh);
   mesh.clean();
 
-  entity.scaleTo(325.0);
+  entity.scaleTo(Utils.min(width, height) * 2.5);
   entity.appendAll(Mesh3.detachFaces(mesh));
 
   int idx = 0;
@@ -37,7 +40,7 @@ void setup() {
   for (Mesh3 mesh : entity) {
     mesh.getFace(0, face);
     Face3.centerMean(face, center);
-    Vec3.mul(center, 2.25, center);
+    Vec3.mul(center, roughness, center);
 
     float rnd = Simplex.fbm(center,
       Simplex.DEFAULT_SEED, 32, 1.0, 0.65);
@@ -47,8 +50,9 @@ void setup() {
     float scl = Utils.lerp(0.825, 0.75, rnd);
     face.scaleLocal(scl, center);
 
-    float amt = Utils.lerp(0.02, 0.075, rnd);
-    mesh.extrudeFaces(amt, true);
+    float amt = Utils.lerp(0.02, 0.0675, rnd);
+    mesh.extrudeFaces(amt, taper, true);
+    mesh.clean();
 
     materials[idx] = new MaterialSolid()
       .setFill(Gradient.eval(grd, rnd));
@@ -64,14 +68,14 @@ void draw() {
   entity.rotateZ(0.01);
 
   rndr.lights();
-  rndr.ortho();
+  rndr.perspective();
   rndr.camera();
   rndr.background();
   rndr.shape(entity, materials);
 }
 
-void mouseReleased() {
-  String pyCd = entity.toBlenderCode(materials);
-  saveStrings("data/extrude.py", new String[] { pyCd });
-  println("Python code saved.");
-}
+//void mouseReleased() {
+//  saveStrings(
+//    "blob.py",
+//    new String[] { entity.toBlenderCode(materials) });
+//}

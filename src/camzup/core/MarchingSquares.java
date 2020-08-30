@@ -10,7 +10,7 @@ abstract class MarchingSquares {
       final Mesh2 target ) {
 
       Vec2[] vs;
-      Vec2[] vts = new Vec2[] {};
+      Vec2[] vts;
       int[][][] fs;
 
       /* @formatter:off */

@@ -288,19 +288,19 @@ public class Quadtree implements Iterable < Vec2 > {
          final Iterator < Vec2 > itr = this.points.iterator();
          while ( itr.hasNext() ) {
             sb.append(itr.next().toString(places));
-            if ( itr.hasNext() ) { sb.append(", "); }
+            if ( itr.hasNext() ) { sb.append(',').append(' '); }
          }
-         sb.append(" ]");
+         sb.append(' ').append(']');
       } else {
          sb.append(", children: [ ");
          for ( int i = 0; i < 4; ++i ) {
             sb.append(this.children[i].toString(places));
-            if ( i < 3 ) { sb.append(", "); }
+            if ( i < 3 ) { sb.append(',').append(' '); }
          }
-         sb.append(" ]");
+         sb.append(' ').append(']');
       }
 
-      sb.append(" }");
+      sb.append(' ').append('}');
       return sb.toString();
    }
 

@@ -52,7 +52,7 @@ void draw() {
   itr = Utils.lerp(0, 4, mouse.x);
 
   Mesh3.cubeSphere(itr,
-    Mesh.PolyType.QUAD,
+    PolyType.QUAD,
     Mesh3.CubeUvProfile.CROSS,
     smooth);
 

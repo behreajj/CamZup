@@ -211,19 +211,6 @@ public class MaterialSolid extends Material {
    }
 
    /**
-    * Sets the material's stroke color to a gray value.
-    *
-    * @param lum the value
-    *
-    * @return this material
-    */
-   public MaterialSolid setFill ( final float lum ) {
-
-      this.fill.set(lum, lum, lum);
-      return this;
-   }
-
-   /**
     * Sets the material's fill color.
     *
     * @param r red
@@ -292,19 +279,6 @@ public class MaterialSolid extends Material {
    public MaterialSolid setStroke ( final Color stroke ) {
 
       this.stroke.set(stroke);
-      return this;
-   }
-
-   /**
-    * Sets the material's stroke color to a gray value.
-    *
-    * @param lum the value
-    *
-    * @return this material
-    */
-   public MaterialSolid setStroke ( final float lum ) {
-
-      this.stroke.set(lum, lum, lum);
       return this;
    }
 
