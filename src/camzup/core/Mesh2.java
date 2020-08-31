@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -550,13 +551,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          final int[][] fNew = fsNew[j];
          final int[] n0 = fNew[0];
-         final int[] n1 = fNew[1];
-         final int[] n2 = fNew[2];
-         final int[] n3 = fNew[3];
-
          n0[0] = vCornerIdx;   n0[1] = vtCornerIdx;
+         final int[] n1 = fNew[1];
          n1[0] = vertNext[0];  n1[1] = vertNext[1];
+         final int[] n2 = fNew[2];
          n2[0] = vsOldLen + k; n2[1] = vtsOldLen + k;
+         final int[] n3 = fNew[3];
          n3[0] = vSubdivIdx;   n3[1] = vtSubdivIdx;
          /* @formatter:on */
 
@@ -700,6 +700,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public Mesh2 reverseFace ( final int i ) {
 
+      // Isn't this the same as Mesh#reverse ?
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
       final int len = face.length;
       final int halfLen = len >> 1;
@@ -1204,13 +1205,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          final int[][] fNew = fsNew[j];
          final int[] n0 = fNew[0];
-         final int[] n1 = fNew[1];
-         final int[] n2 = fNew[2];
-         final int[] n3 = fNew[3];
-
          n0[0] = vCenterIdx;   n0[1] = vtCenterIdx;
+         final int[] n1 = fNew[1];
          n1[0] = vsOldLen + j; n1[1] = vtsOldLen + j;
+         final int[] n2 = fNew[2];
          n2[0] = vNextIdx;     n2[1] = vtNextIdx;
+         final int[] n3 = fNew[3];
          n3[0] = vsOldLen + k; n3[1] = vtsOldLen + k;
          /* @formatter:on */
       }
@@ -1266,14 +1266,13 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          Vec2.add(vCenter, this.coords[vCurrIdx], vCenter);
          Vec2.add(vtCenter, this.texCoords[vtCurrIdx], vtCenter);
 
+         /* @formatter:off */
          final int[][] fNew = fsNew[j];
          final int[] n0 = fNew[0];
-         final int[] n1 = fNew[1];
-         final int[] n2 = fNew[2];
-
-         /* @formatter:off */
          n0[0] = vCenterIdx;  n0[1] = vtCenterIdx;
+         final int[] n1 = fNew[1];
          n1[0] = vCurrIdx;    n1[1] = vtCurrIdx;
+         final int[] n2 = fNew[2];
          n2[0] = vertNext[0]; n2[1] = vertNext[1];
          /* @formatter:on */
       }
@@ -1345,11 +1344,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          /* Update peripheral face. */
          final int[][] fNew = fsNew[j];
          final int[] n0 = fNew[0];
-         final int[] n1 = fNew[1];
-         final int[] n2 = fNew[2];
-
          n0[0] = vSubdivIdx;   n0[1] = vtSubdivIdx;
+         final int[] n1 = fNew[1];
          n1[0] = vNextIdx;     n1[1] = vtNextIdx;
+         final int[] n2 = fNew[2];
          n2[0] = vsOldLen + k; n2[1] = vtsOldLen + k;
          /* @formatter:on */
 
@@ -1547,6 +1545,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @see Mesh2#calcDimensions(Mesh2, Vec2, Vec2, Vec2)
     * @see Mesh2#translate(Vec2)
+    * @see Vec2#negate(Vec2, Vec2)
+    * @see Transform2#rotateTo(float)
+    * @see Transform2#scaleTo(float)
     */
    public Mesh2 toOrigin ( final Transform2 tr ) {
 
@@ -3337,6 +3338,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       @Override
       public Face2 next ( ) {
 
+         if ( !this.hasNext() ) { throw new NoSuchElementException(); }
          return this.mesh.getFace(this.index++, new Face2());
       }
 

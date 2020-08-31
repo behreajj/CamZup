@@ -11,23 +11,23 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    /**
     * The transform's forward axis.
     */
-   protected final Vec2 forward;
+   protected final Vec2 forward = Vec2.forward(new Vec2());
 
    /**
     * The transform's location.
     */
-   protected final Vec2 location;
+   protected final Vec2 location = new Vec2();
 
    /**
     * The previous location. Subtract from the current location to find the
     * delta, or change, in location.
     */
-   protected final Vec2 locPrev;
+   protected final Vec2 locPrev = new Vec2();
 
    /**
     * The transform's right axis.
     */
-   protected final Vec2 right;
+   protected final Vec2 right = Vec2.right(new Vec2());
 
    /**
     * The transform's rotation in radians.
@@ -43,24 +43,13 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    /**
     * The transform's scale.
     */
-   protected final Vec2 scale;
+   protected final Vec2 scale = Vec2.one(new Vec2());
 
    /**
     * The previous scale. Subtract from the current scale to find the delta,
     * or change, in scale.
     */
-   protected final Vec2 scalePrev;
-
-   {
-      this.location = new Vec2();
-      this.scale = Vec2.one(new Vec2());
-
-      this.locPrev = new Vec2();
-      this.scalePrev = Vec2.one(new Vec2());
-
-      this.right = Vec2.right(new Vec2());
-      this.forward = Vec2.forward(new Vec2());
-   }
+   protected final Vec2 scalePrev = Vec2.one(new Vec2());
 
    /**
     * The default constructor.
@@ -266,10 +255,9 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    @Override
    public int hashCode ( ) {
 
-      return ( ( IUtils.MUL_BASE ^ ( this.location == null ? 0 : this.location
-         .hashCode() ) ) * IUtils.HASH_MUL ^ Float.floatToIntBits(
-            this.rotation) ) * IUtils.HASH_MUL ^ ( this.scale == null ? 0
-               : this.scale.hashCode() );
+      return ( ( IUtils.MUL_BASE ^ this.location.hashCode() ) * IUtils.HASH_MUL
+         ^ Float.floatToIntBits(this.rotation) ) * IUtils.HASH_MUL ^ this.scale
+            .hashCode();
    }
 
    /**
@@ -890,15 +878,8 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     */
    protected boolean equals ( final Transform2 t ) {
 
-      if ( this.scale == null ) {
-         if ( t.scale != null ) { return false; }
-      } else if ( !this.scale.equals(t.scale) ) { return false; }
-
-      if ( this.location == null ) {
-         if ( t.location != null ) { return false; }
-      } else if ( !this.location.equals(t.location) ) { return false; }
-
-      return this.rotation == t.rotation;
+      return this.location.equals(t.location) && this.rotation == t.rotation
+         && this.scale.equals(t.scale);
    }
 
    /**

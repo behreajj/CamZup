@@ -120,6 +120,29 @@ public class ImageEntity2 extends MeshEntity2 {
       this.material = new MaterialPImage(name, new Transform2(), texture, tint);
    }
 
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if ( this == obj ) { return true; }
+      if ( !super.equals(obj) ) { return false; }
+      if ( this.getClass() != obj.getClass() ) { return false; }
+      final ImageEntity2 other = ( ImageEntity2 ) obj;
+      if ( this.material == null ) {
+         if ( other.material != null ) { return false; }
+      } else if ( !this.material.equals(other.material) ) { return false; }
+      return true;
+   }
+
+   @Override
+   public int hashCode ( ) {
+
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ( this.material == null ? 0 : this.material
+         .hashCode() );
+      return result;
+   }
+
    /**
     * Sets the material's tint.
     *

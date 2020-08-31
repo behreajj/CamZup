@@ -1,5 +1,8 @@
 package camzup.kotlin;
 
+import java.util.Iterator;
+import java.util.NoSuchElementException;
+
 import camzup.core.Color;
 import camzup.core.IUtils;
 import camzup.core.Utils;
@@ -9,7 +12,7 @@ import camzup.core.Utils;
  * operations retain the alpha channel of the left operand, or of the color
  * they are mutating, so these operations are not commutative.
  */
-public class KtClr extends Color {
+public class KtClr extends Color implements Iterable < Float > {
 
    /**
     * The default constructor. Creates a white color.
@@ -209,6 +212,15 @@ public class KtClr extends Color {
     * @see KtClr#plus(float)
     */
    public KtClr inc ( ) { return this.plus(IUtils.ONE_255); }
+
+   /**
+    * Returns an iterator for this color, which allows its components to be
+    * accessed in an enhanced for-loop.
+    *
+    * @return the iterator
+    */
+   @Override
+   public Iterator < Float > iterator ( ) { return new ClrIterator(this); }
 
    /**
     * Returns a new color with the subtraction of the right operand from the
@@ -522,6 +534,64 @@ public class KtClr extends Color {
 
       return new KtClr(Utils.clamp01(this.r), Utils.clamp01(this.g), Utils
          .clamp01(this.b), Utils.clamp01(this.a));
+   }
+
+   /**
+    * An iterator, which allows a color's components to be accessed in an
+    * enhanced for loop.
+    */
+   public static final class ClrIterator implements Iterator < Float > {
+
+      /**
+       * The color being iterated over.
+       */
+      private final KtClr clr;
+
+      /**
+       * The current index.
+       */
+      private int index = 0;
+
+      /**
+       * The default constructor.
+       *
+       * @param c the color to iterate
+       */
+      public ClrIterator ( final KtClr c ) {
+
+         this.clr = c;
+      }
+
+      /**
+       * Tests to see if the iterator has another value.
+       *
+       * @return the evaluation
+       */
+      @Override
+      public boolean hasNext ( ) { return this.index < this.clr.length(); }
+
+      /**
+       * Gets the next value in the iterator.
+       *
+       * @see Color#get(int)
+       *
+       * @return the value
+       */
+      @Override
+      public Float next ( ) {
+
+         if ( !this.hasNext() ) { throw new NoSuchElementException(); }
+         return this.clr.get(this.index++);
+      }
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
    }
 
 }

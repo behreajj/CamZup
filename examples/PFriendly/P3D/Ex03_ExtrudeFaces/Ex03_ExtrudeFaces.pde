@@ -4,16 +4,11 @@ import camzup.pfriendly.*;
 Zup3 rndr;
 
 float roughness = 2.375;
-float taper = 0.85;
+float taper = 0.75;
 Mesh3 mesh = new Mesh3();
 MeshEntity3 entity = new MeshEntity3();
 MaterialSolid[] materials;
-Gradient grd = new Gradient(
-  #d5dfff,
-  #ffdf15,
-  #ff2828,
-  #101010,
-  #333333);
+Gradient grd = Gradient.paletteViridis(new Gradient());
 
 void settings() {
   size(720, 405, Zup3.PATH_STR);
@@ -22,15 +17,14 @@ void settings() {
 void setup() {
   rndr = (Zup3)getGraphics();
 
-  Mesh3.icosahedron(mesh);
-  mesh.subdivFacesInscribe(2);
+  Mesh3.dodecahedron(mesh);
+  mesh.insetFaces(1, 0.75);
   mesh.subdivFacesCenter(2);
   mesh.subdivFacesFan(1);
-
   Mesh3.castToSphere(mesh, mesh);
   mesh.clean();
 
-  entity.scaleTo(Utils.min(width, height) * 2.5);
+  entity.scaleTo(Utils.min(width, height));
   entity.appendAll(Mesh3.detachFaces(mesh));
 
   int idx = 0;
@@ -51,7 +45,7 @@ void setup() {
     face.scaleLocal(scl, center);
 
     float amt = Utils.lerp(0.02, 0.0675, rnd);
-    mesh.extrudeFaces(amt, taper, true);
+    mesh.extrudeFaces(true, amt, taper);
     mesh.clean();
 
     materials[idx] = new MaterialSolid()
@@ -68,14 +62,8 @@ void draw() {
   entity.rotateZ(0.01);
 
   rndr.lights();
-  rndr.perspective();
+  rndr.ortho();
   rndr.camera();
   rndr.background();
   rndr.shape(entity, materials);
 }
-
-//void mouseReleased() {
-//  saveStrings(
-//    "blob.py",
-//    new String[] { entity.toBlenderCode(materials) });
-//}

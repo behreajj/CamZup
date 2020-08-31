@@ -8,7 +8,7 @@ public abstract class EntityData implements IEntityData {
    /**
     * The name of the data.
     */
-   public String name;
+   public String name = "";
 
    /**
     * The default constructor. The data's name is derived from its identity

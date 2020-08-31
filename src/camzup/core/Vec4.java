@@ -387,6 +387,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param places number of decimal places
     *
     * @return the string
+    * 
+    * @see Utils#toFixed(float, int)
     */
    public String toString ( final int places ) {
 
@@ -410,6 +412,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * formatted as a four-tuple.
     *
     * @return the string
+    * 
+    * @see Utils#toFixed(float, int)
     */
    @Experimental
    String toBlenderCode ( ) {
@@ -562,7 +566,7 @@ public class Vec4 implements Comparable < Vec4 > {
     * @return the evaluation
     *
     * @see Utils#approx(float, float)
-    * @see Vec4#dot(Vec4, Vec4)
+    * @see Vec4#magSq(Vec4)
     */
    public static boolean approxMag ( final Vec4 a, final float b ) {
 
@@ -660,6 +664,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param target    the output vector
     *
     * @return the signed vector
+    * 
+    * @see Utils#copySign(float, float)
     */
    public static Vec4 copySign ( final Vec4 magnitude, final Vec4 sign,
       final Vec4 target ) {
@@ -710,7 +716,6 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the distance
     *
-    * @see Utils#max(float, float)
     * @see Utils#diff(float, float)
     */
    public static float distChebyshev ( final Vec4 a, final Vec4 b ) {
@@ -720,16 +725,9 @@ public class Vec4 implements Comparable < Vec4 > {
       final float zd = Utils.diff(a.z, b.z);
       final float wd = Utils.diff(a.w, b.w);
 
-      // final float c0 = xd >= yd ? xd : xd < yd ? yd : 0.0f; // xd < yd always
-      // evals to true.
-      // final float c1 = c0 >= zd ? c0 : c0 < zd ? zd : 0.0f; // c0 < zd always
-      // evals to true.
-      // return c1 >= wd ? c1 : c1 < wd ? wd : 0.0f; // c1 < wd always evals to
-      // true.
-
-      final float c0 = xd >= yd ? xd : yd;
-      final float c1 = c0 >= zd ? c0 : zd;
-      return c1 >= wd ? c1 : wd;
+      final float c0 = xd > yd ? xd : yd;
+      final float c1 = c0 > zd ? c0 : zd;
+      return c1 > wd ? c1 : wd;
    }
 
    /**
@@ -742,6 +740,7 @@ public class Vec4 implements Comparable < Vec4 > {
     * @return the Euclidean distance
     *
     * @see Vec4#distSq(Vec4, Vec4)
+    * @see Utils#sqrtUnchecked(float)
     */
    public static float distEuclidean ( final Vec4 a, final Vec4 b ) {
 
@@ -777,8 +776,6 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the Minkowski distance
     *
-    * @see Vec4#distEuclidean(Vec4, Vec4)
-    * @see Vec4#distManhattan(Vec4, Vec4)
     * @see Math#pow(double, double)
     * @see Math#abs(double)
     */
@@ -927,6 +924,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param target the output vector
     *
     * @return the filtered vector
+    * 
+    * @see Utils#filter(float, float, float)
     */
    public static Vec4 filter ( final Vec4 v, final Vec4 lb, final Vec4 ub,
       final Vec4 target ) {
@@ -941,6 +940,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param arr the 2D array
     *
     * @return the 1D array
+    * 
+    * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Vec4[] flat ( final Vec4[][] arr ) {
 
@@ -970,6 +971,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param arr the 3D array
     *
     * @return the 1D array
+    * 
+    * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Vec4[] flat ( final Vec4[][][] arr ) {
 
@@ -1005,6 +1008,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param arr the 4D array
     *
     * @return the 1D array
+    * 
+    * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Vec4[] flat ( final Vec4[][][][] arr ) {
 
@@ -1147,6 +1152,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param res the resolution
     *
     * @return the array
+    * 
+    * @see Vec4#grid(int, int, int, int)
     */
    public static Vec4[][][][] grid ( final int res ) {
 
@@ -1163,6 +1170,9 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param strata number of strata
     *
     * @return the array
+    * 
+    * @see Vec4#grid(int, int, int, int, float, float, float, float, float,
+    *      float, float, float)
     */
    public static Vec4[][][][] grid ( final int cols, final int rows,
       final int layers, final int strata ) {
@@ -1182,6 +1192,9 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param upperBound the upper bound
     *
     * @return the array
+    * 
+    * @see Vec4#grid(int, int, int, int, float, float, float, float, float,
+    *      float, float, float)
     */
    public static Vec4[][][][] grid ( final int cols, final int rows,
       final int layers, final int strata, final float lowerBound,
@@ -1203,6 +1216,9 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param upperBound the upper bound
     *
     * @return the array
+    * 
+    * @see Vec4#grid(int, int, int, int, float, float, float, float, float,
+    *      float, float, float)
     */
    public static Vec4[][][][] grid ( final int cols, final int rows,
       final int layers, final int strata, final Vec4 lowerBound,
@@ -1252,7 +1268,7 @@ public class Vec4 implements Comparable < Vec4 > {
     * @return the evaluation
     *
     * @see Utils#approx(float, float)
-    * @see Vec4#dot(Vec4, Vec4)
+    * @see Vec4#magSq(Vec4)
     */
    public static boolean isUnit ( final Vec4 v ) {
 
@@ -1281,6 +1297,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param target the output vector
     *
     * @return the limited vector
+    * 
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec4 limit ( final Vec4 v, final float limit,
       final Vec4 target ) {
@@ -1334,8 +1352,7 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the magnitude
     *
-    * @see Vec4#dot(Vec4, Vec4)
-    * @see Math#sqrt(double)
+    * @see Utils#sqrtUnchecked(float)
     * @see Vec4#magSq(Vec4)
     */
    public static float mag ( final Vec4 v ) {
@@ -1394,6 +1411,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param target     the output vector
     *
     * @return the maximum values
+    * 
+    * @see Utils#max(float, float)
     */
    public static Vec4 max ( final Vec4 a, final float lowerBound,
       final Vec4 target ) {
@@ -1431,6 +1450,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param target     the output vector
     *
     * @return the minimum values
+    * 
+    * @see Utils#min(float, float)
     */
    public static Vec4 min ( final Vec4 a, final float upperBound,
       final Vec4 target ) {
@@ -1640,12 +1661,11 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the unit vector
     *
-    * @see Vec4#div(Vec4, float, Vec4)
-    * @see Vec4#mag(Vec4)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec4 normalize ( final Vec4 v, final Vec4 target ) {
 
-      final float mInv = Utils.invSqrtUnchecked(v.x * v.x + v.y * v.y + v.z
+      final float mInv = Utils.invSqrt(v.x * v.x + v.y * v.y + v.z
          * v.z + v.w * v.w);
       return target.set(v.x * mInv, v.y * mInv, v.z * mInv, v.w * mInv);
    }
@@ -1701,6 +1721,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param target the output vector
     *
     * @return the result
+    * 
+    * @see Math#pow(double, double)
     */
    public static Vec4 pow ( final float a, final Vec4 b, final Vec4 target ) {
 
@@ -1717,6 +1739,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param target the output vector
     *
     * @return the result
+    * 
+    * @see Math#pow(double, double)
     */
    public static Vec4 pow ( final Vec4 a, final float b, final Vec4 target ) {
 
@@ -1829,6 +1853,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param target the output vector
     *
     * @return the vector
+    * 
+    * @see Vec4#randomSpherical(java.util.Random, float, float, Vec4)
     */
    public static Vec4 random ( final java.util.Random rng, final Vec4 target ) {
 
@@ -1869,8 +1895,6 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param target the output vector
     *
     * @return the vector
-    *
-    * @see Quaternion#random(java.util.Random, Quaternion)
     */
    public static Vec4 randomSpherical ( final java.util.Random rng,
       final float rhoMin, final float rhoMax, final Vec4 target ) {
@@ -1897,7 +1921,7 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the rescaled vector
     *
-    * @see Vec4#rescale(Vec4, float, Vec4, Vec4)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec4 rescale ( final Vec4 v, final float scalar,
       final Vec4 target ) {

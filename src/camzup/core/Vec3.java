@@ -118,6 +118,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param v the value
     *
     * @return the evaluation
+    * 
+    * @see Utils#approx(float, float)
     */
    public boolean contains ( final float v ) {
 
@@ -408,10 +410,6 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param v the vector
     *
     * @return the evaluation
-    *
-    * @see Float#floatToIntBits(float)
-    * @see Vec3#approx(Vec3, Vec3)
-    * @see Vec3#approx(Vec3, Vec3, float)
     */
    protected boolean equals ( final Vec3 v ) {
 
@@ -456,6 +454,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the normalized sum
+    * 
+    * @see Utils#invHypot(float, float, float)
     */
    public static Vec3 addNorm ( final Vec3 a, final Vec3 b,
       final Vec3 target ) {
@@ -561,6 +561,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param b the vector
     *
     * @return a new array
+    * 
+    * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Vec3[] append ( final Vec3[] a, final Vec3 b ) {
 
@@ -588,6 +590,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param b right comparisand
     *
     * @return the evaluation
+    * 
+    * @see Vec3#approx(Vec3, Vec3, float)
     */
    public static boolean approx ( final Vec3 a, final Vec3 b ) {
 
@@ -624,8 +628,7 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the evaluation
     *
-    * @see Utils#approx(float, float)
-    * @see Vec3#dot(Vec3, Vec3)
+    * @see Vec3#approxMag(Vec3, float, float)
     */
    public static boolean approxMag ( final Vec3 a, final float b ) {
 
@@ -642,7 +645,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @return the evaluation
     *
     * @see Utils#approx(float, float, float)
-    * @see Vec3#dot(Vec3, Vec3)
+    * @see Vec3#magSq(Vec3)
     */
    public static boolean approxMag ( final Vec3 a, final float b,
       final float tolerance ) {
@@ -658,6 +661,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param b the right comparisand
     *
     * @return the evaluation
+    * 
+    * @see Vec3#areParallel(Vec3, Vec3, float)
     */
    public static boolean areParallel ( final Vec3 a, final Vec3 b ) {
 
@@ -673,6 +678,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param tolerance the tolerance
     *
     * @return the evaluation
+    * 
+    * @see Utils#abs(float)
     */
    public static boolean areParallel ( final Vec3 a, final Vec3 b,
       final float tolerance ) {
@@ -836,6 +843,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @return the tangent along the curve
     *
     * @see Vec3#bezierTangent(Vec3, Vec3, Vec3, Vec3, float, Vec3)
+    * @see Utils#invHypot(float, float, float)
     */
    public static Vec3 bezierTanUnit ( final Vec3 ap0, final Vec3 cp0,
       final Vec3 cp1, final Vec3 ap1, final float step, final Vec3 target ) {
@@ -941,6 +949,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target    the output vector
     *
     * @return the signed vector
+    * 
+    * @see Utils#copySign(float, float)
     */
    public static Vec3 copySign ( final Vec3 magnitude, final Vec3 sign,
       final Vec3 target ) {
@@ -962,16 +972,14 @@ public class Vec3 implements Comparable < Vec3 > {
     * <br>
     * The cross product is anti-commutative, meaning <em>a</em> x <em>b</em> =
     * - ( <em>b</em> x <em>a</em> ) . A unit vector does not necessarily
-    * result from the cross of two unit vectors. The 3D equivalent to the 2D
-    * vector's perpendicular.
+    * result from the cross of two unit vectors. The 3D equivalent to
+    * {@link Vec2#perpendicular(Vec2, Vec2)}.
     *
     * @param a      left operand
     * @param b      right operand
     * @param target the output vector
     *
     * @return the cross product
-    *
-    * @see Vec2#perpendicular(Vec2, Vec2)
     */
    public static Vec3 cross ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
@@ -1000,7 +1008,7 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the normalized cross product
     *
-    * @see Vec3#cross(Vec3, Vec3, Vec3)
+    * @see Utils#invHypot(float, float, float)
     */
    public static Vec3 crossNorm ( final Vec3 a, final Vec3 b,
       final Vec3 target ) {
@@ -1128,8 +1136,6 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the Minkowski distance
     *
-    * @see Vec3#distEuclidean(Vec3, Vec3)
-    * @see Vec3#distManhattan(Vec3, Vec3)
     * @see Math#pow(double, double)
     * @see Math#abs(double)
     */
@@ -1278,6 +1284,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the filtered vector
+    * 
+    * @see Utils#filter(float, float, float)
     */
    public static Vec3 filter ( final Vec3 v, final Vec3 lb, final Vec3 ub,
       final Vec3 target ) {
@@ -1292,6 +1300,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param arr the 2D array
     *
     * @return the 1D array
+    * 
+    * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Vec3[] flat ( final Vec3[][] arr ) {
 
@@ -1321,6 +1331,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param arr the 3D array
     *
     * @return the 1D array
+    * 
+    * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Vec3[] flat ( final Vec3[][][] arr ) {
 
@@ -1499,9 +1511,6 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target      the output vector
     *
     * @return the vector
-    *
-    * @see Math#cos(double)
-    * @see Math#sin(double)
     */
    public static Vec3 fromSpherical ( final float azimuth,
       final float inclination, final float radius, final Vec3 target ) {
@@ -1522,6 +1531,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target      the output vector
     *
     * @return the vector
+    * 
+    * @see Vec3#fromSpherical(float, float, float, Vec3)
     */
    public static Vec3 fromSpherical ( final float azimuth,
       final float inclination, final Vec3 target ) {
@@ -1536,6 +1547,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param res the resolution
     *
     * @return the array
+    * 
+    * @see Vec3#grid(int, int, int)
     */
    public static Vec3[][][] grid ( final int res ) {
 
@@ -1552,6 +1565,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param layers number of layers
     *
     * @return the array
+    * 
+    * @see Vec3#grid(int, int, int, float, float, float, float, float, float)
     */
    public static Vec3[][][] grid ( final int cols, final int rows,
       final int layers ) {
@@ -1572,6 +1587,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param upperBound the upper bound
     *
     * @return the array
+    * 
+    * @see Vec3#grid(int, int, int, float, float, float, float, float, float)
     */
    public static Vec3[][][] grid ( final int cols, final int rows,
       final int layers, final float lowerBound, final float upperBound ) {
@@ -1592,6 +1609,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param upperBound the upper bound
     *
     * @return the array
+    * 
+    * @see Vec3#grid(int, int, int, float, float, float, float, float, float)
     */
    public static Vec3[][][] grid ( final int cols, final int rows,
       final int layers, final Vec3 lowerBound, final Vec3 upperBound ) {
@@ -1608,6 +1627,9 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param radius radius of sphere
     *
     * @return the array
+    * 
+    * @see Utils#max(float, float)
+    * @see Utils#asin(float)
     */
    public static Vec3[] gridFibonacci ( final int count, final float radius ) {
 
@@ -1645,6 +1667,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param latitudes  the latitudes, inclinations
     *
     * @return the array
+    * 
+    * @see Vec3#gridSpherical(int, int, boolean)
     */
    public static Vec3[][][] gridSpherical ( final int longitudes,
       final int latitudes ) {
@@ -1662,6 +1686,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param includePoles include the poles
     *
     * @return the array
+    * 
+    * @see Vec3#gridSpherical(int, int, int, float, float, boolean)
     */
    public static Vec3[][][] gridSpherical ( final int longitudes,
       final int latitudes, final boolean includePoles ) {
@@ -1682,6 +1708,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param radiusMax  maximum radius
     *
     * @return the array
+    * 
+    * @see Vec3#gridSpherical(int, int, int, float, float, boolean)
     */
    public static Vec3[][][] gridSpherical ( final int longitudes,
       final int latitudes, final int layers, final float radiusMin,
@@ -1704,6 +1732,9 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param includePoles include the poles
     *
     * @return the array
+    * 
+    * @see Utils#max(float, float)
+    * @see Utils#min(float, float)
     */
    public static Vec3[][][] gridSpherical ( final int longitudes,
       final int latitudes, final int layers, final float radiusMin,
@@ -1801,7 +1832,6 @@ public class Vec3 implements Comparable < Vec3 > {
     * @return the inclination
     *
     * @see Vec3#inclinationSigned(Vec3)
-    * @see Vec3#inclinationUnsigned(Vec3)
     */
    public static float inclination ( final Vec3 v ) {
 
@@ -1850,6 +1880,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param insert the inserted array
     *
     * @return the new array
+    * 
+    * @see System#arraycopy(Object, int, Object, int, int)
     */
    @Experimental
    public static Vec3[] insert ( final Vec3[] arr, final int index,
@@ -1876,7 +1908,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @return the evaluation
     *
     * @see Utils#approx(float, float)
-    * @see Vec3#dot(Vec3, Vec3)
+    * @see Vec3#magSq(Vec3)
     */
    public static boolean isUnit ( final Vec3 v ) {
 
@@ -1904,6 +1936,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the limited vector
+    * 
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec3 limit ( final Vec3 v, final float limit,
       final Vec3 target ) {
@@ -1957,9 +1991,7 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the magnitude
     *
-    * @see Vec3#dot(Vec3, Vec3)
-    * @see Math#sqrt(double)
-    * @see Vec3#magSq(Vec3)
+    * @see Utils#sqrtUnchecked(float)
     */
    public static float mag ( final Vec3 v ) {
 
@@ -1975,9 +2007,6 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param v the input vector
     *
     * @return the magnitude squared
-    *
-    * @see Vec3#dot(Vec3, Vec3)
-    * @see Vec3#mag(Vec3)
     */
    public static float magSq ( final Vec3 v ) {
 
@@ -2016,6 +2045,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target     the output vector
     *
     * @return the maximum values
+    * 
+    * @see Utils#max(float, float)
     */
    public static Vec3 max ( final Vec3 a, final float lowerBound,
       final Vec3 target ) {
@@ -2052,6 +2083,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target     the output vector
     *
     * @return the minimum values
+    * 
+    * @see Utils#min(float, float)
     */
    public static Vec3 min ( final Vec3 a, final float upperBound,
       final Vec3 target ) {
@@ -2262,13 +2295,11 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the unit vector
     *
-    * @see Vec3#div(Vec3, float, Vec3)
-    * @see Vec3#mag(Vec3)
+    * @see Utils#invSqrt(float)
     */
    public static Vec3 normalize ( final Vec3 v, final Vec3 target ) {
 
-      final float mInv = Utils.invSqrtUnchecked(v.x * v.x + v.y * v.y + v.z
-         * v.z);
+      final float mInv = Utils.invSqrt(v.x * v.x + v.y * v.y + v.z * v.z);
       return target.set(v.x * mInv, v.y * mInv, v.z * mInv);
    }
 
@@ -2323,6 +2354,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the result
+    * 
+    * @see Math#pow(double, double)
     */
    public static Vec3 pow ( final float a, final Vec3 b, final Vec3 target ) {
 
@@ -2339,6 +2372,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the result
+    * 
+    * @see Math#pow(double, double)
     */
    public static Vec3 pow ( final Vec3 a, final float b, final Vec3 target ) {
 
@@ -2515,6 +2550,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the random vector
+    * 
+    * @see Vec3#fromSpherical(float, float, float, Vec3)
     */
    public static Vec3 randomSpherical ( final java.util.Random rng,
       final float rhoMin, final float rhoMax, final Vec3 target ) {
@@ -2557,21 +2594,13 @@ public class Vec3 implements Comparable < Vec3 > {
     * @return the reflected vector
     *
     * @see Vec3#magSq(Vec3)
-    * @see Vec3#dot(Vec3, Vec3)
-    * @see Utils#abs(float)
     * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec3 reflect ( final Vec3 incident, final Vec3 normal,
       final Vec3 target ) {
 
       final float nMSq = Vec3.magSq(normal);
-      if ( Utils.abs(nMSq) < IUtils.EPSILON ) { return target.reset(); }
-
-      if ( Utils.approx(nMSq, 1.0f) ) {
-         final float scalar = 2.0f * Vec3.dot(normal, incident);
-         return target.set(incident.x - scalar * normal.x, incident.y - scalar
-            * normal.y, incident.z - scalar * normal.z);
-      }
+      if ( nMSq < IUtils.EPSILON ) { return target.reset(); }
 
       final float mInv = Utils.invSqrtUnchecked(nMSq);
       final float nx = normal.x * mInv;
@@ -2594,7 +2623,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @return the refraction
     *
     * @see Vec3#dot(Vec3, Vec3)
-    * @see Math#sqrt(double)
+    * @see Utils#sqrtUnchecked(float)
     */
    public static Vec3 refract ( final Vec3 incident, final Vec3 normal,
       final float eta, final Vec3 target ) {
@@ -2642,7 +2671,7 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the rescaled vector
     *
-    * @see Vec3#rescale(Vec3, float, Vec3, Vec3)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec3 rescale ( final Vec3 v, final float scalar,
       final Vec3 target ) {
@@ -2782,6 +2811,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target  the output vector
     *
     * @return the rotated vector
+    * 
+    * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
     */
    public static Vec3 rotate ( final Vec3 v, final float radians,
       final Vec3 axis, final Vec3 target ) {
@@ -3001,6 +3032,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the normalized difference
+    * 
+    * @see Utils#invHypot(float, float, float)
     */
    public static Vec3 subNorm ( final Vec3 a, final Vec3 b,
       final Vec3 target ) {

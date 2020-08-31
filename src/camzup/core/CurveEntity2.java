@@ -15,11 +15,8 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    /**
     * The list of curves held by the entity.
     */
-   public final ArrayList < Curve2 > curves;
-
-   {
-      this.curves = new ArrayList <>(IEntity.DEFAULT_CAPACITY);
-   }
+   public final ArrayList < Curve2 > curves = new ArrayList <>(
+      IEntity.DEFAULT_CAPACITY);
 
    /**
     * The default constructor.
@@ -144,10 +141,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       if ( !super.equals(obj) ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
       final CurveEntity2 other = ( CurveEntity2 ) obj;
-      if ( this.curves == null ) {
-         if ( other.curves != null ) { return false; }
-      } else if ( !this.curves.equals(other.curves) ) { return false; }
-      return true;
+      return this.curves.equals(other.curves);
    }
 
    /**
@@ -187,8 +181,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ( this.curves == null ? 0 : this.curves
-         .hashCode() );
+      result = prime * result + this.curves.hashCode();
       return result;
    }
 

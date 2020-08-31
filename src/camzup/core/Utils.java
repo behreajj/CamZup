@@ -875,7 +875,7 @@ public abstract class Utils implements IUtils {
     */
    public static float max ( final float a, final float b ) {
 
-      return a >= b ? a : b;
+      return a > b ? a : b;
    }
 
    /**
@@ -889,8 +889,8 @@ public abstract class Utils implements IUtils {
     */
    public static float max ( final float a, final float b, final float c ) {
 
-      final float d = a >= b ? a : b;
-      return d >= c ? d : c;
+      final float d = a > b ? a : b;
+      return d > c ? d : c;
    }
 
    /**
@@ -919,7 +919,7 @@ public abstract class Utils implements IUtils {
     */
    public static float min ( final float a, final float b ) {
 
-      return a <= b ? a : b;
+      return a < b ? a : b;
    }
 
    /**
@@ -933,8 +933,8 @@ public abstract class Utils implements IUtils {
     */
    public static float min ( final float a, final float b, final float c ) {
 
-      final float d = a <= b ? a : b;
-      return d <= c ? d : c;
+      final float d = a < b ? a : b;
+      return d < c ? d : c;
    }
 
    /**

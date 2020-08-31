@@ -14,12 +14,13 @@ public class MaterialSolid extends Material {
    /**
     * The fill color.
     */
-   public final Color fill;
+   public final Color fill = Color.fromHex(IMaterial.DEFAULT_FILL, new Color());
 
    /**
     * The stroke color.
     */
-   public final Color stroke;
+   public final Color stroke = Color.fromHex(IMaterial.DEFAULT_STROKE,
+      new Color());
 
    /**
     * The weight, or width, of the stroke.
@@ -35,11 +36,6 @@ public class MaterialSolid extends Material {
     * Whether or not to display a shape with a stroke.
     */
    public boolean useStroke = false;
-
-   {
-      this.fill = Color.fromHex(IMaterial.DEFAULT_FILL, new Color());
-      this.stroke = Color.fromHex(IMaterial.DEFAULT_STROKE, new Color());
-   }
 
    /**
     * The default constructor.
@@ -164,6 +160,43 @@ public class MaterialSolid extends Material {
       this.strokeWeight = strokeWeight;
       this.useFill = useFill;
       this.useStroke = useStroke;
+   }
+
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if ( this == obj ) { return true; }
+      if ( !super.equals(obj) ) { return false; }
+      if ( this.getClass() != obj.getClass() ) { return false; }
+      final MaterialSolid other = ( MaterialSolid ) obj;
+      if ( this.fill == null ) {
+         if ( other.fill != null ) { return false; }
+      } else if ( !this.fill.equals(other.fill) ) { return false; }
+      if ( this.stroke == null ) {
+         if ( other.stroke != null ) { return false; }
+      } else if ( !this.stroke.equals(other.stroke) ) { return false; }
+      if ( Float.floatToIntBits(this.strokeWeight) != Float.floatToIntBits(
+         other.strokeWeight) ) {
+         return false;
+      }
+      if ( this.useFill != other.useFill ) { return false; }
+      if ( this.useStroke != other.useStroke ) { return false; }
+      return true;
+   }
+
+   @Override
+   public int hashCode ( ) {
+
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ( this.fill == null ? 0 : this.fill
+         .hashCode() );
+      result = prime * result + ( this.stroke == null ? 0 : this.stroke
+         .hashCode() );
+      result = prime * result + Float.floatToIntBits(this.strokeWeight);
+      result = prime * result + ( this.useFill ? 1231 : 1237 );
+      result = prime * result + ( this.useStroke ? 1231 : 1237 );
+      return result;
    }
 
    /**

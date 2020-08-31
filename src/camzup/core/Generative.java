@@ -13,11 +13,7 @@ public abstract class Generative {
    /**
     * A default seed set to the system current time in milliseconds.
     */
-   public static final int DEFAULT_SEED;
-
-   static {
-      DEFAULT_SEED = ( int ) System.currentTimeMillis();
-   }
+   public static final int DEFAULT_SEED = ( int ) System.currentTimeMillis();
 
    /**
     * Returns a signed pseudo-random number in the range [-1.0, 1.0] given a

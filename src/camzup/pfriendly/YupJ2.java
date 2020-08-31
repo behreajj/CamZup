@@ -84,23 +84,23 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * A Java AWT affine transform object. This is cached so a new object is
     * not created when accessing or mutating the renderer matrix.
     */
-   protected final AffineTransform affineNative;
+   protected final AffineTransform affineNative = new AffineTransform();
 
    /**
     * A Java AWT arc object. This uses double precision, as Arc2D.Float simply
     * casts between float and double anyway.
     */
-   protected final Arc2D.Double arcd;
+   protected final Arc2D.Double arcd = new Arc2D.Double();
 
    /**
     * A placeholder color used during lerpColor.
     */
-   protected final Color aTemp;
+   protected final Color aTemp = new Color();
 
    /**
     * A placeholder color used during lerpColor.
     */
-   protected final Color bTemp;
+   protected final Color bTemp = new Color();
 
    /**
     * Representation of a stroke cap in the native AWT library.
@@ -112,13 +112,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    /**
     * A placeholder color used during lerpColor.
     */
-   protected final Color cTemp;
+   protected final Color cTemp = new Color();
 
    /**
     * A Java AWT general path object. This is reset when a new shape needs to
     * be displayed in draw.
     */
-   protected final Path2D.Double gp;
+   protected final Path2D.Double gp = new Path2D.Double();
 
    /**
     * One divided by the maximum for the alpha channel.
@@ -150,30 +150,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    /**
     * A placeholder vector used during transform.
     */
-   protected final Vec2 tr2Loc;
+   protected final Vec2 tr2Loc = new Vec2();
 
    /**
     * A placeholder vector used during transform.
     */
-   protected final Vec2 tr2Scale;
+   protected final Vec2 tr2Scale = Vec2.one(new Vec2());
 
    /**
     * A placeholder transform used during transform.
     */
-   protected final Transform2 trCore;
+   protected final Transform2 trCore = new Transform2();
 
    {
-      this.affineNative = new AffineTransform();
-      this.arcd = new Arc2D.Double();
-      this.aTemp = new Color();
       this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
-      this.bTemp = new Color();
-      this.cTemp = new Color();
       this.curveToBezierMatrix = new PMatrix3D();
-      this.gp = new Path2D.Double();
-      this.tr2Loc = new Vec2();
-      this.tr2Scale = new Vec2();
-      this.trCore = new Transform2();
    }
 
    /**
@@ -312,57 +303,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          return;
       }
 
-      float x;
-      float y;
-      float w;
-      float h;
-
-      switch ( this.ellipseMode ) {
-
-         case CORNERS:
-
-            // w = Utils.diff(x1, x0);
-            // h = Utils.diff(y1, y0);
-            // x = x0;
-            // y = y0;
-            // break;
-
-         case RADIUS:
-
-            // w = Utils.abs(x1);
-            // h = Utils.abs(y1);
-            // x = x0 - w;
-            // y = y0 - h;
-            // w += w;
-            // h += h;
-            // break;
-
-         case CENTER:
-
-            // w = Utils.abs(x1);
-            // h = Utils.abs(y1);
-            // x = x0 - w * 0.5f;
-            // y = y0 - h * 0.5f;
-            // break;
-
-         case CORNER:
-
-            // w = Utils.abs(x1);
-            // h = Utils.abs(y1);
-            // x = x0;
-            // y = y0 - h;
-            // break;
-
-         default:
-
-            w = Utils.min(Utils.abs(x1), Utils.abs(y1));
-            h = w;
-            x = x0 - w;
-            y = y0 - h;
-            w += w;
-            h += h;
-
-      }
+      float w = Utils.min(Utils.abs(x1), Utils.abs(y1));
+      float h = w;
+      float x = x0 - w;
+      float y = y0 - h;
+      w += w;
+      h += h;
 
       this.arcImpl(x, y, w, h, start, stop, mode);
    }
@@ -3301,7 +3247,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param gray the brightness
     */
    @Override
-   public void tint ( final float gray ) { PApplet.showMissingWarning("tint"); }
+   public void tint ( final float gray ) { /* Unsupported. */ }
 
    /**
     * Tint is not supported by this renderer.
@@ -3312,7 +3258,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void tint ( final float gray, final float alpha ) {
 
-      PApplet.showMissingWarning("tint");
+      /* Unsupported. */
    }
 
    /**
@@ -3325,7 +3271,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void tint ( final float v1, final float v2, final float v3 ) {
 
-      PApplet.showMissingWarning("tint");
+      /* Unsupported. */
    }
 
    /**
@@ -3340,7 +3286,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void tint ( final float v1, final float v2, final float v3,
       final float alpha ) {
 
-      PApplet.showMissingWarning("tint");
+      /* Unsupported. */
    }
 
    /**
@@ -3349,7 +3295,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param rgb the color in hexadecimal
     */
    @Override
-   public void tint ( final int rgb ) { PApplet.showMissingWarning("tint"); }
+   public void tint ( final int rgb ) { /* Unsupported. */ }
 
    /**
     * Tint is not supported by this renderer.
@@ -3358,10 +3304,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param alpha the alpha channel
     */
    @Override
-   public void tint ( final int rgb, final float alpha ) {
-
-      PApplet.showMissingWarning("tint");
-   }
+   public void tint ( final int rgb, final float alpha ) { /* Unsupported. */ }
 
    /**
     * Returns the string representation of this renderer.
@@ -4144,7 +4087,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Tint is not supported by this renderer.
     */
    @Override
-   protected void tintFromCalc ( ) { PApplet.showMissingWarning("tint"); }
+   protected void tintFromCalc ( ) { /* Unsupported. */ }
 
    /**
     * The floating point epsilon, cast to a double.

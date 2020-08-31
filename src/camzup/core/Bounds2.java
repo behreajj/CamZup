@@ -9,17 +9,12 @@ public class Bounds2 implements Comparable < Bounds2 > {
    /**
     * The maximum corner.
     */
-   public final Vec2 max;
+   public final Vec2 max = new Vec2(-0.5f, -0.5f);
 
    /**
     * The minimum corner.
     */
-   public final Vec2 min;
-
-   {
-      this.min = new Vec2(-0.5f, -0.5f);
-      this.max = new Vec2(0.5f, 0.5f);
-   }
+   public final Vec2 min = new Vec2(0.5f, 0.5f);
 
    /**
     * The default constructor.
@@ -139,10 +134,8 @@ public class Bounds2 implements Comparable < Bounds2 > {
    public int hashCode ( ) {
 
       int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ ( this.min == null ? 0 : this.min
-         .hashCode() );
-      hash = hash * IUtils.HASH_MUL ^ ( this.max == null ? 0 : this.max
-         .hashCode() );
+      hash = hash * IUtils.HASH_MUL ^ this.min.hashCode();
+      hash = hash * IUtils.HASH_MUL ^ this.max.hashCode();
       return hash;
    }
 
@@ -338,15 +331,7 @@ public class Bounds2 implements Comparable < Bounds2 > {
     */
    protected boolean equals ( final Bounds2 b ) {
 
-      if ( this.min == null ) {
-         if ( b.min != null ) { return false; }
-      } else if ( !this.min.equals(b.min) ) { return false; }
-
-      if ( this.max == null ) {
-         if ( b.max != null ) { return false; }
-      } else if ( !this.max.equals(b.max) ) { return false; }
-
-      return true;
+      return this.min.equals(b.min) && this.max.equals(b.max);
    }
 
    /**

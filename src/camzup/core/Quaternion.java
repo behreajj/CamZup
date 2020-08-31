@@ -18,16 +18,12 @@ public class Quaternion implements Comparable < Quaternion > {
     * The coefficients of the imaginary components <em>i</em>, <em>j</em> and
     * <em>k</em>.
     */
-   public final Vec3 imag;
+   public final Vec3 imag = new Vec3();
 
    /**
     * The real component (also known as w).
     */
    public float real = 1.0f;
-
-   {
-      this.imag = new Vec3(0.0f, 0.0f, 0.0f);
-   }
 
    /**
     * The default constructor. Defaults to the identity, (1.0, 0.0, 0.0, 0.0)
@@ -142,7 +138,7 @@ public class Quaternion implements Comparable < Quaternion > {
    public int hashCode ( ) {
 
       return ( IUtils.MUL_BASE ^ Float.floatToIntBits(this.real) )
-         * IUtils.HASH_MUL ^ ( this.imag == null ? 0 : this.imag.hashCode() );
+         * IUtils.HASH_MUL ^ this.imag.hashCode();
    }
 
    /**
@@ -360,11 +356,7 @@ public class Quaternion implements Comparable < Quaternion > {
     */
    protected boolean equals ( final Quaternion q ) {
 
-      if ( this.imag == null ) {
-         if ( q.imag != null ) { return false; }
-      } else if ( !this.imag.equals(q.imag) ) { return false; }
-
-      return this.real == q.real;
+      return this.real == q.real && this.imag.equals(q.imag);
    }
 
    /**

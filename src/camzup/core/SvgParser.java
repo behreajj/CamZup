@@ -881,14 +881,14 @@ abstract class SvgParser {
                final PathCommand command = commands[l];
                switch ( command ) {
 
-                  case ClosePath:
+                  case CLOSE_PATH:
 
                      closedLoop = true;
                      target.closedLoop = closedLoop;
 
                      break;
 
-                  case MoveToAbs:
+                  case MOVE_TO_ABS:
 
                      // if ( datLen > cursor + 1 ) {
                      coxStr = dataTokens[++cursor]; /* 1 */
@@ -920,7 +920,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case MoveToRel:
+                  case MOVE_TO_REL:
 
                      // if ( datLen > cursor + 1 ) {
                      coxStr = dataTokens[++cursor]; /* 1 */
@@ -954,7 +954,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case LineToAbs:
+                  case LINE_TO_ABS:
 
                      // if ( datLen > cursor + 1 ) {
                      coxStr = dataTokens[++cursor]; /* 1 */
@@ -974,7 +974,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case LineToRel:
+                  case LINE_TO_REL:
 
                      // if ( datLen > cursor + 1 ) {
                      coxStr = dataTokens[++cursor]; /* 1 */
@@ -996,7 +996,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case HorizAbs:
+                  case HORIZ_ABS:
 
                      // if ( datLen > cursor ) {
                      coxStr = dataTokens[++cursor]; /* 1 */
@@ -1015,7 +1015,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case HorizRel:
+                  case HORIZ_REL:
 
                      // if ( datLen > cursor ) {
                      coxStr = dataTokens[++cursor]; /* 1 */
@@ -1036,7 +1036,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case VertAbs:
+                  case VERT_ABS:
 
                      // if ( datLen > cursor ) {
                      coyStr = dataTokens[++cursor]; /* 1 */
@@ -1055,7 +1055,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case VertRel:
+                  case VERT_REL:
 
                      // if ( datLen > cursor ) {
                      coyStr = dataTokens[++cursor]; /* 1 */
@@ -1076,7 +1076,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case QuadraticToAbs:
+                  case QUADRATIC_TO_ABS:
 
                      // if ( datLen > cursor + 3 ) {
                      mhxStr = dataTokens[++cursor]; /* 1 */
@@ -1100,7 +1100,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case QuadraticToRel:
+                  case QUADRATIC_TO_REL:
 
                      mhxStr = dataTokens[++cursor]; /* 1 */
                      mhyStr = dataTokens[++cursor]; /* 2 */
@@ -1126,7 +1126,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case ReflectQuadraticAbs:
+                  case REFLECT_QUADRATIC_ABS:
 
                      coxStr = dataTokens[++cursor]; /* 1 */
                      coyStr = dataTokens[++cursor]; /* 2 */
@@ -1152,7 +1152,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case ReflectQuadraticRel:
+                  case REFLECT_QUADRATIC_REL:
 
                      coxStr = dataTokens[++cursor]; /* 1 */
                      coyStr = dataTokens[++cursor]; /* 2 */
@@ -1175,7 +1175,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case CubicToAbs:
+                  case CUBIC_TO_ABS:
 
                      fhxStr = dataTokens[++cursor]; /* 1 */
                      fhyStr = dataTokens[++cursor]; /* 2 */
@@ -1199,7 +1199,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case CubicToRel:
+                  case CUBIC_TO_REL:
 
                      fhxStr = dataTokens[++cursor]; /* 1 */
                      fhyStr = dataTokens[++cursor]; /* 2 */
@@ -1227,7 +1227,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case ReflectCubicAbs:
+                  case REFLECT_CUBIC_ABS:
 
                      rhxStr = dataTokens[++cursor]; /* 1 */
                      rhyStr = dataTokens[++cursor]; /* 2 */
@@ -1248,7 +1248,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case ReflectCubicRel:
+                  case REFLECT_CUBIC_REL:
 
                      rhxStr = dataTokens[++cursor]; /* 1 */
                      rhyStr = dataTokens[++cursor]; /* 2 */
@@ -1272,7 +1272,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case ArcToAbs:
+                  case ARC_TO_ABS:
 
                      rx = dataTokens[++cursor]; /* 1 */
                      ry = dataTokens[++cursor]; /* 2 */
@@ -1295,7 +1295,7 @@ abstract class SvgParser {
 
                      break;
 
-                  case ArcToRel:
+                  case ARC_TO_REL:
 
                      rx = dataTokens[++cursor]; /* 1 */
                      ry = dataTokens[++cursor]; /* 2 */
@@ -1682,242 +1682,6 @@ abstract class SvgParser {
          if ( token.length() > 0 ) { list.add(token); }
       }
       return list.toArray(new String[list.size()]);
-   }
-
-   /**
-    * Command found in a path node's d attribute.
-    */
-   public enum PathCommand {
-
-      /**
-       * Arc absolute ('A').
-       */
-      ArcToAbs ( 'A', false, 7 ),
-
-      /**
-       * Arc relative ('a').
-       */
-      ArcToRel ( 'a', true, 7 ),
-
-      /**
-       * Close path ('Z').
-       */
-      ClosePath ( 'Z', false, 0 ),
-
-      /**
-       * Cubic Bezier Curve absolute ('C').
-       */
-      CubicToAbs ( 'C', false, 6 ),
-
-      /**
-       * Cubic Bezier Curve relative ('c').
-       */
-      CubicToRel ( 'c', true, 6 ),
-
-      /**
-       * Horizontal line absolute ('H').
-       */
-      HorizAbs ( 'H', false, 1 ),
-
-      /**
-       * Horizontal line relative ('h').
-       */
-      HorizRel ( 'h', true, 1 ),
-
-      /**
-       * Line to absolute ('L').
-       */
-      LineToAbs ( 'L', false, 2 ),
-
-      /**
-       * Line to relative ('l).
-       */
-      LineToRel ( 'l', true, 2 ),
-
-      /**
-       * Move to absolute ('M').
-       */
-      MoveToAbs ( 'M', false, 2 ),
-
-      /**
-       * Move to relative ('m').
-       */
-      MoveToRel ( 'm', true, 2 ),
-
-      /**
-       * Quadratic Bezier curve absolute ('Q').
-       */
-      QuadraticToAbs ( 'Q', false, 4 ),
-
-      /**
-       * Quadratic Bezier curve relative ('q').
-       */
-      QuadraticToRel ( 'q', true, 4 ),
-
-      /**
-       * Reflect cubic Bezier curve absolute ('S').
-       */
-      ReflectCubicAbs ( 'S', false, 4 ),
-
-      /**
-       * Reflect cubic Bezier curve relative ('s').
-       */
-      ReflectCubicRel ( 's', true, 4 ),
-
-      /**
-       * Reflect quadratic Bezier curve absolute ('T').
-       */
-      ReflectQuadraticAbs ( 'T', false, 2 ),
-
-      /**
-       * Reflect quadratic Bezier curve relative ('t').
-       */
-      ReflectQuadraticRel ( 't', true, 2 ),
-
-      /**
-       * Vertical line absolute ('V').
-       */
-      VertAbs ( 'V', false, 1 ),
-
-      /**
-       * Vertical line to relative ('v').
-       */
-      VertRel ( 'v', true, 1 );
-
-      /**
-       * The single character code.
-       */
-      private final char code;
-
-      /**
-       * Number of parameters for a given code.
-       */
-      private final int dataCount;
-
-      /**
-       * Is the command in absolute coordinates, or relative to previously
-       * specified coordinates.
-       */
-      private final boolean isRelative;
-
-      /**
-       * The enumeration constant constructor.
-       *
-       * @param code       the character code
-       * @param isRelative is the command relative
-       * @param dataCount  the parameter count
-       */
-      private PathCommand ( final char code, final boolean isRelative,
-         final int dataCount ) {
-
-         this.code = code;
-         this.isRelative = isRelative;
-         this.dataCount = dataCount;
-      }
-
-      /**
-       * Gets the command's character code.
-       *
-       * @return the character
-       */
-      public char getCode ( ) { return this.code; }
-
-      /**
-       * Gets the number of parameters.
-       *
-       * @return the parameter number.
-       */
-      public int getDataCount ( ) { return this.dataCount; }
-
-      /**
-       * Is the command relative (true) or absolute (false).
-       *
-       * @return the boolean
-       */
-      public boolean isRelative ( ) { return this.isRelative; }
-
-      /**
-       * Returns a string representation of the path command.
-       */
-      @Override
-      public String toString ( ) {
-
-         // return String.valueOf(this.code);
-         return super.toString();
-      }
-
-      /**
-       * Returns a path command given a character. In cases where the character
-       * is not a command, returns close path by default.
-       *
-       * @param c the character
-       *
-       * @return the path command
-       */
-      public static PathCommand fromChar ( final char c ) {
-
-         switch ( c ) {
-            case 'A':
-               return ArcToAbs;
-
-            case 'a':
-               return ArcToRel;
-
-            case 'C':
-               return CubicToAbs;
-
-            case 'c':
-               return CubicToRel;
-
-            case 'H':
-               return HorizAbs;
-
-            case 'h':
-               return HorizRel;
-
-            case 'L':
-               return LineToAbs;
-
-            case 'l':
-               return LineToRel;
-
-            case 'M':
-               return MoveToAbs;
-
-            case 'm':
-               return MoveToRel;
-
-            case 'Q':
-               return QuadraticToAbs;
-
-            case 'q':
-               return QuadraticToRel;
-
-            case 'S':
-               return ReflectCubicAbs;
-
-            case 's':
-               return ReflectCubicRel;
-
-            case 'T':
-               return ReflectQuadraticAbs;
-
-            case 't':
-               return ReflectQuadraticRel;
-
-            case 'V':
-               return VertAbs;
-
-            case 'v':
-               return VertRel;
-
-            case 'Z':
-            case 'z':
-            default:
-               return ClosePath;
-         }
-      }
-
    }
 
 }

@@ -11,17 +11,12 @@ public class Ray2 {
    /**
     * The ray's direction.
     */
-   public final Vec2 dir;
+   public final Vec2 dir = Vec2.forward(new Vec2());
 
    /**
     * The ray's origin point.
     */
-   public final Vec2 origin;
-
-   {
-      this.origin = new Vec2();
-      this.dir = Vec2.forward(new Vec2());
-   }
+   public final Vec2 origin = new Vec2();
 
    /**
     * The default constructor.
@@ -73,10 +68,8 @@ public class Ray2 {
    public int hashCode ( ) {
 
       int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ ( this.origin == null ? 0 : this.origin
-         .hashCode() );
-      hash = hash * IUtils.HASH_MUL ^ ( this.dir == null ? 0 : this.dir
-         .hashCode() );
+      hash = hash * IUtils.HASH_MUL ^ this.origin.hashCode();
+      hash = hash * IUtils.HASH_MUL ^ this.dir.hashCode();
       return hash;
    }
 
@@ -175,15 +168,7 @@ public class Ray2 {
     */
    protected boolean equals ( final Ray2 ray ) {
 
-      if ( this.dir == null ) {
-         if ( ray.dir != null ) { return false; }
-      } else if ( !this.dir.equals(ray.dir) ) { return false; }
-
-      if ( this.origin == null ) {
-         if ( ray.origin != null ) { return false; }
-      } else if ( !this.origin.equals(ray.origin) ) { return false; }
-
-      return true;
+      return this.origin.equals(ray.origin) && this.dir.equals(ray.dir);
    }
 
    /**

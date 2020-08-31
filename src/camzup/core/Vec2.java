@@ -84,6 +84,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param v the value
     *
     * @return the evaluation
+    * 
+    * @see Utils#approx(float, float)
     */
    public boolean contains ( final float v ) {
 
@@ -243,6 +245,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * value for use by OBJ formatting functions.
     *
     * @return the string
+    * 
+    * @see Utils#toFixed(float, int)
     */
    public String toObjString ( ) {
 
@@ -267,6 +271,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param places number of decimal places
     *
     * @return the string
+    * 
+    * @see Utils#toFixed(float, int)
     */
    public String toString ( final int places ) {
 
@@ -289,6 +295,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param flipv whether to subtract y from 1.0
     *
     * @return the string
+    * 
+    * @see Utils#toFixed(float, int)
     */
    @Experimental
    String toBlenderCode ( final boolean flipv ) {
@@ -309,6 +317,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * formatted as a three-tuple.
     *
     * @return the string
+    * 
+    * @see Utils#toFixed(float, int)
     */
    @Experimental
    String toBlenderCode ( final float z ) {
@@ -334,6 +344,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * small shapes are scaled up.
     *
     * @return the string
+    * 
+    * @see Utils#toFixed(float, int)
     */
    String toSvgString ( ) {
 
@@ -394,10 +406,6 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param v the vector
     *
     * @return the evaluation
-    *
-    * @see Float#floatToIntBits(float)
-    * @see Vec2#approx(Vec2, Vec2)
-    * @see Vec2#approx(Vec2, Vec2, float)
     */
    protected boolean equals ( final Vec2 v ) {
 
@@ -442,6 +450,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param target the output vector
     *
     * @return the normalized sum
+    * 
+    * @see Utils#invHypot(float, float)
     */
    public static Vec2 addNorm ( final Vec2 a, final Vec2 b,
       final Vec2 target ) {
@@ -544,6 +554,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param b the vector
     *
     * @return a new array
+    * 
+    * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Vec2[] append ( final Vec2[] a, final Vec2 b ) {
 
@@ -571,6 +583,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param b right operand
     *
     * @return the evaluation
+    * 
+    * @see Vec2#approx(Vec2, Vec2, float)
     */
    public static boolean approx ( final Vec2 a, final Vec2 b ) {
 
@@ -606,8 +620,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the evaluation
     *
-    * @see Utils#approx(float, float)
-    * @see Vec2#dot(Vec2, Vec2)
+    * @see Vec2#approxMag(Vec2, float, float)
     */
    public static boolean approxMag ( final Vec2 a, final float b ) {
 
@@ -624,7 +637,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @return the evaluation
     *
     * @see Utils#approx(float, float, float)
-    * @see Vec2#dot(Vec2, Vec2)
+    * @see Vec2#magSq(Vec2)
     */
    public static boolean approxMag ( final Vec2 a, final float b,
       final float tolerance ) {
@@ -639,6 +652,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param b right comparisand
     *
     * @return the evaluation
+    * 
+    * @see Vec2#areParallel(Vec2, Vec2, float)
     */
    public static boolean areParallel ( final Vec2 a, final Vec2 b ) {
 
@@ -654,6 +669,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param tolerance the tolerance
     *
     * @return the evaluation
+    * 
+    * @see Utils#abs(float)
     */
    public static boolean areParallel ( final Vec2 a, final Vec2 b,
       final float tolerance ) {
@@ -771,6 +788,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @return the tangent along the curve
     *
     * @see Vec2#bezierTangent(Vec2, Vec2, Vec2, Vec2, float, Vec2)
+    * @see Utils#invHypot(float, float)
     */
    public static Vec2 bezierTanUnit ( final Vec2 ap0, final Vec2 cp0,
       final Vec2 cp1, final Vec2 ap1, final float step, final Vec2 target ) {
@@ -875,6 +893,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param target    the output vector
     *
     * @return the signed vector
+    * 
+    * @see Utils#copySign(float, float)
     */
    public static Vec2 copySign ( final Vec2 magnitude, final Vec2 sign,
       final Vec2 target ) {
@@ -957,6 +977,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @return the Euclidean distance
     *
     * @see Vec2#distSq(Vec2, Vec2)
+    * @see Utils#sqrtUnchecked(float)
     */
    public static float distEuclidean ( final Vec2 a, final Vec2 b ) {
 
@@ -991,8 +1012,6 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the Minkowski distance
     *
-    * @see Vec2#distEuclidean(Vec2, Vec2)
-    * @see Vec2#distManhattan(Vec2, Vec2)
     * @see Math#pow(double, double)
     * @see Math#abs(double)
     */
@@ -1122,6 +1141,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param target the output vector
     *
     * @return the filtered vector
+    * 
+    * @see Utils#filter(float, float, float)
     */
    public static Vec2 filter ( final Vec2 v, final Vec2 lb, final Vec2 ub,
       final Vec2 target ) {
@@ -1136,6 +1157,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param arr the 2D array
     *
     * @return the 1D array
+    * 
+    * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Vec2[] flat ( final Vec2[][] arr ) {
 
@@ -1295,6 +1318,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param res the resolution
     *
     * @return the array
+    * 
+    * @see Vec2#grid(int, int)
     */
    public static Vec2[][] grid ( final int res ) {
 
@@ -1310,6 +1335,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param rows number of rows
     *
     * @return the array
+    * 
+    * @see Vec2#grid(int, int, float, float, float, float)
     */
    public static Vec2[][] grid ( final int cols, final int rows ) {
 
@@ -1326,6 +1353,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param upperBound the upper bound
     *
     * @return the array
+    * 
+    * @see Vec2#grid(int, int, float, float, float, float)
     */
    public static Vec2[][] grid ( final int cols, final int rows,
       final float lowerBound, final float upperBound ) {
@@ -1344,6 +1373,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param upperBound the upper bound
     *
     * @return the array
+    * 
+    * @see Vec2#grid(int, int, float, float, float, float)
     */
    public static Vec2[][] grid ( final int cols, final int rows,
       final Vec2 lowerBound, final Vec2 upperBound ) {
@@ -1360,6 +1391,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param radius  the radius
     *
     * @return the array
+    * 
+    * @see Vec2#gridPolar(int, int, float, float, float, boolean)
     */
    public static Vec2[][] gridPolar ( final int sectors, final float radius ) {
 
@@ -1376,6 +1409,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param radiusMax maximum radius
     *
     * @return the array
+    * 
+    * @see Vec2#gridPolar(int, int, float, float, float, boolean)
     */
    public static Vec2[][] gridPolar ( final int sectors, final int rings,
       final float radiusMin, final float radiusMax ) {
@@ -1394,6 +1429,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param angOffset angular offset per ring
     *
     * @return the array
+    * 
+    * @see Vec2#gridPolar(int, int, float, float, float, boolean)
     */
    public static Vec2[][] gridPolar ( final int sectors, final int rings,
       final float radiusMin, final float radiusMax, final float angOffset ) {
@@ -1414,6 +1451,10 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param includeCenter include the center
     *
     * @return the array
+    * 
+    * @see Utils#mod1(float)
+    * @see Utils#max(float, float)
+    * @see Utils#min(float, float)
     */
    public static Vec2[][] gridPolar ( final int sectors, final int rings,
       final float radiusMin, final float radiusMax, final float angOffset,
@@ -1495,7 +1536,6 @@ public class Vec2 implements Comparable < Vec2 > {
     * @return the angle in radians
     *
     * @see Vec2#headingSigned(Vec2)
-    * @see Vec2#headingUnsigned(Vec2)
     */
    public static float heading ( final Vec2 v ) {
 
@@ -1540,6 +1580,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param insert the inserted array
     *
     * @return the new array
+    * 
+    * @see System#arraycopy(Object, int, Object, int, int)
     */
    @Experimental
    public static Vec2[] insert ( final Vec2[] arr, final int index,
@@ -1566,7 +1608,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @return the evaluation
     *
     * @see Utils#approx(float, float)
-    * @see Vec2#dot(Vec2, Vec2)
+    * @see Vec2#magSq(Vec2)
     */
    public static boolean isUnit ( final Vec2 v ) {
 
@@ -1595,7 +1637,6 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the limited vector
     *
-    * @see Vec2#magSq(Vec2)
     * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec2 limit ( final Vec2 v, final float limit,
@@ -1650,9 +1691,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the magnitude
     *
-    * @see Vec2#dot(Vec2, Vec2)
-    * @see Math#sqrt(double)
-    * @see Vec2#magSq(Vec2)
+    * @see Utils#sqrtUnchecked(float)
     */
    public static float mag ( final Vec2 v ) {
 
@@ -1668,9 +1707,6 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param v the input vector
     *
     * @return the magnitude squared
-    *
-    * @see Vec2#dot(Vec2, Vec2)
-    * @see Vec2#mag(Vec2)
     */
    public static float magSq ( final Vec2 v ) {
 
@@ -1708,6 +1744,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param target     the output vector
     *
     * @return the maximum values
+    * 
+    * @see Utils#max(float, float)
     */
    public static Vec2 max ( final Vec2 a, final float lowerBound,
       final Vec2 target ) {
@@ -1743,6 +1781,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param target     the output vector
     *
     * @return the minimum values
+    * 
+    * @see Utils#min(float, float)
     */
    public static Vec2 min ( final Vec2 a, final float upperBound,
       final Vec2 target ) {
@@ -1951,12 +1991,11 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the unit vector
     *
-    * @see Vec2#div(Vec2, float, Vec2)
-    * @see Vec2#mag(Vec2)
+    * @see Utils#invSqrt(float)
     */
    public static Vec2 normalize ( final Vec2 v, final Vec2 target ) {
 
-      final float mInv = Utils.invSqrtUnchecked(v.x * v.x + v.y * v.y);
+      final float mInv = Utils.invSqrt(v.x * v.x + v.y * v.y);
       return target.set(v.x * mInv, v.y * mInv);
    }
 
@@ -2004,7 +2043,7 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Finds the perpendicular of a vector. Defaults to counter-clockwise
     * rotation, such that the perpendicular of ( 1.0, 0.0 ) is ( 0.0, 1.0 ) .
-    * The 2D counterpart to the 3D vector's cross product.
+    * The 2D counterpart to {@link Vec3#cross(Vec3, Vec3, Vec3)}.
     *
     * @param v      the input vector
     * @param target the output vector
@@ -2012,7 +2051,6 @@ public class Vec2 implements Comparable < Vec2 > {
     * @return the perpendicular
     *
     * @see Vec2#perpendicularCCW(Vec2, Vec2)
-    * @see Vec3#cross(Vec3, Vec3, Vec3)
     */
    public static Vec2 perpendicular ( final Vec2 v, final Vec2 target ) {
 
@@ -2077,6 +2115,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param target the output vector
     *
     * @return the result
+    * 
+    * @see Math#pow(double, double)
     */
    public static Vec2 pow ( final float a, final Vec2 b, final Vec2 target ) {
 
@@ -2093,6 +2133,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param target the output vector
     *
     * @return the result
+    * 
+    * @see Math#pow(double, double)
     */
    public static Vec2 pow ( final Vec2 a, final float b, final Vec2 target ) {
 
@@ -2303,21 +2345,13 @@ public class Vec2 implements Comparable < Vec2 > {
     * @return the reflected vector
     *
     * @see Vec2#magSq(Vec2)
-    * @see Vec2#dot(Vec2, Vec2)
-    * @see Utils#abs(float)
     * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec2 reflect ( final Vec2 incident, final Vec2 normal,
       final Vec2 target ) {
 
       final float nMSq = Vec2.magSq(normal);
-      if ( Utils.abs(nMSq) < IUtils.EPSILON ) { return target.reset(); }
-
-      if ( Utils.approx(nMSq, 1.0f) ) {
-         final float scalar = 2.0f * Vec2.dot(normal, incident);
-         return target.set(incident.x - scalar * normal.x, incident.y - scalar
-            * normal.y);
-      }
+      if ( nMSq < IUtils.EPSILON ) { return target.reset(); }
 
       final float mInv = Utils.invSqrtUnchecked(nMSq);
       final float nx = normal.x * mInv;
@@ -2337,7 +2371,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @return the refraction
     *
     * @see Vec2#dot(Vec2, Vec2)
-    * @see Math#sqrt(double)
+    * @see Utils#sqrtUnchecked(float)
     */
    public static Vec2 refract ( final Vec2 incident, final Vec2 normal,
       final float eta, final Vec2 target ) {
@@ -2359,6 +2393,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param target the output vector
     *
     * @return the rescaled vector
+    * 
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec2 rescale ( final Vec2 v, final float scalar,
       final Vec2 target ) {
@@ -2598,6 +2634,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param target the output vector
     *
     * @return the normalized difference
+    * 
+    * @see Utils#invHypot(float, float)
     */
    public static Vec2 subNorm ( final Vec2 a, final Vec2 b,
       final Vec2 target ) {

@@ -837,9 +837,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    @Experimental
    public Face3 translateLocal ( final Vec3 v, final Handedness handedness ) {
 
-      // TODO: Are normals defaulting to left-handed? That seems to contribute
-      // to what makes this difficult to debug?
-
       final Transform3 tr = Face3.orientation(this, handedness,
          new Transform3());
       final Vec3 vLocal = Transform3.mulDir(tr, v, new Vec3());

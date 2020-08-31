@@ -10,25 +10,19 @@ public class Knot2 implements Comparable < Knot2 > {
    /**
     * The spatial coordinate of the knot.
     */
-   public final Vec2 coord;
+   public final Vec2 coord = new Vec2();
 
    /**
     * The handle which warps the curve segment heading away from the knot
     * along the direction of the curve.
     */
-   public final Vec2 foreHandle;
+   public final Vec2 foreHandle = new Vec2();
 
    /**
     * The handle which warps the curve segment heading towards the knot along
     * the direction of the curve.
     */
-   public final Vec2 rearHandle;
-
-   {
-      this.coord = new Vec2();
-      this.foreHandle = new Vec2();
-      this.rearHandle = new Vec2();
-   }
+   public final Vec2 rearHandle = new Vec2();
 
    /**
     * The default constructor.
@@ -284,11 +278,11 @@ public class Knot2 implements Comparable < Knot2 > {
 
       /* @formatter:off */
       return ( ( IUtils.MUL_BASE ^
-             ( this.coord == null ? 0 : this.coord.hashCode() ) )
+             this.coord.hashCode() )
                * IUtils.HASH_MUL ^
-             ( this.foreHandle == null ? 0 : this.foreHandle.hashCode() ) )
+             this.foreHandle.hashCode() )
                * IUtils.HASH_MUL ^
-             ( this.rearHandle == null ? 0 : this.rearHandle.hashCode() );
+             this.rearHandle.hashCode();
       /* @formatter:on */
    }
 
@@ -909,19 +903,8 @@ public class Knot2 implements Comparable < Knot2 > {
     */
    protected boolean equals ( final Knot2 other ) {
 
-      if ( this.coord == null ) {
-         if ( other.coord != null ) { return false; }
-      } else if ( !this.coord.equals(other.coord) ) { return false; }
-
-      if ( this.foreHandle == null ) {
-         if ( other.foreHandle != null ) { return false; }
-      } else if ( !this.foreHandle.equals(other.foreHandle) ) { return false; }
-
-      if ( this.rearHandle == null ) {
-         if ( other.rearHandle != null ) { return false; }
-      } else if ( !this.rearHandle.equals(other.rearHandle) ) { return false; }
-
-      return true;
+      return this.coord.equals(other.coord) && this.foreHandle.equals(
+         other.foreHandle) && this.rearHandle.equals(other.rearHandle);
    }
 
    /**

@@ -22,11 +22,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * The list of knots contained by the curve.
     */
-   private final ArrayList < Knot2 > knots;
-
-   {
-      this.knots = new ArrayList <>(ICurve.KNOT_CAPACITY);
-   }
+   private final ArrayList < Knot2 > knots = new ArrayList <>(
+      ICurve.KNOT_CAPACITY);
 
    /**
     * Creates a curve with two default knots.
@@ -227,8 +224,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public int hashCode ( ) {
 
       int hash = IUtils.MUL_BASE ^ ( this.closedLoop ? 1231 : 1237 );
-      hash = hash * IUtils.HASH_MUL ^ ( this.knots == null ? 0 : this.knots
-         .hashCode() );
+      hash = hash * IUtils.HASH_MUL ^ this.knots.hashCode();
       return hash;
    }
 
@@ -769,13 +765,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    protected boolean equals ( final Curve2 curve ) {
 
-      if ( this.closedLoop != curve.closedLoop ) { return false; }
-
-      if ( this.knots == null ) {
-         if ( curve.knots != null ) { return false; }
-      } else if ( !this.knots.equals(curve.knots) ) { return false; }
-
-      return true;
+      return this.closedLoop == curve.closedLoop && this.knots.equals(
+         curve.knots);
    }
 
    /**

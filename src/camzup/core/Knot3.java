@@ -10,25 +10,19 @@ public class Knot3 implements Comparable < Knot3 > {
    /**
     * The spatial coordinate of the knot.
     */
-   public final Vec3 coord;
+   public final Vec3 coord = new Vec3();
 
    /**
     * The handle which warps the curve segment heading away from the knot
     * along the direction of the curve.
     */
-   public final Vec3 foreHandle;
+   public final Vec3 foreHandle = new Vec3();
 
    /**
     * The handle which warps the curve segment heading towards the knot along
     * the direction of the curve.
     */
-   public final Vec3 rearHandle;
-
-   {
-      this.coord = new Vec3();
-      this.foreHandle = new Vec3();
-      this.rearHandle = new Vec3();
-   }
+   public final Vec3 rearHandle = new Vec3();
 
    /**
     * The default constructor.
@@ -329,11 +323,11 @@ public class Knot3 implements Comparable < Knot3 > {
 
       /* @formatter:off */
       return ( ( IUtils.MUL_BASE ^
-             ( this.coord == null ? 0 : this.coord.hashCode() ) )
+             this.coord.hashCode() )
                * IUtils.HASH_MUL ^
-             ( this.foreHandle == null ? 0 : this.foreHandle.hashCode() ) )
+             this.foreHandle.hashCode() )
                * IUtils.HASH_MUL ^
-             ( this.rearHandle == null ? 0 : this.rearHandle.hashCode() );
+             this.rearHandle.hashCode();
       /* @formatter:on */
    }
 
@@ -479,7 +473,6 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    public Knot3 rotateForeHandle ( final Quaternion q ) {
 
-      // TODO: TEST
       Vec3.sub(this.foreHandle, this.coord, this.foreHandle);
       Quaternion.mulVector(q, this.foreHandle, this.foreHandle);
       Vec3.add(this.foreHandle, this.coord, this.foreHandle);
@@ -520,7 +513,6 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    public Knot3 rotateRearHandle ( final Quaternion q ) {
 
-      // TODO: TEST
       Vec3.sub(this.rearHandle, this.coord, this.rearHandle);
       Quaternion.mulVector(q, this.rearHandle, this.rearHandle);
       Vec3.add(this.rearHandle, this.coord, this.rearHandle);
@@ -1114,19 +1106,8 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    protected boolean equals ( final Knot3 other ) {
 
-      if ( this.coord == null ) {
-         if ( other.coord != null ) { return false; }
-      } else if ( !this.coord.equals(other.coord) ) { return false; }
-
-      if ( this.foreHandle == null ) {
-         if ( other.foreHandle != null ) { return false; }
-      } else if ( !this.foreHandle.equals(other.foreHandle) ) { return false; }
-
-      if ( this.rearHandle == null ) {
-         if ( other.rearHandle != null ) { return false; }
-      } else if ( !this.rearHandle.equals(other.rearHandle) ) { return false; }
-
-      return true;
+      return this.coord.equals(other.coord) && this.foreHandle.equals(
+         other.foreHandle) && this.rearHandle.equals(other.rearHandle);
    }
 
    /**

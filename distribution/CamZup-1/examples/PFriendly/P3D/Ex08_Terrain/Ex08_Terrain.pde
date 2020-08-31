@@ -9,6 +9,9 @@ float elev = 0.175;
 float roughness = 3.0;
 
 Vec3 mouse1 = new Vec3();
+Vec3 noiseIn = new Vec3();
+Vec3 voronoi = new Vec3();
+
 Mesh2 plane2 = new Mesh2();
 Mesh3 plane3 = new Mesh3();
 
@@ -21,9 +24,9 @@ MaterialSolid fill = new MaterialSolid()
 
 MaterialSolid stroke = new MaterialSolid()
   .setFill(false)
-  .setStrokeWeight(1.025)
+  .setStrokeWeight(1.0)
   .setStroke(true)
-  .setStroke(#202020);
+  .setStroke(#003f7f);
 
 void settings() {
   size(720, 405, Zup3.PATH_STR);
@@ -42,8 +45,7 @@ void draw() {
   plane3.set(plane2);
 
   float zOff = frameCount * 0.01;
-  Vec3 noiseIn = new Vec3();
-  Vec3 voronoi = new Vec3();
+
   for (Vec3 co : plane3.coords) {
     Vec3.mul(co, roughness, noiseIn);
     noiseIn.z = zOff;

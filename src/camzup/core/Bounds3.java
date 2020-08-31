@@ -9,17 +9,12 @@ public class Bounds3 implements Comparable < Bounds3 > {
    /**
     * The maximum corner.
     */
-   public final Vec3 max;
+   public final Vec3 max = new Vec3(-0.5f, -0.5f, -0.5f);
 
    /**
     * The minimum corner.
     */
-   public final Vec3 min;
-
-   {
-      this.min = new Vec3(-0.5f, -0.5f, -0.5f);
-      this.max = new Vec3(0.5f, 0.5f, 0.5f);
-   }
+   public final Vec3 min = new Vec3(0.5f, 0.5f, 0.5f);
 
    /**
     * The default constructor.
@@ -151,10 +146,8 @@ public class Bounds3 implements Comparable < Bounds3 > {
    public int hashCode ( ) {
 
       int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ ( this.min == null ? 0 : this.min
-         .hashCode() );
-      hash = hash * IUtils.HASH_MUL ^ ( this.max == null ? 0 : this.max
-         .hashCode() );
+      hash = hash * IUtils.HASH_MUL ^ this.min.hashCode();
+      hash = hash * IUtils.HASH_MUL ^ this.max.hashCode();
       return hash;
    }
 
@@ -368,15 +361,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
     */
    protected boolean equals ( final Bounds3 b ) {
 
-      if ( this.min == null ) {
-         if ( b.min != null ) { return false; }
-      } else if ( !this.min.equals(b.min) ) { return false; }
-
-      if ( this.max == null ) {
-         if ( b.max != null ) { return false; }
-      } else if ( !this.max.equals(b.max) ) { return false; }
-
-      return true;
+      return this.min.equals(b.min) && this.max.equals(b.max);
    }
 
    /**

@@ -14,7 +14,6 @@ MeshEntity3 me1 = new MeshEntity3();
 MeshEntity3 me2 = new MeshEntity3();
 MeshEntity3 me3 = new MeshEntity3();
 
-PImage txtr;
 MaterialPImage textured;
 MaterialSolid wire = new MaterialSolid();
 
@@ -26,8 +25,8 @@ void setup() {
   rndr = (Zup3)getGraphics();
   rndr.textureSampling(TextureSampling.LINEAR);
 
-  txtr = createImage(512, 512, ARGB);
-  ZImage.rgb(txtr);
+  PImage txtr = createImage(512, 512, ARGB);
+  ZImage.fill(Gradient.paletteRyb(new Gradient()), txtr);
   textured = new MaterialPImage(txtr);
 
   wire.setStroke(true)
@@ -56,7 +55,7 @@ void draw() {
 
   Mesh3.uvSphere(
     lons, lats,
-    PolyType.QUAD,
+    PolyType.TRI,
     smooth);
 
   flat.set(smooth);

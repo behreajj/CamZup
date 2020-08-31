@@ -11,65 +11,51 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    /**
     * The transform's forward axis.
     */
-   protected final Vec3 forward;
+   protected final Vec3 forward = Vec3.forward(new Vec3());
 
    /**
     * The transform's location.
     */
-   protected final Vec3 location;
+   protected final Vec3 location = new Vec3();
 
    /**
     * The previous location. Subtract from the current location to find the
     * delta, or change, in location.
     */
-   protected final Vec3 locPrev;
+   protected final Vec3 locPrev = new Vec3();
 
    /**
     * The transform's right axis.
     */
-   protected final Vec3 right;
+   protected final Vec3 right = Vec3.right(new Vec3());
 
    /**
     * The transform's rotation. Defaults to the identity, (1.0, 0.0, 0.0, 0.0)
     * .
     */
-   protected final Quaternion rotation;
+   protected final Quaternion rotation = new Quaternion();
 
    /**
     * The previous rotation. Subtract from the current rotation to find the
     * delta, or change, in rotation.
     */
-   protected final Quaternion rotPrev;
+   protected final Quaternion rotPrev = new Quaternion();
 
    /**
     * The transform's scale.
     */
-   protected final Vec3 scale;
+   protected final Vec3 scale = Vec3.one(new Vec3());
 
    /**
     * The previous scale. Subtract from the current scale to find the delta,
     * or change, in scale.
     */
-   protected final Vec3 scalePrev;
+   protected final Vec3 scalePrev = Vec3.one(new Vec3());
 
    /**
     * The transform's up axis.
     */
-   protected final Vec3 up;
-
-   {
-      this.location = new Vec3();
-      this.rotation = new Quaternion();
-      this.scale = Vec3.one(new Vec3());
-
-      this.locPrev = new Vec3();
-      this.rotPrev = new Quaternion();
-      this.scalePrev = Vec3.one(new Vec3());
-
-      this.right = Vec3.right(new Vec3());
-      this.forward = Vec3.forward(new Vec3());
-      this.up = Vec3.up(new Vec3());
-   }
+   protected final Vec3 up = Vec3.up(new Vec3());
 
    /**
     * The default constructor.
@@ -318,10 +304,8 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    @Override
    public int hashCode ( ) {
 
-      return ( ( IUtils.MUL_BASE ^ ( this.location == null ? 0 : this.location
-         .hashCode() ) ) * IUtils.HASH_MUL ^ ( this.rotation == null ? 0
-            : this.rotation.hashCode() ) ) * IUtils.HASH_MUL ^ ( this.scale
-               == null ? 0 : this.scale.hashCode() );
+      return ( ( IUtils.MUL_BASE ^ this.location.hashCode() ) * IUtils.HASH_MUL
+         ^ this.rotation.hashCode() ) * IUtils.HASH_MUL ^ this.scale.hashCode();
    }
 
    /**
@@ -1016,19 +1000,8 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     */
    protected boolean equals ( final Transform3 t ) {
 
-      if ( this.scale == null ) {
-         if ( t.scale != null ) { return false; }
-      } else if ( !this.scale.equals(t.scale) ) { return false; }
-
-      if ( this.location == null ) {
-         if ( t.location != null ) { return false; }
-      } else if ( !this.location.equals(t.location) ) { return false; }
-
-      if ( this.rotation == null ) {
-         if ( t.rotation != null ) { return false; }
-      } else if ( !this.rotation.equals(t.rotation) ) { return false; }
-
-      return true;
+      return this.location.equals(t.location) && this.rotation.equals(
+         t.rotation) && this.scale.equals(t.scale);
    }
 
    /**

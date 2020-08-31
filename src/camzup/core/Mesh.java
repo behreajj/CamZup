@@ -468,6 +468,19 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @param arr   the array
     * @param start the start index
+    *
+    * @return the array
+    */
+   protected static int[][] reverse ( final int[][] arr ) {
+
+      return Mesh.reverse(arr, 0, arr.length - 1);
+   }
+
+   /**
+    * Internal helper function to reverse an array of indices.
+    *
+    * @param arr   the array
+    * @param start the start index
     * @param end   the end index
     *
     * @return the array
@@ -483,6 +496,19 @@ public abstract class Mesh extends EntityData implements IMesh {
          ++st;
       }
       return arr;
+   }
+
+   /**
+    * Internal helper function to reverse an array of indices.
+    *
+    * @param arr   the array
+    * @param start the start index
+    *
+    * @return the array
+    */
+   protected static int[][][] reverse ( final int[][][] arr ) {
+
+      return Mesh.reverse(arr, 0, arr.length - 1);
    }
 
    /**
@@ -573,9 +599,6 @@ public abstract class Mesh extends EntityData implements IMesh {
        */
       @Override
       public int compare ( final Vec2 a, final Vec2 b ) {
-
-         // Vec2.quantize(a, this.levels, this.qa);
-         // Vec2.quantize(b, this.levels, this.qb);
 
          this.qa.set(this.levInv * Utils.floor(0.5f + a.x * this.levf),
             this.levInv * Utils.floor(0.5f + a.y * this.levf));
@@ -670,9 +693,6 @@ public abstract class Mesh extends EntityData implements IMesh {
        */
       @Override
       public int compare ( final Vec3 a, final Vec3 b ) {
-
-         // Vec3.quantize(a, this.levels, this.qa);
-         // Vec3.quantize(b, this.levels, this.qb);
 
          this.qa.set(this.levInv * Utils.floor(0.5f + a.x * this.levf),
             this.levInv * Utils.floor(0.5f + a.y * this.levf), this.levInv

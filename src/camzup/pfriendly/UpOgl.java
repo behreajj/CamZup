@@ -223,43 +223,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       final float x = x0;
       final float y = y0;
-      float w = x1;
-      float h = y1;
-
-      switch ( this.ellipseMode ) {
-
-         case PConstants.CORNERS:
-
-            // w = Utils.diff(x0, x1);
-            // h = Utils.diff(y0, y1);
-            // x += w * 0.5f;
-            // y += h * 0.5f;
-            // break;
-
-         case PConstants.RADIUS:
-
-            // w = Utils.abs(x1 + x1);
-            // h = Utils.abs(y1 + y1);
-            // break;
-
-         case PConstants.CORNER:
-
-            // x += Utils.abs(x1) * 0.5f;
-            // y -= Utils.abs(y1) * 0.5f;
-            // break;
-
-         case PConstants.CENTER:
-
-            // w = Utils.abs(x1);
-            // h = Utils.abs(y1);
-            // break;
-
-         default:
-            w = 2.0f * Utils.min(Utils.abs(x1), Utils.abs(y1));
-            h = w;
-
-      }
-
+      final float w = 2.0f * Utils.min(Utils.abs(x1), Utils.abs(y1));
+      final float h = w;
       final boolean oldFill = this.fill;
 
       switch ( mode ) {
@@ -1293,11 +1258,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( this.colorMode ) {
 
-         case HSB:
+         case PConstants.HSB:
 
             return IUp.MIXER_HSB.apply(origin, dest, step, target);
 
-         case RGB:
+         case PConstants.RGB:
 
          default:
 

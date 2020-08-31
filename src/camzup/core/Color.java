@@ -1,14 +1,13 @@
 package camzup.core;
 
 import java.util.Comparator;
-import java.util.Iterator;
 
 /**
  * A mutable, extensible color class. Supports RGBA and HSBA color spaces.
  * Supports conversion to and from integers where color channels are in the
  * format 0xAARRGGBB (Java).
  */
-public class Color implements Comparable < Color >, Iterable < Float > {
+public class Color implements Comparable < Color > {
 
    /**
     * The alpha channel (opacity).
@@ -274,15 +273,6 @@ public class Color implements Comparable < Color >, Iterable < Float > {
     */
    @Override
    public int hashCode ( ) { return Color.toHexInt(this); }
-
-   /**
-    * Returns an iterator for this color, which allows its components to be
-    * accessed in an enhanced for-loop.
-    *
-    * @return the iterator
-    */
-   @Override
-   public Iterator < Float > iterator ( ) { return new ClrIterator(this); }
 
    /**
     * Gets the number of components held by this color.
@@ -2351,57 +2341,6 @@ public class Color implements Comparable < Color >, Iterable < Float > {
        * The default constructor.
        */
       private ChannelOrder ( ) {}
-
-   }
-
-   /**
-    * An iterator, which allows a color's components to be accessed in an
-    * enhanced for loop.
-    */
-   public static final class ClrIterator implements Iterator < Float > {
-
-      /**
-       * The color being iterated over.
-       */
-      private final Color clr;
-
-      /**
-       * The current index.
-       */
-      private int index = 0;
-
-      /**
-       * The default constructor.
-       *
-       * @param c the color to iterate
-       */
-      public ClrIterator ( final Color c ) { this.clr = c; }
-
-      /**
-       * Tests to see if the iterator has another value.
-       *
-       * @return the evaluation
-       */
-      @Override
-      public boolean hasNext ( ) { return this.index < this.clr.length(); }
-
-      /**
-       * Gets the next value in the iterator.
-       *
-       * @see Color#get(int)
-       *
-       * @return the value
-       */
-      @Override
-      public Float next ( ) { return this.clr.get(this.index++); }
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
 
    }
 

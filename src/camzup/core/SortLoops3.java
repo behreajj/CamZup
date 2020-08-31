@@ -17,18 +17,13 @@ public class SortLoops3 implements Comparator < int[][] > {
     * Internal vector used to store the average coordinate for the left
     * comparisand.
     */
-   protected final Vec3 aAvg;
+   protected final Vec3 aAvg = new Vec3();
 
    /**
     * Internal vector used to store the average coordinate for the right
     * comparisand.
     */
-   protected final Vec3 bAvg;
-
-   {
-      this.aAvg = new Vec3();
-      this.bAvg = new Vec3();
-   }
+   protected final Vec3 bAvg = new Vec3();
 
    /**
     * Constructs a comparator with reference to the mesh's coordinates.

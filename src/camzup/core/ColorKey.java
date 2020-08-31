@@ -13,21 +13,17 @@ public class ColorKey implements Comparable < ColorKey > {
     * The key's color. Abbreviated to 'clr' because 'color' is a data type in
     * Processing IDE.
     */
-   public final Color clr;
+   public final Color clr = new Color(0.0f, 0.0f, 0.0f, 0.0f);
 
    /**
     * The key's step, expected to be in the range [0.0, 1.0] .
     */
    public float step = 0.0f;
 
-   {
-      this.clr = new Color(0.0f, 0.0f, 0.0f, 0.0f);
-   }
-
    /**
     * The default constructor. Creates a clear black color at 0.0 .
     */
-   public ColorKey ( ) { this.set(0.0f, 0.0f, 0.0f, 0.0f, 0.0f); }
+   public ColorKey ( ) {}
 
    /**
     * Creates a key from a source

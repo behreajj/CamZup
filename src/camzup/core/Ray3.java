@@ -10,17 +10,12 @@ public class Ray3 {
    /**
     * The ray's direction.
     */
-   public final Vec3 dir;
+   public final Vec3 dir = Vec3.forward(new Vec3());
 
    /**
     * The ray's origin point.
     */
-   public final Vec3 origin;
-
-   {
-      this.origin = new Vec3();
-      this.dir = Vec3.forward(new Vec3());
-   }
+   public final Vec3 origin = new Vec3();
 
    /**
     * The default constructor.
@@ -72,10 +67,8 @@ public class Ray3 {
    public int hashCode ( ) {
 
       int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ ( this.origin == null ? 0 : this.origin
-         .hashCode() );
-      hash = hash * IUtils.HASH_MUL ^ ( this.dir == null ? 0 : this.dir
-         .hashCode() );
+      hash = hash * IUtils.HASH_MUL ^ this.origin.hashCode();
+      hash = hash * IUtils.HASH_MUL ^ this.dir.hashCode();
       return hash;
    }
 
@@ -171,15 +164,7 @@ public class Ray3 {
     */
    protected boolean equals ( final Ray3 ray ) {
 
-      if ( this.dir == null ) {
-         if ( ray.dir != null ) { return false; }
-      } else if ( !this.dir.equals(ray.dir) ) { return false; }
-
-      if ( this.origin == null ) {
-         if ( ray.origin != null ) { return false; }
-      } else if ( !this.origin.equals(ray.origin) ) { return false; }
-
-      return true;
+      return this.origin.equals(ray.origin) && this.dir.equals(ray.dir);
    }
 
    /**

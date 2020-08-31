@@ -71,6 +71,19 @@ public class MaterialPImage extends MaterialUv {
       this.setTexture(texture);
    }
 
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if ( this == obj ) { return true; }
+      if ( !super.equals(obj) ) { return false; }
+      if ( this.getClass() != obj.getClass() ) { return false; }
+      final MaterialPImage other = ( MaterialPImage ) obj;
+      if ( this.texture == null ) {
+         if ( other.texture != null ) { return false; }
+      } else if ( !this.texture.equals(other.texture) ) { return false; }
+      return true;
+   }
+
    /**
     * Gets this material's transform's texture coordinate location.
     *
@@ -114,6 +127,16 @@ public class MaterialPImage extends MaterialUv {
     * @return the texture
     */
    public PImage getTexture ( ) { return this.texture; }
+
+   @Override
+   public int hashCode ( ) {
+
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ( this.texture == null ? 0 : this.texture
+         .hashCode() );
+      return result;
+   }
 
    /**
     * Sets the material's texture. If the supplied texture is null, then a new

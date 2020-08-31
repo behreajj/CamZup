@@ -100,7 +100,7 @@ public class Mesh3Fixed extends Mesh3 {
       this.coordBuffer = ByteBuffer.allocateDirect(vsArrLen * Float.BYTES)
          .order(byteOrder).asFloatBuffer();
       // this.coordBuffer.rewind();
-      this.coordBuffer.put(vsArr);
+      this.coordBuffer.put(vsArr, 0, vsArrLen);
       // this.coordBuffer.rewind();
 
       /* Texture coordinates. */
@@ -120,7 +120,7 @@ public class Mesh3Fixed extends Mesh3 {
       this.texCoordBuffer = ByteBuffer.allocateDirect(vtsArrLen * Float.BYTES)
          .order(byteOrder).asFloatBuffer();
       // this.texCoordBuffer.rewind();
-      this.texCoordBuffer.put(vtsArr);
+      this.texCoordBuffer.put(vtsArr, 0, vtsArrLen);
       // this.texCoordBuffer.rewind();
 
       /* Normals. */
@@ -141,7 +141,7 @@ public class Mesh3Fixed extends Mesh3 {
       this.normalBuffer = ByteBuffer.allocateDirect(vnsArrLen * Float.BYTES)
          .order(byteOrder).asFloatBuffer();
       // this.normalBuffer.rewind();
-      this.normalBuffer.put(vnsArr);
+      this.normalBuffer.put(vnsArr, 0, vnsArrLen);
       // this.normalBuffer.rewind();
 
       /* Indices. */
@@ -162,8 +162,8 @@ public class Mesh3Fixed extends Mesh3 {
          .order(byteOrder).asIntBuffer();
 
       // this.indexBuffer.rewind();
-      this.indexBuffer.put(idcs);
-      // this.indexBuffer.rewind();
+      this.indexBuffer.put(idcs, 0, idcsLen);
+      this.indexBuffer.rewind();
    }
 
 }

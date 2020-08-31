@@ -15,11 +15,8 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    /**
     * The list of meshes held by the entity.
     */
-   public final ArrayList < Mesh3 > meshes;
-
-   {
-      this.meshes = new ArrayList <>(IEntity.DEFAULT_CAPACITY);
-   }
+   public final ArrayList < Mesh3 > meshes = new ArrayList <>(
+      IEntity.DEFAULT_CAPACITY);
 
    /**
     * The default constructor.
@@ -155,10 +152,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       if ( !super.equals(obj) ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
       final MeshEntity3 other = ( MeshEntity3 ) obj;
-      if ( this.meshes == null ) {
-         if ( other.meshes != null ) { return false; }
-      } else if ( !this.meshes.equals(other.meshes) ) { return false; }
-      return true;
+      return this.meshes.equals(other.meshes);
    }
 
    /**
@@ -196,8 +190,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ( this.meshes == null ? 0 : this.meshes
-         .hashCode() );
+      result = prime * result + this.meshes.hashCode();
       return result;
    }
 
