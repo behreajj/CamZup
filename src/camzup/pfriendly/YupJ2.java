@@ -305,8 +305,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       float w = Utils.min(Utils.abs(x1), Utils.abs(y1));
       float h = w;
-      float x = x0 - w;
-      float y = y0 - h;
+      final float x = x0 - w;
+      final float y = y0 - h;
       w += w;
       h += h;
 

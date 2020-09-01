@@ -35,45 +35,36 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * A vector to store the x axis (first column) when creating a camera
     * look-at matrix.
     */
-   protected final Vec3 i;
+   protected final Vec3 i = Vec3.right(new Vec3());
 
    /**
     * A vector to store the y axis (second column) when creating a camera
     * look-at matrix.
     */
-   protected final Vec3 j;
+   protected final Vec3 j = Vec3.forward(new Vec3());
 
    /**
     * A vector to store the z axis (third column) when creating a camera
     * look-at matrix.
     */
-   protected final Vec3 k;
+   protected final Vec3 k = Vec3.up(new Vec3());
 
    /**
     * A vector to store the unnormalized look direction when creating a camera
     * look-at matrix.
     */
-   protected final Vec3 lookDir;
+   protected final Vec3 lookDir = Vec3.forward(new Vec3());
 
    /**
     * A vector to store the target at which a camera looks.
     */
-   protected final Vec3 lookTarget;
+   protected final Vec3 lookTarget = new Vec3();
 
    /**
     * The reference or "world" up vector against which a camera look-at matrix
     * is created.
     */
-   protected final Vec3 refUp;
-
-   {
-      this.i = Vec3.right(new Vec3());
-      this.j = Vec3.forward(new Vec3());
-      this.k = Vec3.up(new Vec3());
-      this.lookDir = Vec3.forward(new Vec3());
-      this.lookTarget = new Vec3();
-      this.refUp = Vec3.up(new Vec3());
-   }
+   protected final Vec3 refUp = Vec3.up(new Vec3());
 
    /**
     * The default constructor.

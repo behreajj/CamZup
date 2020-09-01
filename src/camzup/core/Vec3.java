@@ -118,7 +118,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param v the value
     *
     * @return the evaluation
-    * 
+    *
     * @see Utils#approx(float, float)
     */
    public boolean contains ( final float v ) {
@@ -454,7 +454,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the normalized sum
-    * 
+    *
     * @see Utils#invHypot(float, float, float)
     */
    public static Vec3 addNorm ( final Vec3 a, final Vec3 b,
@@ -561,7 +561,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param b the vector
     *
     * @return a new array
-    * 
+    *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Vec3[] append ( final Vec3[] a, final Vec3 b ) {
@@ -590,7 +590,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param b right comparisand
     *
     * @return the evaluation
-    * 
+    *
     * @see Vec3#approx(Vec3, Vec3, float)
     */
    public static boolean approx ( final Vec3 a, final Vec3 b ) {
@@ -661,7 +661,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param b the right comparisand
     *
     * @return the evaluation
-    * 
+    *
     * @see Vec3#areParallel(Vec3, Vec3, float)
     */
    public static boolean areParallel ( final Vec3 a, final Vec3 b ) {
@@ -678,7 +678,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param tolerance the tolerance
     *
     * @return the evaluation
-    * 
+    *
     * @see Utils#abs(float)
     */
    public static boolean areParallel ( final Vec3 a, final Vec3 b,
@@ -949,7 +949,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target    the output vector
     *
     * @return the signed vector
-    * 
+    *
     * @see Utils#copySign(float, float)
     */
    public static Vec3 copySign ( final Vec3 magnitude, final Vec3 sign,
@@ -1284,7 +1284,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the filtered vector
-    * 
+    *
     * @see Utils#filter(float, float, float)
     */
    public static Vec3 filter ( final Vec3 v, final Vec3 lb, final Vec3 ub,
@@ -1300,7 +1300,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param arr the 2D array
     *
     * @return the 1D array
-    * 
+    *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Vec3[] flat ( final Vec3[][] arr ) {
@@ -1331,7 +1331,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param arr the 3D array
     *
     * @return the 1D array
-    * 
+    *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Vec3[] flat ( final Vec3[][][] arr ) {
@@ -1531,7 +1531,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target      the output vector
     *
     * @return the vector
-    * 
+    *
     * @see Vec3#fromSpherical(float, float, float, Vec3)
     */
    public static Vec3 fromSpherical ( final float azimuth,
@@ -1547,7 +1547,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param res the resolution
     *
     * @return the array
-    * 
+    *
     * @see Vec3#grid(int, int, int)
     */
    public static Vec3[][][] grid ( final int res ) {
@@ -1565,7 +1565,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param layers number of layers
     *
     * @return the array
-    * 
+    *
     * @see Vec3#grid(int, int, int, float, float, float, float, float, float)
     */
    public static Vec3[][][] grid ( final int cols, final int rows,
@@ -1587,7 +1587,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param upperBound the upper bound
     *
     * @return the array
-    * 
+    *
     * @see Vec3#grid(int, int, int, float, float, float, float, float, float)
     */
    public static Vec3[][][] grid ( final int cols, final int rows,
@@ -1609,7 +1609,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param upperBound the upper bound
     *
     * @return the array
-    * 
+    *
     * @see Vec3#grid(int, int, int, float, float, float, float, float, float)
     */
    public static Vec3[][][] grid ( final int cols, final int rows,
@@ -1627,7 +1627,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param radius radius of sphere
     *
     * @return the array
-    * 
+    *
     * @see Utils#max(float, float)
     * @see Utils#asin(float)
     */
@@ -1667,7 +1667,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param latitudes  the latitudes, inclinations
     *
     * @return the array
-    * 
+    *
     * @see Vec3#gridSpherical(int, int, boolean)
     */
    public static Vec3[][][] gridSpherical ( final int longitudes,
@@ -1686,7 +1686,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param includePoles include the poles
     *
     * @return the array
-    * 
+    *
     * @see Vec3#gridSpherical(int, int, int, float, float, boolean)
     */
    public static Vec3[][][] gridSpherical ( final int longitudes,
@@ -1708,7 +1708,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param radiusMax  maximum radius
     *
     * @return the array
-    * 
+    *
     * @see Vec3#gridSpherical(int, int, int, float, float, boolean)
     */
    public static Vec3[][][] gridSpherical ( final int longitudes,
@@ -1732,7 +1732,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param includePoles include the poles
     *
     * @return the array
-    * 
+    *
     * @see Utils#max(float, float)
     * @see Utils#min(float, float)
     */
@@ -1880,7 +1880,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param insert the inserted array
     *
     * @return the new array
-    * 
+    *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
    @Experimental
@@ -1936,7 +1936,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the limited vector
-    * 
+    *
     * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec3 limit ( final Vec3 v, final float limit,
@@ -2045,7 +2045,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target     the output vector
     *
     * @return the maximum values
-    * 
+    *
     * @see Utils#max(float, float)
     */
    public static Vec3 max ( final Vec3 a, final float lowerBound,
@@ -2083,7 +2083,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target     the output vector
     *
     * @return the minimum values
-    * 
+    *
     * @see Utils#min(float, float)
     */
    public static Vec3 min ( final Vec3 a, final float upperBound,
@@ -2354,7 +2354,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the result
-    * 
+    *
     * @see Math#pow(double, double)
     */
    public static Vec3 pow ( final float a, final Vec3 b, final Vec3 target ) {
@@ -2372,7 +2372,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the result
-    * 
+    *
     * @see Math#pow(double, double)
     */
    public static Vec3 pow ( final Vec3 a, final float b, final Vec3 target ) {
@@ -2550,7 +2550,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the random vector
-    * 
+    *
     * @see Vec3#fromSpherical(float, float, float, Vec3)
     */
    public static Vec3 randomSpherical ( final java.util.Random rng,
@@ -2811,7 +2811,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target  the output vector
     *
     * @return the rotated vector
-    * 
+    *
     * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
     */
    public static Vec3 rotate ( final Vec3 v, final float radians,
@@ -3032,7 +3032,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the normalized difference
-    * 
+    *
     * @see Utils#invHypot(float, float, float)
     */
    public static Vec3 subNorm ( final Vec3 a, final Vec3 b,

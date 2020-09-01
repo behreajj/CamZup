@@ -960,52 +960,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Flips the indices which specify an edge.
-    *
-    * @param i face index
-    * @param j edge index
-    *
-    * @return this mesh
-    */
-   public Mesh3 reverseEdge ( final int i, final int j ) {
-
-      final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
-      final int len = face.length;
-      final int jOrigin = Utils.mod(j, len);
-      final int jDest = ( jOrigin + 1 ) % len;
-
-      final int[] temp = face[jOrigin];
-      face[jOrigin] = face[jDest];
-      face[jDest] = temp;
-
-      return this;
-   }
-
-   /**
-    * Flips the indices which specify a face. Changes the winding of a face
-    * from counter-clockwise (CCW) to clockwise (CW) or vice versa.
-    *
-    * @param i face index
-    *
-    * @return this mesh
-    */
-   public Mesh3 reverseFace ( final int i ) {
-
-      // TODO: Isn't this the same as Mesh#reverse ?
-      final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
-      final int len = face.length;
-      final int halfLen = len >> 1;
-      final int last = len - 1;
-      for ( int j = 0; j < halfLen; ++j ) {
-         final int reverse = last - j;
-         final int[] temp = face[j];
-         face[j] = face[reverse];
-         face[reverse] = temp;
-      }
-      return this;
-   }
-
-   /**
     * Rotates all coordinates in the mesh by an angle around an arbitrary
     * axis.
     *
@@ -4498,6 +4452,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       /* Validate arguments. */
       final int lons = longitudes < 3 ? 3 : longitudes;
       final int lats = latitudes < 1 ? 1 : latitudes;
+      final float radius = 0.5f;
 
       /* UV coordinates require an extra longitude. */
       final int lons1 = lons + 1;
@@ -4556,7 +4511,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       for ( int j = 0; j < lons1; ++j ) { tcxs[j] = j * toTexS; }
 
       /* Loop over the latitudes. */
-      final float radius = 0.5f;
       for ( int i = 0, vIdx = 1, vtIdx = lons; i < lats; ++i ) {
 
          /* Account for offset of pole. */
@@ -4601,9 +4555,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int fsLen = lons + lons + midCount;
 
       /*
-       * If quadrilaterals are chosen, then the faces array will be jagged. Some
-       * inner arrays will be 3 long, i.e., the North and South caps; others,
-       * for the mid-latitudes, will be 4 long.
+       * If quadrilaterals are chosen, then the faces array will be jagged. The
+       * North and South cap face inner arrays will have a length of 3; the
+       * mid-latitudes will have a length of 4.
        */
       final int[][][] fs = target.faces = isQuad ? new int[fsLen][4][3]
          : new int[fsLen][3][3];
@@ -4615,48 +4569,48 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int fsIdxOff = fsLen - lons;
 
       /* Polar caps. */
-      for ( int i = 0; i < lons; ++i ) {
-         final int k = i + 1;
+      for ( int j = 0; j < lons; ++j ) {
+         final int k = j + 1;
          final int n = k % lons;
-         final int j = 1 + n;
-         final int m = lons + i;
+         final int h = 1 + n;
+         final int m = lons + j;
 
-         final int[][] northTri = isQuad ? fs[i] = new int[3][3] : fs[i];
-         final int[][] southTri = isQuad ? fs[fsIdxOff + i] = new int[3][3]
-            : fs[fsIdxOff + i];
+         final int[][] triNorth = isQuad ? fs[j] = new int[3][3] : fs[j];
+         final int[][] triSouth = isQuad ? fs[fsIdxOff + j] = new int[3][3]
+            : fs[fsIdxOff + j];
 
          /* Polar vertex. */
          // final int[] north0 = northTri[0];
          // north0[0] = 0;
-         // north0[1] = i;
+         // north0[1] = j;
          // north0[2] = 0;
-         northTri[0][1] = i;
+         triNorth[0][1] = j;
 
-         final int[] north1 = northTri[1];
+         final int[] north1 = triNorth[1];
          north1[0] = k;
          north1[1] = m;
          north1[2] = k;
 
-         final int[] north2 = northTri[2];
-         north2[0] = j;
+         final int[] north2 = triNorth[2];
+         north2[0] = h;
          north2[1] = m + 1;
-         north2[2] = j;
+         north2[2] = h;
 
          /* Polar vertex. */
-         final int[] south0 = southTri[0];
+         final int[] south0 = triSouth[0];
          south0[0] = last0;
-         south0[1] = vtPoleOff + i;
+         south0[1] = vtPoleOff + j;
          south0[2] = last0;
 
-         final int[] south1 = southTri[1];
+         final int[] south1 = triSouth[1];
          south1[0] = vIdxOff + n;
          south1[1] = vtIdxOff + k;
          south1[2] = vIdxOff + n;
 
-         final int[] south2 = southTri[2];
-         south2[0] = vIdxOff + i;
-         south2[1] = vtIdxOff + i;
-         south2[2] = vIdxOff + i;
+         final int[] south2 = triSouth[2];
+         south2[0] = vIdxOff + j;
+         south2[1] = vtIdxOff + j;
+         south2[2] = vIdxOff + j;
       }
 
       /* Middle. */

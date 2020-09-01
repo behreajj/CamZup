@@ -168,20 +168,19 @@ public class MaterialSolid extends Material {
       if ( this == obj ) { return true; }
       if ( !super.equals(obj) ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
+
       final MaterialSolid other = ( MaterialSolid ) obj;
+
       if ( this.fill == null ) {
          if ( other.fill != null ) { return false; }
       } else if ( !this.fill.equals(other.fill) ) { return false; }
+
       if ( this.stroke == null ) {
          if ( other.stroke != null ) { return false; }
       } else if ( !this.stroke.equals(other.stroke) ) { return false; }
-      if ( Float.floatToIntBits(this.strokeWeight) != Float.floatToIntBits(
-         other.strokeWeight) ) {
-         return false;
-      }
-      if ( this.useFill != other.useFill ) { return false; }
-      if ( this.useStroke != other.useStroke ) { return false; }
-      return true;
+
+      return this.strokeWeight == other.strokeWeight && this.useFill
+         == other.useFill && this.useStroke == other.useStroke;
    }
 
    @Override

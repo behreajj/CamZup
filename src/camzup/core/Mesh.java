@@ -1,5 +1,6 @@
 package camzup.core;
 
+import java.util.Arrays;
 import java.util.Comparator;
 
 /**
@@ -104,11 +105,77 @@ public abstract class Mesh extends EntityData implements IMesh {
    }
 
    /**
+    * Tests this mesh for equivalence with an object.
+    *
+    * @param obj the object
+    *
+    * @return the equivalence
+    */
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if ( this == obj ) { return true; }
+      if ( !super.equals(obj) ) { return false; }
+      if ( this.getClass() != obj.getClass() ) { return false; }
+      final Mesh other = ( Mesh ) obj;
+      return Arrays.deepEquals(this.faces, other.faces);
+   }
+
+   /**
     * Gets this mesh's material index.
     *
     * @return the material index
     */
    public int getMaterialIndex ( ) { return this.materialIndex; }
+
+   /**
+    * Generates a hash code for this mesh.
+    */
+   @Override
+   public int hashCode ( ) {
+
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + Arrays.deepHashCode(this.faces);
+      return result;
+   }
+
+   /**
+    * Flips the indices which specify an edge.
+    *
+    * @param i face index
+    * @param j edge index
+    *
+    * @return this mesh
+    */
+   public Mesh reverseEdge ( final int i, final int j ) {
+
+      final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
+      final int len = face.length;
+      final int jOrigin = Utils.mod(j, len);
+      final int jDest = ( jOrigin + 1 ) % len;
+
+      final int[] temp = face[jOrigin];
+      face[jOrigin] = face[jDest];
+      face[jDest] = temp;
+
+      return this;
+   }
+
+   /**
+    * Flips the indices which specify a face. Changes the winding of a face
+    * from counter-clockwise (CCW) to clockwise (CW) or vice versa.
+    *
+    * @param i face index
+    *
+    * @return this mesh
+    */
+   public Mesh reverseFace ( final int i ) {
+
+      final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
+      Mesh.reverse(face);
+      return this;
+   }
 
    /**
     * Sets this mesh's material index.
@@ -208,17 +275,12 @@ public abstract class Mesh extends EntityData implements IMesh {
    /**
     * The default sorter for 2 meshes.
     */
-   protected static final Comparator < Vec2 > SORT_2;
+   protected static final Comparator < Vec2 > SORT_2 = new SortQuantized2();
 
    /**
     * The default sorter for 3D meshes.
     */
-   protected static final Comparator < Vec3 > SORT_3;
-
-   static {
-      SORT_2 = new SortQuantized2();
-      SORT_3 = new SortQuantized3();
-   }
+   protected static final Comparator < Vec3 > SORT_3 = new SortQuantized3();
 
    /**
     * Evaluates whether two edges are permutations of each other. This is

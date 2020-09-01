@@ -669,53 +669,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Flips the indices which specify an edge.
-    *
-    * @param i face index
-    * @param j edge index
-    *
-    * @return this mesh
-    */
-   public Mesh2 reverseEdge ( final int i, final int j ) {
-
-      final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
-      final int len = face.length;
-      final int jOrigin = Utils.mod(j, len);
-      final int jDest = ( jOrigin + 1 ) % len;
-
-      final int[] temp = face[jOrigin];
-      face[jOrigin] = face[jDest];
-      face[jDest] = temp;
-
-      return this;
-   }
-
-   /**
-    * Flips the indices which specify a face. Changes the winding of a face
-    * from counter-clockwise (CCW) to clockwise (CW) or vice versa.
-    *
-    * @param i face index
-    *
-    * @return this mesh
-    */
-   public Mesh2 reverseFace ( final int i ) {
-
-      // Isn't this the same as Mesh#reverse ?
-      final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
-      final int len = face.length;
-      final int halfLen = len >> 1;
-      final int last = len - 1;
-      for ( int j = 0; j < halfLen; ++j ) {
-         final int reverse = last - j;
-         final int[] temp = face[j];
-         face[j] = face[reverse];
-         face[reverse] = temp;
-      }
-
-      return this;
-   }
-
-   /**
     * Rotates all coordinates in the mesh by an angle around the z axis.
     *
     * @param radians the angle in radians

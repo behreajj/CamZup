@@ -2,6 +2,7 @@ package camzup;
 
 import camzup.core.IUtils;
 import camzup.core.Mesh3;
+import camzup.core.MeshEntity3;
 import camzup.core.PolyType;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -54,511 +55,633 @@ public class CamZup {
       final int rings, final float depth, final float radius,
       final PolyType poly, final Mesh3 target ) {
 
-      /* Validate input arguments. */
-      final int vLons = longitudes < 3 ? 3 : longitudes;
-      final int vLats = latitudes < 2 ? 2 : latitudes % 2 != 0 ? latitudes + 1
-         : latitudes;
-      final int vSections = rings < 0 ? 0 : rings;
-      final float vDepth = Utils.max(IUtils.EPSILON, depth);
-      final float vRad = Utils.max(IUtils.EPSILON, radius);
+      /*
+       * To simplify, require that latitudes be even so that they can be split
+       * evenly at the equator.
+       */
+      final int verif_lats = latitudes < 2 ? 2 : latitudes % 2 != 0 ? latitudes
+         + 1 : latitudes;
+      final int verif_lons = longitudes < 3 ? 3 : longitudes;
+      final int verif_rings = rings < 0 ? 0 : rings;
+      final float verif_depth = Utils.max(IUtils.EPSILON, depth);
+      final float verif_rad = Utils.max(IUtils.EPSILON, radius);
 
       /* Boolean flags that change number of faces and vertices. */
-      final boolean useQuads = poly == PolyType.QUAD;
-      final boolean calcMid = vSections > 0;
+      final boolean use_quads = poly == PolyType.QUAD;
+      final boolean calc_mid = verif_rings > 0;
 
-      final int halfLat = vLats / 2;
-      final int halfLatn2 = halfLat - 2;
-      final int vSectionsp1 = vSections + 1;
-      final int vLonsp1 = vLons + 1;
+      /* Intermediary calculations. */
+      final int half_lats = verif_lats / 2;
+      final int half_lats_n1 = half_lats - 1;
+      final int half_lats_n2 = half_lats - 2;
+      final int verif_rings_p1 = verif_rings + 1;
+      final int verif_lons_p1 = verif_lons + 1;
 
-      /* Find index offsets for coordinates. */
-      final int idx_v_n_equator = vLonsp1 + vLons * halfLatn2;
-      final int idx_v_cyl = idx_v_n_equator + vLons;
-      int idx_v_s_equator = idx_v_cyl;
-      if ( calcMid ) { idx_v_s_equator += vLons * vSections; }
-      final int idx_v_south = idx_v_s_equator + vLons;
-      final int idx_v_south_cap = idx_v_south + vLons * halfLatn2;
-      final int idx_v_south_pole = idx_v_south_cap + vLons;
+      final int v_lons_half_lat_n1 = half_lats_n1 * verif_lons;
+      final int v_lons_v_sections_p1 = verif_rings_p1 * verif_lons;
 
-      // TODO: Face indices are probably linking to the wrong texture
-      // coordinates -- at the equator -- when forming topmost triangle.
-      final int idx_vt_n_cap = 0;
-      final int idx_vt_n_hemi = idx_vt_n_cap + vLons;
-      final int idx_vt_n_equator = idx_vt_n_hemi + vLonsp1 * halfLatn2;
-      int idx_vt_s_equator = idx_vt_n_equator + vLonsp1;
-      if ( calcMid ) { idx_vt_s_equator += vLonsp1 * vSections; }
-      final int idx_vt_s_hemi = idx_vt_s_equator + vLonsp1;
-      final int idx_vt_s_cap = idx_vt_s_hemi + vLonsp1 * halfLatn2;
+      final float half_depth = verif_depth * 0.5f;
+      final float summit = half_depth + verif_rad;
 
-      /* Resize coordinates to new length. */
+      /* Index offsets for coordinates. */
+      final int idx_v_n_equator = verif_lons_p1 + verif_lons * half_lats_n2;
+      final int idx_v_cyl = idx_v_n_equator + verif_lons;
+      final int idx_v_s_equator = calc_mid ? idx_v_cyl + verif_lons
+         * verif_rings : idx_v_cyl;
+      final int idx_v_south = idx_v_s_equator + verif_lons;
+      final int idx_v_south_cap = idx_v_south + verif_lons * half_lats_n2;
+      final int idx_v_south_pole = idx_v_south_cap + verif_lons;
+
+      /* Index offsets for texture coordinates. */
+      final int idx_vt_n_equator = verif_lons + verif_lons_p1 * half_lats_n1;
+      final int idx_vt_cyl = idx_vt_n_equator + verif_lons_p1;
+      final int idx_vt_s_equator = calc_mid ? idx_vt_cyl + verif_lons_p1
+         * verif_rings : idx_vt_cyl;
+      final int idx_vt_s_hemi = idx_vt_s_equator + verif_lons_p1;
+      final int idx_vt_s_polar = idx_vt_s_hemi + verif_lons_p1 * half_lats_n2;
+      final int idx_vt_s_cap = idx_vt_s_polar + verif_lons_p1;
+
+      /* Index offsets for normals. */
+      final int idx_vn_south = idx_v_n_equator + verif_lons;
+      final int idx_vn_south_cap = idx_vn_south + verif_lons * half_lats_n2;
+      final int idx_vn_south_pole = idx_vn_south_cap + verif_lons;
+
+      /* Array lengths. */
       final int len_vs = idx_v_south_pole + 1;
-      final Vec3[] vs = target.coords = Vec3.resize(target.coords, len_vs);
-
-      /* Find index offsets for normals. */
-      final int idx_vn_south = idx_v_n_equator + vLons;
-      final int idx_vn_south_cap = idx_vn_south + vLons * halfLatn2;
-      final int idx_vn_south_pole = idx_vn_south_cap + vLons;
-
-      /* Resize normals to new length. */
+      final int len_vts = idx_vt_s_cap + verif_lons;
       final int len_vns = idx_vn_south_pole + 1;
+
+      /* Allocate mesh data. */
+      final Vec3[] vs = target.coords = Vec3.resize(target.coords, len_vs);
+      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
+         len_vts);
       final Vec3[] vns = target.normals = Vec3.resize(target.normals, len_vns);
 
-      /* Set North and South pole. */
-      final float half_depth = vDepth * 0.5f;
-      final float summit = half_depth + vRad;
+      /* Set North pole: coordinate, normal. */
       vs[0].set(0.0f, 0.0f, summit);
-      vs[idx_v_south_pole].set(0.0f, 0.0f, -summit);
-
-      /* Set North and South Normals. */
       vns[0].set(0.0f, 0.0f, 1.0f);
+
+      /* Set South pole: coordinate, normal. */
+      vs[idx_v_south_pole].set(0.0f, 0.0f, -summit);
       vns[idx_vn_south_pole].set(0.0f, 0.0f, -1.0f);
 
-      /* Calculate theta and equators. */
-      final float[] tSin = new float[vLons];
-      final float[] tCos = new float[vLons];
-      final float toTheta = IUtils.TAU / vLons;
-      for ( int j = 0; j < vLons; ++j ) {
-         final float theta = j * toTheta;
+      /*
+       * Calculate polar texture coordinates. UVs form a triangle at the poles,
+       * where the polar vertex is centered between the other two vertices. That
+       * is why j is offset by 0.5 . There is one fewer column of UVs at the
+       * poles, so the for loop uses the coordinate longitude range. Calculate
+       * theta and equators. Cache sine and cosine of theta.
+       */
+      final float[] sin_theta_cache = new float[verif_lons];
+      final float[] cos_theta_cache = new float[verif_lons];
+      // final float[] rho_sin_theta_cache = new float[verif_lons];
+      // final float[] rho_cos_theta_cache = new float[verif_lons];
+      final float to_theta = IUtils.TAU / verif_lons;
+      final float to_phi = IUtils.PI / verif_lats;
+      final float to_tex_horizontal = 1.0f / verif_lons;
+      final float to_tex_vertical = 1.0f / half_lats;
 
-         final float sinTheta = Utils.sin(theta);
-         final float cosTheta = Utils.cos(theta);
+      for ( int j = 0; j < verif_lons; ++j ) {
+         final float jf = j;
 
-         tSin[j] = sinTheta;
-         tCos[j] = cosTheta;
+         /* Coordinates. */
+         final float theta = jf * to_theta;
+         final float sin_theta = Utils.sin(theta);
+         final float cos_theta = Utils.cos(theta);
+         sin_theta_cache[j] = sin_theta;
+         cos_theta_cache[j] = cos_theta;
 
-         final float x = vRad * cosTheta;
-         final float y = vRad * sinTheta;
+         /* Texture coordinates. */
+         final float s_tex = ( jf + 0.5f ) * to_tex_horizontal;
+         vts[j].set(s_tex, 0.0f);
+         vts[idx_vt_s_cap + j].set(s_tex, 1.0f);
 
-         /* Set equatorial coordinates. */
+         /* Multiply by radius to get equatorial x and y. */
+         final float x = verif_rad * cos_theta;
+         final float y = verif_rad * sin_theta;
+
+         // rho_sin_theta_cache[j] = x;
+         // rho_cos_theta_cache[j] = y;
+
+         /* Set equatorial coordinates. Offset by cylinder depth. */
          vs[idx_v_n_equator + j].set(x, y, half_depth);
          vs[idx_v_s_equator + j].set(x, y, -half_depth);
 
          /* Set equatorial normals. */
-         vns[idx_v_n_equator + j].set(cosTheta, sinTheta, 0.0f);
+         vns[idx_v_n_equator + j].set(cos_theta, sin_theta, 0.0f);
       }
 
-      /* Divide latitudes into hemispheres. */
-      final int half_lat_n1 = halfLat - 1;
-      final float quarterTau = IUtils.HALF_PI;
-      final float toPhi = IUtils.PI / vLats;
-      for ( int k = 0, i = 0; i < half_lat_n1; ++i ) {
-         final int i_p1 = i + 1;
+      /* Calculate equatorial texture coordinates. Cache horizontal measure. */
+      final float[] s_tex_cache = new float[verif_lons_p1];
 
-         /* North. */
-         final float nPhi = -quarterTau + i_p1 * toPhi;
-         final float nSinPhi = Utils.sin(nPhi);
-         final float nCosPhi = Utils.cos(nPhi);
+      /* Simplistic UV aspect ratio: uses 1/3 and 2/3. */
+      // final float vt_aspect_north = 1.0f / 3.0f;
+      // final float vt_aspect_north = ( float ) half_lats / ( verif_rings_p1
+      // + verif_lats );
+      final float vt_aspect_north = verif_rad / ( verif_depth + verif_rad
+         + verif_rad );
+
+      final float vt_aspect_south = 1.0f - vt_aspect_north;
+      for ( int j = 0; j < verif_lons_p1; ++j ) {
+         final float s_tex = j * to_tex_horizontal;
+         s_tex_cache[j] = s_tex;
+         vts[idx_vt_n_equator + j].set(s_tex, vt_aspect_north);
+         vts[idx_vt_s_equator + j].set(s_tex, vt_aspect_south);
+      }
+
+      /* Divide latitudes into hemispheres. Start at i = 1 due to the poles. */
+      int v_hemi_offset_north = 1;
+      int v_hemi_offset_south = idx_v_south;
+
+      int vt_hemi_offset_north = verif_lons;
+      int vt_hemi_offset_south = idx_vt_s_hemi;
+
+      int vn_hemi_offset_south = idx_vn_south;
+
+      for ( int i = 1; i < half_lats; ++i ) {
+
+         final float phi = i * to_phi;
+
+         /*
+          * Use trigonometric symmetries to avoid calculating another sine and
+          * cosine for phi North.
+          */
+         final float sin_phi_south = Utils.sin(phi);
+         final float cos_phi_south = Utils.cos(phi);
+
+         final float sin_phi_north = -cos_phi_south;
+         final float cos_phi_north = sin_phi_south;
 
          /* For North coordinates, multiply by radius and offset. */
-         final float nRhoCosPhi = vRad * nCosPhi;
-         final float nRhoSinPhi = vRad * nSinPhi;
-         final float offsetNorth = half_depth - nRhoSinPhi;
 
-         /* South. */
-         final float sPhi = -quarterTau + ( i_p1 + halfLat ) * toPhi;
-         final float sSinPhi = Utils.sin(sPhi);
-         final float sCosPhi = Utils.cos(sPhi);
+         final float rho_cos_phi_north = verif_rad * cos_phi_north;
+         final float rho_sin_phi_north = verif_rad * sin_phi_north;
+         final float offset_z_north = half_depth - rho_sin_phi_north;
 
          /* For South coordinates, multiply by radius and offset. */
-         final float sRhoCosPhi = vRad * sCosPhi;
-         final float sRhoSinPhi = vRad * sSinPhi;
-         final float offsetSouth = -half_depth - sRhoSinPhi;
+         final float rho_cos_phi_south = verif_rad * cos_phi_south;
+         final float rho_sin_phi_south = verif_rad * sin_phi_south;
+         final float offset_z_south = -half_depth - rho_sin_phi_south;
 
-         for ( int j = 0; j < vLons; ++j, ++k ) {
-            final float sinTheta = tSin[j];
-            final float cosTheta = tCos[j];
+         /* Coordinates */
+         for ( int j = 0; j < verif_lons; ++j ) {
+            final float sin_theta = sin_theta_cache[j];
+            final float cos_theta = cos_theta_cache[j];
+            // final float rho_sin_theta = rho_sin_theta_cache[j];
+            // final float rho_cos_theta = rho_cos_theta_cache[j];
 
+            /* @formatter:off */
+            
             /* North coordinate. */
-            vs[1 + k].set(nRhoCosPhi * cosTheta, nRhoCosPhi * sinTheta,
-               offsetNorth);
-
-            /* South coordinate. */
-            vs[idx_v_south + k].set(sRhoCosPhi * cosTheta, sRhoCosPhi
-               * sinTheta, offsetSouth);
+            vs[v_hemi_offset_north].set(
+               rho_cos_phi_north * cos_theta,
+               rho_cos_phi_north * sin_theta,
+               // cos_phi_north * rho_cos_theta,
+               // cos_phi_north * rho_sin_theta,
+               offset_z_north);
 
             /* North normal. */
-            vns[1 + k].set(nCosPhi * cosTheta, nCosPhi * sinTheta, -nRhoSinPhi);
+            vns[v_hemi_offset_north].set(
+               cos_phi_north * cos_theta,
+               cos_phi_north * sin_theta,
+               -sin_phi_north);
+
+            /* South coordinate. */
+            vs[v_hemi_offset_south].set(
+               rho_cos_phi_south * cos_theta,
+               rho_cos_phi_south * sin_theta,
+               // cos_phi_south * rho_cos_theta,
+               // cos_phi_south * rho_sin_theta,
+               offset_z_south);
 
             /* South normal. */
-            vns[idx_vn_south + k].set(sCosPhi * cosTheta, sCosPhi * sinTheta,
-               -sRhoSinPhi);
+            vns[vn_hemi_offset_south].set(
+               cos_phi_south * cos_theta,
+               cos_phi_south * sin_theta,
+               -sin_phi_south);
+
+            /* @formatter:on */
+
+            v_hemi_offset_north += 1;
+            v_hemi_offset_south += 1;
+            vn_hemi_offset_south += 1;
+         }
+
+         /*
+          * For UVs, linear interpolation from North pole (0.0) to North aspect
+          * ratio (1.0 / 3.0 default); and from South pole (1.0) to South aspect
+          * ratio (2.0 / 3.0 default).
+          */
+         final float t_tex_fac = i * to_tex_vertical;
+         final float t_tex_north = t_tex_fac * vt_aspect_north;
+         final float t_tex_south = ( 1.0f - t_tex_fac ) * vt_aspect_south
+            + t_tex_fac;
+
+         /* Texture coordinates. */
+         for ( int j = 0; j < verif_lons_p1; ++j ) {
+            final float s_tex = s_tex_cache[j];
+            vts[vt_hemi_offset_north].set(s_tex, t_tex_north);
+            vts[vt_hemi_offset_south].set(s_tex, t_tex_south);
+
+            vt_hemi_offset_north += 1;
+            vt_hemi_offset_south += 1;
          }
       }
 
       /* Calculate sections of cylinder in middle. */
-      if ( calcMid ) {
-         final float toFac = 1.0f / vSectionsp1;
-         for ( int k = 0, m = 0; m < vSections; ++m ) {
-            final float fac = ( m + 1.0f ) * toFac;
+      if ( calc_mid ) {
+
+         /*
+          * Linear interpolation must exclude the origin (North equator) and the
+          * destination (South equator), so step must never equal 0.0 or 1.0 .
+          */
+         final float to_fac = 1.0f / verif_rings_p1;
+         int v_cyl_offset = idx_v_cyl;
+         int vt_cyl_offset = idx_vt_cyl;
+         for ( int m = 1; m < verif_rings_p1; ++m ) {
+            final float fac = m * to_fac;
             final float cmpl_fac = 1.0f - fac;
 
-            for ( int j = 0; j < vLons; ++j, ++k ) {
-               final Vec3 vNorth = vs[idx_v_n_equator + j];
-               final Vec3 vSouth = vs[idx_v_s_equator + j];
+            /* Coordinates. */
+            for ( int j = 0; j < verif_lons; ++j, ++v_cyl_offset ) {
 
-               vs[idx_v_cyl + k].set(cmpl_fac * vNorth.x + fac * vSouth.x,
-                  cmpl_fac * vNorth.y + fac * vSouth.y, cmpl_fac * vNorth.z
-                     + fac * vSouth.z);
+               final Vec3 v_equator_north = vs[idx_v_n_equator + j];
+               final Vec3 v_equator_south = vs[idx_v_s_equator + j];
+
+               /*
+                * xy should be the same for both North and South. North z should
+                * equal half_depth while South z should equal -half_depth.
+                * However this is kept as a linear interpolation for clarity.
+                */
+               vs[v_cyl_offset].set(cmpl_fac * v_equator_north.x + fac
+                  * v_equator_south.x, cmpl_fac * v_equator_north.y + fac
+                     * v_equator_south.y, cmpl_fac * v_equator_north.z + fac
+                        * v_equator_south.z);
+            }
+
+            /* Texture coordinates. */
+            final float t_tex = cmpl_fac * vt_aspect_north + fac
+               * vt_aspect_south;
+            for ( int j = 0; j < verif_lons_p1; ++j, ++vt_cyl_offset ) {
+               final float s_tex = s_tex_cache[j];
+               vts[vt_cyl_offset].set(s_tex, t_tex);
             }
          }
       }
 
-      final int v_lons_half_lat_n1 = ( halfLat - 1 ) * vLons;
-      final int v_lons_v_sections_p1 = ( vSections + 1 ) * vLons;
-
       /* Find index offsets for face indices. */
-      int idx_fs_cyl = vLons + v_lons_half_lat_n1;
-      if ( !useQuads ) { idx_fs_cyl += v_lons_half_lat_n1; }
+      int idx_fs_cyl = verif_lons + v_lons_half_lat_n1;
+      if ( !use_quads ) { idx_fs_cyl += v_lons_half_lat_n1; }
       int idx_fs_south_equat = idx_fs_cyl + v_lons_v_sections_p1;
-      if ( !useQuads ) { idx_fs_south_equat += v_lons_v_sections_p1; }
+      if ( !use_quads ) { idx_fs_south_equat += v_lons_v_sections_p1; }
       int idx_fs_south_hemi = idx_fs_south_equat + v_lons_half_lat_n1;
-      if ( !useQuads ) { idx_fs_south_hemi += v_lons_half_lat_n1; }
-      final int idx_fs_south_cap = idx_fs_south_hemi + vLons;
+      if ( !use_quads ) { idx_fs_south_hemi += v_lons_half_lat_n1; }
+      final int idx_fs_south_cap = idx_fs_south_hemi + verif_lons;
 
       /* Resize face indices to new length. */
       final int len_v_indices = idx_fs_south_cap;
       final int[][][] fs = target.faces = new int[len_v_indices][][];
 
       /* North & South cap indices (always triangles). */
-      for ( int j = 0; j < vLons; ++j ) {
-         final int j_next = ( j + 1 ) % vLons;
+      for ( int j = 0; j < verif_lons; ++j ) {
+         final int j_next_vt = j + 1;
+         final int j_next_v = j_next_vt % verif_lons;
 
          /* North coordinate indices. */
-         final int[][] triNorth = fs[j] = new int[3][3];
-         triNorth[0][0] = 1 + j_next;
-         triNorth[1][0] = 1 + j;
-         triNorth[2][0] = 0;
+         final int[][] tri_north = fs[j] = new int[3][3];
+
+         final int[] north0 = tri_north[0];
+         north0[0] = 0;
+         north0[1] = j;
+         north0[2] = 0;
+
+         final int[] north1 = tri_north[1];
+         north1[0] = 1 + j;
+         north1[1] = verif_lons + j;
+         north1[2] = 1 + j;
+
+         final int[] north2 = tri_north[2];
+         north2[0] = 1 + j_next_v;
+         north2[1] = verif_lons + j_next_vt;
+         north2[2] = 1 + j_next_v;
 
          /* South coordinates indices. */
-         final int[][] triSouth = fs[idx_fs_south_hemi + j] = new int[3][3];
-         triSouth[0][0] = idx_v_south_pole;
-         triSouth[1][0] = idx_v_south_cap + j;
-         triSouth[2][0] = idx_v_south_cap + j_next;
+         final int[][] tri_south = fs[idx_fs_south_hemi + j] = new int[3][3];
 
-         /* North texture coordinate indices. */
-         triNorth[0][1] = vLonsp1 + j;
-         triNorth[1][1] = vLons + j;
-         triNorth[2][1] = j;
+         final int[] south0 = tri_south[0];
+         south0[0] = idx_v_south_pole;
+         south0[1] = idx_vt_s_cap + j;
+         south0[2] = idx_vn_south_pole;
 
-         /* North normals. */
-         triNorth[0][2] = 1 + j_next;
-         triNorth[1][2] = 1 + j;
-         triNorth[2][2] = 0;
+         final int[] south1 = tri_south[1];
+         south1[0] = idx_v_south_cap + j_next_v;
+         south1[1] = idx_vt_s_polar + j_next_vt;
+         south1[2] = idx_vn_south_cap + j_next_v;
 
-         // /* South texture coordinate indices. */
-         // triSouth[0][1] = idx_vt_south_cap + j;
-         // triSouth[1][1] = idx_vt_south_cap - vLonsp1 + j;
-         // triSouth[2][1] = idx_vt_south_cap - vLonsp1 + j + 1;
-
-         /* South normals. */
-         triSouth[0][2] = idx_vn_south_pole;
-         triSouth[1][2] = idx_vn_south_cap + j;
-         triSouth[2][2] = idx_vn_south_cap + j_next;
+         final int[] south2 = tri_south[2];
+         south2[0] = idx_v_south_cap + j;
+         south2[1] = idx_vt_s_polar + j;
+         south2[2] = idx_vn_south_cap + j;
       }
 
       /* Hemisphere indices. */
-      for ( int k = 0, i = 0; i < half_lat_n1; ++i ) {
-         final int i_v_lons = i * vLons;
+      int f_hemi_offset_north = verif_lons;
+      int f_hemi_offset_south = idx_fs_south_equat;
+      for ( int i = 0; i < half_lats_n1; ++i ) {
+         final int i_v_lons = i * verif_lons;
 
          /* North coordinate index offset. */
          final int v_curr_lat_n = 1 + i_v_lons;
-         final int v_next_lat_n = v_curr_lat_n + vLons;
+         final int v_next_lat_n = v_curr_lat_n + verif_lons;
 
          /* South coordinate index offset. */
          final int v_curr_lat_s = idx_v_s_equator + i_v_lons;
-         final int v_next_lat_s = v_curr_lat_s + vLons;
+         final int v_next_lat_s = v_curr_lat_s + verif_lons;
 
          /* North texture coordinate index offset. */
-         final int vt_curr_lat_n = idx_vt_n_hemi + i * vLonsp1;
-         final int vt_next_lat_n = vt_curr_lat_n + vLonsp1;
+         final int vt_curr_lat_n = verif_lons + i * verif_lons_p1;
+         final int vt_next_lat_n = vt_curr_lat_n + verif_lons_p1;
 
          /* South texture coordinate index offset, */
-         // final int vt_curr_lat_s = idx_vt_s_equator - vLonsp1 + i * vLonsp1;
-         // final int vt_next_lat_s = vt_curr_lat_s + vLonsp1;
+         final int vt_curr_lat_s = idx_vt_s_equator + i * verif_lons_p1;
+         final int vt_next_lat_s = vt_curr_lat_s + verif_lons_p1;
 
          /* North normal index offset. */
          final int vn_curr_lat_n = 1 + i_v_lons;
-         final int vn_next_lat_n = vn_curr_lat_n + vLons;
+         final int vn_next_lat_n = vn_curr_lat_n + verif_lons;
 
          /* South normal index offset. */
          final int vn_curr_lat_s = idx_v_n_equator + i_v_lons;
-         final int vn_next_lat_s = vn_curr_lat_s + vLons;
+         final int vn_next_lat_s = vn_curr_lat_s + verif_lons;
 
-         for ( int j = 0; j < vLons; ++j ) {
-            final int v_next_lon = ( j + 1 ) % vLons;
+         for ( int j = 0; j < verif_lons; ++j ) {
+            final int j_next_vt = j + 1;
+            final int j_next_v = j_next_vt % verif_lons;
 
             /* North coordinate indices. */
             final int n00 = v_curr_lat_n + j;
-            final int n10 = v_curr_lat_n + v_next_lon;
-            final int n11 = v_next_lat_n + v_next_lon;
             final int n01 = v_next_lat_n + j;
+            final int n11 = v_next_lat_n + j_next_v;
+            final int n10 = v_curr_lat_n + j_next_v;
 
             /* South coordinate indices. */
             final int s00 = v_curr_lat_s + j;
-            final int s10 = v_curr_lat_s + v_next_lon;
-            final int s11 = v_next_lat_s + v_next_lon;
             final int s01 = v_next_lat_s + j;
+            final int s11 = v_next_lat_s + j_next_v;
+            final int s10 = v_curr_lat_s + j_next_v;
 
             /* North texture coordinate indices. */
             final int vtn00 = vt_curr_lat_n + j;
-            final int vtn10 = vt_curr_lat_n + j + 1;
-            final int vtn11 = vt_next_lat_n + j + 1;
             final int vtn01 = vt_next_lat_n + j;
+            final int vtn11 = vt_next_lat_n + j_next_vt;
+            final int vtn10 = vt_curr_lat_n + j_next_vt;
 
             /* South texture coordinate indices. */
-            // final int vts00 = vt_curr_lat_s + j;
-            // final int vts10 = vt_curr_lat_s + j + 1;
-            // final int vts11 = vt_next_lat_s + j + 1;
-            // final int vts01 = vt_next_lat_s + j;
+            final int vts00 = vt_curr_lat_s + j;
+            final int vts01 = vt_next_lat_s + j;
+            final int vts11 = vt_next_lat_s + j_next_vt;
+            final int vts10 = vt_curr_lat_s + j_next_vt;
 
             /* North normal indices. */
             final int vnn00 = vn_curr_lat_n + j;
-            final int vnn10 = vn_curr_lat_n + v_next_lon;
-            final int vnn11 = vn_next_lat_n + v_next_lon;
             final int vnn01 = vn_next_lat_n + j;
+            final int vnn11 = vn_next_lat_n + j_next_v;
+            final int vnn10 = vn_curr_lat_n + j_next_v;
 
             /* South normal indices. */
             final int vns00 = vn_curr_lat_s + j;
-            final int vns10 = vn_curr_lat_s + v_next_lon;
-            final int vns11 = vn_next_lat_s + v_next_lon;
             final int vns01 = vn_next_lat_s + j;
+            final int vns11 = vn_next_lat_s + j_next_v;
+            final int vns10 = vn_curr_lat_s + j_next_v;
 
-            if ( useQuads ) {
-               final int[][] nQuad = fs[vLons + k] = new int[4][3];
-               final int[][] sQuad = fs[idx_fs_south_equat + k] = new int[4][3];
+            if ( use_quads ) {
+               final int[][] north_quad = fs[f_hemi_offset_north]
+                  = new int[4][3];
 
-               /* North coordinate quad. */
-               nQuad[0][0] = n00;
-               nQuad[1][0] = n10;
-               nQuad[2][0] = n11;
-               nQuad[3][0] = n01;
+               final int[] nq0 = north_quad[0];
+               nq0[0] = n00;
+               nq0[1] = vtn00;
+               nq0[2] = vnn00;
 
-               /* South coordinate quad. */
-               sQuad[0][0] = s00;
-               sQuad[1][0] = s10;
-               sQuad[2][0] = s11;
-               sQuad[3][0] = s01;
+               final int[] nq1 = north_quad[1];
+               nq1[0] = n01;
+               nq1[1] = vtn01;
+               nq1[2] = vnn01;
 
-               /* North texture coordinate quad. */
-               nQuad[0][1] = vtn00;
-               nQuad[1][1] = vtn10;
-               nQuad[2][1] = vtn11;
-               nQuad[3][1] = vtn01;
+               final int[] nq2 = north_quad[2];
+               nq2[0] = n11;
+               nq2[1] = vtn11;
+               nq2[2] = vnn11;
 
-               /* South texture coordinate quad. */
-               // sQuad[0][1] = vts00;
-               // sQuad[1][1] = vts10;
-               // sQuad[2][1] = vts11;
-               // sQuad[3][1] = vts01;
+               final int[] nq3 = north_quad[3];
+               nq3[0] = n10;
+               nq3[1] = vtn10;
+               nq3[2] = vnn10;
 
-               /* North normal quad. */
-               nQuad[0][2] = vnn00;
-               nQuad[1][2] = vnn10;
-               nQuad[2][2] = vnn11;
-               nQuad[3][2] = vnn01;
+               final int[][] south_quad = fs[f_hemi_offset_south]
+                  = new int[4][3];
 
-               /* South normal quad. */
-               sQuad[0][2] = vns00;
-               sQuad[1][2] = vns10;
-               sQuad[2][2] = vns11;
-               sQuad[3][2] = vns01;
+               final int[] sq0 = south_quad[0];
+               sq0[0] = s00;
+               sq0[1] = vts00;
+               sq0[2] = vns00;
 
-               k += 1;
+               final int[] sq1 = south_quad[1];
+               sq1[0] = s01;
+               sq1[1] = vts01;
+               sq1[2] = vns01;
+
+               final int[] sq2 = south_quad[2];
+               sq2[0] = s11;
+               sq2[1] = vts11;
+               sq2[2] = vns11;
+
+               final int[] sq3 = south_quad[3];
+               sq3[0] = s10;
+               sq3[1] = vts10;
+               sq3[2] = vns10;
+
+               f_hemi_offset_north += 1;
+               f_hemi_offset_south += 1;
+
             } else {
-               final int k_next = k + 1;
 
-               /* North coordinate triangle 0. */
-               final int[][] nTri0 = fs[vLons + k] = new int[3][3];
-               nTri0[0][0] = n00;
-               nTri0[1][0] = n10;
-               nTri0[2][0] = n11;
-
-               /* North coordinate triangle 1. */
-               final int[][] nTri1 = fs[vLons + k_next] = new int[3][3];
-               nTri1[0][0] = n00;
-               nTri1[1][0] = n11;
-               nTri1[2][0] = n01;
-
-               /* South coordinate triangle 0. */
-               final int[][] sTri0 = fs[idx_fs_south_equat + k] = new int[3][3];
-               sTri0[0][0] = s00;
-               sTri0[1][0] = s10;
-               sTri0[2][0] = s11;
-
-               /* South coordinate triangle 1. */
-               final int[][] sTri1 = fs[idx_fs_south_equat + k_next]
+               /* North triangle 0. */
+               final int[][] north_tri0 = fs[f_hemi_offset_north]
                   = new int[3][3];
-               sTri1[0][0] = s00;
-               sTri1[1][0] = s11;
-               sTri1[2][0] = s01;
 
-               /* North texture coordinate triangle 0. */
-               nTri0[0][1] = vtn00;
-               nTri0[1][1] = vtn10;
-               nTri0[2][1] = vtn11;
+               final int[] n_tri00 = north_tri0[0];
+               n_tri00[0] = n00;
+               n_tri00[1] = vtn00;
+               n_tri00[2] = vnn00;
 
-               /* North texture coordinate triangle 1. */
-               nTri1[0][1] = vtn00;
-               nTri1[1][1] = vtn11;
-               nTri1[2][1] = vtn01;
+               final int[] n_tri01 = north_tri0[1];
+               n_tri01[0] = n01;
+               n_tri01[1] = vtn01;
+               n_tri01[2] = vnn01;
 
-               /* South texture coordinate triangle 0. */
-               // sTri0[0][1] = vts00;
-               // sTri0[1][1] = vts10;
-               // sTri0[2][1] = vts11;
+               final int[] n_tri02 = north_tri0[2];
+               n_tri02[0] = n11;
+               n_tri02[1] = vtn11;
+               n_tri02[2] = vnn11;
 
-               /* South texture coordinate triangle 1. */
-               // sTri1[0][1] = vts00;
-               // sTri1[1][1] = vts11;
-               // sTri1[2][1] = vts01;
+               /* North triangle 1. */
+               final int[][] n_tri1 = fs[f_hemi_offset_north + 1]
+                  = new int[3][3];
 
-               /* North normal triangle 0. */
-               nTri0[0][2] = vnn00;
-               nTri0[1][2] = vnn10;
-               nTri0[2][2] = vnn11;
+               final int[] n_tri10 = n_tri1[0];
+               n_tri10[0] = n00;
+               n_tri10[1] = vtn00;
+               n_tri10[2] = vnn00;
 
-               /* North normal triangle 1. */
-               nTri1[0][2] = vnn00;
-               nTri1[1][2] = vnn11;
-               nTri1[2][2] = vnn01;
+               final int[] n_tri11 = n_tri1[1];
+               n_tri11[0] = n11;
+               n_tri11[1] = vtn11;
+               n_tri11[2] = vnn11;
 
-               /* South normal triangle 0. */
-               nTri0[0][2] = vns00;
-               nTri0[1][2] = vns10;
-               nTri0[2][2] = vns11;
+               final int[] n_tri12 = n_tri1[2];
+               n_tri12[0] = n10;
+               n_tri12[1] = vtn10;
+               n_tri12[2] = vnn10;
 
-               /* South normal triangle 1. */
-               nTri1[0][2] = vns00;
-               nTri1[1][2] = vns11;
-               nTri1[2][2] = vns01;
+               /* South triangle 0. */
+               final int[][] south_tri0 = fs[f_hemi_offset_south]
+                  = new int[3][3];
 
-               k += 2;
+               final int[] s_tri00 = south_tri0[0];
+               s_tri00[0] = s00;
+               s_tri00[1] = vts00;
+               s_tri00[2] = vns00;
+
+               final int[] s_tri01 = south_tri0[1];
+               s_tri01[0] = s01;
+               s_tri01[1] = vts01;
+               s_tri01[2] = vns01;
+
+               final int[] s_tri02 = south_tri0[2];
+               s_tri02[0] = s11;
+               s_tri02[1] = vts11;
+               s_tri02[2] = vns11;
+
+               /* South triangle 1. */
+               final int[][] s_tri1 = fs[f_hemi_offset_south + 1]
+                  = new int[3][3];
+
+               final int[] s_tri10 = s_tri1[0];
+               s_tri10[0] = s00;
+               s_tri10[1] = vts00;
+               s_tri10[2] = vns00;
+
+               final int[] s_tri11 = s_tri1[1];
+               s_tri11[0] = s11;
+               s_tri11[1] = vts11;
+               s_tri11[2] = vns11;
+
+               final int[] s_tri12 = s_tri1[2];
+               s_tri12[0] = s10;
+               s_tri12[1] = vts10;
+               s_tri12[2] = vns10;
+
+               f_hemi_offset_north += 2;
+               f_hemi_offset_south += 2;
             }
          }
       }
 
-      /* Cylinder indices. */
-      for ( int k = 0, m = 0; m < vSectionsp1; ++m ) {
-         final int v_curr_ring = idx_v_n_equator + m * vLons;
-         final int v_next_ring = v_curr_ring + vLons;
+      /* Cylinder face indices. */
+      int f_cyl_offset = idx_fs_cyl;
+      for ( int m = 0; m < verif_rings_p1; ++m ) {
 
-         for ( int j = 0; j < vLons; ++j ) {
-            final int v_next_lon = ( j + 1 ) % vLons;
+         final int v_curr_ring = idx_v_n_equator + m * verif_lons;
+         final int v_next_ring = v_curr_ring + verif_lons;
 
-            /* Normal corners. */
-            final int vn0 = idx_v_n_equator + j;
-            final int vn1 = idx_v_n_equator + v_next_lon;
+         final int vt_curr_ring = idx_vt_n_equator + m * verif_lons_p1;
+         final int vt_next_ring = vt_curr_ring + verif_lons_p1;
+
+         for ( int j = 0; j < verif_lons; ++j ) {
+
+            final int j_next_vt = j + 1;
+            final int j_next_v = j_next_vt % verif_lons;
 
             /* Coordinate corners. */
             final int v00 = v_curr_ring + j;
-            final int v10 = v_curr_ring + v_next_lon;
-            final int v11 = v_next_ring + v_next_lon;
             final int v01 = v_next_ring + j;
+            final int v11 = v_next_ring + j_next_v;
+            final int v10 = v_curr_ring + j_next_v;
 
-            if ( useQuads ) {
-               final int[][] quad = fs[idx_fs_cyl + k] = new int[4][3];
+            /* Texture coordinate corners. */
+            final int vt00 = vt_curr_ring + j;
+            final int vt10 = vt_curr_ring + j_next_vt;
+            final int vt11 = vt_next_ring + j_next_vt;
+            final int vt01 = vt_next_ring + j;
 
-               /* Coordinates. */
-               quad[0][0] = v00;
-               quad[1][0] = v10;
-               quad[2][0] = v11;
-               quad[3][0] = v01;
+            /* Normal corners. */
+            final int vn0 = idx_v_n_equator + j;
+            final int vn1 = idx_v_n_equator + j_next_v;
 
-               /* Normals. */
-               quad[0][2] = vn0;
-               quad[1][2] = vn1;
-               quad[2][2] = vn1;
-               quad[3][2] = vn0;
+            if ( use_quads ) {
 
-               k += 1;
+               final int[][] quad = fs[f_cyl_offset] = new int[4][3];
+
+               final int[] quad0 = quad[0];
+               quad0[0] = v00;
+               quad0[1] = vt00;
+               quad0[2] = vn0;
+
+               final int[] quad1 = quad[1];
+               quad1[0] = v01;
+               quad1[1] = vt01;
+               quad1[2] = vn0;
+
+               final int[] quad2 = quad[2];
+               quad2[0] = v11;
+               quad2[1] = vt11;
+               quad2[2] = vn1;
+
+               final int[] quad3 = quad[3];
+               quad3[0] = v10;
+               quad3[1] = vt10;
+               quad3[2] = vn1;
+
+               f_cyl_offset += 1;
+
             } else {
-               final int k_next = k + 1;
 
-               final int[][] tri0 = fs[idx_fs_cyl + k] = new int[3][3];
-               final int[][] tri1 = fs[idx_fs_cyl + k_next] = new int[3][3];
+               final int[][] tri0 = fs[f_cyl_offset] = new int[3][3];
 
-               /* Coordinates. */
-               tri0[0][0] = v00;
-               tri0[1][0] = v10;
-               tri0[2][0] = v11;
+               final int[] tri00 = tri0[0];
+               tri00[0] = v00;
+               tri00[1] = vt00;
+               tri00[2] = vn0;
 
-               tri1[0][0] = v00;
-               tri1[1][0] = v11;
-               tri1[2][0] = v01;
+               final int[] tri01 = tri0[1];
+               tri01[0] = v01;
+               tri01[1] = vt01;
+               tri01[2] = vn0;
 
-               /* Normals. */
-               tri0[0][2] = vn0;
-               tri0[1][2] = vn1;
-               tri0[2][2] = vn1;
+               final int[] tri02 = tri0[2];
+               tri02[0] = v11;
+               tri02[1] = vt11;
+               tri02[2] = vn1;
 
-               tri1[0][2] = vn0;
-               tri1[1][2] = vn1;
-               tri1[2][2] = vn0;
+               final int[][] tri1 = fs[f_cyl_offset + 1] = new int[3][3];
 
-               k += 2;
-            }
-         }
-      }
+               final int[] tri10 = tri1[0];
+               tri10[0] = v00;
+               tri10[1] = vt00;
+               tri10[2] = vn0;
 
-      /* Resize texture coordinates array. */
-      final int len_vts = idx_vt_s_cap + vLons;
-      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
-         len_vts);
+               final int[] tri11 = tri1[1];
+               tri11[0] = v11;
+               tri11[1] = vt11;
+               tri11[2] = vn1;
 
-      /* Horizontal. */
-      final float to_tex_s = 1.0f / vLons;
-      final float[] tc_s = new float[vLonsp1];
-      for ( int j = 0; j < vLonsp1; ++j ) { tc_s[j] = j * to_tex_s; }
+               final int[] tri12 = tri1[2];
+               tri12[0] = v10;
+               tri12[1] = vt10;
+               tri12[2] = vn1;
 
-      final float vtNorthPole = 0.0f;
-      final float vtNorthHemi = 0.25f;
-      final float vtSouthHemi = 0.75f;
-      final float vtSouthPole = 1.0f;
-
-      /* Calculate polar texture coordinates. */
-      for ( int j = 0; j < vLons; ++j ) {
-         final float s_tex = ( j + 0.5f ) * to_tex_s;
-         vts[idx_vt_n_cap + j].set(s_tex, vtNorthPole);
-         vts[idx_vt_s_cap + j].set(s_tex, vtSouthPole);
-      }
-
-      /* Calculate hemisphere texture coordinates. */
-      for ( int k = 0, i = 0; i < half_lat_n1; ++i ) {
-         final float yFac = ( i + 1.0f ) / ( half_lat_n1 - 1.0f );
-         final float complyFac = 1.0f - yFac;
-
-         for ( int j = 0; j < vLonsp1; ++j, ++k ) {
-            vts[idx_vt_n_hemi + k].set(tc_s[j], complyFac * vtNorthPole + yFac
-               * vtNorthHemi);
-            // vts[idx_vt_south + k].set(tc_s[j], complyFac * vtSouthHemi + yFac
-            // * vtSouthPole);
-         }
-      }
-
-      /* Calculate equatorial texture coordinates. */
-      for ( int j = 0; j < vLonsp1; ++j ) {
-         final float s = tc_s[j];
-         vts[idx_vt_n_equator + j].set(s, vtNorthHemi);
-         vts[idx_vt_s_equator + j].set(s, vtSouthHemi);
-      }
-
-      // TODO: This is wrong, between the polar caps and the equator, we have
-      // the hemispheres...
-
-      /* Calculate sections of cylinder in middle. */
-      if ( calcMid ) {
-         final float to_fac = 1.0f / vSectionsp1;
-         for ( int k = 0, m = 0; m < vSections; ++m ) {
-            final float fac = ( m + 1.0f ) * to_fac;
-            final float cmpl_fac = 1.0f - fac;
-
-            for ( int j = 0; j < vLonsp1; ++j, ++k ) {
-               final Vec2 vtNorth = vts[idx_vt_n_equator + j];
-               final Vec2 vtSouth = vts[idx_vt_s_equator + j];
-
-               // vts[idx_vt_n_equator + k].set(cmpl_fac * vtNorth.x + fac
-               // * vtSouth.x,
-               // cmpl_fac * vtNorthHemi + fac * vtSouthHemi);
+               f_cyl_offset += 2;
             }
          }
       }
@@ -573,15 +696,18 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // Mesh2 m2 = new Mesh2();
-      // Mesh2.hexGrid(8, 1f, 0.05f, m2);
-      // m2.calcUvs();
-      // MeshEntity2 me2 = new MeshEntity2();
-      // me2.append(m2);
-      // String pyCd = me2.toBlenderCode();
-      // System.out.println(pyCd);
-
-
+      final Mesh3 m3 = new Mesh3();
+      final int longitudes = 16;
+      final int latitudes = 8;
+      final int rings = 2;
+      final float depth = 2.0f;
+      final float radius = 1.5f;
+      final PolyType poly = PolyType.TRI;
+      CamZup.capsule(longitudes, latitudes, rings, depth, radius, poly, m3);
+      // System.out.println(m3);
+      final MeshEntity3 entity3 = new MeshEntity3().append(m3);
+      final String pyCd = entity3.toBlenderCode();
+      System.out.println(pyCd);
    }
 
    /**
