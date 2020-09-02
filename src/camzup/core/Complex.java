@@ -75,18 +75,6 @@ public class Complex implements Comparable < Complex > {
    }
 
    /**
-    * Tests to see if the complex number contains a value.
-    *
-    * @param v the value
-    *
-    * @return the evaluation
-    */
-   public boolean contains ( final float v ) {
-
-      return Utils.approx(this.real, v) || Utils.approx(this.imag, v);
-   }
-
-   /**
     * Tests this complex number for equivalence with another object.
     *
     * @param obj the object
@@ -118,13 +106,6 @@ public class Complex implements Comparable < Complex > {
       return ( IUtils.MUL_BASE ^ Float.floatToIntBits(this.real) )
          * IUtils.HASH_MUL ^ Float.floatToIntBits(this.imag);
    }
-
-   /**
-    * Gets the number of components held by the complex number.
-    *
-    * @return the size
-    */
-   public int length ( ) { return 2; }
 
    /**
     * Resets this complex number to an initial state ( 0.0, 0.0 ) .

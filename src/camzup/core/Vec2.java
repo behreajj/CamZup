@@ -79,20 +79,6 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Tests to see if the vector contains a value.
-    *
-    * @param v the value
-    *
-    * @return the evaluation
-    *
-    * @see Utils#approx(float, float)
-    */
-   public boolean contains ( final float v ) {
-
-      return Utils.approx(this.y, v) || Utils.approx(this.x, v);
-   }
-
-   /**
     * Tests this vector for equivalence with another object.
     *
     * @param obj the object
@@ -123,13 +109,6 @@ public class Vec2 implements Comparable < Vec2 > {
       return ( IUtils.MUL_BASE ^ Float.floatToIntBits(this.x) )
          * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y);
    }
-
-   /**
-    * Gets the number of components held by this vector.
-    *
-    * @return the length
-    */
-   public int length ( ) { return 2; }
 
    /**
     * Resets this vector to an initial state, ( 0.0, 0.0 ) .

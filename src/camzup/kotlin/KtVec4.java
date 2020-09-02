@@ -96,6 +96,19 @@ public class KtVec4 extends Vec4 implements Iterable < Float > {
    public KtVec4 ( final Vec4 source ) { super(source); }
 
    /**
+    * Tests to see if the vector contains a value.
+    *
+    * @param v the value
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final float v ) {
+
+      return Utils.approx(this.w, v) || Utils.approx(this.z, v) || Utils.approx(
+         this.y, v) || Utils.approx(this.x, v);
+   }
+
+   /**
     * Returns a new vector decremented by one. For interoperability with
     * Kotlin: <code>--a</code> (prefix) or <code>a--</code> (postfix). Per the
     * specification, <em>does not mutate the vector in place</em>.
@@ -547,7 +560,7 @@ public class KtVec4 extends Vec4 implements Iterable < Float > {
        * @return the evaluation
        */
       @Override
-      public boolean hasNext ( ) { return this.index < this.vec.length(); }
+      public boolean hasNext ( ) { return this.index < V4Iterator.LENGTH; }
 
       /**
        * Gets the next value in the iterator.
@@ -570,6 +583,11 @@ public class KtVec4 extends Vec4 implements Iterable < Float > {
        */
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
+
+      /**
+       * The length of the vector.
+       */
+      public static final int LENGTH = 4;
 
    }
 

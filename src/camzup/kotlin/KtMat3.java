@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import camzup.core.Mat3;
+import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
 
@@ -94,6 +95,26 @@ public class KtMat3 extends Mat3 implements Iterable < KtVec3 > {
     * @param source the source matrix
     */
    public KtMat3 ( final Mat3 source ) { super(source); }
+
+   /**
+    * Tests to see if the matrix contains a value.
+    *
+    * @param v the value
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final float v ) {
+
+      if ( Utils.approx(this.m00, v) ) { return true; }
+      if ( Utils.approx(this.m01, v) ) { return true; }
+      if ( Utils.approx(this.m02, v) ) { return true; }
+      if ( Utils.approx(this.m10, v) ) { return true; }
+      if ( Utils.approx(this.m11, v) ) { return true; }
+      if ( Utils.approx(this.m12, v) ) { return true; }
+      if ( Utils.approx(this.m20, v) ) { return true; }
+      if ( Utils.approx(this.m21, v) ) { return true; }
+      return Utils.approx(this.m22, v);
+   }
 
    /**
     * Gets a column vector from this matrix. For interoperability with Kotlin:
@@ -364,7 +385,7 @@ public class KtMat3 extends Mat3 implements Iterable < KtVec3 > {
       /**
        * The current index.
        */
-      private int index = -1;
+      private int index = 0;
 
       /**
        * The vector being iterated over.
@@ -384,7 +405,7 @@ public class KtMat3 extends Mat3 implements Iterable < KtVec3 > {
        * @return the evaluation
        */
       @Override
-      public boolean hasNext ( ) { return this.index < 2; }
+      public boolean hasNext ( ) { return this.index < M3Iterator.LENGTH; }
 
       /**
        * Gets the next value in the iterator.
@@ -397,7 +418,7 @@ public class KtMat3 extends Mat3 implements Iterable < KtVec3 > {
       public KtVec3 next ( ) {
 
          if ( !this.hasNext() ) { throw new NoSuchElementException(); }
-         return this.mat.get(++this.index);
+         return this.mat.get(this.index++);
       }
 
       /**
@@ -407,6 +428,11 @@ public class KtMat3 extends Mat3 implements Iterable < KtVec3 > {
        */
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
+
+      /**
+       * The length of the vector.
+       */
+      public static final int LENGTH = 3;
 
    }
 

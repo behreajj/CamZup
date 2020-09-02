@@ -1,6 +1,7 @@
 package camzup.kotlin;
 
 import camzup.core.Quaternion;
+import camzup.core.Utils;
 import camzup.core.Vec3;
 
 /**
@@ -57,6 +58,19 @@ public class KtQuat extends Quaternion {
       final String zImag ) {
 
       super(real, xImag, yImag, zImag);
+   }
+
+   /**
+    * Tests to see if the quaternion contains a value.
+    *
+    * @param v the value
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final float v ) {
+
+      return Utils.approx(this.real, v) || Utils.approx(this.imag.y, v) || Utils
+         .approx(this.imag.x, v) || Utils.approx(this.imag.z, v);
    }
 
    /**

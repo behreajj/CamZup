@@ -56,8 +56,8 @@ public class CamZup {
       final PolyType poly, final Mesh3 target ) {
 
       /*
-       * To simplify, require that latitudes be even so that they can be split
-       * evenly at the equator.
+       * Require that latitudes be even so that they can be split
+       * about the equator.
        */
       final int verif_lats = latitudes < 2 ? 2 : latitudes % 2 != 0 ? latitudes
          + 1 : latitudes;
@@ -151,7 +151,7 @@ public class CamZup {
          sin_theta_cache[j] = sin_theta;
          cos_theta_cache[j] = cos_theta;
 
-         /* Texture coordinates. */
+         /* Texture coordinates at North and South pole. */
          final float s_tex = ( jf + 0.5f ) * to_tex_horizontal;
          vts[j].set(s_tex, 0.0f);
          vts[idx_vt_s_cap + j].set(s_tex, 1.0f);
@@ -180,7 +180,6 @@ public class CamZup {
       // + verif_lats );
       final float vt_aspect_north = verif_rad / ( verif_depth + verif_rad
          + verif_rad );
-
       final float vt_aspect_south = 1.0f - vt_aspect_north;
       for ( int j = 0; j < verif_lons_p1; ++j ) {
          final float s_tex = j * to_tex_horizontal;
@@ -213,7 +212,6 @@ public class CamZup {
          final float cos_phi_north = sin_phi_south;
 
          /* For North coordinates, multiply by radius and offset. */
-
          final float rho_cos_phi_north = verif_rad * cos_phi_north;
          final float rho_sin_phi_north = verif_rad * sin_phi_north;
          final float offset_z_north = half_depth - rho_sin_phi_north;
@@ -231,7 +229,7 @@ public class CamZup {
             // final float rho_cos_theta = rho_cos_theta_cache[j];
 
             /* @formatter:off */
-            
+
             /* North coordinate. */
             vs[v_hemi_offset_north].set(
                rho_cos_phi_north * cos_theta,
@@ -303,7 +301,7 @@ public class CamZup {
             final float cmpl_fac = 1.0f - fac;
 
             /* Coordinates. */
-            for ( int j = 0; j < verif_lons; ++j, ++v_cyl_offset ) {
+            for ( int j = 0; j < verif_lons; ++j ) {
 
                final Vec3 v_equator_north = vs[idx_v_n_equator + j];
                final Vec3 v_equator_south = vs[idx_v_s_equator + j];
@@ -317,30 +315,33 @@ public class CamZup {
                   * v_equator_south.x, cmpl_fac * v_equator_north.y + fac
                      * v_equator_south.y, cmpl_fac * v_equator_north.z + fac
                         * v_equator_south.z);
+
+               ++v_cyl_offset;
             }
 
             /* Texture coordinates. */
             final float t_tex = cmpl_fac * vt_aspect_north + fac
                * vt_aspect_south;
-            for ( int j = 0; j < verif_lons_p1; ++j, ++vt_cyl_offset ) {
+            for ( int j = 0; j < verif_lons_p1; ++j ) {
                final float s_tex = s_tex_cache[j];
                vts[vt_cyl_offset].set(s_tex, t_tex);
+               ++vt_cyl_offset;
             }
          }
       }
 
       /* Find index offsets for face indices. */
-      int idx_fs_cyl = verif_lons + v_lons_half_lat_n1;
-      if ( !use_quads ) { idx_fs_cyl += v_lons_half_lat_n1; }
-      int idx_fs_south_equat = idx_fs_cyl + v_lons_v_sections_p1;
-      if ( !use_quads ) { idx_fs_south_equat += v_lons_v_sections_p1; }
-      int idx_fs_south_hemi = idx_fs_south_equat + v_lons_half_lat_n1;
-      if ( !use_quads ) { idx_fs_south_hemi += v_lons_half_lat_n1; }
-      final int idx_fs_south_cap = idx_fs_south_hemi + verif_lons;
+      final int idx_fs_cyl = use_quads ? verif_lons + v_lons_half_lat_n1
+         : verif_lons + v_lons_half_lat_n1 * 2;
+      final int idx_fs_south_equat = use_quads ? idx_fs_cyl
+         + v_lons_v_sections_p1 : idx_fs_cyl + v_lons_v_sections_p1 * 2;
+      final int idx_fs_south_hemi = use_quads ? idx_fs_south_equat
+         + v_lons_half_lat_n1 : idx_fs_south_equat + v_lons_half_lat_n1 * 2;
+
 
       /* Resize face indices to new length. */
-      final int len_v_indices = idx_fs_south_cap;
-      final int[][][] fs = target.faces = new int[len_v_indices][][];
+      final int len_indices = idx_fs_south_hemi + verif_lons;
+      final int[][][] fs = target.faces = new int[len_indices][][];
 
       /* North & South cap indices (always triangles). */
       for ( int j = 0; j < verif_lons; ++j ) {
@@ -507,7 +508,7 @@ public class CamZup {
             } else {
 
                /* North triangle 0. */
-               final int[][] north_tri0 = fs[f_hemi_offset_north]
+               final int[][] north_tri0 = fs[f_hemi_offset_north + 1]
                   = new int[3][3];
 
                final int[] n_tri00 = north_tri0[0];
@@ -526,7 +527,7 @@ public class CamZup {
                n_tri02[2] = vnn11;
 
                /* North triangle 1. */
-               final int[][] n_tri1 = fs[f_hemi_offset_north + 1]
+               final int[][] n_tri1 = fs[f_hemi_offset_north]
                   = new int[3][3];
 
                final int[] n_tri10 = n_tri1[0];
@@ -545,7 +546,7 @@ public class CamZup {
                n_tri12[2] = vnn10;
 
                /* South triangle 0. */
-               final int[][] south_tri0 = fs[f_hemi_offset_south]
+               final int[][] south_tri0 = fs[f_hemi_offset_south + 1]
                   = new int[3][3];
 
                final int[] s_tri00 = south_tri0[0];
@@ -564,7 +565,7 @@ public class CamZup {
                s_tri02[2] = vns11;
 
                /* South triangle 1. */
-               final int[][] s_tri1 = fs[f_hemi_offset_south + 1]
+               final int[][] s_tri1 = fs[f_hemi_offset_south]
                   = new int[3][3];
 
                final int[] s_tri10 = s_tri1[0];
@@ -611,9 +612,9 @@ public class CamZup {
 
             /* Texture coordinate corners. */
             final int vt00 = vt_curr_ring + j;
-            final int vt10 = vt_curr_ring + j_next_vt;
-            final int vt11 = vt_next_ring + j_next_vt;
             final int vt01 = vt_next_ring + j;
+            final int vt11 = vt_next_ring + j_next_vt;
+            final int vt10 = vt_curr_ring + j_next_vt;
 
             /* Normal corners. */
             final int vn0 = idx_v_n_equator + j;
@@ -647,7 +648,8 @@ public class CamZup {
 
             } else {
 
-               final int[][] tri0 = fs[f_cyl_offset] = new int[3][3];
+               final int[][] tri0 = fs[f_cyl_offset + 1]
+                  = new int[3][3];
 
                final int[] tri00 = tri0[0];
                tri00[0] = v00;
@@ -664,7 +666,8 @@ public class CamZup {
                tri02[1] = vt11;
                tri02[2] = vn1;
 
-               final int[][] tri1 = fs[f_cyl_offset + 1] = new int[3][3];
+               final int[][] tri1 = fs[f_cyl_offset]
+                  = new int[3][3];
 
                final int[] tri10 = tri1[0];
                tri10[0] = v00;

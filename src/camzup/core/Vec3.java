@@ -113,21 +113,6 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Tests to see if the vector contains a value.
-    *
-    * @param v the value
-    *
-    * @return the evaluation
-    *
-    * @see Utils#approx(float, float)
-    */
-   public boolean contains ( final float v ) {
-
-      return Utils.approx(this.z, v) || Utils.approx(this.y, v) || Utils.approx(
-         this.x, v);
-   }
-
-   /**
     * Tests this vector for equivalence with another object.
     *
     * @param obj the object
@@ -159,13 +144,6 @@ public class Vec3 implements Comparable < Vec3 > {
          * IUtils.HASH_MUL ^ Float.floatToIntBits(this.y) ) * IUtils.HASH_MUL
          ^ Float.floatToIntBits(this.z);
    }
-
-   /**
-    * Gets the number of components held by this vector.
-    *
-    * @return the length
-    */
-   public int length ( ) { return 3; }
 
    /**
     * Resets this vector to an initial state, ( 0.0, 0.0, 0.0 ) .

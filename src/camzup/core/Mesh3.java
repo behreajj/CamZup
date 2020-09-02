@@ -105,6 +105,35 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Calculates texture coordinates (UVs) for this mesh. Converts a vertex's
+    * index in a face loop to an angle, then to Cartesian coordinates.
+    * 
+    * @return this mesh
+    */
+   public Mesh3 calcUvs ( ) {
+
+      int uniformLen = 0;
+      final int fsLen = this.faces.length;
+      for ( int i = 0; i < fsLen; ++i ) { uniformLen += this.faces[i].length; }
+      this.texCoords = Vec2.resize(this.texCoords, uniformLen);
+
+      for ( int k = 0, i = 0; i < fsLen; ++i ) {
+         final int[][] f = this.faces[i];
+         final int fLen = f.length;
+         final float toTheta = Utils.div(1.0f, fLen);
+         for ( int j = 0; j < fLen; ++j, ++k ) {
+            f[j][1] = k;
+            final float theta = j * toTheta;
+            float cosTheta = Utils.scNorm(theta);
+            float sinTheta = Utils.scNorm(theta - 0.25f);
+            this.texCoords[k].set(cosTheta * 0.5f + 0.5f, 0.5f - sinTheta
+               * 0.5f);
+         }
+      }
+      return this;
+   }
+
+   /**
     * Removes elements from the coordinate, texture coordinate and normal
     * arrays of the mesh which are not visited by the face indices.
     *
@@ -2250,44 +2279,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       pyCd.append(']').append('}');
       return pyCd.toString();
-   }
-
-   /**
-    * Attempts to recalculate the texture coordinates of this mesh per vertex
-    * through spherical projection. The coordinate's unsigned azimuth is
-    * assigned to the texture coordinate u; the complement of its inclination
-    * is assigned to the texture coordinate v.<br>
-    * <br>
-    * This is protected because UVs wrapping from 0.0 to 1.0 created artifacts
-    * in meshes that do not have seams.
-    *
-    * @return this mesh
-    */
-   @Experimental
-   protected Mesh3 calcUvs ( ) {
-
-      final int coordsLen = this.coords.length;
-      this.texCoords = Vec2.resize(this.texCoords, coordsLen);
-      for ( int i = 0; i < coordsLen; ++i ) {
-         final Vec3 v = this.coords[i];
-         final float azim = Utils.atan2(v.y, v.x);
-         final float incl = Utils.asin(v.z * Utils.invSqrt(v.x * v.x + v.y * v.y
-            + v.z * v.z));
-
-         /* Simplification of the map function. */
-         this.texCoords[i].set(Utils.mod1(azim * IUtils.ONE_TAU),
-            ( IUtils.HALF_PI - incl ) * IUtils.ONE_PI);
-      }
-
-      /* Assign coordinate index to UV index. */
-      final int facesLen = this.faces.length;
-      for ( int i = 0; i < facesLen; ++i ) {
-         final int[][] verts = this.faces[i];
-         final int vertsLen = verts.length;
-         for ( int j = 0; j < vertsLen; ++j ) { verts[j][1] = verts[j][0]; }
-      }
-
-      return this;
    }
 
    /**

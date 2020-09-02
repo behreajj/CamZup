@@ -114,6 +114,19 @@ public class KtClr extends Color implements Iterable < Float > {
    }
 
    /**
+    * Tests to see if the vector contains a value.
+    *
+    * @param v the value
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final float v ) {
+
+      return Utils.approx(this.a, v) || Utils.approx(this.b, v) || Utils.approx(
+         this.g, v) || Utils.approx(this.r, v);
+   }
+
+   /**
     * Returns a new color decremented by {@link IUtils#ONE_255},
     * {@value IUtils#ONE_255}. For interoperability with Kotlin:
     * <code>--a</code> (prefix) or <code>a--</code> (postfix). Per the
@@ -568,7 +581,7 @@ public class KtClr extends Color implements Iterable < Float > {
        * @return the evaluation
        */
       @Override
-      public boolean hasNext ( ) { return this.index < this.clr.length(); }
+      public boolean hasNext ( ) { return this.index < ClrIterator.LENGTH; }
 
       /**
        * Gets the next value in the iterator.
@@ -591,6 +604,11 @@ public class KtClr extends Color implements Iterable < Float > {
        */
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
+
+      /**
+       * The length of the vector.
+       */
+      public static final int LENGTH = 4;
 
    }
 

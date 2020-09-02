@@ -137,26 +137,6 @@ public class Mat3 {
    public Mat3 ( final Mat3 source ) { this.set(source); }
 
    /**
-    * Tests to see if the matrix contains a value.
-    *
-    * @param v the value
-    *
-    * @return the evaluation
-    */
-   public boolean contains ( final float v ) {
-
-      if ( Utils.approx(this.m00, v) ) { return true; }
-      if ( Utils.approx(this.m01, v) ) { return true; }
-      if ( Utils.approx(this.m02, v) ) { return true; }
-      if ( Utils.approx(this.m10, v) ) { return true; }
-      if ( Utils.approx(this.m11, v) ) { return true; }
-      if ( Utils.approx(this.m12, v) ) { return true; }
-      if ( Utils.approx(this.m20, v) ) { return true; }
-      if ( Utils.approx(this.m21, v) ) { return true; }
-      return Utils.approx(this.m22, v);
-   }
-
-   /**
     * Tests this matrix for equivalence with another object.
     *
     * @param obj the object

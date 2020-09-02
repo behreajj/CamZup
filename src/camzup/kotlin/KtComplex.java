@@ -1,6 +1,7 @@
 package camzup.kotlin;
 
 import camzup.core.Complex;
+import camzup.core.Utils;
 
 /**
  * Provides Kotlin operator overloading support for complex numbers.
@@ -41,6 +42,18 @@ public class KtComplex extends Complex {
    public KtComplex ( final String realstr, final String imagstr ) {
 
       super(realstr, imagstr);
+   }
+
+   /**
+    * Tests to see if the complex number contains a value.
+    *
+    * @param v the value
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final float v ) {
+
+      return Utils.approx(this.real, v) || Utils.approx(this.imag, v);
    }
 
    /**

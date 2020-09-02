@@ -136,19 +136,6 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
-    * Tests to see if the vector contains a value.
-    *
-    * @param v the value
-    *
-    * @return the evaluation
-    */
-   public boolean contains ( final float v ) {
-
-      return Utils.approx(this.w, v) || Utils.approx(this.z, v) || Utils.approx(
-         this.y, v) || Utils.approx(this.x, v);
-   }
-
-   /**
     * Tests this vector for equivalence with another object.
     *
     * @param obj the object
@@ -182,13 +169,6 @@ public class Vec4 implements Comparable < Vec4 > {
          ^ Float.floatToIntBits(this.z) ) * IUtils.HASH_MUL ^ Float
             .floatToIntBits(this.w);
    }
-
-   /**
-    * Gets the number of components held by this vector.
-    *
-    * @return the length
-    */
-   public int length ( ) { return 4; }
 
    /**
     * Resets this vector to an initial state, ( 0.0, 0.0, 0.0, 0.0 ) .

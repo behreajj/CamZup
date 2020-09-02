@@ -148,19 +148,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Tests to see if the vector contains a value.
-    *
-    * @param v the value
-    *
-    * @return the evaluation
-    */
-   public boolean contains ( final float v ) {
-
-      return Utils.approx(this.a, v) || Utils.approx(this.b, v) || Utils.approx(
-         this.g, v) || Utils.approx(this.r, v);
-   }
-
-   /**
     * Tests this color for equivalence to another based on its hexadecimal
     * representation.
     *
@@ -273,13 +260,6 @@ public class Color implements Comparable < Color > {
     */
    @Override
    public int hashCode ( ) { return Color.toHexInt(this); }
-
-   /**
-    * Gets the number of components held by this color.
-    *
-    * @return the length
-    */
-   public int length ( ) { return 4; }
 
    /**
     * Resets this color to the color white.

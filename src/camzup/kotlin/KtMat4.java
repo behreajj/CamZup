@@ -4,6 +4,7 @@ import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 import camzup.core.Mat4;
+import camzup.core.Utils;
 import camzup.core.Vec3;
 import camzup.core.Vec4;
 
@@ -129,6 +130,33 @@ public class KtMat4 extends Mat4 implements Iterable < KtVec4 > {
     * @param source the source matrix
     */
    public KtMat4 ( final Mat4 source ) { super(source); }
+
+   /**
+    * Tests to see if the matrix contains a value.
+    *
+    * @param v the value
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final float v ) {
+
+      if ( Utils.approx(this.m00, v) ) { return true; }
+      if ( Utils.approx(this.m01, v) ) { return true; }
+      if ( Utils.approx(this.m02, v) ) { return true; }
+      if ( Utils.approx(this.m03, v) ) { return true; }
+      if ( Utils.approx(this.m10, v) ) { return true; }
+      if ( Utils.approx(this.m11, v) ) { return true; }
+      if ( Utils.approx(this.m12, v) ) { return true; }
+      if ( Utils.approx(this.m13, v) ) { return true; }
+      if ( Utils.approx(this.m20, v) ) { return true; }
+      if ( Utils.approx(this.m21, v) ) { return true; }
+      if ( Utils.approx(this.m22, v) ) { return true; }
+      if ( Utils.approx(this.m23, v) ) { return true; }
+      if ( Utils.approx(this.m30, v) ) { return true; }
+      if ( Utils.approx(this.m31, v) ) { return true; }
+      if ( Utils.approx(this.m32, v) ) { return true; }
+      return Utils.approx(this.m33, v);
+   }
 
    /**
     * Gets a column vector from this matrix. For interoperability with Kotlin:
@@ -463,7 +491,7 @@ public class KtMat4 extends Mat4 implements Iterable < KtVec4 > {
       /**
        * The current index.
        */
-      private int index = -1;
+      private int index = 0;
 
       /**
        * The vector being iterated over.
@@ -483,7 +511,7 @@ public class KtMat4 extends Mat4 implements Iterable < KtVec4 > {
        * @return the evaluation
        */
       @Override
-      public boolean hasNext ( ) { return this.index < 3; }
+      public boolean hasNext ( ) { return this.index < M4Iterator.LENGTH; }
 
       /**
        * Gets the next value in the iterator.
@@ -496,7 +524,7 @@ public class KtMat4 extends Mat4 implements Iterable < KtVec4 > {
       public KtVec4 next ( ) {
 
          if ( !this.hasNext() ) { throw new NoSuchElementException(); }
-         return this.mat.get(++this.index);
+         return this.mat.get(this.index++);
       }
 
       /**
@@ -506,6 +534,11 @@ public class KtMat4 extends Mat4 implements Iterable < KtVec4 > {
        */
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
+
+      /**
+       * The length of the vector.
+       */
+      public static final int LENGTH = 4;
 
    }
 

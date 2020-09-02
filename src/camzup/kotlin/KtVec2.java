@@ -51,6 +51,20 @@ public class KtVec2 extends Vec2 implements Iterable < Float > {
    public KtVec2 ( final Vec2 v ) { super(v); }
 
    /**
+    * Tests to see if the vector contains a value.
+    *
+    * @param v the value
+    *
+    * @return the evaluation
+    *
+    * @see Utils#approx(float, float)
+    */
+   public boolean contains ( final float v ) {
+
+      return Utils.approx(this.y, v) || Utils.approx(this.x, v);
+   }
+
+   /**
     * Returns a new vector decremented by one. For interoperability with
     * Kotlin: <code>--a</code> (prefix) or <code>a--</code> (postfix). Per the
     * specification, <em>does not mutate the vector in place</em>.
@@ -454,7 +468,7 @@ public class KtVec2 extends Vec2 implements Iterable < Float > {
        * @return the evaluation
        */
       @Override
-      public boolean hasNext ( ) { return this.index < this.vec.length(); }
+      public boolean hasNext ( ) { return this.index < V2Iterator.LENGTH; }
 
       /**
        * Gets the next value in the iterator.
@@ -477,6 +491,11 @@ public class KtVec2 extends Vec2 implements Iterable < Float > {
        */
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
+
+      /**
+       * The length of the vector.
+       */
+      public static final int LENGTH = 2;
 
    }
 

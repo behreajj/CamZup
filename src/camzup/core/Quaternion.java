@@ -96,19 +96,6 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Tests to see if the quaternion contains a value.
-    *
-    * @param v the value
-    *
-    * @return the evaluation
-    */
-   public boolean contains ( final float v ) {
-
-      if ( Utils.approx(this.real, v) ) { return true; }
-      return this.imag.contains(v);
-   }
-
-   /**
     * Tests this quaternion for equivalence with another object.
     *
     * @param obj the object
@@ -140,13 +127,6 @@ public class Quaternion implements Comparable < Quaternion > {
       return ( IUtils.MUL_BASE ^ Float.floatToIntBits(this.real) )
          * IUtils.HASH_MUL ^ this.imag.hashCode();
    }
-
-   /**
-    * Gets the number of components held by the quaternion.
-    *
-    * @return the size
-    */
-   public int length ( ) { return 4; }
 
    /**
     * Resets this quaternion to an initial state, ( 1.0, 0.0, 0.0, 0.0 ) .
