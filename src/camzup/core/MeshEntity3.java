@@ -388,13 +388,15 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       final float clearcoatRough ) {
 
       final boolean addVertGroups = true;
-      final boolean includeNormals = false;
+
+      final boolean includeNormals = true;
       final boolean includeUvs = true;
-      final boolean useBMesh = includeUvs;
+      final boolean useBMesh = includeUvs | includeNormals;
       final boolean useMaterials = materials != null && materials.length > 0;
 
       final StringBuilder pyCd = new StringBuilder(2048);
 
+      // TODO: Refactor to always use BMesh.
       if ( useBMesh ) { pyCd.append("import bmesh\n"); }
 
       pyCd.append("from bpy import data as D, context as C\n\n");
@@ -487,11 +489,19 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
             pyCd.append("        bmfcidx = face.index\n");
             pyCd.append("        faceuvidcs = uv_idcs[bmfcidx]\n");
             pyCd.append("        for i, loop in enumerate(face.loops):\n");
-            pyCd.append("            vert = loop.vert\n");
             pyCd.append("            bmvt = loop[uv_layer]\n");
-            pyCd.append("            uv_idx = faceuvidcs[i]\n");
-            pyCd.append("            uv_co = uv_dat[uv_idx]\n");
-            pyCd.append("            bmvt.uv = uv_co\n");
+            pyCd.append("            bmvt.uv = uv_dat[faceuvidcs[i]]\n");
+         }
+
+         if ( includeNormals ) {
+            pyCd.append("    nrm_dat = mesh[\"normals\"]\n");
+            pyCd.append("    nrm_idcs = mesh[\"normal_indices\"]\n");
+            pyCd.append("    for face in bm.faces:\n");
+            pyCd.append("        face.smooth = True\n");
+            pyCd.append("        bmfcidx = face.index\n");
+            pyCd.append("        facenrmidcs = nrm_idcs[bmfcidx]\n");
+            pyCd.append("        for i, vert in enumerate(face.verts):\n");
+            pyCd.append("            vert.normal = nrm_dat[facenrmidcs[i]]\n");
          }
 
          if ( calcTangents ) {
@@ -502,13 +512,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
          pyCd.append("    bm.to_mesh(mesh_data)\n");
          pyCd.append("    bm.free()\n\n");
-      }
-
-      if ( !includeNormals ) {
-         pyCd.append("    mesh_data.use_auto_smooth = True\n");
-         pyCd.append("    polys = mesh_data.polygons\n");
-         pyCd.append("    for poly in polys:\n");
-         pyCd.append("        poly.use_smooth = True\n");
       }
 
       if ( includeUvs && calcTangents ) {

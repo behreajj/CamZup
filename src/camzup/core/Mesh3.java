@@ -107,7 +107,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Calculates texture coordinates (UVs) for this mesh. Converts a vertex's
     * index in a face loop to an angle, then to Cartesian coordinates.
-    * 
+    *
     * @return this mesh
     */
    public Mesh3 calcUvs ( ) {
@@ -124,8 +124,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          for ( int j = 0; j < fLen; ++j, ++k ) {
             f[j][1] = k;
             final float theta = j * toTheta;
-            float cosTheta = Utils.scNorm(theta);
-            float sinTheta = Utils.scNorm(theta - 0.25f);
+            final float cosTheta = Utils.scNorm(theta);
+            final float sinTheta = Utils.scNorm(theta - 0.25f);
             this.texCoords[k].set(cosTheta * 0.5f + 0.5f, 0.5f - sinTheta
                * 0.5f);
          }
@@ -1231,6 +1231,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return this mesh
     */
    public Mesh3 set ( final Mesh3 source ) {
+
+      // TODO: Make a copy by value method?
 
       /* Copy coordinates. */
       final Vec3[] sourcevs = source.coords;

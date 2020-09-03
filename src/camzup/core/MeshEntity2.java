@@ -404,6 +404,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       final StringBuilder pyCd = new StringBuilder(2048);
 
+      // TODO: Refactor to always use BMesh.
       if ( includeUvs ) { pyCd.append("import bmesh\n"); }
 
       pyCd.append("from bpy import data as D, context as C\n\n");
@@ -501,11 +502,11 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
          pyCd.append("        bmfcidx = face.index\n");
          pyCd.append("        faceuvidcs = uv_idcs[bmfcidx]\n");
          pyCd.append("        for i, loop in enumerate(face.loops):\n");
-         pyCd.append("            vert = loop.vert\n");
          pyCd.append("            bmvt = loop[uv_layer]\n");
          pyCd.append("            uv_idx = faceuvidcs[i]\n");
          pyCd.append("            uv_co = uv_dat[uv_idx]\n");
          pyCd.append("            bmvt.uv = uv_co\n");
+         pyCd.append("            loop.vert.normal = (0.0, 0.0, 1.0)\n");
 
          if ( calcTangents ) {
             pyCd.append("    bmesh.ops.triangulate(bm, faces=bm.faces,");
