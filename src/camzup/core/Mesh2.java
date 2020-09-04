@@ -669,6 +669,38 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
+    * Removes a given number of face indices from this mesh beginning at an
+    * index. Does not remove any data associated with the indices.
+    *
+    * @param faceIdx the index
+    *
+    * @return this mesh
+    *
+    * @see Mesh3#removeFaces(int, int)
+    */
+   public Mesh2 removeFace ( final int faceIdx ) {
+
+      return this.removeFaces(faceIdx, 1);
+   }
+
+   /**
+    * Removes a given number of face indices from this mesh beginning at an
+    * index. Does not remove any data associated with the indices.
+    *
+    * @param faceIdx the index
+    * @param count   the removal count
+    *
+    * @return this mesh
+    *
+    * @see Mesh#remove(int[][][], int, int)
+    */
+   public Mesh2 removeFaces ( final int faceIdx, final int count ) {
+
+      Mesh.remove(this.faces, Utils.mod(faceIdx, this.faces.length), count);
+      return this;
+   }
+
+   /**
     * Rotates all coordinates in the mesh by an angle around the z axis.
     *
     * @param radians the angle in radians

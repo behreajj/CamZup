@@ -411,50 +411,81 @@ public abstract class Mesh extends EntityData implements IMesh {
    }
 
    /**
-    * Splices a 2D array of integers into the midst of another. For use by
-    * subdivision functions. If the number of deletions exceeds the length of
-    * the target array, then a copy of the insert array is returned.
+    * Removes a number of elements from a 3D integer array at a given start
+    * index. Returns a copy of the original array with the removal.
     *
     * @param arr       the array
-    * @param index     the insertion point
-    * @param deletions deletion count
-    * @param insert    the insert
+    * @param index     the index
+    * @param deletions the number of deletions
     *
-    * @return the spliced array
+    * @return the array
     */
-   public static int[][] splice ( final int[][] arr, final int index,
-      final int deletions, final int[][] insert ) {
+   @Experimental
+   public static int[][][] remove ( final int[][][] arr, final int index,
+      final int deletions ) {
 
-      final int alen = arr.length;
+      final int aLen = arr.length;
 
-      if ( deletions >= alen ) {
-         final int[][] result = new int[insert.length][];
-         System.arraycopy(insert, 0, result, 0, insert.length);
-         return result;
-      }
+      final int valIdx = Utils.mod(index, aLen + 1);
+      final int valDel = Utils.clamp(deletions, 0, aLen - valIdx);
 
-      final int blen = insert.length;
-      final int valIdx = Utils.mod(index, alen + 1);
-      if ( deletions < 1 ) {
-         final int[][] result = new int[alen + blen][];
-         System.arraycopy(arr, 0, result, 0, valIdx);
-         System.arraycopy(insert, 0, result, valIdx, blen);
-         System.arraycopy(arr, valIdx, result, valIdx + blen, alen - valIdx);
-         return result;
-      }
-
-      final int idxOff = valIdx + deletions;
-      final int[][] result = new int[alen + blen - deletions][];
+      final int bLen = aLen - valDel;
+      final int[][][] result = new int[bLen][][];
       System.arraycopy(arr, 0, result, 0, valIdx);
-      System.arraycopy(insert, 0, result, valIdx, blen);
-      System.arraycopy(arr, idxOff, result, valIdx + blen, alen - idxOff);
+
+      System.arraycopy(arr, valIdx + valDel, result, valIdx, bLen - valIdx);
       return result;
    }
 
    /**
-    * Splices a 3D array of integers into the midst of another. For use by
-    * subdivision functions. If the number of deletions exceeds the length of
-    * the target array, then a copy of the insert array is returned.
+    * Splices a 2D array of integers into the midst of another and returns a
+    * new array containing the splice. Does not mutate arrays in place. If the
+    * number of deletions exceeds the length of the target array, then a copy
+    * of the insert array is returned.
+    *
+    * @param arr       the array
+    * @param index     the insertion point
+    * @param deletions deletion count
+    * @param insert    the insert
+    *
+    * @return a new, spliced array
+    * 
+    * @see System#arraycopy(Object, int, Object, int, int)
+    */
+   public static int[][] splice ( final int[][] arr, final int index,
+      final int deletions, final int[][] insert ) {
+
+      final int aLen = arr.length;
+
+      if ( deletions >= aLen ) {
+         final int[][] result0 = new int[insert.length][];
+         System.arraycopy(insert, 0, result0, 0, insert.length);
+         return result0;
+      }
+
+      final int bLen = insert.length;
+      final int valIdx = Utils.mod(index, aLen + 1);
+      if ( deletions < 1 ) {
+         final int[][] result1 = new int[aLen + bLen][];
+         System.arraycopy(arr, 0, result1, 0, valIdx);
+         System.arraycopy(insert, 0, result1, valIdx, bLen);
+         System.arraycopy(arr, valIdx, result1, valIdx + bLen, aLen - valIdx);
+         return result1;
+      }
+
+      final int idxOff = valIdx + deletions;
+      final int[][] result2 = new int[aLen + bLen - deletions][];
+      System.arraycopy(arr, 0, result2, 0, valIdx);
+      System.arraycopy(insert, 0, result2, valIdx, bLen);
+      System.arraycopy(arr, idxOff, result2, valIdx + bLen, aLen - idxOff);
+      return result2;
+   }
+
+   /**
+    * Splices a 3D array of integers into the midst of another and returns a
+    * new array containing the splice. Does not mutate arrays in place. If the
+    * number of deletions exceeds the length of the target array, then a copy
+    * of the insert array is returned.
     *
     * @param arr       the array
     * @param index     the insertion point
@@ -462,6 +493,8 @@ public abstract class Mesh extends EntityData implements IMesh {
     * @param insert    the insert
     *
     * @return the spliced array
+    * 
+    * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static int[][][] splice ( final int[][][] arr, final int index,
       final int deletions, final int[][][] insert ) {
@@ -485,11 +518,11 @@ public abstract class Mesh extends EntityData implements IMesh {
       }
 
       final int idxOff = valIdx + deletions;
-      final int[][][] result = new int[aLen + bLen - deletions][][];
-      System.arraycopy(arr, 0, result, 0, valIdx);
-      System.arraycopy(insert, 0, result, valIdx, bLen);
-      System.arraycopy(arr, idxOff, result, valIdx + bLen, aLen - idxOff);
-      return result;
+      final int[][][] result2 = new int[aLen + bLen - deletions][][];
+      System.arraycopy(arr, 0, result2, 0, valIdx);
+      System.arraycopy(insert, 0, result2, valIdx, bLen);
+      System.arraycopy(arr, idxOff, result2, valIdx + bLen, aLen - idxOff);
+      return result2;
    }
 
    /**

@@ -2,7 +2,6 @@ package camzup;
 
 import camzup.core.IUtils;
 import camzup.core.Mesh3;
-import camzup.core.MeshEntity3;
 import camzup.core.PolyType;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -167,9 +166,9 @@ public class CamZup {
       }
 
       /* Simplistic UV aspect ratio: uses 1/3 and 2/3. */
-      // float vt_aspect_north = 1.0f / 3.0f;
-      // float vt_aspect_north = ( float ) half_lats / ( verif_rings_p1
-      // + verif_lats );
+      // float vtAspectNorth = 1.0f / 3.0f;
+      // float vtAspectNorth = ( float ) halfLats / ( verifRingsP1 + verifLats
+      // );
       final float vtAspectNorth = verifRad / ( verifDepth + verifRad
          + verifRad );
       final float vtAspectSouth = 1.0f - vtAspectNorth;
@@ -678,17 +677,34 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       final Mesh3 m3 = new Mesh3();
-      final int longitudes = 16;
-      final int latitudes = 8;
-      final int rings = 2;
-      final float depth = 2.0f;
-      final float radius = 1.5f;
-      final PolyType poly = PolyType.TRI;
-      CamZup.capsule(longitudes, latitudes, rings, depth, radius, poly, m3);
-      // System.out.println(m3);
-      final MeshEntity3 entity3 = new MeshEntity3().append(m3);
-      final String pyCd = entity3.toBlenderCode();
-      System.out.println(pyCd);
+      Mesh3.cube(m3);
+      System.out.println(m3);
+      m3.removeFaces(-3, 3);
+      System.out.println(m3);
+      // final int longitudes = 16;
+      // final int latitudes = 8;
+      // final int rings = 2;
+      // final float depth = 2.0f;
+      // final float radius = 1.5f;
+      // final PolyType poly = PolyType.TRI;
+      // CamZup.capsule(longitudes, latitudes, rings, depth, radius, poly, m3);
+      // // System.out.println(m3);
+      // final MeshEntity3 entity3 = new MeshEntity3().append(m3);
+      // final String pyCd = entity3.toBlenderCode();
+      // System.out.println(pyCd);
+
+      // int[][][] a = { { { 0, 1, 2 }, { 3, 4, 5 } }, { { 6, 7, 8 }, { 9, 10,
+      // 11 } }, { { -5, -4, -3 }, { -2, -1, 0 } } };
+      // int[][][] b = Mesh.remove(a, 0, 2);
+      // System.out.println("Length: " + b.length);
+      // for ( int i = 0; i < b.length; ++i ) {
+      // for ( int j = 0; j < b[i].length; ++j ) {
+      // for ( int k = 0; k < b[i][j].length; ++k ) {
+      // System.out.print(b[i][j][k] + ", ");
+      // }
+      // System.out.println("");
+      // }
+      // }
    }
 
    /**
