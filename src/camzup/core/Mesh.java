@@ -420,7 +420,6 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @return the array
     */
-   @Experimental
    public static int[][][] remove ( final int[][][] arr, final int index,
       final int deletions ) {
 
@@ -449,7 +448,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     * @param insert    the insert
     *
     * @return a new, spliced array
-    * 
+    *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static int[][] splice ( final int[][] arr, final int index,
@@ -493,7 +492,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     * @param insert    the insert
     *
     * @return the spliced array
-    * 
+    *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static int[][][] splice ( final int[][][] arr, final int index,

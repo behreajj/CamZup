@@ -2,15 +2,21 @@ package camzup.core;
 
 /**
  * Structures the indices used by a 3D mesh to refer to arrays of data from
- * a vertex. Includes indices for a coordinate, and a texture coordinate.
+ * a vertex. Includes indices for a coordinate, a texture coordinate and a
+ * normal.
  */
 @Experimental
-class Indices2 implements Comparable < Indices2 > {
+class Index3 implements Comparable < Index3 > {
 
    /**
     * The coordinate index.
     */
    int v = 0;
+
+   /**
+    * The normal index.
+    */
+   int vn = 0;
 
    /**
     * The texture coordinate index.
@@ -20,24 +26,25 @@ class Indices2 implements Comparable < Indices2 > {
    /**
     * The default constructor.
     */
-   public Indices2 ( ) {}
+   public Index3 ( ) {}
 
    /**
     * Constructs an indices set from a source's components.
     *
     * @param source the source indices
     */
-   public Indices2 ( final Indices2 source ) { this.set(source); }
+   public Index3 ( final Index3 source ) { this.set(source); }
 
    /**
     * Constructs an indices set from components.
     *
     * @param vIdx  the coordinate index
     * @param vtIdx the texture coordinate index
+    * @param vnIdx the normal index
     */
-   public Indices2 ( final int vIdx, final int vtIdx ) {
+   public Index3 ( final int vIdx, final int vtIdx, final int vnIdx ) {
 
-      this.set(vIdx, vtIdx);
+      this.set(vIdx, vtIdx, vnIdx);
    }
 
    /**
@@ -50,7 +57,7 @@ class Indices2 implements Comparable < Indices2 > {
     * @return the numeric code
     */
    @Override
-   public int compareTo ( final Indices2 idx ) {
+   public int compareTo ( final Index3 idx ) {
 
       final int a = this.hashCode();
       final int b = idx.hashCode();
@@ -64,7 +71,7 @@ class Indices2 implements Comparable < Indices2 > {
     *
     * @return the equivalence
     *
-    * @see Indices2#equals(Indices2)
+    * @see Index2#equals(Index2)
     */
    @Override
    public boolean equals ( final Object obj ) {
@@ -72,7 +79,7 @@ class Indices2 implements Comparable < Indices2 > {
       if ( this == obj ) { return true; }
       if ( obj == null ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
-      return this.equals(( Indices2 ) obj);
+      return this.equals(( Index3 ) obj);
    }
 
    /**
@@ -83,7 +90,8 @@ class Indices2 implements Comparable < Indices2 > {
    @Override
    public int hashCode ( ) {
 
-      return ( IUtils.MUL_BASE ^ this.v ) * IUtils.HASH_MUL ^ this.vt;
+      return ( ( IUtils.MUL_BASE ^ this.v ) * IUtils.HASH_MUL ^ this.vt )
+         * IUtils.HASH_MUL ^ this.vn;
    }
 
    /**
@@ -93,9 +101,9 @@ class Indices2 implements Comparable < Indices2 > {
     *
     * @return this set
     */
-   public Indices2 set ( final Indices2 source ) {
+   public Index3 set ( final Index3 source ) {
 
-      return this.set(source.v, source.vt);
+      return this.set(source.v, source.vt, source.vn);
    }
 
    /**
@@ -103,13 +111,15 @@ class Indices2 implements Comparable < Indices2 > {
     *
     * @param vIdx  the coordinate index
     * @param vtIdx the texture coordinate index
+    * @param vnIdx the normal index
     *
     * @return this indices set
     */
-   public Indices2 set ( final int vIdx, final int vtIdx ) {
+   public Index3 set ( final int vIdx, final int vtIdx, final int vnIdx ) {
 
       this.v = vIdx;
       this.vt = vtIdx;
+      this.vn = vnIdx;
       return this;
    }
 
@@ -120,13 +130,16 @@ class Indices2 implements Comparable < Indices2 > {
     *
     * @param vStr  the coordinate index
     * @param vtStr the texture coordinate index
+    * @param vnStr the normal index
     *
     * @return the indices set
     */
-   public Indices2 set ( final String vStr, final String vtStr ) {
+   public Index3 set ( final String vStr, final String vtStr,
+      final String vnStr ) {
 
       int vIdx = 0;
       int vtIdx = 0;
+      int vnIdx = 0;
 
       try {
          vIdx = Integer.parseInt(vStr);
@@ -140,19 +153,29 @@ class Indices2 implements Comparable < Indices2 > {
          vtIdx = 0;
       }
 
+      try {
+         vnIdx = Integer.parseInt(vnStr);
+      } catch ( final Exception e ) {
+         vnIdx = 0;
+      }
+
       this.v = vIdx;
       this.vt = vtIdx;
+      this.vn = vnIdx;
 
       return this;
    }
 
    /**
-    * Returns an integer array of length 2 containing this indices set's
+    * Returns an integer array of length 3 containing this indices set's
     * components.
     *
     * @return the array
     */
-   public int[] toArray ( ) { return new int[] { this.v, this.vt }; }
+   public int[] toArray ( ) {
+
+      return new int[] { this.v, this.vt, this.vn };
+   }
 
    /**
     * Returns a string representation of this indices set.
@@ -176,6 +199,8 @@ class Indices2 implements Comparable < Indices2 > {
       sb.append(Utils.toPadded(this.v, padding));
       sb.append(", vt: ");
       sb.append(Utils.toPadded(this.vt, padding));
+      sb.append(", vn: ");
+      sb.append(Utils.toPadded(this.vn, padding));
       sb.append(' ');
       sb.append('}');
       return sb.toString();
@@ -188,9 +213,9 @@ class Indices2 implements Comparable < Indices2 > {
     *
     * @return the evaluation
     */
-   protected boolean equals ( final Indices2 idx ) {
+   protected boolean equals ( final Index3 idx ) {
 
-      return this.v == idx.v && this.vt == idx.vt;
+      return this.vn == idx.vn && this.v == idx.v && this.vt == idx.vt;
    }
 
    /**
@@ -207,20 +232,20 @@ class Indices2 implements Comparable < Indices2 > {
     *
     * @return the array
     */
-   public static Indices2[] resize ( final Indices2[] arr, final int sz ) {
+   public static Index3[] resize ( final Index3[] arr, final int sz ) {
 
-      if ( sz < 1 ) { return new Indices2[] {}; }
-      final Indices2[] result = new Indices2[sz];
+      if ( sz < 1 ) { return new Index3[] {}; }
+      final Index3[] result = new Index3[sz];
 
       if ( arr == null ) {
-         for ( int i = 0; i < sz; ++i ) { result[i] = new Indices2(); }
+         for ( int i = 0; i < sz; ++i ) { result[i] = new Index3(); }
          return result;
       }
 
       final int last = arr.length - 1;
       for ( int i = 0; i < sz; ++i ) {
          if ( i > last || arr[i] == null ) {
-            result[i] = new Indices2();
+            result[i] = new Index3();
          } else {
             result[i] = arr[i];
          }

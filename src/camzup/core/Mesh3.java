@@ -1400,8 +1400,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    @Experimental
    public Mesh3 shadeSmooth ( ) {
 
-      // TODO: Make individual shade smooth?
-
       this.normals = Vec3.resize(this.normals, this.coords.length);
 
       Vec3 prev = null;
@@ -2825,6 +2823,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       if ( poly == PolyType.TRI ) { target.triangulate(); }
       target.clean();
       Mesh3.castToSphere(target, 0.5f, target);
+
       target.name = "Sphere";
       return target;
    }

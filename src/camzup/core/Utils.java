@@ -894,6 +894,21 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Finds the greatest, or maximum, among three values.
+    *
+    * @param a the first input
+    * @param b the second input
+    * @param c the third input
+    *
+    * @return the maximum value
+    */
+   public static int max ( final int a, final int b, final int c ) {
+
+      final int d = a > b ? a : b;
+      return d > c ? d : c;
+   }
+
+   /**
     * Finds the least, or minimum, among a list of values.
     *
     * @param fs the list of values
@@ -934,6 +949,21 @@ public abstract class Utils implements IUtils {
    public static float min ( final float a, final float b, final float c ) {
 
       final float d = a < b ? a : b;
+      return d < c ? d : c;
+   }
+
+   /**
+    * Finds the least, or minimum, among three values.
+    *
+    * @param a the first input
+    * @param b the second input
+    * @param c the third input
+    *
+    * @return the minimum value
+    */
+   public static int min ( final int a, final int b, final int c ) {
+
+      final int d = a < b ? a : b;
       return d < c ? d : c;
    }
 
