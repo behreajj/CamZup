@@ -3214,6 +3214,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * Sets the size of the text display.
+    *
+    * @param size the text size
+    */
+   @Override
+   public void textSize ( final float size ) {
+
+      // TODO: Research any other ways of improving this mess?
+      final float vsz = Utils.max(0.5f, size);
+      if ( this.textFont == null ) { this.defaultFontOrDeath("textSize", vsz); }
+      this.textSize = vsz;
+      this.textLeading = ( this.textAscent() + this.textDescent() ) * 1.275f;
+   }
+
+   /**
     * Texture mode is not supported by this renderer.
     *
     * @param mode the mode

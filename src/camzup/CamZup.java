@@ -2,7 +2,7 @@ package camzup;
 
 import camzup.core.IUtils;
 import camzup.core.Mesh3;
-import camzup.core.Mesh3Direct;
+import camzup.core.MeshDirect;
 import camzup.core.PolyType;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -677,10 +677,10 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      Mesh3Direct m3d = new Mesh3Direct();
+      MeshDirect m3d = new MeshDirect();
       Mesh3 m3 = new Mesh3();
       Mesh3.icosahedron(m3);
-      Mesh3Direct.fromMesh3(m3, m3d);
+      MeshDirect.fromMesh3(m3, m3d);
       System.out.println(m3d.toString());
    }
 
