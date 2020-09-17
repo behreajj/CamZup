@@ -148,7 +148,6 @@ public class ImageEntity3 extends MeshEntity3 {
     *
     * @return this entity
     */
-
    public ImageEntity3 setTint ( final Color clr ) {
 
       this.material.setTint(clr);
@@ -162,7 +161,6 @@ public class ImageEntity3 extends MeshEntity3 {
     *
     * @return this entity
     */
-
    public ImageEntity3 setTint ( final int clr ) {
 
       this.material.setTint(clr);

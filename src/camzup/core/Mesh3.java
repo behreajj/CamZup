@@ -2459,6 +2459,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Vec3 calcDimensions ( final Mesh3 mesh, final Vec3 target,
       final Vec3 lb, final Vec3 ub ) {
 
+      // TODO: REDO to use Bounds3?
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
       ub.set(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
 

@@ -681,6 +681,7 @@ public class CamZup {
       Mesh3 m3 = new Mesh3();
       Mesh3.icosahedron(m3);
       MeshDirect.fromMesh3(m3, m3d);
+      System.out.println(Utils.toPadded(0, 3));
       System.out.println(m3d.toString());
    }
 

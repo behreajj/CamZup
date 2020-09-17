@@ -1543,7 +1543,8 @@ public abstract class Utils implements IUtils {
 
       final StringBuilder sb = new StringBuilder(16);
       if ( isNeg ) { sb.append('-'); }
-      final int vplaces = filled > places ? filled : places;
+      int vplaces = places < 1 ? 1 : places;
+      vplaces = filled > vplaces ? filled : vplaces;
       for ( int n = vplaces - 1; n > -1; --n ) { sb.append(digits[n]); }
 
       return sb.toString();
@@ -1561,14 +1562,12 @@ public abstract class Utils implements IUtils {
 
       final int len = arr.length;
       final int last = len - 1;
-
       final StringBuilder sb = new StringBuilder(len * 32);
       sb.append('[').append(' ');
       for ( int i = 0; i < arr.length; ++i ) {
          sb.append(arr[i]);
          if ( i < last ) { sb.append(',').append(' '); }
       }
-
       sb.append(' ').append(']');
       return sb.toString();
    }
@@ -1586,14 +1585,35 @@ public abstract class Utils implements IUtils {
 
       final int len = arr.length;
       final int last = len - 1;
-
       final StringBuilder sb = new StringBuilder(len * 32);
       sb.append('[').append(' ');
       for ( int i = 0; i < arr.length; ++i ) {
          sb.append(Utils.toFixed(arr[i], places));
          if ( i < last ) { sb.append(',').append(' '); }
       }
+      sb.append(' ').append(']');
+      return sb.toString();
+   }
 
+   /**
+    * Returns a String representation of a one dimensional array of
+    * <code>int</code>s.
+    *
+    * @param arr     the array
+    * @param padding the digit padding
+    *
+    * @return the String
+    */
+   public static String toString ( final int[] arr, final int padding ) {
+
+      final int len = arr.length;
+      final int last = len - 1;
+      final StringBuilder sb = new StringBuilder(len * 32);
+      sb.append('[').append(' ');
+      for ( int i = 0; i < arr.length; ++i ) {
+         sb.append(Utils.toPadded(arr[i], padding));
+         if ( i < last ) { sb.append(',').append(' '); }
+      }
       sb.append(' ').append(']');
       return sb.toString();
    }
@@ -1609,14 +1629,12 @@ public abstract class Utils implements IUtils {
 
       final int len = arr.length;
       final int last = len - 1;
-
       final StringBuilder sb = new StringBuilder(len * 32);
       sb.append('[').append(' ');
       for ( int i = 0; i < arr.length; ++i ) {
          sb.append(arr[i].toString());
          if ( i < last ) { sb.append(',').append(' '); }
       }
-
       sb.append(' ').append(']');
       return sb.toString();
    }

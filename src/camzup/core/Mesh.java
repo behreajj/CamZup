@@ -225,6 +225,7 @@ public abstract class Mesh extends EntityData implements IMesh {
          this.triangulate(k);
          k += faceLen - 2;
       }
+
       return this;
    }
 

@@ -1399,11 +1399,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       for ( int i = 0; i < lineLen; ++i ) {
          final String line = lines[i].trim().toLowerCase();
          if ( line.equals("GIMP gradient") ) {
-            continue;
          } else if ( line.indexOf("name:") > -1 ) {
-            continue;
          } else if ( line.indexOf('#') == 0 ) {
-            continue;
          } else {
 
             /*

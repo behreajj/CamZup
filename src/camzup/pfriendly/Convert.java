@@ -310,7 +310,6 @@ public abstract class Convert {
             target.translate(loc.x, loc.y);
             target.rotateZ(angle);
             target.scale(dim.x, dim.y);
-
             return target;
       }
    }

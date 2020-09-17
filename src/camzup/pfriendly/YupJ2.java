@@ -3225,6 +3225,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float vsz = Utils.max(0.5f, size);
       if ( this.textFont == null ) { this.defaultFontOrDeath("textSize", vsz); }
       this.textSize = vsz;
+
+      // Why 1.275?
       this.textLeading = ( this.textAscent() + this.textDescent() ) * 1.275f;
    }
 
@@ -3250,7 +3252,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void tint ( final camzup.core.Color c ) {
 
-      PApplet.showMissingWarning("tint");
       // this.colorCalc(c);
       // this.tintFromCalc();
       // this.tintColorObject = new java.awt.Color(this.tintColor, true);
@@ -3743,7 +3744,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.colorMode ) {
 
-         case HSB:
+         case PConstants.HSB:
 
             this.calcR = x * this.invColorModeX;
 
@@ -3756,7 +3757,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case RGB:
+         case PConstants.RGB:
 
          default:
 

@@ -61,16 +61,76 @@ public class MeshDirect {
    }
 
    /**
-    * Recalculate vertex colors to visualize the mesh's normals.
+    * Recalculate vertex colors to visualize the mesh's coordinates. Will
+    * reallocate colors array if it is not of the appropriate length.
+    *
+    * @return this mesh
+    */
+   public MeshDirect calcColorsFromCoords ( ) {
+
+      float lbx = Float.MAX_VALUE;
+      float lby = Float.MAX_VALUE;
+      float lbz = Float.MAX_VALUE;
+
+      float ubx = Float.MIN_VALUE;
+      float uby = Float.MIN_VALUE;
+      float ubz = Float.MIN_VALUE;
+
+      final int coLen = this.coords.length;
+      for ( int i = 0; i < coLen; i += MeshDirect.COORD_STRIDE ) {
+         final float x = this.coords[i];
+         final float y = this.coords[i + 1];
+         final float z = this.coords[i + 2];
+
+         /* Minimum, maximum need individual if checks, not if-else. */
+         if ( x < lbx ) { lbx = x; }
+         if ( x > ubx ) { ubx = x; }
+         if ( y < lby ) { lby = y; }
+         if ( y > uby ) { uby = y; }
+         if ( z < lbz ) { lbz = z; }
+         if ( z > ubz ) { ubz = z; }
+      }
+
+      final float w = ubx - lbx;
+      final float h = uby - lby;
+      final float d = ubz - lbz;
+
+      final float wInv = w != 0.0f ? 1.0f / w : 0.0f;
+      final float hInv = h != 0.0f ? 1.0f / h : 0.0f;
+      final float dInv = d != 0.0f ? 1.0f / d : 0.0f;
+
+      final int clrLen = coLen * MeshDirect.COLOR_STRIDE
+         / MeshDirect.COORD_STRIDE;
+      if ( this.colors.length != clrLen ) { this.colors = new float[clrLen]; }
+
+      for ( int i = 0, j = 0; i < coLen; i += MeshDirect.COORD_STRIDE, j
+         += MeshDirect.COLOR_STRIDE ) {
+         final float x = this.coords[i];
+         final float y = this.coords[i + 1];
+         final float z = this.coords[i + 2];
+
+         this.colors[j] = ( x - lbx ) * wInv;
+         this.colors[j + 1] = ( y - lby ) * hInv;
+         this.colors[j + 2] = ( z - lbz ) * dInv;
+         this.colors[j + 3] = 1.0f;
+      }
+
+      return this;
+   }
+
+   /**
+    * Recalculate vertex colors to visualize the mesh's normals. Will
+    * reallocate colors array if it is not of the appropriate length.
     *
     * @return this mesh
     */
    public MeshDirect calcColorsFromNormals ( ) {
 
-      final int len = this.normals.length;
-      this.colors = new float[len * MeshDirect.COLOR_STRIDE
-         / MeshDirect.NORMAL_STRIDE];
-      for ( int i = 0, j = 0; i < len; i += MeshDirect.NORMAL_STRIDE, j
+      final int nrmLen = this.normals.length;
+      final int clrLen = nrmLen * MeshDirect.COLOR_STRIDE
+         / MeshDirect.NORMAL_STRIDE;
+      if ( this.colors.length != clrLen ) { this.colors = new float[clrLen]; }
+      for ( int i = 0, j = 0; i < nrmLen; i += MeshDirect.NORMAL_STRIDE, j
          += MeshDirect.COLOR_STRIDE ) {
          this.colors[j] = this.normals[i] * 0.5f + 0.5f;
          this.colors[j + 1] = this.normals[i + 1] * 0.5f + 0.5f;
@@ -166,6 +226,256 @@ public class MeshDirect {
 
       final int j = i * MeshDirect.TEX_COORD_STRIDE;
       return target.set(this.coords[j], this.coords[j + 1]);
+   }
+
+   /**
+    * Returns the number of faces held by this mesh.
+    *
+    * @return the length
+    */
+   public int length ( ) {
+
+      return this.indices.length / MeshDirect.INDEX_STRIDE;
+   }
+
+   /**
+    * Centers the mesh about the origin, (0.0, 0.0, 0.0), and rescales it to
+    * the range [-0.5, 0.5] .
+    *
+    * @return this mesh
+    */
+   public MeshDirect reframe ( ) {
+
+      // TEST
+
+      float lbx = Float.MAX_VALUE;
+      float lby = Float.MAX_VALUE;
+      float lbz = Float.MAX_VALUE;
+
+      float ubx = Float.MIN_VALUE;
+      float uby = Float.MIN_VALUE;
+      float ubz = Float.MIN_VALUE;
+
+      final int coLen = this.coords.length;
+      for ( int i = 0; i < coLen; i += MeshDirect.COORD_STRIDE ) {
+         final float x = this.coords[i];
+         final float y = this.coords[i + 1];
+         final float z = this.coords[i + 2];
+
+         if ( x < lbx ) { lbx = x; }
+         if ( x > ubx ) { ubx = x; }
+         if ( y < lby ) { lby = y; }
+         if ( y > uby ) { uby = y; }
+         if ( z < lbz ) { lbz = z; }
+         if ( z > ubz ) { ubz = z; }
+      }
+
+      final float cx = 0.5f * ( lbx + ubx );
+      final float cy = 0.5f * ( lby + uby );
+      final float cz = 0.5f * ( lbz + ubz );
+
+      final float scl = Utils.max(ubx - lbx, uby - lby, ubz - lbz);
+      final float sclInv = scl != 0.0f ? 1.0f / scl : 0.0f;
+
+      for ( int i = 0; i < coLen; i += MeshDirect.COORD_STRIDE ) {
+         this.coords[i] = ( this.coords[i] - cx ) * sclInv;
+         this.coords[i + 1] = ( this.coords[i + 1] - cy ) * sclInv;
+         this.coords[i + 2] = ( this.coords[i + 2] - cz ) * sclInv;
+      }
+
+      return this;
+   }
+
+   /**
+    * Rotates a coordinate in the mesh by a quaternion.
+    *
+    * @param i the index
+    * @param q the quaternion
+    *
+    * @return this mesh
+    */
+   public MeshDirect rotateCoord ( final int i, final Quaternion q ) {
+
+      final int j = i * MeshDirect.COORD_STRIDE;
+
+      final Vec3 imag = q.imag;
+      final float qw = q.real;
+      final float qx = imag.x;
+      final float qy = imag.y;
+      final float qz = imag.z;
+
+      final float vx = this.coords[j];
+      final float vy = this.coords[j + 1];
+      final float vz = this.coords[j + 2];
+
+      final float iw = -qx * vx - qy * vy - qz * vz;
+      final float ix = qw * vx + qy * vz - qz * vy;
+      final float iy = qw * vy + qz * vx - qx * vz;
+      final float iz = qw * vz + qx * vy - qy * vx;
+
+      this.coords[j] = ix * qw + iz * qy - iw * qx - iy * qz;
+      this.coords[j + 1] = iy * qw + ix * qz - iw * qy - iz * qx;
+      this.coords[j + 2] = iz * qw + iy * qx - iw * qz - ix * qy;
+
+      return this;
+   }
+
+   /**
+    * Rotates all coordinates in the mesh by a quaternion.
+    *
+    * @param q the quaternion
+    *
+    * @return this mesh
+    */
+   public MeshDirect rotateCoords ( final Quaternion q ) {
+
+      final Vec3 imag = q.imag;
+      final float qw = q.real;
+      final float qx = imag.x;
+      final float qy = imag.y;
+      final float qz = imag.z;
+
+      final int len = this.coords.length;
+      for ( int j = 0; j < len; j += MeshDirect.COORD_STRIDE ) {
+         final float vx = this.coords[j];
+         final float vy = this.coords[j + 1];
+         final float vz = this.coords[j + 2];
+
+         final float iw = -qx * vx - qy * vy - qz * vz;
+         final float ix = qw * vx + qy * vz - qz * vy;
+         final float iy = qw * vy + qz * vx - qx * vz;
+         final float iz = qw * vz + qx * vy - qy * vx;
+
+         this.coords[j] = ix * qw + iz * qy - iw * qx - iy * qz;
+         this.coords[j + 1] = iy * qw + ix * qz - iw * qy - iz * qx;
+         this.coords[j + 2] = iz * qw + iy * qx - iw * qz - ix * qy;
+      }
+
+      return this;
+   }
+
+   /**
+    * Scales a coordinate in the mesh by a uniform scalar.
+    *
+    * @param i the index
+    * @param s the uniform scalar
+    *
+    * @return this mesh
+    */
+   public MeshDirect scaleCoord ( final int i, final float s ) {
+
+      return this.scaleCoord(i, s, s, s);
+   }
+
+   /**
+    * Scales a coordinate in the mesh by a non uniform scalar.
+    *
+    * @param i the index
+    * @param x the scalar x
+    * @param y the scalar y
+    * @param z the scalar z
+    *
+    * @return this mesh
+    */
+   public MeshDirect scaleCoord ( final int i, final float x, final float y,
+      final float z ) {
+
+      if ( x != 0.0f && y != 0.0f && z != 0.0f ) {
+         final int j = i * MeshDirect.COORD_STRIDE;
+         this.coords[j] *= x;
+         this.coords[j + 1] *= y;
+         this.coords[j + 2] *= z;
+      }
+
+      return this;
+   }
+
+   /**
+    * Scales a coordinate in the mesh by a non uniform scalar. The z component
+    * of the scalar is assumed to be 1.0 .
+    *
+    * @param i the index
+    * @param v the non uniform scalar
+    *
+    * @return this mesh
+    */
+   public MeshDirect scaleCoord ( final int i, final Vec2 v ) {
+
+      return this.scaleCoord(i, v.x, v.y, 1.0f);
+   }
+
+   /**
+    * Scales a coordinate in the mesh by a non uniform scalar.
+    *
+    * @param i the index
+    * @param v the non uniform scalar
+    *
+    * @return this mesh
+    */
+   public MeshDirect scaleCoord ( final int i, final Vec3 v ) {
+
+      return this.scaleCoord(i, v.x, v.y, v.z);
+   }
+
+   /**
+    * Scales all coordinates in the mesh by a uniform scalar.
+    *
+    * @param s the uniform scalar
+    *
+    * @return this mesh
+    */
+   public MeshDirect scaleCoords ( final float s ) {
+
+      return this.scaleCoords(s, s, s);
+   }
+
+   /**
+    * Scales all coordinates in the mesh by a non uniform scalar.
+    *
+    * @param x the scalar x
+    * @param y the scalar y
+    * @param z the scalar z
+    *
+    * @return this mesh
+    */
+   public MeshDirect scaleCoords ( final float x, final float y,
+      final float z ) {
+
+      if ( x != 0.0f && y != 0.0f && z != 0.0f ) {
+         final int len = this.coords.length;
+         for ( int j = 0; j < len; j += MeshDirect.COORD_STRIDE ) {
+            this.coords[j] *= x;
+            this.coords[j + 1] *= y;
+            this.coords[j + 2] *= z;
+         }
+      }
+
+      return this;
+   }
+
+   /**
+    * Scales all coordinates in the mesh by a non uniform scalar. The z
+    * component of the scalar is assumed to be 1.0 .
+    *
+    * @param v the non uniform scalar
+    *
+    * @return this mesh
+    */
+   public MeshDirect scaleCoords ( final Vec2 v ) {
+
+      return this.scaleCoords(v.x, v.y, 1.0f);
+   }
+
+   /**
+    * Scales all coordinates in the mesh by a non uniform scalar.
+    *
+    * @param v the non uniform scalar
+    *
+    * @return this mesh
+    */
+   public MeshDirect scaleCoords ( final Vec3 v ) {
+
+      return this.scaleCoords(v.x, v.y, v.z);
    }
 
    /**
@@ -357,14 +667,8 @@ public class MeshDirect {
 
       final StringBuilder sb = new StringBuilder(2048);
 
-      sb.append("{ indices: [ ");
-      final int idcsLen = this.indices.length;
-      final int idcsLast = idcsLen - 1;
-      for ( int i = 0; i < idcsLen; ++i ) {
-         sb.append(this.indices[i]);
-         if ( i < idcsLast ) { sb.append(',').append(' '); }
-      }
-      sb.append(" ]");
+      sb.append("{ indices: ");
+      sb.append(Utils.toString(this.indices, 0));
 
       sb.append(", coords: ");
       sb.append(Utils.toString(this.coords, places));
@@ -382,6 +686,99 @@ public class MeshDirect {
    }
 
    /**
+    * Translates a coordinate in the mesh by a vector.
+    *
+    * @param i the index
+    * @param x the vector x
+    * @param y the vector y
+    * @param z the vector z
+    *
+    * @return this mesh
+    */
+   public MeshDirect translateCoord ( final int i, final float x, final float y,
+      final float z ) {
+
+      final int j = i * MeshDirect.COORD_STRIDE;
+      this.coords[j] += x;
+      this.coords[j + 1] += y;
+      this.coords[j + 2] += z;
+
+      return this;
+   }
+
+   /**
+    * Translates a coordinate in the mesh by a vector.
+    *
+    * @param i the index
+    * @param v the vector
+    *
+    * @return this mesh
+    */
+   public MeshDirect translateCoord ( final int i, final Vec2 v ) {
+
+      return this.translateCoord(i, v.x, v.y, 0.0f);
+   }
+
+   /**
+    * Translates a coordinate in the mesh by a vector.
+    *
+    * @param i the index
+    * @param v the vector
+    *
+    * @return this mesh
+    */
+   public MeshDirect translateCoord ( final int i, final Vec3 v ) {
+
+      return this.translateCoord(i, v.x, v.y, v.z);
+   }
+
+   /**
+    * Translates all coordinates in the mesh by a vector.
+    *
+    * @param x the vector x
+    * @param y the vector y
+    * @param z the vector z
+    *
+    * @return this mesh
+    */
+   public MeshDirect translateCoords ( final float x, final float y,
+      final float z ) {
+
+      final int len = this.coords.length;
+      for ( int j = 0; j < len; j += MeshDirect.COORD_STRIDE ) {
+         this.coords[j] += x;
+         this.coords[j + 1] += y;
+         this.coords[j + 2] += z;
+      }
+
+      return this;
+   }
+
+   /**
+    * Translates all coordinates in the mesh by a vector.
+    *
+    * @param v the vector
+    *
+    * @return this mesh
+    */
+   public MeshDirect translateCoords ( final Vec2 v ) {
+
+      return this.translateCoords(v.x, v.y, 0.0f);
+   }
+
+   /**
+    * Translates all coordinates in the mesh by a vector.
+    *
+    * @param v the vector
+    *
+    * @return this mesh
+    */
+   public MeshDirect translateCoords ( final Vec3 v ) {
+
+      return this.translateCoords(v.x, v.y, v.z);
+   }
+
+   /**
     * The number of components per color in an array,
     * {@value MeshDirect#COLOR_STRIDE}.
     */
@@ -393,7 +790,7 @@ public class MeshDirect {
     * the shader that will receive the data, e.g., <code>vec4</code>s should
     * use stride 4, <code>vec3</code>s should use stride 3.
     */
-   public static final int COORD_STRIDE = 4;
+   public static final int COORD_STRIDE = 3;
 
    /**
     * The number of indices per face in an array,
@@ -456,7 +853,6 @@ public class MeshDirect {
             target.coords[coIdx] = v.x;
             target.coords[coIdx + 1] = v.y;
             target.coords[coIdx + 2] = 0.0f;
-            target.coords[coIdx + 3] = 1.0f;
 
             final Vec2 vt = vtsSrc[vert[1]];
             target.texCoords[uvIdx] = vt.x;
@@ -523,7 +919,6 @@ public class MeshDirect {
             target.coords[coIdx] = v.x;
             target.coords[coIdx + 1] = v.y;
             target.coords[coIdx + 2] = v.z;
-            target.coords[coIdx + 3] = 1.0f;
 
             final Vec2 vt = vtsSrc[vert[1]];
             target.texCoords[uvIdx] = vt.x;

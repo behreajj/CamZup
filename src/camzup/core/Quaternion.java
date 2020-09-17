@@ -1533,19 +1533,19 @@ public class Quaternion implements Comparable < Quaternion > {
    public static Vec3 mulVector ( final Quaternion q, final Vec3 source,
       final Vec3 target ) {
 
-      final float w = q.real;
-      final Vec3 i = q.imag;
-      final float qx = i.x;
-      final float qy = i.y;
-      final float qz = i.z;
+      final Vec3 imag = q.imag;
+      final float qw = q.real;
+      final float qx = imag.x;
+      final float qy = imag.y;
+      final float qz = imag.z;
 
       final float iw = -qx * source.x - qy * source.y - qz * source.z;
-      final float ix = w * source.x + qy * source.z - qz * source.y;
-      final float iy = w * source.y + qz * source.x - qx * source.z;
-      final float iz = w * source.z + qx * source.y - qy * source.x;
+      final float ix = qw * source.x + qy * source.z - qz * source.y;
+      final float iy = qw * source.y + qz * source.x - qx * source.z;
+      final float iz = qw * source.z + qx * source.y - qy * source.x;
 
-      return target.set(ix * w + iz * qy - iw * qx - iy * qz, iy * w + ix * qz
-         - iw * qy - iz * qx, iz * w + iy * qx - iw * qz - ix * qy);
+      return target.set(ix * qw + iz * qy - iw * qx - iy * qz, iy * qw + ix * qz
+         - iw * qy - iz * qx, iz * qw + iy * qx - iw * qz - ix * qy);
    }
 
    /**

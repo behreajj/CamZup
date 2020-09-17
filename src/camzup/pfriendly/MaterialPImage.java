@@ -71,6 +71,13 @@ public class MaterialPImage extends MaterialUv {
       this.setTexture(texture);
    }
 
+   /**
+    * Tests this material for equivalence with another object.
+    * 
+    * @param obj the object
+    * 
+    * @return the equivalence
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -128,6 +135,11 @@ public class MaterialPImage extends MaterialUv {
     */
    public PImage getTexture ( ) { return this.texture; }
 
+   /**
+    * Returns a hash code for this material.
+    * 
+    * @return the hash code
+    */
    @Override
    public int hashCode ( ) {
 
