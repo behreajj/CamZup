@@ -1229,24 +1229,24 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       this.normals = new Vec3[] { Vec3.up(new Vec3()) };
 
       /* Copy faces. */
-      final int[][][] sourcefs = source.faces;
-      final int fslen0 = sourcefs.length;
-      this.faces = new int[fslen0][][];
+      final int[][][] fsSrc = source.faces;
+      final int fsSrcLen = fsSrc.length;
+      this.faces = new int[fsSrcLen][][];
 
-      for ( int i = 0; i < fslen0; ++i ) {
+      for ( int i = 0; i < fsSrcLen; ++i ) {
 
-         final int[][] source1 = sourcefs[i];
-         final int fslen1 = source1.length;
-         final int[][] target1 = new int[fslen1][];
-         this.faces[i] = target1;
+         final int[][] fSrc = fsSrc[i];
+         final int fSrcLen = fSrc.length;
+         final int[][] fTrg = new int[fSrcLen][];
+         this.faces[i] = fTrg;
 
-         for ( int j = 0; j < fslen1; ++j ) {
+         for ( int j = 0; j < fSrcLen; ++j ) {
 
-            final int[] source2 = source1[j];
-            final int fslen2 = source2.length;
-            final int[] target2 = new int[fslen2 + 1];
-            target1[j] = target2;
-            System.arraycopy(source2, 0, target2, 0, fslen2);
+            final int[] vertSrc = fSrc[j];
+            final int vertSrcLen = vertSrc.length;
+            final int[] vertTrg = new int[vertSrcLen + 1];
+            fTrg[j] = vertTrg;
+            System.arraycopy(vertSrc, 0, vertTrg, 0, vertSrcLen);
          }
       }
 
@@ -1265,48 +1265,44 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 set ( final Mesh3 source ) {
 
-      // TODO: Make a copy by value method?
-
       /* Copy coordinates. */
-      final Vec3[] sourcevs = source.coords;
-      final int vslen = sourcevs.length;
-      this.coords = Vec3.resize(this.coords, vslen);
-      for ( int i = 0; i < vslen; ++i ) { this.coords[i].set(sourcevs[i]); }
+      final Vec3[] vsSrc = source.coords;
+      final int vsLen = vsSrc.length;
+      this.coords = Vec3.resize(this.coords, vsLen);
+      for ( int i = 0; i < vsLen; ++i ) { this.coords[i].set(vsSrc[i]); }
 
       /* Copy texture coordinates. */
-      final Vec2[] sourcevts = source.texCoords;
-      final int vtslen = sourcevts.length;
-      this.texCoords = Vec2.resize(this.texCoords, vtslen);
-      for ( int j = 0; j < vtslen; ++j ) {
-         this.texCoords[j].set(sourcevts[j]);
-      }
+      final Vec2[] vtsSrc = source.texCoords;
+      final int vtsLen = vtsSrc.length;
+      this.texCoords = Vec2.resize(this.texCoords, vtsLen);
+      for ( int j = 0; j < vtsLen; ++j ) { this.texCoords[j].set(vtsSrc[j]); }
 
       /* Copy normals. */
-      final Vec3[] sourcevns = source.normals;
-      final int vnslen = sourcevns.length;
-      this.normals = Vec3.resize(this.normals, vnslen);
-      for ( int k = 0; k < vnslen; ++k ) { this.normals[k].set(sourcevns[k]); }
+      final Vec3[] vnsSrc = source.normals;
+      final int vnsLen = vnsSrc.length;
+      this.normals = Vec3.resize(this.normals, vnsLen);
+      for ( int k = 0; k < vnsLen; ++k ) { this.normals[k].set(vnsSrc[k]); }
 
       /* Copy faces. */
-      final int[][][] sourcefs = source.faces;
-      final int fslen0 = sourcefs.length;
-      this.faces = new int[fslen0][][];
+      final int[][][] fsSrc = source.faces;
+      final int fsSrcLen = fsSrc.length;
+      this.faces = new int[fsSrcLen][][];
 
-      for ( int i = 0; i < fslen0; ++i ) {
+      for ( int i = 0; i < fsSrcLen; ++i ) {
 
-         final int[][] source1 = sourcefs[i];
-         final int fslen1 = source1.length;
-         final int[][] target1 = new int[fslen1][];
-         this.faces[i] = target1;
+         final int[][] fSrc = fsSrc[i];
+         final int fSrcLen = fSrc.length;
+         final int[][] fTrg = new int[fSrcLen][];
+         this.faces[i] = fTrg;
 
-         for ( int j = 0; j < fslen1; ++j ) {
+         for ( int j = 0; j < fSrcLen; ++j ) {
 
-            final int[] source2 = source1[j];
-            final int fslen2 = source2.length;
-            final int[] target2 = new int[fslen2];
-            target1[j] = target2;
+            final int[] vertSrc = fSrc[j];
+            final int vertSrcLen = vertSrc.length;
+            final int[] vertTrg = new int[vertSrcLen];
+            fTrg[j] = vertTrg;
 
-            System.arraycopy(source2, 0, target2, 0, fslen2);
+            System.arraycopy(vertSrc, 0, vertTrg, 0, vertSrcLen);
          }
       }
 
@@ -1958,55 +1954,21 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public String toString ( final int places, final int trunc ) {
 
+      // TODO: Remove truncation?
+
       final StringBuilder sb = new StringBuilder(2048);
       sb.append("{ name: \"");
       sb.append(this.name);
       sb.append("\", materialIndex: ");
       sb.append(this.materialIndex);
-      sb.append(", coords: [ ");
+      sb.append(", coords: ");
+      sb.append(Vec3.toString(this.coords, places));
+      sb.append(", texCoords: ");
+      sb.append(Vec2.toString(this.texCoords, places));
+      sb.append(", normals: ");
+      sb.append(Vec3.toString(this.normals, places));
 
-      if ( this.coords != null ) {
-         final int len = this.coords.length <= trunc ? this.coords.length
-            : trunc;
-         final int last = len - 1;
-         for ( int i = 0; i < len; ++i ) {
-            sb.append(this.coords[i].toString(places));
-            if ( i < last ) { sb.append(',').append(' '); }
-         }
-
-         if ( this.coords.length > trunc ) { sb.append(" /* ... */"); }
-      }
-
-      sb.append(" ], ");
-      sb.append("texCoords: [ ");
-      if ( this.texCoords != null ) {
-         final int len = this.texCoords.length <= trunc ? this.texCoords.length
-            : trunc;
-         final int last = len - 1;
-         for ( int i = 0; i < len; ++i ) {
-            sb.append(this.texCoords[i].toString(places));
-            if ( i < last ) { sb.append(',').append(' '); }
-         }
-
-         if ( this.texCoords.length > trunc ) { sb.append(" /* ... */"); }
-      }
-
-      sb.append(" ], ");
-      sb.append("normals: [ ");
-      if ( this.normals != null ) {
-         final int len = this.normals.length <= trunc ? this.normals.length
-            : trunc;
-         final int last = len - 1;
-         for ( int i = 0; i < len; ++i ) {
-            sb.append(this.normals[i].toString(places));
-            if ( i < last ) { sb.append(',').append(' '); }
-         }
-
-         if ( this.normals.length > trunc ) { sb.append(" /* ... */"); }
-      }
-
-      sb.append(" ], ");
-      sb.append("faces: [ ");
+      sb.append(", faces: [ ");
       if ( this.faces != null ) {
          final int facesLen = this.faces.length <= trunc ? this.faces.length
             : trunc;
@@ -2042,97 +2004,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       sb.append(" ] }");
-      return sb.toString();
-   }
-
-   /**
-    * Renders the mesh as a string representing Unity code. This is brittle,
-    * it is used internally to compare results to other graphics engines.
-    *
-    * @return the string
-    */
-   @Experimental
-   public String toUnityCode ( ) {
-
-      final boolean calcTangents = true;
-      final boolean optimize = true;
-
-      final StringBuilder sb = new StringBuilder(4096);
-      sb.append("Mesh mesh = new Mesh();\n");
-
-      final StringBuilder vs = new StringBuilder(1024);
-      vs.append("Vector3[] vs = { \n");
-
-      final StringBuilder vts = new StringBuilder(1024);
-      vts.append("Vector2[] vts = { \n");
-
-      final StringBuilder vns = new StringBuilder(1024);
-      vns.append("Vector3[] vns = { \n");
-
-      final StringBuilder tris = new StringBuilder(1024);
-      tris.append("int[] tris = { \n");
-
-      final int fsLen = this.faces.length;
-      final int fsLast = fsLen - 1;
-      boolean triFlag = false;
-      for ( int k = 0, i = 0; i < fsLen; ++i ) {
-         final int[][] f = this.faces[i];
-         final int fLen = f.length;
-         if ( fLen != 3 && !triFlag ) {
-            System.err.println(
-               "Mesh has not been triangulated; it will be malformed in Unity.");
-            triFlag = true;
-         }
-         final int fLast = fLen - 1;
-         for ( int j = 0; j < fLen; ++j, ++k ) {
-            final int[] vert = f[j];
-
-            final Vec3 v = this.coords[vert[0]];
-            final Vec2 vt = this.texCoords[vert[1]];
-            final Vec3 vn = this.normals[vert[2]];
-
-            vs.append(v.toUnityCode());
-            vts.append(vt.toUnityCode());
-            vns.append(vn.toUnityCode());
-            tris.append(k);
-
-            if ( j < fLast ) {
-               vs.append(',').append(' ').append('\n');
-               vts.append(',').append(' ').append('\n');
-               vns.append(',').append(' ').append('\n');
-               tris.append(',').append(' ');
-            }
-         }
-
-         if ( i < fsLast ) {
-            vs.append(',').append(' ').append('\n').append('\n');
-            vts.append(',').append(' ').append('\n').append('\n');
-            vns.append(',').append(' ').append('\n').append('\n');
-            tris.append(',').append(' ').append('\n');
-         }
-      }
-
-      vs.append(' ').append('}').append(';');
-      vts.append(' ').append('}').append(';');
-      vns.append(' ').append('}').append(';');
-      tris.append(' ').append('}').append(';');
-
-      sb.append(vs.toString());
-      sb.append('\n').append('\n');
-      sb.append(vts.toString());
-      sb.append('\n').append('\n');
-      sb.append(vns.toString());
-      sb.append('\n').append('\n');
-      sb.append(tris.toString());
-      sb.append('\n').append('\n');
-
-      sb.append("mesh.vertices = vs;\n");
-      sb.append("mesh.uv = vts;\n");
-      sb.append("mesh.normals = vns;\n");
-      sb.append("mesh.triangles = tris;\n\n");
-
-      if ( calcTangents ) { sb.append("mesh.RecalculateTangents();\n"); }
-      if ( optimize ) { sb.append("mesh.Optimize();\n"); }
       return sb.toString();
    }
 
@@ -4177,6 +4048,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       /* Set faces. */
       final int faceStride = isTri ? 2 : 1;
       for ( int k = 0, i = 0; i < vpanl; ++i ) {
+
+         // TODO: Can these for loops be consolidated into the ones above?
          final int iVNext = ( i + 1 ) % vpanl;
 
          /* For converting from 2D to 1D array (idx = y * width + x) . */

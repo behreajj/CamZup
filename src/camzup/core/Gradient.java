@@ -1398,10 +1398,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       for ( int i = 0; i < lineLen; ++i ) {
          final String line = lines[i].trim().toLowerCase();
-         if ( line.equals("GIMP gradient") ) {
-         } else if ( line.indexOf("name:") > -1 ) {
-         } else if ( line.indexOf('#') == 0 ) {
-         } else {
+         if ( line.equals("GIMP gradient") ) {} else if ( line.indexOf("name:")
+            > -1 ) {} else if ( line.indexOf('#') == 0 ) {} else {
 
             /*
              * The last two tokens are integer values that represent enumeration

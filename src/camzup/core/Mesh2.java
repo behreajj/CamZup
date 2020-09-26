@@ -747,7 +747,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * Rounds a corner to an arc with a given radius. The number of points in
     * the arc is specified by the count; if the count is less than zero, a
     * flat miter is created. The corner's original coordinate is retained in
-    * case it is used by another face within the mesh.
+    * case it is used by another face within the mesh.<br>
+    * <br>
+    * Based on the discussion at <a href=
+    * "https://stackoverflow.com/questions/24771828/algorithm-for-creating-rounded-corners-in-a-polygon">Stack
+    * Overflow</a>.
     *
     * @param faceIdx   the face index
     * @param cornerIdx the corner index
@@ -760,24 +764,15 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public Mesh2 roundCorner ( final int faceIdx, final int cornerIdx,
       final float radius, final int count ) {
 
-      /*
-       * https://stackoverflow.com/questions/24771828/algorithm-for-creating-
-       * rounded-corners-in-a-polygon
-       */
-
-      final int facesLen = this.faces.length;
-      final int i = Utils.mod(faceIdx, facesLen);
+      final int i = Utils.mod(faceIdx, this.faces.length);
       final int[][] face = this.faces[i];
       final int faceLen = face.length;
 
-      final int currIdx = Utils.mod(cornerIdx, faceLen);
-      final int prevIdx = Utils.mod(currIdx - 1, faceLen);
-      final int nextIdx = ( currIdx + 1 ) % faceLen;
-
       /* Acquire vertices. */
+      final int currIdx = Utils.mod(cornerIdx, faceLen);
       final int[] currVert = face[currIdx];
-      final int[] prevVert = face[prevIdx];
-      final int[] nextVert = face[nextIdx];
+      final int[] prevVert = face[Utils.mod(currIdx - 1, faceLen)];
+      final int[] nextVert = face[ ( currIdx + 1 ) % faceLen];
 
       /* Acquire corner (current), next and previous coordinate. */
       final Vec2 vCurr = this.coords[currVert[0]];
@@ -790,7 +785,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final float d0Heading = Utils.atan2(d0y, d0x);
       final float d0MagSq = d0x * d0x + d0y * d0y;
       final float d0InvMag = Utils.invSqrt(d0MagSq);
-      final float d0Mag = d0MagSq * d0InvMag;
 
       /* Coordinate edge 1. */
       final float d1x = vCurr.x - vNext.x;
@@ -798,7 +792,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final float d1Heading = Utils.atan2(d1y, d1x);
       final float d1MagSq = d1x * d1x + d1y * d1y;
       final float d1InvMag = Utils.invSqrt(d1MagSq);
-      final float d1Mag = d1MagSq * d1InvMag;
 
       /* Validate radius on lower bound. */
       final float rad = Utils.max(IUtils.EPSILON, radius);
@@ -808,7 +801,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          * 0.5f));
       float vRad = rad;
       float vSeg = Utils.div(vRad, vTan);
-      final float vLen = Utils.min(d0Mag, d1Mag);
+      final float vLen = Utils.min(d0MagSq * d0InvMag, d1MagSq * d1InvMag);
       if ( vSeg > vLen ) {
          vSeg = vLen;
          vRad = vLen * vTan;
@@ -823,32 +816,30 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          * fac1);
 
       /* Acquire corner (current), next and previous texture coordinate. */
-      final Vec2 vtcurr = this.texCoords[currVert[1]];
-      final Vec2 vtprev = this.texCoords[prevVert[1]];
-      final Vec2 vtnext = this.texCoords[nextVert[1]];
+      final Vec2 vtCurr = this.texCoords[currVert[1]];
+      final Vec2 vtPrev = this.texCoords[prevVert[1]];
+      final Vec2 vtNext = this.texCoords[nextVert[1]];
 
       /* Texture coordinate edge 0. */
-      final float dt0x = vtcurr.x - vtprev.x;
-      final float dt0y = vtcurr.y - vtprev.y;
+      final float dt0x = vtCurr.x - vtPrev.x;
+      final float dt0y = vtCurr.y - vtPrev.y;
       final float dt0Heading = Utils.atan2(dt0y, dt0x);
       final float dt0MagSq = dt0x * dt0x + dt0y * dt0y;
       final float dt0InvMag = Utils.invSqrt(dt0MagSq);
-      final float dt0Mag = dt0MagSq * dt0InvMag;
 
       /* Texture coordinate edge 1. */
-      final float dt1x = vtcurr.x - vtnext.x;
-      final float dt1y = vtcurr.y - vtnext.y;
+      final float dt1x = vtCurr.x - vtNext.x;
+      final float dt1y = vtCurr.y - vtNext.y;
       final float dt1Heading = Utils.atan2(dt1y, dt1x);
       final float dt1MagSq = dt1x * dt1x + dt1y * dt1y;
       final float dt1InvMag = Utils.invSqrt(dt1MagSq);
-      final float dt1Mag = dt1MagSq * dt1InvMag;
 
       /* Ensure that texture coordinate radius is not longer than edge. */
       final float vtTan = Utils.abs(Utils.tan( ( dt0Heading - dt1Heading )
          * 0.5f));
       float vtRad = rad;
       float vtSeg = Utils.div(vtRad, vtTan);
-      final float vtLen = Utils.min(dt0Mag, dt1Mag);
+      final float vtLen = Utils.min(dt0MagSq * dt0InvMag, dt1MagSq * dt1InvMag);
       if ( vtSeg > vtLen ) {
          vtSeg = vtLen;
          vtRad = vtLen * vtTan;
@@ -857,9 +848,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       /* Find new coordinate corners. */
       final float fact0 = vtSeg * dt0InvMag;
       final float fact1 = vtSeg * dt1InvMag;
-      final Vec2 vtCorner0 = new Vec2(vtcurr.x - dt0x * fact0, vtcurr.y - dt0y
+      final Vec2 vtCorner0 = new Vec2(vtCurr.x - dt0x * fact0, vtCurr.y - dt0y
          * fact0);
-      final Vec2 vtCorner1 = new Vec2(vtcurr.x - dt1x * fact1, vtcurr.y - dt1y
+      final Vec2 vtCorner1 = new Vec2(vtCurr.x - dt1x * fact1, vtCurr.y - dt1y
          * fact1);
 
       /* If resolution is less than 1, draw a straight line segment. */
@@ -885,71 +876,80 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
        * Find origin of circle. Create an object in case this is helpful in the
        * future, e.g., is included in triangle fan.
        */
-      final float vxdelta = vCurr.x + vCurr.x - vCorner0.x - vCorner1.x;
-      final float vydelta = vCurr.y + vCurr.y - vCorner0.y - vCorner1.y;
-      final float vfac = Utils.hypot(vSeg, vRad) * Utils.invSqrt(vxdelta
-         * vxdelta + vydelta * vydelta);
-      final Vec2 vOrigin = new Vec2(vCurr.x - vxdelta * vfac, vCurr.y - vydelta
-         * vfac);
+      final float vxDelta = vCurr.x + vCurr.x - vCorner0.x - vCorner1.x;
+      final float vyDelta = vCurr.y + vCurr.y - vCorner0.y - vCorner1.y;
+      final float vFac = Utils.hypot(vSeg, vRad) * Utils.invSqrt(vxDelta
+         * vxDelta + vyDelta * vyDelta);
+      final float vxOrigin = vCurr.x - vxDelta * vFac;
+      final float vyOrigin = vCurr.y - vyDelta * vFac;
 
       /* For texture coordinate. */
-      final float vtxdelta = vtcurr.x + vtcurr.x - vtCorner0.x - vtCorner1.x;
-      final float vtydelta = vtcurr.y + vtcurr.y - vtCorner0.y - vtCorner1.y;
-      final float vtfac = Utils.hypot(vtSeg, vtRad) * Utils.invSqrt(vtxdelta
-         * vtxdelta + vtydelta * vtydelta);
-      final Vec2 vtOrigin = new Vec2(vtcurr.x - vtxdelta * vtfac, vtcurr.y
-         - vtydelta * vtfac);
+      final float vtxDelta = vtCurr.x + vtCurr.x - vtCorner0.x - vtCorner1.x;
+      final float vtyDelta = vtCurr.y + vtCurr.y - vtCorner0.y - vtCorner1.y;
+      final float vtFac = Utils.hypot(vtSeg, vtRad) * Utils.invSqrt(vtxDelta
+         * vtxDelta + vtyDelta * vtyDelta);
+      final float vtxOrigin = vtCurr.x - vtxDelta * vtFac;
+      final float vtyOrigin = vtCurr.y - vtyDelta * vtFac;
 
       final int countn1 = count - 1;
       final float toStep = 1.0f / countn1;
 
-      final Vec2[] newCoords = new Vec2[count];
-      final Vec2[] newTexCoords = new Vec2[count];
+      final Vec2[] vsNew = new Vec2[count];
+      final Vec2[] vtsNew = new Vec2[count];
 
       final int[][] newIndices = new int[count][2];
       final int newCoordIdx = this.coords.length;
       final int newTexCoordIdx = this.texCoords.length;
 
       /* Add initial coordinate to new coordinates. */
-      newCoords[0] = vCorner0;
-      newTexCoords[0] = vtCorner0;
-      newIndices[0] = new int[] { newCoordIdx, newTexCoordIdx };
+      vsNew[0] = vCorner0;
+      vtsNew[0] = vtCorner0;
+
+      int[] vertCurr = newIndices[0];
+      vertCurr[0] = newCoordIdx;
+      vertCurr[1] = newTexCoordIdx;
 
       /* Create points along arc. */
       final int countn2 = count - 2;
       for ( int j = 0, k = 1; j < countn2; ++j, ++k ) {
-         final Vec2 v = newCoords[k] = new Vec2();
-         final Vec2 vt = newTexCoords[k] = new Vec2();
          final float t = k * toStep;
          final float u = 1.0f - t;
 
          /* Lerp, subtract pivot, normalize, re-scale, add pivot. */
-         v.set(u * vCorner0.x + t * vCorner1.x, u * vCorner0.y + t
-            * vCorner1.y);
-         Vec2.sub(v, vOrigin, v);
+         final Vec2 v = vsNew[k] = new Vec2(u * vCorner0.x + t * vCorner1.x, u
+            * vCorner0.y + t * vCorner1.y);
+         v.x -= vxOrigin;
+         v.y -= vyOrigin;
          Vec2.rescale(v, vRad, v);
-         Vec2.add(v, vOrigin, v);
+         v.x += vxOrigin;
+         v.y += vyOrigin;
 
          /* For texture coordinates. */
-         vt.set(u * vtCorner0.x + t * vtCorner1.x, u * vtCorner0.y + t
-            * vtCorner1.y);
-         Vec2.sub(vt, vtOrigin, vt);
+         final Vec2 vt = vtsNew[k] = new Vec2(u * vtCorner0.x + t * vtCorner1.x,
+            u * vtCorner0.y + t * vtCorner1.y);
+         vt.x -= vtxOrigin;
+         vt.y -= vtyOrigin;
          Vec2.rescale(vt, vtRad, vt);
-         Vec2.add(vt, vtOrigin, vt);
+         vt.x += vtxOrigin;
+         vt.y += vtyOrigin;
 
-         newIndices[k] = new int[] { newCoordIdx + k, newTexCoordIdx + k };
+         vertCurr = newIndices[k];
+         vertCurr[0] = newCoordIdx + k;
+         vertCurr[1] = newTexCoordIdx + k;
       }
 
       /* Add final corner to new coordinates. */
-      newCoords[countn1] = vCorner1;
-      newTexCoords[countn1] = vtCorner1;
-      newIndices[countn1] = new int[] { newCoordIdx + countn1, newTexCoordIdx
-         + countn1 };
+      vsNew[countn1] = vCorner1;
+      vtsNew[countn1] = vtCorner1;
+
+      vertCurr = newIndices[countn1];
+      vertCurr[0] = newCoordIdx + countn1;
+      vertCurr[1] = newTexCoordIdx + countn1;
 
       /* Splice into existing data. */
       this.faces[i] = Mesh.splice(face, currIdx, 1, newIndices);
-      this.coords = Vec2.concat(this.coords, newCoords);
-      this.texCoords = Vec2.concat(this.texCoords, newTexCoords);
+      this.coords = Vec2.concat(this.coords, vsNew);
+      this.texCoords = Vec2.concat(this.texCoords, vtsNew);
 
       return this;
    }
@@ -993,6 +993,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          this.roundCorner(faceIdx, k, radius, vcount);
          k += vcount;
       }
+
       return this;
    }
 
@@ -1071,39 +1072,37 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public Mesh2 set ( final Mesh2 source ) {
 
       /* Copy coordinates. */
-      final Vec2[] sourcevs = source.coords;
-      final int vslen = sourcevs.length;
-      this.coords = Vec2.resize(this.coords, vslen);
-      for ( int i = 0; i < vslen; ++i ) { this.coords[i].set(sourcevs[i]); }
+      final Vec2[] vsSrc = source.coords;
+      final int vsLen = vsSrc.length;
+      this.coords = Vec2.resize(this.coords, vsLen);
+      for ( int i = 0; i < vsLen; ++i ) { this.coords[i].set(vsSrc[i]); }
 
       /* Copy texture coordinates. */
-      final Vec2[] sourcevts = source.texCoords;
-      final int vtslen = sourcevts.length;
-      this.texCoords = Vec2.resize(this.texCoords, vtslen);
-      for ( int i = 0; i < vtslen; ++i ) {
-         this.texCoords[i].set(sourcevts[i]);
-      }
+      final Vec2[] vtsSrc = source.texCoords;
+      final int vtsLen = vtsSrc.length;
+      this.texCoords = Vec2.resize(this.texCoords, vtsLen);
+      for ( int i = 0; i < vtsLen; ++i ) { this.texCoords[i].set(vtsSrc[i]); }
 
       /* Copy faces. */
-      final int[][][] sourcefs = source.faces;
-      final int fslen0 = sourcefs.length;
-      this.faces = new int[fslen0][][];
+      final int[][][] fsSrc = source.faces;
+      final int fsSrcLen = fsSrc.length;
+      this.faces = new int[fsSrcLen][][];
 
-      for ( int i = 0; i < fslen0; ++i ) {
+      for ( int i = 0; i < fsSrcLen; ++i ) {
 
-         final int[][] source1 = sourcefs[i];
-         final int fslen1 = source1.length;
-         final int[][] target1 = new int[fslen1][];
-         this.faces[i] = target1;
+         final int[][] fSrc = fsSrc[i];
+         final int fSrcLen = fSrc.length;
+         final int[][] fTrg = new int[fSrcLen][];
+         this.faces[i] = fTrg;
 
-         for ( int j = 0; j < fslen1; ++j ) {
+         for ( int j = 0; j < fSrcLen; ++j ) {
 
-            final int[] source2 = source1[j];
-            final int fslen2 = source2.length;
-            final int[] target2 = new int[fslen2];
-            target1[j] = target2;
+            final int[] vertSrc = fSrc[j];
+            final int vertSrcLen = vertSrc.length;
+            final int[] vertTrg = new int[vertSrcLen];
+            fTrg[j] = vertTrg;
 
-            System.arraycopy(source2, 0, target2, 0, fslen2);
+            System.arraycopy(vertSrc, 0, vertTrg, 0, vertSrcLen);
          }
       }
 
@@ -1584,41 +1583,19 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public String toString ( final int places, final int trunc ) {
 
+      // TODO: Remove truncation?
+
       final StringBuilder sb = new StringBuilder(2048);
       sb.append("{ name: \"");
       sb.append(this.name);
       sb.append("\", materialIndex: ");
       sb.append(this.materialIndex);
-      sb.append(", coords: [ ");
+      sb.append(", coords: ");
+      sb.append(Vec2.toString(this.coords, places));
+      sb.append(", texCoords: ");
+      sb.append(Vec2.toString(this.texCoords, places));
 
-      if ( this.coords != null ) {
-         final int len = this.coords.length <= trunc ? this.coords.length
-            : trunc;
-         final int last = len - 1;
-         for ( int i = 0; i < len; ++i ) {
-            sb.append(this.coords[i].toString(places));
-            if ( i < last ) { sb.append(',').append(' '); }
-         }
-
-         if ( this.coords.length > trunc ) { sb.append(" /* ... */"); }
-      }
-
-      sb.append(" ], ");
-      sb.append("texCoords: [ ");
-      if ( this.texCoords != null ) {
-         final int len = this.texCoords.length <= trunc ? this.texCoords.length
-            : trunc;
-         final int last = len - 1;
-         for ( int i = 0; i < len; ++i ) {
-            sb.append(this.texCoords[i].toString(places));
-            if ( i < last ) { sb.append(',').append(' '); }
-         }
-
-         if ( this.texCoords.length > trunc ) { sb.append(" /* ... */"); }
-      }
-
-      sb.append(" ], ");
-      sb.append("faces: [ ");
+      sb.append(", faces: [ ");
       if ( this.faces != null ) {
          final int facesLen = this.faces.length <= trunc ? this.faces.length
             : trunc;

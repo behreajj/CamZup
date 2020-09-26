@@ -1619,27 +1619,6 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Returns a String representation of a one dimensional array of objects.
-    *
-    * @param arr the array
-    *
-    * @return the String
-    */
-   public static String toString ( final Object[] arr ) {
-
-      final int len = arr.length;
-      final int last = len - 1;
-      final StringBuilder sb = new StringBuilder(len * 32);
-      sb.append('[').append(' ');
-      for ( int i = 0; i < arr.length; ++i ) {
-         sb.append(arr[i].toString());
-         if ( i < last ) { sb.append(',').append(' '); }
-      }
-      sb.append(' ').append(']');
-      return sb.toString();
-   }
-
-   /**
     * Truncates the input value. This is an alias for explicitly casting a
     * float to an integer, then implicitly casting the integral to a float.
     *

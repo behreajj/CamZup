@@ -336,48 +336,6 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Returns a String formatted as C# code for the Unity API; creates a
-    * <code>Vector2</code>.
-    *
-    * @param z the z component
-    *
-    * @return the string
-    */
-   @Experimental
-   String toUnityCode ( ) {
-
-      final StringBuilder sb = new StringBuilder(96);
-      sb.append("new Vector2(");
-      sb.append(this.x);
-      sb.append("f, ");
-      sb.append(this.y);
-      sb.append("f)");
-      return sb.toString();
-   }
-
-   /**
-    * Returns a String formatted as C# code for the Unity API; creates a
-    * <code>Vector3</code>.
-    *
-    * @param z the z component
-    *
-    * @return the string
-    */
-   @Experimental
-   String toUnityCode ( final float z ) {
-
-      final StringBuilder sb = new StringBuilder(96);
-      sb.append("new Vector3(");
-      sb.append(this.x);
-      sb.append("f, ");
-      sb.append(this.y);
-      sb.append("f, ");
-      sb.append(z);
-      sb.append("f)");
-      return sb.toString();
-   }
-
-   /**
     * Tests equivalence between this and another vector. For rough equivalence
     * of floating point components, use the static approximation function
     * instead.
@@ -2645,6 +2603,32 @@ public class Vec2 implements Comparable < Vec2 > {
       Vec2.sub(a, b, dir);
       Vec2.normalize(dir, target);
       return target;
+   }
+
+   /**
+    * Returns a string representation of an array of vectors.
+    *
+    * @param arr    the array
+    * @param places the print precision
+    *
+    * @return the string
+    */
+   public static String toString ( final Vec2[] arr, final int places ) {
+
+      final StringBuilder sb = new StringBuilder(1024);
+      sb.append('[').append(' ');
+      if ( arr != null ) {
+         final int len = arr.length;
+         final int last = len - 1;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec2 v = arr[i];
+            sb.append(v != null ? v.toString(places) : "null");
+            if ( i < last ) { sb.append(','); }
+            sb.append(' ');
+         }
+      }
+      sb.append(']');
+      return sb.toString();
    }
 
    /**

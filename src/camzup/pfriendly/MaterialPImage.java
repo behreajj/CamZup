@@ -73,9 +73,9 @@ public class MaterialPImage extends MaterialUv {
 
    /**
     * Tests this material for equivalence with another object.
-    * 
+    *
     * @param obj the object
-    * 
+    *
     * @return the equivalence
     */
    @Override
@@ -137,7 +137,7 @@ public class MaterialPImage extends MaterialUv {
 
    /**
     * Returns a hash code for this material.
-    * 
+    *
     * @return the hash code
     */
    @Override

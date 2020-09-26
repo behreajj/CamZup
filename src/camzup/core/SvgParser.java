@@ -146,6 +146,7 @@ abstract class SvgParser {
     */
    public static CurveEntity2 parse ( final String fileName ) {
 
+      // TODO: Refactor...
       final CurveEntity2 result = new CurveEntity2();
 
       try {

@@ -53,11 +53,7 @@ public class MeshDirect {
    public MeshDirect ( final int[] indices, final float[] coords,
       final float[] texCoords, final float[] normals, final float[] colors ) {
 
-      this.indices = indices;
-      this.coords = coords;
-      this.texCoords = texCoords;
-      this.normals = normals;
-      this.colors = colors;
+      this.set(indices, coords, texCoords, normals, colors);
    }
 
    /**
@@ -479,6 +475,29 @@ public class MeshDirect {
    }
 
    /**
+    * Assigns arrays of data to a mesh.
+    *
+    * @param indices   the face indices
+    * @param coords    the coordinates
+    * @param texCoords the texture coordinates
+    * @param normals   the normals
+    * @param colors    the vertex colors
+    *
+    * @return this mesh
+    */
+   public MeshDirect set ( final int[] indices, final float[] coords,
+      final float[] texCoords, final float[] normals, final float[] colors ) {
+
+      this.indices = indices;
+      this.coords = coords;
+      this.texCoords = texCoords;
+      this.normals = normals;
+      this.colors = colors;
+
+      return this;
+   }
+
+   /**
     * Sets a vertex color at an index.
     *
     * @param i the index
@@ -683,6 +702,72 @@ public class MeshDirect {
       sb.append(Utils.toString(this.colors, places));
       sb.append(" }");
       return sb.toString();
+   }
+
+   public MeshDirect transformCoord ( final int i, final float m00,
+      final float m01, final float m02, final float m03, final float m10,
+      final float m11, final float m12, final float m13, final float m20,
+      final float m21, final float m22, final float m23, final float m30,
+      final float m31, final float m32, final float m33 ) {
+
+      final int j = i * MeshDirect.COORD_STRIDE;
+      final float x = this.coords[j];
+      final float y = this.coords[j + 1];
+      final float z = this.coords[j + 2];
+
+      final float w = m30 * x + m31 * y + m32 * z + m33;
+      final float wInv = w != 0.0f ? 1.0f / w : 0.0f;
+      this.coords[j] = ( m00 * x + m01 * y + m02 * z + m03 ) * wInv;
+      this.coords[j + 1] = ( m10 * x + m11 * y + m12 * z + m13 ) * wInv;
+      this.coords[j + 2] = ( m20 * x + m21 * y + m22 * z + m23 ) * wInv;
+
+      return this;
+   }
+
+   public MeshDirect transformCoord ( final int i, final Mat3 m ) {
+
+      return this.transformCoord(i, m.m00, m.m01, 0.0f, m.m02, m.m10, m.m11,
+         0.0f, m.m12, 0.0f, 0.0f, 1.0f, 0.0f, m.m20, m.m21, 0.0f, m.m22);
+   }
+
+   public MeshDirect transformCoord ( final int i, final Mat4 m ) {
+
+      return this.transformCoord(i, m.m00, m.m01, m.m02, m.m03, m.m10, m.m11,
+         m.m12, m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
+   }
+
+   public MeshDirect transformCoords ( final float m00, final float m01,
+      final float m02, final float m03, final float m10, final float m11,
+      final float m12, final float m13, final float m20, final float m21,
+      final float m22, final float m23, final float m30, final float m31,
+      final float m32, final float m33 ) {
+
+      final int len = this.coords.length;
+      for ( int j = 0; j < len; j += MeshDirect.COORD_STRIDE ) {
+         final float x = this.coords[j];
+         final float y = this.coords[j + 1];
+         final float z = this.coords[j + 2];
+
+         final float w = m30 * x + m31 * y + m32 * z + m33;
+         final float wInv = w != 0.0f ? 1.0f / w : 0.0f;
+         this.coords[j] = ( m00 * x + m01 * y + m02 * z + m03 ) * wInv;
+         this.coords[j + 1] = ( m10 * x + m11 * y + m12 * z + m13 ) * wInv;
+         this.coords[j + 2] = ( m20 * x + m21 * y + m22 * z + m23 ) * wInv;
+      }
+
+      return this;
+   }
+
+   public MeshDirect transformCoords ( final Mat3 m ) {
+
+      return this.transformCoords(m.m00, m.m01, 0.0f, m.m02, m.m10, m.m11, 0.0f,
+         m.m12, 0.0f, 0.0f, 1.0f, 0.0f, m.m20, m.m21, 0.0f, m.m22);
+   }
+
+   public MeshDirect transformCoords ( final Mat4 m ) {
+
+      return this.transformCoords(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11,
+         m.m12, m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
    /**
