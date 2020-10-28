@@ -1561,29 +1561,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public String toString ( ) { return this.toString(4); }
 
    /**
-    * Returns a string representation of the mesh.
+    * Returns a string representation of the mesh. Includes an option to
+    * truncate the listing in case of large meshes.
     *
     * @param places the number of places
     *
     * @return the string
     */
    public String toString ( final int places ) {
-
-      return this.toString(places, Integer.MAX_VALUE);
-   }
-
-   /**
-    * Returns a string representation of the mesh. Includes an option to
-    * truncate the listing in case of large meshes.
-    *
-    * @param places the number of places
-    * @param trunc  truncate elements in a list
-    *
-    * @return the string
-    */
-   public String toString ( final int places, final int trunc ) {
-
-      // TODO: Remove truncation?
 
       final StringBuilder sb = new StringBuilder(2048);
       sb.append("{ name: \"");
@@ -1597,8 +1582,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       sb.append(", faces: [ ");
       if ( this.faces != null ) {
-         final int facesLen = this.faces.length <= trunc ? this.faces.length
-            : trunc;
+         final int facesLen = this.faces.length;
          final int facesLast = facesLen - 1;
 
          for ( int i = 0; i < facesLen; ++i ) {
@@ -1625,8 +1609,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             sb.append(' ').append(']');
             if ( i < facesLast ) { sb.append(',').append(' '); }
          }
-
-         if ( this.faces.length > trunc ) { sb.append(" /* ... */"); }
       }
 
       sb.append(" ] }");
@@ -1980,14 +1962,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          return Mesh2.ring(oculus, sectors, poly, target);
       }
 
-      final int sctCount = Utils.ceil(1 + ( sectors < 3 ? 3 : sectors )
-         * ( float ) arcLen1);
+      final int sctCount = ( int ) Math.ceil(1.0d + ( sectors < 3 ? 3.0d
+         : sectors ) * arcLen1);
       final int sctCount2 = sctCount + sctCount;
       final Vec2[] vs = target.coords = Vec2.resize(target.coords, sctCount2);
       final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
          sctCount2);
 
-      final float annul = Utils.clamp(oculus, IUtils.EPSILON, 1.0f
+      final double annul = Utils.clamp(oculus, IUtils.EPSILON, 1.0d
          - IUtils.EPSILON);
       final double annRad = annul * 0.5d;
 

@@ -261,8 +261,8 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Recolors an image in-place with a color gradient. The image's luminance
-    * is used as the factor.
+    * Recolors an image in-place with a color gradient. The evaluation factor
+    * is the product of a pixel's luminance and its transparency.
     *
     * @param grd    the color gradient
     * @param target the target image
@@ -275,7 +275,12 @@ public class ZImage extends PImage {
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         px[i] = Gradient.eval(grd, Color.luminance(px[i]));
+
+         // int alpha = px[i] & 0xff000000;
+         // px[i] = alpha | Gradient.eval(grd, Color.luminance(px[i]));
+
+         final float alpha = ( px[i] >> 0x18 & 0xff ) * IUtils.ONE_255;
+         px[i] = Gradient.eval(grd, alpha * Color.luminance(px[i]));
       }
       target.updatePixels();
       return target;
@@ -672,6 +677,10 @@ public class ZImage extends PImage {
 
       }
 
+      // TODO: Because the pixel assignment below is cumulative (|=), not a
+      // complete reassignment, you could try filling with bg color here...
+      // Compositing might be an issue, e.g. if green is composited over red it
+      // should be green, not yellow.
       final PImage target = new PImage(wMax, hTotal, PConstants.ARGB, 1);
       target.loadPixels();
       final int[] trgPx = target.pixels;
@@ -729,8 +738,7 @@ public class ZImage extends PImage {
                             * blue channel, to ARGB. Composite target and
                             * source, then composite in tint color.
                             */
-                           trgPx[idxTrg] = trgPx[idxTrg] | srcPx[idxSrc] << 0x18
-                              | vClr;
+                           trgPx[idxTrg] |= srcPx[idxSrc] << 0x18 | vClr;
                         }
                      }
 

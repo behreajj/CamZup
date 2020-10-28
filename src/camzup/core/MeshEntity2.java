@@ -563,20 +563,12 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    /**
     * Returns a string representation of this mesh entity.
     *
+    * @param places   number of places
+    *
     * @return the string
     */
    @Override
-   public String toString ( ) { return this.toString(4, 8); }
-
-   /**
-    * Returns a string representation of this mesh entity.
-    *
-    * @param places   number of places
-    * @param truncate count before list is truncated
-    *
-    * @return the string
-    */
-   public String toString ( final int places, final int truncate ) {
+   public String toString ( final int places ) {
 
       final StringBuilder sb = new StringBuilder(1024);
       sb.append("{ name: \"");
@@ -588,7 +580,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       final Iterator < Mesh2 > itr = this.meshes.iterator();
       while ( itr.hasNext() ) {
-         sb.append(itr.next().toString(places, truncate));
+         sb.append(itr.next().toString(places));
          if ( itr.hasNext() ) { sb.append(',').append(' '); }
       }
 

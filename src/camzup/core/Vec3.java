@@ -3037,16 +3037,22 @@ public class Vec3 implements Comparable < Vec3 > {
 
       final StringBuilder sb = new StringBuilder(1024);
       sb.append('[').append(' ');
+
       if ( arr != null ) {
          final int len = arr.length;
          final int last = len - 1;
-         for ( int i = 0; i < len; ++i ) {
+
+         for ( int i = 0; i < last; ++i ) {
             final Vec3 v = arr[i];
             sb.append(v != null ? v.toString(places) : "null");
-            if ( i < last ) { sb.append(','); }
-            sb.append(' ');
+            sb.append(',').append(' ');
          }
+
+         final Vec3 vl = arr[last];
+         sb.append(vl != null ? vl.toString(places) : "null");
+         sb.append(' ');
       }
+
       sb.append(']');
       return sb.toString();
    }

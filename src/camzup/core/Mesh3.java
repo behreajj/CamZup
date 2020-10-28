@@ -506,6 +506,23 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Negates all normals in this mesh.
+    *
+    * @return this mesh
+    *
+    * @see Vec3#negate(Vec3, Vec3)
+    */
+   public Mesh3 flipNormals ( ) {
+
+      final int len = this.normals.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Vec3 n = this.normals[i];
+         Vec3.negate(n, n);
+      }
+      return this;
+   }
+
+   /**
     * Gets an edge from the mesh.
     *
     * @param i      the face index
@@ -1932,29 +1949,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public String toString ( ) { return this.toString(4); }
 
    /**
-    * Returns a string representation of the mesh.
+    * Returns a string representation of the mesh. Includes an option to
+    * truncate the listing in case of large meshes.
     *
     * @param places the number of places
     *
     * @return the string
     */
    public String toString ( final int places ) {
-
-      return this.toString(places, Integer.MAX_VALUE);
-   }
-
-   /**
-    * Returns a string representation of the mesh. Includes an option to
-    * truncate the listing in case of large meshes.
-    *
-    * @param places the number of places
-    * @param trunc  truncate elements in a list
-    *
-    * @return the string
-    */
-   public String toString ( final int places, final int trunc ) {
-
-      // TODO: Remove truncation?
 
       final StringBuilder sb = new StringBuilder(2048);
       sb.append("{ name: \"");
@@ -1970,8 +1972,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       sb.append(", faces: [ ");
       if ( this.faces != null ) {
-         final int facesLen = this.faces.length <= trunc ? this.faces.length
-            : trunc;
+         final int facesLen = this.faces.length;
          final int facesLast = facesLen - 1;
 
          for ( int i = 0; i < facesLen; ++i ) {
@@ -1999,8 +2000,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             sb.append(' ').append(']');
             if ( i < facesLast ) { sb.append(',').append(' '); }
          }
-
-         if ( this.faces.length > trunc ) { sb.append(" /* ... */"); }
       }
 
       sb.append(" ] }");
@@ -2490,12 +2489,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       for ( int i = 0, k = vsect; i < vsect; ++i, ++k ) {
          final int vCurrent = 2 + i;
          final int vtCurrent = 1 + i;
-         final int vnCurrent = 2 + i;
+         // final int vnCurrent = 2 + i;
 
          final int imod = ( i + 1 ) % vsect;
          final int vNext = 2 + imod;
          final int vtNext = 1 + imod;
-         final int vnNext = 2 + imod;
+         // final int vnNext = 2 + imod;
 
          final float theta = i * toTheta;
          final float cost = Utils.scNorm(theta);
@@ -2542,11 +2541,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          side1[0] = vCurrent;
          side1[1] = vtCurrent;
-         side1[2] = vnCurrent;
+         // side1[2] = vnCurrent;
+         side1[2] = vCurrent;
 
          side2[0] = vNext;
          side2[1] = vtNext;
-         side2[2] = vnNext;
+         // side2[2] = vnNext;
+         side2[2] = vNext;
       }
 
       return target;
@@ -2654,7 +2655,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates a cube, subdivides, casts the vertices to a sphere, then
+    * Creates a cube, subdivides it, casts its vertices to a sphere, then
     * triangulates its faces. The higher the iteration, the more spherical the
     * result, at the cost of speed.
     *
@@ -2670,7 +2671,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates a cube, subdivides, casts the vertices to a sphere, then
+    * Creates a cube, subdivides it, casts its vertices to a sphere, then
     * triangulates its faces. The higher the iteration, the more spherical the
     * result at the cost of performance.
     *
@@ -2701,7 +2702,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates a cube, subdivides, casts the vertices to a sphere. For
+    * Creates a cube, subdivides it, casts its vertices to a sphere. For
     * iterations, uses {@link Mesh3#DEFAULT_SPHERE_ITR},
     * {@value Mesh3#DEFAULT_SPHERE_ITR}.
     *
@@ -2839,9 +2840,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             vtsTrg[j] = new Vec2(vtsSrc[vertSrc[1]]);
             vnsTrg[j] = new Vec3(vnsSrc[vertSrc[2]]);
 
-            fTrg[j][0] = j;
-            fTrg[j][1] = j;
-            fTrg[j][2] = j;
+            final int[] vertTrg = fTrg[j];
+            vertTrg[0] = j;
+            vertTrg[1] = j;
+            vertTrg[2] = j;
          }
 
          meshes[i] = new Mesh3(fsTrg, vsTrg, vtsTrg, vnsTrg);

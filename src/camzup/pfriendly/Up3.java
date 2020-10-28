@@ -69,7 +69,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * The default constructor.
     */
-   public Up3 ( ) { super(); }
+   protected Up3 ( ) { super(); }
 
    /**
     * A constructor for manually initializing the renderer.
@@ -80,7 +80,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * @param path      applet path
     * @param isPrimary is the renderer primary
     */
-   public Up3 ( final int width, final int height, final PApplet parent,
+   protected Up3 ( final int width, final int height, final PApplet parent,
       final String path, final boolean isPrimary ) {
 
       super(width, height, parent, path, isPrimary);

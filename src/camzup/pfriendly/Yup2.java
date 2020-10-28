@@ -154,6 +154,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param zx      the zoom x
     * @param zy      the zoom y
     *
+    * @see Utils#abs(float)
     * @see Utils#min(float, float)
     * @see Utils#modRadians(float)
     */

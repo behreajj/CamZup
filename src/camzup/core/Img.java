@@ -488,8 +488,8 @@ public class Img implements Iterable < Color > {
    }
 
    /**
-    * Recolors an image in-place with a color gradient. The image's luminance
-    * is used as the input factor.
+    * Recolors an image in-place with a color gradient. The evaluation factor
+    * is the product of a pixel's luminance and its transparency.
     *
     * @param grd    the gradient
     * @param target the output image
@@ -501,12 +501,11 @@ public class Img implements Iterable < Color > {
     */
    public static Img falseColor ( final Gradient grd, final Img target ) {
 
-      // TODO: False color with external function? See ZImage.
-
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         px[i] = Gradient.eval(grd, Color.luminance(px[i]));
+         final float alpha = ( px[i] >> 0x18 & 0xff ) * IUtils.ONE_255;
+         px[i] = Gradient.eval(grd, alpha * Color.luminance(px[i]));
       }
       return target;
    }
