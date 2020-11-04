@@ -202,6 +202,7 @@ public abstract class Generative {
     *
     * @author Bob Jenkins
     */
+   @SuppressWarnings ( "all" )
    protected static int hash ( int a, int b, int c ) {
 
       // QUERY: Is there any way to make a 2d version of this with fewer

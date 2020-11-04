@@ -563,7 +563,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    /**
     * Returns a string representation of this mesh entity.
     *
-    * @param places   number of places
+    * @param places number of places
     *
     * @return the string
     */

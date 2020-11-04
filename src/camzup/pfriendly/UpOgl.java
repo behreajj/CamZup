@@ -42,7 +42,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * A curve to hold the arc data.
     */
-   protected final Curve2 arc;
+   protected final Curve2 arc = new Curve2();
 
    /**
     * The arc-mode.
@@ -52,17 +52,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * A placeholder color used during lerpColor.
     */
-   protected final Color aTemp;
+   protected final Color aTemp = new Color();
 
    /**
     * A placeholder color used during lerpColor.
     */
-   protected final Color bTemp;
+   protected final Color bTemp = new Color();
 
    /**
     * A placeholder color used during lerpColor.
     */
-   protected final Color cTemp;
+   protected final Color cTemp = new Color();
 
    /**
     * One divided by the maximum for the alpha channel.
@@ -87,34 +87,28 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * A placeholder vector used during transform.
     */
-   protected final Vec2 tr2Loc;
+   protected final Vec2 tr2Loc = new Vec2();
 
    /**
     * A placeholder vector used during transform.
     */
-   protected final Vec2 tr2Scale;
+   protected final Vec2 tr2Scale = new Vec2();
 
    /**
     * A placeholder transform used during transform.
     */
-   protected final Transform2 transform;
-
-   {
-      this.arc = new Curve2();
-      this.aTemp = new Color();
-      this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
-      this.bTemp = new Color();
-      this.cTemp = new Color();
-      this.curveToBezierMatrix = new PMatrix3D();
-      this.tr2Loc = new Vec2();
-      this.tr2Scale = new Vec2();
-      this.transform = new Transform2();
-   }
+   protected final Transform2 transform = new Transform2();
 
    /**
     * The default constructor.
     */
-   public UpOgl ( ) { super(); }
+   protected UpOgl ( ) {
+
+      super();
+
+      this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
+      this.curveToBezierMatrix = new PMatrix3D();
+   }
 
    /**
     * A constructor for manually initializing the renderer.
@@ -125,13 +119,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param path      applet path
     * @param isPrimary is the renderer primary
     */
-   public UpOgl ( final int width, final int height, final PApplet parent,
+   protected UpOgl ( final int width, final int height, final PApplet parent,
       final String path, final boolean isPrimary ) {
 
       this.setParent(parent);
       this.setPrimary(isPrimary);
       this.setPath(path);
       this.setSize(width, height);
+
+      this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
+      this.curveToBezierMatrix = new PMatrix3D();
    }
 
    /**
@@ -1113,7 +1110,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.texture(img);
       switch ( this.imageMode ) {
 
-         case CORNER:
+         case PConstants.CORNER:
 
             this.vertexImpl(x1, y1, z, u1, v1);
             this.vertexImpl(x1 + x2, y1, z, u2, v1);
@@ -1122,7 +1119,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case CORNERS:
+         case PConstants.CORNERS:
 
             this.vertexImpl(x1, y1, z, u1, v2);
             this.vertexImpl(x2, y1, z, u2, v2);
@@ -1131,7 +1128,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case RADIUS:
+         case PConstants.RADIUS:
 
             this.vertexImpl(x1 - x2, y1 + y2, z, u1, v1);
             this.vertexImpl(x1 + x2, y1 + y2, z, u2, v1);
@@ -1140,7 +1137,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case CENTER:
+         case PConstants.CENTER:
 
          default:
 
@@ -1459,10 +1456,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void perspective ( final float fov ) {
 
-      final float aspect = this.width < 128 && this.height < 128
-         ? IUp.DEFAULT_ASPECT : this.width / ( float ) this.height;
-
-      this.perspective(fov, aspect);
+      this.perspective(fov, this.width < 128 && this.height < 128
+         ? IUp.DEFAULT_ASPECT : this.width / ( float ) this.height);
    }
 
    /**
@@ -1474,14 +1469,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void perspective ( final float fov, final float aspect ) {
 
-      final float xsq = this.cameraX * this.cameraX;
-      final float ysq = this.cameraY * this.cameraY;
-      final float zsq = this.cameraZ * this.cameraZ;
-      final float offset = Utils.sqrt(xsq + ysq + zsq);
-      final float near = IUp.DEFAULT_NEAR_CLIP;
-      final float far = offset + this.eyeDist * IUp.DEFAULT_FAR_CLIP;
-
-      this.perspective(fov, aspect, near, far);
+      this.perspective(fov, aspect, IUp.DEFAULT_NEAR_CLIP, Utils.hypot(
+         this.cameraX, this.cameraY, this.cameraZ) + this.eyeDist
+            * IUp.DEFAULT_FAR_CLIP);
    }
 
    /**
@@ -1623,7 +1613,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( this.rectMode ) {
 
-         case CORNER:
+         case PConstants.CORNER:
 
             w = Utils.abs(x2);
             h = Utils.abs(y2);
@@ -1635,7 +1625,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case CORNERS:
+         case PConstants.CORNERS:
 
             a0 = Utils.min(x1, x2);
             a1 = Utils.max(x1, x2);
@@ -1645,7 +1635,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case RADIUS:
+         case PConstants.RADIUS:
 
             w = Utils.abs(x2);
             h = Utils.abs(y2);
@@ -1657,7 +1647,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case CENTER:
+         case PConstants.CENTER:
 
          default:
 

@@ -677,9 +677,8 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       // final MeshDirect m3d = new MeshDirect();
-      final Mesh3 m3 = new Mesh3();
-      Mesh3.icosahedron(m3);
-      System.out.println(m3);
+      // final Mesh3 m3 = new Mesh3();
+      // Mesh3.icosahedron(m3);
    }
 
    /**

@@ -565,7 +565,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    /**
     * Returns a string representation of this mesh entity.
     *
-    * @param places   number of places
+    * @param places number of places
     *
     * @return the string
     */

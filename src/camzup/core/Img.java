@@ -507,6 +507,7 @@ public class Img implements Iterable < Color > {
          final float alpha = ( px[i] >> 0x18 & 0xff ) * IUtils.ONE_255;
          px[i] = Gradient.eval(grd, alpha * Color.luminance(px[i]));
       }
+
       return target;
    }
 
