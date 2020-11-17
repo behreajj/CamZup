@@ -85,10 +85,6 @@ public class Zup3 extends Up3 {
     * @param xCenter target location x
     * @param yCenter target location y
     * @param zCenter target location z
-    *
-    * @see Zup3#DEFAULT_REF_X
-    * @see Zup3#DEFAULT_REF_Y
-    * @see Zup3#DEFAULT_REF_Z
     */
    @Override
    public void camera ( final float xEye, final float yEye, final float zEye,

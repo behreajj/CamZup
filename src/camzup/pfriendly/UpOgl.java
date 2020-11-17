@@ -5,7 +5,6 @@ import java.util.Iterator;
 import camzup.core.ArcMode;
 import camzup.core.Color;
 import camzup.core.Curve2;
-import camzup.core.Experimental;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Mat3;
@@ -1828,7 +1827,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @param value the flag
     */
-   @Experimental
    public void setAutoNormal ( final boolean value ) {
 
       this.autoNormal = value;

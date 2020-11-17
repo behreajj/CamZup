@@ -2769,7 +2769,7 @@ public class Vec2 implements Comparable < Vec2 > {
       /**
        * The default constructor.
        */
-      public AbstrComparator ( ) {}
+      protected AbstrComparator ( ) {}
 
       /**
        * Returns the simple name of this class.
@@ -2790,7 +2790,7 @@ public class Vec2 implements Comparable < Vec2 > {
       /**
        * The default constructor.
        */
-      public AbstrEasing ( ) {}
+      protected AbstrEasing ( ) {}
 
       /**
        * A clamped interpolation between the origin and destination. Defers to

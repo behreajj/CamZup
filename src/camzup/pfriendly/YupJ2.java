@@ -162,15 +162,16 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    protected final Transform2 trCore = new Transform2();
 
-   {
-      this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
-      this.curveToBezierMatrix = new PMatrix3D();
-   }
-
    /**
     * The default constructor.
     */
-   public YupJ2 ( ) { super(); }
+   public YupJ2 ( ) {
+
+      super();
+
+      this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
+      this.curveToBezierMatrix = new PMatrix3D();
+   }
 
    /**
     * A constructor for manually initializing the renderer.
@@ -188,6 +189,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.setPrimary(isPrimary);
       this.setPath(path);
       this.setSize(width, height);
+
+      this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
+      this.curveToBezierMatrix = new PMatrix3D();
    }
 
    /**

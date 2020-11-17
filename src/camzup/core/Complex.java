@@ -998,7 +998,7 @@ public class Complex implements Comparable < Complex > {
       /**
        * The default constructor.
        */
-      public AbstrComparator ( ) {}
+      protected AbstrComparator ( ) {}
 
       /**
        * Returns the simple name of this class.

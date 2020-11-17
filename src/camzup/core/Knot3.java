@@ -1657,7 +1657,7 @@ public class Knot3 implements Comparable < Knot3 > {
       /**
        * The default constructor.
        */
-      public AbstrEasing ( ) { super(); }
+      protected AbstrEasing ( ) { super(); }
 
       /**
        * A clamped interpolation between the origin and destination. Defers to

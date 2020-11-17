@@ -677,10 +677,6 @@ public class ZImage extends PImage {
 
       }
 
-      // TODO: Because the pixel assignment below is cumulative (|=), not a
-      // complete reassignment, you could try filling with bg color here...
-      // Compositing might be an issue, e.g. if green is composited over red it
-      // should be green, not yellow.
       final PImage target = new PImage(wMax, hTotal, PConstants.ARGB, 1);
       target.loadPixels();
       final int[] trgPx = target.pixels;

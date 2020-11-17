@@ -221,6 +221,9 @@ public abstract class Sdf {
     */
    public static float hexagon ( final Vec2 point, final float bounds ) {
 
+      // TODO: Consider grid hex in reference to
+      // https://www.youtube.com/watch?v=VmrIDyYiJBA
+
       final float px0 = Utils.abs(point.x);
       final float py0 = Utils.abs(point.y);
       final float dotkp2 = 2.0f * Utils.min(0.0f, -IUtils.SQRT_3_2 * px0

@@ -2079,7 +2079,7 @@ public abstract class Utils implements IUtils {
       /**
        * Constructs the easing functional object with a default range, TAU.
        */
-      public PeriodicEasing ( ) {
+      protected PeriodicEasing ( ) {
 
          this.setRange(PeriodicEasing.DEFAULT_RANGE);
       }
@@ -2089,7 +2089,10 @@ public abstract class Utils implements IUtils {
        *
        * @param range the range of the period
        */
-      public PeriodicEasing ( final float range ) { this.setRange(range); }
+      protected PeriodicEasing ( final float range ) {
+
+         this.setRange(range);
+      }
 
       /**
        * Applies the easing function. The abstract class's implementation check

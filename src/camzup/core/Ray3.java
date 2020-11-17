@@ -225,7 +225,7 @@ public class Ray3 {
       /**
        * The default constructor.
        */
-      public AbstrComparator ( ) {}
+      protected AbstrComparator ( ) {}
 
       /**
        * Returns the simple name of this class.

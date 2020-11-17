@@ -2250,7 +2250,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      public AbstrEasing ( ) { super(); }
+      protected AbstrEasing ( ) { super(); }
 
       /**
        * A clamped interpolation between the origin and destination. Defers to
@@ -2375,7 +2375,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      public ComparatorHsb ( ) { super(); }
+      protected ComparatorHsb ( ) { super(); }
 
       /**
        * Returns this class's simple name as a string
@@ -2569,7 +2569,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      public HueEasing ( ) { super(); }
+      protected HueEasing ( ) { super(); }
 
       /**
        * The clamped easing function.

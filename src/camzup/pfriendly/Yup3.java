@@ -89,10 +89,6 @@ public class Yup3 extends Up3 {
     * @param xCenter target location x
     * @param yCenter target location y
     * @param zCenter target location z
-    *
-    * @see Yup3#DEFAULT_REF_X
-    * @see Yup3#DEFAULT_REF_Y
-    * @see Yup3#DEFAULT_REF_Z
     */
    @Override
    public void camera ( final float xEye, final float yEye, final float zEye,
@@ -156,9 +152,7 @@ public class Yup3 extends Up3 {
     * @param eye    the camera's location
     * @param center the point to look at
     *
-    * @see Yup3#DEFAULT_REF_X
-    * @see Yup3#DEFAULT_REF_Y
-    * @see Yup3#DEFAULT_REF_Z
+    * @see Yup3#camera(float, float, float, float, float, float)
     */
    @Override
    public void camera ( final Vec3 eye, final Vec3 center ) {

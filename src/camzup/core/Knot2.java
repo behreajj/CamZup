@@ -1431,7 +1431,7 @@ public class Knot2 implements Comparable < Knot2 > {
       /**
        * The default constructor.
        */
-      public AbstrEasing ( ) { super(); }
+      protected AbstrEasing ( ) { super(); }
 
       /**
        * A clamped interpolation between the origin and destination. Defers to

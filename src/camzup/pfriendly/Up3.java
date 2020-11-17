@@ -163,7 +163,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       this.vertexImpl(x0, y0, z0, 0.0f, 1.0f);
       this.endShape(PConstants.CLOSE);
 
-      /* Up. */
+      /* Front. */
       this.beginShape(PConstants.POLYGON);
       this.normalPerShape(0.0f, 1.0f, 0.0f);
       this.vertexImpl(x0, y1, z0, 1.0f, 1.0f);

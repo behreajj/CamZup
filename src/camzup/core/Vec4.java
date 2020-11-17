@@ -12,7 +12,7 @@ public class Vec4 implements Comparable < Vec4 > {
    /**
     * Component on the w axis. Commonly used to store 1.0 for points and 0.0
     * for vectors when multiplying with a 4 x 4 matrix. Also used to store
-    * alpha (transparency) for colors.
+    * alpha (transparency) for HSB colors.
     */
    public float w = 0.0f;
 
@@ -2204,7 +2204,7 @@ public class Vec4 implements Comparable < Vec4 > {
       /**
        * The default constructor.
        */
-      public AbstrComparator ( ) {}
+      protected AbstrComparator ( ) {}
 
       /**
        * Returns the simple name of this class.
@@ -2225,7 +2225,7 @@ public class Vec4 implements Comparable < Vec4 > {
       /**
        * The default constructor.
        */
-      public AbstrEasing ( ) {}
+      protected AbstrEasing ( ) {}
 
       /**
        * A clamped interpolation between the origin and destination. Defers to
