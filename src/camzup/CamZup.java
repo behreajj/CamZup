@@ -679,6 +679,15 @@ public class CamZup {
       // final MeshDirect m3d = new MeshDirect();
       // final Mesh3 m3 = new Mesh3();
       // Mesh3.icosahedron(m3);
+
+      // final Mesh2 m2 = new Mesh2();
+      // final MeshEntity2 me2 = new MeshEntity2();
+      // Random rng = new Random();
+      // Mesh2.arc(rng.nextFloat() * IUtils.PI, IUtils.PI + rng.nextFloat()
+      // * IUtils.PI, 0.5f, 32, PolyType.NGON, m2);
+      // me2.append(m2);
+      // String str = me2.toBlenderCode();
+      // System.out.println(str);
    }
 
    /**

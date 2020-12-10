@@ -232,7 +232,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    @Override
    public int hashCode ( ) {
 
-      int hash = IUtils.MUL_BASE ^ ( this.closedLoop ? 1231 : 1237 );
+      int hash = super.hashCode() ^ ( this.closedLoop ? 1231 : 1237 );
       hash = hash * IUtils.HASH_MUL ^ this.knots.hashCode();
       return hash;
    }

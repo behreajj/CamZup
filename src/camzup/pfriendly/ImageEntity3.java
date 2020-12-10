@@ -135,10 +135,8 @@ public class ImageEntity3 extends MeshEntity3 {
    public int hashCode ( ) {
 
       final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ( this.material == null ? 0 : this.material
-         .hashCode() );
-      return result;
+      return prime * super.hashCode() + ( this.material == null ? 0
+         : this.material.hashCode() );
    }
 
    /**

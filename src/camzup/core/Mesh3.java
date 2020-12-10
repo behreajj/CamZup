@@ -173,7 +173,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final TreeSet < Vec2 > texCoordsTree = new TreeSet <>(Mesh.SORT_2);
       final TreeSet < Vec3 > normalsTree = new TreeSet <>(Mesh.SORT_3);
 
-      /* Dictionary's keys are no longer needed; just values. */
+      /* Hash map's keys are no longer needed; just values. */
       coordsTree.addAll(usedCoords.values());
       texCoordsTree.addAll(usedTexCoords.values());
       normalsTree.addAll(usedNormals.values());
@@ -690,7 +690,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    @Override
    public int hashCode ( ) {
 
-      int hash = IUtils.HASH_BASE;
+      int hash = super.hashCode();
       hash = hash * IUtils.HASH_MUL ^ Arrays.hashCode(this.coords);
       hash = hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
       return hash;
@@ -2994,6 +2994,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
             } else if ( initialToken.equals("v") ) {
 
+               // TODO: Possible that vs may contain only x and y?
+
                /* Coordinate. */
                coordList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
 
@@ -3184,7 +3186,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
                case 102:
                   /* "f" */
-
                   if ( currentIndices == null ) { break; }
 
                   /* tokens length includes "f", and so is 1 longer. */
@@ -3255,6 +3256,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                   break;
 
                case 118:
+
+                  // TODO: Possible that vs may contain only x and y?
+
                   /* "v" */
                   coordList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
 
@@ -4186,6 +4190,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.name = "Trace";
 
       final int vcount = count < 3 ? 3 : count;
+      final float toStep = 1.0f / vcount;
 
       final Vec3[] vsSrc = source.coords;
       final Vec2[] vtsSrc = source.texCoords;
@@ -4197,8 +4202,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec2[] vtsTrg = target.texCoords = Vec2.resize(target.texCoords,
          trgLen);
       final int[][][] fsTrg = target.faces = new int[fsSrcLen][vcount][3];
-
-      final float toStep = 1.0f / vcount;
 
       for ( int k = 0, i = 0; i < fsSrcLen; ++i ) {
          final int[][] fSrc = fsSrc[i];
@@ -4645,7 +4648,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                      { { 0,  4, 4 }, { 1,  5, 4 }, { 3,  3, 4 } },
                      { { 0,  4, 4 }, { 3,  3, 4 }, { 2,  2, 4 } },
                      { { 2,  2, 5 }, { 3,  3, 5 }, { 7,  6, 5 } },
-                     { { 2,  2, 5 }, { 7,  6, 5 }, { 6,  7, 5 } }, };
+                     { { 2,  2, 5 }, { 7,  6, 5 }, { 6,  7, 5 } } };
                   /* @formatter:on */
                   break;
 

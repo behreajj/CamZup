@@ -234,7 +234,6 @@ public interface IYup2 extends IUp {
       final int vcount = count < 3 ? 3 : count;
       final float toPercent = 1.0f / vcount;
       final int last = vcount + 1;
-      final int ab = 0xff000080;
 
       /* Calculate values for inner loop. */
       final float[] xs = new float[last];
@@ -248,7 +247,7 @@ public interface IYup2 extends IUp {
       for ( int i = 0; i < last; ++i ) {
          final float iPercent = i * toPercent;
          final float y = ( 1.0f - iPercent ) * bottom + iPercent * top;
-         final int agb = ab | ( int ) ( iPercent * 0xff + 0.5f ) << 0x8;
+         final int agb = 0xff000080 | ( int ) ( iPercent * 0xff + 0.5f ) << 0x8;
 
          for ( int j = 0; j < last; ++j ) {
             this.stroke(agb | reds[j]);

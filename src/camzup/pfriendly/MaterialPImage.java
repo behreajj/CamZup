@@ -251,7 +251,7 @@ public class MaterialPImage extends MaterialUv {
                result.add(current);
                current.name = tokens[1];
 
-            } else if ( initialToken.equals("kd") ) {
+            } else if ( current != null && initialToken.equals("kd") ) {
 
                current.tint.set(tokens[1], tokens[2], tokens[3], alpha);
 

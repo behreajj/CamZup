@@ -1123,9 +1123,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final double left = -right;
       final double top = dimdh;
       final double bottom = -top;
-      final double toPercent = 1.0d / count;
-      final int last = count + 1;
-      final int ab = 0xff000080;
+
+      final int vcount = count < 3 ? 3 : count;
+      final double toPercent = 1.0d / vcount;
+      final int last = vcount + 1;
 
       /* Calculate inner for-loop values. */
       final double[] xs = new double[last];
@@ -1143,7 +1144,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          final double iPercent = i * toPercent;
          final double y = ( 1.0d - iPercent ) * bottom + iPercent * top;
          final double yeps = y + YupJ2.EPS_D;
-         final int agb = ab | ( int ) ( iPercent * 0xff + 0.5d ) << 0x8;
+         final int agb = 0xff000080 | ( int ) ( iPercent * 0xff + 0.5d ) << 0x8;
 
          for ( int j = 0; j < last; ++j ) {
             final double x = xs[j];

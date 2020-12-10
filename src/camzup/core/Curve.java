@@ -59,11 +59,40 @@ public abstract class Curve extends EntityData implements ICurve {
    }
 
    /**
+    * Tests this curve for equivalence with an object.
+    *
+    * @param obj the object
+    *
+    * @return the equivalence
+    */
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if ( this == obj ) { return true; }
+      if ( !super.equals(obj) ) { return false; }
+      if ( this.getClass() != obj.getClass() ) { return false; }
+      final Curve other = ( Curve ) obj;
+      if ( this.closedLoop != other.closedLoop ) { return false; }
+      return true;
+   }
+
+   /**
     * Gets this curve's material index.
     *
     * @return the material index
     */
    public int getMaterialIndex ( ) { return this.materialIndex; }
+
+   /**
+    * Generates a hash code for this curve.
+    */
+   @Override
+   public int hashCode ( ) {
+
+      int hash = super.hashCode();
+      hash = hash * IUtils.HASH_MUL ^ ( this.closedLoop ? 1231 : 1237 );
+      return hash;
+   }
 
    /**
     * Sets this curve's material index.

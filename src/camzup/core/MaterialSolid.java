@@ -639,7 +639,7 @@ public class MaterialSolid extends Material {
 
                alpha = tokens[1];
 
-            } else if ( initialToken.equals("kd") ) {
+            } else if ( current != null && initialToken.equals("kd") ) {
 
                /* Diffuse color. Default: (0.8, 0.8, 0.8) . */
                current.fill.set(tokens[1], tokens[2], tokens[3], alpha);

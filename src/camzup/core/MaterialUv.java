@@ -20,14 +20,14 @@ public abstract class MaterialUv extends Material implements IOriented2,
    /**
     * The default constructor.
     */
-   public MaterialUv ( ) { this("MaterialUv"); }
+   protected MaterialUv ( ) { this("MaterialUv"); }
 
    /**
     * Creates a named texture material.
     *
     * @param name the name
     */
-   public MaterialUv ( final String name ) {
+   protected MaterialUv ( final String name ) {
 
       super(name);
       this.transform = new Transform2();
@@ -39,7 +39,7 @@ public abstract class MaterialUv extends Material implements IOriented2,
     * @param name      the name
     * @param transform the UV transform
     */
-   public MaterialUv ( final String name, final Transform2 transform ) {
+   protected MaterialUv ( final String name, final Transform2 transform ) {
 
       super(name);
       this.transform = transform;
@@ -52,7 +52,7 @@ public abstract class MaterialUv extends Material implements IOriented2,
     * @param transform the UV transform
     * @param tint      the tint color
     */
-   public MaterialUv ( final String name, final Transform2 transform,
+   protected MaterialUv ( final String name, final Transform2 transform,
       final Color tint ) {
 
       super(name);

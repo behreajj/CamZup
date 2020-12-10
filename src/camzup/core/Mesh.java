@@ -134,10 +134,9 @@ public abstract class Mesh extends EntityData implements IMesh {
    @Override
    public int hashCode ( ) {
 
-      final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + Arrays.deepHashCode(this.faces);
-      return result;
+      int hash = super.hashCode();
+      hash = hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
+      return hash;
    }
 
    /**
@@ -652,17 +651,12 @@ public abstract class Mesh extends EntityData implements IMesh {
       /**
        * Internal vector to hold quantized left operand.
        */
-      protected final Vec2 qa;
+      protected final Vec2 qa = new Vec2();
 
       /**
        * Internal vector to hold quantized right operand.
        */
-      protected final Vec2 qb;
-
-      {
-         this.qa = new Vec2();
-         this.qb = new Vec2();
-      }
+      protected final Vec2 qb = new Vec2();
 
       /**
        * The default constructor.
@@ -745,17 +739,12 @@ public abstract class Mesh extends EntityData implements IMesh {
       /**
        * Internal vector to hold quantized left operand.
        */
-      protected final Vec3 qa;
+      protected final Vec3 qa = new Vec3();
 
       /**
        * Internal vector to hold quantized right operand.
        */
-      protected final Vec3 qb;
-
-      {
-         this.qa = new Vec3();
-         this.qb = new Vec3();
-      }
+      protected final Vec3 qb = new Vec3();
 
       /**
        * The default constructor.
