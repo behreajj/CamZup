@@ -699,7 +699,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public Mesh2 removeFaces ( final int faceIdx, final int count ) {
 
-      Mesh.remove(this.faces, Utils.mod(faceIdx, this.faces.length), count);
+      this.faces = Mesh.remove(this.faces, Utils.mod(faceIdx,
+         this.faces.length), count);
       return this;
    }
 
@@ -1962,7 +1963,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final double b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU_D);
       final double arcLen1 = Utils.mod1(b1 - a1);
       if ( arcLen1 < 0.00139d ) {
-         return Mesh2.ring(oculus, sectors, poly, target);
+         Mesh2.polygon(sectors, PolyType.NGON, target);
+         target.insetFace(0, 1.0f - oculus);
+         target.removeFaces(-1, 1);
+         if ( poly == PolyType.TRI ) { target.triangulate(); }
+         return target;
       }
 
       final int sctCount = ( int ) Math.ceil(1.0d + ( sectors < 3 ? 3.0d
@@ -1972,9 +1977,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
          sctCount2);
 
-      final double annul = Utils.clamp(oculus, IUtils.EPSILON, 1.0d
+      final double oculFac = Utils.clamp(oculus, IUtils.EPSILON, 1.0d
          - IUtils.EPSILON);
-      final double annRad = annul * 0.5d;
+      final double oculRad = oculFac * 0.5d;
 
       final double toStep = 1.0d / ( sctCount - 1.0d );
       final double origAngle = IUtils.TAU_D * a1;
@@ -1990,7 +1995,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          v0.set(( float ) ( 0.5d * cosa ), ( float ) ( 0.5d * sina ));
 
          final Vec2 v1 = vs[j];
-         v1.set(( float ) ( annRad * cosa ), ( float ) ( annRad * sina ));
+         v1.set(( float ) ( oculRad * cosa ), ( float ) ( oculRad * sina ));
 
          final Vec2 vt0 = vts[i];
          vt0.x = v0.x + 0.5f;
@@ -2888,152 +2893,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Creates a regular convex polygon with an opening in its center. The
-    * oculus describes the relative size of this opening.
-    *
-    * @param sectors the number of sides
-    * @param oculus  the size of the opening
-    * @param target  the output type
-    *
-    * @return the ring
-    */
-   public static Mesh2 ring ( final float oculus, final int sectors,
-      final Mesh2 target ) {
-
-      return Mesh2.ring(oculus, sectors, Mesh2.DEFAULT_POLY_TYPE, target);
-   }
-
-   /**
-    * Creates a regular convex polygon with an opening in its center. The
-    * oculus describes the relative size of this opening. When the polygon
-    * type is {@link PolyType#QUAD}, the ring will be composed of
-    * quadrilaterals; otherwise, triangles.
-    *
-    * @param oculus  the size of the opening
-    * @param sectors the number of sides
-    * @param poly    the polygon type
-    * @param target  the output type
-    *
-    * @return the ring
-    */
-   public static Mesh2 ring ( final float oculus, final int sectors,
-      final PolyType poly, final Mesh2 target ) {
-
-      target.name = "Ring";
-
-      final boolean isQuad = poly == PolyType.QUAD || poly == PolyType.NGON;
-      final int seg = sectors < 3 ? 3 : sectors;
-      final int seg2 = seg + seg;
-      final float ocul = Utils.clamp(oculus, IUtils.EPSILON, 1.0f
-         - IUtils.EPSILON);
-
-      final double toTheta = IUtils.TAU_D / seg;
-      final double oculRad = ocul * 0.5d;
-
-      final Vec2[] vs = target.coords = Vec2.resize(target.coords, seg2);
-      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords, seg2);
-      target.faces = isQuad ? new int[seg][4][2] : new int[seg2][3][2];
-
-      for ( int k = 0, i = 0, j = 1; k < seg; ++k, i += 2, j += 2 ) {
-         final double theta = k * toTheta;
-         final double cosa = Math.cos(theta);
-         final double sina = Math.sin(theta);
-
-         final Vec2 v0 = vs[i];
-         v0.set(( float ) ( 0.5d * cosa ), ( float ) ( 0.5d * sina ));
-
-         final Vec2 v1 = vs[j];
-         v1.set(( float ) ( oculRad * cosa ), ( float ) ( oculRad * sina ));
-
-         final Vec2 vt0 = vts[i];
-         vt0.x = v0.x + 0.5f;
-         vt0.y = 0.5f - v0.y;
-
-         final Vec2 vt1 = vts[j];
-         vt1.x = v1.x + 0.5f;
-         vt1.y = 0.5f - v1.y;
-
-         final int m = ( i + 2 ) % seg2;
-         final int n = ( j + 2 ) % seg2;
-
-         if ( isQuad ) {
-
-            final int[][] f = target.faces[k];
-            f[0][0] = i;
-            f[0][1] = i;
-            f[1][0] = m;
-            f[1][1] = m;
-            f[2][0] = n;
-            f[2][1] = n;
-            f[3][0] = j;
-            f[3][1] = j;
-
-         } else {
-
-            final int[][] f0 = target.faces[i];
-            f0[0][0] = i;
-            f0[0][1] = i;
-            f0[1][0] = m;
-            f0[1][1] = m;
-            f0[2][0] = j;
-            f0[2][1] = j;
-
-            final int[][] f1 = target.faces[j];
-            f1[0][0] = m;
-            f1[0][1] = m;
-            f1[1][0] = n;
-            f1[1][1] = n;
-            f1[2][0] = j;
-            f1[2][1] = j;
-
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Creates a regular convex polygon with an opening in its center.
-    *
-    * @param oculus the size of the opening
-    * @param target the output mesh
-    *
-    * @return the ring
-    */
-   public static Mesh2 ring ( final float oculus, final Mesh2 target ) {
-
-      return Mesh2.ring(oculus, IMesh.DEFAULT_CIRCLE_SECTORS,
-         Mesh2.DEFAULT_POLY_TYPE, target);
-   }
-
-   /**
-    * Creates a regular convex polygon with an opening in its center.
-    *
-    * @param sectors the number of sides
-    * @param target  the output mesh
-    *
-    * @return the ring
-    */
-   public static Mesh2 ring ( final int sectors, final Mesh2 target ) {
-
-      return Mesh2.ring(IMesh.DEFAULT_OCULUS, sectors, Mesh2.DEFAULT_POLY_TYPE,
-         target);
-   }
-
-   /**
-    * Creates a regular convex polygon with an opening in its center.
-    *
-    * @param target the output mesh
-    *
-    * @return the ring
-    */
-   public static Mesh2 ring ( final Mesh2 target ) {
-
-      return Mesh2.ring(IMesh.DEFAULT_OCULUS, IMesh.DEFAULT_CIRCLE_SECTORS,
-         Mesh2.DEFAULT_POLY_TYPE, target);
-   }
-
-   /**
     * Creates a square.
     *
     * @param target the output mesh
@@ -3154,32 +3013,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             vertTrg[1] = k;
          }
       }
-
-      return target;
-   }
-
-   /**
-    * Creates a triangle.
-    *
-    * @param target the output mesh
-    *
-    * @return the triangle
-    */
-   public static final Mesh2 triangle ( final Mesh2 target ) {
-
-      target.name = "Triangle";
-
-      target.coords = Vec2.resize(target.coords, 3);
-      target.coords[0].set(0.5f, 0.0f);
-      target.coords[1].set(-0.25f, 0.4330127f);
-      target.coords[2].set(-0.25f, -0.4330127f);
-
-      target.texCoords = Vec2.resize(target.texCoords, 3);
-      target.texCoords[0].set(1.0f, 0.5f);
-      target.texCoords[1].set(0.25f, 0.066987306f);
-      target.texCoords[2].set(0.25f, 0.9330127f);
-
-      target.faces = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 } } };
 
       return target;
    }

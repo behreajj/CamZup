@@ -680,11 +680,11 @@ public class CamZup {
       // final Mesh3 m3 = new Mesh3();
       // Mesh3.icosahedron(m3);
 
-      // final Mesh2 m2 = new Mesh2();
+      // final Mesh2 m2 = new Mesh2();R
       // final MeshEntity2 me2 = new MeshEntity2();
       // Random rng = new Random();
-      // Mesh2.arc(rng.nextFloat() * IUtils.PI, IUtils.PI + rng.nextFloat()
-      // * IUtils.PI, 0.5f, 32, PolyType.NGON, m2);
+
+      // Mesh2.arc(0, Utils.TAU, 0.25f, 32, PolyType.TRI, m2);
       // me2.append(m2);
       // String str = me2.toBlenderCode();
       // System.out.println(str);

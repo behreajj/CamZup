@@ -2,7 +2,6 @@ import camzup.core.*;
 import camzup.pfriendly.*;
 
 Zup3 rndr;
-Mesh3 diagnostic = new Mesh3();
 MeshEntity3 entity = new MeshEntity3();
 MaterialPImage mat;
 Vec3 mouse1 = new Vec3();
@@ -15,8 +14,8 @@ void setup() {
   rndr = (Zup3)getGraphics();
 
   String[] strs = loadStrings("debug.obj");
-  Mesh3.fromObj(strs, diagnostic);
-  entity.append(diagnostic);
+  Mesh3[] meshes = Mesh3.fromObj(strs, false);
+  entity.append(meshes[0]);
   entity.scaleTo(256);
 
   PImage txtr = createImage(512, 512, ARGB);

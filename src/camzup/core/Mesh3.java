@@ -2933,186 +2933,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates a mesh from an array of strings representing a WaveFront obj
-    * file.<br>
-    * <br>
-    * Files supplied to this parser should always include information for
-    * coordinates, texture coordinates and normals. Mesh groups are not
-    * supported by this function. Material data from a .mtl file is not parsed
-    * here.
-    *
-    * @param lines  the String tokens
-    * @param target the output mesh
-    *
-    * @return the mesh
-    */
-   public static Mesh3 fromObj ( final String[] lines, final Mesh3 target ) {
-
-      String[] tokens;
-      String[] faceTokens;
-      String name = target.hashIdentityString();
-
-      final int len = lines.length;
-      final int capacity = len == 0 ? 32 : len / 4;
-      final ArrayList < Vec3 > coordList = new ArrayList <>(capacity);
-      final ArrayList < Vec2 > texCoordList = new ArrayList <>(capacity);
-      final ArrayList < Vec3 > normalList = new ArrayList <>(capacity);
-      final ArrayList < int[][] > faceList = new ArrayList <>(capacity);
-
-      boolean vsMissing = false;
-      boolean vtsMissing = false;
-      boolean vnsMissing = false;
-
-      boolean usesMaterial = false;
-      String mtlFileName = "";
-      final ArrayList < String > materialNames = new ArrayList <>(8);
-      final Pattern spacePattern = Pattern.compile("\\s+");
-      final Pattern fslashPattern = Pattern.compile("/");
-
-      for ( int i = 0; i < len; ++i ) {
-
-         /* Split line by spaces. */
-         tokens = spacePattern.split(lines[i], 0);
-
-         /* Skip empty lines. */
-         if ( tokens.length > 0 ) {
-            final String initialToken = tokens[0].toLowerCase();
-            if ( initialToken.equals("o") ) {
-
-               /* Assign name. */
-               name = tokens[1];
-
-            } else if ( initialToken.equals("mtllib") ) {
-
-               usesMaterial = true;
-               mtlFileName = tokens[1];
-
-            } else if ( initialToken.equals("usemtl") ) {
-
-               usesMaterial = true;
-               materialNames.add(tokens[1]);
-
-            } else if ( initialToken.equals("v") ) {
-
-               // TODO: Possible that vs may contain only x and y?
-
-               /* Coordinate. */
-               coordList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
-
-            } else if ( initialToken.equals("vt") ) {
-
-               /* Texture coordinate. */
-               texCoordList.add(new Vec2(tokens[1], tokens[2]));
-
-            } else if ( initialToken.equals("vn") ) {
-
-               /* Normal. */
-               normalList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
-
-            } else if ( initialToken.equals("f") ) {
-
-               /* Face. */
-               final int count = tokens.length;
-
-               /* tokens length includes "f", and so is 1 longer. */
-               final int[][] indices = new int[count - 1][3];
-
-               for ( int j = 1; j < count; ++j ) {
-                  faceTokens = fslashPattern.split(tokens[j], 0);
-                  final int tokenLen = faceTokens.length;
-                  final int k = j - 1;
-
-                  /* Vertex coordinate index. */
-                  if ( tokenLen > 0 ) {
-                     final String vIdx = faceTokens[0];
-                     if ( vIdx == null || vIdx.isEmpty() ) {
-                        vsMissing = true;
-                     } else {
-                        /* Indices in .obj file start at 1, not 0. */
-                        indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
-                     }
-                  } else {
-                     vsMissing = true;
-                  }
-
-                  /* Texture coordinate index. */
-                  if ( tokenLen > 1 ) {
-                     final String vtIdx = faceTokens[1];
-                     if ( vtIdx == null || vtIdx.isEmpty() ) {
-                        vtsMissing = true;
-                     } else {
-                        indices[k][1] = Mesh3.intFromStr(vtIdx) - 1;
-                     }
-                  } else {
-                     vtsMissing = true;
-                  }
-
-                  /* Normal index. */
-                  if ( tokenLen > 2 ) {
-                     final String vnIdx = faceTokens[2];
-                     if ( vnIdx == null || vnIdx.isEmpty() ) {
-                        vnsMissing = true;
-                     } else {
-                        indices[k][2] = Mesh3.intFromStr(vnIdx) - 1;
-                     }
-                  } else {
-                     vnsMissing = true;
-                  }
-               }
-
-               faceList.add(indices);
-            }
-         }
-      }
-
-      target.name = name;
-
-      /* Convert to fixed-sized array. */
-      final int[][][] faceArr = new int[faceList.size()][][];
-      faceList.toArray(faceArr);
-
-      Vec3[] coordArr = new Vec3[coordList.size()];
-      if ( vsMissing && coordArr.length < 1 ) {
-         coordArr = new Vec3[] { Vec3.zero(new Vec3()) };
-      } else {
-         coordList.toArray(coordArr);
-      }
-
-      Vec2[] texCoordArr = new Vec2[texCoordList.size()];
-      if ( vtsMissing && texCoordArr.length < 1 ) {
-         texCoordArr = new Vec2[] { Vec2.uvCenter(new Vec2()) };
-      } else {
-         texCoordList.toArray(texCoordArr);
-      }
-
-      Vec3[] normalArr = new Vec3[normalList.size()];
-      if ( vnsMissing && normalArr.length < 1 ) {
-         normalArr = new Vec3[] { Vec3.up(new Vec3()) };
-      } else {
-         normalList.toArray(normalArr);
-      }
-
-      if ( usesMaterial ) {
-         final StringBuilder sb = new StringBuilder(512);
-         sb.append("The .obj file refers to the .mtl file ");
-         sb.append(mtlFileName);
-         sb.append(" , namely, the materials: ");
-
-         final Iterator < String > matNamesItr = materialNames.iterator();
-         while ( matNamesItr.hasNext() ) {
-            sb.append(matNamesItr.next());
-            if ( matNamesItr.hasNext() ) { sb.append(',').append(' '); }
-         }
-
-         sb.append(" .");
-         System.out.println(sb.toString());
-      }
-
-      target.set(faceArr, coordArr, texCoordArr, normalArr);
-      return target;
-   }
-
-   /**
     * Creates an array of meshes from an array of strings representing a
     * WaveFront .obj file with groups.<br>
     * <br>
@@ -3131,8 +2951,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the array of meshes
     */
-   @Experimental
-   public static Mesh3[] fromObjGroup ( final String[] lines,
+   public static Mesh3[] fromObj ( final String[] lines,
       final boolean poolData ) {
 
       String[] tokens;
@@ -3165,10 +2984,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          if ( tokens.length > 0 ) {
 
             /* Switch case by hash code of String, not String itself. */
-            final String initialToken = tokens[0].toLowerCase();
-            final int hsh = initialToken.hashCode();
+            final int cmd = tokens[0].toLowerCase().hashCode();
 
-            switch ( hsh ) {
+            switch ( cmd ) {
 
                case -1063936832:
                   /* "mtllib" */
@@ -3256,9 +3074,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                   break;
 
                case 118:
-
-                  // TODO: Possible that vs may contain only x and y?
-
                   /* "v" */
                   coordList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
 
