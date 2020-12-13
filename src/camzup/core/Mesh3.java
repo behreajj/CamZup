@@ -3075,19 +3075,39 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
                case 118:
                   /* "v" */
-                  coordList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
+
+                  final Vec3 co = new Vec3();
+                  try {
+                     co.x = Float.parseFloat(tokens[1]);
+                     co.y = Float.parseFloat(tokens[2]);
+                     co.z = Float.parseFloat(tokens[3]);
+                  } catch ( final Exception e ) {}
+                  coordList.add(co);
 
                   break;
 
                case 3768:
                   /* "vn" */
-                  normalList.add(new Vec3(tokens[1], tokens[2], tokens[3]));
+
+                  final Vec3 nr = Vec3.up(new Vec3());
+                  try {
+                     nr.x = Float.parseFloat(tokens[1]);
+                     nr.y = Float.parseFloat(tokens[2]);
+                     nr.z = Float.parseFloat(tokens[3]);
+                  } catch ( final Exception e ) {}
+                  normalList.add(nr);
 
                   break;
 
                case 3774:
                   /* "vt" */
-                  texCoordList.add(new Vec2(tokens[1], tokens[2]));
+
+                  final Vec2 tc = Vec2.uvCenter(new Vec2());
+                  try {
+                     tc.x = Float.parseFloat(tokens[1]);
+                     tc.y = Float.parseFloat(tokens[2]);
+                  } catch ( final Exception e ) {}
+                  texCoordList.add(tc);
 
                   break;
 
@@ -3150,7 +3170,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          mesh.texCoords = texCoordArr;
          mesh.normals = normalArr;
 
-         mesh.clean();
+         /* Cleaning a mesh can add significant load time. */
+         // mesh.clean();
 
       } else {
 
