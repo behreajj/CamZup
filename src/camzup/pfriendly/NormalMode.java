@@ -37,7 +37,7 @@ public enum NormalMode {
     *
     * @param val the integer value
     */
-   private NormalMode ( final int val ) { this.val = val; }
+   NormalMode ( final int val ) { this.val = val; }
 
    /**
     * Gets the integer code of the constant.

@@ -41,7 +41,7 @@ public enum TextureSampling {
     *
     * @param val the integer value
     */
-   private TextureSampling ( final int val ) { this.val = val; }
+   TextureSampling ( final int val ) { this.val = val; }
 
    /**
     * Gets the integer code of the constant.

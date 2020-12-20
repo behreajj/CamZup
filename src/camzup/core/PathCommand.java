@@ -124,7 +124,7 @@ public enum PathCommand {
     * @param isRelative is the command relative
     * @param dataCount  the parameter count
     */
-   private PathCommand ( final char code, final boolean isRelative,
+   PathCommand ( final char code, final boolean isRelative,
       final int dataCount ) {
 
       this.code = code;

@@ -33,7 +33,7 @@ public enum Handedness {
     *
     * @param sign the sign
     */
-   private Handedness ( final int sign ) { this.sign = sign; }
+   Handedness ( final int sign ) { this.sign = sign; }
 
    /**
     * Gets the sign of the handedness: -1 for left; 1 for right.

@@ -1,7 +1,9 @@
 package camzup;
 
 import camzup.core.IUtils;
+import camzup.core.Mesh2;
 import camzup.core.Mesh3;
+import camzup.core.MeshEntity2;
 import camzup.core.PolyType;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -685,9 +687,17 @@ public class CamZup {
       // Random rng = new Random();
 
       // Mesh2.arc(0, Utils.TAU, 0.25f, 32, PolyType.TRI, m2);
-      // me2.append(m2);
-      // String str = me2.toBlenderCode();
-      // System.out.println(str);
+
+      final Mesh2 m2 = new Mesh2();
+      Mesh2.square(m2);
+      // System.out.println(m2);
+      m2.subdivEdge(0, 0, 2);
+      // System.out.println(m2);
+
+      final MeshEntity2 me2 = new MeshEntity2();
+      me2.append(m2);
+      final String str = me2.toBlenderCode();
+      System.out.println(str);
    }
 
    /**

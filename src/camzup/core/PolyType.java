@@ -23,6 +23,6 @@ public enum PolyType {
    /**
     * The default constructor.
     */
-   private PolyType ( ) {}
+   PolyType ( ) {}
 
 }

@@ -25,6 +25,6 @@ public enum ArcMode {
    /**
     * The default constructor.
     */
-   private ArcMode ( ) {}
+   ArcMode ( ) {}
 
 }

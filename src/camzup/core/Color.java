@@ -2320,7 +2320,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      private ChannelOrder ( ) {}
+      ChannelOrder ( ) {}
 
    }
 

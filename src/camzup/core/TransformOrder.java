@@ -91,7 +91,7 @@ public enum TransformOrder {
     *
     * @param name the long-form name
     */
-   private TransformOrder ( final String name ) { this.printName = name; }
+   TransformOrder ( final String name ) { this.printName = name; }
 
    /**
     * Gets the print name of this transform order.

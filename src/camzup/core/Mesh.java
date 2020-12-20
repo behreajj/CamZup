@@ -232,14 +232,14 @@ public abstract class Mesh extends EntityData implements IMesh {
     * Triangulates a convex face by drawing diagonals from its first vertex to
     * all non-adjacent vertices.
     *
-    * @param faceIdx the face index
+    * @param faceIndex the face index
     *
     * @return this mesh
     */
-   public Mesh triangulate ( final int faceIdx ) {
+   public Mesh triangulate ( final int faceIndex ) {
 
       final int facesLen = this.faces.length;
-      final int i = Utils.mod(faceIdx, facesLen);
+      final int i = Utils.mod(faceIndex, facesLen);
       final int[][] face = this.faces[i];
       final int faceLen = face.length;
 
@@ -411,6 +411,23 @@ public abstract class Mesh extends EntityData implements IMesh {
    }
 
    /**
+    * Evaluates whether a mesh is composed entirely of triangles.
+    *
+    * @param m the mesh
+    *
+    * @return the evaluation
+    */
+   public static boolean isTriangulated ( final Mesh m ) {
+
+      final int[][][] faces = m.faces;
+      final int facesLen = faces.length;
+      for ( int i = 0; i < facesLen; ++i ) {
+         if ( faces[i].length != 3 ) { return false; }
+      }
+      return true;
+   }
+
+   /**
     * Removes a number of elements from a 3D integer array at a given start
     * index. Returns a copy of the original array with the removal.
     *
@@ -425,13 +442,15 @@ public abstract class Mesh extends EntityData implements IMesh {
 
       final int aLen = arr.length;
 
+      // TODO: Why is the length aLen + 1?
       final int valIdx = Utils.mod(index, aLen + 1);
       final int valDel = Utils.clamp(deletions, 0, aLen - valIdx);
-
       final int bLen = aLen - valDel;
       final int[][][] result = new int[bLen][][];
-      System.arraycopy(arr, 0, result, 0, valIdx);
 
+      // Should it be valIdx + 1 here instead, since the last parameter of
+      // arraycopy is length?
+      System.arraycopy(arr, 0, result, 0, valIdx);
       System.arraycopy(arr, valIdx + valDel, result, valIdx, bLen - valIdx);
       return result;
    }

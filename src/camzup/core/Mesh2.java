@@ -198,6 +198,43 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
+    * Removes a given number of face indices from this mesh beginning at an
+    * index. Does not remove any data associated with the indices.
+    *
+    * @param faceIdx the index
+    *
+    * @return this mesh
+    *
+    * @see Mesh2#deleteFaces(int, int)
+    */
+   public Mesh2 deleteFace ( final int faceIdx ) {
+
+      return this.deleteFaces(faceIdx, 1);
+   }
+
+   /**
+    * Removes a given number of face indices from this mesh beginning at an
+    * index. Does not remove any data associated with the indices.
+    *
+    * @param faceIdx the index
+    * @param count   the removal count
+    *
+    * @return this mesh
+    *
+    * @see Mesh#remove(int[][][], int, int)
+    */
+   public Mesh2 deleteFaces ( final int faceIdx, final int count ) {
+
+      // TODO: Implement delete edges?
+
+      // TODO: If remove can be updated re: what it mods, then the mod wouldn't
+      // be necessary here.
+      this.faces = Mesh.remove(this.faces, Utils.mod(faceIdx,
+         this.faces.length), count);
+      return this;
+   }
+
+   /**
     * Tests this mesh for equivalence with an object.
     *
     * @param obj the object
@@ -296,22 +333,23 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Gets an edge from the mesh.
     *
-    * @param i      the face index
-    * @param j      the vertex index
-    * @param target the output edge
+    * @param faceIdx the face index
+    * @param edgeIdx the edge index
+    * @param target  the output edge
     *
     * @return the edge
     */
-   public Edge2 getEdge ( final int i, final int j, final Edge2 target ) {
+   public Edge2 getEdge ( final int faceIdx, final int edgeIdx,
+      final Edge2 target ) {
 
-      final int[][] f0 = this.faces[Utils.mod(i, this.faces.length)];
-      final int f0len = f0.length;
-      final int k = Utils.mod(j, f0len);
-      final int[] f1 = f0[k];
-      final int[] f2 = f0[ ( k + 1 ) % f0len];
+      final int[][] face = this.faces[Utils.mod(faceIdx, this.faces.length)];
+      final int faceLen = face.length;
+      final int k = Utils.mod(edgeIdx, faceLen);
+      final int[] origin = face[k];
+      final int[] dest = face[ ( k + 1 ) % faceLen];
 
-      return target.set(this.coords[f1[0]], this.texCoords[f1[1]],
-         this.coords[f2[0]], this.texCoords[f2[1]]);
+      return target.set(this.coords[origin[0]], this.texCoords[origin[1]],
+         this.coords[dest[0]], this.texCoords[dest[1]]);
    }
 
    /**
@@ -503,18 +541,15 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int[][][] fsNew = new int[faceLen + 1][4][2];
       final int[][] centerFace = fsNew[faceLen] = new int[faceLen][2];
 
+      /* Find center. */
       final Vec2 vCenter = new Vec2();
       final Vec2 vtCenter = new Vec2();
-
-      /* Find center. */
       for ( int j = 0; j < faceLen; ++j ) {
-         final int[] vertCurr = face[j];
-         final Vec2 vCurr = this.coords[vertCurr[0]];
-         final Vec2 vtCurr = this.texCoords[vertCurr[1]];
 
          /* Sum centers. */
-         Vec2.add(vCenter, vCurr, vCenter);
-         Vec2.add(vtCenter, vtCurr, vtCenter);
+         final int[] vertCurr = face[j];
+         Vec2.add(vCenter, this.coords[vertCurr[0]], vCenter);
+         Vec2.add(vtCenter, this.texCoords[vertCurr[1]], vtCenter);
       }
 
       /* Average. */
@@ -668,39 +703,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       tr.rotateTo(0.0f);
 
-      return this;
-   }
-
-   /**
-    * Removes a given number of face indices from this mesh beginning at an
-    * index. Does not remove any data associated with the indices.
-    *
-    * @param faceIdx the index
-    *
-    * @return this mesh
-    *
-    * @see Mesh3#removeFaces(int, int)
-    */
-   public Mesh2 removeFace ( final int faceIdx ) {
-
-      return this.removeFaces(faceIdx, 1);
-   }
-
-   /**
-    * Removes a given number of face indices from this mesh beginning at an
-    * index. Does not remove any data associated with the indices.
-    *
-    * @param faceIdx the index
-    * @param count   the removal count
-    *
-    * @return this mesh
-    *
-    * @see Mesh#remove(int[][][], int, int)
-    */
-   public Mesh2 removeFaces ( final int faceIdx, final int count ) {
-
-      this.faces = Mesh.remove(this.faces, Utils.mod(faceIdx,
-         this.faces.length), count);
       return this;
    }
 
@@ -859,7 +861,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       /* If resolution is less than 1, draw a straight line segment. */
       if ( count < 1 ) {
-
          final int v0Idx = this.coords.length;
          final int v1Idx = v0Idx + 1;
 
@@ -1112,6 +1113,101 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       this.materialIndex = source.materialIndex;
       this.name = source.name;
+      return this;
+   }
+
+   /**
+    * Subdivides an edge by a cut at its midpoint. Does not distinguish
+    * between interior edges, which have a complement elsewhere, and border
+    * edges; for that reason this works best with NGONs.
+    *
+    * @param faceIndex the face index
+    * @param edgeIndex the edge index
+    *
+    * @return this mesh
+    */
+   public Mesh2 subdivEdge ( final int faceIndex, final int edgeIndex ) {
+
+      return this.subdivEdge(faceIndex, edgeIndex, 1);
+   }
+
+   /**
+    * Subdivides an edge by the number of cuts given. For example, one cut
+    * will divide an edge in half; two cuts, into thirds.<br>
+    * <br>
+    * Does not distinguish between interior edges, which have a complement
+    * elsewhere, and border edges; for that reason this works best with NGONs.
+    *
+    * @param faceIndex the face index
+    * @param edgeIndex the edge index
+    * @param cuts      number of cuts
+    *
+    * @return this mesh
+    */
+   @Experimental
+   public Mesh2 subdivEdge ( final int faceIndex, final int edgeIndex,
+      final int cuts ) {
+
+      if ( cuts < 1 ) { return this; }
+
+      /* Validate face index, find face. */
+      final int facesLen = this.faces.length;
+      final int i = Utils.mod(faceIndex, facesLen);
+      final int[][] face = this.faces[i];
+      final int faceLen = face.length;
+
+      /* Find edge origin vertex. */
+      final int j0 = Utils.mod(edgeIndex, faceLen);
+      final int[] vert0Idx = face[j0];
+      final Vec2 vOrigin = this.coords[vert0Idx[0]];
+      final Vec2 vtOrigin = this.texCoords[vert0Idx[1]];
+
+      /* Find edge destination vertex. */
+      final int j1 = ( j0 + 1 ) % faceLen;
+      final int[] vert1Idx = face[j1];
+      final Vec2 vDest = this.coords[vert1Idx[0]];
+      final Vec2 vtDest = this.texCoords[vert1Idx[1]];
+
+      /*
+       * Cache old length of coordinates and texture coordinates so new ones can
+       * be appended to the end.
+       */
+      final int vsOldLen = this.coords.length;
+      final int vtsOldLen = this.texCoords.length;
+
+      /* Create arrays to hold new data. */
+      final Vec2[] vsNew = new Vec2[cuts];
+      final Vec2[] vtsNew = new Vec2[cuts];
+      final int[][] fsNew = new int[cuts][2];
+
+      /*
+       * Subdivide the edge. The edge origin and destination are to be excluded
+       * from the new set, so the conversion to the step accounts for this.
+       */
+      final float toStep = 1.0f / ( cuts + 1.0f );
+      for ( int k = 0; k < cuts; ++k ) {
+         final float step = toStep + k * toStep;
+         final float u = 1.0f - step;
+
+         vsNew[k] = new Vec2(u * vOrigin.x + step * vDest.x, u * vOrigin.y
+            + step * vDest.y);
+         vtsNew[k] = new Vec2(u * vtOrigin.x + step * vtDest.x, u * vtOrigin.y
+            + step * vtDest.y);
+
+         final int[] fNew = fsNew[k];
+         fNew[0] = vsOldLen + k;
+         fNew[1] = vtsOldLen + k;
+      }
+
+      /*
+       * Append new coordinates and texture coordinates to the end of their
+       * respective arrays. The new faces need to be inserted to the object's
+       * faces array, not reassigned to local face array.
+       */
+      this.coords = Vec2.concat(this.coords, vsNew);
+      this.texCoords = Vec2.concat(this.texCoords, vtsNew);
+      this.faces[i] = Mesh.insert(face, j1, fsNew);
+
       return this;
    }
 
@@ -1831,89 +1927,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Subdivides an edge by the number of cuts given. For example, one cut
-    * will divide an edge in half; two cuts, into thirds.<br>
-    * <br>
-    * Does not distinguish between interior edges, which have a complement
-    * elsewhere, and border edges; for that reason this works best with
-    * NGONs.<br>
-    * <br>
-    * This is protected because it tends to make faces harder to triangulate.
-    *
-    * @param faceIndex the face index
-    * @param edgeIndex the edge index
-    * @param cuts      number of cuts
-    *
-    * @return this mesh
-    */
-   @Experimental
-   protected Mesh2 subdivEdge ( final int faceIndex, final int edgeIndex,
-      final int cuts ) {
-
-      if ( cuts < 1 ) { return this; }
-
-      /* Validate face index, find face. */
-      final int facesLen = this.faces.length;
-      final int i = Utils.mod(faceIndex, facesLen);
-      final int[][] face = this.faces[i];
-      final int faceLen = face.length;
-
-      /* Find edge origin vertex. */
-      final int j0 = Utils.mod(edgeIndex, faceLen);
-      final int[] vert0Idx = face[j0];
-      final Vec2 vOrigin = this.coords[vert0Idx[0]];
-      final Vec2 vtOrigin = this.texCoords[vert0Idx[1]];
-
-      /* Find edge destination vertex. */
-      final int j1 = ( j0 + 1 ) % faceLen;
-      final int[] vert1Idx = face[j1];
-      final Vec2 vDest = this.coords[vert1Idx[0]];
-      final Vec2 vtDest = this.texCoords[vert1Idx[1]];
-
-      /*
-       * Cache old length of coordinates and texture coordinates so new ones can
-       * be appended to the end.
-       */
-      final int vsOldLen = this.coords.length;
-      final int vtsOldLen = this.texCoords.length;
-
-      /* Create arrays to hold new data. */
-      final Vec2[] vsNew = new Vec2[cuts];
-      final Vec2[] vtsNew = new Vec2[cuts];
-      final int[][] fsNew = new int[cuts][2];
-
-      /*
-       * Subdivide the edge. The edge origin and destination are to be excluded
-       * from the new set, so the conversion to the step accounts for this.
-       */
-      final float toStep = 1.0f / ( cuts + 1.0f );
-      for ( int k = 0; k < cuts; ++k ) {
-         final float step = toStep + k * toStep;
-         final float u = 1.0f - step;
-
-         vsNew[k] = new Vec2(u * vOrigin.x + step * vDest.x, u * vOrigin.y
-            + step * vDest.y);
-         vtsNew[k] = new Vec2(u * vtOrigin.x + step * vtDest.x, u * vtOrigin.y
-            + step * vtDest.y);
-
-         final int[] fNew = fsNew[k];
-         fNew[0] = vsOldLen + k;
-         fNew[1] = vtsOldLen + k;
-      }
-
-      /*
-       * Append new coordinates and texture coordinates to the end of their
-       * respective arrays. The new faces need to be inserted to the object's
-       * faces array, not reassigned to local face array.
-       */
-      this.coords = Vec2.concat(this.coords, vsNew);
-      this.texCoords = Vec2.concat(this.texCoords, vtsNew);
-      this.faces[i] = Mesh.insert(face, j1, fsNew);
-
-      return this;
-   }
-
-   /**
     * Type of polygon to draw when it is not supplied to the polygon function.
     */
    public static final PolyType DEFAULT_POLY_TYPE = PolyType.NGON;
@@ -1965,7 +1978,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       if ( arcLen1 < 0.00139d ) {
          Mesh2.polygon(sectors, PolyType.NGON, target);
          target.insetFace(0, 1.0f - oculus);
-         target.removeFaces(-1, 1);
+         target.deleteFaces(-1, 1);
          if ( poly == PolyType.TRI ) { target.triangulate(); }
          return target;
       }
