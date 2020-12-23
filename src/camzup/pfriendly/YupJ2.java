@@ -647,6 +647,47 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * Creates a PShape with the default family.
+    *
+    * @return the shape
+    */
+   @Override
+   public PShape createShape ( ) {
+
+      /*
+       * This needs to be overridden because a bug in PShape drawImpl allows a
+       * geometry family shape to accept bezierVertex, quadraticVertex, etc.
+       * commands that it cannot properly represent. See
+       * https://github.com/processing/processing/issues/4879 .
+       */
+      return this.createShape(YupJ2.DEFAULT_PSHAPE_FAMILY);
+   }
+
+   /**
+    * Creates a PShape of a specified family, from either
+    * {@link PConstants#GROUP} ({@value PConstants#GROUP}),
+    * {@link PShape#PATH} ({@value PShape#PATH}), or {@link PShape#GEOMETRY}
+    * ({@value PShape#GEOMETRY}).
+    *
+    * @param family the family code
+    *
+    * @return the shape
+    */
+   @Override
+   public PShape createShape ( final int family ) {
+
+      switch ( family ) {
+         case PConstants.GROUP:
+         case PShape.GEOMETRY:
+         case PShape.PATH:
+            return new PShape(this, family);
+
+         default:
+            return new PShape(this, YupJ2.DEFAULT_PSHAPE_FAMILY);
+      }
+   }
+
+   /**
     * Draws a curve between four points.
     *
     * @param a the first point
@@ -4109,6 +4150,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    @Override
    protected void tintFromCalc ( ) { /* Unsupported. */ }
+
+   /**
+    * The default PShape family to use when none other is supplied.
+    */
+   public static final int DEFAULT_PSHAPE_FAMILY = PShape.PATH;
 
    /**
     * The floating point epsilon, cast to a double.

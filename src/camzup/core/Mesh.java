@@ -441,15 +441,10 @@ public abstract class Mesh extends EntityData implements IMesh {
       final int deletions ) {
 
       final int aLen = arr.length;
-
-      // TODO: Why is the length aLen + 1?
-      final int valIdx = Utils.mod(index, aLen + 1);
+      final int valIdx = Utils.mod(index, aLen);
       final int valDel = Utils.clamp(deletions, 0, aLen - valIdx);
       final int bLen = aLen - valDel;
       final int[][][] result = new int[bLen][][];
-
-      // Should it be valIdx + 1 here instead, since the last parameter of
-      // arraycopy is length?
       System.arraycopy(arr, 0, result, 0, valIdx);
       System.arraycopy(arr, valIdx + valDel, result, valIdx, bLen - valIdx);
       return result;

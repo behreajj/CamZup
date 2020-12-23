@@ -53,6 +53,11 @@ public class Vert3 implements Comparable < Vert3 > {
    @Override
    public int compareTo ( final Vert3 vert ) {
 
+      // TODO: Reconsider this, as vertex equality based on all its components
+      // could make it easier to convert to a Unity style mesh.
+      // This would mess with proximity function and all others that rely on
+      // getVertices being based on coordinates only, but maybe that's for the
+      // better.
       return this.coord.compareTo(vert.coord);
    }
 
@@ -79,7 +84,10 @@ public class Vert3 implements Comparable < Vert3 > {
     * @return the hash
     */
    @Override
-   public int hashCode ( ) { return this.coord.hashCode(); }
+   public int hashCode ( ) {
+
+      return this.coord.hashCode();
+   }
 
    /**
     * Sets the coordinate, texture coordinate and normal of the vertex by

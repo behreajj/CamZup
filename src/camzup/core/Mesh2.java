@@ -201,36 +201,33 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * Removes a given number of face indices from this mesh beginning at an
     * index. Does not remove any data associated with the indices.
     *
-    * @param faceIdx the index
+    * @param faceIndex the index
     *
     * @return this mesh
     *
     * @see Mesh2#deleteFaces(int, int)
     */
-   public Mesh2 deleteFace ( final int faceIdx ) {
+   public Mesh2 deleteFace ( final int faceIndex ) {
 
-      return this.deleteFaces(faceIdx, 1);
+      return this.deleteFaces(faceIndex, 1);
    }
 
    /**
     * Removes a given number of face indices from this mesh beginning at an
     * index. Does not remove any data associated with the indices.
     *
-    * @param faceIdx the index
-    * @param count   the removal count
+    * @param faceIndex the index
+    * @param count     the removal count
     *
     * @return this mesh
     *
     * @see Mesh#remove(int[][][], int, int)
     */
-   public Mesh2 deleteFaces ( final int faceIdx, final int count ) {
+   public Mesh2 deleteFaces ( final int faceIndex, final int count ) {
 
-      // TODO: Implement delete edges?
+      // TODO: Implement delete vertices, edges?
 
-      // TODO: If remove can be updated re: what it mods, then the mod wouldn't
-      // be necessary here.
-      this.faces = Mesh.remove(this.faces, Utils.mod(faceIdx,
-         this.faces.length), count);
+      this.faces = Mesh.remove(this.faces, faceIndex, count);
       return this;
    }
 
@@ -439,18 +436,17 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Gets a vertex from the mesh.
     *
-    * @param i      primary index
-    * @param j      secondary index
+    * @param i      face index
+    * @param j      vertex index
     * @param target the output vertex
     *
     * @return the vertex
     */
    public Vert2 getVertex ( final int i, final int j, final Vert2 target ) {
 
-      final int[][] f0 = this.faces[Utils.mod(i, this.faces.length)];
-      final int[] f = f0[Utils.mod(j, f0.length)];
-
-      return target.set(this.coords[f[0]], this.texCoords[f[1]]);
+      final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
+      final int[] vertidcs = face[Utils.mod(j, face.length)];
+      return target.set(this.coords[vertidcs[0]], this.texCoords[vertidcs[1]]);
    }
 
    /**
@@ -1978,7 +1974,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       if ( arcLen1 < 0.00139d ) {
          Mesh2.polygon(sectors, PolyType.NGON, target);
          target.insetFace(0, 1.0f - oculus);
-         target.deleteFaces(-1, 1);
+         target.deleteFace(-1);
          if ( poly == PolyType.TRI ) { target.triangulate(); }
          return target;
       }
@@ -2346,8 +2342,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * </pre>
     *
     * See <a href=
-    * "https://www.redblobgames.com/grids/hexagons/implementation.html">https://www.redblobgames.com/grids/hexagons/implementation.html</a>
-    * .
+    * "https://www.redblobgames.com/grids/hexagons/implementation.html">Red
+    * Blob Games' Implementation of Hex Grids</a> .
     *
     * @param rings      the number of rings
     * @param cellRadius the cell radius

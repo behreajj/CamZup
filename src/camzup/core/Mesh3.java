@@ -219,34 +219,31 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * Removes a face indices from this mesh beginning at an index. Does not
     * remove any data associated with the indices.
     *
-    * @param faceIdx the index
+    * @param faceIndex the index
     *
     * @return this mesh
     *
     * @see Mesh3#deleteFaces(int, int)
     */
-   public Mesh3 deleteFace ( final int faceIdx ) {
+   public Mesh3 deleteFace ( final int faceIndex ) {
 
-      return this.deleteFaces(faceIdx, 1);
+      return this.deleteFaces(faceIndex, 1);
    }
 
    /**
     * Removes a given number of face indices from this mesh beginning at an
     * index. Does not remove any data associated with the indices.
     *
-    * @param faceIdx the index
-    * @param count   the removal count
+    * @param faceIndex the index
+    * @param count     the removal count
     *
     * @return this mesh
     *
     * @see Mesh#remove(int[][][], int, int)
     */
-   public Mesh3 deleteFaces ( final int faceIdx, final int count ) {
+   public Mesh3 deleteFaces ( final int faceIndex, final int count ) {
 
-      // TODO: If remove can be updated re: what it mods, then the mod wouldn't
-      // be necessary here.
-      this.faces = Mesh.remove(this.faces, Utils.mod(faceIdx,
-         this.faces.length), count);
+      this.faces = Mesh.remove(this.faces, faceIndex, count);
       return this;
    }
 
@@ -670,19 +667,18 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Gets a vertex from the mesh.
     *
-    * @param i      primary index
-    * @param j      secondary index
+    * @param i      face index
+    * @param j      vertex index
     * @param target the output vertex
     *
     * @return the vertex
     */
    public Vert3 getVertex ( final int i, final int j, final Vert3 target ) {
 
-      final int[][] f0 = this.faces[Utils.mod(i, this.faces.length)];
-      final int[] f = f0[Utils.mod(j, f0.length)];
-
-      return target.set(this.coords[f[0]], this.texCoords[f[1]],
-         this.normals[f[2]]);
+      final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
+      final int[] vertidcs = face[Utils.mod(j, face.length)];
+      return target.set(this.coords[vertidcs[0]], this.texCoords[vertidcs[1]],
+         this.normals[vertidcs[2]]);
    }
 
    /**
