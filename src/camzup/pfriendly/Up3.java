@@ -87,6 +87,21 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
+    * Begins the heads-up display section of the sketch.
+    */
+   @Experimental
+   public void beginHud ( ) {
+
+      this.disableDepthTest();
+      this.disableDepthMask();
+      this.ortho();
+      this.noLights();
+      this.setMatrix(1.0f, 0.0f, 0.0f, -this.width * 0.5f, 0.0f, 1.0f, 0.0f,
+         -this.height * 0.5f, 0.0f, 0.0f, 1.0f, -this.height * IUtils.SQRT_3_2,
+         0.0f, 0.0f, 0.0f, 1.0f);
+   }
+
+   /**
     * Draws a single Bezier curve.
     *
     * @param ap0 the first anchor point
@@ -306,6 +321,16 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             this.lookTarget.z + zLocal, this.refUp.x, this.refUp.y,
             this.refUp.z);
       }
+   }
+
+   /**
+    * Concludes the heads-up display section of the sketch.
+    */
+   @Experimental
+   public void endHud ( ) {
+
+      this.enableDepthMask();
+      this.enableDepthTest();
    }
 
    /**

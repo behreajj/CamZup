@@ -37,7 +37,7 @@ public class Vert2 implements Comparable < Vert2 > {
    }
 
    /**
-    * Compares this vertex to another by hash code.
+    * Compares this vertex to another.
     *
     * @param vert the comparisand
     *
@@ -46,7 +46,9 @@ public class Vert2 implements Comparable < Vert2 > {
    @Override
    public int compareTo ( final Vert2 vert ) {
 
-      return this.coord.compareTo(vert.coord);
+      final int tcComp = this.texCoord.compareTo(vert.texCoord);
+      final int coComp = this.coord.compareTo(vert.coord);
+      return tcComp != 0 ? tcComp : coComp;
    }
 
    /**
@@ -66,13 +68,21 @@ public class Vert2 implements Comparable < Vert2 > {
    }
 
    /**
-    * Returns a hash code for this vertex based on its coordinate and texture
-    * coordinate.
+    * Returns a hash code for this vector based on its x, y and z components.
     *
-    * @return the hash
+    * @return the hash code
     */
    @Override
-   public int hashCode ( ) { return this.coord.hashCode(); }
+   public int hashCode ( ) {
+
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ( this.coord == null ? 0 : this.coord
+         .hashCode() );
+      result = prime * result + ( this.texCoord == null ? 0 : this.texCoord
+         .hashCode() );
+      return result;
+   }
 
    /**
     * Sets the coordinate and texture coordinate of the vertex by reference.
@@ -126,6 +136,10 @@ public class Vert2 implements Comparable < Vert2 > {
       if ( this.coord == null ) {
          if ( vert2.coord != null ) { return false; }
       } else if ( !this.coord.equals(vert2.coord) ) { return false; }
+
+      if ( this.texCoord == null ) {
+         if ( vert2.texCoord != null ) { return false; }
+      } else if ( !this.texCoord.equals(vert2.texCoord) ) { return false; }
 
       return true;
    }

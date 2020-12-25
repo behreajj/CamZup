@@ -92,7 +92,7 @@ void draw() {
 void mouseControls() {
   if (mousePressed) {
 
-    rndr.mouse1(m1s);
+    rndr.mouse1s(m1s);
 
     if (mouseButton == LEFT) {
       Vec3 v = Vec3.mul(m1s, orbitSpeed, new Vec3());

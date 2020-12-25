@@ -1833,14 +1833,66 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Sets the renderer matrix to source values.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    */
+   public void setMatrix ( final float m00, final float m01, final float m02,
+      final float m10, final float m11, final float m12 ) {
+
+      this.setMatrix(m00, m01, 0.0f, m02, m10, m11, 0.0f, m12, 0.0f, 0.0f, 1.0f,
+         0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Sets the renderer matrix to source values.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m03 row 0, column 3
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    * @param m13 row 1, column 3
+    * @param m20 row 2, column 0
+    * @param m21 row 2, column 1
+    * @param m22 row 2, column 2
+    * @param m23 row 2, column 3
+    * @param m30 row 3, column 0
+    * @param m31 row 3, column 1
+    * @param m32 row 3, column 2
+    * @param m33 row 3, column 3
+    *
+    * @see PGraphicsOpenGL#resetMatrix()
+    * @see UpOgl#applyMatrixImpl(float, float, float, float, float, float,
+    *      float, float, float, float, float, float, float, float, float,
+    *      float)
+    */
+   public void setMatrix ( final float m00, final float m01, final float m02,
+      final float m03, final float m10, final float m11, final float m12,
+      final float m13, final float m20, final float m21, final float m22,
+      final float m23, final float m30, final float m31, final float m32,
+      final float m33 ) {
+
+      this.resetMatrix();
+      this.applyMatrixImpl(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21,
+         m22, m23, m30, m31, m32, m33);
+   }
+
+   /**
     * Sets the renderer matrix to the source.
     *
     * @param source the source matrix
     */
    public void setMatrix ( final Mat3 source ) {
 
-      this.resetMatrix();
-      this.applyMatrixImpl(source.m00, source.m01, 0.0f, source.m02, source.m10,
+      this.setMatrix(source.m00, source.m01, 0.0f, source.m02, source.m10,
          source.m11, 0.0f, source.m12, 0.0f, 0.0f, 1.0f, 0.0f, source.m20,
          source.m21, 0.0f, source.m22);
    }
@@ -1852,11 +1904,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void setMatrix ( final Mat4 source ) {
 
-      this.resetMatrix();
-      this.applyMatrixImpl(source.m00, source.m01, source.m02, source.m03,
-         source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
-         source.m22, source.m23, source.m30, source.m31, source.m32,
-         source.m33);
+      this.setMatrix(source.m00, source.m01, source.m02, source.m03, source.m10,
+         source.m11, source.m12, source.m13, source.m20, source.m21, source.m22,
+         source.m23, source.m30, source.m31, source.m32, source.m33);
    }
 
    /**
@@ -1867,8 +1917,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void setMatrix ( final PMatrix2D source ) {
 
-      this.resetMatrix();
-      this.applyMatrixImpl(source.m00, source.m01, 0.0f, source.m02, source.m10,
+      this.setMatrix(source.m00, source.m01, 0.0f, source.m02, source.m10,
          source.m11, 0.0f, source.m12, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
          1.0f);
    }
@@ -1881,11 +1930,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void setMatrix ( final PMatrix3D source ) {
 
-      this.resetMatrix();
-      this.applyMatrixImpl(source.m00, source.m01, source.m02, source.m03,
-         source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
-         source.m22, source.m23, source.m30, source.m31, source.m32,
-         source.m33);
+      this.setMatrix(source.m00, source.m01, source.m02, source.m03, source.m10,
+         source.m11, source.m12, source.m13, source.m20, source.m21, source.m22,
+         source.m23, source.m30, source.m31, source.m32, source.m33);
    }
 
    /**
@@ -1962,7 +2009,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       if ( psh.isVisible() ) {
          this.flush();
+         // this.pushMatrix();
+         // this.scale(1.0f, -1.0f);
          psh.draw(this);
+         // this.popMatrix();
       }
    }
 
@@ -2018,7 +2068,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * by PShapes.
     */
    @Override
-   public void shapeMode ( final int mode ) {}
+   public void shapeMode ( final int mode ) { /* Unsupported. */ }
 
    /**
     * Applies a shear transform to the renderer.
@@ -3062,6 +3112,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    protected void drawMesh3 ( final Mesh3 mesh, final Transform3 tr,
       final Vec3 v, final Vec3 vn ) {
+
+      // TODO: Make a uniform version of this and the 2D version? See
+      // Convert.toPShape.
 
       final Vec3[] vs = mesh.coords;
       final Vec3[] vns = mesh.normals;

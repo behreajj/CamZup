@@ -135,3 +135,4 @@ octree
 quadtree
 hexagons
 int
+tally

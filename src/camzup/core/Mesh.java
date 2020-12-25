@@ -2,6 +2,8 @@ package camzup.core;
 
 import java.util.Arrays;
 import java.util.Comparator;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * An abstract parent for mesh objects.
@@ -283,6 +285,40 @@ public abstract class Mesh extends EntityData implements IMesh {
    protected static final Comparator < Vec3 > SORT_3 = new SortQuantized3();
 
    /**
+    * Counts the occurrence of faces with a given number of vertices. Useful
+    * for determining whether a face is composed entirely of triangles,
+    * quadrilaterals, or is non-uniform. Returns a {@link Map}, where the
+    * vertex count is the key and the tally is the value.<br>
+    * <br>
+    * Always the audit always places 3 and 4 into the map, even if neither
+    * triangles nor quadrilaterals are present, because they are common
+    * entries to check. When querying other possibilities use
+    * {@link Map#getOrDefault(Object, Object)}, where the default argument is
+    * 0.
+    *
+    * @param m the mesh
+    *
+    * @return the audit
+    */
+   public static Map < Integer, Integer > auditFaceType ( final Mesh m ) {
+
+      final HashMap < Integer, Integer > audit = new HashMap <>(32, 0.75f);
+      audit.put(3, 0);
+      audit.put(4, 0);
+      final int[][][] faces = m.faces;
+      final int facesLen = faces.length;
+      for ( int i = 0; i < facesLen; ++i ) {
+         final Integer faceLen = faces[i].length;
+         if ( audit.containsKey(faceLen) ) {
+            audit.put(faceLen, audit.get(faceLen) + 1);
+         } else {
+            audit.put(faceLen, 1);
+         }
+      }
+      return audit;
+   }
+
+   /**
     * Evaluates whether two edges are permutations of each other. This is
     * based on whether they refer to the same coordinates, but do so in a
     * different sequence.<br>
@@ -411,20 +447,27 @@ public abstract class Mesh extends EntityData implements IMesh {
    }
 
    /**
-    * Evaluates whether a mesh is composed entirely of triangles.
+    * Evaluates whether all faces in a mesh are quadrilaterals.
     *
     * @param m the mesh
     *
     * @return the evaluation
     */
-   public static boolean isTriangulated ( final Mesh m ) {
+   public static boolean isQuads ( final Mesh m ) {
 
-      final int[][][] faces = m.faces;
-      final int facesLen = faces.length;
-      for ( int i = 0; i < facesLen; ++i ) {
-         if ( faces[i].length != 3 ) { return false; }
-      }
-      return true;
+      return Mesh.uniformVertsPerFace(m, 4);
+   }
+
+   /**
+    * Evaluates whether all faces in a mesh are triangles.
+    *
+    * @param m the mesh
+    *
+    * @return the evaluation
+    */
+   public static boolean isTriangles ( final Mesh m ) {
+
+      return Mesh.uniformVertsPerFace(m, 3);
    }
 
    /**
@@ -536,6 +579,25 @@ public abstract class Mesh extends EntityData implements IMesh {
       System.arraycopy(insert, 0, result2, valIdx, bLen);
       System.arraycopy(arr, idxOff, result2, valIdx + bLen, aLen - idxOff);
       return result2;
+   }
+
+   /**
+    * Evaluates whether all faces in a mesh have a specified number of
+    * vertices.
+    *
+    * @param m the mesh
+    * @param c the number of vertices.
+    *
+    * @return the evaluation
+    */
+   public static boolean uniformVertsPerFace ( final Mesh m, final int c ) {
+
+      final int[][][] faces = m.faces;
+      final int facesLen = faces.length;
+      for ( int i = 0; i < facesLen; ++i ) {
+         if ( faces[i].length != c ) { return false; }
+      }
+      return true;
    }
 
    /**

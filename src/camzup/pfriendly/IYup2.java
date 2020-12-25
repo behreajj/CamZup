@@ -565,7 +565,6 @@ public interface IYup2 extends IUp {
       this.point(xOrigin, yOrigin);
 
       if ( mSq > 0.0f ) {
-
          final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
          final float dx = xOrigin + xDir * mInv;
          final float dy = yOrigin + yDir * mInv;
@@ -1098,28 +1097,25 @@ public interface IYup2 extends IUp {
    static Vec2 mouse ( final PApplet parent, final IYup2 renderer,
       final Vec2 target ) {
 
-      /* Normalize to [0.0, 1.0], then shift to [-0.5, 0.5]. */
-      float mx = parent.mouseX / ( float ) parent.width - 0.5f;
-      float my = 0.5f - parent.mouseY / ( float ) parent.height;
-
-      /* Scale. */
-      mx *= Utils.div(renderer.getWidth(), renderer.getZoomX());
-      my *= Utils.div(renderer.getHeight(), renderer.getZoomY());
-
-      /* Rotate. */
+      /*
+       * Normalize mouse to [0.0, 1.0], then shift to [-0.5, 0.5]. Follow SRT
+       * transform order. Scale by renderer dimensions divided by zoom. Then
+       * rotate, then translate.
+       */
       final float angle = renderer.getRoll() * IUtils.ONE_TAU;
       final float cosa = Utils.scNorm(angle);
       final float sina = Utils.scNorm(angle - 0.25f);
 
-      final float temp = mx;
-      mx = cosa * mx - sina * my;
-      my = cosa * my + sina * temp;
-
-      /* Translate. */
-      mx += renderer.getLocX();
-      my += renderer.getLocY();
-
-      return target.set(mx, my);
+      /*
+       * Because zoom is set by camera, which already has a check for zero
+       * values, it is okay to not use Utils.div here.
+       */
+      final float mx = ( parent.mouseX / ( float ) parent.width - 0.5f )
+         * ( renderer.getWidth() / renderer.getZoomX() );
+      final float my = ( 0.5f - parent.mouseY / ( float ) parent.height )
+         * ( renderer.getHeight() / renderer.getZoomY() );
+      return target.set(cosa * mx - sina * my + renderer.getLocX(), cosa * my
+         + sina * mx + renderer.getLocY());
    }
 
    /**
@@ -1136,9 +1132,9 @@ public interface IYup2 extends IUp {
     */
    static Vec2 mouse1s ( final PApplet parent, final Vec2 target ) {
 
-      final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
-      final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
-      return target.set(mx + mx - 1.0f, 1.0f - ( my + my ));
+      return target.set(2.0f * Utils.clamp01(parent.mouseX
+         / ( float ) parent.width) - 1.0f, 1.0f - 2.0f * Utils.clamp01(
+            parent.mouseY / ( float ) parent.height));
    }
 
    /**
@@ -1152,9 +1148,8 @@ public interface IYup2 extends IUp {
     */
    static Vec2 mouse1u ( final PApplet parent, final Vec2 target ) {
 
-      final float mx = Utils.clamp01(parent.mouseX / ( float ) parent.width);
-      final float my = Utils.clamp01(parent.mouseY / ( float ) parent.height);
-      return target.set(mx, 1.0f - my);
+      return target.set(Utils.clamp01(parent.mouseX / ( float ) parent.width),
+         1.0f - Utils.clamp01(parent.mouseY / ( float ) parent.height));
    }
 
    /**

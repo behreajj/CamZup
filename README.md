@@ -113,6 +113,7 @@ Here is a brief list of issues with this library and differences which may be un
   
 ### 2D
   - `YupJ2`'s `point` supports `strokeCap(SQUARE)` at the expense of performance.
+  - `YupJ2`'s `createShape` creates a `PATH` family `PShape` by default due to a [bug](https://github.com/processing/processing/issues/4879).
   - The `image` function for `PGraphicsJava2D` is ineffective, both in terms of frame rate and appearance. I recommend that an OpenGL renderer be used instead. Alternatively, rescale images to display size and tint them in an external application that specializes in raster image manipulation (e.g., [GIMP](https://www.gimp.org/)). I have made an image function which removes some of the padding around the native renderer's image function in cases where a `PImage` can be converted to an AWT image in `setup`.
   - As a consequence of how `image` function works above, dynamic `tint`ing is no longer supported in `YupJ2`.
   - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter.

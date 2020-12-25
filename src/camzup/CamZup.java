@@ -54,6 +54,8 @@ public class CamZup {
       final int rings, final float depth, final float radius,
       final PolyType poly, final Mesh3 target ) {
 
+      // TODO: Should this officially be made part of Mesh3?
+
       /*
        * Require that latitudes be even so that they can be split about the
        * equator.
@@ -682,6 +684,20 @@ public class CamZup {
       // me3.append(m3);
       // final String str = me3.toBlenderCode();
       // System.out.println(str);
+
+      // try {
+      // BufferedReader in = new BufferedReader(new FileReader(
+      // "data/test1.obj"));
+      // Mesh3[] meshes0 = Mesh3.fromObj(in, true);
+      // MeshEntity3 entity = new MeshEntity3();
+      // entity.appendAll(meshes0);
+      // System.out.println(meshes0.length);
+      // System.out.println(meshes0[0].faces.length);
+      // // PGraphicsOpenGL rndr = null;
+      // // PShape pshp = Convert.toPShape(rndr, entity);
+      // } catch ( FileNotFoundException e ) {
+      // e.printStackTrace();
+      // }
    }
 
    /**

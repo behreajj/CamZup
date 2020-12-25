@@ -1120,10 +1120,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Oscillates between [0.0, 1.0] based on an input step.<br>
-    * <br>
-    * Uses a different formula than the Unity math function of the same name:
-    * 0.5 + 0.5 * cos ( step / TAU ) .
+    * Oscillates between [0.0, 1.0] based on an input step.
     *
     * @param step the step
     *
@@ -1131,7 +1128,22 @@ public abstract class Utils implements IUtils {
     */
    public static float pingPong ( final float step ) {
 
-      return 0.5f + 0.5f * Utils.scNorm(step);
+      return Utils.pingPong(0.0f, 1.0f, step, 1.0f);
+   }
+
+   /**
+    * Oscillates between [0.0, 1.0] based on an input step and a pause factor.
+    * When the pause is greater than 1.0, the value will be clamped to the
+    * bound before returning to the other pole.
+    *
+    * @param step  the step
+    * @param pause the pause factor
+    *
+    * @return the oscillation
+    */
+   public static float pingPong ( final float step, final float pause ) {
+
+      return Utils.pingPong(0.0f, 1.0f, step, pause);
    }
 
    /**
@@ -1146,7 +1158,29 @@ public abstract class Utils implements IUtils {
    public static float pingPong ( final float lb, final float ub,
       final float step ) {
 
-      final float t = 0.5f + 0.5f * Utils.scNorm(step);
+      return Utils.pingPong(lb, ub, step, 1.0f);
+   }
+
+   /**
+    * Oscillates between a lower and upper bound based on an input step and a
+    * pause factor. When the pause is greater than 1.0, the value will be
+    * clamped to the bound before returning to the other pole.
+    *
+    * @param lb    the lower bound
+    * @param ub    the upper bound
+    * @param step  the step
+    * @param pause the pause factor
+    *
+    * @return the oscillation
+    */
+   public static float pingPong ( final float lb, final float ub,
+      final float step, final float pause ) {
+
+      // TODO: TEST
+
+      final float t = 0.5f + 0.5f * pause * Utils.scNorm(step);
+      if ( t <= 0.0f ) { return lb; }
+      if ( t >= 1.0f ) { return ub; }
       return ( 1.0f - t ) * lb + t * ub;
    }
 
@@ -1161,8 +1195,26 @@ public abstract class Utils implements IUtils {
     */
    public static int pingPong ( final int lb, final int ub, final float step ) {
 
-      final float t = 0.5f + 0.5f * Utils.scNorm(step);
-      return ( int ) ( ( 1.0f - t ) * lb + t * ub );
+      return ( int ) Utils.pingPong(( float ) lb, ( float ) ub, step);
+   }
+
+   /**
+    * Oscillates between a lower and upper bound based on an input step and a
+    * pause factor. When the pause is greater than 1.0, the value will be
+    * clamped to the bound before returning to the other pole.
+    *
+    * @param lb    the lower bound
+    * @param ub    the upper bound
+    * @param step  the step
+    * @param pause the pause factor
+    *
+    * @return the oscillation
+    */
+   public static int pingPong ( final int lb, final int ub, final float step,
+      final float pause ) {
+
+      // TODO: TEST
+      return ( int ) Utils.pingPong(( float ) lb, ( float ) ub, step, pause);
    }
 
    /**

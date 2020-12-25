@@ -1,5 +1,7 @@
 package camzup.core;
 
+import java.io.BufferedReader;
+
 import java.util.ArrayList;
 import java.util.regex.Pattern;
 
@@ -600,52 +602,62 @@ public class MaterialSolid extends Material {
    }
 
    /**
-    * Creates a material from an array of strings representing a Wavefront
-    * .mtl file. The support for this file format is <em>very</em> minimal, as
-    * it is unlikely that its contents would be reproducible between a variety
-    * of renderers. The material's fill is set to the diffuse color.
+    * Creates a material from a buffered reader that holds a Wavefront .mtl
+    * file. The support for this file format is <em>very</em> minimal, as it
+    * is unlikely that its contents would be reproducible between a variety of
+    * renderers. The material's fill is set to the diffuse color.
     *
-    * @param lines the String tokens
+    * @param in buffered reader
     *
     * @return the material
     */
-   public static MaterialSolid[] fromMtl ( final String[] lines ) {
+   public static MaterialSolid[] fromMtl ( final BufferedReader in ) {
 
-      final int len = lines.length;
       String[] tokens;
       final ArrayList < MaterialSolid > result = new ArrayList <>();
       MaterialSolid current = null;
 
-      String alpha = "1.0";
+      float alpha = 1.0f;
       final Pattern spacePattern = Pattern.compile("\\s+");
 
-      for ( int i = 0; i < len; ++i ) {
+      try {
+         try {
+            for ( String ln = in.readLine(); ln != null; ln = in.readLine() ) {
+               /* Split line by spaces. */
+               tokens = spacePattern.split(ln, 0);
 
-         /* Split line by spaces. */
-         tokens = spacePattern.split(lines[i], 0);
+               /* Skip empty lines. */
+               if ( tokens.length > 0 ) {
+                  final String initialToken = tokens[0].toLowerCase();
 
-         /* Skip empty lines. */
-         if ( tokens.length > 0 ) {
-            final String initialToken = tokens[0].toLowerCase();
+                  if ( initialToken.equals("newmtl") ) {
 
-            if ( initialToken.equals("newmtl") ) {
+                     current = new MaterialSolid();
+                     result.add(current);
+                     current.name = tokens[1];
+                     current.fill.set(0.8f, 0.8f, 0.8f, 1.0f);
 
-               current = new MaterialSolid();
-               result.add(current);
-               current.name = tokens[1];
-               current.fill.set(0.8f, 0.8f, 0.8f, 1.0f);
+                  } else if ( initialToken.equals("d") ) {
 
-            } else if ( initialToken.equals("d") ) {
+                     alpha = Float.parseFloat(tokens[1]);
 
-               alpha = tokens[1];
+                  } else if ( current != null && initialToken.equals("kd") ) {
 
-            } else if ( current != null && initialToken.equals("kd") ) {
+                     /* Diffuse color. Default: (0.8, 0.8, 0.8) . */
+                     current.fill.set(Float.parseFloat(tokens[1]), Float
+                        .parseFloat(tokens[2]), Float.parseFloat(tokens[3]),
+                        alpha);
 
-               /* Diffuse color. Default: (0.8, 0.8, 0.8) . */
-               current.fill.set(tokens[1], tokens[2], tokens[3], alpha);
-
+                  }
+               }
             }
+         } catch ( final Exception e ) {
+            e.printStackTrace();
+         } finally {
+            in.close();
          }
+      } catch ( final Exception e ) {
+         e.printStackTrace();
       }
 
       return result.toArray(new MaterialSolid[result.size()]);

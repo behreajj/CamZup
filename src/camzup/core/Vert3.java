@@ -44,7 +44,7 @@ public class Vert3 implements Comparable < Vert3 > {
    }
 
    /**
-    * Compares this vertex to another by hash code.
+    * Compares this vertex to another.
     *
     * @param vert the comparisand
     *
@@ -53,40 +53,29 @@ public class Vert3 implements Comparable < Vert3 > {
    @Override
    public int compareTo ( final Vert3 vert ) {
 
-      // TODO: Reconsider this, as vertex equality based on all its components
-      // could make it easier to convert to a Unity style mesh.
-      // This would mess with proximity function and all others that rely on
-      // getVertices being based on coordinates only, but maybe that's for the
-      // better.
-      return this.coord.compareTo(vert.coord);
+      final int nrComp = this.normal.compareTo(vert.normal);
+      final int tcComp = this.texCoord.compareTo(vert.texCoord);
+      final int coComp = this.coord.compareTo(vert.coord);
+      return nrComp != 0 ? nrComp : tcComp != 0 ? tcComp : coComp;
    }
 
    /**
-    * Tests this vertex for equivalence with another object.
+    * Returns a hash code for this vector based on its x, y and z components.
     *
-    * @param obj the object
-    *
-    * @return the evaluation
-    */
-   @Override
-   public boolean equals ( final Object obj ) {
-
-      if ( this == obj ) { return true; }
-      if ( obj == null ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
-      return this.equals(( Vert3 ) obj);
-   }
-
-   /**
-    * Returns a hash code for this vertex based on its coordinate, texture
-    * coordinate and normal.
-    *
-    * @return the hash
+    * @return the hash code
     */
    @Override
    public int hashCode ( ) {
 
-      return this.coord.hashCode();
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ( this.coord == null ? 0 : this.coord
+         .hashCode() );
+      result = prime * result + ( this.normal == null ? 0 : this.normal
+         .hashCode() );
+      result = prime * result + ( this.texCoord == null ? 0 : this.texCoord
+         .hashCode() );
+      return result;
    }
 
    /**
@@ -147,6 +136,14 @@ public class Vert3 implements Comparable < Vert3 > {
       if ( this.coord == null ) {
          if ( vert3.coord != null ) { return false; }
       } else if ( !this.coord.equals(vert3.coord) ) { return false; }
+
+      if ( this.normal == null ) {
+         if ( vert3.normal != null ) { return false; }
+      } else if ( !this.normal.equals(vert3.normal) ) { return false; }
+
+      if ( this.texCoord == null ) {
+         if ( vert3.texCoord != null ) { return false; }
+      } else if ( !this.texCoord.equals(vert3.texCoord) ) { return false; }
 
       return true;
    }

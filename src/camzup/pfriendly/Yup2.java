@@ -1172,8 +1172,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       this.noStroke();
       while ( meshItr.hasNext() ) {
          final Mesh2 mesh = meshItr.next();
-         final MaterialPImage mat = materials[mesh.materialIndex];
-         this.drawMesh2(mesh, tr, mat, v, vt);
+         this.drawMesh2(mesh, tr, materials[mesh.materialIndex], v, vt);
       }
       this.popStyle();
    }

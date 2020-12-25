@@ -13,8 +13,9 @@ void settings() {
 void setup() {
   rndr = (Zup3)getGraphics();
 
-  String[] strs = loadStrings("debug.obj");
-  Mesh3[] meshes = Mesh3.fromObj(strs, false);
+  BufferedReader in = createReader("debug.obj");
+  Mesh3[] meshes = Mesh3.fromObj(in, false);
+  
   entity.append(meshes[0]);
   entity.scaleTo(256);
 

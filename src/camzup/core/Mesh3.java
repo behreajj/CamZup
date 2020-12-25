@@ -1,5 +1,7 @@
 package camzup.core;
 
+import java.io.BufferedReader;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -1927,6 +1929,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public String toObjString ( ) {
 
+      // TODO: Mesh Entity toObjString?
+
       final int coordsLen = this.coords.length;
       final int texCoordsLen = this.texCoords.length;
       final int normalsLen = this.normals.length;
@@ -2940,12 +2944,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates an array of meshes from an array of strings representing a
+    * Creates an array of meshes from a BufferedReader that references a
     * WaveFront .obj file with groups.<br>
     * <br>
-    * Files supplied to this parser should always include information for
-    * coordinates, texture coordinates and normals. Material data from a .mtl
-    * file is not parsed by this function.<br>
+    * Material data from a .mtl file is not parsed by this function. Each new
+    * material usage should be preceded by a new group. (In Blender's obj
+    * exporter, check "Objects as Material Groups" true.)<br>
     * <br>
     * Because vertex groups are not supported by the Mesh3 class, an option to
     * pool data is provided. If data is pooled between meshes, then all will
@@ -2953,174 +2957,212 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * not, each mesh will receive a copy of the data parsed from the .obj
     * file; the mesh will then be cleaned to remove unused data.
     *
-    * @param lines    the strings
+    * @param in       buffered reader
     * @param poolData whether to share data
     *
     * @return the array of meshes
     */
-   public static Mesh3[] fromObj ( final String[] lines,
+   public static Mesh3[] fromObj ( final BufferedReader in,
       final boolean poolData ) {
 
-      String[] tokens;
-      String[] faceTokens;
-      String objName = "Mesh3";
+      // TODO: Make this package level, add an extra parameter, index offset,
+      // subtract index offset from the parsed face index, then make a public
+      // function which defaults to "1" for index offset. In case you want to
+      // create a MeshEntity fromObj. Might alsos have to pass in a name
+      // parameter as "o" may have already been read by the MeshEntity parser...
 
-      final int len = lines.length;
-      final int capacity = len != 0 ? len / 4 : 32;
-      final ArrayList < Vec3 > coordList = new ArrayList <>(capacity);
-      final ArrayList < Vec2 > texCoordList = new ArrayList <>(capacity);
-      final ArrayList < Vec3 > normalList = new ArrayList <>(capacity);
+      /*
+       * If no initial capacity is supplied, then the hash map maximum capacity,
+       * 1073741824, is used. 0.75f is the default load factor. Initial capacity
+       * must be a power of two. An array list's default capacity is 10. A
+       * default UV sphere has 514 vs and 1024 fs; a cube sphere, 386 vs and 768
+       * fs; an icosphere, 642 vs and 1280 fs.
+       */
+      final int groupCapacity = 512;
+      final int dataCapacity = 512;
+      final int indicesCapacity = 512;
+
       final HashMap < String, ArrayList < int[][] > > faceGroups
-         = new HashMap <>();
-      ArrayList < int[][] > currentIndices = new ArrayList <>();
+         = new HashMap <>(groupCapacity, 0.75f);
+      final ArrayList < Vec3 > coordList = new ArrayList <>(dataCapacity);
+      final ArrayList < Vec2 > texCoordList = new ArrayList <>(dataCapacity);
+      final ArrayList < Vec3 > normalList = new ArrayList <>(dataCapacity);
+      final ArrayList < String > materialNames = new ArrayList <>(8);
+      ArrayList < int[][] > currentIndices = new ArrayList <>(indicesCapacity);
 
       boolean vsMissing = false;
       boolean vtsMissing = false;
       boolean vnsMissing = false;
       boolean groupsMissing = true;
-
+      boolean mtlLibRef = false;
       boolean usesMaterial = false;
+
+      String[] tokens;
+      String[] faceTokens;
+      String objName = "Mesh3";
       String mtlFileName = "";
-      final ArrayList < String > materialNames = new ArrayList <>(8);
+
       final Pattern spacePattern = Pattern.compile("\\s+");
       final Pattern fslashPattern = Pattern.compile("/");
 
-      for ( int i = 0; i < len; ++i ) {
-         tokens = spacePattern.split(lines[i], 0);
+      /*
+       * Nested try blocks to ensure that BufferedReader is closed even if an
+       * error is caught. Alternatively, research try () with resources.
+       */
+      try {
+         try {
+            for ( String ln = in.readLine(); ln != null; ln = in.readLine() ) {
+               tokens = spacePattern.split(ln, 0);
 
-         if ( tokens.length > 0 ) {
+               if ( tokens.length > 0 ) {
 
-            /* Switch case by hash code of String, not String itself. */
-            final int cmd = tokens[0].toLowerCase().hashCode();
+                  /* Switch case by hash code of String, not String itself. */
+                  final int cmd = tokens[0].toLowerCase().hashCode();
+                  switch ( cmd ) {
 
-            switch ( cmd ) {
+                     case -1063936832:
+                        /* "mtllib" */
+                        mtlLibRef = true;
+                        mtlFileName = tokens[1];
 
-               case -1063936832:
-                  /* "mtllib" */
-                  usesMaterial = true;
-                  mtlFileName = tokens[1];
+                        break;
 
-                  break;
+                     case -836034370:
+                        /* "usemtl" */
+                        usesMaterial = true;
+                        materialNames.add(tokens[1]);
 
-               case -836034370:
-                  /* "usemtl" */
-                  usesMaterial = true;
-                  materialNames.add(tokens[1]);
+                        break;
 
-                  break;
+                     case 102:
+                        /* "f" */
+                        if ( currentIndices == null ) { break; }
 
-               case 102:
-                  /* "f" */
-                  if ( currentIndices == null ) { break; }
+                        /* tokens length includes "f", and so is 1 longer. */
+                        final int count = tokens.length;
+                        final int[][] indices = new int[count - 1][3];
 
-                  /* tokens length includes "f", and so is 1 longer. */
-                  final int count = tokens.length;
-                  final int[][] indices = new int[count - 1][3];
+                        for ( int j = 1; j < count; ++j ) {
+                           faceTokens = fslashPattern.split(tokens[j], 0);
+                           final int tokenLen = faceTokens.length;
+                           final int k = j - 1;
 
-                  for ( int j = 1; j < count; ++j ) {
-                     faceTokens = fslashPattern.split(tokens[j], 0);
-                     final int tokenLen = faceTokens.length;
-                     final int k = j - 1;
+                           /* Indices in .obj file start at 1, not 0. */
+                           if ( tokenLen > 0 ) {
+                              final String vIdx = faceTokens[0];
+                              if ( vIdx == null || vIdx.isEmpty() ) {
+                                 vsMissing = true;
+                              } else {
+                                 indices[k][0] = Integer.parseInt(vIdx) - 1;
+                              }
+                           } else {
+                              vsMissing = true;
+                           }
 
-                     /* Indices in .obj file start at 1, not 0. */
-                     if ( tokenLen > 0 ) {
-                        final String vIdx = faceTokens[0];
-                        if ( vIdx == null || vIdx.isEmpty() ) {
-                           vsMissing = true;
-                        } else {
-                           indices[k][0] = Mesh3.intFromStr(vIdx) - 1;
+                           /* Attempt to read texture coordinate index. */
+                           if ( tokenLen > 1 ) {
+                              final String vtIdx = faceTokens[1];
+                              if ( vtIdx == null || vtIdx.isEmpty() ) {
+                                 vtsMissing = true;
+                              } else {
+                                 indices[k][1] = Integer.parseInt(vtIdx) - 1;
+                              }
+                           } else {
+                              vtsMissing = true;
+                           }
+
+                           /* Attempt to read normal index. */
+                           if ( tokenLen > 2 ) {
+                              final String vnIdx = faceTokens[2];
+                              if ( vnIdx == null || vnIdx.isEmpty() ) {
+                                 vnsMissing = true;
+                              } else {
+                                 indices[k][2] = Integer.parseInt(vnIdx) - 1;
+                              }
+                           } else {
+                              vnsMissing = true;
+                           }
                         }
-                     } else {
-                        vsMissing = true;
-                     }
 
-                     /* Attempt to read texture coordinate index. */
-                     if ( tokenLen > 1 ) {
-                        final String vtIdx = faceTokens[1];
-                        if ( vtIdx == null || vtIdx.isEmpty() ) {
-                           vtsMissing = true;
-                        } else {
-                           indices[k][1] = Mesh3.intFromStr(vtIdx) - 1;
-                        }
-                     } else {
-                        vtsMissing = true;
-                     }
+                        currentIndices.add(indices);
 
-                     /* Attempt to read normal index. */
-                     if ( tokenLen > 2 ) {
-                        final String vnIdx = faceTokens[2];
-                        if ( vnIdx == null || vnIdx.isEmpty() ) {
-                           vnsMissing = true;
-                        } else {
-                           indices[k][2] = Mesh3.intFromStr(vnIdx) - 1;
+                        break;
+
+                     case 103:
+                        /* "g" */
+
+                        // TODO: mesh name should be just "g", not "o". Is it
+                        // possible for tokens.length to be 1? for there to be a
+                        // null or empty string for the group name?
+
+                        final String name = objName + "." + tokens[1];
+                        if ( !faceGroups.containsKey(name) ) {
+                           faceGroups.put(name, new ArrayList <>(
+                              indicesCapacity));
                         }
-                     } else {
-                        vnsMissing = true;
-                     }
+                        currentIndices = faceGroups.get(name);
+                        groupsMissing = false;
+
+                        break;
+
+                     case 111:
+                        // TODO: "o" Objects should be associated with entities,
+                        // not meshes.
+
+                        /* "o" */
+                        objName = tokens[1];
+
+                        break;
+
+                     case 118:
+                        /* "v" */
+
+                        final Vec3 co = new Vec3();
+                        // try {
+                        co.x = Float.parseFloat(tokens[1]);
+                        co.y = Float.parseFloat(tokens[2]);
+                        co.z = Float.parseFloat(tokens[3]);
+                        // } catch ( final Exception e ) {}
+                        coordList.add(co);
+
+                        break;
+
+                     case 3768:
+                        /* "vn" */
+
+                        final Vec3 nr = Vec3.up(new Vec3());
+                        // try {
+                        nr.x = Float.parseFloat(tokens[1]);
+                        nr.y = Float.parseFloat(tokens[2]);
+                        nr.z = Float.parseFloat(tokens[3]);
+                        // } catch ( final Exception e ) {}
+                        normalList.add(nr);
+
+                        break;
+
+                     case 3774:
+                        /* "vt" */
+
+                        final Vec2 tc = Vec2.uvCenter(new Vec2());
+                        // try {
+                        tc.x = Float.parseFloat(tokens[1]);
+                        tc.y = Float.parseFloat(tokens[2]);
+                        // } catch ( final Exception e ) {}
+                        texCoordList.add(tc);
+
+                        break;
+
+                     default:
                   }
-
-                  currentIndices.add(indices);
-
-                  break;
-
-               case 103:
-                  /* "g" */
-                  final String name = objName + "." + tokens[1];
-                  if ( !faceGroups.containsKey(name) ) {
-                     faceGroups.put(name, new ArrayList <>());
-                  }
-                  currentIndices = faceGroups.get(name);
-                  groupsMissing = false;
-
-                  break;
-
-               case 111:
-                  /* "o" */
-                  objName = tokens[1];
-
-                  break;
-
-               case 118:
-                  /* "v" */
-
-                  final Vec3 co = new Vec3();
-                  try {
-                     co.x = Float.parseFloat(tokens[1]);
-                     co.y = Float.parseFloat(tokens[2]);
-                     co.z = Float.parseFloat(tokens[3]);
-                  } catch ( final Exception e ) {}
-                  coordList.add(co);
-
-                  break;
-
-               case 3768:
-                  /* "vn" */
-
-                  final Vec3 nr = Vec3.up(new Vec3());
-                  try {
-                     nr.x = Float.parseFloat(tokens[1]);
-                     nr.y = Float.parseFloat(tokens[2]);
-                     nr.z = Float.parseFloat(tokens[3]);
-                  } catch ( final Exception e ) {}
-                  normalList.add(nr);
-
-                  break;
-
-               case 3774:
-                  /* "vt" */
-
-                  final Vec2 tc = Vec2.uvCenter(new Vec2());
-                  try {
-                     tc.x = Float.parseFloat(tokens[1]);
-                     tc.y = Float.parseFloat(tokens[2]);
-                  } catch ( final Exception e ) {}
-                  texCoordList.add(tc);
-
-                  break;
-
-               default:
+               }
             }
+         } catch ( final Exception e ) {
+            e.printStackTrace();
+         } finally {
+            in.close();
          }
+      } catch ( final Exception e ) {
+         e.printStackTrace();
       }
 
       /* Convert to fixed-sized array. */
@@ -3146,19 +3188,22 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       /* Notify if material library was detected. */
-      if ( usesMaterial ) {
+      if ( mtlLibRef ) {
          final StringBuilder sb = new StringBuilder(512);
-         sb.append("The .obj file refers to the .mtl file ");
+         sb.append("The .obj file refers to the .mtl file \"");
          sb.append(mtlFileName);
-         sb.append(" , namely, the materials: ");
+         sb.append("\".\n");
 
-         final Iterator < String > matNamesItr = materialNames.iterator();
-         while ( matNamesItr.hasNext() ) {
-            sb.append(matNamesItr.next());
-            if ( matNamesItr.hasNext() ) { sb.append(',').append(' '); }
+         if ( usesMaterial ) {
+            sb.append("Meshes use the following materials:\n");
+            final Iterator < String > matNamesItr = materialNames.iterator();
+            while ( matNamesItr.hasNext() ) {
+               sb.append(matNamesItr.next());
+               if ( matNamesItr.hasNext() ) { sb.append(',').append('\n'); }
+            }
+            sb.append(".\nUpdate your mesh's material indices if you");
+            sb.append(" parse these materials.");
          }
-
-         sb.append(" .");
          System.out.println(sb.toString());
       }
 
@@ -4811,25 +4856,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          }
       }
 
-      return target;
-   }
-
-   /**
-    * A helper function for parsing an OBJ file. Attempts to convert a string
-    * to an integer.
-    *
-    * @param i the string
-    *
-    * @return the integer
-    */
-   private static int intFromStr ( final String i ) {
-
-      int target = 0;
-      try {
-         target = Integer.parseInt(i);
-      } catch ( final Exception e ) {
-         target = 0;
-      }
       return target;
    }
 

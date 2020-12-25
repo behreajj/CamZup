@@ -1,6 +1,7 @@
 package camzup.pfriendly;
 
 import java.util.Iterator;
+import java.util.Map;
 
 import camzup.core.Curve2;
 import camzup.core.Curve3;
@@ -12,6 +13,7 @@ import camzup.core.Knot2;
 import camzup.core.Knot3;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
+import camzup.core.Mesh;
 import camzup.core.Mesh2;
 import camzup.core.Mesh3;
 import camzup.core.MeshEntity2;
@@ -480,6 +482,11 @@ public abstract class Convert {
     */
    public static PShape toPShape ( final PGraphics rndr, final Curve2 source ) {
 
+      /*
+       * This needs to be of the PATH family because the drawImpl function in
+       * PShape is simplistic and buggy. See
+       * https://github.com/processing/processing/issues/4879 .
+       */
       final boolean dim = rndr.is3D();
       final PShape target = new PShape(rndr, PShape.PATH);
       target.setName(source.name);
@@ -554,7 +561,7 @@ public abstract class Convert {
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      shape.disableStyle();
+      // shape.disableStyle();
       return shape;
    }
 
@@ -633,7 +640,7 @@ public abstract class Convert {
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      shape.disableStyle();
+      // shape.disableStyle();
       return shape;
    }
 
@@ -779,7 +786,7 @@ public abstract class Convert {
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      shape.disableStyle();
+      // shape.disableStyle();
       return shape;
    }
 
@@ -820,6 +827,158 @@ public abstract class Convert {
    }
 
    /**
+    * Converts a 2D mesh to a PShape. Audits the mesh to see if all of its
+    * faces have the same number of vertices. Meshes composed entirely of
+    * triangles or quadrilaterals create much more efficient PShapes than
+    * those with ngons.
+    *
+    * @param rndr   the renderer
+    * @param source the source mesh
+    *
+    * @return the PShape
+    *
+    * @see Mesh#auditFaceType(Mesh)
+    */
+   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
+      final Mesh2 source ) {
+
+      /*
+       * audit.get(3) could return null, but auditFaceType will always put 3 and
+       * 4 into the map. You could also use getOrDefault .
+       */
+      final Map < Integer, Integer > audit = Mesh.auditFaceType(source);
+      final int facesLen = source.faces.length;
+      if ( facesLen == audit.get(3) ) {
+         return Convert.toPShapeUniform(rndr, source, PConstants.TRIANGLES);
+      } else if ( facesLen == audit.get(4) ) {
+         return Convert.toPShapeUniform(rndr, source, PConstants.QUADS);
+      } else {
+         return Convert.toPShapeNonUniform(rndr, source);
+      }
+   }
+
+   /**
+    * Converts a 3D mesh to a PShape. Audits the mesh to see if all of its
+    * faces have the same number of vertices. Meshes composed entirely of
+    * triangles or quadrilaterals create much more efficient PShapes than
+    * those with ngons.
+    *
+    * @param rndr   the renderer
+    * @param source the source mesh
+    *
+    * @return the PShape
+    *
+    * @see Mesh#auditFaceType(Mesh)
+    */
+   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
+      final Mesh3 source ) {
+
+      // TODO: Does this same logic also apply to rendering the shape....?
+
+      /*
+       * audit.get(3) could return null, but auditFaceType will always put 3 and
+       * 4 into the map. You could also use getOrDefault .
+       */
+      final Map < Integer, Integer > audit = Mesh.auditFaceType(source);
+      final int facesLen = source.faces.length;
+      if ( facesLen == audit.get(3) ) {
+         return Convert.toPShapeUniform(rndr, source, PConstants.TRIANGLES);
+      } else if ( facesLen == audit.get(4) ) {
+         return Convert.toPShapeUniform(rndr, source, PConstants.QUADS);
+      } else {
+         return Convert.toPShapeNonUniform(rndr, source);
+      }
+   }
+
+   /**
+    * Converts a 2D mesh entity to a PShapeOpenGL. Requires a PGraphicsOpenGL
+    * renderer. The entity's transform is converted to a matrix which is
+    * applied to the shape.
+    *
+    * @param rndr   the renderer
+    * @param source the source entity
+    *
+    * @return the PShape
+    */
+   @Experimental
+   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
+      final MeshEntity2 source ) {
+
+      final PShapeOpenGL shape = new PShapeOpenGL(rndr, PConstants.GROUP);
+      shape.setName(source.name);
+      shape.set3D(rndr.is3D());
+
+      final Iterator < Mesh2 > itr = source.meshes.iterator();
+      while ( itr.hasNext() ) {
+
+         /*
+          * Keep this as a separate variable to avoid confusion between the
+          * general PShape and PGraphics with the specific PShapeOpenGL and
+          * PGraphicsOpenGL. The signature is addChild(PShape p).
+          */
+         final PShapeOpenGL child = Convert.toPShape(rndr, itr.next());
+         shape.addChild(child);
+      }
+
+      /* Use loose float version of apply matrix to avoid PShape bug. */
+      final Transform2 srctr = source.transform;
+      final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
+         new PMatrix2D());
+      shape.resetMatrix();
+      shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
+
+      /* Stroke weight is scaled with the transform above. */
+      final float maxDim = Transform2.maxDimension(srctr);
+      shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
+      // shape.disableStyle();
+      return shape;
+   }
+
+   /**
+    * Converts a 3D mesh entity to a PShapeOpenGL. Requires a PGraphicsOpenGL
+    * renderer. The entity's transform is converted to a matrix which is
+    * applied to the shape.
+    *
+    * @param rndr   the renderer
+    * @param source the source entity
+    *
+    * @return the PShape
+    */
+   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
+      final MeshEntity3 source ) {
+
+      final PShapeOpenGL shape = new PShapeOpenGL(rndr, PConstants.GROUP);
+      shape.set3D(rndr.is3D());
+
+      final Iterator < Mesh3 > itr = source.meshes.iterator();
+      while ( itr.hasNext() ) {
+
+         /*
+          * Keep this as a separate variable to avoid confusion between the
+          * general PShape and PGraphics with the specific PShapeOpenGL and
+          * PGraphicsOpenGL. The signature is addChild(PShape p).
+          */
+         final PShapeOpenGL child = Convert.toPShape(rndr, itr.next());
+         shape.addChild(child);
+      }
+
+      /* Use loose float version of apply matrix to avoid PShape bug. */
+      final Transform3 srctr = source.transform;
+      final PMatrix3D m = Convert.toPMatrix3D(srctr, TransformOrder.RST,
+         new PMatrix3D());
+      shape.resetMatrix();
+      shape.applyMatrix(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12, m.m13,
+         m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
+
+      /* Stroke weight is scaled with the transform above. */
+      final float maxDim = Transform3.maxDimension(srctr);
+      shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
+      // shape.disableStyle();
+
+      return shape;
+   }
+
+   /**
     * Converts a 2D mesh to a PShape. Returns a {@link PConstants#GROUP} which
     * contains, as a child, each face of the source mesh. Each child is of the
     * type {@link PShape#GEOMETRY}. Child shapes record coordinates and
@@ -830,7 +989,7 @@ public abstract class Convert {
     *
     * @return the PShape
     */
-   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
+   public static PShapeOpenGL toPShapeNonUniform ( final PGraphicsOpenGL rndr,
       final Mesh2 source ) {
 
       /* Decompose source mesh elements. */
@@ -842,7 +1001,7 @@ public abstract class Convert {
       final boolean dim = rndr.is3D();
       final PShapeOpenGL target = new PShapeOpenGL(rndr, PConstants.GROUP);
       target.setName(source.name);
-      // target.setTextureMode(PConstants.NORMAL);
+      target.setTextureMode(PConstants.NORMAL);
       target.set3D(dim);
 
       final int facesLen = faces.length;
@@ -852,7 +1011,7 @@ public abstract class Convert {
 
          final PShapeOpenGL face = new PShapeOpenGL(rndr, PShape.GEOMETRY);
          face.setName("face." + Utils.toPadded(i, 3));
-         // face.setTextureMode(PConstants.NORMAL);
+         face.setTextureMode(PConstants.NORMAL);
          face.set3D(dim);
 
          face.beginShape(PConstants.POLYGON);
@@ -880,7 +1039,7 @@ public abstract class Convert {
     *
     * @return the PShape
     */
-   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
+   public static PShapeOpenGL toPShapeNonUniform ( final PGraphicsOpenGL rndr,
       final Mesh3 source ) {
 
       /* Decompose source mesh elements. */
@@ -893,7 +1052,7 @@ public abstract class Convert {
       final boolean dim = rndr.is3D();
       final PShapeOpenGL target = new PShapeOpenGL(rndr, PConstants.GROUP);
       target.setName(source.name);
-      // target.setTextureMode(PConstants.NORMAL);
+      target.setTextureMode(PConstants.NORMAL);
       target.set3D(dim);
 
       final int facesLen = faces.length;
@@ -903,7 +1062,7 @@ public abstract class Convert {
 
          final PShapeOpenGL face = new PShapeOpenGL(rndr, PShape.GEOMETRY);
          face.setName("face." + Utils.toPadded(i, 3));
-         // face.setTextureMode(PConstants.NORMAL);
+         face.setTextureMode(PConstants.NORMAL);
          face.set3D(dim);
 
          face.beginShape(PConstants.POLYGON);
@@ -923,76 +1082,92 @@ public abstract class Convert {
    }
 
    /**
-    * Converts a 2D mesh entity to a PShapeOpenGL. Requires a PGraphicsOpenGL
-    * renderer. The entity's transform is converted to a matrix which is
-    * applied to the shape.
+    * Converts a 2D mesh with a uniform number of vertices per face to a
+    * PShape. Among the acceptable face types are {@link PConstants#TRIANGLES}
+    * ({@value PConstants#TRIANGLES}) and {@link PConstants#QUADS}
+    * ({@value PConstants#QUADS}).
     *
-    * @param rndr   the renderer
-    * @param source the source entity
+    * @param rndr      the renderer
+    * @param source    the source mesh
+    * @param shapeCode the Processing shape code
     *
-    * @return the PShape
+    * @return the shape
     */
-   @Experimental
-   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
-      final MeshEntity2 source ) {
+   public static PShapeOpenGL toPShapeUniform ( final PGraphicsOpenGL rndr,
+      final Mesh2 source, final int shapeCode ) {
 
-      final PShapeOpenGL shape = new PShapeOpenGL(rndr, PConstants.GROUP);
-      shape.setName(source.name);
-      shape.set3D(rndr.is3D());
+      /* Decompose source mesh elements. */
+      final Vec2[] vs = source.coords;
+      final Vec2[] vts = source.texCoords;
+      final int[][][] faces = source.faces;
 
-      final Iterator < Mesh2 > itr = source.meshes.iterator();
-      while ( itr.hasNext() ) {
-         shape.addChild(Convert.toPShape(rndr, itr.next()));
+      /* Create output target. */
+      final boolean dim = rndr.is3D();
+      final PShapeOpenGL target = new PShapeOpenGL(rndr, PShape.GEOMETRY);
+      target.setName(source.name);
+      target.setTextureMode(PConstants.NORMAL);
+      target.set3D(dim);
+      target.beginShape(shapeCode);
+      final int facesLen = faces.length;
+      for ( int i = 0; i < facesLen; ++i ) {
+         final int[][] verts = faces[i];
+         final int vertsLen = verts.length;
+
+         for ( int j = 0; j < vertsLen; ++j ) {
+            final int[] vert = verts[j];
+            final Vec2 v = vs[vert[0]];
+            final Vec2 vt = vts[vert[1]];
+            target.vertex(v.x, v.y, vt.x, vt.y);
+         }
       }
-
-      /* Use loose float version of apply matrix to avoid PShape bug. */
-      final Transform2 srctr = source.transform;
-      final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
-         new PMatrix2D());
-      shape.resetMatrix();
-      shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
-
-      /* Stroke weight is scaled with the transform above. */
-      final float maxDim = Transform2.maxDimension(srctr);
-      shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      shape.disableStyle();
-      return shape;
+      target.endShape(PConstants.CLOSE);
+      return target;
    }
 
    /**
-    * Converts a 3D mesh entity to a PShapeOpenGL. Requires a PGraphicsOpenGL
-    * renderer. The entity's transform is converted to a matrix which is
-    * applied to the shape.
+    * Converts a 3D mesh with a uniform number of vertices per face to a
+    * PShape. Among the acceptable face types are {@link PConstants#TRIANGLES}
+    * ({@value PConstants#TRIANGLES}) and {@link PConstants#QUADS}
+    * ({@value PConstants#QUADS}).
     *
-    * @param rndr   the renderer
-    * @param source the source entity
+    * @param rndr      the renderer
+    * @param source    the source mesh
+    * @param shapeCode the Processing shape code
     *
-    * @return the PShape
+    * @return the shape
     */
-   public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
-      final MeshEntity3 source ) {
+   public static PShapeOpenGL toPShapeUniform ( final PGraphicsOpenGL rndr,
+      final Mesh3 source, final int shapeCode ) {
 
-      final PShapeOpenGL shape = new PShapeOpenGL(rndr, PConstants.GROUP);
-      shape.set3D(rndr.is3D());
+      /* Decompose source mesh elements. */
+      final Vec3[] vs = source.coords;
+      final Vec2[] vts = source.texCoords;
+      final Vec3[] vns = source.normals;
+      final int[][][] faces = source.faces;
 
-      final Iterator < Mesh3 > itr = source.meshes.iterator();
-      while ( itr.hasNext() ) {
-         shape.addChild(Convert.toPShape(rndr, itr.next()));
+      /* Create output target. */
+      final boolean dim = rndr.is3D();
+      final PShapeOpenGL target = new PShapeOpenGL(rndr, PShape.GEOMETRY);
+      target.setName(source.name);
+      target.setTextureMode(PConstants.NORMAL);
+      target.set3D(dim);
+      target.beginShape(shapeCode);
+      final int facesLen = faces.length;
+      for ( int i = 0; i < facesLen; ++i ) {
+         final int[][] verts = faces[i];
+         final int vertsLen = verts.length;
+
+         for ( int j = 0; j < vertsLen; ++j ) {
+            final int[] vert = verts[j];
+            final Vec3 v = vs[vert[0]];
+            final Vec2 vt = vts[vert[1]];
+            final Vec3 vn = vns[vert[2]];
+            target.normal(vn.x, vn.y, vn.z);
+            target.vertex(v.x, v.y, v.z, vt.x, vt.y);
+         }
       }
-
-      /* Use loose float version of apply matrix to avoid PShape bug. */
-      final Transform3 srctr = source.transform;
-      final PMatrix3D m = Convert.toPMatrix3D(srctr, TransformOrder.RST,
-         new PMatrix3D());
-      shape.resetMatrix();
-      shape.applyMatrix(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12, m.m13,
-         m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
-
-      /* Stroke weight is scaled with the transform above. */
-      final float maxDim = Transform3.maxDimension(srctr);
-      shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      shape.disableStyle();
-      return shape;
+      target.endShape(PConstants.CLOSE);
+      return target;
    }
 
    /**

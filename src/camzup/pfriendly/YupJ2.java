@@ -551,7 +551,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float xUp, final float yUp, final float zUp ) {
 
       PApplet.showMissingWarning("camera");
-
       this.camera(xEye, yEye, Utils.atan2(yUp, xUp), this.cameraZoomX,
          this.cameraZoomY);
    }
@@ -1722,10 +1721,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       /*
        * This has to be overridden, no matter which image modes are supported,
-       * because PGraphics handles an incorrect mode by throwing a run time
-       * exception.
+       * because PGraphics handles an incorrect mode by throwing an exception.
        */
-
       switch ( mode ) {
          case PConstants.CORNER:
          case PConstants.CORNERS:
@@ -2968,10 +2965,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void shape ( final PShape pshp ) {
 
-      PApplet.showVariationWarning("shape");
       if ( pshp.isVisible() ) {
          this.flush();
+         // this.pushMatrix();
+         // this.scale(1.0f, -1.0f);
          pshp.draw(this);
+         // this.popMatrix();
       }
    }
 
@@ -3272,7 +3271,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       if ( this.textFont == null ) { this.defaultFontOrDeath("textSize", vsz); }
       this.textSize = vsz;
 
-      // Why 1.275?
+      // Why 1.275? Maybe it is a conversion from points to units similar to
+      // those when parsing an SVG?
       this.textLeading = ( this.textAscent() + this.textDescent() ) * 1.275f;
    }
 
@@ -3873,9 +3873,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       }
 
       PMatAux.catmullBasis(this.curveTightness, this.curveBasisMatrix);
-
       this.splineForward(this.curveDetail, this.curveDrawMatrix);
-
       PMatAux.mul(this.bezierBasisInverse, this.curveBasisMatrix,
          this.curveToBezierMatrix);
       PMatAux.mul(this.curveDrawMatrix, this.curveBasisMatrix,
@@ -3932,7 +3930,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.rectMode ) {
 
-         case CORNER:
+         case PConstants.CORNER:
 
             w = Math.abs(c);
             h = Math.abs(d);
@@ -3944,7 +3942,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case CORNERS:
+         case PConstants.CORNERS:
 
             w = Math.abs(c - a);
             h = Math.abs(b - d);
@@ -3957,7 +3955,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case RADIUS:
+         case PConstants.RADIUS:
 
             w = Math.abs(c);
             h = Math.abs(d);
@@ -3969,7 +3967,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case CENTER:
+         case PConstants.CENTER:
 
          default:
 
@@ -4060,20 +4058,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       final PFont.Glyph glyph = this.textFont.getGlyph(ch);
       if ( glyph != null ) {
-         final float szInv = Utils.div(1.0f, this.textFont.getSize());
-         final float wGlyph = glyph.width * szInv;
-         final float hGlyph = glyph.height * szInv;
-         final float lextent = glyph.leftExtent * szInv;
-         final float textent = glyph.topExtent * szInv;
+         final float szNorm = this.textSize * Utils.div(1.0f, this.textFont
+            .getSize());
+         final float x0 = x + glyph.leftExtent * szNorm;
+         final float y0 = y + glyph.topExtent * szNorm;
 
-         final float x0 = x + lextent * this.textSize;
-         final float x1 = x0 + wGlyph * this.textSize;
-         final float y0 = y + textent * this.textSize;
-         final float y1 = y0 - hGlyph * this.textSize;
-
-         this.textCharModelImpl(glyph.image, x0, y0, x1, y1, glyph.width,
-            glyph.height);
-
+         this.textCharModelImpl(glyph.image, x0, y0, x0 + glyph.width * szNorm,
+            y0 - glyph.height * szNorm, glyph.width, glyph.height);
       }
    }
 
