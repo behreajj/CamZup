@@ -1168,14 +1168,31 @@ public interface IYup2 extends IUp {
     */
    static String svgBackground ( final IYup2 renderer ) {
 
+      /*
+       * PShape's SVG parser converts primitives like rect into a PShape family
+       * PRIMITIVE, which is difficult to convert to a Curve2. This is because
+       * the PShape's vertices cannot be accessed. For that reason, SVG
+       * primitives should be avoided when writing.
+       */
+
+      final int bgClr = renderer.getBackground();
+      final float bgAlpha = ( bgClr >> 0x18 & 0xff ) * IUtils.ONE_255;
       final StringBuilder svgp = new StringBuilder(128);
-      svgp.append("<rect id=\"background\" x=\"0\" y=\"0\" width=\"");
-      svgp.append(renderer.getWidth());
-      svgp.append("\" height=\"");
-      svgp.append(renderer.getHeight());
-      svgp.append("\" stroke=\"none\" fill=\"");
-      svgp.append(Color.toHexWeb(renderer.getBackground()));
-      svgp.append("\"></rect>");
+      final String wStr = Utils.toFixed(renderer.getWidth(), 1);
+      final String hStr = Utils.toFixed(renderer.getHeight(), 1);
+      svgp.append("<path id=\"background\" d=\"M 0.0 0.0 L ");
+      svgp.append(wStr);
+      svgp.append(" 0.0 L ");
+      svgp.append(wStr);
+      svgp.append(' ');
+      svgp.append(hStr);
+      svgp.append(" L 0.0 ");
+      svgp.append(hStr);
+      svgp.append(" Z\" stroke=\"none\" fill-opacity=\"");
+      svgp.append(Utils.toFixed(Utils.clamp01(bgAlpha), 6));
+      svgp.append("\" fill=\"");
+      svgp.append(Color.toHexWeb(bgClr));
+      svgp.append("\"></path>");
       return svgp.toString();
    }
 

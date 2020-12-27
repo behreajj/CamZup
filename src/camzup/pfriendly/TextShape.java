@@ -329,11 +329,10 @@ public abstract class TextShape {
          transform) : shp.getPathIterator(transform, detail);
 
       /*
-       * A double precision array is filled with values by the iterator when
-       * currentSegment is called. A single precision array can also be used.
+       * A double precision array is filled by the iterator when currentSegment
+       * is called. A single precision (float) array can also be used.
        */
       final double[] itrpts = new double[6];
-      // final float[] itrpts = new float[6];
 
       /* Neutralize the font size so output is close to unit scale. */
       final float fontSize = font.getSize2D();
@@ -353,20 +352,15 @@ public abstract class TextShape {
             case PathIterator.SEG_MOVETO:
 
                /*
-                * Create a new curve, then move to a point. The first two or so
-                * points from this PathIterator seem to be garbage (i.e., they
-                * linger at the origin). The first knot of a shape apparently
-                * duplicates the last; its foreHandle will be copied to the last
-                * knot and then it will be removed.
+                * Create a new curve, move to a point. The first knot of a shape
+                * copies the last; in the SEG_CLOSE case, its fore handle will
+                * be copied to the last knot and then it will be removed.
                 */
 
                currCurve = new Curve2();
                currCurve.closedLoop = true;
-
-               final double movx = itrpts[0] * invScalar;
-               final double movy = -itrpts[1] * invScalar;
-
-               currKnot = new Knot2(( float ) movx, ( float ) movy);
+               currKnot = new Knot2(( float ) ( itrpts[0] * invScalar ),
+                  ( float ) ( -itrpts[1] * invScalar ));
                currCurve.append(currKnot);
                prevKnot = currKnot;
 
@@ -381,13 +375,9 @@ public abstract class TextShape {
                 * the straight line between them.
                 */
 
-               final double linex = itrpts[0] * invScalar;
-               final double liney = -itrpts[1] * invScalar;
-
                currKnot = new Knot2();
-               Knot2.fromSegLinear(( float ) linex, ( float ) liney, prevKnot,
-                  currKnot);
-
+               Knot2.fromSegLinear(( float ) ( itrpts[0] * invScalar ),
+                  ( float ) ( -itrpts[1] * invScalar ), prevKnot, currKnot);
                currCurve.append(currKnot);
                prevKnot = currKnot;
 
@@ -403,42 +393,40 @@ public abstract class TextShape {
                 * respective anchor point by one third.
                 */
 
-               final double qmidx = itrpts[0] * invScalar;
-               final double qmidy = -itrpts[1] * invScalar;
-               final double qcoordx = itrpts[2] * invScalar;
-               final double qcoordy = -itrpts[3] * invScalar;
-
+               /* @formatter:off */
                currKnot = new Knot2();
-               Knot2.fromSegQuadratic(( float ) qmidx, ( float ) qmidy,
-                  ( float ) qcoordx, ( float ) qcoordy, prevKnot, currKnot);
-
+               Knot2.fromSegQuadratic(
+                  ( float ) (  itrpts[0] * invScalar ),
+                  ( float ) ( -itrpts[1] * invScalar ),
+                  ( float ) (  itrpts[2] * invScalar ),
+                  ( float ) ( -itrpts[3] * invScalar ),
+                  prevKnot, currKnot);
                currCurve.append(currKnot);
                prevKnot = currKnot;
+               /* @formatter:on */
 
                break;
 
             case PathIterator.SEG_CUBICTO:
 
                /*
-                * The order of a cubic curve is: (0, 1) previous knot fore
-                * handle; (2, 3) current knot rear handle; (4, 5) current knot
-                * point.
+                * The order of a cubic curve: (0, 1) previous knot fore handle;
+                * (2, 3) current knot rear handle; (4, 5) current knot point.
                 */
 
-               final double cforex = itrpts[0] * invScalar;
-               final double cforey = -itrpts[1] * invScalar;
-               final double crearx = itrpts[2] * invScalar;
-               final double creary = -itrpts[3] * invScalar;
-               final double ccoordx = itrpts[4] * invScalar;
-               final double ccoordy = -itrpts[5] * invScalar;
-
+               /* @formatter:off */
                currKnot = new Knot2();
-               Knot2.fromSegCubic(( float ) cforex, ( float ) cforey,
-                  ( float ) crearx, ( float ) creary, ( float ) ccoordx,
-                  ( float ) ccoordy, prevKnot, currKnot);
-
+               Knot2.fromSegCubic(
+                  ( float ) (  itrpts[0] * invScalar ),
+                  ( float ) ( -itrpts[1] * invScalar ),
+                  ( float ) (  itrpts[2] * invScalar ),
+                  ( float ) ( -itrpts[3] * invScalar ),
+                  ( float ) (  itrpts[4] * invScalar ),
+                  ( float ) ( -itrpts[5] * invScalar ),
+                  prevKnot, currKnot);
                currCurve.append(currKnot);
                prevKnot = currKnot;
+               /* @formatter:on */
 
                break;
 
@@ -446,15 +434,11 @@ public abstract class TextShape {
 
                prevKnot = currKnot;
 
-               /* The first two knots don't seem to be useful. */
-               currCurve.removeAt(0);
-               currCurve.removeAt(0);
-
                /* The knot appended at move-to duplicates the last knot. */
                currKnot = currCurve.removeAt(0);
                prevKnot.foreHandle.set(currKnot.foreHandle);
 
-               /* The y-down to y-up flips the proper winding order (CCW). */
+               /* The y-down to y-up flips the winding order. */
                currCurve.reverse();
                currCurve.closedLoop = true;
                curves.add(currCurve);
@@ -607,10 +591,8 @@ public abstract class TextShape {
 
                currMesh = new Mesh2();
 
-               final double movx = itrpts[0] * invScalar;
-               final double movy = -itrpts[1] * invScalar;
-
-               currPt = new Vec2(( float ) movx, ( float ) movy);
+               currPt = new Vec2(( float ) ( itrpts[0] * invScalar ),
+                  ( float ) ( -itrpts[1] * invScalar ));
                currMeshPts.add(currPt);
 
                break;
@@ -649,10 +631,10 @@ public abstract class TextShape {
                final int[][][] fs = new int[1][len + 1][2];
                final int[][] f = fs[0];
 
-               final float dimx = ubx - lbx;
-               final float dimy = uby - lby;
-               final float xInv = dimx == 0.0f ? 1.0f : 1.0f / dimx;
-               final float yInv = dimy == 0.0f ? 1.0f : 1.0f / dimy;
+               final float xDim = ubx - lbx;
+               final float yDim = uby - lby;
+               final float xInv = xDim == 0.0f ? 1.0f : 1.0f / xDim;
+               final float yInv = yDim == 0.0f ? 1.0f : 1.0f / yDim;
 
                /* Calculate UVs as between lower and upper bound. */
                for ( int i = 0; i < len; ++i ) {
@@ -685,6 +667,7 @@ public abstract class TextShape {
 
          }
 
+         /* Update lower and upper bound. */
          if ( currPt.x < lbx ) { lbx = currPt.x; }
          if ( currPt.x > ubx ) { ubx = currPt.x; }
          if ( currPt.y < lby ) { lby = currPt.y; }

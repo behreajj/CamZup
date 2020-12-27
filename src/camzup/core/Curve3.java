@@ -26,11 +26,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    /**
     * Creates a curve with two default knots.
     */
-   public Curve3 ( ) {
-
-      super();
-      this.reset();
-   }
+   public Curve3 ( ) { super(); }
 
    /**
     * Creates a curve from a collection of knots
@@ -86,7 +82,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public Curve3 ( final String name ) {
 
       super(name);
-      this.reset();
    }
 
    /**
@@ -375,11 +370,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve
     */
-   @Experimental
    public Curve3 relocateKnot ( final int i, final Vec3 v ) {
 
-      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
-      return this.relocateKnot(j, v);
+      this.get(i).relocate(v);
+      return this;
    }
 
    /**
@@ -425,7 +419,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve
     */
-   public Curve3 reset ( ) {
+   public Curve3 resetToDefault ( ) {
 
       this.resize(2);
       this.knots.get(0).set(-0.5f, 0.0f, 0.0f, -0.25f, 0.25f, 0.0f, -0.75f,
@@ -452,9 +446,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public Curve3 reverse ( ) {
 
       Collections.reverse(this.knots);
-
       final Iterator < Knot3 > itr = this.knots.iterator();
       while ( itr.hasNext() ) { itr.next().reverse(); }
+
       return this;
    }
 

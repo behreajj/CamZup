@@ -1,6 +1,8 @@
 package camzup.pfriendly;
 
+import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 
 import camzup.core.Curve2;
@@ -8,6 +10,7 @@ import camzup.core.Curve3;
 import camzup.core.CurveEntity2;
 import camzup.core.CurveEntity3;
 import camzup.core.Experimental;
+import camzup.core.IUtils;
 import camzup.core.Img;
 import camzup.core.Knot2;
 import camzup.core.Knot3;
@@ -48,6 +51,23 @@ public abstract class Convert {
     * Discourage overriding with a private constructor.
     */
    private Convert ( ) {}
+
+   /**
+    * Converts a 2D PShape to a curve entity. Support for this conversion is
+    * <em>very</em> limited. For best results, use a PShape consisting of
+    * quadratic and cubic Bezier curves.
+    * 
+    * @param source    the source shape
+    * @param target the target curve entity
+    * 
+    * @return the curve entity
+    */
+   public static CurveEntity2 toCurveEntity2 ( final PShape source,
+      final CurveEntity2 target ) {
+
+      return target.appendAll(Convert.toCurve2(source, new ArrayList <
+         Curve2 >()));
+   }
 
    /**
     * Converts a PImage to an image.
@@ -561,7 +581,7 @@ public abstract class Convert {
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      // shape.disableStyle();
+      shape.disableStyle();
       return shape;
    }
 
@@ -640,7 +660,7 @@ public abstract class Convert {
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      // shape.disableStyle();
+      shape.disableStyle();
       return shape;
    }
 
@@ -786,7 +806,7 @@ public abstract class Convert {
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      // shape.disableStyle();
+      shape.disableStyle();
       return shape;
    }
 
@@ -872,8 +892,6 @@ public abstract class Convert {
     */
    public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
       final Mesh3 source ) {
-
-      // TODO: Does this same logic also apply to rendering the shape....?
 
       /*
        * audit.get(3) could return null, but auditFaceType will always put 3 and
@@ -1221,6 +1239,220 @@ public abstract class Convert {
    public static Vec4 toVec4 ( final PVector source, final Vec4 target ) {
 
       return target.set(source.x, source.y, source.z, 0.0f);
+   }
+
+   /**
+    * Converts from a 2D PShape to a Curve2.
+    * 
+    * @param source the source shape
+    * @param curves the curves list
+    * 
+    * @return the curves list
+    */
+   protected static List < Curve2 > toCurve2 ( final PShape source, final List <
+      Curve2 > curves ) {
+
+      /* Flags for unsupported operations. */
+      boolean unsupportedFamily = false;
+      boolean unsupportedKind = false;
+      boolean unsupportedCommand = false;
+      boolean noVertices = false;
+      boolean hasCurveCommands = false;
+      boolean hasPrimitives = false;
+      boolean hasContours = false;
+
+      final int family = source.getFamily();
+      switch ( family ) {
+
+         case PConstants.GROUP:
+
+            final PShape[] children = source.getChildren();
+            final int childlen = children.length;
+            for ( int i = 0; i < childlen; ++i ) {
+               Convert.toCurve2(children[i], curves);
+            }
+
+            break;
+
+         case PShape.PRIMITIVE:
+
+            hasPrimitives = true;
+            final float[] params = source.getParams();
+            final int kind = source.getKind();
+            switch ( kind ) {
+               case PConstants.LINE: /* 4 */
+                  curves.add(Curve2.line(new Vec2(params[0], params[1]),
+                     new Vec2(params[2], params[3]), new Curve2()));
+                  break;
+
+               case PConstants.RECT:
+               case PConstants.ELLIPSE:
+               default:
+                  unsupportedKind = true;
+            }
+
+            break;
+
+         case PShape.PATH:
+         case PShape.GEOMETRY:
+
+            /* Get vertex data. */
+            final int vertLen = source.getVertexCount();
+            if ( vertLen < 1 ) {
+               noVertices = true;
+               break;
+            }
+
+            final float[][] data = new float[vertLen][2];
+            for ( int i = 0; i < vertLen; ++i ) {
+               final float[] datum = data[i];
+               datum[0] = source.getVertexX(i);
+               datum[1] = source.getVertexY(i);
+            }
+
+            /* Get command history. */
+            int[] cmds = source.getVertexCodes();
+
+            /*
+             * Remedy commands array if it is null or has no elements.
+             */
+            if ( cmds == null || cmds.length < 1 ) {
+               cmds = new int[vertLen];
+               for ( int i = 0; i < vertLen; ++i ) {
+                  cmds[i] = PConstants.VERTEX;
+               }
+            }
+
+            /* Data retrieved from PShape by command. */
+            float cp0x = 0.0f;
+            float cp0y = 0.0f;
+            float cp1x = 0.0f;
+            float cp1y = 0.0f;
+            float ap1x = 0.0f;
+            float ap1y = 0.0f;
+
+            int cursor = 0;
+            boolean initialVertex = true;
+            Curve2 currCurve = null;
+            Knot2 prevKnot = null;
+            Knot2 currKnot = null;
+
+            /* Iterate over commands. */
+            final int cmdLen = cmds.length;
+            for ( int i = 0; i < cmdLen; ++i ) {
+               final int cmd = cmds[i];
+               switch ( cmd ) {
+
+                  case PConstants.VERTEX:
+
+                     ap1x = source.getVertexX(cursor);
+                     ap1y = source.getVertexY(cursor);
+                     ++cursor;
+
+                     if ( initialVertex ) {
+                        /* Treat as "moveTo" command. */
+                        currCurve = new Curve2();
+                        currCurve.closedLoop = source.isClosed();
+                        currKnot = new Knot2(ap1x, ap1y);
+                        initialVertex = false;
+                     } else {
+                        /* Treat as "lineSegTo" command. */
+                        currKnot = new Knot2();
+                        Knot2.fromSegLinear(ap1x, ap1y, prevKnot, currKnot);
+                     }
+
+                     currCurve.append(currKnot);
+                     prevKnot = currKnot;
+
+                     break;
+
+                  case PConstants.QUADRATIC_VERTEX:
+
+                     cp1x = source.getVertexX(cursor);
+                     cp1y = source.getVertexY(cursor);
+                     ++cursor;
+
+                     ap1x = source.getVertexX(cursor);
+                     ap1y = source.getVertexY(cursor);
+                     ++cursor;
+
+                     currKnot = new Knot2();
+                     Knot2.fromSegQuadratic(cp1x, cp1y, ap1x, ap1y, prevKnot,
+                        currKnot);
+
+                     currCurve.append(currKnot);
+                     prevKnot = currKnot;
+
+                     break;
+
+                  case PConstants.BEZIER_VERTEX:
+
+                     cp0x = source.getVertexX(cursor);
+                     cp0y = source.getVertexY(cursor);
+                     ++cursor;
+
+                     cp1x = source.getVertexX(cursor);
+                     cp1y = source.getVertexY(cursor);
+                     ++cursor;
+
+                     ap1x = source.getVertexX(cursor);
+                     ap1y = source.getVertexY(cursor);
+                     ++cursor;
+
+                     currKnot = new Knot2();
+                     Knot2.fromSegCubic(cp0x, cp0y, cp1x, cp1y, ap1x, ap1y,
+                        prevKnot, currKnot);
+
+                     currCurve.append(currKnot);
+                     prevKnot = currKnot;
+
+                     break;
+
+                  case PConstants.CURVE_VERTEX:
+
+                     hasCurveCommands = true;
+                     ap1x = source.getVertexX(cursor);
+                     ap1y = source.getVertexY(cursor);
+                     ++cursor;
+
+                     currKnot = new Knot2();
+                     Knot2.fromSegLinear(ap1x, ap1y, prevKnot, currKnot);
+
+                     break;
+
+                  case PConstants.BREAK:
+                     // TODO: Contour. Test to see how it is interpreted.
+                     hasContours = true;
+                     break;
+
+                  default:
+                     unsupportedCommand = true;
+               }
+            }
+
+            curves.add(currCurve);
+
+            /* Deal with closed or open loop. */
+            if ( currCurve.closedLoop ) {
+               currKnot = currCurve.getFirst();
+
+               // TODO: Replace these with whatever you're supposed to have?
+               Vec2.mix(currKnot.coord, prevKnot.coord, IUtils.ONE_THIRD,
+                  currKnot.rearHandle);
+               Vec2.mix(prevKnot.coord, currKnot.coord, IUtils.ONE_THIRD,
+                  prevKnot.foreHandle);
+            } else {
+               currCurve.getFirst().mirrorHandlesForward();
+               currCurve.getLast().mirrorHandlesBackward();
+            }
+
+            break;
+
+         default:
+            unsupportedFamily = true;
+      }
+
+      return curves;
    }
 
 }

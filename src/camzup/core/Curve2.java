@@ -28,11 +28,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Creates a curve with two default knots.
     */
-   public Curve2 ( ) {
-
-      super();
-      this.reset();
-   }
+   public Curve2 ( ) { super(); }
 
    /**
     * Creates a curve from a collection of knots
@@ -77,7 +73,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public Curve2 ( final String name ) {
 
       super(name);
-      this.reset();
    }
 
    /**
@@ -366,11 +361,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return this curve
     */
-   @Experimental
    public Curve2 relocateKnot ( final int i, final Vec2 v ) {
 
-      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
-      return this.relocateKnot(j, v);
+      this.get(i).relocate(v);
+      return this;
    }
 
    /**
@@ -415,8 +409,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return this curve
     */
-
-   public Curve2 reset ( ) {
+   public Curve2 resetToDefault ( ) {
 
       this.resize(2);
       this.knots.get(0).set(-0.5f, 0.0f, -0.25f, 0.25f, -0.75f, -0.25f);
@@ -441,7 +434,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public Curve2 reverse ( ) {
 
       Collections.reverse(this.knots);
-
       final Iterator < Knot2 > itr = this.knots.iterator();
       while ( itr.hasNext() ) { itr.next().reverse(); }
 
@@ -1651,6 +1643,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public static Curve2 rect ( final float lbx, final float lby,
       final float ubx, final float uby, final float tl, final float tr,
       final float br, final float bl, final Curve2 target ) {
+
+      // TODO: Make package level?
 
       target.closedLoop = true;
       target.name = "Rect";

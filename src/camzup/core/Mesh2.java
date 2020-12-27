@@ -1540,8 +1540,22 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the string
     */
-   @Experimental
-   public String toObjString ( ) {
+   public String toObjString ( ) { return this.toObjString(1, 1, 1); }
+
+   /**
+    * Renders the mesh as a string following the Wavefront OBJ file format.
+    * The index offsets specify where the mesh's data begin; OBJ file indices
+    * begin at 1, not 0. The mesh is considered a group, 'g', not an object,
+    * 'o'.
+    *
+    * @param vIdx  coordinate index offset
+    * @param vtIdx texture coordinate index offset
+    * @param vnIdx normal index offset
+    *
+    * @return the string
+    */
+   public String toObjString ( final int vIdx, final int vtIdx,
+      final int vnIdx ) {
 
       final int coordsLen = this.coords.length;
       final int texCoordsLen = this.texCoords.length;
@@ -1552,23 +1566,22 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
        * Append comment listing the number of coordinates, texture coordinates
        * and faces.
        */
-      objs.append("# v: ");
+      objs.append("\n# v: ");
       objs.append(coordsLen);
       objs.append(", vt: ");
       objs.append(texCoordsLen);
       objs.append(", vn: 1, f: ");
       objs.append(facesLen);
       objs.append('\n');
-      objs.append('\n');
 
-      /* Append name. */
-      objs.append('o');
+      /* Append group followed by name. */
+      objs.append('g');
       objs.append(' ');
       objs.append(this.name);
       objs.append('\n');
       objs.append('\n');
 
-      /* Append coordinates. */
+      /* Write coordinates. */
       for ( int i = 0; i < coordsLen; ++i ) {
          objs.append('v');
          objs.append(' ');
@@ -1577,7 +1590,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       }
       objs.append('\n');
 
-      /* Append a texture coordinates. */
+      /* Write texture coordinates. */
       for ( int i = 0; i < texCoordsLen; ++i ) {
          objs.append("vt ");
          objs.append(this.texCoords[i].toObjString());
@@ -1587,7 +1600,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       /* Append a single normal. */
       objs.append("\nvn 0.0 0.0 1.0\n\n");
 
-      /* Append face indices. */
+      /* Write face indices. */
       for ( int i = 0; i < facesLen; ++i ) {
 
          final int[][] face = this.faces[i];
@@ -1596,14 +1609,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          objs.append(' ');
 
          for ( int j = 0; j < vLen; ++j ) {
-
-            /* Indices in an .obj file start at 1, not 0. */
             final int[] vert = face[j];
-            objs.append(vert[0] + 1);
+            objs.append(vert[0] + vIdx);
             objs.append('/');
-            objs.append(vert[1] + 1);
+            objs.append(vert[1] + vtIdx);
             objs.append('/');
-            objs.append('1');
+            objs.append(vnIdx);
             objs.append(' ');
          }
 

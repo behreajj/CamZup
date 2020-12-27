@@ -875,7 +875,6 @@ abstract class SvgParser {
              */
             boolean initialMove = true;
             Curve2 target = new Curve2();
-            target.clear();
             result.add(target);
 
             for ( int l = 0, cursor = -1; l < cmdLen; ++l ) {
@@ -899,7 +898,7 @@ abstract class SvgParser {
                      if ( !initialMove ) {
                         if ( target.length() > 1 ) { result.add(target); }
                         target = new Curve2();
-                        target.clear();
+
                      }
                      initialMove = false;
 
@@ -931,7 +930,6 @@ abstract class SvgParser {
                      if ( !initialMove ) {
                         if ( target.length() > 1 ) { result.add(target); }
                         target = new Curve2();
-                        target.clear();
                      }
                      initialMove = false;
 

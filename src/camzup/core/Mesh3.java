@@ -1927,9 +1927,22 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the string
     */
-   public String toObjString ( ) {
+   public String toObjString ( ) { return this.toObjString(1, 1, 1); }
 
-      // TODO: Mesh Entity toObjString?
+   /**
+    * Renders the mesh as a string following the Wavefront OBJ file format.
+    * The index offsets specify where the mesh's data begin; OBJ file indices
+    * begin at 1, not 0. The mesh is considered a group, 'g', not an object,
+    * 'o'.
+    *
+    * @param vIdx  coordinate index offset
+    * @param vtIdx texture coordinate index offset
+    * @param vnIdx normal index offset
+    *
+    * @return the string
+    */
+   public String toObjString ( final int vIdx, final int vtIdx,
+      final int vnIdx ) {
 
       final int coordsLen = this.coords.length;
       final int texCoordsLen = this.texCoords.length;
@@ -1941,7 +1954,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
        * Append a comment listing the number of coordinates, texture
        * coordinates, normals and faces.
        */
-      objs.append("# v: ");
+      objs.append("\n# v: ");
       objs.append(coordsLen);
       objs.append(", vt: ");
       objs.append(texCoordsLen);
@@ -1950,10 +1963,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       objs.append(", f: ");
       objs.append(facesLen);
       objs.append('\n');
-      objs.append('\n');
 
-      /* Append name. */
-      objs.append('o');
+      /* Append group followed by name. */
+      objs.append('g');
       objs.append(' ');
       objs.append(this.name);
       objs.append('\n');
@@ -1984,6 +1996,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
       objs.append('\n');
 
+      /* Write face indices. */
       for ( int i = 0; i < facesLen; ++i ) {
 
          final int[][] face = this.faces[i];
@@ -1992,14 +2005,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          objs.append(' ');
 
          for ( int j = 0; j < vLen; ++j ) {
-
-            /* Indices start at 1, not 0. */
             final int[] vert = face[j];
-            objs.append(vert[0] + 1);
+            objs.append(vert[0] + vIdx);
             objs.append('/');
-            objs.append(vert[1] + 1);
+            objs.append(vert[1] + vtIdx);
             objs.append('/');
-            objs.append(vert[2] + 1);
+            objs.append(vert[2] + vnIdx);
             objs.append(' ');
          }
 
@@ -2736,6 +2747,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public static Mesh3 cylinder ( final Mesh3 target ) {
 
+      // TODO: Add capsule mesh to the list?
+
       return Mesh3.cylinder(0.0f, 0.0f, -0.5f, 0.0f, 0.0f, 0.5f,
          IMesh.DEFAULT_CIRCLE_SECTORS, true, 0.25f, target);
    }
@@ -2999,7 +3012,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       String[] tokens;
       String[] faceTokens;
-      String objName = "Mesh3";
       String mtlFileName = "";
 
       final Pattern spacePattern = Pattern.compile("\\s+");
@@ -3091,26 +3103,22 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                      case 103:
                         /* "g" */
 
-                        // TODO: mesh name should be just "g", not "o". Is it
-                        // possible for tokens.length to be 1? for there to be a
-                        // null or empty string for the group name?
+                        String gName = tokens[1];
+                        if ( gName == null || gName.isEmpty() ) {
+                           gName = "Mesh3";
+                        }
 
-                        final String name = objName + "." + tokens[1];
-                        if ( !faceGroups.containsKey(name) ) {
-                           faceGroups.put(name, new ArrayList <>(
+                        if ( !faceGroups.containsKey(gName) ) {
+                           faceGroups.put(gName, new ArrayList <>(
                               indicesCapacity));
                         }
-                        currentIndices = faceGroups.get(name);
+                        currentIndices = faceGroups.get(gName);
                         groupsMissing = false;
 
                         break;
 
                      case 111:
-                        // TODO: "o" Objects should be associated with entities,
-                        // not meshes.
-
                         /* "o" */
-                        objName = tokens[1];
 
                         break;
 
@@ -3118,11 +3126,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                         /* "v" */
 
                         final Vec3 co = new Vec3();
-                        // try {
                         co.x = Float.parseFloat(tokens[1]);
                         co.y = Float.parseFloat(tokens[2]);
                         co.z = Float.parseFloat(tokens[3]);
-                        // } catch ( final Exception e ) {}
                         coordList.add(co);
 
                         break;
@@ -3131,11 +3137,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                         /* "vn" */
 
                         final Vec3 nr = Vec3.up(new Vec3());
-                        // try {
                         nr.x = Float.parseFloat(tokens[1]);
                         nr.y = Float.parseFloat(tokens[2]);
                         nr.z = Float.parseFloat(tokens[3]);
-                        // } catch ( final Exception e ) {}
                         normalList.add(nr);
 
                         break;
@@ -3144,10 +3148,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                         /* "vt" */
 
                         final Vec2 tc = Vec2.uvCenter(new Vec2());
-                        // try {
                         tc.x = Float.parseFloat(tokens[1]);
                         tc.y = Float.parseFloat(tokens[2]);
-                        // } catch ( final Exception e ) {}
                         texCoordList.add(tc);
 
                         break;
@@ -3212,8 +3214,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       if ( groupsMissing ) {
 
-         final Mesh3 mesh = result[0] = new Mesh3();
-         mesh.name = objName;
+         final Mesh3 mesh = result[0] = new Mesh3("Mesh3");
 
          mesh.faces = new int[currentIndices.size()][][];
          currentIndices.toArray(mesh.faces);
@@ -3906,27 +3907,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          sints[j] = Utils.scNorm(theta - 0.25f);
       }
 
-      /* Calculate number of side panels in a sector. */
-      final float toPhi = 1.0f / vpanl;
-
-      /* Calculate coordinates and normals. */
-      for ( int k = 0, i = 0; i < vpanl; ++i ) {
-         final float phi = -0.5f + i * toPhi;
-         final float cosPhi = Utils.scNorm(phi);
-         final float sinPhi = Utils.scNorm(phi - 0.25f);
-
-         final float rhoCosPhi = rho0 + rho1 * cosPhi;
-         final float rhoSinPhi = rho1 * sinPhi;
-
-         for ( int j = 0; j < vsect; ++j, ++k ) {
-            final float cosTheta = costs[j];
-            final float sinTheta = sints[j];
-
-            vs[k].set(rhoCosPhi * cosTheta, -rhoSinPhi, rhoCosPhi * sinTheta);
-            vns[k].set(cosPhi * cosTheta, -sinPhi, cosPhi * sinTheta);
-         }
-      }
-
       /* Calculate texture coordinates u. */
       final float[] uvxs = new float[vsect1];
       final float toU = 1.0f / vsect;
@@ -3939,21 +3919,39 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          for ( int j = 0; j < vsect1; ++j, ++k ) { vts[k].set(uvxs[j], y); }
       }
 
+      /* To calculate number of side panels in a sector. */
+      final float toPhi = 1.0f / vpanl;
+
       /* Set faces. */
       final int faceStride = isTri ? 2 : 1;
-      for ( int k = 0, i = 0; i < vpanl; ++i ) {
+      for ( int m = 0, k = 0, i = 0; i < vpanl; ++i ) {
 
-         // TODO: Can these for loops be consolidated into the ones above?
-         final int iVNext = ( i + 1 ) % vpanl;
+         /* Find side panel angles. */
+         final float phi = -0.5f + i * toPhi;
+         final float cosPhi = Utils.scNorm(phi);
+         final float sinPhi = Utils.scNorm(phi - 0.25f);
+
+         final float rhoCosPhi = rho0 + rho1 * cosPhi;
+         final float rhoSinPhi = rho1 * sinPhi;
 
          /* For converting from 2D to 1D array (idx = y * width + x) . */
+         final int iVNext = ( i + 1 ) % vpanl;
+
          final int vOffCurr = i * vsect;
          final int vOffNext = iVNext * vsect;
 
          final int vtOffCurr = i * vsect1;
          final int vtOffNext = vtOffCurr + vsect1;
 
-         for ( int j = 0; j < vsect; ++j, k += faceStride ) {
+         for ( int j = 0; j < vsect; ++j, k += faceStride, ++m ) {
+
+            final float cosTheta = costs[j];
+            final float sinTheta = sints[j];
+
+            /* Calculate coordinates and normals. */
+            vs[m].set(rhoCosPhi * cosTheta, -rhoSinPhi, rhoCosPhi * sinTheta);
+            vns[m].set(cosPhi * cosTheta, -sinPhi, cosPhi * sinTheta);
+
             final int jVtNext = j + 1;
             final int jVNext = jVtNext % vsect;
 

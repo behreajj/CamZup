@@ -561,6 +561,54 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
+    * Renders the mesh entity as a string following the Wavefront OBJ file
+    * format.
+    *
+    * @return the string
+    */
+   public String toObjString ( ) {
+
+      final StringBuilder objs = new StringBuilder(2048);
+      final Iterator < Mesh2 > itr = this.meshes.iterator();
+
+      /* Append name. */
+      objs.append('o');
+      objs.append(' ');
+      objs.append(this.name);
+      objs.append('\n');
+
+      int vIdx = 1;
+      int vtIdx = 1;
+      int vnIdx = 1;
+      int fCount = 0;
+      while ( itr.hasNext() ) {
+         final Mesh2 mesh = itr.next();
+         objs.append(mesh.toObjString(vIdx, vtIdx, vnIdx));
+
+         vIdx += mesh.coords.length;
+         vtIdx += mesh.texCoords.length;
+         vnIdx += 1;
+         fCount += mesh.faces.length;
+      }
+
+      final StringBuilder comment = new StringBuilder(256);
+      comment.append("# g: ");
+      comment.append(this.meshes.size());
+      comment.append(", v: ");
+      comment.append(vIdx - 1);
+      comment.append(", vt: ");
+      comment.append(vtIdx - 1);
+      comment.append(", vn: ");
+      comment.append(vnIdx - 1);
+      comment.append(", f: ");
+      comment.append(fCount);
+      comment.append('\n');
+      objs.insert(0, comment);
+
+      return objs.toString();
+   }
+
+   /**
     * Returns a string representation of this mesh entity.
     *
     * @param places number of places

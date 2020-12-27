@@ -1,9 +1,12 @@
 package camzup.core;
 
+import java.io.BufferedReader;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * An entity which contains a transform that is applied to a list of
@@ -563,6 +566,54 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    }
 
    /**
+    * Renders the mesh entity as a string following the Wavefront OBJ file
+    * format.
+    *
+    * @return the string
+    */
+   public String toObjString ( ) {
+
+      final StringBuilder objs = new StringBuilder(2048);
+      final Iterator < Mesh3 > itr = this.meshes.iterator();
+
+      /* Append name. */
+      objs.append('o');
+      objs.append(' ');
+      objs.append(this.name);
+      objs.append('\n');
+
+      int vIdx = 1;
+      int vtIdx = 1;
+      int vnIdx = 1;
+      int fCount = 0;
+      while ( itr.hasNext() ) {
+         final Mesh3 mesh = itr.next();
+         objs.append(mesh.toObjString(vIdx, vtIdx, vnIdx));
+
+         vIdx += mesh.coords.length;
+         vtIdx += mesh.texCoords.length;
+         vnIdx += mesh.normals.length;
+         fCount += mesh.faces.length;
+      }
+
+      final StringBuilder comment = new StringBuilder(256);
+      comment.append("# g: ");
+      comment.append(this.meshes.size());
+      comment.append(", v: ");
+      comment.append(vIdx - 1);
+      comment.append(", vt: ");
+      comment.append(vtIdx - 1);
+      comment.append(", vn: ");
+      comment.append(vnIdx - 1);
+      comment.append(", f: ");
+      comment.append(fCount);
+      comment.append('\n');
+      objs.insert(0, comment);
+
+      return objs.toString();
+   }
+
+   /**
     * Returns a string representation of this mesh entity.
     *
     * @param places number of places
@@ -588,6 +639,66 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
       sb.append(" ] }");
       return sb.toString();
+   }
+
+   @Experimental
+   public static MeshEntity3[] fromObj ( final BufferedReader in ) {
+
+      // TODO: Implement.
+      // This needs to be implemented because Blender allows the option to
+      // export each object as its own 'o' in an obj file.
+
+      final ArrayList < MeshEntity3 > entities = new ArrayList <>();
+      MeshEntity3 currentEntity = new MeshEntity3();
+      boolean oInitialFound = false;
+      String[] tokens;
+      final Pattern spacePattern = Pattern.compile("\\s+");
+
+      try {
+         try {
+            for ( String ln = in.readLine(); ln != null; ln = in.readLine() ) {
+               tokens = spacePattern.split(ln, 0);
+               if ( tokens.length > 0 ) {
+                  /* Switch case by hash code of String, not String itself. */
+                  final int cmd = tokens[0].toLowerCase().hashCode();
+                  switch ( cmd ) {
+                     case 111:
+                        /* "o" */
+
+                        if ( oInitialFound ) {
+                           entities.add(currentEntity);
+                           currentEntity = new MeshEntity3();
+                        }
+
+                        String oName = tokens[1];
+                        if ( oName == null || oName.isEmpty() ) {
+                           oName = "Mesh3";
+                        }
+                        currentEntity.name = oName;
+
+                        oInitialFound = true;
+
+                        break;
+
+                     default:
+                  }
+               }
+            }
+
+         } catch ( final Exception e ) {
+            e.printStackTrace();
+         } finally {
+            in.close();
+         }
+      } catch ( final Exception e ) {
+         e.printStackTrace();
+      }
+
+      if ( !oInitialFound ) {
+         // TODO: Handle problem case where there are no oGroups.
+      }
+
+      return entities.toArray(new MeshEntity3[entities.size()]);
    }
 
 }

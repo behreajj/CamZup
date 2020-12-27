@@ -411,11 +411,11 @@ public abstract class Mesh extends EntityData implements IMesh {
 
    /**
     * Restructures a one-dimensional array of index data to a
-    * three-dimensional array. Assumes that (1) all faces contain the same
-    * number of sides and therefore that the array's length is divisible by
-    * its stride; and (2) the same index accesses the appropriate element in
-    * arrays of uniform length, e.g. of coordinates, texture coordinates and
-    * normals. The dimensions indicate how many arrays are accessed by the
+    * three-dimensional array. Assumes that (1) all input faces contain the
+    * same number of sides and therefore that the array's length is divisible
+    * by its stride; and (2) the same index accesses the appropriate element
+    * in arrays of uniform length, e.g. of coordinates, texture coordinates
+    * and normals. The dimensions indicate how many arrays are accessed by the
     * index (typically 2 for 2D meshes, 3 for 3D meshes).<br>
     * <br>
     * Useful when converting from Unity meshes, wherein all faces are

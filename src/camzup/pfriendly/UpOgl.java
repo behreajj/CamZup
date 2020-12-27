@@ -3113,9 +3113,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    protected void drawMesh3 ( final Mesh3 mesh, final Transform3 tr,
       final Vec3 v, final Vec3 vn ) {
 
-      // TODO: Make a uniform version of this and the 2D version? See
-      // Convert.toPShape.
-
       final Vec3[] vs = mesh.coords;
       final Vec3[] vns = mesh.normals;
       final int[][][] fs = mesh.faces;
