@@ -151,6 +151,8 @@ public abstract class Mesh extends EntityData implements IMesh {
     */
    public Mesh reverseEdge ( final int i, final int j ) {
 
+      // TODO: reverseEdges
+
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
       final int len = face.length;
       final int jOrigin = Utils.mod(j, len);
@@ -175,6 +177,19 @@ public abstract class Mesh extends EntityData implements IMesh {
 
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
       Mesh.reverse(face);
+      return this;
+   }
+
+   /**
+    * Flips the indices which specify all faces. Changes the winding from
+    * counter-clockwise (CCW) to clockwise (CW) or vice versa.
+    *
+    * @return this mesh
+    */
+   public Mesh reverseFaces ( ) {
+
+      final int len = this.faces.length;
+      for ( int i = 0; i < len; ++i ) { Mesh.reverse(this.faces[i]); }
       return this;
    }
 

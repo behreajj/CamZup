@@ -709,7 +709,7 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Returns a point on a Bezier curve described by two anchor points and two
     * control points according to a step in [0.0, 1.0] . When the step is less
-    * than one, returns the first anchor point. When the step is greater than
+    * than zero, returns the first anchor point. When the step is greater than
     * one, returns the second anchor point.
     *
     * @param ap0    the first anchor point
@@ -742,9 +742,49 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
+    * Returns a point on a Bezier curve described by two anchor points and two
+    * control points according to a step in [0.0, 1.0] .
+    *
+    * @param ap0    the first anchor point
+    * @param cp0    the first control point
+    * @param cp1    the second control point
+    * @param ap1    the second anchor point
+    * @param step   the step
+    * @param target the output vector
+    *
+    * @return the point along the curve
+    */
+   public static Vec3 bezierPoint ( final Vec3 ap0, final Vec3 cp0,
+      final Vec3 cp1, final Vec3 ap1, final Vec3 step, final Vec3 target ) {
+
+      final float tx = Utils.clamp01(step.x);
+      final float ty = Utils.clamp01(step.y);
+      final float tz = Utils.clamp01(step.z);
+
+      final float ux = 1.0f - tx;
+      final float uy = 1.0f - ty;
+      final float uz = 1.0f - tz;
+
+      final float tsqx = tx * tx;
+      final float tsqy = ty * ty;
+      final float tsqz = tz * tz;
+
+      final float usqx = ux * ux;
+      final float usqy = uy * uy;
+      final float usqz = uz * uz;
+
+      return target.set(ap0.x * ( usqx * ux ) + cp0.x * ( usqx * 3.0f * tx )
+         + cp1.x * ( tsqx * 3.0f * ux ) + ap1.x * ( tsqx * tx ), ap0.y * ( usqy
+            * uy ) + cp0.y * ( usqy * 3.0f * ty ) + cp1.y * ( tsqy * 3.0f * uy )
+            + ap1.y * ( tsqy * ty ), ap0.z * ( usqz * uz ) + cp0.z * ( usqz
+               * 3.0f * tz ) + cp1.z * ( tsqz * 3.0f * uz ) + ap1.z * ( tsqz
+                  * tz ));
+   }
+
+   /**
     * Returns a tangent on a Bezier curve described by two anchor points and
     * two control points according to a step in [0.0, 1.0] . When the step is
-    * less than one, returns the first anchor point subtracted from the first
+    * less than zero, returns the first anchor point subtracted from the first
     * control point. When the step is greater than one, returns the second
     * anchor point subtracted from the second control point.
     *
@@ -1753,6 +1793,20 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
+    * Evaluates whether all components of the left comparisand are greater
+    * than those of the right comparisand.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean gt ( final Vec3 a, final Vec3 b ) {
+
+      return a.x > b.x && a.y > b.y && a.z > b.z;
+   }
+
+   /**
     * Evaluates whether the left comparisand is greater than the right
     * comparisand.
     *
@@ -1765,6 +1819,20 @@ public class Vec3 implements Comparable < Vec3 > {
    public static Vec3 gt ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
       return target.set(a.x > b.x, a.y > b.y, a.z > b.z);
+   }
+
+   /**
+    * Evaluates whether all components of the left comparisand are greater
+    * than or equal to those of the right comparisand.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean gtEq ( final Vec3 a, final Vec3 b ) {
+
+      return a.x >= b.x && a.y >= b.y && a.z >= b.z;
    }
 
    /**
@@ -1910,6 +1978,20 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
+    * Evaluates whether all components of the left comparisand are less than
+    * those of the right comparisand.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean lt ( final Vec3 a, final Vec3 b ) {
+
+      return a.x < b.x && a.y < b.y && a.z < b.z;
+   }
+
+   /**
     * Evaluates whether the left comparisand is less than the right
     * comparisand.
     *
@@ -1922,6 +2004,20 @@ public class Vec3 implements Comparable < Vec3 > {
    public static Vec3 lt ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
       return target.set(a.x < b.x, a.y < b.y, a.z < b.z);
+   }
+
+   /**
+    * Evaluates whether all components of the left comparisand are less than
+    * or equal to those of the right comparisand.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean ltEq ( final Vec3 a, final Vec3 b ) {
+
+      return a.x <= b.x && a.y <= b.y && a.z <= b.z;
    }
 
    /**
@@ -3022,6 +3118,29 @@ public class Vec3 implements Comparable < Vec3 > {
 
       Vec3.sub(a, b, dir);
       Vec3.normalize(dir, target);
+      return target;
+   }
+
+   /**
+    * Sums all vectors in an array.
+    *
+    * @param arr    the array
+    * @param target the output vector
+    *
+    * @return the sum
+    */
+   public static Vec3 sum ( final Vec3[] arr, final Vec3 target ) {
+
+      target.reset();
+      if ( arr != null ) {
+         final int len = arr.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec3 v = arr[i];
+            target.x += v.x;
+            target.y += v.y;
+            target.z += v.z;
+         }
+      }
       return target;
    }
 

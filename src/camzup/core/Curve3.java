@@ -183,6 +183,63 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Flips the curve on the x axis, then reverse the curve.
+    *
+    * @return this curve
+    */
+   public Curve3 flipX ( ) {
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot3 kn = itr.next();
+         kn.coord.x = -kn.coord.x;
+         kn.foreHandle.x = -kn.foreHandle.x;
+         kn.rearHandle.x = -kn.rearHandle.x;
+         kn.reverse();
+      }
+      Collections.reverse(this.knots);
+      return this;
+   }
+
+   /**
+    * Flips the curve on the y axis, then reverse the curve.
+    *
+    * @return this curve
+    */
+   public Curve3 flipY ( ) {
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot3 kn = itr.next();
+         kn.coord.y = -kn.coord.y;
+         kn.foreHandle.y = -kn.foreHandle.y;
+         kn.rearHandle.y = -kn.rearHandle.y;
+         kn.reverse();
+      }
+      Collections.reverse(this.knots);
+      return this;
+   }
+
+   /**
+    * Flips the curve on the y axis, then reverse the curve.
+    *
+    * @return this curve
+    */
+   public Curve3 flipZ ( ) {
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot3 kn = itr.next();
+         kn.coord.z = -kn.coord.z;
+         kn.foreHandle.z = -kn.foreHandle.z;
+         kn.rearHandle.z = -kn.rearHandle.z;
+         kn.reverse();
+      }
+      Collections.reverse(this.knots);
+      return this;
+   }
+
+   /**
     * Gets a knot from the curve by an index. When the curve is a closed loop,
     * the index wraps around.
     *
@@ -358,6 +415,53 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          this.knots.add(j, knot);
          ++j;
       }
+      return this;
+   }
+
+   /**
+    * Centers the curve about the origin, (0.0, 0.0), and rescales it to the
+    * range [-0.5, 0.5] . Emits a transform which records the curve's center
+    * point and original dimension. The transform's rotation is reset.
+    *
+    * @param tr the output transform
+    *
+    * @return this mesh
+    *
+    * @see Curve3#calcDimensions(Curve3, Vec3, Vec3, Vec3)
+    */
+   public Curve3 reframe ( final Transform3 tr ) {
+
+      tr.locPrev.set(tr.location);
+      tr.scalePrev.set(tr.scale);
+
+      final Vec3 dim = tr.scale;
+      final Vec3 lb = tr.location;
+      final Vec3 ub = new Vec3();
+      Curve3.calcDimensions(this, dim, lb, ub);
+
+      lb.x = 0.5f * ( lb.x + ub.x );
+      lb.y = 0.5f * ( lb.y + ub.y );
+      lb.z = 0.5f * ( lb.z + ub.z );
+      final float scl = Utils.div(1.0f, Utils.max(dim.x, dim.y, dim.z));
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot3 kn = itr.next();
+         final Vec3 co = kn.coord;
+         final Vec3 fh = kn.foreHandle;
+         final Vec3 rh = kn.rearHandle;
+         Vec3.sub(co, lb, co);
+         Vec3.mul(co, scl, co);
+         Vec3.sub(fh, lb, fh);
+         Vec3.mul(fh, scl, fh);
+         Vec3.sub(rh, lb, rh);
+         Vec3.mul(rh, scl, rh);
+      }
+
+      tr.rotPrev.set(tr.rotation);
+      tr.rotation.reset();
+      tr.updateAxes();
+
       return this;
    }
 
@@ -880,6 +984,56 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       target.name = "Arc";
       return target;
+   }
+
+   /**
+    * Calculates the dimensions of an Axis-Aligned Bounding Box (AABB)
+    * encompassing the curve. Does so by taking the min and max of each knot's
+    * coordinate, fore handle and rear handle; <em>not</em> by finding the
+    * curve extrema.
+    *
+    * @param curve  the curve
+    * @param target the output dimensions
+    * @param lb     the lower bound
+    * @param ub     the upper bound
+    *
+    * @return the dimensions
+    */
+   public static Vec3 calcDimensions ( final Curve3 curve, final Vec3 target,
+      final Vec3 lb, final Vec3 ub ) {
+
+      lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
+      ub.set(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
+      final Iterator < Knot3 > itr = curve.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot3 kn = itr.next();
+         final Vec3 co = kn.coord;
+         final Vec3 fh = kn.foreHandle;
+         final Vec3 rh = kn.rearHandle;
+
+         if ( co.x < lb.x ) { lb.x = co.x; }
+         if ( co.x > ub.x ) { ub.x = co.x; }
+         if ( co.y < lb.y ) { lb.y = co.y; }
+         if ( co.y > ub.y ) { ub.y = co.y; }
+         if ( co.z < lb.z ) { lb.z = co.z; }
+         if ( co.z > ub.z ) { ub.z = co.z; }
+
+         if ( fh.x < lb.x ) { lb.x = fh.x; }
+         if ( fh.x > ub.x ) { ub.x = fh.x; }
+         if ( fh.y < lb.y ) { lb.y = fh.y; }
+         if ( fh.y > ub.y ) { ub.y = fh.y; }
+         if ( fh.z < lb.z ) { lb.z = fh.z; }
+         if ( fh.z > ub.z ) { ub.z = fh.z; }
+
+         if ( rh.x < lb.x ) { lb.x = rh.x; }
+         if ( rh.x > ub.x ) { ub.x = rh.x; }
+         if ( rh.y < lb.y ) { lb.y = rh.y; }
+         if ( rh.y > ub.y ) { ub.y = rh.y; }
+         if ( rh.z < lb.z ) { lb.z = rh.z; }
+         if ( rh.z > ub.z ) { ub.z = rh.z; }
+      }
+
+      return Vec3.sub(ub, lb, target);
    }
 
    /**

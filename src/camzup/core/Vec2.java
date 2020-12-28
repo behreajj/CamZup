@@ -630,7 +630,7 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Returns a point on a Bezier curve described by two anchor points and two
     * control points according to a step in [0.0, 1.0] . When the step is less
-    * than one, returns the first anchor point. When the step is greater than
+    * than zero, returns the first anchor point. When the step is greater than
     * one, returns the second anchor point.
     *
     * @param ap0    the first anchor point
@@ -645,16 +645,16 @@ public class Vec2 implements Comparable < Vec2 > {
    public static Vec2 bezierPoint ( final Vec2 ap0, final Vec2 cp0,
       final Vec2 cp1, final Vec2 ap1, final float step, final Vec2 target ) {
 
-      if ( step <= 0.0f ) {
-         return target.set(ap0);
-      } else if ( step >= 1.0f ) { return target.set(ap1); }
-
       /*
        * QUADRATIC: final float u = 1.0f - step; final float usq = u * u; final
        * float tsq = step * step; final float ut2 = u * step * 2.0f; return
        * target.set(usq * ap0.x + ut2 * cp.x + tsq * ap1.x, usq * ap0.y + ut2 *
        * cp.y + tsq * ap1.y);
        */
+
+      if ( step <= 0.0f ) {
+         return target.set(ap0);
+      } else if ( step >= 1.0f ) { return target.set(ap1); }
 
       final float u = 1.0f - step;
       float tcb = step * step;
@@ -669,9 +669,43 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
+    * Returns a point on a Bezier curve described by two anchor points and two
+    * control points according to a step in [0.0, 1.0] .
+    *
+    * @param ap0    the first anchor point
+    * @param cp0    the first control point
+    * @param cp1    the second control point
+    * @param ap1    the second anchor point
+    * @param step   the step
+    * @param target the output vector
+    *
+    * @return the point along the curve
+    */
+   public static Vec2 bezierPoint ( final Vec2 ap0, final Vec2 cp0,
+      final Vec2 cp1, final Vec2 ap1, final Vec2 step, final Vec2 target ) {
+
+      final float tx = Utils.clamp01(step.x);
+      final float ty = Utils.clamp01(step.y);
+
+      final float ux = 1.0f - tx;
+      final float uy = 1.0f - ty;
+
+      final float tsqx = tx * tx;
+      final float tsqy = ty * ty;
+
+      final float usqx = ux * ux;
+      final float usqy = uy * uy;
+
+      return target.set(ap0.x * ( usqx * ux ) + cp0.x * ( usqx * 3.0f * tx )
+         + cp1.x * ( tsqx * 3.0f * ux ) + ap1.x * ( tsqx * tx ), ap0.y * ( usqy
+            * uy ) + cp0.y * ( usqy * 3.0f * ty ) + cp1.y * ( tsqy * 3.0f * uy )
+            + ap1.y * ( tsqy * ty ));
+   }
+
+   /**
     * Returns a tangent on a Bezier curve described by two anchor points and
     * two control points according to a step in [0.0, 1.0] . When the step is
-    * less than one, returns the first anchor point subtracted from the first
+    * less than zero, returns the first anchor point subtracted from the first
     * control point. When the step is greater than one, returns the second
     * anchor point subtracted from the second control point.
     *
@@ -1436,6 +1470,20 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
+    * Evaluates whether all components of the left comparisand are greater
+    * than those of the right comparisand.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean gt ( final Vec2 a, final Vec2 b ) {
+
+      return a.x > b.x && a.y > b.y;
+   }
+
+   /**
     * Evaluates whether the left comparisand is greater than the right
     * comparisand.
     *
@@ -1448,6 +1496,20 @@ public class Vec2 implements Comparable < Vec2 > {
    public static Vec2 gt ( final Vec2 a, final Vec2 b, final Vec2 target ) {
 
       return target.set(a.x > b.x, a.y > b.y);
+   }
+
+   /**
+    * Evaluates whether all components of the left comparisand are greater
+    * than or equal to those of the right comparisand.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean gtEq ( final Vec2 a, final Vec2 b ) {
+
+      return a.x >= b.x && a.y >= b.y;
    }
 
    /**
@@ -1589,6 +1651,20 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
+    * Evaluates whether all components of the left comparisand are less than
+    * those of the right comparisand.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean lt ( final Vec2 a, final Vec2 b ) {
+
+      return a.x < b.x && a.y < b.y;
+   }
+
+   /**
     * Evaluates whether the left comparisand is less than the right
     * comparisand.
     *
@@ -1601,6 +1677,20 @@ public class Vec2 implements Comparable < Vec2 > {
    public static Vec2 lt ( final Vec2 a, final Vec2 b, final Vec2 target ) {
 
       return target.set(a.x < b.x, a.y < b.y);
+   }
+
+   /**
+    * Evaluates whether all components of the left comparisand are less than
+    * or equal to those of the right comparisand.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean ltEq ( final Vec2 a, final Vec2 b ) {
+
+      return a.x <= b.x && a.y <= b.y;
    }
 
    /**
@@ -2602,6 +2692,28 @@ public class Vec2 implements Comparable < Vec2 > {
 
       Vec2.sub(a, b, dir);
       Vec2.normalize(dir, target);
+      return target;
+   }
+
+   /**
+    * Sums all vectors in an array.
+    *
+    * @param arr    the array
+    * @param target the output vector
+    *
+    * @return the sum
+    */
+   public static Vec2 sum ( final Vec2[] arr, final Vec2 target ) {
+
+      target.reset();
+      if ( arr != null ) {
+         final int len = arr.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec2 v = arr[i];
+            target.x += v.x;
+            target.y += v.y;
+         }
+      }
       return target;
    }
 

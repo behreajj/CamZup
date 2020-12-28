@@ -1,10 +1,5 @@
 package camzup;
 
-import camzup.core.Mesh2;
-import camzup.core.MeshEntity2;
-import camzup.core.PolyType;
-import camzup.core.Vec2;
-
 import processing.core.PApplet;
 
 /**
@@ -55,22 +50,21 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      final Mesh2 m20 = new Mesh2();
-      Mesh2.polygon(6, m20);
-      m20.translate(new Vec2(-1.0f, 0.0f));
-
-      final Mesh2 m21 = new Mesh2();
-      Mesh2.polygon(5, PolyType.QUAD, m21);
-      m21.translate(new Vec2(1.0f, 0.0f));
-
-      final MeshEntity2 me2 = new MeshEntity2("Test Obj");
-      me2.append(m20);
-      me2.append(m21);
-      // final String str = me3.toBlenderCode();
+      // final Mesh2 m20 = new Mesh2();
+      // Mesh2.polygon(5, PolyType.QUAD, m20);
+      //
+      // final Mesh2 m21 = new Mesh2(m20);
+      // m21.flipX();
+      //
+      // m21.translate(new Vec2(1.0f, 0.0f));
+      // m20.translate(new Vec2(-1.0f, 0.0f));
+      //
+      // final MeshEntity2 me2 = new MeshEntity2("Test Obj");
+      // me2.append(m20);
+      // me2.append(m21);
+      //
+      // final String str = me2.toBlenderCode();
       // System.out.println(str);
-
-      final String str = me2.toObjString();
-      System.out.println(str);
    }
 
    /**

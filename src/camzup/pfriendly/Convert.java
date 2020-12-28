@@ -22,6 +22,7 @@ import camzup.core.Mesh3;
 import camzup.core.MeshEntity2;
 import camzup.core.MeshEntity3;
 import camzup.core.Quaternion;
+import camzup.core.Recursive;
 import camzup.core.Transform2;
 import camzup.core.Transform3;
 import camzup.core.TransformOrder;
@@ -56,10 +57,10 @@ public abstract class Convert {
     * Converts a 2D PShape to a curve entity. Support for this conversion is
     * <em>very</em> limited. For best results, use a PShape consisting of
     * quadratic and cubic Bezier curves.
-    * 
-    * @param source    the source shape
+    *
+    * @param source the source shape
     * @param target the target curve entity
-    * 
+    *
     * @return the curve entity
     */
    public static CurveEntity2 toCurveEntity2 ( final PShape source,
@@ -1242,13 +1243,16 @@ public abstract class Convert {
    }
 
    /**
-    * Converts from a 2D PShape to a Curve2.
-    * 
+    * Converts from a 2D PShape to a Curve2. Potentially a recursive function
+    * if the PShape is of the family {@link PConstants#GROUP}
+    * ({@value PConstants#GROUP}).
+    *
     * @param source the source shape
     * @param curves the curves list
-    * 
+    *
     * @return the curves list
     */
+   @Recursive
    protected static List < Curve2 > toCurve2 ( final PShape source, final List <
       Curve2 > curves ) {
 
@@ -1323,14 +1327,6 @@ public abstract class Convert {
                }
             }
 
-            /* Data retrieved from PShape by command. */
-            float cp0x = 0.0f;
-            float cp0y = 0.0f;
-            float cp1x = 0.0f;
-            float cp1y = 0.0f;
-            float ap1x = 0.0f;
-            float ap1y = 0.0f;
-
             int cursor = 0;
             boolean initialVertex = true;
             Curve2 currCurve = null;
@@ -1345,20 +1341,18 @@ public abstract class Convert {
 
                   case PConstants.VERTEX:
 
-                     ap1x = source.getVertexX(cursor);
-                     ap1y = source.getVertexY(cursor);
-                     ++cursor;
-
                      if ( initialVertex ) {
                         /* Treat as "moveTo" command. */
                         currCurve = new Curve2();
                         currCurve.closedLoop = source.isClosed();
-                        currKnot = new Knot2(ap1x, ap1y);
+                        currKnot = new Knot2(source.getVertexX(cursor), source
+                           .getVertexY(cursor++));
                         initialVertex = false;
                      } else {
                         /* Treat as "lineSegTo" command. */
                         currKnot = new Knot2();
-                        Knot2.fromSegLinear(ap1x, ap1y, prevKnot, currKnot);
+                        Knot2.fromSegLinear(source.getVertexX(cursor), source
+                           .getVertexY(cursor++), prevKnot, currKnot);
                      }
 
                      currCurve.append(currKnot);
@@ -1368,55 +1362,44 @@ public abstract class Convert {
 
                   case PConstants.QUADRATIC_VERTEX:
 
-                     cp1x = source.getVertexX(cursor);
-                     cp1y = source.getVertexY(cursor);
-                     ++cursor;
-
-                     ap1x = source.getVertexX(cursor);
-                     ap1y = source.getVertexY(cursor);
-                     ++cursor;
-
+                     /* @formatter:off */
                      currKnot = new Knot2();
-                     Knot2.fromSegQuadratic(cp1x, cp1y, ap1x, ap1y, prevKnot,
-                        currKnot);
-
+                     Knot2.fromSegQuadratic(
+                        source.getVertexX(cursor),
+                        source.getVertexY(cursor++),
+                        source.getVertexX(cursor),
+                        source.getVertexY(cursor++),
+                        prevKnot, currKnot);
                      currCurve.append(currKnot);
                      prevKnot = currKnot;
+                     /* @formatter:on */
 
                      break;
 
                   case PConstants.BEZIER_VERTEX:
 
-                     cp0x = source.getVertexX(cursor);
-                     cp0y = source.getVertexY(cursor);
-                     ++cursor;
-
-                     cp1x = source.getVertexX(cursor);
-                     cp1y = source.getVertexY(cursor);
-                     ++cursor;
-
-                     ap1x = source.getVertexX(cursor);
-                     ap1y = source.getVertexY(cursor);
-                     ++cursor;
-
+                     /* @formatter:off */
                      currKnot = new Knot2();
-                     Knot2.fromSegCubic(cp0x, cp0y, cp1x, cp1y, ap1x, ap1y,
+                     Knot2.fromSegCubic(
+                        source.getVertexX(cursor),
+                        source.getVertexY(cursor++),
+                        source.getVertexX(cursor),
+                        source.getVertexY(cursor++),
+                        source.getVertexX(cursor),
+                        source.getVertexY(cursor++),
                         prevKnot, currKnot);
-
                      currCurve.append(currKnot);
                      prevKnot = currKnot;
+                     /* @formatter:on */
 
                      break;
 
                   case PConstants.CURVE_VERTEX:
 
                      hasCurveCommands = true;
-                     ap1x = source.getVertexX(cursor);
-                     ap1y = source.getVertexY(cursor);
-                     ++cursor;
-
                      currKnot = new Knot2();
-                     Knot2.fromSegLinear(ap1x, ap1y, prevKnot, currKnot);
+                     Knot2.fromSegLinear(source.getVertexX(cursor), source
+                        .getVertexY(cursor++), prevKnot, currKnot);
 
                      break;
 
@@ -1450,6 +1433,41 @@ public abstract class Convert {
 
          default:
             unsupportedFamily = true;
+      }
+
+      final String sourceName = source.getName();
+
+      if ( unsupportedFamily ) {
+         System.err.println("The PShape " + sourceName + "'s family " + source
+            .getFamily() + " is not supported.");
+      }
+
+      if ( unsupportedKind ) {
+         System.err.println("The PShape " + sourceName + "'s kind " + source
+            .getFamily() + " is not supported.");
+      }
+
+      if ( unsupportedCommand ) {
+         System.err.println("The PShape " + sourceName
+            + " contained unsupported path commands.");
+      }
+
+      if ( hasContours ) {
+         System.err.println("Contour commands are ignored.");
+      }
+
+      if ( hasCurveCommands ) {
+         System.err.println(
+            "curveVertex commands are treated as straight lines.");
+      }
+
+      if ( hasPrimitives ) {
+         System.err.println("Support for PRIMITIVE family PShapes is limited.");
+      }
+
+      if ( noVertices ) {
+         System.err.println("The PShape " + sourceName
+            + "contained no vertex data.");
       }
 
       return curves;

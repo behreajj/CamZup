@@ -1210,6 +1210,20 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
+    * Evaluates whether all components of the left comparisand are greater
+    * than those of the right comparisand.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean gt ( final Vec4 a, final Vec4 b ) {
+
+      return a.x > b.x && a.y > b.y && a.z > b.z && a.w > b.w;
+   }
+
+   /**
     * Evaluates whether the left comparisand is greater than the right
     * comparisand.
     *
@@ -1222,6 +1236,20 @@ public class Vec4 implements Comparable < Vec4 > {
    public static Vec4 gt ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
       return target.set(a.x > b.x, a.y > b.y, a.z > b.z, a.w > b.w);
+   }
+
+   /**
+    * Evaluates whether all components of the left comparisand are greater
+    * than or equal to those of the right comparisand.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean gtEq ( final Vec4 a, final Vec4 b ) {
+
+      return a.x >= b.x && a.y >= b.y && a.z >= b.z && a.w >= b.w;
    }
 
    /**
@@ -1294,6 +1322,20 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
+    * Evaluates whether all components of the left comparisand are less than
+    * those of the right comparisand.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean lt ( final Vec4 a, final Vec4 b ) {
+
+      return a.x < b.x && a.y < b.y && a.z < b.z && a.w < b.w;
+   }
+
+   /**
     * Evaluates whether the left comparisand is less than the right
     * comparisand.
     *
@@ -1306,6 +1348,20 @@ public class Vec4 implements Comparable < Vec4 > {
    public static Vec4 lt ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
       return target.set(a.x < b.x, a.y < b.y, a.z < b.z, a.w < b.w);
+   }
+
+   /**
+    * Evaluates whether all components of the left comparisand are less than
+    * or equal to those of the right comparisand.
+    *
+    * @param a left comparisand
+    * @param b right comparisand
+    *
+    * @return the evaluation
+    */
+   public static boolean ltEq ( final Vec4 a, final Vec4 b ) {
+
+      return a.x <= b.x && a.y <= b.y && a.z <= b.z && a.w <= b.w;
    }
 
    /**
@@ -2028,6 +2084,30 @@ public class Vec4 implements Comparable < Vec4 > {
    public static Vec4 sub ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
       return target.set(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
+   }
+
+   /**
+    * Sums all vectors in an array.
+    *
+    * @param arr    the array
+    * @param target the output vector
+    *
+    * @return the sum
+    */
+   public static Vec4 sum ( final Vec4[] arr, final Vec4 target ) {
+
+      target.reset();
+      if ( arr != null ) {
+         final int len = arr.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vec4 v = arr[i];
+            target.x += v.x;
+            target.y += v.y;
+            target.z += v.z;
+            target.w += v.w;
+         }
+      }
+      return target;
    }
 
    /**

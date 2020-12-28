@@ -927,6 +927,25 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
+    * Returns a coordinate given two knots and a step.
+    *
+    * @param a      the origin knot
+    * @param b      the destination knot
+    * @param step   the step
+    * @param target the output coordinate
+    *
+    * @return the coordinate
+    *
+    * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, Vec2, Vec2)
+    */
+   public static Vec2 bezierPoint ( final Knot2 a, final Knot2 b,
+      final Vec2 step, final Vec2 target ) {
+
+      return Vec2.bezierPoint(a.coord, a.foreHandle, b.rearHandle, b.coord,
+         step, target);
+   }
+
+   /**
     * Returns a tangent given two knots and a step.
     *
     * @param a      the origin knot

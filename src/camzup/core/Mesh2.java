@@ -328,6 +328,66 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
+    * Negates the x component of all texture coordinates (u) in the mesh. Does
+    * so by subtracting the value from 1.0; does not mod the coordinate.
+    *
+    * @return this mesh
+    */
+   public Mesh2 flipU ( ) {
+
+      final int len = this.texCoords.length;
+      for ( int i = 0; i < len; ++i ) {
+         this.texCoords[i].x = 1.0f - this.texCoords[i].x;
+      }
+      return this;
+   }
+
+   /**
+    * Negates the y component of all texture coordinates (v) in the mesh. Does
+    * so by subtracting the value from 1.0; does not mod the coordinate.
+    *
+    * @return this mesh
+    */
+   public Mesh2 flipV ( ) {
+
+      final int len = this.texCoords.length;
+      for ( int i = 0; i < len; ++i ) {
+         this.texCoords[i].y = 1.0f - this.texCoords[i].y;
+      }
+      return this;
+   }
+
+   /**
+    * Negates the x component of all coordinates in the mesh, then reverses
+    * the mesh's faces. Use this instead of {@link Mesh2#scale(Vec2)} with the
+    * argument <code>new Vec2(-1, 1)</code>.
+    *
+    * @return this mesh
+    */
+   public Mesh2 flipX ( ) {
+
+      final int len = this.coords.length;
+      for ( int i = 0; i < len; ++i ) { this.coords[i].x = -this.coords[i].x; }
+      this.reverseFaces();
+      return this;
+   }
+
+   /**
+    * Negates the y component of all coordinates in the mesh, then reverses
+    * the mesh's faces. Use this instead of {@link Mesh2#scale(Vec2)} with the
+    * argument <code>new Vec2(1, -1)</code>.
+    *
+    * @return this mesh
+    */
+   public Mesh2 flipY ( ) {
+
+      final int len = this.coords.length;
+      for ( int i = 0; i < len; ++i ) { this.coords[i].y = -this.coords[i].y; }
+      this.reverseFaces();
+      return this;
+   }
+
+   /**
     * Gets an edge from the mesh.
     *
     * @param faceIdx the face index

@@ -28,7 +28,13 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Creates a curve with two default knots.
     */
-   public Curve2 ( ) { super(); }
+   public Curve2 ( ) {
+
+      super();
+
+      // RESEARCH: AABB for a curve would allow it to be reframed like meshes.
+      // http://nishiohirokazu.blogspot.com/2009/06/how-to-calculate-bezier-curves-bounding.html
+   }
 
    /**
     * Creates a curve from a collection of knots
@@ -171,6 +177,44 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       if ( !super.equals(obj) ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
       return this.equals(( Curve2 ) obj);
+   }
+
+   /**
+    * Flips the curve horizontally, then reverse the curve.
+    *
+    * @return this curve
+    */
+   public Curve2 flipX ( ) {
+
+      final Iterator < Knot2 > itr = this.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot2 kn = itr.next();
+         kn.coord.x = -kn.coord.x;
+         kn.foreHandle.x = -kn.foreHandle.x;
+         kn.rearHandle.x = -kn.rearHandle.x;
+         kn.reverse();
+      }
+      Collections.reverse(this.knots);
+      return this;
+   }
+
+   /**
+    * Flips the curve vertically, then reverse the curve.
+    *
+    * @return this curve
+    */
+   public Curve2 flipY ( ) {
+
+      final Iterator < Knot2 > itr = this.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot2 kn = itr.next();
+         kn.coord.y = -kn.coord.y;
+         kn.foreHandle.y = -kn.foreHandle.y;
+         kn.rearHandle.y = -kn.rearHandle.y;
+         kn.reverse();
+      }
+      Collections.reverse(this.knots);
+      return this;
    }
 
    /**
@@ -349,6 +393,50 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          this.knots.add(j, knot);
          ++j;
       }
+      return this;
+   }
+
+   /**
+    * Centers the curve about the origin, (0.0, 0.0), and rescales it to the
+    * range [-0.5, 0.5] . Emits a transform which records the curve's center
+    * point and original dimension. The transform's rotation is reset.
+    *
+    * @param tr the output transform
+    *
+    * @return this mesh
+    *
+    * @see Curve2#calcDimensions(Curve2, Vec2, Vec2, Vec2)
+    */
+   public Curve2 reframe ( final Transform2 tr ) {
+
+      tr.locPrev.set(tr.location);
+      tr.scalePrev.set(tr.scale);
+
+      final Vec2 dim = tr.scale;
+      final Vec2 lb = tr.location;
+      final Vec2 ub = new Vec2();
+      Curve2.calcDimensions(this, dim, lb, ub);
+
+      lb.x = 0.5f * ( lb.x + ub.x );
+      lb.y = 0.5f * ( lb.y + ub.y );
+      final float scl = Utils.div(1.0f, Utils.max(dim.x, dim.y));
+
+      final Iterator < Knot2 > itr = this.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot2 kn = itr.next();
+         final Vec2 co = kn.coord;
+         final Vec2 fh = kn.foreHandle;
+         final Vec2 rh = kn.rearHandle;
+         Vec2.sub(co, lb, co);
+         Vec2.mul(co, scl, co);
+         Vec2.sub(fh, lb, fh);
+         Vec2.mul(fh, scl, fh);
+         Vec2.sub(rh, lb, rh);
+         Vec2.mul(rh, scl, rh);
+      }
+
+      tr.rotateTo(0.0f);
+
       return this;
    }
 
@@ -935,6 +1023,50 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float radius, final Curve2 target ) {
 
       return Curve2.arc(startAngle, stopAngle, radius, ArcMode.OPEN, target);
+   }
+
+   /**
+    * Calculates the dimensions of an Axis-Aligned Bounding Box (AABB)
+    * encompassing the curve. Does so by taking the min and max of each knot's
+    * coordinate, fore handle and rear handle; <em>not</em> by finding the
+    * curve extrema.
+    *
+    * @param curve  the curve
+    * @param target the output dimensions
+    * @param lb     the lower bound
+    * @param ub     the upper bound
+    *
+    * @return the dimensions
+    */
+   public static Vec2 calcDimensions ( final Curve2 curve, final Vec2 target,
+      final Vec2 lb, final Vec2 ub ) {
+
+      lb.set(Float.MAX_VALUE, Float.MAX_VALUE);
+      ub.set(Float.MIN_VALUE, Float.MIN_VALUE);
+      final Iterator < Knot2 > itr = curve.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot2 kn = itr.next();
+         final Vec2 co = kn.coord;
+         final Vec2 fh = kn.foreHandle;
+         final Vec2 rh = kn.rearHandle;
+
+         if ( co.x < lb.x ) { lb.x = co.x; }
+         if ( co.x > ub.x ) { ub.x = co.x; }
+         if ( co.y < lb.y ) { lb.y = co.y; }
+         if ( co.y > ub.y ) { ub.y = co.y; }
+
+         if ( fh.x < lb.x ) { lb.x = fh.x; }
+         if ( fh.x > ub.x ) { ub.x = fh.x; }
+         if ( fh.y < lb.y ) { lb.y = fh.y; }
+         if ( fh.y > ub.y ) { ub.y = fh.y; }
+
+         if ( rh.x < lb.x ) { lb.x = rh.x; }
+         if ( rh.x > ub.x ) { ub.x = rh.x; }
+         if ( rh.y < lb.y ) { lb.y = rh.y; }
+         if ( rh.y > ub.y ) { ub.y = rh.y; }
+      }
+
+      return Vec2.sub(ub, lb, target);
    }
 
    /**
@@ -1555,220 +1687,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Creates a rectangle.
-    *
-    * @param lbx    lower bound x
-    * @param lby    lower bound y
-    * @param ubx    upper bound x
-    * @param uby    upper bound y
-    * @param target the output curve
-    *
-    * @return the rectangle
-    */
-   public static Curve2 rect ( final float lbx, final float lby,
-      final float ubx, final float uby, final Curve2 target ) {
-
-      final float x0 = lbx < ubx ? lbx : ubx;
-      final float x1 = ubx > lbx ? ubx : lbx;
-      final float y0 = lby > uby ? lby : uby;
-      final float y1 = uby < lby ? uby : lby;
-
-      target.closedLoop = true;
-      target.name = "Rect";
-      target.resize(4);
-
-      final Iterator < Knot2 > itr = target.knots.iterator();
-      final Knot2 kn0 = itr.next();
-      final Knot2 kn1 = itr.next();
-      final Knot2 kn2 = itr.next();
-      final Knot2 kn3 = itr.next();
-
-      kn0.set(x0, y0, 0.0f, 0.0f, 0.0f, 0.0f);
-      kn1.set(x1, y0, 0.0f, 0.0f, 0.0f, 0.0f);
-      kn2.set(x1, y1, 0.0f, 0.0f, 0.0f, 0.0f);
-      kn3.set(x0, y1, 0.0f, 0.0f, 0.0f, 0.0f);
-
-      Curve2.lerp13(kn0.coord, kn1.coord, kn0.foreHandle);
-      Curve2.lerp13(kn1.coord, kn2.coord, kn1.foreHandle);
-      Curve2.lerp13(kn2.coord, kn3.coord, kn2.foreHandle);
-      Curve2.lerp13(kn3.coord, kn0.coord, kn3.foreHandle);
-
-      Curve2.lerp13(kn0.coord, kn3.coord, kn0.rearHandle);
-      Curve2.lerp13(kn1.coord, kn0.coord, kn1.rearHandle);
-      Curve2.lerp13(kn2.coord, kn1.coord, kn2.rearHandle);
-      Curve2.lerp13(kn3.coord, kn2.coord, kn3.rearHandle);
-
-      return target;
-   }
-
-   /**
-    * Creates a rounded rectangle. The fifth parameter specifies the corner
-    * rounding factor.
-    *
-    * @param lbx    lower bound x
-    * @param lby    lower bound y
-    * @param ubx    upper bound x
-    * @param uby    upper bound y
-    * @param corner the rounding factor
-    * @param target the output curve
-    *
-    * @return the rounded rectangle
-    */
-   public static Curve2 rect ( final float lbx, final float lby,
-      final float ubx, final float uby, final float corner,
-      final Curve2 target ) {
-
-      return Curve2.rect(lbx, lby, ubx, uby, corner, corner, corner, corner,
-         target);
-   }
-
-   /**
-    * Creates a rounded rectangle. The first four parameters specify the lower
-    * and upper bound of the rectangle. The next four parameters specify the
-    * rounding factor for the top left, top right, bottom right and bottom
-    * left corners.
-    *
-    * @param lbx    lower bound x
-    * @param lby    lower bound y
-    * @param ubx    upper bound x
-    * @param uby    upper bound y
-    * @param tl     rounding top left corner
-    * @param tr     rounding top right corner
-    * @param br     rounding bottom right corner
-    * @param bl     rounding bottom left corner
-    * @param target the output curve
-    *
-    * @return the rounded rectangle
-    */
-   public static Curve2 rect ( final float lbx, final float lby,
-      final float ubx, final float uby, final float tl, final float tr,
-      final float br, final float bl, final Curve2 target ) {
-
-      // TODO: Make package level?
-
-      target.closedLoop = true;
-      target.name = "Rect";
-      target.resize(8);
-      final Iterator < Knot2 > itr = target.knots.iterator();
-
-      /* Validate corners. */
-      final float x0 = lbx < ubx ? lbx : ubx;
-      final float x1 = ubx > lbx ? ubx : lbx;
-      final float y0 = lby > uby ? lby : uby;
-      final float y1 = uby < lby ? uby : lby;
-
-      /* Validate corner insetting. */
-      final float vtl = Utils.max(Utils.abs(tl), IUtils.EPSILON);
-      final float vtr = Utils.max(Utils.abs(tr), IUtils.EPSILON);
-      final float vbr = Utils.max(Utils.abs(br), IUtils.EPSILON);
-      final float vbl = Utils.max(Utils.abs(bl), IUtils.EPSILON);
-
-      /* Top edge. */
-      final Knot2 k0 = itr.next().set(x0 + vtl, y0, 0.0f, 0.0f, 0.0f, 0.0f);
-      final Knot2 k1 = itr.next().set(x1 - vtr, y0, 0.0f, 0.0f, 0.0f, 0.0f);
-
-      /* Right edge. */
-      final Knot2 k2 = itr.next().set(x1, y0 - vtr, 0.0f, 0.0f, 0.0f, 0.0f);
-      final Knot2 k3 = itr.next().set(x1, y1 + vbr, 0.0f, 0.0f, 0.0f, 0.0f);
-
-      /* Bottom edge. */
-      final Knot2 k4 = itr.next().set(x1 - vbr, y1, 0.0f, 0.0f, 0.0f, 0.0f);
-      final Knot2 k5 = itr.next().set(x0 + vbl, y1, 0.0f, 0.0f, 0.0f, 0.0f);
-
-      /* Left edge. */
-      final Knot2 k6 = itr.next().set(x0, y1 + vbl, 0.0f, 0.0f, 0.0f, 0.0f);
-      final Knot2 k7 = itr.next().set(x0, y0 - vtl, 0.0f, 0.0f, 0.0f, 0.0f);
-
-      /* Cache knot coordinate shortcuts . */
-      final Vec2 k0co = k0.coord;
-      final Vec2 k1co = k1.coord;
-      final Vec2 k2co = k2.coord;
-      final Vec2 k3co = k3.coord;
-      final Vec2 k4co = k4.coord;
-      final Vec2 k5co = k5.coord;
-      final Vec2 k6co = k6.coord;
-      final Vec2 k7co = k7.coord;
-
-      /* Cache even knot rear handle shortcuts. */
-      final Vec2 k0rh = k0.rearHandle;
-      final Vec2 k2rh = k2.rearHandle;
-      final Vec2 k4rh = k4.rearHandle;
-      final Vec2 k6rh = k6.rearHandle;
-
-      /* Cache odd knot fore handle shortcuts. */
-      final Vec2 k1fh = k1.foreHandle;
-      final Vec2 k3fh = k3.foreHandle;
-      final Vec2 k5fh = k5.foreHandle;
-      final Vec2 k7fh = k7.foreHandle;
-
-      /* Straighten fore handles of each edge. */
-      Curve2.lerp13(k0co, k1co, k0.foreHandle);
-      Curve2.lerp13(k2co, k3co, k2.foreHandle);
-      Curve2.lerp13(k4co, k5co, k4.foreHandle);
-      Curve2.lerp13(k6co, k7co, k6.foreHandle);
-
-      /* Straighten rear handles of each edge. */
-      Curve2.lerp13(k1co, k0co, k1.rearHandle);
-      Curve2.lerp13(k3co, k2co, k3.rearHandle);
-      Curve2.lerp13(k5co, k4co, k5.rearHandle);
-      Curve2.lerp13(k7co, k6co, k7.rearHandle);
-
-      /* Top Right Corner. */
-      if ( tr < 0.0f ) {
-         k1fh.x = k1co.x;
-         k1fh.y = ( k1co.y + k2co.y ) * 0.5f;
-         k2rh.x = ( k2co.x + k1co.x ) * 0.5f;
-         k2rh.y = k2co.y;
-      } else {
-         k1fh.x = ( k1co.x + x1 ) * 0.5f;
-         k1fh.y = y0;
-         k2rh.x = x1;
-         k2rh.y = ( k2co.y + y0 ) * 0.5f;
-      }
-
-      /* Bottom Right Corner. */
-      if ( br < 0.0f ) {
-         k3fh.x = ( k3co.x + k4co.x ) * 0.5f;
-         k3fh.y = k3co.y;
-         k4rh.x = k4co.x;
-         k4rh.y = ( k4co.y + k3co.y ) * 0.5f;
-      } else {
-         k3fh.x = x1;
-         k3fh.y = ( k3co.y + y1 ) * 0.5f;
-         k4rh.x = ( k4co.x + x1 ) * 0.5f;
-         k4rh.y = y1;
-      }
-
-      /* Bottom Left Corner. */
-      if ( bl < 0.0f ) {
-         k5fh.x = k5co.x;
-         k5fh.y = ( k5co.y + k6co.y ) * 0.5f;
-         k6rh.x = ( k6co.x + k5co.x ) * 0.5f;
-         k6rh.y = k6co.y;
-      } else {
-         k5fh.x = ( k5co.x + x0 ) * 0.5f;
-         k5fh.y = y1;
-         k6rh.x = x0;
-         k6rh.y = ( k6co.y + y1 ) * 0.5f;
-      }
-
-      /* Top Left Corner. */
-      if ( tl < 0.0f ) {
-         k7fh.x = ( k7co.x + k0co.x ) * 0.5f;
-         k7fh.y = k7co.y;
-         k0rh.x = k0co.x;
-         k0rh.y = ( k0co.y + k7co.y ) * 0.5f;
-      } else {
-         k7fh.x = x0;
-         k7fh.y = ( k7co.y + y0 ) * 0.5f;
-         k0rh.x = ( k0co.x + x0 ) * 0.5f;
-         k0rh.y = y0;
-      }
-
-      return target;
-   }
-
-   /**
     * Creates a rectangle. The first coordinate specifies the top left corner;
     * the second coordinate specifies the bottom right corner.
     *
@@ -2160,6 +2078,330 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       target.name = "Line";
       target.closedLoop = false;
       return target;
+   }
+
+   /**
+    * Creates a rectangle.
+    *
+    * @param lbx    lower bound x
+    * @param lby    lower bound y
+    * @param ubx    upper bound x
+    * @param uby    upper bound y
+    * @param target the output curve
+    *
+    * @return the rectangle
+    */
+   static Curve2 rect ( final float lbx, final float lby, final float ubx,
+      final float uby, final Curve2 target ) {
+
+      final float x0 = lbx < ubx ? lbx : ubx;
+      final float x1 = ubx > lbx ? ubx : lbx;
+      final float y0 = lby > uby ? lby : uby;
+      final float y1 = uby < lby ? uby : lby;
+
+      target.closedLoop = true;
+      target.name = "Rect";
+      target.resize(4);
+
+      final Iterator < Knot2 > itr = target.knots.iterator();
+      final Knot2 kn0 = itr.next();
+      final Knot2 kn1 = itr.next();
+      final Knot2 kn2 = itr.next();
+      final Knot2 kn3 = itr.next();
+
+      kn0.set(x0, y0, 0.0f, 0.0f, 0.0f, 0.0f);
+      kn1.set(x1, y0, 0.0f, 0.0f, 0.0f, 0.0f);
+      kn2.set(x1, y1, 0.0f, 0.0f, 0.0f, 0.0f);
+      kn3.set(x0, y1, 0.0f, 0.0f, 0.0f, 0.0f);
+
+      Curve2.lerp13(kn0.coord, kn1.coord, kn0.foreHandle);
+      Curve2.lerp13(kn1.coord, kn2.coord, kn1.foreHandle);
+      Curve2.lerp13(kn2.coord, kn3.coord, kn2.foreHandle);
+      Curve2.lerp13(kn3.coord, kn0.coord, kn3.foreHandle);
+
+      Curve2.lerp13(kn0.coord, kn3.coord, kn0.rearHandle);
+      Curve2.lerp13(kn1.coord, kn0.coord, kn1.rearHandle);
+      Curve2.lerp13(kn2.coord, kn1.coord, kn2.rearHandle);
+      Curve2.lerp13(kn3.coord, kn2.coord, kn3.rearHandle);
+
+      return target;
+   }
+
+   /**
+    * Creates a rounded rectangle. The fifth parameter specifies the corner
+    * rounding factor.
+    *
+    * @param lbx    lower bound x
+    * @param lby    lower bound y
+    * @param ubx    upper bound x
+    * @param uby    upper bound y
+    * @param corner the rounding factor
+    * @param target the output curve
+    *
+    * @return the rounded rectangle
+    */
+   static Curve2 rect ( final float lbx, final float lby, final float ubx,
+      final float uby, final float corner, final Curve2 target ) {
+
+      return Curve2.rect(lbx, lby, ubx, uby, corner, corner, corner, corner,
+         target);
+   }
+
+   /**
+    * Creates a rounded rectangle. The first four parameters specify the lower
+    * and upper bound of the rectangle. The next four parameters specify the
+    * rounding factor for the top left, top right, bottom right and bottom
+    * left corners.
+    *
+    * @param lbx    lower bound x
+    * @param lby    lower bound y
+    * @param ubx    upper bound x
+    * @param uby    upper bound y
+    * @param tl     rounding top left corner
+    * @param tr     rounding top right corner
+    * @param br     rounding bottom right corner
+    * @param bl     rounding bottom left corner
+    * @param target the output curve
+    *
+    * @return the rounded rectangle
+    */
+   static Curve2 rect ( final float lbx, final float lby, final float ubx,
+      final float uby, final float tl, final float tr, final float br,
+      final float bl, final Curve2 target ) {
+
+      target.closedLoop = true;
+      target.name = "Rect";
+      target.resize(8);
+      final Iterator < Knot2 > itr = target.knots.iterator();
+
+      /* Validate corners. */
+      final float x0 = lbx < ubx ? lbx : ubx;
+      final float x1 = ubx > lbx ? ubx : lbx;
+      final float y0 = lby > uby ? lby : uby;
+      final float y1 = uby < lby ? uby : lby;
+
+      /* Validate corner insetting. */
+      final float vtl = Utils.max(Utils.abs(tl), IUtils.EPSILON);
+      final float vtr = Utils.max(Utils.abs(tr), IUtils.EPSILON);
+      final float vbr = Utils.max(Utils.abs(br), IUtils.EPSILON);
+      final float vbl = Utils.max(Utils.abs(bl), IUtils.EPSILON);
+
+      /* Top edge. */
+      final Knot2 k0 = itr.next().set(x0 + vtl, y0, 0.0f, 0.0f, 0.0f, 0.0f);
+      final Knot2 k1 = itr.next().set(x1 - vtr, y0, 0.0f, 0.0f, 0.0f, 0.0f);
+
+      /* Right edge. */
+      final Knot2 k2 = itr.next().set(x1, y0 - vtr, 0.0f, 0.0f, 0.0f, 0.0f);
+      final Knot2 k3 = itr.next().set(x1, y1 + vbr, 0.0f, 0.0f, 0.0f, 0.0f);
+
+      /* Bottom edge. */
+      final Knot2 k4 = itr.next().set(x1 - vbr, y1, 0.0f, 0.0f, 0.0f, 0.0f);
+      final Knot2 k5 = itr.next().set(x0 + vbl, y1, 0.0f, 0.0f, 0.0f, 0.0f);
+
+      /* Left edge. */
+      final Knot2 k6 = itr.next().set(x0, y1 + vbl, 0.0f, 0.0f, 0.0f, 0.0f);
+      final Knot2 k7 = itr.next().set(x0, y0 - vtl, 0.0f, 0.0f, 0.0f, 0.0f);
+
+      /* Cache knot coordinate shortcuts . */
+      final Vec2 k0co = k0.coord;
+      final Vec2 k1co = k1.coord;
+      final Vec2 k2co = k2.coord;
+      final Vec2 k3co = k3.coord;
+      final Vec2 k4co = k4.coord;
+      final Vec2 k5co = k5.coord;
+      final Vec2 k6co = k6.coord;
+      final Vec2 k7co = k7.coord;
+
+      /* Cache even knot rear handle shortcuts. */
+      final Vec2 k0rh = k0.rearHandle;
+      final Vec2 k2rh = k2.rearHandle;
+      final Vec2 k4rh = k4.rearHandle;
+      final Vec2 k6rh = k6.rearHandle;
+
+      /* Cache odd knot fore handle shortcuts. */
+      final Vec2 k1fh = k1.foreHandle;
+      final Vec2 k3fh = k3.foreHandle;
+      final Vec2 k5fh = k5.foreHandle;
+      final Vec2 k7fh = k7.foreHandle;
+
+      /* Straighten fore handles of each edge. */
+      Curve2.lerp13(k0co, k1co, k0.foreHandle);
+      Curve2.lerp13(k2co, k3co, k2.foreHandle);
+      Curve2.lerp13(k4co, k5co, k4.foreHandle);
+      Curve2.lerp13(k6co, k7co, k6.foreHandle);
+
+      /* Straighten rear handles of each edge. */
+      Curve2.lerp13(k1co, k0co, k1.rearHandle);
+      Curve2.lerp13(k3co, k2co, k3.rearHandle);
+      Curve2.lerp13(k5co, k4co, k5.rearHandle);
+      Curve2.lerp13(k7co, k6co, k7.rearHandle);
+
+      /* Top Right Corner. */
+      if ( tr < 0.0f ) {
+         k1fh.x = k1co.x;
+         k1fh.y = ( k1co.y + k2co.y ) * 0.5f;
+         k2rh.x = ( k2co.x + k1co.x ) * 0.5f;
+         k2rh.y = k2co.y;
+      } else {
+         k1fh.x = ( k1co.x + x1 ) * 0.5f;
+         k1fh.y = y0;
+         k2rh.x = x1;
+         k2rh.y = ( k2co.y + y0 ) * 0.5f;
+      }
+
+      /* Bottom Right Corner. */
+      if ( br < 0.0f ) {
+         k3fh.x = ( k3co.x + k4co.x ) * 0.5f;
+         k3fh.y = k3co.y;
+         k4rh.x = k4co.x;
+         k4rh.y = ( k4co.y + k3co.y ) * 0.5f;
+      } else {
+         k3fh.x = x1;
+         k3fh.y = ( k3co.y + y1 ) * 0.5f;
+         k4rh.x = ( k4co.x + x1 ) * 0.5f;
+         k4rh.y = y1;
+      }
+
+      /* Bottom Left Corner. */
+      if ( bl < 0.0f ) {
+         k5fh.x = k5co.x;
+         k5fh.y = ( k5co.y + k6co.y ) * 0.5f;
+         k6rh.x = ( k6co.x + k5co.x ) * 0.5f;
+         k6rh.y = k6co.y;
+      } else {
+         k5fh.x = ( k5co.x + x0 ) * 0.5f;
+         k5fh.y = y1;
+         k6rh.x = x0;
+         k6rh.y = ( k6co.y + y1 ) * 0.5f;
+      }
+
+      /* Top Left Corner. */
+      if ( tl < 0.0f ) {
+         k7fh.x = ( k7co.x + k0co.x ) * 0.5f;
+         k7fh.y = k7co.y;
+         k0rh.x = k0co.x;
+         k0rh.y = ( k0co.y + k7co.y ) * 0.5f;
+      } else {
+         k7fh.x = x0;
+         k7fh.y = ( k7co.y + y0 ) * 0.5f;
+         k0rh.x = ( k0co.x + x0 ) * 0.5f;
+         k0rh.y = y0;
+      }
+
+      return target;
+   }
+
+   @Experimental
+   private static Vec2 calcDimensionsExtrema ( final Curve2 curve,
+      final Vec2 target, final Vec2 lb, final Vec2 ub ) {
+
+      // http://nishiohirokazu.blogspot.com/2009/06/
+      // how-to-calculate-bezier-curves-bounding.html
+
+      // https://pomax.github.io/bezierinfo/#derivatives
+
+      // https://computergraphics.stackexchange.com/questions/
+      // 3697/algorithm-to-find-the-center-of-a-bezier-curve
+
+      // https://stackoverflow.com/questions/2587751/
+      // an-algorithm-to-find-bounding-box-of-closed-bezier-curves
+
+      // http://jsfiddle.net/SalixAlba/QQnvm/4/
+
+      final ArrayList < Knot2 > knots = curve.knots;
+      final Iterator < Knot2 > itr = knots.iterator();
+
+      Knot2 currKnot = null;
+
+      // TODO: Maybe this is causing problems? and prevKnot should be getLast?
+      Knot2 prevKnot = curve.getLast();
+      Vec2 p0 = prevKnot.coord;
+      Vec2 p1 = null;
+      Vec2 p2 = null;
+      Vec2 p3 = null;
+
+      lb.set(p0);
+      ub.set(p0);
+
+      while ( itr.hasNext() ) {
+         currKnot = itr.next();
+         p0 = prevKnot.coord;
+         p1 = prevKnot.foreHandle;
+         p2 = currKnot.rearHandle;
+         p3 = currKnot.coord;
+
+         final float ax = 3.0f * p3.x - 9.0f * p2.x + 9.0f * p1.x - 3.0f * p0.x;
+         final float bx = 6.0f * p0.x - 12.0f * p1.x + 6.0f * p2.x;
+         final float cx = 3.0f * p1.x - 3.0f * p0.x;
+         final float xdisc = bx * bx - 4.0f * ax * cx;
+         if ( p3.x < lb.x ) { lb.x = p3.x; }
+         if ( p3.x > ub.x ) { ub.x = p3.x; }
+
+         if ( xdisc >= 0.0f ) {
+            final float sqrtdiscx = Utils.sqrtUnchecked(xdisc);
+            final float invax = 0.5f / ax;
+
+            final float t1x = ( -bx + sqrtdiscx ) * invax;
+            if ( t1x >= 0.0f && t1x <= 1.0f ) {
+               final float x1 = Curve2.f(p0.x, p1.x, p2.x, p3.x, t1x);
+               if ( x1 < lb.x ) { lb.x = x1; }
+               if ( x1 > ub.x ) { ub.x = x1; }
+            }
+
+            final float t2x = ( -bx - sqrtdiscx ) * invax;
+            if ( t2x >= 0.0f && t2x <= 1.0f ) {
+               final float x2 = Curve2.f(p0.x, p1.x, p2.x, p3.x, t1x);
+               if ( x2 < lb.x ) { lb.x = x2; }
+               if ( x2 > ub.x ) { ub.x = x2; }
+            }
+         }
+
+         final float ay = 3 * p3.y - 9 * p2.y + 9 * p1.y - 3 * p0.y;
+         final float by = 6 * p0.y - 12 * p1.y + 6 * p2.y;
+         final float cy = 3 * p1.y - 3 * p0.y;
+         final float ydisc = by * by - 4 * ay * cy;
+         if ( p3.y < lb.y ) { lb.y = p3.y; }
+         if ( p3.y > ub.y ) { ub.y = p3.y; }
+
+         if ( ydisc >= 0.0f ) {
+            final float sqrtdiscy = Utils.sqrtUnchecked(ydisc);
+            final float invay = 0.5f / ay;
+
+            final float t1y = ( -by + sqrtdiscy ) * invay;
+            if ( t1y >= 0.0f && t1y <= 1.0f ) {
+               final float y1 = Curve2.f(p0.y, p1.y, p2.y, p3.y, t1y);
+               if ( y1 < lb.y ) { lb.y = y1; }
+               if ( y1 > ub.y ) { ub.y = y1; }
+            }
+
+            final float t2y = ( -by - sqrtdiscy ) * invay;
+            if ( t2y >= 0.0f && t2y <= 1.0f ) {
+               final float y2 = Curve2.f(p0.y, p1.y, p2.y, p3.y, t1y);
+               if ( y2 < lb.y ) { lb.y = y2; }
+               if ( y2 > ub.y ) { ub.y = y2; }
+            }
+         }
+
+         prevKnot = currKnot;
+      }
+
+      return Vec2.sub(ub, lb, target);
+   }
+
+   private static final float f ( final float p0i, final float p1i,
+      final float p2i, final float p3i, final float t ) {
+
+      // TODO: Delete when finished drafting.
+
+      // f = lambda t: (
+      // (1-t)**3 * P0[i]
+      // + 3 * (1-t)**2 * t * P1[i]
+      // + 3 * (1-t) * t**2 * P2[i]
+      // + t**3 * P3[i])
+
+      final float u = 1.0f - t;
+      return u * u * u * p0i + 3.0f * ( u * u ) * t * p1i + 3.0f * u * ( t * t )
+         * p2i + t * t * t * p3i;
    }
 
    /**
