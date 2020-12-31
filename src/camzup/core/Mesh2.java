@@ -225,9 +225,29 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public Mesh2 deleteFaces ( final int faceIndex, final int count ) {
 
-      // TODO: Implement delete vertices, edges?
-
       this.faces = Mesh.remove(this.faces, faceIndex, count);
+      return this;
+   }
+
+   /**
+    * Removes a given number of vertex indices from this mesh beginning at an
+    * index. Does not remove any data associated with the indices.
+    *
+    * @param faceIndex the face index
+    * @param vertIndex the vertex index
+    * @param count     the removal count
+    *
+    * @return this mesh
+    *
+    * @see Mesh#remove(int[][], int, int)
+    */
+   public Mesh2 deleteVerts ( final int faceIndex, final int vertIndex,
+      final int count ) {
+
+      final int j = Utils.mod(faceIndex, this.faces.length);
+      final int[][] f = this.faces[j];
+      final int vcount = Math.min(f.length - 3, count);
+      this.faces[j] = Mesh.remove(f, vertIndex, vcount);
       return this;
    }
 
@@ -496,8 +516,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Gets a vertex from the mesh.
     *
-    * @param i      face index
-    * @param j      vertex index
+    * @param i      the face index
+    * @param j      the vertex index
     * @param target the output vertex
     *
     * @return the vertex
@@ -2408,11 +2428,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * 1 ring :  1 cell,
     * 2 rings:  7 cells,
     * 3 rings: 19 cells,
-    * 4 rings: 37 cells,
-    * 5 rings: 61 cells
+    * 4 rings: 37 cells
     * </pre>
     *
-    * See <a href=
+    * and so on. See <a href=
     * "https://www.redblobgames.com/grids/hexagons/implementation.html">Red
     * Blob Games' Implementation of Hex Grids</a> .
     *
@@ -2425,8 +2444,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public static Mesh2 gridHex ( final int rings, final float cellRadius,
       final float margin, final Mesh2 target ) {
-
-      // Work in double precision?
 
       final int vRings = rings < 1 ? 1 : rings;
       final float vRad = Utils.max(IUtils.EPSILON, cellRadius);
@@ -2538,6 +2555,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public static Mesh2[] groupByMaterial ( final Mesh2[] meshes ) {
 
+      // TODO: TEST
+
       final HashMap < Integer, Mesh2 > dict = new HashMap <>();
       Mesh2 current;
 
@@ -2552,6 +2571,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          if ( current == null ) {
             current = new Mesh2(new int[0][0][2], new Vec2[0], new Vec2[0]);
             current.materialIndex = matIdxPrm;
+            // TODO: put source.name instead?
             current.name = "Mesh." + Utils.toPadded(matIdxPrm, 3);
             dict.put(matIdxObj, current);
          }
@@ -2559,16 +2579,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          /* Copy source coordinates. */
          final Vec2[] vsSrc = source.coords;
          final int vsLen = vsSrc.length;
-         final Vec2[] vsCopy = new Vec2[vsLen];
-         for ( int j = 0; j < vsLen; ++j ) { vsCopy[j] = new Vec2(vsSrc[j]); }
+         final Vec2[] vsTrg = new Vec2[vsLen];
+         for ( int j = 0; j < vsLen; ++j ) { vsTrg[j] = new Vec2(vsSrc[j]); }
 
          /* Copy source texture coordinates. */
          final Vec2[] vtsSrc = source.texCoords;
          final int vtsLen = vtsSrc.length;
-         final Vec2[] vtsCopy = new Vec2[vtsLen];
-         for ( int j = 0; j < vtsLen; ++j ) {
-            vtsCopy[j] = new Vec2(vtsSrc[j]);
-         }
+         final Vec2[] vtsTrg = new Vec2[vtsLen];
+         for ( int j = 0; j < vtsLen; ++j ) { vtsTrg[j] = new Vec2(vtsSrc[j]); }
 
          /* Concatenated indices need to be offset by current data lengths. */
          final int vsTrgLen = current.coords.length;
@@ -2577,22 +2595,24 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          /* Copy source face indices. */
          final int[][][] fsSrc = source.faces;
          final int fsLen = fsSrc.length;
-         final int[][][] fsCopy = new int[fsLen][][];
+         final int[][][] fsTrg = new int[fsLen][][];
          for ( int j = 0; j < fsLen; ++j ) {
             final int[][] fSrc = fsSrc[j];
             final int fLen = fSrc.length;
-            final int[][] fSrcCopy = fsCopy[j] = new int[fLen][2];
+            final int[][] fTrg = fsTrg[j] = new int[fLen][2];
             for ( int k = 0; k < fLen; ++k ) {
-               fSrcCopy[k][0] = vsTrgLen + fSrc[k][0];
-               fSrcCopy[k][1] = vtsTrgLen + fSrc[k][1];
+               final int[] vertSrc = fSrc[k];
+               final int[] vertTrg = fTrg[k];
+               vertTrg[0] = vsTrgLen + vertSrc[0];
+               vertTrg[1] = vtsTrgLen + vertSrc[1];
             }
          }
 
          /* Concatenate copies with current data. */
-         current.coords = Vec2.concat(current.coords, vsCopy);
-         current.texCoords = Vec2.concat(current.texCoords, vtsCopy);
+         current.coords = Vec2.concat(current.coords, vsTrg);
+         current.texCoords = Vec2.concat(current.texCoords, vtsTrg);
          current.faces = Mesh.splice(current.faces, current.faces.length, 0,
-            fsCopy);
+            fsTrg);
       }
 
       /* Convert dictionary values to an array; clean meshes of excess data. */

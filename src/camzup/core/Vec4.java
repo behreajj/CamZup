@@ -1750,6 +1750,47 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
+    * Oscillates between an origin and destination vector based on an input
+    * step and a pause factor. When the pause is greater than 1.0, the value
+    * will be clamped to the pole.
+    *
+    * @param origin the original vector
+    * @param dest   the destination vector
+    * @param step   the step
+    * @param pause  the pause factor
+    * @param target the output vector
+    *
+    * @return the oscillation
+    */
+   public static Vec4 pingPong ( final Vec4 origin, final Vec4 dest,
+      final float step, final float pause, final Vec4 target ) {
+
+      final float t = 0.5f + 0.5f * pause * Utils.scNorm(step - 0.5f);
+      if ( t <= 0.0f ) { return target.set(origin); }
+      if ( t >= 1.0f ) { return target.set(dest); }
+      final float u = 1.0f - t;
+      return target.set(u * origin.x + t * dest.x, u * origin.y + t * dest.y, u
+         * origin.z + t * dest.z, u * origin.w + t * dest.w);
+   }
+
+   /**
+    * Oscillates between an origin and destination vector based on an input
+    * step.
+    *
+    * @param origin the original vector
+    * @param dest   the destination vector
+    * @param step   the step
+    * @param target the output vector
+    *
+    * @return the oscillation
+    */
+   public static Vec4 pingPong ( final Vec4 origin, final Vec4 dest,
+      final float step, final Vec4 target ) {
+
+      return Vec4.pingPong(origin, dest, step, 1.0f, target);
+   }
+
+   /**
     * Raises a scalar to a vector.
     *
     * @param a      left operand

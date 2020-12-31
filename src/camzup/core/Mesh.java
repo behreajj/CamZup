@@ -486,6 +486,29 @@ public abstract class Mesh extends EntityData implements IMesh {
    }
 
    /**
+    * Removes a number of elements from a 2D integer array at a given start
+    * index. Returns a copy of the original array with the removal.
+    *
+    * @param arr       the array
+    * @param index     the index
+    * @param deletions the number of deletions
+    *
+    * @return the array
+    */
+   public static int[][] remove ( final int[][] arr, final int index,
+      final int deletions ) {
+
+      final int aLen = arr.length;
+      final int valIdx = Utils.mod(index, aLen);
+      final int valDel = Utils.clamp(deletions, 0, aLen - valIdx);
+      final int bLen = aLen - valDel;
+      final int[][] result = new int[bLen][];
+      System.arraycopy(arr, 0, result, 0, valIdx);
+      System.arraycopy(arr, valIdx + valDel, result, valIdx, bLen - valIdx);
+      return result;
+   }
+
+   /**
     * Removes a number of elements from a 3D integer array at a given start
     * index. Returns a copy of the original array with the removal.
     *

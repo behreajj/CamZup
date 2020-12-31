@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -648,11 +649,37 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       // This needs to be implemented because Blender allows the option to
       // export each object as its own 'o' in an obj file.
 
-      final ArrayList < MeshEntity3 > entities = new ArrayList <>();
-      MeshEntity3 currentEntity = new MeshEntity3();
+      boolean vsMissing = false;
+      boolean vtsMissing = false;
+      boolean vnsMissing = false;
+      boolean groupsMissing = true;
+      boolean mtlLibRef = false;
+      boolean usesMaterial = false;
       boolean oInitialFound = false;
-      String[] tokens;
+
+      final int groupCapacity = 512;
+      final int dataCapacity = 512;
+      final int indicesCapacity = 512;
+
+      String mtlFileName = "";
+
+      MeshEntity3 currentEntity = new MeshEntity3();
+
+      final Pattern fslashPattern = Pattern.compile("/");
       final Pattern spacePattern = Pattern.compile("\\s+");
+
+      final ArrayList < MeshEntity3 > entities = new ArrayList <>();
+      final ArrayList < String > materialNames = new ArrayList <>(8);
+      final ArrayList < Vec3 > coordList = new ArrayList <>(dataCapacity);
+      final ArrayList < Vec2 > texCoordList = new ArrayList <>(dataCapacity);
+      final ArrayList < Vec3 > normalList = new ArrayList <>(dataCapacity);
+      ArrayList < int[][] > currentIndices = new ArrayList <>(indicesCapacity);
+
+      final HashMap < String, ArrayList < int[][] > > faceGroups
+         = new HashMap <>(groupCapacity, 0.75f);
+
+      String[] tokens;
+      String[] faceTokens;
 
       try {
          try {
@@ -662,6 +689,90 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
                   /* Switch case by hash code of String, not String itself. */
                   final int cmd = tokens[0].toLowerCase().hashCode();
                   switch ( cmd ) {
+                     case -1063936832:
+                        /* "mtllib" */
+                        mtlLibRef = true;
+                        mtlFileName = tokens[1];
+
+                        break;
+
+                     case -836034370:
+                        /* "usemtl" */
+                        usesMaterial = true;
+                        materialNames.add(tokens[1]);
+
+                        break;
+
+                     case 102:
+                        /* "f" */
+                        if ( currentIndices == null ) { break; }
+
+                        /* tokens length includes "f", and so is 1 longer. */
+                        final int count = tokens.length;
+                        final int[][] indices = new int[count - 1][3];
+
+                        for ( int j = 1; j < count; ++j ) {
+                           faceTokens = fslashPattern.split(tokens[j], 0);
+                           final int tokenLen = faceTokens.length;
+                           final int[] vert = indices[j - 1];
+
+                           /* Indices in .obj file start at 1, not 0. */
+                           if ( tokenLen > 0 ) {
+                              final String vIdx = faceTokens[0];
+                              if ( vIdx == null || vIdx.isEmpty() ) {
+                                 vsMissing = true;
+                              } else {
+                                 vert[0] = Integer.parseInt(vIdx) - 1;
+                              }
+                           } else {
+                              vsMissing = true;
+                           }
+
+                           /* Attempt to read texture coordinate index. */
+                           if ( tokenLen > 1 ) {
+                              final String vtIdx = faceTokens[1];
+                              if ( vtIdx == null || vtIdx.isEmpty() ) {
+                                 vtsMissing = true;
+                              } else {
+                                 vert[1] = Integer.parseInt(vtIdx) - 1;
+                              }
+                           } else {
+                              vtsMissing = true;
+                           }
+
+                           /* Attempt to read normal index. */
+                           if ( tokenLen > 2 ) {
+                              final String vnIdx = faceTokens[2];
+                              if ( vnIdx == null || vnIdx.isEmpty() ) {
+                                 vnsMissing = true;
+                              } else {
+                                 vert[2] = Integer.parseInt(vnIdx) - 1;
+                              }
+                           } else {
+                              vnsMissing = true;
+                           }
+                        }
+
+                        currentIndices.add(indices);
+
+                        break;
+
+                     case 103:
+                        /* "g" */
+                        String gName = tokens[1];
+                        if ( gName == null || gName.isEmpty() ) {
+                           gName = Long.toHexString(System.currentTimeMillis());
+                        }
+
+                        if ( !faceGroups.containsKey(gName) ) {
+                           faceGroups.put(gName, new ArrayList <>(
+                              indicesCapacity));
+                        }
+                        currentIndices = faceGroups.get(gName);
+                        groupsMissing = false;
+
+                        break;
+
                      case 111:
                         /* "o" */
 
@@ -680,6 +791,29 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
                         break;
 
+                     case 118:
+                        /* "v" */
+                        coordList.add(new Vec3(Float.parseFloat(tokens[1]),
+                           Float.parseFloat(tokens[2]), Float.parseFloat(
+                              tokens[3])));
+
+                        break;
+
+                     case 3768:
+                        /* "vn" */
+                        normalList.add(new Vec3(Float.parseFloat(tokens[1]),
+                           Float.parseFloat(tokens[2]), Float.parseFloat(
+                              tokens[3])));
+
+                        break;
+
+                     case 3774:
+                        /* "vt" */
+                        texCoordList.add(new Vec2(Float.parseFloat(tokens[1]),
+                           Float.parseFloat(tokens[2])));
+
+                        break;
+
                      default:
                   }
                }
@@ -695,7 +829,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       }
 
       if ( !oInitialFound ) {
-         // TODO: Handle problem case where there are no oGroups.
+         // TODO: Handle problem case where there are no os.
       }
 
       return entities.toArray(new MeshEntity3[entities.size()]);

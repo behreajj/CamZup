@@ -730,6 +730,42 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Centers the curve about the origin, (0.0, 0.0, 0.0), by calculating its
+    * dimensions then subtracting the center point. Emits a transform which
+    * records the curve's center point. The transform's rotation and scale are
+    * reset.
+    *
+    * @param tr the output transform
+    *
+    * @return this mesh
+    *
+    * @see Curve3#calcDimensions(Curve3, Vec3, Vec3, Vec3)
+    * @see Curve3#translate(Vec3)
+    */
+   public Curve3 toOrigin ( final Transform3 tr ) {
+
+      final Vec3 lb = new Vec3();
+      final Vec3 ub = new Vec3();
+      Curve3.calcDimensions(this, new Vec3(), lb, ub);
+
+      lb.x = -0.5f * ( lb.x + ub.x );
+      lb.y = -0.5f * ( lb.y + ub.y );
+      lb.z = -0.5f * ( lb.z + ub.z );
+      this.translate(lb);
+
+      tr.locPrev.set(tr.location);
+      Vec3.negate(lb, tr.location);
+
+      tr.scaleTo(1.0f);
+
+      tr.rotPrev.set(tr.rotation);
+      tr.rotation.reset();
+      tr.updateAxes();
+
+      return this;
+   }
+
+   /**
     * Returns a string representation of the curve.
     *
     * @return the string

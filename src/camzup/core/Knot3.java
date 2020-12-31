@@ -1130,25 +1130,6 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Returns a coordinate given two knots and a step.
-    *
-    * @param a      the origin knot
-    * @param b      the destination knot
-    * @param step   the step
-    * @param target the output coordinate
-    *
-    * @return the coordinate
-    *
-    * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, Vec3, Vec3)
-    */
-   public static Vec3 bezierPoint ( final Knot3 a, final Knot3 b,
-      final Vec3 step, final Vec3 target ) {
-
-      return Vec3.bezierPoint(a.coord, a.foreHandle, b.rearHandle, b.coord,
-         step, target);
-   }
-
-   /**
     * Returns a tangent given two knots and a step.
     *
     * @param a      the origin knot

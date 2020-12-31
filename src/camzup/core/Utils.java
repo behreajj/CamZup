@@ -1176,9 +1176,7 @@ public abstract class Utils implements IUtils {
    public static float pingPong ( final float lb, final float ub,
       final float step, final float pause ) {
 
-      // TODO: TEST
-
-      final float t = 0.5f + 0.5f * pause * Utils.scNorm(step);
+      final float t = 0.5f + 0.5f * pause * Utils.scNorm(step - 0.5f);
       if ( t <= 0.0f ) { return lb; }
       if ( t >= 1.0f ) { return ub; }
       return ( 1.0f - t ) * lb + t * ub;
@@ -1213,7 +1211,6 @@ public abstract class Utils implements IUtils {
    public static int pingPong ( final int lb, final int ub, final float step,
       final float pause ) {
 
-      // TODO: TEST
       return ( int ) Utils.pingPong(( float ) lb, ( float ) ub, step, pause);
    }
 

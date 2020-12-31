@@ -51,18 +51,10 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       // final Mesh2 m20 = new Mesh2();
-      // Mesh2.polygon(5, PolyType.QUAD, m20);
-      //
-      // final Mesh2 m21 = new Mesh2(m20);
-      // m21.flipX();
-      //
-      // m21.translate(new Vec2(1.0f, 0.0f));
-      // m20.translate(new Vec2(-1.0f, 0.0f));
-      //
+      // Mesh2.polygon(5, PolyType.NGON, m20);
+      // m20.deleteVerts(1, 0, 3);
       // final MeshEntity2 me2 = new MeshEntity2("Test Obj");
       // me2.append(m20);
-      // me2.append(m21);
-      //
       // final String str = me2.toBlenderCode();
       // System.out.println(str);
    }

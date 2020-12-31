@@ -250,6 +250,28 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Removes a given number of vertex indices from this mesh beginning at an
+    * index. Does not remove any data associated with the indices.
+    *
+    * @param faceIndex the face index
+    * @param vertIndex the vertex index
+    * @param count     the removal count
+    *
+    * @return this mesh
+    *
+    * @see Mesh#remove(int[][], int, int)
+    */
+   public Mesh3 deleteVerts ( final int faceIndex, final int vertIndex,
+      final int count ) {
+
+      final int j = Utils.mod(faceIndex, this.faces.length);
+      final int[][] f = this.faces[j];
+      final int vcount = Math.min(f.length - 3, count);
+      this.faces[j] = Mesh.remove(f, vertIndex, vcount);
+      return this;
+   }
+
+   /**
     * Tests this mesh for equivalence with an object.
     *
     * @param obj the object
@@ -744,8 +766,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Gets a vertex from the mesh.
     *
-    * @param i      face index
-    * @param j      vertex index
+    * @param i      the face index
+    * @param j      the vertex index
     * @param target the output vertex
     *
     * @return the vertex
@@ -2426,7 +2448,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Vec3 calcDimensions ( final Mesh3 mesh, final Vec3 target,
       final Vec3 lb, final Vec3 ub ) {
 
-      // TODO: REDO to use Bounds3?
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
       ub.set(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
 
@@ -3053,12 +3074,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3[] fromObj ( final BufferedReader in,
       final boolean poolData ) {
 
-      // TODO: Make this package level, add an extra parameter, index offset,
-      // subtract index offset from the parsed face index, then make a public
-      // function which defaults to "1" for index offset. In case you want to
-      // create a MeshEntity fromObj. Might alsos have to pass in a name
-      // parameter as "o" may have already been read by the MeshEntity parser...
-
       /*
        * If no initial capacity is supplied, then the hash map maximum capacity,
        * 1073741824, is used. 0.75f is the default load factor. Initial capacity
@@ -3132,7 +3147,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                         for ( int j = 1; j < count; ++j ) {
                            faceTokens = fslashPattern.split(tokens[j], 0);
                            final int tokenLen = faceTokens.length;
-                           final int k = j - 1;
+                           final int[] vert = indices[j - 1];
 
                            /* Indices in .obj file start at 1, not 0. */
                            if ( tokenLen > 0 ) {
@@ -3140,7 +3155,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                               if ( vIdx == null || vIdx.isEmpty() ) {
                                  vsMissing = true;
                               } else {
-                                 indices[k][0] = Integer.parseInt(vIdx) - 1;
+                                 vert[0] = Integer.parseInt(vIdx) - 1;
                               }
                            } else {
                               vsMissing = true;
@@ -3152,7 +3167,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                               if ( vtIdx == null || vtIdx.isEmpty() ) {
                                  vtsMissing = true;
                               } else {
-                                 indices[k][1] = Integer.parseInt(vtIdx) - 1;
+                                 vert[1] = Integer.parseInt(vtIdx) - 1;
                               }
                            } else {
                               vtsMissing = true;
@@ -3164,7 +3179,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                               if ( vnIdx == null || vnIdx.isEmpty() ) {
                                  vnsMissing = true;
                               } else {
-                                 indices[k][2] = Integer.parseInt(vnIdx) - 1;
+                                 vert[2] = Integer.parseInt(vnIdx) - 1;
                               }
                            } else {
                               vnsMissing = true;
@@ -3177,10 +3192,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
                      case 103:
                         /* "g" */
-
                         String gName = tokens[1];
                         if ( gName == null || gName.isEmpty() ) {
-                           gName = "Mesh3";
+                           gName = Long.toHexString(System.currentTimeMillis());
                         }
 
                         if ( !faceGroups.containsKey(gName) ) {
@@ -3192,40 +3206,26 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
                         break;
 
-                     case 111:
-                        /* "o" */
-
-                        break;
-
                      case 118:
                         /* "v" */
-
-                        final Vec3 co = new Vec3();
-                        co.x = Float.parseFloat(tokens[1]);
-                        co.y = Float.parseFloat(tokens[2]);
-                        co.z = Float.parseFloat(tokens[3]);
-                        coordList.add(co);
+                        coordList.add(new Vec3(Float.parseFloat(tokens[1]),
+                           Float.parseFloat(tokens[2]), Float.parseFloat(
+                              tokens[3])));
 
                         break;
 
                      case 3768:
                         /* "vn" */
-
-                        final Vec3 nr = Vec3.up(new Vec3());
-                        nr.x = Float.parseFloat(tokens[1]);
-                        nr.y = Float.parseFloat(tokens[2]);
-                        nr.z = Float.parseFloat(tokens[3]);
-                        normalList.add(nr);
+                        normalList.add(new Vec3(Float.parseFloat(tokens[1]),
+                           Float.parseFloat(tokens[2]), Float.parseFloat(
+                              tokens[3])));
 
                         break;
 
                      case 3774:
                         /* "vt" */
-
-                        final Vec2 tc = Vec2.uvCenter(new Vec2());
-                        tc.x = Float.parseFloat(tokens[1]);
-                        tc.y = Float.parseFloat(tokens[2]);
-                        texCoordList.add(tc);
+                        texCoordList.add(new Vec2(Float.parseFloat(tokens[1]),
+                           Float.parseFloat(tokens[2])));
 
                         break;
 
@@ -3370,6 +3370,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public static final Mesh3[] groupByMaterial ( final Mesh3[] meshes ) {
 
+      // TODO: TEST
+
       final HashMap < Integer, Mesh3 > dict = new HashMap <>();
       Mesh3 current;
 
@@ -3392,24 +3394,20 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          /* Copy source coordinates. */
          final Vec3[] vsSrc = source.coords;
          final int vsLen = vsSrc.length;
-         final Vec3[] vsCopy = new Vec3[vsLen];
-         for ( int j = 0; j < vsLen; ++j ) { vsCopy[j] = new Vec3(vsSrc[j]); }
+         final Vec3[] vsTrg = new Vec3[vsLen];
+         for ( int j = 0; j < vsLen; ++j ) { vsTrg[j] = new Vec3(vsSrc[j]); }
 
          /* Copy source texture coordinates. */
          final Vec2[] vtsSrc = source.texCoords;
          final int vtsLen = vtsSrc.length;
-         final Vec2[] vtsCopy = new Vec2[vtsLen];
-         for ( int j = 0; j < vtsLen; ++j ) {
-            vtsCopy[j] = new Vec2(vtsSrc[j]);
-         }
+         final Vec2[] vtsTrg = new Vec2[vtsLen];
+         for ( int j = 0; j < vtsLen; ++j ) { vtsTrg[j] = new Vec2(vtsSrc[j]); }
 
          /* Copy source normals. */
          final Vec3[] vnsSrc = source.normals;
          final int vnsLen = vnsSrc.length;
-         final Vec3[] vnsCopy = new Vec3[vnsLen];
-         for ( int j = 0; j < vnsLen; ++j ) {
-            vnsCopy[j] = new Vec3(vnsSrc[j]);
-         }
+         final Vec3[] vnsTrg = new Vec3[vnsLen];
+         for ( int j = 0; j < vnsLen; ++j ) { vnsTrg[j] = new Vec3(vnsSrc[j]); }
 
          /* Concatenated indices need to be offset by current data lengths. */
          final int vsTrgLen = current.coords.length;
@@ -3419,24 +3417,26 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          /* Copy source face indices. */
          final int[][][] fsSrc = source.faces;
          final int fsLen = fsSrc.length;
-         final int[][][] fsCopy = new int[fsLen][][];
+         final int[][][] fsTrg = new int[fsLen][][];
          for ( int j = 0; j < fsLen; ++j ) {
             final int[][] fSrc = fsSrc[j];
             final int fLen = fSrc.length;
-            final int[][] fSrcCopy = fsCopy[j] = new int[fLen][2];
+            final int[][] fTrg = fsTrg[j] = new int[fLen][3];
             for ( int k = 0; k < fLen; ++k ) {
-               fSrcCopy[k][0] = vsTrgLen + fSrc[k][0];
-               fSrcCopy[k][1] = vtsTrgLen + fSrc[k][1];
-               fSrcCopy[k][2] = vnsTrgLen + fSrc[k][2];
+               final int[] vertSrc = fSrc[k];
+               final int[] vertTrg = fTrg[k];
+               vertTrg[0] = vsTrgLen + vertSrc[0];
+               vertTrg[1] = vtsTrgLen + vertSrc[1];
+               vertTrg[2] = vnsTrgLen + vertSrc[2];
             }
          }
 
          /* Concatenate copies with current data. */
-         current.coords = Vec3.concat(current.coords, vsCopy);
-         current.texCoords = Vec2.concat(current.texCoords, vtsCopy);
-         current.normals = Vec3.concat(current.normals, vnsCopy);
+         current.coords = Vec3.concat(current.coords, vsTrg);
+         current.texCoords = Vec2.concat(current.texCoords, vtsTrg);
+         current.normals = Vec3.concat(current.normals, vnsTrg);
          current.faces = Mesh.splice(current.faces, current.faces.length, 0,
-            fsCopy);
+            fsTrg);
       }
 
       /* Convert dictionary values to an array; clean meshes of excess data. */

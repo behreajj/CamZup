@@ -1514,6 +1514,30 @@ public class Color implements Comparable < Color > {
    public static boolean none ( final Color c ) { return c.a <= 0.0f; }
 
    /**
+    * Oscillates between an origin and destination color based on an input
+    * step and a pause factor. When the pause is greater than 1.0, the value
+    * will be clamped to the pole.
+    *
+    * @param origin the original color
+    * @param dest   the destination color
+    * @param step   the step
+    * @param pause  the pause factor
+    * @param target the output color
+    *
+    * @return the oscillation
+    */
+   public static Color pingPong ( final Color origin, final Color dest,
+      final float step, final float pause, final Color target ) {
+
+      final float t = 0.5f + 0.5f * pause * Utils.scNorm(step - 0.5f);
+      if ( t <= 0.0f ) { return target.set(origin); }
+      if ( t >= 1.0f ) { return target.set(dest); }
+      final float u = 1.0f - t;
+      return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g, u
+         * origin.b + t * dest.b, u * origin.a + t * dest.a);
+   }
+
+   /**
     * Raises a color to the power of a scalar.
     *
     * @param a      left operand
@@ -1821,8 +1845,7 @@ public class Color implements Comparable < Color > {
       final float blue, final float alpha, final Vec4 target ) {
 
       final float bri = Utils.max(red, green, blue);
-      final float mn = Utils.min(red, green, blue);
-      final float delta = bri - mn;
+      final float delta = bri - Utils.min(red, green, blue);
       float hue = 0.0f;
 
       if ( delta != 0.0f ) {
@@ -1838,8 +1861,7 @@ public class Color implements Comparable < Color > {
          if ( hue < 0.0f ) { ++hue; }
       }
 
-      final float sat = bri != 0.0f ? delta / bri : 0.0f;
-      return target.set(hue, sat, bri, alpha);
+      return target.set(hue, bri != 0.0f ? delta / bri : 0.0f, bri, alpha);
    }
 
    /**

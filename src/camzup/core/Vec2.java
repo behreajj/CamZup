@@ -669,40 +669,6 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Returns a point on a Bezier curve described by two anchor points and two
-    * control points according to a step in [0.0, 1.0] .
-    *
-    * @param ap0    the first anchor point
-    * @param cp0    the first control point
-    * @param cp1    the second control point
-    * @param ap1    the second anchor point
-    * @param step   the step
-    * @param target the output vector
-    *
-    * @return the point along the curve
-    */
-   public static Vec2 bezierPoint ( final Vec2 ap0, final Vec2 cp0,
-      final Vec2 cp1, final Vec2 ap1, final Vec2 step, final Vec2 target ) {
-
-      final float tx = Utils.clamp01(step.x);
-      final float ty = Utils.clamp01(step.y);
-
-      final float ux = 1.0f - tx;
-      final float uy = 1.0f - ty;
-
-      final float tsqx = tx * tx;
-      final float tsqy = ty * ty;
-
-      final float usqx = ux * ux;
-      final float usqy = uy * uy;
-
-      return target.set(ap0.x * ( usqx * ux ) + cp0.x * ( usqx * 3.0f * tx )
-         + cp1.x * ( tsqx * 3.0f * ux ) + ap1.x * ( tsqx * tx ), ap0.y * ( usqy
-            * uy ) + cp0.y * ( usqy * 3.0f * ty ) + cp1.y * ( tsqy * 3.0f * uy )
-            + ap1.y * ( tsqy * ty ));
-   }
-
-   /**
     * Returns a tangent on a Bezier curve described by two anchor points and
     * two control points according to a step in [0.0, 1.0] . When the step is
     * less than zero, returns the first anchor point subtracted from the first
@@ -2135,6 +2101,46 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
+    * Oscillates between an origin and destination vector based on an input
+    * step and a pause factor. When the pause is greater than 1.0, the value
+    * will be clamped to the pole.
+    *
+    * @param origin the original vector
+    * @param dest   the destination vector
+    * @param step   the step
+    * @param pause  the pause factor
+    * @param target the output vector
+    *
+    * @return the oscillation
+    */
+   public static Vec2 pingPong ( final Vec2 origin, final Vec2 dest,
+      final float step, final float pause, final Vec2 target ) {
+
+      final float t = 0.5f + 0.5f * pause * Utils.scNorm(step - 0.5f);
+      if ( t <= 0.0f ) { return target.set(origin); }
+      if ( t >= 1.0f ) { return target.set(dest); }
+      final float u = 1.0f - t;
+      return target.set(u * origin.x + t * dest.x, u * origin.y + t * dest.y);
+   }
+
+   /**
+    * Oscillates between an origin and destination vector based on an input
+    * step.
+    *
+    * @param origin the original vector
+    * @param dest   the destination vector
+    * @param step   the step
+    * @param target the output vector
+    *
+    * @return the oscillation
+    */
+   public static Vec2 pingPong ( final Vec2 origin, final Vec2 dest,
+      final float step, final Vec2 target ) {
+
+      return Vec2.pingPong(origin, dest, step, 1.0f, target);
+   }
+
+   /**
     * Raises a scalar to a vector.
     *
     * @param a      left operand
@@ -2692,28 +2698,6 @@ public class Vec2 implements Comparable < Vec2 > {
 
       Vec2.sub(a, b, dir);
       Vec2.normalize(dir, target);
-      return target;
-   }
-
-   /**
-    * Sums all vectors in an array.
-    *
-    * @param arr    the array
-    * @param target the output vector
-    *
-    * @return the sum
-    */
-   public static Vec2 sum ( final Vec2[] arr, final Vec2 target ) {
-
-      target.reset();
-      if ( arr != null ) {
-         final int len = arr.length;
-         for ( int i = 0; i < len; ++i ) {
-            final Vec2 v = arr[i];
-            target.x += v.x;
-            target.y += v.y;
-         }
-      }
       return target;
    }
 

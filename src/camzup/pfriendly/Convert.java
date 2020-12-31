@@ -2,7 +2,6 @@ package camzup.pfriendly;
 
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 
 import camzup.core.Curve2;
@@ -55,8 +54,9 @@ public abstract class Convert {
 
    /**
     * Converts a 2D PShape to a curve entity. Support for this conversion is
-    * <em>very</em> limited. For best results, use a PShape consisting of
-    * quadratic and cubic Bezier curves.
+    * <em>very</em> limited; its primary target is PShapes created from
+    * importing an SVG. For best results, use a PShape consisting of quadratic
+    * and cubic Bezier curves.
     *
     * @param source the source shape
     * @param target the target curve entity
@@ -66,8 +66,9 @@ public abstract class Convert {
    public static CurveEntity2 toCurveEntity2 ( final PShape source,
       final CurveEntity2 target ) {
 
-      return target.appendAll(Convert.toCurve2(source, new ArrayList <
-         Curve2 >()));
+      target.appendAll(Convert.toCurve2(source, new ArrayList < Curve2 >()));
+      target.name = source.getName();
+      return target;
    }
 
    /**
@@ -98,19 +99,14 @@ public abstract class Convert {
 
       switch ( fmt ) {
 
+         /* Seems like color is in AARRGGBB format anyway? */
          case PConstants.RGB:
-
-            /* Seems like color is in AARRGGBB format anyway? */
-
          case PConstants.ARGB:
-
             System.arraycopy(pxSrc, 0, pxTrg, 0, pxLen);
-
             break;
 
          case PConstants.ALPHA:
          default:
-
             for ( int i = 0; i < pxLen; ++i ) {
                final int a = pxSrc[i];
                pxTrg[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
@@ -1253,19 +1249,12 @@ public abstract class Convert {
     * @return the curves list
     */
    @Recursive
-   protected static List < Curve2 > toCurve2 ( final PShape source, final List <
-      Curve2 > curves ) {
+   protected static ArrayList < Curve2 > toCurve2 ( final PShape source,
+      final ArrayList < Curve2 > curves ) {
 
-      /* Flags for unsupported operations. */
-      boolean unsupportedFamily = false;
-      boolean unsupportedKind = false;
-      boolean unsupportedCommand = false;
-      boolean noVertices = false;
-      boolean hasCurveCommands = false;
-      boolean hasPrimitives = false;
-      boolean hasContours = false;
-
+      final String sourceName = source.getName();
       final int family = source.getFamily();
+
       switch ( family ) {
 
          case PConstants.GROUP:
@@ -1280,19 +1269,57 @@ public abstract class Convert {
 
          case PShape.PRIMITIVE:
 
-            hasPrimitives = true;
             final float[] params = source.getParams();
             final int kind = source.getKind();
             switch ( kind ) {
+
                case PConstants.LINE: /* 4 */
+
                   curves.add(Curve2.line(new Vec2(params[0], params[1]),
-                     new Vec2(params[2], params[3]), new Curve2()));
+                     new Vec2(params[2], params[3]), new Curve2(sourceName)));
                   break;
 
-               case PConstants.RECT:
-               case PConstants.ELLIPSE:
+               case PConstants.TRIANGLE: /* 8 */
+
+                  curves.add(Curve2.straightenHandles(new Curve2(sourceName,
+                     true, new Knot2(params[0], params[1]), new Knot2(params[2],
+                        params[3]), new Knot2(params[4], params[5]))));
+                  break;
+
+               case PConstants.QUAD: /* 16 */
+
+                  curves.add(Curve2.straightenHandles(new Curve2(sourceName,
+                     true, new Knot2(params[0], params[1]), new Knot2(params[2],
+                        params[3]), new Knot2(params[4], params[5]), new Knot2(
+                           params[6], params[7]))));
+                  break;
+
+               case PConstants.RECT: /* 30 */
+
+                  final float xRect0 = params[0];
+                  final float yRect0 = params[1];
+                  curves.add(Curve2.rect(new Vec2(xRect0, yRect0), new Vec2(
+                     params[2] + xRect0, params[3] + yRect0), new Curve2(
+                        sourceName)));
+
+                  break;
+
+               case PConstants.ELLIPSE: /* 31 */
+
+                  final float xEllipse = params[2];
+                  final float yEllipse = params[3];
+                  final float major = Utils.max(xEllipse, yEllipse);
+                  final Curve2 ellipse = new Curve2(sourceName);
+                  Curve2.ellipse(Utils.div(Utils.min(xEllipse, yEllipse),
+                     major), ellipse);
+                  ellipse.scale(major);
+                  ellipse.translate(new Vec2(params[0] + 0.5f * xEllipse,
+                     params[1] + 0.5f * yEllipse));
+                  curves.add(ellipse);
+
+                  break;
+
                default:
-                  unsupportedKind = true;
             }
 
             break;
@@ -1302,10 +1329,7 @@ public abstract class Convert {
 
             /* Get vertex data. */
             final int vertLen = source.getVertexCount();
-            if ( vertLen < 1 ) {
-               noVertices = true;
-               break;
-            }
+            if ( vertLen < 1 ) { break; }
 
             final float[][] data = new float[vertLen][2];
             for ( int i = 0; i < vertLen; ++i ) {
@@ -1314,12 +1338,11 @@ public abstract class Convert {
                datum[1] = source.getVertexY(i);
             }
 
-            /* Get command history. */
-            int[] cmds = source.getVertexCodes();
-
             /*
-             * Remedy commands array if it is null or has no elements.
+             * Get command history. If it is null or empty, create a new default
+             * array consisting of vertex commands.
              */
+            int[] cmds = source.getVertexCodes();
             if ( cmds == null || cmds.length < 1 ) {
                cmds = new int[vertLen];
                for ( int i = 0; i < vertLen; ++i ) {
@@ -1327,8 +1350,10 @@ public abstract class Convert {
                }
             }
 
+            final boolean srcClosed = source.isClosed();
             int cursor = 0;
             boolean initialVertex = true;
+            boolean spendContour = false;
             Curve2 currCurve = null;
             Knot2 prevKnot = null;
             Knot2 currKnot = null;
@@ -1343,11 +1368,12 @@ public abstract class Convert {
 
                      if ( initialVertex ) {
                         /* Treat as "moveTo" command. */
-                        currCurve = new Curve2();
-                        currCurve.closedLoop = source.isClosed();
+                        currCurve = new Curve2(sourceName);
+                        currCurve.closedLoop = spendContour || srcClosed;
                         currKnot = new Knot2(source.getVertexX(cursor), source
                            .getVertexY(cursor++));
                         initialVertex = false;
+                        spendContour = false;
                      } else {
                         /* Treat as "lineSegTo" command. */
                         currKnot = new Knot2();
@@ -1396,20 +1422,32 @@ public abstract class Convert {
 
                   case PConstants.CURVE_VERTEX:
 
-                     hasCurveCommands = true;
+                     /* Not supported. */
                      currKnot = new Knot2();
                      Knot2.fromSegLinear(source.getVertexX(cursor), source
                         .getVertexY(cursor++), prevKnot, currKnot);
+                     currCurve.append(currKnot);
+                     prevKnot = currKnot;
 
                      break;
 
                   case PConstants.BREAK:
-                     // TODO: Contour. Test to see how it is interpreted.
-                     hasContours = true;
+
+                     /* Close parent curve regardless. */
+                     currCurve.closedLoop = true;
+                     final Knot2 first = currCurve.getFirst();
+                     final Knot2 last = currCurve.getLast();
+                     Vec2.mix(first.coord, last.coord, IUtils.ONE_THIRD,
+                        first.rearHandle);
+                     Vec2.mix(last.coord, first.coord, IUtils.ONE_THIRD,
+                        last.foreHandle);
+                     curves.add(currCurve);
+                     initialVertex = true;
+                     spendContour = true;
+
                      break;
 
                   default:
-                     unsupportedCommand = true;
                }
             }
 
@@ -1418,8 +1456,6 @@ public abstract class Convert {
             /* Deal with closed or open loop. */
             if ( currCurve.closedLoop ) {
                currKnot = currCurve.getFirst();
-
-               // TODO: Replace these with whatever you're supposed to have?
                Vec2.mix(currKnot.coord, prevKnot.coord, IUtils.ONE_THIRD,
                   currKnot.rearHandle);
                Vec2.mix(prevKnot.coord, currKnot.coord, IUtils.ONE_THIRD,
@@ -1432,42 +1468,6 @@ public abstract class Convert {
             break;
 
          default:
-            unsupportedFamily = true;
-      }
-
-      final String sourceName = source.getName();
-
-      if ( unsupportedFamily ) {
-         System.err.println("The PShape " + sourceName + "'s family " + source
-            .getFamily() + " is not supported.");
-      }
-
-      if ( unsupportedKind ) {
-         System.err.println("The PShape " + sourceName + "'s kind " + source
-            .getFamily() + " is not supported.");
-      }
-
-      if ( unsupportedCommand ) {
-         System.err.println("The PShape " + sourceName
-            + " contained unsupported path commands.");
-      }
-
-      if ( hasContours ) {
-         System.err.println("Contour commands are ignored.");
-      }
-
-      if ( hasCurveCommands ) {
-         System.err.println(
-            "curveVertex commands are treated as straight lines.");
-      }
-
-      if ( hasPrimitives ) {
-         System.err.println("Support for PRIMITIVE family PShapes is limited.");
-      }
-
-      if ( noVertices ) {
-         System.err.println("The PShape " + sourceName
-            + "contained no vertex data.");
       }
 
       return curves;

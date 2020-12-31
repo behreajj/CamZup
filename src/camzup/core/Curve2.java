@@ -31,9 +31,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public Curve2 ( ) {
 
       super();
-
-      // RESEARCH: AABB for a curve would allow it to be reframed like meshes.
-      // http://nishiohirokazu.blogspot.com/2009/06/how-to-calculate-bezier-curves-bounding.html
    }
 
    /**
@@ -604,6 +601,38 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
+    * Centers the curve about the origin, (0.0, 0.0), by calculating its
+    * dimensions then subtracting the center point. Emits a transform which
+    * records the curve's center point. The transform's rotation and scale are
+    * reset.
+    *
+    * @param tr the output transform
+    *
+    * @return this mesh
+    *
+    * @see Curve2#calcDimensions(Curve2, Vec2, Vec2, Vec2)
+    * @see Curve2#translate(Vec2)
+    */
+   public Curve2 toOrigin ( final Transform2 tr ) {
+
+      final Vec2 lb = new Vec2();
+      final Vec2 ub = new Vec2();
+      Curve2.calcDimensions(this, new Vec2(), lb, ub);
+
+      lb.x = -0.5f * ( lb.x + ub.x );
+      lb.y = -0.5f * ( lb.y + ub.y );
+      this.translate(lb);
+
+      tr.locPrev.set(tr.location);
+      Vec2.negate(lb, tr.location);
+
+      tr.scaleTo(1.0f);
+      tr.rotateTo(0.0f);
+
+      return this;
+   }
+
+   /**
     * Returns a string representation of the curve.
     *
     * @return the string
@@ -1040,6 +1069,16 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public static Vec2 calcDimensions ( final Curve2 curve, final Vec2 target,
       final Vec2 lb, final Vec2 ub ) {
+
+      /*
+       * For information on finding AABB:
+       * http://nishiohirokazu.blogspot.com/2009/06/how-to-calculate-bezier-
+       * curves-bounding.html , https://stackoverflow.com/questions/2587751/ //
+       * an-algorithm-to-find-bounding-box-of-closed-bezier-curves ,
+       * https://computergraphics.stackexchange.com/questions/3697/algorithm-to-
+       * find-the-center-of-a-bezier-curve ,
+       * https://pomax.github.io/bezierinfo/#derivatives
+       */
 
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE);
       ub.set(Float.MIN_VALUE, Float.MIN_VALUE);
@@ -2289,119 +2328,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       }
 
       return target;
-   }
-
-   @Experimental
-   private static Vec2 calcDimensionsExtrema ( final Curve2 curve,
-      final Vec2 target, final Vec2 lb, final Vec2 ub ) {
-
-      // http://nishiohirokazu.blogspot.com/2009/06/
-      // how-to-calculate-bezier-curves-bounding.html
-
-      // https://pomax.github.io/bezierinfo/#derivatives
-
-      // https://computergraphics.stackexchange.com/questions/
-      // 3697/algorithm-to-find-the-center-of-a-bezier-curve
-
-      // https://stackoverflow.com/questions/2587751/
-      // an-algorithm-to-find-bounding-box-of-closed-bezier-curves
-
-      // http://jsfiddle.net/SalixAlba/QQnvm/4/
-
-      final ArrayList < Knot2 > knots = curve.knots;
-      final Iterator < Knot2 > itr = knots.iterator();
-
-      Knot2 currKnot = null;
-
-      // TODO: Maybe this is causing problems? and prevKnot should be getLast?
-      Knot2 prevKnot = curve.getLast();
-      Vec2 p0 = prevKnot.coord;
-      Vec2 p1 = null;
-      Vec2 p2 = null;
-      Vec2 p3 = null;
-
-      lb.set(p0);
-      ub.set(p0);
-
-      while ( itr.hasNext() ) {
-         currKnot = itr.next();
-         p0 = prevKnot.coord;
-         p1 = prevKnot.foreHandle;
-         p2 = currKnot.rearHandle;
-         p3 = currKnot.coord;
-
-         final float ax = 3.0f * p3.x - 9.0f * p2.x + 9.0f * p1.x - 3.0f * p0.x;
-         final float bx = 6.0f * p0.x - 12.0f * p1.x + 6.0f * p2.x;
-         final float cx = 3.0f * p1.x - 3.0f * p0.x;
-         final float xdisc = bx * bx - 4.0f * ax * cx;
-         if ( p3.x < lb.x ) { lb.x = p3.x; }
-         if ( p3.x > ub.x ) { ub.x = p3.x; }
-
-         if ( xdisc >= 0.0f ) {
-            final float sqrtdiscx = Utils.sqrtUnchecked(xdisc);
-            final float invax = 0.5f / ax;
-
-            final float t1x = ( -bx + sqrtdiscx ) * invax;
-            if ( t1x >= 0.0f && t1x <= 1.0f ) {
-               final float x1 = Curve2.f(p0.x, p1.x, p2.x, p3.x, t1x);
-               if ( x1 < lb.x ) { lb.x = x1; }
-               if ( x1 > ub.x ) { ub.x = x1; }
-            }
-
-            final float t2x = ( -bx - sqrtdiscx ) * invax;
-            if ( t2x >= 0.0f && t2x <= 1.0f ) {
-               final float x2 = Curve2.f(p0.x, p1.x, p2.x, p3.x, t1x);
-               if ( x2 < lb.x ) { lb.x = x2; }
-               if ( x2 > ub.x ) { ub.x = x2; }
-            }
-         }
-
-         final float ay = 3 * p3.y - 9 * p2.y + 9 * p1.y - 3 * p0.y;
-         final float by = 6 * p0.y - 12 * p1.y + 6 * p2.y;
-         final float cy = 3 * p1.y - 3 * p0.y;
-         final float ydisc = by * by - 4 * ay * cy;
-         if ( p3.y < lb.y ) { lb.y = p3.y; }
-         if ( p3.y > ub.y ) { ub.y = p3.y; }
-
-         if ( ydisc >= 0.0f ) {
-            final float sqrtdiscy = Utils.sqrtUnchecked(ydisc);
-            final float invay = 0.5f / ay;
-
-            final float t1y = ( -by + sqrtdiscy ) * invay;
-            if ( t1y >= 0.0f && t1y <= 1.0f ) {
-               final float y1 = Curve2.f(p0.y, p1.y, p2.y, p3.y, t1y);
-               if ( y1 < lb.y ) { lb.y = y1; }
-               if ( y1 > ub.y ) { ub.y = y1; }
-            }
-
-            final float t2y = ( -by - sqrtdiscy ) * invay;
-            if ( t2y >= 0.0f && t2y <= 1.0f ) {
-               final float y2 = Curve2.f(p0.y, p1.y, p2.y, p3.y, t1y);
-               if ( y2 < lb.y ) { lb.y = y2; }
-               if ( y2 > ub.y ) { ub.y = y2; }
-            }
-         }
-
-         prevKnot = currKnot;
-      }
-
-      return Vec2.sub(ub, lb, target);
-   }
-
-   private static final float f ( final float p0i, final float p1i,
-      final float p2i, final float p3i, final float t ) {
-
-      // TODO: Delete when finished drafting.
-
-      // f = lambda t: (
-      // (1-t)**3 * P0[i]
-      // + 3 * (1-t)**2 * t * P1[i]
-      // + 3 * (1-t) * t**2 * P2[i]
-      // + t**3 * P3[i])
-
-      final float u = 1.0f - t;
-      return u * u * u * p0i + 3.0f * ( u * u ) * t * p1i + 3.0f * u * ( t * t )
-         * p2i + t * t * t * p3i;
    }
 
    /**
