@@ -407,13 +407,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param taper   the taper
     *
     * @return this new face indices
+    * 
+    * @see Mesh3#shadeFlat(int, int)
     */
    @Experimental
    public Mesh3 extrudeFace ( final int faceIdx, final boolean fillCap,
       final float depth, final float taper ) {
 
       if ( depth == 0.0f ) { return this; }
-      final float vtap = Utils.max(IUtils.EPSILON, taper);
+      final float verifTaper = Utils.max(IUtils.EPSILON, taper);
 
       /* Validate face index, find face. */
       final int facesLen = this.faces.length;
@@ -437,10 +439,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       Vec3.normalize(extrudeNorm, extrudeNorm);
       Vec3.mul(extrudeNorm, depth, extrusion);
 
-      /*
-       * Cache old length of coordinates and texture coordinates so new ones can
-       * be appended to the end.
-       */
+      /* Cache old length of data so new data can be appended to the end. */
       final int vsOldLen = this.coords.length;
       final int vtsOldLen = this.texCoords.length;
       final int vnsOldLen = this.normals.length;
@@ -464,9 +463,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec3 vBase = this.coords[vCurrIdx];
          final Vec3 vExtruded = vsExtruded[j] = new Vec3();
 
-         /* Taper and extrude the vertex coordinate. */
+         /*
+          * Taper and extrude the vertex coordinate (remove center, scale
+          * locally, translate locally, reintroduce center).
+          */
          Vec3.sub(vBase, center, vExtruded);
-         Vec3.mul(vExtruded, vtap, vExtruded);
+         Vec3.mul(vExtruded, verifTaper, vExtruded);
          Vec3.add(vExtruded, extrusion, vExtruded);
          Vec3.add(vExtruded, center, vExtruded);
 
@@ -479,6 +481,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          /* Create face for side. */
          final int[][] sideFace = fsNew[j];
 
+         /* Normal indices not updated here because shadeFlat does it later. */
          final int[] v00 = sideFace[0];
          v00[0] = vCurrIdx;
          v00[1] = vtsOldLen;
@@ -510,12 +513,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             new Vec3()));
       }
 
-      /* Update indices. */
+      /* Update indices. If cap is to be removed, splice out original face. */
       this.faces = Mesh.splice(this.faces, i, fillCap ? 0 : 1, fsNew);
 
-      /* Shade normals of four sides. */
-      final int compoundLen = facesLen + faceLen;
-      for ( int j = i; j < compoundLen; ++j ) { this.shadeFlat(j); }
+      /* Shade normals of side panels. */
+      this.shadeFlat(i, faceLen);
 
       return this;
    }
@@ -1430,95 +1432,53 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public Mesh3 shade ( ) { return this.shadeFlat(); }
 
    /**
-    * Calculates this mesh's normals per face, resulting in flat shading.
+    * Calculates this mesh's normals per face, resulting in flat shading. If
+    * the normals array is null, or if its length is not equal to the length
+    * of coordinates, the normals array is reallocated. Sums the cross
+    * products of edges in a face<br>
+    * <br>
+    * ( b - a ) x ( c - a ) <br>
+    * <br>
+    * then normalizing the sum.
     *
     * @return this mesh
+    * 
+    * @see Mesh3#shadeFlat(int, int)
     */
    public Mesh3 shadeFlat ( ) {
 
-      final int len = this.faces.length;
-      for ( int i = 0; i < len; ++i ) { this.shadeFlat(i); }
-
-      return this;
-   }
-
-   /**
-    * Calculates a per face normal for a given face, resulting in flat
-    * shading.<br>
-    * <br>
-    * An individual face version of this function is defined because
-    * {@link Mesh3#extrudeFace(int, boolean, float, float)} needs it.
-    *
-    * @param faceIdx the face index
-    *
-    * @return this mesh
-    */
-   @Experimental
-   public Mesh3 shadeFlat ( final int faceIdx ) {
-
-      final int facesLen = this.faces.length;
-      final int i = Utils.mod(faceIdx, facesLen);
-      final int[][] face = this.faces[i];
-      final int faceLen = face.length;
-
-      final Vec3 vn = new Vec3();
-      final int vnIdx = this.normals.length;
-
-      Vec3 prev = this.coords[face[faceLen - 1][0]];
-      for ( int j = 0; j < faceLen; ++j ) {
-
-         final int[] vert = face[j];
-         final Vec3 curr = this.coords[vert[0]];
-         final Vec3 next = this.coords[face[ ( j + 1 ) % faceLen][0]];
-
-         /*
-          * Cf. Eric Lengyel, Foundations of Game Engine Development I.
-          * Mathematics, p. 101: ( p1 - p0 ) x ( p2 - p0 ) .
-          */
-         final float edge0x = prev.x - curr.x;
-         final float edge0y = prev.y - curr.y;
-         final float edge0z = prev.z - curr.z;
-
-         final float edge1x = curr.x - next.x;
-         final float edge1y = curr.y - next.y;
-         final float edge1z = curr.z - next.z;
-
-         vn.x += edge0y * edge1z - edge0z * edge1y;
-         vn.y += edge0z * edge1x - edge0x * edge1z;
-         vn.z += edge0x * edge1y - edge0y * edge1x;
-
-         vert[2] = vnIdx;
-         prev = curr;
-      }
-
-      Vec3.normalize(vn, vn);
-      this.normals = Vec3.append(this.normals, vn);
-
-      return this;
+      return this.shadeFlat(0, this.faces.length);
    }
 
    /**
     * Calculates this mesh's normals per vertex, resulting in smooth shading.
     * If the normals array is null, or if its length is not equal to the
-    * length of coordinates, the normals array is reallocated.
+    * length of coordinates, the normals array is reallocated. Uses the
+    * formula<br>
+    * <br>
+    * ( b - a ) x ( c - a )<br>
+    * <br>
+    * where a, b and c are three corners of a face, then normalizes the cross
+    * product.
     *
     * @return this mesh
     */
-   @Experimental
    public Mesh3 shadeSmooth ( ) {
-
-      this.normals = Vec3.resize(this.normals, this.coords.length);
 
       Vec3 prev = null;
       Vec3 curr = null;
       Vec3 next = null;
-      Vec3 normal = null;
+      Vec3 vn = null;
 
-      final int[][][] fs = this.faces;
-      final int fsLen = fs.length;
+      final Vec3 edge0 = new Vec3();
+      final Vec3 edge1 = new Vec3();
+
+      final int fsLen = this.faces.length;
+      this.normals = Vec3.resize(this.normals, this.coords.length);
+
       for ( int i = 0; i < fsLen; ++i ) {
 
-         final int[][] f = fs[i];
+         final int[][] f = this.faces[i];
          final int fLen = f.length;
          prev = this.coords[f[fLen - 1][0]];
 
@@ -1529,23 +1489,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final int nextIndex = f[ ( j + 1 ) % fLen][0];
 
             /* Acquire normal and update face index reference to it. */
-            normal = this.normals[currIndex];
+            vn = this.normals[currIndex];
             vert[2] = currIndex;
 
             curr = this.coords[currIndex];
             next = this.coords[nextIndex];
 
-            final float edge0x = prev.x - curr.x;
-            final float edge0y = prev.y - curr.y;
-            final float edge0z = prev.z - curr.z;
-
-            final float edge1x = curr.x - next.x;
-            final float edge1y = curr.y - next.y;
-            final float edge1z = curr.z - next.z;
-
-            normal.set(edge0y * edge1z - edge0z * edge1y, edge0z * edge1x
-               - edge0x * edge1z, edge0x * edge1y - edge0y * edge1x);
-            Vec3.normalize(normal, normal);
+            Vec3.sub(prev, curr, edge0);
+            Vec3.sub(curr, next, edge1);
+            Vec3.crossNorm(edge0, edge1, vn);
 
             prev = curr;
          }
@@ -2411,6 +2363,84 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Internal helper function to calculate flat shading for a number of faces
+    * starting at an index. Assumes that index and count are valid. If the
+    * normals array is null, or if its length is not equal to the length of
+    * coordinates, the normals array is reallocated. Sums the cross products
+    * of edges in a face<br>
+    * <br>
+    * ( b - a ) x ( c - a ) <br>
+    * <br>
+    * then normalizes the sum.<br>
+    * <br>
+    * Needed because {@link Mesh3#extrudeFace(int, boolean, float, float)}
+    * calculates normals for side panels of an extruded face.
+    *
+    * @return this mesh
+    */
+   protected Mesh3 shadeFlat ( final int faceIdx, final int count ) {
+
+      final int facesLen = this.faces.length;
+      final boolean reassign = count >= facesLen;
+
+      Vec3[] vns;
+      int idxOffset;
+      if ( reassign ) {
+         vns = this.normals = Vec3.resize(this.normals, count);
+         idxOffset = 0;
+      } else {
+         vns = new Vec3[count];
+         idxOffset = this.normals.length;
+      }
+
+      Vec3 prev = null;
+      Vec3 curr = null;
+      Vec3 next = null;
+      Vec3 vn = null;
+
+      final Vec3 edge0 = new Vec3();
+      final Vec3 edge1 = new Vec3();
+      final Vec3 cross = new Vec3();
+
+      for ( int i = 0; i < count; ++i ) {
+
+         final int[][] f = this.faces[faceIdx + i];
+         final int fLen = f.length;
+         final int newIdx = idxOffset + i;
+         prev = this.coords[f[fLen - 1][0]];
+
+         if ( reassign ) {
+            vn = vns[i];
+            vn.reset();
+         } else {
+            vn = vns[i] = new Vec3();
+         }
+
+         for ( int j = 0; j < fLen; ++j ) {
+
+            final int[] vert = f[j];
+            curr = this.coords[vert[0]];
+            next = this.coords[f[ ( j + 1 ) % fLen][0]];
+
+            Vec3.sub(prev, curr, edge0);
+            Vec3.sub(curr, next, edge1);
+            Vec3.cross(edge0, edge1, cross);
+            Vec3.add(vn, cross, vn);
+
+            vert[2] = newIdx;
+            prev = curr;
+         }
+
+         /* Normalization takes care of averaging. */
+         Vec3.normalize(vn, vn);
+      }
+
+      if ( !reassign ) { this.normals = Vec3.concat(this.normals, vns); }
+
+      return this;
+   }
+
+   /**
     * Default cube size, such that it will match the dimensions of other
     * Platonic solids; <code>0.5d / Math.sqrt(2.0d)</code> , approximately
     * {@value Mesh3#DEFAULT_CUBE_SIZE} .
@@ -2842,8 +2872,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the cylinder
     */
    public static Mesh3 cylinder ( final Mesh3 target ) {
-
-      // TODO: Add capsule mesh to the list?
 
       return Mesh3.cylinder(0.0f, 0.0f, -0.5f, 0.0f, 0.0f, 0.5f,
          IMesh.DEFAULT_CIRCLE_SECTORS, true, 0.25f, target);
@@ -3281,7 +3309,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             sb.append(".\nUpdate your mesh's material indices if you");
             sb.append(" parse these materials.");
          }
-         System.out.println(sb.toString());
       }
 
       final int groupsLen = faceGroups.size() < 1 ? 1 : faceGroups.size();
@@ -3987,7 +4014,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final float toU = 1.0f / vsect;
       for ( int j = 0; j < vsect1; ++j ) { uvxs[j] = j * toU; }
 
-      /* Combine into texture coordinates. */
+      /* Combine u and v into texture coordinates. */
       final float toV = 1.0f / vpanl;
       for ( int k = 0, i = 0; i < vpanl1; ++i ) {
          final float y = 1.0f - i * toV;
@@ -4200,7 +4227,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          }
       }
 
-      target.shadeFlat();
+      target.shadeFlat(0, fsSrcLen);
       return target;
    }
 

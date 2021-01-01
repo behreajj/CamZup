@@ -64,22 +64,6 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
-    * Attempts to construct a vector from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param x the x string
-    * @param y the y string
-    * @param z the z string
-    * @param w the w string
-    */
-   public Vec4 ( final String x, final String y, final String z,
-      final String w ) {
-
-      this.set(x, y, z, w);
-   }
-
-   /**
     * Promotes a Vec2 to a Vec4.
     *
     * @param v2 the vector
@@ -215,60 +199,6 @@ public class Vec4 implements Comparable < Vec4 > {
       this.y = y;
       this.z = z;
       this.w = w;
-      return this;
-   }
-
-   /**
-    * Attempts to set the components of this vector from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param x the x string
-    * @param y the y string
-    * @param z the z string
-    * @param w the w string
-    *
-    * @return this vector
-    *
-    * @see Float#parseFloat(String)
-    */
-   public Vec4 set ( final String x, final String y, final String z,
-      final String w ) {
-
-      float xprs;
-      float yprs;
-      float zprs;
-      float wprs;
-
-      try {
-         xprs = Float.parseFloat(x);
-      } catch ( final Exception e ) {
-         xprs = 0.0f;
-      }
-
-      try {
-         yprs = Float.parseFloat(y);
-      } catch ( final Exception e ) {
-         yprs = 0.0f;
-      }
-
-      try {
-         zprs = Float.parseFloat(z);
-      } catch ( final Exception e ) {
-         zprs = 0.0f;
-      }
-
-      try {
-         wprs = Float.parseFloat(w);
-      } catch ( final Exception e ) {
-         wprs = 0.0f;
-      }
-
-      this.x = xprs;
-      this.y = yprs;
-      this.z = zprs;
-      this.w = wprs;
-
       return this;
    }
 

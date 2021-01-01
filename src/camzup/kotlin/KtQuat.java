@@ -45,22 +45,6 @@ public class KtQuat extends Quaternion {
    public KtQuat ( final Quaternion source ) { super(source); }
 
    /**
-    * Attempts to construct a quaternion from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param real  the w string
-    * @param xImag the x string
-    * @param yImag the y string
-    * @param zImag the z string
-    */
-   public KtQuat ( final String real, final String xImag, final String yImag,
-      final String zImag ) {
-
-      super(real, xImag, yImag, zImag);
-   }
-
-   /**
     * Tests to see if the quaternion contains a value.
     *
     * @param v the value
@@ -102,11 +86,12 @@ public class KtQuat extends Quaternion {
    public void divAssign ( final float b ) {
 
       if ( b != 0.0f ) {
-         this.real /= b;
+         final float bInv = 1.0f / b;
          final Vec3 i = this.imag;
-         i.x /= b;
-         i.y /= b;
-         i.z /= b;
+         this.real *= bInv;
+         i.x *= bInv;
+         i.y *= bInv;
+         i.z *= bInv;
       } else {
          this.reset();
       }

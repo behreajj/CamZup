@@ -48,22 +48,6 @@ public class KtVec4 extends Vec4 implements Iterable < Float > {
    }
 
    /**
-    * Attempts to construct a vector from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param x the x string
-    * @param y the y string
-    * @param z the z string
-    * @param w the w string
-    */
-   public KtVec4 ( final String x, final String y, final String z,
-      final String w ) {
-
-      super(x, y, z, w);
-   }
-
-   /**
     * Promotes a Vec2 to a KtVec4.
     *
     * @param v2 the vector
@@ -156,10 +140,11 @@ public class KtVec4 extends Vec4 implements Iterable < Float > {
    public void divAssign ( final float b ) {
 
       if ( b != 0.0f ) {
-         this.x /= b;
-         this.y /= b;
-         this.z /= b;
-         this.w /= b;
+         final float bInv = 1.0f / b;
+         this.x *= bInv;
+         this.y *= bInv;
+         this.z *= bInv;
+         this.w *= bInv;
       } else {
          this.reset();
       }

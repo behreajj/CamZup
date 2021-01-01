@@ -32,19 +32,6 @@ public class KtComplex extends Complex {
    }
 
    /**
-    * Attempts to construct a complex numbers from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param realstr the real string
-    * @param imagstr the imaginary string
-    */
-   public KtComplex ( final String realstr, final String imagstr ) {
-
-      super(realstr, imagstr);
-   }
-
-   /**
     * Tests to see if the complex number contains a value.
     *
     * @param v the value
@@ -125,8 +112,9 @@ public class KtComplex extends Complex {
    public void divAssign ( final float b ) {
 
       if ( b != 0.0f ) {
-         this.real /= b;
-         this.imag /= b;
+         final float bInv = 1.0f / b;
+         this.real *= bInv;
+         this.imag *= bInv;
       } else {
          this.real = 0.0f;
          this.imag = 0.0f;

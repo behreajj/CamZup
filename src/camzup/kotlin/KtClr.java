@@ -82,38 +82,6 @@ public class KtClr extends Color implements Iterable < Float > {
    }
 
    /**
-    * Attempts to construct a color from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero. If a NumberFormatException is thrown, the
-    * component is set to zero for red, green and blue; to one for alpha.
-    *
-    * @param rstr the red string
-    * @param gstr the green string
-    * @param bstr the blue string
-    */
-   public KtClr ( final String rstr, final String gstr, final String bstr ) {
-
-      super(rstr, gstr, bstr);
-   }
-
-   /**
-    * Attempts to construct a color from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero. If a NumberFormatException is thrown, the
-    * component is set to zero for red, green and blue; to one for alpha.
-    *
-    * @param rstr the red string
-    * @param gstr the green string
-    * @param bstr the blue string
-    * @param astr the alpha string
-    */
-   public KtClr ( final String rstr, final String gstr, final String bstr,
-      final String astr ) {
-
-      super(rstr, gstr, bstr, astr);
-   }
-
-   /**
     * Tests to see if the vector contains a value.
     *
     * @param v the value

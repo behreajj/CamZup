@@ -55,20 +55,6 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Attempts to construct a vector from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param x the x string
-    * @param y the y string
-    * @param z the z string
-    */
-   public Vec3 ( final String x, final String y, final String z ) {
-
-      this.set(x, y, z);
-   }
-
-   /**
     * Promotes a Vec2 to a Vec3.
     *
     * @param v2 the vector
@@ -184,50 +170,6 @@ public class Vec3 implements Comparable < Vec3 > {
       this.x = x;
       this.y = y;
       this.z = z;
-      return this;
-   }
-
-   /**
-    * Attempts to set the components of this vector from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param x the x string
-    * @param y the y string
-    * @param z the z string
-    *
-    * @return this vector
-    *
-    * @see Float#parseFloat(String)
-    */
-   public Vec3 set ( final String x, final String y, final String z ) {
-
-      float xprs;
-      float yprs;
-      float zprs;
-
-      try {
-         xprs = Float.parseFloat(x);
-      } catch ( final Exception e ) {
-         xprs = 0.0f;
-      }
-
-      try {
-         yprs = Float.parseFloat(y);
-      } catch ( final Exception e ) {
-         yprs = 0.0f;
-      }
-
-      try {
-         zprs = Float.parseFloat(z);
-      } catch ( final Exception e ) {
-         zprs = 0.0f;
-      }
-
-      this.x = xprs;
-      this.y = yprs;
-      this.z = zprs;
-
       return this;
    }
 

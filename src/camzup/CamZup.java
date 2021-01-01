@@ -50,6 +50,14 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
+      // final Mesh3 m30 = new Mesh3();
+      // Mesh3.icosahedron(m30);
+      // m30.extrudeFace(0, false, 1.0f);
+      // m30.insetExtrudeFaces(0.5f, 0.25f, 0.95f);
+
+      // System.out.println(m30);
+      // System.out.println(new MeshEntity3().append(m30).toBlenderCode());
+
       // final Mesh2 m20 = new Mesh2();
       // Mesh2.polygon(5, PolyType.NGON, m20);
       // m20.deleteVerts(1, 0, 3);

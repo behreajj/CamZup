@@ -5,6 +5,7 @@ package camzup.core;
  * Coordinates, texture coordinates, normals and vertex colors are stored
  * in <code>float</code> arrays. Indices are expected to form triangles.
  */
+@Experimental
 public class MeshDirect {
 
    /**

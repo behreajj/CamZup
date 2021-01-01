@@ -42,19 +42,6 @@ public class Complex implements Comparable < Complex > {
    }
 
    /**
-    * Attempts to construct a complex numbers from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param real the real string
-    * @param imag the imaginary string
-    */
-   public Complex ( final String real, final String imag ) {
-
-      this.set(real, imag);
-   }
-
-   /**
     * Returns -1 when this complex number is less than the comparisand; 1 when
     * it is greater than; 0 when the two are 'equal'. The implementation of
     * this method allows collections of complex number to be sorted.
@@ -142,42 +129,6 @@ public class Complex implements Comparable < Complex > {
 
       this.real = real;
       this.imag = imag;
-
-      return this;
-   }
-
-   /**
-    * Attempts to set the components of this complex number from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param real the real string
-    * @param imag the imaginary string
-    *
-    * @return this complex number
-    *
-    * @see Float#parseFloat(String)
-    */
-
-   public Complex set ( final String real, final String imag ) {
-
-      float rlstr;
-      float imstr;
-
-      try {
-         rlstr = Float.parseFloat(real);
-      } catch ( final Exception e ) {
-         rlstr = 0.0f;
-      }
-
-      try {
-         imstr = Float.parseFloat(imag);
-      } catch ( final Exception e ) {
-         imstr = 0.0f;
-      }
-
-      this.real = rlstr;
-      this.imag = imstr;
 
       return this;
    }

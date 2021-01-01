@@ -64,22 +64,6 @@ public class Quaternion implements Comparable < Quaternion > {
    public Quaternion ( final Quaternion source ) { this.set(source); }
 
    /**
-    * Attempts to construct a quaternion from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param real  the w string
-    * @param xImag the x string
-    * @param yImag the y string
-    * @param zImag the z string
-    */
-   public Quaternion ( final String real, final String xImag,
-      final String yImag, final String zImag ) {
-
-      this.set(real, xImag, yImag, zImag);
-   }
-
-   /**
     * Returns -1 when this quaternion is less than the comparisand; 1 when it
     * is greater than; 0 when the two are 'equal'. The implementation of this
     * method allows collections of quaternions to be sorted.
@@ -184,36 +168,6 @@ public class Quaternion implements Comparable < Quaternion > {
 
       this.real = source.real;
       this.imag.set(source.imag);
-      return this;
-   }
-
-   /**
-    * Attempts to set the components of this quaternion from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param wstr the w string
-    * @param xstr the x string
-    * @param ystr the y string
-    * @param zstr the z string
-    *
-    * @return this quaternion
-    *
-    * @see Float#parseFloat(String)
-    */
-   public Quaternion set ( final String wstr, final String xstr,
-      final String ystr, final String zstr ) {
-
-      float rlprs = 0.0f;
-
-      try {
-         rlprs = Float.parseFloat(wstr);
-      } catch ( final Exception e ) {
-         rlprs = 0.0f;
-      }
-
-      this.real = rlprs;
-      this.imag.set(xstr, ystr, zstr);
       return this;
    }
 

@@ -78,22 +78,6 @@ public class Knot2 implements Comparable < Knot2 > {
    public Knot2 ( final Knot2 source ) { this.set(source); }
 
    /**
-    * Attempts to create a knot from Strings.
-    *
-    * @param xCoord the x coordinate string
-    * @param yCoord the y coordinate string
-    * @param xFore  the x fore handle string
-    * @param yFore  the y fore handle string
-    * @param xRear  the x rear handle string
-    * @param yRear  the y rear handle string
-    */
-   public Knot2 ( final String xCoord, final String yCoord, final String xFore,
-      final String yFore, final String xRear, final String yRear ) {
-
-      this.set(xCoord, yCoord, xFore, yFore, xRear, yRear);
-   }
-
-   /**
     * Creates a knot from a coordinate.
     *
     * @param coord the coordinate
@@ -715,31 +699,6 @@ public class Knot2 implements Comparable < Knot2 > {
    public Knot2 set ( final Knot2 source ) {
 
       return this.set(source.coord, source.foreHandle, source.rearHandle);
-   }
-
-   /**
-    * Attempts to set the components of this knot from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param xCoord the x coordinate string
-    * @param yCoord the y coordinate string
-    * @param xFore  the x fore handle string
-    * @param yFore  the y fore handle string
-    * @param xRear  the x rear handle string
-    * @param yRear  the y rear handle string
-    *
-    * @return this knot
-    */
-   public Knot2 set ( final String xCoord, final String yCoord,
-      final String xFore, final String yFore, final String xRear,
-      final String yRear ) {
-
-      this.coord.set(xCoord, yCoord);
-      this.foreHandle.set(xFore, yFore);
-      this.rearHandle.set(xRear, yRear);
-
-      return this;
    }
 
    /**

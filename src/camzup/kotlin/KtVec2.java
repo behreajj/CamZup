@@ -34,16 +34,6 @@ public class KtVec2 extends Vec2 implements Iterable < Float > {
    public KtVec2 ( final float x, final float y ) { super(x, y); }
 
    /**
-    * Attempts to construct a vector from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param x the x string
-    * @param y the y string
-    */
-   public KtVec2 ( final String x, final String y ) { super(x, y); }
-
-   /**
     * Constructs a vector from a source vector's components.
     *
     * @param v the source vector
@@ -110,8 +100,9 @@ public class KtVec2 extends Vec2 implements Iterable < Float > {
    public void divAssign ( final float b ) {
 
       if ( b != 0.0f ) {
-         this.x /= b;
-         this.y /= b;
+         final float bInv = 1.0f / b;
+         this.x *= bInv;
+         this.y *= bInv;
       } else {
          this.reset();
       }

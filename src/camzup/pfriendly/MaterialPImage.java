@@ -1,6 +1,9 @@
 package camzup.pfriendly;
 
+import java.io.BufferedReader;
+
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 import camzup.core.Color;
 import camzup.core.MaterialUv;
@@ -216,58 +219,67 @@ public class MaterialPImage extends MaterialUv {
    }
 
    /**
-    * Creates a material from an array of strings representing a Wavefront
-    * .mtl file. The support for this file format is <em>very</em> minimal, as
-    * it is unlikely that its contents would be reproducible between a variety
-    * of renderers. The material's tint is set to the diffuse color. If an
-    * image file is referenced for the diffuse map, then a message is printed
-    * to the console.
+    * Creates a material from a buffered reader that holds a Wavefront .mtl
+    * file. The support for this file format is <em>very</em> minimal, as it
+    * is unlikely that its contents would be reproducible between a variety of
+    * renderers. The material's tint is set to the diffuse color. If an image
+    * file is referenced for the diffuse map, then a message is printed to the
+    * console.
     *
-    * @param lines the String tokens
+    * @param in buffered reader
     *
     * @return the material
     */
-   public static MaterialPImage[] fromMtl ( final String[] lines ) {
+   public static MaterialPImage[] fromMtl ( final BufferedReader in ) {
 
-      final int len = lines.length;
       String[] tokens;
       final ArrayList < MaterialPImage > result = new ArrayList <>();
       MaterialPImage current = null;
 
-      String alpha = "1.0";
+      float alpha = 1.0f;
+      final Pattern spacePattern = Pattern.compile("\\s+");
+      try {
+         try {
+            for ( String ln = in.readLine(); ln != null; ln = in.readLine() ) {
+               /* Split line by spaces. */
+               tokens = spacePattern.split(ln, 0);
 
-      for ( int i = 0; i < len; ++i ) {
+               /* Skip empty lines. */
+               if ( tokens.length > 0 ) {
+                  final String initialToken = tokens[0].toLowerCase();
 
-         /* Split line by spaces. */
-         tokens = lines[i].split("\\s+");
+                  if ( initialToken.equals("newmtl") ) {
 
-         /* Skip empty lines. */
-         if ( tokens.length > 0 ) {
-            final String initialToken = tokens[0].toLowerCase();
+                     current = new MaterialPImage();
+                     result.add(current);
+                     current.name = tokens[1];
 
-            if ( initialToken.equals("newmtl") ) {
+                  } else if ( initialToken.equals("d") ) {
 
-               current = new MaterialPImage();
-               result.add(current);
-               current.name = tokens[1];
+                     alpha = Float.parseFloat(tokens[1]);
 
-            } else if ( current != null && initialToken.equals("kd") ) {
+                  } else if ( current != null && initialToken.equals("kd") ) {
 
-               current.tint.set(tokens[1], tokens[2], tokens[3], alpha);
+                     current.tint.set(Float.parseFloat(tokens[1]), Float
+                        .parseFloat(tokens[2]), Float.parseFloat(tokens[3]),
+                        alpha);
 
-            } else if ( initialToken.equals("d") ) {
-
-               alpha = tokens[1];
-
-            } else if ( initialToken.equals("map_kd") ) {
-
-               final StringBuilder sb = new StringBuilder(128);
-               sb.append("The .mtl file refers to the image file ");
-               sb.append(tokens[1]);
-               sb.append(" .");
-               System.out.println(sb.toString());
+                  } else if ( initialToken.equals("map_kd") ) {
+                     final StringBuilder sb = new StringBuilder(128);
+                     sb.append("The .mtl file refers to the image file ");
+                     sb.append(tokens[1]);
+                     sb.append(" .");
+                     System.out.println(sb.toString());
+                  }
+               }
             }
+         } catch ( final Exception e ) {
+            e.printStackTrace();
+         } finally {
+            in.close();
          }
+      } catch ( final Exception e ) {
+         e.printStackTrace();
       }
 
       return result.toArray(new MaterialPImage[result.size()]);

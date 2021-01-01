@@ -93,27 +93,6 @@ public class Knot3 implements Comparable < Knot3 > {
    public Knot3 ( final Knot3 source ) { this.set(source); }
 
    /**
-    * Attempts to create a knot from Strings.
-    *
-    * @param xCoord the x coordinate string
-    * @param yCoord the y coordinate string
-    * @param zCoord the z coordinate string
-    * @param xFore  the x fore handle string
-    * @param yFore  the y fore handle string
-    * @param zFore  the z fore handle string
-    * @param xRear  the x rear handle string
-    * @param yRear  the y rear handle string
-    * @param zRear  the z rear handle string
-    */
-   public Knot3 ( final String xCoord, final String yCoord, final String zCoord,
-      final String xFore, final String yFore, final String zFore,
-      final String xRear, final String yRear, final String zRear ) {
-
-      this.set(xCoord, yCoord, zCoord, xFore, yFore, zFore, xRear, yRear,
-         zRear);
-   }
-
-   /**
     * Creates a knot from a series of 2D vectors.
     *
     * @param coord      the coordinate
@@ -872,35 +851,6 @@ public class Knot3 implements Comparable < Knot3 > {
    public Knot3 set ( final Knot3 source ) {
 
       return this.set(source.coord, source.foreHandle, source.rearHandle);
-   }
-
-   /**
-    * Attempts to set the components of this knot from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param xCoord the x coordinate string
-    * @param yCoord the y coordinate string
-    * @param zCoord the z coordinate string
-    * @param xFore  the x fore handle string
-    * @param yFore  the y fore handle string
-    * @param zFore  the z fore handle string
-    * @param xRear  the x rear handle string
-    * @param yRear  the y rear handle string
-    * @param zRear  the z rear handle string
-    *
-    * @return this knot
-    */
-   public Knot3 set ( final String xCoord, final String yCoord,
-      final String zCoord, final String xFore, final String yFore,
-      final String zFore, final String xRear, final String yRear,
-      final String zRear ) {
-
-      this.coord.set(xCoord, yCoord, zCoord);
-      this.foreHandle.set(xFore, yFore, zFore);
-      this.rearHandle.set(xRear, yRear, zRear);
-
-      return this;
    }
 
    /**

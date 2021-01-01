@@ -97,38 +97,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Attempts to construct a color from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero. If a NumberFormatException is thrown, the
-    * component is set to zero for red, green and blue; to one for alpha.
-    *
-    * @param rstr the red string
-    * @param gstr the green string
-    * @param bstr the blue string
-    */
-   public Color ( final String rstr, final String gstr, final String bstr ) {
-
-      this.set(rstr, gstr, bstr);
-   }
-
-   /**
-    * Attempts to construct a color from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero. If a NumberFormatException is thrown, the
-    * component is set to zero for red, green and blue; to one for alpha.
-    *
-    * @param rstr the red string
-    * @param gstr the green string
-    * @param bstr the blue string
-    * @param astr the alpha string
-    */
-   public Color ( final String rstr, final String gstr, final String bstr,
-      final String astr ) {
-
-      this.set(rstr, gstr, bstr, astr);
-   }
-
-   /**
     * Returns -1 when this color is less than the comparisand; 1 when it is
     * greater than; 0 when the two are 'equal'. The implementation of this
     * method allows collections of colors to be sorted.
@@ -350,77 +318,6 @@ public class Color implements Comparable < Color > {
       this.g = green;
       this.b = blue;
       this.a = alpha;
-      return this;
-   }
-
-   /**
-    * Attempts to set the components of this color from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero for red, green and blue; to one for alpha.
-    *
-    * @param rstr the red string
-    * @param gstr the green string
-    * @param bstr the blue string
-    *
-    * @return this color
-    */
-   public Color set ( final String rstr, final String gstr,
-      final String bstr ) {
-
-      return this.set(rstr, gstr, bstr, "1.0");
-   }
-
-   /**
-    * Attempts to set the components of this color from Strings using
-    * {@link Float#parseFloat(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero for red, green and blue; to one for alpha.
-    *
-    * @param rstr the red string
-    * @param gstr the green string
-    * @param bstr the blue string
-    * @param astr the alpha string
-    *
-    * @return this color
-    *
-    * @see Float#parseFloat(String)
-    */
-   public Color set ( final String rstr, final String gstr, final String bstr,
-      final String astr ) {
-
-      float xprs;
-      float yprs;
-      float zprs;
-      float wprs;
-
-      try {
-         xprs = Float.parseFloat(rstr);
-      } catch ( final Exception e ) {
-         xprs = 1.0f;
-      }
-
-      try {
-         yprs = Float.parseFloat(gstr);
-      } catch ( final Exception e ) {
-         yprs = 1.0f;
-      }
-
-      try {
-         zprs = Float.parseFloat(bstr);
-      } catch ( final Exception e ) {
-         zprs = 1.0f;
-      }
-
-      try {
-         wprs = Float.parseFloat(astr);
-      } catch ( final Exception e ) {
-         wprs = 1.0f;
-      }
-
-      this.r = xprs;
-      this.g = yprs;
-      this.b = zprs;
-      this.a = wprs;
-
       return this;
    }
 
