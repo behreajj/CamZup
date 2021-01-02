@@ -188,25 +188,6 @@ public class Complex implements Comparable < Complex > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes.
-    *
-    * @return the string
-    */
-   @Experimental
-   String toBlenderCode ( ) {
-
-      final StringBuilder pyCd = new StringBuilder(64);
-      pyCd.append('(');
-      pyCd.append(Utils.toFixed(this.real, 6));
-      pyCd.append(this.imag < -0.0f ? '-' : '+');
-      pyCd.append(Utils.toFixed(Utils.abs(this.imag), 6));
-      pyCd.append('j');
-      pyCd.append(')');
-      return pyCd.toString();
-   }
-
-   /**
     * Tests equivalence between this and another complex number. For rough
     * equivalence of floating point components, use the static approximates
     * function instead.

@@ -280,16 +280,17 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes. This is
-    * formatted as a three-tuple.
+    * An internal helper function to format a vector as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x.
     *
-    * @return the string
+    * @param pyCd string builder
+    *
+    * @return the string builder
     */
    @Experimental
-   String toBlenderCode ( ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd ) {
 
-      final StringBuilder pyCd = new StringBuilder(96);
       pyCd.append('(');
       pyCd.append(Utils.toFixed(this.x, 6));
       pyCd.append(',');
@@ -299,7 +300,7 @@ public class Vec3 implements Comparable < Vec3 > {
       pyCd.append(' ');
       pyCd.append(Utils.toFixed(this.z, 6));
       pyCd.append(')');
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**

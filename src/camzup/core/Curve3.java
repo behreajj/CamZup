@@ -887,26 +887,31 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how curve geometry looks in Blender (the control) versus in the
-    * library (the test).
+    * An internal helper function to format a vector as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x.
     *
-    * @param uRes the resolution u
+    * @param pyCd      the string builder
+    * @param uRes      the resolution u
+    * @param tiltStart the tilt start
+    * @param tilEnd    the tilt end
     *
-    * @return the string
+    * @return the string builder
     */
    @Experimental
-   String toBlenderCode ( final int uRes, final float tiltStart,
-      final float tiltEnd ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd, final int uRes,
+      final float tiltStart, final float tiltEnd ) {
 
-      final StringBuilder pyCd = new StringBuilder(64 + 256 * this.knots
-         .size());
       pyCd.append("{\"closed_loop\": ");
       pyCd.append(this.closedLoop ? "True" : "False");
       pyCd.append(", \"resolution_u\": ");
       pyCd.append(uRes);
       pyCd.append(", \"knots\": [");
+
+      // TODO: Look at the decompile of this in Intellij.
+      // TODO: The tilt would have to work differently if this were a closed
+      // loop, as the first and last knots should have the same tilt. Maybe use
+      // pingPong?
 
       int i = 0;
       final int len = this.knots.size();
@@ -916,14 +921,14 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       while ( itr.hasNext() ) {
          final float t = i * toPercent;
          final float ang = ( 1.0f - t ) * tiltStart + t * tiltEnd;
-         pyCd.append(itr.next().toBlenderCode(1.0f, 1.0f, ang));
+         itr.next().toBlenderCode(pyCd, 1.0f, 1.0f, ang);
          if ( itr.hasNext() ) { pyCd.append(',').append(' '); }
          ++i;
       }
 
       pyCd.append(']');
       pyCd.append('}');
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**

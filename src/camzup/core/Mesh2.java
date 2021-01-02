@@ -1842,13 +1842,13 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          svgp.append("<path id=\"");
          svgp.append(iddot + Utils.toPadded(i, 3));
          svgp.append("\" d=\"M ");
-         svgp.append(vs[f[0][0]].toSvgString());
+         vs[f[0][0]].toSvgString(svgp);
          svgp.append(' ');
 
          for ( int j = 1; j < fLen; ++j ) {
             svgp.append('L');
             svgp.append(' ');
-            svgp.append(vs[f[j][0]].toSvgString());
+            vs[f[j][0]].toSvgString(svgp);
             svgp.append(' ');
          }
 
@@ -1947,7 +1947,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int vlen = this.coords.length;
       final int vlast = vlen - 1;
       for ( int i = 0; i < vlen; ++i ) {
-         pyCd.append(this.coords[i].toBlenderCode(z));
+         this.coords[i].toBlenderCode(pyCd, z);
          if ( i < vlast ) { pyCd.append(',').append(' '); }
       }
 
@@ -1975,7 +1975,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final int vtlen = this.texCoords.length;
          final int vtlast = vtlen - 1;
          for ( int h = 0; h < vtlen; ++h ) {
-            pyCd.append(this.texCoords[h].toBlenderCode(true));
+            this.texCoords[h].toBlenderCode(pyCd, true);
             if ( h < vtlast ) { pyCd.append(',').append(' '); }
          }
 
@@ -2555,8 +2555,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public static Mesh2[] groupByMaterial ( final Mesh2[] meshes ) {
 
-      // TODO: TEST
-
       final HashMap < Integer, Mesh2 > dict = new HashMap <>();
       Mesh2 current;
 
@@ -2571,7 +2569,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          if ( current == null ) {
             current = new Mesh2(new int[0][0][2], new Vec2[0], new Vec2[0]);
             current.materialIndex = matIdxPrm;
-            // TODO: put source.name instead?
             current.name = "Mesh." + Utils.toPadded(matIdxPrm, 3);
             dict.put(matIdxObj, current);
          }

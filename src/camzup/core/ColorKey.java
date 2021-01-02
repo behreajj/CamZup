@@ -301,7 +301,7 @@ public class ColorKey implements Comparable < ColorKey > {
       pyCd.append("{\"position\": ");
       pyCd.append(Utils.toFixed(Utils.clamp01(this.step), 3));
       pyCd.append(", \"color\": ");
-      pyCd.append(this.clr.toBlenderCode(gamma, true));
+      this.clr.toBlenderCode(pyCd, gamma, true);
       pyCd.append('}');
       return pyCd.toString();
    }

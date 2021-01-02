@@ -830,27 +830,27 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how curve geometry looks in Blender (the control) versus in the
-    * library (the test).
+    * An internal helper function to format a vector as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x. Appends a z component to promote the
+    * vector to 3D.
     *
-    * @param z the z offset
+    * @param pyCd the string builder
+    * @param z    the z offset
     *
-    * @return the string
+    * @return the string builder
     */
    @Experimental
-   String toBlenderCode ( final float z ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd, final float z ) {
 
-      final StringBuilder pyCd = new StringBuilder(256);
       pyCd.append("{\"co\": ");
-      pyCd.append(this.coord.toBlenderCode(z));
+      this.coord.toBlenderCode(pyCd, z);
       pyCd.append(", \"handle_right\": ");
-      pyCd.append(this.foreHandle.toBlenderCode(z));
+      this.foreHandle.toBlenderCode(pyCd, z);
       pyCd.append(", \"handle_left\": ");
-      pyCd.append(this.rearHandle.toBlenderCode(z));
+      this.rearHandle.toBlenderCode(pyCd, z);
       pyCd.append('}');
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**

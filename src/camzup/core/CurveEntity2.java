@@ -438,7 +438,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       pyCd.append("curve_entity = {\"name\": \"");
       pyCd.append(this.name);
       pyCd.append("\", \"transform\": ");
-      pyCd.append(this.transform.toBlenderCode());
+      this.transform.toBlenderCode(pyCd);
       pyCd.append(", \"curves\": [");
 
       int curveIndex = 0;
@@ -447,7 +447,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       final Iterator < Curve2 > itr = this.curves.iterator();
       while ( itr.hasNext() ) {
          // final float zoff = 0.0001f * curveIndex;
-         pyCd.append(itr.next().toBlenderCode(uRes, zoff));
+         itr.next().toBlenderCode(pyCd, uRes, zoff);
          if ( curveIndex < curveLast ) { pyCd.append(',').append(' '); }
          ++curveIndex;
       }
@@ -618,11 +618,10 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
           * an SVG with loadShape.
           */
          if ( includesMats ) {
-
             final int vMatIdx = Utils.mod(curve.materialIndex, matLen);
             final MaterialSolid material = materials[vMatIdx];
             svgp.append("<g ");
-            svgp.append(material.toSvgString(scale));
+            material.toSvgString(svgp, scale);
             svgp.append('>');
             svgp.append('\n');
          }

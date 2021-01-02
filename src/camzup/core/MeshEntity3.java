@@ -396,14 +396,13 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
       final StringBuilder pyCd = new StringBuilder(2048);
 
-      // TODO: Refactor to always use BMesh.
       if ( useBMesh ) { pyCd.append("import bmesh\n"); }
 
       pyCd.append("from bpy import data as D, context as C\n\n");
       pyCd.append("mesh_entity = {\"name\": \"");
       pyCd.append(this.name);
       pyCd.append("\", \"transform\": ");
-      pyCd.append(this.transform.toBlenderCode());
+      this.transform.toBlenderCode(pyCd);
       pyCd.append(", \"meshes\": [");
 
       final Iterator < Mesh3 > meshItr = this.meshes.iterator();
@@ -418,8 +417,8 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
          final int matLast = matLen - 1;
 
          for ( int i = 0; i < matLen; ++i ) {
-            pyCd.append(materials[i].toBlenderCode(gamma, metallic, roughness,
-               specular, clearcoat, clearcoatRough));
+            materials[i].toBlenderCode(pyCd, gamma, metallic, roughness,
+               specular, clearcoat, clearcoatRough);
             if ( i < matLast ) { pyCd.append(',').append(' '); }
          }
       } else {

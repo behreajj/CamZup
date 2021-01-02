@@ -221,43 +221,49 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes. This is
-    * formatted as a two-tuple. If this is a UV coordinate, provides the
-    * option to flip the v coordinate.
+    * An internal helper function to format a vector as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x.<br>
+    * <br>
+    * If this is a UV coordinate, provides the option to flip the v
+    * coordinate.
     *
+    * @param pyCd  string builder
     * @param flipv whether to subtract y from 1.0
     *
-    * @return the string
+    * @return the string builder
     *
     * @see Utils#toFixed(float, int)
     */
    @Experimental
-   String toBlenderCode ( final boolean flipv ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd,
+      final boolean flipv ) {
 
-      final StringBuilder pyCd = new StringBuilder(32);
       pyCd.append('(');
       pyCd.append(Utils.toFixed(flipv ? this.x : 1.0f - this.x, 6));
       pyCd.append(',');
       pyCd.append(' ');
       pyCd.append(Utils.toFixed(flipv ? 1.0f - this.y : this.y, 6));
       pyCd.append(')');
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes. This is
-    * formatted as a three-tuple.
+    * An internal helper function to format a vector as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x. Appends a z component to promote the
+    * vector to 3D.
     *
-    * @return the string
+    * @param pyCd string builder
+    * @param z    the z component
+    * 
+    * @return the string builder
     *
     * @see Utils#toFixed(float, int)
     */
    @Experimental
-   String toBlenderCode ( final float z ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd, final float z ) {
 
-      final StringBuilder pyCd = new StringBuilder(64);
       pyCd.append('(');
       pyCd.append(Utils.toFixed(this.x, 6));
       pyCd.append(',');
@@ -267,27 +273,29 @@ public class Vec2 implements Comparable < Vec2 > {
       pyCd.append(' ');
       pyCd.append(Utils.toFixed(z, 6));
       pyCd.append(')');
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**
-    * Returns a string representation of this vector as a comma separated
-    * value for use by SVG formatting functions.<br>
+    * An internal helper function to append a representation of this vector as
+    * a comma separated value to a {@link StringBuilder}. For use by SVG
+    * formatting functions.<br>
     * <br>
     * This uses a print precision of six decimal places to avoid glitches when
     * small shapes are scaled up.
     *
-    * @return the string
+    * @param svgp string builder
+    * 
+    * @return the string builder
     *
     * @see Utils#toFixed(float, int)
     */
-   String toSvgString ( ) {
+   StringBuilder toSvgString ( final StringBuilder svgp ) {
 
-      final StringBuilder svgp = new StringBuilder(16);
       svgp.append(Utils.toFixed(this.x, 6));
       svgp.append(' ');
       svgp.append(Utils.toFixed(this.y, 6));
-      return svgp.toString();
+      return svgp;
    }
 
    /**

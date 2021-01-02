@@ -1498,6 +1498,9 @@ public abstract class Utils implements IUtils {
     */
    public static String toFixed ( final float value, final int places ) {
 
+      // TODO: Create a package level version of this function which accepts and
+      // returns a StringBuilder, then make the public version a wrapper for it?
+
       final int raw = Float.floatToRawIntBits(value);
       switch ( raw ) {
          case 0x0: /* Positive zero. */

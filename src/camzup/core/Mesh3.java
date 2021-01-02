@@ -399,7 +399,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Extrudes a face by an amount. Creates quadrilateral sides to connect
     * extruded face to original. Does not check whether a face is bordered by
-    * other faces; best used on disconnected faces.
+    * other faces; best used on disconnected faces. The taper is a scalar
+    * applied to a face's size, e.g., a taper of .75 would result in an
+    * extruded face 75% the size of the original.
     *
     * @param faceIdx the face index
     * @param fillCap whether to cap the extruded face
@@ -540,7 +542,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Extrudes all faces in the mesh by an amount. Creates quadrilateral sides
     * to connect extruded face to original. Does not check as to whether a
-    * face is an bordered by other faces; best used on disconnected faces.
+    * face is an bordered by other faces; best used on disconnected faces. The
+    * taper is a scalar applied to a face's size, e.g., a taper of .75 would
+    * result in an extruded face 75% the size of the original.
     *
     * @param fillCap whether to cap the extruded faces
     * @param depth   the extrusion depth
@@ -845,7 +849,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * A convenience function to inset a face at an index and extrude it.
+    * A convenience function to inset a face at an index and extrude it. The
+    * taper is a scalar applied to a face's size, e.g., a taper of .75 would
+    * result in an extruded face 75% the size of the original.
     *
     * @param faceIdx the face index
     * @param inset   the inset factor
@@ -880,6 +886,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * A convenience function to inset and then extrude all faces of the mesh.
+    * The taper is a scalar applied to a face's size, e.g., a taper of .75
+    * would result in an extruded face 75% the size of the original.
     *
     * @param inset the inset factor
     * @param depth the extrusion depth
@@ -2270,7 +2278,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int vlen = this.coords.length;
       final int vlast = vlen - 1;
       for ( int i = 0; i < vlen; ++i ) {
-         pyCd.append(this.coords[i].toBlenderCode());
+         this.coords[i].toBlenderCode(pyCd);
          if ( i < vlast ) { pyCd.append(',').append(' '); }
       }
 
@@ -2298,7 +2306,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int vtlen = this.texCoords.length;
          final int vtlast = vtlen - 1;
          for ( int h = 0; h < vtlen; ++h ) {
-            pyCd.append(this.texCoords[h].toBlenderCode(true));
+            this.texCoords[h].toBlenderCode(pyCd, true);
             if ( h < vtlast ) { pyCd.append(',').append(' '); }
          }
 
@@ -2324,7 +2332,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int nlen = this.normals.length;
          final int nlast = nlen - 1;
          for ( int h = 0; h < nlen; ++h ) {
-            pyCd.append(this.normals[h].toBlenderCode());
+            this.normals[h].toBlenderCode(pyCd);
             if ( h < nlast ) { pyCd.append(',').append(' '); }
          }
 
@@ -3396,8 +3404,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the consolidated meshes
     */
    public static final Mesh3[] groupByMaterial ( final Mesh3[] meshes ) {
-
-      // TODO: TEST
 
       final HashMap < Integer, Mesh3 > dict = new HashMap <>();
       Mesh3 current;

@@ -705,7 +705,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       svgp.append("<path id=\"");
       svgp.append(id);
       svgp.append("\" d=\"M ");
-      svgp.append(prevKnot.coord.toSvgString());
+      prevKnot.coord.toSvgString(svgp);
 
       Knot2 currKnot = null;
       while ( itr.hasNext() ) {
@@ -713,11 +713,11 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          svgp.append(' ');
          svgp.append('C');
          svgp.append(' ');
-         svgp.append(prevKnot.foreHandle.toSvgString());
+         prevKnot.foreHandle.toSvgString(svgp);
          svgp.append(',');
-         svgp.append(currKnot.rearHandle.toSvgString());
+         currKnot.rearHandle.toSvgString(svgp);
          svgp.append(',');
-         svgp.append(currKnot.coord.toSvgString());
+         currKnot.coord.toSvgString(svgp);
          prevKnot = currKnot;
       }
 
@@ -726,11 +726,11 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          svgp.append(' ');
          svgp.append('C');
          svgp.append(' ');
-         svgp.append(prevKnot.foreHandle.toSvgString());
+         prevKnot.foreHandle.toSvgString(svgp);
          svgp.append(',');
-         svgp.append(currKnot.rearHandle.toSvgString());
+         currKnot.rearHandle.toSvgString(svgp);
          svgp.append(',');
-         svgp.append(currKnot.coord.toSvgString());
+         currKnot.coord.toSvgString(svgp);
          svgp.append(' ');
          svgp.append('Z');
       }
@@ -822,21 +822,20 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how curve geometry looks in Blender (the control) versus in the
-    * library (the test).
+    * An internal helper function to format a vector as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x.
     *
+    * @param pyCd the string builder
     * @param uRes the resolution u
     * @param z    the z offset
     *
-    * @return the string
+    * @return the string builder
     */
    @Experimental
-   String toBlenderCode ( final int uRes, final float z ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd, final int uRes,
+      final float z ) {
 
-      final StringBuilder pyCd = new StringBuilder(64 + 256 * this.knots
-         .size());
       pyCd.append("{\"closed_loop\": ");
       pyCd.append(this.closedLoop ? "True" : "False");
       pyCd.append(", \"resolution_u\": ");
@@ -845,13 +844,13 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       while ( itr.hasNext() ) {
-         pyCd.append(itr.next().toBlenderCode(z));
+         itr.next().toBlenderCode(pyCd, z);
          if ( itr.hasNext() ) { pyCd.append(',').append(' '); }
       }
 
       pyCd.append(']');
       pyCd.append('}');
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**

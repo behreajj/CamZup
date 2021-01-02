@@ -967,28 +967,28 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how transforms look in Blender (the control) versus in the
-    * library (the test).
+    * An internal helper function to format a vector as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x.
     *
-    * @return the string
+    * @param pyCd the string builder
+    *
+    * @return the string builder
     */
    @Experimental
-   String toBlenderCode ( ) {
+   StringBuilder toBlenderCode ( StringBuilder pyCd ) {
 
       final String rotationMode = "\"QUATERNION\"";
-      final StringBuilder pyCd = new StringBuilder(256);
       pyCd.append("{\"location\": ");
-      pyCd.append(this.location.toBlenderCode());
+      this.location.toBlenderCode(pyCd);
       pyCd.append(", \"rotation_mode\": ");
       pyCd.append(rotationMode);
       pyCd.append(", \"rotation_quaternion\": ");
-      pyCd.append(this.rotation.toBlenderCode());
+      this.rotation.toBlenderCode(pyCd);
       pyCd.append(", \"scale\": ");
-      pyCd.append(this.scale.toBlenderCode());
+      this.scale.toBlenderCode(pyCd);
       pyCd.append('}');
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**

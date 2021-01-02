@@ -843,7 +843,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          pyCd.append("\n    {\"position\": ");
          pyCd.append(Utils.toFixed(i * toPercent, 6));
          pyCd.append(", \"color\": ");
-         pyCd.append(clrs[i].toBlenderCode(gamma, true));
+         clrs[i].toBlenderCode(pyCd, gamma, true);
          pyCd.append('}');
 
          if ( i < last ) { pyCd.append(',').append(' '); }
@@ -1060,7 +1060,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       final Iterator < ColorKey > itr = this.keys.iterator();
       while ( itr.hasNext() ) {
-         sb.append(itr.next().clr.toGplString());
+         itr.next().clr.toGplString(sb);
          sb.append('\n');
       }
 

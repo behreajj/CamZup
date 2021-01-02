@@ -317,34 +317,6 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes. This is
-    * formatted as a four-tuple.
-    *
-    * @return the string
-    *
-    * @see Utils#toFixed(float, int)
-    */
-   @Experimental
-   String toBlenderCode ( ) {
-
-      final StringBuilder pyCd = new StringBuilder(96);
-      pyCd.append('(');
-      pyCd.append(Utils.toFixed(this.x, 6));
-      pyCd.append(',');
-      pyCd.append(' ');
-      pyCd.append(Utils.toFixed(this.y, 6));
-      pyCd.append(',');
-      pyCd.append(' ');
-      pyCd.append(Utils.toFixed(this.z, 6));
-      pyCd.append(',');
-      pyCd.append(' ');
-      pyCd.append(Utils.toFixed(this.w, 6));
-      pyCd.append(')');
-      return pyCd.toString();
-   }
-
-   /**
     * Tests equivalence between this and another vector.
     *
     * @param v the vector

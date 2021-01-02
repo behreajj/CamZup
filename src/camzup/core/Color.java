@@ -477,16 +477,18 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how curve geometry looks in Blender (the control) versus in the
-    * library (the test).<br>
+    * An internal helper function to format a vector as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x.<br>
     * <br>
     * This is formatted as a tuple where red, green and blue channels have
     * been raised to the power of gamma (usually 2.2, Blender's default sRGB
-    * color management setting). If include alpha is true, then the alpha is
-    * also included.
+    * color management setting).<br>
+    * <br>
+    * If alpha is included, then a four tuple is appended, where alpha is the
+    * last element; if not then a three tuple is appended.
     *
+    * @param pyCd      the string builder
     * @param gamma     the exponent
     * @param inclAlpha include the alpha channel
     *
@@ -494,9 +496,9 @@ public class Color implements Comparable < Color > {
     *
     * @see Utils#pow(float, float)
     */
-   String toBlenderCode ( final float gamma, final boolean inclAlpha ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd, final float gamma,
+      final boolean inclAlpha ) {
 
-      final StringBuilder pyCd = new StringBuilder(96);
       pyCd.append('(');
       pyCd.append(Utils.toFixed(Utils.pow(this.r, gamma), 6));
       pyCd.append(',');
@@ -513,7 +515,7 @@ public class Color implements Comparable < Color > {
       }
 
       pyCd.append(')');
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**
@@ -537,21 +539,23 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Returns a String representation of the color compatible with .gpl (GIMP
-    * palette) file formats. Each channel, including alpha, is represented an
-    * unsigned byte in [0, 255] separated by a space.
+    * Appends a representation of the color compatible with .gpl (GIMP
+    * palette) file formats to a {@link StringBuilder}. Each channel,
+    * including alpha, is represented an unsigned byte in [0, 255] separated
+    * by a space.
     *
-    * @return the string
+    * @param gpl the string builder
+    *
+    * @return the string builder
     */
-   String toGplString ( ) {
+   StringBuilder toGplString ( StringBuilder gpl ) {
 
-      final StringBuilder gpl = new StringBuilder(32);
       gpl.append(( int ) ( this.r * 0xff + 0.5f ));
       gpl.append(' ');
       gpl.append(( int ) ( this.g * 0xff + 0.5f ));
       gpl.append(' ');
       gpl.append(( int ) ( this.b * 0xff + 0.5f ));
-      return gpl.toString();
+      return gpl;
    }
 
    /**
@@ -1228,22 +1232,16 @@ public class Color implements Comparable < Color > {
       switch ( sector ) {
          case 0:
             return target.set(bri, tint3, tint1, alpha);
-
          case 1:
             return target.set(tint2, bri, tint1, alpha);
-
          case 2:
             return target.set(tint1, bri, tint3, alpha);
-
          case 3:
             return target.set(tint1, tint2, bri, alpha);
-
          case 4:
             return target.set(tint3, tint1, bri, alpha);
-
          case 5:
             return target.set(bri, tint1, tint2, alpha);
-
          default:
             return target.reset();
       }
@@ -2018,19 +2016,15 @@ public class Color implements Comparable < Color > {
     *
     * @return the string
     *
-    * @see Color#toHexString(byte)
+    * @see Color#toHexString(byte, StringBuilder)
     */
    public static String toHexWeb ( final Color c ) {
 
-      final byte rb = ( byte ) ( c.r * 0xff + 0.5f );
-      final byte gb = ( byte ) ( c.g * 0xff + 0.5f );
-      final byte bb = ( byte ) ( c.b * 0xff + 0.5f );
-
       final StringBuilder sb = new StringBuilder(7);
       sb.append('#');
-      sb.append(Color.toHexString(rb));
-      sb.append(Color.toHexString(gb));
-      sb.append(Color.toHexString(bb));
+      Color.toHexString(( byte ) ( c.r * 0xff + 0.5f ), sb);
+      Color.toHexString(( byte ) ( c.g * 0xff + 0.5f ), sb);
+      Color.toHexString(( byte ) ( c.b * 0xff + 0.5f ), sb);
       return sb.toString();
    }
 
@@ -2044,19 +2038,15 @@ public class Color implements Comparable < Color > {
     *
     * @return the string
     *
-    * @see Color#toHexString(byte)
+    * @see Color#toHexString(byte, StringBuilder)
     */
    public static String toHexWeb ( final int c ) {
 
-      final byte rb = ( byte ) ( c >> 0x10 & 0xff );
-      final byte gb = ( byte ) ( c >> 0x8 & 0xff );
-      final byte bb = ( byte ) ( c & 0xff );
-
       final StringBuilder sb = new StringBuilder(7);
       sb.append('#');
-      sb.append(Color.toHexString(rb));
-      sb.append(Color.toHexString(gb));
-      sb.append(Color.toHexString(bb));
+      Color.toHexString(( byte ) ( c >> 0x10 & 0xff ), sb);
+      Color.toHexString(( byte ) ( c >> 0x8 & 0xff ), sb);
+      Color.toHexString(( byte ) ( c & 0xff ), sb);
       return sb.toString();
    }
 
@@ -2129,11 +2119,11 @@ public class Color implements Comparable < Color > {
     *
     * @return the string
     */
-   protected static String toHexString ( final byte b ) {
+   protected static StringBuilder toHexString ( final byte b,
+      final StringBuilder sb ) {
 
       final int digit0 = b >> 0x4 & 0xf;
       final int digit1 = b & 0xf;
-      final StringBuilder sb = new StringBuilder(2);
 
       /* @formatter:off */
       switch ( digit0 ) {
@@ -2157,7 +2147,7 @@ public class Color implements Comparable < Color > {
       }
       /* @formatter:on */
 
-      return sb.toString();
+      return sb;
    }
 
    /**

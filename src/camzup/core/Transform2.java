@@ -805,18 +805,19 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how transforms look in Blender (the control) versus in the
-    * library (the test).
+    * An internal helper function to format a vector as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x.
     *
-    * @return the string
+    * @param pyCd the string builder
+    *
+    * @return the string builder
     *
     * @see Utils#cos(float)
     * @see Utils#sin(float)
     */
    @Experimental
-   String toBlenderCode ( ) {
+   StringBuilder toBlenderCode ( StringBuilder pyCd ) {
 
       /*
        * Quaternion from angle: (cos(a * 0.5), 0.0, 0.0, sin(a * 0.5)) . Scale z
@@ -827,9 +828,8 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
       final float halfRad = this.rotation * 0.5f;
       final float depth = ( this.scale.x + this.scale.y ) * 0.5f;
 
-      final StringBuilder pyCd = new StringBuilder(256);
       pyCd.append("{\"location\": ");
-      pyCd.append(this.location.toBlenderCode(0.0f));
+      this.location.toBlenderCode(pyCd, 0.0f);
       pyCd.append(", \"rotation_mode\": ");
       pyCd.append(rotationMode);
       pyCd.append(", \"rotation_quaternion\": (");
@@ -837,9 +837,9 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
       pyCd.append(", 0.0, 0.0, ");
       pyCd.append(Utils.toFixed(Utils.sin(halfRad), 6));
       pyCd.append("), \"scale\": ");
-      pyCd.append(this.scale.toBlenderCode(depth));
+      this.scale.toBlenderCode(pyCd, depth);
       pyCd.append("}");
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**

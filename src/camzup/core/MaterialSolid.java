@@ -457,11 +457,11 @@ public class MaterialSolid extends Material {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how curve geometry looks in Blender (the control) versus in the
-    * library (the test).
+    * An internal helper function to format a vector as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x.
     *
+    * @param pyCd           the string builder
     * @param gamma          the gamma adjustment
     * @param metallic       the metallic factor
     * @param roughness      the roughness
@@ -469,18 +469,17 @@ public class MaterialSolid extends Material {
     * @param clearcoat      clear coat factor
     * @param clearcoatRough clear coat roughness
     *
-    * @return the string
+    * @return the string builder
     */
    @Experimental
-   String toBlenderCode ( final float gamma, final float metallic,
-      final float roughness, final float specular, final float clearcoat,
-      final float clearcoatRough ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd, final float gamma,
+      final float metallic, final float roughness, final float specular,
+      final float clearcoat, final float clearcoatRough ) {
 
-      final StringBuilder pyCd = new StringBuilder(256);
       pyCd.append("{\"name\": \"");
       pyCd.append(this.name);
       pyCd.append("\", \"fill\": ");
-      pyCd.append(this.fill.toBlenderCode(gamma, true));
+      this.fill.toBlenderCode(pyCd, gamma, true);
       pyCd.append(", \"metallic\": ");
       pyCd.append(Utils.toFixed(metallic, 6));
       pyCd.append(", \"roughness\": ");
@@ -492,30 +491,22 @@ public class MaterialSolid extends Material {
       pyCd.append(", \"clearcoat_roughness\": ");
       pyCd.append(Utils.toFixed(clearcoatRough, 6));
       pyCd.append('}');
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**
-    * Returns an SVG snippet as a string.
+    * Appends a representation of this material to a {@link StringBuilder} for
+    * writing an SVG.
     *
-    * @return the string
-    *
-    * @see Utils#clamp01(float)
-    * @see Color#toHexWeb(Color)
-    */
-   String toSvgString ( ) { return this.toSvgString(1.0f); }
-
-   /**
-    * Returns an SVG snippet as a string.
-    *
+    * @param svgp  the string builder
     * @param scale the transform scale.
     *
-    * @return the string
+    * @return the string builder
     *
     * @see Utils#clamp01(float)
     * @see Color#toHexWeb(Color)
     */
-   String toSvgString ( final float scale ) {
+   StringBuilder toSvgString ( final StringBuilder svgp, final float scale ) {
 
       /*
        * This needs to be printed to a high precision because of small meshes
@@ -523,7 +514,6 @@ public class MaterialSolid extends Material {
        */
       final String strokeStr = Utils.toFixed(Utils.max(IUtils.EPSILON, Utils
          .div(this.strokeWeight, scale)), 6);
-      final StringBuilder svgp = new StringBuilder(256);
       svgp.append("id=\"");
       svgp.append(this.name);
       svgp.append('\"');
@@ -555,7 +545,7 @@ public class MaterialSolid extends Material {
       } else {
          svgp.append("fill=\"none\"");
       }
-      return svgp.toString();
+      return svgp;
    }
 
    /**
@@ -578,6 +568,8 @@ public class MaterialSolid extends Material {
     * @return the string
     */
    public static String defaultSvgMaterial ( final float scale ) {
+      // TODO Where is this used? Presumably in pfriendly, which is why it is
+      // public not package? Append a comment explaining why.
 
       /*
        * This needs to be printed to a higher precision, six, because of small
@@ -677,7 +669,7 @@ public class MaterialSolid extends Material {
       pyCd.append("{\"name\": \"");
       pyCd.append("Material");
       pyCd.append("\", \"fill\": ");
-      pyCd.append(c.toBlenderCode(gamma, true));
+      c.toBlenderCode(pyCd, gamma, true);
       pyCd.append(", \"metallic\": 0.0");
       pyCd.append(", \"roughness\": 1.0");
       pyCd.append(", \"specular\": 0.0");

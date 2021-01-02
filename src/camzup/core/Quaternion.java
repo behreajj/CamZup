@@ -249,18 +249,19 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how transforms look in Blender (the control) versus in the
-    * library (the test). This is formatted as a four-tuple where w is the
-    * first element.
+    * An internal helper function to format a vector as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x.<br>
+    * <br>
+    * This is formatted as a four-tuple where w is the first element.
+    * 
+    * @param pyCd the string builder
     *
-    * @return the string
+    * @return the string builder
     */
    @Experimental
-   String toBlenderCode ( ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd ) {
 
-      final StringBuilder pyCd = new StringBuilder(96);
       pyCd.append('(');
       pyCd.append(Utils.toFixed(this.real, 6));
       pyCd.append(',');
@@ -273,7 +274,7 @@ public class Quaternion implements Comparable < Quaternion > {
       pyCd.append(' ');
       pyCd.append(Utils.toFixed(this.imag.z, 6));
       pyCd.append(')');
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**

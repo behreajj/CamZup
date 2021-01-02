@@ -438,14 +438,14 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
       pyCd.append("curve_entity = {\"name\": \"");
       pyCd.append(this.name);
       pyCd.append("\", \"transform\": ");
-      pyCd.append(this.transform.toBlenderCode());
+      this.transform.toBlenderCode(pyCd);
       pyCd.append(", \"curves\": [");
 
       int curveIndex = 0;
       final int curveLast = this.curves.size() - 1;
       final Iterator < Curve3 > itr = this.curves.iterator();
       while ( itr.hasNext() ) {
-         pyCd.append(itr.next().toBlenderCode(uRes, tiltStart, tiltEnd));
+         itr.next().toBlenderCode(pyCd, uRes, tiltStart, tiltEnd);
          if ( curveIndex < curveLast ) { pyCd.append(',').append(' '); }
          ++curveIndex;
       }

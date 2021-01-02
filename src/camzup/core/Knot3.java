@@ -1002,41 +1002,27 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how curve geometry looks in Blender (the control) versus in the
-    * library (the test).
+    * An internal helper function to format a vector as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x.
     *
-    * @return the string
-    */
-   String toBlenderCode ( ) {
-
-      return this.toBlenderCode(1.0f, 1.0f, 0.0f);
-   }
-
-   /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how curve geometry looks in Blender (the control) versus in the
-    * library (the test).
-    *
+    * @param pyCd   the string builder
     * @param weight soft body weight
     * @param radius bevel radius
     * @param tilt   tilt
     *
-    * @return the string
+    * @return the string builder
     */
    @Experimental
-   String toBlenderCode ( final float weight, final float radius,
-      final float tilt ) {
+   StringBuilder toBlenderCode ( StringBuilder pyCd, final float weight,
+      final float radius, final float tilt ) {
 
-      final StringBuilder pyCd = new StringBuilder(384);
       pyCd.append("{\"co\": ");
-      pyCd.append(this.coord.toBlenderCode());
+      this.coord.toBlenderCode(pyCd);
       pyCd.append(", \"handle_right\": ");
-      pyCd.append(this.foreHandle.toBlenderCode());
+      this.foreHandle.toBlenderCode(pyCd);
       pyCd.append(", \"handle_left\": ");
-      pyCd.append(this.rearHandle.toBlenderCode());
+      this.rearHandle.toBlenderCode(pyCd);
       pyCd.append(", \"weight\": ");
       pyCd.append(Utils.toFixed(weight, 6));
       pyCd.append(", \"radius\": ");
@@ -1044,7 +1030,7 @@ public class Knot3 implements Comparable < Knot3 > {
       pyCd.append(", \"tilt\": ");
       pyCd.append(Utils.toFixed(tilt, 6));
       pyCd.append('}');
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**

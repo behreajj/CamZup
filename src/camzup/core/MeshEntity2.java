@@ -404,14 +404,13 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       final StringBuilder pyCd = new StringBuilder(2048);
 
-      // TODO: Refactor to always use BMesh.
       if ( includeUvs ) { pyCd.append("import bmesh\n"); }
 
       pyCd.append("from bpy import data as D, context as C\n\n");
       pyCd.append("mesh_entity = {\"name\": \"");
       pyCd.append(this.name);
       pyCd.append("\", \"transform\": ");
-      pyCd.append(this.transform.toBlenderCode());
+      this.transform.toBlenderCode(pyCd);
       pyCd.append(", \"meshes\": [");
 
       final Iterator < Mesh2 > meshItr = this.meshes.iterator();
@@ -426,8 +425,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
          final int matLast = matLen - 1;
 
          for ( int i = 0; i < matLen; ++i ) {
-            pyCd.append(materials[i].toBlenderCode(gamma, metallic, roughness,
-               specular, clearcoat, clearcoatRough));
+            materials[i].toBlenderCode(pyCd, gamma, metallic, roughness,
+               specular, clearcoat, clearcoatRough);
             if ( i < matLast ) { pyCd.append(',').append(' '); }
          }
       } else {
@@ -716,7 +715,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
             final int vMatIdx = Utils.mod(mesh.materialIndex, matLen);
             final MaterialSolid material = materials[vMatIdx];
             svgp.append("<g ");
-            svgp.append(material.toSvgString(scale));
+            material.toSvgString(svgp, scale);
             svgp.append(">\n");
          }
 
