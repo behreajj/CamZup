@@ -240,9 +240,9 @@ public class Quaternion implements Comparable < Quaternion > {
 
       final StringBuilder sb = new StringBuilder(128);
       sb.append("{ real: ");
-      sb.append(Utils.toFixed(this.real, places));
+      Utils.toFixed(sb, this.real, places);
       sb.append(", imag: ");
-      sb.append(this.imag.toString(places));
+      this.imag.toString(sb, places);
       sb.append(' ');
       sb.append('}');
       return sb.toString();
@@ -254,7 +254,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * compare results with Blender 2.9x.<br>
     * <br>
     * This is formatted as a four-tuple where w is the first element.
-    * 
+    *
     * @param pyCd the string builder
     *
     * @return the string builder
@@ -263,16 +263,16 @@ public class Quaternion implements Comparable < Quaternion > {
    StringBuilder toBlenderCode ( final StringBuilder pyCd ) {
 
       pyCd.append('(');
-      pyCd.append(Utils.toFixed(this.real, 6));
+      Utils.toFixed(pyCd, this.real, 6);
       pyCd.append(',');
       pyCd.append(' ');
-      pyCd.append(Utils.toFixed(this.imag.x, 6));
+      Utils.toFixed(pyCd, this.imag.x, 6);
       pyCd.append(',');
       pyCd.append(' ');
-      pyCd.append(Utils.toFixed(this.imag.y, 6));
+      Utils.toFixed(pyCd, this.imag.y, 6);
       pyCd.append(',');
       pyCd.append(' ');
-      pyCd.append(Utils.toFixed(this.imag.z, 6));
+      Utils.toFixed(pyCd, this.imag.z, 6);
       pyCd.append(')');
       return pyCd;
    }

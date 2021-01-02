@@ -460,10 +460,10 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       pyCd.append(fillMode);
       pyCd.append("\"\n");
       pyCd.append("crv_data.extrude = ");
-      pyCd.append(Utils.toFixed(extrude, 6));
+      Utils.toFixed(pyCd, extrude, 6);
       pyCd.append('\n');
       pyCd.append("crv_data.bevel_depth = ");
-      pyCd.append(Utils.toFixed(bevelDepth, 6));
+      Utils.toFixed(pyCd, bevelDepth, 6);
       pyCd.append('\n');
       pyCd.append("crv_splines = crv_data.splines\n");
       pyCd.append("crv_index = 0\n");

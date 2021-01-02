@@ -69,3 +69,9 @@ void draw() {
   rndr.shape(me2, textured);
   rndr.shape(me3, wire);
 }
+
+void mouseReleased() {
+  String objs = me1.toObjString();
+  saveStrings("data/icosphere.obj", new String[] { objs });
+  println("OBJ file saved.");
+}

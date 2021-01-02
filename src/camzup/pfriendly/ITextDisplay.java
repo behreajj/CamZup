@@ -212,8 +212,6 @@ public interface ITextDisplay {
     *
     * @param str the string
     * @param v   the location
-    *
-    * @see Utils#toFixed(float, int)
     */
    default void text ( final String str, final Vec2 v ) {
 

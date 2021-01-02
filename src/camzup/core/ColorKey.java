@@ -215,14 +215,7 @@ public class ColorKey implements Comparable < ColorKey > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(96);
-      sb.append("{ step: ");
-      sb.append(Utils.toFixed(this.step, places));
-      sb.append(", clr: ");
-      sb.append(this.clr.toString(places));
-      sb.append(' ');
-      sb.append('}');
-      return sb.toString();
+      return this.toString(new StringBuilder(96), places).toString();
    }
 
    /**
@@ -235,11 +228,11 @@ public class ColorKey implements Comparable < ColorKey > {
 
       final StringBuilder svgp = new StringBuilder(96);
       svgp.append("<stop offset=\"");
-      svgp.append(Utils.toFixed(this.step, 6));
+      Utils.toFixed(svgp, this.step, 6);
       svgp.append("\" stop-color=\"");
       svgp.append(Color.toHexWeb(this.clr));
       svgp.append("\" stop-opacity=\"");
-      svgp.append(Utils.toFixed(this.clr.a, 6));
+      Utils.toFixed(svgp, this.clr.a, 6);
       svgp.append("\"/>");
       return svgp.toString();
    }
@@ -290,20 +283,40 @@ public class ColorKey implements Comparable < ColorKey > {
     * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes.
     *
+    * @param pyCd  the string builder
     * @param gamma the gamma adjustment
     *
-    * @return the string
+    * @return the string builder
     */
    @Experimental
-   String toBlenderCode ( final float gamma ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd, final float gamma ) {
 
-      final StringBuilder pyCd = new StringBuilder(256);
       pyCd.append("{\"position\": ");
-      pyCd.append(Utils.toFixed(Utils.clamp01(this.step), 3));
+      Utils.toFixed(pyCd, Utils.clamp01(this.step), 3);
       pyCd.append(", \"color\": ");
       this.clr.toBlenderCode(pyCd, gamma, true);
       pyCd.append('}');
-      return pyCd.toString();
+      return pyCd;
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * color keys. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ step: ");
+      Utils.toFixed(sb, this.step, places);
+      sb.append(", clr: ");
+      this.clr.toString(sb, places);
+      sb.append(' ');
+      sb.append('}');
+      return sb;
    }
 
    /**

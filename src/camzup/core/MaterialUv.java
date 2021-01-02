@@ -336,7 +336,7 @@ public abstract class MaterialUv extends Material implements IOriented2,
       sb.append("{ name: \"");
       sb.append(this.name);
       sb.append("\", tint: ");
-      sb.append(this.tint.toString(places));
+      this.tint.toString(sb, places);
       sb.append(", transform: ");
       sb.append(this.transform.toString(places));
       sb.append(' ');

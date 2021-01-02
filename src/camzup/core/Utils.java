@@ -1492,76 +1492,13 @@ public abstract class Utils implements IUtils {
     * DecimalFormat, which extrapolates values beyond the last decimal place.
     *
     * @param value  the real number
-    * @param places the desired number of decimal places
+    * @param places the number of decimal places
     *
     * @return the string
     */
    public static String toFixed ( final float value, final int places ) {
 
-      // TODO: Create a package level version of this function which accepts and
-      // returns a StringBuilder, then make the public version a wrapper for it?
-
-      final int raw = Float.floatToRawIntBits(value);
-      switch ( raw ) {
-         case 0x0: /* Positive zero. */
-         case 0x80000000: /* Negative zero. */
-         case 0x7fc00000: /* Not a number (NaN). */
-            return "0.0";
-
-         case 0xff800000: /* Negative infinity. */
-         case 0x1: /* Minimum value. */
-            return "1.4E-45";
-
-         case 0x7f800000: /* Positive infinity. */
-         case 0x7f7fffff: /* Max value. */
-            return "3.4028235E38";
-
-         default:
-      }
-
-      if ( places < 0 ) { return Integer.toString(( int ) value); }
-      if ( places < 1 ) { return Float.toString(( int ) value); }
-
-      final float sign = Float.intBitsToFloat(raw & -2147483648 | 1065353216);
-      final float abs = Float.intBitsToFloat(raw & 2147483647);
-      final int trunc = ( int ) abs;
-      final StringBuilder sb = new StringBuilder(16);
-
-      /* Append integral to StringBuilder. */
-      int len = 0;
-      if ( sign < -0.0f ) {
-         sb.append('-').append(trunc);
-         len = sb.length() - 1;
-      } else {
-         sb.append(trunc);
-         len = sb.length();
-      }
-      sb.append('.');
-
-      /*
-       * Hard-coded limit on the number of worthwhile decimal places beyond
-       * which single precision is no longer worth representing accurately.
-       */
-      final int maxPlaces = 9 - len;
-
-      /*
-       * The integral has so many digits that it has consumed the allotment.
-       * (Might be scientific notation?)
-       */
-      if ( maxPlaces < 1 ) { return Float.toString(value); }
-
-      final int vetPlaces = places < maxPlaces ? places : maxPlaces;
-      float frac = abs - trunc;
-
-      /* Truncation. */
-      for ( int i = 0; i < vetPlaces; ++i ) {
-         frac *= 10.0f;
-         final int tr = ( int ) frac;
-         frac -= tr;
-         sb.append(tr);
-      }
-
-      return sb.toString();
+      return Utils.toFixed(new StringBuilder(16), value, places).toString();
    }
 
    /**
@@ -1574,32 +1511,7 @@ public abstract class Utils implements IUtils {
     */
    public static String toPadded ( final int value, final int places ) {
 
-      /*
-       * Double precision is needed to preserve accuracy. The max integer value
-       * is 2147483647, which is 10 digits long. The sign needs to be flipped
-       * because working with positive absolute value would allow
-       * Integer#MIN_VALUE to overflow to zero.
-       */
-
-      final boolean isNeg = value < 0;
-      int nAbsVal = isNeg ? value : -value;
-
-      final int[] digits = new int[10];
-      int filled = 0;
-      while ( nAbsVal < 0 ) {
-         final double y = nAbsVal * 0.1d;
-         nAbsVal = ( int ) y;
-         digits[filled] = -( int ) ( ( y - nAbsVal ) * 10.0d - 0.5d );
-         ++filled;
-      }
-
-      final StringBuilder sb = new StringBuilder(16);
-      if ( isNeg ) { sb.append('-'); }
-      int vplaces = places < 1 ? 1 : places;
-      vplaces = filled > vplaces ? filled : vplaces;
-      for ( int n = vplaces - 1; n > -1; --n ) { sb.append(digits[n]); }
-
-      return sb.toString();
+      return Utils.toPadded(new StringBuilder(16), value, places).toString();
    }
 
    /**
@@ -1640,7 +1552,7 @@ public abstract class Utils implements IUtils {
       final StringBuilder sb = new StringBuilder(len * 32);
       sb.append('[').append(' ');
       for ( int i = 0; i < arr.length; ++i ) {
-         sb.append(Utils.toFixed(arr[i], places));
+         Utils.toFixed(sb, arr[i], places);
          if ( i < last ) { sb.append(',').append(' '); }
       }
       sb.append(' ').append(']');
@@ -1663,7 +1575,7 @@ public abstract class Utils implements IUtils {
       final StringBuilder sb = new StringBuilder(len * 32);
       sb.append('[').append(' ');
       for ( int i = 0; i < arr.length; ++i ) {
-         sb.append(Utils.toPadded(arr[i], padding));
+         Utils.toPadded(sb, arr[i], padding);
          if ( i < last ) { sb.append(',').append(' '); }
       }
       sb.append(' ').append(']');
@@ -1753,6 +1665,124 @@ public abstract class Utils implements IUtils {
 
       return ( a != 0.0f && a != Float.NaN ? 1 : 0 ) ^ ( b != 0.0f && b
          != Float.NaN ? 1 : 0 );
+   }
+
+   /**
+    * An internal helper function to the {@link Utils#toFixed(float, int)}
+    * method and other String representation functions. Appends to a
+    * {@link StringBuilder} passed in by reference.
+    *
+    * @param sb     the string builder
+    * @param value  the real number
+    * @param places the number of decimal places
+    *
+    * @return the string builder
+    */
+   static StringBuilder toFixed ( final StringBuilder sb, final float value,
+      final int places ) {
+
+      final int raw = Float.floatToRawIntBits(value);
+      switch ( raw ) {
+         case 0x0: /* Positive zero. */
+         case 0x80000000: /* Negative zero. */
+         case 0x7fc00000: /* Not a number (NaN). */
+            return sb.append("0.0");
+
+         case 0xff800000: /* Negative infinity. */
+         case 0x1: /* Minimum value. */
+            return sb.append("1.4E-45");
+
+         case 0x7f800000: /* Positive infinity. */
+         case 0x7f7fffff: /* Max value. */
+            return sb.append("3.4028235E38");
+
+         default:
+      }
+
+      if ( places < 0 ) { return sb.append(Integer.toString(( int ) value)); }
+      if ( places < 1 ) { return sb.append(Float.toString(( int ) value)); }
+
+      final float sign = Float.intBitsToFloat(raw & -2147483648 | 1065353216);
+      final float abs = Float.intBitsToFloat(raw & 2147483647);
+      final int trunc = ( int ) abs;
+
+      /* Append integral to StringBuilder. */
+      final int oldLen = sb.length();
+      int len = 0;
+      if ( sign < -0.0f ) {
+         sb.append('-').append(trunc);
+         len = sb.length() - oldLen - 1;
+      } else {
+         sb.append(trunc);
+         len = sb.length() - oldLen;
+      }
+      sb.append('.');
+
+      /*
+       * Hard-coded limit on the number of worthwhile decimal places beyond
+       * which single precision is no longer worth representing accurately.
+       */
+      final int maxPlaces = 9 - len;
+
+      /*
+       * The integral has so many digits that it has consumed the allotment.
+       * (Might be scientific notation?)
+       */
+      if ( maxPlaces < 1 ) { return sb.append(Float.toString(value)); }
+
+      final int vetPlaces = places < maxPlaces ? places : maxPlaces;
+      float frac = abs - trunc;
+
+      /* Truncation. */
+      for ( int i = 0; i < vetPlaces; ++i ) {
+         frac *= 10.0f;
+         final int tr = ( int ) frac;
+         frac -= tr;
+         sb.append(tr);
+      }
+
+      return sb;
+   }
+
+   /**
+    * An internal helper function to the {@link Utils#toPadded(int, int)}
+    * method and other String representation functions. Appends to a
+    * {@link StringBuilder} passed in by reference.
+    *
+    * @param sb     the string builder
+    * @param value  the integer
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   static StringBuilder toPadded ( final StringBuilder sb, final int value,
+      final int places ) {
+
+      /*
+       * Double precision is needed to preserve accuracy. The max integer value
+       * is 2147483647, which is 10 digits long. The sign needs to be flipped
+       * because working with positive absolute value would allow
+       * Integer#MIN_VALUE to overflow to zero.
+       */
+
+      final boolean isNeg = value < 0;
+      int nAbsVal = isNeg ? value : -value;
+
+      final int[] digits = new int[10];
+      int filled = 0;
+      while ( nAbsVal < 0 ) {
+         final double y = nAbsVal * 0.1d;
+         nAbsVal = ( int ) y;
+         digits[filled] = -( int ) ( ( y - nAbsVal ) * 10.0d - 0.5d );
+         ++filled;
+      }
+
+      if ( isNeg ) { sb.append('-'); }
+      int vplaces = places < 1 ? 1 : places;
+      vplaces = filled > vplaces ? filled : vplaces;
+      for ( int n = vplaces - 1; n > -1; --n ) { sb.append(digits[n]); }
+
+      return sb;
    }
 
    /**

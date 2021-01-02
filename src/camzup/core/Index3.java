@@ -196,11 +196,11 @@ class Index3 implements Comparable < Index3 > {
 
       final StringBuilder sb = new StringBuilder(64);
       sb.append("{ v: ");
-      sb.append(Utils.toPadded(this.v, padding));
+      Utils.toPadded(sb, this.v, padding);
       sb.append(", vt: ");
-      sb.append(Utils.toPadded(this.vt, padding));
+      Utils.toPadded(sb, this.vt, padding);
       sb.append(", vn: ");
-      sb.append(Utils.toPadded(this.vn, padding));
+      Utils.toPadded(sb, this.vn, padding);
       sb.append(' ');
       sb.append('}');
       return sb.toString();

@@ -548,10 +548,10 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
          pyCd.append("    solidify = mesh_obj.modifiers.new(");
          pyCd.append("\"Solidify\", \"SOLIDIFY\")\n");
          pyCd.append("    solidify.thickness = ");
-         pyCd.append(Utils.toFixed(extrude, 6));
+         Utils.toFixed(pyCd, extrude, 6);
          pyCd.append("\n");
          pyCd.append("    solidify.offset = ");
-         pyCd.append(Utils.toFixed(offset, 6));
+         Utils.toFixed(pyCd, offset, 6);
          pyCd.append("\n");
          pyCd.append("    solidify.show_in_editmode = False\n");
       }
@@ -582,7 +582,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       int fCount = 0;
       while ( itr.hasNext() ) {
          final Mesh2 mesh = itr.next();
-         objs.append(mesh.toObjString(vIdx, vtIdx, vnIdx));
+         mesh.toObjString(objs, vIdx, vtIdx, vnIdx);
 
          vIdx += mesh.coords.length;
          vtIdx += mesh.texCoords.length;

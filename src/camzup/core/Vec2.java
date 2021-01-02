@@ -175,23 +175,6 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Returns a string representation of this vector as a space separated
-    * value for use by OBJ formatting functions.
-    *
-    * @return the string
-    *
-    * @see Utils#toFixed(float, int)
-    */
-   public String toObjString ( ) {
-
-      final StringBuilder objs = new StringBuilder(16);
-      objs.append(Utils.toFixed(this.x, 6));
-      objs.append(' ');
-      objs.append(Utils.toFixed(this.y, 6));
-      return objs.toString();
-   }
-
-   /**
     * Returns a string representation of this vector.
     *
     * @return the string
@@ -205,19 +188,10 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param places number of decimal places
     *
     * @return the string
-    *
-    * @see Utils#toFixed(float, int)
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(48);
-      sb.append("{ x: ");
-      sb.append(Utils.toFixed(this.x, places));
-      sb.append(", y: ");
-      sb.append(Utils.toFixed(this.y, places));
-      sb.append(' ');
-      sb.append('}');
-      return sb.toString();
+      return this.toString(new StringBuilder(48), places).toString();
    }
 
    /**
@@ -232,18 +206,16 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param flipv whether to subtract y from 1.0
     *
     * @return the string builder
-    *
-    * @see Utils#toFixed(float, int)
     */
    @Experimental
    StringBuilder toBlenderCode ( final StringBuilder pyCd,
       final boolean flipv ) {
 
       pyCd.append('(');
-      pyCd.append(Utils.toFixed(flipv ? this.x : 1.0f - this.x, 6));
+      Utils.toFixed(pyCd, flipv ? this.x : 1.0f - this.x, 6);
       pyCd.append(',');
       pyCd.append(' ');
-      pyCd.append(Utils.toFixed(flipv ? 1.0f - this.y : this.y, 6));
+      Utils.toFixed(pyCd, flipv ? 1.0f - this.y : this.y, 6);
       pyCd.append(')');
       return pyCd;
    }
@@ -256,24 +228,58 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @param pyCd string builder
     * @param z    the z component
-    * 
-    * @return the string builder
     *
-    * @see Utils#toFixed(float, int)
+    * @return the string builder
     */
    @Experimental
    StringBuilder toBlenderCode ( final StringBuilder pyCd, final float z ) {
 
       pyCd.append('(');
-      pyCd.append(Utils.toFixed(this.x, 6));
+      Utils.toFixed(pyCd, this.x, 6);
       pyCd.append(',');
       pyCd.append(' ');
-      pyCd.append(Utils.toFixed(this.y, 6));
+      Utils.toFixed(pyCd, this.y, 6);
       pyCd.append(',');
       pyCd.append(' ');
-      pyCd.append(Utils.toFixed(z, 6));
+      Utils.toFixed(pyCd, z, 6);
       pyCd.append(')');
       return pyCd;
+   }
+
+   /**
+    * Internal helper method that appends a representation of this vector in
+    * the Wavefront OBJ file format to a {@link StringBuilder}.
+    *
+    * @param objs the string builder
+    *
+    * @return the string builder
+    */
+   StringBuilder toObjString ( final StringBuilder objs ) {
+
+      Utils.toFixed(objs, this.x, 6);
+      objs.append(' ');
+      Utils.toFixed(objs, this.y, 6);
+      return objs;
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * vectors. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ x: ");
+      Utils.toFixed(sb, this.x, places);
+      sb.append(", y: ");
+      Utils.toFixed(sb, this.y, places);
+      sb.append(' ');
+      sb.append('}');
+      return sb;
    }
 
    /**
@@ -285,16 +291,14 @@ public class Vec2 implements Comparable < Vec2 > {
     * small shapes are scaled up.
     *
     * @param svgp string builder
-    * 
-    * @return the string builder
     *
-    * @see Utils#toFixed(float, int)
+    * @return the string builder
     */
    StringBuilder toSvgString ( final StringBuilder svgp ) {
 
-      svgp.append(Utils.toFixed(this.x, 6));
+      Utils.toFixed(svgp, this.x, 6);
       svgp.append(' ');
-      svgp.append(Utils.toFixed(this.y, 6));
+      Utils.toFixed(svgp, this.y, 6);
       return svgp;
    }
 
@@ -2674,6 +2678,8 @@ public class Vec2 implements Comparable < Vec2 > {
     */
    public static String toString ( final Vec2[] arr, final int places ) {
 
+      // TODO: Guard against null entries?
+
       final StringBuilder sb = new StringBuilder(1024);
       sb.append('[').append(' ');
 
@@ -2683,12 +2689,12 @@ public class Vec2 implements Comparable < Vec2 > {
 
          for ( int i = 0; i < last; ++i ) {
             final Vec2 v = arr[i];
-            sb.append(v != null ? v.toString(places) : "null");
+            v.toString(sb, places);
             sb.append(',').append(' ');
          }
 
          final Vec2 vl = arr[last];
-         sb.append(vl != null ? vl.toString(places) : "null");
+         vl.toString(sb, places);
          sb.append(' ');
       }
 

@@ -935,16 +935,7 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(384);
-      sb.append("{ coord: ");
-      sb.append(this.coord.toString(places));
-      sb.append(", foreHandle: ");
-      sb.append(this.foreHandle.toString(places));
-      sb.append(", rearHandle: ");
-      sb.append(this.rearHandle.toString(places));
-      sb.append(' ');
-      sb.append('}');
-      return sb.toString();
+      return this.toString(new StringBuilder(384), places).toString();
    }
 
    /**
@@ -1014,7 +1005,7 @@ public class Knot3 implements Comparable < Knot3 > {
     * @return the string builder
     */
    @Experimental
-   StringBuilder toBlenderCode ( StringBuilder pyCd, final float weight,
+   StringBuilder toBlenderCode ( final StringBuilder pyCd, final float weight,
       final float radius, final float tilt ) {
 
       pyCd.append("{\"co\": ");
@@ -1024,13 +1015,35 @@ public class Knot3 implements Comparable < Knot3 > {
       pyCd.append(", \"handle_left\": ");
       this.rearHandle.toBlenderCode(pyCd);
       pyCd.append(", \"weight\": ");
-      pyCd.append(Utils.toFixed(weight, 6));
+      Utils.toFixed(pyCd, weight, 6);
       pyCd.append(", \"radius\": ");
-      pyCd.append(Utils.toFixed(radius, 6));
+      Utils.toFixed(pyCd, radius, 6);
       pyCd.append(", \"tilt\": ");
-      pyCd.append(Utils.toFixed(tilt, 6));
+      Utils.toFixed(pyCd, tilt, 6);
       pyCd.append('}');
       return pyCd;
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * knots. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ coord: ");
+      this.coord.toString(sb, places);
+      sb.append(", foreHandle: ");
+      this.foreHandle.toString(sb, places);
+      sb.append(", rearHandle: ");
+      this.rearHandle.toString(sb, places);
+      sb.append(' ');
+      sb.append('}');
+      return sb;
    }
 
    /**

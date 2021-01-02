@@ -660,7 +660,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       while ( itr.hasNext() ) {
-         sb.append(itr.next().toString(places));
+         itr.next().toString(sb, places);
          if ( itr.hasNext() ) { sb.append(',').append(' '); }
       }
 
@@ -1531,7 +1531,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final StringBuilder sb = new StringBuilder(64);
       sb.append(mesh.name);
       sb.append('.');
-      sb.append(Utils.toPadded(i, 3));
+      Utils.toPadded(sb, i, 3);
 
       target.name = sb.toString();
       target.closedLoop = true;
@@ -2142,25 +2142,25 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       target.resize(4);
 
       final Iterator < Knot2 > itr = target.knots.iterator();
-      final Knot2 kn0 = itr.next();
-      final Knot2 kn1 = itr.next();
-      final Knot2 kn2 = itr.next();
       final Knot2 kn3 = itr.next();
+      final Knot2 kn2 = itr.next();
+      final Knot2 kn1 = itr.next();
+      final Knot2 kn0 = itr.next();
 
       kn0.set(x0, y0, 0.0f, 0.0f, 0.0f, 0.0f);
       kn1.set(x1, y0, 0.0f, 0.0f, 0.0f, 0.0f);
       kn2.set(x1, y1, 0.0f, 0.0f, 0.0f, 0.0f);
       kn3.set(x0, y1, 0.0f, 0.0f, 0.0f, 0.0f);
 
-      Curve2.lerp13(kn0.coord, kn1.coord, kn0.foreHandle);
-      Curve2.lerp13(kn1.coord, kn2.coord, kn1.foreHandle);
-      Curve2.lerp13(kn2.coord, kn3.coord, kn2.foreHandle);
-      Curve2.lerp13(kn3.coord, kn0.coord, kn3.foreHandle);
+      Curve2.lerp13(kn0.coord, kn1.coord, kn0.rearHandle);
+      Curve2.lerp13(kn1.coord, kn2.coord, kn1.rearHandle);
+      Curve2.lerp13(kn2.coord, kn3.coord, kn2.rearHandle);
+      Curve2.lerp13(kn3.coord, kn0.coord, kn3.rearHandle);
 
-      Curve2.lerp13(kn0.coord, kn3.coord, kn0.rearHandle);
-      Curve2.lerp13(kn1.coord, kn0.coord, kn1.rearHandle);
-      Curve2.lerp13(kn2.coord, kn1.coord, kn2.rearHandle);
-      Curve2.lerp13(kn3.coord, kn2.coord, kn3.rearHandle);
+      Curve2.lerp13(kn0.coord, kn3.coord, kn0.foreHandle);
+      Curve2.lerp13(kn1.coord, kn0.coord, kn1.foreHandle);
+      Curve2.lerp13(kn2.coord, kn1.coord, kn2.foreHandle);
+      Curve2.lerp13(kn3.coord, kn2.coord, kn3.foreHandle);
 
       return target;
    }
@@ -2206,6 +2206,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    static Curve2 rect ( final float lbx, final float lby, final float ubx,
       final float uby, final float tl, final float tr, final float br,
       final float bl, final Curve2 target ) {
+
+      // TODO: Handles are improperly wound.
 
       target.closedLoop = true;
       target.name = "Rect";

@@ -763,16 +763,7 @@ public class Knot2 implements Comparable < Knot2 > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(256);
-      sb.append("{ coord: ");
-      sb.append(this.coord.toString(places));
-      sb.append(", foreHandle: ");
-      sb.append(this.foreHandle.toString(places));
-      sb.append(", rearHandle: ");
-      sb.append(this.rearHandle.toString(places));
-      sb.append(' ');
-      sb.append('}');
-      return sb.toString();
+      return this.toString(new StringBuilder(256), places).toString();
    }
 
    /**
@@ -851,6 +842,28 @@ public class Knot2 implements Comparable < Knot2 > {
       this.rearHandle.toBlenderCode(pyCd, z);
       pyCd.append('}');
       return pyCd;
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * knots. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ coord: ");
+      this.coord.toString(sb, places);
+      sb.append(", foreHandle: ");
+      this.foreHandle.toString(sb, places);
+      sb.append(", rearHandle: ");
+      this.rearHandle.toString(sb, places);
+      sb.append(' ');
+      sb.append('}');
+      return sb;
    }
 
    /**

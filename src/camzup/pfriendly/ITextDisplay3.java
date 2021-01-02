@@ -149,6 +149,8 @@ public interface ITextDisplay3 extends ITextDisplay {
     * @param x the x coordinate
     * @param y the y coordinate
     * @param z the z coordinate
+    *
+    * @see Utils#toPadded(int, int)
     */
    default void text ( final int i, final float x, final float y,
       final float z ) {
@@ -161,8 +163,6 @@ public interface ITextDisplay3 extends ITextDisplay {
     *
     * @param i the integer
     * @param v the location
-    *
-    * @see Utils#toFixed(float, int)
     */
    default void text ( final int i, final Vec3 v ) {
 
@@ -188,8 +188,6 @@ public interface ITextDisplay3 extends ITextDisplay {
     *
     * @param str the string
     * @param v   the location
-    *
-    * @see Utils#toFixed(float, int)
     */
    default void text ( final String str, final Vec3 v ) {
 

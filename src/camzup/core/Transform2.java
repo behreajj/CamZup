@@ -778,11 +778,11 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
 
       final StringBuilder sb = new StringBuilder(160);
       sb.append("{ location: ");
-      sb.append(this.location.toString(places));
+      this.location.toString(sb, places);
       sb.append(", rotation: ");
-      sb.append(Utils.toFixed(this.rotation, places));
+      Utils.toFixed(sb, this.rotation, places);
       sb.append(", scale: ");
-      sb.append(this.scale.toString(places));
+      this.scale.toString(sb, places);
       sb.append(" }");
       return sb.toString();
    }
@@ -817,7 +817,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     * @see Utils#sin(float)
     */
    @Experimental
-   StringBuilder toBlenderCode ( StringBuilder pyCd ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd ) {
 
       /*
        * Quaternion from angle: (cos(a * 0.5), 0.0, 0.0, sin(a * 0.5)) . Scale z
@@ -833,9 +833,9 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
       pyCd.append(", \"rotation_mode\": ");
       pyCd.append(rotationMode);
       pyCd.append(", \"rotation_quaternion\": (");
-      pyCd.append(Utils.toFixed(Utils.cos(halfRad), 6));
+      Utils.toFixed(pyCd, Utils.cos(halfRad), 6);
       pyCd.append(", 0.0, 0.0, ");
-      pyCd.append(Utils.toFixed(Utils.sin(halfRad), 6));
+      Utils.toFixed(pyCd, Utils.sin(halfRad), 6);
       pyCd.append("), \"scale\": ");
       this.scale.toBlenderCode(pyCd, depth);
       pyCd.append("}");
@@ -853,18 +853,18 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
 
       final StringBuilder svgp = new StringBuilder(96);
       svgp.append("transform=\"translate(");
-      svgp.append(Utils.toFixed(this.location.x, 6));
+      Utils.toFixed(svgp, this.location.x, 6);
       svgp.append(',');
       svgp.append(' ');
-      svgp.append(Utils.toFixed(this.location.y, 6));
+      Utils.toFixed(svgp, this.location.y, 6);
       svgp.append(") rotate(");
-      svgp.append(Utils.toFixed(Utils.modRadians(this.rotation)
-         * IUtils.RAD_TO_DEG, 0));
+      Utils.toFixed(svgp, Utils.modRadians(this.rotation) * IUtils.RAD_TO_DEG,
+         0);
       svgp.append(") scale(");
-      svgp.append(Utils.toFixed(this.scale.x, 6));
+      Utils.toFixed(svgp, this.scale.x, 6);
       svgp.append(',');
       svgp.append(' ');
-      svgp.append(Utils.toFixed(this.scale.y, 6));
+      Utils.toFixed(svgp, this.scale.y, 6);
       svgp.append(")\"");
       return svgp.toString();
    }

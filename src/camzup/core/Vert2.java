@@ -118,9 +118,9 @@ public class Vert2 implements Comparable < Vert2 > {
 
       final StringBuilder sb = new StringBuilder(256);
       sb.append("{ coord: ");
-      sb.append(this.coord.toString(places));
+      this.coord.toString(sb, places);
       sb.append(", texCoord: ");
-      sb.append(this.texCoord.toString(places));
+      this.texCoord.toString(sb, places);
       sb.append(' ');
       sb.append('}');
       return sb.toString();

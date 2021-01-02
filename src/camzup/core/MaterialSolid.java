@@ -433,8 +433,6 @@ public class MaterialSolid extends Material {
     * @param places the number of places
     *
     * @return the string
-    *
-    * @see Utils#toFixed(float, int)
     */
    public String toString ( final int places ) {
 
@@ -442,11 +440,11 @@ public class MaterialSolid extends Material {
       sb.append("{ name: \"");
       sb.append(this.name);
       sb.append("\", fill: ");
-      sb.append(this.fill.toString(places));
+      this.fill.toString(sb, places);
       sb.append(", stroke: ");
-      sb.append(this.stroke.toString(places));
+      this.stroke.toString(sb, places);
       sb.append(", strokeWeight: ");
-      sb.append(Utils.toFixed(this.strokeWeight, places));
+      Utils.toFixed(sb, this.strokeWeight, places);
       sb.append(", useFill: ");
       sb.append(this.useFill);
       sb.append(", useStroke: ");
@@ -481,15 +479,15 @@ public class MaterialSolid extends Material {
       pyCd.append("\", \"fill\": ");
       this.fill.toBlenderCode(pyCd, gamma, true);
       pyCd.append(", \"metallic\": ");
-      pyCd.append(Utils.toFixed(metallic, 6));
+      Utils.toFixed(pyCd, metallic, 6);
       pyCd.append(", \"roughness\": ");
-      pyCd.append(Utils.toFixed(roughness, 6));
+      Utils.toFixed(pyCd, roughness, 6);
       pyCd.append(", \"specular\": ");
-      pyCd.append(Utils.toFixed(specular, 6));
+      Utils.toFixed(pyCd, specular, 6);
       pyCd.append(", \"clearcoat\": ");
-      pyCd.append(Utils.toFixed(clearcoat, 6));
+      Utils.toFixed(pyCd, clearcoat, 6);
       pyCd.append(", \"clearcoat_roughness\": ");
-      pyCd.append(Utils.toFixed(clearcoatRough, 6));
+      Utils.toFixed(pyCd, clearcoatRough, 6);
       pyCd.append('}');
       return pyCd;
    }
@@ -524,7 +522,7 @@ public class MaterialSolid extends Material {
          svgp.append("stroke-width=\"");
          svgp.append(strokeStr);
          svgp.append("\" stroke-opacity=\"");
-         svgp.append(Utils.toFixed(Utils.clamp01(this.stroke.a), 6));
+         Utils.toFixed(svgp, Utils.clamp01(this.stroke.a), 6);
          svgp.append("\" stroke=\"").append(Color.toHexWeb(this.stroke));
          svgp.append("\" stroke-linejoin=\"");
          svgp.append(MaterialSolid.DEFAULT_SVG_STR_JOIN);
@@ -538,7 +536,7 @@ public class MaterialSolid extends Material {
       /* Fill style. */
       if ( this.useFill ) {
          svgp.append("fill-opacity=\"");
-         svgp.append(Utils.toFixed(Utils.clamp01(this.fill.a), 6));
+         Utils.toFixed(svgp, Utils.clamp01(this.fill.a), 6);
          svgp.append("\" fill=\"");
          svgp.append(Color.toHexWeb(this.fill));
          svgp.append('\"');

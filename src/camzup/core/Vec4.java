@@ -297,20 +297,18 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param places number of decimal places
     *
     * @return the string
-    *
-    * @see Utils#toFixed(float, int)
     */
    public String toString ( final int places ) {
 
       final StringBuilder sb = new StringBuilder(96);
       sb.append("{ x: ");
-      sb.append(Utils.toFixed(this.x, places));
+      Utils.toFixed(sb, this.x, places);
       sb.append(", y: ");
-      sb.append(Utils.toFixed(this.y, places));
+      Utils.toFixed(sb, this.y, places);
       sb.append(", z: ");
-      sb.append(Utils.toFixed(this.z, places));
+      Utils.toFixed(sb, this.z, places);
       sb.append(", w: ");
-      sb.append(Utils.toFixed(this.w, places));
+      Utils.toFixed(sb, this.w, places);
       sb.append(' ');
       sb.append('}');
       return sb.toString();

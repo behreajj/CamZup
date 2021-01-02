@@ -1,7 +1,7 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Yup2 graphics2;
+Yup2 graphics;
 CurveEntity2[] glyCrv;
 MeshEntity2[] glyMsh;
 
@@ -24,7 +24,7 @@ void settings() {
 }
 
 void setup() {
-  graphics2 = (Yup2)getGraphics();
+  graphics = (Yup2)getGraphics();
 
   PImage txtr = createImage(512, 512, ARGB);
   ZImage.rgb(txtr);
@@ -48,41 +48,47 @@ void setup() {
     glyph.scaleTo(scl);
   }
 
-  graphics2.moveTo(width * 0.45, height * 0.25);
+  graphics.moveTo(width * 0.45, height * 0.25);
 }
 
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  graphics2.background(#202020);
-  Vec2 m = graphics2.mouse1(new Vec2());
+  graphics.background(#202020);
+  Vec2 m = graphics.mouse1(new Vec2());
   Vec2.mul(m, 5.0, m);
-  graphics2.moveBy(m);
+  graphics.moveBy(m);
 
   if (toggle) {
     for (MeshEntity2 glyph : glyMsh) {
-      graphics2.shape(glyph, matMsh);
+      graphics.shape(glyph, matMsh);
       //graphics2.shape(glyph);
     }
   } else {
     for (CurveEntity2 glyph : glyCrv) {
-      graphics2.shape(glyph, matCrv);
+      graphics.shape(glyph, matCrv);
       if (showHandles) {
-        graphics2.handles(glyph);
+        graphics.handles(glyph);
       }
     }
   }
 }
 
 void mouseReleased() {
-    toggle = !toggle;
+  toggle = !toggle;
 }
 
 void mouseWheel(MouseEvent e) {
   float mWheel = e.getCount();
-  graphics2.zoomBy(-mWheel * 0.05);
+  graphics.zoomBy(-mWheel * 0.05);
 }
 
 void keyReleased() {
-  showHandles = !showHandles;
+  if (key == ' ') {
+    showHandles = !showHandles;
+  } else if (key == 's') {
+    String result = graphics.toSvgString(glyCrv, matCrv);
+    saveStrings("data/curve.svg", new String[] { result });
+    println("Saved to svg.");
+  }
 }

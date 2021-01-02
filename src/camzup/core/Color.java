@@ -462,18 +462,7 @@ public class Color implements Comparable < Color > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(96);
-      sb.append("{ r: ");
-      sb.append(Utils.toFixed(this.r, places));
-      sb.append(", g: ");
-      sb.append(Utils.toFixed(this.g, places));
-      sb.append(", b: ");
-      sb.append(Utils.toFixed(this.b, places));
-      sb.append(", a: ");
-      sb.append(Utils.toFixed(this.a, places));
-      sb.append(' ');
-      sb.append('}');
-      return sb.toString();
+      return this.toString(new StringBuilder(96), places).toString();
    }
 
    /**
@@ -500,18 +489,18 @@ public class Color implements Comparable < Color > {
       final boolean inclAlpha ) {
 
       pyCd.append('(');
-      pyCd.append(Utils.toFixed(Utils.pow(this.r, gamma), 6));
+      Utils.toFixed(pyCd, Utils.pow(this.r, gamma), 6);
       pyCd.append(',');
       pyCd.append(' ');
-      pyCd.append(Utils.toFixed(Utils.pow(this.g, gamma), 6));
+      Utils.toFixed(pyCd, Utils.pow(this.g, gamma), 6);
       pyCd.append(',');
       pyCd.append(' ');
-      pyCd.append(Utils.toFixed(Utils.pow(this.b, gamma), 6));
+      Utils.toFixed(pyCd, Utils.pow(this.b, gamma), 6);
 
       if ( inclAlpha ) {
          pyCd.append(',');
          pyCd.append(' ');
-         pyCd.append(Utils.toFixed(this.a, 6));
+         Utils.toFixed(pyCd, this.a, 6);
       }
 
       pyCd.append(')');
@@ -528,13 +517,13 @@ public class Color implements Comparable < Color > {
    String toGgrString ( ) {
 
       final StringBuilder ggr = new StringBuilder(96);
-      ggr.append(Utils.toFixed(this.r, 6));
+      Utils.toFixed(ggr, this.r, 6);
       ggr.append(' ');
-      ggr.append(Utils.toFixed(this.g, 6));
+      Utils.toFixed(ggr, this.g, 6);
       ggr.append(' ');
-      ggr.append(Utils.toFixed(this.b, 6));
+      Utils.toFixed(ggr, this.b, 6);
       ggr.append(' ');
-      ggr.append(Utils.toFixed(this.a, 6));
+      Utils.toFixed(ggr, this.a, 6);
       return ggr.toString();
    }
 
@@ -548,7 +537,7 @@ public class Color implements Comparable < Color > {
     *
     * @return the string builder
     */
-   StringBuilder toGplString ( StringBuilder gpl ) {
+   StringBuilder toGplString ( final StringBuilder gpl ) {
 
       gpl.append(( int ) ( this.r * 0xff + 0.5f ));
       gpl.append(' ');
@@ -556,6 +545,30 @@ public class Color implements Comparable < Color > {
       gpl.append(' ');
       gpl.append(( int ) ( this.b * 0xff + 0.5f ));
       return gpl;
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * color. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ r: ");
+      Utils.toFixed(sb, this.r, places);
+      sb.append(", g: ");
+      Utils.toFixed(sb, this.g, places);
+      sb.append(", b: ");
+      Utils.toFixed(sb, this.b, places);
+      sb.append(", a: ");
+      Utils.toFixed(sb, this.a, places);
+      sb.append(' ');
+      sb.append('}');
+      return sb;
    }
 
    /**
@@ -1232,16 +1245,22 @@ public class Color implements Comparable < Color > {
       switch ( sector ) {
          case 0:
             return target.set(bri, tint3, tint1, alpha);
+
          case 1:
             return target.set(tint2, bri, tint1, alpha);
+
          case 2:
             return target.set(tint1, bri, tint3, alpha);
+
          case 3:
             return target.set(tint1, tint2, bri, alpha);
+
          case 4:
             return target.set(tint3, tint1, bri, alpha);
+
          case 5:
             return target.set(bri, tint1, tint2, alpha);
+
          default:
             return target.reset();
       }

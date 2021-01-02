@@ -99,10 +99,10 @@ public interface ISvgWritable {
       svgp.append(heightStr);
       svgp.append("\">\n");
       svgp.append("<g transform=\"translate(");
-      svgp.append(Utils.toFixed(vw * x, 6));
+      Utils.toFixed(svgp, vw * x, 6);
       svgp.append(',');
       svgp.append(' ');
-      svgp.append(Utils.toFixed(vh * y, 6));
+      Utils.toFixed(svgp, vh * y, 6);
       svgp.append(") scale(");
       svgp.append(sclStr);
       svgp.append(", -");

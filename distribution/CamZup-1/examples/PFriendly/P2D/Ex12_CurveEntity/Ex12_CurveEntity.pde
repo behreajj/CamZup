@@ -8,8 +8,9 @@ Transform2 transform = new Transform2()
   .scaleTo(200.0);
 
 Curve2 curve = Curve2.rect(
-  -0.75, 0.5, 0.75, -0.5, -0.25,
-  new Curve2());
+  new Vec2(-0.75, 0.5),
+  new Vec2(0.75, -0.5),
+  -0.25, new Curve2());
 
 CurveEntity2 entity = new CurveEntity2(
   "Example", transform);
@@ -35,8 +36,6 @@ void draw() {
 
   graphics.background();
   graphics.origin();
-  graphics.noFill();
-  graphics.strokeWeight(1.0);
   graphics.shape(entity, mat);
   graphics.handles(entity, 1.25);
 }

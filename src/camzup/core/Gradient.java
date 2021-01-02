@@ -841,7 +841,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       for ( int i = 0; i < len; ++i ) {
          pyCd.append("\n    {\"position\": ");
-         pyCd.append(Utils.toFixed(i * toPercent, 6));
+         Utils.toFixed(pyCd, i * toPercent, 6);
          pyCd.append(", \"color\": ");
          clrs[i].toBlenderCode(pyCd, gamma, true);
          pyCd.append('}');
@@ -947,9 +947,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       if ( nonZeroFirst ) {
          final String frstClrStr = firstColor.toGgrString();
          sb.append("0.000000 ");
-         sb.append(Utils.toFixed(firstStep * 0.5f, 6));
+         Utils.toFixed(sb, firstStep * 0.5f, 6);
          sb.append(' ');
-         sb.append(Utils.toFixed(firstStep, 6));
+         Utils.toFixed(sb, firstStep, 6);
          sb.append(' ');
          sb.append(frstClrStr);
          sb.append(' ').append(frstClrStr);
@@ -976,11 +976,11 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          final float currStep = curr.step;
          final String currClrStr = curr.clr.toGgrString();
 
-         sb.append(Utils.toFixed(prevStep, 6));
+         Utils.toFixed(sb, prevStep, 6);
          sb.append(' ');
-         sb.append(Utils.toFixed( ( prevStep + currStep ) * 0.5f, 6));
+         Utils.toFixed(sb, ( prevStep + currStep ) * 0.5f, 6);
          sb.append(' ');
-         sb.append(Utils.toFixed(currStep, 6));
+         Utils.toFixed(sb, currStep, 6);
          sb.append(' ');
          sb.append(prevClrStr);
          sb.append(' ');
@@ -997,9 +997,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       if ( nonOneLast ) {
          final String lastClrStr = lastColor.toGgrString();
-         sb.append(Utils.toFixed(lastStep, 6));
+         Utils.toFixed(sb, lastStep, 6);
          sb.append(' ');
-         sb.append(Utils.toFixed( ( 1.0f + lastStep ) * 0.5f, 6));
+         Utils.toFixed(sb, ( 1.0f + lastStep ) * 0.5f, 6);
          sb.append(" 1.000000 ");
          sb.append(lastClrStr);
          sb.append(' ');
@@ -1088,7 +1088,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       sb.append("{ keys: [ ");
       final Iterator < ColorKey > itr = this.keys.iterator();
       while ( itr.hasNext() ) {
-         sb.append(itr.next().toString(places));
+         itr.next().toString(sb, places);
          if ( itr.hasNext() ) { sb.append(',').append(' '); }
       }
       sb.append(" ] }");
@@ -1127,13 +1127,13 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       svgp.append("<linearGradient id=\"");
       svgp.append(id);
       svgp.append("\" x1=\"");
-      svgp.append(Utils.toFixed(x1, 6));
+      Utils.toFixed(svgp, x1, 6);
       svgp.append("\" y1=\"");
-      svgp.append(Utils.toFixed(y1, 6));
+      Utils.toFixed(svgp, y1, 6);
       svgp.append("\" x2=\"");
-      svgp.append(Utils.toFixed(x2, 6));
+      Utils.toFixed(svgp, x2, 6);
       svgp.append("\" y2=\"");
-      svgp.append(Utils.toFixed(y2, 6));
+      Utils.toFixed(svgp, y2, 6);
       svgp.append("\">");
 
       final Iterator < ColorKey > itr = this.keys.iterator();

@@ -282,9 +282,9 @@ public class Bounds3 implements Comparable < Bounds3 > {
 
       final StringBuilder sb = new StringBuilder(128);
       sb.append("{ min: ");
-      sb.append(this.min.toString(places));
+      this.min.toString(sb, places);
       sb.append(", max: ");
-      sb.append(this.max.toString(places));
+      this.max.toString(sb, places);
       sb.append(' ');
       sb.append('}');
       return sb.toString();

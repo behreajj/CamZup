@@ -376,9 +376,9 @@ public class Img implements Iterable < Color > {
 
       final StringBuilder sb = new StringBuilder(64);
       sb.append("{ width: ");
-      sb.append(Utils.toPadded(this.width, 4));
+      Utils.toPadded(sb, this.width, 4);
       sb.append(", height: ");
-      sb.append(Utils.toPadded(this.height, 4));
+      Utils.toPadded(sb, this.height, 4);
       sb.append(' ');
       sb.append('}');
       return sb.toString();
@@ -563,8 +563,6 @@ public class Img implements Iterable < Color > {
       final int w = target.width;
       final int[] pixels = target.pixels;
 
-      // TEST Is there a more efficient way to do this? Fill a one dimensional
-      // array with the horizontal evaluation then replicate across pixels?
       final float wInv = 1.0f / ( w - 1.0f );
       for ( int i = 0, y = 0; y < h; ++y ) {
          for ( int x = 0; x < w; ++x, ++i ) {

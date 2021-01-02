@@ -151,9 +151,9 @@ public class Ray2 {
 
       final StringBuilder sb = new StringBuilder(196);
       sb.append("{ origin: ");
-      sb.append(this.origin.toString(places));
+      this.origin.toString(sb, places);
       sb.append(", dir: ");
-      sb.append(this.dir.toString(places));
+      this.dir.toString(sb, places);
       sb.append(' ');
       sb.append('}');
       return sb.toString();

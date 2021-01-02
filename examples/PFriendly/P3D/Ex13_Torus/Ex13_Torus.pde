@@ -59,7 +59,7 @@ void draw() {
     lons, lats,
     PolyType.TRI,
     smooth);
-    
+
   flat.set(smooth);
   flat.shadeFlat();
 
@@ -75,4 +75,10 @@ void draw() {
   rndr.shape(me1, textured);
   rndr.shape(me2, textured);
   rndr.shape(me3, wire);
+}
+
+void mouseReleased() {
+  String objs = me1.toObjString();
+  saveStrings("data/torus.obj", new String[] { objs });
+  println("OBJ file saved.");
 }

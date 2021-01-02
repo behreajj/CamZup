@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-YupJ2 graphics2;
+YupJ2 graphics;
 
 // Number of inscriptions (rows).
 int inscrip = 6;
@@ -40,7 +40,7 @@ void settings() {
 }
 
 void setup() {
-  graphics2 = (YupJ2)getGraphics();
+  graphics = (YupJ2)getGraphics();
 
   // Determine horizontal extents of grid.
   Vec2 ubx = new Vec2(width * 0.4, 0.0);
@@ -109,7 +109,7 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  graphics2.background();
+  graphics.background();
 
   for (int i = 0; i < count; ++i) {
     MeshEntity2[] srcCol = srcEntities[i];
@@ -121,9 +121,9 @@ void draw() {
       Mesh2.tracePerimeter(src.get(0), cut, time, trg.get(0));
 
       if (mousePressed) {
-        graphics2.shape(src, srcMaterial);
+        graphics.shape(src, srcMaterial);
       }
-      graphics2.shape(trg, trgMaterial);
+      graphics.shape(trg, trgMaterial);
     }
   }
 

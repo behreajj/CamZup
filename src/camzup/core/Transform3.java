@@ -938,11 +938,11 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
 
       final StringBuilder sb = new StringBuilder(354);
       sb.append("{ location: ");
-      sb.append(this.location.toString(places));
+      this.location.toString(sb, places);
       sb.append(", rotation: ");
       sb.append(this.rotation.toString(places));
       sb.append(", scale: ");
-      sb.append(this.scale.toString(places));
+      this.scale.toString(sb, places);
       sb.append(' ');
       sb.append('}');
       return sb.toString();
@@ -976,7 +976,7 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     * @return the string builder
     */
    @Experimental
-   StringBuilder toBlenderCode ( StringBuilder pyCd ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd ) {
 
       final String rotationMode = "\"QUATERNION\"";
       pyCd.append("{\"location\": ");

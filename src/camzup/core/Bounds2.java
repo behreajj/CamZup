@@ -261,9 +261,9 @@ public class Bounds2 implements Comparable < Bounds2 > {
 
       final StringBuilder sb = new StringBuilder(96);
       sb.append("{ min: ");
-      sb.append(this.min.toString(places));
+      this.min.toString(sb, places);
       sb.append(", max: ");
-      sb.append(this.max.toString(places));
+      this.max.toString(sb, places);
       sb.append(' ');
       sb.append('}');
       return sb.toString();

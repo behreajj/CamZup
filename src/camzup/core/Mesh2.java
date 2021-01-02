@@ -1637,71 +1637,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public String toObjString ( final int vIdx, final int vtIdx,
       final int vnIdx ) {
 
-      final int coordsLen = this.coords.length;
-      final int texCoordsLen = this.texCoords.length;
-      final int facesLen = this.faces.length;
-      final StringBuilder objs = new StringBuilder(2048);
-
-      /*
-       * Append comment listing the number of coordinates, texture coordinates
-       * and faces.
-       */
-      objs.append("\n# v: ");
-      objs.append(coordsLen);
-      objs.append(", vt: ");
-      objs.append(texCoordsLen);
-      objs.append(", vn: 1, f: ");
-      objs.append(facesLen);
-      objs.append('\n');
-
-      /* Append group followed by name. */
-      objs.append('g');
-      objs.append(' ');
-      objs.append(this.name);
-      objs.append('\n');
-      objs.append('\n');
-
-      /* Write coordinates. */
-      for ( int i = 0; i < coordsLen; ++i ) {
-         objs.append('v');
-         objs.append(' ');
-         objs.append(this.coords[i].toObjString());
-         objs.append(" 0.0 \n");
-      }
-      objs.append('\n');
-
-      /* Write texture coordinates. */
-      for ( int i = 0; i < texCoordsLen; ++i ) {
-         objs.append("vt ");
-         objs.append(this.texCoords[i].toObjString());
-         objs.append('\n');
-      }
-
-      /* Append a single normal. */
-      objs.append("\nvn 0.0 0.0 1.0\n\n");
-
-      /* Write face indices. */
-      for ( int i = 0; i < facesLen; ++i ) {
-
-         final int[][] face = this.faces[i];
-         final int vLen = face.length;
-         objs.append('f');
-         objs.append(' ');
-
-         for ( int j = 0; j < vLen; ++j ) {
-            final int[] vert = face[j];
-            objs.append(vert[0] + vIdx);
-            objs.append('/');
-            objs.append(vert[1] + vtIdx);
-            objs.append('/');
-            objs.append(vnIdx);
-            objs.append(' ');
-         }
-
-         objs.append('\n');
-      }
-
-      return objs.toString();
+      return this.toObjString(new StringBuilder(2048), vIdx, vtIdx, vnIdx)
+         .toString();
    }
 
    /**
@@ -1998,6 +1935,86 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       pyCd.append(']').append('}');
       return pyCd.toString();
+   }
+
+   /**
+    * Internal helper method that appends a representation of this mesh in the
+    * Wavefront OBJ file format to a {@link StringBuilder}.
+    *
+    * @param objs  the string builder
+    * @param vIdx  coordinate index offset
+    * @param vtIdx texture coordinate index offset
+    * @param vnIdx normal index offset
+    *
+    * @return the string builder
+    */
+   StringBuilder toObjString ( final StringBuilder objs, final int vIdx,
+      final int vtIdx, final int vnIdx ) {
+
+      final int coordsLen = this.coords.length;
+      final int texCoordsLen = this.texCoords.length;
+      final int facesLen = this.faces.length;
+
+      /*
+       * Append comment listing the number of coordinates, texture coordinates
+       * and faces.
+       */
+      objs.append("\n# v: ");
+      objs.append(coordsLen);
+      objs.append(", vt: ");
+      objs.append(texCoordsLen);
+      objs.append(", vn: 1, f: ");
+      objs.append(facesLen);
+      objs.append('\n');
+
+      /* Append group followed by name. */
+      objs.append('g');
+      objs.append(' ');
+      objs.append(this.name);
+      objs.append('\n');
+      objs.append('\n');
+
+      /* Write coordinates. */
+      for ( int i = 0; i < coordsLen; ++i ) {
+         objs.append('v');
+         objs.append(' ');
+         this.coords[i].toObjString(objs);
+         objs.append(" 0.0 \n");
+      }
+      objs.append('\n');
+
+      /* Write texture coordinates. */
+      for ( int i = 0; i < texCoordsLen; ++i ) {
+         objs.append("vt ");
+         this.texCoords[i].toObjString(objs);
+         objs.append('\n');
+      }
+
+      /* Append a single normal. */
+      objs.append("\nvn 0.0 0.0 1.0\n\n");
+
+      /* Write face indices. */
+      for ( int i = 0; i < facesLen; ++i ) {
+
+         final int[][] face = this.faces[i];
+         final int vLen = face.length;
+         objs.append('f');
+         objs.append(' ');
+
+         for ( int j = 0; j < vLen; ++j ) {
+            final int[] vert = face[j];
+            objs.append(vert[0] + vIdx);
+            objs.append('/');
+            objs.append(vert[1] + vtIdx);
+            objs.append('/');
+            objs.append(vnIdx);
+            objs.append(' ');
+         }
+
+         objs.append('\n');
+      }
+
+      return objs;
    }
 
    /**

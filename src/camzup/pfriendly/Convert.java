@@ -1270,8 +1270,11 @@ public abstract class Convert {
          case PShape.PRIMITIVE:
 
             final float[] params = source.getParams();
+            final int paramsLen = params.length;
             final int kind = source.getKind();
             switch ( kind ) {
+
+               // TODO: Support Arc?
 
                case PConstants.LINE: /* 4 */
 
@@ -1296,11 +1299,21 @@ public abstract class Convert {
 
                case PConstants.RECT: /* 30 */
 
-                  final float xRect0 = params[0];
-                  final float yRect0 = params[1];
-                  curves.add(Curve2.rect(new Vec2(xRect0, yRect0), new Vec2(
-                     params[2] + xRect0, params[3] + yRect0), new Curve2(
+                  // TEST
+                  final Vec2 tl = new Vec2(params[0], params[1]);
+                  final Vec2 br = new Vec2(tl.x + params[2], tl.y + params[3]);
+                  if ( paramsLen > 7 ) {
+                     curves.add(Curve2.rect(tl, br, params[4], params[5],
+                        params[6], params[7], new Curve2(sourceName)));
+
+                     // curves.add(Curve2.rect(tl, br, params[7], params[6],
+                     // params[5], params[4], new Curve2(sourceName)));
+                  } else if ( paramsLen > 4 ) {
+                     curves.add(Curve2.rect(tl, br, params[4], new Curve2(
                         sourceName)));
+                  } else {
+                     curves.add(Curve2.rect(tl, br, new Curve2(sourceName)));
+                  }
 
                   break;
 

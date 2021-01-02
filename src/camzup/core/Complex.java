@@ -172,16 +172,14 @@ public class Complex implements Comparable < Complex > {
     * @param places the number of places
     *
     * @return the string
-    *
-    * @see Utils#toFixed(float, int)
     */
    public String toString ( final int places ) {
 
       final StringBuilder sb = new StringBuilder(64);
       sb.append("{ real: ");
-      sb.append(Utils.toFixed(this.real, places));
+      Utils.toFixed(sb, this.real, places);
       sb.append(", imag: ");
-      sb.append(Utils.toFixed(this.imag, places));
+      Utils.toFixed(sb, this.imag, places);
       sb.append(' ');
       sb.append('}');
       return sb.toString();

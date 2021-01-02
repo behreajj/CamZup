@@ -173,9 +173,9 @@ class Index2 implements Comparable < Index2 > {
 
       final StringBuilder sb = new StringBuilder(64);
       sb.append("{ v: ");
-      sb.append(Utils.toPadded(this.v, padding));
+      Utils.toPadded(sb, this.v, padding);
       sb.append(", vt: ");
-      sb.append(Utils.toPadded(this.vt, padding));
+      Utils.toPadded(sb, this.vt, padding);
       sb.append(' ');
       sb.append('}');
       return sb.toString();
