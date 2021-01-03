@@ -764,7 +764,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     * @see IUtils#RAD_TO_DEG
     */
    @Override
-   public String toString ( ) { return this.toString(4); }
+   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
 
    /**
     * Returns a string representation of this transform according to its
@@ -853,18 +853,18 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
 
       final StringBuilder svgp = new StringBuilder(96);
       svgp.append("transform=\"translate(");
-      Utils.toFixed(svgp, this.location.x, 6);
+      Utils.toFixed(svgp, this.location.x, ISvgWritable.FIXED_PRINT);
       svgp.append(',');
       svgp.append(' ');
-      Utils.toFixed(svgp, this.location.y, 6);
+      Utils.toFixed(svgp, this.location.y, ISvgWritable.FIXED_PRINT);
       svgp.append(") rotate(");
       Utils.toFixed(svgp, Utils.modRadians(this.rotation) * IUtils.RAD_TO_DEG,
          0);
       svgp.append(") scale(");
-      Utils.toFixed(svgp, this.scale.x, 6);
+      Utils.toFixed(svgp, this.scale.x, ISvgWritable.FIXED_PRINT);
       svgp.append(',');
       svgp.append(' ');
-      Utils.toFixed(svgp, this.scale.y, 6);
+      Utils.toFixed(svgp, this.scale.y, ISvgWritable.FIXED_PRINT);
       svgp.append(")\"");
       return svgp.toString();
    }

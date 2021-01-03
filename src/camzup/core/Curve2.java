@@ -638,7 +638,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @return the string
     */
    @Override
-   public String toString ( ) { return this.toString(4); }
+   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
 
    /**
     * Returns a string representation of the curve.
@@ -679,6 +679,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    @Override
    public String toSvgElm ( final String id, final float zoom ) {
 
+      // TODO: Update to StringBuilder approach?
+
       final StringBuilder svgp = new StringBuilder(1024);
       svgp.append(MaterialSolid.defaultSvgMaterial(zoom));
       svgp.append(this.toSvgPath(id));
@@ -694,6 +696,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @return the SVG string
     */
    public String toSvgPath ( final String id ) {
+
+      // TODO: Update to StringBuilder approach?
 
       final int knotLength = this.knots.size();
       if ( knotLength < 2 ) { return ""; }

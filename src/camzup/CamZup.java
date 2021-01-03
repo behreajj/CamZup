@@ -1,5 +1,10 @@
 package camzup;
 
+import camzup.core.Curve2;
+import camzup.core.Mesh2;
+import camzup.core.MeshEntity2;
+import camzup.core.Rng;
+
 import processing.core.PApplet;
 
 /**
@@ -50,18 +55,18 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // final Mesh3 m30 = new Mesh3();
-      // Mesh3.icosahedron(m30);
-      // m30.insetExtrudeFaces(0.5f, 0.25f, 0.95f);
-      // System.out.println(new MeshEntity3().append(m30).toBlenderCode());
+      Mesh2 m20 = new Mesh2();
+      MeshEntity2 me20 = new MeshEntity2(m20);
 
-      // final Mesh2 m20 = new Mesh2();
-      // Mesh2.polygon(5, PolyType.NGON, m20);
-      // m20.deleteVerts(1, 0, 3);
-      // final MeshEntity2 me2 = new MeshEntity2("Test Obj");
-      // me2.append(m20);
-      // final String str = me2.toBlenderCode();
-      // System.out.println(str);
+      Curve2 c20 = new Curve2();
+      Rng rng = new Rng();
+      Curve2.random(rng, 6, -1f, 1f, true, c20);
+
+      Mesh2.fromCurve2(c20, 6, .001f, m20);
+
+      String pyCd = me20.toBlenderCode();
+      // String pyCd = new CurveEntity2().append(c20).toBlenderCode();
+      System.out.println(pyCd);
    }
 
    /**

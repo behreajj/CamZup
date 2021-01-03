@@ -77,13 +77,13 @@ public interface ISvgWritable {
 
       final float vw = Utils.max(IUtils.EPSILON, width);
       final float vh = Utils.max(IUtils.EPSILON, height);
-      final String widthStr = Utils.toFixed(vw, 6);
-      final String heightStr = Utils.toFixed(vh, 6);
+      final String widthStr = Utils.toFixed(vw, ISvgWritable.FIXED_PRINT);
+      final String heightStr = Utils.toFixed(vh, ISvgWritable.FIXED_PRINT);
       final float x = Utils.clamp01(xOrigin);
       final float y = Utils.clamp01(yOrigin);
 
       final float scl = Utils.min(vw, vh);
-      final String sclStr = Utils.toFixed(scl, 6);
+      final String sclStr = Utils.toFixed(scl, ISvgWritable.FIXED_PRINT);
 
       final StringBuilder svgp = new StringBuilder(128);
       svgp.append("<svg ");
@@ -99,10 +99,10 @@ public interface ISvgWritable {
       svgp.append(heightStr);
       svgp.append("\">\n");
       svgp.append("<g transform=\"translate(");
-      Utils.toFixed(svgp, vw * x, 6);
+      Utils.toFixed(svgp, vw * x, ISvgWritable.FIXED_PRINT);
       svgp.append(',');
       svgp.append(' ');
-      Utils.toFixed(svgp, vh * y, 6);
+      Utils.toFixed(svgp, vh * y, ISvgWritable.FIXED_PRINT);
       svgp.append(") scale(");
       svgp.append(sclStr);
       svgp.append(", -");
@@ -152,5 +152,11 @@ public interface ISvgWritable {
     * Default origin y of a 'camera' transform in an SVG.
     */
    float DEFAULT_SVG_Y_ORIGIN = 0.5f;
+
+   /**
+    * The default number of decimal places to print real numbers in an SVG,
+    * {@value IUtils#FIXED_PRINT}.
+    */
+   int FIXED_PRINT = 6;
 
 }

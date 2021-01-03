@@ -540,7 +540,7 @@ public class Mat3 {
     * @return the string
     */
    @Override
-   public String toString ( ) { return this.toString(4); }
+   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
 
    /**
     * Returns a string representation of this matrix.
@@ -583,7 +583,7 @@ public class Mat3 {
     */
    public String toStringCol ( ) {
 
-      return this.toStringCol(4, ',', ' ', '\n');
+      return this.toStringCol(IUtils.FIXED_PRINT, ',', ' ', '\n');
    }
 
    /**

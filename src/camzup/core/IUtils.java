@@ -55,6 +55,12 @@ public interface IUtils {
    float EPSILON = 0.000001f;
 
    /**
+    * The default number of decimal places to print real numbers,
+    * {@value IUtils#FIXED_PRINT}.
+    */
+   int FIXED_PRINT = 4;
+
+   /**
     * Four-thirds, 4.0 / 3.0 . Approximately {@value IUtils#FOUR_THIRDS} .
     * Useful when creating a circular shape with a series of Bezier curves.
     */

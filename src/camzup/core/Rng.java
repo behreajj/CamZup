@@ -12,7 +12,7 @@ public class Rng extends java.util.Random implements IUtils {
    /**
     * The random number generator's seed.
     */
-   private final long publicSeed;
+   private long publicSeed;
 
    /**
     * The default constructor. Sets the seed to the system's current time in
@@ -31,6 +31,7 @@ public class Rng extends java.util.Random implements IUtils {
 
       super(seed);
       this.publicSeed = seed;
+      this.nextFloat();
    }
 
    /**
@@ -63,6 +64,23 @@ public class Rng extends java.util.Random implements IUtils {
     */
    @Override
    public int hashCode ( ) { return ( int ) this.publicSeed; }
+
+   /**
+    * Sets the seed for this random number generator and calls next float. For
+    * sequences of similar seeds (e.g., 100, 101, 102), the initial random
+    * value fetched will be similar. See
+    * "<a href="https://stackoverflow.com/a/27761175">First random number
+    * after setSeed in Java always similar</a>".
+    * 
+    * @param seed the seed
+    */
+   @Override
+   public void setSeed ( long seed ) {
+
+      super.setSeed(seed);
+      this.publicSeed = seed;
+      this.nextFloat();
+   }
 
    /**
     * Returns a pseudo-random, uniformly distributed integer value between 0

@@ -289,7 +289,7 @@ public class Vec4 implements Comparable < Vec4 > {
     * @return the string
     */
    @Override
-   public String toString ( ) { return this.toString(4); }
+   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
 
    /**
     * Returns a string representation of this vector.

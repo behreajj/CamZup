@@ -180,7 +180,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @return the string
     */
    @Override
-   public String toString ( ) { return this.toString(4); }
+   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
 
    /**
     * Returns a string representation of this vector.
@@ -296,9 +296,9 @@ public class Vec2 implements Comparable < Vec2 > {
     */
    StringBuilder toSvgString ( final StringBuilder svgp ) {
 
-      Utils.toFixed(svgp, this.x, 6);
+      Utils.toFixed(svgp, this.x, ISvgWritable.FIXED_PRINT);
       svgp.append(' ');
-      Utils.toFixed(svgp, this.y, 6);
+      Utils.toFixed(svgp, this.y, ISvgWritable.FIXED_PRINT);
       return svgp;
    }
 

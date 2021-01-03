@@ -1682,7 +1682,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return the string
     */
    @Override
-   public String toString ( ) { return this.toString(4); }
+   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
 
    /**
     * Returns a string representation of the mesh. Includes an option to
@@ -1750,6 +1750,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    @Override
    public String toSvgElm ( final String id, final float zoom ) {
 
+      // TODO: Update to StringBuilder approach?
+
       final StringBuilder svgp = new StringBuilder(1024);
       svgp.append(MaterialSolid.defaultSvgMaterial(zoom));
       svgp.append(this.toSvgPath(id));
@@ -1765,6 +1767,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return the SVG string
     */
    public String toSvgPath ( final String id ) {
+
+      // TODO: Update to StringBuilder approach?
 
       final StringBuilder svgp = new StringBuilder(1024);
       final int[][][] fs = this.faces;
@@ -3128,6 +3132,71 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          }
       }
 
+      return target;
+   }
+
+   public static Mesh2 fromCurve2 ( final Curve2 source, final int resolution,
+      final float colinearTol, final Mesh2 target ) {
+
+      if ( !source.closedLoop ) { return target; }
+
+      // TODO: Implement. May have to do CurveEntity2
+
+      final int vres = resolution < 2 ? 2 : resolution;
+      final float vtol = Utils.clamp01(1.0f - colinearTol);
+      final int curvelen = source.length();
+      final float toPercent = 1.0f / vres;
+      final Iterator < Knot2 > itr = source.iterator();
+      Knot2 prevKnot = source.getLast();
+      Knot2 currKnot = null;
+
+      final ArrayList < Vec2 > points = new ArrayList <>(curvelen * vres);
+
+      /*
+       * Test if vector from fore handle to previous coordinate is colinear with
+       * vector from rear handle to next coordinate. If so, then the curve drawn
+       * between them will be a straight line, and Bezier interpolation is not
+       * needed. The vectors are colinear if the absolute dot product is greater
+       * than 1.0 minus a tolerance.
+       */
+      final Vec2 dir0 = new Vec2();
+      final Vec2 dir1 = new Vec2();
+
+      while ( itr.hasNext() ) {
+         currKnot = itr.next();
+         final Vec2 coPrev = prevKnot.coord;
+         final Vec2 fhPrev = prevKnot.foreHandle;
+         final Vec2 rhNext = currKnot.rearHandle;
+         final Vec2 coNext = currKnot.coord;
+
+         /* Add previous knot coordinate no matter the colinear status. */
+         points.add(new Vec2(coPrev));
+
+         Vec2.subNorm(fhPrev, coPrev, dir0);
+         Vec2.subNorm(rhNext, coNext, dir1);
+         final float dotp = Vec2.dot(dir0, dir1);
+         if ( dotp > -vtol && dotp < vtol ) {
+            for ( int i = 1; i < vres; ++i ) {
+               final float prc = i * toPercent;
+               Vec2 v = new Vec2();
+               Vec2.bezierPoint(coPrev, fhPrev, rhNext, coNext, prc, v);
+               points.add(v);
+            }
+         }
+
+         prevKnot = currKnot;
+      }
+
+      final int pointsLen = points.size();
+      target.coords = points.toArray(new Vec2[pointsLen]);
+
+      int[][][] fs = target.faces = new int[1][pointsLen][2];
+      int[][] f = fs[0];
+      for ( int i = 0; i < pointsLen; ++i ) {
+         f[i][0] = i;
+      }
+
+      target.calcUvs();
       return target;
    }
 

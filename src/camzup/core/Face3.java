@@ -725,7 +725,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @return the string
     */
    @Override
-   public String toString ( ) { return this.toString(4); }
+   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
 
    /**
     * Returns a string representation of this face.

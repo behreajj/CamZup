@@ -500,14 +500,6 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    /**
     * Returns a string representation of this curve entity.
     *
-    * @return the string
-    */
-   @Override
-   public String toString ( ) { return this.toString(4); }
-
-   /**
-    * Returns a string representation of this curve entity.
-    *
     * @param places number of places
     *
     * @return the string
