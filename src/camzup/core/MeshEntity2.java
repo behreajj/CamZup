@@ -415,7 +415,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       final Iterator < Mesh2 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
-         pyCd.append(meshItr.next().toBlenderCode(includeUvs, 0.0f));
+         meshItr.next().toBlenderCode(pyCd, includeUvs, 0.0f);
          if ( meshItr.hasNext() ) { pyCd.append(',').append(' '); }
       }
 
@@ -719,7 +719,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
             svgp.append(">\n");
          }
 
-         svgp.append(mesh.toSvgPath(id));
+         mesh.toSvgPath(svgp, id);
 
          /* Close out material group. */
          if ( includesMats ) { svgp.append("</g>\n"); }

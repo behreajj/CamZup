@@ -982,7 +982,76 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Sets two knots from a segment of the cubic curve. Assumes that the
+    * Sets two knots from a segment of a Catmull-Rom curve. Assumes that the
+    * previous knot's coordinate is set to a prior anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
+    *
+    * @param xPrevAnchor    the previous anchor x
+    * @param yPrevAnchor    the previous anchor y
+    * @param xCurrAnchor    the current anchor x
+    * @param yCurrAnchor    the current anchor y
+    * @param xNextAnchor    the next anchor x
+    * @param yNextAnchor    the next anchor y
+    * @param xAdvAnchor     the advance anchor x
+    * @param yAdvAnchor     the advance anchor y
+    * @param curveTightness the curve tightness
+    * @param prev           the previous knot
+    * @param next           the next knot
+    *
+    * @return the next knot
+    */
+   @Experimental
+   public static Knot2 fromSegCatmull ( final float xPrevAnchor,
+      final float yPrevAnchor, final float xCurrAnchor, final float yCurrAnchor,
+      final float xNextAnchor, final float yNextAnchor, final float xAdvAnchor,
+      final float yAdvAnchor, final float curveTightness, final Knot2 prev,
+      final Knot2 next ) {
+
+      // TODO: Test by creating a fromCatmull to Curve2?
+
+      final float fac = ( curveTightness - 1.0f ) * -IUtils.ONE_SIX;
+      final float x0 = ( xNextAnchor - xPrevAnchor ) * fac;
+      final float y0 = ( yNextAnchor - yPrevAnchor ) * fac;
+      final float x1 = ( xAdvAnchor - xCurrAnchor ) * fac;
+      final float y1 = ( yAdvAnchor - yCurrAnchor ) * fac;
+
+      prev.foreHandle.set(xCurrAnchor + x0, yCurrAnchor + y0);
+      next.rearHandle.set(xNextAnchor - x1, yNextAnchor - y1);
+      next.coord.set(xNextAnchor, yNextAnchor);
+
+      return next;
+   }
+
+   /**
+    * Sets two knots from a segment of a Catmull-Rom curve. Assumes that the
+    * previous knot's coordinate is set to a prior anchor point.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
+    *
+    * @param prevAnchor     the previous anchor
+    * @param currAnchor     the current anchor
+    * @param nextAnchor     the next anchor
+    * @param advAnchor      the advance anchor
+    * @param curveTightness the curve tightness
+    * @param prev           the previous knot
+    * @param next           the next knot
+    *
+    * @return the next knot
+    */
+   public static Knot2 fromSegCatmull ( final Vec2 prevAnchor,
+      final Vec2 currAnchor, final Vec2 nextAnchor, final Vec2 advAnchor,
+      final float curveTightness, final Knot2 prev, final Knot2 next ) {
+
+      return Knot2.fromSegCatmull(prevAnchor.x, prevAnchor.y, currAnchor.x,
+         currAnchor.y, nextAnchor.x, nextAnchor.y, advAnchor.x, advAnchor.y,
+         curveTightness, prev, next);
+   }
+
+   /**
+    * Sets two knots from a segment of a cubic curve. Assumes that the
     * previous knot's coordinate is set to the first anchor point.<br>
     * <br>
     * The previous knot's fore handle, the next knot's rear handle and the
@@ -1012,7 +1081,7 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Sets two knots from a segment of the cubic curve. Assumes that the
+    * Sets two knots from a segment of a cubic curve. Assumes that the
     * previous knot's coordinate is set to the first anchor point.<br>
     * <br>
     * The previous knot's fore handle, the next knot's rear handle and the
@@ -1038,7 +1107,7 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Sets a knot from line segment. Assumes that the previous knot's
+    * Sets a knot from a line segment. Assumes that the previous knot's
     * coordinate is set to the first anchor point.<br>
     * <br>
     * The previous knot's fore handle, the next knot's rear handle and the
@@ -1074,7 +1143,7 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Sets a knot from line segment. Assumes that the previous knot's
+    * Sets a knot from a line segment. Assumes that the previous knot's
     * coordinate is set to the first anchor point.<br>
     * <br>
     * The previous knot's fore handle, the next knot's rear handle and the
@@ -1120,7 +1189,6 @@ public class Knot2 implements Comparable < Knot2 > {
        * This doesn't use lerp13 because a calculation can be saved by
        * calculating the midpoint.
        */
-
       final float midpt23x = xControl * IUtils.TWO_THIRDS;
       final float midpt23y = yControl * IUtils.TWO_THIRDS;
 
@@ -1136,7 +1204,7 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Sets two knots from a segment of the quadratic curve. Assumes that the
+    * Sets two knots from a segment of a quadratic curve. Assumes that the
     * previous knot's coordinate is set to the first anchor point.<br>
     * <br>
     * The previous knot's fore handle, the next knot's rear handle and the

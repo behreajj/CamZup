@@ -1257,7 +1257,7 @@ public abstract class Convert {
 
       switch ( family ) {
 
-         case PConstants.GROUP:
+         case PConstants.GROUP: /* 0 */
 
             final PShape[] children = source.getChildren();
             final int childlen = children.length;
@@ -1267,14 +1267,13 @@ public abstract class Convert {
 
             break;
 
-         case PShape.PRIMITIVE:
+         case PShape.PRIMITIVE: /* 101 */
 
             final float[] params = source.getParams();
             final int paramsLen = params.length;
             final int kind = source.getKind();
-            switch ( kind ) {
 
-               // TODO: Support Arc?
+            switch ( kind ) {
 
                case PConstants.LINE: /* 4 */
 
@@ -1305,9 +1304,6 @@ public abstract class Convert {
                   if ( paramsLen > 7 ) {
                      curves.add(Curve2.rect(tl, br, params[4], params[5],
                         params[6], params[7], new Curve2(sourceName)));
-
-                     // curves.add(Curve2.rect(tl, br, params[7], params[6],
-                     // params[5], params[4], new Curve2(sourceName)));
                   } else if ( paramsLen > 4 ) {
                      curves.add(Curve2.rect(tl, br, params[4], new Curve2(
                         sourceName)));
@@ -1332,24 +1328,25 @@ public abstract class Convert {
 
                   break;
 
+               case PConstants.ARC: /* 32 */
+
+                  // TODO: Support Arc?
+
                default:
+
+                  System.err.println(kind + " is an unsupported kind.");
             }
 
             break;
 
-         case PShape.PATH:
-         case PShape.GEOMETRY:
+         case PShape.PATH: /* 102 */
+         case PShape.GEOMETRY: /* 103 */
 
             /* Get vertex data. */
+            // final boolean isogl =
+            // source.getClass().equals(PShapeOpenGL.class);
             final int vertLen = source.getVertexCount();
             if ( vertLen < 1 ) { break; }
-
-            final float[][] data = new float[vertLen][2];
-            for ( int i = 0; i < vertLen; ++i ) {
-               final float[] datum = data[i];
-               datum[0] = source.getVertexX(i);
-               datum[1] = source.getVertexY(i);
-            }
 
             /*
              * Get command history. If it is null or empty, create a new default
@@ -1375,49 +1372,46 @@ public abstract class Convert {
             final int cmdLen = cmds.length;
             for ( int i = 0; i < cmdLen; ++i ) {
                final int cmd = cmds[i];
+
+               /* @formatter:off */
                switch ( cmd ) {
 
-                  case PConstants.VERTEX:
+                  case PConstants.VERTEX: /* 0 */
 
                      if ( initialVertex ) {
+
                         /* Treat as "moveTo" command. */
                         currCurve = new Curve2(sourceName);
                         currCurve.closedLoop = spendContour || srcClosed;
-                        currKnot = new Knot2(source.getVertexX(cursor), source
-                           .getVertexY(cursor++));
+                        currKnot = new Knot2(
+                           source.getVertexX(cursor),
+                           source.getVertexY(cursor++));
                         initialVertex = false;
                         spendContour = false;
-                     } else {
-                        /* Treat as "lineSegTo" command. */
+                        currCurve.append(currKnot);
+                        prevKnot = currKnot;
+
+                     } else if ( cursor < vertLen ) {
+
+                        /*
+                         * Treat as "lineSegTo" command. In PShapeOpenGLs
+                         * loaded from SVGs, it's possible for the cursor
+                         * to exceed the vertex length.
+                         */
                         currKnot = new Knot2();
-                        Knot2.fromSegLinear(source.getVertexX(cursor), source
-                           .getVertexY(cursor++), prevKnot, currKnot);
+                        Knot2.fromSegLinear(
+                           source.getVertexX(cursor),
+                           source.getVertexY(cursor++),
+                           prevKnot, currKnot);
+                        currCurve.append(currKnot);
+                        prevKnot = currKnot;
+
                      }
 
-                     currCurve.append(currKnot);
-                     prevKnot = currKnot;
-
                      break;
 
-                  case PConstants.QUADRATIC_VERTEX:
+                  case PConstants.BEZIER_VERTEX: /* 1 */
 
-                     /* @formatter:off */
-                     currKnot = new Knot2();
-                     Knot2.fromSegQuadratic(
-                        source.getVertexX(cursor),
-                        source.getVertexY(cursor++),
-                        source.getVertexX(cursor),
-                        source.getVertexY(cursor++),
-                        prevKnot, currKnot);
-                     currCurve.append(currKnot);
-                     prevKnot = currKnot;
-                     /* @formatter:on */
-
-                     break;
-
-                  case PConstants.BEZIER_VERTEX:
-
-                     /* @formatter:off */
                      currKnot = new Knot2();
                      Knot2.fromSegCubic(
                         source.getVertexX(cursor),
@@ -1429,42 +1423,78 @@ public abstract class Convert {
                         prevKnot, currKnot);
                      currCurve.append(currKnot);
                      prevKnot = currKnot;
-                     /* @formatter:on */
 
                      break;
 
-                  case PConstants.CURVE_VERTEX:
+                  case PConstants.QUADRATIC_VERTEX: /* 2 */
 
-                     /* Not supported. */
                      currKnot = new Knot2();
-                     Knot2.fromSegLinear(source.getVertexX(cursor), source
-                        .getVertexY(cursor++), prevKnot, currKnot);
+                     Knot2.fromSegQuadratic(
+                        source.getVertexX(cursor),
+                        source.getVertexY(cursor++),
+                        source.getVertexX(cursor),
+                        source.getVertexY(cursor++),
+                        prevKnot, currKnot);
                      currCurve.append(currKnot);
                      prevKnot = currKnot;
 
                      break;
 
-                  case PConstants.BREAK:
+                  case PConstants.CURVE_VERTEX: /* 3 */
+                     
+                     /*
+                      * PShape does not seem to support its own command...?
+                      * https://github.com/processing/processing/issues/5173
+                      */
+                     final int pi = Math.max(0, cursor - 1);
+                     final int ci = Math.min(cursor + 1, vertLen - 1);
+                     final int ni = Math.min(cursor + 2, vertLen - 1);
 
-                     /* Close parent curve regardless. */
-                     currCurve.closedLoop = true;
-                     final Knot2 first = currCurve.getFirst();
-                     final Knot2 last = currCurve.getLast();
-                     Vec2.mix(first.coord, last.coord, IUtils.ONE_THIRD,
-                        first.rearHandle);
-                     Vec2.mix(last.coord, first.coord, IUtils.ONE_THIRD,
-                        last.foreHandle);
-                     curves.add(currCurve);
-                     initialVertex = true;
-                     spendContour = true;
+                     currKnot = new Knot2();
+                     Knot2.fromSegCatmull(
+                        source.getVertexX(pi),
+                        source.getVertexY(pi),
+                        source.getVertexX(cursor),
+                        source.getVertexY(cursor),
+                        source.getVertexX(ci),
+                        source.getVertexY(ci),
+                        source.getVertexX(ni),
+                        source.getVertexY(ni),
+                        0.0f, prevKnot, currKnot);
+                     ++cursor;
+                     
+                     currCurve.append(currKnot);
+                     prevKnot = currKnot;
+
+                     break;
+
+                  case PConstants.BREAK: /* 4 */
+
+                     /*
+                      * It's possible with PShapeOpenGLs loaded from SVGs for
+                      * break to be the initial command.
+                      */
+                     if ( currCurve != null ) {
+                        currCurve.closedLoop = true;
+                        final Knot2 first = currCurve.getFirst();
+                        final Knot2 last = currCurve.getLast();
+                        Vec2.mix(first.coord, last.coord,
+                           IUtils.ONE_THIRD, first.rearHandle);
+                        Vec2.mix(last.coord, first.coord,
+                           IUtils.ONE_THIRD, last.foreHandle);
+                        curves.add(currCurve);
+                        initialVertex = true;
+                        spendContour = true;
+                     }
 
                      break;
 
                   default:
-               }
-            }
 
-            curves.add(currCurve);
+                     System.err.println(cmd + " is an unsupported command.");
+               }
+               /* @formatter:on */
+            }
 
             /* Deal with closed or open loop. */
             if ( currCurve.closedLoop ) {
@@ -1478,9 +1508,13 @@ public abstract class Convert {
                currCurve.getLast().mirrorHandlesBackward();
             }
 
+            curves.add(currCurve);
+
             break;
 
          default:
+
+            System.err.println(family + " is an unsupported family.");
       }
 
       return curves;

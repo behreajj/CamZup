@@ -2173,30 +2173,20 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes.
+    * An internal helper function to format a mesh as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x.
     *
-    * @return the string
-    */
-   @Experimental
-   String toBlenderCode ( ) { return this.toBlenderCode(false, false); }
-
-   /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how mesh geometry looks in Blender (the control) versus in the
-    * library (the test).
-    *
+    * @param pyCd           the string builder
     * @param includeUvs     whether or not to include UVs
     * @param includeNormals whether or not to include normals
     *
-    * @return the string
+    * @return the string builder
     */
    @Experimental
-   String toBlenderCode ( final boolean includeUvs,
-      final boolean includeNormals ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd,
+      final boolean includeUvs, final boolean includeNormals ) {
 
-      final StringBuilder pyCd = new StringBuilder(1024);
       pyCd.append("{\"name\": \"");
       pyCd.append(this.name);
       pyCd.append("\", \"material_index\": ");
@@ -2282,7 +2272,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       pyCd.append(']').append('}');
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**

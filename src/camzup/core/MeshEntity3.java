@@ -407,7 +407,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
       final Iterator < Mesh3 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
-         pyCd.append(meshItr.next().toBlenderCode(includeUvs, includeNormals));
+         meshItr.next().toBlenderCode(pyCd, includeUvs, includeNormals);
          if ( meshItr.hasNext() ) { pyCd.append(',').append(' '); }
       }
 

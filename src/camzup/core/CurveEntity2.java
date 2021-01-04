@@ -618,7 +618,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
             svgp.append('\n');
          }
 
-         svgp.append(curve.toSvgPath(iddot + Utils.toPadded(i, 4)));
+         curve.toSvgPath(svgp, iddot + Utils.toPadded(i, 4));
          ++i;
 
          /* Close out material group. */

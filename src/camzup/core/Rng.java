@@ -66,23 +66,6 @@ public class Rng extends java.util.Random implements IUtils {
    public int hashCode ( ) { return ( int ) this.publicSeed; }
 
    /**
-    * Sets the seed for this random number generator and calls next float. For
-    * sequences of similar seeds (e.g., 100, 101, 102), the initial random
-    * value fetched will be similar. See
-    * "<a href="https://stackoverflow.com/a/27761175">First random number
-    * after setSeed in Java always similar</a>".
-    * 
-    * @param seed the seed
-    */
-   @Override
-   public void setSeed ( long seed ) {
-
-      super.setSeed(seed);
-      this.publicSeed = seed;
-      this.nextFloat();
-   }
-
-   /**
     * Returns a pseudo-random, uniformly distributed integer value between 0
     * (inclusive) and the specified value (exclusive), drawn from this random
     * number generator's sequence. Overrides parent random's functionality to
@@ -160,6 +143,23 @@ public class Rng extends java.util.Random implements IUtils {
          result[i] = sum * ( x[i + 2] - x[i + 1] );
       }
       return result;
+   }
+
+   /**
+    * Sets the seed for this random number generator and calls next float. For
+    * sequences of similar seeds (e.g., 100, 101, 102), the initial random
+    * value fetched will be similar. See
+    * "<a href="https://stackoverflow.com/a/27761175">First random number
+    * after setSeed in Java always similar</a>".
+    *
+    * @param seed the seed
+    */
+   @Override
+   public void setSeed ( final long seed ) {
+
+      super.setSeed(seed);
+      this.publicSeed = seed;
+      this.nextFloat();
    }
 
    /**

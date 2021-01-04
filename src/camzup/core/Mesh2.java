@@ -1750,52 +1750,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    @Override
    public String toSvgElm ( final String id, final float zoom ) {
 
-      // TODO: Update to StringBuilder approach?
-
       final StringBuilder svgp = new StringBuilder(1024);
       svgp.append(MaterialSolid.defaultSvgMaterial(zoom));
-      svgp.append(this.toSvgPath(id));
+      this.toSvgPath(svgp, id);
       svgp.append("</g>\n");
-      return svgp.toString();
-   }
-
-   /**
-    * Renders the mesh path as a string containing an SVG element.
-    *
-    * @param id the path id
-    *
-    * @return the SVG string
-    */
-   public String toSvgPath ( final String id ) {
-
-      // TODO: Update to StringBuilder approach?
-
-      final StringBuilder svgp = new StringBuilder(1024);
-      final int[][][] fs = this.faces;
-      final Vec2[] vs = this.coords;
-      final int fsLen = fs.length;
-      final String iddot = id + ".";
-
-      for ( int i = 0; i < fsLen; ++i ) {
-         final int[][] f = fs[i];
-         final int fLen = f.length;
-
-         svgp.append("<path id=\"");
-         svgp.append(iddot + Utils.toPadded(i, 3));
-         svgp.append("\" d=\"M ");
-         vs[f[0][0]].toSvgString(svgp);
-         svgp.append(' ');
-
-         for ( int j = 1; j < fLen; ++j ) {
-            svgp.append('L');
-            svgp.append(' ');
-            vs[f[j][0]].toSvgString(svgp);
-            svgp.append(' ');
-         }
-
-         svgp.append("Z\"></path>\n");
-      }
-
       return svgp.toString();
    }
 
@@ -1865,20 +1823,21 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
-    * This code is brittle and is used for internal testing purposes, i.e., to
-    * compare how mesh geometry looks in Blender (the control) versus in the
-    * library (the test).
+    * An internal helper function to format a mesh as a Python tuple, then
+    * append it to a {@link StringBuilder}. Used for testing purposes to
+    * compare results with Blender 2.9x. Appends a z component to promote the
+    * vector to 3D.
     *
+    * @param pyCd       the string builder
     * @param includeUvs whether or not to include UVs
     * @param z          z offset
     *
-    * @return the string
+    * @return the string builder
     */
    @Experimental
-   String toBlenderCode ( final boolean includeUvs, final float z ) {
+   StringBuilder toBlenderCode ( final StringBuilder pyCd,
+      final boolean includeUvs, final float z ) {
 
-      final StringBuilder pyCd = new StringBuilder(1024);
       pyCd.append("{\"name\": \"");
       pyCd.append(this.name);
       pyCd.append("\", \"material_index\": ");
@@ -1938,7 +1897,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       }
 
       pyCd.append(']').append('}');
-      return pyCd.toString();
+      return pyCd;
    }
 
    /**
@@ -2019,6 +1978,45 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       }
 
       return objs;
+   }
+
+   /**
+    * Internal helper function to append a mesh path to a
+    * {@link StringBuilder}; the id is written to the path's id.
+    *
+    * @param svgp the string builder
+    * @param id   the path id
+    *
+    * @return the string builder.
+    */
+   StringBuilder toSvgPath ( final StringBuilder svgp, final String id ) {
+
+      final int[][][] fs = this.faces;
+      final Vec2[] vs = this.coords;
+      final int fsLen = fs.length;
+      final String iddot = id + ".";
+
+      for ( int i = 0; i < fsLen; ++i ) {
+         final int[][] f = fs[i];
+         final int fLen = f.length;
+
+         svgp.append("<path id=\"");
+         svgp.append(iddot + Utils.toPadded(i, 3));
+         svgp.append("\" d=\"M ");
+         vs[f[0][0]].toSvgString(svgp);
+         svgp.append(' ');
+
+         for ( int j = 1; j < fLen; ++j ) {
+            svgp.append('L');
+            svgp.append(' ');
+            vs[f[j][0]].toSvgString(svgp);
+            svgp.append(' ');
+         }
+
+         svgp.append("Z\"></path>\n");
+      }
+
+      return svgp;
    }
 
    /**
@@ -2438,6 +2436,74 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       }
 
       return meshes;
+   }
+
+   /**
+    * Converts a curve to a mesh. If the fore handle and rear handle of a
+    * curve segment are colinear according to a tolerance, then only two
+    * vertices are added; otherwise evaluates the Bezier curve, producing one
+    * line segment per the requested resolution.
+    *
+    * @param source      the source curve
+    * @param resolution  the line segment count
+    * @param colinearTol the colinear tolerance
+    * @param target      the output mesh
+    *
+    * @return the mesh
+    */
+   public static Mesh2 fromCurve2 ( final Curve2 source, final int resolution,
+      final float colinearTol, final Mesh2 target ) {
+
+      final ArrayList < Vec2 > points = new ArrayList <>(64);
+      Mesh2.fromCurve2(source, resolution, colinearTol, points, new Vec2(),
+         new Vec2());
+      final int pointsLen = points.size();
+      target.coords = points.toArray(new Vec2[pointsLen]);
+      final int[][][] fs = target.faces = new int[1][pointsLen][2];
+      final int[][] f = fs[0];
+      for ( int i = 0; i < pointsLen; ++i ) { f[i][0] = i; }
+
+      target.calcUvs();
+      return target;
+   }
+
+   /**
+    * Converts an array of curves to a mesh. If the fore handle and rear
+    * handle of a curve segment are colinear according to a tolerance, then
+    * only two vertices are added; otherwise evaluates the Bezier curve,
+    * producing one line segment per the requested resolution.
+    *
+    * @param arr         the source curves
+    * @param resolution  the line segment count
+    * @param colinearTol the colinear tolerance
+    * @param target      the output mesh
+    *
+    * @return the mesh
+    */
+   public static Mesh2 fromCurve2 ( final Curve2[] arr, final int resolution,
+      final float colinearTol, final Mesh2 target ) {
+
+      // TODO: For 3D version, subdivFacesFan(1), then calc normals.
+
+      final int curvesLen = arr.length;
+      final ArrayList < Vec2 > points = new ArrayList <>(64);
+      final Vec2 dir0 = new Vec2();
+      final Vec2 dir1 = new Vec2();
+      final int[][][] fs = target.faces = new int[curvesLen][][];
+      int prevIdx = 0;
+      int pointsLen = 0;
+      for ( int i = 0; i < curvesLen; ++i ) {
+         Mesh2.fromCurve2(arr[i], resolution, colinearTol, points, dir0, dir1);
+
+         pointsLen = points.size();
+         final int fLen = pointsLen - prevIdx;
+         final int[][] f = fs[i] = new int[fLen][2];
+         for ( int j = 0; j < fLen; ++j ) { f[j][0] = prevIdx + j; }
+         prevIdx = pointsLen;
+      }
+      target.coords = points.toArray(new Vec2[pointsLen]);
+      target.calcUvs();
+      return target;
    }
 
    /**
@@ -3135,71 +3201,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       return target;
    }
 
-   public static Mesh2 fromCurve2 ( final Curve2 source, final int resolution,
-      final float colinearTol, final Mesh2 target ) {
-
-      if ( !source.closedLoop ) { return target; }
-
-      // TODO: Implement. May have to do CurveEntity2
-
-      final int vres = resolution < 2 ? 2 : resolution;
-      final float vtol = Utils.clamp01(1.0f - colinearTol);
-      final int curvelen = source.length();
-      final float toPercent = 1.0f / vres;
-      final Iterator < Knot2 > itr = source.iterator();
-      Knot2 prevKnot = source.getLast();
-      Knot2 currKnot = null;
-
-      final ArrayList < Vec2 > points = new ArrayList <>(curvelen * vres);
-
-      /*
-       * Test if vector from fore handle to previous coordinate is colinear with
-       * vector from rear handle to next coordinate. If so, then the curve drawn
-       * between them will be a straight line, and Bezier interpolation is not
-       * needed. The vectors are colinear if the absolute dot product is greater
-       * than 1.0 minus a tolerance.
-       */
-      final Vec2 dir0 = new Vec2();
-      final Vec2 dir1 = new Vec2();
-
-      while ( itr.hasNext() ) {
-         currKnot = itr.next();
-         final Vec2 coPrev = prevKnot.coord;
-         final Vec2 fhPrev = prevKnot.foreHandle;
-         final Vec2 rhNext = currKnot.rearHandle;
-         final Vec2 coNext = currKnot.coord;
-
-         /* Add previous knot coordinate no matter the colinear status. */
-         points.add(new Vec2(coPrev));
-
-         Vec2.subNorm(fhPrev, coPrev, dir0);
-         Vec2.subNorm(rhNext, coNext, dir1);
-         final float dotp = Vec2.dot(dir0, dir1);
-         if ( dotp > -vtol && dotp < vtol ) {
-            for ( int i = 1; i < vres; ++i ) {
-               final float prc = i * toPercent;
-               Vec2 v = new Vec2();
-               Vec2.bezierPoint(coPrev, fhPrev, rhNext, coNext, prc, v);
-               points.add(v);
-            }
-         }
-
-         prevKnot = currKnot;
-      }
-
-      final int pointsLen = points.size();
-      target.coords = points.toArray(new Vec2[pointsLen]);
-
-      int[][][] fs = target.faces = new int[1][pointsLen][2];
-      int[][] f = fs[0];
-      for ( int i = 0; i < pointsLen; ++i ) {
-         f[i][0] = i;
-      }
-
-      target.calcUvs();
-      return target;
-   }
-
    /**
     * Restructures the mesh so that each face index refers to unique data,
     * indifferent to redundancies. As a consequence, coordinate and texture
@@ -3264,6 +3265,72 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       target.faces = fsTrg;
 
       return target;
+   }
+
+   /**
+    * Internal helper function to convert curves to meshes. Evaluates a Bezier
+    * curve to line segments based on a resolution after testing whether or
+    * not the rear and fore handles of the curve are colinear.
+    *
+    * @param source      the source curve
+    * @param resolution  the resolution
+    * @param colinearTol the colinear tolerance
+    * @param points      the point list
+    * @param dir0        the first direction
+    * @param dir1        the second direction
+    *
+    * @return the point list
+    *
+    * @see Utils#clamp01(float)
+    * @see Vec2#subNorm(Vec2, Vec2, Vec2)
+    * @see Vec2#dot(Vec2, Vec2)
+    * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
+    */
+   static ArrayList < Vec2 > fromCurve2 ( final Curve2 source,
+      final int resolution, final float colinearTol, final ArrayList <
+         Vec2 > points, final Vec2 dir0, final Vec2 dir1 ) {
+
+      // TODO: Consider using arc-length parameterization, so points will be
+      // evenly distributed across the curve.
+
+      /* Open curves not supported. */
+      if ( !source.closedLoop ) { return points; }
+
+      final int vres = resolution < 2 ? 2 : resolution;
+      final float vtol = Utils.clamp01(1.0f - colinearTol);
+      final float toPercent = 1.0f / vres;
+      final Iterator < Knot2 > itr = source.iterator();
+      Knot2 prevKnot = source.getLast();
+
+      /*
+       * Test if vector from fore handle to previous coordinate is colinear with
+       * vector from rear handle to next coordinate. If so, then the curve drawn
+       * between them will be a straight line, and Bezier interpolation is not
+       * needed. The vectors are colinear if the absolute dot product is greater
+       * than 1.0 minus a tolerance.
+       */
+      for ( Knot2 currKnot = null; itr.hasNext(); prevKnot = currKnot ) {
+         currKnot = itr.next();
+         final Vec2 coPrev = prevKnot.coord;
+         final Vec2 fhPrev = prevKnot.foreHandle;
+         final Vec2 rhNext = currKnot.rearHandle;
+         final Vec2 coNext = currKnot.coord;
+
+         /* Add previous knot coordinate no matter the colinear status. */
+         points.add(new Vec2(coPrev));
+
+         Vec2.subNorm(fhPrev, coPrev, dir0);
+         Vec2.subNorm(rhNext, coNext, dir1);
+         final float dotp = Vec2.dot(dir0, dir1);
+         if ( dotp > -vtol && dotp < vtol ) {
+            for ( int i = 1; i < vres; ++i ) {
+               points.add(Vec2.bezierPoint(coPrev, fhPrev, rhNext, coNext, i
+                  * toPercent, new Vec2()));
+            }
+         }
+      }
+
+      return points;
    }
 
    /**

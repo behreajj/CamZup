@@ -679,67 +679,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    @Override
    public String toSvgElm ( final String id, final float zoom ) {
 
-      // TODO: Update to StringBuilder approach?
-
       final StringBuilder svgp = new StringBuilder(1024);
       svgp.append(MaterialSolid.defaultSvgMaterial(zoom));
-      svgp.append(this.toSvgPath(id));
+      this.toSvgPath(svgp, id);
       svgp.append("</g>\n");
-      return svgp.toString();
-   }
-
-   /**
-    * Renders the curve path as a string containing an SVG element.
-    *
-    * @param id the path id
-    *
-    * @return the SVG string
-    */
-   public String toSvgPath ( final String id ) {
-
-      // TODO: Update to StringBuilder approach?
-
-      final int knotLength = this.knots.size();
-      if ( knotLength < 2 ) { return ""; }
-      final StringBuilder svgp = new StringBuilder(32 + 64 * ( this.closedLoop
-         ? knotLength + 1 : knotLength ));
-
-      final Iterator < Knot2 > itr = this.knots.iterator();
-      Knot2 prevKnot = itr.next();
-      svgp.append("<path id=\"");
-      svgp.append(id);
-      svgp.append("\" d=\"M ");
-      prevKnot.coord.toSvgString(svgp);
-
-      Knot2 currKnot = null;
-      while ( itr.hasNext() ) {
-         currKnot = itr.next();
-         svgp.append(' ');
-         svgp.append('C');
-         svgp.append(' ');
-         prevKnot.foreHandle.toSvgString(svgp);
-         svgp.append(',');
-         currKnot.rearHandle.toSvgString(svgp);
-         svgp.append(',');
-         currKnot.coord.toSvgString(svgp);
-         prevKnot = currKnot;
-      }
-
-      if ( this.closedLoop ) {
-         currKnot = this.knots.get(0);
-         svgp.append(' ');
-         svgp.append('C');
-         svgp.append(' ');
-         prevKnot.foreHandle.toSvgString(svgp);
-         svgp.append(',');
-         currKnot.rearHandle.toSvgString(svgp);
-         svgp.append(',');
-         currKnot.coord.toSvgString(svgp);
-         svgp.append(' ');
-         svgp.append('Z');
-      }
-
-      svgp.append("\"></path>\n");
       return svgp.toString();
    }
 
@@ -855,6 +798,58 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       pyCd.append(']');
       pyCd.append('}');
       return pyCd;
+   }
+
+   /**
+    * Internal helper function to append a curve path to a
+    * {@link StringBuilder}; the id is written to the path's id.
+    *
+    * @param svgp the string builder
+    * @param id   the path id
+    *
+    * @return the string builder.
+    */
+   StringBuilder toSvgPath ( final StringBuilder svgp, final String id ) {
+
+      if ( this.knots.size() < 2 ) { return svgp; }
+
+      final Iterator < Knot2 > itr = this.knots.iterator();
+      Knot2 prevKnot = itr.next();
+      svgp.append("<path id=\"");
+      svgp.append(id);
+      svgp.append("\" d=\"M ");
+      prevKnot.coord.toSvgString(svgp);
+
+      Knot2 currKnot = null;
+      while ( itr.hasNext() ) {
+         currKnot = itr.next();
+         svgp.append(' ');
+         svgp.append('C');
+         svgp.append(' ');
+         prevKnot.foreHandle.toSvgString(svgp);
+         svgp.append(',');
+         currKnot.rearHandle.toSvgString(svgp);
+         svgp.append(',');
+         currKnot.coord.toSvgString(svgp);
+         prevKnot = currKnot;
+      }
+
+      if ( this.closedLoop ) {
+         currKnot = this.knots.get(0);
+         svgp.append(' ');
+         svgp.append('C');
+         svgp.append(' ');
+         prevKnot.foreHandle.toSvgString(svgp);
+         svgp.append(',');
+         currKnot.rearHandle.toSvgString(svgp);
+         svgp.append(',');
+         currKnot.coord.toSvgString(svgp);
+         svgp.append(' ');
+         svgp.append('Z');
+      }
+
+      svgp.append("\"></path>\n");
+      return svgp;
    }
 
    /**
