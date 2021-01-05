@@ -908,22 +908,17 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       pyCd.append(uRes);
       pyCd.append(", \"knots\": [");
 
-      // TODO: Look at the decompile of this in Intellij.
-      // TODO: The tilt would have to work differently if this were a closed
-      // loop, as the first and last knots should have the same tilt. Maybe use
-      // pingPong?
-
-      int i = 0;
       final int len = this.knots.size();
       final float toPercent = 1.0f / ( this.closedLoop ? len : len - 1.0f );
-      final Iterator < Knot3 > itr = this.knots.iterator();
 
-      while ( itr.hasNext() ) {
+      int i = 0;
+      for ( final Iterator < Knot3 > itr = this.knots.iterator(); itr.hasNext();
+         ++i ) {
          final float t = i * toPercent;
-         final float ang = ( 1.0f - t ) * tiltStart + t * tiltEnd;
+         final float ang = this.closedLoop ? Utils.pingPong(tiltStart, tiltEnd,
+            t, 1.0f) : Utils.lerpUnclamped(tiltStart, tiltEnd, t);
          itr.next().toBlenderCode(pyCd, 1.0f, 1.0f, ang);
          if ( itr.hasNext() ) { pyCd.append(',').append(' '); }
-         ++i;
       }
 
       pyCd.append(']');
@@ -1421,6 +1416,66 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       Vec3.subNorm(coord, kLast.rearHandle, tangent);
 
       return coord;
+   }
+
+   /**
+    * Converts a set of points on a Catmull-Rom spline to a Bezier curve. The
+    * default tightness is 0.0. There must be at least 4 points in the array.
+    *
+    * @param closedLoop the closed loop flag
+    * @param tightness  the curve tightness
+    * @param points     the points
+    * @param target     the output curve
+    *
+    * @return the conversion
+    */
+   public static Curve3 fromCatmull ( final boolean closedLoop,
+      final Vec3[] points, final float tightness, final Curve3 target ) {
+
+      final int ptsLen = points.length;
+      if ( ptsLen < 4 ) { return target; }
+
+      target.closedLoop = closedLoop;
+      target.name = "Catmull";
+
+      final int knotCount = closedLoop ? ptsLen : ptsLen - 2;
+      target.resize(knotCount);
+      final Iterator < Knot3 > itr = target.iterator();
+      final Knot3 first = itr.next();
+      final int ptsLast = ptsLen - 1;
+
+      int idx = 0;
+      Knot3 prev = first;
+      Knot3 curr;
+      for ( curr = null; itr.hasNext(); ++idx ) {
+         int idx1 = idx + 1;
+         int idx2 = idx + 2;
+         int idx3 = idx + 3;
+
+         if ( closedLoop ) {
+            idx1 %= ptsLen;
+            idx2 %= ptsLen;
+            idx3 %= ptsLen;
+         } else {
+            idx3 = idx3 < ptsLast ? idx3 : ptsLast;
+         }
+
+         curr = itr.next();
+         Knot3.fromSegCatmull(points[idx], points[idx1], points[idx2],
+            points[idx3], tightness, prev, curr);
+         prev = curr;
+      }
+
+      if ( closedLoop ) {
+         Knot3.fromSegCatmull(points[ptsLast], points[0], points[1], points[2],
+            tightness, curr, first);
+      } else {
+         first.coord.set(points[1]);
+         first.mirrorHandlesForward();
+         curr.mirrorHandlesBackward();
+      }
+
+      return target;
    }
 
    /**

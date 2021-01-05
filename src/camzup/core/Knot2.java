@@ -988,74 +988,70 @@ public class Knot2 implements Comparable < Knot2 > {
     * The previous knot's fore handle, the next knot's rear handle and the
     * next knot's coordinate are set by this function.
     *
-    * @param xPrevAnchor    the previous anchor x
-    * @param yPrevAnchor    the previous anchor y
-    * @param xCurrAnchor    the current anchor x
-    * @param yCurrAnchor    the current anchor y
-    * @param xNextAnchor    the next anchor x
-    * @param yNextAnchor    the next anchor y
-    * @param xAdvAnchor     the advance anchor x
-    * @param yAdvAnchor     the advance anchor y
-    * @param curveTightness the curve tightness
-    * @param prev           the previous knot
-    * @param next           the next knot
+    * @param xPrevAnchor the previous anchor x
+    * @param yPrevAnchor the previous anchor y
+    * @param xCurrAnchor the current anchor x
+    * @param yCurrAnchor the current anchor y
+    * @param xNextAnchor the next anchor x
+    * @param yNextAnchor the next anchor y
+    * @param xAdvAnchor  the advance anchor x
+    * @param yAdvAnchor  the advance anchor y
+    * @param tightness   the curve tightness
+    * @param prev        the previous knot
+    * @param next        the next knot
     *
     * @return the next knot
     */
-   @Experimental
    public static Knot2 fromSegCatmull ( final float xPrevAnchor,
       final float yPrevAnchor, final float xCurrAnchor, final float yCurrAnchor,
       final float xNextAnchor, final float yNextAnchor, final float xAdvAnchor,
-      final float yAdvAnchor, final float curveTightness, final Knot2 prev,
+      final float yAdvAnchor, final float tightness, final Knot2 prev,
       final Knot2 next ) {
 
-      // TODO: Test by creating a fromCatmull to Curve2?
-
-      final float fac = ( curveTightness - 1.0f ) * -IUtils.ONE_SIX;
-      final float x0 = ( xNextAnchor - xPrevAnchor ) * fac;
-      final float y0 = ( yNextAnchor - yPrevAnchor ) * fac;
-      final float x1 = ( xAdvAnchor - xCurrAnchor ) * fac;
-      final float y1 = ( yAdvAnchor - yCurrAnchor ) * fac;
-
-      prev.foreHandle.set(xCurrAnchor + x0, yCurrAnchor + y0);
-      next.rearHandle.set(xNextAnchor - x1, yNextAnchor - y1);
+      final float fac = ( tightness - 1.0f ) * -IUtils.ONE_SIX;
+      prev.foreHandle.set(xCurrAnchor + ( xNextAnchor - xPrevAnchor ) * fac,
+         yCurrAnchor + ( yNextAnchor - yPrevAnchor ) * fac);
+      next.rearHandle.set(xNextAnchor - ( xAdvAnchor - xCurrAnchor ) * fac,
+         yNextAnchor - ( yAdvAnchor - yCurrAnchor ) * fac);
       next.coord.set(xNextAnchor, yNextAnchor);
 
       return next;
    }
 
    /**
-    * Sets two knots from a segment of a Catmull-Rom curve. Assumes that the
-    * previous knot's coordinate is set to a prior anchor point.<br>
+    * Sets two knots from a segment of a Catmull-Rom curve. The default curve
+    * tightness is 0.0.<br>
     * <br>
-    * The previous knot's fore handle, the next knot's rear handle and the
-    * next knot's coordinate are set by this function.
+    * Assumes that the previous knot's coordinate is set to a prior anchor
+    * point. The previous knot's fore handle, the next knot's rear handle and
+    * the next knot's coordinate are set by this function.
     *
-    * @param prevAnchor     the previous anchor
-    * @param currAnchor     the current anchor
-    * @param nextAnchor     the next anchor
-    * @param advAnchor      the advance anchor
-    * @param curveTightness the curve tightness
-    * @param prev           the previous knot
-    * @param next           the next knot
+    * @param prevAnchor the previous anchor
+    * @param currAnchor the current anchor
+    * @param nextAnchor the next anchor
+    * @param advAnchor  the advance anchor
+    * @param tightness  the curve tightness
+    * @param prev       the previous knot
+    * @param next       the next knot
     *
     * @return the next knot
     */
    public static Knot2 fromSegCatmull ( final Vec2 prevAnchor,
       final Vec2 currAnchor, final Vec2 nextAnchor, final Vec2 advAnchor,
-      final float curveTightness, final Knot2 prev, final Knot2 next ) {
+      final float tightness, final Knot2 prev, final Knot2 next ) {
 
       return Knot2.fromSegCatmull(prevAnchor.x, prevAnchor.y, currAnchor.x,
          currAnchor.y, nextAnchor.x, nextAnchor.y, advAnchor.x, advAnchor.y,
-         curveTightness, prev, next);
+         tightness, prev, next);
    }
 
    /**
-    * Sets two knots from a segment of a cubic curve. Assumes that the
-    * previous knot's coordinate is set to the first anchor point.<br>
+    * Sets two knots from a segment of a cubic curve. The default curve
+    * tightness is 0.0.<br>
     * <br>
-    * The previous knot's fore handle, the next knot's rear handle and the
-    * next knot's coordinate are set by this function.
+    * Assumes that the previous knot's coordinate is set to the first anchor
+    * point. The previous knot's fore handle, the next knot's rear handle and
+    * the next knot's coordinate are set by this function.
     *
     * @param xPrevControl the previous control point x
     * @param yPrevControl the previous control point y
@@ -1122,9 +1118,6 @@ public class Knot2 implements Comparable < Knot2 > {
     */
    public static Knot2 fromSegLinear ( final float xNextAnchor,
       final float yNextAnchor, final Knot2 prev, final Knot2 next ) {
-
-      // Vec2.mix(prev.coord, next.coord, IUtils.ONE_THIRD, prev.foreHandle);
-      // Vec2.mix(next.coord, prev.coord, IUtils.ONE_THIRD, next.rearHandle);
 
       final Vec2 prevCoord = prev.coord;
       final Vec2 nextCoord = next.coord;

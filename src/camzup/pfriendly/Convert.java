@@ -1441,7 +1441,7 @@ public abstract class Convert {
                      break;
 
                   case PConstants.CURVE_VERTEX: /* 3 */
-                     
+
                      /*
                       * PShape does not seem to support its own command...?
                       * https://github.com/processing/processing/issues/5173
@@ -1462,7 +1462,7 @@ public abstract class Convert {
                         source.getVertexY(ni),
                         0.0f, prevKnot, currKnot);
                      ++cursor;
-                     
+
                      currCurve.append(currKnot);
                      prevKnot = currKnot;
 

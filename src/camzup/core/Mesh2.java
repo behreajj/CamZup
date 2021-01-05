@@ -2464,6 +2464,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       for ( int i = 0; i < pointsLen; ++i ) { f[i][0] = i; }
 
       target.calcUvs();
+      target.materialIndex = source.materialIndex;
       return target;
    }
 
@@ -2501,6 +2502,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          for ( int j = 0; j < fLen; ++j ) { f[j][0] = prevIdx + j; }
          prevIdx = pointsLen;
       }
+
       target.coords = points.toArray(new Vec2[pointsLen]);
       target.calcUvs();
       return target;

@@ -1726,7 +1726,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
    /**
     * A helper function for the renderer camera. Updates the camera matrix,
-    * its inverse, the model view and its inverse, and updates the project
+    * its inverse, the model view and its inverse, and updates the projection
     * model view.
     */
    protected void updateCameraInv ( ) {
