@@ -50,15 +50,16 @@ void draw() {
     Vec3.mul(co, roughness, noiseIn);
     noiseIn.z = zOff;
     float fac1 = Simplex.fbm(
-      noiseIn, Simplex.DEFAULT_SEED,
+      noiseIn, Simplex.DEFAULT_SEED, 
       16, 2.0, 0.3375);
     float fac0 = Voronoi.eval(
-      co, Simplex.DEFAULT_SEED,
+      co, Simplex.DEFAULT_SEED, 
       0.25, voronoi);
     float fac = Utils.lerp(fac0, fac1, 0.75);
     co.z = elev * fac;
   }
   plane3.shadeSmooth();
+  //plane3.shadeFlat();
 
   if (mousePressed) {
     if (mouseButton == LEFT) {

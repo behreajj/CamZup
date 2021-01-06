@@ -2484,8 +2484,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public static Mesh2 fromCurve2 ( final Curve2[] arr, final int resolution,
       final float colinearTol, final Mesh2 target ) {
 
-      // TODO: For 3D version, subdivFacesFan(1), then calc normals.
-
       final int curvesLen = arr.length;
       final ArrayList < Vec2 > points = new ArrayList <>(64);
       final Vec2 dir0 = new Vec2();
@@ -2511,16 +2509,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Generates a grid of hexagons arranged in rings around a central cell.
     * The number of cells follows the formula n = 1 + (rings - 1) * 3 * rings,
-    * meaning
-    *
-    * <pre>
-    * 1 ring :  1 cell,
-    * 2 rings:  7 cells,
-    * 3 rings: 19 cells,
-    * 4 rings: 37 cells
-    * </pre>
-    *
-    * and so on. See <a href=
+    * meaning 1 ring : 1 cell, 2 rings: 7 cells, 3 rings: 19 cells, 4 rings:
+    * 37 cells and so on. See <a href=
     * "https://www.redblobgames.com/grids/hexagons/implementation.html">Red
     * Blob Games' Implementation of Hex Grids</a> .
     *
@@ -2776,13 +2766,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          }
       }
 
+      int[][][] fs;
       switch ( poly ) {
 
          case NGON:
 
          case QUAD:
 
-            target.faces = new int[flen][4][2];
+            fs = target.faces = new int[flen][4][2];
 
             for ( int k = 0, i = 0; i < rval; ++i ) {
                final int noff0 = i * cval1;
@@ -2794,7 +2785,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                   final int n01 = noff1 + j;
                   final int n11 = n01 + 1;
 
-                  final int[][] f = target.faces[k];
+                  final int[][] f = fs[k];
 
                   f[0][0] = n00;
                   f[0][1] = n00;
@@ -2816,7 +2807,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          default:
 
-            target.faces = new int[flen + flen][3][2];
+            fs = target.faces = new int[flen + flen][3][2];
 
             for ( int k = 0, i = 0; i < rval; ++i ) {
                final int noff0 = i * cval1;
@@ -2828,7 +2819,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                   final int n01 = noff1 + j;
                   final int n11 = n01 + 1;
 
-                  final int[][] f0 = target.faces[k];
+                  final int[][] f0 = fs[k];
                   f0[0][0] = n00;
                   f0[0][1] = n00;
 
@@ -2859,14 +2850,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * Creates a subdivided plane. Useful for meshes which later will be
     * augmented by noise or height maps to simulate terrain.
     *
-    * @param div    subdivisions
+    * @param count    subdivisions
     * @param target the output mesh
     *
     * @return the plane
     */
-   public static Mesh2 plane ( final int div, final Mesh2 target ) {
+   public static Mesh2 plane ( final int count, final Mesh2 target ) {
 
-      return Mesh2.plane(div, div, Mesh2.DEFAULT_POLY_TYPE, target);
+      return Mesh2.plane(count, count, Mesh2.DEFAULT_POLY_TYPE, target);
    }
 
    /**
@@ -3292,8 +3283,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int resolution, final float colinearTol, final ArrayList <
          Vec2 > points, final Vec2 dir0, final Vec2 dir1 ) {
 
-      // TODO: Consider using arc-length parameterization, so points will be
-      // evenly distributed across the curve.
+      // QUERY Arc-length parameterization? Seems like too computationally
+      // intensive given the result.
 
       /* Open curves not supported. */
       if ( !source.closedLoop ) { return points; }

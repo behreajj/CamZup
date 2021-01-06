@@ -300,8 +300,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public Mesh3 extrudeEdge ( final int faceIdx, final int edgeIdx,
       final float amt ) {
 
-      // TEST Test UVs.
-
       if ( amt == 0.0f ) { return this; }
 
       final int facesLen = this.faces.length;
@@ -359,7 +357,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec2 vtPerp = new Vec2();
       Vec2.sub(vtOrigin, vtDest, vtPerp);
       Vec2.perpendicularCCW(vtPerp, vtPerp);
-      // Vec2.normalize(vtPerp, vtPerp);
 
       final Vec2 vtNewOrigin = new Vec2();
       final Vec2 vtNewDest = new Vec2();
@@ -3096,6 +3093,78 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Converts a curve to a mesh. If the fore handle and rear handle of a
+    * curve segment are colinear according to a tolerance, then only two
+    * vertices are added; otherwise evaluates the Bezier curve, producing one
+    * line segment per the requested resolution.
+    *
+    * @param source      the source curve
+    * @param resolution  the line segment count
+    * @param colinearTol the colinear tolerance
+    * @param target      the output mesh
+    *
+    * @return the mesh
+    */
+   public static Mesh3 fromCurve3 ( final Curve3 source, final int resolution,
+      final float colinearTol, final Mesh3 target ) {
+
+      final ArrayList < Vec3 > points = new ArrayList <>(64);
+      Mesh3.fromCurve3(source, resolution, colinearTol, points, new Vec3(),
+         new Vec3());
+      final int pointsLen = points.size();
+      target.coords = points.toArray(new Vec3[pointsLen]);
+      final int[][][] fs = target.faces = new int[1][pointsLen][3];
+      final int[][] f = fs[0];
+      for ( int i = 0; i < pointsLen; ++i ) { f[i][0] = i; }
+
+      target.calcUvs();
+      target.shadeSmooth();
+      target.materialIndex = source.materialIndex;
+      return target;
+   }
+
+   /**
+    * Converts an array of curves to a mesh. If the fore handle and rear
+    * handle of a curve segment are colinear according to a tolerance, then
+    * only two vertices are added; otherwise evaluates the Bezier curve,
+    * producing one line segment per the requested resolution.
+    *
+    * @param arr         the source curves
+    * @param resolution  the line segment count
+    * @param colinearTol the colinear tolerance
+    * @param target      the output mesh
+    *
+    * @return the mesh
+    */
+   public static Mesh3 fromCurve3 ( final Curve3[] arr, final int resolution,
+      final float colinearTol, final Mesh3 target ) {
+
+      // TEST
+
+      final int curvesLen = arr.length;
+      final ArrayList < Vec3 > points = new ArrayList <>(64);
+      final Vec3 dir0 = new Vec3();
+      final Vec3 dir1 = new Vec3();
+      final int[][][] fs = target.faces = new int[curvesLen][][];
+      int prevIdx = 0;
+      int pointsLen = 0;
+      for ( int i = 0; i < curvesLen; ++i ) {
+         Mesh3.fromCurve3(arr[i], resolution, colinearTol, points, dir0, dir1);
+
+         pointsLen = points.size();
+         final int fLen = pointsLen - prevIdx;
+         final int[][] f = fs[i] = new int[fLen][3];
+         for ( int j = 0; j < fLen; ++j ) { f[j][0] = prevIdx + j; }
+         prevIdx = pointsLen;
+      }
+
+      target.coords = points.toArray(new Vec3[pointsLen]);
+      target.calcUvs();
+      target.shadeSmooth();
+      return target;
+   }
+
+   /**
     * Creates an array of meshes from a BufferedReader that references a
     * WaveFront .obj file with groups.<br>
     * <br>
@@ -4600,6 +4669,61 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       return Mesh3.uvSphere(IMesh.DEFAULT_CIRCLE_SECTORS,
          IMesh.DEFAULT_CIRCLE_SECTORS >> 1, target);
+   }
+
+   /**
+    * Internal helper function to convert curves to meshes. Evaluates a Bezier
+    * curve to line segments based on a resolution after testing whether or
+    * not the rear and fore handles of the curve are colinear.
+    *
+    * @param source      the source curve
+    * @param resolution  the resolution
+    * @param colinearTol the colinear tolerance
+    * @param points      the point list
+    * @param dir0        the first direction
+    * @param dir1        the second direction
+    *
+    * @return the point list
+    *
+    * @see Utils#clamp01(float)
+    * @see Vec3#subNorm(Vec3, Vec3, Vec3)
+    * @see Vec3#dot(Vec3, Vec3)
+    * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float, Vec3)
+    */
+   static ArrayList < Vec3 > fromCurve3 ( final Curve3 source,
+      final int resolution, final float colinearTol, final ArrayList <
+         Vec3 > points, final Vec3 dir0, final Vec3 dir1 ) {
+
+      if ( !source.closedLoop ) { return points; }
+
+      final int vres = resolution < 2 ? 2 : resolution;
+      final float vtol = Utils.clamp01(1.0f - colinearTol);
+      final float toPercent = 1.0f / vres;
+      final Iterator < Knot3 > itr = source.iterator();
+      Knot3 prevKnot = source.getLast();
+
+      for ( Knot3 currKnot = null; itr.hasNext(); prevKnot = currKnot ) {
+         currKnot = itr.next();
+         final Vec3 coPrev = prevKnot.coord;
+         final Vec3 fhPrev = prevKnot.foreHandle;
+         final Vec3 rhNext = currKnot.rearHandle;
+         final Vec3 coNext = currKnot.coord;
+
+         /* Add previous knot coordinate no matter the colinear status. */
+         points.add(new Vec3(coPrev));
+
+         Vec3.subNorm(fhPrev, coPrev, dir0);
+         Vec3.subNorm(rhNext, coNext, dir1);
+         final float dotp = Vec3.dot(dir0, dir1);
+         if ( dotp > -vtol && dotp < vtol ) {
+            for ( int i = 1; i < vres; ++i ) {
+               points.add(Vec3.bezierPoint(coPrev, fhPrev, rhNext, coNext, i
+                  * toPercent, new Vec3()));
+            }
+         }
+      }
+
+      return points;
    }
 
    /**

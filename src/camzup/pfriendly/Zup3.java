@@ -46,6 +46,8 @@ public class Zup3 extends Up3 {
    @Override
    public void camBottom ( ) {
 
+      // TODO: When called continuously in draw, the camera eventually draws a
+      // blank screen. Same with camDown. Same for Yup3.
       final float z = this.eyeDist < 128 ? -Zup3.DEFAULT_LOC_Z : -this.eyeDist;
       final float y = -z * IUp3.POLARITY_OFFSET;
       this.camera(0.0f, y, z, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
@@ -202,6 +204,8 @@ public class Zup3 extends Up3 {
    @Override
    public void camTop ( ) {
 
+      // TODO: When called continuously in draw, the camera eventually draws a
+      // blank screen. Same with camDown. Same for Yup3.
       final float z = this.eyeDist < 128 ? Zup3.DEFAULT_LOC_Z : this.eyeDist;
       final float y = -z * IUp3.POLARITY_OFFSET;
       this.camera(0.0f, y, z, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,

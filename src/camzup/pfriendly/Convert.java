@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.Map;
 
+import camzup.core.ArcMode;
 import camzup.core.Curve2;
 import camzup.core.Curve3;
 import camzup.core.CurveEntity2;
@@ -1238,6 +1239,69 @@ public abstract class Convert {
       return target.set(source.x, source.y, source.z, 0.0f);
    }
 
+   @Recursive
+   protected static ArrayList < Mesh3 > toMesh3 ( final PShape source,
+      final ArrayList < Mesh3 > meshes ) {
+
+      if ( !source.is3D() ) { return meshes; }
+      final String sourceName = source.getName();
+      final int family = source.getFamily();
+
+      switch ( family ) {
+
+         case PConstants.GROUP: /* 0 */
+
+            final PShape[] children = source.getChildren();
+            final int childLen = children.length;
+            for ( int i = 0; i < childLen; ++i ) {
+               Convert.toMesh3(children[i], meshes);
+            }
+
+            break;
+
+         case PShape.PRIMITIVE: /* 101 */
+
+            break;
+
+         case PShape.PATH: /* 102 */
+         case PShape.GEOMETRY: /* 103 */
+
+            /* Get vertex data. */
+            // final boolean isogl =
+            // source.getClass().equals(PShapeOpenGL.class);
+
+            final int vertLen = source.getVertexCount();
+            if ( vertLen < 1 ) { break; }
+
+            Mesh3 mesh = new Mesh3();
+            mesh.name = sourceName;
+            mesh.coords = Vec3.resize(mesh.coords, vertLen);
+            mesh.texCoords = Vec2.resize(mesh.texCoords, vertLen);
+            mesh.normals = Vec3.resize(mesh.normals, vertLen);
+
+            for ( int i = 0; i < vertLen; ++i ) {
+               mesh.coords[i].set(source.getVertexX(i), source.getVertexY(i),
+                  source.getVertexZ(i));
+               mesh.texCoords[i].set(source.getTextureU(i), source.getTextureV(
+                  i));
+               mesh.normals[i].set(source.getNormalX(i), source.getNormalY(i),
+                  source.getNormalZ(i));
+            }
+
+            // How would you get the face data?
+
+            meshes.add(mesh);
+
+            break;
+
+         default:
+
+            System.err.println(family + " is an unsupported family.");
+      }
+
+      return meshes;
+   }
+
    /**
     * Converts from a 2D PShape to a Curve2. Potentially a recursive function
     * if the PShape is of the family {@link PConstants#GROUP}
@@ -1252,6 +1316,7 @@ public abstract class Convert {
    protected static ArrayList < Curve2 > toCurve2 ( final PShape source,
       final ArrayList < Curve2 > curves ) {
 
+      if ( source.is3D() ) { return curves; }
       final String sourceName = source.getName();
       final int family = source.getFamily();
 
@@ -1260,8 +1325,8 @@ public abstract class Convert {
          case PConstants.GROUP: /* 0 */
 
             final PShape[] children = source.getChildren();
-            final int childlen = children.length;
-            for ( int i = 0; i < childlen; ++i ) {
+            final int childLen = children.length;
+            for ( int i = 0; i < childLen; ++i ) {
                Convert.toCurve2(children[i], curves);
             }
 
@@ -1330,7 +1395,16 @@ public abstract class Convert {
 
                case PConstants.ARC: /* 32 */
 
-                  // TODO: Support Arc?
+                  final int arcMode = paramsLen > 6 ? ( int ) params[6]
+                     : PConstants.OPEN;
+                  final Curve2 arc = new Curve2(sourceName);
+                  Curve2.arc(params[4], params[5], Utils.min(params[2],
+                     params[3]), arcMode == PConstants.PIE ? ArcMode.PIE
+                        : arcMode == PConstants.CHORD ? ArcMode.CHORD
+                        : ArcMode.OPEN, arc);
+                  arc.translate(new Vec2(params[0], params[1]));
+                  curves.add(arc);
+                  break;
 
                default:
 
@@ -1339,8 +1413,8 @@ public abstract class Convert {
 
             break;
 
-         case PShape.PATH: /* 102 */
          case PShape.GEOMETRY: /* 103 */
+         case PShape.PATH: /* 102 */
 
             /* Get vertex data. */
             // final boolean isogl =
@@ -1443,7 +1517,7 @@ public abstract class Convert {
                   case PConstants.CURVE_VERTEX: /* 3 */
 
                      /*
-                      * PShape does not seem to support its own command...?
+                      * PShape doesn't seem to support this...?
                       * https://github.com/processing/processing/issues/5173
                       */
                      final int pi = Math.max(0, cursor - 1);

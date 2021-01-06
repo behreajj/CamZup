@@ -1194,6 +1194,11 @@ public class Knot3 implements Comparable < Knot3 > {
       final float yAdvAnchor, final float zAdvAnchor, final float tightness,
       final Knot3 prev, final Knot3 next ) {
 
+      if ( Utils.approx(tightness, 1.0f) ) {
+         return Knot3.fromSegLinear(xNextAnchor, yNextAnchor, zNextAnchor, prev,
+            next);
+      }
+
       final float fac = ( tightness - 1.0f ) * -IUtils.ONE_SIX;
       prev.foreHandle.set(xCurrAnchor + ( xNextAnchor - xPrevAnchor ) * fac,
          yCurrAnchor + ( yNextAnchor - yPrevAnchor ) * fac, zCurrAnchor
@@ -1320,15 +1325,15 @@ public class Knot3 implements Comparable < Knot3 > {
 
       nextCoord.set(xNextAnchor, yNextAnchor, zNextAnchor);
 
-      prev.foreHandle.set(prevCoord.x * IUtils.ONE_THIRD + nextCoord.x
-         * IUtils.TWO_THIRDS, prevCoord.y * IUtils.ONE_THIRD + nextCoord.y
-            * IUtils.TWO_THIRDS, prevCoord.z * IUtils.ONE_THIRD + nextCoord.z
-               * IUtils.TWO_THIRDS);
+      prev.foreHandle.set(
+         prevCoord.x * IUtils.TWO_THIRDS + nextCoord.x * IUtils.ONE_THIRD,
+         prevCoord.y * IUtils.TWO_THIRDS + nextCoord.y * IUtils.ONE_THIRD,
+         prevCoord.z * IUtils.TWO_THIRDS + nextCoord.z * IUtils.ONE_THIRD);
 
-      next.rearHandle.set(nextCoord.x * IUtils.ONE_THIRD + prevCoord.x
-         * IUtils.TWO_THIRDS, nextCoord.y * IUtils.ONE_THIRD + prevCoord.y
-            * IUtils.TWO_THIRDS, nextCoord.z * IUtils.ONE_THIRD + prevCoord.z
-               * IUtils.TWO_THIRDS);
+      next.rearHandle.set(nextCoord.x * IUtils.TWO_THIRDS + prevCoord.x
+         * IUtils.ONE_THIRD, nextCoord.y * IUtils.TWO_THIRDS + prevCoord.y
+            * IUtils.ONE_THIRD, nextCoord.z * IUtils.TWO_THIRDS + prevCoord.z
+               * IUtils.ONE_THIRD);
 
       return next;
    }

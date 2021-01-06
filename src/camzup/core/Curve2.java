@@ -1690,18 +1690,15 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Creates a regular convex polygon.
     *
+    * @param knotCount   the number of knots
     * @param offsetAngle the offset angle
     * @param radius      the radius
-    * @param knotCount   the number of knots
     * @param target      the output curve
     *
     * @return the polygon
     */
-   public static Curve2 polygon ( final float offsetAngle, final float radius,
-      final int knotCount, final Curve2 target ) {
-
-      // TODO: overload with defaults for radius and offset angle, switch
-      // knotCount to first param because it doesn't take default arg?
+   public static Curve2 polygon ( final int knotCount, final float offsetAngle,
+      final float radius, final Curve2 target ) {
 
       final float off1 = offsetAngle * IUtils.ONE_TAU;
       final int vknct = knotCount < 3 ? 3 : knotCount;
@@ -2199,6 +2196,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       target.closedLoop = true;
       target.name = "Rect";
       target.resize(4);
+
+      // TODO: If you leave cornered rect as is, then this needs its winding
+      // flipped back...
 
       final Iterator < Knot2 > itr = target.knots.iterator();
       final Knot2 kn3 = itr.next();

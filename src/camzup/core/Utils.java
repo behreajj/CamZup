@@ -1045,11 +1045,12 @@ public abstract class Utils implements IUtils {
     * @param degrees the input angle
     *
     * @return the output angle
+    * 
+    * @see Utils#floor(float)
     */
    public static float modDegrees ( final float degrees ) {
 
-      final double d = degrees;
-      return ( float ) ( d - 360.0d * Utils.floor(d * IUtils.ONE_360_D) );
+      return degrees - 360.0f * Utils.floor(degrees * IUtils.ONE_360);
    }
 
    /**
@@ -1061,14 +1062,11 @@ public abstract class Utils implements IUtils {
     * @return the unsigned radians
     *
     * @see Utils#mod(float, float)
-    * @see IUtils#TAU_D
-    * @see IUtils#ONE_TAU_D
-    * @see Utils#floor(double)
+    * @see Utils#floor(float)
     */
    public static float modRadians ( final float radians ) {
 
-      final double r = radians;
-      return ( float ) ( r - IUtils.TAU_D * Utils.floor(r * IUtils.ONE_TAU_D) );
+      return radians - IUtils.TAU * Utils.floor(radians * IUtils.ONE_TAU);
    }
 
    /**

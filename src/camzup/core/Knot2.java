@@ -1008,6 +1008,10 @@ public class Knot2 implements Comparable < Knot2 > {
       final float yAdvAnchor, final float tightness, final Knot2 prev,
       final Knot2 next ) {
 
+      if ( Utils.approx(tightness, 1.0f) ) {
+         return Knot2.fromSegLinear(xNextAnchor, yNextAnchor, prev, next);
+      }
+
       final float fac = ( tightness - 1.0f ) * -IUtils.ONE_SIX;
       prev.foreHandle.set(xCurrAnchor + ( xNextAnchor - xPrevAnchor ) * fac,
          yCurrAnchor + ( yNextAnchor - yPrevAnchor ) * fac);
@@ -1124,13 +1128,13 @@ public class Knot2 implements Comparable < Knot2 > {
 
       nextCoord.set(xNextAnchor, yNextAnchor);
 
-      prev.foreHandle.set(prevCoord.x * IUtils.ONE_THIRD + nextCoord.x
-         * IUtils.TWO_THIRDS, prevCoord.y * IUtils.ONE_THIRD + nextCoord.y
-            * IUtils.TWO_THIRDS);
+      prev.foreHandle.set(prevCoord.x * IUtils.TWO_THIRDS + nextCoord.x
+         * IUtils.ONE_THIRD, prevCoord.y * IUtils.TWO_THIRDS + nextCoord.y
+            * IUtils.ONE_THIRD);
 
-      next.rearHandle.set(nextCoord.x * IUtils.ONE_THIRD + prevCoord.x
-         * IUtils.TWO_THIRDS, nextCoord.y * IUtils.ONE_THIRD + prevCoord.y
-            * IUtils.TWO_THIRDS);
+      next.rearHandle.set(nextCoord.x * IUtils.TWO_THIRDS + prevCoord.x
+         * IUtils.ONE_THIRD, nextCoord.y * IUtils.TWO_THIRDS + prevCoord.y
+            * IUtils.ONE_THIRD);
 
       return next;
    }
