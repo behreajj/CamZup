@@ -97,17 +97,14 @@ abstract class ParserSvg {
    /**
     * The compiled pattern for SVG path commands.
     */
-   protected static final Pattern PATTERN_CMD;
+   protected static final Pattern PATTERN_CMD = Pattern.compile(
+      ParserSvg.PTRN_STR_CMD);
 
    /**
     * The compiled pattern for SVG data elements.
     */
-   protected static final Pattern PATTERN_DATA;
-
-   static {
-      PATTERN_CMD = Pattern.compile(ParserSvg.PTRN_STR_CMD);
-      PATTERN_DATA = Pattern.compile(ParserSvg.PTRN_STR_DATA);
-   }
+   protected static final Pattern PATTERN_DATA = Pattern.compile(
+      ParserSvg.PTRN_STR_DATA);
 
    /**
     * Re-breaks String tokens with numbers separated by negative signs.

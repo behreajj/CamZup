@@ -558,12 +558,11 @@ public interface IYup2 extends IUp {
       final float xDir, final float yDir, final float dLen, final float lnwgt,
       final float oWeight, final float dWeight ) {
 
-      final float mSq = xDir * xDir + yDir * yDir;
-
       this.pushStyle();
       this.strokeWeight(oWeight);
       this.point(xOrigin, yOrigin);
 
+      final float mSq = xDir * xDir + yDir * yDir;
       if ( mSq > 0.0f ) {
          final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
          final float dx = xOrigin + xDir * mInv;
@@ -1169,11 +1168,13 @@ public interface IYup2 extends IUp {
    static String svgBackground ( final IYup2 renderer ) {
 
       /*
-       * PShape's SVG parser converts primitives like rect into a PShape family
+       * PShape's SVG parser converts tags like "rect" into a PShape family
        * PRIMITIVE, which is difficult to convert to a Curve2. This is because
        * the PShape's vertices cannot be accessed. For that reason, SVG
        * primitives should be avoided when writing.
        */
+
+      // TODO: Use append version of toFixed?
 
       final int bgClr = renderer.getBackground();
       final float bgAlpha = ( bgClr >> 0x18 & 0xff ) * IUtils.ONE_255;

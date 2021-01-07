@@ -1239,73 +1239,13 @@ public abstract class Convert {
       return target.set(source.x, source.y, source.z, 0.0f);
    }
 
-   @Recursive
-   protected static ArrayList < Mesh3 > toMesh3 ( final PShape source,
-      final ArrayList < Mesh3 > meshes ) {
-
-      if ( !source.is3D() ) { return meshes; }
-      final String sourceName = source.getName();
-      final int family = source.getFamily();
-
-      switch ( family ) {
-
-         case PConstants.GROUP: /* 0 */
-
-            final PShape[] children = source.getChildren();
-            final int childLen = children.length;
-            for ( int i = 0; i < childLen; ++i ) {
-               Convert.toMesh3(children[i], meshes);
-            }
-
-            break;
-
-         case PShape.PRIMITIVE: /* 101 */
-
-            break;
-
-         case PShape.PATH: /* 102 */
-         case PShape.GEOMETRY: /* 103 */
-
-            /* Get vertex data. */
-            // final boolean isogl =
-            // source.getClass().equals(PShapeOpenGL.class);
-
-            final int vertLen = source.getVertexCount();
-            if ( vertLen < 1 ) { break; }
-
-            Mesh3 mesh = new Mesh3();
-            mesh.name = sourceName;
-            mesh.coords = Vec3.resize(mesh.coords, vertLen);
-            mesh.texCoords = Vec2.resize(mesh.texCoords, vertLen);
-            mesh.normals = Vec3.resize(mesh.normals, vertLen);
-
-            for ( int i = 0; i < vertLen; ++i ) {
-               mesh.coords[i].set(source.getVertexX(i), source.getVertexY(i),
-                  source.getVertexZ(i));
-               mesh.texCoords[i].set(source.getTextureU(i), source.getTextureV(
-                  i));
-               mesh.normals[i].set(source.getNormalX(i), source.getNormalY(i),
-                  source.getNormalZ(i));
-            }
-
-            // How would you get the face data?
-
-            meshes.add(mesh);
-
-            break;
-
-         default:
-
-            System.err.println(family + " is an unsupported family.");
-      }
-
-      return meshes;
-   }
-
    /**
     * Converts from a 2D PShape to a Curve2. Potentially a recursive function
     * if the PShape is of the family {@link PConstants#GROUP}
-    * ({@value PConstants#GROUP}).
+    * ({@value PConstants#GROUP}).<br>
+    * <br>
+    * Conversion of {@link PShape#PRIMITIVE}s does not respond to
+    * {@link PApplet#ellipseMode(int)} or {@link PApplet#rectMode(int)}.
     *
     * @param source the source shape
     * @param curves the curves list
@@ -1363,9 +1303,8 @@ public abstract class Convert {
 
                case PConstants.RECT: /* 30 */
 
-                  // TEST
                   final Vec2 tl = new Vec2(params[0], params[1]);
-                  final Vec2 br = new Vec2(tl.x + params[2], tl.y + params[3]);
+                  final Vec2 br = new Vec2(params[2], params[3]);
                   if ( paramsLen > 7 ) {
                      curves.add(Curve2.rect(tl, br, params[4], params[5],
                         params[6], params[7], new Curve2(sourceName)));
@@ -1592,6 +1531,69 @@ public abstract class Convert {
       }
 
       return curves;
+   }
+
+   @Recursive
+   protected static ArrayList < Mesh3 > toMesh3 ( final PShape source,
+      final ArrayList < Mesh3 > meshes ) {
+
+      if ( !source.is3D() ) { return meshes; }
+      final String sourceName = source.getName();
+      final int family = source.getFamily();
+
+      switch ( family ) {
+
+         case PConstants.GROUP: /* 0 */
+
+            final PShape[] children = source.getChildren();
+            final int childLen = children.length;
+            for ( int i = 0; i < childLen; ++i ) {
+               Convert.toMesh3(children[i], meshes);
+            }
+
+            break;
+
+         case PShape.PRIMITIVE: /* 101 */
+
+            break;
+
+         case PShape.PATH: /* 102 */
+         case PShape.GEOMETRY: /* 103 */
+
+            /* Get vertex data. */
+            // final boolean isogl =
+            // source.getClass().equals(PShapeOpenGL.class);
+
+            final int vertLen = source.getVertexCount();
+            if ( vertLen < 1 ) { break; }
+
+            final Mesh3 mesh = new Mesh3();
+            mesh.name = sourceName;
+            mesh.coords = Vec3.resize(mesh.coords, vertLen);
+            mesh.texCoords = Vec2.resize(mesh.texCoords, vertLen);
+            mesh.normals = Vec3.resize(mesh.normals, vertLen);
+
+            for ( int i = 0; i < vertLen; ++i ) {
+               mesh.coords[i].set(source.getVertexX(i), source.getVertexY(i),
+                  source.getVertexZ(i));
+               mesh.texCoords[i].set(source.getTextureU(i), source.getTextureV(
+                  i));
+               mesh.normals[i].set(source.getNormalX(i), source.getNormalY(i),
+                  source.getNormalZ(i));
+            }
+
+            // How would you get the face data?
+
+            meshes.add(mesh);
+
+            break;
+
+         default:
+
+            System.err.println(family + " is an unsupported family.");
+      }
+
+      return meshes;
    }
 
 }

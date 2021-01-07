@@ -2850,7 +2850,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * Creates a subdivided plane. Useful for meshes which later will be
     * augmented by noise or height maps to simulate terrain.
     *
-    * @param count    subdivisions
+    * @param count  subdivisions
     * @param target the output mesh
     *
     * @return the plane

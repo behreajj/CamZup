@@ -3,6 +3,7 @@ package camzup.pfriendly;
 import camzup.core.Color;
 import camzup.core.IUtils;
 import camzup.core.TransformOrder;
+import camzup.core.Utils;
 import camzup.core.Vec2;
 
 import processing.core.PApplet;
@@ -11,6 +12,16 @@ import processing.core.PApplet;
  * Maintains consistent behavior across renderers in the CamZup library.
  */
 public interface IUp {
+
+   /**
+    * Gets the renderer's aspect ratio, width divided by height.
+    *
+    * @return the aspect ratio.
+    */
+   default float aspect ( ) {
+
+      return Utils.div(this.getWidth(), this.getHeight());
+   }
 
    /**
     * Uses the renderer's default background color.
@@ -210,7 +221,7 @@ public interface IUp {
 
    /**
     * Default scalar by which the height of the sketch is multiplied when the
-    * default camera function is called.
+    * default camera function is called, {@value IUp#DEFAULT_CAM_DIST_FAC}.
     */
    float DEFAULT_CAM_DIST_FAC = IUtils.SQRT_3_2;
 
@@ -221,7 +232,7 @@ public interface IUp {
 
    /**
     * Default far-clip when orthographic or perspective functions are called
-    * without the near and far arguments. 1000.0 .
+    * without the near and far arguments.
     */
    float DEFAULT_FAR_CLIP = 1500.0f;
 
@@ -231,7 +242,8 @@ public interface IUp {
    int DEFAULT_FILL_COLOR = 0xff9ad8e2;
 
    /**
-    * Default field of view for a perspective camera projection. PI / 3.0 .
+    * Default field of view for a perspective camera projection,
+    * {@value IUp#DEFAULT_FOV} .
     */
    float DEFAULT_FOV = IUtils.THIRD_PI;
 

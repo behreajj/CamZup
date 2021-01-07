@@ -1325,10 +1325,10 @@ public class Knot3 implements Comparable < Knot3 > {
 
       nextCoord.set(xNextAnchor, yNextAnchor, zNextAnchor);
 
-      prev.foreHandle.set(
-         prevCoord.x * IUtils.TWO_THIRDS + nextCoord.x * IUtils.ONE_THIRD,
-         prevCoord.y * IUtils.TWO_THIRDS + nextCoord.y * IUtils.ONE_THIRD,
-         prevCoord.z * IUtils.TWO_THIRDS + nextCoord.z * IUtils.ONE_THIRD);
+      prev.foreHandle.set(prevCoord.x * IUtils.TWO_THIRDS + nextCoord.x
+         * IUtils.ONE_THIRD, prevCoord.y * IUtils.TWO_THIRDS + nextCoord.y
+            * IUtils.ONE_THIRD, prevCoord.z * IUtils.TWO_THIRDS + nextCoord.z
+               * IUtils.ONE_THIRD);
 
       next.rearHandle.set(nextCoord.x * IUtils.TWO_THIRDS + prevCoord.x
          * IUtils.ONE_THIRD, nextCoord.y * IUtils.TWO_THIRDS + prevCoord.y

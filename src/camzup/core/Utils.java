@@ -1045,7 +1045,7 @@ public abstract class Utils implements IUtils {
     * @param degrees the input angle
     *
     * @return the output angle
-    * 
+    *
     * @see Utils#floor(float)
     */
    public static float modDegrees ( final float degrees ) {

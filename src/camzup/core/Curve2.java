@@ -1475,12 +1475,12 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Converts a set of points on a Catmull-Rom spline to a Bezier curve. The
     * default tightness is 0.0. There must be at least 4 points in the array.
-    * 
+    *
     * @param closedLoop the closed loop flag
     * @param tightness  the curve tightness
     * @param points     the points
     * @param target     the output curve
-    * 
+    *
     * @return the conversion
     */
    public static Curve2 fromCatmull ( final boolean closedLoop,
@@ -2188,38 +2188,28 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    static Curve2 rect ( final float lbx, final float lby, final float ubx,
       final float uby, final Curve2 target ) {
 
-      final float x0 = lbx < ubx ? lbx : ubx;
-      final float x1 = ubx > lbx ? ubx : lbx;
-      final float y0 = lby > uby ? lby : uby;
-      final float y1 = uby < lby ? uby : lby;
-
       target.closedLoop = true;
       target.name = "Rect";
       target.resize(4);
-
-      // TODO: If you leave cornered rect as is, then this needs its winding
-      // flipped back...
-
       final Iterator < Knot2 > itr = target.knots.iterator();
-      final Knot2 kn3 = itr.next();
-      final Knot2 kn2 = itr.next();
-      final Knot2 kn1 = itr.next();
-      final Knot2 kn0 = itr.next();
 
-      kn0.set(x0, y0, 0.0f, 0.0f, 0.0f, 0.0f);
-      kn1.set(x1, y0, 0.0f, 0.0f, 0.0f, 0.0f);
-      kn2.set(x1, y1, 0.0f, 0.0f, 0.0f, 0.0f);
-      kn3.set(x0, y1, 0.0f, 0.0f, 0.0f, 0.0f);
+      /* Validate corners. */
+      final float lft = lbx < ubx ? lbx : ubx;
+      final float rgt = ubx > lbx ? ubx : lbx;
+      final float btm = lby < uby ? lby : uby;
+      final float top = uby > lby ? uby : lby;
 
-      Curve2.lerp13(kn0.coord, kn1.coord, kn0.rearHandle);
-      Curve2.lerp13(kn1.coord, kn2.coord, kn1.rearHandle);
-      Curve2.lerp13(kn2.coord, kn3.coord, kn2.rearHandle);
-      Curve2.lerp13(kn3.coord, kn0.coord, kn3.rearHandle);
+      /* Find handle offsets. */
+      final float rtl = IUtils.TWO_THIRDS * rgt + IUtils.ONE_THIRD * lft;
+      final float btt = IUtils.TWO_THIRDS * btm + IUtils.ONE_THIRD * top;
+      final float ltr = IUtils.TWO_THIRDS * lft + IUtils.ONE_THIRD * rgt;
+      final float ttb = IUtils.TWO_THIRDS * top + IUtils.ONE_THIRD * btm;
 
-      Curve2.lerp13(kn0.coord, kn3.coord, kn0.foreHandle);
-      Curve2.lerp13(kn1.coord, kn0.coord, kn1.foreHandle);
-      Curve2.lerp13(kn2.coord, kn1.coord, kn2.foreHandle);
-      Curve2.lerp13(kn3.coord, kn2.coord, kn3.foreHandle);
+      /* Sets knots. */
+      itr.next().set(lft, btm, ltr, btm, lft, btt);
+      itr.next().set(rgt, btm, rgt, btt, rtl, btm);
+      itr.next().set(rgt, top, rtl, top, rgt, ttb);
+      itr.next().set(lft, top, lft, ttb, ltr, top);
 
       return target;
    }
@@ -2266,18 +2256,16 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float uby, final float tl, final float tr, final float br,
       final float bl, final Curve2 target ) {
 
-      // TODO: Handles are improperly wound.
-
       target.closedLoop = true;
       target.name = "Rect";
       target.resize(8);
       final Iterator < Knot2 > itr = target.knots.iterator();
 
       /* Validate corners. */
-      final float x0 = lbx < ubx ? lbx : ubx;
-      final float x1 = ubx > lbx ? ubx : lbx;
-      final float y0 = lby > uby ? lby : uby;
-      final float y1 = uby < lby ? uby : lby;
+      final float lft = lbx < ubx ? lbx : ubx;
+      final float rgt = ubx > lbx ? ubx : lbx;
+      final float btm = lby < uby ? lby : uby;
+      final float top = uby > lby ? uby : lby;
 
       /* Validate corner insetting. */
       final float vtl = Utils.max(Utils.abs(tl), IUtils.EPSILON);
@@ -2285,106 +2273,108 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float vbr = Utils.max(Utils.abs(br), IUtils.EPSILON);
       final float vbl = Utils.max(Utils.abs(bl), IUtils.EPSILON);
 
-      /* Top edge. */
-      final Knot2 k0 = itr.next().set(x0 + vtl, y0, 0.0f, 0.0f, 0.0f, 0.0f);
-      final Knot2 k1 = itr.next().set(x1 - vtr, y0, 0.0f, 0.0f, 0.0f, 0.0f);
-
-      /* Right edge. */
-      final Knot2 k2 = itr.next().set(x1, y0 - vtr, 0.0f, 0.0f, 0.0f, 0.0f);
-      final Knot2 k3 = itr.next().set(x1, y1 + vbr, 0.0f, 0.0f, 0.0f, 0.0f);
+      /* Calculate insets. */
+      final float btmIns0 = btm + vbr;
+      final float topIns0 = top - vtr;
+      final float rgtIns0 = rgt - vtr;
+      final float lftIns0 = lft + vtl;
+      final float topIns1 = top - vtl;
+      final float btmIns1 = btm + vbl;
+      final float lftIns1 = lft + vbl;
+      final float rgtIns1 = rgt - vbr;
 
       /* Bottom edge. */
-      final Knot2 k4 = itr.next().set(x1 - vbr, y1, 0.0f, 0.0f, 0.0f, 0.0f);
-      final Knot2 k5 = itr.next().set(x0 + vbl, y1, 0.0f, 0.0f, 0.0f, 0.0f);
+      final Knot2 k7 = itr.next().set(lftIns1, btm, IUtils.TWO_THIRDS * lftIns1
+         + IUtils.ONE_THIRD * rgtIns1, btm, 0.0f, 0.0f);
+      final Knot2 k0 = itr.next().set(rgtIns1, btm, 0.0f, 0.0f,
+         IUtils.TWO_THIRDS * rgtIns1 + IUtils.ONE_THIRD * lftIns1, btm);
+
+      /* Right edge. */
+      final Knot2 k1 = itr.next().set(rgt, btmIns0, rgt, IUtils.TWO_THIRDS
+         * btmIns0 + IUtils.ONE_THIRD * topIns0, 0.0f, 0.0f);
+      final Knot2 k2 = itr.next().set(rgt, topIns0, 0.0f, 0.0f, rgt,
+         IUtils.TWO_THIRDS * topIns0 + IUtils.ONE_THIRD * btmIns0);
+
+      /* Top edge. */
+      final Knot2 k3 = itr.next().set(rgtIns0, top, IUtils.TWO_THIRDS * rgtIns0
+         + IUtils.ONE_THIRD * lftIns0, top, 0.0f, 0.0f);
+      final Knot2 k4 = itr.next().set(lftIns0, top, 0.0f, 0.0f,
+         IUtils.TWO_THIRDS * lftIns0 + IUtils.ONE_THIRD * rgtIns0, top);
 
       /* Left edge. */
-      final Knot2 k6 = itr.next().set(x0, y1 + vbl, 0.0f, 0.0f, 0.0f, 0.0f);
-      final Knot2 k7 = itr.next().set(x0, y0 - vtl, 0.0f, 0.0f, 0.0f, 0.0f);
+      final Knot2 k5 = itr.next().set(lft, topIns1, lft, IUtils.TWO_THIRDS
+         * topIns1 + IUtils.ONE_THIRD * btmIns1, 0.0f, 0.0f);
+      final Knot2 k6 = itr.next().set(lft, btmIns1, 0.0f, 0.0f, lft,
+         IUtils.TWO_THIRDS * btmIns1 + IUtils.ONE_THIRD * topIns1);
 
-      /* Cache knot coordinate shortcuts . */
-      final Vec2 k0co = k0.coord;
-      final Vec2 k1co = k1.coord;
-      final Vec2 k2co = k2.coord;
-      final Vec2 k3co = k3.coord;
-      final Vec2 k4co = k4.coord;
-      final Vec2 k5co = k5.coord;
-      final Vec2 k6co = k6.coord;
-      final Vec2 k7co = k7.coord;
+      final float rgt23 = IUtils.TWO_THIRDS * rgt;
+      final float btm23 = IUtils.TWO_THIRDS * btm;
+      final float top23 = IUtils.TWO_THIRDS * top;
+      final float lft23 = IUtils.TWO_THIRDS * lft;
 
-      /* Cache even knot rear handle shortcuts. */
-      final Vec2 k0rh = k0.rearHandle;
-      final Vec2 k2rh = k2.rearHandle;
-      final Vec2 k4rh = k4.rearHandle;
-      final Vec2 k6rh = k6.rearHandle;
-
-      /* Cache odd knot fore handle shortcuts. */
-      final Vec2 k1fh = k1.foreHandle;
-      final Vec2 k3fh = k3.foreHandle;
-      final Vec2 k5fh = k5.foreHandle;
-      final Vec2 k7fh = k7.foreHandle;
-
-      /* Straighten fore handles of each edge. */
-      Curve2.lerp13(k0co, k1co, k0.foreHandle);
-      Curve2.lerp13(k2co, k3co, k2.foreHandle);
-      Curve2.lerp13(k4co, k5co, k4.foreHandle);
-      Curve2.lerp13(k6co, k7co, k6.foreHandle);
-
-      /* Straighten rear handles of each edge. */
-      Curve2.lerp13(k1co, k0co, k1.rearHandle);
-      Curve2.lerp13(k3co, k2co, k3.rearHandle);
-      Curve2.lerp13(k5co, k4co, k5.rearHandle);
-      Curve2.lerp13(k7co, k6co, k7.rearHandle);
-
-      /* Top Right Corner. */
-      if ( tr < 0.0f ) {
-         k1fh.x = k1co.x;
-         k1fh.y = ( k1co.y + k2co.y ) * 0.5f;
-         k2rh.x = ( k2co.x + k1co.x ) * 0.5f;
-         k2rh.y = k2co.y;
-      } else {
-         k1fh.x = ( k1co.x + x1 ) * 0.5f;
-         k1fh.y = y0;
-         k2rh.x = x1;
-         k2rh.y = ( k2co.y + y0 ) * 0.5f;
-      }
+      final float rgt13 = IUtils.ONE_THIRD * rgt;
+      final float btm13 = IUtils.ONE_THIRD * btm;
+      final float top13 = IUtils.ONE_THIRD * top;
+      final float lft13 = IUtils.ONE_THIRD * lft;
 
       /* Bottom Right Corner. */
-      if ( br < 0.0f ) {
-         k3fh.x = ( k3co.x + k4co.x ) * 0.5f;
-         k3fh.y = k3co.y;
-         k4rh.x = k4co.x;
-         k4rh.y = ( k4co.y + k3co.y ) * 0.5f;
+      final Vec2 k0fh = k0.foreHandle;
+      final Vec2 k1rh = k1.rearHandle;
+      if ( br > 0.0f ) {
+         k0fh.x = IUtils.ONE_THIRD * rgtIns1 + rgt23;
+         k0fh.y = btm;
+         k1rh.x = rgt;
+         k1rh.y = IUtils.ONE_THIRD * btmIns0 + btm23;
       } else {
-         k3fh.x = x1;
-         k3fh.y = ( k3co.y + y1 ) * 0.5f;
-         k4rh.x = ( k4co.x + x1 ) * 0.5f;
-         k4rh.y = y1;
+         k0fh.x = rgtIns1;
+         k0fh.y = btm13 + IUtils.TWO_THIRDS * btmIns0;
+         k1rh.x = rgt13 + IUtils.TWO_THIRDS * rgtIns1;
+         k1rh.y = btmIns0;
       }
 
-      /* Bottom Left Corner. */
-      if ( bl < 0.0f ) {
-         k5fh.x = k5co.x;
-         k5fh.y = ( k5co.y + k6co.y ) * 0.5f;
-         k6rh.x = ( k6co.x + k5co.x ) * 0.5f;
-         k6rh.y = k6co.y;
+      /* Top Right Corner. */
+      final Vec2 k2fh = k2.foreHandle;
+      final Vec2 k3rh = k3.rearHandle;
+      if ( tr > 0.0f ) {
+         k2fh.x = rgt;
+         k2fh.y = IUtils.ONE_THIRD * topIns0 + top23;
+         k3rh.x = IUtils.ONE_THIRD * rgtIns0 + rgt23;
+         k3rh.y = top;
       } else {
-         k5fh.x = ( k5co.x + x0 ) * 0.5f;
-         k5fh.y = y1;
-         k6rh.x = x0;
-         k6rh.y = ( k6co.y + y1 ) * 0.5f;
+         k2fh.x = rgt13 + IUtils.TWO_THIRDS * rgtIns0;
+         k2fh.y = topIns0;
+         k3rh.x = rgtIns0;
+         k3rh.y = top13 + IUtils.TWO_THIRDS * topIns0;
       }
 
       /* Top Left Corner. */
-      if ( tl < 0.0f ) {
-         k7fh.x = ( k7co.x + k0co.x ) * 0.5f;
-         k7fh.y = k7co.y;
-         k0rh.x = k0co.x;
-         k0rh.y = ( k0co.y + k7co.y ) * 0.5f;
+      final Vec2 k4fh = k4.foreHandle;
+      final Vec2 k5rh = k5.rearHandle;
+      if ( tl > 0.0f ) {
+         k4fh.x = IUtils.ONE_THIRD * lftIns0 + lft23;
+         k4fh.y = top;
+         k5rh.x = lft;
+         k5rh.y = IUtils.ONE_THIRD * topIns1 + top23;
       } else {
-         k7fh.x = x0;
-         k7fh.y = ( k7co.y + y0 ) * 0.5f;
-         k0rh.x = ( k0co.x + x0 ) * 0.5f;
-         k0rh.y = y0;
+         k4fh.x = lftIns0;
+         k4fh.y = top13 + IUtils.TWO_THIRDS * topIns1;
+         k5rh.x = lft13 + IUtils.TWO_THIRDS * lftIns0;
+         k5rh.y = topIns1;
+      }
+
+      /* Bottom Left Corner. */
+      final Vec2 k6fh = k6.foreHandle;
+      final Vec2 k7rh = k7.rearHandle;
+      if ( bl > 0.0f ) {
+         k6fh.x = lft;
+         k6fh.y = IUtils.ONE_THIRD * btmIns1 + btm23;
+         k7rh.x = IUtils.ONE_THIRD * lftIns1 + lft23;
+         k7rh.y = btm;
+      } else {
+         k6fh.x = lft13 + IUtils.TWO_THIRDS * lftIns1;
+         k6fh.y = btmIns1;
+         k7rh.x = lftIns1;
+         k7rh.y = btm13 + IUtils.TWO_THIRDS * btmIns1;
       }
 
       return target;

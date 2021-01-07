@@ -1,17 +1,13 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup2 graphics;
+YupJ2 graphics;
 Rng rng = new Rng();
 
-Transform2 transform = new Transform2()
-  .scaleTo(200.0);
+Transform2 transform = new Transform2();
 
-Curve2 curve = Curve2.rect(
-  new Vec2(-0.75, 0.5),
-  new Vec2(0.75, -0.5),
-  -0.25, new Curve2());
-
+float rounding = -0.25;
+Curve2 curve = new Curve2();
 CurveEntity2 entity = new CurveEntity2(
   "Example", transform);
 
@@ -22,18 +18,23 @@ MaterialSolid mat = new MaterialSolid()
   .setStrokeWeight(7.5);
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {
-  graphics = (Yup2)getGraphics();
+  graphics = (YupJ2)getGraphics();
   entity.append(curve);
+  entity.transform.scaleTo(256);
+
+  Curve2.rect(
+    new Vec2(-0.75, -0.5),
+    new Vec2(0.75, 0.5),
+    rounding, curve);
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
   entity.rotateZ(0.01);
-
   graphics.background();
   graphics.origin();
   graphics.shape(entity, mat);
