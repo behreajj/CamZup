@@ -1,9 +1,6 @@
 package camzup;
 
-import camzup.core.Curve2;
-import camzup.core.Mesh2;
-import camzup.core.MeshEntity2;
-import camzup.core.Rng;
+import camzup.core.ParserSvg2;
 
 import processing.core.PApplet;
 
@@ -55,18 +52,7 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      final Mesh2 m20 = new Mesh2();
-      final MeshEntity2 me20 = new MeshEntity2(m20);
-
-      final Curve2 c20 = new Curve2();
-      final Rng rng = new Rng();
-      Curve2.random(rng, 6, -1f, 1f, true, c20);
-
-      Mesh2.fromCurve2(c20, 6, .001f, m20);
-
-      final String pyCd = me20.toBlenderCode();
-      // String pyCd = new CurveEntity2().append(c20).toBlenderCode();
-      System.out.println(pyCd);
+      ParserSvg2.parse("data/diagnostic.svg");
    }
 
    /**

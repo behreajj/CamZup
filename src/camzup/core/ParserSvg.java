@@ -107,34 +107,6 @@ abstract class ParserSvg {
       ParserSvg.PTRN_STR_DATA);
 
    /**
-    * Re-breaks String tokens with numbers separated by negative signs.
-    *
-    * @param tokens the tokens
-    *
-    * @return the partitioned tokens
-    */
-   public static String[] breakNeg ( final String[] tokens ) {
-
-      final ArrayList < String > result = new ArrayList <>();
-      final int tokLen = tokens.length;
-      for ( int i = 0; i < tokLen; ++i ) {
-         final String str = tokens[i];
-         final char[] chrs = str.toCharArray();
-         final int chrsLen = chrs.length;
-         StringBuilder sb = new StringBuilder(chrsLen);
-         for ( int k = 0; k < chrsLen; ++k ) {
-            final char ch = chrs[k];
-            if ( ch == '-' ) {
-               result.add(sb.toString());
-               sb = new StringBuilder(chrsLen - k);
-            }
-            sb.append(ch);
-         }
-      }
-      return result.toArray(new String[result.size()]);
-   }
-
-   /**
     * Attempts to parse an SVG file to a curve entity.
     *
     * @param fileName the SVG file name
@@ -208,6 +180,34 @@ abstract class ParserSvg {
    }
 
    /**
+    * Re-breaks String tokens with numbers separated by negative signs.
+    *
+    * @param tokens the tokens
+    *
+    * @return the partitioned tokens
+    */
+   protected static String[] breakNeg ( final String[] tokens ) {
+
+      final ArrayList < String > result = new ArrayList <>();
+      final int tokLen = tokens.length;
+      for ( int i = 0; i < tokLen; ++i ) {
+         final String str = tokens[i];
+         final char[] chrs = str.toCharArray();
+         final int chrsLen = chrs.length;
+         StringBuilder sb = new StringBuilder(chrsLen);
+         for ( int k = 0; k < chrsLen; ++k ) {
+            final char ch = chrs[k];
+            if ( ch == '-' ) {
+               result.add(sb.toString());
+               sb = new StringBuilder(chrsLen - k);
+            }
+            sb.append(ch);
+         }
+      }
+      return result.toArray(new String[result.size()]);
+   }
+
+   /**
     * A helper function to parse an angle to radians. The default is assumed
     * to be degrees.
     *
@@ -215,7 +215,7 @@ abstract class ParserSvg {
     *
     * @return the angle in radians
     */
-   public static float parseAngle ( final String v ) {
+   protected static float parseAngle ( final String v ) {
 
       return ParserSvg.parseAngle(v, 0.0f);
    }
@@ -229,7 +229,7 @@ abstract class ParserSvg {
     *
     * @return the angle in radians
     */
-   public static float parseAngle ( final String u, final float def ) {
+   protected static float parseAngle ( final String u, final float def ) {
 
       float x = def;
       final String v = u.trim();
@@ -291,7 +291,7 @@ abstract class ParserSvg {
     *
     * @return an array of knots
     */
-   public static Knot2[] parseArcTo ( final Knot2 prior, final float major,
+   protected static Knot2[] parseArcTo ( final Knot2 prior, final float major,
       final float minor, final float ang, final boolean largeArc,
       final boolean sweep, final float x2, final float y2 ) {
 
@@ -439,7 +439,7 @@ abstract class ParserSvg {
     *
     * @return the ellipse curve
     */
-   public static Curve2 parseEllipse ( final Node ellipseNode,
+   protected static Curve2 parseEllipse ( final Node ellipseNode,
       final Curve2 target ) {
 
       final NamedNodeMap attributes = ellipseNode.getAttributes();
@@ -524,7 +524,7 @@ abstract class ParserSvg {
     *
     * @return the boolean
     */
-   public static boolean parseFlagToBool ( final String v ) {
+   protected static boolean parseFlagToBool ( final String v ) {
 
       int x = 0;
       try {
@@ -543,7 +543,7 @@ abstract class ParserSvg {
     *
     * @return the floating point number
     */
-   public static float parseFloat ( final String v ) {
+   protected static float parseFloat ( final String v ) {
 
       return ParserSvg.parseFloat(v, 0.0f);
    }
@@ -574,7 +574,7 @@ abstract class ParserSvg {
     *
     * @return the parsed float
     */
-   public static float parseFloat ( final String u, final float def ) {
+   private static float parseFloat ( final String u, final float def ) {
 
       /*
        * The string needs to be trimmed even here because of unconventional
@@ -664,7 +664,8 @@ abstract class ParserSvg {
     *
     * @return the line curve
     */
-   public static Curve2 parseLine ( final Node lineNode, final Curve2 target ) {
+   protected static Curve2 parseLine ( final Node lineNode,
+      final Curve2 target ) {
 
       final NamedNodeMap attributes = lineNode.getAttributes();
       if ( attributes != null ) {
@@ -701,7 +702,7 @@ abstract class ParserSvg {
     *
     * @return the output curve entity
     */
-   public static ArrayList < Curve2 > parseNode ( final Node node,
+   protected static ArrayList < Curve2 > parseNode ( final Node node,
       final CurveEntity2 target, final Mat3 parent ) {
 
       ArrayList < Curve2 > newCurves = new ArrayList <>();
@@ -771,7 +772,7 @@ abstract class ParserSvg {
 
          /*
           * Curves could potentially be malformed. Only a curve with at least 2
-          * knots should be appended to the output target.
+          * knots should be appended to the outpfut target.
           */
          if ( curve.length() > 1 ) { target.append(curve); }
       }
@@ -798,7 +799,7 @@ abstract class ParserSvg {
     *
     * @return the array of curves
     */
-   public static Curve2[] parsePath ( final Node node ) {
+   protected static Curve2[] parsePath ( final Node node ) {
 
       final ArrayList < Curve2 > result = new ArrayList <>(2);
 
@@ -1359,7 +1360,7 @@ abstract class ParserSvg {
     *
     * @return the command array
     */
-   public static PathCommand[] parsePathToCmd ( final Node node ) {
+   protected static PathCommand[] parsePathToCmd ( final Node node ) {
 
       final ArrayList < PathCommand > cmdList = new ArrayList <>();
 
@@ -1398,7 +1399,7 @@ abstract class ParserSvg {
     *
     * @return the curve
     */
-   public static Curve2 parsePoly ( final Node polygonNode,
+   protected static Curve2 parsePoly ( final Node polygonNode,
       final Curve2 target ) {
 
       final NamedNodeMap attributes = polygonNode.getAttributes();
@@ -1459,7 +1460,8 @@ abstract class ParserSvg {
     *
     * @return the rectangle curve
     */
-   public static Curve2 parseRect ( final Node rectNode, final Curve2 target ) {
+   protected static Curve2 parseRect ( final Node rectNode,
+      final Curve2 target ) {
 
       final NamedNodeMap attributes = rectNode.getAttributes();
       if ( attributes != null ) {
@@ -1514,7 +1516,8 @@ abstract class ParserSvg {
     *
     * @return the matrix
     */
-   public static Mat3 parseTransform ( final Node trNode, final Mat3 target ) {
+   protected static Mat3 parseTransform ( final Node trNode,
+      final Mat3 target ) {
 
       final String v = trNode.getTextContent().trim().toLowerCase();
 
@@ -1642,7 +1645,7 @@ abstract class ParserSvg {
     *
     * @return the vector
     */
-   public static Vec4 parseViewBox ( final Node viewbox, final Vec4 target,
+   protected static Vec4 parseViewBox ( final Node viewbox, final Vec4 target,
       final float width, final float height ) {
 
       float x = 0.0f; /* top left x */
@@ -1669,7 +1672,7 @@ abstract class ParserSvg {
     *
     * @return the stripped tokens
     */
-   public static String[] stripEmptyTokens ( final String[] tokens ) {
+   protected static String[] stripEmptyTokens ( final String[] tokens ) {
 
       final int len = tokens.length;
       final ArrayList < String > list = new ArrayList <>(len);
