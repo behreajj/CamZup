@@ -12,7 +12,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 import java.util.ArrayList;
-import java.util.Deque;
+import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
@@ -74,6 +74,8 @@ public abstract class ParserSvg2 {
    public static final String PTRN_STR_DATA
       = "[A|a|C|c|H|h|L|l|M|m|Q|q|S|sT|t|V|v|Z|z|,|\u0020]";
 
+   
+
    /**
     * Ratio to convert from pixels to units, {@value ParserSvg#PX_TO_UNIT}.
     */
@@ -110,10 +112,14 @@ public abstract class ParserSvg2 {
          final Document doc = db.parse(file);
          doc.normalizeDocument();
 
-         // Temporary matrices used when parsing a transform.
+         /*
+          * Because nodes are hierarchical and transformations compound upon
+          * transformations, a stack is needed (a double-ended que is the
+          * closest in Java).
+          */
          final Mat3 curr = new Mat3();
          final Mat3 delta = new Mat3();
-         final Deque < Mat3 > matStack = new LinkedList <>();
+         final LinkedList < Mat3 > matStack = new LinkedList <>();
          matStack.push(Mat3.identity(new Mat3()));
 
          final ArrayList < Curve2 > curves = new ArrayList <>();
@@ -214,10 +220,11 @@ public abstract class ParserSvg2 {
          }
 
          /* Acquire text content from the node if it exists. */
-         final String cxstr = cxnode != null ? cxnode.getTextContent() : "0";
-         final String cystr = cynode != null ? cynode.getTextContent() : "0";
-         final String rxstr = rxnode != null ? rxnode.getTextContent() : "0.5";
-         final String rystr = rynode != null ? rynode.getTextContent() : "0.5";
+         cxnode.getNodeValue();
+         final String cxstr = cxnode != null ? cxnode.getNodeValue() : "0";
+         final String cystr = cynode != null ? cynode.getNodeValue() : "0";
+         final String rxstr = rxnode != null ? rxnode.getNodeValue() : "0.5";
+         final String rystr = rynode != null ? rynode.getNodeValue() : "0.5";
 
          /* Parse string or default. */
          final float cx = ParserSvg2.parseFloat(cxstr, 0.0f);
@@ -379,30 +386,27 @@ public abstract class ParserSvg2 {
 
    @Recursive
    protected static ArrayList < Curve2 > parseNode ( final Node node,
-      final Deque < Mat3 > matStack, final Mat3 curr, final Mat3 delta,
+      final LinkedList < Mat3 > matStack, final Mat3 prev, final Mat3 delta,
       final ArrayList < Curve2 > curves ) {
 
       final NamedNodeMap attributes = node.getAttributes();
-      boolean containsTransform = false;
-      Mat3 cumulative = curr;
       if ( attributes != null ) {
+
+         boolean containsTransform = false;
+         boolean isGroup = false;
+         Mat3 cumulative = new Mat3(prev);
          final Node transform = attributes.getNamedItem("transform");
          if ( transform != null ) {
             containsTransform = true;
-            ParserSvg2.parseTransform(transform, curr, delta);
-            final Mat3 prev = matStack.peek();
-            cumulative = Mat3.mul(prev, curr, new Mat3());
+            ParserSvg2.parseTransform(transform, cumulative, delta);
+            Mat3.mul(matStack.peek(), cumulative, cumulative);
             matStack.push(cumulative);
          }
 
-         // TODO: Implement.
+         Curve2 result = null;
          final String name = node.getNodeName().toLowerCase();
          final int hsh = name.hashCode();
-         Curve2 result = null;
-
          switch ( hsh ) {
-            case -1360216880:
-               /* "circle" */
 
             case -1656480802:
                /* "ellipse" */
@@ -410,17 +414,34 @@ public abstract class ParserSvg2 {
                result = ParserSvg2.parseEllipse(node, new Curve2());
                break;
 
+            case -1360216880:
+               /* "circle" */
+
+               result = ParserSvg2.parseEllipse(node, new Curve2());
+               break;
+
+            case -397519558:
+               /* "polygon" */
+
+               result = ParserSvg2.parsePoly(node, new Curve2());
+               break;
+
             case 103:
                /* "g" */
 
-               final NodeList children = node.getChildNodes();
-               final int childLen = children.getLength();
-               for ( int i = 0; i < childLen; ++i ) {
-                  final Node child = children.item(i);
-                  ParserSvg2.parseNode(child, matStack, cumulative, delta,
-                     curves);
-               }
+               isGroup = true;
+               break;
 
+            case 3321844:
+               /* "line" */
+
+               result = ParserSvg2.parseLine(node, new Curve2());
+               break;
+
+            case 3433509:
+               /* "path" */
+
+               result = ParserSvg2.parsePath(node, new Curve2());
                break;
 
             case 3496420:
@@ -429,19 +450,155 @@ public abstract class ParserSvg2 {
                result = ParserSvg2.parseRect(node, new Curve2());
                break;
 
+            case 561938880:
+               /* "polyline" */
+
+               result = ParserSvg2.parsePoly(node, new Curve2());
+               break;
+
             default:
          }
 
          if ( containsTransform ) { matStack.pop(); }
 
+         if ( isGroup ) {
+            final NodeList children = node.getChildNodes();
+            final int childLen = children.getLength();
+            for ( int i = 0; i < childLen; ++i ) {
+               final Node child = children.item(i);
+               ParserSvg2.parseNode(child, matStack, cumulative, delta, curves);
+            }
+         }
+
          /* Node may be a group node, "g", where result is null. */
          if ( result != null ) {
-            result.transform(cumulative);
+            result.transform(prev);
             curves.add(result);
          }
       }
 
       return curves;
+   }
+
+   protected static Curve2 parsePath ( final Node pathNode,
+      final Curve2 target ) {
+
+      // TODO: May need to be revised to return an array or arraylist of curves
+      // instead. Can't remember the conditions under which multiple will arise.
+
+      final NamedNodeMap attributes = pathNode.getAttributes();
+      if ( attributes != null ) {
+         final Node pathData = attributes.getNamedItem("d");
+         if ( pathData != null ) {
+            final String pdStr = pathData.getNodeValue();
+            String[] cmdTokens = ParserSvg2.PATTERN_CMD.split(pdStr, 0);
+            // TODO: Return extra step that strips away empty tokens?
+            
+            for ( int i = 0; i < cmdTokens.length; ++i ) {
+               System.out.println(cmdTokens[i]);
+            }
+            
+         } /* End pathData null check. */
+      } /* End attributes null check. */
+      return target;
+   }
+
+   /**
+    * Parses a SVG node and returns a Curve2 forming a line.
+    *
+    * @param lineNode the line node
+    * @param target   the output curve
+    *
+    * @return the line curve
+    */
+   protected static Curve2 parseLine ( final Node lineNode,
+      final Curve2 target ) {
+
+      final NamedNodeMap attributes = lineNode.getAttributes();
+      if ( attributes != null ) {
+
+         /* Search for attribute nodes. May return null. */
+         final Node x1node = attributes.getNamedItem("x1");
+         final Node y1node = attributes.getNamedItem("y1");
+         final Node x2node = attributes.getNamedItem("x2");
+         final Node y2node = attributes.getNamedItem("y2");
+
+         /* Acquire text content from the node if it exists. */
+         final String x1str = x1node != null ? x1node.getNodeValue() : "-0.5";
+         final String y1str = y1node != null ? y1node.getNodeValue() : "0";
+         final String x2str = x2node != null ? x2node.getNodeValue() : "0.5";
+         final String y2str = y2node != null ? y2node.getNodeValue() : "0";
+
+         /* Parse string or default. */
+         final float x1 = ParserSvg2.parseFloat(x1str, -0.5f);
+         final float y1 = ParserSvg2.parseFloat(y1str, 0.0f);
+         final float x2 = ParserSvg2.parseFloat(x2str, 0.5f);
+         final float y2 = ParserSvg2.parseFloat(y2str, 0.0f);
+
+         Curve2.line(x1, y1, x2, y2, target);
+      }
+      return target;
+   }
+
+   /**
+    * Parses a polygon or poly-line node.
+    *
+    * @param polygonNode the polygon
+    * @param target      the output curve
+    *
+    * @return the curve
+    */
+   protected static Curve2 parsePoly ( final Node polygonNode,
+      final Curve2 target ) {
+
+      final NamedNodeMap attributes = polygonNode.getAttributes();
+      if ( attributes != null ) {
+
+         /* Close loop if the node is a polygon. */
+         final String name = polygonNode.getNodeName();
+         if ( name == "polygon" ) {
+            target.name = "Polygon";
+            target.closedLoop = true;
+         } else if ( name == "polyline" ) {
+            target.name = "PolyLine";
+            target.closedLoop = false;
+         } else {
+            target.closedLoop = false;
+         }
+
+         final Node ptsnode = attributes.getNamedItem("points");
+         final String ptsstr = ptsnode != null ? ptsnode.getNodeValue() : "0,0";
+         final String[] coords = ptsstr.split("\\s+|,", 0);
+
+         /* x, y pairs are flattened into a 1D array, so use half length. */
+         final int coordLen = coords.length;
+         target.resize(coordLen / 2);
+
+         int i = -1;
+         final Iterator < Knot2 > itr = target.iterator();
+         final Knot2 first = itr.next();
+         first.coord.set(ParserSvg2.parseFloat(coords[++i], 0.0f), ParserSvg2
+            .parseFloat(coords[++i], 0.0f));
+
+         Knot2 prev = first;
+         while ( itr.hasNext() ) {
+            final String xstr = coords[++i];
+            final String ystr = coords[++i];
+            final float x = ParserSvg2.parseFloat(xstr, 0.0f);
+            final float y = ParserSvg2.parseFloat(ystr, 0.0f);
+            final Knot2 curr = itr.next();
+            Knot2.fromSegLinear(x, y, prev, curr);
+            prev = curr;
+         }
+
+         if ( target.closedLoop ) {
+            Knot2.fromSegLinear(first.coord, prev, first);
+         } else {
+            first.mirrorHandlesForward();
+            prev.mirrorHandlesBackward();
+         }
+      }
+      return target;
    }
 
    /**
@@ -471,12 +628,12 @@ public abstract class ParserSvg2 {
          if ( rxnode != null && rynode == null ) { rynode = rxnode; }
 
          /* Acquire text content from the node if it exists. */
-         final String xstr = xnode != null ? xnode.getTextContent() : "0";
-         final String ystr = ynode != null ? ynode.getTextContent() : "0";
-         final String wstr = wnode != null ? wnode.getTextContent() : "1";
-         final String hstr = hnode != null ? hnode.getTextContent() : "1";
-         final String rxstr = rxnode != null ? rxnode.getTextContent() : "0";
-         final String rystr = rynode != null ? rynode.getTextContent() : "0";
+         final String xstr = xnode != null ? xnode.getNodeValue() : "0";
+         final String ystr = ynode != null ? ynode.getNodeValue() : "0";
+         final String wstr = wnode != null ? wnode.getNodeValue() : "1";
+         final String hstr = hnode != null ? hnode.getNodeValue() : "1";
+         final String rxstr = rxnode != null ? rxnode.getNodeValue() : "0";
+         final String rystr = rynode != null ? rynode.getNodeValue() : "0";
 
          /* Parse string or default. */
          final float x = ParserSvg2.parseFloat(xstr, 0.0f);
@@ -514,9 +671,9 @@ public abstract class ParserSvg2 {
    protected static Mat3 parseTransform ( final Node trNode, final Mat3 target,
       final Mat3 delta ) {
 
-      final String v = trNode.getTextContent().trim().toLowerCase();
+      final String v = trNode.getNodeValue().trim().toLowerCase();
 
-      final String[] segStrs = v.split("\\),*");
+      final String[] segStrs = v.split("\\),*", 0);
       final int segLen = segStrs.length;
       for ( int i = 0; i < segLen; ++i ) {
          final String seg = segStrs[i];
@@ -528,7 +685,7 @@ public abstract class ParserSvg2 {
 
          /* Find the data section of the String. */
          final String dataBlock = seg.substring(openParenIdx + 1);
-         final String[] data = dataBlock.split(",\\s*");
+         final String[] data = dataBlock.split(",\\s*", 0);
          final int dataLen = data.length;
 
          switch ( hsh ) {
@@ -554,17 +711,27 @@ public abstract class ParserSvg2 {
                   ParserSvg2.parseFloat(m12, 0.0f),
                   0.0f, 0.0f, 1.0f);
                /* @formatter:on */
-               // Mat3.mul(target, delta, target);
-               Mat3.mul(delta, target, target);
+               Mat3.mul(target, delta, target);
 
                break;
 
             case -925180581:
                /* "rotate" */
                final String ang = data[0];
+               final String xpivstr = dataLen > 1 ? data[1] : "0";
+               final String ypivstr = dataLen > 2 ? data[2] : "0";
+               final float xpiv = parseFloat(xpivstr, 0.0f);
+               final float ypiv = parseFloat(ypivstr, 0.0f);
+               final Vec2 pivot = new Vec2(xpiv, ypiv);
+
+               Mat3.fromTranslation(pivot, delta);
+               Mat3.mul(target, delta, target);
+
                Mat3.fromRotZ(ParserSvg2.parseAngle(ang, 0.0f), delta);
-               // Mat3.mul(target, delta, target);
-               Mat3.mul(delta, target, target);
+               Mat3.mul(target, delta, target);
+
+               Mat3.fromTranslation(Vec2.negate(pivot, pivot), delta);
+               Mat3.mul(target, delta, target);
 
                break;
 
@@ -575,8 +742,7 @@ public abstract class ParserSvg2 {
                final String scy = dataLen > 1 ? data[1] : scx;
                Mat3.fromScale(ParserSvg2.parseFloat(scx, 1.0f), ParserSvg2
                   .parseFloat(scy, 1.0f), delta);
-               // Mat3.mul(target, delta, target);
-               Mat3.mul(delta, target, target);
+               Mat3.mul(target, delta, target);
 
                break;
 
@@ -585,8 +751,7 @@ public abstract class ParserSvg2 {
 
                final String skx = data[0];
                Mat3.fromSkewX(ParserSvg2.parseAngle(skx, 0.0f), delta);
-               // Mat3.mul(target, delta, target);
-               Mat3.mul(delta, target, target);
+               Mat3.mul(target, delta, target);
 
                break;
 
@@ -595,8 +760,7 @@ public abstract class ParserSvg2 {
 
                final String sky = data[0];
                Mat3.fromSkewY(ParserSvg2.parseAngle(sky, 0.0f), delta);
-               // Mat3.mul(target, delta, target);
-               Mat3.mul(delta, target, target);
+               Mat3.mul(target, delta, target);
 
                break;
 
@@ -607,8 +771,7 @@ public abstract class ParserSvg2 {
                final String ty = dataLen > 1 ? data[1] : "0";
                Mat3.fromTranslation(ParserSvg2.parseFloat(tx, 0.0f), ParserSvg2
                   .parseFloat(ty, 0.0f), delta);
-               // Mat3.mul(target, delta, target);
-               Mat3.mul(delta, target, target);
+               Mat3.mul(target, delta, target);
 
                break;
 

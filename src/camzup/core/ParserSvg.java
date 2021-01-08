@@ -97,13 +97,13 @@ abstract class ParserSvg {
    /**
     * The compiled pattern for SVG path commands.
     */
-   protected static final Pattern PATTERN_CMD = Pattern.compile(
+   private static final Pattern PATTERN_CMD = Pattern.compile(
       ParserSvg.PTRN_STR_CMD);
 
    /**
     * The compiled pattern for SVG data elements.
     */
-   protected static final Pattern PATTERN_DATA = Pattern.compile(
+   private static final Pattern PATTERN_DATA = Pattern.compile(
       ParserSvg.PTRN_STR_DATA);
 
    /**
@@ -139,11 +139,11 @@ abstract class ParserSvg {
          final NamedNodeMap attr = header.getAttributes();
 
          final Node width = attr.getNamedItem("width");
-         final String widthStr = width != null ? width.getTextContent() : "0";
+         final String widthStr = width != null ? width.getNodeValue() : "0";
          final float widpx = ParserSvg.parseFloat(widthStr);
 
          final Node height = attr.getNamedItem("height");
-         final String heightStr = height != null ? height.getTextContent()
+         final String heightStr = height != null ? height.getNodeValue()
             : "0";
          final float hghpx = ParserSvg.parseFloat(heightStr);
 
@@ -186,7 +186,7 @@ abstract class ParserSvg {
     *
     * @return the partitioned tokens
     */
-   protected static String[] breakNeg ( final String[] tokens ) {
+   private static String[] breakNeg ( final String[] tokens ) {
 
       final ArrayList < String > result = new ArrayList <>();
       final int tokLen = tokens.length;
@@ -215,7 +215,7 @@ abstract class ParserSvg {
     *
     * @return the angle in radians
     */
-   protected static float parseAngle ( final String v ) {
+   private static float parseAngle ( final String v ) {
 
       return ParserSvg.parseAngle(v, 0.0f);
    }
@@ -229,7 +229,7 @@ abstract class ParserSvg {
     *
     * @return the angle in radians
     */
-   protected static float parseAngle ( final String u, final float def ) {
+   private static float parseAngle ( final String u, final float def ) {
 
       float x = def;
       final String v = u.trim();
@@ -291,7 +291,7 @@ abstract class ParserSvg {
     *
     * @return an array of knots
     */
-   protected static Knot2[] parseArcTo ( final Knot2 prior, final float major,
+   private static Knot2[] parseArcTo ( final Knot2 prior, final float major,
       final float minor, final float ang, final boolean largeArc,
       final boolean sweep, final float x2, final float y2 ) {
 
@@ -439,7 +439,7 @@ abstract class ParserSvg {
     *
     * @return the ellipse curve
     */
-   protected static Curve2 parseEllipse ( final Node ellipseNode,
+   private static Curve2 parseEllipse ( final Node ellipseNode,
       final Curve2 target ) {
 
       final NamedNodeMap attributes = ellipseNode.getAttributes();
@@ -462,10 +462,10 @@ abstract class ParserSvg {
          }
 
          /* Acquire text content from the node if it exists. */
-         final String cxstr = cxnode != null ? cxnode.getTextContent() : "0";
-         final String cystr = cynode != null ? cynode.getTextContent() : "0";
-         final String rxstr = rxnode != null ? rxnode.getTextContent() : "0.5";
-         final String rystr = rynode != null ? rynode.getTextContent() : "0.5";
+         final String cxstr = cxnode != null ? cxnode.getNodeValue() : "0";
+         final String cystr = cynode != null ? cynode.getNodeValue() : "0";
+         final String rxstr = rxnode != null ? rxnode.getNodeValue() : "0.5";
+         final String rystr = rynode != null ? rynode.getNodeValue() : "0.5";
 
          /* Parse string or default. */
          final float cx = ParserSvg.parseFloat(cxstr, 0.0f);
@@ -524,7 +524,7 @@ abstract class ParserSvg {
     *
     * @return the boolean
     */
-   protected static boolean parseFlagToBool ( final String v ) {
+   private static boolean parseFlagToBool ( final String v ) {
 
       int x = 0;
       try {
@@ -543,117 +543,9 @@ abstract class ParserSvg {
     *
     * @return the floating point number
     */
-   protected static float parseFloat ( final String v ) {
+   private static float parseFloat ( final String v ) {
 
       return ParserSvg.parseFloat(v, 0.0f);
-   }
-
-   /**
-    * A helper function to parse units of measurement in an SVG element. Uses
-    * the following conversions:
-    * <ul>
-    * <li>1 centimeter (cm) = {@value ParserSvg#CM_TO_UNIT} units</li>
-    * <li>1 inch (in) = {@value ParserSvg#IN_TO_UNIT} units</li>
-    * <li>1 millimeter (mm) = {@value ParserSvg#MM_TO_UNIT} units</li>
-    * <li>1 pica (pc) = {@value ParserSvg#PC_TO_UNIT} units</li>
-    * <li>1 point (pt) = {@value ParserSvg#PT_TO_UNIT} units</li>
-    * <li>1 pixel (px) = {@value ParserSvg#PX_TO_UNIT} units</li>
-    * </ul>
-    * View box relative units, namely <code>%</code> is limited; all this
-    * parser will do is divide the value by 100.<br>
-    * <br>
-    * Font-relative units, namely <code>em</code> and <code>ex</code> are not
-    * supported.<br>
-    * <br>
-    * For polar coordinates, radians are assumed to be the default. Degrees
-    * (deg) are converted to radians through multiplication by
-    * {@value IUtils#DEG_TO_RAD}.
-    *
-    * @param u   the String value
-    * @param def the default value
-    *
-    * @return the parsed float
-    */
-   private static float parseFloat ( final String u, final float def ) {
-
-      /*
-       * The string needs to be trimmed even here because of unconventional
-       * formatting which could be contained within a path string.
-       */
-
-      float x = def;
-      final String v = u.trim();
-      final int len = v.length();
-      final int lens1 = len - 1;
-      final int lens2 = len - 2;
-      final int lens3 = len - 3;
-
-      try {
-
-         if ( v.startsWith("cm", lens2) ) {
-
-            /* Centimeters. */
-            x = Float.parseFloat(v.substring(0, lens2)) * ParserSvg.CM_TO_UNIT;
-
-         } else if ( v.startsWith("deg", lens3) ) {
-
-            /* Degrees. */
-            x = Float.parseFloat(v.substring(0, lens3)) * IUtils.DEG_TO_RAD;
-
-         } else if ( v.startsWith("in", lens2) ) {
-
-            /* Inches. */
-            x = Float.parseFloat(v.substring(0, lens2)) * ParserSvg.IN_TO_UNIT;
-
-         } else if ( v.startsWith("mm", lens2) ) {
-
-            /* Millimeters. */
-            x = Float.parseFloat(v.substring(0, lens2)) * ParserSvg.MM_TO_UNIT;
-
-         } else if ( v.startsWith("pc", lens2) ) {
-
-            /* Pica. */
-            x = Float.parseFloat(v.substring(0, lens2)) * ParserSvg.PC_TO_UNIT;
-
-         } else if ( v.startsWith("pt", lens2) ) {
-
-            /* Point. */
-            x = Float.parseFloat(v.substring(0, lens2)) * ParserSvg.PT_TO_UNIT;
-
-         } else if ( v.startsWith("px", lens2) ) {
-
-            /* Pixel. */
-            x = Float.parseFloat(v.substring(0, lens2)) * ParserSvg.PX_TO_UNIT;
-
-         } else if ( v.startsWith("rad", lens3) ) {
-
-            /* Radians. */
-            x = Float.parseFloat(v.substring(0, lens3));
-
-         } else if ( v.startsWith("em", lens2) ) {
-
-            /* RELATIVE UNIT: To font size. Not supported in original. */
-            x = Float.parseFloat(v.substring(0, lens2));
-
-         } else if ( v.startsWith("ex", lens2) ) {
-
-            /* RELATIVE UNIT: To font size. Not supported in original. */
-            x = Float.parseFloat(v.substring(0, lens2));
-
-         } else if ( v.startsWith("%", lens1) ) {
-
-            /* RELATIVE UNIT: Simplified from original. */
-            x = Float.parseFloat(v.substring(0, lens1)) * 0.01f;
-
-         } else {
-
-            x = Float.parseFloat(v);
-
-         }
-
-      } catch ( final Exception e ) { /* Do nothing. */ }
-
-      return x;
    }
 
    /**
@@ -664,7 +556,7 @@ abstract class ParserSvg {
     *
     * @return the line curve
     */
-   protected static Curve2 parseLine ( final Node lineNode,
+   private static Curve2 parseLine ( final Node lineNode,
       final Curve2 target ) {
 
       final NamedNodeMap attributes = lineNode.getAttributes();
@@ -677,10 +569,10 @@ abstract class ParserSvg {
          final Node y2node = attributes.getNamedItem("y2");
 
          /* Acquire text content from the node if it exists. */
-         final String x1str = x1node != null ? x1node.getTextContent() : "-0.5";
-         final String y1str = y1node != null ? y1node.getTextContent() : "0";
-         final String x2str = x2node != null ? x2node.getTextContent() : "0.5";
-         final String y2str = y2node != null ? y2node.getTextContent() : "0";
+         final String x1str = x1node != null ? x1node.getNodeValue() : "-0.5";
+         final String y1str = y1node != null ? y1node.getNodeValue() : "0";
+         final String x2str = x2node != null ? x2node.getNodeValue() : "0.5";
+         final String y2str = y2node != null ? y2node.getNodeValue() : "0";
 
          /* Parse string or default. */
          final float x1 = ParserSvg.parseFloat(x1str, -0.5f);
@@ -702,7 +594,7 @@ abstract class ParserSvg {
     *
     * @return the output curve entity
     */
-   protected static ArrayList < Curve2 > parseNode ( final Node node,
+   private static ArrayList < Curve2 > parseNode ( final Node node,
       final CurveEntity2 target, final Mat3 parent ) {
 
       ArrayList < Curve2 > newCurves = new ArrayList <>();
@@ -799,7 +691,7 @@ abstract class ParserSvg {
     *
     * @return the array of curves
     */
-   protected static Curve2[] parsePath ( final Node node ) {
+   private static Curve2[] parsePath ( final Node node ) {
 
       final ArrayList < Curve2 > result = new ArrayList <>(2);
 
@@ -812,7 +704,7 @@ abstract class ParserSvg {
              * These regular expressions are imperfect, and may yield empty
              * string tokens, so there's an extra step to strip them away.
              */
-            final String pdStr = pathData.getTextContent();
+            final String pdStr = pathData.getNodeValue();
             String[] cmdTokens = ParserSvg.PATTERN_CMD.split(pdStr, 0);
             cmdTokens = ParserSvg.stripEmptyTokens(cmdTokens);
             final int cmdLen = cmdTokens.length;
@@ -1360,7 +1252,7 @@ abstract class ParserSvg {
     *
     * @return the command array
     */
-   protected static PathCommand[] parsePathToCmd ( final Node node ) {
+   private static PathCommand[] parsePathToCmd ( final Node node ) {
 
       final ArrayList < PathCommand > cmdList = new ArrayList <>();
 
@@ -1373,7 +1265,7 @@ abstract class ParserSvg {
              * These regular expressions are imperfect, and may yield empty
              * string tokens, so there's an extra step to strip them away.
              */
-            final String pdStr = pathData.getTextContent();
+            final String pdStr = pathData.getNodeValue();
             String[] cmdTokens = ParserSvg.PATTERN_CMD.split(pdStr, 0);
             cmdTokens = ParserSvg.stripEmptyTokens(cmdTokens);
 
@@ -1399,7 +1291,7 @@ abstract class ParserSvg {
     *
     * @return the curve
     */
-   protected static Curve2 parsePoly ( final Node polygonNode,
+   private static Curve2 parsePoly ( final Node polygonNode,
       final Curve2 target ) {
 
       final NamedNodeMap attributes = polygonNode.getAttributes();
@@ -1418,7 +1310,7 @@ abstract class ParserSvg {
          }
 
          final Node ptsnode = attributes.getNamedItem("points");
-         final String ptsstr = ptsnode != null ? ptsnode.getTextContent()
+         final String ptsstr = ptsnode != null ? ptsnode.getNodeValue()
             : "0,0";
          final String[] coords = ptsstr.split("\\s+|,");
 
@@ -1460,7 +1352,7 @@ abstract class ParserSvg {
     *
     * @return the rectangle curve
     */
-   protected static Curve2 parseRect ( final Node rectNode,
+   private static Curve2 parseRect ( final Node rectNode,
       final Curve2 target ) {
 
       final NamedNodeMap attributes = rectNode.getAttributes();
@@ -1479,12 +1371,12 @@ abstract class ParserSvg {
          if ( rxnode != null && rynode == null ) { rynode = rxnode; }
 
          /* Acquire text content from the node if it exists. */
-         final String xstr = xnode != null ? xnode.getTextContent() : "0";
-         final String ystr = ynode != null ? ynode.getTextContent() : "0";
-         final String wstr = wnode != null ? wnode.getTextContent() : "1";
-         final String hstr = hnode != null ? hnode.getTextContent() : "1";
-         final String rxstr = rxnode != null ? rxnode.getTextContent() : "0";
-         final String rystr = rynode != null ? rynode.getTextContent() : "0";
+         final String xstr = xnode != null ? xnode.getNodeValue() : "0";
+         final String ystr = ynode != null ? ynode.getNodeValue() : "0";
+         final String wstr = wnode != null ? wnode.getNodeValue() : "1";
+         final String hstr = hnode != null ? hnode.getNodeValue() : "1";
+         final String rxstr = rxnode != null ? rxnode.getNodeValue() : "0";
+         final String rystr = rynode != null ? rynode.getNodeValue() : "0";
 
          /* Parse string or default. */
          final float x = ParserSvg.parseFloat(xstr, 0.0f);
@@ -1516,10 +1408,10 @@ abstract class ParserSvg {
     *
     * @return the matrix
     */
-   protected static Mat3 parseTransform ( final Node trNode,
+   private static Mat3 parseTransform ( final Node trNode,
       final Mat3 target ) {
 
-      final String v = trNode.getTextContent().trim().toLowerCase();
+      final String v = trNode.getNodeValue().trim().toLowerCase();
 
       final String[] transformStrs = v.split("\\)");
       final int trsLen = transformStrs.length;
@@ -1645,7 +1537,7 @@ abstract class ParserSvg {
     *
     * @return the vector
     */
-   protected static Vec4 parseViewBox ( final Node viewbox, final Vec4 target,
+   private static Vec4 parseViewBox ( final Node viewbox, final Vec4 target,
       final float width, final float height ) {
 
       float x = 0.0f; /* top left x */
@@ -1653,7 +1545,7 @@ abstract class ParserSvg {
       float z = width < 2.0f ? 2.0f : width; /* bottom right x */
       float w = height < 2.0f ? 2.0f : height; /* bottom right y */
 
-      final String content = viewbox.getTextContent();
+      final String content = viewbox.getNodeValue();
       final String[] tokens = content.split(" ");
       final int tokLen = tokens.length;
 
@@ -1672,7 +1564,7 @@ abstract class ParserSvg {
     *
     * @return the stripped tokens
     */
-   protected static String[] stripEmptyTokens ( final String[] tokens ) {
+   private static String[] stripEmptyTokens ( final String[] tokens ) {
 
       final int len = tokens.length;
       final ArrayList < String > list = new ArrayList <>(len);
@@ -1681,6 +1573,114 @@ abstract class ParserSvg {
          if ( token.length() > 0 ) { list.add(token); }
       }
       return list.toArray(new String[list.size()]);
+   }
+
+   /**
+    * A helper function to parse units of measurement in an SVG element. Uses
+    * the following conversions:
+    * <ul>
+    * <li>1 centimeter (cm) = {@value ParserSvg#CM_TO_UNIT} units</li>
+    * <li>1 inch (in) = {@value ParserSvg#IN_TO_UNIT} units</li>
+    * <li>1 millimeter (mm) = {@value ParserSvg#MM_TO_UNIT} units</li>
+    * <li>1 pica (pc) = {@value ParserSvg#PC_TO_UNIT} units</li>
+    * <li>1 point (pt) = {@value ParserSvg#PT_TO_UNIT} units</li>
+    * <li>1 pixel (px) = {@value ParserSvg#PX_TO_UNIT} units</li>
+    * </ul>
+    * View box relative units, namely <code>%</code> is limited; all this
+    * parser will do is divide the value by 100.<br>
+    * <br>
+    * Font-relative units, namely <code>em</code> and <code>ex</code> are not
+    * supported.<br>
+    * <br>
+    * For polar coordinates, radians are assumed to be the default. Degrees
+    * (deg) are converted to radians through multiplication by
+    * {@value IUtils#DEG_TO_RAD}.
+    *
+    * @param u   the String value
+    * @param def the default value
+    *
+    * @return the parsed float
+    */
+   private static float parseFloat ( final String u, final float def ) {
+
+      /*
+       * The string needs to be trimmed even here because of unconventional
+       * formatting which could be contained within a path string.
+       */
+
+      float x = def;
+      final String v = u.trim();
+      final int len = v.length();
+      final int lens1 = len - 1;
+      final int lens2 = len - 2;
+      final int lens3 = len - 3;
+
+      try {
+
+         if ( v.startsWith("cm", lens2) ) {
+
+            /* Centimeters. */
+            x = Float.parseFloat(v.substring(0, lens2)) * ParserSvg.CM_TO_UNIT;
+
+         } else if ( v.startsWith("deg", lens3) ) {
+
+            /* Degrees. */
+            x = Float.parseFloat(v.substring(0, lens3)) * IUtils.DEG_TO_RAD;
+
+         } else if ( v.startsWith("in", lens2) ) {
+
+            /* Inches. */
+            x = Float.parseFloat(v.substring(0, lens2)) * ParserSvg.IN_TO_UNIT;
+
+         } else if ( v.startsWith("mm", lens2) ) {
+
+            /* Millimeters. */
+            x = Float.parseFloat(v.substring(0, lens2)) * ParserSvg.MM_TO_UNIT;
+
+         } else if ( v.startsWith("pc", lens2) ) {
+
+            /* Pica. */
+            x = Float.parseFloat(v.substring(0, lens2)) * ParserSvg.PC_TO_UNIT;
+
+         } else if ( v.startsWith("pt", lens2) ) {
+
+            /* Point. */
+            x = Float.parseFloat(v.substring(0, lens2)) * ParserSvg.PT_TO_UNIT;
+
+         } else if ( v.startsWith("px", lens2) ) {
+
+            /* Pixel. */
+            x = Float.parseFloat(v.substring(0, lens2)) * ParserSvg.PX_TO_UNIT;
+
+         } else if ( v.startsWith("rad", lens3) ) {
+
+            /* Radians. */
+            x = Float.parseFloat(v.substring(0, lens3));
+
+         } else if ( v.startsWith("em", lens2) ) {
+
+            /* RELATIVE UNIT: To font size. Not supported in original. */
+            x = Float.parseFloat(v.substring(0, lens2));
+
+         } else if ( v.startsWith("ex", lens2) ) {
+
+            /* RELATIVE UNIT: To font size. Not supported in original. */
+            x = Float.parseFloat(v.substring(0, lens2));
+
+         } else if ( v.startsWith("%", lens1) ) {
+
+            /* RELATIVE UNIT: Simplified from original. */
+            x = Float.parseFloat(v.substring(0, lens1)) * 0.01f;
+
+         } else {
+
+            x = Float.parseFloat(v);
+
+         }
+
+      } catch ( final Exception e ) { /* Do nothing. */ }
+
+      return x;
    }
 
 }

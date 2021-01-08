@@ -1,5 +1,6 @@
 package camzup;
 
+import camzup.core.CurveEntity2;
 import camzup.core.ParserSvg2;
 
 import processing.core.PApplet;
@@ -52,7 +53,10 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      ParserSvg2.parse("data/diagnostic.svg");
+      CurveEntity2 ce2 = ParserSvg2.parse("data/diagnostic.svg");
+      String pyCd = ce2.toBlenderCode();
+      // System.out.println("");
+      // System.out.println(pyCd);
    }
 
    /**

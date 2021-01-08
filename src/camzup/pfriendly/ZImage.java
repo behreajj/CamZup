@@ -754,7 +754,6 @@ public class ZImage extends PImage {
       /* End of lines loop. */
 
       target.updatePixels();
-
       return target;
    }
 

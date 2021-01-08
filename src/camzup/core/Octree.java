@@ -270,7 +270,7 @@ public class Octree implements Iterable < Vec3 > {
     * Gets a string representation of this quadtree node.
     */
    @Override
-   public String toString ( ) { return this.toString(4); }
+   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
 
    /**
     * Gets a string representation of this quadtree node.
@@ -279,34 +279,9 @@ public class Octree implements Iterable < Vec3 > {
     *
     * @return the string
     */
-   @Recursive
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(2048);
-      sb.append("{ bounds: ");
-      sb.append(this.bounds.toString(places));
-      sb.append(", capacity: ");
-      sb.append(this.capacity);
-
-      if ( this.isLeaf() ) {
-         sb.append(", points: [ ");
-         final Iterator < Vec3 > itr = this.points.iterator();
-         while ( itr.hasNext() ) {
-            itr.next().toString(sb, places);
-            if ( itr.hasNext() ) { sb.append(',').append(' '); }
-         }
-         sb.append(' ').append(']');
-      } else {
-         sb.append(", children: [ ");
-         for ( int i = 0; i < 8; ++i ) {
-            sb.append(this.children[i].toString(places));
-            if ( i < 7 ) { sb.append(',').append(' '); }
-         }
-         sb.append(' ').append(']');
-      }
-
-      sb.append(' ').append('}');
-      return sb.toString();
+      return this.toString(new StringBuilder(1024), places).toString();
    }
 
    /**
@@ -377,6 +352,46 @@ public class Octree implements Iterable < Vec3 > {
       }
 
       return found;
+   }
+
+   /**
+    * Internal helper function to append an octree's representation to a
+    * {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   @Recursive
+   protected StringBuilder toString ( final StringBuilder sb,
+      final int places ) {
+
+      sb.append("{ bounds: ");
+      sb.append(this.bounds.toString(places));
+      sb.append(", capacity: ");
+      sb.append(this.capacity);
+
+      if ( this.isLeaf() ) {
+         sb.append(", points: [ ");
+         final Iterator < Vec3 > itr = this.points.iterator();
+         while ( itr.hasNext() ) {
+            itr.next().toString(sb, places);
+            if ( itr.hasNext() ) { sb.append(',').append(' '); }
+         }
+         sb.append(' ').append(']');
+      } else {
+         sb.append(", children: [ ");
+         for ( int i = 0; i < 7; ++i ) {
+            this.children[i].toString(sb, places);
+            sb.append(',').append(' ');
+         }
+         sb.append(this.children[7].toString(places));
+         sb.append(' ').append(']');
+      }
+
+      sb.append(' ').append('}');
+      return sb;
    }
 
    /**

@@ -40,6 +40,9 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public CurveEntity2 ( final String name, final Transform2 transform,
       final Curve2... curves ) {
 
+      // TODO: Given that these hold SVGs, how about entity level
+      // calcDimensions, toOrigin and reframe functions?
+
       super(name, transform);
       this.appendAll(curves);
    }

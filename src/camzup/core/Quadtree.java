@@ -265,7 +265,7 @@ public class Quadtree implements Iterable < Vec2 > {
     * Gets a string representation of this quadtree node.
     */
    @Override
-   public String toString ( ) { return this.toString(4); }
+   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
 
    /**
     * Gets a string representation of this quadtree node.
@@ -274,10 +274,23 @@ public class Quadtree implements Iterable < Vec2 > {
     *
     * @return the string
     */
-   @Recursive
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(2048);
+      return this.toString(new StringBuilder(1024), places).toString();
+   }
+
+   /**
+    * Internal helper function to append a quadtree's representation to a
+    * {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   @Recursive
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
       sb.append("{ bounds: ");
       sb.append(this.bounds.toString(places));
       sb.append(", capacity: ");
@@ -293,15 +306,16 @@ public class Quadtree implements Iterable < Vec2 > {
          sb.append(' ').append(']');
       } else {
          sb.append(", children: [ ");
-         for ( int i = 0; i < 4; ++i ) {
-            sb.append(this.children[i].toString(places));
-            if ( i < 3 ) { sb.append(',').append(' '); }
+         for ( int i = 0; i < 3; ++i ) {
+            this.children[i].toString(sb, places);
+            sb.append(',').append(' ');
          }
+         sb.append(this.children[3].toString(places));
          sb.append(' ').append(']');
       }
 
       sb.append(' ').append('}');
-      return sb.toString();
+      return sb;
    }
 
    /**
