@@ -1050,8 +1050,7 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Sets two knots from a segment of a cubic curve. The default curve
-    * tightness is 0.0.<br>
+    * Sets two knots from a segment of a cubic curve.<br>
     * <br>
     * Assumes that the previous knot's coordinate is set to the first anchor
     * point. The previous knot's fore handle, the next knot's rear handle and
@@ -1104,6 +1103,56 @@ public class Knot2 implements Comparable < Knot2 > {
 
       return Knot2.fromSegCubic(prevControl.x, prevControl.y, nextControl.x,
          nextControl.y, nextAnchor.x, nextAnchor.y, prev, next);
+   }
+
+   /**
+    * Sets two knots from a segment of a cubic curve which reflect an existing
+    * segment.<br>
+    * <br>
+    * Assumes that the previous knot's coordinate is set to the first anchor
+    * point. The previous knot's fore handle, the next knot's rear handle and
+    * the next knot's coordinate are set by this function.
+    *
+    * @param xNextControl the next control point x
+    * @param yNextControl the next control point y
+    * @param xNextAnchor  the next anchor x
+    * @param yNextAnchor  the next anchor y
+    * @param prev         the previous knot
+    * @param next         the next knot
+    *
+    * @return next knot
+    */
+   public static Knot2 fromSegCubicRefl ( final float xNextControl,
+      final float yNextControl, final float xNextAnchor,
+      final float yNextAnchor, final Knot2 prev, final Knot2 next ) {
+
+      prev.mirrorHandlesBackward();
+      next.rearHandle.set(xNextControl, yNextControl);
+      next.coord.set(xNextAnchor, yNextAnchor);
+
+      return next;
+   }
+
+   /**
+    * Sets two knots from a segment of a cubic curve which reflect an existing
+    * segment.<br>
+    * <br>
+    * Assumes that the previous knot's coordinate is set to the first anchor
+    * point. The previous knot's fore handle, the next knot's rear handle and
+    * the next knot's coordinate are set by this function.
+    *
+    * @param nextControl the next control point
+    * @param nextAnchor  the next anchor
+    * @param prev        the previous knot
+    * @param next        the next knot
+    *
+    * @return next knot
+    */
+   public static Knot2 fromSegCubicRefl ( final Vec2 nextControl,
+      final Vec2 nextAnchor, final Knot2 prev, final Knot2 next ) {
+
+      return Knot2.fromSegCubicRefl(nextControl.x, nextControl.y, nextAnchor.x,
+         nextAnchor.y, prev, next);
    }
 
    /**

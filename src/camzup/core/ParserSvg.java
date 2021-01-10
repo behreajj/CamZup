@@ -143,8 +143,7 @@ abstract class ParserSvg {
          final float widpx = ParserSvg.parseFloat(widthStr);
 
          final Node height = attr.getNamedItem("height");
-         final String heightStr = height != null ? height.getNodeValue()
-            : "0";
+         final String heightStr = height != null ? height.getNodeValue() : "0";
          final float hghpx = ParserSvg.parseFloat(heightStr);
 
          final Node viewbox = attr.getNamedItem("viewBox");
@@ -752,7 +751,7 @@ abstract class ParserSvg {
             String fs;
 
             final Vec2 relative = new Vec2();
-            final Vec2 mh = new Vec2();
+            final Vec2 midHnd = new Vec2();
             float xOff;
             float yOff;
             boolean closedLoop = false;
@@ -977,12 +976,12 @@ abstract class ParserSvg {
                      curr = new Knot2();
                      target.append(curr);
 
-                     mh.set(ParserSvg.parseFloat(mhxStr), ParserSvg.parseFloat(
-                        mhyStr));
+                     midHnd.set(ParserSvg.parseFloat(mhxStr), ParserSvg
+                        .parseFloat(mhyStr));
                      curr.coord.set(ParserSvg.parseFloat(coxStr), ParserSvg
                         .parseFloat(coyStr));
-                     Curve2.lerp13(mh, prev.coord, prev.foreHandle);
-                     Curve2.lerp13(mh, curr.coord, curr.rearHandle);
+                     Curve2.lerp13(midHnd, prev.coord, prev.foreHandle);
+                     Curve2.lerp13(midHnd, curr.coord, curr.rearHandle);
 
                      relative.set(curr.coord);
                      // }
@@ -1000,16 +999,16 @@ abstract class ParserSvg {
                      curr = new Knot2();
                      target.append(curr);
 
-                     mh.set(ParserSvg.parseFloat(mhxStr), ParserSvg.parseFloat(
-                        mhyStr));
+                     midHnd.set(ParserSvg.parseFloat(mhxStr), ParserSvg
+                        .parseFloat(mhyStr));
                      curr.coord.set(ParserSvg.parseFloat(coxStr), ParserSvg
                         .parseFloat(coyStr));
 
-                     Vec2.add(relative, mh, mh);
+                     Vec2.add(relative, midHnd, midHnd);
                      Vec2.add(relative, curr.coord, curr.coord);
 
-                     Curve2.lerp13(mh, prev.coord, prev.foreHandle);
-                     Curve2.lerp13(mh, curr.coord, curr.rearHandle);
+                     Curve2.lerp13(midHnd, prev.coord, prev.foreHandle);
+                     Curve2.lerp13(midHnd, curr.coord, curr.rearHandle);
 
                      relative.set(curr.coord);
 
@@ -1032,10 +1031,10 @@ abstract class ParserSvg {
                       * Convert mid-handle from point to direction, negate,
                       * convert back to point.
                       */
-                     Vec2.sub(mh, prev.coord, mh);
-                     Vec2.negate(mh, mh);
-                     Vec2.add(mh, prev.coord, mh);
-                     Curve2.lerp13(mh, curr.coord, curr.rearHandle);
+                     Vec2.sub(midHnd, prev.coord, midHnd);
+                     Vec2.negate(midHnd, midHnd);
+                     Vec2.add(midHnd, prev.coord, midHnd);
+                     Curve2.lerp13(midHnd, curr.coord, curr.rearHandle);
 
                      relative.set(curr.coord);
 
@@ -1055,10 +1054,10 @@ abstract class ParserSvg {
                         .parseFloat(coyStr));
                      Vec2.add(relative, curr.coord, curr.coord);
 
-                     Vec2.sub(mh, prev.coord, mh);
-                     Vec2.negate(mh, mh);
-                     Vec2.add(mh, prev.coord, mh);
-                     Curve2.lerp13(mh, curr.coord, curr.rearHandle);
+                     Vec2.sub(midHnd, prev.coord, midHnd);
+                     Vec2.negate(midHnd, midHnd);
+                     Vec2.add(midHnd, prev.coord, midHnd);
+                     Curve2.lerp13(midHnd, curr.coord, curr.rearHandle);
 
                      relative.set(curr.coord);
 
@@ -1310,8 +1309,7 @@ abstract class ParserSvg {
          }
 
          final Node ptsnode = attributes.getNamedItem("points");
-         final String ptsstr = ptsnode != null ? ptsnode.getNodeValue()
-            : "0,0";
+         final String ptsstr = ptsnode != null ? ptsnode.getNodeValue() : "0,0";
          final String[] coords = ptsstr.split("\\s+|,");
 
          int i = -1;
@@ -1408,8 +1406,7 @@ abstract class ParserSvg {
     *
     * @return the matrix
     */
-   private static Mat3 parseTransform ( final Node trNode,
-      final Mat3 target ) {
+   private static Mat3 parseTransform ( final Node trNode, final Mat3 target ) {
 
       final String v = trNode.getNodeValue().trim().toLowerCase();
 

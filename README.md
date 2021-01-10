@@ -99,10 +99,10 @@ rndr.endDraw();
 
 ![Polar Coordinates](data/radialDiagram.png)
 
-Here is a brief list of issues with this library and differences which may be unexpected to new users. Some are unresolved bugs, some arise from the design philosophy of the library.
+Here is a brief list of issues with this library and differences which may be unexpected. Some are unresolved bugs, some arise from the design philosophy of the library.
 
 ### 2D & 3D
-  - Flipping the axes changes the default rotational direction of a positive angle from clockwise to counter-clockwise.
+  - Flipping axes changes the default rotational direction of a positive angle from clockwise to counter-clockwise.
   - [textureMode](https://processing.org/reference/textureMode_.html) `IMAGE` is not supported by OpenGL renderers; `NORMAL` is the default. This is for three reasons: (1.) the belief that `IMAGE` is _harder_, not easier, to understand; (2.) recognition that `NORMAL` is standard; (3.) redundant operations in `PGraphicsOpenGL` that interfere with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT` and cannot be overidden by this library.
   - In making this conversion, support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.
   - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles. It no longer responds to [ellipseMode](https://processing.org/reference/ellipseMode_.html); `RADIUS` is the default behavior. When given nonuniform scales, the minimum is taken.
@@ -115,7 +115,7 @@ Here is a brief list of issues with this library and differences which may be un
   - The `image` function for `PGraphicsJava2D` is ineffective, both in terms of frame rate and appearance. I recommend that an OpenGL renderer be used instead. Alternatively, rescale images to display size and tint them in an external application that specializes in raster image manipulation (e.g., [GIMP](https://www.gimp.org/)). I have made an image function which removes some of the padding around the native renderer's image function in cases where a `PImage` can be converted to an AWT image in `setup`.
   - As a consequence of how `image` function works above, dynamic `tint`ing is no longer supported in `YupJ2`.
   - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter.
-  - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), `ellipseMode` and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with these renderers. For that reason, `CENTER` is the default alignment.
+  - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), `ellipseMode` and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with this library. For that reason, `CENTER` is the default alignment.
   
 ### 3D
   - A z-up axis changes the relationship between a 2D vector's polar coordinates and a 3D vector's spherical coordinates: a 3D vector's azimuth matches a 2D vector's heading.

@@ -1275,6 +1275,28 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
+    * Sets two knots from a segment of a cubic curve which reflect an existing
+    * segment.<br>
+    * <br>
+    * Assumes that the previous knot's coordinate is set to the first anchor
+    * point. The previous knot's fore handle, the next knot's rear handle and
+    * the next knot's coordinate are set by this function.
+    *
+    * @param nextControl the next control point
+    * @param nextAnchor  the next anchor
+    * @param prev        the previous knot
+    * @param next        the next knot
+    *
+    * @return next knot
+    */
+   public static Knot3 fromSegCubic ( final Vec3 nextControl,
+      final Vec3 nextAnchor, final Knot3 prev, final Knot3 next ) {
+
+      return Knot3.fromSegCubicRefl(nextControl.x, nextControl.y, nextControl.z,
+         nextAnchor.x, nextAnchor.y, nextAnchor.z, prev, next);
+   }
+
+   /**
     * Sets two knots from a segment of a cubic curve. Assumes that the
     * previous knot's coordinate is set to the first anchor point.<br>
     * <br>
@@ -1299,6 +1321,36 @@ public class Knot3 implements Comparable < Knot3 > {
       return Knot3.fromSegCubic(prevControl.x, prevControl.y, prevControl.z,
          nextControl.x, nextControl.y, nextControl.z, nextAnchor.x,
          nextAnchor.y, nextAnchor.z, prev, next);
+   }
+
+   /**
+    * Sets two knots from a segment of a cubic curve which reflect an existing
+    * segment.<br>
+    * <br>
+    * The previous knot's fore handle, the next knot's rear handle and the
+    * next knot's coordinate are set by this function.
+    *
+    * @param xNextControl the next control point x
+    * @param yNextControl the next control point y
+    * @param zNextControl the next control point z
+    * @param xNextAnchor  the next anchor x
+    * @param yNextAnchor  the next anchor y
+    * @param zNextAnchor  the next anchor z
+    * @param prev         the previous knot
+    * @param next         the next knot
+    *
+    * @return next knot
+    */
+   public static Knot3 fromSegCubicRefl ( final float xNextControl,
+      final float yNextControl, final float zNextControl,
+      final float xNextAnchor, final float yNextAnchor, final float zNextAnchor,
+      final Knot3 prev, final Knot3 next ) {
+
+      prev.mirrorHandlesBackward();
+      next.rearHandle.set(xNextControl, yNextControl, zNextControl);
+      next.coord.set(xNextAnchor, yNextAnchor, zNextAnchor);
+
+      return next;
    }
 
    /**

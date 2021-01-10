@@ -1,8 +1,5 @@
 package camzup;
 
-import camzup.core.CurveEntity2;
-import camzup.core.ParserSvg2;
-
 import processing.core.PApplet;
 
 /**
@@ -53,10 +50,48 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      CurveEntity2 ce2 = ParserSvg2.parse("data/diagnostic.svg");
-      String pyCd = ce2.toBlenderCode();
+      // CurveEntity2 ce2 = ParserSvg2.parse("data/hexGrid.svg");
+      // String pyCd = ce2.toBlenderCode();
       // System.out.println("");
       // System.out.println(pyCd);
+
+//      char[] arr = "87352.1234".toCharArray();
+//      System.out.println(charArrToFloat(arr));
+   }
+
+   static float charArrToFloat ( char[] arr ) {
+
+      return charArrToFloat(arr, 0, arr.length);
+   }
+
+   public static float charArrToFloat ( char[] arr, int start, int end ) {
+      
+      int dpidx = end;
+      boolean negate = false;
+      for ( int i = start; i < end; ++i ) {
+         char c = arr[i];
+         if ( c == '-' ) {
+            negate = true;
+         } else if ( c == '.' ) {
+            dpidx = i;
+         }
+      }
+      
+      if ( negate ) --dpidx;
+
+      float exponent = 1.0f;
+      for ( int k = 1; k < dpidx; ++k ) { exponent *= 10.0f; }
+
+      float result = 0.0f;
+      for ( int j = start; j < end; ++j ) {
+         int digit = arr[j] - '0';
+         if ( digit > -1 && digit < 10 ) {
+            result += exponent * digit;
+            exponent *= 0.1f;
+         }
+      }
+      
+      return negate ? -result : result;
    }
 
    /**
