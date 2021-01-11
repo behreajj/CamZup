@@ -186,7 +186,7 @@ public enum PathCommand {
          case 'S': return PathCommand.REFLECT_CUBIC_ABS;
          case 'T': return PathCommand.REFLECT_QUADRATIC_ABS;
          case 'V': return PathCommand.VERT_ABS;
-         case 'Z': return PathCommand.CLOSE_PATH;
+         // case 'Z': return PathCommand.CLOSE_PATH;
 
          case 'a': return PathCommand.ARC_TO_REL;
          case 'c': return PathCommand.CUBIC_TO_REL;
@@ -197,7 +197,8 @@ public enum PathCommand {
          case 's': return PathCommand.REFLECT_CUBIC_REL;
          case 't': return PathCommand.REFLECT_QUADRATIC_REL;
          case 'v': return PathCommand.VERT_REL;
-         case 'z': default: return PathCommand.CLOSE_PATH;
+         // case 'z': return PathCommand.CLOSE_PATH;
+         default: return PathCommand.CLOSE_PATH;
       }
       /* @formatter:on */
    }

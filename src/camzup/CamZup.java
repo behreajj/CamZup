@@ -43,6 +43,35 @@ public class CamZup {
     */
    public static final String VERSION = "##library.prettyVersion##";
 
+   public static float charArrToFloat ( final char[] arr ) {
+
+      final int len = arr.length;
+      int dpidx = len;
+      boolean negate = false;
+      for ( int i = 0; i < len; ++i ) {
+         final char c = arr[i];
+         if ( c == '-' ) {
+            negate = true;
+         } else if ( c == '.' ) { dpidx = i; }
+      }
+
+      if ( negate ) { --dpidx; }
+
+      float exponent = 1.0f;
+      for ( int k = 1; k < dpidx; ++k ) { exponent *= 10.0f; }
+
+      float result = 0.0f;
+      for ( int j = 0; j < len; ++j ) {
+         final int digit = arr[j] - '0';
+         if ( digit > -1 && digit < 10 ) {
+            result += exponent * digit;
+            exponent *= 0.1f;
+         }
+      }
+
+      return negate ? -result : result;
+   }
+
    /**
     * The main function.
     *
@@ -50,44 +79,14 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // CurveEntity2 ce2 = ParserSvg.parse("data/diagnostic.svg");
+      // CurveEntity2 ce2 = ParserSvg.parse("data/usMap.svg");
       // String pyCd = ce2.toBlenderCode();
-      // System.out.println("");
-      // System.out.println(pyCd);
 
-      // Iterator < Knot2 > itr = ce2.get(0).iterator();
-      // while ( itr.hasNext() ) { System.out.println(itr.next()); }
-   }
-
-   public static float charArrToFloat ( char[] arr ) {
-      
-      int len = arr.length;
-      int dpidx = len;
-      boolean negate = false;
-      for ( int i = 0; i < len; ++i ) {
-         char c = arr[i];
-         if ( c == '-' ) {
-            negate = true;
-         } else if ( c == '.' ) {
-            dpidx = i;
-         }
-      }
-      
-      if ( negate ) --dpidx;
-
-      float exponent = 1.0f;
-      for ( int k = 1; k < dpidx; ++k ) { exponent *= 10.0f; }
-
-      float result = 0.0f;
-      for ( int j = 0; j < len; ++j ) {
-         int digit = arr[j] - '0';
-         if ( digit > -1 && digit < 10 ) {
-            result += exponent * digit;
-            exponent *= 0.1f;
-         }
-      }
-      
-      return negate ? -result : result;
+      // try {
+      // Files.writeString(Paths.get("data/parsedMap.py"), pyCd,
+      // StandardCharsets.UTF_8);
+      // } catch ( IOException ex ) {
+      // }
    }
 
    /**
