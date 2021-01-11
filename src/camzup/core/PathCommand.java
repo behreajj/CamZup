@@ -52,12 +52,14 @@ public enum PathCommand {
    LINE_TO_REL ( 'l', true, 2 ),
 
    /**
-    * Move to absolute ('M').
+    * Move to absolute ('M'). Data following the initial coordinate pair are
+    * treated implicitly as line-to commands.
     */
    MOVE_TO_ABS ( 'M', false, 2 ),
 
    /**
-    * Move to relative ('m').
+    * Move to relative ('m'). Data following the initial coordinate pair are
+    * treated implicitly as line-to commands.
     */
    MOVE_TO_REL ( 'm', true, 2 ),
 
@@ -107,7 +109,7 @@ public enum PathCommand {
    private final char code;
 
    /**
-    * Number of parameters for a given code.
+    * Number of data per a given code.
     */
    private final int dataCount;
 
@@ -173,66 +175,31 @@ public enum PathCommand {
     */
    public static PathCommand fromChar ( final char c ) {
 
+      /* @formatter:off */
       switch ( c ) {
-         case 'A':
-            return ARC_TO_ABS;
+         case 'A': return PathCommand.ARC_TO_ABS;
+         case 'C': return PathCommand.CUBIC_TO_ABS;
+         case 'H': return PathCommand.HORIZ_ABS;
+         case 'L': return PathCommand.LINE_TO_ABS;
+         case 'M': return PathCommand.MOVE_TO_ABS;
+         case 'Q': return PathCommand.QUADRATIC_TO_ABS;
+         case 'S': return PathCommand.REFLECT_CUBIC_ABS;
+         case 'T': return PathCommand.REFLECT_QUADRATIC_ABS;
+         case 'V': return PathCommand.VERT_ABS;
+         case 'Z': return PathCommand.CLOSE_PATH;
 
-         case 'a':
-            return ARC_TO_REL;
-
-         case 'C':
-            return CUBIC_TO_ABS;
-
-         case 'c':
-            return CUBIC_TO_REL;
-
-         case 'H':
-            return HORIZ_ABS;
-
-         case 'h':
-            return HORIZ_REL;
-
-         case 'L':
-            return LINE_TO_ABS;
-
-         case 'l':
-            return LINE_TO_REL;
-
-         case 'M':
-            return MOVE_TO_ABS;
-
-         case 'm':
-            return MOVE_TO_REL;
-
-         case 'Q':
-            return QUADRATIC_TO_ABS;
-
-         case 'q':
-            return QUADRATIC_TO_REL;
-
-         case 'S':
-            return REFLECT_CUBIC_ABS;
-
-         case 's':
-            return REFLECT_CUBIC_REL;
-
-         case 'T':
-            return REFLECT_QUADRATIC_ABS;
-
-         case 't':
-            return REFLECT_QUADRATIC_REL;
-
-         case 'V':
-            return VERT_ABS;
-
-         case 'v':
-            return VERT_REL;
-
-         case 'Z':
-         case 'z':
-         default:
-            return CLOSE_PATH;
+         case 'a': return PathCommand.ARC_TO_REL;
+         case 'c': return PathCommand.CUBIC_TO_REL;
+         case 'h': return PathCommand.HORIZ_REL;
+         case 'l': return PathCommand.LINE_TO_REL;
+         case 'm': return PathCommand.MOVE_TO_REL;
+         case 'q': return PathCommand.QUADRATIC_TO_REL;
+         case 's': return PathCommand.REFLECT_CUBIC_REL;
+         case 't': return PathCommand.REFLECT_QUADRATIC_REL;
+         case 'v': return PathCommand.VERT_REL;
+         case 'z': default: return PathCommand.CLOSE_PATH;
       }
+      /* @formatter:on */
    }
 
 }

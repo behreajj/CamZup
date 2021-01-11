@@ -204,6 +204,7 @@ public abstract class Utils implements IUtils {
       final boolean yGtX = yAbs > xAbs;
       float t0 = yGtX ? yAbs : xAbs;
       if ( t0 != 0.0f ) {
+         /* t2 chooses between xAbs / yAbs and yAbs / xAbs. */
          final float t2 = ( yGtX ? xAbs : yAbs ) / t0;
          final float t3 = t2 * t2;
          t0 = 0.057477314f - 0.01348047f * t3;

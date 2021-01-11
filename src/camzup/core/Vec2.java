@@ -1496,11 +1496,11 @@ public class Vec2 implements Comparable < Vec2 > {
     * @return the angle in radians
     *
     * @see Vec2#headingSigned(Vec2)
-    * @see Utils#modRadians(float)
     */
    public static float headingUnsigned ( final Vec2 v ) {
 
-      return Utils.modRadians(Vec2.headingSigned(v));
+      final float h = Vec2.headingSigned(v);
+      return h < -0.0f ? h + IUtils.TAU : h;
    }
 
    /**

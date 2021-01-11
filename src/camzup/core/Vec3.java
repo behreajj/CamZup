@@ -643,11 +643,11 @@ public class Vec3 implements Comparable < Vec3 > {
     * @return the angle in radians
     *
     * @see Vec3#azimuthSigned(Vec3)
-    * @see Utils#modRadians(float)
     */
    public static float azimuthUnsigned ( final Vec3 v ) {
 
-      return Utils.modRadians(Vec3.azimuthSigned(v));
+      final float a = Vec3.azimuthSigned(v);
+      return a < -0.0f ? a + IUtils.TAU : a;
    }
 
    /**
