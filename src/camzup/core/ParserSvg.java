@@ -715,6 +715,7 @@ public abstract class ParserSvg {
             final String pdStr = pathData.getNodeValue();
             final char[] pdChars = pdStr.toCharArray();
             final int pdCharsLen = pdChars.length;
+            boolean noSpaces = true;
 
             final ArrayList < PathData > paths = new ArrayList <>(16);
             final ArrayList < Integer > dlmIdcs = new ArrayList <>(64);
@@ -725,7 +726,19 @@ public abstract class ParserSvg {
                   final PathCommand a = PathCommand.fromChar(pdChar);
                   final PathData b = new PathData(a, i);
                   paths.add(b);
-               } else if ( pdChar == ' ' || pdChar == ',' ) { dlmIdcs.add(i); }
+               } else if ( pdChar == ' ' ) {
+                  dlmIdcs.add(i);
+                  noSpaces = false;
+               } else if ( pdChar == ',' ) { dlmIdcs.add(i); }
+            }
+
+            /* Without spaces, SVG is a pain to parse, so leave it. */
+            if ( noSpaces ) {
+               // TODO: Refactor to allow compressed SVGs.
+               System.err.println("This SVG parser does not support"
+                  + " compressed file paths with no spaces between commands"
+                  + " and data.");
+               return result;
             }
 
             /* Add data to each instruction. */
@@ -740,9 +753,7 @@ public abstract class ParserSvg {
                final int nextCmdIdx = nextEntry.cmdIdx;
                final int len = nextCmdIdx - prevCmdIdx - 1;
 
-               /*
-                * Search range between previous and next commands for data.
-                */
+               /* Search range between previous and next commands for data. */
                int prevDelim = delimItr.next();
                while ( delimItr.hasNext() && prevDelim < nextCmdIdx - 1 ) {
                   final int nextDelim = delimItr.next();
@@ -751,7 +762,7 @@ public abstract class ParserSvg {
                      final char c = pdChars[j];
                      if ( c != ' ' ) { sb.append(c); }
                   }
-                  prevStrs.add(sb.toString());
+                  if ( sb.length() > 0 ) { prevStrs.add(sb.toString()); }
                   prevDelim = nextDelim;
                }
 
@@ -768,7 +779,9 @@ public abstract class ParserSvg {
                   final char c = pdChars[j];
                   if ( c != ' ' ) { sbLast.append(c); }
                }
-               prevEntry.data.add(sbLast.toString());
+               if ( sbLast.length() > 0 ) {
+                  prevEntry.data.add(sbLast.toString());
+               }
             }
 
             /*
@@ -798,6 +811,8 @@ public abstract class ParserSvg {
                final PathData entry = pathItr.next();
                final PathCommand cmd = entry.cmd;
                final Iterator < String > dataItr = entry.data.iterator();
+
+               // System.out.println(entry);
 
                switch ( cmd ) {
                   case CLOSE_PATH:
@@ -873,7 +888,6 @@ public abstract class ParserSvg {
 
                      curr = new Knot2(rx, ry);
                      target.append(curr);
-                     relative.set(curr.coord);
 
                      //$FALL-THROUGH$
                   case LINE_TO_REL:
@@ -884,6 +898,8 @@ public abstract class ParserSvg {
                       * of instructions.
                       */
                      while ( dataItr.hasNext() ) {
+                        relative.set(curr.coord);
+
                         prev = curr;
                         curr = new Knot2();
                         target.append(curr);
@@ -896,7 +912,6 @@ public abstract class ParserSvg {
                         }
 
                         Knot2.fromSegLinear(ltrx, ltry, prev, curr);
-                        relative.set(curr.coord);
                      }
 
                      break;
@@ -1108,7 +1123,7 @@ public abstract class ParserSvg {
                                     .next()), ParserSvg.parseFloat(dataItr
                                        .next(), 0.0f), ParserSvg.parseFloat(
                                           dataItr.next(), 0.0f)));
-                     curr = target.get(target.length() - 1);
+                     curr = target.getLast();
 
                      break;
 
@@ -1124,7 +1139,7 @@ public abstract class ParserSvg {
                                        dataItr.next(), 0.0f), relative.y
                                           + ParserSvg.parseFloat(dataItr.next(),
                                              0.0f)));
-                     curr = target.get(target.length() - 1);
+                     curr = target.getLast();
 
                      break;
 

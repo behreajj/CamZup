@@ -1,5 +1,8 @@
 package camzup;
 
+import camzup.core.CurveEntity2;
+import camzup.core.ParserSvg;
+
 import processing.core.PApplet;
 
 /**
@@ -79,7 +82,7 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // CurveEntity2 ce2 = ParserSvg.parse("data/usMap.svg");
+      CurveEntity2 ce2 = ParserSvg.parse("data/tiger.svg");
       // String pyCd = ce2.toBlenderCode();
 
       // try {
