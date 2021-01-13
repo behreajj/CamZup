@@ -1,13 +1,5 @@
 package camzup;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
-
-import camzup.core.CurveEntity2;
-import camzup.core.ParserSvg;
-
 import processing.core.PApplet;
 
 /**
@@ -87,18 +79,18 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      long s = System.currentTimeMillis();
-      CurveEntity2 ce2 = ParserSvg.parse("data/diagnostic.svg");
-      long e = System.currentTimeMillis();
-      String pyCd = ce2.toBlenderCode();
-      long f = System.currentTimeMillis();
-      System.out.println("Parse time: " + ( e - s ));
-      System.out.println("PyCd time: " + ( f - e ));
-
-      try {
-         Files.writeString(Paths.get("data/parsed.py"), pyCd,
-            StandardCharsets.UTF_8);
-      } catch ( IOException ex ) {}
+      // final long s = System.currentTimeMillis();
+      // final CurveEntity2 ce2 = ParserSvg.parse("data/diagnostic.svg");
+      // final long e = System.currentTimeMillis();
+      // final String pyCd = ce2.toBlenderCode();
+      // final long f = System.currentTimeMillis();
+      // System.out.println("Parse time: " + ( e - s ));
+      // System.out.println("PyCd time: " + ( f - e ));
+      //
+      // try {
+      // Files.writeString(Paths.get("data/parsed.py"), pyCd,
+      // StandardCharsets.UTF_8);
+      // } catch ( final IOException ex ) {}
 
    }
 

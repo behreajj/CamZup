@@ -2543,8 +2543,8 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the random vector
     */
-   public static Vec3 randomCartesian ( final Random rng,
-      final Vec3 lowerBound, final Vec3 upperBound, final Vec3 target ) {
+   public static Vec3 randomCartesian ( final Random rng, final Vec3 lowerBound,
+      final Vec3 upperBound, final Vec3 target ) {
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
@@ -2566,8 +2566,8 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @see Vec3#fromSpherical(float, float, float, Vec3)
     */
-   public static Vec3 randomSpherical ( final Random rng,
-      final float rhoMin, final float rhoMax, final Vec3 target ) {
+   public static Vec3 randomSpherical ( final Random rng, final float rhoMin,
+      final float rhoMax, final Vec3 target ) {
 
       final float rt = rng.nextFloat();
       final float rp = rng.nextFloat();
@@ -2588,8 +2588,7 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @see Vec3#randomSpherical(Random, float, float, Vec3)
     */
-   public static Vec3 randomSpherical ( final Random rng,
-      final Vec3 target ) {
+   public static Vec3 randomSpherical ( final Random rng, final Vec3 target ) {
 
       return Vec3.randomSpherical(rng, 1.0f, 1.0f, target);
    }

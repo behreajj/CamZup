@@ -1,10 +1,10 @@
 package camzup.core;
 
 /**
- * Command that describes how to render a path in the <code>d</code>
+ * Command that describes how to render a shape in the <code>d</code>
  * attribute of a <code>path</code> node in scalable vector graphics (SVG).
  */
-public enum PathCommand {
+public enum SvgPathCmd {
 
    /**
     * Arc absolute ('A').
@@ -126,7 +126,7 @@ public enum PathCommand {
     * @param isRelative is the command relative
     * @param dataCount  the parameter count
     */
-   PathCommand ( final char code, final boolean isRelative,
+   SvgPathCmd ( final char code, final boolean isRelative,
       final int dataCount ) {
 
       this.code = code;
@@ -173,32 +173,32 @@ public enum PathCommand {
     *
     * @return the path command
     */
-   public static PathCommand fromChar ( final char c ) {
+   public static SvgPathCmd fromChar ( final char c ) {
 
       /* @formatter:off */
       switch ( c ) {
-         case 'A': return PathCommand.ARC_TO_ABS;
-         case 'C': return PathCommand.CUBIC_TO_ABS;
-         case 'H': return PathCommand.HORIZ_ABS;
-         case 'L': return PathCommand.LINE_TO_ABS;
-         case 'M': return PathCommand.MOVE_TO_ABS;
-         case 'Q': return PathCommand.QUADRATIC_TO_ABS;
-         case 'S': return PathCommand.REFLECT_CUBIC_ABS;
-         case 'T': return PathCommand.REFLECT_QUADRATIC_ABS;
-         case 'V': return PathCommand.VERT_ABS;
+         case 'A': return SvgPathCmd.ARC_TO_ABS;
+         case 'C': return SvgPathCmd.CUBIC_TO_ABS;
+         case 'H': return SvgPathCmd.HORIZ_ABS;
+         case 'L': return SvgPathCmd.LINE_TO_ABS;
+         case 'M': return SvgPathCmd.MOVE_TO_ABS;
+         case 'Q': return SvgPathCmd.QUADRATIC_TO_ABS;
+         case 'S': return SvgPathCmd.REFLECT_CUBIC_ABS;
+         case 'T': return SvgPathCmd.REFLECT_QUADRATIC_ABS;
+         case 'V': return SvgPathCmd.VERT_ABS;
          // case 'Z': return PathCommand.CLOSE_PATH;
 
-         case 'a': return PathCommand.ARC_TO_REL;
-         case 'c': return PathCommand.CUBIC_TO_REL;
-         case 'h': return PathCommand.HORIZ_REL;
-         case 'l': return PathCommand.LINE_TO_REL;
-         case 'm': return PathCommand.MOVE_TO_REL;
-         case 'q': return PathCommand.QUADRATIC_TO_REL;
-         case 's': return PathCommand.REFLECT_CUBIC_REL;
-         case 't': return PathCommand.REFLECT_QUADRATIC_REL;
-         case 'v': return PathCommand.VERT_REL;
+         case 'a': return SvgPathCmd.ARC_TO_REL;
+         case 'c': return SvgPathCmd.CUBIC_TO_REL;
+         case 'h': return SvgPathCmd.HORIZ_REL;
+         case 'l': return SvgPathCmd.LINE_TO_REL;
+         case 'm': return SvgPathCmd.MOVE_TO_REL;
+         case 'q': return SvgPathCmd.QUADRATIC_TO_REL;
+         case 's': return SvgPathCmd.REFLECT_CUBIC_REL;
+         case 't': return SvgPathCmd.REFLECT_QUADRATIC_REL;
+         case 'v': return SvgPathCmd.VERT_REL;
          // case 'z': return PathCommand.CLOSE_PATH;
-         default: return PathCommand.CLOSE_PATH;
+         default: return SvgPathCmd.CLOSE_PATH;
       }
       /* @formatter:on */
    }

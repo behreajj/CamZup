@@ -158,7 +158,6 @@ public abstract class ParserSvg {
    protected static float parseAngle ( final String v, final float def ) {
 
       float x = def;
-      // final String v = u.trim();
       final int len = v.length();
       final int lens3 = len - 3;
       final int lens4 = len - 4;
@@ -238,12 +237,12 @@ public abstract class ParserSvg {
       final float x1 = prior.coord.x;
       final float y1 = prior.coord.y;
 
-      final float xdiff = x1 - xDest;
-      final float ydiff = y1 - yDest;
+      final float xDiff = x1 - xDest;
+      final float yDiff = y1 - yDest;
 
       /* Apply phi rotation to difference. */
-      final float x1r = 0.5f * ( cosPhi * xdiff + sinPhi * ydiff );
-      final float y1r = 0.5f * ( cosPhi * ydiff - sinPhi * xdiff );
+      final float x1r = 0.5f * ( cosPhi * xDiff + sinPhi * yDiff );
+      final float y1r = 0.5f * ( cosPhi * yDiff - sinPhi * xDiff );
 
       /* Square the rotation. */
       final float x1rsq = x1r * x1r;
@@ -379,7 +378,6 @@ public abstract class ParserSvg {
          }
 
          /* Acquire text content from the node if it exists. */
-         cxNode.getNodeValue();
          final String cxStr = cxNode != null ? cxNode.getNodeValue() : "0";
          final String cyStr = cyNode != null ? cyNode.getNodeValue() : "0";
          final String rxStr = rxNode != null ? rxNode.getNodeValue() : "0.5";
@@ -450,7 +448,6 @@ public abstract class ParserSvg {
        */
 
       float x = def;
-      // final String v = u.trim();
       final int len = v.length();
       final int lens1 = len - 1;
       final int lens2 = len - 2;
@@ -585,19 +582,19 @@ public abstract class ParserSvg {
             case -1656480802:
                /* "ellipse" */
 
-               prim = ParserSvg.parseEllipse(node, new Curve2());
+               prim = ParserSvg.parseEllipse(node, new Curve2(name));
                break;
 
             case -1360216880:
                /* "circle" */
 
-               prim = ParserSvg.parseEllipse(node, new Curve2());
+               prim = ParserSvg.parseEllipse(node, new Curve2(name));
                break;
 
             case -397519558:
                /* "polygon" */
 
-               prim = ParserSvg.parsePoly(node, new Curve2());
+               prim = ParserSvg.parsePoly(node, new Curve2(name));
                break;
 
             case 103:
@@ -609,7 +606,7 @@ public abstract class ParserSvg {
             case 3321844:
                /* "line" */
 
-               prim = ParserSvg.parseLine(node, new Curve2());
+               prim = ParserSvg.parseLine(node, new Curve2(name));
                break;
 
             case 3433509:
@@ -620,13 +617,13 @@ public abstract class ParserSvg {
             case 3496420:
                /* "rect" */
 
-               prim = ParserSvg.parseRect(node, new Curve2());
+               prim = ParserSvg.parseRect(node, new Curve2(name));
                break;
 
             case 561938880:
                /* "polyline" */
 
-               prim = ParserSvg.parsePoly(node, new Curve2());
+               prim = ParserSvg.parsePoly(node, new Curve2(name));
                break;
 
             default:
@@ -679,63 +676,24 @@ public abstract class ParserSvg {
              * by spaces and commas.
              */
             final String pdStr = pathData.getNodeValue();
-            final char[] pdChars = pdStr.toCharArray();
-            final int pdCharsLen = pdChars.length;
+            final char[] chars = pdStr.toCharArray();
+            final int charsLen = chars.length;
 
             /* Parse path commands. */
             final ArrayList < PathData > paths = new ArrayList <>(16);
             PathData prevData = null;
-            for ( int i = 0; i < pdCharsLen; ++i ) {
+            for ( int i = 0; i < charsLen; ++i ) {
                // TODO: Will you need to track a prev char just to avoid
                // confusion between unit suffixes and commands?
-               final char c = pdChars[i];
+               final char c = chars[i];
                final int contains = Arrays.binarySearch(ParserSvg.CMDS, c);
                if ( contains > -1 ) {
-                  final PathCommand path = PathCommand.fromChar(c);
-                  final PathData currData = new PathData(path, i + 1,
-                     pdCharsLen);
+                  final SvgPathCmd cmd = SvgPathCmd.fromChar(c);
+                  final PathData currData = new PathData(cmd, i + 1, charsLen);
                   paths.add(currData);
                   if ( prevData != null ) { prevData.ubDat = i; }
                   prevData = currData;
                }
-            }
-
-            /* Add data to each instruction. */
-            Iterator < PathData > pathItr = paths.iterator();
-            while ( pathItr.hasNext() ) {
-               final PathData entry = pathItr.next();
-               final ArrayList < String > entryStrs = entry.data;
-               final int start = entry.lbDat;
-               final int end = entry.ubDat;
-               final int len = end - start;
-
-               // QUERY: More convenient way to convert chars to string?
-               // append also has an override for char arrays!
-               StringBuilder sb = new StringBuilder(len);
-
-               for ( int i = start; i < end; ++i ) {
-                  final char c = pdChars[i];
-                  if ( c == ',' || c == ' ' ) {
-                     final String str = sb.toString().trim();
-                     if ( !str.isEmpty() ) { entryStrs.add(str); }
-                     sb = new StringBuilder(end - i);
-                  } else if ( c == '-' ) {
-
-                     /*
-                      * In web-optimized - i.e., compact - SVGs, a negative sign
-                      * may be a delimiter between coordinates.
-                      */
-                     final String str = sb.toString().trim();
-                     if ( !str.isEmpty() ) { entryStrs.add(str); }
-                     sb = new StringBuilder(end - i);
-                     sb.append(c);
-                  } else {
-                     sb.append(c);
-                  }
-               }
-
-               final String str = sb.toString().trim();
-               if ( !str.isEmpty() ) { entryStrs.add(str); }
             }
 
             /*
@@ -760,14 +718,14 @@ public abstract class ParserSvg {
             Knot2 curr = null;
             Knot2 prev = null;
 
-            pathItr = paths.iterator();
+            /* Add data to each instruction. */
+            final Iterator < PathData > pathItr = paths.iterator();
             while ( pathItr.hasNext() ) {
                final PathData entry = pathItr.next();
-               final PathCommand cmd = entry.cmd;
+               final SvgPathCmd cmd = entry.cmd;
                final ArrayList < String > data = entry.data;
+               ParserSvg.segmentChars(chars, entry.lbDat, entry.ubDat, data);
                final Iterator < String > dataItr = data.iterator();
-
-               // System.out.println(entry);
 
                switch ( cmd ) {
                   case CLOSE_PATH:
@@ -778,9 +736,14 @@ public abstract class ParserSvg {
 
                   case MOVE_TO_ABS:
 
+                     // TODO: Refactor?
+                     // if (!initialMove && target.length() > 1) {
+                     // result.add(target);
+                     // target = new Curve2();
+                     // }
                      if ( !initialMove ) {
                         if ( target.length() > 1 ) { result.add(target); }
-                        target = new Curve2();
+                        target = new Curve2("Path");
                      }
                      initialMove = false;
 
@@ -822,7 +785,7 @@ public abstract class ParserSvg {
                               : target.getLast().coord);
                         }
 
-                        target = new Curve2();
+                        target = new Curve2("Path");
 
                      }
                      initialMove = false;
@@ -1198,36 +1161,32 @@ public abstract class ParserSvg {
          /* Close loop if the node is a polygon. */
          final String name = polygonNode.getNodeName();
          if ( name == "polygon" ) {
-            target.name = "Polygon";
             target.closedLoop = true;
          } else if ( name == "polyline" ) {
-            target.name = "PolyLine";
             target.closedLoop = false;
          } else {
             target.closedLoop = false;
          }
 
-         // TODO: Optimize in regards to string split... Test for no spaces
-         // condensed content, ie., where 0.5-7.6 may be split with negatives.
          final Node ptsNode = attributes.getNamedItem("points");
          final String ptsSt = ptsNode != null ? ptsNode.getNodeValue() : "0,0";
-         final String[] coords = ptsSt.split("\\s+|,", 0);
+         final ArrayList < String > coords = new ArrayList < >();
+         ParserSvg.segmentChars(ptsSt.toCharArray(), 0, ptsSt.length(), coords);
 
          /* x, y pairs are flattened into a 1D array, so use half length. */
-         final int coordLen = coords.length;
-         target.resize(coordLen / 2);
+         target.resize(coords.size() / 2);
 
-         int i = -1;
-         final Iterator < Knot2 > itr = target.iterator();
-         final Knot2 first = itr.next();
-         first.coord.set(ParserSvg.parsef(coords[++i], 0.0f), ParserSvg.parsef(
-            coords[++i], 0.0f));
+         final Iterator < Knot2 > knItr = target.iterator();
+         final Iterator < String > stItr = coords.iterator();
+         final Knot2 first = knItr.next();
+         first.coord.set(ParserSvg.parsef(stItr.next(), 0.0f), ParserSvg.parsef(
+            stItr.next(), 0.0f));
 
          Knot2 prev = first;
-         while ( itr.hasNext() ) {
-            final Knot2 curr = itr.next();
-            Knot2.fromSegLinear(ParserSvg.parsef(coords[++i], 0.0f), ParserSvg
-               .parsef(coords[++i], 0.0f), prev, curr);
+         while ( knItr.hasNext() ) {
+            final Knot2 curr = knItr.next();
+            Knot2.fromSegLinear(ParserSvg.parsef(stItr.next(), 0.0f), ParserSvg
+               .parsef(stItr.next(), 0.0f), prev, curr);
             prev = curr;
          }
 
@@ -1308,161 +1267,72 @@ public abstract class ParserSvg {
     *
     * @return the matrix
     */
-   protected static Mat3 parseTransform2 ( final Node trNode, final Mat3 target,
-      final Mat3 delta ) {
-
-      final String v = trNode.getNodeValue().toLowerCase().trim();
-      final char[] chars = v.toCharArray();
-      final int charLen = chars.length;
-
-      int parOpnIdx = -1;
-      int parClsIdx = -1;
-      boolean betweenParen = true;
-      final ArrayList < String > cmds = new ArrayList <>();
-      final ArrayList < String > data = new ArrayList <>();
-      StringBuilder sb = new StringBuilder(32);
-
-      for ( int i = 0; i < charLen; ++i ) {
-         final char c = chars[i];
-         if ( c == '(' ) {
-            parOpnIdx = i;
-            betweenParen = true;
-
-            /* Append commands. */
-            if ( parClsIdx < 0 ) {
-               final String str = sb.toString().trim();
-               if ( !str.isEmpty() ) { cmds.add(str); }
-               sb = new StringBuilder(charLen - i);
-            } else {
-               sb.append(chars, parClsIdx + 1, parOpnIdx - parClsIdx - 1);
-               final String str2 = sb.toString().trim();
-               if ( !str2.isEmpty() ) { cmds.add(str2); }
-               sb = new StringBuilder(charLen - i);
-            }
-
-         } else if ( c == ')' ) {
-
-            parClsIdx = i;
-            betweenParen = false;
-
-            /* Append last piece of data. */
-            final String str = sb.toString().trim();
-            if ( !str.isEmpty() ) { data.add(str); }
-            sb = new StringBuilder(charLen - i);
-
-         } else if ( betweenParen ) {
-            if ( c == ',' || c == ' ' ) {
-               /* Split exclusive on commas and spaces. */
-               final String str = sb.toString().trim();
-               if ( !str.isEmpty() ) { data.add(str); }
-               sb = new StringBuilder(charLen - i);
-
-            } else if ( c == '-' ) {
-               /* Split inclusive on negative signs. */
-               final String str = sb.toString().trim();
-               if ( !str.isEmpty() ) { data.add(str); }
-               sb = new StringBuilder(charLen - i);
-               sb.append(c);
-            } else {
-               sb.append(c);
-            }
-         }
-      }
-
-      Iterator < String > cmdItr = cmds.iterator();
-      Iterator < String > datItr = data.iterator();
-
-      while ( cmdItr.hasNext() ) {
-         final String cmd = cmdItr.next();
-         final int cmdHash = cmd.hashCode();
-
-         switch ( cmdHash ) {
-            case -1081239615: /* "matrix" */
-
-               break;
-
-            case 109250890: /* "scale" */
-               break;
-
-            case 109493422: /* "skewx" */
-
-               break;
-
-            case 109493423: /* "skewy" */
-
-               break;
-
-            case 1052832078: /* "translate" */
-
-               break;
-
-            default:
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Parses an SVG node containing transform data and converts it to a 3x3
-    * matrix. The delta matrix contains individual transform commands such as
-    * "translate", "rotate" and "scale."
-    *
-    * @param trNode the transform node
-    * @param target the output matrix
-    * @param delta  a temporary matrix
-    *
-    * @return the matrix
-    */
    protected static Mat3 parseTransform ( final Node trNode, final Mat3 target,
       final Mat3 delta ) {
 
-      // TODO: Optimize string splitting by creating patterns?
+      final char[] chars = trNode.getNodeValue().toCharArray();
+      final int charsLen = chars.length;
+      final ArrayList < TransformData > transforms = new ArrayList <>(4);
+      TransformData currData = null;
+      int parClsIdx = -1;
 
-      final String v = trNode.getNodeValue().toLowerCase().trim();
+      /* Parse transform commands. */
+      for ( int i = 0; i < charsLen; ++i ) {
+         final char c = chars[i];
+         if ( c == '(' ) {
+            final String str = new String(chars, parClsIdx + 1, parClsIdx < 0
+               ? i : i - parClsIdx - 1);
+            final SvgTransformCmd cmd = SvgTransformCmd.fromString(str);
+            currData = new TransformData(cmd, i + 1, charsLen);
+            transforms.add(currData);
+         } else if ( c == ')' ) {
+            parClsIdx = i;
+            currData.ubDat = i;
+         }
+      }
 
-      final String[] segStrs = v.split("\\),*", 0);
-      final int segLen = segStrs.length;
-      for ( int i = 0; i < segLen; ++i ) {
-         final String seg = segStrs[i];
+      final Iterator < TransformData > trItr = transforms.iterator();
+      while ( trItr.hasNext() ) {
 
-         /* Find the command section of the String. */
-         final int openParenIdx = seg.indexOf('(', 0);
-         final String cmd = seg.substring(0, openParenIdx).trim();
-         final int hsh = cmd.hashCode();
+         final TransformData entry = trItr.next();
+         ParserSvg.segmentChars(chars, entry.lbDat, entry.ubDat, entry.data);
+         final SvgTransformCmd cmd = entry.cmd;
+         final Iterator < String > dtItr = entry.data.iterator();
 
-         /* Find the data section of the String. */
-         final String dataBlock = seg.substring(openParenIdx + 1);
-         final String[] data = dataBlock.split("[,|\\s*]", 0);
+         switch ( cmd ) {
 
-         final int dataLen = data.length;
+            case MATRIX:
 
-         switch ( hsh ) {
-
-            case -1081239615: /* "matrix" */
+               /* Column major order. */
+               final String m00 = dtItr.next();
+               final String m10 = dtItr.next();
+               final String m01 = dtItr.next();
+               final String m11 = dtItr.next();
+               final String m02 = dtItr.next();
+               final String m12 = dtItr.next();
 
                /* @formatter:off */
                delta.set(
-                  ParserSvg.parsef(data[0], 1.0f),
-                  ParserSvg.parsef(data[2], 0.0f),
-                  ParserSvg.parsef(data[4], 0.0f),
-                  ParserSvg.parsef(data[1], 0.0f),
-                  ParserSvg.parsef(data[3], 1.0f),
-                  ParserSvg.parsef(data[5], 0.0f),
+                  ParserSvg.parsef(m00, 1.0f),
+                  ParserSvg.parsef(m01, 0.0f),
+                  ParserSvg.parsef(m02, 0.0f),
+                  ParserSvg.parsef(m10, 0.0f),
+                  ParserSvg.parsef(m11, 1.0f),
+                  ParserSvg.parsef(m12, 0.0f),
                   0.0f, 0.0f, 1.0f);
-               /* @formatter:on */
                Mat3.mul(target, delta, target);
+               /* @formatter:on */
 
                break;
 
-            case -925180581: /* "rotate" */
+            case ROTATE:
 
-               final String ang = data[0];
-               final String xpivstr = dataLen > 1 ? data[1] : "0";
-               final String ypivstr = dataLen > 2 ? data[2] : "0";
-               final float xpiv = ParserSvg.parsef(xpivstr, 0.0f);
-               final float ypiv = ParserSvg.parsef(ypivstr, 0.0f);
-               final Vec2 pivot = new Vec2(xpiv, ypiv);
+               final String ang = dtItr.next();
+               final String xPivStr = dtItr.hasNext() ? dtItr.next() : "0";
+               final String yPivStr = dtItr.hasNext() ? dtItr.next() : "0";
+               final float xPiv = ParserSvg.parsef(xPivStr, 0.0f);
+               final float yPiv = ParserSvg.parsef(yPivStr, 0.0f);
+               final Vec2 pivot = new Vec2(xPiv, yPiv);
 
                Mat3.fromTranslation(pivot, delta);
                Mat3.mul(target, delta, target);
@@ -1475,36 +1345,34 @@ public abstract class ParserSvg {
 
                break;
 
-            case 109250890: /* "scale" */
+            case SCALE:
 
-               final String scx = data[0];
-               final String scy = dataLen > 1 ? data[1] : scx;
+               final String scx = dtItr.next();
+               final String scy = dtItr.hasNext() ? dtItr.next() : scx;
                Mat3.fromScale(ParserSvg.parsef(scx, 1.0f), ParserSvg.parsef(scy,
                   1.0f), delta);
                Mat3.mul(target, delta, target);
 
                break;
 
-            case 109493422: /* "skewx" */
+            case SKEW_X:
 
-               final String skx = data[0];
-               Mat3.fromSkewX(ParserSvg.parseAngle(skx, 0.0f), delta);
+               Mat3.fromSkewX(ParserSvg.parseAngle(dtItr.next(), 0.0f), delta);
                Mat3.mul(target, delta, target);
 
                break;
 
-            case 109493423: /* "skewy" */
+            case SKEW_Y:
 
-               final String sky = data[0];
-               Mat3.fromSkewY(ParserSvg.parseAngle(sky, 0.0f), delta);
+               Mat3.fromSkewY(ParserSvg.parseAngle(dtItr.next(), 0.0f), delta);
                Mat3.mul(target, delta, target);
 
                break;
 
-            case 1052832078: /* "translate" */
+            case TRANSLATE:
 
-               final String tx = data[0];
-               final String ty = dataLen > 1 ? data[1] : "0";
+               final String tx = dtItr.next();
+               final String ty = dtItr.hasNext() ? dtItr.next() : "0";
                Mat3.fromTranslation(ParserSvg.parsef(tx, 0.0f), ParserSvg
                   .parsef(ty, 0.0f), delta);
                Mat3.mul(target, delta, target);
@@ -1512,10 +1380,53 @@ public abstract class ParserSvg {
                break;
 
             default:
-
          }
-
       }
+
+      return target;
+   }
+
+   /**
+    * Splits an array of characters into Strings based on commas, spaces and
+    * negative signs.
+    *
+    * @param chars  the characters
+    * @param start  the start index
+    * @param end    the end index
+    * @param target the output list
+    *
+    * @return the list
+    */
+   protected static ArrayList < String > segmentChars ( final char[] chars,
+      final int start, final int end, final ArrayList < String > target ) {
+
+      // TODO: Is there a way to do this without StringBuilder? Maybe use new
+      // String(char[], int, int) .
+      StringBuilder sb = new StringBuilder(end - start);
+
+      for ( int i = start; i < end; ++i ) {
+         final char c = chars[i];
+         if ( c == ',' || c == ' ' ) {
+            final String str = sb.toString().trim();
+            if ( !str.isEmpty() ) { target.add(str); }
+            sb = new StringBuilder(end - i);
+         } else if ( c == '-' ) {
+
+            /*
+             * In web-optimized - i.e., compact - SVGs, a negative sign may be a
+             * delimiter between coordinates.
+             */
+            final String str = sb.toString().trim();
+            if ( !str.isEmpty() ) { target.add(str); }
+            sb = new StringBuilder(end - i);
+            sb.append(c);
+         } else {
+            sb.append(c);
+         }
+      }
+
+      final String str = sb.toString().trim();
+      if ( !str.isEmpty() ) { target.add(str); }
 
       return target;
    }
@@ -1529,7 +1440,7 @@ public abstract class ParserSvg {
       /**
        * The path command.
        */
-      public PathCommand cmd;
+      public SvgPathCmd cmd;
 
       /**
        * The parsed data affiliated with the command.
@@ -1542,32 +1453,32 @@ public abstract class ParserSvg {
       public int lbDat = 0;
 
       /**
-       * Upper bounds index, exclusive for data chunk.
+       * Upper bounds index, exclusive, for data chunk.
        */
       public int ubDat = Integer.MAX_VALUE;
 
       /**
-       * Constructs a path data with a command and index.
+       * Constructs path data with a command and index.
        *
        * @param cmd   the command
        * @param lbDat the index
        * @param ubDat the upper bound index
        */
-      public PathData ( final PathCommand cmd, final int lbDat,
+      public PathData ( final SvgPathCmd cmd, final int lbDat,
          final int ubDat ) {
 
          this(cmd, lbDat, ubDat, new ArrayList <>(cmd.getDataCount()));
       }
 
       /**
-       * Constructs a path data with a command, index and array of data.
+       * Constructs path data with a command, index and array of data.
        *
        * @param cmd   the command
        * @param lbDat the lower bound index
        * @param ubDat the upper bound index
        * @param data  the data
        */
-      public PathData ( final PathCommand cmd, final int lbDat, final int ubDat,
+      public PathData ( final SvgPathCmd cmd, final int lbDat, final int ubDat,
          final ArrayList < String > data ) {
 
          this.cmd = cmd;
@@ -1578,6 +1489,82 @@ public abstract class ParserSvg {
 
       /**
        * Returns a string representation of this path data.
+       */
+      @Override
+      public String toString ( ) {
+
+         final StringBuilder sb = new StringBuilder(512);
+         sb.append("{ cmd: ");
+         sb.append(this.cmd.toString());
+         sb.append(", lbDat: ");
+         sb.append(Utils.toPadded(this.lbDat, 0));
+         sb.append(", ubDat: ");
+         sb.append(Utils.toPadded(this.ubDat, 0));
+         sb.append(", data: [ ");
+
+         final Iterator < String > itr = this.data.iterator();
+         while ( itr.hasNext() ) {
+            sb.append(itr.next());
+            if ( itr.hasNext() ) { sb.append(',').append(' '); }
+         }
+
+         sb.append(" ] }");
+         return sb.toString();
+      }
+
+   }
+
+   /**
+    * An internal helper class to associate viable transform commands at an
+    * index in a String with readable data.
+    */
+   private static class TransformData {
+      public SvgTransformCmd cmd;
+
+      public final ArrayList < String > data;
+
+      /**
+       * Lower bounds index, inclusive, for data chunk.
+       */
+      public int lbDat = 0;
+
+      /**
+       * Upper bounds index, exclusive, for data chunk.
+       */
+      public int ubDat = Integer.MAX_VALUE;
+
+      /**
+       * Constructs transform data with a command and index.
+       *
+       * @param cmd   the command
+       * @param lbDat the index
+       * @param ubDat the upper bound index
+       */
+      public TransformData ( final SvgTransformCmd cmd, final int lbDat,
+         final int ubDat ) {
+
+         this(cmd, lbDat, ubDat, new ArrayList <>(cmd.getMaxDataCount()));
+      }
+
+      /**
+       * Constructs transform data with a command, index and array of data.
+       *
+       * @param cmd   the command
+       * @param lbDat the lower bound index
+       * @param ubDat the upper bound index
+       * @param data  the data
+       */
+      public TransformData ( final SvgTransformCmd cmd, final int lbDat,
+         final int ubDat, final ArrayList < String > data ) {
+
+         this.cmd = cmd;
+         this.lbDat = lbDat;
+         this.ubDat = ubDat;
+         this.data = data;
+      }
+
+      /**
+       * Returns a string representation of this transform data.
        */
       @Override
       public String toString ( ) {

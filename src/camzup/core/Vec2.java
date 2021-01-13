@@ -2286,8 +2286,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the random vector
     */
-   public static Vec2 randomCartesian ( final Random rng,
-      final Vec2 lowerBound, final Vec2 upperBound, final Vec2 target ) {
+   public static Vec2 randomCartesian ( final Random rng, final Vec2 lowerBound,
+      final Vec2 upperBound, final Vec2 target ) {
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
@@ -2307,8 +2307,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#fromPolar(float, float, Vec2)
     */
-   public static Vec2 randomPolar ( final Random rng,
-      final float rhoMin, final float rhoMax, final Vec2 target ) {
+   public static Vec2 randomPolar ( final Random rng, final float rhoMin,
+      final float rhoMax, final Vec2 target ) {
 
       final float rt = rng.nextFloat();
       final float rr = rng.nextFloat();
@@ -2327,8 +2327,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#randomPolar(Random, float, float, Vec2)
     */
-   public static Vec2 randomPolar ( final Random rng,
-      final Vec2 target ) {
+   public static Vec2 randomPolar ( final Random rng, final Vec2 target ) {
 
       return Vec2.randomPolar(rng, 1.0f, 1.0f, target);
    }

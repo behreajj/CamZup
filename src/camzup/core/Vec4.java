@@ -1850,8 +1850,8 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the random vector
     */
-   public static Vec4 randomCartesian ( final Random rng,
-      final Vec4 lowerBound, final Vec4 upperBound, final Vec4 target ) {
+   public static Vec4 randomCartesian ( final Random rng, final Vec4 lowerBound,
+      final Vec4 upperBound, final Vec4 target ) {
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
@@ -1874,8 +1874,8 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the vector
     */
-   public static Vec4 randomSpherical ( final Random rng,
-      final float rhoMin, final float rhoMax, final Vec4 target ) {
+   public static Vec4 randomSpherical ( final Random rng, final float rhoMin,
+      final float rhoMax, final Vec4 target ) {
 
       final double rr = rng.nextDouble();
       final double rho = ( 1.0d - rr ) * rhoMin + rr * rhoMax;
