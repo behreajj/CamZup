@@ -1,19 +1,5 @@
-<svg width="512" height="512" xmlns="http://www.w3.org/2000/svg">
-  <!-- <path d="M 80 80
-           A 45 45, 0, 0, 0, 125 125
-           L 125 80 Z" fill="green" />
-  <path d="M 230 80
-           A 45 45, 0, 1, 0, 275 125
-           L 275 80 Z" fill="red" />
-  <path d="M 80 230
-           A 45 45, 0, 0, 1, 125 275
-           L 125 230 Z" fill="purple" />
-  <path d="M 230 230
-           A 45 45, 0, 1, 1, 275 275
-           L 275 230 Z" fill="blue" /> -->
-  <path d="m 50 50
-           c 100 150 75 25 200 150
-            225 35  25 125 150 275" fill="none" stroke="#202020" stroke-width="4.0"></path>
-  <path d="m 50 50
-            c 100 150 75 25 200 150" fill="none" stroke="#ff0000" stroke-width="2.0"></path>
+<svg width="256" height="256" xmlns="http://www.w3.org/2000/svg">
+  <g transform="scale(0.85, 0.85) translate(128, 128) rotate(-30, 0, 0)">
+  <polyline points="0, 0, -75, 25, 75, 100 -80, 0, 40, 30, -20, -50" fill="none" stroke="black" />
+</g>
 </svg>

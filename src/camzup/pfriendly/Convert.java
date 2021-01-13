@@ -1256,8 +1256,6 @@ public abstract class Convert {
    protected static ArrayList < Curve2 > toCurve2 ( final PShape source,
       final ArrayList < Curve2 > curves ) {
 
-      // TODO: Port Matrix stack (LinkedList) from SVG parsing to here?
-
       if ( source.is3D() ) { return curves; }
       final String sourceName = source.getName();
       final int family = source.getFamily();

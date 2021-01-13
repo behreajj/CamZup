@@ -38,11 +38,6 @@ public abstract class ParserSvg {
    public static final float CM_TO_UNIT = 37.795f;
 
    /**
-    * The floating point epsilon, cast to a double.
-    */
-   public static final double EPS_D = 0.000001d;
-
-   /**
     * Ratio to convert from gradians to radians,
     * {@value ParserSvg#GRAD_TO_RAD}.
     */
@@ -78,16 +73,10 @@ public abstract class ParserSvg {
    public static final float PX_TO_UNIT = 1.0f;
 
    /**
-    * For use in parsing arcs to between points, <code>2.0 / PI</code>,
+    * For use in parsing arcs to between points, one divided by \u03c0 ,
     * approximately {@value ParserSvg#TWO_DIV_PI} .
     */
    public static final float TWO_DIV_PI = 0.63661975f;
-
-   /**
-    * For use in parsing arcs to between points, <code>2.0 / PI</code>,
-    * approximately {@value ParserSvg#TWO_DIV_PI_D} .
-    */
-   public static final double TWO_DIV_PI_D = 0.6366197723675814d;
 
    /**
     * Characters used to represent a command in an SVG path. Sorted in natural
@@ -194,7 +183,7 @@ public abstract class ParserSvg {
 
          } else {
 
-            /* Degrees is the SVG default? */
+            /* Degrees is the SVG default. */
             x = Float.parseFloat(v) * IUtils.DEG_TO_RAD;
 
          }
@@ -374,33 +363,33 @@ public abstract class ParserSvg {
       if ( attributes != null ) {
 
          /* Search for attribute nodes. May return null. */
-         final Node cxnode = attributes.getNamedItem("cx");
-         final Node cynode = attributes.getNamedItem("cy");
-         Node rxnode = attributes.getNamedItem("rx");
-         Node rynode = attributes.getNamedItem("ry");
+         final Node cxNode = attributes.getNamedItem("cx");
+         final Node cyNode = attributes.getNamedItem("cy");
+         Node rxNode = attributes.getNamedItem("rx");
+         Node ryNode = attributes.getNamedItem("ry");
 
          /*
           * One or other of the ellipse's axes could be missing, or this node
           * could be circle.
           */
-         if ( rynode != null && rxnode == null ) { rxnode = rynode; }
-         if ( rxnode != null && rynode == null ) { rynode = rxnode; }
-         if ( rxnode == null && rynode == null ) {
-            rxnode = rynode = attributes.getNamedItem("r");
+         if ( ryNode != null && rxNode == null ) { rxNode = ryNode; }
+         if ( rxNode != null && ryNode == null ) { ryNode = rxNode; }
+         if ( rxNode == null && ryNode == null ) {
+            rxNode = ryNode = attributes.getNamedItem("r");
          }
 
          /* Acquire text content from the node if it exists. */
-         cxnode.getNodeValue();
-         final String cxstr = cxnode != null ? cxnode.getNodeValue() : "0";
-         final String cystr = cynode != null ? cynode.getNodeValue() : "0";
-         final String rxstr = rxnode != null ? rxnode.getNodeValue() : "0.5";
-         final String rystr = rynode != null ? rynode.getNodeValue() : "0.5";
+         cxNode.getNodeValue();
+         final String cxStr = cxNode != null ? cxNode.getNodeValue() : "0";
+         final String cyStr = cyNode != null ? cyNode.getNodeValue() : "0";
+         final String rxStr = rxNode != null ? rxNode.getNodeValue() : "0.5";
+         final String ryStr = ryNode != null ? ryNode.getNodeValue() : "0.5";
 
          /* Parse string or default. */
-         final float cx = ParserSvg.parsef(cxstr, 0.0f);
-         final float cy = ParserSvg.parsef(cystr, 0.0f);
-         final float rx = ParserSvg.parsef(rxstr, 0.5f);
-         final float ry = ParserSvg.parsef(rystr, 0.5f);
+         final float cx = ParserSvg.parsef(cxStr, 0.0f);
+         final float cy = ParserSvg.parsef(cyStr, 0.0f);
+         final float rx = ParserSvg.parsef(rxStr, 0.5f);
+         final float ry = ParserSvg.parsef(ryStr, 0.5f);
 
          /* Find cardinal control points. */
          final float right = cx + rx;
@@ -419,44 +408,16 @@ public abstract class ParserSvg {
 
          /* Resize and acquire four knots. */
          target.resize(4);
-         final Knot2 kn0 = target.get(0);
-         final Knot2 kn1 = target.get(1);
-         final Knot2 kn2 = target.get(2);
-         final Knot2 kn3 = target.get(3);
-
-         kn0.coord.set(right, cy);
-         kn0.foreHandle.set(right, yHandlePos);
-         kn0.rearHandle.set(right, yHandleNeg);
-
-         kn1.coord.set(cx, top);
-         kn1.foreHandle.set(xHandleNeg, top);
-         kn1.rearHandle.set(xHandlePos, top);
-
-         kn2.coord.set(left, cy);
-         kn2.foreHandle.set(left, yHandleNeg);
-         kn2.rearHandle.set(left, yHandlePos);
-
-         kn3.coord.set(cx, bottom);
-         kn3.foreHandle.set(xHandlePos, bottom);
-         kn3.rearHandle.set(xHandleNeg, bottom);
-
+         final Iterator < Knot2 > itr = target.iterator();
          target.closedLoop = true;
+
+         itr.next().set(right, cy, right, yHandlePos, right, yHandleNeg);
+         itr.next().set(cx, top, xHandleNeg, top, xHandlePos, top);
+         itr.next().set(left, cy, left, yHandleNeg, left, yHandlePos);
+         itr.next().set(cx, bottom, xHandlePos, bottom, xHandleNeg, bottom);
       }
 
       return target;
-   }
-
-   /**
-    * A helper function to parse real numbers followed by units of measurement
-    * in an SVG element.
-    *
-    * @param v the string
-    *
-    * @return the float
-    */
-   protected static float parsef ( final String v ) {
-
-      return ParserSvg.parsef(v, 0.0f);
    }
 
    /**
@@ -539,12 +500,12 @@ public abstract class ParserSvg {
 
          } else if ( v.startsWith("em", lens2) ) {
 
-            /* RELATIVE UNIT: To font size. Not supported in original. */
+            /* RELATIVE UNIT: To font size. Not supported in PShape. */
             x = Float.parseFloat(v.substring(0, lens2));
 
          } else if ( v.startsWith("ex", lens2) ) {
 
-            /* RELATIVE UNIT: To font size. Not supported in original. */
+            /* RELATIVE UNIT: To font size. Not supported in PShape. */
             x = Float.parseFloat(v.substring(0, lens2));
 
          } else if ( v.startsWith("%", lens1) ) {
@@ -578,24 +539,20 @@ public abstract class ParserSvg {
       if ( attributes != null ) {
 
          /* Search for attribute nodes. May return null. */
-         final Node x1node = attributes.getNamedItem("x1");
-         final Node y1node = attributes.getNamedItem("y1");
-         final Node x2node = attributes.getNamedItem("x2");
-         final Node y2node = attributes.getNamedItem("y2");
+         final Node x1Node = attributes.getNamedItem("x1");
+         final Node y1Node = attributes.getNamedItem("y1");
+         final Node x2Node = attributes.getNamedItem("x2");
+         final Node y2Node = attributes.getNamedItem("y2");
 
          /* Acquire text content from the node if it exists. */
-         final String x1str = x1node != null ? x1node.getNodeValue() : "-0.5";
-         final String y1str = y1node != null ? y1node.getNodeValue() : "0";
-         final String x2str = x2node != null ? x2node.getNodeValue() : "0.5";
-         final String y2str = y2node != null ? y2node.getNodeValue() : "0";
+         final String x1Str = x1Node != null ? x1Node.getNodeValue() : "-0.5";
+         final String y1Str = y1Node != null ? y1Node.getNodeValue() : "0";
+         final String x2Str = x2Node != null ? x2Node.getNodeValue() : "0.5";
+         final String y2Str = y2Node != null ? y2Node.getNodeValue() : "0";
 
-         /* Parse string or default. */
-         final float x1 = ParserSvg.parsef(x1str, -0.5f);
-         final float y1 = ParserSvg.parsef(y1str, 0.0f);
-         final float x2 = ParserSvg.parsef(x2str, 0.5f);
-         final float y2 = ParserSvg.parsef(y2str, 0.0f);
-
-         Curve2.line(x1, y1, x2, y2, target);
+         Curve2.line(ParserSvg.parsef(x1Str, -0.5f), ParserSvg.parsef(y1Str,
+            0.0f), ParserSvg.parsef(x2Str, 0.5f), ParserSvg.parsef(y2Str, 0.0f),
+            target);
       }
       return target;
    }
@@ -725,9 +682,12 @@ public abstract class ParserSvg {
             final char[] pdChars = pdStr.toCharArray();
             final int pdCharsLen = pdChars.length;
 
+            /* Parse path commands. */
             final ArrayList < PathData > paths = new ArrayList <>(16);
             PathData prevData = null;
             for ( int i = 0; i < pdCharsLen; ++i ) {
+               // TODO: Will you need to track a prev char just to avoid
+               // confusion between unit suffixes and commands?
                final char c = pdChars[i];
                final int contains = Arrays.binarySearch(ParserSvg.CMDS, c);
                if ( contains > -1 ) {
@@ -748,19 +708,23 @@ public abstract class ParserSvg {
                final int start = entry.lbDat;
                final int end = entry.ubDat;
                final int len = end - start;
+
+               // QUERY: More convenient way to convert chars to string?
+               // append also has an override for char arrays!
                StringBuilder sb = new StringBuilder(len);
 
                for ( int i = start; i < end; ++i ) {
                   final char c = pdChars[i];
-                  if ( c == ',' ) {
-                     final String str = sb.toString().trim();
-                     if ( !str.isEmpty() ) { entryStrs.add(str); }
-                     sb = new StringBuilder(end - i);
-                  } else if ( c == ' ' ) {
+                  if ( c == ',' || c == ' ' ) {
                      final String str = sb.toString().trim();
                      if ( !str.isEmpty() ) { entryStrs.add(str); }
                      sb = new StringBuilder(end - i);
                   } else if ( c == '-' ) {
+
+                     /*
+                      * In web-optimized - i.e., compact - SVGs, a negative sign
+                      * may be a delimiter between coordinates.
+                      */
                      final String str = sb.toString().trim();
                      if ( !str.isEmpty() ) { entryStrs.add(str); }
                      sb = new StringBuilder(end - i);
@@ -804,22 +768,18 @@ public abstract class ParserSvg {
                final Iterator < String > dataItr = data.iterator();
 
                // System.out.println(entry);
-               boolean zFlag = false;
 
                switch ( cmd ) {
                   case CLOSE_PATH:
 
                      target.closedLoop = true;
-                     zFlag = true;
 
                      break;
 
                   case MOVE_TO_ABS:
 
                      if ( !initialMove ) {
-                        if ( target.length() > 1 ) {
-                           result.add(target);
-                        }
+                        if ( target.length() > 1 ) { result.add(target); }
                         target = new Curve2();
                      }
                      initialMove = false;
@@ -860,12 +820,6 @@ public abstract class ParserSvg {
                             */
                            rel.set(target.closedLoop ? target.getFirst().coord
                               : target.getLast().coord);
-
-                           // if ( zFlag ) {
-                           // rel.set(target.closedLoop ? target
-                           // .getFirst().coord : target.getLast().coord);
-                           // zFlag = false;
-                           // }
                         }
 
                         target = new Curve2();
@@ -1213,8 +1167,6 @@ public abstract class ParserSvg {
                final Knot2 kn1 = curve.getLast();
 
                if ( target.closedLoop ) {
-                  // Curve2.lerp13(kn0.coord, kn1.coord, kn0.rearHandle);
-                  // Curve2.lerp13(kn1.coord, kn0.coord, kn1.foreHandle);
                   Knot2.fromSegLinear(kn0.coord, kn1, kn0);
                } else {
                   kn0.mirrorHandlesForward();
@@ -1255,6 +1207,8 @@ public abstract class ParserSvg {
             target.closedLoop = false;
          }
 
+         // TODO: Optimize in regards to string split... Test for no spaces
+         // condensed content, ie., where 0.5-7.6 may be split with negatives.
          final Node ptsNode = attributes.getNamedItem("points");
          final String ptsSt = ptsNode != null ? ptsNode.getNodeValue() : "0,0";
          final String[] coords = ptsSt.split("\\s+|,", 0);
@@ -1302,32 +1256,32 @@ public abstract class ParserSvg {
       if ( attributes != null ) {
 
          /* Search for property nodes. May return null. */
-         final Node xnode = attributes.getNamedItem("x");
-         final Node ynode = attributes.getNamedItem("y");
-         final Node wnode = attributes.getNamedItem("width");
-         final Node hnode = attributes.getNamedItem("height");
+         final Node xNode = attributes.getNamedItem("x");
+         final Node yNode = attributes.getNamedItem("y");
+         final Node wNode = attributes.getNamedItem("width");
+         final Node hNode = attributes.getNamedItem("height");
 
          /* One or other of the rounding tags may be missing. */
-         Node rxnode = attributes.getNamedItem("rx");
-         Node rynode = attributes.getNamedItem("ry");
-         if ( rynode != null && rxnode == null ) { rxnode = rynode; }
-         if ( rxnode != null && rynode == null ) { rynode = rxnode; }
+         Node rxNode = attributes.getNamedItem("rx");
+         Node ryNode = attributes.getNamedItem("ry");
+         if ( ryNode != null && rxNode == null ) { rxNode = ryNode; }
+         if ( rxNode != null && ryNode == null ) { ryNode = rxNode; }
 
          /* Acquire text content from the node if it exists. */
-         final String xstr = xnode != null ? xnode.getNodeValue() : "0";
-         final String ystr = ynode != null ? ynode.getNodeValue() : "0";
-         final String wstr = wnode != null ? wnode.getNodeValue() : "1";
-         final String hstr = hnode != null ? hnode.getNodeValue() : "1";
-         final String rxstr = rxnode != null ? rxnode.getNodeValue() : "0";
-         final String rystr = rynode != null ? rynode.getNodeValue() : "0";
+         final String xStr = xNode != null ? xNode.getNodeValue() : "0";
+         final String yStr = yNode != null ? yNode.getNodeValue() : "0";
+         final String wStr = wNode != null ? wNode.getNodeValue() : "1";
+         final String hStr = hNode != null ? hNode.getNodeValue() : "1";
+         final String rxStr = rxNode != null ? rxNode.getNodeValue() : "0";
+         final String ryStr = ryNode != null ? ryNode.getNodeValue() : "0";
 
          /* Parse string or default. */
-         final float x = ParserSvg.parsef(xstr, 0.0f);
-         final float y = ParserSvg.parsef(ystr, 0.0f);
-         final float w = ParserSvg.parsef(wstr, 1.0f);
-         final float h = ParserSvg.parsef(hstr, 1.0f);
-         final float rx = ParserSvg.parsef(rxstr, 0.0f);
-         final float ry = ParserSvg.parsef(rystr, 0.0f);
+         final float x = ParserSvg.parsef(xStr, 0.0f);
+         final float y = ParserSvg.parsef(yStr, 0.0f);
+         final float w = ParserSvg.parsef(wStr, 1.0f);
+         final float h = ParserSvg.parsef(hStr, 1.0f);
+         final float rx = ParserSvg.parsef(rxStr, 0.0f);
+         final float ry = ParserSvg.parsef(ryStr, 0.0f);
 
          /*
           * Corner rounding differs between APIs, so average horizontal and
@@ -1354,12 +1308,118 @@ public abstract class ParserSvg {
     *
     * @return the matrix
     */
+   protected static Mat3 parseTransform2 ( final Node trNode, final Mat3 target,
+      final Mat3 delta ) {
+
+      final String v = trNode.getNodeValue().toLowerCase().trim();
+      final char[] chars = v.toCharArray();
+      final int charLen = chars.length;
+
+      int parOpnIdx = -1;
+      int parClsIdx = -1;
+      boolean betweenParen = true;
+      final ArrayList < String > cmds = new ArrayList <>();
+      final ArrayList < String > data = new ArrayList <>();
+      StringBuilder sb = new StringBuilder(32);
+
+      for ( int i = 0; i < charLen; ++i ) {
+         final char c = chars[i];
+         if ( c == '(' ) {
+            parOpnIdx = i;
+            betweenParen = true;
+
+            /* Append commands. */
+            if ( parClsIdx < 0 ) {
+               final String str = sb.toString().trim();
+               if ( !str.isEmpty() ) { cmds.add(str); }
+               sb = new StringBuilder(charLen - i);
+            } else {
+               sb.append(chars, parClsIdx + 1, parOpnIdx - parClsIdx - 1);
+               final String str2 = sb.toString().trim();
+               if ( !str2.isEmpty() ) { cmds.add(str2); }
+               sb = new StringBuilder(charLen - i);
+            }
+
+         } else if ( c == ')' ) {
+
+            parClsIdx = i;
+            betweenParen = false;
+
+            /* Append last piece of data. */
+            final String str = sb.toString().trim();
+            if ( !str.isEmpty() ) { data.add(str); }
+            sb = new StringBuilder(charLen - i);
+
+         } else if ( betweenParen ) {
+            if ( c == ',' || c == ' ' ) {
+               /* Split exclusive on commas and spaces. */
+               final String str = sb.toString().trim();
+               if ( !str.isEmpty() ) { data.add(str); }
+               sb = new StringBuilder(charLen - i);
+
+            } else if ( c == '-' ) {
+               /* Split inclusive on negative signs. */
+               final String str = sb.toString().trim();
+               if ( !str.isEmpty() ) { data.add(str); }
+               sb = new StringBuilder(charLen - i);
+               sb.append(c);
+            } else {
+               sb.append(c);
+            }
+         }
+      }
+
+      Iterator < String > cmdItr = cmds.iterator();
+      Iterator < String > datItr = data.iterator();
+
+      while ( cmdItr.hasNext() ) {
+         final String cmd = cmdItr.next();
+         final int cmdHash = cmd.hashCode();
+
+         switch ( cmdHash ) {
+            case -1081239615: /* "matrix" */
+
+               break;
+
+            case 109250890: /* "scale" */
+               break;
+
+            case 109493422: /* "skewx" */
+
+               break;
+
+            case 109493423: /* "skewy" */
+
+               break;
+
+            case 1052832078: /* "translate" */
+
+               break;
+
+            default:
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Parses an SVG node containing transform data and converts it to a 3x3
+    * matrix. The delta matrix contains individual transform commands such as
+    * "translate", "rotate" and "scale."
+    *
+    * @param trNode the transform node
+    * @param target the output matrix
+    * @param delta  a temporary matrix
+    *
+    * @return the matrix
+    */
    protected static Mat3 parseTransform ( final Node trNode, final Mat3 target,
       final Mat3 delta ) {
 
       // TODO: Optimize string splitting by creating patterns?
 
-      final String v = trNode.getNodeValue().trim().toLowerCase();
+      final String v = trNode.getNodeValue().toLowerCase().trim();
 
       final String[] segStrs = v.split("\\),*", 0);
       final int segLen = segStrs.length;
@@ -1373,27 +1433,21 @@ public abstract class ParserSvg {
 
          /* Find the data section of the String. */
          final String dataBlock = seg.substring(openParenIdx + 1);
-
          final String[] data = dataBlock.split("[,|\\s*]", 0);
-
-         // for ( int x = 0; x < data.length; ++x ) {
-         // System.out.println(data[x]);
-         // }
 
          final int dataLen = data.length;
 
          switch ( hsh ) {
 
-            case -1081239615:
-               /* "matrix" */
+            case -1081239615: /* "matrix" */
 
                /* @formatter:off */
                delta.set(
                   ParserSvg.parsef(data[0], 1.0f),
-                  ParserSvg.parsef(data[1], 0.0f),
                   ParserSvg.parsef(data[2], 0.0f),
-                  ParserSvg.parsef(data[3], 0.0f),
-                  ParserSvg.parsef(data[4], 1.0f),
+                  ParserSvg.parsef(data[4], 0.0f),
+                  ParserSvg.parsef(data[1], 0.0f),
+                  ParserSvg.parsef(data[3], 1.0f),
                   ParserSvg.parsef(data[5], 0.0f),
                   0.0f, 0.0f, 1.0f);
                /* @formatter:on */
@@ -1401,8 +1455,8 @@ public abstract class ParserSvg {
 
                break;
 
-            case -925180581:
-               /* "rotate" */
+            case -925180581: /* "rotate" */
+
                final String ang = data[0];
                final String xpivstr = dataLen > 1 ? data[1] : "0";
                final String ypivstr = dataLen > 2 ? data[2] : "0";
@@ -1421,8 +1475,7 @@ public abstract class ParserSvg {
 
                break;
 
-            case 109250890:
-               /* "scale" */
+            case 109250890: /* "scale" */
 
                final String scx = data[0];
                final String scy = dataLen > 1 ? data[1] : scx;
@@ -1432,8 +1485,7 @@ public abstract class ParserSvg {
 
                break;
 
-            case 109493422:
-               /* "skewx" */
+            case 109493422: /* "skewx" */
 
                final String skx = data[0];
                Mat3.fromSkewX(ParserSvg.parseAngle(skx, 0.0f), delta);
@@ -1441,8 +1493,7 @@ public abstract class ParserSvg {
 
                break;
 
-            case 109493423:
-               /* "skewy" */
+            case 109493423: /* "skewy" */
 
                final String sky = data[0];
                Mat3.fromSkewY(ParserSvg.parseAngle(sky, 0.0f), delta);
@@ -1450,8 +1501,7 @@ public abstract class ParserSvg {
 
                break;
 
-            case 1052832078:
-               /* "translate" */
+            case 1052832078: /* "translate" */
 
                final String tx = data[0];
                final String ty = dataLen > 1 ? data[1] : "0";

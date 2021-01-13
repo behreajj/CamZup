@@ -88,7 +88,7 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       long s = System.currentTimeMillis();
-      CurveEntity2 ce2 = ParserSvg.parse("data/tiger.svg");
+      CurveEntity2 ce2 = ParserSvg.parse("data/diagnostic.svg");
       long e = System.currentTimeMillis();
       String pyCd = ce2.toBlenderCode();
       long f = System.currentTimeMillis();
