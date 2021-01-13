@@ -26,16 +26,6 @@ public abstract class PMatAux {
    private PMatAux ( ) {}
 
    /**
-    * A temporary container to hold inverted quaternions for the purpose of
-    * inverse rotation.
-    */
-   private static final Quaternion ROT_INV;
-
-   static {
-      ROT_INV = new Quaternion();
-   }
-
-   /**
     * Returns a matrix set to the Bezier curve basis inverse:
     *
     * <pre>
@@ -341,13 +331,21 @@ public abstract class PMatAux {
    public static PMatrix3D invRotate ( final Quaternion q,
       final PMatrix3D target ) {
 
-      // TODO: Remove the use of this static object.
-      Quaternion.inverse(q, PMatAux.ROT_INV);
-      final float w = PMatAux.ROT_INV.real;
-      final Vec3 i = PMatAux.ROT_INV.imag;
-      final float x = i.x;
-      final float y = i.y;
-      final float z = i.z;
+      float w = 1.0f;
+      float x = 0.0f;
+      float y = 0.0f;
+      float z = 0.0f;
+
+      /* Find quaternion inverse. */
+      final Vec3 qi = q.imag;
+      final float mSq = q.real * q.real + Vec3.magSq(qi);
+      if ( mSq != 0.0f ) {
+         final float mSqInv = 1.0f / mSq;
+         w = q.real * mSqInv;
+         x = -qi.x * mSqInv;
+         y = -qi.y * mSqInv;
+         z = -qi.z * mSqInv;
+      }
 
       final float x2 = x + x;
       final float y2 = y + y;

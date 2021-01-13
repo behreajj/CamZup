@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Random;
 
 import camzup.core.Utils.EasingFuncArr;
 import camzup.core.Utils.EasingFuncObj;
@@ -1690,10 +1691,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the random curve
     *
-    * @see Vec3#randomCartesian(java.util.Random, Vec3, Vec3, Vec3)
+    * @see Vec3#randomCartesian(Random, Vec3, Vec3, Vec3)
     * @see Curve3#fromPoints(boolean, Vec3[], Curve3)
     */
-   public static Curve3 random ( final java.util.Random rng, final int count,
+   public static Curve3 random ( final Random rng, final int count,
       final float lowerBound, final float upperBound, final boolean closedLoop,
       final Curve3 target ) {
 
@@ -1719,10 +1720,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the random curve
     *
-    * @see Vec3#randomCartesian(java.util.Random, Vec3, Vec3, Vec3)
+    * @see Vec3#randomCartesian(Random, Vec3, Vec3, Vec3)
     * @see Curve3#fromPoints(boolean, Vec3[], Curve3)
     */
-   public static Curve3 random ( final java.util.Random rng, final int count,
+   public static Curve3 random ( final Random rng, final int count,
       final Vec3 lowerBound, final Vec3 upperBound, final boolean closedLoop,
       final Curve3 target ) {
 

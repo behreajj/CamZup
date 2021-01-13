@@ -1,13 +1,14 @@
 package camzup.core;
 
 import java.util.Arrays;
+import java.util.Random;
 
 /**
  * A convenience for working in the Processing IDE: extends
  * {@link java.util.Random} so an additional import does not need to be
  * added. Its name is truncated to avoid collisions.
  */
-public class Rng extends java.util.Random implements IUtils {
+public class Rng extends Random implements IUtils {
 
    /**
     * The random number generator's seed.

@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.Comparator;
+import java.util.Random;
 
 /**
  * A four-dimensional complex number. The <em>x</em>, <em>y</em> and
@@ -1557,7 +1558,7 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @author Ken Shoemake
     */
-   public static Quaternion random ( final java.util.Random rng,
+   public static Quaternion random ( final Random rng,
       final Quaternion target ) {
 
       /* @formatter:off */

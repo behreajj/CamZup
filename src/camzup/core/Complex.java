@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.Comparator;
+import java.util.Random;
 
 /**
  * A two-dimensional complex number. The <code>imag</code> component is a
@@ -799,7 +800,7 @@ public class Complex implements Comparable < Complex > {
     *
     * @see Complex#rect(float, float, Complex)
     */
-   public static Complex random ( final java.util.Random rng, final float rMin,
+   public static Complex random ( final Random rng, final float rMin,
       final float rMax, final Complex target ) {
 
       final float rt = rng.nextFloat();

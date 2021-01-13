@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.Comparator;
+import java.util.Random;
 
 /**
  * A mutable, extensible class influenced by GLSL, OSL and Processing's
@@ -2247,9 +2248,9 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the random vector
     *
-    * @see Vec2#randomPolar(java.util.Random, float, float, Vec2)
+    * @see Vec2#randomPolar(Random, float, float, Vec2)
     */
-   public static Vec2 random ( final java.util.Random rng, final Vec2 target ) {
+   public static Vec2 random ( final Random rng, final Vec2 target ) {
 
       return Vec2.randomPolar(rng, 1.0f, 1.0f, target);
    }
@@ -2265,7 +2266,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the random vector
     */
-   public static Vec2 randomCartesian ( final java.util.Random rng,
+   public static Vec2 randomCartesian ( final Random rng,
       final float lowerBound, final float upperBound, final Vec2 target ) {
 
       final float rx = rng.nextFloat();
@@ -2285,7 +2286,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the random vector
     */
-   public static Vec2 randomCartesian ( final java.util.Random rng,
+   public static Vec2 randomCartesian ( final Random rng,
       final Vec2 lowerBound, final Vec2 upperBound, final Vec2 target ) {
 
       final float rx = rng.nextFloat();
@@ -2306,7 +2307,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#fromPolar(float, float, Vec2)
     */
-   public static Vec2 randomPolar ( final java.util.Random rng,
+   public static Vec2 randomPolar ( final Random rng,
       final float rhoMin, final float rhoMax, final Vec2 target ) {
 
       final float rt = rng.nextFloat();
@@ -2324,9 +2325,9 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the random vector
     *
-    * @see Vec2#randomPolar(java.util.Random, float, float, Vec2)
+    * @see Vec2#randomPolar(Random, float, float, Vec2)
     */
-   public static Vec2 randomPolar ( final java.util.Random rng,
+   public static Vec2 randomPolar ( final Random rng,
       final Vec2 target ) {
 
       return Vec2.randomPolar(rng, 1.0f, 1.0f, target);

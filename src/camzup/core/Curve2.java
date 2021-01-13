@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 import camzup.core.Utils.EasingFuncArr;
 import camzup.core.Utils.EasingFuncObj;
@@ -1739,7 +1740,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return the random curve
     */
-   public static Curve2 random ( final java.util.Random rng, final int count,
+   public static Curve2 random ( final Random rng, final int count,
       final float lowerBound, final float upperBound, final boolean closedLoop,
       final Curve2 target ) {
 
@@ -1766,7 +1767,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return the random curve
     */
-   public static Curve2 random ( final java.util.Random rng, final int count,
+   public static Curve2 random ( final Random rng, final int count,
       final Vec2 lowerBound, final Vec2 upperBound, final boolean closedLoop,
       final Curve2 target ) {
 

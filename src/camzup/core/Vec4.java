@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.Comparator;
+import java.util.Random;
 
 /**
  * A mutable, extensible class influenced by GLSL. This is intended to
@@ -1831,9 +1832,9 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the vector
     *
-    * @see Vec4#randomSpherical(java.util.Random, float, float, Vec4)
+    * @see Vec4#randomSpherical(Random, float, float, Vec4)
     */
-   public static Vec4 random ( final java.util.Random rng, final Vec4 target ) {
+   public static Vec4 random ( final Random rng, final Vec4 target ) {
 
       return Vec4.randomSpherical(rng, 1.0f, 1.0f, target);
    }
@@ -1849,7 +1850,7 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the random vector
     */
-   public static Vec4 randomCartesian ( final java.util.Random rng,
+   public static Vec4 randomCartesian ( final Random rng,
       final Vec4 lowerBound, final Vec4 upperBound, final Vec4 target ) {
 
       final float rx = rng.nextFloat();
@@ -1873,7 +1874,7 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the vector
     */
-   public static Vec4 randomSpherical ( final java.util.Random rng,
+   public static Vec4 randomSpherical ( final Random rng,
       final float rhoMin, final float rhoMax, final Vec4 target ) {
 
       final double rr = rng.nextDouble();

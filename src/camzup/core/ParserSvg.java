@@ -146,7 +146,7 @@ public abstract class ParserSvg {
     *
     * @return the boolean
     */
-   public static boolean parseFlagToBool ( final String v ) {
+   public static boolean parseFlag ( final String v ) {
 
       int x = 0;
       try {
@@ -397,10 +397,10 @@ public abstract class ParserSvg {
          final String rystr = rynode != null ? rynode.getNodeValue() : "0.5";
 
          /* Parse string or default. */
-         final float cx = ParserSvg.parseFloat(cxstr, 0.0f);
-         final float cy = ParserSvg.parseFloat(cystr, 0.0f);
-         final float rx = ParserSvg.parseFloat(rxstr, 0.5f);
-         final float ry = ParserSvg.parseFloat(rystr, 0.5f);
+         final float cx = ParserSvg.parsef(cxstr, 0.0f);
+         final float cy = ParserSvg.parsef(cystr, 0.0f);
+         final float rx = ParserSvg.parsef(rxstr, 0.5f);
+         final float ry = ParserSvg.parsef(rystr, 0.5f);
 
          /* Find cardinal control points. */
          final float right = cx + rx;
@@ -447,8 +447,21 @@ public abstract class ParserSvg {
    }
 
    /**
-    * A helper function to parse units of measurement in an SVG element. Uses
-    * the following conversions:
+    * A helper function to parse real numbers followed by units of measurement
+    * in an SVG element.
+    *
+    * @param v the string
+    *
+    * @return the float
+    */
+   protected static float parsef ( final String v ) {
+
+      return ParserSvg.parsef(v, 0.0f);
+   }
+
+   /**
+    * A helper function to parse real numbers followed by units of measurement
+    * in an SVG element. Uses the following conversions:
     * <ul>
     * <li>1 centimeter (cm) = {@value ParserSvg#CM_TO_UNIT} units</li>
     * <li>1 inch (in) = {@value ParserSvg#IN_TO_UNIT} units</li>
@@ -461,18 +474,14 @@ public abstract class ParserSvg {
     * parser will do is divide the value by 100.<br>
     * <br>
     * Font-relative units, namely <code>em</code> and <code>ex</code> are not
-    * supported.<br>
-    * <br>
-    * For polar coordinates, radians are assumed to be the default. Degrees
-    * (deg) are converted to radians through multiplication by
-    * {@value IUtils#DEG_TO_RAD}.
+    * supported.
     *
     * @param v   the String value
     * @param def the default value
     *
     * @return the parsed float
     */
-   protected static float parseFloat ( final String v, final float def ) {
+   protected static float parsef ( final String v, final float def ) {
 
       /*
        * The string needs to be trimmed even here because of unconventional
@@ -581,10 +590,10 @@ public abstract class ParserSvg {
          final String y2str = y2node != null ? y2node.getNodeValue() : "0";
 
          /* Parse string or default. */
-         final float x1 = ParserSvg.parseFloat(x1str, -0.5f);
-         final float y1 = ParserSvg.parseFloat(y1str, 0.0f);
-         final float x2 = ParserSvg.parseFloat(x2str, 0.5f);
-         final float y2 = ParserSvg.parseFloat(y2str, 0.0f);
+         final float x1 = ParserSvg.parsef(x1str, -0.5f);
+         final float y1 = ParserSvg.parsef(y1str, 0.0f);
+         final float x2 = ParserSvg.parsef(x2str, 0.5f);
+         final float y2 = ParserSvg.parsef(y2str, 0.0f);
 
          Curve2.line(x1, y1, x2, y2, target);
       }
@@ -715,73 +724,54 @@ public abstract class ParserSvg {
             final String pdStr = pathData.getNodeValue();
             final char[] pdChars = pdStr.toCharArray();
             final int pdCharsLen = pdChars.length;
-            boolean noSpaces = true;
 
             final ArrayList < PathData > paths = new ArrayList <>(16);
-            final ArrayList < Integer > dlmIdcs = new ArrayList <>(64);
+            PathData prevData = null;
             for ( int i = 0; i < pdCharsLen; ++i ) {
-               final char pdChar = pdChars[i];
-               final int contains = Arrays.binarySearch(ParserSvg.CMDS, pdChar);
+               final char c = pdChars[i];
+               final int contains = Arrays.binarySearch(ParserSvg.CMDS, c);
                if ( contains > -1 ) {
-                  final PathCommand a = PathCommand.fromChar(pdChar);
-                  final PathData b = new PathData(a, i);
-                  paths.add(b);
-               } else if ( pdChar == ' ' ) {
-                  dlmIdcs.add(i);
-                  noSpaces = false;
-               } else if ( pdChar == ',' ) { dlmIdcs.add(i); }
-            }
-
-            /* Without spaces, SVG is a pain to parse, so leave it. */
-            if ( noSpaces ) {
-               // TODO: Refactor to allow compressed SVGs.
-               System.err.println("This SVG parser does not support"
-                  + " compressed file paths with no spaces between commands"
-                  + " and data.");
-               return result;
+                  final PathCommand path = PathCommand.fromChar(c);
+                  final PathData currData = new PathData(path, i + 1,
+                     pdCharsLen);
+                  paths.add(currData);
+                  if ( prevData != null ) { prevData.ubDat = i; }
+                  prevData = currData;
+               }
             }
 
             /* Add data to each instruction. */
             Iterator < PathData > pathItr = paths.iterator();
-            PathData prevEntry = pathItr.next();
-            final Iterator < Integer > delimItr = dlmIdcs.iterator();
             while ( pathItr.hasNext() ) {
-               final PathData nextEntry = pathItr.next();
-               final ArrayList < String > prevStrs = prevEntry.data;
+               final PathData entry = pathItr.next();
+               final ArrayList < String > entryStrs = entry.data;
+               final int start = entry.lbDat;
+               final int end = entry.ubDat;
+               final int len = end - start;
+               StringBuilder sb = new StringBuilder(len);
 
-               final int prevCmdIdx = prevEntry.cmdIdx;
-               final int nextCmdIdx = nextEntry.cmdIdx;
-               final int len = nextCmdIdx - prevCmdIdx - 1;
-
-               /* Search range between previous and next commands for data. */
-               int prevDelim = delimItr.next();
-               while ( delimItr.hasNext() && prevDelim < nextCmdIdx - 1 ) {
-                  final int nextDelim = delimItr.next();
-                  final StringBuilder sb = new StringBuilder(len);
-                  for ( int j = prevDelim + 1; j < nextDelim; ++j ) {
-                     final char c = pdChars[j];
-                     if ( c != ' ' ) { sb.append(c); }
+               for ( int i = start; i < end; ++i ) {
+                  final char c = pdChars[i];
+                  if ( c == ',' ) {
+                     final String str = sb.toString().trim();
+                     if ( !str.isEmpty() ) { entryStrs.add(str); }
+                     sb = new StringBuilder(end - i);
+                  } else if ( c == ' ' ) {
+                     final String str = sb.toString().trim();
+                     if ( !str.isEmpty() ) { entryStrs.add(str); }
+                     sb = new StringBuilder(end - i);
+                  } else if ( c == '-' ) {
+                     final String str = sb.toString().trim();
+                     if ( !str.isEmpty() ) { entryStrs.add(str); }
+                     sb = new StringBuilder(end - i);
+                     sb.append(c);
+                  } else {
+                     sb.append(c);
                   }
-                  if ( sb.length() > 0 ) { prevStrs.add(sb.toString()); }
-                  prevDelim = nextDelim;
                }
 
-               prevEntry = nextEntry;
-            }
-
-            /*
-             * There may be only one path command, and the last command may not
-             * be 'z', and have trailing data to append.
-             */
-            if ( prevEntry.cmdIdx < pdCharsLen - 1 ) {
-               final StringBuilder sbLast = new StringBuilder();
-               for ( int j = prevEntry.cmdIdx + 1; j < pdCharsLen; ++j ) {
-                  final char c = pdChars[j];
-                  if ( c != ' ' ) { sbLast.append(c); }
-               }
-               if ( sbLast.length() > 0 ) {
-                  prevEntry.data.add(sbLast.toString());
-               }
+               final String str = sb.toString().trim();
+               if ( !str.isEmpty() ) { entryStrs.add(str); }
             }
 
             /*
@@ -797,7 +787,7 @@ public abstract class ParserSvg {
             result.add(target);
 
             /* Tracks the previous coordinate for relative commands. */
-            final Vec2 relative = new Vec2();
+            final Vec2 rel = new Vec2();
 
             /* For quadratic reflections. */
             final Vec2 midHnd = new Vec2();
@@ -810,343 +800,399 @@ public abstract class ParserSvg {
             while ( pathItr.hasNext() ) {
                final PathData entry = pathItr.next();
                final PathCommand cmd = entry.cmd;
-               final Iterator < String > dataItr = entry.data.iterator();
+               final ArrayList < String > data = entry.data;
+               final Iterator < String > dataItr = data.iterator();
 
                // System.out.println(entry);
+               boolean zFlag = false;
 
                switch ( cmd ) {
                   case CLOSE_PATH:
 
                      target.closedLoop = true;
+                     zFlag = true;
 
                      break;
 
                   case MOVE_TO_ABS:
 
                      if ( !initialMove ) {
-                        if ( target.length() > 1 ) { result.add(target); }
+                        if ( target.length() > 1 ) {
+                           result.add(target);
+                        }
                         target = new Curve2();
                      }
                      initialMove = false;
 
-                     final float ax = ParserSvg.parseFloat(dataItr.next(),
-                        0.0f);
-                     float ay = 0.0f;
-                     if ( dataItr.hasNext() ) {
-                        ay = ParserSvg.parseFloat(dataItr.next(), 0.0f);
-                     }
-
-                     curr = new Knot2(ax, ay);
+                     curr = new Knot2(ParserSvg.parsef(dataItr.next(), 0.0f),
+                        ParserSvg.parsef(dataItr.next(), 0.0f));
                      target.append(curr);
 
                      //$FALL-THROUGH$
                   case LINE_TO_ABS:
 
-                     /*
-                      * Move to may contain extra instructions which are
-                      * interpreted as line to. There may not be an even number
-                      * of instructions.
-                      */
                      while ( dataItr.hasNext() ) {
                         prev = curr;
                         curr = new Knot2();
                         target.append(curr);
 
-                        float ltax = ParserSvg.parseFloat(dataItr.next(), 0.0f);
-                        float ltay = 0.0f;
-                        if ( dataItr.hasNext() ) {
-                           ltay = ParserSvg.parseFloat(dataItr.next(), 0.0f);
-                        }
-
-                        Knot2.fromSegLinear(ltax, ltay, prev, curr);
+                        Knot2.fromSegLinear(ParserSvg.parsef(dataItr.next(),
+                           0.0f), ParserSvg.parsef(dataItr.next(), 0.0f), prev,
+                           curr);
                      }
+
+                     rel.set(curr.coord);
 
                      break;
 
                   case MOVE_TO_REL:
 
-                     /* A curve may be empty due to malformed commands. */
                      if ( !initialMove ) {
-                        if ( target.length() > 1 ) { result.add(target); }
+
+                        /* A curve may be empty due to malformed commands. */
+                        if ( target.length() > 1 ) {
+                           result.add(target);
+
+                           /*
+                            * Within a path, multiple sub-paths can use a move
+                            * command followed by a close command followed by a
+                            * relative move command. This tries to fix offsets.
+                            */
+                           rel.set(target.closedLoop ? target.getFirst().coord
+                              : target.getLast().coord);
+
+                           // if ( zFlag ) {
+                           // rel.set(target.closedLoop ? target
+                           // .getFirst().coord : target.getLast().coord);
+                           // zFlag = false;
+                           // }
+                        }
+
                         target = new Curve2();
+
                      }
                      initialMove = false;
 
-                     // TODO: Given this, might not be able to use
-                     // curr.translate after the fact - use relative.x + n
-                     // instead.
-
-                     float rx = relative.x;
-                     if ( dataItr.hasNext() ) {
-                        rx += ParserSvg.parseFloat(dataItr.next(), 0.0f);
-                     }
-
-                     float ry = relative.y;
-                     if ( dataItr.hasNext() ) {
-                        ry += ParserSvg.parseFloat(dataItr.next(), 0.0f);
-                     }
-
-                     curr = new Knot2(rx, ry);
+                     curr = new Knot2(rel.x + ParserSvg.parsef(dataItr.next(),
+                        0.0f), rel.y + ParserSvg.parsef(dataItr.next(), 0.0f));
                      target.append(curr);
 
                      //$FALL-THROUGH$
                   case LINE_TO_REL:
 
-                     /*
-                      * Move to may contain extra instructions which are
-                      * interpreted as line to. There may not be an even number
-                      * of instructions.
-                      */
                      while ( dataItr.hasNext() ) {
-                        relative.set(curr.coord);
+                        rel.set(curr.coord);
 
                         prev = curr;
                         curr = new Knot2();
                         target.append(curr);
 
-                        final float ltrx = relative.x + ParserSvg.parseFloat(
-                           dataItr.next(), 0.0f);
-                        float ltry = relative.y;
-                        if ( dataItr.hasNext() ) {
-                           ltry += ParserSvg.parseFloat(dataItr.next(), 0.0f);
-                        }
-
-                        Knot2.fromSegLinear(ltrx, ltry, prev, curr);
+                        Knot2.fromSegLinear(rel.x + ParserSvg.parsef(dataItr
+                           .next(), 0.0f), rel.y + ParserSvg.parsef(dataItr
+                              .next(), 0.0f), prev, curr);
                      }
+
+                     rel.set(curr.coord);
 
                      break;
 
                   case HORIZ_ABS:
 
-                     prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        curr = new Knot2();
+                        target.append(curr);
 
-                     curr.coord.set(ParserSvg.parseFloat(dataItr.next(), 0.0f),
-                        prev.coord.y);
-                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
-                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+                        Knot2.fromSegLinear(ParserSvg.parsef(dataItr.next(),
+                           0.0f), rel.y, prev, curr);
+
+                        rel.set(curr.coord);
+                     }
 
                      break;
 
                   case HORIZ_REL:
 
-                     prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        curr = new Knot2();
+                        target.append(curr);
 
-                     curr.coord.set(relative.x + ParserSvg.parseFloat(dataItr
-                        .next(), 0.0f), prev.coord.y);
-                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
-                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+                        Knot2.fromSegLinear(rel.x + ParserSvg.parsef(dataItr
+                           .next(), 0.0f), rel.y, prev, curr);
+
+                        rel.set(curr.coord);
+                     }
 
                      break;
 
                   case VERT_ABS:
 
-                     prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        curr = new Knot2();
+                        target.append(curr);
 
-                     curr.coord.set(prev.coord.x, ParserSvg.parseFloat(dataItr
-                        .next(), 0.0f));
-                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
-                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+                        Knot2.fromSegLinear(rel.x, ParserSvg.parsef(dataItr
+                           .next(), 0.0f), prev, curr);
+
+                        rel.set(curr.coord);
+                     }
 
                      break;
 
                   case VERT_REL:
 
-                     prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        curr = new Knot2();
+                        target.append(curr);
 
-                     curr.coord.set(prev.coord.x, relative.y + ParserSvg
-                        .parseFloat(dataItr.next(), 0.0f));
-                     Curve2.lerp13(prev.coord, curr.coord, prev.foreHandle);
-                     Curve2.lerp13(curr.coord, prev.coord, curr.rearHandle);
+                        Knot2.fromSegLinear(rel.x, rel.y + ParserSvg.parsef(
+                           dataItr.next(), 0.0f), prev, curr);
+
+                        rel.set(curr.coord);
+                     }
 
                      break;
 
                   case QUADRATIC_TO_ABS:
 
-                     prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        curr = new Knot2();
+                        target.append(curr);
 
-                     /*
-                      * Mid-handle needs to be set to record quadratic in case
-                      * reflection is used next.
-                      */
-                     midHnd.set(ParserSvg.parseFloat(dataItr.next(), 0.0f),
-                        ParserSvg.parseFloat(dataItr.next(), 0.0f));
-                     curr.coord.set(ParserSvg.parseFloat(dataItr.next(), 0.0f),
-                        ParserSvg.parseFloat(dataItr.next(), 0.0f));
+                        /*
+                         * Mid-handle needs to be set to record quadratic in
+                         * case reflection is used next.
+                         */
+                        midHnd.set(ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f));
+                        curr.coord.set(ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f));
 
-                     Curve2.lerp13(midHnd, prev.coord, prev.foreHandle);
-                     Curve2.lerp13(midHnd, curr.coord, curr.rearHandle);
+                        Curve2.lerp13(midHnd, prev.coord, prev.foreHandle);
+                        Curve2.lerp13(midHnd, curr.coord, curr.rearHandle);
+                     }
+
+                     rel.set(curr.coord);
 
                      break;
 
                   case QUADRATIC_TO_REL:
 
-                     prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        curr = new Knot2();
+                        target.append(curr);
 
-                     /*
-                      * Mid-handle needs to be set to record quadratic in case
-                      * reflection is used next.
-                      */
-                     midHnd.set(ParserSvg.parseFloat(dataItr.next(), 0.0f),
-                        ParserSvg.parseFloat(dataItr.next(), 0.0f));
-                     curr.coord.set(ParserSvg.parseFloat(dataItr.next(), 0.0f),
-                        ParserSvg.parseFloat(dataItr.next(), 0.0f));
+                        /*
+                         * Mid-handle needs to be set to record quadratic in
+                         * case reflection is used next.
+                         */
+                        midHnd.set(ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f));
+                        curr.coord.set(ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f));
 
-                     Vec2.add(relative, midHnd, midHnd);
-                     Vec2.add(relative, curr.coord, curr.coord);
+                        Vec2.add(rel, midHnd, midHnd);
+                        Vec2.add(rel, curr.coord, curr.coord);
 
-                     Curve2.lerp13(midHnd, prev.coord, prev.foreHandle);
-                     Curve2.lerp13(midHnd, curr.coord, curr.rearHandle);
+                        Curve2.lerp13(midHnd, prev.coord, prev.foreHandle);
+                        Curve2.lerp13(midHnd, curr.coord, curr.rearHandle);
+
+                        rel.set(curr.coord);
+                     }
 
                      break;
 
                   case REFLECT_QUADRATIC_ABS:
 
-                     prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        curr = new Knot2();
+                        target.append(curr);
 
-                     prev.mirrorHandlesBackward();
-                     curr.coord.set(ParserSvg.parseFloat(dataItr.next(), 0.0f),
-                        ParserSvg.parseFloat(dataItr.next(), 0.0f));
+                        prev.mirrorHandlesBackward();
+                        curr.coord.set(ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f));
 
-                     /*
-                      * Convert mid-handle from point to direction, negate,
-                      * convert back to point.
-                      */
-                     Vec2.sub(midHnd, prev.coord, midHnd);
-                     Vec2.negate(midHnd, midHnd);
-                     Vec2.add(midHnd, prev.coord, midHnd);
-                     Curve2.lerp13(midHnd, curr.coord, curr.rearHandle);
+                        /*
+                         * Convert mid-handle from point to direction, negate,
+                         * convert back to point.
+                         */
+                        Vec2.sub(midHnd, prev.coord, midHnd);
+                        Vec2.negate(midHnd, midHnd);
+                        Vec2.add(midHnd, prev.coord, midHnd);
+                        Curve2.lerp13(midHnd, curr.coord, curr.rearHandle);
+                     }
+
+                     rel.set(curr.coord);
 
                      break;
 
                   case REFLECT_QUADRATIC_REL:
 
-                     prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        curr = new Knot2();
+                        target.append(curr);
 
-                     prev.mirrorHandlesBackward();
-                     curr.coord.set(ParserSvg.parseFloat(dataItr.next(), 0.0f),
-                        ParserSvg.parseFloat(dataItr.next(), 0.0f));
-                     Vec2.add(relative, curr.coord, curr.coord);
+                        prev.mirrorHandlesBackward();
+                        curr.coord.set(ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f));
+                        Vec2.add(rel, curr.coord, curr.coord);
 
-                     /*
-                      * Convert mid-handle from point to direction, negate,
-                      * convert back to point.
-                      */
-                     Vec2.sub(midHnd, prev.coord, midHnd);
-                     Vec2.negate(midHnd, midHnd);
-                     Vec2.add(midHnd, prev.coord, midHnd);
-                     Curve2.lerp13(midHnd, curr.coord, curr.rearHandle);
+                        /*
+                         * Convert mid-handle from point to direction, negate,
+                         * convert back to point.
+                         */
+                        Vec2.sub(midHnd, prev.coord, midHnd);
+                        Vec2.negate(midHnd, midHnd);
+                        Vec2.add(midHnd, prev.coord, midHnd);
+                        Curve2.lerp13(midHnd, curr.coord, curr.rearHandle);
+
+                        rel.set(curr.coord);
+                     }
 
                      break;
 
                   case CUBIC_TO_ABS:
 
-                     prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        curr = new Knot2();
+                        target.append(curr);
 
-                     Knot2.fromSegCubic(ParserSvg.parseFloat(dataItr.next(),
-                        0.0f), ParserSvg.parseFloat(dataItr.next(), 0.0f),
-                        ParserSvg.parseFloat(dataItr.next(), 0.0f), ParserSvg
-                           .parseFloat(dataItr.next(), 0.0f), ParserSvg
-                              .parseFloat(dataItr.next(), 0.0f), ParserSvg
-                                 .parseFloat(dataItr.next(), 0.0f), prev, curr);
+                        /* @formatter:off */
+                        Knot2.fromSegCubic(
+                           ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f),
+                           prev, curr);
+                        /* @formatter:on */
+                     }
+
+                     rel.set(curr.coord);
 
                      break;
 
                   case CUBIC_TO_REL:
 
-                     prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
+                     /* Add manually, do not use Knot2#translate . */
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        curr = new Knot2();
+                        target.append(curr);
 
-                     Knot2.fromSegCubic(ParserSvg.parseFloat(dataItr.next(),
-                        0.0f), ParserSvg.parseFloat(dataItr.next(), 0.0f),
-                        ParserSvg.parseFloat(dataItr.next(), 0.0f), ParserSvg
-                           .parseFloat(dataItr.next(), 0.0f), ParserSvg
-                              .parseFloat(dataItr.next(), 0.0f), ParserSvg
-                                 .parseFloat(dataItr.next(), 0.0f), prev, curr);
-                     curr.translate(relative);
+                        /* @formatter:off */
+                        Knot2.fromSegCubic(
+                           rel.x + ParserSvg.parsef(dataItr.next(), 0.0f),
+                           rel.y + ParserSvg.parsef(dataItr.next(), 0.0f),
+                           rel.x + ParserSvg.parsef(dataItr.next(), 0.0f),
+                           rel.y + ParserSvg.parsef(dataItr.next(), 0.0f),
+                           rel.x + ParserSvg.parsef(dataItr.next(), 0.0f),
+                           rel.y + ParserSvg.parsef(dataItr.next(), 0.0f),
+                           prev, curr);
+                        /* @formatter:on */
+
+                        rel.set(curr.coord);
+                     }
 
                      break;
 
                   case REFLECT_CUBIC_ABS:
 
-                     prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        curr = new Knot2();
+                        target.append(curr);
 
-                     Knot2.fromSegCubicRefl(ParserSvg.parseFloat(dataItr.next(),
-                        0.0f), ParserSvg.parseFloat(dataItr.next(), 0.0f),
-                        ParserSvg.parseFloat(dataItr.next(), 0.0f), ParserSvg
-                           .parseFloat(dataItr.next(), 0.0f), prev, curr);
+                        Knot2.fromSegCubicRefl(ParserSvg.parsef(dataItr.next(),
+                           0.0f), ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f), ParserSvg
+                              .parsef(dataItr.next(), 0.0f), prev, curr);
+                     }
+
+                     rel.set(curr.coord);
 
                      break;
 
                   case REFLECT_CUBIC_REL:
 
-                     prev = curr;
-                     curr = new Knot2();
-                     target.append(curr);
+                     /* Add manually, do not use Knot2#translate . */
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        curr = new Knot2();
+                        target.append(curr);
 
-                     Knot2.fromSegCubicRefl(ParserSvg.parseFloat(dataItr.next(),
-                        0.0f), ParserSvg.parseFloat(dataItr.next(), 0.0f),
-                        ParserSvg.parseFloat(dataItr.next(), 0.0f), ParserSvg
-                           .parseFloat(dataItr.next(), 0.0f), prev, curr);
-                     curr.translate(relative);
+                        /* @formatter:off */
+                        Knot2.fromSegCubicRefl(
+                           rel.x + ParserSvg.parsef(dataItr.next(), 0.0f),
+                           rel.y + ParserSvg.parsef(dataItr.next(), 0.0f),
+                           rel.x + ParserSvg.parsef(dataItr.next(), 0.0f),
+                           rel.y + ParserSvg.parsef(dataItr.next(), 0.0f),
+                           prev, curr);
+                        /* @formatter:on */
+
+                        rel.set(curr.coord);
+                     }
 
                      break;
 
                   case ARC_TO_ABS:
 
-                     prev = curr;
-                     target.appendAll(ParserSvg.parseArcTo(prev, ParserSvg
-                        .parseFloat(dataItr.next(), 0.0f), ParserSvg.parseFloat(
-                           dataItr.next(), 0.0f), ParserSvg.parseAngle(dataItr
-                              .next(), 0.0f), ParserSvg.parseFlagToBool(dataItr
-                                 .next()), ParserSvg.parseFlagToBool(dataItr
-                                    .next()), ParserSvg.parseFloat(dataItr
-                                       .next(), 0.0f), ParserSvg.parseFloat(
-                                          dataItr.next(), 0.0f)));
-                     curr = target.getLast();
+                     /* @formatter:off */
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        target.appendAll(ParserSvg.parseArcTo(
+                           prev,
+                           ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parseAngle(dataItr.next(), 0.0f),
+                           ParserSvg.parseFlag(dataItr.next()),
+                           ParserSvg.parseFlag(dataItr.next()),
+                           ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f)));
+                        curr = target.getLast();
+                     }
+                     /* @formatter:on */
+
+                     rel.set(curr.coord);
 
                      break;
 
                   case ARC_TO_REL:
 
-                     prev = curr;
-                     target.appendAll(ParserSvg.parseArcTo(prev, ParserSvg
-                        .parseFloat(dataItr.next(), 0.0f), ParserSvg.parseFloat(
-                           dataItr.next(), 0.0f), ParserSvg.parseAngle(dataItr
-                              .next(), 0.0f), ParserSvg.parseFlagToBool(dataItr
-                                 .next()), ParserSvg.parseFlagToBool(dataItr
-                                    .next()), relative.x + ParserSvg.parseFloat(
-                                       dataItr.next(), 0.0f), relative.y
-                                          + ParserSvg.parseFloat(dataItr.next(),
-                                             0.0f)));
-                     curr = target.getLast();
+                     /* @formatter:off */
+                     while ( dataItr.hasNext() ) {
+                        prev = curr;
+                        target.appendAll(ParserSvg.parseArcTo(
+                           prev,
+                           ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parsef(dataItr.next(), 0.0f),
+                           ParserSvg.parseAngle(dataItr.next(), 0.0f),
+                           ParserSvg.parseFlag(dataItr.next()),
+                           ParserSvg.parseFlag(dataItr.next()),
+                           rel.x + ParserSvg.parsef(dataItr.next(), 0.0f),
+                           rel.y + ParserSvg.parsef(dataItr.next(), 0.0f)));
+                        curr = target.getLast();
+
+                        rel.set(curr.coord);
+                     }
+                     /* @formatter:on */
 
                      break;
 
                   default:
-               } /* End command switch case. */
 
-               relative.set(curr.coord);
+                     System.err.println(cmd + " unsupported path command.");
+
+               } /* End command switch case. */
 
             } /* End path data loop. */
 
@@ -1163,15 +1209,16 @@ public abstract class ParserSvg {
             final Iterator < Curve2 > resultItr = result.iterator();
             while ( resultItr.hasNext() ) {
                final Curve2 curve = resultItr.next();
-               final Knot2 first = curve.getFirst();
-               final Knot2 last = curve.getLast();
+               final Knot2 kn0 = curve.getFirst();
+               final Knot2 kn1 = curve.getLast();
 
                if ( target.closedLoop ) {
-                  Curve2.lerp13(first.coord, last.coord, first.rearHandle);
-                  Curve2.lerp13(last.coord, first.coord, last.foreHandle);
+                  // Curve2.lerp13(kn0.coord, kn1.coord, kn0.rearHandle);
+                  // Curve2.lerp13(kn1.coord, kn0.coord, kn1.foreHandle);
+                  Knot2.fromSegLinear(kn0.coord, kn1, kn0);
                } else {
-                  first.mirrorHandlesForward();
-                  last.mirrorHandlesBackward();
+                  kn0.mirrorHandlesForward();
+                  kn1.mirrorHandlesBackward();
                }
             } /* End while loop to fix knots for closed loops. */
 
@@ -1219,14 +1266,14 @@ public abstract class ParserSvg {
          int i = -1;
          final Iterator < Knot2 > itr = target.iterator();
          final Knot2 first = itr.next();
-         first.coord.set(ParserSvg.parseFloat(coords[++i], 0.0f), ParserSvg
-            .parseFloat(coords[++i], 0.0f));
+         first.coord.set(ParserSvg.parsef(coords[++i], 0.0f), ParserSvg.parsef(
+            coords[++i], 0.0f));
 
          Knot2 prev = first;
          while ( itr.hasNext() ) {
             final Knot2 curr = itr.next();
-            Knot2.fromSegLinear(ParserSvg.parseFloat(coords[++i], 0.0f),
-               ParserSvg.parseFloat(coords[++i], 0.0f), prev, curr);
+            Knot2.fromSegLinear(ParserSvg.parsef(coords[++i], 0.0f), ParserSvg
+               .parsef(coords[++i], 0.0f), prev, curr);
             prev = curr;
          }
 
@@ -1275,12 +1322,12 @@ public abstract class ParserSvg {
          final String rystr = rynode != null ? rynode.getNodeValue() : "0";
 
          /* Parse string or default. */
-         final float x = ParserSvg.parseFloat(xstr, 0.0f);
-         final float y = ParserSvg.parseFloat(ystr, 0.0f);
-         final float w = ParserSvg.parseFloat(wstr, 1.0f);
-         final float h = ParserSvg.parseFloat(hstr, 1.0f);
-         final float rx = ParserSvg.parseFloat(rxstr, 0.0f);
-         final float ry = ParserSvg.parseFloat(rystr, 0.0f);
+         final float x = ParserSvg.parsef(xstr, 0.0f);
+         final float y = ParserSvg.parsef(ystr, 0.0f);
+         final float w = ParserSvg.parsef(wstr, 1.0f);
+         final float h = ParserSvg.parsef(hstr, 1.0f);
+         final float rx = ParserSvg.parsef(rxstr, 0.0f);
+         final float ry = ParserSvg.parsef(rystr, 0.0f);
 
          /*
           * Corner rounding differs between APIs, so average horizontal and
@@ -1310,6 +1357,8 @@ public abstract class ParserSvg {
    protected static Mat3 parseTransform ( final Node trNode, final Mat3 target,
       final Mat3 delta ) {
 
+      // TODO: Optimize string splitting by creating patterns?
+
       final String v = trNode.getNodeValue().trim().toLowerCase();
 
       final String[] segStrs = v.split("\\),*", 0);
@@ -1324,7 +1373,13 @@ public abstract class ParserSvg {
 
          /* Find the data section of the String. */
          final String dataBlock = seg.substring(openParenIdx + 1);
-         final String[] data = dataBlock.split(",\\s*", 0);
+
+         final String[] data = dataBlock.split("[,|\\s*]", 0);
+
+         // for ( int x = 0; x < data.length; ++x ) {
+         // System.out.println(data[x]);
+         // }
+
          final int dataLen = data.length;
 
          switch ( hsh ) {
@@ -1332,22 +1387,14 @@ public abstract class ParserSvg {
             case -1081239615:
                /* "matrix" */
 
-               /* Column major. */
-               final String m00 = data[0];
-               final String m10 = data[1];
-               final String m01 = data[2];
-               final String m11 = data[3];
-               final String m02 = data[4];
-               final String m12 = data[5];
-
                /* @formatter:off */
                delta.set(
-                  ParserSvg.parseFloat(m00, 1.0f),
-                  ParserSvg.parseFloat(m01, 0.0f),
-                  ParserSvg.parseFloat(m02, 0.0f),
-                  ParserSvg.parseFloat(m10, 0.0f),
-                  ParserSvg.parseFloat(m11, 1.0f),
-                  ParserSvg.parseFloat(m12, 0.0f),
+                  ParserSvg.parsef(data[0], 1.0f),
+                  ParserSvg.parsef(data[1], 0.0f),
+                  ParserSvg.parsef(data[2], 0.0f),
+                  ParserSvg.parsef(data[3], 0.0f),
+                  ParserSvg.parsef(data[4], 1.0f),
+                  ParserSvg.parsef(data[5], 0.0f),
                   0.0f, 0.0f, 1.0f);
                /* @formatter:on */
                Mat3.mul(target, delta, target);
@@ -1359,8 +1406,8 @@ public abstract class ParserSvg {
                final String ang = data[0];
                final String xpivstr = dataLen > 1 ? data[1] : "0";
                final String ypivstr = dataLen > 2 ? data[2] : "0";
-               final float xpiv = ParserSvg.parseFloat(xpivstr, 0.0f);
-               final float ypiv = ParserSvg.parseFloat(ypivstr, 0.0f);
+               final float xpiv = ParserSvg.parsef(xpivstr, 0.0f);
+               final float ypiv = ParserSvg.parsef(ypivstr, 0.0f);
                final Vec2 pivot = new Vec2(xpiv, ypiv);
 
                Mat3.fromTranslation(pivot, delta);
@@ -1379,8 +1426,8 @@ public abstract class ParserSvg {
 
                final String scx = data[0];
                final String scy = dataLen > 1 ? data[1] : scx;
-               Mat3.fromScale(ParserSvg.parseFloat(scx, 1.0f), ParserSvg
-                  .parseFloat(scy, 1.0f), delta);
+               Mat3.fromScale(ParserSvg.parsef(scx, 1.0f), ParserSvg.parsef(scy,
+                  1.0f), delta);
                Mat3.mul(target, delta, target);
 
                break;
@@ -1408,8 +1455,8 @@ public abstract class ParserSvg {
 
                final String tx = data[0];
                final String ty = dataLen > 1 ? data[1] : "0";
-               Mat3.fromTranslation(ParserSvg.parseFloat(tx, 0.0f), ParserSvg
-                  .parseFloat(ty, 0.0f), delta);
+               Mat3.fromTranslation(ParserSvg.parsef(tx, 0.0f), ParserSvg
+                  .parsef(ty, 0.0f), delta);
                Mat3.mul(target, delta, target);
 
                break;
@@ -1432,12 +1479,7 @@ public abstract class ParserSvg {
       /**
        * The path command.
        */
-      public final PathCommand cmd;
-
-      /**
-       * The command's index in the SVG path data String.
-       */
-      public final int cmdIdx;
+      public PathCommand cmd;
 
       /**
        * The parsed data affiliated with the command.
@@ -1445,28 +1487,42 @@ public abstract class ParserSvg {
       public final ArrayList < String > data;
 
       /**
+       * Lower bounds index, inclusive, for data chunk.
+       */
+      public int lbDat = 0;
+
+      /**
+       * Upper bounds index, exclusive for data chunk.
+       */
+      public int ubDat = Integer.MAX_VALUE;
+
+      /**
        * Constructs a path data with a command and index.
        *
-       * @param cmd    the command
-       * @param cmdIdx the index
+       * @param cmd   the command
+       * @param lbDat the index
+       * @param ubDat the upper bound index
        */
-      public PathData ( final PathCommand cmd, final int cmdIdx ) {
+      public PathData ( final PathCommand cmd, final int lbDat,
+         final int ubDat ) {
 
-         this(cmd, cmdIdx, new ArrayList <>(cmd.getDataCount()));
+         this(cmd, lbDat, ubDat, new ArrayList <>(cmd.getDataCount()));
       }
 
       /**
        * Constructs a path data with a command, index and array of data.
        *
-       * @param cmd    the command
-       * @param cmdIdx the index
-       * @param data   the data
+       * @param cmd   the command
+       * @param lbDat the lower bound index
+       * @param ubDat the upper bound index
+       * @param data  the data
        */
-      public PathData ( final PathCommand cmd, final int cmdIdx,
+      public PathData ( final PathCommand cmd, final int lbDat, final int ubDat,
          final ArrayList < String > data ) {
 
          this.cmd = cmd;
-         this.cmdIdx = cmdIdx;
+         this.lbDat = lbDat;
+         this.ubDat = ubDat;
          this.data = data;
       }
 
@@ -1476,11 +1532,13 @@ public abstract class ParserSvg {
       @Override
       public String toString ( ) {
 
-         final StringBuilder sb = new StringBuilder(256);
+         final StringBuilder sb = new StringBuilder(512);
          sb.append("{ cmd: ");
          sb.append(this.cmd.toString());
-         sb.append(", cmdIdx: ");
-         sb.append(Utils.toPadded(this.cmdIdx, 0));
+         sb.append(", lbDat: ");
+         sb.append(Utils.toPadded(this.lbDat, 0));
+         sb.append(", ubDat: ");
+         sb.append(Utils.toPadded(this.ubDat, 0));
          sb.append(", data: [ ");
 
          final Iterator < String > itr = this.data.iterator();

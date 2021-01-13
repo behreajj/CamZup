@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.Comparator;
+import java.util.Random;
 
 /**
  * A mutable, extensible color class. Supports RGBA and HSBA color spaces.
@@ -1519,8 +1520,7 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     */
-   public static Color random ( final java.util.Random rng,
-      final Color target ) {
+   public static Color random ( final Random rng, final Color target ) {
 
       return Color.randomRgb(rng, target);
    }
@@ -1537,8 +1537,8 @@ public class Color implements Comparable < Color > {
     *
     * @see Color#hsbaToRgba(Vec4, Color)
     */
-   public static Color randomHsb ( final java.util.Random rng,
-      final Color target, final Vec4 hsba ) {
+   public static Color randomHsb ( final Random rng, final Color target,
+      final Vec4 hsba ) {
 
       hsba.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), 1.0f);
       return Color.hsbaToRgba(hsba, target);
@@ -1558,9 +1558,8 @@ public class Color implements Comparable < Color > {
     *
     * @see Color#hsbaToRgba(Vec4, Color)
     */
-   public static Color randomHsb ( final java.util.Random rng,
-      final Vec4 lowerBound, final Vec4 upperBound, final Color target,
-      final Vec4 hsba ) {
+   public static Color randomHsb ( final Random rng, final Vec4 lowerBound,
+      final Vec4 upperBound, final Color target, final Vec4 hsba ) {
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
@@ -1584,8 +1583,8 @@ public class Color implements Comparable < Color > {
     *
     * @see Color#hsbaToRgba(Vec4, Color)
     */
-   public static Color randomHsba ( final java.util.Random rng,
-      final Color target, final Vec4 hsba ) {
+   public static Color randomHsba ( final Random rng, final Color target,
+      final Vec4 hsba ) {
 
       hsba.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng
          .nextFloat());
@@ -1604,12 +1603,11 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     *
-    * @see Vec4#randomCartesian(java.util.Random, Vec4, Vec4, Vec4)
+    * @see Vec4#randomCartesian(Random, Vec4, Vec4, Vec4)
     * @see Color#hsbaToRgba(Vec4, Color)
     */
-   public static Color randomHsba ( final java.util.Random rng,
-      final Vec4 lowerBound, final Vec4 upperBound, final Color target,
-      final Vec4 hsba ) {
+   public static Color randomHsba ( final Random rng, final Vec4 lowerBound,
+      final Vec4 upperBound, final Color target, final Vec4 hsba ) {
 
       Vec4.randomCartesian(rng, lowerBound, upperBound, hsba);
       return Color.hsbaToRgba(hsba, target);
@@ -1624,10 +1622,9 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     *
-    * @see java.util.Random#nextFloat()
+    * @see Random#nextFloat()
     */
-   public static Color randomRgb ( final java.util.Random rng,
-      final Color target ) {
+   public static Color randomRgb ( final Random rng, final Color target ) {
 
       return target.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
          1.0f);
@@ -1644,8 +1641,8 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     */
-   public static Color randomRgb ( final java.util.Random rng,
-      final Color lowerBound, final Color upperBound, final Color target ) {
+   public static Color randomRgb ( final Random rng, final Color lowerBound,
+      final Color upperBound, final Color target ) {
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
@@ -1663,8 +1660,7 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     */
-   public static Color randomRgba ( final java.util.Random rng,
-      final Color target ) {
+   public static Color randomRgba ( final Random rng, final Color target ) {
 
       return target.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng
          .nextFloat());
@@ -1680,8 +1676,8 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     */
-   public static Color randomRgba ( final java.util.Random rng,
-      final Color lowerBound, final Color upperBound, final Color target ) {
+   public static Color randomRgba ( final Random rng, final Color lowerBound,
+      final Color upperBound, final Color target ) {
 
       /* @formatter:off */
       final float rx = rng.nextFloat();
