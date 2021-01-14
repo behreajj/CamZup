@@ -819,7 +819,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       svgp.append("<path id=\"");
       svgp.append(id);
       svgp.append("\" d=\"M ");
-      prevKnot.coord.toSvgString(svgp);
+      prevKnot.coord.toSvgString(svgp, ' ');
 
       Knot2 currKnot = null;
       while ( itr.hasNext() ) {
@@ -827,11 +827,11 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          svgp.append(' ');
          svgp.append('C');
          svgp.append(' ');
-         prevKnot.foreHandle.toSvgString(svgp);
+         prevKnot.foreHandle.toSvgString(svgp, ' ');
          svgp.append(',');
-         currKnot.rearHandle.toSvgString(svgp);
+         currKnot.rearHandle.toSvgString(svgp, ' ');
          svgp.append(',');
-         currKnot.coord.toSvgString(svgp);
+         currKnot.coord.toSvgString(svgp, ' ');
          prevKnot = currKnot;
       }
 
@@ -840,11 +840,11 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          svgp.append(' ');
          svgp.append('C');
          svgp.append(' ');
-         prevKnot.foreHandle.toSvgString(svgp);
+         prevKnot.foreHandle.toSvgString(svgp, ' ');
          svgp.append(',');
-         currKnot.rearHandle.toSvgString(svgp);
+         currKnot.rearHandle.toSvgString(svgp, ' ');
          svgp.append(',');
-         currKnot.coord.toSvgString(svgp);
+         currKnot.coord.toSvgString(svgp, ' ');
          svgp.append(' ');
          svgp.append('Z');
       }
@@ -939,7 +939,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float arcLen1 = Utils.mod1(b1 - a1);
 
       /* Edge case: angles are equal. */
-      if ( arcLen1 <= 0.00139f ) { return target; }
+      if ( arcLen1 <= 0.00139f ) {
+         return Curve2.circle(startAngle, radius, 4, 0.0f, 0.0f, target);
+      }
 
       final float destAngle1 = a1 + arcLen1;
 

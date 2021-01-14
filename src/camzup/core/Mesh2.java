@@ -2003,13 +2003,13 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          svgp.append("<path id=\"");
          svgp.append(iddot + Utils.toPadded(i, 3));
          svgp.append("\" d=\"M ");
-         vs[f[0][0]].toSvgString(svgp);
+         vs[f[0][0]].toSvgString(svgp, ' ');
          svgp.append(' ');
 
          for ( int j = 1; j < fLen; ++j ) {
             svgp.append('L');
             svgp.append(' ');
-            vs[f[j][0]].toSvgString(svgp);
+            vs[f[j][0]].toSvgString(svgp, ' ');
             svgp.append(' ');
          }
 

@@ -291,14 +291,15 @@ public class Vec2 implements Comparable < Vec2 > {
     * This uses a print precision of six decimal places to avoid glitches when
     * small shapes are scaled up.
     *
-    * @param svgp string builder
+    * @param svgp  string builder
+    * @param delim the delimiter
     *
     * @return the string builder
     */
-   StringBuilder toSvgString ( final StringBuilder svgp ) {
+   StringBuilder toSvgString ( final StringBuilder svgp, final char delim ) {
 
       Utils.toFixed(svgp, this.x, ISvgWritable.FIXED_PRINT);
-      svgp.append(' ');
+      svgp.append(delim);
       Utils.toFixed(svgp, this.y, ISvgWritable.FIXED_PRINT);
       return svgp;
    }

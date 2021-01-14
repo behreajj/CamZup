@@ -85,12 +85,19 @@ public abstract class ParserSvg {
    private static final char[] CMDS = { 'A', 'C', 'H', 'L', 'M', 'Q', 'S', 'T',
       'V', 'Z', 'a', 'c', 'h', 'l', 'm', 'q', 's', 't', 'v', 'z' };
 
+   /**
+    * Given a file path, parses an SVG and returns a curve entity.
+    * 
+    * @param fileName the file name
+    * 
+    * @return the curve entity
+    */
    public static CurveEntity2 parse ( final String fileName ) {
 
       final CurveEntity2 result = new CurveEntity2();
 
       try {
-         /* Sonarlint security complaint recommends these settings. */
+         /* Sonar lint security complaint recommends these settings. */
          final DocumentBuilderFactory df = DocumentBuilderFactory.newInstance();
          df.setAttribute(XMLConstants.ACCESS_EXTERNAL_DTD, "");
          df.setAttribute(XMLConstants.ACCESS_EXTERNAL_SCHEMA, "");
@@ -115,8 +122,7 @@ public abstract class ParserSvg {
          final NodeList nodes = header.getChildNodes();
          final int nodeLen = nodes.getLength();
          for ( int i = 0; i < nodeLen; ++i ) {
-            final Node node = nodes.item(i);
-            ParserSvg.parseNode(node, matStack, curr, delta, curves);
+            ParserSvg.parseNode(nodes.item(i), matStack, curr, delta, curves);
          }
 
          result.appendAll(curves);
@@ -279,19 +285,27 @@ public abstract class ParserSvg {
 
       final float phi1 = Utils.atan2(sy, sx);
 
+      // TODO: Can be optimized by not wrapping, then subtracting appropriate
+      // amount based on sweep.
       float phiDelta = Utils.modRadians(Utils.atan2(ty, tx) - phi1);
       if ( !sweep ) { phiDelta -= IUtils.TAU; }
 
-      final float phiNorm = Utils.mod1(phi1 * IUtils.ONE_TAU);
-      final float cosPhi1 = Utils.scNorm(phiNorm);
-      final float sinPhi1 = Utils.scNorm(phiNorm - 0.25f);
+      final float phiNorm = phi1 * IUtils.ONE_TAU;
+      final float phiNormWrap = Utils.mod1(phiNorm);
+      final float cosPhi1 = Utils.scNorm(phiNormWrap);
+      final float sinPhi1 = Utils.scNorm(phiNormWrap - 0.25f);
 
       final int segCount = Utils.ceil(Utils.abs(phiDelta)
          * ParserSvg.TWO_DIV_PI);
       final float incr = phiDelta / segCount;
-      final float tanIncr = Utils.tan(incr * 0.5f);
+      final float incrNorm = incr * IUtils.ONE_TAU;
+      final float cosIncr = Utils.scNorm(incr);
+      final float sinIncr = Utils.scNorm(incrNorm - 0.25f);
+
+      /* tan(a * 0.5) = sin(a) / (1.0 + cos(a)) */
+      final float tanIncr = Utils.div(sinIncr, 1.0f + cosIncr);
       final float handle = Utils.sqrt(4.0f + 3.0f * tanIncr * tanIncr) - 1.0f;
-      final float b = Utils.sin(incr) * handle * IUtils.ONE_THIRD;
+      final float b = sinIncr * handle * IUtils.ONE_THIRD;
 
       /* To determine when to wrap to initial point. */
       final int segLast = segCount - 1;
@@ -310,9 +324,9 @@ public abstract class ParserSvg {
 
       for ( int i = 0; i < segCount; ++i ) {
 
-         final float eta = phi1 + j * incr;
-         final float cosEta = Utils.cos(eta);
-         final float sinEta = Utils.sin(eta);
+         final float eta = phiNorm + j * incrNorm;
+         final float cosEta = Utils.scNorm(eta);
+         final float sinEta = Utils.scNorm(eta - 0.25f);
 
          rxSinEta = -rx * sinEta;
          ryCosEta = ry * cosEta;
@@ -554,6 +568,19 @@ public abstract class ParserSvg {
       return target;
    }
 
+   /**
+    * Parses a node based on its name and attributes. Appends the results to a
+    * list of curves. Uses previous matrix and matrix stack to track
+    * transforms in groups. Definition nodes are treated as groups.
+    * 
+    * @param node     the node
+    * @param matStack the matrix stack
+    * @param prev     previous matrix
+    * @param delta    the delta matrix
+    * @param curves   the curves list
+    * 
+    * @return the curves list
+    */
    @Recursive
    protected static ArrayList < Curve2 > parseNode ( final Node node,
       final LinkedList < Mat3 > matStack, final Mat3 prev, final Mat3 delta,
@@ -576,25 +603,30 @@ public abstract class ParserSvg {
          Curve2 prim = null;
          ArrayList < Curve2 > path = null;
          final String name = node.getNodeName().toLowerCase();
+         final Node idNode = attributes.getNamedItem("id");
+         final String id = idNode != null ? idNode.getNodeValue() : name;
+
+         // System.out.println(name + ": " + id);
+
          final int hsh = name.hashCode();
          switch ( hsh ) {
 
             case -1656480802:
                /* "ellipse" */
 
-               prim = ParserSvg.parseEllipse(node, new Curve2(name));
+               prim = ParserSvg.parseEllipse(node, new Curve2(id));
                break;
 
             case -1360216880:
                /* "circle" */
 
-               prim = ParserSvg.parseEllipse(node, new Curve2(name));
+               prim = ParserSvg.parseEllipse(node, new Curve2(id));
                break;
 
             case -397519558:
                /* "polygon" */
 
-               prim = ParserSvg.parsePoly(node, new Curve2(name));
+               prim = ParserSvg.parsePoly(node, new Curve2(id));
                break;
 
             case 103:
@@ -603,27 +635,33 @@ public abstract class ParserSvg {
                isGroup = true;
                break;
 
+            case 3079438:
+               /* "defs" */
+
+               isGroup = true;
+               break;
+
             case 3321844:
                /* "line" */
 
-               prim = ParserSvg.parseLine(node, new Curve2(name));
+               prim = ParserSvg.parseLine(node, new Curve2(id));
                break;
 
             case 3433509:
                /* "path" */
-               path = ParserSvg.parsePath(node);
+               path = ParserSvg.parsePath(node, id);
                break;
 
             case 3496420:
                /* "rect" */
 
-               prim = ParserSvg.parseRect(node, new Curve2(name));
+               prim = ParserSvg.parseRect(node, new Curve2(id));
                break;
 
             case 561938880:
                /* "polyline" */
 
-               prim = ParserSvg.parsePoly(node, new Curve2(name));
+               prim = ParserSvg.parsePoly(node, new Curve2(id));
                break;
 
             default:
@@ -662,7 +700,8 @@ public abstract class ParserSvg {
       return curves;
    }
 
-   protected static ArrayList < Curve2 > parsePath ( final Node pathNode ) {
+   protected static ArrayList < Curve2 > parsePath ( final Node pathNode,
+      final String name ) {
 
       final ArrayList < Curve2 > result = new ArrayList <>(2);
       final NamedNodeMap attributes = pathNode.getAttributes();
@@ -705,7 +744,7 @@ public abstract class ParserSvg {
             boolean initialMove = true;
 
             /* Current curve. */
-            Curve2 target = new Curve2();
+            Curve2 target = new Curve2(name);
             result.add(target);
 
             /* Tracks the previous coordinate for relative commands. */
@@ -743,7 +782,7 @@ public abstract class ParserSvg {
                      // }
                      if ( !initialMove ) {
                         if ( target.length() > 1 ) { result.add(target); }
-                        target = new Curve2("Path");
+                        target = new Curve2(name);
                      }
                      initialMove = false;
 
@@ -785,7 +824,7 @@ public abstract class ParserSvg {
                               : target.getLast().coord);
                         }
 
-                        target = new Curve2("Path");
+                        target = new Curve2(name);
 
                      }
                      initialMove = false;
@@ -1129,7 +1168,7 @@ public abstract class ParserSvg {
                final Knot2 kn0 = curve.getFirst();
                final Knot2 kn1 = curve.getLast();
 
-               if ( target.closedLoop ) {
+               if ( curve.closedLoop ) {
                   Knot2.fromSegLinear(kn0.coord, kn1, kn0);
                } else {
                   kn0.mirrorHandlesForward();
@@ -1162,15 +1201,13 @@ public abstract class ParserSvg {
          final String name = polygonNode.getNodeName();
          if ( name == "polygon" ) {
             target.closedLoop = true;
-         } else if ( name == "polyline" ) {
-            target.closedLoop = false;
          } else {
             target.closedLoop = false;
          }
 
          final Node ptsNode = attributes.getNamedItem("points");
          final String ptsSt = ptsNode != null ? ptsNode.getNodeValue() : "0,0";
-         final ArrayList < String > coords = new ArrayList < >();
+         final ArrayList < String > coords = new ArrayList <>(8);
          ParserSvg.segmentChars(ptsSt.toCharArray(), 0, ptsSt.length(), coords);
 
          /* x, y pairs are flattened into a 1D array, so use half length. */
@@ -1406,11 +1443,11 @@ public abstract class ParserSvg {
 
       for ( int i = start; i < end; ++i ) {
          final char c = chars[i];
-         if ( c == ',' || c == ' ' ) {
+         if ( c == ' ' || c == ',' ) {
             final String str = sb.toString().trim();
             if ( !str.isEmpty() ) { target.add(str); }
             sb = new StringBuilder(end - i);
-         } else if ( c == '-' ) {
+         } else if ( c == '-' || c == '+' ) {
 
             /*
              * In web-optimized - i.e., compact - SVGs, a negative sign may be a
