@@ -681,7 +681,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public String toSvgElm ( final String id, final float zoom ) {
 
       final StringBuilder svgp = new StringBuilder(1024);
-      svgp.append(MaterialSolid.defaultSvgMaterial(zoom));
+      MaterialSolid.defaultSvgMaterial(svgp, zoom);
       this.toSvgPath(svgp, id);
       svgp.append("</g>\n");
       return svgp.toString();

@@ -1173,14 +1173,11 @@ public interface IYup2 extends IUp {
        * the PShape's vertices cannot be accessed. For that reason, SVG
        * primitives should be avoided when writing.
        */
-
-      // TODO: Use append version of toFixed?
-
       final int bgClr = renderer.getBackground();
       final float bgAlpha = ( bgClr >> 0x18 & 0xff ) * IUtils.ONE_255;
-      final StringBuilder svgp = new StringBuilder(128);
       final String wStr = Utils.toFixed(renderer.getWidth(), 1);
       final String hStr = Utils.toFixed(renderer.getHeight(), 1);
+      final StringBuilder svgp = new StringBuilder(128);
       svgp.append("<path id=\"background\" d=\"M 0.0 0.0 L ");
       svgp.append(wStr);
       svgp.append(" 0.0 L ");

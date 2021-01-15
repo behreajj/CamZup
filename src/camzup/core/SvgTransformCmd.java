@@ -94,31 +94,32 @@ public enum SvgTransformCmd {
 
    /**
     * Returns a transform command from a String.
-    * 
+    *
     * @param s the string
-    * 
+    *
     * @return the command
     */
    public static SvgTransformCmd fromString ( final String s ) {
 
       final String val = s.toLowerCase().trim();
-      switch ( val ) {
-         case "matrix":
+      final int hsh = val.hashCode();
+      switch ( hsh ) {
+         case -1081239615: /* "matrix" */
             return SvgTransformCmd.MATRIX;
 
-         case "rotate":
+         case -925180581: /* "rotate" */
             return SvgTransformCmd.ROTATE;
 
-         case "scale":
+         case 109250890: /* "scale" */
             return SvgTransformCmd.SCALE;
 
-         case "skewx":
+         case 109493422: /* "skewx" */
             return SvgTransformCmd.SKEW_X;
 
-         case "skewy":
+         case 109493423: /* "skewy" */
             return SvgTransformCmd.SKEW_Y;
 
-         case "translate":
+         case 1052832078: /* "translate" */
             return SvgTransformCmd.TRANSLATE;
 
          default:

@@ -557,41 +557,6 @@ public class MaterialSolid extends Material {
    public static final String DEFAULT_SVG_STR_JOIN = "round";
 
    /**
-    * Default material to use when an entity does not have one. Stroke weight
-    * is impacted by transforms, so the stroke weight is divided by the scale.
-    * This opens a group node, which should be closed elsewhere.
-    *
-    * @param scale the transform scale
-    *
-    * @return the string
-    */
-   public static String defaultSvgMaterial ( final float scale ) {
-      // TODO Where is this used? Presumably in pfriendly, which is why it is
-      // public not package? Append a comment explaining why.
-
-      /*
-       * This needs to be printed to a higher precision, six, because of small
-       * meshes which are blown up by scale.
-       */
-      final String strokeStr = Utils.toFixed(Utils.max(IUtils.EPSILON, Utils
-         .div(IUp.DEFAULT_STROKE_WEIGHT, scale)), 6);
-
-      final StringBuilder svgp = new StringBuilder(256);
-      svgp.append("<g id=\"material\" stroke-width=\"");
-      svgp.append(strokeStr);
-      svgp.append("\" stroke-opacity=\"1.0\" stroke=\"#");
-      svgp.append(Integer.toHexString(IUp.DEFAULT_STROKE_COLOR).substring(2));
-      svgp.append("\" fill-opacity=\"1.0\" fill=\"#");
-      svgp.append(Integer.toHexString(IUp.DEFAULT_FILL_COLOR).substring(2));
-      svgp.append("\" stroke-linejoin=\"");
-      svgp.append(MaterialSolid.DEFAULT_SVG_STR_JOIN);
-      svgp.append("\" stroke-linecap=\"");
-      svgp.append(MaterialSolid.DEFAULT_SVG_STR_CAP);
-      svgp.append("\">\n");
-      return svgp.toString();
-   }
-
-   /**
     * Creates a material from a buffered reader that holds a Wavefront .mtl
     * file. The support for this file format is <em>very</em> minimal, as it
     * is unlikely that its contents would be reproducible between a variety of
@@ -662,6 +627,8 @@ public class MaterialSolid extends Material {
     */
    static String defaultBlenderMaterial ( final float gamma ) {
 
+      // TODO: Switch to pass by ref string builder.
+
       final Color c = Color.fromHex(IUp.DEFAULT_FILL_COLOR, new Color());
       final StringBuilder pyCd = new StringBuilder(256);
       pyCd.append("{\"name\": \"");
@@ -675,6 +642,40 @@ public class MaterialSolid extends Material {
       pyCd.append(", \"clearcoat_roughness\": 0.001");
       pyCd.append('}');
       return pyCd.toString();
+   }
+
+   /**
+    * Default material to use when an entity does not have one. Stroke weight
+    * is impacted by transforms, so the stroke weight is divided by the scale.
+    * This opens a group node, which should be closed elsewhere.
+    *
+    * @param svgp  the string builder
+    * @param scale the transform scale
+    *
+    * @return the string builder
+    */
+   static StringBuilder defaultSvgMaterial ( final StringBuilder svgp,
+      final float scale ) {
+
+      /*
+       * This needs to be printed to a higher precision, six, because of small
+       * meshes which are blown up by scale.
+       */
+      final String strokeStr = Utils.toFixed(Utils.max(IUtils.EPSILON, Utils
+         .div(IUp.DEFAULT_STROKE_WEIGHT, scale)), 6);
+
+      svgp.append("<g id=\"material\" stroke-width=\"");
+      svgp.append(strokeStr);
+      svgp.append("\" stroke-opacity=\"1.0\" stroke=\"#");
+      svgp.append(Integer.toHexString(IUp.DEFAULT_STROKE_COLOR).substring(2));
+      svgp.append("\" fill-opacity=\"1.0\" fill=\"#");
+      svgp.append(Integer.toHexString(IUp.DEFAULT_FILL_COLOR).substring(2));
+      svgp.append("\" stroke-linejoin=\"");
+      svgp.append(MaterialSolid.DEFAULT_SVG_STR_JOIN);
+      svgp.append("\" stroke-linecap=\"");
+      svgp.append(MaterialSolid.DEFAULT_SVG_STR_CAP);
+      svgp.append("\">\n");
+      return svgp;
    }
 
 }

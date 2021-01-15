@@ -1,24 +1,27 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
+int count = 80;
+float toPrc = 1.0 / (count - 1.0);
+float offMin = -0.45;
+float offMax = 0.45;
+float dotMax = 25.0;
+float dotMin = 10.0;
+
 YupJ2 rndr;
-Curve2 curve2 = new Curve2();
-CurveEntity2 ce2 = new CurveEntity2();
-MaterialSolid mat = new MaterialSolid()
+
+Curve2 infinity = Curve2.infinity(new Curve2());
+CurveEntity2 infEntity = new CurveEntity2();
+MaterialSolid infMat = new MaterialSolid()
   .setStroke(true)
   .setStroke(#fff7d5)
   .setStrokeWeight(1.25)
   .setFill(false);
 
-int count = 60;
-float toPrc = 1.0 / (count - 1.0);
-float offmin = -0.25;
-float offmax = 0.25;
-float dotmax = 25.0;
-float dotmin = 10.0;
+CurveEntity2[] dotEntities = new CurveEntity2[count];
+MaterialSolid[] dotMats = new MaterialSolid[count];
 
-Gradient grd = new Gradient();
-Color clr = new Color();
+Gradient grd = Gradient.paletteRyb(new Gradient());
 Ray2 local = new Ray2();
 Ray2 world = new Ray2();
 
@@ -27,33 +30,55 @@ void settings() {
 }
 
 void setup() {
+  frameRate(60.0);
   rndr = (YupJ2)getGraphics();
-  Curve2.infinity(curve2);
-  ce2.append(curve2);
-  ce2.scaleTo((rndr.width + rndr.height) * 0.495);
-  Gradient.paletteRyb(grd);
+
+  infEntity.append(infinity);
+  infEntity.scaleTo((rndr.width + rndr.height) * 0.495);
+
+  for (int i = 0; i < count; ++i) {
+    float prc = i * toPrc;
+    float dotSize = Utils.pingPong(dotMin, dotMax, prc);
+
+    CurveEntity2 de2 = new CurveEntity2();
+    Curve2 dot = Curve2.circle(new Curve2());
+    dot.materialIndex = i;
+    de2.append(dot);
+    de2.scaleTo(dotSize);
+    dotEntities[i] = de2;
+
+    MaterialSolid dotMat = new MaterialSolid();
+    dotMats[i] = dotMat;
+    Gradient.eval(grd, prc, dotMat.fill);
+  }
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
   float step = frameCount * 0.0075;
-  ce2.rotateZ(0.01);
+  infEntity.rotateZ(0.01);
 
-  rndr.background(#101010);
+  rndr.background(0xff101010);
   if (mousePressed) {
-    rndr.shape(ce2, mat);
-    rndr.handles(ce2);
+    rndr.shape(infEntity, infMat);
+    rndr.handles(infEntity);
   }
 
   for (int i = 0; i < count; ++i) {
     float prc = i * toPrc;
-    float off = Utils.lerp(offmin, offmax, prc);
-    float dotsiz = Utils.pingPong(dotmin, dotmax, prc);
+    float off = Utils.lerp(offMin, offMax, prc);
 
-    CurveEntity2.eval(ce2, 0, step + off, world, local);
-    rndr.strokeWeight(dotsiz);
-    rndr.stroke(Gradient.eval(grd, prc));
-    rndr.point(world.origin);
+    CurveEntity2.eval(infEntity, 0, step + off, world, local);
+
+    CurveEntity2 de2 = dotEntities[i];
+    de2.moveTo(world.origin);
+    rndr.shape(de2, dotMats[i]);
   }
+}
+
+void keyReleased() {
+  String svg = rndr.toSvgString(dotEntities, dotMats);
+  saveStrings("data/infinity.svg", new String[] {svg});
+  println("Saved to SVG.");
 }

@@ -596,9 +596,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       }
 
       /* If no materials are present, use a default instead. */
-      if ( !includesMats ) {
-         svgp.append(MaterialSolid.defaultSvgMaterial(scale));
-      }
+      if ( !includesMats ) { MaterialSolid.defaultSvgMaterial(svgp, scale); }
 
       int i = 0;
       final String iddot = id + ".";

@@ -2,7 +2,7 @@ import camzup.core.*;
 import camzup.pfriendly.*;
 
 Zup3 rndr;
-MeshEntity3 entity = new MeshEntity3();
+MeshEntity3 entity;
 MaterialPImage mat;
 Vec3 mouse1 = new Vec3();
 
@@ -13,10 +13,8 @@ void settings() {
 void setup() {
   rndr = (Zup3)getGraphics();
 
-  BufferedReader in = createReader("debug.obj");
-  Mesh3[] meshes = Mesh3.fromObj(in, false);
-  
-  entity.append(meshes[0]);
+  String filePath = sketchPath() + "\\data\\debug.obj";
+  entity = ParserObj.load(filePath, false);
   entity.scaleTo(256);
 
   PImage txtr = createImage(512, 512, ARGB);
@@ -35,7 +33,7 @@ void draw() {
     } else if (mouseButton == CENTER) {
       Vec3.mul(mouse1, 37.5, mouse1);
       rndr.strafe(mouse1);
-    } else if(mouseButton == RIGHT) {
+    } else if (mouseButton == RIGHT) {
       rndr.defaultCamera();
     }
   }

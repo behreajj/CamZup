@@ -1751,7 +1751,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public String toSvgElm ( final String id, final float zoom ) {
 
       final StringBuilder svgp = new StringBuilder(1024);
-      svgp.append(MaterialSolid.defaultSvgMaterial(zoom));
+      MaterialSolid.defaultSvgMaterial(svgp, zoom);
       this.toSvgPath(svgp, id);
       svgp.append("</g>\n");
       return svgp.toString();

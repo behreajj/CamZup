@@ -697,9 +697,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       /* If no materials are present, use a default instead. */
       final float scale = zoom * Transform2.minDimension(this.transform);
-      if ( !includesMats ) {
-         svgp.append(MaterialSolid.defaultSvgMaterial(scale));
-      }
+      if ( !includesMats ) { MaterialSolid.defaultSvgMaterial(svgp, scale); }
 
       final Iterator < Mesh2 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
