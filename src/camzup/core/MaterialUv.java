@@ -1,8 +1,10 @@
 package camzup.core;
 
 /**
- * A material which holds data to display textured materials. Holds a
- * transform that may be applied to UV coordinates.
+ * An abstract material which holds data to display textured materials.
+ * Holds a transform that may be applied to UV coordinates. This class
+ * expects to be extended by a sub-class that holds a given image
+ * implementation.
  */
 public abstract class MaterialUv extends Material implements IOriented2,
    ISpatial2, IVolume2 {
@@ -81,6 +83,40 @@ public abstract class MaterialUv extends Material implements IOriented2,
          if ( other.transform != null ) { return false; }
       } else if ( !this.transform.equals(other.transform) ) { return false; }
       return true;
+   }
+
+   /**
+    * Gets this material's transform's texture coordinate location.
+    *
+    * @param target the output vector
+    *
+    * @return the location
+    */
+   @Override
+   public Vec2 getLocation ( final Vec2 target ) {
+
+      return this.transform.getLocation(target);
+   }
+
+   /**
+    * Gets this material's transform's texture coordinate location.
+    *
+    * @return the rotation
+    */
+   @Override
+   public float getRotation ( ) { return this.transform.getRotation(); }
+
+   /**
+    * Gets this material's transform's scale.
+    *
+    * @param target the output vector
+    *
+    * @return the scale
+    */
+   @Override
+   public Vec2 getScale ( final Vec2 target ) {
+
+      return this.transform.getScale(target);
    }
 
    /**

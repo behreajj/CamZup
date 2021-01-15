@@ -848,7 +848,7 @@ public abstract class Convert {
     * Converts a 2D mesh to a PShape. Audits the mesh to see if all of its
     * faces have the same number of vertices. Meshes composed entirely of
     * triangles or quadrilaterals create much more efficient PShapes than
-    * those with ngons.
+    * those with n-sided polygons.
     *
     * @param rndr   the renderer
     * @param source the source mesh
@@ -1532,71 +1532,4 @@ public abstract class Convert {
 
       return curves;
    }
-
-   @Recursive
-   protected static ArrayList < Mesh3 > toMesh3 ( final PShape source,
-      final ArrayList < Mesh3 > meshes ) {
-
-      // TODO: Draft.
-
-      if ( !source.is3D() ) { return meshes; }
-
-      final String sourceName = source.getName();
-      final int family = source.getFamily();
-
-      switch ( family ) {
-
-         case PConstants.GROUP: /* 0 */
-
-            final PShape[] children = source.getChildren();
-            final int childLen = children.length;
-            for ( int i = 0; i < childLen; ++i ) {
-               Convert.toMesh3(children[i], meshes);
-            }
-
-            break;
-
-         case PShape.PRIMITIVE: /* 101 */
-
-            break;
-
-         case PShape.PATH: /* 102 */
-         case PShape.GEOMETRY: /* 103 */
-
-            /* Get vertex data. */
-            // final boolean isogl =
-            // source.getClass().equals(PShapeOpenGL.class);
-
-            final int vertLen = source.getVertexCount();
-            if ( vertLen < 1 ) { break; }
-
-            final Mesh3 mesh = new Mesh3();
-            mesh.name = sourceName;
-            mesh.coords = Vec3.resize(mesh.coords, vertLen);
-            mesh.texCoords = Vec2.resize(mesh.texCoords, vertLen);
-            mesh.normals = Vec3.resize(mesh.normals, vertLen);
-
-            for ( int i = 0; i < vertLen; ++i ) {
-               mesh.coords[i].set(source.getVertexX(i), source.getVertexY(i),
-                  source.getVertexZ(i));
-               mesh.texCoords[i].set(source.getTextureU(i), source.getTextureV(
-                  i));
-               mesh.normals[i].set(source.getNormalX(i), source.getNormalY(i),
-                  source.getNormalZ(i));
-            }
-
-            // How would you get the face data?
-
-            meshes.add(mesh);
-
-            break;
-
-         default:
-
-            System.err.println(family + " is an unsupported family.");
-      }
-
-      return meshes;
-   }
-
 }

@@ -242,8 +242,6 @@ public abstract class ParserObj {
                sb.append(matNamesItr.next());
                if ( matNamesItr.hasNext() ) { sb.append(',').append('\n'); }
             }
-            sb.append(".\nUpdate your mesh's material indices if you");
-            sb.append(" parse these materials.");
          }
       }
 

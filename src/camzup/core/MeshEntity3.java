@@ -422,7 +422,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
             if ( i < matLast ) { pyCd.append(',').append(' '); }
          }
       } else {
-         pyCd.append(MaterialSolid.defaultBlenderMaterial(gamma));
+         MaterialSolid.defaultBlenderMaterial(pyCd, gamma);
       }
 
       pyCd.append("]}\n\nd_objs = D.objects\n");
