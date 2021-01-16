@@ -12,7 +12,7 @@ Table of Contents
   3. [Math & Geometry Conventions](#math--geometry-conventions)
   4. [Kotlin Interoperability](#kotlin-interoperability)
 
-Cam Z-Up is a Java-based library for the creative coding environment [Processing](https://processing.org/). Cam Z-Up flips Processing's default projection so that the positive z axis, (0.0, 0.0, 1.0), is the world up axis; the positive y axis, (0.0, 1.0, 0.0), is forward. This library supports two- and three-dimensional graphics. It also supports "2.5D" graphics.
+Cam Z-Up is a Java-based library for the creative coding environment [Processing](https://processing.org/). Cam Z-Up flips Processing's default projection so that the positive z axis, (0.0, 0.0, 1.0), is the world up axis; the positive y axis, (0.0, 1.0, 0.0), is forward. This library supports two- and three-dimensional graphics.
 
 If you can flip the y-axis by either
 
@@ -30,7 +30,7 @@ Cam Z-Up is split into three packages: `pfriendly`, `core` and `kotlin`. The `pf
 - `YupJ2`, which extends `PGraphicsJava2D`, a.k.a. `JAVA2D`, the default Processing renderer based on the Java AWT library;
 - `Yup2`, which extends `PGraphicsOpenGL`, similar `P2D`, a "2.5D" renderer;
 
-The `FX2D` renderer, based on Java FX, is not fully supported by Processing, so it's not supported here.
+The `FX2D` renderer, based on Java FX, is not fully supported by Processing, so it's not supported here. The `Yup3` renderer treats the positive y axis, (0.0, 1.0, 0.0), as world up.
 
 This library's `core` package includes basic utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3` and `Quaternion`. The division between `pfriendly` and `core` is a protective measure. The aim is to retain the library's usefulness even as bugs in `pfriendly`, or changes to the underlying `Processing` library, cause trouble.
 
@@ -41,15 +41,15 @@ Cam Z-Up is tested with Processing version [4.0 alpha 1](https://github.com/proc
 ### Installation
 
 To install this library from Github, 
-  1. Click on the green `Clone or download` button in the upper right corner of this repository. 
-  2. Select `Download ZIP` to start the download in your browser. (If you know Git or have [Github Desktop](https://desktop.github.com/), you can go one of those routes.)
+  1. Click on the green `Code` button in the upper right corner of this repository. 
+  2. Select `Download ZIP` to start the download in your browser.
   3. Unzip the download.
   4. Navigate through the directory `distribution/Camzup-1/download` until you find a `CamZup-1.zip` file.
   5. Extract the `.zip` file to to your `Processing/libraries/` folder.
      1. You've got the right folder if it contains the sub-folders `examples`, `library`, `reference`, `src` and the file `library.properties`.
      2. If you don't know the location of your `Processing/libraries` folder, look up the information in the Processing IDE by going to `File > Preferences`.
 
-Alternatively, you can navigate to the the distribution `.zip` on Github and download just the file you need.
+Alternatively, you can navigate to the the distribution `.zip` on Github and download just the file you need. If you know [Git](https://git-scm.com/) or have [Github Desktop](https://desktop.github.com/), you can use that instead.
 
 ### Usage
 

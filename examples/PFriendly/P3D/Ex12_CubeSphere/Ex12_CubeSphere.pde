@@ -23,6 +23,7 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
+  frameRate(60.0);
   rndr.textureSampling(TextureSampling.BILINEAR);
 
   txtr = loadImage("texture.png");

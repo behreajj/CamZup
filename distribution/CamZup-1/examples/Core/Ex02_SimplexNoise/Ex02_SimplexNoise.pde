@@ -16,6 +16,7 @@ void settings() {
 
 void setup() {
   colorMode(RGB, 1.0);
+  frameRate(60.0);
 }
 
 void draw() {
@@ -49,6 +50,7 @@ void draw() {
         float fac = Simplex.fbm(noise, Simplex.DEFAULT_SEED,
           octaves, lacunarity, persist);
         fac = fac * 0.5 + 0.5;
+        fac = Utils.clamp01(fac);
         clr.set(fac, fac, fac);
         pixels[idx] = Color.toHexInt(clr);
       } else {

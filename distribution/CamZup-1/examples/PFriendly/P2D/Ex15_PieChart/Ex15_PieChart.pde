@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-YupJ2 rndr;
+YupJ2 graphics;
 int count = 7;
 
 Gradient grd = Gradient.paletteViridis(new Gradient());
@@ -17,7 +17,8 @@ void settings() {
 }
 
 void setup() {
-  rndr = (YupJ2)getGraphics();
+  graphics = (YupJ2)getGraphics();
+  frameRate(60.0);
 
   pie.scaleTo(300);
   PFont font = createFont("Calibri", 20);
@@ -54,11 +55,11 @@ void setup() {
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  
-  rndr.background();
-  rndr.shape(pie, materials);
+
+  graphics.background();
+  graphics.shape(pie, materials);
 
   for (int i = 0; i < count; ++i) {
-    rndr.text(labels[i]);
+    graphics.text(labels[i]);
   }
 }

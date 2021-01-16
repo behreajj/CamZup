@@ -940,7 +940,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       /* Edge case: angles are equal. */
       if ( arcLen1 <= 0.00139f ) {
-         return Curve2.circle(startAngle, radius, 4, 0.0f, 0.0f, target);
+         return Curve2.line(new Vec2(0.0f, 0.0f), Vec2.fromPolar(startAngle,
+            radius, new Vec2()), target);
       }
 
       final float destAngle1 = a1 + arcLen1;

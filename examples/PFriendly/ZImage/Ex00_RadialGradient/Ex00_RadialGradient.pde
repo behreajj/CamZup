@@ -12,6 +12,7 @@ void settings() {
 
 void setup() {
   rndr = (YupJ2)getGraphics();
+  frameRate(60.0);
   img = createImage(512, 512, ARGB);
   Gradient.paletteViridis(gradient);
 }

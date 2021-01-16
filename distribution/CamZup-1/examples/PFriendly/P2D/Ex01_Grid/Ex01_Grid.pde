@@ -9,6 +9,7 @@ void settings() {
 
 void setup() {
   graphics = (Yup2)getGraphics();
+  frameRate(60.0);
 }
 
 void draw() {

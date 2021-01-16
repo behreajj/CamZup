@@ -24,6 +24,7 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
+  frameRate(60.0);
   rndr.textureSampling(TextureSampling.TRILINEAR);
 
   txtr = createImage(512, 512, ARGB);

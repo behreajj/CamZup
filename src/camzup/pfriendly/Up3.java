@@ -207,12 +207,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Places the camera on the negative y axis, such that it is looking up
-    * toward the world origin.
-    */
-   public abstract void camBottom ( );
-
-   /**
     * Places the camera on the negative x axis, such that it is looking East
     * toward the world origin.
     */
@@ -243,12 +237,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * it is looking South toward the world origin.
     */
    public abstract void camSouth ( );
-
-   /**
-    * Places the camera on the positive y axis, such that it is looking down
-    * toward the world origin.
-    */
-   public abstract void camTop ( );
 
    /**
     * Places the camera on the positive x axis, such that it is looking West

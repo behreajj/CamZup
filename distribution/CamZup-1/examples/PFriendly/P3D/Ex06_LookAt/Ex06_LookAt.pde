@@ -12,6 +12,7 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
+  frameRate(60.0);
 
   String filePath = sketchPath() + "\\data\\debug.obj";
   entity = ParserObj.load(filePath, false);

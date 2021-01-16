@@ -26,6 +26,7 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
+  frameRate(60.0);
   rndr.hint(ENABLE_DEPTH_SORT);
   rndr.hint(ENABLE_OPTIMIZED_STROKE);
 
@@ -113,8 +114,6 @@ void keyReleased() {
     rndr.camNorth();
   } else if (keyCode == 51 || keyCode == 131) {
     rndr.camWest();
-  } else if (keyCode == 55 || keyCode == 135) {
-    rndr.camTop();
   } else if (keyCode == 50 || keyCode == 130) {
     rndr.moveByLocal(0.0, -150.0, 0.0);
   } else if (keyCode == 52 || keyCode == 132) {

@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-YupJ2 rndr;
+YupJ2 graphics;
 PImage img;
 Gradient gradient = new Gradient();
 
@@ -10,7 +10,8 @@ void settings() {
 }
 
 void setup() {
-  rndr = (YupJ2)getGraphics();
+  graphics = (YupJ2)getGraphics();
+  frameRate(60.0);
   img = createImage(512, 512, ARGB);
   Gradient.paletteViridis(gradient);
 }
@@ -18,7 +19,7 @@ void setup() {
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
-  Vec2 m = rndr.mouse1s(new Vec2());
+  Vec2 m = graphics.mouse1s(new Vec2());
   ZImage.conic(m, frameCount * 0.02, gradient, img);
-  rndr.image(img);
+  graphics.image(img);
 }

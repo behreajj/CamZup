@@ -14,6 +14,7 @@ void settings() {
 
 void setup() {
   graphics = (YupJ2)getGraphics();
+  frameRate(60.0);
   noStroke();
   img = loadImage("diagnostic.png");
   ZImage.tint(img, 0xffff7f00, 0.25);
@@ -30,11 +31,11 @@ void draw() {
     " | " + modes[currentMode]);
   background(#202020);
   imageMode(currentMode);
-  
+
   graphics.grid(16, 4.0);
   graphics.origin(32.0);
   graphics.image(img,
-    64, 32, img.width/4, img.height/4,
+    64, 32, img.width / 4, img.height / 4,
     0, 0, img.width, img.height);
 }
 

@@ -9,6 +9,7 @@ void settings() {
 }
 
 void setup() {
+  frameRate(60.0);
 }
 
 void draw() {

@@ -163,9 +163,5 @@ void keyReleased() {
   } else if (keyCode == 53 || keyCode == 133) {
     // Five or numpad five.
     useOrtho = !useOrtho;
-  } else if (keyCode == 55 || keyCode == 135) {
-    // Seven or numpad seven.
-    println("TOP");
-    rndr.camTop();
   }
 }

@@ -285,27 +285,19 @@ public abstract class ParserSvg {
 
       final float phi1 = Utils.atan2(sy, sx);
 
-      // TODO: Can be optimized by not wrapping, then subtracting appropriate
-      // amount based on sweep.
       float phiDelta = Utils.modRadians(Utils.atan2(ty, tx) - phi1);
       if ( !sweep ) { phiDelta -= IUtils.TAU; }
 
-      final float phiNorm = phi1 * IUtils.ONE_TAU;
-      final float phiNormWrap = Utils.mod1(phiNorm);
-      final float cosPhi1 = Utils.scNorm(phiNormWrap);
-      final float sinPhi1 = Utils.scNorm(phiNormWrap - 0.25f);
+      final float phiNorm = Utils.mod1(phi1 * IUtils.ONE_TAU);
+      final float cosPhi1 = Utils.scNorm(phiNorm);
+      final float sinPhi1 = Utils.scNorm(phiNorm - 0.25f);
 
       final int segCount = Utils.ceil(Utils.abs(phiDelta)
          * ParserSvg.TWO_DIV_PI);
       final float incr = phiDelta / segCount;
-      final float incrNorm = incr * IUtils.ONE_TAU;
-      final float cosIncr = Utils.scNorm(incr);
-      final float sinIncr = Utils.scNorm(incrNorm - 0.25f);
-
-      /* tan(a * 0.5) = sin(a) / (1.0 + cos(a)) */
-      final float tanIncr = Utils.div(sinIncr, 1.0f + cosIncr);
+      final float tanIncr = Utils.tan(incr * 0.5f);
       final float handle = Utils.sqrt(4.0f + 3.0f * tanIncr * tanIncr) - 1.0f;
-      final float b = sinIncr * handle * IUtils.ONE_THIRD;
+      final float b = Utils.sin(incr) * handle * IUtils.ONE_THIRD;
 
       /* To determine when to wrap to initial point. */
       final int segLast = segCount - 1;
@@ -324,9 +316,9 @@ public abstract class ParserSvg {
 
       for ( int i = 0; i < segCount; ++i ) {
 
-         final float eta = phiNorm + j * incrNorm;
-         final float cosEta = Utils.scNorm(eta);
-         final float sinEta = Utils.scNorm(eta - 0.25f);
+         final float eta = phi1 + j * incr;
+         final float cosEta = Utils.cos(eta);
+         final float sinEta = Utils.sin(eta);
 
          rxSinEta = -rx * sinEta;
          ryCosEta = ry * cosEta;

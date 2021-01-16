@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-YupJ2 rndr;
+YupJ2 graphics;
 int count = 30;
 float toStep = 1.0 / (count - 1.0);
 float maxScale = 0.0;
@@ -15,7 +15,8 @@ void settings() {
 }
 
 void setup() {
-  rndr = (YupJ2)getGraphics();
+  graphics = (YupJ2)getGraphics();
+  frameRate(60.0);
 
   maxScale = 0.9875 * Utils.min(width, height);
   minScale = maxScale * 0.125;
@@ -47,13 +48,13 @@ void draw() {
   }
 
   surface.setTitle(Utils.toFixed(frameRate, 2));
-  rndr.background(#202020);
-  rndr.noStroke();
-  rndr.shape(entity, materials);
+  graphics.background(#202020);
+  graphics.noStroke();
+  graphics.shape(entity, materials);
 }
 
 void mouseReleased() {
-  String result = rndr.toSvgString(entity, materials);
+  String result = graphics.toSvgString(entity, materials);
   saveStrings("data/mesh.svg", new String[] { result });
   println("Saved to svg.");
 }

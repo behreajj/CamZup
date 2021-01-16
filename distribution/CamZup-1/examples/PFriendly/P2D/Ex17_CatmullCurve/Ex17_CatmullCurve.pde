@@ -19,6 +19,7 @@ void settings() {
 
 void setup() {
   rndr = (Yup2)getGraphics();
+  frameRate(60.0);
   ce2.append(catmull);
 
   // Initialize vectors.
@@ -39,7 +40,7 @@ void draw() {
   rndr.background();
   rndr.camera();
   rndr.noFill();
-  rndr.stroke(#00ff7f);
+  rndr.stroke(0x3f003f7f);
   rndr.strokeWeight(3.0);
   rndr.shape(ce2);
   if (showHandles) {
@@ -48,7 +49,7 @@ void draw() {
 }
 
 void keyReleased() {
-  if (key == 'l') { 
+  if (key == 'l') {
     closedLoop = !closedLoop;
   }
   if (key == 'h') {
@@ -59,7 +60,6 @@ void keyReleased() {
 void mouseReleased() {
   randomPoints(Utils.min(width, height) * 0.5);
 }
-
 
 void randomPoints(float edge) {
   for (int i = 0; i < count; ++i) {

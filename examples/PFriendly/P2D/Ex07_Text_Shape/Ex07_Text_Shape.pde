@@ -25,6 +25,7 @@ void settings() {
 
 void setup() {
   graphics = (Yup2)getGraphics();
+  frameRate(60.0);
 
   PImage txtr = createImage(512, 512, ARGB);
   ZImage.rgb(txtr);

@@ -16,6 +16,7 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
+  frameRate(60.0);
 
   Mesh3.dodecahedron(mesh);
   mesh.insetFaces(1, 0.75);

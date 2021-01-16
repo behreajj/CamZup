@@ -36,25 +36,6 @@ public class Zup3 extends Up3 {
    }
 
    /**
-    * Places the camera on the negative z axis, such that it is looking up
-    * toward the world origin.<br>
-    * <br>
-    * Because an exact position on the z axis would interfere with the camera
-    * look at function based on the reference or world up, a small value is
-    * added to the camera's y position.
-    */
-   @Override
-   public void camBottom ( ) {
-
-      // TODO: When called continuously in draw, the camera eventually draws a
-      // blank screen. Same with camDown. Same for Yup3.
-      final float z = this.eyeDist < 128 ? -Zup3.DEFAULT_LOC_Z : -this.eyeDist;
-      final float y = -z * IUp3.POLARITY_OFFSET;
-      this.camera(0.0f, y, z, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
-   }
-
-   /**
     * Places the camera on the negative x axis, such that it is looking East
     * toward the world origin.
     */
@@ -190,25 +171,6 @@ public class Zup3 extends Up3 {
 
       final float y = this.eyeDist < 128 ? -Zup3.DEFAULT_LOC_Y : this.eyeDist;
       this.camera(0.0f, y, 0.0f, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
-         Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
-   }
-
-   /**
-    * Places the camera on the positive z axis, such that it is looking down
-    * toward the world origin.<br>
-    * <br>
-    * Because an exact position on the z axis would interfere with the camera
-    * look at function based on the reference or world up, a small value is
-    * added to the camera's y position.
-    */
-   @Override
-   public void camTop ( ) {
-
-      // TODO: When called continuously in draw, the camera eventually draws a
-      // blank screen. Same with camDown. Same for Yup3.
-      final float z = this.eyeDist < 128 ? Zup3.DEFAULT_LOC_Z : this.eyeDist;
-      final float y = -z * IUp3.POLARITY_OFFSET;
-      this.camera(0.0f, y, z, 0.0f, 0.0f, 0.0f, Zup3.DEFAULT_REF_X,
          Zup3.DEFAULT_REF_Y, Zup3.DEFAULT_REF_Z);
    }
 

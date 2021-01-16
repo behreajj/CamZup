@@ -34,6 +34,7 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
+  frameRate(60.0);
   entity.scaleTo(2.0 * Utils.min(rndr.width, rndr.height));
 }
 

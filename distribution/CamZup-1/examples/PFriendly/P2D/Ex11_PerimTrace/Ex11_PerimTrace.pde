@@ -41,6 +41,7 @@ void settings() {
 
 void setup() {
   graphics = (YupJ2)getGraphics();
+  frameRate(60.0);
 
   // Determine horizontal extents of grid.
   Vec2 ubx = new Vec2(width * 0.4, 0.0);

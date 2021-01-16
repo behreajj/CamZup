@@ -22,6 +22,7 @@ void settings() {
 }
 
 void setup() {
+  frameRate(60.0);
   graphics = (YupJ2)getGraphics();
 }
 

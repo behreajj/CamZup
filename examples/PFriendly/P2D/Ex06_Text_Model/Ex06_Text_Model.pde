@@ -10,6 +10,7 @@ void settings() {
 
 void setup() {
   graphics = (YupJ2)getGraphics();
+  frameRate(60.0);
   noStroke();
 
   font = loadFont("ProcessingSansPro.vlw");
@@ -28,5 +29,5 @@ void draw() {
 
   fill(#1f7fff);
   graphics.text(false, 0.0, -82.0);
-  graphics.text(new Complex(0.0, 1.0), 0.0, -144.0);
+  graphics.text(new Complex(0.5, 0.25), 0.0, -144.0);
 }

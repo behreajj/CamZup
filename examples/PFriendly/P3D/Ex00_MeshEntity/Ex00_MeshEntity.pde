@@ -11,6 +11,7 @@ void settings() {
 
 void setup() {
   graphics3 = (Zup3)getGraphics();
+  frameRate(60.0);
 
   materials = new MaterialSolid[] {
     new MaterialSolid().setFill(#e8455d),

@@ -35,23 +35,6 @@ public class Yup3 extends Up3 {
    }
 
    /**
-    * Places the camera on the negative y axis, such that it is looking up
-    * toward the world origin.<br>
-    * <br>
-    * Because an exact position on the z axis would interfere with the camera
-    * look at function based on the reference or world up, a small value is
-    * added to the camera's y position.
-    */
-   @Override
-   public void camBottom ( ) {
-
-      final float y = this.eyeDist < 128 ? -Yup3.DEFAULT_LOC_Y : this.eyeDist;
-      final float z = -y * IUp3.POLARITY_OFFSET;
-      this.camera(0.0f, y, z, 0.0f, 0.0f, 0.0f, Yup3.DEFAULT_REF_X,
-         Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
-   }
-
-   /**
     * Places the camera on the negative x axis, such that it is looking East
     * toward the world origin.
     */
@@ -195,23 +178,6 @@ public class Yup3 extends Up3 {
 
       final float z = this.eyeDist < 128 ? -Yup3.DEFAULT_LOC_Z : this.eyeDist;
       this.camera(0.0f, 0.0f, z, 0.0f, 0.0f, 0.0f, Yup3.DEFAULT_REF_X,
-         Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
-   }
-
-   /**
-    * Places the camera on the positive y axis, such that it is looking down
-    * toward the world origin.<br>
-    * <br>
-    * Because an exact position on the z axis would interfere with the camera
-    * look at function based on the reference or world up, a small value is
-    * added to the camera's y position.
-    */
-   @Override
-   public void camTop ( ) {
-
-      final float y = this.eyeDist < 128 ? Yup3.DEFAULT_LOC_Y : this.eyeDist;
-      final float z = -y * IUp3.POLARITY_OFFSET;
-      this.camera(0.0f, y, z, 0.0f, 0.0f, 0.0f, Yup3.DEFAULT_REF_X,
          Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
    }
 

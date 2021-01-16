@@ -1103,7 +1103,7 @@ public class Color implements Comparable < Color > {
          }
 
       } catch ( final Exception e ) {
-         // System.out.println(e);
+         e.printStackTrace();
       }
 
       return target.reset();

@@ -1,14 +1,14 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-int count = 80;
+int count = 60;
 float toPrc = 1.0 / (count - 1.0);
 float offMin = -0.45;
 float offMax = 0.45;
 float dotMax = 25.0;
 float dotMin = 10.0;
 
-YupJ2 rndr;
+Yup2 graphics;
 
 Curve2 infinity = Curve2.infinity(new Curve2());
 CurveEntity2 infEntity = new CurveEntity2();
@@ -26,15 +26,15 @@ Ray2 local = new Ray2();
 Ray2 world = new Ray2();
 
 void settings() {
-  size(720, 405, YupJ2.PATH_STR);
+  size(720, 405, Yup2.PATH_STR);
 }
 
 void setup() {
+  graphics = (Yup2)getGraphics();
   frameRate(60.0);
-  rndr = (YupJ2)getGraphics();
 
   infEntity.append(infinity);
-  infEntity.scaleTo((rndr.width + rndr.height) * 0.495);
+  infEntity.scaleTo((graphics.width + graphics.height) * 0.495);
 
   for (int i = 0; i < count; ++i) {
     float prc = i * toPrc;
@@ -59,10 +59,10 @@ void draw() {
   float step = frameCount * 0.0075;
   infEntity.rotateZ(0.01);
 
-  rndr.background(0xff101010);
+  graphics.background(0xff101010);
   if (mousePressed) {
-    rndr.shape(infEntity, infMat);
-    rndr.handles(infEntity);
+    graphics.shape(infEntity, infMat);
+    graphics.handles(infEntity);
   }
 
   for (int i = 0; i < count; ++i) {
@@ -73,12 +73,12 @@ void draw() {
 
     CurveEntity2 de2 = dotEntities[i];
     de2.moveTo(world.origin);
-    rndr.shape(de2, dotMats[i]);
+    graphics.shape(de2, dotMats[i]);
   }
 }
 
 void keyReleased() {
-  String svg = rndr.toSvgString(dotEntities, dotMats);
+  String svg = graphics.toSvgString(dotEntities, dotMats);
   saveStrings("data/infinity.svg", new String[] {svg});
   println("Saved to SVG.");
 }

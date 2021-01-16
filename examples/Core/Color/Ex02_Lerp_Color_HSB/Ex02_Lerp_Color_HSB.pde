@@ -11,6 +11,7 @@ void settings() {
 }
 
 void setup() {
+  frameRate(60.0);
   colorMode(HSB, 1.0);
   graphics = (Yup2)getGraphics();
 }

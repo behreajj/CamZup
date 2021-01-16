@@ -16,6 +16,10 @@ void settings() {
   size(512, 256, Yup2.PATH_STR);
 }
 
+void setup() {
+  frameRate(60.0);
+}
+
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 

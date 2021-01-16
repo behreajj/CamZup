@@ -23,6 +23,7 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
+  frameRate(60.0);
   rndr.textureSampling(TextureSampling.BILINEAR);
 
   txtr = createImage(512, 512, ARGB);
@@ -65,7 +66,7 @@ void draw() {
   rndr.ortho();
   rndr.camera();
   rndr.background();
-  
+
   rndr.shape(me1, textured);
   rndr.shape(me2, textured);
   rndr.shape(me3, wire);

@@ -12,6 +12,7 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
+  frameRate(60.0);
   PFont font = loadFont("AgencyFB-Bold-72.vlw");
   te3 = new TextEntity3(font, msg, clr, 10, 5, CENTER, CENTER, 0.975);
 }
@@ -21,7 +22,7 @@ void draw() {
 
   te3.rotateX(0.01);
   te3.material.moveBy(new Vec2(0.0, -0.005));
-  
+
   rndr.background(#202020);
   rndr.perspective(Utils.PI * 0.125);
   rndr.grid(16, 2.5, #fff7d5, rndr.height);

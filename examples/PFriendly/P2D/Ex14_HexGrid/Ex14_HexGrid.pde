@@ -8,18 +8,18 @@ float faceInset = 0.85;
 float rounding = 0.1;
 float subfRound =0.0375;
 
-Yup2 rndr;
+Yup2 graphics;
 MaterialSolid[] materials;
 MeshEntity2 entity2 = new MeshEntity2();
 Gradient gradient = Gradient.paletteViridis(new Gradient());
 
 void settings() {
   size(720, 405, Yup2.PATH_STR);
-  smooth(8);
 }
 
 void setup() {
-  rndr = (Yup2)getGraphics();
+  graphics = (Yup2)getGraphics();
+  frameRate(60.0);
 
   Mesh2 hex = new Mesh2();
   Mesh2.gridHex(rings, radius, padding, hex);
@@ -66,12 +66,12 @@ void setup() {
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
-  rndr.background(#101010);
-  rndr.shape(entity2, materials);
+  graphics.background(#101010);
+  graphics.shape(entity2, materials);
 }
 
 void mouseReleased() {
-  String str = rndr.toSvgString(entity2, materials);
+  String str = graphics.toSvgString(entity2, materials);
   saveStrings("data/hexGrid.svg", new String[] {str});
   println("Saved to svg.");
 }

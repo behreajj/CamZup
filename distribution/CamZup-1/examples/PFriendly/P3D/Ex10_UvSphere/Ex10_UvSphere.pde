@@ -23,6 +23,7 @@ void settings() {
 
 void setup() {
   rndr = (Zup3)getGraphics();
+  frameRate(60.0);
   rndr.textureSampling(TextureSampling.LINEAR);
 
   PImage txtr = createImage(512, 512, ARGB);
@@ -55,7 +56,7 @@ void draw() {
 
   Mesh3.uvSphere(
     lons, lats,
-    PolyType.TRI,
+    PolyType.QUAD,
     smooth);
 
   flat.set(smooth);
