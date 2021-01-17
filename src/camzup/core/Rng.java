@@ -56,7 +56,7 @@ public class Rng extends Random implements IUtils {
     *
     * @return the seed
     */
-   public long getSeed ( ) { return this.publicSeed; }
+   public synchronized long getSeed ( ) { return this.publicSeed; }
 
    /**
     * Returns a hash code for this random number generator based on its seed.
@@ -156,7 +156,7 @@ public class Rng extends Random implements IUtils {
     * @param seed the seed
     */
    @Override
-   public void setSeed ( final long seed ) {
+   public synchronized void setSeed ( final long seed ) {
 
       super.setSeed(seed);
       this.publicSeed = seed;

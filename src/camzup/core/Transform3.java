@@ -1037,11 +1037,7 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    /**
     * The default easing function.
     */
-   private static Easing EASING;
-
-   static {
-      Transform3.EASING = new Easing();
-   }
+   private static Easing EASING = new Easing();
 
    /**
     * A helper function to set the transform's from either separate vectors or

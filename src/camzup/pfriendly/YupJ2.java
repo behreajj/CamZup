@@ -3234,8 +3234,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.translate(loc.x, loc.y);
       this.rotate(tr.getRotation());
 
-      // TODO: Test...
-      // this.tint(Color.toHexInt(mat.tint));
       this.colorCalc(mat.tint);
       super.tintFromCalc();
       this.tintColorObject = new java.awt.Color(this.tintColor, true);
@@ -3266,7 +3264,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void textSize ( final float size ) {
 
-      // TODO: Research any other ways of improving this mess?
       final float vsz = Utils.max(0.5f, size);
       if ( this.textFont == null ) { this.defaultFontOrDeath("textSize", vsz); }
       this.textSize = vsz;
@@ -3285,13 +3282,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void textureMode ( final int mode ) { /* Unsupported. */ }
 
    /**
-    * Texture wrap is unused by this renderer.
+    * Texture wrap is not supported by this renderer.
     */
    @Override
    public void textureWrap ( final int wrap ) { /* Unsupported. */ }
 
    /**
-    * Sets the renderer's current stroke to the tint.
+    * Tint is not supported by this renderer.
     *
     * @param c the color
     */
@@ -3688,8 +3685,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.backgroundGi = this.calcGi;
       this.backgroundBi = this.calcBi;
       this.backgroundAi = isRgb ? 255 : this.calcAi;
-      // TODO: Throws an error in sonar lint.
-      this.backgroundAlpha = isRgb ? false : this.calcAlpha;
+
+      this.backgroundAlpha = isRgb && this.calcAlpha;
       this.backgroundColor = this.calcColor;
 
       this.backgroundImpl();

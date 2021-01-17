@@ -3283,9 +3283,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int resolution, final float colinearTol, final ArrayList <
          Vec2 > points, final Vec2 dir0, final Vec2 dir1 ) {
 
-      // QUERY Arc-length parameterization? Seems like too computationally
-      // intensive given the result.
-
       /* Open curves not supported. */
       if ( !source.closedLoop ) { return points; }
 

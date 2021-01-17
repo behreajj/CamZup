@@ -68,7 +68,7 @@ public class Vert2 implements Comparable < Vert2 > {
    }
 
    /**
-    * Returns a hash code for this vector based on its x, y and z components.
+    * Returns a hash code for this vertex.
     *
     * @return the hash code
     */

@@ -3089,8 +3089,6 @@ public class Vec3 implements Comparable < Vec3 > {
     */
    public static String toString ( final Vec3[] arr, final int places ) {
 
-      // TODO: Guard against null entries?
-
       final StringBuilder sb = new StringBuilder(1024);
       sb.append('[').append(' ');
 

@@ -1387,6 +1387,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    public static Gradient fromGgr ( final String[] lines, final int samples,
       final Gradient target ) {
 
+      // TODO: Make a separate parser object.
+
       /*
        * Separates parsing from gradient construction. Create a list of float
        * arrays presumed to be of length 13, then demote the list to a 2D array.
@@ -1563,6 +1565,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    @Experimental
    public static Gradient fromGpl ( final String[] lines,
       final Gradient target ) {
+
+      // TODO: Add to separate parser...
 
       target.keys.clear();
 
@@ -1969,8 +1973,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * A helper function for parsing an OBJ file. Attempts to convert a string
-    * to a single precision real number.
+    * A helper function for parsing a file. Attempts to convert a string to a
+    * single precision real number.
     *
     * @param f the string
     *

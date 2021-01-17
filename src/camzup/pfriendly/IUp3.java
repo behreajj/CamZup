@@ -654,16 +654,6 @@ public interface IUp3 extends IUp {
    float GRID_FAC = 32.0f;
 
    /**
-    * Amount to displace the forward axis of a renderer camera when entering a
-    * top or bottom view, thereby preventing a polarity. This constant should
-    * be multiplied by either the camera eye distance or renderer height.
-    *
-    * @see Up3#camTop()
-    * @see Up3#camBottom()
-    */
-   float POLARITY_OFFSET = 0.1f;
-
-   /**
     * Tolerance beneath which the camera's forward direction will be
     * considered the world, or reference, up direction.
     */

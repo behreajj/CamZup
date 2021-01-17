@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup2 rndr;
+Yup2 graphics;
 
 int count = 10;
 Vec2[] arr = new Vec2[count];
@@ -18,7 +18,7 @@ void settings() {
 }
 
 void setup() {
-  rndr = (Yup2)getGraphics();
+  graphics = (Yup2)getGraphics();
   frameRate(60.0);
   ce2.append(catmull);
 
@@ -37,14 +37,14 @@ void draw() {
   Curve2.fromCatmull(closedLoop, arr, tightness, catmull);
 
   surface.setTitle(Utils.toFixed(tightness, 2));
-  rndr.background();
-  rndr.camera();
-  rndr.noFill();
-  rndr.stroke(0x3f003f7f);
-  rndr.strokeWeight(3.0);
-  rndr.shape(ce2);
+  graphics.background();
+  graphics.camera();
+  graphics.noFill();
+  graphics.stroke(0x3f202020);
+  graphics.strokeWeight(3.0);
+  graphics.shape(ce2);
   if (showHandles) {
-    rndr.handles(ce2);
+    graphics.handles(ce2);
   }
 }
 

@@ -95,7 +95,6 @@ public abstract class ParserSvg {
 
       final CurveEntity2 result = new CurveEntity2();
 
-      // TODO: try with resources?
       try {
          /* Sonar lint security complaint recommends these settings. */
          final DocumentBuilderFactory df = DocumentBuilderFactory.newInstance();
@@ -292,6 +291,7 @@ public abstract class ParserSvg {
       final float cosPhi1 = Utils.scNorm(phiNorm);
       final float sinPhi1 = Utils.scNorm(phiNorm - 0.25f);
 
+      // Reintroduce tan half angle identity?
       final int segCount = Utils.ceil(Utils.abs(phiDelta)
          * ParserSvg.TWO_DIV_PI);
       final float incr = phiDelta / segCount;
@@ -659,6 +659,10 @@ public abstract class ParserSvg {
 
          if ( containsTransform ) { matStack.pop(); }
 
+         /*
+          * Node may be a group node, "g", where result is null; a path, which
+          * has multiple curves; or a primitive.
+          */
          if ( isGroup ) {
             final NodeList children = node.getChildNodes();
             final int childLen = children.getLength();
@@ -668,10 +672,6 @@ public abstract class ParserSvg {
             }
          }
 
-         /*
-          * Node may be a group node, "g", where result is null; a path, which
-          * has multiple curves; or a primitive.
-          */
          if ( prim != null ) {
             prim.transform(prev);
             curves.add(prim);
@@ -690,6 +690,15 @@ public abstract class ParserSvg {
       return curves;
    }
 
+   /**
+    * Parses the data in a path node. Because paths may contain sub-paths,
+    * this returns a list of curves.
+    *
+    * @param pathNode the node
+    * @param the      id to name curves
+    *
+    * @return the list of curves
+    */
    protected static ArrayList < Curve2 > parsePath ( final Node pathNode,
       final String name ) {
 
@@ -712,7 +721,7 @@ public abstract class ParserSvg {
             final ArrayList < PathData > paths = new ArrayList <>(16);
             PathData prevData = null;
             for ( int i = 0; i < charsLen; ++i ) {
-               // TODO: Will you need to track a prev char just to avoid
+               // TODO: Will you need to track a previous char just to avoid
                // confusion between unit suffixes and commands?
                final char c = chars[i];
                final int contains = Arrays.binarySearch(ParserSvg.CMDS, c);
@@ -765,11 +774,6 @@ public abstract class ParserSvg {
 
                   case MOVE_TO_ABS:
 
-                     // TODO: Refactor?
-                     // if (!initialMove && target.length() > 1) {
-                     // result.add(target);
-                     // target = new Curve2();
-                     // }
                      if ( !initialMove ) {
                         if ( target.length() > 1 ) { result.add(target); }
                         target = new Curve2(name);
@@ -1189,7 +1193,7 @@ public abstract class ParserSvg {
 
          /* Close loop if the node is a polygon. */
          final String name = polygonNode.getNodeName();
-         if ( name == "polygon" ) {
+         if ( name.equals("polygon") ) {
             target.closedLoop = true;
          } else {
             target.closedLoop = false;
@@ -1268,6 +1272,9 @@ public abstract class ParserSvg {
          final float h = ParserSvg.parsef(hStr, 1.0f);
          final float rx = ParserSvg.parsef(rxStr, 0.0f);
          final float ry = ParserSvg.parsef(ryStr, 0.0f);
+
+         // TODO: Does vertex winding need to be flipped to CW to match rest of
+         // SVG? Same check for other primitives.
 
          /*
           * Corner rounding differs between APIs, so average horizontal and
@@ -1546,8 +1553,15 @@ public abstract class ParserSvg {
     * index in a String with readable data.
     */
    private static class TransformData {
+
+      /**
+       * The transform command.
+       */
       public SvgTransformCmd cmd;
 
+      /**
+       * The list of data.
+       */
       public final ArrayList < String > data;
 
       /**

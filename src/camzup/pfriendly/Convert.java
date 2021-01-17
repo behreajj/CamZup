@@ -67,7 +67,7 @@ public abstract class Convert {
    public static CurveEntity2 toCurveEntity2 ( final PShape source,
       final CurveEntity2 target ) {
 
-      target.appendAll(Convert.toCurve2(source, new ArrayList < Curve2 >()));
+      target.appendAll(Convert.toCurve2(source, new ArrayList <>()));
       target.name = source.getName();
       return target;
    }
@@ -1532,4 +1532,5 @@ public abstract class Convert {
 
       return curves;
    }
+
 }

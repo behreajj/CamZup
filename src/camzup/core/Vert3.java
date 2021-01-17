@@ -60,7 +60,23 @@ public class Vert3 implements Comparable < Vert3 > {
    }
 
    /**
-    * Returns a hash code for this vector based on its x, y and z components.
+    * Tests this vertex for equivalence with another object.
+    *
+    * @param obj the object
+    *
+    * @return the evaluation
+    */
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if ( this == obj ) { return true; }
+      if ( obj == null ) { return false; }
+      if ( this.getClass() != obj.getClass() ) { return false; }
+      return this.equals(( Vert3 ) obj);
+   }
+
+   /**
+    * Returns a hash code for this vertex.
     *
     * @return the hash code
     */

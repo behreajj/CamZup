@@ -917,11 +917,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    /**
     * The default easing function.
     */
-   private static Easing EASING;
-
-   static {
-      Transform2.EASING = new Easing();
-   }
+   private static Easing EASING = new Easing();
 
    /**
     * A helper function to set the transform's from either separate vectors or

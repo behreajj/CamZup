@@ -17,14 +17,14 @@ public abstract class Entity implements IEntity {
     *
     * @see IUtils#hashIdentityString()
     */
-   public Entity ( ) { this.name = this.hashIdentityString(); }
+   protected Entity ( ) { this.name = this.hashIdentityString(); }
 
    /**
     * Creates an entity with a given name.
     *
     * @param name the name
     */
-   public Entity ( final String name ) { this.name = name; }
+   protected Entity ( final String name ) { this.name = name; }
 
    /**
     * Tests this entity for equivalence with an object.
