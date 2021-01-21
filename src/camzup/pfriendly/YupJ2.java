@@ -20,7 +20,6 @@ import camzup.core.CurveEntity2;
 import camzup.core.Experimental;
 import camzup.core.ICurve;
 import camzup.core.IUtils;
-import camzup.core.Img;
 import camzup.core.Knot2;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
@@ -1779,37 +1778,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          uBr * vpd, ( h - vBr ) * vpd,
          imgObs);
       /* @formatter:on */
-   }
-
-   /**
-    * Converts a core image to a Java AWT image, then draws the converted
-    * image to the renderer. Flips the vertical uvs to conform with y up axis.
-    *
-    * @param img the image
-    * @param x0  first corner x of the destination rectangle
-    * @param y0  first corner y of the destination rectangle
-    * @param x1  second corner x of the destination rectangle
-    * @param y1  second corner y of the destination rectangle
-    * @param uTl first corner x of the source rectangle
-    * @param vTl first corner y of the source rectangle
-    * @param uBr second corner x of the source rectangle
-    * @param vBr second corner y of the source rectangle
-    */
-   @Experimental
-   public void imageSource ( final Img img, final int x0, final int y0,
-      final int x1, final int y1, final int uTl, final int vTl, final int uBr,
-      final int vBr ) {
-
-      final int w = img.getWidth();
-      final int h = img.getHeight();
-      final int[] px = img.getPixels();
-      final BufferedImage imgNtv = new BufferedImage(w, h,
-         BufferedImage.TYPE_INT_ARGB);
-      final WritableRaster wr = imgNtv.getRaster();
-      wr.setDataElements(0, 0, w, h, px);
-
-      this.g2.drawImage(imgNtv, x0, y0, x1, y1, uTl, h - vTl, uBr, h - vBr,
-         ( ImageObserver ) null);
    }
 
    /**

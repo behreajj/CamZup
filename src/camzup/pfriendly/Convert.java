@@ -11,7 +11,6 @@ import camzup.core.CurveEntity2;
 import camzup.core.CurveEntity3;
 import camzup.core.Experimental;
 import camzup.core.IUtils;
-import camzup.core.Img;
 import camzup.core.Knot2;
 import camzup.core.Knot3;
 import camzup.core.Mat3;
@@ -34,7 +33,6 @@ import camzup.core.Vec4;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
-import processing.core.PImage;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
@@ -69,51 +67,6 @@ public abstract class Convert {
 
       target.appendAll(Convert.toCurve2(source, new ArrayList <>()));
       target.name = source.getName();
-      return target;
-   }
-
-   /**
-    * Converts a PImage to an image.
-    *
-    * @param pimg   the Processing image
-    * @param target the output image
-    *
-    * @return the image
-    */
-   @Experimental
-   public static Img toImg ( final PImage pimg, final Img target ) {
-
-      pimg.loadPixels();
-      final int fmt = pimg.format;
-      final int[] pxSrc = pimg.pixels;
-      final int pxLen = pxSrc.length;
-      int w = pimg.width;
-      int h = pimg.height;
-      final int wh = w * h;
-      if ( wh != pxLen ) {
-         w *= pimg.pixelDensity;
-         h *= pimg.pixelDensity;
-      }
-
-      target.reallocate(w, h);
-      final int[] pxTrg = target.getPixels();
-
-      switch ( fmt ) {
-
-         /* Seems like color is in AARRGGBB format anyway? */
-         case PConstants.RGB:
-         case PConstants.ARGB:
-            System.arraycopy(pxSrc, 0, pxTrg, 0, pxLen);
-            break;
-
-         case PConstants.ALPHA:
-         default:
-            for ( int i = 0; i < pxLen; ++i ) {
-               final int a = pxSrc[i];
-               pxTrg[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
-            }
-      }
-
       return target;
    }
 
@@ -160,45 +113,6 @@ public abstract class Convert {
          source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
          source.m22, source.m23, source.m30, source.m31, source.m32,
          source.m33);
-   }
-
-   /**
-    * Creates a PImage from an input image.
-    *
-    * @param img the image
-    *
-    * @return the image
-    */
-   public static PImage toPImage ( final Img img ) {
-
-      return Convert.toPImage(img, ( PApplet ) null);
-   }
-
-   /**
-    * Creates a PImage from an input image. The PImage defaults to
-    * {@link PConstants#ARGB} with a pixel density of 1. If
-    * <code>parent</code> is not null, the image's parent is set to the
-    * applet.
-    *
-    * @param img    the image
-    * @param parent the parent
-    *
-    * @return the image
-    */
-   public static PImage toPImage ( final Img img, final PApplet parent ) {
-
-      final PImage pimg = new PImage(img.getWidth(), img.getHeight(),
-         PConstants.ARGB, 1);
-      if ( parent != null ) { pimg.parent = parent; }
-
-      final int[] pxSrc = img.getPixels();
-      final int pxLen = pxSrc.length;
-      final int[] pxTrg = pimg.pixels;
-      pimg.loadPixels();
-      System.arraycopy(pxSrc, 0, pxTrg, 0, pxLen);
-      pimg.updatePixels();
-
-      return pimg;
    }
 
    /**
@@ -1305,10 +1219,15 @@ public abstract class Convert {
 
                   final Vec2 tl = new Vec2(params[0], params[1]);
                   final Vec2 br = new Vec2(params[2], params[3]);
+
                   if ( paramsLen > 7 ) {
+
+                     /* Non-uniform rounded corners. */
                      curves.add(Curve2.rect(tl, br, params[4], params[5],
                         params[6], params[7], new Curve2(sourceName)));
                   } else if ( paramsLen > 4 ) {
+
+                     /* Uniform rounded corners. */
                      curves.add(Curve2.rect(tl, br, params[4], new Curve2(
                         sourceName)));
                   } else {
@@ -1368,6 +1287,8 @@ public abstract class Convert {
             int[] cmds = source.getVertexCodes();
             if ( cmds == null || cmds.length < 1 ) {
                cmds = new int[vertLen];
+
+               /* Technically, not necessary. VERTEX code is 0. */
                for ( int i = 0; i < vertLen; ++i ) {
                   cmds[i] = PConstants.VERTEX;
                }
@@ -1424,7 +1345,7 @@ public abstract class Convert {
                      break;
 
                   case PConstants.BEZIER_VERTEX: /* 1 */
-
+                     
                      currKnot = new Knot2();
                      Knot2.fromSegCubic(
                         source.getVertexX(cursor),

@@ -79,6 +79,7 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
+
       // final long s = System.currentTimeMillis();
       // final CurveEntity2 ce2 = ParserSvg.parse("data/diagnostic.svg");
       // final long e = System.currentTimeMillis();

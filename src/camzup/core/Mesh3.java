@@ -3281,7 +3281,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
        * Follows an icosahedron's net, wherein four skewed rows of triangles
        * proceed from the left edge of the UV map to the right.
        */
-
       target.texCoords = Vec2.resize(target.texCoords, 22);
       target.texCoords[0].set(0.0f, 0.578613f);
       target.texCoords[1].set(0.090909f, 0.421387f);

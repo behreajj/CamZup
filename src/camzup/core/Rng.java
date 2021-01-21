@@ -11,11 +11,6 @@ import java.util.Random;
 public class Rng extends Random implements IUtils {
 
    /**
-    * The random number generator's seed.
-    */
-   private long publicSeed;
-
-   /**
     * The default constructor. Sets the seed to the system's current time in
     * milliseconds.
     *
@@ -31,40 +26,8 @@ public class Rng extends Random implements IUtils {
    public Rng ( final long seed ) {
 
       super(seed);
-      this.publicSeed = seed;
       this.nextFloat();
    }
-
-   /**
-    * Tests this random number generator for equivalence with another object.
-    *
-    * @param obj the object
-    *
-    * @return the equivalence
-    */
-   @Override
-   public boolean equals ( final Object obj ) {
-
-      if ( this == obj ) { return true; }
-      if ( obj == null ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
-      return this.equals(( Rng ) obj);
-   }
-
-   /**
-    * Gets the public seed of the random number generator.
-    *
-    * @return the seed
-    */
-   public synchronized long getSeed ( ) { return this.publicSeed; }
-
-   /**
-    * Returns a hash code for this random number generator based on its seed.
-    *
-    * @return the hash code
-    */
-   @Override
-   public int hashCode ( ) { return ( int ) this.publicSeed; }
 
    /**
     * Returns a pseudo-random, uniformly distributed integer value between 0
@@ -159,22 +122,7 @@ public class Rng extends Random implements IUtils {
    public synchronized void setSeed ( final long seed ) {
 
       super.setSeed(seed);
-      this.publicSeed = seed;
       this.nextFloat();
-   }
-
-   /**
-    * Returns this random number generator's seed as a hash string.
-    */
-   @Override
-   public String toString ( ) {
-
-      final StringBuilder sb = new StringBuilder(64);
-      sb.append("{ seed: ");
-      sb.append(Long.toString(this.publicSeed));
-      sb.append(' ');
-      sb.append('}');
-      return sb.toString();
    }
 
    /**
@@ -243,18 +191,6 @@ public class Rng extends Random implements IUtils {
 
       final float r = this.nextFloat();
       return Utils.floor( ( 1.0f - r ) * lower + r * upper);
-   }
-
-   /**
-    * Tests this random number generator for equivalence with another.
-    *
-    * @param rng the other generator
-    *
-    * @return the equivalence
-    */
-   protected boolean equals ( final Rng rng ) {
-
-      return this.publicSeed == rng.publicSeed;
    }
 
    /**

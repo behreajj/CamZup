@@ -136,3 +136,4 @@ quadtree
 hexagons
 int
 tally
+extrema

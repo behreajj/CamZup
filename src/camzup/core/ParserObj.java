@@ -12,7 +12,7 @@ import java.util.regex.Pattern;
 /**
  * A Wavefront .obj file parser class. Only deals with the portion of the
  * file specification that records meshes, not curve surfaces or
- * poly-lines.
+ * poly-lines. References to materials are ignored.
  */
 public abstract class ParserObj {
 
@@ -337,7 +337,6 @@ public abstract class ParserObj {
       } catch ( final Exception e ) {
          e.printStackTrace();
       }
-
       return result;
    }
 

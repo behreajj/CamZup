@@ -1588,37 +1588,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Creates a curve that approximates Bernoulli's lemniscate, which
-    * resembles an infinity loop (with equally proportioned lobes).
-    *
-    * @param target the output curve
-    *
-    * @return the lemniscate
-    */
-   public static Curve3 infinity ( final Curve3 target ) {
-
-      target.name = "Infinity";
-      target.closedLoop = true;
-      target.resize(6);
-      final Iterator < Knot3 > itr = target.knots.iterator();
-
-      itr.next().set(0.5f, 0.0f, 0.0f, 0.5f, 0.1309615f, 0.0f, 0.5f,
-         -0.1309615f, 0.0f);
-      itr.next().set(0.235709f, 0.166627f, 0.0f, 0.0505335f, 0.114256f, 0.0f,
-         0.361728f, 0.2022675f, 0.0f);
-      itr.next().set(-0.235709f, -0.166627f, 0.0f, -0.361728f, -0.2022675f,
-         0.0f, -0.0505335f, -0.114256f, 0.0f);
-      itr.next().set(-0.5f, 0.0f, 0.0f, -0.5f, 0.1309615f, 0.0f, -0.5f,
-         -0.1309615f, 0.0f);
-      itr.next().set(-0.235709f, 0.166627f, 0.0f, -0.0505335f, 0.114256f, 0.0f,
-         -0.361728f, 0.2022675f, 0.0f);
-      itr.next().set(0.235709f, -0.166627f, 0.0f, 0.361728f, -0.2022675f, 0.0f,
-         0.0505335f, -0.114256f, 0.0f);
-
-      return target;
-   }
-
-   /**
     * Creates a curve that forms a line with an origin and destination.
     *
     * @param origin the origin
@@ -1632,50 +1601,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       return Curve3.line(origin.x, origin.y, origin.z, dest.x, dest.y, dest.z,
          target);
-   }
-
-   /**
-    * Creates a regular convex polygon.
-    *
-    * @param offsetAngle the offset angle
-    * @param radius      the radius
-    * @param knotCount   the number of knots
-    * @param target      the output curve
-    *
-    * @return the polygon
-    *
-    * @see Curve3#straightenHandles(Curve3)
-    */
-   public static Curve3 polygon ( final float offsetAngle, final float radius,
-      final int knotCount, final Curve3 target ) {
-
-      // TODO: overload with defaults for radius and offset angle, switch
-      // knotCount to first param because it doesn't take default arg?
-
-      final float off1 = offsetAngle * IUtils.ONE_TAU;
-      final int vknct = knotCount < 3 ? 3 : knotCount;
-      target.resize(vknct);
-      final float invKnCt = 1.0f / vknct;
-
-      final Iterator < Knot3 > itr = target.knots.iterator();
-      final Knot3 first = itr.next();
-      Knot3 prev = first;
-      prev.coord.set(radius * Utils.scNorm(off1), radius * Utils.scNorm(off1
-         - 0.25f), 0.0f);
-      float i = 1.0f;
-      while ( itr.hasNext() ) {
-         final float theta1 = off1 + i * invKnCt;
-         final Knot3 curr = itr.next();
-         Knot3.fromSegLinear(radius * Utils.scNorm(theta1), radius * Utils
-            .scNorm(theta1 - 0.25f), 0.0f, prev, curr);
-         prev = curr;
-         ++i;
-      }
-      Knot3.fromSegLinear(first.coord, prev, first);
-
-      target.name = "Polygon";
-      target.closedLoop = true;
-      return target;
    }
 
    /**

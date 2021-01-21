@@ -168,6 +168,41 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Adjusts gamma of an image. Raises all color channels to the power given.
+    *
+    * @param source the source image
+    * @param gamma  the gamma correction
+    *
+    * @return the image
+    */
+   public static PImage adjustGamma ( final PImage source, final float gamma ) {
+
+      source.loadPixels();
+
+      final int[] px = source.pixels;
+      final int len = px.length;
+      final double gd = gamma;
+
+      for ( int i = 0; i < len; ++i ) {
+         final int c = px[i];
+
+         final double r = ( c >> 0x10 & 0xff ) * IUtils.ONE_255_D;
+         final double g = ( c >> 0x8 & 0xff ) * IUtils.ONE_255_D;
+         final double b = ( c & 0xff ) * IUtils.ONE_255_D;
+
+         /* @formatter:off */
+         px[i] = c & 0xff000000 |
+            ( int ) ( Math.pow(r, gd) * 255.0d + 0.5d ) << 0x10 |
+            ( int ) ( Math.pow(g, gd) * 255.0d + 0.5d ) << 0x8 |
+            ( int ) ( Math.pow(b, gd) * 255.0d + 0.5d );
+         /* @formatter:on */
+      }
+
+      source.updatePixels();
+      return source;
+   }
+
+   /**
     * Finds the aspect ratio of an image, it's width divided by its height.
     *
     * @param img the image

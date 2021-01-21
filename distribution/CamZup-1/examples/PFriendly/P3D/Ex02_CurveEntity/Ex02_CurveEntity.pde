@@ -25,7 +25,7 @@ void settings() {
 void setup() {
   graphics3 = (Zup3)getGraphics();
   frameRate(60.0);
-  Curve3.infinity(curve);
+  Curve3.circle(curve);
   entity.append(curve);
 }
 
