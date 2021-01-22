@@ -414,6 +414,9 @@ public abstract class Convert {
     */
    public static PShape toPShape ( final PGraphics rndr, final Curve2 source ) {
 
+      // TODO: Support material solid? It could call this function, then call
+      // supplemental style methods...
+
       /*
        * This needs to be of the PATH family because the drawImpl function in
        * PShape is simplistic and buggy. See
@@ -1345,7 +1348,7 @@ public abstract class Convert {
                      break;
 
                   case PConstants.BEZIER_VERTEX: /* 1 */
-                     
+
                      currKnot = new Knot2();
                      Knot2.fromSegCubic(
                         source.getVertexX(cursor),

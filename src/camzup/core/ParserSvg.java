@@ -672,7 +672,12 @@ public abstract class ParserSvg {
             }
          }
 
+         /*
+          * Reverse the vertex winding of any primitives from the Zup3 default
+          * (CCW) to the SVG default (CW).
+          */
          if ( prim != null ) {
+            prim.reverse();
             prim.transform(prev);
             curves.add(prim);
          }
@@ -1273,9 +1278,6 @@ public abstract class ParserSvg {
          final float rx = ParserSvg.parsef(rxStr, 0.0f);
          final float ry = ParserSvg.parsef(ryStr, 0.0f);
 
-         // TODO: Does vertex winding need to be flipped to CW to match rest of
-         // SVG? Same check for other primitives.
-
          /*
           * Corner rounding differs between APIs, so average horizontal and
           * vertical rounding.
@@ -1434,32 +1436,27 @@ public abstract class ParserSvg {
    protected static ArrayList < String > segmentChars ( final char[] chars,
       final int start, final int end, final ArrayList < String > target ) {
 
-      // TODO: Is there a way to do this without StringBuilder? Maybe use new
-      // String(char[], int, int) .
-      StringBuilder sb = new StringBuilder(end - start);
-
+      /*
+       * In web-optimized - i.e., compact - SVGs, a negative sign may be a
+       * delimiter between coordinates.
+       */
+      int count = 0;
       for ( int i = start; i < end; ++i ) {
          final char c = chars[i];
          if ( c == ' ' || c == ',' ) {
-            final String str = sb.toString().trim();
+            final String str = new String(chars, i - count, count).trim();
             if ( !str.isEmpty() ) { target.add(str); }
-            sb = new StringBuilder(end - i);
+            count = 0;
          } else if ( c == '-' || c == '+' ) {
-
-            /*
-             * In web-optimized - i.e., compact - SVGs, a negative sign may be a
-             * delimiter between coordinates.
-             */
-            final String str = sb.toString().trim();
+            final String str = new String(chars, i - count, count).trim();
             if ( !str.isEmpty() ) { target.add(str); }
-            sb = new StringBuilder(end - i);
-            sb.append(c);
+            count = 1;
          } else {
-            sb.append(c);
+            ++count;
          }
       }
 
-      final String str = sb.toString().trim();
+      final String str = new String(chars, end - count, count);
       if ( !str.isEmpty() ) { target.add(str); }
 
       return target;

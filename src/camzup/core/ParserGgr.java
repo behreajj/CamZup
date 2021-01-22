@@ -259,20 +259,15 @@ public abstract class ParserGgr {
                /* Mix color based on color space. Default to RGB. */
                switch ( clrSpc ) {
                   case ParserGgr.SPACE_HSB_CCW:
-
                      ccwMix.apply(ltClr, rtClr, fac, evalClr);
-
                      break;
 
                   case ParserGgr.SPACE_HSB_CW:
-
                      cwMix.apply(ltClr, rtClr, fac, evalClr);
-
                      break;
 
                   case ParserGgr.SPACE_RGB:
                   default:
-
                      rgbaMix.apply(ltClr, rtClr, fac, evalClr);
 
                }

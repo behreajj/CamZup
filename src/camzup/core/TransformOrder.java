@@ -109,53 +109,26 @@ public enum TransformOrder {
     */
    public static TransformOrder reverse ( final TransformOrder order ) {
 
+      /* @formatter:off */
       switch ( order ) {
-         case R:
-            return TransformOrder.R;
-
-         case S:
-            return TransformOrder.S;
-
-         case T:
-            return TransformOrder.T;
-
-         case RS:
-            return TransformOrder.SR;
-
-         case RT:
-            return TransformOrder.TR;
-
-         case SR:
-            return TransformOrder.RS;
-
-         case ST:
-            return TransformOrder.TS;
-
-         case TR:
-            return TransformOrder.RT;
-
-         case TS:
-            return TransformOrder.ST;
-
-         case RST:
-            return TransformOrder.TSR;
-
-         case RTS:
-            return TransformOrder.STR;
-
-         case SRT:
-            return TransformOrder.TRS;
-
-         case STR:
-            return TransformOrder.RTS;
-
-         case TRS:
-            return TransformOrder.SRT;
-
-         case TSR:
-         default:
-            return TransformOrder.RST;
+         case R:   return TransformOrder.R;
+         case S:   return TransformOrder.S;
+         case T:   return TransformOrder.T;
+         case RS:  return TransformOrder.SR;
+         case RT:  return TransformOrder.TR;
+         case SR:  return TransformOrder.RS;
+         case ST:  return TransformOrder.TS;
+         case TR:  return TransformOrder.RT;
+         case TS:  return TransformOrder.ST;
+         case RST: return TransformOrder.TSR;
+         case RTS: return TransformOrder.STR;
+         case SRT: return TransformOrder.TRS;
+         case STR: return TransformOrder.RTS;
+         case TRS: return TransformOrder.SRT;
+         case TSR: 
+         default: return TransformOrder.RST;
       }
+      /* @formatter:on */
    }
 
 }

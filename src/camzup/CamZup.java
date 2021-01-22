@@ -80,19 +80,15 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
 
-      // final long s = System.currentTimeMillis();
-      // final CurveEntity2 ce2 = ParserSvg.parse("data/diagnostic.svg");
-      // final long e = System.currentTimeMillis();
-      // final String pyCd = ce2.toBlenderCode();
-      // final long f = System.currentTimeMillis();
-      // System.out.println("Parse time: " + ( e - s ));
-      // System.out.println("PyCd time: " + ( f - e ));
+      // String str = "5 ,-68.875, 725.26+8001.26";
+      // char[] chars = str.toCharArray();
+      // ArrayList < String > segs = new ArrayList <>();
+      // segmentChars(chars, 0, chars.length, segs);
       //
-      // try {
-      // Files.writeString(Paths.get("data/parsed.py"), pyCd,
-      // StandardCharsets.UTF_8);
-      // } catch ( final IOException ex ) {}
+      // for ( String seg : segs ) { System.out.println(seg); }
    }
+
+
 
    /**
     * Gets the version of the library.

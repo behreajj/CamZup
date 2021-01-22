@@ -1,3 +1,5 @@
+/* Illustration by George Brower. */
+
 import camzup.core.*;
 import camzup.pfriendly.*;
 

@@ -159,6 +159,13 @@ public class MaterialSolid extends Material {
       this.useStroke = useStroke;
    }
 
+   /**
+    * Tests this material for equivalence with another object.
+    * 
+    * @param obj the object
+    * 
+    * @return the evaluation
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -180,18 +187,25 @@ public class MaterialSolid extends Material {
          == other.useFill && this.useStroke == other.useStroke;
    }
 
+   /**
+    * Returns a hash code representation of this material.
+    * 
+    * @return the hash code
+    */
    @Override
    public int hashCode ( ) {
 
       final int prime = 31;
       int result = super.hashCode();
+
+      result = prime * result + ( this.useFill ? 1231 : 1237 );
       result = prime * result + ( this.fill == null ? 0 : this.fill
          .hashCode() );
+
+      result = prime * result + ( this.useStroke ? 1231 : 1237 );
       result = prime * result + ( this.stroke == null ? 0 : this.stroke
          .hashCode() );
       result = prime * result + Float.floatToIntBits(this.strokeWeight);
-      result = prime * result + ( this.useFill ? 1231 : 1237 );
-      result = prime * result + ( this.useStroke ? 1231 : 1237 );
       return result;
    }
 
