@@ -427,8 +427,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param tr the output transform
     *
     * @return this mesh
-    *
-    * @see Curve3#calcDimensions(Curve3, Vec3, Vec3, Vec3)
     */
    public Curve3 reframe ( final Transform3 tr ) {
 
@@ -437,8 +435,11 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       final Vec3 dim = tr.scale;
       final Vec3 lb = tr.location;
-      final Vec3 ub = new Vec3();
-      Curve3.calcDimensions(this, dim, lb, ub);
+      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
+         Float.MIN_VALUE);
+      lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
+      Curve3.accumMinMax(this, lb, ub);
+      Vec3.sub(ub, lb, dim);
 
       lb.x = 0.5f * ( lb.x + ub.x );
       lb.y = 0.5f * ( lb.y + ub.y );
@@ -448,13 +449,16 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Iterator < Knot3 > itr = this.knots.iterator();
       while ( itr.hasNext() ) {
          final Knot3 kn = itr.next();
+
          final Vec3 co = kn.coord;
-         final Vec3 fh = kn.foreHandle;
-         final Vec3 rh = kn.rearHandle;
          Vec3.sub(co, lb, co);
          Vec3.mul(co, scl, co);
+
+         final Vec3 fh = kn.foreHandle;
          Vec3.sub(fh, lb, fh);
          Vec3.mul(fh, scl, fh);
+
+         final Vec3 rh = kn.rearHandle;
          Vec3.sub(rh, lb, rh);
          Vec3.mul(rh, scl, rh);
       }
@@ -740,14 +744,15 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this mesh
     *
-    * @see Curve3#calcDimensions(Curve3, Vec3, Vec3, Vec3)
     * @see Curve3#translate(Vec3)
     */
    public Curve3 toOrigin ( final Transform3 tr ) {
 
-      final Vec3 lb = new Vec3();
-      final Vec3 ub = new Vec3();
-      Curve3.calcDimensions(this, new Vec3(), lb, ub);
+      final Vec3 lb = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE,
+         Float.MAX_VALUE);
+      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
+         Float.MIN_VALUE);
+      Curve3.accumMinMax(this, lb, ub);
 
       lb.x = -0.5f * ( lb.x + ub.x );
       lb.y = -0.5f * ( lb.y + ub.y );
@@ -976,7 +981,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
       final float arcLen1 = Utils.mod1(b1 - a1);
 
-      if ( arcLen1 <= 0.00139f ) { return target; }
+      if ( arcLen1 <= 0.00139f ) {
+         return Curve3.line(new Vec3(), Vec3.fromPolar(startAngle, radius,
+            new Vec3()), target);
+      }
 
       final float destAngle1 = a1 + arcLen1;
       final int knotCount = Utils.ceil(1 + 4 * arcLen1);
@@ -1031,46 +1039,15 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @param curve  the curve
     * @param target the output dimensions
-    * @param lb     the lower bound
-    * @param ub     the upper bound
     *
     * @return the dimensions
     */
-   public static Vec3 calcDimensions ( final Curve3 curve, final Vec3 target,
-      final Vec3 lb, final Vec3 ub ) {
+   public static Bounds3 calcBounds ( final Curve3 curve,
+      final Bounds3 target ) {
 
-      lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
-      ub.set(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
-      final Iterator < Knot3 > itr = curve.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot3 kn = itr.next();
-         final Vec3 co = kn.coord;
-         final Vec3 fh = kn.foreHandle;
-         final Vec3 rh = kn.rearHandle;
-
-         if ( co.x < lb.x ) { lb.x = co.x; }
-         if ( co.x > ub.x ) { ub.x = co.x; }
-         if ( co.y < lb.y ) { lb.y = co.y; }
-         if ( co.y > ub.y ) { ub.y = co.y; }
-         if ( co.z < lb.z ) { lb.z = co.z; }
-         if ( co.z > ub.z ) { ub.z = co.z; }
-
-         if ( fh.x < lb.x ) { lb.x = fh.x; }
-         if ( fh.x > ub.x ) { ub.x = fh.x; }
-         if ( fh.y < lb.y ) { lb.y = fh.y; }
-         if ( fh.y > ub.y ) { ub.y = fh.y; }
-         if ( fh.z < lb.z ) { lb.z = fh.z; }
-         if ( fh.z > ub.z ) { ub.z = fh.z; }
-
-         if ( rh.x < lb.x ) { lb.x = rh.x; }
-         if ( rh.x > ub.x ) { ub.x = rh.x; }
-         if ( rh.y < lb.y ) { lb.y = rh.y; }
-         if ( rh.y > ub.y ) { ub.y = rh.y; }
-         if ( rh.z < lb.z ) { lb.z = rh.z; }
-         if ( rh.z > ub.z ) { ub.z = rh.z; }
-      }
-
-      return Vec3.sub(ub, lb, target);
+      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+      Curve3.accumMinMax(curve, target.min, target.max);
+      return target;
    }
 
    /**
@@ -1805,6 +1782,48 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       }
 
       return target;
+   }
+
+   /**
+    * An internal helper function to accumulate the minimum and maximum points
+    * in a curve. This may be called either by a single curve, or by a curve
+    * entity seeking the minimum and maximum for a collection of curves.
+    *
+    * @param curve the curve
+    * @param lb    the lower bound
+    * @param ub    the upper bound
+    */
+   static void accumMinMax ( final Curve3 curve, final Vec3 lb,
+      final Vec3 ub ) {
+
+      final Iterator < Knot3 > itr = curve.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot3 kn = itr.next();
+         final Vec3 co = kn.coord;
+         final Vec3 fh = kn.foreHandle;
+         final Vec3 rh = kn.rearHandle;
+
+         if ( co.x < lb.x ) { lb.x = co.x; }
+         if ( co.x > ub.x ) { ub.x = co.x; }
+         if ( co.y < lb.y ) { lb.y = co.y; }
+         if ( co.y > ub.y ) { ub.y = co.y; }
+         if ( co.z < lb.z ) { lb.z = co.z; }
+         if ( co.z > ub.z ) { ub.z = co.z; }
+
+         if ( fh.x < lb.x ) { lb.x = fh.x; }
+         if ( fh.x > ub.x ) { ub.x = fh.x; }
+         if ( fh.y < lb.y ) { lb.y = fh.y; }
+         if ( fh.y > ub.y ) { ub.y = fh.y; }
+         if ( fh.z < lb.z ) { lb.z = fh.z; }
+         if ( fh.z > ub.z ) { ub.z = fh.z; }
+
+         if ( rh.x < lb.x ) { lb.x = rh.x; }
+         if ( rh.x > ub.x ) { ub.x = rh.x; }
+         if ( rh.y < lb.y ) { lb.y = rh.y; }
+         if ( rh.y > ub.y ) { ub.y = rh.y; }
+         if ( rh.z < lb.z ) { lb.z = rh.z; }
+         if ( rh.z > ub.z ) { ub.z = rh.z; }
+      }
    }
 
    /**

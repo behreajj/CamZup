@@ -79,7 +79,6 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-
       // String str = "5 ,-68.875, 725.26+8001.26";
       // char[] chars = str.toCharArray();
       // ArrayList < String > segs = new ArrayList <>();
@@ -87,8 +86,6 @@ public class CamZup {
       //
       // for ( String seg : segs ) { System.out.println(seg); }
    }
-
-
 
    /**
     * Gets the version of the library.

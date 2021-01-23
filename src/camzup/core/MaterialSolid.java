@@ -161,9 +161,9 @@ public class MaterialSolid extends Material {
 
    /**
     * Tests this material for equivalence with another object.
-    * 
+    *
     * @param obj the object
-    * 
+    *
     * @return the evaluation
     */
    @Override
@@ -189,7 +189,7 @@ public class MaterialSolid extends Material {
 
    /**
     * Returns a hash code representation of this material.
-    * 
+    *
     * @return the hash code
     */
    @Override

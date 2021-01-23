@@ -11,7 +11,6 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
-import java.awt.image.WritableRaster;
 
 import camzup.core.Bounds2;
 import camzup.core.Color;
@@ -1815,11 +1814,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       /* This is one of the bigger bottlenecks. */
       img.loadPixels();
-      final int type = img.format == PConstants.RGB ? BufferedImage.TYPE_INT_RGB
-         : BufferedImage.TYPE_INT_ARGB;
-      final BufferedImage imgNtv = new BufferedImage(pw, ph, type);
-      final WritableRaster wr = imgNtv.getRaster();
-      wr.setDataElements(0, 0, pw, ph, img.pixels);
+      final BufferedImage imgNtv = new BufferedImage(pw, ph, img.format
+         == PConstants.RGB ? BufferedImage.TYPE_INT_RGB
+            : BufferedImage.TYPE_INT_ARGB);
+      imgNtv.getRaster().setDataElements(0, 0, pw, ph, img.pixels);
 
       this.imageSource(imgNtv, img.pixelDensity, null, x0, y0, x1, y1, uTl, vTl,
          uBr, vBr);

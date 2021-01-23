@@ -402,8 +402,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param tr the output transform
     *
     * @return this mesh
-    *
-    * @see Curve2#calcDimensions(Curve2, Vec2, Vec2, Vec2)
     */
    public Curve2 reframe ( final Transform2 tr ) {
 
@@ -412,8 +410,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       final Vec2 dim = tr.scale;
       final Vec2 lb = tr.location;
-      final Vec2 ub = new Vec2();
-      Curve2.calcDimensions(this, dim, lb, ub);
+      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      lb.set(Float.MAX_VALUE, Float.MAX_VALUE);
+      Curve2.accumMinMax(this, lb, ub);
+      Vec2.sub(ub, lb, dim);
 
       lb.x = 0.5f * ( lb.x + ub.x );
       lb.y = 0.5f * ( lb.y + ub.y );
@@ -422,13 +422,16 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Iterator < Knot2 > itr = this.knots.iterator();
       while ( itr.hasNext() ) {
          final Knot2 kn = itr.next();
+
          final Vec2 co = kn.coord;
-         final Vec2 fh = kn.foreHandle;
-         final Vec2 rh = kn.rearHandle;
          Vec2.sub(co, lb, co);
          Vec2.mul(co, scl, co);
+
+         final Vec2 fh = kn.foreHandle;
          Vec2.sub(fh, lb, fh);
          Vec2.mul(fh, scl, fh);
+
+         final Vec2 rh = kn.rearHandle;
          Vec2.sub(rh, lb, rh);
          Vec2.mul(rh, scl, rh);
       }
@@ -611,14 +614,13 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return this mesh
     *
-    * @see Curve2#calcDimensions(Curve2, Vec2, Vec2, Vec2)
     * @see Curve2#translate(Vec2)
     */
    public Curve2 toOrigin ( final Transform2 tr ) {
 
-      final Vec2 lb = new Vec2();
-      final Vec2 ub = new Vec2();
-      Curve2.calcDimensions(this, new Vec2(), lb, ub);
+      final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
+      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      Curve2.accumMinMax(this, lb, ub);
 
       lb.x = -0.5f * ( lb.x + ub.x );
       lb.y = -0.5f * ( lb.y + ub.y );
@@ -940,8 +942,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       /* Edge case: angles are equal. */
       if ( arcLen1 <= 0.00139f ) {
-         return Curve2.line(new Vec2(0.0f, 0.0f), Vec2.fromPolar(startAngle,
-            radius, new Vec2()), target);
+         return Curve2.line(new Vec2(), Vec2.fromPolar(startAngle, radius,
+            new Vec2()), target);
       }
 
       final float destAngle1 = a1 + arcLen1;
@@ -1069,11 +1071,11 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return the dimensions
     */
-   public static Vec2 calcDimensions ( final Curve2 curve, final Vec2 target,
-      final Vec2 lb, final Vec2 ub ) {
+   public static Bounds2 calcBounds ( final Curve2 curve,
+      final Bounds2 target ) {
 
       /*
-       * For information on finding AABB:
+       * For information on finding AABB by extrema:
        * http://nishiohirokazu.blogspot.com/2009/06/how-to-calculate-bezier-
        * curves-bounding.html , https://stackoverflow.com/questions/2587751/ //
        * an-algorithm-to-find-bounding-box-of-closed-bezier-curves ,
@@ -1082,32 +1084,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
        * https://pomax.github.io/bezierinfo/#derivatives
        */
 
-      lb.set(Float.MAX_VALUE, Float.MAX_VALUE);
-      ub.set(Float.MIN_VALUE, Float.MIN_VALUE);
-      final Iterator < Knot2 > itr = curve.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot2 kn = itr.next();
-         final Vec2 co = kn.coord;
-         final Vec2 fh = kn.foreHandle;
-         final Vec2 rh = kn.rearHandle;
-
-         if ( co.x < lb.x ) { lb.x = co.x; }
-         if ( co.x > ub.x ) { ub.x = co.x; }
-         if ( co.y < lb.y ) { lb.y = co.y; }
-         if ( co.y > ub.y ) { ub.y = co.y; }
-
-         if ( fh.x < lb.x ) { lb.x = fh.x; }
-         if ( fh.x > ub.x ) { ub.x = fh.x; }
-         if ( fh.y < lb.y ) { lb.y = fh.y; }
-         if ( fh.y > ub.y ) { ub.y = fh.y; }
-
-         if ( rh.x < lb.x ) { lb.x = rh.x; }
-         if ( rh.x > ub.x ) { ub.x = rh.x; }
-         if ( rh.y < lb.y ) { lb.y = rh.y; }
-         if ( rh.y > ub.y ) { ub.y = rh.y; }
-      }
-
-      return Vec2.sub(ub, lb, target);
+      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+      Curve2.accumMinMax(curve, target.min, target.max);
+      return target;
    }
 
    /**
@@ -1985,6 +1964,42 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       }
 
       return target;
+   }
+
+   /**
+    * An internal helper function to accumulate the minimum and maximum points
+    * in a curve. This may be called either by a single curve, or by a curve
+    * entity seeking the minimum and maximum for a collection of curves.
+    *
+    * @param curve the curve
+    * @param lb    the lower bound
+    * @param ub    the upper bound
+    */
+   static void accumMinMax ( final Curve2 curve, final Vec2 lb,
+      final Vec2 ub ) {
+
+      final Iterator < Knot2 > itr = curve.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot2 kn = itr.next();
+         final Vec2 co = kn.coord;
+         final Vec2 fh = kn.foreHandle;
+         final Vec2 rh = kn.rearHandle;
+
+         if ( co.x < lb.x ) { lb.x = co.x; }
+         if ( co.x > ub.x ) { ub.x = co.x; }
+         if ( co.y < lb.y ) { lb.y = co.y; }
+         if ( co.y > ub.y ) { ub.y = co.y; }
+
+         if ( fh.x < lb.x ) { lb.x = fh.x; }
+         if ( fh.x > ub.x ) { ub.x = fh.x; }
+         if ( fh.y < lb.y ) { lb.y = fh.y; }
+         if ( fh.y > ub.y ) { ub.y = fh.y; }
+
+         if ( rh.x < lb.x ) { lb.x = rh.x; }
+         if ( rh.x > ub.x ) { ub.x = rh.x; }
+         if ( rh.y < lb.y ) { lb.y = rh.y; }
+         if ( rh.y > ub.y ) { ub.y = rh.y; }
+      }
    }
 
    /**

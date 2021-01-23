@@ -1397,6 +1397,55 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
+    * Returns a sepia tone palette, consisting of 8 keys.
+    * 
+    * @param target the output gradient
+    * 
+    * @return the gradient
+    */
+   public static Gradient paletteSepia ( final Gradient target ) {
+
+      /*
+       * References: http://leware.net/photo/blogSepia.html : y.r = 0.393f * x.r
+       * + 0.769f * x.g + 0.189f * x.b; y.g = 0.349f * x.r + 0.686f * x.g +
+       * 0.168f * x.b, y.b = 0.272f * x.r + 0.534f * x.g + 0.131f * x.b;
+       * https://en.wikipedia.org/wiki/List_of_software_palettes#
+       * Color_gradient_palettes ,
+       * http://pixeljoint.com/forum/forum_posts.asp?TID=10695&PID=135409#135409
+       */
+
+      final TreeSet < ColorKey > keys = target.keys;
+      keys.clear();
+
+      // keys.add(new ColorKey(0.0f, 0.1427647f, 0.11697831f, 0.092218615f));
+      // keys.add(new ColorKey(0.14285715f, 0.2783132f, 0.22656064f,
+      // 0.18545058f));
+      // keys.add(new ColorKey(0.2857143f, 0.398623f, 0.33107126f,
+      // 0.28259718f));
+      // keys.add(new ColorKey(0.42857146f, 0.5233715f, 0.4514219f,
+      // 0.37700084f));
+      // keys.add(new ColorKey(0.5714286f, 0.648874f, 0.5706483f, 0.45196402f));
+      // keys.add(new ColorKey(0.71428573f, 0.7824268f, 0.6984257f,
+      // 0.5348569f));
+      // keys.add(new ColorKey(0.8571429f, 0.88333535f, 0.836489f,
+      // 0.64836895f));
+      // keys.add(new ColorKey(1.0f, 0.97749025f, 0.9324804f, 0.7486266f));
+
+      keys.add(new ColorKey(0.0f, 0.1427647f, 0.11697831f, 0.092218615f));
+      keys.add(new ColorKey(0.14285715f, 0.26946896f, 0.21609344f,
+         0.17169857f));
+      keys.add(new ColorKey(0.2857143f, 0.34644794f, 0.2739504f, 0.20895004f));
+      keys.add(new ColorKey(0.42857146f, 0.41537726f, 0.32903144f,
+         0.22951856f));
+      keys.add(new ColorKey(0.5714286f, 0.5508117f, 0.44238427f, 0.30121392f));
+      keys.add(new ColorKey(0.71428573f, 0.7192731f, 0.61115533f, 0.4397068f));
+      keys.add(new ColorKey(0.8571429f, 0.8640174f, 0.8078519f, 0.6233901f));
+      keys.add(new ColorKey(1.0f, 0.97749025f, 0.9324804f, 0.7486266f));
+
+      return target;
+   }
+
+   /**
     * Returns the Magma color palette, consisting of 16 keys.
     *
     * @param target the output gradient
@@ -1719,44 +1768,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          }
       }
 
-      return target;
-   }
-
-   /**
-    * A helper function for parsing a file. Attempts to convert a string to a
-    * single precision real number.
-    *
-    * @param f the string
-    *
-    * @return the number
-    */
-   protected static float floatFromStr ( final String f ) {
-
-      float target = 0.0f;
-      try {
-         target = Float.parseFloat(f);
-      } catch ( final Exception e ) {
-         target = 0.0f;
-      }
-      return target;
-   }
-
-   /**
-    * A helper function for parsing an gradient and palette files. Attempts to
-    * convert a string to an integer.
-    *
-    * @param i the string
-    *
-    * @return the integer
-    */
-   protected static int intFromStr ( final String i ) {
-
-      int target = 0;
-      try {
-         target = Integer.parseInt(i);
-      } catch ( final Exception e ) {
-         target = 0;
-      }
       return target;
    }
 

@@ -137,3 +137,4 @@ hexagons
 int
 tally
 extrema
+sepia

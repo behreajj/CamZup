@@ -1103,8 +1103,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param tr the output transform
     *
     * @return this mesh
-    *
-    * @see Mesh3#calcDimensions(Mesh3, Vec3, Vec3, Vec3)
     */
    public Mesh3 reframe ( final Transform3 tr ) {
 
@@ -1113,8 +1111,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       final Vec3 dim = tr.scale;
       final Vec3 lb = tr.location;
-      final Vec3 ub = new Vec3();
-      Mesh3.calcDimensions(this, dim, lb, ub);
+      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
+         Float.MIN_VALUE);
+      lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
+      Mesh3.accumMinMax(this, lb, ub);
+      Vec3.sub(ub, lb, dim);
 
       lb.x = 0.5f * ( lb.x + ub.x );
       lb.y = 0.5f * ( lb.y + ub.y );
@@ -2008,14 +2009,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     *
-    * @see Mesh3#calcDimensions(Mesh3, Vec3, Vec3, Vec3)
     * @see Mesh3#translate(Vec3)
     */
    public Mesh3 toOrigin ( final Transform3 tr ) {
 
-      final Vec3 lb = new Vec3();
-      final Vec3 ub = new Vec3();
-      Mesh3.calcDimensions(this, new Vec3(), lb, ub);
+      final Vec3 lb = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE,
+         Float.MAX_VALUE);
+      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
+         Float.MIN_VALUE);
+      Mesh3.accumMinMax(this, lb, ub);
 
       lb.x = -0.5f * ( lb.x + ub.x );
       lb.y = -0.5f * ( lb.y + ub.y );
@@ -2478,37 +2480,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @param mesh   the mesh
     * @param target the output dimensions
-    * @param lb     the lower bound
-    * @param ub     the upper bound
     *
     * @return the dimensions
     */
-   public static Vec3 calcDimensions ( final Mesh3 mesh, final Vec3 target,
-      final Vec3 lb, final Vec3 ub ) {
+   public static Bounds3 calcBounds ( final Mesh3 mesh, final Bounds3 target ) {
 
-      lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
-      ub.set(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
-
-      final Vec3[] coords = mesh.coords;
-      final int len = coords.length;
-
-      for ( int i = 0; i < len; ++i ) {
-
-         final Vec3 coord = coords[i];
-         final float x = coord.x;
-         final float y = coord.y;
-         final float z = coord.z;
-
-         /* Minimum, maximum need individual if checks, not if-else. */
-         if ( x < lb.x ) { lb.x = x; }
-         if ( x > ub.x ) { ub.x = x; }
-         if ( y < lb.y ) { lb.y = y; }
-         if ( y > ub.y ) { ub.y = y; }
-         if ( z < lb.z ) { lb.z = z; }
-         if ( z > ub.z ) { ub.z = z; }
-      }
-
-      return Vec3.sub(ub, lb, target);
+      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+      Mesh3.accumMinMax(mesh, target.min, target.max);
+      return target;
    }
 
    /**
@@ -4358,6 +4337,37 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       return Mesh3.uvSphere(IMesh.DEFAULT_CIRCLE_SECTORS,
          IMesh.DEFAULT_CIRCLE_SECTORS >> 1, target);
+   }
+
+   /**
+    * An internal helper function to accumulate the minimum and maximum points
+    * in a mesh. This may be called either by a single mesh, or by a mesh
+    * entity seeking the minimum and maximum for a collection of meshes.
+    *
+    * @param mesh the mesh
+    * @param lb   the lower bound
+    * @param ub   the upper bound
+    */
+   static void accumMinMax ( final Mesh3 mesh, final Vec3 lb, final Vec3 ub ) {
+
+      final Vec3[] coords = mesh.coords;
+      final int len = coords.length;
+
+      for ( int i = 0; i < len; ++i ) {
+
+         final Vec3 coord = coords[i];
+         final float x = coord.x;
+         final float y = coord.y;
+         final float z = coord.z;
+
+         /* Minimum, maximum need individual if checks, not if-else. */
+         if ( x < lb.x ) { lb.x = x; }
+         if ( x > ub.x ) { ub.x = x; }
+         if ( y < lb.y ) { lb.y = y; }
+         if ( y > ub.y ) { ub.y = y; }
+         if ( z < lb.z ) { lb.z = z; }
+         if ( z > ub.z ) { ub.z = z; }
+      }
    }
 
    /**

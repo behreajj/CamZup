@@ -19,7 +19,7 @@ void setup() {
   me3 = ParserObj.load(filePath, false);
   long end = System.currentTimeMillis();
   println("Elapsed Time: " + (end - start));
-  
+
   me3.get(0).reframe(me3.transform);
   me3.scaleTo(256);
 
@@ -31,8 +31,9 @@ void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
   me3.rotateZ(0.02);
-  
+
   graphics.background();
+  graphics.origin();
   graphics.lights();
   graphics.shape(me3, material);
 }

@@ -90,7 +90,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return this mesh
     *
-    * @see Mesh2#calcDimensions(Mesh2, Vec2, Vec2, Vec2)
     * @see Vec2#div(float, Vec2, Vec2)
     */
    public Mesh2 calcUvs ( ) {
@@ -98,7 +97,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Vec2 dim = new Vec2();
       final Vec2 lb = new Vec2();
       final Vec2 ub = new Vec2();
-      Mesh2.calcDimensions(this, dim, lb, ub);
+      lb.set(Float.MAX_VALUE, Float.MAX_VALUE);
+      ub.set(Float.MIN_VALUE, Float.MIN_VALUE);
+      Mesh2.accumMinMax(this, lb, ub);
+      Vec2.sub(ub, lb, dim);
 
       final int len = this.coords.length;
       this.texCoords = Vec2.resize(this.texCoords, len);
@@ -753,8 +755,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @param tr the output transform
     *
     * @return this mesh
-    *
-    * @see Mesh2#calcDimensions(Mesh2, Vec2, Vec2, Vec2)
     */
    public Mesh2 reframe ( final Transform2 tr ) {
 
@@ -763,8 +763,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final Vec2 dim = tr.scale;
       final Vec2 lb = tr.location;
-      final Vec2 ub = new Vec2();
-      Mesh2.calcDimensions(this, dim, lb, ub);
+      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      lb.set(Float.MAX_VALUE, Float.MAX_VALUE);
+      Mesh2.accumMinMax(this, lb, ub);
+      Vec2.sub(ub, lb, dim);
 
       lb.x = 0.5f * ( lb.x + ub.x );
       lb.y = 0.5f * ( lb.y + ub.y );
@@ -1651,7 +1653,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return this mesh
     *
-    * @see Mesh2#calcDimensions(Mesh2, Vec2, Vec2, Vec2)
     * @see Mesh2#translate(Vec2)
     * @see Vec2#negate(Vec2, Vec2)
     * @see Transform2#rotateTo(float)
@@ -1659,9 +1660,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public Mesh2 toOrigin ( final Transform2 tr ) {
 
-      final Vec2 lb = new Vec2();
-      final Vec2 ub = new Vec2();
-      Mesh2.calcDimensions(this, new Vec2(), lb, ub);
+      final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
+      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      Mesh2.accumMinMax(this, lb, ub);
 
       lb.x = -0.5f * ( lb.x + ub.x );
       lb.y = -0.5f * ( lb.y + ub.y );
@@ -2275,34 +2276,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @param mesh   the mesh
     * @param target the output dimensions
-    * @param lb     the lower bound
-    * @param ub     the upper bound
     *
     * @return the dimensions
     */
-   public static Vec2 calcDimensions ( final Mesh2 mesh, final Vec2 target,
-      final Vec2 lb, final Vec2 ub ) {
+   public static Bounds2 calcBounds ( final Mesh2 mesh, final Bounds2 target ) {
 
-      lb.set(Float.MAX_VALUE, Float.MAX_VALUE);
-      ub.set(Float.MIN_VALUE, Float.MIN_VALUE);
-
-      final Vec2[] coords = mesh.coords;
-      final int len = coords.length;
-
-      for ( int i = 0; i < len; ++i ) {
-
-         final Vec2 coord = coords[i];
-         final float x = coord.x;
-         final float y = coord.y;
-
-         /* Minimum, maximum need separate if checks, not if-else. */
-         if ( x < lb.x ) { lb.x = x; }
-         if ( x > ub.x ) { ub.x = x; }
-         if ( y < lb.y ) { lb.y = y; }
-         if ( y > ub.y ) { ub.y = y; }
-      }
-
-      return Vec2.sub(ub, lb, target);
+      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+      Mesh2.accumMinMax(mesh, target.min, target.max);
+      return target;
    }
 
    /**
@@ -3258,6 +3239,33 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       target.faces = fsTrg;
 
       return target;
+   }
+
+   /**
+    * An internal helper function to accumulate the minimum and maximum points
+    * in a mesh. This may be called either by a single mesh, or by a mesh
+    * entity seeking the minimum and maximum for a collection of meshes.
+    *
+    * @param mesh the mesh
+    * @param lb   the lower bound
+    * @param ub   the upper bound
+    */
+   static void accumMinMax ( final Mesh2 mesh, final Vec2 lb, final Vec2 ub ) {
+
+      final Vec2[] coords = mesh.coords;
+      final int len = coords.length;
+
+      for ( int i = 0; i < len; ++i ) {
+         final Vec2 coord = coords[i];
+         final float x = coord.x;
+         final float y = coord.y;
+
+         /* Minimum, maximum need separate if checks, not if-else. */
+         if ( x < lb.x ) { lb.x = x; }
+         if ( x > ub.x ) { ub.x = x; }
+         if ( y < lb.y ) { lb.y = y; }
+         if ( y > ub.y ) { ub.y = y; }
+      }
    }
 
    /**

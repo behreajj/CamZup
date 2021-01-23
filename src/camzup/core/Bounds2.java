@@ -31,6 +31,17 @@ public class Bounds2 implements Comparable < Bounds2 > {
    /**
     * Creates a bounds from a minimum and maximum.
     *
+    * @param min the minimum
+    * @param max the maximum
+    */
+   public Bounds2 ( final float min, final float max ) {
+
+      this.set(min, max);
+   }
+
+   /**
+    * Creates a bounds from a minimum and maximum.
+    *
     * @param xMin the minimum x
     * @param yMin the minimum y
     * @param xMax the maximum x
@@ -172,6 +183,22 @@ public class Bounds2 implements Comparable < Bounds2 > {
 
       this.min.set(source.min);
       this.max.set(source.max);
+
+      return this;
+   }
+
+   /**
+    * Sets the components of this bounding area with scalars.
+    *
+    * @param min the minimum
+    * @param max the maximum
+    *
+    * @return this bounds
+    */
+   public Bounds2 set ( final float min, final float max ) {
+
+      this.min.set(min, min);
+      this.max.set(max, max);
 
       return this;
    }
