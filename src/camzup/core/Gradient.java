@@ -1397,50 +1397,87 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Returns a sepia tone palette, consisting of 8 keys.
+    * Sets the step of each color key in a gradient to the transparency of the
+    * key's color. Similar to {@link Gradient#sort(Comparator)} in the order
+    * of color keys; however, sort leaves key steps unchanged.
     * 
+    * @param source the input gradient
     * @param target the output gradient
     * 
     * @return the gradient
     */
-   public static Gradient paletteSepia ( final Gradient target ) {
+   public static Gradient keysByAlpha ( final Gradient source,
+      final Gradient target ) {
 
-      /*
-       * References: http://leware.net/photo/blogSepia.html : y.r = 0.393f * x.r
-       * + 0.769f * x.g + 0.189f * x.b; y.g = 0.349f * x.r + 0.686f * x.g +
-       * 0.168f * x.b, y.b = 0.272f * x.r + 0.534f * x.g + 0.131f * x.b;
-       * https://en.wikipedia.org/wiki/List_of_software_palettes#
-       * Color_gradient_palettes ,
-       * http://pixeljoint.com/forum/forum_posts.asp?TID=10695&PID=135409#135409
-       */
+      if ( source == target ) {
 
-      final TreeSet < ColorKey > keys = target.keys;
-      keys.clear();
+         final TreeSet < ColorKey > srcKeys = target.keys;
+         final ArrayList < ColorKey > trgKeys = new ArrayList <>(srcKeys
+            .size());
+         final Iterator < ColorKey > srcItr = srcKeys.iterator();
+         while ( srcItr.hasNext() ) {
+            final Color srcClr = srcItr.next().clr;
+            trgKeys.add(new ColorKey(srcClr.a, srcClr));
+         }
+         srcKeys.clear();
+         srcKeys.addAll(trgKeys);
 
-      // keys.add(new ColorKey(0.0f, 0.1427647f, 0.11697831f, 0.092218615f));
-      // keys.add(new ColorKey(0.14285715f, 0.2783132f, 0.22656064f,
-      // 0.18545058f));
-      // keys.add(new ColorKey(0.2857143f, 0.398623f, 0.33107126f,
-      // 0.28259718f));
-      // keys.add(new ColorKey(0.42857146f, 0.5233715f, 0.4514219f,
-      // 0.37700084f));
-      // keys.add(new ColorKey(0.5714286f, 0.648874f, 0.5706483f, 0.45196402f));
-      // keys.add(new ColorKey(0.71428573f, 0.7824268f, 0.6984257f,
-      // 0.5348569f));
-      // keys.add(new ColorKey(0.8571429f, 0.88333535f, 0.836489f,
-      // 0.64836895f));
-      // keys.add(new ColorKey(1.0f, 0.97749025f, 0.9324804f, 0.7486266f));
+      } else {
 
-      keys.add(new ColorKey(0.0f, 0.1427647f, 0.11697831f, 0.092218615f));
-      keys.add(new ColorKey(0.14285715f, 0.26946896f, 0.21609344f,
-         0.17169857f));
-      keys.add(new ColorKey(0.2857143f, 0.34644794f, 0.2739504f, 0.20895004f));
-      keys.add(new ColorKey(0.42857146f, 0.41537726f, 0.32903144f,
-         0.22951856f));
-      keys.add(new ColorKey(0.5714286f, 0.5508117f, 0.44238427f, 0.30121392f));
-      keys.add(new ColorKey(0.71428573f, 0.7192731f, 0.61115533f, 0.4397068f));
-      keys.add(new ColorKey(0.8571429f, 0.8640174f, 0.8078519f, 0.6233901f));
-      keys.add(new ColorKey(1.0f, 0.97749025f, 0.9324804f, 0.7486266f));
+         final TreeSet < ColorKey > trgKeys = target.keys;
+         trgKeys.clear();
+         final Iterator < ColorKey > srcItr = source.keys.iterator();
+         while ( srcItr.hasNext() ) {
+            final Color srcClr = srcItr.next().clr;
+            trgKeys.add(new ColorKey(srcClr.a, srcClr));
+         }
+
+      }
+
+      return target;
+   }
+
+   /**
+    * Sets the step of each color key in a gradient to the luminance of the
+    * key's color. Similar to {@link Gradient#sort(Comparator)} in the order
+    * of color keys; however, sort leaves key steps unchanged.<br>
+    * <br>
+    * Useful when the gradient is applied to an image as a palette swap or a
+    * false color with the image's perceived luminance serving as an
+    * evaluation factor.
+    * 
+    * @param source the input gradient
+    * @param target the output gradient
+    * 
+    * @return the gradient
+    */
+   public static Gradient keysByLuminance ( final Gradient source,
+      final Gradient target ) {
+
+      if ( source == target ) {
+
+         final TreeSet < ColorKey > srcKeys = target.keys;
+         final ArrayList < ColorKey > trgKeys = new ArrayList <>(srcKeys
+            .size());
+         final Iterator < ColorKey > srcItr = srcKeys.iterator();
+         while ( srcItr.hasNext() ) {
+            final Color srcClr = srcItr.next().clr;
+            trgKeys.add(new ColorKey(Color.luminance(srcClr), srcClr));
+         }
+         srcKeys.clear();
+         srcKeys.addAll(trgKeys);
+
+      } else {
+
+         final TreeSet < ColorKey > trgKeys = target.keys;
+         trgKeys.clear();
+         final Iterator < ColorKey > srcItr = source.keys.iterator();
+         while ( srcItr.hasNext() ) {
+            final Color srcClr = srcItr.next().clr;
+            trgKeys.add(new ColorKey(Color.luminance(srcClr), srcClr));
+         }
+
+      }
 
       return target;
    }
@@ -1505,6 +1542,31 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
+    * Returns a cyanotype palette, such as those used in creating blueprints,
+    * with 8 color keys.
+    * 
+    * @param target the output gradient
+    * 
+    * @return the gradient
+    */
+   public static Gradient paletteCyanotype ( final Gradient target ) {
+
+      final TreeSet < ColorKey > keys = target.keys;
+      keys.clear();
+
+      keys.add(new ColorKey(0.0f, 0.03049412f, 0.10188236f, 0.17378825f));
+      keys.add(new ColorKey(0.14285715f, 0.05563067f, 0.21327104f, 0.3482909f));
+      keys.add(new ColorKey(0.2857143f, 0.0880449f, 0.3129639f, 0.4667135f));
+      keys.add(new ColorKey(0.42857143f, 0.12713926f, 0.40834653f, 0.5497747f));
+      keys.add(new ColorKey(0.5714286f, 0.27109164f, 0.5239352f, 0.63098204f));
+      keys.add(new ColorKey(0.71428573f, 0.48638815f, 0.6944785f, 0.7600696f));
+      keys.add(new ColorKey(0.85714287f, 0.7537112f, 0.85927427f, 0.8739126f));
+      keys.add(new ColorKey(1.0f, 0.9926431f, 0.9935216f, 0.9940706f));
+
+      return target;
+   }
+
+   /**
     * Returns thirteen colors in the red yellow blue color wheel. Red is
     * repeated so that the gradient is periodic.
     *
@@ -1530,6 +1592,39 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       keys.add(new ColorKey(0.8333333f, 0.5f, 0.0f, 0.5f));
       keys.add(new ColorKey(0.9166667f, 0.75f, 0.0f, 0.25f));
       keys.add(new ColorKey(1.0f, 1.0f, 0.0f, 0.0f));
+
+      return target;
+   }
+
+   /**
+    * Returns a sepia tone palette, consisting of 8 keys.
+    *
+    * @param target the output gradient
+    *
+    * @return the gradient
+    */
+   public static Gradient paletteSepia ( final Gradient target ) {
+
+      /*
+       * References: http://leware.net/photo/blogSepia.html : y.r = 0.393f * x.r
+       * + 0.769f * x.g + 0.189f * x.b; y.g = 0.349f * x.r + 0.686f * x.g +
+       * 0.168f * x.b, y.b = 0.272f * x.r + 0.534f * x.g + 0.131f * x.b;
+       * https://en.wikipedia.org/wiki/List_of_software_palettes#
+       * Color_gradient_palettes ,
+       * http://pixeljoint.com/forum/forum_posts.asp?TID=10695&PID=135409#135409
+       */
+
+      final TreeSet < ColorKey > keys = target.keys;
+      keys.clear();
+
+      keys.add(new ColorKey(0.0f, 0.11774882f, 0.09636405f, 0.07582238f));
+      keys.add(new ColorKey(0.14285715f, 0.17625594f, 0.141371f, 0.1127016f));
+      keys.add(new ColorKey(0.2857143f, 0.40054432f, 0.30952805f, 0.22960682f));
+      keys.add(new ColorKey(0.42857146f, 0.527977f, 0.40815717f, 0.27178848f));
+      keys.add(new ColorKey(0.5714286f, 0.6450869f, 0.5168457f, 0.34436274f));
+      keys.add(new ColorKey(0.71428573f, 0.759382f, 0.64926106f, 0.4650265f));
+      keys.add(new ColorKey(0.8571429f, 0.8737513f, 0.81925327f, 0.63157284f));
+      keys.add(new ColorKey(1.0f, 0.9761859f, 0.93075234f, 0.74810547f));
 
       return target;
    }
