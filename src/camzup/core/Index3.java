@@ -142,19 +142,19 @@ class Index3 implements Comparable < Index3 > {
       int vnIdx = 0;
 
       try {
-         vIdx = Integer.parseInt(vStr);
+         vIdx = Integer.parseInt(vStr, 10);
       } catch ( final Exception e ) {
          vIdx = 0;
       }
 
       try {
-         vtIdx = Integer.parseInt(vtStr);
+         vtIdx = Integer.parseInt(vtStr, 10);
       } catch ( final Exception e ) {
          vtIdx = 0;
       }
 
       try {
-         vnIdx = Integer.parseInt(vnStr);
+         vnIdx = Integer.parseInt(vnStr, 10);
       } catch ( final Exception e ) {
          vnIdx = 0;
       }

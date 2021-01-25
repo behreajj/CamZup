@@ -123,7 +123,7 @@ public abstract class ParserObj {
                               if ( vIdx == null || vIdx.isEmpty() ) {
                                  vsMissing = true;
                               } else {
-                                 vert[0] = Integer.parseInt(vIdx) - 1;
+                                 vert[0] = Integer.parseInt(vIdx, 10) - 1;
                               }
                            } else {
                               vsMissing = true;
@@ -135,7 +135,7 @@ public abstract class ParserObj {
                               if ( vtIdx == null || vtIdx.isEmpty() ) {
                                  vtsMissing = true;
                               } else {
-                                 vert[1] = Integer.parseInt(vtIdx) - 1;
+                                 vert[1] = Integer.parseInt(vtIdx, 10) - 1;
                               }
                            } else {
                               vtsMissing = true;
@@ -147,7 +147,7 @@ public abstract class ParserObj {
                               if ( vnIdx == null || vnIdx.isEmpty() ) {
                                  vnsMissing = true;
                               } else {
-                                 vert[2] = Integer.parseInt(vnIdx) - 1;
+                                 vert[2] = Integer.parseInt(vnIdx, 10) - 1;
                               }
                            } else {
                               vnsMissing = true;

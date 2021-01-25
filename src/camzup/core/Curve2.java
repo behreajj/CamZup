@@ -1060,14 +1060,12 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
    /**
     * Calculates the dimensions of an Axis-Aligned Bounding Box (AABB)
-    * encompassing the curve. Does so by taking the min and max of each knot's
-    * coordinate, fore handle and rear handle; <em>not</em> by finding the
-    * curve extrema.
+    * encompassing the curve. Does so by taking the minimum and maximum of
+    * each knot's coordinate, fore handle and rear handle; <em>not</em> by
+    * finding the curve extrema.
     *
     * @param curve  the curve
     * @param target the output dimensions
-    * @param lb     the lower bound
-    * @param ub     the upper bound
     *
     * @return the dimensions
     */

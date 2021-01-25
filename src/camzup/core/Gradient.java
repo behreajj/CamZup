@@ -1400,10 +1400,10 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * Sets the step of each color key in a gradient to the transparency of the
     * key's color. Similar to {@link Gradient#sort(Comparator)} in the order
     * of color keys; however, sort leaves key steps unchanged.
-    * 
+    *
     * @param source the input gradient
     * @param target the output gradient
-    * 
+    *
     * @return the gradient
     */
    public static Gradient keysByAlpha ( final Gradient source,
@@ -1445,10 +1445,10 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * Useful when the gradient is applied to an image as a palette swap or a
     * false color with the image's perceived luminance serving as an
     * evaluation factor.
-    * 
+    *
     * @param source the input gradient
     * @param target the output gradient
-    * 
+    *
     * @return the gradient
     */
    public static Gradient keysByLuminance ( final Gradient source,
@@ -1478,6 +1478,85 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          }
 
       }
+
+      return target;
+   }
+
+   /**
+    * Mixes between two color gradients, producing a new gradient containing
+    * uniformly distributed samples. A color mixing functional object
+    * determines how the colors are mixed.
+    *
+    * @param a       the origin gradient
+    * @param b       the destination gradient
+    * @param samples the number of samples
+    * @param mixer   the color mixer
+    * @param target  the output gradient
+    *
+    * @return the gradient
+    */
+   public static Gradient mix ( final Gradient a, final Gradient b,
+      final int samples, final Color.AbstrEasing mixer,
+      final Gradient target ) {
+
+      final int vSamples = samples < 2 ? 2 : samples;
+      final float toPercent = 1.0f / ( vSamples - 1.0f );
+      final TreeSet < ColorKey > keys = target.keys;
+      keys.clear();
+      final Color aEval = new Color();
+      final Color bEval = new Color();
+      for ( int i = 0; i < vSamples; ++i ) {
+         final float percent = i * toPercent;
+         Gradient.eval(a, percent, aEval);
+         Gradient.eval(b, percent, bEval);
+         final ColorKey key = new ColorKey();
+         key.step = percent;
+         mixer.apply(aEval, bEval, percent, key.clr);
+         keys.add(key);
+      }
+
+      return target;
+   }
+
+   /**
+    * Mixes between two color gradients, producing a new gradient containing
+    * uniformly distributed samples. Defaults to linear interpolation in RGB
+    * color space.
+    *
+    * @param a       the origin gradient
+    * @param b       the destination gradient
+    * @param samples the number of samples
+    * @param target  the output gradient
+    *
+    * @return the gradient
+    */
+   public static Gradient mix ( final Gradient a, final Gradient b,
+      final int samples, final Gradient target ) {
+
+      return Gradient.mix(a, b, samples, new Color.LerpRgba(), target);
+   }
+
+   /**
+    * Returns a cyanotype palette, such as those used in creating blueprints,
+    * with 8 color keys.
+    *
+    * @param target the output gradient
+    *
+    * @return the gradient
+    */
+   public static Gradient paletteCyanotype ( final Gradient target ) {
+
+      final TreeSet < ColorKey > keys = target.keys;
+      keys.clear();
+
+      keys.add(new ColorKey(0.0f, 0.03049412f, 0.10188236f, 0.17378825f));
+      keys.add(new ColorKey(0.14285715f, 0.05563067f, 0.21327104f, 0.3482909f));
+      keys.add(new ColorKey(0.2857143f, 0.0880449f, 0.3129639f, 0.4667135f));
+      keys.add(new ColorKey(0.42857143f, 0.12713926f, 0.40834653f, 0.5497747f));
+      keys.add(new ColorKey(0.5714286f, 0.27109164f, 0.5239352f, 0.63098204f));
+      keys.add(new ColorKey(0.71428573f, 0.48638815f, 0.6944785f, 0.7600696f));
+      keys.add(new ColorKey(0.85714287f, 0.7537112f, 0.85927427f, 0.8739126f));
+      keys.add(new ColorKey(1.0f, 0.9926431f, 0.9935216f, 0.9940706f));
 
       return target;
    }
@@ -1537,31 +1616,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       keys.add(new ColorKey(0.6666667f, 0.0f, 0.0f, 1.0f));
       keys.add(new ColorKey(0.8333333f, 1.0f, 0.0f, 1.0f));
       keys.add(new ColorKey(1.0f, 1.0f, 0.0f, 0.0f));
-
-      return target;
-   }
-
-   /**
-    * Returns a cyanotype palette, such as those used in creating blueprints,
-    * with 8 color keys.
-    * 
-    * @param target the output gradient
-    * 
-    * @return the gradient
-    */
-   public static Gradient paletteCyanotype ( final Gradient target ) {
-
-      final TreeSet < ColorKey > keys = target.keys;
-      keys.clear();
-
-      keys.add(new ColorKey(0.0f, 0.03049412f, 0.10188236f, 0.17378825f));
-      keys.add(new ColorKey(0.14285715f, 0.05563067f, 0.21327104f, 0.3482909f));
-      keys.add(new ColorKey(0.2857143f, 0.0880449f, 0.3129639f, 0.4667135f));
-      keys.add(new ColorKey(0.42857143f, 0.12713926f, 0.40834653f, 0.5497747f));
-      keys.add(new ColorKey(0.5714286f, 0.27109164f, 0.5239352f, 0.63098204f));
-      keys.add(new ColorKey(0.71428573f, 0.48638815f, 0.6944785f, 0.7600696f));
-      keys.add(new ColorKey(0.85714287f, 0.7537112f, 0.85927427f, 0.8739126f));
-      keys.add(new ColorKey(1.0f, 0.9926431f, 0.9935216f, 0.9940706f));
 
       return target;
    }

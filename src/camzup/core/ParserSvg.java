@@ -144,7 +144,7 @@ public abstract class ParserSvg {
 
       int x = 0;
       try {
-         x = Integer.parseInt(v);
+         x = Integer.parseInt(v, 10);
       } catch ( final Exception e ) {
          x = 0;
       }
@@ -679,7 +679,10 @@ public abstract class ParserSvg {
          if ( prim != null ) {
             prim.reverse();
             prim.transform(prev);
-            curves.add(prim);
+
+            // Looks like the same curve is being added multiple
+            // times...
+            if ( !curves.contains(prim) ) { curves.add(prim); }
          }
 
          if ( path != null ) {
@@ -687,7 +690,10 @@ public abstract class ParserSvg {
             while ( itr.hasNext() ) {
                final Curve2 pathCurve = itr.next();
                pathCurve.transform(prev);
-               curves.add(pathCurve);
+
+               // TEST Looks like the same curve is being added multiple
+               // times...
+               if ( !curves.contains(pathCurve) ) { curves.add(pathCurve); }
             }
          }
       }

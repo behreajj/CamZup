@@ -11,7 +11,7 @@ float subfRound =0.0375;
 Yup2 graphics;
 MaterialSolid[] materials;
 MeshEntity2 entity2 = new MeshEntity2();
-Gradient gradient = Gradient.paletteSepia(new Gradient());
+Gradient gradient = Gradient.paletteCyanotype(new Gradient());
 
 void settings() {
   size(720, 405, Yup2.PATH_STR);

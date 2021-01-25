@@ -204,6 +204,38 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public int length ( ) { return this.curves.size(); }
 
    /**
+    * Centers and rescales all curves in the curve entity about a shared
+    * origin by calculating their dimensions, subtracting the center point,
+    * and scaling by the maximum dimension.
+    *
+    * @return this curve entity.
+    */
+   public CurveEntity2 reframe ( ) {
+
+      /* Find lower and upper bound for all curves. */
+      final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
+      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      final Vec2 dim = new Vec2();
+
+      Iterator < Curve2 > crvItr = this.curves.iterator();
+      while ( crvItr.hasNext() ) { Curve2.accumMinMax(crvItr.next(), lb, ub); }
+
+      Vec2.sub(ub, lb, dim);
+      lb.x = -0.5f * ( lb.x + ub.x );
+      lb.y = -0.5f * ( lb.y + ub.y );
+      final float scl = Utils.div(1.0f, Utils.max(dim.x, dim.y));
+
+      crvItr = this.curves.iterator();
+      while ( crvItr.hasNext() ) {
+         final Curve2 curve = crvItr.next();
+         curve.translate(lb);
+         curve.scale(scl);
+      }
+
+      return this;
+   }
+
+   /**
     * @param curveIndex the curve index
     * @param knotIndex  the knot index
     * @param global     the point in global space
@@ -495,6 +527,30 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       pyCd.append("C.scene.collection.objects.link(crv_obj)\n");
 
       return pyCd.toString();
+   }
+
+   /**
+    * Centers all curves in the curve entity about a shared origin by
+    * calculating their dimensions then subtracting the center point.
+    *
+    * @return this curve entity.
+    */
+   public CurveEntity2 toOrigin ( ) {
+
+      /* Find lower and upper bound for all curves. */
+      final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
+      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      Iterator < Curve2 > itr = this.curves.iterator();
+      while ( itr.hasNext() ) { Curve2.accumMinMax(itr.next(), lb, ub); }
+
+      /* Shift curves. */
+      lb.x = -0.5f * ( lb.x + ub.x );
+      lb.y = -0.5f * ( lb.y + ub.y );
+
+      itr = this.curves.iterator();
+      while ( itr.hasNext() ) { itr.next().translate(lb); }
+
+      return this;
    }
 
    /**

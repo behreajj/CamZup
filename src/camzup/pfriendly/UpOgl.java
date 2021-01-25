@@ -598,9 +598,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void defaultSettings ( ) {
 
       /* Color. */
+      this.format = PConstants.ARGB;
       this.colorMode(PConstants.RGB, IUp.DEFAULT_COLOR_MAX);
-      this.fill(IUp.DEFAULT_FILL_COLOR);
       this.blendMode(PConstants.BLEND);
+      this.fill(IUp.DEFAULT_FILL_COLOR);
       if ( this.primaryGraphics ) { this.background(IUp.DEFAULT_BKG_COLOR); }
 
       /* Stroke. */

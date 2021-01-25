@@ -139,3 +139,4 @@ tally
 extrema
 sepia
 cyanotype
+blitting

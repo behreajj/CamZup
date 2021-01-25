@@ -729,21 +729,28 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void defaultSettings ( ) {
 
       super.defaultSettings();
-      this.colorMode(PConstants.RGB, IUp.DEFAULT_COLOR_MAX);
-      this.fill(IUp.DEFAULT_FILL_COLOR);
-      this.stroke(IUp.DEFAULT_STROKE_COLOR);
 
+      /* Color. */
+      this.format = PConstants.ARGB;
+      this.colorMode(PConstants.RGB, IUp.DEFAULT_COLOR_MAX);
+      this.blendMode(PConstants.BLEND);
+      this.fill(IUp.DEFAULT_FILL_COLOR);
+      if ( this.primaryGraphics ) { this.background(IUp.DEFAULT_BKG_COLOR); }
+
+      /* Stroke. */
+      this.stroke(IUp.DEFAULT_STROKE_COLOR);
       this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND,
          IUp.DEFAULT_STROKE_WEIGHT);
       this.stroke = true;
 
-      this.shape = 0;
-
+      /* Shape. */
       this.rectMode(PConstants.CENTER);
       this.ellipseMode(PConstants.CENTER);
       this.imageMode(PConstants.CENTER);
       this.shapeMode = PConstants.CENTER;
+      this.shape = 0;
 
+      /* Text. */
       this.textFont = null;
       this.textSize = IUp.DEFAULT_TEXT_SIZE;
       this.textLeading = IUp.DEFAULT_TEXT_LEADING;
@@ -751,13 +758,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.textAlignY = PConstants.CENTER;
       this.textMode = PConstants.MODEL;
 
-      if ( this.primaryGraphics ) { this.background(IUp.DEFAULT_BKG_COLOR); }
-
-      this.blendMode(PConstants.BLEND);
-
       this.settingsInited = true;
       this.reapplySettings = false;
 
+      /* Camera. */
       this.cameraX = IUp.DEFAULT_LOC_X;
       this.cameraY = IUp.DEFAULT_LOC_Y;
       this.cameraZoomX = IYup2.DEFAULT_ZOOM_X;

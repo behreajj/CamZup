@@ -30,6 +30,7 @@ public class ZImage extends PImage {
     */
    public ZImage ( final int width, final int height ) {
 
+      // TODO: rotateCW, rotateCCW
       super(width, height);
    }
 
@@ -376,6 +377,64 @@ public class ZImage extends PImage {
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) { px[i] = fll; }
       target.updatePixels();
+      return target;
+   }
+
+   /**
+    * Flips an image horizontally, on the x axis. Modifies the target image in
+    * place.
+    *
+    * @param target the output image
+    *
+    * @return the flipped image
+    */
+   public static PImage flipX ( final PImage target ) {
+
+      target.loadPixels();
+
+      final int h = target.height;
+      final int w = target.width;
+      final int[] pixels = target.pixels;
+      final int[] flipped = new int[pixels.length];
+
+      for ( int i = 0, y = 0; y < h; ++y ) {
+         final int yw = y * w;
+         for ( int x = w - 1; x > -1; --x, ++i ) {
+            flipped[yw + x] = pixels[i];
+         }
+      }
+
+      target.pixels = flipped;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Flips an image vertically, on the y axis. Modifies the target image in
+    * place.
+    *
+    * @param target the output image
+    *
+    * @return the flipped image
+    */
+   public static PImage flipY ( final PImage target ) {
+
+      target.loadPixels();
+
+      final int h = target.height;
+      final int w = target.width;
+      final int[] pixels = target.pixels;
+      final int[] flipped = new int[pixels.length];
+
+      for ( int i = 0, y = h - 1; y > -1; --y ) {
+         final int yw = y * w;
+         for ( int x = 0; x < w; ++x, ++i ) { flipped[yw + x] = pixels[i]; }
+      }
+
+      target.pixels = flipped;
+      target.updatePixels();
+
       return target;
    }
 

@@ -129,13 +129,13 @@ class Index2 implements Comparable < Index2 > {
       int vtIdx = 0;
 
       try {
-         vIdx = Integer.parseInt(vStr);
+         vIdx = Integer.parseInt(vStr, 10);
       } catch ( final Exception e ) {
          vIdx = 0;
       }
 
       try {
-         vtIdx = Integer.parseInt(vtStr);
+         vtIdx = Integer.parseInt(vtStr, 10);
       } catch ( final Exception e ) {
          vtIdx = 0;
       }
