@@ -37,7 +37,7 @@ public class MaterialSolid extends Material {
    /**
     * The default constructor.
     */
-   public MaterialSolid ( ) { super(); }
+   public MaterialSolid ( ) {}
 
    /**
     * Creates a material from a fill color.

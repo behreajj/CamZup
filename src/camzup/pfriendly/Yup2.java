@@ -51,7 +51,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * The default constructor.
     */
-   public Yup2 ( ) { super(); }
+   public Yup2 ( ) {}
 
    /**
     * A constructor for manually initializing the renderer.

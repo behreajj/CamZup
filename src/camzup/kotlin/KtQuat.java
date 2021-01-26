@@ -13,7 +13,7 @@ public class KtQuat extends Quaternion {
     * The default constructor. Defaults to the identity, (1.0, 0.0, 0.0, 0.0)
     * .
     */
-   public KtQuat ( ) { super(); }
+   public KtQuat ( ) {}
 
    /**
     * Constructs a quaternion by float component.

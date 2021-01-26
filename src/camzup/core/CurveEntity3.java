@@ -21,7 +21,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    /**
     * The default constructor.
     */
-   public CurveEntity3 ( ) { super(); }
+   public CurveEntity3 ( ) {}
 
    /**
     * Creates a named curve entity.
@@ -200,6 +200,40 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
     * @return the length
     */
    public int length ( ) { return this.curves.size(); }
+
+   /**
+    * Centers and rescales all curves in the curve entity about a shared
+    * origin by calculating their dimensions, subtracting the center point,
+    * and scaling by the maximum dimension.
+    *
+    * @return this curve entity.
+    */
+   public CurveEntity3 reframe ( ) {
+
+      /* Find lower and upper bound for all curves. */
+      final Vec3 lb = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE,
+         Float.MAX_VALUE);
+      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
+         Float.MIN_VALUE);
+
+      Iterator < Curve3 > crvItr = this.curves.iterator();
+      while ( crvItr.hasNext() ) { Curve3.accumMinMax(crvItr.next(), lb, ub); }
+
+      lb.x = -0.5f * ( lb.x + ub.x );
+      lb.y = -0.5f * ( lb.y + ub.y );
+      lb.z = -0.5f * ( lb.z + ub.z );
+      final float scl = Utils.div(1.0f, Utils.max(ub.x - lb.x, ub.y - lb.y, ub.z
+         - lb.z));
+
+      crvItr = this.curves.iterator();
+      while ( crvItr.hasNext() ) {
+         final Curve3 curve = crvItr.next();
+         curve.translate(lb);
+         curve.scale(scl);
+      }
+
+      return this;
+   }
 
    /**
     * @param curveIndex the curve index
@@ -496,6 +530,33 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
       pyCd.append("C.scene.collection.objects.link(crv_obj)\n");
 
       return pyCd.toString();
+   }
+
+   /**
+    * Centers all curves in the curve entity about a shared origin by
+    * calculating their dimensions then subtracting the center point.
+    *
+    * @return this curve entity.
+    */
+   public CurveEntity3 toOrigin ( ) {
+
+      /* Find lower and upper bound for all curves. */
+      final Vec3 lb = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE,
+         Float.MAX_VALUE);
+      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
+         Float.MIN_VALUE);
+      Iterator < Curve3 > itr = this.curves.iterator();
+      while ( itr.hasNext() ) { Curve3.accumMinMax(itr.next(), lb, ub); }
+
+      /* Shift curves. */
+      lb.x = -0.5f * ( lb.x + ub.x );
+      lb.y = -0.5f * ( lb.y + ub.y );
+      lb.z = -0.5f * ( lb.z + ub.z );
+
+      itr = this.curves.iterator();
+      while ( itr.hasNext() ) { itr.next().translate(lb); }
+
+      return this;
    }
 
    /**

@@ -16,7 +16,7 @@ public class CamEntity3 extends Entity3 implements ICamEntity {
    /**
     * The default constructor.
     */
-   public CamEntity3 ( ) { super(); }
+   public CamEntity3 ( ) {}
 
    /**
     * Constructs a named entity. A new transform is created by the

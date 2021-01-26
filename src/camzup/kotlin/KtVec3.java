@@ -17,7 +17,7 @@ public class KtVec3 extends Vec3 implements Iterable < Float > {
    /**
     * The default vector constructor.
     */
-   public KtVec3 ( ) { super(); }
+   public KtVec3 ( ) {}
 
    /**
     * Constructs a vector from boolean values.

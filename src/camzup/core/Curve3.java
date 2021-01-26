@@ -27,7 +27,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    /**
     * Creates a curve with two default knots.
     */
-   public Curve3 ( ) { super(); }
+   public Curve3 ( ) {}
 
    /**
     * Creates a curve from a collection of knots
@@ -60,7 +60,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 ( final Curve2 source ) {
 
-      super();
       this.set(source);
    }
 
@@ -71,7 +70,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 ( final Curve3 source ) {
 
-      super();
       this.set(source);
    }
 

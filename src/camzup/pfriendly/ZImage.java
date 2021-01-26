@@ -63,7 +63,7 @@ public class ZImage extends PImage {
    /**
     * The default constructor.
     */
-   protected ZImage ( ) { super(); }
+   protected ZImage ( ) {}
 
    /**
     * Returns a string representation of an image, including its format,

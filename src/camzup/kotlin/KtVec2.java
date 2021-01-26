@@ -15,7 +15,7 @@ public class KtVec2 extends Vec2 implements Iterable < Float > {
    /**
     * The default vector constructor.
     */
-   public KtVec2 ( ) { super(); }
+   public KtVec2 ( ) {}
 
    /**
     * Constructs a vector from boolean values.

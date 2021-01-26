@@ -11,7 +11,7 @@ public class KtComplex extends Complex {
    /**
     * The default constructor.
     */
-   public KtComplex ( ) { super(); }
+   public KtComplex ( ) {}
 
    /**
     * Constructs a complex number from the source's components.

@@ -21,7 +21,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    /**
     * The default constructor.
     */
-   public CurveEntity2 ( ) { super(); }
+   public CurveEntity2 ( ) {}
 
    /**
     * Creates a named curve entity.
@@ -215,15 +215,13 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       /* Find lower and upper bound for all curves. */
       final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
       final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
-      final Vec2 dim = new Vec2();
 
       Iterator < Curve2 > crvItr = this.curves.iterator();
       while ( crvItr.hasNext() ) { Curve2.accumMinMax(crvItr.next(), lb, ub); }
 
-      Vec2.sub(ub, lb, dim);
       lb.x = -0.5f * ( lb.x + ub.x );
       lb.y = -0.5f * ( lb.y + ub.y );
-      final float scl = Utils.div(1.0f, Utils.max(dim.x, dim.y));
+      final float scl = Utils.div(1.0f, Utils.max(ub.x - lb.x, ub.y - lb.y));
 
       crvItr = this.curves.iterator();
       while ( crvItr.hasNext() ) {

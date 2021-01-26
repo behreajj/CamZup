@@ -17,7 +17,7 @@ public class KtVec4 extends Vec4 implements Iterable < Float > {
    /**
     * The default vector constructor.
     */
-   public KtVec4 ( ) { super(); }
+   public KtVec4 ( ) {}
 
    /**
     * Constructs a vector from boolean values.

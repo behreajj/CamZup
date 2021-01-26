@@ -69,7 +69,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * The default constructor.
     */
-   protected Up3 ( ) { super(); }
+   protected Up3 ( ) {}
 
    /**
     * A constructor for manually initializing the renderer.
@@ -1384,7 +1384,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
             this.translateImpl(tr3Loc.x, tr3Loc.y, tr3Loc.z);
             this.rotate(tr3Rot);
             this.scaleImpl(tr3Scl.x, tr3Scl.y, tr3Scl.z);
-            return;
       }
    }
 

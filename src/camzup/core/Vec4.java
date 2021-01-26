@@ -2301,7 +2301,7 @@ public class Vec4 implements Comparable < Vec4 > {
       /**
        * The default constructor.
        */
-      public Lerp ( ) { super(); }
+      public Lerp ( ) {}
 
       /**
        * Eases between two vectors by a step using the formula (1.0 - t) * a + b

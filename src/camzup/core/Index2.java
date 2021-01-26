@@ -114,39 +114,6 @@ class Index2 implements Comparable < Index2 > {
    }
 
    /**
-    * Attempts to set the components of this indices set from Strings using
-    * {@link Integer#parseInt(String)} . If a NumberFormatException is thrown,
-    * the component is set to zero.
-    *
-    * @param vStr  the coordinate index
-    * @param vtStr the texture coordinate index
-    *
-    * @return the indices set
-    */
-   public Index2 set ( final String vStr, final String vtStr ) {
-
-      int vIdx = 0;
-      int vtIdx = 0;
-
-      try {
-         vIdx = Integer.parseInt(vStr, 10);
-      } catch ( final Exception e ) {
-         vIdx = 0;
-      }
-
-      try {
-         vtIdx = Integer.parseInt(vtStr, 10);
-      } catch ( final Exception e ) {
-         vtIdx = 0;
-      }
-
-      this.v = vIdx;
-      this.vt = vtIdx;
-
-      return this;
-   }
-
-   /**
     * Returns an integer array of length 2 containing this indices set's
     * components.
     *

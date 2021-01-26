@@ -99,10 +99,8 @@ public abstract class ParserGgr {
 
             for ( String ln = in.readLine(); ln != null; ln = in.readLine() ) {
                final String lnlc = ln.trim().toLowerCase();
-               if ( lnlc.equals("gimp gradient") ) {
-                  /* Header found. */
-               } else if ( lnlc.indexOf('#') == 0 ) {
-                  /* Contains a comment. */
+               if ( lnlc.equals("gimp gradient") || lnlc.indexOf('#') == 0 ) {
+                  /* Skip. */
                } else {
 
                   /*

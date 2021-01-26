@@ -1292,12 +1292,12 @@ public class Color implements Comparable < Color > {
     *
     * @return the inverse
     *
-    * @see Utils#max(float, float)
+    * @see Utils#clamp01(float)
     */
    public static Color inverse ( final Color c, final Color target ) {
 
-      return target.set(Utils.max(0.0f, 1.0f - c.r), Utils.max(0.0f, 1.0f
-         - c.g), Utils.max(0.0f, 1.0f - c.b), Utils.clamp01(c.a));
+      return target.set(Utils.clamp01(1.0f - c.r), Utils.clamp01(1.0f - c.g),
+         Utils.clamp01(1.0f - c.b), Utils.clamp01(c.a));
    }
 
    /**
@@ -2174,7 +2174,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      protected AbstrEasing ( ) { super(); }
+      protected AbstrEasing ( ) {}
 
       /**
        * A clamped interpolation between the origin and destination. Defers to
@@ -2256,7 +2256,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      public ComparatorBri ( ) { super(); }
+      public ComparatorBri ( ) {}
 
       /**
        * The comparison function.
@@ -2299,7 +2299,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      protected ComparatorHsb ( ) { super(); }
+      protected ComparatorHsb ( ) {}
 
       /**
        * Returns this class's simple name as a string
@@ -2319,7 +2319,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      public ComparatorHue ( ) { super(); }
+      public ComparatorHue ( ) {}
 
       /**
        * Executes the comparison.
@@ -2352,7 +2352,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      public ComparatorSat ( ) { super(); }
+      public ComparatorSat ( ) {}
 
       /**
        * Executes the comparison.
@@ -2385,7 +2385,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      public HueCCW ( ) { super(); }
+      public HueCCW ( ) {}
 
       /**
        * Applies the function.
@@ -2423,7 +2423,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      public HueCW ( ) { super(); }
+      public HueCW ( ) {}
 
       /**
        * Applies the function.
@@ -2493,7 +2493,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      protected HueEasing ( ) { super(); }
+      protected HueEasing ( ) {}
 
       /**
        * The clamped easing function.
@@ -2563,7 +2563,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      public HueFar ( ) { super(); }
+      public HueFar ( ) {}
 
       /**
        * Applies the function.
@@ -2604,7 +2604,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      public HueNear ( ) { super(); }
+      public HueNear ( ) {}
 
       /**
        * Applies the function.
@@ -2645,7 +2645,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      public LerpRgba ( ) { super(); }
+      public LerpRgba ( ) {}
 
       /**
        * Applies the function.
@@ -2736,7 +2736,6 @@ public class Color implements Comparable < Color > {
          final Utils.LerpUnclamped satFunc,
          final Utils.LerpUnclamped briFunc ) {
 
-         super();
          this.hueFunc = hueFunc;
          this.satFunc = satFunc;
          this.briFunc = briFunc;
@@ -2833,7 +2832,7 @@ public class Color implements Comparable < Color > {
       /**
        * The default constructor.
        */
-      public SmoothStepRgba ( ) { super(); }
+      public SmoothStepRgba ( ) {}
 
       /**
        * Applies the function.

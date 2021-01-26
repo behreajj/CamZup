@@ -3339,7 +3339,7 @@ public class Vec3 implements Comparable < Vec3 > {
       /**
        * The default constructor.
        */
-      public Lerp ( ) { super(); }
+      public Lerp ( ) {}
 
       /**
        * Eases between two vectors by a step using the formula (1.0 - t) * a + b
@@ -3374,7 +3374,7 @@ public class Vec3 implements Comparable < Vec3 > {
       /**
        * The default constructor.
        */
-      public SmoothStep ( ) { super(); }
+      public SmoothStep ( ) {}
 
       /**
        * Applies the function.
@@ -3413,7 +3413,7 @@ public class Vec3 implements Comparable < Vec3 > {
       /**
        * The default constructor.
        */
-      public SortDistSq ( ) { super(); }
+      public SortDistSq ( ) {}
 
       /**
        * Constructs a sorting function with a locus against which points are
@@ -3423,7 +3423,6 @@ public class Vec3 implements Comparable < Vec3 > {
        */
       public SortDistSq ( final Vec3 locus ) {
 
-         super();
          this.locus.set(locus);
       }
 
@@ -3453,7 +3452,7 @@ public class Vec3 implements Comparable < Vec3 > {
       /**
        * The default constructor.
        */
-      public SortX ( ) { super(); }
+      public SortX ( ) {}
 
       /**
        * The compare function.
@@ -3479,7 +3478,7 @@ public class Vec3 implements Comparable < Vec3 > {
       /**
        * The default constructor.
        */
-      public SortY ( ) { super(); }
+      public SortY ( ) {}
 
       /**
        * The compare function.
@@ -3505,7 +3504,7 @@ public class Vec3 implements Comparable < Vec3 > {
       /**
        * The default constructor.
        */
-      public SortZ ( ) { super(); }
+      public SortZ ( ) {}
 
       /**
        * The compare function.

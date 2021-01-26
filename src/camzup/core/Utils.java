@@ -1863,7 +1863,7 @@ public abstract class Utils implements IUtils {
       /**
        * The default constructor.
        */
-      Lerp ( ) { super(); }
+      Lerp ( ) {}
 
       /**
        * Applies the linear interpolation.
@@ -1900,7 +1900,7 @@ public abstract class Utils implements IUtils {
       /**
        * Constructs the lerp CCW functional object with a default range, TAU.
        */
-      public LerpCCW ( ) { super(); }
+      public LerpCCW ( ) {}
 
       /**
        * Constructs the lerp CCW functional object with a specified range.
@@ -1945,7 +1945,7 @@ public abstract class Utils implements IUtils {
       /**
        * Constructs the lerp CW functional object with a default range, TAU.
        */
-      public LerpCW ( ) { super(); }
+      public LerpCW ( ) {}
 
       /**
        * Constructs the lerp CW functional object with a specified range.
@@ -1990,7 +1990,7 @@ public abstract class Utils implements IUtils {
       /**
        * Constructs the lerp far functional object with a default range, TAU.
        */
-      public LerpFar ( ) { super(); }
+      public LerpFar ( ) {}
 
       /**
        * Constructs the lerp far functional object with a specified range.
@@ -2038,7 +2038,7 @@ public abstract class Utils implements IUtils {
       /**
        * Constructs the lerp near functional object with a default range, TAU.
        */
-      public LerpNear ( ) { super(); }
+      public LerpNear ( ) {}
 
       /**
        * Constructs the lerp near functional object with a specified range.
@@ -2299,7 +2299,7 @@ public abstract class Utils implements IUtils {
       /**
        * The default constructor.
        */
-      SmoothStep ( ) { super(); }
+      SmoothStep ( ) {}
 
       /**
        * Applies the unclamped smooth step function.

@@ -1736,7 +1736,7 @@ public class Knot3 implements Comparable < Knot3 > {
       /**
        * The default constructor.
        */
-      protected AbstrEasing ( ) { super(); }
+      protected AbstrEasing ( ) {}
 
       /**
        * A clamped interpolation between the origin and destination. Defers to
@@ -1790,7 +1790,7 @@ public class Knot3 implements Comparable < Knot3 > {
       /**
        * The default constructor.
        */
-      public Lerp ( ) { super(); }
+      public Lerp ( ) {}
 
       /**
        * Eases between two knots by a step using the formula (1.0 - t) * a + t *

@@ -23,7 +23,7 @@ public class ZShader extends PShader {
    /**
     * The default constructor.
     */
-   public ZShader ( ) { super(); }
+   public ZShader ( ) {}
 
    /**
     * Constructs a shader with a parent applet reference

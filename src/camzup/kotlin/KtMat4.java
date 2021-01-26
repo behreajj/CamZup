@@ -17,7 +17,7 @@ public class KtMat4 extends Mat4 implements Iterable < KtVec4 > {
    /**
     * The default constructor. Creates an identity matrix.
     */
-   public KtMat4 ( ) { super(); }
+   public KtMat4 ( ) {}
 
    /**
     * Constructs a matrix from boolean values.

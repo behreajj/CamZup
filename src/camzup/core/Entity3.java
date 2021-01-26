@@ -17,7 +17,6 @@ public class Entity3 extends Entity implements IOriented3, ISpatial3 {
     */
    public Entity3 ( ) {
 
-      super();
       this.transform = new Transform3();
    }
 
@@ -54,7 +53,6 @@ public class Entity3 extends Entity implements IOriented3, ISpatial3 {
     */
    public Entity3 ( final Transform3 transform ) {
 
-      super();
       this.transform = transform;
    }
 

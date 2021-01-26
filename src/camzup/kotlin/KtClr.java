@@ -17,7 +17,7 @@ public class KtClr extends Color implements Iterable < Float > {
    /**
     * The default constructor. Creates a white color.
     */
-   public KtClr ( ) { super(); }
+   public KtClr ( ) {}
 
    /**
     * Creates a color from bytes. In Java, bytes are signed, within the range

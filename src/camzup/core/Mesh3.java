@@ -37,7 +37,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * The default constructor.
     */
-   public Mesh3 ( ) { super(); }
+   public Mesh3 ( ) {}
 
    /**
     * Creates a mesh from arrays of faces, coordinates, texture coordinates
@@ -51,7 +51,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public Mesh3 ( final int[][][] faces, final Vec3[] coords,
       final Vec2[] texCoords, final Vec3[] normals ) {
 
-      super();
       this.set(faces, coords, texCoords, normals);
    }
 
@@ -62,7 +61,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 ( final Mesh2 source ) {
 
-      super();
       this.set(source);
    }
 
@@ -73,7 +71,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 ( final Mesh3 source ) {
 
-      super();
       this.set(source);
    }
 

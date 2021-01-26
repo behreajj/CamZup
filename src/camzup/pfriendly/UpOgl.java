@@ -103,8 +103,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    protected UpOgl ( ) {
 
-      super();
-
       this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
       this.curveToBezierMatrix = new PMatrix3D();
    }
@@ -2424,7 +2422,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.translateImpl(loc.x, loc.y, 0.0f);
             this.rotateZ(angle);
             this.scaleImpl(dim.x, dim.y, 1.0f);
-            return;
       }
    }
 

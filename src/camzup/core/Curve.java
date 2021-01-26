@@ -20,7 +20,6 @@ public abstract class Curve extends EntityData implements ICurve {
     */
    protected Curve ( ) {
 
-      super();
       this.closedLoop = false;
    }
 
@@ -31,7 +30,6 @@ public abstract class Curve extends EntityData implements ICurve {
     */
    protected Curve ( final boolean cl ) {
 
-      super();
       this.closedLoop = cl;
    }
 

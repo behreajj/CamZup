@@ -20,7 +20,7 @@ public class CamEntity2 extends Entity2 implements ICamEntity {
    /**
     * The default constructor.
     */
-   public CamEntity2 ( ) { super(); }
+   public CamEntity2 ( ) {}
 
    /**
     * Constructs a named entity. A new transform is created by the

@@ -501,12 +501,7 @@ public abstract class ParserSvg {
             /* Radians. */
             x = Float.parseFloat(v.substring(0, lens3));
 
-         } else if ( v.startsWith("em", lens2) ) {
-
-            /* RELATIVE UNIT: To font size. Not supported in PShape. */
-            x = Float.parseFloat(v.substring(0, lens2));
-
-         } else if ( v.startsWith("ex", lens2) ) {
+         } else if ( v.startsWith("em", lens2) || v.startsWith("ex", lens2) ) {
 
             /* RELATIVE UNIT: To font size. Not supported in PShape. */
             x = Float.parseFloat(v.substring(0, lens2));

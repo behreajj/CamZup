@@ -29,10 +29,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Creates a curve with two default knots.
     */
-   public Curve2 ( ) {
-
-      super();
-   }
+   public Curve2 ( ) {}
 
    /**
     * Creates a curve from a collection of knots
@@ -65,7 +62,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public Curve2 ( final Curve2 source ) {
 
-      super();
       this.set(source);
    }
 

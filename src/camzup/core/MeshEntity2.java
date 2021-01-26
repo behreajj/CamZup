@@ -21,7 +21,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    /**
     * The default constructor.
     */
-   public MeshEntity2 ( ) { super(); }
+   public MeshEntity2 ( ) {}
 
    /**
     * Creates a mesh entity from a list of meshes.
@@ -213,6 +213,36 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @return the length
     */
    public int length ( ) { return this.meshes.size(); }
+
+   /**
+    * Centers and rescales all curves in the mesh entity about a shared origin
+    * by calculating their dimensions, subtracting the center point, and
+    * scaling by the maximum dimension.
+    *
+    * @return this mesh entity.
+    */
+   public MeshEntity2 reframe ( ) {
+
+      /* Find lower and upper bound for all curves. */
+      final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
+      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+
+      Iterator < Mesh2 > itr = this.meshes.iterator();
+      while ( itr.hasNext() ) { Mesh2.accumMinMax(itr.next(), lb, ub); }
+
+      lb.x = -0.5f * ( lb.x + ub.x );
+      lb.y = -0.5f * ( lb.y + ub.y );
+      final float scl = Utils.div(1.0f, Utils.max(ub.x - lb.x, ub.y - lb.y));
+
+      itr = this.meshes.iterator();
+      while ( itr.hasNext() ) {
+         final Mesh2 mesh = itr.next();
+         mesh.translate(lb);
+         mesh.scale(scl);
+      }
+
+      return this;
+   }
 
    /**
     * Removes a mesh from this mesh entity. Returns <code>true</code> if this
@@ -605,6 +635,30 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       objs.insert(0, comment);
 
       return objs.toString();
+   }
+
+   /**
+    * Centers all meshes in the mesh entity about a shared origin by
+    * calculating their dimensions then subtracting the center point.
+    *
+    * @return this mesh entity.
+    */
+   public MeshEntity2 toOrigin ( ) {
+
+      /* Find lower and upper bound for all curves. */
+      final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
+      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      Iterator < Mesh2 > itr = this.meshes.iterator();
+      while ( itr.hasNext() ) { Mesh2.accumMinMax(itr.next(), lb, ub); }
+
+      /* Shift curves. */
+      lb.x = -0.5f * ( lb.x + ub.x );
+      lb.y = -0.5f * ( lb.y + ub.y );
+
+      itr = this.meshes.iterator();
+      while ( itr.hasNext() ) { itr.next().translate(lb); }
+
+      return this;
    }
 
    /**

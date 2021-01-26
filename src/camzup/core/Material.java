@@ -8,7 +8,7 @@ public abstract class Material extends EntityData implements IMaterial {
    /**
     * The default constructor.
     */
-   public Material ( ) { super(); }
+   public Material ( ) {}
 
    /**
     * Creates a material with a name.

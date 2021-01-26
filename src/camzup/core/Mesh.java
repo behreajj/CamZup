@@ -32,7 +32,7 @@ public abstract class Mesh extends EntityData implements IMesh {
    /**
     * The default constructor.
     */
-   protected Mesh ( ) { super(); }
+   protected Mesh ( ) {}
 
    /**
     * Construct a mesh with an array of face indices.
@@ -41,7 +41,6 @@ public abstract class Mesh extends EntityData implements IMesh {
     */
    protected Mesh ( final int[][][] faces ) {
 
-      super();
       this.faces = faces;
    }
 

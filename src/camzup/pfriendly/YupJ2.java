@@ -165,8 +165,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public YupJ2 ( ) {
 
-      super();
-
       this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
       this.curveToBezierMatrix = new PMatrix3D();
    }
@@ -3467,7 +3465,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             this.g2.translate(loc.x, loc.y);
             this.g2.rotate(angle);
             this.g2.scale(dim.x, dim.y);
-            return;
       }
    }
 

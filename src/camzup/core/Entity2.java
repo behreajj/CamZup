@@ -17,7 +17,6 @@ public class Entity2 extends Entity implements IOriented2, ISpatial2 {
     */
    public Entity2 ( ) {
 
-      super();
       this.transform = new Transform2();
    }
 
@@ -54,7 +53,6 @@ public class Entity2 extends Entity implements IOriented2, ISpatial2 {
     */
    public Entity2 ( final Transform2 transform ) {
 
-      super();
       this.transform = transform;
    }
 

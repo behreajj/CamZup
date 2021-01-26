@@ -2096,7 +2096,7 @@ public class Quaternion implements Comparable < Quaternion > {
       /**
        * The default constructor.
        */
-      protected AbstrComparator ( ) { super(); }
+      protected AbstrComparator ( ) {}
 
       /**
        * Returns the simple name of this class.
@@ -2118,7 +2118,7 @@ public class Quaternion implements Comparable < Quaternion > {
       /**
        * The default constructor.
        */
-      protected AbstrEasing ( ) { super(); }
+      protected AbstrEasing ( ) {}
 
       /**
        * A clamped interpolation between the origin and destination. Normalizes
@@ -2178,7 +2178,7 @@ public class Quaternion implements Comparable < Quaternion > {
       /**
        * The default constructor.
        */
-      public Lerp ( ) { super(); }
+      public Lerp ( ) {}
 
       /**
        * Eases between the origin and destination quaternion by a step.
@@ -2237,7 +2237,7 @@ public class Quaternion implements Comparable < Quaternion > {
       /**
        * The default constructor.
        */
-      public Slerp ( ) { super(); }
+      public Slerp ( ) {}
 
       /**
        * Eases between two quaternions by a step.

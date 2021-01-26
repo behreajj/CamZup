@@ -37,27 +37,19 @@ public abstract class ParserGpl {
 
             for ( String ln = in.readLine(); ln != null; ln = in.readLine() ) {
                final String lnlc = ln.trim().toLowerCase();
-               if ( lnlc.equals("gimp palette") ) {
-                  /* Header found. */
-               } else if ( lnlc.indexOf("name:") > -1 ) {
+               if ( lnlc.equals("gimp palette") || lnlc.indexOf("name:") > -1
+                  || lnlc.indexOf("columns:") > -1 || lnlc.indexOf('#') == 0 ) {
                   /* Skip. */
-               } else if ( lnlc.indexOf("columns:") > -1 ) {
-                  /* Skip. */
-               } else if ( lnlc.indexOf('#') == 0 ) {
-                  /* Contains a comment. */
                } else {
                   final String[] tokens = ptrn.split(lnlc, 0);
                   if ( tokens.length > 2 ) {
-
                      /* @formatter:off */
-                     final Color clr = new Color(
+                     clrs.add(new Color(
                         Float.parseFloat(tokens[0]) * IUtils.ONE_255,
                         Float.parseFloat(tokens[1]) * IUtils.ONE_255,
                         Float.parseFloat(tokens[2]) * IUtils.ONE_255,
-                        1.0f);
+                        1.0f));
                      /* @formatter:on */
-
-                     clrs.add(clr);
                   }
                }
             }

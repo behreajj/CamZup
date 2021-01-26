@@ -7,6 +7,7 @@ import java.util.Comparator;
 import java.util.Iterator;
 import java.util.List;
 import java.util.TreeSet;
+import java.util.function.Function;
 
 /**
  * A mutable, extensible class that contains a list of keys which hold
@@ -1484,34 +1485,65 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
    /**
     * Mixes between two color gradients, producing a new gradient containing
-    * uniformly distributed samples. A color mixing functional object
-    * determines how the colors are mixed.
+    * uniformly distributed samples. The step provides for how much to mix
+    * between the two gradients.
     *
-    * @param a       the origin gradient
-    * @param b       the destination gradient
+    * @param origin  the origin gradient
+    * @param dest    the destination gradient
     * @param samples the number of samples
-    * @param mixer   the color mixer
+    * @param step    the step
     * @param target  the output gradient
     *
     * @return the gradient
     */
-   public static Gradient mix ( final Gradient a, final Gradient b,
-      final int samples, final Color.AbstrEasing mixer,
+   public static Gradient mix ( final Gradient origin, final Gradient dest,
+      final int samples, final float step, final Gradient target ) {
+
+      final Color.LerpRgba mixer = new Color.LerpRgba();
+      return Gradient.mix(origin, dest, samples, new Function < Float,
+         Float >() {
+         @Override
+         public Float apply ( final Float x ) { return step; }
+
+      }, mixer, mixer, target);
+   }
+
+   /**
+    * Mixes between two color gradients, producing a new gradient containing
+    * uniformly distributed samples. The first color mixing functional object
+    * is supplied to
+    * {@link Gradient#eval(Gradient, float, camzup.core.Color.AbstrEasing, Color)}
+    * for the origin and destination gradient. A {@link Function} supplies the
+    * factor for the mixing to the second color mixer at a given sample.
+    *
+    * @param origin   the origin gradient
+    * @param dest     the destination gradient
+    * @param samples  the number of samples
+    * @param stepFunc the step supplier
+    * @param xMixer   the primary color mixer
+    * @param yMixer   the secondary color mixer
+    * @param target   the output gradient
+    *
+    * @return the gradient
+    */
+   public static Gradient mix ( final Gradient origin, final Gradient dest,
+      final int samples, final Function < Float, Float > stepFunc,
+      final Color.AbstrEasing xMixer, final Color.AbstrEasing yMixer,
       final Gradient target ) {
 
       final int vSamples = samples < 2 ? 2 : samples;
-      final float toPercent = 1.0f / ( vSamples - 1.0f );
+      final float toStep = 1.0f / ( vSamples - 1.0f );
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
       final Color aEval = new Color();
       final Color bEval = new Color();
       for ( int i = 0; i < vSamples; ++i ) {
-         final float percent = i * toPercent;
-         Gradient.eval(a, percent, aEval);
-         Gradient.eval(b, percent, bEval);
+         final float step = i * toStep;
+         Gradient.eval(origin, step, xMixer, aEval);
+         Gradient.eval(dest, step, xMixer, bEval);
          final ColorKey key = new ColorKey();
-         key.step = percent;
-         mixer.apply(aEval, bEval, percent, key.clr);
+         key.step = step;
+         yMixer.apply(aEval, bEval, stepFunc.apply(step), key.clr);
          keys.add(key);
       }
 
@@ -1520,20 +1552,19 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
    /**
     * Mixes between two color gradients, producing a new gradient containing
-    * uniformly distributed samples. Defaults to linear interpolation in RGB
-    * color space.
+    * uniformly distributed samples.
     *
-    * @param a       the origin gradient
-    * @param b       the destination gradient
+    * @param origin  the origin gradient
+    * @param dest    the destination gradient
     * @param samples the number of samples
     * @param target  the output gradient
     *
     * @return the gradient
     */
-   public static Gradient mix ( final Gradient a, final Gradient b,
+   public static Gradient mix ( final Gradient origin, final Gradient dest,
       final int samples, final Gradient target ) {
 
-      return Gradient.mix(a, b, samples, new Color.LerpRgba(), target);
+      return Gradient.mix(origin, dest, samples, 0.5f, target);
    }
 
    /**
@@ -1658,15 +1689,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @return the gradient
     */
    public static Gradient paletteSepia ( final Gradient target ) {
-
-      /*
-       * References: http://leware.net/photo/blogSepia.html : y.r = 0.393f * x.r
-       * + 0.769f * x.g + 0.189f * x.b; y.g = 0.349f * x.r + 0.686f * x.g +
-       * 0.168f * x.b, y.b = 0.272f * x.r + 0.534f * x.g + 0.131f * x.b;
-       * https://en.wikipedia.org/wiki/List_of_software_palettes#
-       * Color_gradient_palettes ,
-       * http://pixeljoint.com/forum/forum_posts.asp?TID=10695&PID=135409#135409
-       */
 
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();

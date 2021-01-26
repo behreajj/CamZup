@@ -54,7 +54,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    /**
     * The default constructor.
     */
-   public Transform2 ( ) { super(); }
+   public Transform2 ( ) {}
 
    /**
     * Creates a transform from loose real numbers.
@@ -68,7 +68,6 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    public Transform2 ( final float xLoc, final float yLoc, final float radians,
       final float xScale, final float yScale ) {
 
-      super();
       this.set(xLoc, yLoc, radians, xScale, yScale);
    }
 
@@ -79,7 +78,6 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     */
    public Transform2 ( final Transform2 source ) {
 
-      super();
       this.set(source);
    }
 
@@ -93,7 +91,6 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    public Transform2 ( final Vec2 location, final float rotation,
       final Vec2 scale ) {
 
-      super();
       this.set(location, rotation, scale);
    }
 

@@ -31,7 +31,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * The default constructor.
     */
-   public Mesh2 ( ) { super(); }
+   public Mesh2 ( ) {}
 
    /**
     * Creates a mesh from arrays of faces, coordinates and texture
@@ -44,7 +44,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public Mesh2 ( final int[][][] faces, final Vec2[] coords,
       final Vec2[] texCoords ) {
 
-      super();
       this.set(faces, coords, texCoords);
    }
 
@@ -55,7 +54,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public Mesh2 ( final Mesh2 source ) {
 
-      super();
       this.set(source);
    }
 

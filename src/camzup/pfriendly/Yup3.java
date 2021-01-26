@@ -17,7 +17,7 @@ public class Yup3 extends Up3 {
    /**
     * The default constructor.
     */
-   public Yup3 ( ) { super(); }
+   public Yup3 ( ) {}
 
    /**
     * A constructor for manually initializing the renderer.

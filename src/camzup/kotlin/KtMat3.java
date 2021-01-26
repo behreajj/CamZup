@@ -17,7 +17,7 @@ public class KtMat3 extends Mat3 implements Iterable < KtVec3 > {
    /**
     * The default constructor. Creates an identity matrix.
     */
-   public KtMat3 ( ) { super(); }
+   public KtMat3 ( ) {}
 
    /**
     * Constructs a matrix from boolean values.

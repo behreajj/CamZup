@@ -60,7 +60,7 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    /**
     * The default constructor.
     */
-   public Transform3 ( ) { super(); }
+   public Transform3 ( ) {}
 
    /**
     * Creates a transform from loose real numbers.
@@ -80,7 +80,6 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
       final float real, final float xImag, final float yImag, final float zImag,
       final float xScale, final float yScale, final float zScale ) {
 
-      super();
       this.set(xLoc, yLoc, zLoc, real, xImag, yImag, zImag, xScale, yScale,
          zScale);
    }
@@ -92,7 +91,6 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     */
    public Transform3 ( final Transform2 source ) {
 
-      super();
       this.set(source);
    }
 
@@ -103,7 +101,6 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     */
    public Transform3 ( final Transform3 source ) {
 
-      super();
       this.set(source);
    }
 
@@ -117,7 +114,6 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    public Transform3 ( final Vec3 location, final Quaternion rotation,
       final Vec3 scale ) {
 
-      super();
       this.set(location, rotation, scale);
    }
 

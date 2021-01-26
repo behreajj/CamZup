@@ -2908,7 +2908,7 @@ public class Vec2 implements Comparable < Vec2 > {
       /**
        * The default constructor.
        */
-      public Lerp ( ) { super(); }
+      public Lerp ( ) {}
 
       /**
        * Eases between two vectors by a step using the formula (1 - t) * a + b .
@@ -2942,7 +2942,7 @@ public class Vec2 implements Comparable < Vec2 > {
       /**
        * The default constructor.
        */
-      public SmoothStep ( ) { super(); }
+      public SmoothStep ( ) {}
 
       /**
        * Applies the function.
@@ -2980,7 +2980,7 @@ public class Vec2 implements Comparable < Vec2 > {
       /**
        * The default constructor.
        */
-      public SortDistSq ( ) { super(); }
+      public SortDistSq ( ) {}
 
       /**
        * Constructs a sorting function with a locus against which points are
@@ -2990,7 +2990,6 @@ public class Vec2 implements Comparable < Vec2 > {
        */
       public SortDistSq ( final Vec2 locus ) {
 
-         super();
          this.locus.set(locus);
       }
 
@@ -3020,7 +3019,7 @@ public class Vec2 implements Comparable < Vec2 > {
       /**
        * The default constructor.
        */
-      public SortX ( ) { super(); }
+      public SortX ( ) {}
 
       /**
        * The compare function.
@@ -3046,7 +3045,7 @@ public class Vec2 implements Comparable < Vec2 > {
       /**
        * The default constructor.
        */
-      public SortY ( ) { super(); }
+      public SortY ( ) {}
 
       /**
        * The compare function.
