@@ -1431,14 +1431,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void image ( final PImage img ) {
 
       /*
-       * Skips straight to imageSource because CENTER is assumed to be the
+       * Skips straight to imageImpl because CENTER is assumed to be the
        * default.
        */
       final int w = img.width;
       final int h = img.height;
       final int wh = w / 2;
       final int hh = h / 2;
-      this.imageSource(img, -wh, -hh, wh, hh, 0, 0, w, h);
+      this.imageImpl(img, -wh, -hh, wh, hh, 0, 0, w, h);
    }
 
    /**
@@ -1474,46 +1474,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Displays a PImage. The meaning of the first four parameters depends on
-    * imageMode.
-    *
-    * @param img the image
-    * @param x0  the first x coordinate
-    * @param y0  the first y coordinate
-    * @param x1  the second x coordinate
-    * @param y1  the second y coordinate
-    * @param uTl the image top-left corner u
-    * @param vTl the image top-left corner v
-    * @param uBr the image bottom-right corner u
-    * @param vBr the image bottom-right corner v
-    */
-   public void image ( final PImage img, final float x0, final float y0,
-      final float x1, final float y1, final float uTl, final float vTl,
-      final float uBr, final float vBr ) {
-
-      final float w = img.width;
-      final float h = img.height;
-
-      final int x0i = ( int ) x0;
-      final int y0i = ( int ) y0;
-      final int x1i = ( int ) x1;
-      final int y1i = ( int ) y1;
-
-      /* Perform floor mod on integers instead. */
-      // final int u0 = ( int ) ( Utils.mod1(uTl) * w );
-      // final int v0 = ( int ) ( Utils.mod1(vTl) * h );
-      // final int u1 = ( int ) ( Utils.mod1(uBr) * w );
-      // final int v1 = ( int ) ( Utils.mod1(vBr) * h );
-
-      final int u0 = ( int ) ( uTl * w );
-      final int v0 = ( int ) ( vTl * h );
-      final int u1 = ( int ) ( uBr * w );
-      final int v1 = ( int ) ( vBr * h );
-
-      this.image(img, x0i, y0i, x1i, y1i, u0, v0, u1, v1);
-   }
-
-   /**
     * Displays a PImage.
     *
     * @param img the PImage
@@ -1531,9 +1491,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float x1, final float y1, final int uTl, final int vTl,
       final int uBr, final int vBr ) {
 
-      super.imageImpl(img, x0, y0, x1, y1, uTl, vBr, uBr, vTl);
-
-      // image(img, ( int ) a, ( int ) b, ( int ) c, ( int ) d, u1, v2, u2, v1);
+      this.image(img, ( int ) x0, ( int ) y0, ( int ) x1, ( int ) y1, uTl, vTl,
+         uBr, vBr);
    }
 
    /**
@@ -1543,11 +1502,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param x0  the first x coordinate
     * @param y0  the first y coordinate
     *
-    * @see YupJ2#imageSource(PImage, int, int, int, int, int, int, int, int)
+    * @see YupJ2#imageImpl(PImage, int, int, int, int, int, int, int, int)
     */
    public void image ( final PImage img, final int x0, final int y0 ) {
 
-      /* Skips to imageSource; UV coordinates do not need to be wrapped. */
+      /* Skips to imageImpl; UV coordinates do not need to be wrapped. */
 
       final int w = img.width;
       final int h = img.height;
@@ -1555,19 +1514,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       /* @formatter:off */
       switch ( this.imageMode ) {
          case PConstants.CORNERS:
-            this.imageSource(img,
+            this.imageImpl(img,
                x0, y0, x0 + w, y0 + h,
                0, 0, w, h);
             break;
 
          case PConstants.CORNER:
-            this.imageSource(img,
+            this.imageImpl(img,
                x0, y0 - h, x0 + w,
                y0, 0, 0, w, h);
             break;
 
          case PConstants.RADIUS:
-            this.imageSource(img,
+            this.imageImpl(img,
                x0 - w, y0 - h, x0 + w, y0 + h,
                0, 0, w, h);
             break;
@@ -1576,7 +1535,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          default:
             final int wh = w / 2;
             final int hh = h / 2;
-            this.imageSource(img,
+            this.imageImpl(img,
                x0 - wh, y0 - hh, x0 + wh, y0 + hh,
                0, 0, w, h);
       }
@@ -1592,7 +1551,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param x1  the second x coordinate
     * @param y1  the second y coordinate
     *
-    * @see YupJ2#imageSource(PImage, int, int, int, int, int, int, int, int)
+    * @see YupJ2#imageImpl(PImage, int, int, int, int, int, int, int, int)
     */
    public void image ( final PImage img, final int x0, final int y0,
       final int x1, final int y1 ) {
@@ -1619,17 +1578,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * <code>textureMode(IMAGE);</code> .
     *
     * @param img the PImage
-    * @param x0i the first x coordinate
-    * @param y0i the first y coordinate
-    * @param x1i the second x coordinate
-    * @param y1i the second y coordinate
-    * @param uTl the top left u coordinate
-    * @param vTl the top left v coordinate
-    * @param uBr the bottom right u coordinate
-    * @param vBr the bottom right v coordinate
+    * @param x0i display first corner x
+    * @param y0i display first corner y
+    * @param x1i display second corner x
+    * @param y1i display second corner y
+    * @param uTl sample top-left corner x
+    * @param vTl sample top-left corner y
+    * @param uBr sample bottom-right corner x
+    * @param vBr sample bottom-right corner y
     *
     * @see Math#floorMod(int, int)
-    * @see YupJ2#imageSource(PImage, int, int, int, int, int, int, int, int)
+    * @see YupJ2#imageImpl(PImage, int, int, int, int, int, int, int, int)
     */
    public void image ( final PImage img, final int x0i, final int y0i,
       final int x1i, final int y1i, final int uTl, final int vTl, final int uBr,
@@ -1641,15 +1600,16 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       int hDisp = 0;
 
       final int u0 = Math.floorMod(uTl, w1);
-      final int u1 = Math.floorMod(uBr, w1);
       final int v0 = Math.floorMod(vTl, h1);
+
+      final int u1 = Math.floorMod(uBr, w1);
       final int v1 = Math.floorMod(vBr, h1);
 
       /* @formatter:off */
       switch ( this.imageMode ) {
          case PConstants.CORNERS:
 
-            this.imageSource(img,
+            this.imageImpl(img,
                x0i, y0i, x1i, y1i,
                u0, v0, u1, v1);
             break;
@@ -1659,7 +1619,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             final int ydiff = y0i - y1i;
             wDisp = xdiff < 0 ? -xdiff : xdiff;
             hDisp = ydiff < 0 ? -ydiff : ydiff;
-            this.imageSource(img,
+            this.imageImpl(img,
                x0i, y0i - hDisp, x0i + wDisp, y0i,
                u0, v0, u1, v1);
             break;
@@ -1668,7 +1628,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             wDisp = x1i < 1 ? 1 : x1i;
             hDisp = y1i < 1 ? 1 : y1i;
-            this.imageSource(img,
+            this.imageImpl(img,
                x0i - wDisp, y0i - hDisp, x0i + wDisp, y0i + hDisp,
                u0, v0, u1, v1);
             break;
@@ -1678,7 +1638,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             wDisp = x1i < 2 ? 1 : x1i / 2;
             hDisp = y1i < 2 ? 1 : y1i / 2;
-            this.imageSource(img,
+            this.imageImpl(img,
                x0i - wDisp, y0i - hDisp, x0i + wDisp, y0i + hDisp,
                u0, v0, u1, v1);
 
@@ -1712,6 +1672,46 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * A hack to work around the performance issues with image display. Does
+    * the following:
+    * <ul>
+    * <li>Checks if either the width or height of the image is less than 2.
+    * Returns early if true.</li>
+    * <li>Calls {@link YupJ2#convertPImageToNative(PImage)}.</li>
+    * <li>Calls
+    * {@link Graphics2D#drawImage(Image, int, int, int, int, int, int, int, int, java.awt.Color, ImageObserver)}.</li>
+    * </ul>
+    * This ignores Processing's tint, {@link PGraphics#imageMode} and
+    * {@link PGraphics#textureMode}.
+    *
+    * @param pimg Processing image
+    * @param x0   display first corner x
+    * @param y0   display first corner y
+    * @param x1   display second corner x
+    * @param y1   display second corner y
+    * @param uTl  sample top-left corner x
+    * @param vTl  sample top-left corner y
+    * @param uBr  sample bottom-right corner x
+    * @param vBr  sample bottom-right corner y
+    */
+   public void imageImpl ( final PImage pimg, final int x0, final int y0,
+      final int x1, final int y1, final int uTl, final int vTl, final int uBr,
+      final int vBr ) {
+
+      if ( pimg.width < 2 || pimg.height < 2 ) { return; }
+      final int pd = pimg.pixelDensity;
+
+      /* @formatter:off */
+      this.g2.drawImage(
+         YupJ2.convertPImageToNative(pimg),
+         x0, y0, x1, y1,
+         uTl * pd, vBr * pd,
+         uBr * pd, vTl * pd,
+         null, null);
+      /* @formatter:on */
+   }
+
+   /**
     * Overrides the parent's image mode so as to not throw an exception.
     *
     * @param mode the image mode constant
@@ -1737,92 +1737,120 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * A hack to work around the performance issues with
-    * {@link PGraphicsJava2D#image(PImage, float, float, float, float, int, int, int, int)}
-    * . For performance sensitive image display. {@link PImage#getNative} is
-    * expensive, as it creates a new {@link java.awt.image.BufferedImage}. It
-    * is recommended that <code>PImage</code>s be edited and converted to
-    * {@link java.awt.Image} in <code>setup</code>, which are then passed here
-    * in <code>draw</code>. The {@link java.awt.image.ImageObserver} may be
-    * <code>null</code>. Calls
-    * {@link java.awt.Graphics2D#drawImage(Image, int, int, int, int, int, int, int, int, java.awt.image.ImageObserver) }.
-    * Multiplies the last four arguments by the pixel density and flips the v
-    * coordinates to account for the flipped y axis.<br>
-    * <br>
-    * This does not account for Processing's tint, {@link PGraphics#imageMode}
-    * or {@link PGraphics#textureMode}.
+    * A hack to work around the performance issues with image display. Samples
+    * the complete image and displays it at native resolution.
     *
     * @param imgNtv AWT native image
-    * @param pd     Processing image pixel density
-    * @param imgObs AWT ImageObserver
-    * @param x0     first corner x of the destination rectangle
-    * @param y0     first corner y of the destination rectangle
-    * @param x1     second corner x of the destination rectangle
-    * @param y1     second corner y of the destination rectangle
-    * @param uTl    first corner x of the source rectangle
-    * @param vTl    first corner y of the source rectangle
-    * @param uBr    second corner x of the source rectangle
-    * @param vBr    second corner y of the source rectangle
     */
-   public void imageSource ( final Image imgNtv, final int pd,
-      final ImageObserver imgObs, final int x0, final int y0, final int x1,
-      final int y1, final int uTl, final int vTl, final int uBr,
-      final int vBr ) {
+   public void imageNative ( final Image imgNtv ) {
 
-      /* @formatter:off */
-      final int vpd = pd < 1 ? 1 : pd;
-      final int h = imgNtv.getHeight(imgObs) / vpd;
-      this.g2.drawImage(
-         imgNtv,
-         x0, y0, x1, y1,
-         uTl * vpd, ( h - vTl ) * vpd,
-         uBr * vpd, ( h - vBr ) * vpd,
-         imgObs);
-      /* @formatter:on */
+      final int w = imgNtv.getWidth(null);
+      final int h = imgNtv.getHeight(null);
+      final int wh = w / 2;
+      final int hh = h / 2;
+      this.imageNative(imgNtv, 0, 0, w, h, -wh, -hh, wh, hh);
    }
 
    /**
-    * A hack to work around the performance issues with
-    * {@link PGraphicsJava2D#image(PImage, float, float, float, float, int, int, int, int)}
-    * . Does the following:
-    * <ul>
-    * <li>Checks if either the pixel width or height of the image is less than
-    * 2. Returns early if true.</li>
-    * <li>Acquires the {@link java.awt.Image } backing {@link PImage} and sets
-    * its data to the image's pixels. This is a huge performance bottleneck.
-    * <li>Calls
-    * {@link YupJ2#imageSource(Image, int, ImageObserver, int, int, int, int, int, int, int, int)}.</li>
-    * </ul>
-    * This does not account for Processing's tint, {@link PGraphics#imageMode}
-    * or {@link PGraphics#textureMode}.
+    * A hack to work around the performance issues with image display. Selects
+    * a sample from the image and displays it about the origin at native
+    * resolution.
     *
-    * @param img Processing image
-    * @param x0  first corner x of the destination rectangle
-    * @param y0  first corner y of the destination rectangle
-    * @param x1  second corner x of the destination rectangle
-    * @param y1  second corner y of the destination rectangle
-    * @param uTl first corner x of the source rectangle
-    * @param vTl first corner y of the source rectangle
-    * @param uBr second corner x of the source rectangle
-    * @param vBr second corner y of the source rectangle
+    * @param imgNtv AWT native image
+    * @param uTl    sample top-left corner x
+    * @param vTl    sample top-left corner y
+    * @param uBr    sample bottom-right corner x
+    * @param vBr    sample bottom-right corner y
     */
-   public void imageSource ( final PImage img, final int x0, final int y0,
-      final int x1, final int y1, final int uTl, final int vTl, final int uBr,
-      final int vBr ) {
+   public void imageNative ( final Image imgNtv, final int uTl, final int vTl,
+      final int uBr, final int vBr ) {
 
-      final int pw = img.pixelWidth;
-      final int ph = img.pixelHeight;
-      if ( pw < 2 || ph < 2 ) { return; }
+      imageNative(imgNtv, uTl, vTl, uBr, vBr, 1);
+   }
 
-      /* This is one of the bigger bottlenecks. */
-      img.loadPixels();
-      final BufferedImage imgNtv = new BufferedImage(pw, ph, img.format
-         == PConstants.RGB ? BufferedImage.TYPE_INT_RGB
-            : BufferedImage.TYPE_INT_ARGB);
-      imgNtv.getRaster().setDataElements(0, 0, pw, ph, img.pixels);
+   /**
+    * A hack to work around the performance issues with image display. Selects
+    * a sample from the image and displays it about the origin at the
+    * requested scale.
+    *
+    * @param imgNtv AWT native image
+    * @param uTl    sample top-left corner x
+    * @param vTl    sample top-left corner y
+    * @param uBr    sample bottom-right corner x
+    * @param vBr    sample bottom-right corner y
+    * @param scale  display scale
+    */
+   public void imageNative ( final Image imgNtv, final int uTl, final int vTl,
+      final int uBr, final int vBr, final int scale ) {
 
-      this.imageSource(imgNtv, img.pixelDensity, null, x0, y0, x1, y1, uTl, vTl,
-         uBr, vBr);
+      final int vscl = scale < 1 ? 1 : scale;
+      final int wh = vscl * Math.abs(uTl - uBr);
+      final int hh = vscl * Math.abs(vTl - vBr);
+      this.imageNative(imgNtv, uTl, vTl, uBr, vBr, -wh, -hh, wh, hh);
+   }
+
+   /**
+    * A hack to work around the performance issues with image display. The
+    * coordinate order is switched; specify the sample region <em>first</em>,
+    * the display region <em>second</em>.
+    *
+    * @param imgNtv AWT native image
+    * @param uTl    sample top-left corner x
+    * @param vTl    sample top-left corner y
+    * @param uBr    sample bottom-right corner x
+    * @param vBr    sample bottom-right corner y
+    * @param x0     display first corner x
+    * @param y0     display first corner y
+    * @param x1     display second corner x
+    * @param y1     display second corner y
+    */
+   public void imageNative ( final Image imgNtv, final int uTl, final int vTl,
+      final int uBr, final int vBr, final int x0, final int y0, final int x1,
+      final int y1 ) {
+
+      this.imageNative(imgNtv, uTl, vTl, uBr, vBr, x0, y0, x1, y1, 1);
+   }
+
+   /**
+    * A hack to work around the performance issues with Processing image
+    * display.The coordinate order is switched; specify the sample region
+    * <em>first</em>, the display region <em>second</em>.<br>
+    * <br>
+    * It is recommended that {@link PImage}s be edited and converted to
+    * {@link java.awt.Image}s in {@link PApplet#setup()}, then passed here in
+    * {@link PApplet#draw()}.<br>
+    * <br>
+    * Calls
+    * {@link java.awt.Graphics2D#drawImage(Image, int, int, int, int, int, int, int, int, java.awt.Color, ImageObserver) }.
+    * Multiplies the display coordinates by the pixel density.<br>
+    * <br>
+    * Does not account for Processing's tint, {@link PGraphics#imageMode} or
+    * {@link PGraphics#textureMode}.
+    *
+    * @param imgNtv AWT native image
+    * @param uTl    sample top-left corner x
+    * @param vTl    sample top-left corner y
+    * @param uBr    sample bottom-right corner x
+    * @param vBr    sample bottom-right corner y
+    * @param x0     display first corner x
+    * @param y0     display first corner y
+    * @param x1     display second corner x
+    * @param y1     display second corner y
+    * @param pd     Processing image pixel density
+    */
+   public void imageNative ( final Image imgNtv, final int uTl, final int vTl,
+      final int uBr, final int vBr, final int x0, final int y0, final int x1,
+      final int y1, final int pd ) {
+
+      /* @formatter:off */
+      final int vpd = pd < 1 ? 1 : pd;
+      this.g2.drawImage(
+         imgNtv,
+         x0, y0, x1, y1,
+         uTl * vpd, vBr * vpd,
+         uBr * vpd, vTl * vpd,
+         null, null);
+      /* @formatter:on */
    }
 
    /**
@@ -4120,5 +4148,26 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * The path string for this renderer.
     */
    public static final String PATH_STR = "camzup.pfriendly.YupJ2";
+
+   /**
+    * Converts a PImage to a {@link java.awt.Image}. This is an incredibly
+    * slow and inefficient method. It should <em>not</em> be used in a draw
+    * method.
+    *
+    * @param pimg the Processing image
+    *
+    * @return the AWT image
+    */
+   public static Image convertPImageToNative ( final PImage pimg ) {
+
+      final int pw = pimg.pixelWidth;
+      final int ph = pimg.pixelHeight;
+      pimg.loadPixels();
+      final BufferedImage imgNtv = new BufferedImage(pw, ph, pimg.format
+         == PConstants.RGB ? BufferedImage.TYPE_INT_RGB
+            : BufferedImage.TYPE_INT_ARGB);
+      imgNtv.getRaster().setDataElements(0, 0, pw, ph, pimg.pixels);
+      return imgNtv;
+   }
 
 }
