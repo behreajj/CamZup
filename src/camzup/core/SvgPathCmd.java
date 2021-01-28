@@ -198,6 +198,7 @@ public enum SvgPathCmd {
          case 't': return SvgPathCmd.REFLECT_QUADRATIC_REL;
          case 'v': return SvgPathCmd.VERT_REL;
          // case 'z': return PathCommand.CLOSE_PATH;
+
          default: return SvgPathCmd.CLOSE_PATH;
       }
       /* @formatter:on */

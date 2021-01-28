@@ -219,25 +219,6 @@ public class ColorKey implements Comparable < ColorKey > {
    }
 
    /**
-    * Returns a String representation of this color stop for an SVG gradient.
-    * Includes the offset, color and opacity.
-    *
-    * @return the string
-    */
-   public String toSvgString ( ) {
-
-      final StringBuilder svgp = new StringBuilder(96);
-      svgp.append("<stop offset=\"");
-      Utils.toFixed(svgp, this.step, 6);
-      svgp.append("\" stop-color=\"");
-      svgp.append(Color.toHexWeb(this.clr));
-      svgp.append("\" stop-opacity=\"");
-      Utils.toFixed(svgp, this.clr.a, 6);
-      svgp.append("\"/>");
-      return svgp.toString();
-   }
-
-   /**
     * Sets this key by step and color channel. The color's alpha is assumed to
     * be 1.0 . This is for package-level use only, so that the step can be set
     * without clamp protection.

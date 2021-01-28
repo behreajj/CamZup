@@ -337,7 +337,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public Gradient distribute ( ) {
 
-      final ArrayList < ColorKey > keyArr = new ArrayList <>();
+      final ArrayList < ColorKey > keyArr = new ArrayList <>(this.keys.size());
       keyArr.addAll(this.keys);
       this.keys.clear();
       final Iterator < ColorKey > itr = keyArr.iterator();
@@ -784,6 +784,21 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
+    * Returns an array containing the colors in the gradient. Unlike
+    * {@link Gradient#evalRange(Gradient, int)}, doesn't return equally
+    * distributed colors.
+    *
+    * @return the array
+    */
+   public Color[] toArray ( ) {
+
+      final Color[] result = new Color[this.keys.size()];
+      final Iterator < ColorKey > itr = this.keys.iterator();
+      for ( int i = 0; itr.hasNext(); ++i ) { result[i] = itr.next().clr; }
+      return result;
+   }
+
+   /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes.
     *
@@ -1014,60 +1029,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Returns a String representation of the gradient compatible with .gpl
-    * (GIMP palette) file formats.
-    *
-    * @return the string
-    */
-   public String toGplString ( ) {
-
-      return this.toGplString(this.hashIdentityString(), 0);
-   }
-
-   /**
-    * Returns a String representation of the gradient compatible with .gpl
-    * (GIMP palette) file formats.
-    *
-    * @param name palette name
-    *
-    * @return the string
-    */
-   public String toGplString ( final String name ) {
-
-      return this.toGplString(name, 0);
-   }
-
-   /**
-    * Returns a String representation of the gradient compatible with .gpl
-    * (GIMP palette) file formats.
-    *
-    * @param name           palette name
-    * @param displayColumns display columns
-    *
-    * @return the string
-    */
-   public String toGplString ( final String name, final int displayColumns ) {
-
-      final StringBuilder sb = new StringBuilder(1024);
-      sb.append("GIMP Palette\n");
-      sb.append("Name: ");
-      sb.append(name);
-      sb.append('\n');
-      sb.append("Columns: ");
-      sb.append(displayColumns);
-      sb.append('\n');
-      sb.append("# https://github.com/behreajj/CamZup \n");
-
-      final Iterator < ColorKey > itr = this.keys.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().clr.toGplString(sb);
-         sb.append('\n');
-      }
-
-      return sb.toString();
-   }
-
-   /**
     * Returns a string representation of this gradient.
     *
     * @return the string
@@ -1093,54 +1054,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       }
       sb.append(" ] }");
       return sb.toString();
-   }
-
-   /**
-    * Returns a String representation of the gradient compatible with the SVG
-    * format. Assumes a linear gradient with an origin and destination point.
-    *
-    * @param id the gradient id
-    *
-    * @return the string
-    */
-   public String toSvgString ( final String id ) {
-
-      return this.toSvgString(id, 0.0f, 0.0f, 0.0f, 1.0f);
-   }
-
-   /**
-    * Returns a String representation of the gradient compatible with the SVG
-    * format. Assumes a linear gradient with an origin and destination point.
-    *
-    * @param id the gradient id
-    * @param x1 the origin x
-    * @param y1 the origin y
-    * @param x2 the destination x
-    * @param y2 the destination y
-    *
-    * @return the string
-    */
-   public String toSvgString ( final String id, final float x1, final float y1,
-      final float x2, final float y2 ) {
-
-      final StringBuilder svgp = new StringBuilder(1024);
-      svgp.append("<linearGradient id=\"");
-      svgp.append(id);
-      svgp.append("\" x1=\"");
-      Utils.toFixed(svgp, x1, 6);
-      svgp.append("\" y1=\"");
-      Utils.toFixed(svgp, y1, 6);
-      svgp.append("\" x2=\"");
-      Utils.toFixed(svgp, x2, 6);
-      svgp.append("\" y2=\"");
-      Utils.toFixed(svgp, y2, 6);
-      svgp.append("\">");
-
-      final Iterator < ColorKey > itr = this.keys.iterator();
-      while ( itr.hasNext() ) { svgp.append(itr.next().toSvgString()); }
-
-      svgp.append("</linearGradient>");
-      return svgp.toString();
    }
 
    /**

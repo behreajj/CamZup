@@ -3,7 +3,7 @@ package camzup.core;
 import java.io.BufferedReader;
 import java.io.FileReader;
 
-import java.util.ArrayList;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 /**
@@ -32,9 +32,10 @@ public abstract class ParserGpl {
 
          try {
 
-            final ArrayList < Color > clrs = new ArrayList <>(8);
+            final TreeMap < Integer, Color > clrs = new TreeMap <>();
             final Pattern ptrn = Pattern.compile("\\s+");
 
+            int i = 0;
             for ( String ln = in.readLine(); ln != null; ln = in.readLine() ) {
                final String lnlc = ln.trim().toLowerCase();
                if ( lnlc.equals("gimp palette") || lnlc.indexOf("name:") > -1
@@ -42,19 +43,22 @@ public abstract class ParserGpl {
                   /* Skip. */
                } else {
                   final String[] tokens = ptrn.split(lnlc, 0);
-                  if ( tokens.length > 2 ) {
-                     /* @formatter:off */
-                     clrs.add(new Color(
-                        Float.parseFloat(tokens[0]) * IUtils.ONE_255,
-                        Float.parseFloat(tokens[1]) * IUtils.ONE_255,
-                        Float.parseFloat(tokens[2]) * IUtils.ONE_255,
-                        1.0f));
-                     /* @formatter:on */
+                  final int len = tokens.length;
+                  if ( len > 2 ) {
+                     final int idx = len > 4 ? Integer.parseInt(tokens[4], 10)
+                        - 1 : i;
+
+                     clrs.put(idx, new Color(Float.parseFloat(tokens[0])
+                        * IUtils.ONE_255, Float.parseFloat(tokens[1])
+                           * IUtils.ONE_255, Float.parseFloat(tokens[2])
+                              * IUtils.ONE_255, 1.0f));
+
+                     ++i;
                   }
                }
             }
 
-            result = clrs.toArray(new Color[clrs.size()]);
+            result = clrs.values().toArray(new Color[clrs.size()]);
 
          } catch ( final Exception e ) {
             e.printStackTrace();

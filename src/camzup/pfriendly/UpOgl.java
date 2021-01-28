@@ -1497,7 +1497,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * Prints the camera matrix in columns, for easier viewing in the console.
     */
    @Override
-   public void printCamera ( ) { this.printCamera(4); }
+   public void printCamera ( ) { this.printCamera(IUtils.FIXED_PRINT); }
 
    /**
     * Prints the camera matrix in columns, for easier viewing in the console.
@@ -1513,7 +1513,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * Prints the camera inverse matrix in columns, for easier viewing in the
     * console.
     */
-   public void printCameraInv ( ) { this.printCameraInv(4); }
+   public void printCameraInv ( ) {
+
+      this.printCameraInv(IUtils.FIXED_PRINT);
+   }
 
    /**
     * Prints the camera inverse matrix in columns, for easier viewing in the
@@ -1531,7 +1534,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * console.
     */
    @Override
-   public void printMatrix ( ) { this.printMatrix(4); }
+   public void printMatrix ( ) { this.printMatrix(IUtils.FIXED_PRINT); }
 
    /**
     * Prints the model view matrix in columns, for easier viewing in the
@@ -1549,7 +1552,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * console.
     */
    @Override
-   public void printProjection ( ) { this.printProjection(4); }
+   public void printProjection ( ) { this.printProjection(IUtils.FIXED_PRINT); }
 
    /**
     * Prints the projection matrix in columns, for easier viewing in the
@@ -2008,10 +2011,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       if ( psh.isVisible() ) {
          this.flush();
-         // this.pushMatrix();
-         // this.scale(1.0f, -1.0f);
          psh.draw(this);
-         // this.popMatrix();
       }
    }
 

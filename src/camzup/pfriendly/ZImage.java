@@ -3,6 +3,7 @@ package camzup.pfriendly;
 import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 
+import camzup.core.Bounds2;
 import camzup.core.Color;
 import camzup.core.Gradient;
 import camzup.core.IUtils;
@@ -164,6 +165,8 @@ public class ZImage extends PImage {
    protected static final Pattern PATTERN_SPACE;
 
    static {
+
+      // TODO: Declare these on method call, rather than static objects?
       PATTERN_LN_BR = Pattern.compile("\r\n|\n|\r");
       PATTERN_SPACE = Pattern.compile("\\s+");
    }
@@ -213,6 +216,49 @@ public class ZImage extends PImage {
    public static float aspect ( final PImage img ) {
 
       return Utils.div(( float ) img.width, ( float ) img.height);
+   }
+
+   /**
+    * Finds the bounding area of an image that may contain alpha padding,
+    * inclusive on the lower bound and exclusive on the upper bound.
+    *
+    * @param img    the image
+    * @param target the output
+    *
+    * @return the bounds
+    */
+   public static Bounds2 calcBounds ( final PImage img, final Bounds2 target ) {
+
+      // QUERY Create a version for a key color? ie., pixels[i] != key?
+
+      final int w = img.width;
+      final int[] pixels = img.pixels;
+      final int len = pixels.length;
+
+      final Vec2 min = target.min;
+      final Vec2 max = target.max;
+
+      /* Forward search. */
+      boolean found = false;
+      for ( int i = 0; !found && i < len; ++i ) {
+         final int ai = pixels[i] >> 0x18 & 0xff;
+         if ( ai > 0 ) {
+            min.set(i % w, i / w);
+            found = true;
+         }
+      }
+
+      /* Backward search. */
+      found = false;
+      for ( int i = len - 1; !found && i > -1; --i ) {
+         final int ai = pixels[i] >> 0x18 & 0xff;
+         if ( ai > 0 ) {
+            max.set(1 + i % w, 1 + i / w);
+            found = true;
+         }
+      }
+
+      return target;
    }
 
    /**
@@ -397,6 +443,7 @@ public class ZImage extends PImage {
       final int[] pixels = target.pixels;
       final int[] flipped = new int[pixels.length];
 
+      // TODO: Use one-dimensiona loop instead?
       for ( int i = 0, y = 0; y < h; ++y ) {
          final int yw = y * w;
          for ( int x = w - 1; x > -1; --x, ++i ) {
@@ -427,6 +474,7 @@ public class ZImage extends PImage {
       final int[] pixels = target.pixels;
       final int[] flipped = new int[pixels.length];
 
+      // TODO: Use one-dimensiona loop instead?
       for ( int i = 0, y = h - 1; y > -1; --y ) {
          final int yw = y * w;
          for ( int x = 0; x < w; ++x, ++i ) { flipped[yw + x] = pixels[i]; }
@@ -625,13 +673,6 @@ public class ZImage extends PImage {
    public static PImage fromText ( final PFont font, final String text,
       final int fillClr, final int leading, final int kerning,
       final int textAlign ) {
-
-      /*
-       * This does not use an output target because of difficulties finding a
-       * way to resize an existing image efficiently, i.e. by clipping its
-       * pixels away. PImage's resize function is undefined and the issue is
-       * complicated by PImageAWT .
-       */
 
       /*
        * Validate inputs: colors with no alpha not allowed; negative leading and

@@ -1698,17 +1698,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final int x1, final int y1, final int uTl, final int vTl, final int uBr,
       final int vBr ) {
 
-      if ( pimg.width < 2 || pimg.height < 2 ) { return; }
-      final int pd = pimg.pixelDensity;
-
-      /* @formatter:off */
-      this.g2.drawImage(
-         YupJ2.convertPImageToNative(pimg),
-         x0, y0, x1, y1,
-         uTl * pd, vBr * pd,
-         uBr * pd, vTl * pd,
-         null, null);
-      /* @formatter:on */
+      if ( pimg.width > 1 && pimg.height > 1 ) {
+         final int pd = pimg.pixelDensity;
+         this.g2.drawImage(YupJ2.convertPImageToNative(pimg), x0, y0, x1, y1,
+            uTl * pd, vBr * pd, uBr * pd, vTl * pd, null, null);
+      }
    }
 
    /**
@@ -1744,8 +1738,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public void imageNative ( final Image imgNtv ) {
 
-      final int w = imgNtv.getWidth(null);
-      final int h = imgNtv.getHeight(null);
+      final ImageObserver io = null;
+      final int w = imgNtv.getWidth(io);
+      final int h = imgNtv.getHeight(io);
       final int wh = w / 2;
       final int hh = h / 2;
       this.imageNative(imgNtv, 0, 0, w, h, -wh, -hh, wh, hh);
@@ -1765,7 +1760,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void imageNative ( final Image imgNtv, final int uTl, final int vTl,
       final int uBr, final int vBr ) {
 
-      imageNative(imgNtv, uTl, vTl, uBr, vBr, 1);
+      this.imageNative(imgNtv, uTl, vTl, uBr, vBr, 1);
    }
 
    /**
@@ -2114,7 +2109,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * row-major 3 x 2 matrix, not the Java AWT convention.
     */
    @Override
-   public void printMatrix ( ) { this.printMatrix(4); }
+   public void printMatrix ( ) { this.printMatrix(IUtils.FIXED_PRINT); }
 
    /**
     * Prints the renderer matrix. Follows the Processing convention of a
@@ -2963,10 +2958,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       if ( pshp.isVisible() ) {
          this.flush();
-         // this.pushMatrix();
-         // this.scale(1.0f, -1.0f);
          pshp.draw(this);
-         // this.popMatrix();
       }
    }
 
@@ -4120,6 +4112,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    protected void textLineImpl ( final char[] buffer, final int start,
       final int stop, final float x, final float y ) {
 
+      // TODO: Does this need to be updated for Processing 4?
+      // https://github.com/processing/processing4/blob/
+      // 5b5f6eb95293aa5daa3fad31f847028f9fb59cb3/core/src/
+      // processing/awt/PGraphicsJava2D.java#L2061
       float cursor = x;
       for ( int index = start; index < stop; ++index ) {
          final char c = buffer[index];

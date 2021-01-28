@@ -1233,34 +1233,35 @@ public class Color implements Comparable < Color > {
    public static Color hsbaToRgba ( final float hue, final float sat,
       final float bri, final float alpha, final Color target ) {
 
-      if ( sat <= 0.0f ) { return target.set(bri, bri, bri, alpha); }
-
       final float h = Utils.mod1(hue) * 6.0f;
+      final float s = Utils.clamp01(sat);
+      final float b = Utils.clamp01(bri);
+      final float a = Utils.clamp01(alpha);
+
       final int sector = ( int ) h;
       final float secf = sector;
-
-      final float tint1 = bri * ( 1.0f - sat );
-      final float tint2 = bri * ( 1.0f - sat * ( h - secf ) );
-      final float tint3 = bri * ( 1.0f - sat * ( 1.0f + secf - h ) );
+      final float tint1 = b * ( 1.0f - s );
+      final float tint2 = b * ( 1.0f - s * ( h - secf ) );
+      final float tint3 = b * ( 1.0f - s * ( 1.0f + secf - h ) );
 
       switch ( sector ) {
          case 0:
-            return target.set(bri, tint3, tint1, alpha);
+            return target.set(b, tint3, tint1, a);
 
          case 1:
-            return target.set(tint2, bri, tint1, alpha);
+            return target.set(tint2, b, tint1, a);
 
          case 2:
-            return target.set(tint1, bri, tint3, alpha);
+            return target.set(tint1, b, tint3, a);
 
          case 3:
-            return target.set(tint1, tint2, bri, alpha);
+            return target.set(tint1, tint2, b, a);
 
          case 4:
-            return target.set(tint3, tint1, bri, alpha);
+            return target.set(tint3, tint1, b, a);
 
          case 5:
-            return target.set(bri, tint1, tint2, alpha);
+            return target.set(b, tint1, tint2, a);
 
          default:
             return target.reset();
@@ -1957,6 +1958,68 @@ public class Color implements Comparable < Color > {
       Color.rgbaToHsba(c, hsba);
       hsba.y = Utils.clamp01(hsba.y + shift);
       return Color.hsbaToRgba(hsba, target);
+   }
+
+   /**
+    * Returns a String representing the color array in the GIMP palette file
+    * format.
+    *
+    * @param arr the array
+    *
+    * @return the string
+    */
+   public static String toGplString ( final Color[] arr ) {
+
+      return Color.toGplString(arr, "Palette", 1);
+   }
+
+   /**
+    * Returns a String representing the color array in the GIMP palette file
+    * format.
+    *
+    * @param arr  the array
+    * @param name the palette name
+    *
+    * @return the string
+    */
+   public static String toGplString ( final Color[] arr, final String name ) {
+
+      return Color.toGplString(arr, name, 1);
+   }
+
+   /**
+    * Returns a String representing the color array in the GIMP palette file
+    * format.
+    *
+    * @param arr  the array
+    * @param name the palette name
+    * @param cols the display columns
+    *
+    * @return the string
+    */
+   public static String toGplString ( final Color[] arr, final String name,
+      final int cols ) {
+
+      final StringBuilder sb = new StringBuilder(1024);
+      sb.append("GIMP Palette");
+      sb.append("\nName: ");
+      sb.append(name);
+      sb.append("\nColumns: ");
+      sb.append(cols);
+      sb.append("\n# https://github.com/behreajj/CamZup\n");
+
+      final int len = arr.length;
+      for ( int i = 0; i < len; ++i ) {
+         final Color clr = arr[i];
+         clr.toGplString(sb);
+         sb.append(' ');
+         sb.append(Color.toHexWeb(clr).substring(1).toUpperCase());
+         sb.append(' ');
+         sb.append(i + 1);
+         sb.append('\n');
+      }
+
+      return sb.toString();
    }
 
    /**

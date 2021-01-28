@@ -10,10 +10,11 @@ void settings() {
 
 void setup() {
   long start = System.currentTimeMillis();
-  grd = ParserGgr.load(sketchPath() + "\\data\\Sunrise.ggr", 32);
+  grd = ParserGgr.load(sketchPath() + "\\data\\sunrise.ggr", 16);
   long end = System.currentTimeMillis();
   println("Elapsed Time: " + (end - start));
 
+  Gradient.inverse(grd, grd);
   trg = createImage(width, height, ARGB);
   ZImage.fill(grd, trg);
 }
@@ -24,7 +25,7 @@ void draw() {
 }
 
 void mouseReleased() {
-  String ggr = grd.toGgrString();
-  saveStrings("zup.ggr", new String[] { ggr });
+  String ggr = grd.toGgrString("Sunrise Inverse");
+  saveStrings("data/sunriseInverted.ggr", new String[] { ggr });
   System.out.println("Saved to GGR.");
 }
