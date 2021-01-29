@@ -517,6 +517,12 @@ public class Color implements Comparable < Color > {
     */
    String toGgrString ( ) {
 
+      /*
+       * This does not append to a pre-existing StringBuilder because
+       * differences between GGR and Camzup gradients mean multiple string
+       * conversions of one color.
+       */
+
       final StringBuilder ggr = new StringBuilder(96);
       Utils.toFixed(ggr, this.r, 6);
       ggr.append(' ');
@@ -1858,7 +1864,7 @@ public class Color implements Comparable < Color > {
       final Color target, final Vec4 hsba ) {
 
       Color.rgbaToHsba(c, hsba);
-      hsba.z = Utils.clamp01(hsba.z + shift);
+      hsba.z += shift;
       return Color.hsbaToRgba(hsba, target);
    }
 
@@ -1880,11 +1886,15 @@ public class Color implements Comparable < Color > {
    public static Color shiftHsb ( final Color c, final Vec4 shift,
       final Color target, final Vec4 hsba ) {
 
-      /* HSBA to RGBA conversion takes care of wrapping the hue. */
+      /*
+       * HSBA to RGBA conversion takes care of wrapping the hue, clamping the
+       * saturation and brightness.
+       */
+
       Color.rgbaToHsba(c, hsba);
       hsba.x += shift.x;
-      hsba.y = Utils.clamp01(hsba.y + shift.y);
-      hsba.z = Utils.clamp01(hsba.z + shift.z);
+      hsba.y += shift.y;
+      hsba.z += shift.z;
       return Color.hsbaToRgba(hsba, target);
    }
 
@@ -1905,12 +1915,13 @@ public class Color implements Comparable < Color > {
    public static Color shiftHsba ( final Color c, final Vec4 shift,
       final Color target, final Vec4 hsba ) {
 
-      /* HSBA to RGBA conversion takes care of wrapping the hue. */
+      /*
+       * HSBA to RGBA conversion takes care of wrapping the hue, clamping the
+       * saturation and brightness.
+       */
+
       Color.rgbaToHsba(c, hsba);
-      hsba.x += shift.x;
-      hsba.y = Utils.clamp01(hsba.y + shift.y);
-      hsba.z = Utils.clamp01(hsba.z + shift.z);
-      hsba.w = Utils.clamp01(hsba.w + shift.w);
+      Vec4.add(hsba, shift, hsba);
       return Color.hsbaToRgba(hsba, target);
    }
 
@@ -1956,7 +1967,7 @@ public class Color implements Comparable < Color > {
       final Color target, final Vec4 hsba ) {
 
       Color.rgbaToHsba(c, hsba);
-      hsba.y = Utils.clamp01(hsba.y + shift);
+      hsba.y += shift;
       return Color.hsbaToRgba(hsba, target);
    }
 

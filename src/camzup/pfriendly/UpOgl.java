@@ -1595,79 +1595,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * Draws a rectangle. The meaning of the four parameters depends on
     * rectMode.
     *
-    * @param x1 the first x parameter
-    * @param y1 the first y parameter
-    * @param x2 the second x parameter
-    * @param y2 the second y parameter
+    * @param x0 the first x parameter
+    * @param y0 the first y parameter
+    * @param x1 the second x parameter
+    * @param y1 the second y parameter
     */
    @Override
-   public void rect ( final float x1, final float y1, final float x2,
-      final float y2 ) {
+   public void rect ( final float x0, final float y0, final float x1,
+      final float y1 ) {
 
-      float a0;
-      float b0;
-      float a1;
-      float b1;
-
-      float w;
-      float h;
-
-      switch ( this.rectMode ) {
-
-         case PConstants.CORNER:
-
-            w = Utils.abs(x2);
-            h = Utils.abs(y2);
-
-            a0 = x1;
-            b0 = y1 - h;
-            a1 = x1 + w;
-            b1 = y1;
-
-            break;
-
-         case PConstants.CORNERS:
-
-            a0 = Utils.min(x1, x2);
-            a1 = Utils.max(x1, x2);
-
-            b0 = Utils.min(y1, y2);
-            b1 = Utils.max(y1, y2);
-
-            break;
-
-         case PConstants.RADIUS:
-
-            w = Utils.abs(x2);
-            h = Utils.abs(y2);
-
-            a0 = x1 - w;
-            a1 = x1 + w;
-            b0 = y1 + h;
-            b1 = y1 - h;
-
-            break;
-
-         case PConstants.CENTER:
-
-         default:
-
-            w = Utils.abs(x2) * 0.5f;
-            h = Utils.abs(y2) * 0.5f;
-
-            a0 = x1 - w;
-            a1 = x1 + w;
-            b0 = y1 + h;
-            b1 = y1 - h;
-      }
-
-      this.beginShape(PConstants.POLYGON);
-      this.normalPerShape(0.0f, 0.0f, 1.0f);
-      this.vertexImpl(a0, b0, 0.0f, 0.0f, 0.0f);
-      this.vertexImpl(a1, b0, 0.0f, 1.0f, 0.0f);
-      this.vertexImpl(a1, b1, 0.0f, 1.0f, 1.0f);
-      this.vertexImpl(a0, b1, 0.0f, 0.0f, 1.0f);
-      this.endShape(PConstants.CLOSE);
+      this.rectImpl(x0, y0, x1, y1);
    }
 
    /**
@@ -3608,13 +3545,92 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Draws a rectangle. The meaning of the four parameters depends on
+    * rectMode.
+    *
+    * @param x0 the first x parameter
+    * @param y0 the first y parameter
+    * @param x1 the second x parameter
+    * @param y1 the second y parameter
+    */
+   @Override
+   protected void rectImpl ( final float x0, final float y0, final float x1,
+      final float y1 ) {
+
+      float a0;
+      float b0;
+      float a1;
+      float b1;
+
+      float w;
+      float h;
+
+      switch ( this.rectMode ) {
+
+         case PConstants.CORNER:
+
+            w = Utils.abs(x1);
+            h = Utils.abs(y1);
+
+            a0 = x0;
+            b0 = y0 - h;
+            a1 = x0 + w;
+            b1 = y0;
+
+            break;
+
+         case PConstants.CORNERS:
+
+            a0 = Utils.min(x0, x1);
+            a1 = Utils.max(x0, x1);
+
+            b0 = Utils.min(y0, y1);
+            b1 = Utils.max(y0, y1);
+
+            break;
+
+         case PConstants.RADIUS:
+
+            w = Utils.abs(x1);
+            h = Utils.abs(y1);
+
+            a0 = x0 - w;
+            a1 = x0 + w;
+            b0 = y0 + h;
+            b1 = y0 - h;
+
+            break;
+
+         case PConstants.CENTER:
+
+         default:
+
+            w = Utils.abs(x1) * 0.5f;
+            h = Utils.abs(y1) * 0.5f;
+
+            a0 = x0 - w;
+            a1 = x0 + w;
+            b0 = y0 + h;
+            b1 = y0 - h;
+      }
+
+      this.beginShape(PConstants.POLYGON);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
+      this.vertexImpl(a0, b0, 0.0f, 0.0f, 0.0f);
+      this.vertexImpl(a1, b0, 0.0f, 1.0f, 0.0f);
+      this.vertexImpl(a1, b1, 0.0f, 1.0f, 1.0f);
+      this.vertexImpl(a0, b1, 0.0f, 0.0f, 1.0f);
+      this.endShape(PConstants.CLOSE);
+   }
+
+   /**
     * Draws a rounded rectangle. The meaning of the first four parameters
     * depends on rectMode.
     *
-    * @param a           the first x parameter
-    * @param b           the first y parameter
-    * @param c           the second x parameter
-    * @param d           the second y parameter
+    * @param x0          the first x parameter
+    * @param y0          the first y parameter
+    * @param x1          the second x parameter
+    * @param y1          the second y parameter
     * @param topLeft     the top-left corner rounding
     * @param topRight    the top-right corner rounding
     * @param bottomRight the bottom-right corner rounding
@@ -3626,14 +3642,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @see Utils#clamp(float, float, float)
     */
    @Override
-   protected void rectImpl ( final float a, final float b, final float c,
-      final float d, final float topLeft, final float topRight,
+   protected void rectImpl ( final float x0, final float y0, final float x1,
+      final float y1, final float topLeft, final float topRight,
       final float bottomRight, final float bottomLeft ) {
 
-      float x1;
-      float y1;
-      float x2;
-      float y2;
+      float a0;
+      float b0;
+      float a1;
+      float b1;
 
       float w;
       float h;
@@ -3641,51 +3657,51 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       switch ( this.rectMode ) {
          case PConstants.CORNER:
 
-            w = Utils.abs(c);
-            h = Utils.abs(d);
+            w = Utils.abs(x1);
+            h = Utils.abs(y1);
 
-            x1 = a;
-            y1 = b - h;
-            x2 = a + w;
-            y2 = b;
+            a0 = x0;
+            b0 = y0 - h;
+            a1 = x0 + w;
+            b1 = y0;
 
             break;
 
          case PConstants.CORNERS:
 
-            w = Utils.abs(c - a);
-            h = Utils.abs(b - d);
+            w = Utils.abs(x1 - x0);
+            h = Utils.abs(y0 - y1);
 
-            x1 = Utils.min(a, c);
-            x2 = Utils.max(a, c);
+            a0 = Utils.min(x0, x1);
+            a1 = Utils.max(x0, x1);
 
-            y1 = Utils.min(b, d);
-            y2 = Utils.max(b, d);
+            b0 = Utils.min(y0, y1);
+            b1 = Utils.max(y0, y1);
 
             break;
 
          case PConstants.RADIUS:
 
-            w = Utils.abs(c);
-            h = Utils.abs(d);
+            w = Utils.abs(x1);
+            h = Utils.abs(y1);
 
-            x1 = a - w;
-            x2 = a + w;
-            y1 = b - h;
-            y2 = b + h;
+            a0 = x0 - w;
+            a1 = x0 + w;
+            b0 = y0 - h;
+            b1 = y0 + h;
 
             break;
 
          case PConstants.CENTER:
          default:
 
-            w = Utils.abs(c);
-            h = Utils.abs(d);
+            w = Utils.abs(x1);
+            h = Utils.abs(y1);
 
-            x1 = a - w * 0.5f;
-            x2 = a + w * 0.5f;
-            y1 = b - h * 0.5f;
-            y2 = b + h * 0.5f;
+            a0 = x0 - w * 0.5f;
+            a1 = x0 + w * 0.5f;
+            b0 = y0 - h * 0.5f;
+            b1 = y0 + h * 0.5f;
 
       }
 
@@ -3698,17 +3714,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.beginShape(PConstants.POLYGON);
       this.normalPerShape(0.0f, 0.0f, 1.0f);
 
-      this.vertexImpl(x2 - tr, y1, 0.0f, this.textureU, this.textureV);
-      this.quadraticVertexImpl(x2, y1, 0.0f, x2, y1 + tr, 0.0f);
+      this.vertexImpl(a1 - tr, b0, 0.0f, this.textureU, this.textureV);
+      this.quadraticVertexImpl(a1, b0, 0.0f, a1, b0 + tr, 0.0f);
 
-      this.vertexImpl(x2, y2 - br, 0.0f, this.textureU, this.textureV);
-      this.quadraticVertexImpl(x2, y2, 0.0f, x2 - br, y2, 0.0f);
+      this.vertexImpl(a1, b1 - br, 0.0f, this.textureU, this.textureV);
+      this.quadraticVertexImpl(a1, b1, 0.0f, a1 - br, b1, 0.0f);
 
-      this.vertexImpl(x1 + bl, y2, 0.0f, this.textureU, this.textureV);
-      this.quadraticVertexImpl(x1, y2, 0.0f, x1, y2 - bl, 0.0f);
+      this.vertexImpl(a0 + bl, b1, 0.0f, this.textureU, this.textureV);
+      this.quadraticVertexImpl(a0, b1, 0.0f, a0, b1 - bl, 0.0f);
 
-      this.vertexImpl(x1, y1 + tl, 0.0f, this.textureU, this.textureV);
-      this.quadraticVertexImpl(x1, y1, 0.0f, x1 + tl, y1, 0.0f);
+      this.vertexImpl(a0, b0 + tl, 0.0f, this.textureU, this.textureV);
+      this.quadraticVertexImpl(a0, b0, 0.0f, a0 + tl, b0, 0.0f);
 
       this.endShape(PConstants.CLOSE);
    }

@@ -6,19 +6,19 @@ float radius = 0.5;
 float padding = 0.05;
 float faceInset = 0.85;
 float rounding = 0.1;
-float subfRound =0.0375;
+float subfRound = 0.0375;
 
-Yup2 graphics;
+YupJ2 graphics;
 MaterialSolid[] materials;
 MeshEntity2 entity2 = new MeshEntity2();
-Gradient gradient = Gradient.paletteCyanotype(new Gradient());
+Gradient gradient = Gradient.paletteSepia(new Gradient());
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {
-  graphics = (Yup2)getGraphics();
+  graphics = (YupJ2)getGraphics();
   frameRate(60.0);
 
   Mesh2 hex = new Mesh2();

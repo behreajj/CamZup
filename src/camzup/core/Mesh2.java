@@ -52,10 +52,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @param source the source mesh
     */
-   public Mesh2 ( final Mesh2 source ) {
-
-      this.set(source);
-   }
+   public Mesh2 ( final Mesh2 source ) { this.set(source); }
 
    /**
     * Creates a named mesh.

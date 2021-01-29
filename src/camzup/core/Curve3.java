@@ -58,30 +58,21 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @param source the source curve
     */
-   public Curve3 ( final Curve2 source ) {
-
-      this.set(source);
-   }
+   public Curve3 ( final Curve2 source ) { this.set(source); }
 
    /**
     * Constructs a copy of the source.
     *
     * @param source the source curve
     */
-   public Curve3 ( final Curve3 source ) {
-
-      this.set(source);
-   }
+   public Curve3 ( final Curve3 source ) { this.set(source); }
 
    /**
     * Creates a named curve with two default knots.
     *
     * @param name the name
     */
-   public Curve3 ( final String name ) {
-
-      super(name);
-   }
+   public Curve3 ( final String name ) { super(name); }
 
    /**
     * Creates a named curve from a collection of knots

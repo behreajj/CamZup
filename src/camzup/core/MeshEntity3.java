@@ -30,7 +30,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     */
    public MeshEntity3 ( final Mesh3... meshes ) {
 
-      super(new Transform3());
       this.appendAll(meshes);
    }
 

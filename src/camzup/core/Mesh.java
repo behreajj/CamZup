@@ -39,10 +39,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     *
     * @param faces the face indices.
     */
-   protected Mesh ( final int[][][] faces ) {
-
-      this.faces = faces;
-   }
+   protected Mesh ( final int[][][] faces ) { this.faces = faces; }
 
    /**
     * Construct a mesh and give it a name.
@@ -149,8 +146,6 @@ public abstract class Mesh extends EntityData implements IMesh {
     * @return this mesh
     */
    public Mesh reverseEdge ( final int i, final int j ) {
-
-      // TODO: reverseEdges
 
       final int[][] face = this.faces[Utils.mod(i, this.faces.length)];
       final int len = face.length;

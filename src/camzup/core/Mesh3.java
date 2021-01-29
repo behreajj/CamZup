@@ -59,20 +59,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @param source the source mesh
     */
-   public Mesh3 ( final Mesh2 source ) {
-
-      this.set(source);
-   }
+   public Mesh3 ( final Mesh2 source ) { this.set(source); }
 
    /**
     * Constructs a copy of the source mesh.
     *
     * @param source the source mesh
     */
-   public Mesh3 ( final Mesh3 source ) {
-
-      this.set(source);
-   }
+   public Mesh3 ( final Mesh3 source ) { this.set(source); }
 
    /**
     * Creates a named mesh.

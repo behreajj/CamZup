@@ -1,6 +1,7 @@
 package camzup.pfriendly;
 
 import camzup.core.Color;
+import camzup.core.IUtils;
 import camzup.core.MaterialUv;
 import camzup.core.Transform2;
 
@@ -9,7 +10,7 @@ import processing.core.PConstants;
 import processing.core.PImage;
 
 /**
- * A material which supports PImages as textures.
+ * A material which supports {@link PImage}s as textures.
  */
 public class MaterialPImage extends MaterialUv {
 
@@ -23,7 +24,17 @@ public class MaterialPImage extends MaterialUv {
     */
    public MaterialPImage ( ) {
 
-      super("MaterialPImage");
+      this("MaterialPImage");
+   }
+
+   /**
+    * Constructs a material from a name.
+    * 
+    * @param name the name
+    */
+   public MaterialPImage ( final String name ) {
+
+      super(name);
       this.texture = new PImage(128, 128, PConstants.ARGB, 1);
       ZImage.fill(0xffffffff, this.texture);
    }
@@ -126,6 +137,7 @@ public class MaterialPImage extends MaterialUv {
          this.texture = new PImage(128, 128, PConstants.ARGB, 1);
          ZImage.fill(0xffffffff, this.texture);
       }
+
       return this;
    }
 
@@ -149,7 +161,7 @@ public class MaterialPImage extends MaterialUv {
     * @return the string
     */
    @Override
-   public String toString ( ) { return this.toString(4); }
+   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
 
    /**
     * Returns a string representation of this material.

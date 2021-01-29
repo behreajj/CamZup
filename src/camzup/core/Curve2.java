@@ -60,20 +60,14 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @param source the source curve
     */
-   public Curve2 ( final Curve2 source ) {
-
-      this.set(source);
-   }
+   public Curve2 ( final Curve2 source ) { this.set(source); }
 
    /**
     * Creates a named curve with two default knots.
     *
     * @param name the name
     */
-   public Curve2 ( final String name ) {
-
-      super(name);
-   }
+   public Curve2 ( final String name ) { super(name); }
 
    /**
     * Creates a named curve from a collection of knots

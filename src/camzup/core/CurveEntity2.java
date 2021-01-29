@@ -24,6 +24,16 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public CurveEntity2 ( ) {}
 
    /**
+    * Creates a curve entity from a list of curves.
+    *
+    * @param curves the list of curves
+    */
+   public CurveEntity2 ( final Curve2... curves ) {
+
+      this.appendAll(curves);
+   }
+
+   /**
     * Creates a named curve entity.
     *
     * @param name the name
@@ -41,6 +51,18 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       final Curve2... curves ) {
 
       super(name, transform);
+      this.appendAll(curves);
+   }
+
+   /**
+    * Creates a curve entity from a list of curves.
+    *
+    * @param name   the name
+    * @param curves the list of curves
+    */
+   public CurveEntity2 ( final String name, final Curve2... curves ) {
+
+      super(name);
       this.appendAll(curves);
    }
 

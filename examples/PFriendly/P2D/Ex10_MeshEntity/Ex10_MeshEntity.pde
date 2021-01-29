@@ -4,7 +4,9 @@ import camzup.pfriendly.*;
 YupJ2 graphics;
 
 MaterialSolid material = new MaterialSolid()
-  .setStroke(false)
+  .setStroke(true)
+  .setStroke(#007fff)
+  .setStrokeWeight(2.5)
   .setFill(true)
   .setFill(#303030);
 
@@ -12,7 +14,7 @@ Transform2 transform = new Transform2()
   .moveTo(new Vec2(-100.0, -50.0))
   .scaleTo(150.0);
 
-Mesh2 mesh = Mesh2.polygon(6, PolyType.TRI, new Mesh2());
+Mesh2 mesh = Mesh2.polygon(6, PolyType.NGON, new Mesh2());
 
 MeshEntity2 entity = new MeshEntity2("Example", transform)
   .append(mesh);

@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup2 graphics;
+YupJ2 graphics;
 Rng rng = new Rng();
 
 Transform2 transform = new Transform2();
@@ -18,12 +18,13 @@ MaterialSolid mat = new MaterialSolid()
   .setStrokeWeight(7.5);
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {
-  graphics = (Yup2)getGraphics();
   frameRate(60.0);
+  graphics = (YupJ2)getGraphics();
+
   entity.append(curve);
   entity.transform.scaleTo(256);
 

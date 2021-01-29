@@ -9,8 +9,8 @@ void settings() {
 }
 
 void setup() {
-  graphics = (YupJ2)getGraphics();
   frameRate(60.0);
+  graphics = (YupJ2)getGraphics();
   noStroke();
 
   font = loadFont("ProcessingSansPro.vlw");

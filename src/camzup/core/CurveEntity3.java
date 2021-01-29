@@ -24,6 +24,28 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public CurveEntity3 ( ) {}
 
    /**
+    * Creates a curve entity from a list of curves.
+    *
+    * @param curves the list of curves
+    */
+   public CurveEntity3 ( final Curve3... curves ) {
+
+      this.appendAll(curves);
+   }
+
+   /**
+    * Creates a curve entity from a list of curves.
+    *
+    * @param name   the name
+    * @param curves the list of curves
+    */
+   public CurveEntity3 ( final String name, final Curve3... curves ) {
+
+      super(name);
+      this.appendAll(curves);
+   }
+
+   /**
     * Creates a named curve entity.
     *
     * @param name the name

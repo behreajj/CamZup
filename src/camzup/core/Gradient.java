@@ -967,7 +967,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          Utils.toFixed(sb, firstStep, 6);
          sb.append(' ');
          sb.append(frstClrStr);
-         sb.append(' ').append(frstClrStr);
+         sb.append(' ');
+         sb.append(frstClrStr);
          sb.append(' ');
          sb.append(blendType);
          sb.append(' ');

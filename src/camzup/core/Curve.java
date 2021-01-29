@@ -18,20 +18,14 @@ public abstract class Curve extends EntityData implements ICurve {
    /**
     * The default constructor.
     */
-   protected Curve ( ) {
-
-      this.closedLoop = false;
-   }
+   protected Curve ( ) { this.closedLoop = false; }
 
    /**
     * Constructs a curve and specifies whether it is a loop.
     *
     * @param cl the loop
     */
-   protected Curve ( final boolean cl ) {
-
-      this.closedLoop = cl;
-   }
+   protected Curve ( final boolean cl ) { this.closedLoop = cl; }
 
    /**
     * Constructs a curve and gives it a name.
