@@ -242,16 +242,16 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    /**
     * Draws an arc at a location from a start angle to a stop angle.
     *
-    * @param x0    the first x
-    * @param y0    the first y
+    * @param x     the coordinate x
+    * @param y     the coordinate y
     * @param r     the radius
     * @param start the start angle
     * @param stop  the stop angle
     */
-   public void arc ( final float x0, final float y0, final float r,
+   public void arc ( final float x, final float y, final float r,
       final float start, final float stop ) {
 
-      this.arc(x0, y0, r, r, start, stop, PConstants.OPEN);
+      this.arc(x, y, r, r, start, stop, PConstants.OPEN);
    }
 
    /**
@@ -316,17 +316,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    /**
     * Draws an arc at a location from a start angle to a stop angle.
     *
-    * @param x0    the first x
-    * @param y0    the first y
+    * @param x     the coordinate x
+    * @param y     the coordinate y
     * @param r     the radius
     * @param start the start angle
     * @param stop  the stop angle
     * @param mode  the arc mode
     */
-   public void arc ( final float x0, final float y0, final float r,
+   public void arc ( final float x, final float y, final float r,
       final float start, final float stop, final int mode ) {
 
-      this.arc(x0, y0, r, r, start, stop, mode);
+      this.arc(x, y, r, r, start, stop, mode);
    }
 
    /**
@@ -756,15 +756,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.textAlignY = PConstants.CENTER;
       this.textMode = PConstants.MODEL;
 
-      this.settingsInited = true;
-      this.reapplySettings = false;
-
       /* Camera. */
       this.cameraX = IUp.DEFAULT_LOC_X;
       this.cameraY = IUp.DEFAULT_LOC_Y;
       this.cameraZoomX = IYup2.DEFAULT_ZOOM_X;
       this.cameraZoomY = IYup2.DEFAULT_ZOOM_Y;
       this.cameraRot = IYup2.DEFAULT_ROT;
+
+      this.settingsInited = true;
+      this.reapplySettings = false;
    }
 
    /**
@@ -1177,7 +1177,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          reds[j] = ( int ) ( jPercent * 0xff + 0.5d ) << 0x10;
       }
 
-      this.pushStyle();
+      super.pushStyle();
       this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND, sw);
 
       for ( int i = 0; i < last; ++i ) {
@@ -1202,7 +1202,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          }
       }
 
-      this.popStyle();
+      super.popStyle();
    }
 
    /**
@@ -1698,7 +1698,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final int x1, final int y1, final int uTl, final int vTl, final int uBr,
       final int vBr ) {
 
-      if ( pimg.width > 1 && pimg.height > 1 ) {
+      if ( pimg.width > 2 && pimg.height > 2 ) {
          final int pd = pimg.pixelDensity;
          this.g2.drawImage(YupJ2.convertPImageToNative(pimg), x0, y0, x1, y1,
             uTl * pd, vBr * pd, uBr * pd, vTl * pd, null, null);
@@ -1939,6 +1939,23 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void line ( final Vec2 origin, final Vec2 dest ) {
 
       this.line(origin.x, origin.y, dest.x, dest.y);
+   }
+
+   /**
+    * Sets the renderer's stroke and stroke weight to the material's. Also
+    * sets whether or not to use fill and stroke.
+    *
+    * @param material the material
+    */
+   public void material ( final MaterialAwt material ) {
+
+      this.stroke = material.useStroke;
+      if ( material.useStroke ) {
+         this.strokeWeight(material.strokeWeight);
+         final camzup.core.Color coreStr = material.stroke;
+         this.strokeColorObject = new java.awt.Color(coreStr.r, coreStr.g,
+            coreStr.b, coreStr.a);
+      }
    }
 
    /**
@@ -2285,38 +2302,38 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Draws a rounded rectangle. The meaning of the first four parameters
     * depends on rectMode.
     *
-    * @param x1 the first x parameter
-    * @param y1 the first y parameter
-    * @param x2 the second x parameter
-    * @param y2 the second y parameter
+    * @param x0 the first x parameter
+    * @param y0 the first y parameter
+    * @param x1 the second x parameter
+    * @param y1 the second y parameter
     * @param r  the corner rounding
     */
    @Override
-   public void rect ( final float x1, final float y1, final float x2,
-      final float y2, final float r ) {
+   public void rect ( final float x0, final float y0, final float x1,
+      final float y1, final float r ) {
 
-      this.rectImpl(x1, y1, x2, y2, r, r, r, r);
+      this.rectImpl(x0, y0, x1, y1, r, r, r, r);
    }
 
    /**
     * Draws a rounded rectangle. The meaning of the first four parameters
     * depends on rectMode.
     *
-    * @param x1 the first x parameter
-    * @param y1 the first y parameter
-    * @param x2 the second x parameter
-    * @param y2 the second y parameter
+    * @param x0 the first x parameter
+    * @param y0 the first y parameter
+    * @param x1 the second x parameter
+    * @param y1 the second y parameter
     * @param tl the top-left corner rounding
     * @param tr the top-right corner rounding
     * @param br the bottom-right corner rounding
     * @param bl the bottom-left corner rounding
     */
    @Override
-   public void rect ( final float x1, final float y1, final float x2,
-      final float y2, final float tl, final float tr, final float br,
+   public void rect ( final float x0, final float y0, final float x1,
+      final float y1, final float tl, final float tr, final float br,
       final float bl ) {
 
-      this.rectImpl(x1, y1, x2, y2, tl, tr, br, bl);
+      this.rectImpl(x0, y0, x1, y1, tl, tr, br, bl);
    }
 
    /**
@@ -2647,18 +2664,43 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public void shape ( final CurveEntity2 entity ) {
 
-      final Vec2 rh = new Vec2();
-      final Vec2 fh = new Vec2();
-      final Vec2 co = new Vec2();
-
-      final Transform2 tr = entity.transform;
-      final Iterator < Curve2 > itr = entity.iterator();
-
-      this.gp.reset();
-      while ( itr.hasNext() ) {
-         this.appendToGeneralPath(itr.next(), tr, rh, fh, co);
-      }
+      this.setGeneralPath(entity);
       this.drawShapeSolid(this.gp);
+   }
+
+   /**
+    * Draws a 2D curve entity.
+    *
+    * @param entity   the curve entity
+    * @param material the material
+    */
+   public void shape ( final CurveEntity2 entity, final MaterialAwt material ) {
+
+      // TODO: Version with multiple materials.
+
+      final Bounds2 bounds = new Bounds2();
+      CurveEntity2.calcBounds(entity, bounds);
+      final Vec2 min = bounds.min;
+      final Vec2 max = bounds.max;
+
+      final Image texture = material.texture;
+      final MaterialAwt.Sample sample = material.sample;
+
+      super.pushStyle();
+      this.material(material);
+      this.setGeneralPath(entity);
+
+      /* @formatter:off */
+      this.drawShapeClip(
+         this.gp, texture,
+         sample.xTopLeft, sample.yTopLeft,
+         sample.xBottomRight, sample.yBottomRight,
+         ( int ) min.x, ( int ) min.y,
+         ( int ) max.x, ( int ) max.y,
+         this.pixelDensity);
+      /* @formatter:on */
+
+      super.popStyle();
    }
 
    /**
@@ -2710,16 +2752,43 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public void shape ( final MeshEntity2 entity ) {
 
-      final Vec2 v = new Vec2();
-
-      final Transform2 tr = entity.transform;
-      final Iterator < Mesh2 > meshItr = entity.iterator();
-
-      this.gp.reset();
-      while ( meshItr.hasNext() ) {
-         this.appendToGeneralPath(meshItr.next(), tr, v);
-      }
+      this.setGeneralPath(entity);
       this.drawShapeSolid(this.gp);
+   }
+
+   /**
+    * Draws a 2D curve entity.
+    *
+    * @param entity   the curve entity
+    * @param material the material
+    */
+   public void shape ( final MeshEntity2 entity, final MaterialAwt material ) {
+
+      // TODO: Version with multiple materials.
+
+      final Bounds2 bounds = new Bounds2();
+      MeshEntity2.calcBounds(entity, bounds);
+      final Vec2 min = bounds.min;
+      final Vec2 max = bounds.max;
+
+      final Image texture = material.texture;
+      final MaterialAwt.Sample sample = material.sample;
+
+      super.pushStyle();
+      this.material(material);
+      this.setGeneralPath(entity);
+
+      /* @formatter:off */
+      this.drawShapeClip(
+         this.gp, texture,
+         sample.xTopLeft, sample.yTopLeft,
+         sample.xBottomRight, sample.yBottomRight,
+         ( int ) min.x, ( int ) min.y,
+         ( int ) max.x, ( int ) max.y,
+         this.pixelDensity);
+      /* @formatter:on */
+
+      super.popStyle();
    }
 
    /**
@@ -3323,7 +3392,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void updatePixels ( ) {
 
       if ( this.pixels != null ) {
-         this.getRaster().setDataElements(0, 0, this.pixelWidth,
+         super.getRaster().setDataElements(0, 0, this.pixelWidth,
             this.pixelHeight, this.pixels);
       }
       this.modified = true;
@@ -3620,22 +3689,22 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float w ) {
 
       /* Regardless of RGB or HSV, channels 1 and 2 are linear. */
-      this.calcA = Utils.clamp01(w * this.invColorModeA);
-      this.calcB = Utils.clamp01(z * this.invColorModeZ);
-      this.calcG = Utils.clamp01(y * this.invColorModeY);
+      this.calcA = w * this.invColorModeA;
+      this.calcB = z * this.invColorModeZ;
+      this.calcG = y * this.invColorModeY;
+      this.calcR = x * this.invColorModeX;
 
       switch ( this.colorMode ) {
 
          case PConstants.HSB:
 
-            this.calcR = x * this.invColorModeX;
-
             Color.hsbaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
                this.aTemp);
 
-            this.calcR = this.aTemp.r;
-            this.calcG = this.aTemp.g;
+            this.calcA = this.aTemp.a;
             this.calcB = this.aTemp.b;
+            this.calcG = this.aTemp.g;
+            this.calcR = this.aTemp.r;
 
             break;
 
@@ -3643,7 +3712,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          default:
 
-            this.calcR = Utils.clamp01(x * this.invColorModeX);
+            this.calcA = Utils.clamp01(this.calcA);
+            this.calcB = Utils.clamp01(this.calcB);
+            this.calcG = Utils.clamp01(this.calcG);
+            this.calcR = Utils.clamp01(this.calcR);
 
       }
 
@@ -3709,7 +3781,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       }
 
       PMatAux.catmullBasis(this.curveTightness, this.curveBasisMatrix);
-      this.splineForward(this.curveDetail, this.curveDrawMatrix);
+      super.splineForward(this.curveDetail, this.curveDrawMatrix);
       PMatAux.mul(this.bezierBasisInverse, this.curveBasisMatrix,
          this.curveToBezierMatrix);
       PMatAux.mul(this.curveDrawMatrix, this.curveBasisMatrix,
@@ -3720,14 +3792,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Draws an AWT clip with an image.
     *
     * @param s   the shape
-    * @param img the image.
+    * @param img the image
+    * @param uTl sample top-left corner x
+    * @param vTl sample top-left corner y
+    * @param uBr sample bottom-right corner x
+    * @param vBr sample bottom-right corner y
+    * @param x0  display first corner x
+    * @param y0  display first corner y
+    * @param x1  display second corner x
+    * @param y1  display second corner y
+    * @param pd  the pixel density
     */
-   @Experimental
    protected void drawShapeClip ( final Shape s, final Image img, final int uTl,
       final int vTl, final int uBr, final int vBr, final int x0, final int y0,
       final int x1, final int y1, final int pd ) {
 
-      // TODO: Use?
       this.g2.setClip(s);
       this.imageNative(img, uTl, vTl, uBr, vBr, x0, y0, x1, y1, pd);
       this.g2.setClip(null);
@@ -3939,6 +4018,44 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * Sets a general path to a curve entity, with no intervening changes in
+    * material.
+    *
+    * @param entity the entity
+    */
+   protected void setGeneralPath ( final CurveEntity2 entity ) {
+
+      final Vec2 rh = new Vec2();
+      final Vec2 fh = new Vec2();
+      final Vec2 co = new Vec2();
+
+      final Transform2 tr = entity.transform;
+      final Iterator < Curve2 > itr = entity.iterator();
+
+      this.gp.reset();
+      while ( itr.hasNext() ) {
+         this.appendToGeneralPath(itr.next(), tr, rh, fh, co);
+      }
+   }
+
+   /**
+    * Sets a general path to a mesh entity, with no intervening changes in
+    * material.
+    *
+    * @param entity the entity
+    */
+   protected void setGeneralPath ( final MeshEntity2 entity ) {
+
+      final Vec2 v = new Vec2();
+
+      final Transform2 tr = entity.transform;
+      final Iterator < Mesh2 > itr = entity.iterator();
+
+      this.gp.reset();
+      while ( itr.hasNext() ) { this.appendToGeneralPath(itr.next(), tr, v); }
+   }
+
+   /**
     * For internal use to minimize the number of new BasicStroke objects
     * instantiated.
     *
@@ -4080,7 +4197,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       for ( int index = start; index < stop; ++index ) {
          final char c = buffer[index];
          this.textCharImpl(c, cursor, y);
-         cursor += this.textWidth(c);
+         cursor += super.textWidth(c);
       }
    }
 

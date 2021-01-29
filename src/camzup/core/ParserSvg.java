@@ -672,23 +672,30 @@ public abstract class ParserSvg {
           * (CCW) to the SVG default (CW).
           */
          if ( prim != null ) {
-            prim.reverse();
-            prim.transform(prev);
+            // prim.reverse();
+            // prim.transform(prev);
 
             // Looks like the same curve is being added multiple
             // times...
-            if ( !curves.contains(prim) ) { curves.add(prim); }
+            if ( !curves.contains(prim) ) {
+               prim.reverse();
+               prim.transform(prev);
+               curves.add(prim);
+            }
          }
 
          if ( path != null ) {
             final Iterator < Curve2 > itr = path.iterator();
             while ( itr.hasNext() ) {
                final Curve2 pathCurve = itr.next();
-               pathCurve.transform(prev);
+               // pathCurve.transform(prev);
 
                // TEST Looks like the same curve is being added multiple
                // times...
-               if ( !curves.contains(pathCurve) ) { curves.add(pathCurve); }
+               if ( !curves.contains(pathCurve) ) {
+                  pathCurve.transform(prev);
+                  curves.add(pathCurve);
+               }
             }
          }
       }

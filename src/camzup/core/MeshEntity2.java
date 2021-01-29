@@ -13,6 +13,30 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    IVolume2, ISvgWritable {
 
    /**
+    * Calculates an Axis-Aligned Bounding Box (AABB) encompassing the entity.
+    *
+    * @param entity the entity
+    * @param target the output bounds
+    *
+    * @return the bounds
+    */
+   public static Bounds2 calcBounds ( final MeshEntity2 entity,
+      final Bounds2 target ) {
+
+      final Vec2 co = new Vec2();
+
+      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+
+      final Iterator < Mesh2 > itr = entity.iterator();
+      final Transform2 tr = entity.transform;
+      while ( itr.hasNext() ) {
+         Mesh2.accumMinMax(itr.next(), target.min, target.max, tr, co);
+      }
+
+      return target;
+   }
+
+   /**
     * The list of meshes held by the entity.
     */
    public final ArrayList < Mesh2 > meshes = new ArrayList <>(

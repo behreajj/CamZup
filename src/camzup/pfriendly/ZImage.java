@@ -443,7 +443,6 @@ public class ZImage extends PImage {
       final int[] pixels = target.pixels;
       final int[] flipped = new int[pixels.length];
 
-      // TODO: Use one-dimensiona loop instead?
       for ( int i = 0, y = 0; y < h; ++y ) {
          final int yw = y * w;
          for ( int x = w - 1; x > -1; --x, ++i ) {
@@ -474,7 +473,6 @@ public class ZImage extends PImage {
       final int[] pixels = target.pixels;
       final int[] flipped = new int[pixels.length];
 
-      // TODO: Use one-dimensiona loop instead?
       for ( int i = 0, y = h - 1; y > -1; --y ) {
          final int yw = y * w;
          for ( int x = 0; x < w; ++x, ++i ) { flipped[yw + x] = pixels[i]; }

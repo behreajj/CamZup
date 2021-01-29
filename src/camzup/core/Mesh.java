@@ -419,43 +419,6 @@ public abstract class Mesh extends EntityData implements IMesh {
    }
 
    /**
-    * Restructures a one-dimensional array of index data to a
-    * three-dimensional array. Assumes that (1) all input faces contain the
-    * same number of sides and therefore that the array's length is divisible
-    * by its stride; and (2) the same index accesses the appropriate element
-    * in arrays of uniform length, e.g. of coordinates, texture coordinates
-    * and normals. The dimensions indicate how many arrays are accessed by the
-    * index (typically 2 for 2D meshes, 3 for 3D meshes).<br>
-    * <br>
-    * Useful when converting from Unity meshes, wherein all faces are
-    * triangles.
-    *
-    * @param indices    the indices array
-    * @param stride     the stride
-    * @param dimensions the number of data per vertex
-    *
-    * @return the indices
-    */
-   public static int[][][] groupIndices ( final int[] indices, final int stride,
-      final int dimensions ) {
-
-      final int vstride = stride < 3 ? 3 : stride;
-      final int vdim = dimensions < 1 ? 1 : dimensions;
-      final int lenGrouped = indices.length / vstride;
-      final int[][][] result = new int[lenGrouped][vstride][vdim];
-
-      for ( int k = 0, i = 0; i < lenGrouped; ++i ) {
-         final int[][] face = result[i];
-         for ( int j = 0; j < vstride; ++j, ++k ) {
-            final int idx = indices[k];
-            final int[] vert = face[j];
-            for ( int m = 0; m < vdim; ++m ) { vert[m] = idx; }
-         }
-      }
-      return result;
-   }
-
-   /**
     * Evaluates whether all faces in a mesh are quadrilaterals.
     *
     * @param m the mesh
@@ -522,6 +485,43 @@ public abstract class Mesh extends EntityData implements IMesh {
       final int[][][] result = new int[bLen][][];
       System.arraycopy(arr, 0, result, 0, valIdx);
       System.arraycopy(arr, valIdx + valDel, result, valIdx, bLen - valIdx);
+      return result;
+   }
+
+   /**
+    * Restructures a one-dimensional array of index data to a
+    * three-dimensional array. Assumes that (1) all input faces contain the
+    * same number of sides and therefore that the array's length is divisible
+    * by its stride; and (2) the same index accesses the appropriate element
+    * in arrays of uniform length, e.g. of coordinates, texture coordinates
+    * and normals. The dimensions indicate how many arrays are accessed by the
+    * index (typically 2 for 2D meshes, 3 for 3D meshes).<br>
+    * <br>
+    * Useful when converting from Unity meshes, wherein all faces are
+    * triangles.
+    *
+    * @param indices    the indices array
+    * @param stride     the stride
+    * @param dimensions the number of data per vertex
+    *
+    * @return the indices
+    */
+   public static int[][][] segmentIndices ( final int[] indices,
+      final int stride, final int dimensions ) {
+
+      final int vstride = stride < 3 ? 3 : stride;
+      final int vdim = dimensions < 1 ? 1 : dimensions;
+      final int lenGrouped = indices.length / vstride;
+      final int[][][] result = new int[lenGrouped][vstride][vdim];
+
+      for ( int k = 0, i = 0; i < lenGrouped; ++i ) {
+         final int[][] face = result[i];
+         for ( int j = 0; j < vstride; ++j, ++k ) {
+            final int idx = indices[k];
+            final int[] vert = face[j];
+            for ( int m = 0; m < vdim; ++m ) { vert[m] = idx; }
+         }
+      }
       return result;
    }
 

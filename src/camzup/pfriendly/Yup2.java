@@ -970,12 +970,14 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     */
    public void shape ( final CurveEntity2 entity ) {
 
+      // TODO: Refactor to match YupJ2?
+
       final Transform2 tr = entity.transform;
       final Iterator < Curve2 > curveItr = entity.iterator();
 
-      final Vec2 v0 = new Vec2();
-      final Vec2 v1 = new Vec2();
-      final Vec2 v2 = new Vec2();
+      final Vec2 rh = new Vec2();
+      final Vec2 fh = new Vec2();
+      final Vec2 co = new Vec2();
 
       Knot2 currKnot = null;
       Knot2 prevKnot = null;
@@ -989,10 +991,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
          prevKnot = knItr.next();
          coord = prevKnot.coord;
 
-         Transform2.mulPoint(tr, coord, v2);
+         Transform2.mulPoint(tr, coord, co);
 
          this.beginShape();
-         this.vertexImpl(v2.x, v2.y, 0.0f, this.textureU, this.textureV);
+         this.vertexImpl(co.x, co.y, 0.0f, this.textureU, this.textureV);
 
          while ( knItr.hasNext() ) {
             currKnot = knItr.next();
@@ -1000,12 +1002,12 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform2.mulPoint(tr, foreHandle, v0);
-            Transform2.mulPoint(tr, rearHandle, v1);
-            Transform2.mulPoint(tr, coord, v2);
+            Transform2.mulPoint(tr, foreHandle, rh);
+            Transform2.mulPoint(tr, rearHandle, fh);
+            Transform2.mulPoint(tr, coord, co);
 
-            this.bezierVertexImpl(v0.x, v0.y, 0.0f, v1.x, v1.y, 0.0f, v2.x,
-               v2.y, 0.0f);
+            this.bezierVertexImpl(rh.x, rh.y, 0.0f, fh.x, fh.y, 0.0f, co.x,
+               co.y, 0.0f);
 
             prevKnot = currKnot;
          }
@@ -1016,12 +1018,12 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform2.mulPoint(tr, foreHandle, v0);
-            Transform2.mulPoint(tr, rearHandle, v1);
-            Transform2.mulPoint(tr, coord, v2);
+            Transform2.mulPoint(tr, foreHandle, rh);
+            Transform2.mulPoint(tr, rearHandle, fh);
+            Transform2.mulPoint(tr, coord, co);
 
-            this.bezierVertexImpl(v0.x, v0.y, 0.0f, v1.x, v1.y, 0.0f, v2.x,
-               v2.y, 0.0f);
+            this.bezierVertexImpl(rh.x, rh.y, 0.0f, fh.x, fh.y, 0.0f, co.x,
+               co.y, 0.0f);
             this.endShape(PConstants.CLOSE);
          } else {
             this.endShape(PConstants.OPEN);
@@ -1053,12 +1055,14 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    public void shape ( final CurveEntity2 entity,
       final MaterialSolid[] materials ) {
 
+      // TODO: Refactor to match YupJ2?
+
       final Transform2 tr = entity.transform;
       final Iterator < Curve2 > curveItr = entity.iterator();
 
-      final Vec2 v0 = new Vec2();
-      final Vec2 v1 = new Vec2();
-      final Vec2 v2 = new Vec2();
+      final Vec2 fh = new Vec2();
+      final Vec2 rh = new Vec2();
+      final Vec2 co = new Vec2();
 
       Knot2 currKnot = null;
       Knot2 prevKnot = null;
@@ -1076,10 +1080,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
          prevKnot = knItr.next();
          coord = prevKnot.coord;
 
-         Transform2.mulPoint(tr, coord, v2);
+         Transform2.mulPoint(tr, coord, co);
 
          this.beginShape();
-         this.vertexImpl(v2.x, v2.y, 0.0f, this.textureU, this.textureV);
+         this.vertexImpl(co.x, co.y, 0.0f, this.textureU, this.textureV);
 
          while ( knItr.hasNext() ) {
             currKnot = knItr.next();
@@ -1087,12 +1091,12 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform2.mulPoint(tr, foreHandle, v0);
-            Transform2.mulPoint(tr, rearHandle, v1);
-            Transform2.mulPoint(tr, coord, v2);
+            Transform2.mulPoint(tr, foreHandle, fh);
+            Transform2.mulPoint(tr, rearHandle, rh);
+            Transform2.mulPoint(tr, coord, co);
 
-            this.bezierVertexImpl(v0.x, v0.y, 0.0f, v1.x, v1.y, 0.0f, v2.x,
-               v2.y, 0.0f);
+            this.bezierVertexImpl(fh.x, fh.y, 0.0f, rh.x, rh.y, 0.0f, co.x,
+               co.y, 0.0f);
 
             prevKnot = currKnot;
          }
@@ -1103,12 +1107,12 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
             rearHandle = currKnot.rearHandle;
             coord = currKnot.coord;
 
-            Transform2.mulPoint(tr, foreHandle, v0);
-            Transform2.mulPoint(tr, rearHandle, v1);
-            Transform2.mulPoint(tr, coord, v2);
+            Transform2.mulPoint(tr, foreHandle, fh);
+            Transform2.mulPoint(tr, rearHandle, rh);
+            Transform2.mulPoint(tr, coord, co);
 
-            this.bezierVertexImpl(v0.x, v0.y, 0.0f, v1.x, v1.y, 0.0f, v2.x,
-               v2.y, 0.0f);
+            this.bezierVertexImpl(fh.x, fh.y, 0.0f, rh.x, rh.y, 0.0f, co.x,
+               co.y, 0.0f);
             this.endShape(PConstants.CLOSE);
          } else {
             this.endShape(PConstants.OPEN);

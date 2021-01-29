@@ -2,6 +2,7 @@ package camzup.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -2466,8 +2467,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static final int DEFAULT_SPHERE_ITR = 3;
 
    /**
-    * Calculates the dimensions of an Axis-Aligned Bounding Box (AABB)
-    * encompassing the mesh.
+    * Calculates an Axis-Aligned Bounding Box (AABB) encompassing the mesh.
     *
     * @param mesh   the mesh
     * @param target the output dimensions
@@ -3216,6 +3216,130 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Merges the data of a collection of meshes together into one mesh.
+    *
+    * @param coll   the array
+    * @param target the output mesh
+    *
+    * @return the merger
+    */
+   public static Mesh3 groupData ( final Collection < Mesh3 > coll,
+      final Mesh3 target ) {
+
+      return Mesh3.groupData(coll.toArray(new Mesh3[coll.size()]), target);
+   }
+
+   /**
+    * Merges the data of two meshes together into one mesh.
+    *
+    * @param a      the first mesh
+    * @param b      the second mesh
+    * @param target the output mesh
+    *
+    * @return the merger
+    */
+   public static Mesh3 groupData ( final Mesh3 a, final Mesh3 b,
+      final Mesh3 target ) {
+
+      return Mesh3.groupData(new Mesh3[] { a, b }, target);
+   }
+
+   /**
+    * Merges the data of an array of meshes together into one mesh.
+    *
+    * @param arr    the array
+    * @param target the output mesh
+    *
+    * @return the merger
+    */
+   public static Mesh3 groupData ( final Mesh3[] arr, final Mesh3 target ) {
+
+      /* Sum lengths. */
+      int vsTotal = 0;
+      int vtsTotal = 0;
+      int vnsTotal = 0;
+      int fsTotal = 0;
+      final int collLen = arr.length;
+      for ( int i = 0; i < collLen; ++i ) {
+         final Mesh3 m = arr[i];
+         vsTotal += m.coords.length;
+         vtsTotal += m.texCoords.length;
+         vnsTotal += m.normals.length;
+         fsTotal += m.faces.length;
+      }
+
+      /* Resize target data. */
+      target.coords = Vec3.resize(target.coords, vsTotal);
+      target.texCoords = Vec2.resize(target.texCoords, vtsTotal);
+      target.normals = Vec3.resize(target.normals, vnsTotal);
+
+      /* Cache target shortcuts. */
+      final Vec3[] vsTrg = target.coords;
+      final Vec2[] vtsTrg = target.texCoords;
+      final Vec3[] vnsTrg = target.normals;
+      final int[][][] fsTrg = new int[fsTotal][][];
+
+      /* Offset indices in merged data. */
+      int vsCursor = 0;
+      int vtsCursor = 0;
+      int vnsCursor = 0;
+      int fsCursor = 0;
+
+      /* Copy data. */
+      for ( int i = 0; i < collLen; ++i ) {
+         final Mesh3 m = arr[i];
+
+         /* Copy coordinates. */
+         final Vec3[] vsSrc = m.coords;
+         final int vsSrcLen = vsSrc.length;
+         for ( int j = 0; j < vsSrcLen; ++j ) {
+            vsTrg[vsCursor + j].set(vsSrc[j]);
+         }
+
+         /* Copy texture coordinates. */
+         final Vec2[] vtsSrc = m.texCoords;
+         final int vtsSrcLen = vtsSrc.length;
+         for ( int j = 0; j < vtsSrcLen; ++j ) {
+            vtsTrg[vtsCursor + j].set(vtsSrc[j]);
+         }
+
+         /* Copy normals. */
+         final Vec3[] vnsSrc = m.normals;
+         final int vnsSrcLen = vnsSrc.length;
+         for ( int j = 0; j < vnsSrcLen; ++j ) {
+            vnsTrg[vnsCursor + j].set(vnsSrc[j]);
+         }
+
+         /* Add new offsets to faces. */
+         final int[][][] fsSrc = m.faces;
+         final int fsLen = fsSrc.length;
+         for ( int j = 0; j < fsLen; ++j ) {
+            final int[][] fSrc = fsSrc[j];
+            final int fLen = fSrc.length;
+            final int[][] fTrg = fsTrg[fsCursor + j] = new int[fLen][3];
+            for ( int k = 0; k < fLen; ++k ) {
+               final int[] vertSrc = fSrc[k];
+               final int[] vertTrg = fTrg[k];
+
+               vertTrg[0] = vertSrc[0] + vsCursor;
+               vertTrg[1] = vertSrc[1] + vtsCursor;
+               vertTrg[2] = vertSrc[2] + vnsCursor;
+            }
+         }
+
+         /* Add length of individual mesh to offsets. */
+         vsCursor += vsSrcLen;
+         vtsCursor += vtsSrcLen;
+         vnsCursor += vnsSrcLen;
+         fsCursor += fsLen;
+      }
+
+      /* Update faces and return. */
+      target.faces = fsTrg;
+      return target;
+   }
+
+   /**
     * Creates an icosahedron, a Platonic solid with 20 faces and 12
     * coordinates.
     *
@@ -3414,18 +3538,26 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Projects a 3D mesh onto a 2D surface, returning the 2D mesh projection.
+    * The camera matrix is the same as the model-view matrix. To generate the
+    * required inputs, see
+    * {@link Mat4#perspective(float, float, float, float, Mat4)} and
+    * {@link Mat4#camera(Vec3, Vec3, Vec3, Handedness, Mat4, Vec3, Vec3, Vec3)}.
+    * <br>
+    * <br>
     * Occluded faces are not culled from the 2D mesh.
     *
     * @param source     the input mesh
     * @param projection the projection matrix
-    * @param modelview  the model view matrix
+    * @param camera     the camera matrix
     * @param target     the output mesh
     *
     * @return the projected mesh
     */
    @Experimental
    public static Mesh2 project ( final Mesh3 source, final Mat4 projection,
-      final Mat4 modelview, final Mesh2 target ) {
+      final Mat4 camera, final Mesh2 target ) {
+
+      // TODO: for curves?
 
       target.name = source.name;
       target.materialIndex = source.materialIndex;
@@ -3447,8 +3579,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Vec4 promoted = new Vec4();
       for ( int i = 0; i < vsLen; ++i ) {
 
+         /* Promote 3D coordinate to 4D, then multiply. */
          promoted.set(vsSource[i], 1.0f);
-         Mat4.mul(modelview, promoted, promoted);
+         Mat4.mul(camera, promoted, promoted);
          Mat4.mul(projection, promoted, promoted);
 
          /* Do not flip screen y, like Processing's screen does. */
@@ -3472,7 +3605,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          }
       }
 
-      /* Sort faces according to 3D vectors. */
+      /* Sort 2D faces according to 3D vectors. */
       Arrays.sort(fsTarget, new SortLoops3(vsSource));
 
       return target;

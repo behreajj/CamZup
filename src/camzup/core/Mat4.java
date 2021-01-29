@@ -989,6 +989,51 @@ public class Mat4 {
    }
 
    /**
+    * Generates an orbiting camera matrix. The camera looks from its location
+    * at its focal target with reference to the world up axis, which is
+    * usually (0.0, 1.0, 0.0) or (0.0, 0.0, 1.0).
+    *
+    * @param loc        the camera location
+    * @param focus      the target location
+    * @param ref        the reference up
+    * @param handedness the handedness
+    * @param target     the output matrix
+    * @param i          the right axis
+    * @param j          the forward axis
+    * @param k          the up axis
+    *
+    * @return the camera matrix
+    */
+   public static Mat4 camera ( final Vec3 loc, final Vec3 focus, final Vec3 ref,
+      final Handedness handedness, final Mat4 target, final Vec3 i,
+      final Vec3 j, final Vec3 k ) {
+
+      /* Test to see if forward is parallel to reference. */
+      Vec3.subNorm(loc, focus, k);
+      final float dotp = Vec3.dot(k, ref);
+      final float tol = 1.0f - IUtils.EPSILON;
+      if ( dotp < -tol || dotp > tol ) {
+         return Mat4.fromTranslation(loc, target);
+      }
+
+      if ( handedness == Handedness.RIGHT ) {
+         Vec3.crossNorm(ref, k, i);
+         Vec3.crossNorm(k, i, j);
+      } else {
+         Vec3.crossNorm(k, ref, i);
+         Vec3.crossNorm(i, k, j);
+      }
+
+      /* @formatter:off */
+      return target.set(
+         i.x, i.y, i.z, -loc.x * i.x - loc.y * i.y - loc.z * i.z,
+         j.x, j.y, j.z, -loc.x * j.x - loc.y * j.y - loc.z * j.z,
+         k.x, k.y, k.z, -loc.x * k.x - loc.y * k.y - loc.z * k.z,
+         0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
+   }
+
+   /**
     * Decomposes a matrix into its constituent transforms: translation,
     * rotation and scale. Rotation is returned from the function, while
     * translation and scale are loaded into out parameters.

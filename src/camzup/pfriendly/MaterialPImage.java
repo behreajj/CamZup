@@ -28,18 +28,6 @@ public class MaterialPImage extends MaterialUv {
    }
 
    /**
-    * Constructs a material from a name.
-    * 
-    * @param name the name
-    */
-   public MaterialPImage ( final String name ) {
-
-      super(name);
-      this.texture = new PImage(128, 128, PConstants.ARGB, 1);
-      ZImage.fill(0xffffffff, this.texture);
-   }
-
-   /**
     * Constructs a material from a texture.
     *
     * @param texture the texture
@@ -48,6 +36,18 @@ public class MaterialPImage extends MaterialUv {
 
       super("MaterialPImage");
       this.setTexture(texture);
+   }
+
+   /**
+    * Constructs a material from a name.
+    *
+    * @param name the name
+    */
+   public MaterialPImage ( final String name ) {
+
+      super(name);
+      this.texture = new PImage(128, 128, PConstants.ARGB, 1);
+      ZImage.fill(0xffffffff, this.texture);
    }
 
    /**

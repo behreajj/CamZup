@@ -17,6 +17,11 @@ import camzup.core.Utils;
 public class MaterialAwt extends Material {
 
    /**
+    * The texture sample coordinates.
+    */
+   public final Sample sample = new Sample();
+
+   /**
     * The stroke color.
     */
    public final Color stroke = Color.fromHex(IMaterial.DEFAULT_STROKE,
@@ -50,6 +55,7 @@ public class MaterialAwt extends Material {
    public MaterialAwt ( final Image texture ) {
 
       this.texture = texture;
+      this.sample.set(0, 0, texture.getWidth(null), texture.getHeight(null));
    }
 
    /**
@@ -68,6 +74,7 @@ public class MaterialAwt extends Material {
       for ( int i = 0; i < len; ++i ) { px[i] = 0xffffffff; }
       img.getRaster().setDataElements(0, 0, 128, 128, px);
       this.texture = img;
+      this.sample.set(0, 0, 128, 128);
    }
 
    /**
@@ -230,6 +237,8 @@ public class MaterialAwt extends Material {
       final StringBuilder sb = new StringBuilder(256);
       sb.append("{ name: \"");
       sb.append(this.name);
+      sb.append(", sample: ");
+      sb.append(this.sample.toString(0));
       sb.append(", stroke: ");
       sb.append(this.stroke.toString(places));
       sb.append(", strokeWeight: ");
@@ -241,6 +250,141 @@ public class MaterialAwt extends Material {
       sb.append(' ');
       sb.append('}');
       return sb.toString();
+   }
+
+   /**
+    * Organizes the corners used to sample an image, expressed as integer
+    * pixel coordinates.
+    */
+   public static class Sample {
+
+      /**
+       * The bottom right corner x.
+       */
+      int xBottomRight = 0;
+
+      /**
+       * The top left corner x.
+       */
+      int xTopLeft = 0;
+
+      /**
+       * The bottom right corner y.
+       */
+      int yBottomRight = 0;
+
+      /**
+       * The top left corner y.
+       */
+      int yTopLeft = 0;
+
+      /**
+       * The default constructor.
+       */
+      public Sample ( ) {}
+
+      /**
+       * Constructs a sample from integer coordinates.
+       *
+       * @param xtl the top left corner x
+       * @param ytl the top left corner y
+       * @param xbr the bottom right corner x
+       * @param ybr the bottom right corner y
+       */
+      public Sample ( final int xtl, final int ytl, final int xbr,
+         final int ybr ) {
+
+         this.set(xtl, ytl, xbr, ybr);
+      }
+
+      /**
+       * Tests this sample for equivalence with another object.
+       *
+       * @return the evaluation
+       */
+      @Override
+      public boolean equals ( final Object obj ) {
+
+         if ( this == obj ) { return true; }
+         if ( obj == null ) { return false; }
+         if ( this.getClass() != obj.getClass() ) { return false; }
+         final Sample other = ( Sample ) obj;
+         if ( this.xBottomRight != other.xBottomRight ) { return false; }
+         if ( this.xTopLeft != other.xTopLeft ) { return false; }
+         if ( this.yBottomRight != other.yBottomRight ) { return false; }
+         if ( this.yTopLeft != other.yTopLeft ) { return false; }
+         return true;
+      }
+
+      /**
+       * Generates a hash code for this sample.
+       *
+       * @return the hash code
+       */
+      @Override
+      public int hashCode ( ) {
+
+         final int prime = 31;
+         int result = 1;
+         result = prime * result + this.xBottomRight;
+         result = prime * result + this.xTopLeft;
+         result = prime * result + this.yBottomRight;
+         result = prime * result + this.yTopLeft;
+         return result;
+      }
+
+      /**
+       * Sets a sample from integer coordinates.
+       *
+       * @param xtl the top left corner x
+       * @param ytl the top left corner y
+       * @param xbr the bottom right corner x
+       * @param ybr the bottom right corner y
+       *
+       * @return the sample
+       */
+      public Sample set ( final int xtl, final int ytl, final int xbr,
+         final int ybr ) {
+
+         this.xTopLeft = xtl;
+         this.yTopLeft = ytl;
+         this.xBottomRight = xbr;
+         this.yBottomRight = ybr;
+
+         return this;
+      }
+
+      /**
+       * Returns a string representation of this sample.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.toString(0); }
+
+      /**
+       * Returns a string representation of this sample.
+       *
+       * @param padding the padding
+       *
+       * @return the string
+       */
+      public String toString ( final int padding ) {
+
+         final StringBuilder sb = new StringBuilder(96);
+         sb.append("{ xTopLeft: ");
+         sb.append(Utils.toPadded(this.xTopLeft, padding));
+         sb.append(", yTopLeft: ");
+         sb.append(Utils.toPadded(this.yTopLeft, padding));
+         sb.append(", xBottomRight: ");
+         sb.append(Utils.toPadded(this.xBottomRight, padding));
+         sb.append(", yBottomRight: ");
+         sb.append(Utils.toPadded(this.yBottomRight, padding));
+         sb.append(' ');
+         sb.append('}');
+         return sb.toString();
+      }
+
    }
 
 }

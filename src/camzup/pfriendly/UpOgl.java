@@ -429,15 +429,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param x      the first color channel, hue or red
     * @param y      the second color channel, saturation or green
     * @param z      the third color channel, brightness or blue
-    * @param a      the alpha channel
+    * @param w      the alpha channel
     * @param premul pre-multiply alpha
     *
     * @see UpOgl#colorPreCalc(float, float, float, float)
     */
    public void colorCalc ( final float x, final float y, final float z,
-      final float a, final boolean premul ) {
+      final float w, final boolean premul ) {
 
-      this.colorPreCalc(x, y, z, a);
+      this.colorPreCalc(x, y, z, w);
 
       /* Pre-multiply alpha. */
       if ( premul ) {
@@ -492,28 +492,31 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param x the first color channel, hue or red
     * @param y the second color channel, saturation or green
     * @param z the third color channel, brightness or blue
-    * @param a the alpha channel
+    * @param w the alpha channel
+    * 
+    * @see Utils#clamp01(float)
+    * @see Color#hsbaToRgba(float, float, float, float, Color)
     */
    public void colorPreCalc ( final float x, final float y, final float z,
-      final float a ) {
+      final float w ) {
 
       /* Regardless of RGB or HSV, channels 1 and 2 are linear. */
-      this.calcA = Utils.clamp01(a * this.invColorModeA);
-      this.calcB = Utils.clamp01(z * this.invColorModeZ);
-      this.calcG = Utils.clamp01(y * this.invColorModeY);
+      this.calcA = w * this.invColorModeA;
+      this.calcB = z * this.invColorModeZ;
+      this.calcG = y * this.invColorModeY;
+      this.calcR = x * this.invColorModeX;
 
       switch ( this.colorMode ) {
 
          case PConstants.HSB:
 
-            this.calcR = x * this.invColorModeX;
-
             Color.hsbaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
                this.aTemp);
 
-            this.calcR = this.aTemp.r;
-            this.calcG = this.aTemp.g;
+            this.calcA = this.aTemp.a;
             this.calcB = this.aTemp.b;
+            this.calcG = this.aTemp.g;
+            this.calcR = this.aTemp.r;
 
             break;
 
@@ -521,7 +524,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          default:
 
-            this.calcR = Utils.clamp01(x * this.invColorModeX);
+            this.calcA = Utils.clamp01(this.calcA);
+            this.calcB = Utils.clamp01(this.calcB);
+            this.calcG = Utils.clamp01(this.calcG);
+            this.calcR = Utils.clamp01(this.calcR);
 
       }
    }
@@ -2799,6 +2805,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       Vec2 foreHandle = null;
       Vec2 rearHandle = null;
 
+      // TODO: Make a drawCurve2, drawCurve3, then refactor this?
+
       final Iterator < Knot2 > itr = curve.iterator();
       prevKnot = itr.next();
       coord = prevKnot.coord;
@@ -4004,16 +4012,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * Draws an image representing a glyph from a font.
     *
     * @param glyph the glyph image
-    * @param x1    the first x coordinate
-    * @param y1    the first y coordinate
-    * @param x2    the second x coordinate
-    * @param y2    the second y coordinate
+    * @param x0    the first x coordinate
+    * @param y0    the first y coordinate
+    * @param x1    the second x coordinate
+    * @param y1    the second y coordinate
     * @param u     the u coordinate
     * @param v     the v coordinate
     */
    @Override
-   protected void textCharModelImpl ( final PImage glyph, final float x1,
-      final float y1, final float x2, final float y2, final int u,
+   protected void textCharModelImpl ( final PImage glyph, final float x0,
+      final float y0, final float x1, final float y1, final int u,
       final int v ) {
 
       final boolean savedTint = this.tint;
@@ -4032,7 +4040,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.tintA = this.fillA;
       this.tintAlpha = this.fillAlpha;
 
-      this.image(glyph, x1, y1, x2, y2, 0.0f, 0.0f, 0.0f, u, v);
+      this.image(glyph, x0, y0, x1, y1, 0.0f, 0.0f, 0.0f, u, v);
 
       this.tint = savedTint;
       this.tintColor = savedTintColor;

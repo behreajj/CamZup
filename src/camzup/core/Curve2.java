@@ -1049,10 +1049,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Calculates the dimensions of an Axis-Aligned Bounding Box (AABB)
-    * encompassing the curve. Does so by taking the minimum and maximum of
-    * each knot's coordinate, fore handle and rear handle; <em>not</em> by
-    * finding the curve extrema.
+    * Calculates an Axis-Aligned Bounding Box (AABB) encompassing the curve.
+    * Does so by taking the minimum and maximum of each knot's coordinate,
+    * fore handle and rear handle; <em>not</em> by finding the curve extrema.
     *
     * @param curve  the curve
     * @param target the output dimensions
@@ -1956,8 +1955,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
    /**
     * An internal helper function to accumulate the minimum and maximum points
-    * in a curve. This may be called either by a single curve, or by a curve
-    * entity seeking the minimum and maximum for a collection of curves.
+    * in a curve.
     *
     * @param curve the curve
     * @param lb    the lower bound
@@ -1987,6 +1985,47 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          if ( rh.x > ub.x ) { ub.x = rh.x; }
          if ( rh.y < lb.y ) { lb.y = rh.y; }
          if ( rh.y > ub.y ) { ub.y = rh.y; }
+      }
+   }
+
+   /**
+    * An internal helper function to accumulate the minimum and maximum points
+    * in a curve. This may be called either by a single curve, or by a curve
+    * entity seeking the minimum and maximum for a collection of curves.
+    *
+    * @param curve the curve
+    * @param lb    the lower bound
+    * @param ub    the upper bound
+    * @param tr    the transform
+    * @param fh    the fore handle
+    * @param rh    the rear handle
+    * @param co    the coordinate
+    */
+   static void accumMinMax ( final Curve2 curve, final Vec2 lb,
+      final Vec2 ub, final Transform2 tr, final Vec2 fh, final Vec2 rh,
+      final Vec2 co ) {
+
+      final Iterator < Knot2 > itr = curve.knots.iterator();
+      while ( itr.hasNext() ) {
+         final Knot2 kn = itr.next();
+         Transform2.mulPoint(tr, kn.foreHandle, fh);
+         Transform2.mulPoint(tr, kn.rearHandle, rh);
+         Transform2.mulPoint(tr, kn.coord, co);
+
+         if ( fh.x < lb.x ) { lb.x = fh.x; }
+         if ( fh.x > ub.x ) { ub.x = fh.x; }
+         if ( fh.y < lb.y ) { lb.y = fh.y; }
+         if ( fh.y > ub.y ) { ub.y = fh.y; }
+
+         if ( rh.x < lb.x ) { lb.x = rh.x; }
+         if ( rh.x > ub.x ) { ub.x = rh.x; }
+         if ( rh.y < lb.y ) { lb.y = rh.y; }
+         if ( rh.y > ub.y ) { ub.y = rh.y; }
+
+         if ( co.x < lb.x ) { lb.x = co.x; }
+         if ( co.x > ub.x ) { ub.x = co.x; }
+         if ( co.y < lb.y ) { lb.y = co.y; }
+         if ( co.y > ub.y ) { ub.y = co.y; }
       }
    }
 

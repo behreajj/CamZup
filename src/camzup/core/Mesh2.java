@@ -2,6 +2,7 @@ package camzup.core;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -2266,8 +2267,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
-    * Calculates the dimensions of an Axis-Aligned Bounding Box (AABB)
-    * encompassing the mesh.
+    * Calculates an Axis-Aligned Bounding Box (AABB) encompassing the mesh.
     *
     * @param mesh   the mesh
     * @param target the output dimensions
@@ -2672,6 +2672,116 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int trgLen = result.length;
       for ( int i = 0; i < trgLen; ++i ) { result[i].clean(); }
       return result;
+   }
+
+   /**
+    * Merges the data of a collection of meshes together into one mesh.
+    *
+    * @param coll   the array
+    * @param target the output mesh
+    *
+    * @return the merger
+    */
+   public static Mesh2 groupData ( final Collection < Mesh2 > coll,
+      final Mesh2 target ) {
+
+      return Mesh2.groupData(coll.toArray(new Mesh2[coll.size()]), target);
+   }
+
+   /**
+    * Merges the data of two meshes together into one mesh.
+    *
+    * @param a      the first mesh
+    * @param b      the second mesh
+    * @param target the output mesh
+    *
+    * @return the merger
+    */
+   public static Mesh2 groupData ( final Mesh2 a, final Mesh2 b,
+      final Mesh2 target ) {
+
+      return Mesh2.groupData(new Mesh2[] { a, b }, target);
+   }
+
+   /**
+    * Merges the data of an array of meshes together into one mesh.
+    *
+    * @param arr    the array
+    * @param target the output mesh
+    *
+    * @return the merger
+    */
+   public static Mesh2 groupData ( final Mesh2[] arr, final Mesh2 target ) {
+
+      /* Sum lengths. */
+      int vsTotal = 0;
+      int vtsTotal = 0;
+      int fsTotal = 0;
+      final int collLen = arr.length;
+      for ( int i = 0; i < collLen; ++i ) {
+         final Mesh2 m = arr[i];
+         vsTotal += m.coords.length;
+         vtsTotal += m.texCoords.length;
+         fsTotal += m.faces.length;
+      }
+
+      /* Resize target data. */
+      target.coords = Vec2.resize(target.coords, vsTotal);
+      target.texCoords = Vec2.resize(target.texCoords, vtsTotal);
+
+      /* Cache target shortcuts. */
+      final Vec2[] vsTrg = target.coords;
+      final Vec2[] vtsTrg = target.texCoords;
+      final int[][][] fsTrg = new int[fsTotal][][];
+
+      /* Offset indices in merged data. */
+      int vsCursor = 0;
+      int vtsCursor = 0;
+      int fsCursor = 0;
+
+      /* Copy data. */
+      for ( int i = 0; i < collLen; ++i ) {
+         final Mesh2 m = arr[i];
+
+         /* Copy coordinates. */
+         final Vec2[] vsSrc = m.coords;
+         final int vsSrcLen = vsSrc.length;
+         for ( int j = 0; j < vsSrcLen; ++j ) {
+            vsTrg[vsCursor + j].set(vsSrc[j]);
+         }
+
+         /* Copy texture coordinates. */
+         final Vec2[] vtsSrc = m.texCoords;
+         final int vtsSrcLen = vtsSrc.length;
+         for ( int j = 0; j < vtsSrcLen; ++j ) {
+            vtsTrg[vtsCursor + j].set(vtsSrc[j]);
+         }
+
+         /* Add new offsets to faces. */
+         final int[][][] fsSrc = m.faces;
+         final int fsLen = fsSrc.length;
+         for ( int j = 0; j < fsLen; ++j ) {
+            final int[][] fSrc = fsSrc[j];
+            final int fLen = fSrc.length;
+            final int[][] fTrg = fsTrg[fsCursor + j] = new int[fLen][2];
+            for ( int k = 0; k < fLen; ++k ) {
+               final int[] vertSrc = fSrc[k];
+               final int[] vertTrg = fTrg[k];
+
+               vertTrg[0] = vertSrc[0] + vsCursor;
+               vertTrg[1] = vertSrc[1] + vtsCursor;
+            }
+         }
+
+         /* Add length of individual mesh to offsets. */
+         vsCursor += vsSrcLen;
+         vtsCursor += vtsSrcLen;
+         fsCursor += fsLen;
+      }
+
+      /* Update faces and return. */
+      target.faces = fsTrg;
+      return target;
    }
 
    /**
@@ -3238,8 +3348,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * An internal helper function to accumulate the minimum and maximum points
-    * in a mesh. This may be called either by a single mesh, or by a mesh
-    * entity seeking the minimum and maximum for a collection of meshes.
+    * in a mesh.
     *
     * @param mesh the mesh
     * @param lb   the lower bound
@@ -3254,6 +3363,36 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final Vec2 coord = coords[i];
          final float x = coord.x;
          final float y = coord.y;
+
+         /* Minimum, maximum need separate if checks, not if-else. */
+         if ( x < lb.x ) { lb.x = x; }
+         if ( x > ub.x ) { ub.x = x; }
+         if ( y < lb.y ) { lb.y = y; }
+         if ( y > ub.y ) { ub.y = y; }
+      }
+   }
+
+   /**
+    * An internal helper function to accumulate the minimum and maximum points
+    * in a mesh. This may be called either by a single mesh, or by a mesh
+    * entity seeking the minimum and maximum for a collection of meshes.
+    *
+    * @param mesh the mesh
+    * @param lb   the lower bound
+    * @param ub   the upper bound
+    * @param tr   the transform
+    * @param co   the coordinate
+    */
+   static void accumMinMax ( final Mesh2 mesh, final Vec2 lb, final Vec2 ub,
+      final Transform2 tr, final Vec2 co ) {
+
+      final Vec2[] coords = mesh.coords;
+      final int len = coords.length;
+
+      for ( int i = 0; i < len; ++i ) {
+         Transform2.mulPoint(tr, coords[i], co);
+         final float x = co.x;
+         final float y = co.y;
 
          /* Minimum, maximum need separate if checks, not if-else. */
          if ( x < lb.x ) { lb.x = x; }

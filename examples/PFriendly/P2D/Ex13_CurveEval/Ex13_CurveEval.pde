@@ -3,8 +3,8 @@ import camzup.pfriendly.*;
 
 int count = 60;
 float toPrc = 1.0 / (count - 1.0);
-float offMin = -0.45;
-float offMax = 0.45;
+float offMin = -0.3125;
+float offMax = 0.3125;
 float dotMax = 25.0;
 float dotMin = 10.0;
 
@@ -38,7 +38,7 @@ void setup() {
 
   for (int i = 0; i < count; ++i) {
     float prc = i * toPrc;
-    float dotSize = Utils.pingPong(dotMin, dotMax, prc);
+    float dotSize = Utils.pingPong(dotMax, dotMin, prc);
 
     CurveEntity2 de2 = new CurveEntity2();
     Curve2 dot = Curve2.circle(new Curve2());
@@ -56,7 +56,7 @@ void setup() {
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
-  float step = frameCount * 0.0075;
+  float step = frameCount * 0.005;
   infEntity.rotateZ(0.01);
 
   graphics.background(0xff101010);

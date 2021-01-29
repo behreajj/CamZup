@@ -41,6 +41,18 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public CurveEntity2 ( final String name ) { super(name); }
 
    /**
+    * Creates a curve entity from a list of curves.
+    *
+    * @param name   the name
+    * @param curves the list of curves
+    */
+   public CurveEntity2 ( final String name, final Curve2... curves ) {
+
+      super(name);
+      this.appendAll(curves);
+   }
+
+   /**
     * Creates a curve entity from a name, transform and list of curves.
     *
     * @param name      the name
@@ -51,18 +63,6 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       final Curve2... curves ) {
 
       super(name, transform);
-      this.appendAll(curves);
-   }
-
-   /**
-    * Creates a curve entity from a list of curves.
-    *
-    * @param name   the name
-    * @param curves the list of curves
-    */
-   public CurveEntity2 ( final String name, final Curve2... curves ) {
-
-      super(name);
       this.appendAll(curves);
    }
 
@@ -704,6 +704,34 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
       svgp.append("</g>\n");
       return svgp.toString();
+   }
+
+   /**
+    * Calculates an Axis-Aligned Bounding Box (AABB) encompassing the entity.
+    *
+    * @param entity the entity
+    * @param target the output bounds
+    *
+    * @return the bounds
+    */
+   public static Bounds2 calcBounds ( final CurveEntity2 entity,
+      final Bounds2 target ) {
+
+      // TODO: Implement for other entities?
+
+      final Vec2 fh = new Vec2();
+      final Vec2 rh = new Vec2();
+      final Vec2 co = new Vec2();
+
+      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+
+      final Iterator < Curve2 > itr = entity.iterator();
+      final Transform2 tr = entity.transform;
+      while ( itr.hasNext() ) {
+         Curve2.accumMinMax(itr.next(), target.min, target.max, tr, fh, rh, co);
+      }
+
+      return target;
    }
 
    /**
