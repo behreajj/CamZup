@@ -33,7 +33,10 @@ public class Color implements Comparable < Color > {
    /**
     * The default constructor. Creates a white color.
     */
-   public Color ( ) {}
+   public Color ( ) {
+
+      // RESEARCH https://www.w3.org/TR/compositing-1/#blending
+   }
 
    /**
     * Creates a color from bytes. In Java, bytes are signed, within the range

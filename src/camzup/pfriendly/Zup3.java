@@ -2,6 +2,7 @@ package camzup.pfriendly;
 
 import camzup.core.Experimental;
 import camzup.core.Handedness;
+import camzup.core.IUtils;
 import camzup.core.Utils;
 import camzup.core.Vec3;
 
@@ -33,6 +34,66 @@ public class Zup3 extends Up3 {
       final String path, final boolean isPrimary ) {
 
       super(width, height, parent, path, isPrimary);
+   }
+
+   /**
+    * Creates an pseudo-isometric camera suitable to pixel art, with a rise of
+    * 1 pixel and a run of 2 pixels.<br>
+    * <br>
+    * Should be used in conjunction with an {@link UpOgl#ortho()} projection.
+    */
+   public void camDimetric ( ) {
+
+      this.camDimetric(this.eyeDist < IUtils.EPSILON ? Zup3.DEFAULT_LOC_Z
+         * IUtils.SQRT_3_2 : this.eyeDist);
+   }
+
+   /**
+    * Creates an pseudo-isometric camera suitable to pixel art, with a rise of
+    * 1 pixel and a run of 2 pixels.<br>
+    * <br>
+    * Should be used in conjunction with an {@link UpOgl#ortho()} projection.
+    *
+    * @param orbit camera orbit magnitude
+    */
+   public void camDimetric ( final float orbit ) {
+
+      this.camDimetric(this.lookTarget.x, this.lookTarget.y, this.lookTarget.z,
+         orbit);
+   }
+
+   /**
+    * Creates an pseudo-isometric camera suitable to pixel art, with a rise of
+    * 1 pixel and a run of 2 pixels. The resulting angle from
+    * <code>atan2(1.0, 2.0)</code>, approximately 25.565 degrees, is
+    * subtracted from 60 degrees to get 33.435 degrees. This pitch, along with
+    * a yaw of 45 degrees, determines the camera's forward axis.<br>
+    * <br>
+    * Should be used in conjunction with an {@link UpOgl#ortho()} projection.
+    *
+    * @param xCenter the origin x
+    * @param yCenter the origin y
+    * @param zCenter the origin z
+    * @param orbit   camera orbit magnitude
+    */
+   public void camDimetric ( final float xCenter, final float yCenter,
+      final float zCenter, final float orbit ) {
+
+      this.i.set(0.70710677f, 0.70710677f, 0.0f);
+      this.j.set(-0.38960868f, 0.38960868f, 0.8345119f);
+      this.k.set(0.590089f, -0.590089f, 0.55098987f);
+
+      this.refUp.set(Zup3.DEFAULT_REF_X, Zup3.DEFAULT_REF_Y,
+         Zup3.DEFAULT_REF_Z);
+      this.lookTarget.set(xCenter, yCenter, zCenter);
+      this.eyeDist = Utils.max(IUtils.EPSILON, orbit);
+      Vec3.mul(this.k, this.eyeDist, this.lookDir);
+
+      this.cameraX = this.lookTarget.x + this.lookDir.x;
+      this.cameraY = this.lookTarget.y + this.lookDir.y;
+      this.cameraZ = this.lookTarget.z + this.lookDir.z;
+
+      this.updateCameraInv();
    }
 
    /**

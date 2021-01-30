@@ -79,30 +79,6 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // String str = "5 ,-68.875, 725.26+8001.26";
-      // char[] chars = str.toCharArray();
-      // ArrayList < String > segs = new ArrayList <>();
-      // segmentChars(chars, 0, chars.length, segs);
-      //
-      // for ( String seg : segs ) { System.out.println(seg); }
-
-      // Mesh3 a = new Mesh3();
-      // Mesh3 b = new Mesh3();
-      // Mesh3 c = new Mesh3();
-      // Mesh3 d = new Mesh3();
-      //
-      // Mesh3.cube(a);
-      // Mesh3.icosahedron(b);
-      // Mesh3.torus(d);
-      // a.translate(new Vec3(2f, 0f, 0f));
-      // b.translate(new Vec3(-2f, 0f, 0f));
-      //
-      // Mesh3.groupData(new Mesh3[] { a, b, d }, c);
-      //
-      // MeshEntity3 me3 = new MeshEntity3();
-      // me3.append(c);
-      // System.out.println(me3.toBlenderCode());
-
    }
 
    /**

@@ -3557,8 +3557,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh2 project ( final Mesh3 source, final Mat4 projection,
       final Mat4 camera, final Mesh2 target ) {
 
-      // TODO: for curves?
-
       target.name = source.name;
       target.materialIndex = source.materialIndex;
 
