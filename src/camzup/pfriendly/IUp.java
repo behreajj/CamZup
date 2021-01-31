@@ -195,20 +195,6 @@ public interface IUp {
    void strokeWeight ( final float sw );
 
    /**
-    * Sets the renderer's current stroke to the tint.
-    *
-    * @param c the color
-    */
-   default void tint ( final Color c ) { this.tint(Color.toHexInt(c)); }
-
-   /**
-    * Sets the renderer's current tint to the hexadecimal value.
-    *
-    * @param c the color in hexadecimal.
-    */
-   void tint ( final int c );
-
-   /**
     * Default camera aspect ratio used by perspective camera when size is less
     * than 128. Assumes 1:1.
     */

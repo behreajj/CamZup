@@ -1,26 +1,31 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup2 graphics;
+YupJ2 graphics;
 
-int count = 10;
+int count = 6;
 Vec2[] arr = new Vec2[count];
 float tightness = 0.0;
 boolean closedLoop = true;
-boolean showHandles = false;
+boolean showHandles = true;
 
 Rng rng = new Rng();
 Curve2 catmull = new Curve2();
 CurveEntity2 ce2 = new CurveEntity2(catmull);
+MaterialSolid mat = new MaterialSolid()
+  .setFill(false)
+  .setStroke(true)
+  .setStroke(0xaf404040)
+  .setStrokeWeight(3.0);
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {
   frameRate(60.0);
 
-  graphics = (Yup2)getGraphics();
+  graphics = (YupJ2)getGraphics();
   graphics.noFill();
 
   // Initialize vectors.
@@ -53,9 +58,8 @@ void draw() {
   graphics.endShape();
 
   // Draw test.
-  graphics.stroke(0xaf404040);
-  graphics.strokeWeight(3.0);
-  graphics.shape(ce2);
+
+  graphics.shape(ce2, mat);
   if (showHandles) {
     graphics.handles(ce2);
   }

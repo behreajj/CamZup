@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Zup3 rndr;
+Zup3 graphics;
 Mesh3 mesh = new Mesh3();
 MeshEntity3 entity = new MeshEntity3();
 Vec3 mouse1 = new Vec3();
@@ -24,8 +24,8 @@ void settings() {
 }
 
 void setup() {
-  rndr = (Zup3)getGraphics();
   frameRate(60.0);
+  graphics = (Zup3)getGraphics();
   Mesh3.cube(mesh);
   entity.append(mesh);
 
@@ -45,39 +45,39 @@ void draw() {
   mixer.apply(frames, step, entity.transform);
 
   if (mousePressed) {
-    rndr.mouse1s(mouse1);
+    graphics.mouse1s(mouse1);
     if (mouseButton == LEFT) {
       Vec3.mul(mouse1, 100.0, mouse1);
-      rndr.moveByLocal(mouse1);
+      graphics.moveByLocal(mouse1);
     } else if (mouseButton == CENTER) {
       Vec3.mul(mouse1, 37.5, mouse1);
-      rndr.strafe(mouse1);
+      graphics.strafe(mouse1);
     }
   }
 
-  rndr.background(#131313);
-  rndr.lights();
-  rndr.grid(16, 2.0, #fff7d5, 1024.0);
-  rndr.ortho(0.325);
-  rndr.camera();
+  graphics.background(#131313);
+  graphics.lights();
+  graphics.grid(16, 2.0, #fff7d5, 1024.0);
+  graphics.ortho(0.325);
+  graphics.camera();
 
-  rndr.shape(entity, mat);
+  graphics.shape(entity, mat);
 }
 
 void keyReleased() {
   if (keyCode == 48 || keyCode == 128) {
-    rndr.defaultCamera();
+    graphics.defaultCamera();
   } else if (keyCode == 49 || keyCode == 129) {
-    rndr.camNorth();
+    graphics.camNorth();
   } else if (keyCode == 51 || keyCode == 131) {
-    rndr.camWest();
+    graphics.camWest();
   } else if (keyCode == 50 || keyCode == 130) {
-    rndr.moveByLocal(0.0, -150.0, 0.0);
+    graphics.moveByLocal(0.0, -150.0, 0.0);
   } else if (keyCode == 52 || keyCode == 132) {
-    rndr.moveByLocal(-150.0, 0.0, 0.0);
+    graphics.moveByLocal(-150.0, 0.0, 0.0);
   } else if (keyCode == 54 || keyCode == 134) {
-    rndr.moveByLocal(150.0, 0.0, 0.0);
+    graphics.moveByLocal(150.0, 0.0, 0.0);
   } else if (keyCode == 56 || keyCode == 136) {
-    rndr.moveByLocal(0.0, 150.0, 0.0);
+    graphics.moveByLocal(0.0, 150.0, 0.0);
   }
 }

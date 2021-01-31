@@ -5,7 +5,7 @@ String instructions = " | Mouse Left: Orbit, " +
   "Mouse Center: Strafe, " +
   "Mouse Right: Toggle grid";
 
-Zup3 rndr;
+Zup3 graphics;
 MeshEntity3 me3 = new MeshEntity3();
 Gradient grd = Gradient.paletteRyb(new Gradient());
 MaterialSolid[] solids;
@@ -32,7 +32,8 @@ void settings() {
 }
 
 void setup() {
-  rndr = (Zup3)getGraphics();
+  frameRate(60.0);
+  graphics = (Zup3)getGraphics();
 
   int count = 20;
   float toTheta = Utils.TAU / count;
@@ -59,56 +60,56 @@ void setup() {
     Gradient.eval(grd, percent, solids[i].fill);
   }
   
-  me3.scaleTo(rndr.width * 0.5);
+  me3.scaleTo(graphics.width * 0.5);
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1) + instructions);
 
-  rndr.getLookTarget(lookWorld);
+  graphics.getLookTarget(lookWorld);
   me3.rotateX(0.01);
 
   if (useOrtho) {
-    rndr.ortho(orthoZoom);
+    graphics.ortho(orthoZoom);
   } else {
-    rndr.perspective();
+    graphics.perspective();
   }
 
   mouseControls();
 
-  rndr.background(#101010);
-  rndr.lights();
+  graphics.background(#101010);
+  graphics.lights();
 
   if (showGrid) {
-    rndr.grid(32, 2.5, #fff7d5, rndr.width * 2.0);
+    graphics.grid(32, 2.5, #fff7d5, graphics.width * 2.0);
   }
-  rndr.shape(me3, solids);
+  graphics.shape(me3, solids);
 
-  rndr.strokeWeight(5.0);
-  rndr.stroke(#ffff3f);
-  rndr.point(lookWorld);
+  graphics.strokeWeight(5.0);
+  graphics.stroke(#ffff3f);
+  graphics.point(lookWorld);
 }
 
 void mouseControls() {
   if (mousePressed) {
 
-    rndr.mouse1s(m1s);
+    graphics.mouse1s(m1s);
 
     if (mouseButton == LEFT) {
       Vec3 v = Vec3.mul(m1s, orbitSpeed, new Vec3());
-      rndr.moveByLocal(v);
+      graphics.moveByLocal(v);
       orbitSpeed = Utils.lerp(
         orbitSpeed, orbitMaxSpeed, 0.01);
     }
 
     if (mouseButton == CENTER) {
       Vec3 v = Vec3.mul(m1s, strafeSpeed, new Vec3());
-      rndr.strafe(v);
+      graphics.strafe(v);
       strafeSpeed = Utils.lerp(
         strafeSpeed, strafeMaxSpeed, 0.01);
     }
   } else {
-    rndr.camera();
+    graphics.camera();
 
     orbitSpeed = Utils.lerp(
       orbitSpeed, orbitDefSpeed, 0.025);
@@ -119,7 +120,7 @@ void mouseControls() {
 
 void mouseWheel(MouseEvent event) {
   float count = event.getCount();
-  rndr.dolly(dollySpeed * count);
+  graphics.dolly(dollySpeed * count);
   orthoZoom -= 0.05 * count;
 }
 
@@ -133,16 +134,16 @@ void keyPressed() {
 
   if (keyCode == 50 || keyCode == 130) {
     // Two or numpad two.
-    rndr.moveByLocal(0.0, -150.0, 0.0);
+    graphics.moveByLocal(0.0, -150.0, 0.0);
   } else if (keyCode == 52 || keyCode == 132) {
     // Four or numpad four.
-    rndr.moveByLocal(-150.0, 0.0, 0.0);
+    graphics.moveByLocal(-150.0, 0.0, 0.0);
   } else if (keyCode == 54 || keyCode == 134) {
     // Six or numpad six.
-    rndr.moveByLocal(150.0, 0.0, 0.0);
+    graphics.moveByLocal(150.0, 0.0, 0.0);
   } else if (keyCode == 56 || keyCode == 136) {
     // Eight or numpad eight.
-    rndr.moveByLocal(0.0, 150.0, 0.0);
+    graphics.moveByLocal(0.0, 150.0, 0.0);
   }
 }
 
@@ -151,15 +152,15 @@ void keyReleased() {
   if (keyCode == 48 || keyCode == 128) {
     // Zero or numpad zero.
     println("DEFAULT");
-    rndr.defaultCamera();
+    graphics.defaultCamera();
   } else if (keyCode == 49 || keyCode == 129) {
     // One or numpad one.
     println("NORTH");
-    rndr.camNorth();
+    graphics.camNorth();
   } else if (keyCode == 51 || keyCode == 131) {
     // Three or numpad three.
     println("WEST");
-    rndr.camWest();
+    graphics.camWest();
   } else if (keyCode == 53 || keyCode == 133) {
     // Five or numpad five.
     useOrtho = !useOrtho;

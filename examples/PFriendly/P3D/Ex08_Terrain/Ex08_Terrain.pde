@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Zup3 rndr;
+Zup3 graphics;
 
 boolean wireframe = true;
 int count = 64;
@@ -33,15 +33,17 @@ void settings() {
 }
 
 void setup() {
-  rndr = (Zup3)getGraphics();
   frameRate(60.0);
-  entity.scaleTo(2.0 * Utils.min(rndr.width, rndr.height));
+  graphics = (Zup3)getGraphics();
+  graphics.camDimetric();
+  graphics.ortho();
+  entity.scaleTo(Utils.min(graphics.width, graphics.height));
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
-  rndr.mouse1s(mouse1);
+  graphics.mouse1s(mouse1);
   Mesh2.plane(count, count, PolyType.TRI, plane2);
   plane3.set(plane2);
 
@@ -51,10 +53,10 @@ void draw() {
     Vec3.mul(co, roughness, noiseIn);
     noiseIn.z = zOff;
     float fac1 = Simplex.fbm(
-      noiseIn, Simplex.DEFAULT_SEED, 
+      noiseIn, Simplex.DEFAULT_SEED,
       16, 2.0, 0.3375);
     float fac0 = Voronoi.eval(
-      co, Simplex.DEFAULT_SEED, 
+      co, Simplex.DEFAULT_SEED,
       0.25, voronoi);
     float fac = Utils.lerp(fac0, fac1, 0.75);
     co.z = elev * fac;
@@ -65,19 +67,17 @@ void draw() {
   if (mousePressed) {
     if (mouseButton == LEFT) {
       Vec3.mul(mouse1, 100.0, mouse1);
-      rndr.moveByLocal(mouse1);
+      graphics.moveByLocal(mouse1);
     } else if (mouseButton == CENTER) {
       Vec3.mul(mouse1, 37.5, mouse1);
-      rndr.strafe(mouse1);
+      graphics.strafe(mouse1);
     }
   }
 
-  rndr.background();
-  rndr.grid(32);
-  rndr.perspective();
-  rndr.camera();
-  rndr.lights();
-  rndr.shape(entity, wireframe ? stroke : fill);
+  graphics.background();
+  graphics.grid(32);
+  graphics.lights();
+  graphics.shape(entity, wireframe ? stroke : fill);
 }
 
 void keyReleased() {

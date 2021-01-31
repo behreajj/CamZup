@@ -493,14 +493,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param y the second color channel, saturation or green
     * @param z the third color channel, brightness or blue
     * @param w the alpha channel
-    * 
-    * @see Utils#clamp01(float)
+    *
     * @see Color#hsbaToRgba(float, float, float, float, Color)
     */
    public void colorPreCalc ( final float x, final float y, final float z,
       final float w ) {
 
-      /* Regardless of RGB or HSV, channels 1 and 2 are linear. */
       this.calcA = w * this.invColorModeA;
       this.calcB = z * this.invColorModeZ;
       this.calcG = y * this.invColorModeY;
@@ -523,11 +521,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          case PConstants.RGB:
 
          default:
-
-            this.calcA = Utils.clamp01(this.calcA);
-            this.calcB = Utils.clamp01(this.calcB);
-            this.calcG = Utils.clamp01(this.calcG);
-            this.calcR = Utils.clamp01(this.calcR);
+            this.calcA = this.calcA < 0.0f ? 0.0f : this.calcA > 1.0f ? 1.0f
+               : this.calcA;
+            this.calcB = this.calcB < 0.0f ? 0.0f : this.calcB > 1.0f ? 1.0f
+               : this.calcB;
+            this.calcG = this.calcG < 0.0f ? 0.0f : this.calcG > 1.0f ? 1.0f
+               : this.calcG;
+            this.calcR = this.calcR < 0.0f ? 0.0f : this.calcR > 1.0f ? 1.0f
+               : this.calcR;
 
       }
    }
@@ -2075,6 +2076,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void stroke ( final Color c ) {
 
+      /*
+       * strokeFromCalc is not overridden in the OpenGL, so it calls the method
+       * from PGraphics, which assigns calculated color variables to stroke
+       * color variables.
+       */
+
       this.colorCalc(c);
       this.strokeFromCalc();
    }
@@ -2234,8 +2241,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @param c the color
     */
-   @Override
    public void tint ( final Color c ) {
+
+      /*
+       * tintFromCalc is not overridden in the OpenGL, so it calls the method
+       * from PGraphics, which assigns calculated color variables to tint color
+       * variables.
+       */
 
       this.colorCalc(c);
       this.tintFromCalc();
@@ -3033,7 +3045,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             final int[] data = f[j];
             Transform3.mulPoint(tr, vs[data[0]], v);
             Transform2.mulTexCoord(uvtr, vts[data[1]], vt);
-            Transform3.mulDir(tr, vns[data[2]], vn);
+            Transform3.mulNormal(tr, vns[data[2]], vn);
 
             this.normalX = vn.x;
             this.normalY = vn.y;
@@ -3083,6 +3095,26 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          }
          this.endShape(PConstants.CLOSE);
       }
+   }
+
+   /**
+    * {@link PGraphicsOpenGL#fillFromCalc} attempts to set the ambient light
+    * with this method; this overrides that excess functionality.
+    */
+   @Override
+   protected void fillFromCalc ( ) {
+
+      this.fill = true;
+      this.fillR = this.calcR;
+      this.fillG = this.calcG;
+      this.fillB = this.calcB;
+      this.fillA = this.calcA;
+      this.fillRi = this.calcRi;
+      this.fillGi = this.calcGi;
+      this.fillBi = this.calcBi;
+      this.fillAi = this.calcAi;
+      this.fillColor = this.calcColor;
+      this.fillAlpha = this.calcAlpha;
    }
 
    /**
@@ -3425,11 +3457,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    protected Vec3 model ( final float xSource, final float ySource,
       final float zSource, final Vec3 target ) {
-
-      /*
-       * Multiply point by model-view matrix; multiply product by inverse of
-       * camera matrix.
-       */
 
       /* @formatter:off */
       final float aw = this.modelview.m30 * xSource +
@@ -3924,7 +3951,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          case PConstants.SHAPE:
 
-            this.textCharShapeImpl(ch, x, y);
+            super.textCharShapeImpl(ch, x, y);
 
             break;
 

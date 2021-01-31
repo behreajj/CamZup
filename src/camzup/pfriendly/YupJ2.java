@@ -382,7 +382,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void bezier ( final Vec2 ap0, final Vec2 cp0, final Vec2 cp1,
       final Vec2 ap1 ) {
 
-      this.bezier(ap0.x, ap0.y, cp0.x, cp0.y, cp1.x, cp1.y, ap1.x, ap1.y);
+      super.bezier(ap0.x, ap0.y, cp0.x, cp0.y, cp1.x, cp1.y, ap1.x, ap1.y);
    }
 
    /**
@@ -588,8 +588,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Calculates the color channels from a color object.
     *
     * @param c the color
-    *
-    * @see Utils#clamp01(float)
     */
    public void colorCalc ( final Color c ) {
 
@@ -886,7 +884,20 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void fill ( final camzup.core.Color c ) {
 
       this.colorCalc(c);
-      super.fillFromCalc();
+
+      /* fillFromCalc function: */
+      this.fill = true;
+      this.fillR = this.calcR;
+      this.fillG = this.calcG;
+      this.fillB = this.calcB;
+      this.fillA = this.calcA;
+      this.fillRi = this.calcRi;
+      this.fillGi = this.calcGi;
+      this.fillBi = this.calcBi;
+      this.fillAi = this.calcAi;
+      this.fillColor = this.calcColor;
+      this.fillAlpha = this.calcAlpha;
+
       this.fillColorObject = new java.awt.Color(this.fillColor, true);
       this.fillGradient = false;
    }
@@ -1849,6 +1860,66 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * A hack to work around the performance issues with image display. Selects
+    * a sample from the image and displays it about the origin.
+    *
+    * @param imgNtv AWT native image
+    * @param sample the image sample
+    */
+   public void imageNative ( final Image imgNtv,
+      final MaterialAwt.Sample sample ) {
+
+      this.imageNative(imgNtv, sample, 1);
+   }
+
+   /**
+    * A hack to work around the performance issues with image display.
+    *
+    * @param imgNtv  AWT native image
+    * @param sample  the sample
+    * @param display the display bounds
+    */
+   public void imageNative ( final Image imgNtv,
+      final MaterialAwt.Sample sample, final Bounds2 display ) {
+
+      this.imageNative(imgNtv, sample, display, 1);
+   }
+
+   /**
+    * A hack to work around the performance issues with image display.
+    *
+    * @param imgNtv  AWT native image
+    * @param sample  the sample
+    * @param display the display bounds
+    * @param pd      the pixel density
+    */
+   public void imageNative ( final Image imgNtv,
+      final MaterialAwt.Sample sample, final Bounds2 display, final int pd ) {
+
+      final Vec2 min = display.min;
+      final Vec2 max = display.max;
+      this.imageNative(imgNtv, sample.xTopLeft, sample.yTopLeft,
+         sample.xBottomRight, sample.yBottomRight, ( int ) min.x, ( int ) min.y,
+         ( int ) max.x, ( int ) max.y, pd);
+   }
+
+   /**
+    * A hack to work around the performance issues with image display. Selects
+    * a sample from the image and displays it about the origin at the
+    * requested scale.
+    *
+    * @param imgNtv AWT native image
+    * @param sample the image sample
+    * @param scale  display scale
+    */
+   public void imageNative ( final Image imgNtv,
+      final MaterialAwt.Sample sample, final int scale ) {
+
+      this.imageNative(imgNtv, sample.xTopLeft, sample.yTopLeft,
+         sample.xBottomRight, sample.yBottomRight, scale);
+   }
+
+   /**
     * Returns whether or not the renderer is 2D.
     */
    @Override
@@ -2676,8 +2747,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public void shape ( final CurveEntity2 entity, final MaterialAwt material ) {
 
-      // TODO: Version with multiple materials.
-
       final Bounds2 bounds = new Bounds2();
       CurveEntity2.calcBounds(entity, bounds);
       final Vec2 min = bounds.min;
@@ -2701,6 +2770,44 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       /* @formatter:on */
 
       super.popStyle();
+   }
+
+   /**
+    * Draws a curve entity with an array of materials.
+    *
+    * @param entity    the curve entity
+    * @param materials the materials array
+    */
+   public void shape ( final CurveEntity2 entity,
+      final MaterialAwt[] materials ) {
+
+      // TODO: TEST
+
+      final Bounds2 bounds = new Bounds2();
+      final Vec2 fh = new Vec2();
+      final Vec2 rh = new Vec2();
+      final Vec2 co = new Vec2();
+      final Vec2 min = bounds.min;
+      final Vec2 max = bounds.max;
+      final Transform2 tr = entity.transform;
+      final Iterator < Curve2 > itr = entity.iterator();
+
+      while ( itr.hasNext() ) {
+         final Curve2 curve = itr.next();
+         Curve2.calcBounds(curve, bounds);
+         final MaterialAwt material = materials[curve.materialIndex];
+         final Image texture = material.texture;
+         final MaterialAwt.Sample sample = material.sample;
+
+         super.pushStyle();
+         this.material(material);
+         this.gp.reset();
+         this.appendToGeneralPath(curve, tr, fh, rh, co);
+         this.drawShapeClip(this.gp, texture, sample.xTopLeft, sample.yTopLeft,
+            sample.xBottomRight, sample.yBottomRight, ( int ) min.x,
+            ( int ) min.y, ( int ) max.x, ( int ) max.y, this.pixelDensity);
+         super.popStyle();
+      }
    }
 
    /**
@@ -2757,14 +2864,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws a 2D curve entity.
+    * Draws a mesh entity with one material.
     *
-    * @param entity   the curve entity
+    * @param entity   the mesh entity
     * @param material the material
     */
    public void shape ( final MeshEntity2 entity, final MaterialAwt material ) {
-
-      // TODO: Version with multiple materials.
 
       final Bounds2 bounds = new Bounds2();
       MeshEntity2.calcBounds(entity, bounds);
@@ -2792,7 +2897,49 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws a mesh entity.
+    * Draws a mesh entity with an array of materials.
+    *
+    * @param entity    the mesh entity
+    * @param materials the materials array
+    */
+   public void shape ( final MeshEntity2 entity,
+      final MaterialAwt[] materials ) {
+
+      // TODO: TEST
+
+      final Bounds2 bounds = new Bounds2();
+      final Vec2 v = new Vec2();
+      final Vec2 min = bounds.min;
+      final Vec2 max = bounds.max;
+      final Transform2 tr = entity.transform;
+      final Iterator < Mesh2 > itr = entity.iterator();
+
+      while ( itr.hasNext() ) {
+         final Mesh2 mesh = itr.next();
+         Mesh2.calcBounds(mesh, bounds);
+         final MaterialAwt material = materials[mesh.materialIndex];
+         final Image texture = material.texture;
+         final MaterialAwt.Sample sample = material.sample;
+
+         super.pushStyle();
+         this.material(material);
+         this.gp.reset();
+         this.appendToGeneralPath(mesh, tr, v);
+         /* @formatter:off */
+         this.drawShapeClip(
+            this.gp, texture,
+            sample.xTopLeft, sample.yTopLeft,
+            sample.xBottomRight, sample.yBottomRight,
+            ( int ) min.x, ( int ) min.y,
+            ( int ) max.x, ( int ) max.y,
+            this.pixelDensity);
+         /* @formatter:on */
+         super.popStyle();
+      }
+   }
+
+   /**
+    * Draws a mesh entity with one material.
     *
     * @param entity   the mesh entity
     * @param material the material
@@ -2807,7 +2954,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws a mesh entity.
+    * Draws a mesh entity with an array of materials.
     *
     * @param entity    the mesh entity
     * @param materials the materials array
@@ -2818,10 +2965,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final Vec2 v = new Vec2();
 
       final Transform2 tr = entity.transform;
-      final Iterator < Mesh2 > meshItr = entity.iterator();
+      final Iterator < Mesh2 > itr = entity.iterator();
 
-      while ( meshItr.hasNext() ) {
-         final Mesh2 mesh = meshItr.next();
+      while ( itr.hasNext() ) {
+         final Mesh2 mesh = itr.next();
          super.pushStyle();
          this.material(materials[mesh.materialIndex]);
          this.gp.reset();
@@ -2931,7 +3078,20 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void stroke ( final camzup.core.Color c ) {
 
       this.colorCalc(c);
-      super.strokeFromCalc();
+
+      /* strokeFromCalc function: */
+      this.stroke = true;
+      this.strokeR = this.calcR;
+      this.strokeG = this.calcG;
+      this.strokeB = this.calcB;
+      this.strokeA = this.calcA;
+      this.strokeRi = this.calcRi;
+      this.strokeGi = this.calcGi;
+      this.strokeBi = this.calcBi;
+      this.strokeAi = this.calcAi;
+      this.strokeColor = this.calcColor;
+      this.strokeAlpha = this.calcAlpha;
+
       this.strokeColorObject = new java.awt.Color(this.strokeColor, true);
       this.strokeGradient = false;
    }
@@ -3050,13 +3210,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          case PConstants.BOTTOM:
 
-            yMut += this.textDescent() + high;
+            yMut += super.textDescent() + high;
 
             break;
 
          case PConstants.TOP:
 
-            yMut -= this.textAscent();
+            yMut -= super.textAscent();
 
             break;
 
@@ -3064,13 +3224,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          default:
 
-            yMut -= ( this.textAscent() - high ) * 0.5f;
+            yMut -= ( super.textAscent() - high ) * 0.5f;
       }
 
       int index = 0;
       while ( index < stop ) {
          if ( chars[index] == '\n' ) {
-            this.textLineAlignImpl(chars, stMut, index, x, yMut);
+            super.textLineAlignImpl(chars, stMut, index, x, yMut);
             stMut = index + 1;
             yMut -= this.textLeading;
          }
@@ -3078,8 +3238,41 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       }
 
       if ( stMut < stop ) {
-         this.textLineAlignImpl(chars, stMut, index, x, yMut);
+         super.textLineAlignImpl(chars, stMut, index, x, yMut);
       }
+   }
+
+   /**
+    * Draws a 2D text entity.<br>
+    * <br>
+    * Support for textures in this renderer is limited.
+    *
+    * @param entity the text entity
+    */
+   @Experimental
+   public void text ( final TextEntity2 entity ) {
+
+      final Transform2 tr = entity.transform;
+      final Vec2 loc = tr.getLocation(new Vec2());
+      final MaterialPImage mat = entity.material;
+      final PImage txtr = mat.texture;
+      final int w = txtr.width;
+      final int h = txtr.height;
+      final float wHalf = w * 0.5f;
+      final float hHalf = h * 0.5f;
+
+      super.pushMatrix();
+      super.pushStyle();
+      this.g2.translate(loc.x, loc.y);
+      this.g2.rotate(tr.getRotation());
+
+      /* Needs to use super imageImpl because of the tint. */
+      this.colorCalc(mat.tint);
+      super.tintFromCalc();
+      this.tintColorObject = new java.awt.Color(this.tintColor, true);
+      super.imageImpl(txtr, -wHalf, hHalf, wHalf, -hHalf, 0, 0, w, h);
+      super.popStyle();
+      this.popMatrix();
    }
 
    /**
@@ -3104,12 +3297,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void textSize ( final float size ) {
 
       final float vsz = Utils.max(0.5f, size);
-      if ( this.textFont == null ) { this.defaultFontOrDeath("textSize", vsz); }
+      if ( this.textFont == null ) {
+         super.defaultFontOrDeath("textSize", vsz);
+      }
       this.textSize = vsz;
 
       // Why 1.275? Maybe it is a conversion from points to units similar to
       // those when parsing an SVG?
-      this.textLeading = ( this.textAscent() + this.textDescent() ) * 1.275f;
+      this.textLeading = ( super.textAscent() + super.textDescent() ) * 1.275f;
    }
 
    /**
@@ -3125,14 +3320,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    @Override
    public void textureWrap ( final int wrap ) { /* Unsupported. */ }
-
-   /**
-    * Tint is not supported by this renderer.
-    *
-    * @param c the color
-    */
-   @Override
-   public void tint ( final camzup.core.Color c ) { /* Unsupported. */ }
 
    /**
     * Tint is not supported by this renderer.
@@ -3681,14 +3868,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param z the third color channel, brightness or blue
     * @param w the alpha channel
     *
-    * @see Utils#clamp01(float)
     * @see Color#hsbaToRgba(float, float, float, float, Color)
     */
    @Override
    protected void colorCalc ( final float x, final float y, final float z,
       final float w ) {
 
-      /* Regardless of RGB or HSV, channels 1 and 2 are linear. */
       this.calcA = w * this.invColorModeA;
       this.calcB = z * this.invColorModeZ;
       this.calcG = y * this.invColorModeY;
@@ -3712,10 +3897,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          default:
 
-            this.calcA = Utils.clamp01(this.calcA);
-            this.calcB = Utils.clamp01(this.calcB);
-            this.calcG = Utils.clamp01(this.calcG);
-            this.calcR = Utils.clamp01(this.calcR);
+            this.calcA = this.calcA < 0.0f ? 0.0f : this.calcA > 1.0f ? 1.0f
+               : this.calcA;
+            this.calcB = this.calcB < 0.0f ? 0.0f : this.calcB > 1.0f ? 1.0f
+               : this.calcB;
+            this.calcG = this.calcG < 0.0f ? 0.0f : this.calcG > 1.0f ? 1.0f
+               : this.calcG;
+            this.calcR = this.calcR < 0.0f ? 0.0f : this.calcR > 1.0f ? 1.0f
+               : this.calcR;
 
       }
 
@@ -4161,7 +4350,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       /*
        * This calls the super implementation because the glyphs need to be
-       * tinted with the desired color..
+       * tinted with the desired color.
        */
       super.imageImpl(glyph, x1, y1, x2, y2, 0, 0, u, v);
       this.imageMode = oldImgMd;
@@ -4189,7 +4378,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    protected void textLineImpl ( final char[] buffer, final int start,
       final int stop, final float x, final float y ) {
 
-      // TODO: Does this need to be updated for Processing 4?
+      // QUERY Has this been updated in Processing 4?
       // https://github.com/processing/processing4/blob/
       // 5b5f6eb95293aa5daa3fad31f847028f9fb59cb3/core/src/
       // processing/awt/PGraphicsJava2D.java#L2061

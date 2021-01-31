@@ -15,8 +15,8 @@ void settings() {
 }
 
 void setup() {
-  graphics = (YupJ2)getGraphics();
   frameRate(60.0);
+  graphics = (YupJ2)getGraphics();
 
   maxScale = 0.9875 * Utils.min(width, height);
   minScale = maxScale * 0.125;
@@ -34,6 +34,8 @@ void setup() {
 }
 
 void draw() {
+  surface.setTitle(Utils.toFixed(frameRate, 2));
+
   float startOffset = frameCount * 0.05;
   float stopOffset = frameCount * 0.01;
 
@@ -47,7 +49,6 @@ void draw() {
     mesh.scale(scale);
   }
 
-  surface.setTitle(Utils.toFixed(frameRate, 2));
   graphics.background(#202020);
   graphics.noStroke();
   graphics.shape(entity, materials);

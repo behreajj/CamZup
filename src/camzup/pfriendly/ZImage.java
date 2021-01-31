@@ -155,23 +155,6 @@ public class ZImage extends PImage {
    public static final int DEFAULT_LEADING = 8;
 
    /**
-    * Regex pattern to define a line break when converting text to an image.
-    */
-   protected static final Pattern PATTERN_LN_BR;
-
-   /**
-    * Regex pattern to define a space when converting text to an image.
-    */
-   protected static final Pattern PATTERN_SPACE;
-
-   static {
-
-      // TODO: Declare these on method call, rather than static objects?
-      PATTERN_LN_BR = Pattern.compile("\r\n|\n|\r");
-      PATTERN_SPACE = Pattern.compile("\\s+");
-   }
-
-   /**
     * Adjusts gamma of an image. Raises all color channels to the power given.
     *
     * @param source the source image
@@ -241,8 +224,7 @@ public class ZImage extends PImage {
       /* Forward search. */
       boolean found = false;
       for ( int i = 0; !found && i < len; ++i ) {
-         final int ai = pixels[i] >> 0x18 & 0xff;
-         if ( ai > 0 ) {
+         if ( ( pixels[i] >> 0x18 & 0xff ) > 0 ) {
             min.set(i % w, i / w);
             found = true;
          }
@@ -251,8 +233,7 @@ public class ZImage extends PImage {
       /* Backward search. */
       found = false;
       for ( int i = len - 1; !found && i > -1; --i ) {
-         final int ai = pixels[i] >> 0x18 & 0xff;
-         if ( ai > 0 ) {
+         if ( ( pixels[i] >> 0x18 & 0xff ) > 0 ) {
             max.set(1 + i % w, 1 + i / w);
             found = true;
          }
@@ -685,13 +666,15 @@ public class ZImage extends PImage {
          : 0x00ffffff;
 
       /* Carriage returns, or line breaks, have 3 variants: \r, \n, or \r\n . */
-      final String[] linesSplit = ZImage.PATTERN_LN_BR.split(vTxt, 0);
+      final Pattern patternLnBr = Pattern.compile("[\r\n|\n|\r]+");
+      final String[] linesSplit = patternLnBr.split(vTxt, 0);
       final int lineCount = linesSplit.length;
 
       /* 3D array: lines contain words which contain letters. */
       final char[][][] characters = new char[lineCount][][];
+      final Pattern patternSpace = Pattern.compile("\\s+");
       for ( int i = 0; i < lineCount; ++i ) {
-         final String[] words = ZImage.PATTERN_SPACE.split(linesSplit[i], 0);
+         final String[] words = patternSpace.split(linesSplit[i], 0);
          final int charCount = words.length;
          final char[][] charLine = characters[i] = new char[charCount][];
          for ( int j = 0; j < charCount; ++j ) {
@@ -700,11 +683,18 @@ public class ZImage extends PImage {
       }
 
       /* Determine width of a space. */
+      final int fontSize = font.getSize();
+
       final Glyph whiteSpace = font.getGlyph('-');
       final int spaceWidth = whiteSpace != null ? whiteSpace.width
-         : ( int ) ( font.getSize() * IUtils.ONE_THIRD );
+         : ( int ) ( fontSize * IUtils.ONE_THIRD );
 
-      final Glyph[][][] glyphs = new Glyph[lineCount][][];
+      /*
+       * If a line contains only a space, then maxHeight below may wind up as
+       * zero, and need to be replaced with a blank line.
+       */
+      final Glyph emptyLine = font.getGlyph('E');
+      final int defaultHeight = emptyLine != null ? emptyLine.height : fontSize;
 
       /*
        * The last line's descenders are chopped off if padding isn't added to
@@ -716,9 +706,10 @@ public class ZImage extends PImage {
       final int[] lineHeights = new int[lineCount];
       final int[] lineWidths = new int[lineCount];
       int hTotal = 0;
-      int wMax = Integer.MIN_VALUE;
+      int wMax = 0;
 
       /* Loop through lines. */
+      final Glyph[][][] glyphs = new Glyph[lineCount][][];
       for ( int i = 0; i < lineCount; ++i ) {
          final char[][] charLine = characters[i];
          final int wordCount = charLine.length;
@@ -726,8 +717,8 @@ public class ZImage extends PImage {
          glyphs[i] = glyphLine;
 
          int sumWidths = 0;
-         int maxHeight = Integer.MIN_VALUE;
-         int maxDescent = Integer.MIN_VALUE;
+         int maxHeight = 0;
+         int maxDescent = 0;
 
          /* Loop through words. */
          for ( int j = 0; j < wordCount; ++j ) {
@@ -772,6 +763,8 @@ public class ZImage extends PImage {
             sumWidths += spaceWidth + vKern;
          }
 
+         /* maxHeight may be initial value. */
+         maxHeight = maxHeight < 1 ? defaultHeight : maxHeight;
          lineHeights[i] = maxHeight;
          hTotal += maxHeight;
 
@@ -810,6 +803,8 @@ public class ZImage extends PImage {
 
       }
 
+      /* wMax may have been left at zero initial value. */
+      wMax = wMax < 1 ? 32 : wMax;
       final PImage target = new PImage(wMax, hTotal, PConstants.ARGB, 1);
       target.loadPixels();
       final int[] trgPx = target.pixels;

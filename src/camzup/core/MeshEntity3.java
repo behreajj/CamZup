@@ -696,4 +696,5 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       sb.append(" ] }");
       return sb.toString();
    }
+
 }

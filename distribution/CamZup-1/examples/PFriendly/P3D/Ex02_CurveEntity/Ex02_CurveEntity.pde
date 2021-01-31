@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Zup3 graphics3;
+Zup3 graphics;
 
 Rng rng = new Rng();
 
@@ -23,8 +23,8 @@ void settings() {
 }
 
 void setup() {
-  graphics3 = (Zup3)getGraphics();
   frameRate(60.0);
+  graphics = (Zup3)getGraphics();
   Curve3.circle(curve);
   entity.append(curve);
 }
@@ -39,22 +39,22 @@ void draw() {
   Knot3 knLc = new Knot3();
   CurveEntity3.eval(entity, 0, t, knWd, knLc);
 
-  graphics3.background();
-  graphics3.origin();
+  graphics.background();
+  graphics.origin();
 
-  graphics3.shape(entity, mat);
-  graphics3.handles(entity, 1.25);
+  graphics.shape(entity, mat);
+  graphics.handles(entity, 1.25);
 
-  graphics3.stroke(#202020);
+  graphics.stroke(#202020);
 
-  graphics3.strokeWeight(10.0);
-  graphics3.point(knWd.coord);
+  graphics.strokeWeight(10.0);
+  graphics.point(knWd.coord);
 
-  graphics3.strokeWeight(5.0);
-  graphics3.point(knWd.rearHandle);
+  graphics.strokeWeight(5.0);
+  graphics.point(knWd.rearHandle);
 
-  graphics3.strokeWeight(7.5);
-  graphics3.point(knWd.foreHandle);
+  graphics.strokeWeight(7.5);
+  graphics.point(knWd.foreHandle);
 }
 
 void mouseReleased() {

@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Zup3 rndr;
+Zup3 graphics;
 
 float roughness = 2.375;
 float taper = 0.75;
@@ -15,8 +15,8 @@ void settings() {
 }
 
 void setup() {
-  rndr = (Zup3)getGraphics();
   frameRate(60.0);
+  graphics = (Zup3)getGraphics();
 
   Mesh3.dodecahedron(mesh);
   mesh.insetFaces(1, 0.75);
@@ -49,8 +49,8 @@ void setup() {
     mesh.extrudeFaces(true, amt, taper);
     mesh.clean();
 
-    materials[idx] = new MaterialSolid()
-      .setFill(Gradient.eval(grd, rnd));
+    materials[idx] = new MaterialSolid();
+    Gradient.eval(grd, rnd, materials[idx].fill);
     mesh.materialIndex = idx;
 
     ++idx;
@@ -62,9 +62,9 @@ void draw() {
 
   entity.rotateZ(0.01);
 
-  rndr.lights();
-  rndr.ortho();
-  rndr.camera();
-  rndr.background();
-  rndr.shape(entity, materials);
+  graphics.lights();
+  graphics.ortho();
+  graphics.camera();
+  graphics.background();
+  graphics.shape(entity, materials);
 }

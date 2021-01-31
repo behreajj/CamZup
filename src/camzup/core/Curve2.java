@@ -2001,9 +2001,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param rh    the rear handle
     * @param co    the coordinate
     */
-   static void accumMinMax ( final Curve2 curve, final Vec2 lb,
-      final Vec2 ub, final Transform2 tr, final Vec2 fh, final Vec2 rh,
-      final Vec2 co ) {
+   static void accumMinMax ( final Curve2 curve, final Vec2 lb, final Vec2 ub,
+      final Transform2 tr, final Vec2 fh, final Vec2 rh, final Vec2 co ) {
 
       final Iterator < Knot2 > itr = curve.knots.iterator();
       while ( itr.hasNext() ) {

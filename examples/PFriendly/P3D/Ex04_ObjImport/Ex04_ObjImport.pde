@@ -24,7 +24,7 @@ void setup() {
   me3.scaleTo(256);
 
   material = new MaterialSolid();
-  material.setFill(0xff202020);
+  material.setFill(#202020);
 }
 
 void draw() {

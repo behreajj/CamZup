@@ -4,7 +4,8 @@ Table of Contents
 
   1. [Getting Started](#getting-started)
      1. [Installation](#installation)
-     2. [Usage](#usage)
+     2. [Structure](#structure)
+     3. [Usage](#usage)
   2. [Differences, Problems](#differences-problems)
      1. [2D & 3D](#2d--3d)
      2. [2D](#2d)
@@ -23,18 +24,7 @@ without negative impact to your sketch, chances are you don't need this library.
 
 While Cam Z-Up can help with more complex sketches, it is a general purpose library. Its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as specialist libraries. For an easy mouse-controlled orbital camera with GUI support, I recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
 
-Cam Z-Up is split into three packages: `pfriendly`, `core` and `kotlin`. The `pfriendly` package contains code compatible with Processing's API. Inside it, you'll find four graphics renderers:
-
-- `Zup3`, which extends `PGraphicsOpenGL`, similar to `P3D`;
-- `Yup3`, which also extends `PGraphicsOpenGL`;
-- `YupJ2`, which extends `PGraphicsJava2D`, a.k.a. `JAVA2D`, the default Processing renderer based on the Java AWT library;
-- `Yup2`, which extends `PGraphicsOpenGL`, similar `P2D`, a "2.5D" renderer;
-
-The `FX2D` renderer, based on Java FX, is not fully supported by Processing, so it's not supported here. The `Yup3` renderer treats the positive y axis, (0.0, 1.0, 0.0), as world up.
-
-This library's `core` package includes basic utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3` and `Quaternion`. The division between `pfriendly` and `core` is a protective measure. The aim is to retain the library's usefulness even as bugs in `pfriendly`, or changes to the underlying `Processing` library, cause trouble.
-
-Cam Z-Up is tested with Processing version [4.0 alpha 1](https://github.com/processing/processing4/releases/tag/processing-1270-4.0a1).
+Cam Z-Up is tested with Processing version [4.0 alpha](https://github.com/processing/processing4/releases).
 
 ## Getting Started
 
@@ -50,6 +40,19 @@ To install this library from Github,
      2. If you don't know the location of your `Processing/libraries` folder, look up the information in the Processing IDE by going to `File > Preferences`.
 
 Alternatively, you can navigate to the the distribution `.zip` on Github and download just the file you need. If you know [Git](https://git-scm.com/) or have [Github Desktop](https://desktop.github.com/), you can use that instead.
+
+### Structure
+
+Cam Z-Up is split into three packages: `pfriendly`, `core` and `kotlin`. The `pfriendly` package contains code compatible with Processing's API. Inside it, you'll find four graphics renderers:
+
+- `Zup3`, which extends `PGraphicsOpenGL`, similar to `P3D`;
+- `Yup3`, which also extends `PGraphicsOpenGL`;
+- `YupJ2`, which extends `PGraphicsJava2D`, a.k.a. `JAVA2D`, the default Processing renderer based on the Java AWT library;
+- `Yup2`, which extends `PGraphicsOpenGL`, similar `P2D`, a "2.5D" renderer;
+
+The `FX2D` renderer, based on Java FX, is not fully supported by Processing, so it's not supported here. The `Yup3` renderer treats the positive y axis, (0.0, 1.0, 0.0), as world up.
+
+This library's `core` package includes basic utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3` and `Quaternion`. The division between `pfriendly` and `core` is a protective measure. The aim is to retain the library's usefulness even as bugs in `pfriendly`, or changes to the underlying `Processing` library, cause trouble.
 
 ### Usage
 
