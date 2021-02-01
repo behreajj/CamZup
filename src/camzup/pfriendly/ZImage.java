@@ -31,7 +31,6 @@ public class ZImage extends PImage {
     */
    public ZImage ( final int width, final int height ) {
 
-      // TODO: rotateCW, rotateCCW
       super(width, height);
    }
 
@@ -259,26 +258,20 @@ public class ZImage extends PImage {
 
       target.loadPixels();
 
-      final int h = target.height;
       final int w = target.width;
       final int[] pixels = target.pixels;
+      final int len = pixels.length;
 
-      final float hInv = 1.0f / ( h - 1.0f );
+      final float hInv = 1.0f / ( target.height - 1.0f );
       final float wInv = 1.0f / ( w - 1.0f );
 
-      for ( int i = 0, y = 0; y < h; ++y ) {
-
-         final float yn = y * hInv;
-         final float t = 1.0f - ( yn + yn + yOrigin );
-
-         for ( int x = 0; x < w; ++x, ++i ) {
-
-            final float xn = x * wInv;
-            final float s = xn + xn - xOrigin - 1.0f;
-
-            pixels[i] = Gradient.eval(grd, Sdf.conic(s, t, radians));
-         }
+      for ( int i = 0; i < len; ++i ) {
+         final float yn = hInv * ( i / w );
+         final float xn = wInv * ( i % w );
+         pixels[i] = Gradient.eval(grd, Sdf.conic(xn + xn - xOrigin - 1.0f, 1.0f
+            - ( yn + yn + yOrigin ), radians));
       }
+
       target.updatePixels();
       return target;
    }
@@ -904,28 +897,24 @@ public class ZImage extends PImage {
 
       target.loadPixels();
 
-      final int h = target.height;
       final int w = target.width;
-      final int[] pixels = target.pixels;
+      final int[] px = target.pixels;
+      final int len = px.length;
 
-      final float hInv = 1.0f / ( h - 1.0f );
+      final float hInv = 1.0f / ( target.height - 1.0f );
       final float wInv = 1.0f / ( w - 1.0f );
 
       final float bx = xOrigin - xDest;
       final float by = yOrigin - yDest;
       final float bbInv = 1.0f / Utils.max(IUtils.EPSILON, bx * bx + by * by);
 
-      for ( int i = 0, y = 0; y < h; ++y ) {
+      for ( int i = 0; i < len; ++i ) {
+         final float yn = hInv * ( i / w );
+         final float xn = wInv * ( i % w );
 
-         final float yn = y * hInv;
-         final float ayby = ( yOrigin - ( 1.0f - ( yn + yn ) ) ) * by;
-
-         for ( int x = 0; x < w; ++x, ++i ) {
-
-            final float xn = x * wInv;
-            pixels[i] = Gradient.eval(grd, Utils.clamp01( ( ( xOrigin - ( xn
-               + xn - 1.0f ) ) * bx + ayby ) * bbInv));
-         }
+         px[i] = Gradient.eval(grd, Utils.clamp01( ( ( xOrigin - ( xn + xn
+            - 1.0f ) ) * bx + ( yOrigin - ( 1.0f - ( yn + yn ) ) ) * by )
+            * bbInv));
       }
 
       target.updatePixels();
@@ -966,28 +955,24 @@ public class ZImage extends PImage {
 
       target.loadPixels();
 
-      final int h = target.height;
       final int w = target.width;
       final int[] px = target.pixels;
+      final int len = px.length;
 
-      final float hInv = 1.0f / ( h - 1.0f );
+      final float hInv = 1.0f / ( target.height - 1.0f );
       final float wInv = 1.0f / ( w - 1.0f );
 
       final float r2 = radius + radius;
       final float invrsq = 1.0f / Utils.max(IUtils.EPSILON, r2 * r2);
 
-      for ( int i = 0, y = 0; y < h; ++y ) {
+      for ( int i = 0; i < len; ++i ) {
+         final float yn = hInv * ( i / w );
+         final float xn = wInv * ( i % w );
 
-         final float yn = y * hInv;
          final float ay = yOrigin - ( 1.0f - ( yn + yn ) );
-         final float aysq = ay * ay;
+         final float ax = xOrigin - ( xn + xn - 1.0f );
 
-         for ( int x = 0; x < w; ++x, ++i ) {
-
-            final float xn = x * wInv;
-            final float ax = xOrigin - ( xn + xn - 1.0f );
-            px[i] = Gradient.eval(grd, 1.0f - ( ax * ax + aysq ) * invrsq);
-         }
+         px[i] = Gradient.eval(grd, 1.0f - ( ax * ax + ay * ay ) * invrsq);
       }
 
       target.updatePixels();
@@ -1024,17 +1009,15 @@ public class ZImage extends PImage {
       target.loadPixels();
 
       final int[] px = target.pixels;
-      final int h = target.height;
+      final int len = px.length;
       final int w = target.width;
 
-      final float hInv = 0xff / ( h - 1.0f );
+      final float hInv = 0xff / ( target.height - 1.0f );
       final float wInv = 0xff / ( w - 1.0f );
 
-      for ( int i = 0, y = h - 1; y > -1; --y ) {
-         final int grbl = 0xff000080 | ( int ) ( y * hInv + 0.5f ) << 0x8;
-         for ( int x = 0; x < w; ++x, ++i ) {
-            px[i] = ( int ) ( x * wInv + 0.5f ) << 0x10 | grbl;
-         }
+      for ( int i = 0; i < len; ++i ) {
+         px[i] = 0xff000080 | ( int ) ( 0.5f + wInv * ( i % w ) ) << 0x10
+            | ( int ) ( 255.5f - hInv * ( i / w ) ) << 0x8;
       }
 
       target.updatePixels();
@@ -1236,19 +1219,17 @@ public class ZImage extends PImage {
 
       if ( wSource < 1 || hSource < 1 ) { return target; }
 
-      for ( int i = 0, y = 0; y < hTarget; ++y ) {
-
-         int ymod = ( y - dy ) % hSource;
+      final int trgLen = target.length;
+      for ( int i = 0; i < trgLen; ++i ) {
+         int ymod = ( i / wTarget - dy ) % hSource;
          if ( ( ymod ^ hSource ) < 0 && ymod != 0 ) { ymod += hSource; }
-         final int ny = wSource * ymod;
 
-         for ( int x = 0; x < wTarget; ++x, ++i ) {
+         int xmod = ( i % wTarget + dx ) % wSource;
+         if ( ( xmod ^ wSource ) < 0 && xmod != 0 ) { xmod += wSource; }
 
-            int xmod = ( x + dx ) % wSource;
-            if ( ( xmod ^ wSource ) < 0 && xmod != 0 ) { xmod += wSource; }
-            target[i] = source[xmod + ny];
-         }
+         target[i] = source[xmod + wSource * ymod];
       }
+
       return target;
    }
 

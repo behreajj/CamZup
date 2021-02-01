@@ -2,6 +2,7 @@ import camzup.core.*;
 import camzup.pfriendly.*;
 
 Gradient grd;
+PImage orig;
 PImage trg;
 
 void settings() {
@@ -14,6 +15,9 @@ void setup() {
   long end = System.currentTimeMillis();
   println("Elapsed Time: " + (end - start));
 
+  orig = createImage(width, height, ARGB);
+  ZImage.fill(grd, orig);
+
   Gradient.inverse(grd, grd);
   trg = createImage(width, height, ARGB);
   ZImage.fill(grd, trg);
@@ -21,7 +25,8 @@ void setup() {
 
 void draw() {
   background(#202020);
-  image(trg, 0, 0);
+  image(trg, 0, height / 4, width, height / 2);
+  image(orig, 0, -height / 4, width, height / 2);
 }
 
 void mouseReleased() {

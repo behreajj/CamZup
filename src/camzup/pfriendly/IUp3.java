@@ -194,23 +194,26 @@ public interface IUp3 extends IUp {
    default void grid ( final int count, final float strokeWeight,
       final int strokeColor, final float dim ) {
 
+      /* Just in case this ever becomes non-uniform, keep separate variables. */
       final float xHalfDim = dim * 0.5f;
       final float yHalfDim = xHalfDim;
       final float zHalfDim = xHalfDim;
-      final float sign = this.handedness().getSign();
 
+      /* y and z axes are effected by handedness; x is not. */
+      final int sign = this.handedness().getSign();
       final float right = xHalfDim;
-      final float left = -xHalfDim;
-      final float top = -sign * yHalfDim;
-      final float bottom = sign * yHalfDim;
-      final float far = -sign * zHalfDim;
-      final float near = sign * zHalfDim;
+      final float bottom = Utils.copySign(yHalfDim, sign);
+      final float near = Utils.copySign(zHalfDim, sign);
 
-      final int vcount = count < 3 ? 3 : count;
-      final float toPercent = 1.0f / ( vcount + 1.0f );
-      final float[] xs = new float[vcount];
-      final float[] ys = new float[vcount];
-      final float[] zs = new float[vcount];
+      final float left = -right;
+      final float top = -bottom;
+      final float far = -near;
+
+      final int vCount = count < 3 ? 3 : count;
+      final float toPercent = 1.0f / ( vCount + 1.0f );
+      final float[] xs = new float[vCount];
+      final float[] ys = new float[vCount];
+      final float[] zs = new float[vCount];
 
       this.hint(PConstants.DISABLE_DEPTH_TEST);
       this.hint(PConstants.DISABLE_DEPTH_MASK);
@@ -224,7 +227,7 @@ public interface IUp3 extends IUp {
 
       /* Draw x axis. */
       this.stroke(IUp.DEFAULT_I_COLOR);
-      for ( int j = 0; j < vcount; ++j ) {
+      for ( int j = 0; j < vCount; ++j ) {
          final float jPercent = ( 1 + j ) * toPercent;
          final float x = ( 1.0f - jPercent ) * right + jPercent * left;
          xs[j] = x;
@@ -233,7 +236,7 @@ public interface IUp3 extends IUp {
 
       /* Draw y axis. */
       this.stroke(IUp.DEFAULT_J_COLOR);
-      for ( int i = 0; i < vcount; ++i ) {
+      for ( int i = 0; i < vCount; ++i ) {
          final float iPercent = ( 1 + i ) * toPercent;
          final float y = ( 1.0f - iPercent ) * top + iPercent * bottom;
          ys[i] = y;
@@ -242,32 +245,25 @@ public interface IUp3 extends IUp {
 
       /* Draw z axis. */
       this.stroke(IUp.DEFAULT_K_COLOR);
-      for ( int h = 0; h < vcount; ++h ) {
+      for ( int h = 0; h < vCount; ++h ) {
          final float hPercent = ( 1 + h ) * toPercent;
          final float z = ( 1.0f - hPercent ) * near + hPercent * far;
          zs[h] = z;
          this.point(left, bottom, z);
       }
 
+      /* Draw planar dots. */
       this.strokeWeight(strokeWeight);
       this.stroke(strokeColor);
-
-      /* Draw x plane (y and z vary, x is constant). */
-      for ( int h = 0; h < vcount; ++h ) {
-         final float z = zs[h];
-         for ( int i = 0; i < vcount; ++i ) { this.point(left, ys[i], z); }
-      }
-
-      /* Draw y plane (x and z vary, y is constant). */
-      for ( int h = 0; h < vcount; ++h ) {
-         final float z = zs[h];
-         for ( int j = 0; j < vcount; ++j ) { this.point(xs[j], bottom, z); }
-      }
-
-      /* Draw z plane (x and y vary, z is constant). */
-      for ( int i = 0; i < vcount; ++i ) {
+      for ( int i = 0; i < vCount; ++i ) {
          final float y = ys[i];
-         for ( int j = 0; j < vcount; ++j ) { this.point(xs[j], y, far); }
+         final float z = zs[i];
+         for ( int j = 0; j < vCount; ++j ) {
+            final float x = xs[j];
+            this.point(left, ys[j], z); /* x plane. */
+            this.point(x, bottom, z); /* y plane. */
+            this.point(x, y, far); /* z plane. */
+         }
       }
 
       this.popStyle();

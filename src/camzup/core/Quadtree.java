@@ -95,11 +95,31 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
-    * Gets the level, or depth, of the node.
+    * Gets the level of the node.
     *
     * @return the level
     */
    public int getLevel ( ) { return this.level; }
+
+   /**
+    * Gets the maximum depth of the node and its children.
+    *
+    * @return the level
+    */
+   @Recursive
+   public int getMaxLevel ( ) {
+
+      if ( this.isLeaf() ) {
+         return this.level;
+      } else {
+         int mxLvl = 0;
+         for ( int i = 0; i < 4; ++i ) {
+            final int lvl = this.children[i].getMaxLevel();
+            if ( lvl > mxLvl ) { mxLvl = lvl; }
+         }
+         return mxLvl;
+      }
+   }
 
    /**
     * Inserts a point into the quadtree. Returns <code>true</code> if the

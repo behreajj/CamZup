@@ -2,7 +2,7 @@ import camzup.core.*;
 import camzup.pfriendly.*;
 import java.util.Map.Entry;
 
-Zup3 rndr;
+Zup3 graphics;
 int count = 10;
 HashMap<String, Float> data = new HashMap<String, Float>();
 
@@ -25,10 +25,10 @@ void settings() {
 }
 
 void setup() {
-  rndr = (Zup3)getGraphics();
   frameRate(60.0);
-  rndr.hint(ENABLE_DEPTH_SORT);
-  rndr.hint(ENABLE_OPTIMIZED_STROKE);
+  graphics = (Zup3)getGraphics();
+  graphics.hint(ENABLE_DEPTH_SORT);
+  graphics.hint(ENABLE_OPTIMIZED_STROKE);
 
   // Create fake data.
   Rng rng = new Rng();
@@ -81,46 +81,46 @@ void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
   Vec3 camLoc = new Vec3();
-  rndr.getLocation(camLoc);
+  graphics.getLocation(camLoc);
 
   if (mousePressed) {
-    rndr.mouse1s(mouse1);
+    graphics.mouse1s(mouse1);
     if (mouseButton == LEFT) {
       Vec3.mul(mouse1, 50.0, mouse1);
-      rndr.moveByLocal(mouse1);
+      graphics.moveByLocal(mouse1);
     } else if (mouseButton == CENTER) {
       Vec3.mul(mouse1, 15.0, mouse1);
-      rndr.strafe(mouse1);
+      graphics.strafe(mouse1);
     }
   }
 
-  rndr.lights();
-  rndr.perspective(Utils.PI * 0.125);
-  rndr.camera();
-  rndr.background(#fff7d5);
-  rndr.grid(32);
+  graphics.lights();
+  graphics.ortho();
+  graphics.camera();
+  graphics.background(#fff7d5);
+  graphics.grid(32);
 
   for (int i = 0; i < count; ++i) {
-    rndr.shape(bars[i], materials[i]);
-    rndr.text(labels[i]);
+    graphics.shape(bars[i], materials[i]);
+    graphics.text(labels[i]);
   }
 }
 
 void keyReleased() {
 
   if (keyCode == 48 || keyCode == 128) {
-    rndr.defaultCamera();
+    graphics.defaultCamera();
   } else if (keyCode == 49 || keyCode == 129) {
-    rndr.camNorth();
+    graphics.camNorth();
   } else if (keyCode == 51 || keyCode == 131) {
-    rndr.camWest();
+    graphics.camWest();
   } else if (keyCode == 50 || keyCode == 130) {
-    rndr.moveByLocal(0.0, -150.0, 0.0);
+    graphics.moveByLocal(0.0, -150.0, 0.0);
   } else if (keyCode == 52 || keyCode == 132) {
-    rndr.moveByLocal(-150.0, 0.0, 0.0);
+    graphics.moveByLocal(-150.0, 0.0, 0.0);
   } else if (keyCode == 54 || keyCode == 134) {
-    rndr.moveByLocal(150.0, 0.0, 0.0);
+    graphics.moveByLocal(150.0, 0.0, 0.0);
   } else if (keyCode == 56 || keyCode == 136) {
-    rndr.moveByLocal(0.0, 150.0, 0.0);
+    graphics.moveByLocal(0.0, 150.0, 0.0);
   }
 }

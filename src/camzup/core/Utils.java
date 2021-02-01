@@ -381,7 +381,25 @@ public abstract class Utils implements IUtils {
    public static float copySign ( final float magnitude, final float sign ) {
 
       return Float.intBitsToFloat(Float.floatToRawIntBits(sign) & 0x80000000
-         | Float.floatToRawIntBits(magnitude) & 2147483647);
+         | Float.floatToRawIntBits(magnitude) & 0x7fffffff);
+   }
+
+   /**
+    * Returns the first floating-point argument with the sign of the second
+    * integer argument.
+    *
+    * @param magnitude the magnitude
+    * @param sign      the sign
+    *
+    * @return the magnified sign
+    *
+    * @see Float#intBitsToFloat(int)
+    * @see Float#floatToRawIntBits(float)
+    */
+   public static float copySign ( final float magnitude, final int sign ) {
+
+      return Float.intBitsToFloat(sign & 0x80000000 | Float.floatToRawIntBits(
+         magnitude) & 0x7fffffff);
    }
 
    /**

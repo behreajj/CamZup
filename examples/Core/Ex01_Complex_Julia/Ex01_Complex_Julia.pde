@@ -33,18 +33,14 @@ void draw() {
   }
 
   loadPixels();
-  for (int idx = 0, y = height - 1; y > -1; --y) {
-    float yNorm = y * hNorm;
-    st.imag = yNorm + yNorm - 1.0;
-
-    for (int x = 0; x < width; ++x, ++idx) {
-      float xNorm = x * wNorm;
-      st.real = xNorm + xNorm - 1.0;
-      st.real *= aspect;
-
-      float fac = julia(seed, st, exp, itr, zn);
-      pixels[idx] = Gradient.eval(grd, fac);
-    }
+  int len = pixels.length;
+  for (int i = 0; i < len; ++i) {
+    float xNorm = (i % width) * wNorm;
+    float yNorm = (i / width) * hNorm;
+    st.set((xNorm + xNorm - 1.0) * aspect,
+      yNorm + yNorm - 1.0);
+    float fac = julia(seed, st, exp, itr, zn);
+    pixels[i] = Gradient.eval(grd, fac);
   }
   updatePixels();
 }

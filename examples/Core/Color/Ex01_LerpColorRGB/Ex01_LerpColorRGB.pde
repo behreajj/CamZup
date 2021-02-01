@@ -3,8 +3,8 @@ import camzup.core.*;
 
 YupJ2 graphics;
 
-color a = #007fff;
-color b = #ff007f;
+color a = #ff0000;
+color b = #00ff00;
 
 void settings() {
   size(1024, 128, YupJ2.PATH_STR);
@@ -34,6 +34,7 @@ void draw() {
     float xFac = x * toPercent / mouseFac;
     color c0 = lerpColor(a, b, xFac, RGB);
     color c1 = graphics.lerpColor(a, b, xFac);
+    //color c1 = 0x0;
 
     for (int y = 0; y < height; ++y) {
       px[y * width + x] = y > hHalf ? c1 : c0;

@@ -1,17 +1,17 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-YupJ2 graphics;
+Yup2 graphics;
 PImage img;
 Gradient gradient = new Gradient();
 
 void settings() {
-  size(512, 512, YupJ2.PATH_STR);
+  size(512, 512, Yup2.PATH_STR);
 }
 
 void setup() {
-  graphics = (YupJ2)getGraphics();
   frameRate(60.0);
+  graphics = (Yup2)getGraphics();
   img = createImage(512, 512, ARGB);
   Gradient.paletteViridis(gradient);
 }

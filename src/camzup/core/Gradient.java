@@ -1142,20 +1142,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final ColorKey next = grd.keys.ceiling(grd.query);
       if ( next == null ) { return Color.toHexInt(grd.keys.last().clr); }
 
-      final Color origin = next.clr;
-      final Color dest = prev.clr;
-
-      final float denom = prev.step - next.step;
-      if ( denom != 0.0f ) {
-         final float t = ( step - next.step ) / denom;
-         final float u = 1.0f - t;
-         return ( int ) ( ( u * origin.a + t * dest.a ) * 0xff + 0.5f ) << 0x18
-            | ( int ) ( ( u * origin.r + t * dest.r ) * 0xff + 0.5f ) << 0x10
-            | ( int ) ( ( u * origin.g + t * dest.g ) * 0xff + 0.5f ) << 0x8
-            | ( int ) ( ( u * origin.b + t * dest.b ) * 0xff + 0.5f );
-      }
-
-      return Color.toHexInt(origin);
+      return Color.mix(next.clr, prev.clr, Utils.div(step - next.step, prev.step
+         - next.step));
    }
 
    /**
@@ -1185,18 +1173,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final ColorKey next = grd.keys.ceiling(grd.query);
       if ( next == null ) { return target.set(grd.keys.last().clr); }
 
-      final Color origin = next.clr;
-      final Color dest = prev.clr;
-
-      final float denom = prev.step - next.step;
-      if ( denom != 0.0f ) {
-         final float t = ( step - next.step ) / denom;
-         final float u = 1.0f - t;
-         return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g,
-            u * origin.b + t * dest.b, u * origin.a + t * dest.a);
-      }
-
-      return target.set(origin);
+      return Color.mix(next.clr, prev.clr, Utils.div(step - next.step, prev.step
+         - next.step), target);
    }
 
    /**

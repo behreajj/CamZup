@@ -352,11 +352,11 @@ public interface IUp {
    /**
     * A cached easing function for HSB colors.
     */
-   Color.MixHsba MIXER_HSB = new Color.MixHsba();
+   Color.AbstrEasing MIXER_HSB = new Color.MixHsba();
 
    /**
     * A cached easing function for RGB colors.
     */
-   Color.SmoothStepRgba MIXER_RGB = new Color.SmoothStepRgba();
+   Color.AbstrEasing MIXER_RGB = new Color.SmoothStepRgba();
 
 }

@@ -1,18 +1,18 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Zup3 graphics;
+Yup3 graphics;
 MeshEntity3 entity;
 MaterialPImage mat;
 Vec3 mouse1 = new Vec3();
 
 void settings() {
-  size(720, 405, Zup3.PATH_STR);
+  size(720, 405, Yup3.PATH_STR);
 }
 
 void setup() {
   frameRate(60.0);
-  graphics = (Zup3)getGraphics();
+  graphics = (Yup3)getGraphics();
 
   String filePath = sketchPath() + "\\data\\debug.obj";
   entity = ParserObj.load(filePath, false);
@@ -40,7 +40,7 @@ void draw() {
   }
 
   Vec3 cmloc = graphics.getLocation(new Vec3());
-  entity.lookAt(cmloc, 0.0175, Handedness.RIGHT);
+  entity.lookAt(cmloc, 0.0175, graphics.handedness());
 
   graphics.background(#101010);
   graphics.perspective();

@@ -1016,12 +1016,12 @@ public class Mat4 {
          return Mat4.fromTranslation(loc, target);
       }
 
-      if ( handedness == Handedness.RIGHT ) {
-         Vec3.crossNorm(ref, k, i);
-         Vec3.crossNorm(k, i, j);
-      } else {
+      if ( handedness == Handedness.LEFT ) {
          Vec3.crossNorm(k, ref, i);
          Vec3.crossNorm(i, k, j);
+      } else {
+         Vec3.crossNorm(ref, k, i);
+         Vec3.crossNorm(k, i, j);
       }
 
       /* @formatter:off */
@@ -1031,6 +1031,38 @@ public class Mat4 {
          k.x, k.y, k.z, -loc.x * k.x - loc.y * k.y - loc.z * k.z,
          0.0f, 0.0f, 0.0f, 1.0f);
       /* @formatter:on */
+   }
+
+   /**
+    * Creates an pseudo-isometric camera suitable to pixel art, with a rise of
+    * 1 pixel and a run of 2 pixels. The resulting angle from
+    * <code>atan2(1.0, 2.0)</code>, approximately 25.565 degrees, is
+    * subtracted from 60 degrees to get 33.435 degrees. This pitch, along with
+    * a yaw of 45 degrees, determines the camera's forward axis.<br>
+    *
+    * @param loc        the camera location
+    * @param handedness the handedness
+    * @param target     the output matrix
+    *
+    * @return the camera matrix
+    */
+   public static Mat4 cameraDimetric ( final Vec3 loc,
+      final Handedness handedness, final Mat4 target ) {
+
+      if ( handedness == Handedness.LEFT ) {
+         return target.set(0.70710677f, 0.0f, 0.70710677f, -loc.x * 0.70710677f
+            - loc.z * 0.70710677f, -0.38960868f, 0.8345119f, 0.38960868f, loc.x
+               * 0.38960868f - loc.y * 0.8345119f - loc.z * 0.38960868f,
+            0.590089f, 0.55098987f, -0.590089f, -loc.x * 0.590089f - loc.y
+               * 0.55098987f + loc.z * 0.590089f, 0.0f, 0.0f, 0.0f, 1.0f);
+      } else {
+         return target.set(0.70710677f, 0.70710677f, 0.0f, -loc.x * 0.70710677f
+            - loc.y * 0.70710677f, -0.38960868f, 0.38960868f, 0.8345119f, loc.x
+               * 0.38960868f - loc.y * 0.38960868f - loc.z * 0.8345119f,
+            0.590089f, -0.590089f, 0.55098987f, -loc.x * 0.590089f + loc.y
+               * 0.590089f - loc.z * 0.55098987f, 0.0f, 0.0f, 0.0f, 1.0f);
+      }
+
    }
 
    /**
@@ -1051,9 +1083,6 @@ public class Mat4 {
     */
    public static void decompose ( final Mat4 m, final Vec3 trans,
       final Quaternion rot, final Vec3 scale ) {
-
-      // RESEARCH: Shoemake on polar decomposition, which is also used in matrix
-      // lerp.
 
       final float xMag = Utils.hypot(m.m00, m.m10, m.m20);
       final float yMag = Utils.hypot(m.m01, m.m11, m.m21);
@@ -1282,9 +1311,6 @@ public class Mat4 {
     */
    public static Mat4 fromRotation ( final float radians, final Vec3 axis,
       final Mat4 target ) {
-
-      // return Mat4.fromRotation(Utils.cos(radians), Utils.sin(radians),
-      // axis, target);
 
       final float norm = radians * IUtils.ONE_TAU;
       return Mat4.fromRotation(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),

@@ -1406,29 +1406,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Mixes two colors by a step in the range [0.0, 1.0] . Uses smooth step
-    * RGB easing.
-    *
-    * @param origin the origin color
-    * @param dest   the destination color
-    * @param step   the step
-    * @param target the output color
-    *
-    * @return the mixed color
-    */
-   public static Color mix ( final Color origin, final Color dest,
-      final float step, final Color target ) {
-
-      if ( step <= 0.0f ) { return target.set(origin); }
-      if ( step >= 1.0f ) { return target.set(dest); }
-
-      final float t = step * step * ( 3.0f - ( step + step ) );
-      final float u = 1.0f - t;
-      return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g, u
-         * origin.b + t * dest.b, u * origin.a + t * dest.a);
-   }
-
-   /**
     * Tests to see if the alpha channel of this color is less than or equal to
     * zero, i.e., if it is completely transparent.
     *
@@ -2203,6 +2180,53 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Mixes two colors by a step in the range [0.0, 1.0] . Alpha is blended
+    * linearly; red, green and blue are squared, then the square-root of the
+    * interpolation is taken.
+    *
+    * @param origin the origin color
+    * @param dest   the destination color
+    * @param step   the step
+    * @param target the output color
+    *
+    * @return the mixed color
+    */
+   static int mix ( final Color origin, final Color dest, final float step ) {
+
+      if ( step <= 0.0f ) { return Color.toHexInt(origin); }
+      if ( step >= 1.0f ) { return Color.toHexInt(dest); }
+
+      final float u = 1.0f - step;
+      return ( int ) ( ( u * origin.a + step * dest.a ) * 0xff + 0.5f ) << 0x18
+         | ( int ) ( ( u * origin.r + step * dest.r ) * 0xff + 0.5f ) << 0x10
+         | ( int ) ( ( u * origin.g + step * dest.g ) * 0xff + 0.5f ) << 0x8
+         | ( int ) ( ( u * origin.b + step * dest.b ) * 0xff + 0.5f );
+   }
+
+   /**
+    * Mixes two colors by a step in the range [0.0, 1.0] . Alpha is blended
+    * linearly; red, green and blue are squared, then the square-root of the
+    * interpolation is taken.
+    *
+    * @param origin the origin color
+    * @param dest   the destination color
+    * @param step   the step
+    * @param target the output color
+    *
+    * @return the mixed color
+    */
+   static Color mix ( final Color origin, final Color dest, final float step,
+      final Color target ) {
+
+      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step >= 1.0f ) { return target.set(dest); }
+
+      final float u = 1.0f - step;
+      return target.set(u * origin.r + step * dest.r, u * origin.g + step
+         * dest.g, u * origin.b + step * dest.b, u * origin.a + step * dest.a);
+   }
+
+   /**
     * A helper function to translate a byte to a hexadecimal string. Does
     * <em>not</em> prefix the String with a hexadecimal indicator, '0x'; this
     * is so that Strings can be concatenated together.
@@ -2738,12 +2762,10 @@ public class Color implements Comparable < Color > {
       public Color applyUnclamped ( final Color origin, final Color dest,
          final float step, final Color target ) {
 
-         /* This should remain as double precision. */
-         final double td = step;
-         final double ud = 1.0d - td;
-         return target.set(( float ) ( ud * origin.r + td * dest.r ),
-            ( float ) ( ud * origin.g + td * dest.g ), ( float ) ( ud * origin.b
-               + td * dest.b ), ( float ) ( ud * origin.a + td * dest.a ));
+         final float u = 1.0f - step;
+         return target.set(u * origin.r + step * dest.r, u * origin.g + step
+            * dest.g, u * origin.b + step * dest.b, u * origin.a + step
+               * dest.a);
       }
 
    }
@@ -2771,7 +2793,7 @@ public class Color implements Comparable < Color > {
       /**
        * The new HSBA color.
        */
-      protected final Vec4 hsbaNew = new Vec4();
+      protected final Vec4 cHsb = new Vec4();
 
       /**
        * The hue easing function.
@@ -2829,21 +2851,21 @@ public class Color implements Comparable < Color > {
        * @return the eased color
        *
        * @see Color#rgbaToHsba(Color, Vec4)
+       * @see Color#hsbaToRgba(Vec4, Color)
        */
       @Override
       public Color applyUnclamped ( final Color origin, final Color dest,
          final float step, final Color target ) {
 
+         /* @formatter:off */
          Color.rgbaToHsba(origin, this.aHsb);
          Color.rgbaToHsba(dest, this.bHsb);
-
-         /* @formatter:off */
-         this.hsbaNew.set(
+         this.cHsb.set(
             this.hueFunc.apply(this.aHsb.x, this.bHsb.x, step),
             this.satFunc.apply(this.aHsb.y, this.bHsb.y, step),
             this.briFunc.apply(this.aHsb.z, this.bHsb.z, step),
             ( 1.0f - step ) * this.aHsb.w + step * this.bHsb.w);
-         return Color.hsbaToRgba(this.hsbaNew, target);
+         return Color.hsbaToRgba(this.cHsb, target);
          /* @formatter:on */
       }
 
@@ -2925,14 +2947,10 @@ public class Color implements Comparable < Color > {
       public Color applyUnclamped ( final Color origin, final Color dest,
          final float step, final Color target ) {
 
-         /* This should remain as double-precision! */
-         final double td = step;
-         final double ts = td * td * ( 3.0d - ( td + td ) );
-         final double us = 1.0d - ts;
-
-         return target.set(( float ) ( us * origin.r + ts * dest.r ),
-            ( float ) ( us * origin.g + ts * dest.g ), ( float ) ( us * origin.b
-               + ts * dest.b ), ( float ) ( us * origin.a + ts * dest.a ));
+         final float t = step * step * ( 3.0f - ( step + step ) );
+         final float u = 1.0f - t;
+         return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g,
+            u * origin.b + t * dest.b, u * origin.a + t * dest.a);
       }
 
    }

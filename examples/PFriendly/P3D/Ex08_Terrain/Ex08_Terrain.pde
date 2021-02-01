@@ -62,7 +62,7 @@ void draw() {
     co.z = elev * fac;
   }
   plane3.shadeSmooth();
-  //plane3.shadeFlat();
+  // plane3.shadeFlat();
 
   if (mousePressed) {
     if (mouseButton == LEFT) {
