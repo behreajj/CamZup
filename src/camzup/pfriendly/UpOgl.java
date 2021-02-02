@@ -1671,12 +1671,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void rotateX ( final float radians ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      final float c = Utils.scNorm(normRad);
-      final float s = Utils.scNorm(normRad - 0.25f);
-
-      // TODO: Compound rotate x?
-      PMatAux.rotateX(c, s, this.modelview);
-      PMatAux.invRotateX(c, s, this.modelviewInv);
+      PMatAux.compoundRotateX(Utils.scNorm(normRad), Utils.scNorm(normRad
+         - 0.25f), this.modelview, this.modelviewInv);
       PMatAux.mul(this.projection, this.modelview, this.projmodelview);
    }
 
@@ -1691,12 +1687,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void rotateY ( final float radians ) {
 
       final float normRad = radians * IUtils.ONE_TAU;
-      final float c = Utils.scNorm(normRad);
-      final float s = Utils.scNorm(normRad - 0.25f);
-
-      // TODO: Compound rotate y?
-      PMatAux.rotateY(c, s, this.modelview);
-      PMatAux.invRotateY(c, s, this.modelviewInv);
+      PMatAux.compoundRotateY(Utils.scNorm(normRad), Utils.scNorm(normRad
+         - 0.25f), this.modelview, this.modelviewInv);
       PMatAux.mul(this.projection, this.modelview, this.projmodelview);
    }
 

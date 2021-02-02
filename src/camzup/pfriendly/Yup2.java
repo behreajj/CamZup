@@ -166,6 +166,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       this.cameraY = y;
       this.cameraZ = this.height < 128 ? 128.0f : this.height;
       this.cameraRot = radians;
+
       this.cameraZoomX = Utils.abs(zx) < IUtils.EPSILON ? 1.0f : zx;
       this.cameraZoomY = Utils.abs(zy) < IUtils.EPSILON ? 1.0f : zy;
 

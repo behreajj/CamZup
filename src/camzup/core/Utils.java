@@ -368,7 +368,10 @@ public abstract class Utils implements IUtils {
    /**
     * Returns the first floating-point argument with the sign of the second
     * floating-point argument. An alias of {@link Math#copySign(float, float)}
-    * .
+    * .<br>
+    * <br>
+    * When the sign is zero, the return value will depend on the sign of the
+    * zero.
     *
     * @param magnitude the magnitude
     * @param sign      the sign
@@ -386,7 +389,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Returns the first floating-point argument with the sign of the second
-    * integer argument.
+    * integer argument. When the sign is zero, the return value will be
+    * positive, as integer zeroes are unsigned.
     *
     * @param magnitude the magnitude
     * @param sign      the sign

@@ -1066,7 +1066,8 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Tints an image to a color by a factor in [0.0, 1.0] .
+    * Tints an image to a color by a factor in [0.0, 1.0] . For images with
+    * alpha, the minimum alpha between the source and tint color are used.
     *
     * @param source  the source image
     * @param tintClr the tint color
@@ -1076,6 +1077,8 @@ public class ZImage extends PImage {
     */
    public static PImage tint ( final PImage source, final int tintClr,
       final float fac ) {
+
+      /* Do not optimize until you settle on an appropriate tinting formula. */
 
       /* Right operand. Decompose tint color. */
       final int ya = tintClr >> 0x18 & 0xff;
@@ -1104,7 +1107,7 @@ public class ZImage extends PImage {
             final int trgb = 0x00ffffff & tintClr;
             for ( int i = 0; i < len; ++i ) {
                final float xaf = pixels[i] * IUtils.ONE_255;
-               final float zaf = u * xaf + t * yaf;
+               final float zaf = Utils.min(xaf, yaf);
                pixels[i] = ( int ) ( zaf * 0xff + 0.5f ) << 0x18 | trgb;
             }
 
@@ -1147,7 +1150,7 @@ public class ZImage extends PImage {
                final float xbf = ( rgb & 0xff ) * IUtils.ONE_255;
 
                /* Lerp from left to right by factor t. */
-               final float zaf = u * xaf + t * yaf;
+               final float zaf = Utils.min(xaf, yaf);
                final float zrf = u * xrf + t * yrf;
                final float zgf = u * xgf + t * ygf;
                final float zbf = u * xbf + t * ybf;

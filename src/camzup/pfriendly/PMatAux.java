@@ -179,6 +179,122 @@ public abstract class PMatAux {
    }
 
    /**
+    * Rotates a matrix and its inverse around the x axis by the cosine and
+    * sine of an angle.
+    *
+    * @param c    the cosine
+    * @param s    the sine
+    * @param m    the matrix
+    * @param mInv the matrix inverse
+    *
+    * @return the rotated matrix
+    */
+   public static PMatrix3D compoundRotateX ( final float c, final float s,
+      final PMatrix3D m, final PMatrix3D mInv ) {
+
+      // TODO: Further in-line and optimize?
+
+      /* @formatter:off */
+      float t1 = m.m01;
+      float t2 = m.m02;
+      final float n01 = t1 * c + t2 * s;
+      final float n02 = t2 * c - t1 * s;
+
+      t1 = m.m11;
+      t2 = m.m12;
+      final float n11 = t1 * c + t2 * s;
+      final float n12 = t2 * c - t1 * s;
+
+      t1 = m.m21;
+      t2 = m.m22;
+      final float n21 = t1 * c + t2 * s;
+      final float n22 = t2 * c - t1 * s;
+
+      t1 = m.m31;
+
+      m.m01 = n01;
+      m.m02 = n02;
+      m.m11 = n11;
+      m.m12 = n12;
+      m.m21 = n21;
+      m.m22 = n22;
+      m.m31 = t1 * c + m.m32 * s;
+      m.m32 = m.m32 * c - t1 * s;
+
+      mInv.set(
+         mInv.m00, mInv.m01, mInv.m02, mInv.m03,
+         c * mInv.m10 + s * mInv.m20,
+         c * mInv.m11 + s * mInv.m21,
+         c * mInv.m12 + s * mInv.m22,
+         c * mInv.m13 + s * mInv.m23,
+         c * mInv.m20 - s * mInv.m10,
+         c * mInv.m21 - s * mInv.m11,
+         c * mInv.m22 - s * mInv.m12,
+         c * mInv.m23 - s * mInv.m13,
+         mInv.m30, mInv.m31, mInv.m32, mInv.m33);
+
+      return m;
+      /* @formatter:on */
+   }
+
+   /**
+    * Rotates a matrix and its inverse around the y axis by the cosine and
+    * sine of an angle.
+    *
+    * @param c    the cosine
+    * @param s    the sine
+    * @param m    the matrix
+    * @param mInv the matrix inverse
+    *
+    * @return the rotated matrix
+    */
+   public static PMatrix3D compoundRotateY ( final float c, final float s,
+      final PMatrix3D m, final PMatrix3D mInv ) {
+
+      /* @formatter:off */
+      float t0 = m.m00;
+      float t2 = m.m02;
+      final float n00 = t0 * c - t2 * s;
+      final float n02 = t0 * s + t2 * c;
+
+      t0 = m.m10;
+      t2 = m.m12;
+      final float n10 = t0 * c - t2 * s;
+      final float n12 = t0 * s + t2 * c;
+
+      t0 = m.m20;
+      t2 = m.m22;
+      final float n20 = t0 * c - t2 * s;
+      final float n22 = t0 * s + t2 * c;
+
+      t0 = m.m30;
+
+      m.m00 = n00;
+      m.m02 = n02;
+      m.m10 = n10;
+      m.m12 = n12;
+      m.m20 = n20;
+      m.m22 = n22;
+      m.m30 = t0 * c - m.m32 * s;
+      m.m32 = t0 * s + m.m32 * c;
+      
+      mInv.set(
+         c * mInv.m00 - s * mInv.m20,
+         c * mInv.m01 - s * mInv.m21,
+         c * mInv.m02 - s * mInv.m22,
+         c * mInv.m03 - s * mInv.m23,
+         mInv.m10, mInv.m11, mInv.m12, mInv.m13,
+         c * mInv.m20 + s * mInv.m00,
+         c * mInv.m21 + s * mInv.m01,
+         c * mInv.m22 + s * mInv.m02,
+         c * mInv.m23 + s * mInv.m03,
+         mInv.m30, mInv.m31, mInv.m32, mInv.m33);
+
+      return m;
+      /* @formatter:on */
+   }
+
+   /**
     * Rotates a matrix and its inverse around the z axis by the cosine and
     * sine of an angle.
     *
@@ -218,9 +334,9 @@ public abstract class PMatAux {
          c * mInv.m13 - s * mInv.m03,
          mInv.m20, mInv.m21, mInv.m22, mInv.m23,
          mInv.m30, mInv.m31, mInv.m32, mInv.m33);
-      /* @formatter:on */
-
+      
       return m;
+      /* @formatter:on */
    }
 
    /**

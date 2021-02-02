@@ -3781,10 +3781,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.backgroundBi = this.calcBi;
       this.backgroundAi = isRgb ? 255 : this.calcAi;
 
-      this.backgroundAlpha = isRgb && this.calcAlpha;
+      this.backgroundAlpha = !isRgb && this.calcAlpha;
       this.backgroundColor = this.calcColor;
 
-      super.backgroundImpl();
+      this.backgroundImpl();
    }
 
    /**

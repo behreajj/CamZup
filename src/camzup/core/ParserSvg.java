@@ -672,8 +672,6 @@ public abstract class ParserSvg {
           * (CCW) to the SVG default (CW).
           */
          if ( prim != null ) {
-            // prim.reverse();
-            // prim.transform(prev);
 
             // Looks like the same curve is being added multiple
             // times...
@@ -688,7 +686,6 @@ public abstract class ParserSvg {
             final Iterator < Curve2 > itr = path.iterator();
             while ( itr.hasNext() ) {
                final Curve2 pathCurve = itr.next();
-               // pathCurve.transform(prev);
 
                // TEST Looks like the same curve is being added multiple
                // times...
