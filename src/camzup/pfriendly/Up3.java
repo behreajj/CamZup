@@ -87,18 +87,49 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Begins the heads-up display section of the sketch.
+    * Begins the heads-up display section of the sketch. Turns off lighting,
+    * disables depth testing and depth masking. Sets the camera origin to the
+    * center of the screen and establishes an orthographic projection.
     */
    @Experimental
    public void beginHud ( ) {
 
+      /*
+       * Loose camera variables (cameraX, cameraY, cameraZ, refUp, etc.) should
+       * not be changed, as that would impact default arguments for camera();
+       * method. This is intended to be a temporary element within draw!
+       */
+
+      // QUERY Should there be a boolean flag to signal HUD has begun so that a
+      // warning is thrown if beginHud and endHud aren't called in pairs?
+
+      final float z = -this.height * IUp.DEFAULT_CAM_DIST_FAC;
+      final float w = 1.0f / Utils.max(128, this.width);
+      final float h = 1.0f / Utils.max(128, this.height);
+      final float d = 1.0f / ( IUp.DEFAULT_FAR_CLIP - IUp.DEFAULT_NEAR_CLIP );
+      final float am00 = w + w;
+      final float am11 = h + h;
+      final float am22 = - ( d + d );
+      final float am23 = -d * ( IUp.DEFAULT_FAR_CLIP + IUp.DEFAULT_NEAR_CLIP );
+
       this.disableDepthTest();
       this.disableDepthMask();
-      this.ortho();
       this.noLights();
-      this.setMatrix(1.0f, 0.0f, 0.0f, -this.width * 0.5f, 0.0f, 1.0f, 0.0f,
-         -this.height * 0.5f, 0.0f, 0.0f, 1.0f, -this.height * IUtils.SQRT_3_2,
-         0.0f, 0.0f, 0.0f, 1.0f);
+
+      this.camera.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, z, 0.0f, 0.0f, 0.0f, 1.0f);
+      this.cameraInv.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, -z, 0.0f, 0.0f, 0.0f, 1.0f);
+
+      this.modelview.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, z, 0.0f, 0.0f, 0.0f, 1.0f);
+      this.modelviewInv.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+         0.0f, 0.0f, 1.0f, -z, 0.0f, 0.0f, 0.0f, 1.0f);
+
+      this.projection.set(am00, 0.0f, 0.0f, 0.0f, 0.0f, am11, 0.0f, 0.0f, 0.0f,
+         0.0f, am22, am23, 0.0f, 0.0f, 0.0f, 1.0f);
+      this.projmodelview.set(am00, 0.0f, 0.0f, 0.0f, 0.0f, am11, 0.0f, 0.0f,
+         0.0f, 0.0f, am22, am22 * z + am23, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -213,20 +244,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    public abstract void camEast ( );
 
    /**
-    * Sets the camera to a location, looking at a center, with a reference up
-    * direction.
-    *
-    * @param eye    the eye location
-    * @param center the center of the gaze
-    * @param up     the reference up direction
-    */
-   public void camera ( final Vec3 eye, final Vec3 center, final Vec3 up ) {
-
-      this.camera(eye.x, eye.y, eye.z, center.x, center.y, center.z, up.x, up.y,
-         up.z);
-   }
-
-   /**
     * Places camera on the axis perpendicular to its world up axis such that
     * it is looking North toward the world origin.
     */
@@ -255,7 +272,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    public void curve ( final Vec3 a, final Vec3 b, final Vec3 c,
       final Vec3 d ) {
 
-      this.curve(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z, d.x, d.y, d.z);
+      super.curve(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z, d.x, d.y, d.z);
    }
 
    /**
@@ -312,7 +329,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Concludes the heads-up display section of the sketch.
+    * Concludes the heads-up display section of the sketch by enabling the
+    * depth mask and depth test. This should happen at the end of a draw call;
+    * any display following this method should call camera and projection
+    * methods and set lights.
     */
    @Experimental
    public void endHud ( ) {
@@ -508,9 +528,9 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final int lineColor, final int rearColor, final int foreColor,
       final int coordColor ) {
 
-      final float swRear = sw * 4.0f;
-      final float swFore = swRear * 1.25f;
-      final float swCoord = swFore * 1.25f;
+      final float swRear = sw * IUp.HANDLE_REAR_WEIGHT;
+      final float swFore = sw * IUp.HANDLE_FORE_WEIGHT;
+      final float swCoord = sw * IUp.HANDLE_COORD_WEIGHT;
 
       final Transform3 tr = ce.transform;
       final Iterator < Curve3 > curveItr = ce.iterator();
@@ -842,6 +862,22 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
+    * Resets the model view and camera matrices to the identity. Resets
+    * projection model view to the projection. Resets camera axes vectors to
+    * the default.
+    */
+   @Override
+   public void resetMatrix ( ) {
+
+      super.resetMatrix();
+      Vec3.right(this.i);
+      Vec3.forward(this.j);
+      Vec3.up(this.k);
+      Vec3.forward(this.lookDir);
+      Vec3.zero(this.lookTarget);
+   }
+
+   /**
     * Rotates the model view matrix around an arbitrary axis by an angle in
     * radians.
     *
@@ -911,6 +947,45 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    public void setEyeDist ( final float ed ) { this.eyeDist = ed; }
 
    /**
+    * Resets the {@link PGraphicsOpenGL#camera} and
+    * {@link PGraphicsOpenGL#cameraInv} matrices, sets the model view to the
+    * input values, calculates the inverse model view, then recalculates the
+    * projection model view.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m03 row 0, column 3
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    * @param m13 row 1, column 3
+    * @param m20 row 2, column 0
+    * @param m21 row 2, column 1
+    * @param m22 row 2, column 2
+    * @param m23 row 2, column 3
+    * @param m30 row 3, column 0
+    * @param m31 row 3, column 1
+    * @param m32 row 3, column 2
+    * @param m33 row 3, column 3
+    */
+   @Override
+   public void setMatrix ( final float m00, final float m01, final float m02,
+      final float m03, final float m10, final float m11, final float m12,
+      final float m13, final float m20, final float m21, final float m22,
+      final float m23, final float m30, final float m31, final float m32,
+      final float m33 ) {
+
+      super.setMatrix(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22,
+         m23, m30, m31, m32, m33);
+      Vec3.right(this.i);
+      Vec3.forward(this.j);
+      Vec3.up(this.k);
+      Vec3.forward(this.lookDir);
+      Vec3.zero(this.lookTarget);
+   }
+
+   /**
     * Draws a 3D curve entity.
     *
     * @param entity the curve entity
@@ -918,63 +993,13 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    public void shape ( final CurveEntity3 entity ) {
 
       final Transform3 tr = entity.transform;
-      final Iterator < Curve3 > curveItr = entity.iterator();
+      final Iterator < Curve3 > itr = entity.iterator();
 
-      final Vec3 v0 = new Vec3();
-      final Vec3 v1 = new Vec3();
-      final Vec3 v2 = new Vec3();
+      final Vec3 fh = new Vec3();
+      final Vec3 rh = new Vec3();
+      final Vec3 co = new Vec3();
 
-      Knot3 currKnot = null;
-      Knot3 prevKnot = null;
-      Vec3 coord = null;
-      Vec3 foreHandle = null;
-      Vec3 rearHandle = null;
-
-      while ( curveItr.hasNext() ) {
-
-         final Curve3 curve = curveItr.next();
-         final Iterator < Knot3 > knItr = curve.iterator();
-         prevKnot = knItr.next();
-         coord = prevKnot.coord;
-
-         Transform3.mulPoint(tr, coord, v2);
-
-         this.beginShape();
-         this.vertexImpl(v2.x, v2.y, v2.z, this.textureU, this.textureV);
-
-         while ( knItr.hasNext() ) {
-            currKnot = knItr.next();
-            foreHandle = prevKnot.foreHandle;
-            rearHandle = currKnot.rearHandle;
-            coord = currKnot.coord;
-
-            Transform3.mulPoint(tr, foreHandle, v0);
-            Transform3.mulPoint(tr, rearHandle, v1);
-            Transform3.mulPoint(tr, coord, v2);
-
-            this.bezierVertexImpl(v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x,
-               v2.y, v2.z);
-
-            prevKnot = currKnot;
-         }
-
-         if ( curve.closedLoop ) {
-            currKnot = curve.getFirst();
-            foreHandle = prevKnot.foreHandle;
-            rearHandle = currKnot.rearHandle;
-            coord = currKnot.coord;
-
-            Transform3.mulPoint(tr, foreHandle, v0);
-            Transform3.mulPoint(tr, rearHandle, v1);
-            Transform3.mulPoint(tr, coord, v2);
-
-            this.bezierVertexImpl(v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x,
-               v2.y, v2.z);
-            this.endShape(PConstants.CLOSE);
-         } else {
-            this.endShape(PConstants.OPEN);
-         }
-      }
+      while ( itr.hasNext() ) { this.drawCurve3(itr.next(), tr, fh, rh, co); }
    }
 
    /**
@@ -1002,65 +1027,17 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final MaterialSolid[] materials ) {
 
       final Transform3 tr = entity.transform;
-      final Iterator < Curve3 > curveItr = entity.iterator();
+      final Iterator < Curve3 > itr = entity.iterator();
 
-      final Vec3 v0 = new Vec3();
-      final Vec3 v1 = new Vec3();
-      final Vec3 v2 = new Vec3();
+      final Vec3 fh = new Vec3();
+      final Vec3 rh = new Vec3();
+      final Vec3 co = new Vec3();
 
-      Knot3 currKnot = null;
-      Knot3 prevKnot = null;
-      Vec3 coord = null;
-      Vec3 foreHandle = null;
-      Vec3 rearHandle = null;
-
-      while ( curveItr.hasNext() ) {
-
-         final Curve3 curve = curveItr.next();
+      while ( itr.hasNext() ) {
+         final Curve3 curve = itr.next();
          this.pushStyle();
          this.material(materials[curve.materialIndex]);
-
-         final Iterator < Knot3 > knItr = curve.iterator();
-         prevKnot = knItr.next();
-         coord = prevKnot.coord;
-
-         Transform3.mulPoint(tr, coord, v2);
-
-         this.beginShape();
-         this.vertexImpl(v2.x, v2.y, v2.z, this.textureU, this.textureV);
-
-         while ( knItr.hasNext() ) {
-            currKnot = knItr.next();
-            foreHandle = prevKnot.foreHandle;
-            rearHandle = currKnot.rearHandle;
-            coord = currKnot.coord;
-
-            Transform3.mulPoint(tr, foreHandle, v0);
-            Transform3.mulPoint(tr, rearHandle, v1);
-            Transform3.mulPoint(tr, coord, v2);
-
-            this.bezierVertexImpl(v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x,
-               v2.y, v2.z);
-
-            prevKnot = currKnot;
-         }
-
-         if ( curve.closedLoop ) {
-            currKnot = curve.getFirst();
-            foreHandle = prevKnot.foreHandle;
-            rearHandle = currKnot.rearHandle;
-            coord = currKnot.coord;
-
-            Transform3.mulPoint(tr, foreHandle, v0);
-            Transform3.mulPoint(tr, rearHandle, v1);
-            Transform3.mulPoint(tr, coord, v2);
-
-            this.bezierVertexImpl(v0.x, v0.y, v0.z, v1.x, v1.y, v1.z, v2.x,
-               v2.y, v2.z);
-            this.endShape(PConstants.CLOSE);
-         } else {
-            this.endShape(PConstants.OPEN);
-         }
+         this.drawCurve3(curve, tr, fh, rh, co);
          this.popStyle();
       }
    }

@@ -1250,9 +1250,18 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    public static Vec2 mulPoint ( final Transform2 t, final Vec2 source,
       final Vec2 target ) {
 
-      Vec2.rotateZ(source, t.right.x, t.right.y, target);
-      Vec2.mul(target, t.scale, target);
-      Vec2.add(target, t.location, target);
+      /* Inlined for optimization purposes. */
+      // Vec2.rotateZ(source, t.right.x, t.right.y, target);
+      // Vec2.mul(target, t.scale, target);
+      // Vec2.add(target, t.location, target);
+
+      final float cosa = t.right.x;
+      final float sina = t.right.y;
+      final Vec2 sc = t.scale;
+      final Vec2 tr = t.location;
+      target.x = ( cosa * source.x - sina * source.y ) * sc.x + tr.x;
+      target.y = ( cosa * source.y + sina * source.x ) * sc.y + tr.y;
+
       return target;
    }
 

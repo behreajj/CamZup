@@ -206,6 +206,21 @@ public class Yup3 extends Up3 {
    }
 
    /**
+    * Sets the camera to a location, looking at a center, with a reference up
+    * direction.
+    *
+    * @param eye    the eye location
+    * @param center the center of the gaze
+    * @param up     the reference up direction
+    */
+   public void camera ( final Vec3 eye, final Vec3 center, final Vec3 up ) {
+
+      /* Do not move to Up3. Here, this keeps inheritance overrides clear. */
+      this.camera(eye.x, eye.y, eye.z, center.x, center.y, center.z, up.x, up.y,
+         up.z);
+   }
+
+   /**
     * Sets the camera to the Processing default, where the origin is in the
     * top left corner of the sketch and the y axis points downward.
     */

@@ -277,7 +277,7 @@ public abstract class PMatAux {
       m.m22 = n22;
       m.m30 = t0 * c - m.m32 * s;
       m.m32 = t0 * s + m.m32 * c;
-      
+
       mInv.set(
          c * mInv.m00 - s * mInv.m20,
          c * mInv.m01 - s * mInv.m21,
@@ -334,7 +334,7 @@ public abstract class PMatAux {
          c * mInv.m13 - s * mInv.m03,
          mInv.m20, mInv.m21, mInv.m22, mInv.m23,
          mInv.m30, mInv.m31, mInv.m32, mInv.m33);
-      
+
       return m;
       /* @formatter:on */
    }

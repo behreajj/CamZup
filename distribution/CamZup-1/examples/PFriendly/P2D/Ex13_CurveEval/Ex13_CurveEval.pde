@@ -8,7 +8,7 @@ float offMax = 0.3125;
 float dotMax = 25.0;
 float dotMin = 10.0;
 
-YupJ2 graphics;
+Yup2 graphics;
 
 Curve2 infinity = Curve2.infinity(new Curve2());
 CurveEntity2 infEntity = new CurveEntity2();
@@ -26,12 +26,12 @@ Ray2 local = new Ray2();
 Ray2 world = new Ray2();
 
 void settings() {
-  size(720, 405, YupJ2.PATH_STR);
+  size(720, 405, Yup2.PATH_STR);
 }
 
 void setup() {
   frameRate(60.0);
-  graphics = (YupJ2)getGraphics();
+  graphics = (Yup2)getGraphics();
 
   infEntity.append(infinity);
   infEntity.scaleTo((graphics.width + graphics.height) * 0.495);

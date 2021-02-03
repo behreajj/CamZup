@@ -136,23 +136,26 @@ void draw() {
 
   buff.beginHud();
 
+  float wh = buff.width * 0.5;
+  float hh = buff.height * 0.5;
+
   // Uncorrected aspect.
   buff.fill(#ffffff);
-  buff.rect(buff.width - 36, buff.height - 21, 16, 16);
-  buff.ellipse(buff.width - 36, buff.height - 61, 16, 16);
+  buff.rect(wh - 36, hh - 21, 16, 16);
+  buff.ellipse(wh - 36, hh - 61, 16, 16);
 
   // Corrected aspect.
   buff.fill(#ffffff);
-  buff.rect(buff.width - 18, buff.height - 21, 16, 16 * correct);
-  buff.ellipse(buff.width - 18, buff.height - 61, 16, 16 * correct);
+  buff.rect(wh - 18, hh - 21, 16, 16 * correct);
+  buff.ellipse(wh - 18, hh - 61, 16, 16 * correct);
 
   buff.fill(#202020);
   buff.text("The quick brown fox jumps \nover the lazy dog.",
-    3, buff.height - 3);
+    3 - wh, hh - 3);
 
   buff.fill(#ffffff);
   buff.text("The quick brown fox jumps \nover the lazy dog.",
-    2, buff.height - 2);
+    2 - wh, hh - 2);
 
   buff.endHud();
   buff.endDraw();

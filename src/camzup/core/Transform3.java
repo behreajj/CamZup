@@ -1421,9 +1421,18 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    public static Vec3 mulPoint ( final Transform3 t, final Vec3 source,
       final Vec3 target ) {
 
+      /* Inlined for optimization purposes. */
+      // Quaternion.mulVector(t.rotation, source, target);
+      // Vec3.mul(target, t.scale, target);
+      // Vec3.add(target, t.location, target);
+      // return target;
+
       Quaternion.mulVector(t.rotation, source, target);
-      Vec3.mul(target, t.scale, target);
-      Vec3.add(target, t.location, target);
+      final Vec3 sc = t.scale;
+      final Vec3 tr = t.location;
+      target.x = target.x * sc.x + tr.x;
+      target.y = target.y * sc.y + tr.y;
+      target.z = target.z * sc.z + tr.z;
       return target;
    }
 

@@ -724,7 +724,7 @@ public class Mat3 {
       final float det = Mat3.determinant(m);
       scale.set(xMag, det < 0.0f ? -yMag : yMag);
       trans.set(m.m02, m.m12);
-      return Utils.modRadians(( float ) Math.atan2(m.m10, m.m00));
+      return Utils.modRadians(Utils.atan2(m.m10, m.m00));
    }
 
    /**

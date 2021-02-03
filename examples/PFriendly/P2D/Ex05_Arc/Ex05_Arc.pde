@@ -1,16 +1,16 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-YupJ2 graphics;
+Yup2 graphics;
 Vec2 mouse = new Vec2();
 
 void settings() {
-  size(720, 405, YupJ2.PATH_STR);
+  size(720, 405, Yup2.PATH_STR);
 }
 
 void setup() {
   frameRate(60.0);
-  graphics = (YupJ2)getGraphics();
+  graphics = (Yup2)getGraphics();
 }
 
 void draw() {

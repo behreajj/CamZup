@@ -214,6 +214,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        */
       this.affineNative.setTransform(m00, m10, m01, m11, m02, m12);
       this.g2.transform(this.affineNative);
+
+      // this.affineNative.setTransform(this.g2.getTransform());
+      //
+      // this.cameraX = ( float ) this.affineNative.getTranslateX();
+      // this.cameraY = ( float ) this.affineNative.getTranslateY();
+      //
+      // this.cameraRot = ( float ) Math.atan2(this.affineNative.getShearY(),
+      // this.affineNative.getScaleX());
+      // this.cameraRot = Utils.modRadians(this.cameraRot);
+      //
+      // this.cameraZoomX = ( float ) this.affineNative.getScaleX();
+      // this.cameraZoomY = ( float ) this.affineNative.getScaleY();
+      // if ( this.affineNative.getDeterminant() < 0.0d ) {
+      // this.cameraZoomY = -this.cameraZoomY;
+      // }
    }
 
    /**
@@ -724,6 +739,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void defaultSettings ( ) {
 
+      /*
+       * Calls parent defaultSettings, then sets the java.awt.Composite
+       * defaultComposite to g2.getComposite() .
+       */
       super.defaultSettings();
 
       /* Color. */
@@ -1274,11 +1293,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       /* Cache stroke weights. */
       final BasicStroke swLine = new BasicStroke(sw, BasicStroke.CAP_ROUND,
          BasicStroke.JOIN_ROUND);
-      final BasicStroke swRear = new BasicStroke(sw * 4.0f,
+      final BasicStroke swRear = new BasicStroke(sw * IUp.HANDLE_REAR_WEIGHT,
          BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-      final BasicStroke swFore = new BasicStroke(sw * 5.0f,
+      final BasicStroke swFore = new BasicStroke(sw * IUp.HANDLE_FORE_WEIGHT,
          BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
-      final BasicStroke swCoord = new BasicStroke(sw * 6.25f,
+      final BasicStroke swCoord = new BasicStroke(sw * IUp.HANDLE_COORD_WEIGHT,
          BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
       final Transform2 tr = ce.transform;
@@ -2454,6 +2473,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.affineNative.setToIdentity();
       this.g2.setTransform(this.affineNative);
       this.g2.scale(pdd, pdd);
+
+      // this.cameraRot = 0.0f;
+      // this.cameraZoomX = 1.0f;
+      // this.cameraZoomY = 1.0f;
+      // this.cameraX = 0.0f;
+      // this.cameraY = 0.0f;
    }
 
    /**
@@ -2658,6 +2683,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        */
       this.affineNative.setTransform(m00, m10, m01, m11, m02, m12);
       this.g2.setTransform(this.affineNative);
+
+      // this.cameraZoomX = Utils.hypot(m00, m10);
+      // this.cameraZoomY = Utils.hypot(m01, m11);
+      // final float det = m00 * m11 - m01 * m10;
+      // if ( det < 0.0f ) { this.cameraZoomY = -this.cameraZoomY; }
+      // this.cameraRot = Utils.modRadians(Utils.atan2(m10, m00));
+      // this.cameraX = m02;
+      // this.cameraY = m12;
    }
 
    /**
@@ -3301,10 +3334,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          super.defaultFontOrDeath("textSize", vsz);
       }
       this.textSize = vsz;
-
-      // Why 1.275? Maybe it is a conversion from points to units similar to
-      // those when parsing an SVG?
-      this.textLeading = ( super.textAscent() + super.textDescent() ) * 1.275f;
+      this.textLeading = ( super.textAscent() + super.textDescent() )
+         * YupJ2.TEXT_LEADING_SCALAR;
    }
 
    /**
@@ -3784,7 +3815,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.backgroundAlpha = !isRgb && this.calcAlpha;
       this.backgroundColor = this.calcColor;
 
-      this.backgroundImpl();
+      /*
+       * Because this accesses a private variable, java.awt.Composite
+       * defaultComposite, it cannot be overridden here. defaultComposite is set
+       * in defaultSettings to g2.getComposite() .
+       */
+      super.backgroundImpl();
    }
 
    /**
@@ -4410,6 +4446,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * The path string for this renderer.
     */
    public static final String PATH_STR = "camzup.pfriendly.YupJ2";
+
+   /**
+    * A scalar by which {@link PGraphics#textLeading} is multiplied after the
+    * ascent and descent is calculated.
+    */
+   public static final float TEXT_LEADING_SCALAR = 1.275f;
 
    /**
     * Converts a PImage to a {@link java.awt.Image}. This is an incredibly

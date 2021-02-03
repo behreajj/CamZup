@@ -505,9 +505,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final int lineColor, final int rearColor, final int foreColor,
       final int coordColor ) {
 
-      final float swRear = sw * 4.0f;
-      final float swFore = swRear * 1.25f;
-      final float swCoord = swFore * 1.25f;
+      final float swRear = sw * IUp.HANDLE_REAR_WEIGHT;
+      final float swFore = sw * IUp.HANDLE_FORE_WEIGHT;
+      final float swCoord = sw * IUp.HANDLE_COORD_WEIGHT;
 
       final Transform2 tr = ce.transform;
       final Iterator < Curve2 > curveItr = ce.iterator();
@@ -883,6 +883,20 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    }
 
    /**
+    * Resets the model view and camera matrices to the identity. Resets
+    * projection model view to the projection. Resets camera axes vectors to
+    * the default.
+    */
+   @Override
+   public void resetMatrix ( ) {
+
+      super.resetMatrix();
+      this.cameraRot = 0.0f;
+      this.cameraZoomX = 1.0f;
+      this.cameraZoomY = 1.0f;
+   }
+
+   /**
     * Rotates the model view matrix around an arbitrary axis by an angle in
     * radians. Not supported by this renderer.
     *
@@ -952,6 +966,43 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    }
 
    /**
+    * Resets the {@link PGraphicsOpenGL#camera} and
+    * {@link PGraphicsOpenGL#cameraInv} matrices, sets the model view to the
+    * input values, calculates the inverse model view, then recalculates the
+    * projection model view.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m03 row 0, column 3
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    * @param m13 row 1, column 3
+    * @param m20 row 2, column 0
+    * @param m21 row 2, column 1
+    * @param m22 row 2, column 2
+    * @param m23 row 2, column 3
+    * @param m30 row 3, column 0
+    * @param m31 row 3, column 1
+    * @param m32 row 3, column 2
+    * @param m33 row 3, column 3
+    */
+   @Override
+   public void setMatrix ( final float m00, final float m01, final float m02,
+      final float m03, final float m10, final float m11, final float m12,
+      final float m13, final float m20, final float m21, final float m22,
+      final float m23, final float m30, final float m31, final float m32,
+      final float m33 ) {
+
+      super.setMatrix(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22,
+         m23, m30, m31, m32, m33);
+      this.cameraRot = 0.0f;
+      this.cameraZoomX = 1.0f;
+      this.cameraZoomY = 1.0f;
+   }
+
+   /**
     * Set size is the last function called by size, createGraphics,
     * makeGraphics, etc. when initializing the graphics renderer. Therefore,
     * any additional values that need initialization can be attempted here.
@@ -971,65 +1022,14 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     */
    public void shape ( final CurveEntity2 entity ) {
 
-      // TODO: Refactor to match YupJ2?
-
       final Transform2 tr = entity.transform;
-      final Iterator < Curve2 > curveItr = entity.iterator();
+      final Iterator < Curve2 > itr = entity.iterator();
 
       final Vec2 rh = new Vec2();
       final Vec2 fh = new Vec2();
       final Vec2 co = new Vec2();
 
-      Knot2 currKnot = null;
-      Knot2 prevKnot = null;
-      Vec2 coord = null;
-      Vec2 foreHandle = null;
-      Vec2 rearHandle = null;
-
-      while ( curveItr.hasNext() ) {
-         final Curve2 curve = curveItr.next();
-         final Iterator < Knot2 > knItr = curve.iterator();
-         prevKnot = knItr.next();
-         coord = prevKnot.coord;
-
-         Transform2.mulPoint(tr, coord, co);
-
-         this.beginShape();
-         this.vertexImpl(co.x, co.y, 0.0f, this.textureU, this.textureV);
-
-         while ( knItr.hasNext() ) {
-            currKnot = knItr.next();
-            foreHandle = prevKnot.foreHandle;
-            rearHandle = currKnot.rearHandle;
-            coord = currKnot.coord;
-
-            Transform2.mulPoint(tr, foreHandle, rh);
-            Transform2.mulPoint(tr, rearHandle, fh);
-            Transform2.mulPoint(tr, coord, co);
-
-            this.bezierVertexImpl(rh.x, rh.y, 0.0f, fh.x, fh.y, 0.0f, co.x,
-               co.y, 0.0f);
-
-            prevKnot = currKnot;
-         }
-
-         if ( curve.closedLoop ) {
-            currKnot = curve.getFirst();
-            foreHandle = prevKnot.foreHandle;
-            rearHandle = currKnot.rearHandle;
-            coord = currKnot.coord;
-
-            Transform2.mulPoint(tr, foreHandle, rh);
-            Transform2.mulPoint(tr, rearHandle, fh);
-            Transform2.mulPoint(tr, coord, co);
-
-            this.bezierVertexImpl(rh.x, rh.y, 0.0f, fh.x, fh.y, 0.0f, co.x,
-               co.y, 0.0f);
-            this.endShape(PConstants.CLOSE);
-         } else {
-            this.endShape(PConstants.OPEN);
-         }
-      }
+      while ( itr.hasNext() ) { this.drawCurve2(itr.next(), tr, fh, rh, co); }
    }
 
    /**
@@ -1056,69 +1056,18 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    public void shape ( final CurveEntity2 entity,
       final MaterialSolid[] materials ) {
 
-      // TODO: Refactor to match YupJ2?
-
       final Transform2 tr = entity.transform;
-      final Iterator < Curve2 > curveItr = entity.iterator();
+      final Iterator < Curve2 > itr = entity.iterator();
 
       final Vec2 fh = new Vec2();
       final Vec2 rh = new Vec2();
       final Vec2 co = new Vec2();
 
-      Knot2 currKnot = null;
-      Knot2 prevKnot = null;
-      Vec2 coord = null;
-      Vec2 foreHandle = null;
-      Vec2 rearHandle = null;
-
-      while ( curveItr.hasNext() ) {
-         final Curve2 curve = curveItr.next();
-         final Iterator < Knot2 > knItr = curve.iterator();
-
+      while ( itr.hasNext() ) {
+         final Curve2 curve = itr.next();
          this.pushStyle();
          this.material(materials[curve.materialIndex]);
-
-         prevKnot = knItr.next();
-         coord = prevKnot.coord;
-
-         Transform2.mulPoint(tr, coord, co);
-
-         this.beginShape();
-         this.vertexImpl(co.x, co.y, 0.0f, this.textureU, this.textureV);
-
-         while ( knItr.hasNext() ) {
-            currKnot = knItr.next();
-            foreHandle = prevKnot.foreHandle;
-            rearHandle = currKnot.rearHandle;
-            coord = currKnot.coord;
-
-            Transform2.mulPoint(tr, foreHandle, fh);
-            Transform2.mulPoint(tr, rearHandle, rh);
-            Transform2.mulPoint(tr, coord, co);
-
-            this.bezierVertexImpl(fh.x, fh.y, 0.0f, rh.x, rh.y, 0.0f, co.x,
-               co.y, 0.0f);
-
-            prevKnot = currKnot;
-         }
-
-         if ( curve.closedLoop ) {
-            currKnot = curve.getFirst();
-            foreHandle = prevKnot.foreHandle;
-            rearHandle = currKnot.rearHandle;
-            coord = currKnot.coord;
-
-            Transform2.mulPoint(tr, foreHandle, fh);
-            Transform2.mulPoint(tr, rearHandle, rh);
-            Transform2.mulPoint(tr, coord, co);
-
-            this.bezierVertexImpl(fh.x, fh.y, 0.0f, rh.x, rh.y, 0.0f, co.x,
-               co.y, 0.0f);
-            this.endShape(PConstants.CLOSE);
-         } else {
-            this.endShape(PConstants.OPEN);
-         }
-
+         this.drawCurve2(curve, tr, fh, rh, co);
          this.popStyle();
       }
    }

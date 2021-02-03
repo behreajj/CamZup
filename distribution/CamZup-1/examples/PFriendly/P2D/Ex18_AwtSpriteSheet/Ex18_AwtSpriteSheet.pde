@@ -7,7 +7,7 @@ YupJ2 buff;
 
 PImage fontImg;
 Image fontImgNtv;
-Color fontClr = new Color(1.0, 0.9, 0.85, 1.0);
+Color fontClr = new Color(1.0, 1.0, 1.0, 1.0);
 
 PImage shadowImg;
 Image shadowImgNtv;
@@ -80,7 +80,7 @@ void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
   buff.beginDraw();
-  buff.background(0xffff2828);
+  buff.background(0xff404040);
   buff.camera(
     buff.width * 0.5,
     buff.height * 0.5,

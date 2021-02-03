@@ -5,8 +5,10 @@ import java.util.Iterator;
 import camzup.core.ArcMode;
 import camzup.core.Color;
 import camzup.core.Curve2;
+import camzup.core.Curve3;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
+import camzup.core.Knot3;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
 import camzup.core.MaterialSolid;
@@ -84,21 +86,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    protected float invColorModeZ = 1.0f;
 
    /**
-    * A placeholder vector used during transform.
-    */
-   protected final Vec2 tr2Loc = new Vec2();
-
-   /**
-    * A placeholder vector used during transform.
-    */
-   protected final Vec2 tr2Scale = new Vec2();
-
-   /**
-    * A placeholder transform used during transform.
-    */
-   protected final Transform2 transform = new Transform2();
-
-   /**
     * The default constructor.
     */
    protected UpOgl ( ) {
@@ -167,33 +154,33 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Draws an arc at a location from a start angle to a stop angle.
     *
-    * @param x0    the first x
-    * @param y0    the first y
+    * @param cx    the x center
+    * @param cy    the y center
     * @param r     the radius
     * @param start the start angle
     * @param stop  the stop angle
     */
-   public void arc ( final float x0, final float y0, final float r,
+   public void arc ( final float cx, final float cy, final float r,
       final float start, final float stop ) {
 
-      this.arc(x0, y0, r, r, start, stop, PConstants.OPEN);
+      this.arc(cx, cy, r, r, start, stop, PConstants.OPEN);
    }
 
    /**
     * Draws an arc at a location from a start angle to a stop angle.
     *
-    * @param x0    the first x
-    * @param y0    the first y
-    * @param x1    the second x
-    * @param y1    the second y
+    * @param cx    the x center
+    * @param cy    the y center
+    * @param r0    the radius
+    * @param r1    the radius
     * @param start the start angle
     * @param stop  the stop angle
     */
    @Override
-   public void arc ( final float x0, final float y0, final float x1,
-      final float y1, final float start, final float stop ) {
+   public void arc ( final float cx, final float cy, final float r0,
+      final float r1, final float start, final float stop ) {
 
-      this.arc(x0, y0, x1, y1, start, stop, PConstants.OPEN);
+      this.arc(cx, cy, r0, r1, start, stop, PConstants.OPEN);
    }
 
    /**
@@ -203,22 +190,18 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * longer supports nonuniform scaling for major and minor axes; takes the
     * minimum of x1 and y1.
     *
-    * @param x0    the first x
-    * @param y0    the first y
-    * @param x1    the second x
-    * @param y1    the second y
+    * @param cx    the x center
+    * @param cy    the y center
+    * @param r0    the radius
+    * @param r1    the radius
     * @param start the start angle
     * @param stop  the stop angle
     * @param mode  the arc mode
     */
    @Override
-   public void arc ( final float x0, final float y0, final float x1,
-      final float y1, final float start, final float stop, final int mode ) {
+   public void arc ( final float cx, final float cy, final float r0,
+      final float r1, final float start, final float stop, final int mode ) {
 
-      final float x = x0;
-      final float y = y0;
-      final float w = 2.0f * Utils.min(Utils.abs(x1), Utils.abs(y1));
-      final float h = w;
       final boolean oldFill = this.fill;
 
       switch ( mode ) {
@@ -243,12 +226,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.arcMode = ArcMode.PIE;
       }
 
-      this.transform.moveTo(this.tr2Loc.set(x, y));
-      this.transform.rotateTo(0.0f);
-      this.transform.scaleTo(this.tr2Scale.set(w, h));
-
-      Curve2.arc(start, stop, 0.5f, this.arcMode, this.arc);
-      this.arcImpl(this.arc, this.transform, IUp.DEFAULT_ORDER);
+      Curve2.arc(start, stop, Utils.min(Utils.abs(r0), Utils.abs(r1)),
+         this.arcMode, this.arc);
+      this.arc.translate(new Vec2(cx, cy));
+      this.drawCurve2(this.arc);
 
       this.fill = oldFill;
    }
@@ -256,17 +237,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Draws an arc at a location from a start angle to a stop angle.
     *
-    * @param x0    the first x
-    * @param y0    the first y
+    * @param cx    the x center
+    * @param cy    the y center
     * @param r     the radius
     * @param start the start angle
     * @param stop  the stop angle
     * @param mode  the arc mode
     */
-   public void arc ( final float x0, final float y0, final float r,
+   public void arc ( final float cx, final float cy, final float r,
       final float start, final float stop, final int mode ) {
 
-      this.arc(x0, y0, r, r, start, stop, mode);
+      this.arc(cx, cy, r, r, start, stop, mode);
    }
 
    /**
@@ -1653,6 +1634,25 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Resets the model view and camera matrices to the identity. Resets
+    * projection model view to the projection. Resets camera location to zero.
+    */
+   @Override
+   public void resetMatrix ( ) {
+
+      this.modelview.reset();
+      this.modelviewInv.reset();
+      this.camera.reset();
+      this.cameraInv.reset();
+      this.projmodelview.set(this.projection);
+
+      this.cameraX = 0.0f;
+      this.cameraY = 0.0f;
+      this.cameraZ = 0.0f;
+      this.eyeDist = 0.0f;
+   }
+
+   /**
     * Rotates the model view matrix around the z axis by an angle in radians.
     *
     * @param radians the angle in radians
@@ -1771,7 +1771,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Sets the renderer matrix to source values.
+    * Resets the {@link PGraphicsOpenGL#camera} and
+    * {@link PGraphicsOpenGL#cameraInv} matrices, sets the model view to the
+    * input values, calculates the inverse model view, then recalculates the
+    * projection model view.
     *
     * @param m00 row 0, column 0
     * @param m01 row 0, column 1
@@ -1788,7 +1791,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Sets the renderer matrix to source values.
+    * Resets the {@link PGraphicsOpenGL#camera} and
+    * {@link PGraphicsOpenGL#cameraInv} matrices, sets the model view to the
+    * input values, calculates the inverse model view, then recalculates the
+    * projection model view.
     *
     * @param m00 row 0, column 0
     * @param m01 row 0, column 1
@@ -1807,10 +1813,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param m32 row 3, column 2
     * @param m33 row 3, column 3
     *
-    * @see PGraphicsOpenGL#resetMatrix()
-    * @see UpOgl#applyMatrixImpl(float, float, float, float, float, float,
-    *      float, float, float, float, float, float, float, float, float,
-    *      float)
+    * @see PMatAux#inverse(PMatrix3D, PMatrix3D)
     */
    public void setMatrix ( final float m00, final float m01, final float m02,
       final float m03, final float m10, final float m11, final float m12,
@@ -1818,9 +1821,43 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float m23, final float m30, final float m31, final float m32,
       final float m33 ) {
 
-      this.resetMatrix();
-      this.applyMatrixImpl(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21,
-         m22, m23, m30, m31, m32, m33);
+      // QUERY: Wouldn't it make more sense to set the camera to the model view
+      // and the camera inverse to the model view inverse, as when you are
+      // updating the camera?
+
+      /*
+       * The parent method is to reset, then apply. This is backwards, reseting
+       * and multiplication should depend on setting, not the other way around.
+       * The point is to avoid matrix multiplication when possible.
+       */
+
+      /* @formatter:off */
+      this.camera.set(
+         1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f,
+         0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f, 0.0f, 0.0f, 1.0f);
+      this.cameraInv.set(
+         1.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f,
+         0.0f, 0.0f, 1.0f, 0.0f,
+         0.0f, 0.0f, 0.0f, 1.0f);
+
+      this.modelview.set(
+         m00, m01, m02, m03,
+         m10, m11, m12, m13,
+         m20, m21, m22, m23,
+         m30, m31, m32, m33);
+      PMatAux.inverse(this.modelview, this.modelviewInv);
+      /* @formatter:on */
+
+      PMatAux.mul(this.projection, this.modelview, this.projmodelview);
+
+      /* These loose variables are affected by the camera reset. */
+      this.cameraX = 0.0f;
+      this.cameraY = 0.0f;
+      this.cameraZ = 0.0f;
+      this.eyeDist = 0.0f;
    }
 
    /**
@@ -2271,8 +2308,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    public void transform ( final Transform2 tr2, final TransformOrder order ) {
 
-      final Vec2 dim = tr2.getScale(this.tr2Scale);
-      final Vec2 loc = tr2.getLocation(this.tr2Loc);
+      final Vec2 dim = tr2.getScale(new Vec2());
+      final Vec2 loc = tr2.getLocation(new Vec2());
       final float angle = tr2.getRotation();
 
       switch ( order ) {
@@ -2793,72 +2830,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Draws the OpenGL implementation of the arc function using a curve and
-    * transform.
-    *
-    * @param curve   the arc curve
-    * @param tr2     the transform
-    * @param trOrder the transform order
-    */
-   protected void arcImpl ( final Curve2 curve, final Transform2 tr2,
-      final TransformOrder trOrder ) {
-
-      Knot2 currKnot = null;
-      Knot2 prevKnot = null;
-      Vec2 coord = null;
-      Vec2 foreHandle = null;
-      Vec2 rearHandle = null;
-
-      // TODO: Make a drawCurve2, drawCurve3, then refactor this?
-
-      final Iterator < Knot2 > itr = curve.iterator();
-      prevKnot = itr.next();
-      coord = prevKnot.coord;
-
-      final float oldSw = this.strokeWeight;
-      final float swLine = oldSw / Transform2.minDimension(tr2);
-
-      this.pushStyle();
-      this.strokeWeight(swLine);
-
-      this.pushMatrix();
-      this.transform(tr2, trOrder);
-
-      this.beginShape(PConstants.POLYGON);
-      this.normalPerShape(0.0f, 0.0f, 1.0f);
-      this.vertexImpl(coord.x, coord.y, 0.0f, this.textureU, this.textureV);
-
-      while ( itr.hasNext() ) {
-
-         currKnot = itr.next();
-         foreHandle = prevKnot.foreHandle;
-         rearHandle = currKnot.rearHandle;
-         coord = currKnot.coord;
-
-         this.bezierVertexImpl(foreHandle.x, foreHandle.y, 0.0f, rearHandle.x,
-            rearHandle.y, 0.0f, coord.x, coord.y, 0.0f);
-
-         prevKnot = currKnot;
-      }
-
-      if ( curve.closedLoop ) {
-         currKnot = curve.getFirst();
-         foreHandle = prevKnot.foreHandle;
-         rearHandle = currKnot.rearHandle;
-         coord = currKnot.coord;
-
-         this.bezierVertexImpl(foreHandle.x, foreHandle.y, 0.0f, rearHandle.x,
-            rearHandle.y, 0.0f, coord.x, coord.y, 0.0f);
-         this.endShape(PConstants.CLOSE);
-      } else {
-         this.endShape(PConstants.OPEN);
-      }
-
-      this.popMatrix();
-      this.popStyle();
-   }
-
-   /**
     * Overrides the default colorCalc function.
     *
     * @param x the first color channel, hue or red
@@ -2922,6 +2893,150 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          this.curveToBezierMatrix);
       PMatAux.mul(this.curveDrawMatrix, this.curveBasisMatrix,
          this.curveDrawMatrix);
+   }
+
+   /**
+    * Draws a curve. A special case to assist with drawing {@link UpOgl#arc}s.
+    *
+    * @param mesh the curve
+    * @param tr   the transform
+    * @param fh   the temporary fore handle
+    * @param rh   the temporary rear handle
+    * @param co   the temporary coordinate
+    */
+   protected void drawCurve2 ( final Curve2 curve ) {
+
+      Vec2 co = null;
+      Vec2 rh = null;
+      Vec2 fh = null;
+
+      final Iterator < Knot2 > itr = curve.iterator();
+      final Knot2 firstKnot = itr.next();
+      co = firstKnot.coord;
+      this.beginShape(PConstants.POLYGON);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
+      this.vertexImpl(co.x, co.y, 0.0f, this.textureU, this.textureV);
+
+      Knot2 prevKnot = firstKnot;
+      while ( itr.hasNext() ) {
+         final Knot2 currKnot = itr.next();
+
+         fh = prevKnot.foreHandle;
+         rh = currKnot.rearHandle;
+         co = currKnot.coord;
+
+         this.bezierVertexImpl(fh.x, fh.y, 0.0f, rh.x, rh.y, 0.0f, co.x, co.y,
+            0.0f);
+
+         prevKnot = currKnot;
+      }
+
+      if ( curve.closedLoop ) {
+         fh = prevKnot.foreHandle;
+         rh = firstKnot.rearHandle;
+         co = firstKnot.coord;
+
+         this.bezierVertexImpl(fh.x, fh.y, 0.0f, rh.x, rh.y, 0.0f, co.x, co.y,
+            0.0f);
+         this.endShape(PConstants.CLOSE);
+      } else {
+         this.endShape(PConstants.OPEN);
+      }
+   }
+
+   /**
+    * Draws a curve as multiplied by a transform. The supplied temporary
+    * vectors hold the transformed knot coordinates.
+    *
+    * @param mesh the curve
+    * @param tr   the transform
+    * @param fh   the temporary fore handle
+    * @param rh   the temporary rear handle
+    * @param co   the temporary coordinate
+    */
+   protected void drawCurve2 ( final Curve2 curve, final Transform2 tr,
+      final Vec2 fh, final Vec2 rh, final Vec2 co ) {
+
+      final Iterator < Knot2 > itr = curve.iterator();
+
+      final Knot2 firstKnot = itr.next();
+      Transform2.mulPoint(tr, firstKnot.coord, co);
+      this.beginShape(PConstants.POLYGON);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
+      this.vertexImpl(co.x, co.y, 0.0f, this.textureU, this.textureV);
+
+      Knot2 prevKnot = firstKnot;
+      while ( itr.hasNext() ) {
+         final Knot2 currKnot = itr.next();
+
+         Transform2.mulPoint(tr, prevKnot.foreHandle, fh);
+         Transform2.mulPoint(tr, currKnot.rearHandle, rh);
+         Transform2.mulPoint(tr, currKnot.coord, co);
+
+         this.bezierVertexImpl(fh.x, fh.y, 0.0f, rh.x, rh.y, 0.0f, co.x, co.y,
+            0.0f);
+
+         prevKnot = currKnot;
+      }
+
+      if ( curve.closedLoop ) {
+         Transform2.mulPoint(tr, prevKnot.foreHandle, fh);
+         Transform2.mulPoint(tr, firstKnot.rearHandle, rh);
+         Transform2.mulPoint(tr, firstKnot.coord, co);
+
+         this.bezierVertexImpl(fh.x, fh.y, 0.0f, rh.x, rh.y, 0.0f, co.x, co.y,
+            0.0f);
+         this.endShape(PConstants.CLOSE);
+      } else {
+         this.endShape(PConstants.OPEN);
+      }
+   }
+
+   /**
+    * Draws a curve as multiplied by a transform. The supplied temporary
+    * vectors hold the transformed knot coordinates.
+    *
+    * @param mesh the curve
+    * @param tr   the transform
+    * @param fh   the temporary fore handle
+    * @param rh   the temporary rear handle
+    * @param co   the temporary coordinate
+    */
+   protected void drawCurve3 ( final Curve3 curve, final Transform3 tr,
+      final Vec3 fh, final Vec3 rh, final Vec3 co ) {
+
+      final Iterator < Knot3 > itr = curve.iterator();
+
+      final Knot3 firstKnot = itr.next();
+      Transform3.mulPoint(tr, firstKnot.coord, co);
+      this.beginShape(PConstants.POLYGON);
+      this.vertexImpl(co.x, co.y, co.z, this.textureU, this.textureV);
+
+      Knot3 prevKnot = firstKnot;
+      while ( itr.hasNext() ) {
+         final Knot3 currKnot = itr.next();
+
+         Transform3.mulPoint(tr, prevKnot.foreHandle, fh);
+         Transform3.mulPoint(tr, currKnot.rearHandle, rh);
+         Transform3.mulPoint(tr, currKnot.coord, co);
+
+         this.bezierVertexImpl(fh.x, fh.y, fh.z, rh.x, rh.y, rh.z, co.x, co.y,
+            co.z);
+
+         prevKnot = currKnot;
+      }
+
+      if ( curve.closedLoop ) {
+         Transform3.mulPoint(tr, prevKnot.foreHandle, fh);
+         Transform3.mulPoint(tr, firstKnot.rearHandle, rh);
+         Transform3.mulPoint(tr, firstKnot.coord, co);
+
+         this.bezierVertexImpl(fh.x, fh.y, fh.z, rh.x, rh.y, rh.z, co.x, co.y,
+            co.z);
+         this.endShape(PConstants.CLOSE);
+      } else {
+         this.endShape(PConstants.OPEN);
+      }
    }
 
    /**

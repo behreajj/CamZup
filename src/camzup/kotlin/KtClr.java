@@ -238,7 +238,7 @@ public class KtClr extends Color implements Iterable < Float > {
    }
 
    /**
-    * Subtracts the right operand from the instance (mutates the vector in
+    * Subtracts the right operand from the instance (mutates the color in
     * place). For interoperability with Kotlin: <code>a -= b</code> .
     *
     * @param c the right operand
@@ -254,7 +254,7 @@ public class KtClr extends Color implements Iterable < Float > {
    }
 
    /**
-    * Subtracts the right operand from the instance (mutates the vector in
+    * Subtracts the right operand from the instance (mutates the color in
     * place). For interoperability with Kotlin: <code>a -= b</code> .
     *
     * @param c the right operand
@@ -304,8 +304,8 @@ public class KtClr extends Color implements Iterable < Float > {
    }
 
    /**
-    * Adds the right operand to the instance (mutates the vector in place).
-    * For interoperability with Kotlin: <code>a += b</code> .
+    * Adds the right operand to the instance (mutates the color in place). For
+    * interoperability with Kotlin: <code>a += b</code> .
     *
     * @param c the right operand
     *
@@ -320,8 +320,8 @@ public class KtClr extends Color implements Iterable < Float > {
    }
 
    /**
-    * Adds the right operand to the instance (mutates the vector in place).
-    * For interoperability with Kotlin: <code>a += b</code> .
+    * Adds the right operand to the instance (mutates the color in place). For
+    * interoperability with Kotlin: <code>a += b</code> .
     *
     * @param c the right operand
     *
@@ -379,7 +379,7 @@ public class KtClr extends Color implements Iterable < Float > {
 
    /**
     * Assigns the unsigned remainder (<code>mod</code>) of the instance and
-    * the right operand to the instance (mutates the vector in place). For
+    * the right operand to the instance (mutates the color in place). For
     * interoperability with Kotlin: <code>a %= b</code> .
     *
     * @param c the right operand
@@ -397,7 +397,7 @@ public class KtClr extends Color implements Iterable < Float > {
 
    /**
     * Assigns the unsigned remainder (<code>mod</code>) of the instance and
-    * the right operand to the instance (mutates the vector in place). For
+    * the right operand to the instance (mutates the color in place). For
     * interoperability with Kotlin: <code>a %= b</code> .
     *
     * @param c the right operand
