@@ -6,6 +6,7 @@ package camzup.core;
  */
 public interface ISvgWritable {
 
+
    /**
     * Renders the curve as a string containing an SVG element.
     *
@@ -13,19 +14,7 @@ public interface ISvgWritable {
     */
    default String toSvgElm ( ) {
 
-      return this.toSvgElm(Integer.toHexString(System.identityHashCode(this)));
-   }
-
-   /**
-    * Renders the curve as a string containing an SVG element.
-    *
-    * @param id the path id
-    *
-    * @return the SVG string
-    */
-   default String toSvgElm ( final String id ) {
-
-      return this.toSvgElm(id, 1.0f);
+      return this.toSvgElm(1.0f);
    }
 
    /**
@@ -35,12 +24,11 @@ public interface ISvgWritable {
     * parameter. If nonuniform zooming is used, zoom can be an average of
     * width and height or the maximum dimension.
     *
-    * @param id   the path id
     * @param zoom scaling from external transforms
     *
     * @return the SVG string
     */
-   String toSvgElm ( final String id, final float zoom );
+   String toSvgElm ( final float zoom );
 
    /**
     * Renders this object as an SVG string. A default material renders the
@@ -50,8 +38,7 @@ public interface ISvgWritable {
     */
    default String toSvgString ( ) {
 
-      return this.toSvgString(Integer.toHexString(System.identityHashCode(
-         this)), ISvgWritable.DEFAULT_SVG_X_ORIGIN,
+      return this.toSvgString(ISvgWritable.DEFAULT_SVG_X_ORIGIN,
          ISvgWritable.DEFAULT_SVG_Y_ORIGIN, ISvgWritable.DEFAULT_SVG_WIDTH,
          ISvgWritable.DEFAULT_SVG_HEIGHT);
    }
@@ -64,7 +51,6 @@ public interface ISvgWritable {
     * dimensions. The camera scale is set to the shorter edge of the view box,
     * so as to contain the shape.
     *
-    * @param id      the element id
     * @param xOrigin the origin x
     * @param yOrigin the origin y
     * @param width   the width
@@ -72,7 +58,7 @@ public interface ISvgWritable {
     *
     * @return the SVG string
     */
-   default String toSvgString ( final String id, final float xOrigin,
+   default String toSvgString ( final float xOrigin,
       final float yOrigin, final float width, final float height ) {
 
       final float vw = Utils.max(IUtils.EPSILON, width);
@@ -108,7 +94,7 @@ public interface ISvgWritable {
       svgp.append(", -");
       svgp.append(sclStr);
       svgp.append(")\">\n");
-      svgp.append(this.toSvgElm(id, scl));
+      svgp.append(this.toSvgElm(scl));
       svgp.append("</g>\n");
       svgp.append("</svg>");
 
@@ -121,16 +107,15 @@ public interface ISvgWritable {
     * width and height supplied form both the view box dimensions, the
     * translation and the scale of the shape.
     *
-    * @param id     the element id
     * @param origin the origin
     * @param dim    the dimensions
     *
     * @return the SVG string
     */
-   default String toSvgString ( final String id, final Vec2 origin,
+   default String toSvgString ( final Vec2 origin,
       final Vec2 dim ) {
 
-      return this.toSvgString(id, origin.x, origin.y, dim.x, dim.y);
+      return this.toSvgString(origin.x, origin.y, dim.x, dim.y);
    }
 
    /**
@@ -158,5 +143,12 @@ public interface ISvgWritable {
     * {@value IUtils#FIXED_PRINT}.
     */
    int FIXED_PRINT = 6;
+
+   /**
+    * The default fill rule, from the enumeration "evenodd" and "nonzero".
+    * "nonzero" is the SVG specification default.
+    * {@value ISvgWritable#DEFAULT_SVG_FILL_RULE}.
+    */
+   String DEFAULT_SVG_FILL_RULE = "evenodd";
 
 }

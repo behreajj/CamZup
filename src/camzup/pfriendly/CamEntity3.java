@@ -59,8 +59,9 @@ public class CamEntity3 extends Entity3 implements ICamEntity {
       final Vec3 right = new Vec3();
       final Vec3 forward = new Vec3();
       final Vec3 up = new Vec3();
+      final Vec3 loc = new Vec3();
       this.transform.getAxes(right, forward, up);
-      final Vec3 loc = this.transform.getLocation(new Vec3());
+      this.transform.getLocation(loc);
 
       /* Define matrix elements. */
       final float m00 = right.x;

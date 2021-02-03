@@ -165,6 +165,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public YupJ2 ( ) {
 
+      // TODO: Winding rule?
+      // this.gp.setWindingRule(Path2D.WIND_NON_ZERO);
+      // this.gp.setWindingRule(Path2D.WIND_EVEN_ODD);
+
       this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
       this.curveToBezierMatrix = new PMatrix3D();
    }

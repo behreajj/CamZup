@@ -40,12 +40,17 @@ void setup() {
   int len0 = glyCrv.length;
   for (int i = 0; i < len0; ++i) {
     CurveEntity2 glyph = glyCrv[i];
+    //println(glyph.name);
+    for(Curve2 gl : glyph) {
+      println(gl.name);
+    }
     glyph.scaleTo(scl);
   }
 
   int len1 = glyMsh.length;
   for (int j = 0; j < len1; ++j) {
     MeshEntity2 glyph = glyMsh[j];
+    println(glyph.name);
     glyph.scaleTo(scl);
   }
 

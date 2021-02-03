@@ -664,17 +664,16 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Renders the curve as a string containing an SVG element.
     *
-    * @param id   the element id
     * @param zoom scaling transform
     *
     * @return the SVG string
     */
    @Override
-   public String toSvgElm ( final String id, final float zoom ) {
+   public String toSvgElm ( final float zoom ) {
 
       final StringBuilder svgp = new StringBuilder(1024);
       MaterialSolid.defaultSvgMaterial(svgp, zoom);
-      this.toSvgPath(svgp, id);
+      this.toSvgPath(svgp, ISvgWritable.DEFAULT_SVG_FILL_RULE);
       svgp.append("</g>\n");
       return svgp.toString();
    }
@@ -795,21 +794,27 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
    /**
     * Internal helper function to append a curve path to a
-    * {@link StringBuilder}; the id is written to the path's id.
+    * {@link StringBuilder}; the id is written to the path's id. The fill rule
+    * may be either "evenodd" or "nonzero" (default).
     *
-    * @param svgp the string builder
-    * @param id   the path id
+    * @param svgp     the string builder
+    * @param fillRule the fill rule
     *
     * @return the string builder.
     */
-   StringBuilder toSvgPath ( final StringBuilder svgp, final String id ) {
+   StringBuilder toSvgPath ( final StringBuilder svgp,
+      final String fillRule ) {
 
       if ( this.knots.size() < 2 ) { return svgp; }
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       Knot2 prevKnot = itr.next();
       svgp.append("<path id=\"");
-      svgp.append(id);
+      svgp.append(this.name.toLowerCase());
+      svgp.append("\" class=\"");
+      svgp.append(this.getClass().getSimpleName().toLowerCase());
+      svgp.append("\" fill-rule=\"");
+      svgp.append(fillRule);
       svgp.append("\" d=\"M ");
       prevKnot.coord.toSvgString(svgp, ' ');
 
@@ -1670,10 +1675,21 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public static Curve2 polygon ( final int knotCount, final float offsetAngle,
       final float radius, final Curve2 target ) {
 
-      final float off1 = offsetAngle * IUtils.ONE_TAU;
+      /* @formatter:off */
       final int vknct = knotCount < 3 ? 3 : knotCount;
+      switch ( vknct ) {
+         case 3: target.name = "Triangle"; break;
+         case 4: target.name = "Quadrilateral"; break;
+         case 5: target.name = "Pentagon"; break;
+         case 6: target.name = "Hexagon"; break;
+         case 8: target.name = "Octagon"; break;
+         default: target.name = "Polygon";
+      }
+      /* @formatter:on */
+
       target.resize(vknct);
       final float invKnCt = 1.0f / vknct;
+      final float off1 = offsetAngle * IUtils.ONE_TAU;
 
       final Iterator < Knot2 > itr = target.knots.iterator();
       final Knot2 first = itr.next();
@@ -1691,7 +1707,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       }
       Knot2.fromSegLinear(first.coord, prev, first);
 
-      target.name = "Polygon";
       target.closedLoop = true;
       return target;
    }

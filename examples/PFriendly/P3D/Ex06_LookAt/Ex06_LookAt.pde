@@ -40,7 +40,7 @@ void draw() {
   }
 
   Vec3 cmloc = graphics.getLocation(new Vec3());
-  entity.lookAt(cmloc, 0.0175, graphics.handedness());
+  entity.lookAt(cmloc, 0.025, graphics.handedness());
 
   graphics.background(#101010);
   graphics.perspective();

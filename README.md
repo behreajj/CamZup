@@ -6,6 +6,7 @@ Table of Contents
      1. [Installation](#installation)
      2. [Structure](#structure)
      3. [Usage](#usage)
+     4. [Coordinate Systems](#coordinate-systems)
   2. [Differences, Problems](#differences-problems)
      1. [2D & 3D](#2d--3d)
      2. [2D](#2d)
@@ -75,39 +76,61 @@ More experienced coders may wish to use [createGraphics](https://processing.org/
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-YupJ2 rndr;
+YupJ2 graphics;
 
 void settings() {
   size(128, 128, YupJ2.PATH_STR);
 }
 
 void setup() {
-  rndr = (YupJ2)getGraphics();
+  frameRate(60.0);
+  graphics = (YupJ2)getGraphics();
 }
 ```
 
 Both `createGraphics` and `getGraphics` return `PGraphics`; the result needs to be cast to the specific renderer. The benefit of accessing Cam Z-Up renderers directly, rather than through `PApplet` functions, is that the renderers offer convenience functions. For example, in the following snippet,
 
 ```java
-rndr.beginDraw();
-rndr.background();
-rndr.stroke();
-rndr.ellipse(new Vec2(), new Vec2(25.0, 25.0));
-rndr.endDraw();
+graphics.beginDraw();
+graphics.background();
+graphics.stroke();
+graphics.ellipse(new Vec2(), new Vec2(25.0, 25.0));
+graphics.endDraw();
 ```
 
 `background` and `stroke` use default colors, while `ellipse` and `image` support `Vec2` arguments.
 
-## Differences, Problems
+### Coordinate Systems
 
-![Polar Coordinates](data/radialDiagram.png)
+Flipping the y axis changes the default rotational direction of a positive angle from clockwise to counter-clockwise.
+
+![Polar Coordinates](data/polarDiagram.png)
+
+This can be crucial when working with signed angles, such as those returned from `Vec2.headingSigned` or `Utils.atan2`, when it's important to understand the relationship between polar coordinates and the four quadrants of the Cartesian coordinate plane.
+
+![Quadrants](data/quadrantsDiagram.png)
+
+Signed angles can be converted to unsigned angles with [floor modulo](https://en.wikipedia.org/wiki/Modulo_operation), `mod`. This should not be confused with truncation modulo, `fmod`. In Processing's Java mode, `%` is truncation modulo; in Python mode, `%` is floor modulo.
+
+Vertex winding is also affected. Below, a piecemeal Bezier curve is used to approximate a circle. The central contour uses the opposite (clockwise) vertex winding.
+
+![Winding](data/windingDiagram.png)
+
+In 3D, the orientation of a spherical coordinate system will depend on the up axis. For z-up, the equator of a spherical system will rest on the camera's horizon; for y-up, the poles will rest on the camera's horizon. The image below shows z-up.
+
+![Spherical Coordinates](data/sphericalDiagram.png)
+
+Negative inclinations, in the range [`-PI / 2.0`, `0.0`] will fall beneath the equator; positive inclinations, in the range [`0.0`, `PI / 2.0`], will fall above the equator. An inclination of `-PI / 2.0` will return the South pole; an inclination of `PI / 2.0` will return the North pole. A positive azimuth will head East from the prime meridian; a negative azimuth will head West.
+
+In OpenGL renderers, texture coordinates default to `NORMAL` [textureMode](https://processing.org/reference/textureMode_.html). `IMAGE` is not supported. This is for three reasons: (1.) the belief that `IMAGE` is _harder_, not easier, to understand; (2.) recognition that `NORMAL` is standard; (3.) methods in `PGraphicsOpenGL` interfere with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT` and cannot be overidden by this library.
+
+## Differences, Problems
 
 Here is a brief list of issues with this library and differences which may be unexpected. Some are unresolved bugs, some arise from the design philosophy of the library.
 
 ### 2D & 3D
-  - Flipping axes changes the default rotational direction of a positive angle from clockwise to counter-clockwise.
-  - [textureMode](https://processing.org/reference/textureMode_.html) `IMAGE` is not supported by OpenGL renderers; `NORMAL` is the default. This is for three reasons: (1.) the belief that `IMAGE` is _harder_, not easier, to understand; (2.) recognition that `NORMAL` is standard; (3.) redundant operations in `PGraphicsOpenGL` that interfere with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT` and cannot be overidden by this library.
-  - In making this conversion, support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.
+  
+  - Support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.
   - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles. It no longer responds to [ellipseMode](https://processing.org/reference/ellipseMode_.html); `RADIUS` is the default behavior. When given nonuniform scales, the minimum is taken.
   - The [PShape](https://processing.org/reference/PShape.html) interface has numerous problems stemming from both its implementation and its design. I encourage using `Curve` and `Mesh` objects.
   - [textMode](https://processing.org/reference/textMode_.html) `SHAPE` is not supported. However you can retrieve glyph outlines from a [PFont](https://processing.org/reference/PFont.html) with the `TextShape` class from the `pfriendly` package. (Reminder: the `PFont` needs to be loaded with [createFont](https://processing.org/reference/createFont_.html)).
@@ -121,7 +144,6 @@ Here is a brief list of issues with this library and differences which may be un
   - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), `ellipseMode` and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with this library. For that reason, `CENTER` is the default alignment.
   
 ### 3D
-  - A z-up axis changes the relationship between a 2D vector's polar coordinates and a 3D vector's spherical coordinates: a 3D vector's azimuth matches a 2D vector's heading.
   - Neither 3D primitive, the [sphere](https://processing.org/reference/sphere_.html) nor the [box](https://processing.org/reference/box_.html), are supported; use `MeshEntity`s instead.
   - A `Mesh3` material may not have both a fill and a stroke due to flickering in [perspective](https://processing.org/reference/perspective_.html) cameras.
 
@@ -135,7 +157,7 @@ With the exception of creating nullable objects, the goal of this library is to 
 - `Utils.acos` and `Utils.asin` clamp the input value to the range `-1.0` to `1.0` so as to avoid exceptions.
 - As with Python, JavaScript and OSL, `x != 0` is `true`; `true` is `1` and `false` is `0`.
 - Where possible, `Vec2`, `Vec3` and `Vec4` parallel GLSL's `bvec`. Examples include: `Vec2 c = Vec2.lt(new Vec2(false, true), new Vec2(true, true));` and `boolean d = Vec2.any(c);`.
-- For [modulo operations](https://en.wikipedia.org/wiki/Modulo_operation), I follow the GLSL convention of distinguishing `mod` from `fmod`. `fmod` is based on `trunc`, where `fmod(a, b) := a - b * trunc(a / b)`; `mod`, on `floor`, where `mod(a, b) := a - b * floor(a / b)`. In Java, JavaScript and Kotlin, the `%` operator is `fmod`; in Python, the `%` operator is `mod`.
+
 - As with shader languages, I try to protect against divide-by-zero errors whenever possible. Though mathematically incorrect, `div(x, 0.0) = 0.0` ; in consequence `fmod(x, 0.0)` and `mod(x, 0.0)` return `x`.
 - The [linear interpolation](https://en.wikipedia.org/wiki/Linear_interpolation) (`lerp`) method in this library uses the formula `(1.0 - t) * a + t * b`, not `a + t * (b - a)`. Processing uses the latter. Furthermore, Processing's `lerp` is unclamped by default. This library Includes a clamped and unclamped version of `lerp`; clamped is assumed to be the default.
 - I break with GLSL convention when it comes to easing functions. The step provided to easing functions is always a scalar (a `float`). There are no `step`, `smoothstep` and `linearstep` functions which generate the step to be supplied to `mix`. `mix` is, however, is defined in relevant classes.

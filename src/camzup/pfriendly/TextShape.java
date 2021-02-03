@@ -187,7 +187,8 @@ public abstract class TextShape {
             // float xoff = 0.0f;
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
-               final CurveEntity2 entity = new CurveEntity2();
+               final String name = Character.toString(character);
+               final CurveEntity2 entity = new CurveEntity2(name);
                TextShape.processGlyphCurve(font, frc, at, detail, character,
                   entity.curves);
                entities.add(entity);
@@ -197,7 +198,8 @@ public abstract class TextShape {
 
          } else {
 
-            final CurveEntity2 entity = new CurveEntity2();
+            final String name = new String(characters);
+            final CurveEntity2 entity = new CurveEntity2(name);
             TextShape.processGlyphCurve(font, frc, ( AffineTransform ) null,
                detail, characters, entity.curves);
             entities.add(entity);
@@ -240,7 +242,8 @@ public abstract class TextShape {
 
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
-               final CurveEntity2 entity = new CurveEntity2();
+               final String name = Character.toString(character);
+               final CurveEntity2 entity = new CurveEntity2(name);
                TextShape.processGlyphCurve(font, frc, at, detail, character,
                   entity.curves);
                entities.add(entity);
@@ -248,7 +251,8 @@ public abstract class TextShape {
 
          } else {
 
-            final CurveEntity2 entity = new CurveEntity2();
+            final String name = new String(characters);
+            final CurveEntity2 entity = new CurveEntity2(name);
             TextShape.processGlyphCurve(font, frc, ( AffineTransform ) null,
                detail, characters, entity.curves);
             entities.add(entity);
@@ -316,6 +320,8 @@ public abstract class TextShape {
          Curve2 > curves ) {
 
       final GlyphVector gv = font.createGlyphVector(frc, characters);
+      // final int numGlyphs = gv.getNumGlyphs();
+      final String namePrefix = new String(characters) + ".";
       final Shape shp = gv.getOutline();
 
       /*
@@ -341,6 +347,7 @@ public abstract class TextShape {
       Curve2 currCurve = null;
       Knot2 prevKnot = null;
       Knot2 currKnot = null;
+      int curveCount = 0;
 
       while ( !itr.isDone() ) {
 
@@ -357,7 +364,9 @@ public abstract class TextShape {
                 * be copied to the last knot and then it will be removed.
                 */
 
-               currCurve = new Curve2();
+               final String name = namePrefix + curveCount;
+               currCurve = new Curve2(name);
+               ++curveCount;
                currCurve.closedLoop = true;
                currKnot = new Knot2(( float ) ( itrpts[0] * invScalar ),
                   ( float ) ( -itrpts[1] * invScalar ));
@@ -487,7 +496,9 @@ public abstract class TextShape {
 
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
-               final MeshEntity2 entity = new MeshEntity2();
+
+               final String name = Character.toString(character);
+               final MeshEntity2 entity = new MeshEntity2(name);
                TextShape.processGlyphMesh(font, frc, at, detail, character,
                   entity.meshes);
                entities.add(entity);
@@ -495,7 +506,8 @@ public abstract class TextShape {
 
          } else {
 
-            final MeshEntity2 entity = new MeshEntity2();
+            final String name = new String(characters);
+            final MeshEntity2 entity = new MeshEntity2(name);
             TextShape.processGlyphMesh(font, frc, null, detail, characters,
                entity.meshes);
             entities.add(entity);
@@ -565,6 +577,8 @@ public abstract class TextShape {
          Mesh2 > meshes ) {
 
       final GlyphVector gv = font.createGlyphVector(frc, characters);
+      // final int numGlyphs = gv.getNumGlyphs();
+      final String namePrefix = new String(characters) + ".";
       final Shape shp = gv.getOutline();
       final float vdetail = Utils.min(IUtils.EPSILON, detail);
       final PathIterator itr = shp.getPathIterator(transform, vdetail);
@@ -572,6 +586,7 @@ public abstract class TextShape {
       final float fontSize = font.getSize2D();
       final double invScalar = fontSize == 0.0f ? 1.0d : 1.0d / fontSize;
 
+      int meshCount = 0;
       Mesh2 currMesh = null;
       final ArrayList < Vec2 > currMeshPts = new ArrayList <>();
       Vec2 currPt = null;
@@ -589,7 +604,9 @@ public abstract class TextShape {
 
             case PathIterator.SEG_MOVETO:
 
-               currMesh = new Mesh2();
+               final String name = namePrefix + meshCount;
+               currMesh = new Mesh2(name);
+               ++meshCount;
 
                currPt = new Vec2(( float ) ( itrpts[0] * invScalar ),
                   ( float ) ( -itrpts[1] * invScalar ));

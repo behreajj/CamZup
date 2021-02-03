@@ -523,6 +523,8 @@ public class MaterialSolid extends Material {
          .div(this.strokeWeight, scale)), 6);
       svgp.append("id=\"");
       svgp.append(this.name);
+      svgp.append("\" class=\"");
+      svgp.append(this.getClass().getSimpleName().toLowerCase());
       svgp.append('\"');
       svgp.append(' ');
 
@@ -612,7 +614,7 @@ public class MaterialSolid extends Material {
       final String strokeStr = Utils.toFixed(Utils.max(IUtils.EPSILON, Utils
          .div(IUp.DEFAULT_STROKE_WEIGHT, scale)), 6);
 
-      svgp.append("<g id=\"material\" stroke-width=\"");
+      svgp.append("<g id=\"defaultmaterial\" stroke-width=\"");
       svgp.append(strokeStr);
       svgp.append("\" stroke-opacity=\"1.0\" stroke=\"");
       svgp.append(Color.toHexWeb(IUp.DEFAULT_STROKE_COLOR));

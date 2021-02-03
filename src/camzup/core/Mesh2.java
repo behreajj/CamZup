@@ -1739,17 +1739,16 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Renders the curve as a string containing an SVG element.
     *
-    * @param id   the element id
     * @param zoom scaling transform
     *
     * @return the SVG string
     */
    @Override
-   public String toSvgElm ( final String id, final float zoom ) {
+   public String toSvgElm ( final float zoom ) {
 
       final StringBuilder svgp = new StringBuilder(1024);
       MaterialSolid.defaultSvgMaterial(svgp, zoom);
-      this.toSvgPath(svgp, id);
+      this.toSvgPath(svgp, ISvgWritable.DEFAULT_SVG_FILL_RULE);
       svgp.append("</g>\n");
       return svgp.toString();
    }
@@ -1979,26 +1978,35 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Internal helper function to append a mesh path to a
-    * {@link StringBuilder}; the id is written to the path's id.
+    * {@link StringBuilder}; the id is written to the path's id. The fill rule
+    * may be either "evenodd" or "nonzero" (default).
     *
-    * @param svgp the string builder
-    * @param id   the path id
+    * @param svgp     the string builder
+    * @param id       the path id
+    * @param fillRule the fill rule
     *
     * @return the string builder.
     */
-   StringBuilder toSvgPath ( final StringBuilder svgp, final String id ) {
+   StringBuilder toSvgPath ( final StringBuilder svgp,
+      final String fillRule ) {
 
       final int[][][] fs = this.faces;
       final Vec2[] vs = this.coords;
       final int fsLen = fs.length;
-      final String iddot = id + ".";
 
+      svgp.append("<g id=\"");
+      svgp.append(this.name.toLowerCase());
+      svgp.append("\" class=\"");
+      svgp.append(this.getClass().getSimpleName().toLowerCase());
+      svgp.append("\">");
       for ( int i = 0; i < fsLen; ++i ) {
          final int[][] f = fs[i];
          final int fLen = f.length;
 
          svgp.append("<path id=\"");
-         svgp.append(iddot + Utils.toPadded(i, 3));
+         svgp.append("face." + Utils.toPadded(i, 3));
+         svgp.append("\" fill-rule=\"");
+         svgp.append(fillRule);
          svgp.append("\" d=\"M ");
          vs[f[0][0]].toSvgString(svgp, ' ');
          svgp.append(' ');
@@ -2012,6 +2020,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          svgp.append("Z\"></path>\n");
       }
+      svgp.append("</g>\n");
 
       return svgp;
    }
@@ -2292,8 +2301,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public static Mesh2 circle ( final Mesh2 target ) {
 
-      return Mesh2.polygon(IMesh.DEFAULT_CIRCLE_SECTORS,
+      Mesh2.polygon(IMesh.DEFAULT_CIRCLE_SECTORS,
          Mesh2.DEFAULT_POLY_TYPE, target);
+      target.name = "Circle";
+      return target;
    }
 
    /**
@@ -2308,7 +2319,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public static Mesh2 circle ( final PolyType poly, final Mesh2 target ) {
 
-      return Mesh2.polygon(IMesh.DEFAULT_CIRCLE_SECTORS, poly, target);
+      Mesh2.polygon(IMesh.DEFAULT_CIRCLE_SECTORS, poly, target);
+      target.name = "Circle";
+      return target;
    }
 
    /**
@@ -2382,6 +2395,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public static Mesh2[] detachFaces ( final Mesh2 source ) {
 
+      final String namePrefix = source.name + ".";
       final int[][][] fsSrc = source.faces;
       final Vec2[] vsSrc = source.coords;
       final Vec2[] vtsSrc = source.texCoords;
@@ -2408,7 +2422,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             fTrg[j][1] = j;
          }
 
-         meshes[i] = new Mesh2(fsTrg, vsTrg, vtsTrg);
+         Mesh2 mesh = new Mesh2(fsTrg, vsTrg, vtsTrg);
+         mesh.name = namePrefix + Utils.toPadded(i, 3);
+         meshes[i] = mesh;
       }
 
       return meshes;
@@ -2499,6 +2515,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public static Mesh2 gridHex ( final int rings, final float cellRadius,
       final float margin, final Mesh2 target ) {
+
+      target.name = "Grid.Hexagon";
 
       final int vRings = rings < 1 ? 1 : rings;
       final float vRad = Utils.max(IUtils.EPSILON, cellRadius);
@@ -2976,9 +2994,18 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
        * up and can impact SVG rendering.
        */
 
-      target.name = "Polygon";
-
+      /* @formatter:off */
       final int seg = sectors < 3 ? 3 : sectors;
+      switch ( seg ) {
+         case 3: target.name = "Triangle"; break;
+         case 4: target.name = "Quadrilateral"; break;
+         case 5: target.name = "Pentagon"; break;
+         case 6: target.name = "Hexagon"; break;
+         case 8: target.name = "Octagon"; break;
+         default: target.name = "Polygon";
+      }
+      /* @formatter:on */
+
       final int newLen = poly == PolyType.NGON ? seg : poly == PolyType.QUAD
          ? seg + seg + 1 : seg + 1;
       final double toTheta = IUtils.TAU_D / seg;

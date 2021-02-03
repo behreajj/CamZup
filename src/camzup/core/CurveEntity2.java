@@ -608,30 +608,27 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
     * parameter. If nonuniform zooming is used, zoom can be an average of
     * width and height or the maximum dimension.
     *
-    * @param id   the curve id prefix
     * @param zoom scaling from external transforms
     *
     * @return the string
     */
    @Override
-   public String toSvgElm ( final String id, final float zoom ) {
+   public String toSvgElm ( final float zoom ) {
 
-      return this.toSvgElm(id, zoom, new MaterialSolid[] {});
+      return this.toSvgElm(zoom, new MaterialSolid[] {});
    }
 
    /**
     * Creates a string representing a group node in the SVG format.
     *
-    * @param id       the curve id prefix
     * @param zoom     scaling from external transforms
     * @param material the material to use
     *
     * @return the string
     */
-   public String toSvgElm ( final String id, final float zoom,
-      final MaterialSolid material ) {
+   public String toSvgElm ( final float zoom, final MaterialSolid material ) {
 
-      return this.toSvgElm(id, zoom, new MaterialSolid[] { material });
+      return this.toSvgElm(zoom, new MaterialSolid[] { material });
    }
 
    /**
@@ -642,18 +639,19 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
     * parameter. If nonuniform zooming is used, zoom can be an average of
     * width and height or the maximum dimension.
     *
-    * @param id        the curve id prefix
     * @param zoom      scaling from external transforms
     * @param materials the array of materials
     *
     * @return the string
     */
-   public String toSvgElm ( final String id, final float zoom,
+   public String toSvgElm ( final float zoom,
       final MaterialSolid[] materials ) {
 
       final StringBuilder svgp = new StringBuilder(1024);
       svgp.append("<g id=\"");
       svgp.append(this.name.toLowerCase());
+      svgp.append("\" class=\"");
+      svgp.append(this.getClass().getSimpleName().toLowerCase());
       svgp.append('\"');
       svgp.append(' ');
       svgp.append(this.transform.toSvgString());
@@ -671,8 +669,8 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       /* If no materials are present, use a default instead. */
       if ( !includesMats ) { MaterialSolid.defaultSvgMaterial(svgp, scale); }
 
-      int i = 0;
-      final String iddot = id + ".";
+      // int i = 0;
+      // final String iddot = id + ".";
       final Iterator < Curve2 > curveItr = this.curves.iterator();
       while ( curveItr.hasNext() ) {
          final Curve2 curve = curveItr.next();
@@ -692,8 +690,8 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
             svgp.append('\n');
          }
 
-         curve.toSvgPath(svgp, iddot + Utils.toPadded(i, 4));
-         ++i;
+         curve.toSvgPath(svgp, ISvgWritable.DEFAULT_SVG_FILL_RULE);
+         // ++i;
 
          /* Close out material group. */
          if ( includesMats ) { svgp.append("</g>\n"); }

@@ -4,7 +4,7 @@ import camzup.pfriendly.*;
 int lons = 32;
 Vec3 mouse = new Vec3();
 
-Zup3 rndr;
+Zup3 graphics;
 
 Mesh3 smooth = new Mesh3();
 Mesh3 flat = new Mesh3();
@@ -22,9 +22,9 @@ void settings() {
 }
 
 void setup() {
-  rndr = (Zup3)getGraphics();
+  graphics = (Zup3)getGraphics();
   frameRate(60.0);
-  rndr.textureSampling(TextureSampling.BILINEAR);
+  graphics.textureSampling(TextureSampling.BILINEAR);
 
   txtr = createImage(512, 512, ARGB);
   ZImage.rgb(txtr);
@@ -50,7 +50,7 @@ void setup() {
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
-  rndr.mouse1u(mouse);
+  graphics.mouse1u(mouse);
   lons = Utils.lerp(3, 48, mouse.x);
 
   Mesh3.cone(1.0, 0.5, lons, smooth);
@@ -62,14 +62,14 @@ void draw() {
   me2.rotateY(0.005);
   me3.rotateX(0.005);
 
-  rndr.lights();
-  rndr.ortho();
-  rndr.camera();
-  rndr.background();
+  graphics.lights();
+  graphics.ortho();
+  graphics.camera();
+  graphics.background();
 
-  rndr.shape(me1, textured);
-  rndr.shape(me2, textured);
-  rndr.shape(me3, wire);
+  graphics.shape(me1, textured);
+  graphics.shape(me2, textured);
+  graphics.shape(me3, wire);
 }
 
 void mouseReleased() {
