@@ -537,9 +537,9 @@ public class MaterialSolid extends Material {
          svgp.append("\" stroke=\"");
          svgp.append(Color.toHexWeb(this.stroke));
          svgp.append("\" stroke-linejoin=\"");
-         svgp.append(MaterialSolid.DEFAULT_SVG_STR_JOIN);
+         svgp.append(ISvgWritable.DEFAULT_STR_JOIN);
          svgp.append("\" stroke-linecap=\"");
-         svgp.append(MaterialSolid.DEFAULT_SVG_STR_CAP);
+         svgp.append(ISvgWritable.DEFAULT_STR_CAP);
          svgp.append('\"');
          svgp.append(' ');
       } else {
@@ -560,16 +560,6 @@ public class MaterialSolid extends Material {
    }
 
    /**
-    * Default stroke cap to use when rendering to an SVG.
-    */
-   public static final String DEFAULT_SVG_STR_CAP = "round";
-
-   /**
-    * Default stroke join to use when rendering to an SVG.
-    */
-   public static final String DEFAULT_SVG_STR_JOIN = "round";
-
-   /**
     * Default material to use in Blender code conversion when an entity does
     * not have one.
     *
@@ -582,7 +572,7 @@ public class MaterialSolid extends Material {
 
       final Color c = Color.fromHex(IUp.DEFAULT_FILL_COLOR, new Color());
       pyCd.append("{\"name\": \"");
-      pyCd.append("Material");
+      pyCd.append("CamZupDefault");
       pyCd.append("\", \"fill\": ");
       c.toBlenderCode(pyCd, gamma, true);
       pyCd.append(", \"metallic\": 0.0");
@@ -621,9 +611,9 @@ public class MaterialSolid extends Material {
       svgp.append("\" fill-opacity=\"1.0\" fill=\"");
       svgp.append(Color.toHexWeb(IUp.DEFAULT_FILL_COLOR));
       svgp.append("\" stroke-linejoin=\"");
-      svgp.append(MaterialSolid.DEFAULT_SVG_STR_JOIN);
+      svgp.append(ISvgWritable.DEFAULT_STR_JOIN);
       svgp.append("\" stroke-linecap=\"");
-      svgp.append(MaterialSolid.DEFAULT_SVG_STR_CAP);
+      svgp.append(ISvgWritable.DEFAULT_STR_CAP);
       svgp.append("\">\n");
       return svgp;
    }

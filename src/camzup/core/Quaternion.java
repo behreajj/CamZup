@@ -2136,9 +2136,10 @@ public class Quaternion implements Comparable < Quaternion > {
       public Quaternion apply ( final Quaternion origin, final Quaternion dest,
          final Float step, final Quaternion target ) {
 
-         if ( step <= 0.0f ) { return Quaternion.normalize(origin, target); }
-         if ( step >= 1.0f ) { return Quaternion.normalize(dest, target); }
-         return this.applyUnclamped(origin, dest, step, target);
+         final float tf = step;
+         if ( tf <= 0.0f ) { return Quaternion.normalize(origin, target); }
+         if ( tf >= 1.0f ) { return Quaternion.normalize(dest, target); }
+         return this.applyUnclamped(origin, dest, tf, target);
       }
 
       /**
@@ -2174,11 +2175,6 @@ public class Quaternion implements Comparable < Quaternion > {
     * interpolation (lerp).
     */
    public static class Lerp extends AbstrEasing {
-
-      /**
-       * The default constructor.
-       */
-      public Lerp ( ) {}
 
       /**
        * Eases between the origin and destination quaternion by a step.
@@ -2233,11 +2229,6 @@ public class Quaternion implements Comparable < Quaternion > {
     * .
     */
    public static class Slerp extends AbstrEasing {
-
-      /**
-       * The default constructor.
-       */
-      public Slerp ( ) {}
 
       /**
        * Eases between two quaternions by a step.

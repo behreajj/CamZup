@@ -3303,9 +3303,10 @@ public class Vec3 implements Comparable < Vec3 > {
       public Vec3 apply ( final Vec3 origin, final Vec3 dest, final Float step,
          final Vec3 target ) {
 
-         if ( step <= 0.0f ) { return target.set(origin); }
-         if ( step >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, step, target);
+         final float tf = step;
+         if ( tf <= 0.0f ) { return target.set(origin); }
+         if ( tf >= 1.0f ) { return target.set(dest); }
+         return this.applyUnclamped(origin, dest, tf, target);
       }
 
       /**
@@ -3335,11 +3336,6 @@ public class Vec3 implements Comparable < Vec3 > {
     * A linear interpolation functional class.
     */
    public static class Lerp extends AbstrEasing {
-
-      /**
-       * The default constructor.
-       */
-      public Lerp ( ) {}
 
       /**
        * Eases between two vectors by a step using the formula (1.0 - t) * a + b
@@ -3372,11 +3368,6 @@ public class Vec3 implements Comparable < Vec3 > {
    public static class SmoothStep extends AbstrEasing {
 
       /**
-       * The default constructor.
-       */
-      public SmoothStep ( ) {}
-
-      /**
        * Applies the function.
        *
        * @param origin the origin vector
@@ -3390,12 +3381,10 @@ public class Vec3 implements Comparable < Vec3 > {
       public Vec3 applyUnclamped ( final Vec3 origin, final Vec3 dest,
          final float step, final Vec3 target ) {
 
-         final double td = step;
-         final double ts = td * td * ( 3.0d - ( td + td ) );
-         final double us = 1.0d - ts;
-         return target.set(( float ) ( us * origin.x + ts * dest.x ),
-            ( float ) ( us * origin.y + ts * dest.y ), ( float ) ( us * origin.z
-               + ts * dest.z ));
+         final float tf = step * step * ( 3.0f - ( step + step ) );
+         final float uf = 1.0f - tf;
+         return target.set(uf * origin.x + tf * dest.x, uf * origin.y + tf
+            * dest.y, uf * origin.z + tf * dest.z);
       }
 
    }
@@ -3450,11 +3439,6 @@ public class Vec3 implements Comparable < Vec3 > {
    public static class SortX extends AbstrComparator {
 
       /**
-       * The default constructor.
-       */
-      public SortX ( ) {}
-
-      /**
        * The compare function.
        *
        * @param a the left comparisand
@@ -3476,11 +3460,6 @@ public class Vec3 implements Comparable < Vec3 > {
    public static class SortY extends AbstrComparator {
 
       /**
-       * The default constructor.
-       */
-      public SortY ( ) {}
-
-      /**
        * The compare function.
        *
        * @param a the left comparisand
@@ -3500,11 +3479,6 @@ public class Vec3 implements Comparable < Vec3 > {
     * Compares two vectors on the z axis.
     */
    public static class SortZ extends AbstrComparator {
-
-      /**
-       * The default constructor.
-       */
-      public SortZ ( ) {}
 
       /**
        * The compare function.

@@ -2872,9 +2872,10 @@ public class Vec2 implements Comparable < Vec2 > {
       public Vec2 apply ( final Vec2 origin, final Vec2 dest, final Float step,
          final Vec2 target ) {
 
-         if ( step <= 0.0f ) { return target.set(origin); }
-         if ( step >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, step, target);
+         final float tf = step;
+         if ( tf <= 0.0f ) { return target.set(origin); }
+         if ( tf >= 1.0f ) { return target.set(dest); }
+         return this.applyUnclamped(origin, dest, tf, target);
       }
 
       /**
@@ -2906,11 +2907,6 @@ public class Vec2 implements Comparable < Vec2 > {
    public static class Lerp extends AbstrEasing {
 
       /**
-       * The default constructor.
-       */
-      public Lerp ( ) {}
-
-      /**
        * Eases between two vectors by a step using the formula (1 - t) * a + b .
        * Promotes the step from a float to a double.
        *
@@ -2925,6 +2921,7 @@ public class Vec2 implements Comparable < Vec2 > {
       public Vec2 applyUnclamped ( final Vec2 origin, final Vec2 dest,
          final float step, final Vec2 target ) {
 
+         // TODO: Factor out doubles.
          final double td = step;
          final double ud = 1.0d - td;
          return target.set(( float ) ( ud * origin.x + td * dest.x ),
@@ -2940,11 +2937,6 @@ public class Vec2 implements Comparable < Vec2 > {
    public static class SmoothStep extends AbstrEasing {
 
       /**
-       * The default constructor.
-       */
-      public SmoothStep ( ) {}
-
-      /**
        * Applies the function.
        *
        * @param origin the origin vector
@@ -2958,11 +2950,10 @@ public class Vec2 implements Comparable < Vec2 > {
       public Vec2 applyUnclamped ( final Vec2 origin, final Vec2 dest,
          final float step, final Vec2 target ) {
 
-         final double td = step;
-         final double ts = td * td * ( 3.0d - ( td + td ) );
-         final double us = 1.0d - ts;
-         return target.set(( float ) ( us * origin.x + ts * dest.x ),
-            ( float ) ( us * origin.y + ts * dest.y ));
+         final float tf = step * step * ( 3.0f - ( step + step ) );
+         final float uf = 1.0f - tf;
+         return target.set(uf * origin.x + tf * dest.x, uf * origin.y + tf
+            * dest.y);
       }
 
    }
@@ -3017,11 +3008,6 @@ public class Vec2 implements Comparable < Vec2 > {
    public static class SortX extends AbstrComparator {
 
       /**
-       * The default constructor.
-       */
-      public SortX ( ) {}
-
-      /**
        * The compare function.
        *
        * @param a the left comparisand
@@ -3041,11 +3027,6 @@ public class Vec2 implements Comparable < Vec2 > {
     * Compares two vectors on the y axis.
     */
    public static class SortY extends AbstrComparator {
-
-      /**
-       * The default constructor.
-       */
-      public SortY ( ) {}
 
       /**
        * The compare function.

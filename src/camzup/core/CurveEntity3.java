@@ -491,7 +491,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
 
       final StringBuilder pyCd = new StringBuilder(2048);
       pyCd.append("from bpy import data as D, context as C\n\n");
-      pyCd.append("curve_entity = {\"name\": \"");
+      pyCd.append("entity_src = {\"name\": \"");
       pyCd.append(this.name);
       pyCd.append("\", \"transform\": ");
       this.transform.toBlenderCode(pyCd);
@@ -507,7 +507,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
       }
 
       pyCd.append("]}\n\ncrv_data = D.curves.new(");
-      pyCd.append("curve_entity[\"name\"]");
+      pyCd.append("entity_src[\"name\"]");
       pyCd.append(", \"CURVE\")\n");
       pyCd.append("crv_data.dimensions = \"3D\"\n");
       pyCd.append("crv_data.fill_mode = \"");
@@ -521,7 +521,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
       pyCd.append('\n');
       pyCd.append("crv_splines = crv_data.splines\n");
       pyCd.append("crv_index = 0\n");
-      pyCd.append("splines_raw = curve_entity[\"curves\"]\n");
+      pyCd.append("splines_raw = entity_src[\"curves\"]\n");
       pyCd.append("for spline_raw in splines_raw:\n");
       pyCd.append("    spline = crv_splines.new(\"BEZIER\")\n");
       pyCd.append("    spline.use_cyclic_u = spline_raw[\"closed_loop\"]\n");
@@ -543,7 +543,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
       pyCd.append("        knt_index += 1\n");
       pyCd.append("    crv_index += 1\n\n");
       pyCd.append("crv_obj = D.objects.new(crv_data.name, crv_data)\n");
-      pyCd.append("tr = curve_entity[\"transform\"]\n");
+      pyCd.append("tr = entity_src[\"transform\"]\n");
       pyCd.append("crv_obj.location = tr[\"location\"]\n");
       pyCd.append("crv_obj.rotation_mode = tr[\"rotation_mode\"]\n");
       pyCd.append("crv_obj.rotation_quaternion = ");

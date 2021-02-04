@@ -90,11 +90,63 @@ public class MaterialAwt extends Material {
    }
 
    /**
+    * Tests this material for equivalence with another object.
+    *
+    * @param obj the object
+    *
+    * @return the evaluation
+    */
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if ( this == obj ) { return true; }
+      if ( !super.equals(obj) ) { return false; }
+      if ( this.getClass() != obj.getClass() ) { return false; }
+      final MaterialAwt other = ( MaterialAwt ) obj;
+      if ( this.sample == null ) {
+         if ( other.sample != null ) { return false; }
+      } else if ( !this.sample.equals(other.sample) ) { return false; }
+      if ( this.stroke == null ) {
+         if ( other.stroke != null ) { return false; }
+      } else if ( !this.stroke.equals(other.stroke) ) { return false; }
+      if ( Float.floatToIntBits(this.strokeWeight) != Float.floatToIntBits(
+         other.strokeWeight) ) {
+         return false;
+      }
+      if ( this.texture == null ) {
+         if ( other.texture != null ) { return false; }
+      } else if ( !this.texture.equals(other.texture) ) { return false; }
+      if ( this.useStroke != other.useStroke ) { return false; }
+      return true;
+   }
+
+   /**
     * Gets the material's texture.
     *
     * @return the texture
     */
    public Image getTexture ( ) { return this.texture; }
+
+   /**
+    * Calculates the hash code for this material.
+    *
+    * @return the hash code
+    */
+   @Override
+   public int hashCode ( ) {
+
+      final int prime = 31;
+      int result = super.hashCode();
+      result = prime * result + ( this.sample == null ? 0 : this.sample
+         .hashCode() );
+      result = prime * result + ( this.stroke == null ? 0 : this.stroke
+         .hashCode() );
+      result = prime * result + Float.floatToIntBits(this.strokeWeight);
+      result = prime * result + ( this.texture == null ? 0 : this.texture
+         .hashCode() );
+      result = prime * result + ( this.useStroke ? 1231 : 1237 );
+      return result;
+   }
 
    /**
     * Sets whether or not to use a stroke with a boolean.

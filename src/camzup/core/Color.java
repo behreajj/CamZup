@@ -2293,9 +2293,10 @@ public class Color implements Comparable < Color > {
       public Color apply ( final Color origin, final Color dest,
          final Float step, final Color target ) {
 
-         if ( step <= 0.0f ) { return target.set(origin); }
-         if ( step >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, step, target);
+         final float tf = step;
+         if ( tf <= 0.0f ) { return target.set(origin); }
+         if ( tf >= 1.0f ) { return target.set(dest); }
+         return this.applyUnclamped(origin, dest, tf, target);
       }
 
       /**
@@ -2353,11 +2354,6 @@ public class Color implements Comparable < Color > {
     * Compares two colors by brightness.
     */
    public static class ComparatorBri extends ComparatorHsb {
-
-      /**
-       * The default constructor.
-       */
-      public ComparatorBri ( ) {}
 
       /**
        * The comparison function.
@@ -2418,11 +2414,6 @@ public class Color implements Comparable < Color > {
    public static class ComparatorHue extends ComparatorHsb {
 
       /**
-       * The default constructor.
-       */
-      public ComparatorHue ( ) {}
-
-      /**
        * Executes the comparison.
        *
        * @param a the left comparisand
@@ -2451,11 +2442,6 @@ public class Color implements Comparable < Color > {
    public static class ComparatorSat extends ComparatorHsb {
 
       /**
-       * The default constructor.
-       */
-      public ComparatorSat ( ) {}
-
-      /**
        * Executes the comparison.
        *
        * @param a the left comparisand
@@ -2482,11 +2468,6 @@ public class Color implements Comparable < Color > {
     * Eases the hue in the counter-clockwise direction.
     */
    public static class HueCCW extends HueEasing {
-
-      /**
-       * The default constructor.
-       */
-      public HueCCW ( ) {}
 
       /**
        * Applies the function.
@@ -2520,11 +2501,6 @@ public class Color implements Comparable < Color > {
     * Eases between hues in the clockwise direction.
     */
    public static class HueCW extends HueEasing {
-
-      /**
-       * The default constructor.
-       */
-      public HueCW ( ) {}
 
       /**
        * Applies the function.
@@ -2662,11 +2638,6 @@ public class Color implements Comparable < Color > {
    public static class HueFar extends HueEasing {
 
       /**
-       * The default constructor.
-       */
-      public HueFar ( ) {}
-
-      /**
        * Applies the function.
        *
        * @param origin the origin hue
@@ -2703,11 +2674,6 @@ public class Color implements Comparable < Color > {
    public static class HueNear extends HueEasing {
 
       /**
-       * The default constructor.
-       */
-      public HueNear ( ) {}
-
-      /**
        * Applies the function.
        *
        * @param origin the origin hue
@@ -2742,11 +2708,6 @@ public class Color implements Comparable < Color > {
     * Eases between two colors.
     */
    public static class LerpRgba extends AbstrEasing {
-
-      /**
-       * The default constructor.
-       */
-      public LerpRgba ( ) {}
 
       /**
        * Applies the function.
@@ -2927,11 +2888,6 @@ public class Color implements Comparable < Color > {
     * <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> ) .
     */
    public static class SmoothStepRgba extends AbstrEasing {
-
-      /**
-       * The default constructor.
-       */
-      public SmoothStepRgba ( ) {}
 
       /**
        * Applies the function.

@@ -2265,9 +2265,10 @@ public class Vec4 implements Comparable < Vec4 > {
       public Vec4 apply ( final Vec4 origin, final Vec4 dest, final Float step,
          final Vec4 target ) {
 
-         if ( step <= 0.0f ) { return target.set(origin); }
-         if ( step >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, step, target);
+         final float tf = step;
+         if ( tf <= 0.0f ) { return target.set(origin); }
+         if ( tf >= 1.0f ) { return target.set(dest); }
+         return this.applyUnclamped(origin, dest, tf, target);
       }
 
       /**
@@ -2299,11 +2300,6 @@ public class Vec4 implements Comparable < Vec4 > {
    public static class Lerp extends AbstrEasing {
 
       /**
-       * The default constructor.
-       */
-      public Lerp ( ) {}
-
-      /**
        * Eases between two vectors by a step using the formula (1.0 - t) * a + b
        * . Promotes the step from a float to a double.
        *
@@ -2318,11 +2314,10 @@ public class Vec4 implements Comparable < Vec4 > {
       public Vec4 applyUnclamped ( final Vec4 origin, final Vec4 dest,
          final float step, final Vec4 target ) {
 
-         final double td = step;
-         final double ud = 1.0d - td;
-         return target.set(( float ) ( ud * origin.x + td * dest.x ),
-            ( float ) ( ud * origin.y + td * dest.y ), ( float ) ( ud * origin.z
-               + td * dest.z ), ( float ) ( ud * origin.w + td * dest.w ));
+         final float uf = 1.0f - step;
+         return target.set(uf * origin.x + step * dest.x, uf * origin.y + step
+            * dest.y, uf * origin.z + step * dest.z, uf * origin.w + step
+               * dest.w);
       }
 
    }

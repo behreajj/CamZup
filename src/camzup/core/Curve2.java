@@ -2089,7 +2089,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @param offsetAngle the angular offset
     * @param radius      the radius
-    * @param knotCount   the knot count
+    * @param sectors     the sectors
     * @param xCenter     the x center
     * @param yCenter     the y center
     * @param target      the output curve
@@ -2097,13 +2097,16 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @return the circle
     */
    static Curve2 circle ( final float offsetAngle, final float radius,
-      final int knotCount, final float xCenter, final float yCenter,
+      final int sectors, final float xCenter, final float yCenter,
       final Curve2 target ) {
+
+      // TODO: Change method signature to match Mesh2: sectors first.
 
       /* Since this is called by arc, it also needs to be optimized. */
 
       final float offNorm = offsetAngle * IUtils.ONE_TAU;
-      final int vKnCt = knotCount < 3 ? 3 : knotCount;
+      final int vKnCt = sectors < 3 ? 3 : sectors;
+      // final int vKnCt = Utils.clamp(knotCount, 3, 16);
       target.resize(vKnCt);
       final float invKnCt = 1.0f / vKnCt;
       final float hndlTan = 0.25f * invKnCt;

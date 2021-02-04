@@ -400,7 +400,9 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    @Override
    public Transform2 moveTo ( final Vec2 locNew, final float step ) {
 
-      return this.moveTo(locNew, step, Transform2.EASING.loc);
+      this.locPrev.set(this.location);
+      Vec2.mix(this.locPrev, locNew, step, this.location);
+      return this;
    }
 
    /**
@@ -479,7 +481,36 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    @Override
    public Transform2 rotateTo ( final float radians, final float step ) {
 
-      return this.rotateTo(radians, step, Transform2.EASING.rot);
+      /* Inlined for optimization. */
+      if ( step > 0.0f ) {
+         this.rotPrev = this.rotation;
+
+         if ( step >= 1.0f ) {
+            this.rotation = Utils.modRadians(radians);
+         } else {
+            float a = Utils.modRadians(this.rotation);
+            float b = Utils.modRadians(radians);
+            final float diff = b - a;
+            boolean modResult = false;
+
+            if ( a < b && diff > IUtils.PI ) {
+               a += IUtils.TAU;
+               modResult = true;
+            } else if ( a > b && diff < -IUtils.PI ) {
+               b += IUtils.TAU;
+               modResult = true;
+            }
+
+            this.rotation = ( 1.0f - step ) * a + step * b;
+            if ( modResult ) {
+               this.rotation = Utils.modRadians(this.rotation);
+            }
+         }
+
+         this.updateAxes();
+      }
+
+      return this;
    }
 
    /**
@@ -618,7 +649,8 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    public Transform2 scaleTo ( final Vec2 scaleNew, final float step ) {
 
       if ( Vec2.all(scaleNew) ) {
-         return this.scaleTo(scaleNew, step, Transform2.EASING.scale);
+         this.scalePrev.set(this.scale);
+         Vec2.mix(this.scalePrev, scaleNew, step, this.scale);
       }
 
       return this;
@@ -912,11 +944,6 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    public static final float DEFAULT_RND_SCL_UB = IUtils.SQRT_2;
 
    /**
-    * The default easing function.
-    */
-   private static Easing EASING = new Easing();
-
-   /**
     * Finds the Euclidean distance between the locations of two transforms.
     *
     * @param a the first transform
@@ -1078,16 +1105,6 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    }
 
    /**
-    * Gets the string representation of the default easing function.
-    *
-    * @return the string
-    */
-   public static String getEasingString ( ) {
-
-      return Transform2.EASING.toString();
-   }
-
-   /**
     * Sets a transform to the identity.
     *
     * @param target the output transform
@@ -1221,42 +1238,6 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    public static float minDimension ( final Transform2 t ) {
 
       return Utils.min(t.scale.x, t.scale.y);
-   }
-
-   /**
-    * Mixes two transforms together by a step in [0.0, 1.0] .
-    *
-    * @param origin the original transform
-    * @param dest   the destination transform
-    * @param step   the step
-    * @param target the output transform
-    *
-    * @return the mix
-    *
-    * @see Transform2#EASING
-    */
-   public static Transform2 mix ( final Transform2 origin,
-      final Transform2 dest, final float step, final Transform2 target ) {
-
-      return Transform2.EASING.apply(origin, dest, step, target);
-   }
-
-   /**
-    * Eases an array through a series of transforms according to a step in
-    * [0.0, 1.0] .
-    *
-    * @param frames the frames
-    * @param step   the step
-    * @param target the output transform
-    *
-    * @return the mix
-    *
-    * @see Transform2#EASING
-    */
-   public static Transform2 mix ( final Transform2[] frames, final float step,
-      final Transform2 target ) {
-
-      return Transform2.EASING.apply(frames, step, target);
    }
 
    /**
@@ -1466,16 +1447,6 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    public static Vec2 scaleDelta ( final Transform2 t, final Vec2 target ) {
 
       return Vec2.sub(t.scale, t.scalePrev, target);
-   }
-
-   /**
-    * Sets the default easing function used by the transform.
-    *
-    * @param easing the easing function.
-    */
-   public static void setEasing ( final Transform2.Easing easing ) {
-
-      if ( easing != null ) { Transform2.EASING = easing; }
    }
 
    /**

@@ -440,7 +440,9 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    @Override
    public Transform3 moveTo ( final Vec3 locNew, final float step ) {
 
-      return this.moveTo(locNew, step, Transform3.EASING.loc);
+      this.locPrev.set(this.location);
+      Vec3.mix(this.locPrev, locNew, step, this.location);
+      return this;
    }
 
    /**
@@ -548,7 +550,13 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    @Override
    public Transform3 rotateTo ( final Quaternion rotNew, final float step ) {
 
-      return this.rotateTo(rotNew, step, Transform3.EASING.rot);
+      if ( Quaternion.any(rotNew) ) {
+         this.rotPrev.set(this.rotation);
+         Quaternion.mix(this.rotPrev, rotNew, step, this.rotation);
+         this.updateAxes();
+      }
+
+      return this;
    }
 
    /**
@@ -739,7 +747,8 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    public Transform3 scaleTo ( final Vec3 scaleNew, final float step ) {
 
       if ( Vec3.all(scaleNew) ) {
-         return this.scaleTo(scaleNew, step, Transform3.EASING.scale);
+         this.scalePrev.set(this.scale);
+         Vec3.mix(this.scalePrev, scaleNew, step, this.scale);
       }
 
       return this;
@@ -1031,11 +1040,6 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    public static final float DEFAULT_RND_SCL_UB = IUtils.SQRT_3;
 
    /**
-    * The default easing function.
-    */
-   private static Easing EASING = new Easing();
-
-   /**
     * Finds the Euclidean distance between the locations of two transforms.
     *
     * @param a the first transform
@@ -1204,16 +1208,6 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    }
 
    /**
-    * Gets the string representation of the default easing function.
-    *
-    * @return the string
-    */
-   public static String getEasingString ( ) {
-
-      return Transform3.EASING.toString();
-   }
-
-   /**
     * Sets a transform to the identity.
     *
     * @param target the output transform
@@ -1373,42 +1367,6 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    }
 
    /**
-    * Mixes two transforms together by a step in [0.0, 1.0] .
-    *
-    * @param origin the original transform
-    * @param dest   the destination transform
-    * @param step   the step
-    * @param target the output transform
-    *
-    * @return the mix
-    *
-    * @see Transform3#EASING
-    */
-   public static Transform3 mix ( final Transform3 origin,
-      final Transform3 dest, final float step, final Transform3 target ) {
-
-      return Transform3.EASING.apply(origin, dest, step, target);
-   }
-
-   /**
-    * Eases an array through a series of transforms according to a step in
-    * [0.0, 1.0] .
-    *
-    * @param frames the frames
-    * @param step   the step
-    * @param target the output transform
-    *
-    * @return the mix
-    *
-    * @see Transform3#EASING
-    */
-   public static Transform3 mix ( final Transform3[] frames, final float step,
-      final Transform3 target ) {
-
-      return Transform3.EASING.apply(frames, step, target);
-   }
-
-   /**
     * Multiplies a direction by a transform. This rotates the direction by the
     * transform's rotation.
     *
@@ -1472,12 +1430,23 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
       // Vec3.add(target, t.location, target);
       // return target;
 
-      Quaternion.mulVector(t.rotation, source, target);
+      final Vec3 imag = t.rotation.imag;
+      final float qx = imag.x;
+      final float qy = imag.y;
+      final float qz = imag.z;
+      final float qw = t.rotation.real;
+
+      final float iw = -qx * source.x - qy * source.y - qz * source.z;
+      final float ix = qw * source.x + qy * source.z - qz * source.y;
+      final float iy = qw * source.y + qz * source.x - qx * source.z;
+      final float iz = qw * source.z + qx * source.y - qy * source.x;
+
       final Vec3 sc = t.scale;
       final Vec3 tr = t.location;
-      target.x = target.x * sc.x + tr.x;
-      target.y = target.y * sc.y + tr.y;
-      target.z = target.z * sc.z + tr.z;
+      target.x = ( ix * qw + iz * qy - iw * qx - iy * qz ) * sc.x + tr.x;
+      target.y = ( iy * qw + ix * qz - iw * qy - iz * qx ) * sc.y + tr.y;
+      target.z = ( iz * qw + iy * qx - iw * qz - ix * qy ) * sc.z + tr.z;
+
       return target;
    }
 
@@ -1613,16 +1582,6 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    public static Vec3 scaleDelta ( final Transform3 t, final Vec3 target ) {
 
       return Vec3.sub(t.scale, t.scalePrev, target);
-   }
-
-   /**
-    * Sets the default easing function used by the transform.
-    *
-    * @param easing the easing function.
-    */
-   public static void setEasing ( final Easing easing ) {
-
-      if ( easing != null ) { Transform3.EASING = easing; }
    }
 
    /**

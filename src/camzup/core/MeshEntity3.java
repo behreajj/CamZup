@@ -10,7 +10,7 @@ import java.util.List;
  * meshes.
  */
 public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
-   IVolume3 {
+   IVolume3, IBlenderWritable {
 
    /**
     * The list of meshes held by the entity.
@@ -403,7 +403,8 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * compare how mesh geometry looks in Blender (the control) versus in the
     * library (the test).
     *
-    * @param calcTangents   calculate tangents
+    * @param useAutoSmooth  auto smooth normals
+    * @param autoAngle      auto smooth angle
     * @param materials      the materials
     * @param gamma          color gamma adjustment
     * @param metallic       metallic factor
@@ -415,166 +416,64 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * @return the string
     */
    @Experimental
-   public String toBlenderCode ( final boolean calcTangents,
-      final MaterialSolid[] materials, final float gamma, final float metallic,
-      final float roughness, final float specular, final float clearcoat,
-      final float clearcoatRough ) {
-
-      final boolean addVertGroups = true;
-
-      final boolean includeNormals = true;
-      final boolean includeUvs = true;
-      final boolean useBMesh = includeUvs | includeNormals;
-      final boolean useMaterials = materials != null && materials.length > 0;
+   public String toBlenderCode ( final boolean useAutoSmooth,
+      final float autoAngle, final MaterialSolid[] materials, final float gamma,
+      final float metallic, final float roughness, final float specular,
+      final float clearcoat, final float clearcoatRough ) {
 
       final StringBuilder pyCd = new StringBuilder(2048);
-
-      if ( useBMesh ) { pyCd.append("import bmesh\n"); }
-
-      pyCd.append("from bpy import data as D, context as C\n\n");
-      pyCd.append("mesh_entity = {\"name\": \"");
+      pyCd.append("from bpy import context as C, data as D\nimport bmesh\n\n");
+      pyCd.append("entity_src = {\"name\": \"");
       pyCd.append(this.name);
       pyCd.append("\", \"transform\": ");
       this.transform.toBlenderCode(pyCd);
       pyCd.append(", \"meshes\": [");
 
+      /* Append meshes. */
       final Iterator < Mesh3 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
-         meshItr.next().toBlenderCode(pyCd, includeUvs, includeNormals);
+         meshItr.next().toBlenderCode(pyCd, true, false);
          if ( meshItr.hasNext() ) { pyCd.append(',').append(' '); }
       }
 
+      /* Append materials. */
+      final boolean useMaterials = materials != null && materials.length > 0;
       pyCd.append("], \"materials\": [");
       if ( useMaterials ) {
          final int matLen = materials.length;
          final int matLast = matLen - 1;
-
-         for ( int i = 0; i < matLen; ++i ) {
+         for ( int i = 0; i < matLast; ++i ) {
             materials[i].toBlenderCode(pyCd, gamma, metallic, roughness,
                specular, clearcoat, clearcoatRough);
-            if ( i < matLast ) { pyCd.append(',').append(' '); }
+            pyCd.append(',').append(' ');
          }
+         materials[matLast].toBlenderCode(pyCd, gamma, metallic, roughness,
+            specular, clearcoat, clearcoatRough);
       } else {
          MaterialSolid.defaultBlenderMaterial(pyCd, gamma);
       }
+      pyCd.append("]}\n\n");
 
-      pyCd.append("]}\n\nd_objs = D.objects\n");
-      pyCd.append("parent_obj = d_objs.new(");
-      pyCd.append("mesh_entity[\"name\"], None)\n");
-      pyCd.append("tr = mesh_entity[\"transform\"]\n");
-      pyCd.append("parent_obj.location = tr[\"location\"]\n");
-      pyCd.append("parent_obj.rotation_mode = tr[\"rotation_mode\"]\n");
-      pyCd.append("parent_obj.rotation_quaternion = ");
-      pyCd.append("tr[\"rotation_quaternion\"]\n");
-      pyCd.append("parent_obj.scale = tr[\"scale\"]\n");
-      pyCd.append("parent_obj.empty_display_size = 0.25\n");
-      pyCd.append("scene_objs = C.scene.collection.objects\n");
-      pyCd.append("scene_objs.link(parent_obj)\n\n");
+      this.genParentBoilerPlate(pyCd);
+      this.genMaterialBoilerPlate(pyCd);
+      this.genMeshBoilerPlate(pyCd, useAutoSmooth, autoAngle);
 
-      pyCd.append("materials = mesh_entity[\"materials\"]\n");
-      pyCd.append("d_mats = D.materials\n");
-      pyCd.append("for material in materials:\n");
-      pyCd.append("    fill_clr = material[\"fill\"]\n");
-      pyCd.append("    metal_val = material[\"metallic\"]\n");
-      pyCd.append("    rough_val = material[\"roughness\"]\n\n");
-
-      pyCd.append("    mat_data = d_mats.new(material[\"name\"])\n");
-      pyCd.append("    mat_data.diffuse_color = fill_clr\n");
-      pyCd.append("    mat_data.metallic = metal_val\n");
-      pyCd.append("    mat_data.roughness = rough_val\n");
-      pyCd.append("    mat_data.use_nodes = True\n\n");
-
-      pyCd.append("    node_tree = mat_data.node_tree\n");
-      pyCd.append("    nodes = node_tree.nodes\n");
-      pyCd.append("    pbr = nodes[\"Principled BSDF\"]\n");
-      pyCd.append("    pbr_in = pbr.inputs\n");
-      pyCd.append("    pbr_in[\"Base Color\"].default_value = fill_clr\n");
-      pyCd.append("    pbr_in[\"Metallic\"].default_value = metal_val\n");
-      pyCd.append("    pbr_in[\"Roughness\"].default_value = rough_val\n");
-      pyCd.append("    specular = pbr_in[\"Specular\"]\n");
-      pyCd.append("    specular.default_value = material[\"specular\"]\n");
-      pyCd.append("    clearcoat = pbr_in[\"Clearcoat\"]\n");
-      pyCd.append("    clearcoat.default_value = material[\"clearcoat\"]\n");
-      pyCd.append("    cr = pbr_in[\"Clearcoat Roughness\"]\n");
-      pyCd.append("    cr.default_value = ");
-      pyCd.append("material[\"clearcoat_roughness\"]\n\n");
-
-      pyCd.append("meshes = mesh_entity[\"meshes\"]\n");
-      pyCd.append("d_meshes = D.meshes\n");
-      pyCd.append("for mesh in meshes:\n");
-      pyCd.append("    name = mesh[\"name\"]\n");
-      pyCd.append("    vert_dat = mesh[\"vertices\"]\n");
-      pyCd.append("    fc_idcs = mesh[\"faces\"]\n");
-      pyCd.append("    mesh_data = d_meshes.new(name)\n");
-      pyCd.append("    mesh_data.from_pydata(vert_dat, [], fc_idcs)\n");
-      pyCd.append("    mesh_data.validate(verbose=True)\n\n");
-
-      if ( useBMesh ) {
-         pyCd.append("    bm = bmesh.new()\n");
-         pyCd.append("    bm.from_mesh(mesh_data)\n");
-
-         if ( includeUvs ) {
-            pyCd.append("    uv_dat = mesh[\"uvs\"]\n");
-            pyCd.append("    uv_idcs = mesh[\"uv_indices\"]\n");
-            pyCd.append("    uv_layer = bm.loops.layers.uv.verify()\n");
-            pyCd.append("    for face in bm.faces:\n");
-            pyCd.append("        bmfcidx = face.index\n");
-            pyCd.append("        faceuvidcs = uv_idcs[bmfcidx]\n");
-            pyCd.append("        for i, loop in enumerate(face.loops):\n");
-            pyCd.append("            bmvt = loop[uv_layer]\n");
-            pyCd.append("            bmvt.uv = uv_dat[faceuvidcs[i]]\n");
-         }
-
-         if ( includeNormals ) {
-            pyCd.append("    nrm_dat = mesh[\"normals\"]\n");
-            pyCd.append("    nrm_idcs = mesh[\"normal_indices\"]\n");
-            pyCd.append("    for face in bm.faces:\n");
-            pyCd.append("        face.smooth = True\n");
-            pyCd.append("        bmfcidx = face.index\n");
-            pyCd.append("        facenrmidcs = nrm_idcs[bmfcidx]\n");
-            pyCd.append("        for i, vert in enumerate(face.verts):\n");
-            pyCd.append("            vert.normal = nrm_dat[facenrmidcs[i]]\n");
-         }
-
-         if ( calcTangents ) {
-            pyCd.append("    bmesh.ops.triangulate(bm, faces=bm.faces,");
-            pyCd.append(" quad_method=\"FIXED\",");
-            pyCd.append(" ngon_method=\"EAR_CLIP\")\n");
-         }
-
-         pyCd.append("    bm.to_mesh(mesh_data)\n");
-         pyCd.append("    bm.free()\n\n");
-      }
-
-      if ( includeUvs && calcTangents ) {
-         pyCd.append("    mesh_data.calc_tangents()\n");
-      }
-
+      /* Add materials to mesh data. */
+      pyCd.append("    md_mats = mesh_data.materials\n");
+      pyCd.append("    md_mats.clear()\n");
       if ( useMaterials ) {
-         pyCd.append("    idx = mesh[\"material_index\"]\n");
-         pyCd.append("    mat_name = materials[idx][\"name\"]\n");
-         pyCd.append("    mesh_data.materials.append(d_mats[mat_name])\n");
+         pyCd.append("    mat_idx = mesh[\"material_index\"]\n");
+         pyCd.append("    mat_name = materials[mat_idx][\"name\"]\n");
       } else {
-         pyCd.append("    mesh_data.materials.append(d_mats[0])\n");
+         pyCd.append("    mat_name = materials[0][\"name\"]\n");
       }
+      pyCd.append("    md_mats.append(d_mats[mat_name])\n");
 
-      pyCd.append("    mesh_obj = d_objs.new(name, mesh_data)\n");
+      /* Create mesh object. */
+      pyCd.append("    mesh_obj = d_objs.new(mesh_data.name, mesh_data)\n");
       pyCd.append("    mesh_obj.rotation_mode = \"QUATERNION\"\n");
       pyCd.append("    mesh_obj.parent = parent_obj\n");
       pyCd.append("    scene_objs.link(mesh_obj)\n\n");
-
-      if ( addVertGroups ) {
-         final String vertGroupName = "Faces";
-         pyCd.append("    vert_group = mesh_obj.vertex_groups.new(name=\"");
-         pyCd.append(vertGroupName);
-         pyCd.append("\")\n");
-         pyCd.append("    fc_ln = len(fc_idcs)\n");
-         pyCd.append("    to_wgt = 1.0 / (fc_ln - 1.0)");
-         pyCd.append(" if fc_ln > 1 else 1.0\n");
-         pyCd.append("    for i, fc_idx in enumerate(fc_idcs):\n");
-         pyCd.append("        weight = i * to_wgt\n");
-         pyCd.append("        vert_group.add(fc_idx, weight, \"REPLACE\")\n");
-      }
 
       return pyCd.toString();
    }
@@ -590,8 +489,8 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    @Experimental
    public String toBlenderCode ( final MaterialSolid[] ms ) {
 
-      return this.toBlenderCode(false, ms, 1.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-         0.0001f);
+      return this.toBlenderCode(true, 0.523599f, ms, 1.0f, 0.0f, 1.0f, 0.0f,
+         0.0f, 0.0001f);
    }
 
    /**

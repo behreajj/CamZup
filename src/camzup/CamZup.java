@@ -77,7 +77,20 @@ public class CamZup {
     *
     * @param args the string of arguments
     */
-   public static void main ( final String[] args ) {}
+   public static void main ( final String[] args ) {
+
+      // Mesh3 mesh = new Mesh3();
+      // Mesh3.icosphere(mesh);
+      // MeshEntity3 me3 = new MeshEntity3(mesh);
+      // String pycd = me3.toBlenderCode();
+      // System.out.println(pycd);
+
+      // Mesh2 mesh = new Mesh2();
+      // Mesh2.gridHex(5, 0.5f, 0.1f, mesh);
+      // MeshEntity2 me2 = new MeshEntity2(mesh);
+      // String pycd = me2.toBlenderCode();
+      // System.out.println(pycd);
+   }
 
    /**
     * Gets the version of the library.

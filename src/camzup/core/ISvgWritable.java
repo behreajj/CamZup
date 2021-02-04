@@ -119,14 +119,28 @@ public interface ISvgWritable {
    float DEFAULT_HEIGHT = 512.0f;
 
    /**
-    * Default origin x of a 'camera' transform in an SVG.
+    * Default origin x of a 'camera' transform in an SVG, expressed as a ratio
+    * in [0.0, 1.0].
     */
    float DEFAULT_ORIGIN_X = 0.5f;
 
    /**
-    * Default origin y of a 'camera' transform in an SVG.
+    * Default origin y of a 'camera' transform in an SVG, expressed as a ratio
+    * in [0.0, 1.0].
     */
    float DEFAULT_ORIGIN_Y = 0.5f;
+
+   /**
+    * Default stroke cap to use when rendering to an SVG,
+    * {@value ISvgWritable#DEFAULT_STR_CAP}.
+    */
+   String DEFAULT_STR_CAP = "round";
+
+   /**
+    * Default stroke join to use when rendering to an SVG,
+    * {@value ISvgWritable#DEFAULT_STR_JOIN}.
+    */
+   String DEFAULT_STR_JOIN = "round";
 
    /**
     * Default width of an SVG view box, {@value ISvgWritable#DEFAULT_WIDTH}.

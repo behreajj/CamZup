@@ -1533,28 +1533,6 @@ public abstract class Utils implements IUtils {
 
    /**
     * Returns a String representation of a one dimensional array of
-    * <code>byte</code>s.
-    *
-    * @param arr the array
-    *
-    * @return the String
-    */
-   public static String toString ( final byte[] arr ) {
-
-      final int len = arr.length;
-      final int last = len - 1;
-      final StringBuilder sb = new StringBuilder(len * 32);
-      sb.append('[').append(' ');
-      for ( int i = 0; i < arr.length; ++i ) {
-         sb.append(arr[i]);
-         if ( i < last ) { sb.append(',').append(' '); }
-      }
-      sb.append(' ').append(']');
-      return sb.toString();
-   }
-
-   /**
-    * Returns a String representation of a one dimensional array of
     * <code>float</code>s.
     *
     * @param arr    the array
@@ -1564,16 +1542,7 @@ public abstract class Utils implements IUtils {
     */
    public static String toString ( final float[] arr, final int places ) {
 
-      final int len = arr.length;
-      final int last = len - 1;
-      final StringBuilder sb = new StringBuilder(len * 32);
-      sb.append('[').append(' ');
-      for ( int i = 0; i < arr.length; ++i ) {
-         Utils.toFixed(sb, arr[i], places);
-         if ( i < last ) { sb.append(',').append(' '); }
-      }
-      sb.append(' ').append(']');
-      return sb.toString();
+      return Utils.toString(new StringBuilder(256), arr, places).toString();
    }
 
    /**
@@ -1587,16 +1556,8 @@ public abstract class Utils implements IUtils {
     */
    public static String toString ( final int[] arr, final int padding ) {
 
-      final int len = arr.length;
-      final int last = len - 1;
-      final StringBuilder sb = new StringBuilder(len * 32);
-      sb.append('[').append(' ');
-      for ( int i = 0; i < arr.length; ++i ) {
-         Utils.toPadded(sb, arr[i], padding);
-         if ( i < last ) { sb.append(',').append(' '); }
-      }
-      sb.append(' ').append(']');
-      return sb.toString();
+      return Utils.toString(new StringBuilder(256), arr, padding).toString();
+
    }
 
    /**
@@ -1803,6 +1764,58 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * An internal helper function. Appends to a {@link StringBuilder} passed
+    * in by reference.
+    *
+    * @param sb     the string builder
+    * @param arr    the array
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   static StringBuilder toString ( final StringBuilder sb, final float[] arr,
+      final int places ) {
+
+      final int len = arr.length;
+      final int last = len - 1;
+
+      sb.append('[').append(' ');
+      for ( int i = 0; i < last; ++i ) {
+         Utils.toFixed(sb, arr[i], places);
+         sb.append(',').append(' ');
+      }
+      Utils.toFixed(sb, arr[last], places);
+      sb.append(' ').append(']');
+      return sb;
+   }
+
+   /**
+    * An internal helper function. Appends to a {@link StringBuilder} passed
+    * in by reference.
+    *
+    * @param sb      the string builder
+    * @param arr     the array
+    * @param padding the padding
+    *
+    * @return the string builder
+    */
+   static StringBuilder toString ( final StringBuilder sb, final int[] arr,
+      final int padding ) {
+
+      final int len = arr.length;
+      final int last = len - 1;
+
+      sb.append('[').append(' ');
+      for ( int i = 0; i < last; ++i ) {
+         Utils.toPadded(sb, arr[i], padding);
+         sb.append(',').append(' ');
+      }
+      Utils.toPadded(sb, arr[last], padding);
+      sb.append(' ').append(']');
+      return sb;
+   }
+
+   /**
     * A functional interface for an easing function which interpolates an an
     * array.
     *
@@ -1944,7 +1957,7 @@ public abstract class Utils implements IUtils {
          final float step ) {
 
          if ( this.aGtb ) {
-            this.b = this.b + this.range;
+            this.b += this.range;
             this.modResult = true;
          }
 
@@ -1989,7 +2002,7 @@ public abstract class Utils implements IUtils {
          final float step ) {
 
          if ( this.aLtb ) {
-            this.a = this.a + this.range;
+            this.a += this.range;
             this.modResult = true;
          }
 
@@ -2034,10 +2047,10 @@ public abstract class Utils implements IUtils {
          final float step ) {
 
          if ( this.aLtb && this.diff < this.halfRange ) {
-            this.a = this.a + this.range;
+            this.a += this.range;
             this.modResult = true;
          } else if ( this.aGtb && this.diff > -this.halfRange ) {
-            this.b = this.b + this.range;
+            this.b += this.range;
             this.modResult = true;
          }
 
@@ -2082,10 +2095,10 @@ public abstract class Utils implements IUtils {
          final float step ) {
 
          if ( this.aLtb && this.diff > this.halfRange ) {
-            this.a = this.a + this.range;
+            this.a += this.range;
             this.modResult = true;
          } else if ( this.aGtb && this.diff < -this.halfRange ) {
-            this.b = this.b + this.range;
+            this.b += this.range;
             this.modResult = true;
          }
 
@@ -2121,8 +2134,8 @@ public abstract class Utils implements IUtils {
       public Float apply ( final Float origin, final Float dest,
          final Float step ) {
 
-         final double td = step;
-         return ( float ) ( ( 1.0d - td ) * origin + td * dest );
+         final float tf = step;
+         return ( 1.0f - tf ) * origin + tf * dest;
       }
 
    }
@@ -2208,9 +2221,10 @@ public abstract class Utils implements IUtils {
 
          this.eval(origin, dest);
 
-         if ( step <= 0.0f || this.diff == 0.0f ) { return this.a; }
-         if ( step >= 1.0f ) { return this.b; }
-         return this.applyPartial(origin, dest, step);
+         final float tf = step;
+         if ( tf <= 0.0f || this.diff == 0.0f ) { return this.a; }
+         if ( tf >= 1.0f ) { return this.b; }
+         return this.applyPartial(origin, dest, tf);
       }
 
       /**
@@ -2332,11 +2346,10 @@ public abstract class Utils implements IUtils {
       public Float apply ( final Float origin, final Float dest,
          final Float step ) {
 
-         if ( step <= 0.0f ) { return origin; }
-         if ( step >= 1.0f ) { return dest; }
-         final double td = step;
-         final float ts = ( float ) ( td * td * ( 3.0d - ( td + td ) ) );
-         return super.apply(origin, dest, ts);
+         final float tf = step;
+         if ( tf <= 0.0f ) { return origin; }
+         if ( tf >= 1.0f ) { return dest; }
+         return super.apply(origin, dest, tf * tf * ( 3.0f - ( tf + tf ) ));
       }
 
    }

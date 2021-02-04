@@ -688,19 +688,20 @@ public class MeshDirect {
       final StringBuilder sb = new StringBuilder(2048);
 
       sb.append("{ indices: ");
-      sb.append(Utils.toString(this.indices, 0));
+      // System.out.println(sb.toString());
+      Utils.toString(sb, this.indices, 0);
 
       sb.append(", coords: ");
-      sb.append(Utils.toString(this.coords, places));
+      Utils.toString(sb, this.coords, places);
 
       sb.append(", texCoords: ");
-      sb.append(Utils.toString(this.texCoords, places));
+      Utils.toString(sb, this.texCoords, places);
 
       sb.append(", normals: ");
-      sb.append(Utils.toString(this.normals, places));
+      Utils.toString(sb, this.normals, places);
 
       sb.append(", colors: ");
-      sb.append(Utils.toString(this.colors, places));
+      Utils.toString(sb, this.colors, places);
       sb.append(" }");
       return sb.toString();
    }
@@ -737,6 +738,28 @@ public class MeshDirect {
          m.m12, m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
    }
 
+   /**
+    * Transforms the coordinates in a mesh by a 4x4 matrix.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m03 row 0, column 3
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    * @param m13 row 1, column 3
+    * @param m20 row 2, column 0
+    * @param m21 row 2, column 1
+    * @param m22 row 2, column 2
+    * @param m23 row 2, column 3
+    * @param m30 row 3, column 0
+    * @param m31 row 3, column 1
+    * @param m32 row 3, column 2
+    * @param m33 row 3, column 3
+    *
+    * @return this mesh
+    */
    public MeshDirect transformCoords ( final float m00, final float m01,
       final float m02, final float m03, final float m10, final float m11,
       final float m12, final float m13, final float m20, final float m21,
@@ -759,12 +782,26 @@ public class MeshDirect {
       return this;
    }
 
+   /**
+    * Transforms the coordinates in a mesh by a 3x3 matrix.
+    *
+    * @param m the matrix
+    *
+    * @return the mesh
+    */
    public MeshDirect transformCoords ( final Mat3 m ) {
 
       return this.transformCoords(m.m00, m.m01, 0.0f, m.m02, m.m10, m.m11, 0.0f,
          m.m12, 0.0f, 0.0f, 1.0f, 0.0f, m.m20, m.m21, 0.0f, m.m22);
    }
 
+   /**
+    * Transforms the coordinates in a mesh by a 4x4 matrix.
+    *
+    * @param m the matrix
+    *
+    * @return the mesh
+    */
    public MeshDirect transformCoords ( final Mat4 m ) {
 
       return this.transformCoords(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11,
@@ -938,14 +975,14 @@ public class MeshDirect {
             final Vec2 v = vsSrc[vert[0]];
             target.coords[coIdx] = v.x;
             target.coords[coIdx + 1] = v.y;
-            target.coords[coIdx + 2] = 0.0f;
+            // target.coords[coIdx + 2] = 0.0f;
 
             final Vec2 vt = vtsSrc[vert[1]];
             target.texCoords[uvIdx] = vt.x;
             target.texCoords[uvIdx + 1] = vt.y;
 
-            target.normals[nmIdx] = 0.0f;
-            target.normals[nmIdx + 1] = 0.0f;
+            // target.normals[nmIdx] = 0.0f;
+            // target.normals[nmIdx + 1] = 0.0f;
             target.normals[nmIdx + 2] = 1.0f;
 
             target.colors[clIdx] = 1.0f;
