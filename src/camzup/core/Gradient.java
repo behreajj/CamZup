@@ -17,24 +17,16 @@ import java.util.function.Function;
 public class Gradient implements IUtils, Iterable < ColorKey > {
 
    /**
-    * The set of keys.
+    * The set of keys. Quantized sorting closures should be used as a
+    * comparator supplied to this TreeSet's constructor, as it leads to bugs
+    * when an unknown number of keys are supplied to the gradient.
     */
-   public final TreeSet < ColorKey > keys;
+   public final TreeSet < ColorKey > keys = new TreeSet <>();
 
    /**
     * A temporary variable to hold queries in evaluation functions.
     */
-   protected final ColorKey query;
-
-   {
-      /*
-       * Sort quantized cannot be used as a comparator supplied to this
-       * TreeSet's constructor, as it leads to bugs when an unknown number of
-       * keys are supplied to the gradient.
-       */
-      this.keys = new TreeSet <>();
-      this.query = new ColorKey();
-   }
+   protected final ColorKey query = new ColorKey();
 
    /**
     * Creates a gradient with two default color keys, clear black at 0.0 and
@@ -425,7 +417,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    @Override
    public int hashCode ( ) {
 
-      return this.keys == null ? 0 : this.keys.hashCode();
+      return this.keys.hashCode();
    }
 
    /**
@@ -1107,10 +1099,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    protected boolean equals ( final Gradient other ) {
 
-      if ( this.keys == null ) {
-         if ( other.keys != null ) { return false; }
-      } else if ( !this.keys.equals(other.keys) ) { return false; }
-      return true;
+      return this.keys.equals(other.keys);
    }
 
    /**
@@ -1848,12 +1837,10 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    protected static ColorKey[] reverse ( final ColorKey[] arr, final int start,
       final int end ) {
 
-      int st = start;
-      for ( int ed = end; st < ed; --ed ) {
+      for ( int st = start, ed = end; st < ed; --ed, ++st ) {
          final float temp = arr[st].step;
          arr[st].step = arr[ed].step;
          arr[ed].step = temp;
-         ++st;
       }
       return arr;
    }

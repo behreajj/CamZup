@@ -2,6 +2,8 @@ package camzup.pfriendly;
 
 import camzup.core.Entity3;
 import camzup.core.Experimental;
+import camzup.core.Handedness;
+import camzup.core.IUtils;
 import camzup.core.Transform3;
 import camzup.core.Vec3;
 
@@ -16,7 +18,14 @@ public class CamEntity3 extends Entity3 implements ICamEntity {
    /**
     * The default constructor.
     */
-   public CamEntity3 ( ) {}
+   public CamEntity3 ( ) {
+
+      this.transform.moveTo(new Vec3(CamEntity3.DEFAULT_LOC_X,
+         CamEntity3.DEFAULT_LOC_Y, CamEntity3.DEFAULT_LOC_Z));
+      this.transform.lookAt(new Vec3(CamEntity3.DEFAULT_TARGET_X,
+         CamEntity3.DEFAULT_TARGET_Y, CamEntity3.DEFAULT_TARGET_Z), 1.0f,
+         Handedness.RIGHT);
+   }
 
    /**
     * Constructs a named entity. A new transform is created by the
@@ -24,7 +33,16 @@ public class CamEntity3 extends Entity3 implements ICamEntity {
     *
     * @param name the name
     */
-   public CamEntity3 ( final String name ) { super(name); }
+   public CamEntity3 ( final String name ) {
+
+      super(name);
+
+      this.transform.moveTo(new Vec3(CamEntity3.DEFAULT_LOC_X,
+         CamEntity3.DEFAULT_LOC_Y, CamEntity3.DEFAULT_LOC_Z));
+      this.transform.lookAt(new Vec3(CamEntity3.DEFAULT_TARGET_X,
+         CamEntity3.DEFAULT_TARGET_Y, CamEntity3.DEFAULT_TARGET_Z), 1.0f,
+         Handedness.RIGHT);
+   }
 
    /**
     * Constructs a named entity with a transform. The transform is assigned by
@@ -36,6 +54,12 @@ public class CamEntity3 extends Entity3 implements ICamEntity {
    public CamEntity3 ( final String name, final Transform3 transform ) {
 
       super(name, transform);
+
+      this.transform.moveTo(new Vec3(CamEntity3.DEFAULT_LOC_X,
+         CamEntity3.DEFAULT_LOC_Y, CamEntity3.DEFAULT_LOC_Z));
+      this.transform.lookAt(new Vec3(CamEntity3.DEFAULT_TARGET_X,
+         CamEntity3.DEFAULT_TARGET_Y, CamEntity3.DEFAULT_TARGET_Z), 1.0f,
+         Handedness.RIGHT);
    }
 
    /**
@@ -44,7 +68,16 @@ public class CamEntity3 extends Entity3 implements ICamEntity {
     *
     * @param transform the transform
     */
-   public CamEntity3 ( final Transform3 transform ) { super(transform); }
+   public CamEntity3 ( final Transform3 transform ) {
+
+      super(transform);
+
+      this.transform.moveTo(new Vec3(CamEntity3.DEFAULT_LOC_X,
+         CamEntity3.DEFAULT_LOC_Y, CamEntity3.DEFAULT_LOC_Z));
+      this.transform.lookAt(new Vec3(CamEntity3.DEFAULT_TARGET_X,
+         CamEntity3.DEFAULT_TARGET_Y, CamEntity3.DEFAULT_TARGET_Z), 1.0f,
+         Handedness.RIGHT);
+   }
 
    /**
     * Updates an OpenGL renderer with this entity's transform.
@@ -60,6 +93,7 @@ public class CamEntity3 extends Entity3 implements ICamEntity {
       final Vec3 forward = new Vec3();
       final Vec3 up = new Vec3();
       final Vec3 loc = new Vec3();
+
       this.transform.getAxes(right, forward, up);
       this.transform.getLocation(loc);
 
@@ -98,9 +132,47 @@ public class CamEntity3 extends Entity3 implements ICamEntity {
       /* Set model view to camera. */
       rndr.modelview.set(rndr.camera);
       rndr.modelviewInv.set(rndr.cameraInv);
+
+      // TODO: Doesn't ICamEntity already cover perspective?
+
+      /* Set to perspective. */
+      final float aspect = rndr.height != 0 ? rndr.width / ( float ) rndr.height
+         : 1.0f;
+      PMatAux.perspective(IUtils.THIRD_PI, aspect, 0.015f, 1500.0f,
+         rndr.projection);
       PMatAux.mul(rndr.projection, rndr.modelview, rndr.projmodelview);
 
       return this;
    }
+
+   /**
+    * The default x location set by the constructor.
+    */
+   public static final float DEFAULT_LOC_X = 0.0f;
+
+   /**
+    * The default y location set by the constructor.
+    */
+   public static final float DEFAULT_LOC_Y = 0.0f;
+
+   /**
+    * The default z location set by the constructor.
+    */
+   public static final float DEFAULT_LOC_Z = 0.0f;
+
+   /**
+    * The default x look target set by the constructor.
+    */
+   public static final float DEFAULT_TARGET_X = 0.0f;
+
+   /**
+    * The default y look target set by the constructor.
+    */
+   public static final float DEFAULT_TARGET_Y = 350.7403f;
+
+   /**
+    * The default z look target set by the constructor.
+    */
+   public static final float DEFAULT_TARGET_Z = 0.0f;
 
 }

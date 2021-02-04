@@ -25,6 +25,8 @@ public interface ICamEntity {
       final float right, final float bottom, final float top, final float near,
       final float far ) {
 
+      // TODO: Move all of these out of ICamEntity into CamEntity3?
+
       rndr.cameraNear = near;
       rndr.cameraFar = far;
 

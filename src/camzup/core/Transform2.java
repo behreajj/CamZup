@@ -281,7 +281,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    public Transform2 lookAt ( final Vec2 point, final float step,
       final Handedness handedness ) {
 
-      // TODO: A 2D version of lookIn?
+      // QUERY A 2D version of lookIn?
 
       /* The right axis is used as a temporary container. */
       Vec2.sub(point, this.location, this.right);
@@ -915,6 +915,51 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     * The default easing function.
     */
    private static Easing EASING = new Easing();
+
+   /**
+    * Finds the Euclidean distance between the locations of two transforms.
+    *
+    * @param a the first transform
+    * @param b the second transform
+    *
+    * @return the euclidean distance
+    *
+    * @see Vec2#distEuclidean(Vec2, Vec2)
+    */
+   public static float dist ( final Transform2 a, final Transform2 b ) {
+
+      return Vec2.distEuclidean(a.location, b.location);
+   }
+
+   /**
+    * Finds the Euclidean distance a transform and a vector.
+    *
+    * @param a the transform
+    * @param b the vector
+    *
+    * @return the euclidean distance
+    *
+    * @see Vec2#distEuclidean(Vec2, Vec2)
+    */
+   public static float dist ( final Transform2 a, final Vec2 b ) {
+
+      return Vec2.distEuclidean(a.location, b);
+   }
+
+   /**
+    * Finds the Euclidean distance a transform and a vector.
+    *
+    * @param b the transform
+    * @param a the vector
+    *
+    * @return the euclidean distance
+    *
+    * @see Vec2#distEuclidean(Vec2, Vec2)
+    */
+   public static float dist ( final Vec2 a, final Transform2 b ) {
+
+      return Vec2.distEuclidean(a, b.location);
+   }
 
    /**
     * A helper function to set the transform's from either separate vectors or

@@ -255,7 +255,7 @@ public interface IUp {
     * Color for the curve knot coordinate. Currently diagnostic only, and so
     * not adjustable.
     */
-   int DEFAULT_HANDLE_COORD_COLOR = 0xffb53b19;
+   int DEFAULT_HANDLE_COORD_COLOR = 0xff5c8597;
 
    /**
     * Color for the curve knot forehandle. Currently diagnostic only, and so

@@ -690,7 +690,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
             svgp.append('\n');
          }
 
-         curve.toSvgPath(svgp, ISvgWritable.DEFAULT_SVG_FILL_RULE);
+         curve.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
          // ++i;
 
          /* Close out material group. */

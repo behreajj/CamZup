@@ -7,8 +7,8 @@ package camzup.core;
 public interface IMaterial extends IUtils {
 
    /**
-    * The default fill color used when none is specified. Equivalent to
-    * (0.6039, 0.8471, 0.8863, 1.0) .
+    * The default fill color used when none is specified, (0.6039, 0.8471,
+    * 0.8863) in RGB.
     */
    int DEFAULT_FILL = 0xff9ad8e2;
 
@@ -18,7 +18,8 @@ public interface IMaterial extends IUtils {
    int DEFAULT_STROKE = 0xff232323;
 
    /**
-    * The default stroke weight used when none is specified.
+    * The default stroke weight used when none is specified,
+    * {@value IMaterial#DEFAULT_STROKE_WEIGHT}.
     */
    float DEFAULT_STROKE_WEIGHT = 1.0f;
 

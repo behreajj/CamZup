@@ -690,12 +690,10 @@ public abstract class Mesh extends EntityData implements IMesh {
    protected static int[][] reverse ( final int[][] arr, final int start,
       final int end ) {
 
-      int st = start;
-      for ( int ed = end; st < ed; --ed ) {
+      for ( int st = start, ed = end; st < ed; ++st, --ed ) {
          final int[] temp = arr[st];
          arr[st] = arr[ed];
          arr[ed] = temp;
-         ++st;
       }
       return arr;
    }
@@ -725,12 +723,10 @@ public abstract class Mesh extends EntityData implements IMesh {
    protected static int[][][] reverse ( final int[][][] arr, final int start,
       final int end ) {
 
-      int st = start;
-      for ( int ed = end; st < ed; --ed ) {
+      for ( int st = start, ed = end; st < ed; ++st, --ed ) {
          final int[][] temp = arr[st];
          arr[st] = arr[ed];
          arr[ed] = temp;
-         ++st;
       }
       return arr;
    }

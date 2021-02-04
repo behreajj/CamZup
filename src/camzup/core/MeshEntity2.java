@@ -709,8 +709,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     *
     * @return the string
     */
-   public String toSvgElm ( final float zoom,
-      final MaterialSolid material ) {
+   public String toSvgElm ( final float zoom, final MaterialSolid material ) {
 
       return this.toSvgElm(zoom, new MaterialSolid[] { material });
    }
@@ -769,8 +768,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
             svgp.append(">\n");
          }
 
-         mesh.toSvgPath(svgp,
-            ISvgWritable.DEFAULT_SVG_FILL_RULE);
+         mesh.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
 
          /* Close out material group. */
          if ( includesMats ) { svgp.append("</g>\n"); }

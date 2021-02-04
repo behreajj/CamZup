@@ -25,6 +25,9 @@ public enum ArcMode {
    /**
     * The default constructor.
     */
-   ArcMode ( ) {}
+   ArcMode ( ) {
+
+      // TODO: Add a sector mode, so as to make mesh and curve arcs consistent?
+   }
 
 }

@@ -18,6 +18,7 @@ import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
 import camzup.core.Experimental;
 import camzup.core.ICurve;
+import camzup.core.IMesh;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Mat3;
@@ -88,7 +89,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * A Java AWT arc object. This uses double precision, as Arc2D.Float simply
     * casts between float and double anyway.
     */
-   protected final Arc2D.Double arcd = new Arc2D.Double();
+   protected final Arc2D.Double arcd = new Arc2D.Double(Arc2D.OPEN);
 
    /**
     * A placeholder color used during lerpColor.
@@ -116,7 +117,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * A Java AWT general path object. This is reset when a new shape needs to
     * be displayed in draw.
     */
-   protected final Path2D.Double gp = new Path2D.Double();
+   protected final Path2D.Double gp = new Path2D.Double(
+      YupJ2.DEFAULT_WINDING_RULE, IMesh.DEFAULT_CIRCLE_SECTORS);
 
    /**
     * One divided by the maximum for the alpha channel.
@@ -164,10 +166,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * The default constructor.
     */
    public YupJ2 ( ) {
-
-      // TODO: Winding rule?
-      // this.gp.setWindingRule(Path2D.WIND_NON_ZERO);
-      // this.gp.setWindingRule(Path2D.WIND_EVEN_ODD);
 
       this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
       this.curveToBezierMatrix = new PMatrix3D();
@@ -2772,7 +2770,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public void shape ( final CurveEntity2 entity ) {
 
-      this.setGeneralPath(entity);
+      this.shape(entity, YupJ2.DEFAULT_WINDING_RULE);
+   }
+
+   /**
+    * Draws a 2D curve entity. The winding rule specifies how to fill in
+    * overlapping geometry.
+    *
+    * @param entity      the curve entity
+    * @param windingRule the winding rule
+    */
+   public void shape ( final CurveEntity2 entity, final int windingRule ) {
+
+      this.setGeneralPath(entity, windingRule);
       this.drawShapeSolid(this.gp);
    }
 
@@ -2784,6 +2794,20 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public void shape ( final CurveEntity2 entity, final MaterialAwt material ) {
 
+      this.shape(entity, material, YupJ2.DEFAULT_WINDING_RULE);
+   }
+
+   /**
+    * Draws a 2D curve entity. The winding rule specifies how to fill in
+    * overlapping geometry.
+    *
+    * @param entity      the curve entity
+    * @param material    the material
+    * @param windingRule the winding rule
+    */
+   public void shape ( final CurveEntity2 entity, final MaterialAwt material,
+      final int windingRule ) {
+
       final Bounds2 bounds = new Bounds2();
       CurveEntity2.calcBounds(entity, bounds);
       final Vec2 min = bounds.min;
@@ -2794,7 +2818,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       super.pushStyle();
       this.material(material);
-      this.setGeneralPath(entity);
+      this.setGeneralPath(entity, windingRule);
 
       /* @formatter:off */
       this.drawShapeClip(
@@ -2818,6 +2842,20 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void shape ( final CurveEntity2 entity,
       final MaterialAwt[] materials ) {
 
+      this.shape(entity, materials, YupJ2.DEFAULT_WINDING_RULE);
+   }
+
+   /**
+    * Draws a curve entity with an array of materials. The winding rule
+    * specifies how to fill in overlapping geometry.
+    *
+    * @param entity      the curve entity
+    * @param materials   the materials array
+    * @param windingRule the winding rule
+    */
+   public void shape ( final CurveEntity2 entity, final MaterialAwt[] materials,
+      final int windingRule ) {
+
       // TODO: TEST
 
       final Bounds2 bounds = new Bounds2();
@@ -2828,6 +2866,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final Vec2 max = bounds.max;
       final Transform2 tr = entity.transform;
       final Iterator < Curve2 > itr = entity.iterator();
+
+      this.gp.setWindingRule(windingRule);
 
       while ( itr.hasNext() ) {
          final Curve2 curve = itr.next();
@@ -2856,14 +2896,28 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void shape ( final CurveEntity2 entity,
       final MaterialSolid material ) {
 
+      this.shape(entity, material, YupJ2.DEFAULT_WINDING_RULE);
+   }
+
+   /**
+    * Draws a 2D curve entity. The winding rule specifies how to fill in
+    * overlapping geometry.
+    *
+    * @param entity      the curve entity
+    * @param material    the material
+    * @param windingRule the winding rule
+    */
+   public void shape ( final CurveEntity2 entity, final MaterialSolid material,
+      final int windingRule ) {
+
       super.pushStyle();
       this.material(material);
-      this.shape(entity);
+      this.shape(entity, windingRule);
       super.popStyle();
    }
 
    /**
-    * Draws a 2D curve entity.
+    * Draws a curve entity.
     *
     * @param entity    the curve entity
     * @param materials an array of materials
@@ -2871,12 +2925,28 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void shape ( final CurveEntity2 entity,
       final MaterialSolid[] materials ) {
 
+      this.shape(entity, materials, YupJ2.DEFAULT_WINDING_RULE);
+   }
+
+   /**
+    * Draws a curve entity. The winding rule specifies how to fill in
+    * overlapping geometry.
+    *
+    * @param entity      the curve entity
+    * @param materials   an array of materials
+    * @param windingRule the winding rule
+    */
+   public void shape ( final CurveEntity2 entity,
+      final MaterialSolid[] materials, final int windingRule ) {
+
       final Vec2 fh = new Vec2();
       final Vec2 rh = new Vec2();
       final Vec2 co = new Vec2();
 
       final Transform2 tr = entity.transform;
       final Iterator < Curve2 > itr = entity.iterator();
+
+      this.gp.setWindingRule(windingRule);
 
       while ( itr.hasNext() ) {
          final Curve2 curve = itr.next();
@@ -2896,17 +2966,43 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public void shape ( final MeshEntity2 entity ) {
 
-      this.setGeneralPath(entity);
+      this.shape(entity, YupJ2.DEFAULT_WINDING_RULE);
+   }
+
+   /**
+    * Draws a mesh entity. The winding rule specifies how to fill in
+    * overlapping geometry.
+    *
+    * @param entity      the mesh entity
+    * @param windingRule the winding rule
+    */
+   public void shape ( final MeshEntity2 entity, final int windingRule ) {
+
+      this.setGeneralPath(entity, windingRule);
       this.drawShapeSolid(this.gp);
    }
 
    /**
-    * Draws a mesh entity with one material.
+    * Draws a mesh entity with an image material.
     *
     * @param entity   the mesh entity
     * @param material the material
     */
    public void shape ( final MeshEntity2 entity, final MaterialAwt material ) {
+
+      this.shape(entity, material, YupJ2.DEFAULT_WINDING_RULE);
+   }
+
+   /**
+    * Draws a mesh entity with an image material. The winding rule specifies
+    * how to fill in overlapping geometry.
+    *
+    * @param entity      the mesh entity
+    * @param material    the material
+    * @param windingRule the winding rule
+    */
+   public void shape ( final MeshEntity2 entity, final MaterialAwt material,
+      final int windingRule ) {
 
       final Bounds2 bounds = new Bounds2();
       MeshEntity2.calcBounds(entity, bounds);
@@ -2918,7 +3014,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       super.pushStyle();
       this.material(material);
-      this.setGeneralPath(entity);
+      this.setGeneralPath(entity, windingRule);
 
       /* @formatter:off */
       this.drawShapeClip(
@@ -2934,13 +3030,28 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws a mesh entity with an array of materials.
+    * Draws a mesh entity with an array of image materials. The winding rule
+    * specifies how to fill in overlapping geometry.
     *
     * @param entity    the mesh entity
     * @param materials the materials array
     */
    public void shape ( final MeshEntity2 entity,
       final MaterialAwt[] materials ) {
+
+      this.shape(entity, materials, YupJ2.DEFAULT_WINDING_RULE);
+   }
+
+   /**
+    * Draws a mesh entity with an array of image materials. The winding rule
+    * specifies how to fill in overlapping geometry.
+    *
+    * @param entity      the mesh entity
+    * @param materials   the materials array
+    * @param windingRule the winding rule
+    */
+   public void shape ( final MeshEntity2 entity, final MaterialAwt[] materials,
+      final int windingRule ) {
 
       // TODO: TEST
 
@@ -2950,6 +3061,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final Vec2 max = bounds.max;
       final Transform2 tr = entity.transform;
       final Iterator < Mesh2 > itr = entity.iterator();
+
+      this.gp.setWindingRule(windingRule);
 
       while ( itr.hasNext() ) {
          final Mesh2 mesh = itr.next();
@@ -2976,7 +3089,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws a mesh entity with one material.
+    * Draws a mesh entity with a solid-fill material. The winding rule
+    * specifies how to fill in overlapping geometry.
     *
     * @param entity   the mesh entity
     * @param material the material
@@ -2984,14 +3098,29 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void shape ( final MeshEntity2 entity,
       final MaterialSolid material ) {
 
+      this.shape(entity, material, YupJ2.DEFAULT_WINDING_RULE);
+   }
+
+   /**
+    * Draws a mesh entity with a solid-fill material. The winding rule
+    * specifies how to fill in overlapping geometry.
+    *
+    * @param entity      the mesh entity
+    * @param material    the material
+    * @param windingRule the winding rule
+    */
+   public void shape ( final MeshEntity2 entity, final MaterialSolid material,
+      final int windingRule ) {
+
       super.pushStyle();
       this.material(material);
-      this.shape(entity);
+      this.shape(entity, windingRule);
       super.popStyle();
    }
 
    /**
-    * Draws a mesh entity with an array of materials.
+    * Draws a mesh entity with an array of solid-fill materials. The winding
+    * rule specifies how to fill in overlapping geometry.
     *
     * @param entity    the mesh entity
     * @param materials the materials array
@@ -2999,10 +3128,25 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void shape ( final MeshEntity2 entity,
       final MaterialSolid[] materials ) {
 
-      final Vec2 v = new Vec2();
+      this.shape(entity, materials, YupJ2.DEFAULT_WINDING_RULE);
+   }
 
+   /**
+    * Draws a mesh entity with an array of solid-fill materials. The winding
+    * rule specifies how to fill in overlapping geometry.
+    *
+    * @param entity      the mesh entity
+    * @param materials   the materials array
+    * @param windingRule the winding rule
+    */
+   public void shape ( final MeshEntity2 entity,
+      final MaterialSolid[] materials, final int windingRule ) {
+
+      final Vec2 v = new Vec2();
       final Transform2 tr = entity.transform;
       final Iterator < Mesh2 > itr = entity.iterator();
+
+      this.gp.setWindingRule(windingRule);
 
       while ( itr.hasNext() ) {
          final Mesh2 mesh = itr.next();
@@ -4248,20 +4392,25 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
    /**
     * Sets a general path to a curve entity, with no intervening changes in
-    * material.
+    * material. The winding rule may be either {@link Path2D#WIND_EVEN_ODD}
+    * ({@value Path2D#WIND_EVEN_ODD}) or {@link Path2D#WIND_NON_ZERO}
+    * ({@value Path2D#WIND_NON_ZERO}).
     *
-    * @param entity the entity
+    * @param entity      the entity
+    * @param windingRule the winding rule
     */
-   protected void setGeneralPath ( final CurveEntity2 entity ) {
+   protected void setGeneralPath ( final CurveEntity2 entity,
+      final int windingRule ) {
 
       final Vec2 rh = new Vec2();
       final Vec2 fh = new Vec2();
       final Vec2 co = new Vec2();
-
       final Transform2 tr = entity.transform;
       final Iterator < Curve2 > itr = entity.iterator();
 
       this.gp.reset();
+      this.gp.setWindingRule(windingRule);
+
       while ( itr.hasNext() ) {
          this.appendToGeneralPath(itr.next(), tr, rh, fh, co);
       }
@@ -4269,18 +4418,23 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
    /**
     * Sets a general path to a mesh entity, with no intervening changes in
-    * material.
+    * material. The winding rule may be either {@link Path2D#WIND_EVEN_ODD}
+    * ({@value Path2D#WIND_EVEN_ODD}) or {@link Path2D#WIND_NON_ZERO}
+    * ({@value Path2D#WIND_NON_ZERO}).
     *
-    * @param entity the entity
+    * @param entity      the entity
+    * @param windingRule the winding rule
     */
-   protected void setGeneralPath ( final MeshEntity2 entity ) {
+   protected void setGeneralPath ( final MeshEntity2 entity,
+      final int windingRule ) {
 
       final Vec2 v = new Vec2();
-
       final Transform2 tr = entity.transform;
       final Iterator < Mesh2 > itr = entity.iterator();
 
       this.gp.reset();
+      this.gp.setWindingRule(windingRule);
+
       while ( itr.hasNext() ) { this.appendToGeneralPath(itr.next(), tr, v); }
    }
 
@@ -4440,6 +4594,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * The default PShape family to use when none other is supplied.
     */
    public static final int DEFAULT_PSHAPE_FAMILY = PShape.PATH;
+
+   /**
+    * The default general path winding rule. Options are
+    * {@link Path2D#WIND_EVEN_ODD} ({@value Path2D#WIND_EVEN_ODD}) or
+    * {@link Path2D#WIND_NON_ZERO} ({@value Path2D#WIND_NON_ZERO}).
+    */
+   public static final int DEFAULT_WINDING_RULE = Path2D.WIND_EVEN_ODD;
 
    /**
     * The floating point epsilon, cast to a double.

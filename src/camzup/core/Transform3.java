@@ -1036,6 +1036,51 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    private static Easing EASING = new Easing();
 
    /**
+    * Finds the Euclidean distance between the locations of two transforms.
+    *
+    * @param a the first transform
+    * @param b the second transform
+    *
+    * @return the euclidean distance
+    *
+    * @see Vec3#distEuclidean(Vec3, Vec3)
+    */
+   public static float dist ( final Transform3 a, final Transform3 b ) {
+
+      return Vec3.distEuclidean(a.location, b.location);
+   }
+
+   /**
+    * Finds the Euclidean distance a transform and a vector.
+    *
+    * @param a the transform
+    * @param b the vector
+    *
+    * @return the euclidean distance
+    *
+    * @see Vec3#distEuclidean(Vec3, Vec3)
+    */
+   public static float dist ( final Transform3 a, final Vec3 b ) {
+
+      return Vec3.distEuclidean(a.location, b);
+   }
+
+   /**
+    * Finds the Euclidean distance a transform and a vector.
+    *
+    * @param b the transform
+    * @param a the vector
+    *
+    * @return the euclidean distance
+    *
+    * @see Vec3#distEuclidean(Vec3, Vec3)
+    */
+   public static float dist ( final Vec3 a, final Transform3 b ) {
+
+      return Vec3.distEuclidean(a, b.location);
+   }
+
+   /**
     * A helper function to set the transform's from either separate vectors or
     * from the columns of a matrix. The transform's translation is set to
     * zero; its scale, to one.

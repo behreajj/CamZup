@@ -60,9 +60,13 @@ public class CamEntity2 extends Entity2 implements ICamEntity {
    public CamEntity2 update ( final PGraphicsJava2D rndr ) {
 
       /* Get data from transform. */
-      final Vec2 loc = this.transform.getLocation(new Vec2());
-      final Vec2 scale = this.transform.getScale(new Vec2());
-      final Vec2 right = this.transform.getRight(new Vec2());
+      final Vec2 loc = new Vec2();
+      final Vec2 scale = new Vec2(1.0f, 1.0f);
+      final Vec2 right = new Vec2(1.0f, 0.0f);
+
+      this.transform.getLocation(loc);
+      this.transform.getScale(scale);
+      this.transform.getRight(right);
 
       /* Promote floats to doubles. */
       final double cxd = loc.x;
@@ -96,14 +100,21 @@ public class CamEntity2 extends Entity2 implements ICamEntity {
    public CamEntity2 update ( final PGraphicsOpenGL rndr ) {
 
       /* Get data from transform. */
-      final Vec2 loc = this.transform.getLocation(new Vec2());
-      final Vec2 scale = this.transform.getScale(new Vec2());
-      final Vec2 right = this.transform.getRight(new Vec2());
+      final Vec2 loc = new Vec2();
+      final Vec2 scale = new Vec2(1.0f, 1.0f);
+      final Vec2 right = new Vec2(1.0f, 0.0f);
+
+      this.transform.getLocation(loc);
+      this.transform.getScale(scale);
+      this.transform.getRight(right);
+
+      final float w = rndr.width < 128 ? 128.0f : rndr.width;
+      final float h = rndr.height < 128 ? 128.0f : rndr.height;
 
       /* Update renderer data. */
       rndr.cameraX = loc.x;
       rndr.cameraY = loc.y;
-      rndr.cameraZ = rndr.height < 128 ? 128.0f : rndr.height;
+      rndr.cameraZ = h;
 
       /* Unpack elements. Use negative rotation angle. */
       final float c = right.x;
@@ -129,8 +140,15 @@ public class CamEntity2 extends Entity2 implements ICamEntity {
          -s / yZoom, c / yZoom, 0.0f, rndr.cameraY,
                0.0f,      0.0f, 1.0f, rndr.cameraZ,
                0.0f,      0.0f, 0.0f, 1.0f);
+
+      rndr.projection.set(
+         2.0f / w,     0.0f,     0.0f,  0.0f,
+             0.0f, 2.0f / h,     0.0f,  0.0f,
+             0.0f,     0.0f, -0.0005f, -1.0f,
+             0.0f,     0.0f,     0.0f,  1.0f);
       /* @formatter:on */
 
+      /* Set model view to camera. */
       rndr.camera.set(rndr.modelview);
       rndr.cameraInv.set(rndr.modelviewInv);
       rndr.projmodelview.set(rndr.projection);

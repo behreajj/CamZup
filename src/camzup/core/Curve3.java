@@ -1435,7 +1435,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       if ( closedLoop ) {
          Knot3.fromSegCatmull(points[ptsLast], points[0], points[1], points[2],
             tightness, curr, first);
-      } else {
+      } else if ( curr != null ) {
          first.coord.set(points[1]);
          first.mirrorHandlesForward();
          curr.mirrorHandlesBackward();

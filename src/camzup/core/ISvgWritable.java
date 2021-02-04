@@ -6,16 +6,12 @@ package camzup.core;
  */
 public interface ISvgWritable {
 
-
    /**
     * Renders the curve as a string containing an SVG element.
     *
     * @return the SVG string
     */
-   default String toSvgElm ( ) {
-
-      return this.toSvgElm(1.0f);
-   }
+   default String toSvgElm ( ) { return this.toSvgElm(1.0f); }
 
    /**
     * Renders the curve as a string containing an SVG element.<br>
@@ -38,9 +34,9 @@ public interface ISvgWritable {
     */
    default String toSvgString ( ) {
 
-      return this.toSvgString(ISvgWritable.DEFAULT_SVG_X_ORIGIN,
-         ISvgWritable.DEFAULT_SVG_Y_ORIGIN, ISvgWritable.DEFAULT_SVG_WIDTH,
-         ISvgWritable.DEFAULT_SVG_HEIGHT);
+      return this.toSvgString(ISvgWritable.DEFAULT_ORIGIN_X,
+         ISvgWritable.DEFAULT_ORIGIN_Y, ISvgWritable.DEFAULT_WIDTH,
+         ISvgWritable.DEFAULT_HEIGHT);
    }
 
    /**
@@ -58,8 +54,8 @@ public interface ISvgWritable {
     *
     * @return the SVG string
     */
-   default String toSvgString ( final float xOrigin,
-      final float yOrigin, final float width, final float height ) {
+   default String toSvgString ( final float xOrigin, final float yOrigin,
+      final float width, final float height ) {
 
       final float vw = Utils.max(IUtils.EPSILON, width);
       final float vh = Utils.max(IUtils.EPSILON, height);
@@ -112,43 +108,42 @@ public interface ISvgWritable {
     *
     * @return the SVG string
     */
-   default String toSvgString ( final Vec2 origin,
-      final Vec2 dim ) {
+   default String toSvgString ( final Vec2 origin, final Vec2 dim ) {
 
       return this.toSvgString(origin.x, origin.y, dim.x, dim.y);
    }
 
    /**
-    * Default height of an SVG view box.
+    * Default height of an SVG view box, {@value ISvgWritable#DEFAULT_HEIGHT}.
     */
-   float DEFAULT_SVG_HEIGHT = 512.0f;
-
-   /**
-    * Default width of an SVG view box.
-    */
-   float DEFAULT_SVG_WIDTH = 512.0f;
+   float DEFAULT_HEIGHT = 512.0f;
 
    /**
     * Default origin x of a 'camera' transform in an SVG.
     */
-   float DEFAULT_SVG_X_ORIGIN = 0.5f;
+   float DEFAULT_ORIGIN_X = 0.5f;
 
    /**
     * Default origin y of a 'camera' transform in an SVG.
     */
-   float DEFAULT_SVG_Y_ORIGIN = 0.5f;
+   float DEFAULT_ORIGIN_Y = 0.5f;
+
+   /**
+    * Default width of an SVG view box, {@value ISvgWritable#DEFAULT_WIDTH}.
+    */
+   float DEFAULT_WIDTH = 512.0f;
+
+   /**
+    * The default fill rule, or winding rule, from the enumeration "evenodd"
+    * and "nonzero". "nonzero" is the SVG specification default.
+    * {@value ISvgWritable#DEFAULT_WINDING_RULE}.
+    */
+   String DEFAULT_WINDING_RULE = "evenodd";
 
    /**
     * The default number of decimal places to print real numbers in an SVG,
     * {@value IUtils#FIXED_PRINT}.
     */
    int FIXED_PRINT = 6;
-
-   /**
-    * The default fill rule, from the enumeration "evenodd" and "nonzero".
-    * "nonzero" is the SVG specification default.
-    * {@value ISvgWritable#DEFAULT_SVG_FILL_RULE}.
-    */
-   String DEFAULT_SVG_FILL_RULE = "evenodd";
 
 }

@@ -5,7 +5,12 @@ import camzup.pfriendly.*;
 
 YupJ2 graphics;
 CurveEntity2 ce2;
-MaterialSolid material;
+MaterialSolid material = new MaterialSolid()
+  .setFill(true)
+  .setFill(0x3fff2828)
+  .setStrokeWeight(1.0)
+  .setStroke(0x3f303030)
+  .setStroke(true);
 
 void settings() {
   size(720, 405, YupJ2.PATH_STR);
@@ -21,13 +26,6 @@ void setup() {
   ce2 = ParserSvg.load(filePath);
   long end = System.currentTimeMillis();
   println("Elapsed Time: " + (end - start));
-
-  material = new MaterialSolid();
-  material.setFill(false);
-  material.setFill(0x3f007fff);
-  material.setStrokeWeight(1.0);
-  material.setStroke(0x3f303030);
-  material.setStroke(true);
 }
 
 void draw() {

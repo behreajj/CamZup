@@ -1748,7 +1748,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final StringBuilder svgp = new StringBuilder(1024);
       MaterialSolid.defaultSvgMaterial(svgp, zoom);
-      this.toSvgPath(svgp, ISvgWritable.DEFAULT_SVG_FILL_RULE);
+      this.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
       svgp.append("</g>\n");
       return svgp.toString();
    }
@@ -1987,8 +1987,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the string builder.
     */
-   StringBuilder toSvgPath ( final StringBuilder svgp,
-      final String fillRule ) {
+   StringBuilder toSvgPath ( final StringBuilder svgp, final String fillRule ) {
 
       final int[][][] fs = this.faces;
       final Vec2[] vs = this.coords;
@@ -2301,8 +2300,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public static Mesh2 circle ( final Mesh2 target ) {
 
-      Mesh2.polygon(IMesh.DEFAULT_CIRCLE_SECTORS,
-         Mesh2.DEFAULT_POLY_TYPE, target);
+      Mesh2.polygon(IMesh.DEFAULT_CIRCLE_SECTORS, Mesh2.DEFAULT_POLY_TYPE,
+         target);
       target.name = "Circle";
       return target;
    }
@@ -2422,7 +2421,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             fTrg[j][1] = j;
          }
 
-         Mesh2 mesh = new Mesh2(fsTrg, vsTrg, vtsTrg);
+         final Mesh2 mesh = new Mesh2(fsTrg, vsTrg, vtsTrg);
          mesh.name = namePrefix + Utils.toPadded(i, 3);
          meshes[i] = mesh;
       }

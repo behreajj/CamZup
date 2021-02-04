@@ -1459,9 +1459,7 @@ public abstract class Utils implements IUtils {
     * format, <code>0xffaabbcc</code>, will yield the BBGGRRAA color,
     * <code>0xccbbaaff</code>.<br>
     * <br>
-    * Because Java integers are signed, the integer is promoted to a
-    * <code>long</code> to simulate an <code>uint</code> (an unsigned
-    * integer), then demoted after the shift.
+    * An alias for {@link Integer#reverseBytes(int)}.
     *
     * @param a the input value
     *
@@ -1469,9 +1467,7 @@ public abstract class Utils implements IUtils {
     */
    public static int swapEndian ( final int a ) {
 
-      final long b = a & 0xffffffffL;
-      return ( int ) ( b << 0x18 | ( b & 0xff00 ) << 0x8 | b >> 0x8 & 0xff00 | b
-         >> 0x18 );
+      return a << 24 | ( a & 0xff00 ) << 8 | a >>> 8 & 0xff00 | a >>> 24;
    }
 
    /**

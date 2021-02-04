@@ -25,10 +25,8 @@ void draw() {
   pushMatrix();
   translate(125.0, 100.0);
   rotateZ(0.01 * frameCount);
-
   noStroke();
   fill(#7f00ff);
   rect(0.0, 0.0, 100.0, 100.0, 10.0);
-
   popMatrix();
 }

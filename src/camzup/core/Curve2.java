@@ -673,7 +673,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       final StringBuilder svgp = new StringBuilder(1024);
       MaterialSolid.defaultSvgMaterial(svgp, zoom);
-      this.toSvgPath(svgp, ISvgWritable.DEFAULT_SVG_FILL_RULE);
+      this.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
       svgp.append("</g>\n");
       return svgp.toString();
    }
@@ -802,8 +802,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return the string builder.
     */
-   StringBuilder toSvgPath ( final StringBuilder svgp,
-      final String fillRule ) {
+   StringBuilder toSvgPath ( final StringBuilder svgp, final String fillRule ) {
 
       if ( this.knots.size() < 2 ) { return svgp; }
 
@@ -1498,7 +1497,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       if ( closedLoop ) {
          Knot2.fromSegCatmull(points[ptsLast], points[0], points[1], points[2],
             tightness, curr, first);
-      } else {
+      } else if ( curr != null ) {
          first.coord.set(points[1]);
          first.mirrorHandlesForward();
          curr.mirrorHandlesBackward();

@@ -1380,7 +1380,7 @@ public abstract class Convert {
                   case PConstants.CURVE_VERTEX: /* 3 */
 
                      /*
-                      * PShape doesn't seem to support this...?
+                      * PShape doesn't seem to support this?
                       * https://github.com/processing/processing/issues/5173
                       */
                      final int pi = Math.max(0, cursor - 1);

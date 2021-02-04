@@ -10,7 +10,8 @@ boolean toggle = false;
 boolean showHandles = false;
 
 MaterialSolid matCrv = new MaterialSolid()
-  .setFill(false)
+  .setFill(true)
+  .setFill(#4f4f4f)
   .setStroke(true)
   .setStroke(#fff7d5)
   .setStrokeWeight(1.0);
@@ -24,8 +25,8 @@ void settings() {
 }
 
 void setup() {
-  graphics = (YupJ2)getGraphics();
   frameRate(60.0);
+  graphics = (YupJ2)getGraphics();
 
   PImage txtr = createImage(512, 512, ARGB);
   ZImage.rgb(txtr);
@@ -40,17 +41,12 @@ void setup() {
   int len0 = glyCrv.length;
   for (int i = 0; i < len0; ++i) {
     CurveEntity2 glyph = glyCrv[i];
-    //println(glyph.name);
-    for(Curve2 gl : glyph) {
-      println(gl.name);
-    }
     glyph.scaleTo(scl);
   }
 
   int len1 = glyMsh.length;
   for (int j = 0; j < len1; ++j) {
     MeshEntity2 glyph = glyMsh[j];
-    println(glyph.name);
     glyph.scaleTo(scl);
   }
 

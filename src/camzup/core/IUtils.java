@@ -292,14 +292,14 @@ public interface IUtils {
    double TAU_D = 6.283185307179586d;
 
    /**
-    * \u03c0 divided by three, {@value IUtils#THIRD_PI} . Useful for
-    * describing the field of view in a perspective camera.
+    * \u03c0 divided by three, {@value IUtils#THIRD_PI} . 60 degrees. Useful
+    * for describing the field of view in a perspective camera.
     */
    float THIRD_PI = 1.0471976f;
 
    /**
-    * \u03c0 divided by three, {@value IUtils#THIRD_PI_D} . Useful for
-    * describing the field of view in a perspective camera.
+    * \u03c0 divided by three, {@value IUtils#THIRD_PI_D} . 60 degrees. Useful
+    * for describing the field of view in a perspective camera.
     */
    double THIRD_PI_D = 1.0471975511965976d;
 

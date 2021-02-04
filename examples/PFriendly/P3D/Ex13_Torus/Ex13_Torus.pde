@@ -23,8 +23,8 @@ void settings() {
 }
 
 void setup() {
-  graphics = (Zup3)getGraphics();
   frameRate(60.0);
+  graphics = (Zup3)getGraphics();
   graphics.textureSampling(TextureSampling.TRILINEAR);
 
   txtr = createImage(512, 512, ARGB);
