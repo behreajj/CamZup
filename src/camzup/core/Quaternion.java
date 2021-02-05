@@ -296,15 +296,6 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * The default easing function.
-    */
-   private static AbstrEasing EASING;
-
-   static {
-      Quaternion.EASING = new Slerp();
-   }
-
-   /**
     * Adds two quaternions.
     *
     * @param a      the left operand
@@ -674,6 +665,49 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
+    * Finds the value of Euler's number <em>e</em> raised to the power of the
+    * quaternion. Uses the formula:<br>
+    * <br>
+    * exp ( <em>q</em> ) := <em>e<sup>r</sup></em> ( { cos ( |<em>i</em>| ),
+    * <em>\u00ee</em> sin ( |<em>i</em>| ) } )<br>
+    * <br>
+    * where <em>r</em> is <em>q<sub>real</sub></em> and <em>i</em> is
+    * <em>q<sub>imag</sub></em>.
+    *
+    * @param q      the input quaternion
+    * @param target the output quaternion
+    *
+    * @return the result
+    *
+    * @see Math#exp(double)
+    * @see Vec3#mag(Vec3)
+    * @see Vec3#zero(Vec3)
+    * @see Math#sqrt(double)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    */
+   public static Quaternion exp ( final Quaternion q,
+      final Quaternion target ) {
+
+      // TODO: TEST AGAINST
+      // https://github.com/CesiumGS/cesium/blob/
+      // 4c7fb7cd5b358ab951a1771581ad15627f7bc6e6/Source/Core/Quaternion.js#L816
+
+      final double ea = Math.exp(q.real);
+      final float imSq = Vec3.mag(q.imag);
+      if ( imSq != 0.0f ) {
+         final double im = Math.sqrt(imSq);
+         target.real = ( float ) ( ea * Math.cos(im) );
+         Vec3.mul(q.imag, ( float ) ( ea * Math.sin(im) / im ), target.imag);
+         return target;
+      }
+
+      target.real = ( float ) ea;
+      Vec3.zero(target.imag);
+      return target;
+   }
+
+   /**
     * Sets a quaternion from an angle. The axis is assumed to be (0.0, 0.0,
     * 1.0) . Sets the real component of the quaternion to cosine of the angle;
     * the imaginary z component is set to the sine. Useful when working in
@@ -684,9 +718,6 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param target  the output quaternion
     *
     * @return the quaternion
-    *
-    * @see Math#cos(double)
-    * @see Math#sin(double)
     */
    public static Quaternion fromAngle ( final float radians,
       final Quaternion target ) {
@@ -1037,6 +1068,37 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
+    * Creates a quaternion from spherical coordinates. The quaternion's right
+    * axis corresponds to the point on the sphere, i.e., what would be
+    * returned by {@link Vec3#fromSpherical(float, float, float, Vec3)}.
+    *
+    * @param azimuth     the angle theta in radians
+    * @param inclination the angle phi in radians
+    * @param target      the output quaternion
+    *
+    * @return the quaternion
+    */
+   public static Quaternion fromSpherical ( final float azimuth,
+      final float inclination, final Quaternion target ) {
+
+      final float azimNorm = azimuth * IUtils.ONE_TAU_2;
+      final float cosAzim = Utils.scNorm(azimNorm);
+      final float sinAzim = Utils.scNorm(azimNorm - 0.25f);
+
+      final float inclNorm = inclination * IUtils.ONE_TAU_2;
+      final float cosIncl = Utils.scNorm(inclNorm);
+      final float sinIncl = Utils.scNorm(inclNorm - 0.25f);
+
+      /* Alternative: pointing forward */
+      // Subtract half pi from azimuth.
+      // return target.set(cosAzim * cosIncl, -sinIncl * cosAzim, -sinAzim *
+      // sinIncl, sinAzim * cosIncl);
+
+      return target.set(cosAzim * cosIncl, -sinAzim * sinIncl, sinIncl
+         * cosAzim, sinAzim * cosIncl);
+   }
+
+   /**
     * Creates a quaternion with reference to two vectors. This function
     * creates normalized copies of the vectors.<br>
     * <br>
@@ -1091,17 +1153,6 @@ public class Quaternion implements Comparable < Quaternion > {
       i.z = anx * bny - any * bnx;
 
       return target;
-   }
-
-   /**
-    * Gets the string representation of the default Quaternion easing
-    * function.
-    *
-    * @return the string
-    */
-   public static String getEasingString ( ) {
-
-      return Quaternion.EASING.toString();
    }
 
    /**
@@ -1336,6 +1387,55 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
+    * Finds the natural logarithm of the quaternion. Uses the formula:<br>
+    * <br>
+    * ln ( <em>q</em> ) := { ln ( |<em>q</em>| ), <em>\u00ee</em> acos (
+    * a<sub>real</sub> / |<em>q</em>| ) }<br>
+    * <br>
+    * where <em>i</em> is <em>q<sub>imag</sub></em>.
+    *
+    * @param q      the quaternion
+    * @param target the output quaternion
+    *
+    * @return the result
+    *
+    * @see Vec3#magSq(Vec3)
+    * @see Math#sqrt(double)
+    * @see Math#log(double)
+    * @see Utils#approx(float, float)
+    * @see Vec3#zero(Vec3)
+    * @see Math#acos(double)
+    * @see Vec3#mul(Vec3, float, Vec3)
+    */
+   public static Quaternion log ( final Quaternion q,
+      final Quaternion target ) {
+
+      // TODO: TEST AGAINST:
+      // https://github.com/CesiumGS/cesium/blob/
+      // 4c7fb7cd5b358ab951a1771581ad15627f7bc6e6/Source/Core/Quaternion.js#L793
+
+      final float imSq = Vec3.magSq(q.imag);
+      final float qmSq = q.real * q.real + imSq;
+
+      if ( qmSq == 0.0f ) { return target.reset(); }
+
+      final double qm = Math.sqrt(qmSq);
+      target.real = ( float ) Math.log(qm);
+
+      if ( Utils.approx(imSq, 0.0f) ) {
+         Vec3.zero(target.imag);
+         return target;
+      }
+
+      final double wNorm = q.real / qm;
+      final double wAcos = wNorm <= -1.0d ? Math.PI : wNorm >= 1.0d ? 0.0d
+         : Math.acos(wNorm);
+
+      Vec3.mul(q.imag, ( float ) ( wAcos / Math.sqrt(imSq) ), target.imag);
+      return target;
+   }
+
+   /**
     * Finds the length, or magnitude, of a quaternion.<br>
     * <br>
     * |<em>a</em>| := \u221a <em>a</em> \u00b7 <em>a</em><br>
@@ -1384,13 +1484,63 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param target the output quaternion
     *
     * @return the mix
-    *
-    * @see Quaternion#EASING
     */
    public static Quaternion mix ( final Quaternion origin,
       final Quaternion dest, final float step, final Quaternion target ) {
 
-      return Quaternion.EASING.apply(origin, dest, step, target);
+      if ( step <= 0.0f ) { return Quaternion.normalize(origin, target); }
+      if ( step >= 1.0f ) { return Quaternion.normalize(dest, target); }
+
+      /* Decompose origin quaternion. */
+      final Vec3 ai = origin.imag;
+      final float aw = origin.real;
+      final float ax = ai.x;
+      final float ay = ai.y;
+      final float az = ai.z;
+
+      /* Decompose destination quaternion. */
+      final Vec3 bi = dest.imag;
+      float bw = dest.real;
+      float bx = bi.x;
+      float by = bi.y;
+      float bz = bi.z;
+
+      /* Flip values if the orientation is negative, i.e., find near path. */
+      float dotp = aw * bw + ax * bx + ay * by + az * bz;
+      if ( dotp < 0.0f ) {
+         bw = -bw;
+         bx = -bx;
+         by = -by;
+         bz = -bz;
+         dotp = -dotp;
+      }
+
+      /*
+       * Find interpolation factor and its complement. Inverse square root and
+       * arc-cosine should both check for invalid dot product.
+       */
+      float v = step;
+      float u = 1.0f - v;
+
+      final float sinTheta = Utils.invSqrt(1.0f - dotp * dotp);
+      if ( sinTheta > IUtils.EPSILON ) {
+         final float theta = Utils.acos(dotp);
+         final float thetaStep = theta * step;
+         u = sinTheta * Utils.sin(theta - thetaStep);
+         v = sinTheta * Utils.sin(thetaStep);
+      }
+
+      /* Interpolate. */
+      final float cw = u * aw + v * bw;
+      final float cx = u * ax + v * bx;
+      final float cy = u * ay + v * by;
+      final float cz = u * az + v * bz;
+
+      /* Normalize. */
+      final float mSq = cw * cw + cx * cx + cy * cy + cz * cz;
+      if ( mSq < IUtils.EPSILON ) { return target.reset(); }
+      final float mInv = Utils.invSqrtUnchecked(mSq);
+      return target.set(cw * mInv, cx * mInv, cy * mInv, cz * mInv);
    }
 
    /**
@@ -1727,13 +1877,48 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Sets the easing function by which quaternions are interpolated.
+    * Returns an orientation on a Bezier curve described by two anchor
+    * orientations and two control orientations according to a step in [0.0,
+    * 1.0] . When the step is less than zero, returns the first anchor. When
+    * the step is greater than one, returns the second anchor.
     *
-    * @param easing the easing function
+    * @param ap0    the first anchor point
+    * @param cp0    the first control point
+    * @param cp1    the second control point
+    * @param ap1    the second anchor point
+    * @param step   the step
+    * @param target the output quaternion
+    *
+    * @return the quaternion
     */
-   public static void setEasing ( final AbstrEasing easing ) {
+   @Experimental
+   public static Quaternion squad ( final Quaternion ap0, final Quaternion cp0,
+      final Quaternion cp1, final Quaternion ap1, final float step,
+      final Quaternion target ) {
 
-      if ( easing != null ) { Quaternion.EASING = easing; }
+      // https://devtalk.blender.org/t/quaternion-interpolation/15883/15
+
+      // https://math.stackexchange.com/questions/2650188/
+      // super-confused-by-squad-algorithm-for-quaternion-interpolation
+
+      if ( step <= 0.0f ) { return target.set(ap0); }
+      if ( step >= 1.0f ) { return target.set(ap1); }
+
+      final Quaternion a = new Quaternion();
+      final Quaternion b = new Quaternion();
+      final Quaternion c = new Quaternion();
+
+      final Quaternion ab = new Quaternion();
+      final Quaternion bc = new Quaternion();
+
+      Quaternion.mix(ap0, cp0, step, a);
+      Quaternion.mix(cp0, cp1, step, b);
+      Quaternion.mix(cp1, ap1, step, c);
+      Quaternion.mix(a, b, step, ab);
+      Quaternion.mix(b, c, step, bc);
+      Quaternion.mix(ab, bc, step, target);
+
+      return target;
    }
 
    /**
@@ -1910,94 +2095,6 @@ public class Quaternion implements Comparable < Quaternion > {
       final float mInv = Utils.invSqrtUnchecked(amSq);
       axis.set(ax * mInv, ay * mInv, az * mInv);
       return angle;
-   }
-
-   /**
-    * Finds the value of Euler's number <em>e</em> raised to the power of the
-    * quaternion. Uses the formula:<br>
-    * <br>
-    * exp ( <em>q</em> ) := <em>e<sup>r</sup></em> ( { cos ( |<em>i</em>| ),
-    * <em>\u00ee</em> sin ( |<em>i</em>| ) } )<br>
-    * <br>
-    * where <em>r</em> is <em>q<sub>real</sub></em> and <em>i</em> is
-    * <em>q<sub>imag</sub></em>.
-    *
-    * @param q      the input quaternion
-    * @param target the output quaternion
-    *
-    * @return the result
-    *
-    * @see Math#exp(double)
-    * @see Vec3#mag(Vec3)
-    * @see Vec3#zero(Vec3)
-    * @see Math#sqrt(double)
-    * @see Math#cos(double)
-    * @see Math#sin(double)
-    */
-   static Quaternion exp ( final Quaternion q, final Quaternion target ) {
-
-      final double ea = Math.exp(q.real);
-      final float imSq = Vec3.mag(q.imag);
-      if ( imSq != 0.0f ) {
-         final double im = Math.sqrt(imSq);
-         target.real = ( float ) ( ea * Math.cos(im) );
-         Vec3.mul(q.imag, ( float ) ( ea * Math.sin(im) / im ), target.imag);
-         return target;
-      }
-
-      Vec3.zero(target.imag);
-      target.real = ( float ) ea;
-      return target;
-   }
-
-   /**
-    * Finds the natural logarithm of the quaternion. Uses the formula:<br>
-    * <br>
-    * ln ( <em>q</em> ) := { ln ( |<em>q</em>| ), <em>\u00ee</em> acos (
-    * a<sub>real</sub> / |<em>q</em>| ) }<br>
-    * <br>
-    * where <em>i</em> is <em>q<sub>imag</sub></em>.
-    *
-    * @param q      the quaternion
-    * @param target the output quaternion
-    *
-    * @return the result
-    *
-    * @see Vec3#magSq(Vec3)
-    * @see Math#sqrt(double)
-    * @see Math#log(double)
-    * @see Utils#approx(float, float)
-    * @see Vec3#zero(Vec3)
-    * @see Math#acos(double)
-    * @see Vec3#mul(Vec3, float, Vec3)
-    */
-   static Quaternion log ( final Quaternion q, final Quaternion target ) {
-
-      final float imSq = Vec3.magSq(q.imag);
-      final float qmSq = q.real * q.real + imSq;
-
-      if ( qmSq == 0.0f ) { return target.reset(); }
-
-      final double qm = Math.sqrt(qmSq);
-      target.real = ( float ) Math.log(qm);
-
-      if ( Utils.approx(imSq, 0.0f) ) {
-         Vec3.zero(target.imag);
-         return target;
-      }
-
-      final double wNorm = q.real / qm;
-      final double wAcos = wNorm <= -1.0d ? Math.PI : wNorm >= 1.0d ? 0.0d
-         : Math.acos(wNorm);
-
-      if ( Utils.approx(imSq, 1.0f) ) {
-         Vec3.mul(q.imag, ( float ) wAcos, target.imag);
-         return target;
-      }
-
-      final double scalarNorm = wAcos / Math.sqrt(imSq);
-      Vec3.mul(q.imag, ( float ) scalarNorm, target.imag);
-      return target;
    }
 
    /**
@@ -2264,9 +2361,8 @@ public class Quaternion implements Comparable < Quaternion > {
          double by = bi.y;
          double bz = bi.z;
 
-         /* Clamp the dot product. */
-         double dotp = Utils.clamp(aw * bw + ax * bx + ay * by + az * bz, -1.0d,
-            1.0d);
+         /* Is it necessary to clamp the dot product? */
+         double dotp = aw * bw + ax * bx + ay * by + az * bz;
 
          /* Flip values if the orientation is negative. */
          if ( dotp < 0.0d ) {
@@ -2277,28 +2373,17 @@ public class Quaternion implements Comparable < Quaternion > {
             dotp = -dotp;
          }
 
-         /*
-          * Java Math functions will promote values into doubles, so for
-          * precision, they'll be used until function close.
-          */
-         final double theta = Math.acos(dotp);
-         final double sinTheta = Math.sqrt(1.0d - dotp * dotp);
-         final double stepd = step;
+         /* The step and its complement. */
+         double v = step;
+         double u = 1.0d - v;
 
-         /* The complementary step, i.e., 1.0 - step. */
-         double u;
-
-         /* The step. */
-         double v;
-
+         final double sinTheta = Math.sqrt(1.0d - dotp * dotp); // in [1, 0].
          if ( sinTheta > AbstrEasing.EPS_D ) {
+            final double theta = Math.acos(dotp);
             final double sInv = 1.0d / sinTheta;
-            final double thetaStep = theta * stepd;
+            final double thetaStep = theta * v;
             u = sInv * Math.sin(theta - thetaStep);
             v = sInv * Math.sin(thetaStep);
-         } else {
-            u = 1.0d - stepd;
-            v = stepd;
          }
 
          /* Unclamped linear interpolation. */
@@ -2311,7 +2396,7 @@ public class Quaternion implements Comparable < Quaternion > {
          final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
 
          /* Magnitude is approximately zero. */
-         if ( Math.abs(mSq) < AbstrEasing.EPS_D ) { return target.reset(); }
+         if ( mSq < AbstrEasing.EPS_D ) { return target.reset(); }
 
          /* Magnitude is approximately one. */
          if ( Math.abs(1.0d - mSq) < AbstrEasing.EPS_D ) {

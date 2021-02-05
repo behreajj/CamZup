@@ -1547,6 +1547,51 @@ public class Mat4 {
    }
 
    /**
+    * Creates a matrix from spherical coordinates. The matrix's right axis
+    * (m00, m10, m20) corresponds to the point on the sphere, i.e., what would
+    * be returned by {@link Vec3#fromSpherical(float, float, float, Vec3)}.
+    * The radius acts as a scalar by which all matrix entries are multiplied.
+    * A radius of zero will return the identity matrix.
+    *
+    * @param azimuth     the angle theta in radians
+    * @param inclination the angle phi in radians
+    * @param radius      rho, the magnitude
+    * @param target      the output matrix
+    *
+    * @return the matrix
+    */
+   public static Mat4 fromSpherical ( final float azimuth,
+      final float inclination, final float radius, final Mat4 target ) {
+
+      if ( Utils.abs(radius) < IUtils.EPSILON ) { return target.reset(); }
+
+      final float azimNorm = azimuth * IUtils.ONE_TAU;
+      final float cosAzim = Utils.scNorm(azimNorm);
+      final float sinAzim = Utils.scNorm(azimNorm - 0.25f);
+
+      final float inclNorm = inclination * IUtils.ONE_TAU;
+      final float cosIncl = Utils.scNorm(inclNorm);
+      final float sinIncl = Utils.scNorm(inclNorm - 0.25f);
+
+      final float rhoCosIncl = radius * cosIncl;
+      final float rhoSinIncl = radius * sinIncl;
+
+      /* Alternative: pointing forward: */
+      // return target.set(radius * sinAzim, rhoCosIncl * cosAzim, rhoSinIncl
+      // * cosAzim, 0.0f, radius * -cosAzim, rhoCosIncl * sinAzim, rhoSinIncl
+      // * sinAzim, 0.0f, 0.0f, -rhoSinIncl, rhoCosIncl, 0.0f, 0.0f, 0.0f,
+      // 0.0f, 1.0f);
+
+      /* @formatter:off */
+      return target.set(
+         rhoCosIncl * cosAzim, radius * -sinAzim, rhoSinIncl * cosAzim, 0.0f,
+         rhoCosIncl * sinAzim, radius *  cosAzim, rhoSinIncl * sinAzim, 0.0f,
+                  -rhoSinIncl,              0.0f,           rhoCosIncl, 0.0f,
+                         0.0f,              0.0f,                 0.0f, 1.0f);
+      /* @formatter:on */
+   }
+
+   /**
     * Creates a translation matrix from a vector.
     *
     * @param translation the translation

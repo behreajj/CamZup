@@ -1433,8 +1433,8 @@ public class Vec3 implements Comparable < Vec3 > {
 
       final float azNorm = azimuth * IUtils.ONE_TAU;
       final float inclNorm = inclination * IUtils.ONE_TAU;
-      final float rhoCosPhi = radius * Utils.scNorm(inclNorm);
-      return target.set(rhoCosPhi * Utils.scNorm(azNorm), rhoCosPhi * Utils
+      final float rhoCosIncl = radius * Utils.scNorm(inclNorm);
+      return target.set(rhoCosIncl * Utils.scNorm(azNorm), rhoCosIncl * Utils
          .scNorm(azNorm - 0.25f), radius * -Utils.scNorm(inclNorm - 0.25f));
    }
 

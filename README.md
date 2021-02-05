@@ -118,7 +118,7 @@ Vertex winding is also affected. Below, a piecemeal Bezier curve is used to appr
 
 A renderer's vertex winding rule will dictate the fill of contours with the same winding. For more information, see the [non-zero](https://en.wikipedia.org/wiki/Nonzero-rule) and the [even-odd](https://en.wikipedia.org/wiki/Even%E2%80%93odd_rule) rule.
 
-In 3D, the orientation of a spherical coordinate system will depend on the up axis. For z-up, the equator of a spherical system will rest on the camera's horizon; for y-up, the poles will rest on the camera's horizon. The image below shows z-up.
+In 3D, the orientation of a spherical coordinate system depends on the up axis. For z-up, the equator of a spherical system rests on the camera's horizon; for y-up, the poles rest on the camera's horizon. The image below shows z-up.
 
 ![Spherical Coordinates](data/sphericalDiagram.png)
 

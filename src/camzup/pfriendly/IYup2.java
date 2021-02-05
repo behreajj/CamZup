@@ -85,11 +85,21 @@ public interface IYup2 extends IUp {
     * @param radians the angle in radians
     * @param zx      the zoom x
     * @param zy      the zoom y
-    *
-    * @see Utils#modRadians(float)
     */
    void camera ( final float x, final float y, final float radians,
       final float zx, final float zy );
+
+   /**
+    * Sets the camera to a translation, rotation and scale.
+    *
+    * @param t the translation
+    * @param r the rotation
+    * @param s the scale
+    */
+   default void camera ( final Vec2 t, final float r, final Vec2 s ) {
+
+      this.camera(t.x, t.y, r, s.x, s.y);
+   }
 
    /**
     * Draws a circle at a location

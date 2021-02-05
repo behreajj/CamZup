@@ -3,7 +3,6 @@ package camzup.pfriendly;
 import camzup.core.Entity3;
 import camzup.core.Experimental;
 import camzup.core.Handedness;
-import camzup.core.IUtils;
 import camzup.core.Transform3;
 import camzup.core.Vec3;
 
@@ -132,15 +131,6 @@ public class CamEntity3 extends Entity3 implements ICamEntity {
       /* Set model view to camera. */
       rndr.modelview.set(rndr.camera);
       rndr.modelviewInv.set(rndr.cameraInv);
-
-      // TODO: Doesn't ICamEntity already cover perspective?
-
-      /* Set to perspective. */
-      final float aspect = rndr.height != 0 ? rndr.width / ( float ) rndr.height
-         : 1.0f;
-      PMatAux.perspective(IUtils.THIRD_PI, aspect, 0.015f, 1500.0f,
-         rndr.projection);
-      PMatAux.mul(rndr.projection, rndr.modelview, rndr.projmodelview);
 
       return this;
    }

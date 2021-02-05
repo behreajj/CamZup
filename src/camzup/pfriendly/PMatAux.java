@@ -194,33 +194,26 @@ public abstract class PMatAux {
 
       // TODO: Further in-line and optimize?
 
-      /* @formatter:off */
       float t1 = m.m01;
       float t2 = m.m02;
-      final float n01 = t1 * c + t2 * s;
-      final float n02 = t2 * c - t1 * s;
+      m.m01 = t1 * c + t2 * s;
+      m.m02 = t2 * c - t1 * s;
 
       t1 = m.m11;
       t2 = m.m12;
-      final float n11 = t1 * c + t2 * s;
-      final float n12 = t2 * c - t1 * s;
+      m.m11 = t1 * c + t2 * s;
+      m.m12 = t2 * c - t1 * s;
 
       t1 = m.m21;
       t2 = m.m22;
-      final float n21 = t1 * c + t2 * s;
-      final float n22 = t2 * c - t1 * s;
+      m.m21 = t1 * c + t2 * s;
+      m.m22 = t2 * c - t1 * s;
 
       t1 = m.m31;
-
-      m.m01 = n01;
-      m.m02 = n02;
-      m.m11 = n11;
-      m.m12 = n12;
-      m.m21 = n21;
-      m.m22 = n22;
       m.m31 = t1 * c + m.m32 * s;
       m.m32 = m.m32 * c - t1 * s;
 
+      /* @formatter:off */
       mInv.set(
          mInv.m00, mInv.m01, mInv.m02, mInv.m03,
          c * mInv.m10 + s * mInv.m20,
@@ -251,33 +244,26 @@ public abstract class PMatAux {
    public static PMatrix3D compoundRotateY ( final float c, final float s,
       final PMatrix3D m, final PMatrix3D mInv ) {
 
-      /* @formatter:off */
       float t0 = m.m00;
       float t2 = m.m02;
-      final float n00 = t0 * c - t2 * s;
-      final float n02 = t0 * s + t2 * c;
+      m.m00 = t0 * c - t2 * s;
+      m.m02 = t0 * s + t2 * c;
 
       t0 = m.m10;
       t2 = m.m12;
-      final float n10 = t0 * c - t2 * s;
-      final float n12 = t0 * s + t2 * c;
+      m.m10 = t0 * c - t2 * s;
+      m.m12 = t0 * s + t2 * c;
 
       t0 = m.m20;
       t2 = m.m22;
-      final float n20 = t0 * c - t2 * s;
-      final float n22 = t0 * s + t2 * c;
+      m.m20 = t0 * c - t2 * s;
+      m.m22 = t0 * s + t2 * c;
 
       t0 = m.m30;
-
-      m.m00 = n00;
-      m.m02 = n02;
-      m.m10 = n10;
-      m.m12 = n12;
-      m.m20 = n20;
-      m.m22 = n22;
       m.m30 = t0 * c - m.m32 * s;
       m.m32 = t0 * s + m.m32 * c;
 
+      /* @formatter:off */
       mInv.set(
          c * mInv.m00 - s * mInv.m20,
          c * mInv.m01 - s * mInv.m21,
@@ -308,21 +294,26 @@ public abstract class PMatAux {
    public static PMatrix3D compoundRotateZ ( final float c, final float s,
       final PMatrix3D m, final PMatrix3D mInv ) {
 
-      /* @formatter:off */
-      m.set(
-         c * m.m00 + s * m.m01,
-         c * m.m01 - s * m.m00,
-         m.m02, m.m03,
-         c * m.m10 + s * m.m11,
-         c * m.m11 - s * m.m10,
-         m.m12, m.m13,
-         c * m.m20 + s * m.m21,
-         c * m.m21 - s * m.m20,
-         m.m22, m.m23,
-         c * m.m30 + s * m.m31,
-         c * m.m31 - s * m.m30,
-         m.m32, m.m33);
+      float t0 = m.m00;
+      float t1 = m.m01;
+      m.m00 = t0 * c + t1 * s;
+      m.m01 = t1 * c - t0 * s;
 
+      t0 = m.m10;
+      t1 = m.m11;
+      m.m10 = t0 * c + t1 * s;
+      m.m11 = t1 * c - t0 * s;
+
+      t0 = m.m20;
+      t1 = m.m21;
+      m.m20 = t0 * c + t1 * s;
+      m.m21 = t1 * c - t0 * s;
+
+      t0 = m.m30;
+      m.m30 = t0 * c + m.m31 * s;
+      m.m31 = m.m31 * c - t0 * s;
+
+      /* @formatter:off */
       mInv.set(
          c * mInv.m00 + s * mInv.m10,
          c * mInv.m01 + s * mInv.m11,
@@ -447,6 +438,8 @@ public abstract class PMatAux {
    public static PMatrix3D invRotate ( final Quaternion q,
       final PMatrix3D target ) {
 
+      // TODO: Consolidate into compoundRotate
+
       float w = 1.0f;
       float x = 0.0f;
       float y = 0.0f;
@@ -505,144 +498,6 @@ public abstract class PMatAux {
          target.m30, target.m31, target.m32, target.m33);
       return target;
       /* @formatter:on */
-   }
-
-   /**
-    * Inverse rotates a matrix in place by an angle in radians around the x
-    * axis.
-    *
-    * @param c      the cosine of the angle
-    * @param s      the sine of the angle
-    * @param target the output matrix
-    *
-    * @return the rotated matrix
-    */
-   public static PMatrix3D invRotateX ( final float c, final float s,
-      final PMatrix3D target ) {
-
-      /* @formatter:off */
-      target.set(
-         target.m00, target.m01, target.m02, target.m03,
-         c * target.m10 + s * target.m20,
-         c * target.m11 + s * target.m21,
-         c * target.m12 + s * target.m22,
-         c * target.m13 + s * target.m23,
-         c * target.m20 - s * target.m10,
-         c * target.m21 - s * target.m11,
-         c * target.m22 - s * target.m12,
-         c * target.m23 - s * target.m13,
-         target.m30, target.m31, target.m32, target.m33);
-      return target;
-      /* @formatter:on */
-   }
-
-   /**
-    * Inverse rotates a matrix in place by an angle in radians around the x
-    * axis.
-    *
-    * @param radians the angle in radians
-    * @param target  the output matrix
-    *
-    * @return the rotated matrix
-    */
-   public static PMatrix3D invRotateX ( final float radians,
-      final PMatrix3D target ) {
-
-      final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.invRotateX(Utils.scNorm(normRad), Utils.scNorm(normRad
-         - 0.25f), target);
-   }
-
-   /**
-    * Inverse rotates a matrix in place by an angle in radians around the y
-    * axis.
-    *
-    * @param c      the cosine of the angle
-    * @param s      the sine of the angle
-    * @param target the output matrix
-    *
-    * @return the rotated matrix
-    */
-   public static PMatrix3D invRotateY ( final float c, final float s,
-      final PMatrix3D target ) {
-
-      /* @formatter:off */
-      target.set(
-         c * target.m00 - s * target.m20,
-         c * target.m01 - s * target.m21,
-         c * target.m02 - s * target.m22,
-         c * target.m03 - s * target.m23,
-         target.m10, target.m11, target.m12, target.m13,
-         c * target.m20 + s * target.m00,
-         c * target.m21 + s * target.m01,
-         c * target.m22 + s * target.m02,
-         c * target.m23 + s * target.m03,
-         target.m30, target.m31, target.m32, target.m33);
-      return target;
-      /* @formatter:on */
-   }
-
-   /**
-    * Inverse rotates a matrix in place by an angle in radians around the y
-    * axis.
-    *
-    * @param radians the angle in radians
-    * @param target  the output matrix
-    *
-    * @return the rotated matrix
-    */
-   public static PMatrix3D invRotateY ( final float radians,
-      final PMatrix3D target ) {
-
-      final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.invRotateY(Utils.scNorm(normRad), Utils.scNorm(normRad
-         - 0.25f), target);
-   }
-
-   /**
-    * Inverse rotates a matrix in place by an angle in radians around the z
-    * axis.
-    *
-    * @param c      the cosine of the angle
-    * @param s      the sine of the angle
-    * @param target the output matrix
-    *
-    * @return the rotated matrix
-    */
-   public static PMatrix3D invRotateZ ( final float c, final float s,
-      final PMatrix3D target ) {
-
-      /* @formatter:off */
-      target.set(
-         c * target.m00 + s * target.m10,
-         c * target.m01 + s * target.m11,
-         c * target.m02 + s * target.m12,
-         c * target.m03 + s * target.m13,
-         c * target.m10 - s * target.m00,
-         c * target.m11 - s * target.m01,
-         c * target.m12 - s * target.m02,
-         c * target.m13 - s * target.m03,
-         target.m20, target.m21, target.m22, target.m23,
-         target.m30, target.m31, target.m32, target.m33);
-      return target;
-      /* @formatter:on */
-   }
-
-   /**
-    * Inverse rotates a matrix in place by an angle in radians around the z
-    * axis.
-    *
-    * @param radians the angle in radians
-    * @param target  the output matrix
-    *
-    * @return the rotated matrix
-    */
-   public static PMatrix3D invRotateZ ( final float radians,
-      final PMatrix3D target ) {
-
-      final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.invRotateZ(Utils.scNorm(normRad), Utils.scNorm(normRad
-         - 0.25f), target);
    }
 
    /**
@@ -943,90 +798,6 @@ public abstract class PMatAux {
    }
 
    /**
-    * Rotates a matrix in place around an arbitrary axis by the sine and
-    * cosine of an angle. Does not check that the axis is normalized.
-    *
-    * @param c      the cosine of the angle
-    * @param s      the sine of the angle
-    * @param xAxis  the axis x component
-    * @param yAxis  the axis y component
-    * @param zAxis  the axis z component
-    * @param target the output matrix
-    *
-    * @return the rotated matrix
-    */
-   public static PMatrix3D rotate ( final float c, final float s,
-      final float xAxis, final float yAxis, final float zAxis,
-      final PMatrix3D target ) {
-
-      final float t = 1.0f - c;
-      final float tax = t * xAxis;
-      final float taz = t * zAxis;
-      final float tay = t * yAxis;
-
-      final float saz = s * zAxis;
-      final float sax = s * xAxis;
-      final float say = s * yAxis;
-
-      final float bm00 = tax * xAxis + c;
-      final float bm01 = tay * xAxis - saz;
-      final float bm02 = tax * zAxis + say;
-
-      final float bm10 = tax * yAxis + saz;
-      final float bm11 = tay * yAxis + c;
-      final float bm12 = taz * yAxis - sax;
-
-      final float bm20 = taz * xAxis - say;
-      final float bm21 = tay * zAxis + sax;
-      final float bm22 = taz * zAxis + c;
-
-      /* @formatter:off */
-      target.set(
-         target.m00 * bm00 + target.m01 * bm10 + target.m02 * bm20,
-         target.m00 * bm01 + target.m01 * bm11 + target.m02 * bm21,
-         target.m00 * bm02 + target.m01 * bm12 + target.m02 * bm22,
-         target.m03,
-
-         target.m10 * bm00 + target.m11 * bm10 + target.m12 * bm20,
-         target.m10 * bm01 + target.m11 * bm11 + target.m12 * bm21,
-         target.m10 * bm02 + target.m11 * bm12 + target.m12 * bm22,
-         target.m13,
-
-         target.m20 * bm00 + target.m21 * bm10 + target.m22 * bm20,
-         target.m20 * bm01 + target.m21 * bm11 + target.m22 * bm21,
-         target.m20 * bm02 + target.m21 * bm12 + target.m22 * bm22,
-         target.m23,
-
-         target.m30 * bm00 + target.m31 * bm10 + target.m32 * bm20,
-         target.m30 * bm01 + target.m31 * bm11 + target.m32 * bm21,
-         target.m30 * bm02 + target.m31 * bm12 + target.m32 * bm22,
-         target.m33);
-      /* @formatter:on */
-
-      return target;
-   }
-
-   /**
-    * Rotates a matrix in place around an arbitrary axis by the sine and
-    * cosine of an angle. Does not check that the axis is normalized.
-    *
-    * @param radians the angle in radians
-    * @param xAxis   the axis x component
-    * @param yAxis   the axis y component
-    * @param zAxis   the axis z component
-    * @param target  the output matrix
-    *
-    * @return the rotated matrix
-    */
-   public static PMatrix3D rotate ( final float radians, final float xAxis,
-      final float yAxis, final float zAxis, final PMatrix3D target ) {
-
-      final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.rotate(Utils.scNorm(normRad), Utils.scNorm(normRad
-         - 0.25f), xAxis, yAxis, zAxis, target);
-   }
-
-   /**
     * Rotates a matrix by a quaternion in place. Does so by converting the
     * quaternion to a matrix, then multiplying the input matrix and the
     * conversion.
@@ -1038,6 +809,8 @@ public abstract class PMatAux {
     */
    public static PMatrix3D rotate ( final Quaternion q,
       final PMatrix3D target ) {
+
+      // TODO: Consolidate into compoundRotate
 
       final float w = q.real;
       final Vec3 i = q.imag;
@@ -1093,183 +866,6 @@ public abstract class PMatAux {
          target.m33);
       return target;
       /* @formatter:on */
-   }
-
-   /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer
-    * to rotation about an arbitrary axis. This is not necessary for rotate X.
-    *
-    * @param c      the cosine of the angle
-    * @param s      the sine of the angle
-    * @param target the matrix
-    *
-    * @return the mutated matrix
-    */
-   public static PMatrix3D rotateX ( final float c, final float s,
-      final PMatrix3D target ) {
-
-      float t1 = target.m01;
-      float t2 = target.m02;
-      final float n01 = t1 * c + t2 * s;
-      final float n02 = t2 * c - t1 * s;
-
-      t1 = target.m11;
-      t2 = target.m12;
-      final float n11 = t1 * c + t2 * s;
-      final float n12 = t2 * c - t1 * s;
-
-      t1 = target.m21;
-      t2 = target.m22;
-      final float n21 = t1 * c + t2 * s;
-      final float n22 = t2 * c - t1 * s;
-
-      t1 = target.m31;
-
-      target.m01 = n01;
-      target.m02 = n02;
-      target.m11 = n11;
-      target.m12 = n12;
-      target.m21 = n21;
-      target.m22 = n22;
-      target.m31 = t1 * c + target.m32 * s;
-      target.m32 = target.m32 * c - t1 * s;
-
-      return target;
-   }
-
-   /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer
-    * to rotation about an arbitrary axis. This is not necessary for rotate Y.
-    *
-    * @param radians the angle in radians
-    * @param target  the matrix
-    *
-    * @return the mutated matrix
-    */
-   public static PMatrix3D rotateX ( final float radians,
-      final PMatrix3D target ) {
-
-      final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.rotateX(Utils.scNorm(normRad), Utils.scNorm(normRad
-         - 0.25f), target);
-   }
-
-   /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer
-    * to rotation about an arbitrary axis. This is not necessary for rotate Y.
-    *
-    * @param c      the cosine of the angle
-    * @param s      the sine of the angle
-    * @param target the matrix
-    *
-    * @return the mutated matrix
-    */
-   public static PMatrix3D rotateY ( final float c, final float s,
-      final PMatrix3D target ) {
-
-      float t0 = target.m00;
-      float t2 = target.m02;
-      final float n00 = t0 * c - t2 * s;
-      final float n02 = t0 * s + t2 * c;
-
-      t0 = target.m10;
-      t2 = target.m12;
-      final float n10 = t0 * c - t2 * s;
-      final float n12 = t0 * s + t2 * c;
-
-      t0 = target.m20;
-      t2 = target.m22;
-      final float n20 = t0 * c - t2 * s;
-      final float n22 = t0 * s + t2 * c;
-
-      t0 = target.m30;
-
-      target.m00 = n00;
-      target.m02 = n02;
-      target.m10 = n10;
-      target.m12 = n12;
-      target.m20 = n20;
-      target.m22 = n22;
-      target.m30 = t0 * c - target.m32 * s;
-      target.m32 = t0 * s + target.m32 * c;
-
-      return target;
-   }
-
-   /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer
-    * to rotation about an arbitrary axis. This is not necessary for rotate Y.
-    *
-    * @param radians the angle in radians
-    * @param target  the matrix
-    *
-    * @return the mutated matrix
-    */
-   public static PMatrix3D rotateY ( final float radians,
-      final PMatrix3D target ) {
-
-      final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.rotateY(Utils.scNorm(normRad), Utils.scNorm(normRad
-         - 0.25f), target);
-   }
-
-   /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer
-    * to rotation about an arbitrary axis. This is not necessary for rotate Z.
-    *
-    * @param c      the cosine of the angle
-    * @param s      the sine of the angle
-    * @param target the matrix
-    *
-    * @return the mutated matrix
-    */
-   public static PMatrix3D rotateZ ( final float c, final float s,
-      final PMatrix3D target ) {
-
-      float t0 = target.m00;
-      float t1 = target.m01;
-      final float n00 = t0 * c + t1 * s;
-      final float n01 = t1 * c - t0 * s;
-
-      t0 = target.m10;
-      t1 = target.m11;
-      final float n10 = t0 * c + t1 * s;
-      final float n11 = t1 * c - t0 * s;
-
-      t0 = target.m20;
-      t1 = target.m21;
-      final float n20 = t0 * c + t1 * s;
-      final float n21 = t1 * c - t0 * s;
-
-      t0 = target.m30;
-
-      target.m00 = n00;
-      target.m01 = n01;
-      target.m10 = n10;
-      target.m11 = n11;
-      target.m20 = n20;
-      target.m21 = n21;
-      target.m30 = t0 * c + target.m31 * s;
-      target.m31 = target.m31 * c - t0 * s;
-
-      return target;
-   }
-
-   /**
-    * PMatrix3D's instance methods for rotating around orthonormal axes defer
-    * to rotation about an arbitrary axis. This is not necessary for rotate Z.
-    *
-    * @param radians the angle in radians
-    * @param target  the matrix
-    *
-    * @return the mutated matrix
-    */
-   public static PMatrix3D rotateZ ( final float radians,
-      final PMatrix3D target ) {
-
-      final float normRad = radians * IUtils.ONE_TAU;
-      return PMatAux.rotateZ(Utils.scNorm(normRad), Utils.scNorm(normRad
-         - 0.25f), target);
    }
 
    /**

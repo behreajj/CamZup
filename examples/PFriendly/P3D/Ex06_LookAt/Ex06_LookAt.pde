@@ -43,7 +43,7 @@ void draw() {
   entity.lookAt(cmloc, 0.025, graphics.handedness());
 
   graphics.background(#101010);
-  graphics.perspective();
+  graphics.ortho(0.325);
   graphics.grid(16, 2.0, #7E7A6A, 1000.0);
   graphics.lights();
 
