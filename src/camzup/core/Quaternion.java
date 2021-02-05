@@ -664,47 +664,28 @@ public class Quaternion implements Comparable < Quaternion > {
       return a.real * b.real + Vec3.dot(a.imag, b.imag);
    }
 
-   /**
-    * Finds the value of Euler's number <em>e</em> raised to the power of the
-    * quaternion. Uses the formula:<br>
-    * <br>
-    * exp ( <em>q</em> ) := <em>e<sup>r</sup></em> ( { cos ( |<em>i</em>| ),
-    * <em>\u00ee</em> sin ( |<em>i</em>| ) } )<br>
-    * <br>
-    * where <em>r</em> is <em>q<sub>real</sub></em> and <em>i</em> is
-    * <em>q<sub>imag</sub></em>.
-    *
-    * @param q      the input quaternion
-    * @param target the output quaternion
-    *
-    * @return the result
-    *
-    * @see Math#exp(double)
-    * @see Vec3#mag(Vec3)
-    * @see Vec3#zero(Vec3)
-    * @see Math#sqrt(double)
-    * @see Math#cos(double)
-    * @see Math#sin(double)
-    */
    public static Quaternion exp ( final Quaternion q,
       final Quaternion target ) {
 
-      // TODO: TEST AGAINST
+      // TODO: Compare to
       // https://github.com/CesiumGS/cesium/blob/
       // 4c7fb7cd5b358ab951a1771581ad15627f7bc6e6/Source/Core/Quaternion.js#L816
 
-      final double ea = Math.exp(q.real);
-      final float imSq = Vec3.mag(q.imag);
-      if ( imSq != 0.0f ) {
-         final double im = Math.sqrt(imSq);
-         target.real = ( float ) ( ea * Math.cos(im) );
-         Vec3.mul(q.imag, ( float ) ( ea * Math.sin(im) / im ), target.imag);
-         return target;
-      }
+      final double w = q.real;
+      final double x = q.imag.x;
+      final double y = q.imag.y;
+      final double z = q.imag.z;
 
-      target.real = ( float ) ea;
-      Vec3.zero(target.imag);
-      return target;
+      final double mgImSq = x * x + y * y + z * z;
+      if ( mgImSq > IUtils.EPSILON_D ) {
+         final double wExp = Math.exp(w);
+         final double mgIm = Math.sqrt(mgImSq);
+         final double scalar = wExp * Math.sin(mgIm) / mgIm;
+         return target.set(( float ) ( wExp * Math.cos(mgIm) ), ( float ) ( x
+            * scalar ), ( float ) ( y * scalar ), ( float ) ( z * scalar ));
+      } else {
+         return target.reset();
+      }
    }
 
    /**
@@ -846,9 +827,9 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @see Vec3#magSq(Vec3)
     * @see Utils#approx(float, float)
-    * @see Math#sqrt(double)
-    * @see Math#cos(double)
-    * @see Math#sin(double)
+    * @see Utils#invSqrtUnchecked(float)
+    * @see Utils#cos(float)
+    * @see Utils#sin(float)
     */
    public static Quaternion fromAxisAngle ( final float radians,
       final Vec3 axis, final Quaternion target ) {
@@ -1386,52 +1367,31 @@ public class Quaternion implements Comparable < Quaternion > {
       return Utils.approx(Quaternion.magSq(q), 1.0f);
    }
 
-   /**
-    * Finds the natural logarithm of the quaternion. Uses the formula:<br>
-    * <br>
-    * ln ( <em>q</em> ) := { ln ( |<em>q</em>| ), <em>\u00ee</em> acos (
-    * a<sub>real</sub> / |<em>q</em>| ) }<br>
-    * <br>
-    * where <em>i</em> is <em>q<sub>imag</sub></em>.
-    *
-    * @param q      the quaternion
-    * @param target the output quaternion
-    *
-    * @return the result
-    *
-    * @see Vec3#magSq(Vec3)
-    * @see Math#sqrt(double)
-    * @see Math#log(double)
-    * @see Utils#approx(float, float)
-    * @see Vec3#zero(Vec3)
-    * @see Math#acos(double)
-    * @see Vec3#mul(Vec3, float, Vec3)
-    */
    public static Quaternion log ( final Quaternion q,
       final Quaternion target ) {
 
-      // TODO: TEST AGAINST:
+      // TODO: COMMENT
+
+      // TODO: Compare with
       // https://github.com/CesiumGS/cesium/blob/
       // 4c7fb7cd5b358ab951a1771581ad15627f7bc6e6/Source/Core/Quaternion.js#L793
 
-      final float imSq = Vec3.magSq(q.imag);
-      final float qmSq = q.real * q.real + imSq;
+      final double w = q.real;
+      final double x = q.imag.x;
+      final double y = q.imag.y;
+      final double z = q.imag.z;
 
-      if ( qmSq == 0.0f ) { return target.reset(); }
-
-      final double qm = Math.sqrt(qmSq);
-      target.real = ( float ) Math.log(qm);
-
-      if ( Utils.approx(imSq, 0.0f) ) {
-         Vec3.zero(target.imag);
-         return target;
+      final double mgImSq = x * x + y * y + z * z;
+      target.real = ( float ) ( 0.5d * Math.log(w * w + mgImSq) );
+      if ( mgImSq > IUtils.EPSILON_D ) {
+         final double mgIm = Math.sqrt(mgImSq);
+         final double t = Math.atan2(mgIm, w) / mgIm;
+         target.imag.set(( float ) ( x * t ), ( float ) ( y * t ), ( float ) ( z
+            * t ));
+      } else {
+         target.imag.set(0.0f, 0.0f, 0.0f);
       }
 
-      final double wNorm = q.real / qm;
-      final double wAcos = wNorm <= -1.0d ? Math.PI : wNorm >= 1.0d ? 0.0d
-         : Math.acos(wNorm);
-
-      Vec3.mul(q.imag, ( float ) ( wAcos / Math.sqrt(imSq) ), target.imag);
       return target;
    }
 
@@ -1475,8 +1435,7 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Mixes two vectors together by a step in [0.0, 1.0]. Uses the easing
-    * function that is a static field belonging to the Quaternion class.
+    * Mixes two vectors together by a step in [0.0, 1.0].
     *
     * @param origin the original quaternion
     * @param dest   the destination quaternion
@@ -1484,63 +1443,16 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param target the output quaternion
     *
     * @return the mix
+    *
+    * @see Quaternion#slerpUnclampedSpa(Quaternion, Quaternion, float,
+    *      Quaternion)
     */
    public static Quaternion mix ( final Quaternion origin,
       final Quaternion dest, final float step, final Quaternion target ) {
 
       if ( step <= 0.0f ) { return Quaternion.normalize(origin, target); }
       if ( step >= 1.0f ) { return Quaternion.normalize(dest, target); }
-
-      /* Decompose origin quaternion. */
-      final Vec3 ai = origin.imag;
-      final float aw = origin.real;
-      final float ax = ai.x;
-      final float ay = ai.y;
-      final float az = ai.z;
-
-      /* Decompose destination quaternion. */
-      final Vec3 bi = dest.imag;
-      float bw = dest.real;
-      float bx = bi.x;
-      float by = bi.y;
-      float bz = bi.z;
-
-      /* Flip values if the orientation is negative, i.e., find near path. */
-      float dotp = aw * bw + ax * bx + ay * by + az * bz;
-      if ( dotp < 0.0f ) {
-         bw = -bw;
-         bx = -bx;
-         by = -by;
-         bz = -bz;
-         dotp = -dotp;
-      }
-
-      /*
-       * Find interpolation factor and its complement. Inverse square root and
-       * arc-cosine should both check for invalid dot product.
-       */
-      float v = step;
-      float u = 1.0f - v;
-
-      final float sinTheta = Utils.invSqrt(1.0f - dotp * dotp);
-      if ( sinTheta > IUtils.EPSILON ) {
-         final float theta = Utils.acos(dotp);
-         final float thetaStep = theta * step;
-         u = sinTheta * Utils.sin(theta - thetaStep);
-         v = sinTheta * Utils.sin(thetaStep);
-      }
-
-      /* Interpolate. */
-      final float cw = u * aw + v * bw;
-      final float cx = u * ax + v * bx;
-      final float cy = u * ay + v * by;
-      final float cz = u * az + v * bz;
-
-      /* Normalize. */
-      final float mSq = cw * cw + cx * cx + cy * cy + cz * cz;
-      if ( mSq < IUtils.EPSILON ) { return target.reset(); }
-      final float mInv = Utils.invSqrtUnchecked(mSq);
-      return target.set(cw * mInv, cx * mInv, cy * mInv, cz * mInv);
+      return Quaternion.slerpUnclampedSpa(origin, dest, step, target);
    }
 
    /**
@@ -1693,6 +1605,65 @@ public class Quaternion implements Comparable < Quaternion > {
          return target.set(q.real * mInv, i.x * mInv, i.y * mInv, i.z * mInv);
       }
       return Quaternion.identity(target);
+   }
+
+   public static Quaternion pow ( final Quaternion a, final float b,
+      final Quaternion target ) {
+
+      // TODO: Comment.
+
+      final double aw = a.real;
+      final double ax = a.imag.x;
+      final double ay = a.imag.y;
+      final double az = a.imag.z;
+
+      final double aMagImSq = ax * ax + ay * ay + az * az;
+      double lnw = 0.5d * Math.log(aw * aw + aMagImSq);
+      double lnx = 0.0d;
+      double lny = 0.0d;
+      double lnz = 0.0d;
+      if ( aMagImSq > IUtils.EPSILON_D ) {
+         final double aMagIm = Math.sqrt(aMagImSq);
+         final double theta = Math.atan2(aMagIm, aw) / aMagIm;
+         lnx = ax * theta;
+         lny = ay * theta;
+         lnz = az * theta;
+      }
+
+      if ( b != 0.0f ) {
+         final double bd = b;
+         lnw *= bd;
+         lnx *= bd;
+         lny *= bd;
+         lnz *= bd;
+      } else {
+         lnw = 1.0d;
+         lnx = 0.0d;
+         lny = 0.0d;
+         lnz = 0.0d;
+      }
+
+      final double lnMgImSq = lnx * lnx + lny * lny + lnz * lnz;
+      if ( lnMgImSq > IUtils.EPSILON_D ) {
+         final double lnwExp = Math.exp(lnw);
+         final double lnMgIm = Math.sqrt(lnMgImSq);
+         final double lnSclr = lnwExp * Math.sin(lnMgIm) / lnMgIm;
+         return target.set(( float ) ( lnwExp * Math.cos(lnMgIm) ),
+            ( float ) ( lnx * lnSclr ), ( float ) ( lny * lnSclr ),
+            ( float ) ( lnz * lnSclr ));
+      } else {
+         return target.reset();
+      }
+   }
+
+   public static Quaternion pow ( final Quaternion a, final float b,
+      final Quaternion target, final Quaternion ln, final Quaternion scaled ) {
+
+      // TODO: Comment.
+
+      Quaternion.log(a, ln);
+      Quaternion.mul(ln, b, scaled);
+      return Quaternion.exp(scaled, target);
    }
 
    /**
@@ -1877,10 +1848,11 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Returns an orientation on a Bezier curve described by two anchor
-    * orientations and two control orientations according to a step in [0.0,
-    * 1.0] . When the step is less than zero, returns the first anchor. When
-    * the step is greater than one, returns the second anchor.
+    * Returns an orientation on a curve described by two anchor orientations
+    * and two control orientations according to a step in [0.0, 1.0] . Uses
+    * the De Casteljau algorithm of successive spherical interpolations. When
+    * the step is less than zero, returns the first anchor. When the step is
+    * greater than one, returns the second anchor.
     *
     * @param ap0    the first anchor point
     * @param cp0    the first control point
@@ -1901,24 +1873,312 @@ public class Quaternion implements Comparable < Quaternion > {
       // https://math.stackexchange.com/questions/2650188/
       // super-confused-by-squad-algorithm-for-quaternion-interpolation
 
-      if ( step <= 0.0f ) { return target.set(ap0); }
-      if ( step >= 1.0f ) { return target.set(ap1); }
+      // TEST without normalizing each step
+      // TEST without preferring shortest distance (i.e. negating dot product.
 
-      final Quaternion a = new Quaternion();
-      final Quaternion b = new Quaternion();
-      final Quaternion c = new Quaternion();
+      if ( step <= 0.0f ) { return Quaternion.normalize(ap0, target); }
+      if ( step >= 1.0f ) { return Quaternion.normalize(ap1, target); }
 
-      final Quaternion ab = new Quaternion();
-      final Quaternion bc = new Quaternion();
+      /* @formatter:off */
+      float fw, fx, fy, fz, dotp, u, v, theta, sinTheta, thetaStep, mSq, mInv;
+
+      /* Unpack components. */
+      Vec3 imag = ap0.imag;
+      final float ap0w = ap0.real;
+      final float ap0x = imag.x;
+      final float ap0y = imag.y;
+      final float ap0z = imag.z;
+
+      imag = cp0.imag;
+      final float cp0w = cp0.real;
+      final float cp0x = imag.x;
+      final float cp0y = imag.y;
+      final float cp0z = imag.z;
+
+      imag = cp1.imag;
+      final float cp1w = cp1.real;
+      final float cp1x = imag.x;
+      final float cp1y = imag.y;
+      final float cp1z = imag.z;
+
+      imag = ap1.imag;
+      final float ap1w = ap1.real;
+      final float ap1x = imag.x;
+      final float ap1y = imag.y;
+      final float ap1z = imag.z;
+
+      /* Tertiary 0. */
+      fw = cp0w; fx = cp0x; fy = cp0y; fz = cp0z;
+      dotp = ap0w * cp0w + ap0x * cp0x + ap0y * cp0y + ap0z * cp0z;
+      if ( dotp < 0.0f ) {
+         fw = -fw; fx = -fx; fy = -fy; fz = -fz;
+         dotp = -dotp;
+      }
+
+      v = step;
+      u = 1.0f - v;
+      sinTheta = Utils.invSqrt(1.0f - dotp * dotp);
+      if ( sinTheta > IUtils.EPSILON ) {
+         theta = Utils.acos(dotp);
+         thetaStep = theta * step;
+         u = sinTheta * Utils.sin(theta - thetaStep);
+         v = sinTheta * Utils.sin(thetaStep);
+      }
+
+      float aw = u * ap0w + v * fw;
+      float ax = u * ap0x + v * fx;
+      float ay = u * ap0y + v * fy;
+      float az = u * ap0z + v * fz;
+
+      mSq = aw * aw + ax * ax + ay * ay + az * az;
+      if ( mSq > 0.0f ) {
+         mInv = Utils.invSqrtUnchecked(mSq);
+         aw *= mInv; ax *= mInv; ay *= mInv; az *= mInv;
+      } else {
+         aw = 1.0f; ax = ay = az = 0.0f;
+      }
+
+      /* Tertiary 1. */
+      fw = cp1w; fx = cp1x; fy = cp1y; fz = cp1z;
+      dotp = cp0w * cp1w + cp0x * cp1x + cp0y * cp1y + cp0z * cp1z;
+
+      if ( dotp < 0.0f ) {
+         fw = -fw; fx = -fx; fy = -fy; fz = -fz;
+         dotp = -dotp;
+      }
+
+      v = step;
+      u = 1.0f - v;
+      sinTheta = Utils.invSqrt(1.0f - dotp * dotp);
+      if ( sinTheta > IUtils.EPSILON ) {
+         theta = Utils.acos(dotp);
+         thetaStep = theta * step;
+         u = sinTheta * Utils.sin(theta - thetaStep);
+         v = sinTheta * Utils.sin(thetaStep);
+      }
+
+      float bw = u * cp0w + v * fw;
+      float bx = u * cp0x + v * fx;
+      float by = u * cp0y + v * fy;
+      float bz = u * cp0z + v * fz;
+
+      mSq = bw * bw + bx * bx + by * by + bz * bz;
+      if ( mSq > 0.0f ) {
+         mInv = Utils.invSqrtUnchecked(mSq);
+         bw *= mInv; bx *= mInv; by *= mInv; bz *= mInv;
+      } else {
+         bw = 1.0f;
+         bx = by = bz = 0.0f;
+      }
+
+      /* Tertiary 2. */
+      fw = ap1w; fx = ap1x; fy = ap1y; fz = ap1z;
+      dotp = cp1w * ap1w + cp1x * ap1x + cp1y * ap1y + cp1z * ap1z;
+
+      if ( dotp < 0.0f ) {
+         fw = -fw; fx = -fx; fy = -fy; fz = -fz;
+         dotp = -dotp;
+      }
+
+      v = step;
+      u = 1.0f - v;
+      sinTheta = Utils.invSqrt(1.0f - dotp * dotp);
+      if ( sinTheta > IUtils.EPSILON ) {
+         theta = Utils.acos(dotp);
+         thetaStep = theta * step;
+         u = sinTheta * Utils.sin(theta - thetaStep);
+         v = sinTheta * Utils.sin(thetaStep);
+      }
+
+      float cw = u * cp1w + v * fw;
+      float cx = u * cp1x + v * fx;
+      float cy = u * cp1y + v * fy;
+      float cz = u * cp1z + v * fz;
+
+      mSq = cw * cw + cx * cx + cy * cy + cz * cz;
+      if ( mSq > 0.0f ) {
+         mInv = Utils.invSqrtUnchecked(mSq);
+         cw *= mInv; cx *= mInv; cy *= mInv; cz *= mInv;
+      } else {
+         cw = 1.0f; cx = cy = cz = 0.0f;
+      }
+
+      /* Secondary 0. */
+      fw = bw; fx = bx; fy = by; fz = bz;
+      dotp = aw * bw + ax * bx + ay * by + az * bz;
+
+      if ( dotp < 0.0f ) {
+         fw = -fw; fx = -fx; fy = -fy; fz = -fz;
+         dotp = -dotp;
+      }
+
+      v = step;
+      u = 1.0f - v;
+      sinTheta = Utils.invSqrt(1.0f - dotp * dotp);
+      if ( sinTheta > IUtils.EPSILON ) {
+         theta = Utils.acos(dotp);
+         thetaStep = theta * step;
+         u = sinTheta * Utils.sin(theta - thetaStep);
+         v = sinTheta * Utils.sin(thetaStep);
+      }
+
+      float abw = u * aw + v * fw;
+      float abx = u * ax + v * fx;
+      float aby = u * ay + v * fy;
+      float abz = u * az + v * fz;
+
+      mSq = abw * abw + abx * abx + aby * aby + abz * abz;
+      if ( mSq > 0.0f ) {
+         mInv = Utils.invSqrtUnchecked(mSq);
+         abw *= mInv; abx *= mInv; aby *= mInv; abz *= mInv;
+      } else {
+         abw = 1.0f; abx = aby = abz = 0.0f;
+      }
+
+      /* Secondary 1. */
+      fw = cw; fx = cx; fy = cy; fz = cz;
+      dotp = bw * cw + bx * cx + by * cy + bz * cz;
+
+      if ( dotp < 0.0f ) {
+         fw = -fw; fx = -fx; fy = -fy; fz = -fz;
+         dotp = -dotp;
+      }
+
+      v = step;
+      u = 1.0f - v;
+      sinTheta = Utils.invSqrt(1.0f - dotp * dotp);
+      if ( sinTheta > IUtils.EPSILON ) {
+         theta = Utils.acos(dotp);
+         thetaStep = theta * step;
+         u = sinTheta * Utils.sin(theta - thetaStep);
+         v = sinTheta * Utils.sin(thetaStep);
+      }
+
+      float bcw = u * bw + v * fw;
+      float bcx = u * bx + v * fx;
+      float bcy = u * by + v * fy;
+      float bcz = u * bz + v * fz;
+
+      mSq = bcw * bcw + bcx * bcx + bcy * bcy + bcz * bcz;
+      if ( mSq > 0.0f ) {
+         mInv = Utils.invSqrtUnchecked(mSq);
+         bcw *= mInv; bcx *= mInv; bcy *= mInv; bcz *= mInv;
+      } else {
+         bcw = 1.0f; bcx = bcy = bcz = 0.0f;
+      }
+
+      /* Primary. */
+      fw = bcw; fx = bcx; fy = bcy; fz = bcz;
+      dotp = abw * bcw + abx * bcx + aby * bcy + abz * bcz;
+
+      if ( dotp < 0.0f ) {
+         fw = -fw; fx = -fx; fy = -fy; fz = -fz;
+         dotp = -dotp;
+      }
+
+      v = step;
+      u = 1.0f - v;
+      sinTheta = Utils.invSqrt(1.0f - dotp * dotp);
+      if ( sinTheta > IUtils.EPSILON ) {
+         theta = Utils.acos(dotp);
+         thetaStep = theta * step;
+         u = sinTheta * Utils.sin(theta - thetaStep);
+         v = sinTheta * Utils.sin(thetaStep);
+      }
+
+      float dw = u * abw + v * fw;
+      float dx = u * abx + v * fx;
+      float dy = u * aby + v * fy;
+      float dz = u * abz + v * fz;
+
+      mSq = dw * dw + dx * dx + dy * dy + dz * dz;
+      if ( mSq > 0.0f ) {
+         mInv = Utils.invSqrtUnchecked(mSq);
+         dw *= mInv; dx *= mInv; dy *= mInv; dz *= mInv;
+      } else {
+         dw = 1.0f; dx = dy = dz = 0.0f;
+      }
+
+      imag = target.imag;
+      target.real = dw;
+      imag.x = dx; imag.y = dy; imag.z = dz;
+      return target;
+      /* @formatter:on */
+   }
+
+   /**
+    * Returns an orientation on a curve described by two anchor orientations
+    * and two control orientations according to a step in [0.0, 1.0] . Uses
+    * the De Casteljau algorithm of successive spherical interpolations. When
+    * the step is less than zero, returns the first anchor. When the step is
+    * greater than one, returns the second anchor.
+    *
+    * @param ap0    the first anchor point
+    * @param cp0    the first control point
+    * @param cp1    the second control point
+    * @param ap1    the second anchor point
+    * @param step   the step
+    * @param target the output quaternion
+    * @param a      edge from ap0 to cp0
+    * @param b      edge from cp0 to cp1
+    * @param c      edge from cp1 to ap1
+    * @param ab     edge from a to b
+    * @param bc     edge from b to c
+    *
+    * @return the quaternion
+    *
+    * @see Quaternion#mix(Quaternion, Quaternion, float, Quaternion)
+    */
+   public static Quaternion squad ( final Quaternion ap0, final Quaternion cp0,
+      final Quaternion cp1, final Quaternion ap1, final float step,
+      final Quaternion target, final Quaternion a, final Quaternion b,
+      final Quaternion c, final Quaternion ab, final Quaternion bc ) {
 
       Quaternion.mix(ap0, cp0, step, a);
       Quaternion.mix(cp0, cp1, step, b);
       Quaternion.mix(cp1, ap1, step, c);
       Quaternion.mix(a, b, step, ab);
       Quaternion.mix(b, c, step, bc);
-      Quaternion.mix(ab, bc, step, target);
+      return Quaternion.mix(ab, bc, step, target);
+   }
 
-      return target;
+   /**
+    * Returns an orientation on a curve described by two anchor orientations
+    * and two control orientations according to a step in [0.0, 1.0] . Uses
+    * the De Casteljau algorithm of successive spherical interpolations. When
+    * the step is less than zero, returns the first anchor. When the step is
+    * greater than one, returns the second anchor.
+    *
+    * @param ap0    the first anchor point
+    * @param cp0    the first control point
+    * @param cp1    the second control point
+    * @param ap1    the second anchor point
+    * @param step   the step
+    * @param target the output quaternion
+    * @param easing the easing function
+    * @param a      edge from ap0 to cp0
+    * @param b      edge from cp0 to cp1
+    * @param c      edge from cp1 to ap1
+    * @param ab     edge from a to b
+    * @param bc     edge from b to c
+    *
+    * @return the quaternion
+    *
+    * @see Quaternion#mix(Quaternion, Quaternion, float, Quaternion)
+    */
+   public static Quaternion squad ( final Quaternion ap0, final Quaternion cp0,
+      final Quaternion cp1, final Quaternion ap1, final float step,
+      final Quaternion.AbstrEasing easing, final Quaternion target,
+      final Quaternion a, final Quaternion b, final Quaternion c,
+      final Quaternion ab, final Quaternion bc ) {
+
+      final Float tbox = step;
+      easing.apply(ap0, cp0, tbox, a);
+      easing.apply(cp0, cp1, tbox, b);
+      easing.apply(cp1, ap1, tbox, c);
+      easing.apply(a, b, tbox, ab);
+      easing.apply(b, c, tbox, bc);
+      return easing.apply(ab, bc, tbox, target);
    }
 
    /**
@@ -2003,10 +2263,6 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param right   the right axis
     * @param forward the forward axis
     * @param up      the up axis
-    *
-    * @see Quaternion#getForward(Quaternion, Vec3)
-    * @see Quaternion#getRight(Quaternion, Vec3)
-    * @see Quaternion#getUp(Quaternion, Vec3)
     */
    public static void toAxes ( final Quaternion q, final Vec3 right,
       final Vec3 forward, final Vec3 up ) {
@@ -2098,89 +2354,71 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Raises a quaternion to the power of a real number. Uses the formula<br>
-    * <br>
-    * <em>a</em><sup><em>b</em></sup> := |<em>a</em>|<sup><em>b</em></sup> {
-    * cos ( <em>b</em> \u03b8 ), <em>n</em> sin ( <em>b</em> \u03b8 ) }<br>
-    * <br>
-    * where \u03b8 and <em>n</em> are the angle and axis representation of the
-    * quaternion <em>a</em>.
+    * An internal helper method to mix quaternions together when no easing
+    * function is provided. Does not check whether step is out of the range
+    * [0.0, 1.0]. Uses single precision methods over {@link java.lang.Math},
+    * and hence is less accurate.
     *
-    * @param a      the input quaternion
-    * @param b      the exponent
+    * @param origin the original quaternion
+    * @param dest   the destination quaternion
+    * @param step   the step
     * @param target the output quaternion
     *
-    * @return the result
-    *
-    * @see Quaternion#magSq(Quaternion)
-    * @see Math#sqrt(double)
-    * @see Math#acos(double)
-    * @see Math#pow(double, double)
-    * @see Math#cos(double)
-    * @see Math#sin(double)
+    * @return the mix
     */
-   static Quaternion pow ( final Quaternion a, final float b,
-      final Quaternion target ) {
+   static Quaternion slerpUnclampedSpa ( final Quaternion origin,
+      final Quaternion dest, final float step, final Quaternion target ) {
 
-      if ( b == 0.0f ) { return target.reset(); }
+      /* Decompose origin quaternion. */
+      final Vec3 ai = origin.imag;
+      final float aw = origin.real;
+      final float ax = ai.x;
+      final float ay = ai.y;
+      final float az = ai.z;
 
-      /* Normalize the quaternion's real component */
-      final float mSq = Quaternion.magSq(a);
-      if ( mSq <= 0.0f ) { return target.reset(); }
+      /* Decompose destination quaternion. */
+      final Vec3 bi = dest.imag;
+      float bw = dest.real;
+      float bx = bi.x;
+      float by = bi.y;
+      float bz = bi.z;
 
-      double m = mSq;
-      double wNorm = a.real;
-      if ( !Utils.approx(mSq, 1.0f) ) {
-         m = Math.sqrt(m);
-         wNorm /= m;
-      }
-
-      /* Set new real component. */
-      final double theta = wNorm <= -1.0d ? Math.PI : wNorm >= 1.0d ? 0.0d
-         : Math.acos(wNorm);
-      final double bd = b;
-      final double btheta = bd * theta;
-      final double scalar = Math.pow(m, bd);
-      target.real = ( float ) ( scalar * Math.cos(btheta) );
-
-      /* Calculate imaginary component. */
-      final double wAsin = IUtils.TAU_D - theta;
-      if ( wAsin == 0.0d ) {
-         Vec3.zero(target.imag);
-         return target;
+      /* Flip values if the orientation is negative, i.e., find near path. */
+      float dotp = aw * bw + ax * bx + ay * by + az * bz;
+      if ( dotp < 0.0f ) {
+         bw = -bw;
+         bx = -bx;
+         by = -by;
+         bz = -bz;
+         dotp = -dotp;
       }
 
       /*
-       * The axis is generated by dividing the imaginary by the arc-sine of the
-       * normalized real.
+       * Find interpolation factor and its complement. Inverse square root and
+       * arc-cosine should both check for invalid dot product.
        */
-      final double sInv = 1.0d / wAsin;
-      final Vec3 i = a.imag;
-      double nx = i.x * sInv;
-      double ny = i.y * sInv;
-      double nz = i.z * sInv;
+      float v = step;
+      float u = 1.0f - v;
 
-      /* Normalize the axis. */
-      final double nMSq = nx * nx + ny * ny + nz * nz;
-      if ( nMSq == 0.0d ) {
-         Vec3.zero(target.imag);
-         return target;
+      final float sinTheta = Utils.invSqrt(1.0f - dotp * dotp);
+      if ( sinTheta > IUtils.EPSILON ) {
+         final float theta = Utils.acos(dotp);
+         final float thetaStep = theta * step;
+         u = sinTheta * Utils.sin(theta - thetaStep);
+         v = sinTheta * Utils.sin(thetaStep);
       }
 
-      if ( nMSq != 1.0d ) {
-         final double nmInv = 1.0d / Math.sqrt(nMSq);
-         nx *= nmInv;
-         ny *= nmInv;
-         nz *= nmInv;
-      }
+      /* Interpolate. */
+      final float cw = u * aw + v * bw;
+      final float cx = u * ax + v * bx;
+      final float cy = u * ay + v * by;
+      final float cz = u * az + v * bz;
 
-      /*
-       * Scale the axis by sin(b theta), then by pow(mag(q), b).
-       */
-      final double sclrSinbt = scalar * Math.sin(btheta);
-      target.imag.set(( float ) ( nx * sclrSinbt ), ( float ) ( ny
-         * sclrSinbt ), ( float ) ( nz * sclrSinbt ));
-      return target;
+      /* Normalize. */
+      final float mSq = cw * cw + cx * cx + cy * cy + cz * cz;
+      if ( mSq < IUtils.EPSILON ) { return target.reset(); }
+      final float mInv = Utils.invSqrtUnchecked(mSq);
+      return target.set(cw * mInv, cx * mInv, cy * mInv, cz * mInv);
    }
 
    /**
@@ -2260,11 +2498,6 @@ public class Quaternion implements Comparable < Quaternion > {
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
 
-      /**
-       * A minimal positive non-zero threshold for comparison between doubles.
-       */
-      protected static final double EPS_D = 0.000001d;
-
    }
 
    /**
@@ -2305,9 +2538,9 @@ public class Quaternion implements Comparable < Quaternion > {
          /* Normalize. */
          final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
 
-         if ( Math.abs(mSq) < AbstrEasing.EPS_D ) { return target.reset(); }
+         if ( mSq < IUtils.EPSILON_D ) { return target.reset(); }
 
-         if ( Math.abs(1.0d - mSq) < AbstrEasing.EPS_D ) {
+         if ( Math.abs(1.0d - mSq) < IUtils.EPSILON_D ) {
             return target.set(( float ) cw, ( float ) cx, ( float ) cy,
                ( float ) cz);
          }
@@ -2378,7 +2611,7 @@ public class Quaternion implements Comparable < Quaternion > {
          double u = 1.0d - v;
 
          final double sinTheta = Math.sqrt(1.0d - dotp * dotp); // in [1, 0].
-         if ( sinTheta > AbstrEasing.EPS_D ) {
+         if ( sinTheta > IUtils.EPSILON_D ) {
             final double theta = Math.acos(dotp);
             final double sInv = 1.0d / sinTheta;
             final double thetaStep = theta * v;
@@ -2396,10 +2629,10 @@ public class Quaternion implements Comparable < Quaternion > {
          final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
 
          /* Magnitude is approximately zero. */
-         if ( mSq < AbstrEasing.EPS_D ) { return target.reset(); }
+         if ( mSq < IUtils.EPSILON_D ) { return target.reset(); }
 
          /* Magnitude is approximately one. */
-         if ( Math.abs(1.0d - mSq) < AbstrEasing.EPS_D ) {
+         if ( Math.abs(1.0d - mSq) < IUtils.EPSILON_D ) {
             return target.set(( float ) cw, ( float ) cx, ( float ) cy,
                ( float ) cz);
          }

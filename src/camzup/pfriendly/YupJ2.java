@@ -575,6 +575,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param radians the angle
     * @param zoom    the zoom level
     */
+   @Override
    public void camera ( final Vec2 loc, final float radians, final Vec2 zoom ) {
 
       this.camera(loc.x, loc.y, radians, zoom.x, zoom.y);
@@ -1215,7 +1216,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       for ( int i = 0; i < last; ++i ) {
          final double iPercent = i * toPercent;
          final double y = ( 1.0d - iPercent ) * bottom + iPercent * top;
-         final double yeps = y + YupJ2.EPS_D;
+         final double yeps = y + IUtils.EPSILON_D;
          final int agb = 0xff000080 | ( int ) ( iPercent * 0xff + 0.5d ) << 0x8;
 
          for ( int j = 0; j < last; ++j ) {
@@ -1340,7 +1341,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             /* Draw rear handle. */
             this.gp.reset();
-            this.gp.moveTo(rhx + YupJ2.EPS_D, rhy);
+            this.gp.moveTo(rhx + IUtils.EPSILON_D, rhy);
             this.gp.lineTo(rhx, rhy);
             this.g2.setStroke(swRear);
             this.g2.setColor(rearClrAwt);
@@ -1348,7 +1349,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             /* Draw coordinate. */
             this.gp.reset();
-            this.gp.moveTo(cox + YupJ2.EPS_D, coy);
+            this.gp.moveTo(cox + IUtils.EPSILON_D, coy);
             this.gp.lineTo(cox, coy);
             this.g2.setStroke(swCoord);
             this.g2.setColor(crdClrAwt);
@@ -1356,7 +1357,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             /* Draw fore handle. */
             this.gp.reset();
-            this.gp.moveTo(fhx + YupJ2.EPS_D, fhy);
+            this.gp.moveTo(fhx + IUtils.EPSILON_D, fhy);
             this.gp.lineTo(fhx, fhy);
             this.g2.setStroke(swFore);
             this.g2.setColor(foreClrAwt);
@@ -2130,7 +2131,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void origin ( final float lineLength, final float sw,
       final int xColor, final int yColor ) {
 
-      final double vl = lineLength > IUtils.EPSILON ? lineLength : YupJ2.EPS_D;
+      final double vl = lineLength > IUtils.EPSILON ? lineLength
+         : IUtils.EPSILON_D;
 
       super.pushStyle();
       this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND, sw);
@@ -2181,7 +2183,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             this.gp.reset();
             this.gp.moveTo(xd, yd);
-            this.gp.lineTo(xd + YupJ2.EPS_D, yd);
+            this.gp.lineTo(xd + IUtils.EPSILON_D, yd);
             this.g2.setColor(this.strokeColorObject);
             this.g2.draw(this.gp);
 
@@ -2193,7 +2195,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             this.gp.reset();
             this.gp.moveTo(xd, yd);
-            this.gp.lineTo(xd + YupJ2.EPS_D, yd);
+            this.gp.lineTo(xd + IUtils.EPSILON_D, yd);
             this.g2.setColor(this.strokeColorObject);
             this.g2.draw(this.gp);
 
@@ -2346,7 +2348,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.strokeWeight(oWeight);
       this.gp.reset();
       this.gp.moveTo(xod, yod);
-      this.gp.lineTo(xod + YupJ2.EPS_D, yod);
+      this.gp.lineTo(xod + IUtils.EPSILON_D, yod);
       this.g2.setColor(this.strokeColorObject);
       this.g2.draw(this.gp);
 
@@ -2367,7 +2369,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          this.strokeWeight(dWeight);
          this.gp.reset();
          this.gp.moveTo(dx, dy);
-         this.gp.lineTo(dx + YupJ2.EPS_D, dy);
+         this.gp.lineTo(dx + IUtils.EPSILON_D, dy);
          this.g2.draw(this.gp);
       }
 
@@ -4372,10 +4374,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       }
 
       final double limit = Math.min(w, h) * 0.5d;
-      final double rTld = Utils.clamp(rTl, YupJ2.EPS_D, limit);
-      final double rTrd = Utils.clamp(rTr, YupJ2.EPS_D, limit);
-      final double rBrd = Utils.clamp(rBr, YupJ2.EPS_D, limit);
-      final double rBld = Utils.clamp(rBl, YupJ2.EPS_D, limit);
+      final double rTld = Utils.clamp(rTl, IUtils.EPSILON_D, limit);
+      final double rTrd = Utils.clamp(rTr, IUtils.EPSILON_D, limit);
+      final double rBrd = Utils.clamp(rBr, IUtils.EPSILON_D, limit);
+      final double rBld = Utils.clamp(rBl, IUtils.EPSILON_D, limit);
 
       this.gp.reset();
       this.gp.moveTo(x2 - rTrd, y1);
@@ -4601,11 +4603,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * {@link Path2D#WIND_NON_ZERO} ({@value Path2D#WIND_NON_ZERO}).
     */
    public static final int DEFAULT_WINDING_RULE = Path2D.WIND_EVEN_ODD;
-
-   /**
-    * The floating point epsilon, cast to a double.
-    */
-   public static final double EPS_D = 0.000001d;
 
    /**
     * The path string for this renderer.

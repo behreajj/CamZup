@@ -236,6 +236,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * @param radians the angle
     * @param zoom    the zoom level
     */
+   @Override
    public void camera ( final Vec2 loc, final float radians, final Vec2 zoom ) {
 
       this.camera(loc.x, loc.y, radians, zoom.x, zoom.y);

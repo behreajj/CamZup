@@ -1213,15 +1213,15 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     * returned by {@link Vec3#fromSpherical(float, float, float, Vec3)}. The
     * transform's scale is set to the radius. A radius of zero will return the
     * identity transform instead.
-    * 
+    *
     * @param azimuth     the angle theta in radians
     * @param inclination the angle phi in radians
     * @param radius      rho, the magnitude
     * @param target      the output transform
-    * 
+    *
     * @return the transform
     */
-   public static Transform3 fromSpherical(final float azimuth,
+   public static Transform3 fromSpherical ( final float azimuth,
       final float inclination, final float radius, final Transform3 target ) {
 
       if ( Utils.abs(radius) < IUtils.EPSILON ) {
@@ -1233,7 +1233,7 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
 
       target.rotPrev.set(target.rotation);
       Quaternion.fromSpherical(azimuth, inclination, target.rotation);
-      
+
       target.scalePrev.set(target.scale);
       target.scale.set(radius, radius, radius);
 

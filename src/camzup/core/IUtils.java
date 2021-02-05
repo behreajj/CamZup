@@ -55,6 +55,12 @@ public interface IUtils {
    float EPSILON = 0.000001f;
 
    /**
+    * The smallest positive non-zero value, \u03b5. Set to
+    * {@value IUtils#EPSILON_D} .
+    */
+   double EPSILON_D = 0.000001d;
+
+   /**
     * The default number of decimal places to print real numbers,
     * {@value IUtils#FIXED_PRINT}.
     */
