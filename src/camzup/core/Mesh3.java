@@ -4462,6 +4462,22 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Creates a UV sphere. The longitudes, or meridians, run through the
+    * sphere's poles, and correspond to the azimuth in spherical coordinates.
+    * The latitudes correspond to the inclination.
+    *
+    * @param poly   the polygon type
+    * @param target the output mesh
+    *
+    * @return the sphere
+    */
+   public static Mesh3 uvSphere ( final PolyType poly, final Mesh3 target ) {
+
+      return Mesh3.uvSphere(IMesh.DEFAULT_CIRCLE_SECTORS,
+         IMesh.DEFAULT_CIRCLE_SECTORS >> 1, poly, target);
+   }
+
+   /**
     * An internal helper function to accumulate the minimum and maximum points
     * in a mesh. This may be called either by a single mesh, or by a mesh
     * entity seeking the minimum and maximum for a collection of meshes.

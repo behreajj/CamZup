@@ -1,5 +1,8 @@
 package camzup;
 
+import camzup.core.CurveSphere;
+import camzup.core.IUtils;
+
 import processing.core.PApplet;
 
 /**
@@ -78,7 +81,13 @@ public class CamZup {
     * @param args the string of arguments
     */
    public static void main ( final String[] args ) {
+
+      CurveSphere cs = CurveSphere.helix(4, 3, 0.0f, -IUtils.HALF_PI,
+          IUtils.HALF_PI, new CurveSphere());
+      System.out.println(cs);
+
    }
+
 
    /**
     * Gets the version of the library.

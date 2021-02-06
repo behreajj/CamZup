@@ -44,7 +44,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A bounds checked approximation of the arc cosine for single precision
+    * A bounds checked approximation of the arc-cosine for single precision
     * real numbers. Returns a value in the range [0.0, \u03c0] : \u03c0 when
     * the input is less than or equal to -1.0; \u03c0 / 2.0 when the input is
     * 0.0; 0.0 when the input is greater than or equal to 1.0.<br>
@@ -181,9 +181,8 @@ public abstract class Utils implements IUtils {
     * vertical and horizontal component. The vertical component precedes the
     * horizontal. The return value falls in the range [-\u03c0, \u03c0] .<br>
     * <br>
-    * {@link Math#atan2(double,double) } defers to
-    * {@link StrictMath#atan2(double, double) }, which is implemented
-    * natively. This is not a "fast" alternative.<br>
+    * This is not a "fast" alternative to
+    * {@link Math#atan2(double,double) }.<br>
     * <br>
     * Based on the algorithm in
     * <a href="https://developer.download.nvidia.com/cg/atan2.html">Nvidia Cg
@@ -701,7 +700,7 @@ public abstract class Utils implements IUtils {
 
    /**
     * An inverse square root implementation for single precision real numbers
-    * based on the 'evil bit hack' from <em>Quake 3</em>, as described by
+    * based on the 'evil bit hack' from <em>Quake III</em>, as described by
     * Chris Lomont in
     * "<a href= "http://www.lomont.org/papers/2003/InvSqrt.pdf">Fast Inverse
     * Square Root</a>." For accuracy, the result is refined three times with
@@ -710,7 +709,7 @@ public abstract class Utils implements IUtils {
     * Useful when normalizing vectors or quaternions. Prefer this over
     * {@link Utils#sqrt(float)}, which depends on this function.<br>
     * <br>
-    * Contrary to its name, this should not be assumed to be faster than
+    * Contrary to the name, this should not be assumed to be faster than
     * {@link Math#sqrt(double)}.
     *
     * @param x the value
@@ -1821,7 +1820,6 @@ public abstract class Utils implements IUtils {
     *
     * @param <T> the parameter type
     */
-   @FunctionalInterface
    public interface EasingFuncArr < T > {
 
       /**
@@ -1844,7 +1842,6 @@ public abstract class Utils implements IUtils {
     *
     * @param <T> the parameter type
     */
-   @FunctionalInterface
    public interface EasingFuncObj < T > extends QuadFunction < T, T, Float, T,
       T > {
 
@@ -1869,7 +1866,6 @@ public abstract class Utils implements IUtils {
     *
     * @param <T> the parameter type
     */
-   @FunctionalInterface
    public interface EasingFuncPrm < T > extends TriFunction < T, T, Float, T > {
 
       /**
@@ -2306,7 +2302,6 @@ public abstract class Utils implements IUtils {
     * @param <W> fourth parameter
     * @param <R> return type
     */
-   @FunctionalInterface
    public interface QuadFunction < T, U, V, W, R > {
 
       /**
@@ -2362,7 +2357,6 @@ public abstract class Utils implements IUtils {
     * @param <V> third parameter
     * @param <R> return type
     */
-   @FunctionalInterface
    public interface TriFunction < T, U, V, R > {
 
       /**

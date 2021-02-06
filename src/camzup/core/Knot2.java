@@ -1,7 +1,7 @@
 package camzup.core;
 
 /**
- * Organizes the vectors the shape a Bezier curve into a coordinate (or
+ * Organizes the vectors that shape a Bezier curve into a coordinate (or
  * anchor point), fore handle (the following control point) and rear handle
  * (the preceding control point).
  */
@@ -1567,11 +1567,6 @@ public class Knot2 implements Comparable < Knot2 > {
     * A functional class to ease between two knots with linear interpolation.
     */
    public static class Lerp extends AbstrEasing {
-
-      /**
-       * The default constructor.
-       */
-      public Lerp ( ) {}
 
       /**
        * Eases between two knots by a step using the formula (1.0 - t) * a + t *

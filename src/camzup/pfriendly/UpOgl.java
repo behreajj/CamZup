@@ -6,6 +6,7 @@ import camzup.core.ArcMode;
 import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.Curve3;
+import camzup.core.CurveSphere;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Knot3;
@@ -14,6 +15,7 @@ import camzup.core.Mat4;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
 import camzup.core.Mesh3;
+import camzup.core.Quaternion;
 import camzup.core.Transform2;
 import camzup.core.Transform3;
 import camzup.core.TransformOrder;
@@ -2898,11 +2900,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    /**
     * Draws a curve. A special case to assist with drawing {@link UpOgl#arc}s.
     *
-    * @param mesh the curve
-    * @param tr   the transform
-    * @param fh   the temporary fore handle
-    * @param rh   the temporary rear handle
-    * @param co   the temporary coordinate
+    * @param curve the curve
+    * @param tr    the transform
+    * @param fh    the temporary fore handle
+    * @param rh    the temporary rear handle
+    * @param co    the temporary coordinate
     */
    protected void drawCurve2 ( final Curve2 curve ) {
 
@@ -2948,11 +2950,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * Draws a curve as multiplied by a transform. The supplied temporary
     * vectors hold the transformed knot coordinates.
     *
-    * @param mesh the curve
-    * @param tr   the transform
-    * @param fh   the temporary fore handle
-    * @param rh   the temporary rear handle
-    * @param co   the temporary coordinate
+    * @param curve the curve
+    * @param tr    the transform
+    * @param fh    the temporary fore handle
+    * @param rh    the temporary rear handle
+    * @param co    the temporary coordinate
     */
    protected void drawCurve2 ( final Curve2 curve, final Transform2 tr,
       final Vec2 fh, final Vec2 rh, final Vec2 co ) {
@@ -2993,14 +2995,48 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Draws a curve on a sphere . The supplied temporary vectors hold the
+    * transformed knot coordinates.
+    *
+    * @param curve  the curve
+    * @param tr     the transform
+    * @param detail the curve detail
+    * @param q      the evaluated quaternion
+    * @param right  the quaternion's right axis
+    * @param co     the coordinate
+    */
+   public void drawCurveSphere ( final CurveSphere curve,
+      final Transform3 tr, final int detail, final Quaternion q,
+      final Vec3 right, final Vec3 co ) {
+
+      this.beginShape(PConstants.POLYGON);
+
+      final int vres = detail < 2 ? 2 : detail;
+      final float toPercent = 1.0f / ( vres - 1.0f );
+      for ( int i = 0; i < vres; ++i ) {
+         float percent = i * toPercent;
+         CurveSphere.eval(curve, percent, q);
+         Quaternion.getRight(q, right);
+         Transform3.mulPoint(tr, right, co);
+         this.vertexImpl(co.x, co.y, co.z, this.textureU, this.textureV);
+      }
+
+      if ( curve.closedLoop ) {
+         this.endShape(PConstants.CLOSE);
+      } else {
+         this.endShape(PConstants.OPEN);
+      }
+   }
+
+   /**
     * Draws a curve as multiplied by a transform. The supplied temporary
     * vectors hold the transformed knot coordinates.
     *
-    * @param mesh the curve
-    * @param tr   the transform
-    * @param fh   the temporary fore handle
-    * @param rh   the temporary rear handle
-    * @param co   the temporary coordinate
+    * @param curve the curve
+    * @param tr    the transform
+    * @param fh    the temporary fore handle
+    * @param rh    the temporary rear handle
+    * @param co    the temporary coordinate
     */
    protected void drawCurve3 ( final Curve3 curve, final Transform3 tr,
       final Vec3 fh, final Vec3 rh, final Vec3 co ) {

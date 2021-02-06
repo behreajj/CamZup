@@ -239,14 +239,7 @@ public class Quaternion implements Comparable < Quaternion > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(128);
-      sb.append("{ real: ");
-      Utils.toFixed(sb, this.real, places);
-      sb.append(", imag: ");
-      this.imag.toString(sb, places);
-      sb.append(' ');
-      sb.append('}');
-      return sb.toString();
+      return this.toString(new StringBuilder(128), places).toString();
    }
 
    /**
@@ -276,6 +269,26 @@ public class Quaternion implements Comparable < Quaternion > {
       Utils.toFixed(pyCd, this.imag.z, 6);
       pyCd.append(')');
       return pyCd;
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * quaternions. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ real: ");
+      Utils.toFixed(sb, this.real, places);
+      sb.append(", imag: ");
+      this.imag.toString(sb, places);
+      sb.append(' ');
+      sb.append('}');
+      return sb;
    }
 
    /**
@@ -664,17 +677,30 @@ public class Quaternion implements Comparable < Quaternion > {
       return a.real * b.real + Vec3.dot(a.imag, b.imag);
    }
 
+   /**
+    * Finds the exponent of a quaternion.<br>
+    * <br>
+    * Returns the identity when the quaternion has no non-zero imaginary
+    * components.
+    *
+    * @param q      the quaternion
+    * @param target the output quaternion
+    *
+    * @return the exponent
+    *
+    * @see Math#exp(double)
+    * @see Math#sqrt(double)
+    * @see Math#sin(double)
+    * @see Math#cos(double)
+    */
    public static Quaternion exp ( final Quaternion q,
       final Quaternion target ) {
 
-      // TODO: Compare to
-      // https://github.com/CesiumGS/cesium/blob/
-      // 4c7fb7cd5b358ab951a1771581ad15627f7bc6e6/Source/Core/Quaternion.js#L816
-
+      final Vec3 qi = q.imag;
       final double w = q.real;
-      final double x = q.imag.x;
-      final double y = q.imag.y;
-      final double z = q.imag.z;
+      final double x = qi.x;
+      final double y = qi.y;
+      final double z = qi.z;
 
       final double mgImSq = x * x + y * y + z * z;
       if ( mgImSq > IUtils.EPSILON_D ) {
@@ -1071,12 +1097,9 @@ public class Quaternion implements Comparable < Quaternion > {
       final float sinIncl = Utils.scNorm(inclNorm - 0.25f);
 
       /* Alternative: pointing forward */
-      // Subtract half pi from azimuth.
-      // return target.set(cosAzim * cosIncl, -sinIncl * cosAzim, -sinAzim *
-      // sinIncl, sinAzim * cosIncl);
 
-      return target.set(cosAzim * cosIncl, -sinAzim * sinIncl, sinIncl
-         * cosAzim, sinAzim * cosIncl);
+       return target.set(cosAzim * cosIncl, -sinAzim * sinIncl, sinIncl
+       * cosAzim, sinAzim * cosIncl);
    }
 
    /**
@@ -1230,6 +1253,86 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
+    * Adjusts anchor and control quaternions in a Bezier curve to ensure the
+    * shortest path. This is very computationally expensive. Used in
+    * preparation for
+    * {@link Quaternion#squad(Quaternion, Quaternion, Quaternion, Quaternion, float, Quaternion)}.
+    * See the Microsoft documentation for <a href=
+    * "https://docs.microsoft.com/en-us/previous-versions/windows/desktop/bb153129(v=vs.85)">Quaternion.SquadSetup</a>.
+    *
+    * @param ap0 input anchor point 0
+    * @param cp0 input control point 0
+    * @param cp1 input control point 1
+    * @param ap1 input anchor point 1
+    * @param a   adjusted cp0
+    * @param b   adjusted cp1
+    * @param c   adjusted ap1
+    *
+    * @return the adjusted cp0
+    */
+   @Experimental
+   public static Quaternion innerQuadrangle ( final Quaternion ap0,
+      final Quaternion cp0, final Quaternion cp1, final Quaternion ap1,
+      final Quaternion a, final Quaternion b, final Quaternion c ) {
+
+      final Quaternion q0 = new Quaternion();
+      final Quaternion q3 = new Quaternion();
+
+      final Quaternion q0sum = Quaternion.add(ap0, cp0, new Quaternion());
+      final Quaternion q0dff = Quaternion.sub(ap0, cp0, new Quaternion());
+      if ( Quaternion.magSq(q0sum) < Quaternion.magSq(q0dff) ) {
+         Quaternion.negate(ap0, q0);
+      } else {
+         q0.set(ap0);
+      }
+
+      /* c is the same as q2. */
+      final Quaternion q2sum = Quaternion.add(cp0, cp1, new Quaternion());
+      final Quaternion q2dff = Quaternion.sub(cp0, cp1, new Quaternion());
+      if ( Quaternion.magSq(q2sum) < Quaternion.magSq(q2dff) ) {
+         Quaternion.negate(cp1, c);
+      } else {
+         c.set(cp1);
+      }
+
+      final Quaternion q3sum = Quaternion.add(cp1, ap1, new Quaternion());
+      final Quaternion q3dff = Quaternion.sub(cp1, ap1, new Quaternion());
+      if ( Quaternion.magSq(q3sum) < Quaternion.magSq(q3dff) ) {
+         Quaternion.negate(ap1, q3);
+      } else {
+         q3.set(ap1);
+      }
+
+      final Quaternion expq1 = Quaternion.exp(cp0, new Quaternion());
+      final Quaternion expq1q0 = Quaternion.mul(expq1, q0, new Quaternion());
+      final Quaternion expq1q2 = Quaternion.mul(expq1, c, new Quaternion());
+
+      final Quaternion expq2 = Quaternion.exp(c, new Quaternion());
+      final Quaternion expq2q1 = Quaternion.mul(expq2, cp0, new Quaternion());
+      final Quaternion expq2q3 = Quaternion.mul(expq2, q3, new Quaternion());
+
+      /* q1 * exp(-0.25 * (log(exp(q1) * q2) + log(exp(q1) * q0))) */
+      final Quaternion lnexpq1q2 = Quaternion.log(expq1q2, new Quaternion());
+      final Quaternion lnexpq1q0 = Quaternion.log(expq1q0, new Quaternion());
+      final Quaternion sumln0 = Quaternion.add(lnexpq1q2, lnexpq1q0,
+         new Quaternion());
+      final Quaternion prod0 = Quaternion.mul(-0.25f, sumln0, new Quaternion());
+      final Quaternion exp0 = Quaternion.exp(prod0, new Quaternion());
+      Quaternion.mul(cp0, exp0, a);
+
+      /* q2 * exp(-0.25 * (log(exp(q2) * q3) + log(exp(q2) * q1))) */
+      final Quaternion lnexpq2q3 = Quaternion.log(expq2q3, new Quaternion());
+      final Quaternion lnexpq2q1 = Quaternion.log(expq2q1, new Quaternion());
+      final Quaternion sumln1 = Quaternion.add(lnexpq2q3, lnexpq2q1,
+         new Quaternion());
+      final Quaternion prod1 = Quaternion.mul(-0.25f, sumln1, new Quaternion());
+      final Quaternion exp1 = Quaternion.exp(prod1, new Quaternion());
+      Quaternion.mul(c, exp1, b);
+
+      return a;
+   }
+
+   /**
     * Finds the inverse, or reciprocal, of a quaternion, which is the
     * conjugate divided by the magnitude squared.<br>
     * <br>
@@ -1353,7 +1456,7 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Tests if the quaternion is of unit magnitude.
+    * Tests if the quaternion is a versor, i.e., has a magnitude of 1.0.
     *
     * @param q the quaternion
     *
@@ -1362,24 +1465,35 @@ public class Quaternion implements Comparable < Quaternion > {
     * @see Quaternion#dot(Quaternion, Quaternion)
     * @see Utils#approx(float, float)
     */
-   public static boolean isUnit ( final Quaternion q ) {
+   public static boolean isVersor ( final Quaternion q ) {
 
       return Utils.approx(Quaternion.magSq(q), 1.0f);
    }
 
+   /**
+    * Finds the natural logarithm of a quaternion. Uses the formula:<br>
+    * <br>
+    * <em>q</em> = { <em>log</em> ( | <em>a</em> | ) / 2.0,<br>
+    * <em>a<sub>\u00eemag</sub></em> <em>atan2</em> ( |
+    * <em>a<sub>imag</sub></em> | , <em>a<sub>real</sub></em> )
+    *
+    * @param q      the quaternion
+    * @param target the output quaternion
+    *
+    * @return the natural logarithm
+    *
+    * @see Math#log(double)
+    * @see Math#sqrt(double)
+    * @see Math#atan2(double, double)
+    */
    public static Quaternion log ( final Quaternion q,
       final Quaternion target ) {
 
-      // TODO: COMMENT
-
-      // TODO: Compare with
-      // https://github.com/CesiumGS/cesium/blob/
-      // 4c7fb7cd5b358ab951a1771581ad15627f7bc6e6/Source/Core/Quaternion.js#L793
-
+      final Vec3 qi = q.imag;
       final double w = q.real;
-      final double x = q.imag.x;
-      final double y = q.imag.y;
-      final double z = q.imag.z;
+      final double x = qi.x;
+      final double y = qi.y;
+      final double z = qi.z;
 
       final double mgImSq = x * x + y * y + z * z;
       target.real = ( float ) ( 0.5d * Math.log(w * w + mgImSq) );
@@ -1567,6 +1681,22 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
+    * Negates all components of the quaternion.
+    *
+    * @param q      the quaternion
+    * @param target the output quaternion
+    *
+    * @return the negation
+    */
+   public static Quaternion negate ( final Quaternion q,
+      final Quaternion target ) {
+
+      target.real = -q.real;
+      Vec3.negate(q.imag, target.imag);
+      return target;
+   }
+
+   /**
     * Tests if all components of the quaternion are zero.
     *
     * @param q the quaternion
@@ -1584,8 +1714,9 @@ public class Quaternion implements Comparable < Quaternion > {
     * Divides a quaternion by its magnitude, such that its new magnitude is
     * one and it lies on a 4D hyper-sphere. Uses the formula: <br>
     * <br>
-    * <em>\u00e2</em> = <em>a</em> / |<em>a</em>| Quaternions with zero
-    * magnitude will return the identity.
+    * <em>\u00e2</em> = <em>a</em> / |<em>a</em>|<br>
+    * <br>
+    * Quaternions with zero magnitude will return the identity.
     *
     * @param q      the input quaternion
     * @param target the output quaternion
@@ -1607,17 +1738,35 @@ public class Quaternion implements Comparable < Quaternion > {
       return Quaternion.identity(target);
    }
 
+   /**
+    * Raises a quaternion to a scalar power. Uses the formula<br>
+    * <br>
+    * q = <em>exp</em> ( <em>b</em> <em>log</em> ( <em>a</em> ) )
+    *
+    * @param a      the quaternion
+    * @param b      the scalar
+    * @param target the output quaternion
+    *
+    * @return the output quaternion
+    *
+    * @see Math#log(double)
+    * @see Math#sqrt(double)
+    * @see Math#atan2(double, double)
+    * @see Math#exp(double)
+    * @see Math#sqrt(double)
+    * @see Math#sin(double)
+    * @see Math#cos(double)
+    */
    public static Quaternion pow ( final Quaternion a, final float b,
       final Quaternion target ) {
 
-      // TODO: Comment.
-
+      final Vec3 ai = a.imag;
       final double aw = a.real;
-      final double ax = a.imag.x;
-      final double ay = a.imag.y;
-      final double az = a.imag.z;
-
+      final double ax = ai.x;
+      final double ay = ai.y;
+      final double az = ai.z;
       final double aMagImSq = ax * ax + ay * ay + az * az;
+
       double lnw = 0.5d * Math.log(aw * aw + aMagImSq);
       double lnx = 0.0d;
       double lny = 0.0d;
@@ -1656,10 +1805,27 @@ public class Quaternion implements Comparable < Quaternion > {
       }
    }
 
+   /**
+    * Raises a quaternion to a scalar power. Uses the formula<br>
+    * <br>
+    * q = <em>exp</em> ( <em>b</em> <em>log</em> ( <em>a</em> ) ) <br>
+    * <br>
+    * Emits the logarithm and scaled logarithm.
+    *
+    * @param a      the quaternion
+    * @param b      the scalar
+    * @param target the output quaternion
+    * @param ln     the natural logarithm
+    * @param scaled the scaled logarithm
+    *
+    * @return the output quaternion
+    *
+    * @see Quaternion#log(Quaternion, Quaternion)
+    * @see Quaternion#mul(Quaternion, float, Quaternion)
+    * @see Quaternion#exp(Quaternion, Quaternion)
+    */
    public static Quaternion pow ( final Quaternion a, final float b,
       final Quaternion target, final Quaternion ln, final Quaternion scaled ) {
-
-      // TODO: Comment.
 
       Quaternion.log(a, ln);
       Quaternion.mul(ln, b, scaled);
@@ -1873,45 +2039,58 @@ public class Quaternion implements Comparable < Quaternion > {
       // https://math.stackexchange.com/questions/2650188/
       // super-confused-by-squad-algorithm-for-quaternion-interpolation
 
-      // TEST without normalizing each step
-      // TEST without preferring shortest distance (i.e. negating dot product.
-
       if ( step <= 0.0f ) { return Quaternion.normalize(ap0, target); }
       if ( step >= 1.0f ) { return Quaternion.normalize(ap1, target); }
 
-      /* @formatter:off */
-      float fw, fx, fy, fz, dotp, u, v, theta, sinTheta, thetaStep, mSq, mInv;
+      float fw;
+      float fx;
+      float fy;
+      float fz;
+      float dotp;
+      float u;
+      float v;
+      float theta;
+      float sinTheta;
+      float thetaStep;
+      float mSq;
+      float mInv;
 
       /* Unpack components. */
-      Vec3 imag = ap0.imag;
+      Vec3 i = ap0.imag;
       final float ap0w = ap0.real;
-      final float ap0x = imag.x;
-      final float ap0y = imag.y;
-      final float ap0z = imag.z;
+      final float ap0x = i.x;
+      final float ap0y = i.y;
+      final float ap0z = i.z;
 
-      imag = cp0.imag;
+      i = cp0.imag;
       final float cp0w = cp0.real;
-      final float cp0x = imag.x;
-      final float cp0y = imag.y;
-      final float cp0z = imag.z;
+      final float cp0x = i.x;
+      final float cp0y = i.y;
+      final float cp0z = i.z;
 
-      imag = cp1.imag;
+      i = cp1.imag;
       final float cp1w = cp1.real;
-      final float cp1x = imag.x;
-      final float cp1y = imag.y;
-      final float cp1z = imag.z;
+      final float cp1x = i.x;
+      final float cp1y = i.y;
+      final float cp1z = i.z;
 
-      imag = ap1.imag;
+      i = ap1.imag;
       final float ap1w = ap1.real;
-      final float ap1x = imag.x;
-      final float ap1y = imag.y;
-      final float ap1z = imag.z;
+      final float ap1x = i.x;
+      final float ap1y = i.y;
+      final float ap1z = i.z;
 
       /* Tertiary 0. */
-      fw = cp0w; fx = cp0x; fy = cp0y; fz = cp0z;
+      fw = cp0w;
+      fx = cp0x;
+      fy = cp0y;
+      fz = cp0z;
       dotp = ap0w * cp0w + ap0x * cp0x + ap0y * cp0y + ap0z * cp0z;
       if ( dotp < 0.0f ) {
-         fw = -fw; fx = -fx; fy = -fy; fz = -fz;
+         fw = -fw;
+         fx = -fx;
+         fy = -fy;
+         fz = -fz;
          dotp = -dotp;
       }
 
@@ -1933,17 +2112,27 @@ public class Quaternion implements Comparable < Quaternion > {
       mSq = aw * aw + ax * ax + ay * ay + az * az;
       if ( mSq > 0.0f ) {
          mInv = Utils.invSqrtUnchecked(mSq);
-         aw *= mInv; ax *= mInv; ay *= mInv; az *= mInv;
+         aw *= mInv;
+         ax *= mInv;
+         ay *= mInv;
+         az *= mInv;
       } else {
-         aw = 1.0f; ax = ay = az = 0.0f;
+         aw = 1.0f;
+         ax = ay = az = 0.0f;
       }
 
       /* Tertiary 1. */
-      fw = cp1w; fx = cp1x; fy = cp1y; fz = cp1z;
+      fw = cp1w;
+      fx = cp1x;
+      fy = cp1y;
+      fz = cp1z;
       dotp = cp0w * cp1w + cp0x * cp1x + cp0y * cp1y + cp0z * cp1z;
 
       if ( dotp < 0.0f ) {
-         fw = -fw; fx = -fx; fy = -fy; fz = -fz;
+         fw = -fw;
+         fx = -fx;
+         fy = -fy;
+         fz = -fz;
          dotp = -dotp;
       }
 
@@ -1965,18 +2154,27 @@ public class Quaternion implements Comparable < Quaternion > {
       mSq = bw * bw + bx * bx + by * by + bz * bz;
       if ( mSq > 0.0f ) {
          mInv = Utils.invSqrtUnchecked(mSq);
-         bw *= mInv; bx *= mInv; by *= mInv; bz *= mInv;
+         bw *= mInv;
+         bx *= mInv;
+         by *= mInv;
+         bz *= mInv;
       } else {
          bw = 1.0f;
          bx = by = bz = 0.0f;
       }
 
       /* Tertiary 2. */
-      fw = ap1w; fx = ap1x; fy = ap1y; fz = ap1z;
+      fw = ap1w;
+      fx = ap1x;
+      fy = ap1y;
+      fz = ap1z;
       dotp = cp1w * ap1w + cp1x * ap1x + cp1y * ap1y + cp1z * ap1z;
 
       if ( dotp < 0.0f ) {
-         fw = -fw; fx = -fx; fy = -fy; fz = -fz;
+         fw = -fw;
+         fx = -fx;
+         fy = -fy;
+         fz = -fz;
          dotp = -dotp;
       }
 
@@ -1998,17 +2196,27 @@ public class Quaternion implements Comparable < Quaternion > {
       mSq = cw * cw + cx * cx + cy * cy + cz * cz;
       if ( mSq > 0.0f ) {
          mInv = Utils.invSqrtUnchecked(mSq);
-         cw *= mInv; cx *= mInv; cy *= mInv; cz *= mInv;
+         cw *= mInv;
+         cx *= mInv;
+         cy *= mInv;
+         cz *= mInv;
       } else {
-         cw = 1.0f; cx = cy = cz = 0.0f;
+         cw = 1.0f;
+         cx = cy = cz = 0.0f;
       }
 
       /* Secondary 0. */
-      fw = bw; fx = bx; fy = by; fz = bz;
+      fw = bw;
+      fx = bx;
+      fy = by;
+      fz = bz;
       dotp = aw * bw + ax * bx + ay * by + az * bz;
 
       if ( dotp < 0.0f ) {
-         fw = -fw; fx = -fx; fy = -fy; fz = -fz;
+         fw = -fw;
+         fx = -fx;
+         fy = -fy;
+         fz = -fz;
          dotp = -dotp;
       }
 
@@ -2030,17 +2238,27 @@ public class Quaternion implements Comparable < Quaternion > {
       mSq = abw * abw + abx * abx + aby * aby + abz * abz;
       if ( mSq > 0.0f ) {
          mInv = Utils.invSqrtUnchecked(mSq);
-         abw *= mInv; abx *= mInv; aby *= mInv; abz *= mInv;
+         abw *= mInv;
+         abx *= mInv;
+         aby *= mInv;
+         abz *= mInv;
       } else {
-         abw = 1.0f; abx = aby = abz = 0.0f;
+         abw = 1.0f;
+         abx = aby = abz = 0.0f;
       }
 
       /* Secondary 1. */
-      fw = cw; fx = cx; fy = cy; fz = cz;
+      fw = cw;
+      fx = cx;
+      fy = cy;
+      fz = cz;
       dotp = bw * cw + bx * cx + by * cy + bz * cz;
 
       if ( dotp < 0.0f ) {
-         fw = -fw; fx = -fx; fy = -fy; fz = -fz;
+         fw = -fw;
+         fx = -fx;
+         fy = -fy;
+         fz = -fz;
          dotp = -dotp;
       }
 
@@ -2062,17 +2280,27 @@ public class Quaternion implements Comparable < Quaternion > {
       mSq = bcw * bcw + bcx * bcx + bcy * bcy + bcz * bcz;
       if ( mSq > 0.0f ) {
          mInv = Utils.invSqrtUnchecked(mSq);
-         bcw *= mInv; bcx *= mInv; bcy *= mInv; bcz *= mInv;
+         bcw *= mInv;
+         bcx *= mInv;
+         bcy *= mInv;
+         bcz *= mInv;
       } else {
-         bcw = 1.0f; bcx = bcy = bcz = 0.0f;
+         bcw = 1.0f;
+         bcx = bcy = bcz = 0.0f;
       }
 
       /* Primary. */
-      fw = bcw; fx = bcx; fy = bcy; fz = bcz;
+      fw = bcw;
+      fx = bcx;
+      fy = bcy;
+      fz = bcz;
       dotp = abw * bcw + abx * bcx + aby * bcy + abz * bcz;
 
       if ( dotp < 0.0f ) {
-         fw = -fw; fx = -fx; fy = -fy; fz = -fz;
+         fw = -fw;
+         fx = -fx;
+         fy = -fy;
+         fz = -fz;
          dotp = -dotp;
       }
 
@@ -2094,16 +2322,21 @@ public class Quaternion implements Comparable < Quaternion > {
       mSq = dw * dw + dx * dx + dy * dy + dz * dz;
       if ( mSq > 0.0f ) {
          mInv = Utils.invSqrtUnchecked(mSq);
-         dw *= mInv; dx *= mInv; dy *= mInv; dz *= mInv;
+         dw *= mInv;
+         dx *= mInv;
+         dy *= mInv;
+         dz *= mInv;
       } else {
-         dw = 1.0f; dx = dy = dz = 0.0f;
+         dw = 1.0f;
+         dx = dy = dz = 0.0f;
       }
 
-      imag = target.imag;
+      i = target.imag;
       target.real = dw;
-      imag.x = dx; imag.y = dy; imag.z = dz;
+      i.x = dx;
+      i.y = dy;
+      i.z = dz;
       return target;
-      /* @formatter:on */
    }
 
    /**
@@ -2540,11 +2773,6 @@ public class Quaternion implements Comparable < Quaternion > {
 
          if ( mSq < IUtils.EPSILON_D ) { return target.reset(); }
 
-         if ( Math.abs(1.0d - mSq) < IUtils.EPSILON_D ) {
-            return target.set(( float ) cw, ( float ) cx, ( float ) cy,
-               ( float ) cz);
-         }
-
          final double mInv = 1.0d / Math.sqrt(mSq);
          return target.set(( float ) ( cw * mInv ), ( float ) ( cx * mInv ),
             ( float ) ( cy * mInv ), ( float ) ( cz * mInv ));
@@ -2594,8 +2822,8 @@ public class Quaternion implements Comparable < Quaternion > {
          double by = bi.y;
          double bz = bi.z;
 
-         /* Is it necessary to clamp the dot product? */
-         double dotp = aw * bw + ax * bx + ay * by + az * bz;
+         double dotp = Utils.clamp(aw * bw + ax * bx + ay * by + az * bz, -1.0d,
+            1.0d);
 
          /* Flip values if the orientation is negative. */
          if ( dotp < 0.0d ) {
@@ -2603,7 +2831,7 @@ public class Quaternion implements Comparable < Quaternion > {
             bx = -bx;
             by = -by;
             bz = -bz;
-            dotp = -dotp;
+            dotp = -dotp; // in [0, 1]
          }
 
          /* The step and its complement. */

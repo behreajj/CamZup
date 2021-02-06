@@ -1,7 +1,7 @@
 package camzup.core;
 
 /**
- * Organizes the vectors the shape a Bezier curve into a coordinate (or
+ * Organizes the vectors that shape a Bezier curve into a coordinate (or
  * anchor point), fore handle (the following control point) and rear handle
  * (the preceding control point).
  */
@@ -93,7 +93,7 @@ public class Knot3 implements Comparable < Knot3 > {
    public Knot3 ( final Knot3 source ) { this.set(source); }
 
    /**
-    * Creates a knot from a series of 2D vectors.
+    * Creates a knot from a series of 3D vectors.
     *
     * @param coord      the coordinate
     * @param foreHandle the fore handle
@@ -854,7 +854,7 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Sets this knot from a series of 2D vectors.
+    * Sets this knot from a series of 3D vectors.
     *
     * @param coord      the coordinate
     * @param foreHandle the fore handle
@@ -1715,6 +1715,8 @@ public class Knot3 implements Comparable < Knot3 > {
       final float radius, final float handleMag, final float xCenter,
       final float yCenter, final float zCenter, final Knot3 target ) {
 
+      // TODO: Remove this after 3d curve refactor...
+
       final Vec3 coord = target.coord;
       coord.set(xCenter + radius * cosa, yCenter + radius * sina, zCenter);
 
@@ -1786,11 +1788,6 @@ public class Knot3 implements Comparable < Knot3 > {
     * A functional class to ease between two knots with linear interpolation.
     */
    public static class Lerp extends AbstrEasing {
-
-      /**
-       * The default constructor.
-       */
-      public Lerp ( ) {}
 
       /**
        * Eases between two knots by a step using the formula (1.0 - t) * a + t *

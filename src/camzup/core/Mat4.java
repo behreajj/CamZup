@@ -1576,11 +1576,7 @@ public class Mat4 {
       final float rhoCosIncl = radius * cosIncl;
       final float rhoSinIncl = radius * sinIncl;
 
-      /* Alternative: pointing forward: */
-      // return target.set(radius * sinAzim, rhoCosIncl * cosAzim, rhoSinIncl
-      // * cosAzim, 0.0f, radius * -cosAzim, rhoCosIncl * sinAzim, rhoSinIncl
-      // * sinAzim, 0.0f, 0.0f, -rhoSinIncl, rhoCosIncl, 0.0f, 0.0f, 0.0f,
-      // 0.0f, 1.0f);
+      // TEST That this produces correct results for incl = 90 & -90
 
       /* @formatter:off */
       return target.set(

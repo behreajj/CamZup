@@ -27,7 +27,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       ICurve.KNOT_CAPACITY);
 
    /**
-    * Creates a curve with two default knots.
+    * The default constructor.
     */
    public Curve2 ( ) {}
 
@@ -734,7 +734,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * For internal (package-level) use. Resizes a curve to the specified
     * length. The length may be no less than 2. When the new length is greater
-    * than the old, new <code>Knot2</code>s are added.<br>
+    * than the old, new {@link Knot2}s are added.<br>
     * <br>
     * This does not check if remaining elements in the list are
     * <code>null</code>.
@@ -924,7 +924,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
        * by the Processing sine cosine look-up table (LUT).
        */
       if ( Utils.approx(stopAngle - startAngle, IUtils.TAU, 0.00139f) ) {
-         return Curve2.circle(startAngle, radius, 4, 0.0f, 0.0f, target);
+         return Curve2.circle(KNOTS_PER_CIRCLE, startAngle, radius, 0.0f, 0.0f,
+            target);
       }
 
       /* Divide by TAU then wrap around the range, [0.0, 1.0] . */
@@ -1080,64 +1081,21 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       return target;
    }
 
-   /**
-    * Creates a curve which approximates a circle of radius 0.5 using four
-    * knots.
-    *
-    * @param target the output curve
-    *
-    * @return the circle
-    */
-   public static Curve2 circle ( final Curve2 target ) {
-
-      return Curve2.circle(0.0f, target);
-   }
-
-   /**
-    * Creates a curve which approximates a circle of radius 0.5 using four
-    * knots.
-    *
-    * @param offsetAngle the angular offset
-    * @param target      the output curve
-    *
-    * @return the circle
-    */
-   public static Curve2 circle ( final float offsetAngle,
-      final Curve2 target ) {
-
-      return Curve2.circle(offsetAngle, 0.5f, target);
-   }
-
-   /**
-    * Creates a curve which approximates a circle using four knots.
-    *
-    * @param offsetAngle the angular offset
-    * @param radius      the radius
-    * @param target      the output curve
-    *
-    * @return the circle
-    */
-   public static Curve2 circle ( final float offsetAngle, final float radius,
-      final Curve2 target ) {
-
-      return Curve2.circle(offsetAngle, radius, ICurve.KNOTS_PER_CIRCLE,
-         target);
-   }
 
    /**
     * Creates a curve which approximates a circle.
     *
+    * @param knotCount   the knot count
     * @param offsetAngle the angular offset
     * @param radius      the radius
-    * @param knotCount   the knot count
     * @param target      the output curve
     *
     * @return the circle
     */
-   public static Curve2 circle ( final float offsetAngle, final float radius,
-      final int knotCount, final Curve2 target ) {
+   public static Curve2 circle ( final int knotCount, final float offsetAngle,
+      final float radius, final Curve2 target ) {
 
-      return Curve2.circle(offsetAngle, radius, knotCount, 0.0f, 0.0f, target);
+      return Curve2.circle(knotCount, offsetAngle, radius, 0.0f, 0.0f, target);
    }
 
    /**
@@ -1247,8 +1205,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return the coordinate
     *
-    * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
-    * @see Vec2#bezierTanUnit(Vec2, Vec2, Vec2, Vec2, float, Vec2)
+    * @see Knot2#bezierPoint(Knot2, Knot2, float, Vec2)
+    * @see Knot2#bezierTanUnit(Knot2, Knot2, float, Vec2)
     */
    public static Vec2 eval ( final Curve2 curve, final float step,
       final Vec2 coord, final Vec2 tangent ) {
@@ -2087,20 +2045,18 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * Creates a curve which approximates a circle. This is package level to
     * provide extra functionality for translating a circle's origin.
     *
+    * @param sectors     the sectors
     * @param offsetAngle the angular offset
     * @param radius      the radius
-    * @param sectors     the sectors
     * @param xCenter     the x center
     * @param yCenter     the y center
     * @param target      the output curve
     *
     * @return the circle
     */
-   static Curve2 circle ( final float offsetAngle, final float radius,
-      final int sectors, final float xCenter, final float yCenter,
+   static Curve2 circle ( final int sectors, final float offsetAngle,
+      final float radius, final float xCenter, final float yCenter,
       final Curve2 target ) {
-
-      // TODO: Change method signature to match Mesh2: sectors first.
 
       /* Since this is called by arc, it also needs to be optimized. */
 

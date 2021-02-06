@@ -945,7 +945,7 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
       sb.append("{ location: ");
       this.location.toString(sb, places);
       sb.append(", rotation: ");
-      sb.append(this.rotation.toString(places));
+      this.rotation.toString(sb, places);
       sb.append(", scale: ");
       this.scale.toString(sb, places);
       sb.append(' ');
@@ -1464,10 +1464,10 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
       // return target;
 
       final Vec3 imag = t.rotation.imag;
+      final float qw = t.rotation.real;
       final float qx = imag.x;
       final float qy = imag.y;
       final float qz = imag.z;
-      final float qw = t.rotation.real;
 
       final float iw = -qx * source.x - qy * source.y - qz * source.z;
       final float ix = qw * source.x + qy * source.z - qz * source.y;

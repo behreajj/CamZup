@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
@@ -25,7 +24,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       ICurve.KNOT_CAPACITY);
 
    /**
-    * Creates a curve with two default knots.
+    * The default constructor.
     */
    public Curve3 ( ) {}
 
@@ -237,7 +236,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the knot
     *
-    * @see LinkedList#get(int)
+    * @see List#get(int)
     * @see Utils#mod(int, int)
     */
    public Knot3 get ( final int i ) {
@@ -344,7 +343,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the iterator
     *
-    * @see LinkedList#iterator()
+    * @see List#iterator()
     */
    @Override
    public Iterator < Knot3 > iterator ( ) { return this.knots.iterator(); }
@@ -354,7 +353,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the knot count
     *
-    * @see LinkedList#size()
+    * @see List#size()
     */
    @Override
    public int length ( ) { return this.knots.size(); }
@@ -855,7 +854,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    /**
     * For internal (package-level) use. Resizes a curve to the specified
     * length. The length may be no less than 2. When the new length is greater
-    * than the old, new <code>Knot2</code>s are added.<br>
+    * than the old, new {@link Knot3}s are added.<br>
     * <br>
     * This does not check if remaining elements in the list are
     * <code>null</code>.
@@ -963,7 +962,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       /* See Curve2's arc function for more detailed comments. */
 
       if ( Utils.approx(stopAngle - startAngle, IUtils.TAU, 0.00139f) ) {
-         return Curve3.circle(startAngle, radius, 4, 0.0f, 0.0f, 0.0f, target);
+         return Curve3.circle(ICurve.KNOTS_PER_CIRCLE, startAngle, radius, 0.0f,
+            0.0f, 0.0f, target);
       }
 
       final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
@@ -1039,63 +1039,19 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Creates a curve which approximates a circle of radius 0.5 using four
-    * knots.
-    *
-    * @param target the output curve
-    *
-    * @return the circle
-    */
-   public static Curve3 circle ( final Curve3 target ) {
-
-      return Curve3.circle(0.0f, target);
-   }
-
-   /**
-    * Creates a curve which approximates a circle of radius 0.5 using four
-    * knots.
-    *
-    * @param offsetAngle the angular offset
-    * @param target      the output curve
-    *
-    * @return the circle
-    */
-   public static Curve3 circle ( final float offsetAngle,
-      final Curve3 target ) {
-
-      return Curve3.circle(offsetAngle, 0.5f, target);
-   }
-
-   /**
-    * Creates a curve which approximates a circle using four knots.
-    *
-    * @param offsetAngle the angular offset
-    * @param radius      the radius
-    * @param target      the output curve
-    *
-    * @return the circle
-    */
-   public static Curve3 circle ( final float offsetAngle, final float radius,
-      final Curve3 target ) {
-
-      return Curve3.circle(offsetAngle, radius, ICurve.KNOTS_PER_CIRCLE,
-         target);
-   }
-
-   /**
     * Creates a curve which approximates a circle.
     *
+    * @param knotCount   the knot count
     * @param offsetAngle the angular offset
     * @param radius      the radius
-    * @param knotCount   the knot count
     * @param target      the output curve
     *
     * @return the circle
     */
-   public static Curve3 circle ( final float offsetAngle, final float radius,
-      final int knotCount, final Curve3 target ) {
+   public static Curve3 circle ( final int knotCount, final float offsetAngle,
+      final float radius, final Curve3 target ) {
 
-      return Curve3.circle(offsetAngle, radius, knotCount, 0.0f, 0.0f, 0.0f,
+      return Curve3.circle(knotCount, offsetAngle, radius, 0.0f, 0.0f, 0.0f,
          target);
    }
 
@@ -1191,9 +1147,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param tangent the output tangent
     *
     * @return the coordinate
-    *
-    * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float, Vec3)
-    * @see Vec3#bezierTanUnit(Vec3, Vec3, Vec3, Vec3, float, Vec3)
+    * 
+    * @see Knot3#bezierPoint(Knot3, Knot3, float, Vec3)
+    * @see Knot3#bezierTanUnit(Knot3, Knot3, float, Vec3)
     */
    public static Vec3 eval ( final Curve3 curve, final float step,
       final Vec3 coord, final Vec3 tangent ) {
@@ -1870,9 +1826,12 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the circle
     */
-   static Curve3 circle ( final float offsetAngle, final float radius,
-      final int knotCount, final float xCenter, final float yCenter,
+   static Curve3 circle ( final int knotCount, final float offsetAngle,
+      final float radius, final float xCenter, final float yCenter,
       final float zCenter, final Curve3 target ) {
+
+      // TODO: Redo this to have a version which allows for inclination so that
+      // you can make a series of circles that form a sphere.
 
       final float offNorm = offsetAngle * IUtils.ONE_TAU;
       final int vKnCt = knotCount < 3 ? 3 : knotCount;

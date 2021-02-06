@@ -143,3 +143,5 @@ blitting
 yaw
 casteljau
 de
+versor
+helix
