@@ -1411,15 +1411,11 @@ public class Vec3 implements Comparable < Vec3 > {
 
    /**
     * Creates a vector from spherical coordinates: (1) theta, \u03b8, the
-    * azimuth or longitude; (2) phi, \u03c6, the inclination or latitude; (3)
-    * rho, \u03c1, the radius or magnitude. Uses the formula<br>
-    * <br>
-    * ( \u03c1 cos ( \u03b8 ) cos ( \u03c6 ),<br>
-    * \u03c1 sin ( \u03b8 ) cos ( \u03c6 ),<br>
-    * - \u03c1 sin ( \u03c6 ) )<br>
-    * <br>
-    * The poles will be upright in a z-up coordinate system; sideways in a
-    * y-up coordinate system.
+    * azimuth, yaw or longitude; (2) phi, \u03c6, the inclination, pitch or
+    * latitude; (3) rho, \u03c1, the radius or magnitude. The poles will be
+    * upright in a z-up coordinate system; sideways in a y-up coordinate
+    * system. The expected range for phi is [-\u03c0 / 2.0, \u03c0, 2.0], and
+    * the input will be clamped to that range.
     *
     * @param azimuth     the angle theta in radians
     * @param inclination the angle phi in radians
@@ -1427,15 +1423,22 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target      the output vector
     *
     * @return the vector
+    *
+    * @see Utils#clamp(float, float, float)
     */
    public static Vec3 fromSpherical ( final float azimuth,
       final float inclination, final float radius, final Vec3 target ) {
 
       final float azNorm = azimuth * IUtils.ONE_TAU;
-      final float inclNorm = inclination * IUtils.ONE_TAU;
+      final float inclNorm = Utils.clamp(inclination, -IUtils.HALF_PI,
+         IUtils.HALF_PI) * IUtils.ONE_TAU;
       final float rhoCosIncl = radius * Utils.scNorm(inclNorm);
-      return target.set(rhoCosIncl * Utils.scNorm(azNorm), rhoCosIncl * Utils
-         .scNorm(azNorm - 0.25f), radius * -Utils.scNorm(inclNorm - 0.25f));
+      /* @formatter:off */
+      return target.set(
+         rhoCosIncl * Utils.scNorm(azNorm),
+         rhoCosIncl * Utils.scNorm(azNorm - 0.25f),
+         radius * Utils.scNorm(inclNorm - 0.25f));
+      /* @formatter:on */
    }
 
    /**
@@ -1679,17 +1682,17 @@ public class Vec3 implements Comparable < Vec3 > {
          final Vec3[][] layer = result[h];
 
          if ( includePoles ) {
-            layer[0] = new Vec3[] { new Vec3(0.0f, 0.0f, radius) };
-            layer[latLen - 1] = new Vec3[] { new Vec3(0.0f, 0.0f, -radius) };
+            layer[0] = new Vec3[] { new Vec3(0.0f, 0.0f, -radius) };
+            layer[latLen - 1] = new Vec3[] { new Vec3(0.0f, 0.0f, radius) };
          }
 
          for ( int i = 0, k = 1; i < vlats; ++i, ++k ) {
-
             /*
              * -HALF_PI to HALF_PI range multiply by PI, then subtract HALF_PI.
              * Since range is normalized, multiply by 0.5, subtract 0.25.
              */
-            final float phi = k * toPhi - 0.25f;
+            // final float phi = k * toPhi - 0.25f;
+            final float phi = 0.25f - k * toPhi;
             final float rhoCosPhi = radius * Utils.scNorm(phi);
             final float rhoSinPhi = radius * Utils.scNorm(phi - 0.25f);
 

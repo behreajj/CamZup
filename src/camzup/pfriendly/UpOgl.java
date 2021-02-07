@@ -718,6 +718,39 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Draws a curve on a sphere . The supplied temporary vectors hold the
+    * transformed knot coordinates.
+    *
+    * @param curve  the curve
+    * @param tr     the transform
+    * @param detail the curve detail
+    * @param q      the evaluated quaternion
+    * @param right  the quaternion's right axis
+    * @param co     the coordinate
+    */
+   public void drawCurveSphere ( final CurveSphere curve, final Transform3 tr,
+      final int detail, final Quaternion q, final Vec3 right, final Vec3 co ) {
+
+      this.beginShape(PConstants.POLYGON);
+
+      final int vres = detail < 2 ? 2 : detail;
+      final float toPercent = 1.0f / ( vres - 1.0f );
+      for ( int i = 0; i < vres; ++i ) {
+         final float percent = i * toPercent;
+         CurveSphere.eval(curve, percent, q);
+         Quaternion.getRight(q, right);
+         Transform3.mulPoint(tr, right, co);
+         this.vertexImpl(co.x, co.y, co.z, this.textureU, this.textureV);
+      }
+
+      if ( curve.closedLoop ) {
+         this.endShape(PConstants.CLOSE);
+      } else {
+         this.endShape(PConstants.OPEN);
+      }
+   }
+
+   /**
     * Attempts to make the hint system more convenient to work with.
     */
    public void enableDepthMask ( ) {
@@ -2988,40 +3021,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          this.bezierVertexImpl(fh.x, fh.y, 0.0f, rh.x, rh.y, 0.0f, co.x, co.y,
             0.0f);
-         this.endShape(PConstants.CLOSE);
-      } else {
-         this.endShape(PConstants.OPEN);
-      }
-   }
-
-   /**
-    * Draws a curve on a sphere . The supplied temporary vectors hold the
-    * transformed knot coordinates.
-    *
-    * @param curve  the curve
-    * @param tr     the transform
-    * @param detail the curve detail
-    * @param q      the evaluated quaternion
-    * @param right  the quaternion's right axis
-    * @param co     the coordinate
-    */
-   public void drawCurveSphere ( final CurveSphere curve,
-      final Transform3 tr, final int detail, final Quaternion q,
-      final Vec3 right, final Vec3 co ) {
-
-      this.beginShape(PConstants.POLYGON);
-
-      final int vres = detail < 2 ? 2 : detail;
-      final float toPercent = 1.0f / ( vres - 1.0f );
-      for ( int i = 0; i < vres; ++i ) {
-         float percent = i * toPercent;
-         CurveSphere.eval(curve, percent, q);
-         Quaternion.getRight(q, right);
-         Transform3.mulPoint(tr, right, co);
-         this.vertexImpl(co.x, co.y, co.z, this.textureU, this.textureV);
-      }
-
-      if ( curve.closedLoop ) {
          this.endShape(PConstants.CLOSE);
       } else {
          this.endShape(PConstants.OPEN);

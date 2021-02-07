@@ -826,13 +826,15 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     *
     * @return this transform
     *
-    * @see Quaternion#fromAngle(float, Quaternion)
     * @see Transform3#updateAxes()
     */
    public Transform3 set ( final Transform2 source ) {
 
       this.location.set(source.location, 0.0f);
-      Quaternion.fromAngle(source.rotation, this.rotation);
+      // TODO: Mod radians by TAU?
+      final float halfRadians = source.rotation * 0.5f;
+      this.rotation.set(Utils.cos(halfRadians), 0.0f, 0.0f, Utils.sin(
+         halfRadians));
       this.updateAxes();
       this.scale.set(source.scale, 1.0f);
 

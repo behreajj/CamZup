@@ -148,6 +148,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
       this.coord.set(wco, xco, yco, zco);
       this.foreHandle.set(wfh, xfh, yfh, zfh);
       this.rearHandle.set(wrh, xrh, yrh, zrh);
+
       return this;
    }
 

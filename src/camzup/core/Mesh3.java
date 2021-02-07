@@ -3842,6 +3842,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3 torus ( final float thickness, final int sectors,
       final int panels, final PolyType poly, final Mesh3 target ) {
 
+      // TODO: Double check orientation of faces, vertices re: finding out
+      // fromSpherical was wrong.
+
       target.name = "Torus";
 
       /* Validate arguments. */
@@ -4244,14 +4247,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final float toTheta = 1.0f / lons;
       final float toPhi = 0.5f / lats1;
 
-      /* Set North pole. Offset subsequent vertex indices by 1. */
-      vs[0].set(0.0f, 0.0f, 0.5f);
-      vns[0].set(0.0f, 0.0f, 1.0f);
-
-      /* Set South pole. */
+      /* Set North pole. */
       final int last0 = vLen - 1;
-      vs[last0].set(0.0f, 0.0f, -0.5f);
-      vns[last0].set(0.0f, 0.0f, -1.0f);
+      vs[last0].set(0.0f, 0.0f, 0.5f);
+      vns[last0].set(0.0f, 0.0f, 1.0f);
+
+      /* Set South pole. Offset subsequent vertex indices by 1. */
+      vs[0].set(0.0f, 0.0f, -0.5f);
+      vns[0].set(0.0f, 0.0f, -1.0f);
 
       /*
        * Calculate sine & cosine of theta. Calculate texture coordinate poles.
@@ -4275,7 +4278,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       for ( int j = 0; j < lons1; ++j ) { tcxs[j] = j * toTexS; }
 
       /* Loop over the latitudes. */
-      for ( int i = 0, vIdx = 1, vtIdx = lons; i < lats; ++i ) {
+      for ( int i = lats - 1, vIdx = 1, vtIdx = lons; i > -1; --i ) {
 
          /* Account for offset of pole. */
          final float spOff = i + 1.0f;
@@ -4285,9 +4288,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
           * The expected range of phi is [-HALF_PI, HALF_PI], so subtract
           * QUARTER_PI, or 0.25 for normalized angles, to shift the range.
           */
-         final float phi = spOff * toPhi - 0.25f;
+         final float phi = 0.25f - spOff * toPhi;
          final float cosPhi = Utils.scNorm(phi);
-         final float sinPhi = -Utils.scNorm(phi - 0.25f);
+         final float sinPhi = Utils.scNorm(phi - 0.25f);
 
          final float rhoCosPhi = radius * cosPhi;
          final float rhoSinPhi = radius * sinPhi;
@@ -4326,7 +4329,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int[][][] fs = target.faces = isQuad ? new int[fsLen][4][3]
          : new int[fsLen][3][3];
 
-      /* Offsets for south cap. */
+      /* Offsets for north cap. */
       final int vIdxOff = last0 - lons;
       final int vtPoleOff = vtLen - lons;
       final int vtIdxOff = vtPoleOff - lons1;
@@ -4339,42 +4342,45 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int h = 1 + n;
          final int m = lons + j;
 
-         final int[][] triNorth = isQuad ? fs[j] = new int[3][3] : fs[j];
-         final int[][] triSouth = isQuad ? fs[fsIdxOff + j] = new int[3][3]
+         final int[][] triSouth = isQuad ? fs[j] = new int[3][3] : fs[j];
+         final int[][] triNorth = isQuad ? fs[fsIdxOff + j] = new int[3][3]
             : fs[fsIdxOff + j];
 
          /* Polar vertex. */
-         // final int[] north0 = northTri[0];
-         // north0[0] = 0;
-         // north0[1] = j;
-         // north0[2] = 0;
-         triNorth[0][1] = j;
+         final int[] north0 = triNorth[2];
+         north0[0] = last0;
+         north0[1] = vtPoleOff + j;
+         north0[2] = last0;
 
          final int[] north1 = triNorth[1];
-         north1[0] = k;
-         north1[1] = m;
-         north1[2] = k;
+         north1[0] = vIdxOff + n;
+         north1[1] = vtIdxOff + k;
+         north1[2] = vIdxOff + n;
 
-         final int[] north2 = triNorth[2];
-         north2[0] = h;
-         north2[1] = m + 1;
-         north2[2] = h;
+         final int[] north2 = triNorth[0];
+         north2[0] = vIdxOff + j;
+         north2[1] = vtIdxOff + j;
+         north2[2] = vIdxOff + j;
 
          /* Polar vertex. */
-         final int[] south0 = triSouth[0];
-         south0[0] = last0;
-         south0[1] = vtPoleOff + j;
-         south0[2] = last0;
+         final int[] south0 = triSouth[2];
+
+         south0[0] = 0;
+         south0[1] = j;
+         south0[2] = 0;
 
          final int[] south1 = triSouth[1];
-         south1[0] = vIdxOff + n;
-         south1[1] = vtIdxOff + k;
-         south1[2] = vIdxOff + n;
 
-         final int[] south2 = triSouth[2];
-         south2[0] = vIdxOff + j;
-         south2[1] = vtIdxOff + j;
-         south2[2] = vIdxOff + j;
+         south1[0] = k;
+         south1[1] = m;
+         south1[2] = k;
+
+         final int[] south2 = triSouth[0];
+
+         south2[0] = h;
+         south2[1] = m + 1;
+         south2[2] = h;
+
       }
 
       /* Middle. */
@@ -4396,10 +4402,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final int nextLon0 = nextLon1 % lons;
 
             /* Coordinate and normal indices. */
-            final int v00 = currentLat0 + j;
-            final int v10 = currentLat0 + nextLon0;
-            final int v11 = nextLat0 + nextLon0;
-            final int v01 = nextLat0 + j;
+            final int v00 = nextLat0 + j;
+            final int v10 = nextLat0 + nextLon0;
+            final int v11 = currentLat0 + nextLon0;
+            final int v01 = currentLat0 + j;
 
             /* Texture coordinate indices. */
             final int vt00 = currentLat1 + j;

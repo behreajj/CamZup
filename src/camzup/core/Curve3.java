@@ -1147,7 +1147,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param tangent the output tangent
     *
     * @return the coordinate
-    * 
+    *
     * @see Knot3#bezierPoint(Knot3, Knot3, float, Vec3)
     * @see Knot3#bezierTanUnit(Knot3, Knot3, float, Vec3)
     */

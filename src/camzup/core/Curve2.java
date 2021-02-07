@@ -924,8 +924,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
        * by the Processing sine cosine look-up table (LUT).
        */
       if ( Utils.approx(stopAngle - startAngle, IUtils.TAU, 0.00139f) ) {
-         return Curve2.circle(KNOTS_PER_CIRCLE, startAngle, radius, 0.0f, 0.0f,
-            target);
+         return Curve2.circle(ICurve.KNOTS_PER_CIRCLE, startAngle, radius, 0.0f,
+            0.0f, target);
       }
 
       /* Divide by TAU then wrap around the range, [0.0, 1.0] . */
@@ -1080,7 +1080,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       Curve2.accumMinMax(curve, target.min, target.max);
       return target;
    }
-
 
    /**
     * Creates a curve which approximates a circle.

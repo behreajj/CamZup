@@ -1560,6 +1560,7 @@ public class Mat4 {
     *
     * @return the matrix
     */
+   @Experimental
    public static Mat4 fromSpherical ( final float azimuth,
       final float inclination, final float radius, final Mat4 target ) {
 
@@ -1576,14 +1577,13 @@ public class Mat4 {
       final float rhoCosIncl = radius * cosIncl;
       final float rhoSinIncl = radius * sinIncl;
 
-      // TEST That this produces correct results for incl = 90 & -90
-
       /* @formatter:off */
       return target.set(
-         rhoCosIncl * cosAzim, radius * -sinAzim, rhoSinIncl * cosAzim, 0.0f,
-         rhoCosIncl * sinAzim, radius *  cosAzim, rhoSinIncl * sinAzim, 0.0f,
-                  -rhoSinIncl,              0.0f,           rhoCosIncl, 0.0f,
-                         0.0f,              0.0f,                 0.0f, 1.0f);
+         rhoCosIncl * cosAzim, radius * -sinAzim, -rhoSinIncl * cosAzim,  0.0f,
+         rhoCosIncl * sinAzim, radius *  cosAzim, -rhoSinIncl * sinAzim,  0.0f,
+                   rhoSinIncl,              0.0f,            rhoCosIncl,  0.0f,
+                         0.0f,              0.0f,                  0.0f,  1.0f);
+
       /* @formatter:on */
    }
 

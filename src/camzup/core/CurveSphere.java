@@ -278,24 +278,19 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
       target.resize(vSct);
       final Iterator < KnotSphere > itr = target.knots.iterator();
 
+      // TODO: Test that inclination is correct!
       final float tol = IUtils.HALF_PI - IUtils.EPSILON;
-      final float vincl = Utils.clamp(inclination, -tol, tol);
+      final float vincl = Utils.clamp(-inclination, -tol, tol);
       final float inclNorm = vincl * IUtils.ONE_TAU_2;
       final float cosIncl = Utils.scNorm(inclNorm);
       final float sinIncl = Utils.scNorm(inclNorm - 0.25f);
 
-      // final float toTheta = IUtils.TAU / ( 3.0f * vKnCt );
       final float toAzim = 0.5f / ( 3.0f * vSct );
       final float offNorm = offsetAngle * IUtils.ONE_TAU_2;
 
       for ( int j = 0; itr.hasNext(); j += 3 ) {
          final KnotSphere kn = itr.next();
 
-         // float az0 = ( j - 1 ) * toTheta;
-         // float az1 = j * toTheta;
-         // float az2 = ( j + 1 ) * toTheta;
-
-         // final float azimNorm = ( offsetAngle + az0 ) * IUtils.ONE_TAU_2;
          final float azimNorm0 = offNorm + ( j - 1 ) * toAzim;
          final float cosAzim0 = Utils.scNorm(azimNorm0);
          final float sinAzim0 = Utils.scNorm(azimNorm0 - 0.25f);
@@ -405,15 +400,75 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
    }
 
    /**
-    * Creates a spherical helix.
-    * 
+    * Creates a spherical helix. Useful when creating rhumb lines.
+    *
+    * @param target the output curve
+    *
+    * @return the helix
+    */
+   public static CurveSphere helix ( final CurveSphere target ) {
+
+      return CurveSphere.helix(ICurve.KNOTS_PER_CIRCLE, target);
+   }
+
+   /**
+    * Creates a spherical helix. Useful when creating rhumb lines.
+    *
+    * @param sectors number of knots
+    * @param target  the output curve
+    *
+    * @return the helix
+    */
+   public static CurveSphere helix ( final int sectors,
+      final CurveSphere target ) {
+
+      return CurveSphere.helix(sectors, 2, target);
+   }
+
+   /**
+    * Creates a spherical helix. Useful when creating rhumb lines.
+    *
+    * @param sectors number of knots
+    * @param period  number of periods
+    * @param target  the output curve
+    *
+    * @return the helix
+    */
+   public static CurveSphere helix ( final int sectors, final int period,
+      final CurveSphere target ) {
+
+      return CurveSphere.helix(sectors, period, 0.0f, target);
+   }
+
+   /**
+    * Creates a spherical helix. Useful when creating rhumb lines.
+    *
+    * @param sectors number of knots
+    * @param period  number of periods
+    * @param offset  azimuth offset
+    * @param target  the output curve
+    *
+    * @return the helix
+    */
+   public static CurveSphere helix ( final int sectors, final int period,
+      final float offset, final CurveSphere target ) {
+
+      return CurveSphere.helix(sectors, period, offset, -IUtils.HALF_PI,
+         IUtils.HALF_PI, target);
+   }
+
+   /**
+    * Creates a spherical helix. Useful when creating
+    * <a href="https://www.wikiwand.com/en/Rhumb_line">rhumb lines</a>
+    * (loxodromes).
+    *
     * @param sectors   number of knots
     * @param period    number of periods
     * @param offset    azimuth offset
     * @param inclStart inclination start
     * @param inclEnd   inclination end
     * @param target    the output curve
-    * 
+    *
     * @return the helix
     */
    public static CurveSphere helix ( final int sectors, final int period,
@@ -422,41 +477,69 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
 
       final int vPer = period < 1 ? 2 : period + 1;
       final int vSct = sectors < 2 ? 2 : sectors;
-      final float vStart = Utils.clamp(inclStart, -IUtils.HALF_PI,
-         IUtils.HALF_PI);
-      final float vEnd = Utils.clamp(inclEnd, -IUtils.HALF_PI, IUtils.HALF_PI);
 
-      int len = vPer * vSct;
-      float pern1 = vPer - 1.0f;
-      float kToFac = 1.0f / ( len - 1.0f );
-      float totAzim = pern1 * IUtils.TAU;
-      float right = totAzim * 0.5f;
-      float left = -right;
+      /* Adjust inclination. */
+      final float aIncl = 1.0f - IUtils.ONE_TAU_2 * Utils.clamp(inclStart,
+         -IUtils.HALF_PI, IUtils.HALF_PI);
+      final float bIncl = 1.0f - IUtils.ONE_TAU_2 * Utils.clamp(inclEnd,
+         -IUtils.HALF_PI, IUtils.HALF_PI);
+
+      final int len = vPer * vSct;
+      final float kToFac = 1.0f / ( len - 1.0f );
+      final float bAzim = ( vPer - 1.0f ) * 0.25f;
+      final float aAzim = -bAzim;
+      final float offNorm = IUtils.ONE_TAU_2 * offset;
+
       target.resize(len);
       final Iterator < KnotSphere > itr = target.knots.iterator();
 
-      for ( int k = 0, i = 0; i < vPer; ++i ) {
-         for ( int j = 0; j < vSct; ++j, ++k ) {
-            float kFac0 = ( k - IUtils.ONE_THIRD ) * kToFac;
-            float kFac1 = k * kToFac;
-            float kFac2 = ( k + IUtils.ONE_THIRD ) * kToFac;
+      for ( int k = 0; k < len; ++k ) {
+         final float kf = k;
 
-            float azim0 = offset + Utils.lerpUnclamped(left, right, kFac0);
-            float azim1 = offset + Utils.lerpUnclamped(left, right, kFac1);
-            float azim2 = offset + Utils.lerpUnclamped(left, right, kFac2);
+         /* Previous. */
+         final float t0 = ( kf - IUtils.ONE_THIRD ) * kToFac;
+         final float u0 = 1.0f - t0;
+         final float incl0 = u0 * aIncl + t0 * bIncl;
+         final float azim0 = offNorm + u0 * aAzim + t0 * bAzim;
 
-            KnotSphere knot = itr.next();
+         final float cosAzim = Utils.scNorm(azim0);
+         final float sinAzim = Utils.scNorm(azim0 - 0.25f);
 
-            // TODO: Fudge factor why start at end and not start?
-            // Is there an issue with Quaternion from Spherical re: incl?
-            float incl0 = Utils.lerpUnclamped(vEnd, vStart, kFac0);
-            float incl1 = Utils.lerpUnclamped(vEnd, vStart, kFac1);
-            float incl2 = Utils.lerpUnclamped(vEnd, vStart, kFac2);
+         final float cosIncl = Utils.scNorm(incl0);
+         final float sinIncl = Utils.scNorm(incl0 - 0.25f);
 
-            Quaternion.fromSpherical(azim0, incl0, knot.rearHandle);
-            Quaternion.fromSpherical(azim1, incl1, knot.coord);
-            Quaternion.fromSpherical(azim2, incl2, knot.foreHandle);
-         }
+         /* Current. */
+         final float t1 = kf * kToFac;
+         final float u1 = 1.0f - t1;
+         final float incl1 = u1 * aIncl + t1 * bIncl;
+         final float azim1 = offNorm + u1 * aAzim + t1 * bAzim;
+
+         final float cosAzim1 = Utils.scNorm(azim1);
+         final float sinAzim1 = Utils.scNorm(azim1 - 0.25f);
+
+         final float cosIncl1 = Utils.scNorm(incl1);
+         final float sinIncl1 = Utils.scNorm(incl1 - 0.25f);
+
+         /* Next. */
+         final float t2 = ( kf + IUtils.ONE_THIRD ) * kToFac;
+         final float u2 = 1.0f - t2;
+         final float incl2 = u2 * aIncl + t2 * bIncl;
+         final float azim2 = offNorm + u2 * aAzim + t2 * bAzim;
+
+         final float cosAzim2 = Utils.scNorm(azim2);
+         final float sinAzim2 = Utils.scNorm(azim2 - 0.25f);
+
+         final float cosIncl2 = Utils.scNorm(incl2);
+         final float sinIncl2 = Utils.scNorm(incl2 - 0.25f);
+
+         final KnotSphere knot = itr.next();
+
+         knot.rearHandle.set(cosAzim * cosIncl, -sinAzim * sinIncl, sinIncl
+            * cosAzim, sinAzim * cosIncl);
+         knot.coord.set(cosAzim1 * cosIncl1, -sinAzim1 * sinIncl1, sinIncl1
+            * cosAzim1, sinAzim1 * cosIncl1);
+         knot.foreHandle.set(cosAzim2 * cosIncl2, -sinAzim2 * sinIncl2, sinIncl2
+            * cosAzim2, sinAzim2 * cosIncl2);
       }
 
       target.name = "Helix";

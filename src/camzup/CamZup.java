@@ -1,7 +1,11 @@
 package camzup;
 
-import camzup.core.CurveSphere;
 import camzup.core.IUtils;
+import camzup.core.Mat4;
+import camzup.core.Quaternion;
+import camzup.core.Rng;
+import camzup.core.Vec3;
+import camzup.core.Vec4;
 
 import processing.core.PApplet;
 
@@ -82,12 +86,77 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      CurveSphere cs = CurveSphere.helix(4, 3, 0.0f, -IUtils.HALF_PI,
-          IUtils.HALF_PI, new CurveSphere());
-      System.out.println(cs);
+      // Mesh3 uvSphere = new Mesh3();
+      // Mesh3.uvSphere(uvSphere);
+      // MeshEntity3 me3 = new MeshEntity3(uvSphere);
+      // String pycd = me3.toBlenderCode();
+      // System.out.println(pycd);
 
+      // Vec3[] arr = Vec3.flat(Vec3.gridSpherical(12, 3));
+      // System.out.println(Vec3.toString(arr, 3));
+
+      // CurveSphere cs = new CurveSphere();
+      // Rng rng = new Rng();
+      // int x = rng.nextInt(16);
+      // int y = rng.nextInt(8);
+      // CurveSphere.helix(x, y, 0.0f, -IUtils.HALF_PI, IUtils.HALF_PI, cs);
+
+      // Mat4 m = Mat4.fromSpherical(IUtils.HALF_PI * 0.5f, 0f, 1f,
+      // new Mat4());
+      //
+
+      //
+      // Quaternion q = new Quaternion();
+      // Quaternion.fromAxes(r, u, f, q);
+
+      // double cosa = 0.5f * Math.cos(IUtils.HALF_PI * 0.5f);
+      // double sina = 0.5f * Math.sin(IUtils.HALF_PI * 0.5f);
+      // System.out.println(cosa);
+      // System.out.println(sina);
+      // System.out.println(q);
+
+      System.out.println();
+
+      final Rng rng = new Rng();
+      for ( int i = 0; i < 40; ++i ) {
+         final float t = rng.uniform(-IUtils.PI, IUtils.PI);
+         final float p = rng.uniform(-IUtils.HALF_PI, IUtils.HALF_PI);
+         final Mat4 m = Mat4.fromSpherical(t, p, 1, new Mat4());
+
+         final Vec4 right = new Vec4();
+         final Vec4 up = new Vec4();
+         final Vec4 forward = new Vec4();
+
+         m.getCol(0, right);
+         m.getCol(1, up);
+         m.getCol(2, forward);
+
+         final Vec3 r = new Vec3(right.x, right.y, right.z);
+         final Vec3 u = new Vec3(up.x, up.y, up.z);
+         final Vec3 f = new Vec3(forward.x, forward.y, forward.z);
+
+         final Quaternion q = new Quaternion();
+         Quaternion.fromAxes(r, u, f, q);
+         // System.out.println("q: " + q);
+
+         final Quaternion s = new Quaternion();
+         Quaternion.fromSpherical(t, p, s);
+         // System.out.println("s: " + s);
+
+         // System.out.println(Quaternion.approx(q, s));
+         // System.out.println("");
+
+         final Vec3 v = new Vec3();
+         Vec3.fromSpherical(t, p, 1f, v);
+         System.out.println(v);
+
+         final Vec3 x = new Vec3(1, 0, 0);
+         Quaternion.mulVector(q, new Vec3(1, 0, 0), x);
+         System.out.println(x);
+
+         System.out.println(Vec3.approx(x, v));
+      }
    }
-
 
    /**
     * Gets the version of the library.

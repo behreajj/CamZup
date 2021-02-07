@@ -658,6 +658,35 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * Copies a region of pixels from the display window to another area of the
+    * display.
+    *
+    * @param src the source image
+    * @param sx  source top left corner x
+    * @param sy  source top left corner y
+    * @param sw  source image width
+    * @param sh  source image height
+    * @param dx  destination top left corner x
+    * @param dy  destination top left corner y
+    * @param dw  destination image width
+    * @param dh  destination image height
+    */
+   @Override
+   public void copy ( final PImage src, final int sx, final int sy,
+      final int sw, final int sh, final int dx, final int dy, final int dw,
+      final int dh ) {
+
+      /*
+       * The parent version uses getNative, which returns null if the PImage
+       * can't be guaranteed to be a PImageAWT. See
+       * https://github.com/processing/processing4/issues/169 .
+       */
+
+      this.g2.drawImage(YupJ2.convertPImageToNative(src), dx, dy, dx + dw, dy
+         + dh, sx, sy, sx + sw, sy + sh, null, null);
+   }
+
+   /**
     * Creates a PShape with the default family.
     *
     * @return the shape
