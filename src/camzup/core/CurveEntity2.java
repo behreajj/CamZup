@@ -615,7 +615,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    @Override
    public String toSvgElm ( final float zoom ) {
 
-      return this.toSvgElm(zoom, new MaterialSolid[] {});
+      return this.toSvgElm(zoom, true, new MaterialSolid[] {});
    }
 
    /**
@@ -628,7 +628,22 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
     */
    public String toSvgElm ( final float zoom, final MaterialSolid material ) {
 
-      return this.toSvgElm(zoom, new MaterialSolid[] { material });
+      return this.toSvgElm(zoom, true, new MaterialSolid[] { material });
+   }
+
+   /**
+    * Creates a string representing a group node in the SVG format.
+    *
+    * @param zoom        scaling from external transforms
+    * @param useSubPaths whether to use sub paths
+    * @param material    the material to use
+    *
+    * @return the string
+    */
+   public String toSvgElm ( final float zoom, final boolean useSubPaths,
+      final MaterialSolid material ) {
+
+      return this.toSvgElm(zoom, useSubPaths, new MaterialSolid[] { material });
    }
 
    /**
@@ -637,71 +652,122 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
     * <br>
     * Stroke weight is impacted by scaling in transforms, so zoom is a
     * parameter. If nonuniform zooming is used, zoom can be an average of
-    * width and height or the maximum dimension.
+    * width and height or the maximum dimension.<br>
+    * <br>
+    * If use sub paths is true, then a curve entity will contain one path
+    * element with multiple move to commands.
     *
-    * @param zoom      scaling from external transforms
-    * @param materials the array of materials
+    * @param zoom        scaling from external transforms
+    * @param useSubPaths whether to use sub paths
+    * @param materials   the array of materials
     *
     * @return the string
     */
-   public String toSvgElm ( final float zoom,
+   public String toSvgElm ( final float zoom, final boolean useSubPaths,
       final MaterialSolid[] materials ) {
 
       final StringBuilder svgp = new StringBuilder(1024);
-      svgp.append("<g id=\"");
-      svgp.append(this.name.toLowerCase());
-      svgp.append("\" class=\"");
-      svgp.append(this.getClass().getSimpleName().toLowerCase());
-      svgp.append('\"');
-      svgp.append(' ');
-      svgp.append(this.transform.toSvgString());
-      svgp.append('>');
-      svgp.append('\n');
 
+      /* Adjust stroke weight according to transform scale and camera zoom. */
       final float scale = zoom * Transform2.minDimension(this.transform);
+
+      /* Decide how many groups to create based on material. */
       int matLen = 0;
       boolean includesMats = false;
+      boolean oneMat = false;
       if ( materials != null ) {
          matLen = materials.length;
          includesMats = matLen > 0;
+         oneMat = matLen < 2 && materials[0] != null;
+      }
+      final boolean multipleMats = includesMats && !oneMat;
+
+      /* If no materials, append a default; if one, append that. */
+      if ( !includesMats ) {
+         MaterialSolid.defaultSvgMaterial(svgp, scale);
+      } else if ( oneMat ) {
+         svgp.append("<g ");
+         materials[0].toSvgString(svgp, scale);
+         svgp.append('>');
+         svgp.append('\n');
       }
 
-      /* If no materials are present, use a default instead. */
-      if ( !includesMats ) { MaterialSolid.defaultSvgMaterial(svgp, scale); }
+      if ( !multipleMats && useSubPaths ) {
+         toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
+      } else {
 
-      // int i = 0;
-      // final String iddot = id + ".";
+         /* Append entity group. */
+         svgp.append("<g id=\"");
+         svgp.append(this.name.toLowerCase());
+         svgp.append("\" class=\"");
+         svgp.append(this.getClass().getSimpleName().toLowerCase());
+         svgp.append('\"');
+         svgp.append(' ');
+         this.transform.toSvgString(svgp);
+         svgp.append('>');
+         svgp.append('\n');
+
+         final Iterator < Curve2 > curveItr = this.curves.iterator();
+         while ( curveItr.hasNext() ) {
+            final Curve2 curve = curveItr.next();
+
+            /*
+             * It'd be more efficient to create a definitions block that
+             * contains the data for each material, which is then used by a mesh
+             * element with xlink. However, such tags are ignored when
+             * Processing imports an SVG with loadShape.
+             */
+            if ( multipleMats ) {
+               final int vMatIdx = Utils.mod(curve.materialIndex, matLen);
+               final MaterialSolid material = materials[vMatIdx];
+               svgp.append("<g ");
+               material.toSvgString(svgp, scale);
+               svgp.append('>');
+               svgp.append('\n');
+            }
+
+            curve.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
+
+            /* Close out material group. */
+            if ( multipleMats ) { svgp.append("</g>\n"); }
+         }
+         svgp.append("</g>\n");
+      }
+
+      /* Close out default material or single material. */
+      if ( !includesMats || oneMat ) { svgp.append("</g>\n"); }
+      return svgp.toString();
+   }
+
+   /**
+    * Internal helper function. Writes the curve entity as a single SVG path
+    * with sub-paths.
+    * 
+    * @param svgp     the string builder
+    * @param fillRule the fill rule
+    * 
+    * @return the string builder
+    */
+   StringBuilder toSvgPath ( final StringBuilder svgp, final String fillRule ) {
+
+      svgp.append("<path id=\"");
+      svgp.append(this.name.toLowerCase());
+      svgp.append("\" class=\"");
+      svgp.append(this.getClass().getSimpleName().toLowerCase());
+      svgp.append("\" fill-rule=\"");
+      svgp.append(fillRule);
+      svgp.append('\"');
+      svgp.append(' ');
+      this.transform.toSvgString(svgp);
+      svgp.append(" d=\"");
       final Iterator < Curve2 > curveItr = this.curves.iterator();
       while ( curveItr.hasNext() ) {
-         final Curve2 curve = curveItr.next();
-
-         /*
-          * It'd be more efficient to create a definitions block that contains
-          * the data for each material, which is then used by a mesh element
-          * with xlink. However, such tags are ignored when Processing imports
-          * an SVG with loadShape.
-          */
-         if ( includesMats ) {
-            final int vMatIdx = Utils.mod(curve.materialIndex, matLen);
-            final MaterialSolid material = materials[vMatIdx];
-            svgp.append("<g ");
-            material.toSvgString(svgp, scale);
-            svgp.append('>');
-            svgp.append('\n');
-         }
-
-         curve.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
-         // ++i;
-
-         /* Close out material group. */
-         if ( includesMats ) { svgp.append("</g>\n"); }
+         curveItr.next().toSvgSubPath(svgp);
+         svgp.append(' ');
       }
+      svgp.append("\"></path>\n");
 
-      /* Close out default material. */
-      if ( !includesMats ) { svgp.append("</g>\n"); }
-
-      svgp.append("</g>\n");
-      return svgp.toString();
+      return svgp;
    }
 
    /**

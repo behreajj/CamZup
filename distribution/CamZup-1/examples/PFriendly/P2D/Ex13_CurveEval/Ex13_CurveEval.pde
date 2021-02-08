@@ -39,17 +39,19 @@ void setup() {
   for (int i = 0; i < count; ++i) {
     float prc = i * toPrc;
     float dotSize = Utils.pingPong(dotMax, dotMin, prc);
-
-    CurveEntity2 de2 = new CurveEntity2();
+    String name = "Dot." + Utils.toPadded(i, 2);
+    
     Curve2 dot = Curve2.circle(new Curve2());
     dot.materialIndex = i;
-    de2.append(dot);
+    
+    CurveEntity2 de2 = new CurveEntity2(name, dot);
     de2.scaleTo(dotSize);
     dotEntities[i] = de2;
 
     MaterialSolid dotMat = new MaterialSolid();
     dotMats[i] = dotMat;
     Gradient.eval(grd, prc, dotMat.fill);
+    dotMat.name = Color.toHexString(dotMat.fill);
   }
 }
 

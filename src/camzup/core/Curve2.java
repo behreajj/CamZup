@@ -806,20 +806,38 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       if ( this.knots.size() < 2 ) { return svgp; }
 
-      final Iterator < Knot2 > itr = this.knots.iterator();
-      Knot2 prevKnot = itr.next();
       svgp.append("<path id=\"");
       svgp.append(this.name.toLowerCase());
       svgp.append("\" class=\"");
       svgp.append(this.getClass().getSimpleName().toLowerCase());
       svgp.append("\" fill-rule=\"");
       svgp.append(fillRule);
-      svgp.append("\" d=\"M ");
-      prevKnot.coord.toSvgString(svgp, ' ');
+      svgp.append("\" d=\"");
+      this.toSvgSubPath(svgp);
+      svgp.append("\"></path>\n");
+      return svgp;
+   }
 
-      Knot2 currKnot = null;
+   /**
+    * Internal helper function to draw a sub-path within a path's data
+    * command. Its separation allows for curves to be rendered as multiple
+    * sub-paths rather than one big path.
+    *
+    * @param svgp the string builder
+    *
+    * @return the string builder
+    */
+   StringBuilder toSvgSubPath ( final StringBuilder svgp ) {
+
+      final Iterator < Knot2 > itr = this.knots.iterator();
+      final Knot2 firstKnot = itr.next();
+      Knot2 prevKnot = firstKnot;
+
+      svgp.append('M');
+      svgp.append(' ');
+      prevKnot.coord.toSvgString(svgp, ' ');
       while ( itr.hasNext() ) {
-         currKnot = itr.next();
+         final Knot2 currKnot = itr.next();
          svgp.append(' ');
          svgp.append('C');
          svgp.append(' ');
@@ -832,20 +850,18 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       }
 
       if ( this.closedLoop ) {
-         currKnot = this.knots.get(0);
          svgp.append(' ');
          svgp.append('C');
          svgp.append(' ');
          prevKnot.foreHandle.toSvgString(svgp, ' ');
          svgp.append(',');
-         currKnot.rearHandle.toSvgString(svgp, ' ');
+         firstKnot.rearHandle.toSvgString(svgp, ' ');
          svgp.append(',');
-         currKnot.coord.toSvgString(svgp, ' ');
+         firstKnot.coord.toSvgString(svgp, ' ');
          svgp.append(' ');
          svgp.append('Z');
       }
 
-      svgp.append("\"></path>\n");
       return svgp;
    }
 
@@ -1084,17 +1100,29 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Creates a curve which approximates a circle.
     *
-    * @param knotCount   the knot count
+    * @param target the output curve
+    *
+    * @return the circle
+    */
+   public static Curve2 circle ( final Curve2 target ) {
+
+      return Curve2.circle(ICurve.KNOTS_PER_CIRCLE, 0.0f, 0.5f, target);
+   }
+
+   /**
+    * Creates a curve which approximates a circle.
+    *
+    * @param sectors     the knot count
     * @param offsetAngle the angular offset
     * @param radius      the radius
     * @param target      the output curve
     *
     * @return the circle
     */
-   public static Curve2 circle ( final int knotCount, final float offsetAngle,
+   public static Curve2 circle ( final int sectors, final float offsetAngle,
       final float radius, final Curve2 target ) {
 
-      return Curve2.circle(knotCount, offsetAngle, radius, 0.0f, 0.0f, target);
+      return Curve2.circle(sectors, offsetAngle, radius, 0.0f, 0.0f, target);
    }
 
    /**

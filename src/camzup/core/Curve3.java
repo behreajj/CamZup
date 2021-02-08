@@ -1830,9 +1830,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final float radius, final float xCenter, final float yCenter,
       final float zCenter, final Curve3 target ) {
 
-      // TODO: Redo this to have a version which allows for inclination so that
-      // you can make a series of circles that form a sphere.
-
       final float offNorm = offsetAngle * IUtils.ONE_TAU;
       final int vKnCt = knotCount < 3 ? 3 : knotCount;
       target.resize(vKnCt);

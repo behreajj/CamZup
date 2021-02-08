@@ -26,10 +26,11 @@ void setup() {
     entity.append(mesh);
 
     float step = 1.0 - i * toStep;
-    Color clr = Gradient.eval(grd, step, new Color());
-    MaterialSolid mat = new MaterialSolid();
-    mat.setFill(clr);
-    materials[i] = mat;
+
+    MaterialSolid material = new MaterialSolid();
+    Gradient.eval(grd, step, material.fill);
+    material.name = Color.toHexString(material.fill);
+    materials[i] = material;
   }
 }
 

@@ -872,15 +872,15 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    }
 
    /**
-    * Returns a string representation of this transform in SVG syntax.<br>
+    * Appends a string representation of this transform in SVG syntax to a
+    * string builder.<br>
     * <br>
     * The angle is converted from radians to degrees.
     *
-    * @return the SVG string
+    * @return the string builder
     */
-   String toSvgString ( ) {
+   StringBuilder toSvgString ( StringBuilder svgp ) {
 
-      final StringBuilder svgp = new StringBuilder(96);
       svgp.append("transform=\"translate(");
       Utils.toFixed(svgp, this.location.x, ISvgWritable.FIXED_PRINT);
       svgp.append(',');
@@ -895,7 +895,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
       svgp.append(' ');
       Utils.toFixed(svgp, this.scale.y, ISvgWritable.FIXED_PRINT);
       svgp.append(")\"");
-      return svgp.toString();
+      return svgp;
    }
 
    /**

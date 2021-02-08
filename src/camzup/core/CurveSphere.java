@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 
 /**
  * Organizes a cubic Bezier curve of quaternions into a list of knots.
@@ -281,7 +282,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
       // TODO: Test that inclination is correct!
       final float tol = IUtils.HALF_PI - IUtils.EPSILON;
       final float vincl = Utils.clamp(-inclination, -tol, tol);
-      final float inclNorm = vincl * IUtils.ONE_TAU_2;
+      final float inclNorm = 1.0f - vincl * IUtils.ONE_TAU_2;
       final float cosIncl = Utils.scNorm(inclNorm);
       final float sinIncl = Utils.scNorm(inclNorm - 0.25f);
 
@@ -458,6 +459,37 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
    }
 
    /**
+    * Creates a random curve.
+    * 
+    * @param rng        the random number generator
+    * @param count      the count
+    * @param closedLoop the close loop flag
+    * @param target     the output curve
+    * 
+    * @return the random curve
+    */
+   public static CurveSphere random ( Random rng, int count,
+      final boolean closedLoop, CurveSphere target ) {
+
+      final int valCount = count < 2 ? 2 : count;
+      target.resize(valCount);
+      Iterator < KnotSphere > itr = target.knots.iterator();
+      // KnotSphere first = itr.next();
+      // KnotSphere prev = first;
+      while ( itr.hasNext() ) {
+         KnotSphere curr = itr.next();
+         KnotSphere.random(rng, curr);
+         // Quaternion.innerQuadrangle(prev.coord, prev.foreHandle,
+         // curr.rearHandle, curr.coord, prev.foreHandle, curr.rearHandle,
+         // new Quaternion());
+         // prev = curr;
+      }
+      target.closedLoop = closedLoop;
+
+      return target;
+   }
+
+   /**
     * Creates a spherical helix. Useful when creating
     * <a href="https://www.wikiwand.com/en/Rhumb_line">rhumb lines</a>
     * (loxodromes).
@@ -470,6 +502,8 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     * @param target    the output curve
     *
     * @return the helix
+    * 
+    * @see Utils#clamp(float, float, float)
     */
    public static CurveSphere helix ( final int sectors, final int period,
       final float offset, final float inclStart, final float inclEnd,
@@ -502,11 +536,10 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
          final float incl0 = u0 * aIncl + t0 * bIncl;
          final float azim0 = offNorm + u0 * aAzim + t0 * bAzim;
 
-         final float cosAzim = Utils.scNorm(azim0);
-         final float sinAzim = Utils.scNorm(azim0 - 0.25f);
-
-         final float cosIncl = Utils.scNorm(incl0);
-         final float sinIncl = Utils.scNorm(incl0 - 0.25f);
+         final float cosAzim0 = Utils.scNorm(azim0);
+         final float sinAzim0 = Utils.scNorm(azim0 - 0.25f);
+         final float cosIncl0 = Utils.scNorm(incl0);
+         final float sinIncl0 = Utils.scNorm(incl0 - 0.25f);
 
          /* Current. */
          final float t1 = kf * kToFac;
@@ -516,7 +549,6 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
 
          final float cosAzim1 = Utils.scNorm(azim1);
          final float sinAzim1 = Utils.scNorm(azim1 - 0.25f);
-
          final float cosIncl1 = Utils.scNorm(incl1);
          final float sinIncl1 = Utils.scNorm(incl1 - 0.25f);
 
@@ -528,14 +560,12 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
 
          final float cosAzim2 = Utils.scNorm(azim2);
          final float sinAzim2 = Utils.scNorm(azim2 - 0.25f);
-
          final float cosIncl2 = Utils.scNorm(incl2);
          final float sinIncl2 = Utils.scNorm(incl2 - 0.25f);
 
          final KnotSphere knot = itr.next();
-
-         knot.rearHandle.set(cosAzim * cosIncl, -sinAzim * sinIncl, sinIncl
-            * cosAzim, sinAzim * cosIncl);
+         knot.rearHandle.set(cosAzim0 * cosIncl0, -sinAzim0 * sinIncl0, sinIncl0
+            * cosAzim0, sinAzim0 * cosIncl0);
          knot.coord.set(cosAzim1 * cosIncl1, -sinAzim1 * sinIncl1, sinIncl1
             * cosAzim1, sinAzim1 * cosIncl1);
          knot.foreHandle.set(cosAzim2 * cosIncl2, -sinAzim2 * sinIncl2, sinIncl2

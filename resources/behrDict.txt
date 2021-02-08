@@ -145,3 +145,4 @@ casteljau
 de
 versor
 helix
+loxodromes

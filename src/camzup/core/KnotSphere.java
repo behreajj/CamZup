@@ -1,5 +1,7 @@
 package camzup.core;
 
+import java.util.Random;
+
 /**
  * Organizes the quaternions that shape a Bezier curve on the surface of a
  * sphere into a sphere coordinate (or anchor point), fore handle (the
@@ -123,6 +125,114 @@ public class KnotSphere implements Comparable < KnotSphere > {
    }
 
    /**
+    * Rotates a knot around the x axis.
+    *
+    * @param radians the angle
+    *
+    * @return this knot
+    *
+    * @see KnotSphere#rotateX(float, float)
+    */
+   public KnotSphere rotateX ( final float radians ) {
+
+      final float halfRad = radians * 0.5f;
+      return this.rotateX(Utils.cos(halfRad), Utils.sin(halfRad));
+   }
+
+   /**
+    * Rotates this knot around the x axis. Accepts calculated sine and cosine
+    * of half the angle, so that collections of knots can be efficiently
+    * rotated without repeatedly calling cos and sin.
+    *
+    * @param cosa cosine of half the angle
+    * @param sina sine of half the angle
+    *
+    * @return this knot
+    *
+    * @see Quaternion#rotateX(Quaternion, float, float, Quaternion)
+    */
+   public KnotSphere rotateX ( final float cosa, final float sina ) {
+
+      Quaternion.rotateX(this.coord, cosa, sina, this.coord);
+      Quaternion.rotateX(this.foreHandle, cosa, sina, this.foreHandle);
+      Quaternion.rotateX(this.rearHandle, cosa, sina, this.rearHandle);
+
+      return this;
+   }
+
+   /**
+    * Rotates this knot around the y axis.
+    *
+    * @param radians the angle
+    *
+    * @return this knot
+    *
+    * @see KnotSphere#rotateY(float, float)
+    */
+   public KnotSphere rotateY ( final float radians ) {
+
+      final float halfRad = radians * 0.5f;
+      return this.rotateY(Utils.cos(halfRad), Utils.sin(halfRad));
+   }
+
+   /**
+    * Rotates this knot around the y axis. Accepts calculated sine and cosine
+    * of half the angle, so that collections of knots can be efficiently
+    * rotated without repeatedly calling cos and sin.
+    *
+    * @param cosa cosine of half the angle
+    * @param sina sine of half the angle
+    *
+    * @return this knot
+    *
+    * @see Quaternion#rotateY(Quaternion, float, float, Quaternion)
+    */
+   public KnotSphere rotateY ( final float cosa, final float sina ) {
+
+      Quaternion.rotateY(this.coord, cosa, sina, this.coord);
+      Quaternion.rotateY(this.foreHandle, cosa, sina, this.foreHandle);
+      Quaternion.rotateY(this.rearHandle, cosa, sina, this.rearHandle);
+
+      return this;
+   }
+
+   /**
+    * Rotates a knot around the z axis.
+    *
+    * @param radians the angle
+    *
+    * @return this knot
+    *
+    * @see KnotSphere#rotateZ(float, float)
+    */
+   public KnotSphere rotateZ ( final float radians ) {
+
+      final float halfRad = radians * 0.5f;
+      return this.rotateZ(Utils.cos(halfRad), Utils.sin(halfRad));
+   }
+
+   /**
+    * Rotates this knot around the z axis. Accepts calculated sine and cosine
+    * of half the angle, so that collections of knots can be efficiently
+    * rotated without repeatedly calling cos and sin.
+    *
+    * @param cosa cosine of half the angle
+    * @param sina sine of half the angle
+    *
+    * @return this knot
+    *
+    * @see Quaternion#rotateZ(Quaternion, float, float, Quaternion)
+    */
+   public KnotSphere rotateZ ( final float cosa, final float sina ) {
+
+      Quaternion.rotateZ(this.coord, cosa, sina, this.coord);
+      Quaternion.rotateZ(this.foreHandle, cosa, sina, this.foreHandle);
+      Quaternion.rotateZ(this.rearHandle, cosa, sina, this.rearHandle);
+
+      return this;
+   }
+
+   /**
     * Sets this knot from a series of floats.
     *
     * @param wco the coordinate w
@@ -216,6 +326,25 @@ public class KnotSphere implements Comparable < KnotSphere > {
 
       return this.coord.equals(other.coord) && this.foreHandle.equals(
          other.foreHandle) && this.rearHandle.equals(other.rearHandle);
+   }
+
+   /**
+    * Creates a random knot by calling
+    * {@link Quaternion#random(java.util.Random, Quaternion)} for each of its
+    * components.
+    * 
+    * @param rng    the random number generator
+    * @param target the output knot
+    * 
+    * @return the knot
+    */
+   public static KnotSphere random ( Random rng, KnotSphere target ) {
+
+      Quaternion.random(rng, target.coord);
+      Quaternion.random(rng, target.foreHandle);
+      Quaternion.random(rng, target.rearHandle);
+
+      return target;
    }
 
    /**

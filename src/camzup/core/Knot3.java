@@ -514,7 +514,7 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Rotates a knot around the x axis. Accepts calculated sine and cosine of
+    * Rotates this knot around the x axis. Accepts calculated sine and cosine of
     * an angle, so that collections of knots can be efficiently rotated
     * without repeatedly calling cos and sin.
     *
@@ -549,7 +549,7 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Rotates a knot around the y axis. Accepts calculated sine and cosine of
+    * Rotates this knot around the y axis. Accepts calculated sine and cosine of
     * an angle, so that collections of knots can be efficiently rotated
     * without repeatedly calling cos and sin.
     *
@@ -584,7 +584,7 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Rotates a knot around the z axis. Accepts calculated sine and cosine of
+    * Rotates this knot around the z axis. Accepts calculated sine and cosine of
     * an angle, so that collections of knots can be efficiently rotated
     * without repeatedly calling cos and sin.
     *
@@ -1714,8 +1714,6 @@ public class Knot3 implements Comparable < Knot3 > {
    static Knot3 fromPolar ( final float cosa, final float sina,
       final float radius, final float handleMag, final float xCenter,
       final float yCenter, final float zCenter, final Knot3 target ) {
-
-      // TODO: Remove this after 3d curve refactor...
 
       final Vec3 coord = target.coord;
       coord.set(xCenter + radius * cosa, yCenter + radius * sina, zCenter);

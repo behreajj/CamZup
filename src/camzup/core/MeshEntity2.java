@@ -640,24 +640,41 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       final MaterialSolid[] materials ) {
 
       final StringBuilder svgp = new StringBuilder(1024);
+
+      /* Adjust stroke weight according to transform scale and camera zoom. */
+      final float scale = zoom * Transform2.minDimension(this.transform);
+
+      /* Decide how many groups to create based on material. */
+      int matLen = 0;
+      boolean includesMats = false;
+      boolean oneMat = false;
+      if ( materials != null ) {
+         matLen = materials.length;
+         includesMats = matLen > 0;
+         oneMat = matLen < 2 && materials[0] != null;
+      }
+      final boolean multipleMats = includesMats && !oneMat;
+
+      /* If no materials, append a default; if one, append that. */
+      if ( !includesMats ) {
+         MaterialSolid.defaultSvgMaterial(svgp, scale);
+      } else if ( oneMat ) {
+         svgp.append("<g ");
+         materials[0].toSvgString(svgp, scale);
+         svgp.append('>');
+         svgp.append('\n');
+      }
+
+      /* Append entity group. */
       svgp.append("<g id=\"");
       svgp.append(this.name.toLowerCase());
       svgp.append("\" class=\"");
       svgp.append(this.getClass().getSimpleName().toLowerCase());
-      svgp.append("\" ");
-      svgp.append(this.transform.toSvgString());
-      svgp.append(">\n");
-
-      int matLen = 0;
-      boolean includesMats = false;
-      if ( materials != null ) {
-         matLen = materials.length;
-         includesMats = matLen > 0;
-      }
-
-      /* If no materials are present, use a default instead. */
-      final float scale = zoom * Transform2.minDimension(this.transform);
-      if ( !includesMats ) { MaterialSolid.defaultSvgMaterial(svgp, scale); }
+      svgp.append('\"');
+      svgp.append(' ');
+      this.transform.toSvgString(svgp);
+      svgp.append('>');
+      svgp.append('\n');
 
       final Iterator < Mesh2 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
@@ -669,7 +686,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
           * with xlink. However, such tags are ignored when Processing imports
           * an SVG with loadShape.
           */
-         if ( includesMats ) {
+         if ( multipleMats ) {
             final int vMatIdx = Utils.mod(mesh.materialIndex, matLen);
             final MaterialSolid material = materials[vMatIdx];
             svgp.append("<g ");
@@ -680,13 +697,12 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
          mesh.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
 
          /* Close out material group. */
-         if ( includesMats ) { svgp.append("</g>\n"); }
+         if ( multipleMats ) { svgp.append("</g>\n"); }
       }
+      svgp.append("</g>\n");
 
       /* Close out default material group. */
-      if ( !includesMats ) { svgp.append("</g>\n"); }
-
-      svgp.append("</g>\n");
+      if ( !includesMats || oneMat ) { svgp.append("</g>\n"); }
       return svgp.toString();
    }
 

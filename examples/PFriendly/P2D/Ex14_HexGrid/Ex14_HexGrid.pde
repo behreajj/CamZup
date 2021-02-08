@@ -34,12 +34,10 @@ void setup() {
     Mesh2 cell = meshes[i];
 
     cell.materialIndex = i;
-    int fill = Gradient.eval(gradient, fac);
-    materials[i] = new MaterialSolid()
-      .setFill(fill)
-      .setStrokeWeight(0.5)
-      .setStroke(#171717)
-      .setStroke(true);
+    MaterialSolid material = new MaterialSolid();
+    Gradient.eval(gradient, fac, material.fill);
+    material.name = Color.toHexString(material.fill);
+    materials[i] = material;
 
     if (i % 3 != 2) {
       cell.roundCorners(0, rounding, 3);

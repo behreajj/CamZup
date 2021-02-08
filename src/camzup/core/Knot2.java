@@ -8,7 +8,7 @@ package camzup.core;
 public class Knot2 implements Comparable < Knot2 > {
 
    /**
-    * The spatial coordinate of the knot.
+    * The spatial coordlinate of the knot.
     */
    public final Vec2 coord = new Vec2();
 
@@ -460,7 +460,7 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Rotates a knot around the z axis. Accepts calculated sine and cosine of
+    * Rotates this knot around the z axis. Accepts calculated sine and cosine of
     * an angle, so that collections of knots can be efficiently rotated
     * without repeatedly calling cos and sin.
     *

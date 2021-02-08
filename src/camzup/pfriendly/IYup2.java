@@ -1292,8 +1292,9 @@ public interface IYup2 extends IUp {
 
       final int len = ces.length;
       final float zoom = Utils.max(renderer.getZoomX(), renderer.getZoomY());
+      final boolean useSubPaths = mats == null || mats.length < 2;
       for ( int i = 0; i < len; ++i ) {
-         svgp.append(ces[i].toSvgElm(zoom, mats));
+         svgp.append(ces[i].toSvgElm(zoom, useSubPaths, mats));
          svgp.append('\n');
       }
 

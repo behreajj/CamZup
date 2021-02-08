@@ -143,6 +143,24 @@ void keyReleased() {
   capsLock = !capsLock;
 }
 
+void mouseReleased() {
+  CurveEntity2 target = new CurveEntity2();
+
+  vectorize(fontImg, target, 0.375);
+  target.scaleBy(2.0);
+
+  MaterialSolid displayMaterial = new MaterialSolid("font");
+  displayMaterial.setFill(#202020);
+
+  buff.clear();
+  buff.camera(
+    buff.width * 0.5, buff.height * 0.5,
+    0.0, 1.0, -1.0);
+  String svgStr = buff.toSvgString(target, displayMaterial);
+  saveStrings("data//font.svg", new String[] { svgStr });
+  println("Font vectorized.");
+}
+
 CurveEntity2 vectorize(PImage img, CurveEntity2 target) {
   return vectorize(img, target, 0.0f);
 }
