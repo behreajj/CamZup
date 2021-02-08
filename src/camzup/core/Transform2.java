@@ -879,7 +879,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     *
     * @return the string builder
     */
-   StringBuilder toSvgString ( StringBuilder svgp ) {
+   StringBuilder toSvgString ( final StringBuilder svgp ) {
 
       svgp.append("transform=\"translate(");
       Utils.toFixed(svgp, this.location.x, ISvgWritable.FIXED_PRINT);

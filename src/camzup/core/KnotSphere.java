@@ -332,13 +332,14 @@ public class KnotSphere implements Comparable < KnotSphere > {
     * Creates a random knot by calling
     * {@link Quaternion#random(java.util.Random, Quaternion)} for each of its
     * components.
-    * 
+    *
     * @param rng    the random number generator
     * @param target the output knot
-    * 
+    *
     * @return the knot
     */
-   public static KnotSphere random ( Random rng, KnotSphere target ) {
+   public static KnotSphere random ( final Random rng,
+      final KnotSphere target ) {
 
       Quaternion.random(rng, target.coord);
       Quaternion.random(rng, target.foreHandle);

@@ -19,7 +19,20 @@ int pxPerGlyph = 8;
 // lb inclusive, ub exclusive
 // [0x0000, 0x0100)
 // [0x2013, 0x201E)
-int len = 0x0100 + 11;
+int sublen0 = 0x100;
+int sublen1 = (0x201e - 0x2013);
+int len = sublen0 + sublen1;
+char[] glyphs = new char[len];
+{
+  for (int i = 0; i < sublen0; ++i) {
+    glyphs[i] = (char)i;
+  }
+
+  for (int i = 0x2013, j = sublen0; i < 0x201e; ++i, ++j) {
+    glyphs[j] = (char)i;
+  }
+}
+
 HashMap<Character, MaterialAwt.Sample> map = new HashMap<>(len);
 
 int leading = 2;
@@ -70,9 +83,7 @@ void setup() {
     MaterialAwt.Sample sample = new MaterialAwt.Sample(
       x0, y0, x1, y1);
 
-    int j = i > 0xff ? (i - 0x100) + 0x2013 : i;
-    char c = (char)(j);
-    map.put(c, sample);
+    map.put(glyphs[i], sample);
   }
 }
 
@@ -141,56 +152,4 @@ void draw() {
 
 void keyReleased() {
   capsLock = !capsLock;
-}
-
-void mouseReleased() {
-  CurveEntity2 target = new CurveEntity2();
-
-  vectorize(fontImg, target, 0.375);
-  target.scaleBy(2.0);
-
-  MaterialSolid displayMaterial = new MaterialSolid("font");
-  displayMaterial.setFill(#202020);
-
-  buff.clear();
-  buff.camera(
-    buff.width * 0.5, buff.height * 0.5,
-    0.0, 1.0, -1.0);
-  String svgStr = buff.toSvgString(target, displayMaterial);
-  saveStrings("data//font.svg", new String[] { svgStr });
-  println("Font vectorized.");
-}
-
-CurveEntity2 vectorize(PImage img, CurveEntity2 target) {
-  return vectorize(img, target, 0.0f);
-}
-
-CurveEntity2 vectorize(PImage img, CurveEntity2 target,
-  float rounding) {
-
-  img.loadPixels();
-  int[] pxs = img.pixels;
-  int len = pxs.length;
-  int w = img.width;
-
-  Vec2 tl = new Vec2();
-  Vec2 br = new Vec2();
-  ArrayList<Curve2> curves = target.curves;
-  for (int i = 0; i < len; ++i) {
-    int px = pxs[i];
-    int ai = px >> 0x18 & 0xff;
-    if (ai > 0) {
-      int x0 = i % w;
-      int y0 = i / w;
-      int x1 = x0 + 1;
-      int y1 = y0 + 1;
-
-      tl.set(x0, y0);
-      br.set(x1, y1);
-      Curve2 curve = new Curve2();
-      Curve2.rect(tl, br, rounding, curve);
-      curves.add(curve);
-    }
-  }
-  return target;
 }

@@ -459,37 +459,6 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
    }
 
    /**
-    * Creates a random curve.
-    * 
-    * @param rng        the random number generator
-    * @param count      the count
-    * @param closedLoop the close loop flag
-    * @param target     the output curve
-    * 
-    * @return the random curve
-    */
-   public static CurveSphere random ( Random rng, int count,
-      final boolean closedLoop, CurveSphere target ) {
-
-      final int valCount = count < 2 ? 2 : count;
-      target.resize(valCount);
-      Iterator < KnotSphere > itr = target.knots.iterator();
-      // KnotSphere first = itr.next();
-      // KnotSphere prev = first;
-      while ( itr.hasNext() ) {
-         KnotSphere curr = itr.next();
-         KnotSphere.random(rng, curr);
-         // Quaternion.innerQuadrangle(prev.coord, prev.foreHandle,
-         // curr.rearHandle, curr.coord, prev.foreHandle, curr.rearHandle,
-         // new Quaternion());
-         // prev = curr;
-      }
-      target.closedLoop = closedLoop;
-
-      return target;
-   }
-
-   /**
     * Creates a spherical helix. Useful when creating
     * <a href="https://www.wikiwand.com/en/Rhumb_line">rhumb lines</a>
     * (loxodromes).
@@ -502,7 +471,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     * @param target    the output curve
     *
     * @return the helix
-    * 
+    *
     * @see Utils#clamp(float, float, float)
     */
    public static CurveSphere helix ( final int sectors, final int period,
@@ -574,6 +543,37 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
 
       target.name = "Helix";
       target.closedLoop = false;
+      return target;
+   }
+
+   /**
+    * Creates a random curve.
+    *
+    * @param rng        the random number generator
+    * @param count      the count
+    * @param closedLoop the close loop flag
+    * @param target     the output curve
+    *
+    * @return the random curve
+    */
+   public static CurveSphere random ( final Random rng, final int count,
+      final boolean closedLoop, final CurveSphere target ) {
+
+      final int valCount = count < 2 ? 2 : count;
+      target.resize(valCount);
+      final Iterator < KnotSphere > itr = target.knots.iterator();
+      // KnotSphere first = itr.next();
+      // KnotSphere prev = first;
+      while ( itr.hasNext() ) {
+         final KnotSphere curr = itr.next();
+         KnotSphere.random(rng, curr);
+         // Quaternion.innerQuadrangle(prev.coord, prev.foreHandle,
+         // curr.rearHandle, curr.coord, prev.foreHandle, curr.rearHandle,
+         // new Quaternion());
+         // prev = curr;
+      }
+      target.closedLoop = closedLoop;
+
       return target;
    }
 

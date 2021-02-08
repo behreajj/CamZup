@@ -673,7 +673,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       final StringBuilder svgp = new StringBuilder(1024);
       MaterialSolid.defaultSvgMaterial(svgp, zoom);
-      this.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
+      this.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE, IUtils.EPSILON,
+         new Vec2(), new Vec2());
       svgp.append("</g>\n");
       return svgp.toString();
    }
@@ -797,12 +798,16 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * {@link StringBuilder}; the id is written to the path's id. The fill rule
     * may be either "evenodd" or "nonzero" (default).
     *
-    * @param svgp     the string builder
-    * @param fillRule the fill rule
+    * @param svgp        the string builder
+    * @param fillRule    the fill rule
+    * @param colinearTol the colinear tolerance
+    * @param dir0        the first direction
+    * @param dir1        the second direction
     *
     * @return the string builder.
     */
-   StringBuilder toSvgPath ( final StringBuilder svgp, final String fillRule ) {
+   StringBuilder toSvgPath ( final StringBuilder svgp, final String fillRule,
+      final float colinearTol, final Vec2 dir0, final Vec2 dir1 ) {
 
       if ( this.knots.size() < 2 ) { return svgp; }
 
@@ -813,7 +818,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       svgp.append("\" fill-rule=\"");
       svgp.append(fillRule);
       svgp.append("\" d=\"");
-      this.toSvgSubPath(svgp);
+      this.toSvgSubPath(svgp, colinearTol, dir0, dir1);
       svgp.append("\"></path>\n");
       return svgp;
    }
@@ -823,12 +828,17 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * command. Its separation allows for curves to be rendered as multiple
     * sub-paths rather than one big path.
     *
-    * @param svgp the string builder
+    * @param svgp        the string builder
+    * @param colinearTol the colinear tolerance
+    * @param dir0        the first direction
+    * @param dir1        the second direction
     *
     * @return the string builder
     */
-   StringBuilder toSvgSubPath ( final StringBuilder svgp ) {
+   StringBuilder toSvgSubPath ( final StringBuilder svgp,
+      final float colinearTol, final Vec2 dir0, final Vec2 dir1 ) {
 
+      // final float vtol = Utils.clamp01(1.0f - colinearTol);
       final Iterator < Knot2 > itr = this.knots.iterator();
       final Knot2 firstKnot = itr.next();
       Knot2 prevKnot = firstKnot;
@@ -838,28 +848,63 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       prevKnot.coord.toSvgString(svgp, ' ');
       while ( itr.hasNext() ) {
          final Knot2 currKnot = itr.next();
+
+         // final Vec2 coPrev = prevKnot.coord;
+         final Vec2 fhPrev = prevKnot.foreHandle;
+         final Vec2 rhNext = currKnot.rearHandle;
+         final Vec2 coNext = currKnot.coord;
+
+         // Vec2.subNorm(fhPrev, coPrev, dir0);
+         // Vec2.subNorm(rhNext, coNext, dir1);
+         // final float dotp = Vec2.dot(dir0, dir1);
+         // if ( dotp > -vtol && dotp < vtol ) {
          svgp.append(' ');
          svgp.append('C');
          svgp.append(' ');
-         prevKnot.foreHandle.toSvgString(svgp, ' ');
+         fhPrev.toSvgString(svgp, ' ');
          svgp.append(',');
-         currKnot.rearHandle.toSvgString(svgp, ' ');
+         rhNext.toSvgString(svgp, ' ');
          svgp.append(',');
-         currKnot.coord.toSvgString(svgp, ' ');
+         coNext.toSvgString(svgp, ' ');
+         // } else {
+         // svgp.append(' ');
+         // svgp.append('L');
+         // svgp.append(' ');
+         // coNext.toSvgString(svgp, ' ');
+         // }
+
          prevKnot = currKnot;
       }
 
       if ( this.closedLoop ) {
+         // final Vec2 coPrev = prevKnot.coord;
+         final Vec2 fhPrev = prevKnot.foreHandle;
+         final Vec2 rhNext = firstKnot.rearHandle;
+         final Vec2 coNext = firstKnot.coord;
+
+         // Vec2.subNorm(fhPrev, coPrev, dir0);
+         // Vec2.subNorm(rhNext, coNext, dir1);
+         // final float dotp = Vec2.dot(dir0, dir1);
+         // if ( dotp > -vtol && dotp < vtol ) {
          svgp.append(' ');
          svgp.append('C');
          svgp.append(' ');
-         prevKnot.foreHandle.toSvgString(svgp, ' ');
+         fhPrev.toSvgString(svgp, ' ');
          svgp.append(',');
-         firstKnot.rearHandle.toSvgString(svgp, ' ');
+         rhNext.toSvgString(svgp, ' ');
          svgp.append(',');
-         firstKnot.coord.toSvgString(svgp, ' ');
+         coNext.toSvgString(svgp, ' ');
          svgp.append(' ');
          svgp.append('Z');
+         // } else {
+         // svgp.append(' ');
+         // svgp.append('L');
+         // svgp.append(' ');
+         // firstKnot.coord.toSvgString(svgp, ' ');
+         // svgp.append(' ');
+         // svgp.append('Z');
+         // }
+
       }
 
       return svgp;

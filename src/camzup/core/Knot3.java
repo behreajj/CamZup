@@ -514,8 +514,8 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Rotates this knot around the x axis. Accepts calculated sine and cosine of
-    * an angle, so that collections of knots can be efficiently rotated
+    * Rotates this knot around the x axis. Accepts calculated sine and cosine
+    * of an angle, so that collections of knots can be efficiently rotated
     * without repeatedly calling cos and sin.
     *
     * @param cosa cosine of the angle
@@ -549,8 +549,8 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Rotates this knot around the y axis. Accepts calculated sine and cosine of
-    * an angle, so that collections of knots can be efficiently rotated
+    * Rotates this knot around the y axis. Accepts calculated sine and cosine
+    * of an angle, so that collections of knots can be efficiently rotated
     * without repeatedly calling cos and sin.
     *
     * @param cosa cosine of the angle
@@ -584,8 +584,8 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Rotates this knot around the z axis. Accepts calculated sine and cosine of
-    * an angle, so that collections of knots can be efficiently rotated
+    * Rotates this knot around the z axis. Accepts calculated sine and cosine
+    * of an angle, so that collections of knots can be efficiently rotated
     * without repeatedly calling cos and sin.
     *
     * @param cosa cosine of the angle

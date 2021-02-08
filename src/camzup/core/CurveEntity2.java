@@ -621,19 +621,6 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    /**
     * Creates a string representing a group node in the SVG format.
     *
-    * @param zoom     scaling from external transforms
-    * @param material the material to use
-    *
-    * @return the string
-    */
-   public String toSvgElm ( final float zoom, final MaterialSolid material ) {
-
-      return this.toSvgElm(zoom, true, new MaterialSolid[] { material });
-   }
-
-   /**
-    * Creates a string representing a group node in the SVG format.
-    *
     * @param zoom        scaling from external transforms
     * @param useSubPaths whether to use sub paths
     * @param material    the material to use
@@ -667,9 +654,14 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       final MaterialSolid[] materials ) {
 
       final StringBuilder svgp = new StringBuilder(1024);
+      if ( this.length() < 1 ) { return svgp.toString(); }
 
       /* Adjust stroke weight according to transform scale and camera zoom. */
       final float scale = zoom * Transform2.minDimension(this.transform);
+
+      /* For determining colinearity. */
+      final Vec2 dir0 = new Vec2();
+      final Vec2 dir1 = new Vec2();
 
       /* Decide how many groups to create based on material. */
       int matLen = 0;
@@ -693,7 +685,8 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       }
 
       if ( !multipleMats && useSubPaths ) {
-         toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
+         this.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE, IUtils.EPSILON,
+            dir0, dir1);
       } else {
 
          /* Append entity group. */
@@ -726,7 +719,8 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
                svgp.append('\n');
             }
 
-            curve.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
+            curve.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE,
+               IUtils.EPSILON, dir0, dir1);
 
             /* Close out material group. */
             if ( multipleMats ) { svgp.append("</g>\n"); }
@@ -740,33 +734,51 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    }
 
    /**
+    * Creates a string representing a group node in the SVG format.
+    *
+    * @param zoom     scaling from external transforms
+    * @param material the material to use
+    *
+    * @return the string
+    */
+   public String toSvgElm ( final float zoom, final MaterialSolid material ) {
+
+      return this.toSvgElm(zoom, true, new MaterialSolid[] { material });
+   }
+
+   /**
     * Internal helper function. Writes the curve entity as a single SVG path
     * with sub-paths.
-    * 
-    * @param svgp     the string builder
-    * @param fillRule the fill rule
-    * 
+    *
+    * @param svgp        the string builder
+    * @param fillRule    the fill rule
+    * @param colinearTol the colinear tolerance
+    * @param dir0        the first direction
+    * @param dir1        the second direction
+    *
     * @return the string builder
     */
-   StringBuilder toSvgPath ( final StringBuilder svgp, final String fillRule ) {
+   StringBuilder toSvgPath ( final StringBuilder svgp, final String fillRule,
+      final float colinearTol, final Vec2 dir0, final Vec2 dir1 ) {
 
-      svgp.append("<path id=\"");
-      svgp.append(this.name.toLowerCase());
-      svgp.append("\" class=\"");
-      svgp.append(this.getClass().getSimpleName().toLowerCase());
-      svgp.append("\" fill-rule=\"");
-      svgp.append(fillRule);
-      svgp.append('\"');
-      svgp.append(' ');
-      this.transform.toSvgString(svgp);
-      svgp.append(" d=\"");
-      final Iterator < Curve2 > curveItr = this.curves.iterator();
-      while ( curveItr.hasNext() ) {
-         curveItr.next().toSvgSubPath(svgp);
+      if ( this.length() > 0 ) {
+         svgp.append("<path id=\"");
+         svgp.append(this.name.toLowerCase());
+         svgp.append("\" class=\"");
+         svgp.append(this.getClass().getSimpleName().toLowerCase());
+         svgp.append("\" fill-rule=\"");
+         svgp.append(fillRule);
+         svgp.append('\"');
          svgp.append(' ');
+         this.transform.toSvgString(svgp);
+         svgp.append(" d=\"");
+         final Iterator < Curve2 > curveItr = this.curves.iterator();
+         while ( curveItr.hasNext() ) {
+            curveItr.next().toSvgSubPath(svgp, colinearTol, dir0, dir1);
+            svgp.append(' ');
+         }
+         svgp.append("\"></path>\n");
       }
-      svgp.append("\"></path>\n");
-
       return svgp;
    }
 
