@@ -22,10 +22,7 @@ public class MaterialPImage extends MaterialUv {
    /**
     * The default constructor.
     */
-   public MaterialPImage ( ) {
-
-      this("MaterialPImage");
-   }
+   public MaterialPImage ( ) {}
 
    /**
     * Constructs a material from a texture.
@@ -34,7 +31,7 @@ public class MaterialPImage extends MaterialUv {
     */
    public MaterialPImage ( final PImage texture ) {
 
-      super("MaterialPImage");
+      super();
       this.setTexture(texture);
    }
 

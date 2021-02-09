@@ -496,7 +496,7 @@ public abstract class Convert {
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      shape.disableStyle();
+      // shape.disableStyle();
       return shape;
    }
 
@@ -575,7 +575,7 @@ public abstract class Convert {
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      shape.disableStyle();
+      // shape.disableStyle();
       return shape;
    }
 
@@ -721,7 +721,7 @@ public abstract class Convert {
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      shape.disableStyle();
+      // shape.disableStyle();
       return shape;
    }
 
@@ -757,7 +757,7 @@ public abstract class Convert {
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform3.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      shape.disableStyle();
+      // shape.disableStyle();
       return shape;
    }
 

@@ -1993,20 +1993,20 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Vec2[] vs = this.coords;
       final int fsLen = fs.length;
 
-      svgp.append("<g id=\"");
+      svgp.append("<path id=\"");
       svgp.append(this.name.toLowerCase());
       svgp.append("\" class=\"");
       svgp.append(this.getClass().getSimpleName().toLowerCase());
-      svgp.append("\">");
+      svgp.append("\" fill-rule=\"");
+      svgp.append(fillRule);
+      svgp.append("\" d=\"");
+
       for ( int i = 0; i < fsLen; ++i ) {
          final int[][] f = fs[i];
          final int fLen = f.length;
 
-         svgp.append("<path id=\"");
-         svgp.append("face." + Utils.toPadded(i, 3));
-         svgp.append("\" fill-rule=\"");
-         svgp.append(fillRule);
-         svgp.append("\" d=\"M ");
+         svgp.append('M');
+         svgp.append(' ');
          vs[f[0][0]].toSvgString(svgp, ' ');
          svgp.append(' ');
 
@@ -2017,10 +2017,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             svgp.append(' ');
          }
 
-         svgp.append("Z\"></path>\n");
+         svgp.append('Z');
+         svgp.append(' ');
       }
-      svgp.append("</g>\n");
 
+      svgp.append("\"></path>\n");
       return svgp;
    }
 

@@ -82,6 +82,7 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
+      // System.out.println(Color.fromHex("0xfffff7d5", new Color()));
    }
 
    /**
@@ -93,6 +94,8 @@ public class CamZup {
 
    static Color blend ( final Color origin, final Color dest,
       final BlendMode op, final Color target ) {
+
+      // RESEARCH https://www.w3.org/TR/compositing-1/#blending
 
       // Cr result color
       // B formula
@@ -122,12 +125,14 @@ public class CamZup {
             break;
 
          case DARKEN:
-            // B(Cb, Cs) = min(Cb, Cs)
-            break;
+            return target.set(Utils.min(origin.r, dest.r), Utils.min(origin.g,
+               dest.g), Utils.min(origin.b, dest.b), Utils.min(origin.a,
+                  dest.a));
 
          case DIFFERENCE:
-            // B(Cb, Cs) = | Cb - Cs |
-            break;
+            return target.set(Utils.diff(origin.r, dest.r), Utils.diff(origin.g,
+               dest.g), Utils.diff(origin.b, dest.b), Utils.diff(origin.a,
+                  dest.a));
 
          case EXCLUSION:
             // B(Cb, Cs) = Cb + Cs - 2 x Cb x Cs
@@ -141,16 +146,16 @@ public class CamZup {
             break;
 
          case LIGHTEN:
-            // B(Cb, Cs) = max(Cb, Cs)
-            break;
+            return target.set(Utils.max(origin.r, dest.r), Utils.max(origin.g,
+               dest.g), Utils.max(origin.b, dest.b), Utils.max(origin.a,
+                  dest.a));
 
          case MULTIPLY:
-            // B(Cb, Cs) = Cb x Cs
-            break;
+            return target.set(origin.r * dest.r, origin.g * dest.g, origin.b
+               * dest.b, origin.a * dest.a);
 
          case NORMAL:
-            // B(Cb, Cs) = Cs
-            break;
+            return target.set(dest);
 
          case OVERLAY:
             // B(Cb, Cs) = HardLight(Cs, Cb)
@@ -183,6 +188,8 @@ public class CamZup {
 
    static Color composite ( final Color origin, final Color dest,
       final PorterDuff op, final Color target ) {
+
+      // RESEARCH https://www.w3.org/TR/compositing-1/#blending
 
       float fa = 0.0f;
       float fb = 0.0f;
@@ -262,8 +269,6 @@ public class CamZup {
          Utils.clamp01(as * fa + ab * fb));
       /* @formatter:on */
    }
-
-
 
    enum BlendMode {
       COLOR_BURN, COLOR_DODGE, DARKEN, DIFFERENCE, EXCLUSION, HARD_LIGHT,

@@ -116,6 +116,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     *
     * @return this transform
     */
+   @Override
    public Transform2 flipX ( ) {
 
       this.scalePrev.set(this.scale);
@@ -129,6 +130,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     *
     * @return this transform
     */
+   @Override
    public Transform2 flipY ( ) {
 
       this.scalePrev.set(this.scale);

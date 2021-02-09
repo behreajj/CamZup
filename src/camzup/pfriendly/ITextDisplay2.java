@@ -1,5 +1,6 @@
 package camzup.pfriendly;
 
+import camzup.core.IUtils;
 import camzup.core.Utils;
 
 /**
@@ -53,7 +54,7 @@ public interface ITextDisplay2 extends ITextDisplay {
    default void text ( final float real, final float x, final float y,
       final float z ) {
 
-      this.text(Utils.toFixed(real, 4), x, y);
+      this.text(Utils.toFixed(real, IUtils.FIXED_PRINT), x, y);
    }
 
    /**

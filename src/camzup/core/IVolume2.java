@@ -6,6 +6,20 @@ package camzup.core;
 public interface IVolume2 extends IVolume {
 
    /**
+    * Flips the object's scale horizontally.
+    *
+    * @return this object
+    */
+   IVolume2 flipX ( );
+
+   /**
+    * Flips the object's scale vertically.
+    *
+    * @return this object
+    */
+   IVolume2 flipY ( );
+
+   /**
     * Gets the nonuniform scale of the volume.
     *
     * @param target the output target

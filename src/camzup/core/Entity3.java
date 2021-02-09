@@ -15,10 +15,7 @@ public class Entity3 extends Entity implements IOriented3, ISpatial3 {
    /**
     * The default constructor.
     */
-   public Entity3 ( ) {
-
-      this.transform = new Transform3();
-   }
+   public Entity3 ( ) { this.transform = new Transform3(); }
 
    /**
     * Constructs a named entity. A new transform is created by the

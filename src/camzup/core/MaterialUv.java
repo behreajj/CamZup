@@ -86,6 +86,30 @@ public abstract class MaterialUv extends Material implements IOriented2,
    }
 
    /**
+    * Flips the material horizontally.
+    *
+    * @return this entity
+    */
+   @Override
+   public MaterialUv flipX ( ) {
+
+      this.transform.flipX();
+      return this;
+   }
+
+   /**
+    * Flips the material vertically.
+    *
+    * @return this entity
+    */
+   @Override
+   public MaterialUv flipY ( ) {
+
+      this.transform.flipY();
+      return this;
+   }
+
+   /**
     * Gets this material's transform's texture coordinate location.
     *
     * @param target the output vector

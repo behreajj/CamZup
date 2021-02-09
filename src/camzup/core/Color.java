@@ -2,6 +2,7 @@ package camzup.core;
 
 import java.util.Comparator;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 /**
  * A mutable, extensible color class. Supports RGBA and HSBA color spaces.
@@ -33,10 +34,7 @@ public class Color implements Comparable < Color > {
    /**
     * The default constructor. Creates a white color.
     */
-   public Color ( ) {
-
-      // RESEARCH https://www.w3.org/TR/compositing-1/#blending
-   }
+   public Color ( ) {}
 
    /**
     * Creates a color from bytes. In Java, bytes are signed, within the range
@@ -132,6 +130,21 @@ public class Color implements Comparable < Color > {
    public boolean equals ( final int other ) {
 
       return Color.toHexInt(this) == other;
+   }
+
+   /**
+    * Tests this color for equivalence to another based on its hexadecimal
+    * representation.
+    *
+    * @param other the color long
+    *
+    * @return the equivalence
+    *
+    * @see Color#toHexLong(Color)
+    */
+   public boolean equals ( final long other ) {
+
+      return Color.toHexLong(this) == other;
    }
 
    /**
@@ -492,14 +505,16 @@ public class Color implements Comparable < Color > {
    StringBuilder toBlenderCode ( final StringBuilder pyCd, final float gamma,
       final boolean inclAlpha ) {
 
+      final double gd = gamma;
+
       pyCd.append('(');
-      Utils.toFixed(pyCd, Utils.pow(this.r, gamma), 6);
+      Utils.toFixed(pyCd, ( float ) Math.pow(this.r, gd), 6);
       pyCd.append(',');
       pyCd.append(' ');
-      Utils.toFixed(pyCd, Utils.pow(this.g, gamma), 6);
+      Utils.toFixed(pyCd, ( float ) Math.pow(this.g, gd), 6);
       pyCd.append(',');
       pyCd.append(' ');
-      Utils.toFixed(pyCd, Utils.pow(this.b, gamma), 6);
+      Utils.toFixed(pyCd, ( float ) Math.pow(this.b, gd), 6);
 
       if ( inclAlpha ) {
          pyCd.append(',');
@@ -522,7 +537,7 @@ public class Color implements Comparable < Color > {
 
       /*
        * This does not append to a pre-existing StringBuilder because
-       * differences between GGR and Camzup gradients mean multiple string
+       * differences between GGR and core gradients mean multiple String
        * conversions of one color.
        */
 
@@ -1004,6 +1019,24 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Converts an array of integers that represent colors in hexadecimal into
+    * an array of colors
+    *
+    * @param cs the colors
+    *
+    * @return the array
+    */
+   public static Color[] fromHex ( final int[] cs ) {
+
+      final int len = cs.length;
+      final Color[] result = new Color[len];
+      for ( int i = 0; i < len; ++i ) {
+         result[i] = Color.fromHex(cs[i], new Color());
+      }
+      return result;
+   }
+
+   /**
     * Convert a hexadecimal representation of a color stored as 0xAARRGGBB
     * into a color.
     *
@@ -1023,6 +1056,24 @@ public class Color implements Comparable < Color > {
          ( c         & 0xffL ) * IUtils.ONE_255,
          ( c >> 0x18 & 0xffL ) * IUtils.ONE_255);
       /* @formatter:on */
+   }
+
+   /**
+    * Converts an array of longs that represent colors in hexadecimal into an
+    * array of colors
+    *
+    * @param cs the colors
+    *
+    * @return the array
+    */
+   public static Color[] fromHex ( final long[] cs ) {
+
+      final int len = cs.length;
+      final Color[] result = new Color[len];
+      for ( int i = 0; i < len; ++i ) {
+         result[i] = Color.fromHex(cs[i], new Color());
+      }
+      return result;
    }
 
    /**
@@ -1051,60 +1102,46 @@ public class Color implements Comparable < Color > {
     */
    public static Color fromHex ( final String c, final Color target ) {
 
-      final int len = c.length();
-
       try {
-         String longform = "";
-         int cint;
 
-         // This doesn't seem like it's worth optimizing...
-         // Pattern p = Pattern.compile("^(.)(.)(.)$");
-
+         final int len = c.length();
          switch ( len ) {
 
             case 3:
 
-               /* Example: "rgb" */
-
-               longform = c.replaceAll("^(.)(.)(.)$", "$1$1$2$2$3$3");
-               cint = Integer.parseInt(longform, 16);
-               return Color.fromHex(0xff000000 | cint, target);
+               /* Example: "abc" */
+               return Color.fromHex(0xff000000 | Integer.parseInt(Pattern
+                  .compile("^(.)(.)(.)$").matcher(c).replaceAll("$1$1$2$2$3$3"),
+                  16), target);
 
             case 4:
 
                /* Example: "#abc" */
-
-               longform = c.replaceAll("^#(.)(.)(.)$", "#$1$1$2$2$3$3");
-               cint = Integer.parseInt(longform.substring(1), 16);
-               return Color.fromHex(0xff000000 | cint, target);
+               return Color.fromHex(0xff000000 | Integer.parseInt(Pattern
+                  .compile("^#(.)(.)(.)$").matcher(c).replaceAll(
+                     "#$1$1$2$2$3$3").substring(1), 16), target);
 
             case 6:
 
                /* Example: "aabbcc" */
-
-               cint = Integer.parseInt(c, 16);
-               return Color.fromHex(0xff000000 | cint, target);
+               return Color.fromHex(0xff000000 | Integer.parseInt(c, 16),
+                  target);
 
             case 7:
 
                /* Example: "#aabbcc" */
-
-               cint = Integer.parseInt(c.substring(1), 16);
-               return Color.fromHex(0xff000000 | cint, target);
+               return Color.fromHex(0xff000000 | Integer.parseInt(c.substring(
+                  1), 16), target);
 
             case 8:
 
                /* Example: "aabbccdd" */
-
-               cint = ( int ) Long.parseLong(c, 16);
-               return Color.fromHex(cint, target);
+               return Color.fromHex(Long.parseLong(c, 16), target);
 
             case 10:
 
                /* Example: "0xaabbccdd" */
-
-               cint = ( int ) Long.parseLong(c.substring(2), 16);
-               return Color.fromHex(cint, target);
+               return Color.fromHex(Long.parseLong(c.substring(2), 16), target);
 
             default:
 
@@ -1112,10 +1149,28 @@ public class Color implements Comparable < Color > {
          }
 
       } catch ( final Exception e ) {
-         e.printStackTrace();
+         System.err.println("Could not parse input String correctly.");
       }
 
       return target.reset();
+   }
+
+   /**
+    * Converts an array of Strings that represent colors in hexadecimal into
+    * an array of colors
+    *
+    * @param cs the colors
+    *
+    * @return the array
+    */
+   public static Color[] fromHex ( final String[] cs ) {
+
+      final int len = cs.length;
+      final Color[] result = new Color[len];
+      for ( int i = 0; i < len; ++i ) {
+         result[i] = Color.fromHex(cs[i], new Color());
+      }
+      return result;
    }
 
    /**
@@ -1256,22 +1311,16 @@ public class Color implements Comparable < Color > {
       switch ( sector ) {
          case 0:
             return target.set(b, tint3, tint1, a);
-
          case 1:
             return target.set(tint2, b, tint1, a);
-
          case 2:
             return target.set(tint1, b, tint3, a);
-
          case 3:
             return target.set(tint1, tint2, b, a);
-
          case 4:
             return target.set(tint3, tint1, b, a);
-
          case 5:
             return target.set(b, tint1, tint2, a);
-
          default:
             return target.reset();
       }
@@ -1293,9 +1342,9 @@ public class Color implements Comparable < Color > {
 
    /**
     * Inverts a color by subtracting the red, green and blue channels from
-    * one. Similar to bitNot, except alpha is not affected. Also similar to
-    * adding 0.5 to the x component of a Vec4 storing hue, saturation and
-    * brightness.
+    * one. Similar to bitNot, except alpha is unaffected. Also similar to
+    * adding 0.5 to the x component of a {@link Vec4} storing hue, saturation
+    * and brightness.
     *
     * @param c      the color
     * @param target the output color
@@ -1368,44 +1417,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Sets the target color to the maximum components of the input colors. The
-    * maximums are then clamped to [0.0, 1.0]. Equivalent to a 'lightest'
-    * mixing function.
-    *
-    * @param a      the left operand
-    * @param b      the right operand
-    * @param target the output color
-    *
-    * @return the maximum
-    */
-   public static Color max ( final Color a, final Color b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(Utils.max(a.r, b.r)), Utils.clamp01(Utils
-         .max(a.g, b.g)), Utils.clamp01(Utils.max(a.b, b.b)), Utils.clamp01(
-            Utils.max(a.a, b.a)));
-   }
-
-   /**
-    * Sets the target color to the minimum components of the input colors. The
-    * minimums are then clamped to [0.0, 1.0]. Equivalent to a 'darkest'
-    * mixing function.
-    *
-    * @param a      the left operand
-    * @param b      the right operand
-    * @param target the output color
-    *
-    * @return the maximum
-    */
-   public static Color min ( final Color a, final Color b,
-      final Color target ) {
-
-      return target.set(Utils.clamp01(Utils.min(a.r, b.r)), Utils.clamp01(Utils
-         .min(a.g, b.g)), Utils.clamp01(Utils.min(a.b, b.b)), Utils.clamp01(
-            Utils.min(a.a, b.a)));
-   }
-
-   /**
     * Tests to see if the alpha channel of this color is less than or equal to
     * zero, i.e., if it is completely transparent.
     *
@@ -1440,7 +1451,9 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Raises a color to the power of a scalar.
+    * Raises a color's red, green and blue channels to the power of a scalar.
+    * The alpha channel is unaffected. Useful when adjusting the color's
+    * gamma.
     *
     * @param a      left operand
     * @param b      right operand
@@ -1452,9 +1465,8 @@ public class Color implements Comparable < Color > {
       final Color target ) {
 
       final double bd = b;
-      return target.set(Utils.clamp01(( float ) Math.pow(a.r, bd)), Utils
-         .clamp01(( float ) Math.pow(a.g, bd)), Utils.clamp01(( float ) Math
-            .pow(a.b, bd)), Utils.clamp01(a.a));
+      return target.set(( float ) Math.pow(a.r, bd), ( float ) Math.pow(a.g,
+         bd), ( float ) Math.pow(a.b, bd), a.a);
    }
 
    /**
@@ -2180,9 +2192,11 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Mixes two colors by a step in the range [0.0, 1.0] . Alpha is blended
-    * linearly; red, green and blue are squared, then the square-root of the
-    * interpolation is taken.
+    * Mixes two colors by a step in the range [0.0, 1.0] with linear
+    * interpolation, then returns an integer.<br>
+    * <br>
+    * Internal helper function for {@link Gradient} so that a new color does
+    * not need to be created as a target.
     *
     * @param origin the origin color
     * @param dest   the destination color
@@ -2204,9 +2218,8 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Mixes two colors by a step in the range [0.0, 1.0] . Alpha is blended
-    * linearly; red, green and blue are squared, then the square-root of the
-    * interpolation is taken.
+    * Mixes two colors by a step in the range [0.0, 1.0] with linear
+    * interpolation.
     *
     * @param origin the origin color
     * @param dest   the destination color

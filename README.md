@@ -83,7 +83,11 @@ void settings() {
 }
 
 void setup() {
+
+  // For OpenGL on Macs.
   frameRate(60.0);
+
+  // Cast from PGraphics to your renderer.
   graphics = (YupJ2)getGraphics();
 }
 ```

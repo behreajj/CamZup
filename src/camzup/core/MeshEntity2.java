@@ -155,6 +155,30 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
+    * Flips the mesh horizontally.
+    *
+    * @return this entity
+    */
+   @Override
+   public MeshEntity2 flipX ( ) {
+
+      this.transform.flipX();
+      return this;
+   }
+
+   /**
+    * Flips the mesh vertically.
+    *
+    * @return this entity
+    */
+   @Override
+   public MeshEntity2 flipY ( ) {
+
+      this.transform.flipY();
+      return this;
+   }
+
+   /**
     * Gets a mesh from this mesh entity.
     *
     * @param i the index
@@ -640,6 +664,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       final MaterialSolid[] materials ) {
 
       final StringBuilder svgp = new StringBuilder(1024);
+      if ( this.length() < 1 ) { return svgp.toString(); }
 
       /* Adjust stroke weight according to transform scale and camera zoom. */
       final float scale = zoom * Transform2.minDimension(this.transform);

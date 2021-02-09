@@ -1179,9 +1179,9 @@ public interface IYup2 extends IUp {
 
       /*
        * PShape's SVG parser converts tags like "rect" into a PShape family
-       * PRIMITIVE, which is difficult to convert to a Curve2. This is because
-       * the PShape's vertices cannot be accessed. For that reason, SVG
-       * primitives should be avoided when writing.
+       * PRIMITIVE, which is difficult to deal with, because a primitive depends
+       * on the PShape's parent renderer's rectMode. SVG primitives should be
+       * avoided when writing.
        */
       final int bgClr = renderer.getBackground();
       final float bgAlpha = ( bgClr >> 0x18 & 0xff ) * IUtils.ONE_255;

@@ -15,10 +15,7 @@ public class Entity2 extends Entity implements IOriented2, ISpatial2 {
    /**
     * The default constructor.
     */
-   public Entity2 ( ) {
-
-      this.transform = new Transform2();
-   }
+   public Entity2 ( ) { this.transform = new Transform2(); }
 
    /**
     * Constructs a named entity. A new transform is created by the

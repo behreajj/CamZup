@@ -1,5 +1,6 @@
 package camzup.pfriendly;
 
+import camzup.core.IUtils;
 import camzup.core.Utils;
 import camzup.core.Vec3;
 
@@ -124,7 +125,7 @@ public interface ITextDisplay3 extends ITextDisplay {
    default void text ( final float real, final float x, final float y,
       final float z ) {
 
-      this.text(Utils.toFixed(real, 4), x, y, z);
+      this.text(Utils.toFixed(real, IUtils.FIXED_PRINT), x, y, z);
    }
 
    /**
@@ -138,7 +139,7 @@ public interface ITextDisplay3 extends ITextDisplay {
     */
    default void text ( final float real, final Vec3 v ) {
 
-      this.text(Utils.toFixed(real, 4), v.x, v.y, v.z);
+      this.text(Utils.toFixed(real, IUtils.FIXED_PRINT), v.x, v.y, v.z);
    }
 
    /**

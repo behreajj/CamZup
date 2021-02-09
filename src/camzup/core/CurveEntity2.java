@@ -167,6 +167,30 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    }
 
    /**
+    * Flips the curve horizontally.
+    *
+    * @return this entity
+    */
+   @Override
+   public CurveEntity2 flipX ( ) {
+
+      this.transform.flipX();
+      return this;
+   }
+
+   /**
+    * Flips the curve vertically.
+    *
+    * @return this entity
+    */
+   @Override
+   public CurveEntity2 flipY ( ) {
+
+      this.transform.flipY();
+      return this;
+   }
+
+   /**
     * Gets a curve from this curve entity.
     *
     * @param i the index
@@ -659,7 +683,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       /* Adjust stroke weight according to transform scale and camera zoom. */
       final float scale = zoom * Transform2.minDimension(this.transform);
 
-      /* For determining colinearity. */
+      /* For determining if handles are parallel. */
       final Vec2 dir0 = new Vec2();
       final Vec2 dir1 = new Vec2();
 
