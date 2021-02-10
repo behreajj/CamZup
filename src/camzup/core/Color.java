@@ -1311,16 +1311,22 @@ public class Color implements Comparable < Color > {
       switch ( sector ) {
          case 0:
             return target.set(b, tint3, tint1, a);
+
          case 1:
             return target.set(tint2, b, tint1, a);
+
          case 2:
             return target.set(tint1, b, tint3, a);
+
          case 3:
             return target.set(tint1, tint2, b, a);
+
          case 4:
             return target.set(tint3, tint1, b, a);
+
          case 5:
             return target.set(b, tint1, tint2, a);
+
          default:
             return target.reset();
       }
@@ -2026,6 +2032,29 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Returns a String representing the color array in the JASC-PAL palette
+    * file format.
+    *
+    * @param arr  the array
+    *
+    * @return the string
+    */
+   public static String toPalString ( final Color[] arr ) {
+
+      final int len = arr.length;
+      final StringBuilder sb = new StringBuilder(32 + len * 12);
+      sb.append("JASC-PAL\n0100\n");
+      sb.append(len);
+      sb.append('\n');
+      for ( int i = 0; i < len; ++i ) {
+         arr[i].toGplString(sb);
+         sb.append('\n');
+      }
+
+      return sb.toString();
+   }
+
+   /**
     * Converts a color to an integer where hexadecimal represents the ARGB
     * color channels: 0xAARRGGB .
     *
@@ -2478,7 +2507,7 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Eases the hue in the counter-clockwise direction.
+    * Eases between hues in the clockwise direction.
     */
    public static class HueCCW extends HueEasing {
 
@@ -2498,20 +2527,17 @@ public class Color implements Comparable < Color > {
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
-         if ( this.oLtd ) {
-            ++this.o;
-            this.modResult = true;
+         if ( this.oGtd ) {
+            return Utils.mod1( ( 1.0f - step ) * this.o + step * ( this.d
+               + 1.0f ));
          }
-
-         final float fac = Utils.lerpUnclamped(this.o, this.d, step);
-         if ( this.modResult ) { return Utils.mod1(fac); }
-         return fac;
+         return ( 1.0f - step ) * this.o + step * this.d;
       }
 
    }
 
    /**
-    * Eases between hues in the clockwise direction.
+    * Eases the hue in the counter-clockwise direction.
     */
    public static class HueCW extends HueEasing {
 
@@ -2524,21 +2550,17 @@ public class Color implements Comparable < Color > {
        *
        * @return the eased hue
        *
-       * @see Utils#lerpUnclamped(float, float, float)
        * @see Utils#mod1(float)
        */
       @Override
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
-         if ( this.oGtd ) {
-            ++this.d;
-            this.modResult = true;
+         if ( this.oLtd ) {
+            return Utils.mod1( ( 1.0f - step ) * ( this.o + 1.0f ) + step
+               * this.d);
          }
-
-         final float fac = Utils.lerpUnclamped(this.o, this.d, step);
-         if ( this.modResult ) { return Utils.mod1(fac); }
-         return fac;
+         return ( 1.0f - step ) * this.o + step * this.d;
       }
 
    }
@@ -2558,12 +2580,6 @@ public class Color implements Comparable < Color > {
        * The difference between the stop and start hue.
        */
       protected float diff = 0.0f;
-
-      /**
-       * Whether or not the result of the easing function needs to be subjected
-       * to floor modulo.
-       */
-      protected boolean modResult = false;
 
       /**
        * The modulated origin hue.
@@ -2659,7 +2675,6 @@ public class Color implements Comparable < Color > {
        *
        * @return the eased hue
        *
-       * @see Utils#lerpUnclamped(float, float, float)
        * @see Utils#mod1(float)
        */
       @Override
@@ -2667,16 +2682,13 @@ public class Color implements Comparable < Color > {
          final float step ) {
 
          if ( this.oLtd && this.diff < 0.5f ) {
-            ++this.o;
-            this.modResult = true;
+            return Utils.mod1( ( 1.0f - step ) * ( this.o + 1.0f ) + step
+               * this.d);
          } else if ( this.oGtd && this.diff > -0.5f ) {
-            ++this.d;
-            this.modResult = true;
+            return Utils.mod1( ( 1.0f - step ) * this.o + step * ( this.d
+               + 1.0f ));
          }
-
-         final float fac = Utils.lerpUnclamped(this.o, this.d, step);
-         if ( this.modResult ) { return Utils.mod1(fac); }
-         return fac;
+         return ( 1.0f - step ) * this.o + step * this.d;
       }
 
    }
@@ -2695,7 +2707,6 @@ public class Color implements Comparable < Color > {
        *
        * @return the eased hue
        *
-       * @see Utils#lerpUnclamped(float, float, float)
        * @see Utils#mod1(float)
        */
       @Override
@@ -2703,16 +2714,13 @@ public class Color implements Comparable < Color > {
          final float step ) {
 
          if ( this.oLtd && this.diff > 0.5f ) {
-            ++this.o;
-            this.modResult = true;
+            return Utils.mod1( ( 1.0f - step ) * ( this.o + 1.0f ) + step
+               * this.d);
          } else if ( this.oGtd && this.diff < -0.5f ) {
-            ++this.d;
-            this.modResult = true;
+            return Utils.mod1( ( 1.0f - step ) * this.o + step * ( this.d
+               + 1.0f ));
          }
-
-         final float fac = Utils.lerpUnclamped(this.o, this.d, step);
-         if ( this.modResult ) { return Utils.mod1(fac); }
-         return fac;
+         return ( 1.0f - step ) * this.o + step * this.d;
       }
 
    }

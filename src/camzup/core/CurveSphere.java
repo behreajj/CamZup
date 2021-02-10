@@ -2,6 +2,7 @@ package camzup.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -11,6 +12,7 @@ import java.util.Random;
  * Provides a function to retrieve a quaternion on a curve from a step in
  * the range [0.0, 1.0] .
  */
+@Experimental
 public class CurveSphere extends Curve implements Iterable < KnotSphere > {
 
    /**
@@ -22,7 +24,17 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
    /**
     * The default constructor.
     */
-   public CurveSphere ( ) {}
+   public CurveSphere ( ) {
+
+      // TODO: Implement all curve features.
+   }
+
+   /**
+    * Creates a named curve with two default knots.
+    *
+    * @param name the name
+    */
+   public CurveSphere ( final String name ) { super(name); }
 
    /**
     * Creates a curve from a collection of knots
@@ -92,6 +104,18 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
       for ( int i = 0; i < len; ++i ) { this.append(kn[i]); }
 
       return this;
+   }
+
+   /**
+    * Evaluates whether a knot is contained by this curve.
+    *
+    * @param kn the knot
+    *
+    * @return the evaluation
+    */
+   public boolean contains ( final KnotSphere kn ) {
+
+      return this.knots.contains(kn);
    }
 
    /**
@@ -170,10 +194,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     * @see List#iterator()
     */
    @Override
-   public Iterator < KnotSphere > iterator ( ) {
-
-      return this.knots.iterator();
-   }
+   public Iterator < KnotSphere > iterator ( ) { return this.knots.iterator(); }
 
    /**
     * Gets the number of knots in the curve.
@@ -184,6 +205,55 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     */
    @Override
    public int length ( ) { return this.knots.size(); }
+
+   /**
+    * Prepend a knot to the curve's list of knots.
+    *
+    * @param knot the knot
+    *
+    * @return the curve
+    *
+    * @see List#add(int, Object)
+    */
+   public CurveSphere prepend ( final KnotSphere knot ) {
+
+      this.knots.add(0, knot);
+      return this;
+   }
+
+   /**
+    * Prepend a collection of knots to the curve's list of knots.
+    *
+    * @param kn the collection of knots
+    *
+    * @return this curve.
+    */
+   public CurveSphere prependAll ( final Collection < KnotSphere > kn ) {
+
+      this.knots.addAll(0, kn);
+      return this;
+   }
+
+   /**
+    * Prepend an array of knots to the curve's list of knots.
+    *
+    * @param kn the array of knots
+    *
+    * @return this curve.
+    *
+    * @see List#add(int, Object)
+    */
+   public CurveSphere prependAll ( final KnotSphere... kn ) {
+
+      int j = 0;
+      final int len = kn.length;
+      for ( int i = 0; i < len; ++i ) {
+         final KnotSphere knot = kn[i];
+         this.knots.add(j, knot);
+         ++j;
+      }
+      return this;
+   }
 
    /**
     * Returns a string representation of the curve.
@@ -219,6 +289,24 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
 
       sb.append(" ] }");
       return sb.toString();
+   }
+
+   /**
+    * Reverses the curve. This is done by reversing the list of knots and
+    * swapping the fore- and rear-handle of each knot.
+    *
+    * @return this curve
+    *
+    * @see Collections#reverse(List)
+    * @see KnotSphere#reverse()
+    */
+   public CurveSphere reverse ( ) {
+
+      Collections.reverse(this.knots);
+      final Iterator < KnotSphere > itr = this.knots.iterator();
+      while ( itr.hasNext() ) { itr.next().reverse(); }
+
+      return this;
    }
 
    /**

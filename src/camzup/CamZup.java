@@ -82,7 +82,7 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // System.out.println(Color.fromHex("0xfffff7d5", new Color()));
+
    }
 
    /**

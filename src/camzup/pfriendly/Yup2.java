@@ -572,6 +572,29 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    public void image ( final PImage img ) { this.image(img, 0.0f, 0.0f); }
 
    /**
+    * Displays a PImage. The meaning of the first four parameters depends on
+    * imageMode. The last four coordinates specify the image texture
+    * coordinates (or UVs).
+    *
+    * @param img the PImage
+    * @param x1  the first x coordinate
+    * @param y1  the first y coordinate
+    * @param x2  the second x coordinate
+    * @param y2  the second y coordinate
+    * @param u1  the image top-left corner u
+    * @param v1  the image top-left corner v
+    * @param u2  the image bottom-right corner u
+    * @param v2  the image bottom-right corner v
+    */
+   public void image ( final PImage img, final float x1, final float y1,
+      final float x2, final float y2, final float u1, final float v1,
+      final float u2, final float v2 ) {
+
+      /* This needs to imply the z coordinate then refer to the parent. */
+      this.image(img, x1, y1, x2, y2, 0.0f, u1, v1, u2, v2);
+   }
+
+   /**
     * Draws an image at a given coordinate.
     *
     * @param img   the image

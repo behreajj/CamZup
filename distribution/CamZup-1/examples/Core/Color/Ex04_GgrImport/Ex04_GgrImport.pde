@@ -26,8 +26,8 @@ void setup() {
 
 void draw() {
   background(#202020);
-  image(trg, 0, height / 4, width, height / 2);
-  image(orig, 0, -height / 4, width, height / 2);
+  image(trg, 0, height * 0.25, width, height * 0.5);
+  image(orig, 0, -height * 0.25, width, height * 0.5);
 }
 
 void mouseReleased() {

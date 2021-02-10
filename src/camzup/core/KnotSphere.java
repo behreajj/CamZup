@@ -125,6 +125,24 @@ public class KnotSphere implements Comparable < KnotSphere > {
    }
 
    /**
+    * Reverses the knot's direction by swapping the fore- and rear-handles.
+    *
+    * @return this knot
+    */
+   public KnotSphere reverse ( ) {
+
+      final Vec3 fi = this.foreHandle.imag;
+      final float tw = this.foreHandle.real;
+      final float tx = fi.x;
+      final float ty = fi.y;
+      final float tz = fi.z;
+      this.foreHandle.set(this.rearHandle);
+      this.rearHandle.set(tw, tx, ty, tz);
+
+      return this;
+   }
+
+   /**
     * Rotates a knot around the x axis.
     *
     * @param radians the angle

@@ -38,13 +38,23 @@ public abstract class ParserGpl {
             int i = 0;
             for ( String ln = in.readLine(); ln != null; ln = in.readLine() ) {
                final String lnlc = ln.trim().toLowerCase();
+
+               /* Implicitly support JASC-PAL, which is similar to GPL. */
                if ( lnlc.equals("gimp palette") || lnlc.indexOf("name:") > -1
-                  || lnlc.indexOf("columns:") > -1 || lnlc.indexOf('#') == 0 ) {
+                  || lnlc.indexOf("columns:") > -1 || lnlc.indexOf('#') == 0
+                  || lnlc.equals("jasc-pal") || lnlc.equals("0100") ) {
                   /* Skip. */
                } else {
                   final String[] tokens = ptrn.split(lnlc, 0);
                   final int len = tokens.length;
                   if ( len > 2 ) {
+
+                     /*
+                      * In a GPL, tokens 0, 1 and 2 are the RGB channels; token
+                      * 3 is the optional name; token 4 is the optional index.
+                      * We don't care whether the start index is 1 or 0, so long
+                      * as the palette colors are in order.
+                      */
                      final int idx = len > 4 ? Integer.parseInt(tokens[4], 10)
                         - 1 : i;
 

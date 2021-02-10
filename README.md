@@ -12,7 +12,6 @@ Table of Contents
         2. [Harmony](#harmony)
         3. [Complement Mix Test](#complement-mix-test)
         4. [Shading](#shading)
-        5. [Lighting in 3D](#lighting-in-3d)
   2. [Differences, Problems](#differences-problems)
      1. [2D & 3D](#2d--3d)
      2. [2D](#2d)
@@ -138,7 +137,7 @@ In OpenGL renderers, texture coordinates default to `NORMAL` [textureMode](https
 
 ### Color
 
-I am not a color scientist, nor do I pretend to be. Color is not the central focus of this library and I'm not interested in debating the "correct" way to mix color. Do not use this library for advanced or photo-realistic color work. However, vanilla Processing's approach to color can't not be addressed; I've tried to introduce enough features to allow users to get the job done while not doing too much harm.
+I am not a color scientist, nor do I pretend to be. Color is not the central focus of this library and I'm not interested in debating the "correct" way to mix it. Do not use this library for advanced or photorealistic color work. However, vanilla Processing's approach to color can't not be addressed, so I've tried to introduce enough to allow users to get the job done.
 
 #### Palettes
 
@@ -162,7 +161,7 @@ A quick heuristic to decide if you are blending colors as you prefer is to take 
 
 ![Mix Diagram](data/mixDiagram.png)
 
-If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
+A hue mix can be either counter-clockwise _or_ clockwise. An rgb mix can use linear or smooth step. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
 
 ```java
 class Foo extends Color.AbstrEasing {
@@ -180,7 +179,7 @@ You will need to override the method `applyUnclamped`.
 
 ### Shading
 
-When selecting shades of a hue, Be conscientious that perception and display of brightness are not linear.
+When selecting shades of a hue, be conscientious that perception and display of brightness are not linear.
 
 ![Tone](data/toneDiagram.png)
 

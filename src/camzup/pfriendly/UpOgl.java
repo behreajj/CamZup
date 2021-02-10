@@ -1079,7 +1079,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Displays a PImage. The meaning of the first four parameters depends on
+    * Displays a PImage. The meaning of the first four numbers depends on
     * imageMode.
     *
     * @param img the PImage
@@ -1098,9 +1098,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Displays a PImage. The meaning of the first four parameters depends on
-    * imageMode. The last four coordinates specify the image texture
-    * coordinates (or UVs).
+    * Displays a PImage. The meaning of the first four numbers depends on
+    * imageMode. The last four numbers specify the image texture coordinates
+    * (or UVs).
     *
     * @param img the PImage
     * @param x1  the first x coordinate
@@ -1177,9 +1177,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Displays a PImage. The meaning of the first four parameters depends on
-    * imageMode. The last four coordinates specify the image texture
-    * coordinates (or UVs).
+    * Displays a PImage. The meaning of the first four numbers depends on
+    * imageMode. The last four numbers specify the image sample <em>in
+    * pixels</em> regardless of image mode.
     *
     * @param img the PImage
     * @param x1  the first x coordinate
@@ -1196,7 +1196,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float x2, final float y2, final int u1, final int v1, final int u2,
       final int v2 ) {
 
-      this.image(img, x1, y1, x2, y2, 0.0f, u1, v1, u2, v2);
+      final float wInv = img.width > 0 ? 1.0f / img.width : 1.0f;
+      final float hInv = img.height > 0 ? 1.0f / img.height : 1.0f;
+      this.image(img, x1, y1, x2, y2, 0.0f, u1 * wInv, v1 * hInv, u2 * wInv, v2
+         * hInv);
    }
 
    /**

@@ -1952,12 +1952,14 @@ public abstract class Utils implements IUtils {
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
-         if ( this.aGtb ) {
-            this.b += this.range;
+         // TODO: Revise to match Color.Hue lerp?
+
+         if ( this.oGtd ) {
+            this.d += this.range;
             this.modResult = true;
          }
 
-         final float fac = ( 1.0f - step ) * this.a + step * this.b;
+         final float fac = ( 1.0f - step ) * this.o + step * this.d;
          if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
          return fac;
       }
@@ -1997,12 +1999,12 @@ public abstract class Utils implements IUtils {
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
-         if ( this.aLtb ) {
-            this.a += this.range;
+         if ( this.oLtd ) {
+            this.o += this.range;
             this.modResult = true;
          }
 
-         final float fac = ( 1.0f - step ) * this.a + step * this.b;
+         final float fac = ( 1.0f - step ) * this.o + step * this.d;
          if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
          return fac;
       }
@@ -2042,15 +2044,15 @@ public abstract class Utils implements IUtils {
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
-         if ( this.aLtb && this.diff < this.halfRange ) {
-            this.a += this.range;
+         if ( this.oLtd && this.diff < this.halfRange ) {
+            this.o += this.range;
             this.modResult = true;
-         } else if ( this.aGtb && this.diff > -this.halfRange ) {
-            this.b += this.range;
+         } else if ( this.oGtd && this.diff > -this.halfRange ) {
+            this.d += this.range;
             this.modResult = true;
          }
 
-         final float fac = ( 1.0f - step ) * this.a + step * this.b;
+         final float fac = ( 1.0f - step ) * this.o + step * this.d;
          if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
          return fac;
       }
@@ -2090,15 +2092,15 @@ public abstract class Utils implements IUtils {
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
-         if ( this.aLtb && this.diff > this.halfRange ) {
-            this.a += this.range;
+         if ( this.oLtd && this.diff > this.halfRange ) {
+            this.o += this.range;
             this.modResult = true;
-         } else if ( this.aGtb && this.diff < -this.halfRange ) {
-            this.b += this.range;
+         } else if ( this.oGtd && this.diff < -this.halfRange ) {
+            this.d += this.range;
             this.modResult = true;
          }
 
-         final float fac = ( 1.0f - step ) * this.a + step * this.b;
+         final float fac = ( 1.0f - step ) * this.o + step * this.d;
          if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
          return fac;
       }
@@ -2147,22 +2149,22 @@ public abstract class Utils implements IUtils {
       /**
        * The start angle, modulated by the range.
        */
-      protected float a = 0.0f;
+      protected float o = 0.0f;
 
       /**
        * Whether or not the start angle is greater than the stop angle.
        */
-      protected boolean aGtb = false;
+      protected boolean oGtd = false;
 
       /**
        * Whether or not the start angle is less than the stop angle.
        */
-      protected boolean aLtb = false;
+      protected boolean oLtd = false;
 
       /**
        * The stop angle, modulated by the range.
        */
-      protected float b = 0.0f;
+      protected float d = 0.0f;
 
       /**
        * The difference between the stop and start angle.
@@ -2218,8 +2220,8 @@ public abstract class Utils implements IUtils {
          this.eval(origin, dest);
 
          final float tf = step;
-         if ( tf <= 0.0f || this.diff == 0.0f ) { return this.a; }
-         if ( tf >= 1.0f ) { return this.b; }
+         if ( tf <= 0.0f || this.diff == 0.0f ) { return this.o; }
+         if ( tf >= 1.0f ) { return this.d; }
          return this.applyPartial(origin, dest, tf);
       }
 
@@ -2279,11 +2281,11 @@ public abstract class Utils implements IUtils {
        */
       protected void eval ( final float origin, final float dest ) {
 
-         this.a = Utils.modUnchecked(origin, this.range);
-         this.b = Utils.modUnchecked(dest, this.range);
-         this.diff = this.b - this.a;
-         this.aLtb = this.a < this.b;
-         this.aGtb = this.a > this.b;
+         this.o = Utils.modUnchecked(origin, this.range);
+         this.d = Utils.modUnchecked(dest, this.range);
+         this.diff = this.d - this.o;
+         this.oLtd = this.o < this.d;
+         this.oGtd = this.o > this.d;
       }
 
       /**
