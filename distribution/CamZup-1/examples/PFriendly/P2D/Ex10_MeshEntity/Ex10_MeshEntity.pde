@@ -4,7 +4,7 @@ import camzup.pfriendly.*;
 Yup2 graphics;
 
 MaterialSolid material = new MaterialSolid()
-  .setStroke(true)
+  .setStroke(false)
   .setStroke(#007fff)
   .setStrokeWeight(2.5)
   .setFill(true)

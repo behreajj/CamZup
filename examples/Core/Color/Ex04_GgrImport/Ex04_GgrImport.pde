@@ -4,6 +4,7 @@ import camzup.pfriendly.*;
 Gradient grd;
 PImage orig;
 PImage trg;
+Vec4 shifter = new Vec4(-1.0 / 24.0, 0.1, -0.15, 1.0);
 
 void settings() {
   size(720, 405, Yup2.PATH_STR);
@@ -18,7 +19,7 @@ void setup() {
   orig = createImage(width, height, ARGB);
   ZImage.fill(grd, orig);
 
-  Gradient.inverse(grd, grd);
+  Gradient.shiftHsb(grd, shifter, grd, new Color(), new Vec4());
   trg = createImage(width, height, ARGB);
   ZImage.fill(grd, trg);
 }
@@ -30,7 +31,7 @@ void draw() {
 }
 
 void mouseReleased() {
-  String ggr = grd.toGgrString("Sunrise Inverse");
-  saveStrings("data/sunriseInverted.ggr", new String[] { ggr });
+  String ggr = grd.toGgrString("Sunrise Shifted");
+  saveStrings("data/sunriseShifted.ggr", new String[] { ggr });
   System.out.println("Saved to GGR.");
 }

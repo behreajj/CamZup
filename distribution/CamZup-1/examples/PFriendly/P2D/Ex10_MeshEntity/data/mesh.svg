@@ -1,10 +1,9 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="720" height="405" viewBox="0 0 720 405">
 <path id="background" d="M 0.0 0.0 L 720.0 0.0 L 720.0 405.0 L 0.0 405.0 Z" stroke="none" fill-opacity="1.000000" fill="#fff7d5"></path>
 <g transform="translate(360.000000, 202.500000) scale(1.000000, -1.000000) rotate(0.0) translate(0.0, 0.0)">
-<g id="example" class="meshentity2" transform="translate(-126.873657, -6.167904) rotate(61.0) scale(150.000000, 150.000000)">
-<g id="2353b3e6" class="materialsolid" stroke-width="0.016666" stroke-opacity="1.000000" stroke="#007fff" stroke-linejoin="round" stroke-linecap="round" fill-opacity="1.000000" fill="#303030">
-<g id="hexagon" class="mesh2"><path id="face.000" fill-rule="evenodd" d="M 0.500000 0.0 L 0.250000 0.433012 L -0.250000 0.433012 L -0.500000 0.000000 L -0.250000 -0.433012 L 0.250000 -0.433012 Z"></path>
-</g>
+<g id="2353b3e6" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#303030">
+<g id="example" class="meshentity2" transform="translate(-114.805473, -14.981739) rotate(44.0) scale(150.000000, 150.000000)">
+<path id="hexagon" class="mesh2" fill-rule="evenodd" d="M 0.0 0.0 L 0.500000 0.0 L 0.250000 0.433012 Z M 0.0 0.0 L 0.250000 0.433012 L -0.250000 0.433012 Z M 0.0 0.0 L -0.250000 0.433012 L -0.500000 0.000000 Z M 0.0 0.0 L -0.500000 0.000000 L -0.250000 -0.433012 Z M 0.0 0.0 L -0.250000 -0.433012 L 0.250000 -0.433012 Z M 0.0 0.0 L 0.250000 -0.433012 L 0.500000 0.0 Z "></path>
 </g>
 </g>
 

@@ -6,12 +6,18 @@ Table of Contents
      1. [Installation](#installation)
      2. [Structure](#structure)
      3. [Usage](#usage)
-     4. [Coordinate Systems](#coordinate-systems)
+     4. [Chirality](#chirality)
+     5. [Color](#color)
+        1. [Palettes](#palettes)
+        2. [Harmony](#harmony)
+        3. [Complement Mix Test](#complement-mix-test)
+        4. [Shading](#shading)
+        5. [Lighting in 3D](#lighting-in-3d)
   2. [Differences, Problems](#differences-problems)
      1. [2D & 3D](#2d--3d)
      2. [2D](#2d)
      3. [3D](#3d)
-  3. [Math & Geometry Conventions](#math--geometry-conventions)
+  3. [Math Conventions](#programming-math-conventions)
   4. [Kotlin Interoperability](#kotlin-interoperability)
 
 Cam Z-Up is a Java-based library for the creative coding environment [Processing](https://processing.org/). Cam Z-Up flips Processing's default projection so that the positive z axis, (0.0, 0.0, 1.0), is the world up axis; the positive y axis, (0.0, 1.0, 0.0), is forward. This library supports two- and three-dimensional graphics.
@@ -104,7 +110,7 @@ graphics.endDraw();
 
 `background` and `stroke` use default colors, while `ellipse` and `image` support `Vec2` arguments.
 
-### Coordinate Systems
+### Chirality
 
 Flipping the y axis changes the default rotational direction of a positive angle from clockwise to counter-clockwise.
 
@@ -130,6 +136,56 @@ Negative inclinations, in the range [`-PI / 2.0`, `0.0`] will fall beneath the e
 
 In OpenGL renderers, texture coordinates default to `NORMAL` [textureMode](https://processing.org/reference/textureMode_.html). `IMAGE` is not supported. This is for three reasons: (1.) the belief that `IMAGE` is _harder_, not easier, to understand; (2.) recognition that `NORMAL` is standard; (3.) methods in `PGraphicsOpenGL` interfere with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT` and cannot be overidden by this library. That aside, as per usual, texture coordinates begin at (0.0, 0.0) in the top-left corner and end at (1.0, 1.0) in the bottom-right corner of the image.
 
+### Color
+
+I am not a color scientist, nor do I pretend to be. Color is not the central focus of this library and I'm not interested in debating the "correct" way to mix color. Do not use this library for advanced or photo-realistic color work. However, vanilla Processing's approach to color can't not be addressed; I've tried to introduce enough features to allow users to get the job done while not doing too much harm.
+
+#### Palettes
+
+A `Gradient` class allows you to create color ramps. This includes the following:
+
+![Palette Diagram](data/paletteDiagram.png)
+
+Viridis and Magma are perceptually uniform color palettes used in data visualizations; Viridis in particular is sensitive to color blindnesses. [Sepia](https://www.wikiwand.com/en/Sepia_(color)) and [cyanotype](https://en.wikipedia.org/wiki/Cyanotype) replicate older photographic printing processes. The Temperature palette is intended for use with lights; it is an inaccurate representation of [blackbody radiation temperature](https://www.wikiwand.com/en/Color_temperature).  
+
+### Harmony
+
+The RYB color wheel is included above because popular tutorials on "Color Harmony" (or "Color Theory") often assume a subtractive red-yellow-blue color model, even in the context of digital media. [This](https://youtu.be/YeI6Wqn4I78) tutorial on the subject is one of the better that I've found. Furthermore, [Adobe Color](https://color.adobe.com/create/color-wheel) can assist you in picking harmonies.
+
+![Triadic](data/triadicDiagram.png)
+
+Processing defaults to additive RGB, where cyan (`#00ffff`) is the opposite of red (`#ff0000`), not green. This holds regardless of whether you use the `HSB` or the `RGB` color mode. The RYB wheel's limitations should be apparent from the above images. Oranges are dilated while blues are compressed. Brighter greens, cyans and magentas are not achievable. Blues and greens are desaturated. The hue represented by the RGB and RYB ramps above is _periodic_, not _linear_; input values to these ramps should be brought into range with `mod`, not `clamp`. For example, a hue of `-0.125` is the same as `0.875` except that it is a clockwise shift, not a counter-clockwise one.
+
+### Complement Mix Test
+
+A quick heuristic to decide if you are blending colors as you prefer is to take two complementary colors - typically red and green - which you predict will yield an ugly blend and sample them.
+
+![Mix Diagram](data/mixDiagram.png)
+
+If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
+
+```java
+class Foo extends Color.AbstrEasing {
+  Color applyUnclamped(Color a, Color b, float t, Color target) {
+    float u = 1.0 - t;
+    return target.set(
+      Utils.sqrt(u * a.r * a.r + t * b.r * b.r),
+      Utils.sqrt(u * a.g * a.g + t * b.g * b.g),
+      Utils.sqrt(u * a.b * a.b + t * b.b * b.b),
+      Utils.sqrt(u * a.a * a.a + t * b.a * b.a));
+  }
+}
+```
+You will need to override the method `applyUnclamped`.
+
+### Shading
+
+When selecting shades of a hue, Be conscientious that perception and display of brightness are not linear.
+
+![Tone](data/toneDiagram.png)
+
+Raising a color's red, green and blue channels - or a gradient's evaluation factor - to the power of `2.2`, will compress bright desaurated colors and expand darker shades. Raising to a power of `1.0 / 2.2` will compress darker shades and expand brighter whites. The `Gradient` class attempts to simplify this task by letting you construct a gradient from a single color. The color will be placed between a black key and white key based on its perceived luminance.
+
 ## Differences, Problems
 
 Here is a brief list of issues with this library and differences which may be unexpected. Some are unresolved bugs, some arise from the design philosophy of the library.
@@ -154,15 +210,14 @@ Here is a brief list of issues with this library and differences which may be un
 
 Many core Processing functions are marked `final`, meaning they cannot be extended and modified by classes in this library; many fields are marked `private` meaning they cannot be accessed and/or mutated. This is the one of the reasons for the differences noted above.
 
-## Programming, Mathematical Conventions
+## Programming, Math Conventions
 
-With the exception of `null`-checking, the goal of this library not to throw exceptions, but to create. For that reason some liberties have been taken with mathematics.
+`null`-checking excepted, the goal of this library is not to throw exceptions, but to create. For that reason some liberties have been taken with mathematics.
 
 - Component-wise multiplication between two vectors -- mathematically incorrect -- is assumed to be a shorthand for the multiplication of a vector or point with a non-uniform scalar, which would more appropriately be stored in a matrix.
 - `Utils.acos` and `Utils.asin` clamp the input value to the range `-1.0` to `1.0` so as to avoid exceptions.
 - As with Python, JavaScript and OSL, `x != 0` is `true`; `true` is `1` and `false` is `0`.
 - Where possible, `Vec2`, `Vec3` and `Vec4` parallel GLSL's `bvec`. Examples include: `Vec2 c = Vec2.lt(new Vec2(false, true), new Vec2(true, true));` and `boolean d = Vec2.any(c);`.
-
 - As with shader languages, I try to protect against divide-by-zero errors whenever possible. Though mathematically incorrect, `div(x, 0.0) = 0.0` ; in consequence `fmod(x, 0.0)` and `mod(x, 0.0)` return `x`.
 - The [linear interpolation](https://en.wikipedia.org/wiki/Linear_interpolation) (`lerp`) method in this library uses the formula `(1.0 - t) * a + t * b`, not `a + t * (b - a)`. Processing uses the latter. Furthermore, Processing's `lerp` is unclamped by default. This library Includes a clamped and unclamped version of `lerp`; clamped is assumed to be the default.
 - I break with GLSL convention when it comes to easing functions. The step provided to easing functions is always a scalar (a `float`). There are no `step`, `smoothstep` and `linearstep` functions which generate the step to be supplied to `mix`. `mix` is, however, is defined in relevant classes.

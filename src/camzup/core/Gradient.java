@@ -53,17 +53,18 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Creates a gradient from a color; an additional color key, white at 0.0,
-    * is created.
+    * Creates a gradient from a color. The color is placed in the according to
+    * its perceived luminance, with opaque black at key 0.0 and opaque white
+    * at key 1.0.
     *
     * @param color the color
-    *
-    * @see Color#white(Color)
     */
    public Gradient ( final Color color ) {
 
-      this.keys.add(new ColorKey(0.0f, 1.0f, 1.0f, 1.0f, 1.0f));
-      this.keys.add(new ColorKey(1.0f, color));
+      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, 1.0f));
+      this.keys.add(new ColorKey(Utils.lerp(IUtils.ONE_THIRD, IUtils.TWO_THIRDS,
+         Color.luminance(color)), color));
+      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, 1.0f));
    }
 
    /**
@@ -97,8 +98,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    public Gradient ( final Gradient source ) { this.set(source); }
 
    /**
-    * Creates a gradient from a color integer; an additional color key, white
-    * at 0.0, is created.
+    * Creates a gradient from a color. The color is placed in the according to
+    * its perceived luminance, with opaque black at key 0.0 and opaque white
+    * at key 1.0.
     *
     * @param color the color
     *
@@ -106,8 +108,10 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public Gradient ( final int color ) {
 
-      this.keys.add(new ColorKey(0.0f, 1.0f, 1.0f, 1.0f, 1.0f));
-      this.keys.add(new ColorKey(1.0f, color));
+      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, 1.0f));
+      this.keys.add(new ColorKey(Utils.lerp(IUtils.ONE_THIRD, IUtils.TWO_THIRDS,
+         Color.luminance(color)), color));
+      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, 1.0f));
    }
 
    /**
@@ -1209,33 +1213,60 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public static Color[] evalRange ( final Gradient grd, final int count ) {
 
+      return evalRange(grd, count, 0.0f, 1.0f);
+   }
+
+   /**
+    * Evaluates an array of colors given a supplied count. The origin and
+    * destination specify the step at the beginning and end of the sample.
+    *
+    * @param grd    the gradient
+    * @param count  the count
+    * @param origin the origin
+    * @param dest   the destination
+    *
+    * @return the array
+    */
+   public static Color[] evalRange ( final Gradient grd, final int count,
+      float origin, float dest ) {
+
       final int vCount = count < 2 ? 2 : count;
+      final float vOrigin = Utils.clamp01(origin);
+      final float vDest = Utils.clamp01(dest);
       final Color[] result = new Color[vCount];
       final float toPercent = 1.0f / ( vCount - 1.0f );
       for ( int i = 0; i < vCount; ++i ) {
-         result[i] = Gradient.eval(grd, i * toPercent, new Color());
+         final float prc = i * toPercent;
+         result[i] = Gradient.eval(grd, ( 1.0f - prc ) * vOrigin + prc
+            * vDest, new Color());
       }
       return result;
    }
 
    /**
-    * Evaluates an array of colors given a supplied count. The minimum count
-    * is three.
+    * Evaluates an array of colors given a supplied count. The origin and
+    * destination specify the step at the beginning and end of the sample.
     *
     * @param grd    the gradient
     * @param count  the count
+    * @param origin the origin
+    * @param dest   the destination
     * @param easing the easing function
     *
     * @return the array
     */
    public static Color[] evalRange ( final Gradient grd, final int count,
-      final Color.AbstrEasing easing ) {
+      final float origin, final float dest, final Color.AbstrEasing easing ) {
 
       final int vCount = count < 2 ? 2 : count;
+      final float vOrigin = Utils.clamp01(origin);
+      final float vDest = Utils.clamp01(dest);
       final Color[] result = new Color[vCount];
       final float toPercent = 1.0f / ( vCount - 1.0f );
       for ( int i = 0; i < vCount; ++i ) {
-         result[i] = Gradient.eval(grd, i * toPercent, easing, new Color());
+         final float prc = i * toPercent;
+         result[i] = Gradient.eval(grd, ( 1.0f - prc ) * vOrigin + prc
+            * vDest, easing, new Color());
       }
       return result;
    }
@@ -1649,23 +1680,26 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    /**
     * Shifts the brightness of all colors in a gradient. The brightness is
     * clamped to the range [0.0, 1.0] . The source gradient may either be the
-    * same as or different from the target.
+    * same as or different from the target. Uses two temporary variables to
+    * store colors in their respective color spaces.
     *
     * @param source the source gradient
     * @param shift  the brightness shift
     * @param target the output gradient
+    * @param rgba   the color in RGB
     * @param hsba   the color in HSB
     *
     * @return the shifted ramp
     */
    public static Gradient shiftBri ( final Gradient source, final float shift,
-      final Gradient target, final Vec4 hsba ) {
+      final Gradient target, final Color rgba, final Vec4 hsba ) {
 
       if ( source == target ) {
          final Iterator < ColorKey > kyItr = source.keys.iterator();
          while ( kyItr.hasNext() ) {
             final Color clr = kyItr.next().clr;
-            Color.shiftBri(clr, shift, clr, hsba);
+            rgba.set(clr);
+            Color.shiftBri(rgba, shift, clr, hsba);
          }
       } else {
          final TreeSet < ColorKey > trgKeys = target.keys;
@@ -1674,7 +1708,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          while ( srcItr.hasNext() ) {
             final ColorKey trgKey = new ColorKey(srcItr.next());
             final Color clr = trgKey.clr;
-            Color.shiftBri(clr, shift, clr, hsba);
+            rgba.set(clr);
+            Color.shiftBri(rgba, shift, clr, hsba);
             trgKeys.add(trgKey);
          }
       }
@@ -1684,23 +1719,26 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
    /**
     * Shifts the hue, saturation and brightness in a gradient. The alpha
-    * remains unaffected.
+    * remains unaffected. Uses two temporary variables to store colors in
+    * their respective color spaces.
     *
     * @param source the input gradient
     * @param shift  the shift
     * @param target the output gradient
+    * @param rgba   the color in RGB
     * @param hsba   the color in HSB
     *
     * @return the shifted ramp
     */
    public static Gradient shiftHsb ( final Gradient source, final Vec4 shift,
-      final Gradient target, final Vec4 hsba ) {
+      final Gradient target, final Color rgba, final Vec4 hsba ) {
 
       if ( source == target ) {
          final Iterator < ColorKey > kyItr = source.keys.iterator();
          while ( kyItr.hasNext() ) {
             final Color clr = kyItr.next().clr;
-            Color.shiftHsb(clr, shift, clr, hsba);
+            rgba.set(clr);
+            Color.shiftHsb(rgba, shift, clr, hsba);
          }
       } else {
          final TreeSet < ColorKey > trgKeys = target.keys;
@@ -1709,7 +1747,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          while ( srcItr.hasNext() ) {
             final ColorKey trgKey = new ColorKey(srcItr.next());
             final Color clr = trgKey.clr;
-            Color.shiftHsb(clr, shift, clr, hsba);
+            rgba.set(clr);
+            Color.shiftHsb(rgba, shift, clr, hsba);
             trgKeys.add(trgKey);
          }
       }
@@ -1718,23 +1757,26 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Shifts the hue, saturation and brightness in a gradient.
+    * Shifts the hue, saturation and brightness in a gradient. Uses two
+    * temporary variables to store colors in their respective color spaces.
     *
     * @param source the input gradient
     * @param shift  the shift
     * @param target the output gradient
+    * @param rgba   the color in RGB
     * @param hsba   the color in HSB
     *
     * @return the shifted ramp
     */
    public static Gradient shiftHsba ( final Gradient source, final Vec4 shift,
-      final Gradient target, final Vec4 hsba ) {
+      final Gradient target, final Color rgba, final Vec4 hsba ) {
 
       if ( source == target ) {
          final Iterator < ColorKey > kyItr = source.keys.iterator();
          while ( kyItr.hasNext() ) {
             final Color clr = kyItr.next().clr;
-            Color.shiftHsba(clr, shift, clr, hsba);
+            rgba.set(clr);
+            Color.shiftHsba(rgba, shift, clr, hsba);
          }
       } else {
          final TreeSet < ColorKey > trgKeys = target.keys;
@@ -1743,7 +1785,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          while ( srcItr.hasNext() ) {
             final ColorKey trgKey = new ColorKey(srcItr.next());
             final Color clr = trgKey.clr;
-            Color.shiftHsba(clr, shift, clr, hsba);
+            rgba.set(clr);
+            Color.shiftHsba(rgba, shift, clr, hsba);
             trgKeys.add(trgKey);
          }
       }
@@ -1754,23 +1797,26 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    /**
     * Shifts the hue of all colors in a gradient. The hue wraps around the
     * range [0.0, 1.0] . The source gradient may either be the same as or
-    * different from the target.
+    * different from the target. Uses two temporary variables to store colors
+    * in their respective color spaces.
     *
     * @param source the source gradient
     * @param shift  the hue shift
     * @param target the output gradient
+    * @param rgba   the color in RGB
     * @param hsba   the color in HSB
     *
     * @return the shifted ramp
     */
    public static Gradient shiftHue ( final Gradient source, final float shift,
-      final Gradient target, final Vec4 hsba ) {
+      final Gradient target, final Color rgba, final Vec4 hsba ) {
 
       if ( source == target ) {
          final Iterator < ColorKey > kyItr = source.keys.iterator();
          while ( kyItr.hasNext() ) {
             final Color clr = kyItr.next().clr;
-            Color.shiftHue(clr, shift, clr, hsba);
+            rgba.set(clr);
+            Color.shiftHue(rgba, shift, clr, hsba);
          }
       } else {
          final TreeSet < ColorKey > trgKeys = target.keys;
@@ -1779,7 +1825,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          while ( srcItr.hasNext() ) {
             final ColorKey trgKey = new ColorKey(srcItr.next());
             final Color clr = trgKey.clr;
-            Color.shiftHue(clr, shift, clr, hsba);
+            rgba.set(clr);
+            Color.shiftHue(rgba, shift, clr, hsba);
             trgKeys.add(trgKey);
          }
       }
@@ -1790,23 +1837,26 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    /**
     * Shifts the saturation of all colors in a gradient. The saturation is
     * clamped to the range [0.0, 1.0] . The source gradient may either be the
-    * same as or different from the target.
+    * same as or different from the target. Uses two temporary variables to
+    * store colors in their respective color spaces.
     *
     * @param source the source gradient
     * @param shift  the saturation shift
     * @param target the output gradient
+    * @param rgba   the color in RGB
     * @param hsba   the color in HSB
     *
     * @return the shifted ramp
     */
    public static Gradient shiftSat ( final Gradient source, final float shift,
-      final Gradient target, final Vec4 hsba ) {
+      final Gradient target, final Color rgba, final Vec4 hsba ) {
 
       if ( source == target ) {
          final Iterator < ColorKey > kyItr = source.keys.iterator();
          while ( kyItr.hasNext() ) {
             final Color clr = kyItr.next().clr;
-            Color.shiftSat(clr, shift, clr, hsba);
+            rgba.set(clr);
+            Color.shiftSat(rgba, shift, clr, hsba);
          }
       } else {
          final TreeSet < ColorKey > trgKeys = target.keys;
@@ -1815,7 +1865,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          while ( srcItr.hasNext() ) {
             final ColorKey trgKey = new ColorKey(srcItr.next());
             final Color clr = trgKey.clr;
-            Color.shiftSat(clr, shift, clr, hsba);
+            rgba.set(clr);
+            Color.shiftSat(rgba, shift, clr, hsba);
             trgKeys.add(trgKey);
          }
       }
