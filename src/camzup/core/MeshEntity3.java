@@ -473,7 +473,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       pyCd.append("    mesh_obj = d_objs.new(mesh_data.name, mesh_data)\n");
       pyCd.append("    mesh_obj.rotation_mode = \"QUATERNION\"\n");
       pyCd.append("    mesh_obj.parent = parent_obj\n");
-      pyCd.append("    scene_objs.link(mesh_obj)\n\n");
+      pyCd.append("    scene_objs.link(mesh_obj)");
 
       return pyCd.toString();
    }

@@ -1633,6 +1633,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Vec2[] points, final Curve2 target ) {
 
       target.closedLoop = closedLoop;
+      target.name = "Constellation";
       target.resize(points.length);
       int incr = 0;
       final Iterator < Knot2 > itr = target.knots.iterator();

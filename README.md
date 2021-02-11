@@ -280,7 +280,7 @@ Limit export to `Selection Only`. Depending on whether the export contains multi
 
 ### SVG
 
-This library's scalable vector graphics (SVG) import method is adapted from Processing's. As such, it's quite limited. All material attributes (stroke weight, stroke, fill) are ignored. For best results, remove any XML tags from the top of the SVG file; refrain from any suffixes that specify units of measure (cm, px, %, etc.); and do not use `def`s tags. `ParserSvg.load` returns a `CurveEntity2`. To save a `String` as an SVG, supply entities and materials to the `toSVgString` method of `Yup2` or `YupJ2`. Whether a `Curve2` is rendered as a path or sub-path depends on whether there is one or many materials per curve. A `Mesh2` face is treated as a sub-path. Because import does not interpret `def`s, an exported SVG will not be as efficient as it could otherwise be.
+This library's scalable vector graphics (SVG) import method is adapted from Processing's. As such, it's quite limited. All material attributes (stroke weight, stroke, fill) are ignored. For best results, remove any XML tags from the top of the SVG file; refrain from any suffixes that specify units of measure (cm, px, %, etc.); and do not use `def`s tags. `ParserSvg.load` returns a `CurveEntity2`. To save a `String` as an SVG, supply entities and materials to the `toSVgString` method of `Yup2` or `YupJ2`. Whether a `Curve2` is rendered as a path or sub-path depends on the number of materials per curve. A `Mesh2` face is treated as a sub-path. Because import does not interpret `def`s, an exported SVG will not be as efficient as it could otherwise be.
 
 ## Differences, Problems
 

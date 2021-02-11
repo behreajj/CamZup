@@ -500,7 +500,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
          pyCd.append("    solidify.offset = ");
          Utils.toFixed(pyCd, offset, 6);
          pyCd.append("\n");
-         pyCd.append("    solidify.show_in_editmode = False\n");
+         pyCd.append("    solidify.show_in_editmode = False");
       }
 
       return pyCd.toString();
@@ -517,7 +517,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    @Experimental
    public String toBlenderCode ( final MaterialSolid[] ms ) {
 
-      return this.toBlenderCode(0.5f, 1.0f, true, 0.523599f, ms, 1.0f, 0.0f,
+      return this.toBlenderCode(0.25f, 1.0f, true, 0.523599f, ms, 1.0f, 0.0f,
          1.0f, 0.0f, 0.0f, 0.0001f);
    }
 

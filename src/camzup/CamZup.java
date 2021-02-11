@@ -82,6 +82,14 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
+      // TODO: SANKEY / ALLUVIAL DIAGRAM
+
+      // https://observablehq.com/@d3/sankey-diagram
+      // https://www.wikiwand.com/en/Alluvial_diagram
+      // https://digitalsplashmedia.com/2014/06/
+      // visualizing-categorical-data-as-flows-with-alluvial-diagrams/
+
+
    }
 
    /**

@@ -1497,6 +1497,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Vec3[] points, final Curve3 target ) {
 
       target.closedLoop = closedLoop;
+      target.name = "Constellation";
       target.resize(points.length);
       int incr = 0;
       final Iterator < Knot3 > itr = target.knots.iterator();

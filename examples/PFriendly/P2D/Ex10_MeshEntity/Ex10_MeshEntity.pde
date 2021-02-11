@@ -6,7 +6,7 @@ Yup2 graphics;
 MaterialSolid material = new MaterialSolid()
   .setStroke(false)
   .setStroke(#007fff)
-  .setStrokeWeight(2.5)
+  .setStrokeWeight(1.25)
   .setFill(true)
   .setFill(#303030);
 
