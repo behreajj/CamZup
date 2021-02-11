@@ -39,7 +39,7 @@ void draw() {
 
   Vec2.fromPolar(nearAngle, 110.0, followNear);
   Vec2.fromPolar(cwAngle, 130.0, followCW);
-  Vec2.fromPolar(ccwAngle, 150.0, followCCW);
+  Vec2.fromPolar(ccwAngle, 140.0, followCCW);
 
   graphics.background(#fff7d5);
   graphics.stroke(#202020);

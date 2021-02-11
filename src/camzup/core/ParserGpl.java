@@ -56,8 +56,10 @@ public abstract class ParserGpl {
                       * as the palette colors are in order.
                       */
                      final int idx = len > 4 ? Integer.parseInt(tokens[4], 10)
-                        - 1 : i;
+                        : i;
 
+                     // TODO: Provision for when clrs.contains index, yet two
+                     // colors are unequal?
                      clrs.put(idx, new Color(Float.parseFloat(tokens[0])
                         * IUtils.ONE_255, Float.parseFloat(tokens[1])
                            * IUtils.ONE_255, Float.parseFloat(tokens[2])

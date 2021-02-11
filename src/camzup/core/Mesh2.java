@@ -1951,8 +1951,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       /* Append a single normal. */
       objs.append("\nvn 0.0 0.0 1.0\n\n");
+      objs.append("s off\n\n");
 
       /* Write face indices. */
+      final int facesLast = facesLen - 1;
       for ( int i = 0; i < facesLen; ++i ) {
 
          final int[][] face = this.faces[i];
@@ -1970,7 +1972,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             objs.append(' ');
          }
 
-         objs.append('\n');
+         if ( i < facesLast ) { objs.append('\n'); }
       }
 
       return objs;

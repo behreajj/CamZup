@@ -1970,7 +1970,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the string
     */
-   public String toObjString ( ) { return this.toObjString(1, 1, 1); }
+   public String toObjString ( ) { return this.toObjString(1, 1, 1, 0); }
 
    /**
     * Renders the mesh as a string following the Wavefront OBJ file format.
@@ -1978,17 +1978,18 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * begin at 1, not 0. The mesh is considered a group, 'g', not an object,
     * 'o'.
     *
-    * @param vIdx  coordinate index offset
-    * @param vtIdx texture coordinate index offset
-    * @param vnIdx normal index offset
+    * @param vIdx          coordinate index offset
+    * @param vtIdx         texture coordinate index offset
+    * @param vnIdx         normal index offset
+    * @param smoothShading smooth shading flag
     *
     * @return the string
     */
-   public String toObjString ( final int vIdx, final int vtIdx,
-      final int vnIdx ) {
+   public String toObjString ( final int vIdx, final int vtIdx, final int vnIdx,
+      final int smoothShading ) {
 
-      return this.toObjString(new StringBuilder(2048), vIdx, vtIdx, vnIdx)
-         .toString();
+      return this.toObjString(new StringBuilder(2048), vIdx, vtIdx, vnIdx,
+         smoothShading).toString();
    }
 
    /**
@@ -2266,15 +2267,16 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * Internal helper method that appends a representation of this mesh in the
     * Wavefront OBJ file format to a {@link StringBuilder}.
     *
-    * @param objs  the string builder
-    * @param vIdx  coordinate index offset
-    * @param vtIdx texture coordinate index offset
-    * @param vnIdx normal index offset
+    * @param objs          the string builder
+    * @param vIdx          coordinate index offset
+    * @param vtIdx         texture coordinate index offset
+    * @param vnIdx         normal index offset
+    * @param smoothShading smooth shading flag
     *
     * @return the string builder
     */
    StringBuilder toObjString ( final StringBuilder objs, final int vIdx,
-      final int vtIdx, final int vnIdx ) {
+      final int vtIdx, final int vnIdx, final int smoothShading ) {
 
       final int coordsLen = this.coords.length;
       final int texCoordsLen = this.texCoords.length;
@@ -2327,7 +2329,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
       objs.append('\n');
 
+      /* Write smooth/flat normals. */
+      objs.append("s ");
+      objs.append(smoothShading > 0 ? smoothShading : "off");
+      objs.append("\n\n");
+
       /* Write face indices. */
+      final int facesLast = facesLen - 1;
       for ( int i = 0; i < facesLen; ++i ) {
 
          final int[][] face = this.faces[i];
@@ -2345,7 +2353,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             objs.append(' ');
          }
 
-         objs.append('\n');
+         if ( i < facesLast ) { objs.append('\n'); }
       }
 
       return objs;

@@ -30,13 +30,6 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
    }
 
    /**
-    * Creates a named curve with two default knots.
-    *
-    * @param name the name
-    */
-   public CurveSphere ( final String name ) { super(name); }
-
-   /**
     * Creates a curve from a collection of knots
     *
     * @param cl    whether or not the curve is closed
@@ -60,6 +53,13 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
       super(cl);
       this.appendAll(knots);
    }
+
+   /**
+    * Creates a named curve with two default knots.
+    *
+    * @param name the name
+    */
+   public CurveSphere ( final String name ) { super(name); }
 
    /**
     * Append a knot to the curve's list of knots.
@@ -256,6 +256,24 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
    }
 
    /**
+    * Reverses the curve. This is done by reversing the list of knots and
+    * swapping the fore- and rear-handle of each knot.
+    *
+    * @return this curve
+    *
+    * @see Collections#reverse(List)
+    * @see KnotSphere#reverse()
+    */
+   public CurveSphere reverse ( ) {
+
+      Collections.reverse(this.knots);
+      final Iterator < KnotSphere > itr = this.knots.iterator();
+      while ( itr.hasNext() ) { itr.next().reverse(); }
+
+      return this;
+   }
+
+   /**
     * Returns a string representation of the curve.
     *
     * @return the string
@@ -289,24 +307,6 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
 
       sb.append(" ] }");
       return sb.toString();
-   }
-
-   /**
-    * Reverses the curve. This is done by reversing the list of knots and
-    * swapping the fore- and rear-handle of each knot.
-    *
-    * @return this curve
-    *
-    * @see Collections#reverse(List)
-    * @see KnotSphere#reverse()
-    */
-   public CurveSphere reverse ( ) {
-
-      Collections.reverse(this.knots);
-      final Iterator < KnotSphere > itr = this.knots.iterator();
-      while ( itr.hasNext() ) { itr.next().reverse(); }
-
-      return this;
    }
 
    /**

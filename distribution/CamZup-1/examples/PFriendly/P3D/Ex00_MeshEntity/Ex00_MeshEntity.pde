@@ -67,3 +67,9 @@ void draw() {
     graphics3.shape(me3, materials);
   }
 }
+
+void mouseReleased() {
+  String objs = entities[1].toObjString();
+  saveStrings("data/entity.obj", new String[] { objs });
+  println("OBJ file saved.");
+}

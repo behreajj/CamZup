@@ -12,6 +12,11 @@ Table of Contents
         2. [Harmony](#harmony)
         3. [Complement Mix Test](#complement-mix-test)
         4. [Shading](#shading)
+     6. [File Import & Export](#file-import--export)
+        1. [GPL](#gpl)
+        2. [GGR](#ggr)
+        3. [OBJ](#obj)
+        4. [SVG](#svg)
   2. [Differences, Problems](#differences-problems)
      1. [2D & 3D](#2d--3d)
      2. [2D](#2d)
@@ -133,7 +138,7 @@ In 3D, the orientation of a spherical coordinate system depends on the up axis. 
 
 Negative inclinations, in the range [`-PI / 2.0`, `0.0`] will fall beneath the equator; positive inclinations, in the range [`0.0`, `PI / 2.0`], will fall above the equator. An inclination of `-PI / 2.0` will return the South pole; an inclination of `PI / 2.0` will return the North pole. A positive azimuth will head East from the prime meridian; a negative azimuth will head West.
 
-In OpenGL renderers, texture coordinates default to `NORMAL` [textureMode](https://processing.org/reference/textureMode_.html). `IMAGE` is not supported. This is for three reasons: (1.) the belief that `IMAGE` is _harder_, not easier, to understand; (2.) recognition that `NORMAL` is standard; (3.) methods in `PGraphicsOpenGL` interfere with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT` and cannot be overidden by this library. That aside, as per usual, texture coordinates begin at (0.0, 0.0) in the top-left corner and end at (1.0, 1.0) in the bottom-right corner of the image.
+In OpenGL renderers, texture coordinates default to `NORMAL` [textureMode](https://processing.org/reference/textureMode_.html). `IMAGE` is not supported. This is for three reasons: (1.) the belief that `IMAGE` is harder, not easier, to understand; (2.) recognition that `NORMAL` is standard; (3.) methods in `PGraphicsOpenGL` interfere with [textureWrap](https://processing.org/reference/textureWrap_.html) `REPEAT` and cannot be overidden by this library. That aside, as per usual, texture coordinates begin at (0.0, 0.0) in the top-left corner and end at (1.0, 1.0) in the bottom-right corner of the image.
 
 ### Color
 
@@ -153,7 +158,7 @@ The RYB color wheel is included above because popular tutorials on "Color Harmon
 
 ![Triadic](data/triadicDiagram.png)
 
-Processing defaults to additive RGB, where cyan (`#00ffff`) is the opposite of red (`#ff0000`), not green. This holds regardless of whether you use the `HSB` or the `RGB` color mode. The RYB wheel's limitations should be apparent from the above images. Oranges are dilated while blues are compressed. Brighter greens, cyans and magentas are not achievable. Blues and greens are desaturated. The hue represented by the RGB and RYB ramps above is _periodic_, not _linear_; input values to these ramps should be brought into range with `mod`, not `clamp`. For example, a hue of `-0.125` is the same as `0.875` except that it is a clockwise shift, not a counter-clockwise one.
+Processing defaults to additive RGB, where cyan (`#00ffff`) is the opposite of red (`#ff0000`), not green. This holds regardless of whether you use the `HSB` or the `RGB` color mode. The RYB wheel's limitations should be apparent from the above images. Oranges are dilated while blues are compressed. Brighter greens, cyans and magentas are not achievable. Blues and greens are desaturated. The hue represented by the RGB and RYB ramps above is periodic, not linear; input values to these ramps should be brought into range with `mod`, not `clamp`. For example, a hue of `-0.125` is the same as `0.875` except that it is a clockwise shift, not a counter-clockwise one.
 
 ### Complement Mix Test
 
@@ -161,7 +166,7 @@ A quick heuristic to decide if you are blending colors as you prefer is to take 
 
 ![Mix Diagram](data/mixDiagram.png)
 
-A hue mix can be either counter-clockwise _or_ clockwise. An rgb mix can use linear or smooth step. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
+A hue mix can be either counter-clockwise or clockwise. An rgb mix can use linear or smooth step. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
 
 ```java
 class Foo extends Color.AbstrEasing {
@@ -184,6 +189,98 @@ When selecting shades of a hue, be conscientious that perception and display of 
 ![Tone](data/toneDiagram.png)
 
 Raising a color's red, green and blue channels - or a gradient's evaluation factor - to the power of `2.2`, will compress bright desaurated colors and expand darker shades. Raising to a power of `1.0 / 2.2` will compress darker shades and expand brighter whites. The `Gradient` class attempts to simplify this task by letting you construct a gradient from a single color. The color will be placed between a black key and white key based on its perceived luminance.
+
+## File Import & Export
+
+For file I/O, some general comments: (1.) writing a file is easier than reading files written by others; (2.) to support a file format, a data structure in the library must more or less replicate it in working memory; (3.) the stricter a file format specification is, the better; (4.) almost all file format support is partial; (5.) from 3 and 4, the more kinds of information a file format claims to store, the harder it is to import and replicate it; (6.) commercial interests dictate what formats can and cannot be supported.
+
+Specific to Processing import: methods like `loadImage` and `loadShape` have access to the sketch's path; this library doesn't. Either prepend the `String` returned by `sketchPath` to file names or create a [BufferedReader](https://processing.org/reference/BufferedReader.html).
+
+### GPL
+
+This library supports the GIMP palette format (`.gpl`) because it is human readable, human writable and is also supported by [Aseprite](https://www.aseprite.org) and [Lospec](https://lospec.com/). To export a palette, provide an array of `Color`s to `Color.toGplString`.
+
+```java
+import camzup.core.*;
+
+void setup() {
+  Gradient rgb = Gradient.paletteRgb(new Gradient());
+  Color[] palette = rgb.toArray();
+  String gplstr = Color.toGplString(palette, "My RGB");
+  saveStrings("rgb.gpl", new String[] { gplstr });
+}
+```
+
+This generates the file below. A header is followed by a name, the number of columns to use when displaying the palette, a comment indicated by a `#`. The color is broken into red, green and blue color channels; each channel is formatted as an unsigned byte in [0, 255] separated by a space. This is followed by a name, for which this library writes the color's hexadecimal representation. Last is an index for the color; this library begins the index at 1, not 0. The name and index of a palette entry may be optional for some importers, mandatory for others. Aseprite seems to require at least a name.
+ 
+```
+GIMP Palette
+Name: My RGB
+Columns: 1
+# https://github.com/behreajj/CamZup
+255 0 0 FF0000 1
+255 255 0 FFFF00 2
+0 255 0 00FF00 3
+0 255 255 00FFFF 4
+0 0 255 0000FF 5
+255 0 255 FF00FF 6
+255 0 0 FF0000 7
+```
+To import a GPL file, use `ParserGpl.load` to return an array of `Color`s. Names for colors are not preserved. Due to the simillarity between `.gpl` and the JASC-PAL (`.pal`) format, the parser should also be able to handle those files as well.
+
+### GGR
+
+Support for the GIMP gradient format (`.ggr`) is partial. GIMP gradient color keys store a color at the left edge, right edge and median. This allows for both sharp edges and smooth transitions between color keys. Furthermore, it allows a GIMP gradient to meaningfully contain only one key, such as a HSB ramp that goes from red to red clockwise. CamZup gradients store only one color per key, and require a minimum of two keys. For this reason, upon import a GIMP gradient's keys are not transferred one-to-one; rather, the gradient is sampled at a resolution: `Gradient grd = ParserGgr.load(sketchPath() + "\\data\\filename.ggr", 16);`.
+
+To export, use code like this
+
+```java
+import camzup.core.*;
+
+void setup() {
+  Gradient ryb = Gradient.paletteRyb(new Gradient());
+  String ggrstr = ryb.toGgrString("My Ryb", 0, 1);
+  saveStrings("ryb.ggr", new String[] { ggrstr });
+}
+```
+
+to generate a file like this
+
+```
+GIMP Gradient
+Name: My Ryb
+12
+0.0 0.041666 0.083333 1.000000 0.0 0.0 1.000000 1.000000 0.250000 0.0 1.000000 0 1
+0.083333 0.125000 0.166666 1.000000 0.250000 0.0 1.000000 1.000000 0.500000 0.0 1.000000 0 1
+0.166666 0.208333 0.250000 1.000000 0.500000 0.0 1.000000 1.000000 0.750000 0.0 1.000000 0 1
+0.250000 0.291666 0.333333 1.000000 0.750000 0.0 1.000000 1.000000 1.000000 0.0 1.000000 0 1
+0.333333 0.375000 0.416666 1.000000 1.000000 0.0 1.000000 0.505882 0.831372 0.101960 1.000000 0 1
+0.416666 0.458333 0.500000 0.505882 0.831372 0.101960 1.000000 0.0 0.662745 0.200000 1.000000 0 1
+0.500000 0.541666 0.583333 0.0 0.662745 0.200000 1.000000 0.082352 0.517647 0.400000 1.000000 0 1
+0.583333 0.625000 0.666666 0.082352 0.517647 0.400000 1.000000 0.164705 0.376471 0.600000 1.000000 0 1
+0.666666 0.708333 0.750000 0.164705 0.376471 0.600000 1.000000 0.333333 0.188235 0.552941 1.000000 0 1
+0.750000 0.791666 0.833333 0.333333 0.188235 0.552941 1.000000 0.500000 0.0 0.500000 1.000000 0 1
+0.833333 0.875000 0.916666 0.500000 0.0 0.500000 1.000000 0.750000 0.0 0.250000 1.000000 0 1
+0.916666 0.958333 1.000000 0.750000 0.0 0.250000 1.000000 1.000000 0.0 0.0 1.000000 0 1
+```
+
+Unlike a `.gpl`, a `.ggr`'s color channels are in [0.0, 1.0]. A GIMP gradient requires its key(s) to fill the expanse from `0.0` to `1.0`, the gradient's extrema; a CamZup gradient does not. GIMP gradients use integer constants to indicate color mode and easing function so those can be supplied; they default to `0` and `0` for RGB linear. `.ggr` files can be imported by [Inkscape](https://inkscape.org/).
+
+### OBJ
+
+The Wavefront `.obj` file format is human readable; an overview of the particulars can be found at [Wikipedia](https://www.wikiwand.com/en/Wavefront_.obj_file). It can support a broad array of data, including poly-lines and Bezier surfaces. This library recognizes only meshes. The material library files associated with `.obj`s are not supported for three reasons: (1.) different renderers have different capacities to display materials, so this library separates these concerns; (2.) the information stored by `.mtl` files is outdated relative to modern materials; (3.) Processing's lighting and materials pipeline is limited.
+
+Import functionality is tested against [Blender](https://www.blender.org/) exports. For best results, use the following:
+
+![Blender Export](/data/blenderExport.png)
+
+Limit export to `Selection Only`. Depending on whether the export contains multiple objects, or one object with multiple material groups, separate the relevant category by `g` group headers. The `Transform` should match the axes of the `Zup3` or `Yup3` renderer. `Write Materials` should be unchecked; `Write Normals` and `Include UVs` should be checked.
+
+`.obj`s can be exported via `MeshEntity2` and `MeshEntity3`'s `toObjString` methods. They are imported to `MeshEntity3`s via `ParserObj.load`. Because `Mesh3`s store data by reference, not by copy, the `load` method includes a flag to indicate whether each created `Mesh3` should have its own copy of the `v`, `vt` and `vn` data. For export, an entity is treated as an `o` object, while a mesh is a `g` group; an entity's transform is not applied to the mesh's it holds.
+
+### SVG
+
+This library's scalable vector graphics (SVG) import method is adapted from Processing's. As such, it's quite limited. All material attributes (stroke weight, stroke, fill) are ignored. For best results, remove any XML tags from the top of the SVG file; refrain from any suffixes that specify units of measure (cm, px, %, etc.); and do not use `def`s tags. `ParserSvg.load` returns a `CurveEntity2`. To save a `String` as an SVG, supply entities and materials to the `toSVgString` method of `Yup2` or `YupJ2`. Whether a `Curve2` is rendered as a path or sub-path depends on whether there is one or many materials per curve. A `Mesh2` face is treated as a sub-path. Because import does not interpret `def`s, an exported SVG will not be as efficient as it could otherwise be.
 
 ## Differences, Problems
 

@@ -1001,7 +1001,12 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          sb.append(blendType);
          sb.append(' ');
          sb.append(colorType);
-         sb.append('\n');
+
+         /*
+          * Inkscape GGR import is sensitive to trailing empty spaces, so this
+          * if-check must be retained.
+          */
+         if ( itr.hasNext() ) { sb.append('\n'); }
 
          prevStep = currStep;
          prevClrStr = currClrStr;
@@ -1213,7 +1218,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public static Color[] evalRange ( final Gradient grd, final int count ) {
 
-      return evalRange(grd, count, 0.0f, 1.0f);
+      return Gradient.evalRange(grd, count, 0.0f, 1.0f);
    }
 
    /**
@@ -1228,7 +1233,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @return the array
     */
    public static Color[] evalRange ( final Gradient grd, final int count,
-      float origin, float dest ) {
+      final float origin, final float dest ) {
 
       final int vCount = count < 2 ? 2 : count;
       final float vOrigin = Utils.clamp01(origin);
@@ -1237,8 +1242,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final float toPercent = 1.0f / ( vCount - 1.0f );
       for ( int i = 0; i < vCount; ++i ) {
          final float prc = i * toPercent;
-         result[i] = Gradient.eval(grd, ( 1.0f - prc ) * vOrigin + prc
-            * vDest, new Color());
+         result[i] = Gradient.eval(grd, ( 1.0f - prc ) * vOrigin + prc * vDest,
+            new Color());
       }
       return result;
    }
@@ -1265,8 +1270,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final float toPercent = 1.0f / ( vCount - 1.0f );
       for ( int i = 0; i < vCount; ++i ) {
          final float prc = i * toPercent;
-         result[i] = Gradient.eval(grd, ( 1.0f - prc ) * vOrigin + prc
-            * vDest, easing, new Color());
+         result[i] = Gradient.eval(grd, ( 1.0f - prc ) * vOrigin + prc * vDest,
+            easing, new Color());
       }
       return result;
    }

@@ -2032,29 +2032,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Returns a String representing the color array in the JASC-PAL palette
-    * file format.
-    *
-    * @param arr  the array
-    *
-    * @return the string
-    */
-   public static String toPalString ( final Color[] arr ) {
-
-      final int len = arr.length;
-      final StringBuilder sb = new StringBuilder(32 + len * 12);
-      sb.append("JASC-PAL\n0100\n");
-      sb.append(len);
-      sb.append('\n');
-      for ( int i = 0; i < len; ++i ) {
-         arr[i].toGplString(sb);
-         sb.append('\n');
-      }
-
-      return sb.toString();
-   }
-
-   /**
     * Converts a color to an integer where hexadecimal represents the ARGB
     * color channels: 0xAARRGGB .
     *
@@ -2157,6 +2134,29 @@ public class Color implements Comparable < Color > {
       Color.toHexString(( byte ) ( c >> 0x10 & 0xff ), sb);
       Color.toHexString(( byte ) ( c >> 0x8 & 0xff ), sb);
       Color.toHexString(( byte ) ( c & 0xff ), sb);
+      return sb.toString();
+   }
+
+   /**
+    * Returns a String representing the color array in the JASC-PAL palette
+    * file format.
+    *
+    * @param arr the array
+    *
+    * @return the string
+    */
+   public static String toPalString ( final Color[] arr ) {
+
+      final int len = arr.length;
+      final StringBuilder sb = new StringBuilder(32 + len * 12);
+      sb.append("JASC-PAL\n0100\n");
+      sb.append(len);
+      sb.append('\n');
+      for ( int i = 0; i < len; ++i ) {
+         arr[i].toGplString(sb);
+         sb.append('\n');
+      }
+
       return sb.toString();
    }
 
@@ -2520,17 +2520,19 @@ public class Color implements Comparable < Color > {
        *
        * @return the eased hue
        *
-       * @see Utils#lerpUnclamped(float, float, float)
        * @see Utils#mod1(float)
        */
       @Override
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
+         if ( this.diff == 0.0f ) { return this.o; }
+
          if ( this.oGtd ) {
             return Utils.mod1( ( 1.0f - step ) * this.o + step * ( this.d
                + 1.0f ));
          }
+
          return ( 1.0f - step ) * this.o + step * this.d;
       }
 
@@ -2556,10 +2558,13 @@ public class Color implements Comparable < Color > {
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
+         if ( this.diff == 0.0f ) { return this.d; }
+
          if ( this.oLtd ) {
             return Utils.mod1( ( 1.0f - step ) * ( this.o + 1.0f ) + step
                * this.d);
          }
+
          return ( 1.0f - step ) * this.o + step * this.d;
       }
 
@@ -2615,10 +2620,10 @@ public class Color implements Comparable < Color > {
          final Float step ) {
 
          this.eval(origin, dest);
-
-         if ( step <= 0.0f || this.diff == 0.0f ) { return this.o; }
-         if ( step >= 1.0f ) { return this.d; }
-         return this.applyPartial(origin, dest, step);
+         final float tf = step;
+         if ( tf <= 0.0f ) { return this.o; }
+         if ( tf >= 1.0f ) { return this.d; }
+         return this.applyPartial(origin, dest, tf);
       }
 
       /**
@@ -2662,7 +2667,7 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Eases between hues by the farthest clockwise direction.
+    * Eases between hues by the farthest rotational direction.
     */
    public static class HueFar extends HueEasing {
 
@@ -2681,20 +2686,23 @@ public class Color implements Comparable < Color > {
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
-         if ( this.oLtd && this.diff < 0.5f ) {
+         if ( this.diff == 0.0f || this.oLtd && this.diff < 0.5f ) {
             return Utils.mod1( ( 1.0f - step ) * ( this.o + 1.0f ) + step
                * this.d);
-         } else if ( this.oGtd && this.diff > -0.5f ) {
+         }
+
+         if ( this.oGtd && this.diff > -0.5f ) {
             return Utils.mod1( ( 1.0f - step ) * this.o + step * ( this.d
                + 1.0f ));
          }
+
          return ( 1.0f - step ) * this.o + step * this.d;
       }
 
    }
 
    /**
-    * Eases between hues by the nearest clockwise direction.
+    * Eases between hues by the nearest rotational direction.
     */
    public static class HueNear extends HueEasing {
 
@@ -2713,13 +2721,18 @@ public class Color implements Comparable < Color > {
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
+         if ( this.diff == 0.0f ) { return this.o; }
+
          if ( this.oLtd && this.diff > 0.5f ) {
             return Utils.mod1( ( 1.0f - step ) * ( this.o + 1.0f ) + step
                * this.d);
-         } else if ( this.oGtd && this.diff < -0.5f ) {
+         }
+
+         if ( this.oGtd && this.diff < -0.5f ) {
             return Utils.mod1( ( 1.0f - step ) * this.o + step * ( this.d
                + 1.0f ));
          }
+
          return ( 1.0f - step ) * this.o + step * this.d;
       }
 

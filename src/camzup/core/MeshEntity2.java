@@ -545,6 +545,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       while ( itr.hasNext() ) {
          final Mesh2 mesh = itr.next();
          mesh.toObjString(objs, vIdx, vtIdx, vnIdx);
+         if ( itr.hasNext() ) { objs.append('\n'); }
 
          vIdx += mesh.coords.length;
          vtIdx += mesh.texCoords.length;

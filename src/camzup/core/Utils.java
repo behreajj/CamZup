@@ -745,8 +745,6 @@ public abstract class Utils implements IUtils {
     * @param step   the step
     *
     * @return the interpolated value
-    *
-    * @see Utils#lerpUnclamped(float, float, float)
     */
    public static float lerp ( final float origin, final float dest,
       final float step ) {
@@ -1903,9 +1901,10 @@ public abstract class Utils implements IUtils {
       public Float apply ( final Float origin, final Float dest,
          final Float step ) {
 
-         if ( step <= 0.0f ) { return origin; }
-         if ( step >= 1.0f ) { return dest; }
-         return super.apply(origin, dest, step);
+         final float tf = step;
+         if ( tf <= 0.0f ) { return origin; }
+         if ( tf >= 1.0f ) { return dest; }
+         return super.apply(origin, dest, tf);
       }
 
       /**
@@ -1945,23 +1944,20 @@ public abstract class Utils implements IUtils {
        *
        * @return the eased value
        *
-       * @see Utils#lerpUnclamped(float, float, float)
        * @see Utils#modUnchecked(float, float)
        */
       @Override
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
-         // TODO: Revise to match Color.Hue lerp?
+         if ( this.diff == 0.0f ) { return this.o; }
 
          if ( this.oGtd ) {
-            this.d += this.range;
-            this.modResult = true;
+            return Utils.modUnchecked( ( 1.0f - step ) * this.o + step
+               * ( this.d + this.range ), this.range);
          }
 
-         final float fac = ( 1.0f - step ) * this.o + step * this.d;
-         if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
-         return fac;
+         return ( 1.0f - step ) * this.o + step * this.d;
       }
 
    }
@@ -1992,69 +1988,20 @@ public abstract class Utils implements IUtils {
        *
        * @return the eased value
        *
-       * @see Utils#lerpUnclamped(float, float, float)
        * @see Utils#modUnchecked(float, float)
        */
       @Override
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
+
+         if ( this.diff == 0.0f ) { return this.d; }
 
          if ( this.oLtd ) {
-            this.o += this.range;
-            this.modResult = true;
+            return Utils.modUnchecked( ( 1.0f - step ) * ( this.o + this.range )
+               + step * this.d, this.range);
          }
 
-         final float fac = ( 1.0f - step ) * this.o + step * this.d;
-         if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
-         return fac;
-      }
-
-   }
-
-   /**
-    * Linear interpolation for a periodic value in the farthest direction.
-    */
-   public static class LerpFar extends PeriodicEasing {
-
-      /**
-       * Constructs the lerp far functional object with a default range, TAU.
-       */
-      public LerpFar ( ) {}
-
-      /**
-       * Constructs the lerp far functional object with a specified range.
-       *
-       * @param range the range of the period
-       */
-      public LerpFar ( final float range ) { super(range); }
-
-      /**
-       * Applies the lerp far function.
-       *
-       * @param origin the origin
-       * @param dest   the destination
-       * @param step   the step
-       *
-       * @return the eased value
-       *
-       * @see Utils#lerpUnclamped(float, float, float)
-       * @see Utils#modUnchecked(float, float)
-       */
-      @Override
-      protected float applyPartial ( final float origin, final float dest,
-         final float step ) {
-
-         if ( this.oLtd && this.diff < this.halfRange ) {
-            this.o += this.range;
-            this.modResult = true;
-         } else if ( this.oGtd && this.diff > -this.halfRange ) {
-            this.d += this.range;
-            this.modResult = true;
-         }
-
-         final float fac = ( 1.0f - step ) * this.o + step * this.d;
-         if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
-         return fac;
+         return ( 1.0f - step ) * this.o + step * this.d;
       }
 
    }
@@ -2085,24 +2032,25 @@ public abstract class Utils implements IUtils {
        *
        * @return the eased value
        *
-       * @see Utils#lerpUnclamped(float, float, float)
        * @see Utils#modUnchecked(float, float)
        */
       @Override
       protected float applyPartial ( final float origin, final float dest,
          final float step ) {
 
+         if ( this.diff == 0.0f ) { return this.o; }
+
          if ( this.oLtd && this.diff > this.halfRange ) {
-            this.o += this.range;
-            this.modResult = true;
-         } else if ( this.oGtd && this.diff < -this.halfRange ) {
-            this.d += this.range;
-            this.modResult = true;
+            return Utils.modUnchecked( ( 1.0f - step ) * ( this.o + this.range )
+               + step * this.d, this.range);
          }
 
-         final float fac = ( 1.0f - step ) * this.o + step * this.d;
-         if ( this.modResult ) { return Utils.modUnchecked(fac, this.range); }
-         return fac;
+         if ( this.oGtd && this.diff < -this.halfRange ) {
+            return Utils.modUnchecked( ( 1.0f - step ) * this.o + step
+               * ( this.d + this.range ), this.range);
+         }
+
+         return ( 1.0f - step ) * this.o + step * this.d;
       }
 
    }
@@ -2147,21 +2095,6 @@ public abstract class Utils implements IUtils {
       Float > {
 
       /**
-       * The start angle, modulated by the range.
-       */
-      protected float o = 0.0f;
-
-      /**
-       * Whether or not the start angle is greater than the stop angle.
-       */
-      protected boolean oGtd = false;
-
-      /**
-       * Whether or not the start angle is less than the stop angle.
-       */
-      protected boolean oLtd = false;
-
-      /**
        * The stop angle, modulated by the range.
        */
       protected float d = 0.0f;
@@ -2177,9 +2110,19 @@ public abstract class Utils implements IUtils {
       protected float halfRange = 0.5f;
 
       /**
-       * Whether or not to floor wrap the result of the easing function.
+       * The start angle, modulated by the range.
        */
-      protected boolean modResult = false;
+      protected float o = 0.0f;
+
+      /**
+       * Whether or not the start angle is greater than the stop angle.
+       */
+      protected boolean oGtd = false;
+
+      /**
+       * Whether or not the start angle is less than the stop angle.
+       */
+      protected boolean oLtd = false;
 
       /**
        * The range of the period.
@@ -2218,9 +2161,8 @@ public abstract class Utils implements IUtils {
          final Float step ) {
 
          this.eval(origin, dest);
-
          final float tf = step;
-         if ( tf <= 0.0f || this.diff == 0.0f ) { return this.o; }
+         if ( tf <= 0.0f ) { return this.o; }
          if ( tf >= 1.0f ) { return this.d; }
          return this.applyPartial(origin, dest, tf);
       }

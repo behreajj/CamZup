@@ -31,7 +31,6 @@ public class MaterialPImage extends MaterialUv {
     */
    public MaterialPImage ( final PImage texture ) {
 
-      super();
       this.setTexture(texture);
    }
 

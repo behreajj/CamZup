@@ -964,20 +964,29 @@ public abstract class Simplex extends Generative {
 
       float freq = 1.0f;
       float amp = 0.5f;
+      float vinx = 0.0f;
+      float viny = 0.0f;
+      float sum = 0.0f;
 
-      final Vec2 vin = new Vec2();
+      final boolean calcDeriv = deriv != null;
       final Vec2 nxy = new Vec2();
 
-      float sum = 0.0f;
-      final boolean calcDeriv = deriv != null;
-      if ( calcDeriv ) { deriv.reset(); }
+      if ( calcDeriv ) { deriv.set(0.0f, 0.0f); }
 
       for ( int i = 0; i < octaves; ++i ) {
-         Vec2.mul(v, freq, vin);
-         sum += Simplex.eval(vin, seed, nxy) * amp;
-         Vec2.mul(nxy, amp, nxy);
+         vinx = v.x * freq;
+         viny = v.y * freq;
 
-         if ( calcDeriv ) { Vec2.add(deriv, nxy, deriv); }
+         sum += Simplex.eval(vinx, viny, seed, nxy) * amp;
+
+         nxy.x *= amp;
+         nxy.y *= amp;
+
+         if ( calcDeriv ) {
+            deriv.x += nxy.x;
+            deriv.y += nxy.y;
+         }
+
          freq *= lacunarity;
          amp *= gain;
       }
@@ -1025,20 +1034,33 @@ public abstract class Simplex extends Generative {
 
       float freq = 1.0f;
       float amp = 0.5f;
-
-      final Vec3 vin = new Vec3();
-      final Vec3 nxyz = new Vec3();
-
+      float vinx = 0.0f;
+      float viny = 0.0f;
+      float vinz = 0.0f;
       float sum = 0.0f;
+
+      final Vec3 nxyz = new Vec3();
       final boolean calcDeriv = deriv != null;
-      if ( calcDeriv ) { deriv.reset(); }
+
+      if ( calcDeriv ) { deriv.set(0.0f, 0.0f, 0.0f); }
 
       for ( int i = 0; i < octaves; ++i ) {
-         Vec3.mul(v, freq, vin);
-         sum += Simplex.eval(vin, seed, nxyz) * amp;
-         Vec3.mul(nxyz, amp, nxyz);
+         vinx = v.x * freq;
+         viny = v.y * freq;
+         vinz = v.z * freq;
 
-         if ( calcDeriv ) { Vec3.add(deriv, nxyz, deriv); }
+         sum += Simplex.eval(vinx, viny, vinz, seed, nxyz) * amp;
+
+         nxyz.x *= amp;
+         nxyz.y *= amp;
+         nxyz.z *= amp;
+
+         if ( calcDeriv ) {
+            deriv.x += nxyz.x;
+            deriv.y += nxyz.y;
+            deriv.z += nxyz.z;
+         }
+
          freq *= lacunarity;
          amp *= gain;
       }
@@ -1086,20 +1108,37 @@ public abstract class Simplex extends Generative {
 
       float freq = 1.0f;
       float amp = 0.5f;
-
-      final Vec4 vin = new Vec4();
-      final Vec4 nxyzw = new Vec4();
-
+      float vinx = 0.0f;
+      float viny = 0.0f;
+      float vinz = 0.0f;
+      float vinw = 0.0f;
       float sum = 0.0f;
+
+      final Vec4 nxyzw = new Vec4();
       final boolean calcDeriv = deriv != null;
-      if ( calcDeriv ) { deriv.reset(); }
+
+      if ( calcDeriv ) { deriv.set(0.0f, 0.0f, 0.0f, 0.0f); }
 
       for ( int i = 0; i < octaves; ++i ) {
-         Vec4.mul(v, freq, vin);
-         sum += Simplex.eval(vin, seed, nxyzw) * amp;
-         Vec4.mul(nxyzw, amp, nxyzw);
+         vinx = v.x * freq;
+         viny = v.y * freq;
+         vinz = v.z * freq;
+         vinw = v.w * freq;
 
-         if ( calcDeriv ) { Vec4.add(deriv, nxyzw, deriv); }
+         sum += Simplex.eval(vinx, viny, vinz, vinw, seed, nxyzw) * amp;
+
+         nxyzw.x *= amp;
+         nxyzw.y *= amp;
+         nxyzw.z *= amp;
+         nxyzw.w *= amp;
+
+         if ( calcDeriv ) {
+            deriv.x += nxyzw.x;
+            deriv.y += nxyzw.y;
+            deriv.z += nxyzw.z;
+            deriv.w += nxyzw.w;
+         }
+
          freq *= lacunarity;
          amp *= gain;
       }

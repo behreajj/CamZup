@@ -673,8 +673,6 @@ public abstract class ParserSvg {
           */
          if ( prim != null ) {
 
-            // Looks like the same curve is being added multiple
-            // times...
             if ( !curves.contains(prim) ) {
                prim.reverse();
                prim.transform(prev);
