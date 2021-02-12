@@ -1469,7 +1469,7 @@ public abstract class ParserSvg {
     * An internal helper class to associate viable path commands at an index
     * in a String with readable data.
     */
-   private static class PathData {
+   protected static class PathData {
 
       /**
        * The path command.
@@ -1552,7 +1552,7 @@ public abstract class ParserSvg {
     * An internal helper class to associate viable transform commands at an
     * index in a String with readable data.
     */
-   private static class TransformData {
+   protected static class TransformData {
 
       /**
        * The transform command.

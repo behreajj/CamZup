@@ -1548,10 +1548,9 @@ public class Mat4 {
 
    /**
     * Creates a matrix from spherical coordinates. The matrix's right axis
-    * (m00, m10, m20) corresponds to the point on the sphere, i.e., what would
-    * be returned by {@link Vec3#fromSpherical(float, float, float, Vec3)}.
-    * The radius acts as a scalar by which all matrix entries are multiplied.
-    * A radius of zero will return the identity matrix.
+    * (m00, m10, m20) corresponds to the point on the sphere. The radius acts
+    * as a scalar by which all matrix entries are multiplied. A radius of zero
+    * will return the identity matrix.
     *
     * @param azimuth     the angle theta in radians
     * @param inclination the angle phi in radians
@@ -1564,7 +1563,9 @@ public class Mat4 {
    public static Mat4 fromSpherical ( final float azimuth,
       final float inclination, final float radius, final Mat4 target ) {
 
-      if ( Utils.abs(radius) < IUtils.EPSILON ) { return target.reset(); }
+      // TODO: Version with and without radius?
+
+      if ( radius == 0.0f ) { return target.reset(); }
 
       final float azimNorm = azimuth * IUtils.ONE_TAU;
       final float cosAzim = Utils.scNorm(azimNorm);

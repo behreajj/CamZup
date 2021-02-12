@@ -359,28 +359,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Extrudes all edges of a face, creating new tangential quadrilaterals.
-    * 
-    * @param faceIndex the face index.
-    * @param amount    the extrusion amount
-    *
-    * @return this mesh
-    */
-   public Mesh3 extrudeEdges ( final int faceIndex, final float amount ) {
-
-      final int i = Utils.mod(faceIndex, this.faces.length);
-      final int faceLen = this.faces[i].length;
-      for ( int j = 0; j < faceLen; ++j ) { this.extrudeEdge(i, j, amount); }
-
-      return this;
-   }
-
-   /**
     * Extrudes an edge, creating a new quadrilateral tangent to the edge.
     *
     * @param faceIndex the face index.
     * @param edgeIndex the edge index
-    * @param amount     the extrusion amount
+    * @param amount    the extrusion amount
     *
     * @return this mesh
     */
@@ -465,13 +448,30 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Extrudes all edges of a face, creating new tangential quadrilaterals.
+    *
+    * @param faceIndex the face index.
+    * @param amount    the extrusion amount
+    *
+    * @return this mesh
+    */
+   public Mesh3 extrudeEdges ( final int faceIndex, final float amount ) {
+
+      final int i = Utils.mod(faceIndex, this.faces.length);
+      final int faceLen = this.faces[i].length;
+      for ( int j = 0; j < faceLen; ++j ) { this.extrudeEdge(i, j, amount); }
+
+      return this;
+   }
+
+   /**
     * Extrudes a face by an amount. Creates quadrilateral sides to connect
     * extruded face to original. Does not check whether a face is bordered by
     * other faces; best used on disconnected faces.
     *
     * @param faceIndex the face index
-    * @param fillCap whether to cap the extruded face
-    * @param depth   the extrusion depth
+    * @param fillCap   whether to cap the extruded face
+    * @param depth     the extrusion depth
     *
     * @return this new face indices
     */
@@ -489,9 +489,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * extruded face 75% the size of the original.
     *
     * @param faceIndex the face index
-    * @param fillCap whether to cap the extruded face
-    * @param depth   the extrusion depth
-    * @param taper   the taper
+    * @param fillCap   whether to cap the extruded face
+    * @param depth     the extrusion depth
+    * @param taper     the taper
     *
     * @return this new face indices
     *
@@ -749,7 +749,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @param faceIndex the face index
     * @param edgeIndex the edge index
-    * @param target  the output edge
+    * @param target    the output edge
     *
     * @return the edge
     */
@@ -805,7 +805,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Gets a face from the mesh.
     *
-    * @param index      the index
+    * @param index  the index
     * @param target the output face
     *
     * @return the face
@@ -857,9 +857,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Gets a vertex from the mesh.
     *
-    * @param faceIndex      the face index
-    * @param vertIndex      the vertex index
-    * @param target the output vertex
+    * @param faceIndex the face index
+    * @param vertIndex the vertex index
+    * @param target    the output vertex
     *
     * @return the vertex
     */
@@ -923,8 +923,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * A convenience function to inset a face at an index and extrude it.
     *
     * @param faceIndex the face index
-    * @param inset   the inset factor
-    * @param depth   the extrusion depth
+    * @param inset     the inset factor
+    * @param depth     the extrusion depth
     *
     * @return this mesh
     */
@@ -940,9 +940,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * result in an extruded face 75% the size of the original.
     *
     * @param faceIndex the face index
-    * @param inset   the inset factor
-    * @param depth   the extrusion depth
-    * @param taper   the taper
+    * @param inset     the inset factor
+    * @param depth     the extrusion depth
+    * @param taper     the taper
     *
     * @return this mesh
     */
@@ -1020,7 +1020,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * center.
     *
     * @param faceIndex the face index
-    * @param fac     the inset amount
+    * @param fac       the inset amount
     *
     * @return the new face indices
     */

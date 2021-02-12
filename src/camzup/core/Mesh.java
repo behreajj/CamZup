@@ -188,6 +188,76 @@ public abstract class Mesh extends EntityData implements IMesh {
    }
 
    /**
+    * Splits a face into two halves according to an origin and destination
+    * vertex. The face must have at least 3 vertices. The destination index
+    * should not equal the origin index or either of its neighbors.
+    *
+    * @param faceIndex the face index
+    * @param origIndex the origin index
+    * @param destIndex the destination index
+    *
+    * @return this mesh
+    */
+   @Experimental
+   public Mesh sectionFace ( final int faceIndex, final int origIndex,
+      final int destIndex ) {
+
+      /* Find face. */
+      final int facesLen = this.faces.length;
+      final int i = Utils.mod(faceIndex, facesLen);
+      final int[][] srcFace = this.faces[i];
+
+      /* Find edge. */
+      final int srcFaceLen = srcFace.length;
+      if ( srcFaceLen < 4 ) { return this; }
+      int j = Utils.mod(origIndex, srcFaceLen);
+      int k = Utils.mod(destIndex, srcFaceLen);
+
+      /*
+       * If the destination vertex equals the origin vertex, the origin's
+       * previous neighbor, or its next neighbor, invalid selection.
+       */
+      if ( j == k || ( j + 1 ) % srcFaceLen == k || Utils.mod(j - 1, srcFaceLen)
+         == k ) {
+         return this;
+      }
+
+      /* Maintain vertex winding. */
+      if ( j > k ) {
+         final int swap = j;
+         j = k;
+         k = swap;
+      }
+
+      /* Find length of travel in indices. Each new face adds an extra edge. */
+      final int diff = k - j;
+
+      /* Origin to destination. */
+      final int trgFace0Len = 1 + diff;
+      final int[][] trgFace0 = new int[trgFace0Len][];
+      for ( int n = 0; n < trgFace0Len; ++n ) {
+         final int[] srcVert = srcFace[ ( j + n ) % srcFaceLen];
+         final int srcLen = srcVert.length;
+         final int[] trgVert0 = trgFace0[n] = new int[srcLen];
+         System.arraycopy(srcVert, 0, trgVert0, 0, srcLen);
+      }
+
+      /* Destination to origin. */
+      final int trgFace1Len = 1 + srcFaceLen - diff;
+      final int[][] trgFace1 = new int[trgFace1Len][];
+      for ( int n = 0; n < trgFace1Len; ++n ) {
+         final int[] srcVert = srcFace[ ( k + n ) % srcFaceLen];
+         final int srcLen = srcVert.length;
+         final int[] trgVert1 = trgFace1[n] = new int[srcLen];
+         System.arraycopy(srcVert, 0, trgVert1, 0, srcLen);
+      }
+
+      this.faces = Mesh.splice(this.faces, i, 1, new int[][][] { trgFace0,
+         trgFace1 });
+      return this;
+   }
+
+   /**
     * Sets this mesh's material index.
     *
     * @param i the index

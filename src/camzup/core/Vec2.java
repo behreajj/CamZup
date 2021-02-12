@@ -2907,8 +2907,8 @@ public class Vec2 implements Comparable < Vec2 > {
    public static class Lerp extends AbstrEasing {
 
       /**
-       * Eases between two vectors by a step using the formula (1 - t) * a + b .
-       * Promotes the step from a float to a double.
+       * Eases between two vectors by a step using the formula ( 1.0 -
+       * <em>t</em> ) <em>a</em> + <em>t</em> <em>b</em>.
        *
        * @param origin the origin vector
        * @param dest   the destination vector
@@ -2921,11 +2921,9 @@ public class Vec2 implements Comparable < Vec2 > {
       public Vec2 applyUnclamped ( final Vec2 origin, final Vec2 dest,
          final float step, final Vec2 target ) {
 
-         // TODO: Factor out doubles.
-         final double td = step;
-         final double ud = 1.0d - td;
-         return target.set(( float ) ( ud * origin.x + td * dest.x ),
-            ( float ) ( ud * origin.y + td * dest.y ));
+         final float uf = 1.0f - step;
+         return target.set(uf * origin.x + step * dest.x, uf * origin.y + step
+            * dest.y);
       }
 
    }

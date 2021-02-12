@@ -3341,8 +3341,8 @@ public class Vec3 implements Comparable < Vec3 > {
    public static class Lerp extends AbstrEasing {
 
       /**
-       * Eases between two vectors by a step using the formula (1.0 - t) * a + b
-       * . Promotes the step from a float to a double.
+       * Eases between two vectors by a step using the formula ( 1.0 -
+       * <em>t</em> ) <em>a</em> + <em>t</em> <em>b</em>.
        *
        * @param origin the origin vector
        * @param dest   the destination vector
@@ -3355,11 +3355,9 @@ public class Vec3 implements Comparable < Vec3 > {
       public Vec3 applyUnclamped ( final Vec3 origin, final Vec3 dest,
          final float step, final Vec3 target ) {
 
-         final double td = step;
-         final double ud = 1.0d - td;
-         return target.set(( float ) ( ud * origin.x + td * dest.x ),
-            ( float ) ( ud * origin.y + td * dest.y ), ( float ) ( ud * origin.z
-               + td * dest.z ));
+         final float uf = 1.0f - step;
+         return target.set(uf * origin.x + step * dest.x, uf * origin.y + step
+            * dest.y, uf * origin.z + step * dest.z);
       }
 
    }

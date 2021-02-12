@@ -103,21 +103,23 @@ public class MaterialAwt extends Material {
       if ( !super.equals(obj) ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
       final MaterialAwt other = ( MaterialAwt ) obj;
-      if ( this.sample == null ) {
-         if ( other.sample != null ) { return false; }
-      } else if ( !this.sample.equals(other.sample) ) { return false; }
+
+      if ( !this.sample.equals(other.sample) ) { return false; }
+
       if ( this.stroke == null ) {
          if ( other.stroke != null ) { return false; }
       } else if ( !this.stroke.equals(other.stroke) ) { return false; }
+
       if ( Float.floatToIntBits(this.strokeWeight) != Float.floatToIntBits(
          other.strokeWeight) ) {
          return false;
       }
+
       if ( this.texture == null ) {
          if ( other.texture != null ) { return false; }
       } else if ( !this.texture.equals(other.texture) ) { return false; }
-      if ( this.useStroke != other.useStroke ) { return false; }
-      return true;
+
+      return this.useStroke == other.useStroke;
    }
 
    /**
@@ -137,8 +139,7 @@ public class MaterialAwt extends Material {
 
       final int prime = 31;
       int result = super.hashCode();
-      result = prime * result + ( this.sample == null ? 0 : this.sample
-         .hashCode() );
+      result = prime * result + this.sample.hashCode();
       result = prime * result + ( this.stroke == null ? 0 : this.stroke
          .hashCode() );
       result = prime * result + Float.floatToIntBits(this.strokeWeight);
@@ -361,11 +362,9 @@ public class MaterialAwt extends Material {
          if ( obj == null ) { return false; }
          if ( this.getClass() != obj.getClass() ) { return false; }
          final Sample other = ( Sample ) obj;
-         if ( this.xBottomRight != other.xBottomRight ) { return false; }
-         if ( this.xTopLeft != other.xTopLeft ) { return false; }
-         if ( this.yBottomRight != other.yBottomRight ) { return false; }
-         if ( this.yTopLeft != other.yTopLeft ) { return false; }
-         return true;
+         return this.xBottomRight == other.xBottomRight && this.xTopLeft
+            == other.xTopLeft && this.yBottomRight == other.yBottomRight
+            && this.yTopLeft == other.yTopLeft;
       }
 
       /**

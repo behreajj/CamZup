@@ -2927,6 +2927,118 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
+    * Creates a <a href=
+    * "https://en.wikipedia.org/wiki/Penrose_tiling#Kite_and_dart_tiling_(P2)">Penrose
+    * dart</a>. Defaults to an {@link PolyType#NGON}.
+    *
+    * @param target the output mesh
+    *
+    * @return the dart
+    */
+   public static Mesh2 penroseDart ( final Mesh2 target ) {
+
+      return Mesh2.penroseDart(Mesh2.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates a <a href=
+    * "https://en.wikipedia.org/wiki/Penrose_tiling#Kite_and_dart_tiling_(P2)">Penrose
+    * dart</a>, a concave quadrilateral with interior angles of 36, 72 and 216
+    * degrees (\u03c0 / 5.0, \u03c4 / 5.0 and 3.0 \u03c4 / 5.0).
+    *
+    * @param poly   the poly type
+    * @param target the output mesh
+    *
+    * @return the dart
+    */
+   public static Mesh2 penroseDart ( final PolyType poly, final Mesh2 target ) {
+
+      target.name = "Dart";
+
+      target.coords = Vec2.resize(target.coords, 4);
+      target.coords[0].set(0.11803399f, 0.0f);
+      target.coords[1].set(0.0f, -0.36327127f);
+      target.coords[2].set(0.5f, 0.0f);
+      target.coords[3].set(0.0f, 0.36327127f);
+
+      target.texCoords = Vec2.resize(target.texCoords, 4);
+      target.texCoords[0].set(0.618034f, 0.5f);
+      target.texCoords[1].set(0.5f, 0.863271f);
+      target.texCoords[2].set(1.0f, 0.5f);
+      target.texCoords[3].set(0.5f, 0.136729f);
+
+      switch ( poly ) {
+         case TRI:
+            target.faces = new int[][][] { { { 0, 0 }, { 2, 2 }, { 3, 3 } }, { {
+               0, 0 }, { 1, 1 }, { 2, 2 } } };
+            break;
+         case QUAD:
+         case NGON:
+         default:
+            target.faces = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3,
+               3 } } };
+      }
+
+      return target;
+   }
+
+   /**
+    * Creates a <a href=
+    * "https://en.wikipedia.org/wiki/Penrose_tiling#Kite_and_dart_tiling_(P2)">Penrose
+    * kite</a>.
+    *
+    * @param target the output mesh
+    *
+    * @return the kite
+    */
+   public static Mesh2 penroseKite ( final Mesh2 target ) {
+
+      return Mesh2.penroseKite(Mesh2.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates a <a href=
+    * "https://en.wikipedia.org/wiki/Penrose_tiling#Kite_and_dart_tiling_(P2)">Penrose
+    * kite</a>, a convex quadrilateral with interior angles of 72 and 144
+    * degrees (\u03c4 / 5.0 and 2.0 \u03c4 / 5.0 ).
+    *
+    * @param poly   the poly type
+    * @param target the output mesh
+    *
+    * @return the kite
+    */
+   public static Mesh2 penroseKite ( final PolyType poly, final Mesh2 target ) {
+
+      target.name = "Kite";
+
+      target.coords = Vec2.resize(target.coords, 4);
+      target.coords[0].set(0.11803399f, 0.0f);
+      target.coords[1].set(0.0f, 0.36327127f);
+      target.coords[2].set(-0.5f, 0.0f);
+      target.coords[3].set(0.0f, -0.36327127f);
+
+      target.texCoords = Vec2.resize(target.texCoords, 4);
+      target.texCoords[0].set(0.618034f, 0.5f);
+      target.texCoords[1].set(0.5f, 0.136729f);
+      target.texCoords[2].set(0.0f, 0.5f);
+      target.texCoords[3].set(0.5f, 0.863271f);
+
+      switch ( poly ) {
+         case TRI:
+            target.faces = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 } }, { {
+               0, 0 }, { 2, 2 }, { 3, 3 } } };
+            break;
+         case QUAD:
+         case NGON:
+         default:
+            target.faces = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3,
+               3 } } };
+      }
+
+      return target;
+   }
+
+   /**
     * Creates a subdivided plane. Useful for meshes which later will be
     * augmented by noise or height maps to simulate terrain.
     *

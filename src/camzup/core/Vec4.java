@@ -2300,8 +2300,8 @@ public class Vec4 implements Comparable < Vec4 > {
    public static class Lerp extends AbstrEasing {
 
       /**
-       * Eases between two vectors by a step using the formula (1.0 - t) * a + b
-       * . Promotes the step from a float to a double.
+       * Eases between two vectors by a step using the formula ( 1.0 -
+       * <em>t</em> ) <em>a</em> + <em>t</em> <em>b</em>.
        *
        * @param origin the origin vector
        * @param dest   the destination vector

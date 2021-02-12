@@ -1123,7 +1123,7 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
       /* Update needed because the loose floats may not be normalized. */
       target.updateAxes();
 
-      target.location.reset();
+      Vec3.zero(target.location);
       Vec3.one(target.scale);
 
       return target;
@@ -1196,25 +1196,24 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    public static Transform3 fromDir ( final Vec3 dir,
       final Handedness handedness, final Transform3 target ) {
 
-      target.locPrev.set(target.location);
-      target.location.reset();
+      target.scalePrev.set(target.scale);
+      Vec3.one(target.scale);
 
       target.rotPrev.set(target.rotation);
       Quaternion.fromDir(dir, handedness, target.rotation, target.right,
          target.forward, target.up);
 
-      target.scalePrev.set(target.scale);
-      Vec3.one(target.scale);
+      target.locPrev.set(target.location);
+      Vec3.zero(target.location);
 
       return target;
    }
 
    /**
     * Creates a transform from spherical coordinates. The transform's right
-    * axis corresponds to the point on the sphere, i.e., what would be
-    * returned by {@link Vec3#fromSpherical(float, float, float, Vec3)}. The
-    * transform's scale is set to the radius. A radius of zero will return the
-    * identity transform instead.
+    * axis corresponds to the point on the sphere. The transform's scale is
+    * set to the radius. A radius of zero will return the identity transform
+    * instead.
     *
     * @param azimuth     the angle theta in radians
     * @param inclination the angle phi in radians
@@ -1226,18 +1225,74 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    public static Transform3 fromSpherical ( final float azimuth,
       final float inclination, final float radius, final Transform3 target ) {
 
-      if ( Utils.abs(radius) < IUtils.EPSILON ) {
-         return Transform3.identity(target);
-      }
-
-      target.locPrev.set(target.location);
-      target.location.reset();
+      if ( radius == 0.0f ) { return Transform3.identity(target); }
+      target.scalePrev.set(target.scale);
+      target.scale.set(radius, radius, radius);
 
       target.rotPrev.set(target.rotation);
       Quaternion.fromSpherical(azimuth, inclination, target.rotation);
+      target.updateAxes();
 
+      target.locPrev.set(target.location);
+      Vec3.zero(target.location);
+
+      return target;
+   }
+
+   /**
+    * Creates a transform from spherical coordinates. The transform's right
+    * axis corresponds to the point on the sphere. The transform's scale is
+    * set to the radius. A radius of zero will return the identity transform
+    * instead.
+    *
+    * @param azimuth     the angle theta in radians
+    * @param inclination the angle phi in radians
+    * @param radius      rho, the magnitude
+    * @param origin      the sphere origin
+    * @param target      the output transform
+    *
+    * @return the transform
+    */
+   public static Transform3 fromSpherical ( final float azimuth,
+      final float inclination, final float radius, final Vec3 origin,
+      final Transform3 target ) {
+
+      if ( radius == 0.0f ) { return Transform3.identity(target); }
       target.scalePrev.set(target.scale);
       target.scale.set(radius, radius, radius);
+
+      target.rotPrev.set(target.rotation);
+      Quaternion.fromSpherical(azimuth, inclination, target.rotation);
+      target.updateAxes();
+
+      target.moveTo(origin);
+
+      return target;
+   }
+
+   /**
+    * Creates a transform from spherical coordinates. The transform's right
+    * axis corresponds to the point on the sphere. The transform's scale is
+    * set to 1.0 and its location to the origin.
+    *
+    * @param azimuth     the angle theta in radians
+    * @param inclination the angle phi in radians
+    * @param target      the output transform
+    *
+    * @return the transform
+    */
+   public static Transform3 fromSpherical ( final float azimuth,
+      final float inclination, final Transform3 target ) {
+
+      target.rotPrev.set(target.rotation);
+      Quaternion.fromSpherical(azimuth, inclination, target.rotation);
+      target.updateAxes();
+
+      target.scalePrev.set(target.scale);
+      Vec3.one(target.scale);
+
+      target.locPrev.set(target.location);
+      Vec3.zero(target.location);
 
       return target;
    }

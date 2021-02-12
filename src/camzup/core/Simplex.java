@@ -964,8 +964,8 @@ public abstract class Simplex extends Generative {
 
       float freq = 1.0f;
       float amp = 0.5f;
-      float vinx = 0.0f;
-      float viny = 0.0f;
+      float vinx;
+      float viny;
       float sum = 0.0f;
 
       final boolean calcDeriv = deriv != null;
@@ -1034,9 +1034,9 @@ public abstract class Simplex extends Generative {
 
       float freq = 1.0f;
       float amp = 0.5f;
-      float vinx = 0.0f;
-      float viny = 0.0f;
-      float vinz = 0.0f;
+      float vinx;
+      float viny;
+      float vinz;
       float sum = 0.0f;
 
       final Vec3 nxyz = new Vec3();
@@ -1108,10 +1108,10 @@ public abstract class Simplex extends Generative {
 
       float freq = 1.0f;
       float amp = 0.5f;
-      float vinx = 0.0f;
-      float viny = 0.0f;
-      float vinz = 0.0f;
-      float vinw = 0.0f;
+      float vinx;
+      float viny;
+      float vinz;
+      float vinw;
       float sum = 0.0f;
 
       final Vec4 nxyzw = new Vec4();

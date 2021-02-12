@@ -1,5 +1,6 @@
 package camzup.core;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
@@ -317,11 +318,11 @@ public class Ray2 {
     * @param mesh the mesh
     * @param hits the list of points
     *
-    * @return the list of points
+    * @return the minimum distance
     */
    @Experimental
    public static float intersectMesh ( final Ray2 ray, final Mesh2 mesh,
-      final List < Vec2 > hits ) {
+      final ArrayList < Vec2 > hits ) {
 
       // TEST
 
@@ -334,17 +335,14 @@ public class Ray2 {
       final int[][][] faces = mesh.faces;
       final Vec2[] vs = mesh.coords;
 
-      final int len0 = faces.length;
-      for ( int i = 0; i < len0; ++i ) {
-         final int[][] verts = faces[i];
-         final int len1 = verts.length;
+      final int facesLen = faces.length;
+      for ( int i = 0; i < facesLen; ++i ) {
+         final int[][] face = faces[i];
+         final int faceLen = face.length;
 
-         for ( int j = 0; j < len1; ++j ) {
-            final int[] vert0 = verts[j];
-            final int[] vert1 = verts[ ( j + 1 ) % len1];
-
-            final Vec2 origin = vs[vert0[0]];
-            final Vec2 dest = vs[vert1[0]];
+         for ( int j = 0; j < faceLen; ++j ) {
+            final Vec2 origin = vs[face[j][0]];
+            final Vec2 dest = vs[face[ ( j + 1 ) % faceLen][0]];
 
             Vec2.sub(ray.origin, origin, v1);
             Vec2.sub(dest, origin, v2);

@@ -53,18 +53,18 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Creates a gradient from a color. The color is placed in the according to
-    * its perceived luminance, with opaque black at key 0.0 and opaque white
-    * at key 1.0.
+    * Creates a gradient from a color. The color's is placed according to its
+    * perceived luminance between black at key 0.0 and white at key 1.0. The
+    * boundary keys adopt the color's alpha.
     *
     * @param color the color
     */
    public Gradient ( final Color color ) {
 
-      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, 1.0f));
+      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, color.a));
       this.keys.add(new ColorKey(Utils.lerp(IUtils.ONE_THIRD, IUtils.TWO_THIRDS,
          Color.luminance(color)), color));
-      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, 1.0f));
+      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, color.a));
    }
 
    /**
@@ -98,9 +98,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    public Gradient ( final Gradient source ) { this.set(source); }
 
    /**
-    * Creates a gradient from a color. The color is placed in the according to
-    * its perceived luminance, with opaque black at key 0.0 and opaque white
-    * at key 1.0.
+    * Creates a gradient from a color. The color's is placed according to its
+    * perceived luminance between black at key 0.0 and white at key 1.0. The
+    * boundary keys adopt the color's alpha.
     *
     * @param color the color
     *
@@ -108,10 +108,11 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public Gradient ( final int color ) {
 
-      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, 1.0f));
+      final float a = ( color >> 0x18 & 0xff ) * IUtils.ONE_255;
+      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, a));
       this.keys.add(new ColorKey(Utils.lerp(IUtils.ONE_THIRD, IUtils.TWO_THIRDS,
          Color.luminance(color)), color));
-      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, 1.0f));
+      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, a));
    }
 
    /**
