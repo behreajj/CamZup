@@ -1810,8 +1810,8 @@ public class Color implements Comparable < Color > {
    public static Vec4 rgbaToXyzw ( final float r, final float g, final float b,
       final float a, final Vec4 target ) {
 
-      return target.set(0.412453f * r + 0.357580f * g + 0.180423f * b, 0.212671f
-         * r + 0.715160f * g + 0.072169f * b, 0.019334f * r + 0.119193f * g
+      return target.set(0.412453f * r + 0.35758f * g + 0.180423f * b, 0.212671f
+         * r + 0.71516f * g + 0.072169f * b, 0.019334f * r + 0.119193f * g
             + 0.950227f * b, a);
    }
 
@@ -2188,7 +2188,7 @@ public class Color implements Comparable < Color > {
    public static Color xyzwToRgba ( final float x, final float y, final float z,
       final float a, final Color target ) {
 
-      return target.set(3.240479f * x - 1.537150f * y - 0.498535f * z,
+      return target.set(3.240479f * x - 1.53715f * y - 0.498535f * z,
          -0.969256f * x + 1.875991f * y + 0.041556f * z, 0.055648f * x
             - 0.204043f * y + 1.057311f * z, a);
    }
@@ -2648,7 +2648,8 @@ public class Color implements Comparable < Color > {
 
       /**
        * A helper function to pass on to sub-classes of this class. Mutates the
-       * fields a, b, difference, aLtb and aGtb.
+       * fields {@link o}, {@link d}, {@link diff}, {@link oLtd} and
+       * {@link oGtd}.
        *
        * @param origin the origin hue
        * @param dest   the destination hue

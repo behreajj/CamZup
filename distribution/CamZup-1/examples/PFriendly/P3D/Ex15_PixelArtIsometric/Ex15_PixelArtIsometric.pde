@@ -121,10 +121,10 @@ void draw() {
   Vec3.rotateZ(ms, IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, ms);
   Vec3.mul(ms, orbit * 0.5, ms);
 
-  buff.beginDraw();
+  buff.beginDraw();  
   buff.textAlign(LEFT, TOP);
   buff.noStroke();
-  buff.background(#202020);
+  ZImage.checker(#202020, #101010, 8, 7, buff);
   buff.ortho();
   
   // Pixel art isometric is actually dimetric,
@@ -141,20 +141,18 @@ void draw() {
 
   // Uncorrected aspect.
   buff.fill(#ffffff);
-  buff.rect(wh - 36, hh - 21, 16, 16);
-  buff.ellipse(wh - 36, hh - 61, 16, 16);
+  buff.ellipse(wh - 36, hh - 21, 16, 16);
 
   // Corrected aspect.
   buff.fill(#ffffff);
-  buff.rect(wh - 18, hh - 21, 16, 16 * correct);
-  buff.ellipse(wh - 18, hh - 61, 16, 16 * correct);
+  buff.ellipse(wh - 18, hh - 21, 16, 16 * correct);
 
   buff.fill(#202020);
-  buff.text("The quick brown fox jumps \nover the lazy dog.",
+  buff.text("Beware the aspect ratio.",
     3 - wh, hh - 3);
 
   buff.fill(#ffffff);
-  buff.text("The quick brown fox jumps \nover the lazy dog.",
+  buff.text("Beware the aspect ratio.",
     2 - wh, hh - 2);
 
   buff.endHud();

@@ -971,8 +971,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final float arcLen1 = Utils.mod1(b1 - a1);
 
       if ( arcLen1 <= 0.00139f ) {
-         return Curve3.line(new Vec3(), Vec3.fromPolar(startAngle, radius,
-            new Vec3()), target);
+         return Curve3.line(new Vec3(), Vec3.fromSpherical(startAngle, 0.0f,
+            radius, new Vec3()), target);
       }
 
       final float destAngle1 = a1 + arcLen1;

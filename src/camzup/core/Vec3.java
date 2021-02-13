@@ -1373,43 +1373,6 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Creates a vector from polar coordinates: (1) theta, \u03b8, an angle in
-    * radians, the vector's azimuth; (2) rho, \u03c1, a radius, the vector's
-    * magnitude. Uses the formula<br>
-    * <br>
-    * ( \u03c1 cos ( \u03b8 ),<br>
-    * \u03c1 sin ( \u03b8 ) )
-    *
-    * @param azimuth the angle in radians
-    * @param radius  the radius
-    * @param target  the output vector
-    *
-    * @return the vector
-    */
-   public static Vec3 fromPolar ( final float azimuth, final float radius,
-      final Vec3 target ) {
-
-      final float nrm = azimuth * IUtils.ONE_TAU;
-      return target.set(radius * Utils.scNorm(nrm), radius * Utils.scNorm(nrm
-         - 0.25f), 0.0f);
-   }
-
-   /**
-    * Creates a vector with a magnitude of 1.0 from an angle, such that the
-    * vector is on the equator of the unit sphere.
-    *
-    * @param azimuth the angle in radians
-    * @param target  the output vector
-    *
-    * @return the vector
-    */
-   public static Vec3 fromPolar ( final float azimuth, final Vec3 target ) {
-
-      final float nrm = azimuth * IUtils.ONE_TAU;
-      return target.set(Utils.scNorm(nrm), Utils.scNorm(nrm - 0.25f), 0.0f);
-   }
-
-   /**
     * Creates a vector from spherical coordinates: (1) theta, \u03b8, the
     * azimuth, yaw or longitude; (2) phi, \u03c6, the inclination, pitch or
     * latitude; (3) rho, \u03c1, the radius or magnitude. The poles will be

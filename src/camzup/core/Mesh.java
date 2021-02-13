@@ -579,6 +579,8 @@ public abstract class Mesh extends EntityData implements IMesh {
    public static int[][][] segmentIndices ( final int[] indices,
       final int stride, final int dimensions ) {
 
+      // TODO: Remove... turn into a fromMeshDirect function?s
+
       final int vstride = stride < 3 ? 3 : stride;
       final int vdim = dimensions < 1 ? 1 : dimensions;
       final int lenGrouped = indices.length / vstride;

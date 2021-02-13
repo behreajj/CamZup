@@ -2210,11 +2210,11 @@ public abstract class Utils implements IUtils {
          final float dest, final float step );
 
       /**
-       * A helper function which mutates protected fields a, b, diff, aLtb and
-       * aGtb. This mods the origin (a) and destination (b) by the range. It
-       * then finds the signed distance between the mod origin and destination
-       * (diff). Lastly, it evaluates which of the two is greater than the
-       * other, (aLtb) and (aGtb).
+       * A helper function which mutates fields {@link o}, {@link d},
+       * {@link diff}, {@link oLtd} and {@link oGtd}. This mods the origin and
+       * destination by the range. It then finds the signed distance between the
+       * mod origin and destination . Lastly, it evaluates which of the two is
+       * greater than the other.
        *
        * @param origin origin value
        * @param dest   destination value

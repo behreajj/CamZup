@@ -3,7 +3,6 @@ package camzup.pfriendly;
 import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 
-import camzup.core.Bounds2;
 import camzup.core.Color;
 import camzup.core.Gradient;
 import camzup.core.IUtils;
@@ -201,44 +200,104 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Finds the bounding area of an image that may contain alpha padding,
-    * inclusive on the lower bound and exclusive on the upper bound.
+    * Renders a checker pattern on an image for diagnostic purposes.
     *
-    * @param img    the image
-    * @param target the output
+    * @param a      the first color
+    * @param b      the second color
+    * @param cols   the column count
+    * @param rows   the row count
+    * @param target the output image
     *
-    * @return the bounds
+    * @return the output image
     */
-   public static Bounds2 calcBounds ( final PImage img, final Bounds2 target ) {
+   public static PImage checker ( final Color a, final Color b, final int cols,
+      final int rows, final PImage target ) {
 
-      // QUERY Create a version for a key color? ie., pixels[i] != key?
+      return ZImage.checker(Color.toHexInt(a), Color.toHexInt(b), cols, rows,
+         target);
+   }
 
-      final int w = img.width;
-      final int[] pixels = img.pixels;
-      final int len = pixels.length;
+   /**
+    * Renders a checker pattern on an image for diagnostic purposes.
+    *
+    * @param a      the first color
+    * @param b      the second color
+    * @param count  the count
+    * @param target the output image
+    *
+    * @return the output image
+    */
+   public static PImage checker ( final Color a, final Color b, final int count,
+      final PImage target ) {
 
-      final Vec2 min = target.min;
-      final Vec2 max = target.max;
+      return ZImage.checker(a, b, count, count, target);
+   }
 
-      /* Forward search. */
-      boolean found = false;
-      for ( int i = 0; !found && i < len; ++i ) {
-         if ( ( pixels[i] >> 0x18 & 0xff ) > 0 ) {
-            min.set(i % w, i / w);
-            found = true;
-         }
+   /**
+    * Renders a checker pattern on an image for diagnostic purposes. Ideally,
+    * the image dimensions should be a power of 2 (32, 64, 128, 256, 512).
+    *
+    * @param a      the first color
+    * @param b      the second color
+    * @param cols   the column count
+    * @param rows   the row count
+    * @param target the output image
+    *
+    * @return the output image
+    */
+   public static PImage checker ( final int a, final int b, final int cols,
+      final int rows, final PImage target ) {
+
+      final int vcols = cols < 2 ? 2 : cols;
+      final int vrows = rows < 2 ? 2 : rows;
+
+      target.loadPixels();
+
+      final int w = target.width;
+      final int h = target.height;
+      final int[] px = target.pixels;
+      final int len = px.length;
+
+      final int wch = w / vcols;
+      final int hch = h / vrows;
+
+      for ( int i = 0; i < len; ++i ) {
+         px[i] = ( i % w / wch + i / w / hch ) % 2 == 0 ? a : b;
       }
 
-      /* Backward search. */
-      found = false;
-      for ( int i = len - 1; !found && i > -1; --i ) {
-         if ( ( pixels[i] >> 0x18 & 0xff ) > 0 ) {
-            max.set(1 + i % w, 1 + i / w);
-            found = true;
-         }
-      }
-
+      target.updatePixels();
       return target;
+   }
+
+   /**
+    * Renders a checker pattern on an image for diagnostic purposes.
+    *
+    * @param a      the first color
+    * @param b      the second color
+    * @param count  the count
+    * @param target the output image
+    *
+    * @return the output image
+    */
+   public static PImage checker ( final int a, final int b, final int count,
+      final PImage target ) {
+
+      return ZImage.checker(a, b, count, count, target);
+   }
+
+   /**
+    * Renders a checker pattern on an image for diagnostic purposes. Uses a
+    * value 255 / 3 and its complement as colors (<code>#555555</code>,
+    * <code>#aaaaa</code>).
+    *
+    * @param count  the count
+    * @param target the output image
+    *
+    * @return the output image
+    */
+   public static PImage checker ( final int count, final PImage target ) {
+
+      return ZImage.checker(0xff555555, 0xffaaaaaa, count, count, target);
    }
 
    /**

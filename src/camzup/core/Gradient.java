@@ -53,7 +53,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Creates a gradient from a color. The color's is placed according to its
+    * Creates a gradient from a color. The color is placed according to its
     * perceived luminance between black at key 0.0 and white at key 1.0. The
     * boundary keys adopt the color's alpha.
     *
@@ -98,7 +98,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    public Gradient ( final Gradient source ) { this.set(source); }
 
    /**
-    * Creates a gradient from a color. The color's is placed according to its
+    * Creates a gradient from a color. The color is placed according to its
     * perceived luminance between black at key 0.0 and white at key 1.0. The
     * boundary keys adopt the color's alpha.
     *

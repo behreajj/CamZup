@@ -1,9 +1,6 @@
 package camzup;
 
 import camzup.core.Color;
-import camzup.core.Mesh2;
-import camzup.core.MeshEntity2;
-import camzup.core.PolyType;
 import camzup.core.Utils;
 
 import processing.core.PApplet;
@@ -92,13 +89,13 @@ public class CamZup {
       // https://digitalsplashmedia.com/2014/06/
       // visualizing-categorical-data-as-flows-with-alluvial-diagrams/
 
-      final Mesh2 dart = new Mesh2();
-      final Mesh2 kite = new Mesh2();
-      Mesh2.penroseDart(PolyType.NGON, dart);
-      Mesh2.penroseKite(PolyType.NGON, kite);
+      // final Mesh2 dart = new Mesh2();
+      // final Mesh2 kite = new Mesh2();
+      // Mesh2.penroseDart(PolyType.NGON, dart);
+      // Mesh2.penroseKite(PolyType.NGON, kite);
+      // final MeshEntity2 me2 = new MeshEntity2("Penrose", dart, kite);
+      // System.out.println(me2.toBlenderCode());
 
-      final MeshEntity2 me2 = new MeshEntity2("Penrose", dart, kite);
-      System.out.println(me2.toBlenderCode());
    }
 
    /**
@@ -207,8 +204,8 @@ public class CamZup {
 
       // RESEARCH https://www.w3.org/TR/compositing-1/#blending
 
-      float fa = 0.0f;
-      float fb = 0.0f;
+      float fa;
+      float fb;
       final float as = origin.a;
       final float ab = dest.a;
 
