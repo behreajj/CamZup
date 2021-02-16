@@ -2,7 +2,7 @@ import camzup.core.*;
 import camzup.pfriendly.*;
 
 Zup3 graphics;
-Color clr = new Color(1.0, 1.0, 1.0, 0.65);
+Color clr = new Color(1.0, 0.85, 0.0, 1.0);
 String msg = "The Quick\nBrown Fox\nJumps Over\nThe Lazy Dog!";
 TextEntity3 te3;
 
@@ -16,7 +16,7 @@ void setup() {
   graphics = (Zup3)getGraphics();
   graphics.ortho();
   graphics.camDimetric();
-  
+
   PFont font = loadFont("ProcessingSansPro.vlw");
   te3 = new TextEntity3(font, msg, clr, 16, 0, CENTER, CENTER, 0.975);
   te3.rotateX(IUtils.HALF_PI);

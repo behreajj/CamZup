@@ -218,14 +218,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.g2.transform(this.affineNative);
 
       // this.affineNative.setTransform(this.g2.getTransform());
-      //
       // this.cameraX = ( float ) this.affineNative.getTranslateX();
       // this.cameraY = ( float ) this.affineNative.getTranslateY();
-      //
       // this.cameraRot = ( float ) Math.atan2(this.affineNative.getShearY(),
       // this.affineNative.getScaleX());
       // this.cameraRot = Utils.modRadians(this.cameraRot);
-      //
       // this.cameraZoomX = ( float ) this.affineNative.getScaleX();
       // this.cameraZoomY = ( float ) this.affineNative.getScaleY();
       // if ( this.affineNative.getDeterminant() < 0.0d ) {
@@ -682,8 +679,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * https://github.com/processing/processing4/issues/169 .
        */
 
-      this.g2.drawImage(YupJ2.convertPImageToNative(src), dx, dy, dx + dw, dy
-         + dh, sx, sy, sx + sw, sy + sh, null, null);
+      this.g2.drawImage(YupJ2.convertPImageToNative(src), dx, dy, dx + ( dw < 0
+         ? -dw : dw ), dy + ( dh < 0 ? -dh : dh ), sx, sy, sx + ( sw < 0 ? -sw
+            : sw ), sy + ( sh < 0 ? -sh : sh ), null, null);
    }
 
    /**
@@ -2184,6 +2182,52 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * Draws a transform origin.
+    *
+    * @param tr         the transform
+    * @param lineLength the line length
+    * @param sw         the stroke weight
+    * @param xColor     the color of the x axis
+    * @param yColor     the color of the y axis
+    */
+   public void origin ( final Transform2 tr, final float lineLength,
+      final float sw, final int xColor, final int yColor ) {
+
+      final Vec2 origin = new Vec2();
+      final Vec2 right = new Vec2();
+      final Vec2 forward = new Vec2();
+      tr.getLocation(origin);
+      tr.getAxes(right, forward);
+
+      final double ox = origin.x;
+      final double oy = origin.y;
+      final float vl = lineLength > IUtils.EPSILON ? lineLength
+         : IUtils.EPSILON;
+
+      Vec2.mul(right, vl, right);
+      Vec2.add(right, origin, right);
+      Vec2.mul(forward, vl, forward);
+      Vec2.add(forward, origin, forward);
+
+      super.pushStyle();
+      this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND, sw);
+
+      this.gp.reset();
+      this.gp.moveTo(ox, oy);
+      this.gp.lineTo(right.x, right.y);
+      this.g2.setColor(new java.awt.Color(xColor, true));
+      this.g2.draw(this.gp);
+
+      this.gp.reset();
+      this.gp.moveTo(ox, oy);
+      this.gp.lineTo(forward.x, forward.y);
+      this.g2.setColor(new java.awt.Color(yColor, true));
+      this.g2.draw(this.gp);
+
+      super.popStyle();
+   }
+
+   /**
     * Draws a point at the coordinate x, y. This is done by drawing a line
     * from (x, y) to ((x, y) + (epsilon, epsilon)). When strokeCap is set to
     * SQUARE, it is swapped to PROJECT, then back to SQUARE.
@@ -2506,12 +2550,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.affineNative.setToIdentity();
       this.g2.setTransform(this.affineNative);
       this.g2.scale(pdd, pdd);
-
-      // this.cameraRot = 0.0f;
-      // this.cameraZoomX = 1.0f;
-      // this.cameraZoomY = 1.0f;
-      // this.cameraX = 0.0f;
-      // this.cameraY = 0.0f;
    }
 
    /**
@@ -2889,12 +2927,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       // TODO: TEST
 
-      final Bounds2 bounds = new Bounds2();
       final Vec2 fh = new Vec2();
       final Vec2 rh = new Vec2();
       final Vec2 co = new Vec2();
+
+      final Bounds2 bounds = new Bounds2();
       final Vec2 min = bounds.min;
       final Vec2 max = bounds.max;
+
       final Transform2 tr = entity.transform;
       final Iterator < Curve2 > itr = entity.iterator();
 
@@ -4272,8 +4312,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          case CORNER:
 
-            w = Math.abs(c);
-            h = Math.abs(d);
+            w = c < 0.0f ? -c : c;
+            h = d < 0.0f ? -d : d;
 
             x0 = a;
             y0 = b - h;
@@ -4284,18 +4324,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          case CORNERS:
 
-            x0 = Math.min(a, c);
-            x1 = Math.max(a, c);
-
-            y0 = Math.min(b, d);
-            y1 = Math.max(b, d);
+            x0 = a < c ? a : c;
+            x1 = c > a ? c : a;
+            y0 = b < d ? b : d;
+            y1 = d > b ? d : b;
 
             break;
 
          case RADIUS:
 
-            w = Math.abs(c);
-            h = Math.abs(d);
+            w = c < 0.0f ? -c : c;
+            h = d < 0.0f ? -d : d;
 
             x0 = a - w;
             x1 = a + w;
@@ -4307,8 +4346,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          case CENTER:
 
          default:
-            w = Math.abs(c) * 0.5d;
-            h = Math.abs(d) * 0.5d;
+            w = 0.5d * ( c < 0.0f ? -c : c );
+            h = 0.5d * ( d < 0.0f ? -d : d );
 
             x0 = a - w;
             x1 = a + w;
@@ -4343,10 +4382,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final float d, final float rTl, final float rTr, final float rBr,
       final float rBl ) {
 
+      double x0;
+      double y0;
       double x1;
       double y1;
-      double x2;
-      double y2;
       double w;
       double h;
 
@@ -4354,38 +4393,37 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          case PConstants.CORNER:
 
-            w = Math.abs(c);
-            h = Math.abs(d);
+            w = c < 0.0f ? -c : c;
+            h = d < 0.0f ? -d : d;
 
-            x1 = a;
-            y2 = b - h;
-            x2 = a + w;
-            y1 = b;
+            x0 = a;
+            y1 = b - h;
+            x1 = a + w;
+            y0 = b;
 
             break;
 
          case PConstants.CORNERS:
 
-            w = Math.abs(c - a);
-            h = Math.abs(b - d);
+            w = Utils.abs(c - a);
+            h = Utils.abs(b - d);
 
-            x1 = Math.min(a, c);
-            x2 = Math.max(a, c);
-
-            y2 = Math.min(b, d);
-            y1 = Math.max(b, d);
+            x0 = a < c ? a : c;
+            x1 = c > a ? c : a;
+            y1 = b < d ? b : d;
+            y0 = d > b ? d : b;
 
             break;
 
          case PConstants.RADIUS:
 
-            w = Math.abs(c);
-            h = Math.abs(d);
+            w = c < 0.0f ? -c : c;
+            h = d < 0.0f ? -d : d;
 
-            x1 = a - w;
-            x2 = a + w;
-            y1 = b + h;
-            y2 = b - h;
+            x0 = a - w;
+            x1 = a + w;
+            y0 = b + h;
+            y1 = b - h;
 
             break;
 
@@ -4393,30 +4431,30 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          default:
 
-            w = Math.abs(c);
-            h = Math.abs(d);
+            w = c < 0.0f ? -c : c;
+            h = d < 0.0f ? -d : d;
 
-            x1 = a - w * 0.5f;
-            x2 = a + w * 0.5f;
-            y1 = b + h * 0.5f;
-            y2 = b - h * 0.5f;
+            x0 = a - w * 0.5d;
+            x1 = a + w * 0.5d;
+            y0 = b + h * 0.5d;
+            y1 = b - h * 0.5d;
       }
 
-      final double limit = Math.min(w, h) * 0.5d;
+      final double limit = 0.5d * ( w < h ? w : h );
       final double rTld = Utils.clamp(rTl, IUtils.EPSILON_D, limit);
       final double rTrd = Utils.clamp(rTr, IUtils.EPSILON_D, limit);
       final double rBrd = Utils.clamp(rBr, IUtils.EPSILON_D, limit);
       final double rBld = Utils.clamp(rBl, IUtils.EPSILON_D, limit);
 
       this.gp.reset();
-      this.gp.moveTo(x2 - rTrd, y1);
-      this.gp.quadTo(x2, y1, x2, y1 - rTrd);
-      this.gp.lineTo(x2, y2 + rBrd);
-      this.gp.quadTo(x2, y2, x2 - rBrd, y2);
-      this.gp.lineTo(x1 + rBld, y2);
-      this.gp.quadTo(x1, y2, x1, y2 + rBld);
-      this.gp.lineTo(x1, y1 - rTld);
-      this.gp.quadTo(x1, y1, x1 + rTld, y1);
+      this.gp.moveTo(x1 - rTrd, y0);
+      this.gp.quadTo(x1, y0, x1, y0 - rTrd);
+      this.gp.lineTo(x1, y1 + rBrd);
+      this.gp.quadTo(x1, y1, x1 - rBrd, y1);
+      this.gp.lineTo(x0 + rBld, y1);
+      this.gp.quadTo(x0, y1, x0, y1 + rBld);
+      this.gp.lineTo(x0, y0 - rTld);
+      this.gp.quadTo(x0, y0, x0 + rTld, y0);
       this.gp.closePath();
       this.drawShapeSolid(this.gp);
    }
@@ -4646,8 +4684,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
    /**
     * Converts a PImage to a {@link java.awt.Image}. This is an incredibly
-    * slow and inefficient method. It should <em>not</em> be used in a draw
-    * method.
+    * slow and inefficient method. It should <em>not</em> be used in draw.
     *
     * @param pimg the Processing image
     *

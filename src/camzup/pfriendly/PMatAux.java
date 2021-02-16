@@ -192,8 +192,6 @@ public abstract class PMatAux {
    public static PMatrix3D compoundRotateX ( final float c, final float s,
       final PMatrix3D m, final PMatrix3D mInv ) {
 
-      // TODO: Further in-line and optimize?
-
       float t1 = m.m01;
       float t2 = m.m02;
       m.m01 = t1 * c + t2 * s;
@@ -437,8 +435,6 @@ public abstract class PMatAux {
     */
    public static PMatrix3D invRotate ( final Quaternion q,
       final PMatrix3D target ) {
-
-      // TODO: Consolidate into compoundRotate
 
       float w = 1.0f;
       float x = 0.0f;

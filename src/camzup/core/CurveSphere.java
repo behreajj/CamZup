@@ -370,7 +370,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
       // TODO: Test that inclination is correct!
       final float tol = IUtils.HALF_PI - IUtils.EPSILON;
       final float vincl = Utils.clamp(-inclination, -tol, tol);
-      final float inclNorm = 1.0f - vincl * IUtils.ONE_TAU_2;
+      final float inclNorm = vincl * IUtils.ONE_TAU_2;
       final float cosIncl = Utils.scNorm(inclNorm);
       final float sinIncl = Utils.scNorm(inclNorm - 0.25f);
 

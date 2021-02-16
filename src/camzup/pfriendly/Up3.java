@@ -805,6 +805,57 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
+    * Draws a transform origin.
+    *
+    * @param tr         the transform
+    * @param lineLength the line length
+    * @param sw         the stroke weight
+    * @param xColor     the color of the x axis
+    * @param yColor     the color of the y axis
+    * @param zColor     the color of the z axis
+    */
+   public void origin ( final Transform3 tr, final float lineLength,
+      final float sw, final int xColor, final int yColor, final int zColor ) {
+
+      final Vec3 origin = new Vec3();
+      final Vec3 right = new Vec3();
+      final Vec3 forward = new Vec3();
+      final Vec3 up = new Vec3();
+      tr.getLocation(origin);
+      tr.getAxes(right, forward, up);
+
+      final float vl = lineLength > IUtils.EPSILON ? lineLength
+         : IUtils.EPSILON;
+
+      Vec3.mul(right, vl, right);
+      Vec3.add(right, origin, right);
+      Vec3.mul(forward, vl, forward);
+      Vec3.add(forward, origin, forward);
+      Vec3.mul(up, vl, up);
+      Vec3.add(up, origin, up);
+
+      this.disableDepthMask();
+      this.disableDepthTest();
+      this.pushStyle();
+      this.strokeWeight(sw);
+
+      this.stroke(zColor);
+      this.lineImpl(origin.x, origin.y, origin.z, up.x, up.y, up.z);
+
+      this.stroke(yColor);
+      this.lineImpl(origin.x, origin.y, origin.z, forward.x, forward.y,
+         forward.z);
+
+      this.stroke(xColor);
+      this.lineImpl(origin.x, origin.y, origin.z, right.x, right.y, right.z);
+
+      this.popStyle();
+      this.enableDepthTest();
+      this.enableDepthMask();
+
+   }
+
+   /**
     * Boom or pedestal the camera, moving it on its local y axis, up or down.
     * This is done by multiplying the y magnitude by the camera inverse, then
     * adding the local coordinates to both the camera location and look

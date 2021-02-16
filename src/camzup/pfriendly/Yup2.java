@@ -834,13 +834,45 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
 
       this.pushStyle();
       this.strokeWeight(sw);
-
       this.stroke(xColor);
       this.lineImpl(0.0f, 0.0f, 0.0f, vl, 0.0f, 0.0f);
-
       this.stroke(yColor);
       this.lineImpl(0.0f, 0.0f, 0.0f, 0.0f, vl, 0.0f);
+      this.popStyle();
+   }
 
+   /**
+    * Draws a transform origin.
+    *
+    * @param tr         the transform
+    * @param lineLength the line length
+    * @param sw         the stroke weight
+    * @param xColor     the color of the x axis
+    * @param yColor     the color of the y axis
+    */
+   public void origin ( final Transform2 tr, final float lineLength,
+      final float sw, final int xColor, final int yColor ) {
+
+      final Vec2 origin = new Vec2();
+      final Vec2 right = new Vec2();
+      final Vec2 forward = new Vec2();
+      tr.getLocation(origin);
+      tr.getAxes(right, forward);
+
+      final float vl = lineLength > IUtils.EPSILON ? lineLength
+         : IUtils.EPSILON;
+
+      Vec2.mul(right, vl, right);
+      Vec2.add(right, origin, right);
+      Vec2.mul(forward, vl, forward);
+      Vec2.add(forward, origin, forward);
+
+      this.pushStyle();
+      this.strokeWeight(sw);
+      this.stroke(xColor);
+      this.lineImpl(origin.x, origin.y, 0.0f, right.x, right.y, 0.0f);
+      this.stroke(yColor);
+      this.lineImpl(origin.x, origin.y, 0.0f, forward.x, forward.y, 0.0f);
       this.popStyle();
    }
 

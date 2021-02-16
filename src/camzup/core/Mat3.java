@@ -1162,6 +1162,25 @@ public class Mat3 {
    }
 
    /**
+    * Following <a href=
+    * "https://en.wikibooks.org/wiki/GLSL_Programming/Vector_and_Matrix_Operations#Operators">GLSL
+    * convention</a>, multiplies a vector and the transpose of a matrix.<br>
+    * <br>
+    * v<sup>T</sup> M = ( M<sup>T</sup> v )<sup>T</sup>
+    *
+    * @param b      the matrix
+    * @param a      the vector
+    * @param target the output vector
+    *
+    * @return the product
+    */
+   public static Vec3 mul ( final Vec3 a, final Mat3 b, final Vec3 target ) {
+
+      return target.set(b.m00 * a.x + b.m10 * a.y + b.m20 * a.z, b.m01 * a.x
+         + b.m11 * a.y + b.m21 * a.z, b.m02 * a.x + b.m12 * a.y + b.m22 * a.z);
+   }
+
+   /**
     * Multiplies a matrix and a point. The z component of the point is assumed
     * to be 1.0, so the point is impacted by the matrix's translation.
     *

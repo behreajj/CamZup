@@ -510,11 +510,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int[][] face = this.faces[Utils.mod(faceIdx, this.faces.length)];
       final int faceLen = face.length;
       final int j = Utils.mod(edgeIdx, faceLen);
-      final int[] origin = face[j];
-      final int[] dest = face[ ( j + 1 ) % faceLen];
+      final int[] idcsOrigin = face[j];
+      final int[] idcsDest = face[ ( j + 1 ) % faceLen];
 
-      return target.set(this.coords[origin[0]], this.texCoords[origin[1]],
-         this.coords[dest[0]], this.texCoords[dest[1]]);
+      return target.set(this.coords[idcsOrigin[0]],
+         this.texCoords[idcsOrigin[1]], this.coords[idcsDest[0]],
+         this.texCoords[idcsDest[1]]);
    }
 
    /**
@@ -535,11 +536,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          for ( int j = 0; j < faceLen; ++j ) {
 
-            final int[] fOrigin = fs[j];
-            final int[] fDest = fs[ ( j + 1 ) % faceLen];
+            final int[] idcsOrigin = fs[j];
+            final int[] idcsDest = fs[ ( j + 1 ) % faceLen];
 
-            trial.set(this.coords[fOrigin[0]], this.texCoords[fOrigin[1]],
-               this.coords[fDest[0]], this.texCoords[fDest[1]]);
+            trial.set(this.coords[idcsOrigin[0]], this.texCoords[idcsOrigin[1]],
+               this.coords[idcsDest[0]], this.texCoords[idcsDest[1]]);
 
             if ( result.indexOf(trial) < 0 ) {
                result.add(trial);
@@ -684,20 +685,20 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * unchanged; when it is greater than 1.0, the face is subdivided by
     * center.
     *
-    * @param faceIdx the face index
-    * @param fac     the inset amount
+    * @param faceIndex the face index
+    * @param fac       the inset amount
     *
     * @return the new face indices
     */
    @Experimental
-   public Mesh2 insetFace ( final int faceIdx, final float fac ) {
+   public Mesh2 insetFace ( final int faceIndex, final float fac ) {
 
       if ( fac <= 0.0f ) { return this; }
-      if ( fac >= 1.0f ) { return this.subdivFaceFan(faceIdx); }
+      if ( fac >= 1.0f ) { return this.subdivFaceFan(faceIndex); }
 
       /* Validate face index, find face. */
       final int facesLen = this.faces.length;
-      final int i = Utils.mod(faceIdx, facesLen);
+      final int i = Utils.mod(faceIndex, facesLen);
       final int[][] face = this.faces[i];
       final int faceLen = face.length;
 
@@ -1209,6 +1210,146 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          }
       }
 
+      return this;
+   }
+
+   /**
+    * Splits a face into two halves according to intersections with a ray.
+    * Assumes a convex face, and so checks for only one entrance and one exit.
+    * Returns a boolean as to whether the method was successful.
+    *
+    * @param faceIndex the face index
+    * @param ray       the ray
+    *
+    * @return operation success
+    */
+   @Experimental
+   public boolean sectionFace ( final int faceIndex, final Ray2 ray ) {
+
+      /* Validate face index, find face. */
+      final int facesLen = this.faces.length;
+      final int i = Utils.mod(faceIndex, facesLen);
+      final int[][] srcFace = this.faces[i];
+      final int srcFaceLen = srcFace.length;
+
+      final Vec2 v0 = new Vec2();
+      final Vec2 v1 = new Vec2();
+      final Vec2 v2 = new Vec2();
+
+      final Vec2[] vs = new Vec2[2];
+      final Vec2[] vts = new Vec2[2];
+
+      int faceIdxEnter = -1;
+      boolean entryFound = false;
+
+      int faceIdxExit = -1;
+      boolean exitFound = false;
+
+      for ( int j = 0; ( !exitFound || !entryFound ) && j < srcFaceLen; ++j ) {
+         final int k = ( j + 1 ) % srcFaceLen;
+         final int[] idcsOrigin = srcFace[j];
+         final int[] idcsDest = srcFace[k];
+
+         final Vec2 vOrigin = this.coords[idcsOrigin[0]];
+         final Vec2 vDest = this.coords[idcsDest[0]];
+
+         Vec2.sub(ray.origin, vOrigin, v0);
+         Vec2.sub(vDest, vOrigin, v1);
+         Vec2.perpendicularCCW(ray.dir, v2);
+
+         final float dotp = Vec2.dot(v1, v2);
+         // if ( !Utils.approx(dot, 0.0f) ) {
+         // if ( dotp < -IUtils.EPSILON || dotp > IUtils.EPSILON ) {
+         if ( dotp < -0.0f || dotp > 0.0f ) {
+
+            /* Time step from ray to edge. */
+            final float t0 = Vec2.cross(v1, v0) / dotp;
+            if ( t0 >= 0.0f ) {
+
+               /* Time step from origin to destination. */
+               final float t1 = Vec2.dot(v0, v2) / dotp;
+               if ( t1 >= 0.0f && t1 <= 1.0f ) {
+
+                  // QUERY: What about cases where t2 == 0 and t2 == 1, and
+                  // the cut point is equal to an existing point?
+
+                  if ( !entryFound ) {
+
+                     final float u1 = 1.0f - t1;
+
+                     vs[0] = new Vec2(u1 * vOrigin.x + t1 * vDest.x, u1
+                        * vOrigin.y + t1 * vDest.y);
+
+                     final Vec2 vtOrigin = this.texCoords[idcsOrigin[1]];
+                     final Vec2 vtDest = this.texCoords[idcsDest[1]];
+                     vts[0] = new Vec2(u1 * vtOrigin.x + t1 * vtDest.x, u1
+                        * vtOrigin.y + t1 * vtDest.y);
+
+                     faceIdxEnter = j;
+                     entryFound = true;
+
+                  } else if ( !exitFound ) {
+
+                     final float u1 = 1.0f - t1;
+
+                     vs[1] = new Vec2(u1 * vOrigin.x + t1 * vDest.x, u1
+                        * vOrigin.y + t1 * vDest.y);
+
+                     final Vec2 vtOrigin = this.texCoords[idcsOrigin[1]];
+                     final Vec2 vtDest = this.texCoords[idcsDest[1]];
+                     vts[1] = new Vec2(u1 * vtOrigin.x + t1 * vtDest.x, u1
+                        * vtOrigin.y + t1 * vtDest.y);
+
+                     faceIdxExit = j;
+                     exitFound = true;
+
+                  }
+
+               } /* End edge time check. */
+            } /* End ray time check. */
+         } /* End dot product non-zero check. */
+      } /* End face loop. */
+
+      /* A ray must make an entrance and exit intersection for a cut. */
+      if ( entryFound && exitFound ) {
+
+         /* Append coordinates. */
+         final int vEntryCutIdx = this.coords.length;
+         final int vExitCutIdx = vEntryCutIdx + 1;
+         this.coords = Vec2.concat(this.coords, vs);
+
+         /* Append texture coordinates. */
+         final int vtEntryCutIdx = this.texCoords.length;
+         final int vtExitCutIdx = vtEntryCutIdx + 1;
+         this.texCoords = Vec2.concat(this.texCoords, vts);
+
+         /* Splice vertices into the face loop. */
+         this.faces[i] = Mesh.splice(srcFace, faceIdxEnter + 1, 0, new int[][] {
+            { vEntryCutIdx, vtEntryCutIdx } });
+         this.faces[i] = Mesh.splice(this.faces[i], faceIdxExit + 2, 0,
+            new int[][] { { vExitCutIdx, vtExitCutIdx } });
+
+         /* Cut the face at the new vertices. */
+         return super.sectionFace(i, faceIdxEnter + 1, faceIdxExit + 2);
+      }
+
+      return false;
+   }
+
+   /**
+    * Splits a mesh's faces according to entry and exit intersections with a
+    * ray.
+    *
+    * @param ray the ray
+    *
+    * @return this mesh
+    */
+   public Mesh2 sectionFaces ( final Ray2 ray ) {
+
+      /* Don't cache facesLen, it is updated each iteration in loop. */
+      for ( int i = 0; i < this.faces.length; ++i ) {
+         if ( this.sectionFace(i, ray) ) { ++i; }
+      }
       return this;
    }
 
@@ -2972,6 +3113,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             target.faces = new int[][][] { { { 0, 0 }, { 2, 2 }, { 3, 3 } }, { {
                0, 0 }, { 1, 1 }, { 2, 2 } } };
             break;
+
          case QUAD:
          case NGON:
          default:
@@ -3028,6 +3170,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             target.faces = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 } }, { {
                0, 0 }, { 2, 2 }, { 3, 3 } } };
             break;
+
          case QUAD:
          case NGON:
          default:

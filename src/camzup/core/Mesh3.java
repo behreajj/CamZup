@@ -759,12 +759,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int[][] face = this.faces[Utils.mod(faceIndex, this.faces.length)];
       final int faceLen = face.length;
       final int j = Utils.mod(edgeIndex, faceLen);
-      final int[] origin = face[j];
-      final int[] dest = face[ ( j + 1 ) % faceLen];
+      final int[] idcsOrigin = face[j];
+      final int[] idcsDest = face[ ( j + 1 ) % faceLen];
 
-      return target.set(this.coords[origin[0]], this.texCoords[origin[1]],
-         this.normals[origin[2]], this.coords[dest[0]], this.texCoords[dest[1]],
-         this.normals[dest[2]]);
+      return target.set(this.coords[idcsOrigin[0]],
+         this.texCoords[idcsOrigin[1]], this.normals[idcsOrigin[2]],
+         this.coords[idcsDest[0]], this.texCoords[idcsDest[1]],
+         this.normals[idcsDest[2]]);
    }
 
    /**
@@ -785,12 +786,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          for ( int j = 0; j < faceLen; ++j ) {
 
-            final int[] fOrigin = f[j];
-            final int[] fDest = f[ ( j + 1 ) % faceLen];
+            final int[] idcsOrigin = f[j];
+            final int[] idcsDest = f[ ( j + 1 ) % faceLen];
 
-            trial.set(this.coords[fOrigin[0]], this.texCoords[fOrigin[1]],
-               this.normals[fOrigin[2]], this.coords[fDest[0]],
-               this.texCoords[fDest[1]], this.normals[fDest[2]]);
+            trial.set(this.coords[idcsOrigin[0]], this.texCoords[idcsOrigin[1]],
+               this.normals[idcsOrigin[2]], this.coords[idcsDest[0]],
+               this.texCoords[idcsDest[1]], this.normals[idcsDest[2]]);
 
             if ( result.indexOf(trial) < 0 ) {
                result.add(trial);

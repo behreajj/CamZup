@@ -1787,17 +1787,17 @@ public class Color implements Comparable < Color > {
     *
     * @return the XYZ color
     *
-    * @see Color#rgbaToXyzw(float, float, float, float, Vec4)
+    * @see Color#rgbaToXyza(float, float, float, float, Vec4)
     */
-   public static Vec4 rgbaToXyzw ( final Color c, final Vec4 target ) {
+   public static Vec4 rgbaToXyza ( final Color c, final Vec4 target ) {
 
-      return Color.rgbaToXyzw(c.r, c.g, c.b, c.a, target);
+      return Color.rgbaToXyza(c.r, c.g, c.b, c.a, target);
    }
 
    /**
     * Converts a color from RGB to CIE XYZ. References Pharr, Jakob, and
     * Humphreys' <a href="http://www.pbr-book.org/">Physically Based
-    * Rendering</a>, page 328.
+    * Rendering</a>, section 5.2, page 328.
     *
     * @param r      the red component
     * @param g      the green component
@@ -1807,7 +1807,7 @@ public class Color implements Comparable < Color > {
     *
     * @return the XYZ values.
     */
-   public static Vec4 rgbaToXyzw ( final float r, final float g, final float b,
+   public static Vec4 rgbaToXyza ( final float r, final float g, final float b,
       final float a, final Vec4 target ) {
 
       return target.set(0.412453f * r + 0.35758f * g + 0.180423f * b, 0.212671f
@@ -2175,7 +2175,7 @@ public class Color implements Comparable < Color > {
    /**
     * Converts a color from CIE XYZ to RGB. References Pharr, Jakob, and
     * Humphreys' <a href="http://www.pbr-book.org/">Physically Based
-    * Rendering</a>, page 327.
+    * Rendering</a>, section 5.2, page 327.
     *
     * @param x      the x coordinate
     * @param y      the y coordinate
@@ -2185,12 +2185,12 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     */
-   public static Color xyzwToRgba ( final float x, final float y, final float z,
+   public static Color xyzaToRgba ( final float x, final float y, final float z,
       final float a, final Color target ) {
 
-      return target.set(3.240479f * x - 1.53715f * y - 0.498535f * z,
-         -0.969256f * x + 1.875991f * y + 0.041556f * z, 0.055648f * x
-            - 0.204043f * y + 1.057311f * z, a);
+      return target.set(3.240479f * x - 1.53715f * y - 0.498535f * z, -0.969256f
+         * x + 1.875991f * y + 0.041556f * z, 0.055648f * x - 0.204043f * y
+            + 1.057311f * z, a);
    }
 
    /**
@@ -2201,11 +2201,11 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     *
-    * @see Color#xyzwToRgba(float, float, float, float, Color)
+    * @see Color#xyzaToRgba(float, float, float, float, Color)
     */
-   public static Color xyzwToRgba ( final Vec4 v, final Color target ) {
+   public static Color xyzaToRgba ( final Vec4 v, final Color target ) {
 
-      return Color.xyzwToRgba(v.x, v.y, v.z, v.w, target);
+      return Color.xyzaToRgba(v.x, v.y, v.z, v.w, target);
    }
 
    /**

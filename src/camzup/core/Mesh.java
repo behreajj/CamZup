@@ -190,16 +190,17 @@ public abstract class Mesh extends EntityData implements IMesh {
    /**
     * Splits a face into two halves according to an origin and destination
     * vertex. The face must have at least 3 vertices. The destination index
-    * should not equal the origin index or either of its neighbors.
+    * should not equal the origin index or either of its neighbors. Returns a
+    * boolean as to whether the method was successful.
     *
     * @param faceIndex the face index
     * @param origIndex the origin index
     * @param destIndex the destination index
     *
-    * @return this mesh
+    * @return operation success
     */
    @Experimental
-   public Mesh sectionFace ( final int faceIndex, final int origIndex,
+   public boolean sectionFace ( final int faceIndex, final int origIndex,
       final int destIndex ) {
 
       /* Find face. */
@@ -207,9 +208,9 @@ public abstract class Mesh extends EntityData implements IMesh {
       final int i = Utils.mod(faceIndex, facesLen);
       final int[][] srcFace = this.faces[i];
 
-      /* Find edge. */
+      /* Find edges. */
       final int srcFaceLen = srcFace.length;
-      if ( srcFaceLen < 4 ) { return this; }
+      if ( srcFaceLen < 4 ) { return false; }
       int j = Utils.mod(origIndex, srcFaceLen);
       int k = Utils.mod(destIndex, srcFaceLen);
 
@@ -219,7 +220,7 @@ public abstract class Mesh extends EntityData implements IMesh {
        */
       if ( j == k || ( j + 1 ) % srcFaceLen == k || Utils.mod(j - 1, srcFaceLen)
          == k ) {
-         return this;
+         return false;
       }
 
       /* Maintain vertex winding. */
@@ -254,7 +255,7 @@ public abstract class Mesh extends EntityData implements IMesh {
 
       this.faces = Mesh.splice(this.faces, i, 1, new int[][][] { trgFace0,
          trgFace1 });
-      return this;
+      return true;
    }
 
    /**
@@ -555,45 +556,6 @@ public abstract class Mesh extends EntityData implements IMesh {
       final int[][][] result = new int[bLen][][];
       System.arraycopy(arr, 0, result, 0, valIdx);
       System.arraycopy(arr, valIdx + valDel, result, valIdx, bLen - valIdx);
-      return result;
-   }
-
-   /**
-    * Restructures a one-dimensional array of index data to a
-    * three-dimensional array. Assumes that (1) all input faces contain the
-    * same number of sides and therefore that the array's length is divisible
-    * by its stride; and (2) the same index accesses the appropriate element
-    * in arrays of uniform length, e.g. of coordinates, texture coordinates
-    * and normals. The dimensions indicate how many arrays are accessed by the
-    * index (typically 2 for 2D meshes, 3 for 3D meshes).<br>
-    * <br>
-    * Useful when converting from Unity meshes, wherein all faces are
-    * triangles.
-    *
-    * @param indices    the indices array
-    * @param stride     the stride
-    * @param dimensions the number of data per vertex
-    *
-    * @return the indices
-    */
-   public static int[][][] segmentIndices ( final int[] indices,
-      final int stride, final int dimensions ) {
-
-      // TODO: Remove... turn into a fromMeshDirect function?s
-
-      final int vstride = stride < 3 ? 3 : stride;
-      final int vdim = dimensions < 1 ? 1 : dimensions;
-      final int lenGrouped = indices.length / vstride;
-      final int[][][] result = new int[lenGrouped][vstride][vdim];
-
-      for ( int k = 0, i = 0; i < lenGrouped; ++i ) {
-         final int[][] face = result[i];
-         for ( int j = 0; j < vstride; ++j, ++k ) {
-            final int idx = indices[k];
-            final int[] vert = face[j];
-            for ( int m = 0; m < vdim; ++m ) { vert[m] = idx; }
-         }
-      }
       return result;
    }
 

@@ -135,6 +135,18 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Default color for dark checker squares, {@value ZImage#CHECKER_DARK} or
+    * 1.0 / 3.0 of 255.
+    */
+   public static final int CHECKER_DARK = 0xff555555;
+
+   /**
+    * Default color for light checker squares, {@value ZImage#CHECKER_LIGHT}
+    * or 2.0 / 3.0 of 255.
+    */
+   public static final int CHECKER_LIGHT = 0xffaaaaaa;
+
+   /**
     * Default horizontal alignment when creating an image from text:
     * {@link PConstants#LEFT}, {@value PConstants#LEFT}.
     */
@@ -286,9 +298,9 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Renders a checker pattern on an image for diagnostic purposes. Uses a
-    * value 255 / 3 and its complement as colors (<code>#555555</code>,
-    * <code>#aaaaa</code>).
+    * Renders a checker pattern on an image for diagnostic purposes. Uses
+    * {@value ZImage#CHECKER_DARK} and {@value ZImage#CHECKER_LIGHT} as
+    * default colors.
     *
     * @param count  the count
     * @param target the output image
@@ -297,7 +309,8 @@ public class ZImage extends PImage {
     */
    public static PImage checker ( final int count, final PImage target ) {
 
-      return ZImage.checker(0xff555555, 0xffaaaaaa, count, count, target);
+      return ZImage.checker(ZImage.CHECKER_DARK, ZImage.CHECKER_LIGHT, count,
+         count, target);
    }
 
    /**

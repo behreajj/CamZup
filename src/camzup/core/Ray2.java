@@ -1,8 +1,6 @@
 package camzup.core;
 
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.List;
 
 /**
  * A direction that extends from an originating point.
@@ -218,71 +216,6 @@ public class Ray2 {
    }
 
    /**
-    * Finds an intersection between a ray and an edge.
-    *
-    * @param ray  the ray
-    * @param edge the edge
-    *
-    * @return the list of points
-    *
-    * @see Ray2#intersectLineSeg(Ray2, Vec2, Vec2)
-    */
-   public static float intersectEdge ( final Ray2 ray, final Edge2 edge ) {
-
-      return Ray2.intersectLineSeg(ray, edge.origin.coord, edge.dest.coord);
-   }
-
-   /**
-    * Finds an intersection between a ray and an face.
-    *
-    * @param ray  the ray
-    * @param face the face
-    * @param hits the list of points
-    *
-    * @return the list of points
-    */
-   @Experimental
-   public static float intersectFace ( final Ray2 ray, final Face2 face,
-      final List < Vec2 > hits ) {
-
-      // TEST
-
-      final Vec2 v1 = new Vec2();
-      final Vec2 v2 = new Vec2();
-      final Vec2 v3 = new Vec2();
-
-      final Vert2[] vertices = face.vertices;
-      hits.clear();
-      final int len = vertices.length;
-      float minDist = -1.0f;
-      for ( int i = 0; i < len; ++i ) {
-         final Vert2 vert0 = vertices[i];
-         final Vert2 vert1 = vertices[ ( i + 1 ) % len];
-
-         final Vec2 origin = vert0.coord;
-         final Vec2 dest = vert1.coord;
-
-         Vec2.sub(ray.origin, origin, v1);
-         Vec2.sub(dest, origin, v2);
-         Vec2.perpendicularCCW(ray.dir, v3);
-
-         final float dot = Vec2.dot(v2, v3);
-         if ( !Utils.approx(dot, 0.0f, IUtils.EPSILON) ) {
-            final float t1 = Vec2.cross(v2, v1) / dot;
-            final float t2 = Vec2.dot(v1, v3) / dot;
-            if ( t1 >= 0.0f && t2 >= 0.0f && t2 <= 1.0f ) {
-               if ( t1 < minDist ) { minDist = t1; }
-               final Vec2 hit = new Vec2();
-               Ray2.eval(ray, t1, hit);
-               hits.add(hit);
-            }
-         }
-      }
-
-      return minDist;
-   }
-
-   /**
     * Finds an intersection between a ray and a line segment. Returns -1.0 if
     * there is no intersection. Otherwise, returns a value in [0.0, 1.0] .
     *
@@ -290,7 +223,7 @@ public class Ray2 {
     * @param origin the origin
     * @param dest   the destination
     *
-    * @return the list of points
+    * @return the distance
     */
    @Experimental
    public static float intersectLineSeg ( final Ray2 ray, final Vec2 origin,
@@ -298,70 +231,19 @@ public class Ray2 {
 
       // TEST
 
-      final Vec2 v1 = Vec2.sub(ray.origin, origin, new Vec2());
-      final Vec2 v2 = Vec2.sub(dest, origin, new Vec2());
-      final Vec2 v3 = Vec2.perpendicularCCW(ray.dir, new Vec2());
-      final float dot = Vec2.dot(v2, v3);
+      final Vec2 v1 = Vec2.sub(dest, origin, new Vec2());
+      final Vec2 v2 = Vec2.perpendicularCCW(ray.dir, new Vec2());
+      final float dot = Vec2.dot(v1, v2);
       if ( Utils.approx(dot, 0.0f) ) { return -1.0f; }
 
-      final float t1 = Vec2.cross(v2, v1) / dot;
-      final float t2 = Vec2.dot(v1, v3) / dot;
-      if ( t1 >= 0.0f && t2 >= 0.0f && t2 <= 1.0f ) { return t1; }
-
-      return -1.0f;
-   }
-
-   /**
-    * Finds the intersection points between a ray and a mesh.
-    *
-    * @param ray  the ray
-    * @param mesh the mesh
-    * @param hits the list of points
-    *
-    * @return the minimum distance
-    */
-   @Experimental
-   public static float intersectMesh ( final Ray2 ray, final Mesh2 mesh,
-      final ArrayList < Vec2 > hits ) {
-
-      // TEST
-
-      float minDist = -1.0f;
-
-      final Vec2 v1 = new Vec2();
-      final Vec2 v2 = new Vec2();
-      final Vec2 v3 = new Vec2();
-
-      final int[][][] faces = mesh.faces;
-      final Vec2[] vs = mesh.coords;
-
-      final int facesLen = faces.length;
-      for ( int i = 0; i < facesLen; ++i ) {
-         final int[][] face = faces[i];
-         final int faceLen = face.length;
-
-         for ( int j = 0; j < faceLen; ++j ) {
-            final Vec2 origin = vs[face[j][0]];
-            final Vec2 dest = vs[face[ ( j + 1 ) % faceLen][0]];
-
-            Vec2.sub(ray.origin, origin, v1);
-            Vec2.sub(dest, origin, v2);
-            Vec2.perpendicularCCW(ray.dir, v3);
-
-            final float dot = Vec2.dot(v2, v3);
-            if ( !Utils.approx(dot, 0.0f) ) {
-               final float t1 = Vec2.cross(v2, v1) / dot;
-               final float t2 = Vec2.dot(v1, v3) / dot;
-               if ( t1 >= 0.0f && t2 >= 0.0f && t2 <= 1.0f ) {
-                  if ( t1 < minDist ) { minDist = t1; }
-                  final Vec2 hit = Ray2.eval(ray, t1, new Vec2());
-                  hits.add(hit);
-               }
-            }
-         }
+      final Vec2 v0 = Vec2.sub(ray.origin, origin, new Vec2());
+      final float t1 = Vec2.cross(v1, v0) / dot;
+      if ( t1 >= 0.0f ) {
+         final float t2 = Vec2.dot(v0, v2) / dot;
+         if ( t2 >= 0.0f && t2 <= 1.0f ) { return t1; }
       }
 
-      return minDist;
+      return -1.0f;
    }
 
    /**
