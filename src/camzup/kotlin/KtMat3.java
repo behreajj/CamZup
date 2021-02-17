@@ -117,6 +117,36 @@ public class KtMat3 extends Mat3 implements Iterable < KtVec3 > {
    }
 
    /**
+    * Returns a new matrix with the division of the instance by the right
+    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
+    * not mutate the matrix in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the quotient
+    */
+   public KtMat3 div ( final float b ) {
+
+      if ( b != 0.0f ) { return this.times(1.0f / b); }
+      return new KtMat3();
+   }
+
+   /**
+    * Divides the instance by the right operand (mutates the matrix in place).
+    * For interoperability with Kotlin: <code>a /= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void divAssign ( final float b ) {
+
+      if ( b != 0.0f ) {
+         this.times(1.0f / b);
+      } else {
+         this.reset();
+      }
+   }
+
+   /**
     * Gets a column vector from this matrix. For interoperability with Kotlin:
     * <code>b = a[i]</code> .
     *

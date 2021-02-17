@@ -1253,18 +1253,15 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final Vec2 vOrigin = this.coords[idcsOrigin[0]];
          final Vec2 vDest = this.coords[idcsDest[0]];
 
-         Vec2.sub(ray.origin, vOrigin, v0);
          Vec2.sub(vDest, vOrigin, v1);
          Vec2.perpendicularCCW(ray.dir, v2);
 
          final float dotp = Vec2.dot(v1, v2);
-         // if ( !Utils.approx(dot, 0.0f) ) {
-         // if ( dotp < -IUtils.EPSILON || dotp > IUtils.EPSILON ) {
          if ( dotp < -0.0f || dotp > 0.0f ) {
 
             /* Time step from ray to edge. */
-            final float t0 = Vec2.cross(v1, v0) / dotp;
-            if ( t0 >= 0.0f ) {
+            Vec2.sub(ray.origin, vOrigin, v0);
+            if ( Vec2.cross(v1, v0) / dotp >= 0.0f ) {
 
                /* Time step from origin to destination. */
                final float t1 = Vec2.dot(v0, v2) / dotp;
@@ -1273,15 +1270,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                   // QUERY: What about cases where t2 == 0 and t2 == 1, and
                   // the cut point is equal to an existing point?
 
-                  if ( !entryFound ) {
+                  final Vec2 vtOrigin = this.texCoords[idcsOrigin[1]];
+                  final Vec2 vtDest = this.texCoords[idcsDest[1]];
+                  final float u1 = 1.0f - t1;
 
-                     final float u1 = 1.0f - t1;
+                  if ( !entryFound ) {
 
                      vs[0] = new Vec2(u1 * vOrigin.x + t1 * vDest.x, u1
                         * vOrigin.y + t1 * vDest.y);
-
-                     final Vec2 vtOrigin = this.texCoords[idcsOrigin[1]];
-                     final Vec2 vtDest = this.texCoords[idcsDest[1]];
                      vts[0] = new Vec2(u1 * vtOrigin.x + t1 * vtDest.x, u1
                         * vtOrigin.y + t1 * vtDest.y);
 
@@ -1290,13 +1286,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
                   } else if ( !exitFound ) {
 
-                     final float u1 = 1.0f - t1;
-
                      vs[1] = new Vec2(u1 * vOrigin.x + t1 * vDest.x, u1
                         * vOrigin.y + t1 * vDest.y);
-
-                     final Vec2 vtOrigin = this.texCoords[idcsOrigin[1]];
-                     final Vec2 vtDest = this.texCoords[idcsDest[1]];
                      vts[1] = new Vec2(u1 * vtOrigin.x + t1 * vtDest.x, u1
                         * vtOrigin.y + t1 * vtDest.y);
 

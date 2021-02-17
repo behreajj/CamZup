@@ -142,11 +142,11 @@ In OpenGL renderers, texture coordinates default to `NORMAL` [textureMode](https
 
 ### Color
 
-I am not a color scientist, nor do I pretend to be. Color is not the central focus of this library and I'm not interested in debating the "correct" way to mix it. Do not use this library for advanced or photorealistic color work. However, vanilla Processing's approach to color can't not be addressed, so I've tried to introduce enough to allow users to get the job done.
+I am not a color scientist, nor do I pretend to be. Color is not the central focus of this library and I'm not interested in debating the "correct" way to mix it. Do not use this library for advanced or photorealistic color work. However, vanilla Processing's approach to color can't not be addressed, so I've tried to introduce enough to allow users to get the job done, namely an RGBA `Color` and `Gradient` class.
 
 #### Palettes
 
-A `Gradient` class allows you to create color ramps. This includes the following:
+The `Gradient` class allows you to create color ramps. This includes the following:
 
 ![Palette Diagram](data/paletteDiagram.png)
 
@@ -154,11 +154,11 @@ Viridis and Magma are perceptually uniform color palettes used in data visualiza
 
 ### Harmony
 
-The RYB color wheel is included above because popular tutorials on "Color Harmony" (or "Color Theory") often assume a subtractive red-yellow-blue color model, even in the context of digital media. [This](https://youtu.be/YeI6Wqn4I78) tutorial on the subject is one of the better that I've found. Furthermore, [Adobe Color](https://color.adobe.com/create/color-wheel) can assist you in picking harmonies.
+RYB color is included above because popular tutorials on "Color Harmony" (or "Color Theory") often assume a subtractive red-yellow-blue color model, even in the context of digital media. Processing defaults to additive RGB, where cyan (`#00ffff`) is the opposite of red (`#ff0000`), not green. This holds regardless of whether you use the `HSB` or the `RGB` [colorMode](https://processing.org/reference/colorMode_.html).
 
 ![Triadic](data/triadicDiagram.png)
 
-Processing defaults to additive RGB, where cyan (`#00ffff`) is the opposite of red (`#ff0000`), not green. This holds regardless of whether you use the `HSB` or the `RGB` color mode. The RYB wheel's limitations should be apparent from the above images. Oranges are dilated while blues are compressed. Brighter greens, cyans and magentas are not achievable. Blues and greens are desaturated. The hue represented by the RGB and RYB ramps above is periodic, not linear; input values to these ramps should be brought into range with `mod`, not `clamp`. For example, a hue of `-0.125` is the same as `0.875` except that it is a clockwise shift, not a counter-clockwise one.
+This RYB wheel's limitations should be apparent from the above. Oranges are dilated while blues are compressed. Brighter greens, cyans and magentas are not achievable. Blues and greens are desaturated. [This](https://youtu.be/YeI6Wqn4I78) tutorial on harmonies is one of the better I've found. Furthermore, [Adobe Color](https://color.adobe.com/create/color-wheel) can assist you in picking harmonies.
 
 ### Complement Mix Test
 
@@ -166,7 +166,7 @@ A quick heuristic to decide if you are blending colors as you prefer is to take 
 
 ![Mix Diagram](data/mixDiagram.png)
 
-A hue mix can be either counter-clockwise or clockwise. An rgb mix can use linear or smooth step. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
+A hue mix can be either counter-clockwise or clockwise. Keep hue's periodicity in mind when working with HSB; do not use `clamp` to confine a hue to [0.0, 1.0], use `mod1` instead. An rgb mix can use linear or smooth step. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
 
 ```java
 class Foo extends Color.AbstrEasing {
@@ -217,7 +217,7 @@ This generates the file below. A header is followed by a name, the number of col
 GIMP Palette
 Name: My RGB
 Columns: 1
-# https://github.com/behreajj/CamZup
+# Comment.
 255 0 0 FF0000 1
 255 255 0 FFFF00 2
 0 255 0 00FF00 3
@@ -272,7 +272,7 @@ The Wavefront `.obj` file format is human readable; an overview of the particula
 
 Import functionality is tested against [Blender](https://www.blender.org/) exports. For best results, use the following:
 
-![Blender Export](/data/blenderExport.png)
+![Blender Export](data/blenderExport.png)
 
 Limit export to `Selection Only`. Depending on whether the export contains multiple objects, or one object with multiple material groups, separate the relevant category by `g` group headers. The `Transform` should match the axes of the `Zup3` or `Yup3` renderer. `Write Materials` should be unchecked; `Write Normals` and `Include UVs` should be checked.
 
@@ -290,26 +290,26 @@ Here is a brief list of issues with this library and differences which may be un
   
   - Support for high density pixel displays may be lost; I cannot test this at the moment, so please report issues with `image`.
   - The [arc](https://processing.org/reference/arc_.html) implementation has been changed to `mod` the start and stop angles. It no longer responds to [ellipseMode](https://processing.org/reference/ellipseMode_.html); `RADIUS` is the default behavior. When given nonuniform scales, the minimum is taken.
-  - The [PShape](https://processing.org/reference/PShape.html) class has numerous problems stemming from both its implementation and its design. I encourage using `CurveEntity` and `MeshEntity` objects instead.
+  - The [PShape](https://processing.org/reference/PShape.html) class has numerous problems stemming from both its implementation and its design. I encourage using `CurveEntity` and `MeshEntity` objects excepting the case where high poly count `PShapeOpenGL`s are more performant.
   - [shapeMode](https://processing.org/reference/shapeMode_.html) is not supported.
   - [textMode](https://processing.org/reference/textMode_.html) `SHAPE` is not supported. However you can retrieve glyph outlines from a [PFont](https://processing.org/reference/PFont.html) with the `TextShape` class from the `pfriendly` package. (Reminder: the `PFont` needs to be loaded with [createFont](https://processing.org/reference/createFont_.html)).
   
 ### 2D
-  - The `image` function for `PGraphicsJava2D` is ineffective, both in terms of frame rate and appearance. I recommend that an OpenGL renderer be used instead. Alternatively, rescale images to display size and tint them in an external application that specializes in raster image manipulation (e.g., [GIMP](https://www.gimp.org/)). I have made an image function which removes some of the padding around the native renderer's image function in cases where a `PImage` can be converted to an AWT image in `setup`.
+  - The `image` function for `PGraphicsJava2D` is ineffective, both in terms of frame rate and appearance. I recommend that an OpenGL renderer be used instead. Alternatively, rescale images to display size and tint them in a raster image editor. I have made an image function which removes some of the padding around the native renderer's image function in cases where a `PImage` can be converted to a `java.awt.Image` in `setup`.
   - As a consequence of how `image` function works above, dynamic `tint`ing is no longer supported in `YupJ2`.
   - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter.
   - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), `ellipseMode` and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with this library. For that reason, `CENTER` is the default alignment.
-  - OpenGL renderers do not recognize contours in shape entities.
+  - OpenGL renderers do not recognize contours in meshes and curves.
   
 ### 3D
   - Neither 3D primitive, the [sphere](https://processing.org/reference/sphere_.html) nor the [box](https://processing.org/reference/box_.html), are supported; use `MeshEntity`s instead.
   - A `Mesh3` material may not have both a fill and a stroke due to flickering in [perspective](https://processing.org/reference/perspective_.html) cameras.
 
-Many core Processing functions are marked `final`, meaning they cannot be extended and modified by classes in this library; many fields are marked `private` meaning they cannot be accessed and/or mutated. This is the one of the reasons for the differences noted above.
+Many core Processing functions are marked `final`, meaning they cannot be extended and modified by classes in this library; many fields are marked `private` meaning they cannot be accessed and/or mutated. This is the one of the reasons for the limitations above.
 
 ## Programming, Math Conventions
 
-`null`-checking excepted, the goal of this library is not to throw exceptions, but to create. For that reason some liberties have been taken with mathematics.
+`null`-checks excepted, the goal of this library is not to throw exceptions, but to create. For that reason some liberties have been taken with mathematics.
 
 - Component-wise multiplication between two vectors -- mathematically incorrect -- is assumed to be a shorthand for the multiplication of a vector or point with a non-uniform scalar, which would more appropriately be stored in a matrix.
 - `Utils.acos` and `Utils.asin` clamp the input value to the range `-1.0` to `1.0` so as to avoid exceptions.
@@ -350,8 +350,6 @@ For those reasons, the following functions may be confusing if used in Processin
 |          `a[i]` |          `U a.get(int i)` |         |   X   |     X     |   X    |   X   |   X   |
 |          `a[i]` |  `void a.set(int i, U b)` |    X    |       |           |        |       |   X   |
 
-Operations between all the objects above are subject to ambiguity. Do not, for example, assume commutativity for operators (meaning, do not assume that `a * b` will yield a result equal in value to `b * a`). Even when an operator is not supported by `core`, Kotlin may infer a viable alternative, e.g., `+` may coerce both the left and right operand to a collection, then concatenate the two.
-
-Operators should never be assumed to be more efficient than named methods in languages where objects are allowed to override operators. For example, to divide complex numbers, quaternions or matrices, the denominator's inverse has to be calculated. Always read the language's documentation and do not prematurely optimize.
+Operations between all the objects above are subject to ambiguity. Do not, for example, assume commutativity for operators (`a * b` will not always yield a result equal in value to `b * a`). Even when an operator is not supported by `camzup.kotlin`, Kotlin may infer a viable alternative, e.g., `+` may coerce both the left and right operand to a collection, then concatenate the two. Operators should never be assumed to be more efficient than named methods in languages where objects are allowed to override operators. 
 
 There are more differences between Kotlin and Processing-Java than can be discussed here, please see the Kotlin documentation above for more information.

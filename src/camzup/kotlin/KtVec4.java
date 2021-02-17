@@ -3,6 +3,7 @@ package camzup.kotlin;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import camzup.core.Mat4;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -452,6 +453,29 @@ public class KtVec4 extends Vec4 implements Iterable < Float > {
 
    /**
     * Returns a new vector with the product of the instance and the right
+    * operand. Following GLSL convention, multiplies a vector and the
+    * transpose of a matrix.<br>
+    * <br>
+    * v<sup>T</sup> M = ( M<sup>T</sup> v )<sup>T</sup><br>
+    * <br>
+    * For interoperability with Kotlin: <code>a * b</code> . <em>Does not
+    * mutate the vector in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the product
+    */
+   public KtVec4 times ( final Mat4 b ) {
+
+      return new KtVec4(b.m00 * this.x + b.m10 * this.y + b.m20 * this.z + b.m30
+         * this.w, b.m01 * this.x + b.m11 * this.y + b.m21 * this.z + b.m31
+            * this.w, b.m02 * this.x + b.m12 * this.y + b.m22 * this.z + b.m32
+               * this.w, b.m03 * this.x + b.m13 * this.y + b.m23 * this.z
+                  + b.m33 * this.w);
+   }
+
+   /**
+    * Returns a new vector with the product of the instance and the right
     * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
     * not mutate the vector in place</em>.
     *
@@ -476,6 +500,30 @@ public class KtVec4 extends Vec4 implements Iterable < Float > {
       this.y *= b;
       this.z *= b;
       this.w *= b;
+   }
+
+   /**
+    * Multiplies the right operand with the instance (mutates the vector in
+    * place). Following GLSL convention, multiplies a vector and the transpose
+    * of a matrix.<br>
+    * <br>
+    * v<sup>T</sup> M = ( M<sup>T</sup> v )<sup>T</sup><br>
+    * <br>
+    * For interoperability with Kotlin: <code>a *= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void timesAssign ( final Mat4 b ) {
+
+      final float ax = this.x;
+      final float ay = this.y;
+      final float az = this.z;
+      final float aw = this.w;
+
+      this.x = b.m00 * ax + b.m10 * ay + b.m20 * az + b.m30 * aw;
+      this.y = b.m01 * ax + b.m11 * ay + b.m21 * az + b.m31 * aw;
+      this.z = b.m02 * ax + b.m12 * ay + b.m22 * az + b.m32 * aw;
+      this.w = b.m03 * ax + b.m13 * ay + b.m23 * az + b.m33 * aw;
    }
 
    /**

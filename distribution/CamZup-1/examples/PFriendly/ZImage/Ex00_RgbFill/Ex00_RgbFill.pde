@@ -5,13 +5,13 @@ Yup2 graphics;
 PImage img;
 
 void settings() {
-  size(512, 512, Yup2.PATH_STR);
+  size(702, 405, Yup2.PATH_STR);
 }
 
 void setup() {
   frameRate(60.0);
   graphics = (Yup2)getGraphics();
-  img = createImage(512, 512, ARGB);
+  img = createImage(256, 256, ARGB);
   ZImage.rgb(img);
 }
 

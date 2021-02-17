@@ -373,6 +373,22 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * Sets the renderer background to an image.
+    *
+    * @param pimg the image
+    */
+   @Override
+   public void background ( final PImage pimg ) {
+
+      if ( pimg.format != PConstants.RGB && pimg.format != PConstants.ARGB ) {
+         System.err.println("Background image uses an unrecognized format.");
+         this.background(IUp.DEFAULT_BKG_COLOR);
+      } else {
+         this.backgroundImpl(pimg);
+      }
+   }
+
+   /**
     * Calls the parent beginDraw method, then calls the camera. Used so that
     * camera does not have to be called in the PDE to get the default.
     */
@@ -4040,6 +4056,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * in defaultSettings to g2.getComposite() .
        */
       super.backgroundImpl();
+   }
+
+   /**
+    * Sets the renderer background to an image.
+    *
+    * @param pimg the image
+    */
+   @Override
+   protected void backgroundImpl ( final PImage pimg ) {
+
+      ZImage.wrap(pimg, this, 0, 0);
    }
 
    /**

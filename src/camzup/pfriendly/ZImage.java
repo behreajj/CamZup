@@ -1345,8 +1345,8 @@ public class ZImage extends PImage {
 
       source.loadPixels();
       target.loadPixels();
-      ZImage.wrap(source.pixels, source.width, source.height, target.pixels,
-         target.width, target.height, dx, dy);
+      ZImage.wrap(source.pixels, source.pixelWidth, source.pixelHeight,
+         target.pixels, target.pixelWidth, target.pixelHeight, dx, dy);
       target.updatePixels();
       // source.updatePixels();
       return target;

@@ -93,18 +93,6 @@ public class CamZup {
 
    public static Vec4 rgbaToXyza ( final Color c, final Vec4 xyza ) {
 
-      // QUERY CMYK <-> RGB conversion?
-      // Problem is that CMYK with alpha is 5 variables, so no Vec4...
-      // CMYK --> RGB:
-      // r = (1 - c) * (1 - k)
-      // g = (1 - m) * (1 - k)
-      // b = (1 - y) * (1 - k)
-      // RGB --> CMYK:
-      // k = 1 - max(r, g, b)
-      // c = (1 - r - k) / (1 - k)
-      // m = (1 - g - k) / (1 - k)
-      // y = (1 - b - k) / (1 - k)
-
       // Lab, XYZ
       // https://www.shadertoy.com/view/wt23Rt
       // https://github.com/neilpanchal/Chroma

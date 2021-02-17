@@ -3,6 +3,7 @@ package camzup.kotlin;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
+import camzup.core.Mat3;
 import camzup.core.Quaternion;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -420,9 +421,31 @@ public class KtVec3 extends Vec3 implements Iterable < Float > {
    }
 
    /**
+    * Returns a new vector with the product of the instance and the right
+    * operand. Following GLSL convention, multiplies a vector and the
+    * transpose of a matrix.<br>
+    * <br>
+    * v<sup>T</sup> M = ( M<sup>T</sup> v )<sup>T</sup><br>
+    * <br>
+    * For interoperability with Kotlin: <code>a * b</code> . <em>Does not
+    * mutate the vector in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the product
+    */
+   public KtVec3 times ( final Mat3 b ) {
+
+      return new KtVec3(b.m00 * this.x + b.m10 * this.y + b.m20 * this.z, b.m01
+         * this.x + b.m11 * this.y + b.m21 * this.z, b.m02 * this.x + b.m12
+            * this.y + b.m22 * this.z);
+   }
+
+   /**
     * Returns a quaternion the product of the instance promoted to a
-    * quaternion and another quaternion. For interoperability with Kotlin:
-    * <code>a * b</code> . <em>Does not mutate the vector in place</em>.
+    * quaternion and another quaternion. Promotes the vector to a pure
+    * quaternion. For interoperability with Kotlin: <code>a * b</code> .
+    * <em>Does not mutate the vector in place</em>.
     *
     * @param b the quaternion
     *
@@ -463,6 +486,28 @@ public class KtVec3 extends Vec3 implements Iterable < Float > {
       this.x *= b;
       this.y *= b;
       this.z *= b;
+   }
+
+   /**
+    * Multiplies the right operand with the instance (mutates the vector in
+    * place). Following GLSL convention, multiplies a vector and the transpose
+    * of a matrix.<br>
+    * <br>
+    * v<sup>T</sup> M = ( M<sup>T</sup> v )<sup>T</sup><br>
+    * <br>
+    * For interoperability with Kotlin: <code>a *= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void timesAssign ( final Mat3 b ) {
+
+      final float ax = this.x;
+      final float ay = this.y;
+      final float az = this.z;
+
+      this.x = b.m00 * ax + b.m10 * ay + b.m20 * az;
+      this.y = b.m01 * ax + b.m11 * ay + b.m21 * az;
+      this.z = b.m02 * ax + b.m12 * ay + b.m22 * az;
    }
 
    /**

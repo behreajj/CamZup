@@ -253,6 +253,37 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Sets the renderer background to an image.
+    *
+    * @param pimg the image
+    */
+   @Override
+   public void background ( final PImage pimg ) {
+
+      if ( pimg.format != PConstants.RGB && pimg.format != PConstants.ARGB ) {
+         System.err.println("Background image uses an unrecognized format.");
+         this.background(IUp.DEFAULT_BKG_COLOR);
+      } else {
+         this.backgroundImpl(pimg);
+      }
+   }
+
+   /**
+    * Sets the renderer background to an image.
+    *
+    * @param pimg the image
+    */
+   @Override
+   public void backgroundImpl ( final PImage pimg ) {
+
+      /* PGL clearBackground method is not visible. */
+      this.backgroundImpl();
+      ZImage.wrap(pimg, this, 0, 0);
+      this.backgroundA = 1.0f;
+      this.loaded = false;
+   }
+
+   /**
     * Draws a Bezier curve.
     *
     * @param ap0x the first anchor point x

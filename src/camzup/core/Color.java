@@ -919,6 +919,30 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Converts a color from CMYK to RGBA.
+    *
+    * @param cyan    the cyan channel
+    * @param magenta the magenta channel
+    * @param yellow  the yellow channel
+    * @param black   the black channel
+    * @param alpha   the transparency
+    * @param target  the output color
+    *
+    * @return the color
+    *
+    * @see Utils#clamp01(float)
+    */
+   public static Color cmykaToRgba ( final float cyan, final float magenta,
+      final float yellow, final float black, final float alpha,
+      final Color target ) {
+
+      final float j = 1.0f - black;
+      return target.set(Utils.clamp01( ( 1.0f - cyan ) * j), Utils.clamp01(
+         ( 1.0f - magenta ) * j), Utils.clamp01( ( 1.0f - yellow ) * j), Utils
+            .clamp01(alpha));
+   }
+
+   /**
     * Returns the color cyan, ( 0.0, 1.0, 1.0, 1.0 ) .
     *
     * @param target the output color
@@ -1707,6 +1731,47 @@ public class Color implements Comparable < Color > {
    public static Color red ( final Color target ) {
 
       return target.set(1.0f, 0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Converts a color from RGBA to CYMKA. Stores the output in a float array
+    * that is assumed to be 5 elements long.
+    *
+    * @param c      the color
+    * @param target the output array
+    *
+    * @return the array
+    */
+   public static float[] rgbaToCmyka ( final Color c, final float[] target ) {
+
+      return Color.rgbaToCmyka(c.r, c.g, c.b, c.a, target);
+   }
+
+   /**
+    * Converts a color from RGBA to CYMKA. Stores the output in a float array
+    * that is assumed to be 5 elements long.
+    *
+    * @param red    the red channel
+    * @param green  the green channel
+    * @param blue   the blue channel
+    * @param alpha  the transparency
+    * @param target the output array
+    *
+    * @return the array
+    *
+    * @see Utils#clamp01(float)
+    */
+   public static float[] rgbaToCmyka ( final float red, final float green,
+      final float blue, final float alpha, final float[] target ) {
+
+      final float k = 1.0f - Utils.max(red, green, blue);
+      final float j = k != 0.0f ? 1.0f / ( 1.0f - k ) : 0.0f;
+      target[0] = Utils.clamp01( ( 1.0f - red - k ) * j);
+      target[1] = Utils.clamp01( ( 1.0f - green - k ) * j);
+      target[2] = Utils.clamp01( ( 1.0f - blue - k ) * j);
+      target[3] = Utils.clamp01(k);
+      target[4] = Utils.clamp01(alpha);
+      return target;
    }
 
    /**

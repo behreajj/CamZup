@@ -80,8 +80,6 @@ public class KtQuat extends Quaternion {
     * place). For interoperability with Kotlin: <code>a /= b</code> .
     *
     * @param b the right operand
-    *
-    * @see Quaternion#div(Quaternion, float, Quaternion)
     */
    public void divAssign ( final float b ) {
 
@@ -129,8 +127,9 @@ public class KtQuat extends Quaternion {
 
    /**
     * Returns a new quaternion with the subtraction of the right operand from
-    * the instance. For interoperability with Kotlin: <code>a - b</code> .
-    * <em>Does not mutate the quaternion in place</em>.
+    * the instance. Promotes the vector to a pure quaternion. For
+    * interoperability with Kotlin: <code>a - b</code> . <em>Does not mutate
+    * the quaternion in place</em>.
     *
     * @param b the right operand
     *
@@ -167,7 +166,8 @@ public class KtQuat extends Quaternion {
 
    /**
     * Subtracts the right operand from the instance (mutates the quaternion in
-    * place). For interoperability with Kotlin: <code>a -= b</code> .
+    * place). Promotes the vector to a pure quaternion. For interoperability
+    * with Kotlin: <code>a -= b</code> .
     *
     * @param b the right operand
     */
@@ -211,8 +211,9 @@ public class KtQuat extends Quaternion {
 
    /**
     * Returns a new quaternion with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the quaternion in place</em>.
+    * instance. Promotes the vector to a pure quaternion. For interoperability
+    * with Kotlin: <code>a + b</code> . <em>Does not mutate the quaternion in
+    * place</em>.
     *
     * @param b the right operand
     *
@@ -249,7 +250,8 @@ public class KtQuat extends Quaternion {
 
    /**
     * Adds the right operand to the instance (mutates the quaternion in
-    * place). For interoperability with Kotlin: <code>a += b</code> .
+    * place). Promotes the vector to a pure quaternion. For interoperability
+    * with Kotlin: <code>a += b</code> .
     *
     * @param b the right operand
     */
@@ -299,8 +301,9 @@ public class KtQuat extends Quaternion {
 
    /**
     * Returns a new quaternion with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the quaternion in place</em>.
+    * operand. Promotes the vector to a pure quaternion. For interoperability
+    * with Kotlin: <code>a * b</code> . <em>Does not mutate the quaternion in
+    * place</em>.
     *
     * @param b the right operand
     *
@@ -344,7 +347,8 @@ public class KtQuat extends Quaternion {
 
    /**
     * Multiplies the right operand with the instance (mutates the quaternion
-    * in place). For interoperability with Kotlin: <code>a *= b</code> .
+    * in place). Promotes the vector to a pure quaternion. For
+    * interoperability with Kotlin: <code>a *= b</code> .
     *
     * @param b the right operand
     */
