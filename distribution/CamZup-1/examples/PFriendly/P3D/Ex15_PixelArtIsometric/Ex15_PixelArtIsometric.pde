@@ -74,10 +74,10 @@ void setup() {
   Vec3 scale3 = new Vec3();
   for (int k = 0, i = 0; i < cubecount; ++i) {
     float ifac = i * toPrc;
-    ifac = -1.0 + ifac * 2.0;
+    ifac = ifac + ifac - 1.0;
     for (int j = 0; j < cubecount; ++j, ++k) {
       float jfac = j * toPrc;
-      jfac = -1.0 + jfac * 2.0;
+      jfac = jfac + jfac - 1.0;
 
       // Create cube from reference.
       Mesh3 cube = new Mesh3(source);
@@ -148,11 +148,11 @@ void draw() {
   buff.ellipse(wh - 18, hh - 21, 16, 16 * correct);
 
   buff.fill(#202020);
-  buff.text("Beware the aspect ratio.",
+  buff.text("Press mouse button for 1:1.",
     3 - wh, hh - 3);
 
   buff.fill(#ffffff);
-  buff.text("Beware the aspect ratio.",
+  buff.text("Press mouse button for 1:1.",
     2 - wh, hh - 2);
 
   buff.endHud();

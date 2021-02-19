@@ -147,3 +147,4 @@ versor
 helix
 loxodromes
 concave
+rhombus

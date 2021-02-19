@@ -2776,12 +2776,13 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final int vRings = rings < 1 ? 1 : rings;
       final float vRad = Utils.max(IUtils.EPSILON, cellRadius);
+      final float vMrg = Utils.clamp(margin, 0.0f, vRad - IUtils.EPSILON);
 
       final float extent = IUtils.SQRT_3 * vRad;
       final float halfExt = extent * 0.5f;
 
       final float rad15 = vRad * 1.5f;
-      final float padRad = Utils.max(IUtils.EPSILON, vRad - margin);
+      final float padRad = vRad - vMrg;
       final float halfRad = padRad * 0.5f;
       final float radrt32 = padRad * IUtils.SQRT_3_2;
 
@@ -2871,6 +2872,141 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public static Mesh2 gridHex ( final int rings, final Mesh2 target ) {
 
       return Mesh2.gridHex(rings, 0.5f, target);
+   }
+
+   /**
+    * Generates a grid of triangles arranged as a rhombus. The left half of
+    * the rhombus is a mirror of the right. For a given count <em>c</em>, the
+    * number of faces is 2 <em>c</em><sup>2</sup>.
+    *
+    * @param count      the count
+    * @param cellRadius the cell radius
+    * @param margin     the cell margin
+    * @param target     the output mesh
+    *
+    * @return the triangle grid
+    */
+   public static Mesh2 gridTri ( final int count, final float cellRadius,
+      final float margin, final Mesh2 target ) {
+
+      target.name = "Grid.Triangle";
+
+      final int vCount = count < 1 ? 1 : count;
+      final int fsLen = vCount * vCount * 2;
+      final int vsLen = fsLen * 3;
+
+      final Vec2[] vs = target.coords = Vec2.resize(target.coords, vsLen);
+      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
+         vsLen);
+      final int[][][] fs = new int[fsLen][3][2];
+
+      final float vRad = Utils.max(IUtils.EPSILON, cellRadius);
+      final float vMrg = Utils.clamp(margin, 0.0f, vRad - IUtils.EPSILON);
+
+      final float padRad = vRad - vMrg;
+      final float padRadHalf = padRad * 0.5f;
+      final float yOffPad = IUtils.SQRT_3_2 * padRad;
+      final float vRadn15 = -1.5f * vRad;
+      final float yOff = IUtils.SQRT_3_2 * vRad;
+      final float halfMrg = vMrg * 0.5f;
+      final float centering = vRad * 0.5f + vRad * 1.5f * ( vCount - 1 );
+
+      // Fudge.
+      final float tou = 0.4330127f / centering;
+
+      for ( int m = 0, k = 0, i = 0; i < vCount; ++i ) {
+         final int imod = ( i + 1 ) % 2;
+         final float vx = centering + i * vRadn15;
+         final float vxn25 = vx - padRadHalf;
+         final float vxp5 = vx + padRad;
+         final float vxp5mrg = halfMrg + vxp5;
+         final float vxn25mrg = halfMrg + vxn25;
+
+         for ( int j = -i; j <= i; ++j, k += 2, m += 6 ) {
+            final float vy = j * yOff;
+
+            /* Right is default, left is mirror. */
+            final Vec2 aRight = vs[m];
+            final Vec2 bRight = vs[m + 1];
+            final Vec2 cRight = vs[m + 2];
+
+            final Vec2 aLeft = vs[m + 3];
+            final Vec2 bLeft = vs[m + 4];
+            final Vec2 cLeft = vs[m + 5];
+
+            /* Every other iteration of j, flip triangle. */
+            if ( imod == ( j < 0 ? -j : j ) % 2 ) {
+               aRight.set(vxn25mrg, vy);
+               bRight.set(vxp5mrg, vy - yOffPad);
+               cRight.set(vxp5mrg, vy + yOffPad);
+
+               aLeft.set(-vxn25mrg, vy);
+               bLeft.set(-vxp5mrg, vy + yOffPad);
+               cLeft.set(-vxp5mrg, vy - yOffPad);
+            } else {
+               aRight.set(vxp5, vy);
+               bRight.set(vxn25, vy + yOffPad);
+               cRight.set(vxn25, vy - yOffPad);
+
+               aLeft.set(-vxp5, vy);
+               bLeft.set(-vxn25, vy - yOffPad);
+               cLeft.set(-vxn25, vy + yOffPad);
+            }
+
+            vts[m].set(0.5f + aRight.x * tou, 0.5f - aRight.y * tou);
+            vts[m + 1].set(0.5f + bRight.x * tou, 0.5f - bRight.y * tou);
+            vts[m + 2].set(0.5f + cRight.x * tou, 0.5f - cRight.y * tou);
+
+            vts[m + 3].set(0.5f + aLeft.x * tou, 0.5f - aLeft.y * tou);
+            vts[m + 4].set(0.5f + bLeft.x * tou, 0.5f - bLeft.y * tou);
+            vts[m + 5].set(0.5f + cLeft.x * tou, 0.5f - cLeft.y * tou);
+
+            final int[][] fRight = fs[k];
+            fRight[0][0] = fRight[0][1] = m;
+            fRight[1][0] = fRight[1][1] = m + 1;
+            fRight[2][0] = fRight[2][1] = m + 2;
+
+            final int[][] fLeft = fs[k + 1];
+            fLeft[0][0] = fLeft[0][1] = m + 3;
+            fLeft[1][0] = fLeft[1][1] = m + 4;
+            fLeft[2][0] = fLeft[2][1] = m + 5;
+         }
+      }
+
+      target.faces = fs;
+      return target;
+   }
+
+   /**
+    * Generates a grid of triangles arranged as a rhombus. The left half of
+    * the rhombus is a mirror of the right. For a given count <em>c</em>, the
+    * number of faces is 2 <em>c</em><sup>2</sup>.
+    *
+    * @param count      the count
+    * @param cellRadius the cell radius
+    * @param target     the output mesh
+    *
+    * @return the triangle grid
+    */
+   public static Mesh2 gridTri ( final int count, final float cellRadius,
+      final Mesh2 target ) {
+
+      return Mesh2.gridTri(count, cellRadius, 0.0f, target);
+   }
+
+   /**
+    * Generates a grid of triangles arranged as a rhombus. The left half of
+    * the rhombus is a mirror of the right. For a given count <em>c</em>, the
+    * number of faces is 2 <em>c</em><sup>2</sup>.
+    *
+    * @param count  the count
+    * @param target the output mesh
+    *
+    * @return the triangle grid
+    */
+   public static Mesh2 gridTri ( final int count, final Mesh2 target ) {
+
+      return Mesh2.gridTri(count, 0.5f, target);
    }
 
    /**
