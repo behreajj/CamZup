@@ -2,7 +2,6 @@ package camzup;
 
 import camzup.core.Color;
 import camzup.core.Utils;
-import camzup.core.Vec4;
 
 import processing.core.PApplet;
 
@@ -89,14 +88,6 @@ public class CamZup {
       // https://www.wikiwand.com/en/Alluvial_diagram
       // https://digitalsplashmedia.com/2014/06/
       // visualizing-categorical-data-as-flows-with-alluvial-diagrams/
-   }
-
-   public static Vec4 rgbaToXyza ( final Color c, final Vec4 xyza ) {
-
-      // Lab, XYZ
-      // https://www.shadertoy.com/view/wt23Rt
-      // https://github.com/neilpanchal/Chroma
-      return xyza;
    }
 
    /**

@@ -1,26 +1,24 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Yup2 graphics2;
+YupJ2 graphics;
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
-
-  // Recommended to assist with jittering in AWT:
+  size(720, 405, YupJ2.PATH_STR);
   smooth(8);
   pixelDensity(displayDensity());
 }
 
 void setup() {
-  graphics2 = (Yup2)getGraphics();
   frameRate(60.0);
+  graphics = (YupJ2)getGraphics();
 }
 
-void draw() {
+void draw() {    
   surface.setTitle(Utils.toFixed(frameRate, 1));
 
-  graphics2.background();
-  graphics2.origin();
+  graphics.background();
+  graphics.origin();
 
   pushMatrix();
   translate(125.0, 100.0);

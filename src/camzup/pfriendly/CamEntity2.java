@@ -15,7 +15,7 @@ import processing.opengl.PGraphicsOpenGL;
  * An entity which updates a renderer's camera according to its transform.
  */
 @Experimental
-public class CamEntity2 extends Entity2 implements ICamEntity {
+public class CamEntity2 extends Entity2 {
 
    /**
     * The default constructor.

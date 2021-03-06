@@ -2370,12 +2370,12 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the result
     *
-    * @see Utils#pow(float, float)
+    * @see Math#pow(double, double)
     */
    public static Vec3 pow ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
-      return target.set(Utils.pow(a.x, b.x), Utils.pow(a.y, b.y), Utils.pow(a.z,
-         b.z));
+      return target.set(( float ) Math.pow(a.x, b.x), ( float ) Math.pow(a.y,
+         b.y), ( float ) Math.pow(a.z, b.z));
    }
 
    /**

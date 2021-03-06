@@ -1736,12 +1736,12 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the result
     *
-    * @see Utils#pow(float, float)
+    * @see Math#pow(double, double)
     */
    public static Vec4 pow ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
-      return target.set(Utils.pow(a.x, b.x), Utils.pow(a.y, b.y), Utils.pow(a.z,
-         b.z), Utils.pow(a.w, b.w));
+      return target.set(( float ) Math.pow(a.x, b.x), ( float ) Math.pow(a.y,
+         b.y), ( float ) Math.pow(a.z, b.z), ( float ) Math.pow(a.w, b.w));
    }
 
    /**

@@ -2154,11 +2154,12 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the result
     *
-    * @see Utils#pow(float, float)
+    * @see Math#pow(double, double)
     */
    public static Vec2 pow ( final Vec2 a, final Vec2 b, final Vec2 target ) {
 
-      return target.set(Utils.pow(a.x, b.x), Utils.pow(a.y, b.y));
+      return target.set(( float ) Math.pow(a.x, b.x), ( float ) Math.pow(a.y,
+         b.y));
    }
 
    /**

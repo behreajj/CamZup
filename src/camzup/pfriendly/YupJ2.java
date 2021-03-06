@@ -1913,15 +1913,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final int uBr, final int vBr, final int x0, final int y0, final int x1,
       final int y1, final int pd ) {
 
-      /* @formatter:off */
+      /* Transpose vTl and vBr. */
       final int vpd = pd < 1 ? 1 : pd;
-      this.g2.drawImage(
-         imgNtv,
-         x0, y0, x1, y1,
-         uTl * vpd, vBr * vpd,
-         uBr * vpd, vTl * vpd,
-         null, null);
-      /* @formatter:on */
+      this.g2.drawImage(imgNtv, x0, y0, x1, y1, uTl * vpd, vBr * vpd, uBr * vpd,
+         vTl * vpd, null, null);
    }
 
    /**

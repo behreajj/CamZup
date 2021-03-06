@@ -271,10 +271,10 @@ public class ZImage extends PImage {
       final int len = px.length;
 
       final int wch = w / vcols;
-      final int hch = h / vrows;
+      final int hchw = w * h / vrows;
 
       for ( int i = 0; i < len; ++i ) {
-         px[i] = ( i % w / wch + i / w / hch ) % 2 == 0 ? a : b;
+         px[i] = ( i % w / wch + i / hchw ) % 2 == 0 ? a : b;
       }
 
       target.updatePixels();
@@ -315,7 +315,8 @@ public class ZImage extends PImage {
 
    /**
     * Generates a conic gradient, where the factor rotates on the z axis
-    * around an origin point.
+    * around an origin point. Best used with square images; for other aspect
+    * ratios, the origin should be adjusted accordingly.
     *
     * @param xOrigin the origin x coordinate
     * @param yOrigin the origin y coordinate
@@ -331,16 +332,32 @@ public class ZImage extends PImage {
       target.loadPixels();
 
       final int w = target.width;
+      final int h = target.height;
       final int[] pixels = target.pixels;
       final int len = pixels.length;
 
-      final float hInv = 1.0f / ( target.height - 1.0f );
-      final float wInv = 1.0f / ( w - 1.0f );
+      final float shortEdge = w < h ? w : h;
+      final float longEdge = w > h ? w : h;
+
+      final float hInv = 1.0f / ( h - 1.0f );
+
+      float wInv;
+      final float xo = xOrigin;
+      float aspect;
+      if ( shortEdge == longEdge ) {
+         wInv = 1.0f / ( w - 1.0f );
+      } else if ( w == shortEdge ) {
+         aspect = shortEdge / longEdge;
+         wInv = aspect / ( w - 1.0f );
+      } else {
+         aspect = longEdge / shortEdge;
+         wInv = aspect / ( w - 1.0f );
+      }
 
       for ( int i = 0; i < len; ++i ) {
-         final float yn = hInv * ( i / w );
          final float xn = wInv * ( i % w );
-         pixels[i] = Gradient.eval(grd, Sdf.conic(xn + xn - xOrigin - 1.0f, 1.0f
+         final float yn = hInv * ( i / w );
+         pixels[i] = Gradient.eval(grd, Sdf.conic(xn + xn - xo - 1.0f, 1.0f
             - ( yn + yn + yOrigin ), radians));
       }
 
@@ -731,7 +748,7 @@ public class ZImage extends PImage {
          : 0x00ffffff;
 
       /* Carriage returns, or line breaks, have 3 variants: \r, \n, or \r\n . */
-      final Pattern patternLnBr = Pattern.compile("[\r\n|\n|\r]+");
+      final Pattern patternLnBr = Pattern.compile("[\n|\r]+");
       final String[] linesSplit = patternLnBr.split(vTxt, 0);
       final int lineCount = linesSplit.length;
 
@@ -1282,15 +1299,14 @@ public class ZImage extends PImage {
     * @param hSource source image height
     * @param target  target pixel array
     * @param wTarget target image width
-    * @param hTarget target image height
     * @param dx      horizontal pixel offset
     * @param dy      vertical pixel offset
     *
     * @return the target pixels
     */
    public static int[] wrap ( final int[] source, final int wSource,
-      final int hSource, final int[] target, final int wTarget,
-      final int hTarget, final int dx, final int dy ) {
+      final int hSource, final int[] target, final int wTarget, final int dx,
+      final int dy ) {
 
       if ( wSource < 1 || hSource < 1 ) { return target; }
 
@@ -1346,7 +1362,7 @@ public class ZImage extends PImage {
       source.loadPixels();
       target.loadPixels();
       ZImage.wrap(source.pixels, source.pixelWidth, source.pixelHeight,
-         target.pixels, target.pixelWidth, target.pixelHeight, dx, dy);
+         target.pixels, target.pixelWidth, dx, dy);
       target.updatePixels();
       // source.updatePixels();
       return target;

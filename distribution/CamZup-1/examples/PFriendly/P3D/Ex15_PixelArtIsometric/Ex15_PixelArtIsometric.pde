@@ -47,7 +47,7 @@ void setup() {
   // The SNES's internal resolution is 256 x 224,
   // an 8:7 aspect ratio, 1.14285.
   buff = (Zup3)createGraphics(256, 224, Zup3.PATH_STR);
-  buff.smooth(0);
+  //buff.smooth(0);
   buff.disableMipMaps();
   buff.textureSampling(TextureSampling.POINT);
   buffar = buff.aspect();

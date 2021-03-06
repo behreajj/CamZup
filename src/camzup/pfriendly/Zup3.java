@@ -419,10 +419,6 @@ public class Zup3 extends Up3 {
 
          // this.lightNormal[num3] = mInv * nx;
          // this.lightNormal[num3 + 1] = mInv * ny;
-         // this.lightNormal[num3 + 2] = mInv * -nz;
-
-         // this.lightNormal[num3] = mInv * nx;
-         // this.lightNormal[num3 + 1] = mInv * ny;
          // this.lightNormal[num3 + 2] = mInv * nz;
 
          this.lightNormal[num3] = mInv * -nx;

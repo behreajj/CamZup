@@ -39,9 +39,12 @@ Cam Z-Up is tested with Processing version [4.0 alpha](https://github.com/proces
 
 ## Getting Started
 
+For more complete information, please refer to the `docs` included with this library.
+
 ### Installation
 
 To install this library from Github, 
+
   1. Click on the green `Code` button in the upper right corner of this repository. 
   2. Select `Download ZIP` to start the download in your browser.
   3. Unzip the download.
@@ -120,7 +123,7 @@ Flipping the y axis changes the default rotational direction of a positive angle
 
 ![Polar Coordinates](data/polarDiagram.png)
 
-This can be crucial when working with signed angles, such as those returned from `Vec2.headingSigned` or `Utils.atan2`, when it's important to understand the relationship between polar coordinates and the four quadrants of the Cartesian coordinate plane.
+This can be crucial when working with signed angles, such as those returned from `Vec2.headingSigned` or `Utils.atan2`, as it's important to understand the relationship between polar coordinates and the four quadrants of the Cartesian coordinate plane.
 
 ![Quadrants](data/quadrantsDiagram.png)
 
@@ -142,7 +145,7 @@ In OpenGL renderers, texture coordinates default to `NORMAL` [textureMode](https
 
 ### Color
 
-I am not a color scientist, nor do I pretend to be. Color is not the central focus of this library and I'm not interested in debating the "correct" way to mix it. Do not use this library for advanced or photorealistic color work. However, vanilla Processing's approach to color can't not be addressed, so I've tried to introduce enough to allow users to get the job done, namely an RGBA `Color` and `Gradient` class.
+I am not a color scientist, nor do I pretend to be. Color is not the central focus of this library and I'm not interested in debating the "correct" way to mix it. Do not use this library for advanced or photorealistic color work. However, vanilla Processing's approach to color can't not be addressed, so I've introduced enough to allow users to get the job done, namely an RGBA `Color` and `Gradient` class.
 
 #### Palettes
 

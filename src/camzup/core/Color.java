@@ -2471,7 +2471,6 @@ public class Color implements Comparable < Color > {
        * @return the comparison
        *
        * @see Color#rgbaToHsba(Color, Vec4)
-       * @see Float#compare(float, float)
        */
       @Override
       public int compare ( final Color a, final Color b ) {
@@ -2529,7 +2528,6 @@ public class Color implements Comparable < Color > {
        * @return the comparison
        *
        * @see Color#rgbaToHsba(Color, Vec4)
-       * @see Float#compare(float, float)
        */
       @Override
       public int compare ( final Color a, final Color b ) {
@@ -2557,7 +2555,6 @@ public class Color implements Comparable < Color > {
        * @return the comparison
        *
        * @see Color#rgbaToHsba(Color, Vec4)
-       * @see Float#compare(float, float)
        */
       @Override
       public int compare ( final Color a, final Color b ) {

@@ -2909,11 +2909,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final float vRadn15 = -1.5f * vRad;
       final float yOff = IUtils.SQRT_3_2 * vRad;
       final float halfMrg = vMrg * 0.5f;
-      final float centering = vRad * 0.5f + vRad * 1.5f * ( vCount - 1 );
+      final float centering = vRad * 0.5f - vRadn15 * ( vCount - 1 );
 
-      // Fudge.
+      // TODO: This is a magic number. It doesn't work entirely.
       final float tou = 0.4330127f / centering;
 
+      // final float iToFac = 1.0f / (vCount - 1.0f);
       for ( int m = 0, k = 0, i = 0; i < vCount; ++i ) {
          final int imod = ( i + 1 ) % 2;
          final float vx = centering + i * vRadn15;
@@ -2922,8 +2923,13 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final float vxp5mrg = halfMrg + vxp5;
          final float vxn25mrg = halfMrg + vxn25;
 
+         // final float ifac = i * iToFac;
+         // final float jToFac = i != 0 ? 1.0f / (i + i) : 1.0f;
          for ( int j = -i; j <= i; ++j, k += 2, m += 6 ) {
+            // final float jfac = (j + i) * jToFac;
             final float vy = j * yOff;
+            final float vyBtm = vy - yOffPad;
+            final float vyTop = vy + yOffPad;
 
             /* Right is default, left is mirror. */
             final Vec2 aRight = vs[m];
@@ -2934,32 +2940,40 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             final Vec2 bLeft = vs[m + 4];
             final Vec2 cLeft = vs[m + 5];
 
+            final Vec2 atRight = vts[m];
+            final Vec2 btRight = vts[m + 1];
+            final Vec2 ctRight = vts[m + 2];
+
+            final Vec2 atLeft = vts[m + 3];
+            final Vec2 btLeft = vts[m + 4];
+            final Vec2 ctLeft = vts[m + 5];
+
             /* Every other iteration of j, flip triangle. */
             if ( imod == ( j < 0 ? -j : j ) % 2 ) {
                aRight.set(vxn25mrg, vy);
-               bRight.set(vxp5mrg, vy - yOffPad);
-               cRight.set(vxp5mrg, vy + yOffPad);
+               bRight.set(vxp5mrg, vyBtm);
+               cRight.set(vxp5mrg, vyTop);
 
                aLeft.set(-vxn25mrg, vy);
-               bLeft.set(-vxp5mrg, vy + yOffPad);
-               cLeft.set(-vxp5mrg, vy - yOffPad);
+               bLeft.set(-vxp5mrg, vyTop);
+               cLeft.set(-vxp5mrg, vyBtm);
             } else {
                aRight.set(vxp5, vy);
-               bRight.set(vxn25, vy + yOffPad);
-               cRight.set(vxn25, vy - yOffPad);
+               bRight.set(vxn25, vyTop);
+               cRight.set(vxn25, vyBtm);
 
                aLeft.set(-vxp5, vy);
-               bLeft.set(-vxn25, vy - yOffPad);
-               cLeft.set(-vxn25, vy + yOffPad);
+               bLeft.set(-vxn25, vyBtm);
+               cLeft.set(-vxn25, vyTop);
             }
 
-            vts[m].set(0.5f + aRight.x * tou, 0.5f - aRight.y * tou);
-            vts[m + 1].set(0.5f + bRight.x * tou, 0.5f - bRight.y * tou);
-            vts[m + 2].set(0.5f + cRight.x * tou, 0.5f - cRight.y * tou);
+            atRight.set(0.5f + aRight.x * tou, 0.5f - aRight.y * tou);
+            btRight.set(0.5f + bRight.x * tou, 0.5f - bRight.y * tou);
+            ctRight.set(0.5f + cRight.x * tou, 0.5f - cRight.y * tou);
 
-            vts[m + 3].set(0.5f + aLeft.x * tou, 0.5f - aLeft.y * tou);
-            vts[m + 4].set(0.5f + bLeft.x * tou, 0.5f - bLeft.y * tou);
-            vts[m + 5].set(0.5f + cLeft.x * tou, 0.5f - cLeft.y * tou);
+            atLeft.set(0.5f + aLeft.x * tou, 0.5f - aLeft.y * tou);
+            btLeft.set(0.5f + bLeft.x * tou, 0.5f - bLeft.y * tou);
+            ctLeft.set(0.5f + cLeft.x * tou, 0.5f - cLeft.y * tou);
 
             final int[][] fRight = fs[k];
             fRight[0][0] = fRight[0][1] = m;
@@ -3191,120 +3205,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       /* Update faces and return. */
       target.faces = fsTrg;
-      return target;
-   }
-
-   /**
-    * Creates a <a href=
-    * "https://en.wikipedia.org/wiki/Penrose_tiling#Kite_and_dart_tiling_(P2)">Penrose
-    * dart</a>. Defaults to an {@link PolyType#NGON}.
-    *
-    * @param target the output mesh
-    *
-    * @return the dart
-    */
-   public static Mesh2 penroseDart ( final Mesh2 target ) {
-
-      return Mesh2.penroseDart(Mesh2.DEFAULT_POLY_TYPE, target);
-   }
-
-   /**
-    * Creates a <a href=
-    * "https://en.wikipedia.org/wiki/Penrose_tiling#Kite_and_dart_tiling_(P2)">Penrose
-    * dart</a>, a concave quadrilateral with interior angles of 36, 72 and 216
-    * degrees (\u03c0 / 5.0, \u03c4 / 5.0 and 3.0 \u03c4 / 5.0).
-    *
-    * @param poly   the poly type
-    * @param target the output mesh
-    *
-    * @return the dart
-    */
-   public static Mesh2 penroseDart ( final PolyType poly, final Mesh2 target ) {
-
-      target.name = "Dart";
-
-      target.coords = Vec2.resize(target.coords, 4);
-      target.coords[0].set(0.11803399f, 0.0f);
-      target.coords[1].set(0.0f, -0.36327127f);
-      target.coords[2].set(0.5f, 0.0f);
-      target.coords[3].set(0.0f, 0.36327127f);
-
-      target.texCoords = Vec2.resize(target.texCoords, 4);
-      target.texCoords[0].set(0.618034f, 0.5f);
-      target.texCoords[1].set(0.5f, 0.863271f);
-      target.texCoords[2].set(1.0f, 0.5f);
-      target.texCoords[3].set(0.5f, 0.136729f);
-
-      switch ( poly ) {
-         case TRI:
-            target.faces = new int[][][] { { { 0, 0 }, { 2, 2 }, { 3, 3 } }, { {
-               0, 0 }, { 1, 1 }, { 2, 2 } } };
-            break;
-
-         case QUAD:
-         case NGON:
-         default:
-            target.faces = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3,
-               3 } } };
-      }
-
-      return target;
-   }
-
-   /**
-    * Creates a <a href=
-    * "https://en.wikipedia.org/wiki/Penrose_tiling#Kite_and_dart_tiling_(P2)">Penrose
-    * kite</a>.
-    *
-    * @param target the output mesh
-    *
-    * @return the kite
-    */
-   public static Mesh2 penroseKite ( final Mesh2 target ) {
-
-      return Mesh2.penroseKite(Mesh2.DEFAULT_POLY_TYPE, target);
-   }
-
-   /**
-    * Creates a <a href=
-    * "https://en.wikipedia.org/wiki/Penrose_tiling#Kite_and_dart_tiling_(P2)">Penrose
-    * kite</a>, a convex quadrilateral with interior angles of 72 and 144
-    * degrees (\u03c4 / 5.0 and 2.0 \u03c4 / 5.0 ).
-    *
-    * @param poly   the poly type
-    * @param target the output mesh
-    *
-    * @return the kite
-    */
-   public static Mesh2 penroseKite ( final PolyType poly, final Mesh2 target ) {
-
-      target.name = "Kite";
-
-      target.coords = Vec2.resize(target.coords, 4);
-      target.coords[0].set(0.11803399f, 0.0f);
-      target.coords[1].set(0.0f, 0.36327127f);
-      target.coords[2].set(-0.5f, 0.0f);
-      target.coords[3].set(0.0f, -0.36327127f);
-
-      target.texCoords = Vec2.resize(target.texCoords, 4);
-      target.texCoords[0].set(0.618034f, 0.5f);
-      target.texCoords[1].set(0.5f, 0.136729f);
-      target.texCoords[2].set(0.0f, 0.5f);
-      target.texCoords[3].set(0.5f, 0.863271f);
-
-      switch ( poly ) {
-         case TRI:
-            target.faces = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 } }, { {
-               0, 0 }, { 2, 2 }, { 3, 3 } } };
-            break;
-
-         case QUAD:
-         case NGON:
-         default:
-            target.faces = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3,
-               3 } } };
-      }
-
       return target;
    }
 
