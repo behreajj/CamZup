@@ -201,7 +201,7 @@ public interface IUp {
    float DEFAULT_ASPECT = 1.0f;
 
    /**
-    * An off-white background color, (1.0, 0.9686, 0.8352) in RGB.
+    * An off-white background color, (1.0, 0.9686, 0.8352, 1.0) in RGBA.
     */
    int DEFAULT_BKG_COLOR = 0xfffff7d5;
 
@@ -223,7 +223,7 @@ public interface IUp {
    float DEFAULT_FAR_CLIP = 1500.0f;
 
    /**
-    * Default fill color, a light blue, (0.6039, 0.8470, 0.8862) in RGB.
+    * Default fill color, a light blue, (0.6039, 0.8470, 0.8862, 1.0) in RGBA.
     */
    int DEFAULT_FILL_COLOR = 0xff9ad8e2;
 
@@ -367,13 +367,13 @@ public interface IUp {
    float HANDLE_REAR_WEIGHT = 4.0f;
 
    /**
-    * A cached easing function for HSB colors.
+    * A cached easing function for HSVA colors.
     */
-   Color.AbstrEasing MIXER_HSB = new Color.MixHsba();
+   Color.AbstrEasing MIXER_HSVA = new Color.MixHsva();
 
    /**
-    * A cached easing function for RGB colors.
+    * A cached easing function for RGBA colors.
     */
-   Color.AbstrEasing MIXER_RGB = new Color.SmoothStepRgba();
+   Color.AbstrEasing MIXER_RGBA = new Color.SmoothStepRgba();
 
 }

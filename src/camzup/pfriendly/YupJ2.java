@@ -39,8 +39,10 @@ import processing.core.PImage;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
+import processing.core.PSurface;
 
 import processing.awt.PGraphicsJava2D;
+import processing.awt.PSurfaceAWT;
 
 /**
  * A 2D renderer based on the Java AWT (Abstract Window Toolkit). Supposes
@@ -638,7 +640,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       /* @formatter:off */
       this.calcColor = this.calcAi << 0x18
                      | this.calcRi << 0x10
-                     | this.calcGi << 0x8
+                     | this.calcGi << 0x08
                      | this.calcBi;
       /* @formatter:on */
    }
@@ -739,6 +741,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          default:
             return new PShape(this, YupJ2.DEFAULT_PSHAPE_FAMILY);
       }
+   }
+
+   /**
+    * Creates a surface.
+    */
+   @Override
+   public PSurface createSurface ( ) {
+
+      /* In case you ever need or want to extend this surface. */
+      this.surface = new PSurfaceAWT(this);
+      return this.surface;
    }
 
    /**
@@ -2009,13 +2022,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          case PConstants.HSB:
 
-            return IUp.MIXER_HSB.apply(origin, dest, step, target);
+            return IUp.MIXER_HSVA.apply(origin, dest, step, target);
 
          case PConstants.RGB:
 
          default:
 
-            return IUp.MIXER_RGB.apply(origin, dest, step, target);
+            return IUp.MIXER_RGBA.apply(origin, dest, step, target);
       }
    }
 
@@ -4145,7 +4158,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param z the third color channel, brightness or blue
     * @param w the alpha channel
     *
-    * @see Color#hsbaToRgba(float, float, float, float, Color)
+    * @see Color#hsvaToRgba(float, float, float, float, Color)
     */
    @Override
    protected void colorCalc ( final float x, final float y, final float z,
@@ -4160,7 +4173,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          case PConstants.HSB:
 
-            Color.hsbaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
+            Color.hsvaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
                this.aTemp);
 
             this.calcA = this.aTemp.a;
@@ -4195,7 +4208,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       /* @formatter:off */
       this.calcColor = this.calcAi << 0x18
                      | this.calcRi << 0x10
-                     | this.calcGi << 0x8
+                     | this.calcGi << 0x08
                      | this.calcBi;
       /* @formatter:on */
    }
@@ -4223,7 +4236,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       }
 
       this.calcRi = argb >> 0x10 & 0xff;
-      this.calcGi = argb >> 0x8 & 0xff;
+      this.calcGi = argb >> 0x08 & 0xff;
       this.calcBi = argb & 0xff;
 
       this.calcA = this.calcAi * IUtils.ONE_255;

@@ -138,8 +138,8 @@ public abstract class ParserGgr {
 
          /* Mixers. */
          final Color.LerpRgba rgbaMix = new Color.LerpRgba();
-         final Color.MixHsba cwMix = new Color.MixHsba(new Color.HueCW());
-         final Color.MixHsba ccwMix = new Color.MixHsba(new Color.HueCCW());
+         final Color.MixHsva cwMix = new Color.MixHsva(new Color.HueCW());
+         final Color.MixHsva ccwMix = new Color.MixHsva(new Color.HueCCW());
 
          /* The GGR file is sampled rather than transferred one-to-one. */
          final int vSamp = Utils.clamp(samples, 3, 32);
@@ -246,11 +246,11 @@ public abstract class ParserGgr {
                int clrSpc = ( int ) seg[12];
                if ( ltClr.equals(rtClr) ) {
                   if ( clrSpc == ParserGgr.SPACE_HSB_CW ) {
-                     Color.shiftHsba(ltClr, new Vec4(-IUtils.EPSILON, 0.0f,
+                     Color.shiftHsva(ltClr, new Vec4(-IUtils.EPSILON, 0.0f,
                         0.0f, 0.0f), ltClr, new Vec4());
                      clrSpc = ParserGgr.SPACE_HSB_CCW;
                   } else if ( clrSpc == ParserGgr.SPACE_HSB_CCW ) {
-                     Color.shiftHsba(ltClr, new Vec4(IUtils.EPSILON, 0.0f, 0.0f,
+                     Color.shiftHsva(ltClr, new Vec4(IUtils.EPSILON, 0.0f, 0.0f,
                         0.0f), ltClr, new Vec4());
                      clrSpc = ParserGgr.SPACE_HSB_CW;
                   }

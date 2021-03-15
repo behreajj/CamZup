@@ -33,9 +33,11 @@ import processing.core.PMatrix;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
+import processing.core.PSurface;
 
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
+import processing.opengl.PSurfaceJOGL;
 
 /**
  * An abstract parent class for Processing renderers based on OpenGL.
@@ -429,7 +431,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       /* @formatter:off */
       this.calcColor = this.calcAi << 0x18
                      | this.calcRi << 0x10
-                     | this.calcGi << 0x8
+                     | this.calcGi << 0x08
                      | this.calcBi;
       /* @formatter:on */
    }
@@ -470,7 +472,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       /* @formatter:off */
       this.calcColor = this.calcAi << 0x18
                      | this.calcRi << 0x10
-                     | this.calcGi << 0x8
+                     | this.calcGi << 0x08
                      | this.calcBi;
       /* @formatter:on */
    }
@@ -508,7 +510,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param z the third color channel, brightness or blue
     * @param w the alpha channel
     *
-    * @see Color#hsbaToRgba(float, float, float, float, Color)
+    * @see Color#hsvaToRgba(float, float, float, float, Color)
     */
    public void colorPreCalc ( final float x, final float y, final float z,
       final float w ) {
@@ -522,7 +524,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          case PConstants.HSB:
 
-            Color.hsbaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
+            Color.hsvaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
                this.aTemp);
 
             this.calcA = this.aTemp.a;
@@ -545,6 +547,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
                : this.calcR;
 
       }
+   }
+
+   /**
+    * Creates a surface.
+    */
+   @Override
+   public PSurface createSurface ( ) {
+
+      /* In case you ever need or want to extend this surface. */
+      this.surface = new PSurfaceJOGL(this);
+      return this.surface;
    }
 
    /**
@@ -1312,13 +1325,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          case PConstants.HSB:
 
-            return IUp.MIXER_HSB.apply(origin, dest, step, target);
+            return IUp.MIXER_HSVA.apply(origin, dest, step, target);
 
          case PConstants.RGB:
 
          default:
 
-            return IUp.MIXER_RGB.apply(origin, dest, step, target);
+            return IUp.MIXER_RGBA.apply(origin, dest, step, target);
       }
    }
 

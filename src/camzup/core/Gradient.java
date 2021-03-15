@@ -1684,27 +1684,26 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Shifts the hue, saturation and brightness in a gradient. The alpha
-    * remains unaffected. Uses two temporary variables to store colors in
-    * their respective color spaces.
+    * Shifts the hue, saturation, value and alpha in a gradient. Uses two
+    * temporary variables to store colors in their respective color spaces.
     *
     * @param source the input gradient
     * @param shift  the shift
     * @param target the output gradient
-    * @param rgba   the color in RGB
-    * @param hsba   the color in HSB
+    * @param rgba   the color in RGBA
+    * @param hsva   the color in HSVA
     *
     * @return the shifted ramp
     */
-   public static Gradient shiftHsb ( final Gradient source, final Vec4 shift,
-      final Gradient target, final Color rgba, final Vec4 hsba ) {
+   public static Gradient shiftHsva ( final Gradient source, final Vec4 shift,
+      final Gradient target, final Color rgba, final Vec4 hsva ) {
 
       if ( source == target ) {
          final Iterator < ColorKey > kyItr = source.keys.iterator();
          while ( kyItr.hasNext() ) {
             final Color clr = kyItr.next().clr;
             rgba.set(clr);
-            Color.shiftHsb(rgba, shift, clr, hsba);
+            Color.shiftHsva(rgba, shift, clr, hsva);
          }
       } else {
          final TreeSet < ColorKey > trgKeys = target.keys;
@@ -1714,7 +1713,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
             final ColorKey trgKey = new ColorKey(srcItr.next());
             final Color clr = trgKey.clr;
             rgba.set(clr);
-            Color.shiftHsb(rgba, shift, clr, hsba);
+            Color.shiftHsva(rgba, shift, clr, hsva);
             trgKeys.add(trgKey);
          }
       }
@@ -1723,26 +1722,26 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Shifts the hue, saturation and brightness in a gradient. Uses two
+    * Shifts the hue, saturation, lightness and alpha in a gradient. Uses two
     * temporary variables to store colors in their respective color spaces.
     *
     * @param source the input gradient
     * @param shift  the shift
     * @param target the output gradient
-    * @param rgba   the color in RGB
-    * @param hsba   the color in HSB
+    * @param rgba   the color in RGBA
+    * @param hsla   the color in HSLA
     *
     * @return the shifted ramp
     */
-   public static Gradient shiftHsba ( final Gradient source, final Vec4 shift,
-      final Gradient target, final Color rgba, final Vec4 hsba ) {
+   public static Gradient shiftHsla ( final Gradient source, final Vec4 shift,
+      final Gradient target, final Color rgba, final Vec4 hsla ) {
 
       if ( source == target ) {
          final Iterator < ColorKey > kyItr = source.keys.iterator();
          while ( kyItr.hasNext() ) {
             final Color clr = kyItr.next().clr;
             rgba.set(clr);
-            Color.shiftHsba(rgba, shift, clr, hsba);
+            Color.shiftHsla(rgba, shift, clr, hsla);
          }
       } else {
          final TreeSet < ColorKey > trgKeys = target.keys;
@@ -1752,7 +1751,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
             final ColorKey trgKey = new ColorKey(srcItr.next());
             final Color clr = trgKey.clr;
             rgba.set(clr);
-            Color.shiftHsba(rgba, shift, clr, hsba);
+            Color.shiftHsla(rgba, shift, clr, hsla);
             trgKeys.add(trgKey);
          }
       }

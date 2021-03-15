@@ -4,7 +4,7 @@ import camzup.pfriendly.*;
 Gradient grd;
 PImage orig;
 PImage trg;
-Vec4 shifter = new Vec4(-1.0 / 24.0, 0.1, -0.15, 1.0);
+Vec4 shifter = new Vec4(-1.0 / 24.0, 0.1, -0.15, 0.0);
 
 void settings() {
   size(720, 405, Yup2.PATH_STR);
@@ -19,7 +19,7 @@ void setup() {
   orig = createImage(width, height, ARGB);
   ZImage.fill(grd, orig);
 
-  Gradient.shiftHsb(grd, shifter, grd, new Color(), new Vec4());
+  Gradient.shiftHsba(grd, shifter, grd, new Color(), new Vec4());
   trg = createImage(width, height, ARGB);
   ZImage.fill(grd, trg);
 }

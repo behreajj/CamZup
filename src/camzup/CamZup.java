@@ -1,10 +1,7 @@
 package camzup;
 
 import camzup.core.Color;
-import camzup.core.IUtils;
-import camzup.core.Rng;
 import camzup.core.Utils;
-import camzup.core.Vec4;
 
 import processing.core.PApplet;
 
@@ -49,22 +46,6 @@ public class CamZup {
     */
    public static final String VERSION = "##library.prettyVersion##";
 
-   public static Color hslaToRgba ( final float h, final float s, final float l,
-      final float a, final Color target ) {
-
-      if ( l <= 0.0f ) { return target.set(0.0f, 0.0f, 0.0f, a); }
-      if ( l >= 1.0f ) { return target.set(1.0f, 1.0f, 1.0f, a); }
-      if ( s <= 0.0f ) { return target.set(l, l, l, a); }
-
-      final float sm = s > 1.0f ? 1.0f : s;
-      final float q = l < 0.5f ? l * ( 1.0f + sm ) : l + sm - l * sm;
-      final float p = l + l - q;
-      final float r = CamZup.hslaHue(p, q, h + IUtils.ONE_THIRD);
-      final float g = CamZup.hslaHue(p, q, h);
-      final float b = CamZup.hslaHue(p, q, h - IUtils.ONE_THIRD);
-      return target.set(r, g, b, Utils.clamp01(a));
-   }
-
    /**
     * The main function.
     *
@@ -79,42 +60,17 @@ public class CamZup {
       // https://digitalsplashmedia.com/2014/06/
       // visualizing-categorical-data-as-flows-with-alluvial-diagrams/
 
-      final Rng rng = new Rng();
-      final float h = rng.nextFloat();
-      final float s = rng.nextFloat();
-      final float l = rng.nextFloat();
-      final Color c = CamZup.hslaToRgba(h, s, l, 1f, new Color());
-      final Vec4 x = CamZup.rgbaToHsla(c.r, c.g, c.b, c.a, new Vec4());
-      System.out.println(c);
-      System.out.println(x);
-      System.out.println(h);
-      System.out.println(s);
-      System.out.println(l);
-   }
-
-   public static Vec4 rgbaToHsla ( final float r, final float g, final float b,
-      final float a, final Vec4 target ) {
-
-      final float mx = Utils.max(r, g, b);
-      final float mn = Utils.min(r, g, b);
-      final float l = ( mx + mn ) * 0.5f;
-      if ( mx == mn ) {
-         return target.set(0.0f, 0.0f, l, a);
-      } else {
-         final float diff = mx - mn;
-         final float s = l > 0.5f ? diff / ( 2.0f - mx - mn ) : diff / ( mx
-            + mn );
-         float h = 0.0f;
-         if ( mx == r ) {
-            h = ( g - b ) / diff + ( g < b ? 6.0f : 0.0f );
-         } else if ( mx == g ) {
-            h = ( b - r ) / diff + 2.0f;
-         } else {
-            h = ( r - g ) / diff + 4.0f;
-         }
-         h *= IUtils.ONE_SIX;
-         return target.set(h, s, l, a);
-      }
+      // final Rng rng = new Rng();
+      // final float h = rng.nextFloat();
+      // final float s = rng.nextFloat();
+      // final float l = rng.nextFloat();
+      // final Color c = Color.hslaToRgba(h, s, l, 1f, new Color());
+      // final Vec4 x = Color.rgbaToHsla(c.r, c.g, c.b, c.a, new Vec4());
+      // System.out.println(c);
+      // System.out.println(x);
+      // System.out.println(h);
+      // System.out.println(s);
+      // System.out.println(l);
    }
 
    /**
@@ -300,20 +256,6 @@ public class CamZup {
          Utils.clamp01(as * fa * origin.b + ab * fb * dest.b),
          Utils.clamp01(as * fa + ab * fb));
       /* @formatter:on */
-   }
-
-   private static float hslaHue ( final float p, final float q,
-      final float t ) {
-
-      final float tm = Utils.mod1(t);
-      // if ( tm < 0.0f ) tm += 1.0f;
-      // if ( tm > 1.0f ) tm -= 1.0f;
-      if ( tm < IUtils.ONE_SIX ) { return p + ( q - p ) * 6.0f * tm; }
-      if ( tm < 0.5f ) { return q; }
-      if ( tm < IUtils.TWO_THIRDS ) {
-         return p + ( q - p ) * ( IUtils.TWO_THIRDS - tm ) * 6.0f;
-      }
-      return p;
    }
 
    enum BlendMode {
