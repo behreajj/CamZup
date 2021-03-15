@@ -246,10 +246,12 @@ public abstract class ParserGgr {
                int clrSpc = ( int ) seg[12];
                if ( ltClr.equals(rtClr) ) {
                   if ( clrSpc == ParserGgr.SPACE_HSB_CW ) {
-                     Color.shiftHue(ltClr, -IUtils.EPSILON, ltClr, new Vec4());
+                     Color.shiftHsba(ltClr, new Vec4(-IUtils.EPSILON, 0.0f,
+                        0.0f, 0.0f), ltClr, new Vec4());
                      clrSpc = ParserGgr.SPACE_HSB_CCW;
                   } else if ( clrSpc == ParserGgr.SPACE_HSB_CCW ) {
-                     Color.shiftHue(ltClr, IUtils.EPSILON, ltClr, new Vec4());
+                     Color.shiftHsba(ltClr, new Vec4(IUtils.EPSILON, 0.0f, 0.0f,
+                        0.0f), ltClr, new Vec4());
                      clrSpc = ParserGgr.SPACE_HSB_CW;
                   }
                }

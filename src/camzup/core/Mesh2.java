@@ -468,7 +468,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Negates the x component of all coordinates in the mesh, then reverses
     * the mesh's faces. Use this instead of {@link Mesh2#scale(Vec2)} with the
-    * argument <code>new Vec2(-1, 1)</code>.
+    * argument <code>new Vec2(-1.0f, 1.0f)</code>.
     *
     * @return this mesh
     */
@@ -483,7 +483,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Negates the y component of all coordinates in the mesh, then reverses
     * the mesh's faces. Use this instead of {@link Mesh2#scale(Vec2)} with the
-    * argument <code>new Vec2(1, -1)</code>.
+    * argument <code>new Vec2(1.0f, -1.0f)</code>.
     *
     * @return this mesh
     */

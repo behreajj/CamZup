@@ -1270,19 +1270,14 @@ public class Quaternion implements Comparable < Quaternion > {
    public static Quaternion inverse ( final Quaternion q,
       final Quaternion target ) {
 
-      final float mSq = Quaternion.magSq(q);
+      final Vec3 i = q.imag;
+      final float mSq = q.real * q.real + i.x * i.x + i.y * i.y + i.z * i.z;
       if ( mSq != 0.0f ) {
-         final Vec3 i = q.imag;
-         if ( Utils.approx(mSq, 1.0f) ) {
-            return target.set(q.real, -i.x, -i.y, -i.z);
-         }
-
          final float mSqInv = 1.0f / mSq;
          return target.set(q.real * mSqInv, -i.x * mSqInv, -i.y * mSqInv, -i.z
             * mSqInv);
       }
-
-      return target.reset();
+      return Quaternion.identity(target);
    }
 
    /**

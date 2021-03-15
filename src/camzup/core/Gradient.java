@@ -1684,46 +1684,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Shifts the brightness of all colors in a gradient. The brightness is
-    * clamped to the range [0.0, 1.0] . The source gradient may either be the
-    * same as or different from the target. Uses two temporary variables to
-    * store colors in their respective color spaces.
-    *
-    * @param source the source gradient
-    * @param shift  the brightness shift
-    * @param target the output gradient
-    * @param rgba   the color in RGB
-    * @param hsba   the color in HSB
-    *
-    * @return the shifted ramp
-    */
-   public static Gradient shiftBri ( final Gradient source, final float shift,
-      final Gradient target, final Color rgba, final Vec4 hsba ) {
-
-      if ( source == target ) {
-         final Iterator < ColorKey > kyItr = source.keys.iterator();
-         while ( kyItr.hasNext() ) {
-            final Color clr = kyItr.next().clr;
-            rgba.set(clr);
-            Color.shiftBri(rgba, shift, clr, hsba);
-         }
-      } else {
-         final TreeSet < ColorKey > trgKeys = target.keys;
-         trgKeys.clear();
-         final Iterator < ColorKey > srcItr = source.keys.iterator();
-         while ( srcItr.hasNext() ) {
-            final ColorKey trgKey = new ColorKey(srcItr.next());
-            final Color clr = trgKey.clr;
-            rgba.set(clr);
-            Color.shiftBri(rgba, shift, clr, hsba);
-            trgKeys.add(trgKey);
-         }
-      }
-
-      return target;
-   }
-
-   /**
     * Shifts the hue, saturation and brightness in a gradient. The alpha
     * remains unaffected. Uses two temporary variables to store colors in
     * their respective color spaces.
@@ -1793,86 +1753,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
             final Color clr = trgKey.clr;
             rgba.set(clr);
             Color.shiftHsba(rgba, shift, clr, hsba);
-            trgKeys.add(trgKey);
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Shifts the hue of all colors in a gradient. The hue wraps around the
-    * range [0.0, 1.0] . The source gradient may either be the same as or
-    * different from the target. Uses two temporary variables to store colors
-    * in their respective color spaces.
-    *
-    * @param source the source gradient
-    * @param shift  the hue shift
-    * @param target the output gradient
-    * @param rgba   the color in RGB
-    * @param hsba   the color in HSB
-    *
-    * @return the shifted ramp
-    */
-   public static Gradient shiftHue ( final Gradient source, final float shift,
-      final Gradient target, final Color rgba, final Vec4 hsba ) {
-
-      if ( source == target ) {
-         final Iterator < ColorKey > kyItr = source.keys.iterator();
-         while ( kyItr.hasNext() ) {
-            final Color clr = kyItr.next().clr;
-            rgba.set(clr);
-            Color.shiftHue(rgba, shift, clr, hsba);
-         }
-      } else {
-         final TreeSet < ColorKey > trgKeys = target.keys;
-         trgKeys.clear();
-         final Iterator < ColorKey > srcItr = source.keys.iterator();
-         while ( srcItr.hasNext() ) {
-            final ColorKey trgKey = new ColorKey(srcItr.next());
-            final Color clr = trgKey.clr;
-            rgba.set(clr);
-            Color.shiftHue(rgba, shift, clr, hsba);
-            trgKeys.add(trgKey);
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Shifts the saturation of all colors in a gradient. The saturation is
-    * clamped to the range [0.0, 1.0] . The source gradient may either be the
-    * same as or different from the target. Uses two temporary variables to
-    * store colors in their respective color spaces.
-    *
-    * @param source the source gradient
-    * @param shift  the saturation shift
-    * @param target the output gradient
-    * @param rgba   the color in RGB
-    * @param hsba   the color in HSB
-    *
-    * @return the shifted ramp
-    */
-   public static Gradient shiftSat ( final Gradient source, final float shift,
-      final Gradient target, final Color rgba, final Vec4 hsba ) {
-
-      if ( source == target ) {
-         final Iterator < ColorKey > kyItr = source.keys.iterator();
-         while ( kyItr.hasNext() ) {
-            final Color clr = kyItr.next().clr;
-            rgba.set(clr);
-            Color.shiftSat(rgba, shift, clr, hsba);
-         }
-      } else {
-         final TreeSet < ColorKey > trgKeys = target.keys;
-         trgKeys.clear();
-         final Iterator < ColorKey > srcItr = source.keys.iterator();
-         while ( srcItr.hasNext() ) {
-            final ColorKey trgKey = new ColorKey(srcItr.next());
-            final Color clr = trgKey.clr;
-            rgba.set(clr);
-            Color.shiftSat(rgba, shift, clr, hsba);
             trgKeys.add(trgKey);
          }
       }

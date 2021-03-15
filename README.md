@@ -62,7 +62,7 @@ Cam Z-Up is split into three packages: `pfriendly`, `core` and `kotlin`. The `pf
 - `Zup3`, which extends `PGraphicsOpenGL`, similar to `P3D`;
 - `Yup3`, which also extends `PGraphicsOpenGL`;
 - `YupJ2`, which extends `PGraphicsJava2D`, a.k.a. `JAVA2D`, the default Processing renderer based on the Java AWT library;
-- `Yup2`, which extends `PGraphicsOpenGL`, similar `P2D`, a "2.5D" renderer;
+- `Yup2`, which extends `PGraphicsOpenGL`, similar to `P2D`, a "2.5D" renderer;
 
 The `FX2D` renderer, based on Java FX, is not fully supported by Processing, so it's not supported here. The `Yup3` renderer treats the positive y axis, (0.0, 1.0, 0.0), as world up.
 
@@ -283,7 +283,7 @@ Limit export to `Selection Only`. Depending on whether the export contains multi
 
 ### SVG
 
-This library's scalable vector graphics (SVG) import method is adapted from Processing's. As such, it's quite limited. All material attributes (stroke weight, stroke, fill) are ignored. For best results, remove any XML tags from the top of the SVG file; refrain from any suffixes that specify units of measure (cm, px, %, etc.); and do not use `def`s tags. `ParserSvg.load` returns a `CurveEntity2`. To save a `String` as an SVG, supply entities and materials to the `toSVgString` method of `Yup2` or `YupJ2`. Whether a `Curve2` is rendered as a path or sub-path depends on the number of materials per curve. A `Mesh2` face is treated as a sub-path. Because import does not interpret `def`s, an exported SVG will not be as efficient as it could otherwise be.
+This library's scalable vector graphics (SVG) import method is adapted from Processing's. As such, it's quite limited. All material attributes (stroke weight, stroke, fill) are ignored. For best results, remove any XML tags from the top of the SVG file; refrain from any suffixes that specify units of measure (cm, px, %, etc.); and do not use `def`s tags. `ParserSvg.load` returns a `CurveEntity2`. To save a `String` as an SVG, supply entities and materials to the `toSvgString` method of `Yup2` or `YupJ2`. Whether a `Curve2` is rendered as a path or sub-path depends on the number of materials per curve. A `Mesh2` face is treated as a sub-path. Because import does not interpret `def`s, an exported SVG will not be as efficient as it could otherwise be.
 
 ## Differences, Problems
 

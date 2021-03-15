@@ -702,7 +702,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Negates the x component of all coordinates in the mesh, then reverses
     * the mesh's faces. Use this instead of {@link Mesh3#scale(Vec3)} with the
-    * argument <code>new Vec3(-1, 1, 1)</code>.
+    * argument <code>new Vec3(-1.0f, 1.0f, 1.0f)</code>.
     *
     * @return this mesh
     */
@@ -717,7 +717,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Negates the y component of all coordinates in the mesh, then reverses
     * the mesh's faces. Use this instead of {@link Mesh3#scale(Vec3)} with the
-    * argument <code>new Vec2(1, -1, 1)</code>.
+    * argument <code>new Vec2(1.0f, -1.0f, 1.0f)</code>.
     *
     * @return this mesh
     */
@@ -732,7 +732,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Negates the z component of all coordinates in the mesh, then reverses
     * the mesh's faces. Use this instead of {@link Mesh3#scale(Vec3)} with the
-    * argument <code>new Vec3(1, 1, -1)</code>.
+    * argument <code>new Vec3(1.0f, 1.0f, -1.0f)</code>.
     *
     * @return this mesh
     */

@@ -1909,29 +1909,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Shifts a color's brightness by a factor. The brightness is clamped to
-    * the range [0.0, 1.0] .
-    *
-    * @param c      the input color
-    * @param shift  the brightness shift
-    * @param target the output color
-    * @param hsba   the color in HSB
-    *
-    * @return the shifted color
-    *
-    * @see Utils#clamp01(float)
-    * @see Color#rgbaToHsba(Color, Vec4)
-    * @see Color#hsbaToRgba(Vec4, Color)
-    */
-   public static Color shiftBri ( final Color c, final float shift,
-      final Color target, final Vec4 hsba ) {
-
-      Color.rgbaToHsba(c, hsba);
-      hsba.z += shift;
-      return Color.hsbaToRgba(hsba, target);
-   }
-
-   /**
     * Shifts a color's hue, saturation and brightness by a vector. The color's
     * alpha remains unaffected.
     *
@@ -1988,51 +1965,7 @@ public class Color implements Comparable < Color > {
       return Color.hsbaToRgba(hsba, target);
    }
 
-   /**
-    * Shifts a color's hue by a factor. The hue wraps around the range [0.0,
-    * 1.0] .
-    *
-    * @param c      the input color
-    * @param shift  the hue shift
-    * @param target the output color
-    * @param hsba   the color in HSB
-    *
-    * @return the shifted color
-    *
-    * @see Color#rgbaToHsba(Color, Vec4)
-    * @see Color#hsbaToRgba(Vec4, Color)
-    */
-   public static Color shiftHue ( final Color c, final float shift,
-      final Color target, final Vec4 hsba ) {
 
-      /* HSBA to RGBA conversion takes care of wrapping the hue. */
-      Color.rgbaToHsba(c, hsba);
-      hsba.x += shift;
-      return Color.hsbaToRgba(hsba, target);
-   }
-
-   /**
-    * Shifts a color's saturation by a factor. The saturation is clamped to
-    * the range [0.0, 1.0] .
-    *
-    * @param c      the input color
-    * @param shift  the saturation shift
-    * @param target the output color
-    * @param hsba   the color in HSB
-    *
-    * @return the shifted color
-    *
-    * @see Utils#clamp01(float)
-    * @see Color#rgbaToHsba(Color, Vec4)
-    * @see Color#hsbaToRgba(Vec4, Color)
-    */
-   public static Color shiftSat ( final Color c, final float shift,
-      final Color target, final Vec4 hsba ) {
-
-      Color.rgbaToHsba(c, hsba);
-      hsba.y += shift;
-      return Color.hsbaToRgba(hsba, target);
-   }
 
    /**
     * Returns a String representing the color array in the GIMP palette file

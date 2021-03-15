@@ -455,18 +455,13 @@ public class ZImage extends PImage {
    public static PImage fill ( final Gradient grd, final PImage target ) {
 
       target.loadPixels();
-
-      final int h = target.height;
       final int w = target.width;
       final int[] pixels = target.pixels;
-
+      final int len = pixels.length;
       final float wInv = 1.0f / ( w - 1.0f );
-      for ( int i = 0, y = 0; y < h; ++y ) {
-         for ( int x = 0; x < w; ++x, ++i ) {
-            pixels[i] = Gradient.eval(grd, x * wInv);
-         }
+      for ( int i = 0; i < len; ++i ) {
+         pixels[i] = Gradient.eval(grd, i % w * wInv);
       }
-
       target.updatePixels();
       return target;
    }
@@ -969,7 +964,8 @@ public class ZImage extends PImage {
 
    /**
     * Generates a linear gradient from an origin point to a destination point.
-    * The value is clamped to a range [0.0, 1.0] .
+    * The origin and destination should be in the range [-1.0, 1.0]. The
+    * gradient factor is clamped to [0.0, 1.0].
     *
     * @param xOrigin the origin x coordinate
     * @param yOrigin the origin y coordinate
