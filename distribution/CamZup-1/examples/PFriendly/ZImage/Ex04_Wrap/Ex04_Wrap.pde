@@ -31,6 +31,6 @@ void draw() {
   Vec2.mul(szvec, mouse, msscl);
 
   ZImage.wrap(source, target, msscl);
-  graphics.background(#fff7d5);
+  graphics.background();
   graphics.image(target, 0.0, 0.0, width, height);
 }

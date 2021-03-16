@@ -54,7 +54,7 @@ void draw() {
 
   Mesh3.cubeSphere(itr,
     PolyType.QUAD,
-    Mesh3.CubeUvProfile.CROSS,
+    UvProfile.Cube.CROSS,
     smooth);
 
   flat.set(smooth);

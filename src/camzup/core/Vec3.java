@@ -371,7 +371,7 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the normalized sum
     *
-    * @see Utils#invHypot(float, float, float)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec3 addNorm ( final Vec3 a, final Vec3 b,
       final Vec3 target ) {
@@ -379,7 +379,7 @@ public class Vec3 implements Comparable < Vec3 > {
       final float dx = a.x + b.x;
       final float dy = a.y + b.y;
       final float dz = a.z + b.z;
-      final float mInv = Utils.invHypot(dx, dy, dz);
+      final float mInv = Utils.invSqrtUnchecked(dx * dx + dy * dy + dz * dz);
       return target.set(dx * mInv, dy * mInv, dz * mInv);
    }
 
@@ -924,7 +924,7 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the normalized cross product
     *
-    * @see Utils#invHypot(float, float, float)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec3 crossNorm ( final Vec3 a, final Vec3 b,
       final Vec3 target ) {
@@ -932,7 +932,7 @@ public class Vec3 implements Comparable < Vec3 > {
       final float x = a.y * b.z - a.z * b.y;
       final float y = a.z * b.x - a.x * b.z;
       final float z = a.x * b.y - a.y * b.x;
-      final float mInv = Utils.invHypot(x, y, z);
+      final float mInv = Utils.invSqrtUnchecked(x * x + y * y + z * z);
       return target.set(x * mInv, y * mInv, z * mInv);
    }
 
@@ -2396,27 +2396,28 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Returns the scalar projection of <em>a</em> onto <em>b</em>.
+    * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined
+    * as<br>
+    * <br>
+    * project ( <em>a</em>, <em>b</em> ) := <em>a</em> \u00b7 <em>b</em> /
+    * <em>b</em> \u00b7 <em>b</em>
     *
     * @param a left operand
     * @param b right operand
     *
     * @return the scalar projection
-    *
-    * @see Vec3#magSq(Vec3)
-    * @see Vec3#dot(Vec3, Vec3)
     */
    public static float projectScalar ( final Vec3 a, final Vec3 b ) {
 
-      final float bSq = Vec3.magSq(b);
-      if ( bSq > 0.0f ) { return Vec3.dot(a, b) / bSq; }
+      final float bSq = b.x * b.x + b.y * b.y + b.z * b.z;
+      if ( bSq > 0.0f ) { return ( a.x * b.x + a.y * b.y + a.z * b.z ) / bSq; }
       return 0.0f;
    }
 
    /**
     * Projects one vector onto another. Defined as<br>
     * <br>
-    * proj ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> \u00b7
+    * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> \u00b7
     * <em>b</em> / <em>b</em> \u00b7 <em>b</em> )<br>
     * <br>
     * Returns a zero vector if the right operand, <em>b</em>, has zero
@@ -3011,7 +3012,7 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the normalized difference
     *
-    * @see Utils#invHypot(float, float, float)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec3 subNorm ( final Vec3 a, final Vec3 b,
       final Vec3 target ) {
@@ -3019,7 +3020,7 @@ public class Vec3 implements Comparable < Vec3 > {
       final float dx = a.x - b.x;
       final float dy = a.y - b.y;
       final float dz = a.z - b.z;
-      final float mInv = Utils.invHypot(dx, dy, dz);
+      final float mInv = Utils.invSqrtUnchecked(dx * dx + dy * dy + dz * dz);
       return target.set(dx * mInv, dy * mInv, dz * mInv);
    }
 

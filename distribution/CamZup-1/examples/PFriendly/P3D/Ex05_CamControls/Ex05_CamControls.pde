@@ -47,8 +47,8 @@ void setup() {
   for (int i = 0; i < count; ++i) {
     float theta = i * toTheta;
     float percent = i * toPercent;
-    Vec3.fromPolar(theta, rad0, origin);
-    Vec3.fromPolar(theta, rad1, dest);
+    Vec3.fromSpherical(theta, 0.0, rad0, origin);
+    Vec3.fromSpherical(theta, 0.0, rad1, dest);
     
     Mesh3 mesh = new Mesh3();
     Mesh3.cylinder(origin, dest, 6, true, 0.05, mesh);

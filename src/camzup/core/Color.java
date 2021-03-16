@@ -498,8 +498,6 @@ public class Color implements Comparable < Color > {
     * @param inclAlpha include the alpha channel
     *
     * @return the string
-    *
-    * @see Utils#pow(float, float)
     */
    StringBuilder toBlenderCode ( final StringBuilder pyCd, final float gamma,
       final boolean inclAlpha ) {
@@ -962,12 +960,11 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     *
-    * @see Vec2#magSq(Vec2)
     * @see Utils#invSqrtUnchecked(float)
     */
    public static Color fromDir ( final Vec2 v, final Color target ) {
 
-      final float mSq = Vec2.magSq(v);
+      final float mSq = v.x * v.x + v.y * v.y;
       if ( mSq > 0.0f ) {
          final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
          return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, 0.5f, 1.0f);
@@ -984,12 +981,11 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     *
-    * @see Vec3#magSq(Vec3)
     * @see Utils#invSqrtUnchecked(float)
     */
    public static Color fromDir ( final Vec3 v, final Color target ) {
 
-      final float mSq = Vec3.magSq(v);
+      final float mSq = v.x * v.x + v.y * v.y + v.z * v.z;
       if ( mSq > 0.0f ) {
          final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
          return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, v.z * mInv
@@ -1007,12 +1003,11 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     *
-    * @see Vec4#magSq(Vec4)
     * @see Utils#invSqrtUnchecked(float)
     */
    public static Color fromDir ( final Vec4 v, final Color target ) {
 
-      final float mSq = Vec4.magSq(v);
+      final float mSq = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
       if ( mSq > 0.0f ) {
          final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
          return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, v.z * mInv

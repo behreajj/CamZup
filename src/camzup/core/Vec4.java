@@ -1290,11 +1290,10 @@ public class Vec4 implements Comparable < Vec4 > {
     * @return the magnitude
     *
     * @see Utils#sqrtUnchecked(float)
-    * @see Vec4#magSq(Vec4)
     */
    public static float mag ( final Vec4 v ) {
 
-      return Utils.sqrtUnchecked(Vec4.magSq(v));
+      return Utils.sqrtUnchecked(v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
    }
 
    /**
@@ -1598,12 +1597,12 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the unit vector
     *
-    * @see Utils#invSqrtUnchecked(float)
+    * @see Utils#invSqrt(float)
     */
    public static Vec4 normalize ( final Vec4 v, final Vec4 target ) {
 
-      final float mInv = Utils.invSqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w
-         * v.w);
+      final float mInv = Utils.invSqrt(v.x * v.x + v.y * v.y + v.z
+         * v.z + v.w * v.w);
       return target.set(v.x * mInv, v.y * mInv, v.z * mInv, v.w * mInv);
    }
 
@@ -1762,7 +1761,11 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
-    * Returns the scalar projection of <em>a</em> onto <em>b</em>.
+    * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined
+    * as<br>
+    * <br>
+    * project ( <em>a</em>, <em>b</em> ) := <em>a</em> \u00b7 <em>b</em> /
+    * <em>b</em> \u00b7 <em>b</em>
     *
     * @param a left operand
     * @param b right operand
@@ -1774,15 +1777,17 @@ public class Vec4 implements Comparable < Vec4 > {
     */
    public static float projectScalar ( final Vec4 a, final Vec4 b ) {
 
-      final float bSq = Vec4.magSq(b);
-      if ( bSq > 0.0f ) { return Vec4.dot(a, b) / bSq; }
+      final float bSq = b.x * b.x + b.y * b.y + b.z * b.z + b.w * b.w;
+      if ( bSq > 0.0f ) {
+         return ( a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w ) / bSq;
+      }
       return 0.0f;
    }
 
    /**
     * Projects one vector onto another. Defined as<br>
     * <br>
-    * proj ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> \u00b7
+    * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> \u00b7
     * <em>b</em> / <em>b</em> \u00b7 <em>b</em> )
     *
     * @param a      left operand
@@ -2026,30 +2031,6 @@ public class Vec4 implements Comparable < Vec4 > {
    public static Vec4 sub ( final Vec4 a, final Vec4 b, final Vec4 target ) {
 
       return target.set(a.x - b.x, a.y - b.y, a.z - b.z, a.w - b.w);
-   }
-
-   /**
-    * Sums all vectors in an array.
-    *
-    * @param arr    the array
-    * @param target the output vector
-    *
-    * @return the sum
-    */
-   public static Vec4 sum ( final Vec4[] arr, final Vec4 target ) {
-
-      target.reset();
-      if ( arr != null ) {
-         final int len = arr.length;
-         for ( int i = 0; i < len; ++i ) {
-            final Vec4 v = arr[i];
-            target.x += v.x;
-            target.y += v.y;
-            target.z += v.z;
-            target.w += v.w;
-         }
-      }
-      return target;
    }
 
    /**

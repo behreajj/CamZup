@@ -53,7 +53,6 @@ void setup() {
   main = (YupJ2)getGraphics();
 
   buff = (YupJ2)createGraphics(256, 256, YupJ2.PATH_STR);
-  buff.noSmooth();
 
   fontImg = loadImage("data/rasterFont.png");
   shadowImg = fontImg.get();

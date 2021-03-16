@@ -7,7 +7,7 @@ MeshEntity2[] glyMsh;
 
 String str = "Quigley";
 boolean toggle = false;
-boolean showHandles = false;
+boolean showHandles = true;
 
 MaterialSolid matCrv = new MaterialSolid()
   .setFill(true)

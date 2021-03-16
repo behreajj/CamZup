@@ -1041,6 +1041,18 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    /**
     * Creates a curve which approximates a circle.
     *
+    * @param target the output curve
+    *
+    * @return the circle
+    */
+   public static Curve3 circle ( final Curve3 target ) {
+
+      return Curve3.circle(ICurve.KNOTS_PER_CIRCLE, 0.0f, 0.5f, target);
+   }
+
+   /**
+    * Creates a curve which approximates a circle.
+    *
     * @param knotCount   the knot count
     * @param offsetAngle the angular offset
     * @param radius      the radius

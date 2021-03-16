@@ -296,13 +296,13 @@ public abstract class ParserObj {
                }
 
                mesh.texCoords = new Vec2[texCoordLen];
-               for ( int j = 0; j < texCoordLen; ++j ) {
-                  mesh.texCoords[j] = new Vec2(texCoordArr[j]);
+               for ( int i = 0; i < texCoordLen; ++i ) {
+                  mesh.texCoords[i] = new Vec2(texCoordArr[i]);
                }
 
                mesh.normals = new Vec3[normalLen];
-               for ( int k = 0; k < normalLen; ++k ) {
-                  mesh.normals[k] = new Vec3(normalArr[k]);
+               for ( int i = 0; i < normalLen; ++i ) {
+                  mesh.normals[i] = new Vec3(normalArr[i]);
                }
 
                /* Remove unused data. */

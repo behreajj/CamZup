@@ -357,14 +357,14 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the normalized sum
     *
-    * @see Utils#invHypot(float, float)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec2 addNorm ( final Vec2 a, final Vec2 b,
       final Vec2 target ) {
 
       final float dx = a.x + b.x;
       final float dy = a.y + b.y;
-      final float mInv = Utils.invHypot(dx, dy);
+      final float mInv = Utils.invSqrtUnchecked(dx * dx + dy * dy);
       return target.set(dx * mInv, dy * mInv);
    }
 
@@ -2180,20 +2180,21 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Returns the scalar projection of <em>a</em> onto <em>b</em>.
+    * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined
+    * as<br>
+    * <br>
+    * project ( <em>a</em>, <em>b</em> ) := <em>a</em> \u00b7 <em>b</em> /
+    * <em>b</em> \u00b7 <em>b</em>
     *
     * @param a left operand
     * @param b right operand
     *
     * @return the scalar projection
-    *
-    * @see Vec2#magSq(Vec2)
-    * @see Vec2#dot(Vec2, Vec2)
     */
    public static float projectScalar ( final Vec2 a, final Vec2 b ) {
 
-      final float bSq = Vec2.magSq(b);
-      if ( bSq > 0.0f ) { return Vec2.dot(a, b) / bSq; }
+      final float bSq = b.x * b.x + b.y * b.y;
+      if ( bSq > 0.0f ) { return ( a.x * b.x + a.y * b.y ) / bSq; }
       return 0.0f;
    }
 
@@ -2637,14 +2638,14 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the normalized difference
     *
-    * @see Utils#invHypot(float, float)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Vec2 subNorm ( final Vec2 a, final Vec2 b,
       final Vec2 target ) {
 
       final float dx = a.x - b.x;
       final float dy = a.y - b.y;
-      final float mInv = Utils.invHypot(dx, dy);
+      final float mInv = Utils.invSqrtUnchecked(dx * dx + dy * dy);
       return target.set(dx * mInv, dy * mInv);
    }
 

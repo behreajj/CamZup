@@ -1,8 +1,8 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="720" height="405" viewBox="0 0 720 405">
 <path id="background" d="M 0.0 0.0 L 720.0 0.0 L 720.0 405.0 L 0.0 405.0 Z" stroke="none" fill-opacity="1.000000" fill="#fff7d5"></path>
 <g transform="translate(360.000000, 202.500000) scale(1.000000, -1.000000) rotate(0.0) translate(0.0, 0.0)">
-<g id="2353b3e6" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#303030">
-<g id="example" class="meshentity2" transform="translate(-140.025665, -1.503761) rotate(77.0) scale(150.000000, 150.000000)">
+<g id="27a8c74e" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#303030">
+<g id="example" class="meshentity2" transform="translate(-142.981613, -0.993925) rotate(81.0) scale(150.000000, 150.000000)">
 <path id="hexagon" class="mesh2" fill-rule="evenodd" d="M 0.0 0.0 L 0.500000 0.0 L 0.249999 0.433012 Z M 0.0 0.0 L 0.249999 0.433012 L -0.250000 0.433012 Z M 0.0 0.0 L -0.250000 0.433012 L -0.500000 0.0 Z M 0.0 0.0 L -0.500000 0.0 L -0.249999 -0.433012 Z M 0.0 0.0 L -0.249999 -0.433012 L 0.250000 -0.433012 Z M 0.0 0.0 L 0.250000 -0.433012 L 0.500000 0.0 Z "></path>
 </g>
 </g>

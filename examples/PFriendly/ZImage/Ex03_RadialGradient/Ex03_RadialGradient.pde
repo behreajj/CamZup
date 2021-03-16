@@ -22,5 +22,6 @@ void draw() {
 
   graphics.mouse1s(origin);
   ZImage.radial(origin, 0.5, gradient, img);
+  graphics.background();
   graphics.image(img);
 }

@@ -1704,10 +1704,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             break;
 
          case PConstants.CORNER:
-            final int xdiff = x0i - x1i;
-            final int ydiff = y0i - y1i;
-            wDisp = xdiff < 0 ? -xdiff : xdiff;
-            hDisp = ydiff < 0 ? -ydiff : ydiff;
+
+            wDisp = x1i < 0 ? -x1i : x1i;
+            hDisp = y1i < 0 ? -y1i : y1i;
             this.imageImpl(img,
                x0i, y0i - hDisp, x0i + wDisp, y0i,
                u0, v0, u1, v1);

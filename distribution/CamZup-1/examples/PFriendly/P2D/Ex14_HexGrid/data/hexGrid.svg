@@ -1,7 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="720" height="405" viewBox="0 0 720 405">
 <path id="background" d="M 0.0 0.0 L 720.0 0.0 L 720.0 405.0 L 0.0 405.0 Z" stroke="none" fill-opacity="1.000000" fill="#101010"></path>
 <g transform="translate(360.000000, 202.500000) scale(1.000000, -1.000000) rotate(0.0) translate(0.0, 0.0)">
-<g id="9a7504c" class="meshentity2" transform="translate(0.0, 0.0) rotate(0.0) scale(27.939340, 27.939340)">
+<g id="1877ab81" class="meshentity2" transform="translate(0.0, 0.0) rotate(0.0) scale(27.939340, 27.939340)">
 <g id="0xff1e1913" class="materialsolid" stroke="none" fill-opacity="1.000000" fill="#1e1913">
 <path id="grid.hexagon.000" class="mesh2" fill-rule="evenodd" d="M -7.744228 0.421132 L -7.794228 0.434529 L -7.844228 0.421132 L -8.133939 0.253867 L -8.170541 0.217265 L -8.183939 0.167264 L -8.183939 -0.167264 L -8.170541 -0.217265 L -8.133939 -0.253867 L -7.844228 -0.421132 L -7.794228 -0.434529 L -7.744228 -0.421132 L -7.454517 -0.253867 L -7.417914 -0.217265 L -7.404517 -0.167264 L -7.404517 0.167264 L -7.417914 0.217265 L -7.454517 0.253867 Z "></path>
 </g>

@@ -11,11 +11,12 @@ void settings() {
 void setup() {
   frameRate(60.0);
   graphics = (Yup2)getGraphics();
-  img = createImage(256, 256, ARGB);
+  img = createImage(512, 512, ARGB);
   ZImage.rgb(img);
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
-  graphics.image(img);
+  graphics.background();
+  graphics.image(img, 0.0, 0.0, 256.0, 256.0);
 }

@@ -519,23 +519,12 @@ public class Quaternion implements Comparable < Quaternion > {
       final float bz = bi.z;
 
       final float bmSq = bw * bw + bx * bx + by * by + bz * bz;
-
-      if ( bmSq == 0.0f ) { return target.reset(); }
-
-      float bwInv = bw;
-      float bxInv = -bx;
-      float byInv = -by;
-      float bzInv = -bz;
-
-      if ( bmSq != 1.0f ) {
-         final float bmSqInv = 1.0f / bmSq;
-         bwInv *= bmSqInv;
-         bxInv *= bmSqInv;
-         byInv *= bmSqInv;
-         bzInv *= bmSqInv;
+      if ( bmSq != 0.0f ) {
+         final float abmSqInv = a / bmSq;
+         return target.set(bw * abmSqInv, -bx * abmSqInv, -by * abmSqInv, -bz
+            * abmSqInv);
       }
-
-      return target.set(a * bwInv, a * bxInv, a * byInv, a * bzInv);
+      return Quaternion.identity(target);
    }
 
    /**
@@ -581,7 +570,7 @@ public class Quaternion implements Comparable < Quaternion > {
          target.real = a.real * bInv;
          return target;
       }
-      return target.reset();
+      return Quaternion.identity(target);
    }
 
    /**
@@ -607,7 +596,7 @@ public class Quaternion implements Comparable < Quaternion > {
 
       final float bmSq = bw * bw + bx * bx + by * by + bz * bz;
 
-      if ( bmSq == 0.0f ) { return target.reset(); }
+      if ( bmSq == 0.0f ) { return Quaternion.identity(target); }
 
       float bwInv = bw;
       float bxInv = -bx;
@@ -710,7 +699,7 @@ public class Quaternion implements Comparable < Quaternion > {
          return target.set(( float ) ( wExp * Math.cos(mgIm) ), ( float ) ( x
             * scalar ), ( float ) ( y * scalar ), ( float ) ( z * scalar ));
       } else {
-         return target.reset();
+         return Quaternion.identity(target);
       }
    }
 
@@ -1047,13 +1036,13 @@ public class Quaternion implements Comparable < Quaternion > {
       float any = origin.y;
       float anz = origin.z;
       final float amsq = anx * anx + any * any + anz * anz;
-      if ( amsq <= 0.0f ) { return target.reset(); }
+      if ( amsq <= 0.0f ) { return Quaternion.identity(target); }
 
       float bnx = dest.x;
       float bny = dest.y;
       float bnz = dest.z;
       final float bmsq = bnx * bnx + bny * bny + bnz * bnz;
-      if ( bmsq <= 0.0f ) { return target.reset(); }
+      if ( bmsq <= 0.0f ) { return Quaternion.identity(target); }
 
       if ( amsq != 1.0f ) {
          final float aminv = Utils.invSqrtUnchecked(amsq);
@@ -1273,9 +1262,8 @@ public class Quaternion implements Comparable < Quaternion > {
       final Vec3 i = q.imag;
       final float mSq = q.real * q.real + i.x * i.x + i.y * i.y + i.z * i.z;
       if ( mSq != 0.0f ) {
-         final float mSqInv = 1.0f / mSq;
-         return target.set(q.real * mSqInv, -i.x * mSqInv, -i.y * mSqInv, -i.z
-            * mSqInv);
+         final float msi = 1.0f / mSq;
+         return target.set(q.real * msi, -i.x * msi, -i.y * msi, -i.z * msi);
       }
       return Quaternion.identity(target);
    }
@@ -1636,16 +1624,13 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param target the output quaternion
     *
     * @return the normalized quaternion
-    *
-    * @see Quaternion#div(Quaternion, float, Quaternion)
-    * @see Quaternion#mag(Quaternion)
     */
    public static Quaternion normalize ( final Quaternion q,
       final Quaternion target ) {
 
       final Vec3 i = q.imag;
       final float mSq = q.real * q.real + i.x * i.x + i.y * i.y + i.z * i.z;
-      if ( mSq > 0.0f ) {
+      if ( mSq != 0.0f ) {
          final float mInv = Utils.invSqrtUnchecked(mSq);
          return target.set(q.real * mInv, i.x * mInv, i.y * mInv, i.z * mInv);
       }
@@ -1841,8 +1826,7 @@ public class Quaternion implements Comparable < Quaternion > {
    public static Quaternion rotateX ( final Quaternion q, final float radians,
       final Quaternion target ) {
 
-      // TODO: Mod radians by TAU?
-      final double halfAngle = radians * 0.5d;
+      final double halfAngle = Utils.modRadians(radians) * 0.5d;
       return Quaternion.rotateX(q, ( float ) Math.cos(halfAngle), ( float ) Math
          .sin(halfAngle), target);
    }
@@ -1881,8 +1865,7 @@ public class Quaternion implements Comparable < Quaternion > {
    public static Quaternion rotateY ( final Quaternion q, final float radians,
       final Quaternion target ) {
 
-      // TODO: Mod radians by TAU?
-      final double halfAngle = radians * 0.5d;
+      final double halfAngle = Utils.modRadians(radians) * 0.5d;
       return Quaternion.rotateY(q, ( float ) Math.cos(halfAngle), ( float ) Math
          .sin(halfAngle), target);
    }
@@ -1921,8 +1904,7 @@ public class Quaternion implements Comparable < Quaternion > {
    public static Quaternion rotateZ ( final Quaternion q, final float radians,
       final Quaternion target ) {
 
-      // TODO: Mod radians by TAU?
-      final double halfAngle = radians * 0.5d;
+      final double halfAngle = Utils.modRadians(radians) * 0.5d;
       return Quaternion.rotateZ(q, ( float ) Math.cos(halfAngle), ( float ) Math
          .sin(halfAngle), target);
    }
