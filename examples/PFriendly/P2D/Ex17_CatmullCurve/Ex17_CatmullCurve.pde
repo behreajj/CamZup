@@ -58,7 +58,6 @@ void draw() {
   graphics.endShape();
 
   // Draw test.
-
   graphics.shape(ce2, mat);
   if (showHandles) {
     graphics.handles(ce2);
@@ -75,10 +74,16 @@ void keyReleased() {
 }
 
 void mouseReleased() {
-  randomPoints(Utils.min(width, height) * 0.5);
+  if (mouseButton == LEFT) {
+    randomPoints(arr, Utils.min(width, height) * 0.5);
+  } else if (mouseButton == RIGHT) {
+    String str = graphics.toSvgString(ce2, mat);
+    saveStrings("data/catmull.svg", new String[] {str});
+    println("Saved to svg.");
+  }
 }
 
-void randomPoints(float edge) {
+void randomPoints(Vec2[] arr, float edge) {
   for (int i = 0; i < count; ++i) {
     Vec2.randomCartesian(rng, -edge, edge, arr[i]);
   }

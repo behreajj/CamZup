@@ -33,7 +33,8 @@ char[] glyphs = new char[len];
   }
 }
 
-HashMap<Character, MaterialAwt.Sample> map = new HashMap<>(len);
+HashMap<Character, MaterialAwt.Sample> map =
+  new HashMap<Character, MaterialAwt.Sample>(len);
 
 int leading = 2;
 int kerning = 0;
@@ -92,8 +93,8 @@ void draw() {
   buff.beginDraw();
   buff.background(0xff404040);
   buff.camera(
-    buff.width * 0.5,
-    buff.height * 0.5,
+    buff.width * 0.5, 
+    buff.height * 0.5, 
     0.0, 1.0, 1.0);
 
   char[] charr = str.toCharArray();
@@ -129,12 +130,12 @@ void draw() {
       float y1 = yCursor + pxPerGlyph;
 
       shBounds.set(
-        xCursor + 0.5, yCursor - 0.5,
+        xCursor + 0.5, yCursor - 0.5, 
         x1 + 0.5, y1 - 0.5);
       buff.imageNative(shadowImgNtv, sample, shBounds);
 
       hlBounds.set(
-        xCursor, yCursor,
+        xCursor, yCursor, 
         x1, y1);
       buff.imageNative(fontImgNtv, sample, hlBounds);
 

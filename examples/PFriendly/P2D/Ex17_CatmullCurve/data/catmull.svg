@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="720" height="405" viewBox="0 0 720 405">
+<path id="background" d="M 0.0 0.0 L 720.0 0.0 L 720.0 405.0 L 0.0 405.0 Z" stroke="none" fill-opacity="1.000000" fill="#fff7d5"></path>
+<g id="camera" transform="translate(360.000000, 202.500000) scale(1.000000, -1.000000) rotate(0.0) translate(0.0, 0.0)">
+<g id="7e2d773b" class="materialsolid" stroke-width="3.000000" stroke-opacity="0.686274" stroke="#404040" stroke-linejoin="round" stroke-linecap="round" fill="none">
+<path id="bd8db5a" class="curveentity2" fill-rule="evenodd" transform="translate(0.0, 0.0) rotate(0.0) scale(1.000000, 1.000000)" d="M -183.640441 159.729034 C -178.774353 80.639778,-25.324392 -88.089447,-47.109298 -16.389343 C -68.894203 55.310760,-182.793975 145.442474,-146.294891 36.814575 C -109.795814 -71.813323,74.686843 94.382980,-109.679138 169.829895 C -294.045104 245.276809,211.126220 -280.240112,169.761047 -92.522979 C 128.395874 95.194168,-244.918304 -4.823898,-38.767425 -151.970916 C 167.383453 -299.117919,-188.506530 238.818298,-183.640441 159.729034 Z "></path>
+</g>
+
+</g>
+</svg>

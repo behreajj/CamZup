@@ -9,7 +9,7 @@ int[] modes = { CORNER, CORNERS, CENTER, RADIUS };
 String[] msStr = { "CORNER", "CORNERS", "CENTER", "RADIUS"};
 
 void settings() {
-  size(720, 600, YupJ2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {

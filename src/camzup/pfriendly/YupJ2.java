@@ -42,7 +42,6 @@ import processing.core.PShape;
 import processing.core.PSurface;
 
 import processing.awt.PGraphicsJava2D;
-import processing.awt.PSurfaceAWT;
 
 /**
  * A 2D renderer based on the Java AWT (Abstract Window Toolkit). Supposes
@@ -750,7 +749,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public PSurface createSurface ( ) {
 
       /* In case you ever need or want to extend this surface. */
-      this.surface = new PSurfaceAWT(this);
+      this.surface = new ZSurfaceAwt(this);
       return this.surface;
    }
 
