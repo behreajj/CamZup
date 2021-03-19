@@ -3886,6 +3886,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          Vec2.subNorm(fhPrev, coPrev, dir0);
          Vec2.subNorm(rhNext, coNext, dir1);
          final float dotp = Vec2.dot(dir0, dir1);
+
+         // TODO: Test to see if this fails or succeeds with
+         // the infinity curve.
          if ( dotp > -vtol && dotp < vtol ) {
             for ( int i = 1; i < vres; ++i ) {
                points.add(Vec2.bezierPoint(coPrev, fhPrev, rhNext, coNext, i

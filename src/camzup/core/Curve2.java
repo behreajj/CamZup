@@ -2135,7 +2135,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       final float offNorm = offsetAngle * IUtils.ONE_TAU;
       final int vKnCt = sectors < 3 ? 3 : sectors;
-      // final int vKnCt = Utils.clamp(knotCount, 3, 16);
       target.resize(vKnCt);
       final float invKnCt = 1.0f / vKnCt;
       final float hndlTan = 0.25f * invKnCt;
@@ -2408,7 +2407,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float top13 = IUtils.ONE_THIRD * top;
       final float lft13 = IUtils.ONE_THIRD * lft;
 
-      /* Bottom Right Corner. */
+      /* Bottom Right corner. */
       final Vec2 k0fh = k0.foreHandle;
       final Vec2 k1rh = k1.rearHandle;
       if ( br > 0.0f ) {
@@ -2423,7 +2422,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          k1rh.y = btmIns0;
       }
 
-      /* Top Right Corner. */
+      /* Top Right corner. */
       final Vec2 k2fh = k2.foreHandle;
       final Vec2 k3rh = k3.rearHandle;
       if ( tr > 0.0f ) {
@@ -2438,7 +2437,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          k3rh.y = top13 + IUtils.TWO_THIRDS * topIns0;
       }
 
-      /* Top Left Corner. */
+      /* Top Left corner. */
       final Vec2 k4fh = k4.foreHandle;
       final Vec2 k5rh = k5.rearHandle;
       if ( tl > 0.0f ) {
@@ -2453,7 +2452,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          k5rh.y = topIns1;
       }
 
-      /* Bottom Left Corner. */
+      /* Bottom Left corner. */
       final Vec2 k6fh = k6.foreHandle;
       final Vec2 k7rh = k7.rearHandle;
       if ( bl > 0.0f ) {

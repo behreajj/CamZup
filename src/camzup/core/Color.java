@@ -1297,6 +1297,84 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Converts from hue, saturation, lightness and alpha to a color with red,
+    * green, blue and alpha channels.
+    *
+    * @param hue    the hue
+    * @param sat    the saturation
+    * @param light  the lightness
+    * @param alpha  the transparency
+    * @param target the output color
+    *
+    * @return the color
+    *
+    * @see Utils#clamp01(float)
+    * @see Utils#mod1(float)
+    */
+   public static Color hslaToRgba ( final float hue, final float sat,
+      final float light, final float alpha, final Color target ) {
+
+      final float acl = Utils.clamp01(alpha);
+      if ( light <= 0.0f ) { return target.set(0.0f, 0.0f, 0.0f, acl); }
+      if ( light >= 1.0f ) { return target.set(1.0f, 1.0f, 1.0f, acl); }
+      if ( sat <= 0.0f ) { return target.set(light, light, light, acl); }
+
+      final float scl = sat > 1.0f ? 1.0f : sat;
+      final float q = light < 0.5f ? light * ( 1.0f + scl ) : light + scl
+         - light * scl;
+      final float p = light + light - q;
+      final float qnp6 = ( q - p ) * 6.0f;
+
+      final float rHue = Utils.mod1(hue + IUtils.ONE_THIRD);
+      final float gHue = Utils.mod1(hue);
+      final float bHue = Utils.mod1(hue - IUtils.ONE_THIRD);
+
+      float r = p;
+      float g = p;
+      float b = p;
+
+      if ( rHue < IUtils.ONE_SIX ) {
+         r = p + qnp6 * rHue;
+      } else if ( rHue < 0.5f ) {
+         r = q;
+      } else if ( rHue < IUtils.TWO_THIRDS ) {
+         r = p + qnp6 * ( IUtils.TWO_THIRDS - rHue );
+      }
+
+      if ( gHue < IUtils.ONE_SIX ) {
+         g = p + qnp6 * gHue;
+      } else if ( gHue < 0.5f ) {
+         g = q;
+      } else if ( gHue < IUtils.TWO_THIRDS ) {
+         g = p + qnp6 * ( IUtils.TWO_THIRDS - gHue );
+      }
+
+      if ( bHue < IUtils.ONE_SIX ) {
+         b = p + qnp6 * bHue;
+      } else if ( bHue < 0.5f ) {
+         b = q;
+      } else if ( bHue < IUtils.TWO_THIRDS ) {
+         b = p + qnp6 * ( IUtils.TWO_THIRDS - bHue );
+      }
+
+      return target.set(r, g, b, acl);
+   }
+
+   /**
+    * Converts from hue, saturation, lightness and alpha to a color with red,
+    * green, blue and alpha channels.
+    *
+    * @param hsla   the HSLA vector
+    * @param target the output color
+    *
+    * @return the color
+    */
+   public static Color hslaToRgba ( final Vec4 hsla, final Color target ) {
+
+      return Color.hslaToRgba(hsla.x, hsla.y, hsla.z, hsla.w, target);
+   }
+
+   /**
     * Converts from hue, saturation, value and alpha to a color with red,
     * green, blue and alpha channels.
     *
@@ -1361,84 +1439,6 @@ public class Color implements Comparable < Color > {
    public static Color hsvaToRgba ( final Vec4 hsva, final Color target ) {
 
       return Color.hsvaToRgba(hsva.x, hsva.y, hsva.z, hsva.w, target);
-   }
-
-   /**
-    * Converts from hue, saturation, lightness and alpha to a color with red,
-    * green, blue and alpha channels.
-    *
-    * @param hue    the hue
-    * @param sat    the saturation
-    * @param light  the lightness
-    * @param alpha  the transparency
-    * @param target the output color
-    *
-    * @return the color
-    *
-    * @see Utils#clamp01(float)
-    * @see Utils#mod1(float)
-    */
-   public static Color hslaToRgba ( final float hue, final float sat,
-      final float light, final float alpha, final Color target ) {
-
-      final float acl = Utils.clamp01(alpha);
-      if ( light <= 0.0f ) { return target.set(0.0f, 0.0f, 0.0f, acl); }
-      if ( light >= 1.0f ) { return target.set(1.0f, 1.0f, 1.0f, acl); }
-      if ( sat <= 0.0f ) { return target.set(light, light, light, acl); }
-
-      final float scl = sat > 1.0f ? 1.0f : sat;
-      final float q = light < 0.5f ? light * ( 1.0f + scl ) : light + scl
-         - light * scl;
-      final float p = light + light - q;
-      final float qnp6 = ( q - p ) * 6.0f;
-
-      final float huer = Utils.mod1(hue + IUtils.ONE_THIRD);
-      final float hueg = Utils.mod1(hue);
-      final float hueb = Utils.mod1(hue - IUtils.ONE_THIRD);
-
-      float r = p;
-      float g = p;
-      float b = p;
-
-      if ( huer < IUtils.ONE_SIX ) {
-         r = p + qnp6 * huer;
-      } else if ( huer < 0.5f ) {
-         r = q;
-      } else if ( huer < IUtils.TWO_THIRDS ) {
-         r = p + qnp6 * ( IUtils.TWO_THIRDS - huer );
-      }
-
-      if ( hueg < IUtils.ONE_SIX ) {
-         g = p + qnp6 * hueg;
-      } else if ( hueg < 0.5f ) {
-         g = q;
-      } else if ( hueg < IUtils.TWO_THIRDS ) {
-         g = p + qnp6 * ( IUtils.TWO_THIRDS - hueg );
-      }
-
-      if ( hueb < IUtils.ONE_SIX ) {
-         b = p + qnp6 * hueb;
-      } else if ( hueb < 0.5f ) {
-         b = q;
-      } else if ( hueb < IUtils.TWO_THIRDS ) {
-         b = p + qnp6 * ( IUtils.TWO_THIRDS - hueb );
-      }
-
-      return target.set(r, g, b, acl);
-   }
-
-   /**
-    * Converts from hue, saturation, lightness and alpha to a color with red,
-    * green, blue and alpha channels.
-    *
-    * @param hsla   the HSLA vector
-    * @param target the output color
-    *
-    * @return the color
-    */
-   public static Color hslaToRgba ( final Vec4 hsla, final Color target ) {
-
-      return Color.hslaToRgba(hsla.x, hsla.y, hsla.z, hsla.w, target);
    }
 
    /**
@@ -1774,60 +1774,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color to a vector which holds hue, saturation, value and
-    * alpha.
-    *
-    * @param c      the color
-    * @param target the output vector
-    *
-    * @return the HSVA vector
-    *
-    * @see Color#rgbaToHsva(float, float, float, float, Vec4)
-    */
-   public static Vec4 rgbaToHsva ( final Color c, final Vec4 target ) {
-
-      return Color.rgbaToHsva(c.r, c.g, c.b, c.a, target);
-   }
-
-   /**
-    * Converts RGBA channels to a vector which holds hue, saturation, value
-    * and alpha.
-    *
-    * @param red    the red channel
-    * @param green  the green channel
-    * @param blue   the blue channel
-    * @param alpha  the alpha channel
-    * @param target the output vector
-    *
-    * @return the HSVA values
-    *
-    * @see Utils#max
-    * @see Utils#min
-    */
-   public static Vec4 rgbaToHsva ( final float red, final float green,
-      final float blue, final float alpha, final Vec4 target ) {
-
-      final float val = Utils.max(red, green, blue);
-      final float delta = val - Utils.min(red, green, blue);
-      float hue = 0.0f;
-
-      if ( delta != 0.0f ) {
-         if ( red == val ) {
-            hue = ( green - blue ) / delta;
-         } else if ( green == val ) {
-            hue = 2.0f + ( blue - red ) / delta;
-         } else {
-            hue = 4.0f + ( red - green ) / delta;
-         }
-
-         hue *= IUtils.ONE_SIX;
-         if ( hue < 0.0f ) { ++hue; }
-      }
-
-      return target.set(hue, val != 0.0f ? delta / val : 0.0f, val, alpha);
-   }
-
-   /**
     * Converts a color to a vector which holds hue, saturation, lightness and
     * alpha.
     *
@@ -1881,6 +1827,60 @@ public class Color implements Comparable < Color > {
          hue *= IUtils.ONE_SIX;
          return target.set(hue, sat, light, alpha);
       }
+   }
+
+   /**
+    * Converts a color to a vector which holds hue, saturation, value and
+    * alpha.
+    *
+    * @param c      the color
+    * @param target the output vector
+    *
+    * @return the HSVA vector
+    *
+    * @see Color#rgbaToHsva(float, float, float, float, Vec4)
+    */
+   public static Vec4 rgbaToHsva ( final Color c, final Vec4 target ) {
+
+      return Color.rgbaToHsva(c.r, c.g, c.b, c.a, target);
+   }
+
+   /**
+    * Converts RGBA channels to a vector which holds hue, saturation, value
+    * and alpha.
+    *
+    * @param red    the red channel
+    * @param green  the green channel
+    * @param blue   the blue channel
+    * @param alpha  the alpha channel
+    * @param target the output vector
+    *
+    * @return the HSVA values
+    *
+    * @see Utils#max
+    * @see Utils#min
+    */
+   public static Vec4 rgbaToHsva ( final float red, final float green,
+      final float blue, final float alpha, final Vec4 target ) {
+
+      final float val = Utils.max(red, green, blue);
+      final float delta = val - Utils.min(red, green, blue);
+      float hue = 0.0f;
+
+      if ( delta != 0.0f ) {
+         if ( red == val ) {
+            hue = ( green - blue ) / delta;
+         } else if ( green == val ) {
+            hue = 2.0f + ( blue - red ) / delta;
+         } else {
+            hue = 4.0f + ( red - green ) / delta;
+         }
+
+         hue *= IUtils.ONE_SIX;
+         if ( hue < 0.0f ) { ++hue; }
+      }
+
+      return target.set(hue, val != 0.0f ? delta / val : 0.0f, val, alpha);
    }
 
    /**
@@ -1948,28 +1948,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Shifts a color's hue, saturation, value and alpha by a vector.
-    *
-    * @param c      the input color
-    * @param shift  the shift
-    * @param target the output color
-    * @param hsva   the color in HSB
-    *
-    * @return the shifted color
-    *
-    * @see Utils#clamp01(float)
-    * @see Color#rgbaToHsva(Color, Vec4)
-    * @see Color#hsvaToRgba(Vec4, Color)
-    */
-   public static Color shiftHsva ( final Color c, final Vec4 shift,
-      final Color target, final Vec4 hsva ) {
-
-      Color.rgbaToHsva(c, hsva);
-      Vec4.add(hsva, shift, hsva);
-      return Color.hsvaToRgba(hsva, target);
-   }
-
-   /**
     * Shifts a color's hue, saturation, lightness and alpha by a vector.
     *
     * @param c      the input color
@@ -1989,6 +1967,28 @@ public class Color implements Comparable < Color > {
       Color.rgbaToHsla(c, hsla);
       Vec4.add(hsla, shift, hsla);
       return Color.hslaToRgba(hsla, target);
+   }
+
+   /**
+    * Shifts a color's hue, saturation, value and alpha by a vector.
+    *
+    * @param c      the input color
+    * @param shift  the shift
+    * @param target the output color
+    * @param hsva   the color in HSB
+    *
+    * @return the shifted color
+    *
+    * @see Utils#clamp01(float)
+    * @see Color#rgbaToHsva(Color, Vec4)
+    * @see Color#hsvaToRgba(Vec4, Color)
+    */
+   public static Color shiftHsva ( final Color c, final Vec4 shift,
+      final Color target, final Vec4 hsva ) {
+
+      Color.rgbaToHsva(c, hsva);
+      Vec4.add(hsva, shift, hsva);
+      return Color.hsvaToRgba(hsva, target);
    }
 
    /**
@@ -2040,6 +2040,7 @@ public class Color implements Comparable < Color > {
       sb.append("\n# https://github.com/behreajj/CamZup\n");
 
       final int len = arr.length;
+      final int last = len - 1;
       for ( int i = 0; i < len; ++i ) {
          final Color clr = arr[i];
          clr.toGplString(sb);
@@ -2047,7 +2048,7 @@ public class Color implements Comparable < Color > {
          sb.append(Color.toHexWeb(clr).substring(1).toUpperCase());
          sb.append(' ');
          sb.append(i + 1);
-         sb.append('\n');
+         if ( i < last ) { sb.append('\n'); }
       }
 
       return sb.toString();
@@ -2170,14 +2171,16 @@ public class Color implements Comparable < Color > {
    public static String toPalString ( final Color[] arr ) {
 
       final int len = arr.length;
+      final int last = len - 1;
       final StringBuilder sb = new StringBuilder(32 + len * 12);
       sb.append("JASC-PAL\n0100\n");
       sb.append(len);
       sb.append('\n');
-      for ( int i = 0; i < len; ++i ) {
+      for ( int i = 0; i < last; ++i ) {
          arr[i].toGplString(sb);
          sb.append('\n');
       }
+      arr[last].toGplString(sb);
 
       return sb.toString();
    }
@@ -2675,158 +2678,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Eases between colors by hue, saturation and value.
-    */
-   public static class MixHsva extends AbstrEasing {
-
-      /**
-       * The origin color in HSVA.
-       */
-      protected final Vec4 aHsv = new Vec4();
-
-      /**
-       * The destination color in HSVA.
-       */
-      protected final Vec4 bHsv = new Vec4();
-
-      /**
-       * The value easing function.
-       */
-      protected Utils.LerpUnclamped valFunc;
-
-      /**
-       * The new HSVA color.
-       */
-      protected final Vec4 cHsv = new Vec4();
-
-      /**
-       * The hue easing function.
-       */
-      protected HueEasing hueFunc;
-
-      /**
-       * The saturation easing function.
-       */
-      protected Utils.LerpUnclamped satFunc;
-
-      /**
-       * The default constructor. Creates a mixer with nearest hue interpolation
-       * and linear interpolation for saturation and value.
-       */
-      public MixHsva ( ) { this(new HueNear()); }
-
-      /**
-       * Creates a color HSVA mixing function with the given hue easing
-       * function. Saturation and value are governed by linear interpolation.
-       *
-       * @param hueFunc the hue easing function
-       */
-      public MixHsva ( final HueEasing hueFunc ) {
-
-         this(hueFunc, new Utils.Lerp(), new Utils.Lerp());
-      }
-
-      /**
-       * Creates a color HSVA mixing function with the given easing functions
-       * for hue, saturation and value.
-       *
-       * @param hueFunc the hue easing function
-       * @param satFunc the saturation easing function
-       * @param valFunc the value easing function
-       */
-      public MixHsva ( final HueEasing hueFunc,
-         final Utils.LerpUnclamped satFunc,
-         final Utils.LerpUnclamped valFunc ) {
-
-         this.hueFunc = hueFunc;
-         this.satFunc = satFunc;
-         this.valFunc = valFunc;
-      }
-
-      /**
-       * Applies the function.
-       *
-       * @param origin the origin color
-       * @param dest   the destination color
-       * @param step   the step in a range 0 to 1
-       * @param target the output color
-       *
-       * @return the eased color
-       *
-       * @see Color#rgbaToHsva(Color, Vec4)
-       * @see Color#hsvaToRgba(Vec4, Color)
-       */
-      @Override
-      public Color applyUnclamped ( final Color origin, final Color dest,
-         final Float step, final Color target ) {
-
-         /* @formatter:off */
-         final float t = step;
-         Color.rgbaToHsva(origin, this.aHsv);
-         Color.rgbaToHsva(dest, this.bHsv);
-         this.cHsv.set(
-            this.hueFunc.apply(this.aHsv.x, this.bHsv.x, step),
-            this.satFunc.apply(this.aHsv.y, this.bHsv.y, step),
-            this.valFunc.apply(this.aHsv.z, this.bHsv.z, step),
-            ( 1.0f - t ) * this.aHsv.w + t * this.bHsv.w);
-         return Color.hsvaToRgba(this.cHsv, target);
-         /* @formatter:on */
-      }
-
-      /**
-       * Gets the string identifier for the value easing function.
-       *
-       * @return the string
-       */
-      public String getValFuncString ( ) { return this.valFunc.toString(); }
-
-      /**
-       * Gets the string identifier for the hue easing function.
-       *
-       * @return the string
-       */
-      public String getHueFuncString ( ) { return this.hueFunc.toString(); }
-
-      /**
-       * Gets the string identifier for the saturation easing function.
-       *
-       * @return the string
-       */
-      public String getSatFuncString ( ) { return this.satFunc.toString(); }
-
-      /**
-       * Sets the value easing function.
-       *
-       * @param valFunc the easing function
-       */
-      public void setValFunc ( final Utils.LerpUnclamped valFunc ) {
-
-         if ( valFunc != null ) { this.valFunc = valFunc; }
-      }
-
-      /**
-       * Sets the hue easing function.
-       *
-       * @param hueFunc the easing function
-       */
-      public void setHueFunc ( final HueEasing hueFunc ) {
-
-         if ( hueFunc != null ) { this.hueFunc = hueFunc; }
-      }
-
-      /**
-       * Sets the saturation easing function.
-       *
-       * @param satFunc the saturation function
-       */
-      public void setSatFunc ( final Utils.LerpUnclamped satFunc ) {
-
-         if ( satFunc != null ) { this.satFunc = satFunc; }
-      }
-
-   }
-
-   /**
     * Eases between colors by hue, saturation and lightness.
     */
    public static class MixHsla extends AbstrEasing {
@@ -2978,6 +2829,158 @@ public class Color implements Comparable < Color > {
       public void setSatFunc ( final Utils.LerpUnclamped satFunc ) {
 
          if ( satFunc != null ) { this.satFunc = satFunc; }
+      }
+
+   }
+
+   /**
+    * Eases between colors by hue, saturation and value.
+    */
+   public static class MixHsva extends AbstrEasing {
+
+      /**
+       * The origin color in HSVA.
+       */
+      protected final Vec4 aHsv = new Vec4();
+
+      /**
+       * The destination color in HSVA.
+       */
+      protected final Vec4 bHsv = new Vec4();
+
+      /**
+       * The new HSVA color.
+       */
+      protected final Vec4 cHsv = new Vec4();
+
+      /**
+       * The hue easing function.
+       */
+      protected HueEasing hueFunc;
+
+      /**
+       * The saturation easing function.
+       */
+      protected Utils.LerpUnclamped satFunc;
+
+      /**
+       * The value easing function.
+       */
+      protected Utils.LerpUnclamped valFunc;
+
+      /**
+       * The default constructor. Creates a mixer with nearest hue interpolation
+       * and linear interpolation for saturation and value.
+       */
+      public MixHsva ( ) { this(new HueNear()); }
+
+      /**
+       * Creates a color HSVA mixing function with the given hue easing
+       * function. Saturation and value are governed by linear interpolation.
+       *
+       * @param hueFunc the hue easing function
+       */
+      public MixHsva ( final HueEasing hueFunc ) {
+
+         this(hueFunc, new Utils.Lerp(), new Utils.Lerp());
+      }
+
+      /**
+       * Creates a color HSVA mixing function with the given easing functions
+       * for hue, saturation and value.
+       *
+       * @param hueFunc the hue easing function
+       * @param satFunc the saturation easing function
+       * @param valFunc the value easing function
+       */
+      public MixHsva ( final HueEasing hueFunc,
+         final Utils.LerpUnclamped satFunc,
+         final Utils.LerpUnclamped valFunc ) {
+
+         this.hueFunc = hueFunc;
+         this.satFunc = satFunc;
+         this.valFunc = valFunc;
+      }
+
+      /**
+       * Applies the function.
+       *
+       * @param origin the origin color
+       * @param dest   the destination color
+       * @param step   the step in a range 0 to 1
+       * @param target the output color
+       *
+       * @return the eased color
+       *
+       * @see Color#rgbaToHsva(Color, Vec4)
+       * @see Color#hsvaToRgba(Vec4, Color)
+       */
+      @Override
+      public Color applyUnclamped ( final Color origin, final Color dest,
+         final Float step, final Color target ) {
+
+         /* @formatter:off */
+         final float t = step;
+         Color.rgbaToHsva(origin, this.aHsv);
+         Color.rgbaToHsva(dest, this.bHsv);
+         this.cHsv.set(
+            this.hueFunc.apply(this.aHsv.x, this.bHsv.x, step),
+            this.satFunc.apply(this.aHsv.y, this.bHsv.y, step),
+            this.valFunc.apply(this.aHsv.z, this.bHsv.z, step),
+            ( 1.0f - t ) * this.aHsv.w + t * this.bHsv.w);
+         return Color.hsvaToRgba(this.cHsv, target);
+         /* @formatter:on */
+      }
+
+      /**
+       * Gets the string identifier for the hue easing function.
+       *
+       * @return the string
+       */
+      public String getHueFuncString ( ) { return this.hueFunc.toString(); }
+
+      /**
+       * Gets the string identifier for the saturation easing function.
+       *
+       * @return the string
+       */
+      public String getSatFuncString ( ) { return this.satFunc.toString(); }
+
+      /**
+       * Gets the string identifier for the value easing function.
+       *
+       * @return the string
+       */
+      public String getValFuncString ( ) { return this.valFunc.toString(); }
+
+      /**
+       * Sets the hue easing function.
+       *
+       * @param hueFunc the easing function
+       */
+      public void setHueFunc ( final HueEasing hueFunc ) {
+
+         if ( hueFunc != null ) { this.hueFunc = hueFunc; }
+      }
+
+      /**
+       * Sets the saturation easing function.
+       *
+       * @param satFunc the saturation function
+       */
+      public void setSatFunc ( final Utils.LerpUnclamped satFunc ) {
+
+         if ( satFunc != null ) { this.satFunc = satFunc; }
+      }
+
+      /**
+       * Sets the value easing function.
+       *
+       * @param valFunc the easing function
+       */
+      public void setValFunc ( final Utils.LerpUnclamped valFunc ) {
+
+         if ( valFunc != null ) { this.valFunc = valFunc; }
       }
 
    }

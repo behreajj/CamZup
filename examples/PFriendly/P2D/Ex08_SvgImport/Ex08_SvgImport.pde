@@ -7,7 +7,7 @@ YupJ2 graphics;
 CurveEntity2 ce2;
 MaterialSolid material = new MaterialSolid()
   .setFill(true)
-  .setFill(0x3f7f00ff)
+  .setFill(0x3f707070)
   .setStrokeWeight(1.0)
   .setStroke(0x3f303030)
   .setStroke(true);
