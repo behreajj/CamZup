@@ -1570,8 +1570,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Returns thirteen colors in the red yellow blue color wheel. Red is
-    * repeated so that the gradient is periodic.
+    * Returns colors in the red yellow blue color wheel. Red is repeated so
+    * that the gradient is periodic.
     *
     * @param target the output gradient
     *
@@ -1583,17 +1583,18 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       keys.clear();
 
       keys.add(new ColorKey(0.0f, 1.0f, 0.0f, 0.0f));
-      keys.add(new ColorKey(0.0833333f, 1.0f, 0.25f, 0.0f));
-      keys.add(new ColorKey(0.1666667f, 1.0f, 0.5f, 0.0f));
-      keys.add(new ColorKey(0.25f, 1.0f, 0.75f, 0.0f));
-      keys.add(new ColorKey(0.3333333f, 1.0f, 1.0f, 0.0f)); /* Yellow */
+      keys.add(new ColorKey(0.08333333f, 1.0f, 0.4166667f, 0.0f));
+      keys.add(new ColorKey(0.16666667f, 1.0f, 0.6363637f, 0.0f));
+      keys.add(new ColorKey(0.25f, 1.0f, 0.8125f, 0.0f));
+      keys.add(new ColorKey(0.3333333f, 1.0f, 1.0f, 0.0f));
       keys.add(new ColorKey(0.4166667f, 0.5058824f, 0.8313726f, 0.1019608f));
-      keys.add(new ColorKey(0.5f, 0.0f, 0.6627451f, 0.2f)); /* Green */
-      keys.add(new ColorKey(0.5833333f, 0.0823529f, 0.517647f, 0.4f));
-      keys.add(new ColorKey(0.6666667f, 0.1647059f, 0.376471f, 0.6f));
-      keys.add(new ColorKey(0.75f, 0.3333333f, 0.1882353f, 0.5529412f));
-      keys.add(new ColorKey(0.8333333f, 0.5f, 0.0f, 0.5f));
-      keys.add(new ColorKey(0.9166667f, 0.75f, 0.0f, 0.25f));
+      keys.add(new ColorKey(0.5f, 0.0f, 0.6627451f, 0.2f));
+      keys.add(new ColorKey(0.5833333f, 0.082352884f, 0.5176469f, 0.40000018f));
+      keys.add(new ColorKey(0.6666667f, 0.06666667f, 0.34901962f, 0.6509804f));
+      keys.add(new ColorKey(0.75f, 0.23559582f, 0.16500752f, 0.57254905f));
+      keys.add(new ColorKey(0.8333333f, 0.41094783f, 0.045751583f,
+         0.52042484f));
+      keys.add(new ColorKey(0.9166667f, 0.66666667f, 0.0f, 0.33333333f));
       keys.add(new ColorKey(1.0f, 1.0f, 0.0f, 0.0f));
 
       return target;
@@ -1611,6 +1612,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
+      // QUERY Brighten first key slightly?
       keys.add(new ColorKey(0.0f, 0.11774882f, 0.09636405f, 0.07582238f));
       keys.add(new ColorKey(0.14285715f, 0.17625594f, 0.141371f, 0.1127016f));
       keys.add(new ColorKey(0.2857143f, 0.40054432f, 0.30952805f, 0.22960682f));

@@ -731,6 +731,10 @@ public class ZImage extends PImage {
       final int fillClr, final int leading, final int kerning,
       final int textAlign ) {
 
+      // TODO: Create a fromText which accepts a char array, a start index and a
+      // stop index, so that text can be dynamically updated as in a old school
+      // RPG dialog box.
+
       /*
        * Validate inputs: colors with no alpha not allowed; negative leading and
        * kerning not allowed; try to guard against empty Strings. Remove alpha

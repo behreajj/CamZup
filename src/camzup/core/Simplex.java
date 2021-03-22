@@ -66,8 +66,8 @@ public abstract class Simplex extends Generative {
    public static final float F4 = 0.309017f;
 
    /**
-    * Stretch constant 2D <code>(1.0 / Math.sqrt(3.0) - 1.0) /
-    * 2.0</code>; approximately {@value Simplex#G2} .
+    * Stretch constant 2D <code>(3.0 - Math.sqrt(3.0)) / 6.0</code>;
+    * approximately {@value Simplex#G2} .
     */
    public static final float G2 = 0.21132487f;
 
@@ -101,7 +101,7 @@ public abstract class Simplex extends Generative {
     * 2x stretch constant 2D minus one. Approximately {@value Simplex#N2_2_1}
     * .
     */
-   public static final float N2_2_1 = 0.57735026f;
+   public static final float N2_2_1 = IUtils.ONE_SQRT_3;
 
    /**
     * 3x stretch constant 3D minus one. Approximately {@value Simplex#N3_3_1}

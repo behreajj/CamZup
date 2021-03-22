@@ -88,6 +88,8 @@ public class ZSurfaceAwt extends PSurfaceNone {
 
       this.canvas = new SmoothCanvas();
       this.canvas.setFocusTraversalKeysEnabled(false);
+      // this.canvas.setMinimumSize(new Dimension(128, 128));
+      // this.canvas.setMaximumSize(Toolkit.getDefaultToolkit().getScreenSize());
 
       this.canvas.addComponentListener(new ComponentAdapter() {
          @Override
@@ -200,6 +202,7 @@ public class ZSurfaceAwt extends PSurfaceNone {
       }
 
       this.frame = new JFrame(this.displayDevice.getDefaultConfiguration());
+
       final Color windowColor = new Color(this.sketch.sketchWindowColor(),
          false);
       if ( this.frame instanceof JFrame ) {
@@ -218,6 +221,9 @@ public class ZSurfaceAwt extends PSurfaceNone {
       if ( fullScreen ) { this.frame.invalidate(); }
 
       this.frame.setResizable(false);
+      // this.frame.setMinimumSize(new Dimension(128, 128));
+      // this.frame.setMaximumSize(Toolkit.getDefaultToolkit().getScreenSize());
+
       this.frame.addWindowListener(new WindowAdapter() {
          @Override
          public void windowClosing ( final WindowEvent e ) {
@@ -347,10 +353,19 @@ public class ZSurfaceAwt extends PSurfaceNone {
       this.cursorType = k;
    }
 
+   /**
+    * Sets the cursor to an image with a given hot spot.
+    * 
+    * @param img the Processing image
+    * @param x   the hot spot x
+    * @param y   the hot spot y
+    * 
+    * @see Toolkit#createCustomCursor(Image, Point, String)
+    * @see Canvas#setCursor(Cursor)
+    */
    @Override
    public void setCursor ( final PImage img, final int x, final int y ) {
 
-      // TODO: TEST
       final Dimension cursorSize = Toolkit.getDefaultToolkit()
          .getBestCursorSize(img.width, img.height);
       if ( cursorSize.width == 0 || cursorSize.height == 0 ) { return; }
@@ -360,10 +375,15 @@ public class ZSurfaceAwt extends PSurfaceNone {
       this.cursorVisible = true;
    }
 
+   /**
+    * Sets the applet icon to an image.
+    * 
+    * @param img the Processing image
+    */
    @Override
-   public void setIcon ( final PImage image ) {
+   public void setIcon ( final PImage img ) {
 
-      final Image awtImage = YupJ2.convertPImageToNative(image);
+      final Image awtImage = YupJ2.convertPImageToNative(img);
 
       if ( PApplet.platform != PConstants.MACOS ) {
          this.frame.setIconImage(awtImage);
@@ -390,28 +410,37 @@ public class ZSurfaceAwt extends PSurfaceNone {
    @Override
    public void setResizable ( final boolean resizable ) {
 
-      if ( this.frame != null ) { this.frame.setResizable(resizable); }
+      /*
+       * Unsupported: https://github.com/processing/processing4/issues/186 .
+       */
+      PApplet.showMethodWarning("setResizable");
+      // if ( this.frame != null ) { this.frame.setResizable(resizable); }
    }
 
    @Override
    public void setSize ( final int w, final int h ) {
 
-      final int wide = w < 1 ? 1 : w;
-      final int high = h < 1 ? 1 : h;
+      /*
+       * Increasing the minimum bound here does not prevent resizing window to
+       * 0, 0 in the issues https://github.com/processing/processing4/issues/186
+       * https://github.com/processing/processing/issues/5052 .
+       */
+      final int wid = w < 2 ? 2 : w;
+      final int high = h < 2 ? 2 : h;
 
-      if ( wide == this.sketch.width && high == this.sketch.height
+      if ( wid == this.sketch.width && high == this.sketch.height
          && ( this.frame == null || this.currentInsets.equals(this.frame
             .getInsets()) ) ) {
          return;
       }
 
-      this.sketchWidth = wide * this.windowScaleFactor;
+      this.sketchWidth = wid * this.windowScaleFactor;
       this.sketchHeight = high * this.windowScaleFactor;
 
       if ( this.frame != null ) { this.setFrameSize(); }
       this.setCanvasSize();
-      this.sketch.setSize(wide, high);
-      this.graphics.setSize(wide, high);
+      this.sketch.setSize(wid, high);
+      this.graphics.setSize(wid, high);
    }
 
    /** Set the window (and dock, or whatever necessary) title. */
@@ -732,12 +761,13 @@ public class ZSurfaceAwt extends PSurfaceNone {
 
    private void setCanvasSize ( ) {
 
-      final int contentW = Math.max(this.sketchWidth,
+      final int wContent = Math.max(this.sketchWidth,
          PSurface.MIN_WINDOW_WIDTH);
-      final int contentH = Math.max(this.sketchHeight,
+      final int hContent = Math.max(this.sketchHeight,
          PSurface.MIN_WINDOW_HEIGHT);
 
-      this.canvas.setBounds( ( contentW - this.sketchWidth ) / 2, ( contentH
+
+      this.canvas.setBounds( ( wContent - this.sketchWidth ) / 2, ( hContent
          - this.sketchHeight ) / 2, this.sketchWidth, this.sketchHeight);
    }
 
@@ -753,13 +783,22 @@ public class ZSurfaceAwt extends PSurfaceNone {
 
       this.frame.addNotify();
       this.currentInsets = this.frame.getInsets();
-      final int windowW = Math.max(this.sketchWidth, PSurface.MIN_WINDOW_WIDTH)
+      final int wWindow = Math.max(this.sketchWidth, PSurface.MIN_WINDOW_WIDTH)
          + this.currentInsets.left + this.currentInsets.right;
-      final int windowH = Math.max(this.sketchHeight,
+      final int hWindow = Math.max(this.sketchHeight,
          PSurface.MIN_WINDOW_HEIGHT) + this.currentInsets.top
          + this.currentInsets.bottom;
-      this.frame.setSize(windowW, windowH);
-      return new Dimension(windowW, windowH);
+
+      // final int wWindow = Math.max(this.sketchWidth + this.currentInsets.left
+      // + this.currentInsets.right, PSurface.MIN_WINDOW_WIDTH);
+      // final int hWindow = Math.max(this.sketchHeight + this.currentInsets.top
+      // + this.currentInsets.bottom, PSurface.MIN_WINDOW_HEIGHT);
+
+      // this.frame.setMinimumSize(new Dimension(PSurface.MIN_WINDOW_WIDTH,
+      // PSurface.MIN_WINDOW_HEIGHT));
+
+      this.frame.setSize(wWindow, hWindow);
+      return new Dimension(wWindow, hWindow);
    }
 
    private void setFullFrame ( ) {
@@ -879,12 +918,17 @@ public class ZSurfaceAwt extends PSurfaceNone {
       @Override
       public Dimension getMaximumSize ( ) {
 
-         return ZSurfaceAwt.this.frame.isResizable() ? super.getMaximumSize()
-            : this.getPreferredSize();
+         // return ZSurfaceAwt.this.frame.isResizable() ? super.getMaximumSize()
+         // : this.getPreferredSize();
+         return super.getMaximumSize();
       }
 
       @Override
-      public Dimension getMinimumSize ( ) { return this.getPreferredSize(); }
+      public Dimension getMinimumSize ( ) {
+
+         // return this.getPreferredSize();
+         return super.getMinimumSize();
+      }
 
       @Override
       public Dimension getPreferredSize ( ) {

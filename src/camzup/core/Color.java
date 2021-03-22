@@ -1807,6 +1807,7 @@ public class Color implements Comparable < Color > {
    public static Vec4 rgbaToHsla ( final float red, final float green,
       final float blue, final float alpha, final Vec4 target ) {
 
+      // TODO: Inline and optimize max and min ops.
       final float mx = Utils.max(red, green, blue);
       final float mn = Utils.min(red, green, blue);
       final float light = ( mx + mn ) * 0.5f;
@@ -1814,11 +1815,12 @@ public class Color implements Comparable < Color > {
          return target.set(0.0f, 0.0f, light, alpha);
       } else {
          final float diff = mx - mn;
-         final float sat = light > 0.5f ? diff / ( 2.0f - mx - mn ) : diff
-            / ( mx + mn );
+         final float sum = mx + mn;
+         final float sat = light > 0.5f ? diff / ( 2.0f - sum ) : diff / sum;
          float hue;
          if ( mx == red ) {
-            hue = ( green - blue ) / diff + ( green < blue ? 6.0f : 0.0f );
+            hue = ( green - blue ) / diff;
+            if ( green < blue ) { hue += 6.0f; }
          } else if ( mx == green ) {
             hue = ( blue - red ) / diff + 2.0f;
          } else {
@@ -1867,6 +1869,7 @@ public class Color implements Comparable < Color > {
       final float delta = val - Utils.min(red, green, blue);
       float hue = 0.0f;
 
+      // TODO: Optimize with reference to rgbaToHsla.
       if ( delta != 0.0f ) {
          if ( red == val ) {
             hue = ( green - blue ) / delta;
