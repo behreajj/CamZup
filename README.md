@@ -39,7 +39,7 @@ Cam Z-Up is tested with Processing version [4.0 alpha](https://github.com/proces
 
 ## Getting Started
 
-For more complete information, please refer to the `docs` included with this library.
+For more complete information, please refer to the documentation included with this library in the `doc` directory.
 
 ### Installation
 
@@ -169,11 +169,11 @@ A quick heuristic to decide if you are blending colors as you prefer is to take 
 
 ![Mix Diagram](data/mixDiagram.png)
 
-A hue mix can be either counter-clockwise or clockwise. Keep hue's periodicity in mind when working with HSB; do not use `clamp` to confine a hue to [0.0, 1.0], use `mod1` instead. An rgb mix can use linear or smooth step. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
+A hue mix can be either counter-clockwise or clockwise. Keep hue's periodicity in mind when working with HSB; do not use `Utils.clamp01` to confine a hue to [0.0, 1.0], use `Utils.mod1` instead. An rgb mix can use linear or smooth step. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
 
 ```java
 class Foo extends Color.AbstrEasing {
-  Color applyUnclamped(Color a, Color b, float t, Color target) {
+  Color applyUnclamped(Color a, Color b, Float t, Color target) {
     float u = 1.0 - t;
     return target.set(
       Utils.sqrt(u * a.r * a.r + t * b.r * b.r),
@@ -299,13 +299,14 @@ Here is a brief list of issues with this library and differences which may be un
   
 ### 2D
   - The `image` function for `PGraphicsJava2D` is ineffective, both in terms of frame rate and appearance. I recommend that an OpenGL renderer be used instead. Alternatively, rescale images to display size and tint them in a raster image editor. I have made an image function which removes some of the padding around the native renderer's image function in cases where a `PImage` can be converted to a `java.awt.Image` in `setup`.
+  - `surface.setResizable` is not supported.
   - As a consequence of how `image` function works above, dynamic `tint`ing is no longer supported in `YupJ2`.
   - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter.
   - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), `ellipseMode` and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with this library. For that reason, `CENTER` is the default alignment.
   - OpenGL renderers do not recognize contours in meshes and curves.
   
 ### 3D
-  - Neither 3D primitive, the [sphere](https://processing.org/reference/sphere_.html) nor the [box](https://processing.org/reference/box_.html), are supported; use `MeshEntity`s instead.
+  - Neither 3D primitive, the [sphere](https://processing.org/reference/sphere_.html) nor the [box](https://processing.org/reference/box_.html), are supported; use `MeshEntity3`s instead.
   - A `Mesh3` material may not have both a fill and a stroke due to flickering in [perspective](https://processing.org/reference/perspective_.html) cameras.
 
 Many core Processing functions are marked `final`, meaning they cannot be extended and modified by classes in this library; many fields are marked `private` meaning they cannot be accessed and/or mutated. This is the one of the reasons for the limitations above.

@@ -26,10 +26,16 @@ void setup() {
   ce2 = ParserSvg.load(filePath);
   long end = System.currentTimeMillis();
   println("Elapsed Time: " + (end - start));
+  
+  ce2.reframe();
+  ce2.scaleTo(2.0 * Utils.min(width, height));
 }
 
 void draw() {
   surface.setTitle(Utils.toFixed(frameRate, 1));
+
+  ce2.moveTo(graphics.mouse(new Vec2()));
+
   graphics.background();
   graphics.camFlipped();
   graphics.shape(ce2, material);

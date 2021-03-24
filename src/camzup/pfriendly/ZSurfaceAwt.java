@@ -379,6 +379,8 @@ public class ZSurfaceAwt extends PSurfaceNone {
     * Sets the applet icon to an image.
     * 
     * @param img the Processing image
+    * 
+    * @see Frame#setIconImage(Image)
     */
    @Override
    public void setIcon ( final PImage img ) {
@@ -407,6 +409,11 @@ public class ZSurfaceAwt extends PSurfaceNone {
       this.frame.setLocation(x, y);
    }
 
+   /**
+    * Sets the applet to be resizable. Not supported with this surface.
+    * 
+    * @param resizable true or false
+    */
    @Override
    public void setResizable ( final boolean resizable ) {
 
@@ -605,16 +612,16 @@ public class ZSurfaceAwt extends PSurfaceNone {
       int peAction;
       final int eventid = event.getID();
       switch ( eventid ) {
+         case java.awt.event.KeyEvent.KEY_TYPED:
+            peAction = KeyEvent.TYPE;
+            break;
+         
          case java.awt.event.KeyEvent.KEY_PRESSED:
             peAction = KeyEvent.PRESS;
             break;
 
          case java.awt.event.KeyEvent.KEY_RELEASED:
             peAction = KeyEvent.RELEASE;
-            break;
-
-         case java.awt.event.KeyEvent.KEY_TYPED:
-            peAction = KeyEvent.TYPE;
             break;
 
          default:
@@ -653,6 +660,12 @@ public class ZSurfaceAwt extends PSurfaceNone {
       int peAction;
       final int eventid = nativeEvent.getID();
       switch ( eventid ) {
+         case java.awt.event.MouseEvent.MOUSE_CLICKED:
+            peAction = MouseEvent.CLICK;
+            peButton = ZSurfaceAwt.awtToProcessingMouseButton(nativeEvent
+               .getButton());
+            break;
+
          case java.awt.event.MouseEvent.MOUSE_PRESSED:
             peAction = MouseEvent.PRESS;
             break;
@@ -661,16 +674,6 @@ public class ZSurfaceAwt extends PSurfaceNone {
             peAction = MouseEvent.RELEASE;
             peButton = ZSurfaceAwt.awtToProcessingMouseButton(nativeEvent
                .getButton());
-            break;
-
-         case java.awt.event.MouseEvent.MOUSE_CLICKED:
-            peAction = MouseEvent.CLICK;
-            peButton = ZSurfaceAwt.awtToProcessingMouseButton(nativeEvent
-               .getButton());
-            break;
-
-         case java.awt.event.MouseEvent.MOUSE_DRAGGED:
-            peAction = MouseEvent.DRAG;
             break;
 
          case java.awt.event.MouseEvent.MOUSE_MOVED:
@@ -683,6 +686,10 @@ public class ZSurfaceAwt extends PSurfaceNone {
 
          case java.awt.event.MouseEvent.MOUSE_EXITED:
             peAction = MouseEvent.EXIT;
+            break;
+
+         case java.awt.event.MouseEvent.MOUSE_DRAGGED:
+            peAction = MouseEvent.DRAG;
             break;
 
          case java.awt.event.MouseEvent.MOUSE_WHEEL:
@@ -699,7 +706,7 @@ public class ZSurfaceAwt extends PSurfaceNone {
          nativeEvent.getY() / this.windowScaleFactor, peButton, peCount));
    }
 
-   synchronized protected void render ( ) {
+   protected synchronized void render ( ) {
 
       if ( this.canvas.isDisplayable() && this.graphics.image != null ) {
          if ( this.canvas.getBufferStrategy() == null ) {
@@ -740,7 +747,7 @@ public class ZSurfaceAwt extends PSurfaceNone {
             }
             frame.setIconImages(this.iconImages);
 
-         } catch ( final Exception e ) {}
+         } catch ( final Exception e ) { e.printStackTrace(); }
 
       } else {
          if ( !ZSurfaceAwt.dockIconSpecified() ) {
@@ -766,7 +773,6 @@ public class ZSurfaceAwt extends PSurfaceNone {
       final int hContent = Math.max(this.sketchHeight,
          PSurface.MIN_WINDOW_HEIGHT);
 
-
       this.canvas.setBounds( ( wContent - this.sketchWidth ) / 2, ( hContent
          - this.sketchHeight ) / 2, this.sketchWidth, this.sketchHeight);
    }
@@ -778,7 +784,6 @@ public class ZSurfaceAwt extends PSurfaceNone {
             - this.sketchHeight ) / 2);
    }
 
-   /** Resize frame for these sketch (canvas) dimensions. */
    private Dimension setFrameSize ( ) {
 
       this.frame.addNotify();
@@ -788,14 +793,6 @@ public class ZSurfaceAwt extends PSurfaceNone {
       final int hWindow = Math.max(this.sketchHeight,
          PSurface.MIN_WINDOW_HEIGHT) + this.currentInsets.top
          + this.currentInsets.bottom;
-
-      // final int wWindow = Math.max(this.sketchWidth + this.currentInsets.left
-      // + this.currentInsets.right, PSurface.MIN_WINDOW_WIDTH);
-      // final int hWindow = Math.max(this.sketchHeight + this.currentInsets.top
-      // + this.currentInsets.bottom, PSurface.MIN_WINDOW_HEIGHT);
-
-      // this.frame.setMinimumSize(new Dimension(PSurface.MIN_WINDOW_WIDTH,
-      // PSurface.MIN_WINDOW_HEIGHT));
 
       this.frame.setSize(wWindow, hWindow);
       return new Dimension(wWindow, hWindow);
@@ -832,8 +829,6 @@ public class ZSurfaceAwt extends PSurfaceNone {
             if ( ZSurfaceAwt.this.frame.isResizable() ) {
                final Frame fr = ( Frame ) e.getComponent();
                if ( fr.isVisible() ) {
-
-                  // TODO: Optimize more.
                   final Insets insets = ZSurfaceAwt.this.currentInsets;
                   final int left = insets.left;
                   final int top = insets.top;

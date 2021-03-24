@@ -148,3 +148,4 @@ helix
 loxodromes
 concave
 rhombus
+resizable

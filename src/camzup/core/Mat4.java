@@ -2,10 +2,10 @@ package camzup.core;
 
 /**
  * A mutable, extensible class influenced by GLSL, OSL and Processing's
- * PMatrix3D. Although this is a 4 x 4 matrix, it is generally assumed to
- * be a 3D affine transform matrix, where the last row is (0.0, 0.0, 0.0,
- * 1.0) . Instance methods are limited, while most static methods require
- * an explicit output variable to be provided.
+ * PMatrix3D. Although this is a 4 x 4 matrix, it is assumed to be a 3D
+ * affine transform matrix, where the last row is (0.0, 0.0, 0.0, 1.0) .
+ * Instance methods are limited, while most static methods require an
+ * explicit output variable to be provided.
  */
 public class Mat4 {
 
@@ -1259,44 +1259,22 @@ public class Mat4 {
    }
 
    /**
-    * Creates a rotation matrix from the cosine and sine of an angle around an
-    * axis. The axis will be normalized by the function.
+    * Creates a rotation matrix from an angle in radians around an axis. The
+    * axis will not be checked for validity.
     *
-    * @param cosa   the cosine of an angle
-    * @param sina   the sine of an angle
+    * @param cosa   cosine of the angle
+    * @param sina   sine of the angle
     * @param axis   the axis
     * @param target the output matrix
     *
     * @return the matrix
+    *
+    * @see Mat4#fromRotation(float, float, float, float, float, Mat4)
     */
    public static Mat4 fromRotation ( final float cosa, final float sina,
       final Vec3 axis, final Mat4 target ) {
 
-      final float mSq = Vec3.magSq(axis);
-      if ( mSq != 0.0f ) {
-         final float mInv = Utils.invSqrtUnchecked(mSq);
-         final float ax = axis.x * mInv;
-         final float ay = axis.y * mInv;
-         final float az = axis.z * mInv;
-
-         final float d = 1.0f - cosa;
-         final float x = ax * d;
-         final float y = ay * d;
-         final float z = az * d;
-
-         final float axay = x * ay;
-         final float axaz = x * az;
-         final float ayaz = y * az;
-
-         /* @formatter:off */
-         return target.set(
-            cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
-            axay + sina * az, cosa + y * ay, ayaz - sina * ax, 0.0f,
-            axaz - sina * ay, ayaz + sina * ax, cosa + z * az, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f);
-         /* @formatter:on */
-      }
-      return target.reset();
+      return Mat4.fromRotation(cosa, sina, axis.x, axis.y, axis.z, target);
    }
 
    /**
@@ -1308,13 +1286,24 @@ public class Mat4 {
     * @param target  the output matrix
     *
     * @return the matrix
+    *
+    * @see Mat4#fromRotation(float, float, float, float, float, Mat4)
     */
    public static Mat4 fromRotation ( final float radians, final Vec3 axis,
       final Mat4 target ) {
 
-      final float norm = radians * IUtils.ONE_TAU;
-      return Mat4.fromRotation(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f),
-         axis, target);
+      final float ax = axis.x;
+      final float ay = axis.y;
+      final float az = axis.z;
+      final float mSq = ax * ax + ay * ay + az * az;
+      if ( mSq != 0.0f ) {
+         final float mInv = Utils.invSqrtUnchecked(mSq);
+         final float norm = radians * IUtils.ONE_TAU;
+         return Mat4.fromRotation(Utils.scNorm(norm), Utils.scNorm(norm
+            - 0.25f), ax * mInv, ay * mInv, az * mInv, target);
+      } else {
+         return Mat4.identity(target);
+      }
    }
 
    /**
@@ -1562,8 +1551,6 @@ public class Mat4 {
    @Experimental
    public static Mat4 fromSpherical ( final float azimuth,
       final float inclination, final float radius, final Mat4 target ) {
-
-      // TODO: Version with and without radius?
 
       if ( radius == 0.0f ) { return target.reset(); }
 
@@ -2440,6 +2427,40 @@ public class Mat4 {
          Utils.xor(a.m22, b.m22), Utils.xor(a.m23, b.m23),
          Utils.xor(a.m30, b.m30), Utils.xor(a.m31, b.m31),
          Utils.xor(a.m32, b.m32), Utils.xor(a.m33, b.m33));
+      /* @formatter:on */
+   }
+
+   /**
+    * Creates a rotation matrix from an angle in radians around an axis. The
+    * axis will not be checked for validity.
+    *
+    * @param cosa   cosine of the angle
+    * @param sina   sine of the angle
+    * @param ax     the axis x
+    * @param ay     the axis y
+    * @param az     the axis z
+    * @param target the output matrix
+    *
+    * @return the matrix
+    */
+   static Mat4 fromRotation ( final float cosa, final float sina,
+      final float ax, final float ay, final float az, final Mat4 target ) {
+
+      final float d = 1.0f - cosa;
+      final float x = ax * d;
+      final float y = ay * d;
+      final float z = az * d;
+
+      final float axay = x * ay;
+      final float axaz = x * az;
+      final float ayaz = y * az;
+
+      /* @formatter:off */
+      return target.set(
+         cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
+         axay + sina * az, cosa + y * ay, ayaz - sina * ax, 0.0f,
+         axaz - sina * ay, ayaz + sina * ax, cosa + z * az, 0.0f,
+         0.0f, 0.0f, 0.0f, 1.0f);
       /* @formatter:on */
    }
 

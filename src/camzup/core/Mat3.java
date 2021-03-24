@@ -2,7 +2,7 @@ package camzup.core;
 
 /**
  * A mutable, extensible class influenced by GLSL, OSL and Processing's
- * PMatrix2D. Although this is a 3 x 3 matrix, it is generally assumed to
+ * PMatrix2D. Although this is a 3 x 3 matrix, it is assumed to
  * be a 2D affine transform matrix, where the last row is (0.0, 0.0, 1.0) .
  * Instance methods are limited, while most static methods require an
  * explicit output variable to be provided.

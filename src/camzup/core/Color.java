@@ -1807,9 +1807,10 @@ public class Color implements Comparable < Color > {
    public static Vec4 rgbaToHsla ( final float red, final float green,
       final float blue, final float alpha, final Vec4 target ) {
 
-      // TODO: Inline and optimize max and min ops.
-      final float mx = Utils.max(red, green, blue);
-      final float mn = Utils.min(red, green, blue);
+      final float rgmx = red > green ? red : green;
+      final float rgmn = red < green ? red : green;
+      final float mx = rgmx > blue ? rgmx : blue;
+      final float mn = rgmn < blue ? rgmn : blue;
       final float light = ( mx + mn ) * 0.5f;
       if ( mx == mn ) {
          return target.set(0.0f, 0.0f, light, alpha);
@@ -1822,9 +1823,9 @@ public class Color implements Comparable < Color > {
             hue = ( green - blue ) / diff;
             if ( green < blue ) { hue += 6.0f; }
          } else if ( mx == green ) {
-            hue = ( blue - red ) / diff + 2.0f;
+            hue = 2.0f + ( blue - red ) / diff;
          } else {
-            hue = ( red - green ) / diff + 4.0f;
+            hue = 4.0f + ( red - green ) / diff;
          }
          hue *= IUtils.ONE_SIX;
          return target.set(hue, sat, light, alpha);
@@ -1865,25 +1866,28 @@ public class Color implements Comparable < Color > {
    public static Vec4 rgbaToHsva ( final float red, final float green,
       final float blue, final float alpha, final Vec4 target ) {
 
-      final float val = Utils.max(red, green, blue);
-      final float delta = val - Utils.min(red, green, blue);
+      final float rgmx = red > green ? red : green;
+      final float rgmn = red < green ? red : green;
+      final float mx = rgmx > blue ? rgmx : blue;
+      final float mn = rgmn < blue ? rgmn : blue;
+      final float diff = mx - mn;
       float hue = 0.0f;
 
       // TODO: Optimize with reference to rgbaToHsla.
-      if ( delta != 0.0f ) {
-         if ( red == val ) {
-            hue = ( green - blue ) / delta;
-         } else if ( green == val ) {
-            hue = 2.0f + ( blue - red ) / delta;
+      if ( diff != 0.0f ) {
+         if ( red == mx ) {
+            hue = ( green - blue ) / diff;
+         } else if ( green == mx ) {
+            hue = 2.0f + ( blue - red ) / diff;
          } else {
-            hue = 4.0f + ( red - green ) / delta;
+            hue = 4.0f + ( red - green ) / diff;
          }
 
          hue *= IUtils.ONE_SIX;
          if ( hue < 0.0f ) { ++hue; }
       }
 
-      return target.set(hue, val != 0.0f ? delta / val : 0.0f, val, alpha);
+      return target.set(hue, mx != 0.0f ? diff / mx : 0.0f, mx, alpha);
    }
 
    /**
