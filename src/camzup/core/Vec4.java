@@ -1601,8 +1601,8 @@ public class Vec4 implements Comparable < Vec4 > {
     */
    public static Vec4 normalize ( final Vec4 v, final Vec4 target ) {
 
-      final float mInv = Utils.invSqrt(v.x * v.x + v.y * v.y + v.z
-         * v.z + v.w * v.w);
+      final float mInv = Utils.invSqrt(v.x * v.x + v.y * v.y + v.z * v.z + v.w
+         * v.w);
       return target.set(v.x * mInv, v.y * mInv, v.z * mInv, v.w * mInv);
    }
 

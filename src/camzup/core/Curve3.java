@@ -1655,11 +1655,11 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       final int knotLast = knotLength - 1;
       final Vec3 carry = new Vec3();
+      final Iterator < Knot3 > itr = knots.iterator();
+      final Knot3 first = itr.next();
 
       if ( target.closedLoop ) {
 
-         final Iterator < Knot3 > itr = knots.iterator();
-         final Knot3 first = itr.next();
          Knot3 prev = knots.get(knotLast);
          Knot3 curr = first;
          while ( itr.hasNext() ) {
@@ -1672,19 +1672,18 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       } else {
 
-         Knot3 prev = knots.get(0);
-         Knot3 curr = knots.get(1);
+         Knot3 prev = first;
+         Knot3 curr = itr.next();
          Knot3.smoothHandlesFirst(prev, curr, carry).mirrorHandlesForward();
 
-         for ( int i = 2; i < knotLength; ++i ) {
-            final Knot3 next = knots.get(i);
+         while ( itr.hasNext() ) {
+            final Knot3 next = itr.next();
             Knot3.smoothHandles(prev, curr, next, carry);
             prev = curr;
             curr = next;
          }
 
-         Knot3.smoothHandlesLast(knots.get(knotLength - 2), knots.get(knotLast),
-            carry).mirrorHandlesBackward();
+         Knot3.smoothHandlesLast(prev, curr, carry).mirrorHandlesBackward();
 
       }
 

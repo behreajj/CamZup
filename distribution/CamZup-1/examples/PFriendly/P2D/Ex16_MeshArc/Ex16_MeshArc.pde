@@ -8,6 +8,7 @@ float maxScale = 0.0;
 float minScale = 0.0;
 MeshEntity2 entity = new MeshEntity2();
 MaterialSolid[] materials = new MaterialSolid[count];
+Color.AbstrEasing mixer = new Color.LerpRgba();
 Gradient grd = Gradient.paletteRyb(new Gradient());
 
 void settings() {
@@ -28,7 +29,7 @@ void setup() {
     float step = 1.0 - i * toStep;
 
     MaterialSolid material = new MaterialSolid();
-    Gradient.eval(grd, step, material.fill);
+    Gradient.eval(grd, step, mixer, material.fill);
     material.name = Color.toHexString(material.fill);
     materials[i] = material;
   }

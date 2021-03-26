@@ -1800,24 +1800,21 @@ public class Color implements Comparable < Color > {
     * @param target the output vector
     *
     * @return the HSLA values
-    *
-    * @see Utils#max
-    * @see Utils#min
     */
    public static Vec4 rgbaToHsla ( final float red, final float green,
       final float blue, final float alpha, final Vec4 target ) {
 
-      final float rgmx = red > green ? red : green;
-      final float rgmn = red < green ? red : green;
-      final float mx = rgmx > blue ? rgmx : blue;
-      final float mn = rgmn < blue ? rgmn : blue;
+      final float gbmx = green > blue ? green : blue;
+      final float gbmn = green < blue ? green : blue;
+      final float mx = gbmx > red ? gbmx : red;
+      final float mn = gbmn < red ? gbmn : red;
+
       final float light = ( mx + mn ) * 0.5f;
       if ( mx == mn ) {
          return target.set(0.0f, 0.0f, light, alpha);
       } else {
          final float diff = mx - mn;
          final float sum = mx + mn;
-         final float sat = light > 0.5f ? diff / ( 2.0f - sum ) : diff / sum;
          float hue;
          if ( mx == red ) {
             hue = ( green - blue ) / diff;
@@ -1828,7 +1825,8 @@ public class Color implements Comparable < Color > {
             hue = 4.0f + ( red - green ) / diff;
          }
          hue *= IUtils.ONE_SIX;
-         return target.set(hue, sat, light, alpha);
+         return target.set(hue, light > 0.5f ? diff / ( 2.0f - sum ) : diff
+            / sum, light, alpha);
       }
    }
 
@@ -1860,23 +1858,22 @@ public class Color implements Comparable < Color > {
     *
     * @return the HSVA values
     *
-    * @see Utils#max
-    * @see Utils#min
     */
    public static Vec4 rgbaToHsva ( final float red, final float green,
       final float blue, final float alpha, final Vec4 target ) {
 
-      final float rgmx = red > green ? red : green;
-      final float rgmn = red < green ? red : green;
-      final float mx = rgmx > blue ? rgmx : blue;
-      final float mn = rgmn < blue ? rgmn : blue;
+      final float gbmx = green > blue ? green : blue;
+      final float gbmn = green < blue ? green : blue;
+      final float mx = gbmx > red ? gbmx : red;
+      final float mn = gbmn < red ? gbmn : red;
+
       final float diff = mx - mn;
       float hue = 0.0f;
 
-      // TODO: Optimize with reference to rgbaToHsla.
       if ( diff != 0.0f ) {
          if ( red == mx ) {
             hue = ( green - blue ) / diff;
+            if ( green < blue ) { hue += 6.0f; }
          } else if ( green == mx ) {
             hue = 2.0f + ( blue - red ) / diff;
          } else {
@@ -1884,7 +1881,6 @@ public class Color implements Comparable < Color > {
          }
 
          hue *= IUtils.ONE_SIX;
-         if ( hue < 0.0f ) { ++hue; }
       }
 
       return target.set(hue, mx != 0.0f ? diff / mx : 0.0f, mx, alpha);

@@ -19,7 +19,7 @@ void setup() {
   orig = createImage(width, height, ARGB);
   ZImage.fill(grd, orig);
 
-  Gradient.shiftHsba(grd, shifter, grd, new Color(), new Vec4());
+  Gradient.shiftHsva(grd, shifter, grd, new Color(), new Vec4());
   trg = createImage(width, height, ARGB);
   ZImage.fill(grd, trg);
 }

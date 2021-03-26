@@ -379,7 +379,7 @@ public class Complex implements Comparable < Complex > {
    public static Complex div ( final Complex a, final Complex b,
       final Complex target ) {
 
-      final float bAbsSq = Complex.absSq(b);
+      final float bAbsSq = b.real * b.real + b.imag * b.imag;
       if ( bAbsSq != 0.0f ) {
          final float bInvAbsSq = 1.0f / bAbsSq;
          final float cReal = b.real * bInvAbsSq;
@@ -445,7 +445,7 @@ public class Complex implements Comparable < Complex > {
    public static Complex div ( final float a, final Complex b,
       final Complex target ) {
 
-      final float bAbsSq = Complex.absSq(b);
+      final float bAbsSq = b.real * b.real + b.imag * b.imag;
       if ( bAbsSq != 0.0f ) {
          final float abInvAbsSq = a / bAbsSq;
          return target.set(b.real * abInvAbsSq, -b.imag * abInvAbsSq);
@@ -485,7 +485,7 @@ public class Complex implements Comparable < Complex > {
     */
    public static Complex inverse ( final Complex z, final Complex target ) {
 
-      final float absSq = Complex.absSq(z);
+      final float absSq = z.real * z.real + z.imag * z.imag;
       if ( absSq != 0.0f ) {
          final float invAbsSq = 1.0f / absSq;
          return target.set(z.real * invAbsSq, -z.imag * invAbsSq);
@@ -508,7 +508,7 @@ public class Complex implements Comparable < Complex > {
    public static Complex inverse ( final Complex z, final Complex target,
       final Complex conj ) {
 
-      final float absSq = Complex.absSq(z);
+      final float absSq = z.real * z.real + z.imag * z.imag;
       if ( absSq != 0.0f ) {
          Complex.conj(z, conj);
          final float invAbsSq = 1.0f / absSq;
@@ -529,7 +529,7 @@ public class Complex implements Comparable < Complex > {
     */
    public static boolean isUnit ( final Complex z ) {
 
-      return Utils.approx(Complex.absSq(z), 1.0f);
+      return Utils.approx(z.real * z.real + z.imag * z.imag, 1.0f);
    }
 
    /**

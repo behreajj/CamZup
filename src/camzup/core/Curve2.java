@@ -1910,11 +1910,11 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       final int knotLast = knotLength - 1;
       final Vec2 carry = new Vec2();
+      final Iterator < Knot2 > itr = knots.iterator();
+      final Knot2 first = itr.next();
 
       if ( target.closedLoop ) {
 
-         final Iterator < Knot2 > itr = knots.iterator();
-         final Knot2 first = itr.next();
          Knot2 prev = knots.get(knotLast);
          Knot2 curr = first;
          while ( itr.hasNext() ) {
@@ -1927,20 +1927,18 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       } else {
 
-         Knot2 prev = knots.get(0);
-         Knot2 curr = knots.get(1);
+         Knot2 prev = first;
+         Knot2 curr = itr.next();
          Knot2.smoothHandlesFirst(prev, curr, carry).mirrorHandlesForward();
 
-         for ( int i = 2; i < knotLength; ++i ) {
-            final Knot2 next = knots.get(i);
+         while ( itr.hasNext() ) {
+            final Knot2 next = itr.next();
             Knot2.smoothHandles(prev, curr, next, carry);
             prev = curr;
             curr = next;
          }
 
-         Knot2.smoothHandlesLast(knots.get(knotLength - 2), knots.get(knotLast),
-            carry).mirrorHandlesBackward();
-
+         Knot2.smoothHandlesLast(prev, curr, carry).mirrorHandlesBackward();
       }
 
       return target;

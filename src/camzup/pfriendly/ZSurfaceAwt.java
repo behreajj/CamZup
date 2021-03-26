@@ -355,11 +355,11 @@ public class ZSurfaceAwt extends PSurfaceNone {
 
    /**
     * Sets the cursor to an image with a given hot spot.
-    * 
+    *
     * @param img the Processing image
     * @param x   the hot spot x
     * @param y   the hot spot y
-    * 
+    *
     * @see Toolkit#createCustomCursor(Image, Point, String)
     * @see Canvas#setCursor(Cursor)
     */
@@ -377,9 +377,9 @@ public class ZSurfaceAwt extends PSurfaceNone {
 
    /**
     * Sets the applet icon to an image.
-    * 
+    *
     * @param img the Processing image
-    * 
+    *
     * @see Frame#setIconImage(Image)
     */
    @Override
@@ -411,7 +411,7 @@ public class ZSurfaceAwt extends PSurfaceNone {
 
    /**
     * Sets the applet to be resizable. Not supported with this surface.
-    * 
+    *
     * @param resizable true or false
     */
    @Override
@@ -604,7 +604,7 @@ public class ZSurfaceAwt extends PSurfaceNone {
    /**
     * Converts {@link java.awt.event.KeyEvent}s into
     * {@link processing.event.KeyEvent}s.
-    * 
+    *
     * @param event the AWT event
     */
    protected void nativeKeyEvent ( final java.awt.event.KeyEvent event ) {
@@ -615,7 +615,7 @@ public class ZSurfaceAwt extends PSurfaceNone {
          case java.awt.event.KeyEvent.KEY_TYPED:
             peAction = KeyEvent.TYPE;
             break;
-         
+
          case java.awt.event.KeyEvent.KEY_PRESSED:
             peAction = KeyEvent.PRESS;
             break;
@@ -635,7 +635,7 @@ public class ZSurfaceAwt extends PSurfaceNone {
    /**
     * Converts {@link java.awt.event.MouseEvent}s into
     * {@link processing.event.MouseEvent}s.
-    * 
+    *
     * @param event the AWT event
     */
    protected void nativeMouseEvent (
@@ -747,7 +747,9 @@ public class ZSurfaceAwt extends PSurfaceNone {
             }
             frame.setIconImages(this.iconImages);
 
-         } catch ( final Exception e ) { e.printStackTrace(); }
+         } catch ( final Exception e ) {
+            e.printStackTrace();
+         }
 
       } else {
          if ( !ZSurfaceAwt.dockIconSpecified() ) {

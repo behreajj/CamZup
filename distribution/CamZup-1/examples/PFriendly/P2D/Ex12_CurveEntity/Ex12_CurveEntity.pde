@@ -1,15 +1,14 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup2 graphics;
-Rng rng = new Rng();
-
-Transform2 transform = new Transform2();
-
+boolean loop = false;
 float rounding = -0.25;
+
+Yup2 graphics;
+
+Rng rng = new Rng();
 Curve2 curve = new Curve2();
-CurveEntity2 entity = new CurveEntity2(
-  "Example", transform);
+CurveEntity2 entity = new CurveEntity2("Example", curve);
 
 MaterialSolid mat = new MaterialSolid()
   .setFill(false)
@@ -25,9 +24,7 @@ void setup() {
   frameRate(60.0);
   graphics = (Yup2)getGraphics();
 
-  entity.append(curve);
-  entity.transform.scaleTo(256);
-
+  entity.transform.scaleTo(256.0);
   Curve2.rect(
     new Vec2(-0.75, -0.5),
     new Vec2(0.75, 0.5),
@@ -46,7 +43,9 @@ void draw() {
 void keyReleased() {
   if (key == ' ') {
     Curve2.random(rng, 8,
-      -0.75, 0.75, false, curve);
+      -0.75, 0.75, loop, curve);
+  } else if (key == 'l') {
+    loop = !loop;
   } else if (key == 's') {
     String result = graphics.toSvgString(entity, mat);
     saveStrings("data/curve.svg", new String[] { result });

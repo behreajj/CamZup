@@ -218,7 +218,6 @@ public class Edge3 implements Comparable < Edge3 > {
 
       final float cosa = Utils.cos(radians);
       final float sina = Utils.sin(radians);
-
       return this.rotateLocal(cosa, sina, axis, center);
    }
 

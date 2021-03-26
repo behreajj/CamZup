@@ -18,7 +18,10 @@ void setup() {
   graphics.camDimetric();
 
   PFont font = loadFont("ProcessingSansPro.vlw");
+  long start = System.currentTimeMillis();
   te3 = new TextEntity3(font, msg, clr, 16, 0, CENTER, CENTER, 0.975);
+  long end = System.currentTimeMillis();
+  println("Elapsed Time: " + (end - start));
   te3.rotateX(IUtils.HALF_PI);
 }
 

@@ -184,13 +184,13 @@ public class ZImage extends PImage {
          final int c = px[i];
 
          final double r = ( c >> 0x10 & 0xff ) * IUtils.ONE_255_D;
-         final double g = ( c >> 0x8 & 0xff ) * IUtils.ONE_255_D;
+         final double g = ( c >> 0x08 & 0xff ) * IUtils.ONE_255_D;
          final double b = ( c & 0xff ) * IUtils.ONE_255_D;
 
          /* @formatter:off */
          px[i] = c & 0xff000000 |
             ( int ) ( Math.pow(r, gd) * 255.0d + 0.5d ) << 0x10 |
-            ( int ) ( Math.pow(g, gd) * 255.0d + 0.5d ) << 0x8 |
+            ( int ) ( Math.pow(g, gd) * 255.0d + 0.5d ) << 0x08 |
             ( int ) ( Math.pow(b, gd) * 255.0d + 0.5d );
          /* @formatter:on */
       }
@@ -919,29 +919,25 @@ public class ZImage extends PImage {
                       * because glyph descenders or ascenders may overlap.
                       */
                      final int wSrc = source.pixelWidth;
-                     final int hSrc = source.pixelHeight;
                      final int[] srcPx = source.pixels;
+                     final int srcLen = srcPx.length;
                      final int yStart = yCursor + lineHeight - glyph.topExtent;
 
                      /*
                       * Loop through source image height and width. Target index
                       * is manually calculated in the inner loop using the
-                      * formula index = x + y * width.
+                      * formulae index = x + y * width and x = index % width, y
+                      * = index / width.
                       */
-                     for ( int idxSrc = 0, ySrc = 0, yTrg = yStart; ySrc < hSrc;
-                        ++ySrc, ++yTrg ) {
-                        final int idxOffTrg = yTrg * wMax;
-                        for ( int xSrc = 0, xTrg = xCursor; xSrc < wSrc;
-                           ++xSrc, ++idxSrc, ++xTrg ) {
-                           final int idxTrg = idxOffTrg + xTrg;
+                     for ( int idxSrc = 0; idxSrc < srcLen; ++idxSrc ) {
 
-                           /*
-                            * Shift source image from grey scale, stored in the
-                            * blue channel, to ARGB. Composite target and
-                            * source, then composite in tint color.
-                            */
-                           trgPx[idxTrg] |= srcPx[idxSrc] << 0x18 | vClr;
-                        }
+                        /*
+                         * Shift source image from grey scale, stored in the
+                         * blue channel, to ARGB. Composite target and source,
+                         * then composite in tint color.
+                         */
+                        trgPx[ ( yStart + idxSrc / wSrc ) * wMax + xCursor
+                           + idxSrc % wSrc] |= srcPx[idxSrc] << 0x18 | vClr;
                      }
 
                      // target.updatePixels(xCursor, yCursor, wSrc, hSrc);
@@ -1103,7 +1099,7 @@ public class ZImage extends PImage {
 
       for ( int i = 0; i < len; ++i ) {
          px[i] = 0xff000080 | ( int ) ( 0.5f + wInv * ( i % w ) ) << 0x10
-            | ( int ) ( 255.5f - hInv * ( i / w ) ) << 0x8;
+            | ( int ) ( 255.5f - hInv * ( i / w ) ) << 0x08;
       }
 
       target.updatePixels();
@@ -1169,7 +1165,7 @@ public class ZImage extends PImage {
       /* Right operand. Decompose tint color. */
       final int ya = tintClr >> 0x18 & 0xff;
       final int yr = tintClr >> 0x10 & 0xff;
-      final int yg = tintClr >> 0x8 & 0xff;
+      final int yg = tintClr >> 0x08 & 0xff;
       final int yb = tintClr & 0xff;
 
       /* Convert from [0, 255] to [0.0, 1.0] . */
@@ -1206,7 +1202,7 @@ public class ZImage extends PImage {
 
                /* Left operand. Decompose color. */
                final float xrf = ( rgb >> 0x10 & 0xff ) * IUtils.ONE_255;
-               final float xgf = ( rgb >> 0x8 & 0xff ) * IUtils.ONE_255;
+               final float xgf = ( rgb >> 0x08 & 0xff ) * IUtils.ONE_255;
                final float xbf = ( rgb & 0xff ) * IUtils.ONE_255;
 
                /* Lerp from left to right by factor t. */
@@ -1217,7 +1213,7 @@ public class ZImage extends PImage {
                /* @formatter:off */
                pixels[i] = ya << 0x18 |
                            ( int ) ( zrf * 0xff + 0.5f ) << 0x10 |
-                           ( int ) ( zgf * 0xff + 0.5f ) << 0x8  |
+                           ( int ) ( zgf * 0xff + 0.5f ) << 0x08  |
                            ( int ) ( zbf * 0xff + 0.5f );
                /* @formatter:on */
             }
@@ -1232,7 +1228,7 @@ public class ZImage extends PImage {
                /* Left operand. Decompose color. */
                final float xaf = ( rgb >> 0x18 & 0xff ) * IUtils.ONE_255;
                final float xrf = ( rgb >> 0x10 & 0xff ) * IUtils.ONE_255;
-               final float xgf = ( rgb >> 0x8 & 0xff ) * IUtils.ONE_255;
+               final float xgf = ( rgb >> 0x08 & 0xff ) * IUtils.ONE_255;
                final float xbf = ( rgb & 0xff ) * IUtils.ONE_255;
 
                /* Lerp from left to right by factor t. */
@@ -1244,7 +1240,7 @@ public class ZImage extends PImage {
                /* @formatter:off */
                pixels[i] = ( int ) ( zaf * 0xff + 0.5f ) << 0x18 |
                            ( int ) ( zrf * 0xff + 0.5f ) << 0x10 |
-                           ( int ) ( zgf * 0xff + 0.5f ) << 0x8  |
+                           ( int ) ( zgf * 0xff + 0.5f ) << 0x08  |
                            ( int ) ( zbf * 0xff + 0.5f );
                /* @formatter:on */
             }

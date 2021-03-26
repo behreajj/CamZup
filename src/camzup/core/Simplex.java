@@ -378,7 +378,6 @@ public abstract class Simplex extends Generative {
     * @see Simplex#G4
     * @see Simplex#PERMUTE
     * @see Simplex#SCALE_4
-    * @see Simplex#gradient4(int, int, int, int, int)
     */
    public static float eval ( final float x, final float y, final float z,
       final float w, final int seed, final Vec4 deriv ) {
@@ -479,7 +478,8 @@ public abstract class Simplex extends Generative {
       if ( t0 >= 0.0f ) {
          t20 = t0 * t0;
          t40 = t20 * t20;
-         g0 = Simplex.gradient4(i, j, k, l, seed);
+         g0 = Simplex.GRAD_4_LUT[Generative.hash(i, j, Generative.hash(k, l,
+            seed)) & 0x1f];
          n0 = g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0;
       }
 
@@ -487,7 +487,8 @@ public abstract class Simplex extends Generative {
       if ( t1 >= 0.0f ) {
          t21 = t1 * t1;
          t41 = t21 * t21;
-         g1 = Simplex.gradient4(i + i1, j + j1, k + k1, l + l1, seed);
+         g1 = Simplex.GRAD_4_LUT[Generative.hash(i + i1, j + j1, Generative
+            .hash(k + k1, l + l1, seed)) & 0x1f];
          n1 = g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1;
       }
 
@@ -495,7 +496,8 @@ public abstract class Simplex extends Generative {
       if ( t2 >= 0.0f ) {
          t22 = t2 * t2;
          t42 = t22 * t22;
-         g2 = Simplex.gradient4(i + i2, j + j2, k + k2, l + l2, seed);
+         g2 = Simplex.GRAD_4_LUT[Generative.hash(i + i2, j + j2, Generative
+            .hash(k + k2, l + l2, seed)) & 0x1f];
          n2 = g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2;
       }
 
@@ -503,7 +505,8 @@ public abstract class Simplex extends Generative {
       if ( t3 >= 0.0f ) {
          t23 = t3 * t3;
          t43 = t23 * t23;
-         g3 = Simplex.gradient4(i + i3, j + j3, k + k3, l + l3, seed);
+         g3 = Simplex.GRAD_4_LUT[Generative.hash(i + i3, j + j3, Generative
+            .hash(k + k3, l + l3, seed)) & 0x1f];
          n3 = g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3;
       }
 
@@ -511,7 +514,8 @@ public abstract class Simplex extends Generative {
       if ( t4 >= 0.0f ) {
          t24 = t4 * t4;
          t44 = t24 * t24;
-         g4 = Simplex.gradient4(i + 1, j + 1, k + 1, l + 1, seed);
+         g4 = Simplex.GRAD_4_LUT[Generative.hash(i + 1, j + 1, Generative.hash(k
+            + 1, l + 1, seed)) & 0x1f];
          n4 = g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4;
       }
 
@@ -582,7 +586,6 @@ public abstract class Simplex extends Generative {
     * @see Simplex#F3
     * @see Simplex#G3
     * @see Simplex#SCALE_3
-    * @see Simplex#gradient3(int, int, int, int)
     */
    public static float eval ( final float x, final float y, final float z,
       final int seed, final Vec3 deriv ) {
@@ -662,7 +665,8 @@ public abstract class Simplex extends Generative {
       Vec3 g0 = Simplex.ZERO_3;
       final float t0 = 0.5f - ( x0 * x0 + y0 * y0 + z0 * z0 );
       if ( t0 >= 0.0f ) {
-         g0 = Simplex.gradient3(i, j, k, seed);
+         g0 = Simplex.GRAD_3_LUT[Generative.hash(i, j, Generative.hash(k, seed,
+            0)) & 0xf];
          t20 = t0 * t0;
          t40 = t20 * t20;
          n0 = g0.x * x0 + g0.y * y0 + g0.z * z0;
@@ -674,7 +678,8 @@ public abstract class Simplex extends Generative {
       Vec3 g1 = Simplex.ZERO_3;
       final float t1 = 0.5f - ( x1 * x1 + y1 * y1 + z1 * z1 );
       if ( t1 >= 0.0f ) {
-         g1 = Simplex.gradient3(i + i1, j + j1, k + k1, seed);
+         g1 = Simplex.GRAD_3_LUT[Generative.hash(i + i1, j + j1, Generative
+            .hash(k + k1, seed, 0)) & 0xf];
          t21 = t1 * t1;
          t41 = t21 * t21;
          n1 = g1.x * x1 + g1.y * y1 + g1.z * z1;
@@ -686,7 +691,8 @@ public abstract class Simplex extends Generative {
       Vec3 g2 = Simplex.ZERO_3;
       final float t2 = 0.5f - ( x2 * x2 + y2 * y2 + z2 * z2 );
       if ( t2 >= 0.0f ) {
-         g2 = Simplex.gradient3(i + i2, j + j2, k + k2, seed);
+         g2 = Simplex.GRAD_3_LUT[Generative.hash(i + i2, j + j2, Generative
+            .hash(k + k2, seed, 0)) & 0xf];
          t22 = t2 * t2;
          t42 = t22 * t22;
          n2 = g2.x * x2 + g2.y * y2 + g2.z * z2;
@@ -698,7 +704,8 @@ public abstract class Simplex extends Generative {
       Vec3 g3 = Simplex.ZERO_3;
       final float t3 = 0.5f - ( x3 * x3 + y3 * y3 + z3 * z3 );
       if ( t3 >= 0.0f ) {
-         g3 = Simplex.gradient3(i + 1, j + 1, k + 1, seed);
+         g3 = Simplex.GRAD_3_LUT[Generative.hash(i + 1, j + 1, Generative.hash(k
+            + 1, seed, 0)) & 0xf];
          t23 = t3 * t3;
          t43 = t23 * t23;
          n3 = g3.x * x3 + g3.y * y3 + g3.z * z3;
@@ -754,7 +761,6 @@ public abstract class Simplex extends Generative {
     * @see Simplex#F2
     * @see Simplex#G2
     * @see Simplex#SCALE_2
-    * @see Simplex#gradient2(int, int, int)
     */
    public static float eval ( final float x, final float y, final int seed,
       final Vec2 deriv ) {
@@ -787,7 +793,7 @@ public abstract class Simplex extends Generative {
       Vec2 g0 = Simplex.ZERO_2;
       final float t0 = 0.5f - ( x0 * x0 + y0 * y0 );
       if ( t0 >= 0.0f ) {
-         g0 = Simplex.gradient2(i, j, seed);
+         g0 = Simplex.GRAD_2_LUT[Generative.hash(i, j, seed) & 0x7];
          t20 = t0 * t0;
          t40 = t20 * t20;
          n0 = g0.x * x0 + g0.y * y0;
@@ -801,7 +807,7 @@ public abstract class Simplex extends Generative {
       final float y1 = y0 - j1 + Simplex.G2;
       final float t1 = 0.5f - ( x1 * x1 + y1 * y1 );
       if ( t1 >= 0.0f ) {
-         g1 = Simplex.gradient2(i + i1, j + j1, seed);
+         g1 = Simplex.GRAD_2_LUT[Generative.hash(i + i1, j + j1, seed) & 0x7];
          t21 = t1 * t1;
          t41 = t21 * t21;
          n1 = g1.x * x1 + g1.y * y1;
@@ -815,7 +821,7 @@ public abstract class Simplex extends Generative {
       final float y2 = y0 - Simplex.N2_2_1;
       final float t2 = 0.5f - ( x2 * x2 + y2 * y2 );
       if ( t2 >= 0.0f ) {
-         g2 = Simplex.gradient2(i + 1, j + 1, seed);
+         g2 = Simplex.GRAD_2_LUT[Generative.hash(i + 1, j + 1, seed) & 0x7];
          t22 = t2 * t2;
          t42 = t22 * t22;
          n2 = g2.x * x2 + g2.y * y2;
@@ -1705,67 +1711,6 @@ public abstract class Simplex extends Generative {
          Simplex.eval(v.x, v.y, v.z + st, v.w, seed, zDeriv),
          Simplex.eval(v.x, v.y, v.z, v.w + st, seed, wDeriv));
       /* @formatter:on */
-   }
-
-   /**
-    * Hashes the indices i and j with the seed, then returns a vector from the
-    * look up table.
-    *
-    * @param i    the first index
-    * @param j    the second index
-    * @param seed the seed
-    *
-    * @return the vector
-    *
-    * @see Simplex#hash(int, int, int)
-    * @see Simplex#GRAD_2_LUT
-    */
-   private static Vec2 gradient2 ( final int i, final int j, final int seed ) {
-
-      return Simplex.GRAD_2_LUT[Generative.hash(i, j, seed) & 0x7];
-   }
-
-   /**
-    * Hashes the indices i, j and k with the seed, then returns a vector from
-    * the look up table.
-    *
-    * @param i    the first index
-    * @param j    the second index
-    * @param k    the third index
-    * @param seed the seed
-    *
-    * @return the vector
-    *
-    * @see Simplex#hash(int, int, int)
-    * @see Simplex#GRAD_3_LUT
-    */
-   private static Vec3 gradient3 ( final int i, final int j, final int k,
-      final int seed ) {
-
-      return Simplex.GRAD_3_LUT[Generative.hash(i, j, Generative.hash(k, seed,
-         0)) & 0xf];
-   }
-
-   /**
-    * Hashes the indices i, j, k and l with the seed, then returns a vector
-    * from the look up table.
-    *
-    * @param i    the first index
-    * @param j    the second index
-    * @param k    the third index
-    * @param l    the fourth index
-    * @param seed the seed
-    *
-    * @return the vector
-    *
-    * @see Simplex#hash(int, int, int)
-    * @see Simplex#GRAD_4_LUT
-    */
-   private static Vec4 gradient4 ( final int i, final int j, final int k,
-      final int l, final int seed ) {
-
-      return Simplex.GRAD_4_LUT[Generative.hash(i, j, Generative.hash(k, l,
-         seed)) & 0x1f];
    }
 
    /**

@@ -1,16 +1,13 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
+boolean loop = false;
+
 Zup3 graphics;
 
 Rng rng = new Rng();
-
-Transform3 transform = new Transform3()
-  .moveTo(new Vec3())
-  .scaleTo(256.0);
-
 Curve3 curve = new Curve3();
-CurveEntity3 entity = new CurveEntity3("Example", transform);
+CurveEntity3 entity = new CurveEntity3("Example", curve);
 
 MaterialSolid mat = new MaterialSolid()
   .setFill(false)
@@ -25,8 +22,8 @@ void settings() {
 void setup() {
   frameRate(60.0);
   graphics = (Zup3)getGraphics();
+  entity.transform.scaleTo(256.0);
   Curve3.circle(curve);
-  entity.append(curve);
 }
 
 void draw() {
@@ -57,6 +54,11 @@ void draw() {
   graphics.point(knWd.foreHandle);
 }
 
-void mouseReleased() {
-  Curve3.random(rng, 7, -0.5, 0.5, true, curve);
+
+void keyReleased() {
+  if (key == ' ') {
+    Curve3.random(rng, 7, -0.5, 0.5, loop, curve);
+  } else if (key == 'l') {
+    loop = !loop;
+  }
 }
