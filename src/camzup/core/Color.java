@@ -1472,6 +1472,7 @@ public class Color implements Comparable < Color > {
    public static float luminance ( final Color c ) {
 
       return 0.2126f * c.r + 0.7152f * c.g + 0.0722f * c.b;
+      // return ( 2126.0f * c.r + 7152.0f * c.g + 722.0f * c.b ) * 0.0001f;
    }
 
    /**
@@ -1498,10 +1499,10 @@ public class Color implements Comparable < Color > {
        * 0.002804705882352941d ; (c) 0.0002831372549019608d .
        */
 
-      /* @formatter:off */
-      return ( c >> 0x10 & 0xff ) * 0.0008337255f +
-             ( c >> 0x08 & 0xff ) * 0.0028047059f +
-             ( c         & 0xff ) * 0.00028313725f;
+      /* @formatter:off */      
+      return (( c >> 0x10 & 0xff ) *  83372550.0f +
+              ( c >> 0x08 & 0xff ) * 280470590.0f +
+              ( c         & 0xff ) *  28313725.0f) * 10E-12f;
       /* @formatter:on */
    }
 
@@ -1857,7 +1858,6 @@ public class Color implements Comparable < Color > {
     * @param target the output vector
     *
     * @return the HSVA values
-    *
     */
    public static Vec4 rgbaToHsva ( final float red, final float green,
       final float blue, final float alpha, final Vec4 target ) {

@@ -1,6 +1,7 @@
 package camzup;
 
 import camzup.core.Color;
+import camzup.core.Rng;
 import camzup.core.Utils;
 
 import processing.core.PApplet;
@@ -60,18 +61,12 @@ public class CamZup {
       // https://digitalsplashmedia.com/2014/06/
       // visualizing-categorical-data-as-flows-with-alluvial-diagrams/
 
-      // final Rng rng = new Rng();
-      // final float h = rng.nextFloat();
-      // final float s = rng.nextFloat();
-      // final float l = rng.nextFloat();
-      // final Color c = Color.hslaToRgba(h, s, l, 1f, new Color());
-      // final Vec4 x = Color.rgbaToHsla(c.r, c.g, c.b, c.a, new Vec4());
-      // System.out.println(c);
-      // System.out.println(x);
-      // System.out.println(h);
-      // System.out.println(s);
-      // System.out.println(l);
-
+      final Rng rng = new Rng();
+      Color c = Color.random(rng, new Color());
+      int chex = Color.toHexInt(c);
+      System.out.println(Color.luminance(c));
+      System.out.println(Color.luminance(chex));
+      System.out.println(Color.toHexWeb(c));
    }
 
    /**

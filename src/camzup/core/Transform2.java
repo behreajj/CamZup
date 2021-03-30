@@ -398,12 +398,15 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     * @param step   the step in [0.0, 1.0]
     *
     * @return this transform
+    *
+    * @see Vec2#mix(Vec2, Vec2, float, Vec2)
     */
    @Override
    public Transform2 moveTo ( final Vec2 locNew, final float step ) {
 
       this.locPrev.set(this.location);
       Vec2.mix(this.locPrev, locNew, step, this.location);
+
       return this;
    }
 
@@ -826,6 +829,8 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     * @param ub the upper bound
     *
     * @return the wrapped transform
+    *
+    * @see Vec2#wrap(Vec2, Vec2, Vec2, Vec2)
     */
    public Transform2 wrap ( final Vec2 lb, final Vec2 ub ) {
 
@@ -856,7 +861,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
        * when it is extruded.
        */
       final String rotationMode = "\"QUATERNION\"";
-      final float halfRad = this.rotation * 0.5f;
+      final float halfRad = Utils.modRadians(this.rotation) * 0.5f;
       final float depth = ( this.scale.x + this.scale.y ) * 0.5f;
 
       pyCd.append("{\"location\": ");
@@ -1006,6 +1011,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     * @see Vec2#normalize(Vec2, Vec2)
     * @see Vec2#headingSigned(Vec2)
     * @see Vec2#one(Vec2)
+    * @see Vec2#zero(Vec2)
     */
    public static Transform2 fromAxes ( final float xRight, final float yForward,
       final float yRight, final float xForward, final Transform2 target ) {
@@ -1020,7 +1026,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
       Vec2.normalize(target.right, target.right);
       Vec2.normalize(target.forward, target.forward);
 
-      target.location.reset();
+      Vec2.zero(target.location);
       target.rotation = Vec2.headingSigned(target.right);
       Vec2.one(target.scale);
 
@@ -1080,6 +1086,9 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     * @see Vec2#perpendicularCW(Vec2, Vec2)
     * @see Vec2#headingSigned(Vec2)
     * @see Vec2#one(Vec2)
+    * @see Vec2#forward(Vec2)
+    * @see Vec2#right(Vec2)
+    * @see Vec2#zero(Vec2)
     */
    public static Transform2 fromDir ( final Vec2 dir,
       final Handedness handedness, final Transform2 target ) {
@@ -1100,7 +1109,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
       }
 
       target.rotation = Vec2.headingSigned(target.right);
-      target.location.reset();
+      Vec2.zero(target.location);
       Vec2.one(target.scale);
 
       return target;
@@ -1116,6 +1125,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     * @see Vec2#one(Vec2)
     * @see Vec2#right(Vec2)
     * @see Vec2#forward(Vec2)
+    * @see Vec2#zero(Vec2)
     */
    public static Transform2 identity ( final Transform2 target ) {
 
@@ -1123,7 +1133,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
       target.rotPrev = target.rotation;
       target.scalePrev.set(target.scale);
 
-      target.location.reset();
+      Vec2.zero(target.location);
       target.rotation = 0.0f;
       Vec2.one(target.scale);
 
@@ -1404,6 +1414,8 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     * @param target the output transform
     *
     * @return the transform
+    *
+    * @see Vec2#randomCartesian(java.util.Random, Vec2, Vec2, Vec2)
     */
    public static Transform2 random ( final java.util.Random rng,
       final Vec2 lbLoc, final Vec2 ubLoc, final float lbRot, final float ubRot,

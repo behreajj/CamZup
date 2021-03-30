@@ -24,6 +24,7 @@ void draw() {
   graphics.origin();
   strokeWeight(5.0);
   stroke(#373737);
+  fill(0xff3fafef);
   arc(0.0, 0.0,
     150.0, 150.0,
     start, stop,

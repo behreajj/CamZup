@@ -68,3 +68,9 @@ void draw() {
   graphics.background();
   graphics.shape(entity, materials);
 }
+
+void mouseReleased() {
+  //String objstr = entity.toObjString();
+  //saveStrings("data/extrusion.obj", new String[] { objstr });
+  //println("Saved obj file.");
+}

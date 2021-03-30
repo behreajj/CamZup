@@ -436,12 +436,15 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     * @param step   the step in [0.0, 1.0]
     *
     * @return this transform
+    *
+    * @see Vec3#mix(Vec3, Vec3, float, Vec3)
     */
    @Override
    public Transform3 moveTo ( final Vec3 locNew, final float step ) {
 
       this.locPrev.set(this.location);
       Vec3.mix(this.locPrev, locNew, step, this.location);
+
       return this;
    }
 
@@ -536,6 +539,7 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
          this.rotation.set(rotNew);
          this.updateAxes();
       }
+
       return this;
    }
 
@@ -831,8 +835,7 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    public Transform3 set ( final Transform2 source ) {
 
       this.location.set(source.location, 0.0f);
-      // TODO: Mod radians by TAU?
-      final float halfRadians = source.rotation * 0.5f;
+      final float halfRadians = Utils.modRadians(source.rotation) * 0.5f;
       this.rotation.set(Utils.cos(halfRadians), 0.0f, 0.0f, Utils.sin(
          halfRadians));
       this.updateAxes();
@@ -963,8 +966,9 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     * @param ub the upper bound
     *
     * @return the wrapped transform
+    *
+    * @see Vec3#wrap(Vec3, Vec3, Vec3, Vec3)
     */
-
    public Transform3 wrap ( final Vec3 lb, final Vec3 ub ) {
 
       this.locPrev.set(this.location);
@@ -1107,6 +1111,7 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     * @see Quaternion#fromAxes(float, float, float, float, float, float,
     *      float, float, float, Quaternion)
     * @see Vec3#one(Vec3)
+    * @see Vec3#zero(Vec3)
     */
    public static Transform3 fromAxes ( final float xRight, final float yForward,
       final float zUp, final float zForward, final float yUp, final float xUp,
@@ -1315,8 +1320,8 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
       target.rotPrev.set(target.rotation);
       target.scalePrev.set(target.scale);
 
-      target.location.reset();
-      target.rotation.reset();
+      Vec3.zero(target.location);
+      Quaternion.identity(target.rotation);
       Vec3.one(target.scale);
 
       Vec3.right(target.right);
@@ -1541,6 +1546,56 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    }
 
    /**
+    * Multiplies a point and normal by a transform. A convenience for drawing
+    * mesh data. Returns the transformed point.
+    *
+    * @param t      the transform
+    * @param ptSrc  the input point
+    * @param nrmSrc the input normal
+    * @param ptTrg  the output point
+    * @param nrmTrg the output normal
+    *
+    * @return the transformed point
+    */
+   public static Vec3 mulPointAndNormal ( final Transform3 t, final Vec3 ptSrc,
+      final Vec3 nrmSrc, final Vec3 ptTrg, final Vec3 nrmTrg ) {
+
+      final Vec3 tr = t.location;
+      final Vec3 sc = t.scale;
+      final Quaternion q = t.rotation;
+
+      final Vec3 imag = q.imag;
+      final float qw = q.real;
+      final float qx = imag.x;
+      final float qy = imag.y;
+      final float qz = imag.z;
+
+      final float ptiw = -qx * ptSrc.x - qy * ptSrc.y - qz * ptSrc.z;
+      final float ptix = qw * ptSrc.x + qy * ptSrc.z - qz * ptSrc.y;
+      final float ptiy = qw * ptSrc.y + qz * ptSrc.x - qx * ptSrc.z;
+      final float ptiz = qw * ptSrc.z + qx * ptSrc.y - qy * ptSrc.x;
+
+      ptTrg.x = ( ptix * qw + ptiz * qy - ptiw * qx - ptiy * qz ) * sc.x + tr.x;
+      ptTrg.y = ( ptiy * qw + ptix * qz - ptiw * qy - ptiz * qx ) * sc.y + tr.y;
+      ptTrg.z = ( ptiz * qw + ptiy * qx - ptiw * qz - ptix * qy ) * sc.z + tr.z;
+
+      nrmTrg.x = nrmSrc.x / sc.x;
+      nrmTrg.y = nrmSrc.y / sc.y;
+      nrmTrg.z = nrmSrc.z / sc.z;
+
+      final float nmiw = -qx * nrmTrg.x - qy * nrmTrg.y - qz * nrmTrg.z;
+      final float nmix = qw * nrmTrg.x + qy * nrmTrg.z - qz * nrmTrg.y;
+      final float nmiy = qw * nrmTrg.y + qz * nrmTrg.x - qx * nrmTrg.z;
+      final float nmiz = qw * nrmTrg.z + qx * nrmTrg.y - qy * nrmTrg.x;
+
+      nrmTrg.x = nmix * qw + nmiz * qy - nmiw * qx - nmiy * qz;
+      nrmTrg.y = nmiy * qw + nmix * qz - nmiw * qy - nmiz * qx;
+      nrmTrg.z = nmiz * qw + nmiy * qx - nmiw * qz - nmix * qy;
+
+      return ptTrg;
+   }
+
+   /**
     * Multiplies a vector by a transform. This rotates the vector by the
     * transform's rotation and then multiplies it by the transform's scale.
     *
@@ -1574,6 +1629,9 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     * @param target the output transform
     *
     * @return the random transform
+    *
+    * @see Vec3#randomCartesian(java.util.Random, Vec3, Vec3, Vec3)
+    * @see Quaternion#random(java.util.Random, Quaternion)
     */
    public static Transform3 random ( final java.util.Random rng,
       final float lbLoc, final float ubLoc, final float lbScl,
@@ -1624,6 +1682,9 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     * @param target the output transform
     *
     * @return the random transform
+    *
+    * @see Vec3#randomCartesian(java.util.Random, Vec3, Vec3, Vec3)
+    * @see Quaternion#random(java.util.Random, Quaternion)
     */
    public static Transform3 random ( final java.util.Random rng,
       final Vec3 lbLoc, final Vec3 ubLoc, final Vec3 lbScl, final Vec3 ubScl,
