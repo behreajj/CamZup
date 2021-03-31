@@ -450,7 +450,6 @@ public class ZSurfaceAwt extends PSurfaceNone {
       this.graphics.setSize(wid, high);
    }
 
-   /** Set the window (and dock, or whatever necessary) title. */
    @Override
    public void setTitle ( final String title ) {
 

@@ -806,8 +806,6 @@ public abstract class PMatAux {
    public static PMatrix3D rotate ( final Quaternion q,
       final PMatrix3D target ) {
 
-      // TODO: Consolidate into compoundRotate
-
       final float w = q.real;
       final Vec3 i = q.imag;
       final float x = i.x;

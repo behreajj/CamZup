@@ -1598,7 +1598,6 @@ public class Color implements Comparable < Color > {
     *
     * @return the posterized color
     *
-    * @see Vec4#quantize(Vec4, int, Vec4)
     * @see Utils#floor(float)
     */
    public static Color quantize ( final Color c, final int levels,
@@ -2366,7 +2365,7 @@ public class Color implements Comparable < Color > {
          final float tf = step;
          if ( tf <= 0.0f ) { return target.set(origin); }
          if ( tf >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, tf, target);
+         return this.applyUnclamped(origin, dest, step, target);
       }
 
       /**

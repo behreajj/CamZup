@@ -305,6 +305,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public Gradient cycle ( final int places ) {
 
+      // TODO: What does this accomplish if steps remain unchanged?
+
       /* Load from tree set into an array. */
       final int len = this.keys.size();
       final Iterator < ColorKey > itr = this.keys.iterator();
@@ -1511,6 +1513,26 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
+    * Returns a monochrome palette with 4 colors that simulates an LCD screen.
+    *
+    * @param target the output gradient
+    *
+    * @return the gradient
+    */
+   public static Gradient paletteLcd ( final Gradient target ) {
+
+      final TreeSet < ColorKey > keys = target.keys;
+      keys.clear();
+
+      keys.add(new ColorKey(0.0f, 0.054901965f, 0.18823531f, 0.16078432f));
+      keys.add(new ColorKey(0.25f, 0.27450982f, 0.40784317f, 0.32156864f));
+      keys.add(new ColorKey(0.75f, 0.54901963f, 0.7254902f, 0.41176474f));
+      keys.add(new ColorKey(1.0f, 0.86274517f, 0.9607844f, 0.75294125f));
+
+      return target;
+   }
+
+   /**
     * Returns the Magma color palette, consisting of 16 keys.
     *
     * @param target the output gradient
@@ -1589,11 +1611,10 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       keys.add(new ColorKey(0.3333333f, 1.0f, 1.0f, 0.0f));
       keys.add(new ColorKey(0.4166667f, 0.5058824f, 0.8313726f, 0.1019608f));
       keys.add(new ColorKey(0.5f, 0.0f, 0.6627451f, 0.2f));
-      keys.add(new ColorKey(0.5833333f, 0.082352884f, 0.5176469f, 0.40000018f));
+      keys.add(new ColorKey(0.5833333f, 0.082352884f, 0.5176469f, 0.4f));
       keys.add(new ColorKey(0.6666667f, 0.06666667f, 0.34901962f, 0.6509804f));
       keys.add(new ColorKey(0.75f, 0.23559582f, 0.16500752f, 0.57254905f));
-      keys.add(new ColorKey(0.8333333f, 0.41094783f, 0.045751583f,
-         0.52042484f));
+      keys.add(new ColorKey(0.8333333f, 0.4109478f, 0.04575158f, 0.5204248f));
       keys.add(new ColorKey(0.9166667f, 0.66666667f, 0.0f, 0.33333333f));
       keys.add(new ColorKey(1.0f, 1.0f, 0.0f, 0.0f));
 
@@ -1612,9 +1633,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      // QUERY Brighten first key slightly?
+      /* Second key is pushed a little closer to zero. */
       keys.add(new ColorKey(0.0f, 0.11774882f, 0.09636405f, 0.07582238f));
-      keys.add(new ColorKey(0.14285715f, 0.17625594f, 0.141371f, 0.1127016f));
+      keys.add(new ColorKey(0.12f, 0.17625594f, 0.141371f, 0.1127016f));
       keys.add(new ColorKey(0.2857143f, 0.40054432f, 0.30952805f, 0.22960682f));
       keys.add(new ColorKey(0.42857146f, 0.527977f, 0.40815717f, 0.27178848f));
       keys.add(new ColorKey(0.5714286f, 0.6450869f, 0.5168457f, 0.34436274f));

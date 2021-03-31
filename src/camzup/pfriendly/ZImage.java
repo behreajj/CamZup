@@ -731,6 +731,8 @@ public class ZImage extends PImage {
       final int fillClr, final int leading, final int kerning,
       final int textAlign ) {
 
+      // TODO: Worry about pre-multiplying alpha?
+
       /*
        * Validate inputs: colors with no alpha not allowed; negative leading and
        * kerning not allowed; try to guard against empty Strings. Remove alpha
@@ -1201,9 +1203,9 @@ public class ZImage extends PImage {
                final int rgb = pixels[i];
 
                /* Left operand. Decompose color. */
-               final float xrf = ( rgb >> 0x10 & 0xff ) * IUtils.ONE_255;
-               final float xgf = ( rgb >> 0x08 & 0xff ) * IUtils.ONE_255;
-               final float xbf = ( rgb & 0xff ) * IUtils.ONE_255;
+               final float xrf = IUtils.ONE_255 * ( rgb >> 0x10 & 0xff );
+               final float xgf = IUtils.ONE_255 * ( rgb >> 0x08 & 0xff );
+               final float xbf = IUtils.ONE_255 * ( rgb & 0xff );
 
                /* Lerp from left to right by factor t. */
                final float zrf = u * xrf + t * yrf;
@@ -1226,10 +1228,10 @@ public class ZImage extends PImage {
                final int rgb = pixels[i];
 
                /* Left operand. Decompose color. */
-               final float xaf = ( rgb >> 0x18 & 0xff ) * IUtils.ONE_255;
-               final float xrf = ( rgb >> 0x10 & 0xff ) * IUtils.ONE_255;
-               final float xgf = ( rgb >> 0x08 & 0xff ) * IUtils.ONE_255;
-               final float xbf = ( rgb & 0xff ) * IUtils.ONE_255;
+               final float xaf = IUtils.ONE_255 * ( rgb >> 0x18 & 0xff );
+               final float xrf = IUtils.ONE_255 * ( rgb >> 0x10 & 0xff );
+               final float xgf = IUtils.ONE_255 * ( rgb >> 0x08 & 0xff );
+               final float xbf = IUtils.ONE_255 * ( rgb & 0xff );
 
                /* Lerp from left to right by factor t. */
                final float zaf = Utils.min(xaf, yaf);

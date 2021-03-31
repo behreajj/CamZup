@@ -214,7 +214,7 @@ void setup() {
 }
 ```
 
-This generates the file below. A header is followed by a name, the number of columns to use when displaying the palette, a comment indicated by a `#`. The color is broken into red, green and blue color channels; each channel is formatted as an unsigned byte in [0, 255] separated by a space. This is followed by a name, for which this library writes the color's hexadecimal representation. Last is an index for the color; this library begins the index at 1, not 0. The name and index of a palette entry may be optional for some importers, mandatory for others. Aseprite seems to require at least a name.
+This generates the file below. A header is followed by a name, the number of columns to use when displaying the palette and a comment preceded by a `#`. The color is broken into red, green and blue color channels; each channel is formatted as an unsigned byte in [0, 255] separated by a space. This is followed by a name, for which this library writes the color's hexadecimal representation. Last is an index for the color; this library begins the index at 1, not 0. The name and index of a palette entry may be optional for some importers, mandatory for others. Aseprite seems to require at least a name.
  
 ```
 GIMP Palette

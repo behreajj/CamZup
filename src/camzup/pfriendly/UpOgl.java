@@ -492,14 +492,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.calcG = IUtils.ONE_255 * ( argb >> 0x08 & 0xff );
       this.calcB = IUtils.ONE_255 * ( argb & 0xff );
 
-      this.calcR = this.calcR < 0.0f ? 0.0f : this.calcR > 1.0f ? 1.0f
-         : this.calcR;
-      this.calcG = this.calcG < 0.0f ? 0.0f : this.calcG > 1.0f ? 1.0f
-         : this.calcG;
-      this.calcB = this.calcB < 0.0f ? 0.0f : this.calcB > 1.0f ? 1.0f
-         : this.calcB;
-      this.calcA = this.calcA < 0.0f ? 0.0f : this.calcA > 1.0f ? 1.0f
-         : this.calcA;
+      /* @formatter:off */
+      this.calcR = this.calcR < 0.0f ? 0.0f : this.calcR > 1.0f ? 1.0f : this.calcR;
+      this.calcG = this.calcG < 0.0f ? 0.0f : this.calcG > 1.0f ? 1.0f : this.calcG;
+      this.calcB = this.calcB < 0.0f ? 0.0f : this.calcB > 1.0f ? 1.0f : this.calcB;
+      this.calcA = this.calcA < 0.0f ? 0.0f : this.calcA > 1.0f ? 1.0f : this.calcA;
+      /* @formatter:on */
 
       /* Pre-multiply alpha. */
       if ( premul ) {
@@ -3388,9 +3386,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          for ( int j = 0; j < fLen; ++j ) {
 
             final int[] data = f[j];
-            // Transform3.mulPoint(tr, vs[data[0]], v);
             Transform2.mulTexCoord(uvtr, vts[data[1]], vt);
-            // Transform3.mulNormal(tr, vns[data[2]], vn);
             Transform3.mulPointAndNormal(tr, vs[data[0]], vns[data[2]], v, vn);
 
             this.normalX = vn.x;
@@ -3550,7 +3546,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    protected void lightAmbient ( final int num, final int clr ) {
 
-      this.colorCalc(clr, this.colorModeA);
+      this.colorCalc(clr, false);
 
       final int num3 = num + num + num;
       this.lightAmbient[num3] = this.calcR;
@@ -3605,7 +3601,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    protected void lightDiffuse ( final int num, final int clr ) {
 
-      this.colorCalc(clr, this.colorModeA);
+      this.colorCalc(clr, false);
 
       final int num3 = num + num + num;
       this.lightDiffuse[num3] = this.calcR;
