@@ -58,7 +58,7 @@ void draw() {
     lons, lats,
     PolyType.QUAD,
     smooth);
-  
+
   flat.set(smooth);
   flat.shadeFlat();
 

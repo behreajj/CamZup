@@ -1544,25 +1544,25 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      keys.add(new ColorKey(0.0f, 0.988235f, 1.0f, 0.698039f));
-      keys.add(new ColorKey(0.06666667f, 0.98719f, 0.843137f, 0.562092f));
-      keys.add(new ColorKey(0.13333333f, 0.984314f, 0.694118f, 0.446275f));
-      keys.add(new ColorKey(0.2f, 0.981176f, 0.548235f, 0.35451f));
+      keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.019608f));
+      keys.add(new ColorKey(0.06666667f, 0.040784f, 0.028758f, 0.110327f));
+      keys.add(new ColorKey(0.13333333f, 0.093856f, 0.036863f, 0.232941f));
+      keys.add(new ColorKey(0.2f, 0.174118f, 0.006275f, 0.357647f));
 
-      keys.add(new ColorKey(0.26666668f, 0.962353f, 0.412549f, 0.301176f));
-      keys.add(new ColorKey(0.33333334f, 0.912418f, 0.286275f, 0.298039f));
-      keys.add(new ColorKey(0.4f, 0.824314f, 0.198431f, 0.334902f));
-      keys.add(new ColorKey(0.46666667f, 0.703268f, 0.142484f, 0.383007f));
+      keys.add(new ColorKey(0.26666668f, 0.267974f, 0.002353f, 0.416732f));
+      keys.add(new ColorKey(0.33333334f, 0.36732f, 0.045752f, 0.43268f));
+      keys.add(new ColorKey(0.4f, 0.471373f, 0.080784f, 0.430588f));
+      keys.add(new ColorKey(0.46666667f, 0.584052f, 0.110588f, 0.413856f));
 
-      keys.add(new ColorKey(0.5333333f, 0.584052f, 0.110588f, 0.413856f));
-      keys.add(new ColorKey(0.6f, 0.471373f, 0.080784f, 0.430588f));
-      keys.add(new ColorKey(0.6666667f, 0.36732f, 0.045752f, 0.43268f));
-      keys.add(new ColorKey(0.73333335f, 0.267974f, 0.002353f, 0.416732f));
+      keys.add(new ColorKey(0.5333333f, 0.703268f, 0.142484f, 0.383007f));
+      keys.add(new ColorKey(0.6f, 0.824314f, 0.198431f, 0.334902f));
+      keys.add(new ColorKey(0.6666667f, 0.912418f, 0.286275f, 0.298039f));
+      keys.add(new ColorKey(0.73333335f, 0.962353f, 0.412549f, 0.301176f));
 
-      keys.add(new ColorKey(0.8f, 0.174118f, 0.006275f, 0.357647f));
-      keys.add(new ColorKey(0.8666667f, 0.093856f, 0.036863f, 0.232941f));
-      keys.add(new ColorKey(0.93333334f, 0.040784f, 0.028758f, 0.110327f));
-      keys.add(new ColorKey(1.0f, 0.0f, 0.0f, 0.019608f));
+      keys.add(new ColorKey(0.8f, 0.981176f, 0.548235f, 0.35451f));
+      keys.add(new ColorKey(0.8666667f, 0.984314f, 0.694118f, 0.446275f));
+      keys.add(new ColorKey(0.93333334f, 0.98719f, 0.843137f, 0.562092f));
+      keys.add(new ColorKey(1.0f, 0.988235f, 1.0f, 0.698039f));
 
       return target;
    }

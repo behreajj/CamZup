@@ -165,41 +165,6 @@ public class ZImage extends PImage {
    public static final int DEFAULT_LEADING = 8;
 
    /**
-    * Adjusts gamma of an image. Raises all color channels to the power given.
-    *
-    * @param source the source image
-    * @param gamma  the gamma correction
-    *
-    * @return the image
-    */
-   public static PImage adjustGamma ( final PImage source, final float gamma ) {
-
-      source.loadPixels();
-
-      final int[] px = source.pixels;
-      final int len = px.length;
-      final double gd = gamma;
-
-      for ( int i = 0; i < len; ++i ) {
-         final int c = px[i];
-
-         final double r = ( c >> 0x10 & 0xff ) * IUtils.ONE_255_D;
-         final double g = ( c >> 0x08 & 0xff ) * IUtils.ONE_255_D;
-         final double b = ( c & 0xff ) * IUtils.ONE_255_D;
-
-         /* @formatter:off */
-         px[i] = c & 0xff000000 |
-            ( int ) ( Math.pow(r, gd) * 255.0d + 0.5d ) << 0x10 |
-            ( int ) ( Math.pow(g, gd) * 255.0d + 0.5d ) << 0x08 |
-            ( int ) ( Math.pow(b, gd) * 255.0d + 0.5d );
-         /* @formatter:on */
-      }
-
-      source.updatePixels();
-      return source;
-   }
-
-   /**
     * Finds the aspect ratio of an image, it's width divided by its height.
     *
     * @param img the image
@@ -420,9 +385,6 @@ public class ZImage extends PImage {
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-
-         // int alpha = px[i] & 0xff000000;
-         // px[i] = alpha | Gradient.eval(grd, Color.luminance(px[i]));
 
          final float alpha = ( px[i] >> 0x18 & 0xff ) * IUtils.ONE_255;
          px[i] = Gradient.eval(grd, alpha * Color.luminance(px[i]));
@@ -732,6 +694,7 @@ public class ZImage extends PImage {
       final int textAlign ) {
 
       // TODO: Worry about pre-multiplying alpha?
+      // Test with kinetic text example where txture is placed on torus.
 
       /*
        * Validate inputs: colors with no alpha not allowed; negative leading and
@@ -962,6 +925,41 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Adjusts gamma of an image. Raises all color channels to the power given.
+    *
+    * @param source the source image
+    * @param gamma  the gamma correction
+    *
+    * @return the image
+    */
+   public static PImage gammaAdjust ( final PImage source, final float gamma ) {
+
+      source.loadPixels();
+
+      final int[] px = source.pixels;
+      final int len = px.length;
+      final double gd = gamma;
+
+      for ( int i = 0; i < len; ++i ) {
+         final int c = px[i];
+
+         final double r = ( c >> 0x10 & 0xff ) * IUtils.ONE_255_D;
+         final double g = ( c >> 0x08 & 0xff ) * IUtils.ONE_255_D;
+         final double b = ( c & 0xff ) * IUtils.ONE_255_D;
+
+         /* @formatter:off */
+         px[i] = c & 0xff000000 |
+            ( int ) ( Math.pow(r, gd) * 255.0d + 0.5d ) << 0x10 |
+            ( int ) ( Math.pow(g, gd) * 255.0d + 0.5d ) << 0x08 |
+            ( int ) ( Math.pow(b, gd) * 255.0d + 0.5d );
+         /* @formatter:on */
+      }
+
+      source.updatePixels();
+      return source;
+   }
+
+   /**
     * Generates a linear gradient from an origin point to a destination point.
     * The origin and destination should be in the range [-1.0, 1.0]. The
     * gradient factor is clamped to [0.0, 1.0].
@@ -1020,6 +1018,39 @@ public class ZImage extends PImage {
       final Gradient grd, final PImage target ) {
 
       return ZImage.linear(origin.x, origin.y, dest.x, dest.y, grd, target);
+   }
+
+   /**
+    * Multiplies the red, green and blue channels of each pixel in the image
+    * by its alpha channel.
+    *
+    * @param source the source image
+    *
+    * @return the pre-multiplied image
+    */
+   public static PImage preMul ( final PImage source ) {
+
+      source.loadPixels();
+      final int[] px = source.pixels;
+      final int len = px.length;
+      for ( int i = 0; i < len; ++i ) {
+         final int ai = px[i] >> 0x18 & 0xff;
+         if ( ai < 1 ) {
+            px[i] = 0x00000000;
+         } else if ( ai < 0xff ) {
+            final int ri = px[i] >> 0x10 & 0xff;
+            final int gi = px[i] >> 0x08 & 0xff;
+            final int bi = px[i] & 0xff;
+
+            final float divisor = ai * IUtils.ONE_255;
+
+            px[i] = ai << 0x18 | ( int ) ( ri * divisor + 0.5f ) << 0x10
+               | ( int ) ( gi * divisor + 0.5f ) << 0x08 | ( int ) ( bi
+                  * divisor + 0.5f );
+         }
+      }
+      source.updatePixels();
+      return source;
    }
 
    /**
@@ -1257,6 +1288,70 @@ public class ZImage extends PImage {
       source.format = PConstants.ARGB;
 
       return source;
+   }
+
+   /**
+    * Converts an image to gray scale. Does not reduce the number of bytes
+    * used to store color; all colors remain 32-bit.
+    *
+    * @param target the output image
+    *
+    * @return the image
+    */
+   public static PImage toGrayscale ( final PImage target ) {
+
+      return toGrayscale(target, false);
+   }
+
+   /**
+    * Converts an image to gray scale, with the option of stretching its
+    * contrast, i.e., normalizing its grays according to a minimum and
+    * maximum. Does not reduce the number of bytes used to store color; all
+    * colors remain 32-bit. Uses rec. 709 luminance.
+    *
+    * @param target    the output image
+    * @param normalize the normalization flag
+    *
+    * @return the image
+    */
+   public static PImage toGrayscale ( final PImage target,
+      final boolean normalize ) {
+
+      target.loadPixels();
+      final int[] px = target.pixels;
+      final int len = px.length;
+
+      if ( normalize ) {
+
+         /* Find minimum and maximum luminance. */
+         float lumMin = 1.0f;
+         float lumMax = 0.0f;
+         final float[] lums = new float[len];
+         for ( int i = 0; i < len; ++i ) {
+            final float lum = Color.luminance(px[i]);
+            if ( lum < lumMin ) { lumMin = lum; }
+            if ( lum > lumMax ) { lumMax = lum; }
+            lums[i] = lum;
+         }
+
+         /* Map luminance to [0.0, 1.0] from [minimum, maximum]. */
+         final float lumRange = lumMax - lumMin;
+         final float denom = lumRange != 0.0f ? 1.0f / lumRange : 0.0f;
+         for ( int i = 0; i < len; ++i ) {
+            final float lum = ( lums[i] - lumMin ) * denom;
+            final int gi = ( int ) ( lum * 0xff + 0.5f );
+            px[i] = px[i] & 0xff000000 | gi << 0x10 | gi << 0x08 | gi;
+         }
+
+      } else {
+         for ( int i = 0; i < len; ++i ) {
+            final int gi = ( int ) ( Color.luminance(px[i]) * 0xff + 0.5f );
+            px[i] = px[i] & 0xff000000 | gi << 0x10 | gi << 0x08 | gi;
+         }
+      }
+
+      target.updatePixels();
+      return target;
    }
 
    /**

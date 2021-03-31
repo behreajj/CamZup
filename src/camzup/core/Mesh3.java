@@ -4380,8 +4380,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          /* Texture coordinates at poles. */
          final float sTex = ( jf + 0.5f ) * toTexS;
-         vts[j].set(sTex, 0.0f);
-         vts[k].set(sTex, 1.0f);
+         vts[j].set(sTex, 1.0f);
+         vts[k].set(sTex, 0.0f);
       }
 
       /* Calculate the texture coordinate u's. */
@@ -4518,11 +4518,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final int v11 = currentLat0 + nextLon0;
             final int v01 = currentLat0 + j;
 
+
             /* Texture coordinate indices. */
-            final int vt00 = currentLat1 + j;
-            final int vt10 = currentLat1 + nextLon1;
-            final int vt11 = nextLat1 + nextLon1;
-            final int vt01 = nextLat1 + j;
+            final int vt00 = nextLat1 + j;
+            final int vt10 = nextLat1 + nextLon1;
+            final int vt11 = currentLat1 + nextLon1;
+            final int vt01 = currentLat1 + j;
 
             if ( isQuad ) {
 
