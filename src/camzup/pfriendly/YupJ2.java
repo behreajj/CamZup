@@ -3557,8 +3557,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void textMode ( final int mode ) {
 
-      if ( mode == PConstants.MODEL || mode == PConstants.SHAPE ) {
-         this.textMode = mode;
+      switch ( mode ) {
+         case PConstants.SHAPE:
+            this.textMode = mode;
+            break;
+
+         case PConstants.MODEL:
+         default:
+            this.textMode = mode;
       }
    }
 

@@ -87,4 +87,10 @@ public interface IUpOgl extends IUp {
     */
    int MAX_LIGHTS = 8;
 
+   /**
+    * Flag to indicate the blend mode should be set to the old Processing
+    * OpenGL blend mode for the purposes of displaying text.
+    */
+   int TEXT_BLEND = 9999;
+
 }

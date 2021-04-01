@@ -30,6 +30,7 @@ public class ZImage extends PImage {
     */
    public ZImage ( final int width, final int height ) {
 
+      // QUERY Is there a set opaque or remove alpha func in pimage?
       super(width, height);
    }
 
@@ -127,7 +128,6 @@ public class ZImage extends PImage {
     *
     * @return this image
     */
-
    PImage setParent ( final PApplet parent ) {
 
       this.parent = parent;
@@ -693,9 +693,6 @@ public class ZImage extends PImage {
       final int fillClr, final int leading, final int kerning,
       final int textAlign ) {
 
-      // TODO: Worry about pre-multiplying alpha?
-      // Test with kinetic text example where txture is placed on torus.
-
       /*
        * Validate inputs: colors with no alpha not allowed; negative leading and
        * kerning not allowed; try to guard against empty Strings. Remove alpha
@@ -948,15 +945,82 @@ public class ZImage extends PImage {
          final double b = ( c & 0xff ) * IUtils.ONE_255_D;
 
          /* @formatter:off */
-         px[i] = c & 0xff000000 |
-            ( int ) ( Math.pow(r, gd) * 255.0d + 0.5d ) << 0x10 |
-            ( int ) ( Math.pow(g, gd) * 255.0d + 0.5d ) << 0x08 |
-            ( int ) ( Math.pow(b, gd) * 255.0d + 0.5d );
+         px[i] = c & 0xff000000
+            | ( int ) ( Math.pow(r, gd) * 255.0d + 0.5d ) << 0x10
+            | ( int ) ( Math.pow(g, gd) * 255.0d + 0.5d ) << 0x08
+            | ( int ) ( Math.pow(b, gd) * 255.0d + 0.5d );
          /* @formatter:on */
       }
 
       source.updatePixels();
       return source;
+   }
+
+   /**
+    * Converts an image to gray scale. Does not change the image format or
+    * reduce the number of bytes used to store color; all colors remain
+    * 32-bit.
+    *
+    * @param target the output image
+    *
+    * @return the image
+    */
+   public static PImage grayscale ( final PImage target ) {
+
+      return ZImage.grayscale(target, false);
+   }
+
+   /**
+    * Converts an image to gray scale, with the option of stretching its
+    * contrast, i.e., normalizing its grays according to a minimum and
+    * maximum. Does not change the image format or reduce the number of bytes
+    * used to store color; all colors remain 32-bit.
+    *
+    * @param target    the output image
+    * @param normalize the normalization flag
+    *
+    * @return the image
+    *
+    * @see Color#luminance(int)
+    */
+   public static PImage grayscale ( final PImage target,
+      final boolean normalize ) {
+
+      target.loadPixels();
+      final int[] px = target.pixels;
+      final int len = px.length;
+
+      if ( normalize ) {
+
+         /* Find minimum and maximum luminance. */
+         float lumMin = 1.0f;
+         float lumMax = 0.0f;
+         final float[] lums = new float[len];
+         for ( int i = 0; i < len; ++i ) {
+            final float lum = Color.luminance(px[i]);
+            if ( lum < lumMin ) { lumMin = lum; }
+            if ( lum > lumMax ) { lumMax = lum; }
+            lums[i] = lum;
+         }
+
+         /* Map luminance to [0.0, 1.0] from [minimum, maximum]. */
+         final float lumRange = lumMax - lumMin;
+         final float denom = lumRange != 0.0f ? 1.0f / lumRange : 0.0f;
+         for ( int i = 0; i < len; ++i ) {
+            final float lum = ( lums[i] - lumMin ) * denom;
+            final int gr = ( int ) ( lum * 0xff + 0.5f );
+            px[i] = px[i] & 0xff000000 | gr << 0x10 | gr << 0x08 | gr;
+         }
+
+      } else {
+         for ( int i = 0; i < len; ++i ) {
+            final int gr = ( int ) ( Color.luminance(px[i]) * 0xff + 0.5f );
+            px[i] = px[i] & 0xff000000 | gr << 0x10 | gr << 0x08 | gr;
+         }
+      }
+
+      target.updatePixels();
+      return target;
    }
 
    /**
@@ -1041,7 +1105,6 @@ public class ZImage extends PImage {
             final int ri = px[i] >> 0x10 & 0xff;
             final int gi = px[i] >> 0x08 & 0xff;
             final int bi = px[i] & 0xff;
-
             final float divisor = ai * IUtils.ONE_255;
 
             px[i] = ai << 0x18 | ( int ) ( ri * divisor + 0.5f ) << 0x10
@@ -1288,70 +1351,6 @@ public class ZImage extends PImage {
       source.format = PConstants.ARGB;
 
       return source;
-   }
-
-   /**
-    * Converts an image to gray scale. Does not reduce the number of bytes
-    * used to store color; all colors remain 32-bit.
-    *
-    * @param target the output image
-    *
-    * @return the image
-    */
-   public static PImage toGrayscale ( final PImage target ) {
-
-      return toGrayscale(target, false);
-   }
-
-   /**
-    * Converts an image to gray scale, with the option of stretching its
-    * contrast, i.e., normalizing its grays according to a minimum and
-    * maximum. Does not reduce the number of bytes used to store color; all
-    * colors remain 32-bit. Uses rec. 709 luminance.
-    *
-    * @param target    the output image
-    * @param normalize the normalization flag
-    *
-    * @return the image
-    */
-   public static PImage toGrayscale ( final PImage target,
-      final boolean normalize ) {
-
-      target.loadPixels();
-      final int[] px = target.pixels;
-      final int len = px.length;
-
-      if ( normalize ) {
-
-         /* Find minimum and maximum luminance. */
-         float lumMin = 1.0f;
-         float lumMax = 0.0f;
-         final float[] lums = new float[len];
-         for ( int i = 0; i < len; ++i ) {
-            final float lum = Color.luminance(px[i]);
-            if ( lum < lumMin ) { lumMin = lum; }
-            if ( lum > lumMax ) { lumMax = lum; }
-            lums[i] = lum;
-         }
-
-         /* Map luminance to [0.0, 1.0] from [minimum, maximum]. */
-         final float lumRange = lumMax - lumMin;
-         final float denom = lumRange != 0.0f ? 1.0f / lumRange : 0.0f;
-         for ( int i = 0; i < len; ++i ) {
-            final float lum = ( lums[i] - lumMin ) * denom;
-            final int gi = ( int ) ( lum * 0xff + 0.5f );
-            px[i] = px[i] & 0xff000000 | gi << 0x10 | gi << 0x08 | gi;
-         }
-
-      } else {
-         for ( int i = 0; i < len; ++i ) {
-            final int gi = ( int ) ( Color.luminance(px[i]) * 0xff + 0.5f );
-            px[i] = px[i] & 0xff000000 | gi << 0x10 | gi << 0x08 | gi;
-         }
-      }
-
-      target.updatePixels();
-      return target;
    }
 
    /**

@@ -4518,7 +4518,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final int v11 = currentLat0 + nextLon0;
             final int v01 = currentLat0 + j;
 
-
             /* Texture coordinate indices. */
             final int vt00 = nextLat1 + j;
             final int vt10 = nextLat1 + nextLon1;
@@ -4691,7 +4690,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the updated mesh
     */
-   private static Mesh3 cubeTexCoords ( final PolyType poly,
+   protected static Mesh3 cubeTexCoords ( final PolyType poly,
       final UvProfile.Cube profile, final Mesh3 target ) {
 
       switch ( profile ) {
@@ -4797,7 +4796,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Draws a cylinder from an origin point toward a destination point. End
     * caps with a centered triangle fan may optionally be included. This is
-    * private so that multiple public overloaded methods may access it.
+    * protected so that multiple public overloaded methods may access it.
     *
     * @param xOrigin     origin x
     * @param yOrigin     origin y
@@ -4812,7 +4811,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the cylinder
     */
-   private static Mesh3 cylinder ( final float xOrigin, final float yOrigin,
+   protected static Mesh3 cylinder ( final float xOrigin, final float yOrigin,
       final float zOrigin, final float xDest, final float yDest,
       final float zDest, final int sectors, final boolean includeCaps,
       final float radius, final Mesh3 target ) {
@@ -4827,7 +4826,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       /* If difference's length is zero, invalid inputs. */
       final float m0 = x0 * x0 + y0 * y0 + z0 * z0;
       if ( Utils.approx(m0, 0.0f, IUtils.EPSILON) ) {
-         x0 = IUtils.EPSILON * 2.0f;
+         x0 = IUtils.EPSILON + IUtils.EPSILON;
          y0 = x0;
          z0 = x0;
       }

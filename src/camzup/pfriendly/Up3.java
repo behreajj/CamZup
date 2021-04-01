@@ -1279,12 +1279,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void text ( final TextEntity3 entity ) {
 
-      /* The "correct" OpenGL blend mode screws up images storing text. */
-
-      int oldBlendMode = this.blendMode;
-      this.blendMode(-9999);
       this.shape(entity, entity.material);
-      this.blendMode(oldBlendMode);
    }
 
    /**

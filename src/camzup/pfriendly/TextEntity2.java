@@ -84,13 +84,19 @@ public class TextEntity2 extends ImageEntity2 {
     * @param alignVert  the vertical alignment
     *
     * @see ZImage#fromText(PFont, String, int, int, int, int)
+    * @see ZImage#preMul(processing.core.PImage)
     */
    public TextEntity2 ( final PFont font, final String text, final Color tint,
       final int leading, final int kerning, final int alignHoriz,
       final int alignVert, final float scale ) {
 
+      /*
+       * Image must be pre-multiplied due to OpenGL blending. Image is colored
+       * white so that it can be tinted by material.
+       */
       super(text, ZImage.fromText(font, text, 0xffffffff, leading, kerning,
          alignHoriz), tint, scale, alignHoriz, alignVert);
+      ZImage.preMul(this.material.texture);
    }
 
 }

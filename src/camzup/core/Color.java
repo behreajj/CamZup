@@ -1285,6 +1285,25 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Raises a color's red, green and blue channels to the power of a scalar.
+    * The alpha channel is unaffected. Useful when adjusting the color's
+    * gamma.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target the output color
+    *
+    * @return the result
+    */
+   public static Color gammaAdjust ( final Color a, final float b,
+      final Color target ) {
+
+      final double bd = b;
+      return target.set(( float ) Math.pow(a.r, bd), ( float ) Math.pow(a.g,
+         bd), ( float ) Math.pow(a.b, bd), a.a);
+   }
+
+   /**
     * Returns the color green, ( 0.0, 1.0, 0.0, 1.0 ) .
     *
     * @param target the output color
@@ -1462,8 +1481,9 @@ public class Color implements Comparable < Color > {
 
    /**
     * Returns the relative luminance of the color, based on
-    * <a href="https://en.wikipedia.org/wiki/Relative_luminance">
-    * https://en.wikipedia.org/wiki/Relative_luminance</a> .
+    * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
+    * 709 relative luminance</a> coefficients: <code>0.2126</code> for red,
+    * <code>0.7152</code> for green and <code>0.0722</code> for blue.
     *
     * @param c the input color
     *
@@ -1472,13 +1492,12 @@ public class Color implements Comparable < Color > {
    public static float luminance ( final Color c ) {
 
       return 0.2126f * c.r + 0.7152f * c.g + 0.0722f * c.b;
-      // return ( 2126.0f * c.r + 7152.0f * c.g + 722.0f * c.b ) * 0.0001f;
    }
 
    /**
     * Returns the relative luminance of the color, based on
-    * <a href="https://en.wikipedia.org/wiki/Relative_luminance">
-    * https://en.wikipedia.org/wiki/Relative_luminance</a> .<br>
+    * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
+    * 709 relative luminance</a>.<br>
     * <br>
     * Colors stored as integers are less precise than those stored as
     * <code>float</code>s (1.0 / 255.0 being the smallest difference between a
@@ -1499,7 +1518,7 @@ public class Color implements Comparable < Color > {
        * 0.002804705882352941d ; (c) 0.0002831372549019608d .
        */
 
-      /* @formatter:off */      
+      /* @formatter:off */
       return (( c >> 0x10 & 0xff ) *  83372550.0f +
               ( c >> 0x08 & 0xff ) * 280470590.0f +
               ( c         & 0xff ) *  28313725.0f) * 10E-12f;
@@ -1553,25 +1572,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Raises a color's red, green and blue channels to the power of a scalar.
-    * The alpha channel is unaffected. Useful when adjusting the color's
-    * gamma.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target the output color
-    *
-    * @return the result
-    */
-   public static Color pow ( final Color a, final float b,
-      final Color target ) {
-
-      final double bd = b;
-      return target.set(( float ) Math.pow(a.r, bd), ( float ) Math.pow(a.g,
-         bd), ( float ) Math.pow(a.b, bd), a.a);
-   }
-
-   /**
     * Multiplies the red, green and blue color channels of a color by the
     * alpha channel.
     *
@@ -1582,10 +1582,13 @@ public class Color implements Comparable < Color > {
     */
    public static Color preMul ( final Color c, final Color target ) {
 
-      if ( c.a <= 0.0f ) { return target.set(0.0f, 0.0f, 0.0f, 0.0f); }
-      if ( c.a >= 1.0f ) { return target.set(c.r, c.g, c.b, 1.0f); }
-
-      return target.set(c.r * c.a, c.g * c.a, c.b * c.a, c.a);
+      if ( c.a <= 0.0f ) {
+         return target.set(0.0f, 0.0f, 0.0f, 0.0f);
+      } else if ( c.a >= 1.0f ) {
+         return target.set(c.r, c.g, c.b, 1.0f);
+      } else {
+         return target.set(c.r * c.a, c.g * c.a, c.b * c.a, c.a);
+      }
    }
 
    /**

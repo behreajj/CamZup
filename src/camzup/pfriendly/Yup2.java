@@ -1266,12 +1266,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     */
    public void text ( final TextEntity2 entity ) {
 
-      /* The "correct" OpenGL blend mode screws up images storing text. */
-
-      int oldBlendMode = this.blendMode;
-      this.blendMode(-9999);
       this.shape(entity, entity.material);
-      this.blendMode(oldBlendMode);
    }
 
    /**

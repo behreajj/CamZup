@@ -442,23 +442,49 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
    /**
     * Exposes the color calculation to the public. Includes the option to pre
-    * multiply alpha. Refers to the helper function
-    * {@link UpOgl#colorPreCalc(float, float, float, float)} to perform part
-    * of the calculation independent of this consideration.
+    * multiply alpha.
     *
     * @param x      the first color channel, hue or red
     * @param y      the second color channel, saturation or green
     * @param z      the third color channel, brightness or blue
     * @param w      the alpha channel
     * @param premul pre-multiply alpha
-    *
-    * @see UpOgl#colorPreCalc(float, float, float, float)
     */
    public void colorCalc ( final float x, final float y, final float z,
       final float w, final boolean premul ) {
 
-      // TODO: Inline?
-      this.colorPreCalc(x, y, z, w);
+      this.calcA = w * this.invColorModeA;
+      this.calcB = z * this.invColorModeZ;
+      this.calcG = y * this.invColorModeY;
+      this.calcR = x * this.invColorModeX;
+
+      switch ( this.colorMode ) {
+
+         case PConstants.HSB:
+
+            /* Conversion clamps the results. */
+            Color.hsvaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
+               this.aTemp);
+
+            this.calcA = this.aTemp.a;
+            this.calcB = this.aTemp.b;
+            this.calcG = this.aTemp.g;
+            this.calcR = this.aTemp.r;
+
+            break;
+
+         case PConstants.RGB:
+
+         default:
+
+            /* @formatter:off */
+            this.calcA = this.calcA < 0.0f ? 0.0f : this.calcA > 1.0f ? 1.0f : this.calcA;
+            this.calcB = this.calcB < 0.0f ? 0.0f : this.calcB > 1.0f ? 1.0f : this.calcB;
+            this.calcG = this.calcG < 0.0f ? 0.0f : this.calcG > 1.0f ? 1.0f : this.calcG;
+            this.calcR = this.calcR < 0.0f ? 0.0f : this.calcR > 1.0f ? 1.0f : this.calcR;
+            /* @formatter:on */
+
+      }
 
       /* Pre-multiply alpha. */
       if ( premul ) {
@@ -479,8 +505,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Calculates a color from an integer containing alpha and RGB
-    * channels.
+    * Calculates a color from an integer containing alpha and RGB channels.
     *
     * @param argb   the hexadecimal color
     * @param premul pre-multiply alpha
@@ -488,29 +513,29 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void colorCalc ( final int argb, final boolean premul ) {
 
       this.calcA = IUtils.ONE_255 * ( argb >> 0x18 & 0xff );
-      this.calcR = IUtils.ONE_255 * ( argb >> 0x10 & 0xff );
-      this.calcG = IUtils.ONE_255 * ( argb >> 0x08 & 0xff );
       this.calcB = IUtils.ONE_255 * ( argb & 0xff );
+      this.calcG = IUtils.ONE_255 * ( argb >> 0x08 & 0xff );
+      this.calcR = IUtils.ONE_255 * ( argb >> 0x10 & 0xff );
 
       /* @formatter:off */
-      this.calcR = this.calcR < 0.0f ? 0.0f : this.calcR > 1.0f ? 1.0f : this.calcR;
-      this.calcG = this.calcG < 0.0f ? 0.0f : this.calcG > 1.0f ? 1.0f : this.calcG;
-      this.calcB = this.calcB < 0.0f ? 0.0f : this.calcB > 1.0f ? 1.0f : this.calcB;
       this.calcA = this.calcA < 0.0f ? 0.0f : this.calcA > 1.0f ? 1.0f : this.calcA;
+      this.calcB = this.calcB < 0.0f ? 0.0f : this.calcB > 1.0f ? 1.0f : this.calcB;
+      this.calcG = this.calcG < 0.0f ? 0.0f : this.calcG > 1.0f ? 1.0f : this.calcG;
+      this.calcR = this.calcR < 0.0f ? 0.0f : this.calcR > 1.0f ? 1.0f : this.calcR;
       /* @formatter:on */
 
       /* Pre-multiply alpha. */
       if ( premul ) {
-         this.calcR *= this.calcA;
-         this.calcG *= this.calcA;
          this.calcB *= this.calcA;
+         this.calcG *= this.calcA;
+         this.calcR *= this.calcA;
       }
 
       /* Convert from [0.0, 1.0] to [0, 255] . */
-      this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
-      this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
-      this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
       this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
+      this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
+      this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
+      this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
       this.calcAlpha = this.calcAi != 0xff;
 
       this.calcColor = this.calcAi << 0x18 | this.calcRi << 0x10 | this.calcGi
@@ -538,55 +563,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.invColorModeY = 1.0f / this.colorModeY;
       this.invColorModeZ = 1.0f / this.colorModeZ;
       this.invColorModeA = 1.0f / this.colorModeA;
-   }
-
-   /**
-    * A helper function to color calculation, exposed to the public.
-    * Calculates color based on the color mode, HSB or RGB, regardless of
-    * whether or not the color is to be pre-multiplied.
-    *
-    * @param x the first color channel, hue or red
-    * @param y the second color channel, saturation or green
-    * @param z the third color channel, brightness or blue
-    * @param w the alpha channel
-    *
-    * @see Color#hsvaToRgba(float, float, float, float, Color)
-    */
-   public void colorPreCalc ( final float x, final float y, final float z,
-      final float w ) {
-
-      this.calcA = w * this.invColorModeA;
-      this.calcB = z * this.invColorModeZ;
-      this.calcG = y * this.invColorModeY;
-      this.calcR = x * this.invColorModeX;
-
-      switch ( this.colorMode ) {
-
-         case PConstants.HSB:
-
-            Color.hsvaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
-               this.aTemp);
-
-            this.calcA = this.aTemp.a;
-            this.calcB = this.aTemp.b;
-            this.calcG = this.aTemp.g;
-            this.calcR = this.aTemp.r;
-
-            break;
-
-         case PConstants.RGB:
-
-         default:
-            this.calcA = this.calcA < 0.0f ? 0.0f : this.calcA > 1.0f ? 1.0f
-               : this.calcA;
-            this.calcB = this.calcB < 0.0f ? 0.0f : this.calcB > 1.0f ? 1.0f
-               : this.calcB;
-            this.calcG = this.calcG < 0.0f ? 0.0f : this.calcG > 1.0f ? 1.0f
-               : this.calcG;
-            this.calcR = this.calcR < 0.0f ? 0.0f : this.calcR > 1.0f ? 1.0f
-               : this.calcR;
-
-      }
    }
 
    /**
@@ -672,7 +648,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       /* Color. */
       this.format = PConstants.ARGB;
       this.colorMode(PConstants.RGB, IUp.DEFAULT_COLOR_MAX);
-      this.blendMode(PConstants.BLEND);
+      this.blendMode = PConstants.BLEND;
+      this.blendModeImpl();
       this.fill(IUp.DEFAULT_FILL_COLOR);
       if ( this.primaryGraphics ) { this.background(IUp.DEFAULT_BKG_COLOR); }
 
@@ -889,7 +866,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Sets the renderer's current fill to the color.
+    * Sets the renderer's current fill to the color. Does not check whether
+    * the color should be pre-multiplied by alpha; the user is trusted to do
+    * so manually if desired.
     *
     * @param c the color
     */
@@ -2220,7 +2199,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Sets the renderer's current stroke to the color.
+    * Sets the renderer's current stroke to the color. Does not check whether
+    * the color should be pre-multiplied by alpha; the user is trusted to do
+    * so manually if desired.
     *
     * @param c the color
     */
@@ -2341,8 +2322,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public void textMode ( final int mode ) {
 
-      if ( mode == PConstants.MODEL || mode == PConstants.SHAPE ) {
-         this.textMode = mode;
+      switch ( mode ) {
+         case PConstants.SHAPE:
+            this.textMode = mode;
+            break;
+
+         case PConstants.MODEL:
+         default:
+            this.textMode = mode;
       }
    }
 
@@ -3052,18 +3039,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             if ( PGraphicsOpenGL.blendEqSupported ) {
                this.pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
             }
-
             this.pgl.blendFuncSeparate(PGL.ONE, PGL.ONE_MINUS_SRC_ALPHA,
                PGL.ONE, PGL.ONE_MINUS_SRC_ALPHA);
 
             break;
 
+         case IUpOgl.TEXT_BLEND:
          default:
 
             if ( PGraphicsOpenGL.blendEqSupported ) {
                this.pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
             }
-
             this.pgl.blendFuncSeparate(PGL.SRC_ALPHA, PGL.ONE_MINUS_SRC_ALPHA,
                PGL.ONE, PGL.ONE);
       }
@@ -3427,8 +3413,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          for ( int j = 0; j < fLen; ++j ) {
 
             final int[] data = f[j];
-            // Transform3.mulPoint(tr, vs[data[0]], v);
-            // Transform3.mulNormal(tr, vns[data[2]], vn);
             Transform3.mulPointAndNormal(tr, vs[data[0]], vns[data[2]], v, vn);
 
             this.normalX = vn.x;
@@ -4335,7 +4319,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
           * mode, so send an invalid integer deliberately.
           */
          final int oldBlendMode = this.blendMode;
-         this.blendMode(-9999);
+         this.blendMode = IUpOgl.TEXT_BLEND;
+         this.blendModeImpl();
 
          final float invSz = 1.0f / this.textFont.getSize();
          final float wGlyph = glyph.width * invSz;
@@ -4385,7 +4370,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          this.tintA = savedTintA;
          this.tintAlpha = savedTintAlpha;
 
-         this.blendMode(oldBlendMode);
+         this.blendMode = oldBlendMode;
+         this.blendModeImpl();
       }
    }
 
@@ -4408,7 +4394,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       // QUERY Where is this used in the library?
 
       final int oldBlendMode = this.blendMode;
-      this.blendMode(-9999);
+      this.blendMode = IUpOgl.TEXT_BLEND;
+      this.blendModeImpl();
 
       final boolean savedTint = this.tint;
       final int savedTintColor = this.tintColor;
@@ -4436,7 +4423,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.tintA = savedTintA;
       this.tintAlpha = savedTintAlpha;
 
-      this.blendMode(oldBlendMode);
+      this.blendMode = oldBlendMode;
+      this.blendModeImpl();
    }
 
    /**
