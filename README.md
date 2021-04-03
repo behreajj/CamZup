@@ -161,7 +161,7 @@ RYB color is included above because popular tutorials on "Color Harmony" (or "Co
 
 ![Triadic](data/triadicDiagram.png)
 
-This RYB wheel's limitations should be apparent from the above. Oranges are dilated while blues are compressed. Brighter greens, cyans and magentas are not achievable. Blues and greens are desaturated. [This](https://youtu.be/YeI6Wqn4I78) tutorial on harmonies is one of the better I've found. Furthermore, [Adobe Color](https://color.adobe.com/create/color-wheel) can assist you in picking harmonies.
+This RYB wheel's limitations should be apparent from the above. Oranges are dilated while blues are compressed. Brighter greens, cyans and magentas are not achievable. Blues and greens are desaturated. [This](https://youtu.be/YeI6Wqn4I78) tutorial on harmonies is one of the better I've found. Furthermore, [Coolors](https://coolors.co) can assist you in picking harmonies.
 
 ### Complement Mix Test
 

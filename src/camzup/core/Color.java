@@ -2006,35 +2006,61 @@ public class Color implements Comparable < Color > {
     */
    public static String toGplString ( final Color[] arr ) {
 
-      return Color.toGplString(arr, "Palette", 1);
+      return Color.toGplString(arr, "Palette");
    }
 
    /**
     * Returns a String representing the color array in the GIMP palette file
-    * format.
+    * format. The number of columns defaults to the square root of the array's
+    * length; for example, 16 colors would have 4 columns.
     *
     * @param arr  the array
     * @param name the palette name
     *
     * @return the string
+    * 
+    * @see Utils#ceil(float)
+    * @see Utils#sqrt(float)
     */
    public static String toGplString ( final Color[] arr, final String name ) {
 
-      return Color.toGplString(arr, name, 1);
+      return Color.toGplString(arr, name, Utils.ceil(Utils.sqrt(arr.length)));
    }
 
    /**
     * Returns a String representing the color array in the GIMP palette file
-    * format.
-    *
+    * format. The number of columns is for displaying the palette.
+    * 
     * @param arr  the array
     * @param name the palette name
     * @param cols the display columns
     *
     * @return the string
+    * 
+    * @see Utils#ceil(float)
+    * @see Utils#sqrt(float)
     */
    public static String toGplString ( final Color[] arr, final String name,
       final int cols ) {
+
+      return Color.toGplString(arr, name, cols, false);
+   }
+
+   /**
+    * Returns a String representing the color array in the GIMP palette file
+    * format. The number of columns is for displaying the palette. A flag
+    * indicates whether or not to append the color's index as the final column
+    * of each row. Indices begin at 1, not 0.
+    *
+    * @param arr    the array
+    * @param name   the palette name
+    * @param cols   the display columns
+    * @param useIdx append the index
+    *
+    * @return the string
+    */
+   public static String toGplString ( final Color[] arr, final String name,
+      final int cols, boolean useIdx ) {
 
       final StringBuilder sb = new StringBuilder(1024);
       sb.append("GIMP Palette");
@@ -2051,8 +2077,10 @@ public class Color implements Comparable < Color > {
          clr.toGplString(sb);
          sb.append(' ');
          sb.append(Color.toHexWeb(clr).substring(1).toUpperCase());
-         sb.append(' ');
-         sb.append(i + 1);
+         if ( useIdx ) {
+            sb.append(' ');
+            sb.append(i + 1);
+         }
          if ( i < last ) { sb.append('\n'); }
       }
 

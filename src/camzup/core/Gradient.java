@@ -1527,7 +1527,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       keys.add(new ColorKey(0.0f, 0.054901965f, 0.18823531f, 0.16078432f));
       keys.add(new ColorKey(0.25f, 0.27450982f, 0.40784317f, 0.32156864f));
       keys.add(new ColorKey(0.75f, 0.54901963f, 0.7254902f, 0.41176474f));
-      keys.add(new ColorKey(1.0f, 0.86274517f, 0.9607844f, 0.75294125f));
+      keys.add(new ColorKey(1.0f, 0.7686275f, 0.89019614f, 0.6505883f));
 
       return target;
    }
