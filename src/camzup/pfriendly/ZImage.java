@@ -1005,10 +1005,9 @@ public class ZImage extends PImage {
 
          /* Map luminance to [0.0, 1.0] from [minimum, maximum]. */
          final float lumRange = lumMax - lumMin;
-         final float denom = lumRange != 0.0f ? 1.0f / lumRange : 0.0f;
+         final float denom255 = lumRange != 0.0f ? 255.0f / lumRange : 0.0f;
          for ( int i = 0; i < len; ++i ) {
-            final float lum = ( lums[i] - lumMin ) * denom;
-            final int gr = ( int ) ( lum * 0xff + 0.5f );
+            final int gr = ( int ) ( ( lums[i] - lumMin ) * denom255 + 0.5f );
             px[i] = px[i] & 0xff000000 | gr << 0x10 | gr << 0x08 | gr;
          }
 
@@ -1047,20 +1046,22 @@ public class ZImage extends PImage {
       final int[] px = target.pixels;
       final int len = px.length;
 
-      final float hInv = 1.0f / ( target.height - 1.0f );
-      final float wInv = 1.0f / ( w - 1.0f );
-
       final float bx = xOrigin - xDest;
       final float by = yOrigin - yDest;
+
       final float bbInv = 1.0f / Utils.max(IUtils.EPSILON, bx * bx + by * by);
 
-      for ( int i = 0; i < len; ++i ) {
-         final float yn = hInv * ( i / w );
-         final float xn = wInv * ( i % w );
+      final float bxbbinv = bx * bbInv;
+      final float bybbinv = by * bbInv;
 
-         px[i] = Gradient.eval(grd, Utils.clamp01( ( ( xOrigin - ( xn + xn
-            - 1.0f ) ) * bx + ( yOrigin - ( 1.0f - ( yn + yn ) ) ) * by )
-            * bbInv));
+      final float xobx = xOrigin * bxbbinv;
+      final float yoby = yOrigin * bybbinv;
+      final float bxwInv2 = 2.0f / ( w - 1.0f ) * bxbbinv;
+      final float byhInv2 = 2.0f / ( target.height - 1.0f ) * bybbinv;
+
+      for ( int i = 0; i < len; ++i ) {
+         px[i] = Gradient.eval(grd, Utils.clamp01(xobx + bxbbinv - bxwInv2 * ( i
+            % w ) + ( yoby + byhInv2 * ( i / w ) - bybbinv )));
       }
 
       target.updatePixels();
@@ -1137,20 +1138,19 @@ public class ZImage extends PImage {
       final int[] px = target.pixels;
       final int len = px.length;
 
-      final float hInv = 1.0f / ( target.height - 1.0f );
-      final float wInv = 1.0f / ( w - 1.0f );
+      final float hInv2 = 2.0f / ( target.height - 1.0f );
+      final float wInv2 = 2.0f / ( w - 1.0f );
 
       final float r2 = radius + radius;
-      final float invrsq = 1.0f / Utils.max(IUtils.EPSILON, r2 * r2);
+      final float rsqInv = 1.0f / Utils.max(IUtils.EPSILON, r2 * r2);
+
+      final float yon1 = yOrigin - 1.0f;
+      final float xop1 = xOrigin + 1.0f;
 
       for ( int i = 0; i < len; ++i ) {
-         final float yn = hInv * ( i / w );
-         final float xn = wInv * ( i % w );
-
-         final float ay = yOrigin - ( 1.0f - ( yn + yn ) );
-         final float ax = xOrigin - ( xn + xn - 1.0f );
-
-         px[i] = Gradient.eval(grd, 1.0f - ( ax * ax + ay * ay ) * invrsq);
+         final float ay = yon1 + hInv2 * ( i / w );
+         final float ax = xop1 - wInv2 * ( i % w );
+         px[i] = Gradient.eval(grd, 1.0f - ( ax * ax + ay * ay ) * rsqInv);
       }
 
       target.updatePixels();
@@ -1307,10 +1307,10 @@ public class ZImage extends PImage {
                final float zbf = u * xbf + t * ybf;
 
                /* @formatter:off */
-               pixels[i] = ya << 0x18 |
-                           ( int ) ( zrf * 0xff + 0.5f ) << 0x10 |
-                           ( int ) ( zgf * 0xff + 0.5f ) << 0x08  |
-                           ( int ) ( zbf * 0xff + 0.5f );
+               pixels[i] = ya << 0x18
+                         | ( int ) ( zrf * 0xff + 0.5f ) << 0x10
+                         | ( int ) ( zgf * 0xff + 0.5f ) << 0x08
+                         | ( int ) ( zbf * 0xff + 0.5f );
                /* @formatter:on */
             }
 
@@ -1319,13 +1319,13 @@ public class ZImage extends PImage {
          case PConstants.ARGB:
 
             for ( int i = 0; i < len; ++i ) {
-               final int rgb = pixels[i];
+               final int argb = pixels[i];
 
                /* Left operand. Decompose color. */
-               final float xaf = IUtils.ONE_255 * ( rgb >> 0x18 & 0xff );
-               final float xrf = IUtils.ONE_255 * ( rgb >> 0x10 & 0xff );
-               final float xgf = IUtils.ONE_255 * ( rgb >> 0x08 & 0xff );
-               final float xbf = IUtils.ONE_255 * ( rgb & 0xff );
+               final float xaf = IUtils.ONE_255 * ( argb >> 0x18 & 0xff );
+               final float xrf = IUtils.ONE_255 * ( argb >> 0x10 & 0xff );
+               final float xgf = IUtils.ONE_255 * ( argb >> 0x08 & 0xff );
+               final float xbf = IUtils.ONE_255 * ( argb & 0xff );
 
                /* Lerp from left to right by factor t. */
                final float zaf = Utils.min(xaf, yaf);
@@ -1334,10 +1334,10 @@ public class ZImage extends PImage {
                final float zbf = u * xbf + t * ybf;
 
                /* @formatter:off */
-               pixels[i] = ( int ) ( zaf * 0xff + 0.5f ) << 0x18 |
-                           ( int ) ( zrf * 0xff + 0.5f ) << 0x10 |
-                           ( int ) ( zgf * 0xff + 0.5f ) << 0x08  |
-                           ( int ) ( zbf * 0xff + 0.5f );
+               pixels[i] = ( int ) ( zaf * 0xff + 0.5f ) << 0x18
+                         | ( int ) ( zrf * 0xff + 0.5f ) << 0x10
+                         | ( int ) ( zgf * 0xff + 0.5f ) << 0x08
+                         | ( int ) ( zbf * 0xff + 0.5f );
                /* @formatter:on */
             }
 

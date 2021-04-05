@@ -246,11 +246,9 @@ public class Color implements Comparable < Color > {
    public int hashCode ( ) { return Color.toHexInt(this); }
 
    /**
-    * Resets this color to the color white.
+    * Resets this color to opaque white.
     *
     * @return this color
-    *
-    * @see Color#white(Color)
     */
    public Color reset ( ) { return this.set(1.0f, 1.0f, 1.0f, 1.0f); }
 
@@ -916,30 +914,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from CMYK to RGBA.
-    *
-    * @param cyan    the cyan channel
-    * @param magenta the magenta channel
-    * @param yellow  the yellow channel
-    * @param black   the black channel
-    * @param alpha   the transparency
-    * @param target  the output color
-    *
-    * @return the color
-    *
-    * @see Utils#clamp01(float)
-    */
-   public static Color cmykaToRgba ( final float cyan, final float magenta,
-      final float yellow, final float black, final float alpha,
-      final Color target ) {
-
-      final float j = 1.0f - black;
-      return target.set(Utils.clamp01( ( 1.0f - cyan ) * j), Utils.clamp01(
-         ( 1.0f - magenta ) * j), Utils.clamp01( ( 1.0f - yellow ) * j), Utils
-            .clamp01(alpha));
-   }
-
-   /**
     * Returns the color cyan, ( 0.0, 1.0, 1.0, 1.0 ) .
     *
     * @param target the output color
@@ -1349,9 +1323,6 @@ public class Color implements Comparable < Color > {
       final float bHue = Utils.mod1(hue - IUtils.ONE_THIRD);
 
       float r = p;
-      float g = p;
-      float b = p;
-
       if ( rHue < IUtils.ONE_SIX ) {
          r = p + qnp6 * rHue;
       } else if ( rHue < 0.5f ) {
@@ -1360,6 +1331,7 @@ public class Color implements Comparable < Color > {
          r = p + qnp6 * ( IUtils.TWO_THIRDS - rHue );
       }
 
+      float g = p;
       if ( gHue < IUtils.ONE_SIX ) {
          g = p + qnp6 * gHue;
       } else if ( gHue < 0.5f ) {
@@ -1368,6 +1340,7 @@ public class Color implements Comparable < Color > {
          g = p + qnp6 * ( IUtils.TWO_THIRDS - gHue );
       }
 
+      float b = p;
       if ( bHue < IUtils.ONE_SIX ) {
          b = p + qnp6 * bHue;
       } else if ( bHue < 0.5f ) {
@@ -1720,47 +1693,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from RGBA to CYMKA. Stores the output in a float array
-    * that is assumed to be 5 elements long.
-    *
-    * @param c      the color
-    * @param target the output array
-    *
-    * @return the array
-    */
-   public static float[] rgbaToCmyka ( final Color c, final float[] target ) {
-
-      return Color.rgbaToCmyka(c.r, c.g, c.b, c.a, target);
-   }
-
-   /**
-    * Converts a color from RGBA to CYMKA. Stores the output in a float array
-    * that is assumed to be 5 elements long.
-    *
-    * @param red    the red channel
-    * @param green  the green channel
-    * @param blue   the blue channel
-    * @param alpha  the transparency
-    * @param target the output array
-    *
-    * @return the array
-    *
-    * @see Utils#clamp01(float)
-    */
-   public static float[] rgbaToCmyka ( final float red, final float green,
-      final float blue, final float alpha, final float[] target ) {
-
-      final float k = 1.0f - Utils.max(red, green, blue);
-      final float j = k != 0.0f ? 1.0f / ( 1.0f - k ) : 0.0f;
-      target[0] = Utils.clamp01(j * ( 1.0f - red - k ));
-      target[1] = Utils.clamp01(j * ( 1.0f - green - k ));
-      target[2] = Utils.clamp01(j * ( 1.0f - blue - k ));
-      target[3] = Utils.clamp01(k);
-      target[4] = Utils.clamp01(alpha);
-      return target;
-   }
-
-   /**
     * Convert a color to gray-scale based on its perceived luminance.
     *
     * @param c      the input color
@@ -1962,9 +1894,9 @@ public class Color implements Comparable < Color > {
     *
     * @return the shifted color
     *
-    * @see Utils#clamp01(float)
     * @see Color#rgbaToHsla(Color, Vec4)
     * @see Color#hslaToRgba(Vec4, Color)
+    * @see Vec4#add(Vec4, Vec4, Vec4)
     */
    public static Color shiftHsla ( final Color c, final Vec4 shift,
       final Color target, final Vec4 hsla ) {
@@ -1984,9 +1916,9 @@ public class Color implements Comparable < Color > {
     *
     * @return the shifted color
     *
-    * @see Utils#clamp01(float)
     * @see Color#rgbaToHsva(Color, Vec4)
     * @see Color#hsvaToRgba(Vec4, Color)
+    * @see Vec4#add(Vec4, Vec4, Vec4)
     */
    public static Color shiftHsva ( final Color c, final Vec4 shift,
       final Color target, final Vec4 hsva ) {
@@ -2018,7 +1950,7 @@ public class Color implements Comparable < Color > {
     * @param name the palette name
     *
     * @return the string
-    * 
+    *
     * @see Utils#ceil(float)
     * @see Utils#sqrt(float)
     */
@@ -2030,13 +1962,13 @@ public class Color implements Comparable < Color > {
    /**
     * Returns a String representing the color array in the GIMP palette file
     * format. The number of columns is for displaying the palette.
-    * 
+    *
     * @param arr  the array
     * @param name the palette name
     * @param cols the display columns
     *
     * @return the string
-    * 
+    *
     * @see Utils#ceil(float)
     * @see Utils#sqrt(float)
     */
@@ -2060,7 +1992,7 @@ public class Color implements Comparable < Color > {
     * @return the string
     */
    public static String toGplString ( final Color[] arr, final String name,
-      final int cols, boolean useIdx ) {
+      final int cols, final boolean useIdx ) {
 
       final StringBuilder sb = new StringBuilder(1024);
       sb.append("GIMP Palette");

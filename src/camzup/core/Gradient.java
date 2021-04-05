@@ -1569,7 +1569,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
    /**
     * Returns seven primary and secondary colors: red, yellow, green, cyan,
-    * blue, magenta and red. Red is repeated so the gradient is periodic.
+    * blue, magenta and red. Red is repeated so that the gradient is periodic.
     *
     * @param target the output gradient
     *

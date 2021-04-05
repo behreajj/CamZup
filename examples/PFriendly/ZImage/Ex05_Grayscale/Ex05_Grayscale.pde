@@ -21,7 +21,7 @@ void setup() {
   source = loadImage("callingStMatthew.jpg");
   ZImage.gammaAdjust(source, gamma);
   target = source.get();
-  ZImage.grayscale(target, true);
+  ZImage.grayscale(target, false);
 }
 
 void draw() {

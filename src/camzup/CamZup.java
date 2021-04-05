@@ -60,11 +60,9 @@ public class CamZup {
       // https://digitalsplashmedia.com/2014/06/
       // visualizing-categorical-data-as-flows-with-alluvial-diagrams/
 
-      // Mesh3 mesh3 = new Mesh3();
-      // Mesh3.uvSphere(32, 16, PolyType.TRI, mesh3);
-      // MeshEntity3 me3 = new MeshEntity3(mesh3);
-      // String str = me3.toBlenderCode();
-      // System.out.println(str);
+      final Color x = new Color();
+      Color.fromHex(0xffaabbcc, x);
+      System.out.println(Color.toHexWeb(x));
    }
 
    /**
