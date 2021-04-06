@@ -1159,8 +1159,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
       final Vec2 target ) {
 
       /* cos(-a) = cos(a), sin(-a) = -sin(a) */
-      Vec2.rotateZ(source, t.right.x, -t.right.y, target);
-      return target;
+      return Vec2.rotateZ(source, t.right.x, -t.right.y, target);
    }
 
    /**
@@ -1253,6 +1252,47 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    }
 
    /**
+    * Multiplies a curve segment by a transform. A convenience for drawing
+    * curves in a renderer. The segment is represented by the first control
+    * point, second control point and destination anchor point.
+    *
+    * @param t     the transform
+    * @param fhSrc the source fore handle
+    * @param rhSrc the source rear handle
+    * @param coSrc the source coordinate
+    * @param fhTrg the target fore handle
+    * @param rhTrg the target rear handle
+    * @param coTrg the target coordinate
+    *
+    * @return the transformed coordinate
+    */
+   public static Vec2 mulCurveSeg ( final Transform2 t, final Vec2 fhSrc,
+      final Vec2 rhSrc, final Vec2 coSrc, final Vec2 fhTrg, final Vec2 rhTrg,
+      final Vec2 coTrg ) {
+
+      final float xtr = t.location.x;
+      final float ytr = t.location.y;
+      final float cosa = t.right.x;
+      final float sina = t.right.y;
+      final float w = t.scale.x;
+      final float d = t.scale.y;
+
+      float temp = fhSrc.x;
+      fhTrg.x = ( cosa * temp - sina * fhSrc.y ) * w + xtr;
+      fhTrg.y = ( cosa * fhSrc.y + sina * temp ) * d + ytr;
+
+      temp = rhSrc.x;
+      rhTrg.x = ( cosa * temp - sina * rhSrc.y ) * w + xtr;
+      rhTrg.y = ( cosa * rhSrc.y + sina * temp ) * d + ytr;
+
+      temp = coSrc.x;
+      coTrg.x = ( cosa * temp - sina * coSrc.y ) * w + xtr;
+      coTrg.y = ( cosa * coSrc.y + sina * temp ) * d + ytr;
+
+      return coTrg;
+   }
+
+   /**
     * Multiplies a direction by a transform. This rotates the direction by the
     * transform's rotation.
     *
@@ -1267,8 +1307,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
    public static Vec2 mulDir ( final Transform2 t, final Vec2 source,
       final Vec2 target ) {
 
-      Vec2.rotateZ(source, t.right.x, t.right.y, target);
-      return target;
+      return Vec2.rotateZ(source, t.right.x, t.right.y, target);
    }
 
    /**
@@ -1280,25 +1319,26 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     * @param target the output point
     *
     * @return the point
-    *
-    * @see Vec2#rotateZ(Vec2, float, Vec2)
-    * @see Vec2#mul(Vec2, Vec2, Vec2)
-    * @see Vec2#add(Vec2, Vec2, Vec2)
     */
    public static Vec2 mulPoint ( final Transform2 t, final Vec2 source,
       final Vec2 target ) {
 
-      /* Inlined for optimization purposes. */
+      /* Inlined for optimization. */
       // Vec2.rotateZ(source, t.right.x, t.right.y, target);
       // Vec2.mul(target, t.scale, target);
       // Vec2.add(target, t.location, target);
 
+      final float xtr = t.location.x;
+      final float ytr = t.location.y;
       final float cosa = t.right.x;
       final float sina = t.right.y;
-      final Vec2 sc = t.scale;
-      final Vec2 tr = t.location;
-      target.x = ( cosa * source.x - sina * source.y ) * sc.x + tr.x;
-      target.y = ( cosa * source.y + sina * source.x ) * sc.y + tr.y;
+      final float w = t.scale.x;
+      final float d = t.scale.y;
+
+      /* Must account for cases where source == target. */
+      final float temp = source.x;
+      target.x = ( cosa * temp - sina * source.y ) * w + xtr;
+      target.y = ( cosa * source.y + sina * temp ) * d + ytr;
 
       return target;
    }

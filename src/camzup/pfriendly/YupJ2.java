@@ -3882,6 +3882,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param fh    the temporary fore handle
     * @param rh    the temporary rear handle
     * @param co    the temporary coordinate
+    * 
+    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
+    * @see Transform2#mulCurveSeg(Transform2, Vec2, Vec2, Vec2, Vec2, Vec2,
+    *      Vec2)
     */
    protected void appendToGeneralPath ( final Curve2 curve, final Transform2 tr,
       final Vec2 fh, final Vec2 rh, final Vec2 co ) {
@@ -3895,21 +3899,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       Knot2 prevKnot = firstKnot;
       while ( itr.hasNext() ) {
          final Knot2 currKnot = itr.next();
-
-         Transform2.mulPoint(tr, prevKnot.foreHandle, fh);
-         Transform2.mulPoint(tr, currKnot.rearHandle, rh);
-         Transform2.mulPoint(tr, currKnot.coord, co);
-
+         Transform2.mulCurveSeg(tr, prevKnot.foreHandle, currKnot.rearHandle,
+            currKnot.coord, fh, rh, co);
          this.gp.curveTo(fh.x, fh.y, rh.x, rh.y, co.x, co.y);
-
          prevKnot = currKnot;
       }
 
       if ( curve.closedLoop ) {
-         Transform2.mulPoint(tr, prevKnot.foreHandle, fh);
-         Transform2.mulPoint(tr, firstKnot.rearHandle, rh);
-         Transform2.mulPoint(tr, firstKnot.coord, co);
-
+         Transform2.mulCurveSeg(tr, prevKnot.foreHandle, firstKnot.rearHandle,
+            firstKnot.coord, fh, rh, co);
          this.gp.curveTo(fh.x, fh.y, rh.x, rh.y, co.x, co.y);
          this.gp.closePath();
       }
@@ -3923,6 +3921,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param mesh the mesh
     * @param tr   the transform
     * @param v    the vector
+    * 
+    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
     */
    protected void appendToGeneralPath ( final Mesh2 mesh, final Transform2 tr,
       final Vec2 v ) {
@@ -4239,14 +4239,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          this.calcColor = this.calcAi << 0x18 | argb & 0xffffff;
       }
 
-      this.calcRi = argb >> 0x10 & 0xff;
-      this.calcGi = argb >> 0x08 & 0xff;
       this.calcBi = argb & 0xff;
+      this.calcGi = argb >> 0x08 & 0xff;
+      this.calcRi = argb >> 0x10 & 0xff;
 
       this.calcA = this.calcAi * IUtils.ONE_255;
-      this.calcR = this.calcRi * IUtils.ONE_255;
-      this.calcG = this.calcGi * IUtils.ONE_255;
       this.calcB = this.calcBi * IUtils.ONE_255;
+      this.calcG = this.calcGi * IUtils.ONE_255;
+      this.calcR = this.calcRi * IUtils.ONE_255;
 
       this.calcAlpha = this.calcAi != 0xff;
    }

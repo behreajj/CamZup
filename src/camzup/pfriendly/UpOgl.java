@@ -3175,6 +3175,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param fh    the temporary fore handle
     * @param rh    the temporary rear handle
     * @param co    the temporary coordinate
+    * 
+    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
+    * @see Transform2#mulCurveSeg(Transform2, Vec2, Vec2, Vec2, Vec2, Vec2,
+    *      Vec2)
     */
    protected void drawCurve2 ( final Curve2 curve, final Transform2 tr,
       final Vec2 fh, final Vec2 rh, final Vec2 co ) {
@@ -3190,22 +3194,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       Knot2 prevKnot = firstKnot;
       while ( itr.hasNext() ) {
          final Knot2 currKnot = itr.next();
-
-         Transform2.mulPoint(tr, prevKnot.foreHandle, fh);
-         Transform2.mulPoint(tr, currKnot.rearHandle, rh);
-         Transform2.mulPoint(tr, currKnot.coord, co);
-
+         Transform2.mulCurveSeg(tr, prevKnot.foreHandle, currKnot.rearHandle,
+            currKnot.coord, fh, rh, co);
          this.bezierVertexImpl(fh.x, fh.y, 0.0f, rh.x, rh.y, 0.0f, co.x, co.y,
             0.0f);
-
          prevKnot = currKnot;
       }
 
       if ( curve.closedLoop ) {
-         Transform2.mulPoint(tr, prevKnot.foreHandle, fh);
-         Transform2.mulPoint(tr, firstKnot.rearHandle, rh);
-         Transform2.mulPoint(tr, firstKnot.coord, co);
-
+         Transform2.mulCurveSeg(tr, prevKnot.foreHandle, firstKnot.rearHandle,
+            firstKnot.coord, fh, rh, co);
          this.bezierVertexImpl(fh.x, fh.y, 0.0f, rh.x, rh.y, 0.0f, co.x, co.y,
             0.0f);
          this.endShape(PConstants.CLOSE);
@@ -3223,6 +3221,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param fh    the temporary fore handle
     * @param rh    the temporary rear handle
     * @param co    the temporary coordinate
+    * 
+    * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
+    * @see Transform3#mulCurveSeg(Transform3, Vec3, Vec3, Vec3, Vec3, Vec3,
+    *      Vec3)
     */
    protected void drawCurve3 ( final Curve3 curve, final Transform3 tr,
       final Vec3 fh, final Vec3 rh, final Vec3 co ) {
@@ -3237,22 +3239,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       Knot3 prevKnot = firstKnot;
       while ( itr.hasNext() ) {
          final Knot3 currKnot = itr.next();
-
-         Transform3.mulPoint(tr, prevKnot.foreHandle, fh);
-         Transform3.mulPoint(tr, currKnot.rearHandle, rh);
-         Transform3.mulPoint(tr, currKnot.coord, co);
-
+         Transform3.mulCurveSeg(tr, prevKnot.foreHandle, currKnot.rearHandle,
+            currKnot.coord, fh, rh, co);
          this.bezierVertexImpl(fh.x, fh.y, fh.z, rh.x, rh.y, rh.z, co.x, co.y,
             co.z);
-
          prevKnot = currKnot;
       }
 
       if ( curve.closedLoop ) {
-         Transform3.mulPoint(tr, prevKnot.foreHandle, fh);
-         Transform3.mulPoint(tr, firstKnot.rearHandle, rh);
-         Transform3.mulPoint(tr, firstKnot.coord, co);
-
+         Transform3.mulCurveSeg(tr, prevKnot.foreHandle, firstKnot.rearHandle,
+            firstKnot.coord, fh, rh, co);
          this.bezierVertexImpl(fh.x, fh.y, fh.z, rh.x, rh.y, rh.z, co.x, co.y,
             co.z);
          this.endShape(PConstants.CLOSE);
@@ -3270,6 +3266,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param mat  the material
     * @param v    a temporary vector
     * @param vt   a temporary vector
+    * 
+    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
+    * @see Transform2#mulTexCoord(Transform2, Vec2, Vec2)
     */
    protected void drawMesh2 ( final Mesh2 mesh, final Transform2 tr,
       final MaterialPImage mat, final Vec2 v, final Vec2 vt ) {
@@ -3293,11 +3292,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          this.texture(pimg);
 
          for ( int j = 0; j < fLen; ++j ) {
-
             final int[] data = f[j];
             Transform2.mulPoint(tr, vs[data[0]], v);
             Transform2.mulTexCoord(uvtr, vts[data[1]], vt);
-
             this.vertexImpl(v.x, v.y, 0.0f, vt.x, vt.y);
          }
          this.endShape(PConstants.CLOSE);
@@ -3311,6 +3308,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param mesh the mesh
     * @param tr   the transform
     * @param v    a temporary vector
+    * 
+    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
     */
    protected void drawMesh2 ( final Mesh2 mesh, final Transform2 tr,
       final Vec2 v ) {
@@ -3345,6 +3344,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param v    a temporary vector
     * @param vt   a temporary vector
     * @param vn   a temporary vector
+    * 
+    * @see Transform2#mulTexCoord(Transform2, Vec2, Vec2)
+    * @see Transform3#mulPointAndNormal(Transform3, Vec3, Vec3, Vec3, Vec3)
     */
    protected void drawMesh3 ( final Mesh3 mesh, final Transform3 tr,
       final MaterialPImage mat, final Vec3 v, final Vec2 vt, final Vec3 vn ) {
@@ -3392,6 +3394,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param tr   the transform
     * @param v    a temporary vector
     * @param vn   a temporary vector
+    * 
+    * @see Transform3#mulPointAndNormal(Transform3, Vec3, Vec3, Vec3, Vec3)
     */
    protected void drawMesh3 ( final Mesh3 mesh, final Transform3 tr,
       final Vec3 v, final Vec3 vn ) {

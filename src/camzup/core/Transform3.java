@@ -1346,8 +1346,7 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    public static Vec3 invMulDir ( final Transform3 t, final Vec3 source,
       final Vec3 target ) {
 
-      Quaternion.invMulVector(t.rotation, source, target);
-      return target;
+      return Quaternion.invMulVector(t.rotation, source, target);
    }
 
    /**
@@ -1462,6 +1461,69 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    }
 
    /**
+    * Multiplies a curve segment by a transform. A convenience for drawing
+    * curves in a renderer. The segment is represented by the first control
+    * point, second control point and destination anchor point.
+    *
+    * @param t     the transform
+    * @param fhSrc the source fore handle
+    * @param rhSrc the source rear handle
+    * @param coSrc the source coordinate
+    * @param fhTrg the target fore handle
+    * @param rhTrg the target rear handle
+    * @param coTrg the target coordinate
+    *
+    * @return the transformed coordinate
+    */
+   public static Vec3 mulCurveSeg ( final Transform3 t, final Vec3 fhSrc,
+      final Vec3 rhSrc, final Vec3 coSrc, final Vec3 fhTrg, final Vec3 rhTrg,
+      final Vec3 coTrg ) {
+
+      final float xtr = t.location.x;
+      final float ytr = t.location.y;
+      final float ztr = t.location.z;
+
+      final float qw = t.rotation.real;
+      final Vec3 imag = t.rotation.imag;
+      final float qx = imag.x;
+      final float qy = imag.y;
+      final float qz = imag.z;
+
+      final float w = t.scale.x;
+      final float d = t.scale.y;
+      final float h = t.scale.z;
+
+      final float fhiw = -qx * fhSrc.x - qy * fhSrc.y - qz * fhSrc.z;
+      final float fhix = qw * fhSrc.x + qy * fhSrc.z - qz * fhSrc.y;
+      final float fhiy = qw * fhSrc.y + qz * fhSrc.x - qx * fhSrc.z;
+      final float fhiz = qw * fhSrc.z + qx * fhSrc.y - qy * fhSrc.x;
+
+      fhTrg.x = ( fhix * qw + fhiz * qy - fhiw * qx - fhiy * qz ) * w + xtr;
+      fhTrg.y = ( fhiy * qw + fhix * qz - fhiw * qy - fhiz * qx ) * d + ytr;
+      fhTrg.z = ( fhiz * qw + fhiy * qx - fhiw * qz - fhix * qy ) * h + ztr;
+
+      final float rhiw = -qx * rhSrc.x - qy * rhSrc.y - qz * rhSrc.z;
+      final float rhix = qw * rhSrc.x + qy * rhSrc.z - qz * rhSrc.y;
+      final float rhiy = qw * rhSrc.y + qz * rhSrc.x - qx * rhSrc.z;
+      final float rhiz = qw * rhSrc.z + qx * rhSrc.y - qy * rhSrc.x;
+
+      rhTrg.x = ( rhix * qw + rhiz * qy - rhiw * qx - rhiy * qz ) * w + xtr;
+      rhTrg.y = ( rhiy * qw + rhix * qz - rhiw * qy - rhiz * qx ) * d + ytr;
+      rhTrg.z = ( rhiz * qw + rhiy * qx - rhiw * qz - rhix * qy ) * h + ztr;
+
+      final float coiw = -qx * coSrc.x - qy * coSrc.y - qz * coSrc.z;
+      final float coix = qw * coSrc.x + qy * coSrc.z - qz * coSrc.y;
+      final float coiy = qw * coSrc.y + qz * coSrc.x - qx * coSrc.z;
+      final float coiz = qw * coSrc.z + qx * coSrc.y - qy * coSrc.x;
+
+      coTrg.x = ( coix * qw + coiz * qy - coiw * qx - coiy * qz ) * w + xtr;
+      coTrg.y = ( coiy * qw + coix * qz - coiw * qy - coiz * qx ) * d + ytr;
+      coTrg.z = ( coiz * qw + coiy * qx - coiw * qz - coix * qy ) * h + ztr;
+
+      return coTrg;
+   }
+
+   /**
     * Multiplies a direction by a transform. This rotates the direction by the
     * transform's rotation.
     *
@@ -1476,8 +1538,7 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
    public static Vec3 mulDir ( final Transform3 t, final Vec3 source,
       final Vec3 target ) {
 
-      Quaternion.mulVector(t.rotation, source, target);
-      return target;
+      return Quaternion.mulVector(t.rotation, source, target);
    }
 
    /**
@@ -1511,10 +1572,6 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     * @param target the output point
     *
     * @return the point
-    *
-    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
-    * @see Vec3#mul(Vec3, Vec3, Vec3)
-    * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    public static Vec3 mulPoint ( final Transform3 t, final Vec3 source,
       final Vec3 target ) {

@@ -8,7 +8,7 @@ package camzup.core;
 public class Knot2 implements Comparable < Knot2 > {
 
    /**
-    * The spatial coordlinate of the knot.
+    * The spatial coordinate of the knot.
     */
    public final Vec2 coord = new Vec2();
 
