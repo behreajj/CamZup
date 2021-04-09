@@ -249,25 +249,25 @@ public interface IUp {
     * Color for the lines connected the forehandle, coordinate and rear handle
     * of a curve knot. Currently diagnostic only, and so not adjustable.
     */
-   int DEFAULT_HANDLE_COLOR = 0xff2c2c30;
+   int DEFAULT_HANDLE_COLOR = 0xffeb605d;
 
    /**
     * Color for the curve knot coordinate. Currently diagnostic only, and so
     * not adjustable.
     */
-   int DEFAULT_HANDLE_COORD_COLOR = 0xff5c8597;
+   int DEFAULT_HANDLE_COORD_COLOR = 0xfffabb74;
 
    /**
     * Color for the curve knot forehandle. Currently diagnostic only, and so
     * not adjustable.
     */
-   int DEFAULT_HANDLE_FORE_COLOR = 0xff85d3cc;
+   int DEFAULT_HANDLE_FORE_COLOR = 0xff239e95;
 
    /**
     * Color for the curve knot rearhandle. Currently diagnostic only, and so
     * not adjustable.
     */
-   int DEFAULT_HANDLE_REAR_COLOR = 0xff323761;
+   int DEFAULT_HANDLE_REAR_COLOR = 0xffbb1641;
 
    /**
     * Default color of the x axis when displayed by a camera's origin

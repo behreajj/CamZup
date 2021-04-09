@@ -3175,7 +3175,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param fh    the temporary fore handle
     * @param rh    the temporary rear handle
     * @param co    the temporary coordinate
-    * 
+    *
     * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
     * @see Transform2#mulCurveSeg(Transform2, Vec2, Vec2, Vec2, Vec2, Vec2,
     *      Vec2)
@@ -3221,7 +3221,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param fh    the temporary fore handle
     * @param rh    the temporary rear handle
     * @param co    the temporary coordinate
-    * 
+    *
     * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
     * @see Transform3#mulCurveSeg(Transform3, Vec3, Vec3, Vec3, Vec3, Vec3,
     *      Vec3)
@@ -3266,7 +3266,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param mat  the material
     * @param v    a temporary vector
     * @param vt   a temporary vector
-    * 
+    *
     * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
     * @see Transform2#mulTexCoord(Transform2, Vec2, Vec2)
     */
@@ -3308,7 +3308,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param mesh the mesh
     * @param tr   the transform
     * @param v    a temporary vector
-    * 
+    *
     * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
     */
    protected void drawMesh2 ( final Mesh2 mesh, final Transform2 tr,
@@ -3344,7 +3344,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param v    a temporary vector
     * @param vt   a temporary vector
     * @param vn   a temporary vector
-    * 
+    *
     * @see Transform2#mulTexCoord(Transform2, Vec2, Vec2)
     * @see Transform3#mulPointAndNormal(Transform3, Vec3, Vec3, Vec3, Vec3)
     */
@@ -3394,7 +3394,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param tr   the transform
     * @param v    a temporary vector
     * @param vn   a temporary vector
-    * 
+    *
     * @see Transform3#mulPointAndNormal(Transform3, Vec3, Vec3, Vec3, Vec3)
     */
    protected void drawMesh3 ( final Mesh3 mesh, final Transform3 tr,

@@ -105,7 +105,7 @@ void setup() {
 }
 ```
 
-Both `createGraphics` and `getGraphics` return `PGraphics`; the result needs to be cast to the specific renderer. The benefit of accessing Cam Z-Up renderers directly, rather than through `PApplet` functions, is that the renderers offer convenience functions. For example, in the following snippet,
+Both `createGraphics` and `getGraphics` return `PGraphics`; the result needs to be cast to the specific renderer. The benefit of accessing Cam Z-Up renderers directly, rather than through `PApplet`, is that the renderers offer additional conveniences. For example, in the following snippet,
 
 ```java
 graphics.beginDraw();
@@ -299,14 +299,14 @@ Here is a brief list of issues with this library and differences which may be un
   
 ### 2D
   - The `image` function for `PGraphicsJava2D` is ineffective, both in terms of frame rate and appearance. I recommend that an OpenGL renderer be used instead. Alternatively, rescale images to display size and tint them in a raster image editor. I have made an image function which removes some of the padding around the native renderer's image function in cases where a `PImage` can be converted to a `java.awt.Image` in `setup`.
-  - `surface.setResizable` is not supported.
   - As a consequence of how `image` function works above, dynamic `tint`ing is no longer supported in `YupJ2`.
   - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter.
   - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), `ellipseMode` and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with this library. For that reason, `CENTER` is the default alignment.
   - OpenGL renderers do not recognize contours in meshes and curves.
+  - `surface.setResizable` is not supported.
   
 ### 3D
-  - Neither 3D primitive, the [sphere](https://processing.org/reference/sphere_.html) nor the [box](https://processing.org/reference/box_.html), are supported; use `MeshEntity3`s instead.
+  - Neither 3D primitive, [sphere](https://processing.org/reference/sphere_.html) and [box](https://processing.org/reference/box_.html), are supported; use `MeshEntity3`s instead.
   - A `Mesh3` material may not have both a fill and a stroke due to flickering in [perspective](https://processing.org/reference/perspective_.html) cameras.
 
 Many core Processing functions are marked `final`, meaning they cannot be extended and modified by classes in this library; many fields are marked `private` meaning they cannot be accessed and/or mutated. This is the one of the reasons for the limitations above.

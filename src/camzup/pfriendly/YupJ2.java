@@ -617,34 +617,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Calculates the color channels from a color object.
-    *
-    * @param c the color
-    */
-   public void colorCalc ( final Color c ) {
-
-      /* Clamp values to the range [0.0, 1.0] . */
-      this.calcR = c.r < 0.0f ? 0.0f : c.r > 1.0f ? 1.0f : c.r;
-      this.calcG = c.g < 0.0f ? 0.0f : c.g > 1.0f ? 1.0f : c.g;
-      this.calcB = c.b < 0.0f ? 0.0f : c.b > 1.0f ? 1.0f : c.b;
-      this.calcA = c.a < 0.0f ? 0.0f : c.a > 1.0f ? 1.0f : c.a;
-
-      /* Convert from [0.0, 1.0] to [0, 255] . */
-      this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
-      this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
-      this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
-      this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
-      this.calcAlpha = this.calcAi != 0xff;
-
-      /* @formatter:off */
-      this.calcColor = this.calcAi << 0x18
-                     | this.calcRi << 0x10
-                     | this.calcGi << 0x08
-                     | this.calcBi;
-      /* @formatter:on */
-   }
-
-   /**
     * Sets the renderer's color mode. Color channel maximums should be a
     * positive value greater than or equal to one.
     *
@@ -3882,7 +3854,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param fh    the temporary fore handle
     * @param rh    the temporary rear handle
     * @param co    the temporary coordinate
-    * 
+    *
     * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
     * @see Transform2#mulCurveSeg(Transform2, Vec2, Vec2, Vec2, Vec2, Vec2,
     *      Vec2)
@@ -3921,7 +3893,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param mesh the mesh
     * @param tr   the transform
     * @param v    the vector
-    * 
+    *
     * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
     */
    protected void appendToGeneralPath ( final Mesh2 mesh, final Transform2 tr,
@@ -4152,6 +4124,35 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * Calculates the color channels from a color object.
+    *
+    * @param c the color
+    */
+   protected void colorCalc ( final Color c ) {
+
+      /* Clamp values to the range [0.0, 1.0] . */
+      this.calcA = c.a < 0.0f ? 0.0f : c.a > 1.0f ? 1.0f : c.a;
+      this.calcB = c.b < 0.0f ? 0.0f : c.b > 1.0f ? 1.0f : c.b;
+      this.calcG = c.g < 0.0f ? 0.0f : c.g > 1.0f ? 1.0f : c.g;
+      this.calcR = c.r < 0.0f ? 0.0f : c.r > 1.0f ? 1.0f : c.r;
+
+      /* Convert from [0.0, 1.0] to [0, 255] . */
+      this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
+      this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
+      this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
+      this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
+
+      this.calcAlpha = this.calcAi != 0xff;
+
+      /* @formatter:off */
+      this.calcColor = this.calcAi << 0x18
+                     | this.calcRi << 0x10
+                     | this.calcGi << 0x08
+                     | this.calcBi;
+      /* @formatter:on */
+   }
+
+   /**
     * Calculates the color channels from four input channels. The manner in
     * which the first three are interpreted depends on color mode. For HSB
     * color mode, the first channel, x, is interpreted as a periodic, not a
@@ -4203,10 +4204,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       }
 
       /* Convert from [0.0, 1.0] to [0, 255] . */
-      this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
-      this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
-      this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
       this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
+      this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
+      this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
+      this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
+
       this.calcAlpha = this.calcAi != 0xff;
 
       /* @formatter:off */

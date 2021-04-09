@@ -2669,7 +2669,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates a cylinder on the z axis, where its pointed end is on +z and its
+    * Creates a cone on the z axis, where its pointed end is on +z and its
     * base is on -z at a radius.
     *
     * @param depth   cone height
@@ -2751,20 +2751,20 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          /* Indices are zero by default. */
          final int[][] base = fs[i];
-         // final int[] base0 = base[0];
-         final int[] base1 = base[1];
-         final int[] base2 = base[2];
 
+         // final int[] base0 = base[0];
          // base0[0] = 0;
          // base0[1] = 0;
          // base0[2] = 0;
 
-         base1[0] = vCurrent;
-         base1[1] = vtCurrent;
+         final int[] base1 = base[1];
+         base1[0] = vNext;
+         base1[1] = vtNext;
          // base1[2] = 0;
 
-         base2[0] = vNext;
-         base2[1] = vtNext;
+         final int[] base2 = base[2];
+         base2[0] = vCurrent;
+         base2[1] = vtCurrent;
          // base2[2] = 0;
 
          final int[][] side = fs[k];
@@ -2791,7 +2791,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates a cylinder on the z axis, where its pointed end is on +z and its
+    * Creates a cone on the z axis, where its pointed end is on +z and its
     * base is on -z at a radius. The number of sectors defaults to
     * {@value IMesh#DEFAULT_CIRCLE_SECTORS}.
     *
@@ -4825,7 +4825,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* If difference's length is zero, invalid inputs. */
       final float m0 = x0 * x0 + y0 * y0 + z0 * z0;
-      if ( Utils.approx(m0, 0.0f, IUtils.EPSILON) ) {
+      if ( m0 <= IUtils.EPSILON ) {
          x0 = IUtils.EPSILON + IUtils.EPSILON;
          y0 = x0;
          z0 = x0;
@@ -4833,7 +4833,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* Validate arguments. */
       final int sec = sectors < 3 ? 3 : sectors;
-      final float rad = Utils.max(IUtils.EPSILON, radius);
+      final float rad = radius < IUtils.EPSILON ? IUtils.EPSILON : radius;
 
       /* Normalize forward. */
       final float mInv0 = Utils.invSqrtUnchecked(m0);
@@ -4846,9 +4846,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       float y1 = kx;
       float z1 = 0.0f;
 
-      /* Forward and up are parallel if the cross product is zero. */
+      /*
+       * Forward and up are parallel if the cross product is zero. z1 is already
+       * known to be zero, so no check is necessary.
+       */
       if ( Utils.approx(x1, 0.0f, IUtils.EPSILON) && Utils.approx(y1, 0.0f,
-         IUtils.EPSILON) && Utils.approx(z1, 0.0f, IUtils.EPSILON) ) {
+         IUtils.EPSILON) ) {
 
          /*
           * If forward and up are parallel, recalculate the cross product
@@ -4860,7 +4863,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       /* The cross product is the right axis. Normalize right. */
-      final float mInv1 = Utils.invHypot(x1, y1, z1);
+      final float mInv1 = Utils.invSqrtUnchecked(x1 * x1 + y1 * y1 + z1 * z1);
       final float ix = x1 * mInv1;
       final float iy = y1 * mInv1;
       final float iz = z1 * mInv1;
@@ -4871,7 +4874,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final float z2 = ix * ky - iy * kx;
 
       /* Normalize the up axis. */
-      final float mInv2 = Utils.invHypot(x2, y2, z2);
+      final float mInv2 = Utils.invSqrtUnchecked(x2 * x2 + y2 * y2 + z2 * z2);
       final float jx = x2 * mInv2;
       final float jy = y2 * mInv2;
       final float jz = z2 * mInv2;
@@ -4910,10 +4913,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       // float toU = 1.0f / sectors;
       // float toTheta = TAU / sectors;
       for ( int i = 0, j = sec1; i < sec1; ++i, ++j ) {
-         // final float u = i * toTheta;
          final float u = 1.0f - i * toTheta;
-         vts[i].set(u, 1.0f);
-         vts[j].set(u, 0.0f);
+         // vts[i].set(u, 1.0f);
+         // vts[j].set(u, 0.0f);
+         // final float u = i * toTheta;
+         vts[i].set(u, 0.0f);
+         vts[j].set(u, 1.0f);
       }
 
       /* Side panel vertices and normals. */
@@ -4931,16 +4936,26 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec3 vn = vns[i].set(ix * cosa + jx * sina, iy * cosa + jy
             * sina, iz * cosa + jz * sina);
 
+         /* For coordinates, multiply normals by radius / radii. */
+         final Vec3 v0 = vs[i];
+         final Vec3 v1 = vs[j];
+
+         v0.x = vn.x * rad;
+         v0.y = vn.y * rad;
+         v0.z = vn.z * rad;
+
          /*
-          * In case you want to try tapering the cylinder by providing two
-          * radii.
+          * If you wanted to implement a tapered radius, this would have to be
+          * different than v0.
           */
-         final Vec3 v0 = Vec3.mul(vn, rad, vs[i]);
+         v1.x = v0.x;
+         v1.y = v0.y;
+         v1.z = v0.z;
+
          v0.x += xOrigin;
          v0.y += yOrigin;
          v0.z += zOrigin;
 
-         final Vec3 v1 = Vec3.mul(vn, rad, vs[j]);
          v1.x += xDest;
          v1.y += yDest;
          v1.z += zDest;
@@ -4991,7 +5006,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          /* If needed, find end cap texture coordinates. */
          if ( includeCaps ) {
-            vts[vtLen + i].set(cosa * 0.5f + 0.5f, sina * 0.5f + 0.5f);
+            // vts[vtLen + i].set(cosa * 0.5f + 0.5f, sina * 0.5f + 0.5f);
+            vts[vtLen + i].set(0.5f - 0.5f * cosa, 0.5f - 0.5f * sina);
          }
       }
 
@@ -5009,7 +5025,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          /* Set normals. */
          vns[sec].set(-kx, -ky, -kz);
-         vns[sec1].set(-kx, -ky, -kz);
+         vns[sec1].set(kx, ky, kz);
 
          /* Set faces. */
          for ( int i = 0, j = sec; i < sec; ++i, ++j ) {
@@ -5019,31 +5035,37 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
             final int[][] cap0 = fs[vLen + i];
 
-            cap0[0][0] = vLen;
-            cap0[0][1] = vtCenterIdx;
-            cap0[0][2] = sec;
+            final int[] vert00 = cap0[0];
+            vert00[0] = vLen;
+            vert00[1] = vtCenterIdx;
+            vert00[2] = sec;
 
-            cap0[1][0] = i;
-            cap0[1][1] = m;
-            cap0[1][2] = sec;
+            final int[] vert01 = cap0[1];
+            vert01[0] = i;
+            vert01[1] = m;
+            vert01[2] = sec;
 
-            cap0[2][0] = k;
-            cap0[2][1] = n;
-            cap0[2][2] = sec;
+            final int[] vert02 = cap0[2];
+            vert02[0] = k;
+            vert02[1] = n;
+            vert02[2] = sec;
 
             final int[][] cap1 = fs[vLen + j];
 
-            cap1[0][0] = len1;
-            cap1[0][1] = vtCenterIdx;
-            cap1[0][2] = sec1;
+            final int[] vert10 = cap1[0];
+            vert10[0] = len1;
+            vert10[1] = vtCenterIdx;
+            vert10[2] = sec1;
 
-            cap1[1][0] = j;
-            cap1[1][1] = m;
-            cap1[1][2] = sec1;
+            final int[] vert11 = cap1[1];
+            vert11[0] = sec + k;
+            vert11[1] = n;
+            vert11[2] = sec1;
 
-            cap1[2][0] = sec + k;
-            cap1[2][1] = n;
-            cap1[2][2] = sec1;
+            final int[] vert12 = cap1[2];
+            vert12[0] = j;
+            vert12[1] = m;
+            vert12[2] = sec1;
          }
       }
 

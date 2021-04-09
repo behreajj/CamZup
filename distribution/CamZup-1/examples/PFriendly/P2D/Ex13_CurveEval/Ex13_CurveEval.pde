@@ -41,10 +41,10 @@ void setup() {
     float prc = i * toPrc;
     float dotSize = Utils.pingPong(dotMax, dotMin, prc);
     String name = "Dot." + Utils.toPadded(i, 2);
-    
+
     Curve2 dot = Curve2.circle(new Curve2());
     dot.materialIndex = i;
-    
+
     CurveEntity2 de2 = new CurveEntity2(name, dot);
     de2.scaleTo(dotSize);
     dotEntities[i] = de2;
