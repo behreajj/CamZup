@@ -442,10 +442,9 @@ public class KtVec3 extends Vec3 implements Iterable < Float > {
    }
 
    /**
-    * Returns a quaternion the product of the instance promoted to a
-    * quaternion and another quaternion. Promotes the vector to a pure
-    * quaternion. For interoperability with Kotlin: <code>a * b</code> .
-    * <em>Does not mutate the vector in place</em>.
+    * The product of the instance, promoted to a quaternion, and another
+    * quaternion. Returns a quaternion. For interoperability with Kotlin:
+    * <code>a * b</code> . <em>Does not mutate the vector in place</em>.
     *
     * @param b the quaternion
     *

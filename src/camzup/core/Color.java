@@ -1291,7 +1291,8 @@ public class Color implements Comparable < Color > {
 
    /**
     * Converts from hue, saturation, lightness and alpha to a color with red,
-    * green, blue and alpha channels.
+    * green, blue and alpha channels. All arguments are expected to be in the
+    * range [0.0, 1.0] .
     *
     * @param hue    the hue
     * @param sat    the saturation
@@ -1368,7 +1369,8 @@ public class Color implements Comparable < Color > {
 
    /**
     * Converts from hue, saturation, value and alpha to a color with red,
-    * green, blue and alpha channels.
+    * green, blue and alpha channels. All arguments are expected to be in the
+    * range [0.0, 1.0] .
     *
     * @param hue    the hue
     * @param sat    the saturation
@@ -1472,11 +1474,7 @@ public class Color implements Comparable < Color > {
     * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
     * 709 relative luminance</a>.<br>
     * <br>
-    * Colors stored as integers are less precise than those stored as
-    * <code>float</code>s (1.0 / 255.0 being the smallest difference between a
-    * channel of two integer colors). Combined with single precision when
-    * multiplying small numbers (all weighting factors must be divided by
-    * 255.0 ), this will not yield the same result as
+    * Due to single precision, this may not yield the same result as
     * {@link Color#luminance(Color)} .
     *
     * @param c the input color

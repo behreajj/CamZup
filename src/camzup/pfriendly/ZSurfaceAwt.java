@@ -64,13 +64,13 @@ import processing.event.MouseEvent;
 public class ZSurfaceAwt extends PSurfaceNone {
    protected Canvas canvas;
    protected Insets currentInsets = new Insets(0, 0, 0, 0);
-   protected int cursorType = PConstants.ARROW;
    protected boolean cursorVisible = true;
    protected GraphicsDevice displayDevice;
    protected Frame frame;
    protected ArrayList < Image > iconImages;
    protected Cursor invisibleCursor;
    protected Rectangle screenRect;
+   protected int cursorType = PConstants.ARROW;
    protected int sketchHeight;
    protected int sketchWidth;
    protected int windowScaleFactor;
@@ -133,6 +133,9 @@ public class ZSurfaceAwt extends PSurfaceNone {
    @Override
    public Object getNative ( ) { return this.canvas; }
 
+   /**
+    * Hides the cursor.
+    */
    @Override
    public void hideCursor ( ) {
 
@@ -152,6 +155,12 @@ public class ZSurfaceAwt extends PSurfaceNone {
       this.cursorVisible = false;
    }
 
+   /**
+    * Initializes the frame given a parent sketch, an applet. Creates a
+    * {@link javax.swing.JFrame} which is cast to a {@link java.awt.Frame}.
+    * 
+    * @param sk the sketch
+    */
    @Override
    public void initFrame ( final PApplet sk ) {
 
@@ -403,6 +412,12 @@ public class ZSurfaceAwt extends PSurfaceNone {
       }
    }
 
+   /**
+    * Sets the surface's location.
+    *
+    * @param x location x
+    * @param y location y
+    */
    @Override
    public void setLocation ( final int x, final int y ) {
 
@@ -424,6 +439,12 @@ public class ZSurfaceAwt extends PSurfaceNone {
       // if ( this.frame != null ) { this.frame.setResizable(resizable); }
    }
 
+   /**
+    * Sets the surface's size.
+    *
+    * @param w the width
+    * @param h the height
+    */
    @Override
    public void setSize ( final int w, final int h ) {
 
@@ -450,6 +471,11 @@ public class ZSurfaceAwt extends PSurfaceNone {
       this.graphics.setSize(wid, high);
    }
 
+   /**
+    * Sets the surface's title.
+    *
+    * @param title the title
+    */
    @Override
    public void setTitle ( final String title ) {
 
@@ -483,6 +509,10 @@ public class ZSurfaceAwt extends PSurfaceNone {
       if ( this.canvas != null ) { this.canvas.requestFocus(); }
    }
 
+   /**
+    * Sets the cursor to visible and sets the cursor's appearance based on a
+    * predefined type.
+    */
    @Override
    public void showCursor ( ) {
 
@@ -492,11 +522,21 @@ public class ZSurfaceAwt extends PSurfaceNone {
       }
    }
 
+   /**
+    * Prints arguments to the console in the desired format.
+    * 
+    * @param format the format
+    * @param args   the arguments
+    */
    void debug ( final String format, final Object... args ) {
 
-      System.out.format(format + "%n", args);
+      System.out.format(format, args);
    }
 
+   /**
+    * Adds listeners for the mouse, mouse motion, mouse wheel, keys and window
+    * focus.
+    */
    protected void addListeners ( ) {
 
       this.canvas.addMouseListener(new MouseListener() {

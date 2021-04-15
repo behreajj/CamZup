@@ -4,7 +4,7 @@ void setup() {
 
   // Constructors.
   Vec2 v = new Vec2();
-  Vec2 w = new Vec2(5.0, 7.0);
+  Vec2 w = new Vec2(5.0f, 7.0f);
   Vec2 y = new Vec2(false, true);
 
   println("\nConstructors");
@@ -23,7 +23,7 @@ void setup() {
   println(w);
   println(y);
 
-  Vec2.fromPolar(radians(60.0), 0.5, v);
+  Vec2.fromPolar(radians(60.0f), 0.5f, v);
 
   println("\nFrom Polar");
   println(v);

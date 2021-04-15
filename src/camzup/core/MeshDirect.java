@@ -502,6 +502,19 @@ public class MeshDirect {
     * Sets a vertex color at an index.
     *
     * @param i the index
+    * @param c the color
+    *
+    * @return this mesh
+    */
+   public MeshDirect setColor ( final int i, final Color c ) {
+
+      return this.setColor(i, c.r, c.g, c.b, c.a);
+   }
+
+   /**
+    * Sets a vertex color at an index.
+    *
+    * @param i the index
     * @param r the red channel
     * @param g the green channel
     * @param b the blue channel
@@ -706,6 +719,29 @@ public class MeshDirect {
       return sb.toString();
    }
 
+   /**
+    * Transforms a mesh coordinate at an index by a 4x4 matrix.
+    *
+    * @param i   the index
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m02 row 0, column 2
+    * @param m03 row 0, column 3
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    * @param m12 row 1, column 2
+    * @param m13 row 1, column 3
+    * @param m20 row 2, column 0
+    * @param m21 row 2, column 1
+    * @param m22 row 2, column 2
+    * @param m23 row 2, column 3
+    * @param m30 row 3, column 0
+    * @param m31 row 3, column 1
+    * @param m32 row 3, column 2
+    * @param m33 row 3, column 3
+    *
+    * @return this mesh
+    */
    public MeshDirect transformCoord ( final int i, final float m00,
       final float m01, final float m02, final float m03, final float m10,
       final float m11, final float m12, final float m13, final float m20,
@@ -726,12 +762,28 @@ public class MeshDirect {
       return this;
    }
 
+   /**
+    * Transforms a mesh coordinate at an index by a 3x3 matrix.
+    *
+    * @param i the index
+    * @param m the matrix
+    *
+    * @return this mesh
+    */
    public MeshDirect transformCoord ( final int i, final Mat3 m ) {
 
       return this.transformCoord(i, m.m00, m.m01, 0.0f, m.m02, m.m10, m.m11,
          0.0f, m.m12, 0.0f, 0.0f, 1.0f, 0.0f, m.m20, m.m21, 0.0f, m.m22);
    }
 
+   /**
+    * Transforms a mesh coordinate at an index by a 4x4 matrix.
+    *
+    * @param i the index
+    * @param m the matrix
+    *
+    * @return this mesh
+    */
    public MeshDirect transformCoord ( final int i, final Mat4 m ) {
 
       return this.transformCoord(i, m.m00, m.m01, m.m02, m.m03, m.m10, m.m11,

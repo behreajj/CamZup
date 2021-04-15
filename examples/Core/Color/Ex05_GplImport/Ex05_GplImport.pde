@@ -11,7 +11,7 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (YupJ2)getGraphics();
   graphics.noStroke();
   graphics.rectMode(CORNERS);

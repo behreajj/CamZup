@@ -61,10 +61,15 @@ public abstract class Convert {
     * @param target the target curve entity
     *
     * @return the curve entity
+    *
+    * @see CurveEntity2#reset()
+    * @see CurveEntity2#appendAll(java.util.Collection)
+    * @see Convert#toCurve2(PShape, ArrayList)
     */
    public static CurveEntity2 toCurveEntity2 ( final PShape source,
       final CurveEntity2 target ) {
 
+      target.reset();
       target.appendAll(Convert.toCurve2(source, new ArrayList <>()));
       target.name = source.getName();
       return target;
@@ -296,6 +301,8 @@ public abstract class Convert {
     * @param target the output PMatrix3D
     *
     * @return the transform
+    *
+    * @see PMatAux#rotate(Quaternion, PMatrix3D)
     */
    public static PMatrix3D toPMatrix3D ( final Transform3 tr3,
       final TransformOrder order, final PMatrix3D target ) {
@@ -419,7 +426,7 @@ public abstract class Convert {
 
       /*
        * This needs to be of the PATH family because the drawImpl function in
-       * PShape is simplistic and buggy. See
+       * PShape is buggy. See
        * https://github.com/processing/processing/issues/4879 .
        */
       final boolean dim = rndr.is3D();
@@ -473,6 +480,9 @@ public abstract class Convert {
     * @param source the source entity
     *
     * @return the PShape
+    *
+    * @see Convert#toPShape(PGraphics, Curve2)
+    * @see Convert#toPMatrix2D(Transform2, TransformOrder, PMatrix2D)
     */
    public static PShape toPShape ( final PGraphics rndr,
       final CurveEntity2 source ) {
@@ -599,11 +609,11 @@ public abstract class Convert {
 
       final Knot2 firstKnot = itr.next();
       Knot2 prevKnot = firstKnot;
-      Knot2 currKnot;
+      Knot2 currKnot = null;
 
       Vec2 coord = prevKnot.coord;
-      Vec2 foreHandle;
-      Vec2 rearHandle;
+      Vec2 foreHandle = null;
+      Vec2 rearHandle = null;
 
       target.beginShape(PConstants.POLYGON);
       target.vertex(coord.x, coord.y);

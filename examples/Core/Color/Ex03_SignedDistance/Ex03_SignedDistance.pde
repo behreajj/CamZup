@@ -9,16 +9,14 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
-  float hNorm = 1.0 / (height - 1.0);
-  float wNorm = 1.0 / (width - 1.0);
-  float ang1 = frameCount * 0.1;
-  float ang0 = -ang1 * 0.2;
+  float hNorm = 1.0f / (height - 1.0f);
+  float wNorm = 1.0f / (width - 1.0f);
+  float ang1 = frameCount * 0.1f;
+  float ang0 = -ang1 * 0.2f;
   int sides = Utils.lerp(3, 8, mouseX * wNorm);
 
   loadPixels();
@@ -26,10 +24,12 @@ void draw() {
   for (int i = 0; i < len; ++i) {
     float xNorm = (i % width) * wNorm;
     float yNorm = (i / width) * hNorm;
-    st.set(xNorm + xNorm - 1.0, yNorm + yNorm - 1.0);
+    st.set(
+      xNorm + xNorm - 1.0f,
+      yNorm + yNorm - 1.0f);
 
-    float fac1 = Sdf.arc(st, ang0, ang1, 0.25, 0.35);
-    float fac2 = Sdf.polygon(st, sides, -ang0, 1.25);
+    float fac1 = Sdf.arc(st, ang0, ang1, 0.25f, 0.35f);
+    float fac2 = Sdf.polygon(st, sides, -ang0, 1.25f);
     float fac = Sdf.subtract(fac1, fac2);
     pixels[i] = Gradient.eval(gr, fac);
   }

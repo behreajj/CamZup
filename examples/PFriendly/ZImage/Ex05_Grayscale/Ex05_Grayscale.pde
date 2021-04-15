@@ -7,7 +7,7 @@ import camzup.pfriendly.*;
 PImage source;
 PImage target;
 
-float gamma = 1.0 / 2.4;
+float gamma = 1.0f / 2.4f;
 Yup2 graphics;
 
 void settings() {
@@ -15,7 +15,7 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Yup2)getGraphics();
 
   source = loadImage("callingStMatthew.jpg");
@@ -25,7 +25,6 @@ void setup() {
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
   graphics.background();
   if (mousePressed) {
     graphics.image(target);

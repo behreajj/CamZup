@@ -3,26 +3,26 @@ import camzup.core.*;
 
 Yup2 graphics;
 
-color a = #ff0000;
-color b = #0000ff;
+int a = 0xffff0000;
+int b = 0xff0000ff;
 
 void settings() {
   size(512, 256, Yup2.PATH_STR);
 }
 
 void setup() {
-  frameRate(60.0);
-  colorMode(HSB, 1.0);
+  frameRate(60.0f);
+  colorMode(HSB, 1.0f);
   graphics = (Yup2)getGraphics();
 }
 
 void randomColors() {
-  float hue0 = random(0.0, 1.0);
-  int hueSign = random(0.0, 1.0) < 0.5 ? -1 : 1;
-  float hueOffset = hueSign * random(0.01, 0.425);
+  float hue0 = random(0.0f, 1.0f);
+  int hueSign = random(0.0f, 1.0f) < 0.5f ? -1 : 1;
+  float hueOffset = hueSign * random(0.01f, 0.425f);
   float hue1 = Utils.mod1(hue0 + hueOffset);
-  a = color(hue0, 1.0, 1.0, 1.0);
-  b = color(hue1, 1.0, 1.0, 1.0);
+  a = color(hue0, 1.0f, 1.0f, 1.0f);
+  b = color(hue1, 1.0f, 1.0f, 1.0f);
   println(hex(a), hex(b));
   println("");
 }
@@ -32,9 +32,7 @@ void mouseReleased() {
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
-  float toPercent = 1.0 / (float)(height - 1);
+  float toPercent = 1.0f / (height - 1.0f);
   int wHalf = width / 2;
 
   graphics.loadPixels();

@@ -24,7 +24,9 @@ Table of Contents
   3. [Math Conventions](#programming-math-conventions)
   4. [Kotlin Interoperability](#kotlin-interoperability)
 
-Cam Z-Up is a Java-based library for the creative coding environment [Processing](https://processing.org/). Cam Z-Up flips Processing's default projection so that the positive z axis, (0.0, 0.0, 1.0), is the world up axis; the positive y axis, (0.0, 1.0, 0.0), is forward. This library supports two- and three-dimensional graphics.
+Cam Z-Up is a Java-based library for the creative coding environment [Processing](https://processing.org/). Cam Z-Up flips Processing's default projection so that the positive z axis, (0.0, 0.0, 1.0), is the world up axis; the positive y axis, (0.0, 1.0, 0.0), is forward. The world origin, (0.0, 0.0, 0.0), is placed at the center of a sketch.
+
+This library supports two- and three-dimensional graphics. In 2D, the positive y axis is (0.0, 1.0). If the camera is imagined to be above the sketch looking down, this is forward. If the camera is imagined to be looking from a sideview, this is up.
 
 If you can flip the y-axis by either
 
@@ -33,13 +35,13 @@ If you can flip the y-axis by either
   
 without negative impact to your sketch, chances are you don't need this library.
 
-While Cam Z-Up can help with more complex sketches, it is a general purpose library. Its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as specialist libraries. For an easy mouse-controlled orbital camera with GUI support, I recommend [peasycam](https://github.com/jdf/peasycam) instead. Other long-standing great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
+While Cam Z-Up can help with more complex sketches, it is a general purpose library. Its aim is to make a number of small tasks easier than in vanilla Processing. It will not be as effective as specialist libraries. For an easy mouse-controlled orbital camera with GUI support, I recommend [peasycam](https://github.com/jdf/peasycam) instead. Other great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
 
 Cam Z-Up is tested with Processing version [4.0 alpha](https://github.com/processing/processing4/releases).
 
 ## Getting Started
 
-For more complete information, please refer to the documentation included with this library in the `doc` directory.
+For more thorough information, please refer to the documentation included with this library in the `doc` directory. For more examples, see the `examples` directory.
 
 ### Installation
 
@@ -59,8 +61,8 @@ Alternatively, you can navigate to the the distribution `.zip` on Github and dow
 
 Cam Z-Up is split into three packages: `pfriendly`, `core` and `kotlin`. The `pfriendly` package contains code compatible with Processing's API. Inside it, you'll find four graphics renderers:
 
-- `Zup3`, which extends `PGraphicsOpenGL`, similar to `P3D`;
-- `Yup3`, which also extends `PGraphicsOpenGL`;
+- `Yup3`, which extends `PGraphicsOpenGL`, similar to `P3D`;
+- `Zup3`, which also extends `PGraphicsOpenGL`;
 - `YupJ2`, which extends `PGraphicsJava2D`, a.k.a. `JAVA2D`, the default Processing renderer based on the Java AWT library;
 - `Yup2`, which extends `PGraphicsOpenGL`, similar to `P2D`, a "2.5D" renderer;
 
@@ -229,6 +231,7 @@ Columns: 1
 255 0 255 FF00FF 6
 255 0 0 FF0000 7
 ```
+
 To import a GPL file, use `ParserGpl.load` to return an array of `Color`s. Names for colors are not preserved. Due to the simillarity between `.gpl` and the JASC-PAL (`.pal`) format, the parser should also be able to handle those files as well.
 
 ### GGR
@@ -253,18 +256,18 @@ to generate a file like this
 GIMP Gradient
 Name: My Ryb
 12
-0.0 0.041666 0.083333 1.000000 0.0 0.0 1.000000 1.000000 0.250000 0.0 1.000000 0 1
-0.083333 0.125000 0.166666 1.000000 0.250000 0.0 1.000000 1.000000 0.500000 0.0 1.000000 0 1
-0.166666 0.208333 0.250000 1.000000 0.500000 0.0 1.000000 1.000000 0.750000 0.0 1.000000 0 1
-0.250000 0.291666 0.333333 1.000000 0.750000 0.0 1.000000 1.000000 1.000000 0.0 1.000000 0 1
-0.333333 0.375000 0.416666 1.000000 1.000000 0.0 1.000000 0.505882 0.831372 0.101960 1.000000 0 1
-0.416666 0.458333 0.500000 0.505882 0.831372 0.101960 1.000000 0.0 0.662745 0.200000 1.000000 0 1
-0.500000 0.541666 0.583333 0.0 0.662745 0.200000 1.000000 0.082352 0.517647 0.400000 1.000000 0 1
-0.583333 0.625000 0.666666 0.082352 0.517647 0.400000 1.000000 0.164705 0.376471 0.600000 1.000000 0 1
-0.666666 0.708333 0.750000 0.164705 0.376471 0.600000 1.000000 0.333333 0.188235 0.552941 1.000000 0 1
-0.750000 0.791666 0.833333 0.333333 0.188235 0.552941 1.000000 0.500000 0.0 0.500000 1.000000 0 1
-0.833333 0.875000 0.916666 0.500000 0.0 0.500000 1.000000 0.750000 0.0 0.250000 1.000000 0 1
-0.916666 0.958333 1.000000 0.750000 0.0 0.250000 1.000000 1.000000 0.0 0.0 1.000000 0 1
+0.0 0.041666 0.083333 1.0 0.0 0.0 1.0 1.0 0.25 0.0 1.0 0 1
+0.083333 0.125 0.166666 1.0 0.25 0.0 1.0 1.0 0.5 0.0 1.0 0 1
+0.166666 0.208333 0.25 1.0 0.5 0.0 1.0 1.0 0.75 0.0 1.0 0 1
+0.25 0.291666 0.333333 1.0 0.75 0.0 1.0 1.0 1.0 0.0 1.0 0 1
+0.333333 0.375 0.416666 1.0 1.0 0.0 1.0 0.505882 0.831372 0.101960 1.0 0 1
+0.416666 0.458333 0.5 0.505882 0.831372 0.101960 1.0 0.0 0.662745 0.2 1.0 0 1
+0.5 0.541666 0.583333 0.0 0.662745 0.2 1.0 0.082352 0.517647 0.4 1.0 0 1
+0.583333 0.625 0.666666 0.082352 0.517647 0.4 1.0 0.164705 0.376471 0.6 1.0 0 1
+0.666666 0.708333 0.75 0.164705 0.376471 0.6 1.0 0.333333 0.188235 0.552941 1.0 0 1
+0.75 0.791666 0.833333 0.333333 0.188235 0.552941 1.0 0.5 0.0 0.5 1.0 0 1
+0.833333 0.875 0.916666 0.5 0.0 0.5 1.0 0.75 0.0 0.25 1.0 0 1
+0.916666 0.958333 1.0 0.75 0.0 0.25 1.0 1.0 0.0 0.0 1.0 0 1
 ```
 
 Unlike a `.gpl`, a `.ggr`'s color channels are in [0.0, 1.0]. A GIMP gradient requires its key(s) to fill the expanse from `0.0` to `1.0`, the gradient's extrema; a CamZup gradient does not. GIMP gradients use integer constants to indicate color mode and easing function so those can be supplied; they default to `0` and `0` for RGB linear. `.ggr` files can be imported by [Inkscape](https://inkscape.org/).
@@ -329,7 +332,7 @@ Many core Processing functions are marked `final`, meaning they cannot be extend
 
 This library's `core` was originally designed to affiliate with Processing's code design. With exceptions, classes are defined to be mutable and extensible. Methods are at most `protected` and fields are public (no getters or setters). `static` methods are preferred where possible, and use the out parameter antipattern.
 
-As of v 0.6, this library provides limited interoperability with [Kotlin](https://kotlinlang.org/), specifically [operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html). As of v 0.7, this support is sectioned off in `camzup.kotlin`, where a Kotlin friendly class extends a core class; for example, `KtVec2` is a child of `Vec2`. Kotlin does not use `static` methods; instance methods do not always mutate the instance in place; and naming conventions differ to those of this library.
+As of v 0.6, this library provides limited interoperability with [Kotlin](https://kotlinlang.org/), specifically [operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html). As of v 0.7, this support is sectioned off in `camzup.kotlin`, where a Kotlin friendly class extends a core class; for example, `KtVec2` extends `Vec2`. Kotlin does not use `static` methods; instance methods do not always mutate the instance in place; and naming conventions differ to those of this library.
 
 For those reasons, the following functions may be confusing if used in Processing-Java.
 

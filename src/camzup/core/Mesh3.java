@@ -2768,19 +2768,19 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          // base2[2] = 0;
 
          final int[][] side = fs[k];
-         final int[] side0 = side[0];
-         final int[] side1 = side[1];
-         final int[] side2 = side[2];
 
+         final int[] side0 = side[0];
          side0[0] = 1;
          // side0[1] = 0;
          side0[2] = 1;
 
+         final int[] side1 = side[1];
          side1[0] = vCurrent;
          side1[1] = vtCurrent;
          // side1[2] = vnCurrent;
          side1[2] = vCurrent;
 
+         final int[] side2 = side[2];
          side2[0] = vNext;
          side2[1] = vtNext;
          // side2[2] = vnNext;
@@ -2919,7 +2919,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the cube sphere
     *
+    * @see Mesh3#cube(float, PolyType, UvProfile.Cube, Mesh3)
     * @see Mesh3#subdivFacesCenter(int)
+    * @see Mesh3#castToSphere(Mesh3, float, Mesh3)
     */
    public static Mesh3 cubeSphere ( final int itrs, final PolyType poly,
       final UvProfile.Cube profile, final Mesh3 target ) {

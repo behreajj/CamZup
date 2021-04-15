@@ -1,7 +1,7 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Zup3 graphics3;
+Zup3 graphics;
 MaterialSolid[] materials;
 MeshEntity3 entity;
 
@@ -10,15 +10,15 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
-  graphics3 = (Zup3)getGraphics();
+  frameRate(60.0f);
+  graphics = (Zup3)getGraphics();
 
   materials = new MaterialSolid[] {
-    new MaterialSolid().setFill(#e8455d),
-    new MaterialSolid().setFill(#ffabb1),
-    new MaterialSolid().setFill(#f6c89a),
-    new MaterialSolid().setFill(#0cc0de),
-    new MaterialSolid().setFill(#113b49)
+    new MaterialSolid().setFill(0xffe8455d),
+    new MaterialSolid().setFill(0xffffabb1),
+    new MaterialSolid().setFill(0xfff6c89a),
+    new MaterialSolid().setFill(0xff0cc0de),
+    new MaterialSolid().setFill(0xff113b49)
   };
 
   entity = new MeshEntity3("Platonic Solids",
@@ -28,32 +28,30 @@ void setup() {
     Mesh3.dodecahedron(new Mesh3()),
     Mesh3.icosahedron(new Mesh3()));
 
-  Vec3 ub = new Vec3(2.5, 0.0, 0.0);
+  Vec3 ub = new Vec3(2.5f, 0.0f, 0.0f);
   Vec3 lb = Vec3.negate(ub, new Vec3());
   int len = entity.length();
   for (int i = 0; i < len; ++i) {
-    float prc = i * 0.25;
+    float prc = i * 0.25f;
     Vec3 v = Vec3.mix(ub, lb, prc, new Vec3());
     Mesh3 mesh = entity.get(i);
     mesh.translate(v);
     mesh.setMaterialIndex(i);
   }
 
-  float scl = Utils.min(width, height) * 0.3;
+  float scl = 0.3f * Utils.min(width, height);
   entity.scaleTo(scl);
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
+  graphics.lights();
+  graphics.ortho();
+  graphics.camDimetric();
+  graphics.background();
+  graphics.origin(75.0f, 1.0f);
 
-  graphics3.lights();
-  graphics3.ortho();
-  graphics3.camDimetric();
-  graphics3.background();
-  graphics3.origin(75.0, 1.0);
-
-  entity.rotateX(0.01);
-  graphics3.shape(entity, materials);
+  entity.rotateX(0.01f);
+  graphics.shape(entity, materials);
 }
 
 void mouseReleased() {

@@ -9,14 +9,13 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Yup2)getGraphics();
   img = createImage(512, 512, ARGB);
   ZImage.rgb(img);
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
   graphics.background();
-  graphics.image(img, 0.0, 0.0, 256.0, 256.0);
+  graphics.image(img, 0.0f, 0.0f, 256.0f, 256.0f);
 }

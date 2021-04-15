@@ -10,17 +10,15 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Yup2)getGraphics();
   img = createImage(384, 384, ARGB);
   Gradient.paletteViridis(gradient);
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
   Vec2 m = graphics.mouse1s(new Vec2());
-  ZImage.conic(m, frameCount * 0.02, gradient, img);
+  ZImage.conic(m, frameCount * 0.02f, gradient, img);
   
   graphics.background();
   graphics.image(img);

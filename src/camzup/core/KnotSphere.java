@@ -150,10 +150,11 @@ public class KnotSphere implements Comparable < KnotSphere > {
     * @return this knot
     *
     * @see KnotSphere#rotateX(float, float)
+    * @see Utils#modRadians(float)
     */
    public KnotSphere rotateX ( final float radians ) {
 
-      final float halfRad = radians * 0.5f;
+      final float halfRad = Utils.modRadians(radians) * 0.5f;
       return this.rotateX(Utils.cos(halfRad), Utils.sin(halfRad));
    }
 
@@ -186,10 +187,11 @@ public class KnotSphere implements Comparable < KnotSphere > {
     * @return this knot
     *
     * @see KnotSphere#rotateY(float, float)
+    * @see Utils#modRadians(float)
     */
    public KnotSphere rotateY ( final float radians ) {
 
-      final float halfRad = radians * 0.5f;
+      final float halfRad = Utils.modRadians(radians) * 0.5f;
       return this.rotateY(Utils.cos(halfRad), Utils.sin(halfRad));
    }
 
@@ -222,10 +224,11 @@ public class KnotSphere implements Comparable < KnotSphere > {
     * @return this knot
     *
     * @see KnotSphere#rotateZ(float, float)
+    * @see Utils#modRadians(float)
     */
    public KnotSphere rotateZ ( final float radians ) {
 
-      final float halfRad = radians * 0.5f;
+      final float halfRad = Utils.modRadians(radians) * 0.5f;
       return this.rotateZ(Utils.cos(halfRad), Utils.sin(halfRad));
    }
 

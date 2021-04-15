@@ -10,17 +10,17 @@ MeshEntity3 me3 = new MeshEntity3();
 Gradient grd = Gradient.paletteRyb(new Gradient());
 MaterialSolid[] solids;
 
-float orthoZoom = 0.5;
+float orthoZoom = 0.5f;
 boolean showGrid = true;
 boolean useOrtho = false;
 
-float strafeDefSpeed = 25.0;
-float orbitDefSpeed = 35.0;
+float strafeDefSpeed = 25.0f;
+float orbitDefSpeed = 35.0f;
 
-float strafeMaxSpeed = strafeDefSpeed * 2.0;
-float orbitMaxSpeed = orbitDefSpeed * 2.0;
+float strafeMaxSpeed = strafeDefSpeed * 2.0f;
+float orbitMaxSpeed = orbitDefSpeed * 2.0f;
 
-float dollySpeed = 25.0;
+float dollySpeed = 25.0f;
 float strafeSpeed = strafeDefSpeed;
 float orbitSpeed = orbitDefSpeed;
 
@@ -32,14 +32,14 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Zup3)getGraphics();
 
   int count = 20;
   float toTheta = Utils.TAU / count;
-  float toPercent = 1.0 / (count - 1.0);
-  float rad0 = 0.75;
-  float rad1 = 1.25;
+  float toPercent = 1.0f / (count - 1.0f);
+  float rad0 = 0.75f;
+  float rad1 = 1.25f;
   Vec3 origin = new Vec3();
   Vec3 dest = new Vec3();
   solids = new MaterialSolid[count];
@@ -47,11 +47,11 @@ void setup() {
   for (int i = 0; i < count; ++i) {
     float theta = i * toTheta;
     float percent = i * toPercent;
-    Vec3.fromSpherical(theta, 0.0, rad0, origin);
-    Vec3.fromSpherical(theta, 0.0, rad1, dest);
+    Vec3.fromSpherical(theta, 0.0f, rad0, origin);
+    Vec3.fromSpherical(theta, 0.0f, rad1, dest);
     
     Mesh3 mesh = new Mesh3();
-    Mesh3.cylinder(origin, dest, 6, true, 0.05, mesh);
+    Mesh3.cylinder(origin, dest, 6, true, 0.05f, mesh);
     mesh.shadeFlat();
     mesh.materialIndex = i;
     me3.append(mesh);
@@ -60,14 +60,12 @@ void setup() {
     Gradient.eval(grd, percent, solids[i].fill);
   }
   
-  me3.scaleTo(graphics.width * 0.5);
+  me3.scaleTo(graphics.width * 0.5f);
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1) + instructions);
-
   graphics.getLookTarget(lookWorld);
-  me3.rotateX(0.01);
+  me3.rotateX(0.01f);
 
   if (useOrtho) {
     graphics.ortho(orthoZoom);
@@ -77,16 +75,16 @@ void draw() {
 
   mouseControls();
 
-  graphics.background(#101010);
+  graphics.background(0xff101010);
   graphics.lights();
 
   if (showGrid) {
-    graphics.grid(32, 2.5, #fff7d5, graphics.width * 2.0);
+    graphics.grid(32, 2.5f, 0xfffff7d5, graphics.width * 2.0f);
   }
   graphics.shape(me3, solids);
 
-  graphics.strokeWeight(5.0);
-  graphics.stroke(#ffff3f);
+  graphics.strokeWeight(5.0f);
+  graphics.stroke(0xffffff3f);
   graphics.point(lookWorld);
 }
 
@@ -99,29 +97,29 @@ void mouseControls() {
       Vec3 v = Vec3.mul(m1s, orbitSpeed, new Vec3());
       graphics.moveByLocal(v);
       orbitSpeed = Utils.lerp(
-        orbitSpeed, orbitMaxSpeed, 0.01);
+        orbitSpeed, orbitMaxSpeed, 0.01f);
     }
 
     if (mouseButton == CENTER) {
       Vec3 v = Vec3.mul(m1s, strafeSpeed, new Vec3());
       graphics.strafe(v);
       strafeSpeed = Utils.lerp(
-        strafeSpeed, strafeMaxSpeed, 0.01);
+        strafeSpeed, strafeMaxSpeed, 0.01f);
     }
   } else {
     graphics.camera();
 
     orbitSpeed = Utils.lerp(
-      orbitSpeed, orbitDefSpeed, 0.025);
+      orbitSpeed, orbitDefSpeed, 0.025f);
     strafeSpeed = Utils.lerp(
-      strafeSpeed, strafeDefSpeed, 0.025);
+      strafeSpeed, strafeDefSpeed, 0.025f);
   }
 }
 
 void mouseWheel(MouseEvent event) {
   float count = event.getCount();
   graphics.dolly(dollySpeed * count);
-  orthoZoom -= 0.05 * count;
+  orthoZoom -= 0.05f * count;
 }
 
 void mouseReleased() {
@@ -134,16 +132,16 @@ void keyPressed() {
 
   if (keyCode == 50 || keyCode == 130) {
     // Two or numpad two.
-    graphics.moveByLocal(0.0, -150.0, 0.0);
+    graphics.moveByLocal(0.0f, -150.0f, 0.0f);
   } else if (keyCode == 52 || keyCode == 132) {
     // Four or numpad four.
-    graphics.moveByLocal(-150.0, 0.0, 0.0);
+    graphics.moveByLocal(-150.0f, 0.0f, 0.0f);
   } else if (keyCode == 54 || keyCode == 134) {
     // Six or numpad six.
-    graphics.moveByLocal(150.0, 0.0, 0.0);
+    graphics.moveByLocal(150.0f, 0.0f, 0.0f);
   } else if (keyCode == 56 || keyCode == 136) {
     // Eight or numpad eight.
-    graphics.moveByLocal(0.0, 150.0, 0.0);
+    graphics.moveByLocal(0.0f, 150.0f, 0.0f);
   }
 }
 

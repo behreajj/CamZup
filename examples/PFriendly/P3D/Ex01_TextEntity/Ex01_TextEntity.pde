@@ -2,7 +2,7 @@ import camzup.core.*;
 import camzup.pfriendly.*;
 
 Zup3 graphics;
-Color clr = new Color(1.0, 0.85, 0.0, 1.0);
+Color clr = new Color(1.0f, 0.85f, 0.0f, 1.0f);
 String msg = "The Quick\nBrown Fox\nJumps Over\nThe Lazy Dog!";
 TextEntity3 te3;
 
@@ -11,7 +11,7 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
 
   graphics = (Zup3)getGraphics();
   graphics.ortho();
@@ -19,19 +19,17 @@ void setup() {
 
   PFont font = loadFont("ProcessingSansPro.vlw");
   long start = System.currentTimeMillis();
-  te3 = new TextEntity3(font, msg, clr, 16, 0, CENTER, CENTER, 0.975);
+  te3 = new TextEntity3(font, msg, clr, 16, 0, CENTER, CENTER, 0.975f);
   long end = System.currentTimeMillis();
   println("Elapsed Time: " + (end - start));
   te3.rotateX(IUtils.HALF_PI);
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
+  te3.rotateX(0.01f);
+  te3.material.moveBy(new Vec2(0.0f, -0.005f));
 
-  te3.rotateX(0.01);
-  te3.material.moveBy(new Vec2(0.0, -0.005));
-
-  graphics.background(#202020);
-  graphics.grid(16, 2.5, #fff7d5, graphics.height);
+  graphics.background(0xff202020);
+  graphics.grid(16, 2.5f, 0xfffff7d5, graphics.height);
   graphics.text(te3);
 }

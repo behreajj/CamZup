@@ -4,7 +4,7 @@ void setup() {
   Rng rng = new Rng();
   Quaternion a = new Quaternion();
   Quaternion b = new Quaternion();
-  float angle = 0.0;
+  float angle = 0.0f;
   Vec3 axis = new Vec3();
 
   // Convert 20 random quaternions to an axis and an angle.

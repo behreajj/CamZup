@@ -3,8 +3,8 @@ import camzup.pfriendly.*;
 
 Zup3 graphics;
 
-float roughness = 2.375;
-float taper = 0.75;
+float roughness = 2.375f;
+float taper = 0.75f;
 Mesh3 mesh = new Mesh3();
 MeshEntity3 entity = new MeshEntity3();
 MaterialSolid[] materials;
@@ -15,11 +15,11 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Zup3)getGraphics();
 
   Mesh3.dodecahedron(mesh);
-  mesh.insetFaces(1, 0.75);
+  mesh.insetFaces(1, 0.75f);
   mesh.subdivFacesCenter(2);
   mesh.subdivFacesFan(1);
   Mesh3.castToSphere(mesh, mesh);
@@ -38,14 +38,14 @@ void setup() {
     Vec3.mul(center, roughness, center);
 
     float rnd = Simplex.fbm(center,
-      Simplex.DEFAULT_SEED, 32, 1.0, 0.65);
+      Simplex.DEFAULT_SEED, 32, 1.0f, 0.65f);
     rnd = Utils.abs(rnd);
     rnd = Utils.quantize(rnd, 10);
 
-    float scl = Utils.lerp(0.825, 0.75, rnd);
+    float scl = Utils.lerp(0.825f, 0.75f, rnd);
     face.scaleLocal(scl, center);
 
-    float amt = Utils.lerp(0.02, 0.0675, rnd);
+    float amt = Utils.lerp(0.02f, 0.0675f, rnd);
     mesh.extrudeFaces(true, amt, taper);
     mesh.clean();
 
@@ -58,9 +58,7 @@ void setup() {
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
-  entity.rotateZ(0.01);
+  entity.rotateZ(0.01f);
 
   graphics.lights();
   graphics.ortho();

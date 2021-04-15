@@ -2,11 +2,11 @@ import camzup.core.*;
 import camzup.pfriendly.*;
 
 int rings = 10;
-float radius = 0.5;
-float padding = 0.05;
-float faceInset = 0.85;
-float rounding = 0.1;
-float subfRound = 0.0375;
+float radius = 0.5f;
+float padding = 0.05f;
+float faceInset = 0.85f;
+float rounding = 0.1f;
+float subfRound = 0.0375f;
 
 YupJ2 graphics;
 MaterialSolid[] materials;
@@ -18,8 +18,8 @@ void settings() {
 }
 
 void setup() {
+  frameRate(60.0f);
   graphics = (YupJ2)getGraphics();
-  frameRate(60.0);
 
   Mesh2 hex = new Mesh2();
   Mesh2.gridHex(rings, radius, padding, hex);
@@ -27,7 +27,7 @@ void setup() {
   int len = meshes.length;
   materials = new MaterialSolid[len];
 
-  float toPercent = 1.0 / (len - 1.0);
+  float toPercent = 1.0f / (len - 1.0f);
   Vec2 center = new Vec2();
   for (int i = 0; i < len; ++i) {
     float fac = i * toPercent;
@@ -57,14 +57,12 @@ void setup() {
   }
 
   float shortEdge = Utils.min(width, height);
-  float scl = IUtils.ONE_SQRT_2 * shortEdge / (rings + 0.25);
+  float scl = IUtils.ONE_SQRT_2 * shortEdge / (rings + 0.25f);
   entity2.scaleTo(scl);
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
-  graphics.background(#101010);
+  graphics.background(0xff101010);
   graphics.shape(entity2, materials);
 }
 

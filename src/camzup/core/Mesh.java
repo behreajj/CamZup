@@ -370,11 +370,11 @@ public abstract class Mesh extends EntityData implements IMesh {
     * quadrilaterals, or is non-uniform. Returns a {@link Map}, where the
     * vertex count is the key and the tally is the value.<br>
     * <br>
-    * Always the audit always places 3 and 4 into the map, even if neither
-    * triangles nor quadrilaterals are present, because they are common
-    * entries to check. When querying other possibilities use
-    * {@link Map#getOrDefault(Object, Object)}, where the default argument is
-    * 0.
+    * The audit always places 3 and 4 into the map, even if the mesh contains
+    * neither triangles nor quadrilaterals, because they are common entries to
+    * query. When querying other possibilities use
+    * {@link Map#getOrDefault(Object, Object)}, with the default argument set
+    * to 0.
     *
     * @param m the mesh
     *

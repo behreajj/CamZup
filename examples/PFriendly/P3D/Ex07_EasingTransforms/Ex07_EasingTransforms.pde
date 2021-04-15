@@ -8,7 +8,7 @@ Vec3 mouse1 = new Vec3();
 Rng rng = new Rng();
 
 MaterialSolid mat = new MaterialSolid()
-  .setFill(#007fff)
+  .setFill(0xff007fff)
   .setStroke(false);
 
 Transform3.Easing mixer = new Transform3.Easing(
@@ -24,41 +24,39 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Zup3)getGraphics();
   Mesh3.cube(mesh);
   entity.append(mesh);
 
   for (int i = 0; i < fCount - 1; ++i) {
     frames[i] = Transform3.random(rng,
-      -512.0, 512.0,
-      50.0, 300.0,
+      -512.0f, 512.0f,
+      50.0f, 300.0f,
       new Transform3());
   }
   frames[fCount - 1] = frames[0];
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
-  float step = Utils.fract(frameCount * 0.005);
+  float step = Utils.fract(frameCount * 0.005f);
   mixer.apply(frames, step, entity.transform);
 
   if (mousePressed) {
     graphics.mouse1s(mouse1);
     if (mouseButton == LEFT) {
-      Vec3.mul(mouse1, 100.0, mouse1);
+      Vec3.mul(mouse1, 100.0f, mouse1);
       graphics.moveByLocal(mouse1);
     } else if (mouseButton == CENTER) {
-      Vec3.mul(mouse1, 37.5, mouse1);
+      Vec3.mul(mouse1, 37.5f, mouse1);
       graphics.strafe(mouse1);
     }
   }
 
-  graphics.background(#131313);
+  graphics.background(0xff131313);
   graphics.lights();
-  graphics.grid(16, 2.0, #fff7d5, 1024.0);
-  graphics.ortho(0.325);
+  graphics.grid(16, 2.0f, 0xfffff7d5, 1024.0f);
+  graphics.ortho(0.325f);
   graphics.camera();
 
   graphics.shape(entity, mat);
@@ -72,12 +70,12 @@ void keyReleased() {
   } else if (keyCode == 51 || keyCode == 131) {
     graphics.camWest();
   } else if (keyCode == 50 || keyCode == 130) {
-    graphics.moveByLocal(0.0, -150.0, 0.0);
+    graphics.moveByLocal(0.0f, -150.0f, 0.0f);
   } else if (keyCode == 52 || keyCode == 132) {
-    graphics.moveByLocal(-150.0, 0.0, 0.0);
+    graphics.moveByLocal(-150.0f, 0.0f, 0.0f);
   } else if (keyCode == 54 || keyCode == 134) {
-    graphics.moveByLocal(150.0, 0.0, 0.0);
+    graphics.moveByLocal(150.0f, 0.0f, 0.0f);
   } else if (keyCode == 56 || keyCode == 136) {
-    graphics.moveByLocal(0.0, 150.0, 0.0);
+    graphics.moveByLocal(0.0f, 150.0f, 0.0f);
   }
 }

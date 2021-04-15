@@ -10,7 +10,7 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Zup3)getGraphics();
 
   String filePath = sketchPath() + "\\data\\bunny.obj";
@@ -21,16 +21,14 @@ void setup() {
   println("Elapsed Time: " + (end - start));
 
   me3.get(0).reframe(me3.transform);
-  me3.scaleTo(256);
+  me3.scaleTo(256.0f);
 
   material = new MaterialSolid();
-  material.setFill(#202020);
+  material.setFill(0xff202020);
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
-  me3.rotateZ(0.02);
+  me3.rotateZ(0.02f);
 
   graphics.background();
   graphics.origin();
