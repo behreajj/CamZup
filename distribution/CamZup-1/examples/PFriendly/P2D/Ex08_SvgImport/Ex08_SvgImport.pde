@@ -8,7 +8,7 @@ CurveEntity2 ce2;
 MaterialSolid material = new MaterialSolid()
   .setFill(true)
   .setFill(0x3f707070)
-  .setStrokeWeight(1.0)
+  .setStrokeWeight(1.0f)
   .setStroke(0x3f303030)
   .setStroke(true);
 
@@ -28,12 +28,10 @@ void setup() {
   println("Elapsed Time: " + (end - start));
   
   ce2.reframe();
-  ce2.scaleTo(2.0 * Utils.min(width, height));
+  ce2.scaleTo(2.0f * Utils.min(width, height));
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
   ce2.moveTo(graphics.mouse(new Vec2()));
 
   graphics.background();

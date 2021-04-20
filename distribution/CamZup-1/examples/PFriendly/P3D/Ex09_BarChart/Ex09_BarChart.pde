@@ -11,13 +11,13 @@ MeshEntity3[] bars = new MeshEntity3[count];
 TextEntity3[] labels = new TextEntity3[count];
 MaterialSolid[] materials = new MaterialSolid[count];
 
-Mesh3 cube = Mesh3.cube(0.5, new Mesh3())
-  .translate(new Vec3(0.0, 0.0, 0.5));
-Vec3 barScale = new Vec3(50.0, 50.0, 50.0);
+Mesh3 cube = Mesh3.cube(0.5f, new Mesh3())
+  .translate(new Vec3(0.0f, 0.0f, 0.5f));
+Vec3 barScale = new Vec3(50.0f, 50.0f, 50.0f);
 
-float labelScale = 0.175;
-Color labelColor = new Color(0.2, 0.2, 0.2, 1.0);
-Vec3 labelOffset = new Vec3(0.0, -25.0, 0.0);
+float labelScale = 0.175f;
+Color labelColor = new Color(0.2f, 0.2f, 0.2f, 1.0f);
+Vec3 labelOffset = new Vec3(0.0f, -25.0f, 0.0f);
 Vec3 mouse1 = new Vec3();
 
 void settings() {
@@ -25,7 +25,7 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Zup3)getGraphics();
   graphics.hint(ENABLE_DEPTH_SORT);
   graphics.hint(ENABLE_OPTIMIZED_STROKE);
@@ -40,8 +40,8 @@ void setup() {
 
   PFont font = createFont("Calibri", 156);
 
-  Vec3 lb = new Vec3(-width * 0.5, 0, 0);
-  Vec3 ub = new Vec3(width * 0.5, 0, 0);
+  Vec3 lb = new Vec3(-width * 0.5f, 0.0f, 0f);
+  Vec3 ub = new Vec3(width * 0.5f, 0.0f, 0.0f);
   Vec3 loc = new Vec3();
 
   // Loop through each entry in the data, converting
@@ -50,10 +50,10 @@ void setup() {
   for (Entry<String, Float> datum : data.entrySet()) {
     String str = datum.getKey();
     float amount = datum.getValue();
-    float percent = i / (count - 1.0);
+    float percent = i / (count - 1.0f);
 
     Vec3.mix(lb, ub, percent, loc);
-    barScale.z = 10.0 + 140.0 * amount;
+    barScale.z = 10.0f + 140.0f * amount;
 
     // Create bars.
     MeshEntity3 bar = bars[i] = new MeshEntity3();
@@ -78,18 +78,16 @@ void setup() {
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
   Vec3 camLoc = new Vec3();
   graphics.getLocation(camLoc);
 
   if (mousePressed) {
     graphics.mouse1s(mouse1);
     if (mouseButton == LEFT) {
-      Vec3.mul(mouse1, 50.0, mouse1);
+      Vec3.mul(mouse1, 50.0f, mouse1);
       graphics.moveByLocal(mouse1);
     } else if (mouseButton == CENTER) {
-      Vec3.mul(mouse1, 15.0, mouse1);
+      Vec3.mul(mouse1, 15.0f, mouse1);
       graphics.strafe(mouse1);
     }
   }
@@ -97,7 +95,7 @@ void draw() {
   graphics.lights();
   graphics.ortho();
   graphics.camera();
-  graphics.background(#fff7d5);
+  graphics.background(0xfffff7d5);
   graphics.grid(32);
 
   for (int i = 0; i < count; ++i) {
@@ -115,12 +113,12 @@ void keyReleased() {
   } else if (keyCode == 51 || keyCode == 131) {
     graphics.camWest();
   } else if (keyCode == 50 || keyCode == 130) {
-    graphics.moveByLocal(0.0, -150.0, 0.0);
+    graphics.moveByLocal(0.0f, -150.0f, 0.0f);
   } else if (keyCode == 52 || keyCode == 132) {
-    graphics.moveByLocal(-150.0, 0.0, 0.0);
+    graphics.moveByLocal(-150.0f, 0.0f, 0.0f);
   } else if (keyCode == 54 || keyCode == 134) {
-    graphics.moveByLocal(150.0, 0.0, 0.0);
+    graphics.moveByLocal(150.0f, 0.0f, 0.0f);
   } else if (keyCode == 56 || keyCode == 136) {
-    graphics.moveByLocal(0.0, 150.0, 0.0);
+    graphics.moveByLocal(0.0f, 150.0f, 0.0f);
   }
 }

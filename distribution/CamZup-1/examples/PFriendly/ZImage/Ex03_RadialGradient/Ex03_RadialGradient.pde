@@ -11,17 +11,15 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Yup2)getGraphics();
   img = createImage(512, 512, ARGB);
   Gradient.paletteViridis(gradient);
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
   graphics.mouse1s(origin);
-  ZImage.radial(origin, 0.5, gradient, img);
+  ZImage.radial(origin, 0.5f, gradient, img);
   graphics.background();
   graphics.image(img);
 }

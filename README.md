@@ -171,17 +171,12 @@ A quick heuristic to decide if you are blending colors as you prefer is to take 
 
 ![Mix Diagram](data/mixDiagram.png)
 
-A hue mix can be either counter-clockwise or clockwise. Keep hue's periodicity in mind when working with HSB; do not use `Utils.clamp01` to confine a hue to [0.0, 1.0], use `Utils.mod1` instead. An rgb mix can use linear or smooth step. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
+A hue mix can be either counter-clockwise or clockwise. Keep hue's periodicity in mind when working with HSL or HSV; do not use `Utils.clamp01` to confine a hue to [0.0, 1.0], use `Utils.mod1` instead. Mixing in [Standard RGB](https://www.wikiwand.com/en/SRGB) includes linear and smooth interpolation. Converting sRGB to linear RGB, interpolating, then converting back is computationally expensive. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
 
 ```java
 class Foo extends Color.AbstrEasing {
   Color applyUnclamped(Color a, Color b, Float t, Color target) {
-    float u = 1.0 - t;
-    return target.set(
-      Utils.sqrt(u * a.r * a.r + t * b.r * b.r),
-      Utils.sqrt(u * a.g * a.g + t * b.g * b.g),
-      Utils.sqrt(u * a.b * a.b + t * b.b * b.b),
-      Utils.sqrt(u * a.a * a.a + t * b.a * b.a));
+    return target;
   }
 }
 ```

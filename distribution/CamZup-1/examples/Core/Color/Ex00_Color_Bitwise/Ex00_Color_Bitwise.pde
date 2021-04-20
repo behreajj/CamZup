@@ -7,15 +7,15 @@ Color c = new Color();
 
 Color.bitOr(a, b, c);
 println(c);
-println(hex(#ff0000 | #0000ff), Color.toHexString(c));
+println(hex(0xffff0000 | 0xff0000ff), Color.toHexString(c));
 println("");
 
-a = new Color(0.5, 0.75, 0.25);
-b = new Color(0.25, 1.0, 0.25);
+a = new Color(0.5f, 0.75f, 0.25f);
+b = new Color(0.25f, 1.0f, 0.25f);
 
 Color.bitAnd(a, b, c);
 println(c);
-println(hex(#80bf40 & #40ff40), Color.toHexString(c));
+println(hex(0xff80bf40 & 0xff40ff40), Color.toHexString(c));
 println("");
 
 Color.randomRgba(rng, a);
@@ -33,4 +33,3 @@ println(b);
 println(c);
 println(Color.toHexString(c));
 println(hex(Color.toHexInt(a) ^ Color.toHexInt(b)));
-println("");

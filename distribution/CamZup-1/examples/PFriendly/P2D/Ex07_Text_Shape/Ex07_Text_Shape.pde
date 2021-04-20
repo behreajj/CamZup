@@ -11,10 +11,10 @@ boolean showHandles = true;
 
 MaterialSolid matCrv = new MaterialSolid()
   .setFill(true)
-  .setFill(#4f4f4f)
+  .setFill(0xff4f4f4f)
   .setStroke(true)
-  .setStroke(#fff7d5)
-  .setStrokeWeight(1.0);
+  .setStroke(0xfffff7d5)
+  .setStrokeWeight(1.0f);
 
 MaterialPImage matMsh;
 
@@ -25,7 +25,7 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (YupJ2)getGraphics();
 
   PImage txtr = createImage(512, 512, ARGB);
@@ -34,10 +34,10 @@ void setup() {
 
   textMode(SHAPE);
   font = createFont("Cambria", 64);
-  glyCrv = TextShape.glyphCurve(font, 0.0, false, str);
-  glyMsh = TextShape.glyphMesh(font, 15.0, false, str);
+  glyCrv = TextShape.glyphCurve(font, 0.0f, false, str);
+  glyMsh = TextShape.glyphMesh(font, 15.0f, false, str);
 
-  float scl = width * 0.4;
+  float scl = width * 0.4f;
   int len0 = glyCrv.length;
   for (int i = 0; i < len0; ++i) {
     CurveEntity2 glyph = glyCrv[i];
@@ -50,15 +50,14 @@ void setup() {
     glyph.scaleTo(scl);
   }
 
-  graphics.moveTo(width * 0.45, height * 0.25);
+  graphics.moveTo(width * 0.45f, height * 0.25f);
 }
 
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-  graphics.background(#202020);
+  graphics.background(0xff202020);
   Vec2 m = graphics.mouse1(new Vec2());
-  Vec2.mul(m, 5.0, m);
+  Vec2.mul(m, 5.0f, m);
   graphics.moveBy(m);
 
   if (toggle) {
@@ -82,7 +81,7 @@ void mouseReleased() {
 
 void mouseWheel(MouseEvent e) {
   float mWheel = e.getCount();
-  graphics.zoomBy(-mWheel * 0.05);
+  graphics.zoomBy(-mWheel * 0.05f);
 }
 
 void keyReleased() {

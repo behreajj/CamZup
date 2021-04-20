@@ -8,13 +8,12 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (YupJ2)getGraphics();
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-  background(#202020);
-  graphics.grid(16, 3.0);
+  background(0xff202020);
+  graphics.grid(16, 3.0f);
   graphics.origin(32);
 }

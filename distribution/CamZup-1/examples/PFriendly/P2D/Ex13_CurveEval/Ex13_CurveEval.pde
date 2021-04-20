@@ -2,11 +2,11 @@ import camzup.core.*;
 import camzup.pfriendly.*;
 
 int count = 60;
-float toPrc = 1.0 / (count - 1.0);
-float offMin = -0.3125;
-float offMax = 0.3125;
-float dotMax = 25.0;
-float dotMin = 10.0;
+float toPrc = 1.0f / (count - 1.0f);
+float offMin = -0.3125f;
+float offMax = 0.3125f;
+float dotMax = 25.0f;
+float dotMin = 10.0f;
 
 Yup2 graphics;
 
@@ -14,8 +14,8 @@ Curve2 infinity = Curve2.infinity(new Curve2());
 CurveEntity2 infEntity = new CurveEntity2();
 MaterialSolid infMat = new MaterialSolid()
   .setStroke(true)
-  .setStroke(#fff7d5)
-  .setStrokeWeight(1.25)
+  .setStroke(0xfffff7d5)
+  .setStrokeWeight(1.25f)
   .setFill(false);
 
 CurveEntity2[] dotEntities = new CurveEntity2[count];
@@ -31,11 +31,11 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Yup2)getGraphics();
 
   infEntity.append(infinity);
-  infEntity.scaleTo((graphics.width + graphics.height) * 0.495);
+  infEntity.scaleTo((graphics.width + graphics.height) * 0.495f);
 
   for (int i = 0; i < count; ++i) {
     float prc = i * toPrc;
@@ -57,10 +57,8 @@ void setup() {
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
-  float step = frameCount * 0.005;
-  infEntity.rotateZ(0.01);
+  float step = frameCount * 0.005f;
+  infEntity.rotateZ(0.01f);
 
   graphics.background(0xff101010);
   if (mousePressed) {

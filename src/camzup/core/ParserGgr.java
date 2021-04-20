@@ -137,7 +137,7 @@ public abstract class ParserGgr {
          final Color rtClr = new Color();
 
          /* Mixers. */
-         final Color.LerpRgba rgbaMix = new Color.LerpRgba();
+         final Color.LerpSrgba rgbaMix = new Color.LerpSrgba();
          final Color.MixHsva cwMix = new Color.MixHsva(new Color.HueCW());
          final Color.MixHsva ccwMix = new Color.MixHsva(new Color.HueCCW());
 

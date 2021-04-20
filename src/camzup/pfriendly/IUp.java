@@ -374,6 +374,6 @@ public interface IUp {
    /**
     * A cached easing function for RGBA colors.
     */
-   Color.AbstrEasing MIXER_RGBA = new Color.SmoothStepRgba();
+   Color.AbstrEasing MIXER_RGBA = new Color.SmoothStepSrgba();
 
 }

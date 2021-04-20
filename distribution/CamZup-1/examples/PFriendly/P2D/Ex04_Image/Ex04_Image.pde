@@ -14,10 +14,10 @@ void settings() {
 
 void setup() {
   graphics = (YupJ2)getGraphics();
-  frameRate(60.0);
+  frameRate(60.0f);
   noStroke();
   img = loadImage("diagnostic.png");
-  ZImage.tint(img, 0xafff7f00, 0.25);
+  ZImage.tint(img, 0xafff7f00, 0.25f);
 
   // For OpenGL rendering.
   //graphics.textureSampling(TextureSampling.POINT);
@@ -26,17 +26,13 @@ void setup() {
 }
 
 void draw() {
-  surface.setTitle(
-    Utils.toFixed(frameRate, 1) +
-    " | " + msStr[currentMode] +
-    " | " + modes[currentMode]);
-  background(#202020);
+  background(0xff202020);
   imageMode(currentMode);
 
-  graphics.grid(16, 4.0);
-  graphics.origin(32.0);
+  graphics.grid(16, 4.0f);
+  graphics.origin(32.0f);
   graphics.image(img,
-    64.0, 32.0, img.width * 0.25, img.height * 0.25,
+    64.0f, 32.0f, img.width * 0.25f, img.height * 0.25f,
     0, 0, img.width, img.height);
 }
 

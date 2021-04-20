@@ -1026,7 +1026,7 @@ public abstract class Convert {
 
    /**
     * Converts a 2D mesh with a uniform number of vertices per face to a
-    * PShape. Among the acceptable face types are {@link PConstants#TRIANGLES}
+    * PShape. Acceptable face types are {@link PConstants#TRIANGLES}
     * ({@value PConstants#TRIANGLES}) and {@link PConstants#QUADS}
     * ({@value PConstants#QUADS}).
     *
@@ -1045,11 +1045,10 @@ public abstract class Convert {
       final int[][][] faces = source.faces;
 
       /* Create output target. */
-      final boolean dim = rndr.is3D();
       final PShapeOpenGL target = new PShapeOpenGL(rndr, PShape.GEOMETRY);
       target.setName(source.name);
       target.setTextureMode(PConstants.NORMAL);
-      target.set3D(dim);
+      target.set3D(rndr.is3D());
       target.beginShape(shapeCode);
       final int facesLen = faces.length;
       for ( int i = 0; i < facesLen; ++i ) {
@@ -1069,7 +1068,7 @@ public abstract class Convert {
 
    /**
     * Converts a 3D mesh with a uniform number of vertices per face to a
-    * PShape. Among the acceptable face types are {@link PConstants#TRIANGLES}
+    * PShape. Acceptable face types are {@link PConstants#TRIANGLES}
     * ({@value PConstants#TRIANGLES}) and {@link PConstants#QUADS}
     * ({@value PConstants#QUADS}).
     *
@@ -1089,11 +1088,10 @@ public abstract class Convert {
       final int[][][] faces = source.faces;
 
       /* Create output target. */
-      final boolean dim = rndr.is3D();
       final PShapeOpenGL target = new PShapeOpenGL(rndr, PShape.GEOMETRY);
       target.setName(source.name);
       target.setTextureMode(PConstants.NORMAL);
-      target.set3D(dim);
+      target.set3D(rndr.is3D());
       target.beginShape(shapeCode);
       final int facesLen = faces.length;
       for ( int i = 0; i < facesLen; ++i ) {

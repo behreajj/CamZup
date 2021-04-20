@@ -5,14 +5,14 @@ Yup2 graphics;
 
 MaterialSolid material = new MaterialSolid()
   .setStroke(false)
-  .setStroke(#007fff)
-  .setStrokeWeight(1.25)
+  .setStroke(0xff007fff)
+  .setStrokeWeight(1.25f)
   .setFill(true)
-  .setFill(#303030);
+  .setFill(0xff303030);
 
 Transform2 transform = new Transform2()
-  .moveTo(new Vec2(-100.0, -50.0))
-  .scaleTo(150.0);
+  .moveTo(new Vec2(-100.0f, -50.0f))
+  .scaleTo(150.0f);
 
 Mesh2 mesh = Mesh2.polygon(6, PolyType.TRI, new Mesh2());
 
@@ -24,14 +24,13 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Yup2)getGraphics();
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-  entity.rotateZ(0.02);
-  entity.transform.moveByLocal(new Vec2(0.0, 1.0));
+  entity.rotateZ(0.02f);
+  entity.transform.moveByLocal(new Vec2(0.0f, 1.0f));
   graphics.background();
   graphics.origin();
   graphics.shape(entity, material);

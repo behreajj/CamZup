@@ -8,29 +8,28 @@ void settings() {
 }
 
 void setup() {
+  frameRate(60.0f);
   graphics = (Yup2)getGraphics();
-  frameRate(60.0);
   noStroke();
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-  background(#202020);
-  graphics.grid(16, 4.0);
+  background(0xff202020);
+  graphics.grid(16, 4.0f);
   
   rectMode(RADIUS);
-  fill(#e01c34);
-  rect(32.0, 32.0, 128.0, 128.0, 16.0);
+  fill(0xffe01c34);
+  rect(32.0f, 32.0f, 128.0f, 128.0f, 16.0f);
 
   rectMode(CENTER);
-  fill(#44b09e);
-  rect(32.0, 32.0, 128.0, 128.0, 24.0);
+  fill(0xff44b09e);
+  rect(32.0f, 32.0f, 128.0f, 128.0f, 24.0f);
 
   rectMode(CORNERS);
-  fill(#acabb0);
-  rect(32.0, 32.0, 128.0, 128.0, 32.0);
+  fill(0xffacabb0);
+  rect(32.0f, 32.0f, 128.0f, 128.0f, 32.0f);
 
   rectMode(CORNER);
-  fill(#e0d2c7);
-  rect(32.0, 32.0, 128.0, 128.0, 16.0);
+  fill(0xffe0d2c7);
+  rect(32.0f, 32.0f, 128.0f, 128.0f, 16.0f);
 }

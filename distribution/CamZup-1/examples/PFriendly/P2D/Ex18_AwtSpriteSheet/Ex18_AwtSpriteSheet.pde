@@ -7,11 +7,11 @@ YupJ2 buff;
 
 PImage fontImg;
 Image fontImgNtv;
-Color fontClr = new Color(1.0, 1.0, 1.0, 1.0);
+Color fontClr = Color.white(new Color());
 
 PImage shadowImg;
 Image shadowImgNtv;
-Color shadowClr = new Color(0.125, 0.125, 0.125, 1.0);
+Color shadowClr = new Color(0.125f, 0.125f, 0.125f, 1.0f);
 
 int pxPerGlyph = 8;
 
@@ -50,7 +50,7 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   main = (YupJ2)getGraphics();
 
   buff = (YupJ2)createGraphics(256, 256, YupJ2.PATH_STR);
@@ -58,8 +58,8 @@ void setup() {
   fontImg = loadImage("data/rasterFont.png");
   shadowImg = fontImg.get();
 
-  ZImage.tint(fontImg, fontClr, 1.0);
-  ZImage.tint(shadowImg, shadowClr, 1.0);
+  ZImage.tint(fontImg, fontClr, 1.0f);
+  ZImage.tint(shadowImg, shadowClr, 1.0f);
 
   fontImgNtv = YupJ2.convertPImageToNative(fontImg);
   shadowImgNtv = YupJ2.convertPImageToNative(shadowImg);
@@ -88,14 +88,12 @@ void setup() {
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
   buff.beginDraw();
   buff.background(0xff404040);
   buff.camera(
-    buff.width * 0.5, 
-    buff.height * 0.5, 
-    0.0, 1.0, 1.0);
+    buff.width * 0.5f, 
+    buff.height * 0.5f, 
+    0.0f, 1.0f, 1.0f);
 
   char[] charr = str.toCharArray();
   Bounds2 hlBounds = new Bounds2();
@@ -130,8 +128,8 @@ void draw() {
       float y1 = yCursor + pxPerGlyph;
 
       shBounds.set(
-        xCursor + 0.5, yCursor - 0.5, 
-        x1 + 0.5, y1 - 0.5);
+        xCursor + 0.5f, yCursor - 0.5f, 
+        x1 + 0.5f, y1 - 0.5f);
       buff.imageNative(shadowImgNtv, sample, shBounds);
 
       hlBounds.set(
@@ -147,7 +145,7 @@ void draw() {
 
   main.background();
   main.camera();
-  main.image(buff, 0.0, 0.0, main.width, main.height);
+  main.image(buff, 0.0f, 0.0f, main.width, main.height);
 }
 
 void keyReleased() {

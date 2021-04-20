@@ -2614,9 +2614,135 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Eases between two colors.
+    * Converts two colors from
+    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> to linear
+    * RGB, uses linear interpolation, then converts back to standard RGB. Uses
+    * a gamma adjustment of <code>2.4</code>.
     */
-   public static class LerpRgba extends AbstrEasing {
+   public static class LerpLrgba extends AbstrEasing {
+
+      /**
+       * Applies the function.
+       *
+       * @param origin the origin color
+       * @param dest   the destination color
+       * @param step   the step in a range 0 to 1
+       * @param target the output color
+       *
+       * @return the eased color
+       */
+      @Override
+      public Color applyUnclamped ( final Color origin, final Color dest,
+         final Float step, final Color target ) {
+
+         final double t = step;
+         final double u = 1.0d - t;
+
+         /* Convert origin from standard to linear. */
+         final double alr = origin.r <= LerpLrgba.LB_S_TO_L ? origin.r
+            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( origin.r + 0.055d )
+               * LerpLrgba.COEFF_S_TO_L, LerpLrgba.EXPONENT_S_TO_L);
+         final double alg = origin.g <= LerpLrgba.LB_S_TO_L ? origin.g
+            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( origin.g + 0.055d )
+               * LerpLrgba.COEFF_S_TO_L, LerpLrgba.EXPONENT_S_TO_L);
+         final double alb = origin.b <= LerpLrgba.LB_S_TO_L ? origin.b
+            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( origin.b + 0.055d )
+               * LerpLrgba.COEFF_S_TO_L, LerpLrgba.EXPONENT_S_TO_L);
+
+         /* Convert destination from standard to linear. */
+         final double blr = dest.r <= LerpLrgba.LB_S_TO_L ? dest.r
+            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( dest.r + 0.055d )
+               * LerpLrgba.COEFF_S_TO_L, LerpLrgba.EXPONENT_S_TO_L);
+         final double blg = dest.g <= LerpLrgba.LB_S_TO_L ? dest.g
+            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( dest.g + 0.055d )
+               * LerpLrgba.COEFF_S_TO_L, LerpLrgba.EXPONENT_S_TO_L);
+         final double blb = dest.b <= LerpLrgba.LB_S_TO_L ? dest.b
+            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( dest.b + 0.055d )
+               * LerpLrgba.COEFF_S_TO_L, LerpLrgba.EXPONENT_S_TO_L);
+
+         /* Linear interpolation. */
+         final double clr = u * alr + t * blr;
+         final double clg = u * alg + t * blg;
+         final double clb = u * alb + t * blb;
+         final double csa = u * origin.a + t * dest.a;
+
+         /* Convert from linear to standard. */
+         final double csr = clr <= LerpLrgba.LB_L_TO_S ? clr
+            * LerpLrgba.COEFF_LB_L_TO_S : Math.pow(clr,
+               LerpLrgba.EXPONENT_L_TO_S) * LerpLrgba.COEFF_L_TO_S - 0.055d;
+         final double csg = clg <= LerpLrgba.LB_L_TO_S ? clg
+            * LerpLrgba.COEFF_LB_L_TO_S : Math.pow(clg,
+               LerpLrgba.EXPONENT_L_TO_S) * LerpLrgba.COEFF_L_TO_S - 0.055d;
+         final double csb = clb <= LerpLrgba.LB_L_TO_S ? clb
+            * LerpLrgba.COEFF_LB_L_TO_S : Math.pow(clb,
+               LerpLrgba.EXPONENT_L_TO_S) * LerpLrgba.COEFF_L_TO_S - 0.055d;
+
+         return target.set(( float ) csr, ( float ) csg, ( float ) csb,
+            ( float ) csa);
+      }
+
+      /**
+       * Amount by which the power of a color channel is multiplied when
+       * converting from linear to standard RGB; approximately
+       * {@value LerpLrgba#COEFF_L_TO_S} .
+       */
+      public static final double COEFF_L_TO_S = 1.055d;
+
+      /**
+       * Amount by which a color channel beneath the lower bound is multiplied
+       * when converting from linear to standard RGB; approximately
+       * {@value LerpLrgba#COEFF_LB_L_TO_S} .
+       */
+      public static final double COEFF_LB_L_TO_S = 12.92d;
+
+      /**
+       * Amount by which a color channel beneath the lower bound is multiplied
+       * when converting from standard to linear RGB; approximately
+       * {@value LerpLrgba#COEFF_LB_S_TO_L} .
+       */
+      public static final double COEFF_LB_S_TO_L = 1.0d
+         / LerpLrgba.COEFF_LB_L_TO_S;
+
+      /**
+       * Amount by which the power of a color channel is multiplied when
+       * converting from standard to linear RGB; approximately
+       * {@value LerpLrgba#COEFF_S_TO_L} .
+       */
+      public static final double COEFF_S_TO_L = 1.0d / LerpLrgba.COEFF_L_TO_S;
+
+      /**
+       * Exponent by which a channel is raised when converting from linear to
+       * standard RGB, {@value LerpLrgba#EXPONENT_L_TO_S}.
+       */
+      public static final double EXPONENT_L_TO_S = 1.0d
+         / LerpLrgba.EXPONENT_S_TO_L;
+
+      /**
+       * Exponent by which a channel is raised when converting from standard to
+       * linear RGB, {@value LerpLrgba#EXPONENT_S_TO_L}.
+       */
+      public static final double EXPONENT_S_TO_L = 2.4d;
+
+      /**
+       * When converting from linear to standard RGB, lower bound beneath which
+       * a color channel is not raised to a power, but rather is divided by a
+       * constant. {@value LerpLrgba#LB_L_TO_S} .
+       */
+      public static final double LB_L_TO_S = 0.0031308d;
+
+      /**
+       * When converting from standard to linear RGB, lower bound beneath which
+       * a color channel is not raised to a power, but rather is divided by a
+       * constant. {@value LerpLrgba#LB_S_TO_L} .
+       */
+      public static final double LB_S_TO_L = 0.04045d;
+
+   }
+
+   /**
+    * Eases between two colors in sRGB, i.e., with no gamma correction.
+    */
+   public static class LerpSrgba extends AbstrEasing {
 
       /**
        * Applies the function.
@@ -2949,10 +3075,11 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Eases between two colors with the smooth step formula:
-    * <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> ) .
+    * Eases between two colors in sRGB, i.e., with no gamma correction using
+    * the smooth step formula: <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> )
+    * .
     */
-   public static class SmoothStepRgba extends AbstrEasing {
+   public static class SmoothStepSrgba extends AbstrEasing {
 
       /**
        * Applies the function.

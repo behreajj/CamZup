@@ -53,16 +53,8 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // TODO: SANKEY / ALLUVIAL DIAGRAM
-
-      // https://observablehq.com/@d3/sankey-diagram
-      // https://www.wikiwand.com/en/Alluvial_diagram
-      // https://digitalsplashmedia.com/2014/06/
-      // visualizing-categorical-data-as-flows-with-alluvial-diagrams/
-
-      final Color x = new Color();
-      Color.fromHex(0xffaabbcc, x);
-      System.out.println(Color.toHexWeb(x));
+      // TODO: Add delta time or elapsed time.
+      // https://github.com/processing/processing/issues/6070
    }
 
    /**

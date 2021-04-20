@@ -14,7 +14,7 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Yup2)getGraphics();
 
   source = createImage(512, 512, ARGB);
@@ -24,13 +24,11 @@ void setup() {
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
   graphics.mouse1s(mouse);
   graphics.getSize(szvec);
   Vec2.mul(szvec, mouse, msscl);
 
   ZImage.wrap(source, target, msscl);
   graphics.background();
-  graphics.image(target, 0.0, 0.0, width, height);
+  graphics.image(target, 0.0f, 0.0f, width, height);
 }

@@ -12,25 +12,24 @@ CurveEntity3 entity = new CurveEntity3("Example", curve);
 MaterialSolid mat = new MaterialSolid()
   .setFill(false)
   .setStroke(true)
-  .setStroke(#202020)
-  .setStrokeWeight(1.0);
+  .setStroke(0xff202020)
+  .setStrokeWeight(1.0f);
 
 void settings() {
   size(720, 405, Zup3.PATH_STR);
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Zup3)getGraphics();
-  entity.transform.scaleTo(256.0);
+  entity.transform.scaleTo(256.0f);
   Curve3.circle(curve);
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-  entity.rotateZ(0.0075);
+  entity.rotateZ(0.0075f);
 
-  float t = Utils.mod1(frameCount * 0.005);
+  float t = Utils.mod1(frameCount * 0.005f);
 
   Knot3 knWd = new Knot3();
   Knot3 knLc = new Knot3();
@@ -40,24 +39,24 @@ void draw() {
   graphics.origin();
 
   graphics.shape(entity, mat);
-  graphics.handles(entity, 1.25);
+  graphics.handles(entity, 1.25f);
 
-  graphics.stroke(#202020);
+  graphics.stroke(0xff202020);
 
-  graphics.strokeWeight(10.0);
+  graphics.strokeWeight(10.0f);
   graphics.point(knWd.coord);
 
-  graphics.strokeWeight(5.0);
+  graphics.strokeWeight(5.0f);
   graphics.point(knWd.rearHandle);
 
-  graphics.strokeWeight(7.5);
+  graphics.strokeWeight(7.5f);
   graphics.point(knWd.foreHandle);
 }
 
 
 void keyReleased() {
   if (key == ' ') {
-    Curve3.random(rng, 7, -0.5, 0.5, loop, curve);
+    Curve3.random(rng, 7, -0.5f, 0.5f, loop, curve);
   } else if (key == 'l') {
     loop = !loop;
   }

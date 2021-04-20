@@ -534,8 +534,8 @@ public class ZSurfaceAwt extends PSurfaceNone {
    }
 
    /**
-    * Adds listeners for the mouse, mouse motion, mouse wheel, keys and window
-    * focus.
+    * Adds listeners for the mouse click, mouse motion, mouse wheel, keys and
+    * window focus.
     */
    protected void addListeners ( ) {
 
@@ -699,40 +699,40 @@ public class ZSurfaceAwt extends PSurfaceNone {
       int peAction;
       final int eventid = nativeEvent.getID();
       switch ( eventid ) {
-         case java.awt.event.MouseEvent.MOUSE_CLICKED:
-            peAction = MouseEvent.CLICK;
+         case java.awt.event.MouseEvent.MOUSE_CLICKED: /* 500 */
+            peAction = MouseEvent.CLICK; /* 3 */
             peButton = ZSurfaceAwt.awtToProcessingMouseButton(nativeEvent
                .getButton());
             break;
 
-         case java.awt.event.MouseEvent.MOUSE_PRESSED:
-            peAction = MouseEvent.PRESS;
+         case java.awt.event.MouseEvent.MOUSE_PRESSED: /* 501 */
+            peAction = MouseEvent.PRESS; /* 1 */
             break;
 
-         case java.awt.event.MouseEvent.MOUSE_RELEASED:
-            peAction = MouseEvent.RELEASE;
+         case java.awt.event.MouseEvent.MOUSE_RELEASED: /* 502 */
+            peAction = MouseEvent.RELEASE; /* 2 */
             peButton = ZSurfaceAwt.awtToProcessingMouseButton(nativeEvent
                .getButton());
             break;
 
-         case java.awt.event.MouseEvent.MOUSE_MOVED:
-            peAction = MouseEvent.MOVE;
+         case java.awt.event.MouseEvent.MOUSE_MOVED: /* 503 */
+            peAction = MouseEvent.MOVE; /* 5 */
             break;
 
-         case java.awt.event.MouseEvent.MOUSE_ENTERED:
-            peAction = MouseEvent.ENTER;
+         case java.awt.event.MouseEvent.MOUSE_ENTERED: /* 504 */
+            peAction = MouseEvent.ENTER; /* 6 */
             break;
 
-         case java.awt.event.MouseEvent.MOUSE_EXITED:
-            peAction = MouseEvent.EXIT;
+         case java.awt.event.MouseEvent.MOUSE_EXITED: /* 505 */
+            peAction = MouseEvent.EXIT; /* 7 */
             break;
 
-         case java.awt.event.MouseEvent.MOUSE_DRAGGED:
-            peAction = MouseEvent.DRAG;
+         case java.awt.event.MouseEvent.MOUSE_DRAGGED: /* 506 */
+            peAction = MouseEvent.DRAG; /* 4 */
             break;
 
-         case java.awt.event.MouseEvent.MOUSE_WHEEL:
-            peAction = MouseEvent.WHEEL;
+         case java.awt.event.MouseEvent.MOUSE_WHEEL: /* 507 */
+            peAction = MouseEvent.WHEEL; /* 8 */
             peCount = ( ( MouseWheelEvent ) nativeEvent ).getWheelRotation();
             break;
 

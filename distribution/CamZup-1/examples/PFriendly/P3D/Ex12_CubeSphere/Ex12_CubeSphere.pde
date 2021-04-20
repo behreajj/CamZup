@@ -4,7 +4,7 @@ import camzup.pfriendly.*;
 int itr = 3;
 Vec3 mouse = new Vec3();
 
-Zup3 rndr;
+Zup3 graphics;
 
 Mesh3 smooth = new Mesh3();
 Mesh3 flat = new Mesh3();
@@ -22,34 +22,32 @@ void settings() {
 }
 
 void setup() {
-  rndr = (Zup3)getGraphics();
-  frameRate(60.0);
-  rndr.textureSampling(TextureSampling.BILINEAR);
+  frameRate(60.0f);
+  graphics = (Zup3)getGraphics();
+  graphics.textureSampling(TextureSampling.BILINEAR);
 
   txtr = loadImage("texture.png");
   textured = new MaterialPImage(txtr);
 
   wire.setStroke(true)
-    .setStroke(#202020)
-    .setStrokeWeight(1.0)
+    .setStroke(0xff202020)
+    .setStrokeWeight(1.0f)
     .setFill(false);
 
   me1.append(smooth);
   me2.append(flat);
   me3.append(smooth);
 
-  me1.scaleTo(256);
-  me2.scaleTo(256);
-  me3.scaleTo(256);
+  me1.scaleTo(256.0f);
+  me2.scaleTo(256.0f);
+  me3.scaleTo(256.0f);
 
-  me1.moveBy(new Vec3(-275.0, 0.0, 0.0));
-  me3.moveBy(new Vec3(275.0, 0.0, 0.0));
+  me1.moveBy(new Vec3(-275.0f, 0.0f, 0.0f));
+  me3.moveBy(new Vec3(275.0f, 0.0f, 0.0f));
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
-  rndr.mouse1u(mouse);
+  graphics.mouse1u(mouse);
   itr = Utils.lerp(0, 4, mouse.x);
 
   Mesh3.cubeSphere(itr,
@@ -60,18 +58,18 @@ void draw() {
   flat.set(smooth);
   flat.shadeFlat();
 
-  me1.rotateZ(0.005);
-  me2.rotateY(0.005);
-  me3.rotateX(0.005);
+  me1.rotateZ(0.005f);
+  me2.rotateY(0.005f);
+  me3.rotateX(0.005f);
 
-  rndr.lights();
-  rndr.ortho();
-  rndr.camera();
-  rndr.background();
+  graphics.lights();
+  graphics.ortho();
+  graphics.camera();
+  graphics.background();
 
-  rndr.shape(me1, textured);
-  rndr.shape(me2, textured);
-  rndr.shape(me3, wire);
+  graphics.shape(me1, textured);
+  graphics.shape(me2, textured);
+  graphics.shape(me3, wire);
 }
 
 void mouseReleased() {

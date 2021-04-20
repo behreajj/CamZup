@@ -23,7 +23,7 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Zup3)getGraphics();
   graphics.textureSampling(TextureSampling.TRILINEAR);
 
@@ -32,31 +32,29 @@ void setup() {
   textured = new MaterialPImage(txtr);
 
   wire.setStroke(true)
-    .setStroke(#202020)
-    .setStrokeWeight(1.0)
+    .setStroke(0xff202020)
+    .setStrokeWeight(1.0f)
     .setFill(false);
 
   me1.append(smooth);
   me2.append(flat);
   me3.append(smooth);
 
-  me1.scaleTo(196);
-  me2.scaleTo(196);
-  me3.scaleTo(196);
+  me1.scaleTo(196.0f);
+  me2.scaleTo(196.0f);
+  me3.scaleTo(196.0f);
 
-  me2.moveBy(new Vec3(-275.0, 0.0, 0.0));
-  me3.moveBy(new Vec3(275.0, 0.0, 0.0));
+  me2.moveBy(new Vec3(-275.0f, 0.0f, 0.0f));
+  me3.moveBy(new Vec3(275.0f, 0.0f, 0.0f));
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
   graphics.mouse1u(mouse);
   lons = Utils.lerp(3, 48, mouse.x);
   lats = Utils.lerp(1, 24, mouse.y);
 
   Mesh3.torus(
-    0.375,
+    0.375f,
     lons, lats,
     PolyType.TRI,
     smooth);
@@ -64,9 +62,9 @@ void draw() {
   flat.set(smooth);
   flat.shadeFlat();
 
-  me1.rotateZ(0.005);
-  me2.rotateY(0.005);
-  me3.rotateX(0.005);
+  me1.rotateZ(0.005f);
+  me2.rotateY(0.005f);
+  me3.rotateX(0.005f);
 
   graphics.lights();
   graphics.ortho();

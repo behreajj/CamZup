@@ -408,7 +408,7 @@ public class ZImage extends PImage {
 
    /**
     * Fills an image with a gradient in place. The gradient is horizontal.
-    * Colors are interpolated in RGB color space.
+    * Colors are interpolated in sRGB color space.
     *
     * @param grd    the gradient
     * @param target the target image

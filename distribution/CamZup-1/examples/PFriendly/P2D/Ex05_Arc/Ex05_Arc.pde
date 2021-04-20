@@ -9,28 +9,26 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (Yup2)getGraphics();
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
   graphics.mouse(mouse);
   float start = Vec2.heading(mouse);
-  float stop = frameCount * 0.01;
+  float stop = frameCount * 0.01f;
   ellipseMode(RADIUS);
-  background(#fff7d5);
+  background(0xfffff7d5);
   graphics.origin();
-  strokeWeight(5.0);
-  stroke(#373737);
+  strokeWeight(5.0f);
+  stroke(0xff373737);
   fill(0xff3fafef);
-  arc(0.0, 0.0,
-    150.0, 150.0,
+  arc(0.0f, 0.0f,
+    150.0f, 150.0f,
     start, stop,
     PIE);
 
-  stroke(#ff2020);
-  strokeWeight(12.0);
+  stroke(0xffff2020);
+  strokeWeight(12.0f);
   graphics.point(mouse);
 }

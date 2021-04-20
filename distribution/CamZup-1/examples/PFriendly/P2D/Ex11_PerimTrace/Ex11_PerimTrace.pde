@@ -11,10 +11,10 @@ int count = 6;
 
 // Control for animation.
 float time = IUtils.ONE_THIRD;
-float timeIncr = 1.0 / 256.0;
+float timeIncr = 1.0f / 256.0f;
 
 // Scale of the shape
-float scale = 62.0;
+float scale = 62.0f;
 
 PolyType poly = PolyType.NGON;
 
@@ -22,16 +22,16 @@ MeshEntity2[][] srcEntities = new MeshEntity2[count][inscrip];
 MeshEntity2[][] trgEntities = new MeshEntity2[count][inscrip];
 
 MaterialSolid srcMaterial = new MaterialSolid()
-  .setFill(#fff7d5)
+  .setFill(0xfffff7d5)
   .setFill(false)
-  .setStroke(#202020)
+  .setStroke(0xff202020)
   .setStroke(true)
   .setStrokeWeight(1.0);
 
 MaterialSolid trgMaterial = new MaterialSolid()
   .setFill(0xafff2828)
   .setFill(true)
-  .setStroke(#007fff)
+  .setStroke(0xff007fff)
   .setStroke(false)
   .setStrokeWeight(1.75);
 
@@ -40,16 +40,16 @@ void settings() {
 }
 
 void setup() {
+  frameRate(60.0f);
   graphics = (YupJ2)getGraphics();
-  frameRate(60.0);
 
   // Determine horizontal extents of grid.
-  Vec2 ubx = new Vec2(width * 0.4, 0.0);
+  Vec2 ubx = new Vec2(width * 0.4f, 0.0f);
   Vec2 lbx = Vec2.negate(ubx, new Vec2());
   Vec2 horiz = new Vec2();
 
   // Determine vertical extents of grid.
-  Vec2 uby = new Vec2(0.0, height * 0.4);
+  Vec2 uby = new Vec2(0.0f, height * 0.4f);
   Vec2 lby = Vec2.negate(uby, new Vec2());
   Vec2 vert = new Vec2();
 
@@ -57,8 +57,8 @@ void setup() {
   Vec2 loc = new Vec2();
 
   // Convert from rows and columns to percentage.
-  float toPercent0 = 1.0 / (count - 1.0);
-  float toPercent1 = 1.0 / (inscrip - 1.0);
+  float toPercent0 = 1.0f / (count - 1.0f);
+  float toPercent1 = 1.0f / (inscrip - 1.0f);
 
   for (int i = 0, sides = 3; i < count; ++i, ++sides) {
 
@@ -109,7 +109,6 @@ void setup() {
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
   graphics.background();
 
   for (int i = 0; i < count; ++i) {

@@ -1419,7 +1419,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    public static Gradient mix ( final Gradient origin, final Gradient dest,
       final int samples, final float step, final Gradient target ) {
 
-      final Color.LerpRgba mixer = new Color.LerpRgba();
+      final Color.LerpSrgba mixer = new Color.LerpSrgba();
       return Gradient.mix(origin, dest, samples, new Function < Float,
          Float >() {
          @Override
