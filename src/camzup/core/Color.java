@@ -2735,7 +2735,7 @@ public class Color implements Comparable < Color > {
        * a color channel is not raised to a power, but rather is divided by a
        * constant. {@value LerpLrgba#LB_S_TO_L} .
        */
-      public static final double LB_S_TO_L = 0.04045d;
+      public static final float LB_S_TO_L = 0.04045f;
 
    }
 

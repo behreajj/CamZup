@@ -1441,19 +1441,35 @@ public abstract class ParserSvg {
 
       /*
        * In web-optimized - i.e., compact - SVGs, a negative sign may be a
-       * delimiter between coordinates.
+       * delimiter between coordinates. A decimal point may also be a delimiter;
+       * see
+       * https://discourse.processing.org/t/why-arent-my-svg-images-rendering-
+       * properly-in-processing/29548 .
        */
       int count = 0;
+      boolean decimalDelim = false;
       for ( int i = start; i < end; ++i ) {
          final char c = chars[i];
          if ( c == ' ' || c == ',' ) {
             final String str = new String(chars, i - count, count).trim();
             if ( !str.isEmpty() ) { target.add(str); }
             count = 0;
+            decimalDelim = false;
          } else if ( c == '-' || c == '+' ) {
             final String str = new String(chars, i - count, count).trim();
             if ( !str.isEmpty() ) { target.add(str); }
             count = 1;
+            decimalDelim = false;
+         } else if ( c == '.' ) {
+            if ( decimalDelim ) {
+               final String str = new String(chars, i - count, count).trim();
+               if ( !str.isEmpty() ) { target.add(str); }
+               count = 1;
+               decimalDelim = false;
+            } else {
+               decimalDelim = true;
+               ++count;
+            }
          } else {
             ++count;
          }
