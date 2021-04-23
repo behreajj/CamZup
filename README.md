@@ -159,7 +159,7 @@ Viridis and Magma are perceptually uniform color palettes used in data visualiza
 
 ### Harmony
 
-RYB color is included above because popular tutorials on "Color Harmony" (or "Color Theory") often assume a subtractive red-yellow-blue color model, even in the context of digital media. Processing defaults to additive RGB, where cyan (`#00ffff`) is the opposite of red (`#ff0000`), not green. This holds regardless of whether you use the `HSB` or the `RGB` [colorMode](https://processing.org/reference/colorMode_.html).
+RYB color is included above because popular tutorials on "Color Harmony" (or "Color Theory") often assume a subtractive red-yellow-blue color model, even in the context of digital media. Processing defaults to additive sRGB, where cyan (`#00ffff`) is the complement of red (`#ff0000`), not green. This holds regardless of whether you use the `HSB` or the `RGB` [colorMode](https://processing.org/reference/colorMode_.html).
 
 ![Triadic](data/triadicDiagram.png)
 
@@ -277,11 +277,11 @@ Import functionality is tested against [Blender](https://www.blender.org/) expor
 
 Limit export to `Selection Only`. Depending on whether the export contains multiple objects, or one object with multiple material groups, separate the relevant category by `g` group headers. The `Transform` should match the axes of the `Zup3` or `Yup3` renderer. `Write Materials` should be unchecked; `Write Normals` and `Include UVs` should be checked.
 
-`.obj`s can be exported via `MeshEntity2` and `MeshEntity3`'s `toObjString` methods. They are imported to `MeshEntity3`s via `ParserObj.load`. Because `Mesh3`s store data by reference, not by copy, the `load` method includes a flag to indicate whether each created `Mesh3` should have its own copy of the `v`, `vt` and `vn` data. For export, an entity is treated as an `o` object, while a mesh is a `g` group; an entity's transform is not applied to the mesh's it holds.
+`.obj`s can be exported via `MeshEntity2` and `MeshEntity3`'s `toObjString` methods. They are imported to `MeshEntity3`s via `ParserObj.load`. Because `Mesh3`s store data by reference, not by copy, the `load` method includes a flag to indicate whether each created `Mesh3` should have its own copy of the `v`, `vt` and `vn` data. For export, an entity is treated as an `o` object, while a mesh is a `g` group; an entity's transform is not applied to the meshes it holds.
 
 ### SVG
 
-This library's scalable vector graphics (SVG) import method is adapted from Processing's. As such, it's quite limited. All material attributes (stroke weight, stroke, fill) are ignored. For best results, remove any XML tags from the top of the SVG file; refrain from any suffixes that specify units of measure (cm, px, %, etc.); and do not use `def`s tags. `ParserSvg.load` returns a `CurveEntity2`. To save a `String` as an SVG, supply entities and materials to the `toSvgString` method of `Yup2` or `YupJ2`. Whether a `Curve2` is rendered as a path or sub-path depends on the number of materials per curve. A `Mesh2` face is treated as a sub-path. Because import does not interpret `def`s, an exported SVG will not be as efficient as it could otherwise be.
+This library's scalable vector graphics (SVG) import method is adapted from Processing's. As such, it's quite limited. All material attributes (stroke weight, stroke, fill) are ignored. For best results, remove any `?xml` tags from the top of the SVG file; refrain from any suffixes that specify units of measure (cm, px, %, etc.); and do not use `def`s tags. `ParserSvg.load` returns a `CurveEntity2`. To save a `String` as an SVG, supply entities and materials to the `toSvgString` method of `Yup2` or `YupJ2`. Whether a `Curve2` is rendered as a path or sub-path depends on the number of materials per curve. A `Mesh2` face is treated as a sub-path. Because import does not interpret `def`s, an exported SVG will not be as efficient as it could otherwise be.
 
 ## Differences, Problems
 

@@ -7,9 +7,9 @@ YupJ2 graphics;
 CurveEntity2 ce2;
 MaterialSolid material = new MaterialSolid()
   .setFill(true)
-  .setFill(0x3f707070)
-  .setStrokeWeight(1.0f)
-  .setStroke(0x3f303030)
+  .setFill(0x7f202020)
+  .setStrokeWeight(1.25f)
+  .setStroke(0xff7e7a6a)
   .setStroke(true);
 
 void settings() {
@@ -17,7 +17,7 @@ void settings() {
 }
 
 void setup() {
-  frameRate(60.0);
+  frameRate(60.0f);
   graphics = (YupJ2)getGraphics();
 
   String filePath = sketchPath() + "\\data\\bot1.svg";

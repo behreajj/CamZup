@@ -55,7 +55,6 @@ public class CamZup {
 
       // TODO: Add delta time or elapsed time.
       // https://github.com/processing/processing/issues/6070
-
    }
 
    /**

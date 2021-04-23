@@ -89,7 +89,7 @@ void setup() {
 
 void draw() {
   buff.beginDraw();
-  buff.background(0xff404040);
+  buff.background(0xff202020);
   buff.camera(
     buff.width * 0.5f, 
     buff.height * 0.5f, 

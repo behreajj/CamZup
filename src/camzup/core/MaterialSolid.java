@@ -515,12 +515,8 @@ public class MaterialSolid extends Material {
     */
    StringBuilder toSvgString ( final StringBuilder svgp, final float scale ) {
 
-      /*
-       * This needs to be printed to a high precision because of small meshes
-       * which are blown up by scale.
-       */
-      final String strokeStr = Utils.toFixed(Utils.max(IUtils.EPSILON, Utils
-         .div(this.strokeWeight, scale)), 6);
+      final String strokeStr = Float.toString(Utils.max(IUtils.EPSILON, Utils
+         .div(this.strokeWeight, scale)));
       svgp.append("id=\"");
       svgp.append(this.name);
       svgp.append("\" class=\"");
@@ -597,12 +593,8 @@ public class MaterialSolid extends Material {
    static StringBuilder defaultSvgMaterial ( final StringBuilder svgp,
       final float scale ) {
 
-      /*
-       * This needs to be printed to a higher precision, six, because of small
-       * meshes which are blown up by scale.
-       */
-      final String strokeStr = Utils.toFixed(Utils.max(IUtils.EPSILON, Utils
-         .div(IUp.DEFAULT_STROKE_WEIGHT, scale)), 6);
+      final String strokeStr = Float.toString(Utils.max(IUtils.EPSILON, Utils
+         .div(IUp.DEFAULT_STROKE_WEIGHT, scale)));
 
       svgp.append("<g id=\"defaultmaterial\" stroke-width=\"");
       svgp.append(strokeStr);

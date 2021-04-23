@@ -33,7 +33,7 @@ void setup() {
   matMsh = new MaterialPImage(txtr);
 
   textMode(SHAPE);
-  font = createFont("Cambria", 64);
+  font = createFont("Cambria", 64.0f);
   glyCrv = TextShape.glyphCurve(font, 0.0f, false, str);
   glyMsh = TextShape.glyphMesh(font, 15.0f, false, str);
 

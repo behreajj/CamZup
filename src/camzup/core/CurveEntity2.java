@@ -680,9 +680,6 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       final StringBuilder svgp = new StringBuilder(1024);
       if ( this.length() < 1 ) { return svgp.toString(); }
 
-      /* Adjust stroke weight according to transform scale and camera zoom. */
-      final float scale = zoom * Transform2.minDimension(this.transform);
-
       /* For determining if handles are parallel. */
       final Vec2 dir0 = new Vec2();
       final Vec2 dir1 = new Vec2();
@@ -694,9 +691,13 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       if ( materials != null ) {
          matLen = materials.length;
          includesMats = matLen > 0;
-         oneMat = matLen < 2 && materials[0] != null;
+         oneMat = includesMats && matLen < 2 && materials[0] != null;
       }
       final boolean multipleMats = includesMats && !oneMat;
+
+      /* Adjust stroke weight according to transform scale and camera zoom. */
+      final float scale = multipleMats ? zoom * 0.5f + Transform2.minDimension(
+         this.transform) : zoom * 0.5f;
 
       /* If no materials, append a default; if one, append that. */
       if ( !includesMats ) {
