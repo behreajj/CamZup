@@ -1230,11 +1230,12 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     *
     * @return the maximum dimension
     *
+    * @see Utils#abs(float)
     * @see Utils#max(float, float)
     */
    public static float maxDimension ( final Transform2 t ) {
 
-      return Utils.max(t.scale.x, t.scale.y);
+      return Utils.max(Utils.abs(t.scale.x), Utils.abs(t.scale.y));
    }
 
    /**
@@ -1244,11 +1245,12 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     *
     * @return the minimum dimension
     *
+    * @see Utils#abs(float)
     * @see Utils#min(float, float)
     */
    public static float minDimension ( final Transform2 t ) {
 
-      return Utils.min(t.scale.x, t.scale.y);
+      return Utils.min(Utils.abs(t.scale.x), Utils.abs(t.scale.y));
    }
 
    /**

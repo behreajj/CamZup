@@ -89,7 +89,7 @@ void keyReleased() {
     showHandles = !showHandles;
   } else if (key == 's') {
     String result = graphics.toSvgString(glyCrv, matCrv);
-    saveStrings("data/curve.svg", new String[] { result });
+    saveStrings("data/text.svg", new String[] { result });
     println("Saved to svg.");
   }
 }

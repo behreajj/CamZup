@@ -1979,6 +1979,21 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
+    * Renders this mesh as an SVG string. A default material renders the
+    * mesh's fill and stroke. The background of the SVG is transparent.
+    *
+    * @return the SVG string
+    */
+   @Override
+   public String toSvgString ( ) {
+
+      return this.toSvgString(ISvgWritable.DEFAULT_ORIGIN_X,
+         ISvgWritable.DEFAULT_ORIGIN_Y, ISvgWritable.DEFAULT_WIDTH,
+         ISvgWritable.DEFAULT_HEIGHT, ISvgWritable.DEFAULT_WIDTH,
+         ISvgWritable.DEFAULT_HEIGHT);
+   }
+
+   /**
     * Transforms all coordinates in the mesh by a matrix.
     *
     * @param m the matrix

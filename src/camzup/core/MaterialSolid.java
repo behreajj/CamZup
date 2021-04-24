@@ -510,13 +510,13 @@ public class MaterialSolid extends Material {
     *
     * @return the string builder
     *
+    * @see Utils#div(float, float)
+    * @see Utils#abs(float)
     * @see Utils#clamp01(float)
     * @see Color#toHexWeb(Color)
     */
    StringBuilder toSvgString ( final StringBuilder svgp, final float scale ) {
 
-      final String strokeStr = Float.toString(Utils.max(IUtils.EPSILON, Utils
-         .div(this.strokeWeight, scale)));
       svgp.append("id=\"");
       svgp.append(this.name);
       svgp.append("\" class=\"");
@@ -525,11 +525,14 @@ public class MaterialSolid extends Material {
       svgp.append(' ');
 
       /* Stroke style. */
-      if ( this.useStroke ) {
+      final float sw = Utils.div(this.strokeWeight, Utils.abs(scale));
+      final float sa = Utils.clamp01(this.stroke.a);
+      if ( this.useStroke && sw > IUtils.EPSILON ) {
          svgp.append("stroke-width=\"");
-         svgp.append(strokeStr);
+         // svgp.append(Float.toString(sclStrk));
+         Utils.toFixed(svgp, sw, 6);
          svgp.append("\" stroke-opacity=\"");
-         Utils.toFixed(svgp, Utils.clamp01(this.stroke.a), 6);
+         Utils.toFixed(svgp, sa, 6);
          svgp.append("\" stroke=\"");
          svgp.append(Color.toHexWeb(this.stroke));
          svgp.append("\" stroke-linejoin=\"");
@@ -543,9 +546,10 @@ public class MaterialSolid extends Material {
       }
 
       /* Fill style. */
+      final float fa = Utils.clamp01(this.fill.a);
       if ( this.useFill ) {
          svgp.append("fill-opacity=\"");
-         Utils.toFixed(svgp, Utils.clamp01(this.fill.a), 6);
+         Utils.toFixed(svgp, fa, 6);
          svgp.append("\" fill=\"");
          svgp.append(Color.toHexWeb(this.fill));
          svgp.append('\"');
@@ -589,24 +593,40 @@ public class MaterialSolid extends Material {
     * @param scale the transform scale
     *
     * @return the string builder
+    * 
+    * @see Utils#div(float, float)
+    * @see Utils#abs(float)
     */
    static StringBuilder defaultSvgMaterial ( final StringBuilder svgp,
       final float scale ) {
 
-      final String strokeStr = Float.toString(Utils.max(IUtils.EPSILON, Utils
-         .div(IUp.DEFAULT_STROKE_WEIGHT, scale)));
-
-      svgp.append("<g id=\"defaultmaterial\" stroke-width=\"");
-      svgp.append(strokeStr);
-      svgp.append("\" stroke-opacity=\"1.0\" stroke=\"");
-      svgp.append(Color.toHexWeb(IUp.DEFAULT_STROKE_COLOR));
-      svgp.append("\" fill-opacity=\"1.0\" fill=\"");
+      svgp.append("<g id=\"defaultmaterial\"");
+      svgp.append(" fill-opacity=\"");
+      svgp.append("1.0");
+      svgp.append("\" fill=\"");
       svgp.append(Color.toHexWeb(IUp.DEFAULT_FILL_COLOR));
-      svgp.append("\" stroke-linejoin=\"");
-      svgp.append(ISvgWritable.DEFAULT_STR_JOIN);
-      svgp.append("\" stroke-linecap=\"");
-      svgp.append(ISvgWritable.DEFAULT_STR_CAP);
-      svgp.append("\">\n");
+      svgp.append('\"');
+      svgp.append(' ');
+
+      final float sw = Utils.div(IUp.DEFAULT_STROKE_WEIGHT, Utils.abs(scale));
+      if ( sw > IUtils.EPSILON ) {
+         svgp.append("stroke-width=\"");
+         // svgp.append(Float.toString(sclStrk));
+         Utils.toFixed(svgp, sw, 6);
+         svgp.append("\" stroke-opacity=\"");
+         svgp.append("1.0");
+         svgp.append("\" stroke=\"");
+         svgp.append(Color.toHexWeb(IUp.DEFAULT_STROKE_COLOR));
+         svgp.append("\" stroke-linejoin=\"");
+         svgp.append(ISvgWritable.DEFAULT_STR_JOIN);
+         svgp.append("\" stroke-linecap=\"");
+         svgp.append(ISvgWritable.DEFAULT_STR_CAP);
+         svgp.append('\"');
+         svgp.append(' ');
+      } else {
+         svgp.append("stroke=\"none\"");
+      }
+      svgp.append(">\n");
       return svgp;
    }
 

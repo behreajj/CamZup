@@ -679,8 +679,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       final boolean multipleMats = includesMats && !oneMat;
 
       /* Adjust stroke weight according to transform scale and camera zoom. */
-      final float scale = multipleMats ? zoom * 0.5f + Transform2.minDimension(
-         this.transform) : zoom * 0.5f;
+      final float scale = zoom * Transform2.minDimension(this.transform);
 
       /* If no materials, append a default; if one, append that. */
       if ( !includesMats ) {
@@ -731,6 +730,23 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       /* Close out default material group. */
       if ( !includesMats || oneMat ) { svgp.append("</g>\n"); }
       return svgp.toString();
+   }
+
+   /**
+    * Renders this mesh entity as an SVG string. A default material renders
+    * the mesh's fill and stroke. The background of the SVG is transparent.
+    * Sets the camera scale to 1.0.
+    *
+    * @return the SVG string
+    */
+   @Override
+   public String toSvgString ( ) {
+
+      final Vec2 scale = this.transform.getScale(new Vec2());
+      return this.toSvgString(ISvgWritable.DEFAULT_ORIGIN_X,
+         ISvgWritable.DEFAULT_ORIGIN_Y, 1.0f, -1.0f, Utils.max(
+            ISvgWritable.DEFAULT_WIDTH, Utils.abs(scale.x)), Utils.max(
+               ISvgWritable.DEFAULT_HEIGHT, Utils.abs(scale.y)));
    }
 
    /**

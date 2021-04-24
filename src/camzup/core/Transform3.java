@@ -1439,11 +1439,13 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     *
     * @return the maximum dimension
     *
+    * @see Utils#abs(float)
     * @see Utils#max(float, float, float)
     */
    public static float maxDimension ( final Transform3 t ) {
 
-      return Utils.max(t.scale.x, t.scale.y, t.scale.z);
+      return Utils.max(Utils.abs(t.scale.x), Utils.abs(t.scale.y), Utils.abs(
+         t.scale.z));
    }
 
    /**
@@ -1453,11 +1455,13 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     *
     * @return the minimum dimension
     *
+    * @see Utils#abs(float)
     * @see Utils#min(float, float, float)
     */
    public static float minDimension ( final Transform3 t ) {
 
-      return Utils.min(t.scale.x, t.scale.y, t.scale.z);
+      return Utils.min(Utils.abs(t.scale.x), Utils.abs(t.scale.y), Utils.abs(
+         t.scale.z));
    }
 
    /**

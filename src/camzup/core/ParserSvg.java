@@ -675,7 +675,6 @@ public abstract class ParserSvg {
           * (CCW) to the SVG default (CW).
           */
          if ( prim != null ) {
-
             if ( !curves.contains(prim) ) {
                prim.reverse();
                prim.transform(prev);

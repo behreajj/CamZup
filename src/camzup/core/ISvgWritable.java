@@ -7,14 +7,14 @@ package camzup.core;
 public interface ISvgWritable {
 
    /**
-    * Renders the curve as a string containing an SVG element.
+    * Renders this object as a string containing an SVG element.
     *
     * @return the SVG string
     */
    default String toSvgElm ( ) { return this.toSvgElm(1.0f); }
 
    /**
-    * Renders the curve as a string containing an SVG element.<br>
+    * Renders this object as a string containing an SVG element.<br>
     * <br>
     * Stroke weight is impacted by scaling in transforms, so zoom is a
     * parameter. If nonuniform zooming is used, zoom can be an average of
@@ -32,40 +32,36 @@ public interface ISvgWritable {
     *
     * @return the SVG string
     */
-   default String toSvgString ( ) {
-
-      return this.toSvgString(ISvgWritable.DEFAULT_ORIGIN_X,
-         ISvgWritable.DEFAULT_ORIGIN_Y, ISvgWritable.DEFAULT_WIDTH,
-         ISvgWritable.DEFAULT_HEIGHT);
-   }
+   String toSvgString ( );
 
    /**
     * Renders this object as an SVG string. A default material renders the
     * mesh's fill and stroke. The background of the SVG is transparent. The
     * width and height inform the view box dimensions. The origin is expected
     * to be in unit coordinates, [0.0, 1.0] ; it is multiplied by the view box
-    * dimensions. The camera scale is set to the shorter edge of the view box,
-    * so as to contain the shape.
+    * dimensions.
     *
-    * @param xOrigin the origin x
-    * @param yOrigin the origin y
-    * @param width   the width
-    * @param height  the height
+    * @param xOrigin    the origin x
+    * @param yOrigin    the origin y
+    * @param xScale     the scale x
+    * @param yScale     the scale y
+    * @param viewWidth  the width
+    * @param viewHeight the height
     *
     * @return the SVG string
     */
    default String toSvgString ( final float xOrigin, final float yOrigin,
-      final float width, final float height ) {
+      final float xScale, final float yScale, final float viewWidth,
+      final float viewHeight ) {
 
-      final float vw = Utils.max(IUtils.EPSILON, width);
-      final float vh = Utils.max(IUtils.EPSILON, height);
+      final float vw = Utils.max(IUtils.EPSILON, viewWidth);
+      final float vh = Utils.max(IUtils.EPSILON, viewHeight);
       final String widthStr = Utils.toFixed(vw, ISvgWritable.FIXED_PRINT);
       final String heightStr = Utils.toFixed(vh, ISvgWritable.FIXED_PRINT);
       final float x = Utils.clamp01(xOrigin);
       final float y = Utils.clamp01(yOrigin);
-
-      final float scl = Utils.min(vw, vh);
-      final String sclStr = Utils.toFixed(scl, ISvgWritable.FIXED_PRINT);
+      final float vxscl = Utils.approx(xScale, 0.0f) ? 1.0f : xScale;
+      final float vyscl = Utils.approx(yScale, 0.0f) ? 1.0f : yScale;
 
       final StringBuilder svgp = new StringBuilder(128);
       svgp.append("<svg ");
@@ -80,17 +76,19 @@ public interface ISvgWritable {
       svgp.append(' ');
       svgp.append(heightStr);
       svgp.append("\">\n");
+
       svgp.append("<g transform=\"translate(");
       Utils.toFixed(svgp, vw * x, ISvgWritable.FIXED_PRINT);
       svgp.append(',');
       svgp.append(' ');
       Utils.toFixed(svgp, vh * y, ISvgWritable.FIXED_PRINT);
-      svgp.append(") scale(");
-      svgp.append(sclStr);
-      svgp.append(", -");
-      svgp.append(sclStr);
+      svgp.append(')');
+      svgp.append(" scale(");
+      Utils.toFixed(svgp, vxscl, ISvgWritable.FIXED_PRINT);
+      svgp.append(", ");
+      Utils.toFixed(svgp, vyscl, ISvgWritable.FIXED_PRINT);
       svgp.append(")\">\n");
-      svgp.append(this.toSvgElm(scl));
+      svgp.append(this.toSvgElm(Utils.min(vxscl, vyscl)));
       svgp.append("</g>\n");
       svgp.append("</svg>");
 
@@ -104,13 +102,16 @@ public interface ISvgWritable {
     * translation and the scale of the shape.
     *
     * @param origin the origin
+    * @param scale  the scale
     * @param dim    the dimensions
     *
     * @return the SVG string
     */
-   default String toSvgString ( final Vec2 origin, final Vec2 dim ) {
+   default String toSvgString ( final Vec2 origin, final Vec2 scale,
+      final Vec2 dim ) {
 
-      return this.toSvgString(origin.x, origin.y, dim.x, dim.y);
+      return this.toSvgString(origin.x, origin.y, scale.x, scale.y, dim.x,
+         dim.y);
    }
 
    /**
