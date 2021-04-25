@@ -378,6 +378,8 @@ public class ZImage extends PImage {
     * @param target the target image
     *
     * @return the augmented image
+    *
+    * @see Color#sRgbLuminance(int)
     */
    public static PImage falseColor ( final Gradient grd, final PImage target ) {
 
@@ -385,9 +387,11 @@ public class ZImage extends PImage {
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-
          final float alpha = ( px[i] >> 0x18 & 0xff ) * IUtils.ONE_255;
-         px[i] = Gradient.eval(grd, alpha * Color.luminance(px[i]));
+         final float lum = Color.sRgbLuminance(px[i]);
+         final float vf = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math
+            .pow(lum, 0.4166666666666667d) * 1.055d - 0.055d );
+         px[i] = Gradient.eval(grd, alpha * vf);
       }
       target.updatePixels();
       return target;
@@ -981,7 +985,7 @@ public class ZImage extends PImage {
     *
     * @return the image
     *
-    * @see Color#luminance(int)
+    * @see Color#sRgbLuminance(int)
     */
    public static PImage grayscale ( final PImage target,
       final boolean normalize ) {
@@ -993,28 +997,33 @@ public class ZImage extends PImage {
       if ( normalize ) {
 
          /* Find minimum and maximum luminance. */
-         float lumMin = 1.0f;
-         float lumMax = 0.0f;
+         float lumMin = Float.MAX_VALUE;
+         float lumMax = Float.MIN_VALUE;
          final float[] lums = new float[len];
          for ( int i = 0; i < len; ++i ) {
-            final float lum = Color.luminance(px[i]);
+            final float lum = Color.sRgbLuminance(px[i]);
             if ( lum < lumMin ) { lumMin = lum; }
             if ( lum > lumMax ) { lumMax = lum; }
             lums[i] = lum;
          }
 
          /* Map luminance to [0.0, 1.0] from [minimum, maximum]. */
-         final float lumRange = lumMax - lumMin;
-         final float denom255 = lumRange != 0.0f ? 255.0f / lumRange : 0.0f;
          for ( int i = 0; i < len; ++i ) {
-            final int gr = ( int ) ( ( lums[i] - lumMin ) * denom255 + 0.5f );
-            px[i] = px[i] & 0xff000000 | gr << 0x10 | gr << 0x08 | gr;
+            // TODO: Optimize?
+            final float lum = Utils.map(lums[i], lumMin, lumMax, 0.0f, 1.0f);
+            final float vf = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math
+               .pow(lum, 0.4166666666666667d) * 1.055d - 0.055d );
+            final int vi = ( int ) ( vf * 0xff + 0.5f );
+            px[i] = px[i] & 0xff000000 | vi << 0x10 | vi << 0x08 | vi;
          }
 
       } else {
          for ( int i = 0; i < len; ++i ) {
-            final int gr = ( int ) ( Color.luminance(px[i]) * 0xff + 0.5f );
-            px[i] = px[i] & 0xff000000 | gr << 0x10 | gr << 0x08 | gr;
+            final float lum = Color.sRgbLuminance(px[i]);
+            final float vf = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math
+               .pow(lum, 0.4166666666666667d) * 1.055d - 0.055d );
+            final int vi = ( int ) ( vf * 0xff + 0.5f );
+            px[i] = px[i] & 0xff000000 | vi << 0x10 | vi << 0x08 | vi;
          }
       }
 

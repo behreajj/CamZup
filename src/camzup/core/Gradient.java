@@ -61,9 +61,14 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public Gradient ( final Color color ) {
 
+      final float lum = Color.sRgbLuminance(color);
+      final float vf = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math.pow(
+         lum, 0.4166666666666667d) * 1.055d - 0.055d );
+      final float step = Utils.lerp(IUtils.ONE_THIRD,
+         IUtils.TWO_THIRDS, vf);
+
       this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, color.a));
-      this.keys.add(new ColorKey(Utils.lerp(IUtils.ONE_THIRD, IUtils.TWO_THIRDS,
-         Color.luminance(color)), color));
+      this.keys.add(new ColorKey(step, color));
       this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, color.a));
    }
 
@@ -103,16 +108,10 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * boundary keys adopt the color's alpha.
     *
     * @param color the color
-    *
-    * @see Color#white(Color)
     */
    public Gradient ( final int color ) {
 
-      final float a = ( color >> 0x18 & 0xff ) * IUtils.ONE_255;
-      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, a));
-      this.keys.add(new ColorKey(Utils.lerp(IUtils.ONE_THIRD, IUtils.TWO_THIRDS,
-         Color.luminance(color)), color));
-      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, a));
+      this(Color.fromHex(color, new Color()));
    }
 
    /**
@@ -1371,6 +1370,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @param target the output gradient
     *
     * @return the gradient
+    * 
+    * @see Color#sRgbLuminance(Color)
     */
    public static Gradient keysByLuminance ( final Gradient source,
       final Gradient target ) {
@@ -1383,7 +1384,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          final Iterator < ColorKey > srcItr = srcKeys.iterator();
          while ( srcItr.hasNext() ) {
             final Color srcClr = srcItr.next().clr;
-            trgKeys.add(new ColorKey(Color.luminance(srcClr), srcClr));
+            trgKeys.add(new ColorKey(Color.sRgbLuminance(srcClr), srcClr));
          }
          srcKeys.clear();
          srcKeys.addAll(trgKeys);
@@ -1395,7 +1396,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          final Iterator < ColorKey > srcItr = source.keys.iterator();
          while ( srcItr.hasNext() ) {
             final Color srcClr = srcItr.next().clr;
-            trgKeys.add(new ColorKey(Color.luminance(srcClr), srcClr));
+            trgKeys.add(new ColorKey(Color.lRgbLuminance(srcClr), srcClr));
          }
 
       }

@@ -1455,7 +1455,29 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Returns the relative luminance of the color, based on
+    * Converts a color from linear RGB to
+    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
+    *
+    * @param source the linear color
+    * @param target the output color
+    *
+    * @return the standard color
+    */
+   public static Color linearToStandard ( final Color source,
+      final Color target ) {
+
+      /* 1.0d / 2.4d = 0.4166666666666667d . */
+      return target.set(source.r <= 0.0031308f ? source.r * 12.92f
+         : ( float ) ( Math.pow(source.r, 0.4166666666666667d) * 1.055d
+            - 0.055d ), source.g <= 0.0031308f ? source.g * 12.92f
+               : ( float ) ( Math.pow(source.g, 0.4166666666666667d) * 1.055d
+                  - 0.055d ), source.b <= 0.0031308f ? source.b * 12.92f
+                     : ( float ) ( Math.pow(source.b, 0.4166666666666667d)
+                        * 1.055d - 0.055d ), source.a);
+   }
+
+   /**
+    * Returns the relative luminance of the linear RGB color, based on
     * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
     * 709 relative luminance</a> coefficients: <code>0.2126</code> for red,
     * <code>0.7152</code> for green and <code>0.0722</code> for blue.
@@ -1464,24 +1486,24 @@ public class Color implements Comparable < Color > {
     *
     * @return the luminance
     */
-   public static float luminance ( final Color c ) {
+   public static float lRgbLuminance ( final Color c ) {
 
       return 0.2126f * c.r + 0.7152f * c.g + 0.0722f * c.b;
    }
 
    /**
-    * Returns the relative luminance of the color, based on
+    * Returns the relative luminance of the linear RGB color, based on
     * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
     * 709 relative luminance</a>.<br>
     * <br>
     * Due to single precision, this may not yield the same result as
-    * {@link Color#luminance(Color)} .
+    * {@link Color#lRgbLuminance(Color)} .
     *
     * @param c the input color
     *
     * @return the luminance
     */
-   public static float luminance ( final int c ) {
+   public static float lRgbLuminance ( final int c ) {
 
       /*
        * Coefficients: 0.2126 / 255.0 ; 0.7152 / 255.0 ; 0.0722 / 255.0 . In
@@ -1494,6 +1516,34 @@ public class Color implements Comparable < Color > {
               ( c >> 0x08 & 0xff ) * 280470590.0f +
               ( c         & 0xff ) *  28313725.0f) * 10E-12f;
       /* @formatter:on */
+   }
+
+   /**
+    * Returns the relative luminance of a color; assumes the color is in sRGB.
+    *
+    * @param c the color
+    *
+    * @return the luminance
+    * 
+    * @see Color#sRgbLuminance(Color)
+    */
+   public static float luminance ( final Color c ) {
+
+      return Color.sRgbLuminance(c);
+   }
+
+   /**
+    * Returns the relative luminance of a color; assumes the color is in sRGB.
+    *
+    * @param c the color
+    *
+    * @return the luminance
+    * 
+    * @see Color#sRgbLuminance(int)
+    */
+   public static float luminance ( final int c ) {
+
+      return Color.sRgbLuminance(c);
    }
 
    /**
@@ -1698,12 +1748,14 @@ public class Color implements Comparable < Color > {
     *
     * @return the gray scale color
     *
-    * @see Color#luminance(Color)
+    * @see Color#sRgbLuminance(Color)
     */
    public static Color rgbaToGray ( final Color c, final Color target ) {
 
-      final float lum = Color.luminance(c);
-      return target.set(lum, lum, lum, c.a);
+      final float lum = Color.sRgbLuminance(c);
+      final float vf = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math.pow(
+         lum, 0.4166666666666667d) * 1.055d - 0.055d );
+      return target.set(vf, vf, vf, c.a);
    }
 
    /**
@@ -1819,7 +1871,7 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from RGB to CIE XYZ.
+    * Converts a color from sRGB to CIE XYZ.
     *
     * @param c      the color
     * @param target the output vector
@@ -1834,7 +1886,7 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from RGB to CIE XYZ. References Pharr, Jakob, and
+    * Converts a color from sRGB to CIE XYZ. References Pharr, Jakob, and
     * Humphreys' <a href="http://www.pbr-book.org/">Physically Based
     * Rendering</a>, section 5.2, page 328.
     *
@@ -1924,6 +1976,80 @@ public class Color implements Comparable < Color > {
       Color.rgbaToHsva(c, hsva);
       Vec4.add(hsva, shift, hsva);
       return Color.hsvaToRgba(hsva, target);
+   }
+
+   /**
+    * Returns the relative luminance of the standard RGB color, based on
+    * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
+    * 709 relative luminance</a> coefficients: <code>0.2126</code> for red,
+    * <code>0.7152</code> for green and <code>0.0722</code> for blue.
+    *
+    * @param c the input color
+    *
+    * @return the luminance
+    */
+   public static float sRgbLuminance ( final Color c ) {
+
+      final double lr = c.r <= 0.04045f ? c.r * 0.07739938080495357d : Math.pow(
+         ( c.r + 0.055d ) * 0.9478672985781991d, 2.4d);
+      final double lg = c.g <= 0.04045f ? c.g * 0.07739938080495357d : Math.pow(
+         ( c.g + 0.055d ) * 0.9478672985781991d, 2.4d);
+      final double lb = c.b <= 0.04045f ? c.b * 0.07739938080495357d : Math.pow(
+         ( c.b + 0.055d ) * 0.9478672985781991d, 2.4d);
+
+      return ( float ) ( 0.2126d * lr + 0.7152d * lg + 0.0722d * lb );
+   }
+
+   /**
+    * Returns the relative luminance of the standard RGB color, based on
+    * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
+    * 709 relative luminance</a> coefficients: <code>0.2126</code> for red,
+    * <code>0.7152</code> for green and <code>0.0722</code> for blue.
+    *
+    * @param c the input color
+    *
+    * @return the luminance
+    */
+   public static float sRgbLuminance ( final int c ) {
+
+      final double sr = ( c >> 0x10 & 0xff ) * IUtils.ONE_255_D;
+      final double sg = ( c >> 0x08 & 0xff ) * IUtils.ONE_255_D;
+      final double sb = ( c & 0xff ) * IUtils.ONE_255_D;
+
+      final double lr = sr <= 0.04045d ? sr * 0.07739938080495357d : Math.pow(
+         ( sr + 0.055d ) * 0.9478672985781991d, 2.4d);
+      final double lg = sg <= 0.04045d ? sg * 0.07739938080495357d : Math.pow(
+         ( sg + 0.055d ) * 0.9478672985781991d, 2.4d);
+      final double lb = sb <= 0.04045d ? sb * 0.07739938080495357d : Math.pow(
+         ( sb + 0.055d ) * 0.9478672985781991d, 2.4d);
+
+      return ( float ) ( 0.2126d * lr + 0.7152d * lg + 0.0722d * lb );
+   }
+
+   /**
+    * Converts a color from
+    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB) to
+    * linear RGB.
+    *
+    * @param source the standard color
+    * @param target the output color
+    *
+    * @return the linear color
+    */
+   public static Color standardToLinear ( final Color source,
+      final Color target ) {
+
+      /*
+       * (float)(1.0d / 12.92d) = 0.07739938f . 1.0d / 1.055d =
+       * 0.9478672985781991d
+       */
+      return target.set(source.r <= 0.04045f ? source.r * 0.07739938f
+         : ( float ) Math.pow( ( source.r + 0.055d ) * 0.9478672985781991d,
+            2.4d), source.g <= 0.04045f ? source.g * 0.07739938f
+               : ( float ) Math.pow( ( source.g + 0.055d )
+                  * 0.9478672985781991d, 2.4d), source.g <= 0.04045f ? source.g
+                     * 0.07739938f : ( float ) Math.pow( ( source.g + 0.055d )
+                        * 0.9478672985781991d, 2.4d), source.a);
    }
 
    /**
@@ -2161,7 +2287,7 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from CIE XYZ to RGB. References Pharr, Jakob, and
+    * Converts a color from CIE XYZ to sRGB. References Pharr, Jakob, and
     * Humphreys' <a href="http://www.pbr-book.org/">Physically Based
     * Rendering</a>, section 5.2, page 327.
     *
@@ -2182,7 +2308,7 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from CIE XYZ to RGB.
+    * Converts a color from CIE XYZ to sRGB.
     *
     * @param v      the XYZ vector
     * @param target the output color
@@ -2616,8 +2742,8 @@ public class Color implements Comparable < Color > {
    /**
     * Converts two colors from
     * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> to linear
-    * RGB, uses linear interpolation, then converts back to standard RGB. Uses
-    * a gamma adjustment of <code>2.4</code>.
+    * RGB, mixes them with linear interpolation, then converts back to
+    * standard RGB.
     */
    public static class LerpLrgba extends AbstrEasing {
 
@@ -2635,6 +2761,11 @@ public class Color implements Comparable < Color > {
       public Color applyUnclamped ( final Color origin, final Color dest,
          final Float step, final Color target ) {
 
+         /*
+          * https://blog.johnnovak.net/2016/09/21/what-every-coder-should-know-
+          * about-gamma/
+          */
+
          final double t = step;
          final double u = 1.0d - t;
 
@@ -2651,14 +2782,17 @@ public class Color implements Comparable < Color > {
 
          /* Convert destination from standard to linear. */
          final double blr = dest.r <= LerpLrgba.LB_S_TO_L ? dest.r
-            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( dest.r + 0.055d )
-               * LerpLrgba.COEFF_S_TO_L, LerpLrgba.EXPONENT_S_TO_L);
+            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( dest.r
+               + LerpLrgba.OFFSET ) * LerpLrgba.COEFF_S_TO_L,
+               LerpLrgba.EXPONENT_S_TO_L);
          final double blg = dest.g <= LerpLrgba.LB_S_TO_L ? dest.g
-            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( dest.g + 0.055d )
-               * LerpLrgba.COEFF_S_TO_L, LerpLrgba.EXPONENT_S_TO_L);
+            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( dest.g
+               + LerpLrgba.OFFSET ) * LerpLrgba.COEFF_S_TO_L,
+               LerpLrgba.EXPONENT_S_TO_L);
          final double blb = dest.b <= LerpLrgba.LB_S_TO_L ? dest.b
-            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( dest.b + 0.055d )
-               * LerpLrgba.COEFF_S_TO_L, LerpLrgba.EXPONENT_S_TO_L);
+            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( dest.b
+               + LerpLrgba.OFFSET ) * LerpLrgba.COEFF_S_TO_L,
+               LerpLrgba.EXPONENT_S_TO_L);
 
          /* Linear interpolation. */
          final double clr = u * alr + t * blr;
@@ -2669,13 +2803,16 @@ public class Color implements Comparable < Color > {
          /* Convert from linear to standard. */
          final double csr = clr <= LerpLrgba.LB_L_TO_S ? clr
             * LerpLrgba.COEFF_LB_L_TO_S : Math.pow(clr,
-               LerpLrgba.EXPONENT_L_TO_S) * LerpLrgba.COEFF_L_TO_S - 0.055d;
+               LerpLrgba.EXPONENT_L_TO_S) * LerpLrgba.COEFF_L_TO_S
+               - LerpLrgba.OFFSET;
          final double csg = clg <= LerpLrgba.LB_L_TO_S ? clg
             * LerpLrgba.COEFF_LB_L_TO_S : Math.pow(clg,
-               LerpLrgba.EXPONENT_L_TO_S) * LerpLrgba.COEFF_L_TO_S - 0.055d;
+               LerpLrgba.EXPONENT_L_TO_S) * LerpLrgba.COEFF_L_TO_S
+               - LerpLrgba.OFFSET;
          final double csb = clb <= LerpLrgba.LB_L_TO_S ? clb
             * LerpLrgba.COEFF_LB_L_TO_S : Math.pow(clb,
-               LerpLrgba.EXPONENT_L_TO_S) * LerpLrgba.COEFF_L_TO_S - 0.055d;
+               LerpLrgba.EXPONENT_L_TO_S) * LerpLrgba.COEFF_L_TO_S
+               - LerpLrgba.OFFSET;
 
          return target.set(( float ) csr, ( float ) csg, ( float ) csb,
             ( float ) csa);
@@ -2736,6 +2873,12 @@ public class Color implements Comparable < Color > {
        * constant. {@value LerpLrgba#LB_S_TO_L} .
        */
       public static final float LB_S_TO_L = 0.04045f;
+
+      /**
+       * Amount added to or subtracted from a color channel when converting
+       * between linear and standard, {@value LerpLrgba#OFFSET}.
+       */
+      public static final double OFFSET = 0.055d;
 
    }
 

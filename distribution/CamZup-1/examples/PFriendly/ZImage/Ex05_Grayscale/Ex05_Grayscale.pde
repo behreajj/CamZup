@@ -7,7 +7,6 @@ import camzup.pfriendly.*;
 PImage source;
 PImage target;
 
-float gamma = 1.0f / 2.4f;
 Yup2 graphics;
 
 void settings() {
@@ -19,9 +18,8 @@ void setup() {
   graphics = (Yup2)getGraphics();
 
   source = loadImage("callingStMatthew.jpg");
-  ZImage.gammaAdjust(source, gamma);
   target = source.get();
-  ZImage.grayscale(target, false);
+  ZImage.grayscale(target, true);
 }
 
 void draw() {

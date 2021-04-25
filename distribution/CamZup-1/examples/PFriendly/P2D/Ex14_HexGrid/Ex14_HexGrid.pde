@@ -11,7 +11,7 @@ float subfRound = 0.0375f;
 YupJ2 graphics;
 MaterialSolid[] materials;
 MeshEntity2 entity2 = new MeshEntity2();
-Gradient gradient = Gradient.paletteSepia(new Gradient());
+Gradient gradient = Gradient.paletteLcd(new Gradient());
 
 void settings() {
   size(720, 405, YupJ2.PATH_STR);
@@ -35,6 +35,9 @@ void setup() {
 
     cell.materialIndex = i;
     MaterialSolid material = new MaterialSolid();
+    material.setStroke(true);
+    material.setStrokeWeight(0.5f);
+    material.setStroke(0xffffffff);
     Gradient.eval(gradient, fac, material.fill);
     material.name = Color.toHexString(material.fill);
     materials[i] = material;

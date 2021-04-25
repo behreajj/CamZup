@@ -593,7 +593,7 @@ public class MaterialSolid extends Material {
     * @param scale the transform scale
     *
     * @return the string builder
-    * 
+    *
     * @see Utils#div(float, float)
     * @see Utils#abs(float)
     */

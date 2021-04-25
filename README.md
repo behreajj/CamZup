@@ -188,7 +188,7 @@ When selecting shades of a hue, be conscientious that perception and display of 
 
 ![Tone](data/toneDiagram.png)
 
-Raising a color's red, green and blue channels - or a gradient's evaluation factor - to the power of `2.2`, will compress bright desaurated colors and expand darker shades. Raising to a power of `1.0 / 2.2` will compress darker shades and expand brighter whites. The `Gradient` class attempts to simplify this task by letting you construct a gradient from a single color. The color will be placed between a black key and white key based on its perceived luminance.
+Raising a color's red, green and blue channels - or a gradient's evaluation factor - to the power of `2.2`, will compress bright desaurated colors and expand darker shades. Raising to a power of `1.0 / 2.2` will compress darker shades and expand brighter whites.
 
 ## File Import & Export
 

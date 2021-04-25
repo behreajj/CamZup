@@ -3687,17 +3687,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.lightPosition[num4] = x * this.modelview.m00 +
                                  y * this.modelview.m01 +
                                  z * this.modelview.m02 +
-                                 this.modelview.m03;
+                                     this.modelview.m03;
 
       this.lightPosition[num4 + 1] = x * this.modelview.m10 +
                                      y * this.modelview.m11 +
                                      z * this.modelview.m12 +
-                                     this.modelview.m13;
+                                         this.modelview.m13;
 
       this.lightPosition[num4 + 2] = x * this.modelview.m20 +
                                      y * this.modelview.m21 +
                                      z * this.modelview.m22 +
-                                     this.modelview.m23;
+                                         this.modelview.m23;
       /* @formatter:on */
 
       /*
