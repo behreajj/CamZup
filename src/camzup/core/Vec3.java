@@ -2978,8 +2978,6 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the sign
-    *
-    * @see Utils#sign(float)
     */
    public static Vec3 sign ( final Vec3 v, final Vec3 target ) {
 

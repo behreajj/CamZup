@@ -4,16 +4,17 @@ import java.util.Comparator;
 import java.util.Random;
 
 /**
- * A mutable, extensible class influenced by GLSL. This is intended to
- * serve as a parent class for colors. Instance methods are limited, while
- * most static methods require an explicit output variable to be provided.
+ * A mutable, extensible class influenced by GLSL. Instance methods are
+ * limited, while most static methods require an explicit output variable
+ * to be provided.<br>
+ * <br>
+ * May also be used to store color in HSLA and HSVA color spaces.
  */
 public class Vec4 implements Comparable < Vec4 > {
 
    /**
     * Component on the w axis. Commonly used to store 1.0 for points and 0.0
-    * for vectors when multiplying with a 4 x 4 matrix. Also used to store
-    * alpha (transparency) for HSB colors.
+    * for vectors when multiplying with a 4 x 4 matrix.
     */
    public float w = 0.0f;
 
@@ -301,7 +302,20 @@ public class Vec4 implements Comparable < Vec4 > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(96);
+      return this.toString(new StringBuilder(96), places).toString();
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * vectors. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
       sb.append("{ x: ");
       Utils.toFixed(sb, this.x, places);
       sb.append(", y: ");
@@ -312,7 +326,7 @@ public class Vec4 implements Comparable < Vec4 > {
       Utils.toFixed(sb, this.w, places);
       sb.append(' ');
       sb.append('}');
-      return sb.toString();
+      return sb;
    }
 
    /**
@@ -483,6 +497,118 @@ public class Vec4 implements Comparable < Vec4 > {
    public static Vec4 back ( final Vec4 target ) {
 
       return target.set(0.0f, -1.0f, 0.0f, 0.0f);
+   }
+
+   /**
+    * Returns a point on a Bezier curve described by two anchor points and two
+    * control points according to a step in [0.0, 1.0] . When the step is less
+    * than zero, returns the first anchor point. When the step is greater than
+    * one, returns the second anchor point.
+    *
+    * @param ap0    the first anchor point
+    * @param cp0    the first control point
+    * @param cp1    the second control point
+    * @param ap1    the second anchor point
+    * @param step   the step
+    * @param target the output vector
+    *
+    * @return the point along the curve
+    */
+   public static Vec4 bezierPoint ( final Vec4 ap0, final Vec4 cp0,
+      final Vec4 cp1, final Vec4 ap1, final float step, final Vec4 target ) {
+
+      if ( step <= 0.0f ) {
+         return target.set(ap0);
+      } else if ( step >= 1.0f ) { return target.set(ap1); }
+
+      final float u = 1.0f - step;
+      float tcb = step * step;
+      float ucb = u * u;
+      final float usq3t = ucb * ( step + step + step );
+      final float tsq3u = tcb * ( u + u + u );
+      ucb *= u;
+      tcb *= step;
+
+      return target.set(ap0.x * ucb + cp0.x * usq3t + cp1.x * tsq3u + ap1.x
+         * tcb, ap0.y * ucb + cp0.y * usq3t + cp1.y * tsq3u + ap1.y * tcb, ap0.z
+            * ucb + cp0.z * usq3t + cp1.z * tsq3u + ap1.z * tcb, ap0.w * ucb
+               + cp0.w * usq3t + cp1.w * tsq3u + ap1.w * tcb);
+   }
+
+   /**
+    * Returns a tangent on a Bezier curve described by two anchor points and
+    * two control points according to a step in [0.0, 1.0] . When the step is
+    * less than zero, returns the first anchor point subtracted from the first
+    * control point. When the step is greater than one, returns the second
+    * anchor point subtracted from the second control point.
+    *
+    * @param ap0    the first anchor point
+    * @param cp0    the first control point
+    * @param cp1    the second control point
+    * @param ap1    the second anchor point
+    * @param step   the step
+    * @param target the output vector
+    *
+    * @return the tangent along the curve
+    *
+    * @see Vec4#sub(Vec4, Vec4, Vec4)
+    */
+   public static Vec4 bezierTangent ( final Vec4 ap0, final Vec4 cp0,
+      final Vec4 cp1, final Vec4 ap1, final float step, final Vec4 target ) {
+
+      if ( step <= 0.0f ) {
+         return Vec4.sub(cp0, ap0, target);
+      } else if ( step >= 1.0f ) { return Vec4.sub(ap1, cp1, target); }
+
+      final float u = 1.0f - step;
+      final float t3 = step + step + step;
+      final float usq3 = u * ( u + u + u );
+      final float tsq3 = step * t3;
+      final float ut6 = u * ( t3 + t3 );
+
+      /* @formatter:off */
+      return target.set(
+         ( cp0.x - ap0.x ) * usq3 +
+         ( cp1.x - cp0.x ) * ut6 +
+         ( ap1.x - cp1.x ) * tsq3,
+
+         ( cp0.y - ap0.y ) * usq3 +
+         ( cp1.y - cp0.y ) * ut6 +
+         ( ap1.y - cp1.y ) * tsq3,
+
+         ( cp0.z - ap0.z ) * usq3 +
+         ( cp1.z - cp0.z ) * ut6 +
+         ( ap1.z - cp1.z ) * tsq3,
+
+         ( cp0.w - ap0.w ) * usq3 +
+         ( cp1.w - cp0.w ) * ut6 +
+         ( ap1.w - cp1.w ) * tsq3);
+      /* @formatter:on */
+   }
+
+   /**
+    * Returns a normalized tangent on a Bezier curve.
+    *
+    * @param ap0    the first anchor point
+    * @param cp0    the first control point
+    * @param cp1    the second control point
+    * @param ap1    the second anchor point
+    * @param step   the step
+    * @param target the output vector
+    *
+    * @return the tangent along the curve
+    *
+    * @see Vec4#bezierTangent(Vec4, Vec4, Vec4, Vec4, float, Vec4)
+    * @see Utils#invSqrtUnchecked(float)
+    */
+   public static Vec4 bezierTanUnit ( final Vec4 ap0, final Vec4 cp0,
+      final Vec4 cp1, final Vec4 ap1, final float step, final Vec4 target ) {
+
+      Vec4.bezierTangent(ap0, cp0, cp1, ap1, step, target);
+      final float mInv = Utils.invSqrtUnchecked(target.x * target.x + target.y
+         * target.y + target.z * target.z + target.w * target.w);
+      return target.set(target.x * mInv, target.y * mInv, target.z * mInv,
+         target.w * mInv);
    }
 
    /**
@@ -2005,8 +2131,6 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param target the output vector
     *
     * @return the sign
-    *
-    * @see Utils#sign(float)
     */
    public static Vec4 sign ( final Vec4 v, final Vec4 target ) {
 

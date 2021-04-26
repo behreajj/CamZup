@@ -1472,8 +1472,8 @@ public class Color implements Comparable < Color > {
             - 0.055d ), source.g <= 0.0031308f ? source.g * 12.92f
                : ( float ) ( Math.pow(source.g, 0.4166666666666667d) * 1.055d
                   - 0.055d ), source.b <= 0.0031308f ? source.b * 12.92f
-                     : ( float ) ( Math.pow(source.b, 0.4166666666666667d)
-                        * 1.055d - 0.055d ), source.a);
+                     : ( float ) ( Math.pow(
+            source.b, 0.4166666666666667d) * 1.055d - 0.055d ), source.a);
    }
 
    /**
@@ -1524,7 +1524,7 @@ public class Color implements Comparable < Color > {
     * @param c the color
     *
     * @return the luminance
-    * 
+    *
     * @see Color#sRgbLuminance(Color)
     */
    public static float luminance ( final Color c ) {
@@ -1538,7 +1538,7 @@ public class Color implements Comparable < Color > {
     * @param c the color
     *
     * @return the luminance
-    * 
+    *
     * @see Color#sRgbLuminance(int)
     */
    public static float luminance ( final int c ) {
@@ -2047,8 +2047,8 @@ public class Color implements Comparable < Color > {
          : ( float ) Math.pow( ( source.r + 0.055d ) * 0.9478672985781991d,
             2.4d), source.g <= 0.04045f ? source.g * 0.07739938f
                : ( float ) Math.pow( ( source.g + 0.055d )
-                  * 0.9478672985781991d, 2.4d), source.g <= 0.04045f ? source.g
-                     * 0.07739938f : ( float ) Math.pow( ( source.g + 0.055d )
+                  * 0.9478672985781991d, 2.4d), source.b <= 0.04045f ? source.b
+                     * 0.07739938f : ( float ) Math.pow( ( source.b + 0.055d )
                         * 0.9478672985781991d, 2.4d), source.a);
    }
 

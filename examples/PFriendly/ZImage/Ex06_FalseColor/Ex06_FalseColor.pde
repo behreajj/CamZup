@@ -8,7 +8,8 @@ PImage source;
 PImage target;
 
 Yup2 graphics;
-Gradient grd = Gradient.paletteSepia(new Gradient());
+Gradient lcd = Gradient.paletteLcd(new Gradient());
+Gradient sepia = Gradient.paletteSepia(new Gradient());
 
 void settings() {
   size(720, 405, Yup2.PATH_STR);
@@ -20,7 +21,7 @@ void setup() {
 
   source = loadImage("callingStMatthew.jpg");
   target = source.get();
-  ZImage.falseColor(grd, target);
+  ZImage.falseColor(lcd, target);
 }
 
 void draw() {

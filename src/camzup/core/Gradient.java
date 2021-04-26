@@ -64,8 +64,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final float lum = Color.sRgbLuminance(color);
       final float vf = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math.pow(
          lum, 0.4166666666666667d) * 1.055d - 0.055d );
-      final float step = Utils.lerp(IUtils.ONE_THIRD,
-         IUtils.TWO_THIRDS, vf);
+      final float step = Utils.lerp(IUtils.ONE_THIRD, IUtils.TWO_THIRDS, vf);
 
       this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, color.a));
       this.keys.add(new ColorKey(step, color));
@@ -842,6 +841,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
        * contain a minimum of only 1, they default to 2 keys when created.
        */
 
+      // TODO: Evaluate with a standard to linear mixer?
       final Color[] clrs = Gradient.evalRange(this, Utils.clamp(samples, 2,
          32));
       final int len = clrs.length;
@@ -1370,7 +1370,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @param target the output gradient
     *
     * @return the gradient
-    * 
+    *
     * @see Color#sRgbLuminance(Color)
     */
    public static Gradient keysByLuminance ( final Gradient source,

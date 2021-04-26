@@ -2604,8 +2604,6 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param target the output vector
     *
     * @return the sign
-    *
-    * @see Utils#sign(float)
     */
    public static Vec2 sign ( final Vec2 v, final Vec2 target ) {
 
