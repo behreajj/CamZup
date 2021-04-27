@@ -121,6 +121,8 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
    /**
     * Tests this curve for equality with another object.
     *
+    * @param obj the object
+    *
     * @return the evaluation
     */
    @Override
@@ -252,6 +254,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
          this.knots.add(j, knot);
          ++j;
       }
+
       return this;
    }
 
@@ -335,11 +338,14 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
       } else if ( diff > 0 ) {
          for ( int i = 0; i < diff; ++i ) { this.knots.add(new KnotSphere()); }
       }
+
       return this;
    }
 
    /**
     * Tests this curve for equality with another.
+    *
+    * @param curve the curve
     *
     * @return the evaluation
     */
@@ -654,7 +660,11 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
       // KnotSphere prev = first;
       while ( itr.hasNext() ) {
          final KnotSphere curr = itr.next();
-         KnotSphere.random(rng, curr);
+
+         Quaternion.random(rng, curr.coord);
+         Quaternion.random(rng, curr.foreHandle);
+         Quaternion.random(rng, curr.rearHandle);
+
          // Quaternion.innerQuadrangle(prev.coord, prev.foreHandle,
          // curr.rearHandle, curr.coord, prev.foreHandle, curr.rearHandle,
          // new Quaternion());

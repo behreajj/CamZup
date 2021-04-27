@@ -255,6 +255,8 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
     * and scaling by the maximum dimension.
     *
     * @return this curve entity.
+    * 
+    * @see Curve2#accumMinMax(Curve2, Vec2, Vec2)
     */
    public CurveEntity2 reframe ( ) {
 
@@ -288,6 +290,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
     * @return this entity
     *
     * @see Transform2#invMulPoint(Transform2, Vec2, Vec2)
+    * @see Curve2#relocateKnot(int, Vec2)
     */
    @Experimental
    public CurveEntity2 relocateKnot ( final int curveIndex, final int knotIndex,
@@ -789,7 +792,8 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
    /**
     * Internal helper function. Writes the curve entity as a single SVG path
-    * with sub-paths.
+    * with sub-paths. The fill rule may be either <code>"evenodd"</code> or
+    * <code>"nonzero"</code> (default).
     *
     * @param svgp        the string builder
     * @param fillRule    the fill rule

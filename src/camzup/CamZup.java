@@ -55,6 +55,10 @@ public class CamZup {
 
       // TODO: Add delta time or elapsed time.
       // https://github.com/processing/processing/issues/6070
+
+      Color x = Color.fromHex(0x00aabbcc, new Color());
+      String y = Color.toHexString(x);
+      System.out.println(y);
    }
 
    /**

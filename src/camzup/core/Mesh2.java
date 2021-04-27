@@ -2221,7 +2221,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Internal helper function to append a mesh path to a
     * {@link StringBuilder}; the id is written to the path's id. The fill rule
-    * may be either "evenodd" or "nonzero" (default).
+    * may be either <code>"evenodd"</code> or <code>"nonzero"</code>
+    * (default).
     *
     * @param svgp     the string builder
     * @param id       the path id

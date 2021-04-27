@@ -41,7 +41,8 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Creates a knot from real numbers.
+    * Creates a knot from a coordinates and fore handle. The rear handle is a
+    * mirror of the fore handle.
     *
     * @param xCoord the x coordinate
     * @param yCoord the y coordinate
@@ -86,7 +87,7 @@ public class Knot2 implements Comparable < Knot2 > {
 
    /**
     * Creates a knot from a coordinate and fore handle. The rear handle is a
-    * mirror of the fore.
+    * mirror of the fore handle.
     *
     * @param coord      the coordinate
     * @param foreHandle the fore handle
@@ -175,19 +176,19 @@ public class Knot2 implements Comparable < Knot2 > {
     */
    public Knot2 alignHandlesBackward ( ) {
 
-      final float cox = this.coord.x;
-      final float coy = this.coord.y;
+      final float xCoord = this.coord.x;
+      final float yCoord = this.coord.y;
 
-      final float rearDirx = this.rearHandle.x - cox;
-      final float rearDiry = this.rearHandle.y - coy;
+      final float xRear = this.rearHandle.x - xCoord;
+      final float yRear = this.rearHandle.y - yCoord;
 
-      final float rmsq = rearDirx * rearDirx + rearDiry * rearDiry;
+      final float rmsq = xRear * xRear + yRear * yRear;
       if ( rmsq > 0.0f ) {
-         final float flipRescale = -Utils.hypot(this.foreHandle.x - cox,
-            this.foreHandle.y - coy) * Utils.invSqrtUnchecked(rmsq);
+         final float flipRescale = -Utils.hypot(this.foreHandle.x - xCoord,
+            this.foreHandle.y - yCoord) * Utils.invSqrtUnchecked(rmsq);
 
-         this.foreHandle.x = rearDirx * flipRescale + cox;
-         this.foreHandle.y = rearDiry * flipRescale + coy;
+         this.foreHandle.x = xRear * flipRescale + xCoord;
+         this.foreHandle.y = yRear * flipRescale + yCoord;
       }
 
       return this;
@@ -204,19 +205,19 @@ public class Knot2 implements Comparable < Knot2 > {
     */
    public Knot2 alignHandlesForward ( ) {
 
-      final float cox = this.coord.x;
-      final float coy = this.coord.y;
+      final float xCoord = this.coord.x;
+      final float yCoord = this.coord.y;
 
-      final float foreDirx = this.foreHandle.x - cox;
-      final float foreDiry = this.foreHandle.y - coy;
+      final float xFore = this.foreHandle.x - xCoord;
+      final float yFore = this.foreHandle.y - yCoord;
 
-      final float fmsq = foreDirx * foreDirx + foreDiry * foreDiry;
+      final float fmsq = xFore * xFore + yFore * yFore;
       if ( fmsq > 0.0f ) {
-         final float flipRescale = -Utils.hypot(this.rearHandle.x - cox,
-            this.rearHandle.y - coy) * Utils.invSqrtUnchecked(fmsq);
+         final float flipRescale = -Utils.hypot(this.rearHandle.x - xCoord,
+            this.rearHandle.y - yCoord) * Utils.invSqrtUnchecked(fmsq);
 
-         this.rearHandle.x = foreDirx * flipRescale + cox;
-         this.rearHandle.y = foreDiry * flipRescale + coy;
+         this.rearHandle.x = xFore * flipRescale + xCoord;
+         this.rearHandle.y = yFore * flipRescale + yCoord;
       }
 
       return this;
@@ -315,6 +316,9 @@ public class Knot2 implements Comparable < Knot2 > {
     * @param v the location
     *
     * @return this knot
+    *
+    * @see Vec2#sub(Vec2, Vec2, Vec2)
+    * @see Vec2#add(Vec2, Vec2, Vec2)
     */
    @Experimental
    public Knot2 relocate ( final Vec2 v ) {
@@ -646,7 +650,7 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Sets the knot's coordinates and fore handle. The rear handle is a mirror
+    * Sets the knot's coordinate and fore handle. The rear handle is a mirror
     * of the forehandle.
     *
     * @param xCoord the x coordinate
@@ -1273,24 +1277,6 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Mixes two knots together by a step in [0.0, 1.0] with the help of an
-    * easing function.
-    *
-    * @param origin     the original knot
-    * @param dest       the destination knot
-    * @param step       the step
-    * @param target     the output knot
-    * @param easingFunc the easing function
-    *
-    * @return the mix
-    */
-   public static Knot2 mix ( final Knot2 origin, final Knot2 dest,
-      final float step, final Knot2 target, final AbstrEasing easingFunc ) {
-
-      return easingFunc.apply(origin, dest, step, target);
-   }
-
-   /**
     * Gets the rear handle of a knot as a direction, rather than as a point.
     *
     * @param knot   the knot
@@ -1353,25 +1339,25 @@ public class Knot2 implements Comparable < Knot2 > {
       final Vec2 coPrev = prev.coord;
       final Vec2 coNext = next.coord;
 
-      final float backx = coPrev.x - coCurr.x;
-      final float backy = coPrev.y - coCurr.y;
+      final float xRear = coPrev.x - coCurr.x;
+      final float yRear = coPrev.y - coCurr.y;
 
-      final float forex = coNext.x - coCurr.x;
-      final float forey = coNext.y - coCurr.y;
+      final float xFore = coNext.x - coCurr.x;
+      final float yFore = coNext.y - coCurr.y;
 
-      final float bmSq = backx * backx + backy * backy;
+      final float bmSq = xRear * xRear + yRear * yRear;
       final float bmInv = Utils.invSqrt(bmSq);
 
-      final float fmSq = forex * forex + forey * forey;
+      final float fmSq = xFore * xFore + yFore * yFore;
       final float fmInv = Utils.invSqrt(fmSq);
 
-      final float dirx = carry.x + backx * bmInv - forex * fmInv;
-      final float diry = carry.y + backy * bmInv - forey * fmInv;
+      final float xDir = carry.x + xRear * bmInv - xFore * fmInv;
+      final float yDir = carry.y + yRear * bmInv - yFore * fmInv;
 
-      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(dirx * dirx + diry
-         * diry);
-      carry.x = dirx * rescl;
-      carry.y = diry * rescl;
+      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(xDir * xDir + yDir
+         * yDir);
+      carry.x = xDir * rescl;
+      carry.y = yDir * rescl;
 
       final float bMag = bmSq * bmInv;
       curr.rearHandle.set(coCurr.x + bMag * carry.x, coCurr.y + bMag * carry.y);
@@ -1398,32 +1384,26 @@ public class Knot2 implements Comparable < Knot2 > {
       final Vec2 coCurr = curr.coord;
       final Vec2 coNext = next.coord;
 
-      final float backx = -coCurr.x;
-      final float backy = -coCurr.y;
+      final float xRear = -coCurr.x;
+      final float yRear = -coCurr.y;
 
-      final float forex = coNext.x + backx;
-      final float forey = coNext.y + backy;
+      final float xFore = coNext.x + xRear;
+      final float yFore = coNext.y + yRear;
 
-      final float bmSq = backx * backx + backy * backy;
+      final float bmSq = xRear * xRear + yRear * yRear;
       final float bmInv = Utils.invSqrt(bmSq);
 
-      final float fmSq = forex * forex + forey * forey;
+      final float fmSq = xFore * xFore + yFore * yFore;
       final float fmInv = Utils.invSqrt(fmSq);
       final float fMag = fmSq * fmInv;
 
-      final float dirx = carry.x + backx * bmInv - forex * fmInv;
-      final float diry = carry.y + backy * bmInv - forey * fmInv;
+      final float xDir = carry.x + xRear * bmInv - xFore * fmInv;
+      final float yDir = carry.y + yRear * bmInv - yFore * fmInv;
 
-      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(dirx * dirx + diry
-         * diry);
-      carry.x = dirx * rescl;
-      carry.y = diry * rescl;
-
-      // Should this just be a mirror of the fore handle instead?
-      // final float bMag = bmSq * bmInv;
-      // currKnot.rearHandle.set(
-      // coCurr.x + bMag * dir.x,
-      // coCurr.y + bMag * dir.y);
+      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(xDir * xDir + yDir
+         * yDir);
+      carry.x = xDir * rescl;
+      carry.y = yDir * rescl;
 
       curr.foreHandle.set(coCurr.x - fMag * carry.x, coCurr.y - fMag * carry.y);
 
@@ -1446,34 +1426,28 @@ public class Knot2 implements Comparable < Knot2 > {
       final Vec2 coCurr = curr.coord;
       final Vec2 coPrev = prev.coord;
 
-      final float forex = -coCurr.x;
-      final float forey = -coCurr.y;
+      final float xFore = -coCurr.x;
+      final float yFore = -coCurr.y;
 
-      final float backx = coPrev.x + forex;
-      final float backy = coPrev.y + forey;
+      final float xRear = coPrev.x + xFore;
+      final float yRear = coPrev.y + yFore;
 
-      final float bmSq = backx * backx + backy * backy;
+      final float bmSq = xRear * xRear + yRear * yRear;
       final float bmInv = Utils.invSqrt(bmSq);
       final float bMag = bmSq * bmInv;
 
-      final float fmSq = forex * forex + forey * forey;
+      final float fmSq = xFore * xFore + yFore * yFore;
       final float fmInv = Utils.invSqrt(fmSq);
 
-      final float dirx = carry.x + backx * bmInv - forex * fmInv;
-      final float diry = carry.y + backy * bmInv - forey * fmInv;
+      final float xDir = carry.x + xRear * bmInv - xFore * fmInv;
+      final float yDir = carry.y + yRear * bmInv - yFore * fmInv;
 
-      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(dirx * dirx + diry
-         * diry);
-      carry.x = dirx * rescl;
-      carry.y = diry * rescl;
+      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(xDir * xDir + yDir
+         * yDir);
+      carry.x = xDir * rescl;
+      carry.y = yDir * rescl;
 
       curr.rearHandle.set(coCurr.x + bMag * carry.x, coCurr.y + bMag * carry.y);
-
-      // Should this just be a mirror of the rear handle instead?
-      // final float fMag = fmSq * fmInv;
-      // currKnot.foreHandle.set(
-      // coCurr.x - fMag * dir.x,
-      // coCurr.y - fMag * dir.y);
 
       return curr;
    }
@@ -1535,9 +1509,10 @@ public class Knot2 implements Comparable < Knot2 > {
       public Knot2 apply ( final Knot2 origin, final Knot2 dest,
          final Float step, final Knot2 target ) {
 
-         if ( step <= 0.0f ) { return target.set(origin); }
-         if ( step >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, step, target);
+         final float t = step;
+         if ( t <= 0.0f ) { return target.set(origin); }
+         if ( t >= 1.0f ) { return target.set(dest); }
+         return this.applyUnclamped(origin, dest, t, target);
       }
 
       /**

@@ -411,29 +411,6 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Fills an image with a gradient in place. The gradient is horizontal.
-    * Colors are interpolated in sRGB color space.
-    *
-    * @param grd    the gradient
-    * @param target the target image
-    *
-    * @return the image
-    */
-   public static PImage fill ( final Gradient grd, final PImage target ) {
-
-      target.loadPixels();
-      final int w = target.width;
-      final int[] pixels = target.pixels;
-      final int len = pixels.length;
-      final float wInv = 1.0f / ( w - 1.0f );
-      for ( int i = 0; i < len; ++i ) {
-         pixels[i] = Gradient.eval(grd, i % w * wInv);
-      }
-      target.updatePixels();
-      return target;
-   }
-
-   /**
     * Fills an image with a color in place.
     *
     * @param fll    the fill color
@@ -1034,7 +1011,7 @@ public class ZImage extends PImage {
    /**
     * Generates a linear gradient from an origin point to a destination point.
     * The origin and destination should be in the range [-1.0, 1.0]. The
-    * gradient factor is clamped to [0.0, 1.0].
+    * scalar projection is clamped to [0.0, 1.0].
     *
     * @param xOrigin the origin x coordinate
     * @param yOrigin the origin y coordinate
@@ -1078,8 +1055,31 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Generates a horizontal linear gradient.
+    *
+    * @param grd    the gradient
+    * @param target the target image
+    *
+    * @return the image
+    */
+   public static PImage linear ( final Gradient grd, final PImage target ) {
+
+      target.loadPixels();
+      final int w = target.width;
+      final int[] pixels = target.pixels;
+      final int len = pixels.length;
+      final float wInv = 1.0f / ( w - 1.0f );
+      for ( int i = 0; i < len; ++i ) {
+         pixels[i] = Gradient.eval(grd, i % w * wInv);
+      }
+      target.updatePixels();
+      return target;
+   }
+
+   /**
     * Generates a linear gradient from an origin point to a destination point.
-    * The value is clamped to a range [0.0, 1.0] .
+    * The origin and destination should be in the range [-1.0, 1.0]. The
+    * scalar projection is clamped to [0.0, 1.0].
     *
     * @param origin the origin
     * @param dest   the destination

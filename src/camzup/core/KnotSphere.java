@@ -1,7 +1,5 @@
 package camzup.core;
 
-import java.util.Random;
-
 /**
  * Organizes the quaternions that shape a Bezier curve on the surface of a
  * sphere into a sphere coordinate (or anchor point), fore handle (the
@@ -347,26 +345,6 @@ public class KnotSphere implements Comparable < KnotSphere > {
 
       return this.coord.equals(other.coord) && this.foreHandle.equals(
          other.foreHandle) && this.rearHandle.equals(other.rearHandle);
-   }
-
-   /**
-    * Creates a random knot by calling
-    * {@link Quaternion#random(java.util.Random, Quaternion)} for each of its
-    * components.
-    *
-    * @param rng    the random number generator
-    * @param target the output knot
-    *
-    * @return the knot
-    */
-   public static KnotSphere random ( final Random rng,
-      final KnotSphere target ) {
-
-      Quaternion.random(rng, target.coord);
-      Quaternion.random(rng, target.foreHandle);
-      Quaternion.random(rng, target.rearHandle);
-
-      return target;
    }
 
    /**

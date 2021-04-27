@@ -1472,8 +1472,8 @@ public class Color implements Comparable < Color > {
             - 0.055d ), source.g <= 0.0031308f ? source.g * 12.92f
                : ( float ) ( Math.pow(source.g, 0.4166666666666667d) * 1.055d
                   - 0.055d ), source.b <= 0.0031308f ? source.b * 12.92f
-                     : ( float ) ( Math.pow(
-            source.b, 0.4166666666666667d) * 1.055d - 0.055d ), source.a);
+                     : ( float ) ( Math.pow(source.b, 0.4166666666666667d)
+                        * 1.055d - 0.055d ), source.a);
    }
 
    /**
@@ -2184,12 +2184,17 @@ public class Color implements Comparable < Color > {
     *
     * @return the string
     *
-    * @see Color#toHexInt(Color)
-    * @see Color#toHexString(int)
+    * @see Color#toHexString(byte, StringBuilder)
     */
    public static String toHexString ( final Color c ) {
 
-      return Color.toHexString(Color.toHexInt(c));
+      final StringBuilder sb = new StringBuilder(10);
+      sb.append("0x");
+      Color.toHexString(( byte ) ( c.a * 0xff + 0.5f ), sb);
+      Color.toHexString(( byte ) ( c.r * 0xff + 0.5f ), sb);
+      Color.toHexString(( byte ) ( c.g * 0xff + 0.5f ), sb);
+      Color.toHexString(( byte ) ( c.b * 0xff + 0.5f ), sb);
+      return sb.toString();
    }
 
    /**
@@ -2200,11 +2205,17 @@ public class Color implements Comparable < Color > {
     *
     * @return the string
     *
-    * @see Integer#toHexString(int)
+    * @see Color#toHexString(byte, StringBuilder)
     */
    public static String toHexString ( final int c ) {
 
-      return "0x" + Integer.toHexString(c);
+      final StringBuilder sb = new StringBuilder(10);
+      sb.append("0x");
+      Color.toHexString(( byte ) ( c >> 0x18 & 0xff ), sb);
+      Color.toHexString(( byte ) ( c >> 0x10 & 0xff ), sb);
+      Color.toHexString(( byte ) ( c >> 0x08 & 0xff ), sb);
+      Color.toHexString(( byte ) ( c & 0xff ), sb);
+      return sb.toString();
    }
 
    /**
@@ -2362,7 +2373,7 @@ public class Color implements Comparable < Color > {
 
    /**
     * Mixes two colors by a step in the range [0.0, 1.0] with linear
-    * interpolation.
+    * interpolation in standard RGB.
     *
     * @param origin the origin color
     * @param dest   the destination color
@@ -3218,7 +3229,7 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Eases between two colors in sRGB, i.e., with no gamma correction using
+    * Eases between two colors in sRGB, i.e., with no gamma correction, using
     * the smooth step formula: <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> )
     * .
     */

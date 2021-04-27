@@ -599,13 +599,13 @@ public class Vec4 implements Comparable < Vec4 > {
     * @return the tangent along the curve
     *
     * @see Vec4#bezierTangent(Vec4, Vec4, Vec4, Vec4, float, Vec4)
-    * @see Utils#invSqrtUnchecked(float)
+    * @see Utils#invSqrt(float)
     */
    public static Vec4 bezierTanUnit ( final Vec4 ap0, final Vec4 cp0,
       final Vec4 cp1, final Vec4 ap1, final float step, final Vec4 target ) {
 
       Vec4.bezierTangent(ap0, cp0, cp1, ap1, step, target);
-      final float mInv = Utils.invSqrtUnchecked(target.x * target.x + target.y
+      final float mInv = Utils.invSqrt(target.x * target.x + target.y
          * target.y + target.z * target.z + target.w * target.w);
       return target.set(target.x * mInv, target.y * mInv, target.z * mInv,
          target.w * mInv);
@@ -1968,6 +1968,29 @@ public class Vec4 implements Comparable < Vec4 > {
    public static Vec4 random ( final Random rng, final Vec4 target ) {
 
       return Vec4.randomSpherical(rng, 1.0f, 1.0f, target);
+   }
+
+   /**
+    * Creates a random point in the Cartesian coordinate system given a lower
+    * and an upper bound.
+    *
+    * @param rng        the random number generator
+    * @param lowerBound the lower bound
+    * @param upperBound the upper bound
+    * @param target     the output vector
+    *
+    * @return the random vector
+    */
+   public static Vec4 randomCartesian ( final Random rng,
+      final float lowerBound, final float upperBound, final Vec4 target ) {
+
+      final float rx = rng.nextFloat();
+      final float ry = rng.nextFloat();
+      final float rz = rng.nextFloat();
+      final float rw = rng.nextFloat();
+      return target.set( ( 1.0f - rx ) * lowerBound + rx * upperBound, ( 1.0f
+         - ry ) * lowerBound + ry * upperBound, ( 1.0f - rz ) * lowerBound + rz
+            * upperBound, ( 1.0f - rw ) * lowerBound + rw * upperBound);
    }
 
    /**

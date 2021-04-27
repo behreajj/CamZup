@@ -147,6 +147,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param kn the knot
     *
     * @return the evaluation
+    * 
+    * @see List#contains(Object)
     */
    public boolean contains ( final Knot2 kn ) {
 
@@ -155,6 +157,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
    /**
     * Tests this curve for equality with another object.
+    *
+    * @param obj the object
     *
     * @return the evaluation
     */
@@ -263,6 +267,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param knot the knot
     *
     * @return the curve
+    * 
+    * @see Utils#mod(int, int)
+    * @see List#add(int, Object)
     */
    public Curve2 insert ( final int i, final Knot2 knot ) {
 
@@ -281,6 +288,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param kn the knots
     *
     * @return this curve
+    * 
+    * @see Utils#mod(int, int)
+    * @see List#addAll(int, Collection)
     */
    public Curve2 insertAll ( final int i, final Collection < Knot2 > kn ) {
 
@@ -298,6 +308,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param kn the knots
     *
     * @return this curve
+    * 
+    * @see Utils#mod(int, int)
+    * @see List#add(int, Object)
     */
    public Curve2 insertAll ( final int i, final Knot2... kn ) {
 
@@ -356,6 +369,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param kn the collection of knots
     *
     * @return this curve.
+    * 
+    * @see List#addAll(int, Collection)
     */
    public Curve2 prependAll ( final Collection < Knot2 > kn ) {
 
@@ -453,6 +468,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return the knot
     *
+    * @see Utils#mod(int, int)
     * @see List#remove(int)
     * @see List#size()
     */
@@ -535,6 +551,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       while ( itr.hasNext() ) { itr.next().rotateZ(cosa, sina); }
+
       return this;
    }
 
@@ -553,6 +570,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          final Iterator < Knot2 > itr = this.knots.iterator();
          while ( itr.hasNext() ) { itr.next().scale(scale); }
       }
+
       return this;
    }
 
@@ -563,6 +581,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return this curve
     *
+    * @see Vec2#all(Vec2)
     * @see Knot2#scale(Vec2)
     */
    public Curve2 scale ( final Vec2 scale ) {
@@ -591,6 +610,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       this.closedLoop = source.closedLoop;
       this.materialIndex = source.materialIndex;
+
       return this;
    }
 
@@ -773,6 +793,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       } else if ( diff > 0 ) {
          for ( int i = 0; i < diff; ++i ) { this.knots.add(new Knot2()); }
       }
+
       return this;
    }
 
@@ -811,7 +832,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Internal helper function to append a curve path to a
     * {@link StringBuilder}; the id is written to the path's id. The fill rule
-    * may be either "evenodd" or "nonzero" (default).
+    * may be either <code>"evenodd"</code> or <code>"nonzero"</code>
+    * (default).
     *
     * @param svgp        the string builder
     * @param fillRule    the fill rule
@@ -919,7 +941,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          // svgp.append(' ');
          // svgp.append('Z');
          // }
-
       }
 
       return svgp;
@@ -940,6 +961,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
    /**
     * Tests this curve for equality with another.
+    *
+    * @param curve the curve
     *
     * @return the evaluation
     */
@@ -1501,6 +1524,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param target     the output curve
     *
     * @return the conversion
+    * 
+    * @see Knot2#fromSegCatmull(Vec2, Vec2, Vec2, Vec2, float, Knot2, Knot2)
+    * @see Knot2#mirrorHandlesForward()
+    * @see Knot2#mirrorHandlesBackward()
     */
    public static Curve2 fromCatmull ( final boolean closedLoop,
       final Vec2[] points, final float tightness, final Curve2 target ) {
@@ -1768,6 +1795,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param target     the target curve
     *
     * @return the random curve
+    * 
+    * @see Vec2#randomCartesian(Random, float, float, Vec2)
+    * @see Curve2#fromPoints(boolean, Vec2[], Curve2)
     */
    public static Curve2 random ( final Random rng, final int count,
       final float lowerBound, final float upperBound, final boolean closedLoop,
@@ -1795,6 +1825,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param target     the target curve
     *
     * @return the random curve
+    * 
+    * @see Vec2#randomCartesian(Random, Vec2, Vec2, Vec2)
+    * @see Curve2#fromPoints(boolean, Vec2[], Curve2)
     */
    public static Curve2 random ( final Random rng, final int count,
       final Vec2 lowerBound, final Vec2 upperBound, final boolean closedLoop,
@@ -1916,6 +1949,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @see Knot2#smoothHandles(Knot2, Knot2, Knot2, Vec2)
     * @see Knot2#smoothHandlesLast(Knot2, Knot2, Vec2)
     * @see Knot2#smoothHandlesFirst(Knot2, Knot2, Vec2)
+    * @see Knot2#mirrorHandlesForward()
+    * @see Knot2#mirrorHandlesBackward()
     */
    public static Curve2 smoothHandles ( final Curve2 target ) {
 
@@ -2245,8 +2280,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Creates a curve that forms a line with an origin and destination. This
-    * is package level to provide functionality for SVG parsing.
+    * Creates a curve that forms a line with an origin and destination.
     *
     * @param xOrigin the origin x
     * @param yOrigin the origin y
@@ -2255,6 +2289,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param target  the output curve
     *
     * @return the line
+    * 
+    * @see Curve2#lerp13(Vec2, Vec2, Vec2)
+    * @see Knot2#mirrorHandlesForward()
+    * @see Knot2#mirrorHandlesBackward()
     */
    static Curve2 line ( final float xOrigin, final float yOrigin,
       final float xDest, final float yDest, final Curve2 target ) {

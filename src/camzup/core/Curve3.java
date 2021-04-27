@@ -151,6 +151,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param kn the knot
     *
     * @return the evaluation
+    * 
+    * @see List#contains(Object)
     */
    public boolean contains ( final Knot3 kn ) {
 
@@ -159,6 +161,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
    /**
     * Tests this curve for equality with another object.
+    *
+    * @param obj the object
     *
     * @return the evaluation
     */
@@ -286,6 +290,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param knot the knot
     *
     * @return the curve
+    * 
+    * @see Utils#mod(int, int)
+    * @see List#add(int, Object)
     */
    public Curve3 insert ( final int i, final Knot3 knot ) {
 
@@ -304,6 +311,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param kn the knots
     *
     * @return this curve
+    * 
+    * @see Utils#mod(int, int)
+    * @see List#addAll(int, Collection)
     */
    public Curve3 insertAll ( final int i, final Collection < Knot3 > kn ) {
 
@@ -321,6 +331,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param kn the knots
     *
     * @return this curve
+    * 
+    * @see Utils#mod(int, int)
+    * @see List#add(int, Object)
     */
    public Curve3 insertAll ( final int i, final Knot3... kn ) {
 
@@ -379,6 +392,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param kn the collection of knots
     *
     * @return this curve.
+    * 
+    * @see List#addAll(int, Collection)
     */
    public Curve3 prependAll ( final Collection < Knot3 > kn ) {
 
@@ -470,6 +485,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public Curve3 relocateKnot ( final int i, final Vec3 v ) {
 
       this.get(i).relocate(v);
+
       return this;
    }
 
@@ -480,6 +496,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the knot
     *
+    * @see Utils#mod(int, int)
     * @see List#remove(int)
     * @see List#size()
     */
@@ -566,6 +583,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while ( itr.hasNext() ) { itr.next().rotate(cosa, sina, axis); }
+
       return this;
    }
 
@@ -670,7 +688,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve
     *
-    * @see Vec3#none(Vec3)
+    * @see Vec3#all(Vec3)
     * @see Knot3#scale(Vec3)
     */
    public Curve3 scale ( final Vec3 scale ) {
@@ -719,6 +737,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       this.closedLoop = source.closedLoop;
       this.materialIndex = source.materialIndex;
+
       return this;
    }
 
@@ -776,7 +795,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(64 + 256 * this.knots.size());
+      final StringBuilder sb = new StringBuilder(64 + 384 * this.knots.size());
       sb.append("{ name: \"");
       sb.append(this.name);
       sb.append("\", closedLoop: ");
@@ -877,6 +896,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       } else if ( diff > 0 ) {
          for ( int i = 0; i < diff; ++i ) { this.knots.add(new Knot3()); }
       }
+
       return this;
    }
 
@@ -935,6 +955,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
    /**
     * Tests this curve for equality with another.
+    *
+    * @param curve the curve
     *
     * @return the evaluation
     */
@@ -1362,6 +1384,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param target     the output curve
     *
     * @return the conversion
+    * 
+    * @see Knot3#fromSegCatmull(Vec3, Vec3, Vec3, Vec3, float, Knot3, Knot3)
+    * @see Knot3#mirrorHandlesForward()
+    * @see Knot3#mirrorHandlesBackward()
     */
    public static Curve3 fromCatmull ( final boolean closedLoop,
       final Vec3[] points, final float tightness, final Curve3 target ) {
@@ -1644,8 +1670,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Knot3#smoothHandles(Knot3, Knot3, Knot3, Vec3)
     * @see Knot3#smoothHandlesLast(Knot3, Knot3, Vec3)
     * @see Knot3#smoothHandlesFirst(Knot3, Knot3, Vec3)
-    * @see Knot3#mirrorHandlesBackward()
     * @see Knot3#mirrorHandlesForward()
+    * @see Knot3#mirrorHandlesBackward()
     */
    public static Curve3 smoothHandles ( final Curve3 target ) {
 
@@ -1794,9 +1820,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the knot
     *
-    * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
-    * @see Vec2#bezierTangent(Vec2, Vec2, Vec2, Vec2, float, Vec2)
-    * @see Vec2#add(Vec2, Vec2, Vec2)
+    * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float, Vec3)
+    * @see Vec3#bezierTangent(Vec3, Vec3, Vec3, Vec3, float, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    @Experimental
    static Knot3 bezierKnot ( final Knot3 a, final Knot3 b, final float step,
@@ -1882,8 +1908,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Creates a curve that forms a line with an origin and destination. This
-    * is package level to provide functionality for SVG parsing.
+    * Creates a curve that forms a line with an origin and destination.
     *
     * @param xOrigin the origin x
     * @param yOrigin the origin y
@@ -1894,6 +1919,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param target  the output curve
     *
     * @return the line
+    * 
+    * @see Curve3#lerp13(Vec3, Vec3, Vec3)
+    * @see Knot3#mirrorHandlesForward()
+    * @see Knot3#mirrorHandlesBackward()
     */
    static Curve3 line ( final float xOrigin, final float yOrigin,
       final float zOrigin, final float xDest, final float yDest,

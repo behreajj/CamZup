@@ -42,7 +42,8 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Creates a knot from real numbers.
+    * Creates a knot from a coordinate and fore handle. The rear handle is a
+    * mirror of the fore handle.
     *
     * @param xCoord the x coordinate
     * @param yCoord the y coordinate
@@ -79,7 +80,9 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Creates a knot from a source knot.
+    * Creates a knot from a 2D source knot.<br>
+    * <br>
+    * For the purpose of promoting 2D curves to 3D.
     *
     * @param source the source
     */
@@ -93,7 +96,9 @@ public class Knot3 implements Comparable < Knot3 > {
    public Knot3 ( final Knot3 source ) { this.set(source); }
 
    /**
-    * Creates a knot from a series of 3D vectors.
+    * Creates a knot from a series of 2D vectors.<br>
+    * <br>
+    * For the purpose of promoting 2D curves to 3D.
     *
     * @param coord      the coordinate
     * @param foreHandle the fore handle
@@ -113,8 +118,8 @@ public class Knot3 implements Comparable < Knot3 > {
    public Knot3 ( final Vec3 coord ) { this.set(coord); }
 
    /**
-    * Creates a knot from a coordinate and fore-handle. The rear handle is a
-    * mirror of the fore.
+    * Creates a knot from a coordinate and fore handle. The rear handle is a
+    * mirror of the fore handle.
     *
     * @param coord      the coordinate
     * @param foreHandle the fore handle
@@ -205,24 +210,23 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    public Knot3 alignHandlesBackward ( ) {
 
-      final float cox = this.coord.x;
-      final float coy = this.coord.y;
-      final float coz = this.coord.z;
+      final float xCoord = this.coord.x;
+      final float yCoord = this.coord.y;
+      final float zCoord = this.coord.z;
 
-      final float rearDirx = this.rearHandle.x - cox;
-      final float rearDiry = this.rearHandle.y - coy;
-      final float rearDirz = this.rearHandle.z - coz;
+      final float xRear = this.rearHandle.x - xCoord;
+      final float yRear = this.rearHandle.y - yCoord;
+      final float zRear = this.rearHandle.z - zCoord;
 
-      final float rmsq = rearDirx * rearDirx + rearDiry * rearDiry + rearDirz
-         * rearDirz;
+      final float rmsq = xRear * xRear + yRear * yRear + zRear * zRear;
       if ( rmsq > 0.0f ) {
-         final float flipRescale = -Utils.hypot(this.foreHandle.x - cox,
-            this.foreHandle.y - coy, this.foreHandle.z - coz) * Utils
+         final float flipRescale = -Utils.hypot(this.foreHandle.x - xCoord,
+            this.foreHandle.y - yCoord, this.foreHandle.z - zCoord) * Utils
                .invSqrtUnchecked(rmsq);
 
-         this.foreHandle.x = rearDirx * flipRescale + cox;
-         this.foreHandle.y = rearDiry * flipRescale + coy;
-         this.foreHandle.z = rearDirz * flipRescale + coz;
+         this.foreHandle.x = xRear * flipRescale + xCoord;
+         this.foreHandle.y = yRear * flipRescale + yCoord;
+         this.foreHandle.z = zRear * flipRescale + zCoord;
       }
 
       return this;
@@ -239,24 +243,23 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    public Knot3 alignHandlesForward ( ) {
 
-      final float cox = this.coord.x;
-      final float coy = this.coord.y;
-      final float coz = this.coord.z;
+      final float xCoord = this.coord.x;
+      final float yCoord = this.coord.y;
+      final float zCoord = this.coord.z;
 
-      final float foreDirx = this.foreHandle.x - cox;
-      final float foreDiry = this.foreHandle.y - coy;
-      final float foreDirz = this.foreHandle.z - coz;
+      final float xFore = this.foreHandle.x - xCoord;
+      final float yFore = this.foreHandle.y - yCoord;
+      final float zFore = this.foreHandle.z - zCoord;
 
-      final float fmsq = foreDirx * foreDirx + foreDiry * foreDiry + foreDirz
-         * foreDirz;
+      final float fmsq = xFore * xFore + yFore * yFore + zFore * zFore;
       if ( fmsq > 0.0f ) {
-         final float flipRescale = -Utils.hypot(this.rearHandle.x - cox,
-            this.rearHandle.y - coy, this.rearHandle.z - coz) * Utils
+         final float flipRescale = -Utils.hypot(this.rearHandle.x - xCoord,
+            this.rearHandle.y - yCoord, this.rearHandle.z - zCoord) * Utils
                .invSqrtUnchecked(fmsq);
 
-         this.rearHandle.x = foreDirx * flipRescale + cox;
-         this.rearHandle.y = foreDiry * flipRescale + coy;
-         this.rearHandle.z = foreDirz * flipRescale + coz;
+         this.rearHandle.x = xFore * flipRescale + xCoord;
+         this.rearHandle.y = yFore * flipRescale + yCoord;
+         this.rearHandle.z = zFore * flipRescale + zCoord;
       }
 
       return this;
@@ -357,6 +360,9 @@ public class Knot3 implements Comparable < Knot3 > {
     * @param v the location
     *
     * @return this knot
+    *
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    @Experimental
    public Knot3 relocate ( final Vec3 v ) {
@@ -428,6 +434,8 @@ public class Knot3 implements Comparable < Knot3 > {
     * @param q the quaternion
     *
     * @return this knot
+    *
+    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     */
    public Knot3 rotate ( final Quaternion q ) {
 
@@ -649,7 +657,6 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    public Knot3 scaleForeHandleBy ( final float scalar ) {
 
-      /* forehandle = coordinate + scalar * (forehandle - coordinate) */
       this.foreHandle.x = this.coord.x + scalar * ( this.foreHandle.x
          - this.coord.x );
       this.foreHandle.y = this.coord.y + scalar * ( this.foreHandle.y
@@ -778,7 +785,7 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Sets the knot's coordinates and fore handle. The rear handle is a mirror
+    * Sets the knot's coordinate and fore handle. The rear handle is a mirror
     * of the fore handle.
     *
     * @param xCoord the x coordinate
@@ -830,7 +837,9 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Sets this knot from a source knot.
+    * Sets this knot from a 2D source knot.<br>
+    * <br>
+    * For the purpose of promoting 2D curves to 3D.
     *
     * @param source the source
     *
@@ -854,7 +863,9 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Sets this knot from a series of 3D vectors.
+    * Sets this knot from a series of 2D vectors.<br>
+    * <br>
+    * For the purpose of promoting 2D curves to 3D.
     *
     * @param coord      the coordinate
     * @param foreHandle the fore handle
@@ -885,8 +896,8 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Sets the knot's coordinates and fore handle. The rear handle is a mirror
-    * of the forehandle.
+    * Sets the knot's coordinate and fore handle. The rear handle is a mirror
+    * of the fore handle.
     *
     * @param coord      the coordinate
     * @param foreHandle the fore handle
@@ -1093,7 +1104,7 @@ public class Knot3 implements Comparable < Knot3 > {
    public static Vec3 bezierTangent ( final Knot3 a, final Knot3 b,
       final float step, final Vec3 target ) {
 
-      return Vec3.bezierTanUnit(a.coord, a.foreHandle, b.rearHandle, b.coord,
+      return Vec3.bezierTangent(a.coord, a.foreHandle, b.rearHandle, b.coord,
          step, target);
    }
 
@@ -1240,120 +1251,6 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Sets two knots from a segment of a cubic curve. Assumes that the
-    * previous knot's coordinate is set to the first anchor point.<br>
-    * <br>
-    * The previous knot's fore handle, the next knot's rear handle and the
-    * next knot's coordinate are set by this function.
-    *
-    * @param xPrevControl the previous control point x
-    * @param yPrevControl the previous control point y
-    * @param zPrevControl the previous control point z
-    * @param xNextControl the next control point x
-    * @param yNextControl the next control point y
-    * @param zNextControl the next control point z
-    * @param xNextAnchor  the next anchor x
-    * @param yNextAnchor  the next anchor y
-    * @param zNextAnchor  the next anchor z
-    * @param prev         the previous knot
-    * @param next         the next knot
-    *
-    * @return next knot
-    */
-   public static Knot3 fromSegCubic ( final float xPrevControl,
-      final float yPrevControl, final float zPrevControl,
-      final float xNextControl, final float yNextControl,
-      final float zNextControl, final float xNextAnchor,
-      final float yNextAnchor, final float zNextAnchor, final Knot3 prev,
-      final Knot3 next ) {
-
-      prev.foreHandle.set(xPrevControl, yPrevControl, zPrevControl);
-      next.rearHandle.set(xNextControl, yNextControl, zNextControl);
-      next.coord.set(xNextAnchor, yNextAnchor, zNextAnchor);
-
-      return next;
-   }
-
-   /**
-    * Sets two knots from a segment of a cubic curve which reflect an existing
-    * segment.<br>
-    * <br>
-    * Assumes that the previous knot's coordinate is set to the first anchor
-    * point. The previous knot's fore handle, the next knot's rear handle and
-    * the next knot's coordinate are set by this function.
-    *
-    * @param nextControl the next control point
-    * @param nextAnchor  the next anchor
-    * @param prev        the previous knot
-    * @param next        the next knot
-    *
-    * @return next knot
-    */
-   public static Knot3 fromSegCubic ( final Vec3 nextControl,
-      final Vec3 nextAnchor, final Knot3 prev, final Knot3 next ) {
-
-      return Knot3.fromSegCubicRefl(nextControl.x, nextControl.y, nextControl.z,
-         nextAnchor.x, nextAnchor.y, nextAnchor.z, prev, next);
-   }
-
-   /**
-    * Sets two knots from a segment of a cubic curve. Assumes that the
-    * previous knot's coordinate is set to the first anchor point.<br>
-    * <br>
-    * The previous knot's fore handle, the next knot's rear handle and the
-    * next knot's coordinate are set by this function.
-    *
-    * @param prevControl the previous control point
-    * @param nextControl the next control point
-    * @param nextAnchor  the next anchor point
-    * @param prev        the previous knot
-    * @param next        the next knot
-    *
-    * @return the next knot
-    *
-    * @see Knot3#fromSegCubic(float, float, float, float, float, float, float,
-    *      float, float, Knot3, Knot3)
-    */
-   public static Knot3 fromSegCubic ( final Vec3 prevControl,
-      final Vec3 nextControl, final Vec3 nextAnchor, final Knot3 prev,
-      final Knot3 next ) {
-
-      return Knot3.fromSegCubic(prevControl.x, prevControl.y, prevControl.z,
-         nextControl.x, nextControl.y, nextControl.z, nextAnchor.x,
-         nextAnchor.y, nextAnchor.z, prev, next);
-   }
-
-   /**
-    * Sets two knots from a segment of a cubic curve which reflect an existing
-    * segment.<br>
-    * <br>
-    * The previous knot's fore handle, the next knot's rear handle and the
-    * next knot's coordinate are set by this function.
-    *
-    * @param xNextControl the next control point x
-    * @param yNextControl the next control point y
-    * @param zNextControl the next control point z
-    * @param xNextAnchor  the next anchor x
-    * @param yNextAnchor  the next anchor y
-    * @param zNextAnchor  the next anchor z
-    * @param prev         the previous knot
-    * @param next         the next knot
-    *
-    * @return next knot
-    */
-   public static Knot3 fromSegCubicRefl ( final float xNextControl,
-      final float yNextControl, final float zNextControl,
-      final float xNextAnchor, final float yNextAnchor, final float zNextAnchor,
-      final Knot3 prev, final Knot3 next ) {
-
-      prev.mirrorHandlesBackward();
-      next.rearHandle.set(xNextControl, yNextControl, zNextControl);
-      next.coord.set(xNextAnchor, yNextAnchor, zNextAnchor);
-
-      return next;
-   }
-
-   /**
     * Sets a knot from a line segment. Assumes that the previous knot's
     * coordinate is set to the first anchor point.<br>
     * <br>
@@ -1478,24 +1375,6 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Mixes two knots together by a step in [0.0, 1.0] with the help of an
-    * easing function.
-    *
-    * @param origin     the original knot
-    * @param dest       the destination knot
-    * @param step       the step
-    * @param target     the output knot
-    * @param easingFunc the easing function
-    *
-    * @return the mix
-    */
-   public static Knot3 mix ( final Knot3 origin, final Knot3 dest,
-      final float step, final Knot3 target, final AbstrEasing easingFunc ) {
-
-      return easingFunc.apply(origin, dest, step, target);
-   }
-
-   /**
     * Gets the rear handle of a knot as a direction, rather than as a point.
     *
     * @param knot   the knot
@@ -1558,29 +1437,29 @@ public class Knot3 implements Comparable < Knot3 > {
       final Vec3 coPrev = prev.coord;
       final Vec3 coNext = next.coord;
 
-      final float backx = coPrev.x - coCurr.x;
-      final float backy = coPrev.y - coCurr.y;
-      final float backz = coPrev.z - coCurr.z;
+      final float xRear = coPrev.x - coCurr.x;
+      final float yRear = coPrev.y - coCurr.y;
+      final float zRear = coPrev.z - coCurr.z;
 
-      final float forex = coNext.x - coCurr.x;
-      final float forey = coNext.y - coCurr.y;
-      final float forez = coNext.z - coCurr.z;
+      final float xFore = coNext.x - coCurr.x;
+      final float yFore = coNext.y - coCurr.y;
+      final float zFore = coNext.z - coCurr.z;
 
-      final float bmSq = backx * backx + backy * backy + backz * backz;
+      final float bmSq = xRear * xRear + yRear * yRear + zRear * zRear;
       final float bmInv = Utils.invSqrt(bmSq);
 
-      final float fmSq = forex * forex + forey * forey + forez * forez;
+      final float fmSq = xFore * xFore + yFore * yFore + zFore * zFore;
       final float fmInv = Utils.invSqrt(fmSq);
 
-      final float dirx = carry.x + backx * bmInv - forex * fmInv;
-      final float diry = carry.y + backy * bmInv - forey * fmInv;
-      final float dirz = carry.z + backz * bmInv - forez * fmInv;
+      final float xDir = carry.x + xRear * bmInv - xFore * fmInv;
+      final float yDir = carry.y + yRear * bmInv - yFore * fmInv;
+      final float zDir = carry.z + zRear * bmInv - zFore * fmInv;
 
-      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(dirx * dirx + diry
-         * diry + dirz * dirz);
-      carry.x = dirx * rescl;
-      carry.y = diry * rescl;
-      carry.z = dirz * rescl;
+      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(xDir * xDir + yDir
+         * yDir + zDir * zDir);
+      carry.x = xDir * rescl;
+      carry.y = yDir * rescl;
+      carry.z = zDir * rescl;
 
       final float bMag = bmSq * bmInv;
       curr.rearHandle.set(coCurr.x + bMag * carry.x, coCurr.y + bMag * carry.y,
@@ -1609,35 +1488,29 @@ public class Knot3 implements Comparable < Knot3 > {
       final Vec3 coCurr = curr.coord;
       final Vec3 coNext = next.coord;
 
-      final float backx = -coCurr.x;
-      final float backy = -coCurr.y;
-      final float backz = -coCurr.z;
+      final float xRear = -coCurr.x;
+      final float yRear = -coCurr.y;
+      final float zRear = -coCurr.z;
 
-      final float forex = coNext.x + backx;
-      final float forey = coNext.y + backy;
-      final float forez = coNext.z + backz;
+      final float xFore = coNext.x + xRear;
+      final float yFore = coNext.y + yRear;
+      final float zFore = coNext.z + zRear;
 
-      final float bmSq = backx * backx + backy * backy + backz * backz;
+      final float bmSq = xRear * xRear + yRear * yRear + zRear * zRear;
       final float bmInv = Utils.invSqrt(bmSq);
 
-      final float fmSq = forex * forex + forey * forey + forez * forez;
+      final float fmSq = xFore * xFore + yFore * yFore + zFore * zFore;
       final float fmInv = Utils.invSqrt(fmSq);
 
-      final float dirx = carry.x + backx * bmInv - forex * fmInv;
-      final float diry = carry.y + backy * bmInv - forey * fmInv;
-      final float dirz = carry.z + backz * bmInv - forez * fmInv;
+      final float xDir = carry.x + xRear * bmInv - xFore * fmInv;
+      final float yDir = carry.y + yRear * bmInv - yFore * fmInv;
+      final float zDir = carry.z + zRear * bmInv - zFore * fmInv;
 
-      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(dirx * dirx + diry
-         * diry + dirz * dirz);
-      carry.x = dirx * rescl;
-      carry.y = diry * rescl;
-      carry.z = dirz * rescl;
-
-      // final float bMag = bmSq * bmInv;
-      // curr.rearHandle.set(
-      // coCurr.x + bMag * dir.x,
-      // coCurr.y + bMag * dir.y,
-      // coCurr.z + bMag * dir.z);
+      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(xDir * xDir + yDir
+         * yDir + zDir * zDir);
+      carry.x = xDir * rescl;
+      carry.y = yDir * rescl;
+      carry.z = zDir * rescl;
 
       final float fMag = fmSq * fmInv;
       curr.foreHandle.set(coCurr.x - fMag * carry.x, coCurr.y - fMag * carry.y,
@@ -1662,39 +1535,33 @@ public class Knot3 implements Comparable < Knot3 > {
       final Vec3 coCurr = curr.coord;
       final Vec3 coPrev = prev.coord;
 
-      final float forex = -coCurr.x;
-      final float forey = -coCurr.y;
-      final float forez = -coCurr.z;
+      final float xFore = -coCurr.x;
+      final float yFore = -coCurr.y;
+      final float zFore = -coCurr.z;
 
-      final float backx = coPrev.x + forex;
-      final float backy = coPrev.y + forey;
-      final float backz = coPrev.z + forez;
+      final float xRear = coPrev.x + xFore;
+      final float yRear = coPrev.y + yFore;
+      final float zRear = coPrev.z + zFore;
 
-      final float bmSq = backx * backx + backy * backy + backz * backz;
+      final float bmSq = xRear * xRear + yRear * yRear + zRear * zRear;
       final float bmInv = Utils.invSqrt(bmSq);
 
-      final float fmSq = forex * forex + forey * forey + forez * forez;
+      final float fmSq = xFore * xFore + yFore * yFore + zFore * zFore;
       final float fmInv = Utils.invSqrt(fmSq);
 
-      final float dirx = carry.x + backx * bmInv - forex * fmInv;
-      final float diry = carry.y + backy * bmInv - forey * fmInv;
-      final float dirz = carry.z + backz * bmInv - forez * fmInv;
+      final float xDir = carry.x + xRear * bmInv - xFore * fmInv;
+      final float yDir = carry.y + yRear * bmInv - yFore * fmInv;
+      final float zDir = carry.z + zRear * bmInv - zFore * fmInv;
 
-      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(dirx * dirx + diry
-         * diry + dirz * dirz);
-      carry.x = dirx * rescl;
-      carry.y = diry * rescl;
-      carry.z = dirz * rescl;
+      final float rescl = IUtils.ONE_THIRD * Utils.invSqrt(xDir * xDir + yDir
+         * yDir + zDir * zDir);
+      carry.x = xDir * rescl;
+      carry.y = yDir * rescl;
+      carry.z = zDir * rescl;
 
       final float bMag = bmSq * bmInv;
       curr.rearHandle.set(coCurr.x + bMag * carry.x, coCurr.y + bMag * carry.y,
          coCurr.z + bMag * carry.z);
-
-      // final float fMag = fmSq * fmInv;
-      // curr.foreHandle.set(
-      // coCurr.x - fMag * dir.x,
-      // coCurr.y - fMag * dir.y,
-      // coCurr.z - fMag * dir.z);
 
       return curr;
    }
@@ -1754,9 +1621,10 @@ public class Knot3 implements Comparable < Knot3 > {
       public Knot3 apply ( final Knot3 origin, final Knot3 dest,
          final Float step, final Knot3 target ) {
 
-         if ( step <= 0.0f ) { return target.set(origin); }
-         if ( step >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, step, target);
+         final float t = step;
+         if ( t <= 0.0f ) { return target.set(origin); }
+         if ( t >= 1.0f ) { return target.set(dest); }
+         return this.applyUnclamped(origin, dest, t, target);
       }
 
       /**
