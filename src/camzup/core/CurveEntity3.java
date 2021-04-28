@@ -229,7 +229,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
     * and scaling by the maximum dimension.
     *
     * @return this curve entity.
-    * 
+    *
     * @see Curve3#accumMinMax(Curve3, Vec3, Vec3)
     */
    public CurveEntity3 reframe ( ) {

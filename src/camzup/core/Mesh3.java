@@ -2936,7 +2936,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.clean();
       Mesh3.castToSphere(target, 0.5f, target);
 
-      target.name = "Sphere";
+      target.name = "Sphere.Cube";
       return target;
    }
 
@@ -3217,8 +3217,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public static Mesh3 fromCurve3 ( final Curve3[] arr, final int resolution,
       final float colinearTol, final Mesh3 target ) {
-
-      // TEST
 
       final int curvesLen = arr.length;
       final ArrayList < Vec3 > points = new ArrayList <>(64);
@@ -3945,166 +3943,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * Creates a torus, or doughnut. The hole opens onto the y axis.
     *
     * @param thickness tube thickness
-    * @param sectors   number of sectors
-    * @param panels    number of panels
-    * @param poly      the polygon type
-    * @param target    the output mesh
-    *
-    * @return the torus
-    */
-   public static Mesh3 torus ( final float thickness, final int sectors,
-      final int panels, final PolyType poly, final Mesh3 target ) {
-
-      // TODO: Double check orientation of faces, vertices re: finding out
-      // fromSpherical was wrong.
-
-      target.name = "Torus";
-
-      /* Validate arguments. */
-      final int vsect = sectors < 3 ? 3 : sectors;
-      final int vpanl = panels < 3 ? 3 : panels;
-      final float rho0 = 0.5f;
-      final float rho1 = rho0 * Utils.clamp(thickness, IUtils.EPSILON, 1.0f
-         - IUtils.EPSILON);
-
-      /* Values for array accesses. */
-      final int vsect1 = vsect + 1;
-      final int vpanl1 = vpanl + 1;
-      final int vLen = vpanl * vsect;
-      final int vtLen = vpanl1 * vsect1;
-      final boolean isTri = poly == PolyType.TRI;
-      final int fsLen = isTri ? vLen + vLen : vLen;
-
-      /* Reallocate arrays. */
-      target.coords = Vec3.resize(target.coords, vLen);
-      target.texCoords = Vec2.resize(target.texCoords, vtLen);
-      target.normals = Vec3.resize(target.normals, vLen);
-      target.faces = isTri ? new int[fsLen][3][3] : new int[fsLen][4][3];
-
-      /* Cache shortcuts. */
-      final Vec3[] vs = target.coords;
-      final Vec2[] vts = target.texCoords;
-      final Vec3[] vns = target.normals;
-      final int[][][] fs = target.faces;
-
-      /* Calculate number of sectors in a ring. */
-      final float toTheta = 1.0f / vsect;
-      final float[] costs = new float[vsect];
-      final float[] sints = new float[vsect];
-      for ( int j = 0; j < vsect; ++j ) {
-         final float theta = j * toTheta;
-         costs[j] = Utils.scNorm(theta);
-         sints[j] = Utils.scNorm(theta - 0.25f);
-      }
-
-      /* Calculate texture coordinates u. */
-      final float[] uvxs = new float[vsect1];
-      final float toU = 1.0f / vsect;
-      for ( int j = 0; j < vsect1; ++j ) { uvxs[j] = j * toU; }
-
-      /* Combine u and v into texture coordinates. */
-      final float toV = 1.0f / vpanl;
-      for ( int k = 0, i = 0; i < vpanl1; ++i ) {
-         final float y = 1.0f - i * toV;
-         for ( int j = 0; j < vsect1; ++j, ++k ) { vts[k].set(uvxs[j], y); }
-      }
-
-      /* To calculate number of side panels in a sector. */
-      final float toPhi = 1.0f / vpanl;
-
-      /* Set faces. */
-      final int faceStride = isTri ? 2 : 1;
-      for ( int m = 0, k = 0, i = 0; i < vpanl; ++i ) {
-
-         /* Find side panel angles. */
-         final float phi = -0.5f + i * toPhi;
-         final float cosPhi = Utils.scNorm(phi);
-         final float sinPhi = Utils.scNorm(phi - 0.25f);
-
-         final float rhoCosPhi = rho0 + rho1 * cosPhi;
-         final float rhoSinPhi = rho1 * sinPhi;
-
-         /* For converting from 2D to 1D array (idx = y * width + x) . */
-         final int iVNext = ( i + 1 ) % vpanl;
-
-         final int vOffCurr = i * vsect;
-         final int vOffNext = iVNext * vsect;
-
-         final int vtOffCurr = i * vsect1;
-         final int vtOffNext = vtOffCurr + vsect1;
-
-         for ( int j = 0; j < vsect; ++j, k += faceStride, ++m ) {
-
-            final float cosTheta = costs[j];
-            final float sinTheta = sints[j];
-
-            /* Calculate coordinates and normals. */
-            vs[m].set(rhoCosPhi * cosTheta, -rhoSinPhi, rhoCosPhi * sinTheta);
-            vns[m].set(cosPhi * cosTheta, -sinPhi, cosPhi * sinTheta);
-
-            final int jVtNext = j + 1;
-            final int jVNext = jVtNext % vsect;
-
-            /* Coordinate and normal indices. */
-            final int v00 = vOffCurr + j;
-            final int v10 = vOffCurr + jVNext;
-            final int v11 = vOffNext + jVNext;
-            final int v01 = vOffNext + j;
-
-            /* Texture coordinate indices. */
-            final int vt00 = vtOffCurr + j;
-            final int vt10 = vtOffCurr + jVtNext;
-            final int vt11 = vtOffNext + jVtNext;
-            final int vt01 = vtOffNext + j;
-
-            if ( isTri ) {
-               /* Triangle 0 */
-               final int[][] tri0 = fs[k];
-               final int[] a0 = tri0[0];
-               final int[] b0 = tri0[1];
-               final int[] c0 = tri0[2];
-
-               /* Triangle 1 */
-               final int[][] tri1 = fs[k + 1];
-               final int[] a1 = tri1[0];
-               final int[] b1 = tri1[1];
-               final int[] c1 = tri1[2];
-
-               /* @formatter:off */
-               a0[0] = v00; a0[1] = vt00; a0[2] = v00;
-               b0[0] = v10; b0[1] = vt10; b0[2] = v10;
-               c0[0] = v11; c0[1] = vt11; c0[2] = v11;
-
-               a1[0] = v00; a1[1] = vt00; a1[2] = v00;
-               b1[0] = v11; b1[1] = vt11; b1[2] = v11;
-               c1[0] = v01; c1[1] = vt01; c1[2] = v01;
-               /* @formatter:on */
-
-            } else {
-
-               final int[][] quad = fs[k];
-               final int[] a = quad[0];
-               final int[] b = quad[1];
-               final int[] c = quad[2];
-               final int[] d = quad[3];
-
-               /* @formatter:off */
-               a[0] = v00; a[1] = vt00; a[2] = v00;
-               b[0] = v10; b[1] = vt10; b[2] = v10;
-               c[0] = v11; c[1] = vt11; c[2] = v11;
-               d[0] = v01; d[1] = vt01; d[2] = v01;
-               /* @formatter:on */
-            }
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Creates a torus, or doughnut. The hole opens onto the y axis.
-    *
-    * @param thickness tube thickness
     * @param target    the output mesh
     *
     * @return the torus
@@ -4142,6 +3980,154 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       return Mesh3.torus(IMesh.DEFAULT_OCULUS, IMesh.DEFAULT_CIRCLE_SECTORS,
          IMesh.DEFAULT_CIRCLE_SECTORS >> 1, Mesh3.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates a torus, or doughnut. The hole opens onto the y axis.
+    *
+    * @param thickness tube thickness
+    * @param sectors   number of sectors
+    * @param panels    number of panels
+    * @param poly      the polygon type
+    * @param target    the output mesh
+    *
+    * @return the torus
+    */
+   public static Mesh3 torus ( final float thickness, final int sectors,
+      final int panels, final PolyType poly, final Mesh3 target ) {
+
+      target.name = "Torus";
+
+      /* Validate arguments. */
+      final int vSect = sectors < 3 ? 3 : sectors;
+      final int vPanl = panels < 3 ? 3 : panels;
+      final float vThick = Utils.clamp(thickness, IUtils.EPSILON, 1.0f
+         - IUtils.EPSILON);
+
+      /* Radii. */
+      final float rho0 = 0.5f;
+      final float rho1 = rho0 * vThick;
+
+      /* Values for array accesses. */
+      final int vSect1 = vSect + 1;
+      final int vPanl1 = vPanl + 1;
+      final int vLen = vPanl * vSect;
+      final int vtLen = vPanl1 * vSect1;
+      final boolean isTri = poly == PolyType.TRI;
+      final int fsLen = isTri ? vLen + vLen : vLen;
+
+      /* Reallocate arrays. */
+      target.coords = Vec3.resize(target.coords, vLen);
+      target.texCoords = Vec2.resize(target.texCoords, vtLen);
+      target.normals = Vec3.resize(target.normals, vLen);
+      target.faces = isTri ? new int[fsLen][3][3] : new int[fsLen][4][3];
+
+      /* Cache shortcuts. */
+      final Vec3[] vs = target.coords;
+      final Vec2[] vts = target.texCoords;
+      final Vec3[] vns = target.normals;
+      final int[][][] fs = target.faces;
+
+      /* Index conversions. Because scNorm is used, no Tau multiplication. */
+      final float toU = 1.0f / vSect;
+      final float toV = 1.0f / vPanl;
+      final float toTheta = toU;
+      final float toPhi = toV;
+
+      int faceIdx = 0;
+      final int faceStride = isTri ? 2 : 1;
+
+      /* Populate coordinates, normals and faces. */
+      for ( int k = 0; k < vLen; ++k ) {
+         final int i = k / vSect;
+         final int j = k % vSect;
+
+         /* Find theta and phi. */
+         final float phi = -0.5f + i * toPhi;
+         final float cosPhi = Utils.scNorm(phi);
+         final float sinPhi = Utils.scNorm(phi - 0.25f);
+
+         final float rhoCosPhi = rho0 + rho1 * cosPhi;
+         final float rhoSinPhi = rho1 * sinPhi;
+
+         final float theta = j * toTheta;
+         final float cosTheta = Utils.scNorm(theta);
+         final float sinTheta = Utils.scNorm(theta - 0.25f);
+
+         /* Set coordinates and normals. */
+         vs[k].set(rhoCosPhi * cosTheta, -rhoSinPhi, rhoCosPhi * sinTheta);
+         vns[k].set(cosPhi * cosTheta, -sinPhi, cosPhi * sinTheta);
+
+         /* For converting from 2D to 1D array (idx = y * width + x) . */
+         final int iVNext = ( i + 1 ) % vPanl;
+
+         final int vOffCurr = i * vSect; // this is not equal to k.
+         final int vOffNext = iVNext * vSect;
+
+         final int vtOffCurr = i * vSect1;
+         final int vtOffNext = vtOffCurr + vSect1;
+
+         final int jVtNext = j + 1;
+         final int jVNext = jVtNext % vSect;
+
+         /* Coordinate and normal indices. */
+         final int v00 = vOffCurr + j;
+         final int v10 = vOffCurr + jVNext;
+         final int v11 = vOffNext + jVNext;
+         final int v01 = vOffNext + j;
+
+         /* Texture coordinate indices. */
+         final int vt00 = vtOffCurr + j;
+         final int vt10 = vtOffCurr + jVtNext;
+         final int vt11 = vtOffNext + jVtNext;
+         final int vt01 = vtOffNext + j;
+
+         if ( isTri ) {
+            /* @formatter:off */
+
+            /* Triangle 0 */
+            final int[][] tri0 = fs[faceIdx];
+            final int[] a0 = tri0[0];
+            a0[0] = v00; a0[1] = vt00; a0[2] = v00;
+            final int[] b0 = tri0[1];
+            b0[0] = v10; b0[1] = vt10; b0[2] = v10;
+            final int[] c0 = tri0[2];
+            c0[0] = v11; c0[1] = vt11; c0[2] = v11;
+
+            /* Triangle 1 */
+            final int[][] tri1 = fs[faceIdx + 1];
+            final int[] a1 = tri1[0];
+            a1[0] = v00; a1[1] = vt00; a1[2] = v00;
+            final int[] b1 = tri1[1];
+            b1[0] = v11; b1[1] = vt11; b1[2] = v11;
+            final int[] c1 = tri1[2];
+            c1[0] = v01; c1[1] = vt01; c1[2] = v01;
+            /* @formatter:on */
+
+         } else {
+
+            /* @formatter:off */
+            final int[][] quad = fs[faceIdx];
+            final int[] a = quad[0];
+            a[0] = v00; a[1] = vt00; a[2] = v00;
+            final int[] b = quad[1];
+            b[0] = v10; b[1] = vt10; b[2] = v10;
+            final int[] c = quad[2];
+            c[0] = v11; c[1] = vt11; c[2] = v11;
+            final int[] d = quad[3];
+            d[0] = v01; d[1] = vt01; d[2] = v01;
+            /* @formatter:on */
+         }
+
+         faceIdx += faceStride;
+      }
+
+      /* Populate texture coordinates. */
+      for ( int k = 0; k < vtLen; ++k ) {
+         vts[k].set(k % vSect1 * toU, 1.0f - k / vSect1 * toV);
+      }
+
+      return target;
    }
 
    /**
@@ -4327,7 +4313,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3 uvSphere ( final int longitudes, final int latitudes,
       final PolyType poly, final Mesh3 target ) {
 
-      target.name = "UV Sphere";
+      target.name = "Sphere.Uv";
 
       /* Validate arguments. */
       final int lons = longitudes < 3 ? 3 : longitudes;
@@ -4352,13 +4338,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /*
        * Because of the two poles, the linear interpolation between latitudes is
-       * not i / (latitudes - 1.0); it is (i + 1) / (latitudes + 1.0) . Phi is
-       * half the range as theta (either TAU / 2.0 or 1.0 / 2.0) .
+       * not i / (latitudes - 1.0); it is (i + 1) / (latitudes + 1.0) .
+       * Inclination is half the range as azimuth (TAU / 2.0 is normalized to
+       * 1.0 / 2.0) .
        */
       final float toTexS = 1.0f / lons;
       final float toTexT = 1.0f / lats1;
-      final float toTheta = 1.0f / lons;
-      final float toPhi = 0.5f / lats1;
+      final float toAzim = 1.0f / lons;
+      final float toIncl = 0.5f / lats1;
 
       /* Set North pole. */
       final int last0 = vLen - 1;
@@ -4370,15 +4357,16 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       vns[0].set(0.0f, 0.0f, -1.0f);
 
       /*
-       * Calculate sine & cosine of theta. Calculate texture coordinate poles.
+       * Calculate sine & cosine for azimuth. Calculate texture coordinate
+       * poles.
        */
       final float[] costs = new float[lons];
       final float[] sints = new float[lons];
       for ( int j = 0, k = vtLen - lons; j < lons; ++j, ++k ) {
          final float jf = j;
-         final float theta = jf * toTheta;
-         costs[j] = Utils.scNorm(theta);
-         sints[j] = Utils.scNorm(theta - 0.25f);
+         final float azim = jf * toAzim;
+         costs[j] = Utils.scNorm(azim);
+         sints[j] = Utils.scNorm(azim - 0.25f);
 
          /* Texture coordinates at poles. */
          final float sTex = ( jf + 0.5f ) * toTexS;
@@ -4401,21 +4389,22 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
           * The expected range of phi is [-HALF_PI, HALF_PI], so subtract
           * QUARTER_PI, or 0.25 for normalized angles, to shift the range.
           */
-         final float phi = 0.25f - spOff * toPhi;
-         final float cosPhi = Utils.scNorm(phi);
-         final float sinPhi = Utils.scNorm(phi - 0.25f);
+         final float incl = 0.25f - spOff * toIncl;
+         final float cosIncl = Utils.scNorm(incl);
+         final float sinIncl = Utils.scNorm(incl - 0.25f);
 
-         final float rhoCosPhi = radius * cosPhi;
-         final float rhoSinPhi = radius * sinPhi;
+         final float rhoCosIncl = radius * cosIncl;
+         final float rhoSinIncl = radius * sinIncl;
 
          /* Loop over coordinates and normals. */
          for ( int j = 0; j < lons; ++j, ++vIdx ) {
 
-            final float cosTheta = costs[j];
-            final float sinTheta = sints[j];
+            final float cosAzim = costs[j];
+            final float sinAzim = sints[j];
 
-            vs[vIdx].set(rhoCosPhi * cosTheta, rhoCosPhi * sinTheta, rhoSinPhi);
-            vns[vIdx].set(cosPhi * cosTheta, cosPhi * sinTheta, sinPhi);
+            vs[vIdx].set(rhoCosIncl * cosAzim, rhoCosIncl * sinAzim,
+               rhoSinIncl);
+            vns[vIdx].set(cosIncl * cosAzim, cosIncl * sinAzim, sinIncl);
          }
 
          /* Loop over texture coordinates. */
@@ -4477,23 +4466,19 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          /* Polar vertex. */
          final int[] south0 = triSouth[2];
-
          south0[0] = 0;
          south0[1] = j;
          south0[2] = 0;
 
          final int[] south1 = triSouth[1];
-
          south1[0] = k;
          south1[1] = m;
          south1[2] = k;
 
          final int[] south2 = triSouth[0];
-
          south2[0] = h;
          south2[1] = m + 1;
          south2[2] = h;
-
       }
 
       /* Middle. */

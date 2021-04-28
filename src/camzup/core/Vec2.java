@@ -2672,6 +2672,18 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Returns a string representation of an array of vectors.
     *
+    * @param arr the array
+    *
+    * @return the string
+    */
+   public static String toString ( final Vec2[] arr ) {
+
+      return Vec2.toString(arr, IUtils.FIXED_PRINT);
+   }
+
+   /**
+    * Returns a string representation of an array of vectors.
+    *
     * @param arr    the array
     * @param places the print precision
     *
@@ -2798,27 +2810,24 @@ public class Vec2 implements Comparable < Vec2 > {
    protected static Vec2[][] grid ( final int cols, final int rows,
       final float lbx, final float lby, final float ubx, final float uby ) {
 
-      final int rval = rows < 2 ? 2 : rows;
-      final int cval = cols < 2 ? 2 : cols;
+      final int rVal = rows < 2 ? 2 : rows;
+      final int cVal = cols < 2 ? 2 : cols;
 
-      final float iToStep = 1.0f / ( rval - 1.0f );
-      final float jToStep = 1.0f / ( cval - 1.0f );
+      final Vec2[][] result = new Vec2[rVal][cVal];
 
-      /* Calculate x values in separate loop. */
-      final float[] xs = new float[cval];
-      for ( int j = 0; j < cval; ++j ) {
-         final float step = j * jToStep;
-         xs[j] = ( 1.0f - step ) * lbx + step * ubx;
-      }
+      final float iToStep = 1.0f / ( rVal - 1.0f );
+      final float jToStep = 1.0f / ( cVal - 1.0f );
 
-      final Vec2[][] result = new Vec2[rval][cval];
-      for ( int i = 0; i < rval; ++i ) {
+      final int len = rVal * cVal;
+      for ( int k = 0; k < len; ++k ) {
+         final int i = k / cVal;
+         final int j = k % cVal;
 
-         final Vec2[] row = result[i];
-         final float step = i * iToStep;
-         final float y = ( 1.0f - step ) * lby + step * uby;
+         final float iStep = i * iToStep;
+         final float jStep = j * jToStep;
 
-         for ( int j = 0; j < cval; ++j ) { row[j] = new Vec2(xs[j], y); }
+         result[i][j] = new Vec2( ( 1.0f - jStep ) * lbx + jStep * ubx, ( 1.0f
+            - iStep ) * lby + iStep * uby);
       }
 
       return result;

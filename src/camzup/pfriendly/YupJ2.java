@@ -1240,6 +1240,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       super.pushStyle();
       this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND, sw);
 
+      // TODO: Can this be optimized with a 1D for loop?
       for ( int i = 0; i < last; ++i ) {
          final double iPercent = i * toPercent;
          final double y = ( 1.0d - iPercent ) * bottom + iPercent * top;

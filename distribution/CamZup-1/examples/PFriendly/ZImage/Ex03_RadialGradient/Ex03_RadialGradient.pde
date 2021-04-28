@@ -14,7 +14,7 @@ void setup() {
   frameRate(60.0f);
   graphics = (Yup2)getGraphics();
   img = createImage(512, 512, ARGB);
-  Gradient.paletteViridis(gradient);
+  Gradient.paletteMagma(gradient);
 }
 
 void draw() {

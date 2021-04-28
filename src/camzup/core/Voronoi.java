@@ -55,6 +55,7 @@ public class Voronoi extends Generative {
       float xHsh;
       float yHsh;
 
+      // TODO: Any way to do this with a 1D loop?
       for ( float j = -1.0f; j < 2.0f; ++j ) {
          final float sumy = yCell + j;
          final float sumysq = sumy * sumy;

@@ -147,7 +147,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param kn the knot
     *
     * @return the evaluation
-    * 
+    *
     * @see List#contains(Object)
     */
    public boolean contains ( final Knot2 kn ) {
@@ -267,7 +267,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param knot the knot
     *
     * @return the curve
-    * 
+    *
     * @see Utils#mod(int, int)
     * @see List#add(int, Object)
     */
@@ -288,7 +288,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param kn the knots
     *
     * @return this curve
-    * 
+    *
     * @see Utils#mod(int, int)
     * @see List#addAll(int, Collection)
     */
@@ -308,7 +308,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param kn the knots
     *
     * @return this curve
-    * 
+    *
     * @see Utils#mod(int, int)
     * @see List#add(int, Object)
     */
@@ -369,7 +369,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param kn the collection of knots
     *
     * @return this curve.
-    * 
+    *
     * @see List#addAll(int, Collection)
     */
    public Curve2 prependAll ( final Collection < Knot2 > kn ) {
@@ -1524,7 +1524,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param target     the output curve
     *
     * @return the conversion
-    * 
+    *
     * @see Knot2#fromSegCatmull(Vec2, Vec2, Vec2, Vec2, float, Knot2, Knot2)
     * @see Knot2#mirrorHandlesForward()
     * @see Knot2#mirrorHandlesBackward()
@@ -1795,7 +1795,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param target     the target curve
     *
     * @return the random curve
-    * 
+    *
     * @see Vec2#randomCartesian(Random, float, float, Vec2)
     * @see Curve2#fromPoints(boolean, Vec2[], Curve2)
     */
@@ -1825,7 +1825,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param target     the target curve
     *
     * @return the random curve
-    * 
+    *
     * @see Vec2#randomCartesian(Random, Vec2, Vec2, Vec2)
     * @see Curve2#fromPoints(boolean, Vec2[], Curve2)
     */
@@ -2289,7 +2289,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param target  the output curve
     *
     * @return the line
-    * 
+    *
     * @see Curve2#lerp13(Vec2, Vec2, Vec2)
     * @see Knot2#mirrorHandlesForward()
     * @see Knot2#mirrorHandlesBackward()

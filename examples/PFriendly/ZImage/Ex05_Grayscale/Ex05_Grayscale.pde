@@ -19,7 +19,11 @@ void setup() {
 
   source = loadImage("callingStMatthew.jpg");
   target = source.get();
+
+  long start = System.currentTimeMillis();
   ZImage.grayscale(target, true);
+  long end = System.currentTimeMillis();
+  println("Elapsed Time: " + (end - start));
 }
 
 void draw() {

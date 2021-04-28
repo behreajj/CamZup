@@ -301,23 +301,10 @@ public class ZImage extends PImage {
       final int[] pixels = target.pixels;
       final int len = pixels.length;
 
-      final float shortEdge = w < h ? w : h;
-      final float longEdge = w > h ? w : h;
-
+      final float aspect = w / ( float ) h;
+      final float wInv = aspect / ( w - 1.0f );
       final float hInv = 1.0f / ( h - 1.0f );
-
-      float wInv;
-      final float xo = xOrigin;
-      float aspect;
-      if ( shortEdge == longEdge ) {
-         wInv = 1.0f / ( w - 1.0f );
-      } else if ( w == shortEdge ) {
-         aspect = shortEdge / longEdge;
-         wInv = aspect / ( w - 1.0f );
-      } else {
-         aspect = longEdge / shortEdge;
-         wInv = aspect / ( w - 1.0f );
-      }
+      final float xo = ( xOrigin * 0.5f + 0.5f ) * aspect * 2.0f - 1.0f;
 
       for ( int i = 0; i < len; ++i ) {
          final float xn = wInv * ( i % w );
@@ -985,9 +972,11 @@ public class ZImage extends PImage {
          }
 
          /* Map luminance to [0.0, 1.0] from [minimum, maximum]. */
+         final float diff = lumMax - lumMin;
+         final float denom = diff != 0.0f ? 1.0f / diff : 0.0f;
          for ( int i = 0; i < len; ++i ) {
-            // TODO: Optimize?
-            final float lum = Utils.map(lums[i], lumMin, lumMax, 0.0f, 1.0f);
+            // final float lum = Utils.map(lums[i], lumMin, lumMax, 0.0f, 1.0f);
+            final float lum = ( lums[i] - lumMin ) * denom;
             final float vf = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math
                .pow(lum, 0.4166666666666667d) * 1.055d - 0.055d );
             final int vi = ( int ) ( vf * 0xff + 0.5f );

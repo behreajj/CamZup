@@ -19,11 +19,11 @@ void setup() {
   println("Elapsed Time: " + (end - start));
 
   orig = createImage(width, height, ARGB);
-  ZImage.linear(-1.0f, 0.0f, 1.0f, 0.0f, grd, orig);
+  ZImage.linear(grd, orig);
 
   Gradient.shiftHsva(grd, shifter, grd, new Color(), new Vec4());
   trg = createImage(width, height, ARGB);
-  ZImage.linear(-1.0f, 0.0f, 1.0f, 0.0f, grd, trg);
+  ZImage.linear(grd, trg);
 }
 
 void draw() {

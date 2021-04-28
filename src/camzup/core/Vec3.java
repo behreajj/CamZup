@@ -3047,6 +3047,18 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Returns a string representation of an array of vectors.
     *
+    * @param arr the array
+    *
+    * @return the string
+    */
+   public static String toString ( final Vec3[] arr ) {
+
+      return Vec3.toString(arr, IUtils.FIXED_PRINT);
+   }
+
+   /**
+    * Returns a string representation of an array of vectors.
+    *
     * @param arr    the array
     * @param places the print precision
     *
@@ -3179,42 +3191,31 @@ public class Vec3 implements Comparable < Vec3 > {
       final int layers, final float lbx, final float lby, final float lbz,
       final float ubx, final float uby, final float ubz ) {
 
-      final int lval = layers < 2 ? 2 : layers;
-      final int rval = rows < 2 ? 2 : rows;
-      final int cval = cols < 2 ? 2 : cols;
+      final int lVal = layers < 2 ? 2 : layers;
+      final int rVal = rows < 2 ? 2 : rows;
+      final int cVal = cols < 2 ? 2 : cols;
 
-      final float hToStep = 1.0f / ( lval - 1.0f );
-      final float iToStep = 1.0f / ( rval - 1.0f );
-      final float jToStep = 1.0f / ( cval - 1.0f );
+      final Vec3[][][] result = new Vec3[lVal][rVal][cVal];
 
-      /* Calculate x values in separate loop. */
-      final float[] xs = new float[cval];
-      for ( int j = 0; j < cval; ++j ) {
-         final float step = j * jToStep;
-         xs[j] = ( 1.0f - step ) * lbx + step * ubx;
-      }
+      final float hToStep = 1.0f / ( lVal - 1.0f );
+      final float iToStep = 1.0f / ( rVal - 1.0f );
+      final float jToStep = 1.0f / ( cVal - 1.0f );
 
-      /* Calculate y values in separate loop. */
-      final float[] ys = new float[rval];
-      for ( int i = 0; i < rval; ++i ) {
-         final float step = i * iToStep;
-         ys[i] = ( 1.0f - step ) * lby + step * uby;
-      }
+      final int rValcVal = rVal * cVal;
+      final int len = lVal * rValcVal;
+      for ( int k = 0; k < len; ++k ) {
+         final int h = k / rValcVal;
+         final int m = k - h * rValcVal;
+         final int i = m / cVal;
+         final int j = m % cVal;
 
-      final Vec3[][][] result = new Vec3[lval][rval][cval];
-      for ( int h = 0; h < lval; ++h ) {
+         final float hStep = h * hToStep;
+         final float iStep = i * iToStep;
+         final float jStep = j * jToStep;
 
-         final Vec3[][] layer = result[h];
-         final float step = h * hToStep;
-         final float z = ( 1.0f - step ) * lbz + step * ubz;
-
-         for ( int i = 0; i < rval; ++i ) {
-
-            final Vec3[] row = layer[i];
-            final float y = ys[i];
-
-            for ( int j = 0; j < cval; ++j ) { row[j] = new Vec3(xs[j], y, z); }
-         }
+         result[h][i][j] = new Vec3( ( 1.0f - jStep ) * lbx + jStep * ubx,
+            ( 1.0f - iStep ) * lby + iStep * uby, ( 1.0f - hStep ) * lbz + hStep
+               * ubz);
       }
 
       return result;

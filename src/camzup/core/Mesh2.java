@@ -3257,74 +3257,66 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       target.name = "Plane";
 
-      final int rval = rows < 1 ? 1 : rows;
-      final int cval = cols < 1 ? 1 : cols;
+      final int rVal = rows < 1 ? 1 : rows;
+      final int cVal = cols < 1 ? 1 : cols;
+      final int rVal1 = rVal + 1;
+      final int cVal1 = cVal + 1;
+      final int fLen1 = rVal1 * cVal1;
 
-      final int rval1 = rval + 1;
-      final int cval1 = cval + 1;
-
-      final float iToStep = 1.0f / rval;
-      final float jToStep = 1.0f / cval;
-
-      final Vec2[] vs = target.coords = Vec2.resize(target.coords, rval1
-         * cval1);
+      final Vec2[] vs = target.coords = Vec2.resize(target.coords, fLen1);
       final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
-         vs.length);
-      final int flen = rval * cval;
+         fLen1);
 
-      /* Calculate x values in separate loop. */
-      final float[] xs = new float[cval1];
-      final float[] us = new float[cval1];
-      for ( int j = 0; j < cval1; ++j ) {
-         final float xPrc = j * jToStep;
-         xs[j] = xPrc - 0.5f;
-         us[j] = xPrc;
+      /* Set coordinates and texture coordinates. */
+      final float iToStep = 1.0f / rVal;
+      final float jToStep = 1.0f / cVal;
+      for ( int k = 0; k < fLen1; ++k ) {
+         final float jStep = k % cVal1 * jToStep;
+         final float iStep = k / cVal1 * iToStep;
+         vs[k].set(jStep - 0.5f, iStep - 0.5f);
+         vts[k].set(jStep, 1.0f - iStep);
       }
 
-      for ( int k = 0, i = 0; i < rval1; ++i ) {
-         final float yPrc = i * iToStep;
-         final float y = yPrc - 0.5f;
-         final float v = 1.0f - yPrc;
-
-         for ( int j = 0; j < cval1; ++j, ++k ) {
-            vs[k].set(xs[j], y);
-            vts[k].set(us[j], v);
-         }
-      }
-
+      /* Set faces. */
       int[][][] fs;
+      final int fLen = rVal * cVal;
+
       switch ( poly ) {
 
          case NGON:
 
          case QUAD:
 
-            fs = target.faces = new int[flen][4][2];
+            fs = target.faces = new int[fLen][4][2];
+            for ( int k = 0; k < fLen; ++k ) {
+               final int i = k / cVal;
+               final int j = k % cVal;
 
-            for ( int k = 0, i = 0; i < rval; ++i ) {
-               final int noff0 = i * cval1;
-               final int noff1 = noff0 + cval1;
+               final int cOff0 = i * cVal1;
+               // final int cOff1 = cOff0 + cVal1;
 
-               for ( int j = 0; j < cval; ++j, ++k ) {
-                  final int n00 = noff0 + j;
-                  final int n10 = n00 + 1;
-                  final int n01 = noff1 + j;
-                  final int n11 = n01 + 1;
+               final int c00 = cOff0 + j;
+               final int c10 = c00 + 1;
+               final int c01 = cOff0 + cVal1 + j;
+               final int c11 = c01 + 1;
 
-                  final int[][] f = fs[k];
+               final int[][] f = fs[k];
 
-                  f[0][0] = n00;
-                  f[0][1] = n00;
+               final int[] vert0 = f[0];
+               vert0[0] = c00;
+               vert0[1] = c00;
 
-                  f[1][0] = n10;
-                  f[1][1] = n10;
+               final int[] vert1 = f[1];
+               vert1[0] = c10;
+               vert1[1] = c10;
 
-                  f[2][0] = n11;
-                  f[2][1] = n11;
+               final int[] vert2 = f[2];
+               vert2[0] = c11;
+               vert2[1] = c11;
 
-                  f[3][0] = n01;
-                  f[3][1] = n01;
-               }
+               final int[] vert3 = f[3];
+               vert3[0] = c01;
+               vert3[1] = c01;
             }
 
             break;
@@ -3333,40 +3325,45 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          default:
 
-            fs = target.faces = new int[flen + flen][3][2];
+            fs = target.faces = new int[fLen + fLen][3][2];
+            for ( int m = 0, k = 0; k < fLen; ++k, m += 2 ) {
+               final int i = k / cVal;
+               final int j = k % cVal;
 
-            for ( int k = 0, i = 0; i < rval; ++i ) {
-               final int noff0 = i * cval1;
-               final int noff1 = noff0 + cval1;
+               final int cOff0 = i * cVal1;
+               // final int cOff1 = cOff0 + cVal1;
 
-               for ( int j = 0; j < cval; ++j, k += 2 ) {
-                  final int n00 = noff0 + j;
-                  final int n10 = n00 + 1;
-                  final int n01 = noff1 + j;
-                  final int n11 = n01 + 1;
+               final int c00 = cOff0 + j;
+               final int c10 = c00 + 1;
+               final int c01 = cOff0 + cVal1 + j;
+               final int c11 = c01 + 1;
 
-                  final int[][] f0 = fs[k];
-                  f0[0][0] = n00;
-                  f0[0][1] = n00;
+               final int[][] f0 = fs[m];
+               final int[] vert00 = f0[0];
+               vert00[0] = c00;
+               vert00[1] = c00;
 
-                  f0[1][0] = n10;
-                  f0[1][1] = n10;
+               final int[] vert01 = f0[1];
+               vert01[0] = c10;
+               vert01[1] = c10;
 
-                  f0[2][0] = n11;
-                  f0[2][1] = n11;
+               final int[] vert02 = f0[2];
+               vert02[0] = c11;
+               vert02[1] = c11;
 
-                  final int[][] f1 = target.faces[k + 1];
-                  f1[0][0] = n11;
-                  f1[0][1] = n11;
+               final int[][] f1 = fs[m + 1];
+               final int[] vert10 = f1[0];
+               vert10[0] = c11;
+               vert10[1] = c11;
 
-                  f1[1][0] = n01;
-                  f1[1][1] = n01;
+               final int[] vert11 = f1[1];
+               vert11[0] = c01;
+               vert11[1] = c01;
 
-                  f1[2][0] = n00;
-                  f1[2][1] = n00;
-               }
+               final int[] vert12 = f1[2];
+               vert12[0] = c00;
+               vert12[1] = c00;
             }
-
       }
 
       return target;

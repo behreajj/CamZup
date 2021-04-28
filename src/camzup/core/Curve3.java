@@ -151,7 +151,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param kn the knot
     *
     * @return the evaluation
-    * 
+    *
     * @see List#contains(Object)
     */
    public boolean contains ( final Knot3 kn ) {
@@ -290,7 +290,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param knot the knot
     *
     * @return the curve
-    * 
+    *
     * @see Utils#mod(int, int)
     * @see List#add(int, Object)
     */
@@ -311,7 +311,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param kn the knots
     *
     * @return this curve
-    * 
+    *
     * @see Utils#mod(int, int)
     * @see List#addAll(int, Collection)
     */
@@ -331,7 +331,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param kn the knots
     *
     * @return this curve
-    * 
+    *
     * @see Utils#mod(int, int)
     * @see List#add(int, Object)
     */
@@ -392,7 +392,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param kn the collection of knots
     *
     * @return this curve.
-    * 
+    *
     * @see List#addAll(int, Collection)
     */
    public Curve3 prependAll ( final Collection < Knot3 > kn ) {
@@ -1384,7 +1384,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param target     the output curve
     *
     * @return the conversion
-    * 
+    *
     * @see Knot3#fromSegCatmull(Vec3, Vec3, Vec3, Vec3, float, Knot3, Knot3)
     * @see Knot3#mirrorHandlesForward()
     * @see Knot3#mirrorHandlesBackward()
@@ -1919,7 +1919,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param target  the output curve
     *
     * @return the line
-    * 
+    *
     * @see Curve3#lerp13(Vec3, Vec3, Vec3)
     * @see Knot3#mirrorHandlesForward()
     * @see Knot3#mirrorHandlesBackward()

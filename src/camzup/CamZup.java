@@ -56,9 +56,17 @@ public class CamZup {
       // TODO: Add delta time or elapsed time.
       // https://github.com/processing/processing/issues/6070
 
-      Color x = Color.fromHex(0x00aabbcc, new Color());
-      String y = Color.toHexString(x);
-      System.out.println(y);
+      // Mesh2 m = Mesh2.plane(8, 3, PolyType.QUAD, new Mesh2());
+      // MeshEntity2 me = new MeshEntity2(m);
+      // String str = me.toBlenderCode();
+      // System.out.println(str);
+      // System.out.println(m);
+
+      // Mesh3 m3 = new Mesh3();
+      // Mesh3.torus(0.5f, 12, 8, PolyType.QUAD, m3);
+      // MeshEntity3 me3 = new MeshEntity3(m3);
+      // String str = me3.toBlenderCode();
+      // System.out.println(str);
    }
 
    /**

@@ -53,10 +53,11 @@ void draw() {
     float fac1 = Simplex.fbm(
       noiseIn, Simplex.DEFAULT_SEED,
       16, 2.0f, 0.3375f);
-    float fac0 = Voronoi.eval(
-      co, Simplex.DEFAULT_SEED,
-      0.25f, voronoi);
-    float fac = Utils.lerp(fac0, fac1, 0.75f);
+    //float fac0 = Voronoi.eval(
+    //  co, Simplex.DEFAULT_SEED,
+    //  0.25f, voronoi);
+    //float fac = Utils.lerp(fac0, fac1, 0.75f);
+    float fac = fac1;
     co.z = elev * fac;
   }
   plane3.shadeSmooth();

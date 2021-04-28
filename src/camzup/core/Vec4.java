@@ -605,8 +605,8 @@ public class Vec4 implements Comparable < Vec4 > {
       final Vec4 cp1, final Vec4 ap1, final float step, final Vec4 target ) {
 
       Vec4.bezierTangent(ap0, cp0, cp1, ap1, step, target);
-      final float mInv = Utils.invSqrt(target.x * target.x + target.y
-         * target.y + target.z * target.z + target.w * target.w);
+      final float mInv = Utils.invSqrt(target.x * target.x + target.y * target.y
+         + target.z * target.z + target.w * target.w);
       return target.set(target.x * mInv, target.y * mInv, target.z * mInv,
          target.w * mInv);
    }
@@ -2181,6 +2181,50 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
+    * Returns a string representation of an array of vectors.
+    *
+    * @param arr the array
+    *
+    * @return the string
+    */
+   public static String toString ( final Vec4[] arr ) {
+
+      return Vec4.toString(arr, IUtils.FIXED_PRINT);
+   }
+
+   /**
+    * Returns a string representation of an array of vectors.
+    *
+    * @param arr    the array
+    * @param places the print precision
+    *
+    * @return the string
+    */
+   public static String toString ( final Vec4[] arr, final int places ) {
+
+      final StringBuilder sb = new StringBuilder(1024);
+      sb.append('[').append(' ');
+
+      if ( arr != null ) {
+         final int len = arr.length;
+         final int last = len - 1;
+
+         for ( int i = 0; i < last; ++i ) {
+            final Vec4 v = arr[i];
+            v.toString(sb, places);
+            sb.append(',').append(' ');
+         }
+
+         final Vec4 vl = arr[last];
+         vl.toString(sb, places);
+         sb.append(' ');
+      }
+
+      sb.append(']');
+      return sb.toString();
+   }
+
+   /**
     * Truncates each component of the vector.
     *
     * @param v      the input vector
@@ -2287,55 +2331,66 @@ public class Vec4 implements Comparable < Vec4 > {
       final float lbz, final float lbw, final float ubx, final float uby,
       final float ubz, final float ubw ) {
 
-      final int sval = strata < 2 ? 2 : strata;
-      final int lval = layers < 2 ? 2 : layers;
-      final int rval = rows < 2 ? 2 : rows;
-      final int cval = cols < 2 ? 2 : cols;
+      // TODO: Use a one-dimensional for-loop, convert indices to 4D array.
+      // https://stackoverflow.com/questions/7367770/how-to-flatten-or-index-3d-array-in-1d-array
 
-      final float gToStep = 1.0f / ( sval - 1.0f );
-      final float hToStep = 1.0f / ( lval - 1.0f );
-      final float iToStep = 1.0f / ( rval - 1.0f );
-      final float jToStep = 1.0f / ( cval - 1.0f );
+      // index = x + y * D1 + z * D1 * D2 + t * D1 * D2 * D3;
+      // x = Index % D1;
+      // y = ( ( Index - x ) / D1 ) % D2;
+      // z = ( ( Index - y * D1 - x ) / (D1 * D2) ) % D3;
+      // t = ( ( Index - z * D2 * D1 - y * D1 - x ) / (D1 * D2 * D3) ) % D4;
+      // /* Technically the last modulus is not required,
+      // since that division SHOULD be bounded by D4 anyways... */
+
+      final int sVal = strata < 2 ? 2 : strata;
+      final int lVal = layers < 2 ? 2 : layers;
+      final int rVal = rows < 2 ? 2 : rows;
+      final int cVal = cols < 2 ? 2 : cols;
+
+      final float gToStep = 1.0f / ( sVal - 1.0f );
+      final float hToStep = 1.0f / ( lVal - 1.0f );
+      final float iToStep = 1.0f / ( rVal - 1.0f );
+      final float jToStep = 1.0f / ( cVal - 1.0f );
 
       /* Calculate x values in separate loop. */
-      final float[] xs = new float[cval];
-      for ( int j = 0; j < cval; ++j ) {
-         final float step = j * jToStep;
-         xs[j] = ( 1.0f - step ) * lbx + step * ubx;
+      final float[] xs = new float[cVal];
+      for ( int j = 0; j < cVal; ++j ) {
+         final float jStep = j * jToStep;
+         xs[j] = ( 1.0f - jStep ) * lbx + jStep * ubx;
       }
 
       /* Calculate y values in separate loop. */
-      final float[] ys = new float[rval];
-      for ( int i = 0; i < rval; ++i ) {
-         final float step = i * iToStep;
-         ys[i] = ( 1.0f - step ) * lby + step * uby;
+      final float[] ys = new float[rVal];
+      for ( int i = 0; i < rVal; ++i ) {
+         final float iStep = i * iToStep;
+         ys[i] = ( 1.0f - iStep ) * lby + iStep * uby;
       }
 
       /* Calculate z values in separate loop. */
-      final float[] zs = new float[lval];
-      for ( int h = 0; h < lval; ++h ) {
-         final float step = h * hToStep;
-         zs[h] = ( 1.0f - step ) * lbz + step * ubz;
+      final float[] zs = new float[lVal];
+      for ( int h = 0; h < lVal; ++h ) {
+         final float hStep = h * hToStep;
+         zs[h] = ( 1.0f - hStep ) * lbz + hStep * ubz;
       }
 
-      final Vec4[][][][] result = new Vec4[sval][lval][rval][cval];
-      for ( int g = 0; g < sval; ++g ) {
+      final Vec4[][][][] result = new Vec4[sVal][lVal][rVal][cVal];
+      for ( int g = 0; g < sVal; ++g ) {
 
          final Vec4[][][] stratum = result[g];
-         final float step = g * gToStep;
-         final float w = ( 1.0f - step ) * lbw + step * ubw;
+         final float gStep = g * gToStep;
+         final float w = ( 1.0f - gStep ) * lbw + gStep * ubw;
 
-         for ( int h = 0; h < lval; ++h ) {
+         for ( int h = 0; h < lVal; ++h ) {
 
             final Vec4[][] layer = stratum[h];
             final float z = zs[h];
 
-            for ( int i = 0; i < rval; ++i ) {
+            for ( int i = 0; i < rVal; ++i ) {
 
                final Vec4[] row = layer[i];
                final float y = ys[i];
 
-               for ( int j = 0; j < cval; ++j ) {
+               for ( int j = 0; j < cVal; ++j ) {
                   row[j] = new Vec4(xs[j], y, z, w);
                }
             }

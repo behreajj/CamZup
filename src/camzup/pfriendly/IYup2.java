@@ -254,6 +254,7 @@ public interface IYup2 extends IUp {
          reds[j] = ( int ) ( jPercent * 0xff + 0.5f ) << 0x10;
       }
 
+      // TODO: Can this be optimized with a 1d for loop?
       for ( int i = 0; i < last; ++i ) {
          final float iPercent = i * toPercent;
          final float y = ( 1.0f - iPercent ) * bottom + iPercent * top;
