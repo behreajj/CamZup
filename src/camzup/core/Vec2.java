@@ -1366,39 +1366,36 @@ public class Vec2 implements Comparable < Vec2 > {
       final float radiusMin, final float radiusMax, final float angOffset,
       final boolean includeCenter ) {
 
-      final int vsect = sectors < 3 ? 3 : sectors;
-      final int vring = rings < 1 ? 1 : rings;
+      final int vSect = sectors < 3 ? 3 : sectors;
+      final int vRing = rings < 1 ? 1 : rings;
       final float angNorm = Utils.mod1(angOffset * IUtils.ONE_TAU);
 
-      final boolean oneRing = vring == 1;
+      final boolean oneRing = vRing == 1;
       final float vrMax = Utils.max(IUtils.EPSILON, radiusMin, radiusMax);
       final float vrMin = oneRing ? vrMax : Utils.max(IUtils.EPSILON, Utils.min(
          radiusMin, radiusMax));
 
       final int ringLen = includeCenter ? rings + 1 : rings;
-      final Vec2[][] result = new Vec2[ringLen][vsect];
+      final Vec2[][] result = new Vec2[ringLen][vSect];
       if ( includeCenter ) { result[0] = new Vec2[] { new Vec2() }; }
 
-      final float toPrc = oneRing ? 1.0f : 1.0f / ( vring - 1.0f );
-      final float toTheta = 1.0f / vsect;
-      float off = 0.0f;
+      final float toStep = oneRing ? 1.0f : 1.0f / ( vRing - 1.0f );
+      final float toTheta = 1.0f / vSect;
 
-      for ( int h = 0; h < vring; ++h ) {
+      final int flatLen = vRing * vSect;
+      for ( int k = 0; k < flatLen; ++k ) {
+         final int i = k / vSect;
+         final int j = k % vSect;
 
-         final float prc = h * toPrc;
-         final float radius = ( 1.0f - prc ) * vrMin + prc * vrMax;
-         final Vec2[] ring = result[includeCenter ? h + 1 : h];
+         final float ifl = i;
+         final float iStep = ifl * toStep;
+         final float offset = ifl * angNorm;
 
-         for ( int i = 0; i < vsect; ++i ) {
+         final float radius = ( 1.0f - iStep ) * vrMin + iStep * vrMax;
+         final float theta = offset + j * toTheta;
 
-            final float theta = off + i * toTheta;
-            final float cosTheta = Utils.scNorm(theta);
-            final float sinTheta = Utils.scNorm(theta - 0.25f);
-
-            ring[i] = new Vec2(radius * cosTheta, radius * sinTheta);
-         }
-
-         off += angNorm;
+         result[includeCenter ? 1 + i : i][j] = new Vec2(radius * Utils.scNorm(
+            theta), radius * Utils.scNorm(theta - 0.25f));
       }
 
       return result;

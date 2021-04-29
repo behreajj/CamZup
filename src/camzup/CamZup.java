@@ -67,6 +67,11 @@ public class CamZup {
       // MeshEntity3 me3 = new MeshEntity3(m3);
       // String str = me3.toBlenderCode();
       // System.out.println(str);
+
+      // Vec4[][][][] grid = Vec4.grid(2, 2, 2, 2);
+      // Vec4[] flat = Vec4.flat(grid);
+      // String str = Vec4.toString(flat);
+      // System.out.println(str);
    }
 
    /**

@@ -49,6 +49,8 @@ void setup() {
 }
 
 void draw() {
+  surface.setTitle(Utils.toFixed(frameRate, 1));
+  
   graphics.mouse1u(mouse);
   lons = Utils.lerp(3, 64, mouse.x);
   lats = Utils.lerp(1, 32, mouse.y);

@@ -2314,7 +2314,7 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param cols   number of columns
     * @param rows   number of rows
     * @param layers number of layers
-    * @param strata number of stratum
+    * @param strata number of strata
     * @param lbx    lower bound x
     * @param lby    lower bound y
     * @param lbz    lower bound z
@@ -2331,70 +2331,37 @@ public class Vec4 implements Comparable < Vec4 > {
       final float lbz, final float lbw, final float ubx, final float uby,
       final float ubz, final float ubw ) {
 
-      // TODO: Use a one-dimensional for-loop, convert indices to 4D array.
-      // https://stackoverflow.com/questions/7367770/how-to-flatten-or-index-3d-array-in-1d-array
-
-      // index = x + y * D1 + z * D1 * D2 + t * D1 * D2 * D3;
-      // x = Index % D1;
-      // y = ( ( Index - x ) / D1 ) % D2;
-      // z = ( ( Index - y * D1 - x ) / (D1 * D2) ) % D3;
-      // t = ( ( Index - z * D2 * D1 - y * D1 - x ) / (D1 * D2 * D3) ) % D4;
-      // /* Technically the last modulus is not required,
-      // since that division SHOULD be bounded by D4 anyways... */
-
       final int sVal = strata < 2 ? 2 : strata;
       final int lVal = layers < 2 ? 2 : layers;
       final int rVal = rows < 2 ? 2 : rows;
       final int cVal = cols < 2 ? 2 : cols;
+
+      final Vec4[][][][] result = new Vec4[sVal][lVal][rVal][cVal];
 
       final float gToStep = 1.0f / ( sVal - 1.0f );
       final float hToStep = 1.0f / ( lVal - 1.0f );
       final float iToStep = 1.0f / ( rVal - 1.0f );
       final float jToStep = 1.0f / ( cVal - 1.0f );
 
-      /* Calculate x values in separate loop. */
-      final float[] xs = new float[cVal];
-      for ( int j = 0; j < cVal; ++j ) {
-         final float jStep = j * jToStep;
-         xs[j] = ( 1.0f - jStep ) * lbx + jStep * ubx;
-      }
+      final int rcVal = rVal * cVal;
+      final int lrcVal = lVal * rcVal;
+      final int len = sVal * lrcVal;
+      for ( int k = 0; k < len; ++k ) {
+         final int g = k / lrcVal;
+         final int m = k - g * lrcVal;
+         final int h = m / rcVal;
+         final int n = m - h * rcVal;
+         final int i = n / cVal;
+         final int j = n % cVal;
 
-      /* Calculate y values in separate loop. */
-      final float[] ys = new float[rVal];
-      for ( int i = 0; i < rVal; ++i ) {
-         final float iStep = i * iToStep;
-         ys[i] = ( 1.0f - iStep ) * lby + iStep * uby;
-      }
-
-      /* Calculate z values in separate loop. */
-      final float[] zs = new float[lVal];
-      for ( int h = 0; h < lVal; ++h ) {
-         final float hStep = h * hToStep;
-         zs[h] = ( 1.0f - hStep ) * lbz + hStep * ubz;
-      }
-
-      final Vec4[][][][] result = new Vec4[sVal][lVal][rVal][cVal];
-      for ( int g = 0; g < sVal; ++g ) {
-
-         final Vec4[][][] stratum = result[g];
          final float gStep = g * gToStep;
-         final float w = ( 1.0f - gStep ) * lbw + gStep * ubw;
+         final float hStep = h * hToStep;
+         final float iStep = i * iToStep;
+         final float jStep = j * jToStep;
 
-         for ( int h = 0; h < lVal; ++h ) {
-
-            final Vec4[][] layer = stratum[h];
-            final float z = zs[h];
-
-            for ( int i = 0; i < rVal; ++i ) {
-
-               final Vec4[] row = layer[i];
-               final float y = ys[i];
-
-               for ( int j = 0; j < cVal; ++j ) {
-                  row[j] = new Vec4(xs[j], y, z, w);
-               }
-            }
-         }
+         result[g][h][i][j] = new Vec4( ( 1.0f - jStep ) * lbx + jStep * ubx,
+            ( 1.0f - iStep ) * lby + iStep * uby, ( 1.0f - hStep ) * lbz + hStep
+               * ubz, ( 1.0f - gStep ) * lbw + gStep * ubw);
       }
 
       return result;

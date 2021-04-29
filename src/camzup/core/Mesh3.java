@@ -3943,49 +3943,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * Creates a torus, or doughnut. The hole opens onto the y axis.
     *
     * @param thickness tube thickness
-    * @param target    the output mesh
-    *
-    * @return the torus
-    */
-   public static Mesh3 torus ( final float thickness, final Mesh3 target ) {
-
-      return Mesh3.torus(thickness, IMesh.DEFAULT_CIRCLE_SECTORS,
-         IMesh.DEFAULT_CIRCLE_SECTORS >> 1, Mesh3.DEFAULT_POLY_TYPE, target);
-   }
-
-   /**
-    * Creates a torus, or doughnut. The hole opens onto the y axis.
-    *
-    * @param sectors number of sectors
-    * @param panels  number of panels
-    * @param target  the output mesh
-    *
-    * @return the torus
-    */
-   public static Mesh3 torus ( final int sectors, final int panels,
-      final Mesh3 target ) {
-
-      return Mesh3.torus(IMesh.DEFAULT_OCULUS, sectors, panels,
-         Mesh3.DEFAULT_POLY_TYPE, target);
-   }
-
-   /**
-    * Creates a torus, or doughnut. The hole opens onto the y axis.
-    *
-    * @param target the output mesh
-    *
-    * @return the torus
-    */
-   public static Mesh3 torus ( final Mesh3 target ) {
-
-      return Mesh3.torus(IMesh.DEFAULT_OCULUS, IMesh.DEFAULT_CIRCLE_SECTORS,
-         IMesh.DEFAULT_CIRCLE_SECTORS >> 1, Mesh3.DEFAULT_POLY_TYPE, target);
-   }
-
-   /**
-    * Creates a torus, or doughnut. The hole opens onto the y axis.
-    *
-    * @param thickness tube thickness
     * @param sectors   number of sectors
     * @param panels    number of panels
     * @param poly      the polygon type
@@ -4128,6 +4085,49 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       return target;
+   }
+
+   /**
+    * Creates a torus, or doughnut. The hole opens onto the y axis.
+    *
+    * @param thickness tube thickness
+    * @param target    the output mesh
+    *
+    * @return the torus
+    */
+   public static Mesh3 torus ( final float thickness, final Mesh3 target ) {
+
+      return Mesh3.torus(thickness, IMesh.DEFAULT_CIRCLE_SECTORS,
+         IMesh.DEFAULT_CIRCLE_SECTORS >> 1, Mesh3.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates a torus, or doughnut. The hole opens onto the y axis.
+    *
+    * @param sectors number of sectors
+    * @param panels  number of panels
+    * @param target  the output mesh
+    *
+    * @return the torus
+    */
+   public static Mesh3 torus ( final int sectors, final int panels,
+      final Mesh3 target ) {
+
+      return Mesh3.torus(IMesh.DEFAULT_OCULUS, sectors, panels,
+         Mesh3.DEFAULT_POLY_TYPE, target);
+   }
+
+   /**
+    * Creates a torus, or doughnut. The hole opens onto the y axis.
+    *
+    * @param target the output mesh
+    *
+    * @return the torus
+    */
+   public static Mesh3 torus ( final Mesh3 target ) {
+
+      return Mesh3.torus(IMesh.DEFAULT_OCULUS, IMesh.DEFAULT_CIRCLE_SECTORS,
+         IMesh.DEFAULT_CIRCLE_SECTORS >> 1, Mesh3.DEFAULT_POLY_TYPE, target);
    }
 
    /**

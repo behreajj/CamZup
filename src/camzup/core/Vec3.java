@@ -3201,11 +3201,11 @@ public class Vec3 implements Comparable < Vec3 > {
       final float iToStep = 1.0f / ( rVal - 1.0f );
       final float jToStep = 1.0f / ( cVal - 1.0f );
 
-      final int rValcVal = rVal * cVal;
-      final int len = lVal * rValcVal;
+      final int rcVal = rVal * cVal;
+      final int len = lVal * rcVal;
       for ( int k = 0; k < len; ++k ) {
-         final int h = k / rValcVal;
-         final int m = k - h * rValcVal;
+         final int h = k / rcVal;
+         final int m = k - h * rcVal;
          final int i = m / cVal;
          final int j = m % cVal;
 

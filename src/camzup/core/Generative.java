@@ -16,6 +16,38 @@ public abstract class Generative {
    public static final int DEFAULT_SEED = ( int ) System.currentTimeMillis();
 
    /**
+    * A helper function to the gradient functions. Performs a series of
+    * bit-shifting operations to create a hash.
+    *
+    * @param a first input
+    * @param b second input
+    * @param c third input
+    *
+    * @return the hash
+    *
+    * @author Bob Jenkins
+    */
+   @SuppressWarnings ( "all" )
+   public static int hash ( int a, int b, int c ) {
+
+      c ^= b;
+      c -= b << 0xe | b >> 0x20 - 0xe;
+      a ^= c;
+      a -= c << 0xb | c >> 0x20 - 0xb;
+      b ^= a;
+      b -= a << 0x19 | a >> 0x20 - 0x19;
+      c ^= b;
+      c -= b << 0x10 | b >> 0x20 - 0x10;
+      a ^= c;
+      a -= c << 0x4 | c >> 0x20 - 0x4;
+      b ^= a;
+      b -= a << 0xe | a >> 0x20 - 0xe;
+      c ^= b;
+      c -= b << 0x18 | b >> 0x20 - 0x18;
+      return c;
+   }
+
+   /**
     * Returns a signed pseudo-random number in the range [-1.0, 1.0] given a
     * vector input and a seed, based on the vector's hash code.
     *
@@ -188,41 +220,6 @@ public abstract class Generative {
          ( Float.intBitsToFloat(Generative.hash(dhash, seed, 0)
             & 0x007fffff | 0x3f800000) - 1.0f ) * 2.0f - 1.0f);
       /* @formatter:on */
-   }
-
-   /**
-    * A helper function to the gradient functions. Performs a series of
-    * bit-shifting operations to create a hash.
-    *
-    * @param a first input
-    * @param b second input
-    * @param c third input
-    *
-    * @return the hash
-    *
-    * @author Bob Jenkins
-    */
-   @SuppressWarnings ( "all" )
-   protected static int hash ( int a, int b, int c ) {
-
-      // QUERY: Is there any way to make a 2d version of this with fewer
-      // operations? Maybe instead of assuming c = 0, assume a = 0?
-
-      c ^= b;
-      c -= b << 0xe | b >> 0x20 - 0xe;
-      a ^= c;
-      a -= c << 0xb | c >> 0x20 - 0xb;
-      b ^= a;
-      b -= a << 0x19 | a >> 0x20 - 0x19;
-      c ^= b;
-      c -= b << 0x10 | b >> 0x20 - 0x10;
-      a ^= c;
-      a -= c << 0x4 | c >> 0x20 - 0x4;
-      b ^= a;
-      b -= a << 0xe | a >> 0x20 - 0xe;
-      c ^= b;
-      c -= b << 0x18 | b >> 0x20 - 0x18;
-      return c;
    }
 
 }

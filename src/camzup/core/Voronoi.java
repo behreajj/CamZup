@@ -30,8 +30,7 @@ public class Voronoi extends Generative {
 
       /*
        * As many functions as is reasonable are inlined for performance purposes
-       * (both to avoid function call overhead and to avoid creating new Vec3
-       * s).
+       * (both to avoid function call overhead and to avoid creating Vec2s).
        */
 
       if ( scale == 0.0f ) {
@@ -52,57 +51,49 @@ public class Voronoi extends Generative {
       final float yLocal = yScaled - yCell;
 
       float minDistSq = Float.MAX_VALUE;
-      float xHsh;
-      float yHsh;
 
-      // TODO: Any way to do this with a 1D loop?
-      for ( float j = -1.0f; j < 2.0f; ++j ) {
-         final float sumy = yCell + j;
-         final float sumysq = sumy * sumy;
-         final int vybit = Float.floatToIntBits(sumy);
+      /* For 2D, 3 x 3 = 9. */
+      for ( int k = 0; k < 9; ++k ) {
 
-         for ( float i = -1.0f; i < 2.0f; ++i ) {
-            final float sumx = xCell + i;
-            final float sumxsq = sumx * sumx;
+         /* Convert from linear index to [0, 2]. */
+         final int i = k / 3;
+         final int j = k % 3;
 
-            /*
-             * Calculate an offset step for the vector. This has to be done with
-             * all three sums within the for loop.
-             */
-            final float st = Utils.sqrtUnchecked(sumxsq + sumysq)
-               * Simplex.STEP_2;
+         /* Convert from [0, 2] to [-1.0, 1.0]. */
+         final float in1 = i - 1.0f;
+         final float jn1 = j - 1.0f;
 
-            /* Create a hash for the x component. */
-            final int ahsh = ( IUtils.MUL_BASE ^ Float.floatToIntBits(sumx
-               + st) ) * IUtils.HASH_MUL ^ vybit;
+         /* Calculate an offset step for the vector. */
+         final float xSum = xCell + jn1;
+         final float ySum = yCell + in1;
 
-            /* Create a hash for the y component. */
-            final int bhsh = ( IUtils.MUL_BASE ^ Float.floatToIntBits(sumx) )
-               * IUtils.HASH_MUL ^ Float.floatToIntBits(sumy + st);
+         final float st = Utils.sqrtUnchecked(xSum * xSum + ySum * ySum)
+            * Simplex.STEP_2;
 
-            /*
-             * Create a random vector in the range [0.0, 1.0] . Add the cell
-             * offset.
-             */
-            xHsh = i + Float.intBitsToFloat(Generative.hash(ahsh, seed, 0)
-               & 0x007fffff | 0x3f800000) - 1.0f;
-            yHsh = j + Float.intBitsToFloat(Generative.hash(bhsh, seed, 0)
-               & 0x007fffff | 0x3f800000) - 1.0f;
+         /* Create a random vector [0.0, 1.0] . Add cell offset. */
+         final float xHsh = jn1 + Float.intBitsToFloat(Generative.hash(
+            ( IUtils.MUL_BASE ^ Float.floatToIntBits(xSum + st) )
+               * IUtils.HASH_MUL ^ Float.floatToIntBits(ySum), seed, 0)
+            & 0x007fffff | 0x3f800000) - 1.0f;
 
-            /*
-             * Find the Euclidean distance between the local coordinate and the
-             * random point.
-             */
-            final float xDist = xLocal - xHsh;
-            final float yDist = yLocal - yHsh;
-            final float distSq = xDist * xDist + yDist * yDist;
+         final float yHsh = in1 + Float.intBitsToFloat(Generative.hash(
+            ( IUtils.MUL_BASE ^ Float.floatToIntBits(xSum) ) * IUtils.HASH_MUL
+               ^ Float.floatToIntBits(ySum + st), seed, 0) & 0x007fffff
+            | 0x3f800000) - 1.0f;
 
-            /* Reassign minimums. */
-            if ( distSq < minDistSq ) {
-               minDistSq = distSq;
-               target.x = xHsh;
-               target.y = yHsh;
-            }
+         /*
+          * Find the Euclidean distance between the local coordinate and the
+          * random point.
+          */
+         final float xDist = xLocal - xHsh;
+         final float yDist = yLocal - yHsh;
+         final float distSq = xDist * xDist + yDist * yDist;
+
+         /* Reassign minimums. */
+         if ( distSq < minDistSq ) {
+            minDistSq = distSq;
+            target.x = xHsh;
+            target.y = yHsh;
          }
       }
 
@@ -129,12 +120,6 @@ public class Voronoi extends Generative {
    public static float eval ( final Vec3 coord, final int seed,
       final float scale, final Vec3 target ) {
 
-      /*
-       * As many functions as is reasonable are inlined for performance purposes
-       * (both to avoid function call overhead and to avoid creating new Vec3
-       * s).
-       */
-
       if ( scale == 0.0f ) {
          target.reset();
          return 0.0f;
@@ -157,76 +142,51 @@ public class Voronoi extends Generative {
       final float zLocal = zScaled - zCell;
 
       float minDistSq = Float.MAX_VALUE;
-      float xHsh;
-      float yHsh;
-      float zHsh;
 
-      for ( float k = -1.0f; k < 2.0f; ++k ) {
-         final float sumz = zCell + k;
-         final float sumzsq = sumz * sumz;
-         final int vzbit = Float.floatToIntBits(sumz);
+      /* For 3D, 3 x 3 x 3 = 27. */
+      for ( int k = 0; k < 27; ++k ) {
+         final int h = k / 9;
+         final int m = k - h * 9;
+         final int i = m / 3;
+         final int j = m % 3;
 
-         for ( float j = -1.0f; j < 2.0f; ++j ) {
-            final float sumy = yCell + j;
-            final float sumysq = sumy * sumy;
-            final int vybit = Float.floatToIntBits(sumy);
+         final float hn1 = h - 1.0f;
+         final float in1 = i - 1.0f;
+         final float jn1 = j - 1.0f;
 
-            for ( float i = -1.0f; i < 2.0f; ++i ) {
-               final float sumx = xCell + i;
-               final float sumxsq = sumx * sumx;
+         final float zSum = zCell + hn1;
+         final float ySum = yCell + in1;
+         final float xSum = xCell + jn1;
 
-               // TEST
-               final int mulvx = ( IUtils.MUL_BASE ^ Float.floatToIntBits(
-                  sumx) ) * IUtils.HASH_MUL;
+         final float st = Simplex.STEP_3 * Utils.sqrtUnchecked(xSum * xSum
+            + ySum * ySum + zSum * zSum);
 
-               /*
-                * Calculate an offset step for the vector. This has to be done
-                * with all three sums within the for loop.
-                */
-               final float st = Simplex.STEP_3 * Utils.sqrtUnchecked(sumxsq
-                  + sumysq + sumzsq);
+         final int zBit = Float.floatToIntBits(zSum);
+         final int yBit = Float.floatToIntBits(ySum);
+         final int xBitBase = ( IUtils.MUL_BASE ^ Float.floatToIntBits(xSum) )
+            * IUtils.HASH_MUL;
 
-               /* Create a hash for the x component. */
-               final int ahsh = ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(sumx
-                  + st) ) * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL ^ vzbit;
+         final float xHsh = jn1 + Float.intBitsToFloat(Generative.hash(
+            ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(xSum + st) )
+               * IUtils.HASH_MUL ^ yBit ) * IUtils.HASH_MUL ^ zBit, seed, 0)
+            & 0x007fffff | 0x3f800000) - 1.0f;
+         final float yHsh = in1 + Float.intBitsToFloat(Generative.hash(
+            ( xBitBase ^ Float.floatToIntBits(ySum + st) ) * IUtils.HASH_MUL
+               ^ zBit, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f;
+         final float zHsh = hn1 + Float.intBitsToFloat(Generative.hash(
+            ( xBitBase ^ yBit ) * IUtils.HASH_MUL ^ Float.floatToIntBits(zSum
+               + st), seed, 0) & 0x007fffff | 0x3f800000) - 1.0f;
 
-               /* Create a hash for the y component. */
-               final int bhsh = ( mulvx ^ Float.floatToIntBits(sumy + st) )
-                  * IUtils.HASH_MUL ^ vzbit;
+         final float xDist = xLocal - xHsh;
+         final float yDist = yLocal - yHsh;
+         final float zDist = zLocal - zHsh;
+         final float distSq = xDist * xDist + yDist * yDist + zDist * zDist;
 
-               /* Create a hash for the z component. */
-               final int chsh = ( mulvx ^ vybit ) * IUtils.HASH_MUL ^ Float
-                  .floatToIntBits(sumz + st);
-
-               /*
-                * Create a random vector in the range [0.0, 1.0] . Add the cell
-                * offset.
-                */
-               xHsh = i + Float.intBitsToFloat(Generative.hash(ahsh, seed, 0)
-                  & 0x007fffff | 0x3f800000) - 1.0f;
-               yHsh = j + Float.intBitsToFloat(Generative.hash(bhsh, seed, 0)
-                  & 0x007fffff | 0x3f800000) - 1.0f;
-               zHsh = k + Float.intBitsToFloat(Generative.hash(chsh, seed, 0)
-                  & 0x007fffff | 0x3f800000) - 1.0f;
-
-               /*
-                * Find the Euclidean distance between the local coordinate and
-                * the random point.
-                */
-               final float xDist = xLocal - xHsh;
-               final float yDist = yLocal - yHsh;
-               final float zDist = zLocal - zHsh;
-               final float distSq = xDist * xDist + yDist * yDist + zDist
-                  * zDist;
-
-               /* Reassign minimums. */
-               if ( distSq < minDistSq ) {
-                  minDistSq = distSq;
-                  target.x = xHsh;
-                  target.y = yHsh;
-                  target.z = zHsh;
-               }
-            }
+         if ( distSq < minDistSq ) {
+            minDistSq = distSq;
+            target.x = xHsh;
+            target.y = yHsh;
+            target.z = zHsh;
          }
       }
 
@@ -281,92 +241,71 @@ public class Voronoi extends Generative {
       final float wLocal = wScaled - wCell;
 
       float minDist = Float.MAX_VALUE;
-      float xHsh;
-      float yHsh;
-      float zHsh;
-      float wHsh;
 
-      for ( float m = -1.0f; m < 2.0f; ++m ) {
-         final float sumw = wCell + m;
-         final float sumwsq = sumw * sumw;
-         final int vwbit = Float.floatToIntBits(sumw);
+      /* For 4D, 3 x 3 x 3 x 3 = 81. */
+      for ( int k = 0; k < 81; ++k ) {
+         final int g = k / 27;
+         final int m = k - g * 27;
+         final int h = m / 9;
+         final int n = m - h * 9;
+         final int i = n / 3;
+         final int j = n % 3;
 
-         for ( float k = -1.0f; k < 2.0f; ++k ) {
-            final float sumz = zCell + k;
-            final float sumzsq = sumz * sumz;
-            final int vzbit = Float.floatToIntBits(sumz);
+         final float gn1 = g - 1.0f;
+         final float hn1 = h - 1.0f;
+         final float in1 = i - 1.0f;
+         final float jn1 = j - 1.0f;
 
-            for ( float j = -1.0f; j < 2.0f; ++j ) {
-               final float sumy = yCell + j;
-               final float sumysq = sumy * sumy;
-               final int vybit = Float.floatToIntBits(sumy);
+         final float wSum = wCell + gn1;
+         final float zSum = zCell + hn1;
+         final float ySum = yCell + in1;
+         final float xSum = xCell + jn1;
 
-               for ( float i = -1.0f; i < 2.0f; ++i ) {
-                  final float sumx = xCell + i;
-                  final float sumxsq = sumx * sumx;
+         final float st = Simplex.STEP_4 * Utils.sqrtUnchecked(xSum * xSum
+            + ySum * ySum + zSum * zSum + wSum * wSum);
 
-                  // TEST
-                  final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(
-                     sumx);
-                  final int hashmulvx = ( mulvx * IUtils.HASH_MUL ^ vybit )
-                     * IUtils.HASH_MUL;
+         final int wBit = Float.floatToIntBits(wSum);
+         final int zBit = Float.floatToIntBits(zSum);
+         final int yBit = Float.floatToIntBits(ySum);
 
-                  /* Calculate an offset step for the vector. */
-                  final float st = Simplex.STEP_4 * Utils.sqrtUnchecked(sumxsq
-                     + sumysq + sumzsq + sumwsq);
+         final int xBitBase = IUtils.MUL_BASE ^ Float.floatToIntBits(xSum);
+         final int yBitBase = ( xBitBase * IUtils.HASH_MUL ^ yBit )
+            * IUtils.HASH_MUL;
 
-                  /* Create a hash for the x component. */
-                  final int ahsh = ( ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(
-                     sumx + st) ) * IUtils.HASH_MUL ^ vybit ) * IUtils.HASH_MUL
-                     ^ vzbit ) * IUtils.HASH_MUL ^ vwbit;
+         final float xHsh = jn1 + Float.intBitsToFloat(Generative.hash(
+            ( ( ( IUtils.MUL_BASE ^ Float.floatToIntBits(xSum + st) )
+               * IUtils.HASH_MUL ^ yBit ) * IUtils.HASH_MUL ^ zBit )
+               * IUtils.HASH_MUL ^ wBit, seed, 0) & 0x007fffff | 0x3f800000)
+            - 1.0f;
+         final float yHsh = in1 + Float.intBitsToFloat(Generative.hash(
+            ( ( xBitBase * IUtils.HASH_MUL ^ Float.floatToIntBits(ySum + st) )
+               * IUtils.HASH_MUL ^ zBit ) * IUtils.HASH_MUL ^ wBit, seed, 0)
+            & 0x007fffff | 0x3f800000) - 1.0f;
+         final float zHsh = hn1 + Float.intBitsToFloat(Generative.hash(
+            ( yBitBase ^ Float.floatToIntBits(zSum + st) ) * IUtils.HASH_MUL
+               ^ wBit, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f;
+         final float wHsh = gn1 + Float.intBitsToFloat(Generative.hash(
+            ( yBitBase ^ zBit ) * IUtils.HASH_MUL ^ Float.floatToIntBits(wSum
+               + st), seed, 0) & 0x007fffff | 0x3f800000) - 1.0f;
 
-                  /* Create a hash for the y component. */
-                  final int bhsh = ( ( mulvx * IUtils.HASH_MUL ^ Float
-                     .floatToIntBits(sumy + st) ) * IUtils.HASH_MUL ^ vzbit )
-                     * IUtils.HASH_MUL ^ vwbit;
+         /*
+          * Find the Euclidean distance between the local coordinate and the
+          * random point.
+          */
+         final float xDist = xLocal - xHsh;
+         final float yDist = yLocal - yHsh;
+         final float zDist = zLocal - zHsh;
+         final float wDist = wLocal - wHsh;
+         final float dist = xDist * xDist + yDist * yDist + zDist * zDist
+            + wDist * wDist;
 
-                  /* Create a hash for the z component. */
-                  final int chsh = ( hashmulvx ^ Float.floatToIntBits(sumz
-                     + st) ) * IUtils.HASH_MUL ^ vwbit;
-
-                  /* Create a hash for the w component. */
-                  final int dhsh = ( hashmulvx ^ vzbit ) * IUtils.HASH_MUL
-                     ^ Float.floatToIntBits(sumw + st);
-
-                  /*
-                   * Create a random vector in the range [0.0, 1.0] . Add the
-                   * cell offset.
-                   */
-                  xHsh = i + Float.intBitsToFloat(Generative.hash(ahsh, seed, 0)
-                     & 0x007fffff | 0x3f800000) - 1.0f;
-                  yHsh = j + Float.intBitsToFloat(Generative.hash(bhsh, seed, 0)
-                     & 0x007fffff | 0x3f800000) - 1.0f;
-                  zHsh = k + Float.intBitsToFloat(Generative.hash(chsh, seed, 0)
-                     & 0x007fffff | 0x3f800000) - 1.0f;
-                  wHsh = m + Float.intBitsToFloat(Generative.hash(dhsh, seed, 0)
-                     & 0x007fffff | 0x3f800000) - 1.0f;
-
-                  /*
-                   * Find the Euclidean distance between the local coordinate
-                   * and the random point.
-                   */
-                  final float xDist = xLocal - xHsh;
-                  final float yDist = yLocal - yHsh;
-                  final float zDist = zLocal - zHsh;
-                  final float wDist = wLocal - wHsh;
-                  final float dist = xDist * xDist + yDist * yDist + zDist
-                     * zDist + wDist * wDist;
-
-                  /* Reassign minimums. */
-                  if ( dist < minDist ) {
-                     minDist = dist;
-                     target.x = xHsh;
-                     target.y = yHsh;
-                     target.z = zHsh;
-                     target.w = wHsh;
-                  }
-               }
-            }
+         /* Reassign minimums. */
+         if ( dist < minDist ) {
+            minDist = dist;
+            target.x = xHsh;
+            target.y = yHsh;
+            target.z = zHsh;
+            target.w = wHsh;
          }
       }
 
