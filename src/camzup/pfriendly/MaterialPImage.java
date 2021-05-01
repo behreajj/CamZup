@@ -128,7 +128,7 @@ public class MaterialPImage extends MaterialUv {
    public MaterialPImage setTexture ( final PImage texture ) {
 
       if ( texture != null ) {
-         this.texture = texture;
+         this.texture = ZImage.alphaToArgb(texture);
       } else {
          this.texture = new PImage(128, 128, PConstants.ARGB, 1);
          ZImage.fill(0xffffffff, this.texture);

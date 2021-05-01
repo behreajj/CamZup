@@ -1466,7 +1466,7 @@ public class Color implements Comparable < Color > {
    public static Color linearToStandard ( final Color source,
       final Color target ) {
 
-      /* 1.0d / 2.4d = 0.4166666666666667d . */
+      /* 0.4166666666666667d = 0.4166666666666667d . */
       return target.set(source.r <= 0.0031308f ? source.r * 12.92f
          : ( float ) ( Math.pow(source.r, 0.4166666666666667d) * 1.055d
             - 0.055d ), source.g <= 0.0031308f ? source.g * 12.92f
@@ -2059,7 +2059,7 @@ public class Color implements Comparable < Color > {
       final Color target ) {
 
       /*
-       * (float)(1.0d / 12.92d) = 0.07739938f . 1.0d / 1.055d =
+       * (float)(0.07739938080495357d) = 0.07739938f . 0.9478672985781991d =
        * 0.9478672985781991d
        */
       return target.set(source.r <= 0.04045f ? source.r * 0.07739938f
@@ -2819,29 +2819,23 @@ public class Color implements Comparable < Color > {
          final double u = 1.0d - t;
 
          /* Convert origin from standard to linear. */
-         final double alr = origin.r <= LerpLrgba.LB_S_TO_L ? origin.r
-            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( origin.r + 0.055d )
-               * LerpLrgba.COEFF_S_TO_L, LerpLrgba.EXPONENT_S_TO_L);
-         final double alg = origin.g <= LerpLrgba.LB_S_TO_L ? origin.g
-            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( origin.g + 0.055d )
-               * LerpLrgba.COEFF_S_TO_L, LerpLrgba.EXPONENT_S_TO_L);
-         final double alb = origin.b <= LerpLrgba.LB_S_TO_L ? origin.b
-            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( origin.b + 0.055d )
-               * LerpLrgba.COEFF_S_TO_L, LerpLrgba.EXPONENT_S_TO_L);
+         final double alr = origin.r <= 0.04045f ? origin.r
+            * 0.07739938080495357d : Math.pow( ( origin.r + 0.055d )
+               * 0.9478672985781991d, 2.4d);
+         final double alg = origin.g <= 0.04045f ? origin.g
+            * 0.07739938080495357d : Math.pow( ( origin.g + 0.055d )
+               * 0.9478672985781991d, 2.4d);
+         final double alb = origin.b <= 0.04045f ? origin.b
+            * 0.07739938080495357d : Math.pow( ( origin.b + 0.055d )
+               * 0.9478672985781991d, 2.4d);
 
          /* Convert destination from standard to linear. */
-         final double blr = dest.r <= LerpLrgba.LB_S_TO_L ? dest.r
-            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( dest.r
-               + LerpLrgba.OFFSET ) * LerpLrgba.COEFF_S_TO_L,
-               LerpLrgba.EXPONENT_S_TO_L);
-         final double blg = dest.g <= LerpLrgba.LB_S_TO_L ? dest.g
-            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( dest.g
-               + LerpLrgba.OFFSET ) * LerpLrgba.COEFF_S_TO_L,
-               LerpLrgba.EXPONENT_S_TO_L);
-         final double blb = dest.b <= LerpLrgba.LB_S_TO_L ? dest.b
-            * LerpLrgba.COEFF_LB_S_TO_L : Math.pow( ( dest.b
-               + LerpLrgba.OFFSET ) * LerpLrgba.COEFF_S_TO_L,
-               LerpLrgba.EXPONENT_S_TO_L);
+         final double blr = dest.r <= 0.04045f ? dest.r * 0.07739938080495357d
+            : Math.pow( ( dest.r + 0.055d ) * 0.9478672985781991d, 2.4d);
+         final double blg = dest.g <= 0.04045f ? dest.g * 0.07739938080495357d
+            : Math.pow( ( dest.g + 0.055d ) * 0.9478672985781991d, 2.4d);
+         final double blb = dest.b <= 0.04045f ? dest.b * 0.07739938080495357d
+            : Math.pow( ( dest.b + 0.055d ) * 0.9478672985781991d, 2.4d);
 
          /* Linear interpolation. */
          final double clr = u * alr + t * blr;
@@ -2850,84 +2844,16 @@ public class Color implements Comparable < Color > {
          final double csa = u * origin.a + t * dest.a;
 
          /* Convert from linear to standard. */
-         final double csr = clr <= LerpLrgba.LB_L_TO_S ? clr
-            * LerpLrgba.COEFF_LB_L_TO_S : Math.pow(clr,
-               LerpLrgba.EXPONENT_L_TO_S) * LerpLrgba.COEFF_L_TO_S
-               - LerpLrgba.OFFSET;
-         final double csg = clg <= LerpLrgba.LB_L_TO_S ? clg
-            * LerpLrgba.COEFF_LB_L_TO_S : Math.pow(clg,
-               LerpLrgba.EXPONENT_L_TO_S) * LerpLrgba.COEFF_L_TO_S
-               - LerpLrgba.OFFSET;
-         final double csb = clb <= LerpLrgba.LB_L_TO_S ? clb
-            * LerpLrgba.COEFF_LB_L_TO_S : Math.pow(clb,
-               LerpLrgba.EXPONENT_L_TO_S) * LerpLrgba.COEFF_L_TO_S
-               - LerpLrgba.OFFSET;
+         final double csr = clr <= 0.0031308d ? clr * 12.92d : Math.pow(clr,
+            0.4166666666666667d) * 1.055d - 0.055d;
+         final double csg = clg <= 0.0031308d ? clg * 12.92d : Math.pow(clg,
+            0.4166666666666667d) * 1.055d - 0.055d;
+         final double csb = clb <= 0.0031308d ? clb * 12.92d : Math.pow(clb,
+            0.4166666666666667d) * 1.055d - 0.055d;
 
          return target.set(( float ) csr, ( float ) csg, ( float ) csb,
             ( float ) csa);
       }
-
-      /**
-       * Amount by which the power of a color channel is multiplied when
-       * converting from linear to standard RGB; approximately
-       * {@value LerpLrgba#COEFF_L_TO_S} .
-       */
-      public static final double COEFF_L_TO_S = 1.055d;
-
-      /**
-       * Amount by which a color channel beneath the lower bound is multiplied
-       * when converting from linear to standard RGB; approximately
-       * {@value LerpLrgba#COEFF_LB_L_TO_S} .
-       */
-      public static final double COEFF_LB_L_TO_S = 12.92d;
-
-      /**
-       * Amount by which a color channel beneath the lower bound is multiplied
-       * when converting from standard to linear RGB; approximately
-       * {@value LerpLrgba#COEFF_LB_S_TO_L} .
-       */
-      public static final double COEFF_LB_S_TO_L = 1.0d
-         / LerpLrgba.COEFF_LB_L_TO_S;
-
-      /**
-       * Amount by which the power of a color channel is multiplied when
-       * converting from standard to linear RGB; approximately
-       * {@value LerpLrgba#COEFF_S_TO_L} .
-       */
-      public static final double COEFF_S_TO_L = 1.0d / LerpLrgba.COEFF_L_TO_S;
-
-      /**
-       * Exponent by which a channel is raised when converting from linear to
-       * standard RGB, {@value LerpLrgba#EXPONENT_L_TO_S}.
-       */
-      public static final double EXPONENT_L_TO_S = 1.0d
-         / LerpLrgba.EXPONENT_S_TO_L;
-
-      /**
-       * Exponent by which a channel is raised when converting from standard to
-       * linear RGB, {@value LerpLrgba#EXPONENT_S_TO_L}.
-       */
-      public static final double EXPONENT_S_TO_L = 2.4d;
-
-      /**
-       * When converting from linear to standard RGB, lower bound beneath which
-       * a color channel is not raised to a power, but rather is divided by a
-       * constant. {@value LerpLrgba#LB_L_TO_S} .
-       */
-      public static final double LB_L_TO_S = 0.0031308d;
-
-      /**
-       * When converting from standard to linear RGB, lower bound beneath which
-       * a color channel is not raised to a power, but rather is divided by a
-       * constant. {@value LerpLrgba#LB_S_TO_L} .
-       */
-      public static final float LB_S_TO_L = 0.04045f;
-
-      /**
-       * Amount added to or subtracted from a color channel when converting
-       * between linear and standard, {@value LerpLrgba#OFFSET}.
-       */
-      public static final double OFFSET = 0.055d;
 
    }
 

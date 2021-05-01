@@ -165,6 +165,30 @@ public class ZImage extends PImage {
    public static final int DEFAULT_LEADING = 8;
 
    /**
+    * Convert an image in the {@link PConstants#ALPHA} format to an image in
+    * the {@link PConstants#ARGB} format.
+    *
+    * @param target the image
+    *
+    * @return the conversion
+    */
+   public static PImage alphaToArgb ( final PImage target ) {
+
+      if ( target.format != PConstants.ALPHA ) { return target; }
+
+      target.loadPixels();
+      final int[] pixels = target.pixels;
+      final int len = pixels.length;
+      for ( int i = 0; i < len; ++i ) {
+         final int val = pixels[i];
+         pixels[i] = val << 0x18 | val << 0x10 | val << 0x08 | val;
+      }
+      target.format = PConstants.ARGB;
+      target.updatePixels();
+      return target;
+   }
+
+   /**
     * Finds the aspect ratio of an image, it's width divided by its height.
     *
     * @param img the image
@@ -1095,6 +1119,8 @@ public class ZImage extends PImage {
    public static PImage linearToStandard ( final PImage target,
       final Color adjusted ) {
 
+      // TODO: Handle ALPHA format?
+
       target.loadPixels();
 
       final int[] px = target.pixels;
@@ -1211,7 +1237,7 @@ public class ZImage extends PImage {
       final int hPx ) {
 
       /*
-       * https://stackoverflow.com/questions/
+       * References: https://stackoverflow.com/questions/
        * 17640173/implementation-of-bi-cubic-resize
        * https://blog.demofox.org/2015/08/15/
        * resizing-images-with-bicubic-interpolation/
@@ -1221,20 +1247,25 @@ public class ZImage extends PImage {
       final int[] kernel = new int[kernelSize];
 
       target.loadPixels();
-      final int srcWidth = target.pixelWidth;
-      final int srcHeight = target.pixelHeight;
+      final int sw = target.pixelWidth;
+      final int sh = target.pixelHeight;
       final int srcFmt = target.format;
-      final int[] in = target.pixels;
+      final int[] srcpx = target.pixels;
 
-      final int destWidth = wPx < 2 ? 2 : wPx;
-      final int destHeight = hPx < 2 ? 2 : hPx;
+      final int dw = wPx < 2 ? 2 : wPx;
+      final int dh = hPx < 2 ? 2 : hPx;
 
-      final float tx = srcWidth / ( float ) destWidth;
-      final float ty = srcHeight / ( float ) destHeight;
+      /*
+       * Subtracting by 1.0 from the source dimensions was not present in the
+       * reference code, but seems to help reduce blurred alpha on the right and
+       * bottom edges.
+       */
+      final float tx = ( sw - 1.0f ) / dw;
+      final float ty = ( sh - 1.0f ) / dh;
 
       int chnlCount;
       switch ( srcFmt ) {
-         case PConstants.GRAY:
+         case PConstants.ALPHA:
             chnlCount = 1;
             break;
 
@@ -1248,12 +1279,11 @@ public class ZImage extends PImage {
        * The original algorithm consists of 4 nested for loops: rows (height),
        * columns (width), kernel, channel. This flattens it to one loop.
        */
-      final int rowStride = destWidth * chnlCount;
-      final int newPxlLen = destWidth * destHeight;
+      final int newPxlLen = dw * dh;
       final int[] clrs = new int[newPxlLen * kernelSize];
       final int len2 = kernelSize * chnlCount;
-      final int len3 = destWidth * len2;
-      final int len4 = destHeight * len3;
+      final int len3 = dw * len2;
+      final int len4 = dh * len3;
 
       for ( int k = 0; k < len4; ++k ) {
          final int g = k / len3; /* row index */
@@ -1279,17 +1309,17 @@ public class ZImage extends PImage {
          int d3 = 0;
 
          final int z = y - 1 + j;
-         if ( z > -1 && z < srcHeight ) {
-            final int zw = z * srcWidth;
-            final int i8 = srcFmt == PConstants.ALPHA ? 0 : i * 8;
+         if ( z > -1 && z < sh ) {
+            final int zw = z * sw;
+            final int i8 = i * 8;
             final int x1 = x - 1;
             final int x2 = x + 1;
             final int x3 = x + 2;
 
-            if ( x > -1 && x < srcWidth ) { a0 = in[zw + x] >> i8 & 0xff; }
-            if ( x1 > -1 && x1 < srcWidth ) { d0 = in[zw + x1] >> i8 & 0xff; }
-            if ( x2 > -1 && x2 < srcWidth ) { d2 = in[zw + x2] >> i8 & 0xff; }
-            if ( x3 > -1 && x3 < srcWidth ) { d3 = in[zw + x3] >> i8 & 0xff; }
+            if ( x > -1 && x < sw ) { a0 = srcpx[zw + x] >> i8 & 0xff; }
+            if ( x1 > -1 && x1 < sw ) { d0 = srcpx[zw + x1] >> i8 & 0xff; }
+            if ( x2 > -1 && x2 < sw ) { d2 = srcpx[zw + x2] >> i8 & 0xff; }
+            if ( x3 > -1 && x3 < sw ) { d3 = srcpx[zw + x3] >> i8 & 0xff; }
          }
 
          /* Subtract a0 no matter the boundary condition. */
@@ -1313,33 +1343,71 @@ public class ZImage extends PImage {
          a2 = 0.5f * ( d0 + d2 );
          a3 = -IUtils.ONE_SIX * d0 - 0.5f * d2 + IUtils.ONE_SIX * d3;
 
-         clrs[g * rowStride + h * chnlCount + i] = Utils.clamp(( int ) ( a0 + a1
-            * dy + a2 * dysq + a3 * ( dy * dysq ) ), 0, 255);
+         // rowStride = dw * chnlCount
+         // g * rowStride + h * chnlCount + i]
+         clrs[k / kernelSize] = Utils.clamp(( int ) ( a0 + a1 * dy + a2 * dysq
+            + a3 * ( dy * dysq ) ), 0, 255);
       }
 
-      final int[] packed = new int[newPxlLen];
+      final int[] trgpx = new int[newPxlLen];
       switch ( srcFmt ) {
-         case PConstants.GRAY:
-            for ( int i = 0; i < newPxlLen; ++i ) {
-               final int val = clrs[i];
-               packed[i] = val;
-            }
+         case PConstants.ALPHA:
+            for ( int i = 0; i < newPxlLen; ++i ) { trgpx[i] = clrs[i]; }
             break;
 
          case PConstants.RGB:
          case PConstants.ARGB:
          default:
             for ( int i = 0, j = 0; i < newPxlLen; ++i, j += 4 ) {
-               packed[i] = clrs[j + 3] << 0x18 | clrs[j + 2] << 0x10 | clrs[j
+               trgpx[i] = clrs[j + 3] << 0x18 | clrs[j + 2] << 0x10 | clrs[j
                   + 1] << 0x08 | clrs[j];
             }
       }
 
-      target.pixels = packed;
-      target.width = destWidth;
-      target.height = destHeight;
-      target.pixelWidth = destWidth * target.pixelDensity;
-      target.pixelHeight = destHeight * target.pixelDensity;
+      target.pixels = trgpx;
+      target.width = dw;
+      target.height = dh;
+      target.pixelWidth = dw * target.pixelDensity;
+      target.pixelHeight = dh * target.pixelDensity;
+      target.updatePixels();
+      return target;
+   }
+
+   /**
+    * Resizes an image to new dimensions in pixels using nearest neigbor.
+    *
+    * @param target the image
+    * @param wPx    the new pixel width
+    * @param hPx    the new pixel height
+    *
+    * @return the target
+    */
+   public static PImage resizeNearest ( final PImage target, final int wPx,
+      final int hPx ) {
+
+      target.loadPixels();
+      final int sw = target.pixelWidth;
+      final int sh = target.pixelHeight;
+      final int[] srcpx = target.pixels;
+
+      final int dw = wPx < 2 ? 2 : wPx;
+      final int dh = hPx < 2 ? 2 : hPx;
+      final int len = dw * dh;
+      final int[] trgpx = new int[len];
+
+      final float tx = ( sw - 1.0f ) / dw;
+      final float ty = ( sh - 1.0f ) / dh;
+      for ( int k = 0; k < len; ++k ) {
+         final int nx = ( int ) ( k % dw * tx );
+         final int ny = ( int ) ( k / dw * ty );
+         trgpx[k] = srcpx[ny * sw + nx];
+      }
+
+      target.pixels = trgpx;
+      target.width = dw;
+      target.height = dh;
+      target.pixelWidth = dw * target.pixelDensity;
+      target.pixelHeight = dh * target.pixelDensity;
       target.updatePixels();
       return target;
    }
@@ -1418,6 +1486,50 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Scales an image by a percentage of its original dimensions.
+    *
+    * @param target the image
+    * @param prc    the percentage
+    *
+    * @return the image
+    */
+   public static PImage scaleNearest ( final PImage target, final float prc ) {
+
+      return ZImage.scaleNearest(target, prc, prc);
+   }
+
+   /**
+    * Scales an image by percentages of its original dimensions.
+    *
+    * @param target the image
+    * @param xPrc   the x percent
+    * @param yPrc   the y percent
+    *
+    * @return the image
+    *
+    * @see ZImage#resizeNearest(PImage, int, int)
+    */
+   public static PImage scaleNearest ( final PImage target, final float xPrc,
+      final float yPrc ) {
+
+      return ZImage.resizeNearest(target, ( int ) ( 0.5f + target.width
+         * xPrc ), ( int ) ( 0.5f + target.height * yPrc ));
+   }
+
+   /**
+    * Scales an image by a percentage of its original dimensions.
+    *
+    * @param target the image
+    * @param v      the percentage
+    *
+    * @return the image
+    */
+   public static PImage scaleNearest ( final PImage target, final Vec2 v ) {
+
+      return ZImage.scaleNearest(target, v.x, v.y);
+   }
+
+   /**
     * Converts an image from
     * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB) to
     * linear RGB.
@@ -1429,6 +1541,8 @@ public class ZImage extends PImage {
     */
    public static PImage standardToLinear ( final PImage target,
       final Color adjusted ) {
+
+      // TODO: Handle ALPHA format?
 
       target.loadPixels();
 

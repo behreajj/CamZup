@@ -1183,6 +1183,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final int oldWrapMode = this.textureWrap;
       this.textureWrap(PConstants.CLAMP);
 
+      /* To be consistent with YupJ2, rely on ZImage.alphaToArgb. */
+      // final boolean isAlphaFmt = img.format == PConstants.ALPHA;
+      // final int oldBlendMode = this.blendMode;
+      // if ( isAlphaFmt ) {
+      // this.blendMode = IUpOgl.TEXT_BLEND;
+      // this.blendModeImpl();
+      // }
+
       this.beginShape(PConstants.POLYGON);
       this.normalPerShape(0.0f, 0.0f, 1.0f);
       this.texture(img);
@@ -1229,7 +1237,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       }
 
       this.endShape(PConstants.CLOSE);
+
+      // if ( isAlphaFmt ) {
+      // this.blendMode = oldBlendMode;
+      // this.blendModeImpl();
+      // }
       this.textureWrap(oldWrapMode);
+
       this.popStyle();
    }
 
