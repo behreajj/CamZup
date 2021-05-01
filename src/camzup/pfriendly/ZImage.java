@@ -1084,6 +1084,30 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Converts an image from linear RGB to
+    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
+    *
+    * @param target   the image
+    * @param adjusted temporary color
+    *
+    * @return the standard image
+    */
+   public static PImage linearToStandard ( final PImage target,
+      final Color adjusted ) {
+
+      target.loadPixels();
+
+      final int[] px = target.pixels;
+      final int len = px.length;
+      for ( int i = 0; i < len; ++i ) {
+         px[i] = Color.toHexInt(Color.linearToStandard(Color.fromHex(px[i],
+            adjusted), adjusted));
+      }
+      target.updatePixels();
+      return target;
+   }
+
+   /**
     * Multiplies the red, green and blue channels of each pixel in the image
     * by its alpha channel.
     *
@@ -1173,6 +1197,154 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Resizes an image to new dimensions in pixels using
+    * <a href="https://www.wikiwand.com/en/Bicubic_interpolation">bicubic
+    * interpolation</a>.
+    *
+    * @param target the image
+    * @param wPx    the new pixel width
+    * @param hPx    the new pixel height
+    *
+    * @return the target
+    */
+   public static PImage resizeBicubic ( final PImage target, final int wPx,
+      final int hPx ) {
+
+      /*
+       * https://stackoverflow.com/questions/
+       * 17640173/implementation-of-bi-cubic-resize
+       * https://blog.demofox.org/2015/08/15/
+       * resizing-images-with-bicubic-interpolation/
+       */
+
+      final int kernelSize = 4;
+      final int[] kernel = new int[kernelSize];
+
+      target.loadPixels();
+      final int srcWidth = target.pixelWidth;
+      final int srcHeight = target.pixelHeight;
+      final int srcFmt = target.format;
+      final int[] in = target.pixels;
+
+      final int destWidth = wPx < 2 ? 2 : wPx;
+      final int destHeight = hPx < 2 ? 2 : hPx;
+
+      final float tx = srcWidth / ( float ) destWidth;
+      final float ty = srcHeight / ( float ) destHeight;
+
+      int chnlCount;
+      switch ( srcFmt ) {
+         case PConstants.GRAY:
+            chnlCount = 1;
+            break;
+
+         case PConstants.RGB:
+         case PConstants.ARGB:
+         default:
+            chnlCount = 4;
+      }
+
+      /*
+       * The original algorithm consists of 4 nested for loops: rows (height),
+       * columns (width), kernel, channel. This flattens it to one loop.
+       */
+      final int rowStride = destWidth * chnlCount;
+      final int newPxlLen = destWidth * destHeight;
+      final int[] clrs = new int[newPxlLen * kernelSize];
+      final int len2 = kernelSize * chnlCount;
+      final int len3 = destWidth * len2;
+      final int len4 = destHeight * len3;
+
+      for ( int k = 0; k < len4; ++k ) {
+         final int g = k / len3; /* row index */
+         final int m = k - g * len3; /* temporary */
+         final int h = m / len2; /* column index */
+         final int n = m - h * len2; /* temporary */
+         final int i = n / kernelSize; /* channel index */
+         final int j = n % kernelSize; /* kernel index */
+
+         /* Row. */
+         final int y = ( int ) ( ty * g );
+         final float dy = ty * g - y;
+         final float dysq = dy * dy;
+
+         /* Column. */
+         final int x = ( int ) ( tx * h );
+         final float dx = tx * h - x;
+         final float dxsq = dx * dx;
+
+         int a0 = 0;
+         int d0 = 0;
+         int d2 = 0;
+         int d3 = 0;
+
+         final int z = y - 1 + j;
+         if ( z > -1 && z < srcHeight ) {
+            final int zw = z * srcWidth;
+            final int i8 = srcFmt == PConstants.ALPHA ? 0 : i * 8;
+            final int x1 = x - 1;
+            final int x2 = x + 1;
+            final int x3 = x + 2;
+
+            if ( x > -1 && x < srcWidth ) { a0 = in[zw + x] >> i8 & 0xff; }
+            if ( x1 > -1 && x1 < srcWidth ) { d0 = in[zw + x1] >> i8 & 0xff; }
+            if ( x2 > -1 && x2 < srcWidth ) { d2 = in[zw + x2] >> i8 & 0xff; }
+            if ( x3 > -1 && x3 < srcWidth ) { d3 = in[zw + x3] >> i8 & 0xff; }
+         }
+
+         /* Subtract a0 no matter the boundary condition. */
+         d0 -= a0;
+         d2 -= a0;
+         d3 -= a0;
+
+         float a1 = -IUtils.ONE_THIRD * d0 + d2 - IUtils.ONE_SIX * d3;
+         float a2 = 0.5f * ( d0 + d2 );
+         float a3 = -IUtils.ONE_SIX * d0 - 0.5f * d2 + IUtils.ONE_SIX * d3;
+
+         kernel[j] = Utils.clamp(( int ) ( a0 + a1 * dx + a2 * dxsq + a3 * ( dx
+            * dxsq ) ), 0, 255);
+
+         d0 = kernel[0] - kernel[1];
+         d2 = kernel[2] - kernel[1];
+         d3 = kernel[3] - kernel[1];
+         a0 = kernel[1];
+
+         a1 = -IUtils.ONE_THIRD * d0 + d2 - IUtils.ONE_SIX * d3;
+         a2 = 0.5f * ( d0 + d2 );
+         a3 = -IUtils.ONE_SIX * d0 - 0.5f * d2 + IUtils.ONE_SIX * d3;
+
+         clrs[g * rowStride + h * chnlCount + i] = Utils.clamp(( int ) ( a0 + a1
+            * dy + a2 * dysq + a3 * ( dy * dysq ) ), 0, 255);
+      }
+
+      final int[] packed = new int[newPxlLen];
+      switch ( srcFmt ) {
+         case PConstants.GRAY:
+            for ( int i = 0; i < newPxlLen; ++i ) {
+               final int val = clrs[i];
+               packed[i] = val;
+            }
+            break;
+
+         case PConstants.RGB:
+         case PConstants.ARGB:
+         default:
+            for ( int i = 0, j = 0; i < newPxlLen; ++i, j += 4 ) {
+               packed[i] = clrs[j + 3] << 0x18 | clrs[j + 2] << 0x10 | clrs[j
+                  + 1] << 0x08 | clrs[j];
+            }
+      }
+
+      target.pixels = packed;
+      target.width = destWidth;
+      target.height = destHeight;
+      target.pixelWidth = destWidth * target.pixelDensity;
+      target.pixelHeight = destHeight * target.pixelDensity;
+      target.updatePixels();
+      return target;
+   }
+
+   /**
     * Generates a diagnostic image where a pixel's location on the x-axis
     * correlates to the color red; on the y-axis, to green.
     *
@@ -1196,6 +1368,76 @@ public class ZImage extends PImage {
             | ( int ) ( 255.5f - hInv * ( i / w ) ) << 0x08;
       }
 
+      target.format = PConstants.ARGB;
+      target.updatePixels();
+      return target;
+   }
+
+   /**
+    * Scales an image by a percentage of its original dimensions.
+    *
+    * @param target the image
+    * @param prc    the percentage
+    *
+    * @return the image
+    */
+   public static PImage scaleBicubic ( final PImage target, final float prc ) {
+
+      return ZImage.scaleBicubic(target, prc, prc);
+   }
+
+   /**
+    * Scales an image by percentages of its original dimensions.
+    *
+    * @param target the image
+    * @param xPrc   the x percent
+    * @param yPrc   the y percent
+    *
+    * @return the image
+    *
+    * @see ZImage#resizeBicubic(PImage, int, int)
+    */
+   public static PImage scaleBicubic ( final PImage target, final float xPrc,
+      final float yPrc ) {
+
+      return ZImage.resizeBicubic(target, ( int ) ( 0.5f + target.width
+         * xPrc ), ( int ) ( 0.5f + target.height * yPrc ));
+   }
+
+   /**
+    * Scales an image by a percentage of its original dimensions.
+    *
+    * @param target the image
+    * @param v      the percentage
+    *
+    * @return the image
+    */
+   public static PImage scaleBicubic ( final PImage target, final Vec2 v ) {
+
+      return ZImage.scaleBicubic(target, v.x, v.y);
+   }
+
+   /**
+    * Converts an image from
+    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB) to
+    * linear RGB.
+    *
+    * @param target   the image
+    * @param adjusted temporary color
+    *
+    * @return the linear image
+    */
+   public static PImage standardToLinear ( final PImage target,
+      final Color adjusted ) {
+
+      target.loadPixels();
+
+      final int[] px = target.pixels;
+      final int len = px.length;
+      for ( int i = 0; i < len; ++i ) {
+         px[i] = Color.toHexInt(Color.standardToLinear(Color.fromHex(px[i],
+            adjusted), adjusted));
+      }
       target.updatePixels();
       return target;
    }

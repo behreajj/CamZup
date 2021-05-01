@@ -140,24 +140,6 @@ public abstract class Simplex extends Generative {
    public static final float SCALE_4 = 54.0f;
 
    /**
-    * Factor added to 2D noise when returning a Vec2. <code>1.0 /
-    * Math.sqrt(2.0)</code>; approximately {@value Simplex#STEP_2} .
-    */
-   public static final float STEP_2 = IUtils.ONE_SQRT_2;
-
-   /**
-    * Factor added to 3D noise when returning a Vec3. <code>1.0 /
-    * Math.sqrt(3.0)</code>; approximately {@value Simplex#STEP_3} .
-    */
-   public static final float STEP_3 = IUtils.ONE_SQRT_3;
-
-   /**
-    * Factor added to 4D noise when returning a Vec4. <code>1.0 /
-    * Math.sqrt(4.0)</code>; {@value Simplex#STEP_4} .
-    */
-   public static final float STEP_4 = 0.5f;
-
-   /**
     * 2D simplex gradient look-up table.
     */
    private static final Vec2[] GRAD_2_LUT;
@@ -1603,7 +1585,7 @@ public abstract class Simplex extends Generative {
       final Vec2 xDeriv, final Vec2 yDeriv ) {
 
       /* @formatter:off */
-      final float st = Simplex.STEP_2 * Utils.sqrtUnchecked(
+      final float st = Generative.STEP_2 * Utils.sqrtUnchecked(
          v.x * v.x + v.y * v.y);
       return target.set(
          Simplex.eval(v.x + st, v.y, seed, xDeriv),
@@ -1650,7 +1632,7 @@ public abstract class Simplex extends Generative {
       final Vec3 xDeriv, final Vec3 yDeriv, final Vec3 zDeriv ) {
 
       /* @formatter:off */
-      final float st = Simplex.STEP_3 * Utils.sqrtUnchecked(
+      final float st = Generative.STEP_3 * Utils.sqrtUnchecked(
          v.x * v.x + v.y * v.y + v.z * v.z);
       return target.set(
          Simplex.eval(v.x + st, v.y, v.z, seed, xDeriv),
@@ -1703,7 +1685,7 @@ public abstract class Simplex extends Generative {
       final Vec4 wDeriv ) {
 
       /* @formatter:off */
-      final float st = Simplex.STEP_4 * Utils.sqrtUnchecked(
+      final float st = Generative.STEP_4 * Utils.sqrtUnchecked(
          v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w);
       return target.set(
          Simplex.eval(v.x + st, v.y, v.z, v.w, seed, xDeriv),

@@ -16,6 +16,24 @@ public abstract class Generative {
    public static final int DEFAULT_SEED = ( int ) System.currentTimeMillis();
 
    /**
+    * Factor added to 2D noise when returning a Vec2. <code>1.0 /
+    * Math.sqrt(2.0)</code>; approximately {@value Generative#STEP_2} .
+    */
+   public static final float STEP_2 = IUtils.ONE_SQRT_2;
+
+   /**
+    * Factor added to 3D noise when returning a Vec3. <code>1.0 /
+    * Math.sqrt(3.0)</code>; approximately {@value Generative#STEP_3} .
+    */
+   public static final float STEP_3 = IUtils.ONE_SQRT_3;
+
+   /**
+    * Factor added to 4D noise when returning a Vec4. <code>1.0 /
+    * Math.sqrt(4.0)</code>; {@value Generative#STEP_4} .
+    */
+   public static final float STEP_4 = 0.5f;
+
+   /**
     * A helper function to the gradient functions. Performs a series of
     * bit-shifting operations to create a hash.
     *
@@ -78,7 +96,7 @@ public abstract class Generative {
     */
    public static Vec2 hash ( final Vec2 v, final int seed, final Vec2 target ) {
 
-      final float st = Simplex.STEP_2 * Utils.sqrtUnchecked(v.x * v.x + v.y
+      final float st = Generative.STEP_2 * Utils.sqrtUnchecked(v.x * v.x + v.y
          * v.y);
 
       final int ahash = ( IUtils.MUL_BASE ^ Float.floatToIntBits(v.x + st) )
@@ -127,7 +145,7 @@ public abstract class Generative {
     */
    public static Vec3 hash ( final Vec3 v, final int seed, final Vec3 target ) {
 
-      final float st = Simplex.STEP_3 * Utils.sqrtUnchecked(v.x * v.x + v.y
+      final float st = Generative.STEP_3 * Utils.sqrtUnchecked(v.x * v.x + v.y
          * v.y + v.z * v.z);
       final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x);
       final int vybit = Float.floatToIntBits(v.y);
@@ -186,7 +204,7 @@ public abstract class Generative {
     */
    public static Vec4 hash ( final Vec4 v, final int seed, final Vec4 target ) {
 
-      final float st = Simplex.STEP_4 * Utils.sqrtUnchecked(v.x * v.x + v.y
+      final float st = Generative.STEP_4 * Utils.sqrtUnchecked(v.x * v.x + v.y
          * v.y + v.z * v.z + v.w * v.w);
       final int mulvx = IUtils.MUL_BASE ^ Float.floatToIntBits(v.x);
       final int vybit = Float.floatToIntBits(v.y);

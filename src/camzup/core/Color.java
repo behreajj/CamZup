@@ -1477,6 +1477,42 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Converts a color from linear RGB to CIE XYZ.
+    *
+    * @param c      the color
+    * @param target the output vector
+    *
+    * @return the XYZ color
+    *
+    * @see Color#lRgbaToXyza(float, float, float, float, Vec4)
+    */
+   public static Vec4 lRgbaToXyza ( final Color c, final Vec4 target ) {
+
+      return Color.lRgbaToXyza(c.r, c.g, c.b, c.a, target);
+   }
+
+   /**
+    * Converts a color from linear RGB to CIE XYZ. References Pharr, Jakob,
+    * and Humphreys' <a href="http://www.pbr-book.org/">Physically Based
+    * Rendering</a>, section 5.2, page 328.
+    *
+    * @param r      the red component
+    * @param g      the green component
+    * @param b      the blue component
+    * @param a      the alpha component
+    * @param target the output vector
+    *
+    * @return the XYZ values.
+    */
+   public static Vec4 lRgbaToXyza ( final float r, final float g, final float b,
+      final float a, final Vec4 target ) {
+
+      return target.set(0.412453f * r + 0.35758f * g + 0.180423f * b, 0.212671f
+         * r + 0.71516f * g + 0.072169f * b, 0.019334f * r + 0.119193f * g
+            + 0.950227f * b, a);
+   }
+
+   /**
     * Returns the relative luminance of the linear RGB color, based on
     * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
     * 709 relative luminance</a> coefficients: <code>0.2126</code> for red,
@@ -1871,42 +1907,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from sRGB to CIE XYZ.
-    *
-    * @param c      the color
-    * @param target the output vector
-    *
-    * @return the XYZ color
-    *
-    * @see Color#rgbaToXyza(float, float, float, float, Vec4)
-    */
-   public static Vec4 rgbaToXyza ( final Color c, final Vec4 target ) {
-
-      return Color.rgbaToXyza(c.r, c.g, c.b, c.a, target);
-   }
-
-   /**
-    * Converts a color from sRGB to CIE XYZ. References Pharr, Jakob, and
-    * Humphreys' <a href="http://www.pbr-book.org/">Physically Based
-    * Rendering</a>, section 5.2, page 328.
-    *
-    * @param r      the red component
-    * @param g      the green component
-    * @param b      the blue component
-    * @param a      the alpha component
-    * @param target the output vector
-    *
-    * @return the XYZ values.
-    */
-   public static Vec4 rgbaToXyza ( final float r, final float g, final float b,
-      final float a, final Vec4 target ) {
-
-      return target.set(0.412453f * r + 0.35758f * g + 0.180423f * b, 0.212671f
-         * r + 0.71516f * g + 0.072169f * b, 0.019334f * r + 0.119193f * g
-            + 0.950227f * b, a);
-   }
-
-   /**
     * Finds the maximum color channel of a color, excluding alpha.
     *
     * @param c the color
@@ -1976,6 +1976,25 @@ public class Color implements Comparable < Color > {
       Color.rgbaToHsva(c, hsva);
       Vec4.add(hsva, shift, hsva);
       return Color.hsvaToRgba(hsva, target);
+   }
+
+   /**
+    * Converts a color from sRGB to CIE XYZ.
+    *
+    * @param c      the color
+    * @param target the output vector
+    * @param linear the color in linear
+    *
+    * @return the XYZ color
+    *
+    * @see Color#lRgbaToXyza(float, float, float, float, Vec4)
+    * @see Color#standardToLinear(Color, Color)
+    */
+   public static Vec4 sRgbaToXyza ( final Color c, final Vec4 target,
+      final Color linear ) {
+
+      Color.standardToLinear(c, linear);
+      return Color.lRgbaToXyza(linear.r, linear.g, linear.b, linear.a, target);
    }
 
    /**
@@ -2298,7 +2317,7 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from CIE XYZ to sRGB. References Pharr, Jakob, and
+    * Converts a color from CIE XYZ to lRGB. References Pharr, Jakob, and
     * Humphreys' <a href="http://www.pbr-book.org/">Physically Based
     * Rendering</a>, section 5.2, page 327.
     *
@@ -2310,8 +2329,8 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     */
-   public static Color xyzaToRgba ( final float x, final float y, final float z,
-      final float a, final Color target ) {
+   public static Color xyzaToLrgba ( final float x, final float y,
+      final float z, final float a, final Color target ) {
 
       return target.set(3.240479f * x - 1.53715f * y - 0.498535f * z, -0.969256f
          * x + 1.875991f * y + 0.041556f * z, 0.055648f * x - 0.204043f * y
@@ -2319,18 +2338,37 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from CIE XYZ to sRGB.
+    * Converts a color from CIE XYZ to lRGB.
     *
     * @param v      the XYZ vector
     * @param target the output color
     *
     * @return the color
     *
-    * @see Color#xyzaToRgba(float, float, float, float, Color)
+    * @see Color#xyzaToLrgba(float, float, float, float, Color)
     */
-   public static Color xyzaToRgba ( final Vec4 v, final Color target ) {
+   public static Color xyzaToLrgba ( final Vec4 v, final Color target ) {
 
-      return Color.xyzaToRgba(v.x, v.y, v.z, v.w, target);
+      return Color.xyzaToLrgba(v.x, v.y, v.z, v.w, target);
+   }
+
+   /**
+    * Converts a color from CIE XYZ to lRGB.
+    *
+    * @param v      the XYZ vector
+    * @param target the output color
+    * @param linear the linear color
+    *
+    * @return the color
+    *
+    * @see Color#xyzaToLrgba(float, float, float, float, Color)
+    * @see Color#linearToStandard(Color, Color)
+    */
+   public static Color xyzaToSrgba ( final Vec4 v, final Color target,
+      final Color linear ) {
+
+      Color.xyzaToLrgba(v.x, v.y, v.z, v.w, linear);
+      return Color.linearToStandard(linear, target);
    }
 
    /**

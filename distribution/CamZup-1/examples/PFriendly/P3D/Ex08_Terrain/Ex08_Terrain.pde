@@ -3,8 +3,8 @@ import camzup.pfriendly.*;
 
 Zup3 graphics;
 
-boolean wireframe = true;
-boolean flatShading = true;
+boolean wireframe = false;
+boolean flatShading = false;
 int count = 32;
 float elev = 0.175f;
 float roughness = 3.0f;
@@ -45,8 +45,6 @@ void setup() {
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-
   graphics.mouse1s(mouse1);
   Mesh2.plane(count, count, PolyType.TRI, plane2);
   plane3.set(plane2);

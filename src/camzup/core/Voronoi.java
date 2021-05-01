@@ -67,8 +67,9 @@ public class Voronoi extends Generative {
          final float xSum = xCell + jn1;
          final float ySum = yCell + in1;
 
+         // TODO: Promote Simplex.STEP_2, STEP_3, STEP_4 to Generative.
          final float st = Utils.sqrtUnchecked(xSum * xSum + ySum * ySum)
-            * Simplex.STEP_2;
+            * Generative.STEP_2;
 
          /* Create a random vector [0.0, 1.0] . Add cell offset. */
          final float xHsh = jn1 + Float.intBitsToFloat(Generative.hash(
@@ -158,7 +159,7 @@ public class Voronoi extends Generative {
          final float ySum = yCell + in1;
          final float xSum = xCell + jn1;
 
-         final float st = Simplex.STEP_3 * Utils.sqrtUnchecked(xSum * xSum
+         final float st = Generative.STEP_3 * Utils.sqrtUnchecked(xSum * xSum
             + ySum * ySum + zSum * zSum);
 
          final int zBit = Float.floatToIntBits(zSum);
@@ -261,7 +262,7 @@ public class Voronoi extends Generative {
          final float ySum = yCell + in1;
          final float xSum = xCell + jn1;
 
-         final float st = Simplex.STEP_4 * Utils.sqrtUnchecked(xSum * xSum
+         final float st = Generative.STEP_4 * Utils.sqrtUnchecked(xSum * xSum
             + ySum * ySum + zSum * zSum + wSum * wSum);
 
          final int wBit = Float.floatToIntBits(wSum);

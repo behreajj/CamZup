@@ -48,9 +48,7 @@ void setup() {
   me3.moveBy(new Vec3(275.0f, 0.0f, 0.0f));
 }
 
-void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-  
+void draw() {  
   graphics.mouse1u(mouse);
   lons = Utils.lerp(3, 64, mouse.x);
   lats = Utils.lerp(1, 32, mouse.y);
