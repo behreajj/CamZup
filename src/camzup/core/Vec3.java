@@ -1622,6 +1622,8 @@ public class Vec3 implements Comparable < Vec3 > {
       final int latitudes, final int layers, final float radiusMin,
       final float radiusMax, final boolean includePoles ) {
 
+      // TODO: Redo with 1D for loop?
+
       final int vlons = longitudes < 3 ? 3 : longitudes;
       final int vlats = latitudes < 3 ? 3 : latitudes;
       final int vlayers = layers < 1 ? 1 : layers;

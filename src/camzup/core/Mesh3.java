@@ -4313,6 +4313,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3 uvSphere ( final int longitudes, final int latitudes,
       final PolyType poly, final Mesh3 target ) {
 
+      // TODO: Redraft in CamZup class using 1D arrays and proper spherical to
+      // cartesian coordinate.
+
       target.name = "Sphere.Uv";
 
       /* Validate arguments. */
