@@ -249,16 +249,24 @@ public class ZImage extends PImage {
    public static PImage checker ( final int a, final int b, final int cols,
       final int rows, final PImage target ) {
 
-      final int vcols = cols < 2 ? 2 : cols;
-      final int vrows = rows < 2 ? 2 : rows;
-
       target.loadPixels();
 
-      final int w = target.width;
-      final int h = target.height;
+      final int w = target.pixelWidth;
+      final int h = target.pixelHeight;
+
+      /*
+       * Rows and columns should have a maximum bound, because it will be easy
+       * to transpose color and columns & rows arguments.
+       */
+      final int limit = 2 * target.pixelDensity;
+      final int vcols = cols < 2 ? 2 : cols > w / limit ? w / limit : cols;
+      final int vrows = rows < 2 ? 2 : rows > h / limit ? h / limit : rows;
+
       final int[] px = target.pixels;
       final int len = px.length;
 
+      // TODO: Do vrows and vcols also need to account for pixel density?
+      // This will have to go untested for now.
       final int wch = w / vcols;
       final int hchw = w * h / vrows;
 
@@ -266,6 +274,7 @@ public class ZImage extends PImage {
          px[i] = ( i % w / wch + i / hchw ) % 2 == 0 ? a : b;
       }
 
+      target.format = PConstants.ARGB;
       target.updatePixels();
       return target;
    }
@@ -320,8 +329,8 @@ public class ZImage extends PImage {
 
       target.loadPixels();
 
-      final int w = target.width;
-      final int h = target.height;
+      final int w = target.pixelWidth;
+      final int h = target.pixelHeight;
       final int[] pixels = target.pixels;
       final int len = pixels.length;
 
@@ -451,8 +460,8 @@ public class ZImage extends PImage {
 
       target.loadPixels();
 
-      final int h = target.height;
-      final int w = target.width;
+      final int h = target.pixelHeight;
+      final int w = target.pixelWidth;
       final int[] pixels = target.pixels;
       final int[] flipped = new int[pixels.length];
 
@@ -481,8 +490,8 @@ public class ZImage extends PImage {
 
       target.loadPixels();
 
-      final int h = target.height;
-      final int w = target.width;
+      final int h = target.pixelHeight;
+      final int w = target.pixelWidth;
       final int[] pixels = target.pixels;
       final int[] flipped = new int[pixels.length];
 
@@ -886,7 +895,7 @@ public class ZImage extends PImage {
                      for ( int idxSrc = 0; idxSrc < srcLen; ++idxSrc ) {
 
                         /*
-                         * Shift source image from grey scale, stored in the
+                         * Shift source image from gray scale, stored in the
                          * blue channel, to ARGB. Composite target and source,
                          * then composite in tint color.
                          */
@@ -1041,7 +1050,7 @@ public class ZImage extends PImage {
 
       target.loadPixels();
 
-      final int w = target.width;
+      final int w = target.pixelWidth;
       final int[] px = target.pixels;
       final int len = px.length;
 
@@ -1056,7 +1065,7 @@ public class ZImage extends PImage {
       final float xobx = xOrigin * bxbbinv;
       final float yoby = yOrigin * bybbinv;
       final float bxwInv2 = 2.0f / ( w - 1.0f ) * bxbbinv;
-      final float byhInv2 = 2.0f / ( target.height - 1.0f ) * bybbinv;
+      final float byhInv2 = 2.0f / ( target.pixelHeight - 1.0f ) * bybbinv;
 
       for ( int i = 0; i < len; ++i ) {
          px[i] = Gradient.eval(grd, Utils.clamp01(xobx + bxbbinv - bxwInv2 * ( i
@@ -1078,7 +1087,7 @@ public class ZImage extends PImage {
    public static PImage linear ( final Gradient grd, final PImage target ) {
 
       target.loadPixels();
-      final int w = target.width;
+      final int w = target.pixelWidth;
       final int[] pixels = target.pixels;
       final int len = pixels.length;
       final float wInv = 1.0f / ( w - 1.0f );
@@ -1182,11 +1191,11 @@ public class ZImage extends PImage {
 
       target.loadPixels();
 
-      final int w = target.width;
+      final int w = target.pixelWidth;
       final int[] px = target.pixels;
       final int len = px.length;
 
-      final float hInv2 = 2.0f / ( target.height - 1.0f );
+      final float hInv2 = 2.0f / ( target.pixelHeight - 1.0f );
       final float wInv2 = 2.0f / ( w - 1.0f );
 
       final float r2 = radius + radius;
@@ -1263,6 +1272,7 @@ public class ZImage extends PImage {
       final float tx = ( sw - 1.0f ) / dw;
       final float ty = ( sh - 1.0f ) / dh;
 
+      /* Despite the name, RGB images retain alpha, and so have 4 channels. */
       int chnlCount;
       switch ( srcFmt ) {
          case PConstants.ALPHA:
@@ -1277,7 +1287,7 @@ public class ZImage extends PImage {
 
       /*
        * The original algorithm consists of 4 nested for loops: rows (height),
-       * columns (width), kernel, channel. This flattens it to one loop.
+       * columns (width), kernel, channel. This flattens them to one loop.
        */
       final int newPxlLen = dw * dh;
       final int[] clrs = new int[newPxlLen * kernelSize];
@@ -1374,7 +1384,7 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Resizes an image to new dimensions in pixels using nearest neigbor.
+    * Resizes an image to new dimensions in pixels using nearest neighbor.
     *
     * @param target the image
     * @param wPx    the new pixel width
@@ -1395,8 +1405,14 @@ public class ZImage extends PImage {
       final int len = dw * dh;
       final int[] trgpx = new int[len];
 
-      final float tx = ( sw - 1.0f ) / dw;
-      final float ty = ( sh - 1.0f ) / dh;
+      /*
+       * Subtracting one leads to incorrect bottom-right pixel from very small
+       * images.
+       */
+      // final float tx = ( sw - 1.0f ) / dw;
+      // final float ty = ( sh - 1.0f ) / dh;
+      final float tx = sw / ( float ) dw;
+      final float ty = sh / ( float ) dh;
       for ( int k = 0; k < len; ++k ) {
          final int nx = ( int ) ( k % dw * tx );
          final int ny = ( int ) ( k / dw * ty );
@@ -1426,9 +1442,9 @@ public class ZImage extends PImage {
 
       final int[] px = target.pixels;
       final int len = px.length;
-      final int w = target.width;
+      final int w = target.pixelWidth;
 
-      final float hInv = 0xff / ( target.height - 1.0f );
+      final float hInv = 0xff / ( target.pixelHeight - 1.0f );
       final float wInv = 0xff / ( w - 1.0f );
 
       for ( int i = 0; i < len; ++i ) {
