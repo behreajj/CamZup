@@ -1128,8 +1128,6 @@ public class ZImage extends PImage {
    public static PImage linearToStandard ( final PImage target,
       final Color adjusted ) {
 
-      // TODO: Handle ALPHA format?
-
       target.loadPixels();
 
       final int[] px = target.pixels;
@@ -1259,10 +1257,11 @@ public class ZImage extends PImage {
       final int sw = target.pixelWidth;
       final int sh = target.pixelHeight;
       final int srcFmt = target.format;
+      final int pd = target.pixelDensity;
       final int[] srcpx = target.pixels;
 
-      final int dw = wPx < 2 ? 2 : wPx;
-      final int dh = hPx < 2 ? 2 : hPx;
+      final int dw = ( wPx < 2 ? 2 : wPx ) * pd;
+      final int dh = ( hPx < 2 ? 2 : hPx ) * pd;
 
       /*
        * Subtracting by 1.0 from the source dimensions was not present in the
@@ -1375,10 +1374,10 @@ public class ZImage extends PImage {
       }
 
       target.pixels = trgpx;
-      target.width = dw;
-      target.height = dh;
-      target.pixelWidth = dw * target.pixelDensity;
-      target.pixelHeight = dh * target.pixelDensity;
+      target.width = dw / pd;
+      target.height = dh / pd;
+      target.pixelWidth = dw;
+      target.pixelHeight = dh;
       target.updatePixels();
       return target;
    }
@@ -1398,10 +1397,11 @@ public class ZImage extends PImage {
       target.loadPixels();
       final int sw = target.pixelWidth;
       final int sh = target.pixelHeight;
+      final int pd = target.pixelDensity;
       final int[] srcpx = target.pixels;
 
-      final int dw = wPx < 2 ? 2 : wPx;
-      final int dh = hPx < 2 ? 2 : hPx;
+      final int dw = ( wPx < 2 ? 2 : wPx ) * pd;
+      final int dh = ( hPx < 2 ? 2 : hPx ) * pd;
       final int len = dw * dh;
       final int[] trgpx = new int[len];
 
@@ -1420,10 +1420,10 @@ public class ZImage extends PImage {
       }
 
       target.pixels = trgpx;
-      target.width = dw;
-      target.height = dh;
-      target.pixelWidth = dw * target.pixelDensity;
-      target.pixelHeight = dh * target.pixelDensity;
+      target.width = dw / pd;
+      target.height = dh / pd;
+      target.pixelWidth = dw;
+      target.pixelHeight = dh;
       target.updatePixels();
       return target;
    }
