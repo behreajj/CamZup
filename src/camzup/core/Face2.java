@@ -257,7 +257,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     *
     * @return this face
     *
-    * @see Vec2#mul(Vec2, Vec2, Vec2)
+    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     */
    public Face2 scale ( final Vec2 scale ) {
 
@@ -296,7 +296,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @return this face
     *
     * @see Vec2#none(Vec2)
-    * @see Vec2#mul(Vec2, Vec2, Vec2)
+    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     */
    public Face2 scaleGlobal ( final Vec2 scale ) {
 
@@ -304,7 +304,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
          final int len = this.vertices.length;
          for ( int i = 0; i < len; ++i ) {
             final Vec2 c = this.vertices[i].coord;
-            Vec2.mul(c, scale, c);
+            Vec2.hadamard(c, scale, c);
          }
       }
 
@@ -354,7 +354,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @see Vec2#none(Vec2)
     * @see Face2#centerMean(Face2, Vec2)
     * @see Vec2#sub(Vec2, Vec2, Vec2)
-    * @see Vec2#mul(Vec2, Vec2, Vec2)
+    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
    public Face2 scaleLocal ( final Vec2 scale, final Vec2 center ) {
@@ -366,7 +366,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
          for ( int i = 0; i < len; ++i ) {
             final Vec2 c = this.vertices[i].coord;
             Vec2.sub(c, center, c);
-            Vec2.mul(c, scale, c);
+            Vec2.hadamard(c, scale, c);
             Vec2.add(c, center, c);
          }
       }

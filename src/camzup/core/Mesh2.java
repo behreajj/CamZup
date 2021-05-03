@@ -1198,7 +1198,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return this mesh
     *
     * @see Vec2#none(Vec2)
-    * @see Vec2#mul(Vec2, Vec2, Vec2)
+    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     */
    public Mesh2 scale ( final Vec2 scale ) {
 
@@ -1206,7 +1206,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final int vsLen = this.coords.length;
          for ( int i = 0; i < vsLen; ++i ) {
             final Vec2 c = this.coords[i];
-            Vec2.mul(c, scale, c);
+            Vec2.hadamard(c, scale, c);
          }
       }
 

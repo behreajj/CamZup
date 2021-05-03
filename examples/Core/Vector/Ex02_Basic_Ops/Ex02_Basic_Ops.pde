@@ -12,11 +12,8 @@ void setup() {
   Vec2.sub(a, b, diff);
   println("difference: ", diff);
 
-  // Component-wise multiplication is undefined
-  // mathematically, but has many practical
-  // applications.
   Vec2 product = new Vec2();
-  Vec2.mul(a, b, product);
+  Vec2.hadamard(a, b, product);
   println("vec - vec product", product);
 
   Vec2.mul(a, -4.0f, product);

@@ -149,3 +149,4 @@ loxodromes
 concave
 rhombus
 resizable
+hadamard

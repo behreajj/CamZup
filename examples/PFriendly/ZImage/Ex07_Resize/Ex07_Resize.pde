@@ -1,14 +1,14 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup2 main;
-Yup2 buff;
+YupJ2 main;
+YupJ2 buff;
 
 int samples = 8;
 float minScale = 0.25f;
 float maxScale = 5.0f;
-int wOriginal = 128;
-int hOriginal = 128;
+int wOriginal = 96;
+int hOriginal = 96;
 boolean nearToggle = false;
 boolean lToSConvert = false;
 
@@ -21,13 +21,13 @@ PImage[] nearest = new PImage[samples];
 float[] scales = new float[samples];
 
 void settings() {
-  size(720, 202, Yup2.PATH_STR);
+  size(720, 202, YupJ2.PATH_STR);
 }
 
 void setup() {
   frameRate(60.0f);
-  main = (Yup2)getGraphics();
-  buff = (Yup2)createGraphics(1920, 540, Yup2.PATH_STR);
+  main = (YupJ2)getGraphics();
+  buff = (YupJ2)createGraphics(1920, 540, YupJ2.PATH_STR);
 
   source = createImage(wOriginal, hOriginal, ARGB);
   Gradient grd0 = new Gradient(

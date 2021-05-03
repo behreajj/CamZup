@@ -210,6 +210,7 @@ public interface IUp3 extends IUp {
       final float far = -near;
 
       final int vCount = count < 3 ? 3 : count;
+      final int vCountSq = vCount * vCount;
       final float toPercent = 1.0f / ( vCount + 1.0f );
       final float[] xs = new float[vCount];
       final float[] ys = new float[vCount];
@@ -255,15 +256,14 @@ public interface IUp3 extends IUp {
       /* Draw planar dots. */
       this.strokeWeight(strokeWeight);
       this.stroke(strokeColor);
-      for ( int i = 0; i < vCount; ++i ) {
-         final float y = ys[i];
+      for ( int k = 0; k < vCountSq; ++k ) {
+         final int i = k / vCount;
+         final int j = k % vCount;
+         final float x = xs[j];
          final float z = zs[i];
-         for ( int j = 0; j < vCount; ++j ) {
-            final float x = xs[j];
-            this.point(left, ys[j], z); /* x plane. */
-            this.point(x, bottom, z); /* y plane. */
-            this.point(x, y, far); /* z plane. */
-         }
+         this.point(left, ys[j], z); /* x plane. */
+         this.point(x, bottom, z); /* y plane. */
+         this.point(x, ys[i], far); /* z plane. */
       }
 
       this.popStyle();

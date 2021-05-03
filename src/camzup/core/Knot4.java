@@ -449,13 +449,13 @@ public class Knot4 implements Comparable < Knot4 > {
     *
     * @return this knot
     *
-    * @see Vec4#mul(Vec4, Vec4, Vec4)
+    * @see Vec4#hadamard(Vec4, Vec4, Vec4)
     */
    public Knot4 scale ( final Vec4 scale ) {
 
-      Vec4.mul(this.coord, scale, this.coord);
-      Vec4.mul(this.foreHandle, scale, this.foreHandle);
-      Vec4.mul(this.rearHandle, scale, this.rearHandle);
+      Vec4.hadamard(this.coord, scale, this.coord);
+      Vec4.hadamard(this.foreHandle, scale, this.foreHandle);
+      Vec4.hadamard(this.rearHandle, scale, this.rearHandle);
 
       return this;
    }

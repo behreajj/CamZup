@@ -1460,6 +1460,21 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
+    * Multiplies two vectors, component-wise.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target the output vector
+    *
+    * @return the product
+    */
+   public static Vec2 hadamard ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
+
+      return target.set(a.x * b.x, a.y * b.y);
+   }
+
+   /**
     * Finds the vector's heading. Defaults to headingSigned.
     *
     * @param v the input vector
@@ -1884,22 +1899,6 @@ public class Vec2 implements Comparable < Vec2 > {
    public static Vec2 mul ( final Vec2 a, final float b, final Vec2 target ) {
 
       return target.set(a.x * b, a.y * b);
-   }
-
-   /**
-    * Multiplies two vectors, component-wise. Such multiplication is
-    * mathematically incorrect, but serves as a shortcut for transforming a
-    * vector by a scalar matrix.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target the output vector
-    *
-    * @return the product
-    */
-   public static Vec2 mul ( final Vec2 a, final Vec2 b, final Vec2 target ) {
-
-      return target.set(a.x * b.x, a.y * b.y);
    }
 
    /**

@@ -583,13 +583,13 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return this edge
     *
-    * @see Vec3#mul(Vec3, Vec3, Vec3)
+    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     */
    public Edge3 scaleGlobal ( final Vec3 scalar ) {
 
       if ( Vec3.all(scalar) ) {
-         Vec3.mul(this.origin.coord, scalar, this.origin.coord);
-         Vec3.mul(this.dest.coord, scalar, this.dest.coord);
+         Vec3.hadamard(this.origin.coord, scalar, this.origin.coord);
+         Vec3.hadamard(this.dest.coord, scalar, this.dest.coord);
       }
 
       return this;
@@ -641,7 +641,7 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @see Vec3#none(Vec3)
     * @see Vec3#sub(Vec3, Vec3, Vec3)
-    * @see Vec3#mul(Vec3, Vec3, Vec3)
+    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    public Edge3 scaleLocal ( final Vec3 scalar, final Vec3 center ) {
@@ -655,11 +655,11 @@ public class Edge3 implements Comparable < Edge3 > {
             * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
 
          Vec3.sub(coOrigin, center, coOrigin);
-         Vec3.mul(coOrigin, scalar, coOrigin);
+         Vec3.hadamard(coOrigin, scalar, coOrigin);
          Vec3.add(coOrigin, center, coOrigin);
 
          Vec3.sub(coDest, center, coDest);
-         Vec3.mul(coDest, scalar, coDest);
+         Vec3.hadamard(coDest, scalar, coDest);
          Vec3.add(coDest, center, coDest);
       }
 

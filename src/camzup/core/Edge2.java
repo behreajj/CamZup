@@ -261,13 +261,13 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return this edge
     *
-    * @see Vec2#mul(Vec2, Vec2, Vec2)
+    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     */
    public Edge2 scaleGlobal ( final Vec2 scalar ) {
 
       if ( Vec2.all(scalar) ) {
-         Vec2.mul(this.origin.coord, scalar, this.origin.coord);
-         Vec2.mul(this.dest.coord, scalar, this.dest.coord);
+         Vec2.hadamard(this.origin.coord, scalar, this.origin.coord);
+         Vec2.hadamard(this.dest.coord, scalar, this.dest.coord);
       }
 
       return this;
@@ -319,7 +319,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @see Vec2#none(Vec2)
     * @see Vec2#sub(Vec2, Vec2, Vec2)
-    * @see Vec2#mul(Vec2, Vec2, Vec2)
+    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
    @Experimental
@@ -334,11 +334,11 @@ public class Edge2 implements Comparable < Edge2 > {
             * 0.5f);
 
          Vec2.sub(coOrigin, center, coOrigin);
-         Vec2.mul(coOrigin, scalar, coOrigin);
+         Vec2.hadamard(coOrigin, scalar, coOrigin);
          Vec2.add(coOrigin, center, coOrigin);
 
          Vec2.sub(coDest, center, coDest);
-         Vec2.mul(coDest, scalar, coDest);
+         Vec2.hadamard(coDest, scalar, coDest);
          Vec2.add(coDest, center, coDest);
       }
 

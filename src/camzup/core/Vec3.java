@@ -1622,7 +1622,8 @@ public class Vec3 implements Comparable < Vec3 > {
       final int latitudes, final int layers, final float radiusMin,
       final float radiusMax, final boolean includePoles ) {
 
-      // TODO: Redo with 1D for loop?
+      // TODO: Redo with 1D for loop? If so, the include poles if clause would
+      // need to be refactored.
 
       final int vlons = longitudes < 3 ? 3 : longitudes;
       final int vlats = latitudes < 3 ? 3 : latitudes;
@@ -1734,6 +1735,21 @@ public class Vec3 implements Comparable < Vec3 > {
    public static Vec3 gtEq ( final Vec3 a, final Vec3 b, final Vec3 target ) {
 
       return target.set(a.x >= b.x, a.y >= b.y, a.z >= b.z);
+   }
+
+   /**
+    * Multiplies two vectors, component-wise.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target the output vector
+    *
+    * @return the product
+    */
+   public static Vec3 hadamard ( final Vec3 a, final Vec3 b,
+      final Vec3 target ) {
+
+      return target.set(a.x * b.x, a.y * b.y, a.z * b.z);
    }
 
    /**
@@ -2169,22 +2185,6 @@ public class Vec3 implements Comparable < Vec3 > {
    public static Vec3 mul ( final Vec3 a, final float b, final Vec3 target ) {
 
       return target.set(a.x * b, a.y * b, a.z * b);
-   }
-
-   /**
-    * Multiplies two vectors, component-wise. Such multiplication is
-    * mathematically incorrect, but serves as a shortcut for transforming a
-    * vector by a scalar matrix.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target the output vector
-    *
-    * @return the product
-    */
-   public static Vec3 mul ( final Vec3 a, final Vec3 b, final Vec3 target ) {
-
-      return target.set(a.x * b.x, a.y * b.y, a.z * b.z);
    }
 
    /**

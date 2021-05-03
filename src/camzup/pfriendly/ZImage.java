@@ -253,19 +253,20 @@ public class ZImage extends PImage {
 
       final int w = target.pixelWidth;
       final int h = target.pixelHeight;
+      final int pd = target.pixelDensity;
 
       /*
        * Rows and columns should have a maximum bound, because it will be easy
        * to transpose color and columns & rows arguments.
        */
-      final int limit = 2 * target.pixelDensity;
+      final int limit = 2 * pd;
       final int vcols = cols < 2 ? 2 : cols > w / limit ? w / limit : cols;
       final int vrows = rows < 2 ? 2 : rows > h / limit ? h / limit : rows;
 
       final int[] px = target.pixels;
       final int len = px.length;
 
-      // TODO: Do vrows and vcols also need to account for pixel density?
+      // QUERY: Do vrows and vcols also need to account for pixel density?
       // This will have to go untested for now.
       final int wch = w / vcols;
       final int hchw = w * h / vrows;
@@ -1270,7 +1271,7 @@ public class ZImage extends PImage {
        * reference code, but seems to help reduce blurred alpha on the right and
        * bottom edges.
        */
-      final float bias = 0.004f;
+      final float bias = 0.00405f;
       final float tx = sw / ( dw * ( 1.0f + bias ) );
       final float ty = sh / ( dh * ( 1.0f + bias ) );
 
@@ -1279,7 +1280,6 @@ public class ZImage extends PImage {
       switch ( srcFmt ) {
          case PConstants.RGB:
          case PConstants.ARGB:
-         default:
             chnlCount = 4;
             break;
 
@@ -1287,6 +1287,8 @@ public class ZImage extends PImage {
             chnlCount = 1;
             break;
 
+         default:
+            chnlCount = 4;
       }
 
       /*
@@ -1343,10 +1345,10 @@ public class ZImage extends PImage {
          d2 -= a0;
          d3 -= a0;
 
-         float d3_6 = IUtils.ONE_SIX * d3;
-         float a1 = -IUtils.ONE_THIRD * d0 + d2 - d3_6;
+         float d36 = IUtils.ONE_SIX * d3;
+         float a1 = -IUtils.ONE_THIRD * d0 + d2 - d36;
          float a2 = 0.5f * ( d0 + d2 );
-         float a3 = -IUtils.ONE_SIX * d0 - 0.5f * d2 + d3_6;
+         float a3 = -IUtils.ONE_SIX * d0 - 0.5f * d2 + d36;
 
          frame[j] = Utils.clamp(a0 + ( int ) ( a1 * dx + a2 * dxsq + a3 * ( dx
             * dxsq ) ), 0, 255);
@@ -1356,10 +1358,10 @@ public class ZImage extends PImage {
          d3 = frame[3] - frame[1];
          a0 = frame[1];
 
-         d3_6 = IUtils.ONE_SIX * d3;
-         a1 = -IUtils.ONE_THIRD * d0 + d2 - d3_6;
+         d36 = IUtils.ONE_SIX * d3;
+         a1 = -IUtils.ONE_THIRD * d0 + d2 - d36;
          a2 = 0.5f * ( d0 + d2 );
-         a3 = -IUtils.ONE_SIX * d0 - 0.5f * d2 + d3_6;
+         a3 = -IUtils.ONE_SIX * d0 - 0.5f * d2 + d36;
 
          // rowStride = dw * chnlCount
          // g * rowStride + h * chnlCount + i
@@ -1369,6 +1371,10 @@ public class ZImage extends PImage {
 
       final int[] trgpx = new int[newPxlLen];
       switch ( srcFmt ) {
+         case PConstants.ALPHA:
+            System.arraycopy(clrs, 0, trgpx, 0, newPxlLen);
+            break;
+
          case PConstants.RGB:
          case PConstants.ARGB:
          default:
@@ -1377,11 +1383,6 @@ public class ZImage extends PImage {
                   + 1] << 0x08 | clrs[j];
             }
             break;
-
-         case PConstants.ALPHA:
-            for ( int i = 0; i < newPxlLen; ++i ) { trgpx[i] = clrs[i]; }
-            break;
-
       }
 
       target.pixels = trgpx;
@@ -1423,11 +1424,12 @@ public class ZImage extends PImage {
        * Subtracting one leads to incorrect bottom-right pixel from very small
        * images.
        */
-      final float tx = sw / ( float ) dw;
-      final float ty = sh / ( float ) dh;
+      final float bias = 0.00075f;
+      final float tx = sw / ( dw * ( 1.0f + bias ) );
+      final float ty = sh / ( dh * ( 1.0f + bias ) );
       for ( int k = 0; k < len; ++k ) {
-         final int nx = ( int ) ( k % dw * tx );
-         final int ny = ( int ) ( k / dw * ty );
+         final int nx = ( int ) ( k % dw * tx - bias );
+         final int ny = ( int ) ( k / dw * ty - bias );
          trgpx[k] = srcpx[ny * sw + nx];
       }
 
@@ -1660,6 +1662,17 @@ public class ZImage extends PImage {
 
       switch ( srcFmt ) {
 
+         case PConstants.ALPHA:
+
+            final int trgb = 0x00ffffff & tintClr;
+            for ( int i = 0; i < len; ++i ) {
+               final float xaf = pixels[i] * IUtils.ONE_255;
+               final float zaf = Utils.min(xaf, yaf);
+               pixels[i] = ( int ) ( zaf * 0xff + 0.5f ) << 0x18 | trgb;
+            }
+
+            break;
+
          case PConstants.RGB:
 
             for ( int i = 0; i < len; ++i ) {
@@ -1709,17 +1722,6 @@ public class ZImage extends PImage {
                          | ( int ) ( zgf * 0xff + 0.5f ) << 0x08
                          | ( int ) ( zbf * 0xff + 0.5f );
                /* @formatter:on */
-            }
-
-            break;
-
-         case PConstants.ALPHA:
-
-            final int trgb = 0x00ffffff & tintClr;
-            for ( int i = 0; i < len; ++i ) {
-               final float xaf = pixels[i] * IUtils.ONE_255;
-               final float zaf = Utils.min(xaf, yaf);
-               pixels[i] = ( int ) ( zaf * 0xff + 0.5f ) << 0x18 | trgb;
             }
 
             break;

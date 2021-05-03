@@ -67,7 +67,6 @@ public class Voronoi extends Generative {
          final float xSum = xCell + jn1;
          final float ySum = yCell + in1;
 
-         // TODO: Promote Simplex.STEP_2, STEP_3, STEP_4 to Generative.
          final float st = Utils.sqrtUnchecked(xSum * xSum + ySum * ySum)
             * Generative.STEP_2;
 

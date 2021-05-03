@@ -1466,7 +1466,6 @@ public class Color implements Comparable < Color > {
    public static Color linearToStandard ( final Color source,
       final Color target ) {
 
-      /* 0.4166666666666667d = 0.4166666666666667d . */
       return target.set(source.r <= 0.0031308f ? source.r * 12.92f
          : ( float ) ( Math.pow(source.r, 0.4166666666666667d) * 1.055d
             - 0.055d ), source.g <= 0.0031308f ? source.g * 12.92f
@@ -1503,13 +1502,21 @@ public class Color implements Comparable < Color > {
     * @param target the output vector
     *
     * @return the XYZ values.
+    * 
+    * @see Color#xyzaTolRgba(float, float, float, float, Color)
     */
    public static Vec4 lRgbaToXyza ( final float r, final float g, final float b,
       final float a, final Vec4 target ) {
 
-      return target.set(0.412453f * r + 0.35758f * g + 0.180423f * b, 0.212671f
-         * r + 0.71516f * g + 0.072169f * b, 0.019334f * r + 0.119193f * g
-            + 0.950227f * b, a);
+      /*
+       * { { 0.4124108464885388, 0.3575845678529519, 0.18045380393360833 }, {
+       * 0.21264934272065283, 0.7151691357059038, 0.07218152157344333 }, {
+       * 0.019331758429150258, 0.11919485595098397, 0.9503900340503373 } }
+       */
+
+      return target.set(0.41241086f * r + 0.35758457f * g + 0.1804538f * b,
+         0.21264935f * r + 0.71516913f * g + 0.07218152f * b, 0.019331759f * r
+            + 0.11919486f * g + 0.95039004f * b, a);
    }
 
    /**
@@ -1524,7 +1531,7 @@ public class Color implements Comparable < Color > {
     */
    public static float lRgbLuminance ( final Color c ) {
 
-      return 0.2126f * c.r + 0.7152f * c.g + 0.0722f * c.b;
+      return 0.21264935f * c.r + 0.71516913f * c.g + 0.07218152f * c.b;
    }
 
    /**
@@ -1542,15 +1549,15 @@ public class Color implements Comparable < Color > {
    public static float lRgbLuminance ( final int c ) {
 
       /*
-       * Coefficients: 0.2126 / 255.0 ; 0.7152 / 255.0 ; 0.0722 / 255.0 . In
-       * double precision: (a) 0.0008337254901960785d ; (b)
-       * 0.002804705882352941d ; (c) 0.0002831372549019608d .
+       * Coefficients: 0.21264935 / 255.0, 0.71516913 / 255.0, 0.07218152 /
+       * 255.0, 0.000833919019607843, 0.002804584823529412,
+       * 0.0002830647843137255
        */
-
+      
       /* @formatter:off */
-      return (( c >> 0x10 & 0xff ) *  83372550.0f +
-              ( c >> 0x08 & 0xff ) * 280470590.0f +
-              ( c         & 0xff ) *  28313725.0f) * 10E-12f;
+      return (( c >> 0x10 & 0xff ) *  83391901.0f +
+              ( c >> 0x08 & 0xff ) * 280458482.0f +
+              ( c         & 0xff ) *  28306478.0f) * 10E-12f;
       /* @formatter:on */
    }
 
@@ -2016,7 +2023,8 @@ public class Color implements Comparable < Color > {
       final double lb = c.b <= 0.04045f ? c.b * 0.07739938080495357d : Math.pow(
          ( c.b + 0.055d ) * 0.9478672985781991d, 2.4d);
 
-      return ( float ) ( 0.2126d * lr + 0.7152d * lg + 0.0722d * lb );
+      return ( float ) ( 0.21264934272065283d * lr + 0.7151691357059038d * lg
+         + 0.07218152157344333d * lb );
    }
 
    /**
@@ -2042,7 +2050,8 @@ public class Color implements Comparable < Color > {
       final double lb = sb <= 0.04045d ? sb * 0.07739938080495357d : Math.pow(
          ( sb + 0.055d ) * 0.9478672985781991d, 2.4d);
 
-      return ( float ) ( 0.2126d * lr + 0.7152d * lg + 0.0722d * lb );
+      return ( float ) ( 0.21264934272065283d * lr + 0.7151691357059038d * lg
+         + 0.07218152157344333d * lb );
    }
 
    /**
@@ -2058,10 +2067,6 @@ public class Color implements Comparable < Color > {
    public static Color standardToLinear ( final Color source,
       final Color target ) {
 
-      /*
-       * (float)(0.07739938080495357d) = 0.07739938f . 0.9478672985781991d =
-       * 0.9478672985781991d
-       */
       return target.set(source.r <= 0.04045f ? source.r * 0.07739938f
          : ( float ) Math.pow( ( source.r + 0.055d ) * 0.9478672985781991d,
             2.4d), source.g <= 0.04045f ? source.g * 0.07739938f
@@ -2328,13 +2333,21 @@ public class Color implements Comparable < Color > {
     * @param target the output color
     *
     * @return the color
+    * 
+    * @see Color#lRgbaToXyza(float, float, float, float, Vec4)
     */
-   public static Color xyzaToLrgba ( final float x, final float y,
+   public static Color xyzaTolRgba ( final float x, final float y,
       final float z, final float a, final Color target ) {
 
-      return target.set(3.240479f * x - 1.53715f * y - 0.498535f * z, -0.969256f
-         * x + 1.875991f * y + 0.041556f * z, 0.055648f * x - 0.204043f * y
-            + 1.057311f * z, a);
+      /*
+       * { { 3.240812398895283, -1.5373084456298136, -0.4985865229069666 }, {
+       * -0.9692430170086407, 1.8759663029085742, 0.04155503085668564 }, {
+       * 0.055638398436112804, -0.20400746093241362, 1.0571295702861434 } }
+       */
+
+      return target.set(3.2408123f * x - 1.5373085f * y - 0.49858654f * z,
+         -0.969243f * x + 1.8759663f * y + 0.041555032f * z, 0.0556384f * x
+            - 0.20400746f * y + 1.0571296f * z, a);
    }
 
    /**
@@ -2345,11 +2358,11 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     *
-    * @see Color#xyzaToLrgba(float, float, float, float, Color)
+    * @see Color#xyzaTolRgba(float, float, float, float, Color)
     */
-   public static Color xyzaToLrgba ( final Vec4 v, final Color target ) {
+   public static Color xyzaTolRgba ( final Vec4 v, final Color target ) {
 
-      return Color.xyzaToLrgba(v.x, v.y, v.z, v.w, target);
+      return Color.xyzaTolRgba(v.x, v.y, v.z, v.w, target);
    }
 
    /**
@@ -2361,13 +2374,13 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     *
-    * @see Color#xyzaToLrgba(float, float, float, float, Color)
+    * @see Color#xyzaTolRgba(float, float, float, float, Color)
     * @see Color#linearToStandard(Color, Color)
     */
-   public static Color xyzaToSrgba ( final Vec4 v, final Color target,
+   public static Color xyzaTosRgba ( final Vec4 v, final Color target,
       final Color linear ) {
 
-      Color.xyzaToLrgba(v.x, v.y, v.z, v.w, linear);
+      Color.xyzaTolRgba(v.x, v.y, v.z, v.w, linear);
       return Color.linearToStandard(linear, target);
    }
 

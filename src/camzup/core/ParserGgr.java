@@ -59,12 +59,13 @@ public abstract class ParserGgr {
    public static final int SPACE_RGB = 0;
 
    /**
-    * The logarithm of 0.5, approximately {@value ParserGgr#LOG_HALF}.
+    * The natural logarithm of 0.5, approximately {@value ParserGgr#LOG_HALF}.
     */
    protected static final float LOG_HALF = -0.6931472f;
 
    /**
-    * The logarithm of 0.5, approximately {@value ParserGgr#LOG_HALF_D}.
+    * The natural logarithm of 0.5, approximately
+    * {@value ParserGgr#LOG_HALF_D}.
     */
    protected static final double LOG_HALF_D = -0.6931471805599453d;
 

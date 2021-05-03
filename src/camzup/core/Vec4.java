@@ -1295,6 +1295,21 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
+    * Multiplies two vectors, component-wise.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target the output vector
+    *
+    * @return the product
+    */
+   public static Vec4 hadamard ( final Vec4 a, final Vec4 b,
+      final Vec4 target ) {
+
+      return target.set(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
+   }
+
+   /**
     * Tests to see if the vector is on the unit hyper-sphere, i.e., has a
     * magnitude of approximately 1.0.
     *
@@ -1660,20 +1675,6 @@ public class Vec4 implements Comparable < Vec4 > {
    public static Vec4 mul ( final Vec4 a, final float b, final Vec4 target ) {
 
       return target.set(a.x * b, a.y * b, a.z * b, a.w * b);
-   }
-
-   /**
-    * Multiplies two vectors, component-wise.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target the output vector
-    *
-    * @return the product
-    */
-   public static Vec4 mul ( final Vec4 a, final Vec4 b, final Vec4 target ) {
-
-      return target.set(a.x * b.x, a.y * b.y, a.z * b.z, a.w * b.w);
    }
 
    /**

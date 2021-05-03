@@ -608,7 +608,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @return this face
     *
-    * @see Vec3#mul(Vec3, Vec3, Vec3)
+    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     */
    public Face3 scaleGlobal ( final Vec3 scale ) {
 
@@ -616,7 +616,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
          final int len = this.vertices.length;
          for ( int i = 0; i < len; ++i ) {
             final Vec3 c = this.vertices[i].coord;
-            Vec3.mul(c, scale, c);
+            Vec3.hadamard(c, scale, c);
          }
       }
 
@@ -668,7 +668,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Face3#centerMean(Face3, Vec3)
     * @see Vec3#sub(Vec3, Vec3, Vec3)
-    * @see Vec3#mul(Vec3, Vec3, Vec3)
+    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    public Face3 scaleLocal ( final Vec3 scale, final Vec3 center ) {
@@ -680,7 +680,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
          for ( int i = 0; i < len; ++i ) {
             final Vec3 c = this.vertices[i].coord;
             Vec3.sub(c, center, c);
-            Vec3.mul(c, scale, c);
+            Vec3.hadamard(c, scale, c);
             Vec3.add(c, center, c);
          }
       }

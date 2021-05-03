@@ -375,9 +375,9 @@ public class KtVec2 extends Vec2 implements Iterable < Float > {
    }
 
    /**
-    * Returns a new vector with the product of the instance and the right
-    * operand. For interoperability with Kotlin: <code>a * b</code> . <em>Does
-    * not mutate the vector in place</em>.
+    * Returns a new vector with the Hadamard product of the instance and the
+    * right operand. For interoperability with Kotlin: <code>a * b</code> .
+    * <em>Does not mutate the vector in place</em>.
     *
     * @param b the right operand
     *

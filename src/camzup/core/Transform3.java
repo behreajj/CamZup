@@ -400,7 +400,7 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     * @return this transform
     *
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
-    * @see Vec3#mul(Vec3, Vec3, Vec3)
+    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    public Transform3 moveByLocal ( final Vec3 dir ) {
@@ -685,14 +685,14 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     * @return this transform
     *
     * @see Vec3#all(Vec3)
-    * @see Vec3#mul(Vec3, Vec3, Vec3)
+    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     */
    @Override
    public Transform3 scaleBy ( final Vec3 nonUniformScale ) {
 
       if ( Vec3.all(nonUniformScale) ) {
          this.scalePrev.set(this.scale);
-         Vec3.mul(this.scalePrev, nonUniformScale, this.scale);
+         Vec3.hadamard(this.scalePrev, nonUniformScale, this.scale);
       }
 
       return this;
@@ -1360,14 +1360,14 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     * @return the normal
     *
     * @see Quaternion#invMulVector(Quaternion, Vec3, Vec3)
-    * @see Vec3#mul(Vec3, Vec3, Vec3)
+    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     */
    @Experimental
    public static Vec3 invMulNormal ( final Transform3 t, final Vec3 source,
       final Vec3 target ) {
 
       Quaternion.invMulVector(t.rotation, source, target);
-      Vec3.mul(target, t.scale, target);
+      Vec3.hadamard(target, t.scale, target);
       return target;
    }
 
@@ -1667,13 +1667,13 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
     * @return the vector
     *
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
-    * @see Vec3#mul(Vec3, Vec3, Vec3)
+    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     */
    public static Vec3 mulVector ( final Transform3 t, final Vec3 source,
       final Vec3 target ) {
 
       Quaternion.mulVector(t.rotation, source, target);
-      Vec3.mul(target, t.scale, target);
+      Vec3.hadamard(target, t.scale, target);
       return target;
    }
 

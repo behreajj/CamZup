@@ -362,7 +362,7 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     * @return this transform
     *
     * @see Vec2#rotateZ(Vec2, float, float, Vec2)
-    * @see Vec2#mul(Vec2, Vec2, Vec2)
+    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
     */
    public Transform2 moveByLocal ( final Vec2 dir ) {
@@ -588,14 +588,14 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     * @return this transform
     *
     * @see Vec2#all(Vec2)
-    * @see Vec2#mul(Vec2, Vec2, Vec2)
+    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     */
    @Override
    public Transform2 scaleBy ( final Vec2 nonUniformScale ) {
 
       if ( Vec2.all(nonUniformScale) ) {
          this.scalePrev.set(this.scale);
-         Vec2.mul(this.scalePrev, nonUniformScale, this.scale);
+         Vec2.hadamard(this.scalePrev, nonUniformScale, this.scale);
       }
 
       return this;
@@ -1377,13 +1377,13 @@ public class Transform2 implements ISpatial2, IOriented2, IVolume2 {
     * @return the vector
     *
     * @see Vec2#rotateZ(Vec2, float, Vec2)
-    * @see Vec2#mul(Vec2, Vec2, Vec2)
+    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     */
    public static Vec2 mulVector ( final Transform2 t, final Vec2 source,
       final Vec2 target ) {
 
       Vec2.rotateZ(source, t.right.x, t.right.y, target);
-      Vec2.mul(target, t.scale, target);
+      Vec2.hadamard(target, t.scale, target);
       return target;
    }
 

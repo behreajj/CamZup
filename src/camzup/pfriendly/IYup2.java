@@ -229,9 +229,6 @@ public interface IYup2 extends IUp {
    default void grid ( final int count, final float strokeWeight,
       final float dim ) {
 
-      this.pushStyle();
-      this.strokeWeight(strokeWeight);
-
       /*
        * In case dimensions are not uniform, right and top duplicate the
        * calculation of half dimension.
@@ -244,26 +241,18 @@ public interface IYup2 extends IUp {
       final int vcount = count < 3 ? 3 : count;
       final float toPercent = 1.0f / vcount;
       final int last = vcount + 1;
+      final int lastsq = last * last;
 
-      /* Calculate values for inner loop. */
-      final float[] xs = new float[last];
-      final int[] reds = new int[last];
-      for ( int j = 0; j < last; ++j ) {
-         final float jPercent = j * toPercent;
-         xs[j] = ( 1.0f - jPercent ) * left + jPercent * right;
-         reds[j] = ( int ) ( jPercent * 0xff + 0.5f ) << 0x10;
-      }
+      this.pushStyle();
+      this.strokeWeight(strokeWeight);
 
-      // TODO: Can this be optimized with a 1d for loop?
-      for ( int i = 0; i < last; ++i ) {
-         final float iPercent = i * toPercent;
-         final float y = ( 1.0f - iPercent ) * bottom + iPercent * top;
-         final int agb = 0xff000080 | ( int ) ( iPercent * 0xff + 0.5f ) << 0x8;
-
-         for ( int j = 0; j < last; ++j ) {
-            this.stroke(agb | reds[j]);
-            this.point(xs[j], y);
-         }
+      for ( int k = 0; k < lastsq; ++k ) {
+         final float iPercent = k / last * toPercent;
+         final float jPercent = k % last * toPercent;
+         this.stroke(0xff000080 | ( int ) ( iPercent * 0xff + 0.5f ) << 0x08
+            | ( int ) ( jPercent * 0xff + 0.5f ) << 0x10);
+         this.point( ( 1.0f - jPercent ) * left + jPercent * right, ( 1.0f
+            - iPercent ) * bottom + iPercent * top);
       }
 
       this.popStyle();

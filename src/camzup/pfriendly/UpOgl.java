@@ -1930,10 +1930,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float m23, final float m30, final float m31, final float m32,
       final float m33 ) {
 
-      // QUERY: Wouldn't it make more sense to set the camera to the model view
-      // and the camera inverse to the model view inverse, as when you are
-      // updating the camera?
-
       /*
        * The parent method is to reset, then apply. This is backwards, reseting
        * and multiplication should depend on setting, not the other way around.

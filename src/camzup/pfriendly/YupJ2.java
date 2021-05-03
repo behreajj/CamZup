@@ -1227,40 +1227,28 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final int vcount = count < 3 ? 3 : count;
       final double toPercent = 1.0d / vcount;
       final int last = vcount + 1;
-
-      /* Calculate inner for-loop values. */
-      final double[] xs = new double[last];
-      final int[] reds = new int[last];
-      for ( int j = 0; j < last; ++j ) {
-         final double jPercent = j * toPercent;
-         xs[j] = ( 1.0d - jPercent ) * left + jPercent * right;
-         reds[j] = ( int ) ( jPercent * 0xff + 0.5d ) << 0x10;
-      }
+      final int lastsq = last * last;
 
       super.pushStyle();
       this.setStrokeAwt(PConstants.ROUND, PConstants.ROUND, sw);
 
-      // TODO: Can this be optimized with a 1D for loop?
-      for ( int i = 0; i < last; ++i ) {
-         final double iPercent = i * toPercent;
+      for ( int k = 0; k < lastsq; ++k ) {
+         final double iPercent = k / last * toPercent;
+         final double jPercent = k % last * toPercent;
+         final double x = ( 1.0d - jPercent ) * left + jPercent * right;
          final double y = ( 1.0d - iPercent ) * bottom + iPercent * top;
-         final double yeps = y + IUtils.EPSILON_D;
-         final int agb = 0xff000080 | ( int ) ( iPercent * 0xff + 0.5d ) << 0x8;
 
-         for ( int j = 0; j < last; ++j ) {
-            final double x = xs[j];
-
-            /*
-             * Draw a point. Epsilon is added to y instead of x to minimize
-             * calculations. Color is set directly with an object instead of
-             * through colorCalc.
-             */
-            this.gp.reset();
-            this.gp.moveTo(x, yeps);
-            this.gp.lineTo(x, y);
-            this.g2.setColor(new java.awt.Color(agb | reds[j], true));
-            this.g2.draw(this.gp);
-         }
+         /*
+          * Draw a point. Color is set directly with an object instead of
+          * through colorCalc.
+          */
+         this.gp.reset();
+         this.gp.moveTo(x + IUtils.EPSILON_D, y);
+         this.gp.lineTo(x, y);
+         this.g2.setColor(new java.awt.Color(0xff000080 | ( int ) ( iPercent
+            * 0xff + 0.5f ) << 0x08 | ( int ) ( jPercent * 0xff + 0.5f )
+               << 0x10, true));
+         this.g2.draw(this.gp);
       }
 
       super.popStyle();
