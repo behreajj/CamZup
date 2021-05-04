@@ -1841,7 +1841,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the string
     */
-   public String toObjString ( ) { return this.toObjString(1, 1, 1); }
+   public String toObjString ( ) { return this.toObjString(1, 1, 1, true); }
 
    /**
     * Renders the mesh as a string following the Wavefront OBJ file format.
@@ -1849,17 +1849,18 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * begin at 1, not 0. The mesh is considered a group, 'g', not an object,
     * 'o'.
     *
-    * @param vIdx  coordinate index offset
-    * @param vtIdx texture coordinate index offset
-    * @param vnIdx normal index offset
+    * @param vIdx   coordinate index offset
+    * @param vtIdx  texture coordinate index offset
+    * @param vnIdx  normal index offset
+    * @param flipvs whether to subtract y from 1.0
     *
     * @return the string
     */
-   public String toObjString ( final int vIdx, final int vtIdx,
-      final int vnIdx ) {
+   public String toObjString ( final int vIdx, final int vtIdx, final int vnIdx,
+      final boolean flipvs ) {
 
-      return this.toObjString(new StringBuilder(2048), vIdx, vtIdx, vnIdx)
-         .toString();
+      return this.toObjString(new StringBuilder(2048), vIdx, vtIdx, vnIdx,
+         flipvs).toString();
    }
 
    /**
@@ -2140,15 +2141,16 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * Internal helper method that appends a representation of this mesh in the
     * Wavefront OBJ file format to a {@link StringBuilder}.
     *
-    * @param objs  the string builder
-    * @param vIdx  coordinate index offset
-    * @param vtIdx texture coordinate index offset
-    * @param vnIdx normal index offset
+    * @param objs   the string builder
+    * @param vIdx   coordinate index offset
+    * @param vtIdx  texture coordinate index offset
+    * @param vnIdx  normal index offset
+    * @param flipvs whether to subtract y from 1.0
     *
     * @return the string builder
     */
    StringBuilder toObjString ( final StringBuilder objs, final int vIdx,
-      final int vtIdx, final int vnIdx ) {
+      final int vtIdx, final int vnIdx, final boolean flipvs ) {
 
       final int vsLen = this.coords.length;
       final int vtsLen = this.texCoords.length;
@@ -2177,7 +2179,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       for ( int i = 0; i < vsLen; ++i ) {
          objs.append('v');
          objs.append(' ');
-         this.coords[i].toObjString(objs);
+         this.coords[i].toObjString(objs, false);
          objs.append(" 0.0 \n");
       }
       objs.append('\n');
@@ -2185,7 +2187,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       /* Write texture coordinates. */
       for ( int i = 0; i < vtsLen; ++i ) {
          objs.append("vt ");
-         this.texCoords[i].toObjString(objs);
+         this.texCoords[i].toObjString(objs, flipvs);
          objs.append('\n');
       }
 

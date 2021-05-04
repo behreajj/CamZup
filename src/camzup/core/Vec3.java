@@ -1373,12 +1373,36 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
+    * Creates a vector from the cosine and sine of an azimuth and inclination.
+    *
+    * @param cosAzim the cosine of azimuth
+    * @param sinAzim the sine of azimuth
+    * @param cosIncl the cosine of inclination
+    * @param sinIncl the sine of inclination
+    * @param radius  the radius
+    * @param target  the output vector
+    *
+    * @return the vector
+    */
+   public static Vec3 fromSpherical ( final float cosAzim, final float sinAzim,
+      final float cosIncl, final float sinIncl, final float radius,
+      final Vec3 target ) {
+
+      /* @formatter:off */
+      final float rhoCosIncl = radius * cosIncl;
+      return target.set(
+         rhoCosIncl * cosAzim,
+         rhoCosIncl * sinAzim,
+         radius * sinIncl);
+      /* @formatter:on */
+   }
+
+   /**
     * Creates a vector from spherical coordinates: (1) theta, \u03b8, the
     * azimuth, yaw or longitude; (2) phi, \u03c6, the inclination, pitch or
     * latitude; (3) rho, \u03c1, the radius or magnitude. The poles will be
     * upright in a z-up coordinate system; sideways in a y-up coordinate
-    * system. The expected range for phi is [-\u03c0 / 2.0, \u03c0, 2.0], and
-    * the input will be clamped to that range.
+    * system.
     *
     * @param azimuth     the angle theta in radians
     * @param inclination the angle phi in radians
@@ -1386,22 +1410,16 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target      the output vector
     *
     * @return the vector
-    *
-    * @see Utils#clamp(float, float, float)
     */
    public static Vec3 fromSpherical ( final float azimuth,
       final float inclination, final float radius, final Vec3 target ) {
 
+      final float inclNorm = inclination * IUtils.ONE_TAU;
       final float azNorm = azimuth * IUtils.ONE_TAU;
-      final float inclNorm = Utils.clamp(inclination, -IUtils.HALF_PI,
-         IUtils.HALF_PI) * IUtils.ONE_TAU;
-      final float rhoCosIncl = radius * Utils.scNorm(inclNorm);
-      /* @formatter:off */
-      return target.set(
-         rhoCosIncl * Utils.scNorm(azNorm),
-         rhoCosIncl * Utils.scNorm(azNorm - 0.25f),
-         radius * Utils.scNorm(inclNorm - 0.25f));
-      /* @formatter:on */
+
+      return Vec3.fromSpherical(Utils.scNorm(azNorm), Utils.scNorm(azNorm
+         - 0.25f), Utils.scNorm(inclNorm), Utils.scNorm(inclNorm - 0.25f),
+         radius, target);
    }
 
    /**
@@ -1774,29 +1792,22 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param v the input vector
     *
     * @return the inclination
-    *
-    * @see Utils#asin(float)
-    * @see Utils#invHypot(float, float, float)
     */
    public static float inclinationSigned ( final Vec3 v ) {
 
-      return Utils.asin(v.z * Utils.invHypot(v.x, v.y, v.z));
+      return IUtils.HALF_PI - Vec3.inclinationUnsigned(v);
    }
 
    /**
-    * Finds the vector's inclination in the range [3.0 \u03c0 / 2.0, \u03c0 /
-    * 2.0] .
+    * Finds the vector's inclination in the range [\u03c0, 0.0] .
     *
     * @param v the input vector
     *
     * @return the inclination
-    *
-    * @see Vec3#inclinationSigned(Vec3)
-    * @see Utils#modRadians(float)
     */
    public static float inclinationUnsigned ( final Vec3 v ) {
 
-      return Utils.modRadians(Vec3.inclinationSigned(v));
+      return Utils.acos(v.z * Utils.invHypot(v.x, v.y, v.z));
    }
 
    /**

@@ -516,7 +516,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       int fCount = 0;
       while ( itr.hasNext() ) {
          final Mesh3 mesh = itr.next();
-         mesh.toObjString(objs, vIdx, vtIdx, vnIdx, 0);
+         mesh.toObjString(objs, vIdx, vtIdx, vnIdx, 0, true);
          if ( itr.hasNext() ) { objs.append('\n'); }
 
          vIdx += mesh.coords.length;

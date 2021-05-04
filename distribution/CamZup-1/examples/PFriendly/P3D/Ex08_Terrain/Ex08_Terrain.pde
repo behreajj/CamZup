@@ -22,15 +22,13 @@ Mesh3 plane3 = new Mesh3();
 MeshEntity3 entity = new MeshEntity3()
   .append(plane3);
 
-MaterialSolid fill = new MaterialSolid()
-  .setStroke(false)
-  .setFill(0xff007fff);
+MaterialPImage fill;
 
 MaterialSolid stroke = new MaterialSolid()
   .setFill(false)
   .setStrokeWeight(1.0f)
   .setStroke(true)
-  .setStroke(0xff003f7f);
+  .setStroke(0xff202020);
 
 void settings() {
   size(720, 405, Zup3.PATH_STR);
@@ -42,9 +40,12 @@ void setup() {
   graphics.camDimetric();
   graphics.ortho();
   entity.scaleTo(Utils.min(graphics.width, graphics.height));
+  fill = new MaterialPImage(loadImage("diagnostic.png"));
 }
 
 void draw() {
+  surface.setTitle(Utils.toFixed(frameRate, 1));
+  
   graphics.mouse1s(mouse1);
   Mesh2.plane(count, count, PolyType.TRI, plane2);
   plane3.set(plane2);
@@ -92,7 +93,12 @@ void draw() {
   graphics.background();
   graphics.grid(32);
   graphics.lights();
-  graphics.shape(entity, wireframe ? stroke : fill);
+
+  if (wireframe) {
+    graphics.shape(entity, stroke);
+  } else {
+    graphics.shape(entity, fill);
+  }
 }
 
 void keyReleased() {

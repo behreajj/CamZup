@@ -513,7 +513,7 @@ public class MaterialSolid extends Material {
     * @see Utils#div(float, float)
     * @see Utils#abs(float)
     * @see Utils#clamp01(float)
-    * @see Color#toHexWeb(Color)
+    * @see Color#toHexWeb(StringBuilder, Color)
     */
    StringBuilder toSvgString ( final StringBuilder svgp, final float scale ) {
 
@@ -530,11 +530,12 @@ public class MaterialSolid extends Material {
       if ( this.useStroke && sw > IUtils.EPSILON ) {
          svgp.append("stroke-width=\"");
          // svgp.append(Float.toString(sclStrk));
-         Utils.toFixed(svgp, sw, 6);
+         Utils.toFixed(svgp, sw, ISvgWritable.FIXED_PRINT);
          svgp.append("\" stroke-opacity=\"");
-         Utils.toFixed(svgp, sa, 6);
+         Utils.toFixed(svgp, sa, ISvgWritable.FIXED_PRINT);
          svgp.append("\" stroke=\"");
-         svgp.append(Color.toHexWeb(this.stroke));
+         // svgp.append(Color.toHexWeb(this.stroke));
+         Color.toHexWeb(svgp, this.stroke);
          svgp.append("\" stroke-linejoin=\"");
          svgp.append(ISvgWritable.DEFAULT_STR_JOIN);
          svgp.append("\" stroke-linecap=\"");
@@ -549,9 +550,9 @@ public class MaterialSolid extends Material {
       final float fa = Utils.clamp01(this.fill.a);
       if ( this.useFill ) {
          svgp.append("fill-opacity=\"");
-         Utils.toFixed(svgp, fa, 6);
+         Utils.toFixed(svgp, fa, ISvgWritable.FIXED_PRINT);
          svgp.append("\" fill=\"");
-         svgp.append(Color.toHexWeb(this.fill));
+         Color.toHexWeb(svgp, this.fill);
          svgp.append('\"');
       } else {
          svgp.append("fill=\"none\"");
@@ -600,11 +601,16 @@ public class MaterialSolid extends Material {
    static StringBuilder defaultSvgMaterial ( final StringBuilder svgp,
       final float scale ) {
 
+      /*
+       * To keep this short and simple, alpha components for default fill color
+       * and stroke color are not calculated, but are assumed to be 1.0.
+       */
+
       svgp.append("<g id=\"defaultmaterial\"");
       svgp.append(" fill-opacity=\"");
       svgp.append("1.0");
       svgp.append("\" fill=\"");
-      svgp.append(Color.toHexWeb(IUp.DEFAULT_FILL_COLOR));
+      Color.toHexWeb(svgp, IUp.DEFAULT_FILL_COLOR);
       svgp.append('\"');
       svgp.append(' ');
 
@@ -612,11 +618,11 @@ public class MaterialSolid extends Material {
       if ( sw > IUtils.EPSILON ) {
          svgp.append("stroke-width=\"");
          // svgp.append(Float.toString(sclStrk));
-         Utils.toFixed(svgp, sw, 6);
+         Utils.toFixed(svgp, sw, ISvgWritable.FIXED_PRINT);
          svgp.append("\" stroke-opacity=\"");
          svgp.append("1.0");
          svgp.append("\" stroke=\"");
-         svgp.append(Color.toHexWeb(IUp.DEFAULT_STROKE_COLOR));
+         Color.toHexWeb(svgp, IUp.DEFAULT_STROKE_COLOR);
          svgp.append("\" stroke-linejoin=\"");
          svgp.append(ISvgWritable.DEFAULT_STR_JOIN);
          svgp.append("\" stroke-linecap=\"");

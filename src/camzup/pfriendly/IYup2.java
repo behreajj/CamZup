@@ -1162,7 +1162,7 @@ public interface IYup2 extends IUp {
     *
     * @see IYup2#getWidth()
     * @see IYup2#getHeight()
-    * @see Color#toHexWeb(int)
+    * @see Color#toHexWeb(StringBuilder, int)
     * @see IYup2#getBackground()
     */
    static String svgBackground ( final IYup2 renderer ) {
@@ -1189,7 +1189,7 @@ public interface IYup2 extends IUp {
       svgp.append(" Z\" stroke=\"none\" fill-opacity=\"");
       svgp.append(Utils.toFixed(Utils.clamp01(bgAlpha), 6));
       svgp.append("\" fill=\"");
-      svgp.append(Color.toHexWeb(bgClr));
+      Color.toHexWeb(svgp, bgClr);
       svgp.append("\"></path>");
       return svgp.toString();
    }

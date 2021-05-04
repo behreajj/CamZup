@@ -251,15 +251,16 @@ public class Vec2 implements Comparable < Vec2 > {
     * Internal helper method that appends a representation of this vector in
     * the Wavefront OBJ file format to a {@link StringBuilder}.
     *
-    * @param objs the string builder
+    * @param objs  the string builder
+    * @param flipv whether to subtract y from 1.0
     *
     * @return the string builder
     */
-   StringBuilder toObjString ( final StringBuilder objs ) {
+   StringBuilder toObjString ( final StringBuilder objs, final boolean flipv ) {
 
-      Utils.toFixed(objs, this.x, 6);
+      Utils.toFixed(objs, flipv ? this.x : 1.0f - this.x, 6);
       objs.append(' ');
-      Utils.toFixed(objs, this.y, 6);
+      Utils.toFixed(objs, flipv ? 1.0f - this.y : this.y, 6);
       return objs;
    }
 

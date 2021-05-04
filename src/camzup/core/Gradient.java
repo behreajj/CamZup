@@ -1061,6 +1061,200 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
+    * Returns a String representation of the gradient compatible with the SVG
+    * format. Assumes a linear gradient with an origin and destination point.
+    *
+    * @param id the gradient id
+    *
+    * @return the string
+    */
+   public String toSvgString ( final String id ) {
+
+      return this.toSvgString(id, 0.0f, 0.5f, 1.0f, 0.5f, 768, 64);
+   }
+
+   /**
+    * Returns a String representation of the gradient compatible with the SVG
+    * format. Assumes a linear gradient with an origin and destination
+    * point.<br>
+    * <br>
+    * Gradients support two kinds of <a href=
+    * "https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/color-interpolation">color
+    * interpolation</a>: one in standard RGB space (the default); another
+    * gamma corrected to linear space. If gammaCorrect is <code>true</code>,
+    * the latter will be used.<br>
+    * <br>
+    * Because SVG gradients require a <code>defs</code> tag, this class is not
+    * compatible with {@link ISvgWritable}. This method is a convenience only.
+    *
+    * @param id the gradient id
+    * @param x1 the origin x
+    * @param y1 the origin y
+    * @param x2 the destination x
+    * @param y2 the destination y
+    * @param w  the width
+    * @param h  the height
+    *
+    * @return the string
+    */
+   @Experimental
+   public String toSvgString ( final String id, final float x1, final float y1,
+      final float x2, final float y2, final int w, final int h ) {
+
+      // TODO: Examine decompiled version of this method in IntelliJ.
+
+      final String idTrim = id != null ? id.trim() : "";
+      final String vid = idTrim.length() > 0 ? idTrim : "camzupGradient";
+
+      final int vw = w < 3 ? 3 : w;
+      final int vh = h < 3 ? 3 : h;
+      final int vhHalf = h / 2;
+      final String wStr = Utils.toFixed(vw, ISvgWritable.FIXED_PRINT);
+      final String hMidStr = Utils.toFixed(vhHalf, ISvgWritable.FIXED_PRINT);
+      final String hBtmStr = Utils.toFixed(vh, ISvgWritable.FIXED_PRINT);
+
+      final float swLeft = 0.0f;
+      final float swRight = vw;
+
+      final StringBuilder svgp = new StringBuilder(1024);
+
+      svgp.append("<svg ");
+      svgp.append("xmlns=\"http://www.w3.org/2000/svg\" ");
+      svgp.append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
+      svgp.append("viewBox=\"0 0 ");
+      svgp.append(vw);
+      svgp.append(' ');
+      svgp.append(vh);
+      svgp.append("\">\n");
+
+      svgp.append("<defs>\n");
+
+      final boolean gammaCorrect = false;
+      if ( gammaCorrect ) {
+         // RESEARCH:
+         // https://developer.mozilla.org/en-US/
+         // docs/Web/SVG/Element/feComponentTransfer
+         final boolean correctAlpha = false;
+         float gammaInv = 1.0f / 2.2f;
+         svgp.append("<filter id=\"sRgbTolRgb\"");
+         svgp.append(">\n<feComponentTransfer");
+         svgp.append(" color-interpolation-filters=\"sRGB\">\n");
+
+         svgp.append("<feFuncR type=\"gamma\" amplitude=\"1\" exponent=\"");
+         Utils.toFixed(svgp, gammaInv, ISvgWritable.FIXED_PRINT);
+         svgp.append("\" offset=\"0\" />\n");
+
+         svgp.append("<feFuncG type=\"gamma\" amplitude=\"1\" exponent=\"");
+         Utils.toFixed(svgp, gammaInv, ISvgWritable.FIXED_PRINT);
+         svgp.append("\" offset=\"0\" />\n");
+
+         svgp.append("<feFuncB type=\"gamma\" amplitude=\"1\" exponent=\"");
+         Utils.toFixed(svgp, gammaInv, ISvgWritable.FIXED_PRINT);
+         svgp.append("\" offset=\"0\" />\n");
+
+         if ( correctAlpha ) {
+            svgp.append("<feFuncA type=\"gamma\" amplitude=\"1\" exponent=\"");
+            Utils.toFixed(svgp, gammaInv, ISvgWritable.FIXED_PRINT);
+            svgp.append("\" offset=\"0\" />\n");
+         }
+
+         svgp.append("</feComponentTransfer>\n");
+         svgp.append("</filter>\n");
+      }
+
+      svgp.append("<linearGradient id=\"");
+      svgp.append(vid);
+      svgp.append("\" x1=\"");
+      Utils.toFixed(svgp, x1, ISvgWritable.FIXED_PRINT);
+      svgp.append("\" y1=\"");
+      Utils.toFixed(svgp, y1, ISvgWritable.FIXED_PRINT);
+      svgp.append("\" x2=\"");
+      Utils.toFixed(svgp, x2, ISvgWritable.FIXED_PRINT);
+      svgp.append("\" y2=\"");
+      Utils.toFixed(svgp, y2, ISvgWritable.FIXED_PRINT);
+      svgp.append("\">\n");
+
+      final StringBuilder sbSwatch = new StringBuilder(1024);
+      sbSwatch.append("<g id=\"swatches\">\n");
+
+      int idx = 0;
+
+      final int len = this.keys.size();
+      final float toFac = len > 1 ? 1.0f / ( len ) : 1.0f;
+      final Iterator < ColorKey > itr = this.keys.iterator();
+      while ( itr.hasNext() ) {
+         final ColorKey ck = itr.next();
+         final Color clr = ck.clr;
+
+         /* Color stops in linear gradient. */
+         ck.toSvgString(svgp);
+         if ( itr.hasNext() ) { svgp.append('\n'); }
+
+         /* Swatches. */
+         float fac0 = ( idx ) * toFac;
+         float xl = ( 1.0f - fac0 ) * swLeft + fac0 * swRight;
+         float fac1 = ( idx + 1.0f ) * toFac;
+         float xr = ( 1.0f - fac1 ) * swLeft + fac1 * swRight;;
+
+         final String hex = Color.toHexWeb(clr);
+         sbSwatch.append("<path id=\"");
+         sbSwatch.append("swatch." + hex.substring(1));
+
+         sbSwatch.append("\" d=\"M ");
+         Utils.toFixed(sbSwatch, xl, ISvgWritable.FIXED_PRINT);
+         sbSwatch.append(' ');
+         sbSwatch.append(hMidStr);
+
+         sbSwatch.append(" L ");
+         Utils.toFixed(sbSwatch, xr, ISvgWritable.FIXED_PRINT);
+         sbSwatch.append(' ');
+         sbSwatch.append(hMidStr);
+
+         sbSwatch.append(" L ");
+         Utils.toFixed(sbSwatch, xr, ISvgWritable.FIXED_PRINT);
+         sbSwatch.append(' ');
+         sbSwatch.append(hBtmStr);
+
+         sbSwatch.append(" L ");
+         Utils.toFixed(sbSwatch, xl, ISvgWritable.FIXED_PRINT);
+         sbSwatch.append(' ');
+         sbSwatch.append(hBtmStr);
+
+         sbSwatch.append(" Z\" stroke=\"none\" fill-opacity=\"");
+         Utils.toFixed(sbSwatch, Utils.clamp01(clr.a),
+            ISvgWritable.FIXED_PRINT);
+
+         sbSwatch.append("\" fill=\"");
+         sbSwatch.append(hex);
+         sbSwatch.append("\" />\n");
+
+         ++idx;
+      }
+
+      sbSwatch.append("</g>\n");
+      svgp.append("\n</linearGradient>\n");
+      svgp.append("</defs>\n");
+      svgp.append("<path id=\"ramp\" d=\"M 0.0 0.0 L ");
+      svgp.append(wStr);
+      svgp.append(" 0.0 L ");
+      svgp.append(wStr);
+      svgp.append(' ');
+      svgp.append(hMidStr);
+      svgp.append(" L 0.0 ");
+      svgp.append(hMidStr);
+      svgp.append(" Z\" fill=\"url('#");
+      svgp.append(vid);
+      svgp.append("')\"");
+      if ( gammaCorrect ) {
+         svgp.append(" filter=\"url('#sRgbTolRgb')\"");
+      }
+      svgp.append(" />\n");
+      svgp.append(sbSwatch);
+      svgp.append("</svg>");
+      return svgp.toString();
+   }
+
+   /**
     * Helper function that compresses existing keys to the left when a new
     * color is added to the gradient without a key.
     *

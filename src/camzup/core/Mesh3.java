@@ -2072,7 +2072,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the string
     */
-   public String toObjString ( ) { return this.toObjString(1, 1, 1, 0); }
+   public String toObjString ( ) {
+
+      return this.toObjString(1, 1, 1, 0, true);
+   }
 
    /**
     * Renders the mesh as a string following the Wavefront OBJ file format.
@@ -2084,14 +2087,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param vtIdx         texture coordinate index offset
     * @param vnIdx         normal index offset
     * @param smoothShading smooth shading flag
+    * @param flipvs        whether to subtract y from 1.0
     *
     * @return the string
     */
    public String toObjString ( final int vIdx, final int vtIdx, final int vnIdx,
-      final int smoothShading ) {
+      final int smoothShading, final boolean flipvs ) {
 
       return this.toObjString(new StringBuilder(2048), vIdx, vtIdx, vnIdx,
-         smoothShading).toString();
+         smoothShading, flipvs).toString();
    }
 
    /**
@@ -2375,11 +2379,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param vtIdx         texture coordinate index offset
     * @param vnIdx         normal index offset
     * @param smoothShading smooth shading flag
+    * @param flipvs        whether to subtract y from 1.0
     *
     * @return the string builder
     */
    StringBuilder toObjString ( final StringBuilder objs, final int vIdx,
-      final int vtIdx, final int vnIdx, final int smoothShading ) {
+      final int vtIdx, final int vnIdx, final int smoothShading,
+      final boolean flipvs ) {
 
       final int vsLen = this.coords.length;
       final int vtsLen = this.texCoords.length;
@@ -2419,7 +2425,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       /* Write texture coordinates. */
       for ( int i = 0; i < vtsLen; ++i ) {
          objs.append("vt ");
-         this.texCoords[i].toObjString(objs);
+         this.texCoords[i].toObjString(objs, flipvs);
          objs.append('\n');
       }
       objs.append('\n');

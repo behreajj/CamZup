@@ -1466,6 +1466,8 @@ public class Color implements Comparable < Color > {
    public static Color linearToStandard ( final Color source,
       final Color target ) {
 
+      // TODO: Flag to include or exclude alpha.
+
       return target.set(source.r <= 0.0031308f ? source.r * 12.92f
          : ( float ) ( Math.pow(source.r, 0.4166666666666667d) * 1.055d
             - 0.055d ), source.g <= 0.0031308f ? source.g * 12.92f
@@ -1502,7 +1504,7 @@ public class Color implements Comparable < Color > {
     * @param target the output vector
     *
     * @return the XYZ values.
-    * 
+    *
     * @see Color#xyzaTolRgba(float, float, float, float, Color)
     */
    public static Vec4 lRgbaToXyza ( final float r, final float g, final float b,
@@ -1553,7 +1555,7 @@ public class Color implements Comparable < Color > {
        * 255.0, 0.000833919019607843, 0.002804584823529412,
        * 0.0002830647843137255
        */
-      
+
       /* @formatter:off */
       return (( c >> 0x10 & 0xff ) *  83391901.0f +
               ( c >> 0x08 & 0xff ) * 280458482.0f +
@@ -2067,6 +2069,8 @@ public class Color implements Comparable < Color > {
    public static Color standardToLinear ( final Color source,
       final Color target ) {
 
+      // TODO: Flag to include or exclude alpha.
+
       return target.set(source.r <= 0.04045f ? source.r * 0.07739938f
          : ( float ) Math.pow( ( source.r + 0.055d ) * 0.9478672985781991d,
             2.4d), source.g <= 0.04045f ? source.g * 0.07739938f
@@ -2138,6 +2142,8 @@ public class Color implements Comparable < Color > {
     * @param useIdx append the index
     *
     * @return the string
+    *
+    * @see Color#toHexWeb(Color)
     */
    public static String toGplString ( final Color[] arr, final String name,
       final int cols, final boolean useIdx ) {
@@ -2212,6 +2218,7 @@ public class Color implements Comparable < Color > {
     */
    public static String toHexString ( final Color c ) {
 
+      // TODO: Update to match toHexWeb convention. Add channel order support?
       final StringBuilder sb = new StringBuilder(10);
       sb.append("0x");
       Color.toHexString(( byte ) ( c.a * 0xff + 0.5f ), sb);
@@ -2233,6 +2240,7 @@ public class Color implements Comparable < Color > {
     */
    public static String toHexString ( final int c ) {
 
+      // TODO: Update to match toHexWeb convention. Add channel order support?
       final StringBuilder sb = new StringBuilder(10);
       sb.append("0x");
       Color.toHexString(( byte ) ( c >> 0x18 & 0xff ), sb);
@@ -2243,23 +2251,18 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Returns a web-friendly representation of the color as a hexadecimal
+    * Creates a web-friendly representation of the color as a hexadecimal
     * code, preceded by a hash tag, '#', with no alpha.
     *
     * @param c the color
     *
     * @return the string
     *
-    * @see Color#toHexString(byte, StringBuilder)
+    * @see Color#toHexWeb(StringBuilder, Color)
     */
    public static String toHexWeb ( final Color c ) {
 
-      final StringBuilder sb = new StringBuilder(7);
-      sb.append('#');
-      Color.toHexString(( byte ) ( c.r * 0xff + 0.5f ), sb);
-      Color.toHexString(( byte ) ( c.g * 0xff + 0.5f ), sb);
-      Color.toHexString(( byte ) ( c.b * 0xff + 0.5f ), sb);
-      return sb.toString();
+      return Color.toHexWeb(new StringBuilder(7), c).toString();
    }
 
    /**
@@ -2272,16 +2275,74 @@ public class Color implements Comparable < Color > {
     *
     * @return the string
     *
-    * @see Color#toHexString(byte, StringBuilder)
+    * @see Color#toHexWeb(StringBuilder, int)
     */
    public static String toHexWeb ( final int c ) {
 
-      final StringBuilder sb = new StringBuilder(7);
+      return Color.toHexWeb(new StringBuilder(7), c).toString();
+   }
+
+   /**
+    * Creates a web-friendly representation of the color as a hexadecimal
+    * code, preceded by a hash tag, '#', with no alpha. Appends to an existing
+    * {@link StringBuilder}.<br>
+    *
+    * @param sb the string builder
+    * @param r  the red byte
+    * @param g  the green byte
+    * @param b  the blue byte
+    *
+    * @return the string builder
+    */
+   public static StringBuilder toHexWeb ( final StringBuilder sb, final byte r,
+      final byte g, final byte b ) {
+
       sb.append('#');
-      Color.toHexString(( byte ) ( c >> 0x10 & 0xff ), sb);
-      Color.toHexString(( byte ) ( c >> 0x08 & 0xff ), sb);
-      Color.toHexString(( byte ) ( c & 0xff ), sb);
-      return sb.toString();
+      Color.toHexString(r, sb);
+      Color.toHexString(g, sb);
+      Color.toHexString(b, sb);
+      return sb;
+   }
+
+   /**
+    * Creates a web-friendly representation of the color as a hexadecimal
+    * code, preceded by a hash tag, '#', with no alpha. Appends to an existing
+    * {@link StringBuilder}.
+    *
+    * @param sb the string builder
+    * @param c  color
+    *
+    * @return the string builder
+    *
+    * @see Color#toHexWeb(StringBuilder, byte, byte, byte)
+    */
+   public static StringBuilder toHexWeb ( final StringBuilder sb,
+      final Color c ) {
+
+      return Color.toHexWeb(sb, ( byte ) ( c.r * 0xff + 0.5f ), ( byte ) ( c.g
+         * 0xff + 0.5f ), ( byte ) ( c.b * 0xff + 0.5f ));
+   }
+
+   /**
+    * Creates a web-friendly representation of the color as a hexadecimal
+    * code, preceded by a hash tag, '#', with no alpha. Appends to an existing
+    * {@link StringBuilder}.<br>
+    * <br>
+    * Assumes the number will be formatted as <code>0xAARRGGBB</code> , where
+    * alpha is the first channel, followed by red, green and blue.
+    *
+    * @param sb the string builder
+    * @param c  the color
+    *
+    * @return the string builder
+    *
+    * @see Color#toHexWeb(StringBuilder, byte, byte, byte)
+    */
+   public static StringBuilder toHexWeb ( final StringBuilder sb,
+      final int c ) {
+
+      return Color.toHexWeb(sb, ( byte ) ( c >> 0x10 & 0xff ), ( byte ) ( c
+         >> 0x08 & 0xff ), ( byte ) ( c & 0xff ));
    }
 
    /**
@@ -2310,6 +2371,50 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Returns a string representation of an array of Colors.
+    *
+    * @param arr the array
+    *
+    * @return the string
+    */
+   public static String toString ( final Color[] arr ) {
+
+      return Color.toString(arr, IUtils.FIXED_PRINT);
+   }
+
+   /**
+    * Returns a string representation of an array of colors.
+    *
+    * @param arr    the array
+    * @param places the print precision
+    *
+    * @return the string
+    */
+   public static String toString ( final Color[] arr, final int places ) {
+
+      final StringBuilder sb = new StringBuilder(1024);
+      sb.append('[').append(' ');
+
+      if ( arr != null ) {
+         final int len = arr.length;
+         final int last = len - 1;
+
+         for ( int i = 0; i < last; ++i ) {
+            final Color c = arr[i];
+            c.toString(sb, places);
+            sb.append(',').append(' ');
+         }
+
+         final Color cl = arr[last];
+         cl.toString(sb, places);
+         sb.append(' ');
+      }
+
+      sb.append(']');
+      return sb.toString();
+   }
+
+   /**
     * Returns the color white, ( 1.0, 1.0, 1.0, 1.0 ) .
     *
     * @param target the output color
@@ -2333,7 +2438,7 @@ public class Color implements Comparable < Color > {
     * @param target the output color
     *
     * @return the color
-    * 
+    *
     * @see Color#lRgbaToXyza(float, float, float, float, Vec4)
     */
    public static Color xyzaTolRgba ( final float x, final float y,
@@ -2453,8 +2558,7 @@ public class Color implements Comparable < Color > {
     *
     * @return the string
     */
-   protected static StringBuilder toHexString ( final byte b,
-      final StringBuilder sb ) {
+   static StringBuilder toHexString ( final byte b, final StringBuilder sb ) {
 
       final int digit0 = b >> 0x4 & 0xf;
       final int digit1 = b & 0xf;
