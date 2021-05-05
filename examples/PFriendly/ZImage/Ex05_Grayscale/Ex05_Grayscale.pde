@@ -29,8 +29,8 @@ void setup() {
 void draw() {
   graphics.background();
   if (mousePressed) {
-    graphics.image(target);
-  } else {
     graphics.image(source);
+  } else {
+    graphics.image(target);
   }
 }

@@ -5,7 +5,6 @@ import java.net.URL;
 import camzup.core.Color;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
-import camzup.core.Quaternion;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
 import camzup.core.Vec4;
@@ -106,18 +105,6 @@ public class ZShader extends PShader {
    public void set ( final String name, final Mat4 m ) {
 
       this.setUniformImpl(name, ZShader.MAT4_IDX, m.toArray1());
-   }
-
-   /**
-    * Sets a GLSL vec4 uniform to a Quaternion. The real component, 'w' is
-    * treated as the last component.
-    *
-    * @param name the uniform name
-    * @param q    the quaternion
-    */
-   public void set ( final String name, final Quaternion q ) {
-
-      this.setUniformImpl(name, ZShader.VEC4_IDX, q.toArray(false));
    }
 
    /**

@@ -31,6 +31,7 @@ void draw() {
     float fac1 = Sdf.arc(st, ang0, ang1, 0.25f, 0.35f);
     float fac2 = Sdf.polygon(st, sides, -ang0, 1.25f);
     float fac = Sdf.subtract(fac1, fac2);
+    fac = Utils.quantize(fac, 16);
     pixels[i] = Gradient.eval(gr, fac);
   }
   updatePixels();

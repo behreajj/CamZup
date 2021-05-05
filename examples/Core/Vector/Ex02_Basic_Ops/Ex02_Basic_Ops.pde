@@ -14,7 +14,7 @@ void setup() {
 
   Vec2 product = new Vec2();
   Vec2.hadamard(a, b, product);
-  println("vec - vec product", product);
+  println("vec * vec product", product);
 
   Vec2.mul(a, -4.0f, product);
   println("vec - scalar product", product);

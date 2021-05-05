@@ -1640,9 +1640,6 @@ public class Vec3 implements Comparable < Vec3 > {
       final int latitudes, final int layers, final float radiusMin,
       final float radiusMax, final boolean includePoles ) {
 
-      // TODO: Redo with 1D for loop? If so, the include poles if clause would
-      // need to be refactored.
-
       final int vlons = longitudes < 3 ? 3 : longitudes;
       final int vlats = latitudes < 3 ? 3 : latitudes;
       final int vlayers = layers < 1 ? 1 : layers;
@@ -1653,44 +1650,44 @@ public class Vec3 implements Comparable < Vec3 > {
          .min(radiusMin, radiusMax));
 
       final int latLen = includePoles ? vlats + 2 : vlats;
-      final Vec3[][][] result = new Vec3[vlayers][latLen][];
+      final int latOff = includePoles ? 1 : 0;
+      final Vec3[][][] result = new Vec3[vlayers][latLen][vlons];
 
       final float toPrc = oneLayer ? 1.0f : 1.0f / ( vlayers - 1.0f );
       final float toPhi = 0.5f / ( vlats + 1.0f );
       final float toTheta = 1.0f / vlons;
 
-      for ( int h = 0; h < vlayers; ++h ) {
+      final int len2 = vlats * vlons;
+      final int len3 = vlayers * len2;
+      for ( int q = 0; q < len3; ++q ) {
+         final int h = q / len2;
+         final int m = q - h * len2;
+         final int i = m / vlons;
+         final int j = m % vlons;
 
          final float prc = h * toPrc;
          final float radius = ( 1.0f - prc ) * vrMin + prc * vrMax;
-         final Vec3[][] layer = result[h];
 
-         if ( includePoles ) {
+         final float phi = 0.25f - ( i + 1.0f ) * toPhi;
+         final float rhoCosPhi = radius * Utils.scNorm(phi);
+         final float rhoSinPhi = radius * Utils.scNorm(phi - 0.25f);
+
+         final float theta = j * toTheta;
+         final float cosTheta = Utils.scNorm(theta);
+         final float sinTheta = Utils.scNorm(theta - 0.25f);
+
+         result[h][latOff + i][j] = new Vec3(rhoCosPhi * cosTheta, rhoCosPhi
+            * sinTheta, -rhoSinPhi);
+      }
+
+      /* Add single element arrays to beginning and end of layers. */
+      if ( includePoles ) {
+         for ( int h = 0; h < vlayers; ++h ) {
+            final float prc = h * toPrc;
+            final float radius = ( 1.0f - prc ) * vrMin + prc * vrMax;
+            final Vec3[][] layer = result[h];
             layer[0] = new Vec3[] { new Vec3(0.0f, 0.0f, -radius) };
             layer[latLen - 1] = new Vec3[] { new Vec3(0.0f, 0.0f, radius) };
-         }
-
-         for ( int i = 0, k = 1; i < vlats; ++i, ++k ) {
-            /*
-             * -HALF_PI to HALF_PI range multiply by PI, then subtract HALF_PI.
-             * Since range is normalized, multiply by 0.5, subtract 0.25.
-             */
-            // final float phi = k * toPhi - 0.25f;
-            final float phi = 0.25f - k * toPhi;
-            final float rhoCosPhi = radius * Utils.scNorm(phi);
-            final float rhoSinPhi = radius * Utils.scNorm(phi - 0.25f);
-
-            final Vec3[] lat = layer[includePoles ? k : i] = new Vec3[vlons];
-
-            for ( int j = 0; j < vlons; ++j ) {
-
-               final float theta = j * toTheta;
-               final float cosTheta = Utils.scNorm(theta);
-               final float sinTheta = Utils.scNorm(theta - 0.25f);
-
-               lat[j] = new Vec3(rhoCosPhi * cosTheta, rhoCosPhi * sinTheta,
-                  -rhoSinPhi);
-            }
          }
       }
 

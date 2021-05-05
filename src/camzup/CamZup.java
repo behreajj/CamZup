@@ -59,10 +59,11 @@ public class CamZup {
       // final String str = me3.toBlenderCode();
       // System.out.println(str);
 
-      // Gradient ryb = new Gradient(0xff000000, 0xffff00ff);
-      // // Gradient.paletteRyb(ryb);
+      // Gradient ryb = new Gradient(0xff00ff00, 0xffff00ff);
+      // Gradient.paletteRyb(ryb);
       // String str = ryb.toSvgString("ryb", 0.0f, 0.5f, 1.0f, 0.5f, 768, 64);
       // System.out.println(str);
+
    }
 
    /**

@@ -924,34 +924,59 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Adjusts gamma of an image. Raises all color channels to the power given.
+    * Adjusts gamma of an image. Raises red, green and blue to the power of
+    * the gamma; includes alpha if the flag is true.
     *
-    * @param source the source image
-    * @param gamma  the gamma correction
+    * @param source    the source image
+    * @param gamma     the gamma
+    * @param amplitude the amplitude
+    * @param offset    the offset
+    * @param alpha     adjust the alpha
     *
     * @return the image
     */
-   public static PImage gammaAdjust ( final PImage source, final float gamma ) {
+   public static PImage gammaAdjust ( final PImage source, final float gamma,
+      final float amplitude, final float offset, final boolean alpha ) {
 
       source.loadPixels();
 
       final int[] px = source.pixels;
       final int len = px.length;
+
       final double gd = gamma;
+      final double ad = amplitude;
+      final double od = offset;
 
-      for ( int i = 0; i < len; ++i ) {
-         final int c = px[i];
+      if ( alpha ) {
+         for ( int i = 0; i < len; ++i ) {
+            final int c = px[i];
 
-         final double r = ( c >> 0x10 & 0xff ) * IUtils.ONE_255_D;
-         final double g = ( c >> 0x08 & 0xff ) * IUtils.ONE_255_D;
-         final double b = ( c & 0xff ) * IUtils.ONE_255_D;
+            final double a = ( c >> 0x18 & 0xff ) * IUtils.ONE_255_D;
+            final double r = ( c >> 0x10 & 0xff ) * IUtils.ONE_255_D;
+            final double g = ( c >> 0x08 & 0xff ) * IUtils.ONE_255_D;
+            final double b = ( c & 0xff ) * IUtils.ONE_255_D;
 
-         /* @formatter:off */
-         px[i] = c & 0xff000000
-            | ( int ) ( Math.pow(r, gd) * 255.0d + 0.5d ) << 0x10
-            | ( int ) ( Math.pow(g, gd) * 255.0d + 0.5d ) << 0x08
-            | ( int ) ( Math.pow(b, gd) * 255.0d + 0.5d );
-         /* @formatter:on */
+            px[i] = ( int ) ( Utils.clamp01(Math.pow(a, gd) * ad + od) * 255.0d
+               + 0.5d ) << 0x10 | ( int ) ( Utils.clamp01(Math.pow(r, gd) * ad
+                  + od) * 255.0d + 0.5d ) << 0x10 | ( int ) ( Utils.clamp01(Math
+                     .pow(g, gd) * ad + od) * 255.0d + 0.5d ) << 0x08
+               | ( int ) ( Utils.clamp01(Math.pow(b, gd) * ad + od) * 255.0d
+                  + 0.5d );
+         }
+      } else {
+         for ( int i = 0; i < len; ++i ) {
+            final int c = px[i];
+
+            final double r = ( c >> 0x10 & 0xff ) * IUtils.ONE_255_D;
+            final double g = ( c >> 0x08 & 0xff ) * IUtils.ONE_255_D;
+            final double b = ( c & 0xff ) * IUtils.ONE_255_D;
+
+            px[i] = c & 0xff000000 | ( int ) ( Utils.clamp01(Math.pow(r, gd)
+               * ad + od) * 255.0d + 0.5d ) << 0x10 | ( int ) ( Utils.clamp01(
+                  Math.pow(g, gd) * ad + od) * 255.0d + 0.5d ) << 0x08
+               | ( int ) ( Utils.clamp01(Math.pow(b, gd) * ad + od) * 255.0d
+                  + 0.5d );
+         }
       }
 
       source.updatePixels();
@@ -1121,21 +1146,22 @@ public class ZImage extends PImage {
     * Converts an image from linear RGB to
     * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
     *
-    * @param target   the image
-    * @param adjusted temporary color
+    * @param target      the image
+    * @param adjustAlpha include alpha in the adjustment
+    * @param adjusted    temporary color
     *
     * @return the standard image
     */
-   public static PImage linearToStandard ( final PImage target,
-      final Color adjusted ) {
+   public static PImage lRgbTosRgb ( final PImage target,
+      final boolean adjustAlpha, final Color adjusted ) {
 
       target.loadPixels();
 
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         px[i] = Color.toHexInt(Color.linearToStandard(Color.fromHex(px[i],
-            adjusted), adjusted));
+         px[i] = Color.toHexInt(Color.lRgbTosRgb(Color.fromHex(px[i], adjusted),
+            adjustAlpha, adjusted));
       }
       target.updatePixels();
       return target;
@@ -1564,21 +1590,22 @@ public class ZImage extends PImage {
     * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB) to
     * linear RGB.
     *
-    * @param target   the image
-    * @param adjusted temporary color
+    * @param target      the image
+    * @param adjustAlpha include the alpha channel in the adjustment
+    * @param adjusted    temporary color
     *
     * @return the linear image
     */
-   public static PImage standardToLinear ( final PImage target,
-      final Color adjusted ) {
+   public static PImage sRgbTolRgb ( final PImage target,
+      final boolean adjustAlpha, final Color adjusted ) {
 
       target.loadPixels();
 
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         px[i] = Color.toHexInt(Color.standardToLinear(Color.fromHex(px[i],
-            adjusted), adjusted));
+         px[i] = Color.toHexInt(Color.sRgbTolRgb(Color.fromHex(px[i], adjusted),
+            adjustAlpha, adjusted));
       }
       target.updatePixels();
       return target;
@@ -1748,9 +1775,9 @@ public class ZImage extends PImage {
       sb.append("{ format: ");
       sb.append(img.format);
       sb.append(", width: ");
-      sb.append(Utils.toPadded(img.width, 4));
+      sb.append(img.width);
       sb.append(", height: ");
-      sb.append(Utils.toPadded(img.height, 4));
+      sb.append(img.height);
       sb.append(", pixelDensity: ");
       sb.append(img.pixelDensity);
       sb.append(' ');

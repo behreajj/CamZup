@@ -1379,6 +1379,32 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Loads a shader from a fragment and vertex source file. May return null
+    * if neither file path is valid.
+    *
+    * @param fnFrag the fragment shader file name
+    * @param fnVert the vertex shader file name
+    *
+    * @return the shader
+    */
+   @Override
+   public ZShader loadShader ( final String fnFrag, final String fnVert ) {
+
+      ZShader shader = null;
+      if ( fnFrag == null || fnFrag.equals("") ) {
+         PGraphics.showWarning(
+            "The fragment shader is missing, cannot create shader object");
+      } else if ( fnVert == null || fnVert.equals("") ) {
+         PGraphics.showWarning(
+            "The vertex shader is missing, cannot create shader object");
+      } else {
+         shader = new ZShader(this.parent, fnVert, fnFrag);
+      }
+
+      return shader;
+   }
+
+   /**
     * Sets the renderer's stroke, stroke weight and fill to the material's.
     * Also sets whether or not to use fill and stroke.
     *

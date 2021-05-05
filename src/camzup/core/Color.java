@@ -992,7 +992,7 @@ public class Color implements Comparable < Color > {
 
    /**
     * Convert a hexadecimal representation of a color stored as 0xAARRGGBB
-    * into a color.
+    * into a color. Does so by dividing each color channel by 255.
     *
     * @param c      the color in hexadecimal
     * @param target the output color
@@ -1259,26 +1259,35 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Raises a color's red, green and blue channels to the power of a scalar.
-    * The alpha channel is unaffected. Useful when adjusting the color's
-    * gamma.
+    * Raises a color's red, green and blue channels to an exponent. If alpha
+    * is true, then the alpha channel is included. <em>Does not clamp the
+    * results</em>; a color channel may exceed the range [0.0, 1.0].
     *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target the output color
+    * @param c         the color
+    * @param gamma     the gamma
+    * @param amplitude the amplitude
+    * @param offset    the offset
+    * @param alpha     adjust the alpha
+    * @param target    the output color
     *
     * @return the result
     */
-   public static Color gammaAdjust ( final Color a, final float b,
+   public static Color gammaAdjust ( final Color c, final float gamma,
+      final float amplitude, final float offset, final boolean alpha,
       final Color target ) {
 
-      final double bd = b;
-      return target.set(( float ) Math.pow(a.r, bd), ( float ) Math.pow(a.g,
-         bd), ( float ) Math.pow(a.b, bd), a.a);
+      final double gd = gamma;
+      final double ad = amplitude;
+      final double od = offset;
+
+      return target.set(( float ) ( Math.pow(c.r, gd) * ad + od ),
+         ( float ) ( Math.pow(c.g, gd) * ad + od ), ( float ) ( Math.pow(c.b,
+            gd) * ad + od ), alpha ? ( float ) ( Math.pow(c.a, gd) * ad + od )
+               : c.a);
    }
 
    /**
-    * Returns the color green, ( 0.0, 1.0, 0.0, 1.0 ) .
+    * Returns the color lime green, ( 0.0, 1.0, 0.0, 1.0 ) .
     *
     * @param target the output color
     *
@@ -1455,29 +1464,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from linear RGB to
-    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
-    *
-    * @param source the linear color
-    * @param target the output color
-    *
-    * @return the standard color
-    */
-   public static Color linearToStandard ( final Color source,
-      final Color target ) {
-
-      // TODO: Flag to include or exclude alpha.
-
-      return target.set(source.r <= 0.0031308f ? source.r * 12.92f
-         : ( float ) ( Math.pow(source.r, 0.4166666666666667d) * 1.055d
-            - 0.055d ), source.g <= 0.0031308f ? source.g * 12.92f
-               : ( float ) ( Math.pow(source.g, 0.4166666666666667d) * 1.055d
-                  - 0.055d ), source.b <= 0.0031308f ? source.b * 12.92f
-                     : ( float ) ( Math.pow(source.b, 0.4166666666666667d)
-                        * 1.055d - 0.055d ), source.a);
-   }
-
-   /**
     * Converts a color from linear RGB to CIE XYZ.
     *
     * @param c      the color
@@ -1561,6 +1547,31 @@ public class Color implements Comparable < Color > {
               ( c >> 0x08 & 0xff ) * 280458482.0f +
               ( c         & 0xff ) *  28306478.0f) * 10E-12f;
       /* @formatter:on */
+   }
+
+   /**
+    * Converts a color from linear RGB to
+    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
+    *
+    * @param source the linear color
+    * @param alpha  adjust the alpha channel
+    * @param target the output color
+    *
+    * @return the standard color
+    */
+   public static Color lRgbTosRgb ( final Color source, final boolean alpha,
+      final Color target ) {
+
+      return target.set(source.r <= 0.0031308f ? source.r * 12.92f
+         : ( float ) ( Math.pow(source.r, 0.4166666666666667d) * 1.055d
+            - 0.055d ), source.g <= 0.0031308f ? source.g * 12.92f
+               : ( float ) ( Math.pow(source.g, 0.4166666666666667d) * 1.055d
+                  - 0.055d ), source.b <= 0.0031308f ? source.b * 12.92f
+                     : ( float ) ( Math.pow(source.b, 0.4166666666666667d)
+                        * 1.055d - 0.055d ), alpha ? source.a <= 0.0031308f
+                           ? source.a * 12.92f : ( float ) ( Math.pow(source.a,
+                              0.4166666666666667d) * 1.055d - 0.055d )
+                           : source.a);
    }
 
    /**
@@ -1991,18 +2002,19 @@ public class Color implements Comparable < Color > {
     * Converts a color from sRGB to CIE XYZ.
     *
     * @param c      the color
+    * @param alpha  adjust the alpha
     * @param target the output vector
     * @param linear the color in linear
     *
     * @return the XYZ color
     *
     * @see Color#lRgbaToXyza(float, float, float, float, Vec4)
-    * @see Color#standardToLinear(Color, Color)
+    * @see Color#sRgbTolRgb(Color, boolean, Color)
     */
-   public static Vec4 sRgbaToXyza ( final Color c, final Vec4 target,
-      final Color linear ) {
+   public static Vec4 sRgbaToXyza ( final Color c, final boolean alpha,
+      final Vec4 target, final Color linear ) {
 
-      Color.standardToLinear(c, linear);
+      Color.sRgbTolRgb(c, alpha, linear);
       return Color.lRgbaToXyza(linear.r, linear.g, linear.b, linear.a, target);
    }
 
@@ -2062,14 +2074,13 @@ public class Color implements Comparable < Color > {
     * linear RGB.
     *
     * @param source the standard color
+    * @param alpha  adjust the alpha channel
     * @param target the output color
     *
     * @return the linear color
     */
-   public static Color standardToLinear ( final Color source,
+   public static Color sRgbTolRgb ( final Color source, final boolean alpha,
       final Color target ) {
-
-      // TODO: Flag to include or exclude alpha.
 
       return target.set(source.r <= 0.04045f ? source.r * 0.07739938f
          : ( float ) Math.pow( ( source.r + 0.055d ) * 0.9478672985781991d,
@@ -2077,7 +2088,10 @@ public class Color implements Comparable < Color > {
                : ( float ) Math.pow( ( source.g + 0.055d )
                   * 0.9478672985781991d, 2.4d), source.b <= 0.04045f ? source.b
                      * 0.07739938f : ( float ) Math.pow( ( source.b + 0.055d )
-                        * 0.9478672985781991d, 2.4d), source.a);
+                        * 0.9478672985781991d, 2.4d), alpha ? source.a
+                           <= 0.04045f ? source.a * 0.07739938f : ( float ) Math
+                              .pow( ( source.a + 0.055d ) * 0.9478672985781991d,
+                                 2.4d) : source.a);
    }
 
    /**
@@ -2474,19 +2488,20 @@ public class Color implements Comparable < Color > {
     * Converts a color from CIE XYZ to lRGB.
     *
     * @param v      the XYZ vector
+    * @param alpha  adjust the alpha
     * @param target the output color
     * @param linear the linear color
     *
     * @return the color
     *
     * @see Color#xyzaTolRgba(float, float, float, float, Color)
-    * @see Color#linearToStandard(Color, Color)
+    * @see Color#lRgbTosRgb(Color, boolean, Color)
     */
-   public static Color xyzaTosRgba ( final Vec4 v, final Color target,
-      final Color linear ) {
+   public static Color xyzaTosRgba ( final Vec4 v, final boolean alpha,
+      final Color target, final Color linear ) {
 
       Color.xyzaTolRgba(v.x, v.y, v.z, v.w, linear);
-      return Color.linearToStandard(linear, target);
+      return Color.lRgbTosRgb(linear, alpha, target);
    }
 
    /**
@@ -2914,6 +2929,22 @@ public class Color implements Comparable < Color > {
    public static class LerpLrgba extends AbstrEasing {
 
       /**
+       * Whether or not to include the alpha in the adjustment.
+       */
+      final boolean alpha;
+
+      /**
+       * Construct a new linear color mixer. The flag specifies whether or not
+       * alpha should be included in the adjustment.
+       *
+       * @param alpha flag to adjust alpha
+       */
+      LerpLrgba ( final boolean alpha ) {
+
+         this.alpha = alpha;
+      }
+
+      /**
        * Applies the function.
        *
        * @param origin the origin color
@@ -2958,7 +2989,6 @@ public class Color implements Comparable < Color > {
          final double clr = u * alr + t * blr;
          final double clg = u * alg + t * blg;
          final double clb = u * alb + t * blb;
-         final double csa = u * origin.a + t * dest.a;
 
          /* Convert from linear to standard. */
          final double csr = clr <= 0.0031308d ? clr * 12.92d : Math.pow(clr,
@@ -2967,6 +2997,22 @@ public class Color implements Comparable < Color > {
             0.4166666666666667d) * 1.055d - 0.055d;
          final double csb = clb <= 0.0031308d ? clb * 12.92d : Math.pow(clb,
             0.4166666666666667d) * 1.055d - 0.055d;
+
+         /* Treat alpha separately. */
+         double csa = 0.0d;
+         if ( this.alpha ) {
+            final double ala = origin.a <= 0.04045f ? origin.a
+               * 0.07739938080495357d : Math.pow( ( origin.a + 0.055d )
+                  * 0.9478672985781991d, 2.4d);
+            final double bla = dest.a <= 0.04045f ? dest.a
+               * 0.07739938080495357d : Math.pow( ( dest.a + 0.055d )
+                  * 0.9478672985781991d, 2.4d);
+            final double cla = u * ala + t * bla;
+            csa = cla <= 0.0031308d ? cla * 12.92d : Math.pow(cla,
+               0.4166666666666667d) * 1.055d - 0.055d;
+         } else {
+            csa = u * origin.a + t * dest.a;
+         }
 
          return target.set(( float ) csr, ( float ) csg, ( float ) csb,
             ( float ) csa);
