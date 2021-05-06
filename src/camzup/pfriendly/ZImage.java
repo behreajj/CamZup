@@ -5,6 +5,7 @@ import java.util.regex.Pattern;
 
 import camzup.core.Color;
 import camzup.core.Gradient;
+import camzup.core.ISvgWritable;
 import camzup.core.IUtils;
 import camzup.core.Sdf;
 import camzup.core.Utils;
@@ -31,6 +32,7 @@ public class ZImage extends PImage {
    public ZImage ( final int width, final int height ) {
 
       // QUERY Is there a set opaque or remove alpha func in pimage?
+      // Vectorize to little rectangles as an SVG string?
       super(width, height);
    }
 
@@ -1783,6 +1785,76 @@ public class ZImage extends PImage {
       sb.append(' ');
       sb.append('}');
       return sb.toString();
+   }
+
+   /**
+    * Intended for use with small images in the pixel art style that need to
+    * be scaled while maintaining crisp edges.
+    *
+    * @param source the source image
+    * @param scale  the scale
+    *
+    * @return the string
+    */
+   public static String toSvgString ( final PImage source, final float scale ) {
+
+      source.loadPixels();
+      final int pw = source.pixelWidth;
+      final int ph = source.pixelHeight;
+      final int[] px = source.pixels;
+      final int len = px.length;
+
+      final StringBuilder svgp = new StringBuilder(1024);
+      svgp.append("<svg ");
+      svgp.append("xmlns=\"http://www.w3.org/2000/svg\" ");
+      svgp.append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
+      svgp.append("shape-rendering=\"crispEdges\" ");
+      svgp.append("stroke=\"none\" ");
+      svgp.append("width=\"");
+      svgp.append(Utils.toFixed(source.width * scale,
+         ISvgWritable.FIXED_PRINT));
+      svgp.append("\" height=\"");
+      svgp.append(Utils.toFixed(source.height * scale,
+         ISvgWritable.FIXED_PRINT));
+      svgp.append("\" viewBox=\"0 0 ");
+      svgp.append(pw);
+      svgp.append(' ');
+      svgp.append(ph);
+      svgp.append("\">\n");
+
+      for ( int k = 0; k < len; ++k ) {
+         final int hex = px[k];
+         final int ai = hex >> 0x18 & 0xff;
+         if ( ai > 0 ) {
+            final int i0 = k / pw;
+            final int j0 = k % pw;
+            final int i1 = i0 + 1;
+            final int j1 = j0 + 1;
+
+            svgp.append("<path id=\"");
+            svgp.append(j0).append('.').append(i0);
+            svgp.append("\" d=\"M ");
+            svgp.append(j0).append(' ').append(i0);
+            svgp.append(" L ");
+            svgp.append(j1).append(' ').append(i0);
+            svgp.append(" L ");
+            svgp.append(j1).append(' ').append(i1);
+            svgp.append(" L ");
+            svgp.append(j0).append(' ').append(i1);
+            svgp.append(" Z\" ");
+            if ( ai < 255 ) {
+               svgp.append("fill-opacity=\"");
+               svgp.append(Utils.toFixed(ai * IUtils.ONE_255,
+                  ISvgWritable.FIXED_PRINT));
+               svgp.append("\" ");
+            }
+            svgp.append("fill=\"");
+            Color.toHexWeb(svgp, hex);
+            svgp.append("\" />\n");
+         }
+      }
+      svgp.append("</svg>");
+      return svgp.toString();
    }
 
    /**

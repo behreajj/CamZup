@@ -63,11 +63,19 @@ public interface ISvgWritable {
       final float vxscl = Utils.approx(xScale, 0.0f) ? 1.0f : xScale;
       final float vyscl = Utils.approx(yScale, 0.0f) ? 1.0f : yScale;
 
+      /*
+       * https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-
+       * rendering: auto | optimizeSpeed | crispEdges | geometricPrecision
+       */
+      final String shapeRendering = "geometricPrecision";
+
       final StringBuilder svgp = new StringBuilder(128);
       svgp.append("<svg ");
       svgp.append("xmlns=\"http://www.w3.org/2000/svg\" ");
       svgp.append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
-      svgp.append("width=\"");
+      svgp.append("shape-rendering=\"");
+      svgp.append(shapeRendering);
+      svgp.append("\" width=\"");
       svgp.append(widthStr);
       svgp.append("\" height=\"");
       svgp.append(heightStr);

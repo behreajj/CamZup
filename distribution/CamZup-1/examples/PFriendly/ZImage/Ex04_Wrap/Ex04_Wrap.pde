@@ -26,7 +26,7 @@ void setup() {
 void draw() {
   graphics.mouse1s(mouse);
   graphics.getSize(szvec);
-  Vec2.mul(szvec, mouse, msscl);
+  Vec2.hadamard(szvec, mouse, msscl);
 
   ZImage.wrap(source, target, msscl);
   graphics.background();

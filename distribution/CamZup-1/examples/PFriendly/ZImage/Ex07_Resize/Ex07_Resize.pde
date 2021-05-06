@@ -56,8 +56,8 @@ void setup() {
     PImage rsznn = nearest[i] = source.get();
 
     if (lToSConvert) {
-      ZImage.standardToLinear(rszcb, temp);
-      ZImage.standardToLinear(rsznn, temp);
+      ZImage.sRgbTolRgb(rszcb, false, temp);
+      ZImage.sRgbTolRgb(rsznn, false, temp);
     }
 
     long start = System.currentTimeMillis();
@@ -72,8 +72,8 @@ void setup() {
       ", w:", rszcb.width, ", h:", rszcb.height);
 
     if (lToSConvert) {
-      ZImage.linearToStandard(rszcb, temp);
-      ZImage.linearToStandard(rsznn, temp);
+      ZImage.lRgbTosRgb(rszcb, false, temp);
+      ZImage.lRgbTosRgb(rsznn, false, temp);
     }
   }
   long concl = System.currentTimeMillis();

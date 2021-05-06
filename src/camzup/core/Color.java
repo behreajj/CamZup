@@ -2934,12 +2934,18 @@ public class Color implements Comparable < Color > {
       final boolean alpha;
 
       /**
+       * Construct a new linear color mixer. Defaults to not including alpha, or
+       * transparency, in the adjustment.
+       */
+      public LerpLrgba ( ) { this(false); }
+
+      /**
        * Construct a new linear color mixer. The flag specifies whether or not
        * alpha should be included in the adjustment.
        *
        * @param alpha flag to adjust alpha
        */
-      LerpLrgba ( final boolean alpha ) {
+      public LerpLrgba ( final boolean alpha ) {
 
          this.alpha = alpha;
       }

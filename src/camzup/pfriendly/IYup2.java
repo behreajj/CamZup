@@ -1241,11 +1241,19 @@ public interface IYup2 extends IUp {
       final String wStr = Integer.toString(w);
       final String hStr = Integer.toString(h);
 
+      /*
+       * https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/shape-
+       * rendering: auto | optimizeSpeed | crispEdges | geometricPrecision
+       */
+      final String shapeRendering = "geometricPrecision";
+
       final StringBuilder svgp = new StringBuilder(128);
       svgp.append("<svg ");
       svgp.append("xmlns=\"http://www.w3.org/2000/svg\" ");
       svgp.append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
-      svgp.append("width=\"");
+      svgp.append("shape-rendering=\"");
+      svgp.append(shapeRendering);
+      svgp.append("\" width=\"");
       svgp.append(wStr);
       svgp.append("\" height=\"");
       svgp.append(hStr);

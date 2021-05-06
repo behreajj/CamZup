@@ -44,8 +44,6 @@ void setup() {
 }
 
 void draw() {
-  surface.setTitle(Utils.toFixed(frameRate, 1));
-  
   graphics.mouse1s(mouse1);
   Mesh2.plane(count, count, PolyType.TRI, plane2);
   plane3.set(plane2);
@@ -87,6 +85,8 @@ void draw() {
       graphics.strafe(mouse1);
     } else if (mouseButton == RIGHT) {
       mix = mouseX / (width - 1.0f);
+      count = Utils.lerp(2, 64,
+        1.0f - mouseY / (height - 1.0f));
     }
   }
 

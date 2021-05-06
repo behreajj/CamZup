@@ -303,8 +303,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public Gradient cycle ( final int places ) {
 
-      // TODO: What does this accomplish if steps remain unchanged?
-
       /* Load from tree set into an array. */
       final int len = this.keys.size();
       final Iterator < ColorKey > itr = this.keys.iterator();
@@ -1070,7 +1068,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public String toSvgString ( final String id ) {
 
-      return this.toSvgString(id, 0.0f, 0.5f, 1.0f, 0.5f, 768, 64);
+      return this.toSvgString(id, 0.0f, 0.5f, 1.0f, 0.5f, 768, 64, 1.0f, false);
    }
 
    /**
@@ -1078,11 +1076,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * format. Assumes a linear gradient with an origin and destination
     * point.<br>
     * <br>
-    * Gradients support two kinds of <a href=
-    * "https://developer.mozilla.org/en-US/docs/Web/SVG/Attribute/color-interpolation">color
-    * interpolation</a>: one in standard RGB space (the default); another
-    * gamma corrected to linear space. If gammaCorrect is <code>true</code>,
-    * the latter will be used.<br>
+    * If gamma is not 1.0, a filter is applied that transforms the gradient to
+    * the adjusted color space. <br>
     * <br>
     * Because SVG gradients require a <code>defs</code> tag, this class is not
     * compatible with {@link ISvgWritable}. This method is a convenience only.
@@ -1094,12 +1089,15 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @param y2 the destination y
     * @param w  the width
     * @param h  the height
+    * @param g  the gamma correction
+    * @param a  include alpha
     *
     * @return the string
     */
    @Experimental
    public String toSvgString ( final String id, final float x1, final float y1,
-      final float x2, final float y2, final int w, final int h ) {
+      final float x2, final float y2, final int w, final int h, final float g,
+      final boolean a ) {
 
       final String idTrim = id != null ? id.trim() : "";
       final String vid = idTrim.length() > 0 ? idTrim : "camzupGradient";
@@ -1119,7 +1117,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       svgp.append("<svg ");
       svgp.append("xmlns=\"http://www.w3.org/2000/svg\" ");
       svgp.append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
-      svgp.append("viewBox=\"0 0 ");
+      svgp.append("shape-rendering=\"");
+      svgp.append("geometricPrecision");
+      svgp.append("\" viewBox=\"0 0 ");
       svgp.append(vw);
       svgp.append(' ');
       svgp.append(vh);
@@ -1127,30 +1127,30 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       svgp.append("<defs>\n");
 
-      final boolean gammaCorrect = false;
-      final boolean correctAlpha = false;
+      final boolean gammaCorrect = g != 1.0f;
       if ( gammaCorrect ) {
-         final float gammaInv = 1.0f / 2.4f;
-         svgp.append("<filter id=\"sRgbTolRgb\"");
+         svgp.append("<filter id=\"adjust\"");
          svgp.append(">\n<feComponentTransfer");
          svgp.append(" color-interpolation-filters=\"sRGB\">\n");
 
          svgp.append("<feFuncR type=\"gamma\" exponent=\"");
-         Utils.toFixed(svgp, gammaInv, ISvgWritable.FIXED_PRINT);
+         Utils.toFixed(svgp, g, ISvgWritable.FIXED_PRINT);
          svgp.append("\" />\n");
 
          svgp.append("<feFuncG type=\"gamma\" exponent=\"");
-         Utils.toFixed(svgp, gammaInv, ISvgWritable.FIXED_PRINT);
+         Utils.toFixed(svgp, g, ISvgWritable.FIXED_PRINT);
          svgp.append("\" />\n");
 
          svgp.append("<feFuncB type=\"gamma\" exponent=\"");
-         Utils.toFixed(svgp, gammaInv, ISvgWritable.FIXED_PRINT);
+         Utils.toFixed(svgp, g, ISvgWritable.FIXED_PRINT);
          svgp.append("\" />\n");
 
-         if ( correctAlpha ) {
+         if ( a ) {
             svgp.append("<feFuncA type=\"gamma\" exponent=\"");
-            Utils.toFixed(svgp, gammaInv, ISvgWritable.FIXED_PRINT);
+            Utils.toFixed(svgp, g, ISvgWritable.FIXED_PRINT);
             svgp.append("\" />\n");
+         } else {
+            svgp.append("<feFuncA type=\"gamma\" exponent=\"1.0\" />");
          }
 
          svgp.append("</feComponentTransfer>\n");
@@ -1238,7 +1238,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       svgp.append(" Z\" fill=\"url('#");
       svgp.append(vid);
       svgp.append("')\"");
-      if ( gammaCorrect ) { svgp.append(" filter=\"url('#sRgbTolRgb')\""); }
+      if ( gammaCorrect ) { svgp.append(" filter=\"url('#adjust')\""); }
       svgp.append(" />\n");
       svgp.append(sbSwatch);
       svgp.append("</svg>");
