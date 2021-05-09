@@ -1788,8 +1788,9 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Intended for use with small images in the pixel art style that need to
-    * be scaled while maintaining crisp edges.
+    * Converts an image to a SVG, where a rectangle with non-zero alpha
+    * represents a pixel. Intended for use with small images in the pixel art
+    * style that need to be scaled while maintaining crisp edges.
     *
     * @param source the source image
     * @param scale  the scale
@@ -1801,8 +1802,6 @@ public class ZImage extends PImage {
       source.loadPixels();
       final int pw = source.pixelWidth;
       final int ph = source.pixelHeight;
-      final int[] px = source.pixels;
-      final int len = px.length;
 
       final StringBuilder svgp = new StringBuilder(1024);
       svgp.append("<svg ");
@@ -1822,37 +1821,49 @@ public class ZImage extends PImage {
       svgp.append(ph);
       svgp.append("\">\n");
 
+      final int[] px = source.pixels;
+      final int len = px.length;
       for ( int k = 0; k < len; ++k ) {
          final int hex = px[k];
          final int ai = hex >> 0x18 & 0xff;
          if ( ai > 0 ) {
             final int i0 = k / pw;
             final int j0 = k % pw;
-            final int i1 = i0 + 1;
-            final int j1 = j0 + 1;
+            // final int i1 = i0 + 1;
+            // final int j1 = j0 + 1;
 
-            svgp.append("<path id=\"");
-            svgp.append(j0).append('.').append(i0);
-            svgp.append("\" d=\"M ");
+            // svgp.append("<path id=\"");
+            // svgp.append(j0).append('.').append(i0);
+            // svgp.append("\"");
+            svgp.append("<path");
+
+            // svgp.append("\" d=\"M ");
+            // svgp.append(j0).append(' ').append(i0);
+            // svgp.append(" L ");
+            // svgp.append(j1).append(' ').append(i0);
+            // svgp.append(" L ");
+            // svgp.append(j1).append(' ').append(i1);
+            // svgp.append(" L ");
+            // svgp.append(j0).append(' ').append(i1);
+            // svgp.append(" Z\" ");
+
+            svgp.append(" d=\"M ");
             svgp.append(j0).append(' ').append(i0);
-            svgp.append(" L ");
-            svgp.append(j1).append(' ').append(i0);
-            svgp.append(" L ");
-            svgp.append(j1).append(' ').append(i1);
-            svgp.append(" L ");
-            svgp.append(j0).append(' ').append(i1);
-            svgp.append(" Z\" ");
+            svgp.append(" h 1 v 1 h -1 Z\" ");
+
             if ( ai < 255 ) {
                svgp.append("fill-opacity=\"");
                svgp.append(Utils.toFixed(ai * IUtils.ONE_255,
                   ISvgWritable.FIXED_PRINT));
                svgp.append("\" ");
             }
+
             svgp.append("fill=\"");
             Color.toHexWeb(svgp, hex);
             svgp.append("\" />\n");
          }
       }
+
       svgp.append("</svg>");
       return svgp.toString();
    }

@@ -4,9 +4,7 @@ import camzup.pfriendly.*;
 int rings = 10;
 float radius = 0.5f;
 float padding = 0.05f;
-float faceInset = 0.85f;
-float rounding = 0.1f;
-float subfRound = 0.0375f;
+float faceInset = 0.8f;
 
 YupJ2 graphics;
 MaterialSolid[] materials;
@@ -43,7 +41,6 @@ void setup() {
     materials[i] = material;
 
     if (i % 3 != 2) {
-      cell.roundCorners(0, rounding, 3);
     } else {
       cell.subdivFacesCenter(1);
       Mesh2.uniformData(cell, cell);
@@ -52,7 +49,6 @@ void setup() {
       for (int j = 0; j < facesLen; ++j) {
         Face2 subface = faces[j];
         subface.scaleLocal(faceInset, center);
-        cell.roundCorners(j, subfRound, 3);
       }
     }
 

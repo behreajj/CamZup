@@ -5,8 +5,8 @@ Yup2 main;
 Yup2 buff;
 ZShader linearGradient;
 
-Color aColor = new Color(0.0f, 0.5f, 1.0f, 1.0f);
-Color bColor = new Color(1.0f, 1.0f, 0.0f, 1.0f);
+Color aColor = Color.fromHex(0xff003fff, new Color());
+Color bColor = Color.fromHex(0xff3fff7f, new Color());
 Vec2 origin = new Vec2();
 Vec2 dest = new Vec2();
 
@@ -17,7 +17,7 @@ void settings() {
 void setup() {
   main = (Yup2)getGraphics();
   buff = (Yup2)createGraphics(1920, 1080, Yup2.PATH_STR);
-  dest.set(buff.width, 0.0f);
+  dest.set(buff.width, buff.height);
 
   linearGradient = (ZShader)loadShader("linear.frag", "linear.vert");
   linearGradient.set("origin", origin);
@@ -33,7 +33,7 @@ void draw() {
   buff.beginDraw();
   buff.clear();
   buff.shader(linearGradient);
-  buff.ellipse(x, 0.0f, 750.0f, 750.0f);
+  buff.ellipse(x, 0.0f, buff.width * 0.85, buff.height * 0.85);
   buff.endDraw();
 
   main.background(0xff202020);

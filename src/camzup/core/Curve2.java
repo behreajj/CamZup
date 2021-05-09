@@ -856,7 +856,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       svgp.append(fillRule);
       svgp.append("\" d=\"");
       this.toSvgSubPath(svgp, colinearTol, dir0, dir1);
-      svgp.append("\"></path>\n");
+      svgp.append("\" />\n");
       return svgp;
    }
 
@@ -1050,7 +1050,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float xf = 1.0f + 4.0f * arcLen1;
       final int xi = ( int ) xf;
       final int knotCount = xf > xi ? xi + 1 : xi;
-
       final float toStep = 1.0f / ( knotCount - 1.0f );
 
       /*

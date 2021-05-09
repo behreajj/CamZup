@@ -822,7 +822,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
             curveItr.next().toSvgSubPath(svgp, colinearTol, dir0, dir1);
             svgp.append(' ');
          }
-         svgp.append("\"></path>\n");
+         svgp.append("\" />\n");
       }
       return svgp;
    }

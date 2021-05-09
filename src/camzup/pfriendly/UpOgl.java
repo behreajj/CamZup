@@ -216,20 +216,20 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( mode ) {
 
-         case PConstants.OPEN:
+         case PConstants.OPEN: /* 1 */
 
             this.arcMode = ArcMode.OPEN;
             this.fill = false;
 
             break;
 
-         case PConstants.CHORD:
+         case PConstants.CHORD: /* 2 */
 
             this.arcMode = ArcMode.CHORD;
 
             break;
 
-         case PConstants.PIE:
+         case PConstants.PIE: /* 3 */
 
          default:
 
@@ -2264,12 +2264,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( this.textAlignY ) {
 
-         case PConstants.BOTTOM:
-            yMut += this.textDescent();
-            break;
-
          case PConstants.TOP:
             yMut -= this.textAscent();
+            break;
+
+         case PConstants.BOTTOM:
+            yMut += this.textDescent();
             break;
 
          case PConstants.CENTER:
@@ -2307,15 +2307,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( this.textAlignY ) {
 
-         case PConstants.BOTTOM:
-
-            yMut += this.textDescent() + high;
-
-            break;
-
          case PConstants.TOP:
 
             yMut -= this.textAscent();
+
+            break;
+
+         case PConstants.BOTTOM:
+
+            yMut += this.textDescent() + high;
 
             break;
 
@@ -2981,7 +2981,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.pgl.enable(PGL.BLEND);
 
       switch ( this.blendMode ) {
-         case PConstants.REPLACE:
+         case PConstants.REPLACE: /* 0 */
 
             if ( PGraphicsOpenGL.blendEqSupported ) {
                this.pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
@@ -2990,7 +2990,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.ADD:
+         case PConstants.BLEND: /* 1 */
+
+            if ( PGraphicsOpenGL.blendEqSupported ) {
+               this.pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
+            }
+            this.pgl.blendFuncSeparate(PGL.ONE, PGL.ONE_MINUS_SRC_ALPHA,
+               PGL.ONE, PGL.ONE_MINUS_SRC_ALPHA);
+
+            break;
+
+         case PConstants.ADD: /* 2 */
 
             if ( PGraphicsOpenGL.blendEqSupported ) {
                this.pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
@@ -3002,7 +3012,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.SUBTRACT:
+         case PConstants.SUBTRACT: /* 4 */
 
             if ( PGraphicsOpenGL.blendEqSupported ) {
                this.pgl.blendEquationSeparate(PGL.FUNC_REVERSE_SUBTRACT,
@@ -3015,7 +3025,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.LIGHTEST:
+         case PConstants.LIGHTEST: /* 8 */
 
             if ( PGraphicsOpenGL.blendEqSupported ) {
                this.pgl.blendEquationSeparate(PGL.FUNC_MAX, PGL.FUNC_ADD);
@@ -3024,7 +3034,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.DARKEST:
+         case PConstants.DARKEST: /* 16 */
 
             if ( PGraphicsOpenGL.blendEqSupported ) {
                this.pgl.blendEquationSeparate(PGL.FUNC_MIN, PGL.FUNC_ADD);
@@ -3033,7 +3043,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.EXCLUSION:
+         case PConstants.EXCLUSION: /* 64 */
 
             if ( PGraphicsOpenGL.blendEqSupported ) {
                this.pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
@@ -3043,7 +3053,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.MULTIPLY:
+         case PConstants.MULTIPLY: /* 128 */
 
             if ( PGraphicsOpenGL.blendEqSupported ) {
                this.pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
@@ -3054,23 +3064,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.pgl.blendFunc(PGL.DST_COLOR, PGL.ONE_MINUS_SRC_ALPHA);
             break;
 
-         case PConstants.SCREEN:
+         case PConstants.SCREEN: /* 256 */
 
             if ( PGraphicsOpenGL.blendEqSupported ) {
                this.pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
             }
             this.pgl.blendFuncSeparate(PGL.ONE_MINUS_DST_COLOR, PGL.ONE,
                PGL.ONE, PGL.ONE);
-
-            break;
-
-         case PConstants.BLEND:
-
-            if ( PGraphicsOpenGL.blendEqSupported ) {
-               this.pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
-            }
-            this.pgl.blendFuncSeparate(PGL.ONE, PGL.ONE_MINUS_SRC_ALPHA,
-               PGL.ONE, PGL.ONE_MINUS_SRC_ALPHA);
 
             break;
 

@@ -3398,15 +3398,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.textAlignY ) {
 
-         case PConstants.BOTTOM:
-
-            yMut += super.textDescent();
-
-            break;
-
          case PConstants.TOP:
 
             yMut -= super.textAscent();
+
+            break;
+
+         case PConstants.BOTTOM:
+
+            yMut += super.textDescent();
 
             break;
 
@@ -3443,15 +3443,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.textAlignY ) {
 
-         case PConstants.BOTTOM:
-
-            yMut += super.textDescent() + high;
-
-            break;
-
          case PConstants.TOP:
 
             yMut -= super.textAscent();
+
+            break;
+
+         case PConstants.BOTTOM:
+
+            yMut += super.textDescent() + high;
 
             break;
 
@@ -3961,24 +3961,24 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( arcMode ) {
 
-         case PConstants.PIE:
+         case PConstants.OPEN: /* 1 */
 
-            strokeMode = Arc2D.PIE;
+            fillMode = Arc2D.OPEN;
 
             break;
 
-         case PConstants.CHORD:
+         case PConstants.CHORD: /* 2 */
 
             fillMode = Arc2D.CHORD;
             strokeMode = Arc2D.CHORD;
 
             break;
 
-         case PConstants.OPEN:
+         case PConstants.PIE: /* 3 */
 
          default:
 
-            fillMode = Arc2D.OPEN;
+            strokeMode = Arc2D.PIE;
       }
 
       /* Promote floats to doubles. */
@@ -4054,17 +4054,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( cap ) {
 
-         case PConstants.PROJECT:
-
-            this.strokeCap = PConstants.PROJECT; /* 4 */
-            this.capNative = BasicStroke.CAP_SQUARE; /* 2 */
-
-            break;
-
          case PConstants.SQUARE:
 
             this.strokeCap = PConstants.SQUARE; /* 1 */
             this.capNative = BasicStroke.CAP_BUTT; /* 0 */
+
+            break;
+
+         case PConstants.PROJECT:
+
+            this.strokeCap = PConstants.PROJECT; /* 4 */
+            this.capNative = BasicStroke.CAP_SQUARE; /* 2 */
 
             break;
 
@@ -4089,17 +4089,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( join ) {
 
-         case PConstants.BEVEL:
-
-            this.strokeJoin = PConstants.BEVEL; /* 32 */
-            this.joinNative = BasicStroke.JOIN_BEVEL; /* 2 */
-
-            break;
-
          case PConstants.MITER:
 
             this.strokeJoin = PConstants.MITER; /* 8 */
             this.joinNative = BasicStroke.JOIN_MITER; /* 0 */
+
+            break;
+
+         case PConstants.BEVEL:
+
+            this.strokeJoin = PConstants.BEVEL; /* 32 */
+            this.joinNative = BasicStroke.JOIN_BEVEL; /* 2 */
 
             break;
 

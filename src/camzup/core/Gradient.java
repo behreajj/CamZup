@@ -839,7 +839,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
        * contain a minimum of only 1, they default to 2 keys when created.
        */
 
-      // TODO: Evaluate with a standard to linear mixer?
       final Color[] clrs = Gradient.evalRange(this, Utils.clamp(samples, 2,
          32));
       final int len = clrs.length;
@@ -1060,7 +1059,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
    /**
     * Returns a String representation of the gradient compatible with the SVG
-    * format. Assumes a linear gradient with an origin and destination point.
+    * format. Assumes a horizontal linear gradient from left to right.
     *
     * @param id the gradient id
     *
@@ -1068,7 +1067,42 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public String toSvgString ( final String id ) {
 
-      return this.toSvgString(id, 0.0f, 0.5f, 1.0f, 0.5f, 768, 64, 1.0f, false);
+      return this.toSvgString(id, 768, 64);
+   }
+
+   /**
+    * Returns a String representation of the gradient compatible with the SVG
+    * format. Assumes a horizontal linear gradient from left to right.
+    *
+    * @param id the gradient id
+    * @param w  the width
+    * @param h  the height
+    *
+    * @return the string
+    */
+   public String toSvgString ( final String id, final int w, final int h ) {
+
+      return this.toSvgString(id, w, h, 0.0f, 0.5f, 1.0f, 0.5f);
+   }
+
+   /**
+    * Returns a String representation of the gradient compatible with the SVG
+    * format. Assumes a linear gradient with an origin and destination point.
+    *
+    * @param id the gradient id
+    * @param w  the width
+    * @param h  the height
+    * @param x1 the origin x
+    * @param y1 the origin y
+    * @param x2 the destination x
+    * @param y2 the destination y
+    *
+    * @return the string
+    */
+   public String toSvgString ( final String id, final int w, final int h,
+      final float x1, final float y1, final float x2, final float y2 ) {
+
+      return this.toSvgString(id, w, h, x1, y1, x2, y2, 1.0f, false);
    }
 
    /**
@@ -1083,21 +1117,21 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * compatible with {@link ISvgWritable}. This method is a convenience only.
     *
     * @param id the gradient id
+    * @param w  the width
+    * @param h  the height
     * @param x1 the origin x
     * @param y1 the origin y
     * @param x2 the destination x
     * @param y2 the destination y
-    * @param w  the width
-    * @param h  the height
     * @param g  the gamma correction
     * @param a  include alpha
     *
     * @return the string
     */
    @Experimental
-   public String toSvgString ( final String id, final float x1, final float y1,
-      final float x2, final float y2, final int w, final int h, final float g,
-      final boolean a ) {
+   public String toSvgString ( final String id, final int w, final int h,
+      final float x1, final float y1, final float x2, final float y2,
+      final float g, final boolean a ) {
 
       final String idTrim = id != null ? id.trim() : "";
       final String vid = idTrim.length() > 0 ? idTrim : "camzupGradient";

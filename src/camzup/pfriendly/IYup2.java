@@ -3,6 +3,7 @@ package camzup.pfriendly;
 import camzup.core.Bounds2;
 import camzup.core.Color;
 import camzup.core.CurveEntity2;
+import camzup.core.ISvgWritable;
 import camzup.core.IUtils;
 import camzup.core.MaterialSolid;
 import camzup.core.MeshEntity2;
@@ -1174,24 +1175,29 @@ public interface IYup2 extends IUp {
        * avoided when writing.
        */
       final int bgClr = renderer.getBackground();
-      final float bgAlpha = ( bgClr >> 0x18 & 0xff ) * IUtils.ONE_255;
-      final String wStr = Utils.toFixed(renderer.getWidth(), 1);
-      final String hStr = Utils.toFixed(renderer.getHeight(), 1);
-      final StringBuilder svgp = new StringBuilder(128);
-      svgp.append("<path id=\"background\" d=\"M 0.0 0.0 L ");
-      svgp.append(wStr);
-      svgp.append(" 0.0 L ");
-      svgp.append(wStr);
-      svgp.append(' ');
-      svgp.append(hStr);
-      svgp.append(" L 0.0 ");
-      svgp.append(hStr);
-      svgp.append(" Z\" stroke=\"none\" fill-opacity=\"");
-      svgp.append(Utils.toFixed(Utils.clamp01(bgAlpha), 6));
-      svgp.append("\" fill=\"");
-      Color.toHexWeb(svgp, bgClr);
-      svgp.append("\"></path>");
-      return svgp.toString();
+      final int bgai = bgClr >> 0x18 & 0xff;
+      if ( bgai > 0 ) {
+         final String wStr = Utils.toFixed(renderer.getWidth(), 1);
+         final String hStr = Utils.toFixed(renderer.getHeight(), 1);
+         final StringBuilder svgp = new StringBuilder(128);
+         svgp.append("<path id=\"background\" d=\"M 0.0 0.0 L ");
+         svgp.append(wStr);
+         svgp.append(" 0.0 L ");
+         svgp.append(wStr);
+         svgp.append(' ');
+         svgp.append(hStr);
+         svgp.append(" L 0.0 ");
+         svgp.append(hStr);
+         svgp.append(" Z\" stroke=\"none\" fill-opacity=\"");
+         svgp.append(Utils.toFixed(bgai * IUtils.ONE_255,
+            ISvgWritable.FIXED_PRINT));
+         svgp.append("\" fill=\"");
+         Color.toHexWeb(svgp, bgClr);
+         svgp.append("\" />");
+         return svgp.toString();
+      } else {
+         return "";
+      }
    }
 
    /**
@@ -1206,19 +1212,22 @@ public interface IYup2 extends IUp {
 
       final StringBuilder svgp = new StringBuilder(128);
       svgp.append("transform=\"translate(");
-      svgp.append(Utils.toFixed(renderer.getWidth() * 0.5f, 6));
+      svgp.append(Utils.toFixed(renderer.getWidth() * 0.5f,
+         ISvgWritable.FIXED_PRINT));
       svgp.append(',').append(' ');
-      svgp.append(Utils.toFixed(renderer.getHeight() * 0.5f, 6));
+      svgp.append(Utils.toFixed(renderer.getHeight() * 0.5f,
+         ISvgWritable.FIXED_PRINT));
       svgp.append(") scale(");
-      svgp.append(Utils.toFixed(renderer.getZoomX(), 6));
+      svgp.append(Utils.toFixed(renderer.getZoomX(), ISvgWritable.FIXED_PRINT));
       svgp.append(',').append(' ');
-      svgp.append(Utils.toFixed(-renderer.getZoomY(), 6));
+      svgp.append(Utils.toFixed(-renderer.getZoomY(),
+         ISvgWritable.FIXED_PRINT));
       svgp.append(") rotate(");
       svgp.append(Utils.toFixed(-renderer.getRoll() * IUtils.RAD_TO_DEG, 2));
       svgp.append(") translate(");
-      svgp.append(Utils.toFixed(-renderer.getLocX(), 6));
+      svgp.append(Utils.toFixed(-renderer.getLocX(), ISvgWritable.FIXED_PRINT));
       svgp.append(',').append(' ');
-      svgp.append(Utils.toFixed(-renderer.getLocY(), 6));
+      svgp.append(Utils.toFixed(-renderer.getLocY(), ISvgWritable.FIXED_PRINT));
       svgp.append(')').append('\"');
       return svgp.toString();
    }
@@ -1317,8 +1326,7 @@ public interface IYup2 extends IUp {
       svgp.append(IYup2.svgHeader(renderer));
       svgp.append('\n');
       svgp.append(IYup2.svgBackground(renderer));
-      svgp.append('\n');
-      svgp.append("<g ");
+      svgp.append("\n<g ");
       svgp.append(IYup2.svgCamera(renderer));
       svgp.append('>');
       svgp.append('\n');

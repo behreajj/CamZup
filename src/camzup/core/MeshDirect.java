@@ -58,6 +58,56 @@ public class MeshDirect {
    }
 
    /**
+    * Returns the length of this mesh's colors array in bytes.
+    *
+    * @return the length
+    */
+   public int byteLengthColors ( ) {
+
+      return this.colors.length * Float.BYTES;
+   }
+
+   /**
+    * Returns the length of this mesh's coordinates array in bytes.
+    *
+    * @return the length
+    */
+   public int byteLengthCoords ( ) {
+
+      return this.coords.length * Float.BYTES;
+   }
+
+   /**
+    * Returns the length of this mesh's indices array in bytes.
+    *
+    * @return the length
+    */
+   public int byteLengthIndices ( ) {
+
+      return this.indices.length * Integer.BYTES;
+   }
+
+   /**
+    * Returns the length of this mesh's normals array in bytes.
+    *
+    * @return the length
+    */
+   public int byteLengthNormals ( ) {
+
+      return this.normals.length * Float.BYTES;
+   }
+
+   /**
+    * Returns the length of this mesh's texture coordinates array in bytes.
+    *
+    * @return the length
+    */
+   public int byteLengthTexCoords ( ) {
+
+      return this.texCoords.length * Float.BYTES;
+   }
+
+   /**
     * Recalculate vertex colors to visualize the mesh's coordinates. Will
     * reallocate colors array if it is not of the appropriate length.
     *
@@ -79,7 +129,6 @@ public class MeshDirect {
          final float y = this.coords[i + 1];
          final float z = this.coords[i + 2];
 
-         /* Minimum, maximum need individual if checks, not if-else. */
          if ( x < lbx ) { lbx = x; }
          if ( x > ubx ) { ubx = x; }
          if ( y < lby ) { lby = y; }
@@ -229,10 +278,67 @@ public class MeshDirect {
     * Returns the number of faces held by this mesh.
     *
     * @return the length
+    *
+    * @see MeshDirect#lengthIndices()
     */
    public int length ( ) {
 
+      return this.lengthIndices();
+   }
+
+   /**
+    * Returns the number of colors in the mesh, i.e., actual length divided by
+    * {@link MeshDirect#COLOR_STRIDE}.
+    *
+    * @return the length
+    */
+   public int lengthColors ( ) {
+
+      return this.colors.length / MeshDirect.COLOR_STRIDE;
+   }
+
+   /**
+    * Returns the number of coordinates in the mesh, i.e., actual length
+    * divided by {@link MeshDirect#COORD_STRIDE}.
+    *
+    * @return the length
+    */
+   public int lengthCoords ( ) {
+
+      return this.coords.length / MeshDirect.COORD_STRIDE;
+   }
+
+   /**
+    * Returns the number of faces in the mesh, i.e., actual length divided by
+    * {@link MeshDirect#INDEX_STRIDE}.
+    *
+    * @return the length
+    */
+   public int lengthIndices ( ) {
+
       return this.indices.length / MeshDirect.INDEX_STRIDE;
+   }
+
+   /**
+    * Returns the number of normals in the mesh, i.e., actual length divided
+    * by {@link MeshDirect#NORMAL_STRIDE}.
+    *
+    * @return the length
+    */
+   public int lengthNormals ( ) {
+
+      return this.normals.length / MeshDirect.NORMAL_STRIDE;
+   }
+
+   /**
+    * Returns the number of texture coordinates in the mesh, i.e., actual
+    * length divided by {@link MeshDirect#TEX_COORD_STRIDE}.
+    *
+    * @return the length
+    */
+   public int lengthTexCoords ( ) {
+
+      return this.texCoords.length / MeshDirect.TEX_COORD_STRIDE;
    }
 
    /**
@@ -701,7 +807,6 @@ public class MeshDirect {
       final StringBuilder sb = new StringBuilder(2048);
 
       sb.append("{ indices: ");
-      // System.out.println(sb.toString());
       Utils.toString(sb, this.indices, 0);
 
       sb.append(", coords: ");
@@ -1017,36 +1122,34 @@ public class MeshDirect {
       int nmIdx = 0;
       int clIdx = 0;
 
-      for ( int k = 0, i = 0; i < fsLen; ++i ) {
-         final int[][] f = fs[i];
-         for ( int j = 0; j < MeshDirect.INDEX_STRIDE; ++j, ++k ) {
-            final int[] vert = f[j];
+      for ( int k = 0; k < fsLen3; ++k ) {
+         final int[][] f = fs[k / MeshDirect.INDEX_STRIDE];
+         final int[] vert = f[k % MeshDirect.INDEX_STRIDE];
 
-            target.indices[k] = k;
+         target.indices[k] = k;
 
-            final Vec2 v = vsSrc[vert[0]];
-            target.coords[coIdx] = v.x;
-            target.coords[coIdx + 1] = v.y;
-            // target.coords[coIdx + 2] = 0.0f;
+         final Vec2 v = vsSrc[vert[0]];
+         target.coords[coIdx] = v.x;
+         target.coords[coIdx + 1] = v.y;
+         // target.coords[coIdx + 2] = 0.0f;
 
-            final Vec2 vt = vtsSrc[vert[1]];
-            target.texCoords[uvIdx] = vt.x;
-            target.texCoords[uvIdx + 1] = vt.y;
+         final Vec2 vt = vtsSrc[vert[1]];
+         target.texCoords[uvIdx] = vt.x;
+         target.texCoords[uvIdx + 1] = vt.y;
 
-            // target.normals[nmIdx] = 0.0f;
-            // target.normals[nmIdx + 1] = 0.0f;
-            target.normals[nmIdx + 2] = 1.0f;
+         // target.normals[nmIdx] = 0.0f;
+         // target.normals[nmIdx + 1] = 0.0f;
+         target.normals[nmIdx + 2] = 1.0f;
 
-            target.colors[clIdx] = 1.0f;
-            target.colors[clIdx + 1] = 1.0f;
-            target.colors[clIdx + 2] = 1.0f;
-            target.colors[clIdx + 3] = 1.0f;
+         target.colors[clIdx] = 1.0f;
+         target.colors[clIdx + 1] = 1.0f;
+         target.colors[clIdx + 2] = 1.0f;
+         target.colors[clIdx + 3] = 1.0f;
 
-            coIdx += MeshDirect.COORD_STRIDE;
-            uvIdx += MeshDirect.TEX_COORD_STRIDE;
-            nmIdx += MeshDirect.NORMAL_STRIDE;
-            clIdx += MeshDirect.COLOR_STRIDE;
-         }
+         coIdx += MeshDirect.COORD_STRIDE;
+         uvIdx += MeshDirect.TEX_COORD_STRIDE;
+         nmIdx += MeshDirect.NORMAL_STRIDE;
+         clIdx += MeshDirect.COLOR_STRIDE;
       }
 
       return target;
@@ -1083,37 +1186,34 @@ public class MeshDirect {
       int nmIdx = 0;
       int clIdx = 0;
 
-      for ( int k = 0, i = 0; i < fsLen; ++i ) {
-         final int[][] f = fs[i];
-         for ( int j = 0; j < MeshDirect.INDEX_STRIDE; ++j, ++k ) {
-            final int[] vert = f[j];
+      for ( int k = 0; k < fsLen3; ++k ) {
+         final int[][] f = fs[k / MeshDirect.INDEX_STRIDE];
+         final int[] vert = f[k % MeshDirect.INDEX_STRIDE];
+         target.indices[k] = k;
 
-            target.indices[k] = k;
+         final Vec3 v = vsSrc[vert[0]];
+         target.coords[coIdx] = v.x;
+         target.coords[coIdx + 1] = v.y;
+         target.coords[coIdx + 2] = v.z;
 
-            final Vec3 v = vsSrc[vert[0]];
-            target.coords[coIdx] = v.x;
-            target.coords[coIdx + 1] = v.y;
-            target.coords[coIdx + 2] = v.z;
+         final Vec2 vt = vtsSrc[vert[1]];
+         target.texCoords[uvIdx] = vt.x;
+         target.texCoords[uvIdx + 1] = vt.y;
 
-            final Vec2 vt = vtsSrc[vert[1]];
-            target.texCoords[uvIdx] = vt.x;
-            target.texCoords[uvIdx + 1] = vt.y;
+         final Vec3 vn = vnsSrc[vert[2]];
+         target.normals[nmIdx] = vn.x;
+         target.normals[nmIdx + 1] = vn.y;
+         target.normals[nmIdx + 2] = vn.z;
 
-            final Vec3 vn = vnsSrc[vert[2]];
-            target.normals[nmIdx] = vn.x;
-            target.normals[nmIdx + 1] = vn.y;
-            target.normals[nmIdx + 2] = vn.z;
+         target.colors[clIdx] = 1.0f;
+         target.colors[clIdx + 1] = 1.0f;
+         target.colors[clIdx + 2] = 1.0f;
+         target.colors[clIdx + 3] = 1.0f;
 
-            target.colors[clIdx] = 1.0f;
-            target.colors[clIdx + 1] = 1.0f;
-            target.colors[clIdx + 2] = 1.0f;
-            target.colors[clIdx + 3] = 1.0f;
-
-            coIdx += MeshDirect.COORD_STRIDE;
-            uvIdx += MeshDirect.TEX_COORD_STRIDE;
-            nmIdx += MeshDirect.NORMAL_STRIDE;
-            clIdx += MeshDirect.COLOR_STRIDE;
-         }
+         coIdx += MeshDirect.COORD_STRIDE;
+         uvIdx += MeshDirect.TEX_COORD_STRIDE;
+         nmIdx += MeshDirect.NORMAL_STRIDE;
+         clIdx += MeshDirect.COLOR_STRIDE;
       }
 
       return target;

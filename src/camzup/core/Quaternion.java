@@ -1161,86 +1161,6 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Adjusts anchor and control quaternions in a Bezier curve to ensure the
-    * shortest path. This is very computationally expensive. Used in
-    * preparation for
-    * {@link Quaternion#squad(Quaternion, Quaternion, Quaternion, Quaternion, float, Quaternion)}.
-    * See the Microsoft documentation for <a href=
-    * "https://docs.microsoft.com/en-us/previous-versions/windows/desktop/bb153129(v=vs.85)">Quaternion.SquadSetup</a>.
-    *
-    * @param ap0 input anchor point 0
-    * @param cp0 input control point 0
-    * @param cp1 input control point 1
-    * @param ap1 input anchor point 1
-    * @param a   adjusted cp0
-    * @param b   adjusted cp1
-    * @param c   adjusted ap1
-    *
-    * @return the adjusted cp0
-    */
-   @Experimental
-   public static Quaternion innerQuadrangle ( final Quaternion ap0,
-      final Quaternion cp0, final Quaternion cp1, final Quaternion ap1,
-      final Quaternion a, final Quaternion b, final Quaternion c ) {
-
-      final Quaternion q0 = new Quaternion();
-      final Quaternion q3 = new Quaternion();
-
-      final Quaternion q0sum = Quaternion.add(ap0, cp0, new Quaternion());
-      final Quaternion q0dff = Quaternion.sub(ap0, cp0, new Quaternion());
-      if ( Quaternion.magSq(q0sum) < Quaternion.magSq(q0dff) ) {
-         Quaternion.negate(ap0, q0);
-      } else {
-         q0.set(ap0);
-      }
-
-      /* c is the same as q2. */
-      final Quaternion q2sum = Quaternion.add(cp0, cp1, new Quaternion());
-      final Quaternion q2dff = Quaternion.sub(cp0, cp1, new Quaternion());
-      if ( Quaternion.magSq(q2sum) < Quaternion.magSq(q2dff) ) {
-         Quaternion.negate(cp1, c);
-      } else {
-         c.set(cp1);
-      }
-
-      final Quaternion q3sum = Quaternion.add(cp1, ap1, new Quaternion());
-      final Quaternion q3dff = Quaternion.sub(cp1, ap1, new Quaternion());
-      if ( Quaternion.magSq(q3sum) < Quaternion.magSq(q3dff) ) {
-         Quaternion.negate(ap1, q3);
-      } else {
-         q3.set(ap1);
-      }
-
-      final Quaternion expq1 = Quaternion.exp(cp0, new Quaternion());
-      final Quaternion expq1q0 = Quaternion.mul(expq1, q0, new Quaternion());
-      final Quaternion expq1q2 = Quaternion.mul(expq1, c, new Quaternion());
-
-      final Quaternion expq2 = Quaternion.exp(c, new Quaternion());
-      final Quaternion expq2q1 = Quaternion.mul(expq2, cp0, new Quaternion());
-      final Quaternion expq2q3 = Quaternion.mul(expq2, q3, new Quaternion());
-
-      /* q1 * exp(-0.25 * (log(exp(q1) * q2) + log(exp(q1) * q0))) */
-      final Quaternion lnexpq1q2 = Quaternion.log(expq1q2, new Quaternion());
-      final Quaternion lnexpq1q0 = Quaternion.log(expq1q0, new Quaternion());
-      final Quaternion sumln0 = Quaternion.add(lnexpq1q2, lnexpq1q0,
-         new Quaternion());
-      final Quaternion prod0 = Quaternion.mul(-0.25f, sumln0, new Quaternion());
-      final Quaternion exp0 = Quaternion.exp(prod0, new Quaternion());
-      Quaternion.mul(cp0, exp0, a);
-
-      /* q2 * exp(-0.25 * (log(exp(q2) * q3) + log(exp(q2) * q1))) */
-      final Quaternion lnexpq2q3 = Quaternion.log(expq2q3, new Quaternion());
-      final Quaternion lnexpq2q1 = Quaternion.log(expq2q1, new Quaternion());
-      final Quaternion sumln1 = Quaternion.add(lnexpq2q3, lnexpq2q1,
-         new Quaternion());
-      final Quaternion prod1 = Quaternion.mul(-0.25f, sumln1, new Quaternion());
-      final Quaternion exp1 = Quaternion.exp(prod1, new Quaternion());
-      Quaternion.mul(c, exp1, b);
-
-      return a;
-   }
-
-   /**
     * Finds the inverse, or reciprocal, of a quaternion, which is the
     * conjugate divided by the magnitude squared.<br>
     * <br>
@@ -1460,7 +1380,7 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @return the mix
     *
-    * @see Quaternion#slerpUnclampedSpa(Quaternion, Quaternion, float,
+    * @see Quaternion#slerpUnclamped(Quaternion, Quaternion, float,
     *      Quaternion)
     */
    public static Quaternion mix ( final Quaternion origin,
@@ -1468,7 +1388,7 @@ public class Quaternion implements Comparable < Quaternion > {
 
       if ( step <= 0.0f ) { return Quaternion.normalize(origin, target); }
       if ( step >= 1.0f ) { return Quaternion.normalize(dest, target); }
-      return Quaternion.slerpUnclampedSpa(origin, dest, step, target);
+      return Quaternion.slerpUnclamped(origin, dest, step, target);
    }
 
    /**
@@ -1935,6 +1855,8 @@ public class Quaternion implements Comparable < Quaternion > {
       // https://math.stackexchange.com/questions/2650188/
       // super-confused-by-squad-algorithm-for-quaternion-interpolation
 
+      // QUERY Should this _not_ invert the dot product?
+
       if ( step <= 0.0f ) { return Quaternion.normalize(ap0, target); }
       if ( step >= 1.0f ) { return Quaternion.normalize(ap1, target); }
 
@@ -2258,56 +2180,37 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @see Quaternion#mix(Quaternion, Quaternion, float, Quaternion)
     */
+   @Experimental
    public static Quaternion squad ( final Quaternion ap0, final Quaternion cp0,
       final Quaternion cp1, final Quaternion ap1, final float step,
       final Quaternion target, final Quaternion a, final Quaternion b,
       final Quaternion c, final Quaternion ab, final Quaternion bc ) {
 
-      Quaternion.mix(ap0, cp0, step, a);
-      Quaternion.mix(cp0, cp1, step, b);
-      Quaternion.mix(cp1, ap1, step, c);
-      Quaternion.mix(a, b, step, ab);
-      Quaternion.mix(b, c, step, bc);
-      return Quaternion.mix(ab, bc, step, target);
-   }
+      if ( step <= 0.0f ) {
+         Quaternion.normalize(ap0, a);
+         Quaternion.normalize(cp0, b);
+         Quaternion.normalize(cp1, c);
+         Quaternion.normalize(ap0, ab);
+         Quaternion.normalize(cp0, bc);
+         return Quaternion.normalize(ap0, target);
+      }
 
-   /**
-    * Returns an orientation on a curve described by two anchor orientations
-    * and two control orientations according to a step in [0.0, 1.0] . Uses
-    * the De Casteljau algorithm of successive spherical interpolations. When
-    * the step is less than zero, returns the first anchor. When the step is
-    * greater than one, returns the second anchor.
-    *
-    * @param ap0    the first anchor point
-    * @param cp0    the first control point
-    * @param cp1    the second control point
-    * @param ap1    the second anchor point
-    * @param step   the step
-    * @param target the output quaternion
-    * @param easing the easing function
-    * @param a      edge from ap0 to cp0
-    * @param b      edge from cp0 to cp1
-    * @param c      edge from cp1 to ap1
-    * @param ab     edge from a to b
-    * @param bc     edge from b to c
-    *
-    * @return the quaternion
-    *
-    * @see Quaternion#mix(Quaternion, Quaternion, float, Quaternion)
-    */
-   public static Quaternion squad ( final Quaternion ap0, final Quaternion cp0,
-      final Quaternion cp1, final Quaternion ap1, final float step,
-      final Quaternion.AbstrEasing easing, final Quaternion target,
-      final Quaternion a, final Quaternion b, final Quaternion c,
-      final Quaternion ab, final Quaternion bc ) {
+      if ( step >= 1.0f ) {
+         Quaternion.normalize(cp0, a);
+         Quaternion.normalize(cp1, b);
+         Quaternion.normalize(ap1, c);
+         Quaternion.normalize(cp1, ab);
+         Quaternion.normalize(ap1, bc);
+         return Quaternion.normalize(ap1, target);
+      }
 
-      final Float tbox = step;
-      easing.apply(ap0, cp0, tbox, a);
-      easing.apply(cp0, cp1, tbox, b);
-      easing.apply(cp1, ap1, tbox, c);
-      easing.apply(a, b, tbox, ab);
-      easing.apply(b, c, tbox, bc);
-      return easing.apply(ab, bc, tbox, target);
+      // QUERY Allow inverse or no inverse?
+      Quaternion.slerpNoInvertUnclamped(ap0, cp0, step, a);
+      Quaternion.slerpNoInvertUnclamped(cp0, cp1, step, b);
+      Quaternion.slerpNoInvertUnclamped(cp1, ap1, step, c);
+      Quaternion.slerpNoInvertUnclamped(a, b, step, ab);
+      Quaternion.slerpNoInvertUnclamped(b, c, step, bc);
+      return Quaternion.slerpNoInvertUnclamped(ab, bc, step, target);
    }
 
    /**
@@ -2531,6 +2434,68 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
+    * An internal helper method to mix quaternions together within a squad
+    * function. Does not check whether step is out of the range [0.0, 1.0].
+    *
+    * @param origin the original quaternion
+    * @param dest   the destination quaternion
+    * @param step   the step
+    * @param target the output quaternion
+    *
+    * @return the mix
+    */
+   static Quaternion slerpNoInvertUnclamped ( final Quaternion origin,
+      final Quaternion dest, final float step, final Quaternion target ) {
+
+      /* Decompose origin quaternion. */
+      final Vec3 ai = origin.imag;
+      final float aw = origin.real;
+      final float ax = ai.x;
+      final float ay = ai.y;
+      final float az = ai.z;
+
+      /* Decompose destination quaternion. */
+      final Vec3 bi = dest.imag;
+      final float bw = dest.real;
+      final float bx = bi.x;
+      final float by = bi.y;
+      final float bz = bi.z;
+
+      /* Find the dot product. */
+      final float dotp = aw * bw + ax * bx + ay * by + az * bz;
+      if ( Utils.abs(dotp) >= 1.0f - IUtils.EPSILON ) {
+         return Quaternion.normalize(dest, target);
+      }
+
+      /*
+       * Find interpolation factor and its complement. Inverse square root and
+       * arc-cosine should both check for invalid dot product.
+       */
+      float v = step;
+      float u = 1.0f - v;
+
+      final float sinTheta = Utils.invSqrt(1.0f - dotp * dotp);
+      if ( sinTheta > IUtils.EPSILON ) {
+         final float theta = Utils.acos(dotp);
+         final float thetaStep = theta * step;
+         u = sinTheta * Utils.sin(theta - thetaStep);
+         v = sinTheta * Utils.sin(thetaStep);
+      }
+
+      /* Interpolate. */
+      final float cw = u * aw + v * bw;
+      final float cx = u * ax + v * bx;
+      final float cy = u * ay + v * by;
+      final float cz = u * az + v * bz;
+
+      /* Normalize. */
+      final float mSq = cw * cw + cx * cx + cy * cy + cz * cz;
+      if ( mSq < IUtils.EPSILON ) { return target.reset(); }
+      final float mInv = Utils.invSqrtUnchecked(mSq);
+      return target.set(cw * mInv, cx * mInv, cy * mInv, cz * mInv);
+   }
+
+   /**
     * An internal helper method to mix quaternions together when no easing
     * function is provided. Does not check whether step is out of the range
     * [0.0, 1.0]. Uses single precision methods over {@link java.lang.Math},
@@ -2543,7 +2508,7 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @return the mix
     */
-   static Quaternion slerpUnclampedSpa ( final Quaternion origin,
+   static Quaternion slerpUnclamped ( final Quaternion origin,
       final Quaternion dest, final float step, final Quaternion target ) {
 
       /* Decompose origin quaternion. */
