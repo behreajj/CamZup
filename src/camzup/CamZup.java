@@ -1,7 +1,9 @@
 package camzup;
 
+import camzup.core.Color;
 import camzup.core.Quaternion;
 import camzup.core.Rng;
+import camzup.core.Vec4;
 
 import processing.core.PApplet;
 
@@ -56,52 +58,18 @@ public class CamZup {
       // TODO: Add delta time or elapsed time.
       // https://github.com/processing/processing/issues/6070
 
-      // final Mesh3 m3 = new Mesh3();
-      // Mesh3.uvSphere(16, 8, PolyType.QUAD, m3);
-      // final MeshEntity3 me3 = new MeshEntity3(m3);
-      // final String str = me3.toBlenderCode();
-      // System.out.println(str);
-
-      // final Gradient ryb = new Gradient(0xff0000ff, 0xff3800ff, 0xff8000ff,
-      // 0xffba00ff, 0xffde00ff, 0xffff00ff);
-      // final String str = ryb.toSvgString("ryb", 0.0f, 0.5f, 1.0f, 0.5f, 768,
-      // 64,
-      // 1.0f / 2.2f, false);
-      // System.out.println(1 / 2.2f);
-
-      // final MeshDirect md = new MeshDirect();
-      // final Mesh3 mesh3 = new Mesh3();
-      // Mesh3.cube(mesh3);
-      // MeshDirect.fromMesh3(mesh3, md);
-      // System.out.println(mesh3);
-      // System.out.println("");
-      // System.out.println(md);
-
       final Rng rng = new Rng();
-      final Quaternion targeta = new Quaternion();
-      final Quaternion targetb = new Quaternion();
-      final Quaternion temp0 = new Quaternion();
-      final Quaternion temp1 = new Quaternion();
-      final Quaternion temp2 = new Quaternion();
-      final Quaternion temp3 = new Quaternion();
-      final Quaternion temp4 = new Quaternion();
-
-      for ( int i = 0; i < 10; ++i ) {
-         final float t = rng.nextFloat();
-         final Quaternion a = Quaternion.random(rng, new Quaternion());
-         final Quaternion b = Quaternion.random(rng, new Quaternion());
-         final Quaternion c = Quaternion.random(rng, new Quaternion());
-         final Quaternion d = Quaternion.random(rng, new Quaternion());
-
-         Quaternion.squad(a, b, c, d, t, targeta, temp0, temp1, temp2, temp3,
-            temp4);
-
-         CamZup.squad(a, b, c, d, t, targetb, temp0, temp1);
-
-         System.out.println(targeta);
-         System.out.println(targetb);
-         System.out.println(Quaternion.approx(targeta, targetb));
-      }
+      final Color a = new Color();
+      final Vec4 lab = new Vec4();
+      final Vec4 xyz = new Vec4();
+      // Color.fromHex(0xffaabbcc, a);
+      Color.random(rng, a);
+      Color.sRgbaToLab(a, false, lab, xyz, new Color());
+      System.out.println(a);
+      System.out.println(lab);
+      final Color b = new Color();
+      Color.labTosRgba(lab, false, b, xyz, new Color());
+      System.out.println(b);
    }
 
    public static Quaternion squad ( final Quaternion q1, final Quaternion q2,
@@ -114,16 +82,16 @@ public class CamZup {
       return target;
    }
 
-   public static Quaternion squadHelper0 ( final Quaternion qin1,
-      final Quaternion qi, final Quaternion qip1, final Quaternion target ) {
+   public static Quaternion squadHelper0 ( final Quaternion prev,
+      final Quaternion curr, final Quaternion next, final Quaternion target ) {
 
       // https://gist.github.com/usefulslug/c59d5f7d35240733b80b
-      // https://www.3dgep.com/understanding-quaternions/#Quotient_of_Two_Complex_Numbers
+      // https://www.3dgep.com/understanding-quaternions/
 
-      final Quaternion qiInverse = Quaternion.inverse(qi, new Quaternion());
+      final Quaternion qiInverse = Quaternion.inverse(curr, new Quaternion());
 
-      final Quaternion a = Quaternion.mul(qip1, qiInverse, new Quaternion());
-      final Quaternion b = Quaternion.mul(qin1, qiInverse, new Quaternion());
+      final Quaternion a = Quaternion.mul(next, qiInverse, new Quaternion());
+      final Quaternion b = Quaternion.mul(prev, qiInverse, new Quaternion());
 
       final Quaternion loga = Quaternion.log(a, new Quaternion());
       final Quaternion logb = Quaternion.log(b, new Quaternion());
@@ -133,7 +101,7 @@ public class CamZup {
       final Quaternion expc = Quaternion.exp(divn4, new Quaternion());
 
       // Looks like its qi first, not expc...
-      Quaternion.mul(qi, expc, target);
+      Quaternion.mul(curr, expc, target);
 
       Quaternion.normalize(target, target);
       return target;

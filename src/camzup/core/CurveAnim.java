@@ -8,23 +8,24 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Organizes a cubic Bezier curve of quaternions into a list of knots.
- * Provides a function to retrieve a quaternion on a curve from a step in
- * the range [0.0, 1.0] .
+ * Implements a <a href=
+ * "https://www.wikiwand.com/en/Composite_B%C3%A9zier_curve">composite</a>
+ * piecewise cubic Bezier curve. Provides a function to retrieve a
+ * quaternion on a curve from a step in the range [0.0, 1.0] .
  */
 @Experimental
-public class CurveSphere extends Curve implements Iterable < KnotSphere > {
+public class CurveAnim extends Curve implements Iterable < KnotAnim > {
 
    /**
     * The list of knots contained by the curve.
     */
-   private final ArrayList < KnotSphere > knots = new ArrayList <>(
+   private final ArrayList < KnotAnim > knots = new ArrayList <>(
       ICurve.KNOT_CAPACITY);
 
    /**
     * The default constructor.
     */
-   public CurveSphere ( ) {
+   public CurveAnim ( ) {
 
       // TODO: Implement all curve features.
    }
@@ -35,8 +36,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     * @param cl    whether or not the curve is closed
     * @param knots the collection of knots
     */
-   public CurveSphere ( final boolean cl, final Collection <
-      KnotSphere > knots ) {
+   public CurveAnim ( final boolean cl, final Collection < KnotAnim > knots ) {
 
       super(cl);
       this.appendAll(knots);
@@ -48,7 +48,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     * @param cl    whether or not the curve is closed
     * @param knots the list of knots
     */
-   public CurveSphere ( final boolean cl, final KnotSphere... knots ) {
+   public CurveAnim ( final boolean cl, final KnotAnim... knots ) {
 
       super(cl);
       this.appendAll(knots);
@@ -59,7 +59,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @param name the name
     */
-   public CurveSphere ( final String name ) { super(name); }
+   public CurveAnim ( final String name ) { super(name); }
 
    /**
     * Append a knot to the curve's list of knots.
@@ -70,7 +70,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @see List#add(Object)
     */
-   public CurveSphere append ( final KnotSphere knot ) {
+   public CurveAnim append ( final KnotAnim knot ) {
 
       this.knots.add(knot);
       return this;
@@ -83,9 +83,9 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return this curve.
     */
-   public CurveSphere appendAll ( final Collection < KnotSphere > kn ) {
+   public CurveAnim appendAll ( final Collection < KnotAnim > kn ) {
 
-      final Iterator < KnotSphere > knItr = kn.iterator();
+      final Iterator < KnotAnim > knItr = kn.iterator();
       while ( knItr.hasNext() ) { this.append(knItr.next()); }
 
       return this;
@@ -98,7 +98,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return this curve.
     */
-   public CurveSphere appendAll ( final KnotSphere... kn ) {
+   public CurveAnim appendAll ( final KnotAnim... kn ) {
 
       final int len = kn.length;
       for ( int i = 0; i < len; ++i ) { this.append(kn[i]); }
@@ -113,7 +113,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return the evaluation
     */
-   public boolean contains ( final KnotSphere kn ) {
+   public boolean contains ( final KnotAnim kn ) {
 
       return this.knots.contains(kn);
    }
@@ -131,7 +131,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
       if ( this == obj ) { return true; }
       if ( !super.equals(obj) ) { return false; }
       if ( this.getClass() != obj.getClass() ) { return false; }
-      return this.equals(( CurveSphere ) obj);
+      return this.equals(( CurveAnim ) obj);
    }
 
    /**
@@ -145,7 +145,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     * @see List#get(int)
     * @see Utils#mod(int, int)
     */
-   public KnotSphere get ( final int i ) {
+   public KnotAnim get ( final int i ) {
 
       final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
       return this.knots.get(j);
@@ -158,7 +158,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @see List#get(int)
     */
-   public KnotSphere getFirst ( ) { return this.knots.get(0); }
+   public KnotAnim getFirst ( ) { return this.knots.get(0); }
 
    /**
     * Gets the last knot in the curve.
@@ -168,7 +168,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     * @see List#get(int)
     * @see List#size()
     */
-   public KnotSphere getLast ( ) {
+   public KnotAnim getLast ( ) {
 
       return this.knots.get(this.knots.size() - 1);
    }
@@ -196,7 +196,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     * @see List#iterator()
     */
    @Override
-   public Iterator < KnotSphere > iterator ( ) { return this.knots.iterator(); }
+   public Iterator < KnotAnim > iterator ( ) { return this.knots.iterator(); }
 
    /**
     * Gets the number of knots in the curve.
@@ -217,7 +217,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @see List#add(int, Object)
     */
-   public CurveSphere prepend ( final KnotSphere knot ) {
+   public CurveAnim prepend ( final KnotAnim knot ) {
 
       this.knots.add(0, knot);
       return this;
@@ -230,7 +230,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return this curve.
     */
-   public CurveSphere prependAll ( final Collection < KnotSphere > kn ) {
+   public CurveAnim prependAll ( final Collection < KnotAnim > kn ) {
 
       this.knots.addAll(0, kn);
       return this;
@@ -245,12 +245,12 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @see List#add(int, Object)
     */
-   public CurveSphere prependAll ( final KnotSphere... kn ) {
+   public CurveAnim prependAll ( final KnotAnim... kn ) {
 
       int j = 0;
       final int len = kn.length;
       for ( int i = 0; i < len; ++i ) {
-         final KnotSphere knot = kn[i];
+         final KnotAnim knot = kn[i];
          this.knots.add(j, knot);
          ++j;
       }
@@ -265,12 +265,12 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     * @return this curve
     *
     * @see Collections#reverse(List)
-    * @see KnotSphere#reverse()
+    * @see KnotAnim#reverse()
     */
-   public CurveSphere reverse ( ) {
+   public CurveAnim reverse ( ) {
 
       Collections.reverse(this.knots);
-      final Iterator < KnotSphere > itr = this.knots.iterator();
+      final Iterator < KnotAnim > itr = this.knots.iterator();
       while ( itr.hasNext() ) { itr.next().reverse(); }
 
       return this;
@@ -302,7 +302,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
       sb.append(this.materialIndex);
       sb.append(", knots: [ ");
 
-      final Iterator < KnotSphere > itr = this.knots.iterator();
+      final Iterator < KnotAnim > itr = this.knots.iterator();
       while ( itr.hasNext() ) {
          itr.next().toString(sb, places);
          if ( itr.hasNext() ) { sb.append(',').append(' '); }
@@ -315,7 +315,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
    /**
     * For internal (package-level) use. Resizes a curve to the specified
     * length. The length may be no less than 2. When the new length is greater
-    * than the old, new {@link KnotSphere}s are added.<br>
+    * than the old, new {@link KnotAnim}s are added.<br>
     * <br>
     * This does not check if remaining elements in the list are
     * <code>null</code>.
@@ -327,7 +327,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     * @see List#add(Object)
     * @see List#remove(int)
     */
-   CurveSphere resize ( final int len ) {
+   CurveAnim resize ( final int len ) {
 
       final int vlen = len < 2 ? 2 : len;
       final int oldLen = this.knots.size();
@@ -336,7 +336,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
          final int last = oldLen - 1;
          for ( int i = 0; i < -diff; ++i ) { this.knots.remove(last - i); }
       } else if ( diff > 0 ) {
-         for ( int i = 0; i < diff; ++i ) { this.knots.add(new KnotSphere()); }
+         for ( int i = 0; i < diff; ++i ) { this.knots.add(new KnotAnim()); }
       }
 
       return this;
@@ -349,7 +349,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return the evaluation
     */
-   protected boolean equals ( final CurveSphere curve ) {
+   protected boolean equals ( final CurveAnim curve ) {
 
       return this.closedLoop == curve.closedLoop && this.knots.equals(
          curve.knots);
@@ -365,13 +365,12 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return the circle
     */
-   public static CurveSphere circle ( final int sectors,
-      final float offsetAngle, final float inclination,
-      final CurveSphere target ) {
+   public static CurveAnim circle ( final int sectors, final float offsetAngle,
+      final float inclination, final CurveAnim target ) {
 
       final int vSct = sectors < 3 ? 3 : sectors;
       target.resize(vSct);
-      final Iterator < KnotSphere > itr = target.knots.iterator();
+      final Iterator < KnotAnim > itr = target.knots.iterator();
 
       // TODO: Test that inclination is correct!
       final float tol = IUtils.HALF_PI - IUtils.EPSILON;
@@ -384,7 +383,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
       final float offNorm = offsetAngle * IUtils.ONE_TAU_2;
 
       for ( int j = 0; itr.hasNext(); j += 3 ) {
-         final KnotSphere kn = itr.next();
+         final KnotAnim kn = itr.next();
 
          final float azimNorm0 = offNorm + ( j - 1 ) * toAzim;
          final float cosAzim0 = Utils.scNorm(azimNorm0);
@@ -421,20 +420,20 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return the coordinate
     *
-    * @see KnotSphere#squad(KnotSphere, KnotSphere, float, Quaternion)
-    * @see CurveSphere#evalFirst(CurveSphere, Quaternion)
-    * @see CurveSphere#evalLast(CurveSphere, Quaternion)
+    * @see KnotAnim#squad(KnotAnim, KnotAnim, float, Quaternion)
+    * @see CurveAnim#evalFirst(CurveAnim, Quaternion)
+    * @see CurveAnim#evalLast(CurveAnim, Quaternion)
     */
-   public static Quaternion eval ( final CurveSphere curve, final float step,
+   public static Quaternion eval ( final CurveAnim curve, final float step,
       final Quaternion coord ) {
 
-      final ArrayList < KnotSphere > knots = curve.knots;
+      final ArrayList < KnotAnim > knots = curve.knots;
       final int knotLength = knots.size();
 
       float tScaled;
       int i = 0;
-      KnotSphere a = null;
-      KnotSphere b = null;
+      KnotAnim a = null;
+      KnotAnim b = null;
       if ( curve.closedLoop ) {
          tScaled = Utils.mod1(step) * knotLength;
          i = ( int ) tScaled;
@@ -442,9 +441,9 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
          b = knots.get(Utils.mod(i + 1, knotLength));
       } else {
          if ( knotLength == 1 || step <= 0.0f ) {
-            return CurveSphere.evalFirst(curve, coord);
+            return CurveAnim.evalFirst(curve, coord);
          }
-         if ( step >= 1.0f ) { return CurveSphere.evalLast(curve, coord); }
+         if ( step >= 1.0f ) { return CurveAnim.evalLast(curve, coord); }
 
          tScaled = step * ( knotLength - 1 );
          i = ( int ) tScaled;
@@ -453,7 +452,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
       }
 
       final float t = tScaled - i;
-      KnotSphere.squad(a, b, t, coord);
+      KnotAnim.squad(a, b, t, coord);
 
       return coord;
    }
@@ -467,10 +466,10 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return the coordinate
     */
-   public static Quaternion evalFirst ( final CurveSphere curve,
+   public static Quaternion evalFirst ( final CurveAnim curve,
       final Quaternion coord ) {
 
-      final KnotSphere kFirst = curve.knots.get(0);
+      final KnotAnim kFirst = curve.knots.get(0);
       coord.set(kFirst.coord);
 
       return coord;
@@ -485,10 +484,10 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return the coordinate
     */
-   public static Quaternion evalLast ( final CurveSphere curve,
+   public static Quaternion evalLast ( final CurveAnim curve,
       final Quaternion coord ) {
 
-      final KnotSphere kLast = curve.knots.get(curve.knots.size() - 1);
+      final KnotAnim kLast = curve.knots.get(curve.knots.size() - 1);
       coord.set(kLast.coord);
 
       return coord;
@@ -501,9 +500,9 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return the helix
     */
-   public static CurveSphere helix ( final CurveSphere target ) {
+   public static CurveAnim helix ( final CurveAnim target ) {
 
-      return CurveSphere.helix(ICurve.KNOTS_PER_CIRCLE, target);
+      return CurveAnim.helix(ICurve.KNOTS_PER_CIRCLE, target);
    }
 
    /**
@@ -514,10 +513,9 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return the helix
     */
-   public static CurveSphere helix ( final int sectors,
-      final CurveSphere target ) {
+   public static CurveAnim helix ( final int sectors, final CurveAnim target ) {
 
-      return CurveSphere.helix(sectors, 2, target);
+      return CurveAnim.helix(sectors, 2, target);
    }
 
    /**
@@ -529,10 +527,10 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return the helix
     */
-   public static CurveSphere helix ( final int sectors, final int period,
-      final CurveSphere target ) {
+   public static CurveAnim helix ( final int sectors, final int period,
+      final CurveAnim target ) {
 
-      return CurveSphere.helix(sectors, period, 0.0f, target);
+      return CurveAnim.helix(sectors, period, 0.0f, target);
    }
 
    /**
@@ -545,10 +543,10 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return the helix
     */
-   public static CurveSphere helix ( final int sectors, final int period,
-      final float offset, final CurveSphere target ) {
+   public static CurveAnim helix ( final int sectors, final int period,
+      final float offset, final CurveAnim target ) {
 
-      return CurveSphere.helix(sectors, period, offset, -IUtils.HALF_PI,
+      return CurveAnim.helix(sectors, period, offset, -IUtils.HALF_PI,
          IUtils.HALF_PI, target);
    }
 
@@ -568,9 +566,9 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @see Utils#clamp(float, float, float)
     */
-   public static CurveSphere helix ( final int sectors, final int period,
+   public static CurveAnim helix ( final int sectors, final int period,
       final float offset, final float inclStart, final float inclEnd,
-      final CurveSphere target ) {
+      final CurveAnim target ) {
 
       final int vPer = period < 1 ? 2 : period + 1;
       final int vSct = sectors < 2 ? 2 : sectors;
@@ -588,7 +586,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
       final float offNorm = IUtils.ONE_TAU_2 * offset;
 
       target.resize(len);
-      final Iterator < KnotSphere > itr = target.knots.iterator();
+      final Iterator < KnotAnim > itr = target.knots.iterator();
 
       for ( int k = 0; k < len; ++k ) {
          final float kf = k;
@@ -626,7 +624,7 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
          final float cosIncl2 = Utils.scNorm(incl2);
          final float sinIncl2 = Utils.scNorm(incl2 - 0.25f);
 
-         final KnotSphere knot = itr.next();
+         final KnotAnim knot = itr.next();
          knot.rearHandle.set(cosAzim0 * cosIncl0, -sinAzim0 * sinIncl0, sinIncl0
             * cosAzim0, sinAzim0 * cosIncl0);
          knot.coord.set(cosAzim1 * cosIncl1, -sinAzim1 * sinIncl1, sinIncl1
@@ -650,25 +648,19 @@ public class CurveSphere extends Curve implements Iterable < KnotSphere > {
     *
     * @return the random curve
     */
-   public static CurveSphere random ( final Random rng, final int count,
-      final boolean closedLoop, final CurveSphere target ) {
+   public static CurveAnim random ( final Random rng, final int count,
+      final boolean closedLoop, final CurveAnim target ) {
 
       final int valCount = count < 2 ? 2 : count;
       target.resize(valCount);
-      final Iterator < KnotSphere > itr = target.knots.iterator();
-      // KnotSphere first = itr.next();
-      // KnotSphere prev = first;
+      final Iterator < KnotAnim > itr = target.knots.iterator();
       while ( itr.hasNext() ) {
-         final KnotSphere curr = itr.next();
+         final KnotAnim curr = itr.next();
 
          Quaternion.random(rng, curr.coord);
          Quaternion.random(rng, curr.foreHandle);
          Quaternion.random(rng, curr.rearHandle);
 
-         // Quaternion.innerQuadrangle(prev.coord, prev.foreHandle,
-         // curr.rearHandle, curr.coord, prev.foreHandle, curr.rearHandle,
-         // new Quaternion());
-         // prev = curr;
       }
       target.closedLoop = closedLoop;
 

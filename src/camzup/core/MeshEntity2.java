@@ -447,7 +447,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       /* Append meshes. */
       final Iterator < Mesh2 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
-         meshItr.next().toBlenderCode(pyCd, true, 0.0f);
+         meshItr.next().toBlenderCode(pyCd, false, true, 0.0f);
          if ( meshItr.hasNext() ) { pyCd.append(',').append(' '); }
       }
 
@@ -471,7 +471,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       this.genParentBoilerPlate(pyCd);
       this.genMaterialBoilerPlate(pyCd);
-      this.genMeshBoilerPlate(pyCd, useAutoSmooth, autoAngle);
+      this.genMeshBoilerPlate(pyCd, true, useAutoSmooth, autoAngle);
 
       /* Add materials to mesh data. */
       pyCd.append("    md_mats = mesh_data.materials\n");

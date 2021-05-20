@@ -6,7 +6,7 @@ import camzup.core.ArcMode;
 import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.Curve3;
-import camzup.core.CurveSphere;
+import camzup.core.CurveAnim;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Knot3;
@@ -783,7 +783,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param right  the quaternion's right axis
     * @param co     the coordinate
     */
-   public void drawCurveSphere ( final CurveSphere curve, final Transform3 tr,
+   public void drawCurveSphere ( final CurveAnim curve, final Transform3 tr,
       final int detail, final Quaternion q, final Vec3 right, final Vec3 co ) {
 
       this.beginShape(PConstants.POLYGON);
@@ -792,7 +792,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float toPercent = 1.0f / ( vres - 1.0f );
       for ( int i = 0; i < vres; ++i ) {
          final float percent = i * toPercent;
-         CurveSphere.eval(curve, percent, q);
+         CurveAnim.eval(curve, percent, q);
          Quaternion.getRight(q, right);
          Transform3.mulPoint(tr, right, co);
          this.vertexImpl(co.x, co.y, co.z, this.textureU, this.textureV);

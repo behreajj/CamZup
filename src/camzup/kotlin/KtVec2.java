@@ -34,6 +34,14 @@ public class KtVec2 extends Vec2 implements Iterable < Float > {
    public KtVec2 ( final float x, final float y ) { super(x, y); }
 
    /**
+    * Constructs a vector from integer values.
+    *
+    * @param x the x component
+    * @param y the y component
+    */
+   public KtVec2 ( final int x, final int y ) { super(x, y); }
+
+   /**
     * Constructs a vector from a source vector's components.
     *
     * @param v the source vector

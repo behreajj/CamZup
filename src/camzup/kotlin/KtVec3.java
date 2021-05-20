@@ -45,6 +45,18 @@ public class KtVec3 extends Vec3 implements Iterable < Float > {
    }
 
    /**
+    * Constructs a vector from integer values.
+    *
+    * @param x the x component
+    * @param y the y component
+    * @param z the z component
+    */
+   public KtVec3 ( final int x, final int y, final int z ) {
+
+      super(x, y, z);
+   }
+
+   /**
     * Promotes a Vec2 to a KtVec3.
     *
     * @param v2 the vector

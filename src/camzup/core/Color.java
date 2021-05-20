@@ -1464,6 +1464,93 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Converts a color from CIE Lab to sRGB.
+    *
+    * @param source the Lab vector
+    * @param alpha  adjust the alpha
+    * @param target the output color
+    * @param xyz    the XYZ vector
+    * @param linear the linear color
+    *
+    * @return the color
+    *
+    * @see Color#labToXyza(Vec4, Vec4)
+    * @see Color#xyzaTosRgba(Vec4, boolean, Color, Color)
+    */
+   public static Color labTosRgba ( final Vec4 source, final boolean alpha,
+      final Color target, final Vec4 xyz, final Color linear ) {
+
+      Color.labToXyza(source, xyz);
+      return Color.xyzaTosRgba(xyz, alpha, target, linear);
+   }
+
+   /**
+    * Converts a color from CIE L*a*b* to CIE XYZ. Assumes D65 illuminant, CIE
+    * 1965 2 degrees referents.
+    *
+    * @param l      the perceptual lightness
+    * @param a      the green to red range
+    * @param b      the blue to yellow range
+    * @param alpha  the alpha channel
+    * @param target the output vector
+    *
+    * @return the CIE XYZ color
+    */
+   public static Vec4 labToXyza ( final float l, final float a, final float b,
+      final float alpha, final Vec4 target ) {
+
+      /*
+       * http://www.easyrgb.com/en/math.php D65, CIE 1931 2 degrees; 95.047,
+       * 100.0, 108.883; 16.0 / 116.0 = 0.13793103448275862; 1.0 / 116.0 =
+       * 0.008620689655172414; 1.0 / 7.787 = 0.12841751101180157
+       */
+
+      double vy = ( l + 16.0d ) * 0.008620689655172414d;
+      double vx = a * 0.002d + vy;
+      double vz = vy - b * 0.005d;
+
+      final double vye3 = vy * vy * vy;
+      if ( vye3 > 0.008856d ) {
+         vy = vye3;
+      } else {
+         vy = ( vy - 0.13793103448275862d ) * 0.12841751101180157d;
+      }
+
+      final double vxe3 = vx * vx * vx;
+      if ( vxe3 > 0.008856d ) {
+         vx = vxe3;
+      } else {
+         vx = ( vx - 0.13793103448275862d ) * 0.12841751101180157d;
+      }
+
+      final double vze3 = vz * vz * vz;
+      if ( vze3 > 0.008856d ) {
+         vz = vze3;
+      } else {
+         vz = ( vz - 0.13793103448275862d ) * 0.12841751101180157d;
+      }
+
+      return target.set(( float ) ( vx * 0.95047d ), ( float ) vy,
+         ( float ) ( vz * 1.08883d ), alpha);
+
+   }
+
+   /**
+    * Converts a color from CIE L*a*b* to CIE XYZ.
+    *
+    * @param source the XYZ vector
+    * @param target the output vector
+    *
+    * @return the Lab color
+    *
+    * @see Color#labToXyza(float, float, float, float, Vec4)
+    */
+   public static Vec4 labToXyza ( final Vec4 source, final Vec4 target ) {
+
+      return Color.labToXyza(source.x, source.y, source.z, source.w, target);
+   }
+
+   /**
     * Converts a color from linear RGB to CIE XYZ.
     *
     * @param c      the color
@@ -1479,9 +1566,10 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from linear RGB to CIE XYZ. References Pharr, Jakob,
-    * and Humphreys' <a href="http://www.pbr-book.org/">Physically Based
-    * Rendering</a>, section 5.2, page 328.
+    * Converts a color from linear RGB to CIE XYZ. The values returned are in
+    * the range [0.0, 1.0]. References Pharr, Jakob, and Humphreys'
+    * <a href="http://www.pbr-book.org/">Physically Based Rendering</a>,
+    * section 5.2.2, page 328.
     *
     * @param r      the red component
     * @param g      the green component
@@ -1495,12 +1583,6 @@ public class Color implements Comparable < Color > {
     */
    public static Vec4 lRgbaToXyza ( final float r, final float g, final float b,
       final float a, final Vec4 target ) {
-
-      /*
-       * { { 0.4124108464885388, 0.3575845678529519, 0.18045380393360833 }, {
-       * 0.21264934272065283, 0.7151691357059038, 0.07218152157344333 }, {
-       * 0.019331758429150258, 0.11919485595098397, 0.9503900340503373 } }
-       */
 
       return target.set(0.41241086f * r + 0.35758457f * g + 0.1804538f * b,
          0.21264935f * r + 0.71516913f * g + 0.07218152f * b, 0.019331759f * r
@@ -1999,6 +2081,24 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Converts a color from sRGB to CIE L*a*b*.
+    *
+    * @param c      the color
+    * @param alpha  adjust the alpha
+    * @param target the output vector
+    * @param xyz    the XYZ vector
+    * @param linear the color in linear
+    *
+    * @return the lab vector
+    */
+   public static Vec4 sRgbaToLab ( final Color c, final boolean alpha,
+      final Vec4 target, final Vec4 xyz, final Color linear ) {
+
+      Color.sRgbaToXyza(c, alpha, xyz, linear);
+      return Color.xyzaToLab(xyz, target);
+   }
+
+   /**
     * Converts a color from sRGB to CIE XYZ.
     *
     * @param c      the color
@@ -2008,14 +2108,14 @@ public class Color implements Comparable < Color > {
     *
     * @return the XYZ color
     *
-    * @see Color#lRgbaToXyza(float, float, float, float, Vec4)
+    * @see Color#lRgbaToXyza(Color, Vec4)
     * @see Color#sRgbTolRgb(Color, boolean, Color)
     */
    public static Vec4 sRgbaToXyza ( final Color c, final boolean alpha,
       final Vec4 target, final Color linear ) {
 
       Color.sRgbTolRgb(c, alpha, linear);
-      return Color.lRgbaToXyza(linear.r, linear.g, linear.b, linear.a, target);
+      return Color.lRgbaToXyza(linear, target);
    }
 
    /**
@@ -2228,18 +2328,11 @@ public class Color implements Comparable < Color > {
     *
     * @return the string
     *
-    * @see Color#toHexString(byte, StringBuilder)
+    * @see Color#toHexString(StringBuilder, Color)
     */
    public static String toHexString ( final Color c ) {
 
-      // TODO: Update to match toHexWeb convention. Add channel order support?
-      final StringBuilder sb = new StringBuilder(10);
-      sb.append("0x");
-      Color.toHexString(( byte ) ( c.a * 0xff + 0.5f ), sb);
-      Color.toHexString(( byte ) ( c.r * 0xff + 0.5f ), sb);
-      Color.toHexString(( byte ) ( c.g * 0xff + 0.5f ), sb);
-      Color.toHexString(( byte ) ( c.b * 0xff + 0.5f ), sb);
-      return sb.toString();
+      return Color.toHexString(new StringBuilder(10), c).toString();
    }
 
    /**
@@ -2250,18 +2343,79 @@ public class Color implements Comparable < Color > {
     *
     * @return the string
     *
-    * @see Color#toHexString(byte, StringBuilder)
+    * @see Color#toHexString(StringBuilder, int)
     */
    public static String toHexString ( final int c ) {
 
-      // TODO: Update to match toHexWeb convention. Add channel order support?
-      final StringBuilder sb = new StringBuilder(10);
+      return Color.toHexString(new StringBuilder(10), c).toString();
+   }
+
+   /**
+    * Returns a representation of the color as a hexadecimal code, preceded by
+    * a '0x', in the format AARRGGBB. Appends to an existing
+    * {@link StringBuilder}.<br>
+    *
+    * @param sb the string builder
+    * @param a  the alpha byte
+    * @param r  the red byte
+    * @param g  the green byte
+    * @param b  the blue byte
+    *
+    * @return the string builder
+    *
+    * @see Color#toHexString(StringBuilder, byte)
+    */
+   public static StringBuilder toHexString ( final StringBuilder sb,
+      final byte a, final byte r, final byte g, final byte b ) {
+
       sb.append("0x");
-      Color.toHexString(( byte ) ( c >> 0x18 & 0xff ), sb);
-      Color.toHexString(( byte ) ( c >> 0x10 & 0xff ), sb);
-      Color.toHexString(( byte ) ( c >> 0x08 & 0xff ), sb);
-      Color.toHexString(( byte ) ( c & 0xff ), sb);
-      return sb.toString();
+      Color.toHexString(sb, a);
+      Color.toHexString(sb, r);
+      Color.toHexString(sb, g);
+      Color.toHexString(sb, b);
+      return sb;
+   }
+
+   /**
+    * Returns a representation of the color as a hexadecimal code, preceded by
+    * a '0x', in the format AARRGGBB. Appends to an existing
+    * {@link StringBuilder}.<br>
+    *
+    * @param sb the string builder
+    * @param c  the color
+    *
+    * @return the string builder
+    *
+    * @see Utils#clamp01(float)
+    * @see Color#toHexString(StringBuilder, byte, byte, byte, byte)
+    */
+   public static StringBuilder toHexString ( final StringBuilder sb,
+      final Color c ) {
+
+      return Color.toHexString(sb, ( byte ) ( Utils.clamp01(c.a) * 0xff
+         + 0.5f ), ( byte ) ( Utils.clamp01(c.r) * 0xff + 0.5f ),
+         ( byte ) ( Utils.clamp01(c.g) * 0xff + 0.5f ), ( byte ) ( Utils
+            .clamp01(c.b) * 0xff + 0.5f ));
+   }
+
+   /**
+    * Returns a representation of the color as a hexadecimal code, preceded by
+    * a '0x', in the format AARRGGBB. Appends to an existing
+    * {@link StringBuilder}.<br>
+    *
+    * @param sb the string builder
+    * @param c  the color
+    *
+    * @return the string builder
+    *
+    * @see Color#toHexString(StringBuilder, byte, byte, byte, byte)
+    */
+   public static StringBuilder toHexString ( final StringBuilder sb,
+      final int c ) {
+
+      return Color.toHexString(sb, ( byte ) ( c >> 0x18 & 0xff ), ( byte ) ( c
+         >> 0x10 & 0xff ), ( byte ) ( c >> 0x08 & 0xff ), ( byte ) ( c
+            & 0xff ));
    }
 
    /**
@@ -2307,14 +2461,16 @@ public class Color implements Comparable < Color > {
     * @param b  the blue byte
     *
     * @return the string builder
+    * 
+    * @see Color#toHexString(StringBuilder, byte)
     */
    public static StringBuilder toHexWeb ( final StringBuilder sb, final byte r,
       final byte g, final byte b ) {
 
       sb.append('#');
-      Color.toHexString(r, sb);
-      Color.toHexString(g, sb);
-      Color.toHexString(b, sb);
+      Color.toHexString(sb, r);
+      Color.toHexString(sb, g);
+      Color.toHexString(sb, b);
       return sb;
    }
 
@@ -2328,13 +2484,15 @@ public class Color implements Comparable < Color > {
     *
     * @return the string builder
     *
+    * @see Utils#clamp01(float)
     * @see Color#toHexWeb(StringBuilder, byte, byte, byte)
     */
    public static StringBuilder toHexWeb ( final StringBuilder sb,
       final Color c ) {
 
-      return Color.toHexWeb(sb, ( byte ) ( c.r * 0xff + 0.5f ), ( byte ) ( c.g
-         * 0xff + 0.5f ), ( byte ) ( c.b * 0xff + 0.5f ));
+      return Color.toHexWeb(sb, ( byte ) ( Utils.clamp01(c.r) * 0xff + 0.5f ),
+         ( byte ) ( Utils.clamp01(c.g) * 0xff + 0.5f ), ( byte ) ( Utils
+            .clamp01(c.b) * 0xff + 0.5f ));
    }
 
    /**
@@ -2441,9 +2599,73 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from CIE XYZ to lRGB. References Pharr, Jakob, and
-    * Humphreys' <a href="http://www.pbr-book.org/">Physically Based
-    * Rendering</a>, section 5.2, page 327.
+    * Converts a color from CIE XYZ to CIE L*a*b*. Assumes D65 illuminant, CIE
+    * 1965 2 degrees referents.
+    *
+    * @param x      the x coordinate
+    * @param y      the y coordinate
+    * @param z      the z coordinate
+    * @param a      the alpha component
+    * @param target the output vector
+    *
+    * @return the Lab color
+    *
+    * @see Math#pow(double, double)
+    */
+   public static Vec4 xyzaToLab ( final float x, final float y, final float z,
+      final float a, final Vec4 target ) {
+
+      /*
+       * http://www.easyrgb.com/en/math.php 100.0d / 95.047d =
+       * 1.0521110608435826d; 100.0d / 108.883d = 0.9184170164304805d; 16.0d /
+       * 116.0d = 0.13793103448275862d
+       */
+
+      double vx = x * 1.0521110608435826d;
+      if ( vx > 0.008856d ) {
+         vx = Math.pow(vx, 0.3333333333333333d);
+      } else {
+         vx = 7.787d * vx + 0.13793103448275862d;
+      }
+
+      double vy = y;
+      if ( vy > 0.008856d ) {
+         vy = Math.pow(vy, 0.3333333333333333d);
+      } else {
+         vy = 7.787d * vy + 0.13793103448275862d;
+      }
+
+      double vz = z * 0.9184170164304805d;
+      if ( vz > 0.008856d ) {
+         vz = Math.pow(vz, 0.3333333333333333d);
+      } else {
+         vz = 7.787d * vz + 0.13793103448275862d;
+      }
+
+      return target.set(( float ) ( 116.0d * vy - 16.0d ), ( float ) ( 500.0d
+         * ( vx - vy ) ), ( float ) ( 200.0d * ( vy - vz ) ), a);
+   }
+
+   /**
+    * Converts a color from CIE XYZ to CIE L*a*b*.
+    *
+    * @param source the XYZ vector
+    * @param target the output vector
+    *
+    * @return the Lab color
+    *
+    * @see Color#xyzaToLab(float, float, float, float, Vec4)
+    */
+   public static Vec4 xyzaToLab ( final Vec4 source, final Vec4 target ) {
+
+      return Color.xyzaToLab(source.x, source.y, source.z, source.w, target);
+   }
+
+   /**
+    * Converts a color from CIE XYZ to lRGB. Expects input values to be in the
+    * range [0.0, 1.0]. References Pharr, Jakob, and Humphreys'
+    * <a href="http://www.pbr-book.org/">Physically Based Rendering</a>,
+    * section 5.2.2, page 327.
     *
     * @param x      the x coordinate
     * @param y      the y coordinate
@@ -2458,12 +2680,6 @@ public class Color implements Comparable < Color > {
    public static Color xyzaTolRgba ( final float x, final float y,
       final float z, final float a, final Color target ) {
 
-      /*
-       * { { 3.240812398895283, -1.5373084456298136, -0.4985865229069666 }, {
-       * -0.9692430170086407, 1.8759663029085742, 0.04155503085668564 }, {
-       * 0.055638398436112804, -0.20400746093241362, 1.0571295702861434 } }
-       */
-
       return target.set(3.2408123f * x - 1.5373085f * y - 0.49858654f * z,
          -0.969243f * x + 1.8759663f * y + 0.041555032f * z, 0.0556384f * x
             - 0.20400746f * y + 1.0571296f * z, a);
@@ -2472,35 +2688,35 @@ public class Color implements Comparable < Color > {
    /**
     * Converts a color from CIE XYZ to lRGB.
     *
-    * @param v      the XYZ vector
+    * @param source the XYZ vector
     * @param target the output color
     *
     * @return the color
     *
     * @see Color#xyzaTolRgba(float, float, float, float, Color)
     */
-   public static Color xyzaTolRgba ( final Vec4 v, final Color target ) {
+   public static Color xyzaTolRgba ( final Vec4 source, final Color target ) {
 
-      return Color.xyzaTolRgba(v.x, v.y, v.z, v.w, target);
+      return Color.xyzaTolRgba(source.x, source.y, source.z, source.w, target);
    }
 
    /**
-    * Converts a color from CIE XYZ to lRGB.
+    * Converts a color from CIE XYZ to sRGB.
     *
-    * @param v      the XYZ vector
+    * @param source the XYZ vector
     * @param alpha  adjust the alpha
     * @param target the output color
     * @param linear the linear color
     *
     * @return the color
     *
-    * @see Color#xyzaTolRgba(float, float, float, float, Color)
+    * @see Color#xyzaTolRgba(Vec4, Color)
     * @see Color#lRgbTosRgb(Color, boolean, Color)
     */
-   public static Color xyzaTosRgba ( final Vec4 v, final boolean alpha,
+   public static Color xyzaTosRgba ( final Vec4 source, final boolean alpha,
       final Color target, final Color linear ) {
 
-      Color.xyzaTolRgba(v.x, v.y, v.z, v.w, linear);
+      Color.xyzaTolRgba(source, linear);
       return Color.lRgbTosRgb(linear, alpha, target);
    }
 
@@ -2569,11 +2785,12 @@ public class Color implements Comparable < Color > {
     * <em>not</em> prefix the String with a hexadecimal indicator, '0x'; this
     * is so that Strings can be concatenated together.
     *
-    * @param b the byte
+    * @param sb the string builder
+    * @param b  the byte
     *
     * @return the string
     */
-   static StringBuilder toHexString ( final byte b, final StringBuilder sb ) {
+   static StringBuilder toHexString ( final StringBuilder sb, final byte b ) {
 
       final int digit0 = b >> 0x4 & 0xf;
       final int digit1 = b & 0xf;
@@ -2964,11 +3181,6 @@ public class Color implements Comparable < Color > {
       public Color applyUnclamped ( final Color origin, final Color dest,
          final Float step, final Color target ) {
 
-         /*
-          * https://blog.johnnovak.net/2016/09/21/what-every-coder-should-know-
-          * about-gamma/
-          */
-
          final double t = step;
          final double u = 1.0d - t;
 
@@ -3005,7 +3217,7 @@ public class Color implements Comparable < Color > {
             0.4166666666666667d) * 1.055d - 0.055d;
 
          /* Treat alpha separately. */
-         double csa = 0.0d;
+         double csa;
          if ( this.alpha ) {
             final double ala = origin.a <= 0.04045f ? origin.a
                * 0.07739938080495357d : Math.pow( ( origin.a + 0.055d )
@@ -3357,6 +3569,85 @@ public class Color implements Comparable < Color > {
       public void setValFunc ( final Utils.LerpUnclamped valFunc ) {
 
          if ( valFunc != null ) { this.valFunc = valFunc; }
+      }
+
+   }
+
+   /**
+    * Eases between two colors in CIE L*a*b* color space. May return colors
+    * outside the range [0.0, 1.0].
+    */
+   public static class MixLab extends AbstrEasing {
+
+      /**
+       * The mixed color in CIE L*a*b*.
+       */
+      protected final Vec4 cLab = new Vec4();
+
+      /**
+       * The mixed color in linear RGB.
+       */
+      protected final Color cLinear = new Color();
+
+      /**
+       * The mixed color in CIE XYZ.
+       */
+      protected final Vec4 cXyz = new Vec4();
+
+      /**
+       * The destination color in CIE L*a*b*.
+       */
+      protected final Vec4 dLab = new Vec4();
+
+      /**
+       * The destination color in linear RGB.
+       */
+      protected final Color dLinear = new Color();
+
+      /**
+       * The destination color in CIE XYZ.
+       */
+      protected final Vec4 dXyz = new Vec4();
+
+      /**
+       * The origin color in CIE L*a*b*.
+       */
+      protected final Vec4 oLab = new Vec4();
+
+      /**
+       * The origin color in linear RGB.
+       */
+      protected final Color oLinear = new Color();
+
+      /**
+       * The origin color in CIE XYZ.
+       */
+      protected final Vec4 oXyz = new Vec4();
+
+      /**
+       * Applies the function.
+       *
+       * @param origin the origin color
+       * @param dest   the destination color
+       * @param step   the step in a range 0 to 1
+       * @param target the output color
+       *
+       * @return the eased color
+       *
+       * @see Color#sRgbaToLab(Color, boolean, Vec4, Vec4, Color)
+       * @see Color#labTosRgba(Vec4, boolean, Color, Vec4, Color)
+       * @see Vec4#mix(Vec4, Vec4, float, Vec4)
+       */
+      @Override
+      public Color applyUnclamped ( final Color origin, final Color dest,
+         final Float step, final Color target ) {
+
+         Color.sRgbaToLab(origin, false, this.oLab, this.oXyz, this.oLinear);
+         Color.sRgbaToLab(dest, false, this.dLab, this.dXyz, this.dLinear);
+         Vec4.mix(this.oLab, this.dLab, step, this.cLab);
+         Color.labTosRgba(this.cLab, false, target, this.cXyz, this.cLinear);
+         // return Color.clamp01(target, target);
+         return target;
       }
 
    }

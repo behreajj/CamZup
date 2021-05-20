@@ -54,13 +54,15 @@ public interface IBlenderWritable {
     * Generates Blender python code which creates mesh data.
     *
     * @param pyCd          the string builder
+    * @param includeEdges  whether to include edge data
     * @param useAutoSmooth use auto smoothed normals
     * @param autoAngle     the auto smooth angle
     *
     * @return the string builder
     */
    default StringBuilder genMeshBoilerPlate ( final StringBuilder pyCd,
-      final boolean useAutoSmooth, final float autoAngle ) {
+      final boolean includeEdges, final boolean useAutoSmooth,
+      final float autoAngle ) {
 
       /* Append meshes. */
       final String pyUseAutoSmooth = useAutoSmooth ? "True" : "False";
@@ -69,9 +71,15 @@ public interface IBlenderWritable {
       pyCd.append("for mesh in meshes:\n");
       pyCd.append("    name = mesh[\"name\"]\n");
       pyCd.append("    vert_dat = mesh[\"vertices\"]\n");
+      pyCd.append("    edge_idcs = ");
+      if ( includeEdges ) {
+         pyCd.append("mesh[\"edges\"]\n");
+      } else {
+         pyCd.append("[]\n");
+      }
       pyCd.append("    fc_idcs = mesh[\"faces\"]\n");
       pyCd.append("    mesh_data = d_meshes.new(name)\n");
-      pyCd.append("    mesh_data.from_pydata(vert_dat, [], fc_idcs)\n");
+      pyCd.append("    mesh_data.from_pydata(vert_dat, edge_idcs, fc_idcs)\n");
       pyCd.append("    mesh_data.validate(verbose=True)\n");
       pyCd.append("    mesh_data.use_auto_smooth = ");
       pyCd.append(pyUseAutoSmooth);

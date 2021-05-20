@@ -247,7 +247,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * append it to a {@link StringBuilder}. Used for testing purposes to
     * compare results with Blender 2.9x.<br>
     * <br>
-    * This is formatted as a four-tuple where w is the first element.
+    * The real component, w, is the first element.
     *
     * @param pyCd the string builder
     *
@@ -337,7 +337,8 @@ public class Quaternion implements Comparable < Quaternion > {
     * @return the normalized sum
     *
     * @see Vec3#add(Vec3, Vec3, Vec3)
-    * @see Quaternion#dot(Quaternion, Quaternion)
+    * @see Quaternion#magSq(Quaternion)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Quaternion addNorm ( final Quaternion a, final Quaternion b,
       final Quaternion target ) {
@@ -499,7 +500,8 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Divides a scalar by a quaternion.
+    * Divides a scalar by a quaternion. Returns the identity if the operation
+    * is invalid.
     *
     * @param a      the numerator
     * @param b      the denominator
@@ -508,6 +510,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * @return the quotient
     *
     * @see Utils#approx(float, float)
+    * @see Quaternion#identity(Quaternion)
     */
    public static Quaternion div ( final float a, final Quaternion b,
       final Quaternion target ) {
@@ -551,7 +554,8 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Divides a quaternion by a scalar.
+    * Divides a quaternion by a scalar. Returns the identity if the operation
+    * is invalid.
     *
     * @param a      the numerator
     * @param b      the denominator
@@ -560,6 +564,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * @return the quotient
     *
     * @see Vec3#mul(Vec3, float, Vec3)
+    * @see Quaternion#identity(Quaternion)
     */
    public static Quaternion div ( final Quaternion a, final float b,
       final Quaternion target ) {
@@ -575,7 +580,8 @@ public class Quaternion implements Comparable < Quaternion > {
 
    /**
     * Divides one quaternion by another. Equivalent to multiplying the
-    * numerator and the inverse of the denominator.
+    * numerator and the inverse of the denominator. Returns the identity if
+    * the operation is invalid.
     *
     * @param a      the numerator
     * @param b      the denominator
@@ -584,6 +590,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * @return the quotient
     *
     * @see Utils#approx(float, float)
+    * @see Quaternion#identity(Quaternion)
     */
    public static Quaternion div ( final Quaternion a, final Quaternion b,
       final Quaternion target ) {
@@ -669,8 +676,8 @@ public class Quaternion implements Comparable < Quaternion > {
    /**
     * Finds the exponent of a quaternion.<br>
     * <br>
-    * Returns the identity when the quaternion has no non-zero imaginary
-    * components.
+    * Returns the identity when the quaternion's imaginary vector has zero
+    * magnitude.
     *
     * @param q      the quaternion
     * @param target the output quaternion
@@ -686,14 +693,13 @@ public class Quaternion implements Comparable < Quaternion > {
       final Quaternion target ) {
 
       final Vec3 qi = q.imag;
-      final double w = q.real;
       final double x = qi.x;
       final double y = qi.y;
       final double z = qi.z;
 
       final double mgImSq = x * x + y * y + z * z;
       if ( mgImSq > IUtils.EPSILON_D ) {
-         final double wExp = Math.exp(w);
+         final double wExp = Math.exp(q.real);
          final double mgIm = Math.sqrt(mgImSq);
          final double scalar = wExp * Math.sin(mgIm) / mgIm;
          return target.set(( float ) ( wExp * Math.cos(mgIm) ), ( float ) ( x
@@ -704,7 +710,9 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Creates a quaternion from three axes.
+    * Creates a quaternion from two 2D axes. The up axis is assumed to be
+    * (0.0, 0.0, 1.0). For use in 2.5D graphics, where 2D inputs need to be
+    * represented internally as 3D elements.
     *
     * @param right   the right axis
     * @param forward the forward axis
@@ -714,6 +722,8 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @see Quaternion#fromAxes(float, float, float, float, float, float,
     *      float, float, float, Quaternion)
+    * @see Utils#invSqrt(float)
+    * @see Vec2#magSq(Vec2)
     */
    public static Quaternion fromAxes ( final Vec2 right, final Vec2 forward,
       final Quaternion target ) {
@@ -736,6 +746,8 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @see Quaternion#fromAxes(float, float, float, float, float, float,
     *      float, float, float, Quaternion)
+    * @see Utils#invSqrt(float)
+    * @see Vec3#magSq(Vec3)
     */
    public static Quaternion fromAxes ( final Vec3 right, final Vec3 forward,
       final Vec3 up, final Quaternion target ) {
@@ -1018,7 +1030,9 @@ public class Quaternion implements Comparable < Quaternion > {
     * <em>a</em> x <em>b</em> }<br>
     * <br>
     * The real component is the dot product of the vectors; the imaginary
-    * component is their cross product.
+    * component is their cross product.<br>
+    * <br>
+    * Returns the identity if either vector is zero.
     *
     * @param origin the origin vector
     * @param dest   the destination vector
@@ -1027,7 +1041,8 @@ public class Quaternion implements Comparable < Quaternion > {
     * @return the quaternion
     *
     * @see Utils#approx(float, float)
-    * @see Math#sqrt(double)
+    * @see Utils#invSqrtUnchecked(float)
+    * @see Quaternion#identity(Quaternion)
     */
    public static Quaternion fromTo ( final Vec3 origin, final Vec3 dest,
       final Quaternion target ) {
@@ -1035,27 +1050,27 @@ public class Quaternion implements Comparable < Quaternion > {
       float anx = origin.x;
       float any = origin.y;
       float anz = origin.z;
-      final float amsq = anx * anx + any * any + anz * anz;
-      if ( amsq <= 0.0f ) { return Quaternion.identity(target); }
+      final float amSq = anx * anx + any * any + anz * anz;
+      if ( amSq <= 0.0f ) { return Quaternion.identity(target); }
 
       float bnx = dest.x;
       float bny = dest.y;
       float bnz = dest.z;
-      final float bmsq = bnx * bnx + bny * bny + bnz * bnz;
-      if ( bmsq <= 0.0f ) { return Quaternion.identity(target); }
+      final float bmSq = bnx * bnx + bny * bny + bnz * bnz;
+      if ( bmSq <= 0.0f ) { return Quaternion.identity(target); }
 
-      if ( amsq != 1.0f ) {
-         final float aminv = Utils.invSqrtUnchecked(amsq);
-         anx *= aminv;
-         any *= aminv;
-         anz *= aminv;
+      if ( amSq != 1.0f ) {
+         final float amInv = Utils.invSqrtUnchecked(amSq);
+         anx *= amInv;
+         any *= amInv;
+         anz *= amInv;
       }
 
-      if ( bmsq != 1.0f ) {
-         final float bminv = Utils.invSqrtUnchecked(bmsq);
-         bnx *= bminv;
-         bny *= bminv;
-         bnz *= bminv;
+      if ( bmSq != 1.0f ) {
+         final float bmInv = Utils.invSqrtUnchecked(bmSq);
+         bnx *= bmInv;
+         bny *= bmInv;
+         bnz *= bmInv;
       }
 
       target.real = anx * bnx + any * bny + anz * bnz;
@@ -1167,7 +1182,9 @@ public class Quaternion implements Comparable < Quaternion > {
     * <em>a</em><sup>-1</sup> := <em>a</em>* / |<em>a</em>|<sup>2</sup><br>
     * <br>
     * If a quaternion is of unit length, its inverse is equal to its
-    * conjugate.
+    * conjugate.<br>
+    * <br>
+    * Returns the identity if the quaternion cannot be inverted.
     *
     * @param q      the input quaternion
     * @param target the output quaternion
@@ -1175,6 +1192,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * @return the inverse
     *
     * @see Quaternion#magSq(Quaternion)
+    * @see Quaternion#identity(Quaternion)
     */
    public static Quaternion inverse ( final Quaternion q,
       final Quaternion target ) {
@@ -1284,7 +1302,7 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @return the evaluation
     *
-    * @see Quaternion#dot(Quaternion, Quaternion)
+    * @see Quaternion#magSq(Quaternion)
     * @see Utils#approx(float, float)
     */
    public static boolean isVersor ( final Quaternion q ) {
@@ -1318,7 +1336,6 @@ public class Quaternion implements Comparable < Quaternion > {
       final double z = qi.z;
 
       final double mgImSq = x * x + y * y + z * z;
-      target.real = ( float ) ( 0.5d * Math.log(w * w + mgImSq) );
       if ( mgImSq > IUtils.EPSILON_D ) {
          final double mgIm = Math.sqrt(mgImSq);
          final double t = Math.atan2(mgIm, w) / mgIm;
@@ -1328,6 +1345,7 @@ public class Quaternion implements Comparable < Quaternion > {
          target.imag.set(0.0f, 0.0f, 0.0f);
       }
 
+      target.real = ( float ) ( 0.5d * Math.log(w * w + mgImSq) );
       return target;
    }
 
@@ -1351,9 +1369,10 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Finds the magnitude squared of a quaternion. Equivalent to the dot
-    * product of a quaternion with itself and to the product of a quaternion
-    * with its conjugate.<br>
+    * Finds the magnitude squared of a quaternion. Equivalent to the
+    * {@link Quaternion#dot(Quaternion, Quaternion)} of a quaternion with
+    * itself and to the product of a quaternion with its
+    * {@link Quaternion#conj(Quaternion, Quaternion)}.<br>
     * <br>
     * |<em>a</em>|<sup>2</sup> := <em>a</em> \u00b7 <em>a</em><br>
     * <br>
@@ -1363,7 +1382,7 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @return the magnitude squared
     *
-    * @see Quaternion#dot(Quaternion, Quaternion)
+    * @see Vec3#magSq(Vec3)
     */
    public static float magSq ( final Quaternion q ) {
 
@@ -1371,7 +1390,8 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Mixes two vectors together by a step in [0.0, 1.0].
+    * Mixes two vectors together by a step in [0.0, 1.0], then normalizes the
+    * result.
     *
     * @param origin the original quaternion
     * @param dest   the destination quaternion
@@ -1380,6 +1400,7 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @return the mix
     *
+    * @see Quaternion#normalize(Quaternion, Quaternion)
     * @see Quaternion#slerpUnclamped(Quaternion, Quaternion, float,
     *      Quaternion)
     */
@@ -1399,6 +1420,8 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param target the output quaternion
     *
     * @return the scaled quaternion
+    *
+    * @see Vec3#mul(float, Vec3, Vec3)
     */
    public static Quaternion mul ( final float a, final Quaternion b,
       final Quaternion target ) {
@@ -1419,6 +1442,8 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param target the output quaternion
     *
     * @return the scaled quaternion
+    *
+    * @see Vec3#mul(Vec3, float, Vec3)
     */
    public static Quaternion mul ( final Quaternion a, final float b,
       final Quaternion target ) {
@@ -1509,6 +1534,8 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param target the output quaternion
     *
     * @return the negation
+    *
+    * @see Vec3#negate(Vec3, Vec3)
     */
    public static Quaternion negate ( final Quaternion q,
       final Quaternion target ) {
@@ -1544,6 +1571,8 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param target the output quaternion
     *
     * @return the normalized quaternion
+    *
+    * @see Quaternion#identity(Quaternion)
     */
    public static Quaternion normalize ( final Quaternion q,
       final Quaternion target ) {
@@ -1646,6 +1675,10 @@ public class Quaternion implements Comparable < Quaternion > {
    public static Quaternion pow ( final Quaternion a, final float b,
       final Quaternion target, final Quaternion ln, final Quaternion scaled ) {
 
+      // QUERY: Is it possible to raise a number to a quaternion power?
+      // Quaternion.mul((float)Math.log(a), b, scaled);
+      // return Quaternion.exp(scaled, target);
+
       Quaternion.log(a, ln);
       Quaternion.mul(ln, b, scaled);
       return Quaternion.exp(scaled, target);
@@ -1742,6 +1775,9 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param target  the output quaternion
     *
     * @return the rotated quaternion
+    *
+    * @see Utils#modRadians(float)
+    * @see Quaternion#rotateX(Quaternion, float, float, Quaternion)
     */
    public static Quaternion rotateX ( final Quaternion q, final float radians,
       final Quaternion target ) {
@@ -1781,6 +1817,9 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param target  the output quaternion
     *
     * @return the rotated quaternion
+    *
+    * @see Utils#modRadians(float)
+    * @see Quaternion#rotateY(Quaternion, float, float, Quaternion)
     */
    public static Quaternion rotateY ( final Quaternion q, final float radians,
       final Quaternion target ) {
@@ -1820,6 +1859,9 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param target  the output quaternion
     *
     * @return the rotated quaternion
+    *
+    * @see Utils#modRadians(float)
+    * @see Quaternion#rotateZ(Quaternion, float, float, Quaternion)
     */
    public static Quaternion rotateZ ( final Quaternion q, final float radians,
       final Quaternion target ) {
@@ -1844,14 +1886,20 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param target the output quaternion
     *
     * @return the quaternion
+    *
+    * @see Quaternion#normalize(Quaternion, Quaternion)
     */
    @Experimental
    public static Quaternion squad ( final Quaternion ap0, final Quaternion cp0,
       final Quaternion cp1, final Quaternion ap1, final float step,
       final Quaternion target ) {
 
-      // https://devtalk.blender.org/t/quaternion-interpolation/15883/15
+      // TODO: This is not squad. Squad is:
+      // slerp(slerp(start, end, t), slerp(handle_1, handle_2, t), 2t(1 - t))
 
+      // https://devtalk.blender.org/t/quaternion-interpolation/15883/15
+      // https://gist.github.com/usefulslug/c59d5f7d35240733b80b
+      // https://www.3dgep.com/understanding-quaternions/
       // https://math.stackexchange.com/questions/2650188/
       // super-confused-by-squad-algorithm-for-quaternion-interpolation
 
@@ -2178,7 +2226,9 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @return the quaternion
     *
-    * @see Quaternion#mix(Quaternion, Quaternion, float, Quaternion)
+    * @see Quaternion#normalize(Quaternion, Quaternion)
+    * @see Quaternion#slerpNoInvertUnclamped(Quaternion, Quaternion, float,
+    *      Quaternion)
     */
    @Experimental
    public static Quaternion squad ( final Quaternion ap0, final Quaternion cp0,
@@ -2190,21 +2240,21 @@ public class Quaternion implements Comparable < Quaternion > {
          Quaternion.normalize(ap0, a);
          Quaternion.normalize(cp0, b);
          Quaternion.normalize(cp1, c);
-         Quaternion.normalize(ap0, ab);
-         Quaternion.normalize(cp0, bc);
-         return Quaternion.normalize(ap0, target);
+         ab.set(a);
+         bc.set(b);
+         return target.set(a);
       }
 
       if ( step >= 1.0f ) {
          Quaternion.normalize(cp0, a);
          Quaternion.normalize(cp1, b);
          Quaternion.normalize(ap1, c);
-         Quaternion.normalize(cp1, ab);
-         Quaternion.normalize(ap1, bc);
-         return Quaternion.normalize(ap1, target);
+         ab.set(b);
+         bc.set(c);
+         return target.set(c);
       }
 
-      // QUERY Allow inverse or no inverse?
+      // QUERY Inverse or no inverse?
       Quaternion.slerpNoInvertUnclamped(ap0, cp0, step, a);
       Quaternion.slerpNoInvertUnclamped(cp0, cp1, step, b);
       Quaternion.slerpNoInvertUnclamped(cp1, ap1, step, c);
@@ -2244,7 +2294,7 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     * @see Quaternion#magSq(Quaternion)
-    * @see Math#sqrt(double)
+    * @see Utils#invSqrtUnchecked(float)
     */
    public static Quaternion subNorm ( final Quaternion a, final Quaternion b,
       final Quaternion target ) {
@@ -2336,10 +2386,10 @@ public class Quaternion implements Comparable < Quaternion > {
     * @return the angle
     *
     * @see Quaternion#magSq(Quaternion)
+    * @see Utils#approx(float, float)
+    * @see Utils#invSqrtUnchecked(float)
     * @see Vec3#forward(Vec3)
-    * @see Math#abs(float)
-    * @see Math#sqrt(double)
-    * @see Math#acos(double)
+    * @see Utils#acos(float)
     */
    public static float toAxisAngle ( final Quaternion q, final Vec3 axis ) {
 
@@ -2435,7 +2485,9 @@ public class Quaternion implements Comparable < Quaternion > {
 
    /**
     * An internal helper method to mix quaternions together within a squad
-    * function. Does not check whether step is out of the range [0.0, 1.0].
+    * function. Does not invert the dot product to find the shortest route.
+    * Normalizes the result. Does not check whether step is out of the range
+    * [0.0, 1.0].
     *
     * @param origin the original quaternion
     * @param dest   the destination quaternion
@@ -2443,6 +2495,12 @@ public class Quaternion implements Comparable < Quaternion > {
     * @param target the output quaternion
     *
     * @return the mix
+    *
+    * @see Utils#abs(float)
+    * @see Quaternion#normalize(Quaternion, Quaternion)
+    * @see Utils#acos(float)
+    * @see Utils#invSqrtUnchecked(float)
+    * @see Utils#sin(float)
     */
    static Quaternion slerpNoInvertUnclamped ( final Quaternion origin,
       final Quaternion dest, final float step, final Quaternion target ) {
@@ -2498,8 +2556,9 @@ public class Quaternion implements Comparable < Quaternion > {
    /**
     * An internal helper method to mix quaternions together when no easing
     * function is provided. Does not check whether step is out of the range
-    * [0.0, 1.0]. Uses single precision methods over {@link java.lang.Math},
-    * and hence is less accurate.
+    * [0.0, 1.0]. Reverses the dot product to find the shortest route.
+    * Normalizes the result. Uses single precision methods over
+    * {@link java.lang.Math}, and hence is less accurate.
     *
     * @param origin the original quaternion
     * @param dest   the destination quaternion
@@ -2644,7 +2703,7 @@ public class Quaternion implements Comparable < Quaternion > {
 
    /**
     * A functional class to ease between two quaternions by linear
-    * interpolation (lerp).
+    * interpolation (lerp). The result is normalized following interpolation.
     */
    public static class Lerp extends AbstrEasing {
 
@@ -2693,7 +2752,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * A functional class to ease between two quaternions by spherical linear
     * interpolation (slerp). This chooses the shortest path between two
     * orientations and maintains constant speed for a step given in [0.0, 1.0]
-    * .
+    * . The result is normalized following interpolation.
     */
    public static class Slerp extends AbstrEasing {
 

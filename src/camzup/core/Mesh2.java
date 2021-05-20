@@ -1661,15 +1661,21 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * compare results with Blender 2.9x. Appends a z component to promote the
     * vector to 3D.
     *
-    * @param pyCd       the string builder
-    * @param includeUvs whether or not to include UVs
-    * @param z          z offset
+    * @param pyCd         the string builder
+    * @param includeEdges whether to include edge index data
+    * @param includeUvs   whether or not to include UVs
+    * @param z            z offset
     *
     * @return the string builder
     */
    @Experimental
    StringBuilder toBlenderCode ( final StringBuilder pyCd,
-      final boolean includeUvs, final float z ) {
+      final boolean includeEdges, final boolean includeUvs, final float z ) {
+
+      final int vsLen = this.coords.length;
+      final int vsLast = vsLen - 1;
+      final int facesLen = this.faces.length;
+      final int facesLast = facesLen - 1;
 
       pyCd.append("{\"name\": \"");
       pyCd.append(this.name);
@@ -1677,17 +1683,39 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       pyCd.append(this.materialIndex);
       pyCd.append(", \"vertices\": [");
 
-      final int vsLen = this.coords.length;
-      final int vsLast = vsLen - 1;
       for ( int i = 0; i < vsLen; ++i ) {
          this.coords[i].toBlenderCode(pyCd, z);
          if ( i < vsLast ) { pyCd.append(',').append(' '); }
       }
 
-      pyCd.append("], \"faces\": [");
+      if ( includeEdges ) {
 
-      final int facesLen = this.faces.length;
-      final int facesLast = facesLen - 1;
+         /*
+          * Edges are not included because they raise a lot of flags from
+          * verbose from_py validation about duplicates. You would need to make
+          * an array then check if it contains either the edge or its
+          * permutation.
+          */
+
+         pyCd.append("], \"edges\": [");
+
+         for ( int j = 0; j < facesLen; ++j ) {
+            final int[][] vrtInd = this.faces[j];
+            final int vrtIndLen = vrtInd.length;
+            final int vrtLast = vrtIndLen - 1;
+            for ( int k = 0; k < vrtIndLen; ++k ) {
+               pyCd.append('(');
+               pyCd.append(vrtInd[k][0]);
+               pyCd.append(',').append(' ');
+               pyCd.append(vrtInd[ ( k + 1 ) % vrtIndLen][0]);
+               pyCd.append(')');
+               if ( k < vrtLast ) { pyCd.append(',').append(' '); }
+            }
+            if ( j < facesLast ) { pyCd.append(',').append(' '); }
+         }
+      }
+
+      pyCd.append("], \"faces\": [");
       for ( int j = 0; j < facesLen; ++j ) {
          final int[][] vrtInd = this.faces[j];
          final int vrtIndLen = vrtInd.length;
@@ -1704,9 +1732,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       }
 
       if ( includeUvs ) {
-         pyCd.append("], \"uvs\": [");
          final int vtsLen = this.texCoords.length;
          final int vtsLast = vtsLen - 1;
+
+         pyCd.append("], \"uvs\": [");
          for ( int h = 0; h < vtsLen; ++h ) {
             this.texCoords[h].toBlenderCode(pyCd, true);
             if ( h < vtsLast ) { pyCd.append(',').append(' '); }
@@ -2400,8 +2429,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final float halfRad = padRad * 0.5f;
       final float radrt32 = padRad * IUtils.SQRT_3_2;
 
-      final int iMax = vRings - 1;
-      final int iMin = -iMax;
+      final int vRingsn1 = vRings - 1;
 
       /* Hard code texture coordinates. */
       final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords, 6);
@@ -2412,16 +2440,18 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       vts[4].set(0.9330127f, 0.25f);
       vts[5].set(0.9330127f, 0.75f);
 
-      final int fsLen = 1 + iMax * vRings * 3;
+      final int fsLen = 1 + vRingsn1 * vRings * 3;
       final Vec2[] vs = target.coords = Vec2.resize(target.coords, fsLen * 6);
       final int[][][] fs = target.faces = new int[fsLen][6][2];
 
       int vIdx = 0;
       int fIdx = 0;
-      for ( int i = iMin; i <= iMax; ++i ) {
-         final int jMin = Math.max(iMin, iMin - i);
-         final int jMax = Math.min(iMax, iMax - i);
+      for ( int i = -vRingsn1; i <= vRingsn1; ++i ) {
+         final boolean igt0 = i > 0;
+         final int jMin = igt0 ? -vRingsn1 : -vRingsn1 - i;
+         final int jMax = igt0 ? vRingsn1 - i : vRingsn1;
          final float iExt = i * extent;
+         // jLen = (vRings * 2 - 1) + or - (i > 0 ? i : -i)
 
          for ( int j = jMin; j <= jMax; ++j ) {
             final float jf = j;

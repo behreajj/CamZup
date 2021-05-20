@@ -40,8 +40,7 @@ void setup() {
     material.name = Color.toHexString(material.fill);
     materials[i] = material;
 
-    if (i % 3 != 2) {
-    } else {
+    if (i % 3 == 2) {
       cell.subdivFacesCenter(1);
       Mesh2.uniformData(cell, cell);
       Face2[] faces = cell.getFaces();

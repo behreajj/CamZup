@@ -2273,6 +2273,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * compare results with Blender 2.9x.
     *
     * @param pyCd           the string builder
+    * @param includeEdges   whether to include edge index data
     * @param includeUvs     whether or not to include UVs
     * @param includeNormals whether or not to include normals
     *
@@ -2280,7 +2281,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    @Experimental
    StringBuilder toBlenderCode ( final StringBuilder pyCd,
-      final boolean includeUvs, final boolean includeNormals ) {
+      final boolean includeEdges, final boolean includeUvs,
+      final boolean includeNormals ) {
+
+      final int vsLen = this.coords.length;
+      final int vsLast = vsLen - 1;
+      final int facesLen = this.faces.length;
+      final int facesLast = facesLen - 1;
 
       pyCd.append("{\"name\": \"");
       pyCd.append(this.name);
@@ -2288,17 +2295,39 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       pyCd.append(this.materialIndex);
       pyCd.append(", \"vertices\": [");
 
-      final int vsLen = this.coords.length;
-      final int vsLast = vsLen - 1;
       for ( int i = 0; i < vsLen; ++i ) {
          this.coords[i].toBlenderCode(pyCd);
          if ( i < vsLast ) { pyCd.append(',').append(' '); }
       }
 
-      pyCd.append("], \"faces\": [");
+      if ( includeEdges ) {
 
-      final int facesLen = this.faces.length;
-      final int facesLast = facesLen - 1;
+         /*
+          * Edges are not included because they raise a lot of flags from
+          * verbose from_py validation about duplicates. You would need to make
+          * an array then check if it contains either the edge or its
+          * permutation.
+          */
+
+         pyCd.append("], \"edges\": [");
+
+         for ( int j = 0; j < facesLen; ++j ) {
+            final int[][] vrtInd = this.faces[j];
+            final int vrtIndLen = vrtInd.length;
+            final int vrtLast = vrtIndLen - 1;
+            for ( int k = 0; k < vrtIndLen; ++k ) {
+               pyCd.append('(');
+               pyCd.append(vrtInd[k][0]);
+               pyCd.append(',').append(' ');
+               pyCd.append(vrtInd[ ( k + 1 ) % vrtIndLen][0]);
+               pyCd.append(')');
+               if ( k < vrtLast ) { pyCd.append(',').append(' '); }
+            }
+            if ( j < facesLast ) { pyCd.append(',').append(' '); }
+         }
+      }
+
+      pyCd.append("], \"faces\": [");
       for ( int j = 0; j < facesLen; ++j ) {
          final int[][] vrtInd = this.faces[j];
          final int vrtIndLen = vrtInd.length;
@@ -2315,9 +2344,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       if ( includeUvs ) {
-         pyCd.append("], \"uvs\": [");
          final int vtsLen = this.texCoords.length;
          final int vtsLast = vtsLen - 1;
+
+         pyCd.append("], \"uvs\": [");
          for ( int h = 0; h < vtsLen; ++h ) {
             this.texCoords[h].toBlenderCode(pyCd, true);
             if ( h < vtsLast ) { pyCd.append(',').append(' '); }

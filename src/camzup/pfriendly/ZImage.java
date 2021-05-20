@@ -1399,17 +1399,30 @@ public class ZImage extends PImage {
 
       final int[] trgpx = new int[newPxlLen];
       switch ( srcFmt ) {
+
          case PConstants.ALPHA:
+
             System.arraycopy(clrs, 0, trgpx, 0, newPxlLen);
+
             break;
 
          case PConstants.RGB:
+
+            for ( int i = 0, j = 0; i < newPxlLen; ++i, j += 4 ) {
+               trgpx[i] = 0xff000000 | clrs[j + 2] << 0x10 | clrs[j + 1] << 0x08
+                  | clrs[j];
+            }
+
+            break;
+
          case PConstants.ARGB:
          default:
+
             for ( int i = 0, j = 0; i < newPxlLen; ++i, j += 4 ) {
                trgpx[i] = clrs[j + 3] << 0x18 | clrs[j + 2] << 0x10 | clrs[j
                   + 1] << 0x08 | clrs[j];
             }
+
             break;
       }
 
@@ -1718,7 +1731,7 @@ public class ZImage extends PImage {
                final float zbf = u * xbf + t * ybf;
 
                /* @formatter:off */
-               pixels[i] = ya << 0x18
+               pixels[i] = 0xff000000
                          | ( int ) ( zrf * 0xff + 0.5f ) << 0x10
                          | ( int ) ( zgf * 0xff + 0.5f ) << 0x08
                          | ( int ) ( zbf * 0xff + 0.5f );

@@ -131,7 +131,7 @@ This can be crucial when working with signed angles, such as those returned from
 
 Signed angles can be converted to unsigned angles with [floor modulo](https://en.wikipedia.org/wiki/Modulo_operation), `mod`. This should not be confused with truncation modulo, `fmod`. In Processing's Java mode, `%` is truncation modulo; in Python mode, `%` is floor modulo.
 
-Vertex winding is also affected. Below, a piecemeal Bezier curve is used to approximate a circle. The central contour uses the opposite (clockwise) vertex winding.
+Vertex winding is also affected. Below, a piecewise Bezier curve is used to approximate a circle. The central contour uses the opposite (clockwise) vertex winding.
 
 ![Winding](data/windingDiagram.png)
 

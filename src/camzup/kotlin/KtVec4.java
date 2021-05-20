@@ -49,6 +49,19 @@ public class KtVec4 extends Vec4 implements Iterable < Float > {
    }
 
    /**
+    * Constructs a vector from integer values.
+    *
+    * @param x the x component
+    * @param y the y component
+    * @param z the z component
+    * @param w the w component
+    */
+   public KtVec4 ( final int x, final int y, final int z, final int w ) {
+
+      super(x, y, z, w);
+   }
+
+   /**
     * Promotes a Vec2 to a KtVec4.
     *
     * @param v2 the vector
@@ -86,6 +99,8 @@ public class KtVec4 extends Vec4 implements Iterable < Float > {
     * @param v the value
     *
     * @return the evaluation
+    *
+    * @see Utils#approx(float, float)
     */
    public boolean contains ( final float v ) {
 

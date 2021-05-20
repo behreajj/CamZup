@@ -11,9 +11,10 @@ import camzup.core.Utils.EasingFuncArr;
 import camzup.core.Utils.EasingFuncObj;
 
 /**
- * Organizes a 3D cubic Bezier curve into a list of knots. Provides a
- * function to retrieve a point and tangent on a curve from a step in the
- * range [0.0, 1.0] .
+ * Implements a <a href=
+ * "https://www.wikiwand.com/en/Composite_B%C3%A9zier_curve">composite</a>
+ * piecewise cubic Bezier curve. Provides a function to retrieve a point
+ * and tangent on a curve from a step in the range [0.0, 1.0] .
  */
 public class Curve3 extends Curve implements Iterable < Knot3 > {
 

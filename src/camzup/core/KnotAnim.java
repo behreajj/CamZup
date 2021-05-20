@@ -6,7 +6,7 @@ package camzup.core;
  * following control point) and rear handle (the preceding control point).
  */
 @Experimental
-public class KnotSphere implements Comparable < KnotSphere > {
+public class KnotAnim implements Comparable < KnotAnim > {
 
    /**
     * The orientation of the knot, serving as a coordinate on a sphere.
@@ -28,7 +28,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
    /**
     * The default constructor.
     */
-   public KnotSphere ( ) {}
+   public KnotAnim ( ) {}
 
    /**
     * Sets this knot from a series of floats.
@@ -46,7 +46,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
     * @param yrh the rear handle y
     * @param zrh the rear handle z
     */
-   public KnotSphere ( final float wco, final float xco, final float yco,
+   public KnotAnim ( final float wco, final float xco, final float yco,
       final float zco, final float wfh, final float xfh, final float yfh,
       final float zfh, final float wrh, final float xrh, final float yrh,
       final float zrh ) {
@@ -59,7 +59,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
     *
     * @param source the source
     */
-   public KnotSphere ( final KnotSphere source ) { this.set(source); }
+   public KnotAnim ( final KnotAnim source ) { this.set(source); }
 
    /**
     * Creates a knot from a series of quaternions.
@@ -68,7 +68,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
     * @param foreHandle the fore handle
     * @param rearHandle the rear handle
     */
-   public KnotSphere ( final Quaternion coord, final Quaternion foreHandle,
+   public KnotAnim ( final Quaternion coord, final Quaternion foreHandle,
       final Quaternion rearHandle ) {
 
       this.set(coord, foreHandle, rearHandle);
@@ -82,7 +82,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
     * @return the evaluation
     */
    @Override
-   public int compareTo ( final KnotSphere knot ) {
+   public int compareTo ( final KnotAnim knot ) {
 
       return this.coord.compareTo(knot.coord);
    }
@@ -123,11 +123,55 @@ public class KnotSphere implements Comparable < KnotSphere > {
    }
 
    /**
+    * Mirrors this knot's handles. Defaults to mirroring in the forward
+    * direction.
+    *
+    * @return this knot
+    *
+    * @see KnotAnim#mirrorHandlesForward()
+    */
+   public KnotAnim mirrorHandles ( ) { return this.mirrorHandlesForward(); }
+
+   /**
+    * Sets the forward-facing handle to mirror the rear-facing handle: the
+    * fore will have the same magnitude and negated direction of the rear.
+    *
+    * @return this knot
+    */
+   public KnotAnim mirrorHandlesBackward ( ) {
+
+      final Vec3 coi = this.coord.imag;
+      final Vec3 rhi = this.rearHandle.imag;
+      this.foreHandle.set(this.coord.real - ( this.rearHandle.real
+         - this.coord.real ), coi.x - ( rhi.x - coi.x ), coi.y - ( rhi.y
+            - coi.y ), coi.z - ( rhi.z - coi.z ));
+
+      return this;
+   }
+
+   /**
+    * Sets the rear-facing handle to mirror the forward-facing handle: the
+    * rear will have the same magnitude and negated direction of the fore.
+    *
+    * @return this knot
+    */
+   public KnotAnim mirrorHandlesForward ( ) {
+
+      final Vec3 coi = this.coord.imag;
+      final Vec3 fhi = this.foreHandle.imag;
+      this.rearHandle.set(this.coord.real - ( this.foreHandle.real
+         - this.coord.real ), coi.x - ( fhi.x - coi.x ), coi.y - ( fhi.y
+            - coi.y ), coi.z - ( fhi.z - coi.z ));
+
+      return this;
+   }
+
+   /**
     * Reverses the knot's direction by swapping the fore- and rear-handles.
     *
     * @return this knot
     */
-   public KnotSphere reverse ( ) {
+   public KnotAnim reverse ( ) {
 
       final Vec3 fi = this.foreHandle.imag;
       final float tw = this.foreHandle.real;
@@ -147,10 +191,10 @@ public class KnotSphere implements Comparable < KnotSphere > {
     *
     * @return this knot
     *
-    * @see KnotSphere#rotateX(float, float)
+    * @see KnotAnim#rotateX(float, float)
     * @see Utils#modRadians(float)
     */
-   public KnotSphere rotateX ( final float radians ) {
+   public KnotAnim rotateX ( final float radians ) {
 
       final float halfRad = Utils.modRadians(radians) * 0.5f;
       return this.rotateX(Utils.cos(halfRad), Utils.sin(halfRad));
@@ -168,7 +212,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
     *
     * @see Quaternion#rotateX(Quaternion, float, float, Quaternion)
     */
-   public KnotSphere rotateX ( final float cosa, final float sina ) {
+   public KnotAnim rotateX ( final float cosa, final float sina ) {
 
       Quaternion.rotateX(this.coord, cosa, sina, this.coord);
       Quaternion.rotateX(this.foreHandle, cosa, sina, this.foreHandle);
@@ -184,10 +228,10 @@ public class KnotSphere implements Comparable < KnotSphere > {
     *
     * @return this knot
     *
-    * @see KnotSphere#rotateY(float, float)
+    * @see KnotAnim#rotateY(float, float)
     * @see Utils#modRadians(float)
     */
-   public KnotSphere rotateY ( final float radians ) {
+   public KnotAnim rotateY ( final float radians ) {
 
       final float halfRad = Utils.modRadians(radians) * 0.5f;
       return this.rotateY(Utils.cos(halfRad), Utils.sin(halfRad));
@@ -205,7 +249,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
     *
     * @see Quaternion#rotateY(Quaternion, float, float, Quaternion)
     */
-   public KnotSphere rotateY ( final float cosa, final float sina ) {
+   public KnotAnim rotateY ( final float cosa, final float sina ) {
 
       Quaternion.rotateY(this.coord, cosa, sina, this.coord);
       Quaternion.rotateY(this.foreHandle, cosa, sina, this.foreHandle);
@@ -221,10 +265,10 @@ public class KnotSphere implements Comparable < KnotSphere > {
     *
     * @return this knot
     *
-    * @see KnotSphere#rotateZ(float, float)
+    * @see KnotAnim#rotateZ(float, float)
     * @see Utils#modRadians(float)
     */
-   public KnotSphere rotateZ ( final float radians ) {
+   public KnotAnim rotateZ ( final float radians ) {
 
       final float halfRad = Utils.modRadians(radians) * 0.5f;
       return this.rotateZ(Utils.cos(halfRad), Utils.sin(halfRad));
@@ -242,7 +286,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
     *
     * @see Quaternion#rotateZ(Quaternion, float, float, Quaternion)
     */
-   public KnotSphere rotateZ ( final float cosa, final float sina ) {
+   public KnotAnim rotateZ ( final float cosa, final float sina ) {
 
       Quaternion.rotateZ(this.coord, cosa, sina, this.coord);
       Quaternion.rotateZ(this.foreHandle, cosa, sina, this.foreHandle);
@@ -269,7 +313,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
     *
     * @return this knot
     */
-   public KnotSphere set ( final float wco, final float xco, final float yco,
+   public KnotAnim set ( final float wco, final float xco, final float yco,
       final float zco, final float wfh, final float xfh, final float yfh,
       final float zfh, final float wrh, final float xrh, final float yrh,
       final float zrh ) {
@@ -288,7 +332,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
     *
     * @return this knot
     */
-   public KnotSphere set ( final KnotSphere source ) {
+   public KnotAnim set ( final KnotAnim source ) {
 
       return this.set(source.coord, source.foreHandle, source.rearHandle);
    }
@@ -302,7 +346,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
     *
     * @return this knot
     */
-   public KnotSphere set ( final Quaternion coord, final Quaternion foreHandle,
+   public KnotAnim set ( final Quaternion coord, final Quaternion foreHandle,
       final Quaternion rearHandle ) {
 
       this.coord.set(coord);
@@ -341,7 +385,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
     *
     * @return the evaluation
     */
-   protected boolean equals ( final KnotSphere other ) {
+   protected boolean equals ( final KnotAnim other ) {
 
       return this.coord.equals(other.coord) && this.foreHandle.equals(
          other.foreHandle) && this.rearHandle.equals(other.rearHandle);
@@ -358,7 +402,7 @@ public class KnotSphere implements Comparable < KnotSphere > {
     *
     * @return the orientation
     */
-   public static Quaternion squad ( final KnotSphere a, final KnotSphere b,
+   public static Quaternion squad ( final KnotAnim a, final KnotAnim b,
       final float step, final Quaternion target ) {
 
       return Quaternion.squad(a.coord, a.foreHandle, b.rearHandle, b.coord,

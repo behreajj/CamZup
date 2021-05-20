@@ -87,11 +87,14 @@ public class KtClr extends Color implements Iterable < Float > {
     * @param v the value
     *
     * @return the evaluation
+    *
+    * @see Utils#approx(float, float, float)
     */
    public boolean contains ( final float v ) {
 
-      return Utils.approx(this.a, v) || Utils.approx(this.b, v) || Utils.approx(
-         this.g, v) || Utils.approx(this.r, v);
+      final float eps = IUtils.ONE_255;
+      return Utils.approx(this.a, v, eps) || Utils.approx(this.b, v, eps)
+         || Utils.approx(this.g, v, eps) || Utils.approx(this.r, v, eps);
    }
 
    /**
