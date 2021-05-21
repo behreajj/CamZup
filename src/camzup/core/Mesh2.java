@@ -3084,18 +3084,16 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          case QUAD:
 
-            final int[][][] quadfs = target.faces = new int[seg][4][2];
+            final int[][][] fsQuad = target.faces = new int[seg][4][2];
             vs[0].set(0.0f, 0.0f);
             vts[0].set(0.5f, 0.5f);
 
             /* Find corners. */
             for ( int i = 0, j = 1; i < seg; ++i, j += 2 ) {
-               final Vec2 vCorner = vs[j];
-               final float theta = i * toTheta;
-               vCorner.set(0.5f * Utils.scNorm(theta), 0.5f * Utils.scNorm(theta
-                  - 0.25f));
-
-               vts[j].set(vCorner.x + 0.5f, 0.5f - vCorner.y);
+               final Vec2 vCrn = vs[j];
+               final float t = i * toTheta;
+               vCrn.set(0.5f * Utils.scNorm(t), 0.5f * Utils.scNorm(t - 0.25f));
+               vts[j].set(vCrn.x + 0.5f, 0.5f - vCrn.y);
             }
 
             /* Find midpoints. */
@@ -3121,7 +3119,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                final int t = 1 + j % last;
                final int u = 1 + ( j + 1 ) % last;
 
-               final int[][] f = quadfs[i];
+               final int[][] f = fsQuad[i];
 
                /* Should default to zero. */
                // f[0][0] = 0;
@@ -3143,20 +3141,18 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          default:
 
-            final int[][][] trifs = target.faces = new int[seg][3][2];
+            final int[][][] fsTri = target.faces = new int[seg][3][2];
             vs[0].set(0.0f, 0.0f);
             vts[0].set(0.5f, 0.5f);
 
             for ( int i = 0, j = 1; i < seg; ++i, ++j ) {
                final Vec2 v = vs[j];
-               final float theta = i * toTheta;
-               v.set(0.5f * Utils.scNorm(theta), 0.5f * Utils.scNorm(theta
-                  - 0.25f));
-
+               final float t = i * toTheta;
+               v.set(0.5f * Utils.scNorm(t), 0.5f * Utils.scNorm(t - 0.25f));
                vts[j].set(v.x + 0.5f, 0.5f - v.y);
 
                final int k = 1 + j % seg;
-               final int[][] f = trifs[i];
+               final int[][] f = fsTri[i];
 
                /* Should default to zero. */
                // f[0][0] = 0;

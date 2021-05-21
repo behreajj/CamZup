@@ -1697,6 +1697,32 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Maps an input vector from an original range to a target range. Useful
+    * for mapping colors back into [0.0, 1.0] after they have been mixed in
+    * another color space.
+    *
+    * @param c        the input vector
+    * @param lbOrigin lower bound of original range
+    * @param ubOrigin upper bound of original range
+    * @param lbDest   lower bound of destination range
+    * @param ubDest   upper bound of destination range
+    * @param target   the output vector
+    *
+    * @return the mapped value
+    *
+    * @see Utils#map(float, float, float, float, float)
+    */
+   public static Color map ( final Color c, final Color lbOrigin,
+      final Color ubOrigin, final Color lbDest, final Color ubDest,
+      final Color target ) {
+
+      return target.set(Utils.map(c.r, lbOrigin.r, ubOrigin.r, lbDest.r,
+         ubDest.r), Utils.map(c.g, lbOrigin.g, ubOrigin.g, lbDest.g, ubDest.g),
+         Utils.map(c.b, lbOrigin.b, ubOrigin.b, lbDest.b, ubDest.b), Utils.map(
+            c.a, lbOrigin.a, ubOrigin.a, lbDest.a, ubDest.a));
+   }
+
+   /**
     * Tests to see if the alpha channel of this color is less than or equal to
     * zero, i.e., if it is completely transparent.
     *
@@ -2461,7 +2487,7 @@ public class Color implements Comparable < Color > {
     * @param b  the blue byte
     *
     * @return the string builder
-    * 
+    *
     * @see Color#toHexString(StringBuilder, byte)
     */
    public static StringBuilder toHexWeb ( final StringBuilder sb, final byte r,
@@ -3575,7 +3601,7 @@ public class Color implements Comparable < Color > {
 
    /**
     * Eases between two colors in CIE L*a*b* color space. May return colors
-    * outside the range [0.0, 1.0].
+    * outside the range [0.0, 1.0] .
     */
    public static class MixLab extends AbstrEasing {
 

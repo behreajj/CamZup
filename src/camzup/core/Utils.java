@@ -794,22 +794,6 @@ public abstract class Utils implements IUtils {
     *
     * @return the interpolated value
     */
-   public static double lerpUnclamped ( final double origin, final double dest,
-      final double step ) {
-
-      return ( 1.0d - step ) * origin + step * dest;
-   }
-
-   /**
-    * Linear interpolation from the origin to the destination value by a step.
-    * Does not check to see if the step is beyond the range [0.0, 1.0] .
-    *
-    * @param origin the origin value
-    * @param dest   the destination value
-    * @param step   the step
-    *
-    * @return the interpolated value
-    */
    public static float lerpUnclamped ( final float origin, final float dest,
       final float step ) {
 
@@ -859,7 +843,7 @@ public abstract class Utils implements IUtils {
    /**
     * Maps an input value from an original range to a target range. If the
     * upper and lower bound of the original range are equal, will return the
-    * lower bound of the destination range.
+    * value.
     *
     * @param value    the input value
     * @param lbOrigin lower bound of original range
@@ -876,7 +860,7 @@ public abstract class Utils implements IUtils {
       if ( denom != 0.0f ) {
          return lbDest + ( ubDest - lbDest ) * ( ( value - lbOrigin ) / denom );
       }
-      return lbDest;
+      return value;
    }
 
    /**
@@ -1564,7 +1548,6 @@ public abstract class Utils implements IUtils {
    public static String toString ( final int[] arr, final int padding ) {
 
       return Utils.toString(new StringBuilder(256), arr, padding).toString();
-
    }
 
    /**
