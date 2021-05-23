@@ -2253,9 +2253,7 @@ public class Vec4 implements Comparable < Vec4 > {
 
    /**
     * Wraps a vector around a periodic range as defined by an upper and lower
-    * bound: lower bounds inclusive; upper bounds exclusive. In cases where
-    * the lower bound is (0.0, 0.0, 0.0, 0.0) , use
-    * {@link Vec4#mod(Vec4, Vec4, Vec4)} .
+    * bound.
     *
     * @param v      the vector
     * @param lb     the lower bound

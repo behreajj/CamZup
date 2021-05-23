@@ -3126,9 +3126,7 @@ public class Vec3 implements Comparable < Vec3 > {
 
    /**
     * Wraps a vector around a periodic range as defined by an upper and lower
-    * bound: lower bounds inclusive; upper bounds exclusive. In cases where
-    * the lower bound is (0.0, 0.0, 0.0) , use
-    * {@link Vec3#mod(Vec3, Vec3, Vec3)} .
+    * bound.
     *
     * @param v      the vector
     * @param lb     the lower bound

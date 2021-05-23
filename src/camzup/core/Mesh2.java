@@ -2533,6 +2533,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public static Mesh2 gridTri ( final int count, final float cellRadius,
       final float margin, final Mesh2 target ) {
 
+      // TODO: Refactor to
+      // Mesh2.plane(8, 8, PolyType.TRI, test);
+      // test.rotateZ(Utils.DEG_TO_RAD * (45));
+      // test.scale(new Vec2(sqrt(3), 1.0));
+
       target.name = "Grid.Triangle";
 
       final int vCount = count < 1 ? 1 : count;

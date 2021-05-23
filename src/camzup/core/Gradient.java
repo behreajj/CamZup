@@ -151,8 +151,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    public Gradient append ( final float scalar ) {
 
       this.compressKeysLeft(1);
-      final float scl = Utils.clamp01(scalar);
-      this.keys.add(new ColorKey(1.0f, scl, scl, scl, scl));
+      this.keys.add(new ColorKey(1.0f, scalar, scalar, scalar, scalar));
       return this;
    }
 
@@ -514,8 +513,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    public Gradient prepend ( final float scalar ) {
 
       this.compressKeysRight(1);
-      final float scl = Utils.clamp01(scalar);
-      this.keys.add(new ColorKey(0.0f, scl, scl, scl, scl));
+      this.keys.add(new ColorKey(0.0f, scalar, scalar, scalar, scalar));
       return this;
    }
 
@@ -1767,10 +1765,15 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final TreeSet < ColorKey > srcKeys = source.keys;
       Iterator < ColorKey > srcItr = srcKeys.iterator();
 
-      float minRgb = Float.MAX_VALUE;
-      float maxRgb = Float.MIN_VALUE;
-      float minAlpha = Float.MAX_VALUE;
-      float maxAlpha = Float.MIN_VALUE;
+      /*
+       * We don't need to expand the range if its within [0.0, 1.0], only
+       * compress it. So do not set these to Float#MIN_VALUE and Float#MAX_VALUE
+       * like usual.
+       */
+      float minRgb = 0.0f;
+      float maxRgb = 1.0f;
+      float minAlpha = 0.0f;
+      float maxAlpha = 1.0f;
 
       while ( srcItr.hasNext() ) {
          final Color clr = srcItr.next().clr;

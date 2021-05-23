@@ -2738,8 +2738,7 @@ public class Vec2 implements Comparable < Vec2 > {
 
    /**
     * Wraps a vector around a periodic range as defined by an upper and lower
-    * bound: lower bounds inclusive; upper bounds exclusive. In cases where
-    * the lower bound is (0.0, 0.0) , use {@link Vec2#mod(Vec2, Vec2, Vec2)} .
+    * bound.
     *
     * @param v      the vector
     * @param lb     the lower bound

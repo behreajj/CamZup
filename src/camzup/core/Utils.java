@@ -1026,7 +1026,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Subtracts the floor of the input value from the value. Returns a
-    * positive value in the range [0.0, 1.0] .
+    * positive value in the range [0.0, 1.0] . Equivalent to GLSL's
+    * <code>fract</code>.
     *
     * @param value the input value
     *
@@ -1040,7 +1041,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Subtracts the floor of the input value from the value. Returns a
-    * positive value in the range [0.0, 1.0] .
+    * positive value in the range [0.0, 1.0] . Equivalent to GLSL's
+    * <code>fract</code>.
     *
     * @param value the input value
     *
@@ -1187,6 +1189,11 @@ public abstract class Utils implements IUtils {
     */
    public static float pingPong ( final float lb, final float ub,
       final float step, final float pause ) {
+
+      // QUERY: Cheaper alternative:
+      // float x = t * 0.5f;
+      // float z = 2.0f * (x - floor(x)) - 1.0f;
+      // return z > 0.0f ? 1.0f - z : z < -0.0f ? 1.0f + z : 1.0f;
 
       final float t = 0.5f + 0.5f * pause * Utils.scNorm(step - 0.5f);
       if ( t <= 0.0f ) { return lb; }
@@ -1589,10 +1596,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Wraps a value around a periodic range as defined by an upper and lower
-    * bound: lower bounds inclusive; upper bounds exclusive. Due to single
-    * precision accuracy, results will be inexact. In cases where the lower
-    * bound is greater than the upper bound, the two will be swapped. In cases
-    * where the range is 0.0, 0.0 will be returned.
+    * bound. The lower bound is inclusive; the upper bound is exclusive.
+    * Returns the value unchanged if the range is zero.
     *
     * @param value the value
     * @param lb    the lower bound
@@ -1603,21 +1608,13 @@ public abstract class Utils implements IUtils {
    public static float wrap ( final float value, final float lb,
       final float ub ) {
 
-      final float span = ub - lb;
-      float vlb;
-      float vub;
-      if ( span < 0.0f ) {
-         vlb = ub;
-         vub = lb;
-      } else {
-         if ( span <= 0.0f ) { return 0.0f; }
-
-         vlb = lb;
-         vub = ub;
+      final float range = ub - lb;
+      if ( range != 0.0f ) {
+         final float b = ( value - lb ) / range;
+         return value - range * ( b > 0.0f ? ( int ) b : b < 0.0f ? ( int ) b
+            - 1.0f : 0.0f );
       }
-
-      if ( value < vlb ) { return vub - ( vlb - value ) % span; }
-      return value >= vub ? vlb + ( value - vlb ) % span : value;
+      return value;
    }
 
    /**
