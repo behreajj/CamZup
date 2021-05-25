@@ -1177,7 +1177,7 @@ public class ZImage extends PImage {
     *
     * @return the pre-multiplied image
     */
-   public static PImage preMul ( final PImage source ) {
+   public static PImage premul ( final PImage source ) {
 
       source.loadPixels();
       final int[] px = source.pixels;
@@ -1334,7 +1334,7 @@ public class ZImage extends PImage {
          final int m = k - g * len3; /* temporary */
          final int h = m / len2; /* column index */
          final int n = m - h * len2; /* temporary */
-         final int i = n / frameSize; /* channel index */
+         // final int i = n / frameSize; /* channel index */
          final int j = n % frameSize; /* kernel index */
 
          /* Row. */
@@ -1357,7 +1357,8 @@ public class ZImage extends PImage {
          final int z = y - 1 + j;
          if ( z > -1 && z < sh ) {
             final int zw = z * sw;
-            final int i8 = i * 8;
+            // final int i8 = i * 8;
+            final int i8 = 8 * n / frameSize;
             final int x1 = x - 1;
             final int x2 = x + 1;
             final int x3 = x + 2;
@@ -1381,10 +1382,10 @@ public class ZImage extends PImage {
          frame[j] = Utils.clamp(a0 + ( int ) ( a1 * dx + a2 * dxsq + a3 * ( dx
             * dxsq ) ), 0, 255);
 
-         d0 = frame[0] - frame[1];
-         d2 = frame[2] - frame[1];
-         d3 = frame[3] - frame[1];
          a0 = frame[1];
+         d0 = frame[0] - a0;
+         d2 = frame[2] - a0;
+         d3 = frame[3] - a0;
 
          d36 = IUtils.ONE_SIX * d3;
          a1 = -IUtils.ONE_THIRD * d0 + d2 - d36;

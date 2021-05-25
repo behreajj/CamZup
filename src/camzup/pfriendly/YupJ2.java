@@ -3923,7 +3923,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param stopAngle  the stop angle
     * @param arcMode    the arc mode
     *
-    * @see Utils#mod1(double)
     * @see Graphics2D#setColor(java.awt.Color)
     * @see Graphics2D#fill(Shape)
     * @see Graphics2D#draw(Shape)

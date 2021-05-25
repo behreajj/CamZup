@@ -1765,7 +1765,7 @@ public class Color implements Comparable < Color > {
     *
     * @return the multiplied color
     */
-   public static Color preMul ( final Color c, final Color target ) {
+   public static Color premul ( final Color c, final Color target ) {
 
       if ( c.a <= 0.0f ) {
          return target.set(0.0f, 0.0f, 0.0f, 0.0f);
@@ -2610,6 +2610,27 @@ public class Color implements Comparable < Color > {
 
       sb.append(']');
       return sb.toString();
+   }
+
+   /**
+    * Divides the red, green and blue color channels of a color by the alpha
+    * channel; reverses {@link Color#premul(Color, Color)}.
+    *
+    * @param c      the input color
+    * @param target the output color
+    *
+    * @return the multiplied color
+    */
+   public static Color unpremul ( final Color c, final Color target ) {
+
+      if ( c.a <= 0.0f ) {
+         return target.set(0.0f, 0.0f, 0.0f, 0.0f);
+      } else if ( c.a >= 1.0f ) {
+         return target.set(c.r, c.g, c.b, 1.0f);
+      } else {
+         final float aInv = 1.0f / c.a;
+         return target.set(c.r * aInv, c.g * aInv, c.b * aInv, c.a);
+      }
    }
 
    /**

@@ -11,22 +11,6 @@ public abstract class Utils implements IUtils {
    private Utils ( ) {}
 
    /**
-    * Finds the absolute value of a double precision real number. An alias for
-    * {@link Math#abs(double)} . Relies on bit-masking to remove the sign bit.
-    *
-    * @param value the input value
-    *
-    * @return the absolute value
-    *
-    * @see Double#longBitsToDouble(long)
-    * @see Double#doubleToLongBits(double)
-    */
-   public static double abs ( final double value ) {
-
-      return Double.longBitsToDouble(Double.doubleToLongBits(value) << 1 >>> 1);
-   }
-
-   /**
     * Finds the absolute value of a single precision real number. An alias for
     * {@link Math#abs(float)}. Relies on bit-masking to remove the sign bit.
     * Equivalent to max(-a, a) .
@@ -482,22 +466,6 @@ public abstract class Utils implements IUtils {
     * This is to simulate the convention of shading languages like GLSL and
     * OSL.
     *
-    * @param a numerator
-    * @param b denominator
-    *
-    * @return the quotient
-    */
-   public static double div ( final double a, final double b ) {
-
-      return b != 0.0d ? a / b : 0.0d;
-   }
-
-   /**
-    * Divides the left operand by the right, but returns zero when the
-    * denominator is zero, avoiding the {@link java.lang.ArithmeticException}.
-    * This is to simulate the convention of shading languages like GLSL and
-    * OSL.
-    *
     * @param a the numerator
     * @param b the denominator
     *
@@ -538,20 +506,6 @@ public abstract class Utils implements IUtils {
       final float ub ) {
 
       return value >= lb && value < ub ? value : 0.0f;
-   }
-
-   /**
-    * Floors a real number to the next least integer. An alternative to
-    * {@link Math#floor(double)} .
-    *
-    * @param value the input value
-    *
-    * @return the floored value
-    */
-   public static double floor ( final double value ) {
-
-      return value > 0.0d ? ( int ) value : value < 0.0d ? ( int ) value - 1.0d
-         : 0.0d;
    }
 
    /**

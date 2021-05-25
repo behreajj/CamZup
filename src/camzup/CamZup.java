@@ -1,9 +1,10 @@
 package camzup;
 
-import camzup.core.Color;
+import camzup.core.IUtils;
+import camzup.core.Mesh2;
+import camzup.core.MeshEntity2;
 import camzup.core.Quaternion;
-import camzup.core.Rng;
-import camzup.core.Vec4;
+import camzup.core.Vec2;
 
 import processing.core.PApplet;
 
@@ -48,6 +49,81 @@ public class CamZup {
     */
    public static final String VERSION = "##library.prettyVersion##";
 
+   public static Mesh2 gridTriNew ( final int count, final float margin,
+      final Mesh2 target ) {
+
+      // TODO: Finish.
+      // Make each vertex coord unique.
+
+      target.name = "Grid.Tri";
+
+      final int cVal = count < 1 ? 1 : count;
+      final int cVal1 = cVal + 1;
+      final int fLen1 = cVal1 * cVal1;
+      final int fLen = cVal * cVal;
+
+      final Vec2[] vs = target.coords = Vec2.resize(target.coords, fLen1);
+      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
+         fLen1);
+      final int[][][] fs = target.faces = new int[fLen + fLen][3][2];
+
+      final float toStep = 1.0f / cVal;
+      for ( int k = 0; k < fLen1; ++k ) {
+         final float jStep = k % cVal1 * toStep;
+         final float iStep = k / cVal1 * toStep;
+
+         final float vx = 0.5f - jStep;
+         final float vy = iStep - 0.5f;
+
+         vs[k].set(IUtils.SQRT_3 * ( IUtils.ONE_SQRT_2 * vy - IUtils.ONE_SQRT_2
+            * vx ), IUtils.ONE_SQRT_2 * vy + IUtils.ONE_SQRT_2 * vx);
+         vts[k].set(jStep, 1.0f - iStep);
+
+      }
+
+      for ( int m = 0, k = 0; k < fLen; ++k, m += 2 ) {
+         final int i = k / cVal;
+         final int j = k % cVal;
+
+         final int cOff0 = i * cVal1;
+         // final int cOff1 = cOff0 + cVal1;
+
+         final int c00 = cOff0 + j;
+         final int c10 = c00 + 1;
+         final int c01 = cOff0 + cVal1 + j;
+         final int c11 = c01 + 1;
+
+         final int[][] f0 = fs[m];
+         final int[] vert00 = f0[0];
+         vert00[0] = c00;
+         vert00[1] = c00;
+
+         final int[] vert01 = f0[1];
+         vert01[0] = c10;
+         vert01[1] = c10;
+
+         final int[] vert02 = f0[2];
+         vert02[0] = c01;
+         vert02[1] = c01;
+
+         final int[][] f1 = fs[m + 1];
+         final int[] vert10 = f1[0];
+         vert10[0] = c01;
+         vert10[1] = c01;
+
+         final int[] vert11 = f1[1];
+         vert11[0] = c10;
+         vert11[1] = c10;
+
+         final int[] vert12 = f1[2];
+         vert12[0] = c11;
+         vert12[1] = c11;
+
+      }
+
+      return target;
+   }
+
    /**
     * The main function.
     *
@@ -58,18 +134,24 @@ public class CamZup {
       // TODO: Add delta time or elapsed time.
       // https://github.com/processing/processing/issues/6070
 
-      final Rng rng = new Rng();
-      final Color a = new Color();
-      final Vec4 lab = new Vec4();
-      final Vec4 xyz = new Vec4();
-      // Color.fromHex(0xffaabbcc, a);
-      Color.random(rng, a);
-      Color.sRgbaToLab(a, false, lab, xyz, new Color());
-      System.out.println(a);
-      System.out.println(lab);
-      final Color b = new Color();
-      Color.labTosRgba(lab, false, b, xyz, new Color());
-      System.out.println(b);
+      // final Rng rng = new Rng();
+      // final Color a = new Color();
+      // final Vec4 lab = new Vec4();
+      // final Vec4 xyz = new Vec4();
+      // // Color.fromHex(0xffaabbcc, a);
+      // Color.random(rng, a);
+      // Color.sRgbaToLab(a, false, lab, xyz, new Color());
+      // System.out.println(a);
+      // System.out.println(lab);
+      // final Color b = new Color();
+      // Color.labTosRgba(lab, false, b, xyz, new Color());
+      // System.out.println(b);
+
+      final Mesh2 m2 = new Mesh2();
+      CamZup.gridTriNew(8, 0f, m2);
+      final MeshEntity2 me2 = new MeshEntity2(m2);
+      final String str = me2.toBlenderCode();
+      System.out.println(str);
    }
 
    public static Quaternion squad ( final Quaternion q1, final Quaternion q2,

@@ -203,9 +203,9 @@ public abstract class ParserGgr {
                switch ( blndFunc ) {
 
                   case ParserGgr.BLEND_CURVED:
-
-                     fac = ( float ) Math.pow(pos, Utils.div(
-                        ParserGgr.LOG_HALF_D, Math.log(mid)));
+                     final double logMid = Math.log(mid);
+                     fac = ( float ) Math.pow(pos, logMid != 0.0d
+                        ? ParserGgr.LOG_HALF_D / logMid : 0.0d);
 
                      break;
 
