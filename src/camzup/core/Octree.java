@@ -98,6 +98,35 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
+    * Finds the mean center of the points contained in this octree node and
+    * its children.
+    *
+    * @param target the output vector
+    *
+    * @return the center
+    *
+    * @see Octree#getPoints(ArrayList)
+    */
+   public Vec3 centerMean ( final Vec3 target ) {
+
+      // TODO: TEST
+
+      final ArrayList < Vec3 > pts = new ArrayList < >(
+         Octree.DEFAULT_CAPACITY);
+      this.getPoints(pts);
+
+      target.reset();
+      final int len = pts.size();
+      if ( len > 0 ) {
+         final Iterator < Vec3 > itr = pts.iterator();
+         while ( itr.hasNext() ) { Vec3.add(target, itr.next(), target); }
+         Vec3.div(target, len, target);
+      }
+
+      return target;
+   }
+
+   /**
     * Gets the level of the node.
     *
     * @return the level
@@ -122,6 +151,31 @@ public class Octree implements Iterable < Vec3 > {
          }
          return mxLvl;
       }
+   }
+
+   /**
+    * Gets an array of points contained in this octree and its children. The
+    * points are transferred to the array by value, not reference, so changing
+    * them in the array will not change them within the tree.
+    *
+    * @return the points array
+    *
+    * @see Octree#getPoints(ArrayList)
+    */
+   public Vec3[] getPoints ( ) {
+
+      // TODO: TEST
+
+      final ArrayList < Vec3 > references = new ArrayList <>(
+         Octree.DEFAULT_CAPACITY);
+      this.getPoints(references);
+      final int len = references.size();
+      final Vec3[] result = new Vec3[len];
+      final Iterator < Vec3 > itr = references.iterator();
+      for ( int i = 0; itr.hasNext(); ++i ) {
+         result[i] = new Vec3(itr.next());
+      }
+      return result;
    }
 
    /**
@@ -301,6 +355,26 @@ public class Octree implements Iterable < Vec3 > {
    public String toString ( final int places ) {
 
       return this.toString(new StringBuilder(1024), places).toString();
+   }
+
+   /**
+    * Gets the points in this octree node and its children. The points will
+    * still be stored by reference in the output array list, so this should be
+    * used internally.
+    *
+    * @param target the output array list
+    *
+    * @return the points
+    */
+   @Recursive
+   protected ArrayList < Vec3 > getPoints ( final ArrayList < Vec3 > target ) {
+
+      if ( this.isLeaf() ) {
+         target.addAll(this.points);
+      } else {
+         for ( int i = 0; i < 8; ++i ) { this.children[i].getPoints(target); }
+      }
+      return target;
    }
 
    /**

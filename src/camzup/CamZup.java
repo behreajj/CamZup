@@ -2,7 +2,6 @@ package camzup;
 
 import camzup.core.IUtils;
 import camzup.core.Mesh2;
-import camzup.core.MeshEntity2;
 import camzup.core.Quaternion;
 import camzup.core.Vec2;
 
@@ -147,11 +146,36 @@ public class CamZup {
       // Color.labTosRgba(lab, false, b, xyz, new Color());
       // System.out.println(b);
 
-      final Mesh2 m2 = new Mesh2();
-      CamZup.gridTriNew(8, 0f, m2);
-      final MeshEntity2 me2 = new MeshEntity2(m2);
-      final String str = me2.toBlenderCode();
-      System.out.println(str);
+      // final Mesh2 m2 = new Mesh2();
+      // CamZup.gridTriNew(8, 0f, m2);
+      // final MeshEntity2 me2 = new MeshEntity2(m2);
+      // final String str = me2.toBlenderCode();
+      // System.out.println(str);
+
+      // double r = new Random().nextFloat();
+      // System.out.println(r);
+
+      // double test = r * r * Math.pow(r, 0.4d);
+      // System.out.println(control);
+      // System.out.println(test);
+      // System.out.println(Math.abs(control - test) <= 0.000001d);
+      // System.out.println(compute(r, 2.4d));
+
+   }
+
+   public static float pow24 ( final float x ) {
+
+      return ( float ) Math.exp(2.4d * Math.log(x));
+   }
+
+   public static float pow24Alt ( final float x ) {
+
+      return x * x * ( float ) Math.pow(x, 0.4d);
+   }
+
+   public static float pow24Inv ( final float x ) {
+
+      return ( float ) Math.exp(0.4166666666666667d * Math.log(x));
    }
 
    public static Quaternion squad ( final Quaternion q1, final Quaternion q2,

@@ -151,3 +151,4 @@ rhombus
 resizable
 hadamard
 swatches
+illuminant

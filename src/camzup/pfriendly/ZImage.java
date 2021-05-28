@@ -1162,7 +1162,7 @@ public class ZImage extends PImage {
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         px[i] = Color.toHexInt(Color.lRgbTosRgb(Color.fromHex(px[i], adjusted),
+         px[i] = Color.toHexInt(Color.lRgbaTosRgba(Color.fromHex(px[i], adjusted),
             adjustAlpha, adjusted));
       }
       target.updatePixels();
@@ -1620,7 +1620,7 @@ public class ZImage extends PImage {
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         px[i] = Color.toHexInt(Color.sRgbTolRgb(Color.fromHex(px[i], adjusted),
+         px[i] = Color.toHexInt(Color.sRgbaTolRgba(Color.fromHex(px[i], adjusted),
             adjustAlpha, adjusted));
       }
       target.updatePixels();

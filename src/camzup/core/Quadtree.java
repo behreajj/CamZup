@@ -95,6 +95,35 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
+    * Finds the mean center of the points contained in this quadtree node and
+    * its children.
+    *
+    * @param target the output vector
+    *
+    * @return the center
+    *
+    * @see Quadtree#getPoints(ArrayList)
+    */
+   public Vec2 centerMean ( final Vec2 target ) {
+
+      // TODO: TEST
+
+      final ArrayList < Vec2 > pts = new ArrayList <>(
+         Quadtree.DEFAULT_CAPACITY);
+      this.getPoints(pts);
+
+      target.reset();
+      final int len = pts.size();
+      if ( len > 0 ) {
+         final Iterator < Vec2 > itr = pts.iterator();
+         while ( itr.hasNext() ) { Vec2.add(target, itr.next(), target); }
+         Vec2.div(target, len, target);
+      }
+
+      return target;
+   }
+
+   /**
     * Gets the level of the node.
     *
     * @return the level
@@ -119,6 +148,31 @@ public class Quadtree implements Iterable < Vec2 > {
          }
          return mxLvl;
       }
+   }
+
+   /**
+    * Gets an array of points contained in this quadtree and its children. The
+    * points are transferred to the array by value, not reference, so changing
+    * them in the array will not change them within the tree.
+    *
+    * @return the points array
+    *
+    * @see Quadtree#getPoints(ArrayList)
+    */
+   public Vec2[] getPoints ( ) {
+
+      // TODO: TEST
+
+      final ArrayList < Vec2 > references = new ArrayList <>(
+         Quadtree.DEFAULT_CAPACITY);
+      this.getPoints(references);
+      final int len = references.size();
+      final Vec2[] result = new Vec2[len];
+      final Iterator < Vec2 > itr = references.iterator();
+      for ( int i = 0; itr.hasNext(); ++i ) {
+         result[i] = new Vec2(itr.next());
+      }
+      return result;
    }
 
    /**
@@ -336,6 +390,26 @@ public class Quadtree implements Iterable < Vec2 > {
 
       sb.append(' ').append('}');
       return sb;
+   }
+
+   /**
+    * Gets the points in this quadtree node and its children. The points will
+    * still be stored by reference in the output array list, so this should be
+    * used internally.
+    *
+    * @param target the output array list
+    *
+    * @return the points
+    */
+   @Recursive
+   protected ArrayList < Vec2 > getPoints ( final ArrayList < Vec2 > target ) {
+
+      if ( this.isLeaf() ) {
+         target.addAll(this.points);
+      } else {
+         for ( int i = 0; i < 4; ++i ) { this.children[i].getPoints(target); }
+      }
+      return target;
    }
 
    /**

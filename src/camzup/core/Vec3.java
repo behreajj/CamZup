@@ -991,7 +991,7 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the Chebyshev distance between two vectors. Forms a square pattern
+    * Finds the Chebyshev distance between two vectors. Forms a cube pattern
     * when plotted.
     *
     * @param a left operand
@@ -1025,7 +1025,7 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the Manhattan distance between two vectors. Forms a diamond
+    * Finds the Manhattan distance between two vectors. Forms a octahedron
     * pattern when plotted.
     *
     * @param a left operand
@@ -1532,6 +1532,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * @see Utils#asin(float)
     */
    public static Vec3[] gridFibonacci ( final int count, final float radius ) {
+
+      // TODO: Redo on account of spherical coordinate system?
 
       final int vcount = count < 3 ? 3 : count;
       final float vrad = Utils.max(IUtils.EPSILON, radius);

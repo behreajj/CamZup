@@ -1464,29 +1464,8 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from CIE Lab to sRGB.
-    *
-    * @param source the Lab vector
-    * @param alpha  adjust the alpha
-    * @param target the output color
-    * @param xyz    the XYZ vector
-    * @param linear the linear color
-    *
-    * @return the color
-    *
-    * @see Color#labToXyza(Vec4, Vec4)
-    * @see Color#xyzaTosRgba(Vec4, boolean, Color, Color)
-    */
-   public static Color labTosRgba ( final Vec4 source, final boolean alpha,
-      final Color target, final Vec4 xyz, final Color linear ) {
-
-      Color.labToXyza(source, xyz);
-      return Color.xyzaTosRgba(xyz, alpha, target, linear);
-   }
-
-   /**
     * Converts a color from CIE L*a*b* to CIE XYZ. Assumes D65 illuminant, CIE
-    * 1965 2 degrees referents.
+    * 1931 2 degrees referents.
     *
     * @param l      the perceptual lightness
     * @param a      the green to red range
@@ -1496,7 +1475,7 @@ public class Color implements Comparable < Color > {
     *
     * @return the CIE XYZ color
     */
-   public static Vec4 labToXyza ( final float l, final float a, final float b,
+   public static Vec4 labaToXyza ( final float l, final float a, final float b,
       final float alpha, final Vec4 target ) {
 
       /*
@@ -1543,11 +1522,38 @@ public class Color implements Comparable < Color > {
     *
     * @return the Lab color
     *
-    * @see Color#labToXyza(float, float, float, float, Vec4)
+    * @see Color#labaToXyza(float, float, float, float, Vec4)
     */
-   public static Vec4 labToXyza ( final Vec4 source, final Vec4 target ) {
+   public static Vec4 labaToXyza ( final Vec4 source, final Vec4 target ) {
 
-      return Color.labToXyza(source.x, source.y, source.z, source.w, target);
+      return Color.labaToXyza(source.x, source.y, source.z, source.w, target);
+   }
+
+   /**
+    * Converts a color from linear RGB to
+    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
+    *
+    * @param source the linear color
+    * @param alpha  adjust the alpha channel
+    * @param target the output color
+    *
+    * @return the standard color
+    */
+   public static Color lRgbaTosRgba ( final Color source, final boolean alpha,
+      final Color target ) {
+
+      /* pow(x, y) := exp(y * log(x)) does not lead to better performance. */
+
+      return target.set(source.r <= 0.0031308f ? source.r * 12.92f
+         : ( float ) ( Math.pow(source.r, 0.4166666666666667d) * 1.055d
+            - 0.055d ), source.g <= 0.0031308f ? source.g * 12.92f
+               : ( float ) ( Math.pow(source.g, 0.4166666666666667d) * 1.055d
+                  - 0.055d ), source.b <= 0.0031308f ? source.b * 12.92f
+                     : ( float ) ( Math.pow(source.b, 0.4166666666666667d)
+                        * 1.055d - 0.055d ), alpha ? source.a <= 0.0031308f
+                           ? source.a * 12.92f : ( float ) ( Math.pow(source.a,
+                              0.4166666666666667d) * 1.055d - 0.055d )
+                           : source.a);
    }
 
    /**
@@ -1629,31 +1635,6 @@ public class Color implements Comparable < Color > {
               ( c >> 0x08 & 0xff ) * 280458482.0f +
               ( c         & 0xff ) *  28306478.0f) * 10E-12f;
       /* @formatter:on */
-   }
-
-   /**
-    * Converts a color from linear RGB to
-    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
-    *
-    * @param source the linear color
-    * @param alpha  adjust the alpha channel
-    * @param target the output color
-    *
-    * @return the standard color
-    */
-   public static Color lRgbTosRgb ( final Color source, final boolean alpha,
-      final Color target ) {
-
-      return target.set(source.r <= 0.0031308f ? source.r * 12.92f
-         : ( float ) ( Math.pow(source.r, 0.4166666666666667d) * 1.055d
-            - 0.055d ), source.g <= 0.0031308f ? source.g * 12.92f
-               : ( float ) ( Math.pow(source.g, 0.4166666666666667d) * 1.055d
-                  - 0.055d ), source.b <= 0.0031308f ? source.b * 12.92f
-                     : ( float ) ( Math.pow(source.b, 0.4166666666666667d)
-                        * 1.055d - 0.055d ), alpha ? source.a <= 0.0031308f
-                           ? source.a * 12.92f : ( float ) ( Math.pow(source.a,
-                              0.4166666666666667d) * 1.055d - 0.055d )
-                           : source.a);
    }
 
    /**
@@ -2107,41 +2088,34 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from sRGB to CIE L*a*b*.
+    * Converts a color from
+    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB) to
+    * linear RGB.
     *
-    * @param c      the color
-    * @param alpha  adjust the alpha
-    * @param target the output vector
-    * @param xyz    the XYZ vector
-    * @param linear the color in linear
+    * @param source the standard color
+    * @param alpha  adjust the alpha channel
+    * @param target the output color
     *
-    * @return the lab vector
+    * @return the linear color
     */
-   public static Vec4 sRgbaToLab ( final Color c, final boolean alpha,
-      final Vec4 target, final Vec4 xyz, final Color linear ) {
+   public static Color sRgbaTolRgba ( final Color source, final boolean alpha,
+      final Color target ) {
 
-      Color.sRgbaToXyza(c, alpha, xyz, linear);
-      return Color.xyzaToLab(xyz, target);
-   }
+      /*
+       * pow(x, y) := exp(y * log(x)) does not lead to better performance.
+       * pow(x, 2.4) := x * x * pow(x, 0.4) needs more testing...
+       */
 
-   /**
-    * Converts a color from sRGB to CIE XYZ.
-    *
-    * @param c      the color
-    * @param alpha  adjust the alpha
-    * @param target the output vector
-    * @param linear the color in linear
-    *
-    * @return the XYZ color
-    *
-    * @see Color#lRgbaToXyza(Color, Vec4)
-    * @see Color#sRgbTolRgb(Color, boolean, Color)
-    */
-   public static Vec4 sRgbaToXyza ( final Color c, final boolean alpha,
-      final Vec4 target, final Color linear ) {
-
-      Color.sRgbTolRgb(c, alpha, linear);
-      return Color.lRgbaToXyza(linear, target);
+      return target.set(source.r <= 0.04045f ? source.r * 0.07739938f
+         : ( float ) Math.pow( ( source.r + 0.055d ) * 0.9478672985781991d,
+            2.4d), source.g <= 0.04045f ? source.g * 0.07739938f
+               : ( float ) Math.pow( ( source.g + 0.055d )
+                  * 0.9478672985781991d, 2.4d), source.b <= 0.04045f ? source.b
+                     * 0.07739938f : ( float ) Math.pow( ( source.b + 0.055d )
+                        * 0.9478672985781991d, 2.4d), alpha ? source.a
+                           <= 0.04045f ? source.a * 0.07739938f : ( float ) Math
+                              .pow( ( source.a + 0.055d ) * 0.9478672985781991d,
+                                 2.4d) : source.a);
    }
 
    /**
@@ -2192,32 +2166,6 @@ public class Color implements Comparable < Color > {
 
       return ( float ) ( 0.21264934272065283d * lr + 0.7151691357059038d * lg
          + 0.07218152157344333d * lb );
-   }
-
-   /**
-    * Converts a color from
-    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB) to
-    * linear RGB.
-    *
-    * @param source the standard color
-    * @param alpha  adjust the alpha channel
-    * @param target the output color
-    *
-    * @return the linear color
-    */
-   public static Color sRgbTolRgb ( final Color source, final boolean alpha,
-      final Color target ) {
-
-      return target.set(source.r <= 0.04045f ? source.r * 0.07739938f
-         : ( float ) Math.pow( ( source.r + 0.055d ) * 0.9478672985781991d,
-            2.4d), source.g <= 0.04045f ? source.g * 0.07739938f
-               : ( float ) Math.pow( ( source.g + 0.055d )
-                  * 0.9478672985781991d, 2.4d), source.b <= 0.04045f ? source.b
-                     * 0.07739938f : ( float ) Math.pow( ( source.b + 0.055d )
-                        * 0.9478672985781991d, 2.4d), alpha ? source.a
-                           <= 0.04045f ? source.a * 0.07739938f : ( float ) Math
-                              .pow( ( source.a + 0.055d ) * 0.9478672985781991d,
-                                 2.4d) : source.a);
    }
 
    /**
@@ -2647,7 +2595,7 @@ public class Color implements Comparable < Color > {
 
    /**
     * Converts a color from CIE XYZ to CIE L*a*b*. Assumes D65 illuminant, CIE
-    * 1965 2 degrees referents.
+    * 1931 2 degrees referents.
     *
     * @param x      the x coordinate
     * @param y      the y coordinate
@@ -2659,7 +2607,7 @@ public class Color implements Comparable < Color > {
     *
     * @see Math#pow(double, double)
     */
-   public static Vec4 xyzaToLab ( final float x, final float y, final float z,
+   public static Vec4 xyzaToLaba ( final float x, final float y, final float z,
       final float a, final Vec4 target ) {
 
       /*
@@ -2701,11 +2649,11 @@ public class Color implements Comparable < Color > {
     *
     * @return the Lab color
     *
-    * @see Color#xyzaToLab(float, float, float, float, Vec4)
+    * @see Color#xyzaToLaba(float, float, float, float, Vec4)
     */
-   public static Vec4 xyzaToLab ( final Vec4 source, final Vec4 target ) {
+   public static Vec4 xyzaToLaba ( final Vec4 source, final Vec4 target ) {
 
-      return Color.xyzaToLab(source.x, source.y, source.z, source.w, target);
+      return Color.xyzaToLaba(source.x, source.y, source.z, source.w, target);
    }
 
    /**
@@ -2745,26 +2693,6 @@ public class Color implements Comparable < Color > {
    public static Color xyzaTolRgba ( final Vec4 source, final Color target ) {
 
       return Color.xyzaTolRgba(source.x, source.y, source.z, source.w, target);
-   }
-
-   /**
-    * Converts a color from CIE XYZ to sRGB.
-    *
-    * @param source the XYZ vector
-    * @param alpha  adjust the alpha
-    * @param target the output color
-    * @param linear the linear color
-    *
-    * @return the color
-    *
-    * @see Color#xyzaTolRgba(Vec4, Color)
-    * @see Color#lRgbTosRgb(Color, boolean, Color)
-    */
-   public static Color xyzaTosRgba ( final Vec4 source, final boolean alpha,
-      final Color target, final Color linear ) {
-
-      Color.xyzaTolRgba(source, linear);
-      return Color.lRgbTosRgb(linear, alpha, target);
    }
 
    /**
@@ -3198,6 +3126,21 @@ public class Color implements Comparable < Color > {
       final boolean alpha;
 
       /**
+       * The mixed color in linear RGB.
+       */
+      protected final Color cLinear = new Color();
+
+      /**
+       * The destination color in linear RGB.
+       */
+      protected final Color dLinear = new Color();
+
+      /**
+       * The origin color in linear RGB.
+       */
+      protected final Color oLinear = new Color();
+
+      /**
        * Construct a new linear color mixer. Defaults to not including alpha, or
        * transparency, in the adjustment.
        */
@@ -3223,64 +3166,24 @@ public class Color implements Comparable < Color > {
        * @param target the output color
        *
        * @return the eased color
+       *
+       * @see Color#sRgbaTolRgba(Color, boolean, Color)
+       * @see Color#lRgbaTosRgba(Color, boolean, Color)
        */
       @Override
       public Color applyUnclamped ( final Color origin, final Color dest,
          final Float step, final Color target ) {
 
-         final double t = step;
-         final double u = 1.0d - t;
+         Color.sRgbaTolRgba(origin, this.alpha, this.oLinear);
+         Color.sRgbaTolRgba(dest, this.alpha, this.dLinear);
 
-         /* Convert origin from standard to linear. */
-         final double alr = origin.r <= 0.04045f ? origin.r
-            * 0.07739938080495357d : Math.pow( ( origin.r + 0.055d )
-               * 0.9478672985781991d, 2.4d);
-         final double alg = origin.g <= 0.04045f ? origin.g
-            * 0.07739938080495357d : Math.pow( ( origin.g + 0.055d )
-               * 0.9478672985781991d, 2.4d);
-         final double alb = origin.b <= 0.04045f ? origin.b
-            * 0.07739938080495357d : Math.pow( ( origin.b + 0.055d )
-               * 0.9478672985781991d, 2.4d);
+         final float t = step;
+         final float u = 1.0f - t;
+         this.cLinear.set(u * this.oLinear.r + t * this.dLinear.r, u
+            * this.oLinear.g + t * this.dLinear.g, u * this.oLinear.b + t
+               * this.dLinear.b, u * this.oLinear.a + t * this.dLinear.a);
 
-         /* Convert destination from standard to linear. */
-         final double blr = dest.r <= 0.04045f ? dest.r * 0.07739938080495357d
-            : Math.pow( ( dest.r + 0.055d ) * 0.9478672985781991d, 2.4d);
-         final double blg = dest.g <= 0.04045f ? dest.g * 0.07739938080495357d
-            : Math.pow( ( dest.g + 0.055d ) * 0.9478672985781991d, 2.4d);
-         final double blb = dest.b <= 0.04045f ? dest.b * 0.07739938080495357d
-            : Math.pow( ( dest.b + 0.055d ) * 0.9478672985781991d, 2.4d);
-
-         /* Linear interpolation. */
-         final double clr = u * alr + t * blr;
-         final double clg = u * alg + t * blg;
-         final double clb = u * alb + t * blb;
-
-         /* Convert from linear to standard. */
-         final double csr = clr <= 0.0031308d ? clr * 12.92d : Math.pow(clr,
-            0.4166666666666667d) * 1.055d - 0.055d;
-         final double csg = clg <= 0.0031308d ? clg * 12.92d : Math.pow(clg,
-            0.4166666666666667d) * 1.055d - 0.055d;
-         final double csb = clb <= 0.0031308d ? clb * 12.92d : Math.pow(clb,
-            0.4166666666666667d) * 1.055d - 0.055d;
-
-         /* Treat alpha separately. */
-         double csa;
-         if ( this.alpha ) {
-            final double ala = origin.a <= 0.04045f ? origin.a
-               * 0.07739938080495357d : Math.pow( ( origin.a + 0.055d )
-                  * 0.9478672985781991d, 2.4d);
-            final double bla = dest.a <= 0.04045f ? dest.a
-               * 0.07739938080495357d : Math.pow( ( dest.a + 0.055d )
-                  * 0.9478672985781991d, 2.4d);
-            final double cla = u * ala + t * bla;
-            csa = cla <= 0.0031308d ? cla * 12.92d : Math.pow(cla,
-               0.4166666666666667d) * 1.055d - 0.055d;
-         } else {
-            csa = u * origin.a + t * dest.a;
-         }
-
-         return target.set(( float ) csr, ( float ) csg, ( float ) csb,
-            ( float ) csa);
+         return Color.lRgbaTosRgba(this.cLinear, this.alpha, target);
       }
 
    }
@@ -3681,19 +3584,32 @@ public class Color implements Comparable < Color > {
        *
        * @return the eased color
        *
-       * @see Color#sRgbaToLab(Color, boolean, Vec4, Vec4, Color)
-       * @see Color#labTosRgba(Vec4, boolean, Color, Vec4, Color)
+       * @see Color#sRgbaTolRgba(Color, boolean, Color)
+       * @see Color#lRgbaToXyza(Color, Vec4)
+       * @see Color#xyzaToLaba(Vec4, Vec4)
+       * @see Color#labaToXyza(Vec4, Vec4)
+       * @see Color#xyzaTolRgba(Vec4, Color)
+       * @see Color#lRgbaTosRgba(Color, boolean, Color)
        * @see Vec4#mix(Vec4, Vec4, float, Vec4)
        */
       @Override
       public Color applyUnclamped ( final Color origin, final Color dest,
          final Float step, final Color target ) {
 
-         Color.sRgbaToLab(origin, false, this.oLab, this.oXyz, this.oLinear);
-         Color.sRgbaToLab(dest, false, this.dLab, this.dXyz, this.dLinear);
+         Color.sRgbaTolRgba(origin, false, this.oLinear);
+         Color.lRgbaToXyza(this.oLinear, this.oXyz);
+         Color.xyzaToLaba(this.oXyz, this.oLab);
+
+         Color.sRgbaTolRgba(dest, false, this.dLinear);
+         Color.lRgbaToXyza(this.dLinear, this.dXyz);
+         Color.xyzaToLaba(this.dXyz, this.dLab);
+
          Vec4.mix(this.oLab, this.dLab, step, this.cLab);
-         Color.labTosRgba(this.cLab, false, target, this.cXyz, this.cLinear);
-         // return Color.clamp01(target, target);
+
+         Color.labaToXyza(this.cLab, this.cXyz);
+         Color.xyzaTolRgba(this.cXyz, this.cLinear);
+         Color.lRgbaTosRgba(this.cLinear, false, target);
+
          return target;
       }
 

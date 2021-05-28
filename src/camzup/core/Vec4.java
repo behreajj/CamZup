@@ -715,8 +715,7 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
-    * Finds the Chebyshev distance between two vectors. Forms a square pattern
-    * when plotted.
+    * Finds the Chebyshev distance between two vectors.
     *
     * @param a left operand
     * @param b right operand
@@ -755,8 +754,7 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
-    * Finds the Manhattan distance between two vectors. Forms a diamond
-    * pattern when plotted.
+    * Finds the Manhattan distance between two vectors.
     *
     * @param a left operand
     * @param b right operand
