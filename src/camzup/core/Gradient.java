@@ -1085,26 +1085,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
    /**
     * Returns a String representation of the gradient compatible with the SVG
-    * format. Assumes a linear gradient with an origin and destination point.
-    *
-    * @param id the gradient id
-    * @param w  the width
-    * @param h  the height
-    * @param x1 the origin x
-    * @param y1 the origin y
-    * @param x2 the destination x
-    * @param y2 the destination y
-    *
-    * @return the string
-    */
-   public String toSvgString ( final String id, final int w, final int h,
-      final float x1, final float y1, final float x2, final float y2 ) {
-
-      return this.toSvgString(id, w, h, x1, y1, x2, y2, 1.0f, false);
-   }
-
-   /**
-    * Returns a String representation of the gradient compatible with the SVG
     * format. Assumes a linear gradient with an origin and destination
     * point.<br>
     * <br>
@@ -1121,15 +1101,12 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @param y1 the origin y
     * @param x2 the destination x
     * @param y2 the destination y
-    * @param g  the gamma correction
-    * @param a  include alpha
     *
     * @return the string
     */
    @Experimental
    public String toSvgString ( final String id, final int w, final int h,
-      final float x1, final float y1, final float x2, final float y2,
-      final float g, final boolean a ) {
+      final float x1, final float y1, final float x2, final float y2 ) {
 
       final String idTrim = id != null ? id.trim() : "";
       final String vid = idTrim.length() > 0 ? idTrim : "camzupGradient";
@@ -1143,7 +1120,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       final float swLeft = 0.0f;
       final float swRight = vw;
-
       final StringBuilder svgp = new StringBuilder(1024);
 
       svgp.append("<svg ");
@@ -1158,37 +1134,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       svgp.append("\">\n");
 
       svgp.append("<defs>\n");
-
-      final boolean gammaCorrect = g != 1.0f;
-      if ( gammaCorrect ) {
-         svgp.append("<filter id=\"adjust\"");
-         svgp.append(">\n<feComponentTransfer");
-         svgp.append(" color-interpolation-filters=\"sRGB\">\n");
-
-         svgp.append("<feFuncR type=\"gamma\" exponent=\"");
-         Utils.toFixed(svgp, g, ISvgWritable.FIXED_PRINT);
-         svgp.append("\" />\n");
-
-         svgp.append("<feFuncG type=\"gamma\" exponent=\"");
-         Utils.toFixed(svgp, g, ISvgWritable.FIXED_PRINT);
-         svgp.append("\" />\n");
-
-         svgp.append("<feFuncB type=\"gamma\" exponent=\"");
-         Utils.toFixed(svgp, g, ISvgWritable.FIXED_PRINT);
-         svgp.append("\" />\n");
-
-         if ( a ) {
-            svgp.append("<feFuncA type=\"gamma\" exponent=\"");
-            Utils.toFixed(svgp, g, ISvgWritable.FIXED_PRINT);
-            svgp.append("\" />\n");
-         } else {
-            svgp.append("<feFuncA type=\"gamma\" exponent=\"1.0\" />");
-         }
-
-         svgp.append("</feComponentTransfer>\n");
-         svgp.append("</filter>\n");
-      }
-
       svgp.append("<linearGradient id=\"");
       svgp.append(vid);
       svgp.append("\" x1=\"");
@@ -1270,7 +1215,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       svgp.append(" Z\" fill=\"url('#");
       svgp.append(vid);
       svgp.append("')\"");
-      if ( gammaCorrect ) { svgp.append(" filter=\"url('#adjust')\""); }
       svgp.append(" />\n");
       svgp.append(sbSwatch);
       svgp.append("</svg>");

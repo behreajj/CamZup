@@ -1036,7 +1036,6 @@ public class ZImage extends PImage {
          final float diff = lumMax - lumMin;
          final float denom = diff != 0.0f ? 1.0f / diff : 0.0f;
          for ( int i = 0; i < len; ++i ) {
-            // final float lum = Utils.map(lums[i], lumMin, lumMax, 0.0f, 1.0f);
             final float lum = ( lums[i] - lumMin ) * denom;
             final float vf = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math
                .pow(lum, 0.4166666666666667d) * 1.055d - 0.055d );
@@ -1150,20 +1149,18 @@ public class ZImage extends PImage {
     *
     * @param target      the image
     * @param adjustAlpha include alpha in the adjustment
-    * @param adjusted    temporary color
     *
     * @return the standard image
     */
-   public static PImage lRgbTosRgb ( final PImage target,
-      final boolean adjustAlpha, final Color adjusted ) {
+   public static PImage lRgbaTosRgba ( final PImage target,
+      final boolean adjustAlpha ) {
 
       target.loadPixels();
 
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         px[i] = Color.toHexInt(Color.lRgbaTosRgba(Color.fromHex(px[i], adjusted),
-            adjustAlpha, adjusted));
+         px[i] = Color.lRgbaTosRgba(px[i], adjustAlpha);
       }
       target.updatePixels();
       return target;
@@ -1358,7 +1355,7 @@ public class ZImage extends PImage {
          if ( z > -1 && z < sh ) {
             final int zw = z * sw;
             // final int i8 = i * 8;
-            final int i8 = 8 * n / frameSize;
+            final int i8 = 8 * ( n / frameSize );
             final int x1 = x - 1;
             final int x2 = x + 1;
             final int x3 = x + 2;
@@ -1608,20 +1605,18 @@ public class ZImage extends PImage {
     *
     * @param target      the image
     * @param adjustAlpha include the alpha channel in the adjustment
-    * @param adjusted    temporary color
     *
     * @return the linear image
     */
-   public static PImage sRgbTolRgb ( final PImage target,
-      final boolean adjustAlpha, final Color adjusted ) {
+   public static PImage sRgbaTolRgba ( final PImage target,
+      final boolean adjustAlpha ) {
 
       target.loadPixels();
 
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         px[i] = Color.toHexInt(Color.sRgbaTolRgba(Color.fromHex(px[i], adjusted),
-            adjustAlpha, adjusted));
+         px[i] = Color.sRgbaTolRgba(px[i], adjustAlpha);
       }
       target.updatePixels();
       return target;
@@ -1843,24 +1838,8 @@ public class ZImage extends PImage {
          if ( ai > 0 ) {
             final int i0 = k / pw;
             final int j0 = k % pw;
-            // final int i1 = i0 + 1;
-            // final int j1 = j0 + 1;
 
-            // svgp.append("<path id=\"");
-            // svgp.append(j0).append('.').append(i0);
-            // svgp.append("\"");
             svgp.append("<path");
-
-            // svgp.append("\" d=\"M ");
-            // svgp.append(j0).append(' ').append(i0);
-            // svgp.append(" L ");
-            // svgp.append(j1).append(' ').append(i0);
-            // svgp.append(" L ");
-            // svgp.append(j1).append(' ').append(i1);
-            // svgp.append(" L ");
-            // svgp.append(j0).append(' ').append(i1);
-            // svgp.append(" Z\" ");
-
             svgp.append(" d=\"M ");
             svgp.append(j0).append(' ').append(i0);
             svgp.append(" h 1 v 1 h -1 Z\" ");

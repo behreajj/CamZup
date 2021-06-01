@@ -307,13 +307,6 @@ public class Quadtree implements Iterable < Vec2 > {
       }
 
       Iterator < Vec2 > itr;
-      // Vec2 mean = new Vec2();
-      // itr = this.points.iterator();
-      // while(itr.hasNext()) {
-      // Vec2.add(mean, itr.next(), mean);
-      // }
-      // Vec2.div(mean, this.points.size(), mean);
-
       Bounds2.split(this.bounds, 0.5f, 0.5f,
          this.children[Quadtree.SOUTH_WEST].bounds,
          this.children[Quadtree.SOUTH_EAST].bounds,

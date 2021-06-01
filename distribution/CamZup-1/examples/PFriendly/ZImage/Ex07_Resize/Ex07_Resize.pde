@@ -10,7 +10,7 @@ float maxScale = 5.0f;
 int wOriginal = 96;
 int hOriginal = 96;
 boolean nearToggle = false;
-boolean lToSConvert = false;
+boolean lToSConvert = true;
 
 PImage source;
 int wOrig;
@@ -31,11 +31,9 @@ void setup() {
 
   source = createImage(wOriginal, hOriginal, ARGB);
   Gradient grd0 = new Gradient(
-    0xff7f00ff,
-    0x100000ff,
-    0x7f007fff,
+    0x7f7f00ff,
     0x3fff7f00,
-    0xdfffffff);
+    0xffffffff);
   ZImage.radial(0.0f, 0.0f, 0.7071f, grd0, source);
 
   if (main.getClass().getSimpleName().equals("Yup2")) {
@@ -46,7 +44,6 @@ void setup() {
   hOrig = source.height;
 
   float toStep = 1.0f / (samples - 1.0f);
-  Color temp = new Color();
   long init = System.currentTimeMillis();
   for (int i = 0; i < samples; ++i) {
     float step = i * toStep;
@@ -56,8 +53,8 @@ void setup() {
     PImage rsznn = nearest[i] = source.get();
 
     if (lToSConvert) {
-      ZImage.sRgbTolRgb(rszcb, false, temp);
-      ZImage.sRgbTolRgb(rsznn, false, temp);
+      ZImage.sRgbaTolRgba(rszcb, false);
+      ZImage.sRgbaTolRgba(rsznn, false);
     }
 
     long start = System.currentTimeMillis();
@@ -72,8 +69,8 @@ void setup() {
       ", w:", rszcb.width, ", h:", rszcb.height);
 
     if (lToSConvert) {
-      ZImage.lRgbTosRgb(rszcb, false, temp);
-      ZImage.lRgbTosRgb(rsznn, false, temp);
+      ZImage.lRgbaTosRgba(rszcb, false);
+      ZImage.lRgbaTosRgba(rsznn, false);
     }
   }
   long concl = System.currentTimeMillis();

@@ -309,12 +309,6 @@ public class Octree implements Iterable < Vec3 > {
       }
 
       Iterator < Vec3 > itr;
-
-      // Vec3 mean = new Vec3();
-      // itr = this.points.iterator();
-      // while ( itr.hasNext() ) { Vec3.add(mean, itr.next(), mean); }
-      // Vec3.div(mean, this.points.size(), mean);
-
       Bounds3.split(this.bounds, 0.5f, 0.5f, 0.5f,
          this.children[Octree.BACK_SOUTH_WEST].bounds,
          this.children[Octree.BACK_SOUTH_EAST].bounds,

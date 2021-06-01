@@ -607,6 +607,48 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Look up table for converting colors from linear to standard RGB.
+    */
+   private static final int[] LTS_LUT = new int[] { 0, 13, 22, 28, 34, 38, 42,
+      46, 50, 53, 56, 59, 61, 64, 66, 69, 71, 73, 75, 77, 79, 81, 83, 85, 86,
+      88, 90, 92, 93, 95, 96, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110,
+      112, 113, 114, 115, 117, 118, 119, 120, 121, 122, 124, 125, 126, 127, 128,
+      129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143,
+      144, 145, 146, 147, 148, 148, 149, 150, 151, 152, 153, 154, 155, 155, 156,
+      157, 158, 159, 159, 160, 161, 162, 163, 163, 164, 165, 166, 167, 167, 168,
+      169, 170, 170, 171, 172, 173, 173, 174, 175, 175, 176, 177, 178, 178, 179,
+      180, 180, 181, 182, 182, 183, 184, 185, 185, 186, 187, 187, 188, 189, 189,
+      190, 190, 191, 192, 192, 193, 194, 194, 195, 196, 196, 197, 197, 198, 199,
+      199, 200, 200, 201, 202, 202, 203, 203, 204, 205, 205, 206, 206, 207, 208,
+      208, 209, 209, 210, 210, 211, 212, 212, 213, 213, 214, 214, 215, 215, 216,
+      216, 217, 218, 218, 219, 219, 220, 220, 221, 221, 222, 222, 223, 223, 224,
+      224, 225, 226, 226, 227, 227, 228, 228, 229, 229, 230, 230, 231, 231, 232,
+      232, 233, 233, 234, 234, 235, 235, 236, 236, 237, 237, 238, 238, 238, 239,
+      239, 240, 240, 241, 241, 242, 242, 243, 243, 244, 244, 245, 245, 246, 246,
+      246, 247, 247, 248, 248, 249, 249, 250, 250, 251, 251, 251, 252, 252, 253,
+      253, 254, 254, 255, 255 };
+
+   /**
+    * Look up table for converting colors from standard to linear RGB.
+    */
+   private static final int[] STL_LUT = new int[] { 0, 0, 0, 0, 0, 0, 0, 1, 1,
+      1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4,
+      4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 10, 10, 10,
+      11, 11, 12, 12, 12, 13, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 17, 18,
+      18, 19, 19, 20, 20, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 27, 27, 28,
+      29, 29, 30, 30, 31, 32, 32, 33, 34, 35, 35, 36, 37, 37, 38, 39, 40, 41,
+      41, 42, 43, 44, 45, 45, 46, 47, 48, 49, 50, 51, 51, 52, 53, 54, 55, 56,
+      57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74,
+      76, 77, 78, 79, 80, 81, 82, 84, 85, 86, 87, 88, 90, 91, 92, 93, 95, 96,
+      97, 99, 100, 101, 103, 104, 105, 107, 108, 109, 111, 112, 114, 115, 116,
+      118, 119, 121, 122, 124, 125, 127, 128, 130, 131, 133, 134, 136, 138, 139,
+      141, 142, 144, 146, 147, 149, 151, 152, 154, 156, 157, 159, 161, 163, 164,
+      166, 168, 170, 171, 173, 175, 177, 179, 181, 183, 184, 186, 188, 190, 192,
+      194, 196, 198, 200, 202, 204, 206, 208, 210, 212, 214, 216, 218, 220, 222,
+      224, 226, 229, 231, 233, 235, 237, 239, 242, 244, 246, 248, 250, 253,
+      255 };
+
+   /**
     * Tests to see if all color channels are greater than zero.
     *
     * @param c the color
@@ -1164,101 +1206,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Returns one of the 16 web safe colors from a string key word. See
-    * <a href="https://en.wikipedia.org/wiki/Web_colors#HTML_color_names">HTML
-    * color names</a>.<br>
-    * <br>
-    * Differences in naming conventions include:
-    * <ul>
-    * <li>(0.0, 1.0, 1.0) may be either aqua or cyan;</li>
-    * <li>(1.0, 0.0, 1.0) may be either fuchsia or magenta;</li>
-    * <li>(0.0, 1.0, 0.0) is lime, not green;</li>
-    * <li>(0.0, 0.5, 0.0) is green.</li>
-    * </ul>
-    *
-    * @param keyword the key word
-    * @param target  the output color
-    *
-    * @return the color by keyword
-    */
-   public static Color fromKeyword ( final String keyword,
-      final Color target ) {
-
-      /*
-       * Switch casing with strings is messy. Decompiled code uses the string's
-       * hash code instead. See Stack Overflow for discussions on how stable
-       * Strings are across platforms.
-       */
-
-      final int hsh = keyword.toLowerCase().trim().hashCode();
-      switch ( hsh ) {
-         case -1081301904:
-            /* "maroon" */
-            return target.set(0.5f, 0.0f, 0.0f, 1.0f);
-
-         case -976943172:
-            /* "purple" */
-            return target.set(0.5f, 0.0f, 0.5f, 1.0f);
-
-         case -902311155:
-            /* "silver" */
-            return target.set(0.75f, 0.75f, 0.75f, 1.0f);
-
-         case -734239628:
-            return Color.yellow(target);
-
-         case -519653673:
-         case 828922025:
-            /* "fuchsia" or "magenta" */
-            return Color.magenta(target);
-
-         case 112785:
-            return Color.red(target);
-
-         case 3002044:
-         case 3068707:
-            /* "aqua" or "cyan" */
-            return Color.cyan(target);
-
-         case 3027034:
-            return Color.blue(target);
-
-         case 3181155:
-            /* "gray" */
-            return target.set(0.5f, 0.5f, 0.5f, 1.0f);
-
-         case 3321813:
-            /* "lime" */
-            return Color.green(target);
-
-         case 3374006:
-            /* "navy" */
-            return target.set(0.0f, 0.0f, 0.5f, 1.0f);
-
-         case 3555932:
-            /* "teal" */
-            return target.set(0.0f, 0.5f, 0.5f, 1.0f);
-
-         case 93818879:
-            return Color.black(target);
-
-         case 98619139:
-            /* "green" */
-            return target.set(0.0f, 0.5f, 0.0f, 1.0f);
-
-         case 105832923:
-            /* "olive" */
-            return target.set(0.5f, 0.5f, 0.0f, 1.0f);
-
-         case 113101865:
-            return Color.white(target);
-
-         default:
-            return target.reset();
-      }
-   }
-
-   /**
     * Raises a color's red, green and blue channels to an exponent. If alpha
     * is true, then the alpha channel is included. <em>Does not clamp the
     * results</em>; a color channel may exceed the range [0.0, 1.0].
@@ -1554,6 +1501,23 @@ public class Color implements Comparable < Color > {
                            ? source.a * 12.92f : ( float ) ( Math.pow(source.a,
                               0.4166666666666667d) * 1.055d - 0.055d )
                            : source.a);
+   }
+
+   /**
+    * Converts a color stored in a hexadecimal integer from linear to standard
+    * RGB by using a look up table.
+    *
+    * @param c     the linear color
+    * @param alpha transform alpha
+    *
+    * @return the standard color
+    */
+   public static int lRgbaTosRgba ( final int c, final boolean alpha ) {
+
+      final int lai = c >> 0x18 & 0xff;
+      return ( alpha ? Color.LTS_LUT[lai] : lai ) << 0x18 | Color.LTS_LUT[c
+         >> 0x10 & 0xff] << 0x10 | Color.LTS_LUT[c >> 0x08 & 0xff] << 0x08
+         | Color.LTS_LUT[c & 0xff];
    }
 
    /**
@@ -2119,6 +2083,23 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Converts a color stored in a hexadecimal integer from standard to linear
+    * RGB by using a look up table.
+    *
+    * @param c     the standard color
+    * @param alpha transform alpha
+    *
+    * @return the linear color
+    */
+   public static int sRgbaTolRgba ( final int c, final boolean alpha ) {
+
+      final int sai = c >> 0x18 & 0xff;
+      return ( alpha ? Color.STL_LUT[sai] : sai ) << 0x18 | Color.STL_LUT[c
+         >> 0x10 & 0xff] << 0x10 | Color.STL_LUT[c >> 0x08 & 0xff] << 0x08
+         | Color.STL_LUT[c & 0xff];
+   }
+
+   /**
     * Returns the relative luminance of the standard RGB color, based on
     * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
     * 709 relative luminance</a> coefficients: <code>0.2126</code> for red,
@@ -2153,19 +2134,19 @@ public class Color implements Comparable < Color > {
     */
    public static float sRgbLuminance ( final int c ) {
 
-      final double sr = ( c >> 0x10 & 0xff ) * IUtils.ONE_255_D;
-      final double sg = ( c >> 0x08 & 0xff ) * IUtils.ONE_255_D;
-      final double sb = ( c & 0xff ) * IUtils.ONE_255_D;
+      final int sri = c >> 0x10 & 0xff;
+      final int sgi = c >> 0x08 & 0xff;
+      final int sbi = c & 0xff;
 
-      final double lr = sr <= 0.04045d ? sr * 0.07739938080495357d : Math.pow(
-         ( sr + 0.055d ) * 0.9478672985781991d, 2.4d);
-      final double lg = sg <= 0.04045d ? sg * 0.07739938080495357d : Math.pow(
-         ( sg + 0.055d ) * 0.9478672985781991d, 2.4d);
-      final double lb = sb <= 0.04045d ? sb * 0.07739938080495357d : Math.pow(
-         ( sb + 0.055d ) * 0.9478672985781991d, 2.4d);
+      final int lri = Color.STL_LUT[sri];
+      final int lgi = Color.STL_LUT[sgi];
+      final int lbi = Color.STL_LUT[sbi];
 
-      return ( float ) ( 0.21264934272065283d * lr + 0.7151691357059038d * lg
-         + 0.07218152157344333d * lb );
+      final double lrd = lri * IUtils.ONE_255_D;
+      final double lgd = lgi * IUtils.ONE_255_D;
+      final double lbd = lbi * IUtils.ONE_255_D;
+      return ( float ) ( 0.21264934272065283d * lrd + 0.7151691357059038d * lgd
+         + 0.07218152157344333d * lbd );
    }
 
    /**

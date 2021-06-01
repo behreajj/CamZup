@@ -1,8 +1,10 @@
 package camzup;
 
+import camzup.core.Color;
 import camzup.core.IUtils;
 import camzup.core.Mesh2;
 import camzup.core.Quaternion;
+import camzup.core.Rng;
 import camzup.core.Vec2;
 
 import processing.core.PApplet;
@@ -12,7 +14,6 @@ import processing.core.PApplet;
  * and is for development and debugging only.
  */
 public class CamZup {
-
    /**
     * The PApplet referenced by this class.
     */
@@ -133,33 +134,14 @@ public class CamZup {
       // TODO: Add delta time or elapsed time.
       // https://github.com/processing/processing/issues/6070
 
-      // final Rng rng = new Rng();
-      // final Color a = new Color();
-      // final Vec4 lab = new Vec4();
-      // final Vec4 xyz = new Vec4();
-      // // Color.fromHex(0xffaabbcc, a);
-      // Color.random(rng, a);
-      // Color.sRgbaToLab(a, false, lab, xyz, new Color());
-      // System.out.println(a);
-      // System.out.println(lab);
-      // final Color b = new Color();
-      // Color.labTosRgba(lab, false, b, xyz, new Color());
-      // System.out.println(b);
-
-      // final Mesh2 m2 = new Mesh2();
-      // CamZup.gridTriNew(8, 0f, m2);
-      // final MeshEntity2 me2 = new MeshEntity2(m2);
-      // final String str = me2.toBlenderCode();
-      // System.out.println(str);
-
-      // double r = new Random().nextFloat();
-      // System.out.println(r);
-
-      // double test = r * r * Math.pow(r, 0.4d);
-      // System.out.println(control);
-      // System.out.println(test);
-      // System.out.println(Math.abs(control - test) <= 0.000001d);
-      // System.out.println(compute(r, 2.4d));
+      final Rng rng = new Rng();
+      final Color a = new Color();
+      for ( int i = 0; i < 255; ++i ) {
+         Color.randomRgb(rng, a);
+         int hex = Color.toHexInt(a);
+         System.out.println(Color.luminance(a));
+         System.out.println(Color.luminance(hex));
+      }
 
    }
 

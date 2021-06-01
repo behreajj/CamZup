@@ -21,7 +21,7 @@ void setup() {
   target = source.get();
 
   long start = System.currentTimeMillis();
-  ZImage.grayscale(target, false);
+  ZImage.grayscale(target, true);
   long end = System.currentTimeMillis();
   println("Elapsed Time: " + (end - start));
 }
