@@ -138,7 +138,7 @@ public class CamZup {
       final Color a = new Color();
       for ( int i = 0; i < 255; ++i ) {
          Color.randomRgb(rng, a);
-         int hex = Color.toHexInt(a);
+         final int hex = Color.toHexInt(a);
          System.out.println(Color.luminance(a));
          System.out.println(Color.luminance(hex));
       }

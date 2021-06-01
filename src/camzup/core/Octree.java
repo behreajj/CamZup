@@ -111,8 +111,7 @@ public class Octree implements Iterable < Vec3 > {
 
       // TODO: TEST
 
-      final ArrayList < Vec3 > pts = new ArrayList < >(
-         Octree.DEFAULT_CAPACITY);
+      final ArrayList < Vec3 > pts = new ArrayList <>(Octree.DEFAULT_CAPACITY);
       this.getPoints(pts);
 
       target.reset();

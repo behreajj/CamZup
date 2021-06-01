@@ -2134,19 +2134,9 @@ public class Color implements Comparable < Color > {
     */
    public static float sRgbLuminance ( final int c ) {
 
-      final int sri = c >> 0x10 & 0xff;
-      final int sgi = c >> 0x08 & 0xff;
-      final int sbi = c & 0xff;
-
-      final int lri = Color.STL_LUT[sri];
-      final int lgi = Color.STL_LUT[sgi];
-      final int lbi = Color.STL_LUT[sbi];
-
-      final double lrd = lri * IUtils.ONE_255_D;
-      final double lgd = lgi * IUtils.ONE_255_D;
-      final double lbd = lbi * IUtils.ONE_255_D;
-      return ( float ) ( 0.21264934272065283d * lrd + 0.7151691357059038d * lgd
-         + 0.07218152157344333d * lbd );
+      return ( float ) ( 0.0008339189910613837d * Color.STL_LUT[c >> 0x10
+         & 0xff] + 0.002804584845905505d * Color.STL_LUT[c >> 0x08 & 0xff]
+         + 0.0002830647904840915d * Color.STL_LUT[c & 0xff] );
    }
 
    /**

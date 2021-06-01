@@ -1331,7 +1331,6 @@ public class ZImage extends PImage {
          final int m = k - g * len3; /* temporary */
          final int h = m / len2; /* column index */
          final int n = m - h * len2; /* temporary */
-         // final int i = n / frameSize; /* channel index */
          final int j = n % frameSize; /* kernel index */
 
          /* Row. */
@@ -1353,12 +1352,16 @@ public class ZImage extends PImage {
 
          final int z = y - 1 + j;
          if ( z > -1 && z < sh ) {
-            final int zw = z * sw;
-            // final int i8 = i * 8;
-            final int i8 = 8 * ( n / frameSize );
+
+            /*
+             * Channel index multiplied by size of byte, as it will be used to
+             * unpack color channels.
+             */
+            final int i8 = Byte.SIZE * ( n / frameSize );
             final int x1 = x - 1;
             final int x2 = x + 1;
             final int x3 = x + 2;
+            final int zw = z * sw;
 
             if ( x > -1 && x < sw ) { a0 = srcpx[zw + x] >> i8 & 0xff; }
             if ( x1 > -1 && x1 < sw ) { d0 = srcpx[zw + x1] >> i8 & 0xff; }
@@ -1376,8 +1379,8 @@ public class ZImage extends PImage {
          float a2 = 0.5f * ( d0 + d2 );
          float a3 = -IUtils.ONE_SIX * d0 - 0.5f * d2 + d36;
 
-         frame[j] = Utils.clamp(a0 + ( int ) ( a1 * dx + a2 * dxsq + a3 * ( dx
-            * dxsq ) ), 0, 255);
+         int sample = a0 + ( int ) ( a1 * dx + a2 * dxsq + a3 * ( dx * dxsq ) );
+         frame[j] = sample < 0 ? 0 : sample > 255 ? 255 : sample;
 
          a0 = frame[1];
          d0 = frame[0] - a0;
@@ -1391,8 +1394,8 @@ public class ZImage extends PImage {
 
          // rowStride = dw * chnlCount
          // g * rowStride + h * chnlCount + i
-         clrs[k / frameSize] = Utils.clamp(a0 + ( int ) ( a1 * dy + a2 * dysq
-            + a3 * ( dy * dysq ) ), 0, 255);
+         sample = a0 + ( int ) ( a1 * dy + a2 * dysq + a3 * ( dy * dysq ) );
+         clrs[k / frameSize] = sample < 0 ? 0 : sample > 255 ? 255 : sample;
       }
 
       final int[] trgpx = new int[newPxlLen];
@@ -1407,8 +1410,8 @@ public class ZImage extends PImage {
          case PConstants.RGB:
 
             for ( int i = 0, j = 0; i < newPxlLen; ++i, j += 4 ) {
-               trgpx[i] = 0xff000000 | clrs[j + 2] << 0x10 | clrs[j + 1] << 0x08
-                  | clrs[j];
+               trgpx[i] = clrs[j] | clrs[j + 1] << 0x08 | clrs[j + 2] << 0x10
+                  | 0xff000000;
             }
 
             break;
@@ -1417,8 +1420,8 @@ public class ZImage extends PImage {
          default:
 
             for ( int i = 0, j = 0; i < newPxlLen; ++i, j += 4 ) {
-               trgpx[i] = clrs[j + 3] << 0x18 | clrs[j + 2] << 0x10 | clrs[j
-                  + 1] << 0x08 | clrs[j];
+               trgpx[i] = clrs[j] | clrs[j + 1] << 0x08 | clrs[j + 2] << 0x10
+                  | clrs[j + 3] << 0x18;
             }
 
             break;

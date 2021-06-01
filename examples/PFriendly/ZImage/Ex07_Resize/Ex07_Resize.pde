@@ -31,6 +31,7 @@ void setup() {
 
   source = createImage(wOriginal, hOriginal, ARGB);
   Gradient grd0 = new Gradient(
+    0xaf00ff7f,
     0x7f7f00ff,
     0x3fff7f00,
     0xffffffff);
