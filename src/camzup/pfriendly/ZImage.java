@@ -1296,7 +1296,8 @@ public class ZImage extends PImage {
        * reference code, but seems to help reduce blurred alpha on the right and
        * bottom edges.
        */
-      final float bias = 0.00405f;
+      // final float bias = 0.00405f;
+      final float bias = 0.0f;
       final float tx = sw / ( dw * ( 1.0f + bias ) );
       final float ty = sh / ( dh * ( 1.0f + bias ) );
 
@@ -1326,6 +1327,9 @@ public class ZImage extends PImage {
       final int len3 = dw * len2;
       final int len4 = dh * len3;
 
+      final int swn1 = sw - 1;
+      final int shn1 = sh - 1;
+
       for ( int k = 0; k < len4; ++k ) {
          final int g = k / len3; /* row index */
          final int m = k - g * len3; /* temporary */
@@ -1345,29 +1349,30 @@ public class ZImage extends PImage {
          final float dx = tx * ( hf - bias ) - x;
          final float dxsq = dx * dx;
 
-         int a0 = 0;
-         int d0 = 0;
-         int d2 = 0;
-         int d3 = 0;
+         final int zu = y - 1 + j;
+         final int z = zu < 0 ? 0 : zu > shn1 ? shn1 : zu;
 
-         final int z = y - 1 + j;
-         if ( z > -1 && z < sh ) {
+         /*
+          * Channel index multiplied by size of byte, as it will be used to
+          * unpack color channels.
+          */
+         final int i8 = Byte.SIZE * ( n / frameSize );
+         final int zw = z * sw;
 
-            /*
-             * Channel index multiplied by size of byte, as it will be used to
-             * unpack color channels.
-             */
-            final int i8 = Byte.SIZE * ( n / frameSize );
-            final int x1 = x - 1;
-            final int x2 = x + 1;
-            final int x3 = x + 2;
-            final int zw = z * sw;
+         final int x0 = x < 0 ? 0 : x > swn1 ? swn1 : x;
+         int a0 = srcpx[zw + x0] >> i8 & 0xff;
 
-            if ( x > -1 && x < sw ) { a0 = srcpx[zw + x] >> i8 & 0xff; }
-            if ( x1 > -1 && x1 < sw ) { d0 = srcpx[zw + x1] >> i8 & 0xff; }
-            if ( x2 > -1 && x2 < sw ) { d2 = srcpx[zw + x2] >> i8 & 0xff; }
-            if ( x3 > -1 && x3 < sw ) { d3 = srcpx[zw + x3] >> i8 & 0xff; }
-         }
+         final int x1u = x - 1;
+         final int x1 = x1u < 0 ? 0 : x1u > swn1 ? swn1 : x1u;
+         int d0 = srcpx[zw + x1] >> i8 & 0xff;
+
+         final int x2u = x + 1;
+         final int x2 = x2u < 0 ? 0 : x2u > swn1 ? swn1 : x2u;
+         int d2 = srcpx[zw + x2] >> i8 & 0xff;
+
+         final int x3u = x + 2;
+         final int x3 = x3u < 0 ? 0 : x3u > swn1 ? swn1 : x3u;
+         int d3 = srcpx[zw + x3] >> i8 & 0xff;
 
          /* Subtract a0 no matter the boundary condition. */
          d0 -= a0;
