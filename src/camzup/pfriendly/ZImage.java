@@ -1292,9 +1292,8 @@ public class ZImage extends PImage {
       final int[] frame = new int[frameSize];
 
       /*
-       * Subtracting by 1.0 from the source dimensions was not present in the
-       * reference code, but seems to help reduce blurred alpha on the right and
-       * bottom edges.
+       * Introducing a bias was not present in the reference code, but it helped
+       * with edge haloing in earlier versions of this algorithm.
        */
       // final float bias = 0.00405f;
       final float bias = 0.0f;

@@ -1533,7 +1533,15 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Vec2[] points, final float tightness, final Curve2 target ) {
 
       final int ptsLen = points.length;
-      if ( ptsLen < 4 ) { return target; }
+      if ( ptsLen < 2 ) {
+         return target;
+      } else if ( ptsLen < 3 ) {
+         return Curve2.fromCatmull(false, new Vec2[] { points[0], points[0],
+            points[1], points[1] }, tightness, target);
+      } else if ( ptsLen < 4 ) {
+         return Curve2.fromCatmull(false, new Vec2[] { points[0], points[0],
+            points[1], points[2], points[2] }, tightness, target);
+      }
 
       target.closedLoop = closedLoop;
       target.name = "Catmull";

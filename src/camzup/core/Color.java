@@ -1462,7 +1462,9 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from CIE L*a*b* to CIE XYZ.
+    * Converts a color from CIE L*a*b* to CIE XYZ. The source should be
+    * organized as z: L or lightness, x: a or green-red, y: b or blue-yellow,
+    * w: alpha.
     *
     * @param source the XYZ vector
     * @param target the output vector
@@ -1473,7 +1475,7 @@ public class Color implements Comparable < Color > {
     */
    public static Vec4 labaToXyza ( final Vec4 source, final Vec4 target ) {
 
-      return Color.labaToXyza(source.x, source.y, source.z, source.w, target);
+      return Color.labaToXyza(source.z, source.x, source.y, source.w, target);
    }
 
    /**
@@ -2566,7 +2568,10 @@ public class Color implements Comparable < Color > {
 
    /**
     * Converts a color from CIE XYZ to CIE L*a*b*. Assumes D65 illuminant, CIE
-    * 1931 2 degrees referents.
+    * 1931 2 degrees referents.<br>
+    * <br>
+    * The target is packaged as z: L or lightness, x: a or green-red, y: b or
+    * blue-yellow, w: alpha.
     *
     * @param x      the x coordinate
     * @param y      the y coordinate
@@ -2608,8 +2613,8 @@ public class Color implements Comparable < Color > {
          vz = 7.787d * vz + 0.13793103448275862d;
       }
 
-      return target.set(( float ) ( 116.0d * vy - 16.0d ), ( float ) ( 500.0d
-         * ( vx - vy ) ), ( float ) ( 200.0d * ( vy - vz ) ), a);
+      return target.set(( float ) ( 500.0d * ( vx - vy ) ), ( float ) ( 200.0d
+         * ( vy - vz ) ), ( float ) ( 116.0d * vy - 16.0d ), a);
    }
 
    /**
