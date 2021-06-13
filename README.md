@@ -332,26 +332,26 @@ As of v 0.6, this library provides limited interoperability with [Kotlin](https:
 
 For those reasons, the following functions may be confusing if used in Processing-Java.
 
-| Kotlin Operator |            Interop Method | Mutator | KtVec | KtComplex | KtQuat | KtClr | KtMat |
-| --------------: | ------------------------: | :-----: | :---: | :-------: | :----: | :---: | :---: |
-|            `+a` |         `T a.unaryPlus()` |         |   X   |     X     |   X    |   X   |   X   |
-|            `-a` |        `T a.unaryMinus()` |         |   X   |     X     |   X    |   X   |   X   |
-|            `!a` |               `T a.not()` |         |   X   |           |        |       |   X   |
-|    `++a`, `a++` |               `T a.inc()` |         |   X   |           |        |   X   |       |
-|    `--a`, `a--` |               `T a.dec()` |         |   X   |           |        |   X   |       |
-|         `a + b` |           `T a.plus(U b)` |         |   X   |     X     |   X    |   X   |   X   |
-|         `a - b` |          `T a.minus(U b)` |         |   X   |     X     |   X    |   X   |   X   |
-|         `a * b` |          `T a.times(U b)` |         |   X   |     X     |   X    |   X   |   X   |
-|         `a / b` |            `T a.div(U b)` |         |   X   |     X     |   X    |   X   |   X   |
-|         `a % b` |            `T a.rem(U b)` |         |   X   |           |        |   X   |       |
-|        `a += b` |  `void a.plusAssign(U b)` |    X    |   X   |     X     |   X    |   X   |   X   |
-|        `a -= b` | `void a.minusAssign(U b)` |    X    |   X   |     X     |   X    |   X   |   X   |
-|        `a *= b` | `void a.timesAssign(U b)` |    X    |   X   |     X     |   X    |   X   |   X   |
-|        `a /= b` |   `void a.divAssign(U b)` |    X    |   X   |     X     |   X    |   X   |   X   |
-|        `a %= b` |   `void a.remAssign(U b)` |    X    |   X   |           |        |   X   |       |
-|        `a in b` | `boolean b.contains(U a)` |         |   X   |     X     |   X    |   X   |   X   |
-|          `a[i]` |          `U a.get(int i)` |         |   X   |     X     |   X    |   X   |   X   |
-|          `a[i]` |  `void a.set(int i, U b)` |    X    |       |           |        |       |   X   |
+| Kotlin Operator |            Interop Method | Mutator | KtVec | KtComplex | KtQuat | KtMat |
+| --------------: | ------------------------: | :-----: | :---: | :-------: | :----: | :---: |
+|            `+a` |         `T a.unaryPlus()` |         |   X   |     X     |   X    |   X   |
+|            `-a` |        `T a.unaryMinus()` |         |   X   |     X     |   X    |   X   |
+|            `!a` |               `T a.not()` |         |   X   |           |        |   X   |
+|    `++a`, `a++` |               `T a.inc()` |         |   X   |           |        |       |
+|    `--a`, `a--` |               `T a.dec()` |         |   X   |           |        |       |
+|         `a + b` |           `T a.plus(U b)` |         |   X   |     X     |   X    |   X   |
+|         `a - b` |          `T a.minus(U b)` |         |   X   |     X     |   X    |   X   |
+|         `a * b` |          `T a.times(U b)` |         |   X   |     X     |   X    |   X   |
+|         `a / b` |            `T a.div(U b)` |         |   X   |     X     |   X    |   X   |
+|         `a % b` |            `T a.rem(U b)` |         |   X   |           |        |       |
+|        `a += b` |  `void a.plusAssign(U b)` |    X    |   X   |     X     |   X    |   X   |
+|        `a -= b` | `void a.minusAssign(U b)` |    X    |   X   |     X     |   X    |   X   |
+|        `a *= b` | `void a.timesAssign(U b)` |    X    |   X   |     X     |   X    |   X   |
+|        `a /= b` |   `void a.divAssign(U b)` |    X    |   X   |     X     |   X    |   X   |
+|        `a %= b` |   `void a.remAssign(U b)` |    X    |   X   |           |        |       |
+|        `a in b` | `boolean b.contains(U a)` |         |   X   |     X     |   X    |   X   |
+|          `a[i]` |          `U a.get(int i)` |         |   X   |     X     |   X    |   X   |
+|          `a[i]` |  `void a.set(int i, U b)` |    X    |       |           |        |   X   |
 
 Operations between all the objects above are subject to ambiguity. Do not, for example, assume commutativity for operators (`a * b` will not always yield a result equal in value to `b * a`). Even when an operator is not supported by `camzup.kotlin`, Kotlin may infer a viable alternative, e.g., `+` may coerce both the left and right operand to a collection, then concatenate the two. Operators should never be assumed to be more efficient than named methods in languages where objects are allowed to override operators. 
 

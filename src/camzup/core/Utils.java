@@ -77,8 +77,7 @@ public abstract class Utils implements IUtils {
     */
    public static int and ( final float a, final float b ) {
 
-      return ( a != 0.0f && a != Float.NaN ? 1 : 0 ) & ( b != 0.0f && b
-         != Float.NaN ? 1 : 0 );
+      return ( a != 0.0f && a == a ? 1 : 0 ) & ( b != 0.0f && b == b ? 1 : 0 );
    }
 
    /**
@@ -1069,7 +1068,7 @@ public abstract class Utils implements IUtils {
     */
    public static int not ( final float value ) {
 
-      return value == 0.0f || value == Float.NaN ? 1 : 0;
+      return value != 0.0f && value == value ? 0 : 1;
    }
 
    /**
@@ -1083,8 +1082,7 @@ public abstract class Utils implements IUtils {
     */
    public static int or ( final float a, final float b ) {
 
-      return ( a != 0.0f && a != Float.NaN ? 1 : 0 ) | ( b != 0.0f && b
-         != Float.NaN ? 1 : 0 );
+      return ( a != 0.0f && a == a ? 1 : 0 ) | ( b != 0.0f && b == b ? 1 : 0 );
    }
 
    /**
@@ -1419,7 +1417,7 @@ public abstract class Utils implements IUtils {
     */
    public static int swapEndian ( final int a ) {
 
-      return a << 24 | ( a & 0xff00 ) << 8 | a >>> 8 & 0xff00 | a >>> 24;
+      return a << 24 | ( a & '\uff00' ) << 8 | a >>> 8 & '\uff00' | a >>> 24;
    }
 
    /**
@@ -1582,8 +1580,7 @@ public abstract class Utils implements IUtils {
     */
    public static int xor ( final float a, final float b ) {
 
-      return ( a != 0.0f && a != Float.NaN ? 1 : 0 ) ^ ( b != 0.0f && b
-         != Float.NaN ? 1 : 0 );
+      return ( a != 0.0f && a == a ? 1 : 0 ) ^ ( b != 0.0f && b == b ? 1 : 0 );
    }
 
    /**

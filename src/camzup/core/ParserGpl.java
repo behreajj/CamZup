@@ -18,7 +18,9 @@ public abstract class ParserGpl {
    private ParserGpl ( ) {}
 
    /**
-    * Parses a .gpl file containing a GIMP palette.
+    * Parses a .gpl file containing a GIMP palette. Supports the <a href=
+    * "https://github.com/aseprite/aseprite/blob/main/docs/gpl-palette-extension.md">Aseprite
+    * extension</a> which includes an alpha channel.
     *
     * @param in the buffered reader
     *
@@ -36,6 +38,9 @@ public abstract class ParserGpl {
             final Pattern ptrn = Pattern.compile("\\s+");
 
             int i = 0;
+            boolean aseExt = false;
+            int lastIndex = 4;
+
             for ( String ln = in.readLine(); ln != null; ln = in.readLine() ) {
                final String lnlc = ln.trim().toLowerCase();
 
@@ -43,27 +48,38 @@ public abstract class ParserGpl {
                if ( lnlc.equals("gimp palette") || lnlc.indexOf("name:") > -1
                   || lnlc.indexOf("columns:") > -1 || lnlc.indexOf('#') == 0
                   || lnlc.equals("jasc-pal") || lnlc.equals("0100") ) {
+
                   /* Skip. */
+
+               } else if ( lnlc.equals("channels: rgba") ) {
+
+                  aseExt = true;
+                  lastIndex = 5;
+
                } else {
+
                   final String[] tokens = ptrn.split(lnlc, 0);
                   final int len = tokens.length;
                   if ( len > 2 ) {
 
                      /*
                       * In a GPL, tokens 0, 1 and 2 are the RGB channels; token
-                      * 3 is the optional name; token 4 is the optional index.
-                      * We don't care whether the start index is 1 or 0, so long
-                      * as the palette colors are in order.
+                      * n - 1 is the optional name; token n - 1 is the optional
+                      * index. We don't care whether the start index is 1 or 0,
+                      * so long as the palette colors are in order.
                       */
-                     final int idx = len > 4 ? Integer.parseInt(tokens[4], 10)
-                        : i;
+                     final int idx = len > lastIndex ? Integer.parseInt(
+                        tokens[lastIndex], 10) : i;
+
+                     final float alpha = aseExt ? Float.parseFloat(tokens[3])
+                        * IUtils.ONE_255 : 1.0f;
 
                      // TODO: Provision for when clrs.contains index, yet two
                      // colors are unequal?
                      clrs.put(idx, new Color(Float.parseFloat(tokens[0])
                         * IUtils.ONE_255, Float.parseFloat(tokens[1])
                            * IUtils.ONE_255, Float.parseFloat(tokens[2])
-                              * IUtils.ONE_255, 1.0f));
+                              * IUtils.ONE_255, alpha));
 
                      ++i;
                   }

@@ -152,3 +152,4 @@ resizable
 hadamard
 swatches
 illuminant
+chroma

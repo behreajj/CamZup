@@ -1,10 +1,8 @@
 package camzup;
 
-import camzup.core.Color;
 import camzup.core.IUtils;
 import camzup.core.Mesh2;
 import camzup.core.Quaternion;
-import camzup.core.Rng;
 import camzup.core.Vec2;
 
 import processing.core.PApplet;
@@ -131,17 +129,15 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // TODO: Add delta time or elapsed time.
-      // https://github.com/processing/processing/issues/6070
+      // https://rosettacode.org/wiki/Kronecker_product#Java
 
-      final Rng rng = new Rng();
-      final Color a = new Color();
-      for ( int i = 0; i < 255; ++i ) {
-         Color.randomRgb(rng, a);
-         final int hex = Color.toHexInt(a);
-         System.out.println(Color.luminance(a));
-         System.out.println(Color.luminance(hex));
-      }
+      // final Color a = new Color();
+      // for ( int i = 0; i < 255; ++i ) {
+      // Color.randomRgb(rng, a);
+      // final int hex = Color.toHexInt(a);
+      // System.out.println(Color.luminance(a));
+      // System.out.println(Color.luminance(hex));
+      // }
 
    }
 

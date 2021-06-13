@@ -1392,29 +1392,45 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Inverts a color by subtracting the red, green and blue channels from
-    * one. Similar to bitNot, except alpha is unaffected. Also similar to
-    * adding 0.5 to the x component of a {@link Vec4} storing hue, saturation
-    * and value.
+    * Converts a color from CIE L*a*b* to CIE LCh. The output is organized as
+    * z: L or lightness, y: C or chroma, x: h or hue, w: alpha. The returned
+    * hue is in the range [0.0, 1.0] .
     *
-    * @param c      the color
-    * @param target the output color
+    * @param l      the lightness
+    * @param a      the green to red range
+    * @param b      the blue to yellow range
+    * @param alpha  the alpha channel
+    * @param target the output vector
     *
-    * @return the inverse
-    *
-    * @see Utils#clamp01(float)
+    * @return the lch vector
     */
-   public static Color inverse ( final Color c, final Color target ) {
+   public static Vec4 labaToLcha ( final float l, final float a, final float b,
+      final float alpha, final Vec4 target ) {
 
-      return target.set(Utils.clamp01(1.0f - c.r), Utils.clamp01(1.0f - c.g),
-         Utils.clamp01(1.0f - c.b), Utils.clamp01(c.a));
+      return target.set(Utils.mod1(IUtils.ONE_TAU * ( float ) Math.atan2(b, a)),
+         ( float ) Math.sqrt(a * a + b * b), l, alpha);
+   }
+
+   /**
+    * Converts a color from CIE L*a*b* to CIE LCh. The source should be
+    * organized as z: L or lightness, x: a or green-red, y: b or blue-yellow,
+    * w: alpha. The returned hue is in the range [0.0, 1.0] .
+    *
+    * @param source the lab vector
+    * @param target the output vector
+    *
+    * @return the lch color
+    */
+   public static Vec4 labaToLcha ( final Vec4 source, final Vec4 target ) {
+
+      return Color.labaToLcha(source.z, source.x, source.y, source.w, target);
    }
 
    /**
     * Converts a color from CIE L*a*b* to CIE XYZ. Assumes D65 illuminant, CIE
     * 1931 2 degrees referents.
     *
-    * @param l      the perceptual lightness
+    * @param l      the lightness
     * @param a      the green to red range
     * @param b      the blue to yellow range
     * @param alpha  the alpha channel
@@ -1431,33 +1447,32 @@ public class Color implements Comparable < Color > {
        * 0.008620689655172414; 1.0 / 7.787 = 0.12841751101180157
        */
 
-      double vy = ( l + 16.0d ) * 0.008620689655172414d;
-      double vx = a * 0.002d + vy;
-      double vz = vy - b * 0.005d;
+      float vy = ( l + 16.0f ) * 0.00862069f;
+      float vx = a * 0.002f + vy;
+      float vz = vy - b * 0.005f;
 
-      final double vye3 = vy * vy * vy;
-      if ( vye3 > 0.008856d ) {
+      final float vye3 = vy * vy * vy;
+      if ( vye3 > 0.008856f ) {
          vy = vye3;
       } else {
-         vy = ( vy - 0.13793103448275862d ) * 0.12841751101180157d;
+         vy = ( vy - 0.13793103f ) * 0.1284175f;
       }
 
-      final double vxe3 = vx * vx * vx;
-      if ( vxe3 > 0.008856d ) {
+      final float vxe3 = vx * vx * vx;
+      if ( vxe3 > 0.008856f ) {
          vx = vxe3;
       } else {
-         vx = ( vx - 0.13793103448275862d ) * 0.12841751101180157d;
+         vx = ( vx - 0.13793103f ) * 0.1284175f;
       }
 
-      final double vze3 = vz * vz * vz;
-      if ( vze3 > 0.008856d ) {
+      final float vze3 = vz * vz * vz;
+      if ( vze3 > 0.008856f ) {
          vz = vze3;
       } else {
-         vz = ( vz - 0.13793103448275862d ) * 0.12841751101180157d;
+         vz = ( vz - 0.13793103f ) * 0.1284175f;
       }
 
-      return target.set(( float ) ( vx * 0.95047d ), ( float ) vy,
-         ( float ) ( vz * 1.08883d ), alpha);
+      return target.set(vx * 0.95047f, vy, vz * 1.08883f, alpha);
 
    }
 
@@ -1469,13 +1484,47 @@ public class Color implements Comparable < Color > {
     * @param source the XYZ vector
     * @param target the output vector
     *
-    * @return the Lab color
+    * @return the lab color
     *
     * @see Color#labaToXyza(float, float, float, float, Vec4)
     */
    public static Vec4 labaToXyza ( final Vec4 source, final Vec4 target ) {
 
       return Color.labaToXyza(source.z, source.x, source.y, source.w, target);
+   }
+
+   /**
+    * Converts a color from CIE LCh to CIE L*a*b*. The output is organized as
+    * z: L or lightness, x: a or green-red, y: b or blue-yellow, w: alpha.
+    *
+    * @param l      the lightness
+    * @param c      the chroma
+    * @param h      the hue
+    * @param a      the alpha channel
+    * @param target the output vector
+    *
+    * @return the lab vector
+    */
+   public static Vec4 lchaToLaba ( final float l, final float c, final float h,
+      final float a, final Vec4 target ) {
+
+      final double hRad = Utils.mod1(h) * IUtils.TAU_D;
+      return target.set(c * ( float ) Math.cos(hRad), c * ( float ) Math.sin(
+         hRad), l, a);
+   }
+
+   /**
+    * Converts a color from CIE LCh to CIE L*a*b*. The output should be
+    * organized as z: L or lightness, y: C or chroma, x: h or hue, w: alpha.
+    *
+    * @param source the lch vector
+    * @param target the output vector
+    *
+    * @return the lab vector
+    */
+   public static Vec4 lchaToLaba ( final Vec4 source, final Vec4 target ) {
+
+      return Color.lchaToLaba(source.z, source.y, source.x, source.w, target);
    }
 
    /**
@@ -1491,7 +1540,7 @@ public class Color implements Comparable < Color > {
    public static Color lRgbaTosRgba ( final Color source, final boolean alpha,
       final Color target ) {
 
-      /* pow(x, y) := exp(y * log(x)) does not lead to better performance. */
+      /* pow(x, y) := exp(y * ln(x)) does not lead to better performance. */
 
       return target.set(source.r <= 0.0031308f ? source.r * 12.92f
          : ( float ) ( Math.pow(source.r, 0.4166666666666667d) * 1.055d
@@ -1979,6 +2028,37 @@ public class Color implements Comparable < Color > {
       }
 
       return target.set(hue, mx != 0.0f ? diff / mx : 0.0f, mx, alpha);
+   }
+
+   /**
+    * Evaluates whether the color is within the standard RGB gamut of [0.0,
+    * 1.0] .
+    *
+    * @param c color
+    *
+    * @return the evaluation
+    */
+   public static boolean rgbIsInGamut ( final Color c ) {
+
+      return Color.rgbIsInGamut(c, 0.0f);
+   }
+
+   /**
+    * Evaluates whether the color is within the standard RGB gamut of [0.0,
+    * 1.0], according to a tolerance.
+    *
+    * @param c   color
+    * @param tol tolerance
+    *
+    * @return the evaluation
+    */
+   public static boolean rgbIsInGamut ( final Color c, final float tol ) {
+
+      final float oneptol = 1.0f + tol;
+      return 
+      c.r >= -tol && c.r <= oneptol && c.g >= -tol && c.g <= oneptol
+         && c.b >= -tol && c.b <= oneptol;
+
    }
 
    /**

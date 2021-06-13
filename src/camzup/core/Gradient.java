@@ -1479,44 +1479,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Inverts all colors in the gradient and reverses the gradient.
-    *
-    * @param source the source gradient
-    * @param target the target gradient
-    *
-    * @return the inverse
-    */
-   public static Gradient inverse ( final Gradient source,
-      final Gradient target ) {
-
-      if ( source == target ) {
-
-         final Iterator < ColorKey > kyItr = source.keys.iterator();
-         while ( kyItr.hasNext() ) {
-            final Color clr = kyItr.next().clr;
-            Color.inverse(clr, clr);
-         }
-
-      } else {
-
-         final TreeSet < ColorKey > trgKeys = target.keys;
-         final Iterator < ColorKey > srcItr = source.keys.iterator();
-
-         trgKeys.clear();
-
-         while ( srcItr.hasNext() ) {
-            final ColorKey trgKey = new ColorKey(srcItr.next());
-            final Color clr = trgKey.clr;
-            Color.inverse(clr, clr);
-            trgKeys.add(trgKey);
-         }
-      }
-
-      target.reverse();
-      return target;
-   }
-
-   /**
     * Sets the step of each color key in a gradient to the transparency of the
     * key's color. Similar to {@link Gradient#sort(Comparator)} in the order
     * of color keys; however, sort leaves key steps unchanged.
