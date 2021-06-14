@@ -1528,6 +1528,19 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Finds the linear to standard conversion for a single color channel in
+    * [0, 255].
+    *
+    * @param v the value
+    *
+    * @return the conversion
+    */
+   public static int linearToStandard ( final int v ) {
+
+      return Color.LTS_LUT[v];
+   }
+
+   /**
     * Converts a color from linear RGB to
     * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
     *
@@ -2055,8 +2068,7 @@ public class Color implements Comparable < Color > {
    public static boolean rgbIsInGamut ( final Color c, final float tol ) {
 
       final float oneptol = 1.0f + tol;
-      return 
-      c.r >= -tol && c.r <= oneptol && c.g >= -tol && c.g <= oneptol
+      return c.r >= -tol && c.r <= oneptol && c.g >= -tol && c.g <= oneptol
          && c.b >= -tol && c.b <= oneptol;
 
    }
@@ -2222,6 +2234,19 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Finds the standard to linear conversion for a single color channel in
+    * [0, 255].
+    *
+    * @param v the value
+    *
+    * @return the conversion
+    */
+   public static int standardToLinear ( final int v ) {
+
+      return Color.STL_LUT[v];
+   }
+
+   /**
     * Returns a String representing the color array in the GIMP palette file
     * format.
     *
@@ -2288,6 +2313,8 @@ public class Color implements Comparable < Color > {
     */
    public static String toGplString ( final Color[] arr, final String name,
       final int cols, final boolean useIdx ) {
+
+      // TODO: Allow boolean flag to write Aseprite extended GPL format?
 
       final StringBuilder sb = new StringBuilder(1024);
       sb.append("GIMP Palette");

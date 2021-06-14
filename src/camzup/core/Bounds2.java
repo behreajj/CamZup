@@ -421,7 +421,7 @@ public class Bounds2 implements Comparable < Bounds2 > {
 
    /**
     * Evaluates whether a point is within the bounding area, lower bounds
-    * inclusive upper bounds exclusive. For cases where multiple bounds must
+    * inclusive, upper bounds exclusive. For cases where multiple bounds must
     * cover an area without overlap or gaps.
     *
     * @param b the bounds
@@ -682,18 +682,18 @@ public class Bounds2 implements Comparable < Bounds2 > {
     * Splits a bounding area into quadrants.
     *
     * @param b  the bounds
-    * @param bl bottom left target bounds
-    * @param br bottom right target bounds
-    * @param tl top left target bounds
-    * @param tr top right target bounds
+    * @param sw south west target bounds
+    * @param se south east target bounds
+    * @param nw north west target bounds
+    * @param ne north east target bounds
     *
     * @see Bounds2#split(Bounds2, float, float, Bounds2, Bounds2, Bounds2,
     *      Bounds2)
     */
-   public static void split ( final Bounds2 b, final Bounds2 bl,
-      final Bounds2 br, final Bounds2 tl, final Bounds2 tr ) {
+   public static void split ( final Bounds2 b, final Bounds2 sw,
+      final Bounds2 se, final Bounds2 nw, final Bounds2 ne ) {
 
-      Bounds2.split(b, 0.5f, 0.5f, bl, br, tl, tr);
+      Bounds2.split(b, 0.5f, 0.5f, sw, se, nw, ne);
    }
 
    /**
@@ -704,16 +704,16 @@ public class Bounds2 implements Comparable < Bounds2 > {
     * @param b    bounds
     * @param xFac vertical factor
     * @param yFac horizontal factor
-    * @param bl   bottom left target bounds
-    * @param br   bottom right target bounds
-    * @param tl   top left target bounds
-    * @param tr   top right target bounds
+    * @param sw   south west target bounds
+    * @param se   south east target bounds
+    * @param nw   north west target bounds
+    * @param ne   north east target bounds
     *
     * @see Utils#clamp(float, float, float)
     */
    public static void split ( final Bounds2 b, final float xFac,
-      final float yFac, final Bounds2 bl, final Bounds2 br, final Bounds2 tl,
-      final Bounds2 tr ) {
+      final float yFac, final Bounds2 sw, final Bounds2 se, final Bounds2 nw,
+      final Bounds2 ne ) {
 
       final Vec2 bMin = b.min;
       final Vec2 bMax = b.max;
@@ -725,10 +725,10 @@ public class Bounds2 implements Comparable < Bounds2 > {
       final float y = ( 1.0f - ty ) * bMin.y + ty * bMax.y;
 
       /* @formatter:off */
-      bl.set(bMin.x, bMin.y,      x,      y);
-      br.set(     x, bMin.y, bMax.x,      y);
-      tl.set(bMin.x,      y,      x, bMax.y);
-      tr.set(     x,      y, bMax.x, bMax.y);
+      sw.set(bMin.x, bMin.y,      x,      y);
+      se.set(     x, bMin.y, bMax.x,      y);
+      nw.set(bMin.x,      y,      x, bMax.y);
+      ne.set(     x,      y, bMax.x, bMax.y);
       /* @formatter:on */
    }
 
@@ -740,10 +740,10 @@ public class Bounds2 implements Comparable < Bounds2 > {
     *
     * @param b  the bounds
     * @param v  the point
-    * @param bl bottom left target bounds
-    * @param br bottom right target bounds
-    * @param tl top left target bounds
-    * @param tr top right target bounds
+    * @param sw south west target bounds
+    * @param se south east target bounds
+    * @param nw north west target bounds
+    * @param ne north east target bounds
     *
     * @return point is in bounds
     *
@@ -752,7 +752,7 @@ public class Bounds2 implements Comparable < Bounds2 > {
     *      Bounds2)
     */
    public static boolean split ( final Bounds2 b, final Vec2 v,
-      final Bounds2 bl, final Bounds2 br, final Bounds2 tl, final Bounds2 tr ) {
+      final Bounds2 sw, final Bounds2 se, final Bounds2 nw, final Bounds2 ne ) {
 
       final Vec2 bMin = b.min;
       final Vec2 bMax = b.max;
@@ -760,143 +760,7 @@ public class Bounds2 implements Comparable < Bounds2 > {
       if ( v.x > bMin.x && v.x < bMax.x && v.y > bMin.y && v.y < bMax.y ) {
          final float xFac = Utils.div(v.x - bMin.x, bMax.x - bMin.x);
          final float yFac = Utils.div(v.y - bMin.y, bMax.y - bMin.y);
-         Bounds2.split(b, xFac, yFac, bl, br, tl, tr);
-         return true;
-      }
-
-      return false;
-   }
-
-   /**
-    * Splits a bounding area in half on the x axis.
-    *
-    * @param b      the bounds
-    * @param bottom bottom target bounds
-    * @param top    top target bounds
-    *
-    * @see Bounds2#splitHorizontal(Bounds2, float, Bounds2, Bounds2)
-    */
-   public static void splitHorizontal ( final Bounds2 b, final Bounds2 bottom,
-      final Bounds2 top ) {
-
-      Bounds2.splitVertical(b, 0.5f, bottom, top);
-   }
-
-   /**
-    * Splits a bounding area on the y axis according to a factor in the range
-    * [0.0, 1.0] .
-    *
-    * @param b      the bounds
-    * @param fac    the factor
-    * @param bottom bottom target bounds
-    * @param top    top target bounds
-    *
-    * @see Utils#clamp(float, float, float)
-    */
-   public static void splitHorizontal ( final Bounds2 b, final float fac,
-      final Bounds2 bottom, final Bounds2 top ) {
-
-      final Vec2 bMin = b.min;
-      final Vec2 bMax = b.max;
-      final float t = Utils.clamp(fac, IUtils.EPSILON, 1.0f - IUtils.EPSILON);
-      final float y = ( 1.0f - t ) * bMin.y + t * bMax.y;
-
-      bottom.set(bMin.x, bMin.y, bMax.x, y);
-      top.set(bMin.x, y, bMax.x, bMax.y);
-   }
-
-   /**
-    * Splits a bounding area on the x axis according to a point. If the point
-    * is inside the bounding area, assigns the result to target bounds and
-    * returns <code>true</code>. If the point is outside the bounding area,
-    * returns <code>false</code>.
-    *
-    * @param b      the bounds
-    * @param v      the point
-    * @param bottom bottom target bounds
-    * @param top    top target bounds
-    *
-    * @return point is in bounds
-    *
-    * @see Bounds2#splitHorizontal(Bounds2, float, Bounds2, Bounds2)
-    */
-   public static boolean splitHorizontal ( final Bounds2 b, final Vec2 v,
-      final Bounds2 bottom, final Bounds2 top ) {
-
-      final Vec2 bMin = b.min;
-      final Vec2 bMax = b.max;
-
-      if ( v.x > bMin.x && v.x < bMax.x ) {
-         final float fac = Utils.div(v.y - bMin.y, bMax.y - bMin.y);
-         Bounds2.splitHorizontal(b, fac, bottom, top);
-         return true;
-      }
-
-      return false;
-   }
-
-   /**
-    * Splits a bounding area in half on the y axis.
-    *
-    * @param b     the bounds
-    * @param left  left target bounds
-    * @param right right target bounds
-    *
-    * @see Bounds2#splitVertical(Bounds2, float, Bounds2, Bounds2)
-    */
-   public static void splitVertical ( final Bounds2 b, final Bounds2 left,
-      final Bounds2 right ) {
-
-      Bounds2.splitVertical(b, 0.5f, left, right);
-   }
-
-   /**
-    * Splits a bounding area on the y axis according to a factor in the range
-    * [0.0, 1.0] .
-    *
-    * @param b     the bounds
-    * @param fac   the factor
-    * @param left  left target bounds
-    * @param right right target bounds
-    *
-    * @see Utils#clamp(float, float, float)
-    */
-   public static void splitVertical ( final Bounds2 b, final float fac,
-      final Bounds2 left, final Bounds2 right ) {
-
-      final Vec2 bMin = b.min;
-      final Vec2 bMax = b.max;
-      final float t = Utils.clamp(fac, IUtils.EPSILON, 1.0f - IUtils.EPSILON);
-      final float x = ( 1.0f - t ) * bMin.x + t * bMax.x;
-
-      left.set(bMin.x, bMin.y, x, bMax.y);
-      right.set(x, bMin.y, bMax.x, bMax.y);
-   }
-
-   /**
-    * Splits a bounding area on the y axis according to a point. If the point
-    * is inside the bounding area, assigns the result to target bounds and
-    * returns <code>true</code>. If the point is outside the bounding area,
-    * returns <code>false</code>.
-    *
-    * @param b     the bounds
-    * @param v     the point
-    * @param left  left target bounds
-    * @param right right target bounds
-    *
-    * @return point is in bounds
-    *
-    * @see Bounds2#splitVertical(Bounds2, float, Bounds2, Bounds2)
-    */
-   public static boolean splitVertical ( final Bounds2 b, final Vec2 v,
-      final Bounds2 left, final Bounds2 right ) {
-
-      final Vec2 bMin = b.min;
-      final Vec2 bMax = b.max;
-
-      if ( v.y > bMin.y && v.y < bMax.y ) {
-         final float fac = Utils.div(v.x - bMin.x, bMax.x - bMin.x);
-         Bounds2.splitVertical(b, fac, left, right);
+         Bounds2.split(b, xFac, yFac, sw, se, nw, ne);
          return true;
       }
 

@@ -140,16 +140,15 @@ public class Octree implements Iterable < Vec3 > {
    @Recursive
    public int getMaxLevel ( ) {
 
-      if ( this.isLeaf() ) {
-         return this.level;
-      } else {
-         int mxLvl = 0;
-         for ( int i = 0; i < 8; ++i ) {
-            final int lvl = this.children[i].getMaxLevel();
+      int mxLvl = this.level;
+      for ( int i = 0; i < 8; ++i ) {
+         final Octree child = this.children[i];
+         if ( child != null ) {
+            final int lvl = child.getMaxLevel();
             if ( lvl > mxLvl ) { mxLvl = lvl; }
          }
-         return mxLvl;
       }
+      return mxLvl;
    }
 
    /**
@@ -178,10 +177,10 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Inserts a point into the quadtree. Returns <code>true</code> if the
-    * point was successfully inserted into the quad tree directly or
-    * indirectly through one of its children; returns <code>false</code> if
-    * the insertion was unsuccessful.
+    * Inserts a point into the octree. Returns <code>true</code> if the point
+    * was successfully inserted into the octree directly or indirectly through
+    * one of its children; returns <code>false</code> if the insertion was
+    * unsuccessful.
     *
     * @param point the point
     *
@@ -208,13 +207,15 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Inserts points into the quadtree.
+    * Inserts points into the octree.
     *
     * @param pts the points
     *
     * @return the insertion success
     */
    public boolean insertAll ( final Vec3[] pts ) {
+
+      // TODO: Expand doc comment to explain return.
 
       final int len = pts.length;
       boolean flag = true;
@@ -223,7 +224,8 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Is this a leaf node in the quadtree, i.e. does it have any children.
+    * Evaluates whether this octree node has any children; returns true if no;
+    * otherwise false.
     *
     * @return the evaluation
     */
@@ -266,7 +268,7 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Queries the octree with a circular range, returning points inside the
+    * Queries the octree with a spherical range, returning points inside the
     * range.
     *
     * @param origin the circle origin
@@ -296,9 +298,9 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Splits the octree into eight child nodes.
+    * Splits the octree node into eight child nodes.
     *
-    * @return this octree tree.
+    * @return this octree
     */
    public Octree split ( ) {
 
@@ -333,13 +335,13 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Gets a string representation of this quadtree node.
+    * Gets a string representation of this octree node.
     */
    @Override
    public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
 
    /**
-    * Gets a string representation of this quadtree node.
+    * Gets a string representation of this octree node.
     *
     * @param places number of decimal places
     *
@@ -371,8 +373,8 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Queries the quadtree with a rectangular range. If points in the quadtree
-    * are in range, they are added to the list.
+    * Queries the octree with a rectangular range. If points in the octree are
+    * in range, they are added to the list.
     *
     * @param range the range
     * @param found the output list
@@ -406,8 +408,8 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Queries the quadtree with a circular range. If points in the quadtree
-    * are in range, they are added to the list.
+    * Queries the octree with a spherical range. If points in the octree are
+    * in range, they are added to the list.
     *
     * @param origin the circle origin
     * @param radius the circle radius
@@ -458,6 +460,9 @@ public class Octree implements Iterable < Vec3 > {
       sb.append(", capacity: ");
       sb.append(this.capacity);
 
+      // TODO: Could this be optimized to not use
+      // isLeaf in addition to the second for loop?
+      // Display level?
       if ( this.isLeaf() ) {
          sb.append(", points: [ ");
          final Iterator < Vec3 > itr = this.points.iterator();

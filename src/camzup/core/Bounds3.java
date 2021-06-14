@@ -442,7 +442,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
 
    /**
     * Evaluates whether a point is within the bounding volume, lower bounds
-    * inclusive upper bounds exclusive. For cases where multiple bounds must
+    * inclusive, upper bounds exclusive. For cases where multiple bounds must
     * cover an volume without overlap or gaps.
     *
     * @param b the bounds
@@ -713,25 +713,25 @@ public class Bounds3 implements Comparable < Bounds3 > {
     * Splits a bounding volume into octants.
     *
     * @param b   the bounds
-    * @param bbl back bottom left
-    * @param bbr back bottom right
-    * @param btl back top left
-    * @param btr back top right
-    * @param fbl front bottom left
-    * @param fbr front bottom right
-    * @param ftl front top left
-    * @param ftr front top right
+    * @param bsw back south west
+    * @param bse back south east
+    * @param bnw back north west
+    * @param bne back north east
+    * @param fsw front south west
+    * @param fse front south east
+    * @param fnw front north west
+    * @param fne front north east
     *
     * @see Bounds3#split(Bounds3, float, float, float, Bounds3, Bounds3,
     *      Bounds3, Bounds3, Bounds3, Bounds3, Bounds3, Bounds3)
     */
-   public static void split ( final Bounds3 b, final Bounds3 bbl,
-      final Bounds3 bbr, final Bounds3 btl, final Bounds3 btr,
-      final Bounds3 fbl, final Bounds3 fbr, final Bounds3 ftl,
-      final Bounds3 ftr ) {
+   public static void split ( final Bounds3 b, final Bounds3 bsw,
+      final Bounds3 bse, final Bounds3 bnw, final Bounds3 bne,
+      final Bounds3 fsw, final Bounds3 fse, final Bounds3 fnw,
+      final Bounds3 fne ) {
 
-      Bounds3.split(b, 0.5f, 0.5f, 0.5f, bbl, bbr, btl, btr, fbl, fbr, ftl,
-         ftr);
+      Bounds3.split(b, 0.5f, 0.5f, 0.5f, bsw, bse, bnw, bne, fsw, fse, fnw,
+         fne);
    }
 
    /**
@@ -744,21 +744,21 @@ public class Bounds3 implements Comparable < Bounds3 > {
     * @param xFac vertical factor
     * @param yFac horizontal factor
     * @param zFac depth factor
-    * @param bbl  back bottom left
-    * @param bbr  back bottom right
-    * @param btl  back top left
-    * @param btr  back top right
-    * @param fbl  front bottom left
-    * @param fbr  front bottom right
-    * @param ftl  front top left
-    * @param ftr  front top right
+    * @param bsw  back south west
+    * @param bse  back south east
+    * @param bnw  back north west
+    * @param bne  back north east
+    * @param fsw  front south west
+    * @param fse  front south east
+    * @param fnw  front north west
+    * @param fne  front north east
     *
     * @see Utils#clamp(float, float, float)
     */
    public static void split ( final Bounds3 b, final float xFac,
-      final float yFac, final float zFac, final Bounds3 bbl, final Bounds3 bbr,
-      final Bounds3 btl, final Bounds3 btr, final Bounds3 fbl,
-      final Bounds3 fbr, final Bounds3 ftl, final Bounds3 ftr ) {
+      final float yFac, final float zFac, final Bounds3 bsw, final Bounds3 bse,
+      final Bounds3 bnw, final Bounds3 bne, final Bounds3 fsw,
+      final Bounds3 fse, final Bounds3 fnw, final Bounds3 fne ) {
 
       final Vec3 bMin = b.min;
       final Vec3 bMax = b.max;
@@ -772,14 +772,14 @@ public class Bounds3 implements Comparable < Bounds3 > {
       final float z = ( 1.0f - tz ) * bMin.z + tz * bMax.z;
 
       /* @formatter:off */
-      bbl.set(bMin.x, bMin.y, bMin.z,      x,      y,      z);
-      bbr.set(     x, bMin.y, bMin.z, bMax.x,      y,      z);
-      btl.set(bMin.x,      y, bMin.z,      x, bMax.y,      z);
-      btr.set(     x,      y, bMin.z, bMax.x, bMax.y,      z);
-      fbl.set(bMin.x, bMin.y,      z,      x,      y, bMax.z);
-      fbr.set(     x, bMin.y,      z, bMax.x,      y, bMax.z);
-      ftl.set(bMin.x,      y,      z,      x, bMax.y, bMax.z);
-      ftr.set(     x,      y,      z, bMax.x, bMax.y, bMax.z);
+      bsw.set(bMin.x, bMin.y, bMin.z,      x,      y,      z);
+      bse.set(     x, bMin.y, bMin.z, bMax.x,      y,      z);
+      bnw.set(bMin.x,      y, bMin.z,      x, bMax.y,      z);
+      bne.set(     x,      y, bMin.z, bMax.x, bMax.y,      z);
+      fsw.set(bMin.x, bMin.y,      z,      x,      y, bMax.z);
+      fse.set(     x, bMin.y,      z, bMax.x,      y, bMax.z);
+      fnw.set(bMin.x,      y,      z,      x, bMax.y, bMax.z);
+      fne.set(     x,      y,      z, bMax.x, bMax.y, bMax.z);
       /* @formatter:on */
    }
 
@@ -791,14 +791,14 @@ public class Bounds3 implements Comparable < Bounds3 > {
     *
     * @param b   the bounds
     * @param v   the point
-    * @param bbl back bottom left
-    * @param bbr back bottom right
-    * @param btl back top left
-    * @param btr back top right
-    * @param fbl front bottom left
-    * @param fbr front bottom right
-    * @param ftl front top left
-    * @param ftr front top right
+    * @param bsw back south west
+    * @param bse back south east
+    * @param bnw back north west
+    * @param bne back north east
+    * @param fsw front south west
+    * @param fse front south east
+    * @param fnw front north west
+    * @param fne front north east
     *
     * @return point is in bounds
     *
@@ -807,9 +807,9 @@ public class Bounds3 implements Comparable < Bounds3 > {
     *      Bounds3, Bounds3, Bounds3, Bounds3, Bounds3, Bounds3)
     */
    public static boolean split ( final Bounds3 b, final Vec3 v,
-      final Bounds3 bbl, final Bounds3 bbr, final Bounds3 btl,
-      final Bounds3 btr, final Bounds3 fbl, final Bounds3 fbr,
-      final Bounds3 ftl, final Bounds3 ftr ) {
+      final Bounds3 bsw, final Bounds3 bse, final Bounds3 bnw,
+      final Bounds3 bne, final Bounds3 fsw, final Bounds3 fse,
+      final Bounds3 fnw, final Bounds3 fne ) {
 
       final Vec3 bMin = b.min;
       final Vec3 bMax = b.max;
@@ -819,213 +819,8 @@ public class Bounds3 implements Comparable < Bounds3 > {
          final float xFac = Utils.div(v.x - bMin.x, bMax.x - bMin.x);
          final float yFac = Utils.div(v.y - bMin.y, bMax.y - bMin.y);
          final float zFac = Utils.div(v.z - bMin.z, bMax.z - bMin.z);
-         Bounds3.split(b, xFac, yFac, zFac, bbl, bbr, btl, btr, fbl, fbr, ftl,
-            ftr);
-         return true;
-      }
-
-      return false;
-   }
-
-   /**
-    * Splits a bounding volume in half on the z axis.
-    *
-    * @param b     the bounds
-    * @param back  back target bounds
-    * @param front front target bounds
-    *
-    * @see Bounds3#splitDepth(Bounds3, float, Bounds3, Bounds3)
-    */
-   public static void splitDepth ( final Bounds3 b, final Bounds3 back,
-      final Bounds3 front ) {
-
-      Bounds3.splitDepth(b, 0.5f, back, front);
-   }
-
-   /**
-    * Splits a bounding volume on the z axis according to a factor in the
-    * range [0.0, 1.0] .
-    *
-    * @param b     the bounds
-    * @param fac   the factor
-    * @param back  back target bounds
-    * @param front front target bounds
-    *
-    * @see Utils#clamp(float, float, float)
-    */
-   public static void splitDepth ( final Bounds3 b, final float fac,
-      final Bounds3 back, final Bounds3 front ) {
-
-      final Vec3 bMin = b.min;
-      final Vec3 bMax = b.max;
-
-      final float t = Utils.clamp(fac, IUtils.EPSILON, 1.0f - IUtils.EPSILON);
-      final float z = ( 1.0f - t ) * bMin.z + t * bMax.z;
-
-      back.set(bMin.x, bMin.y, bMin.z, bMax.x, bMax.y, z);
-      front.set(bMin.x, bMin.y, z, bMax.x, bMax.y, bMax.z);
-   }
-
-   /**
-    * Splits a bounding volume on the z axis according to a point. If the
-    * point is inside the bounding volume, assigns the result to target bounds
-    * and returns <code>true</code>. If the point is outside the bounding
-    * volume, returns <code>false</code>.
-    *
-    * @param b     the bounds
-    * @param v     the point
-    * @param back  back target bounds
-    * @param front front target bounds
-    *
-    * @return point is in bounds
-    *
-    * @see Bounds3#splitDepth(Bounds3, float, Bounds3, Bounds3)
-    */
-   public static boolean splitDepth ( final Bounds3 b, final Vec3 v,
-      final Bounds3 back, final Bounds3 front ) {
-
-      final Vec3 bMin = b.min;
-      final Vec3 bMax = b.max;
-
-      if ( v.z > bMin.z && v.z < bMax.z ) {
-         final float fac = Utils.div(v.z - bMin.z, bMax.z - bMin.z);
-         Bounds3.splitDepth(b, fac, back, front);
-         return true;
-      }
-
-      return false;
-   }
-
-   /**
-    * Splits a bounding volume in half on the x axis.
-    *
-    * @param b      the bounds
-    * @param bottom bottom target bounds
-    * @param top    top target bounds
-    *
-    * @see Bounds3#splitVertical(Bounds3, float, Bounds3, Bounds3)
-    */
-   public static void splitHorizontal ( final Bounds3 b, final Bounds3 bottom,
-      final Bounds3 top ) {
-
-      Bounds3.splitVertical(b, 0.5f, bottom, top);
-   }
-
-   /**
-    * Splits a bounding volume on the y axis according to a factor in the
-    * range [0.0, 1.0] .
-    *
-    * @param b      the bounds
-    * @param fac    the factor
-    * @param bottom bottom target bounds
-    * @param top    top target bounds
-    *
-    * @see Utils#clamp(float, float, float)
-    */
-   public static void splitHorizontal ( final Bounds3 b, final float fac,
-      final Bounds3 bottom, final Bounds3 top ) {
-
-      final Vec3 bMin = b.min;
-      final Vec3 bMax = b.max;
-      final float t = Utils.clamp(fac, IUtils.EPSILON, 1.0f - IUtils.EPSILON);
-      final float y = ( 1.0f - t ) * bMin.y + t * bMax.y;
-
-      bottom.set(bMin.x, bMin.y, bMin.z, bMax.x, y, bMax.z);
-      top.set(bMin.x, y, bMin.z, bMax.x, bMax.y, bMax.z);
-   }
-
-   /**
-    * Splits a bounding volume on the x axis according to a point. If the
-    * point is inside the bounding volume, assigns the result to target bounds
-    * and returns <code>true</code>. If the point is outside the bounding
-    * volume, returns <code>false</code>.
-    *
-    * @param b      the bounds
-    * @param v      the point
-    * @param bottom bottom target bounds
-    * @param top    top target bounds
-    *
-    * @return point is in bounds
-    *
-    * @see Bounds3#splitHorizontal(Bounds3, float, Bounds3, Bounds3)
-    */
-   public static boolean splitHorizontal ( final Bounds3 b, final Vec3 v,
-      final Bounds3 bottom, final Bounds3 top ) {
-
-      final Vec3 bMin = b.min;
-      final Vec3 bMax = b.max;
-
-      if ( v.x > bMin.x && v.x < bMax.x ) {
-         final float fac = Utils.div(v.y - bMin.y, bMax.y - bMin.y);
-         Bounds3.splitHorizontal(b, fac, bottom, top);
-         return true;
-      }
-
-      return false;
-   }
-
-   /**
-    * Splits a bounding volume in half on the y axis.
-    *
-    * @param b     the bounds
-    * @param left  left target bounds
-    * @param right right target bounds
-    *
-    * @see Bounds3#splitVertical(Bounds3, float, Bounds3, Bounds3)
-    */
-   public static void splitVertical ( final Bounds3 b, final Bounds3 left,
-      final Bounds3 right ) {
-
-      Bounds3.splitVertical(b, 0.5f, left, right);
-   }
-
-   /**
-    * Splits a bounding volume on the y axis according to a factor in the
-    * range [0.0, 1.0] .
-    *
-    * @param b     the bounds
-    * @param fac   the factor
-    * @param left  left target bounds
-    * @param right right target bounds
-    *
-    * @see Utils#clamp(float, float, float)
-    */
-   public static void splitVertical ( final Bounds3 b, final float fac,
-      final Bounds3 left, final Bounds3 right ) {
-
-      final Vec3 bMin = b.min;
-      final Vec3 bMax = b.max;
-      final float t = Utils.clamp(fac, IUtils.EPSILON, 1.0f - IUtils.EPSILON);
-      final float x = ( 1.0f - t ) * bMin.x + t * bMax.x;
-
-      left.set(bMin.x, bMin.y, bMin.z, x, bMax.y, bMax.z);
-      right.set(x, bMin.y, bMin.z, bMax.x, bMax.y, bMax.z);
-   }
-
-   /**
-    * Splits a bounding volume on the y axis according to a point. If the
-    * point is inside the bounding volume, assigns the result to target bounds
-    * and returns <code>true</code>. If the point is outside the bounding
-    * volume, returns <code>false</code>.
-    *
-    * @param b     the bounds
-    * @param v     the point
-    * @param left  left target bounds
-    * @param right right target bounds
-    *
-    * @return point is in bounds
-    *
-    * @see Bounds3#splitVertical(Bounds3, float, Bounds3, Bounds3)
-    */
-   public static boolean splitVertical ( final Bounds3 b, final Vec3 v,
-      final Bounds3 left, final Bounds3 right ) {
-
-      final Vec3 bMin = b.min;
-      final Vec3 bMax = b.max;
-
-      if ( v.y > bMin.y && v.y < bMax.y ) {
-         final float fac = Utils.div(v.x - bMin.x, bMax.x - bMin.x);
-         Bounds3.splitVertical(b, fac, left, right);
+         Bounds3.split(b, xFac, yFac, zFac, bsw, bse, bnw, bne, fsw, fse, fnw,
+            fne);
          return true;
       }
 

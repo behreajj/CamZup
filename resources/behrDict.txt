@@ -153,3 +153,4 @@ hadamard
 swatches
 illuminant
 chroma
+haloes

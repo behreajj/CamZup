@@ -32,7 +32,6 @@ public class ZImage extends PImage {
    public ZImage ( final int width, final int height ) {
 
       // QUERY Is there a set opaque or remove alpha func in pimage?
-      // Vectorize to little rectangles as an SVG string?
       super(width, height);
    }
 
@@ -66,6 +65,19 @@ public class ZImage extends PImage {
     * The default constructor.
     */
    protected ZImage ( ) {}
+
+   /**
+    * Resizes the image to a requested size in pixels using bicubic
+    * interpolation.
+    *
+    * @param w width
+    * @param h height
+    */
+   @Override
+   public void resize ( final int w, final int h ) {
+
+      ZImage.resizeBicubic(this, w, h);
+   }
 
    /**
     * Returns a string representation of an image, including its format,
@@ -1036,20 +1048,23 @@ public class ZImage extends PImage {
          final float diff = lumMax - lumMin;
          final float denom = diff != 0.0f ? 1.0f / diff : 0.0f;
          for ( int i = 0; i < len; ++i ) {
+
+            // QUERY Should LTS_LUT and STL_LUT be made package level so that
+            // this luminance can be converted from linear to standard after it
+            // is converted to an integer?
+
             final float lum = ( lums[i] - lumMin ) * denom;
-            final float vf = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math
-               .pow(lum, 0.4166666666666667d) * 1.055d - 0.055d );
-            final int vi = ( int ) ( vf * 0xff + 0.5f );
-            px[i] = px[i] & 0xff000000 | vi << 0x10 | vi << 0x08 | vi;
+            final int viLin = ( int ) ( lum * 0xff + 0.5f );
+            final int viStd = Color.linearToStandard(viLin);
+            px[i] = px[i] & 0xff000000 | viStd << 0x10 | viStd << 0x08 | viStd;
          }
 
       } else {
          for ( int i = 0; i < len; ++i ) {
             final float lum = Color.sRgbLuminance(px[i]);
-            final float vf = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math
-               .pow(lum, 0.4166666666666667d) * 1.055d - 0.055d );
-            final int vi = ( int ) ( vf * 0xff + 0.5f );
-            px[i] = px[i] & 0xff000000 | vi << 0x10 | vi << 0x08 | vi;
+            final int viLin = ( int ) ( lum * 0xff + 0.5f );
+            final int viStd = Color.linearToStandard(viLin);
+            px[i] = px[i] & 0xff000000 | viStd << 0x10 | viStd << 0x08 | viStd;
          }
       }
 
@@ -1293,7 +1308,7 @@ public class ZImage extends PImage {
 
       /*
        * Introducing a bias was not present in the reference code, but it helped
-       * with edge haloing in earlier versions of this algorithm.
+       * with edge haloes in earlier versions of this algorithm.
        */
       // final float bias = 0.00405f;
       final float bias = 0.0f;

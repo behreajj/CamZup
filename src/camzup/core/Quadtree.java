@@ -138,16 +138,15 @@ public class Quadtree implements Iterable < Vec2 > {
    @Recursive
    public int getMaxLevel ( ) {
 
-      if ( this.isLeaf() ) {
-         return this.level;
-      } else {
-         int mxLvl = 0;
-         for ( int i = 0; i < 4; ++i ) {
-            final int lvl = this.children[i].getMaxLevel();
+      int mxLvl = this.level;
+      for ( int i = 0; i < 8; ++i ) {
+         final Quadtree child = this.children[i];
+         if ( child != null ) {
+            final int lvl = child.getMaxLevel();
             if ( lvl > mxLvl ) { mxLvl = lvl; }
          }
-         return mxLvl;
       }
+      return mxLvl;
    }
 
    /**
@@ -177,9 +176,9 @@ public class Quadtree implements Iterable < Vec2 > {
 
    /**
     * Inserts a point into the quadtree. Returns <code>true</code> if the
-    * point was successfully inserted into the quad tree directly or
-    * indirectly through one of its children; returns <code>false</code> if
-    * the insertion was unsuccessful.
+    * point was successfully inserted into the quadtree directly or indirectly
+    * through one of its children; returns <code>false</code> if the insertion
+    * was unsuccessful.
     *
     * @param point the point
     *
@@ -221,7 +220,8 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
-    * Is this a leaf node in the quadtree, i.e. does it have any children.
+    * Evaluates whether this quadtree node has any children; returns true if
+    * no; otherwise false.
     *
     * @return the evaluation
     */
@@ -294,9 +294,9 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
-    * Splits the quadtree into four child nodes.
+    * Splits the quadtree node into four child nodes.
     *
-    * @return this quad tree.
+    * @return this quadtree.
     */
    public Quadtree split ( ) {
 
