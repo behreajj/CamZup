@@ -353,8 +353,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
+      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
       return this.equals(( Mesh3 ) obj);
    }
 
@@ -2159,11 +2158,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       sb.append("\", materialIndex: ");
       sb.append(this.materialIndex);
       sb.append(", coords: ");
-      sb.append(Vec3.toString(this.coords, places));
+      Vec3.toString(sb, this.coords, places);
       sb.append(", texCoords: ");
-      sb.append(Vec2.toString(this.texCoords, places));
+      Vec2.toString(sb, this.texCoords, places);
       sb.append(", normals: ");
-      sb.append(Vec3.toString(this.normals, places));
+      Vec3.toString(sb, this.normals, places);
 
       sb.append(", faces: [ ");
       if ( this.faces != null ) {
@@ -5123,20 +5122,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          if ( !this.hasNext() ) { throw new NoSuchElementException(); }
          return this.mesh.getFace(this.index++, new Face3());
-      }
-
-      /**
-       * Gets the next value in the iterator.
-       *
-       * @param target the output face
-       *
-       * @return the value
-       *
-       * @see Mesh3#getFace(int, Face3)
-       */
-      public Face3 next ( final Face3 target ) {
-
-         return this.mesh.getFace(this.index++, target);
       }
 
       /**

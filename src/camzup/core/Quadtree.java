@@ -78,6 +78,33 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
+    * Constructs an octree from an array of points.
+    *
+    * @param points the points
+    */
+   public Quadtree ( final Vec2[] points ) {
+
+      this(points, Quadtree.DEFAULT_CAPACITY);
+   }
+
+   /**
+    * Constructs an octree from an array of points and a capacity per octree
+    * node.
+    *
+    * @param points   the points
+    * @param capacity capacity per node
+    */
+   public Quadtree ( final Vec2[] points, final int capacity ) {
+
+      // TODO: TEST
+      this.bounds = Bounds2.fromPoints(points, new Bounds2());
+      this.capacity = capacity < 1 ? 1 : capacity;
+      this.level = 0;
+      this.points = new HashSet <>(this.capacity);
+      this.insertAll(points);
+   }
+
+   /**
     * Constructs a quadtree with a boundary and capacity. Protected so that
     * the level can be set.
     *
@@ -205,7 +232,9 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
-    * Inserts points into the quadtree.
+    * Inserts points into the quadtree. Returns <code>true</code> if all
+    * insertions were successful; <code>false</code> if at least one was
+    * unsuccessful.
     *
     * @param pts the points
     *
@@ -306,7 +335,6 @@ public class Quadtree implements Iterable < Vec2 > {
             nextLevel);
       }
 
-      Iterator < Vec2 > itr;
       Bounds2.split(this.bounds, 0.5f, 0.5f,
          this.children[Quadtree.SOUTH_WEST].bounds,
          this.children[Quadtree.SOUTH_EAST].bounds,
@@ -314,7 +342,7 @@ public class Quadtree implements Iterable < Vec2 > {
          this.children[Quadtree.NORTH_EAST].bounds);
 
       /* Pass on points to children. */
-      itr = this.points.iterator();
+      final Iterator < Vec2 > itr = this.points.iterator();
       while ( itr.hasNext() ) {
          final Vec2 v = itr.next();
          boolean flag = false;

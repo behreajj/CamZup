@@ -82,8 +82,7 @@ public class Vec2 implements Comparable < Vec2 > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( obj == null ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
+      if ( ( obj == null ) || ( this.getClass() != obj.getClass() ) ) { return false; }
       return this.equals(( Vec2 ) obj);
    }
 
@@ -2667,6 +2666,41 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
+    * Appends a string representation of an array of vectors to a
+    * {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param arr    the array
+    * @param places the print precision
+    *
+    * @return the string builder
+    */
+   public static StringBuilder toString ( final StringBuilder sb,
+      final Vec2[] arr, final int places ) {
+
+      sb.append('[').append(' ');
+
+      if ( arr != null ) {
+         final int len = arr.length;
+         final int last = len - 1;
+
+         for ( int i = 0; i < last; ++i ) {
+            final Vec2 v = arr[i];
+            v.toString(sb, places);
+            sb.append(',').append(' ');
+         }
+
+         final Vec2 vl = arr[last];
+         vl.toString(sb, places);
+         sb.append(' ');
+      }
+
+      sb.append(']');
+
+      return sb;
+   }
+
+   /**
     * Returns a string representation of an array of vectors.
     *
     * @param arr the array
@@ -2688,26 +2722,7 @@ public class Vec2 implements Comparable < Vec2 > {
     */
    public static String toString ( final Vec2[] arr, final int places ) {
 
-      final StringBuilder sb = new StringBuilder(1024);
-      sb.append('[').append(' ');
-
-      if ( arr != null ) {
-         final int len = arr.length;
-         final int last = len - 1;
-
-         for ( int i = 0; i < last; ++i ) {
-            final Vec2 v = arr[i];
-            v.toString(sb, places);
-            sb.append(',').append(' ');
-         }
-
-         final Vec2 vl = arr[last];
-         vl.toString(sb, places);
-         sb.append(' ');
-      }
-
-      sb.append(']');
-      return sb.toString();
+      return Vec2.toString(new StringBuilder(1024), arr, places).toString();
    }
 
    /**

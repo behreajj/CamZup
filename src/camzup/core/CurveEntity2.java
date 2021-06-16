@@ -160,8 +160,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
+      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
       final CurveEntity2 other = ( CurveEntity2 ) obj;
       return this.curves.equals(other.curves);
    }

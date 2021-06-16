@@ -171,8 +171,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
+      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
       return this.equals(( Curve3 ) obj);
    }
 

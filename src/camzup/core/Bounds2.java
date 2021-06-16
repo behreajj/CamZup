@@ -9,12 +9,12 @@ public class Bounds2 implements Comparable < Bounds2 > {
    /**
     * The maximum corner.
     */
-   public final Vec2 max = new Vec2(-0.5f, -0.5f);
+   public final Vec2 max = new Vec2(0.5f, 0.5f);
 
    /**
     * The minimum corner.
     */
-   public final Vec2 min = new Vec2(0.5f, 0.5f);
+   public final Vec2 min = new Vec2(-0.5f, -0.5f);
 
    /**
     * The default constructor.
@@ -100,8 +100,7 @@ public class Bounds2 implements Comparable < Bounds2 > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( obj == null ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
+      if ( ( obj == null ) || ( this.getClass() != obj.getClass() ) ) { return false; }
       return this.equals(( Bounds2 ) obj);
    }
 
@@ -675,7 +674,8 @@ public class Bounds2 implements Comparable < Bounds2 > {
          > origin.x - a.max.x ? a.max.x : 0.0f;
       final float yDist = origin.y < a.min.y ? origin.y - a.min.y : origin.y
          > origin.y - a.max.y ? a.max.y : 0.0f;
-      return Utils.sqrtUnchecked(xDist * xDist + yDist * yDist) < radius;
+
+      return xDist * xDist + yDist * yDist < radius * radius;
    }
 
    /**

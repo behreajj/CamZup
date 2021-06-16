@@ -8,11 +8,7 @@ public class Voronoi extends Generative {
    /**
     * Discourage overriding with a private constructor.
     */
-   private Voronoi ( ) {
-
-      // QUERY Smooth voronoi function to reduce discontinuities?
-      // https://www.iquilezles.org/www/articles/smoothvoronoi/smoothvoronoi.htm
-   }
+   private Voronoi ( ) {}
 
    /**
     * Generates 2D Voronoi noise. Returns the minimum Euclidean distance; the

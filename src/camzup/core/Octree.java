@@ -81,6 +81,33 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
+    * Constructs an octree from an array of points.
+    *
+    * @param points the points
+    */
+   public Octree ( final Vec3[] points ) {
+
+      this(points, Octree.DEFAULT_CAPACITY);
+   }
+
+   /**
+    * Constructs an octree from an array of points and a capacity per octree
+    * node.
+    *
+    * @param points   the points
+    * @param capacity capacity per node
+    */
+   public Octree ( final Vec3[] points, final int capacity ) {
+
+      // TODO: TEST
+      this.bounds = Bounds3.fromPoints(points, new Bounds3());
+      this.capacity = capacity < 1 ? 1 : capacity;
+      this.level = 0;
+      this.points = new HashSet <>(this.capacity);
+      this.insertAll(points);
+   }
+
+   /**
     * Constructs an octree with a boundary and capacity. Protected so that the
     * level can be set.
     *
@@ -207,15 +234,15 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Inserts points into the octree.
+    * Inserts points into the octree. Returns <code>true</code> if all
+    * insertions were successful; <code>false</code> if at least one was
+    * unsuccessful.
     *
     * @param pts the points
     *
     * @return the insertion success
     */
    public boolean insertAll ( final Vec3[] pts ) {
-
-      // TODO: Expand doc comment to explain return.
 
       final int len = pts.length;
       boolean flag = true;
@@ -309,7 +336,6 @@ public class Octree implements Iterable < Vec3 > {
          this.children[i] = new Octree(new Bounds3(), this.capacity, nextLevel);
       }
 
-      Iterator < Vec3 > itr;
       Bounds3.split(this.bounds, 0.5f, 0.5f, 0.5f,
          this.children[Octree.BACK_SOUTH_WEST].bounds,
          this.children[Octree.BACK_SOUTH_EAST].bounds,
@@ -321,7 +347,7 @@ public class Octree implements Iterable < Vec3 > {
          this.children[Octree.FRONT_NORTH_EAST].bounds);
 
       /* Pass on points to children. */
-      itr = this.points.iterator();
+      final Iterator < Vec3 > itr = this.points.iterator();
       while ( itr.hasNext() ) {
          final Vec3 v = itr.next();
          boolean flag = false;
@@ -393,6 +419,8 @@ public class Octree implements Iterable < Vec3 > {
             final Iterator < Vec3 > itr = this.points.iterator();
             while ( itr.hasNext() ) {
                final Vec3 point = itr.next();
+
+               // TODO: Use an SDF instead so that entries can be sorted?
                if ( Bounds3.containsInclusive(range, point) ) {
                   found.add(point);
                }
@@ -429,6 +457,12 @@ public class Octree implements Iterable < Vec3 > {
             final Iterator < Vec3 > itr = this.points.iterator();
             final float rsq = radius * radius;
             while ( itr.hasNext() ) {
+
+               // TODO: Instead of internal queries using an array list, use a
+               // tree map where the dist sq is the key and the point is
+               // the value. Then convert to an array after in the public facing
+               // function.
+
                final Vec3 point = itr.next();
                if ( Vec3.distSq(origin, point) <= rsq ) { found.add(point); }
             }
@@ -460,9 +494,6 @@ public class Octree implements Iterable < Vec3 > {
       sb.append(", capacity: ");
       sb.append(this.capacity);
 
-      // TODO: Could this be optimized to not use
-      // isLeaf in addition to the second for loop?
-      // Display level?
       if ( this.isLeaf() ) {
          sb.append(", points: [ ");
          final Iterator < Vec3 > itr = this.points.iterator();

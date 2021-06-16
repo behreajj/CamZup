@@ -61,8 +61,7 @@ public abstract class Curve extends EntityData implements ICurve {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
+      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
       final Curve other = ( Curve ) obj;
       if ( this.closedLoop != other.closedLoop ) { return false; }
       return true;

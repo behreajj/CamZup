@@ -141,21 +141,6 @@ public class CamZup {
 
    }
 
-   public static float pow24 ( final float x ) {
-
-      return ( float ) Math.exp(2.4d * Math.log(x));
-   }
-
-   public static float pow24Alt ( final float x ) {
-
-      return x * x * ( float ) Math.pow(x, 0.4d);
-   }
-
-   public static float pow24Inv ( final float x ) {
-
-      return ( float ) Math.exp(0.4166666666666667d * Math.log(x));
-   }
-
    public static Quaternion squad ( final Quaternion q1, final Quaternion q2,
       final Quaternion s1, final Quaternion s2, final float step,
       final Quaternion target, final Quaternion a, final Quaternion b ) {

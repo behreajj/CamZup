@@ -15,6 +15,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PFont.Glyph;
+import processing.core.PGraphics;
 import processing.core.PImage;
 
 /**
@@ -406,8 +407,9 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Recolors an image in-place with a color gradient. The evaluation factor
-    * is the product of a pixel's luminance and its transparency.
+    * Recolors an image in-place with a color gradient. Also known as a
+    * gradient map. The evaluation factor is the product of a pixel's
+    * luminance and its transparency.
     *
     * @param grd    the color gradient
     * @param target the target image
@@ -1048,11 +1050,6 @@ public class ZImage extends PImage {
          final float diff = lumMax - lumMin;
          final float denom = diff != 0.0f ? 1.0f / diff : 0.0f;
          for ( int i = 0; i < len; ++i ) {
-
-            // QUERY Should LTS_LUT and STL_LUT be made package level so that
-            // this luminance can be converted from linear to standard after it
-            // is converted to an integer?
-
             final float lum = ( lums[i] - lumMin ) * denom;
             final int viLin = ( int ) ( lum * 0xff + 0.5f );
             final int viStd = Color.linearToStandard(viLin);
@@ -1171,7 +1168,6 @@ public class ZImage extends PImage {
       final boolean adjustAlpha ) {
 
       target.loadPixels();
-
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
@@ -1290,6 +1286,11 @@ public class ZImage extends PImage {
        * https://blog.demofox.org/2015/08/15/
        * resizing-images-with-bicubic-interpolation/
        */
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not resize PGraphics with this method.");
+         return target;
+      }
 
       target.loadPixels();
       final int pd = target.pixelDensity;
@@ -1467,6 +1468,11 @@ public class ZImage extends PImage {
    public static PImage resizeNearest ( final PImage target, final int wPx,
       final int hPx ) {
 
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not resize PGraphics with this method.");
+         return target;
+      }
+
       target.loadPixels();
       final int pd = target.pixelDensity;
       final int dw = ( wPx < 2 ? 2 : wPx ) * pd;
@@ -1634,7 +1640,6 @@ public class ZImage extends PImage {
       final boolean adjustAlpha ) {
 
       target.loadPixels();
-
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {

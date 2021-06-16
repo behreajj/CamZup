@@ -64,8 +64,7 @@ public class Entity2 extends Entity implements IOriented2, ISpatial2 {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
+      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
       return this.equals(( Entity2 ) obj);
    }
 

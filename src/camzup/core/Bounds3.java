@@ -9,12 +9,12 @@ public class Bounds3 implements Comparable < Bounds3 > {
    /**
     * The maximum corner.
     */
-   public final Vec3 max = new Vec3(-0.5f, -0.5f, -0.5f);
+   public final Vec3 max = new Vec3(0.5f, 0.5f, 0.5f);
 
    /**
     * The minimum corner.
     */
-   public final Vec3 min = new Vec3(0.5f, 0.5f, 0.5f);
+   public final Vec3 min = new Vec3(-0.5f, -0.5f, -0.5f);
 
    /**
     * The default constructor.
@@ -108,8 +108,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( obj == null ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
+      if ( ( obj == null ) || ( this.getClass() != obj.getClass() ) ) { return false; }
       return this.equals(( Bounds3 ) obj);
    }
 
@@ -688,7 +687,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
    }
 
    /**
-    * Evaluates whether a bounding area intersects a sphere.
+    * Evaluates whether a bounding volume intersects a sphere.
     *
     * @param a      the bounding area
     * @param origin the sphere origin
@@ -705,8 +704,8 @@ public class Bounds3 implements Comparable < Bounds3 > {
          > origin.y - a.max.y ? a.max.y : 0.0f;
       final float zDist = origin.z < a.min.z ? origin.z - a.min.z : origin.z
          > origin.z - a.max.z ? a.max.z : 0.0f;
-      return Utils.sqrtUnchecked(xDist * xDist + yDist * yDist + zDist * zDist)
-         < radius;
+
+      return xDist * xDist + yDist * yDist + zDist * zDist < radius * radius;
    }
 
    /**

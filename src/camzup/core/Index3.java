@@ -77,8 +77,7 @@ class Index3 implements Comparable < Index3 > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( obj == null ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
+      if ( ( obj == null ) || ( this.getClass() != obj.getClass() ) ) { return false; }
       return this.equals(( Index3 ) obj);
    }
 

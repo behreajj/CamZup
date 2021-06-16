@@ -159,8 +159,7 @@ public class Color implements Comparable < Color > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( obj == null ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
+      if ( ( obj == null ) || ( this.getClass() != obj.getClass() ) ) { return false; }
       return this.equals(( Color ) obj);
    }
 
@@ -895,28 +894,7 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Clamps a color to a lower and upper bound.
-    *
-    * @param a          the input color
-    * @param lowerBound the lower bound
-    * @param upperBound the upper bound
-    * @param target     the output color
-    *
-    * @return the clamped color
-    *
-    * @see Utils#clamp(float, float, float)
-    */
-   public static Color clamp ( final Color a, final Color lowerBound,
-      final Color upperBound, final Color target ) {
-
-      return target.set(Utils.clamp(a.r, lowerBound.r, upperBound.r), Utils
-         .clamp(a.g, lowerBound.g, upperBound.g), Utils.clamp(a.b, lowerBound.b,
-            upperBound.b), Utils.clamp(a.a, lowerBound.a, upperBound.a));
-   }
-
-   /**
-    * Ensures that the values of the color are clamped to the range [0.0, 1.0]
-    * .
+    * Clamps all color channels to the range [0.0, 1.0] .
     *
     * @param a      the color
     * @param target the output color
@@ -1529,7 +1507,7 @@ public class Color implements Comparable < Color > {
 
    /**
     * Finds the linear to standard conversion for a single color channel in
-    * [0, 255].
+    * [0, 255] .
     *
     * @param v the value
     *
@@ -2235,7 +2213,7 @@ public class Color implements Comparable < Color > {
 
    /**
     * Finds the standard to linear conversion for a single color channel in
-    * [0, 255].
+    * [0, 255] .
     *
     * @param v the value
     *

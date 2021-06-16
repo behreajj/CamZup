@@ -112,8 +112,7 @@ public class Vec3 implements Comparable < Vec3 > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( obj == null ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
+      if ( ( obj == null ) || ( this.getClass() != obj.getClass() ) ) { return false; }
       return this.equals(( Vec3 ) obj);
    }
 
@@ -3057,6 +3056,41 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
+    * Appends a string representation of an array of vectors to a
+    * {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param arr    the array
+    * @param places the print precision
+    *
+    * @return the string builder
+    */
+   public static StringBuilder toString ( final StringBuilder sb,
+      final Vec3[] arr, final int places ) {
+
+      sb.append('[').append(' ');
+
+      if ( arr != null ) {
+         final int len = arr.length;
+         final int last = len - 1;
+
+         for ( int i = 0; i < last; ++i ) {
+            final Vec3 v = arr[i];
+            v.toString(sb, places);
+            sb.append(',').append(' ');
+         }
+
+         final Vec3 vl = arr[last];
+         vl.toString(sb, places);
+         sb.append(' ');
+      }
+
+      sb.append(']');
+
+      return sb;
+   }
+
+   /**
     * Returns a string representation of an array of vectors.
     *
     * @param arr the array
@@ -3078,26 +3112,7 @@ public class Vec3 implements Comparable < Vec3 > {
     */
    public static String toString ( final Vec3[] arr, final int places ) {
 
-      final StringBuilder sb = new StringBuilder(1024);
-      sb.append('[').append(' ');
-
-      if ( arr != null ) {
-         final int len = arr.length;
-         final int last = len - 1;
-
-         for ( int i = 0; i < last; ++i ) {
-            final Vec3 v = arr[i];
-            v.toString(sb, places);
-            sb.append(',').append(' ');
-         }
-
-         final Vec3 vl = arr[last];
-         vl.toString(sb, places);
-         sb.append(' ');
-      }
-
-      sb.append(']');
-      return sb.toString();
+      return Vec3.toString(new StringBuilder(1024), arr, places).toString();
    }
 
    /**

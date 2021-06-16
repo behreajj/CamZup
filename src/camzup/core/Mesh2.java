@@ -332,8 +332,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
+      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
       return this.equals(( Mesh2 ) obj);
    }
 
@@ -1517,9 +1516,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       sb.append("\", materialIndex: ");
       sb.append(this.materialIndex);
       sb.append(", coords: ");
-      sb.append(Vec2.toString(this.coords, places));
+      Vec2.toString(sb, this.coords, places);
       sb.append(", texCoords: ");
-      sb.append(Vec2.toString(this.texCoords, places));
+      Vec2.toString(sb, this.texCoords, places);
 
       sb.append(", faces: [ ");
       if ( this.faces != null ) {
@@ -1871,18 +1870,18 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final int facesLen = this.faces.length;
       for ( int i = 0; i < facesLen; ++i ) {
-         final int[][] f = this.faces[i];
-         final int faceLen = f.length;
+         final int[][] face = this.faces[i];
+         final int faceLen = face.length;
 
          svgp.append('M');
          svgp.append(' ');
-         vs[f[0][0]].toSvgString(svgp, ' ');
+         vs[face[0][0]].toSvgString(svgp, ' ');
          svgp.append(' ');
 
          for ( int j = 1; j < faceLen; ++j ) {
             svgp.append('L');
             svgp.append(' ');
-            vs[f[j][0]].toSvgString(svgp, ' ');
+            vs[face[j][0]].toSvgString(svgp, ' ');
             svgp.append(' ');
          }
 
@@ -3431,20 +3430,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          if ( !this.hasNext() ) { throw new NoSuchElementException(); }
          return this.mesh.getFace(this.index++, new Face2());
-      }
-
-      /**
-       * Gets the next value in the iterator.
-       *
-       * @param target the output face
-       *
-       * @return the value
-       *
-       * @see Mesh2#getFace(int, Face2)
-       */
-      public Face2 next ( final Face2 target ) {
-
-         return this.mesh.getFace(this.index++, target);
       }
 
       /**
