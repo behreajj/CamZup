@@ -64,7 +64,9 @@ public class Entity3 extends Entity implements IOriented3, ISpatial3 {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( !super.equals(obj) || this.getClass() != obj.getClass() ) {
+         return false;
+      }
       return this.equals(( Entity3 ) obj);
    }
 

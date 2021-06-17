@@ -138,7 +138,7 @@ public class CamZup {
       // System.out.println(Color.luminance(a));
       // System.out.println(Color.luminance(hex));
       // }
-
+      
    }
 
    public static Quaternion squad ( final Quaternion q1, final Quaternion q2,

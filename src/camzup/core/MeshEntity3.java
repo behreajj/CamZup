@@ -148,7 +148,9 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( !super.equals(obj) || this.getClass() != obj.getClass() ) {
+         return false;
+      }
       final MeshEntity3 other = ( MeshEntity3 ) obj;
       return this.meshes.equals(other.meshes);
    }

@@ -353,7 +353,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( !super.equals(obj) || this.getClass() != obj.getClass() ) {
+         return false;
+      }
       return this.equals(( Mesh3 ) obj);
    }
 

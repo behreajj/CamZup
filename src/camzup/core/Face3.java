@@ -72,7 +72,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( ( obj == null ) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( obj == null || this.getClass() != obj.getClass() ) { return false; }
       return Arrays.equals(this.vertices, ( ( Face3 ) obj ).vertices);
    }
 

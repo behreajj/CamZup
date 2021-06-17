@@ -129,7 +129,9 @@ public class CurveAnim extends Curve implements Iterable < KnotAnim > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( !super.equals(obj) || this.getClass() != obj.getClass() ) {
+         return false;
+      }
       return this.equals(( CurveAnim ) obj);
    }
 

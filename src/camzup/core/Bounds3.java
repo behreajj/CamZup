@@ -108,7 +108,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( ( obj == null ) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( obj == null || this.getClass() != obj.getClass() ) { return false; }
       return this.equals(( Bounds3 ) obj);
    }
 
@@ -698,6 +698,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
    public static boolean intersect ( final Bounds3 a, final Vec3 origin,
       final float radius ) {
 
+      // TODO: Fix this, it is probably wrong.
       final float xDist = origin.x < a.min.x ? origin.x - a.min.x : origin.x
          > origin.x - a.max.x ? a.max.x : 0.0f;
       final float yDist = origin.y < a.min.y ? origin.y - a.min.y : origin.y

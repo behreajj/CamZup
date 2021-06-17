@@ -1142,7 +1142,7 @@ public abstract class Utils implements IUtils {
    public static float pingPong ( final float lb, final float ub,
       final float step, final float pause ) {
 
-      // QUERY: Cheaper alternative:
+      // Cheaper alternative:
       // float x = t * 0.5f;
       // float z = 2.0f * (x - floor(x)) - 1.0f;
       // return z > 0.0f ? 1.0f - z : z < -0.0f ? 1.0f + z : 1.0f;
@@ -1822,43 +1822,6 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Linear interpolation for a value.
-    */
-   public static class Lerp extends LerpUnclamped {
-
-      /**
-       * The default constructor.
-       */
-      Lerp ( ) {}
-
-      /**
-       * Applies the linear interpolation.
-       *
-       * @param origin the origin
-       * @param dest   the destination
-       * @param step   the step
-       */
-      @Override
-      public Float apply ( final Float origin, final Float dest,
-         final Float step ) {
-
-         final float tf = step;
-         if ( tf <= 0.0f ) { return origin; }
-         if ( tf >= 1.0f ) { return dest; }
-         return super.apply(origin, dest, tf);
-      }
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
-
-   }
-
-   /**
     * Linear interpolation for a periodic value in the counter-clockwise
     * direction.
     */
@@ -1992,37 +1955,6 @@ public abstract class Utils implements IUtils {
          }
 
          return ( 1.0f - step ) * this.o + step * this.d;
-      }
-
-   }
-
-   /**
-    * Linear interpolation, not clamped, for a value. Note that there is an
-    * added cost to boxing and unboxing a primitive float to and from a Float
-    * object.
-    */
-   public static class LerpUnclamped implements EasingFuncPrm < Float > {
-
-      /**
-       * The default constructor.
-       */
-      LerpUnclamped ( ) {}
-
-      /**
-       * Applies the unclamped lerp function.
-       *
-       * @param origin the origin
-       * @param dest   the destination
-       * @param step   the step
-       *
-       * @return the eased value
-       */
-      @Override
-      public Float apply ( final Float origin, final Float dest,
-         final Float step ) {
-
-         final float tf = step;
-         return ( 1.0f - tf ) * origin + tf * dest;
       }
 
    }
@@ -2200,37 +2132,6 @@ public abstract class Utils implements IUtils {
        * @return return type
        */
       R apply ( T t, U u, V v, W w );
-
-   }
-
-   /**
-    * Eases between two values by a smooth step.
-    */
-   public static class SmoothStep extends LerpUnclamped {
-
-      /**
-       * The default constructor.
-       */
-      SmoothStep ( ) {}
-
-      /**
-       * Applies the unclamped smooth step function.
-       *
-       * @param origin the origin
-       * @param dest   the destination
-       * @param step   the step
-       *
-       * @return the eased value
-       */
-      @Override
-      public Float apply ( final Float origin, final Float dest,
-         final Float step ) {
-
-         final float tf = step;
-         if ( tf <= 0.0f ) { return origin; }
-         if ( tf >= 1.0f ) { return dest; }
-         return super.apply(origin, dest, tf * tf * ( 3.0f - ( tf + tf ) ));
-      }
 
    }
 

@@ -148,7 +148,9 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( !super.equals(obj) || this.getClass() != obj.getClass() ) {
+         return false;
+      }
       final MeshEntity2 other = ( MeshEntity2 ) obj;
       return this.meshes.equals(other.meshes);
    }

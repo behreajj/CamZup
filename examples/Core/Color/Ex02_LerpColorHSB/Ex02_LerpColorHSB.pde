@@ -36,11 +36,11 @@ void draw() {
   int wHalf = width / 2;
 
   graphics.loadPixels();
-  color[] px = graphics.pixels;
+  int[] px = graphics.pixels;
   for (int i = 0, y = 0; y < height; ++y) {
     float yFac = y * toPercent;
-    color c0 = lerpColor(a, b, yFac, HSB);
-    color c1 = graphics.lerpColor(a, b, yFac);
+    int c0 = lerpColor(a, b, yFac, HSB);
+    int c1 = graphics.lerpColor(a, b, yFac);
 
     for (int j = 0; j < width; ++j, ++i) {
       px[i] = j > wHalf ? c1: c0;

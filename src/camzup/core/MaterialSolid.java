@@ -170,7 +170,9 @@ public class MaterialSolid extends Material {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( !super.equals(obj) || this.getClass() != obj.getClass() ) {
+         return false;
+      }
 
       final MaterialSolid other = ( MaterialSolid ) obj;
 

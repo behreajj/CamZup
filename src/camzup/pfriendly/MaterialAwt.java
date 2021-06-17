@@ -100,8 +100,7 @@ public class MaterialAwt extends Material {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) ) { return false; }
-      if ( this.getClass() != obj.getClass() ) { return false; }
+      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
       final MaterialAwt other = ( MaterialAwt ) obj;
 
       if ( !this.sample.equals(other.sample) ) { return false; }
@@ -359,8 +358,7 @@ public class MaterialAwt extends Material {
       public boolean equals ( final Object obj ) {
 
          if ( this == obj ) { return true; }
-         if ( obj == null ) { return false; }
-         if ( this.getClass() != obj.getClass() ) { return false; }
+         if ( ( obj == null ) || ( this.getClass() != obj.getClass() ) ) { return false; }
          final Sample other = ( Sample ) obj;
          return this.xBottomRight == other.xBottomRight && this.xTopLeft
             == other.xTopLeft && this.yBottomRight == other.yBottomRight

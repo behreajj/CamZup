@@ -341,7 +341,7 @@ public class Knot4 implements Comparable < Knot4 > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( ( obj == null ) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( obj == null || this.getClass() != obj.getClass() ) { return false; }
       return this.equals(( Knot4 ) obj);
    }
 

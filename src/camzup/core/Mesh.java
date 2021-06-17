@@ -113,7 +113,9 @@ public abstract class Mesh extends EntityData implements IMesh {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( !super.equals(obj) || this.getClass() != obj.getClass() ) {
+         return false;
+      }
       final Mesh other = ( Mesh ) obj;
       return Arrays.deepEquals(this.faces, other.faces);
    }

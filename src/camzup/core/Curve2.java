@@ -167,7 +167,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( !super.equals(obj) || this.getClass() != obj.getClass() ) {
+         return false;
+      }
       return this.equals(( Curve2 ) obj);
    }
 

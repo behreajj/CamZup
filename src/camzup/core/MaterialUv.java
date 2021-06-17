@@ -73,7 +73,9 @@ public abstract class MaterialUv extends Material implements IOriented2,
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( !super.equals(obj) || this.getClass() != obj.getClass() ) {
+         return false;
+      }
       final MaterialUv other = ( MaterialUv ) obj;
       if ( this.tint == null ) {
          if ( other.tint != null ) { return false; }

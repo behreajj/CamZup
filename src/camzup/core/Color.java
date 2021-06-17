@@ -159,7 +159,7 @@ public class Color implements Comparable < Color > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( ( obj == null ) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( obj == null || this.getClass() != obj.getClass() ) { return false; }
       return this.equals(( Color ) obj);
    }
 
@@ -3302,48 +3302,20 @@ public class Color implements Comparable < Color > {
       protected HueEasing hueFunc;
 
       /**
-       * The lightness easing function.
-       */
-      protected Utils.LerpUnclamped lightFunc;
-
-      /**
-       * The saturation easing function.
-       */
-      protected Utils.LerpUnclamped satFunc;
-
-      /**
        * The default constructor. Creates a mixer with nearest hue interpolation
        * and linear interpolation for saturation and lightness.
        */
       public MixHsla ( ) { this(new HueNear()); }
 
       /**
-       * Creates a color HSLA mixing function with the given hue easing
-       * function. Saturation and lightness are governed by linear
-       * interpolation.
+       * Creates a color HSLA mixing function with the given easing functions
+       * for hue.
        *
        * @param hueFunc the hue easing function
        */
       public MixHsla ( final HueEasing hueFunc ) {
 
-         this(hueFunc, new Utils.Lerp(), new Utils.Lerp());
-      }
-
-      /**
-       * Creates a color HSLA mixing function with the given easing functions
-       * for hue, saturation and lightness.
-       *
-       * @param hueFunc   the hue easing function
-       * @param satFunc   the saturation easing function
-       * @param lightFunc the lightness easing function
-       */
-      public MixHsla ( final HueEasing hueFunc,
-         final Utils.LerpUnclamped satFunc,
-         final Utils.LerpUnclamped lightFunc ) {
-
          this.hueFunc = hueFunc;
-         this.satFunc = satFunc;
-         this.lightFunc = lightFunc;
       }
 
       /**
@@ -3365,13 +3337,14 @@ public class Color implements Comparable < Color > {
 
          /* @formatter:off */
          final float t = step;
+         final float u = 1.0f - t;
          Color.rgbaToHsla(origin, this.aHsl);
          Color.rgbaToHsla(dest, this.bHsl);
          this.cHsl.set(
             this.hueFunc.apply(this.aHsl.x, this.bHsl.x, step),
-            this.satFunc.apply(this.aHsl.y, this.bHsl.y, step),
-            this.lightFunc.apply(this.aHsl.z, this.bHsl.z, step),
-            ( 1.0f - t ) * this.aHsl.w + t * this.bHsl.w);
+            u * this.aHsl.y + t * this.bHsl.y,
+            u * this.aHsl.z + t * this.bHsl.z,
+            u * this.aHsl.w + t * this.bHsl.w);
          return Color.hslaToRgba(this.cHsl, target);
          /* @formatter:on */
       }
@@ -3384,23 +3357,6 @@ public class Color implements Comparable < Color > {
       public String getHueFuncString ( ) { return this.hueFunc.toString(); }
 
       /**
-       * Gets the string identifier for the lightness easing function.
-       *
-       * @return the string
-       */
-      public String getLightFuncString ( ) {
-
-         return this.lightFunc.toString();
-      }
-
-      /**
-       * Gets the string identifier for the saturation easing function.
-       *
-       * @return the string
-       */
-      public String getSatFuncString ( ) { return this.satFunc.toString(); }
-
-      /**
        * Sets the hue easing function.
        *
        * @param hueFunc the easing function
@@ -3408,26 +3364,6 @@ public class Color implements Comparable < Color > {
       public void setHueFunc ( final HueEasing hueFunc ) {
 
          if ( hueFunc != null ) { this.hueFunc = hueFunc; }
-      }
-
-      /**
-       * Sets the lightness easing function.
-       *
-       * @param lightFunc the lightness function
-       */
-      public void setLightFunc ( final Utils.LerpUnclamped lightFunc ) {
-
-         if ( lightFunc != null ) { this.lightFunc = lightFunc; }
-      }
-
-      /**
-       * Sets the saturation easing function.
-       *
-       * @param satFunc the saturation function
-       */
-      public void setSatFunc ( final Utils.LerpUnclamped satFunc ) {
-
-         if ( satFunc != null ) { this.satFunc = satFunc; }
       }
 
    }
@@ -3458,47 +3394,20 @@ public class Color implements Comparable < Color > {
       protected HueEasing hueFunc;
 
       /**
-       * The saturation easing function.
-       */
-      protected Utils.LerpUnclamped satFunc;
-
-      /**
-       * The value easing function.
-       */
-      protected Utils.LerpUnclamped valFunc;
-
-      /**
        * The default constructor. Creates a mixer with nearest hue interpolation
        * and linear interpolation for saturation and value.
        */
       public MixHsva ( ) { this(new HueNear()); }
 
       /**
-       * Creates a color HSVA mixing function with the given hue easing
-       * function. Saturation and value are governed by linear interpolation.
+       * Creates a color HSVA mixing function with the given easing functions
+       * for hue.
        *
        * @param hueFunc the hue easing function
        */
       public MixHsva ( final HueEasing hueFunc ) {
 
-         this(hueFunc, new Utils.Lerp(), new Utils.Lerp());
-      }
-
-      /**
-       * Creates a color HSVA mixing function with the given easing functions
-       * for hue, saturation and value.
-       *
-       * @param hueFunc the hue easing function
-       * @param satFunc the saturation easing function
-       * @param valFunc the value easing function
-       */
-      public MixHsva ( final HueEasing hueFunc,
-         final Utils.LerpUnclamped satFunc,
-         final Utils.LerpUnclamped valFunc ) {
-
          this.hueFunc = hueFunc;
-         this.satFunc = satFunc;
-         this.valFunc = valFunc;
       }
 
       /**
@@ -3520,13 +3429,14 @@ public class Color implements Comparable < Color > {
 
          /* @formatter:off */
          final float t = step;
+         final float u = 1.0f - t;
          Color.rgbaToHsva(origin, this.aHsv);
          Color.rgbaToHsva(dest, this.bHsv);
          this.cHsv.set(
             this.hueFunc.apply(this.aHsv.x, this.bHsv.x, step),
-            this.satFunc.apply(this.aHsv.y, this.bHsv.y, step),
-            this.valFunc.apply(this.aHsv.z, this.bHsv.z, step),
-            ( 1.0f - t ) * this.aHsv.w + t * this.bHsv.w);
+            u * this.aHsv.y + t * this.bHsv.y,
+            u * this.aHsv.z + t * this.bHsv.z,
+            u * this.aHsv.w + t * this.bHsv.w);
          return Color.hsvaToRgba(this.cHsv, target);
          /* @formatter:on */
       }
@@ -3539,20 +3449,6 @@ public class Color implements Comparable < Color > {
       public String getHueFuncString ( ) { return this.hueFunc.toString(); }
 
       /**
-       * Gets the string identifier for the saturation easing function.
-       *
-       * @return the string
-       */
-      public String getSatFuncString ( ) { return this.satFunc.toString(); }
-
-      /**
-       * Gets the string identifier for the value easing function.
-       *
-       * @return the string
-       */
-      public String getValFuncString ( ) { return this.valFunc.toString(); }
-
-      /**
        * Sets the hue easing function.
        *
        * @param hueFunc the easing function
@@ -3560,26 +3456,6 @@ public class Color implements Comparable < Color > {
       public void setHueFunc ( final HueEasing hueFunc ) {
 
          if ( hueFunc != null ) { this.hueFunc = hueFunc; }
-      }
-
-      /**
-       * Sets the saturation easing function.
-       *
-       * @param satFunc the saturation function
-       */
-      public void setSatFunc ( final Utils.LerpUnclamped satFunc ) {
-
-         if ( satFunc != null ) { this.satFunc = satFunc; }
-      }
-
-      /**
-       * Sets the value easing function.
-       *
-       * @param valFunc the easing function
-       */
-      public void setValFunc ( final Utils.LerpUnclamped valFunc ) {
-
-         if ( valFunc != null ) { this.valFunc = valFunc; }
       }
 
    }

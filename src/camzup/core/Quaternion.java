@@ -93,7 +93,7 @@ public class Quaternion implements Comparable < Quaternion > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( ( obj == null ) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( obj == null || this.getClass() != obj.getClass() ) { return false; }
       return this.equals(( Quaternion ) obj);
    }
 
@@ -1673,10 +1673,6 @@ public class Quaternion implements Comparable < Quaternion > {
     */
    public static Quaternion pow ( final Quaternion a, final float b,
       final Quaternion target, final Quaternion ln, final Quaternion scaled ) {
-
-      // QUERY: Is it possible to raise a number to a quaternion power?
-      // Quaternion.mul((float)Math.log(a), b, scaled);
-      // return Quaternion.exp(scaled, target);
 
       Quaternion.log(a, ln);
       Quaternion.mul(ln, b, scaled);

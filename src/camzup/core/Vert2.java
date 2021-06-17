@@ -62,7 +62,7 @@ public class Vert2 implements Comparable < Vert2 > {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( ( obj == null ) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( obj == null || this.getClass() != obj.getClass() ) { return false; }
       return this.equals(( Vert2 ) obj);
    }
 

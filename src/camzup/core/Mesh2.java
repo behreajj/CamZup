@@ -332,7 +332,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( !super.equals(obj) || this.getClass() != obj.getClass() ) {
+         return false;
+      }
       return this.equals(( Mesh2 ) obj);
    }
 
