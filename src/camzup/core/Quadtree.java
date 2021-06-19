@@ -387,7 +387,7 @@ public class Quadtree implements Iterable < Vec2 > {
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
       sb.append("{ bounds: ");
-      sb.append(this.bounds.toString(places));
+      this.bounds.toString(sb, places);
       sb.append(", capacity: ");
       sb.append(this.capacity);
 

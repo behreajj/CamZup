@@ -455,9 +455,9 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       }
       pyCd.append("]}\n\n");
 
-      this.genParentBoilerPlate(pyCd);
-      this.genMaterialBoilerPlate(pyCd);
-      this.genMeshBoilerPlate(pyCd, false, useAutoSmooth, autoAngle);
+      this.genParentString(pyCd);
+      this.genMaterialString(pyCd);
+      this.genMeshString(pyCd, false, useAutoSmooth, autoAngle);
 
       /* Add materials to mesh data. */
       pyCd.append("    md_mats = mesh_data.materials\n");

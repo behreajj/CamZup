@@ -140,18 +140,22 @@ public class KtMat4 extends Mat4 implements Iterable < KtVec4 > {
     */
    public boolean contains ( final float v ) {
 
-      if ( Utils.approx(this.m00, v) || Utils.approx(this.m01, v) || Utils.approx(this.m02, v) || Utils.approx(this.m03, v) ) { return true; }
-      if ( Utils.approx(this.m10, v) ) { return true; }
-      if ( Utils.approx(this.m11, v) ) { return true; }
-      if ( Utils.approx(this.m12, v) ) { return true; }
-      if ( Utils.approx(this.m13, v) ) { return true; }
-      if ( Utils.approx(this.m20, v) ) { return true; }
-      if ( Utils.approx(this.m21, v) ) { return true; }
-      if ( Utils.approx(this.m22, v) ) { return true; }
-      if ( Utils.approx(this.m23, v) ) { return true; }
-      if ( Utils.approx(this.m30, v) ) { return true; }
-      if ( Utils.approx(this.m31, v) ) { return true; }
-      if ( Utils.approx(this.m32, v) ) { return true; }
+      if ( Utils.approx(this.m00, v) || Utils.approx(this.m01, v) || Utils
+         .approx(this.m02, v) || Utils.approx(this.m03, v) ) {
+         return true;
+      }
+      if ( Utils.approx(this.m10, v) || Utils.approx(this.m11, v) || Utils
+         .approx(this.m12, v) || Utils.approx(this.m13, v) ) {
+         return true;
+      }
+      if ( Utils.approx(this.m20, v) || Utils.approx(this.m21, v) || Utils
+         .approx(this.m22, v) || Utils.approx(this.m23, v) ) {
+         return true;
+      }
+      if ( Utils.approx(this.m30, v) || Utils.approx(this.m31, v) || Utils
+         .approx(this.m32, v) ) {
+         return true;
+      }
       return Utils.approx(this.m33, v);
    }
 

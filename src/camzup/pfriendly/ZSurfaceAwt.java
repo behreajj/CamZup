@@ -215,6 +215,7 @@ public class ZSurfaceAwt extends PSurfaceNone {
       final Color windowColor = new Color(this.sketch.sketchWindowColor(),
          false);
       if ( this.frame instanceof JFrame ) {
+         // TODO: Why would this not default to true?
          ( ( JFrame ) this.frame ).getContentPane().setBackground(windowColor);
       } else {
          this.frame.setBackground(windowColor);
@@ -247,6 +248,14 @@ public class ZSurfaceAwt extends PSurfaceNone {
    @Override
    public void initOffscreen ( final PApplet sk ) { this.sketch = sk; }
 
+   /**
+    * Loads an image using {@link ShimAWT#loadImage}.
+    *
+    * @param path file path
+    * @param args arguments
+    *
+    * @return the image
+    */
    @Override
    public PImage loadImage ( final String path, final Object... args ) {
 
@@ -350,6 +359,12 @@ public class ZSurfaceAwt extends PSurfaceNone {
       this.frame.setAlwaysOnTop(always);
    }
 
+   /**
+    * Sets the cursor to a preset signaled by an integer constant. Also sets
+    * the cursor to visible.
+    *
+    * @param kind the integer constant
+    */
    @Override
    public void setCursor ( final int kind ) {
 
@@ -363,7 +378,8 @@ public class ZSurfaceAwt extends PSurfaceNone {
    }
 
    /**
-    * Sets the cursor to an image with a given hot spot.
+    * Sets the cursor to an image with a given hot spot. Also sets the cursor
+    * to visible.
     *
     * @param img the Processing image
     * @param x   the hot spot x
@@ -512,6 +528,8 @@ public class ZSurfaceAwt extends PSurfaceNone {
    /**
     * Sets the cursor to visible and sets the cursor's appearance based on a
     * predefined type.
+    *
+    * @see Cursor#getPredefinedCursor(int)
     */
    @Override
    public void showCursor ( ) {
@@ -651,15 +669,15 @@ public class ZSurfaceAwt extends PSurfaceNone {
       int peAction;
       final int eventid = event.getID();
       switch ( eventid ) {
-         case java.awt.event.KeyEvent.KEY_TYPED:
+         case java.awt.event.KeyEvent.KEY_TYPED: /* 400 */
             peAction = KeyEvent.TYPE;
             break;
 
-         case java.awt.event.KeyEvent.KEY_PRESSED:
+         case java.awt.event.KeyEvent.KEY_PRESSED: /* 401 */
             peAction = KeyEvent.PRESS;
             break;
 
-         case java.awt.event.KeyEvent.KEY_RELEASED:
+         case java.awt.event.KeyEvent.KEY_RELEASED: /* 402 */
             peAction = KeyEvent.RELEASE;
             break;
 
@@ -749,6 +767,8 @@ public class ZSurfaceAwt extends PSurfaceNone {
 
       if ( this.canvas.isDisplayable() && this.graphics.image != null ) {
          if ( this.canvas.getBufferStrategy() == null ) {
+
+            /* Specify the number of buffers to be used by the strategy. */
             this.canvas.createBufferStrategy(2);
          }
          final BufferStrategy strategy = this.canvas.getBufferStrategy();
@@ -905,13 +925,13 @@ public class ZSurfaceAwt extends PSurfaceNone {
    public static int awtToProcessingMouseButton ( final int button ) {
 
       switch ( button ) {
-         case java.awt.event.MouseEvent.BUTTON1:
+         case java.awt.event.MouseEvent.BUTTON1: /* 1 */
             return PConstants.LEFT;
 
-         case java.awt.event.MouseEvent.BUTTON2:
+         case java.awt.event.MouseEvent.BUTTON2: /* 2 */
             return PConstants.CENTER;
 
-         case java.awt.event.MouseEvent.BUTTON3:
+         case java.awt.event.MouseEvent.BUTTON3: /* 3 */
             return PConstants.RIGHT;
 
          default:

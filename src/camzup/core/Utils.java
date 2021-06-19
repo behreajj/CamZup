@@ -340,18 +340,6 @@ public abstract class Utils implements IUtils {
     *
     * @return the clamped value
     */
-   public static double clamp01 ( final double value ) {
-
-      return value < 0.0d ? 0.0d : value > 1.0d ? 1.0d : value;
-   }
-
-   /**
-    * Clamps a value to the range [0.0, 1.0] .
-    *
-    * @param value the input value
-    *
-    * @return the clamped value
-    */
    public static float clamp01 ( final float value ) {
 
       return value < 0.0f ? 0.0f : value > 1.0f ? 1.0f : value;

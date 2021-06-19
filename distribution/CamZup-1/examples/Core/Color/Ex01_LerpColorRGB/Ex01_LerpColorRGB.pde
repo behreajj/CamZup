@@ -27,11 +27,11 @@ void draw() {
   int hHalf = height / 2;
 
   graphics.loadPixels();
-  color[] px = graphics.pixels;
+  int[] px = graphics.pixels;
   for (int x = 0; x < width; ++x) {
     float xFac = x * toPercent / mouseFac;
-    color c0 = lerpColor(a, b, xFac, RGB);
-    color c1 = graphics.lerpColor(a, b, xFac);
+    int c0 = lerpColor(a, b, xFac, RGB);
+    int c1 = graphics.lerpColor(a, b, xFac);
 
     for (int y = 0; y < height; ++y) {
       px[y * width + x] = y > hHalf ? c1 : c0;

@@ -306,14 +306,27 @@ public class Bounds3 implements Comparable < Bounds3 > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(128);
+      return this.toString(new StringBuilder(128), places).toString();
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * bounds. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   public StringBuilder toString ( final StringBuilder sb, final int places ) {
+
       sb.append("{ min: ");
       this.min.toString(sb, places);
       sb.append(", max: ");
       this.max.toString(sb, places);
       sb.append(' ');
       sb.append('}');
-      return sb.toString();
+      return sb;
    }
 
    /**

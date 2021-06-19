@@ -490,7 +490,7 @@ public class Octree implements Iterable < Vec3 > {
       final int places ) {
 
       sb.append("{ bounds: ");
-      sb.append(this.bounds.toString(places));
+      this.bounds.toString(sb, places);
       sb.append(", capacity: ");
       sb.append(this.capacity);
 

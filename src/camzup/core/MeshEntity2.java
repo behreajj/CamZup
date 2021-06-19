@@ -470,9 +470,9 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       }
       pyCd.append("]}\n\n");
 
-      this.genParentBoilerPlate(pyCd);
-      this.genMaterialBoilerPlate(pyCd);
-      this.genMeshBoilerPlate(pyCd, false, useAutoSmooth, autoAngle);
+      this.genParentString(pyCd);
+      this.genMaterialString(pyCd);
+      this.genMeshString(pyCd, false, useAutoSmooth, autoAngle);
 
       /* Add materials to mesh data. */
       pyCd.append("    md_mats = mesh_data.materials\n");

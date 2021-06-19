@@ -122,7 +122,9 @@ public class ImageEntity3 extends MeshEntity3 {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( !super.equals(obj) || this.getClass() != obj.getClass() ) {
+         return false;
+      }
       final ImageEntity3 other = ( ImageEntity3 ) obj;
       if ( this.material == null ) {
          if ( other.material != null ) { return false; }

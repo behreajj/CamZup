@@ -14,7 +14,7 @@ public interface IBlenderWritable {
     *
     * @return the string builder
     */
-   default StringBuilder genMaterialBoilerPlate ( final StringBuilder pyCd ) {
+   default StringBuilder genMaterialString ( final StringBuilder pyCd ) {
 
       /* Create materials. */
       pyCd.append("materials = entity_src[\"materials\"]\n");
@@ -60,7 +60,7 @@ public interface IBlenderWritable {
     *
     * @return the string builder
     */
-   default StringBuilder genMeshBoilerPlate ( final StringBuilder pyCd,
+   default StringBuilder genMeshString ( final StringBuilder pyCd,
       final boolean includeEdges, final boolean useAutoSmooth,
       final float autoAngle ) {
 
@@ -114,7 +114,7 @@ public interface IBlenderWritable {
     *
     * @return the string builder
     */
-   default StringBuilder genParentBoilerPlate ( final StringBuilder pyCd ) {
+   default StringBuilder genParentString ( final StringBuilder pyCd ) {
 
       pyCd.append("d_objs = D.objects\n");
       pyCd.append("parent_obj = d_objs.new(");

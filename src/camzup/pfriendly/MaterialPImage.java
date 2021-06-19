@@ -86,7 +86,9 @@ public class MaterialPImage extends MaterialUv {
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
-      if ( !super.equals(obj) || ( this.getClass() != obj.getClass() ) ) { return false; }
+      if ( !super.equals(obj) || this.getClass() != obj.getClass() ) {
+         return false;
+      }
       final MaterialPImage other = ( MaterialPImage ) obj;
       if ( this.texture == null ) {
          if ( other.texture != null ) { return false; }

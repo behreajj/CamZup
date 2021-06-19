@@ -202,34 +202,34 @@ public abstract class ParserGgr {
                final int blndFunc = ( int ) seg[11];
                switch ( blndFunc ) {
 
-                  case ParserGgr.BLEND_CURVED:
+                  case ParserGgr.BLEND_CURVED: /* 1 */
                      final double logMid = Math.log(mid);
                      fac = ( float ) Math.pow(pos, logMid != 0.0d
                         ? ParserGgr.LOG_HALF_D / logMid : 0.0d);
 
                      break;
 
-                  case ParserGgr.BLEND_SINE:
+                  case ParserGgr.BLEND_SINE: /* 2 */
 
                      fac = 0.5f * ( Utils.sin(IUtils.PI * fac - IUtils.HALF_PI)
                         + 1.0f );
 
                      break;
 
-                  case ParserGgr.BLEND_SPHERE_INCR:
+                  case ParserGgr.BLEND_SPHERE_INCR: /* 3 */
 
                      fac -= 1.0f;
                      fac = Utils.sqrt(1.0f - fac * fac);
 
                      break;
 
-                  case ParserGgr.BLEND_SPHERE_DECR:
+                  case ParserGgr.BLEND_SPHERE_DECR: /* 4 */
 
                      fac = 1.0f - Utils.sqrt(1.0f - fac * fac);
 
                      break;
 
-                  case ParserGgr.BLEND_LINEAR:
+                  case ParserGgr.BLEND_LINEAR: /* 0 */
                   default:
 
                }
@@ -259,15 +259,15 @@ public abstract class ParserGgr {
 
                /* Mix color based on color space. Default to RGB. */
                switch ( clrSpc ) {
-                  case ParserGgr.SPACE_HSB_CCW:
+                  case ParserGgr.SPACE_HSB_CCW: /* 1 */
                      ccwMix.apply(ltClr, rtClr, fac, evalClr);
                      break;
 
-                  case ParserGgr.SPACE_HSB_CW:
+                  case ParserGgr.SPACE_HSB_CW: /* 2 */
                      cwMix.apply(ltClr, rtClr, fac, evalClr);
                      break;
 
-                  case ParserGgr.SPACE_RGB:
+                  case ParserGgr.SPACE_RGB: /* 0 */
                   default:
                      rgbaMix.apply(ltClr, rtClr, fac, evalClr);
 

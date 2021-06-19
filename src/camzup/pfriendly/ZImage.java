@@ -740,9 +740,9 @@ public class ZImage extends PImage {
          }
       }
 
-      /* Determine width of a space. */
       final int fontSize = font.getSize();
 
+      /* Determine width of a space. */
       final Glyph whiteSpace = font.getGlyph('-');
       final int spaceWidth = whiteSpace != null ? whiteSpace.width
          : ( int ) ( fontSize * IUtils.ONE_THIRD );
@@ -808,11 +808,11 @@ public class ZImage extends PImage {
                    * the width of a line is the sum of each glyph's width, plus
                    * kerning, plus left extents.
                    */
-                  maxHeight = height > maxHeight ? height : maxHeight;
+                  if ( height > maxHeight ) { maxHeight = height; }
                   sumWidths += glyph.width + vKern + glyph.leftExtent;
-
-                  maxDescent = glyphDescent > maxDescent ? glyphDescent
-                     : maxDescent;
+                  if ( glyphDescent > maxDescent ) {
+                     maxDescent = glyphDescent;
+                  }
                   lastRowPadding = maxDescent;
                }
             }
@@ -822,18 +822,18 @@ public class ZImage extends PImage {
          }
 
          /* maxHeight may be initial value. */
-         maxHeight = maxHeight < 1 ? defaultHeight : maxHeight;
+         if ( maxHeight < 1 ) { maxHeight = defaultHeight; }
          lineHeights[i] = maxHeight;
          hTotal += maxHeight;
 
          lineWidths[i] = sumWidths;
-         wMax = sumWidths > wMax ? sumWidths : wMax;
+         if ( sumWidths > wMax ) { wMax = sumWidths; }
       }
 
       hTotal += lastRowPadding;
 
       /*
-       * Offset the xCursor's initial position by an offset depending on
+       * Offset the xCursor's initial position depending on
        * horizontal alignment.
        */
       final int[] lineOffsets = new int[lineCount];
@@ -941,7 +941,8 @@ public class ZImage extends PImage {
 
    /**
     * Adjusts gamma of an image. Raises red, green and blue to the power of
-    * the gamma; includes alpha if the flag is true.
+    * the gamma; includes alpha if the flag is true. Clamps results to stay in
+    * gamut.
     *
     * @param source    the source image
     * @param gamma     the gamma
@@ -963,36 +964,40 @@ public class ZImage extends PImage {
       final double ad = amplitude;
       final double od = offset;
 
-      if ( alpha ) {
-         for ( int i = 0; i < len; ++i ) {
-            final int c = px[i];
+      for ( int i = 0; i < len; ++i ) {
+         final int c = px[i];
 
-            final double a = ( c >> 0x18 & 0xff ) * IUtils.ONE_255_D;
-            final double r = ( c >> 0x10 & 0xff ) * IUtils.ONE_255_D;
-            final double g = ( c >> 0x08 & 0xff ) * IUtils.ONE_255_D;
-            final double b = ( c & 0xff ) * IUtils.ONE_255_D;
+         double a = ( c >> 0x18 & 0xff ) * IUtils.ONE_255_D;
+         double r = ( c >> 0x10 & 0xff ) * IUtils.ONE_255_D;
+         double g = ( c >> 0x08 & 0xff ) * IUtils.ONE_255_D;
+         double b = ( c & 0xff ) * IUtils.ONE_255_D;
 
-            px[i] = ( int ) ( Utils.clamp01(Math.pow(a, gd) * ad + od) * 255.0d
-               + 0.5d ) << 0x10 | ( int ) ( Utils.clamp01(Math.pow(r, gd) * ad
-                  + od) * 255.0d + 0.5d ) << 0x10 | ( int ) ( Utils.clamp01(Math
-                     .pow(g, gd) * ad + od) * 255.0d + 0.5d ) << 0x08
-               | ( int ) ( Utils.clamp01(Math.pow(b, gd) * ad + od) * 255.0d
-                  + 0.5d );
+         r = Math.pow(r, gd) * ad + od;
+         g = Math.pow(g, gd) * ad + od;
+         b = Math.pow(b, gd) * ad + od;
+
+         if ( r < 0.0d ) {
+            r = 0.0d;
+         } else if ( r > 1.0d ) { r = 1.0d; }
+
+         if ( g < 0.0d ) {
+            g = 0.0d;
+         } else if ( g > 1.0d ) { g = 1.0d; }
+
+         if ( b < 0.0d ) {
+            b = 0.0d;
+         } else if ( b > 1.0d ) { b = 1.0d; }
+
+         if ( alpha ) {
+            a = Math.pow(a, gd) * ad + od;
+            if ( a < 0.0d ) {
+               a = 0.0d;
+            } else if ( a > 1.0d ) { a = 1.0d; }
          }
-      } else {
-         for ( int i = 0; i < len; ++i ) {
-            final int c = px[i];
 
-            final double r = ( c >> 0x10 & 0xff ) * IUtils.ONE_255_D;
-            final double g = ( c >> 0x08 & 0xff ) * IUtils.ONE_255_D;
-            final double b = ( c & 0xff ) * IUtils.ONE_255_D;
-
-            px[i] = c & 0xff000000 | ( int ) ( Utils.clamp01(Math.pow(r, gd)
-               * ad + od) * 255.0d + 0.5d ) << 0x10 | ( int ) ( Utils.clamp01(
-                  Math.pow(g, gd) * ad + od) * 255.0d + 0.5d ) << 0x08
-               | ( int ) ( Utils.clamp01(Math.pow(b, gd) * ad + od) * 255.0d
-                  + 0.5d );
-         }
+         px[i] = ( int ) ( a * 255.0d + 0.5d ) << 0x18 | ( int ) ( r * 255.0d
+            + 0.5d ) << 0x10 | ( int ) ( g * 255.0d + 0.5d ) << 0x08
+            | ( int ) ( b * 255.0d + 0.5d );
       }
 
       source.updatePixels();

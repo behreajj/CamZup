@@ -241,6 +241,10 @@ public abstract class TextShape {
             final AffineTransform at = null;
 
             for ( int i = 0; i < len; ++i ) {
+
+               // TODO: Update to handle line breaks.
+               // Can PFont be used to make separate option better?
+
                final char character = characters[i];
                final String name = Character.toString(character);
                final CurveEntity2 entity = new CurveEntity2(name);
