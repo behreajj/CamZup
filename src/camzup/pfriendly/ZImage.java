@@ -425,10 +425,10 @@ public class ZImage extends PImage {
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
          final float alpha = ( px[i] >> 0x18 & 0xff ) * IUtils.ONE_255;
-         final float lum = Color.sRgbLuminance(px[i]);
-         final float vf = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math
+         float lum = Color.sRgbLuminance(px[i]);
+         lum = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math
             .pow(lum, 0.4166666666666667d) * 1.055d - 0.055d );
-         px[i] = Gradient.eval(grd, alpha * vf);
+         px[i] = Gradient.eval(grd, alpha * lum);
       }
       target.updatePixels();
       return target;

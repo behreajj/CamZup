@@ -606,6 +606,31 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Arbitrary hue in HSL and HSV assigned to colors with no saturation that
+    * are closer to light, {@value Color#HSL_HUE_LIGHT}. Defaults to a yellow.
+    */
+   public static final float HSL_HUE_LIGHT = 48.0f / 360.0f;
+
+   /**
+    * Arbitrary hue in HSL and HSV assigned to colors with no saturation that
+    * are closer to shadow, {@value Color#HSL_HUE_SHADOW}. Defaults to a
+    * violet.
+    */
+   public static final float HSL_HUE_SHADOW = 255.0f / 360.0f;
+
+   /**
+    * Arbitrary hue in LCh assigned to colors with no saturation that are
+    * closer to light, {@value Color#LCH_HUE_LIGHT}. Defaults to a yellow.
+    */
+   public static final float LCH_HUE_LIGHT = 99.0f / 360.0f;
+
+   /**
+    * Arbitrary hue in LCh assigned to colors with no saturation that are
+    * closer to shadow, {@value Color#LCH_HUE_SHADOW}. Defaults to a violet.
+    */
+   public static final float LCH_HUE_SHADOW = 308.0f / 360.0f;
+
+   /**
     * Look up table for converting colors from linear to standard RGB.
     */
    private static final int[] LTS_LUT = new int[] { 0, 13, 22, 28, 34, 38, 42,
@@ -1380,13 +1405,20 @@ public class Color implements Comparable < Color > {
     * @param alpha  the alpha channel
     * @param target the output vector
     *
-    * @return the lch vector
+    * @return the LCh vector
     */
    public static Vec4 labaToLcha ( final float l, final float a, final float b,
       final float alpha, final Vec4 target ) {
 
-      return target.set(Utils.mod1(IUtils.ONE_TAU * ( float ) Math.atan2(b, a)),
-         ( float ) Math.sqrt(a * a + b * b), l, alpha);
+      final float cSq = a * a + b * b;
+      if ( cSq < 0.00005f ) {
+         final float fac = Utils.clamp01(l * 0.01f);
+         return target.set(Utils.mod1( ( 1.0f - fac ) * Color.LCH_HUE_SHADOW
+            + fac * ( 1.0f + Color.LCH_HUE_LIGHT )), 0.0f, l, alpha);
+      } else {
+         return target.set(Utils.mod1(IUtils.ONE_TAU * ( float ) Math.atan2(b,
+            a)), ( float ) Math.sqrt(cSq), l, alpha);
+      }
    }
 
    /**
@@ -1397,7 +1429,7 @@ public class Color implements Comparable < Color > {
     * @param source the lab vector
     * @param target the output vector
     *
-    * @return the lch color
+    * @return the LCh color
     */
    public static Vec4 labaToLcha ( final Vec4 source, final Vec4 target ) {
 
@@ -1595,6 +1627,11 @@ public class Color implements Comparable < Color > {
     */
    public static Vec4 lRgbaToXyza ( final float r, final float g, final float b,
       final float a, final Vec4 target ) {
+
+      // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+      // 0.4124564 0.3575761 0.1804375
+      // 0.2126729 0.7151522 0.0721750
+      // 0.0193339 0.1191920 0.9503041
 
       return target.set(0.41241086f * r + 0.35758457f * g + 0.1804538f * b,
          0.21264935f * r + 0.71516913f * g + 0.07218152f * b, 0.019331759f * r
@@ -1947,7 +1984,8 @@ public class Color implements Comparable < Color > {
 
       final float light = ( mx + mn ) * 0.5f;
       if ( mx == mn ) {
-         return target.set(0.0f, 0.0f, light, alpha);
+         return target.set(Utils.mod1( ( 1.0f - light ) * Color.HSL_HUE_SHADOW
+            + light * ( 1.0f + Color.HSL_HUE_LIGHT )), 0.0f, light, alpha);
       } else {
          final float diff = mx - mn;
          final float sum = mx + mn;
@@ -2004,7 +2042,6 @@ public class Color implements Comparable < Color > {
 
       final float diff = mx - mn;
       float hue = 0.0f;
-
       if ( diff != 0.0f ) {
          if ( red == mx ) {
             hue = ( green - blue ) / diff;
@@ -2016,6 +2053,10 @@ public class Color implements Comparable < Color > {
          }
 
          hue *= IUtils.ONE_SIX;
+      } else {
+         final float light = ( mx + mn ) * 0.5f;
+         hue = Utils.mod1( ( 1.0f - light ) * Color.HSL_HUE_SHADOW + light
+            * ( 1.0f + Color.HSL_HUE_LIGHT ));
       }
 
       return target.set(hue, mx != 0.0f ? diff / mx : 0.0f, mx, alpha);
@@ -2291,8 +2332,6 @@ public class Color implements Comparable < Color > {
     */
    public static String toGplString ( final Color[] arr, final String name,
       final int cols, final boolean useIdx ) {
-
-      // TODO: Allow boolean flag to write Aseprite extended GPL format?
 
       final StringBuilder sb = new StringBuilder(1024);
       sb.append("GIMP Palette");
@@ -2735,6 +2774,11 @@ public class Color implements Comparable < Color > {
     */
    public static Color xyzaTolRgba ( final float x, final float y,
       final float z, final float a, final Color target ) {
+
+      // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
+      // 3.2404542 -1.5371385 -0.4985314
+      // -0.9692660 1.8760108 0.0415560
+      // 0.0556434 -0.2040259 1.0572252
 
       return target.set(3.2408123f * x - 1.5373085f * y - 0.49858654f * z,
          -0.969243f * x + 1.8759663f * y + 0.041555032f * z, 0.0556384f * x
@@ -3335,18 +3379,36 @@ public class Color implements Comparable < Color > {
       public Color applyUnclamped ( final Color origin, final Color dest,
          final Float step, final Color target ) {
 
-         /* @formatter:off */
+         // TEST
+
          final float t = step;
          final float u = 1.0f - t;
          Color.rgbaToHsla(origin, this.aHsl);
          Color.rgbaToHsla(dest, this.bHsl);
-         this.cHsl.set(
-            this.hueFunc.apply(this.aHsl.x, this.bHsl.x, step),
-            u * this.aHsl.y + t * this.bHsl.y,
-            u * this.aHsl.z + t * this.bHsl.z,
-            u * this.aHsl.w + t * this.bHsl.w);
+
+         float aHue = this.aHsl.x;
+         float aSat = this.aHsl.y;
+         final float aLgt = this.aHsl.z;
+
+         float bHue = this.bHsl.x;
+         float bSat = this.bHsl.y;
+         final float bLgt = this.bHsl.z;
+
+         /* For gradients between grey scale and saturated colors. */
+         if ( aSat <= 0.0f && bSat > 0.0f ) { aHue = this.bHsl.x; }
+         if ( bSat <= 0.0f && aSat > 0.0f ) { bHue = this.aHsl.x; }
+         if ( aLgt <= 0.0f && bLgt > 0.0f ) { aSat = this.bHsl.y; }
+         if ( bLgt <= 0.0f && aLgt > 0.0f ) { bSat = this.aHsl.y; }
+
+         /*
+          * The light in HSLA forms a conic 3D geometry, so it needs to be
+          * smoothed, particularly around the fulcrum where L = 0.5.
+          */
+         final float v = t * t * ( 3.0f - ( t + t ) );
+         final float w = 1.0f - v;
+         this.cHsl.set(this.hueFunc.apply(aHue, bHue, step), u * aSat + t
+            * bSat, w * aLgt + v * bLgt, u * this.aHsl.w + t * this.bHsl.w);
          return Color.hslaToRgba(this.cHsl, target);
-         /* @formatter:on */
       }
 
       /**
@@ -3427,18 +3489,30 @@ public class Color implements Comparable < Color > {
       public Color applyUnclamped ( final Color origin, final Color dest,
          final Float step, final Color target ) {
 
-         /* @formatter:off */
+         // TEST
+
          final float t = step;
          final float u = 1.0f - t;
          Color.rgbaToHsva(origin, this.aHsv);
          Color.rgbaToHsva(dest, this.bHsv);
-         this.cHsv.set(
-            this.hueFunc.apply(this.aHsv.x, this.bHsv.x, step),
-            u * this.aHsv.y + t * this.bHsv.y,
-            u * this.aHsv.z + t * this.bHsv.z,
-            u * this.aHsv.w + t * this.bHsv.w);
+
+         float aHue = this.aHsv.x;
+         float aSat = this.aHsv.y;
+         final float aVal = this.aHsv.z;
+
+         float bHue = this.bHsv.x;
+         float bSat = this.bHsv.y;
+         final float bVal = this.bHsv.z;
+
+         /* For gradients between grey scale and saturated colors. */
+         if ( aSat <= 0.0f && bSat > 0.0f ) { aHue = this.bHsv.x; }
+         if ( bSat <= 0.0f && aSat > 0.0f ) { bHue = this.aHsv.x; }
+         if ( aVal <= 0.0f && bVal > 0.0f ) { aSat = this.bHsv.y; }
+         if ( bVal <= 0.0f && aVal > 0.0f ) { bSat = this.aHsv.y; }
+
+         this.cHsv.set(this.hueFunc.apply(aHue, bHue, step), u * aSat + t
+            * bSat, u * aVal + t * bVal, u * this.aHsv.w + t * this.bHsv.w);
          return Color.hsvaToRgba(this.cHsv, target);
-         /* @formatter:on */
       }
 
       /**

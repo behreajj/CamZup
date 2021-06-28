@@ -154,3 +154,5 @@ swatches
 illuminant
 chroma
 haloes
+fulcrum
+gamut

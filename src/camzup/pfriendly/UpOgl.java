@@ -791,8 +791,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final int vres = detail < 2 ? 2 : detail;
       final float toPercent = 1.0f / ( vres - 1.0f );
       for ( int i = 0; i < vres; ++i ) {
-         final float percent = i * toPercent;
-         CurveAnim.eval(curve, percent, q);
+         CurveAnim.eval(curve, i * toPercent, q);
          Quaternion.getRight(q, right);
          Transform3.mulPoint(tr, right, co);
          this.vertexImpl(co.x, co.y, co.z, this.textureU, this.textureV);

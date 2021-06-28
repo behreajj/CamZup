@@ -703,23 +703,30 @@ public class Bounds3 implements Comparable < Bounds3 > {
     * Evaluates whether a bounding volume intersects a sphere.
     *
     * @param a      the bounding area
-    * @param origin the sphere origin
+    * @param center the sphere center
     * @param radius the sphere radius
     *
     * @return the evaluation
     */
-   public static boolean intersect ( final Bounds3 a, final Vec3 origin,
+   public static boolean intersect ( final Bounds3 a, final Vec3 center,
       final float radius ) {
 
-      // TODO: Fix this, it is probably wrong.
-      final float xDist = origin.x < a.min.x ? origin.x - a.min.x : origin.x
-         > origin.x - a.max.x ? a.max.x : 0.0f;
-      final float yDist = origin.y < a.min.y ? origin.y - a.min.y : origin.y
-         > origin.y - a.max.y ? a.max.y : 0.0f;
-      final float zDist = origin.z < a.min.z ? origin.z - a.min.z : origin.z
-         > origin.z - a.max.z ? a.max.z : 0.0f;
+      float zd = 0.0f;
+      if ( center.z < a.min.z ) {
+         zd = center.z - a.min.z;
+      } else if ( center.z > a.max.z ) { zd = center.z - a.max.z; }
 
-      return xDist * xDist + yDist * yDist + zDist * zDist < radius * radius;
+      float yd = 0.0f;
+      if ( center.y < a.min.y ) {
+         yd = center.y - a.min.y;
+      } else if ( center.y > a.max.y ) { yd = center.y - a.max.y; }
+
+      float xd = 0.0f;
+      if ( center.x < a.min.x ) {
+         xd = center.x - a.min.x;
+      } else if ( center.x > a.max.x ) { xd = center.x - a.max.x; }
+
+      return xd * xd + yd * yd + zd * zd < radius * radius;
    }
 
    /**

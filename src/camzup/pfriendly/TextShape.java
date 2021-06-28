@@ -52,7 +52,8 @@ public abstract class TextShape {
    public static CurveEntity2[] glyphCurve ( final PFont pfont,
       final float detail, final boolean separate, final char... characters ) {
 
-      return TextShape.processGlyphCe(pfont, detail, separate, characters);
+      // TODO: Pass on display scale to user.
+      return TextShape.processGlyphCe(pfont, 1f, detail, separate, characters);
    }
 
    /**
@@ -71,7 +72,8 @@ public abstract class TextShape {
    public static CurveEntity2[] glyphCurve ( final PFont pfont,
       final float detail, final boolean separate, final String str ) {
 
-      return TextShape.processGlyphCe(pfont, detail, separate, str
+      // TODO: Pass on display scale to user.
+      return TextShape.processGlyphCe(pfont, 1f, detail, separate, str
          .toCharArray());
    }
 
@@ -170,7 +172,7 @@ public abstract class TextShape {
       final PFont pfont, final float detail, final boolean separate,
       final char... characters ) {
 
-      final List < CurveEntity2 > entities = new ArrayList <>();
+      final ArrayList < CurveEntity2 > entities = new ArrayList <>();
       final Font font = ( Font ) pfont.getNative();
       if ( font != null ) {
 
@@ -182,14 +184,13 @@ public abstract class TextShape {
          if ( separate ) {
 
             final int len = characters.length;
-            final AffineTransform at = null;
 
             // float xoff = 0.0f;
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
                final String name = Character.toString(character);
                final CurveEntity2 entity = new CurveEntity2(name);
-               TextShape.processGlyphCurve(font, frc, at, detail, character,
+               TextShape.processGlyphCurve(font, frc, null, detail, character,
                   entity.curves);
                entities.add(entity);
                // final float w = fm.charWidth(character);
@@ -200,8 +201,8 @@ public abstract class TextShape {
 
             final String name = new String(characters);
             final CurveEntity2 entity = new CurveEntity2(name);
-            TextShape.processGlyphCurve(font, frc, ( AffineTransform ) null,
-               detail, characters, entity.curves);
+            TextShape.processGlyphCurve(font, frc, null, detail, characters,
+               entity.curves);
             entities.add(entity);
          }
 
@@ -215,19 +216,21 @@ public abstract class TextShape {
     * Processing uses a deprecated method from an AWT function. That method
     * call has been isolated to this function.
     *
-    * @param pfont      the Processing font
-    * @param detail     the curve detail
-    * @param characters the characters
-    * @param separate   separate curve per char
+    * @param pfont        the Processing font
+    * @param displayScale the display scale
+    * @param detail       the curve detail
+    * @param characters   the characters
+    * @param separate     separate curve per char
     *
     * @return the array of glyphs
     *
     * @see Toolkit#getDefaultToolkit()
     */
    protected static CurveEntity2[] processGlyphCe ( final PFont pfont,
-      final float detail, final boolean separate, final char... characters ) {
+      final float displayScale, final float detail, final boolean separate,
+      final char... characters ) {
 
-      final List < CurveEntity2 > entities = new ArrayList <>();
+      final ArrayList < CurveEntity2 > entities = new ArrayList <>();
       final Font font = ( Font ) pfont.getNative();
       if ( font != null ) {
 
@@ -238,26 +241,53 @@ public abstract class TextShape {
          if ( separate ) {
 
             final int len = characters.length;
-            final AffineTransform at = null;
+
+            float xCursor = 0.0f;
+            float yCursor = 0.0f;
+            final Vec2 tr = new Vec2();
+
+            // TODO: Implement mesh version.
+            final float scalar = displayScale / pfont.getSize();
+            final float kerning = 0.25f;
+            final float leading = 1.0f;
+            final float spaceWidth = pfont.getGlyph('-').width;
+            final float lineHeight = Utils.max(pfont.getGlyph('l').height, pfont
+               .getGlyph('d').height);
+            boolean newLineFlag = false;
 
             for ( int i = 0; i < len; ++i ) {
-
-               // TODO: Update to handle line breaks.
-               // Can PFont be used to make separate option better?
-
                final char character = characters[i];
-               final String name = Character.toString(character);
-               final CurveEntity2 entity = new CurveEntity2(name);
-               TextShape.processGlyphCurve(font, frc, at, detail, character,
-                  entity.curves);
-               entities.add(entity);
+
+               if ( character == '\n' || character == '\r' ) {
+                  yCursor -= ( lineHeight + leading ) * scalar;
+                  xCursor = 0.0f;
+                  newLineFlag = true;
+               } else if ( character == ' ' || character == '\t' ) {
+                  xCursor += spaceWidth * scalar;
+                  newLineFlag = false;
+               } else {
+
+                  final String name = Character.toString(character);
+                  final CurveEntity2 entity = new CurveEntity2(name);
+                  entities.add(entity);
+                  TextShape.processGlyphCurve(font, frc, null, detail,
+                     character, entity.curves);
+
+                  final PFont.Glyph glyph = pfont.getGlyph(character);
+
+                  tr.set(xCursor, yCursor);
+                  entity.moveTo(tr);
+                  xCursor += ( glyph.width + kerning ) * scalar;
+                  if ( !newLineFlag ) { xCursor += glyph.leftExtent * scalar; }
+                  newLineFlag = false;
+               }
             }
 
          } else {
 
             final String name = new String(characters);
             final CurveEntity2 entity = new CurveEntity2(name);
-            TextShape.processGlyphCurve(font, frc, ( AffineTransform ) null,
+            TextShape.processGlyphCurve(font, frc, null,
                detail, characters, entity.curves);
             entities.add(entity);
 
@@ -286,9 +316,10 @@ public abstract class TextShape {
     * @see TextShape#processGlyphCurve(Font, FontRenderContext,
     *      AffineTransform, float, char[], List)
     */
-   protected static List < Curve2 > processGlyphCurve ( final Font font,
+   protected static ArrayList < Curve2 > processGlyphCurve ( final Font font,
       final FontRenderContext frc, final AffineTransform transform,
-      final float detail, final char character, final List < Curve2 > curves ) {
+      final float detail, final char character, final ArrayList <
+         Curve2 > curves ) {
 
       return TextShape.processGlyphCurve(font, frc, transform, detail,
          new char[] { character }, curves);
@@ -318,13 +349,12 @@ public abstract class TextShape {
     * @see Font#getSize()
     * @see PathIterator#currentSegment(float[])
     */
-   protected static List < Curve2 > processGlyphCurve ( final Font font,
+   protected static ArrayList < Curve2 > processGlyphCurve ( final Font font,
       final FontRenderContext frc, final AffineTransform transform,
-      final float detail, final char[] characters, final List <
+      final float detail, final char[] characters, final ArrayList <
          Curve2 > curves ) {
 
       final GlyphVector gv = font.createGlyphVector(frc, characters);
-      // final int numGlyphs = gv.getNumGlyphs();
       final String namePrefix = new String(characters) + ".";
       final Shape shp = gv.getOutline();
 
@@ -360,7 +390,7 @@ public abstract class TextShape {
          final int segType = itr.currentSegment(itrpts);
          switch ( segType ) {
 
-            case PathIterator.SEG_MOVETO:
+            case PathIterator.SEG_MOVETO: /* 0 */
 
                /*
                 * Create a new curve, move to a point. The first knot of a shape
@@ -379,7 +409,7 @@ public abstract class TextShape {
 
                break;
 
-            case PathIterator.SEG_LINETO:
+            case PathIterator.SEG_LINETO: /* 1 */
 
                /*
                 * For straight lines, create a new knot from a point. The
@@ -396,7 +426,7 @@ public abstract class TextShape {
 
                break;
 
-            case PathIterator.SEG_QUADTO:
+            case PathIterator.SEG_QUADTO: /* 2 */
 
                /*
                 * The order of a quadratic curve is: (0, 1) a shared handle, or
@@ -420,7 +450,7 @@ public abstract class TextShape {
 
                break;
 
-            case PathIterator.SEG_CUBICTO:
+            case PathIterator.SEG_CUBICTO: /* 3 */
 
                /*
                 * The order of a cubic curve: (0, 1) previous knot fore handle;
@@ -443,7 +473,7 @@ public abstract class TextShape {
 
                break;
 
-            case PathIterator.SEG_CLOSE:
+            case PathIterator.SEG_CLOSE: /* 4 */
 
                prevKnot = currKnot;
 
@@ -485,7 +515,9 @@ public abstract class TextShape {
    protected static MeshEntity2[] processGlyphMe ( final PFont pfont,
       final float detail, final boolean separate, final char... characters ) {
 
-      final List < MeshEntity2 > entities = new ArrayList <>();
+      // TODO: What about the variation which accepts a Graphics2D?
+
+      final ArrayList < MeshEntity2 > entities = new ArrayList <>();
       final Font font = ( Font ) pfont.getNative();
       if ( font != null ) {
 
@@ -496,14 +528,13 @@ public abstract class TextShape {
          if ( separate ) {
 
             final int len = characters.length;
-            final AffineTransform at = null;
 
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
 
                final String name = Character.toString(character);
                final MeshEntity2 entity = new MeshEntity2(name);
-               TextShape.processGlyphMesh(font, frc, at, detail, character,
+               TextShape.processGlyphMesh(font, frc, null, detail, character,
                   entity.meshes);
                entities.add(entity);
             }
@@ -542,9 +573,10 @@ public abstract class TextShape {
     *      AffineTransform, float, char[], List)
     */
    @Experimental
-   protected static List < Mesh2 > processGlyphMesh ( final Font font,
+   protected static ArrayList < Mesh2 > processGlyphMesh ( final Font font,
       final FontRenderContext frc, final AffineTransform transform,
-      final float detail, final char character, final List < Mesh2 > meshes ) {
+      final float detail, final char character, final ArrayList <
+         Mesh2 > meshes ) {
 
       return TextShape.processGlyphMesh(font, frc, transform, detail,
          new char[] { character }, meshes);
@@ -575,9 +607,9 @@ public abstract class TextShape {
     * @see PathIterator#currentSegment(float[])
     */
    @Experimental
-   protected static List < Mesh2 > processGlyphMesh ( final Font font,
+   protected static ArrayList < Mesh2 > processGlyphMesh ( final Font font,
       final FontRenderContext frc, final AffineTransform transform,
-      final float detail, final char[] characters, final List <
+      final float detail, final char[] characters, final ArrayList <
          Mesh2 > meshes ) {
 
       final GlyphVector gv = font.createGlyphVector(frc, characters);
@@ -606,7 +638,7 @@ public abstract class TextShape {
 
          switch ( segType ) {
 
-            case PathIterator.SEG_MOVETO:
+            case PathIterator.SEG_MOVETO: /* 0 */
 
                final String name = namePrefix + meshCount;
                currMesh = new Mesh2(name);
@@ -618,23 +650,7 @@ public abstract class TextShape {
 
                break;
 
-            case PathIterator.SEG_CUBICTO:
-
-               currPt = new Vec2(( float ) ( itrpts[4] * invScalar ),
-                  ( float ) ( -itrpts[5] * invScalar ));
-               currMeshPts.add(currPt);
-
-               break;
-
-            case PathIterator.SEG_QUADTO:
-
-               currPt = new Vec2(( float ) ( itrpts[2] * invScalar ),
-                  ( float ) ( -itrpts[3] * invScalar ));
-               currMeshPts.add(currPt);
-
-               break;
-
-            case PathIterator.SEG_LINETO:
+            case PathIterator.SEG_LINETO: /* 1 */
 
                currPt = new Vec2(( float ) ( itrpts[0] * invScalar ),
                   ( float ) ( -itrpts[1] * invScalar ));
@@ -642,7 +658,23 @@ public abstract class TextShape {
 
                break;
 
-            case PathIterator.SEG_CLOSE:
+            case PathIterator.SEG_QUADTO: /* 2 */
+
+               currPt = new Vec2(( float ) ( itrpts[2] * invScalar ),
+                  ( float ) ( -itrpts[3] * invScalar ));
+               currMeshPts.add(currPt);
+
+               break;
+
+            case PathIterator.SEG_CUBICTO: /* 3 */
+
+               currPt = new Vec2(( float ) ( itrpts[4] * invScalar ),
+                  ( float ) ( -itrpts[5] * invScalar ));
+               currMeshPts.add(currPt);
+
+               break;
+
+            case PathIterator.SEG_CLOSE: /* 4 */
 
                currMeshPts.remove(0);
 

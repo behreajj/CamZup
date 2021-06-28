@@ -1,8 +1,10 @@
 package camzup.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.TreeMap;
 
 /**
  * Partitions space to improve collision and intersection tests. A quadtree
@@ -287,25 +289,43 @@ public class Quadtree implements Iterable < Vec2 > {
     */
    public Vec2[] query ( final Bounds2 range ) {
 
-      final ArrayList < Vec2 > result = new ArrayList <>();
-      this.query(range, result);
-      return result.toArray(new Vec2[result.size()]);
+      final TreeMap < Float, Vec2 > found = new TreeMap <>();
+      this.query(range, found);
+
+      /* Copy by value, so references can't change. */
+      final Collection < Vec2 > values = found.values();
+      final Iterator < Vec2 > itr = values.iterator();
+      final int len = values.size();
+      final Vec2[] result = new Vec2[len];
+      for ( int i = 0; itr.hasNext(); ++i ) {
+         result[i] = new Vec2(itr.next());
+      }
+      return result;
    }
 
    /**
     * Queries the quadtree with a circular range, returning points inside the
     * range.
     *
-    * @param origin the circle origin
+    * @param center the circle center
     * @param radius the circle radius
     *
     * @return the points.
     */
-   public Vec2[] query ( final Vec2 origin, final float radius ) {
+   public Vec2[] query ( final Vec2 center, final float radius ) {
 
-      final ArrayList < Vec2 > result = new ArrayList <>();
-      this.query(origin, radius, result);
-      return result.toArray(new Vec2[result.size()]);
+      final TreeMap < Float, Vec2 > found = new TreeMap <>();
+      this.query(center, radius, found);
+
+      /* Copy by value, so references can't change. */
+      final Collection < Vec2 > values = found.values();
+      final Iterator < Vec2 > itr = values.iterator();
+      final int len = values.size();
+      final Vec2[] result = new Vec2[len];
+      for ( int i = 0; itr.hasNext(); ++i ) {
+         result[i] = new Vec2(itr.next());
+      }
+      return result;
    }
 
    /**
@@ -435,27 +455,31 @@ public class Quadtree implements Iterable < Vec2 > {
 
    /**
     * Queries the quadtree with a rectangular range. If points in the quadtree
-    * are in range, they are added to the list.
+    * are in range, they are added to a {@link java.util.TreeMap}.
     *
-    * @param range the range
+    * @param range the bounds
     * @param found the output list
     *
     * @return found points
     *
     * @see Bounds2#intersect(Bounds2, Bounds2)
     * @see Bounds2#containsInclusive(Bounds2, Vec2)
+    * @see Vec2#dist(Vec2, Vec2)
+    * @see Bounds2#center(Bounds2, Vec2)
     */
    @Recursive
-   protected ArrayList < Vec2 > query ( final Bounds2 range, final ArrayList <
-      Vec2 > found ) {
+   protected TreeMap < Float, Vec2 > query ( final Bounds2 range,
+      final TreeMap < Float, Vec2 > found ) {
 
       if ( Bounds2.intersect(range, this.bounds) ) {
          if ( this.isLeaf() ) {
             final Iterator < Vec2 > itr = this.points.iterator();
+            final Vec2 rCenter = new Vec2();
+            Bounds2.center(range, rCenter);
             while ( itr.hasNext() ) {
                final Vec2 point = itr.next();
                if ( Bounds2.containsInclusive(range, point) ) {
-                  found.add(point);
+                  found.put(Vec2.dist(point, rCenter), point);
                }
             }
          } else {
@@ -470,9 +494,9 @@ public class Quadtree implements Iterable < Vec2 > {
 
    /**
     * Queries the quadtree with a circular range. If points in the quadtree
-    * are in range, they are added to the list.
+    * are in range, they are added to a {@link java.util.TreeMap}.
     *
-    * @param origin the circle origin
+    * @param center the circle center
     * @param radius the circle radius
     * @param found  the output list
     *
@@ -480,22 +504,23 @@ public class Quadtree implements Iterable < Vec2 > {
     *
     * @see Bounds2#intersect(Bounds2, Vec2, float)
     * @see Vec2#distSq(Vec2, Vec2)
+    * @see Utils#sqrt(float)
     */
-   @Recursive
-   protected ArrayList < Vec2 > query ( final Vec2 origin, final float radius,
-      final ArrayList < Vec2 > found ) {
+   protected TreeMap < Float, Vec2 > query ( final Vec2 center,
+      final float radius, final TreeMap < Float, Vec2 > found ) {
 
-      if ( Bounds2.intersect(this.bounds, origin, radius) ) {
+      if ( Bounds2.intersect(this.bounds, center, radius) ) {
          if ( this.isLeaf() ) {
             final Iterator < Vec2 > itr = this.points.iterator();
             final float rsq = radius * radius;
             while ( itr.hasNext() ) {
                final Vec2 point = itr.next();
-               if ( Vec2.distSq(origin, point) <= rsq ) { found.add(point); }
+               final float dsq = Vec2.distSq(center, point);
+               if ( dsq <= rsq ) { found.put(Utils.sqrt(dsq), point); }
             }
          } else {
             for ( int i = 0; i < 4; ++i ) {
-               this.children[i].query(origin, radius, found);
+               this.children[i].query(center, radius, found);
             }
          }
       }

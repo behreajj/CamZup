@@ -20,7 +20,7 @@ void setup() {
   //PFont font = loadFont("ProcessingSansPro.vlw");
   PFont font = loadFont("NotoSerif-Bold-48.vlw");
   long start = System.currentTimeMillis();
-  te3 = new TextEntity3(font, msg, clr, 8, 0, CENTER, CENTER, 0.975f);
+  te3 = new TextEntity3(font, msg, clr, 8, 0, LEFT, CENTER, 0.975f);
   long end = System.currentTimeMillis();
   println("Elapsed Time: " + (end - start));
   te3.rotateX(IUtils.HALF_PI);

@@ -1,8 +1,10 @@
 package camzup.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.TreeMap;
 
 /**
  * Partitions space to improve collision and intersection tests. An octree
@@ -289,25 +291,43 @@ public class Octree implements Iterable < Vec3 > {
     */
    public Vec3[] query ( final Bounds3 range ) {
 
-      final ArrayList < Vec3 > result = new ArrayList <>();
-      this.query(range, result);
-      return result.toArray(new Vec3[result.size()]);
+      final TreeMap < Float, Vec3 > found = new TreeMap <>();
+      this.query(range, found);
+
+      /* Copy by value, so references can't change. */
+      final Collection < Vec3 > values = found.values();
+      final Iterator < Vec3 > itr = values.iterator();
+      final int len = values.size();
+      final Vec3[] result = new Vec3[len];
+      for ( int i = 0; itr.hasNext(); ++i ) {
+         result[i] = new Vec3(itr.next());
+      }
+      return result;
    }
 
    /**
     * Queries the octree with a spherical range, returning points inside the
     * range.
     *
-    * @param origin the circle origin
-    * @param radius the circle radius
+    * @param center the sphere center
+    * @param radius the sphere radius
     *
     * @return the points.
     */
-   public Vec3[] query ( final Vec3 origin, final float radius ) {
+   public Vec3[] query ( final Vec3 center, final float radius ) {
 
-      final ArrayList < Vec3 > result = new ArrayList <>();
-      this.query(origin, radius, result);
-      return result.toArray(new Vec3[result.size()]);
+      final TreeMap < Float, Vec3 > found = new TreeMap <>();
+      this.query(center, radius, found);
+
+      /* Copy by value, so references can't change. */
+      final Collection < Vec3 > values = found.values();
+      final Iterator < Vec3 > itr = values.iterator();
+      final int len = values.size();
+      final Vec3[] result = new Vec3[len];
+      for ( int i = 0; itr.hasNext(); ++i ) {
+         result[i] = new Vec3(itr.next());
+      }
+      return result;
    }
 
    /**
@@ -399,8 +419,8 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Queries the octree with a rectangular range. If points in the octree are
-    * in range, they are added to the list.
+    * Queries the octree with a box range. If points in the octree are in
+    * range, they are added to a {@link java.util.TreeMap}.
     *
     * @param range the range
     * @param found the output list
@@ -409,20 +429,22 @@ public class Octree implements Iterable < Vec3 > {
     *
     * @see Bounds3#intersect(Bounds3, Bounds3)
     * @see Bounds3#containsInclusive(Bounds3, Vec3)
+    * @see Vec3#dist(Vec3, Vec3)
+    * @see Bounds3#center(Bounds3, Vec3)
     */
    @Recursive
-   protected ArrayList < Vec3 > query ( final Bounds3 range, final ArrayList <
-      Vec3 > found ) {
+   protected TreeMap < Float, Vec3 > query ( final Bounds3 range,
+      final TreeMap < Float, Vec3 > found ) {
 
       if ( Bounds3.intersect(range, this.bounds) ) {
          if ( this.isLeaf() ) {
             final Iterator < Vec3 > itr = this.points.iterator();
+            final Vec3 rCenter = new Vec3();
+            Bounds3.center(range, rCenter);
             while ( itr.hasNext() ) {
                final Vec3 point = itr.next();
-
-               // TODO: Use an SDF instead so that entries can be sorted?
                if ( Bounds3.containsInclusive(range, point) ) {
-                  found.add(point);
+                  found.put(Vec3.dist(point, rCenter), point);
                }
             }
          } else {
@@ -437,38 +459,33 @@ public class Octree implements Iterable < Vec3 > {
 
    /**
     * Queries the octree with a spherical range. If points in the octree are
-    * in range, they are added to the list.
+    * in range, they are added to a {@link java.util.TreeMap}.
     *
-    * @param origin the circle origin
-    * @param radius the circle radius
+    * @param center the sphere center
+    * @param radius the sphere radius
     * @param found  the output list
     *
     * @return found points
     *
     * @see Bounds3#intersect(Bounds3, Vec3, float)
     * @see Vec3#distSq(Vec3, Vec3)
+    * @see Utils#sqrt(float)
     */
-   @Recursive
-   protected ArrayList < Vec3 > query ( final Vec3 origin, final float radius,
-      final ArrayList < Vec3 > found ) {
+   protected TreeMap < Float, Vec3 > query ( final Vec3 center,
+      final float radius, final TreeMap < Float, Vec3 > found ) {
 
-      if ( Bounds3.intersect(this.bounds, origin, radius) ) {
+      if ( Bounds3.intersect(this.bounds, center, radius) ) {
          if ( this.isLeaf() ) {
             final Iterator < Vec3 > itr = this.points.iterator();
             final float rsq = radius * radius;
             while ( itr.hasNext() ) {
-
-               // TODO: Instead of internal queries using an array list, use a
-               // tree map where the dist sq is the key and the point is
-               // the value. Then convert to an array after in the public facing
-               // function.
-
                final Vec3 point = itr.next();
-               if ( Vec3.distSq(origin, point) <= rsq ) { found.add(point); }
+               final float dsq = Vec3.distSq(center, point);
+               if ( dsq <= rsq ) { found.put(Utils.sqrt(dsq), point); }
             }
          } else {
             for ( int i = 0; i < 8; ++i ) {
-               this.children[i].query(origin, radius, found);
+               this.children[i].query(center, radius, found);
             }
          }
       }
