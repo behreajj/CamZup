@@ -1977,30 +1977,54 @@ public class Color implements Comparable < Color > {
    public static Vec4 rgbaToHsla ( final float red, final float green,
       final float blue, final float alpha, final Vec4 target ) {
 
-      final float gbmx = green > blue ? green : blue;
-      final float gbmn = green < blue ? green : blue;
-      final float mx = gbmx > red ? gbmx : red;
-      final float mn = gbmn < red ? gbmn : red;
+      final float r = red;
+      final float g = green;
+      final float b = blue;
+      final float a = alpha;
 
-      final float light = ( mx + mn ) * 0.5f;
-      if ( mx == mn ) {
-         return target.set(Utils.mod1( ( 1.0f - light ) * Color.HSL_HUE_SHADOW
-            + light * ( 1.0f + Color.HSL_HUE_LIGHT )), 0.0f, light, alpha);
+      // if ( r < 0.0f ) {
+      // r = 0.0f;
+      // } else if ( r > 1.0f ) { r = 1.0f; }
+      // if ( g < 0.0f ) {
+      // g = 0.0f;
+      // } else if ( g > 1.0f ) { g = 1.0f; }
+      // if ( b < 0.0f ) {
+      // b = 0.0f;
+      // } else if ( b > 1.0f ) { b = 1.0f; }
+      // if ( a < 0.0f ) {
+      // a = 0.0f;
+      // } else if ( a > 1.0f ) { a = 1.0f; }
+
+      final float gbmx = g > b ? g : b;
+      final float gbmn = g < b ? g : b;
+      final float mx = gbmx > r ? gbmx : r;
+      final float mn = gbmn < r ? gbmn : r;
+
+      final float sum = mx + mn;
+      final float diff = mx - mn;
+      final float light = sum * 0.5f;
+
+      if ( light <= IUtils.ONE_255 ) {
+         return target.set(Color.HSL_HUE_SHADOW, 0.0f, 0.0f, a);
+      } else if ( light >= 1.0f - IUtils.ONE_255 ) {
+         return target.set(Color.HSL_HUE_LIGHT, 0.0f, 1.0f, a);
+      } else if ( diff <= IUtils.ONE_255 ) {
+         final float hue = light * ( 1.0f + Color.HSL_HUE_LIGHT ) + ( 1.0f
+            - light ) * Color.HSL_HUE_SHADOW;
+         return target.set(hue % 1.0f, 0.0f, light, a);
       } else {
-         final float diff = mx - mn;
-         final float sum = mx + mn;
          float hue;
-         if ( mx == red ) {
-            hue = ( green - blue ) / diff;
-            if ( green < blue ) { hue += 6.0f; }
-         } else if ( mx == green ) {
-            hue = 2.0f + ( blue - red ) / diff;
+         if ( Utils.approx(r, mx, IUtils.ONE_255) ) {
+            hue = ( g - b ) / diff;
+            if ( g < b ) { hue += 6.0f; }
+         } else if ( Utils.approx(g, mx, IUtils.ONE_255) ) {
+            hue = 2.0f + ( b - r ) / diff;
          } else {
-            hue = 4.0f + ( red - green ) / diff;
+            hue = 4.0f + ( r - g ) / diff;
          }
-         hue *= IUtils.ONE_SIX;
-         return target.set(hue, light > 0.5f ? diff / ( 2.0f - sum ) : diff
-            / sum, light, alpha);
+
+         final float sat = light > 0.5f ? diff / ( 2.0f - sum ) : diff / sum;
+         return target.set(hue * IUtils.ONE_SIX, sat, light, a);
       }
    }
 
@@ -2035,31 +2059,56 @@ public class Color implements Comparable < Color > {
    public static Vec4 rgbaToHsva ( final float red, final float green,
       final float blue, final float alpha, final Vec4 target ) {
 
-      final float gbmx = green > blue ? green : blue;
-      final float gbmn = green < blue ? green : blue;
-      final float mx = gbmx > red ? gbmx : red;
-      final float mn = gbmn < red ? gbmn : red;
+      final float r = red;
+      final float g = green;
+      final float b = blue;
+      final float a = alpha;
 
-      final float diff = mx - mn;
-      float hue = 0.0f;
-      if ( diff != 0.0f ) {
-         if ( red == mx ) {
-            hue = ( green - blue ) / diff;
-            if ( green < blue ) { hue += 6.0f; }
-         } else if ( green == mx ) {
-            hue = 2.0f + ( blue - red ) / diff;
-         } else {
-            hue = 4.0f + ( red - green ) / diff;
-         }
+      // if ( r < 0.0f ) {
+      // r = 0.0f;
+      // } else if ( r > 1.0f ) { r = 1.0f; }
+      // if ( g < 0.0f ) {
+      // g = 0.0f;
+      // } else if ( g > 1.0f ) { g = 1.0f; }
+      // if ( b < 0.0f ) {
+      // b = 0.0f;
+      // } else if ( b > 1.0f ) { b = 1.0f; }
+      // if ( a < 0.0f ) {
+      // a = 0.0f;
+      // } else if ( a > 1.0f ) { a = 1.0f; }
 
-         hue *= IUtils.ONE_SIX;
+      final float gbmx = g > b ? g : b;
+      final float gbmn = g < b ? g : b;
+      final float mx = gbmx > r ? gbmx : r;
+
+      if ( mx <= IUtils.ONE_255 ) {
+         return target.set(Color.HSL_HUE_SHADOW, 0.0f, 0.0f, a);
       } else {
-         final float light = ( mx + mn ) * 0.5f;
-         hue = Utils.mod1( ( 1.0f - light ) * Color.HSL_HUE_SHADOW + light
-            * ( 1.0f + Color.HSL_HUE_LIGHT ));
-      }
+         final float mn = gbmn < r ? gbmn : r;
+         final float diff = mx - mn;
+         if ( diff <= IUtils.ONE_255 ) {
+            final float light = ( mx + mn ) * 0.5f;
+            if ( light >= 1.0f - IUtils.ONE_255 ) {
+               return target.set(Color.HSL_HUE_LIGHT, 0.0f, 1.0f, a);
+            } else {
+               final float hue = light * ( 1.0f + Color.HSL_HUE_LIGHT ) + ( 1.0f
+                  - light ) * Color.HSL_HUE_SHADOW;
+               return target.set(hue % 1.0f, 0.0f, mx, a);
+            }
+         } else {
+            float hue;
+            if ( Utils.approx(r, mx, IUtils.ONE_255) ) {
+               hue = ( g - b ) / diff;
+               if ( g < b ) { hue += 6.0f; }
+            } else if ( Utils.approx(g, mx, IUtils.ONE_255) ) {
+               hue = 2.0f + ( b - r ) / diff;
+            } else {
+               hue = 4.0f + ( r - g ) / diff;
+            }
 
-      return target.set(hue, mx != 0.0f ? diff / mx : 0.0f, mx, alpha);
+            return target.set(hue * IUtils.ONE_SIX, diff / mx, mx, a);
+         }
+      }
    }
 
    /**
@@ -2132,13 +2181,21 @@ public class Color implements Comparable < Color > {
     *
     * @see Color#rgbaToHsla(Color, Vec4)
     * @see Color#hslaToRgba(Vec4, Color)
-    * @see Vec4#add(Vec4, Vec4, Vec4)
     */
    public static Color shiftHsla ( final Color c, final Vec4 shift,
       final Color target, final Vec4 hsla ) {
 
       Color.rgbaToHsla(c, hsla);
-      Vec4.add(hsla, shift, hsla);
+
+      final float oldSat = hsla.y;
+      if ( oldSat > 0.0f ) {
+         hsla.x += shift.x;
+         hsla.y += shift.y;
+      }
+
+      hsla.z += shift.z;
+      hsla.w += shift.w;
+
       return Color.hslaToRgba(hsla, target);
    }
 
@@ -2154,13 +2211,21 @@ public class Color implements Comparable < Color > {
     *
     * @see Color#rgbaToHsva(Color, Vec4)
     * @see Color#hsvaToRgba(Vec4, Color)
-    * @see Vec4#add(Vec4, Vec4, Vec4)
     */
    public static Color shiftHsva ( final Color c, final Vec4 shift,
       final Color target, final Vec4 hsva ) {
 
       Color.rgbaToHsva(c, hsva);
-      Vec4.add(hsva, shift, hsva);
+
+      final float oldSat = hsva.y;
+      if ( oldSat > 0.0f ) {
+         hsva.x += shift.x;
+         hsva.y += shift.y;
+      }
+
+      hsva.z += shift.z;
+      hsva.w += shift.w;
+
       return Color.hsvaToRgba(hsva, target);
    }
 
@@ -3379,35 +3444,24 @@ public class Color implements Comparable < Color > {
       public Color applyUnclamped ( final Color origin, final Color dest,
          final Float step, final Color target ) {
 
-         // TEST
-
-         final float t = step;
-         final float u = 1.0f - t;
          Color.rgbaToHsla(origin, this.aHsl);
          Color.rgbaToHsla(dest, this.bHsl);
 
-         float aHue = this.aHsl.x;
-         float aSat = this.aHsl.y;
-         final float aLgt = this.aHsl.z;
+         final float aSat = this.aHsl.y;
+         final float bSat = this.bHsl.y;
 
-         float bHue = this.bHsl.x;
-         float bSat = this.bHsl.y;
-         final float bLgt = this.bHsl.z;
+         final float t = step;
+         final float u = 1.0f - t;
 
-         /* For gradients between grey scale and saturated colors. */
-         if ( aSat <= 0.0f && bSat > 0.0f ) { aHue = this.bHsl.x; }
-         if ( bSat <= 0.0f && aSat > 0.0f ) { bHue = this.aHsl.x; }
-         if ( aLgt <= 0.0f && bLgt > 0.0f ) { aSat = this.bHsl.y; }
-         if ( bLgt <= 0.0f && aLgt > 0.0f ) { bSat = this.aHsl.y; }
+         if ( aSat <= IUtils.EPSILON || bSat <= IUtils.EPSILON ) {
+            return target.set(u * origin.r + t * dest.r, u * origin.g + t
+               * dest.g, u * origin.b + t * dest.b, u * origin.a + t * dest.a);
+         }
 
-         /*
-          * The light in HSLA forms a conic 3D geometry, so it needs to be
-          * smoothed, particularly around the fulcrum where L = 0.5.
-          */
-         final float v = t * t * ( 3.0f - ( t + t ) );
-         final float w = 1.0f - v;
-         this.cHsl.set(this.hueFunc.apply(aHue, bHue, step), u * aSat + t
-            * bSat, w * aLgt + v * bLgt, u * this.aHsl.w + t * this.bHsl.w);
+         this.cHsl.set(this.hueFunc.apply(this.aHsl.x, this.bHsl.x, step), u
+            * aSat + t * bSat, u * this.aHsl.z + t * this.bHsl.z, u
+               * this.aHsl.w + t * this.bHsl.w);
+
          return Color.hslaToRgba(this.cHsl, target);
       }
 
@@ -3489,29 +3543,24 @@ public class Color implements Comparable < Color > {
       public Color applyUnclamped ( final Color origin, final Color dest,
          final Float step, final Color target ) {
 
-         // TEST
-
-         final float t = step;
-         final float u = 1.0f - t;
          Color.rgbaToHsva(origin, this.aHsv);
          Color.rgbaToHsva(dest, this.bHsv);
 
-         float aHue = this.aHsv.x;
-         float aSat = this.aHsv.y;
-         final float aVal = this.aHsv.z;
+         final float aSat = this.aHsv.y;
+         final float bSat = this.bHsv.y;
 
-         float bHue = this.bHsv.x;
-         float bSat = this.bHsv.y;
-         final float bVal = this.bHsv.z;
+         final float t = step;
+         final float u = 1.0f - t;
 
-         /* For gradients between grey scale and saturated colors. */
-         if ( aSat <= 0.0f && bSat > 0.0f ) { aHue = this.bHsv.x; }
-         if ( bSat <= 0.0f && aSat > 0.0f ) { bHue = this.aHsv.x; }
-         if ( aVal <= 0.0f && bVal > 0.0f ) { aSat = this.bHsv.y; }
-         if ( bVal <= 0.0f && aVal > 0.0f ) { bSat = this.aHsv.y; }
+         if ( aSat <= IUtils.EPSILON || bSat <= IUtils.EPSILON ) {
+            return target.set(u * origin.r + t * dest.r, u * origin.g + t
+               * dest.g, u * origin.b + t * dest.b, u * origin.a + t * dest.a);
+         }
 
-         this.cHsv.set(this.hueFunc.apply(aHue, bHue, step), u * aSat + t
-            * bSat, u * aVal + t * bVal, u * this.aHsv.w + t * this.bHsv.w);
+         this.cHsv.set(this.hueFunc.apply(this.aHsv.x, this.bHsv.x, step), u
+            * aSat + t * bSat, u * this.aHsv.z + t * this.bHsv.z, u
+               * this.aHsv.w + t * this.bHsv.w);
+
          return Color.hsvaToRgba(this.cHsv, target);
       }
 

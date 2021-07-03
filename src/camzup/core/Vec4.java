@@ -627,26 +627,6 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
-    * Clamps a vector to a range within the lower- and upper-bound.
-    *
-    * @param v          the input vector
-    * @param lowerBound the lower bound of the range
-    * @param upperBound the upper bound of the range
-    * @param target     the output vector
-    *
-    * @return the clamped vector
-    *
-    * @see Utils#clamp(float, float, float)
-    */
-   public static Vec4 clamp ( final Vec4 v, final Vec4 lowerBound,
-      final Vec4 upperBound, final Vec4 target ) {
-
-      return target.set(Utils.clamp(v.x, lowerBound.x, upperBound.x), Utils
-         .clamp(v.y, lowerBound.y, upperBound.y), Utils.clamp(v.z, lowerBound.z,
-            upperBound.z), Utils.clamp(v.w, lowerBound.w, upperBound.w));
-   }
-
-   /**
     * Clamps the vector to a range in [0.0, 1.0].
     *
     * @param v      the input vector

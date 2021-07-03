@@ -156,3 +156,4 @@ chroma
 haloes
 fulcrum
 gamut
+desaturated

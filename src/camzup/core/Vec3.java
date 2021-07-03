@@ -784,26 +784,6 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Clamps a vector to a range within the lower- and upper-bound.
-    *
-    * @param a          the input vector
-    * @param lowerBound the lower bound of the range
-    * @param upperBound the upper bound of the range
-    * @param target     the output vector
-    *
-    * @return the clamped vector
-    *
-    * @see Utils#clamp(float, float, float)
-    */
-   public static Vec3 clamp ( final Vec3 a, final Vec3 lowerBound,
-      final Vec3 upperBound, final Vec3 target ) {
-
-      return target.set(Utils.clamp(a.x, lowerBound.x, upperBound.x), Utils
-         .clamp(a.y, lowerBound.y, upperBound.y), Utils.clamp(a.z, lowerBound.z,
-            upperBound.z));
-   }
-
-   /**
     * Clamps the vector to a range in [0, 1].
     *
     * @param v      the input vector
@@ -1641,49 +1621,49 @@ public class Vec3 implements Comparable < Vec3 > {
       final int latitudes, final int layers, final float radiusMin,
       final float radiusMax, final boolean includePoles ) {
 
-      final int vlons = longitudes < 3 ? 3 : longitudes;
-      final int vlats = latitudes < 3 ? 3 : latitudes;
-      final int vlayers = layers < 1 ? 1 : layers;
+      final int vLons = longitudes < 3 ? 3 : longitudes;
+      final int vLats = latitudes < 3 ? 3 : latitudes;
+      final int vLayers = layers < 1 ? 1 : layers;
 
-      final boolean oneLayer = vlayers == 1;
+      final boolean oneLayer = vLayers == 1;
       final float vrMax = Utils.max(IUtils.EPSILON, radiusMin, radiusMax);
       final float vrMin = oneLayer ? vrMax : Utils.max(IUtils.EPSILON, Utils
          .min(radiusMin, radiusMax));
 
-      final int latLen = includePoles ? vlats + 2 : vlats;
+      final int latLen = includePoles ? vLats + 2 : vLats;
       final int latOff = includePoles ? 1 : 0;
-      final Vec3[][][] result = new Vec3[vlayers][latLen][vlons];
+      final Vec3[][][] result = new Vec3[vLayers][latLen][vLons];
 
-      final float toPrc = oneLayer ? 1.0f : 1.0f / ( vlayers - 1.0f );
-      final float toPhi = 0.5f / ( vlats + 1.0f );
-      final float toTheta = 1.0f / vlons;
+      final float toPrc = oneLayer ? 1.0f : 1.0f / ( vLayers - 1.0f );
+      final float toIncl = 0.5f / ( vLats + 1.0f );
+      final float toAzim = 1.0f / vLons;
 
-      final int len2 = vlats * vlons;
-      final int len3 = vlayers * len2;
-      for ( int q = 0; q < len3; ++q ) {
-         final int h = q / len2;
-         final int m = q - h * len2;
-         final int i = m / vlons;
-         final int j = m % vlons;
+      final int len2 = vLats * vLons;
+      final int len3 = vLayers * len2;
+      for ( int k = 0; k < len3; ++k ) {
+         final int h = k / len2;
+         final int m = k - h * len2;
+         final int i = m / vLons;
+         final int j = m % vLons;
 
          final float prc = h * toPrc;
          final float radius = ( 1.0f - prc ) * vrMin + prc * vrMax;
 
-         final float phi = 0.25f - ( i + 1.0f ) * toPhi;
-         final float rhoCosPhi = radius * Utils.scNorm(phi);
-         final float rhoSinPhi = radius * Utils.scNorm(phi - 0.25f);
+         final float incl = 0.25f - ( i + 1.0f ) * toIncl;
+         final float rhoCosIncl = radius * Utils.scNorm(incl);
+         final float rhoSinIncl = radius * Utils.scNorm(incl - 0.25f);
 
-         final float theta = j * toTheta;
-         final float cosTheta = Utils.scNorm(theta);
-         final float sinTheta = Utils.scNorm(theta - 0.25f);
+         final float azim = j * toAzim;
+         final float cosAzim = Utils.scNorm(azim);
+         final float sinAzim = Utils.scNorm(azim - 0.25f);
 
-         result[h][latOff + i][j] = new Vec3(rhoCosPhi * cosTheta, rhoCosPhi
-            * sinTheta, -rhoSinPhi);
+         result[h][latOff + i][j] = new Vec3(rhoCosIncl * cosAzim, rhoCosIncl
+            * sinAzim, -rhoSinIncl);
       }
 
       /* Add single element arrays to beginning and end of layers. */
       if ( includePoles ) {
-         for ( int h = 0; h < vlayers; ++h ) {
+         for ( int h = 0; h < vLayers; ++h ) {
             final float prc = h * toPrc;
             final float radius = ( 1.0f - prc ) * vrMin + prc * vrMax;
             final Vec3[][] layer = result[h];

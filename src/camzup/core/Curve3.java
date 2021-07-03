@@ -1426,9 +1426,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
             idx1 %= ptsLen;
             idx2 %= ptsLen;
             idx3 %= ptsLen;
-         } else {
-            idx3 = idx3 < ptsLast ? idx3 : ptsLast;
-         }
+         } else if ( idx3 > ptsLast ) { idx3 = ptsLast; }
 
          curr = itr.next();
          Knot3.fromSegCatmull(points[idx], points[idx1], points[idx2],

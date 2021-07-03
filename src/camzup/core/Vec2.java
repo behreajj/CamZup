@@ -720,25 +720,6 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Clamps a vector to a range within the lower and upper bound.
-    *
-    * @param v          the input vector
-    * @param lowerBound the range lower bound
-    * @param upperBound the range upper bound
-    * @param target     the output vector
-    *
-    * @return the clamped vector
-    *
-    * @see Utils#clamp(float, float, float)
-    */
-   public static Vec2 clamp ( final Vec2 v, final Vec2 lowerBound,
-      final Vec2 upperBound, final Vec2 target ) {
-
-      return target.set(Utils.clamp(v.x, lowerBound.x, upperBound.x), Utils
-         .clamp(v.x, lowerBound.y, upperBound.y));
-   }
-
-   /**
     * Clamps the vector to a range in [0.0, 1.0]. Useful for working with
     * texture coordinates.
     *

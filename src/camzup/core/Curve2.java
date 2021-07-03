@@ -1565,9 +1565,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
             idx1 %= ptsLen;
             idx2 %= ptsLen;
             idx3 %= ptsLen;
-         } else {
-            idx3 = idx3 < ptsLast ? idx3 : ptsLast;
-         }
+         } else if ( idx3 > ptsLast ) { idx3 = ptsLast; }
 
          curr = itr.next();
          Knot2.fromSegCatmull(points[idx], points[idx1], points[idx2],

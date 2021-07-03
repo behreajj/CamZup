@@ -22,11 +22,11 @@ void randomColors() {
   float hueOffset = hueSign * random(0.01f, 0.425f);
   float hue1 = Utils.mod1(hue0 + hueOffset);
   a = color(hue0, 
-    random(0.1f, 1.0f), 
-    random(0.1f, 1.0f), 1.0f);
+    random(0.5f, 1.0f), 
+    random(0.5f, 1.0f), 1.0f);
   b = color(hue1, 
-    random(0.1f, 1.0f), 
-    random(0.1f, 1.0f), 1.0f);
+    random(0.5f, 1.0f), 
+    random(0.5f, 1.0f), 1.0f);
   println(hex(a), hex(b));
   println("");
 }
