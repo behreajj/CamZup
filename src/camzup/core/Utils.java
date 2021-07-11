@@ -974,21 +974,6 @@ public abstract class Utils implements IUtils {
     *
     * @return the result
     */
-   public static double mod1 ( final double value ) {
-
-      return value > 0.0d ? value - ( int ) value : value < 0.0d ? value
-         - ( ( int ) value - 1.0d ) : 0.0d;
-   }
-
-   /**
-    * Subtracts the floor of the input value from the value. Returns a
-    * positive value in the range [0.0, 1.0] . Equivalent to GLSL's
-    * <code>fract</code>.
-    *
-    * @param value the input value
-    *
-    * @return the result
-    */
    public static float mod1 ( final float value ) {
 
       return value > 0.0f ? value - ( int ) value : value < 0.0f ? value
@@ -1007,7 +992,10 @@ public abstract class Utils implements IUtils {
     */
    public static float modDegrees ( final float degrees ) {
 
-      return degrees - 360.0f * Utils.floor(degrees * IUtils.ONE_360);
+      // return degrees - 360.0f * Utils.floor(degrees * IUtils.ONE_360);
+      final float dNorm = degrees * IUtils.ONE_360;
+      return degrees - 360.0f * ( dNorm > 0.0f ? ( int ) dNorm : dNorm < 0.0f
+         ? ( int ) dNorm - 1.0f : 0.0f );
    }
 
    /**
@@ -1023,7 +1011,10 @@ public abstract class Utils implements IUtils {
     */
    public static float modRadians ( final float radians ) {
 
-      return radians - IUtils.TAU * Utils.floor(radians * IUtils.ONE_TAU);
+      // return radians - IUtils.TAU * Utils.floor(radians * IUtils.ONE_TAU);
+      final float rNorm = radians * IUtils.ONE_TAU;
+      return radians - IUtils.TAU * ( rNorm > 0.0f ? ( int ) rNorm : rNorm
+         < 0.0f ? ( int ) rNorm - 1.0f : 0.0f );
    }
 
    /**
@@ -1041,10 +1032,10 @@ public abstract class Utils implements IUtils {
     */
    public static float modUnchecked ( final float a, final float b ) {
 
+      // return a - b * Utils.floor(a / b);
       final float q = a / b;
       return a - b * ( q > 0.0f ? ( int ) q : q < 0.0f ? ( int ) q - 1.0f
          : 0.0f );
-      // return a - b * Utils.floor(a / b);
    }
 
    /**
@@ -1130,10 +1121,11 @@ public abstract class Utils implements IUtils {
    public static float pingPong ( final float lb, final float ub,
       final float step, final float pause ) {
 
-      // Cheaper alternative:
-      // float x = t * 0.5f;
-      // float z = 2.0f * (x - floor(x)) - 1.0f;
-      // return z > 0.0f ? 1.0f - z : z < -0.0f ? 1.0f + z : 1.0f;
+      /*
+       * Cheaper alternative: float z = 2.0f * (x - floor(x)) - 1.0f; return z >
+       * 0.0f ? 1.0f - z : z < -0.0f ? 1.0f + z : 1.0f; By subjecting the
+       * results to smoothStep, a sine wave can be approximated.
+       */
 
       final float t = 0.5f + 0.5f * pause * Utils.scNorm(step - 0.5f);
       if ( t <= 0.0f ) { return lb; }

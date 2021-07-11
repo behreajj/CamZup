@@ -84,7 +84,9 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Creates a color out of red, green, blue and alpha channels.
+    * Creates a color out of red, green, blue and alpha channels. The expected
+    * range for each channel is [0.0, 1.0], however these bounds are not
+    * checked so as to facilitate color mixing in other color spaces.
     *
     * @param red   the red channel
     * @param green the green channel
@@ -315,7 +317,9 @@ public class Color implements Comparable < Color > {
 
    /**
     * Overrides the parent set function for the sake of making RGB parameters
-    * clearer and for chainability.
+    * clearer and for chainability. The expected range for each channel is
+    * [0.0, 1.0], however these bounds are not checked so as to facilitate
+    * color mixing in other color spaces.
     *
     * @param red   the red channel
     * @param green the green channel
@@ -2004,11 +2008,11 @@ public class Color implements Comparable < Color > {
       final float diff = mx - mn;
       final float light = sum * 0.5f;
 
-      if ( light <= IUtils.ONE_255 ) {
+      if ( light < IUtils.ONE_255 ) {
          return target.set(Color.HSL_HUE_SHADOW, 0.0f, 0.0f, a);
-      } else if ( light >= 1.0f - IUtils.ONE_255 ) {
+      } else if ( light > 1.0f - IUtils.ONE_255 ) {
          return target.set(Color.HSL_HUE_LIGHT, 0.0f, 1.0f, a);
-      } else if ( diff <= IUtils.ONE_255 ) {
+      } else if ( diff < IUtils.ONE_255 ) {
          final float hue = light * ( 1.0f + Color.HSL_HUE_LIGHT ) + ( 1.0f
             - light ) * Color.HSL_HUE_SHADOW;
          return target.set(hue % 1.0f, 0.0f, light, a);
@@ -2081,14 +2085,14 @@ public class Color implements Comparable < Color > {
       final float gbmn = g < b ? g : b;
       final float mx = gbmx > r ? gbmx : r;
 
-      if ( mx <= IUtils.ONE_255 ) {
+      if ( mx < IUtils.ONE_255 ) {
          return target.set(Color.HSL_HUE_SHADOW, 0.0f, 0.0f, a);
       } else {
          final float mn = gbmn < r ? gbmn : r;
          final float diff = mx - mn;
-         if ( diff <= IUtils.ONE_255 ) {
+         if ( diff < IUtils.ONE_255 ) {
             final float light = ( mx + mn ) * 0.5f;
-            if ( light >= 1.0f - IUtils.ONE_255 ) {
+            if ( light > 1.0f - IUtils.ONE_255 ) {
                return target.set(Color.HSL_HUE_LIGHT, 0.0f, 1.0f, a);
             } else {
                final float hue = light * ( 1.0f + Color.HSL_HUE_LIGHT ) + ( 1.0f
@@ -2479,11 +2483,51 @@ public class Color implements Comparable < Color > {
     *
     * @return the string
     *
-    * @see Color#toHexString(StringBuilder, int)
+    * @see Color#toHexDigit(StringBuilder, int)
     */
    public static String toHexString ( final int c ) {
 
       return Color.toHexString(new StringBuilder(10), c).toString();
+   }
+
+   /**
+    * Returns a representation of the color as a hexadecimal code, preceded by
+    * a '0x', in the format AARRGGBB. Appends to an existing
+    * {@link StringBuilder}.<br>
+    *
+    * @param sb the string builder
+    * @param c  the color
+    *
+    * @return the string builder
+    *
+    * @see Utils#clamp01(float)
+    * @see Color#toHexString(StringBuilder, int, int, int, int)
+    */
+   public static StringBuilder toHexString ( final StringBuilder sb,
+      final Color c ) {
+
+      return Color.toHexString(sb, ( int ) ( Utils.clamp01(c.a) * 0xff + 0.5f ),
+         ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ), ( int ) ( Utils.clamp01(
+            c.g) * 0xff + 0.5f ), ( int ) ( Utils.clamp01(c.b) * 0xff + 0.5f ));
+   }
+
+   /**
+    * Returns a representation of the color as a hexadecimal code, preceded by
+    * a '0x', in the format AARRGGBB. Appends to an existing
+    * {@link StringBuilder}.<br>
+    *
+    * @param sb the string builder
+    * @param c  the color
+    *
+    * @return the string builder
+    *
+    * @see Color#toHexString(StringBuilder, int, int, int, int)
+    */
+   public static StringBuilder toHexString ( final StringBuilder sb,
+      final int c ) {
+
+      return Color.toHexString(sb, c >> 0x18 & 0xff, c >> 0x10 & 0xff, c >> 0x08
+         & 0xff, c & 0xff);
    }
 
    /**
@@ -2499,59 +2543,17 @@ public class Color implements Comparable < Color > {
     *
     * @return the string builder
     *
-    * @see Color#toHexString(StringBuilder, byte)
+    * @see Color#toHexDigit(StringBuilder, int)
     */
    public static StringBuilder toHexString ( final StringBuilder sb,
-      final byte a, final byte r, final byte g, final byte b ) {
+      final int a, final int r, final int g, final int b ) {
 
       sb.append("0x");
-      Color.toHexString(sb, a);
-      Color.toHexString(sb, r);
-      Color.toHexString(sb, g);
-      Color.toHexString(sb, b);
+      Color.toHexDigit(sb, a);
+      Color.toHexDigit(sb, r);
+      Color.toHexDigit(sb, g);
+      Color.toHexDigit(sb, b);
       return sb;
-   }
-
-   /**
-    * Returns a representation of the color as a hexadecimal code, preceded by
-    * a '0x', in the format AARRGGBB. Appends to an existing
-    * {@link StringBuilder}.<br>
-    *
-    * @param sb the string builder
-    * @param c  the color
-    *
-    * @return the string builder
-    *
-    * @see Utils#clamp01(float)
-    * @see Color#toHexString(StringBuilder, byte, byte, byte, byte)
-    */
-   public static StringBuilder toHexString ( final StringBuilder sb,
-      final Color c ) {
-
-      return Color.toHexString(sb, ( byte ) ( Utils.clamp01(c.a) * 0xff
-         + 0.5f ), ( byte ) ( Utils.clamp01(c.r) * 0xff + 0.5f ),
-         ( byte ) ( Utils.clamp01(c.g) * 0xff + 0.5f ), ( byte ) ( Utils
-            .clamp01(c.b) * 0xff + 0.5f ));
-   }
-
-   /**
-    * Returns a representation of the color as a hexadecimal code, preceded by
-    * a '0x', in the format AARRGGBB. Appends to an existing
-    * {@link StringBuilder}.<br>
-    *
-    * @param sb the string builder
-    * @param c  the color
-    *
-    * @return the string builder
-    *
-    * @see Color#toHexString(StringBuilder, byte, byte, byte, byte)
-    */
-   public static StringBuilder toHexString ( final StringBuilder sb,
-      final int c ) {
-
-      return Color.toHexString(sb, ( byte ) ( c >> 0x18 & 0xff ), ( byte ) ( c
-         >> 0x10 & 0xff ), ( byte ) ( c >> 0x08 & 0xff ), ( byte ) ( c
-            & 0xff ));
    }
 
    /**
@@ -2589,30 +2591,6 @@ public class Color implements Comparable < Color > {
    /**
     * Creates a web-friendly representation of the color as a hexadecimal
     * code, preceded by a hash tag, '#', with no alpha. Appends to an existing
-    * {@link StringBuilder}.<br>
-    *
-    * @param sb the string builder
-    * @param r  the red byte
-    * @param g  the green byte
-    * @param b  the blue byte
-    *
-    * @return the string builder
-    *
-    * @see Color#toHexString(StringBuilder, byte)
-    */
-   public static StringBuilder toHexWeb ( final StringBuilder sb, final byte r,
-      final byte g, final byte b ) {
-
-      sb.append('#');
-      Color.toHexString(sb, r);
-      Color.toHexString(sb, g);
-      Color.toHexString(sb, b);
-      return sb;
-   }
-
-   /**
-    * Creates a web-friendly representation of the color as a hexadecimal
-    * code, preceded by a hash tag, '#', with no alpha. Appends to an existing
     * {@link StringBuilder}.
     *
     * @param sb the string builder
@@ -2621,14 +2599,14 @@ public class Color implements Comparable < Color > {
     * @return the string builder
     *
     * @see Utils#clamp01(float)
-    * @see Color#toHexWeb(StringBuilder, byte, byte, byte)
+    * @see Color#toHexWeb(StringBuilder, int, int, int)
     */
    public static StringBuilder toHexWeb ( final StringBuilder sb,
       final Color c ) {
 
-      return Color.toHexWeb(sb, ( byte ) ( Utils.clamp01(c.r) * 0xff + 0.5f ),
-         ( byte ) ( Utils.clamp01(c.g) * 0xff + 0.5f ), ( byte ) ( Utils
-            .clamp01(c.b) * 0xff + 0.5f ));
+      return Color.toHexWeb(sb, ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ),
+         ( int ) ( Utils.clamp01(c.g) * 0xff + 0.5f ), ( int ) ( Utils.clamp01(
+            c.b) * 0xff + 0.5f ));
    }
 
    /**
@@ -2644,13 +2622,36 @@ public class Color implements Comparable < Color > {
     *
     * @return the string builder
     *
-    * @see Color#toHexWeb(StringBuilder, byte, byte, byte)
+    * @see Color#toHexWeb(StringBuilder, int, int, int)
     */
    public static StringBuilder toHexWeb ( final StringBuilder sb,
       final int c ) {
 
-      return Color.toHexWeb(sb, ( byte ) ( c >> 0x10 & 0xff ), ( byte ) ( c
-         >> 0x08 & 0xff ), ( byte ) ( c & 0xff ));
+      return Color.toHexWeb(sb, c >> 0x10 & 0xff, c >> 0x08 & 0xff, c & 0xff);
+   }
+
+   /**
+    * Creates a web-friendly representation of the color as a hexadecimal
+    * code, preceded by a hash tag, '#', with no alpha. Appends to an existing
+    * {@link StringBuilder}.<br>
+    *
+    * @param sb the string builder
+    * @param r  the red byte
+    * @param g  the green byte
+    * @param b  the blue byte
+    *
+    * @return the string builder
+    *
+    * @see Color#toHexDigit(StringBuilder, int)
+    */
+   public static StringBuilder toHexWeb ( final StringBuilder sb, final int r,
+      final int g, final int b ) {
+
+      sb.append('#');
+      Color.toHexDigit(sb, r);
+      Color.toHexDigit(sb, g);
+      Color.toHexDigit(sb, b);
+      return sb;
    }
 
    /**
@@ -2935,7 +2936,7 @@ public class Color implements Comparable < Color > {
     *
     * @return the string
     */
-   static StringBuilder toHexString ( final StringBuilder sb, final byte b ) {
+   static StringBuilder toHexDigit ( final StringBuilder sb, final int b ) {
 
       final int digit0 = b >> 0x4 & 0xf;
       final int digit1 = b & 0xf;
@@ -3453,7 +3454,7 @@ public class Color implements Comparable < Color > {
          final float t = step;
          final float u = 1.0f - t;
 
-         if ( aSat <= IUtils.EPSILON || bSat <= IUtils.EPSILON ) {
+         if ( aSat <= IUtils.ONE_255 || bSat <= IUtils.ONE_255 ) {
             return target.set(u * origin.r + t * dest.r, u * origin.g + t
                * dest.g, u * origin.b + t * dest.b, u * origin.a + t * dest.a);
          }
@@ -3552,7 +3553,7 @@ public class Color implements Comparable < Color > {
          final float t = step;
          final float u = 1.0f - t;
 
-         if ( aSat <= IUtils.EPSILON || bSat <= IUtils.EPSILON ) {
+         if ( aSat <= IUtils.ONE_255 || bSat <= IUtils.ONE_255 ) {
             return target.set(u * origin.r + t * dest.r, u * origin.g + t
                * dest.g, u * origin.b + t * dest.b, u * origin.a + t * dest.a);
          }

@@ -5,7 +5,7 @@
 name = Camera Z up
 
 # List of authors. Links can be provided using the syntax [author name](url).
-authors = [Jeremy Behreandt](https://behreandt.bitbucket.io)
+authors = [Jeremy Behreandt](https://github.com/behreajj)
 
 # A web page for your Library, NOT a direct link to where to download it.
 url = https://github.com/behreajj/CamZup

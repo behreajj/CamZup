@@ -426,8 +426,8 @@ public class ZImage extends PImage {
       for ( int i = 0; i < len; ++i ) {
          final float alpha = ( px[i] >> 0x18 & 0xff ) * IUtils.ONE_255;
          float lum = Color.sRgbLuminance(px[i]);
-         lum = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math
-            .pow(lum, 0.4166666666666667d) * 1.055d - 0.055d );
+         lum = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math.pow(lum,
+            0.4166666666666667d) * 1.055d - 0.055d );
          px[i] = Gradient.eval(grd, alpha * lum);
       }
       target.updatePixels();
@@ -833,8 +833,8 @@ public class ZImage extends PImage {
       hTotal += lastRowPadding;
 
       /*
-       * Offset the xCursor's initial position depending on
-       * horizontal alignment.
+       * Offset the xCursor's initial position depending on horizontal
+       * alignment.
        */
       final int[] lineOffsets = new int[lineCount];
       switch ( textAlign ) {

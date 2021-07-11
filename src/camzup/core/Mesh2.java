@@ -1947,8 +1947,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @param target     the output mesh
     *
     * @return the arc
-    *
-    * @see Utils#mod1(double)
     */
    public static Mesh2 arc ( final float startAngle, final float stopAngle,
       final float oculus, final int sectors, final PolyType poly,
@@ -1956,9 +1954,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       target.name = "Arc";
 
-      final double a1 = Utils.mod1(startAngle * IUtils.ONE_TAU_D);
-      final double b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU_D);
-      final double arcLen1 = Utils.mod1(b1 - a1);
+      final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
+      final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
+      final float arcLen1 = Utils.mod1(b1 - a1);
       if ( arcLen1 < 0.00139d ) {
          Mesh2.polygon(sectors, PolyType.NGON, target);
          target.insetFace(0, 1.0f - oculus);
@@ -1974,25 +1972,27 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
          sctCount2);
 
-      final double oculFac = Utils.clamp(oculus, IUtils.EPSILON, 1.0d
+      final float oculFac = Utils.clamp(oculus, IUtils.EPSILON, 1.0f
          - IUtils.EPSILON);
-      final double oculRad = oculFac * 0.5d;
+      final float oculRad = oculFac * 0.5f;
 
-      final double toStep = 1.0d / ( sctCount - 1.0d );
-      final double origAngle = IUtils.TAU_D * a1;
-      final double destAngle = IUtils.TAU_D * ( a1 + arcLen1 );
+      final float toStep = 1.0f / ( sctCount - 1.0f );
+      final float origAngle = IUtils.TAU * a1;
+      final float destAngle = IUtils.TAU * ( a1 + arcLen1 );
 
       for ( int k = 0, i = 0, j = 1; k < sctCount; ++k, i += 2, j += 2 ) {
-         final double step = k * toStep;
-         final double theta = ( 1.0d - step ) * origAngle + step * destAngle;
-         final double cosa = Math.cos(theta);
-         final double sina = Math.sin(theta);
+         final float step = k * toStep;
+         final float theta = ( 1.0f - step ) * origAngle + step * destAngle;
+
+         // TODO: Switch back to scNorm?
+         final float cosa = Utils.cos(theta);
+         final float sina = Utils.sin(theta);
 
          final Vec2 v0 = vs[i];
-         v0.set(( float ) ( 0.5d * cosa ), ( float ) ( 0.5d * sina ));
+         v0.set(0.5f * cosa, 0.5f * sina);
 
          final Vec2 v1 = vs[j];
-         v1.set(( float ) ( oculRad * cosa ), ( float ) ( oculRad * sina ));
+         v1.set(oculRad * cosa, oculRad * sina);
 
          // TODO: Multiple UV profiles for this? One which treats ring as a bent
          // strip. See

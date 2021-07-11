@@ -4,7 +4,6 @@ import camzup.core.IUtils;
 import camzup.core.Mesh2;
 import camzup.core.Quaternion;
 import camzup.core.Vec2;
-import camzup.core.Vec3;
 
 import processing.core.PApplet;
 
@@ -140,9 +139,17 @@ public class CamZup {
       // System.out.println(Color.luminance(hex));
       // }
 
-      Vec3[][][] grd = Vec3.gridSpherical(32, 16);
-      Vec3[] flat = Vec3.flat(grd);
-      System.out.println(Vec3.toString(flat));
+      // Vec3[][][] grd = Vec3.gridSpherical(32, 16);
+      // Vec3[] flat = Vec3.flat(grd);
+      // System.out.println(Vec3.toString(flat));
+
+      // System.out.println(Color.toHexWeb(0xffaabbcc));
+      // System.out.println(Color.toHexString(0xffaabbcc));
+      //
+      // System.out.println(Color.toHexWeb(Color.fromHex(0xffaabbcc,
+      // new Color())));
+      // System.out.println(Color.toHexString(Color.fromHex(0xffaabbcc,
+      // new Color())));
    }
 
    public static Quaternion squad ( final Quaternion q1, final Quaternion q2,

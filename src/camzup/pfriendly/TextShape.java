@@ -287,8 +287,8 @@ public abstract class TextShape {
 
             final String name = new String(characters);
             final CurveEntity2 entity = new CurveEntity2(name);
-            TextShape.processGlyphCurve(font, frc, null,
-               detail, characters, entity.curves);
+            TextShape.processGlyphCurve(font, frc, null, detail, characters,
+               entity.curves);
             entities.add(entity);
 
          }
