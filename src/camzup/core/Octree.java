@@ -38,7 +38,7 @@ public class Octree implements Iterable < Vec3 > {
    /**
     * Children nodes.
     */
-   public final Octree[] children = new Octree[8];
+   public final Octree[] children = new Octree[Octree.CHILD_COUNT];
 
    /**
     * The number of elements an octree can hold before it is split into child
@@ -170,7 +170,7 @@ public class Octree implements Iterable < Vec3 > {
    public int getMaxLevel ( ) {
 
       int mxLvl = this.level;
-      for ( int i = 0; i < 8; ++i ) {
+      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
          final Octree child = this.children[i];
          if ( child != null ) {
             final int lvl = child.getMaxLevel();
@@ -228,7 +228,7 @@ public class Octree implements Iterable < Vec3 > {
             return true;
          }
 
-         for ( int i = 0; i < 8; ++i ) {
+         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
             if ( this.children[i].insert(point) ) { return true; }
          }
       }
@@ -260,7 +260,7 @@ public class Octree implements Iterable < Vec3 > {
     */
    public boolean isLeaf ( ) {
 
-      for ( int i = 0; i < 8; ++i ) {
+      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
          if ( this.children[i] != null ) { return false; }
       }
       return true;
@@ -339,7 +339,9 @@ public class Octree implements Iterable < Vec3 > {
    public Octree reset ( ) {
 
       this.points.clear();
-      for ( int i = 0; i < 8; ++i ) { this.children[i] = null; }
+      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+         this.children[i] = null;
+      }
 
       return this;
    }
@@ -352,7 +354,7 @@ public class Octree implements Iterable < Vec3 > {
    public Octree split ( ) {
 
       final int nextLevel = this.level + 1;
-      for ( int i = 0; i < 8; ++i ) {
+      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
          this.children[i] = new Octree(new Bounds3(), this.capacity, nextLevel);
       }
 
@@ -371,7 +373,7 @@ public class Octree implements Iterable < Vec3 > {
       while ( itr.hasNext() ) {
          final Vec3 v = itr.next();
          boolean flag = false;
-         for ( int i = 0; i < 8 && !flag; ++i ) {
+         for ( int i = 0; i < Octree.CHILD_COUNT && !flag; ++i ) {
             flag = this.children[i].insert(v);
          }
       }
@@ -413,7 +415,9 @@ public class Octree implements Iterable < Vec3 > {
       if ( this.isLeaf() ) {
          target.addAll(this.points);
       } else {
-         for ( int i = 0; i < 8; ++i ) { this.children[i].getPoints(target); }
+         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+            this.children[i].getPoints(target);
+         }
       }
       return target;
    }
@@ -448,7 +452,7 @@ public class Octree implements Iterable < Vec3 > {
                }
             }
          } else {
-            for ( int i = 0; i < 8; ++i ) {
+            for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
                this.children[i].query(range, found);
             }
          }
@@ -484,7 +488,7 @@ public class Octree implements Iterable < Vec3 > {
                if ( dsq <= rsq ) { found.put(Utils.sqrt(dsq), point); }
             }
          } else {
-            for ( int i = 0; i < 8; ++i ) {
+            for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
                this.children[i].query(center, radius, found);
             }
          }
@@ -521,11 +525,11 @@ public class Octree implements Iterable < Vec3 > {
          sb.append(' ').append(']');
       } else {
          sb.append(", children: [ ");
-         for ( int i = 0; i < 7; ++i ) {
+         for ( int i = 0; i < Octree.CHILD_COUNT - 1; ++i ) {
             this.children[i].toString(sb, places);
             sb.append(',').append(' ');
          }
-         sb.append(this.children[7].toString(places));
+         sb.append(this.children[Octree.CHILD_COUNT - 1].toString(places));
          sb.append(' ').append(']');
       }
 
@@ -552,6 +556,11 @@ public class Octree implements Iterable < Vec3 > {
     * Bottom South West index for array of children nodes.
     */
    public static final int BACK_SOUTH_WEST = 0;
+
+   /**
+    * Number of children held by a quadtree.
+    */
+   public static final int CHILD_COUNT = 8;
 
    /**
     * The default capacity.

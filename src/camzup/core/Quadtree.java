@@ -35,7 +35,7 @@ public class Quadtree implements Iterable < Vec2 > {
    /**
     * Children nodes.
     */
-   public final Quadtree[] children = new Quadtree[4];
+   public final Quadtree[] children = new Quadtree[Quadtree.CHILD_COUNT];
 
    /**
     * The number of elements a quadtree can hold before it is split into child
@@ -168,7 +168,7 @@ public class Quadtree implements Iterable < Vec2 > {
    public int getMaxLevel ( ) {
 
       int mxLvl = this.level;
-      for ( int i = 0; i < 8; ++i ) {
+      for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
          final Quadtree child = this.children[i];
          if ( child != null ) {
             final int lvl = child.getMaxLevel();
@@ -226,7 +226,7 @@ public class Quadtree implements Iterable < Vec2 > {
             return true;
          }
 
-         for ( int i = 0; i < 4; ++i ) {
+         for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
             if ( this.children[i].insert(point) ) { return true; }
          }
       }
@@ -258,7 +258,7 @@ public class Quadtree implements Iterable < Vec2 > {
     */
    public boolean isLeaf ( ) {
 
-      for ( int i = 0; i < 4; ++i ) {
+      for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
          if ( this.children[i] != null ) { return false; }
       }
       return true;
@@ -337,7 +337,9 @@ public class Quadtree implements Iterable < Vec2 > {
    public Quadtree reset ( ) {
 
       this.points.clear();
-      for ( int i = 0; i < 4; ++i ) { this.children[i] = null; }
+      for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
+         this.children[i] = null;
+      }
 
       return this;
    }
@@ -350,7 +352,7 @@ public class Quadtree implements Iterable < Vec2 > {
    public Quadtree split ( ) {
 
       final int nextLevel = this.level + 1;
-      for ( int i = 0; i < 4; ++i ) {
+      for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
          this.children[i] = new Quadtree(new Bounds2(), this.capacity,
             nextLevel);
       }
@@ -366,7 +368,7 @@ public class Quadtree implements Iterable < Vec2 > {
       while ( itr.hasNext() ) {
          final Vec2 v = itr.next();
          boolean flag = false;
-         for ( int i = 0; i < 8 && !flag; ++i ) {
+         for ( int i = 0; i < Quadtree.CHILD_COUNT && !flag; ++i ) {
             flag = this.children[i].insert(v);
          }
       }
@@ -421,11 +423,11 @@ public class Quadtree implements Iterable < Vec2 > {
          sb.append(' ').append(']');
       } else {
          sb.append(", children: [ ");
-         for ( int i = 0; i < 3; ++i ) {
+         for ( int i = 0; i < Quadtree.CHILD_COUNT - 1; ++i ) {
             this.children[i].toString(sb, places);
             sb.append(',').append(' ');
          }
-         sb.append(this.children[3].toString(places));
+         sb.append(this.children[Quadtree.CHILD_COUNT - 1].toString(places));
          sb.append(' ').append(']');
       }
 
@@ -448,7 +450,9 @@ public class Quadtree implements Iterable < Vec2 > {
       if ( this.isLeaf() ) {
          target.addAll(this.points);
       } else {
-         for ( int i = 0; i < 4; ++i ) { this.children[i].getPoints(target); }
+         for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
+            this.children[i].getPoints(target);
+         }
       }
       return target;
    }
@@ -483,7 +487,7 @@ public class Quadtree implements Iterable < Vec2 > {
                }
             }
          } else {
-            for ( int i = 0; i < 4; ++i ) {
+            for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
                this.children[i].query(range, found);
             }
          }
@@ -519,7 +523,7 @@ public class Quadtree implements Iterable < Vec2 > {
                if ( dsq <= rsq ) { found.put(Utils.sqrt(dsq), point); }
             }
          } else {
-            for ( int i = 0; i < 4; ++i ) {
+            for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
                this.children[i].query(center, radius, found);
             }
          }
@@ -527,6 +531,11 @@ public class Quadtree implements Iterable < Vec2 > {
 
       return found;
    }
+
+   /**
+    * Number of children held by a quadtree.
+    */
+   public static final int CHILD_COUNT = 4;
 
    /**
     * The default capacity.

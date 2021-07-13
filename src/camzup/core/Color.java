@@ -3454,16 +3454,15 @@ public class Color implements Comparable < Color > {
          final float t = step;
          final float u = 1.0f - t;
 
-         if ( aSat <= IUtils.ONE_255 || bSat <= IUtils.ONE_255 ) {
+         if ( aSat > IUtils.ONE_255 && bSat > IUtils.ONE_255 ) {
+            this.cHsl.set(this.hueFunc.apply(this.aHsl.x, this.bHsl.x, step), u
+               * aSat + t * bSat, u * this.aHsl.z + t * this.bHsl.z, u
+                  * this.aHsl.w + t * this.bHsl.w);
+            return Color.hslaToRgba(this.cHsl, target);
+         } else {
             return target.set(u * origin.r + t * dest.r, u * origin.g + t
                * dest.g, u * origin.b + t * dest.b, u * origin.a + t * dest.a);
          }
-
-         this.cHsl.set(this.hueFunc.apply(this.aHsl.x, this.bHsl.x, step), u
-            * aSat + t * bSat, u * this.aHsl.z + t * this.bHsl.z, u
-               * this.aHsl.w + t * this.bHsl.w);
-
-         return Color.hslaToRgba(this.cHsl, target);
       }
 
       /**
@@ -3553,16 +3552,15 @@ public class Color implements Comparable < Color > {
          final float t = step;
          final float u = 1.0f - t;
 
-         if ( aSat <= IUtils.ONE_255 || bSat <= IUtils.ONE_255 ) {
+         if ( aSat > IUtils.ONE_255 && bSat > IUtils.ONE_255 ) {
+            this.cHsv.set(this.hueFunc.apply(this.aHsv.x, this.bHsv.x, step), u
+               * aSat + t * bSat, u * this.aHsv.z + t * this.bHsv.z, u
+                  * this.aHsv.w + t * this.bHsv.w);
+            return Color.hsvaToRgba(this.cHsv, target);
+         } else {
             return target.set(u * origin.r + t * dest.r, u * origin.g + t
                * dest.g, u * origin.b + t * dest.b, u * origin.a + t * dest.a);
          }
-
-         this.cHsv.set(this.hueFunc.apply(this.aHsv.x, this.bHsv.x, step), u
-            * aSat + t * bSat, u * this.aHsv.z + t * this.bHsv.z, u
-               * this.aHsv.w + t * this.bHsv.w);
-
-         return Color.hsvaToRgba(this.cHsv, target);
       }
 
       /**

@@ -167,7 +167,7 @@ public abstract class ParserGgr {
 
             } else if ( step >= keyArr[keyLen - 1][2] ) {
 
-               /* If greater than upper bound, set to right color of key -1. */
+               /* If greater than upper bound, set to right color of key - 1. */
                seg = keyArr[keyLen - 1];
                evalClr.set(seg[7], seg[8], seg[9], seg[10]);
                trgKeys.add(new ColorKey(step, evalClr));
