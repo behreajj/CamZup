@@ -2761,7 +2761,6 @@ public class Quaternion implements Comparable < Quaternion > {
        *
        * @return the eased quaternion
        *
-       * @see Utils#clamp(double, double, double)
        * @see Math#acos(double)
        * @see Math#sqrt(double)
        * @see Math#sin(double)
@@ -2785,8 +2784,10 @@ public class Quaternion implements Comparable < Quaternion > {
          double by = bi.y;
          double bz = bi.z;
 
-         double dotp = Utils.clamp(aw * bw + ax * bx + ay * by + az * bz, -1.0d,
-            1.0d);
+         double dotp = aw * bw + ax * bx + ay * by + az * bz;
+         if ( dotp < -1.0d ) {
+            dotp = -1.0d;
+         } else if ( dotp > 1.0d ) { dotp = 1.0d; }
 
          /* Flip values if the orientation is negative. */
          if ( dotp < 0.0d ) {

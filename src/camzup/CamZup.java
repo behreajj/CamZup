@@ -131,25 +131,36 @@ public class CamZup {
 
       // https://rosettacode.org/wiki/Kronecker_product#Java
 
-      // final Color a = new Color();
-      // for ( int i = 0; i < 255; ++i ) {
-      // Color.randomRgb(rng, a);
-      // final int hex = Color.toHexInt(a);
-      // System.out.println(Color.luminance(a));
-      // System.out.println(Color.luminance(hex));
-      // }
-
-      // Vec3[][][] grd = Vec3.gridSpherical(32, 16);
-      // Vec3[] flat = Vec3.flat(grd);
-      // System.out.println(Vec3.toString(flat));
-
-      // System.out.println(Color.toHexWeb(0xffaabbcc));
-      // System.out.println(Color.toHexString(0xffaabbcc));
+      // int count = 10;
+      // Rng rng = new Rng();
+      // StringBuilder sb = new StringBuilder();
+      // sb.append("local inputs = {\n");
+      // for ( int i = 0; i < count; ++i ) {
+      // Vec3 right = new Vec3();
+      // Vec3 forward = new Vec3();
+      // Vec3 up = new Vec3();
       //
-      // System.out.println(Color.toHexWeb(Color.fromHex(0xffaabbcc,
-      // new Color())));
-      // System.out.println(Color.toHexString(Color.fromHex(0xffaabbcc,
-      // new Color())));
+      // Vec3.randomSpherical(rng, right);
+      // Vec3.randomSpherical(rng, forward);
+      // Vec3.randomSpherical(rng, up);
+      //
+      // sb.append("{ right = Vec3.new(").append(right.x).append(", ").append(
+      // right.y).append(", ").append(right.z).append(
+      // "),\n forward = Vec3.new(").append(
+      // forward.x).append(", ").append(forward.y).append(", ").append(
+      // forward.z).append("),\n up = Vec3.new(").append(up.x)
+      // .append(", ")
+      // .append(up.y).append(", ")
+      // .append(up.z).append(") }");
+      //
+      // if ( i < count - 1 ) { sb.append(",\n"); }
+      //
+      // System.out.println(Quaternion.fromAxes(right, forward, up,
+      // new Quaternion()));
+      // }
+      // sb.append("}");
+      //
+      // System.out.println(sb.toString());
    }
 
    public static Quaternion squad ( final Quaternion q1, final Quaternion q2,

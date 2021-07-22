@@ -2084,32 +2084,6 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
-    * Rounds each component of the vector to a given number of places right of
-    * the decimal point. Beware of inaccuracies due to single precision.
-    *
-    * @param v      the input vector
-    * @param places the number of places
-    * @param target the output vector
-    *
-    * @return the rounded vector
-    *
-    * @see Vec4#round(Vec4, Vec4)
-    */
-   public static Vec4 round ( final Vec4 v, final int places,
-      final Vec4 target ) {
-
-      if ( places < 1 ) { return Vec4.round(v, target); }
-      if ( places > 7 ) { return target.set(v); }
-
-      int n = 10;
-      for ( int i = 1; i < places; ++i ) { n *= 10; }
-      final float nf = n;
-      final float nInv = 1.0f / nf;
-      return target.set(Utils.round(v.x * nf) * nInv, Utils.round(v.y * nf)
-         * nInv, Utils.round(v.z * nf) * nInv, Utils.round(v.w * nf) * nInv);
-   }
-
-   /**
     * Rounds each component of the vector to the nearest whole number.
     *
     * @param v      the input vector

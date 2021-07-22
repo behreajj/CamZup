@@ -617,8 +617,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Sets the renderer's color mode. Color channel maximums should be a
-    * positive value greater than or equal to one.
+    * Sets the renderer's color mode. Color channel maximums should be within
+    * the range [{@value IUp#COLOR_MODE_MIN}, {@value IUp#COLOR_MODE_MAX}] to
+    * mitigate precision issues arising from conversion between single
+    * precision real numbers and colors stored in 32-bit integers with [0,
+    * 255] per channel.
     *
     * @param mode the color mode, HSB or RGB
     * @param max1 the first channel maximum, hue or red
@@ -630,8 +633,18 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void colorMode ( final int mode, final float max1, final float max2,
       final float max3, final float aMax ) {
 
-      super.colorMode(mode, max1 < 1.0f ? 1.0f : max1, max2 < 1.0f ? 1.0f
-         : max2, max3 < 1.0f ? 1.0f : max3, aMax < 1.0f ? 1.0f : aMax);
+      /*
+       * See https://discourse.processing.org/t/colormode-and-rgba-values/31379
+       */
+
+      super.colorMode(mode, max1 < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN
+         : max1 > IUp.COLOR_MODE_MAX ? IUp.COLOR_MODE_MAX : max1, max2
+            < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN : max2
+               > IUp.COLOR_MODE_MAX ? IUp.COLOR_MODE_MAX : max2, max3
+                  < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN : max3
+                     > IUp.COLOR_MODE_MAX ? IUp.COLOR_MODE_MAX : max3, aMax
+                        < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN : aMax
+                           > IUp.COLOR_MODE_MAX ? IUp.COLOR_MODE_MAX : aMax);
 
       /*
        * Cache the inverse of the color maximums so that color channels can be
@@ -704,9 +717,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public PShape createShape ( final int family ) {
 
       switch ( family ) {
-         case PConstants.GROUP:
-         case PShape.GEOMETRY:
-         case PShape.PATH:
+         case PConstants.GROUP: /* 0 */
+         case PShape.PATH: /* 102 */
+         case PShape.GEOMETRY: /* 103 */
             return new PShape(this, family);
 
          default:
@@ -1562,25 +1575,25 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       /* @formatter:off */
       switch ( this.imageMode ) {
-         case PConstants.CORNERS:
-            this.imageImpl(img,
-               x0, y0, x0 + w, y0 + h,
-               0, 0, w, h);
-            break;
-
-         case PConstants.CORNER:
+         case PConstants.CORNER: /* 0 */
             this.imageImpl(img,
                x0, y0 - h, x0 + w,
                y0, 0, 0, w, h);
             break;
 
-         case PConstants.RADIUS:
+         case PConstants.CORNERS: /* 1 */
+            this.imageImpl(img,
+               x0, y0, x0 + w, y0 + h,
+               0, 0, w, h);
+            break;
+
+         case PConstants.RADIUS: /* 2 */
             this.imageImpl(img,
                x0 - w, y0 - h, x0 + w, y0 + h,
                0, 0, w, h);
             break;
 
-         case PConstants.CENTER:
+         case PConstants.CENTER: /* 3 */
          default:
             final int wh = w / 2;
             final int hh = h / 2;
@@ -1656,14 +1669,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       /* @formatter:off */
       switch ( this.imageMode ) {
-         case PConstants.CORNERS:
-
-            this.imageImpl(img,
-               x0i, y0i, x1i, y1i,
-               u0, v0, u1, v1);
-            break;
-
-         case PConstants.CORNER:
+         case PConstants.CORNER: /* 0 */
 
             wDisp = x1i < 0 ? -x1i : x1i;
             hDisp = y1i < 0 ? -y1i : y1i;
@@ -1672,7 +1678,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
                u0, v0, u1, v1);
             break;
 
-         case PConstants.RADIUS:
+         case PConstants.CORNERS: /* 1 */
+
+            this.imageImpl(img,
+               x0i, y0i, x1i, y1i,
+               u0, v0, u1, v1);
+            break;
+
+         case PConstants.RADIUS: /* 2 */
 
             wDisp = x1i < 1 ? 1 : x1i;
             hDisp = y1i < 1 ? 1 : y1i;
@@ -1681,7 +1694,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
                u0, v0, u1, v1);
             break;
 
-         case PConstants.CENTER:
+         case PConstants.CENTER: /* 3 */
          default:
 
             wDisp = x1i < 2 ? 1 : x1i / 2;
@@ -1766,10 +1779,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * because PGraphics handles an incorrect mode by throwing an exception.
        */
       switch ( mode ) {
-         case PConstants.CORNER:
-         case PConstants.CORNERS:
-         case PConstants.CENTER:
-         case PConstants.RADIUS:
+         case PConstants.CORNER: /* 0 */
+         case PConstants.CORNERS: /* 1 */
+         case PConstants.RADIUS: /* 2 */
+         case PConstants.CENTER: /* 3 */
             this.imageMode = mode;
             break;
 
@@ -3398,19 +3411,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.textAlignY ) {
 
-         case PConstants.TOP:
+         case PConstants.TOP: /* 101 */
 
             yMut -= super.textAscent();
 
             break;
 
-         case PConstants.BOTTOM:
+         case PConstants.BOTTOM: /* 102 */
 
             yMut += super.textDescent();
 
             break;
 
-         case PConstants.CENTER:
+         case PConstants.CENTER: /* 3 */
 
          default:
 
@@ -3443,19 +3456,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.textAlignY ) {
 
-         case PConstants.TOP:
+         case PConstants.TOP: /* 101 */
 
             yMut -= super.textAscent();
 
             break;
 
-         case PConstants.BOTTOM:
+         case PConstants.BOTTOM: /* 102 */
 
             yMut += super.textDescent() + high;
 
             break;
 
-         case PConstants.CENTER:
+         case PConstants.CENTER: /* 3 */
 
          default:
 
@@ -3519,13 +3532,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void textMode ( final int mode ) {
 
       switch ( mode ) {
-         case PConstants.SHAPE:
+         case PConstants.MODEL: /* 4 */
+         case PConstants.SHAPE: /* 5 */
             this.textMode = mode;
             break;
 
-         case PConstants.MODEL:
          default:
-            this.textMode = mode;
+            this.textMode = PConstants.MODEL;
       }
    }
 
@@ -4470,10 +4483,26 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       }
 
       final double limit = 0.5d * ( w < h ? w : h );
-      final double rTld = Utils.clamp(rTl, IUtils.EPSILON_D, limit);
-      final double rTrd = Utils.clamp(rTr, IUtils.EPSILON_D, limit);
-      final double rBrd = Utils.clamp(rBr, IUtils.EPSILON_D, limit);
-      final double rBld = Utils.clamp(rBl, IUtils.EPSILON_D, limit);
+
+      double rTld = rTl;
+      if ( rTld < IUtils.EPSILON_D ) {
+         rTld = IUtils.EPSILON_D;
+      } else if ( rTld > limit ) { rTld = limit; }
+
+      double rTrd = rTr;
+      if ( rTrd < IUtils.EPSILON_D ) {
+         rTrd = IUtils.EPSILON_D;
+      } else if ( rTrd > limit ) { rTrd = limit; }
+
+      double rBrd = rBr;
+      if ( rBrd < IUtils.EPSILON_D ) {
+         rBrd = IUtils.EPSILON_D;
+      } else if ( rBrd > limit ) { rBrd = limit; }
+
+      double rBld = rBl;
+      if ( rBld < IUtils.EPSILON_D ) {
+         rBld = IUtils.EPSILON_D;
+      } else if ( rBld > limit ) { rBld = limit; }
 
       this.gp.reset();
       this.gp.moveTo(x1 - rTrd, y0);

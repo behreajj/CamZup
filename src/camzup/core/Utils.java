@@ -294,22 +294,6 @@ public abstract class Utils implements IUtils {
     *
     * @return the clamped value
     */
-   public static double clamp ( final double value, final double lowerBound,
-      final double upperBound ) {
-
-      return value < lowerBound ? lowerBound : value > upperBound ? upperBound
-         : value;
-   }
-
-   /**
-    * Clamps a real number between a lower and an upper bound.
-    *
-    * @param value      the input value
-    * @param lowerBound the upper bound
-    * @param upperBound the lower bound
-    *
-    * @return the clamped value
-    */
    public static float clamp ( final float value, final float lowerBound,
       final float upperBound ) {
 

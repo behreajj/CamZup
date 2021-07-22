@@ -2533,33 +2533,6 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Rounds each component of the vector to a given number of places right of
-    * the decimal point. Beware of inaccuracies due to single precision.
-    *
-    * @param v      the input vector
-    * @param places the number of places
-    * @param target the output vector
-    *
-    * @return the rounded vector
-    *
-    * @see Vec2#round(Vec2, Vec2)
-    * @see Utils#round(float)
-    */
-   public static Vec2 round ( final Vec2 v, final int places,
-      final Vec2 target ) {
-
-      if ( places < 1 ) { return Vec2.round(v, target); }
-      if ( places > 7 ) { return target.set(v); }
-
-      int n = 10;
-      for ( int i = 1; i < places; ++i ) { n *= 10; }
-      final float nf = n;
-      final float nInv = 1.0f / nf;
-      return target.set(Utils.round(v.x * nf) * nInv, Utils.round(v.y * nf)
-         * nInv);
-   }
-
-   /**
     * Rounds each component of the vector to the nearest whole number.
     *
     * @param v      the input vector

@@ -195,6 +195,17 @@ public interface IUp {
    void strokeWeight ( final float sw );
 
    /**
+    * Maximum color mode scale. Set to {@value IUp#COLOR_MODE_MAX} to mitigate
+    * precision issues resulting from float-int 32 color conversion.
+    */
+   float COLOR_MODE_MAX = 1000.0f;
+
+   /**
+    * Minimum color mode scale. Defaults to {@value IUp#COLOR_MODE_MIN}.
+    */
+   float COLOR_MODE_MIN = 1.0f;
+
+   /**
     * Default camera aspect ratio used by perspective camera when size is less
     * than 128, {@value IUp#DEFAULT_ASPECT}.
     */

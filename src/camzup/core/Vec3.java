@@ -2921,33 +2921,6 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Rounds each component of the vector to a given number of places right of
-    * the decimal point. Beware of inaccuracies due to single precision.
-    *
-    * @param v      the input vector
-    * @param places the number of places
-    * @param target the output vector
-    *
-    * @return the rounded vector
-    *
-    * @see Vec3#round(Vec3, Vec3)
-    * @see Utils#round(float)
-    */
-   public static Vec3 round ( final Vec3 v, final int places,
-      final Vec3 target ) {
-
-      if ( places < 1 ) { return Vec3.round(v, target); }
-      if ( places > 7 ) { return target.set(v); }
-
-      int n = 10;
-      for ( int i = 1; i < places; ++i ) { n *= 10; }
-      final float nf = n;
-      final float nInv = 1.0f / nf;
-      return target.set(Utils.round(v.x * nf) * nInv, Utils.round(v.y * nf)
-         * nInv, Utils.round(v.z * nf) * nInv);
-   }
-
-   /**
     * Rounds each component of the vector to the nearest whole number.
     *
     * @param v      the input vector

@@ -537,8 +537,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Sets the renderer's color mode. Color channel maximums should be a
-    * positive value greater than or equal to one.
+    * Sets the renderer's color mode. Color channel maximums should be within
+    * the range [{@value IUp#COLOR_MODE_MIN}, {@value IUp#COLOR_MODE_MAX}] to
+    * mitigate precision issues arising from conversion between single
+    * precision real numbers and colors stored in 32-bit integers with [0,
+    * 255] per channel.
     *
     * @param mode the color mode, HSB or RGB
     * @param max1 the first channel maximum, hue or red
@@ -550,8 +553,18 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void colorMode ( final int mode, final float max1, final float max2,
       final float max3, final float aMax ) {
 
-      super.colorMode(mode, max1 < 1.0f ? 1.0f : max1, max2 < 1.0f ? 1.0f
-         : max2, max3 < 1.0f ? 1.0f : max3, aMax < 1.0f ? 1.0f : aMax);
+      /*
+       * See https://discourse.processing.org/t/colormode-and-rgba-values/31379
+       */
+
+      super.colorMode(mode, max1 < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN
+         : max1 > IUp.COLOR_MODE_MAX ? IUp.COLOR_MODE_MAX : max1, max2
+            < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN : max2
+               > IUp.COLOR_MODE_MAX ? IUp.COLOR_MODE_MAX : max2, max3
+                  < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN : max3
+                     > IUp.COLOR_MODE_MAX ? IUp.COLOR_MODE_MAX : max3, aMax
+                        < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN : aMax
+                           > IUp.COLOR_MODE_MAX ? IUp.COLOR_MODE_MAX : aMax);
 
       this.invColorModeX = 1.0f / this.colorModeX;
       this.invColorModeY = 1.0f / this.colorModeY;
@@ -1195,7 +1208,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.texture(img);
       switch ( this.imageMode ) {
 
-         case PConstants.CORNER:
+         case PConstants.CORNER: /* 0 */
 
             this.vertexImpl(x1, y1, z, u1, v1);
             this.vertexImpl(x1 + x2, y1, z, u2, v1);
@@ -1204,7 +1217,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.CORNERS:
+         case PConstants.CORNERS: /* 1 */
 
             this.vertexImpl(x1, y1, z, u1, v2);
             this.vertexImpl(x2, y1, z, u2, v2);
@@ -1213,7 +1226,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.RADIUS:
+         case PConstants.RADIUS: /* 2 */
 
             this.vertexImpl(x1 - x2, y1 + y2, z, u1, v1);
             this.vertexImpl(x1 + x2, y1 + y2, z, u2, v1);
@@ -1222,7 +1235,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.CENTER:
+         case PConstants.CENTER: /* 3 */
 
          default:
 
@@ -1311,10 +1324,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        */
 
       switch ( mode ) {
-         case PConstants.CORNER:
-         case PConstants.CORNERS:
-         case PConstants.CENTER:
-         case PConstants.RADIUS:
+         case PConstants.CORNER: /* 0 */
+         case PConstants.CORNERS: /* 1 */
+         case PConstants.RADIUS: /* 2 */
+         case PConstants.CENTER: /* 3 */
             this.imageMode = mode;
             break;
 
@@ -2263,15 +2276,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( this.textAlignY ) {
 
-         case PConstants.TOP:
+         case PConstants.TOP: /* 101 */
             yMut -= this.textAscent();
             break;
 
-         case PConstants.BOTTOM:
+         case PConstants.BOTTOM: /* 102 */
             yMut += this.textDescent();
             break;
 
-         case PConstants.CENTER:
+         case PConstants.CENTER: /* 3 */
          default:
             yMut -= this.textAscent() * 0.5f;
       }
@@ -2306,19 +2319,19 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( this.textAlignY ) {
 
-         case PConstants.TOP:
+         case PConstants.TOP: /* 101 */
 
             yMut -= this.textAscent();
 
             break;
 
-         case PConstants.BOTTOM:
+         case PConstants.BOTTOM: /* 102 */
 
             yMut += this.textDescent() + high;
 
             break;
 
-         case PConstants.CENTER:
+         case PConstants.CENTER: /* 3 */
 
          default:
 
@@ -2352,13 +2365,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    public void textMode ( final int mode ) {
 
       switch ( mode ) {
-         case PConstants.SHAPE:
+         case PConstants.MODEL: /* 4 */
+         case PConstants.SHAPE: /* 5 */
             this.textMode = mode;
             break;
 
-         case PConstants.MODEL:
          default:
-            this.textMode = mode;
+            this.textMode = PConstants.MODEL;
       }
    }
 
@@ -3962,7 +3975,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( this.rectMode ) {
 
-         case PConstants.CORNER:
+         case PConstants.CORNER: /* 0 */
 
             w = Utils.abs(x1);
             h = Utils.abs(y1);
@@ -3974,7 +3987,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.CORNERS:
+         case PConstants.CORNERS: /* 1 */
 
             a0 = Utils.min(x0, x1);
             a1 = Utils.max(x0, x1);
@@ -3984,7 +3997,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.RADIUS:
+         case PConstants.RADIUS: /* 2 */
 
             w = Utils.abs(x1);
             h = Utils.abs(y1);
@@ -3996,7 +4009,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.CENTER:
+         case PConstants.CENTER: /* 3 */
 
          default:
 
@@ -4050,7 +4063,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       float h;
 
       switch ( this.rectMode ) {
-         case PConstants.CORNER:
+         case PConstants.CORNER: /* 0 */
 
             w = Utils.abs(x1);
             h = Utils.abs(y1);
@@ -4062,7 +4075,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.CORNERS:
+         case PConstants.CORNERS: /* 1 */
 
             w = Utils.abs(x1 - x0);
             h = Utils.abs(y0 - y1);
@@ -4075,7 +4088,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.RADIUS:
+         case PConstants.RADIUS: /* 2 */
 
             w = Utils.abs(x1);
             h = Utils.abs(y1);
@@ -4087,7 +4100,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.CENTER:
+         case PConstants.CENTER: /* 3 */
          default:
 
             w = Utils.abs(x1);
@@ -4309,13 +4322,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( this.textMode ) {
 
-         case PConstants.SHAPE:
+         case PConstants.SHAPE: /* 5 */
 
             super.textCharShapeImpl(ch, x, y);
 
             break;
 
-         case PConstants.MODEL:
+         case PConstants.MODEL: /* 4 */
 
          default:
 
@@ -4563,14 +4576,14 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( desiredTextureWrap ) {
 
-         case PConstants.CLAMP:
+         case PConstants.CLAMP: /* 0 */
 
             this.textureU = Utils.clamp01(this.textureU);
             this.textureV = Utils.clamp01(this.textureV);
 
             break;
 
-         case PConstants.REPEAT:
+         case PConstants.REPEAT: /* 1 */
 
             /*
              * Problem where in meshes that use cylindrical projection (UV

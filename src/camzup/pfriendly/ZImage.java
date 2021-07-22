@@ -1316,10 +1316,8 @@ public class ZImage extends PImage {
        * Introducing a bias was not present in the reference code, but it helped
        * with edge haloes in earlier versions of this algorithm.
        */
-      // final float bias = 0.00405f;
-      final float bias = 0.0f;
-      final float tx = sw / ( dw * ( 1.0f + bias ) );
-      final float ty = sh / ( dh * ( 1.0f + bias ) );
+      final float tx = sw / dw;
+      final float ty = sh / dh;
 
       /* Despite the name, RGB images retain alpha, and so have 4 channels. */
       byte chnlCount;
@@ -1360,13 +1358,13 @@ public class ZImage extends PImage {
          /* Row. */
          final float gf = g;
          final int y = ( int ) ( ty * gf );
-         final float dy = ty * ( gf - bias ) - y;
+         final float dy = ty * gf - y;
          final float dysq = dy * dy;
 
          /* Column. */
          final float hf = h;
          final int x = ( int ) ( tx * hf );
-         final float dx = tx * ( hf - bias ) - x;
+         final float dx = tx * hf - x;
          final float dxsq = dx * dx;
 
          final int zu = y - 1 + j;
