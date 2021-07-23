@@ -1,15 +1,20 @@
 package camzup.pfriendly;
 
+import java.util.HashMap;
 import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 
+import camzup.core.Bounds3;
 import camzup.core.Color;
 import camzup.core.Gradient;
 import camzup.core.ISvgWritable;
 import camzup.core.IUtils;
+import camzup.core.Octree;
 import camzup.core.Sdf;
 import camzup.core.Utils;
 import camzup.core.Vec2;
+import camzup.core.Vec3;
+import camzup.core.Vec4;
 
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -381,6 +386,229 @@ public class ZImage extends PImage {
       final Gradient grd, final PImage target ) {
 
       return ZImage.conic(origin.x, origin.y, radians, grd, target);
+   }
+
+   /**
+    * Dithers an image with the <a href=
+    * "https://www.wikiwand.com/en/Floyd-Steinberg">Floyd-Steinberg</a>
+    * method. Builds an octree in CIE LAB from an input palette, then finds
+    * the nearest color according to Euclidean distance (see <a href=
+    * "https://www.wikiwand.com/en/Color_difference#/CIE76">CIE76</a>).
+    * 
+    * @param target  image
+    * @param palette palette
+    * 
+    * @return the image
+    */
+   public static PImage dither ( final PImage target, final Color[] palette ) {
+
+      // TODO: Consider using linear RGB comparison instead?
+
+      final float fs_1_16 = 0.0625f;
+      final float fs_3_16 = 0.1875f;
+      final float fs_5_16 = 0.3125f;
+      final float fs_7_16 = 0.4375f;
+
+      final int octCapacity = 16;
+      final float queryRad = 175.0f;
+
+      final Color lrgb = new Color();
+      final Vec4 xyz = new Vec4();
+      final Vec4 lab = new Vec4();
+
+      final int palLen = palette.length;
+      final HashMap < Integer, Integer > ptToHexDict = new HashMap <>(palLen,
+         0.75f);
+      final Octree octree = new Octree(new Bounds3(-110.0f, -110.0f, -1.0f,
+         110.0f, 110.0f, 101.0f), octCapacity);
+
+      for ( int i = 0; i < palLen; ++i ) {
+         final Color palEntry = palette[i];
+         Color.sRgbaTolRgba(palEntry, false, lrgb);
+         Color.lRgbaToXyza(lrgb, xyz);
+         Color.xyzaToLaba(xyz, lab);
+
+         final Vec3 point = new Vec3(lab.x, lab.y, lab.z);
+         ptToHexDict.put(point.hashCode(), Color.toHexInt(palEntry));
+         octree.insert(point);
+      }
+
+      target.loadPixels();
+      final int[] px = target.pixels;
+      final int w = target.pixelWidth;
+      final int h = target.pixelHeight;
+      final int pxLen = px.length;
+
+      final Color srgb = new Color();
+      final Vec3 query = new Vec3();
+
+      for ( int k = 0; k < pxLen; ++k ) {
+         final int srcHex = px[k];
+         final int rSrc = srcHex >> 0x10 & 0xff;
+         final int gSrc = srcHex >> 0x08 & 0xff;
+         final int bSrc = srcHex & 0xff;
+
+         srgb.set(rSrc * IUtils.ONE_255, gSrc * IUtils.ONE_255, bSrc
+            * IUtils.ONE_255, 1.0f);
+         Color.sRgbaTolRgba(srgb, false, lrgb);
+         Color.lRgbaToXyza(lrgb, xyz);
+         Color.xyzaToLaba(xyz, lab);
+         query.set(lab.x, lab.y, lab.z);
+
+         int trgHex = 0x00000000;
+         int rTrg = 0;
+         int gTrg = 0;
+         int bTrg = 0;
+
+         final Vec3[] nearestPts = octree.query(query, queryRad);
+         if ( nearestPts.length > 0 ) {
+            final Integer nearestHash = nearestPts[0].hashCode();
+            if ( ptToHexDict.containsKey(nearestHash) ) {
+               final int nearestHex = ptToHexDict.get(nearestHash);
+               rTrg = nearestHex >> 0x10 & 0xff;
+               gTrg = nearestHex >> 0x08 & 0xff;
+               bTrg = nearestHex & 0xff;
+               trgHex = srcHex & 0xff000000 | rTrg << 0x10 | gTrg << 0x08
+                  | bTrg;
+            }
+         }
+
+         px[k] = trgHex;
+         final float rErr = rSrc - rTrg;
+         final float gErr = gSrc - gTrg;
+         final float bErr = bSrc - bTrg;
+
+         final int x = k % w;
+         final int y = k / w;
+         final int yp1 = y + 1;
+         final int xp1 = x + 1;
+         final boolean xp1InBounds = xp1 < w;
+         final boolean yp1InBounds = yp1 < h;
+         final int yp1w = yp1 * w;
+
+         if ( xp1InBounds ) {
+            final int k0 = xp1 + y * w;
+            final int neighbor0 = px[k0];
+
+            final int rn0 = neighbor0 >> 0x10 & 0xff;
+            final int gn0 = neighbor0 >> 0x08 & 0xff;
+            final int bn0 = neighbor0 & 0xff;
+
+            // int rne0 = ( int ) ( rn0 + 0.5f + rErr * fs_7_16 );
+            // int gne0 = ( int ) ( gn0 + 0.5f + gErr * fs_7_16 );
+            // int bne0 = ( int ) ( bn0 + 0.5f + bErr * fs_7_16 );
+
+            int rne0 = ( int ) ( rn0 + rErr * fs_7_16 );
+            int gne0 = ( int ) ( gn0 + gErr * fs_7_16 );
+            int bne0 = ( int ) ( bn0 + bErr * fs_7_16 );
+
+            if ( rne0 < 0 ) {
+               rne0 = 0;
+            } else if ( rne0 > 255 ) { rne0 = 255; }
+            if ( gne0 < 0 ) {
+               gne0 = 0;
+            } else if ( gne0 > 255 ) { gne0 = 255; }
+            if ( bne0 < 0 ) {
+               bne0 = 0;
+            } else if ( bne0 > 255 ) { bne0 = 255; }
+
+            px[k0] = neighbor0 & 0xff000000 | rne0 << 0x10 | gne0 << 0x08
+               | bne0;
+
+            if ( yp1InBounds ) {
+               final int k3 = xp1 + yp1w;
+               final int neighbor3 = px[k3];
+
+               final int rn3 = neighbor3 >> 0x10 & 0xff;
+               final int gn3 = neighbor3 >> 0x08 & 0xff;
+               final int bn3 = neighbor3 & 0xff;
+
+               // int rne3 = ( int ) ( rn3 + 0.5f + rErr * fs_1_16 );
+               // int gne3 = ( int ) ( gn3 + 0.5f + gErr * fs_1_16 );
+               // int bne3 = ( int ) ( bn3 + 0.5f + bErr * fs_1_16 );
+
+               int rne3 = ( int ) ( rn3 + rErr * fs_1_16 );
+               int gne3 = ( int ) ( gn3 + gErr * fs_1_16 );
+               int bne3 = ( int ) ( bn3 + bErr * fs_1_16 );
+
+               if ( rne3 < 0 ) {
+                  rne3 = 0;
+               } else if ( rne3 > 255 ) { rne3 = 255; }
+               if ( gne3 < 0 ) {
+                  gne3 = 0;
+               } else if ( gne3 > 255 ) { gne3 = 255; }
+               if ( bne3 < 0 ) {
+                  bne3 = 0;
+               } else if ( bne3 > 255 ) { bne3 = 255; }
+
+               px[k3] = neighbor3 & 0xff000000 | rne3 << 0x10 | gne3 << 0x08
+                  | bne3;
+            }
+         }
+
+         if ( yp1InBounds ) {
+            final int k2 = x + yp1w;
+            final int neighbor2 = px[k2];
+
+            final int rn2 = neighbor2 >> 0x10 & 0xff;
+            final int gn2 = neighbor2 >> 0x08 & 0xff;
+            final int bn2 = neighbor2 & 0xff;
+
+            // int rne2 = ( int ) ( rn2 + 0.5f + rErr * fs_5_16 );
+            // int gne2 = ( int ) ( gn2 + 0.5f + gErr * fs_5_16 );
+            // int bne2 = ( int ) ( bn2 + 0.5f + bErr * fs_5_16 );
+
+            int rne2 = ( int ) ( rn2 + rErr * fs_5_16 );
+            int gne2 = ( int ) ( gn2 + gErr * fs_5_16 );
+            int bne2 = ( int ) ( bn2 + bErr * fs_5_16 );
+
+            if ( rne2 < 0 ) {
+               rne2 = 0;
+            } else if ( rne2 > 255 ) { rne2 = 255; }
+            if ( gne2 < 0 ) {
+               gne2 = 0;
+            } else if ( gne2 > 255 ) { gne2 = 255; }
+            if ( bne2 < 0 ) {
+               bne2 = 0;
+            } else if ( bne2 > 255 ) { bne2 = 255; }
+
+            px[k2] = neighbor2 & 0xff000000 | rne2 << 0x10 | gne2 << 0x08
+               | bne2;
+
+            if ( x > 0 ) {
+               final int k1 = x - 1 + yp1w;
+               final int neighbor1 = px[k1];
+
+               final int rn1 = neighbor1 >> 0x10 & 0xff;
+               final int gn1 = neighbor1 >> 0x08 & 0xff;
+               final int bn1 = neighbor1 & 0xff;
+
+               // int rne1 = ( int ) ( rn1 + 0.5f + rErr * fs_3_16 );
+               // int gne1 = ( int ) ( gn1 + 0.5f + gErr * fs_3_16 );
+               // int bne1 = ( int ) ( bn1 + 0.5f + bErr * fs_3_16 );
+
+               int rne1 = ( int ) ( rn1 + rErr * fs_3_16 );
+               int gne1 = ( int ) ( gn1 + gErr * fs_3_16 );
+               int bne1 = ( int ) ( bn1 + bErr * fs_3_16 );
+
+               if ( rne1 < 0 ) {
+                  rne1 = 0;
+               } else if ( rne1 > 255 ) { rne1 = 255; }
+               if ( gne1 < 0 ) {
+                  gne1 = 0;
+               } else if ( gne1 > 255 ) { gne1 = 255; }
+               if ( bne1 < 0 ) {
+                  bne1 = 0;
+               } else if ( bne1 > 255 ) { bne1 = 255; }
+
+               px[k1] = neighbor1 & 0xff000000 | rne1 << 0x10 | gne1 << 0x08
+                  | bne1;
+            }
+         }
+      }
+
+      target.updatePixels();
+      return target;
    }
 
    /**

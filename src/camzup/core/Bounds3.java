@@ -373,6 +373,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
       mx.y = yMax > yMin ? yMax : yMin;
       mx.z = zMax > zMin ? zMax : zMin;
 
+      // QUERY: Use approximate equality instead?
       if ( mn.x == mx.x ) {
          mn.x -= IUtils.EPSILON;
          mx.x += IUtils.EPSILON;
@@ -626,13 +627,15 @@ public class Bounds3 implements Comparable < Bounds3 > {
    public static Bounds3 fromPoints ( final Vec3[] points,
       final Bounds3 target ) {
 
+      final int len = points.length;
+      if ( len < 1 ) return target;
+
       final Vec3 lb = target.min;
       final Vec3 ub = target.max;
 
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
       ub.set(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
 
-      final int len = points.length;
       for ( int i = 0; i < len; ++i ) {
          final Vec3 p = points[i];
          final float x = p.x;
@@ -647,6 +650,14 @@ public class Bounds3 implements Comparable < Bounds3 > {
          if ( z < lb.z ) { lb.z = z; }
          if ( z > ub.z ) { ub.z = z; }
       }
+
+      lb.x -= IUtils.EPSILON;
+      lb.y -= IUtils.EPSILON;
+      lb.z -= IUtils.EPSILON;
+
+      ub.x += IUtils.EPSILON;
+      ub.y += IUtils.EPSILON;
+      ub.z += IUtils.EPSILON;
 
       return target;
    }

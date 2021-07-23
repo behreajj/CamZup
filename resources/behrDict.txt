@@ -157,3 +157,4 @@ haloes
 fulcrum
 gamut
 desaturated
+dithers

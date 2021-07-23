@@ -2808,7 +2808,8 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from CIE XYZ to CIE L*a*b*.
+    * Converts a color from CIE XYZ to CIE L*a*b*. The target is packaged as
+    * z: L or lightness, x: a or green-red, y: b or blue-yellow, w: alpha.
     *
     * @param source the XYZ vector
     * @param target the output vector
@@ -2823,8 +2824,8 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from CIE XYZ to lRGB. Expects input values to be in the
-    * range [0.0, 1.0]. References Pharr, Jakob, and Humphreys'
+    * Converts a color from CIE XYZ to linear RGB. Expects input values to be
+    * in the range [0.0, 1.0]. References Pharr, Jakob, and Humphreys'
     * <a href="http://www.pbr-book.org/">Physically Based Rendering</a>,
     * section 5.2.2, page 327.
     *
@@ -2852,7 +2853,7 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from CIE XYZ to lRGB.
+    * Converts a color from CIE XYZ to linear RGB.
     *
     * @param source the XYZ vector
     * @param target the output color

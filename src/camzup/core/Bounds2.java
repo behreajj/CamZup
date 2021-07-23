@@ -348,6 +348,7 @@ public class Bounds2 implements Comparable < Bounds2 > {
       mx.x = xMax > xMin ? xMax : xMin;
       mx.y = yMax > yMin ? yMax : yMin;
 
+      // QUERY: Use approximate equality instead?
       if ( mn.x == mx.x ) {
          mn.x -= IUtils.EPSILON;
          mx.x += IUtils.EPSILON;
@@ -601,13 +602,15 @@ public class Bounds2 implements Comparable < Bounds2 > {
    public static Bounds2 fromPoints ( final Vec2[] points,
       final Bounds2 target ) {
 
+      final int len = points.length;
+      if ( len < 1 ) return target;
+
       final Vec2 lb = target.min;
       final Vec2 ub = target.max;
 
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE);
       ub.set(Float.MIN_VALUE, Float.MIN_VALUE);
 
-      final int len = points.length;
       for ( int i = 0; i < len; ++i ) {
          final Vec2 p = points[i];
          final float x = p.x;
@@ -619,6 +622,12 @@ public class Bounds2 implements Comparable < Bounds2 > {
          if ( y < lb.y ) { lb.y = y; }
          if ( y > ub.y ) { ub.y = y; }
       }
+
+      lb.x -= IUtils.EPSILON;
+      lb.y -= IUtils.EPSILON;
+
+      ub.x += IUtils.EPSILON;
+      ub.y += IUtils.EPSILON;
 
       return target;
    }
