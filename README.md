@@ -26,7 +26,7 @@ Table of Contents
 
 Cam Z-Up is a Java-based library for the creative coding environment [Processing](https://processing.org/). Cam Z-Up flips Processing's default projection so that the positive z axis, (0.0, 0.0, 1.0), is the world up axis; the positive y axis, (0.0, 1.0, 0.0), is forward. The world origin, (0.0, 0.0, 0.0), is placed at the center of a sketch.
 
-This library supports two- and three-dimensional graphics. In 2D, the positive y axis is (0.0, 1.0). If the camera is imagined to be above the sketch looking down, this is forward. If the camera is imagined to be looking from a sideview, this is up.
+This library supports two- and three-dimensional graphics. In 2D, if the camera is imagined to be above the sketch looking down, the positive y axis is forward. If the camera is imagined to be looking from a sideview, this is up.
 
 If you can flip the y-axis by either
 

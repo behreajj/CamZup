@@ -394,10 +394,10 @@ public class ZImage extends PImage {
     * method. Builds an octree in CIE LAB from an input palette, then finds
     * the nearest color according to Euclidean distance (see <a href=
     * "https://www.wikiwand.com/en/Color_difference#/CIE76">CIE76</a>).
-    * 
+    *
     * @param target  image
     * @param palette palette
-    * 
+    *
     * @return the image
     */
    public static PImage dither ( final PImage target, final Color[] palette ) {
@@ -468,8 +468,7 @@ public class ZImage extends PImage {
                rTrg = nearestHex >> 0x10 & 0xff;
                gTrg = nearestHex >> 0x08 & 0xff;
                bTrg = nearestHex & 0xff;
-               trgHex = srcHex & 0xff000000 | rTrg << 0x10 | gTrg << 0x08
-                  | bTrg;
+               trgHex = srcHex & 0xff000000 | nearestHex & 0x00ffffff;
             }
          }
 
@@ -494,13 +493,10 @@ public class ZImage extends PImage {
             final int gn0 = neighbor0 >> 0x08 & 0xff;
             final int bn0 = neighbor0 & 0xff;
 
-            // int rne0 = ( int ) ( rn0 + 0.5f + rErr * fs_7_16 );
-            // int gne0 = ( int ) ( gn0 + 0.5f + gErr * fs_7_16 );
-            // int bne0 = ( int ) ( bn0 + 0.5f + bErr * fs_7_16 );
-
-            int rne0 = ( int ) ( rn0 + rErr * fs_7_16 );
-            int gne0 = ( int ) ( gn0 + gErr * fs_7_16 );
-            int bne0 = ( int ) ( bn0 + bErr * fs_7_16 );
+            // QUERY: Add 0.5f to round up to this and 3 other neighbors?
+            int rne0 = rn0 + ( int ) ( rErr * fs_7_16 );
+            int gne0 = gn0 + ( int ) ( gErr * fs_7_16 );
+            int bne0 = bn0 + ( int ) ( bErr * fs_7_16 );
 
             if ( rne0 < 0 ) {
                rne0 = 0;
@@ -523,13 +519,9 @@ public class ZImage extends PImage {
                final int gn3 = neighbor3 >> 0x08 & 0xff;
                final int bn3 = neighbor3 & 0xff;
 
-               // int rne3 = ( int ) ( rn3 + 0.5f + rErr * fs_1_16 );
-               // int gne3 = ( int ) ( gn3 + 0.5f + gErr * fs_1_16 );
-               // int bne3 = ( int ) ( bn3 + 0.5f + bErr * fs_1_16 );
-
-               int rne3 = ( int ) ( rn3 + rErr * fs_1_16 );
-               int gne3 = ( int ) ( gn3 + gErr * fs_1_16 );
-               int bne3 = ( int ) ( bn3 + bErr * fs_1_16 );
+               int rne3 = rn3 + ( int ) ( rErr * fs_1_16 );
+               int gne3 = gn3 + ( int ) ( gErr * fs_1_16 );
+               int bne3 = bn3 + ( int ) ( bErr * fs_1_16 );
 
                if ( rne3 < 0 ) {
                   rne3 = 0;
@@ -554,13 +546,9 @@ public class ZImage extends PImage {
             final int gn2 = neighbor2 >> 0x08 & 0xff;
             final int bn2 = neighbor2 & 0xff;
 
-            // int rne2 = ( int ) ( rn2 + 0.5f + rErr * fs_5_16 );
-            // int gne2 = ( int ) ( gn2 + 0.5f + gErr * fs_5_16 );
-            // int bne2 = ( int ) ( bn2 + 0.5f + bErr * fs_5_16 );
-
-            int rne2 = ( int ) ( rn2 + rErr * fs_5_16 );
-            int gne2 = ( int ) ( gn2 + gErr * fs_5_16 );
-            int bne2 = ( int ) ( bn2 + bErr * fs_5_16 );
+            int rne2 = rn2 + ( int ) ( rErr * fs_5_16 );
+            int gne2 = gn2 + ( int ) ( gErr * fs_5_16 );
+            int bne2 = bn2 + ( int ) ( bErr * fs_5_16 );
 
             if ( rne2 < 0 ) {
                rne2 = 0;
@@ -583,13 +571,9 @@ public class ZImage extends PImage {
                final int gn1 = neighbor1 >> 0x08 & 0xff;
                final int bn1 = neighbor1 & 0xff;
 
-               // int rne1 = ( int ) ( rn1 + 0.5f + rErr * fs_3_16 );
-               // int gne1 = ( int ) ( gn1 + 0.5f + gErr * fs_3_16 );
-               // int bne1 = ( int ) ( bn1 + 0.5f + bErr * fs_3_16 );
-
-               int rne1 = ( int ) ( rn1 + rErr * fs_3_16 );
-               int gne1 = ( int ) ( gn1 + gErr * fs_3_16 );
-               int bne1 = ( int ) ( bn1 + bErr * fs_3_16 );
+               int rne1 = rn1 + ( int ) ( rErr * fs_3_16 );
+               int gne1 = gn1 + ( int ) ( gErr * fs_3_16 );
+               int bne1 = bn1 + ( int ) ( bErr * fs_3_16 );
 
                if ( rne1 < 0 ) {
                   rne1 = 0;

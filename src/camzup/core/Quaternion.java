@@ -499,8 +499,8 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Divides a scalar by a quaternion. Returns the identity if the operation
-    * is invalid.
+    * Divides a scalar by a quaternion. Returns the identity if either a or b
+    * are zero.
     *
     * @param a      the numerator
     * @param b      the denominator
@@ -508,29 +508,33 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @return the quotient
     *
-    * @see Utils#approx(float, float)
     * @see Quaternion#identity(Quaternion)
     */
    public static Quaternion div ( final float a, final Quaternion b,
       final Quaternion target ) {
 
-      final Vec3 bi = b.imag;
-      final float bw = b.real;
-      final float bx = bi.x;
-      final float by = bi.y;
-      final float bz = bi.z;
-
-      final float bmSq = bw * bw + bx * bx + by * by + bz * bz;
-      if ( bmSq != 0.0f ) {
-         final float abmSqInv = a / bmSq;
-         return target.set(bw * abmSqInv, -bx * abmSqInv, -by * abmSqInv, -bz
-            * abmSqInv);
+      if ( a != 0.0f ) {
+         final Vec3 bi = b.imag;
+         final float bw = b.real;
+         final float bx = bi.x;
+         final float by = bi.y;
+         final float bz = bi.z;
+         final float bmSq = bw * bw + bx * bx + by * by + bz * bz;
+         if ( bmSq != 0.0f ) {
+            final float abmSqInv = a / bmSq;
+            return target.set(bw * abmSqInv, -bx * abmSqInv, -by * abmSqInv, -bz
+               * abmSqInv);
+         } else {
+            return Quaternion.identity(target);
+         }
+      } else {
+         return Quaternion.identity(target);
       }
-      return Quaternion.identity(target);
    }
 
    /**
-    * Divides a scalar by a quaternion.
+    * Divides a scalar by a quaternion. Returns the identity if either a or b
+    * are zero.
     *
     * @param a         the numerator
     * @param b         the denominator
@@ -540,6 +544,8 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @return the quotient
     *
+    * @see Quaternion#any(Quaternion)
+    * @see Quaternion#identity(Quaternion)
     * @see Quaternion#inverse(Quaternion, Quaternion, Quaternion)
     * @see Quaternion#mul(float, Quaternion, Quaternion)
     */
@@ -547,9 +553,15 @@ public class Quaternion implements Comparable < Quaternion > {
       final Quaternion target, final Quaternion inverted,
       final Quaternion conjugate ) {
 
-      Quaternion.inverse(b, inverted, conjugate);
-      Quaternion.mul(a, inverted, target);
-      return target;
+      if ( Quaternion.any(b) ) {
+         Quaternion.inverse(b, inverted, conjugate);
+         Quaternion.mul(a, inverted, target);
+         return target;
+      } else {
+         Quaternion.identity(conjugate);
+         Quaternion.identity(inverted);
+         return Quaternion.identity(target);
+      }
    }
 
    /**
@@ -1429,8 +1441,9 @@ public class Quaternion implements Comparable < Quaternion > {
          Vec3.mul(a, b.imag, target.imag);
          target.real = a * b.real;
          return target;
+      } else {
+         return Quaternion.identity(target);
       }
-      return target.reset();
    }
 
    /**
@@ -1451,8 +1464,9 @@ public class Quaternion implements Comparable < Quaternion > {
          Vec3.mul(a.imag, b, target.imag);
          target.real = a.real * b;
          return target;
+      } else {
+         return Quaternion.identity(target);
       }
-      return target.reset();
    }
 
    /**
