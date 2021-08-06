@@ -603,7 +603,7 @@ public class Bounds2 implements Comparable < Bounds2 > {
       final Bounds2 target ) {
 
       final int len = points.length;
-      if ( len < 1 ) return target;
+      if ( len < 1 ) { return target; }
 
       final Vec2 lb = target.min;
       final Vec2 ub = target.max;

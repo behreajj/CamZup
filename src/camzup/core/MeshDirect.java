@@ -1,9 +1,11 @@
 package camzup.core;
 
 /**
- * A lower level version of the Mesh class intended for use with JOGL.
- * Coordinates, texture coordinates, normals and vertex colors are stored
- * in <code>float</code> arrays. Indices are expected to form triangles.
+ * A variant of the Mesh class intended for use with JOGL. Coordinates,
+ * texture coordinates, normals and vertex colors are stored in
+ * <code>float</code> arrays. Indices are expected to form triangles.
+ * Intended for lower-level code work and performance-oriented display,
+ * rather than procedural generation.
  */
 @Experimental
 public class MeshDirect {
@@ -820,6 +822,7 @@ public class MeshDirect {
 
       sb.append(", colors: ");
       Utils.toString(sb, this.colors, places);
+
       sb.append(" }");
       return sb.toString();
    }
@@ -868,7 +871,8 @@ public class MeshDirect {
    }
 
    /**
-    * Transforms a mesh coordinate at an index by a 3x3 matrix.
+    * Transforms a mesh coordinate at an index by a 3x3 matrix. Assumes the
+    * matrix holds a 2D affine transform.
     *
     * @param i the index
     * @param m the matrix

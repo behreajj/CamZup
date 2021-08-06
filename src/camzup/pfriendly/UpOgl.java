@@ -460,7 +460,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( this.colorMode ) {
 
-         case PConstants.HSB:
+         case PConstants.HSB: /* 3 */
 
             /* Conversion clamps the results. */
             Color.hsvaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
@@ -473,7 +473,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             break;
 
-         case PConstants.RGB:
+         case PConstants.RGB: /* 1 */
 
          default:
 

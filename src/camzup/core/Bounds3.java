@@ -628,7 +628,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
       final Bounds3 target ) {
 
       final int len = points.length;
-      if ( len < 1 ) return target;
+      if ( len < 1 ) { return target; }
 
       final Vec3 lb = target.min;
       final Vec3 ub = target.max;

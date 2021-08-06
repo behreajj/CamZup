@@ -78,7 +78,7 @@ public class Edge3 implements Comparable < Edge3 > {
 
       if ( this == obj ) { return true; }
       if ( obj == null || this.getClass() != obj.getClass() ) { return false; }
-      return this.equals(obj);
+      return this.equalsDirected(( Edge3 ) obj);
    }
 
    /**
@@ -782,12 +782,12 @@ public class Edge3 implements Comparable < Edge3 > {
    }
 
    /**
-    * Tests this edge for equivalence with another. To be true the edges'
+    * Tests this edge for equivalence with another. To be true, the edges'
     * origins must be equal and their destinations must be equal.
     *
     * @return the evaluation
     */
-   protected boolean equals ( final Edge3 edge3 ) {
+   protected boolean equalsDirected ( final Edge3 edge3 ) {
 
       if ( this.dest == null ) {
          if ( edge3.dest != null ) { return false; }

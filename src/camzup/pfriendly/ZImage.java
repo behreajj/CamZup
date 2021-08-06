@@ -1051,7 +1051,7 @@ public class ZImage extends PImage {
       final int[] lineOffsets = new int[lineCount];
       switch ( textAlign ) {
 
-         case PConstants.CENTER:
+         case PConstants.CENTER: /* 3 */
 
             for ( int i = 0; i < lineCount; ++i ) {
                lineOffsets[i] = ( wMax - lineWidths[i] ) / 2;
@@ -1059,7 +1059,7 @@ public class ZImage extends PImage {
 
             break;
 
-         case PConstants.RIGHT:
+         case PConstants.RIGHT: /* 39 */
 
             for ( int i = 0; i < lineCount; ++i ) {
                lineOffsets[i] = wMax - lineWidths[i];
@@ -1067,7 +1067,7 @@ public class ZImage extends PImage {
 
             break;
 
-         case PConstants.LEFT:
+         case PConstants.LEFT: /* 37 */
 
          default:
 

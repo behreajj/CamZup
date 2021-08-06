@@ -856,19 +856,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.ellipseMode ) {
 
-         case PConstants.RADIUS:
-
-            xc = x;
-            yc = y;
-
-            extapw = w;
-            extcpw = ICurve.HNDL_MAG_ORTHO_D * extapw;
-            extaph = h;
-            extcph = ICurve.HNDL_MAG_ORTHO_D * extaph;
-
-            break;
-
-         case PConstants.CORNER:
+         case PConstants.CORNER: /* 0 */
 
             extapw = 0.5d * w;
             extcpw = ICurve.HNDL_MAG_ORTHO_2_D * w;
@@ -880,7 +868,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case PConstants.CORNERS:
+         case PConstants.CORNERS: /* 1 */
 
             final double wcalc = Math.abs(w - x);
             final double hcalc = Math.abs(h - y);
@@ -895,7 +883,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case PConstants.CENTER:
+         case PConstants.RADIUS: /* 2 */
+
+            xc = x;
+            yc = y;
+
+            extapw = w;
+            extcpw = ICurve.HNDL_MAG_ORTHO_D * extapw;
+            extaph = h;
+            extcph = ICurve.HNDL_MAG_ORTHO_D * extaph;
+
+            break;
+
+         case PConstants.CENTER: /* 3 */
 
          default:
 
@@ -4177,7 +4177,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.colorMode ) {
 
-         case PConstants.HSB:
+         case PConstants.HSB: /* 3 */
 
             Color.hsvaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
                this.aTemp);
@@ -4189,7 +4189,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case PConstants.RGB:
+         case PConstants.RGB: /* 1 */
 
          default:
 
@@ -4352,7 +4352,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.rectMode ) {
 
-         case CORNER:
+         case PConstants.CORNER: /* 0 */
 
             w = c < 0.0f ? -c : c;
             h = d < 0.0f ? -d : d;
@@ -4364,7 +4364,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case CORNERS:
+         case PConstants.CORNERS: /* 1 */
 
             x0 = a < c ? a : c;
             x1 = c > a ? c : a;
@@ -4373,7 +4373,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case RADIUS:
+         case PConstants.RADIUS: /* 2 */
 
             w = c < 0.0f ? -c : c;
             h = d < 0.0f ? -d : d;
@@ -4385,7 +4385,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case CENTER:
+         case PConstants.CENTER: /* 3 */
 
          default:
             w = 0.5d * ( c < 0.0f ? -c : c );
@@ -4433,7 +4433,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.rectMode ) {
 
-         case PConstants.CORNER:
+         case PConstants.CORNER: /* 0 */
 
             w = c < 0.0f ? -c : c;
             h = d < 0.0f ? -d : d;
@@ -4445,7 +4445,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case PConstants.CORNERS:
+         case PConstants.CORNERS: /* 1 */
 
             w = Utils.abs(c - a);
             h = Utils.abs(b - d);
@@ -4457,7 +4457,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case PConstants.RADIUS:
+         case PConstants.RADIUS: /* 2 */
 
             w = c < 0.0f ? -c : c;
             h = d < 0.0f ? -d : d;
@@ -4469,7 +4469,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             break;
 
-         case PConstants.CENTER:
+         case PConstants.CENTER: /* 3 */
 
          default:
 

@@ -524,7 +524,18 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the edges array
     */
-   public Edge2[] getEdges ( ) {
+   public Edge2[] getEdges ( ) { return getEdgesDirected(); }
+
+   /**
+    * Gets an array of edges from the mesh. Edges are treated as directed, so
+    * (origin, destination) and (destination, edge) are considered to be
+    * different.
+    *
+    * @return the edges array
+    */
+   public Edge2[] getEdgesDirected ( ) {
+
+      // TODO: Create variation for getEdgesDirected and getEdgesUndirected!
 
       Edge2 trial = new Edge2();
       final int facesLen = this.faces.length;
@@ -1692,27 +1703,35 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       if ( includeEdges ) {
 
          /*
-          * Edges are not included because they raise a lot of flags from
-          * verbose from_py validation about duplicates. You would need to make
-          * an array then check if it contains either the edge or its
-          * permutation.
+          * Edges should be undirected, not directed, e.g., (0, 1) and (1, 0)
+          * should be treated as equivalent.
           */
 
-         pyCd.append("], \"edges\": [");
-
+         final ArrayList < String > edgesList = new ArrayList <>();
          for ( int j = 0; j < facesLen; ++j ) {
             final int[][] vrtInd = this.faces[j];
             final int vrtIndLen = vrtInd.length;
-            final int vrtLast = vrtIndLen - 1;
             for ( int k = 0; k < vrtIndLen; ++k ) {
-               pyCd.append('(');
-               pyCd.append(vrtInd[k][0]);
-               pyCd.append(',').append(' ');
-               pyCd.append(vrtInd[ ( k + 1 ) % vrtIndLen][0]);
-               pyCd.append(')');
-               if ( k < vrtLast ) { pyCd.append(',').append(' '); }
+               final int origin = vrtInd[k][0];
+               final int dest = vrtInd[ ( k + 1 ) % vrtIndLen][0];
+
+               final String query = origin + ", " + dest;
+               final String reverse = dest + ", " + origin;
+
+               if ( edgesList.indexOf(query) < 0 && edgesList.indexOf(reverse)
+                  < 0 ) {
+                  edgesList.add(query);
+               }
             }
-            if ( j < facesLast ) { pyCd.append(',').append(' '); }
+         }
+
+         pyCd.append("], \"edges\": [");
+         final Iterator < String > edgesItr = edgesList.iterator();
+         while ( edgesItr.hasNext() ) {
+            pyCd.append('(');
+            pyCd.append(edgesItr.next());
+            pyCd.append(')');
+            if ( edgesItr.hasNext() ) { pyCd.append(',').append(' '); }
          }
       }
 

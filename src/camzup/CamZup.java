@@ -12,6 +12,7 @@ import processing.core.PApplet;
  * and is for development and debugging only.
  */
 public class CamZup {
+
    /**
     * The PApplet referenced by this class.
     */
@@ -129,16 +130,22 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // https://rosettacode.org/wiki/Kronecker_product#Java
+      // final Mesh2 mesh2 = new Mesh2();
+      // Mesh2.gridHex(2, mesh2);
+      // mesh2.clean();
+      // final MeshEntity2 me2 = new MeshEntity2(mesh2);
+      // System.out.println(me2.toBlenderCode());
 
-      float a = 5.0f;
-      Quaternion b = new Quaternion(0.0f, 0.0f, 0.0f, 0.0f);
+      // Edge2[] edges = mesh2.getEdgesDirected();
+      // for ( Edge2 edge : edges ) { System.out.println(edge); }
+      // System.out.println(edges.length);
 
-      Quaternion x = Quaternion.div(a, b, new Quaternion());
-      Quaternion y = Quaternion.div(a, b, new Quaternion(), new Quaternion(),
-         new Quaternion());
-      System.out.println(x);
-      System.out.println(y);
+      // System.out.println(mesh2.getEdgesDirected().length);
+
+      // final Mesh3 mesh3 = new Mesh3();
+      // Mesh3.dodecahedron(mesh3);
+      // final MeshEntity3 me3 = new MeshEntity3(mesh3);
+      // System.out.println(me3.toBlenderCode());
    }
 
    public static Quaternion squad ( final Quaternion q1, final Quaternion q2,

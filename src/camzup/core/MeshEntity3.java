@@ -433,7 +433,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       /* Append meshes. */
       final Iterator < Mesh3 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
-         meshItr.next().toBlenderCode(pyCd, false, true, false);
+         meshItr.next().toBlenderCode(pyCd, true, true, false);
          if ( meshItr.hasNext() ) { pyCd.append(',').append(' '); }
       }
 

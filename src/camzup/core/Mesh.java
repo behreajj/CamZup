@@ -371,11 +371,10 @@ public abstract class Mesh extends EntityData implements IMesh {
     * quadrilaterals, or is non-uniform. Returns a {@link Map}, where the
     * vertex count is the key and the tally is the value.<br>
     * <br>
-    * The audit always places 3 and 4 into the map, even if the mesh contains
-    * neither triangles nor quadrilaterals, because they are common entries to
-    * query. When querying other possibilities use
-    * {@link Map#getOrDefault(Object, Object)}, with the default argument set
-    * to 0.
+    * The audit places 3 and 4 into the map, even if the mesh contains neither
+    * triangles nor quadrilaterals, because they are common entries to query.
+    * When querying other possibilities, query whether the map contains a key
+    * prior to using its get method.
     *
     * @param m the mesh
     *
@@ -408,7 +407,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     * product algorithm is used.
     *
     * @param a    the left comparisand
-    * @param aIdx the b edge index
+    * @param aIdx the a edge index
     * @param b    the right comparisand
     * @param bIdx the b edge index
     *
@@ -658,6 +657,10 @@ public abstract class Mesh extends EntityData implements IMesh {
     * @return the evaluation
     */
    public static boolean uniformVertsPerFace ( final Mesh m, final int c ) {
+
+      // QUERY: Could this be sped up by searching start-to-end and
+      // end-to-start simultaneously? Would have to compensate for odd number of
+      // faces.
 
       final int[][][] faces = m.faces;
       final int facesLen = faces.length;

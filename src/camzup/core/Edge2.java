@@ -76,7 +76,7 @@ public class Edge2 implements Comparable < Edge2 > {
 
       if ( this == obj ) { return true; }
       if ( obj == null || this.getClass() != obj.getClass() ) { return false; }
-      return this.equals(( Edge2 ) obj);
+      return this.equalsDirected(( Edge2 ) obj);
    }
 
    /**
@@ -464,7 +464,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return the evaluation
     */
-   protected boolean equals ( final Edge2 edge2 ) {
+   protected boolean equalsDirected ( final Edge2 edge2 ) {
 
       if ( this.dest == null ) {
          if ( edge2.dest != null ) { return false; }
@@ -673,5 +673,4 @@ public class Edge2 implements Comparable < Edge2 > {
       if ( Vert2.approxCoord(aDest, bDest) ) { return -2; }
       return 0;
    }
-
 }

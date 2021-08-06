@@ -972,21 +972,6 @@ public class ZSurfaceAwt extends PSurfaceNone {
       public Frame getFrame ( ) { return ZSurfaceAwt.this.frame; }
 
       @Override
-      public Dimension getMaximumSize ( ) {
-
-         // return ZSurfaceAwt.this.frame.isResizable() ? super.getMaximumSize()
-         // : this.getPreferredSize();
-         return super.getMaximumSize();
-      }
-
-      @Override
-      public Dimension getMinimumSize ( ) {
-
-         // return this.getPreferredSize();
-         return super.getMinimumSize();
-      }
-
-      @Override
       public Dimension getPreferredSize ( ) {
 
          return new Dimension(ZSurfaceAwt.this.sketchWidth,

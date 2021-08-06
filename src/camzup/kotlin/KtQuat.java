@@ -68,11 +68,29 @@ public class KtQuat extends Quaternion {
     */
    public KtQuat div ( final float b ) {
 
+      // TODO: What about divide and divAssign for q / v3?
+
       if ( b != 0.0f ) {
          return new KtQuat(this.real / b, this.imag.x / b, this.imag.y / b,
             this.imag.z / b);
       }
       return new KtQuat();
+   }
+
+   /**
+    * Returns a new quaternion with the division of the instance by the right
+    * operand. For interoperability with Kotlin: <code>a / b</code> . <em>Does
+    * not mutate the quaternion in place</em>.
+    *
+    * @param b the right operand
+    *
+    * @return the quotient
+    */
+   public KtQuat div ( final Quaternion b ) {
+
+      final KtQuat result = new KtQuat();
+      Quaternion.div(this, b, result);
+      return result;
    }
 
    /**
@@ -93,6 +111,17 @@ public class KtQuat extends Quaternion {
       } else {
          this.reset();
       }
+   }
+
+   /**
+    * Divides the instance by the right operand (mutates the quaternion in
+    * place). For interoperability with Kotlin: <code>a /= b</code> .
+    *
+    * @param b the right operand
+    */
+   public void divAssign ( final Quaternion b ) {
+
+      Quaternion.div(this, b, this);
    }
 
    /**

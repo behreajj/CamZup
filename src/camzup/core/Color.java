@@ -1522,6 +1522,7 @@ public class Color implements Comparable < Color > {
    public static Vec4 lchaToLaba ( final float l, final float c, final float h,
       final float a, final Vec4 target ) {
 
+      // TODO: Clamp l to [0, 100], c to [0, 134] ?
       final double hRad = Utils.mod1(h) * IUtils.TAU_D;
       return target.set(c * ( float ) Math.cos(hRad), c * ( float ) Math.sin(
          hRad), l, a);
