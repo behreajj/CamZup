@@ -774,7 +774,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the edges array
     */
-   public Edge3[] getEdges ( ) { return getEdgesDirected(); }
+   public Edge3[] getEdges ( ) { return this.getEdgesDirected(); }
 
    /**
     * Gets an array of edges from the mesh. Edges are treated as directed, so
@@ -784,8 +784,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the edges array
     */
    public Edge3[] getEdgesDirected ( ) {
-
-      // TODO: Create variation for getEdgesDirected and getEdgesUndirected!
 
       Edge3 trial = new Edge3();
       final int facesLen = this.faces.length;
@@ -813,6 +811,48 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       return result.toArray(new Edge3[result.size()]);
+   }
+
+   /**
+    * Gets an array of edges from the mesh. Edges are treated as undirected,
+    * so (origin, destination) and (destination, edge) are considered to be
+    * the same.
+    *
+    * @return the edges array
+    */
+   public Edge3[] getEdgesUndirected ( ) {
+
+      final int facesLen = this.faces.length;
+      final TreeMap < Integer, Edge3 > result = new TreeMap <>();
+
+      for ( int i = 0; i < facesLen; ++i ) {
+
+         final int[][] fs = this.faces[i];
+         final int faceLen = fs.length;
+
+         for ( int j = 0; j < faceLen; ++j ) {
+
+            final int[] idcsOrigin = fs[j];
+            final int[] idcsDest = fs[ ( j + 1 ) % faceLen];
+
+            final int vIdxOrigin = idcsOrigin[0];
+            final int vIdxDest = idcsDest[0];
+
+            final Integer aHsh = ( IUtils.MUL_BASE ^ vIdxOrigin )
+               * IUtils.HASH_MUL ^ vIdxDest;
+            final Integer bHsh = ( IUtils.MUL_BASE ^ vIdxDest )
+               * IUtils.HASH_MUL ^ vIdxOrigin;
+
+            if ( !result.containsKey(aHsh) && !result.containsKey(bHsh) ) {
+               result.put(vIdxOrigin < vIdxDest ? aHsh : bHsh, new Edge3(
+                  this.coords[vIdxOrigin], this.texCoords[idcsOrigin[1]],
+                  this.normals[idcsOrigin[2]], this.coords[vIdxDest],
+                  this.texCoords[idcsDest[1]], this.normals[idcsDest[2]]));
+            }
+         }
+      }
+
+      return result.values().toArray(new Edge3[result.size()]);
    }
 
    /**
@@ -2165,6 +2205,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public String toString ( final int places ) {
 
+      // TODO: Create pass by reference StringBuilder version?
       final StringBuilder sb = new StringBuilder(2048);
       sb.append("{ name: \"");
       sb.append(this.name);
@@ -2332,6 +2373,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
                if ( edgesList.indexOf(query) < 0 && edgesList.indexOf(reverse)
                   < 0 ) {
+                  // edgesList.add(origin < dest ? query : reverse);
                   edgesList.add(query);
                }
             }
@@ -3187,6 +3229,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.coords[18].set(0.5f, -0.05901699f, 0.18163565f);
       target.coords[19].set(-0.5f, -0.05901699f, 0.18163565f);
 
+      /* These are ordered according to the results of the clean method. */
       target.texCoords = Vec2.resize(target.texCoords, 5);
       target.texCoords[0].set(0.5f, 0.0f);
       target.texCoords[1].set(0.79389268f, 0.90450847f);

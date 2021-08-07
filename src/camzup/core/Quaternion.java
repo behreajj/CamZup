@@ -76,7 +76,7 @@ public class Quaternion implements Comparable < Quaternion > {
    @Override
    public int compareTo ( final Quaternion q ) {
 
-      return this.real > q.real ? 1 : this.real < q.real ? -1 : this.imag
+      return this.real < q.real ? -1 : this.real > q.real ? 1 : this.imag
          .compareTo(q.imag);
    }
 

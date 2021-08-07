@@ -28,7 +28,7 @@ import java.util.TreeMap;
  *
  * forming a backwards z pattern.
  */
-public class Octree implements Iterable < Vec3 > {
+public class Octree implements Comparable < Octree >, Iterable < Vec3 > {
 
    /**
     * The bounding volume.
@@ -152,6 +152,19 @@ public class Octree implements Iterable < Vec3 > {
       }
 
       return target;
+   }
+
+   /**
+    * Compares this octree to another based on a comparison between bounds.
+    *
+    * @param ot the other octree
+    *
+    * @return the evaluation
+    */
+   @Override
+   public int compareTo ( final Octree ot ) {
+
+      return this.bounds.compareTo(ot.bounds);
    }
 
    /**

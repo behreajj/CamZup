@@ -673,4 +673,5 @@ public class Edge2 implements Comparable < Edge2 > {
       if ( Vert2.approxCoord(aDest, bDest) ) { return -2; }
       return 0;
    }
+
 }

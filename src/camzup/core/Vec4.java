@@ -109,16 +109,9 @@ public class Vec4 implements Comparable < Vec4 > {
    @Override
    public int compareTo ( final Vec4 v ) {
 
-      /* @formatter:off */
-      return this.w > v.w ?  1
-           : this.w < v.w ? -1
-           : this.z > v.z ?  1
-           : this.z < v.z ? -1
-           : this.y > v.y ?  1
-           : this.y < v.y ? -1
-           : this.x > v.x ?  1
-           : this.x < v.x ? -1 : 0;
-      /* @formatter:on */
+      return this.w < v.w ? -1 : this.w > v.w ? 1 : this.z < v.z ? -1 : this.z
+         > v.z ? 1 : this.y < v.y ? -1 : this.y > v.y ? 1 : this.x < v.x ? -1
+         : this.x > v.x ? 1 : 0;
    }
 
    /**

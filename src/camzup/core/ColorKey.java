@@ -112,7 +112,7 @@ public class ColorKey implements Comparable < ColorKey > {
    @Override
    public int compareTo ( final ColorKey key ) {
 
-      return this.step > key.step ? 1 : this.step < key.step ? -1 : 0;
+      return this.step < key.step ? -1 : this.step > key.step ? 1 : 0;
    }
 
    /**

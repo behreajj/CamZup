@@ -316,6 +316,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final int j = Utils.mod(faceIndex, this.faces.length);
       final int[][] f = this.faces[j];
+
+      // TODO: Remove Math.min from this and Mesh3 version.
       final int vcount = Math.min(f.length - 3, count);
       this.faces[j] = Mesh.remove(f, vertIndex, vcount);
       return this;
@@ -524,7 +526,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return the edges array
     */
-   public Edge2[] getEdges ( ) { return getEdgesDirected(); }
+   public Edge2[] getEdges ( ) { return this.getEdgesDirected(); }
 
    /**
     * Gets an array of edges from the mesh. Edges are treated as directed, so
@@ -534,8 +536,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return the edges array
     */
    public Edge2[] getEdgesDirected ( ) {
-
-      // TODO: Create variation for getEdgesDirected and getEdgesUndirected!
 
       Edge2 trial = new Edge2();
       final int facesLen = this.faces.length;
@@ -562,6 +562,47 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       }
 
       return result.toArray(new Edge2[result.size()]);
+   }
+
+   /**
+    * Gets an array of edges from the mesh. Edges are treated as undirected,
+    * so (origin, destination) and (destination, edge) are considered to be
+    * the same.
+    *
+    * @return the edges array
+    */
+   public Edge2[] getEdgesUndirected ( ) {
+
+      final int facesLen = this.faces.length;
+      final TreeMap < Integer, Edge2 > result = new TreeMap <>();
+
+      for ( int i = 0; i < facesLen; ++i ) {
+
+         final int[][] fs = this.faces[i];
+         final int faceLen = fs.length;
+
+         for ( int j = 0; j < faceLen; ++j ) {
+
+            final int[] idcsOrigin = fs[j];
+            final int[] idcsDest = fs[ ( j + 1 ) % faceLen];
+
+            final int vIdxOrigin = idcsOrigin[0];
+            final int vIdxDest = idcsDest[0];
+
+            final Integer aHsh = ( IUtils.MUL_BASE ^ vIdxOrigin )
+               * IUtils.HASH_MUL ^ vIdxDest;
+            final Integer bHsh = ( IUtils.MUL_BASE ^ vIdxDest )
+               * IUtils.HASH_MUL ^ vIdxOrigin;
+
+            if ( !result.containsKey(aHsh) && !result.containsKey(bHsh) ) {
+               result.put(vIdxOrigin < vIdxDest ? aHsh : bHsh, new Edge2(
+                  this.coords[vIdxOrigin], this.texCoords[idcsOrigin[1]],
+                  this.coords[vIdxDest], this.texCoords[idcsDest[1]]));
+            }
+         }
+      }
+
+      return result.values().toArray(new Edge2[result.size()]);
    }
 
    /**
@@ -1708,6 +1749,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
           */
 
          final ArrayList < String > edgesList = new ArrayList <>();
+
+         // This doesn't work because 1, 10, 11, 12, 2, 24, 25 ordering.
+         // You'd have to use a TreeMap with integers...
+         // final TreeSet < String > edgesList = new TreeSet <>();
+
          for ( int j = 0; j < facesLen; ++j ) {
             final int[][] vrtInd = this.faces[j];
             final int vrtIndLen = vrtInd.length;
@@ -1720,6 +1766,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
                if ( edgesList.indexOf(query) < 0 && edgesList.indexOf(reverse)
                   < 0 ) {
+                  // edgesList.add(origin < dest ? query : reverse);
                   edgesList.add(query);
                }
             }

@@ -25,7 +25,7 @@ import java.util.TreeMap;
  *
  * forming a backwards z pattern.
  */
-public class Quadtree implements Iterable < Vec2 > {
+public class Quadtree implements Comparable < Quadtree >, Iterable < Vec2 > {
 
    /**
     * The bounding area.
@@ -150,6 +150,19 @@ public class Quadtree implements Iterable < Vec2 > {
       }
 
       return target;
+   }
+
+   /**
+    * Compares this quadtree to another based on a comparison between bounds.
+    *
+    * @param qt the other quadtree
+    *
+    * @return the evaluation
+    */
+   @Override
+   public int compareTo ( final Quadtree qt ) {
+
+      return this.bounds.compareTo(qt.bounds);
    }
 
    /**

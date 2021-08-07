@@ -89,14 +89,8 @@ public class Vec3 implements Comparable < Vec3 > {
    @Override
    public int compareTo ( final Vec3 v ) {
 
-      /* @formatter:off */
-      return this.z > v.z ?  1
-           : this.z < v.z ? -1
-           : this.y > v.y ?  1
-           : this.y < v.y ? -1
-           : this.x > v.x ?  1
-           : this.x < v.x ? -1 : 0;
-      /* @formatter:on */
+      return this.z < v.z ? -1 : this.z > v.z ? 1 : this.y < v.y ? -1 : this.y
+         > v.y ? 1 : this.x < v.x ? -1 : this.x > v.x ? 1 : 0;
    }
 
    /**
@@ -3391,7 +3385,7 @@ public class Vec3 implements Comparable < Vec3 > {
       @Override
       public int compare ( final Vec3 a, final Vec3 b ) {
 
-         return a.x > b.x ? 1 : a.x < b.x ? -1 : 0;
+         return a.x < b.x ? -1 : a.x > b.x ? 1 : 0;
       }
 
    }
@@ -3412,7 +3406,7 @@ public class Vec3 implements Comparable < Vec3 > {
       @Override
       public int compare ( final Vec3 a, final Vec3 b ) {
 
-         return a.y > b.y ? 1 : a.y < b.y ? -1 : 0;
+         return a.y < b.y ? -1 : a.y > b.y ? 1 : 0;
       }
 
    }
@@ -3433,7 +3427,7 @@ public class Vec3 implements Comparable < Vec3 > {
       @Override
       public int compare ( final Vec3 a, final Vec3 b ) {
 
-         return a.z > b.z ? 1 : a.z < b.z ? -1 : 0;
+         return a.z < b.z ? -1 : a.z > b.z ? 1 : 0;
       }
 
    }

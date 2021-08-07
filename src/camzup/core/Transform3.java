@@ -6,7 +6,8 @@ import camzup.core.Utils.EasingFuncObj;
 /**
  * Facilitates 3D affine transformations for entities.
  */
-public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
+public class Transform3 implements Comparable < Transform3 >, ISpatial3,
+   IOriented3, IVolume3 {
 
    /**
     * The transform's forward axis.
@@ -115,6 +116,20 @@ public class Transform3 implements ISpatial3, IOriented3, IVolume3 {
       final Vec3 scale ) {
 
       this.set(location, rotation, scale);
+   }
+
+   /**
+    * Compares this transform to another based on a comparison between
+    * locations.
+    *
+    * @param tr the other transform
+    *
+    * @return the evaluation
+    */
+   @Override
+   public int compareTo ( final Transform3 tr ) {
+
+      return this.location.compareTo(tr.location);
    }
 
    /**

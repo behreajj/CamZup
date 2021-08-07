@@ -54,7 +54,7 @@ class Index2 implements Comparable < Index2 > {
 
       final int a = this.hashCode();
       final int b = idx.hashCode();
-      return a > b ? 1 : a < b ? -1 : 0;
+      return a < b ? -1 : a > b ? 1 : 0;
    }
 
    /**

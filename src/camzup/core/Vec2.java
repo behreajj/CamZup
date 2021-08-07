@@ -61,12 +61,8 @@ public class Vec2 implements Comparable < Vec2 > {
    @Override
    public int compareTo ( final Vec2 v ) {
 
-      /* @formatter:off */
-      return this.y > v.y ?  1
-           : this.y < v.y ? -1
-           : this.x > v.x ?  1
-           : this.x < v.x ? -1 : 0;
-      /* @formatter:on */
+      return this.y < v.y ? -1 : this.y > v.y ? 1 : this.x < v.x ? -1 : this.x
+         > v.x ? 1 : 0;
    }
 
    /**
@@ -2990,7 +2986,7 @@ public class Vec2 implements Comparable < Vec2 > {
       @Override
       public int compare ( final Vec2 a, final Vec2 b ) {
 
-         return a.x > b.x ? 1 : a.x < b.x ? -1 : 0;
+         return a.x < b.x ? -1 : a.x > b.x ? 1 : 0;
       }
 
    }
@@ -3011,7 +3007,7 @@ public class Vec2 implements Comparable < Vec2 > {
       @Override
       public int compare ( final Vec2 a, final Vec2 b ) {
 
-         return a.y > b.y ? 1 : a.y < b.y ? -1 : 0;
+         return a.y < b.y ? -1 : a.y > b.y ? 1 : 0;
       }
 
    }

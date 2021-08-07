@@ -54,12 +54,8 @@ public class Complex implements Comparable < Complex > {
    @Override
    public int compareTo ( final Complex z ) {
 
-      /* @formatter:off */
-      return this.imag > z.imag ?  1
-           : this.imag < z.imag ? -1
-           : this.real > z.real ?  1
-           : this.real < z.real ? -1 : 0;
-      /* @formatter:on */
+      return this.imag < z.imag ? -1 : this.imag > z.imag ? 1 : this.real
+         < z.real ? -1 : this.real > z.real ? 1 : 0;
    }
 
    /**
