@@ -195,8 +195,10 @@ public class KnotAnim implements Comparable < KnotAnim > {
     */
    public KnotAnim rotateX ( final float radians ) {
 
-      final float halfRad = Utils.modRadians(radians) * 0.5f;
-      return this.rotateX(Utils.cos(halfRad), Utils.sin(halfRad));
+      final double halfRad = Utils.modRadians(radians) * 0.5d;
+      final float cosa = ( float ) Math.cos(halfRad);
+      final float sina = ( float ) Math.sin(halfRad);
+      return this.rotateX(cosa, sina);
    }
 
    /**
@@ -232,8 +234,10 @@ public class KnotAnim implements Comparable < KnotAnim > {
     */
    public KnotAnim rotateY ( final float radians ) {
 
-      final float halfRad = Utils.modRadians(radians) * 0.5f;
-      return this.rotateY(Utils.cos(halfRad), Utils.sin(halfRad));
+      final double halfRad = Utils.modRadians(radians) * 0.5d;
+      final float cosa = ( float ) Math.cos(halfRad);
+      final float sina = ( float ) Math.sin(halfRad);
+      return this.rotateY(cosa, sina);
    }
 
    /**
@@ -269,8 +273,10 @@ public class KnotAnim implements Comparable < KnotAnim > {
     */
    public KnotAnim rotateZ ( final float radians ) {
 
-      final float halfRad = Utils.modRadians(radians) * 0.5f;
-      return this.rotateZ(Utils.cos(halfRad), Utils.sin(halfRad));
+      final double halfRad = Utils.modRadians(radians) * 0.5d;
+      final float cosa = ( float ) Math.cos(halfRad);
+      final float sina = ( float ) Math.sin(halfRad);
+      return this.rotateZ(cosa, sina);
    }
 
    /**

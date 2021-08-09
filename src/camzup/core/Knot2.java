@@ -355,7 +355,10 @@ public class Knot2 implements Comparable < Knot2 > {
     */
    public Knot2 rotateForeHandle ( final float radians ) {
 
-      return this.rotateForeHandle(Utils.cos(radians), Utils.sin(radians));
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
+      return this.rotateForeHandle(cosa, sina);
    }
 
    /**
@@ -390,7 +393,10 @@ public class Knot2 implements Comparable < Knot2 > {
     */
    public Knot2 rotateHandles ( final float radians ) {
 
-      return this.rotateHandles(Utils.cos(radians), Utils.sin(radians));
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
+      return this.rotateHandles(cosa, sina);
    }
 
    /**
@@ -424,7 +430,10 @@ public class Knot2 implements Comparable < Knot2 > {
     */
    public Knot2 rotateRearHandle ( final float radians ) {
 
-      return this.rotateRearHandle(Utils.cos(radians), Utils.sin(radians));
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
+      return this.rotateRearHandle(cosa, sina);
    }
 
    /**
@@ -459,7 +468,10 @@ public class Knot2 implements Comparable < Knot2 > {
     */
    public Knot2 rotateZ ( final float radians ) {
 
-      return this.rotateZ(Utils.cos(radians), Utils.sin(radians));
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
+      return this.rotateZ(cosa, sina);
    }
 
    /**

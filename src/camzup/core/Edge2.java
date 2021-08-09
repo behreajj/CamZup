@@ -120,8 +120,9 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public Edge2 rotateZGlobal ( final float radians ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
 
       return this.rotateZGlobal(cosa, sina);
    }
@@ -195,8 +196,10 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public Edge2 rotateZLocal ( final float radians, final Vec2 center ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
+
       return this.rotateZLocal(cosa, sina, center);
    }
 

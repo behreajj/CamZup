@@ -454,6 +454,20 @@ public class Bounds3 implements Comparable < Bounds3 > {
    }
 
    /**
+    * Returns a boundary encompassing the CIE L*a*b* color space, with a
+    * minimum at (-110.0, -110.0, -1.0) and a maximum of (110.0, 110.0,
+    * 101.0).
+    *
+    * @param target the output bounds
+    *
+    * @return the CIE LAB bounds
+    */
+   public static Bounds3 cieLab ( final Bounds3 target ) {
+
+      return target.set(-110.0f, -110.0f, -1.0f, 110.0f, 110.0f, 101.0f);
+   }
+
+   /**
     * Evaluates whether a point is within the bounding volume, lower bounds
     * inclusive, upper bounds exclusive. For cases where multiple bounds must
     * cover an volume without overlap or gaps.
@@ -856,6 +870,36 @@ public class Bounds3 implements Comparable < Bounds3 > {
       }
 
       return false;
+   }
+
+   /**
+    * Returns a boundary encompassing a signed unit cube in the range [-1.0,
+    * 1.0] .
+    *
+    * @param target the output bounds
+    *
+    * @return the unit cube
+    */
+   public static Bounds3 unitCubeSigned ( final Bounds3 target ) {
+
+      return target.set(-1.0f - IUtils.EPSILON * 2.0f, -1.0f - IUtils.EPSILON
+         * 2.0f, -1.0f - IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f,
+         1.0f + IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f);
+   }
+
+   /**
+    * Returns a boundary encompassing an unsigned unit cube in the range
+    * [-1.0, 1.0] .
+    *
+    * @param target the output bounds
+    *
+    * @return the unit cube
+    */
+   public static Bounds3 unitCubeUnsigned ( final Bounds3 target ) {
+
+      return target.set(-IUtils.EPSILON * 2.0f, -IUtils.EPSILON * 2.0f,
+         -IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f, 1.0f
+            + IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f);
    }
 
    /**

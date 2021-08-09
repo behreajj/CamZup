@@ -977,7 +977,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    @Override
    public void rotateX ( final float radians ) {
 
-      this.scaleImpl(1.0f, Utils.cos(radians), 1.0f);
+      this.scaleImpl(1.0f, ( float ) Math.cos(radians), 1.0f);
    }
 
    /**
@@ -989,7 +989,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    @Override
    public void rotateY ( final float radians ) {
 
-      this.scaleImpl(Utils.cos(radians), 1.0f, 1.0f);
+      this.scaleImpl(( float ) Math.cos(radians), 1.0f, 1.0f);
    }
 
    /**

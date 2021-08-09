@@ -871,7 +871,7 @@ public abstract class PMatAux {
     */
    public static String toString ( final PMatrix2D m ) {
 
-      return PMatAux.toString(m, 4);
+      return PMatAux.toString(m, IUtils.FIXED_PRINT);
    }
 
    /**
@@ -888,22 +888,14 @@ public abstract class PMatAux {
       sb.append('\n');
       sb.append('[');
       sb.append(' ');
-      sb.append(Utils.toFixed(m.m00, places));
-      sb.append(',');
-      sb.append(' ');
-      sb.append(Utils.toFixed(m.m01, places));
-      sb.append(',');
-      sb.append(' ');
+      sb.append(Utils.toFixed(m.m00, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m01, places)).append(',').append(' ');
       sb.append(Utils.toFixed(m.m02, places));
       sb.append(',');
       sb.append(' ');
       sb.append('\n');
-      sb.append(Utils.toFixed(m.m10, places));
-      sb.append(',');
-      sb.append(' ');
-      sb.append(Utils.toFixed(m.m11, places));
-      sb.append(',');
-      sb.append(' ');
+      sb.append(Utils.toFixed(m.m10, places)).append(',').append(' ');
+      sb.append(Utils.toFixed(m.m11, places)).append(',').append(' ');
       sb.append(Utils.toFixed(m.m12, places));
       sb.append(' ');
       sb.append(']');
@@ -921,7 +913,7 @@ public abstract class PMatAux {
     */
    public static String toString ( final PMatrix3D m ) {
 
-      return PMatAux.toString(m, 4);
+      return PMatAux.toString(m, IUtils.FIXED_PRINT);
    }
 
    /**

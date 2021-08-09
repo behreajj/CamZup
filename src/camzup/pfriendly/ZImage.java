@@ -402,8 +402,6 @@ public class ZImage extends PImage {
     */
    public static PImage dither ( final PImage target, final Color[] palette ) {
 
-      // TODO: Consider using linear RGB comparison instead?
-
       final float fs_1_16 = 0.0625f;
       final float fs_3_16 = 0.1875f;
       final float fs_5_16 = 0.3125f;
@@ -411,6 +409,7 @@ public class ZImage extends PImage {
 
       final int octCapacity = 16;
       final float queryRad = 175.0f;
+      // final float queryRad = 5.0f;
 
       final Color lrgb = new Color();
       final Vec4 xyz = new Vec4();
@@ -419,8 +418,11 @@ public class ZImage extends PImage {
       final int palLen = palette.length;
       final HashMap < Integer, Integer > ptToHexDict = new HashMap <>(palLen,
          0.75f);
-      final Octree octree = new Octree(new Bounds3(-110.0f, -110.0f, -1.0f,
-         110.0f, 110.0f, 101.0f), octCapacity);
+      final Octree octree = new Octree(Bounds3.cieLab(new Bounds3()),
+         octCapacity);
+      // final Octree octree = new Octree(Bounds3.unitCubeUnsigned(new
+      // Bounds3()),
+      // octCapacity);
 
       for ( int i = 0; i < palLen; ++i ) {
          final Color palEntry = palette[i];
@@ -429,6 +431,7 @@ public class ZImage extends PImage {
          Color.xyzaToLaba(xyz, lab);
 
          final Vec3 point = new Vec3(lab.x, lab.y, lab.z);
+         // final Vec3 point = new Vec3(lrgb.r, lrgb.g, lrgb.b);
          ptToHexDict.put(point.hashCode(), Color.toHexInt(palEntry));
          octree.insert(point);
       }
@@ -454,6 +457,7 @@ public class ZImage extends PImage {
          Color.lRgbaToXyza(lrgb, xyz);
          Color.xyzaToLaba(xyz, lab);
          query.set(lab.x, lab.y, lab.z);
+         // query.set(lrgb.r, lrgb.g, lrgb.b);
 
          int trgHex = 0x00000000;
          int rTrg = 0;

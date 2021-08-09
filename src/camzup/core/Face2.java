@@ -159,8 +159,9 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     */
    public Face2 rotateZGlobal ( final float radians ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
       return this.rotateZGlobal(cosa, sina);
    }
 
@@ -230,8 +231,9 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     */
    public Face2 rotateZLocal ( final float radians, final Vec2 center ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
       return this.rotateZLocal(cosa, sina, center);
    }
 

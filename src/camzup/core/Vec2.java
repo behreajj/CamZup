@@ -2465,13 +2465,11 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param target  the output vector
     *
     * @return the rotated vector
-    *
-    * @see Utils#cos(float)
     */
    public static Vec2 rotateX ( final Vec2 v, final float radians,
       final Vec2 target ) {
 
-      return target.set(v.x, v.y * Utils.cos(radians));
+      return target.set(v.x, v.y * ( float ) Math.cos(radians));
    }
 
    /**
@@ -2483,13 +2481,11 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param target  the output vector
     *
     * @return the rotated vector
-    *
-    * @see Utils#cos(float)
     */
    public static Vec2 rotateY ( final Vec2 v, final float radians,
       final Vec2 target ) {
 
-      return target.set(v.x * Utils.cos(radians), v.y);
+      return target.set(v.x * ( float ) Math.cos(radians), v.y);
    }
 
    /**

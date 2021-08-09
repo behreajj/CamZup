@@ -849,9 +849,9 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    public Transform3 set ( final Transform2 source ) {
 
       this.location.set(source.location, 0.0f);
-      final float halfRadians = Utils.modRadians(source.rotation) * 0.5f;
-      this.rotation.set(Utils.cos(halfRadians), 0.0f, 0.0f, Utils.sin(
-         halfRadians));
+      final double halfRadians = Utils.modRadians(source.rotation) * 0.5d;
+      this.rotation.set(( float ) Math.cos(halfRadians), 0.0f, 0.0f,
+         ( float ) Math.sin(halfRadians));
       this.updateAxes();
       this.scale.set(source.scale, 1.0f);
 

@@ -573,17 +573,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Creates a surface.
-    */
-   @Override
-   public PSurface createSurface ( ) {
-
-      /* In case you ever need or want to extend this surface. */
-      this.surface = new PSurfaceJOGL(this);
-      return this.surface;
-   }
-
-   /**
     * Draws a curved line on the screen. The first three parameters specify
     * the start control point; the last three parameters specify the ending
     * control point. The middle parameters specify the start and stop of the
@@ -3801,7 +3790,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float exponent ) {
 
       final int num2 = num + num;
-      this.lightSpotParameters[num2] = Utils.max(0.0f, Utils.cos(radians));
+      this.lightSpotParameters[num2] = Utils.max(0.0f, ( float ) Math.cos(
+         radians));
       this.lightSpotParameters[num2 + 1] = exponent;
    }
 

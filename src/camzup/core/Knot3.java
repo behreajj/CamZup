@@ -424,7 +424,10 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    public Knot3 rotate ( final float radians, final Vec3 axis ) {
 
-      return this.rotate(Utils.cos(radians), Utils.sin(radians), axis);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
+      return this.rotate(cosa, sina, axis);
    }
 
    /**
@@ -517,7 +520,10 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    public Knot3 rotateX ( final float radians ) {
 
-      return this.rotateX(Utils.cos(radians), Utils.sin(radians));
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
+      return this.rotateX(cosa, sina);
    }
 
    /**
@@ -552,7 +558,10 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    public Knot3 rotateY ( final float radians ) {
 
-      return this.rotateY(Utils.cos(radians), Utils.sin(radians));
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
+      return this.rotateY(cosa, sina);
    }
 
    /**
@@ -587,7 +596,10 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    public Knot3 rotateZ ( final float radians ) {
 
-      return this.rotateZ(Utils.cos(radians), Utils.sin(radians));
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
+      return this.rotateZ(cosa, sina);
    }
 
    /**

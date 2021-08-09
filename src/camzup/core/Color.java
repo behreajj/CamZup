@@ -184,6 +184,9 @@ public class Color implements Comparable < Color > {
     */
    public float getAlphaFirst ( final int index ) {
 
+      // TODO: These getters need to be expanded to use ColorChannel options in
+      // order to match toArray.
+
       switch ( index ) {
          case 0:
          case -4:

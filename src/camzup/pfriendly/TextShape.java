@@ -267,16 +267,16 @@ public abstract class TextShape {
                   newLineFlag = false;
                } else {
 
-                  final String name = Character.toString(character);
-                  final CurveEntity2 entity = new CurveEntity2(name);
+                  final CurveEntity2 entity = new CurveEntity2(Character
+                     .toString(character));
                   entities.add(entity);
                   TextShape.processGlyphCurve(font, frc, null, detail,
                      character, entity.curves);
 
-                  final PFont.Glyph glyph = pfont.getGlyph(character);
-
                   tr.set(xCursor, yCursor);
                   entity.moveTo(tr);
+
+                  final PFont.Glyph glyph = pfont.getGlyph(character);
                   xCursor += ( glyph.width + kerning ) * scalar;
                   if ( !newLineFlag ) { xCursor += glyph.leftExtent * scalar; }
                   newLineFlag = false;

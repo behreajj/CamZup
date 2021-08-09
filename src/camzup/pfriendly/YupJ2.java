@@ -728,17 +728,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Creates a surface.
-    */
-   @Override
-   public PSurface createSurface ( ) {
-
-      /* In case you ever need or want to extend this surface. */
-      this.surface = new ZSurfaceAwt(this);
-      return this.surface;
-   }
-
-   /**
     * Draws a curve between four points.
     *
     * @param a the first point

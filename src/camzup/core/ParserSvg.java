@@ -300,7 +300,7 @@ public abstract class ParserSvg {
       final float incr = phiDelta / segCount;
       final float tanIncr = Utils.tan(incr * 0.5f);
       final float handle = Utils.sqrt(4.0f + 3.0f * tanIncr * tanIncr) - 1.0f;
-      final float b = Utils.sin(incr) * handle * IUtils.ONE_THIRD;
+      final float b = ( float ) Math.sin(incr) * handle * IUtils.ONE_THIRD;
 
       /* To determine when to wrap to initial point. */
       final int segLast = segCount - 1;
@@ -319,9 +319,9 @@ public abstract class ParserSvg {
 
       for ( int i = 0; i < segCount; ++i ) {
 
-         final float eta = phi1 + j * incr;
-         final float cosEta = Utils.cos(eta);
-         final float sinEta = Utils.sin(eta);
+         final double eta = phi1 + j * incr;
+         final float cosEta = ( float ) Math.cos(eta);
+         final float sinEta = ( float ) Math.sin(eta);
 
          rxSinEta = -rx * sinEta;
          ryCosEta = ry * cosEta;

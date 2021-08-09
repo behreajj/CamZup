@@ -415,8 +415,8 @@ public abstract class Sdf {
 
       final float a = angle + Utils.atan2(point.y, -point.x);
       final float b = IUtils.TAU / Utils.max(3, vertices);
-      return Utils.cos(b * Utils.floor(0.5f + a / b) - a) * Utils.hypot(point.x,
-         point.y) - bounds * 0.5f;
+      return ( float ) Math.cos(b * Utils.floor(0.5f + a / b) - a) * Utils
+         .hypot(point.x, point.y) - bounds * 0.5f;
    }
 
    /**

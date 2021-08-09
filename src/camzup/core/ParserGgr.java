@@ -211,8 +211,8 @@ public abstract class ParserGgr {
 
                   case ParserGgr.BLEND_SINE: /* 2 */
 
-                     fac = 0.5f * ( Utils.sin(IUtils.PI * fac - IUtils.HALF_PI)
-                        + 1.0f );
+                     fac = 0.5f * ( ( float ) Math.sin(IUtils.PI * fac
+                        - IUtils.HALF_PI) + 1.0f );
 
                      break;
 

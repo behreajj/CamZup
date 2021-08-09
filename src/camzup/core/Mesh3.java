@@ -1295,8 +1295,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 rotate ( final float radians, final Vec3 axis ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
 
       final int vsLen = this.coords.length;
       for ( int i = 0; i < vsLen; ++i ) {
@@ -1336,8 +1337,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 rotateX ( final float radians ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
 
       final int vsLen = this.coords.length;
       for ( int i = 0; i < vsLen; ++i ) {
@@ -1359,8 +1361,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 rotateY ( final float radians ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
 
       final int vsLen = this.coords.length;
       for ( int i = 0; i < vsLen; ++i ) {
@@ -1382,8 +1385,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 rotateZ ( final float radians ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
 
       final int vsLen = this.coords.length;
       for ( int i = 0; i < vsLen; ++i ) {

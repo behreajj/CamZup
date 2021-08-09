@@ -548,8 +548,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public Curve2 rotateZ ( final float radians ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       while ( itr.hasNext() ) { itr.next().rotateZ(cosa, sina); }

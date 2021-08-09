@@ -936,8 +936,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public Mesh2 rotateZ ( final float radians ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
 
       final int vsLen = this.coords.length;
       for ( int i = 0; i < vsLen; ++i ) {
@@ -2051,8 +2052,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final float theta = ( 1.0f - step ) * origAngle + step * destAngle;
 
          // TODO: Switch back to scNorm?
-         final float cosa = Utils.cos(theta);
-         final float sina = Utils.sin(theta);
+         final double radd = theta;
+         final float cosa = ( float ) Math.cos(radd);
+         final float sina = ( float ) Math.sin(radd);
 
          final Vec2 v0 = vs[i];
          v0.set(0.5f * cosa, 0.5f * sina);

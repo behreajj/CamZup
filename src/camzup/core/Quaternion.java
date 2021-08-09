@@ -784,8 +784,6 @@ public class Quaternion implements Comparable < Quaternion > {
     * @see Vec3#magSq(Vec3)
     * @see Utils#approx(float, float)
     * @see Utils#invSqrtUnchecked(float)
-    * @see Utils#cos(float)
-    * @see Utils#sin(float)
     */
    public static Quaternion fromAxisAngle ( final float radians,
       final Vec3 axis, final Quaternion target ) {
@@ -804,12 +802,13 @@ public class Quaternion implements Comparable < Quaternion > {
             nz *= amInv;
          }
 
-         final float modRad = radians % IUtils.TAU;
-         final float halfAngle = 0.5f * modRad;
-         final float sinHalf = Utils.sin(halfAngle);
+         final double modRad = radians % IUtils.TAU_D;
+         final double halfAngle = 0.5d * modRad;
+         final double sinHalf = Math.sin(halfAngle);
 
-         return target.set(Utils.cos(halfAngle), nx * sinHalf, ny * sinHalf, nz
-            * sinHalf);
+         return target.set(( float ) Math.cos(halfAngle), ( float ) ( nx
+            * sinHalf ), ( float ) ( ny * sinHalf ), ( float ) ( nz
+               * sinHalf ));
       }
 
       return target.reset();
@@ -1975,8 +1974,8 @@ public class Quaternion implements Comparable < Quaternion > {
       if ( sinTheta > IUtils.EPSILON ) {
          theta = Utils.acos(dotp);
          thetaStep = theta * step;
-         u = sinTheta * Utils.sin(theta - thetaStep);
-         v = sinTheta * Utils.sin(thetaStep);
+         u = sinTheta * ( float ) Math.sin(theta - thetaStep);
+         v = sinTheta * ( float ) Math.sin(thetaStep);
       }
 
       float aw = u * ap0w + v * fw;
@@ -2017,8 +2016,8 @@ public class Quaternion implements Comparable < Quaternion > {
       if ( sinTheta > IUtils.EPSILON ) {
          theta = Utils.acos(dotp);
          thetaStep = theta * step;
-         u = sinTheta * Utils.sin(theta - thetaStep);
-         v = sinTheta * Utils.sin(thetaStep);
+         u = sinTheta * ( float ) Math.sin(theta - thetaStep);
+         v = sinTheta * ( float ) Math.sin(thetaStep);
       }
 
       float bw = u * cp0w + v * fw;
@@ -2059,8 +2058,8 @@ public class Quaternion implements Comparable < Quaternion > {
       if ( sinTheta > IUtils.EPSILON ) {
          theta = Utils.acos(dotp);
          thetaStep = theta * step;
-         u = sinTheta * Utils.sin(theta - thetaStep);
-         v = sinTheta * Utils.sin(thetaStep);
+         u = sinTheta * ( float ) Math.sin(theta - thetaStep);
+         v = sinTheta * ( float ) Math.sin(thetaStep);
       }
 
       float cw = u * cp1w + v * fw;
@@ -2101,8 +2100,8 @@ public class Quaternion implements Comparable < Quaternion > {
       if ( sinTheta > IUtils.EPSILON ) {
          theta = Utils.acos(dotp);
          thetaStep = theta * step;
-         u = sinTheta * Utils.sin(theta - thetaStep);
-         v = sinTheta * Utils.sin(thetaStep);
+         u = sinTheta * ( float ) Math.sin(theta - thetaStep);
+         v = sinTheta * ( float ) Math.sin(thetaStep);
       }
 
       float abw = u * aw + v * fw;
@@ -2143,8 +2142,8 @@ public class Quaternion implements Comparable < Quaternion > {
       if ( sinTheta > IUtils.EPSILON ) {
          theta = Utils.acos(dotp);
          thetaStep = theta * step;
-         u = sinTheta * Utils.sin(theta - thetaStep);
-         v = sinTheta * Utils.sin(thetaStep);
+         u = sinTheta * ( float ) Math.sin(theta - thetaStep);
+         v = sinTheta * ( float ) Math.sin(thetaStep);
       }
 
       float bcw = u * bw + v * fw;
@@ -2185,8 +2184,8 @@ public class Quaternion implements Comparable < Quaternion > {
       if ( sinTheta > IUtils.EPSILON ) {
          theta = Utils.acos(dotp);
          thetaStep = theta * step;
-         u = sinTheta * Utils.sin(theta - thetaStep);
-         v = sinTheta * Utils.sin(thetaStep);
+         u = sinTheta * ( float ) Math.sin(theta - thetaStep);
+         v = sinTheta * ( float ) Math.sin(thetaStep);
       }
 
       float dw = u * abw + v * fw;
@@ -2509,7 +2508,6 @@ public class Quaternion implements Comparable < Quaternion > {
     * @see Quaternion#normalize(Quaternion, Quaternion)
     * @see Utils#acos(float)
     * @see Utils#invSqrtUnchecked(float)
-    * @see Utils#sin(float)
     */
    static Quaternion slerpNoInvertUnclamped ( final Quaternion origin,
       final Quaternion dest, final float step, final Quaternion target ) {
@@ -2545,8 +2543,8 @@ public class Quaternion implements Comparable < Quaternion > {
       if ( sinTheta > IUtils.EPSILON ) {
          final float theta = Utils.acos(dotp);
          final float thetaStep = theta * step;
-         u = sinTheta * Utils.sin(theta - thetaStep);
-         v = sinTheta * Utils.sin(thetaStep);
+         u = sinTheta * ( float ) Math.sin(theta - thetaStep);
+         v = sinTheta * ( float ) Math.sin(thetaStep);
       }
 
       /* Interpolate. */
@@ -2614,8 +2612,8 @@ public class Quaternion implements Comparable < Quaternion > {
       if ( sinTheta > IUtils.EPSILON ) {
          final float theta = Utils.acos(dotp);
          final float thetaStep = theta * step;
-         u = sinTheta * Utils.sin(theta - thetaStep);
-         v = sinTheta * Utils.sin(thetaStep);
+         u = sinTheta * ( float ) Math.sin(theta - thetaStep);
+         v = sinTheta * ( float ) Math.sin(thetaStep);
       }
 
       /* Interpolate. */

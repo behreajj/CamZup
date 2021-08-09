@@ -1443,8 +1443,15 @@ public abstract class Simplex extends Generative {
    public static float flow ( final float x, final float y, final float z,
       final float radians, final int seed, final Vec3 deriv ) {
 
-      return Simplex.flow(x, y, z, Utils.cos(radians), Utils.sin(radians), seed,
-         deriv);
+      // final double radd = radians;
+      // return Simplex.flow(x, y, z, ( float ) Math.cos(radd), ( float )
+      // Math.sin(
+      // radd), seed, deriv);
+
+      final float radNorm = radians * IUtils.ONE_TAU;
+      final float cosa = Utils.scNorm(radNorm);
+      final float sina = Utils.scNorm(radNorm - 0.25f);
+      return Simplex.flow(x, y, z, cosa, sina, seed, deriv);
    }
 
    /**
@@ -1478,8 +1485,14 @@ public abstract class Simplex extends Generative {
    public static float flow ( final float x, final float y, final float radians,
       final int seed, final Vec2 deriv ) {
 
-      return Simplex.flow(x, y, Utils.cos(radians), Utils.sin(radians), seed,
-         deriv);
+      // final double radd = radians;
+      // return Simplex.flow(x, y, ( float ) Math.cos(radd), ( float ) Math.sin(
+      // radd), seed, deriv);
+
+      final float radNorm = radians * IUtils.ONE_TAU;
+      final float cosa = Utils.scNorm(radNorm);
+      final float sina = Utils.scNorm(radNorm - 0.25f);
+      return Simplex.flow(x, y, cosa, sina, seed, deriv);
    }
 
    /**

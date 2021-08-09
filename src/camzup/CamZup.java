@@ -148,6 +148,7 @@ public class CamZup {
       mesh3.clean();
       final MeshEntity3 me3 = new MeshEntity3(mesh3);
       System.out.println(me3.toBlenderCode());
+
       // Edge3[] edges = mesh3.getEdgesUndirected();
       // for ( Edge3 edge : edges ) { System.out.println(edge); }
       // System.out.println(mesh3.getEdgesUndirected().length);

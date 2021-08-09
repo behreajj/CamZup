@@ -793,4 +793,32 @@ public class Bounds2 implements Comparable < Bounds2 > {
       return false;
    }
 
+   /**
+    * Returns a boundary encompassing a signed unit square in the range [-1.0,
+    * 1.0] .
+    *
+    * @param target the output bounds
+    *
+    * @return the unit square
+    */
+   public static Bounds2 unitSquareSigned ( final Bounds2 target ) {
+
+      return target.set(-1.0f - IUtils.EPSILON * 2.0f, -1.0f - IUtils.EPSILON
+         * 2.0f, 1.0f + IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f);
+   }
+
+   /**
+    * Returns a boundary encompassing an unsigned unit square in the range
+    * [-1.0, 1.0] .
+    *
+    * @param target the output bounds
+    *
+    * @return the unit square
+    */
+   public static Bounds2 unitSquareUnsigned ( final Bounds2 target ) {
+
+      return target.set(-IUtils.EPSILON * 2.0f, -IUtils.EPSILON * 2.0f, 1.0f
+         + IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f);
+   }
+
 }

@@ -1087,9 +1087,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * format. Assumes a linear gradient with an origin and destination
     * point.<br>
     * <br>
-    * If gamma is not 1.0, a filter is applied that transforms the gradient to
-    * the adjusted color space. <br>
-    * <br>
     * Because SVG gradients require a <code>defs</code> tag, this class is not
     * compatible with {@link ISvgWritable}. This method is a convenience only.
     *

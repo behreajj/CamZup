@@ -85,28 +85,28 @@ public class ImageEntity3 extends MeshEntity3 {
       final Vec3 meshOff = new Vec3();
 
       switch ( alignHoriz ) {
-         case PConstants.LEFT:
+         case PConstants.LEFT: /* 37 */
             meshOff.x = 0.5f * meshDim.x;
             break;
 
-         case PConstants.RIGHT:
+         case PConstants.RIGHT: /* 39 */
             meshOff.x = -0.5f * meshDim.x;
             break;
 
-         case PConstants.CENTER:
+         case PConstants.CENTER: /* 3 */
          default:
       }
 
       switch ( alignVert ) {
-         case PConstants.TOP:
+         case PConstants.TOP: /* 101 */
             meshOff.y = -0.5f * meshDim.y;
             break;
 
-         case PConstants.BOTTOM:
+         case PConstants.BOTTOM: /* 102 */
             meshOff.y = 0.5f * meshDim.y;
             break;
 
-         case PConstants.CENTER:
+         case PConstants.CENTER: /* 3 */
          default:
       }
 

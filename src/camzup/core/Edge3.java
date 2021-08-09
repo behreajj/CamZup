@@ -140,8 +140,9 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateGlobal ( final float radians, final Vec3 axis ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
       return this.rotateGlobal(cosa, sina, axis);
    }
 
@@ -215,8 +216,9 @@ public class Edge3 implements Comparable < Edge3 > {
    public Edge3 rotateLocal ( final float radians, final Vec3 axis,
       final Vec3 center ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
       return this.rotateLocal(cosa, sina, axis, center);
    }
 
@@ -264,8 +266,9 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateXGlobal ( final float radians ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
       return this.rotateXGlobal(cosa, sina);
    }
 
@@ -337,8 +340,9 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateXLocal ( final float radians, final Vec3 center ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
       return this.rotateXLocal(cosa, sina, center);
    }
 
@@ -354,8 +358,9 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateYGlobal ( final float radians ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
       return this.rotateYGlobal(cosa, sina);
    }
 
@@ -427,8 +432,9 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateYLocal ( final float radians, final Vec3 center ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
       return this.rotateYLocal(cosa, sina, center);
    }
 
@@ -444,8 +450,9 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateZGlobal ( final float radians ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
       return this.rotateZGlobal(cosa, sina);
    }
 
@@ -517,8 +524,9 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateZLocal ( final float radians, final Vec3 center ) {
 
-      final float cosa = Utils.cos(radians);
-      final float sina = Utils.sin(radians);
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
       return this.rotateZLocal(cosa, sina, center);
    }
 

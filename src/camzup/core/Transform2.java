@@ -862,9 +862,6 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     * @param pyCd the string builder
     *
     * @return the string builder
-    *
-    * @see Utils#cos(float)
-    * @see Utils#sin(float)
     */
    @Experimental
    StringBuilder toBlenderCode ( final StringBuilder pyCd ) {
@@ -875,7 +872,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
        * when it is extruded.
        */
       final String rotationMode = "\"QUATERNION\"";
-      final float halfRad = Utils.modRadians(this.rotation) * 0.5f;
+      final double halfRad = Utils.modRadians(this.rotation) * 0.5d;
       final float depth = ( this.scale.x + this.scale.y ) * 0.5f;
 
       pyCd.append("{\"location\": ");
@@ -883,9 +880,9 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
       pyCd.append(", \"rotation_mode\": ");
       pyCd.append(rotationMode);
       pyCd.append(", \"rotation_quaternion\": (");
-      Utils.toFixed(pyCd, Utils.cos(halfRad), 6);
+      Utils.toFixed(pyCd, ( float ) Math.cos(halfRad), 6);
       pyCd.append(", 0.0, 0.0, ");
-      Utils.toFixed(pyCd, Utils.sin(halfRad), 6);
+      Utils.toFixed(pyCd, ( float ) Math.sin(halfRad), 6);
       pyCd.append("), \"scale\": ");
       this.scale.toBlenderCode(pyCd, depth);
       pyCd.append("}");
