@@ -1823,7 +1823,7 @@ public class Color implements Comparable < Color > {
    public static Color quantize ( final Color c, final int levels,
       final Color target ) {
 
-      if ( levels < 2 || levels > 255 ) { return target.set(c); }
+      if ( levels < 1 || levels > 255 ) { return target.set(c); }
 
       final float levf = levels;
       final float delta = 1.0f / levf;
