@@ -33,11 +33,9 @@ import processing.core.PMatrix;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
-import processing.core.PSurface;
 
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
-import processing.opengl.PSurfaceJOGL;
 
 /**
  * An abstract parent class for Processing renderers based on OpenGL.

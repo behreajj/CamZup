@@ -139,18 +139,6 @@ public class CamZup {
       // for ( Edge2 edge : edges ) { System.out.println(edge); }
       // System.out.println(mesh2.getEdgesUndirected().length);
       // System.out.println(mesh2.getEdgesDirected().length);
-
-      // final Mesh3 mesh3 = new Mesh3();
-      //
-      // Mesh3.dodecahedron(mesh3);
-      // mesh3.clean();
-      // final MeshEntity3 me3 = new MeshEntity3(mesh3);
-      // System.out.println(me3.toBlenderCode());
-
-      // Edge3[] edges = mesh3.getEdgesUndirected();
-      // for ( Edge3 edge : edges ) { System.out.println(edge); }
-      // System.out.println(mesh3.getEdgesUndirected().length);
-      // System.out.println(mesh3.getEdgesDirected().length);
    }
 
    public static Quaternion squad ( final Quaternion q1, final Quaternion q2,

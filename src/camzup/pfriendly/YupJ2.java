@@ -39,7 +39,6 @@ import processing.core.PImage;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
-import processing.core.PSurface;
 
 import processing.awt.PGraphicsJava2D;
 

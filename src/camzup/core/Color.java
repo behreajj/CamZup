@@ -605,11 +605,11 @@ public class Color implements Comparable < Color > {
     *
     * @return the evaluation
     *
-    * @see Color#toHexInt(Color)
+    * @see Color#bitEq(Color, Color)
     */
    protected boolean equals ( final Color c ) {
 
-      return Color.toHexInt(this) == Color.toHexInt(c);
+      return Color.bitEq(this, c);
    }
 
    /**
@@ -725,6 +725,58 @@ public class Color implements Comparable < Color > {
          ( ( int ) ( a.a * 0xff + 0.5f ) &
            ( int ) ( b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
       /* @formatter:on */
+   }
+
+   /**
+    * Checks if two colors have equivalent red, green, blue and alpha channels
+    * when converted to bytes in [0, 255]. Uses overflow arithmetic, not
+    * saturation arithmetic.
+    *
+    * @param a the left comparisand
+    * @param b the right comparisand
+    *
+    * @return the equivalence
+    * 
+    * @see Color#bitEqAlpha(Color, Color)
+    * @see Color#bitEqRgb(Color, Color)
+    */
+   public static boolean bitEq ( final Color a, final Color b ) {
+
+      return Color.bitEqAlpha(a, b) && Color.bitEqRgb(a, b);
+   }
+
+   /**
+    * Checks if two colors have equivalent alpha channels when converted to
+    * bytes in [0, 255]. Uses overflow arithmetic, not saturation arithmetic.
+    *
+    * @param a the left comparisand
+    * @param b the right comparisand
+    *
+    * @return the equivalence
+    */
+   public static boolean bitEqAlpha ( final Color a, final Color b ) {
+
+      return ( ( int ) ( 0.5f + a.a * 0xff ) & 0xff ) == ( ( int ) ( 0.5f + a.a
+         * 0xff ) & 0xff );
+   }
+
+   /**
+    * Checks if two colors have equivalent red, green and blue channels when
+    * converted to bytes in [0, 255]. Uses overflow arithmetic, not saturation
+    * arithmetic.
+    *
+    * @param a the left comparisand
+    * @param b the right comparisand
+    *
+    * @return the equivalence
+    */
+   public static boolean bitEqRgb ( final Color a, final Color b ) {
+
+      return ( ( int ) ( 0.5f + a.b * 0xff ) & 0xff ) == ( ( int ) ( 0.5f + a.b
+         * 0xff ) & 0xff ) && ( ( int ) ( 0.5f + a.g * 0xff ) & 0xff )
+            == ( ( int ) ( 0.5f + a.g * 0xff ) & 0xff ) && ( ( int ) ( 0.5f
+               + a.r * 0xff ) & 0xff ) == ( ( int ) ( 0.5f + a.r * 0xff )
+                  & 0xff );
    }
 
    /**
@@ -2019,7 +2071,7 @@ public class Color implements Comparable < Color > {
       } else if ( diff < IUtils.ONE_255 ) {
          final float hue = light * ( 1.0f + Color.HSL_HUE_LIGHT ) + ( 1.0f
             - light ) * Color.HSL_HUE_SHADOW;
-         return target.set(hue % 1.0f, 0.0f, light, a);
+         return target.set(hue != 1.0f ? hue % 1.0f : 1.0f, 0.0f, light, a);
       } else {
          float hue;
          if ( Utils.approx(r, mx, IUtils.ONE_255) ) {
@@ -2101,7 +2153,7 @@ public class Color implements Comparable < Color > {
             } else {
                final float hue = light * ( 1.0f + Color.HSL_HUE_LIGHT ) + ( 1.0f
                   - light ) * Color.HSL_HUE_SHADOW;
-               return target.set(hue % 1.0f, 0.0f, mx, a);
+               return target.set(hue != 1.0f ? hue % 1.0f : 1.0f, 0.0f, mx, a);
             }
          } else {
             float hue;
