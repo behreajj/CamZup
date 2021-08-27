@@ -605,11 +605,11 @@ public class Color implements Comparable < Color > {
     *
     * @return the evaluation
     *
-    * @see Color#bitEq(Color, Color)
+    * @see Color#eqSat(Color, Color)
     */
    protected boolean equals ( final Color c ) {
 
-      return Color.bitEq(this, c);
+      return Color.eqSat(this, c);
    }
 
    /**
@@ -725,58 +725,6 @@ public class Color implements Comparable < Color > {
          ( ( int ) ( a.a * 0xff + 0.5f ) &
            ( int ) ( b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
       /* @formatter:on */
-   }
-
-   /**
-    * Checks if two colors have equivalent red, green, blue and alpha channels
-    * when converted to bytes in [0, 255]. Uses overflow arithmetic, not
-    * saturation arithmetic.
-    *
-    * @param a the left comparisand
-    * @param b the right comparisand
-    *
-    * @return the equivalence
-    * 
-    * @see Color#bitEqAlpha(Color, Color)
-    * @see Color#bitEqRgb(Color, Color)
-    */
-   public static boolean bitEq ( final Color a, final Color b ) {
-
-      return Color.bitEqAlpha(a, b) && Color.bitEqRgb(a, b);
-   }
-
-   /**
-    * Checks if two colors have equivalent alpha channels when converted to
-    * bytes in [0, 255]. Uses overflow arithmetic, not saturation arithmetic.
-    *
-    * @param a the left comparisand
-    * @param b the right comparisand
-    *
-    * @return the equivalence
-    */
-   public static boolean bitEqAlpha ( final Color a, final Color b ) {
-
-      return ( ( int ) ( 0.5f + a.a * 0xff ) & 0xff ) == ( ( int ) ( 0.5f + a.a
-         * 0xff ) & 0xff );
-   }
-
-   /**
-    * Checks if two colors have equivalent red, green and blue channels when
-    * converted to bytes in [0, 255]. Uses overflow arithmetic, not saturation
-    * arithmetic.
-    *
-    * @param a the left comparisand
-    * @param b the right comparisand
-    *
-    * @return the equivalence
-    */
-   public static boolean bitEqRgb ( final Color a, final Color b ) {
-
-      return ( ( int ) ( 0.5f + a.b * 0xff ) & 0xff ) == ( ( int ) ( 0.5f + a.b
-         * 0xff ) & 0xff ) && ( ( int ) ( 0.5f + a.g * 0xff ) & 0xff )
-            == ( ( int ) ( 0.5f + a.g * 0xff ) & 0xff ) && ( ( int ) ( 0.5f
-               + a.r * 0xff ) & 0xff ) == ( ( int ) ( 0.5f + a.r * 0xff )
-                  & 0xff );
    }
 
    /**
@@ -1027,6 +975,59 @@ public class Color implements Comparable < Color > {
    public static Color cyan ( final Color target ) {
 
       return target.set(0.0f, 1.0f, 1.0f, 1.0f);
+   }
+
+   /**
+    * Checks if two colors have equivalent alpha channels when converted to
+    * bytes in [0, 255]. Uses saturation arithmetic.
+    *
+    * @param a the left comparisand
+    * @param b the right comparisand
+    *
+    * @return the equivalence
+    */
+   public static boolean eqAlphaSat ( final Color a, final Color b ) {
+
+      return ( int ) ( 0.5f + Utils.clamp01(a.a) * 0xff ) == ( int ) ( 0.5f
+         + Utils.clamp01(b.a) * 0xff );
+   }
+
+   /**
+    * Checks if two colors have equivalent red, green and blue channels when
+    * converted to bytes in [0, 255]. Uses saturation arithmetic.
+    *
+    * @param a the left comparisand
+    * @param b the right comparisand
+    *
+    * @return the equivalence
+    */
+   public static boolean eqRgbSat ( final Color a, final Color b ) {
+
+      /* @formatter:off */
+      return ( int ) ( 0.5f + Utils.clamp01(a.b) * 0xff )
+          == ( int ) ( 0.5f + Utils.clamp01(b.b) * 0xff )
+          && ( int ) ( 0.5f + Utils.clamp01(a.g) * 0xff )
+          == ( int ) ( 0.5f + Utils.clamp01(b.g) * 0xff )
+          && ( int ) ( 0.5f + Utils.clamp01(a.r) * 0xff )
+          == ( int ) ( 0.5f + Utils.clamp01(b.r) * 0xff );
+      /* @formatter:on */
+   }
+
+   /**
+    * Checks if two colors have equivalent red, green, blue and alpha channels
+    * when converted to bytes in [0, 255]. Uses saturation arithmetic.
+    *
+    * @param a the left comparisand
+    * @param b the right comparisand
+    *
+    * @return the equivalence
+    *
+    * @see Color#eqAlphaSat(Color, Color)
+    * @see Color#eqRgbSat(Color, Color)
+    */
+   public static boolean eqSat ( final Color a, final Color b ) {
+
+      return Color.eqAlphaSat(a, b) && Color.eqRgbSat(a, b);
    }
 
    /**
