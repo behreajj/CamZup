@@ -642,7 +642,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          this.noFill();
          if ( material.useStroke ) {
             this.strokeWeight(material.strokeWeight);
-            this.stroke(Color.toHexInt(material.stroke));
+            this.stroke(Color.toHexIntWrap(material.stroke));
          } else {
             this.noStroke();
          }
@@ -1494,7 +1494,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    void ambientLight ( final Color clr ) {
 
-      this.ambientLight(Color.toHexInt(clr), this.lookTarget.x,
+      this.ambientLight(Color.toHexIntWrap(clr), this.lookTarget.x,
          this.lookTarget.y, this.lookTarget.z);
    }
 
@@ -1507,7 +1507,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    void ambientLight ( final Color clr, final Vec3 loc ) {
 
-      this.ambientLight(Color.toHexInt(clr), loc.x, loc.y, loc.z);
+      this.ambientLight(Color.toHexIntWrap(clr), loc.x, loc.y, loc.z);
    }
 
    /**
@@ -1574,7 +1574,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    void directionalLight ( final Color clr, final Vec3 dir ) {
 
-      this.directionalLight(Color.toHexInt(clr), dir.x, dir.y, dir.z);
+      this.directionalLight(Color.toHexIntWrap(clr), dir.x, dir.y, dir.z);
    }
 
    /**
@@ -1629,7 +1629,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    void pointLight ( final Color clr, final Vec3 loc ) {
 
-      this.pointLight(Color.toHexInt(clr), loc.x, loc.y, loc.z);
+      this.pointLight(Color.toHexIntWrap(clr), loc.x, loc.y, loc.z);
    }
 
    /**
@@ -1677,7 +1677,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    void spotLight ( final Color clr, final Vec3 loc, final Vec3 dir,
       final float angle, final float concentration ) {
 
-      this.spotLight(Color.toHexInt(this.aTemp), loc.x, loc.y, loc.z, dir.x,
+      this.spotLight(Color.toHexIntWrap(this.aTemp), loc.x, loc.y, loc.z, dir.x,
          dir.y, dir.z, angle, concentration);
    }
 

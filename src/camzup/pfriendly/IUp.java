@@ -35,7 +35,7 @@ public interface IUp {
     */
    default void background ( final Color c ) {
 
-      this.background(Color.toHexInt(c));
+      this.background(Color.toHexIntWrap(c));
    }
 
    /**
@@ -65,7 +65,7 @@ public interface IUp {
     *
     * @param c the color
     */
-   default void fill ( final Color c ) { this.fill(Color.toHexInt(c)); }
+   default void fill ( final Color c ) { this.fill(Color.toHexIntWrap(c)); }
 
    /**
     * Sets the renderer's current fill to the hexadecimal value.
@@ -170,7 +170,7 @@ public interface IUp {
     *
     * @param c the color
     */
-   default void stroke ( final Color c ) { this.stroke(Color.toHexInt(c)); }
+   default void stroke ( final Color c ) { this.stroke(Color.toHexIntWrap(c)); }
 
    /**
     * Sets the renderer's current stroke to the hexadecimal value.

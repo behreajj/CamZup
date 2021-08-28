@@ -76,6 +76,12 @@ public abstract class ParserGpl {
 
                      // TODO: Provision for when clrs.contains index, yet two
                      // colors are unequal?
+
+                     /*
+                      * It's possible that a GPL file could contain numbers
+                      * outside the range [0, 255]. Because colors are
+                      * unclamped, this doesn't matter.
+                      */
                      clrs.put(idx, new Color(Float.parseFloat(tokens[0])
                         * IUtils.ONE_255, Float.parseFloat(tokens[1])
                            * IUtils.ONE_255, Float.parseFloat(tokens[2])

@@ -234,7 +234,8 @@ public class ZImage extends PImage {
    public static PImage checker ( final Color a, final Color b, final int cols,
       final int rows, final PImage target ) {
 
-      return ZImage.checker(Color.toHexInt(a), Color.toHexInt(b), cols, rows,
+      return ZImage.checker(Color.toHexIntSat(a), Color.toHexIntSat(b), cols,
+         rows,
          target);
    }
 
@@ -432,7 +433,7 @@ public class ZImage extends PImage {
 
          final Vec3 point = new Vec3(lab.x, lab.y, lab.z);
          // final Vec3 point = new Vec3(lrgb.r, lrgb.g, lrgb.b);
-         ptToHexDict.put(point.hashCode(), Color.toHexInt(palEntry));
+         ptToHexDict.put(point.hashCode(), Color.toHexIntSat(palEntry));
          octree.insert(point);
       }
 
@@ -660,7 +661,7 @@ public class ZImage extends PImage {
     */
    public static PImage fill ( final Color fll, final PImage target ) {
 
-      return ZImage.fill(Color.toHexInt(fll), target);
+      return ZImage.fill(Color.toHexIntSat(fll), target);
    }
 
    /**
@@ -769,7 +770,7 @@ public class ZImage extends PImage {
    public static PImage fromText ( final PFont font, final String text,
       final Color fillClr ) {
 
-      return ZImage.fromText(font, text, Color.toHexInt(fillClr));
+      return ZImage.fromText(font, text, Color.toHexIntSat(fillClr));
    }
 
    /**
@@ -789,7 +790,7 @@ public class ZImage extends PImage {
    public static PImage fromText ( final PFont font, final String text,
       final Color fillClr, final int leading ) {
 
-      return ZImage.fromText(font, text, Color.toHexInt(fillClr), leading);
+      return ZImage.fromText(font, text, Color.toHexIntSat(fillClr), leading);
    }
 
    /**
@@ -810,7 +811,7 @@ public class ZImage extends PImage {
    public static PImage fromText ( final PFont font, final String text,
       final Color fillClr, final int leading, final int kerning ) {
 
-      return ZImage.fromText(font, text, Color.toHexInt(fillClr), leading,
+      return ZImage.fromText(font, text, Color.toHexIntSat(fillClr), leading,
          kerning);
    }
 
@@ -838,7 +839,7 @@ public class ZImage extends PImage {
       final Color fillClr, final int leading, final int kerning,
       final int textAlign ) {
 
-      return ZImage.fromText(font, text, Color.toHexInt(fillClr), leading,
+      return ZImage.fromText(font, text, Color.toHexIntSat(fillClr), leading,
          kerning, textAlign);
    }
 
@@ -1878,7 +1879,7 @@ public class ZImage extends PImage {
     */
    public static PImage tint ( final PImage source, final Color tintClr ) {
 
-      return ZImage.tint(source, Color.toHexInt(tintClr), 0.5f);
+      return ZImage.tint(source, Color.toHexIntSat(tintClr), 0.5f);
    }
 
    /**
@@ -1893,7 +1894,7 @@ public class ZImage extends PImage {
    public static PImage tint ( final PImage source, final Color tintClr,
       final float fac ) {
 
-      return ZImage.tint(source, Color.toHexInt(tintClr), fac);
+      return ZImage.tint(source, Color.toHexIntSat(tintClr), fac);
    }
 
    /**

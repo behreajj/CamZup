@@ -108,13 +108,13 @@ public class Color implements Comparable < Color > {
     *
     * @return the numeric code
     *
-    * @see Color#toHexInt(Color)
+    * @see Color#toHexIntWrap(Color)
     */
    @Override
    public int compareTo ( final Color c ) {
 
-      final int left = Color.toHexInt(this);
-      final int right = Color.toHexInt(c);
+      final int left = Color.toHexIntWrap(this);
+      final int right = Color.toHexIntWrap(c);
       return left > right ? 1 : left < right ? -1 : 0;
    }
 
@@ -126,26 +126,11 @@ public class Color implements Comparable < Color > {
     *
     * @return the equivalence
     *
-    * @see Color#toHexInt(Color)
+    * @see Color#toHexIntWrap(Color)
     */
    public boolean equals ( final int other ) {
 
-      return Color.toHexInt(this) == other;
-   }
-
-   /**
-    * Tests this color for equivalence to another based on its hexadecimal
-    * representation.
-    *
-    * @param other the color long
-    *
-    * @return the equivalence
-    *
-    * @see Color#toHexLong(Color)
-    */
-   public boolean equals ( final long other ) {
-
-      return Color.toHexLong(this) == other;
+      return Color.toHexIntWrap(this) == other;
    }
 
    /**
@@ -247,7 +232,7 @@ public class Color implements Comparable < Color > {
     * @return the hash code
     */
    @Override
-   public int hashCode ( ) { return Color.toHexInt(this); }
+   public int hashCode ( ) { return Color.toHexIntWrap(this); }
 
    /**
     * Resets this color to opaque white.
@@ -509,18 +494,18 @@ public class Color implements Comparable < Color > {
       final double gd = gamma;
 
       pyCd.append('(');
-      Utils.toFixed(pyCd, ( float ) Math.pow(this.r, gd), 6);
+      Utils.toFixed(pyCd, ( float ) Math.pow(Utils.clamp01(this.r), gd), 6);
       pyCd.append(',');
       pyCd.append(' ');
-      Utils.toFixed(pyCd, ( float ) Math.pow(this.g, gd), 6);
+      Utils.toFixed(pyCd, ( float ) Math.pow(Utils.clamp01(this.g), gd), 6);
       pyCd.append(',');
       pyCd.append(' ');
-      Utils.toFixed(pyCd, ( float ) Math.pow(this.b, gd), 6);
+      Utils.toFixed(pyCd, ( float ) Math.pow(Utils.clamp01(this.b), gd), 6);
 
       if ( inclAlpha ) {
          pyCd.append(',');
          pyCd.append(' ');
-         Utils.toFixed(pyCd, this.a, 6);
+         Utils.toFixed(pyCd, Utils.clamp01(this.a), 6);
       }
 
       pyCd.append(')');
@@ -530,7 +515,8 @@ public class Color implements Comparable < Color > {
    /**
     * Returns a String representation of the color compatible with .ggr (GIMP
     * gradient) file formats. Each channel, including alpha, is represented as
-    * a float in [0.0, 1.0] separated by a space.
+    * a float in [0.0, 1.0] separated by a space. Out of bounds values are
+    * clamped to the range.
     *
     * @return the string
     */
@@ -543,13 +529,13 @@ public class Color implements Comparable < Color > {
        */
 
       final StringBuilder ggr = new StringBuilder(96);
-      Utils.toFixed(ggr, this.r, 6);
+      Utils.toFixed(ggr, Utils.clamp01(this.r), 6);
       ggr.append(' ');
-      Utils.toFixed(ggr, this.g, 6);
+      Utils.toFixed(ggr, Utils.clamp01(this.g), 6);
       ggr.append(' ');
-      Utils.toFixed(ggr, this.b, 6);
+      Utils.toFixed(ggr, Utils.clamp01(this.b), 6);
       ggr.append(' ');
-      Utils.toFixed(ggr, this.a, 6);
+      Utils.toFixed(ggr, Utils.clamp01(this.a), 6);
       return ggr.toString();
    }
 
@@ -557,7 +543,7 @@ public class Color implements Comparable < Color > {
     * Appends a representation of the color compatible with .gpl (GIMP
     * palette) file formats to a {@link StringBuilder}. Each channel,
     * including alpha, is represented an unsigned byte in [0, 255] separated
-    * by a space.
+    * by a space. Saturation arithmetic is used.
     *
     * @param gpl the string builder
     *
@@ -565,11 +551,11 @@ public class Color implements Comparable < Color > {
     */
    StringBuilder toGplString ( final StringBuilder gpl ) {
 
-      gpl.append(( int ) ( this.r * 0xff + 0.5f ));
+      gpl.append(( int ) ( Utils.clamp01(this.r) * 0xff + 0.5f ));
       gpl.append(' ');
-      gpl.append(( int ) ( this.g * 0xff + 0.5f ));
+      gpl.append(( int ) ( Utils.clamp01(this.g) * 0xff + 0.5f ));
       gpl.append(' ');
-      gpl.append(( int ) ( this.b * 0xff + 0.5f ));
+      gpl.append(( int ) ( Utils.clamp01(this.b) * 0xff + 0.5f ));
       return gpl;
    }
 
@@ -605,11 +591,11 @@ public class Color implements Comparable < Color > {
     *
     * @return the evaluation
     *
-    * @see Color#eqSat(Color, Color)
+    * @see Color#eqSatArith(Color, Color)
     */
    protected boolean equals ( final Color c ) {
 
-      return Color.eqSat(this, c);
+      return Color.eqSatArith(this, c);
    }
 
    /**
@@ -785,12 +771,12 @@ public class Color implements Comparable < Color > {
     * @return the rotated color
     *
     * @see Color#fromHex(int, Color)
-    * @see Color#toHexInt(Color)
+    * @see Color#toHexIntWrap(Color)
     */
    public static Color bitRotateLeft ( final Color a, final int places,
       final Color target ) {
 
-      final int i = Color.toHexInt(a);
+      final int i = Color.toHexIntWrap(a);
       return Color.fromHex(i << places | i >>> -places, target);
    }
 
@@ -806,12 +792,12 @@ public class Color implements Comparable < Color > {
     * @return the rotated color
     *
     * @see Color#fromHex(int, Color)
-    * @see Color#toHexInt(Color)
+    * @see Color#toHexIntWrap(Color)
     */
    public static Color bitRotateRight ( final Color a, final int places,
       final Color target ) {
 
-      final int i = Color.toHexInt(a);
+      final int i = Color.toHexIntWrap(a);
       return Color.fromHex(i >>> places | i << -places, target);
    }
 
@@ -827,12 +813,12 @@ public class Color implements Comparable < Color > {
     * @return the shifted color
     *
     * @see Color#fromHex(int, Color)
-    * @see Color#toHexInt(Color)
+    * @see Color#toHexIntWrap(Color)
     */
    public static Color bitShiftLeft ( final Color a, final int places,
       final Color target ) {
 
-      return Color.fromHex(Color.toHexInt(a) << places, target);
+      return Color.fromHex(Color.toHexIntWrap(a) << places, target);
    }
 
    /**
@@ -847,12 +833,12 @@ public class Color implements Comparable < Color > {
     * @return the shifted color
     *
     * @see Color#fromHex(int, Color)
-    * @see Color#toHexInt(Color)
+    * @see Color#toHexIntWrap(Color)
     */
    public static Color bitShiftRight ( final Color a, final int places,
       final Color target ) {
 
-      return Color.fromHex(Color.toHexInt(a) >> places, target);
+      return Color.fromHex(Color.toHexIntWrap(a) >> places, target);
    }
 
    /**
@@ -867,12 +853,12 @@ public class Color implements Comparable < Color > {
     * @return the shifted color
     *
     * @see Color#fromHex(int, Color)
-    * @see Color#toHexInt(Color)
+    * @see Color#toHexIntWrap(Color)
     */
    public static Color bitShiftRightUnsigned ( final Color a, final int places,
       final Color target ) {
 
-      return Color.fromHex(Color.toHexInt(a) >>> places, target);
+      return Color.fromHex(Color.toHexIntWrap(a) >>> places, target);
    }
 
    /**
@@ -986,7 +972,7 @@ public class Color implements Comparable < Color > {
     *
     * @return the equivalence
     */
-   public static boolean eqAlphaSat ( final Color a, final Color b ) {
+   public static boolean eqAlphaSatArith ( final Color a, final Color b ) {
 
       return ( int ) ( 0.5f + Utils.clamp01(a.a) * 0xff ) == ( int ) ( 0.5f
          + Utils.clamp01(b.a) * 0xff );
@@ -1001,7 +987,7 @@ public class Color implements Comparable < Color > {
     *
     * @return the equivalence
     */
-   public static boolean eqRgbSat ( final Color a, final Color b ) {
+   public static boolean eqRgbSatArith ( final Color a, final Color b ) {
 
       /* @formatter:off */
       return ( int ) ( 0.5f + Utils.clamp01(a.b) * 0xff )
@@ -1022,12 +1008,12 @@ public class Color implements Comparable < Color > {
     *
     * @return the equivalence
     *
-    * @see Color#eqAlphaSat(Color, Color)
-    * @see Color#eqRgbSat(Color, Color)
+    * @see Color#eqAlphaSatArith(Color, Color)
+    * @see Color#eqRgbSatArith(Color, Color)
     */
-   public static boolean eqSat ( final Color a, final Color b ) {
+   public static boolean eqSatArith ( final Color a, final Color b ) {
 
-      return Color.eqAlphaSat(a, b) && Color.eqRgbSat(a, b);
+      return Color.eqAlphaSatArith(a, b) && Color.eqRgbSatArith(a, b);
    }
 
    /**
@@ -2454,6 +2440,7 @@ public class Color implements Comparable < Color > {
     *
     * @return the string
     *
+    * @see Color#toGplString(StringBuilder)
     * @see Color#toHexWeb(Color)
     */
    public static String toGplString ( final Color[] arr, final String name,
@@ -2486,13 +2473,46 @@ public class Color implements Comparable < Color > {
 
    /**
     * Converts a color to an integer where hexadecimal represents the ARGB
-    * color channels: 0xAARRGGB .
+    * color channels: 0xAARRGGB . Defaults to modular arithmetic.
+    *
+    * @param c the input color
+    *
+    * @return the color in hexadecimal
+    *
+    * @see Color#toHexIntWrap(Color)
+    */
+   public static int toHexInt ( final Color c ) {
+
+      return Color.toHexIntWrap(c);
+   }
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the ARGB
+    * color channels: 0xAARRGGB . Uses saturation arithmetic. Two colors with
+    * unequal values beyond [0.0, 1.0] may yield equal integers.
     *
     * @param c the input color
     *
     * @return the color in hexadecimal
     */
-   public static int toHexInt ( final Color c ) {
+   public static int toHexIntSat ( final Color c ) {
+
+      return ( int ) ( Utils.clamp01(c.a) * 0xff + 0.5f ) << 0x18
+         | ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ) << 0x10
+         | ( int ) ( Utils.clamp01(c.g) * 0xff + 0.5f ) << 0x08
+         | ( int ) ( Utils.clamp01(c.b) * 0xff + 0.5f );
+   }
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the ARGB
+    * color channels: 0xAARRGGB . Uses modular arithmetic, so out-of-gamut
+    * colors may cause overflow and unexpected hexadecimal colors.
+    *
+    * @param c the input color
+    *
+    * @return the color in hexadecimal
+    */
+   public static int toHexIntWrap ( final Color c ) {
 
       /* @formatter:off */
       return ( int ) ( c.a * 0xff + 0.5f ) << 0x18
@@ -2500,21 +2520,6 @@ public class Color implements Comparable < Color > {
            | ( int ) ( c.g * 0xff + 0.5f ) << 0x08
            | ( int ) ( c.b * 0xff + 0.5f );
       /* @formatter:on */
-   }
-
-   /**
-    * Converts a color to an <code>long</code> where hexadecimal represents
-    * the ARGB color channels: 0xAARRGGB .
-    *
-    * @param c the input color
-    *
-    * @return the color in hexadecimal
-    *
-    * @see Color#toHexInt(Color)
-    */
-   public static long toHexLong ( final Color c ) {
-
-      return Color.toHexInt(c) & 0xffffffffL;
    }
 
    /**
@@ -2952,8 +2957,8 @@ public class Color implements Comparable < Color > {
     */
    static int mix ( final Color origin, final Color dest, final float step ) {
 
-      if ( step <= 0.0f ) { return Color.toHexInt(origin); }
-      if ( step >= 1.0f ) { return Color.toHexInt(dest); }
+      if ( step <= 0.0f ) { return Color.toHexIntWrap(origin); }
+      if ( step >= 1.0f ) { return Color.toHexIntWrap(dest); }
 
       final float u = 1.0f - step;
       return ( int ) ( ( u * origin.a + step * dest.a ) * 0xff + 0.5f ) << 0x18
