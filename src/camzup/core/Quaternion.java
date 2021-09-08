@@ -862,23 +862,24 @@ public class Quaternion implements Comparable < Quaternion > {
              * In a right-handed coordinate system, the forward axis is either
              * (0.0, 0.0, 1.0) or (0.0, 0.0, -1.0) .
              */
-            if ( zForward >= 0.0f ) {
-               return target.set(IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f,
-                  0.0f);
-            } else if ( zForward < 0.0f ) {
+            if ( zForward < 0.0f ) {
                return target.set(-IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f,
                   0.0f);
+            } else {
+               return target.set(IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f,
+                  0.0f);
             }
+
          } else {
 
             /*
              * In a left-handed coordinate system, the forward axis is either
              * (0.0, 1.0, 0.0) or (0.0, -1.0, 0.0) .
              */
-            if ( yForward >= 0.0f ) {
-               return target.set(0.0f, 0.0f, 1.0f, 0.0f);
-            } else if ( yForward < 0.0f ) {
+            if ( yForward < 0.0f ) {
                return target.set(0.0f, 0.0f, 0.0f, 1.0f);
+            } else {
+               return target.set(0.0f, 0.0f, 1.0f, 0.0f);
             }
          }
       }
@@ -955,22 +956,18 @@ public class Quaternion implements Comparable < Quaternion > {
              * In a right-handed coordinate system, the forward axis is either
              * (0.0, 0.0, 1.0) or (0.0, 0.0, -1.0) .
              */
-            if ( forward.z >= 0.0f ) {
-
-               Vec3.right(right);
-               Vec3.up(forward);
-               Vec3.back(up);
-               return target.set(IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f,
-                  0.0f);
-
-            } else if ( forward.z < 0.0f ) {
-
+            if ( forward.z < 0.0f ) {
                Vec3.right(right);
                Vec3.down(forward);
                Vec3.forward(up);
                return target.set(-IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f,
                   0.0f);
-
+            } else {
+               Vec3.right(right);
+               Vec3.up(forward);
+               Vec3.back(up);
+               return target.set(IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f,
+                  0.0f);
             }
 
          } else {
@@ -979,20 +976,16 @@ public class Quaternion implements Comparable < Quaternion > {
              * In a left-handed coordinate system, the forward axis is either
              * (0.0, 1.0, 0.0) or (0.0, -1.0, 0.0) .
              */
-            if ( forward.y >= 0.0f ) {
-
-               Vec3.left(right);
-               Vec3.forward(forward);
-               Vec3.down(up);
-               return target.set(0.0f, 0.0f, 1.0f, 0.0f);
-
-            } else if ( forward.y < 0.0f ) {
-
+            if ( forward.y < 0.0f ) {
                Vec3.left(right);
                Vec3.back(forward);
                Vec3.up(up);
                return target.set(0.0f, 0.0f, 0.0f, 1.0f);
-
+            } else {
+               Vec3.left(right);
+               Vec3.forward(forward);
+               Vec3.down(up);
+               return target.set(0.0f, 0.0f, 1.0f, 0.0f);
             }
 
          }
@@ -1661,7 +1654,7 @@ public class Quaternion implements Comparable < Quaternion > {
             ( float ) ( lnx * lnSclr ), ( float ) ( lny * lnSclr ),
             ( float ) ( lnz * lnSclr ));
       } else {
-         return target.reset();
+         return Quaternion.identity(target);
       }
    }
 
@@ -2317,7 +2310,7 @@ public class Quaternion implements Comparable < Quaternion > {
          return target.set(target.real * mInv, i.x * mInv, i.y * mInv, i.z
             * mInv);
       }
-      return target.reset();
+      return Quaternion.identity(target);
    }
 
    /**

@@ -11,27 +11,27 @@ Yup2 graphics;
 Gradient lcd = Gradient.paletteLcd(new Gradient());
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+    size(720, 405, Yup2.PATH_STR);
 }
 
 void setup() {
-  frameRate(60.0f);
-  graphics = (Yup2)getGraphics();
+    frameRate(60.0f);
+    graphics = (Yup2)getGraphics();
 
-  source = loadImage("callingStMatthew.jpg");
-  target = source.get();
+    source = loadImage("callingStMatthew.jpg");
+    target = source.get();
 
-  long start = System.currentTimeMillis();
-  ZImage.falseColor(lcd, target);
-  long end = System.currentTimeMillis();
-  println("Elapsed Time: " + (end - start));
+    long start = System.currentTimeMillis();
+    ZImage.falseColor(lcd, target);
+    long end = System.currentTimeMillis();
+    println("Elapsed Time: " + (end - start));
 }
 
 void draw() {
-  graphics.background();
-  if (mousePressed) {
-    graphics.image(source);
-  } else {
-    graphics.image(target);
-  }
+    graphics.background();
+    if (mousePressed) {
+        graphics.image(source);
+    } else {
+        graphics.image(target);
+    }
 }

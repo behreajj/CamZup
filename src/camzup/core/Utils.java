@@ -2020,7 +2020,7 @@ public abstract class Utils implements IUtils {
       public void setRange ( final float range ) {
 
          this.range = Utils.max(Utils.abs(range), IUtils.EPSILON);
-         this.halfRange = range * 0.5f;
+         this.halfRange = this.range * 0.5f;
       }
 
       /**

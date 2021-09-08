@@ -28,8 +28,6 @@ public abstract class ParserGpl {
     */
    public static Color[] load ( final BufferedReader in ) {
 
-      Color[] result = new Color[0];
-
       try {
 
          try {
@@ -45,8 +43,8 @@ public abstract class ParserGpl {
                final String lnlc = ln.trim().toLowerCase();
 
                /* Implicitly support JASC-PAL, which is similar to GPL. */
-               if ( lnlc.equals("gimp palette") || lnlc.indexOf("name:") > -1
-                  || lnlc.indexOf("columns:") > -1 || lnlc.indexOf('#') == 0
+               if ( lnlc.indexOf('#') == 0 || lnlc.equals("gimp palette")
+                  || lnlc.indexOf("name:") > -1 || lnlc.indexOf("columns:") > -1
                   || lnlc.equals("jasc-pal") || lnlc.equals("0100") ) {
 
                   /* Skip. */
@@ -92,7 +90,7 @@ public abstract class ParserGpl {
                }
             }
 
-            result = clrs.values().toArray(new Color[clrs.size()]);
+            return clrs.values().toArray(new Color[clrs.size()]);
 
          } catch ( final Exception e ) {
             e.printStackTrace();
@@ -104,7 +102,7 @@ public abstract class ParserGpl {
          e.printStackTrace();
       }
 
-      return result;
+      return new Color[0];
    }
 
    /**

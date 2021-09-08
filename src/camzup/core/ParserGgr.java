@@ -100,7 +100,7 @@ public abstract class ParserGgr {
 
             for ( String ln = in.readLine(); ln != null; ln = in.readLine() ) {
                final String lnlc = ln.trim().toLowerCase();
-               if ( lnlc.equals("gimp gradient") || lnlc.indexOf('#') == 0 ) {
+               if ( lnlc.indexOf('#') == 0 || lnlc.equals("gimp gradient") ) {
                   /* Skip. */
                } else {
 

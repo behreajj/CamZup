@@ -216,18 +216,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        */
       this.affineNative.setTransform(m00, m10, m01, m11, m02, m12);
       this.g2.transform(this.affineNative);
-
-      // this.affineNative.setTransform(this.g2.getTransform());
-      // this.cameraX = ( float ) this.affineNative.getTranslateX();
-      // this.cameraY = ( float ) this.affineNative.getTranslateY();
-      // this.cameraRot = ( float ) Math.atan2(this.affineNative.getShearY(),
-      // this.affineNative.getScaleX());
-      // this.cameraRot = Utils.modRadians(this.cameraRot);
-      // this.cameraZoomX = ( float ) this.affineNative.getScaleX();
-      // this.cameraZoomY = ( float ) this.affineNative.getScaleY();
-      // if ( this.affineNative.getDeterminant() < 0.0d ) {
-      // this.cameraZoomY = -this.cameraZoomY;
-      // }
    }
 
    /**

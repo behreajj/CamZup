@@ -928,6 +928,8 @@ public class ZImage extends PImage {
       final int fillClr, final int leading, final int kerning,
       final int textAlign ) {
 
+      // TODO: Support long line breaking; use drafts from Lua scripts.
+
       /*
        * Validate inputs: colors with no alpha not allowed; negative leading and
        * kerning not allowed; try to guard against empty Strings. Remove alpha
@@ -1530,11 +1532,13 @@ public class ZImage extends PImage {
       final int[] frame = new int[frameSize];
 
       /*
-       * Introducing a bias was not present in the reference code, but it helped
-       * with edge haloes in earlier versions of this algorithm.
+       * Subtracting by 1.0 from the source dimensions was not present in the
+       * reference code, but seems to help reduce blurred alpha on the right and
+       * bottom edges.
        */
-      final float tx = sw / dw;
-      final float ty = sh / dh;
+      final float bias = 0.0f;
+      final float tx = sw / ( dw * ( 1.0f + bias ) );
+      final float ty = sh / ( dh * ( 1.0f + bias ) );
 
       /* Despite the name, RGB images retain alpha, and so have 4 channels. */
       byte chnlCount;
@@ -1562,52 +1566,44 @@ public class ZImage extends PImage {
       final int len3 = dw * len2;
       final int len4 = dh * len3;
 
-      final int swn1 = sw - 1;
-      final int shn1 = sh - 1;
-
       for ( int k = 0; k < len4; ++k ) {
          final int g = k / len3; /* row index */
          final int m = k - g * len3; /* temporary */
          final int h = m / len2; /* column index */
          final int n = m - h * len2; /* temporary */
+         final int i = n / frameSize; /* channel index */
          final int j = n % frameSize; /* kernel index */
 
          /* Row. */
          final float gf = g;
          final int y = ( int ) ( ty * gf );
-         final float dy = ty * gf - y;
+         final float dy = ty * ( gf - bias ) - y;
          final float dysq = dy * dy;
 
          /* Column. */
          final float hf = h;
          final int x = ( int ) ( tx * hf );
-         final float dx = tx * hf - x;
+         final float dx = tx * ( hf - bias ) - x;
          final float dxsq = dx * dx;
 
-         final int zu = y - 1 + j;
-         final int z = zu < 0 ? 0 : zu > shn1 ? shn1 : zu;
+         int a0 = 0;
+         int d0 = 0;
+         int d2 = 0;
+         int d3 = 0;
 
-         /*
-          * Channel index multiplied by size of byte, as it will be used to
-          * unpack color channels.
-          */
-         final int i8 = Byte.SIZE * ( n / frameSize );
-         final int zw = z * sw;
+         final int z = y - 1 + j;
+         if ( z > -1 && z < sh ) {
+            final int zw = z * sw;
+            final int i8 = i * 8;
+            final int x1 = x - 1;
+            final int x2 = x + 1;
+            final int x3 = x + 2;
 
-         final int x0 = x < 0 ? 0 : x > swn1 ? swn1 : x;
-         int a0 = srcpx[zw + x0] >> i8 & 0xff;
-
-         final int x1u = x - 1;
-         final int x1 = x1u < 0 ? 0 : x1u > swn1 ? swn1 : x1u;
-         int d0 = srcpx[zw + x1] >> i8 & 0xff;
-
-         final int x2u = x + 1;
-         final int x2 = x2u < 0 ? 0 : x2u > swn1 ? swn1 : x2u;
-         int d2 = srcpx[zw + x2] >> i8 & 0xff;
-
-         final int x3u = x + 2;
-         final int x3 = x3u < 0 ? 0 : x3u > swn1 ? swn1 : x3u;
-         int d3 = srcpx[zw + x3] >> i8 & 0xff;
+            if ( x > -1 && x < sw ) { a0 = srcpx[zw + x] >> i8 & 0xff; }
+            if ( x1 > -1 && x1 < sw ) { d0 = srcpx[zw + x1] >> i8 & 0xff; }
+            if ( x2 > -1 && x2 < sw ) { d2 = srcpx[zw + x2] >> i8 & 0xff; }
+            if ( x3 > -1 && x3 < sw ) { d3 = srcpx[zw + x3] >> i8 & 0xff; }
+         }
 
          /* Subtract a0 no matter the boundary condition. */
          d0 -= a0;
@@ -1619,13 +1615,13 @@ public class ZImage extends PImage {
          float a2 = 0.5f * ( d0 + d2 );
          float a3 = -IUtils.ONE_SIX * d0 - 0.5f * d2 + d36;
 
-         int sample = a0 + ( int ) ( a1 * dx + a2 * dxsq + a3 * ( dx * dxsq ) );
-         frame[j] = sample < 0 ? 0 : sample > 255 ? 255 : sample;
+         frame[j] = Utils.clamp(a0 + ( int ) ( a1 * dx + a2 * dxsq + a3 * ( dx
+            * dxsq ) ), 0, 255);
 
+         d0 = frame[0] - frame[1];
+         d2 = frame[2] - frame[1];
+         d3 = frame[3] - frame[1];
          a0 = frame[1];
-         d0 = frame[0] - a0;
-         d2 = frame[2] - a0;
-         d3 = frame[3] - a0;
 
          d36 = IUtils.ONE_SIX * d3;
          a1 = -IUtils.ONE_THIRD * d0 + d2 - d36;
@@ -1634,36 +1630,23 @@ public class ZImage extends PImage {
 
          // rowStride = dw * chnlCount
          // g * rowStride + h * chnlCount + i
-         sample = a0 + ( int ) ( a1 * dy + a2 * dysq + a3 * ( dy * dysq ) );
-         clrs[k / frameSize] = sample < 0 ? 0 : sample > 255 ? 255 : sample;
+         clrs[k / frameSize] = Utils.clamp(a0 + ( int ) ( a1 * dy + a2 * dysq
+            + a3 * ( dy * dysq ) ), 0, 255);
       }
 
       final int[] trgpx = new int[newPxlLen];
       switch ( srcFmt ) {
-
          case PConstants.ALPHA:
-
             System.arraycopy(clrs, 0, trgpx, 0, newPxlLen);
-
             break;
 
          case PConstants.RGB:
-
-            for ( int i = 0, j = 0; i < newPxlLen; ++i, j += 4 ) {
-               trgpx[i] = clrs[j] | clrs[j + 1] << 0x08 | clrs[j + 2] << 0x10
-                  | 0xff000000;
-            }
-
-            break;
-
          case PConstants.ARGB:
          default:
-
             for ( int i = 0, j = 0; i < newPxlLen; ++i, j += 4 ) {
-               trgpx[i] = clrs[j] | clrs[j + 1] << 0x08 | clrs[j + 2] << 0x10
-                  | clrs[j + 3] << 0x18;
+               trgpx[i] = clrs[j + 3] << 0x18 | clrs[j + 2] << 0x10 | clrs[j
+                  + 1] << 0x08 | clrs[j];
             }
-
             break;
       }
 
@@ -1947,7 +1930,7 @@ public class ZImage extends PImage {
 
       switch ( srcFmt ) {
 
-         case PConstants.ALPHA:
+         case PConstants.ALPHA: /* 4 */
 
             final int trgb = 0x00ffffff & tintClr;
             for ( int i = 0; i < len; ++i ) {
@@ -1958,7 +1941,7 @@ public class ZImage extends PImage {
 
             break;
 
-         case PConstants.RGB:
+         case PConstants.RGB: /* 1 */
 
             for ( int i = 0; i < len; ++i ) {
                final int rgb = pixels[i];
@@ -1983,7 +1966,7 @@ public class ZImage extends PImage {
 
             break;
 
-         case PConstants.ARGB:
+         case PConstants.ARGB: /* 2 */
          default:
 
             for ( int i = 0; i < len; ++i ) {
