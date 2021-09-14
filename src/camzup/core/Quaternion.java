@@ -657,8 +657,14 @@ public class Quaternion implements Comparable < Quaternion > {
       final Quaternion target, final Quaternion inverted,
       final Quaternion conjugate ) {
 
-      Quaternion.inverse(b, inverted, conjugate);
-      return Quaternion.mul(a, inverted, target);
+      if ( Quaternion.any(b) ) {
+         Quaternion.inverse(b, inverted, conjugate);
+         return Quaternion.mul(a, inverted, target);
+      } else {
+         Quaternion.identity(conjugate);
+         Quaternion.identity(inverted);
+         return Quaternion.identity(target);
+      }
    }
 
    /**

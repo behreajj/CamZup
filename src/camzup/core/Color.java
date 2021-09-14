@@ -115,7 +115,7 @@ public class Color implements Comparable < Color > {
 
       final int left = Color.toHexIntWrap(this);
       final int right = Color.toHexIntWrap(c);
-      return left > right ? 1 : left < right ? -1 : 0;
+      return left < right ? -1 : left > right ? 1 : 0;
    }
 
    /**
@@ -2452,11 +2452,11 @@ public class Color implements Comparable < Color > {
       sb.append(name);
       sb.append("\nColumns: ");
       sb.append(cols);
-      sb.append("\n# https://github.com/behreajj/CamZup\n");
+      sb.append("\n# https://github.com/behreajj/CamZup");
 
       final int len = arr.length;
-      final int last = len - 1;
       for ( int i = 0; i < len; ++i ) {
+         sb.append('\n');
          final Color clr = arr[i];
          clr.toGplString(sb);
          sb.append(' ');
@@ -2465,7 +2465,6 @@ public class Color implements Comparable < Color > {
             sb.append(' ');
             sb.append(i + 1);
          }
-         if ( i < last ) { sb.append('\n'); }
       }
 
       return sb.toString();
@@ -2727,16 +2726,13 @@ public class Color implements Comparable < Color > {
    public static String toPalString ( final Color[] arr ) {
 
       final int len = arr.length;
-      final int last = len - 1;
       final StringBuilder sb = new StringBuilder(32 + len * 12);
       sb.append("JASC-PAL\n0100\n");
       sb.append(len);
-      sb.append('\n');
-      for ( int i = 0; i < last; ++i ) {
-         arr[i].toGplString(sb);
+      for ( int i = 0; i < len; ++i ) {
          sb.append('\n');
+         arr[i].toGplString(sb);
       }
-      arr[last].toGplString(sb);
 
       return sb.toString();
    }

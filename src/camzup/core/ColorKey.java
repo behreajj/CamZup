@@ -367,7 +367,7 @@ public class ColorKey implements Comparable < ColorKey > {
 
          final float aq = Utils.quantize(a.step, this.level);
          final float bq = Utils.quantize(b.step, this.level);
-         return aq > bq ? 1 : aq < bq ? -1 : 0;
+         return aq < bq ? -1 : aq > bq ? 1 : 0;
       }
 
       /**
