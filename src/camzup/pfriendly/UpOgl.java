@@ -1373,8 +1373,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    @Override
    public int lerpColor ( final int origin, final int dest, final float step ) {
 
-      return Color.toHexIntWrap(this.lerpColor(Color.fromHex(origin, this.aTemp),
-         Color.fromHex(dest, this.bTemp), step, this.cTemp));
+      return Color.toHexIntWrap(this.lerpColor(Color.fromHex(origin,
+         this.aTemp), Color.fromHex(dest, this.bTemp), step, this.cTemp));
    }
 
    /**

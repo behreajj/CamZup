@@ -348,15 +348,14 @@ public class Bounds2 implements Comparable < Bounds2 > {
       mx.x = xMax > xMin ? xMax : xMin;
       mx.y = yMax > yMin ? yMax : yMin;
 
-      // QUERY: Use approximate equality instead?
-      if ( mn.x == mx.x ) {
-         mn.x -= IUtils.EPSILON;
-         mx.x += IUtils.EPSILON;
+      if ( Utils.approx(mn.x, mx.x, IUtils.EPSILON) ) {
+         mn.x -= IUtils.EPSILON * 2.0f;
+         mx.x += IUtils.EPSILON * 2.0f;
       }
 
-      if ( mn.y == mx.y ) {
-         mn.y -= IUtils.EPSILON;
-         mx.y += IUtils.EPSILON;
+      if ( Utils.approx(mn.y, mx.y, IUtils.EPSILON) ) {
+         mn.y -= IUtils.EPSILON * 2.0f;
+         mx.y += IUtils.EPSILON * 2.0f;
       }
 
       return this;
@@ -623,11 +622,11 @@ public class Bounds2 implements Comparable < Bounds2 > {
          if ( y > ub.y ) { ub.y = y; }
       }
 
-      lb.x -= IUtils.EPSILON;
-      lb.y -= IUtils.EPSILON;
+      lb.x -= IUtils.EPSILON * 2.0f;
+      lb.y -= IUtils.EPSILON * 2.0f;
 
-      ub.x += IUtils.EPSILON;
-      ub.y += IUtils.EPSILON;
+      ub.x += IUtils.EPSILON * 2.0f;
+      ub.y += IUtils.EPSILON * 2.0f;
 
       return target;
    }
@@ -638,7 +637,7 @@ public class Bounds2 implements Comparable < Bounds2 > {
     * @param b      the bounds
     * @param target the output vector
     *
-    * @return the extent
+    * @return the half-extent
     *
     * @see Bounds2#extent(Bounds2, Vec2)
     * @see Vec2#mul(Vec2, float, Vec2)
@@ -803,13 +802,13 @@ public class Bounds2 implements Comparable < Bounds2 > {
     */
    public static Bounds2 unitSquareSigned ( final Bounds2 target ) {
 
-      return target.set(-1.0f - IUtils.EPSILON * 2.0f, -1.0f - IUtils.EPSILON
-         * 2.0f, 1.0f + IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f);
+      return target.set(-1.0f - IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON
+         * 2.0f);
    }
 
    /**
-    * Returns a boundary encompassing an unsigned unit square in the range
-    * [-1.0, 1.0] .
+    * Returns a boundary encompassing an unsigned unit square in the range [0,
+    * 1.0] .
     *
     * @param target the output bounds
     *
@@ -817,8 +816,7 @@ public class Bounds2 implements Comparable < Bounds2 > {
     */
    public static Bounds2 unitSquareUnsigned ( final Bounds2 target ) {
 
-      return target.set(-IUtils.EPSILON * 2.0f, -IUtils.EPSILON * 2.0f, 1.0f
-         + IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f);
+      return target.set(-IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f);
    }
 
 }

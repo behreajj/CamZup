@@ -1263,28 +1263,43 @@ public class ZImage extends PImage {
          float lumMax = Float.MIN_VALUE;
          final float[] lums = new float[len];
          for ( int i = 0; i < len; ++i ) {
-            final float lum = Color.sRgbLuminance(px[i]);
-            if ( lum < lumMin ) { lumMin = lum; }
-            if ( lum > lumMax ) { lumMax = lum; }
-            lums[i] = lum;
+            final int hex = px[i];
+            if ( ( hex & 0xff000000 ) != 0 ) {
+               final float lum = Color.sRgbLuminance(hex);
+               if ( lum < lumMin ) { lumMin = lum; }
+               if ( lum > lumMax ) { lumMax = lum; }
+               lums[i] = lum;
+            }
          }
 
          /* Map luminance to [0.0, 1.0] from [minimum, maximum]. */
          final float diff = lumMax - lumMin;
          final float denom = diff != 0.0f ? 1.0f / diff : 0.0f;
          for ( int i = 0; i < len; ++i ) {
-            final float lum = ( lums[i] - lumMin ) * denom;
-            final int viLin = ( int ) ( lum * 0xff + 0.5f );
-            final int viStd = Color.linearToStandard(viLin);
-            px[i] = px[i] & 0xff000000 | viStd << 0x10 | viStd << 0x08 | viStd;
+            final int hex = px[i];
+            final int alphaOnly = hex & 0xff000000;
+            if ( alphaOnly != 0 ) {
+               final float lum = ( lums[i] - lumMin ) * denom;
+               final int viLin = ( int ) ( lum * 0xff + 0.5f );
+               final int viStd = Color.linearToStandard(viLin);
+               px[i] = alphaOnly | viStd << 0x10 | viStd << 0x08 | viStd;
+            } else {
+               px[i] = 0x0;
+            }
          }
 
       } else {
          for ( int i = 0; i < len; ++i ) {
-            final float lum = Color.sRgbLuminance(px[i]);
-            final int viLin = ( int ) ( lum * 0xff + 0.5f );
-            final int viStd = Color.linearToStandard(viLin);
-            px[i] = px[i] & 0xff000000 | viStd << 0x10 | viStd << 0x08 | viStd;
+            final int hex = px[i];
+            final int alphaOnly = hex & 0xff000000;
+            if ( alphaOnly != 0 ) {
+               final float lum = Color.sRgbLuminance(hex);
+               final int viLin = ( int ) ( lum * 0xff + 0.5f );
+               final int viStd = Color.linearToStandard(viLin);
+               px[i] = alphaOnly | viStd << 0x10 | viStd << 0x08 | viStd;
+            } else {
+               px[i] = 0x0;
+            }
          }
       }
 

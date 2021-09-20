@@ -170,7 +170,10 @@ public interface IUp {
     *
     * @param c the color
     */
-   default void stroke ( final Color c ) { this.stroke(Color.toHexIntWrap(c)); }
+   default void stroke ( final Color c ) {
+
+      this.stroke(Color.toHexIntWrap(c));
+   }
 
    /**
     * Sets the renderer's current stroke to the hexadecimal value.

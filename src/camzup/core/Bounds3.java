@@ -373,20 +373,19 @@ public class Bounds3 implements Comparable < Bounds3 > {
       mx.y = yMax > yMin ? yMax : yMin;
       mx.z = zMax > zMin ? zMax : zMin;
 
-      // QUERY: Use approximate equality instead?
-      if ( mn.x == mx.x ) {
-         mn.x -= IUtils.EPSILON;
-         mx.x += IUtils.EPSILON;
+      if ( Utils.approx(mn.x, mx.x, IUtils.EPSILON) ) {
+         mn.x -= IUtils.EPSILON * 2.0f;
+         mx.x += IUtils.EPSILON * 2.0f;
       }
 
-      if ( mn.y == mx.y ) {
-         mn.y -= IUtils.EPSILON;
-         mx.y += IUtils.EPSILON;
+      if ( Utils.approx(mn.y, mx.y, IUtils.EPSILON) ) {
+         mn.y -= IUtils.EPSILON * 2.0f;
+         mx.y += IUtils.EPSILON * 2.0f;
       }
 
-      if ( mn.z == mx.z ) {
-         mn.z -= IUtils.EPSILON;
-         mx.z += IUtils.EPSILON;
+      if ( Utils.approx(mn.z, mx.z, IUtils.EPSILON) ) {
+         mn.z -= IUtils.EPSILON * 2.0f;
+         mx.z += IUtils.EPSILON * 2.0f;
       }
 
       return this;
@@ -665,13 +664,13 @@ public class Bounds3 implements Comparable < Bounds3 > {
          if ( z > ub.z ) { ub.z = z; }
       }
 
-      lb.x -= IUtils.EPSILON;
-      lb.y -= IUtils.EPSILON;
-      lb.z -= IUtils.EPSILON;
+      lb.x -= IUtils.EPSILON * 2.0f;
+      lb.y -= IUtils.EPSILON * 2.0f;
+      lb.z -= IUtils.EPSILON * 2.0f;
 
-      ub.x += IUtils.EPSILON;
-      ub.y += IUtils.EPSILON;
-      ub.z += IUtils.EPSILON;
+      ub.x += IUtils.EPSILON * 2.0f;
+      ub.y += IUtils.EPSILON * 2.0f;
+      ub.z += IUtils.EPSILON * 2.0f;
 
       return target;
    }
@@ -682,7 +681,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
     * @param b      the bounds
     * @param target the output vector
     *
-    * @return the extent
+    * @return the half-extent
     *
     * @see Bounds3#extent(Bounds3, Vec3)
     * @see Vec3#mul(Vec3, float, Vec3)
@@ -882,14 +881,13 @@ public class Bounds3 implements Comparable < Bounds3 > {
     */
    public static Bounds3 unitCubeSigned ( final Bounds3 target ) {
 
-      return target.set(-1.0f - IUtils.EPSILON * 2.0f, -1.0f - IUtils.EPSILON
-         * 2.0f, -1.0f - IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f,
-         1.0f + IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f);
+      return target.set(-1.0f - IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON
+         * 2.0f);
    }
 
    /**
-    * Returns a boundary encompassing an unsigned unit cube in the range
-    * [-1.0, 1.0] .
+    * Returns a boundary encompassing an unsigned unit cube in the range [0.0,
+    * 1.0] .
     *
     * @param target the output bounds
     *
@@ -897,9 +895,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
     */
    public static Bounds3 unitCubeUnsigned ( final Bounds3 target ) {
 
-      return target.set(-IUtils.EPSILON * 2.0f, -IUtils.EPSILON * 2.0f,
-         -IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f, 1.0f
-            + IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f);
+      return target.set(-IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f);
    }
 
    /**

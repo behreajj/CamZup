@@ -494,11 +494,12 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Applies the modulo operator (<code>%</code>) to the operands. An
-    * analogous formula would be fmod ( <em>a</em>, <em>b</em> ) := <em>a</em>
-    * - <em>b</em> trunc ( <em>a</em> / <em>b</em> ) . When <em>b</em> is
-    * zero, returns <em>a</em>. When <em>a</em> is negative and <em>b</em> is
-    * positive, the result will be negative. If <em>b</em> is one, use
+    * Applies the modulo operator (<code>%</code>) to the operands. Known in
+    * some languages as <code>rem</code> for remainder. An analogous formula
+    * would be fmod ( <em>a</em>, <em>b</em> ) := <em>a</em> - <em>b</em>
+    * trunc ( <em>a</em> / <em>b</em> ) . When <em>b</em> is zero, returns
+    * <em>a</em>. When <em>a</em> is negative and <em>b</em> is positive, the
+    * result will be negative. If <em>b</em> is one, use
     * {@link Utils#fract(float)} or <em>a</em> - trunc ( <em>a</em> ).
     *
     * @param a the left operand
@@ -512,8 +513,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Applies the modulo operator (%) to the operands. When <em>b</em> is
-    * zero, returns <em>a</em>.
+    * Applies the modulo operator (%) to the operands. Known in some languages
+    * as <code>rem</code> for remainder. When <em>b</em> is zero, returns
+    * <em>a</em>.
     *
     * @param a the left operand
     * @param b the right operand
@@ -907,11 +909,12 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Applies floor modulo to the operands, and therefore uses the formula mod
-    * ( <em>a</em>, <em>b</em> ) := <em>a</em> - <em>b</em> * floor (
-    * <em>a</em> / <em>b</em> ) . When <em>b</em> is zero, returns <em>a</em>.
-    * If <em>b</em> is one, use {@link Utils#mod1(float)} or <em>a</em> -
-    * floor(<em>a</em>) instead.
+    * Applies floor modulo to the operands. Known in some programming
+    * languages as the Euclidean remainder. Uses the formula mod ( <em>a</em>,
+    * <em>b</em> ) := <em>a</em> - <em>b</em> * floor ( <em>a</em> /
+    * <em>b</em> ). When <em>b</em> is zero, returns <em>a</em>. If <em>b</em>
+    * is one, use {@link Utils#mod1(float)} or <em>a</em> - floor(<em>a</em>)
+    * instead.
     *
     * @param a the left operand
     * @param b the right operand
@@ -931,7 +934,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Applies floor modulo to the operands. Returns the left operand when the
+    * Applies floor modulo to the operands. Known in some programming
+    * languages as the Euclidean remainder. Returns the left operand when the
     * right operand is zero. An alternative to {@link Math#floorMod(int, int)}
     * .
     *
@@ -1002,12 +1006,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Applies floor modulo to the operands, and therefore uses the formula mod
-    * ( <em>a</em>, <em>b</em> ) := <em>a</em> - <em>b</em> floor ( <em>a</em>
-    * / <em>b</em> ) . If the right operand is one, use <em>a</em> - floor (
-    * <em>a</em> ) instead.<br>
-    * <br>
-    * Does not check if the right operand is zero.
+    * Applies floor modulo to the operands. Known in some programming
+    * languages as the Euclidean remainder. Does not check if the right
+    * operand is zero.
     *
     * @param a the left operand
     * @param b the right operand

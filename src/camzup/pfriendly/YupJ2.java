@@ -1992,8 +1992,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public int lerpColor ( final int origin, final int dest, final float step ) {
 
-      return Color.toHexIntWrap(this.lerpColor(Color.fromHex(origin, this.aTemp),
-         Color.fromHex(dest, this.bTemp), step, this.cTemp));
+      return Color.toHexIntWrap(this.lerpColor(Color.fromHex(origin,
+         this.aTemp), Color.fromHex(dest, this.bTemp), step, this.cTemp));
    }
 
    /**
