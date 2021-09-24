@@ -432,6 +432,28 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Finds the unsigned distance between two angles.
+    *
+    * @param a left operand
+    * @param b right operand
+    *
+    * @return unsigned distance
+    *
+    * @see Utils#modRadians(float)
+    * @see Utils#abs(float)
+    */
+   public static float distAngleUnsigned ( final float a, final float b ) {
+
+      /*
+       * See https://gamedev.stackexchange.com/a/4472,
+       * https://stackoverflow.com/a/28037434 (for signed)
+       */
+
+      return IUtils.PI - Utils.abs(Utils.abs(Utils.modRadians(b) - Utils
+         .modRadians(a)) - IUtils.PI);
+   }
+
+   /**
     * Divides the left operand by the right, but returns zero when the
     * denominator is zero, avoiding the {@link java.lang.ArithmeticException}.
     * This is to simulate the convention of shading languages like GLSL and

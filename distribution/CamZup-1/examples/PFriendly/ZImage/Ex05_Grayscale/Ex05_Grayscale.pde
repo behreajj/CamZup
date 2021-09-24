@@ -24,6 +24,8 @@ void setup() {
   ZImage.grayscale(target, true);
   long end = System.currentTimeMillis();
   println("Elapsed Time: " + (end - start));
+
+  ZImage.premul(target);
 }
 
 void draw() {

@@ -425,16 +425,27 @@ public class Vec2 implements Comparable < Vec2 > {
     * @return the angle
     *
     * @see Vec2#any(Vec2)
-    * @see Vec2#dot(Vec2, Vec2)
-    * @see Vec2#magSq(Vec2)
-    * @see Utils#invSqrtUnchecked(float)
-    * @see Utils#acos(float)
     */
    public static float angleBetween ( final Vec2 a, final Vec2 b ) {
 
-      return Vec2.any(a) && Vec2.any(b) ? Utils.acos(Vec2.dot(a, b) * Utils
-         .invSqrtUnchecked(Vec2.magSq(a)) * Utils.invSqrtUnchecked(Vec2.magSq(
-            b))) : 0.0f;
+      /* To match distAngleUnsigned, this requires double precision. */
+
+      // return Vec2.any(a) && Vec2.any(b) ? Utils.acos(Vec2.dot(a, b) * Utils
+      // .invSqrtUnchecked(Vec2.magSq(a)) * Utils.invSqrtUnchecked(Vec2.magSq(
+      // b))) : 0.0f;
+
+      if ( Vec2.any(a) && Vec2.any(b) ) {
+         final double ax = a.x;
+         final double ay = a.y;
+
+         final double bx = b.x;
+         final double by = b.y;
+
+         return ( float ) Math.acos( ( ax * bx + ay * by ) / ( Math.sqrt(ax * ax
+            + ay * ay) * Math.sqrt(bx * bx + by * by) ));
+      } else {
+         return 0.0f;
+      }
    }
 
    /**

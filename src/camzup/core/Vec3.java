@@ -438,17 +438,30 @@ public class Vec3 implements Comparable < Vec3 > {
     * @return the angle
     *
     * @see Vec3#any(Vec3)
-    * @see Vec3#dot(Vec3, Vec3)
-    * @see Vec3#magSq(Vec3)
-    * @see Utils#invSqrtUnchecked(float)
-    * @see Vec3#mag(Vec3)
-    * @see Utils#acos(float)
     */
    public static float angleBetween ( final Vec3 a, final Vec3 b ) {
 
-      return Vec3.any(a) && Vec3.any(b) ? Utils.acos(Vec3.dot(a, b) * Utils
-         .invSqrtUnchecked(Vec3.magSq(a)) * Utils.invSqrtUnchecked(Vec3.magSq(
-            b))) : 0.0f;
+      /* To match distAngleUnsigned, this requires double precision. */
+
+      // return Vec3.any(a) && Vec3.any(b) ? Utils.acos(Vec3.dot(a, b) * Utils
+      // .invSqrtUnchecked(Vec3.magSq(a)) * Utils.invSqrtUnchecked(Vec3.magSq(
+      // b))) : 0.0f;
+
+      if ( Vec3.any(a) && Vec3.any(b) ) {
+         final double ax = a.x;
+         final double ay = a.y;
+         final double az = a.z;
+
+         final double bx = b.x;
+         final double by = b.y;
+         final double bz = b.z;
+
+         return ( float ) Math.acos( ( ax * bx + ay * by + az * bz ) / ( Math
+            .sqrt(ax * ax + ay * ay + az * az) * Math.sqrt(bx * bx + by * by
+               + bz * bz) ));
+      } else {
+         return 0.0f;
+      }
    }
 
    /**
