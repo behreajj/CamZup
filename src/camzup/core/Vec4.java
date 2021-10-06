@@ -435,13 +435,9 @@ public class Vec4 implements Comparable < Vec4 > {
    public static boolean approx ( final Vec4 a, final Vec4 b,
       final float tolerance ) {
 
-      /* @formatter:off */
-      return a == b ||
-         Utils.approx(a.w, b.w, tolerance) &&
-         Utils.approx(a.z, b.z, tolerance) &&
-         Utils.approx(a.y, b.y, tolerance) &&
-         Utils.approx(a.x, b.x, tolerance);
-      /* @formatter:on */
+      return a == b || Utils.approx(a.w, b.w, tolerance) && Utils.approx(a.z,
+         b.z, tolerance) && Utils.approx(a.y, b.y, tolerance) && Utils.approx(
+            a.x, b.x, tolerance);
    }
 
    /**

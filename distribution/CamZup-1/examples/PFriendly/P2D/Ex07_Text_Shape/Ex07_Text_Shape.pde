@@ -3,10 +3,8 @@ import camzup.core.*;
 
 YupJ2 graphics;
 CurveEntity2[] glyCrv;
-MeshEntity2[] glyMsh;
 
 String str = "Quigley";
-boolean toggle = false;
 boolean showHandles = true;
 
 MaterialSolid matCrv = new MaterialSolid()
@@ -28,31 +26,16 @@ void setup() {
   frameRate(60.0f);
   graphics = (YupJ2)getGraphics();
 
+  float scl = width * 0.4f;
   PImage txtr = createImage(512, 512, ARGB);
   ZImage.rgb(txtr);
   matMsh = new MaterialPImage(txtr);
 
   textMode(SHAPE);
   font = createFont("Cambria", 64.0f);
-  glyCrv = TextShape.glyphCurve(font, 0.0f, false, str);
-  glyMsh = TextShape.glyphMesh(font, 15.0f, false, str);
-
-  float scl = width * 0.4f;
-  int len0 = glyCrv.length;
-  for (int i = 0; i < len0; ++i) {
-    CurveEntity2 glyph = glyCrv[i];
-    glyph.scaleTo(scl);
-  }
-
-  int len1 = glyMsh.length;
-  for (int j = 0; j < len1; ++j) {
-    MeshEntity2 glyph = glyMsh[j];
-    glyph.scaleTo(scl);
-  }
-
+  glyCrv = TextShape.glyphCurve(font, scl, 0.0f, true, str);
   graphics.moveTo(width * 0.45f, height * 0.25f);
 }
-
 
 void draw() {
   graphics.background(0xff202020);
@@ -60,23 +43,12 @@ void draw() {
   Vec2.mul(m, 5.0f, m);
   graphics.moveBy(m);
 
-  if (toggle) {
-    for (MeshEntity2 glyph : glyMsh) {
-      //graphics.shape(glyph, matMsh);
-      graphics.shape(glyph);
-    }
-  } else {
-    for (CurveEntity2 glyph : glyCrv) {
-      graphics.shape(glyph, matCrv);
-      if (showHandles) {
-        graphics.handles(glyph);
-      }
+  for (CurveEntity2 glyph : glyCrv) {
+    graphics.shape(glyph, matCrv);
+    if (showHandles) {
+      graphics.handles(glyph);
     }
   }
-}
-
-void mouseReleased() {
-  toggle = !toggle;
 }
 
 void mouseWheel(MouseEvent e) {

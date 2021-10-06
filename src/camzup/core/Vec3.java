@@ -534,12 +534,8 @@ public class Vec3 implements Comparable < Vec3 > {
    public static boolean approx ( final Vec3 a, final Vec3 b,
       final float tolerance ) {
 
-      /* @formatter:off */
-      return a == b ||
-         Utils.approx(a.z, b.z, tolerance) &&
-         Utils.approx(a.y, b.y, tolerance) &&
-         Utils.approx(a.x, b.x, tolerance);
-      /* @formatter:on */
+      return a == b || Utils.approx(a.z, b.z, tolerance) && Utils.approx(a.y,
+         b.y, tolerance) && Utils.approx(a.x, b.x, tolerance);
    }
 
    /**

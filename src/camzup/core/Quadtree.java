@@ -25,7 +25,7 @@ import java.util.TreeMap;
  *
  * forming a backwards z pattern.
  */
-public class Quadtree implements Comparable < Quadtree >, Iterable < Vec2 > {
+public class Quadtree implements Iterable < Vec2 > {
 
    /**
     * The bounding area.
@@ -56,7 +56,17 @@ public class Quadtree implements Comparable < Quadtree >, Iterable < Vec2 > {
    /**
     * The default constructor.
     */
-   public Quadtree ( ) { this(new Bounds2()); }
+   public Quadtree ( ) {
+
+      /*
+       * This no longer implements Comparable<Quadtree> (based on its bounds
+       * center) because then it would also have to implement equals and
+       * hashCode to fulfill the interface contract, and it's not clear how two
+       * should be equated.
+       */
+
+      this(new Bounds2());
+   }
 
    /**
     * Constructs a quadtree node with a boundary.
@@ -150,19 +160,6 @@ public class Quadtree implements Comparable < Quadtree >, Iterable < Vec2 > {
       }
 
       return target;
-   }
-
-   /**
-    * Compares this quadtree to another based on a comparison between bounds.
-    *
-    * @param qt the other quadtree
-    *
-    * @return the evaluation
-    */
-   @Override
-   public int compareTo ( final Quadtree qt ) {
-
-      return this.bounds.compareTo(qt.bounds);
    }
 
    /**

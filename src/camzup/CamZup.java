@@ -52,38 +52,6 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // Rng rng = new Rng();
-      // for ( int i = 0; i < 16; ++i ) {
-      // final float a = rng.nextFloat() * ( IUtils.TAU * 2 ) - IUtils.TAU;
-      // final float b = rng.nextFloat() * ( IUtils.TAU * 2 ) - IUtils.TAU;
-      //
-      // final Vec2 aVec = Vec2.fromPolar(a, 1.0f, new Vec2());
-      // final Vec2 bVec = Vec2.fromPolar(b, 1.0f, new Vec2());
-      //
-      // final float ctrl = Vec2.angleBetween(aVec, bVec);
-      // final float test = Utils.distAngleUnsigned(a, b);
-      //
-      // System.out.println(String.format(
-      // "a: %.1f b: %.1f ctrl: %.1f test: %.1f equal: %s", IUtils.RAD_TO_DEG
-      // * a, IUtils.RAD_TO_DEG * b, IUtils.RAD_TO_DEG * ctrl,
-      // IUtils.RAD_TO_DEG * test, Utils.approx(ctrl, test,
-      // IUtils.EPSILON)));
-      // }
-
-      // final Mesh2 mesh2 = new Mesh2();
-      // Mesh2.gridHex(2, mesh2);
-      // mesh2.clean();
-      // final MeshEntity2 me2 = new MeshEntity2(mesh2);
-      // System.out.println(me2.toBlenderCode());
-      // Edge2[] edges = mesh2.getEdgesUndirected();
-      // for ( Edge2 edge : edges ) { System.out.println(edge); }
-      // System.out.println(mesh2.getEdgesUndirected().length);
-      // System.out.println(mesh2.getEdgesDirected().length);
-
-      // Gradient grd = new Gradient();
-      // Gradient.paletteRyb(grd);
-      // String s = Color.toPalString(grd.toArray());
-      // System.out.print(s);
    }
 
    public static Quaternion squad ( final Quaternion q1, final Quaternion q2,

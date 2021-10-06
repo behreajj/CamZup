@@ -770,7 +770,13 @@ public abstract class ParserSvg {
                final PathData entry = pathItr.next();
                final SvgPathCmd cmd = entry.cmd;
                final ArrayList < String > data = entry.data;
+
                ParserSvg.segmentChars(chars, entry.lbDat, entry.ubDat, data);
+
+               // TODO: Working on entry validation.
+               // entry.validate();
+               // System.out.println(entry);
+
                final Iterator < String > dataItr = data.iterator();
 
                switch ( cmd ) {
@@ -1461,6 +1467,8 @@ public abstract class ParserSvg {
             count = 1;
             decimalDelim = false;
          } else if ( c == '.' ) {
+            // TODO: It's possible to have multiple decimal point delimiters
+            // between numbers.
             if ( decimalDelim ) {
                final String str = new String(chars, i - count, count).trim();
                if ( !str.isEmpty() ) { target.add(str); }
@@ -1539,6 +1547,8 @@ public abstract class ParserSvg {
 
       /**
        * Returns a string representation of this path data.
+       *
+       * @return the string
        */
       @Override
       public String toString ( ) {
@@ -1560,6 +1570,35 @@ public abstract class ParserSvg {
 
          sb.append(" ] }");
          return sb.toString();
+      }
+
+      /**
+       * Checks whether the number of entries in the path's data matches the
+       * number expected by its command. Returns true if the numbers match;
+       * otherwise, returns false. Fills the array list with empty values in
+       * cases where actual is less than expected number.
+       *
+       * @return the evaluation
+       */
+      public boolean validate ( ) {
+
+         final int expectedCount = this.cmd.getDataCount();
+         final int actualCount = this.data.size();
+         if ( expectedCount != actualCount ) {
+            if ( actualCount < expectedCount ) {
+               final int diff = expectedCount - actualCount;
+               for ( int i = 0; i < diff; ++i ) { this.data.add("0"); }
+            } else if ( actualCount % 2 != 0 && expectedCount % 2 == 0 ) {
+               // TODO: Maybe this should be actualCount % expectedCount != 0 ?
+               // Would have to account for close command being zero.
+               // A move-to command may have multiple iterations, and thus
+               // greater than expectedCount, but still be malformed.
+               this.data.add("0");
+            }
+            return false;
+         } else {
+            return true;
+         }
       }
 
    }

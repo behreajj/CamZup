@@ -14,11 +14,8 @@ import java.awt.geom.PathIterator;
 
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
-import camzup.core.Experimental;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
-import camzup.core.Mesh2;
-import camzup.core.MeshEntity2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 
@@ -37,12 +34,31 @@ public abstract class TextShape {
    private TextShape ( ) {}
 
    /**
+    * One of two characters sampled from a font to establish an appropriate
+    * line height, {@value TextShape#LINE_HEIGHT_SAMPLE_A}.
+    */
+   public static final char LINE_HEIGHT_SAMPLE_A = 'l';
+
+   /**
+    * One of two characters sampled from a font to establish an appropriate
+    * line height, {@value TextShape#LINE_HEIGHT_SAMPLE_B}.
+    */
+   public static final char LINE_HEIGHT_SAMPLE_B = 'd';
+
+   /**
+    * Character used to establish the space of a width for a given font,
+    * {@value TextShape#SPACE_WIDTH_SAMPLE}.
+    */
+   public static final char SPACE_WIDTH_SAMPLE = '-';
+
+   /**
     * Converts a list of characters to a an array of curve entities. When the
     * level of detail is 0, uses Bezier curves; when the detail is non-zero,
     * approximates the glyph with a series of straight line segments. The
     * PFont should have been created with createFont, not loadFont.
     *
     * @param pfont      the PFont
+    * @param scale      the curve scale
     * @param detail     the level of detail
     * @param characters the characters
     * @param separate   separate curve per char
@@ -50,10 +66,18 @@ public abstract class TextShape {
     * @return the array
     */
    public static CurveEntity2[] glyphCurve ( final PFont pfont,
-      final float detail, final boolean separate, final char... characters ) {
+      final float scale, final float detail, final boolean separate,
+      final char... characters ) {
 
-      // TODO: Pass on display scale to user.
-      return TextShape.processGlyphCe(pfont, 1f, detail, separate, characters);
+      final Font font = ( Font ) pfont.getNative();
+      if ( font != null ) {
+         @SuppressWarnings ( "deprecation" )
+         final FontRenderContext frc = Toolkit.getDefaultToolkit()
+            .getFontMetrics(font).getFontRenderContext();
+         return TextShape.processGlyphCe(frc, pfont, scale, detail, separate,
+            characters);
+      }
+      return new CurveEntity2[] {};
    }
 
    /**
@@ -63,6 +87,7 @@ public abstract class TextShape {
     * PFont should have been created with createFont, not loadFont.
     *
     * @param pfont    the PFont
+    * @param scale    the curve scale
     * @param detail   the level of detail
     * @param separate separate curve per char
     * @param str      the string
@@ -70,10 +95,10 @@ public abstract class TextShape {
     * @return the array
     */
    public static CurveEntity2[] glyphCurve ( final PFont pfont,
-      final float detail, final boolean separate, final String str ) {
+      final float scale, final float detail, final boolean separate,
+      final String str ) {
 
-      // TODO: Pass on display scale to user.
-      return TextShape.processGlyphCe(pfont, 1f, detail, separate, str
+      return TextShape.glyphCurve(pfont, scale, detail, separate, str
          .toCharArray());
    }
 
@@ -85,6 +110,7 @@ public abstract class TextShape {
     *
     * @param rndr       the renderer
     * @param pfont      the PFont
+    * @param scale      the curve scale
     * @param detail     the level of detail
     * @param characters the characters
     * @param separate   separate curve per char
@@ -92,11 +118,12 @@ public abstract class TextShape {
     * @return the array
     */
    public static CurveEntity2[] glyphCurve ( final PGraphicsJava2D rndr,
-      final PFont pfont, final float detail, final boolean separate,
-      final char... characters ) {
+      final PFont pfont, final float scale, final float detail,
+      final boolean separate, final char... characters ) {
 
-      return TextShape.processGlyphCe(rndr.g2, pfont, detail, separate,
-         characters);
+      return TextShape.processGlyphCe( ( ( Graphics2D ) rndr.getNative() )
+         .getFontRenderContext(), pfont, scale, detail, separate, characters);
+
    }
 
    /**
@@ -107,6 +134,7 @@ public abstract class TextShape {
     *
     * @param rndr     the renderer
     * @param pfont    the PFont
+    * @param scale    the curve scale
     * @param detail   the level of detail
     * @param separate separate curve per char
     * @param str      the string
@@ -114,108 +142,18 @@ public abstract class TextShape {
     * @return the array
     */
    public static CurveEntity2[] glyphCurve ( final PGraphicsJava2D rndr,
-      final PFont pfont, final float detail, final boolean separate,
-      final String str ) {
+      final PFont pfont, final float scale, final float detail,
+      final boolean separate, final String str ) {
 
-      return TextShape.processGlyphCe(rndr.g2, pfont, detail, separate, str
+      return TextShape.glyphCurve(rndr, pfont, scale, detail, separate, str
          .toCharArray());
    }
 
    /**
-    * Converts a list of characters to an array of mesh entities. The PFont
-    * should have been created with createFont, not loadFont.
+    * Appends curve entities to an array list based on a font rendering
+    * context, font and array of characters.
     *
-    * @param pfont      the PFont
-    * @param detail     the level of detail
-    * @param separate   separate curve per char
-    * @param characters the characters
-    *
-    * @return the array
-    */
-   public static MeshEntity2[] glyphMesh ( final PFont pfont,
-      final float detail, final boolean separate, final char... characters ) {
-
-      return TextShape.processGlyphMe(pfont, detail, separate, characters);
-   }
-
-   /**
-    * Converts a string to a an array of mesh entities. The PFont should have
-    * been created with createFont, not loadFont.
-    *
-    * @param pfont    the PFont
-    * @param detail   the level of detail
-    * @param separate separate curve per char
-    * @param str      the string
-    *
-    * @return the array
-    */
-   public static MeshEntity2[] glyphMesh ( final PFont pfont,
-      final float detail, final boolean separate, final String str ) {
-
-      return TextShape.processGlyphMe(pfont, detail, separate, str
-         .toCharArray());
-   }
-
-   /**
-    * Gets an array of curves from a PFont. The Graphics2D input can be
-    * retrieved from a PGraphicsJava2D renderer.
-    *
-    * @param graphics   the AWT Graphics2D
-    * @param pfont      the PFont
-    * @param detail     the glyph detail
-    * @param characters the characters
-    * @param separate   separate curve per char
-    *
-    * @return the array of Curve2s
-    */
-   protected static CurveEntity2[] processGlyphCe ( final Graphics2D graphics,
-      final PFont pfont, final float detail, final boolean separate,
-      final char... characters ) {
-
-      final ArrayList < CurveEntity2 > entities = new ArrayList <>();
-      final Font font = ( Font ) pfont.getNative();
-      if ( font != null ) {
-
-         final FontRenderContext frc = graphics.getFontRenderContext();
-         // final FontMetrics fm = graphics.getFontMetrics();
-         // final LineMetrics lm = fm.getLineMetrics(
-         // characters, 0, characters.length, graphics);
-
-         if ( separate ) {
-
-            final int len = characters.length;
-
-            // float xoff = 0.0f;
-            for ( int i = 0; i < len; ++i ) {
-               final char character = characters[i];
-               final String name = Character.toString(character);
-               final CurveEntity2 entity = new CurveEntity2(name);
-               TextShape.processGlyphCurve(font, frc, null, detail, character,
-                  entity.curves);
-               entities.add(entity);
-               // final float w = fm.charWidth(character);
-               // xoff += w;
-            }
-
-         } else {
-
-            final String name = new String(characters);
-            final CurveEntity2 entity = new CurveEntity2(name);
-            TextShape.processGlyphCurve(font, frc, null, detail, characters,
-               entity.curves);
-            entities.add(entity);
-         }
-
-      }
-
-      return entities.toArray(new CurveEntity2[entities.size()]);
-   }
-
-   /**
-    * To convert a character to a glyph with OpenGL- based renderers,
-    * Processing uses a deprecated method from an AWT function. That method
-    * call has been isolated to this function.
-    *
+    * @param frc          the font rendering context
     * @param pfont        the Processing font
     * @param displayScale the display scale
     * @param detail       the curve detail
@@ -223,38 +161,34 @@ public abstract class TextShape {
     * @param separate     separate curve per char
     *
     * @return the array of glyphs
-    *
-    * @see Toolkit#getDefaultToolkit()
     */
-   protected static CurveEntity2[] processGlyphCe ( final PFont pfont,
-      final float displayScale, final float detail, final boolean separate,
-      final char... characters ) {
+   protected static CurveEntity2[] processGlyphCe ( final FontRenderContext frc,
+      final PFont pfont, final float displayScale, final float detail,
+      final boolean separate, final char... characters ) {
 
       final ArrayList < CurveEntity2 > entities = new ArrayList <>();
       final Font font = ( Font ) pfont.getNative();
       if ( font != null ) {
 
-         @SuppressWarnings ( "deprecation" )
-         final FontRenderContext frc = Toolkit.getDefaultToolkit()
-            .getFontMetrics(font).getFontRenderContext();
+         final float valDispScl = displayScale != 0.0f ? displayScale : 1.0f;
 
          if ( separate ) {
-
-            final int len = characters.length;
 
             float xCursor = 0.0f;
             float yCursor = 0.0f;
             final Vec2 tr = new Vec2();
 
-            // TODO: Implement mesh version.
-            final float scalar = displayScale / pfont.getSize();
+            final float scalar = valDispScl / pfont.getSize();
             final float kerning = 0.25f;
             final float leading = 1.0f;
-            final float spaceWidth = pfont.getGlyph('-').width;
-            final float lineHeight = Utils.max(pfont.getGlyph('l').height, pfont
-               .getGlyph('d').height);
+            final float spaceWidth = pfont.getGlyph(
+               TextShape.SPACE_WIDTH_SAMPLE).width;
+            final float lineHeight = Utils.max(pfont.getGlyph(
+               TextShape.LINE_HEIGHT_SAMPLE_A).height, pfont.getGlyph(
+                  TextShape.LINE_HEIGHT_SAMPLE_B).height);
             boolean newLineFlag = false;
 
+            final int len = characters.length;
             for ( int i = 0; i < len; ++i ) {
                final char character = characters[i];
 
@@ -270,8 +204,9 @@ public abstract class TextShape {
                   final CurveEntity2 entity = new CurveEntity2(Character
                      .toString(character));
                   entities.add(entity);
-                  TextShape.processGlyphCurve(font, frc, null, detail,
-                     character, entity.curves);
+
+                  TextShape.processGlyphCurve(font, frc, null, valDispScl,
+                     detail, character, entity.curves);
 
                   tr.set(xCursor, yCursor);
                   entity.moveTo(tr);
@@ -287,8 +222,8 @@ public abstract class TextShape {
 
             final String name = new String(characters);
             final CurveEntity2 entity = new CurveEntity2(name);
-            TextShape.processGlyphCurve(font, frc, null, detail, characters,
-               entity.curves);
+            TextShape.processGlyphCurve(font, frc, null, valDispScl, detail,
+               characters, entity.curves);
             entities.add(entity);
 
          }
@@ -307,6 +242,7 @@ public abstract class TextShape {
     * @param font      the AWT font
     * @param frc       the font render context
     * @param transform the AWT affine transform
+    * @param scale     the glyph scale
     * @param detail    the detail
     * @param character the character
     * @param curves    the list of curves
@@ -318,10 +254,10 @@ public abstract class TextShape {
     */
    protected static ArrayList < Curve2 > processGlyphCurve ( final Font font,
       final FontRenderContext frc, final AffineTransform transform,
-      final float detail, final char character, final ArrayList <
-         Curve2 > curves ) {
+      final float scale, final float detail, final char character,
+      final ArrayList < Curve2 > curves ) {
 
-      return TextShape.processGlyphCurve(font, frc, transform, detail,
+      return TextShape.processGlyphCurve(font, frc, transform, scale, detail,
          new char[] { character }, curves);
    }
 
@@ -336,6 +272,7 @@ public abstract class TextShape {
     * @param font       the AWT font
     * @param frc        the font render context
     * @param transform  the AWT affine transform
+    * @param scale      the glyph scale
     * @param detail     the detail
     * @param characters the characters array
     * @param curves     the list of curves
@@ -351,8 +288,8 @@ public abstract class TextShape {
     */
    protected static ArrayList < Curve2 > processGlyphCurve ( final Font font,
       final FontRenderContext frc, final AffineTransform transform,
-      final float detail, final char[] characters, final ArrayList <
-         Curve2 > curves ) {
+      final float scale, final float detail, final char[] characters,
+      final ArrayList < Curve2 > curves ) {
 
       final GlyphVector gv = font.createGlyphVector(frc, characters);
       final String namePrefix = new String(characters) + ".";
@@ -374,9 +311,13 @@ public abstract class TextShape {
        */
       final double[] itrpts = new double[6];
 
-      /* Neutralize the font size so output is close to unit scale. */
+      /*
+       * Neutralize the font size so output is close to unit scale. Multiply by
+       * display scale.
+       */
       final float fontSize = font.getSize2D();
-      final double invScalar = fontSize == 0.0f ? 1.0d : 1.0d / fontSize;
+      final double dispScl = scale == 0.0f ? 1.0d : scale;
+      final double invScalar = fontSize == 0.0f ? dispScl : dispScl / fontSize;
 
       Curve2 currCurve = null;
       Knot2 prevKnot = null;
@@ -386,7 +327,6 @@ public abstract class TextShape {
       while ( !itr.isDone() ) {
 
          /* The y-axis is flipped in all cases, for y-up. */
-
          final int segType = itr.currentSegment(itrpts);
          switch ( segType ) {
 
@@ -496,240 +436,6 @@ public abstract class TextShape {
       }
 
       return curves;
-   }
-
-   /**
-    * To convert a character to a glyph with OpenGL- based renderers,
-    * Processing uses a deprecated method from an AWT function. That method
-    * call has been isolated to this function.
-    *
-    * @param pfont      the Processing font
-    * @param detail     the curve detail
-    * @param characters the characters
-    * @param separate   separate curve per char
-    *
-    * @return the array of glyphs
-    *
-    * @see Toolkit#getDefaultToolkit()
-    */
-   protected static MeshEntity2[] processGlyphMe ( final PFont pfont,
-      final float detail, final boolean separate, final char... characters ) {
-
-      // TODO: What about the variation which accepts a Graphics2D?
-
-      final ArrayList < MeshEntity2 > entities = new ArrayList <>();
-      final Font font = ( Font ) pfont.getNative();
-      if ( font != null ) {
-
-         @SuppressWarnings ( "deprecation" )
-         final FontRenderContext frc = Toolkit.getDefaultToolkit()
-            .getFontMetrics(font).getFontRenderContext();
-
-         if ( separate ) {
-
-            final int len = characters.length;
-
-            for ( int i = 0; i < len; ++i ) {
-               final char character = characters[i];
-
-               final String name = Character.toString(character);
-               final MeshEntity2 entity = new MeshEntity2(name);
-               TextShape.processGlyphMesh(font, frc, null, detail, character,
-                  entity.meshes);
-               entities.add(entity);
-            }
-
-         } else {
-
-            final String name = new String(characters);
-            final MeshEntity2 entity = new MeshEntity2(name);
-            TextShape.processGlyphMesh(font, frc, null, detail, characters,
-               entity.meshes);
-            entities.add(entity);
-
-         }
-      }
-      return entities.toArray(new MeshEntity2[entities.size()]);
-   }
-
-   /**
-    * Converts a character to an list of meshes. A helper function for other
-    * variants of getGlyph.<br>
-    * <br>
-    * When multiple characters are provided, the kerning between characters is
-    * better; when one character is supplied, glyphs with multiple curves (i,
-    * j, p, etc.) are easier to organize.
-    *
-    * @param font      the AWT font
-    * @param frc       the font render context
-    * @param transform the AWT affine transform
-    * @param detail    the detail
-    * @param character the character
-    * @param curves    the list of curves
-    *
-    * @return the list of curves
-    *
-    * @see TextShape#processGlyphMesh(Font, FontRenderContext,
-    *      AffineTransform, float, char[], List)
-    */
-   @Experimental
-   protected static ArrayList < Mesh2 > processGlyphMesh ( final Font font,
-      final FontRenderContext frc, final AffineTransform transform,
-      final float detail, final char character, final ArrayList <
-         Mesh2 > meshes ) {
-
-      return TextShape.processGlyphMesh(font, frc, transform, detail,
-         new char[] { character }, meshes);
-   }
-
-   /**
-    * Converts an array of characters to an list of meshes. A helper function
-    * for other variants of getGlyph.<br>
-    * <br>
-    * When multiple characters are provided, the kerning between characters is
-    * better; when one character is supplied, glyphs with multiple curves (i,
-    * j, p, etc.) are easier to organize.
-    *
-    * @param font       the AWT font
-    * @param frc        the font render context
-    * @param transform  the AWT affine transform
-    * @param detail     the detail
-    * @param characters the characters array
-    * @param meshes     the list of meshes
-    *
-    * @return the list of meshes
-    *
-    * @see Font#createGlyphVector(FontRenderContext, char[])
-    * @see GlyphVector#getOutline()
-    * @see Shape#getPathIterator(java.awt.geom.AffineTransform)
-    * @see Shape#getPathIterator(java.awt.geom.AffineTransform, double)
-    * @see Font#getSize()
-    * @see PathIterator#currentSegment(float[])
-    */
-   @Experimental
-   protected static ArrayList < Mesh2 > processGlyphMesh ( final Font font,
-      final FontRenderContext frc, final AffineTransform transform,
-      final float detail, final char[] characters, final ArrayList <
-         Mesh2 > meshes ) {
-
-      final GlyphVector gv = font.createGlyphVector(frc, characters);
-      // final int numGlyphs = gv.getNumGlyphs();
-      final String namePrefix = new String(characters) + ".";
-      final Shape shp = gv.getOutline();
-      final float vdetail = Utils.min(IUtils.EPSILON, detail);
-      final PathIterator itr = shp.getPathIterator(transform, vdetail);
-      final double[] itrpts = new double[6];
-      final float fontSize = font.getSize2D();
-      final double invScalar = fontSize == 0.0f ? 1.0d : 1.0d / fontSize;
-
-      int meshCount = 0;
-      Mesh2 currMesh = null;
-      final ArrayList < Vec2 > currMeshPts = new ArrayList <>();
-      Vec2 currPt = null;
-
-      /* For texture coordinate calculation. */
-      float lbx = Float.MAX_VALUE;
-      float lby = Float.MAX_VALUE;
-      float ubx = Float.MIN_VALUE;
-      float uby = Float.MIN_VALUE;
-
-      while ( !itr.isDone() ) {
-         final int segType = itr.currentSegment(itrpts);
-
-         switch ( segType ) {
-
-            case PathIterator.SEG_MOVETO: /* 0 */
-
-               final String name = namePrefix + meshCount;
-               currMesh = new Mesh2(name);
-               ++meshCount;
-
-               currPt = new Vec2(( float ) ( itrpts[0] * invScalar ),
-                  ( float ) ( -itrpts[1] * invScalar ));
-               currMeshPts.add(currPt);
-
-               break;
-
-            case PathIterator.SEG_LINETO: /* 1 */
-
-               currPt = new Vec2(( float ) ( itrpts[0] * invScalar ),
-                  ( float ) ( -itrpts[1] * invScalar ));
-               currMeshPts.add(currPt);
-
-               break;
-
-            case PathIterator.SEG_QUADTO: /* 2 */
-
-               currPt = new Vec2(( float ) ( itrpts[2] * invScalar ),
-                  ( float ) ( -itrpts[3] * invScalar ));
-               currMeshPts.add(currPt);
-
-               break;
-
-            case PathIterator.SEG_CUBICTO: /* 3 */
-
-               currPt = new Vec2(( float ) ( itrpts[4] * invScalar ),
-                  ( float ) ( -itrpts[5] * invScalar ));
-               currMeshPts.add(currPt);
-
-               break;
-
-            case PathIterator.SEG_CLOSE: /* 4 */
-
-               currMeshPts.remove(0);
-
-               final int len = currMeshPts.size();
-               final Vec2[] vs = currMeshPts.toArray(new Vec2[len]);
-               final Vec2[] vts = new Vec2[len];
-               final int[][][] fs = new int[1][len + 1][2];
-               final int[][] f = fs[0];
-
-               final float xDim = ubx - lbx;
-               final float yDim = uby - lby;
-               final float xInv = xDim == 0.0f ? 1.0f : 1.0f / xDim;
-               final float yInv = yDim == 0.0f ? 1.0f : 1.0f / yDim;
-
-               /* Calculate UVs as between lower and upper bound. */
-               for ( int i = 0; i < len; ++i ) {
-                  f[i][0] = i;
-                  f[i][1] = i;
-                  final Vec2 v = vs[i];
-                  vts[i] = new Vec2( ( v.x - lbx ) * xInv, 1.0f - ( v.y - lby )
-                     * yInv);
-               }
-               f[len][0] = 0;
-               f[len][1] = 0;
-
-               currMesh.set(fs, vs, vts);
-               currMesh.reverseFace(0);
-               meshes.add(currMesh);
-
-               /*
-                * Clear array list and reset lower and upper bound so that UV
-                * coordinates can be calculated for the next mesh.
-                */
-               currMeshPts.clear();
-               lbx = Float.MAX_VALUE;
-               lby = Float.MAX_VALUE;
-               ubx = Float.MIN_VALUE;
-               uby = Float.MIN_VALUE;
-
-               break;
-
-            default:
-
-         }
-
-         /* Update lower and upper bound. */
-         if ( currPt.x < lbx ) { lbx = currPt.x; }
-         if ( currPt.x > ubx ) { ubx = currPt.x; }
-         if ( currPt.y < lby ) { lby = currPt.y; }
-         if ( currPt.y > uby ) { uby = currPt.y; }
-
-         itr.next();
-      }
-
-      return meshes;
    }
 
 }

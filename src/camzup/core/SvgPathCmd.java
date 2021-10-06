@@ -157,6 +157,8 @@ public enum SvgPathCmd {
 
    /**
     * Returns a string representation of the path command.
+    *
+    * @return the string
     */
    @Override
    public String toString ( ) {

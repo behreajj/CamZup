@@ -1,12 +1,12 @@
 package camzup.core;
 
 /**
- * Coordinates texture coordinate profiles for various meshes.
+ * Organizes texture coordinate profiles for various meshes.
  */
 public interface UvProfile {
 
    /**
-    * Texture coordinate patterns when making a cube.
+    * Texture coordinate patterns for a cube.
     */
    public enum Cube {
 

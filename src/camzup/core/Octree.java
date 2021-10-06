@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -28,7 +29,7 @@ import java.util.TreeMap;
  *
  * forming a backwards z pattern.
  */
-public class Octree implements Comparable < Octree >, Iterable < Vec3 > {
+public class Octree implements Iterable < Vec3 > {
 
    /**
     * The bounding volume.
@@ -59,7 +60,17 @@ public class Octree implements Comparable < Octree >, Iterable < Vec3 > {
    /**
     * The default constructor.
     */
-   public Octree ( ) { this(new Bounds3()); }
+   public Octree ( ) {
+
+      /*
+       * This no longer implements Comparable<Octree> (based on its bounds
+       * center) because then it would also have to implement equals and
+       * hashCode to fulfill the interface contract, and it's not clear how two
+       * should be equated.
+       */
+
+      this(new Bounds3());
+   }
 
    /**
     * Constructs an octree node with a boundary.
@@ -155,19 +166,6 @@ public class Octree implements Comparable < Octree >, Iterable < Vec3 > {
    }
 
    /**
-    * Compares this octree to another based on a comparison between bounds.
-    *
-    * @param ot the other octree
-    *
-    * @return the evaluation
-    */
-   @Override
-   public int compareTo ( final Octree ot ) {
-
-      return this.bounds.compareTo(ot.bounds);
-   }
-
-   /**
     * Gets the level of the node.
     *
     * @return the level
@@ -215,6 +213,21 @@ public class Octree implements Comparable < Octree >, Iterable < Vec3 > {
       for ( int i = 0; itr.hasNext(); ++i ) {
          result[i] = new Vec3(itr.next());
       }
+      return result;
+   }
+
+   @Override
+   public int hashCode ( ) {
+
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ( this.bounds == null ? 0 : this.bounds
+         .hashCode() );
+      result = prime * result + this.capacity;
+      result = prime * result + Arrays.hashCode(this.children);
+      result = prime * result + this.level;
+      result = prime * result + ( this.points == null ? 0 : this.points
+         .hashCode() );
       return result;
    }
 

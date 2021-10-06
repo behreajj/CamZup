@@ -518,11 +518,8 @@ public class Vec2 implements Comparable < Vec2 > {
    public static boolean approx ( final Vec2 a, final Vec2 b,
       final float tolerance ) {
 
-      /* @formatter:off */
-      return a == b ||
-         Utils.approx(a.y, b.y, tolerance) &&
-         Utils.approx(a.x, b.x, tolerance);
-      /* @formatter:on */
+      return a == b || Utils.approx(a.y, b.y, tolerance) && Utils.approx(a.x,
+         b.x, tolerance);
    }
 
    /**
