@@ -123,7 +123,6 @@ public abstract class TextShape {
 
       return TextShape.processGlyphCe( ( ( Graphics2D ) rndr.getNative() )
          .getFontRenderContext(), pfont, scale, detail, separate, characters);
-
    }
 
    /**
