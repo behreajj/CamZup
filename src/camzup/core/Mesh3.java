@@ -3025,20 +3025,62 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @see Mesh3#cube(float, PolyType, UvProfile.Cube, Mesh3)
     * @see Mesh3#subdivFacesCenter(int)
-    * @see Mesh3#castToSphere(Mesh3, float, Mesh3)
     */
    public static Mesh3 cubeSphere ( final int itrs, final PolyType poly,
       final UvProfile.Cube profile, final Mesh3 target ) {
 
       /*
-       * Sort has to be done first to merge newly created vertices before
-       * normals are calculated.
+       * Formula specific to casting a cube to a sphere:
+       * https://math.stackexchange.com/questions/118760/can-someone-please-
+       * explain-the-cube-to-sphere-mapping-formula-to-me The cube's initial
+       * size must be [-1.0, 1.0]. Sort has to be done first to merge newly
+       * created vertices before normals are calculated.
        */
-      Mesh3.cube(0.5f, PolyType.QUAD, profile, target);
+      final float rad = 0.5f;
+
+      Mesh3.cube(1.0f, PolyType.QUAD, profile, target);
       target.subdivFacesCenter(itrs);
       if ( poly == PolyType.TRI ) { target.triangulate(); }
       target.clean();
-      Mesh3.castToSphere(target, 0.5f, target);
+
+      final int[][][] fsSrc = target.faces;
+      final Vec3[] vsSrc = target.coords;
+      final int fsSrcLen = fsSrc.length;
+      final int vsSrcLen = vsSrc.length;
+
+      final Vec3[] vns = target.normals = Vec3.resize(target.normals, vsSrcLen);
+      for ( int i = 0; i < vsSrcLen; ++i ) {
+
+         final Vec3 vSrc = vsSrc[i];
+         final float x = vSrc.x;
+         final float y = vSrc.y;
+         final float z = vSrc.z;
+
+         final float xsq = x * x;
+         final float ysq = y * y;
+         final float zsq = z * z;
+
+         final float xsq_2 = xsq * 0.5f;
+         final float ysq_2 = ysq * 0.5f;
+         final float zsq_2 = zsq * 0.5f;
+
+         final Vec3 vnSrc = vns[i];
+         vnSrc.set(x * Utils.sqrtUnchecked(1.0f - ( ysq_2 + zsq_2 ) + ysq * zsq
+            * IUtils.ONE_THIRD), y * Utils.sqrtUnchecked(1.0f - ( zsq_2
+               + xsq_2 ) + zsq * xsq * IUtils.ONE_THIRD), z * Utils
+                  .sqrtUnchecked(1.0f - ( xsq_2 + ysq_2 ) + xsq * ysq
+                     * IUtils.ONE_THIRD));
+         Vec3.mul(vnSrc, rad, vSrc);
+      }
+
+      for ( int i = 0; i < fsSrcLen; ++i ) {
+         final int[][] fSrc = fsSrc[i];
+         final int fSrcLen = fSrc.length;
+         for ( int j = 0; j < fSrcLen; ++j ) {
+            final int[] vertSrc = fSrc[j];
+            vertSrc[2] = vertSrc[0];
+         }
+      }
 
       target.name = "Sphere.Cube";
       return target;

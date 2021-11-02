@@ -52,7 +52,6 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-
    }
 
    public static Quaternion squad ( final Quaternion q1, final Quaternion q2,
