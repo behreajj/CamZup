@@ -78,6 +78,8 @@ public class ZImage extends PImage {
     *
     * @param w width
     * @param h height
+    * 
+    * @see ZImage#resizeBicubic(PImage, int, int)
     */
    @Override
    public void resize ( final int w, final int h ) {
@@ -1771,6 +1773,87 @@ public class ZImage extends PImage {
       }
 
       target.format = PConstants.ARGB;
+      target.updatePixels();
+      return target;
+   }
+
+   /**
+    * Rotates an image in place by 90 degrees counter-clockwise.
+    * 
+    * @param target the output image
+    * 
+    * @return the rotated image.
+    */
+   public static PImage rotate90 ( final PImage target ) {
+
+      target.loadPixels();
+      final int[] px = target.pixels;
+      final int w = target.pixelWidth;
+      final int h = target.pixelHeight;
+      final int pd = target.pixelDensity;
+      final int pxLen = px.length;
+      final int pxLennh = pxLen - h;
+      final int[] rotated = new int[pxLen];
+      for ( int i = 0; i < pxLen; ++i ) {
+         rotated[pxLennh + i / w - i % w * h] = px[i];
+      }
+      target.pixels = rotated;
+      target.width = h / pd;
+      target.height = w / pd;
+      target.pixelWidth = h;
+      target.pixelHeight = w;
+      target.updatePixels();
+      return target;
+   }
+
+   /**
+    * Rotates an image in place by 180 degrees.
+    * 
+    * @param target the output image
+    * 
+    * @return the rotated image.
+    */
+   public static PImage rotate180 ( final PImage target ) {
+
+      target.loadPixels();
+      final int[] px = target.pixels;
+      final int pxLen = px.length;
+      final int pxHalfLen = pxLen / 2;
+      final int pxLenn1 = pxLen - 1;
+      for ( int i = 0; i < pxHalfLen; ++i ) {
+         final int t = px[i];
+         px[i] = px[pxLenn1 - i];
+         px[pxLenn1 - i] = t;
+      }
+      target.updatePixels();
+      return target;
+   }
+
+   /**
+    * Rotates an image in place by 270 degrees counter-clockwise.
+    * 
+    * @param target the output image
+    * 
+    * @return the rotated image.
+    */
+   public static PImage rotate270 ( final PImage target ) {
+
+      target.loadPixels();
+      final int[] px = target.pixels;
+      final int w = target.pixelWidth;
+      final int h = target.pixelHeight;
+      final int pd = target.pixelDensity;
+      final int pxLen = px.length;
+      final int hn1 = h - 1;
+      final int[] rotated = new int[pxLen];
+      for ( int i = 0; i < pxLen; ++i ) {
+         rotated[i % w * h + hn1 - i / w] = px[i];
+      }
+      target.pixels = rotated;
+      target.width = h / pd;
+      target.height = w / pd;
+      target.pixelWidth = h;
+      target.pixelHeight = w;
       target.updatePixels();
       return target;
    }
