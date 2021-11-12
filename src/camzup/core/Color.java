@@ -1470,7 +1470,8 @@ public class Color implements Comparable < Color > {
    /**
     * Converts a color from CIE L*a*b* to CIE LCh. The source should be
     * organized as z: L or lightness, x: a or green-red, y: b or blue-yellow,
-    * w: alpha. The returned hue is in the range [0.0, 1.0] .
+    * w: alpha. The output is organized as z: L or lightness, y: C or chroma,
+    * x: h or hue, w: alpha. The returned hue is in the range [0.0, 1.0] .
     *
     * @param source the lab vector
     * @param target the output vector
@@ -1571,8 +1572,10 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from CIE LCh to CIE L*a*b*. The output should be
+    * Converts a color from CIE LCh to CIE L*a*b*. The source should be
     * organized as z: L or lightness, y: C or chroma, x: h or hue, w: alpha.
+    * The output is organized as z: L or lightness, x: a or green-red, y: b or
+    * blue-yellow, w: alpha
     *
     * @param source the lch vector
     * @param target the output vector

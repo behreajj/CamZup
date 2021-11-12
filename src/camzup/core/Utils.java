@@ -968,6 +968,7 @@ public abstract class Utils implements IUtils {
     */
    public static int mod ( final int a, final int b ) {
 
+      // return b != 0 ? ( a % b + b ) % b : a;
       if ( b != 0 ) {
          final int result = a - b * ( a / b );
          return result < 0 ? result + b : result;

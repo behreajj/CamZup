@@ -78,7 +78,7 @@ public class ZImage extends PImage {
     *
     * @param w width
     * @param h height
-    * 
+    *
     * @see ZImage#resizeBicubic(PImage, int, int)
     */
    @Override
@@ -185,6 +185,120 @@ public class ZImage extends PImage {
     * text: {@value ZImage#DEFAULT_LEADING}.
     */
    public static final int DEFAULT_LEADING = 8;
+
+   /**
+    * Adjusts an image's brightness by a factor. Uses the CIE L*a*b* color
+    * space. The contrast adjustment is clamped to the range [-1.0, 1.0].
+    *
+    * @param target the image
+    * @param bright the contrast adjustment
+    *
+    * @return the altered image
+    */
+   public static PImage adjustBrightness ( final PImage target,
+      final float bright ) {
+
+      final float valAdjust = 100.0f * Utils.clamp(bright, -1.0f, 1.0f);
+
+      target.loadPixels();
+      final int[] px = target.pixels;
+      final int len = px.length;
+
+      final Color lrgb = new Color();
+      final Vec4 xyz = new Vec4();
+      final Vec4 lab = new Vec4();
+      final HashMap < Integer, Integer > dictionary = new HashMap <>(512,
+         0.75f);
+
+      for ( int i = 0; i < len; ++i ) {
+         final int srgbKeyInt = px[i];
+         if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
+            final Integer srgbKeyObj = srgbKeyInt;
+            if ( !dictionary.containsKey(srgbKeyObj) ) {
+
+               Color.fromHex(Color.sRgbaTolRgba(srgbKeyInt, false), lrgb);
+               Color.lRgbaToXyza(lrgb, xyz);
+               Color.xyzaToLaba(xyz, lab);
+
+               lab.z += valAdjust;
+
+               Color.labaToXyza(lab, xyz);
+               Color.xyzaTolRgba(xyz, lrgb);
+               dictionary.put(srgbKeyObj, Color.lRgbaTosRgba(Color.toHexIntSat(
+                  lrgb), false));
+            }
+         }
+      }
+
+      if ( dictionary.size() > 0 ) {
+         for ( int i = 0; i < len; ++i ) {
+            final Integer srgbKeyObj = px[i];
+            if ( dictionary.containsKey(srgbKeyObj) ) {
+               px[i] = dictionary.get(srgbKeyObj);
+            }
+         }
+         target.updatePixels();
+      }
+
+      return target;
+   }
+
+   /**
+    * Adjusts an image's contrast by a factor. Uses the CIE L*a*b* color
+    * space. The contrast adjustment is clamped to the range [-1.0, 1.0].
+    *
+    * @param target   the image
+    * @param contrast the contrast adjustment
+    *
+    * @return the altered image
+    */
+   public static PImage adjustContrast ( final PImage target,
+      final float contrast ) {
+
+      final float valAdjust = 1.0f + Utils.clamp(contrast, -1.0f, 1.0f);
+
+      target.loadPixels();
+      final int[] px = target.pixels;
+      final int len = px.length;
+
+      final Color lrgb = new Color();
+      final Vec4 xyz = new Vec4();
+      final Vec4 lab = new Vec4();
+      final HashMap < Integer, Integer > dictionary = new HashMap <>(512,
+         0.75f);
+
+      for ( int i = 0; i < len; ++i ) {
+         final int srgbKeyInt = px[i];
+         if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
+            final Integer srgbKeyObj = srgbKeyInt;
+            if ( !dictionary.containsKey(srgbKeyObj) ) {
+
+               Color.fromHex(Color.sRgbaTolRgba(srgbKeyInt, false), lrgb);
+               Color.lRgbaToXyza(lrgb, xyz);
+               Color.xyzaToLaba(xyz, lab);
+
+               lab.z = ( lab.z - 50.0f ) * valAdjust + 50.0f;
+
+               Color.labaToXyza(lab, xyz);
+               Color.xyzaTolRgba(xyz, lrgb);
+               dictionary.put(srgbKeyObj, Color.lRgbaTosRgba(Color.toHexIntSat(
+                  lrgb), false));
+            }
+         }
+      }
+
+      if ( dictionary.size() > 0 ) {
+         for ( int i = 0; i < len; ++i ) {
+            final Integer srgbKeyObj = px[i];
+            if ( dictionary.containsKey(srgbKeyObj) ) {
+               px[i] = dictionary.get(srgbKeyObj);
+            }
+         }
+         target.updatePixels();
+      }
+
+      return target;
+   }
 
    /**
     * Convert an image in the {@link PConstants#ALPHA} format to an image in
@@ -393,7 +507,7 @@ public class ZImage extends PImage {
    /**
     * Dithers an image with the <a href=
     * "https://www.wikiwand.com/en/Floyd-Steinberg">Floyd-Steinberg</a>
-    * method. Builds an octree in CIE LAB from an input palette, then finds
+    * method. Builds an octree in CIE L*a*b* from an input palette, then finds
     * the nearest color according to Euclidean distance (see <a href=
     * "https://www.wikiwand.com/en/Color_difference#/CIE76">CIE76</a>).
     *
@@ -1240,25 +1354,25 @@ public class ZImage extends PImage {
 
    /**
     * Converts an image to gray scale, with the option of stretching its
-    * contrast, i.e., normalizing its grays according to a minimum and
-    * maximum. Does not change the image format or reduce the number of bytes
-    * used to store color; all colors remain 32-bit.
+    * contrast according to a minimum and maximum. Does not change the image
+    * format or reduce the number of bytes used to store color; all colors
+    * remain 32-bit.
     *
-    * @param target    the output image
-    * @param normalize the normalization flag
+    * @param target  the output image
+    * @param stretch flag to stretch contrast
     *
     * @return the image
     *
     * @see Color#sRgbLuminance(int)
     */
    public static PImage grayscale ( final PImage target,
-      final boolean normalize ) {
+      final boolean stretch ) {
 
       target.loadPixels();
       final int[] px = target.pixels;
       final int len = px.length;
 
-      if ( normalize ) {
+      if ( stretch ) {
 
          /* Find minimum and maximum luminance. */
          float lumMin = Float.MAX_VALUE;
@@ -1778,39 +1892,10 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Rotates an image in place by 90 degrees counter-clockwise.
-    * 
-    * @param target the output image
-    * 
-    * @return the rotated image.
-    */
-   public static PImage rotate90 ( final PImage target ) {
-
-      target.loadPixels();
-      final int[] px = target.pixels;
-      final int w = target.pixelWidth;
-      final int h = target.pixelHeight;
-      final int pd = target.pixelDensity;
-      final int pxLen = px.length;
-      final int pxLennh = pxLen - h;
-      final int[] rotated = new int[pxLen];
-      for ( int i = 0; i < pxLen; ++i ) {
-         rotated[pxLennh + i / w - i % w * h] = px[i];
-      }
-      target.pixels = rotated;
-      target.width = h / pd;
-      target.height = w / pd;
-      target.pixelWidth = h;
-      target.pixelHeight = w;
-      target.updatePixels();
-      return target;
-   }
-
-   /**
     * Rotates an image in place by 180 degrees.
-    * 
+    *
     * @param target the output image
-    * 
+    *
     * @return the rotated image.
     */
    public static PImage rotate180 ( final PImage target ) {
@@ -1831,12 +1916,17 @@ public class ZImage extends PImage {
 
    /**
     * Rotates an image in place by 270 degrees counter-clockwise.
-    * 
+    *
     * @param target the output image
-    * 
+    *
     * @return the rotated image.
     */
    public static PImage rotate270 ( final PImage target ) {
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
 
       target.loadPixels();
       final int[] px = target.pixels;
@@ -1848,6 +1938,40 @@ public class ZImage extends PImage {
       final int[] rotated = new int[pxLen];
       for ( int i = 0; i < pxLen; ++i ) {
          rotated[i % w * h + hn1 - i / w] = px[i];
+      }
+      target.pixels = rotated;
+      target.width = h / pd;
+      target.height = w / pd;
+      target.pixelWidth = h;
+      target.pixelHeight = w;
+      target.updatePixels();
+      return target;
+   }
+
+   /**
+    * Rotates an image in place by 90 degrees counter-clockwise.
+    *
+    * @param target the output image
+    *
+    * @return the rotated image.
+    */
+   public static PImage rotate90 ( final PImage target ) {
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      target.loadPixels();
+      final int[] px = target.pixels;
+      final int w = target.pixelWidth;
+      final int h = target.pixelHeight;
+      final int pd = target.pixelDensity;
+      final int pxLen = px.length;
+      final int pxLennh = pxLen - h;
+      final int[] rotated = new int[pxLen];
+      for ( int i = 0; i < pxLen; ++i ) {
+         rotated[pxLennh + i / w - i % w * h] = px[i];
       }
       target.pixels = rotated;
       target.width = h / pd;
