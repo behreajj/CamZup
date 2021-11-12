@@ -24,14 +24,11 @@ void setup() {
 }
 
 void draw() {
-  float gamma = Utils.lerp(
-    2.4f, 1.0f / 2.4f, mouseX / (width - 1.0f));
-  float amplitude = 1.0f;
-  float offset = Utils.lerp(0.5f, -0.5f,
-    mouseY / (height - 1.0f));
-
+  Vec2 m = graphics.mouse1s(new Vec2());
+  
   target = source.get();
-  ZImage.gammaAdjust(target, gamma, amplitude, offset, false);
+  ZImage.adjustContrast(target, m.x);
+  ZImage.adjustBrightness(target, m.y);
 
   graphics.background();
   if (mousePressed) {
