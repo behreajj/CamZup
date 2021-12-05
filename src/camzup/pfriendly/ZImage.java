@@ -7,7 +7,6 @@ import java.util.regex.Pattern;
 import camzup.core.Bounds3;
 import camzup.core.Color;
 import camzup.core.Gradient;
-import camzup.core.ISvgWritable;
 import camzup.core.IUtils;
 import camzup.core.Octree;
 import camzup.core.Sdf;
@@ -188,7 +187,7 @@ public class ZImage extends PImage {
 
    /**
     * Adjusts an image's brightness by a factor. Uses the CIE L*a*b* color
-    * space. The contrast adjustment is clamped to the range [-1.0, 1.0].
+    * space. The adjustment is clamped to the range [-1.0, 1.0].
     *
     * @param target the image
     * @param bright the contrast adjustment
@@ -245,7 +244,7 @@ public class ZImage extends PImage {
 
    /**
     * Adjusts an image's contrast by a factor. Uses the CIE L*a*b* color
-    * space. The contrast adjustment is clamped to the range [-1.0, 1.0].
+    * space. The adjustment is clamped to the range [-1.0, 1.0].
     *
     * @param target   the image
     * @param contrast the contrast adjustment
@@ -325,7 +324,7 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Finds the aspect ratio of an image, it's width divided by its height.
+    * Finds the aspect ratio of an image, its width divided by its height.
     *
     * @param img the image
     *
@@ -716,8 +715,9 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Recolors an image in-place with a color gradient. The color is converted
-    * to a factor in [0.0, 1.0] by an evaluation function.
+    * Recolors an image in-place with a color gradient. The evaluation
+    * function should accept a hexadecimal color as input and return a factor
+    * in [0.0, 1.0].
     *
     * @param grd     the color gradient
     * @param clrEval the color evaluator
@@ -809,16 +809,14 @@ public class ZImage extends PImage {
 
       target.loadPixels();
 
-      final int h = target.pixelHeight;
       final int w = target.pixelWidth;
       final int[] pixels = target.pixels;
-      final int[] flipped = new int[pixels.length];
+      final int len = pixels.length;
+      final int[] flipped = new int[len];
 
-      for ( int i = 0, y = 0; y < h; ++y ) {
-         final int yw = y * w;
-         for ( int x = w - 1; x > -1; --x, ++i ) {
-            flipped[yw + x] = pixels[i];
-         }
+      final int wn1 = w - 1;
+      for ( int i = 0; i < len; ++i ) {
+         flipped[i / w * w + wn1 - i % w] = pixels[i];
       }
 
       target.pixels = flipped;
@@ -842,11 +840,12 @@ public class ZImage extends PImage {
       final int h = target.pixelHeight;
       final int w = target.pixelWidth;
       final int[] pixels = target.pixels;
-      final int[] flipped = new int[pixels.length];
+      final int len = pixels.length;
+      final int[] flipped = new int[len];
 
-      for ( int i = 0, y = h - 1; y > -1; --y ) {
-         final int yw = y * w;
-         for ( int x = 0; x < w; ++x, ++i ) { flipped[yw + x] = pixels[i]; }
+      final int hn1 = h - 1;
+      for ( int i = 0; i < len; ++i ) {
+         flipped[ ( hn1 - i / w ) * w + i % w] = pixels[i];
       }
 
       target.pixels = flipped;
@@ -1475,6 +1474,8 @@ public class ZImage extends PImage {
     * @return the pre-multiplied image
     */
    public static PImage premul ( final PImage source ) {
+
+      // TODO: Implement unpremul?
 
       source.loadPixels();
       final int[] px = source.pixels;
@@ -2203,71 +2204,6 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Converts an image to a SVG, where a rectangle with non-zero alpha
-    * represents a pixel. Intended for use with small images in the pixel art
-    * style that need to be scaled while maintaining crisp edges.
-    *
-    * @param source the source image
-    * @param scale  the scale
-    *
-    * @return the string
-    */
-   public static String toSvgString ( final PImage source, final float scale ) {
-
-      source.loadPixels();
-      final int pw = source.pixelWidth;
-      final int ph = source.pixelHeight;
-
-      final StringBuilder svgp = new StringBuilder(1024);
-      svgp.append("<svg ");
-      svgp.append("xmlns=\"http://www.w3.org/2000/svg\" ");
-      svgp.append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
-      svgp.append("shape-rendering=\"crispEdges\" ");
-      svgp.append("stroke=\"none\" ");
-      svgp.append("width=\"");
-      svgp.append(Utils.toFixed(source.width * scale,
-         ISvgWritable.FIXED_PRINT));
-      svgp.append("\" height=\"");
-      svgp.append(Utils.toFixed(source.height * scale,
-         ISvgWritable.FIXED_PRINT));
-      svgp.append("\" viewBox=\"0 0 ");
-      svgp.append(pw);
-      svgp.append(' ');
-      svgp.append(ph);
-      svgp.append("\">\n");
-
-      final int[] px = source.pixels;
-      final int len = px.length;
-      for ( int k = 0; k < len; ++k ) {
-         final int hex = px[k];
-         final int ai = hex >> 0x18 & 0xff;
-         if ( ai > 0 ) {
-            final int i0 = k / pw;
-            final int j0 = k % pw;
-
-            svgp.append("<path");
-            svgp.append(" d=\"M ");
-            svgp.append(j0).append(' ').append(i0);
-            svgp.append(" h 1 v 1 h -1 Z\" ");
-
-            if ( ai < 255 ) {
-               svgp.append("fill-opacity=\"");
-               svgp.append(Utils.toFixed(ai * IUtils.ONE_255,
-                  ISvgWritable.FIXED_PRINT));
-               svgp.append("\" ");
-            }
-
-            svgp.append("fill=\"");
-            Color.toHexWeb(svgp, hex);
-            svgp.append("\" />\n");
-         }
-      }
-
-      svgp.append("</svg>");
-      return svgp.toString();
-   }
-
-   /**
     * Blits a source image's pixels onto a target image's pixels, using
     * integer floor modulo to wrap the source image. The source image can be
     * offset horizontally and/or vertically, creating the illusion of
@@ -2317,25 +2253,6 @@ public class ZImage extends PImage {
     * @return the image
     */
    public static PImage wrap ( final PImage source, final PImage target,
-      final float dx, final float dy ) {
-
-      return ZImage.wrap(source, target, ( int ) dx, ( int ) dy);
-   }
-
-   /**
-    * Blits a source image's pixels onto a target image's pixels, using
-    * integer floor modulo to wrap the source image. The source image can be
-    * offset horizontally and/or vertically, creating the illusion of
-    * parallax.
-    *
-    * @param source the source image
-    * @param target the target image
-    * @param dx     horizontal pixel offset
-    * @param dy     vertical pixel offset
-    *
-    * @return the image
-    */
-   public static PImage wrap ( final PImage source, final PImage target,
       final int dx, final int dy ) {
 
       source.loadPixels();
@@ -2345,24 +2262,6 @@ public class ZImage extends PImage {
       target.updatePixels();
       // source.updatePixels();
       return target;
-   }
-
-   /**
-    * Blits a source image's pixels onto a target image's pixels, using
-    * integer floor modulo to wrap the source image. The source image can be
-    * offset horizontally and/or vertically, creating the illusion of
-    * parallax.
-    *
-    * @param source the source image
-    * @param target the target image
-    * @param d      pixel offset
-    *
-    * @return the image
-    */
-   public static PImage wrap ( final PImage source, final PImage target,
-      final Vec2 d ) {
-
-      return ZImage.wrap(source, target, ( int ) d.x, ( int ) d.y);
    }
 
 }

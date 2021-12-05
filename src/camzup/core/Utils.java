@@ -931,8 +931,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Applies floor modulo to the operands. Known in some programming
-    * languages as the Euclidean remainder. Uses the formula mod ( <em>a</em>,
+    * Applies floor modulo to the operands. Uses the formula mod ( <em>a</em>,
     * <em>b</em> ) := <em>a</em> - <em>b</em> * floor ( <em>a</em> /
     * <em>b</em> ). When <em>b</em> is zero, returns <em>a</em>. If <em>b</em>
     * is one, use {@link Utils#mod1(float)} or <em>a</em> - floor(<em>a</em>)
@@ -956,8 +955,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Applies floor modulo to the operands. Known in some programming
-    * languages as the Euclidean remainder. Returns the left operand when the
+    * Applies floor modulo to the operands. Returns the left operand when the
     * right operand is zero. An alternative to {@link Math#floorMod(int, int)}
     * .
     *
@@ -967,6 +965,11 @@ public abstract class Utils implements IUtils {
     * @return the result
     */
    public static int mod ( final int a, final int b ) {
+
+      /*
+       * Floor mod is not the same as Euclidean remainder. See
+       * https://harry.garrood.me/blog/integer-division/ .
+       */
 
       // return b != 0 ? ( a % b + b ) % b : a;
       if ( b != 0 ) {
@@ -1029,8 +1032,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Applies floor modulo to the operands. Known in some programming
-    * languages as the Euclidean remainder. Does not check if the right
+    * Applies floor modulo to the operands. Does not check if the right
     * operand is zero.
     *
     * @param a the left operand

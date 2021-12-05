@@ -404,12 +404,11 @@ public abstract class ParserSvg {
          final float left = cx - rx;
          final float bottom = cy - ry;
 
-         final float horizHandle = rx * ICurve.HNDL_MAG_ORTHO;
-         final float vertHandle = ry * ICurve.HNDL_MAG_ORTHO;
+         final float horizHandle = rx * ICurve.KAPPA;
+         final float vertHandle = ry * ICurve.KAPPA;
 
          final float xHandlePos = cx + horizHandle;
          final float xHandleNeg = cx - horizHandle;
-
          final float yHandlePos = cy + vertHandle;
          final float yHandleNeg = cy - vertHandle;
 

@@ -71,6 +71,32 @@ public class CamZup {
       return target;
    }
 
+   public static Quaternion squadHelper0 ( final Quaternion prev,
+      final Quaternion curr, final Quaternion next, final Quaternion target ) {
+
+      // https://gist.github.com/usefulslug/c59d5f7d35240733b80b
+      // https://www.3dgep.com/understanding-quaternions/
+
+      final Quaternion qiInverse = Quaternion.inverse(curr, new Quaternion());
+
+      final Quaternion a = Quaternion.mul(next, qiInverse, new Quaternion());
+      final Quaternion b = Quaternion.mul(prev, qiInverse, new Quaternion());
+
+      final Quaternion loga = Quaternion.log(a, new Quaternion());
+      final Quaternion logb = Quaternion.log(b, new Quaternion());
+
+      final Quaternion sum = Quaternion.add(loga, logb, new Quaternion());
+      final Quaternion divn4 = Quaternion.mul(sum, -0.25f, new Quaternion());
+      final Quaternion expc = Quaternion.exp(divn4, new Quaternion());
+
+      // Looks like its qi first, not expc...
+      Quaternion.mul(curr, expc, target);
+
+      Quaternion.normalize(target, target);
+      return target;
+
+   }
+
    public static PImage stretchContrast ( final PImage target,
       final float fac ) {
 
@@ -152,32 +178,6 @@ public class CamZup {
          target.updatePixels();
       }
       return target;
-   }
-
-   public static Quaternion squadHelper0 ( final Quaternion prev,
-      final Quaternion curr, final Quaternion next, final Quaternion target ) {
-
-      // https://gist.github.com/usefulslug/c59d5f7d35240733b80b
-      // https://www.3dgep.com/understanding-quaternions/
-
-      final Quaternion qiInverse = Quaternion.inverse(curr, new Quaternion());
-
-      final Quaternion a = Quaternion.mul(next, qiInverse, new Quaternion());
-      final Quaternion b = Quaternion.mul(prev, qiInverse, new Quaternion());
-
-      final Quaternion loga = Quaternion.log(a, new Quaternion());
-      final Quaternion logb = Quaternion.log(b, new Quaternion());
-
-      final Quaternion sum = Quaternion.add(loga, logb, new Quaternion());
-      final Quaternion divn4 = Quaternion.mul(sum, -0.25f, new Quaternion());
-      final Quaternion expc = Quaternion.exp(divn4, new Quaternion());
-
-      // Looks like its qi first, not expc...
-      Quaternion.mul(curr, expc, target);
-
-      Quaternion.normalize(target, target);
-      return target;
-
    }
 
    /**

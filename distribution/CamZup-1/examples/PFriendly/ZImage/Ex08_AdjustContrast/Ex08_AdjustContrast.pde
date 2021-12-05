@@ -20,7 +20,6 @@ void setup() {
 
   source = loadImage("callingStMatthew.jpg");
   target = source.get();
-  ZImage.falseColor(lcd, target);
 }
 
 void draw() {

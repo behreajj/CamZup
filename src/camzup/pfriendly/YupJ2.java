@@ -835,9 +835,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          case PConstants.CORNER: /* 0 */
 
             extapw = 0.5d * w;
-            extcpw = ICurve.HNDL_MAG_ORTHO_2_D * w;
+            extcpw = ICurve.KAPPA_2_D * w;
             extaph = 0.5d * h;
-            extcph = ICurve.HNDL_MAG_ORTHO_2_D * h;
+            extcph = ICurve.KAPPA_2_D * h;
 
             xc = x + extapw;
             yc = y - extaph;
@@ -853,9 +853,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             yc = ( y + h ) * 0.5d;
 
             extapw = 0.5d * wcalc;
-            extcpw = ICurve.HNDL_MAG_ORTHO_2_D * wcalc;
+            extcpw = ICurve.KAPPA_2_D * wcalc;
             extaph = 0.5d * hcalc;
-            extcph = ICurve.HNDL_MAG_ORTHO_2_D * hcalc;
+            extcph = ICurve.KAPPA_2_D * hcalc;
 
             break;
 
@@ -865,9 +865,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             yc = y;
 
             extapw = w;
-            extcpw = ICurve.HNDL_MAG_ORTHO_D * extapw;
+            extcpw = ICurve.KAPPA_D * extapw;
             extaph = h;
-            extcph = ICurve.HNDL_MAG_ORTHO_D * extaph;
+            extcph = ICurve.KAPPA_D * extaph;
 
             break;
 
@@ -879,9 +879,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             yc = y;
 
             extapw = 0.5d * w;
-            extcpw = ICurve.HNDL_MAG_ORTHO_2_D * w;
+            extcpw = ICurve.KAPPA_2_D * w;
             extaph = 0.5d * h;
-            extcph = ICurve.HNDL_MAG_ORTHO_2_D * h;
+            extcph = ICurve.KAPPA_2_D * h;
 
       }
 

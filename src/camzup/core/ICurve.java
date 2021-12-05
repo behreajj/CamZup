@@ -22,28 +22,30 @@ public interface ICurve extends IEntityData {
    /**
     * Handle magnitude for orthogonal handles when four curve knots are used
     * to approximate an ellipse or circle (90 degrees per knot),
-    * {@value Curve#HNDL_MAG_ORTHO} .
+    * {@value Curve#KAPPA} . Derived from
+    * <code>4.0 * (Math.sqrt(2.0) - 1.0) / 3.0</code>.
     */
-   float HNDL_MAG_ORTHO = 0.552285f;
+   float KAPPA = 0.552285f;
 
    /**
     * Half the orthogonal handle magnitude for curve knots,
-    * {@value Curve#HNDL_MAG_ORTHO_2} .
+    * {@value Curve#KAPPA_2} .
     */
-   float HNDL_MAG_ORTHO_2 = ICurve.HNDL_MAG_ORTHO * 0.5f;
+   float KAPPA_2 = ICurve.KAPPA * 0.5f;
 
    /**
     * Half the orthogonal handle magnitude for curve knots,
-    * {@value Curve#HNDL_MAG_ORTHO_2_D} .
+    * {@value Curve#KAPPA_2_D} .
     */
-   double HNDL_MAG_ORTHO_2_D = ICurve.HNDL_MAG_ORTHO_D * 0.5d;
+   double KAPPA_2_D = ICurve.KAPPA_D * 0.5d;
 
    /**
     * Handle magnitude for orthogonal handles when four curve knots are used
     * to approximate an ellipse or circle (90 degrees per knot),
-    * {@value Curve#HNDL_MAG_ORTHO_D} .
+    * {@value Curve#KAPPA_D} . Derived from
+    * <code>4.0 * (Math.sqrt(2.0) - 1.0) / 3.0</code>.
     */
-   double HNDL_MAG_ORTHO_D = 0.552285d;
+   double KAPPA_D = 0.5522847498307936d;
 
    /**
     * Default number of knots to expect when creating an array list in curves.

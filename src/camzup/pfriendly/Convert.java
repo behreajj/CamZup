@@ -785,8 +785,8 @@ public abstract class Convert {
       final Mesh2 source ) {
 
       /*
-       * audit.get(3) could return null, but auditFaceType will always put 3 and
-       * 4 into the map. You could also use getOrDefault .
+       * audit.get could return null, but auditFaceType will always put 3 and 4
+       * into the map. You could also use getOrDefault .
        */
       final Map < Integer, Integer > audit = Mesh.auditFaceType(source);
       final int facesLen = source.faces.length;
@@ -816,8 +816,8 @@ public abstract class Convert {
       final Mesh3 source ) {
 
       /*
-       * audit.get(3) could return null, but auditFaceType will always put 3 and
-       * 4 into the map. You could also use getOrDefault .
+       * audit.get could return null, but auditFaceType will always put 3 and 4
+       * into the map. You could also use getOrDefault .
        */
       final Map < Integer, Integer > audit = Mesh.auditFaceType(source);
       final int facesLen = source.faces.length;

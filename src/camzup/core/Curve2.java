@@ -2235,8 +2235,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float left = xCenter - vrad;
       final float bottom = yCenter - ry;
 
-      final float horizHandle = vrad * ICurve.HNDL_MAG_ORTHO;
-      final float vertHandle = ry * ICurve.HNDL_MAG_ORTHO;
+      final float horizHandle = vrad * ICurve.KAPPA;
+      final float vertHandle = ry * ICurve.KAPPA;
 
       final float xHandlePos = xCenter + horizHandle;
       final float xHandleNeg = xCenter - horizHandle;
