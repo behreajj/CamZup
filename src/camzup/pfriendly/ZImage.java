@@ -1042,8 +1042,6 @@ public class ZImage extends PImage {
       final int fillClr, final int leading, final int kerning,
       final int textAlign ) {
 
-      // TODO: Support long line breaking; use drafts from Lua scripts.
-
       /*
        * Validate inputs: colors with no alpha not allowed; negative leading and
        * kerning not allowed; try to guard against empty Strings. Remove alpha
@@ -1462,6 +1460,90 @@ public class ZImage extends PImage {
          px[i] = Color.lRgbaTosRgba(px[i], adjustAlpha);
       }
       target.updatePixels();
+      return target;
+   }
+
+   /**
+    * Masks the pixels of an under image with the alpha channel of the over
+    * image. The target image is set to the size of the under image.
+    * 
+    * @param under  the under image
+    * @param over   the over image
+    * @param target the target image
+    * 
+    * @return the masked image
+    */
+   public static PImage mask ( final PImage under, final PImage over,
+      final PImage target ) {
+
+      return ZImage.mask(under, over, 0, 0, target);
+   }
+
+   /**
+    * Masks the pixels of an under image with the alpha channel of the over
+    * image. Offsets the over image by pixel coordinates relative to the top
+    * left corner. The target image is set to the size of the under image.
+    * 
+    * @param under  the under image
+    * @param over   the over image
+    * @param x      the mask horizontal offset
+    * @param y      the mask vertical offset
+    * @param target the target image
+    * 
+    * @return the masked image
+    */
+   public static PImage mask ( final PImage under, final PImage over,
+      final int x, final int y, final PImage target ) {
+
+      // TODO: For maximum efficiency, wouldn't the mask image be the size of
+      // the intersection between under an over image?
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Don't use PGraphics as a target of this method.");
+         return target;
+      }
+
+      under.loadPixels();
+      over.loadPixels();
+
+      final int xShift = x;
+      final int yShift = y;
+
+      final int[] pxUnder = under.pixels;
+      final int pxLenUnder = pxUnder.length;
+      final int wUnder = under.pixelWidth;
+      final int hUnder = under.pixelHeight;
+
+      final int[] pxOver = over.pixels;
+      // final int pxLenOver = pxOver.length;
+      final int wOver = over.pixelWidth;
+      final int hOver = over.pixelHeight;
+
+      final int[] pxTarget = new int[pxLenUnder];
+      for ( int i = 0; i < pxLenUnder; ++i ) {
+         final int yUnder = i / wUnder;
+         final int yOver = yUnder - yShift;
+
+         final int xUnder = i % wUnder;
+         final int xOver = xUnder - xShift;
+
+         if ( yOver > -1 && yOver < hOver && xOver > -1 && xOver < wOver ) {
+            final int hexOver = pxOver[yOver * wOver + xOver];
+            final int hexUnder = pxUnder[i];
+
+            pxTarget[i] = ( hexOver & 0xff000000 ) | ( hexUnder
+               & 0x00ffffff );
+         }
+      }
+
+      target.pixels = pxTarget;
+      target.width = under.width;
+      target.height = under.height;
+      target.pixelDensity = under.pixelDensity;
+      target.pixelWidth = wUnder;
+      target.pixelHeight = hUnder;
+      target.updatePixels();
+
       return target;
    }
 

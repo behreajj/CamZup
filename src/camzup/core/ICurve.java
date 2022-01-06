@@ -20,10 +20,10 @@ public interface ICurve extends IEntityData {
    ICurve toggleLoop ( );
 
    /**
-    * Handle magnitude for orthogonal handles when four curve knots are used
-    * to approximate an ellipse or circle (90 degrees per knot),
+    * Magnitude for orthogonal handles when four curve knots are used to
+    * approximate an ellipse or circle (90 degrees per knot),
     * {@value Curve#KAPPA} . Derived from
-    * <code>4.0 * (Math.sqrt(2.0) - 1.0) / 3.0</code>.
+    * <code>(Math.sqrt(2.0) - 1.0) * 4.0 / 3.0</code>.
     */
    float KAPPA = 0.552285f;
 
@@ -40,10 +40,10 @@ public interface ICurve extends IEntityData {
    double KAPPA_2_D = ICurve.KAPPA_D * 0.5d;
 
    /**
-    * Handle magnitude for orthogonal handles when four curve knots are used
-    * to approximate an ellipse or circle (90 degrees per knot),
+    * Magnitude for orthogonal handles when four curve knots are used to
+    * approximate an ellipse or circle (90 degrees per knot),
     * {@value Curve#KAPPA_D} . Derived from
-    * <code>4.0 * (Math.sqrt(2.0) - 1.0) / 3.0</code>.
+    * <code>(Math.sqrt(2.0) - 1.0) * 4.0 / 3.0</code>.
     */
    double KAPPA_D = 0.5522847498307936d;
 

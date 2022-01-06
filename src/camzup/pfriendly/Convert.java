@@ -70,7 +70,7 @@ public abstract class Convert {
       final CurveEntity2 target ) {
 
       target.reset();
-      target.appendAll(Convert.toCurve2(source, new ArrayList <>()));
+      target.appendAll(Convert.toCurve2(source, new ArrayList < Curve2 >()));
       target.name = source.getName();
       return target;
    }
@@ -118,6 +118,28 @@ public abstract class Convert {
          source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
          source.m22, source.m23, source.m30, source.m31, source.m32,
          source.m33);
+   }
+
+   /**
+    * Converts a PShape to a mesh entity. Support for this conversion is
+    * <em>very</em> limited.
+    *
+    * @param source the source shape
+    * @param target the target curve entity
+    *
+    * @return the mesh entity
+    *
+    * @see MeshEntity3#reset()
+    * @see MeshEntity3#appendAll(java.util.Collection)
+    * @see Convert#toMesh3(PShape, ArrayList)
+    */
+   public static MeshEntity3 toMeshEntity3 ( final PShape source,
+      final MeshEntity3 target ) {
+
+      target.reset();
+      target.appendAll(Convert.toMesh3(source, new ArrayList < Mesh3 >()));
+      target.name = source.getName();
+      return target;
    }
 
    /**
@@ -1162,12 +1184,14 @@ public abstract class Convert {
    }
 
    /**
-    * Converts from a 2D PShape to a Curve2. Potentially a recursive function
-    * if the PShape is of the family {@link PConstants#GROUP}
+    * Converts from a 2D PShape to a {@link Curve3}. Potentially a recursive
+    * function if the PShape is of the family {@link PConstants#GROUP}
     * ({@value PConstants#GROUP}).<br>
     * <br>
     * Conversion of {@link PShape#PRIMITIVE}s does not respond to
     * {@link PApplet#ellipseMode(int)} or {@link PApplet#rectMode(int)}.
+    * Rectangles should be described according to the top-left and
+    * bottom-right corner.
     *
     * @param source the source shape
     * @param curves the curves list
@@ -1460,6 +1484,225 @@ public abstract class Convert {
       }
 
       return curves;
+   }
+
+   /**
+    * Converts from a PShape to a {@link Mesh3}. Potentially a recursive
+    * function if the PShape is of the family {@link PConstants#GROUP}
+    * ({@value PConstants#GROUP}).<br>
+    * <br>
+    * Conversion of {@link PShape#PRIMITIVE}s does not respond to
+    * {@link PApplet#ellipseMode(int)}, {@link PApplet#rectMode(int)} or to UV
+    * sphere settings.<br>
+    * <br>
+    * For shapes in the {@link PShape.GEOMETRY} family, faces are assumed to
+    * be triangles.
+    *
+    * @param source the source shape
+    * @param meshes the mesh list
+    *
+    * @return the mesh list
+    */
+   @Recursive
+   protected static ArrayList < Mesh3 > toMesh3 ( final PShape source,
+      final ArrayList < Mesh3 > meshes ) {
+
+      // TODO: Vertex winding for rectangles, ellipses, arcs?
+
+      final String sourceName = source.getName();
+      final int family = source.getFamily();
+
+      switch ( family ) {
+         case PConstants.GROUP: /* 0 */
+
+            final PShape[] children = source.getChildren();
+            final int childLen = children.length;
+            for ( int i = 0; i < childLen; ++i ) {
+               Convert.toMesh3(children[i], meshes);
+            }
+
+            break;
+
+         case PShape.PRIMITIVE: /* 101 */
+
+            final float[] params = source.getParams();
+            final int paramsLen = params.length;
+            final int kind = source.getKind();
+
+            switch ( kind ) {
+
+               case PConstants.LINE: /* 4 */
+
+                  System.err.println("Lines are not supported.");
+                  break;
+
+               case PConstants.TRIANGLE: /* 8 */
+
+                  meshes.add(new Mesh3(sourceName, new int[][][] { { { 0, 0 }, {
+                     1, 1 }, { 2, 2 } } }, new Vec3[] { new Vec3(params[0],
+                        params[1], 0.0f), new Vec3(params[2], params[3], 0.0f),
+                        new Vec3(params[4], params[5], 0.0f) }, new Vec2[] {
+                           new Vec2(1.0f, 0.5f), new Vec2(0.25f, 0.066987306f),
+                           new Vec2(0.25f, 0.9330127f) }, new Vec3[] { Vec3.up(
+                              new Vec3()) }));
+                  break;
+
+               case PConstants.QUAD: /* 16 */
+
+                  meshes.add(new Mesh3(sourceName, new int[][][] { { { 0, 0 }, {
+                     1, 1 }, { 2, 2 }, { 3, 3 } } }, new Vec3[] { new Vec3(
+                        params[0], params[1], 0.0f), new Vec3(params[2],
+                           params[3], 0.0f), new Vec3(params[4], params[5],
+                              0.0f), new Vec3(params[6], params[7], 0.0f) },
+                     new Vec2[] { new Vec2(1.0f, 0.5f), new Vec2(0.5f, 0.0f),
+                        new Vec2(0.0f, 0.5f), new Vec2(0.5f, 1.0f) },
+                     new Vec3[] { Vec3.up(new Vec3()) }));
+                  break;
+
+               case PConstants.RECT: /* 30 */
+
+                  if ( paramsLen > 4 ) {
+                     System.err.println("Rounded rectangles aren't supported.");
+                  } else {
+                     System.err.println("Rectangles are not supported.");
+                  }
+                  break;
+
+               case PConstants.ELLIPSE: /* 31 */
+
+                  System.err.println("Ellipses are not supported.");
+                  break;
+
+               case PConstants.ARC: /* 32 */
+
+                  System.err.println("Arcs are not supported.");
+                  break;
+
+               case PConstants.SPHERE: /* 40 */
+
+                  if ( paramsLen > 0 ) {
+                     meshes.add(Mesh3.uvSphere(new Mesh3()).scale(params[0]));
+                  } else {
+                     meshes.add(Mesh3.uvSphere(new Mesh3()));
+                  }
+                  break;
+
+               case PConstants.BOX: /* 41 */
+
+                  if ( paramsLen > 2 ) {
+                     meshes.add(Mesh3.cube(new Mesh3()).scale(new Vec3(
+                        params[0], params[1], params[2])));
+                  } else if ( paramsLen > 0 ) {
+                     meshes.add(Mesh3.cube(new Mesh3()).scale(params[0]));
+                  } else {
+                     meshes.add(Mesh3.cube(new Mesh3()));
+                  }
+                  break;
+
+               default:
+
+                  System.err.println(kind + " is an unsupported kind.");
+            }
+
+            break;
+
+         case PShape.PATH: /* 102 */
+
+            System.err.println("Paths are not supported.");
+            break;
+
+         case PShape.GEOMETRY: /* 103 */
+
+            final boolean is3d = source.is3D();
+            final int vertLen = source.getVertexCount();
+
+            /*
+             * Not sure how to find number of vertices in a face loop except as
+             * an educated guess. Support hexagonal faces maximum.
+             */
+            int loopLen = 3;
+            if ( vertLen % 3 != 0 ) {
+               for ( int i = 4; i < 7; ++i ) {
+                  if ( vertLen % i == 0 ) {
+                     loopLen = i;
+                     break;
+                  }
+               }
+            }
+            final int faceLen = vertLen / loopLen;
+
+            final int[][][] faces = new int[faceLen][loopLen][3];
+            final Vec3[] coords = new Vec3[vertLen];
+            final Vec2[] texCoords = new Vec2[vertLen];
+            final Vec3[] normals = is3d ? new Vec3[vertLen] : new Vec3[] { Vec3
+               .up(new Vec3()) };
+
+            /*
+             * It is common for all texture coordinates to be zero, and to exist
+             * without really having been set.
+             */
+            // boolean uvsFound = false;
+
+            if ( is3d ) {
+
+               // QUERY: Would this be better if it iterated over loopLen *
+               // faceLen instead of vertLen, in case of a nonuniform count?
+               for ( int k = 0; k < vertLen; ++k ) {
+                  final int i = k / loopLen;
+                  final int j = k % loopLen;
+                  final int[] vert = faces[i][j];
+
+                  vert[0] = k;
+                  vert[1] = k;
+                  vert[2] = k;
+
+                  coords[k] = new Vec3(source.getVertexX(k), source.getVertexY(
+                     k), source.getVertexZ(k));
+                  normals[k] = new Vec3(source.getNormalX(k), source.getNormalY(
+                     k), source.getNormalZ(k));
+
+                  final float u = source.getTextureU(k);
+                  final float v = source.getTextureV(k);
+                  texCoords[k] = new Vec2(u, v);
+                  // uvsFound = u != 0.0f || v != 0.0f;
+               }
+
+            } else {
+
+               for ( int k = 0; k < vertLen; ++k ) {
+                  final int i = k / loopLen;
+                  final int j = k % loopLen;
+                  final int[] vert = faces[i][j];
+
+                  vert[0] = k;
+                  vert[1] = k;
+                  // vert[2] = 0;
+
+                  coords[k] = new Vec3(source.getVertexX(k), source.getVertexY(
+                     k), source.getVertexZ(k));
+
+                  final float u = source.getTextureU(k);
+                  final float v = source.getTextureV(k);
+                  texCoords[k] = new Vec2(u, v);
+                  // uvsFound = u != 0.0f || v != 0.0f;
+               }
+
+            }
+
+            final Mesh3 mesh = new Mesh3(sourceName, faces, coords, texCoords,
+               normals);
+            // if ( !uvsFound ) { mesh.calcUvs(); }
+            meshes.add(mesh);
+
+            break;
+
+         default:
+
+            System.err.println(family + " is an unsupported family.");
+
+      }
+
+      return meshes;
    }
 
 }
