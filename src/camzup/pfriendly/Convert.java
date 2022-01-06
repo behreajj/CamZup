@@ -71,7 +71,7 @@ public abstract class Convert {
 
       target.reset();
       target.appendAll(Convert.toCurve2(source, new ArrayList < Curve2 >()));
-      target.name = source.getName();
+      target.name = Convert.getPShapeName(source);
       return target;
    }
 
@@ -138,7 +138,7 @@ public abstract class Convert {
 
       target.reset();
       target.appendAll(Convert.toMesh3(source, new ArrayList < Mesh3 >()));
-      target.name = source.getName();
+      target.name = Convert.getPShapeName(source);
       return target;
    }
 
@@ -1203,7 +1203,7 @@ public abstract class Convert {
       final ArrayList < Curve2 > curves ) {
 
       if ( source.is3D() ) { return curves; }
-      final String sourceName = source.getName();
+      final String sourceName = Convert.getPShapeName(source);
       final int family = source.getFamily();
 
       switch ( family ) {
@@ -1509,7 +1509,7 @@ public abstract class Convert {
 
       // TODO: Vertex winding for rectangles, ellipses, arcs?
 
-      final String sourceName = source.getName();
+      final String sourceName = Convert.getPShapeName(source);
       final int family = source.getFamily();
 
       switch ( family ) {
@@ -1631,22 +1631,21 @@ public abstract class Convert {
             }
             final int faceLen = vertLen / loopLen;
 
+            /*
+             * It's possible for all texture coordinates to be (0.0, 0.0) if
+             * they weren't set. It's also possible for all normals to be (0.0,
+             * 0.0, 1.0) even on 3D shapes.
+             */
+            boolean diverseNormals = true;
+
             final int[][][] faces = new int[faceLen][loopLen][3];
             final Vec3[] coords = new Vec3[vertLen];
             final Vec2[] texCoords = new Vec2[vertLen];
             final Vec3[] normals = is3d ? new Vec3[vertLen] : new Vec3[] { Vec3
                .up(new Vec3()) };
 
-            /*
-             * It is common for all texture coordinates to be zero, and to exist
-             * without really having been set.
-             */
-            // boolean uvsFound = false;
-
             if ( is3d ) {
 
-               // QUERY: Would this be better if it iterated over loopLen *
-               // faceLen instead of vertLen, in case of a nonuniform count?
                for ( int k = 0; k < vertLen; ++k ) {
                   final int i = k / loopLen;
                   final int j = k % loopLen;
@@ -1656,15 +1655,17 @@ public abstract class Convert {
                   vert[1] = k;
                   vert[2] = k;
 
+                  final float vnx = source.getNormalX(k);
+                  final float vny = source.getNormalY(k);
+                  final float vnz = source.getNormalZ(k);
+
                   coords[k] = new Vec3(source.getVertexX(k), source.getVertexY(
                      k), source.getVertexZ(k));
-                  normals[k] = new Vec3(source.getNormalX(k), source.getNormalY(
-                     k), source.getNormalZ(k));
+                  texCoords[k] = new Vec2(source.getTextureU(k), source
+                     .getTextureV(k));
+                  normals[k] = new Vec3(vnx, vny, vnz);
 
-                  final float u = source.getTextureU(k);
-                  final float v = source.getTextureV(k);
-                  texCoords[k] = new Vec2(u, v);
-                  // uvsFound = u != 0.0f || v != 0.0f;
+                  diverseNormals = vnx != 0.0f || vny != 0.0f || vnz != 1.0f;
                }
 
             } else {
@@ -1680,18 +1681,15 @@ public abstract class Convert {
 
                   coords[k] = new Vec3(source.getVertexX(k), source.getVertexY(
                      k), source.getVertexZ(k));
-
-                  final float u = source.getTextureU(k);
-                  final float v = source.getTextureV(k);
-                  texCoords[k] = new Vec2(u, v);
-                  // uvsFound = u != 0.0f || v != 0.0f;
+                  texCoords[k] = new Vec2(source.getTextureU(k), source
+                     .getTextureV(k));
                }
 
             }
 
             final Mesh3 mesh = new Mesh3(sourceName, faces, coords, texCoords,
                normals);
-            // if ( !uvsFound ) { mesh.calcUvs(); }
+            if ( is3d && !diverseNormals ) { mesh.shadeFlat(); }
             meshes.add(mesh);
 
             break;
@@ -1703,6 +1701,23 @@ public abstract class Convert {
       }
 
       return meshes;
+   }
+
+   /**
+    * {@link PShape#getName()} may return <code>null</code>. This method
+    * returns the hexadecimal representation of the current time in
+    * milliseconds if that is the case. {@link PShape#hashCode()} is
+    * unreliable and should not be used as a substitute.
+    * 
+    * @param pshp the shape
+    * 
+    * @return the name
+    */
+   private static String getPShapeName ( final PShape pshp ) {
+
+      final String candidate = pshp.getName();
+      return candidate != null ? candidate : Long.toHexString(System
+         .currentTimeMillis());
    }
 
 }
