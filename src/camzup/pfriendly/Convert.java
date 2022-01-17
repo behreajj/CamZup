@@ -1608,9 +1608,6 @@ public abstract class Convert {
 
          case PShape.PATH: /* 102 */
 
-            System.err.println("Paths are not supported.");
-            break;
-
          case PShape.GEOMETRY: /* 103 */
 
             final boolean is3d = source.is3D();
@@ -1632,9 +1629,8 @@ public abstract class Convert {
             final int faceLen = vertLen / loopLen;
 
             /*
-             * It's possible for all texture coordinates to be (0.0, 0.0) if
-             * they weren't set. It's also possible for all normals to be (0.0,
-             * 0.0, 1.0) even on 3D shapes.
+             * It's possible for all texture coordinates to be (0.0, 0.0); also,
+             * for all normals to be (0.0, 0.0, 1.0).
              */
             boolean diverseNormals = true;
 
@@ -1715,8 +1711,8 @@ public abstract class Convert {
     */
    private static String getPShapeName ( final PShape pshp ) {
 
-      final String candidate = pshp.getName();
-      return candidate != null ? candidate : Long.toHexString(System
+      final String name = pshp.getName();
+      return name != null ? name : Long.toHexString(System
          .currentTimeMillis());
    }
 

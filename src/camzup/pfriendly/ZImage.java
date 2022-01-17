@@ -1557,8 +1557,6 @@ public class ZImage extends PImage {
     */
    public static PImage premul ( final PImage source ) {
 
-      // TODO: Implement unpremul?
-
       source.loadPixels();
       final int[] px = source.pixels;
       final int len = px.length;
@@ -1570,11 +1568,11 @@ public class ZImage extends PImage {
             final int ri = px[i] >> 0x10 & 0xff;
             final int gi = px[i] >> 0x08 & 0xff;
             final int bi = px[i] & 0xff;
-            final float divisor = ai * IUtils.ONE_255;
 
-            px[i] = ai << 0x18 | ( int ) ( ri * divisor + 0.5f ) << 0x10
-               | ( int ) ( gi * divisor + 0.5f ) << 0x08 | ( int ) ( bi
-                  * divisor + 0.5f );
+            final float af = ai * IUtils.ONE_255;
+            px[i] = ai << 0x18 | ( int ) ( ri * af + 0.5f ) << 0x10
+               | ( int ) ( gi * af + 0.5f ) << 0x08 | ( int ) ( bi * af
+                  + 0.5f );
          }
       }
       source.updatePixels();
