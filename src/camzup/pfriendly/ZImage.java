@@ -36,7 +36,7 @@ public class ZImage extends PImage {
     */
    public ZImage ( final int width, final int height ) {
 
-      // QUERY Is there a set opaque or remove alpha func in pimage?
+      // TODO: Fill RGB images with black? (as opposed to RGBA)
       super(width, height);
    }
 
@@ -612,7 +612,7 @@ public class ZImage extends PImage {
             final int gn0 = neighbor0 >> 0x08 & 0xff;
             final int bn0 = neighbor0 & 0xff;
 
-            // QUERY: Add 0.5f to round up to this and 3 other neighbors?
+            // Add 0.5f to round up to this and 3 other neighbors?
             int rne0 = rn0 + ( int ) ( rErr * fs_7_16 );
             int gne0 = gn0 + ( int ) ( gErr * fs_7_16 );
             int bne0 = bn0 + ( int ) ( bErr * fs_7_16 );

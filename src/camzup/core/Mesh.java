@@ -373,7 +373,7 @@ public abstract class Mesh extends EntityData implements IMesh {
     * <br>
     * The audit places 3 and 4 into the map, even if the mesh contains neither
     * triangles nor quadrilaterals, because they are common entries to query.
-    * When querying other possibilities, query whether the map contains a key
+    * When querying other possibilities, check whether the map contains a key
     * prior to using its get method.
     *
     * @param m the mesh

@@ -1203,6 +1203,7 @@ public abstract class Convert {
       final ArrayList < Curve2 > curves ) {
 
       if ( source.is3D() ) { return curves; }
+
       final String sourceName = Convert.getPShapeName(source);
       final int family = source.getFamily();
 
@@ -1409,7 +1410,7 @@ public abstract class Convert {
                   case PConstants.CURVE_VERTEX: /* 3 */
 
                      /*
-                      * PShape doesn't seem to support this?
+                      * PShape doesn't support this?
                       * https://github.com/processing/processing/issues/5173
                       */
                      final int pi = Math.max(0, cursor - 1);
@@ -1506,8 +1507,6 @@ public abstract class Convert {
    @Recursive
    protected static ArrayList < Mesh3 > toMesh3 ( final PShape source,
       final ArrayList < Mesh3 > meshes ) {
-
-      // TODO: Vertex winding for rectangles, ellipses, arcs?
 
       final String sourceName = Convert.getPShapeName(source);
       final int family = source.getFamily();
@@ -1608,14 +1607,19 @@ public abstract class Convert {
 
          case PShape.PATH: /* 102 */
 
+            /*
+             * Not worth it to adhere to path commands, although doing so could
+             * make quadratic and cubic Bezier paths more accurate.
+             */
+
          case PShape.GEOMETRY: /* 103 */
 
             final boolean is3d = source.is3D();
             final int vertLen = source.getVertexCount();
 
             /*
-             * Not sure how to find number of vertices in a face loop except as
-             * an educated guess. Support hexagonal faces maximum.
+             * Unsure how to find number of vertices in a face loop except as an
+             * educated guess. Support hexagonal faces maximum.
              */
             int loopLen = 3;
             if ( vertLen % 3 != 0 ) {
@@ -1629,8 +1633,8 @@ public abstract class Convert {
             final int faceLen = vertLen / loopLen;
 
             /*
-             * It's possible for all texture coordinates to be (0.0, 0.0); also,
-             * for all normals to be (0.0, 0.0, 1.0).
+             * Possible for all texture coordinates to be (0.0, 0.0); also, for
+             * all normals to be (0.0, 0.0, 1.0).
              */
             boolean diverseNormals = true;
 
@@ -1654,14 +1658,13 @@ public abstract class Convert {
                   final float vnx = source.getNormalX(k);
                   final float vny = source.getNormalY(k);
                   final float vnz = source.getNormalZ(k);
+                  diverseNormals = vnx != 0.0f || vny != 0.0f || vnz != 1.0f;
 
                   coords[k] = new Vec3(source.getVertexX(k), source.getVertexY(
                      k), source.getVertexZ(k));
                   texCoords[k] = new Vec2(source.getTextureU(k), source
                      .getTextureV(k));
                   normals[k] = new Vec3(vnx, vny, vnz);
-
-                  diverseNormals = vnx != 0.0f || vny != 0.0f || vnz != 1.0f;
                }
 
             } else {
@@ -1669,20 +1672,21 @@ public abstract class Convert {
                for ( int k = 0; k < vertLen; ++k ) {
                   final int i = k / loopLen;
                   final int j = k % loopLen;
-                  final int[] vert = faces[i][j];
 
+                  final int[] vert = faces[i][j];
                   vert[0] = k;
                   vert[1] = k;
                   // vert[2] = 0;
 
                   coords[k] = new Vec3(source.getVertexX(k), source.getVertexY(
-                     k), source.getVertexZ(k));
+                     k), 0.0f);
                   texCoords[k] = new Vec2(source.getTextureU(k), source
                      .getTextureV(k));
                }
 
             }
 
+            /* Mesh is not cleaned, so it could contain duplicates. */
             final Mesh3 mesh = new Mesh3(sourceName, faces, coords, texCoords,
                normals);
             if ( is3d && !diverseNormals ) { mesh.shadeFlat(); }

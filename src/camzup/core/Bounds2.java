@@ -807,8 +807,8 @@ public class Bounds2 implements Comparable < Bounds2 > {
    }
 
    /**
-    * Returns a boundary encompassing an unsigned unit square in the range [0,
-    * 1.0] .
+    * Returns a boundary encompassing an unsigned unit square in the range
+    * [0.0, 1.0] .
     *
     * @param target the output bounds
     *

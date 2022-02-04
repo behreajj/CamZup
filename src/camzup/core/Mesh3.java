@@ -24,8 +24,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public Vec3[] coords;
 
    /**
-    * An array of normals to indicate how light will bounce off the mesh's
-    * surface.
+    * An array of normals to indicate how light will bounce off the mesh.
     */
    public Vec3[] normals;
 
@@ -2953,8 +2952,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public static Mesh3 cube ( final float size, final PolyType poly,
       final UvProfile.Cube profile, final Mesh3 target ) {
 
-      // TODO: Now that sorting method has been updated, change the ordering to
-      // match how mesh would be organized after clean.
       final float vsz = Utils.max(IUtils.EPSILON, size);
 
       target.name = "Cube";
