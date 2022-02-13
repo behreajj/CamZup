@@ -1,7 +1,7 @@
 import camzup.core.*;
 import camzup.pfriendly.*;
 
-Yup2 graphics;
+YupJ2 graphics;
 int count = 7;
 
 Gradient grd = Gradient.paletteViridis(new Gradient());
@@ -13,12 +13,12 @@ float labelScale = 1.0f;
 Color labelColor = Color.black(new Color());
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {
   frameRate(60.0f);
-  graphics = (Yup2)getGraphics();
+  graphics = (YupJ2)getGraphics();
 
   pie.scaleTo(300.0f);
   PFont font = createFont("Calibri", 20.0f);

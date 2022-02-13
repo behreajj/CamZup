@@ -36,7 +36,6 @@ public class ZImage extends PImage {
     */
    public ZImage ( final int width, final int height ) {
 
-      // TODO: Fill RGB images with black? (as opposed to RGBA)
       super(width, height);
    }
 
@@ -789,6 +788,8 @@ public class ZImage extends PImage {
     */
    public static PImage fill ( final int fll, final PImage target ) {
 
+      // TODO: Mask out alpha channel for RGB format?
+
       target.loadPixels();
       final int[] px = target.pixels;
       final int len = px.length;
@@ -1465,31 +1466,15 @@ public class ZImage extends PImage {
 
    /**
     * Masks the pixels of an under image with the alpha channel of the over
-    * image. The target image is set to the size of the under image.
-    * 
-    * @param under  the under image
-    * @param over   the over image
-    * @param target the target image
-    * 
-    * @return the masked image
-    */
-   public static PImage mask ( final PImage under, final PImage over,
-      final PImage target ) {
-
-      return ZImage.mask(under, over, 0, 0, target);
-   }
-
-   /**
-    * Masks the pixels of an under image with the alpha channel of the over
     * image. Offsets the over image by pixel coordinates relative to the top
     * left corner. The target image is set to the size of the under image.
-    * 
+    *
     * @param under  the under image
     * @param over   the over image
     * @param x      the mask horizontal offset
     * @param y      the mask vertical offset
     * @param target the target image
-    * 
+    *
     * @return the masked image
     */
    public static PImage mask ( final PImage under, final PImage over,
@@ -1531,8 +1516,7 @@ public class ZImage extends PImage {
             final int hexOver = pxOver[yOver * wOver + xOver];
             final int hexUnder = pxUnder[i];
 
-            pxTarget[i] = ( hexOver & 0xff000000 ) | ( hexUnder
-               & 0x00ffffff );
+            pxTarget[i] = hexOver & 0xff000000 | hexUnder & 0x00ffffff;
          }
       }
 
@@ -1545,6 +1529,22 @@ public class ZImage extends PImage {
       target.updatePixels();
 
       return target;
+   }
+
+   /**
+    * Masks the pixels of an under image with the alpha channel of the over
+    * image. The target image is set to the size of the under image.
+    *
+    * @param under  the under image
+    * @param over   the over image
+    * @param target the target image
+    *
+    * @return the masked image
+    */
+   public static PImage mask ( final PImage under, final PImage over,
+      final PImage target ) {
+
+      return ZImage.mask(under, over, 0, 0, target);
    }
 
    /**

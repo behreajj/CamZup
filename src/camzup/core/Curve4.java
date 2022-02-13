@@ -165,6 +165,23 @@ public class Curve4 extends Curve implements Iterable < Knot4 > {
    }
 
    /**
+    * Tests this curve for equality with another object.
+    *
+    * @param obj the object
+    *
+    * @return the evaluation
+    */
+    @Override
+    public boolean equals ( final Object obj ) {
+ 
+       if ( this == obj ) { return true; }
+       if ( !super.equals(obj) || this.getClass() != obj.getClass() ) {
+          return false;
+       }
+       return this.equals(( Curve4 ) obj);
+    }
+
+   /**
     * Gets a knot from the curve by an index. When the curve is a closed loop,
     * the index wraps around; this means negative indices are accepted.
     *

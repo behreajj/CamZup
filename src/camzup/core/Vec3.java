@@ -1803,7 +1803,6 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
-   @Experimental
    public static Vec3[] insert ( final Vec3[] arr, final int index,
       final Vec3[] insert ) {
 
