@@ -202,17 +202,17 @@ public abstract class ParserSvg {
    }
 
    /**
-    * Parse a path arc-to command, based on the Processing implementation,
-    * which references
+    * Parse a path elliptical arc-to command, based on the Processing
+    * implementation, which references
     * <a href="http://www.spaceroots.org/documents/ellipse/node22.html">these
     * equations</a>.<br>
     * <br>
     * According to the SVG specification, the large arc flag "is 0 if an arc
     * spanning less than or equal to 180 degrees is chosen, or 1 if an arc
-    * spanning greater than 180 degrees is chosen".<br>
+    * spanning greater than 180 degrees is chosen."<br>
     * <br>
     * The sweep flag "is 0 if the line joining center to arc sweeps through
-    * decreasing angles, or 1 if it sweeps through increasing angles".
+    * decreasing angles, or 1 if it sweeps through increasing angles."
     *
     * @param prior    the prior knot
     * @param major    the major axis
@@ -234,10 +234,6 @@ public abstract class ParserSvg {
          return new Knot2[] { new Knot2(xDest, yDest) };
       }
 
-      /* Valid major and minor axes. */
-      float rx = Utils.abs(major);
-      float ry = Utils.abs(minor);
-
       /* Wrap the angle into range, find sine and cosine. */
       final float phi = Utils.mod1(ang * IUtils.ONE_TAU);
       final float cosPhi = Utils.scNorm(phi);
@@ -258,6 +254,8 @@ public abstract class ParserSvg {
       final float y1rsq = y1r * y1r;
 
       /* Square the major and minor axes. */
+      float rx = major;
+      float ry = minor;
       final float rxsq = rx * rx;
       final float rysq = ry * ry;
 

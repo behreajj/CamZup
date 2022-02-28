@@ -151,82 +151,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Simulates bracket subscript access in an array.
-    *
-    * @param index the index
-    *
-    * @return the element
-    */
-   public float get ( final int index ) { return this.getAlphaLast(index); }
-
-   /**
-    * Simulates bracket access in an array. The alpha channel is treated as
-    * the first channel.
-    *
-    * @param index the index
-    *
-    * @return the element
-    */
-   public float getAlphaFirst ( final int index ) {
-
-      // TODO: These getters need to be expanded to use ColorChannel options in
-      // order to match toArray.
-
-      switch ( index ) {
-         case 0:
-         case -4:
-            return this.a;
-
-         case 1:
-         case -3:
-            return this.r;
-
-         case 2:
-         case -2:
-            return this.g;
-
-         case 3:
-         case -1:
-            return this.b;
-
-         default:
-            return 0.0f;
-      }
-   }
-
-   /**
-    * Simulates bracket access in an array. The alpha channel is treated as
-    * the last channel.
-    *
-    * @param index the index
-    *
-    * @return the element
-    */
-   public float getAlphaLast ( final int index ) {
-
-      switch ( index ) {
-         case 0:
-         case -4:
-            return this.r;
-
-         case 1:
-         case -3:
-            return this.g;
-
-         case 2:
-         case -2:
-            return this.b;
-
-         case 3:
-         case -1:
-            return this.a;
-
-         default:
-            return 0.0f;
-      }
-   }
-
-   /**
     * Returns a hash code for this color based on its hexadecimal value.
     *
     * @return the hash code
@@ -324,130 +248,6 @@ public class Color implements Comparable < Color > {
       this.b = blue;
       this.a = alpha;
       return this;
-   }
-
-   /**
-    * Returns a float array of length 4 containing this color's components.
-    * Defaults to {@link Color.ChannelOrder#ARGB}.
-    *
-    * @return the array
-    */
-   public float[] toArray ( ) {
-
-      return this.toArray(ChannelOrder.ARGB);
-   }
-
-   /**
-    * Puts the colors's components into an existing array at the index
-    * provided. Consumes four elements, but the ordering depends on the
-    * {@link Color.ChannelOrder}.
-    *
-    * @param arr   the array
-    * @param i     the index
-    * @param order the channel order
-    *
-    * @return the array
-    */
-   public byte[] toArray ( final byte[] arr, final int i,
-      final ChannelOrder order ) {
-
-      final byte rb = ( byte ) ( this.r * 0xff + 0.5f );
-      final byte gb = ( byte ) ( this.g * 0xff + 0.5f );
-      final byte bb = ( byte ) ( this.b * 0xff + 0.5f );
-      final byte ab = ( byte ) ( this.a * 0xff + 0.5f );
-
-      switch ( order ) {
-
-         case ABGR:
-
-            arr[i] = ab;
-            arr[i + 1] = bb;
-            arr[i + 2] = gb;
-            arr[i + 3] = rb;
-
-            break;
-
-         case ARGB:
-
-            arr[i] = ab;
-            arr[i + 1] = rb;
-            arr[i + 2] = gb;
-            arr[i + 3] = bb;
-
-            break;
-
-         case RGBA:
-
-         default:
-
-            arr[i] = rb;
-            arr[i + 1] = gb;
-            arr[i + 2] = bb;
-            arr[i + 3] = ab;
-
-      }
-
-      return arr;
-   }
-
-   /**
-    * Returns a float array of length 4 containing this color's components.
-    *
-    * @param order the channel order
-    *
-    * @return the array
-    */
-   public float[] toArray ( final ChannelOrder order ) {
-
-      return this.toArray(new float[4], 0, order);
-   }
-
-   /**
-    * Puts the colors's components into an existing array at the index
-    * provided. Consumes four elements, but the ordering depends on the
-    * {@link Color.ChannelOrder}.
-    *
-    * @param arr   the array
-    * @param i     the index
-    * @param order the channel order
-    *
-    * @return the array
-    */
-   public float[] toArray ( final float[] arr, final int i,
-      final ChannelOrder order ) {
-
-      switch ( order ) {
-
-         case ABGR:
-
-            arr[i] = this.a;
-            arr[i + 1] = this.b;
-            arr[i + 2] = this.g;
-            arr[i + 3] = this.r;
-
-            break;
-
-         case ARGB:
-
-            arr[i] = this.a;
-            arr[i + 1] = this.r;
-            arr[i + 2] = this.g;
-            arr[i + 3] = this.b;
-
-            break;
-
-         case RGBA:
-
-         default:
-
-            arr[i] = this.r;
-            arr[i + 1] = this.g;
-            arr[i + 2] = this.b;
-            arr[i + 3] = this.a;
-
-      }
-
-      return arr;
    }
 
    /**
@@ -1018,7 +818,8 @@ public class Color implements Comparable < Color > {
 
    /**
     * Converts a direction to a color. Normalizes the direction, multiplies it
-    * by 0.5, then adds 0.5 .
+    * by 0.5, then adds 0.5 . Returns (0.5, 0.5, 1.0, 1.0) if the direction
+    * has no magnitude.
     *
     * @param v      the direction
     * @param target the output color
@@ -1034,12 +835,13 @@ public class Color implements Comparable < Color > {
          final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
          return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, 0.5f, 1.0f);
       }
-      return target.set(0.5f, 0.5f, 0.5f, 1.0f);
+      return target.set(0.5f, 0.5f, 1.0f, 1.0f);
    }
 
    /**
     * Converts a direction to a color. Normalizes the direction, multiplies it
-    * by 0.5, then adds 0.5 .
+    * by 0.5, then adds 0.5 . Returns (0.5, 0.5, 1.0, 1.0) if the direction
+    * has no magnitude.
     *
     * @param v      the direction
     * @param target the output color
@@ -1056,29 +858,7 @@ public class Color implements Comparable < Color > {
          return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, v.z * mInv
             + 0.5f, 1.0f);
       }
-      return target.set(0.5f, 0.5f, 0.5f, 1.0f);
-   }
-
-   /**
-    * Converts a direction to a color. Normalizes the direction, multiplies it
-    * by 0.5, then adds 0.5 .
-    *
-    * @param v      the direction
-    * @param target the output color
-    *
-    * @return the color
-    *
-    * @see Utils#invSqrtUnchecked(float)
-    */
-   public static Color fromDir ( final Vec4 v, final Color target ) {
-
-      final float mSq = v.x * v.x + v.y * v.y + v.z * v.z + v.w * v.w;
-      if ( mSq > 0.0f ) {
-         final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-         return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, v.z * mInv
-            + 0.5f, v.w * mInv + 0.5f);
-      }
-      return target.set(0.5f, 0.5f, 0.5f, 0.5f);
+      return target.set(0.5f, 0.5f, 1.0f, 1.0f);
    }
 
    /**
@@ -1565,7 +1345,6 @@ public class Color implements Comparable < Color > {
    public static Vec4 lchaToLaba ( final float l, final float c, final float h,
       final float a, final Vec4 target ) {
 
-      // TODO: Clamp l to [0, 100], c to [0, 134] ?
       final double hRad = Utils.mod1(h) * IUtils.TAU_D;
       return target.set(c * ( float ) Math.cos(hRad), c * ( float ) Math.sin(
          hRad), l, a);
@@ -1865,6 +1644,7 @@ public class Color implements Comparable < Color > {
    public static Color quantize ( final Color c, final int levels,
       final Color target ) {
 
+      // TODO: Refine into quantizeSigned and unsigned for multiple levels?
       if ( levels < 1 || levels > 255 ) { return target.set(c); }
 
       final float levf = levels;
@@ -3081,34 +2861,6 @@ public class Color implements Comparable < Color > {
        */
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
-
-   }
-
-   /**
-    * Order in which to arrange color channels when flattening color to an
-    * array.
-    */
-   public enum ChannelOrder {
-
-      /**
-       * Alpha, Blue, Green, Red.
-       */
-      ABGR ( ),
-
-      /**
-       * Alpha, Red, Green, Blue.
-       */
-      ARGB ( ),
-
-      /**
-       * Red, Green, Blue, Alpha.
-       */
-      RGBA ( );
-
-      /**
-       * The default constructor.
-       */
-      ChannelOrder ( ) {}
 
    }
 

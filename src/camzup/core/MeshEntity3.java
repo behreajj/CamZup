@@ -590,7 +590,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
       final Iterator < Mesh3 > itr = this.meshes.iterator();
       while ( itr.hasNext() ) {
-         sb.append(itr.next().toString(places));
+         itr.next().toString(sb, places);
          if ( itr.hasNext() ) { sb.append(',').append(' '); }
       }
 

@@ -162,7 +162,6 @@ public abstract class Sdf {
        * Judging by the appearance of ZImage gradients made with this function,
        * Math#atan2 with double precision is necessary.
        */
-
       return Utils.mod1(( float ) ( ( Math.atan2(yPoint, xPoint) - radians )
          * IUtils.ONE_TAU_D ));
    }

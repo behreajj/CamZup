@@ -621,7 +621,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
       final Iterator < Curve2 > itr = this.curves.iterator();
       while ( itr.hasNext() ) {
-         sb.append(itr.next().toString(places));
+         itr.next().toString(sb, places);
          if ( itr.hasNext() ) { sb.append(',').append(' '); }
       }
 

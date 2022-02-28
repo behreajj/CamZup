@@ -1355,6 +1355,34 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
+    * Converts a color to a direction. Multiplies each channel by two,
+    * subtracts one, then normalizes the result. Returns the up direction if
+    * the color's alpha channel is zero or if its magnitude is too small.
+    *
+    * @param c      the color
+    * @param target the output direction
+    *
+    * @return the direction
+    *
+    * @see Utils#invSqrt(float)
+    * @see Vec3#up(Vec3)
+    */
+   public static Vec3 fromColor ( final Color c, final Vec3 target ) {
+
+      if ( c.a > 0.0f ) {
+         final float x = c.r + c.r - 1.0f;
+         final float y = c.g + c.g - 1.0f;
+         final float z = c.b + c.b - 1.0f;
+         final float mSq = x * x + y * y + z * z;
+         if ( mSq > 0.0f ) {
+            final float mInv = Utils.invSqrtUnchecked(mSq);
+            return target.set(x * mInv, y * mInv, z * mInv);
+         }
+      }
+      return Vec3.up(target);
+   }
+
+   /**
     * Creates a vector from the cosine and sine of an azimuth and inclination.
     *
     * @param cosAzim the cosine of azimuth

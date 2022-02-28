@@ -801,23 +801,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(64 + 384 * this.knots.size());
-      sb.append("{ name: \"");
-      sb.append(this.name);
-      sb.append("\", closedLoop: ");
-      sb.append(this.closedLoop);
-      sb.append(", materialIndex: ");
-      sb.append(this.materialIndex);
-      sb.append(", knots: [ ");
-
-      final Iterator < Knot3 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().toString(sb, places);
-         if ( itr.hasNext() ) { sb.append(',').append(' '); }
-      }
-
-      sb.append(" ] }");
-      return sb.toString();
+      return this.toString(new StringBuilder(64 + 384 * this.knots.size()),
+         places).toString();
    }
 
    /**
@@ -944,6 +929,35 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       pyCd.append(']');
       pyCd.append('}');
       return pyCd;
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * curves. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append("\", closedLoop: ");
+      sb.append(this.closedLoop);
+      sb.append(", materialIndex: ");
+      sb.append(this.materialIndex);
+      sb.append(", knots: [ ");
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      while ( itr.hasNext() ) {
+         itr.next().toString(sb, places);
+         if ( itr.hasNext() ) { sb.append(',').append(' '); }
+      }
+
+      sb.append(" ] }");
+      return sb;
    }
 
    /**

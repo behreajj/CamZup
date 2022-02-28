@@ -81,8 +81,8 @@ public class ZShader extends PShader {
     */
    public void set ( final String name, final Color c ) {
 
-      this.setUniformImpl(name, ZShader.VEC4_IDX, c.toArray(
-         Color.ChannelOrder.RGBA));
+      this.setUniformImpl(name, ZShader.VEC4_IDX, new float[] { c.r, c.g, c.b,
+         c.a });
    }
 
    /**

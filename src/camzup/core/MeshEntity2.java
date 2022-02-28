@@ -615,7 +615,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       final Iterator < Mesh2 > itr = this.meshes.iterator();
       while ( itr.hasNext() ) {
-         sb.append(itr.next().toString(places));
+         itr.next().toString(sb, places);
          if ( itr.hasNext() ) { sb.append(',').append(' '); }
       }
 

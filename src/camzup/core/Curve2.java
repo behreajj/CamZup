@@ -665,23 +665,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(64 + 256 * this.knots.size());
-      sb.append("{ name: \"");
-      sb.append(this.name);
-      sb.append("\", closedLoop: ");
-      sb.append(this.closedLoop);
-      sb.append(", materialIndex: ");
-      sb.append(this.materialIndex);
-      sb.append(", knots: [ ");
-
-      final Iterator < Knot2 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().toString(sb, places);
-         if ( itr.hasNext() ) { sb.append(',').append(' '); }
-      }
-
-      sb.append(" ] }");
-      return sb.toString();
+      return this.toString(new StringBuilder(64 + 256 * this.knots.size()),
+         places).toString();
    }
 
    /**
@@ -830,6 +815,35 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       pyCd.append(']');
       pyCd.append('}');
       return pyCd;
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * curves. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append("\", closedLoop: ");
+      sb.append(this.closedLoop);
+      sb.append(", materialIndex: ");
+      sb.append(this.materialIndex);
+      sb.append(", knots: [ ");
+
+      final Iterator < Knot2 > itr = this.knots.iterator();
+      while ( itr.hasNext() ) {
+         itr.next().toString(sb, places);
+         if ( itr.hasNext() ) { sb.append(',').append(' '); }
+      }
+
+      sb.append(" ] }");
+      return sb;
    }
 
    /**
@@ -1743,21 +1757,28 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Creates a regular convex polygon.
+    * Creates a regular convex polygon with rounded corners. Rounding is a
+    * factor with the expected range of [0.0, 1.0].
     *
-    * @param knotCount   the number of knots
+    * @param sectors     the number of sides
     * @param offsetAngle the offset angle
     * @param radius      the radius
+    * @param rounding    the corner rounding
     * @param target      the output curve
     *
     * @return the polygon
     */
-   public static Curve2 polygon ( final int knotCount, final float offsetAngle,
-      final float radius, final Curve2 target ) {
+   public static Curve2 polygon ( final int sectors, final float offsetAngle,
+      final float radius, final float rounding, final Curve2 target ) {
+
+      final float vCrnr = IUtils.ONE_THIRD * Utils.clamp(rounding,
+         IUtils.EPSILON, 1.0f - IUtils.EPSILON);
+      final float vRad = Utils.max(radius, IUtils.EPSILON);
+      final float offNorm = offsetAngle * IUtils.ONE_TAU;
+      final int vSect = sectors < 3 ? 3 : sectors;
 
       /* @formatter:off */
-      final int vknct = knotCount < 3 ? 3 : knotCount;
-      switch ( vknct ) {
+      switch ( vSect ) {
          case 3: target.name = "Triangle"; break;
          case 4: target.name = "Quadrilateral"; break;
          case 5: target.name = "Pentagon"; break;
@@ -1767,25 +1788,69 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       }
       /* @formatter:on */
 
-      target.resize(vknct);
-      final float invKnCt = 1.0f / vknct;
-      final float off1 = offsetAngle * IUtils.ONE_TAU;
-
-      final Iterator < Knot2 > itr = target.knots.iterator();
-      final Knot2 first = itr.next();
-      Knot2 prev = first;
-      prev.coord.set(radius * Utils.scNorm(off1), radius * Utils.scNorm(off1
-         - 0.25f));
-      float i = 1.0f;
-      while ( itr.hasNext() ) {
-         final float theta1 = off1 + i * invKnCt;
-         final Knot2 curr = itr.next();
-         Knot2.fromSegLinear(radius * Utils.scNorm(theta1), radius * Utils
-            .scNorm(theta1 - 0.25f), prev, curr);
-         prev = curr;
-         ++i;
+      /*
+       * Preferable to create a temporary array over calling sine and cosine
+       * three times for previous, current and next angle.
+       */
+      final float toTheta = 1.0f / vSect;
+      final int vSect2 = vSect + vSect;
+      final float[] vs = new float[vSect2];
+      for ( int i = 0; i < vSect; ++i ) {
+         final float theta = offNorm + i * toTheta;
+         vs[i + i] = vRad * Utils.scNorm(theta);
+         vs[i + i + 1] = vRad * Utils.scNorm(theta - 0.25f);
       }
-      Knot2.fromSegLinear(first.coord, prev, first);
+
+      target.resize(vSect2);
+      final Iterator < Knot2 > itr = target.knots.iterator();
+
+      /*
+       * Easing coefficients. Kappa is 4 * (Math.sqrt(2) - 1) / 3 for 4 knots in
+       * a Bezier circle, so do the cross multiplication and get rid of the 4.
+       */
+      final float s = 1.0f - vCrnr;
+      final float t = IUtils.ONE_THIRD - 0.5f * vCrnr;
+      final float u = 1.0f - t;
+      final float v = 0.1380711874576984f * vSect;
+      final float w = 1.0f - v;
+
+      for ( int i = 0; i < vSect; ++i ) {
+         final int h = Utils.mod(i - 1, vSect);
+         final int j = ( i + 1 ) % vSect;
+
+         /* Previous, current and next corner. */
+         final float xPrevCorner = vs[h + h];
+         final float yPrevCorner = vs[h + h + 1];
+         final float xCurrCorner = vs[i + i];
+         final float yCurrCorner = vs[i + i + 1];
+         final float xNextCorner = vs[j + j];
+         final float yNextCorner = vs[j + j + 1];
+
+         /* Knot coordinates before and after corner. */
+         final float sxCurr = s * xCurrCorner;
+         final float syCurr = s * yCurrCorner;
+         final float xCoPrev = sxCurr + vCrnr * xPrevCorner;
+         final float yCoPrev = syCurr + vCrnr * yPrevCorner;
+         final float xCoNext = sxCurr + vCrnr * xNextCorner;
+         final float yCoNext = syCurr + vCrnr * yNextCorner;
+
+         /* Straight edge handles. */
+         final float xRhPrev = u * xCoPrev + t * xPrevCorner;
+         final float yRhPrev = u * yCoPrev + t * yPrevCorner;
+         final float xFhNext = u * xCoNext + t * xNextCorner;
+         final float yFhNext = u * yCoNext + t * yNextCorner;
+
+         /* Corner handles. */
+         final float vxCurr = v * xCurrCorner;
+         final float vyCurr = v * yCurrCorner;
+         final float xFhPrev = w * xCoPrev + vxCurr;
+         final float yFhPrev = w * yCoPrev + vyCurr;
+         final float xRhNext = w * xCoNext + vxCurr;
+         final float yRhNext = w * yCoNext + vyCurr;
+
+         itr.next().set(xCoPrev, yCoPrev, xFhPrev, yFhPrev, xRhPrev, yRhPrev);
+         itr.next().set(xCoNext, yCoNext, xFhNext, yFhNext, xRhNext, yRhNext);
+      }
 
       target.closedLoop = true;
       return target;
@@ -2456,28 +2521,36 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Knot2 k6 = itr.next().set(lft, btmIns1, 0.0f, 0.0f, lft,
          IUtils.TWO_THIRDS * btmIns1 + IUtils.ONE_THIRD * topIns1);
 
-      final float rgt23 = IUtils.TWO_THIRDS * rgt;
-      final float btm23 = IUtils.TWO_THIRDS * btm;
-      final float top23 = IUtils.TWO_THIRDS * top;
-      final float lft23 = IUtils.TWO_THIRDS * lft;
+      // TODO: Experiments with kappa instead of 1/3 and 2/3.
+      // final float k = 0.1380711874576984f;
+      // final float k = 0.2761423749153968f;
+      // final float k = 0.41421356237309515f;
+      // final float k = 0.5522847498307936f;
+      final float k = IUtils.ONE_THIRD;
+      final float u = 1.0f - k;
 
-      final float rgt13 = IUtils.ONE_THIRD * rgt;
-      final float btm13 = IUtils.ONE_THIRD * btm;
-      final float top13 = IUtils.ONE_THIRD * top;
-      final float lft13 = IUtils.ONE_THIRD * lft;
+      final float rgt23 = u * rgt;
+      final float btm23 = u * btm;
+      final float top23 = u * top;
+      final float lft23 = u * lft;
+
+      final float rgt13 = k * rgt;
+      final float btm13 = k * btm;
+      final float top13 = k * top;
+      final float lft13 = k * lft;
 
       /* Bottom Right corner. */
       final Vec2 k0fh = k0.foreHandle;
       final Vec2 k1rh = k1.rearHandle;
       if ( br > 0.0f ) {
-         k0fh.x = IUtils.ONE_THIRD * rgtIns1 + rgt23;
+         k0fh.x = k * rgtIns1 + rgt23;
          k0fh.y = btm;
          k1rh.x = rgt;
-         k1rh.y = IUtils.ONE_THIRD * btmIns0 + btm23;
+         k1rh.y = k * btmIns0 + btm23;
       } else {
          k0fh.x = rgtIns1;
-         k0fh.y = btm13 + IUtils.TWO_THIRDS * btmIns0;
-         k1rh.x = rgt13 + IUtils.TWO_THIRDS * rgtIns1;
+         k0fh.y = btm13 + u * btmIns0;
+         k1rh.x = rgt13 + u * rgtIns1;
          k1rh.y = btmIns0;
       }
 
@@ -2486,28 +2559,28 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Vec2 k3rh = k3.rearHandle;
       if ( tr > 0.0f ) {
          k2fh.x = rgt;
-         k2fh.y = IUtils.ONE_THIRD * topIns0 + top23;
-         k3rh.x = IUtils.ONE_THIRD * rgtIns0 + rgt23;
+         k2fh.y = k * topIns0 + top23;
+         k3rh.x = k * rgtIns0 + rgt23;
          k3rh.y = top;
       } else {
-         k2fh.x = rgt13 + IUtils.TWO_THIRDS * rgtIns0;
+         k2fh.x = rgt13 + u * rgtIns0;
          k2fh.y = topIns0;
          k3rh.x = rgtIns0;
-         k3rh.y = top13 + IUtils.TWO_THIRDS * topIns0;
+         k3rh.y = top13 + u * topIns0;
       }
 
       /* Top Left corner. */
       final Vec2 k4fh = k4.foreHandle;
       final Vec2 k5rh = k5.rearHandle;
       if ( tl > 0.0f ) {
-         k4fh.x = IUtils.ONE_THIRD * lftIns0 + lft23;
+         k4fh.x = k * lftIns0 + lft23;
          k4fh.y = top;
          k5rh.x = lft;
-         k5rh.y = IUtils.ONE_THIRD * topIns1 + top23;
+         k5rh.y = k * topIns1 + top23;
       } else {
          k4fh.x = lftIns0;
-         k4fh.y = top13 + IUtils.TWO_THIRDS * topIns1;
-         k5rh.x = lft13 + IUtils.TWO_THIRDS * lftIns0;
+         k4fh.y = top13 + u * topIns1;
+         k5rh.x = lft13 + u * lftIns0;
          k5rh.y = topIns1;
       }
 
@@ -2516,14 +2589,14 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Vec2 k7rh = k7.rearHandle;
       if ( bl > 0.0f ) {
          k6fh.x = lft;
-         k6fh.y = IUtils.ONE_THIRD * btmIns1 + btm23;
-         k7rh.x = IUtils.ONE_THIRD * lftIns1 + lft23;
+         k6fh.y = k * btmIns1 + btm23;
+         k7rh.x = k * lftIns1 + lft23;
          k7rh.y = btm;
       } else {
-         k6fh.x = lft13 + IUtils.TWO_THIRDS * lftIns1;
+         k6fh.x = lft13 + u * lftIns1;
          k6fh.y = btmIns1;
          k7rh.x = lftIns1;
-         k7rh.y = btm13 + IUtils.TWO_THIRDS * btmIns1;
+         k7rh.y = btm13 + u * btmIns1;
       }
 
       return target;

@@ -80,7 +80,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Calculates texture coordinates (UVs) for this mesh. Finds the
-    * object-space dimensions of each coordinate, then using the frame as a
+    * object-space dimensions of each coordinate, then uses the frame as a
     * reference for new UVs, such that the shape acts as a mask for the
     * texture (or, the texture fills the shape without repeating).
     *
@@ -1509,7 +1509,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public String toObjString ( final int vIdx, final int vtIdx, final int vnIdx,
       final boolean flipvs ) {
 
-      return this.toObjString(new StringBuilder(2048), vIdx, vtIdx, vnIdx,
+      return this.toObjString(new StringBuilder(1024), vIdx, vtIdx, vnIdx,
          flipvs).toString();
    }
 
@@ -1565,51 +1565,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(2048);
-      sb.append("{ name: \"");
-      sb.append(this.name);
-      sb.append("\", materialIndex: ");
-      sb.append(this.materialIndex);
-      sb.append(", coords: ");
-      Vec2.toString(sb, this.coords, places);
-      sb.append(", texCoords: ");
-      Vec2.toString(sb, this.texCoords, places);
-
-      sb.append(", faces: [ ");
-      if ( this.faces != null ) {
-         final int facesLen = this.faces.length;
-         final int facesLast = facesLen - 1;
-
-         for ( int i = 0; i < facesLen; ++i ) {
-
-            final int[][] verts = this.faces[i];
-            final int vertsLen = verts.length;
-            final int vertsLast = vertsLen - 1;
-            sb.append('[').append(' ');
-
-            for ( int j = 0; j < vertsLen; ++j ) {
-
-               final int[] vert = verts[j];
-               final int infoLen = vert.length;
-               final int infoLast = infoLen - 1;
-               sb.append('[').append(' ');
-
-               /* 2 indices: coordinate & texture coordinate. */
-               for ( int k = 0; k < infoLen; ++k ) {
-                  sb.append(vert[k]);
-                  if ( k < infoLast ) { sb.append(',').append(' '); }
-               }
-
-               sb.append(' ').append(']');
-               if ( j < vertsLast ) { sb.append(',').append(' '); }
-            }
-            sb.append(' ').append(']');
-            if ( i < facesLast ) { sb.append(',').append(' '); }
-         }
-      }
-
-      sb.append(" ] }");
-      return sb.toString();
+      return this.toString(new StringBuilder(1024), places).toString();
    }
 
    /**
@@ -1911,6 +1867,63 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       }
 
       return objs;
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * meshes. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append("\", materialIndex: ");
+      sb.append(this.materialIndex);
+      sb.append(", coords: ");
+      Vec2.toString(sb, this.coords, places);
+      sb.append(", texCoords: ");
+      Vec2.toString(sb, this.texCoords, places);
+
+      sb.append(", faces: [ ");
+      if ( this.faces != null ) {
+         final int facesLen = this.faces.length;
+         final int facesLast = facesLen - 1;
+
+         for ( int i = 0; i < facesLen; ++i ) {
+
+            final int[][] verts = this.faces[i];
+            final int vertsLen = verts.length;
+            final int vertsLast = vertsLen - 1;
+            sb.append('[').append(' ');
+
+            for ( int j = 0; j < vertsLen; ++j ) {
+
+               final int[] vert = verts[j];
+               final int infoLen = vert.length;
+               final int infoLast = infoLen - 1;
+               sb.append('[').append(' ');
+
+               /* 2 indices: coordinate & texture coordinate. */
+               for ( int k = 0; k < infoLen; ++k ) {
+                  sb.append(vert[k]);
+                  if ( k < infoLast ) { sb.append(',').append(' '); }
+               }
+
+               sb.append(' ').append(']');
+               if ( j < vertsLast ) { sb.append(',').append(' '); }
+            }
+            sb.append(' ').append(']');
+            if ( i < facesLast ) { sb.append(',').append(' '); }
+         }
+      }
+
+      sb.append(" ] }");
+      return sb;
    }
 
    /**

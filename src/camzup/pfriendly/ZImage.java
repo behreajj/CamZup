@@ -205,14 +205,13 @@ public class ZImage extends PImage {
       final Color lrgb = new Color();
       final Vec4 xyz = new Vec4();
       final Vec4 lab = new Vec4();
-      final HashMap < Integer, Integer > dictionary = new HashMap <>(512,
-         0.75f);
+      final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
 
       for ( int i = 0; i < len; ++i ) {
          final int srgbKeyInt = px[i];
          if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
             final Integer srgbKeyObj = srgbKeyInt;
-            if ( !dictionary.containsKey(srgbKeyObj) ) {
+            if ( !dict.containsKey(srgbKeyObj) ) {
 
                Color.fromHex(Color.sRgbaTolRgba(srgbKeyInt, false), lrgb);
                Color.lRgbaToXyza(lrgb, xyz);
@@ -222,17 +221,17 @@ public class ZImage extends PImage {
 
                Color.labaToXyza(lab, xyz);
                Color.xyzaTolRgba(xyz, lrgb);
-               dictionary.put(srgbKeyObj, Color.lRgbaTosRgba(Color.toHexIntSat(
-                  lrgb), false));
+               dict.put(srgbKeyObj, Color.lRgbaTosRgba(Color.toHexIntSat(lrgb),
+                  false));
             }
          }
       }
 
-      if ( dictionary.size() > 0 ) {
+      if ( dict.size() > 0 ) {
          for ( int i = 0; i < len; ++i ) {
             final Integer srgbKeyObj = px[i];
-            if ( dictionary.containsKey(srgbKeyObj) ) {
-               px[i] = dictionary.get(srgbKeyObj);
+            if ( dict.containsKey(srgbKeyObj) ) {
+               px[i] = dict.get(srgbKeyObj);
             }
          }
          target.updatePixels();
@@ -262,14 +261,13 @@ public class ZImage extends PImage {
       final Color lrgb = new Color();
       final Vec4 xyz = new Vec4();
       final Vec4 lab = new Vec4();
-      final HashMap < Integer, Integer > dictionary = new HashMap <>(512,
-         0.75f);
+      final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
 
       for ( int i = 0; i < len; ++i ) {
          final int srgbKeyInt = px[i];
          if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
             final Integer srgbKeyObj = srgbKeyInt;
-            if ( !dictionary.containsKey(srgbKeyObj) ) {
+            if ( !dict.containsKey(srgbKeyObj) ) {
 
                Color.fromHex(Color.sRgbaTolRgba(srgbKeyInt, false), lrgb);
                Color.lRgbaToXyza(lrgb, xyz);
@@ -279,17 +277,17 @@ public class ZImage extends PImage {
 
                Color.labaToXyza(lab, xyz);
                Color.xyzaTolRgba(xyz, lrgb);
-               dictionary.put(srgbKeyObj, Color.lRgbaTosRgba(Color.toHexIntSat(
-                  lrgb), false));
+               dict.put(srgbKeyObj, Color.lRgbaTosRgba(Color.toHexIntSat(lrgb),
+                  false));
             }
          }
       }
 
-      if ( dictionary.size() > 0 ) {
+      if ( dict.size() > 0 ) {
          for ( int i = 0; i < len; ++i ) {
             final Integer srgbKeyObj = px[i];
-            if ( dictionary.containsKey(srgbKeyObj) ) {
-               px[i] = dictionary.get(srgbKeyObj);
+            if ( dict.containsKey(srgbKeyObj) ) {
+               px[i] = dict.get(srgbKeyObj);
             }
          }
          target.updatePixels();
@@ -314,8 +312,8 @@ public class ZImage extends PImage {
       final int[] pixels = target.pixels;
       final int len = pixels.length;
       for ( int i = 0; i < len; ++i ) {
-         final int val = pixels[i];
-         pixels[i] = val << 0x18 | val << 0x10 | val << 0x08 | val;
+         final int a = pixels[i];
+         pixels[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
       }
       target.format = PConstants.ARGB;
       target.updatePixels();
@@ -370,7 +368,8 @@ public class ZImage extends PImage {
 
    /**
     * Renders a checker pattern on an image for diagnostic purposes. Ideally,
-    * the image dimensions should be a power of 2 (32, 64, 128, 256, 512).
+    * the image dimensions should be a power of 2 (32, 64, 128, 256, 512). The
+    * color is expected to be a 32-bit color integer.
     *
     * @param a      the first color
     * @param b      the second color
@@ -394,19 +393,27 @@ public class ZImage extends PImage {
        * to transpose color and columns & rows arguments.
        */
       final int limit = 2 * pd;
-      final int vcols = cols < 2 ? 2 : cols > w / limit ? w / limit : cols;
-      final int vrows = rows < 2 ? 2 : rows > h / limit ? h / limit : rows;
+      final int vCols = cols < 2 ? 2 : cols > w / limit ? w / limit : cols;
+      final int vRows = rows < 2 ? 2 : rows > h / limit ? h / limit : rows;
+
+      /*
+       * Alternatively, these could be adjusted according to the image's present
+       * pixel format; instead of changing the format.
+       */
+      final int va = a;
+      final int vb = b;
 
       final int[] px = target.pixels;
       final int len = px.length;
 
       // QUERY: Do vrows and vcols also need to account for pixel density?
       // This will have to go untested for now.
-      final int wch = w / vcols;
-      final int hchw = w * h / vrows;
+      final int wch = w / vCols;
+      final int hchw = w * h / vRows;
 
       for ( int i = 0; i < len; ++i ) {
-         px[i] = ( i % w / wch + i / hchw ) % 2 == 0 ? a : b;
+         /* % 2 can be replaced by & 1 for even or odd. */
+         px[i] = ( i % w / wch + i / hchw & 1 ) == 0 ? va : vb;
       }
 
       target.format = PConstants.ARGB;
@@ -481,7 +488,9 @@ public class ZImage extends PImage {
             - ( yn + yn + yOrigin ), radians));
       }
 
+      target.format = PConstants.ARGB;
       target.updatePixels();
+
       return target;
    }
 
@@ -523,7 +532,6 @@ public class ZImage extends PImage {
 
       final int octCapacity = 16;
       final float queryRad = 175.0f;
-      // final float queryRad = 5.0f;
 
       final Color lrgb = new Color();
       final Vec4 xyz = new Vec4();
@@ -534,9 +542,6 @@ public class ZImage extends PImage {
          0.75f);
       final Octree octree = new Octree(Bounds3.cieLab(new Bounds3()),
          octCapacity);
-      // final Octree octree = new Octree(Bounds3.unitCubeUnsigned(new
-      // Bounds3()),
-      // octCapacity);
 
       for ( int i = 0; i < palLen; ++i ) {
          final Color palEntry = palette[i];
@@ -545,7 +550,6 @@ public class ZImage extends PImage {
          Color.xyzaToLaba(xyz, lab);
 
          final Vec3 point = new Vec3(lab.x, lab.y, lab.z);
-         // final Vec3 point = new Vec3(lrgb.r, lrgb.g, lrgb.b);
          ptToHexDict.put(point.hashCode(), Color.toHexIntSat(palEntry));
          octree.insert(point);
       }
@@ -571,7 +575,6 @@ public class ZImage extends PImage {
          Color.lRgbaToXyza(lrgb, xyz);
          Color.xyzaToLaba(xyz, lab);
          query.set(lab.x, lab.y, lab.z);
-         // query.set(lrgb.r, lrgb.g, lrgb.b);
 
          int trgHex = 0x00000000;
          int rTrg = 0;
@@ -709,6 +712,7 @@ public class ZImage extends PImage {
          }
       }
 
+      target.format = PConstants.ARGB;
       target.updatePixels();
       return target;
    }
@@ -733,6 +737,7 @@ public class ZImage extends PImage {
       for ( int i = 0; i < len; ++i ) {
          px[i] = Gradient.eval(grd, clrEval.apply(px[i]));
       }
+      target.format = PConstants.ARGB;
       target.updatePixels();
       return target;
    }
@@ -761,7 +766,9 @@ public class ZImage extends PImage {
             0.4166666666666667d) * 1.055d - 0.055d );
          px[i] = Gradient.eval(grd, alpha * lum);
       }
+      target.format = PConstants.ARGB;
       target.updatePixels();
+
       return target;
    }
 
@@ -779,7 +786,8 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Fills an image with a color in place.
+    * Fills an image with a color in place. The color is expected to be a
+    * 32-bit color integer.
     *
     * @param fll    the fill color
     * @param target the target image
@@ -788,13 +796,18 @@ public class ZImage extends PImage {
     */
    public static PImage fill ( final int fll, final PImage target ) {
 
-      // TODO: Mask out alpha channel for RGB format?
-
+      /*
+       * An alternative design would be to adjust the validated fill based on
+       * the target's format instead of changing the format to ARGB.
+       */
+      final int valFll = fll;
       target.loadPixels();
       final int[] px = target.pixels;
       final int len = px.length;
-      for ( int i = 0; i < len; ++i ) { px[i] = fll; }
+      for ( int i = 0; i < len; ++i ) { px[i] = valFll; }
+      target.format = PConstants.ARGB;
       target.updatePixels();
+
       return target;
    }
 
@@ -1302,8 +1315,16 @@ public class ZImage extends PImage {
       final boolean stretch ) {
 
       target.loadPixels();
+      final int format = target.format;
       final int[] px = target.pixels;
       final int len = px.length;
+
+      if ( format == PConstants.ALPHA ) {
+         for ( int i = 0; i < len; ++i ) {
+            final int a = px[i];
+            px[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
+         }
+      }
 
       if ( stretch ) {
 
@@ -1338,6 +1359,7 @@ public class ZImage extends PImage {
          }
 
       } else {
+
          for ( int i = 0; i < len; ++i ) {
             final int hex = px[i];
             final int alphaOnly = hex & 0xff000000;
@@ -1350,8 +1372,10 @@ public class ZImage extends PImage {
                px[i] = 0x0;
             }
          }
+
       }
 
+      target.format = PConstants.ARGB;
       target.updatePixels();
       return target;
    }
@@ -1398,7 +1422,9 @@ public class ZImage extends PImage {
             % w ) + ( yoby + byhInv2 * ( i / w ) - bybbinv )));
       }
 
+      target.format = PConstants.ARGB;
       target.updatePixels();
+
       return target;
    }
 
@@ -1420,7 +1446,9 @@ public class ZImage extends PImage {
       for ( int i = 0; i < len; ++i ) {
          pixels[i] = Gradient.eval(grd, i % w * wInv);
       }
+      target.format = PConstants.ARGB;
       target.updatePixels();
+
       return target;
    }
 
@@ -1454,6 +1482,8 @@ public class ZImage extends PImage {
    public static PImage lRgbaTosRgba ( final PImage target,
       final boolean adjustAlpha ) {
 
+      // TODO: Handle ALPHA image format?
+
       target.loadPixels();
       final int[] px = target.pixels;
       final int len = px.length;
@@ -1461,6 +1491,7 @@ public class ZImage extends PImage {
          px[i] = Color.lRgbaTosRgba(px[i], adjustAlpha);
       }
       target.updatePixels();
+
       return target;
    }
 
@@ -1480,7 +1511,7 @@ public class ZImage extends PImage {
    public static PImage mask ( final PImage under, final PImage over,
       final int x, final int y, final PImage target ) {
 
-      // TODO: For maximum efficiency, wouldn't the mask image be the size of
+      // TODO: For efficiency, wouldn't the mask image be the size of
       // the intersection between under an over image?
 
       if ( target instanceof PGraphics ) {
@@ -1526,6 +1557,7 @@ public class ZImage extends PImage {
       target.pixelDensity = under.pixelDensity;
       target.pixelWidth = wUnder;
       target.pixelHeight = hUnder;
+      target.format = PConstants.ARGB;
       target.updatePixels();
 
       return target;
@@ -1558,8 +1590,17 @@ public class ZImage extends PImage {
    public static PImage premul ( final PImage source ) {
 
       source.loadPixels();
+
       final int[] px = source.pixels;
       final int len = px.length;
+
+      if ( source.format == PConstants.ALPHA ) {
+         for ( int i = 0; i < len; ++i ) {
+            final int a = px[i];
+            px[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
+         }
+      }
+
       for ( int i = 0; i < len; ++i ) {
          final int ai = px[i] >> 0x18 & 0xff;
          if ( ai < 1 ) {
@@ -1575,7 +1616,9 @@ public class ZImage extends PImage {
                   + 0.5f );
          }
       }
+      source.format = PConstants.ARGB;
       source.updatePixels();
+
       return source;
    }
 
@@ -1615,7 +1658,9 @@ public class ZImage extends PImage {
          px[i] = Gradient.eval(grd, 1.0f - ( ax * ax + ay * ay ) * rsqInv);
       }
 
+      target.format = PConstants.ARGB;
       target.updatePixels();
+
       return target;
    }
 
@@ -1822,6 +1867,7 @@ public class ZImage extends PImage {
       target.pixelWidth = dw;
       target.pixelHeight = dh;
       target.updatePixels();
+
       return target;
    }
 
@@ -1875,6 +1921,7 @@ public class ZImage extends PImage {
       target.pixelWidth = dw;
       target.pixelHeight = dh;
       target.updatePixels();
+
       return target;
    }
 
@@ -1889,21 +1936,18 @@ public class ZImage extends PImage {
    public static PImage rgb ( final PImage target ) {
 
       target.loadPixels();
-
       final int[] px = target.pixels;
       final int len = px.length;
       final int w = target.pixelWidth;
-
       final float hInv = 0xff / ( target.pixelHeight - 1.0f );
       final float wInv = 0xff / ( w - 1.0f );
-
       for ( int i = 0; i < len; ++i ) {
          px[i] = 0xff000080 | ( int ) ( 0.5f + wInv * ( i % w ) ) << 0x10
             | ( int ) ( 255.5f - hInv * ( i / w ) ) << 0x08;
       }
-
       target.format = PConstants.ARGB;
       target.updatePixels();
+
       return target;
    }
 
@@ -1927,6 +1971,7 @@ public class ZImage extends PImage {
          px[pxLenn1 - i] = t;
       }
       target.updatePixels();
+
       return target;
    }
 
@@ -1961,6 +2006,7 @@ public class ZImage extends PImage {
       target.pixelWidth = h;
       target.pixelHeight = w;
       target.updatePixels();
+
       return target;
    }
 
@@ -1995,6 +2041,7 @@ public class ZImage extends PImage {
       target.pixelWidth = h;
       target.pixelHeight = w;
       target.updatePixels();
+
       return target;
    }
 
@@ -2099,6 +2146,8 @@ public class ZImage extends PImage {
    public static PImage sRgbaTolRgba ( final PImage target,
       final boolean adjustAlpha ) {
 
+      // TODO: Handle ALPHA image format?
+
       target.loadPixels();
       final int[] px = target.pixels;
       final int len = px.length;
@@ -2106,6 +2155,7 @@ public class ZImage extends PImage {
          px[i] = Color.sRgbaTolRgba(px[i], adjustAlpha);
       }
       target.updatePixels();
+
       return target;
    }
 
@@ -2187,17 +2237,6 @@ public class ZImage extends PImage {
 
       switch ( srcFmt ) {
 
-         case PConstants.ALPHA: /* 4 */
-
-            final int trgb = 0x00ffffff & tintClr;
-            for ( int i = 0; i < len; ++i ) {
-               final float xaf = pixels[i] * IUtils.ONE_255;
-               final float zaf = Utils.min(xaf, yaf);
-               pixels[i] = ( int ) ( zaf * 0xff + 0.5f ) << 0x18 | trgb;
-            }
-
-            break;
-
          case PConstants.RGB: /* 1 */
 
             for ( int i = 0; i < len; ++i ) {
@@ -2219,6 +2258,17 @@ public class ZImage extends PImage {
                          | ( int ) ( zgf * 0xff + 0.5f ) << 0x08
                          | ( int ) ( zbf * 0xff + 0.5f );
                /* @formatter:on */
+            }
+
+            break;
+
+         case PConstants.ALPHA: /* 4 */
+
+            final int trgb = 0x00ffffff & tintClr;
+            for ( int i = 0; i < len; ++i ) {
+               final float xaf = pixels[i] * IUtils.ONE_255;
+               final float zaf = Utils.min(xaf, yaf);
+               pixels[i] = ( int ) ( zaf * 0xff + 0.5f ) << 0x18 | trgb;
             }
 
             break;
@@ -2253,8 +2303,8 @@ public class ZImage extends PImage {
 
       }
 
-      source.updatePixels();
       source.format = PConstants.ARGB;
+      source.updatePixels();
 
       return source;
    }
@@ -2339,8 +2389,9 @@ public class ZImage extends PImage {
       target.loadPixels();
       ZImage.wrap(source.pixels, source.pixelWidth, source.pixelHeight,
          target.pixels, target.pixelWidth, dx, dy);
+      target.format = source.format;
       target.updatePixels();
-      // source.updatePixels();
+
       return target;
    }
 

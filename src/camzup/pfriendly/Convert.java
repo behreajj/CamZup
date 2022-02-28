@@ -1708,16 +1708,15 @@ public abstract class Convert {
     * returns the hexadecimal representation of the current time in
     * milliseconds if that is the case. {@link PShape#hashCode()} is
     * unreliable and should not be used as a substitute.
-    * 
+    *
     * @param pshp the shape
-    * 
+    *
     * @return the name
     */
    private static String getPShapeName ( final PShape pshp ) {
 
       final String name = pshp.getName();
-      return name != null ? name : Long.toHexString(System
-         .currentTimeMillis());
+      return name != null ? name : Long.toHexString(System.currentTimeMillis());
    }
 
 }

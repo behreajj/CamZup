@@ -289,26 +289,6 @@ public class Bounds2 implements Comparable < Bounds2 > {
    }
 
    /**
-    * Internal helper function to assist with methods that need to print many
-    * bounds. Appends to an existing {@link StringBuilder}.
-    *
-    * @param sb     the string builder
-    * @param places the number of places
-    *
-    * @return the string builder
-    */
-   public StringBuilder toString ( final StringBuilder sb, final int places ) {
-
-      sb.append("{ min: ");
-      this.min.toString(sb, places);
-      sb.append(", max: ");
-      this.max.toString(sb, places);
-      sb.append(' ');
-      sb.append('}');
-      return sb;
-   }
-
-   /**
     * Translates this bounds by a vector.
     *
     * @param v the vector
@@ -359,6 +339,26 @@ public class Bounds2 implements Comparable < Bounds2 > {
       }
 
       return this;
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * bounds. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ min: ");
+      this.min.toString(sb, places);
+      sb.append(", max: ");
+      this.max.toString(sb, places);
+      sb.append(' ');
+      sb.append('}');
+      return sb;
    }
 
    /**

@@ -159,3 +159,4 @@ gamut
 desaturated
 dithers
 bicubic
+kappa

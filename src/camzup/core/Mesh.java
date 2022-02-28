@@ -291,8 +291,8 @@ public abstract class Mesh extends EntityData implements IMesh {
    }
 
    /**
-    * Triangulates all faces in a mesh drawing diagonals from the face's first
-    * vertex to all non-adjacent vertices.
+    * Triangulates all faces in a mesh by drawing diagonals from the face's
+    * first vertex to all non-adjacent vertices.
     *
     * @return this mesh
     *

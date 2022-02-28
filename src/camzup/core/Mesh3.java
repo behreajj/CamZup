@@ -2149,7 +2149,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public String toObjString ( final int vIdx, final int vtIdx, final int vnIdx,
       final int smoothShading, final boolean flipvs ) {
 
-      return this.toObjString(new StringBuilder(2048), vIdx, vtIdx, vnIdx,
+      return this.toObjString(new StringBuilder(1024), vIdx, vtIdx, vnIdx,
          smoothShading, flipvs).toString();
    }
 
@@ -2208,54 +2208,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public String toString ( final int places ) {
 
-      // TODO: Create pass by reference StringBuilder version?
-      final StringBuilder sb = new StringBuilder(2048);
-      sb.append("{ name: \"");
-      sb.append(this.name);
-      sb.append("\", materialIndex: ");
-      sb.append(this.materialIndex);
-      sb.append(", coords: ");
-      Vec3.toString(sb, this.coords, places);
-      sb.append(", texCoords: ");
-      Vec2.toString(sb, this.texCoords, places);
-      sb.append(", normals: ");
-      Vec3.toString(sb, this.normals, places);
-
-      sb.append(", faces: [ ");
-      if ( this.faces != null ) {
-         final int facesLen = this.faces.length;
-         final int facesLast = facesLen - 1;
-
-         for ( int i = 0; i < facesLen; ++i ) {
-
-            final int[][] verts = this.faces[i];
-            final int vertsLen = verts.length;
-            final int vertsLast = vertsLen - 1;
-            sb.append('[').append(' ');
-
-            for ( int j = 0; j < vertsLen; ++j ) {
-
-               final int[] vert = verts[j];
-               final int infoLen = vert.length;
-               final int infoLast = infoLen - 1;
-               sb.append('[').append(' ');
-
-               /* 3 indices: coordinate, texture coordinate & normal. */
-               for ( int k = 0; k < infoLen; ++k ) {
-                  sb.append(vert[k]);
-                  if ( k < infoLast ) { sb.append(',').append(' '); }
-               }
-
-               sb.append(' ').append(']');
-               if ( j < vertsLast ) { sb.append(',').append(' '); }
-            }
-            sb.append(' ').append(']');
-            if ( i < facesLast ) { sb.append(',').append(' '); }
-         }
-      }
-
-      sb.append(" ] }");
-      return sb.toString();
+      return this.toString(new StringBuilder(1024), places).toString();
    }
 
    /**
@@ -2561,6 +2514,65 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       return objs;
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * meshes. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ name: \"");
+      sb.append(this.name);
+      sb.append("\", materialIndex: ");
+      sb.append(this.materialIndex);
+      sb.append(", coords: ");
+      Vec3.toString(sb, this.coords, places);
+      sb.append(", texCoords: ");
+      Vec2.toString(sb, this.texCoords, places);
+      sb.append(", normals: ");
+      Vec3.toString(sb, this.normals, places);
+
+      sb.append(", faces: [ ");
+      if ( this.faces != null ) {
+         final int facesLen = this.faces.length;
+         final int facesLast = facesLen - 1;
+
+         for ( int i = 0; i < facesLen; ++i ) {
+
+            final int[][] verts = this.faces[i];
+            final int vertsLen = verts.length;
+            final int vertsLast = vertsLen - 1;
+            sb.append('[').append(' ');
+
+            for ( int j = 0; j < vertsLen; ++j ) {
+
+               final int[] vert = verts[j];
+               final int infoLen = vert.length;
+               final int infoLast = infoLen - 1;
+               sb.append('[').append(' ');
+
+               /* 3 indices: coordinate, texture coordinate & normal. */
+               for ( int k = 0; k < infoLen; ++k ) {
+                  sb.append(vert[k]);
+                  if ( k < infoLast ) { sb.append(',').append(' '); }
+               }
+
+               sb.append(' ').append(']');
+               if ( j < vertsLast ) { sb.append(',').append(' '); }
+            }
+            sb.append(' ').append(']');
+            if ( i < facesLast ) { sb.append(',').append(' '); }
+         }
+      }
+
+      sb.append(" ] }");
+      return sb;
    }
 
    /**
@@ -4048,6 +4060,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    @Experimental
    public static Mesh2 textureMap ( final Mesh3 source, final Mesh2 target ) {
+
+      // TODO: Change name?
 
       final Vec2[] vtsSrc = source.texCoords;
       final int[][][] fsSrc = source.faces;
