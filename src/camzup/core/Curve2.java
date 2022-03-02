@@ -2421,36 +2421,18 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Knot2 k6 = itr.next().set(lft, btmIns1, 0.0f, 0.0f, lft,
          IUtils.TWO_THIRDS * btmIns1 + IUtils.ONE_THIRD * topIns1);
 
-      // TODO: Experiments with kappa instead of 1/3 and 2/3.
-      // final float k = 0.1380711874576984f;
-      // final float k = 0.2761423749153968f;
-      // final float k = 0.41421356237309515f;
-      // final float k = 0.5522847498307936f;
-      final float k = IUtils.ONE_THIRD;
-      final float u = 1.0f - k;
-
-      final float rgt23 = u * rgt;
-      final float btm23 = u * btm;
-      final float top23 = u * top;
-      final float lft23 = u * lft;
-
-      final float rgt13 = k * rgt;
-      final float btm13 = k * btm;
-      final float top13 = k * top;
-      final float lft13 = k * lft;
-
       /* Bottom Right corner. */
       final Vec2 k0fh = k0.foreHandle;
       final Vec2 k1rh = k1.rearHandle;
       if ( br > 0.0f ) {
-         k0fh.x = k * rgtIns1 + rgt23;
+         k0fh.x = rgtIns1 + vbr * ICurve.KAPPA;
          k0fh.y = btm;
          k1rh.x = rgt;
-         k1rh.y = k * btmIns0 + btm23;
+         k1rh.y = btmIns0 - vbr * ICurve.KAPPA;
       } else {
          k0fh.x = rgtIns1;
-         k0fh.y = btm13 + u * btmIns0;
-         k1rh.x = rgt13 + u * rgtIns1;
+         k0fh.y = btm + vbr * ICurve.KAPPA;
+         k1rh.x = rgt - vbr * ICurve.KAPPA;
          k1rh.y = btmIns0;
       }
 
@@ -2459,28 +2441,28 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Vec2 k3rh = k3.rearHandle;
       if ( tr > 0.0f ) {
          k2fh.x = rgt;
-         k2fh.y = k * topIns0 + top23;
-         k3rh.x = k * rgtIns0 + rgt23;
+         k2fh.y = topIns0 + vtr * ICurve.KAPPA;
+         k3rh.x = rgtIns0 + vtr * ICurve.KAPPA;
          k3rh.y = top;
       } else {
-         k2fh.x = rgt13 + u * rgtIns0;
+         k2fh.x = rgt - vtr * ICurve.KAPPA;
          k2fh.y = topIns0;
          k3rh.x = rgtIns0;
-         k3rh.y = top13 + u * topIns0;
+         k3rh.y = top - vtr * ICurve.KAPPA;
       }
 
       /* Top Left corner. */
       final Vec2 k4fh = k4.foreHandle;
       final Vec2 k5rh = k5.rearHandle;
       if ( tl > 0.0f ) {
-         k4fh.x = k * lftIns0 + lft23;
+         k4fh.x = lftIns0 - vtl * ICurve.KAPPA;
          k4fh.y = top;
          k5rh.x = lft;
-         k5rh.y = k * topIns1 + top23;
+         k5rh.y = topIns1 + vtl * ICurve.KAPPA;
       } else {
          k4fh.x = lftIns0;
-         k4fh.y = top13 + u * topIns1;
-         k5rh.x = lft13 + u * lftIns0;
+         k4fh.y = top - vtl * ICurve.KAPPA;
+         k5rh.x = lft + vtl * ICurve.KAPPA;
          k5rh.y = topIns1;
       }
 
@@ -2489,14 +2471,14 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Vec2 k7rh = k7.rearHandle;
       if ( bl > 0.0f ) {
          k6fh.x = lft;
-         k6fh.y = k * btmIns1 + btm23;
-         k7rh.x = k * lftIns1 + lft23;
+         k6fh.y = btmIns1 - vbl * ICurve.KAPPA;
+         k7rh.x = lftIns1 - vbl * ICurve.KAPPA;
          k7rh.y = btm;
       } else {
-         k6fh.x = lft13 + u * lftIns1;
+         k6fh.x = lft + vbl * ICurve.KAPPA;
          k6fh.y = btmIns1;
          k7rh.x = lftIns1;
-         k7rh.y = btm13 + u * btmIns1;
+         k7rh.y = btm + vbl * ICurve.KAPPA;
       }
 
       return target;

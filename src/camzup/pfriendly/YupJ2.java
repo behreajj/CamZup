@@ -4482,13 +4482,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       this.gp.reset();
       this.gp.moveTo(x1 - rTrd, y0);
-      this.gp.quadTo(x1, y0, x1, y0 - rTrd);
+      this.gp.curveTo(x1 - rTrd + rTrd * ICurve.KAPPA_D, y0, x1, y0 - rTrd
+         + rTrd * ICurve.KAPPA_D, x1, y0 - rTrd);
       this.gp.lineTo(x1, y1 + rBrd);
-      this.gp.quadTo(x1, y1, x1 - rBrd, y1);
+      this.gp.curveTo(x1, y1 + rBrd - rBrd * ICurve.KAPPA_D, x1 - rBrd + rBrd
+         * ICurve.KAPPA_D, y1, x1 - rBrd, y1);
       this.gp.lineTo(x0 + rBld, y1);
-      this.gp.quadTo(x0, y1, x0, y1 + rBld);
+      this.gp.curveTo(x0 + rBld - rBld * ICurve.KAPPA_D, y1, x0, y1 + rBld
+         - rBld * ICurve.KAPPA_D, x0, y1 + rBld);
       this.gp.lineTo(x0, y0 - rTld);
-      this.gp.quadTo(x0, y0, x0 + rTld, y0);
+      this.gp.curveTo(x0, y0 - rTld + rTld * ICurve.KAPPA_D, x0 + rTld - rTld
+         * ICurve.KAPPA_D, y0, x0 + rTld, y0);
       this.gp.closePath();
       this.drawShapeSolid(this.gp);
    }

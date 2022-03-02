@@ -2,7 +2,6 @@ package camzup;
 
 import java.util.HashMap;
 
-import camzup.core.ChannelOrder;
 import camzup.core.Color;
 import camzup.core.IUtils;
 import camzup.core.Quaternion;
@@ -59,9 +58,6 @@ public class CamZup {
     * @param args the string of arguments
     */
    public static void main ( final String[] args ) {
-
-      System.out.println(ChannelOrder.RGBA);
-
    }
 
    public static Quaternion squad ( final Quaternion q1, final Quaternion q2,

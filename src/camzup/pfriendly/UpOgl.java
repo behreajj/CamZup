@@ -7,6 +7,7 @@ import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.Curve3;
 import camzup.core.CurveAnim;
+import camzup.core.ICurve;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Knot3;
@@ -4050,6 +4051,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       float w;
       float h;
 
+      float c0 = topLeft;
+      float c1 = topRight;
+      float c2 = bottomRight;
+      float c3 = bottomLeft;
+
       switch ( this.rectMode ) {
          case PConstants.CORNER: /* 0 */
 
@@ -4098,30 +4104,29 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             a1 = x0 + w * 0.5f;
             b0 = y0 - h * 0.5f;
             b1 = y0 + h * 0.5f;
-
       }
 
       final float limit = Utils.min(w, h) * 0.5f;
-      final float tl = Utils.clamp(topLeft, IUtils.EPSILON, limit);
-      final float tr = Utils.clamp(topRight, IUtils.EPSILON, limit);
-      final float br = Utils.clamp(bottomRight, IUtils.EPSILON, limit);
-      final float bl = Utils.clamp(bottomLeft, IUtils.EPSILON, limit);
+      c0 = Utils.clamp(c0, IUtils.EPSILON, limit);
+      c1 = Utils.clamp(c1, IUtils.EPSILON, limit);
+      c2 = Utils.clamp(c2, IUtils.EPSILON, limit);
+      c3 = Utils.clamp(c3, IUtils.EPSILON, limit);
 
       this.beginShape(PConstants.POLYGON);
       this.normalPerShape(0.0f, 0.0f, 1.0f);
 
-      this.vertexImpl(a1 - tr, b0, 0.0f, this.textureU, this.textureV);
-      this.quadraticVertexImpl(a1, b0, 0.0f, a1, b0 + tr, 0.0f);
-
-      this.vertexImpl(a1, b1 - br, 0.0f, this.textureU, this.textureV);
-      this.quadraticVertexImpl(a1, b1, 0.0f, a1 - br, b1, 0.0f);
-
-      this.vertexImpl(a0 + bl, b1, 0.0f, this.textureU, this.textureV);
-      this.quadraticVertexImpl(a0, b1, 0.0f, a0, b1 - bl, 0.0f);
-
-      this.vertexImpl(a0, b0 + tl, 0.0f, this.textureU, this.textureV);
-      this.quadraticVertexImpl(a0, b0, 0.0f, a0 + tl, b0, 0.0f);
-
+      this.vertexImpl(a1 - c2, b0, 0.0f, this.textureU, this.textureV);
+      this.bezierVertexImpl(a1 - c2 + c2 * ICurve.KAPPA, b0, 0.0f, a1, b0 + c2
+         - c2 * ICurve.KAPPA, 0.0f, a1, b0 + c2, 0.0f);
+      this.vertexImpl(a1, b1 - c1, 0.0f, this.textureU, this.textureV);
+      this.bezierVertexImpl(a1, b1 - c1 + c1 * ICurve.KAPPA, 0.0f, a1 - c1 + c1
+         * ICurve.KAPPA, b1, 0.0f, a1 - c1, b1, 0.0f);
+      this.vertexImpl(a0 + c0, b1, 0.0f, this.textureU, this.textureV);
+      this.bezierVertexImpl(a0 + c0 - c0 * ICurve.KAPPA, b1, 0.0f, a0, b1 - c0
+         + c0 * ICurve.KAPPA, 0.0f, a0, b1 - c0, 0.0f);
+      this.vertexImpl(a0, b0 + c3, 0.0f, this.textureU, this.textureV);
+      this.bezierVertexImpl(a0, b0 + c3 - c3 * ICurve.KAPPA, 0.0f, a0 + c3 - c3
+         * ICurve.KAPPA, b0, 0.0f, a0 + c3, b0, 0.0f);
       this.endShape(PConstants.CLOSE);
    }
 
