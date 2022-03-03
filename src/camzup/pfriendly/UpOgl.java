@@ -414,6 +414,19 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Draws a circle at a location
+    *
+    * @param x    the x coordinate
+    * @param y    the y coordinate
+    * @param size the size
+    */
+   @Override
+   public void circle ( final float x, final float y, final float size ) {
+
+      this.ellipseImpl(x, y, size, size);
+   }
+
+   /**
     * Calculates the color channels from a color object. Does not check
     * whether the color should be pre-multiplied by alpha; the user is trusted
     * to do so manually if desired.
@@ -803,6 +816,22 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       } else {
          this.endShape(PConstants.OPEN);
       }
+   }
+
+   /**
+    * Draws an ellipse; the meaning of the two parameters depends on the
+    * renderer's ellipseMode.
+    *
+    * @param x the first parameter
+    * @param y the second parameter
+    * @param w the third parameter
+    * @param h the fourth parameter
+    */
+   @Override
+   public void ellipse ( final float x, final float y, final float w,
+      final float h ) {
+
+      this.ellipseImpl(x, y, w, h);
    }
 
    /**
