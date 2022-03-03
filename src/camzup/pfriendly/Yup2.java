@@ -254,13 +254,26 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a circle at a location
     *
+    * @param x    the x coordinate
+    * @param y    the y coordinate
+    * @param size the size
+    */
+   @Override
+   public void circle ( final float x, final float y, final float size ) {
+
+      this.ellipseImpl(x, y, size, size);
+   }
+
+   /**
+    * Draws a circle at a location
+    *
     * @param coord the coordinate
     * @param size  the size
     */
    @Override
    public void circle ( final Vec2 coord, final float size ) {
 
-      super.circle(coord.x, coord.y, size);
+      this.ellipseImpl(coord.x, coord.y, size, size);
    }
 
    /**
@@ -356,13 +369,29 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
     * Draws an ellipse; the meaning of the two parameters depends on the
     * renderer's ellipseMode.
     *
+    * @param x the first parameter
+    * @param y the second parameter
+    * @param w the third parameter
+    * @param h the fourth parameter
+    */
+   @Override
+   public void ellipse ( final float x, final float y, final float w,
+      final float h ) {
+
+      super.ellipseImpl(x, y, w, h);
+   }
+
+   /**
+    * Draws an ellipse; the meaning of the two parameters depends on the
+    * renderer's ellipseMode.
+    *
     * @param a the first parameter
     * @param b the second parameter
     */
    @Override
    public void ellipse ( final Vec2 a, final Vec2 b ) {
 
-      super.ellipse(a.x, a.y, b.x, b.y);
+      super.ellipseImpl(a.x, a.y, b.x, b.y);
    }
 
    /**

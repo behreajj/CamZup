@@ -812,7 +812,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param w the third parameter
     * @param h the fourth parameter
     *
-    * @see Utils#abs(float)
+    * @see Math#abs(double)
     * @see Path2D#reset()
     * @see Path2D#moveTo(double, double)
     * @see Path2D#curveTo(double, double, double, double, double, double)

@@ -806,6 +806,115 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Draws an ellipse. The parameters meanings are determined by the
+    * ellipseMode.
+    *
+    * @param x the first parameter
+    * @param y the second parameter
+    * @param w the third parameter
+    * @param h the fourth parameter
+    *
+    * @see Utils#abs(float)
+    */
+   @Override
+   public void ellipseImpl ( final float x, final float y, final float w,
+      final float h ) {
+
+      /*
+       * This needs to be implemented to resolve a bug with CORNER. All ellipse
+       * functions should perform no work, but redirect immediately here.
+       */
+
+      float extapw;
+      float extaph;
+      float extcpw;
+      float extcph;
+      float xc;
+      float yc;
+
+      switch ( this.ellipseMode ) {
+         case PConstants.CORNER: /* 0 */
+
+            extapw = 0.5f * w;
+            extcpw = ICurve.KAPPA_2 * w;
+            extaph = 0.5f * h;
+            extcph = ICurve.KAPPA_2 * h;
+
+            xc = x + extapw;
+            yc = y - extaph;
+
+            break;
+
+         case PConstants.CORNERS: /* 1 */
+
+            final float wcalc = Utils.abs(w - x);
+            final float hcalc = Utils.abs(h - y);
+
+            xc = ( x + w ) * 0.5f;
+            yc = ( y + h ) * 0.5f;
+
+            extapw = 0.5f * wcalc;
+            extcpw = ICurve.KAPPA_2 * wcalc;
+            extaph = 0.5f * hcalc;
+            extcph = ICurve.KAPPA_2 * hcalc;
+
+            break;
+
+         case PConstants.RADIUS: /* 2 */
+
+            xc = x;
+            yc = y;
+
+            extapw = w;
+            extcpw = ICurve.KAPPA * extapw;
+            extaph = h;
+            extcph = ICurve.KAPPA * extaph;
+
+            break;
+
+         case PConstants.CENTER: /* 3 */
+         default:
+
+            xc = x;
+            yc = y;
+
+            extapw = 0.5f * w;
+            extcpw = ICurve.KAPPA_2 * w;
+            extaph = 0.5f * h;
+            extcph = ICurve.KAPPA_2 * h;
+      }
+
+      final float right = xc + extapw;
+      final float left = xc - extapw;
+      final float top = yc + extaph;
+      final float bottom = yc - extaph;
+
+      this.beginShape(PConstants.POLYGON);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
+      this.vertexImpl(right, yc, 0.0f, this.textureU, this.textureV);
+
+      /* @formatter:off */
+      this.bezierVertexImpl(
+         right, yc + extcph, 0.0f,
+         xc + extcpw, top, 0.0f,
+         xc, top, 0.0f);
+      this.bezierVertexImpl(
+         xc - extcpw, top, 0.0f,
+         left, yc + extcph, 0.0f,
+         left, yc, 0.0f);
+      this.bezierVertexImpl(
+         left, yc - extcph, 0.0f,
+         xc - extcpw, bottom, 0.0f,
+         xc, bottom, 0.0f);
+      this.bezierVertexImpl(
+         xc + extcpw, bottom, 0.0f,
+         right, yc - extcph, 0.0f,
+         right, yc, 0.0f);
+      /* @formatter:on */
+      this.endShape(PConstants.CLOSE);
+   }
+
+   /**
     * Attempts to make the hint system more convenient to work with.
     */
    public void enableDepthMask ( ) {
