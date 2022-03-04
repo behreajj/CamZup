@@ -6,12 +6,12 @@
 			<attribute name="module" value="true"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Jeremy Behreandt/Documents/processing-4.0b6/core/library/core.jar">
+	<classpathentry kind="lib" path="C:/Users/Jeremy Behreandt/Documents/processing-4.0b7/core/library/core.jar">
 		<attributes>
 			<attribute name="source_encoding" value="UTF-16"/>
 		</attributes>
 	</classpathentry>
-	<classpathentry kind="lib" path="C:/Users/Jeremy Behreandt/Documents/processing-4.0b6/core/library/gluegen-rt.jar"/>
-	<classpathentry kind="lib" path="C:/Users/Jeremy Behreandt/Documents/processing-4.0b6/core/library/jogl-all.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jeremy Behreandt/Documents/processing-4.0b7/core/library/gluegen-rt.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Jeremy Behreandt/Documents/processing-4.0b7/core/library/jogl-all.jar"/>
 	<classpathentry kind="output" path="resources/code"/>
 </classpath>

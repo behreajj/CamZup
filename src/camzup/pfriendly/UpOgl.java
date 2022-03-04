@@ -4492,8 +4492,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          /*
           * Hack to deal with blending modes. The "correct" blend causes
-          * backgrounds to appear on text, but the default case is the old blend
-          * mode, so send an invalid integer deliberately.
+          * backgrounds to appear on text; the default is the old blend mode.
           */
          final int oldBlendMode = this.blendMode;
          this.blendMode = IUpOgl.TEXT_BLEND;
