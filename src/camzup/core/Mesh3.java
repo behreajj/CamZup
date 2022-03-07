@@ -2298,9 +2298,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int facesLen = this.faces.length;
       final int facesLast = facesLen - 1;
 
-      pyCd.append("{\"name\": \"");
-      pyCd.append(this.name);
-      pyCd.append("\", \"material_index\": ");
+      pyCd.append("{\"name\": \"Mesh3\", \"material_index\": ");
       pyCd.append(this.materialIndex);
       pyCd.append(", \"vertices\": [");
 

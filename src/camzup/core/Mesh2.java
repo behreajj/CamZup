@@ -1687,9 +1687,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int facesLen = this.faces.length;
       final int facesLast = facesLen - 1;
 
-      pyCd.append("{\"name\": \"");
-      pyCd.append(this.name);
-      pyCd.append("\", \"material_index\": ");
+      pyCd.append("{\"name\": \"Mesh2\", \"material_index\": ");
       pyCd.append(this.materialIndex);
       pyCd.append(", \"vertices\": [");
 

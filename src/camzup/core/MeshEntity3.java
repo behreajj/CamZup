@@ -424,9 +424,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
       final StringBuilder pyCd = new StringBuilder(2048);
       pyCd.append("from bpy import context as C, data as D\nimport bmesh\n\n");
-      pyCd.append("entity_src = {\"name\": \"");
-      pyCd.append(this.name);
-      pyCd.append("\", \"transform\": ");
+      pyCd.append("entity_src = {\"name\": \"MeshEntity3\", \"transform\": ");
       this.transform.toBlenderCode(pyCd);
       pyCd.append(", \"meshes\": [");
 

@@ -36,6 +36,9 @@ public class ZImage extends PImage {
     */
    public ZImage ( final int width, final int height ) {
 
+      // TODO: Make your own color invert function instead of relying
+      // on Processing filter? The formula is px[i] ^= 0x00ffffff;
+
       super(width, height);
    }
 
@@ -2213,6 +2216,12 @@ public class ZImage extends PImage {
    public static PImage tint ( final PImage source, final int tintClr,
       final float fac ) {
 
+      if ( fac <= 0.0f ) { return source; }
+
+      source.loadPixels();
+      final int[] pixels = source.pixels;
+      final int len = pixels.length;
+
       /* Do not optimize until you settle on an appropriate tinting formula. */
 
       /* Right operand. Decompose tint color. */
@@ -2228,12 +2237,8 @@ public class ZImage extends PImage {
       final float ybf = yb * IUtils.ONE_255;
 
       final int srcFmt = source.format;
-      final float t = Utils.clamp01(fac);
+      final float t = Utils.min(fac, 1.0f);
       final float u = 1.0f - t;
-
-      source.loadPixels();
-      final int[] pixels = source.pixels;
-      final int len = pixels.length;
 
       switch ( srcFmt ) {
 

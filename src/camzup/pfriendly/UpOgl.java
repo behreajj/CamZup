@@ -920,9 +920,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       this.beginShape(PConstants.POLYGON);
       this.normalPerShape(0.0f, 0.0f, 1.0f);
-      this.vertexImpl(right, yc, 0.0f, this.textureU, this.textureV);
 
       /* @formatter:off */
+      this.vertexImpl(
+         right, yc, 0.0f,
+         this.textureU, this.textureV);
       this.bezierVertexImpl(
          right, yc + extcph, 0.0f,
          xc + extcpw, top, 0.0f,
