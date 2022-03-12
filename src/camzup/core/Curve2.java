@@ -1817,8 +1817,35 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Creates a rectangle. The first coordinate specifies the top left corner;
-    * the second coordinate specifies the bottom right corner.
+    * Sets a target curve to a rectangle.
+    * 
+    * @param target the output curve
+    *
+    * @return the rectangle
+    */
+   public static Curve2 rect ( final Curve2 target ) {
+
+      return Curve2.rect(0.0f, target);
+   }
+
+   /**
+    * Sets a target curve to a rectangle. The first parameter specifies the
+    * corner rounding factor.
+    * 
+    * @param rounding corner rounding
+    * @param target   the output curve
+    *
+    * @return the rectangle
+    */
+   public static Curve2 rect ( final float rounding, final Curve2 target ) {
+
+      return Curve2.rect(-0.5f, 0.5f, 0.5f, -0.5f, rounding, target);
+   }
+
+   /**
+    * Sets a target curve to a rectangle. The first coordinate specifies the
+    * top left corner; the second coordinate specifies the bottom right
+    * corner.
     *
     * @param tl     the top left corner
     * @param br     the bottom right corner
@@ -1829,13 +1856,14 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public static Curve2 rect ( final Vec2 tl, final Vec2 br,
       final Curve2 target ) {
 
-      return Curve2.rect(tl.x, tl.y, br.x, br.y, target);
+      return Curve2.rect(tl.x, tl.y, br.x, br.y, 0.0f,
+         target);
    }
 
    /**
-    * Creates a rounded rectangle. The first coordinate specifies the top left
-    * corner; the second coordinate specifies the bottom right corner. The
-    * third parameter specifies the corner rounding factor.
+    * Sets a target curve to a rectangle. The first coordinate specifies the
+    * top left corner; the second coordinate specifies the bottom right
+    * corner. The third parameter specifies the corner rounding factor.
     *
     * @param tl     the top left corner
     * @param br     the bottom right corner
@@ -1851,10 +1879,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Creates a rounded rectangle. The first coordinate specifies the top left
-    * corner; the second coordinate, specifies the bottom right corner. The
-    * next four parameters specify the rounding factor for the top left, top
-    * right, bottom right and bottom left corners.
+    * Sets a target curve to a rectangle. The first coordinate specifies the
+    * top left corner; the second coordinate, specifies the bottom right
+    * corner. The next four parameters specify the rounding factor for the top
+    * left, top right, bottom right and bottom left corners.
     *
     * @param tl       the top left corner
     * @param br       the bottom right corner
@@ -2289,46 +2317,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Creates a rectangle.
-    *
-    * @param lbx    lower bound x
-    * @param lby    lower bound y
-    * @param ubx    upper bound x
-    * @param uby    upper bound y
-    * @param target the output curve
-    *
-    * @return the rectangle
-    */
-   static Curve2 rect ( final float lbx, final float lby, final float ubx,
-      final float uby, final Curve2 target ) {
-
-      target.closedLoop = true;
-      target.name = "Rect";
-      target.resize(4);
-      final Iterator < Knot2 > itr = target.knots.iterator();
-
-      /* Validate corners. */
-      final float lft = lbx < ubx ? lbx : ubx;
-      final float rgt = ubx > lbx ? ubx : lbx;
-      final float btm = lby < uby ? lby : uby;
-      final float top = uby > lby ? uby : lby;
-
-      /* Find handle offsets. */
-      final float rtl = IUtils.TWO_THIRDS * rgt + IUtils.ONE_THIRD * lft;
-      final float btt = IUtils.TWO_THIRDS * btm + IUtils.ONE_THIRD * top;
-      final float ltr = IUtils.TWO_THIRDS * lft + IUtils.ONE_THIRD * rgt;
-      final float ttb = IUtils.TWO_THIRDS * top + IUtils.ONE_THIRD * btm;
-
-      /* Sets knots. */
-      itr.next().set(lft, btm, ltr, btm, lft, btt);
-      itr.next().set(rgt, btm, rgt, btt, rtl, btm);
-      itr.next().set(rgt, top, rtl, top, rgt, ttb);
-      itr.next().set(lft, top, lft, ttb, ltr, top);
-
-      return target;
-   }
-
-   /**
     * Creates a rounded rectangle. The fifth parameter specifies the corner
     * rounding factor.
     *
@@ -2372,113 +2360,142 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       target.closedLoop = true;
       target.name = "Rect";
-      target.resize(8);
-      final Iterator < Knot2 > itr = target.knots.iterator();
 
       /* Validate corners. */
-      final float lft = lbx < ubx ? lbx : ubx;
-      final float rgt = ubx > lbx ? ubx : lbx;
-      final float btm = lby < uby ? lby : uby;
-      final float top = uby > lby ? uby : lby;
+      float lft = lbx < ubx ? lbx : ubx;
+      float btm = lby < uby ? lby : uby;
+      float rgt = ubx > lbx ? ubx : lbx;
+      float top = uby > lby ? uby : lby;
 
-      /* Validate corner insetting. */
-      final float vtl = Utils.max(Utils.abs(tl), IUtils.EPSILON);
-      final float vtr = Utils.max(Utils.abs(tr), IUtils.EPSILON);
-      final float vbr = Utils.max(Utils.abs(br), IUtils.EPSILON);
-      final float vbl = Utils.max(Utils.abs(bl), IUtils.EPSILON);
+      /* Protect against zero dimensions on w or h or both. */
+      float w = rgt - lft;
+      float h = top - btm;
+      final boolean wInval = w < IUtils.EPSILON;
+      final boolean hInval = h < IUtils.EPSILON;
+      if ( wInval && hInval ) {
+         final float cx = (lft + rgt) * 0.5f;
+         final float cy = (top + btm) * 0.5f;
+         lft = cx - 0.5f;
+         rgt = cx + 0.5f;
+         btm = cy - 0.5f;
+         top = cy + 0.5f;
+      } else if ( wInval ) {
+         final float cx = (lft + rgt) * 0.5f;
+         final float hHalf = h * 0.5f;
+         lft = cx - hHalf;
+         rgt = cx + hHalf;
+         w = h;
+      } else if ( hInval ) {
+         final float cy = (top + btm) * 0.5f;
+         final float wHalf = w * 0.5f;
+         btm = cy - wHalf;
+         top = cy + wHalf;
+         h = w;
+      }
+
+      /*
+       * Validate corner insetting. It would make more sense for these to be
+       * factors in [0.0, 1.0] that are then divided by 2. However, there needs
+       * to be parity with Processing and SVG approach.
+       */
+      final float se = 0.5f * Utils.min(w, h);
+      final float vtl = Utils.min(se, Utils.abs(tl));
+      final float vbl = Utils.min(se, Utils.abs(bl));
+      final float vbr = Utils.min(se, Utils.abs(br));
+      final float vtr = Utils.min(se, Utils.abs(tr));
+
+      /* To extend corner handles. */
+      final float vtlk = vtl * ICurve.KAPPA;
+      final float vblk = vbl * ICurve.KAPPA;
+      final float vbrk = vbr * ICurve.KAPPA;
+      final float vtrk = vtr * ICurve.KAPPA;
+      
+      /* To lerp handles on flat edges. */
+      final float t = IUtils.ONE_THIRD;
+      final float u = IUtils.TWO_THIRDS;
 
       /* Calculate insets. */
-      final float btmIns0 = btm + vbr;
-      final float topIns0 = top - vtr;
-      final float rgtIns0 = rgt - vtr;
       final float lftIns0 = lft + vtl;
       final float topIns1 = top - vtl;
       final float btmIns1 = btm + vbl;
       final float lftIns1 = lft + vbl;
       final float rgtIns1 = rgt - vbr;
+      final float btmIns0 = btm + vbr;
+      final float topIns0 = top - vtr;
+      final float rgtIns0 = rgt - vtr;
 
-      /* Bottom edge. */
-      final Knot2 k7 = itr.next().set(lftIns1, btm, IUtils.TWO_THIRDS * lftIns1
-         + IUtils.ONE_THIRD * rgtIns1, btm, 0.0f, 0.0f);
-      final Knot2 k0 = itr.next().set(rgtIns1, btm, 0.0f, 0.0f,
-         IUtils.TWO_THIRDS * rgtIns1 + IUtils.ONE_THIRD * lftIns1, btm);
+      /* Calculate knot count. Two knots if corner is round. */
+      int knotCount = 4;
+      if ( tl != 0.0f ) { ++knotCount; }
+      if ( bl != 0.0f ) { ++knotCount; }
+      if ( br != 0.0f ) { ++knotCount; }
+      if ( tr != 0.0f ) { ++knotCount; }
+      
+      target.resize(knotCount);
+      final Iterator < Knot2 > itr = target.knots.iterator();
 
-      /* Right edge. */
-      final Knot2 k1 = itr.next().set(rgt, btmIns0, rgt, IUtils.TWO_THIRDS
-         * btmIns0 + IUtils.ONE_THIRD * topIns0, 0.0f, 0.0f);
-      final Knot2 k2 = itr.next().set(rgt, topIns0, 0.0f, 0.0f, rgt,
-         IUtils.TWO_THIRDS * topIns0 + IUtils.ONE_THIRD * btmIns0);
-
-      /* Top edge. */
-      final Knot2 k3 = itr.next().set(rgtIns0, top, IUtils.TWO_THIRDS * rgtIns0
-         + IUtils.ONE_THIRD * lftIns0, top, 0.0f, 0.0f);
-      final Knot2 k4 = itr.next().set(lftIns0, top, 0.0f, 0.0f,
-         IUtils.TWO_THIRDS * lftIns0 + IUtils.ONE_THIRD * rgtIns0, top);
-
-      /* Left edge. */
-      final Knot2 k5 = itr.next().set(lft, topIns1, lft, IUtils.TWO_THIRDS
-         * topIns1 + IUtils.ONE_THIRD * btmIns1, 0.0f, 0.0f);
-      final Knot2 k6 = itr.next().set(lft, btmIns1, 0.0f, 0.0f, lft,
-         IUtils.TWO_THIRDS * btmIns1 + IUtils.ONE_THIRD * topIns1);
-
-      /* Bottom Right corner. */
-      final Vec2 k0fh = k0.foreHandle;
-      final Vec2 k1rh = k1.rearHandle;
-      if ( br > 0.0f ) {
-         k0fh.x = rgtIns1 + vbr * ICurve.KAPPA;
-         k0fh.y = btm;
-         k1rh.x = rgt;
-         k1rh.y = btmIns0 - vbr * ICurve.KAPPA;
-      } else {
-         k0fh.x = rgtIns1;
-         k0fh.y = btm + vbr * ICurve.KAPPA;
-         k1rh.x = rgt - vbr * ICurve.KAPPA;
-         k1rh.y = btmIns0;
-      }
-
-      /* Top Right corner. */
-      final Vec2 k2fh = k2.foreHandle;
-      final Vec2 k3rh = k3.rearHandle;
-      if ( tr > 0.0f ) {
-         k2fh.x = rgt;
-         k2fh.y = topIns0 + vtr * ICurve.KAPPA;
-         k3rh.x = rgtIns0 + vtr * ICurve.KAPPA;
-         k3rh.y = top;
-      } else {
-         k2fh.x = rgt - vtr * ICurve.KAPPA;
-         k2fh.y = topIns0;
-         k3rh.x = rgtIns0;
-         k3rh.y = top - vtr * ICurve.KAPPA;
-      }
-
-      /* Top Left corner. */
-      final Vec2 k4fh = k4.foreHandle;
-      final Vec2 k5rh = k5.rearHandle;
+      /* Top left corner. */
       if ( tl > 0.0f ) {
-         k4fh.x = lftIns0 - vtl * ICurve.KAPPA;
-         k4fh.y = top;
-         k5rh.x = lft;
-         k5rh.y = topIns1 + vtl * ICurve.KAPPA;
+         itr.next().set(lftIns0, top, lftIns0 - vtlk, top, u * lftIns0 + t
+            * rgtIns0, top);
+         itr.next().set(lft, topIns1, lft, u * topIns1 + t * btmIns1, lft,
+            topIns1 + vtlk);
+      } else if ( tl < -0.0f ) {
+         itr.next().set(lftIns0, top, lftIns0, top - vtlk, u * lftIns0 + t
+            * rgtIns0, top);
+         itr.next().set(lft, topIns1, lft, u * topIns1 + t * btmIns1, lft
+            + vtlk, topIns1);
       } else {
-         k4fh.x = lftIns0;
-         k4fh.y = top - vtl * ICurve.KAPPA;
-         k5rh.x = lft + vtl * ICurve.KAPPA;
-         k5rh.y = topIns1;
+         itr.next().set(lft, top, lft, u * top + t * btmIns1, u * lft + t
+            * rgtIns0, top);
       }
 
-      /* Bottom Left corner. */
-      final Vec2 k6fh = k6.foreHandle;
-      final Vec2 k7rh = k7.rearHandle;
+      /* Bottom left corner. */
       if ( bl > 0.0f ) {
-         k6fh.x = lft;
-         k6fh.y = btmIns1 - vbl * ICurve.KAPPA;
-         k7rh.x = lftIns1 - vbl * ICurve.KAPPA;
-         k7rh.y = btm;
+         itr.next().set(lft, btmIns1, lft, btmIns1 - vblk, lft, u * btmIns1 + t
+            * topIns1);
+         itr.next().set(lftIns1, btm, u * lftIns1 + t * rgtIns1, btm, lftIns1
+            - vblk, btm);
+      } else if ( bl < -0.0f ) {
+         itr.next().set(lft, btmIns1, lft + vblk, btmIns1, lft, u * btmIns1 + t
+            * topIns1);
+         itr.next().set(lftIns1, btm, u * lftIns1 + t * rgtIns1, btm, lftIns1,
+            btm + vblk);
       } else {
-         k6fh.x = lft + vbl * ICurve.KAPPA;
-         k6fh.y = btmIns1;
-         k7rh.x = lftIns1;
-         k7rh.y = btm + vbl * ICurve.KAPPA;
+         itr.next().set(lft, btm, u * lft + t * rgtIns1, btm, lft, u * btm + t
+            * topIns1);
+      }
+
+      /* Bottom right corner. */
+      if ( br > 0.0f ) {
+         itr.next().set(rgtIns1, btm, rgtIns1 + vbrk, btm, u * rgtIns1 + t
+            * lftIns1, btm);
+         itr.next().set(rgt, btmIns0, rgt, u * btmIns0 + t * topIns0, rgt,
+            btmIns0 - vbrk);
+      } else if ( br < -0.0f ) {
+         itr.next().set(rgtIns1, btm, rgtIns1, btm + vbrk, u * rgtIns1 + t
+            * lftIns1, btm);
+         itr.next().set(rgt, btmIns0, rgt, u * btmIns0 + t * topIns0, rgt
+            - vbrk, btmIns0);
+      } else {
+         itr.next().set(rgt, btm, rgt, u * btm + t * topIns0, u * rgt + t
+            * lftIns1, btm);
+      }
+
+      /* Top right corner. */
+      if ( tr > 0.0f ) {
+         itr.next().set(rgt, topIns0, rgt, topIns0 + vtrk, rgt, u * topIns0 + t
+            * btmIns0);
+         itr.next().set(rgtIns0, top, u * rgtIns0 + t * lftIns0, top, rgtIns0
+            + vtrk, top);
+      } else if ( tr < -0.0f ) {
+         itr.next().set(rgt, topIns0, rgt - vtrk, topIns0, rgt, u * topIns0 + t
+            * btmIns0);
+         itr.next().set(rgtIns0, top, u * rgtIns0 + t * lftIns0, top, rgtIns0,
+            top - vtrk);
+      } else {
+         itr.next().set(rgt, top, u * rgt + t * lftIns0, top, rgt, u * top + t
+            * btmIns0);
       }
 
       return target;

@@ -165,7 +165,7 @@ public interface ISvgWritable {
 
    /**
     * The default number of decimal places to print real numbers in an SVG,
-    * {@value IUtils#FIXED_PRINT}.
+    * {@value ISvgWritable#FIXED_PRINT}.
     */
    int FIXED_PRINT = 6;
 

@@ -484,9 +484,7 @@ public class MaterialSolid extends Material {
       final float metallic, final float roughness, final float specular,
       final float clearcoat, final float clearcoatRough ) {
 
-      pyCd.append("{\"name\": \"");
-      pyCd.append(this.name);
-      pyCd.append("\", \"fill\": ");
+      pyCd.append("{\"name\": \"Material\", \"fill\": ");
       this.fill.toBlenderCode(pyCd, gamma, true);
       pyCd.append(", \"metallic\": ");
       Utils.toFixed(pyCd, metallic, 6);
@@ -530,12 +528,10 @@ public class MaterialSolid extends Material {
       final float sa = Utils.clamp01(this.stroke.a);
       if ( this.useStroke && sw > IUtils.EPSILON ) {
          svgp.append("stroke-width=\"");
-         // svgp.append(Float.toString(sclStrk));
          Utils.toFixed(svgp, sw, ISvgWritable.FIXED_PRINT);
          svgp.append("\" stroke-opacity=\"");
          Utils.toFixed(svgp, sa, ISvgWritable.FIXED_PRINT);
          svgp.append("\" stroke=\"");
-         // svgp.append(Color.toHexWeb(this.stroke));
          Color.toHexWeb(svgp, this.stroke);
          svgp.append("\" stroke-linejoin=\"");
          svgp.append(ISvgWritable.DEFAULT_STR_JOIN);
@@ -618,7 +614,6 @@ public class MaterialSolid extends Material {
       final float sw = Utils.div(IUp.DEFAULT_STROKE_WEIGHT, Utils.abs(scale));
       if ( sw > IUtils.EPSILON ) {
          svgp.append("stroke-width=\"");
-         // svgp.append(Float.toString(sclStrk));
          Utils.toFixed(svgp, sw, ISvgWritable.FIXED_PRINT);
          svgp.append("\" stroke-opacity=\"");
          svgp.append("1.0");

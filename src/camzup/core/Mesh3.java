@@ -1290,7 +1290,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     *
-    * @see Vec3#rotate(Vec3, float, Vec3, Vec3)
+    * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
     */
    public Mesh3 rotate ( final float radians, final Vec3 axis ) {
 
@@ -1304,6 +1304,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          Vec3.rotate(c, cosa, sina, axis, c);
       }
 
+      final int vnsLen = this.normals.length;
+      for ( int j = 0; j < vnsLen; ++j ) {
+         final Vec3 n = this.normals[j];
+         Vec3.rotate(n, cosa, sina, axis, n);
+      }
+
       return this;
    }
 
@@ -1313,6 +1319,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param q the quaternion
     *
     * @return the mesh
+    *
+    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     */
    public Mesh3 rotate ( final Quaternion q ) {
 
@@ -1320,6 +1328,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       for ( int i = 0; i < vsLen; ++i ) {
          final Vec3 c = this.coords[i];
          Quaternion.mulVector(q, c, c);
+      }
+
+      final int vnsLen = this.normals.length;
+      for ( int j = 0; j < vnsLen; ++j ) {
+         final Vec3 n = this.normals[j];
+         Quaternion.mulVector(q, n, n);
       }
 
       return this;
@@ -1332,7 +1346,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     *
-    * @see Vec3#rotateX(Vec3, float, Vec3)
+    * @see Vec3#rotateX(Vec3, float, float, Vec3)
     */
    public Mesh3 rotateX ( final float radians ) {
 
@@ -1346,6 +1360,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          Vec3.rotateX(c, cosa, sina, c);
       }
 
+      final int vnsLen = this.normals.length;
+      for ( int j = 0; j < vnsLen; ++j ) {
+         final Vec3 n = this.normals[j];
+         Vec3.rotateX(n, cosa, sina, n);
+      }
+
       return this;
    }
 
@@ -1356,7 +1376,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     *
-    * @see Vec3#rotateY(Vec3, float, Vec3)
+    * @see Vec3#rotateY(Vec3, float, float, Vec3)
     */
    public Mesh3 rotateY ( final float radians ) {
 
@@ -1370,6 +1390,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          Vec3.rotateY(c, cosa, sina, c);
       }
 
+      final int vnsLen = this.normals.length;
+      for ( int j = 0; j < vnsLen; ++j ) {
+         final Vec3 n = this.normals[j];
+         Vec3.rotateY(n, cosa, sina, n);
+      }
+
       return this;
    }
 
@@ -1380,7 +1406,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return this mesh
     *
-    * @see Vec3#rotateZ(Vec3, float, Vec3)
+    * @see Vec3#rotateZ(Vec3, float, float, Vec3)
     */
    public Mesh3 rotateZ ( final float radians ) {
 
@@ -1392,6 +1418,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       for ( int i = 0; i < vsLen; ++i ) {
          final Vec3 c = this.coords[i];
          Vec3.rotateZ(c, cosa, sina, c);
+      }
+
+      final int vnsLen = this.normals.length;
+      for ( int j = 0; j < vnsLen; ++j ) {
+         final Vec3 n = this.normals[j];
+         Vec3.rotateZ(n, cosa, sina, n);
       }
 
       return this;
@@ -1420,14 +1452,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Scales all coordinates in the mesh by a non-uniform scalar.
+    * Scales all coordinates and normals in the mesh by a non-uniform scalar.
     *
     * @param scale the vector
     *
     * @return this mesh
     *
-    * @see Vec3#none(Vec3)
+    * @see Vec3#all(Vec3)
     * @see Vec3#hadamard(Vec3, Vec3, Vec3)
+    * @see Vec3#normalize(Vec3, Vec3)
     */
    public Mesh3 scale ( final Vec3 scale ) {
 
@@ -1436,6 +1469,16 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          for ( int i = 0; i < vsLen; ++i ) {
             final Vec3 c = this.coords[i];
             Vec3.hadamard(c, scale, c);
+         }
+
+         final float xInv = 1.0f / scale.x;
+         final float yInv = 1.0f / scale.y;
+         final float zInv = 1.0f / scale.z;
+         final int vnsLen = this.normals.length;
+         for ( int j = 0; j < vnsLen; ++j ) {
+            final Vec3 n = this.normals[j];
+            n.set(n.x * xInv, n.y * yInv, n.z * zInv);
+            Vec3.normalize(n, n);
          }
       }
 
@@ -2212,28 +2255,39 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Transforms all coordinates in the mesh by a matrix.
+    * Transforms all coordinates and normals in the mesh by a matrix.
+    * Calculates the matrix inverse in order to transform normals.
     *
     * @param m the matrix
+    * @param h the matrix inverse
     *
     * @return this mesh
     *
+    * @see Mat4#inverse(Mat4, Mat4)
+    * @see Mat4#mulNormal(Vec3, Mat4, Mat4, Vec3)
     * @see Mat4#mulPoint(Mat4, Vec3, Vec3)
     */
-   public Mesh3 transform ( final Mat4 m ) {
+   public Mesh3 transform ( final Mat4 m, final Mat4 h ) {
 
-      final int len = this.coords.length;
-      for ( int i = 0; i < len; ++i ) {
+      final int vsLen = this.coords.length;
+      for ( int i = 0; i < vsLen; ++i ) {
          final Vec3 c = this.coords[i];
          Mat4.mulPoint(m, c, c);
+      }
+
+      Mat4.inverse(m, h);
+      final int vnsLen = this.normals.length;
+      for ( int j = 0; j < vnsLen; ++j ) {
+         final Vec3 n = this.normals[j];
+         Mat4.mulNormal(n, m, h, n);
       }
 
       return this;
    }
 
    /**
-    * Transforms all coordinates in the mesh <em>permanently</em> by a
-    * transform.<br>
+    * Transforms all coordinates and normals in the mesh <em>permanently</em>
+    * by a transform.<br>
     * <br>
     * Not to be confused with the <em>temporary</em> transformations applied
     * by a mesh entity's transform to the meshes contained within the
@@ -2244,13 +2298,22 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param tr the transform
     *
     * @return this mesh
+    *
+    * @see Transform3#mulNormal(Transform3, Vec3, Vec3)
+    * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
     */
    public Mesh3 transform ( final Transform3 tr ) {
 
-      final int len = this.coords.length;
-      for ( int i = 0; i < len; ++i ) {
+      final int vsLen = this.coords.length;
+      for ( int i = 0; i < vsLen; ++i ) {
          final Vec3 c = this.coords[i];
          Transform3.mulPoint(tr, c, c);
+      }
+
+      final int vnsLen = this.normals.length;
+      for ( int j = 0; j < vnsLen; ++j ) {
+         final Vec3 n = this.normals[j];
+         Transform3.mulNormal(tr, n, n);
       }
 
       return this;

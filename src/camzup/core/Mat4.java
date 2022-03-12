@@ -2053,6 +2053,7 @@ public class Mat4 {
     * @return the transformed normal
     *
     * @see Mat4#inverse(Mat4, Mat4)
+    * @see Mat4#mulNormal(Vec3, Mat4, Mat4, Vec3)
     */
    @Experimental
    public static Vec3 mulNormal ( final Vec3 n, final Mat4 m, final Mat4 h,
@@ -2072,7 +2073,7 @@ public class Mat4 {
     *
     * @return the transformed normal
     *
-    * @see Mat4#inverse(Mat4, Mat4)
+    * @see Vec3#normalize(Vec3, Vec3)
     */
    @Experimental
    public static Vec3 mulNormal ( final Vec3 n, final Mat4 h,
@@ -2082,8 +2083,9 @@ public class Mat4 {
        * Cf. Eric Lengyel, Foundations of Game Engine Development I.
        * Mathematics, page 106.
        */
-      return target.set(n.x * h.m00 + n.y * h.m10 + n.z * h.m20, n.x * h.m01
+      target.set(n.x * h.m00 + n.y * h.m10 + n.z * h.m20, n.x * h.m01
          + n.y * h.m11 + n.z * h.m21, n.x * h.m02 + n.y * h.m12 + n.z * h.m22);
+      return Vec3.normalize(target, target);
    }
 
    /**

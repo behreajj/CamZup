@@ -1384,6 +1384,34 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Inverts the color channels of the image, with an option to include or
+    * exclude transparency.
+    *
+    * @param source      the source image
+    * @param adjustAlpha invert alpha
+    *
+    * @return the inverted image
+    */
+   public static PImage invert ( final PImage source,
+      final boolean adjustAlpha ) {
+
+      // TODO: Test
+      source.loadPixels();
+      final int[] px = source.pixels;
+      final int len = px.length;
+      if ( adjustAlpha ) {
+         for ( int i = 0; i < len; ++i ) { px[i] = ~px[i]; }
+         if ( source.format == PConstants.RGB ) {
+            source.format = PConstants.ARGB;
+         }
+      } else if ( source.format != PConstants.ALPHA ) {
+         for ( int i = 0; i < len; ++i ) { px[i] ^= 0x00ffffff; }
+      }
+      source.updatePixels();
+      return source;
+   }
+
+   /**
     * Generates a linear gradient from an origin point to a destination point.
     * The origin and destination should be in the range [-1.0, 1.0]. The
     * scalar projection is clamped to [0.0, 1.0].
@@ -2357,6 +2385,8 @@ public class ZImage extends PImage {
    public static int[] wrap ( final int[] source, final int wSource,
       final int hSource, final int[] target, final int wTarget, final int dx,
       final int dy ) {
+
+      // TODO: Should the sign of dx and dy be reversed? +dy, -dx?
 
       if ( wSource < 1 || hSource < 1 ) { return target; }
 

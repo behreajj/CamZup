@@ -1289,11 +1289,7 @@ public abstract class ParserSvg {
           * vertical rounding.
           */
          final float rAvg = ( rx + ry ) * 0.5f;
-         if ( rAvg < IUtils.EPSILON ) {
-            Curve2.rect(x, y, x + w, y + h, target);
-         } else {
-            Curve2.rect(x, y, x + w, y + h, rAvg, target);
-         }
+         Curve2.rect(x, y, x + w, y + h, rAvg, target);
       }
       return target;
    }

@@ -978,7 +978,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return this mesh
     *
-    * @see Vec2#none(Vec2)
+    * @see Vec2#all(Vec2)
     * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     */
    public Mesh2 scale ( final Vec2 scale ) {

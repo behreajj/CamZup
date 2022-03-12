@@ -1382,6 +1382,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
 
       Quaternion.invMulVector(t.rotation, source, target);
       Vec3.hadamard(target, t.scale, target);
+      Vec3.normalize(target, target);
       return target;
    }
 
@@ -1578,6 +1579,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
 
       Vec3.div(source, t.scale, target);
       Quaternion.mulVector(t.rotation, target, target);
+      Vec3.normalize(target, target);
       return target;
    }
 
@@ -1666,6 +1668,9 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
       nrmTrg.x = nmix * qw + nmiz * qy - nmiw * qx - nmiy * qz;
       nrmTrg.y = nmiy * qw + nmix * qz - nmiw * qy - nmiz * qx;
       nrmTrg.z = nmiz * qw + nmiy * qx - nmiw * qz - nmix * qy;
+
+      // TODO: Inline.
+      Vec3.normalize(nrmTrg, nrmTrg);
 
       return ptTrg;
    }
