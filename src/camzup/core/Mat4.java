@@ -2083,8 +2083,8 @@ public class Mat4 {
        * Cf. Eric Lengyel, Foundations of Game Engine Development I.
        * Mathematics, page 106.
        */
-      target.set(n.x * h.m00 + n.y * h.m10 + n.z * h.m20, n.x * h.m01
-         + n.y * h.m11 + n.z * h.m21, n.x * h.m02 + n.y * h.m12 + n.z * h.m22);
+      target.set(n.x * h.m00 + n.y * h.m10 + n.z * h.m20, n.x * h.m01 + n.y
+         * h.m11 + n.z * h.m21, n.x * h.m02 + n.y * h.m12 + n.z * h.m22);
       return Vec3.normalize(target, target);
    }
 

@@ -1818,7 +1818,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
    /**
     * Sets a target curve to a rectangle.
-    * 
+    *
     * @param target the output curve
     *
     * @return the rectangle
@@ -1831,7 +1831,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Sets a target curve to a rectangle. The first parameter specifies the
     * corner rounding factor.
-    * 
+    *
     * @param rounding corner rounding
     * @param target   the output curve
     *
@@ -1856,8 +1856,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public static Curve2 rect ( final Vec2 tl, final Vec2 br,
       final Curve2 target ) {
 
-      return Curve2.rect(tl.x, tl.y, br.x, br.y, 0.0f,
-         target);
+      return Curve2.rect(tl.x, tl.y, br.x, br.y, 0.0f, target);
    }
 
    /**
@@ -2373,20 +2372,20 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final boolean wInval = w < IUtils.EPSILON;
       final boolean hInval = h < IUtils.EPSILON;
       if ( wInval && hInval ) {
-         final float cx = (lft + rgt) * 0.5f;
-         final float cy = (top + btm) * 0.5f;
+         final float cx = ( lft + rgt ) * 0.5f;
+         final float cy = ( top + btm ) * 0.5f;
          lft = cx - 0.5f;
          rgt = cx + 0.5f;
          btm = cy - 0.5f;
          top = cy + 0.5f;
       } else if ( wInval ) {
-         final float cx = (lft + rgt) * 0.5f;
+         final float cx = ( lft + rgt ) * 0.5f;
          final float hHalf = h * 0.5f;
          lft = cx - hHalf;
          rgt = cx + hHalf;
          w = h;
       } else if ( hInval ) {
-         final float cy = (top + btm) * 0.5f;
+         final float cy = ( top + btm ) * 0.5f;
          final float wHalf = w * 0.5f;
          btm = cy - wHalf;
          top = cy + wHalf;
@@ -2409,7 +2408,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final float vblk = vbl * ICurve.KAPPA;
       final float vbrk = vbr * ICurve.KAPPA;
       final float vtrk = vtr * ICurve.KAPPA;
-      
+
       /* To lerp handles on flat edges. */
       final float t = IUtils.ONE_THIRD;
       final float u = IUtils.TWO_THIRDS;
@@ -2430,7 +2429,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       if ( bl != 0.0f ) { ++knotCount; }
       if ( br != 0.0f ) { ++knotCount; }
       if ( tr != 0.0f ) { ++knotCount; }
-      
+
       target.resize(knotCount);
       final Iterator < Knot2 > itr = target.knots.iterator();
 

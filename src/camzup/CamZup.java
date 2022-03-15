@@ -59,7 +59,12 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // System.out.println( ( 16f / 9f * 0.5f ));
+      // final Mesh3 m = new Mesh3();
+      // Mesh3.octahedron(m);
+      // final MeshEntity3 me = new MeshEntity3(m);
+      // System.out.println(m);
+      // m.shadeFlat();
+      // System.out.println(m);
    }
 
    public static Quaternion squad ( final Quaternion q1, final Quaternion q2,

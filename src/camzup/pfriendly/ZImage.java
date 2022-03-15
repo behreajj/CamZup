@@ -36,9 +36,6 @@ public class ZImage extends PImage {
     */
    public ZImage ( final int width, final int height ) {
 
-      // TODO: Make your own color invert function instead of relying
-      // on Processing filter? The formula is px[i] ^= 0x00ffffff;
-
       super(width, height);
    }
 
@@ -2007,7 +2004,8 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Rotates an image in place by 270 degrees counter-clockwise.
+    * Rotates an image in place by 270 degrees counter-clockwise (or 90
+    * degrees clockwise).
     *
     * @param target the output image
     *
