@@ -3347,13 +3347,45 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.coords[18].set(0.5f, -0.05901699f, 0.18163565f);
       target.coords[19].set(-0.5f, -0.05901699f, 0.18163565f);
 
-      /* These are ordered according to the results of the clean method. */
-      target.texCoords = Vec2.resize(target.texCoords, 5);
-      target.texCoords[0].set(0.5f, 0.0f);
-      target.texCoords[1].set(0.79389268f, 0.90450847f);
-      target.texCoords[2].set(0.02447176f, 0.34549153f);
-      target.texCoords[3].set(0.20610738f, 0.90450853f);
-      target.texCoords[4].set(0.97552824f, 0.34549141f);
+      target.texCoords = Vec2.resize(target.texCoords, 38);
+      target.texCoords[0].set(0.25946382f, 0.7467648f);
+      target.texCoords[1].set(0.58017874f, 0.7467648f);
+      target.texCoords[2].set(0.70268095f, 0.7467648f);
+      target.texCoords[3].set(0.7783915f, 0.7467648f);
+      target.texCoords[4].set(0.90089375f, 0.7467648f);
+      target.texCoords[5].set(0.16035746f, 0.67475975f);
+      target.texCoords[6].set(0.3585702f, 0.67475975f);
+      target.texCoords[7].set(0.099106364f, 0.63025826f);
+      target.texCoords[8].set(0.4198213f, 0.63025826f);
+      target.texCoords[9].set(0.54232347f, 0.63025826f);
+      target.texCoords[10].set(0.7405362f, 0.63025826f);
+      target.texCoords[11].set(0.93874896f, 0.63025826f);
+      target.texCoords[12].set(0.0f, 0.5582533f);
+      target.texCoords[13].set(0.19821273f, 0.5582533f);
+      target.texCoords[14].set(0.32071492f, 0.5582533f);
+      target.texCoords[15].set(0.51892763f, 0.5582533f);
+      target.texCoords[16].set(0.64142984f, 0.5582533f);
+      target.texCoords[17].set(0.8396426f, 0.5582533f);
+      target.texCoords[18].set(0.9621448f, 0.5582533f);
+      target.texCoords[19].set(0.03785526f, 0.4417467f);
+      target.texCoords[20].set(0.16035746f, 0.4417467f);
+      target.texCoords[21].set(0.3585702f, 0.4417467f);
+      target.texCoords[22].set(0.4810724f, 0.4417467f);
+      target.texCoords[23].set(0.6792851f, 0.4417467f);
+      target.texCoords[24].set(0.8017873f, 0.4417467f);
+      target.texCoords[25].set(1.0f, 0.4417467f);
+      target.texCoords[26].set(0.06125109f, 0.36974174f);
+      target.texCoords[27].set(0.25946382f, 0.36974174f);
+      target.texCoords[28].set(0.45767656f, 0.36974174f);
+      target.texCoords[29].set(0.58017874f, 0.36974174f);
+      target.texCoords[30].set(0.90089375f, 0.36974174f);
+      target.texCoords[31].set(0.64142984f, 0.3252402f);
+      target.texCoords[32].set(0.8396426f, 0.3252402f);
+      target.texCoords[33].set(0.099106364f, 0.25323522f);
+      target.texCoords[34].set(0.22160856f, 0.25323522f);
+      target.texCoords[35].set(0.29731908f, 0.25323522f);
+      target.texCoords[36].set(0.4198213f, 0.25323522f);
+      target.texCoords[37].set(0.7405362f, 0.25323522f);
 
       target.normals = Vec3.resize(target.normals, 12);
       target.normals[0].set(-0.8506508f, 0.5f, 0.16245979f);
@@ -3369,20 +3401,20 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals[10].set(0.8506508f, -0.5f, -0.16245979f);
       target.normals[11].set(-0.8506508f, -0.5f, -0.16245979f);
 
-      /* @formatter:off */
+      /* @formatter:off */      
       target.faces = new int[][][] {
-         { {  2, 0,  2 }, { 10, 2,  2 }, {  0, 3,  2 }, { 14, 1,  2 }, {  1, 4,  2 } },
-         { {  1, 0,  5 }, {  4, 2,  5 }, { 15, 3,  5 }, {  3, 1,  5 }, {  2, 4,  5 } },
-         { {  7, 0,  1 }, { 17, 2,  1 }, { 16, 3,  1 }, {  6, 1,  1 }, {  5, 4,  1 } },
-         { {  5, 0,  3 }, { 12, 2,  3 }, {  9, 3,  3 }, {  8, 1,  3 }, {  7, 4,  3 } },
-         { {  9, 0,  4 }, {  0, 2,  4 }, { 10, 3,  4 }, { 11, 1,  4 }, {  8, 4,  4 } },
-         { {  0, 0,  6 }, {  9, 2,  6 }, { 12, 3,  6 }, { 13, 1,  6 }, { 14, 4,  6 } },
-         { { 16, 0,  7 }, { 15, 2,  7 }, {  4, 3,  7 }, { 19, 1,  7 }, {  6, 4,  7 } },
-         { { 15, 0,  8 }, { 16, 2,  8 }, { 17, 3,  8 }, { 18, 1,  8 }, {  3, 4,  8 } },
-         { { 11, 0,  9 }, { 10, 2,  9 }, {  2, 3,  9 }, {  3, 1,  9 }, { 18, 4,  9 } },
-         { { 18, 0, 10 }, { 17, 2, 10 }, {  7, 3, 10 }, {  8, 1, 10 }, { 11, 4, 10 } },
-         { { 13, 0, 11 }, { 12, 2, 11 }, {  5, 3, 11 }, {  6, 1, 11 }, { 19, 4, 11 } },
-         { { 19, 0,  0 }, {  4, 2,  0 }, {  1, 3,  0 }, { 14, 1,  0 }, { 13, 4,  0 } } };
+         { {  2, 23,  2 }, { 10, 16,  2 }, {  0, 10,  2 }, { 14, 17,  2 }, {  1, 24,  2 } },
+         { {  1, 24,  5 }, {  4, 32,  5 }, { 15, 37,  5 }, {  3, 31,  5 }, {  2, 23,  5 } },
+         { {  7, 14,  1 }, { 17, 21,  1 }, { 16, 27,  1 }, {  6, 20,  1 }, {  5, 13,  1 } },
+         { {  5, 13,  3 }, { 12,  5,  3 }, {  9,  0,  3 }, {  8,  6,  3 }, {  7, 14,  3 } },
+         { {  9,  2,  4 }, {  0, 10,  4 }, { 10, 16,  4 }, { 11,  9,  4 }, {  8,  1,  4 } },
+         { {  0, 10,  6 }, {  9,  3,  6 }, { 12,  4,  6 }, { 13, 11,  6 }, { 14, 17,  6 } },
+         { { 16, 27,  7 }, { 15, 34,  7 }, {  4, 33,  7 }, { 19, 26,  7 }, {  6, 20,  7 } },
+         { { 15, 35,  8 }, { 16, 27,  8 }, { 17, 21,  8 }, { 18, 28,  8 }, {  3, 36,  8 } },
+         { { 11, 15,  9 }, { 10, 16,  9 }, {  2, 23,  9 }, {  3, 29,  9 }, { 18, 22,  9 } },
+         { { 18, 22, 10 }, { 17, 21, 10 }, {  7, 14, 10 }, {  8,  8, 10 }, { 11, 15, 10 } },
+         { { 13, 12, 11 }, { 12,  7, 11 }, {  5, 13, 11 }, {  6, 20, 11 }, { 19, 19, 11 } },
+         { { 19, 25,  0 }, {  4, 30,  0 }, {  1, 24,  0 }, { 14, 17,  0 }, { 13, 18,  0 } } };
       /* @formatter:on */
 
       return target;
@@ -3827,38 +3859,53 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.name = "Octahedron";
 
       target.coords = Vec3.resize(target.coords, 6);
-      target.coords[0].set(0.0f, -0.5f, 0.0f);
-      target.coords[1].set(0.5f, 0.0f, 0.0f);
+      target.coords[0].set(0.0f, 0.0f, -0.5f);
+      target.coords[1].set(0.0f, -0.5f, 0.0f);
       target.coords[2].set(-0.5f, 0.0f, 0.0f);
-      target.coords[3].set(0.0f, 0.5f, 0.0f);
-      target.coords[4].set(0.0f, 0.0f, 0.5f);
-      target.coords[5].set(0.0f, 0.0f, -0.5f);
+      target.coords[3].set(0.5f, 0.0f, 0.0f);
+      target.coords[4].set(0.0f, 0.5f, 0.0f);
+      target.coords[5].set(0.0f, 0.0f, 0.5f);
 
-      target.texCoords = Vec2.resize(target.texCoords, 3);
-      target.texCoords[0].set(0.5f, 0.0f);
-      target.texCoords[1].set(1.0f, 1.0f);
-      target.texCoords[2].set(0.0f, 1.0f);
+      target.texCoords = Vec2.resize(target.texCoords, 13);
+      target.texCoords[0].set(0.125f, 0.0f);
+      target.texCoords[1].set(0.375f, 0.0f);
+      target.texCoords[2].set(0.625f, 0.0f);
+      target.texCoords[3].set(0.875f, 0.0f);
+
+      target.texCoords[4].set(0.0f, 0.5f);
+      target.texCoords[5].set(0.25f, 0.5f);
+      target.texCoords[6].set(0.5f, 0.5f);
+      target.texCoords[7].set(0.75f, 0.5f);
+      target.texCoords[8].set(1.0f, 0.5f);
+
+      target.texCoords[9].set(0.125f, 1.0f);
+      target.texCoords[10].set(0.375f, 1.0f);
+      target.texCoords[11].set(0.625f, 1.0f);
+      target.texCoords[12].set(0.875f, 1.0f);
 
       target.normals = Vec3.resize(target.normals, 8);
-      target.normals[0].set(0.57735026f, -0.57735026f, 0.57735026f);
-      target.normals[1].set(-0.57735026f, 0.57735026f, 0.57735026f);
-      target.normals[2].set(-0.57735026f, -0.57735026f, 0.57735026f);
-      target.normals[3].set(0.57735026f, 0.57735026f, 0.57735026f);
-      target.normals[4].set(-0.57735026f, 0.57735026f, -0.57735026f);
-      target.normals[5].set(0.57735026f, 0.57735026f, -0.57735026f);
-      target.normals[6].set(0.57735026f, -0.57735026f, -0.57735026f);
-      target.normals[7].set(-0.57735026f, -0.57735026f, -0.57735026f);
+      target.normals[0].set(-0.57735026f, -0.57735026f, -0.57735026f);
+      target.normals[1].set(0.57735026f, -0.57735026f, -0.57735026f);
+      target.normals[2].set(-0.57735026f, 0.57735026f, -0.57735026f);
+      target.normals[3].set(0.57735026f, 0.57735026f, -0.57735026f);
 
-      /* @formatter:off */
+      target.normals[4].set(-0.57735026f, -0.57735026f, 0.57735026f);
+      target.normals[5].set(0.57735026f, -0.57735026f, 0.57735026f);
+      target.normals[6].set(-0.57735026f, 0.57735026f, 0.57735026f);
+      target.normals[7].set(0.57735026f, 0.57735026f, 0.57735026f);
+
+      /* @formatter:off */    
       target.faces = new int[][][] {
-         { { 0, 2, 0 }, { 1, 1, 0 }, { 4, 0, 0 } },
-         { { 1, 2, 3 }, { 3, 1, 3 }, { 4, 0, 3 } },
-         { { 3, 2, 1 }, { 2, 1, 1 }, { 4, 0, 1 } },
-         { { 2, 2, 2 }, { 0, 1, 2 }, { 4, 0, 2 } },
-         { { 2, 2, 4 }, { 3, 1, 4 }, { 5, 0, 4 } },
-         { { 3, 2, 5 }, { 1, 1, 5 }, { 5, 0, 5 } },
-         { { 1, 2, 6 }, { 0, 1, 6 }, { 5, 0, 6 } },
-         { { 0, 2, 7 }, { 2, 1, 7 }, { 5, 0, 7 } } };
+         { { 2, 4, 0 }, { 0, 9, 0 }, { 1, 5, 0 } },
+         { { 1, 5, 1 }, { 0, 10, 1 }, { 3, 6, 1 } },
+         { { 4, 7, 3 }, { 0, 12, 3 }, { 2, 8, 3 } },
+         { { 3, 6, 2 }, { 0, 11, 2 }, { 4, 7, 2 } },
+          
+         { { 2, 4, 4 }, { 1, 5, 4 }, { 5, 0, 4 } },
+         { { 1, 5, 5 }, { 3, 6, 5 }, { 5, 1, 5 } }, 
+         { { 4, 7, 7 }, { 2, 8, 7 }, { 5, 3, 7 } },
+         { { 3, 6, 6 }, { 4, 7, 6 }, { 5, 2, 6 } }
+      };
       /* @formatter:on */
 
       return target;
