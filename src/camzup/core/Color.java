@@ -2000,66 +2000,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Shifts a color's hue, saturation, lightness and alpha by a vector.
-    *
-    * @param c      the input color
-    * @param shift  the shift
-    * @param target the output color
-    * @param hsla   the color in HSL
-    *
-    * @return the shifted color
-    *
-    * @see Color#rgbaToHsla(Color, Vec4)
-    * @see Color#hslaToRgba(Vec4, Color)
-    */
-   public static Color shiftHsla ( final Color c, final Vec4 shift,
-      final Color target, final Vec4 hsla ) {
-
-      Color.rgbaToHsla(c, hsla);
-
-      final float oldSat = hsla.y;
-      if ( oldSat > 0.0f ) {
-         hsla.x += shift.x;
-         hsla.y += shift.y;
-      }
-
-      hsla.z += shift.z;
-      hsla.w += shift.w;
-
-      return Color.hslaToRgba(hsla, target);
-   }
-
-   /**
-    * Shifts a color's hue, saturation, value and alpha by a vector.
-    *
-    * @param c      the input color
-    * @param shift  the shift
-    * @param target the output color
-    * @param hsva   the color in HSB
-    *
-    * @return the shifted color
-    *
-    * @see Color#rgbaToHsva(Color, Vec4)
-    * @see Color#hsvaToRgba(Vec4, Color)
-    */
-   public static Color shiftHsva ( final Color c, final Vec4 shift,
-      final Color target, final Vec4 hsva ) {
-
-      Color.rgbaToHsva(c, hsva);
-
-      final float oldSat = hsva.y;
-      if ( oldSat > 0.0f ) {
-         hsva.x += shift.x;
-         hsva.y += shift.y;
-      }
-
-      hsva.z += shift.z;
-      hsva.w += shift.w;
-
-      return Color.hsvaToRgba(hsva, target);
-   }
-
-   /**
     * Converts a color from
     * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB) to
     * linear RGB.

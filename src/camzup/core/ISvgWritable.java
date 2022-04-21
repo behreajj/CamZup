@@ -49,6 +49,12 @@ public interface ISvgWritable {
     * @param viewHeight the height
     *
     * @return the SVG string
+    *
+    * @see Utils#max(float, float)
+    * @see Utils#toFixed(float, int)
+    * @see Utils#clamp01(float)
+    * @see Utils#approx(float, float)
+    * @see Utils#min(float, float)
     */
    default String toSvgString ( final float xOrigin, final float yOrigin,
       final float xScale, final float yScale, final float viewWidth,

@@ -142,17 +142,17 @@ public abstract class Simplex extends Generative {
    /**
     * 2D simplex gradient look-up table.
     */
-   private static final Vec2[] GRAD_2_LUT;
+   private static final float[] GRAD_2_LUT;
 
    /**
     * 3D simplex gradient look-up table.
     */
-   private static final Vec3[] GRAD_3_LUT;
+   private static final float[] GRAD_3_LUT;
 
    /**
     * 4D simplex gradient look-up table.
     */
-   private static final Vec4[] GRAD_4_LUT;
+   private static final float[] GRAD_4_LUT;
 
    /**
     * Table for 3D rotations, u. Multiplied by the cosine of an angle in 3D
@@ -169,7 +169,7 @@ public abstract class Simplex extends Generative {
    /**
     * Permutation table for 4D noise.
     */
-   private static final int[][] PERMUTE;
+   private static final int[] PERMUTE;
 
    /**
     * Temporary vector used by gradRot2.
@@ -193,76 +193,31 @@ public abstract class Simplex extends Generative {
     */
    private static final Vec3 ZERO_3;
 
-   /**
-    * Initial state to which a 4D noise contribution is set. Prevents compiler
-    * complaint that variables may not have been initialized.
-    */
-   private static final Vec4 ZERO_4;
-
    static {
+      GRAD_2_LUT = new float[] { -1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f,
+         1.0f, -1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, 1.0f, -1.0f };
+
+      GRAD_3_LUT = new float[] { 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 1.0f, -1.0f,
+         0.0f, 1.0f, 0.0f, -1.0f, 1.0f, 1.0f, 0.0f, -1.0f, 0.0f, 1.0f, -1.0f,
+         -1.0f, 0.0f, -1.0f, 0.0f, -1.0f, -1.0f, 1.0f, -1.0f, 0.0f, 1.0f, 1.0f,
+         0.0f, -1.0f, 1.0f, 0.0f, -1.0f, -1.0f, 0.0f, 1.0f, 0.0f, 1.0f, -1.0f,
+         0.0f, 1.0f, 0.0f, 1.0f, -1.0f, 0.0f, -1.0f, -1.0f };
+
+      GRAD_4_LUT = new float[] { 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f,
+         -1.0f, 0.0f, 1.0f, -1.0f, 1.0f, 0.0f, 1.0f, -1.0f, -1.0f, 0.0f, -1.0f,
+         1.0f, 1.0f, 0.0f, -1.0f, 1.0f, -1.0f, 0.0f, -1.0f, -1.0f, 1.0f, 0.0f,
+         -1.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, -1.0f,
+         1.0f, 0.0f, -1.0f, 1.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f, 0.0f, 1.0f,
+         1.0f, -1.0f, 0.0f, 1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 1.0f, -1.0f, 0.0f,
+         -1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, 1.0f, 0.0f, -1.0f, 1.0f,
+         -1.0f, 0.0f, 1.0f, 1.0f, -1.0f, 0.0f, -1.0f, -1.0f, 1.0f, 0.0f, 1.0f,
+         -1.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f, 0.0f, 1.0f, -1.0f, -1.0f, 0.0f,
+         -1.0f, 1.0f, 1.0f, 1.0f, 0.0f, 1.0f, 1.0f, -1.0f, 0.0f, 1.0f, -1.0f,
+         1.0f, 0.0f, 1.0f, -1.0f, -1.0f, 0.0f, -1.0f, 1.0f, 1.0f, 0.0f, -1.0f,
+         1.0f, -1.0f, 0.0f, -1.0f, -1.0f, 1.0f, 0.0f, -1.0f, -1.0f, -1.0f,
+         0.0f };
+
       /* @formatter:off */
-      GRAD_2_LUT = new Vec2[] {
-         new Vec2(-1.0f, -1.0f),
-         new Vec2( 1.0f,  0.0f),
-         new Vec2(-1.0f,  0.0f),
-         new Vec2( 1.0f,  1.0f),
-         new Vec2(-1.0f,  1.0f),
-         new Vec2( 0.0f, -1.0f),
-         new Vec2( 0.0f,  1.0f),
-         new Vec2( 1.0f, -1.0f) };
-
-      GRAD_3_LUT = new Vec3[] {
-         new Vec3( 1.0f,  0.0f,  1.0f),
-         new Vec3( 0.0f,  1.0f,  1.0f),
-         new Vec3(-1.0f,  0.0f,  1.0f),
-         new Vec3( 0.0f, -1.0f,  1.0f),
-         new Vec3( 1.0f,  0.0f, -1.0f),
-         new Vec3( 0.0f,  1.0f, -1.0f),
-         new Vec3(-1.0f,  0.0f, -1.0f),
-         new Vec3( 0.0f, -1.0f, -1.0f),
-         new Vec3( 1.0f, -1.0f,  0.0f),
-         new Vec3( 1.0f,  1.0f,  0.0f),
-         new Vec3(-1.0f,  1.0f,  0.0f),
-         new Vec3(-1.0f, -1.0f,  0.0f),
-         new Vec3( 1.0f,  0.0f,  1.0f),
-         new Vec3(-1.0f,  0.0f,  1.0f),
-         new Vec3( 0.0f,  1.0f, -1.0f),
-         new Vec3( 0.0f, -1.0f, -1.0f) };
-
-      GRAD_4_LUT = new Vec4[] {
-         new Vec4( 0.0f,  1.0f,  1.0f,  1.0f),
-         new Vec4( 0.0f,  1.0f,  1.0f, -1.0f),
-         new Vec4( 0.0f,  1.0f, -1.0f,  1.0f),
-         new Vec4( 0.0f,  1.0f, -1.0f, -1.0f),
-         new Vec4( 0.0f, -1.0f,  1.0f,  1.0f),
-         new Vec4( 0.0f, -1.0f,  1.0f, -1.0f),
-         new Vec4( 0.0f, -1.0f, -1.0f,  1.0f),
-         new Vec4( 0.0f, -1.0f, -1.0f, -1.0f),
-         new Vec4( 1.0f,  0.0f,  1.0f,  1.0f),
-         new Vec4( 1.0f,  0.0f,  1.0f, -1.0f),
-         new Vec4( 1.0f,  0.0f, -1.0f,  1.0f),
-         new Vec4( 1.0f,  0.0f, -1.0f, -1.0f),
-         new Vec4(-1.0f,  0.0f,  1.0f,  1.0f),
-         new Vec4(-1.0f,  0.0f,  1.0f, -1.0f),
-         new Vec4(-1.0f,  0.0f, -1.0f,  1.0f),
-         new Vec4(-1.0f,  0.0f, -1.0f, -1.0f),
-         new Vec4( 1.0f,  1.0f,  0.0f,  1.0f),
-         new Vec4( 1.0f,  1.0f,  0.0f, -1.0f),
-         new Vec4( 1.0f, -1.0f,  0.0f,  1.0f),
-         new Vec4( 1.0f, -1.0f,  0.0f, -1.0f),
-         new Vec4(-1.0f,  1.0f,  0.0f,  1.0f),
-         new Vec4(-1.0f,  1.0f,  0.0f, -1.0f),
-         new Vec4(-1.0f, -1.0f,  0.0f,  1.0f),
-         new Vec4(-1.0f, -1.0f,  0.0f, -1.0f),
-         new Vec4( 1.0f,  1.0f,  1.0f,  0.0f),
-         new Vec4( 1.0f,  1.0f, -1.0f,  0.0f),
-         new Vec4( 1.0f, -1.0f,  1.0f,  0.0f),
-         new Vec4( 1.0f, -1.0f, -1.0f,  0.0f),
-         new Vec4(-1.0f,  1.0f,  1.0f,  0.0f),
-         new Vec4(-1.0f,  1.0f, -1.0f,  0.0f),
-         new Vec4(-1.0f, -1.0f,  1.0f,  0.0f),
-         new Vec4(-1.0f, -1.0f, -1.0f,  0.0f) };
-
       GRAD3_U = new Vec3[] {
          new Vec3( 1.0f,  0.0f,  1.0f),
          new Vec3( 0.0f,  1.0f,  1.0f),
@@ -298,32 +253,25 @@ public abstract class Simplex extends Generative {
          new Vec3(-1.0f,  0.0f,  1.0f),
          new Vec3( 0.0f,  1.0f, -1.0f),
          new Vec3( 0.0f, -1.0f, -1.0f) };
+      /* @formatter:on */
 
-      PERMUTE = new int[][] {
-         { 0, 1, 2, 3 }, { 0, 1, 3, 2 }, { 0, 0, 0, 0 }, { 0, 2, 3, 1 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 2, 3, 0 },
-         { 0, 2, 1, 3 }, { 0, 0, 0, 0 }, { 0, 3, 1, 2 }, { 0, 3, 2, 1 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 1, 3, 2, 0 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 1, 2, 0, 3 }, { 0, 0, 0, 0 }, { 1, 3, 0, 2 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 2, 3, 0, 1 }, { 2, 3, 1, 0 },
-         { 1, 0, 2, 3 }, { 1, 0, 3, 2 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 2, 0, 3, 1 }, { 0, 0, 0, 0 }, { 2, 1, 3, 0 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 2, 0, 1, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 3, 0, 1, 2 }, { 3, 0, 2, 1 }, { 0, 0, 0, 0 }, { 3, 1, 2, 0 },
-         { 2, 1, 0, 3 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 }, { 0, 0, 0, 0 },
-         { 3, 1, 0, 2 }, { 0, 0, 0, 0 }, { 3, 2, 0, 1 }, { 3, 2, 1, 0 } };
+      PERMUTE = new int[] { 0, 1, 2, 3, 0, 1, 3, 2, 0, 0, 0, 0, 0, 2, 3, 1, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 3, 0, 0, 2, 1, 3, 0, 0, 0, 0, 0,
+         3, 1, 2, 0, 3, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 3, 2, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 1, 2, 0, 3, 0, 0, 0, 0, 1, 3, 0, 2, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 2, 3, 0, 1, 2, 3, 1, 0, 1, 0, 2, 3, 1, 0, 3, 2, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 2, 0, 3, 1, 0, 0, 0, 0, 2, 1, 3, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 2, 0, 1, 3, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 3,
+         0, 1, 2, 3, 0, 2, 1, 0, 0, 0, 0, 3, 1, 2, 0, 2, 1, 0, 3, 0, 0, 0, 0, 0,
+         0, 0, 0, 0, 0, 0, 0, 3, 1, 0, 2, 0, 0, 0, 0, 3, 2, 0, 1, 3, 2, 1, 0 };
 
       ROT_2 = new Vec2();
       ROT_3 = new Vec3();
 
       ZERO_2 = new Vec2();
       ZERO_3 = new Vec3();
-      ZERO_4 = new Vec4();
-      /* @formatter:on */
    }
 
    /**
@@ -388,13 +336,14 @@ public abstract class Simplex extends Generative {
       final float z0 = z - ( k - t );
       final float w0 = w - ( l - t );
 
-      final int[] sc = Simplex.PERMUTE[ ( x0 > y0 ? 0x20 : 0 ) | ( x0 > z0
-         ? 0x10 : 0 ) | ( y0 > z0 ? 0x8 : 0 ) | ( x0 > w0 ? 0x4 : 0 ) | ( y0
-            > w0 ? 0x2 : 0 ) | ( z0 > w0 ? 0x1 : 0 )];
-      final int sc0 = sc[0];
-      final int sc1 = sc[1];
-      final int sc2 = sc[2];
-      final int sc3 = sc[3];
+      // TODO: TEST
+      final int idx = 4 * ( ( x0 > y0 ? 0x20 : 0 ) | ( x0 > z0 ? 0x10 : 0 )
+         | ( y0 > z0 ? 0x08 : 0 ) | ( x0 > w0 ? 0x04 : 0 ) | ( y0 > w0 ? 0x02
+            : 0 ) | ( z0 > w0 ? 0x01 : 0 ) );
+      final int sc0 = Simplex.PERMUTE[idx];
+      final int sc1 = Simplex.PERMUTE[idx + 1];
+      final int sc2 = Simplex.PERMUTE[idx + 2];
+      final int sc3 = Simplex.PERMUTE[idx + 3];
 
       /* These are integers because they are supplied to gradient4. */
       final int i1 = sc0 > 2 ? 1 : 0;
@@ -450,55 +399,89 @@ public abstract class Simplex extends Generative {
       float t43 = 0.0f;
       float t44 = 0.0f;
 
-      Vec4 g0 = Simplex.ZERO_4;
-      Vec4 g1 = Simplex.ZERO_4;
-      Vec4 g2 = Simplex.ZERO_4;
-      Vec4 g3 = Simplex.ZERO_4;
-      Vec4 g4 = Simplex.ZERO_4;
-
+      float g0x = 0.0f;
+      float g0y = 0.0f;
+      float g0z = 0.0f;
+      float g0w = 0.0f;
       final float t0 = 0.5f - ( x0 * x0 + y0 * y0 + z0 * z0 + w0 * w0 );
       if ( t0 >= 0.0f ) {
          t20 = t0 * t0;
          t40 = t20 * t20;
-         g0 = Simplex.GRAD_4_LUT[Generative.hash(i, j, Generative.hash(k, l,
-            seed)) & 0x1f];
-         n0 = g0.x * x0 + g0.y * y0 + g0.z * z0 + g0.w * w0;
+         final int t0Idx = 4 * ( Generative.hash(i, j, Generative.hash(k, l,
+            seed)) & 0x1f );
+         g0x = Simplex.GRAD_4_LUT[t0Idx];
+         g0y = Simplex.GRAD_4_LUT[t0Idx + 1];
+         g0z = Simplex.GRAD_4_LUT[t0Idx + 2];
+         g0w = Simplex.GRAD_4_LUT[t0Idx + 3];
+         n0 = g0x * x0 + g0y * y0 + g0z * z0 + g0w * w0;
       }
 
+      float g1x = 0.0f;
+      float g1y = 0.0f;
+      float g1z = 0.0f;
+      float g1w = 0.0f;
       final float t1 = 0.5f - ( x1 * x1 + y1 * y1 + z1 * z1 + w1 * w1 );
       if ( t1 >= 0.0f ) {
          t21 = t1 * t1;
          t41 = t21 * t21;
-         g1 = Simplex.GRAD_4_LUT[Generative.hash(i + i1, j + j1, Generative
-            .hash(k + k1, l + l1, seed)) & 0x1f];
-         n1 = g1.x * x1 + g1.y * y1 + g1.z * z1 + g1.w * w1;
+         final int t1Idx = 4 * ( Generative.hash(i + i1, j + j1, Generative
+            .hash(k + k1, l + l1, seed)) & 0x1f );
+         g1x = Simplex.GRAD_4_LUT[t1Idx];
+         g1y = Simplex.GRAD_4_LUT[t1Idx + 1];
+         g1z = Simplex.GRAD_4_LUT[t1Idx + 2];
+         g1w = Simplex.GRAD_4_LUT[t1Idx + 3];
+         n1 = g1x * x1 + g1y * y1 + g1z * z1 + g1w * w1;
       }
 
+      float g2x = 0.0f;
+      float g2y = 0.0f;
+      float g2z = 0.0f;
+      float g2w = 0.0f;
       final float t2 = 0.5f - ( x2 * x2 + y2 * y2 + z2 * z2 + w2 * w2 );
       if ( t2 >= 0.0f ) {
          t22 = t2 * t2;
          t42 = t22 * t22;
-         g2 = Simplex.GRAD_4_LUT[Generative.hash(i + i2, j + j2, Generative
-            .hash(k + k2, l + l2, seed)) & 0x1f];
-         n2 = g2.x * x2 + g2.y * y2 + g2.z * z2 + g2.w * w2;
+         final int t2Idx = 4 * ( Generative.hash(i + i2, j + j2, Generative
+            .hash(k + k2, l + l2, seed)) & 0x1f );
+         g2x = Simplex.GRAD_4_LUT[t2Idx];
+         g2y = Simplex.GRAD_4_LUT[t2Idx + 1];
+         g2z = Simplex.GRAD_4_LUT[t2Idx + 2];
+         g2w = Simplex.GRAD_4_LUT[t2Idx + 3];
+         n2 = g2x * x2 + g2y * y2 + g2z * z2 + g2w * w2;
       }
 
+      float g3x = 0.0f;
+      float g3y = 0.0f;
+      float g3z = 0.0f;
+      float g3w = 0.0f;
       final float t3 = 0.5f - ( x3 * x3 + y3 * y3 + z3 * z3 + w3 * w3 );
       if ( t3 >= 0.0f ) {
          t23 = t3 * t3;
          t43 = t23 * t23;
-         g3 = Simplex.GRAD_4_LUT[Generative.hash(i + i3, j + j3, Generative
-            .hash(k + k3, l + l3, seed)) & 0x1f];
-         n3 = g3.x * x3 + g3.y * y3 + g3.z * z3 + g3.w * w3;
+         final int t3Idx = 4 * ( Generative.hash(i + i3, j + j3, Generative
+            .hash(k + k3, l + l3, seed)) & 0x1f );
+         g3x = Simplex.GRAD_4_LUT[t3Idx];
+         g3y = Simplex.GRAD_4_LUT[t3Idx + 1];
+         g3z = Simplex.GRAD_4_LUT[t3Idx + 2];
+         g3w = Simplex.GRAD_4_LUT[t3Idx + 3];
+         n3 = g3x * x3 + g3y * y3 + g3z * z3 + g3w * w3;
       }
 
+      float g4x = 0.0f;
+      float g4y = 0.0f;
+      float g4z = 0.0f;
+      float g4w = 0.0f;
       final float t4 = 0.5f - ( x4 * x4 + y4 * y4 + z4 * z4 + w4 * w4 );
       if ( t4 >= 0.0f ) {
          t24 = t4 * t4;
          t44 = t24 * t24;
-         g4 = Simplex.GRAD_4_LUT[Generative.hash(i + 1, j + 1, Generative.hash(k
-            + 1, l + 1, seed)) & 0x1f];
-         n4 = g4.x * x4 + g4.y * y4 + g4.z * z4 + g4.w * w4;
+         final int t4Idx = 4 * ( Generative.hash(i + 1, j + 1, Generative.hash(k
+            + 1, l + 1, seed)) & 0x1f );
+         g4x = Simplex.GRAD_4_LUT[t4Idx];
+         g4y = Simplex.GRAD_4_LUT[t4Idx + 1];
+         g4z = Simplex.GRAD_4_LUT[t4Idx + 2];
+         g4w = Simplex.GRAD_4_LUT[t4Idx + 3];
+         n4 = g4x * x4 + g4y * y4 + g4z * z4 + g4w * w4;
       }
 
       if ( deriv != null ) {
@@ -518,14 +501,10 @@ public abstract class Simplex extends Generative {
          deriv.w = -8.0f * ( tmp0 * w0 + tmp1 * w1 + tmp2 * w2 + tmp3 * w3
             + tmp4 * w4 );
 
-         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x + t44
-            * g4.x;
-         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y + t44
-            * g4.y;
-         deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z + t44
-            * g4.z;
-         deriv.w += t40 * g0.w + t41 * g1.w + t42 * g2.w + t43 * g3.w + t44
-            * g4.w;
+         deriv.x += t40 * g0x + t41 * g1x + t42 * g2x + t43 * g3x + t44 * g4x;
+         deriv.y += t40 * g0y + t41 * g1y + t42 * g2y + t43 * g3y + t44 * g4y;
+         deriv.z += t40 * g0z + t41 * g1z + t42 * g2z + t43 * g3z + t44 * g4z;
+         deriv.w += t40 * g0w + t41 * g1w + t42 * g2w + t43 * g3w + t44 * g4w;
 
          deriv.x *= Simplex.SCALE_4;
          deriv.y *= Simplex.SCALE_4;
@@ -644,53 +623,73 @@ public abstract class Simplex extends Generative {
       float n0 = 0.0f;
       float t20 = 0.0f;
       float t40 = 0.0f;
-      Vec3 g0 = Simplex.ZERO_3;
+      float g0x = 0.0f;
+      float g0y = 0.0f;
+      float g0z = 0.0f;
       final float t0 = 0.5f - ( x0 * x0 + y0 * y0 + z0 * z0 );
       if ( t0 >= 0.0f ) {
-         g0 = Simplex.GRAD_3_LUT[Generative.hash(i, j, Generative.hash(k, seed,
-            0)) & 0xf];
+         final int t0Idx = 3 * ( Generative.hash(i, j, Generative.hash(k, seed,
+            0)) & 0xf );
+         g0x = Simplex.GRAD_3_LUT[t0Idx];
+         g0y = Simplex.GRAD_3_LUT[t0Idx + 1];
+         g0z = Simplex.GRAD_3_LUT[t0Idx + 2];
          t20 = t0 * t0;
          t40 = t20 * t20;
-         n0 = g0.x * x0 + g0.y * y0 + g0.z * z0;
+         n0 = g0x * x0 + g0y * y0 + g0z * z0;
       }
 
       float n1 = 0.0f;
       float t21 = 0.0f;
       float t41 = 0.0f;
-      Vec3 g1 = Simplex.ZERO_3;
+      float g1x = 0.0f;
+      float g1y = 0.0f;
+      float g1z = 0.0f;
       final float t1 = 0.5f - ( x1 * x1 + y1 * y1 + z1 * z1 );
       if ( t1 >= 0.0f ) {
-         g1 = Simplex.GRAD_3_LUT[Generative.hash(i + i1, j + j1, Generative
-            .hash(k + k1, seed, 0)) & 0xf];
+         final int t1Idx = 3 * ( Generative.hash(i + i1, j + j1, Generative
+            .hash(k + k1, seed, 0)) & 0xf );
+         g1x = Simplex.GRAD_3_LUT[t1Idx];
+         g1y = Simplex.GRAD_3_LUT[t1Idx + 1];
+         g1z = Simplex.GRAD_3_LUT[t1Idx + 2];
          t21 = t1 * t1;
          t41 = t21 * t21;
-         n1 = g1.x * x1 + g1.y * y1 + g1.z * z1;
+         n1 = g1x * x1 + g1y * y1 + g1z * z1;
       }
 
       float n2 = 0.0f;
       float t22 = 0.0f;
       float t42 = 0.0f;
-      Vec3 g2 = Simplex.ZERO_3;
+      float g2x = 0.0f;
+      float g2y = 0.0f;
+      float g2z = 0.0f;
       final float t2 = 0.5f - ( x2 * x2 + y2 * y2 + z2 * z2 );
       if ( t2 >= 0.0f ) {
-         g2 = Simplex.GRAD_3_LUT[Generative.hash(i + i2, j + j2, Generative
-            .hash(k + k2, seed, 0)) & 0xf];
+         final int t2Idx = 3 * ( Generative.hash(i + i2, j + j2, Generative
+            .hash(k + k2, seed, 0)) & 0xf );
+         g2x = Simplex.GRAD_3_LUT[t2Idx];
+         g2y = Simplex.GRAD_3_LUT[t2Idx + 1];
+         g2z = Simplex.GRAD_3_LUT[t2Idx + 2];
          t22 = t2 * t2;
          t42 = t22 * t22;
-         n2 = g2.x * x2 + g2.y * y2 + g2.z * z2;
+         n2 = g2x * x2 + g2y * y2 + g2z * z2;
       }
 
       float n3 = 0.0f;
       float t23 = 0.0f;
       float t43 = 0.0f;
-      Vec3 g3 = Simplex.ZERO_3;
+      float g3x = 0.0f;
+      float g3y = 0.0f;
+      float g3z = 0.0f;
       final float t3 = 0.5f - ( x3 * x3 + y3 * y3 + z3 * z3 );
       if ( t3 >= 0.0f ) {
-         g3 = Simplex.GRAD_3_LUT[Generative.hash(i + 1, j + 1, Generative.hash(k
-            + 1, seed, 0)) & 0xf];
+         final int t3Idx = 3 * ( Generative.hash(i + 1, j + 1, Generative.hash(k
+            + 1, seed, 0)) & 0xf );
+         g3x = Simplex.GRAD_3_LUT[t3Idx];
+         g3y = Simplex.GRAD_3_LUT[t3Idx + 1];
+         g3z = Simplex.GRAD_3_LUT[t3Idx + 2];
          t23 = t3 * t3;
          t43 = t23 * t23;
-         n3 = g3.x * x3 + g3.y * y3 + g3.z * z3;
+         n3 = g3x * x3 + g3y * y3 + g3z * z3;
       }
 
       if ( deriv != null ) {
@@ -703,9 +702,9 @@ public abstract class Simplex extends Generative {
          deriv.y = -8.0f * ( tmp0 * y0 + tmp1 * y1 + tmp2 * y2 + tmp3 * y3 );
          deriv.z = -8.0f * ( tmp0 * z0 + tmp1 * z1 + tmp2 * z2 + tmp3 * z3 );
 
-         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x + t43 * g3.x;
-         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y + t43 * g3.y;
-         deriv.z += t40 * g0.z + t41 * g1.z + t42 * g2.z + t43 * g3.z;
+         deriv.x += t40 * g0x + t41 * g1x + t42 * g2x + t43 * g3x;
+         deriv.y += t40 * g0y + t41 * g1y + t42 * g2y + t43 * g3y;
+         deriv.z += t40 * g0z + t41 * g1z + t42 * g2z + t43 * g3z;
 
          deriv.x *= Simplex.SCALE_3;
          deriv.y *= Simplex.SCALE_3;
@@ -772,41 +771,50 @@ public abstract class Simplex extends Generative {
       float n0 = 0.0f;
       float t20 = 0.0f;
       float t40 = 0.0f;
-      Vec2 g0 = Simplex.ZERO_2;
+      float g0x = 0.0f;
+      float g0y = 0.0f;
       final float t0 = 0.5f - ( x0 * x0 + y0 * y0 );
       if ( t0 >= 0.0f ) {
-         g0 = Simplex.GRAD_2_LUT[Generative.hash(i, j, seed) & 0x7];
+         final int t0Idx = 2 * ( Generative.hash(i, j, seed) & 0x7 );
+         g0x = Simplex.GRAD_2_LUT[t0Idx];
+         g0y = Simplex.GRAD_2_LUT[t0Idx + 1];
          t20 = t0 * t0;
          t40 = t20 * t20;
-         n0 = g0.x * x0 + g0.y * y0;
+         n0 = g0x * x0 + g0y * y0;
       }
 
       float n1 = 0.0f;
       float t21 = 0.0f;
       float t41 = 0.0f;
-      Vec2 g1 = Simplex.ZERO_2;
+      float g1x = 0.0f;
+      float g1y = 0.0f;
       final float x1 = x0 - i1 + Simplex.G2;
       final float y1 = y0 - j1 + Simplex.G2;
       final float t1 = 0.5f - ( x1 * x1 + y1 * y1 );
       if ( t1 >= 0.0f ) {
-         g1 = Simplex.GRAD_2_LUT[Generative.hash(i + i1, j + j1, seed) & 0x7];
+         final int t1Idx = 2 * ( Generative.hash(i + i1, j + j1, seed) & 0x7 );
+         g1x = Simplex.GRAD_2_LUT[t1Idx];
+         g1y = Simplex.GRAD_2_LUT[t1Idx + 1];
          t21 = t1 * t1;
          t41 = t21 * t21;
-         n1 = g1.x * x1 + g1.y * y1;
+         n1 = g1x * x1 + g1y * y1;
       }
 
       float n2 = 0.0f;
       float t22 = 0.0f;
       float t42 = 0.0f;
-      Vec2 g2 = Simplex.ZERO_2;
+      float g2x = 0.0f;
+      float g2y = 0.0f;
       final float x2 = x0 - Simplex.N2_2_1;
       final float y2 = y0 - Simplex.N2_2_1;
       final float t2 = 0.5f - ( x2 * x2 + y2 * y2 );
       if ( t2 >= 0.0f ) {
-         g2 = Simplex.GRAD_2_LUT[Generative.hash(i + 1, j + 1, seed) & 0x7];
+         final int t2Idx = 2 * ( Generative.hash(i + 1, j + 1, seed) & 0x7 );
+         g2x = Simplex.GRAD_2_LUT[t2Idx];
+         g2y = Simplex.GRAD_2_LUT[t2Idx + 1];
          t22 = t2 * t2;
          t42 = t22 * t22;
-         n2 = g2.x * x2 + g2.y * y2;
+         n2 = g2x * x2 + g2y * y2;
       }
 
       if ( deriv != null ) {
@@ -818,8 +826,8 @@ public abstract class Simplex extends Generative {
          deriv.x = -8.0f * ( tmp0 * x0 + tmp1 * x1 + tmp2 * x2 );
          deriv.y = -8.0f * ( tmp0 * y0 + tmp1 * y1 + tmp2 * y2 );
 
-         deriv.x += t40 * g0.x + t41 * g1.x + t42 * g2.x;
-         deriv.y += t40 * g0.y + t41 * g1.y + t42 * g2.y;
+         deriv.x += t40 * g0x + t41 * g1x + t42 * g2x;
+         deriv.y += t40 * g0y + t41 * g1y + t42 * g2y;
 
          deriv.x *= Simplex.SCALE_2;
          deriv.y *= Simplex.SCALE_2;
@@ -1730,8 +1738,10 @@ public abstract class Simplex extends Generative {
    private static Vec2 gradRot2 ( final int i, final int j, final int seed,
       final float cosa, final float sina, final Vec2 target ) {
 
-      return Vec2.rotateZ(Simplex.GRAD_2_LUT[Generative.hash(i, j, seed) & 0x7],
-         cosa, sina, target);
+      final int idx = 2 * ( Generative.hash(i, j, seed) & 0x7 );
+      final float x = Simplex.GRAD_2_LUT[idx];
+      final float y = Simplex.GRAD_2_LUT[idx + 1];
+      return target.set(cosa * x - sina * y, cosa * y + sina * x);
    }
 
    /**

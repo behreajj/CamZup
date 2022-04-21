@@ -751,6 +751,7 @@ public class Mat4 {
     */
    public String toString ( final int places ) {
 
+      // TODO: Switch to pass by reference format.
       final StringBuilder sb = new StringBuilder(512);
       sb.append("{ m00: ");
       Utils.toFixed(sb, this.m00, places);
@@ -1468,7 +1469,6 @@ public class Mat4 {
       if ( scalar != 0.0f ) {
          return target.set(scalar, 0.0f, 0.0f, 0.0f, 0.0f, scalar, 0.0f, 0.0f,
             0.0f, 0.0f, scalar, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-
       }
       return target.reset();
    }

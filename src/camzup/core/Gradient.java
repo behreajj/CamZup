@@ -1429,6 +1429,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @param dest   the destination
     *
     * @return the array
+    *
+    * @see Utils#clamp01(float)
+    * @see Gradient#eval(Gradient, float, Color)
     */
    public static Color[] evalRange ( final Gradient grd, final int count,
       final float origin, final float dest ) {
@@ -1457,6 +1460,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @param easing the easing function
     *
     * @return the array
+    *
+    * @see Utils#clamp01(float)
+    * @see Gradient#eval(Gradient, float, Color.AbstrEasing, Color)
     */
    public static Color[] evalRange ( final Gradient grd, final int count,
       final float origin, final float dest, final Color.AbstrEasing easing ) {
@@ -1936,82 +1942,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Shifts the hue, saturation, lightness and alpha in a gradient. Uses two
-    * temporary variables to store colors in their respective color spaces.
-    *
-    * @param source the input gradient
-    * @param shift  the shift
-    * @param target the output gradient
-    * @param rgba   the color in RGBA
-    * @param hsla   the color in HSLA
-    *
-    * @return the shifted ramp
-    */
-   public static Gradient shiftHsla ( final Gradient source, final Vec4 shift,
-      final Gradient target, final Color rgba, final Vec4 hsla ) {
-
-      if ( source == target ) {
-         final Iterator < ColorKey > kyItr = source.keys.iterator();
-         while ( kyItr.hasNext() ) {
-            final Color clr = kyItr.next().clr;
-            rgba.set(clr);
-            Color.shiftHsla(rgba, shift, clr, hsla);
-         }
-      } else {
-         final TreeSet < ColorKey > trgKeys = target.keys;
-         trgKeys.clear();
-         final Iterator < ColorKey > srcItr = source.keys.iterator();
-         while ( srcItr.hasNext() ) {
-            final ColorKey trgKey = new ColorKey(srcItr.next());
-            final Color clr = trgKey.clr;
-            rgba.set(clr);
-            Color.shiftHsla(rgba, shift, clr, hsla);
-            trgKeys.add(trgKey);
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Shifts the hue, saturation, value and alpha in a gradient. Uses two
-    * temporary variables to store colors in their respective color spaces.
-    *
-    * @param source the input gradient
-    * @param shift  the shift
-    * @param target the output gradient
-    * @param rgba   the color in RGBA
-    * @param hsva   the color in HSVA
-    *
-    * @return the shifted ramp
-    */
-   public static Gradient shiftHsva ( final Gradient source, final Vec4 shift,
-      final Gradient target, final Color rgba, final Vec4 hsva ) {
-
-      if ( source == target ) {
-         final Iterator < ColorKey > kyItr = source.keys.iterator();
-         while ( kyItr.hasNext() ) {
-            final Color clr = kyItr.next().clr;
-            rgba.set(clr);
-            Color.shiftHsva(rgba, shift, clr, hsva);
-         }
-      } else {
-         final TreeSet < ColorKey > trgKeys = target.keys;
-         trgKeys.clear();
-         final Iterator < ColorKey > srcItr = source.keys.iterator();
-         while ( srcItr.hasNext() ) {
-            final ColorKey trgKey = new ColorKey(srcItr.next());
-            final Color clr = trgKey.clr;
-            rgba.set(clr);
-            Color.shiftHsva(rgba, shift, clr, hsva);
-            trgKeys.add(trgKey);
-         }
-      }
-
-      return target;
-   }
-
-   /**
     * Internal helper function to reverse the <em>steps</em> in an array of
     * color keys. Does <em>not</em> reverse the ordering of the elements, as
     * it is assumed that the keys will be returned to an ordered set.
@@ -2024,6 +1954,11 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    protected static ColorKey[] reverse ( final ColorKey[] arr, final int start,
       final int end ) {
+
+      /*
+       * This belongs to the gradient class, and not the color key class,
+       * because it does not reverse the array, it only swaps the steps.
+       */
 
       for ( int st = start, ed = end; st < ed; --ed, ++st ) {
          final float temp = arr[st].step;

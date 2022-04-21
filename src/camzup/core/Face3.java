@@ -221,6 +221,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @return this face
     *
+    * @see Face3#centerMean(Face3, Vec3)
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
@@ -270,6 +271,11 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @param center the center
     *
     * @return this face
+    *
+    * @see Face3#centerMean(Face3, Vec3)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    public Face3 rotateLocal ( final Quaternion q, final Vec3 center ) {
 
@@ -335,6 +341,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @return this face
     *
+    * @see Face3#centerMean(Face3, Vec3)
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     * @see Vec3#rotateX(Vec3, float, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
@@ -423,6 +430,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @return this face
     *
+    * @see Face3#centerMean(Face3, Vec3)
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     * @see Vec3#rotateY(Vec3, float, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
@@ -511,6 +519,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @return this face
     *
+    * @see Face3#centerMean(Face3, Vec3)
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     * @see Vec3#rotateZ(Vec3, float, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
@@ -556,8 +565,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @param scale the scalar
     *
     * @return this face
-    *
-    * @see Vec3#mul(Vec3, float, Vec3)
     */
    public Face3 scale ( final float scale ) {
 
@@ -573,8 +580,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @param scale the nonuniform scalar
     *
     * @return this face
-    *
-    * @see Vec3#mul(Vec3, float, Vec3)
     */
    public Face3 scale ( final Vec3 scale ) {
 
@@ -615,6 +620,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @return this face
     *
+    * @see Vec3#all(Vec3)
     * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     */
    public Face3 scaleGlobal ( final Vec3 scale ) {
@@ -640,9 +646,9 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @return this face
     *
     * @see Face3#centerMean(Face3, Vec3)
-    * @see Vec3#sub(Vec3, Vec3, Vec3)
-    * @see Vec3#mul(Vec3, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#mul(Vec3, float, Vec3)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    public Face3 scaleLocal ( final float scale, final Vec3 center ) {
 
@@ -674,9 +680,10 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @return this face
     *
     * @see Face3#centerMean(Face3, Vec3)
-    * @see Vec3#sub(Vec3, Vec3, Vec3)
-    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
+    * @see Vec3#all(Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    public Face3 scaleLocal ( final Vec3 scale, final Vec3 center ) {
 
@@ -801,8 +808,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @param v the vector
     *
     * @return this face
-    *
-    * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    public Face3 translate ( final Vec3 v ) {
 
@@ -840,6 +845,11 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @param handedness the handedness
     *
     * @return the face
+    *
+    * @see Face3#orientation(Face3, Handedness, Transform3)
+    * @see Transform3#mulDir(Transform3, Vec3, Vec3)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    @Experimental
    public Face3 translateLocal ( final Vec3 v, final Handedness handedness ) {

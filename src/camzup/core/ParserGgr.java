@@ -238,23 +238,14 @@ public abstract class ParserGgr {
                ltClr.set(seg[3], seg[4], seg[5], seg[6]);
                rtClr.set(seg[7], seg[8], seg[9], seg[10]);
 
-               /*
-                * Hack for case in which colors are equal. The color
-                * interpolation below does not recognize multiple revolutions
-                * around the color wheel where hues are equal, so an epsilon
-                * shift needs to take place.
-                */
-               int clrSpc = ( int ) seg[12];
+               final int clrSpc = ( int ) seg[12];
                if ( ltClr.equals(rtClr) ) {
-                  if ( clrSpc == ParserGgr.SPACE_HSB_CW ) {
-                     Color.shiftHsva(ltClr, new Vec4(-IUtils.EPSILON, 0.0f,
-                        0.0f, 0.0f), ltClr, new Vec4());
-                     clrSpc = ParserGgr.SPACE_HSB_CCW;
-                  } else if ( clrSpc == ParserGgr.SPACE_HSB_CCW ) {
-                     Color.shiftHsva(ltClr, new Vec4(IUtils.EPSILON, 0.0f, 0.0f,
-                        0.0f), ltClr, new Vec4());
-                     clrSpc = ParserGgr.SPACE_HSB_CW;
-                  }
+                  /*
+                   * Formerly a hack for case in which colors are equal. The
+                   * color interpolation below does not recognize multiple
+                   * revolutions around the color wheel where hues are equal, so
+                   * an epsilon shift needs to take place.
+                   */
                }
 
                /* Mix color based on color space. Default to RGB. */

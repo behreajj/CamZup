@@ -293,6 +293,8 @@ public class MaterialSolid extends Material {
     * @param fill the color
     *
     * @return this material
+    *
+    * @see Color#fromHex(int, Color)
     */
    public MaterialSolid setFill ( final int fill ) {
 
@@ -365,6 +367,8 @@ public class MaterialSolid extends Material {
     * @param stroke the color
     *
     * @return this material
+    *
+    * @see Color#fromHex(int, Color)
     */
    public MaterialSolid setStroke ( final int stroke ) {
 
@@ -378,6 +382,8 @@ public class MaterialSolid extends Material {
     * @param strokeWeight the stroke weight
     *
     * @return this material
+    *
+    * @see Utils#max(float, float)
     */
    public MaterialSolid setStrokeWeight ( final float strokeWeight ) {
 
@@ -564,6 +570,8 @@ public class MaterialSolid extends Material {
     * @param gamma gamma adjustment
     *
     * @return the string builder
+    *
+    * @see Color#fromHex(int, Color)
     */
    static StringBuilder defaultBlenderMaterial ( final StringBuilder pyCd,
       final float gamma ) {
@@ -594,6 +602,8 @@ public class MaterialSolid extends Material {
     *
     * @see Utils#div(float, float)
     * @see Utils#abs(float)
+    * @see Color#toHexWeb(StringBuilder, int)
+    * @see Utils#toFixed(StringBuilder, float, int)
     */
    static StringBuilder defaultSvgMaterial ( final StringBuilder svgp,
       final float scale ) {

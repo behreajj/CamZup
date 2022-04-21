@@ -4,7 +4,6 @@ import java.util.HashMap;
 
 import camzup.core.Color;
 import camzup.core.IUtils;
-import camzup.core.Quaternion;
 import camzup.core.Utils;
 import camzup.core.Vec4;
 
@@ -57,51 +56,7 @@ public class CamZup {
     *
     * @param args the string of arguments
     */
-   public static void main ( final String[] args ) {
-
-      // final Mesh3 m = new Mesh3();
-      // Mesh3.octahedron(m);
-      // final MeshEntity3 me = new MeshEntity3(m);
-      // System.out.println(m);
-      // m.shadeFlat();
-      // System.out.println(m);
-   }
-
-   public static Quaternion squad ( final Quaternion q1, final Quaternion q2,
-      final Quaternion s1, final Quaternion s2, final float step,
-      final Quaternion target, final Quaternion a, final Quaternion b ) {
-
-      Quaternion.mix(q1, q2, step, a);
-      Quaternion.mix(s1, s2, step, b);
-      Quaternion.mix(a, b, 2 * step * ( 1 - step ), target);
-      return target;
-   }
-
-   public static Quaternion squadHelper0 ( final Quaternion prev,
-      final Quaternion curr, final Quaternion next, final Quaternion target ) {
-
-      // https://gist.github.com/usefulslug/c59d5f7d35240733b80b
-      // https://www.3dgep.com/understanding-quaternions/
-
-      final Quaternion qiInverse = Quaternion.inverse(curr, new Quaternion());
-
-      final Quaternion a = Quaternion.mul(next, qiInverse, new Quaternion());
-      final Quaternion b = Quaternion.mul(prev, qiInverse, new Quaternion());
-
-      final Quaternion loga = Quaternion.log(a, new Quaternion());
-      final Quaternion logb = Quaternion.log(b, new Quaternion());
-
-      final Quaternion sum = Quaternion.add(loga, logb, new Quaternion());
-      final Quaternion divn4 = Quaternion.mul(sum, -0.25f, new Quaternion());
-      final Quaternion expc = Quaternion.exp(divn4, new Quaternion());
-
-      // Looks like its qi first, not expc...
-      Quaternion.mul(curr, expc, target);
-
-      Quaternion.normalize(target, target);
-      return target;
-
-   }
+   public static void main ( final String[] args ) {}
 
    public static PImage stretchContrast ( final PImage target,
       final float fac ) {

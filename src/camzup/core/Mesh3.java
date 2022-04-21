@@ -653,11 +653,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Negates all normals in this mesh.
+    * Negates all normals in this mesh, then reverses the meshes's faces.
     *
     * @return this mesh
     *
     * @see Vec3#negate(Vec3, Vec3)
+    * @see Mesh3#reverseFaces()
     */
    public Mesh3 flipNormals ( ) {
 
@@ -666,12 +667,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final Vec3 n = this.normals[i];
          Vec3.negate(n, n);
       }
+      this.reverseFaces();
       return this;
    }
 
    /**
     * Negates the x component of all texture coordinates (u) in the mesh. Does
-    * so by subtracting the value from 1.0; does not mod the coordinate.
+    * so by subtracting the value from 1.0.
     *
     * @return this mesh
     */
@@ -686,7 +688,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * Negates the y component of all texture coordinates (v) in the mesh. Does
-    * so by subtracting the value from 1.0; does not mod the coordinate.
+    * so by subtracting the value from 1.0.
     *
     * @return this mesh
     */
@@ -705,6 +707,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * argument <code>new Vec3(-1.0f, 1.0f, 1.0f)</code>.
     *
     * @return this mesh
+    *
+    * @see Mesh3#reverseFaces()
     */
    public Mesh3 flipX ( ) {
 
@@ -720,6 +724,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * argument <code>new Vec2(1.0f, -1.0f, 1.0f)</code>.
     *
     * @return this mesh
+    *
+    * @see Mesh3#reverseFaces()
     */
    public Mesh3 flipY ( ) {
 
@@ -735,6 +741,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * argument <code>new Vec3(1.0f, 1.0f, -1.0f)</code>.
     *
     * @return this mesh
+    *
+    * @see Mesh3#reverseFaces()
     */
    public Mesh3 flipZ ( ) {
 
@@ -1633,7 +1641,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * <br>
     * ( b - a ) x ( c - a ) <br>
     * <br>
-    * then normalizing the sum.
+    * then normalizes the sum.
     *
     * @return this mesh
     *
@@ -3876,13 +3884,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.texCoords[1].set(0.375f, 0.28349364f);
       target.texCoords[2].set(0.625f, 0.28349364f);
       target.texCoords[3].set(0.875f, 0.28349364f);
-
       target.texCoords[4].set(0.0f, 0.5f);
       target.texCoords[5].set(0.25f, 0.5f);
       target.texCoords[6].set(0.5f, 0.5f);
       target.texCoords[7].set(0.75f, 0.5f);
       target.texCoords[8].set(1.0f, 0.5f);
-
       target.texCoords[9].set(0.125f, 0.71650636f);
       target.texCoords[10].set(0.375f, 0.71650636f);
       target.texCoords[11].set(0.625f, 0.71650636f);
@@ -3893,7 +3899,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals[1].set(0.57735026f, -0.57735026f, -0.57735026f);
       target.normals[2].set(-0.57735026f, 0.57735026f, -0.57735026f);
       target.normals[3].set(0.57735026f, 0.57735026f, -0.57735026f);
-
       target.normals[4].set(-0.57735026f, -0.57735026f, 0.57735026f);
       target.normals[5].set(0.57735026f, -0.57735026f, 0.57735026f);
       target.normals[6].set(-0.57735026f, 0.57735026f, 0.57735026f);
@@ -3901,15 +3906,14 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       /* @formatter:off */
       target.faces = new int[][][] {
-         { { 0,  9, 0 }, { 1, 5, 0 }, { 2, 4, 0 } },
-         { { 0, 10, 1 }, { 3, 6, 1 }, { 1, 5, 1 } },
-         { { 0, 11, 2 }, { 4, 7, 2 }, { 3, 6, 2 } },
-         { { 0, 12, 3 }, { 2, 8, 3 }, { 4, 7, 3 } },
-
-         { { 2, 4, 4 }, { 1, 5, 4 }, { 5, 0, 4 } },
-         { { 1, 5, 5 }, { 3, 6, 5 }, { 5, 1, 5 } },
-         { { 4, 7, 6 }, { 2, 8, 6 }, { 5, 3, 6 } },
-         { { 3, 6, 7 }, { 4, 7, 7 }, { 5, 2, 7 } }
+         { {  0,  9,  0 }, {  1,  5,  0 }, {  2,  4,  0 } },
+         { {  0, 10,  1 }, {  3,  6,  1 }, {  1,  5,  1 } },
+         { {  0, 11,  2 }, {  4,  7,  2 }, {  3,  6,  2 } },
+         { {  0, 12,  3 }, {  2,  8,  3 }, {  4,  7,  3 } },
+         { {  2,  4,  4 }, {  1,  5,  4 }, {  5,  0,  4 } },
+         { {  1,  5,  5 }, {  3,  6,  5 }, {  5,  1,  5 } },
+         { {  4,  7,  6 }, {  2,  8,  6 }, {  5,  3,  6 } },
+         { {  3,  6,  7 }, {  4,  7,  7 }, {  5,  2,  7 } }
       };
       /* @formatter:on */
 
@@ -4173,8 +4177,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    @Experimental
    public static Mesh2 textureMap ( final Mesh3 source, final Mesh2 target ) {
-
-      // TODO: Change name?
 
       final Vec2[] vtsSrc = source.texCoords;
       final int[][][] fsSrc = source.faces;

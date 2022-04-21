@@ -255,7 +255,6 @@ public class ColorKey implements Comparable < ColorKey > {
 
       this.step = step;
       this.clr.set(red, green, blue, alpha);
-
       return this;
    }
 

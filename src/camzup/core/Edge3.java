@@ -537,8 +537,6 @@ public class Edge3 implements Comparable < Edge3 > {
     * @param scalar uniform scalar
     *
     * @return this edge
-    *
-    * @see Edge3#scaleGlobal(float)
     */
    public Edge3 scale ( final float scalar ) {
 
@@ -552,8 +550,6 @@ public class Edge3 implements Comparable < Edge3 > {
     * @param scalar non uniform scalar
     *
     * @return this edge
-    *
-    * @see Edge3#scaleGlobal(Vec3)
     */
    public Edge3 scale ( final Vec3 scalar ) {
 
@@ -590,6 +586,7 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return this edge
     *
+    * @see Vec3#all(Vec3)
     * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     */
    public Edge3 scaleGlobal ( final Vec3 scalar ) {
@@ -646,6 +643,7 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return this edge
     *
+    * @see Vec3#all(Vec3)
     * @see Vec3#none(Vec3)
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     * @see Vec3#hadamard(Vec3, Vec3, Vec3)
@@ -727,6 +725,7 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public String toString ( final int places ) {
 
+      // TODO: Pass by reference version.
       final StringBuilder sb = new StringBuilder(768);
       sb.append("{ origin: ");
       sb.append(this.origin.toString(places));
@@ -816,6 +815,8 @@ public class Edge3 implements Comparable < Edge3 > {
     * @param b right comparisand
     *
     * @return the evaluation
+    *
+    * @see Vert3#approxCoord(Vert3, Vert3)
     */
    public static boolean areNeighbors ( final Edge3 a, final Edge3 b ) {
 
@@ -969,8 +970,6 @@ public class Edge3 implements Comparable < Edge3 > {
     * @param target the output vector
     *
     * @return the projection
-    *
-    * @see Utils#clamp01(float)
     */
    @Experimental
    public static Vec3 projectVector ( final Edge3 edge, final Vec3 v,
@@ -1015,6 +1014,8 @@ public class Edge3 implements Comparable < Edge3 > {
     * @param b the right comparisand
     *
     * @return the evaluation
+    *
+    * @see Vert3#approxCoord(Vert3, Vert3)
     */
    public static int sharedCoord ( final Edge3 a, final Edge3 b ) {
 

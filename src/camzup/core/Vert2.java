@@ -115,6 +115,7 @@ public class Vert2 implements Comparable < Vert2 > {
     */
    public String toString ( final int places ) {
 
+      // TODO: Pass by reference version.
       final StringBuilder sb = new StringBuilder(256);
       sb.append("{ coord: ");
       this.coord.toString(sb, places);

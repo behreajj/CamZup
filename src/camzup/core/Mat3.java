@@ -550,6 +550,7 @@ public class Mat3 {
     */
    public String toString ( final int places ) {
 
+      // TODO: Switch to pass by reference format.
       final StringBuilder sb = new StringBuilder(128);
       sb.append("{ m00: ");
       Utils.toFixed(sb, this.m00, places);

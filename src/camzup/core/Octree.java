@@ -112,7 +112,6 @@ public class Octree implements Iterable < Vec3 > {
     */
    public Octree ( final Vec3[] points, final int capacity ) {
 
-      // TODO: TEST
       this.bounds = Bounds3.fromPoints(points, new Bounds3());
       this.capacity = capacity < 1 ? 1 : capacity;
       this.level = 0;
@@ -139,17 +138,19 @@ public class Octree implements Iterable < Vec3 > {
 
    /**
     * Finds the mean center of the points contained in this octree node and
-    * its children.
+    * its children. If a node doesn't contain any points, then returns the
+    * node bounds center.
     *
     * @param target the output vector
     *
     * @return the center
     *
     * @see Octree#getPoints(ArrayList)
+    * @see Bounds3#center(Bounds3, Vec3)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#div(Vec3, float, Vec3)
     */
    public Vec3 centerMean ( final Vec3 target ) {
-
-      // TODO: TEST
 
       final ArrayList < Vec3 > pts = new ArrayList <>(Octree.DEFAULT_CAPACITY);
       this.getPoints(pts);
@@ -160,9 +161,65 @@ public class Octree implements Iterable < Vec3 > {
          final Iterator < Vec3 > itr = pts.iterator();
          while ( itr.hasNext() ) { Vec3.add(target, itr.next(), target); }
          Vec3.div(target, len, target);
+      } else {
+         Bounds3.center(this.bounds, target);
       }
 
       return target;
+   }
+
+   /**
+    * Finds the centers of each leaf node in this octree and returns them as a
+    * flat array. Nodes which contain no points are omitted.
+    *
+    * @return the centers array
+    * 
+    * @see Octree#getLeaves(ArrayList)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#div(Vec3, float, Vec3)
+    */
+   public Vec3[] centersMean ( ) {
+
+      final ArrayList < Octree > leaves = this.getLeaves(new ArrayList <
+         Octree >());
+      final int len = leaves.size();
+      final ArrayList < Vec3 > results = new ArrayList < >(len);
+      final Iterator < Octree > leafItr = leaves.iterator();
+
+      while ( leafItr.hasNext() ) {
+         final Octree leaf = leafItr.next();
+         final HashSet < Vec3 > leafPoints = leaf.points;
+         final int ptsLen = leafPoints.size();
+
+         if ( ptsLen > 0 ) {
+            final Vec3 result = new Vec3();
+            final Iterator < Vec3 > ptsItr = leafPoints.iterator();
+            while ( ptsItr.hasNext() ) {
+               Vec3.add(result, ptsItr.next(), result);
+            }
+            Vec3.div(result, len, result);
+            results.add(result);
+         } else {
+            // results.add(Bounds3.center(leaf.bounds, new Vec3()));
+         }
+      }
+
+      return results.toArray(new Vec3[results.size()]);
+   }
+
+   /**
+    * Gets the leaf nodes of an octree as a flat array. The nodes are passed
+    * by reference, not by value.
+    *
+    * @return the octree array
+    *
+    * @see Octree#getLeaves(ArrayList)
+    */
+   public Octree[] getLeaves ( ) {
+
+      final ArrayList < Octree > references = new ArrayList <>(32);
+      this.getLeaves(references);
+      return references.toArray(new Octree[references.size()]);
    }
 
    /**
@@ -201,8 +258,6 @@ public class Octree implements Iterable < Vec3 > {
     * @see Octree#getPoints(ArrayList)
     */
    public Vec3[] getPoints ( ) {
-
-      // TODO: TEST
 
       final ArrayList < Vec3 > references = new ArrayList <>(
          Octree.DEFAULT_CAPACITY);
@@ -427,6 +482,30 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
+    * Gets the leaf nodes in this node and its children. The leaf nodes will
+    * still be stored by reference in the output array list, so this should be
+    * used internally.
+    *
+    * @param target the output array list
+    *
+    * @return the leaf nodes
+    */
+   @Recursive
+   protected ArrayList < Octree > getLeaves ( final ArrayList <
+      Octree > target ) {
+
+      if ( this.isLeaf() ) {
+         target.add(this);
+      } else {
+         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+            this.children[i].getLeaves(target);
+         }
+      }
+
+      return target;
+   }
+
+   /**
     * Gets the points in this octree node and its children. The points will
     * still be stored by reference in the output array list, so this should be
     * used internally.
@@ -501,6 +580,7 @@ public class Octree implements Iterable < Vec3 > {
     * @see Vec3#distSq(Vec3, Vec3)
     * @see Utils#sqrt(float)
     */
+   @Recursive
    protected TreeMap < Float, Vec3 > query ( final Vec3 center,
       final float radius, final TreeMap < Float, Vec3 > found ) {
 

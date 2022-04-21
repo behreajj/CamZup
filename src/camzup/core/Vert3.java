@@ -129,6 +129,7 @@ public class Vert3 implements Comparable < Vert3 > {
     */
    public String toString ( final int places ) {
 
+      // TODO: Pass by reference version.
       final StringBuilder sb = new StringBuilder(512);
       sb.append("{ coord: ");
       this.coord.toString(sb, places);

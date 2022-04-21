@@ -174,7 +174,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Flips the curve horizontally, then reverse the curve.
+    * Flips the curve on the x axis, then reverses the curve.
     *
     * @return this curve
     */
@@ -193,7 +193,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Flips the curve vertically, then reverse the curve.
+    * Flips the curve on the y axis, then reverses the curve.
     *
     * @return this curve
     */

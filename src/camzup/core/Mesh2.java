@@ -102,14 +102,23 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       this.texCoords = Vec2.resize(this.texCoords, len);
 
       if ( dim.x == 0.0f || dim.y == 0.0f ) { return this; }
-      final float xInv = 1.0f / dim.x;
-      final float yInv = 1.0f / dim.y;
+      final float w = dim.x;
+      final float h = dim.y;
+      final float wInv = 1.0f / w;
+      final float hInv = 1.0f / h;
+      final float sAsp = w < h ? w / h : 1.0f;
+      final float tAsp = w > h ? h / w : 1.0f;
 
       for ( int i = 0; i < len; ++i ) {
          final Vec2 v = this.coords[i];
+         final float sStretch = ( v.x - lb.x ) * wInv;
+         final float tStretch = ( v.y - lb.y ) * hInv;
+         final float s = ( sStretch - 0.5f ) * sAsp + 0.5f;
+         final float t = ( tStretch - 0.5f ) * tAsp + 0.5f;
+
          final Vec2 vt = this.texCoords[i];
-         vt.x = ( v.x - lb.x ) * xInv;
-         vt.y = 1.0f - ( v.y - lb.y ) * yInv;
+         vt.x = s;
+         vt.y = 1.0f - t;
       }
 
       /* Assign coordinate index to UV index. */
@@ -440,7 +449,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Negates the x component of all texture coordinates (u) in the mesh. Does
-    * so by subtracting the value from 1.0; does not mod the coordinate.
+    * so by subtracting the value from 1.0.
     *
     * @return this mesh
     */
@@ -455,7 +464,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * Negates the y component of all texture coordinates (v) in the mesh. Does
-    * so by subtracting the value from 1.0; does not mod the coordinate.
+    * so by subtracting the value from 1.0.
     *
     * @return this mesh
     */
@@ -474,6 +483,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * argument <code>new Vec2(-1.0f, 1.0f)</code>.
     *
     * @return this mesh
+    *
+    * @see Mesh2#reverseFaces()
     */
    public Mesh2 flipX ( ) {
 
@@ -489,6 +500,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * argument <code>new Vec2(1.0f, -1.0f)</code>.
     *
     * @return this mesh
+    *
+    * @see Mesh2#reverseFaces()
     */
    public Mesh2 flipY ( ) {
 
@@ -2035,9 +2048,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final float a1 = Utils.mod1(startAngle * IUtils.ONE_TAU);
       final float b1 = Utils.mod1(stopAngle * IUtils.ONE_TAU);
       final float arcLen1 = Utils.mod1(b1 - a1);
+      final float oculFac = Utils.clamp(oculus, IUtils.EPSILON, 1.0f
+         - IUtils.EPSILON);
       if ( arcLen1 < 0.00139d ) {
          Mesh2.polygon(sectors, PolyType.NGON, target);
-         target.insetFace(0, 1.0f - oculus);
+         target.insetFace(0, 1.0f - oculFac);
          target.deleteFace(-1);
          if ( poly == PolyType.TRI ) { target.triangulate(); }
          return target;
@@ -2050,8 +2065,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
          sctCount2);
 
-      final float oculFac = Utils.clamp(oculus, IUtils.EPSILON, 1.0f
-         - IUtils.EPSILON);
       final float oculRad = oculFac * 0.5f;
 
       final float toStep = 1.0f / ( sctCount - 1.0f );

@@ -178,7 +178,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Flips the curve on the x axis, then reverse the curve.
+    * Flips the curve on the x axis, then reverses the curve.
     *
     * @return this curve
     */
@@ -197,7 +197,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Flips the curve on the y axis, then reverse the curve.
+    * Flips the curve on the y axis, then reverses the curve.
     *
     * @return this curve
     */
@@ -216,7 +216,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Flips the curve on the y axis, then reverse the curve.
+    * Flips the curve on the y axis, then reverses the curve.
     *
     * @return this curve
     */

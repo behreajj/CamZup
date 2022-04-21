@@ -99,8 +99,6 @@ public class Edge2 implements Comparable < Edge2 > {
     * @param radians angle
     *
     * @return this edge
-    *
-    * @see Edge2#rotateZGlobal(float)
     */
    public Edge2 rotateZ ( final float radians ) {
 
@@ -210,8 +208,6 @@ public class Edge2 implements Comparable < Edge2 > {
     * @param scale uniform scalar
     *
     * @return this edge
-    *
-    * @see Edge2#scaleGlobal(float)
     */
    public Edge2 scale ( final float scale ) {
 
@@ -225,8 +221,6 @@ public class Edge2 implements Comparable < Edge2 > {
     * @param scalar non uniform scalar
     *
     * @return this edge
-    *
-    * @see Edge2#scaleGlobal(Vec2)
     */
    public Edge2 scale ( final Vec2 scalar ) {
 
@@ -263,6 +257,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return this edge
     *
+    * @see Vec2#all(Vec2)
     * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     */
    public Edge2 scaleGlobal ( final Vec2 scalar ) {
@@ -319,6 +314,7 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return this edge
     *
+    * @see Vec2#all(Vec2)
     * @see Vec2#none(Vec2)
     * @see Vec2#sub(Vec2, Vec2, Vec2)
     * @see Vec2#hadamard(Vec2, Vec2, Vec2)
@@ -399,6 +395,7 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public String toString ( final int places ) {
 
+      // TODO: Pass by reference version.
       final StringBuilder sb = new StringBuilder(512);
       sb.append("{ origin: ");
       sb.append(this.origin.toString(places));
@@ -488,6 +485,8 @@ public class Edge2 implements Comparable < Edge2 > {
     * @param b right comparisand
     *
     * @return the evaluation
+    *
+    * @see Vert2#approxCoord(Vert2, Vert2)
     */
    public static boolean areNeighbors ( final Edge2 a, final Edge2 b ) {
 
@@ -614,8 +613,6 @@ public class Edge2 implements Comparable < Edge2 > {
     * @param target the output vector
     *
     * @return the projection
-    *
-    * @see Utils#clamp01(float)
     */
    public static Vec2 projectVector ( final Edge2 edge, final Vec2 v,
       final Vec2 target ) {
@@ -662,6 +659,8 @@ public class Edge2 implements Comparable < Edge2 > {
     * @param b the right comparisand
     *
     * @return the evaluation
+    *
+    * @see Vert2#approxCoord(Vert2, Vert2)
     */
    public static int sharedCoord ( final Edge2 a, final Edge2 b ) {
 

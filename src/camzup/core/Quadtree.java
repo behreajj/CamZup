@@ -108,7 +108,6 @@ public class Quadtree implements Iterable < Vec2 > {
     */
    public Quadtree ( final Vec2[] points, final int capacity ) {
 
-      // TODO: TEST
       this.bounds = Bounds2.fromPoints(points, new Bounds2());
       this.capacity = capacity < 1 ? 1 : capacity;
       this.level = 0;
@@ -135,17 +134,19 @@ public class Quadtree implements Iterable < Vec2 > {
 
    /**
     * Finds the mean center of the points contained in this quadtree node and
-    * its children.
+    * its children. If a node doesn't contain any points, then returns the
+    * node bounds center.
     *
     * @param target the output vector
     *
     * @return the center
     *
     * @see Quadtree#getPoints(ArrayList)
+    * @see Bounds2#center(Bounds2, Vec2)
+    * @see Vec2#add(Vec2, Vec2, Vec2)
+    * @see Vec2#div(Vec2, float, Vec2)
     */
    public Vec2 centerMean ( final Vec2 target ) {
-
-      // TODO: TEST
 
       final ArrayList < Vec2 > pts = new ArrayList <>(
          Quadtree.DEFAULT_CAPACITY);
@@ -157,9 +158,65 @@ public class Quadtree implements Iterable < Vec2 > {
          final Iterator < Vec2 > itr = pts.iterator();
          while ( itr.hasNext() ) { Vec2.add(target, itr.next(), target); }
          Vec2.div(target, len, target);
+      } else {
+         Bounds2.center(this.bounds, target);
       }
 
       return target;
+   }
+
+   /**
+    * Finds the centers of each leaf node in this quadtree and returns them as
+    * a flat array. Nodes which contain no points are omitted.
+    *
+    * @return the centers array
+    * 
+    * @see Quadtree#getLeaves(ArrayList)
+    * @see Vec2#add(Vec2, Vec2, Vec2)
+    * @see Vec2#div(Vec2, float, Vec2)
+    */
+   public Vec2[] centersMean ( ) {
+
+      final ArrayList < Quadtree > leaves = this.getLeaves(new ArrayList <
+         Quadtree >());
+      final int len = leaves.size();
+      final ArrayList < Vec2 > results = new ArrayList < >(len);
+      final Iterator < Quadtree > leafItr = leaves.iterator();
+
+      while ( leafItr.hasNext() ) {
+         final Quadtree leaf = leafItr.next();
+         final HashSet < Vec2 > leafPoints = leaf.points;
+         final int ptsLen = leafPoints.size();
+
+         if ( ptsLen > 0 ) {
+            final Vec2 result = new Vec2();
+            final Iterator < Vec2 > ptsItr = leafPoints.iterator();
+            while ( ptsItr.hasNext() ) {
+               Vec2.add(result, ptsItr.next(), result);
+            }
+            Vec2.div(result, len, result);
+            results.add(result);
+         } else {
+            // results.add(Bounds2.center(leaf.bounds, new Vec2()));
+         }
+      }
+
+      return results.toArray(new Vec2[results.size()]);
+   }
+
+   /**
+    * Gets the leaf nodes of a quadtree as a flat array. The nodes are passed
+    * by reference, not by value.
+    *
+    * @return the quadtree array
+    *
+    * @see Quadtree#getLeaves(ArrayList)
+    */
+   public Quadtree[] getLeaves ( ) {
+
+      final ArrayList < Quadtree > references = new ArrayList <>(32);
+      this.getLeaves(references);
+      return references.toArray(new Quadtree[references.size()]);
    }
 
    /**
@@ -198,8 +255,6 @@ public class Quadtree implements Iterable < Vec2 > {
     * @see Quadtree#getPoints(ArrayList)
     */
    public Vec2[] getPoints ( ) {
-
-      // TODO: TEST
 
       final ArrayList < Vec2 > references = new ArrayList <>(
          Quadtree.DEFAULT_CAPACITY);
@@ -446,6 +501,30 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
+    * Gets the leaf nodes in this node and its children. The leaf nodes will
+    * still be stored by reference in the output array list, so this should be
+    * used internally.
+    *
+    * @param target the output array list
+    *
+    * @return the leaf nodes
+    */
+   @Recursive
+   protected ArrayList < Quadtree > getLeaves ( final ArrayList <
+      Quadtree > target ) {
+
+      if ( this.isLeaf() ) {
+         target.add(this);
+      } else {
+         for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
+            this.children[i].getLeaves(target);
+         }
+      }
+
+      return target;
+   }
+
+   /**
     * Gets the points in this quadtree node and its children. The points will
     * still be stored by reference in the output array list, so this should be
     * used internally.
@@ -520,6 +599,7 @@ public class Quadtree implements Iterable < Vec2 > {
     * @see Vec2#distSq(Vec2, Vec2)
     * @see Utils#sqrt(float)
     */
+   @Recursive
    protected TreeMap < Float, Vec2 > query ( final Vec2 center,
       final float radius, final TreeMap < Float, Vec2 > found ) {
 
