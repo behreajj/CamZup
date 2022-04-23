@@ -1,6 +1,8 @@
 package camzup.pfriendly;
 
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 
@@ -715,6 +717,92 @@ public class ZImage extends PImage {
       target.format = PConstants.ARGB;
       target.updatePixels();
       return target;
+   }
+
+   /**
+    * Extracts a palette from an image with an octree in CIE LAB. The size of
+    * the palette depends on the capacity of each node in the octree. Does not
+    * retain alpha component of image pixels. Colors produced may not be in
+    * gamut.
+    *
+    * @param source   the source image
+    * @param capacity the octree capacity
+    *
+    * @return the color array
+    */
+   public static Color[] extractPalette ( final PImage source,
+      final int capacity ) {
+
+      return ZImage.extractPalette(source, capacity, 256);
+   }
+
+   /**
+    * Extracts a palette from an image with an octree in CIE LAB. The size of
+    * the palette depends on the capacity of each node in the octree. Does not
+    * retain alpha component of image pixels. The threshold describes the
+    * minimum number of unique colors in the image beneath which it is
+    * preferable to not engage the octree. Once the octree has been used,
+    * colors produced may not be in gamut.
+    *
+    * @param source    the source image
+    * @param capacity  the octree capacity
+    * @param threshold the minimum threshold
+    *
+    * @return the color array
+    */
+   public static Color[] extractPalette ( final PImage source,
+      final int capacity, final int threshold ) {
+
+      final HashSet < Integer > uniqueColors = new HashSet <>();
+      source.loadPixels();
+      final int[] px = source.pixels;
+      final int pxLen = px.length;
+
+      for ( int i = 0; i < pxLen; ++i ) {
+         uniqueColors.add(0xff000000 | px[i]);
+      }
+
+      final int uniquesLen = uniqueColors.size();
+      final Iterator < Integer > uniquesItr = uniqueColors.iterator();
+
+      /* Lt instead of lteq to account for +1 of alpha. */
+      if ( uniquesLen < threshold ) {
+         final Color[] result = new Color[1 + uniquesLen];
+         for ( int i = 0; uniquesItr.hasNext(); ++i ) {
+            result[1 + i] = Color.fromHex(uniquesItr.next(), new Color());
+         }
+         result[0] = Color.clearBlack(new Color());
+         return result;
+      }
+
+      final Bounds3 bounds = Bounds3.cieLab(new Bounds3());
+      final Octree oct = new Octree(bounds, capacity);
+      final Color srgb = new Color();
+      final Color lrgb = new Color();
+      final Vec4 xyz = new Vec4();
+      final Vec4 lab = new Vec4();
+
+      while ( uniquesItr.hasNext() ) {
+         Color.fromHex(uniquesItr.next(), srgb);
+         Color.sRgbaTolRgba(srgb, false, lrgb);
+         Color.lRgbaToXyza(lrgb, xyz);
+         Color.xyzaToLaba(xyz, lab);
+         oct.insert(new Vec3(lab.x, lab.y, lab.z));
+      }
+
+      final Vec3[] centers = oct.centersMean(false);
+      final int centersLen = centers.length;
+      final Color[] result = new Color[1 + centersLen];
+      for ( int i = 0; i < centersLen; ++i ) {
+         final Vec3 center = centers[i];
+         Color.labaToXyza(center.z, center.x, center.y, 1.0f, xyz);
+         Color.xyzaTolRgba(xyz, lrgb);
+         final Color c = Color.lRgbaTosRgba(lrgb, false, new Color());
+         result[1 + i] = c;
+      }
+
+      result[0] = Color.clearBlack(new Color());
+      return result;
    }
 
    /**

@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * Partitions space to improve collision and intersection tests. An octree
@@ -148,7 +149,7 @@ public class Octree implements Iterable < Vec3 > {
     * @see Octree#getPoints(ArrayList)
     * @see Bounds3#center(Bounds3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
-    * @see Vec3#div(Vec3, float, Vec3)
+    * @see Vec3#mul(Vec3, float, Vec3)
     */
    public Vec3 centerMean ( final Vec3 target ) {
 
@@ -156,11 +157,11 @@ public class Octree implements Iterable < Vec3 > {
       this.getPoints(pts);
 
       target.reset();
-      final int len = pts.size();
-      if ( len > 0 ) {
+      final int ptsLen = pts.size();
+      if ( ptsLen > 0 ) {
          final Iterator < Vec3 > itr = pts.iterator();
          while ( itr.hasNext() ) { Vec3.add(target, itr.next(), target); }
-         Vec3.div(target, len, target);
+         Vec3.mul(target, 1.0f / ptsLen, target);
       } else {
          Bounds3.center(this.bounds, target);
       }
@@ -169,43 +170,62 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Finds the centers of each leaf node in this octree and returns them as a
-    * flat array. Nodes which contain no points are omitted.
+    * Finds the centers of each leaf node in this quadtree and returns them as
+    * a flat array.
     *
     * @return the centers array
-    * 
+    */
+   public Vec3[] centersMean ( ) { return this.centersMean(false); }
+
+   /**
+    * Finds the centers of each leaf node in this octree and returns them as a
+    * flat array. If the include empty flag is true, a center will be inferred
+    * from the cel's boundary center if it contains no points.
+    *
+    * @param includeEmpty whether to include empty
+    *
+    * @return the centers array
+    *
     * @see Octree#getLeaves(ArrayList)
     * @see Vec3#add(Vec3, Vec3, Vec3)
-    * @see Vec3#div(Vec3, float, Vec3)
+    * @see Vec3#mul(Vec3, float, Vec3)
+    * @see Bounds3#center(Bounds3, Vec3)
     */
-   public Vec3[] centersMean ( ) {
+   public Vec3[] centersMean ( final boolean includeEmpty ) {
 
-      final ArrayList < Octree > leaves = this.getLeaves(new ArrayList <
-         Octree >());
-      final int len = leaves.size();
-      final ArrayList < Vec3 > results = new ArrayList < >(len);
+      final ArrayList < Octree > leaves = this.getLeaves(new ArrayList <>());
+      final TreeSet < Vec3 > results = new TreeSet <>();
       final Iterator < Octree > leafItr = leaves.iterator();
 
       while ( leafItr.hasNext() ) {
          final Octree leaf = leafItr.next();
          final HashSet < Vec3 > leafPoints = leaf.points;
          final int ptsLen = leafPoints.size();
+         final Iterator < Vec3 > ptsItr = leafPoints.iterator();
 
-         if ( ptsLen > 0 ) {
+         if ( ptsLen > 1 ) {
             final Vec3 result = new Vec3();
-            final Iterator < Vec3 > ptsItr = leafPoints.iterator();
             while ( ptsItr.hasNext() ) {
                Vec3.add(result, ptsItr.next(), result);
             }
-            Vec3.div(result, len, result);
+            Vec3.mul(result, 1.0f / ptsLen, result);
             results.add(result);
-         } else {
-            // results.add(Bounds3.center(leaf.bounds, new Vec3()));
+         } else if ( ptsLen > 0 ) {
+            results.add(new Vec3(ptsItr.next()));
+         } else if ( includeEmpty ) {
+            results.add(Bounds3.center(leaf.bounds, new Vec3()));
          }
       }
 
       return results.toArray(new Vec3[results.size()]);
    }
+
+   /**
+    * Gets the capacity of the node.
+    *
+    * @return the capacity
+    */
+   public int getCapacity ( ) { return this.capacity; }
 
    /**
     * Gets the leaf nodes of an octree as a flat array. The nodes are passed
@@ -223,14 +243,14 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Gets the level of the node.
+    * Gets the level, or depth, of the node.
     *
     * @return the level
     */
    public int getLevel ( ) { return this.level; }
 
    /**
-    * Gets the maximum depth of the node and its children.
+    * Gets the maximum level, or depth, of the node and its children.
     *
     * @return the level
     */
@@ -305,7 +325,11 @@ public class Octree implements Iterable < Vec3 > {
       if ( Bounds3.contains(this.bounds, point) ) {
          if ( this.isLeaf() ) {
             this.points.add(point);
-            if ( this.points.size() > this.capacity ) { this.split(); }
+            if ( this.points.size() > this.capacity ) {
+               this.split();
+               // TODO: Add option to merge if this level is at max
+               // level?
+            }
             return true;
          }
 
@@ -361,6 +385,43 @@ public class Octree implements Iterable < Vec3 > {
     * @return the length
     */
    public int length ( ) { return this.points.size(); }
+
+   /**
+    * If this octree node has children, converts it to a leaf node containing
+    * the centers of its children. Increases node capacity if necessary.
+    *
+    * @return this octree
+    */
+   @Experimental
+   public Octree merge ( ) {
+
+      if ( this.isLeaf() ) { return this; }
+
+      this.points.clear();
+
+      final ArrayList < Vec3 > pts = new ArrayList <>(Octree.DEFAULT_CAPACITY);
+      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+         final Octree child = this.children[i];
+
+         child.getPoints(pts);
+         final int len = pts.size();
+         if ( len > 0 ) {
+            final Vec3 center = new Vec3();
+            final Iterator < Vec3 > itr = pts.iterator();
+            while ( itr.hasNext() ) { Vec3.add(center, itr.next(), center); }
+            Vec3.div(center, len, center);
+            this.points.add(center);
+            pts.clear();
+         }
+
+         this.children[i] = null;
+      }
+
+      final int pointsLen = this.points.size();
+      if ( pointsLen > this.capacity ) { this.capacity = pointsLen; }
+
+      return this;
+   }
 
    /**
     * Queries the octree with a rectangular range, returning points inside the
@@ -428,39 +489,19 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Splits the octree node into eight child nodes.
+    * Sets the capacity of the node. If the node's point size exceeds the new
+    * capacity, the node is split.
     *
-    * @return this octree
+    * @param capacity the new capacity
+    *
+    * @see Octree#split()
     */
-   public Octree split ( ) {
+   public void setCapacity ( final int capacity ) {
 
-      final int nextLevel = this.level + 1;
-      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
-         this.children[i] = new Octree(new Bounds3(), this.capacity, nextLevel);
+      if ( capacity > 0 ) {
+         this.capacity = capacity;
+         if ( this.points.size() > capacity ) { this.split(); }
       }
-
-      Bounds3.split(this.bounds, 0.5f, 0.5f, 0.5f,
-         this.children[Octree.BACK_SOUTH_WEST].bounds,
-         this.children[Octree.BACK_SOUTH_EAST].bounds,
-         this.children[Octree.BACK_NORTH_WEST].bounds,
-         this.children[Octree.BACK_NORTH_EAST].bounds,
-         this.children[Octree.FRONT_SOUTH_WEST].bounds,
-         this.children[Octree.FRONT_SOUTH_EAST].bounds,
-         this.children[Octree.FRONT_NORTH_WEST].bounds,
-         this.children[Octree.FRONT_NORTH_EAST].bounds);
-
-      /* Pass on points to children. */
-      final Iterator < Vec3 > itr = this.points.iterator();
-      while ( itr.hasNext() ) {
-         final Vec3 v = itr.next();
-         boolean flag = false;
-         for ( int i = 0; i < Octree.CHILD_COUNT && !flag; ++i ) {
-            flag = this.children[i].insert(v);
-         }
-      }
-      this.points.clear();
-
-      return this;
    }
 
    /**
@@ -494,14 +535,15 @@ public class Octree implements Iterable < Vec3 > {
    protected ArrayList < Octree > getLeaves ( final ArrayList <
       Octree > target ) {
 
-      if ( this.isLeaf() ) {
-         target.add(this);
-      } else {
-         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
-            this.children[i].getLeaves(target);
+      boolean isLeaf = true;
+      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+         final Octree child = this.children[i];
+         if ( child != null ) {
+            isLeaf = false;
+            child.getLeaves(target);
          }
       }
-
+      if ( isLeaf ) { target.add(this); }
       return target;
    }
 
@@ -517,13 +559,15 @@ public class Octree implements Iterable < Vec3 > {
    @Recursive
    protected ArrayList < Vec3 > getPoints ( final ArrayList < Vec3 > target ) {
 
-      if ( this.isLeaf() ) {
-         target.addAll(this.points);
-      } else {
-         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
-            this.children[i].getPoints(target);
+      boolean isLeaf = true;
+      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+         final Octree child = this.children[i];
+         if ( child != null ) {
+            isLeaf = false;
+            child.getPoints(target);
          }
       }
+      if ( isLeaf ) { target.addAll(this.points); }
       return target;
    }
 
@@ -601,6 +645,42 @@ public class Octree implements Iterable < Vec3 > {
       }
 
       return found;
+   }
+
+   /**
+    * Splits the octree node into eight child nodes.
+    *
+    * @return this octree
+    */
+   protected Octree split ( ) {
+
+      final int nextLevel = this.level + 1;
+      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+         this.children[i] = new Octree(new Bounds3(), this.capacity, nextLevel);
+      }
+
+      Bounds3.split(this.bounds, 0.5f, 0.5f, 0.5f,
+         this.children[Octree.BACK_SOUTH_WEST].bounds,
+         this.children[Octree.BACK_SOUTH_EAST].bounds,
+         this.children[Octree.BACK_NORTH_WEST].bounds,
+         this.children[Octree.BACK_NORTH_EAST].bounds,
+         this.children[Octree.FRONT_SOUTH_WEST].bounds,
+         this.children[Octree.FRONT_SOUTH_EAST].bounds,
+         this.children[Octree.FRONT_NORTH_WEST].bounds,
+         this.children[Octree.FRONT_NORTH_EAST].bounds);
+
+      /* Pass on points to children. */
+      final Iterator < Vec3 > itr = this.points.iterator();
+      while ( itr.hasNext() ) {
+         final Vec3 v = itr.next();
+         boolean flag = false;
+         for ( int i = 0; i < Octree.CHILD_COUNT && !flag; ++i ) {
+            flag = this.children[i].insert(v);
+         }
+      }
+      this.points.clear();
+
+      return this;
    }
 
    /**
