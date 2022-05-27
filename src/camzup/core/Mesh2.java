@@ -2025,7 +2025,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Creates an arc from a start and stop angle. The granularity of the
     * approximation is dictated by the number of sectors in a complete circle.
-    * The thickness of the arc is described by the annulus. Useful where
+    * The thickness of the arc is described by the oculus. Useful where
     * sectors may be faster than the Bezier curves of
     * {@link Curve2#arc(float, float, float, camzup.core.ArcMode, Curve2)} or
     * where there is an issue rendering strokes.

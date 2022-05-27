@@ -636,6 +636,17 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
+    * Finds this gradient's range. Subtracts the step of its first key from
+    * the step of its last.
+    *
+    * @return the range
+    */
+   public float range ( ) {
+
+      return this.keys.last().step - this.keys.first().step;
+   }
+
+   /**
     * Removes a key from the gradient. Returns true if successful.
     *
     * @param key the key

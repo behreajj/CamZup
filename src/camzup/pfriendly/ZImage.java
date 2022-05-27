@@ -542,8 +542,11 @@ public class ZImage extends PImage {
       final int palLen = palette.length;
       final HashMap < Integer, Integer > ptToHexDict = new HashMap <>(palLen,
          0.75f);
+
+      /* Ensure that at least 8 colors will be returned from the octree. */
       final Octree octree = new Octree(Bounds3.cieLab(new Bounds3()),
          octCapacity);
+      octree.subdivide(1, octCapacity);
 
       for ( int i = 0; i < palLen; ++i ) {
          final Color palEntry = palette[i];
@@ -555,6 +558,8 @@ public class ZImage extends PImage {
          ptToHexDict.put(point.hashCode(), Color.toHexIntSat(palEntry));
          octree.insert(point);
       }
+
+      octree.cull();
 
       target.loadPixels();
       final int[] px = target.pixels;
@@ -583,7 +588,7 @@ public class ZImage extends PImage {
          int gTrg = 0;
          int bTrg = 0;
 
-         final Vec3[] nearestPts = octree.query(query, queryRad);
+         final Vec3[] nearestPts = octree.queryRange(query, queryRad);
          if ( nearestPts.length > 0 ) {
             final Integer nearestHash = nearestPts[0].hashCode();
             if ( ptToHexDict.containsKey(nearestHash) ) {

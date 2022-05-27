@@ -71,11 +71,17 @@ public interface IYup2 extends IUp {
    @Recursive
    default void bounds ( final Quadtree qt ) {
 
-      if ( qt.isLeaf() ) {
-         this.bounds(qt.bounds);
-      } else {
-         for ( int i = 0; i < 4; ++i ) { this.bounds(qt.children[i]); }
+      boolean isLeaf = true;
+      final Quadtree[] children = qt.children;
+      for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
+         final Quadtree child = children[i];
+         if ( child != null ) {
+            isLeaf = false;
+            this.bounds(child);
+         }
       }
+
+      if ( isLeaf ) { this.bounds(qt.bounds); }
    }
 
    /**

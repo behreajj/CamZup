@@ -351,11 +351,11 @@ public class Color implements Comparable < Color > {
     */
    StringBuilder toGplString ( final StringBuilder gpl ) {
 
-      gpl.append(( int ) ( Utils.clamp01(this.r) * 0xff + 0.5f ));
+      gpl.append(( int ) ( 0.5f + Utils.clamp01(this.r) * 0xff ));
       gpl.append(' ');
-      gpl.append(( int ) ( Utils.clamp01(this.g) * 0xff + 0.5f ));
+      gpl.append(( int ) ( 0.5f + Utils.clamp01(this.g) * 0xff ));
       gpl.append(' ');
-      gpl.append(( int ) ( Utils.clamp01(this.b) * 0xff + 0.5f ));
+      gpl.append(( int ) ( 0.5f + Utils.clamp01(this.b) * 0xff ));
       return gpl;
    }
 
@@ -502,14 +502,14 @@ public class Color implements Comparable < Color > {
 
       /* @formatter:off */
       return target.set(
-         ( ( int ) ( a.r * 0xff + 0.5f ) &
-           ( int ) ( b.r * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.g * 0xff + 0.5f ) &
-           ( int ) ( b.g * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.b * 0xff + 0.5f ) &
-           ( int ) ( b.b * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.a * 0xff + 0.5f ) &
-           ( int ) ( b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
+         ( ( int ) ( 0.5f + a.r * 0xff ) &
+           ( int ) ( 0.5f + b.r * 0xff ) ) * IUtils.ONE_255,
+         ( ( int ) ( 0.5f + a.g * 0xff ) &
+           ( int ) ( 0.5f + b.g * 0xff ) ) * IUtils.ONE_255,
+         ( ( int ) ( 0.5f + a.b * 0xff ) &
+           ( int ) ( 0.5f + b.b * 0xff ) ) * IUtils.ONE_255,
+         ( ( int ) ( 0.5f + a.a * 0xff ) &
+           ( int ) ( 0.5f + b.a * 0xff ) ) * IUtils.ONE_255);
       /* @formatter:on */
    }
 
@@ -526,10 +526,10 @@ public class Color implements Comparable < Color > {
 
       /* @formatter:off */
       return target.set(
-         ( ~( int ) ( a.r * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255,
-         ( ~( int ) ( a.g * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255,
-         ( ~( int ) ( a.b * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255,
-         ( ~( int ) ( a.a * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255);
+         ( ~( int ) ( 0.5f + a.r * 0xff ) & 0xff ) * IUtils.ONE_255,
+         ( ~( int ) ( 0.5f + a.g * 0xff ) & 0xff ) * IUtils.ONE_255,
+         ( ~( int ) ( 0.5f + a.b * 0xff ) & 0xff ) * IUtils.ONE_255,
+         ( ~( int ) ( 0.5f + a.a * 0xff ) & 0xff ) * IUtils.ONE_255);
       /* @formatter:on */
    }
 
@@ -548,14 +548,14 @@ public class Color implements Comparable < Color > {
 
       /* @formatter:off */
       return target.set(
-         ( ( int ) ( a.r * 0xff + 0.5f ) |
-           ( int ) ( b.r * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.g * 0xff + 0.5f ) |
-           ( int ) ( b.g * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.b * 0xff + 0.5f ) |
-           ( int ) ( b.b * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.a * 0xff + 0.5f ) |
-           ( int ) ( b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
+         ( ( int ) ( 0.5f + a.r * 0xff ) |
+           ( int ) ( 0.5f + b.r * 0xff ) ) * IUtils.ONE_255,
+         ( ( int ) ( 0.5f + a.g * 0xff ) |
+           ( int ) ( 0.5f + b.g * 0xff ) ) * IUtils.ONE_255,
+         ( ( int ) ( 0.5f + a.b * 0xff ) |
+           ( int ) ( 0.5f + b.b * 0xff ) ) * IUtils.ONE_255,
+         ( ( int ) ( 0.5f + a.a * 0xff ) |
+           ( int ) ( 0.5f + b.a * 0xff ) ) * IUtils.ONE_255);
       /* @formatter:on */
    }
 
@@ -676,14 +676,14 @@ public class Color implements Comparable < Color > {
 
       /* @formatter:off */
       return target.set(
-         ( ( int ) ( a.r * 0xff + 0.5f ) ^
-           ( int ) ( b.r * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.g * 0xff + 0.5f ) ^
-           ( int ) ( b.g * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.b * 0xff + 0.5f ) ^
-           ( int ) ( b.b * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.a * 0xff + 0.5f ) ^
-           ( int ) ( b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
+         ( ( int ) ( 0.5f + a.r * 0xff ) ^
+           ( int ) ( 0.5f + b.r * 0xff ) ) * IUtils.ONE_255,
+         ( ( int ) ( 0.5f + a.g * 0xff ) ^
+           ( int ) ( 0.5f + b.g * 0xff ) ) * IUtils.ONE_255,
+         ( ( int ) ( 0.5f + a.b * 0xff ) ^
+           ( int ) ( 0.5f + b.b * 0xff ) ) * IUtils.ONE_255,
+         ( ( int ) ( 0.5f + a.a * 0xff ) ^
+           ( int ) ( 0.5f + b.a * 0xff ) ) * IUtils.ONE_255);
       /* @formatter:on */
    }
 
@@ -2219,10 +2219,12 @@ public class Color implements Comparable < Color > {
     */
    public static int toHexIntSat ( final Color c ) {
 
-      return ( int ) ( Utils.clamp01(c.a) * 0xff + 0.5f ) << 0x18
-         | ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ) << 0x10
-         | ( int ) ( Utils.clamp01(c.g) * 0xff + 0.5f ) << 0x08
-         | ( int ) ( Utils.clamp01(c.b) * 0xff + 0.5f );
+      /* @formatter:off */
+      return ( int ) ( 0.5f + Utils.clamp01(c.a) * 0xff ) << 0x18
+           | ( int ) ( 0.5f + Utils.clamp01(c.r) * 0xff ) << 0x10
+           | ( int ) ( 0.5f + Utils.clamp01(c.g) * 0xff ) << 0x08
+           | ( int ) ( 0.5f + Utils.clamp01(c.b) * 0xff );
+      /* @formatter:on */
    }
 
    /**
@@ -2237,10 +2239,10 @@ public class Color implements Comparable < Color > {
    public static int toHexIntWrap ( final Color c ) {
 
       /* @formatter:off */
-      return ( int ) ( c.a * 0xff + 0.5f ) << 0x18
-           | ( int ) ( c.r * 0xff + 0.5f ) << 0x10
-           | ( int ) ( c.g * 0xff + 0.5f ) << 0x08
-           | ( int ) ( c.b * 0xff + 0.5f );
+      return ( int ) ( 0.5f + c.a * 0xff ) << 0x18
+           | ( int ) ( 0.5f + c.r * 0xff ) << 0x10
+           | ( int ) ( 0.5f + c.g * 0xff ) << 0x08
+           | ( int ) ( 0.5f + c.b * 0xff );
       /* @formatter:on */
    }
 
@@ -2290,9 +2292,10 @@ public class Color implements Comparable < Color > {
    public static StringBuilder toHexString ( final StringBuilder sb,
       final Color c ) {
 
-      return Color.toHexString(sb, ( int ) ( Utils.clamp01(c.a) * 0xff + 0.5f ),
-         ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ), ( int ) ( Utils.clamp01(
-            c.g) * 0xff + 0.5f ), ( int ) ( Utils.clamp01(c.b) * 0xff + 0.5f ));
+      return Color.toHexString(sb, ( int ) ( 0.5f + Utils.clamp01(c.a) * 0xff ),
+         ( int ) ( 0.5f + Utils.clamp01(c.r) * 0xff ), ( int ) ( 0.5f + Utils
+            .clamp01(c.g) * 0xff ), ( int ) ( 0.5f + Utils.clamp01(c.b)
+               * 0xff ));
    }
 
    /**
@@ -2388,9 +2391,9 @@ public class Color implements Comparable < Color > {
    public static StringBuilder toHexWeb ( final StringBuilder sb,
       final Color c ) {
 
-      return Color.toHexWeb(sb, ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ),
-         ( int ) ( Utils.clamp01(c.g) * 0xff + 0.5f ), ( int ) ( Utils.clamp01(
-            c.b) * 0xff + 0.5f ));
+      return Color.toHexWeb(sb, ( int ) ( 0.5f + Utils.clamp01(c.r) * 0xff ),
+         ( int ) ( 0.5f + Utils.clamp01(c.g) * 0xff ), ( int ) ( 0.5f + Utils
+            .clamp01(c.b) * 0xff ));
    }
 
    /**
@@ -2680,10 +2683,10 @@ public class Color implements Comparable < Color > {
       if ( step >= 1.0f ) { return Color.toHexIntWrap(dest); }
 
       final float u = 1.0f - step;
-      return ( int ) ( ( u * origin.a + step * dest.a ) * 0xff + 0.5f ) << 0x18
-         | ( int ) ( ( u * origin.r + step * dest.r ) * 0xff + 0.5f ) << 0x10
-         | ( int ) ( ( u * origin.g + step * dest.g ) * 0xff + 0.5f ) << 0x08
-         | ( int ) ( ( u * origin.b + step * dest.b ) * 0xff + 0.5f );
+      return ( int ) ( 0.5f + ( u * origin.a + step * dest.a ) * 0xff ) << 0x18
+         | ( int ) ( 0.5f + ( u * origin.r + step * dest.r ) * 0xff ) << 0x10
+         | ( int ) ( 0.5f + ( u * origin.g + step * dest.g ) * 0xff ) << 0x08
+         | ( int ) ( 0.5f + ( u * origin.b + step * dest.b ) * 0xff );
    }
 
    /**
@@ -3418,6 +3421,95 @@ public class Color implements Comparable < Color > {
          Color.xyzaToLaba(this.dXyz, this.dLab);
 
          Vec4.mix(this.oLab, this.dLab, step, this.cLab);
+
+         Color.labaToXyza(this.cLab, this.cXyz);
+         Color.xyzaTolRgba(this.cXyz, this.cLinear);
+         Color.lRgbaTosRgba(this.cLinear, false, target);
+
+         return target;
+      }
+
+   }
+
+   /**
+    * Eases between two colors in CIE LCh color space. May return colors
+    * outside the range [0.0, 1.0] .
+    */
+   public static class MixLch extends MixLab {
+
+      /**
+       * The new LCh color.
+       */
+      protected final Vec4 cLch = new Vec4();
+
+      /**
+       * The hue easing function.
+       */
+      protected HueEasing hueFunc;
+
+      /**
+       * The default constructor. Creates a mixer with nearest hue interpolation
+       * and linear interpolation for saturation and value.
+       */
+      public MixLch ( ) { this(new HueNear()); }
+
+      /**
+       * Creates a color CIE LCh mixing function with the given easing functions
+       * for hue.
+       *
+       * @param hueFunc the hue easing function
+       */
+      public MixLch ( final HueEasing hueFunc ) {
+
+         this.hueFunc = hueFunc;
+      }
+
+      /**
+       * Applies the function.
+       *
+       * @param origin the origin color
+       * @param dest   the destination color
+       * @param step   the step in a range 0 to 1
+       * @param target the output color
+       *
+       * @return the eased color
+       *
+       * @see Color#sRgbaTolRgba(Color, boolean, Color)
+       * @see Color#lRgbaToXyza(Color, Vec4)
+       * @see Color#xyzaToLaba(Vec4, Vec4)
+       */
+      @Override
+      public Color applyUnclamped ( final Color origin, final Color dest,
+         final Float step, final Color target ) {
+
+         Color.sRgbaTolRgba(origin, false, this.oLinear);
+         Color.lRgbaToXyza(this.oLinear, this.oXyz);
+         Color.xyzaToLaba(this.oXyz, this.oLab);
+
+         final float oa = this.oLab.x;
+         final float ob = this.oLab.y;
+         final float ocsq = oa * oa + ob * ob;
+
+         Color.sRgbaTolRgba(dest, false, this.dLinear);
+         Color.lRgbaToXyza(this.dLinear, this.dXyz);
+         Color.xyzaToLaba(this.dXyz, this.dLab);
+
+         final float da = this.dLab.x;
+         final float db = this.dLab.y;
+         final float dcsq = da * da + db * db;
+
+         if ( ocsq <= IUtils.EPSILON || dcsq <= IUtils.EPSILON ) {
+            Vec4.mix(this.oLab, this.dLab, step, this.cLab);
+         } else {
+            final float t = step;
+            final float u = 1.0f - t;
+            this.cLch.set(this.hueFunc.apply(Utils.modRadians(Utils.atan2(ob,
+               oa)) * IUtils.ONE_TAU, Utils.modRadians(Utils.atan2(db, da))
+                  * IUtils.ONE_TAU, step), u * Utils.sqrtUnchecked(ocsq) + t
+                     * Utils.sqrtUnchecked(dcsq), u * this.oLab.z + t
+                        * this.dLab.z, u * this.oLab.w + t * this.dLab.w);
+            Color.lchaToLaba(this.cLch, this.cLab);
+         }
 
          Color.labaToXyza(this.cLab, this.cXyz);
          Color.xyzaTolRgba(this.cXyz, this.cLinear);

@@ -1692,21 +1692,76 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param target     the output curve
     *
     * @return the curve
+    *
+    * @see Curve2#straightenHandles(Curve2)
+    * @see Curve2#smoothHandles(Curve2)
     */
    public static Curve2 fromPoints ( final boolean closedLoop,
       final Vec2[] points, final Curve2 target ) {
 
-      target.closedLoop = closedLoop;
-      target.name = "Constellation";
-      target.resize(points.length);
-      int incr = 0;
+      final int ptsLen = points.length;
+      if ( ptsLen < 2 ) { return target; }
+      target.resize(ptsLen);
+
       final Iterator < Knot2 > itr = target.knots.iterator();
-      for ( ; itr.hasNext(); ++incr ) {
-         final Vec2 pt = points[incr];
+      for ( int i = 0; itr.hasNext(); ++i ) {
+         final Vec2 pt = points[i];
          itr.next().set(pt, pt, pt);
       }
 
-      return Curve2.smoothHandles(target);
+      target.closedLoop = closedLoop;
+      target.name = "Points";
+
+      return ptsLen < 3 ? Curve2.straightenHandles(target) : Curve2
+         .smoothHandles(target);
+   }
+
+   /**
+    * Creates a curve from a series of points, where every other point
+    * represents a control point in a quadratic curve.
+    *
+    * @param closedLoop whether the curve is a closed loop
+    * @param points     the array of points
+    * @param target     the output curve
+    *
+    * @return the curve
+    */
+   public static Curve2 fromQuadratic ( final boolean closedLoop,
+      final Vec2[] points, final Curve2 target ) {
+
+      final int ptsLen = points.length;
+      if ( ptsLen < 3 ) { return Curve2.fromPoints(false, points, target); }
+      final int knotCount = ptsLen / 2 + ( closedLoop ? 0 : 1 );
+      if ( knotCount < 2 || ( closedLoop ? ptsLen % 2 != 0 : ( ptsLen + 1 ) % 2
+         != 0 ) ) {
+         System.err.println("Incorrect number of points.");
+         return target;
+      }
+
+      target.resize(knotCount);
+      final ArrayList < Knot2 > knots = target.knots;
+      final Iterator < Knot2 > itr = knots.iterator();
+
+      final Knot2 first = itr.next();
+      Knot2 prev = first;
+      Knot2 curr = null;
+      for ( int i = 1; itr.hasNext(); i += 2 ) {
+         curr = itr.next();
+         Knot2.fromSegQuadratic(points[i], points[i + 1], prev, curr);
+         prev = curr;
+      }
+
+      if ( closedLoop ) {
+         Knot2.fromSegQuadratic(points[ptsLen - 1], points[0], curr, first);
+      } else if ( curr != null ) {
+         first.coord.set(points[0]);
+         first.mirrorHandlesForward();
+         curr.mirrorHandlesBackward();
+      }
+
+      target.closedLoop = closedLoop;
+      target.name = "Quadratic";
+      return target;
    }
 
    /**
@@ -1955,10 +2010,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public static Curve2 smoothHandles ( final Curve2 target ) {
 
       final ArrayList < Knot2 > knots = target.knots;
-      final int knotLength = knots.size();
-      if ( knotLength < 3 ) { return target; }
+      final int knotCount = knots.size();
+      if ( knotCount < 3 ) { return target; }
 
-      final int knotLast = knotLength - 1;
+      final int knotLast = knotCount - 1;
       final Vec2 carry = new Vec2();
       final Iterator < Knot2 > itr = knots.iterator();
       final Knot2 first = itr.next();

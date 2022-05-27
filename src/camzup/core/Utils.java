@@ -432,7 +432,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the unsigned distance between two angles.
+    * Finds the unsigned distance between two angles. Angles are expected to
+    * be in radians.
     *
     * @param a left operand
     * @param b right operand

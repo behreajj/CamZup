@@ -975,8 +975,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Returns the orientation of the vertex as a quaternion based on the
-    * face's normal.
+    * Returns the orientation of the face as a quaternion based on the face's
+    * normal.
     *
     * @param face       the face
     * @param handedness the handedness
@@ -998,7 +998,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Returns the orientation of the vertex as a transform based on the face's
+    * Returns the orientation of the face as a transform based on the face's
     * normal.
     *
     * @param face       the face
@@ -1026,8 +1026,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Returns the orientation of the vertex as a ray based on the face's
-    * normal.
+    * Returns the orientation of the face as a ray based on the face's normal.
     *
     * @param face   the face
     * @param target the output transform

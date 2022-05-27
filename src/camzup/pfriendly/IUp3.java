@@ -54,11 +54,17 @@ public interface IUp3 extends IUp {
    @Recursive
    default void bounds ( final Octree ot ) {
 
-      if ( ot.isLeaf() ) {
-         this.bounds(ot.bounds);
-      } else {
-         for ( int i = 0; i < 8; ++i ) { this.bounds(ot.children[i]); }
+      boolean isLeaf = true;
+      final Octree[] children = ot.children;
+      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+         final Octree child = children[i];
+         if ( child != null ) {
+            isLeaf = false;
+            this.bounds(child);
+         }
       }
+
+      if ( isLeaf ) { this.bounds(ot.bounds); }
    }
 
    /**

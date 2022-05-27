@@ -1556,21 +1556,83 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param target     the output curve
     *
     * @return the curve
+    *
+    * @see Curve3#straightenHandles(Curve3)
+    * @see Curve3#smoothHandles(Curve3)
     */
    public static Curve3 fromPoints ( final boolean closedLoop,
       final Vec3[] points, final Curve3 target ) {
 
-      target.closedLoop = closedLoop;
-      target.name = "Constellation";
-      target.resize(points.length);
-      int incr = 0;
+      final int ptsLen = points.length;
+      if ( ptsLen < 2 ) { return target; }
+      target.resize(ptsLen);
+
       final Iterator < Knot3 > itr = target.knots.iterator();
-      for ( ; itr.hasNext(); ++incr ) {
-         final Vec3 pt = points[incr];
+      for ( int i = 0; itr.hasNext(); ++i ) {
+         final Vec3 pt = points[i];
          itr.next().set(pt, pt, pt);
       }
 
-      return Curve3.smoothHandles(target);
+      target.closedLoop = closedLoop;
+      target.name = "Points";
+
+      return ptsLen < 3 ? Curve3.straightenHandles(target) : Curve3
+         .smoothHandles(target);
+   }
+
+   /**
+    * Creates a curve from a series of points, where every other point
+    * represents a control point in a quadratic curve.
+    *
+    * @param closedLoop whether the curve is a closed loop
+    * @param points     the array of points
+    * @param target     the output curve
+    *
+    * @return the curve
+    *
+    * @see Curve3#fromPoints(boolean, Vec3[], Curve3)
+    * @see Knot3#fromSegQuadratic(Vec3, Vec3, Knot3, Knot3)
+    * @see Knot3#mirrorHandlesForward()
+    * @see Knot3#mirrorHandlesBackward()
+    */
+   public static Curve3 fromQuadratic ( final boolean closedLoop,
+      final Vec3[] points, final Curve3 target ) {
+
+      final int ptsLen = points.length;
+      if ( ptsLen < 3 ) {
+         return Curve3.fromPoints(closedLoop, points, target);
+      }
+      final int knotCount = ptsLen / 2 + ( closedLoop ? 0 : 1 );
+      if ( knotCount < 2 || ( closedLoop ? ptsLen % 2 != 0 : ( ptsLen + 1 ) % 2
+         != 0 ) ) {
+         System.err.println("Incorrect number of points.");
+         return target;
+      }
+
+      target.resize(knotCount);
+      final ArrayList < Knot3 > knots = target.knots;
+      final Iterator < Knot3 > itr = knots.iterator();
+
+      final Knot3 first = itr.next();
+      Knot3 prev = first;
+      Knot3 curr = null;
+      for ( int i = 1; itr.hasNext(); i += 2 ) {
+         curr = itr.next();
+         Knot3.fromSegQuadratic(points[i], points[i + 1], prev, curr);
+         prev = curr;
+      }
+
+      if ( closedLoop ) {
+         Knot3.fromSegQuadratic(points[ptsLen - 1], points[0], curr, first);
+      } else if ( curr != null ) {
+         first.coord.set(points[0]);
+         first.mirrorHandlesForward();
+         curr.mirrorHandlesBackward();
+      }
+
+      target.closedLoop = closedLoop;
+      target.name = "Quadratic";
+      return target;
    }
 
    /**
@@ -1702,10 +1764,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public static Curve3 smoothHandles ( final Curve3 target ) {
 
       final ArrayList < Knot3 > knots = target.knots;
-      final int knotLength = knots.size();
-      if ( knotLength < 3 ) { return target; }
+      final int knotCount = knots.size();
+      if ( knotCount < 3 ) { return target; }
 
-      final int knotLast = knotLength - 1;
+      final int knotLast = knotCount - 1;
       final Vec3 carry = new Vec3();
       final Iterator < Knot3 > itr = knots.iterator();
       final Knot3 first = itr.next();

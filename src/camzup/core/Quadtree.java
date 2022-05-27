@@ -1,8 +1,8 @@
 package camzup.core;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -52,7 +52,7 @@ public class Quadtree implements Iterable < Vec2 > {
    /**
     * Elements contained by this quadtree if it is a leaf.
     */
-   protected HashSet < Vec2 > points;
+   protected TreeSet < Vec2 > points;
 
    /**
     * The default constructor.
@@ -91,7 +91,7 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
-    * Constructs an octree from an array of points.
+    * Constructs an quadtree from an array of points.
     *
     * @param points the points
     */
@@ -101,8 +101,7 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
-    * Constructs an octree from an array of points and a capacity per octree
-    * node.
+    * Constructs an quadtree from an array of points and a capacity per node.
     *
     * @param points   the points
     * @param capacity capacity per node
@@ -112,7 +111,7 @@ public class Quadtree implements Iterable < Vec2 > {
       this.bounds = Bounds2.fromPoints(points, new Bounds2());
       this.capacity = capacity < 1 ? 1 : capacity;
       this.level = 0;
-      this.points = new HashSet <>(this.capacity);
+      this.points = new TreeSet <>();
       this.insertAll(points);
    }
 
@@ -130,91 +129,103 @@ public class Quadtree implements Iterable < Vec2 > {
       this.bounds = bounds;
       this.capacity = capacity < 1 ? 1 : capacity;
       this.level = level < 0 ? 0 : level;
-      this.points = new HashSet <>(this.capacity);
+      this.points = new TreeSet <>();
    }
 
    /**
-    * Finds the mean center of the points contained in this quadtree node and
-    * its children. If a node doesn't contain any points, then returns the
-    * node bounds center.
+    * Finds the average center in each leaf node of this quadtree and appends
+    * it to an array.
     *
-    * @param target the output vector
-    *
-    * @return the center
-    *
-    * @see Quadtree#getPoints(ArrayList)
-    * @see Bounds2#center(Bounds2, Vec2)
-    * @see Vec2#add(Vec2, Vec2, Vec2)
-    * @see Vec2#mul(Vec2, float, Vec2)
-    */
-   public Vec2 centerMean ( final Vec2 target ) {
-
-      final ArrayList < Vec2 > pts = new ArrayList <>(
-         Quadtree.DEFAULT_CAPACITY);
-      this.getPoints(pts);
-
-      target.reset();
-      final int ptsLen = pts.size();
-      if ( ptsLen > 0 ) {
-         final Iterator < Vec2 > itr = pts.iterator();
-         while ( itr.hasNext() ) { Vec2.add(target, itr.next(), target); }
-         Vec2.mul(target, 1.0f / ptsLen, target);
-      } else {
-         Bounds2.center(this.bounds, target);
-      }
-
-      return target;
-   }
-
-   /**
-    * Finds the centers of each leaf node in this quadtree and returns them as
-    * a flat array.
-    *
-    * @return the centers array
+    * @return centers
     */
    public Vec2[] centersMean ( ) { return this.centersMean(false); }
 
    /**
-    * Finds the centers of each leaf node in this quadtree and returns them as
-    * a flat array. If the include empty flag is true, a center will be
-    * inferred from the cel's boundary center if it contains no points.
+    * Finds the average center in each leaf node of this quadtree and appends
+    * it to an array. If the node is empty, and includeEmpty is true, then the
+    * center of the cell bounds is used instead.
     *
-    * @param includeEmpty whether to include empty
+    * @param includeEmpty include empty cells
     *
-    * @return the centers array
-    *
-    * @see Quadtree#getLeaves(ArrayList)
-    * @see Vec2#add(Vec2, Vec2, Vec2)
-    * @see Vec2#mul(Vec2, float, Vec2)
-    * @see Bounds2#center(Bounds2, Vec2)
+    * @return centers
     */
    public Vec2[] centersMean ( final boolean includeEmpty ) {
 
-      final ArrayList < Quadtree > leaves = this.getLeaves(new ArrayList <>());
-      final TreeSet < Vec2 > results = new TreeSet <>();
-      final Iterator < Quadtree > leafItr = leaves.iterator();
+      final ArrayList < Vec2 > results = new ArrayList <>(32);
+      this.centersMean(includeEmpty, results);
+      return results.toArray(new Vec2[results.size()]);
+   }
 
-      while ( leafItr.hasNext() ) {
-         final Quadtree leaf = leafItr.next();
-         final HashSet < Vec2 > leafPoints = leaf.points;
-         final int ptsLen = leafPoints.size();
-         final Iterator < Vec2 > ptsItr = leafPoints.iterator();
+   /**
+    * Counts the number of leaves held by this quadtree.
+    *
+    * @return the sum
+    */
+   @Recursive
+   public int countLeaves ( ) {
 
-         if ( ptsLen > 1 ) {
-            final Vec2 result = new Vec2();
-            while ( ptsItr.hasNext() ) {
-               Vec2.add(result, ptsItr.next(), result);
-            }
-            Vec2.mul(result, 1.0f / ptsLen, result);
-            results.add(result);
-         } else if ( ptsLen > 0 ) {
-            results.add(new Vec2(ptsItr.next()));
-         } else if ( includeEmpty ) {
-            results.add(Bounds2.center(leaf.bounds, new Vec2()));
+      int sum = 0;
+      boolean isLeaf = true;
+      for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
+         final Quadtree child = this.children[i];
+         if ( child != null ) {
+            isLeaf = false;
+            sum += child.countLeaves();
          }
       }
 
-      return results.toArray(new Vec2[results.size()]);
+      if ( isLeaf ) { return 1; }
+      return sum;
+
+   }
+
+   /**
+    * Counts the number of points held by this quadtree's leaf nodes.
+    *
+    * @return the sum
+    */
+   @Recursive
+   public int countPoints ( ) {
+
+      int sum = 0;
+      boolean isLeaf = true;
+      for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
+         final Quadtree child = this.children[i];
+         if ( child != null ) {
+            isLeaf = false;
+            sum += child.countPoints();
+         }
+      }
+
+      if ( isLeaf ) { sum += this.points.size(); }
+      return sum;
+   }
+
+   /**
+    * Sets empty child nodes in the quadtree to null. Returns true if this
+    * quadtree node should be culled; i.e., all its children are null and it
+    * contains no points.
+    *
+    * @return the evaluation
+    */
+   @Experimental
+   @Recursive
+   public boolean cull ( ) {
+
+      int cullThis = 0;
+      for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
+         final Quadtree child = this.children[i];
+         if ( child != null ) {
+            if ( child.cull() ) {
+               this.children[i] = null;
+               ++cullThis;
+            }
+         } else {
+            ++cullThis;
+         }
+      }
+
+      return cullThis >= Quadtree.CHILD_COUNT && this.points.size() < 1;
    }
 
    /**
@@ -289,6 +300,26 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
+    * Returns a hash code for this quadtree.
+    *
+    * @return the hash code
+    */
+   @Override
+   public int hashCode ( ) {
+
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + ( this.bounds == null ? 0 : this.bounds
+         .hashCode() );
+      result = prime * result + this.capacity;
+      result = prime * result + Arrays.hashCode(this.children);
+      result = prime * result + this.level;
+      result = prime * result + ( this.points == null ? 0 : this.points
+         .hashCode() );
+      return result;
+   }
+
+   /**
     * Inserts a point into the quadtree. Returns <code>true</code> if the
     * point was successfully inserted into the quadtree directly or indirectly
     * through one of its children; returns <code>false</code> if the insertion
@@ -305,14 +336,25 @@ public class Quadtree implements Iterable < Vec2 > {
 
       /* Lower bound inclusive, upper bound exclusive. */
       if ( Bounds2.contains(this.bounds, point) ) {
-         if ( this.isLeaf() ) {
-            this.points.add(point);
-            if ( this.points.size() > this.capacity ) { this.split(); }
-            return true;
+         boolean isLeaf = true;
+         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+            final Quadtree child = this.children[i];
+            if ( child != null ) {
+               isLeaf = false;
+               if ( child.insert(point) ) { return true; }
+            }
          }
 
-         for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
-            if ( this.children[i].insert(point) ) { return true; }
+         if ( isLeaf ) {
+            this.points.add(point);
+            if ( this.points.size() > this.capacity ) {
+               this.split(this.capacity);
+            }
+            return true;
+         } else {
+            /* Case where a child has been culled. Try again. */
+            this.split(this.capacity);
+            return this.insert(point);
          }
       }
       return false;
@@ -369,7 +411,7 @@ public class Quadtree implements Iterable < Vec2 > {
     * containing the centers of its children. Increases node capacity if
     * necessary.
     *
-    * @return this octree
+    * @return this quadtree
     */
    @Experimental
    public Quadtree merge ( ) {
@@ -382,19 +424,19 @@ public class Quadtree implements Iterable < Vec2 > {
          Quadtree.DEFAULT_CAPACITY);
       for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
          final Quadtree child = this.children[i];
-
-         child.getPoints(pts);
-         final int len = pts.size();
-         if ( len > 0 ) {
-            final Vec2 center = new Vec2();
-            final Iterator < Vec2 > itr = pts.iterator();
-            while ( itr.hasNext() ) { Vec2.add(center, itr.next(), center); }
-            Vec2.div(center, len, center);
-            this.points.add(center);
-            pts.clear();
+         if ( child != null ) {
+            child.getPoints(pts);
+            final int ptsLen = pts.size();
+            if ( ptsLen > 0 ) {
+               final Vec2 center = new Vec2();
+               final Iterator < Vec2 > itr = pts.iterator();
+               while ( itr.hasNext() ) { Vec2.add(center, itr.next(), center); }
+               Vec2.mul(center, 1.0f / ptsLen, center);
+               this.points.add(center);
+               pts.clear();
+            }
+            this.children[i] = null;
          }
-
-         this.children[i] = null;
       }
 
       final int pointsLen = this.points.size();
@@ -411,10 +453,10 @@ public class Quadtree implements Iterable < Vec2 > {
     *
     * @return the points.
     */
-   public Vec2[] query ( final Bounds2 range ) {
+   public Vec2[] queryRange ( final Bounds2 range ) {
 
       final TreeMap < Float, Vec2 > found = new TreeMap <>();
-      this.query(range, found);
+      this.queryRange(range, found);
 
       /* Copy by value, so references can't change. */
       final Collection < Vec2 > values = found.values();
@@ -436,10 +478,10 @@ public class Quadtree implements Iterable < Vec2 > {
     *
     * @return the points.
     */
-   public Vec2[] query ( final Vec2 center, final float radius ) {
+   public Vec2[] queryRange ( final Vec2 center, final float radius ) {
 
       final TreeMap < Float, Vec2 > found = new TreeMap <>();
-      this.query(center, radius, found);
+      this.queryRange(center, radius, found);
 
       /* Copy by value, so references can't change. */
       final Collection < Vec2 > values = found.values();
@@ -474,14 +516,47 @@ public class Quadtree implements Iterable < Vec2 > {
     *
     * @param capacity the new capacity
     *
-    * @see Quadtree#split()
+    * @see Quadtree#split(int)
     */
    public void setCapacity ( final int capacity ) {
 
       if ( capacity > 0 ) {
          this.capacity = capacity;
-         if ( this.points.size() > capacity ) { this.split(); }
+         if ( this.points.size() > capacity ) { this.split(this.capacity); }
       }
+   }
+
+   /**
+    * Splits a quadtree into children. For cases where a minimum number of
+    * children nodes is desired, independent of point insertion. The result
+    * will be {@value Quadtree#CHILD_COUNT} raised to the power of iterations,
+    * e.g., 4, 16, 64, 256, etc.
+    *
+    * @param iterations    iteration count
+    * @param childCapacity child capacity
+    *
+    * @return this quadtree
+    *
+    * @see Quadtree#split(int)
+    */
+   public Quadtree subdivide ( final int iterations, final int childCapacity ) {
+
+      if ( iterations < 1 ) { return this; }
+
+      for ( int i = 0; i < iterations; ++i ) {
+         boolean isLeaf = true;
+         for ( int j = 0; j < Quadtree.CHILD_COUNT; ++j ) {
+            final Quadtree child = this.children[j];
+            if ( child != null ) {
+               isLeaf = false;
+               child.subdivide(iterations - 1, childCapacity);
+            }
+         }
+
+         if ( isLeaf ) { this.split(childCapacity); }
+      }
+
+      return this;
    }
 
    /**
@@ -539,6 +614,53 @@ public class Quadtree implements Iterable < Vec2 > {
 
       sb.append(' ').append('}');
       return sb;
+   }
+
+   /**
+    * Finds the average center in each leaf node of this quadtree and appends
+    * it to an array. If the node is empty, and includeEmpty is true, then the
+    * center of the cell bounds is used instead.
+    *
+    * @param includeEmpty include empty cells
+    * @param target       output array list
+    *
+    * @return centers
+    *
+    * @see Vec2#add(Vec2, Vec2, Vec2)
+    * @see Vec2#mul(Vec2, float, Vec2)
+    * @see Bounds2#center(Bounds2, Vec2)
+    */
+   @Recursive
+   protected ArrayList < Vec2 > centersMean ( final boolean includeEmpty,
+      final ArrayList < Vec2 > target ) {
+
+      boolean isLeaf = true;
+      for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
+         final Quadtree child = this.children[i];
+         if ( child != null ) {
+            isLeaf = false;
+            child.centersMean(includeEmpty, target);
+         }
+      }
+
+      if ( isLeaf ) {
+         final int ptsLen = this.points.size();
+         final Iterator < Vec2 > ptsItr = this.points.iterator();
+         if ( ptsLen > 1 ) {
+            final Vec2 result = new Vec2();
+            while ( ptsItr.hasNext() ) {
+               Vec2.add(result, ptsItr.next(), result);
+            }
+            Vec2.mul(result, 1.0f / ptsLen, result);
+            target.add(result);
+         } else if ( ptsLen > 0 ) {
+            target.add(new Vec2(ptsItr.next()));
+         } else if ( includeEmpty ) {
+            target.add(Bounds2.center(this.bounds, new Vec2()));
+         }
+      }
+
+      return target;
    }
 
    /**
@@ -605,11 +727,20 @@ public class Quadtree implements Iterable < Vec2 > {
     * @see Bounds2#center(Bounds2, Vec2)
     */
    @Recursive
-   protected TreeMap < Float, Vec2 > query ( final Bounds2 range,
+   protected TreeMap < Float, Vec2 > queryRange ( final Bounds2 range,
       final TreeMap < Float, Vec2 > found ) {
 
       if ( Bounds2.intersect(range, this.bounds) ) {
-         if ( this.isLeaf() ) {
+         boolean isLeaf = true;
+         for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
+            final Quadtree child = this.children[i];
+            if ( child != null ) {
+               isLeaf = false;
+               child.queryRange(range, found);
+            }
+         }
+
+         if ( isLeaf ) {
             final Iterator < Vec2 > itr = this.points.iterator();
             final Vec2 rCenter = new Vec2();
             Bounds2.center(range, rCenter);
@@ -618,10 +749,6 @@ public class Quadtree implements Iterable < Vec2 > {
                if ( Bounds2.containsInclusive(range, point) ) {
                   found.put(Vec2.dist(point, rCenter), point);
                }
-            }
-         } else {
-            for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
-               this.children[i].query(range, found);
             }
          }
       }
@@ -644,21 +771,26 @@ public class Quadtree implements Iterable < Vec2 > {
     * @see Utils#sqrt(float)
     */
    @Recursive
-   protected TreeMap < Float, Vec2 > query ( final Vec2 center,
+   protected TreeMap < Float, Vec2 > queryRange ( final Vec2 center,
       final float radius, final TreeMap < Float, Vec2 > found ) {
 
       if ( Bounds2.intersect(this.bounds, center, radius) ) {
-         if ( this.isLeaf() ) {
-            final Iterator < Vec2 > itr = this.points.iterator();
+         boolean isLeaf = true;
+         for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
+            final Quadtree child = this.children[i];
+            if ( child != null ) {
+               isLeaf = false;
+               child.queryRange(center, radius, found);
+            }
+         }
+
+         if ( isLeaf ) {
             final float rsq = radius * radius;
+            final Iterator < Vec2 > itr = this.points.iterator();
             while ( itr.hasNext() ) {
                final Vec2 point = itr.next();
                final float dsq = Vec2.distSq(center, point);
                if ( dsq <= rsq ) { found.put(Utils.sqrt(dsq), point); }
-            }
-         } else {
-            for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
-               this.children[i].query(center, radius, found);
             }
          }
       }
@@ -667,16 +799,32 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
-    * Splits the quadtree node into four child nodes.
+    * Splits the quadtree node into eight child nodes. The child capacity is
+    * the same as the parent's.
     *
-    * @return this quadtree.
+    * @return this quadtree
     */
-   protected Quadtree split ( ) {
+   protected Quadtree split ( ) { return this.split(this.capacity); }
+
+   /**
+    * Splits the quadtree node into eight child nodes.
+    *
+    * @param childCapacity child capacity
+    *
+    * @return this quadtree
+    */
+   protected Quadtree split ( final int childCapacity ) {
 
       final int nextLevel = this.level + 1;
       for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
-         this.children[i] = new Quadtree(new Bounds2(), this.capacity,
-            nextLevel);
+         final Quadtree child = this.children[i];
+         if ( child != null ) {
+            /* Bounds will be set by the split method. Level is final. */
+            child.setCapacity(childCapacity);
+         } else {
+            this.children[i] = new Quadtree(new Bounds2(), this.capacity,
+               nextLevel);
+         }
       }
 
       Bounds2.split(this.bounds, 0.5f, 0.5f,
@@ -690,8 +838,8 @@ public class Quadtree implements Iterable < Vec2 > {
       while ( itr.hasNext() ) {
          final Vec2 v = itr.next();
          boolean flag = false;
-         for ( int i = 0; i < Quadtree.CHILD_COUNT && !flag; ++i ) {
-            flag = this.children[i].insert(v);
+         for ( int j = 0; j < Quadtree.CHILD_COUNT && !flag; ++j ) {
+            flag = this.children[j].insert(v);
          }
       }
 

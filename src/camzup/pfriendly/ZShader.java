@@ -74,7 +74,7 @@ public class ZShader extends PShader {
 
    /**
     * Sets a GLSL vec4 uniform to a color. The alpha channel is treated as the
-    * last component.
+    * w component.
     *
     * @param name the uniform name
     * @param c    the color

@@ -894,21 +894,83 @@ public class Curve4 extends Curve implements Iterable < Knot4 > {
     * @param target     the output curve
     *
     * @return the curve
+    *
+    * @see Curve4#straightenHandles(Curve4)
+    * @see Curve4#smoothHandles(Curve4)
     */
    public static Curve4 fromPoints ( final boolean closedLoop,
       final Vec4[] points, final Curve4 target ) {
 
-      target.closedLoop = closedLoop;
-      target.name = "Constellation";
-      target.resize(points.length);
-      int incr = 0;
+      final int ptsLen = points.length;
+      if ( ptsLen < 2 ) { return target; }
+      target.resize(ptsLen);
+
       final Iterator < Knot4 > itr = target.knots.iterator();
-      for ( ; itr.hasNext(); ++incr ) {
-         final Vec4 pt = points[incr];
+      for ( int i = 0; itr.hasNext(); ++i ) {
+         final Vec4 pt = points[i];
          itr.next().set(pt, pt, pt);
       }
 
-      return Curve4.smoothHandles(target);
+      target.closedLoop = closedLoop;
+      target.name = "Points";
+
+      return ptsLen < 3 ? Curve4.straightenHandles(target) : Curve4
+         .smoothHandles(target);
+   }
+
+   /**
+    * Creates a curve from a series of points, where every other point
+    * represents a control point in a quadratic curve.
+    *
+    * @param closedLoop whether the curve is a closed loop
+    * @param points     the array of points
+    * @param target     the output curve
+    *
+    * @return the curve
+    *
+    * @see Curve4#fromPoints(boolean, Vec4[], Curve4)
+    * @see Knot4#fromSegQuadratic(Vec4, Vec4, Knot4, Knot4)
+    * @see Knot4#mirrorHandlesForward()
+    * @see Knot4#mirrorHandlesBackward()
+    */
+   public static Curve4 fromQuadratic ( final boolean closedLoop,
+      final Vec4[] points, final Curve4 target ) {
+
+      final int ptsLen = points.length;
+      if ( ptsLen < 3 ) {
+         return Curve4.fromPoints(closedLoop, points, target);
+      }
+      final int knotCount = ptsLen / 2 + ( closedLoop ? 0 : 1 );
+      if ( knotCount < 2 || ( closedLoop ? ptsLen % 2 != 0 : ( ptsLen + 1 ) % 2
+         != 0 ) ) {
+         System.err.println("Incorrect number of points.");
+         return target;
+      }
+
+      target.resize(knotCount);
+      final ArrayList < Knot4 > knots = target.knots;
+      final Iterator < Knot4 > itr = knots.iterator();
+
+      final Knot4 first = itr.next();
+      Knot4 prev = first;
+      Knot4 curr = null;
+      for ( int i = 1; itr.hasNext(); i += 2 ) {
+         curr = itr.next();
+         Knot4.fromSegQuadratic(points[i], points[i + 1], prev, curr);
+         prev = curr;
+      }
+
+      if ( closedLoop ) {
+         Knot4.fromSegQuadratic(points[ptsLen - 1], points[0], curr, first);
+      } else if ( curr != null ) {
+         first.coord.set(points[0]);
+         first.mirrorHandlesForward();
+         curr.mirrorHandlesBackward();
+      }
+
+      target.closedLoop = closedLoop;
+      target.name = "Quadratic";
+      return target;
    }
 
    /**
@@ -1041,10 +1103,10 @@ public class Curve4 extends Curve implements Iterable < Knot4 > {
    public static Curve4 smoothHandles ( final Curve4 target ) {
 
       final ArrayList < Knot4 > knots = target.knots;
-      final int knotLength = knots.size();
-      if ( knotLength < 3 ) { return target; }
+      final int knotCount = knots.size();
+      if ( knotCount < 3 ) { return target; }
 
-      final int knotLast = knotLength - 1;
+      final int knotLast = knotCount - 1;
       final Vec4 carry = new Vec4();
       final Iterator < Knot4 > itr = knots.iterator();
       final Knot4 first = itr.next();
