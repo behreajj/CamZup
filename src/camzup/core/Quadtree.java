@@ -45,7 +45,8 @@ public class Quadtree implements Iterable < Vec2 > {
    protected int capacity;
 
    /**
-    * The depth, or level, of the quadtree node.
+    * The depth, or level, of the quadtree node. The root node is at
+    * {@value Quadtree#ROOT_LEVEL}.
     */
    protected final int level;
 
@@ -87,7 +88,7 @@ public class Quadtree implements Iterable < Vec2 > {
     */
    public Quadtree ( final Bounds2 bounds, final int capacity ) {
 
-      this(bounds, capacity, 0);
+      this(bounds, capacity, Quadtree.ROOT_LEVEL);
    }
 
    /**
@@ -110,7 +111,7 @@ public class Quadtree implements Iterable < Vec2 > {
 
       this.bounds = Bounds2.fromPoints(points, new Bounds2());
       this.capacity = capacity < 1 ? 1 : capacity;
-      this.level = 0;
+      this.level = Quadtree.ROOT_LEVEL;
       this.points = new TreeSet <>();
       this.insertAll(points);
    }
@@ -128,7 +129,7 @@ public class Quadtree implements Iterable < Vec2 > {
 
       this.bounds = bounds;
       this.capacity = capacity < 1 ? 1 : capacity;
-      this.level = level < 0 ? 0 : level;
+      this.level = level < Quadtree.ROOT_LEVEL ? Quadtree.ROOT_LEVEL : level;
       this.points = new TreeSet <>();
    }
 
@@ -527,10 +528,32 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
-    * Splits a quadtree into children. For cases where a minimum number of
-    * children nodes is desired, independent of point insertion. The result
-    * will be {@value Quadtree#CHILD_COUNT} raised to the power of iterations,
-    * e.g., 4, 16, 64, 256, etc.
+    * Subdivides this quadtree.
+    *
+    * @return this quadtree
+    */
+   public Quadtree subdivide ( ) {
+
+      return this.subdivide(1);
+   }
+
+   /**
+    * Subdivides this quadtree.
+    *
+    * @param iterations iteration count
+    *
+    * @return this quadtree
+    */
+   public Quadtree subdivide ( final int iterations ) {
+
+      return this.subdivide(iterations, this.capacity);
+   }
+
+   /**
+    * Subdivides this quadtree. For cases where a minimum number of children
+    * nodes is desired, independent of point insertion. The result will be
+    * {@value Quadtree#CHILD_COUNT} raised to the power of iterations, e.g.,
+    * 4, 16, 64, 256, etc.
     *
     * @param iterations    iteration count
     * @param childCapacity child capacity
@@ -605,10 +628,22 @@ public class Quadtree implements Iterable < Vec2 > {
       } else {
          sb.append(", children: [ ");
          for ( int i = 0; i < Quadtree.CHILD_COUNT - 1; ++i ) {
-            this.children[i].toString(sb, places);
-            sb.append(',').append(' ');
+            final Quadtree child = this.children[i];
+            if ( child != null ) {
+               child.toString(sb, places);
+               sb.append(',').append(' ');
+            } else {
+               sb.append("null, ");
+            }
          }
-         sb.append(this.children[Quadtree.CHILD_COUNT - 1].toString(places));
+
+         final Quadtree last = this.children[Quadtree.CHILD_COUNT - 1];
+         if ( last != null ) {
+            sb.append(last.toString(places));
+         } else {
+            sb.append("null");
+         }
+
          sb.append(' ').append(']');
       }
 
@@ -849,12 +884,12 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
-    * Number of children held by a quadtree.
+    * Number of children held by a node.
     */
    public static final int CHILD_COUNT = 4;
 
    /**
-    * The default capacity.
+    * The default point capacity.
     */
    public static final int DEFAULT_CAPACITY = 8;
 
@@ -867,6 +902,11 @@ public class Quadtree implements Iterable < Vec2 > {
     * North West index for array of children nodes.
     */
    public static final int NORTH_WEST = 2;
+
+   /**
+    * The root level, or depth, {@value Quadtree#ROOT_LEVEL}.
+    */
+   public static final int ROOT_LEVEL = 0;
 
    /**
     * South East index for array of children nodes.

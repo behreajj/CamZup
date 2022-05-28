@@ -311,11 +311,11 @@ public class ZImage extends PImage {
       if ( target.format != PConstants.ALPHA ) { return target; }
 
       target.loadPixels();
-      final int[] pixels = target.pixels;
-      final int len = pixels.length;
+      final int[] px = target.pixels;
+      final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
-         final int a = pixels[i];
-         pixels[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
+         final int a = px[i];
+         px[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
       }
       target.format = PConstants.ARGB;
       target.updatePixels();
@@ -475,8 +475,8 @@ public class ZImage extends PImage {
 
       final int w = target.pixelWidth;
       final int h = target.pixelHeight;
-      final int[] pixels = target.pixels;
-      final int len = pixels.length;
+      final int[] px = target.pixels;
+      final int len = px.length;
 
       final float aspect = w / ( float ) h;
       final float wInv = aspect / ( w - 1.0f );
@@ -486,8 +486,8 @@ public class ZImage extends PImage {
       for ( int i = 0; i < len; ++i ) {
          final float xn = wInv * ( i % w );
          final float yn = hInv * ( i / w );
-         pixels[i] = Gradient.eval(grd, Sdf.conic(xn + xn - xo - 1.0f, 1.0f
-            - ( yn + yn + yOrigin ), radians));
+         px[i] = Gradient.eval(grd, Sdf.conic(xn + xn - xo - 1.0f, 1.0f - ( yn
+            + yn + yOrigin ), radians));
       }
 
       target.format = PConstants.ARGB;
@@ -795,6 +795,9 @@ public class ZImage extends PImage {
          oct.insert(new Vec3(lab.x, lab.y, lab.z));
       }
 
+      /* Unlike dither, shouldn't have to maintain a minimum of 8 centers. */
+      oct.cull();
+
       final Vec3[] centers = oct.centersMean(false);
       final int centersLen = centers.length;
       final Color[] result = new Color[1 + centersLen];
@@ -917,13 +920,13 @@ public class ZImage extends PImage {
       target.loadPixels();
 
       final int w = target.pixelWidth;
-      final int[] pixels = target.pixels;
-      final int len = pixels.length;
+      final int[] px = target.pixels;
+      final int len = px.length;
       final int[] flipped = new int[len];
 
       final int wn1 = w - 1;
       for ( int i = 0; i < len; ++i ) {
-         flipped[i / w * w + wn1 - i % w] = pixels[i];
+         flipped[i / w * w + wn1 - i % w] = px[i];
       }
 
       target.pixels = flipped;
@@ -946,13 +949,13 @@ public class ZImage extends PImage {
 
       final int h = target.pixelHeight;
       final int w = target.pixelWidth;
-      final int[] pixels = target.pixels;
-      final int len = pixels.length;
+      final int[] px = target.pixels;
+      final int len = px.length;
       final int[] flipped = new int[len];
 
       final int hn1 = h - 1;
       for ( int i = 0; i < len; ++i ) {
-         flipped[ ( hn1 - i / w ) * w + i % w] = pixels[i];
+         flipped[ ( hn1 - i / w ) * w + i % w] = px[i];
       }
 
       target.pixels = flipped;
@@ -1303,7 +1306,7 @@ public class ZImage extends PImage {
       wMax = wMax < 1 ? 32 : wMax;
       final PImage target = new PImage(wMax, hTotal, PConstants.ARGB, 1);
       target.loadPixels();
-      final int[] trgPx = target.pixels;
+      final int[] pxTrg = target.pixels;
       int yCursor = 0;
 
       /* Loop through lines. */
@@ -1337,8 +1340,8 @@ public class ZImage extends PImage {
                       * because glyph descenders or ascenders may overlap.
                       */
                      final int wSrc = source.pixelWidth;
-                     final int[] srcPx = source.pixels;
-                     final int srcLen = srcPx.length;
+                     final int[] pxSrc = source.pixels;
+                     final int srcLen = pxSrc.length;
                      final int yStart = yCursor + lineHeight - glyph.topExtent;
 
                      /*
@@ -1354,8 +1357,8 @@ public class ZImage extends PImage {
                          * blue channel, to ARGB. Composite target and source,
                          * then composite in tint color.
                          */
-                        trgPx[ ( yStart + idxSrc / wSrc ) * wMax + xCursor
-                           + idxSrc % wSrc] |= srcPx[idxSrc] << 0x18 | vClr;
+                        pxTrg[ ( yStart + idxSrc / wSrc ) * wMax + xCursor
+                           + idxSrc % wSrc] |= pxSrc[idxSrc] << 0x18 | vClr;
                      }
 
                      // target.updatePixels(xCursor, yCursor, wSrc, hSrc);
@@ -2455,6 +2458,152 @@ public class ZImage extends PImage {
       sb.append(' ');
       sb.append('}');
       return sb.toString();
+   }
+
+   /**
+    * Removes excess transparent pixels from an image.
+    *
+    * @param source the source image
+    * @param target the target image
+    *
+    * @return the trimmed image
+    *
+    * @author Oleg Mikhailov
+    */
+   public static PImage trimAlpha ( final PImage source, final PImage target ) {
+
+      return ZImage.trimAlpha(source, target, null);
+   }
+
+   /**
+    * Removes excess transparent pixels from an image. Optionally, assigns the
+    * offset to a vector. Adapted from the implementation by Oleg Mikhailov:
+    * <a href=
+    * "https://stackoverflow.com/a/36938923">https://stackoverflow.com/a/36938923</a>.
+    *
+    * @param source the source image
+    * @param target the target image
+    * @param offset the offset vector
+    *
+    * @return the trimmed image
+    *
+    * @author Oleg Mikhailov
+    */
+   public static PImage trimAlpha ( final PImage source, final PImage target,
+      final Vec2 offset ) {
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not resize PGraphics with this method.");
+         return target;
+      }
+
+      final int wSrc = source.pixelWidth;
+      final int hSrc = source.pixelHeight;
+      if ( wSrc < 2 || hSrc < 2 ) {
+         if ( offset != null ) { offset.set(0.0f, 0.0f); }
+         return target;
+      }
+
+      source.loadPixels();
+      final int[] pxSrc = source.pixels;
+      final int pd = source.pixelDensity;
+
+      final int wn1 = wSrc - 1;
+      final int hn1 = hSrc - 1;
+      int minRight = wn1;
+      int minBottom = hn1;
+
+      /* Top search. y is outer loop, x is inner loop. */
+      int top = -1;
+      boolean goTop = true;
+      while ( top < hn1 && goTop ) {
+         ++top;
+         final int wtop = wSrc * top;
+         int x = -1;
+         while ( x < wn1 && goTop ) {
+            ++x;
+            if ( ( pxSrc[wtop + x] & 0xff000000 ) != 0 ) {
+               minRight = x;
+               minBottom = top;
+               goTop = false;
+            }
+         }
+      }
+
+      /* Left search. x is outer loop, y is inner loop. */
+      int left = -1;
+      boolean goLeft = true;
+      while ( left < minRight && goLeft ) {
+         ++left;
+         int y = hSrc;
+         while ( y > top && goLeft ) {
+            --y;
+            if ( ( pxSrc[y * wSrc + left] & 0xff000000 ) != 0 ) {
+               minBottom = y;
+               goLeft = false;
+            }
+         }
+      }
+
+      /* Bottom search. y is outer loop, x is inner loop. */
+      int bottom = hSrc;
+      boolean goBottom = true;
+      while ( bottom > minBottom && goBottom ) {
+         --bottom;
+         final int wbottom = wSrc * bottom;
+         int x = wSrc;
+         while ( x > left && goBottom ) {
+            --x;
+            if ( ( pxSrc[wbottom + x] & 0xff000000 ) != 0 ) {
+               minRight = x;
+               goBottom = false;
+            }
+         }
+      }
+
+      /* Right search. x is outer loop, y is inner loop. */
+      int right = wSrc;
+      boolean goRight = true;
+      while ( right > minRight && goRight ) {
+         --right;
+         int y = bottom + 1;
+         while ( y > top && goRight ) {
+            --y;
+            if ( ( pxSrc[y * wSrc + right] & 0xff000000 ) != 0 ) {
+               goRight = false;
+            }
+         }
+      }
+
+      final int wTrg = 1 + right - left;
+      final int hTrg = 1 + bottom - top;
+      if ( wTrg < 2 || hTrg < 2 ) {
+         if ( offset != null ) { offset.set(0.0f, 0.0f); }
+         return target;
+      }
+      final int lenTrg = wTrg * hTrg;
+      final int[] pxTrg = new int[lenTrg];
+
+      for ( int i = 0; i < lenTrg; ++i ) {
+         // final int xTrg = i % wTrg;
+         // final int yTrg = i / wTrg;
+         // final int xSrc = left + xTrg;
+         // final int ySrc = top + yTrg;
+         // final int idxSrc = wSrc * ySrc + xSrc;
+         pxTrg[i] = pxSrc[wSrc * ( top + i / wTrg ) + left + i % wTrg];
+      }
+
+      if ( source != target ) { target.loadPixels(); }
+      target.format = PConstants.ARGB;
+      target.pixels = pxTrg;
+      target.width = wTrg / pd;
+      target.height = hTrg / pd;
+      target.pixelWidth = wTrg;
+      target.pixelHeight = hTrg;
+      target.updatePixels();
+
+      if ( offset != null ) { offset.set(left, top); }
+      return target;
    }
 
    /**

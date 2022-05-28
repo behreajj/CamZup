@@ -162,3 +162,4 @@ bicubic
 kappa
 circumradius
 inradius
+dither

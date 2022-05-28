@@ -386,11 +386,16 @@ public class Bounds2 implements Comparable < Bounds2 > {
     */
    protected Bounds2 scale ( final float w, final float h ) {
 
+      // TODO: Do (w, h) need to copy the sign of (mx - mn) for this to scale
+      // correctly?
+
       final float xCenter = Utils.diff(this.max.x, this.min.x) * 0.5f;
       final float yCenter = Utils.diff(this.max.y, this.min.y) * 0.5f;
 
-      final float vw = Utils.max(IUtils.EPSILON, w);
-      final float vh = Utils.max(IUtils.EPSILON, h);
+      final float vw = w < -IUtils.EPSILON || w > IUtils.EPSILON ? w
+         : IUtils.EPSILON;
+      final float vh = h < -IUtils.EPSILON || h > IUtils.EPSILON ? h
+         : IUtils.EPSILON;
 
       this.min.x = ( this.min.x - xCenter ) * vw + xCenter;
       this.min.y = ( this.min.y - yCenter ) * vh + yCenter;
@@ -615,7 +620,6 @@ public class Bounds2 implements Comparable < Bounds2 > {
          final float x = p.x;
          final float y = p.y;
 
-         /* Minimum, maximum need separate if checks, not if-else. */
          if ( x < lb.x ) { lb.x = x; }
          if ( x > ub.x ) { ub.x = x; }
          if ( y < lb.y ) { lb.y = y; }

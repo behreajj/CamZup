@@ -48,7 +48,8 @@ public class Octree implements Iterable < Vec3 > {
    protected int capacity;
 
    /**
-    * The depth, or level, of the octree node.
+    * The depth, or level, of the octree node. The root node is at
+    * {@value Octree#ROOT_LEVEL}.
     */
    protected final int level;
 
@@ -90,7 +91,7 @@ public class Octree implements Iterable < Vec3 > {
     */
    public Octree ( final Bounds3 bounds, final int capacity ) {
 
-      this(bounds, capacity, 0);
+      this(bounds, capacity, Octree.ROOT_LEVEL);
    }
 
    /**
@@ -113,7 +114,7 @@ public class Octree implements Iterable < Vec3 > {
 
       this.bounds = Bounds3.fromPoints(points, new Bounds3());
       this.capacity = capacity < 1 ? 1 : capacity;
-      this.level = 0;
+      this.level = Octree.ROOT_LEVEL;
       this.points = new TreeSet <>();
       this.insertAll(points);
    }
@@ -131,7 +132,7 @@ public class Octree implements Iterable < Vec3 > {
 
       this.bounds = bounds;
       this.capacity = capacity < 1 ? 1 : capacity;
-      this.level = level < 0 ? 0 : level;
+      this.level = level < Octree.ROOT_LEVEL ? Octree.ROOT_LEVEL : level;
       this.points = new TreeSet <>();
    }
 
@@ -266,7 +267,6 @@ public class Octree implements Iterable < Vec3 > {
     */
    @Recursive
    public int getMaxLevel ( ) {
-      // TODO: Rename to maxLevel?
 
       int mxLvl = this.level;
       for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
@@ -530,9 +530,17 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Splits an octree into child nodes independent from point insertion. For
-    * cases where a minimum number of children nodes is desired. The result
-    * will be 8 raised to the power of iterations, e.g., 8, 64, 512, etc.
+    * Subdivides this octree.
+    *
+    * @return this octree
+    */
+   public Octree subdivide ( ) {
+
+      return this.subdivide(1);
+   }
+
+   /**
+    * Subdivides this octree
     *
     * @param iterations iteration count
     *
@@ -544,10 +552,10 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Splits an octree into children. For cases where a minimum number of
-    * children nodes is desired, independent of point insertion. The result
-    * will be {@value Octree#CHILD_COUNT} raised to the power of iterations,
-    * e.g., 8, 64, 512, etc.
+    * Subdivides this octree. For cases where a minimum number of children
+    * nodes is desired, independent of point insertion. The result will be
+    * {@value Octree#CHILD_COUNT} raised to the power of iterations, e.g., 8,
+    * 64, 512, etc.
     *
     * @param iterations    iteration count
     * @param childCapacity child capacity
@@ -779,15 +787,15 @@ public class Octree implements Iterable < Vec3 > {
    }
 
    /**
-    * Splits the octree node into eight child nodes. The child capacity is the
-    * same as the parent's.
+    * Splits this octree node into eight child nodes. The child capacity is
+    * the same as the parent's.
     *
     * @return this octree
     */
    protected Octree split ( ) { return this.split(this.capacity); }
 
    /**
-    * Splits the octree node into eight child nodes.
+    * Splits this octree node into eight child nodes.
     *
     * @param childCapacity child capacity
     *
@@ -860,10 +868,22 @@ public class Octree implements Iterable < Vec3 > {
       } else {
          sb.append(", children: [ ");
          for ( int i = 0; i < Octree.CHILD_COUNT - 1; ++i ) {
-            this.children[i].toString(sb, places);
-            sb.append(',').append(' ');
+            final Octree child = this.children[i];
+            if ( child != null ) {
+               child.toString(sb, places);
+               sb.append(',').append(' ');
+            } else {
+               sb.append("null, ");
+            }
          }
-         sb.append(this.children[Octree.CHILD_COUNT - 1].toString(places));
+
+         final Octree last = this.children[Octree.CHILD_COUNT - 1];
+         if ( last != null ) {
+            sb.append(last.toString(places));
+         } else {
+            sb.append("null");
+         }
+
          sb.append(' ').append(']');
       }
 
@@ -892,12 +912,12 @@ public class Octree implements Iterable < Vec3 > {
    public static final int BACK_SOUTH_WEST = 0;
 
    /**
-    * Number of children held by a octree.
+    * Number of children held by a node.
     */
    public static final int CHILD_COUNT = 8;
 
    /**
-    * The default capacity.
+    * The default point capacity.
     */
    public static final int DEFAULT_CAPACITY = 8;
 
@@ -920,5 +940,10 @@ public class Octree implements Iterable < Vec3 > {
     * Top South West index for array of children nodes.
     */
    public static final int FRONT_SOUTH_WEST = 4;
+
+   /**
+    * The root level, or depth, {@value Octree#ROOT_LEVEL}.
+    */
+   public static final int ROOT_LEVEL = 0;
 
 }

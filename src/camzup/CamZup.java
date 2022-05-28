@@ -59,33 +59,32 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      // 8 ^ 1 = 8,
-      // 8 ^ 2 = 16,
-      // 8 ^ 3 = 32,
-      // 8 ^ 4 = 64,
-
       // int count = 2048;
       // Vec3[] samples = new Vec3[count];
       // Octree octree = new Octree();
-      //
-      // // System.out.println(octree.getMaxLevel());
-      // // System.out.println(octree.countLeaves());
+
+      // System.out.println(octree.getMaxLevel());
+      // System.out.println(octree.countLeaves());
       // octree.subdivide(3, octree.getCapacity());
       // System.out.println(octree.getMaxLevel());
       // System.out.println(octree.countLeaves());
-      //
+
       // Rng rng = new Rng();
       // for ( int i = 0; i < count; ++i ) {
       // Vec3 sample = new Vec3();
-      // Vec3.randomCartesian(rng, -0.5f, 0.5f, sample);
+      // Vec3.randomCartesian(rng, -0.25f, 0.325f, sample);
       // octree.insert(sample);
       // samples[i] = sample;
       // }
       //
-      // System.out.println(octree.getLeaves().length);
-      // System.out.println(octree.getPoints().length);
       //
       // octree.cull();
+      //
+      // System.out.println(octree.getMaxLevel());
+      // System.out.println(octree.countLeaves());
+      // System.out.println(octree.countPoints());
+
+      // System.out.println(octree);
       //
       // System.out.println(octree.countLeaves());
       // System.out.println(octree.getLeaves().length);

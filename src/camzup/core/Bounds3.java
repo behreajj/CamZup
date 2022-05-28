@@ -421,9 +421,12 @@ public class Bounds3 implements Comparable < Bounds3 > {
       final float yCenter = Utils.diff(this.max.y, this.min.y) * 0.5f;
       final float zCenter = Utils.diff(this.max.z, this.min.z) * 0.5f;
 
-      final float vw = Utils.max(IUtils.EPSILON, w);
-      final float vh = Utils.max(IUtils.EPSILON, h);
-      final float vd = Utils.max(IUtils.EPSILON, d);
+      final float vw = w < -IUtils.EPSILON || w > IUtils.EPSILON ? w
+         : IUtils.EPSILON;
+      final float vh = h < -IUtils.EPSILON || h > IUtils.EPSILON ? h
+         : IUtils.EPSILON;
+      final float vd = d < -IUtils.EPSILON || d > IUtils.EPSILON ? d
+         : IUtils.EPSILON;
 
       this.min.x = ( this.min.x - xCenter ) * vw + xCenter;
       this.min.y = ( this.min.y - yCenter ) * vh + yCenter;
@@ -655,7 +658,6 @@ public class Bounds3 implements Comparable < Bounds3 > {
          final float y = p.y;
          final float z = p.z;
 
-         /* Minimum, maximum need separate if checks, not if-else. */
          if ( x < lb.x ) { lb.x = x; }
          if ( x > ub.x ) { ub.x = x; }
          if ( y < lb.y ) { lb.y = y; }
