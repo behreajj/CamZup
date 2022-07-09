@@ -417,7 +417,7 @@ public abstract class TextShape {
                prevKnot = currKnot;
 
                /* The knot appended at move-to duplicates the last knot. */
-               currKnot = currCurve.removeAt(0);
+               currCurve.removeAt(0, currKnot);
                prevKnot.foreHandle.set(currKnot.foreHandle);
 
                /* The y-down to y-up flips the winding order. */

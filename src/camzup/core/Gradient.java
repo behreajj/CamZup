@@ -334,13 +334,11 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final ArrayList < ColorKey > keyArr = new ArrayList <>(this.keys.size());
       keyArr.addAll(this.keys);
       this.keys.clear();
-      final Iterator < ColorKey > itr = keyArr.iterator();
       final float denom = 1.0f / ( keyArr.size() - 1.0f );
-
+      final Iterator < ColorKey > itr = keyArr.iterator();
       for ( float incr = 0.0f; itr.hasNext(); ++incr ) {
          itr.next().step = incr * denom;
       }
-
       this.keys.addAll(keyArr);
       return this;
    }
@@ -654,6 +652,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @return the success
     */
    public boolean remove ( final ColorKey key ) {
+
+      // TODO: Make consistent with Curve2,3?
 
       return this.keys.remove(key);
    }
@@ -1156,12 +1156,11 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final StringBuilder sbSwatch = new StringBuilder(1024);
       sbSwatch.append("<g id=\"swatches\">\n");
 
-      int idx = 0;
       final int len = this.keys.size();
       final float toFac = len > 1 ? 1.0f / len : 1.0f;
       final Iterator < ColorKey > itr = this.keys.iterator();
 
-      for ( ; itr.hasNext(); ++idx ) {
+      for ( int idx = 0; itr.hasNext(); ++idx ) {
          final ColorKey ck = itr.next();
          final Color clr = ck.clr;
 

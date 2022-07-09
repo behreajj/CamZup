@@ -685,7 +685,7 @@ public class Bounds2 implements Comparable < Bounds2 > {
    /**
     * Evaluates whether a bounding area intersects a circle.
     *
-    * @param a      the bounding area
+    * @param a      the bounds
     * @param center the circle center
     * @param radius the circle radius
     *
@@ -694,15 +694,10 @@ public class Bounds2 implements Comparable < Bounds2 > {
    public static boolean intersect ( final Bounds2 a, final Vec2 center,
       final float radius ) {
 
-      float yd = 0.0f;
-      if ( center.y < a.min.y ) {
-         yd = center.y - a.min.y;
-      } else if ( center.y > a.max.y ) { yd = center.y - a.max.y; }
-
-      float xd = 0.0f;
-      if ( center.x < a.min.x ) {
-         xd = center.x - a.min.x;
-      } else if ( center.x > a.max.x ) { xd = center.x - a.max.x; }
+      final float yd = center.y < a.min.y ? center.y - a.min.y : center.y
+         > a.max.y ? center.y - a.max.y : 0.0f;
+      final float xd = center.x < a.min.x ? center.x - a.min.x : center.x
+         > a.max.x ? center.x - a.max.x : 0.0f;
 
       return xd * xd + yd * yd < radius * radius;
    }

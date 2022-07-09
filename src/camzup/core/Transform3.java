@@ -828,10 +828,12 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
          this.updateAxes();
       }
 
-      this.scalePrev.set(this.scale);
-      if ( xScale != 0.0f ) { this.scale.x = xScale; }
-      if ( yScale != 0.0f ) { this.scale.y = yScale; }
-      if ( zScale != 0.0f ) { this.scale.z = zScale; }
+      if ( xScale != 0.0f && yScale != 0.0f && zScale != 0.0f ) {
+         this.scalePrev.set(this.scale);
+         this.scale.x = xScale;
+         this.scale.y = yScale;
+         this.scale.z = zScale;
+      }
 
       return this;
    }

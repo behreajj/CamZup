@@ -30,7 +30,13 @@ public class Quaternion implements Comparable < Quaternion > {
     * The default constructor. Defaults to the identity, (1.0, 0.0, 0.0, 0.0)
     * .
     */
-   public Quaternion ( ) {}
+   public Quaternion ( ) {
+
+      /*
+       * Flip x, y, z: https://stackoverflow.com/a/33999726 . These couldn't be
+       * matched up to scaling a mesh on an axis.
+       */
+   }
 
    /**
     * Constructs a quaternion by float component.
@@ -1693,9 +1699,9 @@ public class Quaternion implements Comparable < Quaternion > {
 
    /**
     * Creates a random unit quaternion. Uses an algorithm by Ken Shoemake,
-    * reproduced at this Math Stack Exchange discussion: <a href=
-    * "https://math.stackexchange.com/questions/131336/uniform-random-quaternion-in-a-restricted-angle-range">Uniform
-    * Random Quaternion In a restricted angle range</a> .
+    * reproduced at this Math Stack Exchange discussion:
+    * <a href= "https://math.stackexchange.com/q/131336">Uniform Random
+    * Quaternion In a restricted angle range</a> .
     *
     * @param rng    the random number generator
     * @param target the output quaternion

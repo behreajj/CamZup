@@ -1,5 +1,6 @@
 package camzup.pfriendly;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -71,6 +72,51 @@ public class ZImage extends PImage {
     * The default constructor.
     */
    protected ZImage ( ) {}
+
+   /**
+    * Tests this image for equivalence with another object.
+    *
+    * @param obj the object
+    *
+    * @return the equivalence
+    *
+    * @see Arrays#equals(int[], int[])
+    */
+   @Override
+   public boolean equals ( final Object obj ) {
+
+      if ( this == obj ) { return true; }
+      if ( obj == null || this.getClass() != obj.getClass() ) { return false; }
+      final ZImage z = ( ZImage ) obj;
+      if ( this.format != z.format || this.width != z.width || this.pixelDensity
+         != z.pixelDensity || this.pixelHeight != z.pixelHeight
+         || this.pixelWidth != z.pixelWidth || this.height != z.height ) {
+         return false;
+      }
+      return Arrays.equals(this.pixels, z.pixels);
+   }
+
+   /**
+    * Returns a hash code for this image.
+    *
+    * @return the hash code
+    *
+    * @see Arrays#hashCode(int[])
+    */
+   @Override
+   public int hashCode ( ) {
+
+      final int prime = 31;
+      int result = 1;
+      result = prime * result + this.format;
+      result = prime * result + this.pixelDensity;
+      result = prime * result + this.pixelHeight;
+      result = prime * result + this.pixelWidth;
+      result = prime * result + this.height;
+      result = prime * result + this.width;
+      result = prime * result + Arrays.hashCode(this.pixels);
+      return result;
+   }
 
    /**
     * Resizes the image to a requested size in pixels using bicubic
@@ -1707,18 +1753,18 @@ public class ZImage extends PImage {
     * Multiplies the red, green and blue channels of each pixel in the image
     * by its alpha channel.
     *
-    * @param source the source image
+    * @param target the source image
     *
     * @return the pre-multiplied image
     */
-   public static PImage premul ( final PImage source ) {
+   public static PImage premul ( final PImage target ) {
 
-      source.loadPixels();
+      target.loadPixels();
 
-      final int[] px = source.pixels;
+      final int[] px = target.pixels;
       final int len = px.length;
 
-      if ( source.format == PConstants.ALPHA ) {
+      if ( target.format == PConstants.ALPHA ) {
          for ( int i = 0; i < len; ++i ) {
             final int a = px[i];
             px[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
@@ -1729,21 +1775,28 @@ public class ZImage extends PImage {
          final int ai = px[i] >> 0x18 & 0xff;
          if ( ai < 1 ) {
             px[i] = 0x00000000;
-         } else if ( ai < 0xff ) {
+         } else if ( ai < 255 ) {
             final int ri = px[i] >> 0x10 & 0xff;
             final int gi = px[i] >> 0x08 & 0xff;
             final int bi = px[i] & 0xff;
 
             final float af = ai * IUtils.ONE_255;
-            px[i] = ai << 0x18 | ( int ) ( ri * af + 0.5f ) << 0x10
-               | ( int ) ( gi * af + 0.5f ) << 0x08 | ( int ) ( bi * af
-                  + 0.5f );
+            int rp = ( int ) ( ri * af + 0.5f );
+            int gp = ( int ) ( gi * af + 0.5f );
+            int bp = ( int ) ( bi * af + 0.5f );
+
+            if ( rp > 255 ) { rp = 255; }
+            if ( gp > 255 ) { gp = 255; }
+            if ( bp > 255 ) { bp = 255; }
+
+            px[i] = ai << 0x18 | rp << 0x10 | gp << 0x08 | bp;
          }
       }
-      source.format = PConstants.ARGB;
-      source.updatePixels();
 
-      return source;
+      target.format = PConstants.ARGB;
+      target.updatePixels();
+
+      return target;
    }
 
    /**
@@ -2171,6 +2224,288 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Rotates an image around its center by an angle in radians. Defaults to
+    * other methods for rotations of approximately 0, 90, 180 and 270 degrees.
+    * Uses bilinear interpolation method.<br>
+    * <br>
+    * It is recommended to trim the image's alpha before and/or after
+    * rotation. Depending on the renderer, alpha should be premultiplied prior
+    * to rotation and unpremultiplied after.
+    * 
+    * @param target the image
+    * @param angle  the angle in radians
+    * 
+    * @return the rotated image
+    * 
+    * @see Utils#modRadians(float)
+    * @see Utils#approx(float, float, float)
+    * @see ZImage#rotate90(PImage)
+    * @see ZImage#rotate180(PImage)
+    * @see ZImage#rotate270(PImage)
+    * @see Utils#abs(float)
+    * @see Utils#ceil(float)
+    * @see Utils#floor(float)
+    */
+   public static PImage rotateBilinear ( final PImage target,
+      final float angle ) {
+
+      /* 1 / 720 degrees = .00872 radians. */
+      final float aVerif = Utils.modRadians(angle);
+      if ( Utils.approx(aVerif, 0.0f, 0.008726646f) ) { return target; }
+      if ( Utils.approx(aVerif, IUtils.HALF_PI, 0.008726646f) ) {
+         return ZImage.rotate90(target);
+      }
+      if ( Utils.approx(aVerif, IUtils.PI, 0.008726646f) ) {
+         return ZImage.rotate180(target);
+      }
+      if ( Utils.approx(aVerif, 4.712389f, 0.008726646f) ) {
+         return ZImage.rotate270(target);
+      }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      /*
+       * Source: http://polymathprogrammer.com/2010/04/05/
+       * image-rotation-with-bilinear-interpolation- and-no-clipping/
+       */
+
+      final double avd = aVerif;
+      final float cosa = ( float ) Math.cos(avd);
+      final float sina = ( float ) Math.sin(avd);
+
+      target.loadPixels();
+      final int[] pxSrc = target.pixels;
+      final int wSrc = target.pixelWidth;
+      final int hSrc = target.pixelHeight;
+      final int pdSrc = target.pixelDensity;
+
+      final float absCosa = Utils.abs(cosa);
+      final float absSina = Utils.abs(sina);
+      final int wTrg = Utils.ceil(hSrc * absSina + wSrc * absCosa);
+      final int hTrg = Utils.ceil(hSrc * absCosa + wSrc * absSina);
+
+      final float xSrcCenter = wSrc * 0.5f;
+      final float ySrcCenter = hSrc * 0.5f;
+      final float xTrgCenter = wTrg * 0.5f;
+      final float yTrgCenter = hTrg * 0.5f;
+
+      final int pxLenTrg = wTrg * hTrg;
+      final int[] pxTrg = new int[pxLenTrg];
+      for ( int i = 0; i < pxLenTrg; ++i ) {
+         final int xTrg = i % wTrg;
+         final int yTrg = i / wTrg;
+         final float xSgn = xTrg - xTrgCenter;
+         final float ySgn = yTrg - yTrgCenter;
+
+         /*
+          * Avoid conversion to and from polar coordinates by using vector
+          * rotation formula.
+          */
+         final float xSrc = xSrcCenter + ( cosa * xSgn - sina * ySgn );
+         final float ySrc = ySrcCenter + ( cosa * ySgn + sina * xSgn );
+
+         /* Specific to bilinear sampling. */
+         final int xf = Utils.floor(xSrc);
+         final int xc = Utils.ceil(xSrc);
+         final int yf = Utils.floor(ySrc);
+         final int yc = Utils.ceil(ySrc);
+
+         final boolean xfInBounds = xf > -1 && xf < wSrc;
+         final boolean xcInBounds = xc > -1 && xc < wSrc;
+         final boolean yfInBounds = yf > -1 && yf < hSrc;
+         final boolean ycInBounds = yc > -1 && yc < hSrc;
+
+         /* Pixel corners colors. */
+         final int c00 = xfInBounds && yfInBounds ? pxSrc[xf + yf * wSrc] : 0;
+         final int c10 = xcInBounds && yfInBounds ? pxSrc[xc + yf * wSrc] : 0;
+         final int c11 = xcInBounds && ycInBounds ? pxSrc[xc + yc * wSrc] : 0;
+         final int c01 = xfInBounds && ycInBounds ? pxSrc[xf + yc * wSrc] : 0;
+
+         final float xErr = xSrc - xf;
+
+         float a0 = 0.0f;
+         float r0 = 0.0f;
+         float g0 = 0.0f;
+         float b0 = 0.0f;
+
+         final int a00 = c00 >> 0x18 & 0xff;
+         final int a10 = c10 >> 0x18 & 0xff;
+         if ( a00 > 0 || a10 > 0 ) {
+            final float u = 1.0f - xErr;
+            a0 = u * a00 + xErr * a10;
+            if ( a0 > 0.0f ) {
+               final int r00 = c00 >> 0x10 & 0xff;
+               final int g00 = c00 >> 0x08 & 0xff;
+               final int b00 = c00 & 0xff;
+
+               final int r10 = c10 >> 0x10 & 0xff;
+               final int g10 = c10 >> 0x08 & 0xff;
+               final int b10 = c10 & 0xff;
+
+               r0 = u * r00 + xErr * r10;
+               g0 = u * g00 + xErr * g10;
+               b0 = u * b00 + xErr * b10;
+            }
+         }
+
+         float a1 = 0.0f;
+         float r1 = 0.0f;
+         float g1 = 0.0f;
+         float b1 = 0.0f;
+
+         final int a01 = c01 >> 0x18 & 0xff;
+         final int a11 = c11 >> 0x18 & 0xff;
+         if ( a01 > 0 || a11 > 0 ) {
+            final float u = 1.0f - xErr;
+            a1 = u * a01 + xErr * a11;
+            if ( a1 > 0.0f ) {
+               final int r01 = c01 >> 0x10 & 0xff;
+               final int g01 = c01 >> 0x08 & 0xff;
+               final int b01 = c01 & 0xff;
+
+               final int r11 = c11 >> 0x10 & 0xff;
+               final int g11 = c11 >> 0x08 & 0xff;
+               final int b11 = c11 & 0xff;
+
+               r1 = u * r01 + xErr * r11;
+               g1 = u * g01 + xErr * g11;
+               b1 = u * b01 + xErr * b11;
+            }
+         }
+
+         float a2 = 0.0f;
+         float r2 = 0.0f;
+         float g2 = 0.0f;
+         float b2 = 0.0f;
+
+         if ( a0 > 0.0f || a1 > 0.0f ) {
+            final float yErr = ySrc - yf;
+            final float u = 1.0f - yErr;
+            a2 = u * a0 + yErr * a1;
+            if ( a2 > 0.0f ) {
+               r2 = u * r0 + yErr * r1;
+               g2 = u * g0 + yErr * g1;
+               b2 = u * b0 + yErr * b1;
+            }
+
+            int ai = ( int ) a2;
+            int ri = ( int ) r2;
+            int gi = ( int ) g2;
+            int bi = ( int ) b2;
+
+            if ( ai > 255 ) { ai = 255; }
+            if ( ri > 255 ) { ri = 255; }
+            if ( gi > 255 ) { gi = 255; }
+            if ( bi > 255 ) { bi = 255; }
+
+            pxTrg[i] = ai << 0x18 | ri << 0x10 | gi << 0x08 | bi;
+         }
+      }
+
+      target.format = PConstants.ARGB;
+      target.pixels = pxTrg;
+      target.width = wTrg / pdSrc;
+      target.height = hTrg / pdSrc;
+      target.pixelWidth = wTrg;
+      target.pixelHeight = hTrg;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Rotates an image around its center by an angle in radians. Defaults to
+    * other methods for rotations of approximately 0, 90, 180 and 270 degrees.
+    * Uses nearest neighbor method.<br>
+    * <br>
+    * It is recommended to trim the image's alpha before and/or after
+    * rotation.
+    * 
+    * @param target the image
+    * @param angle  the angle in radians
+    * 
+    * @return the rotated image
+    * 
+    * @see Utils#modRadians(float)
+    * @see Utils#approx(float, float, float)
+    * @see ZImage#rotate90(PImage)
+    * @see ZImage#rotate180(PImage)
+    * @see ZImage#rotate270(PImage)
+    * @see Utils#abs(float)
+    * @see Utils#ceil(float)
+    * @see Utils#round(float)
+    */
+   public static PImage rotateNearest ( final PImage target,
+      final float angle ) {
+
+      /* 1 / 720 degrees = .00872 radians. */
+      final float aVerif = Utils.modRadians(angle);
+      if ( Utils.approx(aVerif, 0.0f, 0.008726646f) ) { return target; }
+      if ( Utils.approx(aVerif, IUtils.HALF_PI, 0.008726646f) ) {
+         return ZImage.rotate90(target);
+      }
+      if ( Utils.approx(aVerif, IUtils.PI, 0.008726646f) ) {
+         return ZImage.rotate180(target);
+      }
+      if ( Utils.approx(aVerif, 4.712389f, 0.008726646f) ) {
+         return ZImage.rotate270(target);
+      }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      final double avd = aVerif;
+      final float cosa = ( float ) Math.cos(avd);
+      final float sina = ( float ) Math.sin(avd);
+
+      target.loadPixels();
+      final int[] pxSrc = target.pixels;
+      final int wSrc = target.pixelWidth;
+      final int hSrc = target.pixelHeight;
+      final int pdSrc = target.pixelDensity;
+
+      final float absCosa = Utils.abs(cosa);
+      final float absSina = Utils.abs(sina);
+      final int wTrg = Utils.ceil(hSrc * absSina + wSrc * absCosa);
+      final int hTrg = Utils.ceil(hSrc * absCosa + wSrc * absSina);
+
+      final float xSrcCenter = wSrc * 0.5f;
+      final float ySrcCenter = hSrc * 0.5f;
+      final float xTrgCenter = wTrg * 0.5f;
+      final float yTrgCenter = hTrg * 0.5f;
+
+      final int pxLenTrg = wTrg * hTrg;
+      final int[] pxTrg = new int[pxLenTrg];
+
+      for ( int i = 0; i < pxLenTrg; ++i ) {
+         final int xTrg = i % wTrg;
+         final int yTrg = i / wTrg;
+         final float xSgn = xTrg - xTrgCenter;
+         final float ySgn = yTrg - yTrgCenter;
+         final int xr = Utils.round(xSrcCenter + ( cosa * xSgn - sina * ySgn ));
+         final int yr = Utils.round(ySrcCenter + ( cosa * ySgn + sina * xSgn ));
+         if ( yr > -1 && yr < hSrc && xr > -1 && xr < wSrc ) {
+            pxTrg[i] = pxSrc[xr + yr * hSrc];
+         }
+      }
+
+      target.format = PConstants.ARGB;
+      target.pixels = pxTrg;
+      target.width = wTrg / pdSrc;
+      target.height = hTrg / pdSrc;
+      target.pixelWidth = wTrg;
+      target.pixelHeight = hTrg;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
     * Scales an image by a percentage of its original dimensions.
     *
     * @param target the image
@@ -2581,15 +2916,10 @@ public class ZImage extends PImage {
          if ( offset != null ) { offset.set(0.0f, 0.0f); }
          return target;
       }
+
       final int lenTrg = wTrg * hTrg;
       final int[] pxTrg = new int[lenTrg];
-
       for ( int i = 0; i < lenTrg; ++i ) {
-         // final int xTrg = i % wTrg;
-         // final int yTrg = i / wTrg;
-         // final int xSrc = left + xTrg;
-         // final int ySrc = top + yTrg;
-         // final int idxSrc = wSrc * ySrc + xSrc;
          pxTrg[i] = pxSrc[wSrc * ( top + i / wTrg ) + left + i % wTrg];
       }
 
@@ -2603,6 +2933,56 @@ public class ZImage extends PImage {
       target.updatePixels();
 
       if ( offset != null ) { offset.set(left, top); }
+      return target;
+   }
+
+   /**
+    * Divides the red, green and blue channels of each pixel in the image by
+    * its alpha channel. Reverse pre-multiplication.
+    *
+    * @param target the source image
+    *
+    * @return the image
+    */
+   public static PImage unpremul ( final PImage target ) {
+
+      target.loadPixels();
+
+      final int[] px = target.pixels;
+      final int len = px.length;
+
+      if ( target.format == PConstants.ALPHA ) {
+         for ( int i = 0; i < len; ++i ) {
+            final int a = px[i];
+            px[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
+         }
+      }
+
+      for ( int i = 0; i < len; ++i ) {
+         final int ai = px[i] >> 0x18 & 0xff;
+         if ( ai < 1 ) {
+            px[i] = 0x00000000;
+         } else if ( ai < 255 ) {
+            final int ri = px[i] >> 0x10 & 0xff;
+            final int gi = px[i] >> 0x08 & 0xff;
+            final int bi = px[i] & 0xff;
+
+            final float af = 255.0f / ai;
+            int ru = ( int ) ( ri * af + 0.5f );
+            int gu = ( int ) ( gi * af + 0.5f );
+            int bu = ( int ) ( bi * af + 0.5f );
+
+            if ( ru > 255 ) { ru = 255; }
+            if ( gu > 255 ) { gu = 255; }
+            if ( bu > 255 ) { bu = 255; }
+
+            px[i] = ai << 0x18 | ru << 0x10 | gu << 0x08 | bu;
+         }
+      }
+
+      target.format = PConstants.ARGB;
+      target.updatePixels();
+
       return target;
    }
 

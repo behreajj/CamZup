@@ -65,8 +65,7 @@ public abstract class Curve extends EntityData implements ICurve {
          return false;
       }
       final Curve other = ( Curve ) obj;
-      if ( this.closedLoop != other.closedLoop ) { return false; }
-      return true;
+      return this.closedLoop == other.closedLoop;
    }
 
    /**

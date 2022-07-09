@@ -492,42 +492,66 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Returns and removes a knot at a given index.
+    * Removes a knot from the curve at a given index if the curve has more
+    * than 2 knots. Returns true if the removal was successful. The target
+    * knot is set to the value of the removed knot. If the curve is a closed
+    * loop, wraps the index; otherwise checks that the index is in-bounds.
     *
-    * @param i the index
+    * @param i      the index
+    * @param target the output knot
     *
-    * @return the knot
-    *
-    * @see Utils#mod(int, int)
-    * @see List#remove(int)
-    * @see List#size()
+    * @return the removed knot value
     */
-   public Knot3 removeAt ( final int i ) {
+   public boolean removeAt ( final int i, final Knot3 target ) {
 
-      final int j = this.closedLoop ? Utils.mod(i, this.knots.size()) : i;
-      return this.knots.remove(j);
+      final int len = this.knots.size();
+      if ( len > 2 ) {
+         if ( this.closedLoop ) {
+            target.set(this.knots.remove(Utils.mod(i, len)));
+            return true;
+         } else if ( i > -1 && i < len ) {
+            target.set(this.knots.remove(i));
+            return true;
+         }
+      }
+      return false;
    }
 
    /**
-    * Returns and removes the first knot in the curve.
+    * Removes the first knot from the curve if the curve has more than 2
+    * knots. Returns true if the removal was successful. The target knot is
+    * set to the value of the removed knot.
     *
-    * @return the knot
+    * @param target the output knot
     *
-    * @see List#remove(int)
+    * @return the removed knot value
     */
-   public Knot3 removeFirst ( ) { return this.knots.remove(0); }
+   public boolean removeFirst ( final Knot3 target ) {
+
+      if ( this.knots.size() > 2 ) {
+         target.set(this.knots.remove(0));
+         return true;
+      }
+      return false;
+   }
 
    /**
-    * Removes and returns the last knot in the curve.
+    * Removes the last knot from the curve if the curve has more than 2 knots.
+    * Returns true if the removal was successful. The target knot is set to
+    * the value of the removed knot.
     *
-    * @return the knot
+    * @param target the output knot
     *
-    * @see List#remove(int)
-    * @see List#size()
+    * @return the removed knot value
     */
-   public Knot3 removeLast ( ) {
+   public boolean removeLast ( final Knot3 target ) {
 
-      return this.knots.remove(this.knots.size() - 1);
+      final int len = this.knots.size();
+      if ( len > 2 ) {
+         target.set(this.knots.remove(len - 1));
+         return true;
+      }
+      return false;
    }
 
    /**
@@ -601,6 +625,60 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while ( itr.hasNext() ) { itr.next().rotate(q); }
+
+      return this;
+   }
+
+   public Curve3 rotateHandles ( final float radians ) {
+      // TODO: Test
+
+      final double radd = radians;
+      final float cosa = ( float ) Math.cos(radd);
+      final float sina = ( float ) Math.sin(radd);
+
+      final Vec3 axis = new Vec3();
+
+      final Iterator < Knot3 > itr = this.knots.iterator();
+      final Knot3 first = itr.next();
+      Knot3 prev = first;
+      Knot3 curr = null;
+      while ( itr.hasNext() ) {
+         curr = itr.next();
+         Vec3.subNorm(curr.coord, prev.coord, axis);
+
+         final Vec3 fh = prev.foreHandle;
+         final Vec3 coPrev = prev.coord;
+         Vec3.sub(fh, coPrev, fh);
+         Vec3.rotate(fh, cosa, sina, axis, fh);
+         Vec3.add(fh, coPrev, fh);
+
+         final Vec3 rh = curr.rearHandle;
+         final Vec3 coCurr = curr.coord;
+         Vec3.sub(rh, coCurr, rh);
+         Vec3.rotate(rh, cosa, sina, axis, rh);
+         Vec3.add(rh, coCurr, rh);
+
+         prev = curr;
+      }
+
+      if ( this.closedLoop ) {
+         Vec3.subNorm(first.coord, prev.coord, axis);
+
+         final Vec3 fh = prev.foreHandle;
+         final Vec3 coPrev = prev.coord;
+         Vec3.sub(fh, coPrev, fh);
+         Vec3.rotate(fh, cosa, sina, axis, fh);
+         Vec3.add(fh, coPrev, fh);
+
+         final Vec3 rh = first.rearHandle;
+         final Vec3 coFirst = first.coord;
+         Vec3.sub(rh, coFirst, rh);
+         Vec3.rotate(rh, cosa, sina, axis, rh);
+         Vec3.add(rh, coFirst, rh);
+      } else {
+         prev.mirrorHandlesBackward();
+         first.mirrorHandlesForward();
+      }
 
       return this;
    }
@@ -1557,7 +1635,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return the curve
     *
-    * @see Curve3#straightenHandles(Curve3)
+    * @see Curve3#straightHandles(Curve3)
     * @see Curve3#smoothHandles(Curve3)
     */
    public static Curve3 fromPoints ( final boolean closedLoop,
@@ -1576,8 +1654,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       target.closedLoop = closedLoop;
       target.name = "Points";
 
-      return ptsLen < 3 ? Curve3.straightenHandles(target) : Curve3
-         .smoothHandles(target);
+      return ptsLen < 3 ? Curve3.straightHandles(target) : Curve3.smoothHandles(
+         target);
    }
 
    /**
@@ -1749,7 +1827,46 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Adjusts knot handles so as to create a smooth, continuous curve.
+    * Samples all segments of a source curve into an array of curves.
+    *
+    * @param source the input curve
+    *
+    * @return the result array
+    */
+   public static Curve3[] sampleSegments ( final Curve3 source ) {
+
+      final boolean cl = source.closedLoop;
+      final ArrayList < Knot3 > knots = source.knots;
+      final Iterator < Knot3 > itr = knots.iterator();
+      final int knotLength = knots.size();
+      final int resLen = cl || knotLength < 3 ? knotLength : knotLength - 1;
+
+      final Curve3[] result = new Curve3[resLen];
+      final Knot3 first = itr.next();
+      Knot3 prev = first;
+      Knot3 curr = null;
+
+      for ( int idx = 0; itr.hasNext(); ++idx ) {
+         curr = itr.next();
+         final Curve3 curve = new Curve3();
+         curve.append(new Knot3(prev).mirrorHandlesForward());
+         curve.append(new Knot3(curr).mirrorHandlesBackward());
+         result[idx] = curve;
+         prev = curr;
+      }
+
+      if ( cl ) {
+         final Curve3 curve = new Curve3();
+         curve.append(new Knot3(prev).mirrorHandlesForward());
+         curve.append(new Knot3(first).mirrorHandlesBackward());
+         result[resLen - 1] = curve;
+      }
+
+      return result;
+   }
+
+   /**
+    * Adjusts knot handles to create a smooth, continuous curve.
     *
     * @param target the output curve
     *
@@ -1767,14 +1884,13 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final int knotCount = knots.size();
       if ( knotCount < 3 ) { return target; }
 
-      final int knotLast = knotCount - 1;
       final Vec3 carry = new Vec3();
       final Iterator < Knot3 > itr = knots.iterator();
       final Knot3 first = itr.next();
 
       if ( target.closedLoop ) {
 
-         Knot3 prev = knots.get(knotLast);
+         Knot3 prev = knots.get(knotCount - 1);
          Knot3 curr = first;
          while ( itr.hasNext() ) {
             final Knot3 next = itr.next();
@@ -1788,7 +1904,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
          Knot3 prev = first;
          Knot3 curr = itr.next();
-         Knot3.smoothHandlesFirst(prev, curr, carry).mirrorHandlesForward();
+         Knot3.smoothHandlesFirst(prev, curr, carry);
+         curr.mirrorHandlesForward();
 
          while ( itr.hasNext() ) {
             final Knot3 next = itr.next();
@@ -1797,7 +1914,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
             curr = next;
          }
 
-         Knot3.smoothHandlesLast(prev, curr, carry).mirrorHandlesBackward();
+         Knot3.smoothHandlesLast(prev, curr, carry);
+         curr.mirrorHandlesBackward();
 
       }
 
@@ -1805,7 +1923,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Adjusts knot handles so as to create straight line segments.
+    * Adjusts knot handles to create straight line segments.
     *
     * @param target the output curve
     *
@@ -1813,7 +1931,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @see Curve3#lerp13(Vec3, Vec3, Vec3)
     */
-   public static Curve3 straightenHandles ( final Curve3 target ) {
+   public static Curve3 straightHandles ( final Curve3 target ) {
 
       final ArrayList < Knot3 > knots = target.knots;
       final int knotLength = knots.size();

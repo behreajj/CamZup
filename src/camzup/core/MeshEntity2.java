@@ -156,7 +156,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
-    * Flips the mesh horizontally.
+    * Flips the mesh entity horizontally.
     *
     * @return this entity
     */
@@ -168,7 +168,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
-    * Flips the mesh vertically.
+    * Flips the mesh entity vertically.
     *
     * @return this entity
     */

@@ -1,7 +1,6 @@
 package camzup.core;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.TreeMap;
@@ -26,7 +25,7 @@ import java.util.TreeSet;
  *
  * forming a backwards z pattern.
  */
-public class Quadtree implements Iterable < Vec2 > {
+public class Quadtree {
 
    /**
     * The bounding area.
@@ -134,17 +133,16 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
-    * Finds the average center in each leaf node of this quadtree and appends
-    * it to an array.
+    * Finds the average center in each leaf node of this quadtree.
     *
     * @return centers
     */
    public Vec2[] centersMean ( ) { return this.centersMean(false); }
 
    /**
-    * Finds the average center in each leaf node of this quadtree and appends
-    * it to an array. If the node is empty, and includeEmpty is true, then the
-    * center of the cell bounds is used instead.
+    * Finds the average center in each leaf node of this quadtree. If the node
+    * is empty, and includeEmpty is true, then the center of the cell bounds
+    * is used instead.
     *
     * @param includeEmpty include empty cells
     *
@@ -158,7 +156,8 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
-    * Counts the number of leaves held by this quadtree.
+    * Counts the number of leaves held by this quadtree. Returns 1 if this
+    * node is itself a leaf.
     *
     * @return the sum
     */
@@ -226,7 +225,7 @@ public class Quadtree implements Iterable < Vec2 > {
          }
       }
 
-      return cullThis >= Quadtree.CHILD_COUNT && this.points.size() < 1;
+      return cullThis >= Quadtree.CHILD_COUNT && this.points.isEmpty();
    }
 
    /**
@@ -301,26 +300,6 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
-    * Returns a hash code for this quadtree.
-    *
-    * @return the hash code
-    */
-   @Override
-   public int hashCode ( ) {
-
-      final int prime = 31;
-      int result = 1;
-      result = prime * result + ( this.bounds == null ? 0 : this.bounds
-         .hashCode() );
-      result = prime * result + this.capacity;
-      result = prime * result + Arrays.hashCode(this.children);
-      result = prime * result + this.level;
-      result = prime * result + ( this.points == null ? 0 : this.points
-         .hashCode() );
-      return result;
-   }
-
-   /**
     * Inserts a point into the quadtree. Returns <code>true</code> if the
     * point was successfully inserted into the quadtree directly or indirectly
     * through one of its children; returns <code>false</code> if the insertion
@@ -379,7 +358,7 @@ public class Quadtree implements Iterable < Vec2 > {
    }
 
    /**
-    * Evaluates whether this quadtree node has any children; returns true if
+    * Evaluates whether this quadtree node has any children. Returns true if
     * no; otherwise false.
     *
     * @return the evaluation
@@ -391,21 +370,6 @@ public class Quadtree implements Iterable < Vec2 > {
       }
       return true;
    }
-
-   /**
-    * Gets this quadtree's points iterator.
-    *
-    * @return the iterator
-    */
-   @Override
-   public Iterator < Vec2 > iterator ( ) { return this.points.iterator(); }
-
-   /**
-    * Returns the number of points in this quadtree node.
-    *
-    * @return the length
-    */
-   public int length ( ) { return this.points.size(); }
 
    /**
     * If this quadtree node has children, converts it to a leaf node
@@ -782,7 +746,7 @@ public class Quadtree implements Iterable < Vec2 > {
             while ( itr.hasNext() ) {
                final Vec2 point = itr.next();
                if ( Bounds2.containsInclusive(range, point) ) {
-                  found.put(Vec2.dist(point, rCenter), point);
+                  found.put(Vec2.distChebyshev(point, rCenter), point);
                }
             }
          }
@@ -825,7 +789,7 @@ public class Quadtree implements Iterable < Vec2 > {
             while ( itr.hasNext() ) {
                final Vec2 point = itr.next();
                final float dsq = Vec2.distSq(center, point);
-               if ( dsq <= rsq ) { found.put(Utils.sqrt(dsq), point); }
+               if ( dsq < rsq ) { found.put(Utils.sqrt(dsq), point); }
             }
          }
       }
@@ -868,13 +832,19 @@ public class Quadtree implements Iterable < Vec2 > {
          this.children[Quadtree.NORTH_WEST].bounds,
          this.children[Quadtree.NORTH_EAST].bounds);
 
-      /* Pass on points to children. */
+      /*
+       * Pass on points to children. Begin search for the appropriate child node
+       * at the index where the previous point was inserted.
+       */
       final Iterator < Vec2 > itr = this.points.iterator();
+      int idxOffset = 0;
       while ( itr.hasNext() ) {
          final Vec2 v = itr.next();
-         boolean flag = false;
-         for ( int j = 0; j < Quadtree.CHILD_COUNT && !flag; ++j ) {
-            flag = this.children[j].insert(v);
+         boolean found = false;
+         for ( int j = 0; j < Quadtree.CHILD_COUNT && !found; ++j ) {
+            final int k = ( idxOffset + j ) % Quadtree.CHILD_COUNT;
+            found = this.children[k].insert(v);
+            if ( found ) { idxOffset = k; }
          }
       }
 

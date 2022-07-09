@@ -4197,6 +4197,42 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * Calculates a color from an integer.<br>
+    * <br>
+    * Does not attempt to detect difference between an 8-bit gray color
+    * integer and a 32-bit ARGB hexadecimal, e.g., between
+    * <code>fill(128);</code> and <code>fill(0xff808080);</code>.
+    *
+    * @param argb the hexadecimal color
+    */
+   @Override
+   protected void colorCalc ( final int argb ) {
+
+      /*
+       * For consistency with UpOgl implementation. See original at
+       * https://github.com/processing/processing4/blob/master/core/src/
+       * processing/core/PGraphics.java#L7759 .
+       */
+      this.colorCalcARGB(argb, this.colorModeA);
+   }
+
+   /**
+    * Calculates a color from an integer and alpha value. Useful in the IDE
+    * for colors defined with hash-tag literals, such as "#aabbcc" .<br>
+    * <br>
+    * Does not attempt to detect difference between an 8-bit gray color
+    * integer and a 32-bit ARGB hexadecimal, e.g., between
+    * <code>fill(128, 255);</code> and <code>fill(#808080, 255);</code>.
+    *
+    * @param argb the hexadecimal color
+    */
+   @Override
+   protected void colorCalc ( final int rgb, final float alpha ) {
+
+      this.colorCalcARGB(rgb, alpha);
+   }
+
+   /**
     * Decomposes a hexadecimal color into RGBA channels. Two versions of these
     * channels are stored: the unsigned byte values in the range [0, 255] and
     * the decimal values in [0.0, 1.0].

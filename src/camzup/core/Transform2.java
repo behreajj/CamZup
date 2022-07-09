@@ -720,9 +720,11 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
 
       this.rotateTo(radians);
 
-      this.scalePrev.set(this.scale);
-      if ( xScale != 0.0f ) { this.scale.x = xScale; }
-      if ( yScale != 0.0f ) { this.scale.y = yScale; }
+      if ( xScale != 0.0f && yScale != 0.0f ) {
+         this.scalePrev.set(this.scale);
+         this.scale.x = xScale;
+         this.scale.y = yScale;
+      }
 
       return this;
    }

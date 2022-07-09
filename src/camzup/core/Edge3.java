@@ -725,15 +725,7 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public String toString ( final int places ) {
 
-      // TODO: Pass by reference version.
-      final StringBuilder sb = new StringBuilder(768);
-      sb.append("{ origin: ");
-      sb.append(this.origin.toString(places));
-      sb.append(", dest: ");
-      sb.append(this.dest.toString(places));
-      sb.append(' ');
-      sb.append('}');
-      return sb.toString();
+      return this.toString(new StringBuilder(768), places).toString();
    }
 
    /**
@@ -786,6 +778,26 @@ public class Edge3 implements Comparable < Edge3 > {
       Vec3.add(this.dest.coord, v, this.dest.coord);
 
       return this;
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * edges. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ origin: ");
+      sb.append(this.origin.toString(places));
+      sb.append(", dest: ");
+      sb.append(this.dest.toString(places));
+      sb.append(' ');
+      sb.append('}');
+      return sb;
    }
 
    /**

@@ -6,7 +6,6 @@ import camzup.core.ArcMode;
 import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.Curve3;
-import camzup.core.CurveAnim;
 import camzup.core.ICurve;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
@@ -16,7 +15,6 @@ import camzup.core.Mat4;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
 import camzup.core.Mesh3;
-import camzup.core.Quaternion;
 import camzup.core.Transform2;
 import camzup.core.Transform3;
 import camzup.core.TransformOrder;
@@ -784,38 +782,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.hints[PConstants.DISABLE_OPTIMIZED_STROKE] = true;
       this.flush();
       this.flushMode = PGraphicsOpenGL.FLUSH_CONTINUOUSLY;
-   }
-
-   /**
-    * Draws a curve on a sphere . The supplied temporary vectors hold the
-    * transformed knot coordinates.
-    *
-    * @param curve  the curve
-    * @param tr     the transform
-    * @param detail the curve detail
-    * @param q      the evaluated quaternion
-    * @param right  the quaternion's right axis
-    * @param co     the coordinate
-    */
-   public void drawCurveSphere ( final CurveAnim curve, final Transform3 tr,
-      final int detail, final Quaternion q, final Vec3 right, final Vec3 co ) {
-
-      this.beginShape(PConstants.POLYGON);
-
-      final int vres = detail < 2 ? 2 : detail;
-      final float toPercent = 1.0f / ( vres - 1.0f );
-      for ( int i = 0; i < vres; ++i ) {
-         CurveAnim.eval(curve, i * toPercent, q);
-         Quaternion.getRight(q, right);
-         Transform3.mulPoint(tr, right, co);
-         this.vertexImpl(co.x, co.y, co.z, this.textureU, this.textureV);
-      }
-
-      if ( curve.closedLoop ) {
-         this.endShape(PConstants.CLOSE);
-      } else {
-         this.endShape(PConstants.OPEN);
-      }
    }
 
    /**
@@ -3243,28 +3209,39 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Calculates a color from an integer.
+    * Calculates a color from an integer. Does not attempt to detect
+    * difference between an 8-bit gray color integer and a 32-bit ARGB
+    * hexadecimal, e.g., between <code>fill(128);</code> and
+    * <code>fill(0xff808080);</code>.
     *
     * @param argb the hexadecimal color
     */
    @Override
    protected void colorCalc ( final int argb ) {
 
+      /*
+       * See https://github.com/processing/processing4/blob/master/core/src/
+       * processing/core/PGraphics.java#L7759 .
+       */
       this.colorCalc(argb, this.usePreMultiply);
    }
 
    /**
     * Calculates a color from an integer and alpha value. Useful in the IDE
-    * for colors defined with hash-tag literals, such as "#aabbcc" .
+    * for colors defined with hash-tag literals, such as "#aabbcc" .<br>
+    * <br>
+    * Does not attempt to detect difference between an 8-bit gray color
+    * integer and a 32-bit ARGB hexadecimal, e.g., between
+    * <code>fill(128, 255);</code> and <code>fill(#808080, 255);</code>.
     *
-    * @param argb  the hexadecimal color
+    * @param rgb   the hexadecimal color
     * @param alpha the alpha channel
     */
    @Override
-   protected void colorCalcARGB ( final int argb, final float alpha ) {
+   protected void colorCalcARGB ( final int rgb, final float alpha ) {
 
       this.colorCalc(( int ) ( 0.5f + 0xff * alpha * this.invColorModeA )
-         << 0x18 | argb & 0x00ffffff, this.usePreMultiply);
+         << 0x18 | rgb & 0x00ffffff, this.usePreMultiply);
    }
 
    /**

@@ -168,7 +168,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    }
 
    /**
-    * Flips the curve horizontally.
+    * Flips the curve entity horizontally.
     *
     * @return this entity
     */
@@ -180,7 +180,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    }
 
    /**
-    * Flips the curve vertically.
+    * Flips the curve entity vertically.
     *
     * @return this entity
     */

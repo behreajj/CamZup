@@ -671,12 +671,10 @@ public abstract class ParserSvg {
           * Reverse the vertex winding of any primitives from the Zup3 default
           * (CCW) to the SVG default (CW).
           */
-         if ( prim != null ) {
-            if ( !curves.contains(prim) ) {
-               prim.reverse();
-               prim.transform(prev);
-               curves.add(prim);
-            }
+         if ( prim != null && !curves.contains(prim) ) {
+            prim.reverse();
+            prim.transform(prev);
+            curves.add(prim);
          }
 
          if ( path != null ) {

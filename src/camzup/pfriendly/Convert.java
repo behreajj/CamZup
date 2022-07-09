@@ -1235,15 +1235,15 @@ public abstract class Convert {
 
                case PConstants.TRIANGLE: /* 8 */
 
-                  curves.add(Curve2.straightenHandles(new Curve2(sourceName,
-                     true, new Knot2(params[0], params[1]), new Knot2(params[2],
+                  curves.add(Curve2.straightHandles(new Curve2(sourceName, true,
+                     new Knot2(params[0], params[1]), new Knot2(params[2],
                         params[3]), new Knot2(params[4], params[5]))));
                   break;
 
                case PConstants.QUAD: /* 16 */
 
-                  curves.add(Curve2.straightenHandles(new Curve2(sourceName,
-                     true, new Knot2(params[0], params[1]), new Knot2(params[2],
+                  curves.add(Curve2.straightHandles(new Curve2(sourceName, true,
+                     new Knot2(params[0], params[1]), new Knot2(params[2],
                         params[3]), new Knot2(params[4], params[5]), new Knot2(
                            params[6], params[7]))));
                   break;

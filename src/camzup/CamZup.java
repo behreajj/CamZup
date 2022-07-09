@@ -51,6 +51,13 @@ public class CamZup {
     */
    public static final String VERSION = "##library.prettyVersion##";
 
+   public static float floorModExact ( final float a, final float b ) {
+
+      float m = a % b;
+      if ( m > 0 ? b < 0 : m < 0 && b > 0 ) { m += b; }
+      return m;
+   }
+
    /**
     * The main function.
     *
@@ -59,42 +66,6 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      // int count = 2048;
-      // Vec3[] samples = new Vec3[count];
-      // Octree octree = new Octree();
-
-      // System.out.println(octree.getMaxLevel());
-      // System.out.println(octree.countLeaves());
-      // octree.subdivide(3, octree.getCapacity());
-      // System.out.println(octree.getMaxLevel());
-      // System.out.println(octree.countLeaves());
-
-      // Rng rng = new Rng();
-      // for ( int i = 0; i < count; ++i ) {
-      // Vec3 sample = new Vec3();
-      // Vec3.randomCartesian(rng, -0.25f, 0.325f, sample);
-      // octree.insert(sample);
-      // samples[i] = sample;
-      // }
-      //
-      //
-      // octree.cull();
-      //
-      // System.out.println(octree.getMaxLevel());
-      // System.out.println(octree.countLeaves());
-      // System.out.println(octree.countPoints());
-
-      // System.out.println(octree);
-      //
-      // System.out.println(octree.countLeaves());
-      // System.out.println(octree.getLeaves().length);
-      //
-      // System.out.println(octree.countPoints());
-      // System.out.println(octree.getPoints().length);
-
-      // System.out.println(octree.getMaxLevel());
-      // System.out.println(octree.countLeaves());
-      // System.out.println(( int ) Math.pow(8, octree.getMaxLevel()));
    }
 
    public static PImage stretchContrast ( final PImage target,
