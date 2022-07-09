@@ -51,13 +51,6 @@ public class CamZup {
     */
    public static final String VERSION = "##library.prettyVersion##";
 
-   public static float floorModExact ( final float a, final float b ) {
-
-      float m = a % b;
-      if ( m > 0 ? b < 0 : m < 0 && b > 0 ) { m += b; }
-      return m;
-   }
-
    /**
     * The main function.
     *
@@ -65,7 +58,6 @@ public class CamZup {
     */
 
    public static void main ( final String[] args ) {
-
    }
 
    public static PImage stretchContrast ( final PImage target,

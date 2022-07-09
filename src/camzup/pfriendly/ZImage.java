@@ -1789,6 +1789,10 @@ public class ZImage extends PImage {
             if ( gp > 255 ) { gp = 255; }
             if ( bp > 255 ) { bp = 255; }
 
+            // final int rp = ZImage.div255(ri * ai);
+            // final int gp = ZImage.div255(gi * ai);
+            // final int bp = ZImage.div255(bi * ai);
+
             px[i] = ai << 0x18 | rp << 0x10 | gp << 0x08 | bp;
          }
       }
@@ -2231,12 +2235,12 @@ public class ZImage extends PImage {
     * It is recommended to trim the image's alpha before and/or after
     * rotation. Depending on the renderer, alpha should be premultiplied prior
     * to rotation and unpremultiplied after.
-    * 
+    *
     * @param target the image
     * @param angle  the angle in radians
-    * 
+    *
     * @return the rotated image
-    * 
+    *
     * @see Utils#modRadians(float)
     * @see Utils#approx(float, float, float)
     * @see ZImage#rotate90(PImage)
@@ -2423,12 +2427,12 @@ public class ZImage extends PImage {
     * <br>
     * It is recommended to trim the image's alpha before and/or after
     * rotation.
-    * 
+    *
     * @param target the image
     * @param angle  the angle in radians
-    * 
+    *
     * @return the rotated image
-    * 
+    *
     * @see Utils#modRadians(float)
     * @see Utils#approx(float, float, float)
     * @see ZImage#rotate90(PImage)
@@ -2490,7 +2494,7 @@ public class ZImage extends PImage {
          final int xr = Utils.round(xSrcCenter + ( cosa * xSgn - sina * ySgn ));
          final int yr = Utils.round(ySrcCenter + ( cosa * ySgn + sina * xSgn ));
          if ( yr > -1 && yr < hSrc && xr > -1 && xr < wSrc ) {
-            pxTrg[i] = pxSrc[xr + yr * hSrc];
+            pxTrg[i] = pxSrc[xr + yr * wSrc];
          }
       }
 
@@ -3049,5 +3053,21 @@ public class ZImage extends PImage {
 
       return target;
    }
+
+   // /**
+   // * Approximates the division of an integer by 255. See <a href=
+   // *
+   // "https://stackoverflow.com/a/35285458">https://stackoverflow.com/a/35285458</a>.
+   // *
+   // * @param the input value
+   // *
+   // * @return the division
+   // *
+   // * @author ErmIg
+   // */
+   // private static final int div255 ( final int x ) {
+   //
+   // return x + 1 + ( x >> 8 ) >> 8;
+   // }
 
 }
