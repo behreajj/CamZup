@@ -1496,7 +1496,7 @@ public class ZImage extends PImage {
                final int viStd = Color.linearToStandard(viLin);
                px[i] = alphaOnly | viStd << 0x10 | viStd << 0x08 | viStd;
             } else {
-               px[i] = 0x0;
+               px[i] = 0x00000000;
             }
          }
 
@@ -1511,7 +1511,7 @@ public class ZImage extends PImage {
                final int viStd = Color.linearToStandard(viLin);
                px[i] = alphaOnly | viStd << 0x10 | viStd << 0x08 | viStd;
             } else {
-               px[i] = 0x0;
+               px[i] = 0x00000000;
             }
          }
 
@@ -1750,6 +1750,83 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Mirrors an image across the axis described by an origin and destination.
+    * Coordinates are expected to be in the range [0.0, 1.0]. Out-of-bounds
+    * pixels are omitted from the mirror.
+    *
+    * @param xOrigin the origin x
+    * @param yOrigin the origin y
+    * @param xDest   the destination x
+    * @param yDest   the destination y
+    * @param flip    the flip reflection flag
+    * @param target  the output image
+    *
+    * @return the mirrored image
+    */
+   public static PImage mirror ( final float xOrigin, final float yOrigin,
+      final float xDest, final float yDest, final boolean flip,
+      final PImage target ) {
+
+      final int w = target.pixelWidth;
+      final int h = target.pixelHeight;
+      final float wfn1 = w - 1.0f;
+      final float hfn1 = h - 1.0f;
+
+      final float ax = xOrigin * wfn1;
+      final float ay = hfn1 - yOrigin * hfn1;
+      final float bx = xDest * wfn1;
+      final float by = hfn1 - yDest * hfn1;
+
+      final float dx = bx - ax;
+      final float dy = by - ay;
+      final float dMagSq = dx * dx + dy * dy;
+      final float dMagSqInv = 1.0f / Utils.max(IUtils.EPSILON, dMagSq);
+
+      final float flipSign = flip ? -1.0f : 1.0f;
+
+      target.loadPixels();
+
+      final int[] px = target.pixels;
+      final int len = px.length;
+      final int[] mirrored = new int[len];
+
+      for ( int k = 0; k < len; ++k ) {
+         final float cx = k % w;
+         final float cy = k / w;
+
+         final float ex = cx - ax;
+         final float ey = cy - ay;
+         final float cross = ex * dy - ey * dx;
+
+         if ( flipSign * cross < 0.0f ) {
+            mirrored[k] = px[k];
+         } else {
+            final float t = ( ex * dx + ey * dy ) * dMagSqInv;
+            final float u = 1.0f - t;
+            final float pxProj = u * ax + t * bx;
+            final float pyProj = u * ay + t * by;
+            final float pxOpp = pxProj + pxProj - cx;
+            final float pyOpp = pyProj + pyProj - cy;
+
+            // TODO: Use bilinear filtering instead of nearest?
+            final int j = ( int ) ( pxOpp + 0.5f );
+            final int i = ( int ) ( pyOpp + 0.5f );
+            if ( j > -1 && j < w && i > -1 && i < h ) {
+               mirrored[k] = px[j + i * w];
+            }
+            // mirrored[k] = px[Utils.mod(j, w) + Utils.mod(i, h) * w];
+         }
+      }
+
+      target.pixels = mirrored;
+      target.format = PConstants.ARGB;
+      target.updatePixels();
+
+      return target;
+
+   }
+
+   /**
     * Multiplies the red, green and blue channels of each pixel in the image
     * by its alpha channel.
     *
@@ -1788,10 +1865,6 @@ public class ZImage extends PImage {
             if ( rp > 255 ) { rp = 255; }
             if ( gp > 255 ) { gp = 255; }
             if ( bp > 255 ) { bp = 255; }
-
-            // final int rp = ZImage.div255(ri * ai);
-            // final int gp = ZImage.div255(gi * ai);
-            // final int bp = ZImage.div255(bi * ai);
 
             px[i] = ai << 0x18 | rp << 0x10 | gp << 0x08 | bp;
          }
@@ -2253,6 +2326,9 @@ public class ZImage extends PImage {
    public static PImage rotateBilinear ( final PImage target,
       final float angle ) {
 
+      // TODO: Displacement vector for this and rotateNearest, similar to
+      // trimAlpha?
+
       /* 1 / 720 degrees = .00872 radians. */
       final float aVerif = Utils.modRadians(angle);
       if ( Utils.approx(aVerif, 0.0f, 0.008726646f) ) { return target; }
@@ -2271,11 +2347,6 @@ public class ZImage extends PImage {
          return target;
       }
 
-      /*
-       * Source: http://polymathprogrammer.com/2010/04/05/
-       * image-rotation-with-bilinear-interpolation- and-no-clipping/
-       */
-
       final double avd = aVerif;
       final float cosa = ( float ) Math.cos(avd);
       final float sina = ( float ) Math.sin(avd);
@@ -2286,13 +2357,15 @@ public class ZImage extends PImage {
       final int hSrc = target.pixelHeight;
       final int pdSrc = target.pixelDensity;
 
+      final float wf = wSrc;
+      final float hf = hSrc;
       final float absCosa = Utils.abs(cosa);
       final float absSina = Utils.abs(sina);
-      final int wTrg = Utils.ceil(hSrc * absSina + wSrc * absCosa);
-      final int hTrg = Utils.ceil(hSrc * absCosa + wSrc * absSina);
+      final int wTrg = Utils.ceil(hf * absSina + wf * absCosa);
+      final int hTrg = Utils.ceil(hf * absCosa + wf * absSina);
 
-      final float xSrcCenter = wSrc * 0.5f;
-      final float ySrcCenter = hSrc * 0.5f;
+      final float xSrcCenter = wf * 0.5f;
+      final float ySrcCenter = hf * 0.5f;
       final float xTrgCenter = wTrg * 0.5f;
       final float yTrgCenter = hTrg * 0.5f;
 
@@ -2395,15 +2468,10 @@ public class ZImage extends PImage {
                b2 = u * b0 + yErr * b1;
             }
 
-            int ai = ( int ) a2;
-            int ri = ( int ) r2;
-            int gi = ( int ) g2;
-            int bi = ( int ) b2;
-
-            if ( ai > 255 ) { ai = 255; }
-            if ( ri > 255 ) { ri = 255; }
-            if ( gi > 255 ) { gi = 255; }
-            if ( bi > 255 ) { bi = 255; }
+            final int ai = a2 > 255.0f ? 255 : ( int ) a2;
+            final int ri = r2 > 255.0f ? 255 : ( int ) r2;
+            final int gi = g2 > 255.0f ? 255 : ( int ) g2;
+            final int bi = b2 > 255.0f ? 255 : ( int ) b2;
 
             pxTrg[i] = ai << 0x18 | ri << 0x10 | gi << 0x08 | bi;
          }
@@ -2473,13 +2541,15 @@ public class ZImage extends PImage {
       final int hSrc = target.pixelHeight;
       final int pdSrc = target.pixelDensity;
 
+      final float wf = wSrc;
+      final float hf = hSrc;
       final float absCosa = Utils.abs(cosa);
       final float absSina = Utils.abs(sina);
-      final int wTrg = Utils.ceil(hSrc * absSina + wSrc * absCosa);
-      final int hTrg = Utils.ceil(hSrc * absCosa + wSrc * absSina);
+      final int wTrg = Utils.ceil(hf * absSina + wf * absCosa);
+      final int hTrg = Utils.ceil(hf * absCosa + wf * absSina);
 
-      final float xSrcCenter = wSrc * 0.5f;
-      final float ySrcCenter = hSrc * 0.5f;
+      final float xSrcCenter = wf * 0.5f;
+      final float ySrcCenter = hf * 0.5f;
       final float xTrgCenter = wTrg * 0.5f;
       final float yTrgCenter = hTrg * 0.5f;
 
@@ -2832,7 +2902,7 @@ public class ZImage extends PImage {
       final Vec2 offset ) {
 
       if ( target instanceof PGraphics ) {
-         System.err.println("Do not resize PGraphics with this method.");
+         System.err.println("Do not trim PGraphics with this method.");
          return target;
       }
 
@@ -3053,21 +3123,5 @@ public class ZImage extends PImage {
 
       return target;
    }
-
-   // /**
-   // * Approximates the division of an integer by 255. See <a href=
-   // *
-   // "https://stackoverflow.com/a/35285458">https://stackoverflow.com/a/35285458</a>.
-   // *
-   // * @param the input value
-   // *
-   // * @return the division
-   // *
-   // * @author ErmIg
-   // */
-   // private static final int div255 ( final int x ) {
-   //
-   // return x + 1 + ( x >> 8 ) >> 8;
-   // }
 
 }

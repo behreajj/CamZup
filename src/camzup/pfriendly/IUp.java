@@ -388,6 +388,6 @@ public interface IUp {
    /**
     * A cached easing function for RGBA colors.
     */
-   Color.AbstrEasing MIXER_RGBA = new Color.LerpSrgba();
+   Color.AbstrEasing MIXER_RGBA = new Color.MixSrgba();
 
 }

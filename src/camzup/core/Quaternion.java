@@ -1700,7 +1700,7 @@ public class Quaternion implements Comparable < Quaternion > {
    /**
     * Creates a random unit quaternion. Uses an algorithm by Ken Shoemake,
     * reproduced at this Math Stack Exchange discussion:
-    * <a href= "https://math.stackexchange.com/q/131336">Uniform Random
+    * <a href="https://math.stackexchange.com/q/131336">Uniform Random
     * Quaternion In a restricted angle range</a> .
     *
     * @param rng    the random number generator

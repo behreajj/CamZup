@@ -2514,7 +2514,7 @@ public class Color implements Comparable < Color > {
     * @param c      the input color
     * @param target the output color
     *
-    * @return the multiplied color
+    * @return the divided color
     */
    public static Color unpremul ( final Color c, final Color target ) {
 
@@ -3041,109 +3041,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts two colors from
-    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> to linear
-    * RGB, mixes them with linear interpolation, then converts back to
-    * standard RGB.
-    */
-   public static class LerpLrgba extends AbstrEasing {
-
-      /**
-       * Whether or not to include the alpha in the adjustment.
-       */
-      final boolean alpha;
-
-      /**
-       * The mixed color in linear RGB.
-       */
-      protected final Color cLinear = new Color();
-
-      /**
-       * The destination color in linear RGB.
-       */
-      protected final Color dLinear = new Color();
-
-      /**
-       * The origin color in linear RGB.
-       */
-      protected final Color oLinear = new Color();
-
-      /**
-       * Construct a new linear color mixer. Defaults to not including alpha, or
-       * transparency, in the adjustment.
-       */
-      public LerpLrgba ( ) { this(false); }
-
-      /**
-       * Construct a new linear color mixer. The flag specifies whether or not
-       * alpha should be included in the adjustment.
-       *
-       * @param alpha flag to adjust alpha
-       */
-      public LerpLrgba ( final boolean alpha ) {
-
-         this.alpha = alpha;
-      }
-
-      /**
-       * Applies the function.
-       *
-       * @param origin the origin color
-       * @param dest   the destination color
-       * @param step   the step in a range 0 to 1
-       * @param target the output color
-       *
-       * @return the eased color
-       *
-       * @see Color#sRgbaTolRgba(Color, boolean, Color)
-       * @see Color#lRgbaTosRgba(Color, boolean, Color)
-       */
-      @Override
-      public Color applyUnclamped ( final Color origin, final Color dest,
-         final Float step, final Color target ) {
-
-         Color.sRgbaTolRgba(origin, this.alpha, this.oLinear);
-         Color.sRgbaTolRgba(dest, this.alpha, this.dLinear);
-
-         final float t = step;
-         final float u = 1.0f - t;
-         this.cLinear.set(u * this.oLinear.r + t * this.dLinear.r, u
-            * this.oLinear.g + t * this.dLinear.g, u * this.oLinear.b + t
-               * this.dLinear.b, u * this.oLinear.a + t * this.dLinear.a);
-
-         return Color.lRgbaTosRgba(this.cLinear, this.alpha, target);
-      }
-
-   }
-
-   /**
-    * Eases between two colors in sRGB, i.e., with no gamma correction.
-    */
-   public static class LerpSrgba extends AbstrEasing {
-
-      /**
-       * Applies the function.
-       *
-       * @param origin the origin color
-       * @param dest   the destination color
-       * @param step   the step in a range 0 to 1
-       * @param target the output color
-       *
-       * @return the eased color
-       */
-      @Override
-      public Color applyUnclamped ( final Color origin, final Color dest,
-         final Float step, final Color target ) {
-
-         final float t = step;
-         final float u = 1.0f - t;
-         return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g,
-            u * origin.b + t * dest.b, u * origin.a + t * dest.a);
-      }
-
-   }
-
-   /**
     * Eases between colors by hue, saturation and lightness.
     */
    public static class MixHsla extends AbstrEasing {
@@ -3521,11 +3418,85 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Eases between two colors in sRGB, i.e., with no gamma correction, using
-    * the smooth step formula: <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> )
-    * .
+    * Converts two colors from
+    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> to linear
+    * RGB, mixes them with linear interpolation, then converts back to
+    * standard RGB.
     */
-   public static class SmoothStepSrgba extends AbstrEasing {
+   public static class MixLrgba extends AbstrEasing {
+
+      /**
+       * Whether or not to include the alpha in the adjustment.
+       */
+      final boolean alpha;
+
+      /**
+       * The mixed color in linear RGB.
+       */
+      protected final Color cLinear = new Color();
+
+      /**
+       * The destination color in linear RGB.
+       */
+      protected final Color dLinear = new Color();
+
+      /**
+       * The origin color in linear RGB.
+       */
+      protected final Color oLinear = new Color();
+
+      /**
+       * Construct a new linear color mixer. Defaults to not including alpha, or
+       * transparency, in the adjustment.
+       */
+      public MixLrgba ( ) { this(false); }
+
+      /**
+       * Construct a new linear color mixer. The flag specifies whether or not
+       * alpha should be included in the adjustment.
+       *
+       * @param alpha flag to adjust alpha
+       */
+      public MixLrgba ( final boolean alpha ) {
+
+         this.alpha = alpha;
+      }
+
+      /**
+       * Applies the function.
+       *
+       * @param origin the origin color
+       * @param dest   the destination color
+       * @param step   the step in a range 0 to 1
+       * @param target the output color
+       *
+       * @return the eased color
+       *
+       * @see Color#sRgbaTolRgba(Color, boolean, Color)
+       * @see Color#lRgbaTosRgba(Color, boolean, Color)
+       */
+      @Override
+      public Color applyUnclamped ( final Color origin, final Color dest,
+         final Float step, final Color target ) {
+
+         Color.sRgbaTolRgba(origin, this.alpha, this.oLinear);
+         Color.sRgbaTolRgba(dest, this.alpha, this.dLinear);
+
+         final float t = step;
+         final float u = 1.0f - t;
+         this.cLinear.set(u * this.oLinear.r + t * this.dLinear.r, u
+            * this.oLinear.g + t * this.dLinear.g, u * this.oLinear.b + t
+               * this.dLinear.b, u * this.oLinear.a + t * this.dLinear.a);
+
+         return Color.lRgbaTosRgba(this.cLinear, this.alpha, target);
+      }
+
+   }
+
+   /**
+    * Eases between two colors in sRGB, i.e., with no gamma correction.
+    */
+   public static class MixSrgba extends AbstrEasing {
 
       /**
        * Applies the function.
@@ -3541,8 +3512,7 @@ public class Color implements Comparable < Color > {
       public Color applyUnclamped ( final Color origin, final Color dest,
          final Float step, final Color target ) {
 
-         final float s = step;
-         final float t = s * s * ( 3.0f - ( s + s ) );
+         final float t = step;
          final float u = 1.0f - t;
          return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g,
             u * origin.b + t * dest.b, u * origin.a + t * dest.a);
