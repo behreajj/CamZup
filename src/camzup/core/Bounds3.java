@@ -456,9 +456,8 @@ public class Bounds3 implements Comparable < Bounds3 > {
    }
 
    /**
-    * Returns a boundary encompassing the CIE L*a*b* color space, with a
-    * minimum at (-110.0, -110.0, -1.0) and a maximum of (110.0, 110.0,
-    * 101.0).
+    * Returns a boundary encompassing the CIE LAB color space, with a minimum
+    * at (-110.0, -110.0, -1.0) and a maximum of (110.0, 110.0, 101.0).
     *
     * @param target the output bounds
     *

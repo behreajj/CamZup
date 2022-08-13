@@ -24,10 +24,10 @@ void setup() {
 
 void draw() {
   Vec2 m = graphics.mouse1s(new Vec2());
+  Vec4 lch = new Vec4(0.0f, 0.0f, 100.0f * m.y, 0.0f);
   
-  target = source.get();
-  ZImage.adjustContrast(target, m.x);
-  ZImage.adjustBrightness(target, m.y);
+  ZImage.adjustContrast(source, m.x, target);
+  ZImage.adjustLch(target, lch, target);
 
   graphics.background();
   if (mousePressed) {

@@ -424,48 +424,6 @@ public class Color implements Comparable < Color > {
    public static final float LCH_HUE_SHADOW = 308.0f / 360.0f;
 
    /**
-    * Look up table for converting colors from linear to standard RGB.
-    */
-   private static final int[] LTS_LUT = new int[] { 0, 13, 22, 28, 34, 38, 42,
-      46, 50, 53, 56, 59, 61, 64, 66, 69, 71, 73, 75, 77, 79, 81, 83, 85, 86,
-      88, 90, 92, 93, 95, 96, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110,
-      112, 113, 114, 115, 117, 118, 119, 120, 121, 122, 124, 125, 126, 127, 128,
-      129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143,
-      144, 145, 146, 147, 148, 148, 149, 150, 151, 152, 153, 154, 155, 155, 156,
-      157, 158, 159, 159, 160, 161, 162, 163, 163, 164, 165, 166, 167, 167, 168,
-      169, 170, 170, 171, 172, 173, 173, 174, 175, 175, 176, 177, 178, 178, 179,
-      180, 180, 181, 182, 182, 183, 184, 185, 185, 186, 187, 187, 188, 189, 189,
-      190, 190, 191, 192, 192, 193, 194, 194, 195, 196, 196, 197, 197, 198, 199,
-      199, 200, 200, 201, 202, 202, 203, 203, 204, 205, 205, 206, 206, 207, 208,
-      208, 209, 209, 210, 210, 211, 212, 212, 213, 213, 214, 214, 215, 215, 216,
-      216, 217, 218, 218, 219, 219, 220, 220, 221, 221, 222, 222, 223, 223, 224,
-      224, 225, 226, 226, 227, 227, 228, 228, 229, 229, 230, 230, 231, 231, 232,
-      232, 233, 233, 234, 234, 235, 235, 236, 236, 237, 237, 238, 238, 238, 239,
-      239, 240, 240, 241, 241, 242, 242, 243, 243, 244, 244, 245, 245, 246, 246,
-      246, 247, 247, 248, 248, 249, 249, 250, 250, 251, 251, 251, 252, 252, 253,
-      253, 254, 254, 255, 255 };
-
-   /**
-    * Look up table for converting colors from standard to linear RGB.
-    */
-   private static final int[] STL_LUT = new int[] { 0, 0, 0, 0, 0, 0, 0, 1, 1,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4,
-      4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 10, 10, 10,
-      11, 11, 12, 12, 12, 13, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 17, 18,
-      18, 19, 19, 20, 20, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 27, 27, 28,
-      29, 29, 30, 30, 31, 32, 32, 33, 34, 35, 35, 36, 37, 37, 38, 39, 40, 41,
-      41, 42, 43, 44, 45, 45, 46, 47, 48, 49, 50, 51, 51, 52, 53, 54, 55, 56,
-      57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74,
-      76, 77, 78, 79, 80, 81, 82, 84, 85, 86, 87, 88, 90, 91, 92, 93, 95, 96,
-      97, 99, 100, 101, 103, 104, 105, 107, 108, 109, 111, 112, 114, 115, 116,
-      118, 119, 121, 122, 124, 125, 127, 128, 130, 131, 133, 134, 136, 138, 139,
-      141, 142, 144, 146, 147, 149, 151, 152, 154, 156, 157, 159, 161, 163, 164,
-      166, 168, 170, 171, 173, 175, 177, 179, 181, 183, 184, 186, 188, 190, 192,
-      194, 196, 198, 200, 202, 204, 206, 208, 210, 212, 214, 216, 218, 220, 222,
-      224, 226, 229, 231, 233, 235, 237, 239, 242, 244, 246, 248, 250, 253,
-      255 };
-
-   /**
     * Tests to see if all color channels are greater than zero.
     *
     * @param c the color
@@ -1367,19 +1325,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Finds the linear to standard conversion for a single color channel in
-    * [0, 255] .
-    *
-    * @param v the value
-    *
-    * @return the conversion
-    */
-   public static int linearToStandard ( final int v ) {
-
-      return Color.LTS_LUT[v];
-   }
-
-   /**
     * Converts a color from linear RGB to
     * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
     *
@@ -1404,23 +1349,6 @@ public class Color implements Comparable < Color > {
                            ? source.a * 12.92f : ( float ) ( Math.pow(source.a,
                               0.4166666666666667d) * 1.055d - 0.055d )
                            : source.a);
-   }
-
-   /**
-    * Converts a color stored in a hexadecimal integer from linear to standard
-    * RGB by using a look up table.
-    *
-    * @param c     the linear color
-    * @param alpha transform alpha
-    *
-    * @return the standard color
-    */
-   public static int lRgbaTosRgba ( final int c, final boolean alpha ) {
-
-      final int lai = c >> 0x18 & 0xff;
-      return ( alpha ? Color.LTS_LUT[lai] : lai ) << 0x18 | Color.LTS_LUT[c
-         >> 0x10 & 0xff] << 0x10 | Color.LTS_LUT[c >> 0x08 & 0xff] << 0x08
-         | Color.LTS_LUT[c & 0xff];
    }
 
    /**
@@ -1519,20 +1447,6 @@ public class Color implements Comparable < Color > {
     * @see Color#sRgbLuminance(Color)
     */
    public static float luminance ( final Color c ) {
-
-      return Color.sRgbLuminance(c);
-   }
-
-   /**
-    * Returns the relative luminance of a color; assumes the color is in sRGB.
-    *
-    * @param c the color
-    *
-    * @return the luminance
-    *
-    * @see Color#sRgbLuminance(int)
-    */
-   public static float luminance ( final int c ) {
 
       return Color.sRgbLuminance(c);
    }
@@ -2031,23 +1945,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color stored in a hexadecimal integer from standard to linear
-    * RGB by using a look up table.
-    *
-    * @param c     the standard color
-    * @param alpha transform alpha
-    *
-    * @return the linear color
-    */
-   public static int sRgbaTolRgba ( final int c, final boolean alpha ) {
-
-      final int sai = c >> 0x18 & 0xff;
-      return ( alpha ? Color.STL_LUT[sai] : sai ) << 0x18 | Color.STL_LUT[c
-         >> 0x10 & 0xff] << 0x10 | Color.STL_LUT[c >> 0x08 & 0xff] << 0x08
-         | Color.STL_LUT[c & 0xff];
-   }
-
-   /**
     * Returns the relative luminance of the standard RGB color, based on
     * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
     * 709 relative luminance</a> coefficients: <code>0.2126</code> for red,
@@ -2068,36 +1965,6 @@ public class Color implements Comparable < Color > {
 
       return ( float ) ( 0.21264934272065283d * lr + 0.7151691357059038d * lg
          + 0.07218152157344333d * lb );
-   }
-
-   /**
-    * Returns the relative luminance of the standard RGB color, based on
-    * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
-    * 709 relative luminance</a> coefficients: <code>0.2126</code> for red,
-    * <code>0.7152</code> for green and <code>0.0722</code> for blue.
-    *
-    * @param c the input color
-    *
-    * @return the luminance
-    */
-   public static float sRgbLuminance ( final int c ) {
-
-      return ( float ) ( 0.0008339189910613837d * Color.STL_LUT[c >> 0x10
-         & 0xff] + 0.002804584845905505d * Color.STL_LUT[c >> 0x08 & 0xff]
-         + 0.0002830647904840915d * Color.STL_LUT[c & 0xff] );
-   }
-
-   /**
-    * Finds the standard to linear conversion for a single color channel in
-    * [0, 255] .
-    *
-    * @param v the value
-    *
-    * @return the conversion
-    */
-   public static int standardToLinear ( final int v ) {
-
-      return Color.STL_LUT[v];
    }
 
    /**

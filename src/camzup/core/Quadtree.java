@@ -300,10 +300,10 @@ public class Quadtree {
    }
 
    /**
-    * Inserts a point into the quadtree. Returns <code>true</code> if the
-    * point was successfully inserted into the quadtree directly or indirectly
-    * through one of its children; returns <code>false</code> if the insertion
-    * was unsuccessful.
+    * Inserts a point into the quadtree by reference. Returns
+    * <code>true</code> if the point was successfully inserted into the
+    * quadtree directly or indirectly through one of its children; returns
+    * <code>false</code> if the insertion was unsuccessful.
     *
     * @param point the point
     *

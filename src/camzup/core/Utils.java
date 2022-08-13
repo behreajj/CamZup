@@ -1301,7 +1301,7 @@ public abstract class Utils implements IUtils {
 
       float r0y = 0.5f - r1y;
       r1y = 0.0f;
-      if ( r1y >= -9.0f ^ ( r2x | r2z ) ) {
+      if ( r1y >= -9.0f ^ ( r2x || r2z ) ) {
          r0y = r0y * r0y;
          r1y = 60.14581f - r0y * 24.980804f;
          r1y = r1y * r0y - 85.45379f;

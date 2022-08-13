@@ -882,17 +882,14 @@ public class Quaternion implements Comparable < Quaternion > {
                   0.0f);
             }
 
+         } else /*
+                 * In a left-handed coordinate system, the forward axis is
+                 * either (0.0, 1.0, 0.0) or (0.0, -1.0, 0.0) .
+                 */
+         if ( yForward < 0.0f ) {
+            return target.set(0.0f, 0.0f, 0.0f, 1.0f);
          } else {
-
-            /*
-             * In a left-handed coordinate system, the forward axis is either
-             * (0.0, 1.0, 0.0) or (0.0, -1.0, 0.0) .
-             */
-            if ( yForward < 0.0f ) {
-               return target.set(0.0f, 0.0f, 0.0f, 1.0f);
-            } else {
-               return target.set(0.0f, 0.0f, 1.0f, 0.0f);
-            }
+            return target.set(0.0f, 0.0f, 1.0f, 0.0f);
          }
       }
 
@@ -982,24 +979,20 @@ public class Quaternion implements Comparable < Quaternion > {
                   0.0f);
             }
 
-         } else {
-
+         } else if ( forward.y < 0.0f ) {
             /*
-             * In a left-handed coordinate system, the forward axis is either
-             * (0.0, 1.0, 0.0) or (0.0, -1.0, 0.0) .
+             * In a left-handed coordinate system, the forward axis is
+             * either (0.0, 1.0, 0.0) or (0.0, -1.0, 0.0) .
              */
-            if ( forward.y < 0.0f ) {
-               Vec3.left(right);
-               Vec3.back(forward);
-               Vec3.up(up);
-               return target.set(0.0f, 0.0f, 0.0f, 1.0f);
-            } else {
-               Vec3.left(right);
-               Vec3.forward(forward);
-               Vec3.down(up);
-               return target.set(0.0f, 0.0f, 1.0f, 0.0f);
-            }
-
+            Vec3.left(right);
+            Vec3.back(forward);
+            Vec3.up(up);
+            return target.set(0.0f, 0.0f, 0.0f, 1.0f);
+         } else {
+            Vec3.left(right);
+            Vec3.forward(forward);
+            Vec3.down(up);
+            return target.set(0.0f, 0.0f, 1.0f, 0.0f);
          }
 
       }

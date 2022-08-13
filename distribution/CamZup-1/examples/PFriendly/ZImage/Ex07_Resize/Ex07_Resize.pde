@@ -38,7 +38,7 @@ void setup() {
   ZImage.radial(0.0f, 0.0f, 0.7071f, grd0, source);
 
   if (main.getClass().getSimpleName().equals("Yup2")) {
-    ZImage.premul(source);
+    ZImage.premul(source, source);
   }
 
   wOrig = source.width;

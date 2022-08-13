@@ -302,10 +302,10 @@ public class Octree {
    }
 
    /**
-    * Inserts a point into the octree. Returns <code>true</code> if the point
-    * was successfully inserted into the octree directly or indirectly through
-    * one of its children; returns <code>false</code> if the insertion was
-    * unsuccessful.
+    * Inserts a point into the octree by reference. Returns <code>true</code>
+    * if the point was successfully inserted into the octree directly or
+    * indirectly through one of its children; returns <code>false</code> if
+    * the insertion was unsuccessful.
     *
     * @param point the point
     *

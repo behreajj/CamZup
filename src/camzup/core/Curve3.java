@@ -629,60 +629,6 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       return this;
    }
 
-   public Curve3 rotateHandles ( final float radians ) {
-      // TODO: Test
-
-      final double radd = radians;
-      final float cosa = ( float ) Math.cos(radd);
-      final float sina = ( float ) Math.sin(radd);
-
-      final Vec3 axis = new Vec3();
-
-      final Iterator < Knot3 > itr = this.knots.iterator();
-      final Knot3 first = itr.next();
-      Knot3 prev = first;
-      Knot3 curr = null;
-      while ( itr.hasNext() ) {
-         curr = itr.next();
-         Vec3.subNorm(curr.coord, prev.coord, axis);
-
-         final Vec3 fh = prev.foreHandle;
-         final Vec3 coPrev = prev.coord;
-         Vec3.sub(fh, coPrev, fh);
-         Vec3.rotate(fh, cosa, sina, axis, fh);
-         Vec3.add(fh, coPrev, fh);
-
-         final Vec3 rh = curr.rearHandle;
-         final Vec3 coCurr = curr.coord;
-         Vec3.sub(rh, coCurr, rh);
-         Vec3.rotate(rh, cosa, sina, axis, rh);
-         Vec3.add(rh, coCurr, rh);
-
-         prev = curr;
-      }
-
-      if ( this.closedLoop ) {
-         Vec3.subNorm(first.coord, prev.coord, axis);
-
-         final Vec3 fh = prev.foreHandle;
-         final Vec3 coPrev = prev.coord;
-         Vec3.sub(fh, coPrev, fh);
-         Vec3.rotate(fh, cosa, sina, axis, fh);
-         Vec3.add(fh, coPrev, fh);
-
-         final Vec3 rh = first.rearHandle;
-         final Vec3 coFirst = first.coord;
-         Vec3.sub(rh, coFirst, rh);
-         Vec3.rotate(rh, cosa, sina, axis, rh);
-         Vec3.add(rh, coFirst, rh);
-      } else {
-         prev.mirrorHandlesBackward();
-         first.mirrorHandlesForward();
-      }
-
-      return this;
-   }
-
    /**
     * Rotates all knots in the curve by an angle in radians around the x axis.
     *

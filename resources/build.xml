@@ -205,7 +205,7 @@
 			bottom="Processing Library ${project.name} by ${author.name}. ${library.copyright}"
 			classpath="${classpath.local.location}/core.jar;{project.bin}"
 			destdir="${project.tmp}/${project.name}/reference" verbose="false"
-			stylesheetfile="resources/stylesheet.css"
+			stylesheetfile="resources/javadoc_stylesheet.css"
 			doctitle="Javadocs: ${project.name}" public="true" version="false"
 			windowtitle="Javadocs: ${project.name}">
 

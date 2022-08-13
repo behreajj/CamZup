@@ -2,9 +2,6 @@ package camzup.pfriendly;
 
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
-import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 
 import camzup.core.Bounds3;
@@ -12,6 +9,7 @@ import camzup.core.Color;
 import camzup.core.Gradient;
 import camzup.core.IUtils;
 import camzup.core.Octree;
+import camzup.core.Pixels;
 import camzup.core.Sdf;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -38,6 +36,9 @@ public class ZImage extends PImage {
     * @param height the image height
     */
    public ZImage ( final int width, final int height ) {
+
+      // TODO: Rename linear, radial, conic, etc. to gradientLinear,
+      // gradientRadial, gradientConic, gradientMap
 
       super(width, height);
    }
@@ -79,21 +80,31 @@ public class ZImage extends PImage {
     * @param obj the object
     *
     * @return the equivalence
-    *
-    * @see Arrays#equals(int[], int[])
     */
    @Override
    public boolean equals ( final Object obj ) {
 
       if ( this == obj ) { return true; }
       if ( obj == null || this.getClass() != obj.getClass() ) { return false; }
-      final ZImage z = ( ZImage ) obj;
-      if ( this.format != z.format || this.width != z.width || this.pixelDensity
-         != z.pixelDensity || this.pixelHeight != z.pixelHeight
-         || this.pixelWidth != z.pixelWidth || this.height != z.height ) {
+      final PImage p = ( PImage ) obj;
+      if ( this.format != p.format || this.width != p.width || this.pixelDensity
+         != p.pixelDensity || this.pixelHeight != p.pixelHeight
+         || this.pixelWidth != p.pixelWidth || this.height != p.height ) {
          return false;
       }
-      return Arrays.equals(this.pixels, z.pixels);
+
+      final int[] apx = this.pixels;
+      final int[] bpx = p.pixels;
+      if ( apx == bpx ) { return true; }
+      if ( apx == null || bpx == null ) { return false; }
+
+      final int len = apx.length;
+      if ( bpx.length != len ) { return false; }
+
+      for ( int i = 0; i < len; ++i ) {
+         if ( apx[i] != bpx[i] ) { return false; }
+      }
+      return true;
    }
 
    /**
@@ -233,113 +244,87 @@ public class ZImage extends PImage {
    public static final int DEFAULT_LEADING = 8;
 
    /**
-    * Adjusts an image's brightness by a factor. Uses the CIE L*a*b* color
-    * space. The adjustment is clamped to the range [-1.0, 1.0].
+    * Adjusts the contrast of an image by a factor. Uses the CIE LAB color
+    * space. The adjustment factor is expected to be in [-1.0, 1.0].
     *
-    * @param target the image
-    * @param bright the contrast adjustment
+    * @param source the source image
+    * @param fac    the contrast factor
+    * @param target the target image
     *
-    * @return the altered image
+    * @return the adjusted image
+    *
+    * @see Pixels#adjustContrast(int[], float, int[])
     */
-   public static PImage adjustBrightness ( final PImage target,
-      final float bright ) {
+   public static PImage adjustContrast ( final PImage source, final float fac,
+      final PImage target ) {
 
-      final float valAdjust = 100.0f * Utils.clamp(bright, -1.0f, 1.0f);
-
-      target.loadPixels();
-      final int[] px = target.pixels;
-      final int len = px.length;
-
-      final Color lrgb = new Color();
-      final Vec4 xyz = new Vec4();
-      final Vec4 lab = new Vec4();
-      final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
-
-      for ( int i = 0; i < len; ++i ) {
-         final int srgbKeyInt = px[i];
-         if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
-            final Integer srgbKeyObj = srgbKeyInt;
-            if ( !dict.containsKey(srgbKeyObj) ) {
-
-               Color.fromHex(Color.sRgbaTolRgba(srgbKeyInt, false), lrgb);
-               Color.lRgbaToXyza(lrgb, xyz);
-               Color.xyzaToLaba(xyz, lab);
-
-               lab.z += valAdjust;
-
-               Color.labaToXyza(lab, xyz);
-               Color.xyzaTolRgba(xyz, lrgb);
-               dict.put(srgbKeyObj, Color.lRgbaTosRgba(Color.toHexIntSat(lrgb),
-                  false));
-            }
-         }
-      }
-
-      if ( dict.size() > 0 ) {
-         for ( int i = 0; i < len; ++i ) {
-            final Integer srgbKeyObj = px[i];
-            if ( dict.containsKey(srgbKeyObj) ) {
-               px[i] = dict.get(srgbKeyObj);
-            }
-         }
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.adjustContrast(target.pixels, fac, target.pixels);
          target.updatePixels();
+         return target;
       }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.adjustContrast(pxSrc, fac, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = source.pixelWidth;
+      target.pixelHeight = source.pixelHeight;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
 
       return target;
    }
 
    /**
-    * Adjusts an image's contrast by a factor. Uses the CIE L*a*b* color
-    * space. The adjustment is clamped to the range [-1.0, 1.0].
+    * Adjusts a source image's colors in CIE LCH. Assigns the results to a
+    * target image.
     *
-    * @param target   the image
-    * @param contrast the contrast adjustment
+    * @param source the source image
+    * @param adjust the adjustment
+    * @param target the target image
     *
-    * @return the altered image
+    * @return the adjusted image
+    *
+    * @see Pixels#adjustLch(int[], Vec4, int[])
     */
-   public static PImage adjustContrast ( final PImage target,
-      final float contrast ) {
+   public static PImage adjustLch ( final PImage source, final Vec4 adjust,
+      final PImage target ) {
 
-      final float valAdjust = 1.0f + Utils.clamp(contrast, -1.0f, 1.0f);
-
-      target.loadPixels();
-      final int[] px = target.pixels;
-      final int len = px.length;
-
-      final Color lrgb = new Color();
-      final Vec4 xyz = new Vec4();
-      final Vec4 lab = new Vec4();
-      final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
-
-      for ( int i = 0; i < len; ++i ) {
-         final int srgbKeyInt = px[i];
-         if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
-            final Integer srgbKeyObj = srgbKeyInt;
-            if ( !dict.containsKey(srgbKeyObj) ) {
-
-               Color.fromHex(Color.sRgbaTolRgba(srgbKeyInt, false), lrgb);
-               Color.lRgbaToXyza(lrgb, xyz);
-               Color.xyzaToLaba(xyz, lab);
-
-               lab.z = ( lab.z - 50.0f ) * valAdjust + 50.0f;
-
-               Color.labaToXyza(lab, xyz);
-               Color.xyzaTolRgba(xyz, lrgb);
-               dict.put(srgbKeyObj, Color.lRgbaTosRgba(Color.toHexIntSat(lrgb),
-                  false));
-            }
-         }
-      }
-
-      if ( dict.size() > 0 ) {
-         for ( int i = 0; i < len; ++i ) {
-            final Integer srgbKeyObj = px[i];
-            if ( dict.containsKey(srgbKeyObj) ) {
-               px[i] = dict.get(srgbKeyObj);
-            }
-         }
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.adjustLch(target.pixels, adjust, target.pixels);
          target.updatePixels();
+         return target;
       }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.adjustLch(pxSrc, adjust, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = source.pixelWidth;
+      target.pixelHeight = source.pixelHeight;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
 
       return target;
    }
@@ -348,36 +333,38 @@ public class ZImage extends PImage {
     * Convert an image in the {@link PConstants#ALPHA} format to an image in
     * the {@link PConstants#ARGB} format.
     *
-    * @param target the image
+    * @param image the image
     *
     * @return the conversion
     */
-   public static PImage alphaToArgb ( final PImage target ) {
+   public static PImage alphaToArgb ( final PImage image ) {
 
-      if ( target.format != PConstants.ALPHA ) { return target; }
+      // QUERY: Depart from (source, target) signature for this function?
 
-      target.loadPixels();
-      final int[] px = target.pixels;
+      if ( image.format != PConstants.ALPHA ) { return image; }
+
+      image.loadPixels();
+      final int[] px = image.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
          final int a = px[i];
          px[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
       }
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-      return target;
+      image.format = PConstants.ARGB;
+      image.updatePixels();
+      return image;
    }
 
    /**
     * Finds the aspect ratio of an image, its width divided by its height.
     *
-    * @param img the image
+    * @param image the image
     *
     * @return the aspect ratio
     */
-   public static float aspect ( final PImage img ) {
+   public static float aspect ( final PImage image ) {
 
-      return Utils.div(( float ) img.width, ( float ) img.height);
+      return Utils.div(( float ) image.width, ( float ) image.height);
    }
 
    /**
@@ -804,84 +791,8 @@ public class ZImage extends PImage {
    public static Color[] extractPalette ( final PImage source,
       final int capacity, final int threshold ) {
 
-      final HashSet < Integer > uniqueColors = new HashSet <>();
       source.loadPixels();
-      final int[] px = source.pixels;
-      final int pxLen = px.length;
-
-      for ( int i = 0; i < pxLen; ++i ) {
-         uniqueColors.add(0xff000000 | px[i]);
-      }
-
-      final int uniquesLen = uniqueColors.size();
-      final Iterator < Integer > uniquesItr = uniqueColors.iterator();
-
-      /* Lt instead of lteq to account for +1 of alpha. */
-      if ( uniquesLen < threshold ) {
-         final Color[] result = new Color[1 + uniquesLen];
-         for ( int i = 0; uniquesItr.hasNext(); ++i ) {
-            result[1 + i] = Color.fromHex(uniquesItr.next(), new Color());
-         }
-         result[0] = Color.clearBlack(new Color());
-         return result;
-      }
-
-      final Bounds3 bounds = Bounds3.cieLab(new Bounds3());
-      final Octree oct = new Octree(bounds, capacity);
-      final Color srgb = new Color();
-      final Color lrgb = new Color();
-      final Vec4 xyz = new Vec4();
-      final Vec4 lab = new Vec4();
-
-      while ( uniquesItr.hasNext() ) {
-         Color.fromHex(uniquesItr.next(), srgb);
-         Color.sRgbaTolRgba(srgb, false, lrgb);
-         Color.lRgbaToXyza(lrgb, xyz);
-         Color.xyzaToLaba(xyz, lab);
-         oct.insert(new Vec3(lab.x, lab.y, lab.z));
-      }
-
-      /* Unlike dither, shouldn't have to maintain a minimum of 8 centers. */
-      oct.cull();
-
-      final Vec3[] centers = oct.centersMean(false);
-      final int centersLen = centers.length;
-      final Color[] result = new Color[1 + centersLen];
-      for ( int i = 0; i < centersLen; ++i ) {
-         final Vec3 center = centers[i];
-         Color.labaToXyza(center.z, center.x, center.y, 1.0f, xyz);
-         Color.xyzaTolRgba(xyz, lrgb);
-         final Color c = Color.lRgbaTosRgba(lrgb, false, new Color());
-         result[1 + i] = c;
-      }
-
-      result[0] = Color.clearBlack(new Color());
-      return result;
-   }
-
-   /**
-    * Recolors an image in-place with a color gradient. The evaluation
-    * function should accept a hexadecimal color as input and return a factor
-    * in [0.0, 1.0].
-    *
-    * @param grd     the color gradient
-    * @param clrEval the color evaluator
-    * @param target  the target image
-    *
-    * @return the augmented image
-    */
-   public static PImage falseColor ( final Gradient grd, final IntFunction <
-      Float > clrEval, final PImage target ) {
-
-      target.loadPixels();
-      final int[] px = target.pixels;
-      final int len = px.length;
-      for ( int i = 0; i < len; ++i ) {
-         px[i] = Gradient.eval(grd, clrEval.apply(px[i]));
-      }
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-      return target;
+      return Pixels.extractPalette(source.pixels, capacity, threshold);
    }
 
    /**
@@ -893,17 +804,16 @@ public class ZImage extends PImage {
     * @param target the target image
     *
     * @return the augmented image
-    *
-    * @see Color#sRgbLuminance(int)
     */
    public static PImage falseColor ( final Gradient grd, final PImage target ) {
 
+      // TODO: Refactor to use Pixels class. Rename to gradientMap?
       target.loadPixels();
       final int[] px = target.pixels;
       final int len = px.length;
       for ( int i = 0; i < len; ++i ) {
          final float alpha = ( px[i] >> 0x18 & 0xff ) * IUtils.ONE_255;
-         float lum = Color.sRgbLuminance(px[i]);
+         float lum = Pixels.sRgbLuminance(px[i]);
          lum = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math.pow(lum,
             0.4166666666666667d) * 1.055d - 0.055d );
          px[i] = Gradient.eval(grd, alpha * lum);
@@ -918,35 +828,32 @@ public class ZImage extends PImage {
     * Fills an image in place with a color.
     *
     * @param target the target image
-    * @param fll    the fill color
+    * @param c      the fill color
     *
     * @return the image
+    *
+    * @see Color#toHexIntSat(Color)
     */
-   public static PImage fill ( final Color fll, final PImage target ) {
+   public static PImage fill ( final Color c, final PImage target ) {
 
-      return ZImage.fill(Color.toHexIntSat(fll), target);
+      return ZImage.fill(Color.toHexIntSat(c), target);
    }
 
    /**
     * Fills an image with a color in place. The color is expected to be a
     * 32-bit color integer.
     *
-    * @param fll    the fill color
+    * @param c      the fill color
     * @param target the target image
     *
     * @return the image
+    *
+    * @see Pixels#fill(int, int[])
     */
-   public static PImage fill ( final int fll, final PImage target ) {
+   public static PImage fill ( final int c, final PImage target ) {
 
-      /*
-       * An alternative design would be to adjust the validated fill based on
-       * the target's format instead of changing the format to ARGB.
-       */
-      final int valFll = fll;
       target.loadPixels();
-      final int[] px = target.pixels;
-      final int len = px.length;
-      for ( int i = 0; i < len; ++i ) { px[i] = valFll; }
+      Pixels.fill(c, target.pixels);
       target.format = PConstants.ARGB;
       target.updatePixels();
 
@@ -954,57 +861,82 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Flips an image horizontally, on the x axis. Modifies the target image in
-    * place.
+    * Flips an image horizontally, on the x axis.
     *
-    * @param target the output image
+    * @param source the source image
+    * @param target the target image
     *
     * @return the flipped image
     */
-   public static PImage flipX ( final PImage target ) {
+   public static PImage flipX ( final PImage source, final PImage target ) {
 
-      target.loadPixels();
-
-      final int w = target.pixelWidth;
-      final int[] px = target.pixels;
-      final int len = px.length;
-      final int[] flipped = new int[len];
-
-      final int wn1 = w - 1;
-      for ( int i = 0; i < len; ++i ) {
-         flipped[i / w * w + wn1 - i % w] = px[i];
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.flipX(target.pixels, target.pixelWidth, target.pixelHeight,
+            target.pixels);
+         target.updatePixels();
+         return target;
       }
 
-      target.pixels = flipped;
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.flipX(pxSrc, w, h, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = w;
+      target.pixelHeight = h;
+      target.width = source.width;
+      target.height = source.height;
       target.updatePixels();
 
       return target;
    }
 
    /**
-    * Flips an image vertically, on the y axis. Modifies the target image in
-    * place.
+    * Flips an image horizontally, on the y axis.
     *
-    * @param target the output image
+    * @param source the source image
+    * @param target the target image
     *
     * @return the flipped image
     */
-   public static PImage flipY ( final PImage target ) {
+   public static PImage flipY ( final PImage source, final PImage target ) {
 
-      target.loadPixels();
-
-      final int h = target.pixelHeight;
-      final int w = target.pixelWidth;
-      final int[] px = target.pixels;
-      final int len = px.length;
-      final int[] flipped = new int[len];
-
-      final int hn1 = h - 1;
-      for ( int i = 0; i < len; ++i ) {
-         flipped[ ( hn1 - i / w ) * w + i % w] = px[i];
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.flipY(target.pixels, target.pixelWidth, target.pixelHeight,
+            target.pixels);
+         target.updatePixels();
+         return target;
       }
 
-      target.pixels = flipped;
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.flipY(pxSrc, w, h, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = w;
+      target.pixelHeight = h;
+      target.width = source.width;
+      target.height = source.height;
       target.updatePixels();
 
       return target;
@@ -1427,127 +1359,43 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Converts an image to gray scale. Does not change the image format or
-    * reduce the number of bytes used to store color; all colors remain
-    * 32-bit.
+    * Converts a color image from color to gray.
     *
-    * @param target the output image
+    * @param source the source image
+    * @param target the target image
     *
-    * @return the image
+    * @return the gray image
+    *
+    * @see Pixels#grayscale(int[], int[])
     */
-   public static PImage grayscale ( final PImage target ) {
+   public static PImage grayscale ( final PImage source, final PImage target ) {
 
-      return ZImage.grayscale(target, false);
-   }
-
-   /**
-    * Converts an image to gray scale, with the option of stretching its
-    * contrast according to a minimum and maximum. Does not change the image
-    * format or reduce the number of bytes used to store color; all colors
-    * remain 32-bit.
-    *
-    * @param target  the output image
-    * @param stretch flag to stretch contrast
-    *
-    * @return the image
-    *
-    * @see Color#sRgbLuminance(int)
-    */
-   public static PImage grayscale ( final PImage target,
-      final boolean stretch ) {
-
-      target.loadPixels();
-      final int format = target.format;
-      final int[] px = target.pixels;
-      final int len = px.length;
-
-      if ( format == PConstants.ALPHA ) {
-         for ( int i = 0; i < len; ++i ) {
-            final int a = px[i];
-            px[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
-         }
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.grayscale(target.pixels, target.pixels);
+         target.updatePixels();
+         return target;
       }
 
-      if ( stretch ) {
-
-         /* Find minimum and maximum luminance. */
-         float lumMin = Float.MAX_VALUE;
-         float lumMax = Float.MIN_VALUE;
-         final float[] lums = new float[len];
-         for ( int i = 0; i < len; ++i ) {
-            final int hex = px[i];
-            if ( ( hex & 0xff000000 ) != 0 ) {
-               final float lum = Color.sRgbLuminance(hex);
-               if ( lum < lumMin ) { lumMin = lum; }
-               if ( lum > lumMax ) { lumMax = lum; }
-               lums[i] = lum;
-            }
-         }
-
-         /* Map luminance to [0.0, 1.0] from [minimum, maximum]. */
-         final float diff = lumMax - lumMin;
-         final float denom = diff != 0.0f ? 1.0f / diff : 0.0f;
-         for ( int i = 0; i < len; ++i ) {
-            final int hex = px[i];
-            final int alphaOnly = hex & 0xff000000;
-            if ( alphaOnly != 0 ) {
-               final float lum = ( lums[i] - lumMin ) * denom;
-               final int viLin = ( int ) ( lum * 0xff + 0.5f );
-               final int viStd = Color.linearToStandard(viLin);
-               px[i] = alphaOnly | viStd << 0x10 | viStd << 0x08 | viStd;
-            } else {
-               px[i] = 0x00000000;
-            }
-         }
-
-      } else {
-
-         for ( int i = 0; i < len; ++i ) {
-            final int hex = px[i];
-            final int alphaOnly = hex & 0xff000000;
-            if ( alphaOnly != 0 ) {
-               final float lum = Color.sRgbLuminance(hex);
-               final int viLin = ( int ) ( lum * 0xff + 0.5f );
-               final int viStd = Color.linearToStandard(viLin);
-               px[i] = alphaOnly | viStd << 0x10 | viStd << 0x08 | viStd;
-            } else {
-               px[i] = 0x00000000;
-            }
-         }
-
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
       }
 
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-      return target;
-   }
-
-   /**
-    * Inverts the color channels of the image, with an option to include or
-    * exclude transparency.
-    *
-    * @param source      the source image
-    * @param adjustAlpha invert alpha
-    *
-    * @return the inverted image
-    */
-   public static PImage invert ( final PImage source,
-      final boolean adjustAlpha ) {
-
-      // TODO: Test
       source.loadPixels();
-      final int[] px = source.pixels;
-      final int len = px.length;
-      if ( adjustAlpha ) {
-         for ( int i = 0; i < len; ++i ) { px[i] = ~px[i]; }
-         if ( source.format == PConstants.RGB ) {
-            source.format = PConstants.ARGB;
-         }
-      } else if ( source.format != PConstants.ALPHA ) {
-         for ( int i = 0; i < len; ++i ) { px[i] ^= 0x00ffffff; }
-      }
-      source.updatePixels();
-      return source;
+      target.loadPixels();
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.grayscale(pxSrc, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = source.pixelWidth;
+      target.pixelHeight = source.pixelHeight;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
+
+      return target;
    }
 
    /**
@@ -1644,25 +1492,62 @@ public class ZImage extends PImage {
     * Converts an image from linear RGB to
     * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
     *
-    * @param target      the image
-    * @param adjustAlpha include alpha in the adjustment
+    * @param source      the source image
+    * @param adjustAlpha include the alpha channel in the adjustment
+    * @param target      the target image
     *
-    * @return the standard image
+    * @return the linear image
+    *
+    * @see Pixels#lRgbaTosRgba(int, boolean)
     */
-   public static PImage lRgbaTosRgba ( final PImage target,
-      final boolean adjustAlpha ) {
+   public static PImage lRgbaTosRgba ( final PImage source,
+      final boolean adjustAlpha, final PImage target ) {
 
-      // TODO: Handle ALPHA image format?
-
-      target.loadPixels();
-      final int[] px = target.pixels;
-      final int len = px.length;
-      for ( int i = 0; i < len; ++i ) {
-         px[i] = Color.lRgbaTosRgba(px[i], adjustAlpha);
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.lRgbaTosRgba(target.pixels, adjustAlpha, target.pixels);
+         target.updatePixels();
+         return target;
       }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.lRgbaTosRgba(pxSrc, adjustAlpha, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = w;
+      target.pixelHeight = h;
+      target.width = source.width;
+      target.height = source.height;
       target.updatePixels();
 
       return target;
+   }
+
+   /**
+    * Converts an image from linear RGB to
+    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
+    *
+    * @param source the source image
+    * @param target the target image
+    *
+    * @return the linear image
+    *
+    * @see Pixels#lRgbaTosRgba(int, boolean)
+    */
+   public static PImage lRgbaTosRgba ( final PImage source,
+      final PImage target ) {
+
+      return ZImage.lRgbaTosRgba(source, false, target);
    }
 
    /**
@@ -1754,6 +1639,7 @@ public class ZImage extends PImage {
     * Coordinates are expected to be in the range [0.0, 1.0]. Out-of-bounds
     * pixels are omitted from the mirror.
     *
+    * @param source  the source image
     * @param xOrigin the origin x
     * @param yOrigin the origin y
     * @param xDest   the destination x
@@ -1762,115 +1648,145 @@ public class ZImage extends PImage {
     * @param target  the output image
     *
     * @return the mirrored image
+    *
+    * @see Pixels#mirrorBilinear(int[], int, int, float, float, float, float,
+    *      boolean, int[])
     */
-   public static PImage mirror ( final float xOrigin, final float yOrigin,
-      final float xDest, final float yDest, final boolean flip,
-      final PImage target ) {
+   public static PImage mirror ( final PImage source, final float xOrigin,
+      final float yOrigin, final float xDest, final float yDest,
+      final boolean flip, final PImage target ) {
 
-      final int w = target.pixelWidth;
-      final int h = target.pixelHeight;
-      final float wfn1 = w - 1.0f;
-      final float hfn1 = h - 1.0f;
-
-      final float ax = xOrigin * wfn1;
-      final float ay = hfn1 - yOrigin * hfn1;
-      final float bx = xDest * wfn1;
-      final float by = hfn1 - yDest * hfn1;
-
-      final float dx = bx - ax;
-      final float dy = by - ay;
-      final float dMagSq = dx * dx + dy * dy;
-      final float dMagSqInv = 1.0f / Utils.max(IUtils.EPSILON, dMagSq);
-
-      final float flipSign = flip ? -1.0f : 1.0f;
-
-      target.loadPixels();
-
-      final int[] px = target.pixels;
-      final int len = px.length;
-      final int[] mirrored = new int[len];
-
-      for ( int k = 0; k < len; ++k ) {
-         final float cx = k % w;
-         final float cy = k / w;
-
-         final float ex = cx - ax;
-         final float ey = cy - ay;
-         final float cross = ex * dy - ey * dx;
-
-         if ( flipSign * cross < 0.0f ) {
-            mirrored[k] = px[k];
-         } else {
-            final float t = ( ex * dx + ey * dy ) * dMagSqInv;
-            final float u = 1.0f - t;
-            final float pxProj = u * ax + t * bx;
-            final float pyProj = u * ay + t * by;
-            final float pxOpp = pxProj + pxProj - cx;
-            final float pyOpp = pyProj + pyProj - cy;
-
-            // TODO: Use bilinear filtering instead of nearest?
-            final int j = ( int ) ( pxOpp + 0.5f );
-            final int i = ( int ) ( pyOpp + 0.5f );
-            if ( j > -1 && j < w && i > -1 && i < h ) {
-               mirrored[k] = px[j + i * w];
-            }
-            // mirrored[k] = px[Utils.mod(j, w) + Utils.mod(i, h) * w];
-         }
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.mirrorBilinear(target.pixels, target.pixelWidth,
+            target.pixelHeight, xOrigin, yOrigin, xDest, yDest, flip,
+            target.pixels);
+         target.updatePixels();
+         return target;
       }
 
-      target.pixels = mirrored;
-      target.format = PConstants.ARGB;
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.mirrorBilinear(pxSrc, w, h, xOrigin, yOrigin,
+         xDest, yDest, flip, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = w;
+      target.pixelHeight = h;
+      target.width = source.width;
+      target.height = source.height;
       target.updatePixels();
 
       return target;
-
    }
 
    /**
-    * Multiplies the red, green and blue channels of each pixel in the image
-    * by its alpha channel.
+    * Mirrors an image across the axis described by an origin and destination.
+    * Coordinates are expected to be in the range [0.0, 1.0]. Out-of-bounds
+    * pixels are omitted from the mirror.
     *
-    * @param target the source image
+    * @param source  the source image
+    * @param xOrigin the origin x
+    * @param yOrigin the origin y
+    * @param xDest   the destination x
+    * @param yDest   the destination y
+    * @param target  the output image
     *
-    * @return the pre-multiplied image
+    * @return the mirrored image
     */
-   public static PImage premul ( final PImage target ) {
+   public static PImage mirror ( final PImage source, final float xOrigin,
+      final float yOrigin, final float xDest, final float yDest,
+      final PImage target ) {
 
+      return ZImage.mirror(source, xOrigin, yOrigin, xDest, yDest, false,
+         target);
+   }
+
+   /**
+    * Mirrors an image across the axis described by an origin and destination.
+    * Coordinates are expected to be in the range [0.0, 1.0]. Out-of-bounds
+    * pixels are omitted from the mirror.
+    *
+    * @param source the source image
+    * @param origin the origin point
+    * @param dest   the destination point
+    * @param flip   the flip reflection flag
+    * @param target the output image
+    *
+    * @return the mirrored image
+    */
+   public static PImage mirror ( final PImage source, final Vec2 origin,
+      final Vec2 dest, final boolean flip, final PImage target ) {
+
+      return ZImage.mirror(source, origin.x, origin.y, dest.x, dest.y, flip,
+         target);
+   }
+
+   /**
+    * Mirrors an image across the axis described by an origin and destination.
+    * Coordinates are expected to be in the range [0.0, 1.0]. Out-of-bounds
+    * pixels are omitted from the mirror.
+    *
+    * @param source the source image
+    * @param origin the origin point
+    * @param dest   the destination point
+    * @param target the output image
+    *
+    * @return the mirrored image
+    */
+   public static PImage mirror ( final PImage source, final Vec2 origin,
+      final Vec2 dest, final PImage target ) {
+
+      return ZImage.mirror(source, origin.x, origin.y, dest.x, dest.y, target);
+   }
+
+   /**
+    * Multiplies the red, green and blue channels of each pixel in a source
+    * image by the alpha channel.
+    *
+    * @param source the source image
+    * @param target the target image
+    *
+    * @return the image
+    *
+    * @see Pixels#premul(int[], int[])
+    */
+   public static PImage premul ( final PImage source, final PImage target ) {
+
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.premul(target.pixels, target.pixels);
+         target.updatePixels();
+         return target;
+      }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
       target.loadPixels();
-
-      final int[] px = target.pixels;
-      final int len = px.length;
-
-      if ( target.format == PConstants.ALPHA ) {
-         for ( int i = 0; i < len; ++i ) {
-            final int a = px[i];
-            px[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
-         }
-      }
-
-      for ( int i = 0; i < len; ++i ) {
-         final int ai = px[i] >> 0x18 & 0xff;
-         if ( ai < 1 ) {
-            px[i] = 0x00000000;
-         } else if ( ai < 255 ) {
-            final int ri = px[i] >> 0x10 & 0xff;
-            final int gi = px[i] >> 0x08 & 0xff;
-            final int bi = px[i] & 0xff;
-
-            final float af = ai * IUtils.ONE_255;
-            int rp = ( int ) ( ri * af + 0.5f );
-            int gp = ( int ) ( gi * af + 0.5f );
-            int bp = ( int ) ( bi * af + 0.5f );
-
-            if ( rp > 255 ) { rp = 255; }
-            if ( gp > 255 ) { gp = 255; }
-            if ( bp > 255 ) { bp = 255; }
-
-            px[i] = ai << 0x18 | rp << 0x10 | gp << 0x08 | bp;
-         }
-      }
-
-      target.format = PConstants.ARGB;
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.premul(pxSrc, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = w;
+      target.pixelHeight = h;
+      target.width = source.width;
+      target.height = source.height;
       target.updatePixels();
 
       return target;
@@ -1948,6 +1864,8 @@ public class ZImage extends PImage {
     */
    public static PImage resizeBicubic ( final PImage target, final int wPx,
       final int hPx ) {
+
+      // TODO: Replace with resizeBilinear
 
       /*
        * References: https://stackoverflow.com/questions/
@@ -2126,79 +2044,19 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Resizes an image to new dimensions in pixels using nearest neighbor.
-    *
-    * @param target the image
-    * @param wPx    the new pixel width
-    * @param hPx    the new pixel height
-    *
-    * @return the target
-    */
-   public static PImage resizeNearest ( final PImage target, final int wPx,
-      final int hPx ) {
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not resize PGraphics with this method.");
-         return target;
-      }
-
-      target.loadPixels();
-      final int pd = target.pixelDensity;
-      final int dw = ( wPx < 2 ? 2 : wPx ) * pd;
-      final int dh = ( hPx < 2 ? 2 : hPx ) * pd;
-
-      final int sw = target.pixelWidth;
-      final int sh = target.pixelHeight;
-
-      if ( dw == sw && dh == sh ) { return target; }
-
-      final int[] srcpx = target.pixels;
-      final int len = dw * dh;
-      final int[] trgpx = new int[len];
-
-      /*
-       * Subtracting one leads to incorrect bottom-right pixel from very small
-       * images.
-       */
-      final float bias = 0.00075f;
-      final float tx = sw / ( dw * ( 1.0f + bias ) );
-      final float ty = sh / ( dh * ( 1.0f + bias ) );
-      for ( int k = 0; k < len; ++k ) {
-         final int nx = ( int ) ( k % dw * tx - bias );
-         final int ny = ( int ) ( k / dw * ty - bias );
-         trgpx[k] = srcpx[ny * sw + nx];
-      }
-
-      target.pixels = trgpx;
-      target.width = dw / pd;
-      target.height = dh / pd;
-      target.pixelWidth = dw;
-      target.pixelHeight = dh;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
     * Generates a diagnostic image where a pixel's location on the x-axis
     * correlates to the color red; on the y-axis, to green.
     *
     * @param target the output image
     *
     * @return the image
+    *
+    * @see Pixels#rgb(int, int, int, int[])
     */
    public static PImage rgb ( final PImage target ) {
 
       target.loadPixels();
-      final int[] px = target.pixels;
-      final int len = px.length;
-      final int w = target.pixelWidth;
-      final float hInv = 0xff / ( target.pixelHeight - 1.0f );
-      final float wInv = 0xff / ( w - 1.0f );
-      for ( int i = 0; i < len; ++i ) {
-         px[i] = 0xff000080 | ( int ) ( 0.5f + wInv * ( i % w ) ) << 0x10
-            | ( int ) ( 255.5f - hInv * ( i / w ) ) << 0x08;
-      }
+      Pixels.rgb(target.pixelWidth, target.pixelHeight, 0x80, target.pixels);
       target.format = PConstants.ARGB;
       target.updatePixels();
 
@@ -2206,140 +2064,37 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Rotates an image in place by 180 degrees.
+    * Rotates a source image around its center by an angle in radians.
     *
-    * @param target the output image
-    *
-    * @return the rotated image.
-    */
-   public static PImage rotate180 ( final PImage target ) {
-
-      target.loadPixels();
-      final int[] px = target.pixels;
-      final int pxLen = px.length;
-      final int pxHalfLen = pxLen / 2;
-      final int pxLenn1 = pxLen - 1;
-      for ( int i = 0; i < pxHalfLen; ++i ) {
-         final int t = px[i];
-         px[i] = px[pxLenn1 - i];
-         px[pxLenn1 - i] = t;
-      }
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Rotates an image in place by 270 degrees counter-clockwise (or 90
-    * degrees clockwise).
-    *
-    * @param target the output image
-    *
-    * @return the rotated image.
-    */
-   public static PImage rotate270 ( final PImage target ) {
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not use PGraphics with this method.");
-         return target;
-      }
-
-      target.loadPixels();
-      final int[] px = target.pixels;
-      final int w = target.pixelWidth;
-      final int h = target.pixelHeight;
-      final int pd = target.pixelDensity;
-      final int pxLen = px.length;
-      final int hn1 = h - 1;
-      final int[] rotated = new int[pxLen];
-      for ( int i = 0; i < pxLen; ++i ) {
-         rotated[i % w * h + hn1 - i / w] = px[i];
-      }
-      target.pixels = rotated;
-      target.width = h / pd;
-      target.height = w / pd;
-      target.pixelWidth = h;
-      target.pixelHeight = w;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Rotates an image in place by 90 degrees counter-clockwise.
-    *
-    * @param target the output image
-    *
-    * @return the rotated image.
-    */
-   public static PImage rotate90 ( final PImage target ) {
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not use PGraphics with this method.");
-         return target;
-      }
-
-      target.loadPixels();
-      final int[] px = target.pixels;
-      final int w = target.pixelWidth;
-      final int h = target.pixelHeight;
-      final int pd = target.pixelDensity;
-      final int pxLen = px.length;
-      final int pxLennh = pxLen - h;
-      final int[] rotated = new int[pxLen];
-      for ( int i = 0; i < pxLen; ++i ) {
-         rotated[pxLennh + i / w - i % w * h] = px[i];
-      }
-      target.pixels = rotated;
-      target.width = h / pd;
-      target.height = w / pd;
-      target.pixelWidth = h;
-      target.pixelHeight = w;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Rotates an image around its center by an angle in radians. Defaults to
-    * other methods for rotations of approximately 0, 90, 180 and 270 degrees.
-    * Uses bilinear interpolation method.<br>
-    * <br>
-    * It is recommended to trim the image's alpha before and/or after
-    * rotation. Depending on the renderer, alpha should be premultiplied prior
-    * to rotation and unpremultiplied after.
-    *
-    * @param target the image
+    * @param source the source image
     * @param angle  the angle in radians
+    * @param target the target image
+    *
+    * @return the rotated image
+    */
+   public static PImage rotate ( final PImage source, final float angle,
+      final PImage target ) {
+
+      return ZImage.rotateBilinear(source, angle, target);
+   }
+
+   /**
+    * Rotates an image by 180 degrees.
+    *
+    * @param source the source image
+    * @param target the target image
     *
     * @return the rotated image
     *
-    * @see Utils#modRadians(float)
-    * @see Utils#approx(float, float, float)
-    * @see ZImage#rotate90(PImage)
-    * @see ZImage#rotate180(PImage)
-    * @see ZImage#rotate270(PImage)
-    * @see Utils#abs(float)
-    * @see Utils#ceil(float)
-    * @see Utils#floor(float)
+    * @see Pixels#rotate180(int[], int[])
     */
-   public static PImage rotateBilinear ( final PImage target,
-      final float angle ) {
+   public static PImage rotate180 ( final PImage source, final PImage target ) {
 
-      // TODO: Displacement vector for this and rotateNearest, similar to
-      // trimAlpha?
-
-      /* 1 / 720 degrees = .00872 radians. */
-      final float aVerif = Utils.modRadians(angle);
-      if ( Utils.approx(aVerif, 0.0f, 0.008726646f) ) { return target; }
-      if ( Utils.approx(aVerif, IUtils.HALF_PI, 0.008726646f) ) {
-         return ZImage.rotate90(target);
-      }
-      if ( Utils.approx(aVerif, IUtils.PI, 0.008726646f) ) {
-         return ZImage.rotate180(target);
-      }
-      if ( Utils.approx(aVerif, 4.712389f, 0.008726646f) ) {
-         return ZImage.rotate270(target);
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.rotate180(target.pixels, target.pixels);
+         target.updatePixels();
+         return target;
       }
 
       if ( target instanceof PGraphics ) {
@@ -2347,233 +2102,126 @@ public class ZImage extends PImage {
          return target;
       }
 
-      final double avd = aVerif;
-      final float cosa = ( float ) Math.cos(avd);
-      final float sina = ( float ) Math.sin(avd);
-
+      source.loadPixels();
       target.loadPixels();
-      final int[] pxSrc = target.pixels;
-      final int wSrc = target.pixelWidth;
-      final int hSrc = target.pixelHeight;
-      final int pdSrc = target.pixelDensity;
-
-      final float wf = wSrc;
-      final float hf = hSrc;
-      final float absCosa = Utils.abs(cosa);
-      final float absSina = Utils.abs(sina);
-      final int wTrg = Utils.ceil(hf * absSina + wf * absCosa);
-      final int hTrg = Utils.ceil(hf * absCosa + wf * absSina);
-
-      final float xSrcCenter = wf * 0.5f;
-      final float ySrcCenter = hf * 0.5f;
-      final float xTrgCenter = wTrg * 0.5f;
-      final float yTrgCenter = hTrg * 0.5f;
-
-      final int pxLenTrg = wTrg * hTrg;
-      final int[] pxTrg = new int[pxLenTrg];
-      for ( int i = 0; i < pxLenTrg; ++i ) {
-         final int xTrg = i % wTrg;
-         final int yTrg = i / wTrg;
-         final float xSgn = xTrg - xTrgCenter;
-         final float ySgn = yTrg - yTrgCenter;
-
-         /*
-          * Avoid conversion to and from polar coordinates by using vector
-          * rotation formula.
-          */
-         final float xSrc = xSrcCenter + ( cosa * xSgn - sina * ySgn );
-         final float ySrc = ySrcCenter + ( cosa * ySgn + sina * xSgn );
-
-         /* Specific to bilinear sampling. */
-         final int xf = Utils.floor(xSrc);
-         final int xc = Utils.ceil(xSrc);
-         final int yf = Utils.floor(ySrc);
-         final int yc = Utils.ceil(ySrc);
-
-         final boolean xfInBounds = xf > -1 && xf < wSrc;
-         final boolean xcInBounds = xc > -1 && xc < wSrc;
-         final boolean yfInBounds = yf > -1 && yf < hSrc;
-         final boolean ycInBounds = yc > -1 && yc < hSrc;
-
-         /* Pixel corners colors. */
-         final int c00 = xfInBounds && yfInBounds ? pxSrc[xf + yf * wSrc] : 0;
-         final int c10 = xcInBounds && yfInBounds ? pxSrc[xc + yf * wSrc] : 0;
-         final int c11 = xcInBounds && ycInBounds ? pxSrc[xc + yc * wSrc] : 0;
-         final int c01 = xfInBounds && ycInBounds ? pxSrc[xf + yc * wSrc] : 0;
-
-         final float xErr = xSrc - xf;
-
-         float a0 = 0.0f;
-         float r0 = 0.0f;
-         float g0 = 0.0f;
-         float b0 = 0.0f;
-
-         final int a00 = c00 >> 0x18 & 0xff;
-         final int a10 = c10 >> 0x18 & 0xff;
-         if ( a00 > 0 || a10 > 0 ) {
-            final float u = 1.0f - xErr;
-            a0 = u * a00 + xErr * a10;
-            if ( a0 > 0.0f ) {
-               final int r00 = c00 >> 0x10 & 0xff;
-               final int g00 = c00 >> 0x08 & 0xff;
-               final int b00 = c00 & 0xff;
-
-               final int r10 = c10 >> 0x10 & 0xff;
-               final int g10 = c10 >> 0x08 & 0xff;
-               final int b10 = c10 & 0xff;
-
-               r0 = u * r00 + xErr * r10;
-               g0 = u * g00 + xErr * g10;
-               b0 = u * b00 + xErr * b10;
-            }
-         }
-
-         float a1 = 0.0f;
-         float r1 = 0.0f;
-         float g1 = 0.0f;
-         float b1 = 0.0f;
-
-         final int a01 = c01 >> 0x18 & 0xff;
-         final int a11 = c11 >> 0x18 & 0xff;
-         if ( a01 > 0 || a11 > 0 ) {
-            final float u = 1.0f - xErr;
-            a1 = u * a01 + xErr * a11;
-            if ( a1 > 0.0f ) {
-               final int r01 = c01 >> 0x10 & 0xff;
-               final int g01 = c01 >> 0x08 & 0xff;
-               final int b01 = c01 & 0xff;
-
-               final int r11 = c11 >> 0x10 & 0xff;
-               final int g11 = c11 >> 0x08 & 0xff;
-               final int b11 = c11 & 0xff;
-
-               r1 = u * r01 + xErr * r11;
-               g1 = u * g01 + xErr * g11;
-               b1 = u * b01 + xErr * b11;
-            }
-         }
-
-         float a2 = 0.0f;
-         float r2 = 0.0f;
-         float g2 = 0.0f;
-         float b2 = 0.0f;
-
-         if ( a0 > 0.0f || a1 > 0.0f ) {
-            final float yErr = ySrc - yf;
-            final float u = 1.0f - yErr;
-            a2 = u * a0 + yErr * a1;
-            if ( a2 > 0.0f ) {
-               r2 = u * r0 + yErr * r1;
-               g2 = u * g0 + yErr * g1;
-               b2 = u * b0 + yErr * b1;
-            }
-
-            final int ai = a2 > 255.0f ? 255 : ( int ) a2;
-            final int ri = r2 > 255.0f ? 255 : ( int ) r2;
-            final int gi = g2 > 255.0f ? 255 : ( int ) g2;
-            final int bi = b2 > 255.0f ? 255 : ( int ) b2;
-
-            pxTrg[i] = ai << 0x18 | ri << 0x10 | gi << 0x08 | bi;
-         }
-      }
-
-      target.format = PConstants.ARGB;
-      target.pixels = pxTrg;
-      target.width = wTrg / pdSrc;
-      target.height = hTrg / pdSrc;
-      target.pixelWidth = wTrg;
-      target.pixelHeight = hTrg;
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.rotate180(pxSrc, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = source.pixelWidth;
+      target.pixelHeight = source.pixelHeight;
+      target.width = source.width;
+      target.height = source.height;
       target.updatePixels();
 
       return target;
    }
 
    /**
-    * Rotates an image around its center by an angle in radians. Defaults to
-    * other methods for rotations of approximately 0, 90, 180 and 270 degrees.
-    * Uses nearest neighbor method.<br>
-    * <br>
-    * It is recommended to trim the image's alpha before and/or after
-    * rotation.
+    * Rotates an image by 270 degrees counter-clockwise (or 90 degrees
+    * clockwise).
     *
-    * @param target the image
-    * @param angle  the angle in radians
+    * @param source the source image
+    * @param target the target image
     *
     * @return the rotated image
     *
-    * @see Utils#modRadians(float)
-    * @see Utils#approx(float, float, float)
-    * @see ZImage#rotate90(PImage)
-    * @see ZImage#rotate180(PImage)
-    * @see ZImage#rotate270(PImage)
-    * @see Utils#abs(float)
-    * @see Utils#ceil(float)
-    * @see Utils#round(float)
+    * @see Pixels#rotate270(int[], int, int, int[])
     */
-   public static PImage rotateNearest ( final PImage target,
-      final float angle ) {
-
-      /* 1 / 720 degrees = .00872 radians. */
-      final float aVerif = Utils.modRadians(angle);
-      if ( Utils.approx(aVerif, 0.0f, 0.008726646f) ) { return target; }
-      if ( Utils.approx(aVerif, IUtils.HALF_PI, 0.008726646f) ) {
-         return ZImage.rotate90(target);
-      }
-      if ( Utils.approx(aVerif, IUtils.PI, 0.008726646f) ) {
-         return ZImage.rotate180(target);
-      }
-      if ( Utils.approx(aVerif, 4.712389f, 0.008726646f) ) {
-         return ZImage.rotate270(target);
-      }
+   public static PImage rotate270 ( final PImage source, final PImage target ) {
 
       if ( target instanceof PGraphics ) {
          System.err.println("Do not use PGraphics with this method.");
          return target;
       }
 
-      final double avd = aVerif;
-      final float cosa = ( float ) Math.cos(avd);
-      final float sina = ( float ) Math.sin(avd);
-
+      source.loadPixels();
       target.loadPixels();
-      final int[] pxSrc = target.pixels;
-      final int wSrc = target.pixelWidth;
-      final int hSrc = target.pixelHeight;
-      final int pdSrc = target.pixelDensity;
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.rotate270(pxSrc, w, h, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = w;
+      target.pixelHeight = h;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
 
-      final float wf = wSrc;
-      final float hf = hSrc;
-      final float absCosa = Utils.abs(cosa);
-      final float absSina = Utils.abs(sina);
-      final int wTrg = Utils.ceil(hf * absSina + wf * absCosa);
-      final int hTrg = Utils.ceil(hf * absCosa + wf * absSina);
+      return target;
+   }
 
-      final float xSrcCenter = wf * 0.5f;
-      final float ySrcCenter = hf * 0.5f;
-      final float xTrgCenter = wTrg * 0.5f;
-      final float yTrgCenter = hTrg * 0.5f;
+   /**
+    * Rotates an image by 90 degrees counter-clockwise.
+    *
+    * @param source the source image
+    * @param target the target image
+    *
+    * @return the rotated image
+    *
+    * @see Pixels#rotate90(int[], int, int, int[])
+    */
+   public static PImage rotate90 ( final PImage source, final PImage target ) {
 
-      final int pxLenTrg = wTrg * hTrg;
-      final int[] pxTrg = new int[pxLenTrg];
-
-      for ( int i = 0; i < pxLenTrg; ++i ) {
-         final int xTrg = i % wTrg;
-         final int yTrg = i / wTrg;
-         final float xSgn = xTrg - xTrgCenter;
-         final float ySgn = yTrg - yTrgCenter;
-         final int xr = Utils.round(xSrcCenter + ( cosa * xSgn - sina * ySgn ));
-         final int yr = Utils.round(ySrcCenter + ( cosa * ySgn + sina * xSgn ));
-         if ( yr > -1 && yr < hSrc && xr > -1 && xr < wSrc ) {
-            pxTrg[i] = pxSrc[xr + yr * wSrc];
-         }
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
       }
 
-      target.format = PConstants.ARGB;
-      target.pixels = pxTrg;
-      target.width = wTrg / pdSrc;
-      target.height = hTrg / pdSrc;
-      target.pixelWidth = wTrg;
-      target.pixelHeight = hTrg;
+      source.loadPixels();
+      target.loadPixels();
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.rotate90(pxSrc, w, h, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = w;
+      target.pixelHeight = h;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Rotates a source image around its center by an angle in radians.
+    *
+    * @param source the source image
+    * @param angle  the angle in radians
+    * @param target the target image
+    *
+    * @return the rotated image
+    *
+    * @see Pixels#rotateBilinear(int[], int, int, float, Vec2)
+    */
+   public static PImage rotateBilinear ( final PImage source, final float angle,
+      final PImage target ) {
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int pd = source.pixelDensity;
+      final int[] pxSrc = source.pixels;
+      final Vec2 dim = new Vec2();
+      target.pixels = Pixels.rotateBilinear(pxSrc, w, h, angle, dim);
+      target.format = source.format;
+      target.pixelDensity = pd;
+      target.pixelWidth = ( int ) dim.x;
+      target.pixelHeight = ( int ) dim.y;
+      target.width = target.pixelWidth / pd;
+      target.height = target.pixelHeight / pd;
       target.updatePixels();
 
       return target;
@@ -2624,47 +2272,109 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Scales an image by a percentage of its original dimensions.
+    * Skews a source image horizontally.
     *
-    * @param target the image
-    * @param prc    the percentage
+    * @param source the source image
+    * @param angle  the angle in radians
+    * @param target the target image
     *
-    * @return the image
+    * @return the skewed image
     */
-   public static PImage scaleNearest ( final PImage target, final float prc ) {
+   public static PImage skewX ( final PImage source, final float angle,
+      final PImage target ) {
 
-      return ZImage.scaleNearest(target, prc, prc);
+      return ZImage.skewXBilinear(source, angle, target);
    }
 
    /**
-    * Scales an image by percentages of its original dimensions.
+    * Skews a source image horizontally.
     *
-    * @param target the image
-    * @param xPrc   the x percent
-    * @param yPrc   the y percent
+    * @param source the source image
+    * @param angle  the angle in radians
+    * @param target the target image
     *
-    * @return the image
+    * @return the skewed image
     *
-    * @see ZImage#resizeNearest(PImage, int, int)
+    * @see Pixels#skewXBilinear(int[], int, int, float, Vec2)
     */
-   public static PImage scaleNearest ( final PImage target, final float xPrc,
-      final float yPrc ) {
+   public static PImage skewXBilinear ( final PImage source, final float angle,
+      final PImage target ) {
 
-      return ZImage.resizeNearest(target, ( int ) ( 0.5f + target.width
-         * xPrc ), ( int ) ( 0.5f + target.height * yPrc ));
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int pd = source.pixelDensity;
+      final int[] pxSrc = source.pixels;
+      final Vec2 dim = new Vec2();
+      target.pixels = Pixels.skewXBilinear(pxSrc, w, h, angle, dim);
+      target.format = source.format;
+      target.pixelDensity = pd;
+      target.pixelWidth = ( int ) dim.x;
+      target.pixelHeight = ( int ) dim.y;
+      target.width = target.pixelWidth / pd;
+      target.height = target.pixelHeight / pd;
+      target.updatePixels();
+
+      return target;
    }
 
    /**
-    * Scales an image by a percentage of its original dimensions.
+    * Skews a source image vertically.
     *
-    * @param target the image
-    * @param v      the percentage
+    * @param source the source image
+    * @param angle  the angle in radians
+    * @param target the target image
     *
-    * @return the image
+    * @return the skewed image
     */
-   public static PImage scaleNearest ( final PImage target, final Vec2 v ) {
+   public static PImage skewY ( final PImage source, final float angle,
+      final PImage target ) {
 
-      return ZImage.scaleNearest(target, v.x, v.y);
+      return ZImage.skewYBilinear(source, angle, target);
+   }
+
+   /**
+    * Skews a source image vertically.
+    *
+    * @param source the source image
+    * @param angle  the angle in radians
+    * @param target the target image
+    *
+    * @return the skewed image
+    *
+    * @see Pixels#skewYBilinear(int[], int, int, float, Vec2)
+    */
+   public static PImage skewYBilinear ( final PImage source, final float angle,
+      final PImage target ) {
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int pd = source.pixelDensity;
+      final int[] pxSrc = source.pixels;
+      final Vec2 dim = new Vec2();
+      target.pixels = Pixels.skewYBilinear(pxSrc, w, h, angle, dim);
+      target.format = source.format;
+      target.pixelDensity = pd;
+      target.pixelWidth = ( int ) dim.x;
+      target.pixelHeight = ( int ) dim.y;
+      target.width = target.pixelWidth / pd;
+      target.height = target.pixelHeight / pd;
+      target.updatePixels();
+
+      return target;
    }
 
    /**
@@ -2672,177 +2382,225 @@ public class ZImage extends PImage {
     * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB) to
     * linear RGB.
     *
-    * @param target      the image
+    * @param source      the source image
     * @param adjustAlpha include the alpha channel in the adjustment
+    * @param target      the target image
     *
     * @return the linear image
+    *
+    * @see Pixels#sRgbaTolRgba(int, boolean)
     */
-   public static PImage sRgbaTolRgba ( final PImage target,
-      final boolean adjustAlpha ) {
+   public static PImage sRgbaTolRgba ( final PImage source,
+      final boolean adjustAlpha, final PImage target ) {
 
-      // TODO: Handle ALPHA image format?
-
-      target.loadPixels();
-      final int[] px = target.pixels;
-      final int len = px.length;
-      for ( int i = 0; i < len; ++i ) {
-         px[i] = Color.sRgbaTolRgba(px[i], adjustAlpha);
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.sRgbaTolRgba(target.pixels, adjustAlpha, target.pixels);
+         target.updatePixels();
+         return target;
       }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.sRgbaTolRgba(pxSrc, adjustAlpha, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = w;
+      target.pixelHeight = h;
+      target.width = source.width;
+      target.height = source.height;
       target.updatePixels();
 
       return target;
    }
 
    /**
-    * Tints an image to a color.
+    * Converts an image from
+    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB) to
+    * linear RGB.
     *
-    * @param source  the source image
-    * @param tintClr the tint color
+    * @param source the source image
+    * @param target the target image
     *
-    * @return the image
+    * @return the linear image
     */
-   public static PImage tint ( final PImage source, final Color tintClr ) {
+   public static PImage sRgbaTolRgba ( final PImage source,
+      final PImage target ) {
 
-      return ZImage.tint(source, Color.toHexIntSat(tintClr), 0.5f);
+      return ZImage.sRgbaTolRgba(source, false, target);
    }
 
    /**
-    * Tints an image to a color by a factor in [0.0, 1.0] .
+    * Finds the minimum, maximum and mean lightness in a source image. If
+    * factor is positive, stretches color to maximum lightness range in [0.0,
+    * 100.0]. If factor is negative, compresses color to mean. Assigns result
+    * to target array. The factor is expected to be in [-1.0, 1.0].<br>
+    * <br>
+    * If difference between minimum and maximum lightness is negligible,
+    * copies source array to target.
     *
-    * @param source  the source image
-    * @param tintClr the tint color
-    * @param fac     the factor
+    * @param source the source image
+    * @param fac    the factor
+    * @param target the target image
     *
-    * @return the image
+    * @return the normalized image
+    *
+    * @see Pixels#stretchContrast(int[], float, int[])
     */
-   public static PImage tint ( final PImage source, final Color tintClr,
-      final float fac ) {
+   public static PImage stretchContrast ( final PImage source, final float fac,
+      final PImage target ) {
 
-      return ZImage.tint(source, Color.toHexIntSat(tintClr), fac);
-   }
-
-   /**
-    * Tints an image to a color by a factor in [0.0, 1.0] .
-    *
-    * @param source  the source image
-    * @param tintClr the tint color
-    *
-    * @return the image
-    */
-   public static PImage tint ( final PImage source, final int tintClr ) {
-
-      return ZImage.tint(source, tintClr, 0.5f);
-   }
-
-   /**
-    * Tints an image to a color by a factor in [0.0, 1.0] . For images with
-    * alpha, the minimum alpha between the source and tint color are used.
-    *
-    * @param source  the source image
-    * @param tintClr the tint color
-    * @param fac     the factor
-    *
-    * @return the image
-    */
-   public static PImage tint ( final PImage source, final int tintClr,
-      final float fac ) {
-
-      if ( fac <= 0.0f ) { return source; }
-
-      source.loadPixels();
-      final int[] pixels = source.pixels;
-      final int len = pixels.length;
-
-      /* Do not optimize until you settle on an appropriate tinting formula. */
-
-      /* Right operand. Decompose tint color. */
-      final int ya = tintClr >> 0x18 & 0xff;
-      final int yr = tintClr >> 0x10 & 0xff;
-      final int yg = tintClr >> 0x08 & 0xff;
-      final int yb = tintClr & 0xff;
-
-      /* Convert from [0, 255] to [0.0, 1.0] . */
-      final float yaf = ya * IUtils.ONE_255;
-      final float yrf = yr * IUtils.ONE_255;
-      final float ygf = yg * IUtils.ONE_255;
-      final float ybf = yb * IUtils.ONE_255;
-
-      final int srcFmt = source.format;
-      final float t = Utils.min(fac, 1.0f);
-      final float u = 1.0f - t;
-
-      switch ( srcFmt ) {
-
-         case PConstants.RGB: /* 1 */
-
-            for ( int i = 0; i < len; ++i ) {
-               final int rgb = pixels[i];
-
-               /* Left operand. Decompose color. */
-               final float xrf = IUtils.ONE_255 * ( rgb >> 0x10 & 0xff );
-               final float xgf = IUtils.ONE_255 * ( rgb >> 0x08 & 0xff );
-               final float xbf = IUtils.ONE_255 * ( rgb & 0xff );
-
-               /* Lerp from left to right by factor t. */
-               final float zrf = u * xrf + t * yrf;
-               final float zgf = u * xgf + t * ygf;
-               final float zbf = u * xbf + t * ybf;
-
-               /* @formatter:off */
-               pixels[i] = 0xff000000
-                         | ( int ) ( zrf * 0xff + 0.5f ) << 0x10
-                         | ( int ) ( zgf * 0xff + 0.5f ) << 0x08
-                         | ( int ) ( zbf * 0xff + 0.5f );
-               /* @formatter:on */
-            }
-
-            break;
-
-         case PConstants.ALPHA: /* 4 */
-
-            final int trgb = 0x00ffffff & tintClr;
-            for ( int i = 0; i < len; ++i ) {
-               final float xaf = pixels[i] * IUtils.ONE_255;
-               final float zaf = Utils.min(xaf, yaf);
-               pixels[i] = ( int ) ( zaf * 0xff + 0.5f ) << 0x18 | trgb;
-            }
-
-            break;
-
-         case PConstants.ARGB: /* 2 */
-         default:
-
-            for ( int i = 0; i < len; ++i ) {
-               final int argb = pixels[i];
-
-               /* Left operand. Decompose color. */
-               final float xaf = IUtils.ONE_255 * ( argb >> 0x18 & 0xff );
-               final float xrf = IUtils.ONE_255 * ( argb >> 0x10 & 0xff );
-               final float xgf = IUtils.ONE_255 * ( argb >> 0x08 & 0xff );
-               final float xbf = IUtils.ONE_255 * ( argb & 0xff );
-
-               /* Lerp from left to right by factor t. */
-               final float zaf = Utils.min(xaf, yaf);
-               final float zrf = u * xrf + t * yrf;
-               final float zgf = u * xgf + t * ygf;
-               final float zbf = u * xbf + t * ybf;
-
-               /* @formatter:off */
-               pixels[i] = ( int ) ( zaf * 0xff + 0.5f ) << 0x18
-                         | ( int ) ( zrf * 0xff + 0.5f ) << 0x10
-                         | ( int ) ( zgf * 0xff + 0.5f ) << 0x08
-                         | ( int ) ( zbf * 0xff + 0.5f );
-               /* @formatter:on */
-            }
-
-            break;
-
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.stretchContrast(target.pixels, fac, target.pixels);
+         target.updatePixels();
+         return target;
       }
 
-      source.format = PConstants.ARGB;
-      source.updatePixels();
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
 
-      return source;
+      source.loadPixels();
+      target.loadPixels();
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.stretchContrast(pxSrc, fac, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = source.pixelWidth;
+      target.pixelHeight = source.pixelHeight;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Finds the minimum and maximum lightness in a source image. If difference
+    * between minimum and maximum lightness is negligible, copies source array
+    * to target.
+    *
+    * @param source the source image
+    * @param target the target image
+    *
+    * @return the normalized image
+    */
+   public static PImage stretchContrast ( final PImage source,
+      final PImage target ) {
+
+      return ZImage.stretchContrast(source, 1.0f, target);
+
+   }
+
+   /**
+    * Tints an image to a color by a factor. The image's alpha channel is
+    * converted to a factor to mix the colors.
+    *
+    * @param source the source image
+    * @param tint   the tint color
+    * @param fac    the factor
+    * @param target the target image
+    *
+    * @return the tinted image
+    *
+    * @see Color#toHexIntSat(Color)
+    */
+   public static PImage tint ( final PImage source, final Color tint,
+      final float fac, final PImage target ) {
+
+      return ZImage.tint(source, Color.toHexIntSat(tint), fac, target);
+   }
+
+   /**
+    * Tints an image to a color. The image's alpha channel is converted to a
+    * factor to mix the colors.
+    *
+    * @param source the source image
+    * @param tint   the tint color
+    * @param target the target image
+    *
+    * @return the tinted image
+    *
+    * @see Color#toHexIntSat(Color)
+    */
+   public static PImage tint ( final PImage source, final Color tint,
+      final PImage target ) {
+
+      return ZImage.tint(source, Color.toHexIntSat(tint), target);
+   }
+
+   /**
+    * Tints an image to a color by a factor.
+    *
+    * @param source the source image
+    * @param tint   the tint color
+    * @param fac    the factor
+    * @param target the target image
+    *
+    * @return the tinted image
+    */
+   public static PImage tint ( final PImage source, final int tint,
+      final float fac, final PImage target ) {
+
+      final int valTint = source.format == PConstants.RGB ? 0xff000000 | tint
+         : tint;
+
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.tintLab(target.pixels, valTint, fac, target.pixels);
+         target.updatePixels();
+         return target;
+      }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.tintLab(pxSrc, valTint, fac, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = source.pixelWidth;
+      target.pixelHeight = source.pixelHeight;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Tints an image to a color by a factor. The image's alpha channel is
+    * converted to a factor to mix the colors.
+    *
+    * @param source the source image
+    * @param tint   the tint color
+    * @param target the target image
+    *
+    * @return the tinted image
+    */
+   public static PImage tint ( final PImage source, final int tint,
+      final PImage target ) {
+
+      final int a255 = tint >> 0x18 & 0xff;
+      final float fac = a255 * IUtils.ONE_255;
+      return ZImage.tint(source, 0xff000000 | tint, fac, target);
    }
 
    /**
@@ -2870,7 +2628,9 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Removes excess transparent pixels from an image.
+    * Removes excess transparent pixels from an image. Adapted from the
+    * implementation by Oleg Mikhailov: <a href=
+    * "https://stackoverflow.com/a/36938923">https://stackoverflow.com/a/36938923</a>.
     *
     * @param source the source image
     * @param target the target image
@@ -2881,25 +2641,7 @@ public class ZImage extends PImage {
     */
    public static PImage trimAlpha ( final PImage source, final PImage target ) {
 
-      return ZImage.trimAlpha(source, target, null);
-   }
-
-   /**
-    * Removes excess transparent pixels from an image. Optionally, assigns the
-    * offset to a vector. Adapted from the implementation by Oleg Mikhailov:
-    * <a href=
-    * "https://stackoverflow.com/a/36938923">https://stackoverflow.com/a/36938923</a>.
-    *
-    * @param source the source image
-    * @param target the target image
-    * @param offset the offset vector
-    *
-    * @return the trimmed image
-    *
-    * @author Oleg Mikhailov
-    */
-   public static PImage trimAlpha ( final PImage source, final PImage target,
-      final Vec2 offset ) {
+      // TODO: Transfer to pixels.
 
       if ( target instanceof PGraphics ) {
          System.err.println("Do not trim PGraphics with this method.");
@@ -2908,10 +2650,7 @@ public class ZImage extends PImage {
 
       final int wSrc = source.pixelWidth;
       final int hSrc = source.pixelHeight;
-      if ( wSrc < 2 || hSrc < 2 ) {
-         if ( offset != null ) { offset.set(0.0f, 0.0f); }
-         return target;
-      }
+      if ( wSrc < 2 || hSrc < 2 ) { return target; }
 
       source.loadPixels();
       final int[] pxSrc = source.pixels;
@@ -2986,10 +2725,7 @@ public class ZImage extends PImage {
 
       final int wTrg = 1 + right - left;
       final int hTrg = 1 + bottom - top;
-      if ( wTrg < 2 || hTrg < 2 ) {
-         if ( offset != null ) { offset.set(0.0f, 0.0f); }
-         return target;
-      }
+      if ( wTrg < 2 || hTrg < 2 ) { return target; }
 
       final int lenTrg = wTrg * hTrg;
       final int[] pxTrg = new int[lenTrg];
@@ -3006,55 +2742,47 @@ public class ZImage extends PImage {
       target.pixelHeight = hTrg;
       target.updatePixels();
 
-      if ( offset != null ) { offset.set(left, top); }
       return target;
    }
 
    /**
-    * Divides the red, green and blue channels of each pixel in the image by
-    * its alpha channel. Reverse pre-multiplication.
+    * Divides the red, green and blue channels of each pixel in a source image
+    * by the alpha channel. Reverse pre-multiplication.
     *
-    * @param target the source image
+    * @param source the source image
+    * @param target the target image
     *
     * @return the image
+    *
+    * @see Pixels#unpremul(int[], int[])
     */
-   public static PImage unpremul ( final PImage target ) {
+   public static PImage unpremul ( final PImage source, final PImage target ) {
 
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.unpremul(target.pixels, target.pixels);
+         target.updatePixels();
+         return target;
+      }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
       target.loadPixels();
-
-      final int[] px = target.pixels;
-      final int len = px.length;
-
-      if ( target.format == PConstants.ALPHA ) {
-         for ( int i = 0; i < len; ++i ) {
-            final int a = px[i];
-            px[i] = a << 0x18 | a << 0x10 | a << 0x08 | a;
-         }
-      }
-
-      for ( int i = 0; i < len; ++i ) {
-         final int ai = px[i] >> 0x18 & 0xff;
-         if ( ai < 1 ) {
-            px[i] = 0x00000000;
-         } else if ( ai < 255 ) {
-            final int ri = px[i] >> 0x10 & 0xff;
-            final int gi = px[i] >> 0x08 & 0xff;
-            final int bi = px[i] & 0xff;
-
-            final float af = 255.0f / ai;
-            int ru = ( int ) ( ri * af + 0.5f );
-            int gu = ( int ) ( gi * af + 0.5f );
-            int bu = ( int ) ( bi * af + 0.5f );
-
-            if ( ru > 255 ) { ru = 255; }
-            if ( gu > 255 ) { gu = 255; }
-            if ( bu > 255 ) { bu = 255; }
-
-            px[i] = ai << 0x18 | ru << 0x10 | gu << 0x08 | bu;
-         }
-      }
-
-      target.format = PConstants.ARGB;
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int[] pxSrc = source.pixels;
+      final int[] pxTrg = new int[pxSrc.length];
+      target.pixels = Pixels.unpremul(pxSrc, pxTrg);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = w;
+      target.pixelHeight = h;
+      target.width = source.width;
+      target.height = source.height;
       target.updatePixels();
 
       return target;

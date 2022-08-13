@@ -163,7 +163,6 @@ public enum SvgPathCmd {
    @Override
    public String toString ( ) {
 
-      // return String.valueOf(this.code);
       return super.toString();
    }
 
@@ -177,6 +176,8 @@ public enum SvgPathCmd {
     */
    public static SvgPathCmd fromChar ( final char c ) {
 
+      // QUERY: Is there a difference between Z and z (absolute v. relative)?
+
       /* @formatter:off */
       switch ( c ) {
          case 'A': return SvgPathCmd.ARC_TO_ABS;
@@ -188,8 +189,6 @@ public enum SvgPathCmd {
          case 'S': return SvgPathCmd.REFLECT_CUBIC_ABS;
          case 'T': return SvgPathCmd.REFLECT_QUADRATIC_ABS;
          case 'V': return SvgPathCmd.VERT_ABS;
-         // case 'Z': return PathCommand.CLOSE_PATH;
-
          case 'a': return SvgPathCmd.ARC_TO_REL;
          case 'c': return SvgPathCmd.CUBIC_TO_REL;
          case 'h': return SvgPathCmd.HORIZ_REL;
@@ -199,8 +198,6 @@ public enum SvgPathCmd {
          case 's': return SvgPathCmd.REFLECT_CUBIC_REL;
          case 't': return SvgPathCmd.REFLECT_QUADRATIC_REL;
          case 'v': return SvgPathCmd.VERT_REL;
-         // case 'z': return PathCommand.CLOSE_PATH;
-
          default: return SvgPathCmd.CLOSE_PATH;
       }
       /* @formatter:on */

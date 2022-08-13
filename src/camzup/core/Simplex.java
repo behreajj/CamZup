@@ -592,20 +592,18 @@ public abstract class Simplex extends Generative {
             i2 = 1;
             k2 = 1;
          }
+      } else if ( y0 < z0 ) {
+         k1 = 1;
+         j2 = 1;
+         k2 = 1;
+      } else if ( x0 < z0 ) {
+         j1 = 1;
+         j2 = 1;
+         k2 = 1;
       } else {
-         if ( y0 < z0 ) {
-            k1 = 1;
-            j2 = 1;
-            k2 = 1;
-         } else if ( x0 < z0 ) {
-            j1 = 1;
-            j2 = 1;
-            k2 = 1;
-         } else {
-            j1 = 1;
-            i2 = 1;
-            j2 = 1;
-         }
+         j1 = 1;
+         i2 = 1;
+         j2 = 1;
       }
 
       final float x1 = x0 - i1 + Simplex.G3;
@@ -1221,20 +1219,18 @@ public abstract class Simplex extends Generative {
             i2 = 1;
             k2 = 1;
          }
+      } else if ( y0 < z0 ) {
+         k1 = 1;
+         j2 = 1;
+         k2 = 1;
+      } else if ( x0 < z0 ) {
+         j1 = 1;
+         j2 = 1;
+         k2 = 1;
       } else {
-         if ( y0 < z0 ) {
-            k1 = 1;
-            j2 = 1;
-            k2 = 1;
-         } else if ( x0 < z0 ) {
-            j1 = 1;
-            j2 = 1;
-            k2 = 1;
-         } else {
-            j1 = 1;
-            i2 = 1;
-            j2 = 1;
-         }
+         j1 = 1;
+         i2 = 1;
+         j2 = 1;
       }
 
       float n0 = 0.0f;

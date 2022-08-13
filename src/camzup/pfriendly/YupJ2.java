@@ -2077,6 +2077,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
    /**
     * Normal is not supported by this renderer.
+    *
+    * @param x the x component
+    * @param y the y component
+    * @param z the z component
     */
    @Override
    public void normal ( final float x, final float y, final float z ) {
