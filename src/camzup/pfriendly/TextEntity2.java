@@ -4,6 +4,7 @@ import camzup.core.Color;
 
 import processing.core.PConstants;
 import processing.core.PFont;
+import processing.core.PImage;
 
 /**
  * A convenience to create billboards which present text strings as a
@@ -84,6 +85,7 @@ public class TextEntity2 extends ImageEntity2 {
     * @param alignVert  the vertical alignment
     *
     * @see ZImage#fromText(PFont, String, int, int, int, int)
+    * @see ZImage#premul(PImage, PImage)
     */
    public TextEntity2 ( final PFont font, final String text, final Color tint,
       final int leading, final int kerning, final int alignHoriz,

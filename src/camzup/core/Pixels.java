@@ -14,13 +14,10 @@ public abstract class Pixels {
    /**
     * Discourage overriding with a private constructor.
     */
-   private Pixels ( ) {}
+   private Pixels ( ) {
 
-   /**
-    * Tolerance to determine whether two angles are approximate. Equivalent to
-    * half a degree, <code>1.0 / 720.0</code>, {@value Pixels#EPS_RADIANS}.
-    */
-   public static final float EPS_RADIANS = 0.008726646f;
+      // TODO: Scale bilinear
+   }
 
    /**
     * Look up table for converting colors from linear to standard RGB.
@@ -235,6 +232,7 @@ public abstract class Pixels {
     * @return the color array
     *
     * @see Bounds3#cieLab(Bounds3)
+    * @see Octree#insert(Vec3)
     * @see Color#fromHex(int, Color)
     * @see Color#sRgbaTolRgba(Color, boolean, Color)
     * @see Color#lRgbaToXyza(Color, Vec4)
@@ -247,6 +245,7 @@ public abstract class Pixels {
    public static Color[] extractPalette ( final int[] source,
       final int capacity, final int threshold ) {
 
+      /* Find unique opaque colors. */
       final HashSet < Integer > uniqueColors = new HashSet <>(256, 0.75f);
       final int srcLen = source.length;
       for ( int i = 0; i < srcLen; ++i ) {
@@ -261,8 +260,8 @@ public abstract class Pixels {
       if ( uniquesLen < valThresh ) {
          /* Account for alpha at index 0, so less than threshold. */
          final Color[] result = new Color[1 + uniquesLen];
-         for ( int i = 0; uniquesItr.hasNext(); ++i ) {
-            result[1 + i] = Color.fromHex(uniquesItr.next(), new Color());
+         for ( int i = 1; uniquesItr.hasNext(); ++i ) {
+            result[i] = Color.fromHex(uniquesItr.next(), new Color());
          }
          result[0] = Color.clearBlack(new Color());
          return result;
@@ -275,6 +274,7 @@ public abstract class Pixels {
       final Vec4 xyz = new Vec4();
       final Vec4 lab = new Vec4();
 
+      /* Place colors in octree. */
       while ( uniquesItr.hasNext() ) {
          Color.fromHex(uniquesItr.next(), srgb);
          Color.sRgbaTolRgba(srgb, false, lrgb);
@@ -293,8 +293,7 @@ public abstract class Pixels {
          final Vec3 center = centers[i];
          Color.labaToXyza(center.z, center.x, center.y, 1.0f, xyz);
          Color.xyzaTolRgba(xyz, lrgb);
-         final Color c = Color.lRgbaTosRgba(lrgb, false, new Color());
-         result[1 + i] = c;
+         result[1 + i] = Color.lRgbaTosRgba(lrgb, false, new Color());
       }
       result[0] = Color.clearBlack(new Color());
       return result;
@@ -369,17 +368,9 @@ public abstract class Pixels {
          final float u = 1.0f - xErr;
          a0 = u * a00 + xErr * a10;
          if ( a0 > 0.0f ) {
-            final int r00 = c00 >> 0x10 & 0xff;
-            final int g00 = c00 >> 0x08 & 0xff;
-            final int b00 = c00 & 0xff;
-
-            final int r10 = c10 >> 0x10 & 0xff;
-            final int g10 = c10 >> 0x08 & 0xff;
-            final int b10 = c10 & 0xff;
-
-            r0 = u * r00 + xErr * r10;
-            g0 = u * g00 + xErr * g10;
-            b0 = u * b00 + xErr * b10;
+            r0 = u * ( c00 >> 0x10 & 0xff ) + xErr * ( c10 >> 0x10 & 0xff );
+            g0 = u * ( c00 >> 0x08 & 0xff ) + xErr * ( c10 >> 0x08 & 0xff );
+            b0 = u * ( c00 & 0xff ) + xErr * ( c10 & 0xff );
          }
       }
 
@@ -394,17 +385,9 @@ public abstract class Pixels {
          final float u = 1.0f - xErr;
          a1 = u * a01 + xErr * a11;
          if ( a1 > 0.0f ) {
-            final int r01 = c01 >> 0x10 & 0xff;
-            final int g01 = c01 >> 0x08 & 0xff;
-            final int b01 = c01 & 0xff;
-
-            final int r11 = c11 >> 0x10 & 0xff;
-            final int g11 = c11 >> 0x08 & 0xff;
-            final int b11 = c11 & 0xff;
-
-            r1 = u * r01 + xErr * r11;
-            g1 = u * g01 + xErr * g11;
-            b1 = u * b01 + xErr * b11;
+            r1 = u * ( c01 >> 0x10 & 0xff ) + xErr * ( c11 >> 0x10 & 0xff );
+            g1 = u * ( c01 >> 0x08 & 0xff ) + xErr * ( c11 >> 0x08 & 0xff );
+            b1 = u * ( c01 & 0xff ) + xErr * ( c11 & 0xff );
          }
       }
 
@@ -667,9 +650,10 @@ public abstract class Pixels {
    }
 
    /**
-    * Mirrors pixels from a source image across the axis described by an
-    * origin and destination. Coordinates are expected to be in the range
-    * [0.0, 1.0]. Out-of-bounds pixels are omitted from the mirror.
+    * Mirrors, or reflects, pixels from a source image across the axis
+    * described by an origin and destination. Coordinates are expected to be
+    * in the range [0.0, 1.0]. Out-of-bounds pixels are omitted from the
+    * mirror.
     *
     * @param source  the source pixels
     * @param wSrc    the source image width
@@ -681,31 +665,49 @@ public abstract class Pixels {
     * @param flip    the flip reflection flag
     * @param target  the target pixels
     *
-    * @return the mirrored image
+    * @return the mirrored pixels
     *
-    * @see Utils#max(float, float)
+    * @see Utils#approx(float, float, float)
+    * @see Utils#round(float)
+    * @see Pixels#mirrorX(int[], int, int, boolean, int[])
+    * @see Pixels#mirrorY(int[], int, int, int, boolean, int[])
     * @see Pixels#filterBilinear(float, float, int, int, int[])
     */
-   public static int[] mirrorBilinear ( final int[] source, final int wSrc,
+   public static int[] mirror ( final int[] source, final int wSrc,
       final int hSrc, final float xOrigin, final float yOrigin,
       final float xDest, final float yDest, final boolean flip,
       final int[] target ) {
 
-      // TODO: Create specialized cases for horizontal and vertical lines?
-
       final float wfn1 = wSrc - 1.0f;
       final float hfn1 = hSrc - 1.0f;
 
-      final float ax = xOrigin * wfn1;
-      final float ay = hfn1 - yOrigin * hfn1;
-      final float bx = xDest * wfn1;
-      final float by = hfn1 - yDest * hfn1;
+      final float ax = xOrigin * ( wSrc + 1 ) - 0.5f;
+      final float bx = xDest * ( wSrc + 1 ) - 0.5f;
+      final float ay = ( 1.0f - yOrigin ) * ( hSrc + 1 ) - 0.5f;
+      final float by = ( 1.0f - yDest ) * ( hSrc + 1 ) - 0.5f;
 
       final float dx = bx - ax;
       final float dy = by - ay;
-      final float dMagSq = dx * dx + dy * dy;
-      final float dMagSqInv = 1.0f / Utils.max(IUtils.EPSILON, dMagSq);
+      final boolean dxZero = Utils.approx(dx, 0.0f, 0.5f);
+      final boolean dyZero = Utils.approx(dy, 0.0f, 0.5f);
 
+      if ( dxZero && dyZero ) {
+         System.arraycopy(source, 0, target, 0, source.length < target.length
+            ? source.length : target.length);
+         return target;
+      }
+
+      if ( dxZero ) {
+         return Pixels.mirrorX(source, wSrc, Utils.round(bx), flip ? ay > by
+            : by > ay, target);
+      }
+
+      if ( dyZero ) {
+         return Pixels.mirrorY(source, wSrc, hSrc, Utils.round(by), flip ? bx
+            > ax : ax > bx, target);
+      }
+
+      final float dMagSqInv = 1.0f / ( dx * dx + dy * dy );
       final float flipSign = flip ? -1.0f : 1.0f;
 
       final int trgLen = target.length;
@@ -735,6 +737,79 @@ public abstract class Pixels {
                target[k] = Pixels.filterBilinear(pxOpp, pyOpp, wSrc, hSrc,
                   source);
             }
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Mirrors, or reflects, pixels from a source image across a pivot. The
+    * pivot is expected to be in [-1, width + 1].
+    *
+    * @param source the source pixels
+    * @param wSrc   the source image width
+    * @param pivot  the x pivot
+    * @param flip   the flip reflection flag
+    * @param target the target pixels
+    *
+    * @return the mirrored pixels
+    */
+   public static int[] mirrorX ( final int[] source, final int wSrc,
+      final int pivot, final boolean flip, final int[] target ) {
+
+      final int trgLen = target.length;
+      final int flipSign = flip ? 1 : -1;
+
+      for ( int k = 0; k < trgLen; ++k ) {
+         final int cross = k % wSrc - pivot;
+         if ( flipSign * cross < 0 ) {
+            target[k] = source[k];
+         } else {
+            final int pxOpp = pivot - cross;
+            if ( pxOpp > -1 && pxOpp < wSrc ) {
+               target[k] = source[k / wSrc * wSrc + pxOpp];
+            }
+
+            // target[k] = source[k / wSrc * wSrc + Utils.mod(pxOpp, wSrc)];
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Mirrors, or reflects, pixels from a source image across a pivot. The
+    * pivot is expected to be in [-1, height + 1]. The up axis is not
+    * mirrored, so positive y points down to the bottom of the image.
+    *
+    * @param source the source pixels
+    * @param wSrc   the source image width
+    * @param hSrc   the source image height
+    * @param pivot  the y pivot
+    * @param flip   the flip reflection flag
+    * @param target the target pixels
+    *
+    * @return the mirrored pixels
+    */
+   public static int[] mirrorY ( final int[] source, final int wSrc,
+      final int hSrc, final int pivot, final boolean flip,
+      final int[] target ) {
+
+      final int trgLen = target.length;
+      final int flipSign = flip ? 1 : -1;
+
+      for ( int k = 0; k < trgLen; ++k ) {
+         final int cross = k / wSrc - pivot;
+         if ( flipSign * cross < 0 ) {
+            target[k] = source[k];
+         } else {
+            final int pyOpp = pivot - cross;
+            if ( pyOpp > -1 && pyOpp < hSrc ) {
+               target[k] = source[pyOpp * wSrc + k % wSrc];
+            }
+
+            // target[k] = source[Utils.mod(pyOpp, hSrc) * wSrc + k % wSrc];
          }
       }
 
@@ -774,6 +849,44 @@ public abstract class Pixels {
                target[i] = srcHex;
             }
          }
+      }
+
+      return target;
+   }
+
+   /**
+    * Resizes pixels from a source image to a requested size using a bilinear
+    * filter. Copies the source to the target if source and target dimensions
+    * are equal.
+    *
+    * @param source the source pixels
+    * @param wSrc   the source image width
+    * @param hSrc   the source image height
+    * @param wTrg   the target width
+    * @param hTrg   the target height
+    *
+    * @return the resized image
+    *
+    * @see Pixels#filterBilinear(float, float, int, int, int[])
+    */
+   public static int[] resizeBilinear ( final int[] source, final int wSrc,
+      final int hSrc, final int wTrg, final int hTrg ) {
+
+      final int srcLen = source.length;
+      if ( wSrc == wTrg && hSrc == hTrg ) {
+         final int[] target = new int[srcLen];
+         System.arraycopy(source, 0, target, 0, srcLen);
+         return target;
+      }
+
+      final float tx = ( wSrc - 1.0f ) / ( wTrg - 1.0f );
+      final float ty = ( hSrc - 1.0f ) / ( hTrg - 1.0f );
+
+      final int trgLen = wTrg * hTrg;
+      final int[] target = new int[trgLen];
+      for ( int i = 0; i < trgLen; ++i ) {
+         target[i] = Pixels.filterBilinear(tx * ( i % wTrg ), ty * ( i / wTrg ),
+            wSrc, hSrc, source);
       }
 
       return target;
@@ -913,7 +1026,6 @@ public abstract class Pixels {
       final float absCosa = Utils.abs(cosa);
       final float absSina = Utils.abs(sina);
 
-      // QUERY: For this and skewX, skewY, should this be round or ceil?
       final int wTrg = ( int ) ( 0.5f + hSrcf * absSina + wSrcf * absCosa );
       final int hTrg = ( int ) ( 0.5f + hSrcf * absCosa + wSrcf * absSina );
       final float wTrgf = wTrg;
@@ -926,18 +1038,15 @@ public abstract class Pixels {
 
       final int trgLen = wTrg * hTrg;
       final int[] target = new int[trgLen];
-      if ( dim != null ) { dim.set(wTrgf, hTrgf); }
 
       for ( int i = 0; i < trgLen; ++i ) {
-         final int yTrg = i / wTrg;
-         final float ySgn = yTrg - yTrgCenter;
-         final int xTrg = i % wTrg;
-         final float xSgn = xTrg - xTrgCenter;
-         final float ySrc = ySrcCenter + cosa * ySgn + sina * xSgn;
-         final float xSrc = xSrcCenter + cosa * xSgn - sina * ySgn;
-         target[i] = Pixels.filterBilinear(xSrc, ySrc, wSrc, hSrc, source);
+         final float ySgn = i / wTrg - yTrgCenter;
+         final float xSgn = i % wTrg - xTrgCenter;
+         target[i] = Pixels.filterBilinear(xSrcCenter + cosa * xSgn - sina
+            * ySgn, ySrcCenter + cosa * ySgn + sina * xSgn, wSrc, hSrc, source);
       }
 
+      if ( dim != null ) { dim.set(wTrgf, hTrgf); }
       return target;
    }
 
@@ -959,39 +1068,39 @@ public abstract class Pixels {
     * @see Pixels#rotate180(int[], int[])
     * @see Pixels#rotate90(int[], int, int, int[])
     * @see Pixels#rotate270(int[], int, int, int[])
-    * @see Utils#modRadians(float)
-    * @see Utils#approx(float, float)
+    * @see Utils#mod(int, int)
+    * @see Utils#round(float)
     */
    public static int[] rotateBilinear ( final int[] source, final int wSrc,
       final int hSrc, final float angle, final Vec2 dim ) {
 
-      /* 1 / 720 degrees = .00872 radians. */
       final int srcLen = source.length;
-      final float aVerif = Utils.modRadians(angle);
-      if ( Utils.approx(aVerif, 0.0f, Pixels.EPS_RADIANS) ) {
-         if ( dim != null ) { dim.set(wSrc, hSrc); }
-         final int[] target = new int[srcLen];
-         System.arraycopy(source, 0, target, 0, srcLen);
-         return target;
-      }
-      if ( Utils.approx(aVerif, IUtils.HALF_PI, Pixels.EPS_RADIANS) ) {
-         if ( dim != null ) { dim.set(hSrc, wSrc); }
-         return Pixels.rotate90(source, wSrc, hSrc, new int[srcLen]);
-      }
-      if ( Utils.approx(aVerif, IUtils.PI, Pixels.EPS_RADIANS) ) {
-         if ( dim != null ) { dim.set(wSrc, hSrc); }
-         return Pixels.rotate180(source, new int[srcLen]);
-      }
-      if ( Utils.approx(aVerif, 4.712389f, Pixels.EPS_RADIANS) ) {
-         if ( dim != null ) { dim.set(hSrc, wSrc); }
-         return Pixels.rotate270(source, wSrc, hSrc, new int[srcLen]);
-      }
+      final int deg = Utils.mod(Utils.round(angle * IUtils.RAD_TO_DEG), 360);
+      switch ( deg ) {
+         case 0:
+            if ( dim != null ) { dim.set(wSrc, hSrc); }
+            final int[] target = new int[srcLen];
+            System.arraycopy(source, 0, target, 0, srcLen);
+            return target;
 
-      final double avd = aVerif;
-      final float cosa = ( float ) Math.cos(avd);
-      final float sina = ( float ) Math.sin(avd);
+         case 90:
+            if ( dim != null ) { dim.set(hSrc, wSrc); }
+            return Pixels.rotate90(source, wSrc, hSrc, new int[srcLen]);
 
-      return Pixels.rotateBilinear(source, wSrc, hSrc, cosa, sina, dim);
+         case 180:
+            if ( dim != null ) { dim.set(wSrc, hSrc); }
+            return Pixels.rotate180(source, new int[srcLen]);
+
+         case 270:
+            if ( dim != null ) { dim.set(hSrc, wSrc); }
+            return Pixels.rotate270(source, wSrc, hSrc, new int[srcLen]);
+
+         default:
+            final double avd = angle;
+            final float cosa = ( float ) Math.cos(avd);
+            final float sina = ( float ) Math.sin(avd);
+            return Pixels.rotateBilinear(source, wSrc, hSrc, cosa, sina, dim);
+      }
    }
 
    /**
@@ -1012,47 +1121,49 @@ public abstract class Pixels {
     *
     * @see Pixels#filterBilinear(float, float, int, int, int[])
     * @see Utils#abs(float)
-    * @see Utils#mod(float, float)
-    * @see Utils#approx(float, float, float)
+    * @see Utils#mod(int, int)
+    * @see Utils#round(float)
     */
    @Experimental
    public static int[] skewXBilinear ( final int[] source, final int wSrc,
       final int hSrc, final float angle, final Vec2 dim ) {
 
       final int srcLen = source.length;
-      final float aVerif = Utils.mod(angle, IUtils.PI);
-      if ( Utils.approx(aVerif, 0.0f, Pixels.EPS_RADIANS) ) {
-         if ( dim != null ) { dim.set(wSrc, hSrc); }
-         final int[] target = new int[srcLen];
-         System.arraycopy(source, 0, target, 0, srcLen);
-         return target;
+      final int deg = Utils.mod(Utils.round(angle * IUtils.RAD_TO_DEG), 180);
+      switch ( deg ) {
+         case 0:
+            if ( dim != null ) { dim.set(wSrc, hSrc); }
+            final int[] cpy = new int[srcLen];
+            System.arraycopy(source, 0, cpy, 0, srcLen);
+            return cpy;
+
+         case 89:
+         case 90:
+         case 91:
+            if ( dim != null ) { dim.set(wSrc, hSrc); }
+            return new int[srcLen];
+
+         default:
+            final float wSrcf = wSrc;
+            final float hSrcf = hSrc;
+
+            final float tana = ( float ) Math.tan(angle);
+            final int wTrg = ( int ) ( 0.5f + wSrcf + Utils.abs(tana) * hSrcf );
+            final float wTrgf = wTrg;
+            final float yCenter = hSrcf * 0.5f;
+            final float xDiff = ( wSrcf - wTrgf ) * 0.5f;
+
+            final int trgLen = wTrg * hSrc;
+            final int[] target = new int[trgLen];
+            for ( int i = 0; i < trgLen; ++i ) {
+               final int yTrg = i / wTrg;
+               target[i] = Pixels.filterBilinear(xDiff + i % wTrg + tana
+                  * ( yTrg - yCenter ), yTrg, wSrc, hSrc, source);
+            }
+
+            if ( dim != null ) { dim.set(wTrgf, hSrcf); }
+            return target;
       }
-      if ( Utils.approx(aVerif, IUtils.HALF_PI, Pixels.EPS_RADIANS) ) {
-         if ( dim != null ) { dim.set(wSrc, hSrc); }
-         return new int[srcLen];
-      }
-
-      final float wSrcf = wSrc;
-      final float hSrcf = hSrc;
-
-      final float tana = ( float ) Math.tan(aVerif);
-      final int wTrg = ( int ) ( 0.5f + wSrcf + Utils.abs(tana) * hSrcf );
-      final float wTrgf = wTrg;
-      final float yCenter = hSrcf * 0.5f;
-      final float xDiff = ( wSrcf - wTrgf ) * 0.5f;
-
-      final int trgLen = wTrg * hSrc;
-      final int[] target = new int[trgLen];
-      if ( dim != null ) { dim.set(wTrgf, hSrcf); }
-
-      for ( int i = 0; i < trgLen; ++i ) {
-         final int yTrg = i / wTrg;
-         final int xTrg = i % wTrg;
-         final float xSrc = xDiff + xTrg + tana * ( yTrg - yCenter );
-         target[i] = Pixels.filterBilinear(xSrc, yTrg, wSrc, hSrc, source);
-      }
-
-      return target;
    }
 
    /**
@@ -1073,47 +1184,49 @@ public abstract class Pixels {
     *
     * @see Pixels#filterBilinear(float, float, int, int, int[])
     * @see Utils#abs(float)
-    * @see Utils#mod(float, float)
-    * @see Utils#approx(float, float, float)
+    * @see Utils#mod(int, int)
+    * @see Utils#round(float)
     */
    @Experimental
    public static int[] skewYBilinear ( final int[] source, final int wSrc,
       final int hSrc, final float angle, final Vec2 dim ) {
 
       final int srcLen = source.length;
-      final float aVerif = Utils.mod(angle, IUtils.PI);
-      if ( Utils.approx(aVerif, 0.0f, Pixels.EPS_RADIANS) ) {
-         if ( dim != null ) { dim.set(wSrc, hSrc); }
-         final int[] target = new int[srcLen];
-         System.arraycopy(source, 0, target, 0, srcLen);
-         return target;
+      final int deg = Utils.mod(Utils.round(angle * IUtils.RAD_TO_DEG), 180);
+      switch ( deg ) {
+         case 0:
+            if ( dim != null ) { dim.set(wSrc, hSrc); }
+            final int[] cpy = new int[srcLen];
+            System.arraycopy(source, 0, cpy, 0, srcLen);
+            return cpy;
+
+         case 89:
+         case 90:
+         case 91:
+            if ( dim != null ) { dim.set(wSrc, hSrc); }
+            return new int[srcLen];
+
+         default:
+            final float wSrcf = wSrc;
+            final float hSrcf = hSrc;
+
+            final float tana = ( float ) Math.tan(angle);
+            final int hTrg = ( int ) ( 0.5f + hSrcf + Utils.abs(tana) * wSrcf );
+            final float hTrgf = hTrg;
+            final float xCenter = wSrcf * 0.5f;
+            final float yDiff = ( hSrcf - hTrgf ) * 0.5f;
+
+            final int trgLen = wSrc * hTrg;
+            final int[] target = new int[trgLen];
+            for ( int i = 0; i < trgLen; ++i ) {
+               final int xTrg = i % wSrc;
+               target[i] = Pixels.filterBilinear(xTrg, yDiff + i / wSrc + tana
+                  * ( xTrg - xCenter ), wSrc, hSrc, source);
+            }
+
+            if ( dim != null ) { dim.set(wSrcf, hTrgf); }
+            return target;
       }
-      if ( Utils.approx(aVerif, IUtils.HALF_PI, Pixels.EPS_RADIANS) ) {
-         if ( dim != null ) { dim.set(wSrc, hSrc); }
-         return new int[srcLen];
-      }
-
-      final float wSrcf = wSrc;
-      final float hSrcf = hSrc;
-
-      final float tana = ( float ) Math.tan(aVerif);
-      final int hTrg = ( int ) ( 0.5f + hSrcf + Utils.abs(tana) * wSrcf );
-      final float hTrgf = hTrg;
-      final float xCenter = wSrcf * 0.5f;
-      final float yDiff = ( hSrcf - hTrgf ) * 0.5f;
-
-      final int trgLen = wSrc * hTrg;
-      final int[] target = new int[trgLen];
-      if ( dim != null ) { dim.set(wSrcf, hTrgf); }
-
-      for ( int i = 0; i < trgLen; ++i ) {
-         final int yTrg = i / wSrc;
-         final int xTrg = i % wSrc;
-         final float ySrc = yDiff + yTrg + tana * ( xTrg - xCenter );
-         target[i] = Pixels.filterBilinear(xTrg, ySrc, wSrc, hSrc, source);
-      }
-
-      return target;
    }
 
    /**
@@ -1389,6 +1502,184 @@ public abstract class Pixels {
          }
       }
 
+      return target;
+   }
+
+   /**
+    * Removes excess transparent pixels from an array of pixels. Adapted from
+    * the implementation by Oleg Mikhailov: <a href=
+    * "https://stackoverflow.com/a/36938923">https://stackoverflow.com/a/36938923</a>.
+    * <br>
+    * <br>
+    * Emits the new image dimensions to a {@link Vec2}.
+    *
+    * @param source the source pixels
+    * @param wSrc   the source image width
+    * @param hSrc   the source image height
+    * @param dim    the new dimension
+    *
+    * @return the trimmed pixels
+    *
+    * @author Oleg Mikhailov
+    */
+   public static int[] trimAlpha ( final int[] source, final int wSrc,
+      final int hSrc, final Vec2 dim ) {
+
+      final int srcLen = source.length;
+      final int wn1 = wSrc - 1;
+      final int hn1 = hSrc - 1;
+
+      if ( wSrc < 2 && hSrc < 2 ) {
+
+         if ( dim != null ) { dim.set(wSrc, hSrc); }
+         final int[] target = new int[srcLen];
+         System.arraycopy(source, 0, target, 0, srcLen);
+         return target;
+
+      } else if ( wSrc == 1 ) {
+
+         int top = -1;
+         int minBottom = hn1;
+         boolean goTop = true;
+         while ( goTop && top < hn1 ) {
+            ++top;
+            if ( ( source[top] & 0xff000000 ) != 0 ) {
+               minBottom = top;
+               goTop = false;
+            }
+         }
+
+         int bottom = hSrc;
+         boolean goBottom = true;
+         while ( goBottom && bottom > minBottom ) {
+            --bottom;
+            goBottom = ( source[bottom] & 0xff000000 ) != 0;
+         }
+
+         final int hTrg = 1 + bottom - top;
+         // if ( hTrg > 0 ) {
+         final int[] target = new int[hTrg];
+         if ( dim != null ) { dim.set(1.0f, hTrg); }
+         return target;
+         // } else {
+         // if ( dim != null ) { Vec2.zero(dim); }
+         // return new int[] {};
+         // }
+
+      } else if ( hSrc == 1 ) {
+
+         int left = -1;
+         int minRight = wn1;
+         boolean goLeft = true;
+         while ( goLeft && left < minRight ) {
+            ++left;
+            if ( ( source[left] & 0xff000000 ) != 0 ) {
+               minRight = left;
+               goLeft = false;
+            }
+         }
+
+         int right = wSrc;
+         boolean goRight = true;
+         while ( goRight && right > minRight ) {
+            --right;
+            goRight = ( source[right] & 0xff000000 ) != 0;
+         }
+
+         final int wTrg = 1 + right - left;
+         // if ( wTrg > 0 ) {
+         final int[] target = new int[wTrg];
+         System.arraycopy(source, left, target, 0, wTrg);
+         if ( dim != null ) { dim.set(wTrg, 1.0f); }
+         return target;
+         // } else {
+         // if ( dim != null ) { Vec2.zero(dim); }
+         // return new int[] {};
+         // }
+
+      }
+
+      int minRight = wn1;
+      int minBottom = hn1;
+
+      /* Top search. y is outer loop, x is inner loop. */
+      int top = -1;
+      boolean goTop = true;
+      while ( goTop && top < hn1 ) {
+         ++top;
+         final int wtop = wSrc * top;
+         int x = -1;
+         while ( goTop && x < wn1 ) {
+            ++x;
+            if ( ( source[wtop + x] & 0xff000000 ) != 0 ) {
+               minRight = x;
+               minBottom = top;
+               goTop = false;
+            }
+         }
+      }
+
+      /* Left search. x is outer loop, y is inner loop. */
+      int left = -1;
+      boolean goLeft = true;
+      while ( goLeft && left < minRight ) {
+         ++left;
+         int y = hSrc;
+         while ( goLeft && y > top ) {
+            --y;
+            if ( ( source[y * wSrc + left] & 0xff000000 ) != 0 ) {
+               minBottom = y;
+               goLeft = false;
+            }
+         }
+      }
+
+      /* Bottom search. y is outer loop, x is inner loop. */
+      int bottom = hSrc;
+      boolean goBottom = true;
+      while ( goBottom && bottom > minBottom ) {
+         --bottom;
+         final int wbottom = wSrc * bottom;
+         int x = wSrc;
+         while ( goBottom && x > left ) {
+            --x;
+            if ( ( source[wbottom + x] & 0xff000000 ) != 0 ) {
+               minRight = x;
+               goBottom = false;
+            }
+         }
+      }
+
+      /* Right search. x is outer loop, y is inner loop. */
+      int right = wSrc;
+      boolean goRight = true;
+      while ( goRight && right > minRight ) {
+         --right;
+         int y = bottom + 1;
+         while ( goRight && y > top ) {
+            --y;
+            if ( ( source[y * wSrc + right] & 0xff000000 ) != 0 ) {
+               goRight = false;
+            }
+         }
+      }
+
+      final int wTrg = 1 + right - left;
+      final int hTrg = 1 + bottom - top;
+      if ( wTrg < 1 || hTrg < 1 ) {
+         if ( dim != null ) { Vec2.zero(dim); }
+         final int[] target = new int[srcLen];
+         System.arraycopy(source, 0, target, 0, srcLen);
+         return target;
+      }
+
+      final int trgLen = wTrg * hTrg;
+      final int[] target = new int[trgLen];
+      for ( int i = 0; i < trgLen; ++i ) {
+         target[i] = source[wSrc * ( top + i / wTrg ) + left + i % wTrg];
+      }
+
+      if ( dim != null ) { dim.set(wTrg, hTrg); }
       return target;
    }
 

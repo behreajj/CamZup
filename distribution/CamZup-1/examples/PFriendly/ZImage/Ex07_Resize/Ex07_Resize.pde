@@ -10,14 +10,12 @@ float maxScale = 5.0f;
 int wOriginal = 96;
 int hOriginal = 96;
 boolean nearToggle = false;
-boolean lToSConvert = true;
 
 PImage source;
 int wOrig;
 int hOrig;
 
 PImage[] bicubic = new PImage[samples];
-PImage[] nearest = new PImage[samples];
 float[] scales = new float[samples];
 
 void settings() {
@@ -51,28 +49,14 @@ void setup() {
     float scale = Utils.lerp(minScale, maxScale, step);
     scales[i] = scale;
     PImage rszcb = bicubic[i] = source.get();
-    PImage rsznn = nearest[i] = source.get();
-
-    if (lToSConvert) {
-      ZImage.sRgbaTolRgba(rszcb, false);
-      ZImage.sRgbaTolRgba(rsznn, false);
-    }
 
     long start = System.currentTimeMillis();
-    ZImage.scaleBicubic(rszcb, scale, scale);
-    long mid = System.currentTimeMillis();
-    ZImage.scaleNearest(rsznn, scale, scale);
+    ZImage.scaleBilinear(source, scale, scale, rszcb);
     long stop = System.currentTimeMillis();
 
-    long diff0 = mid - start;
-    long diff1 = stop - mid;
-    println("bicubic:", diff0, ", nearest:", diff1,
+    long diff0 = stop - start;
+    println("bicubic:", diff0,
       ", w:", rszcb.width, ", h:", rszcb.height);
-
-    if (lToSConvert) {
-      ZImage.lRgbaTosRgba(rszcb, false);
-      ZImage.lRgbaTosRgba(rsznn, false);
-    }
   }
   long concl = System.currentTimeMillis();
   long cumul = concl - init;
@@ -90,7 +74,7 @@ void draw() {
   float left = bicubic[0].width * 0.525f - halfWidth;
   float toStep = 1.0f / (samples - 1.0f);
   for (int i = 0; i < samples; ++i) {
-    PImage img = nearToggle ? nearest[i] : bicubic[i];
+    PImage img = bicubic[i];
     float step = i * toStep;
     float x = Utils.lerp(left, right, Utils.pow(step, 1.5f));
     buff.image(img, x, 0.0f);
@@ -110,9 +94,7 @@ void draw() {
 }
 
 void keyReleased() {
-  if (key == 'n' || key == 'N') {
-    nearToggle = !nearToggle;
-  } else if (key == 's' || key == 'S') {
+  if (key == 's' || key == 'S') {
     buff.save("/data/" + millis() + ".png");
     println("Screen saved.");
   }

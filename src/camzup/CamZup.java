@@ -51,6 +51,18 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
+      // int[] a = new int[] { 0, 0xff_000000, 0xff_ff0000, 0xff_00ff00,
+      // 0xff_000000, 0, 0 };
+      // int[] a = new int[] { 0xff000000, 0, 0x00_000000, 0x00_ff0000,
+      // 0x00_00ff00,
+      // 0x00_000000, 0, 0, 0, 0, 0, 0 };
+      // Vec2 dim = new Vec2();
+      // int[] b = Pixels.trimAlpha(a, 4, 3, dim);
+      // System.out.println("lenArr:" + b.length);
+      // System.out.println("dim:" + dim);
+      // for ( int i = 0; i < b.length; ++i ) {
+      // System.out.println(Integer.toHexString(b[i]));
+      // }
    }
 
    /**

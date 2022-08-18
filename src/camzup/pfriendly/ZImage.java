@@ -135,13 +135,11 @@ public class ZImage extends PImage {
     *
     * @param w width
     * @param h height
-    *
-    * @see ZImage#resizeBicubic(PImage, int, int)
     */
    @Override
    public void resize ( final int w, final int h ) {
 
-      ZImage.resizeBicubic(this, w, h);
+      ZImage.resizeBilinear(this, w, h, this);
    }
 
    /**
@@ -273,8 +271,7 @@ public class ZImage extends PImage {
       source.loadPixels();
       target.loadPixels();
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.adjustContrast(pxSrc, fac, pxTrg);
+      target.pixels = Pixels.adjustContrast(pxSrc, fac, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = source.pixelWidth;
@@ -316,8 +313,7 @@ public class ZImage extends PImage {
       source.loadPixels();
       target.loadPixels();
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.adjustLch(pxSrc, adjust, pxTrg);
+      target.pixels = Pixels.adjustLch(pxSrc, adjust, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = source.pixelWidth;
@@ -888,8 +884,7 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.flipX(pxSrc, w, h, pxTrg);
+      target.pixels = Pixels.flipX(pxSrc, w, h, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = w;
@@ -929,8 +924,7 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.flipY(pxSrc, w, h, pxTrg);
+      target.pixels = Pixels.flipY(pxSrc, w, h, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = w;
@@ -1385,8 +1379,7 @@ public class ZImage extends PImage {
       source.loadPixels();
       target.loadPixels();
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.grayscale(pxSrc, pxTrg);
+      target.pixels = Pixels.grayscale(pxSrc, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = source.pixelWidth;
@@ -1396,6 +1389,80 @@ public class ZImage extends PImage {
       target.updatePixels();
 
       return target;
+   }
+
+   /**
+    * Inverts the colors of an image.
+    *
+    * @param source the source image
+    * @param l      invert l flag
+    * @param a      invert a flag
+    * @param b      invert b flag
+    * @param alpha  invert alpha flag
+    * @param target the target image
+    *
+    * @return the inverted image
+    */
+   public static PImage invert ( final PImage source, final boolean l,
+      final boolean a, final boolean b, final boolean alpha,
+      final PImage target ) {
+
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.invertLab(target.pixels, l, a, b, alpha, target.pixels);
+         target.updatePixels();
+         return target;
+      }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int[] pxSrc = source.pixels;
+      target.pixels = Pixels.invertLab(pxSrc, l, a, b, alpha,
+         new int[pxSrc.length]);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = source.pixelWidth;
+      target.pixelHeight = source.pixelHeight;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Inverts the colors of an image. Excludes alpha from the inversion.
+    *
+    * @param source the source image
+    * @param l      invert l flag
+    * @param a      invert a flag
+    * @param b      invert b flag
+    * @param target the target image
+    *
+    * @return the inverted image
+    */
+   public static PImage invert ( final PImage source, final boolean l,
+      final boolean a, final boolean b, final PImage target ) {
+
+      return ZImage.invert(source, l, a, b, false, target);
+   }
+
+   /**
+    * Inverts the colors of an image. Excludes alpha from the inversion.
+    *
+    * @param source the source image
+    * @param target the target image
+    *
+    * @return the inverted image
+    */
+   public static PImage invert ( final PImage source, final PImage target ) {
+
+      return ZImage.invert(source, true, true, true, target);
    }
 
    /**
@@ -1520,8 +1587,8 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.lRgbaTosRgba(pxSrc, adjustAlpha, pxTrg);
+      target.pixels = Pixels.lRgbaTosRgba(pxSrc, adjustAlpha,
+         new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = w;
@@ -1649,8 +1716,8 @@ public class ZImage extends PImage {
     *
     * @return the mirrored image
     *
-    * @see Pixels#mirrorBilinear(int[], int, int, float, float, float, float,
-    *      boolean, int[])
+    * @see Pixels#mirror(int[], int, int, float, float, float, float, boolean,
+    *      int[])
     */
    public static PImage mirror ( final PImage source, final float xOrigin,
       final float yOrigin, final float xDest, final float yDest,
@@ -1658,9 +1725,8 @@ public class ZImage extends PImage {
 
       if ( source == target ) {
          target.loadPixels();
-         Pixels.mirrorBilinear(target.pixels, target.pixelWidth,
-            target.pixelHeight, xOrigin, yOrigin, xDest, yDest, flip,
-            target.pixels);
+         Pixels.mirror(target.pixels, target.pixelWidth, target.pixelHeight,
+            xOrigin, yOrigin, xDest, yDest, flip, target.pixels);
          target.updatePixels();
          return target;
       }
@@ -1675,9 +1741,8 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.mirrorBilinear(pxSrc, w, h, xOrigin, yOrigin,
-         xDest, yDest, flip, pxTrg);
+      target.pixels = Pixels.mirror(pxSrc, w, h, xOrigin, yOrigin, xDest, yDest,
+         flip, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = w;
@@ -1750,6 +1815,107 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Mirrors, or reflects, an image on the x axis across a pivot. The pivot
+    * is expected to be in [0.0, 1.0].
+    *
+    * @param source the source image
+    * @param x      the x pivot
+    * @param flip   the flip reflection flag
+    * @param target the target image
+    *
+    * @return the mirrored image
+    *
+    * @see Utils#round(float)
+    * @see Pixels#mirrorX(int[], int, int, boolean, int[])
+    */
+   public static PImage mirrorX ( final PImage source, final float x,
+      final boolean flip, final PImage target ) {
+
+      final int xPx = Utils.round(x * ( source.pixelWidth + 1 ) - 0.5f);
+
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.mirrorX(target.pixels, target.pixelWidth, xPx, flip,
+            target.pixels);
+         target.updatePixels();
+         return target;
+      }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int[] pxSrc = source.pixels;
+      target.pixels = Pixels.mirrorX(pxSrc, w, xPx, flip,
+         new int[pxSrc.length]);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = w;
+      target.pixelHeight = h;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Mirrors, or reflects, an image on the y axis across a pivot. The pivot
+    * is expected to be in [0.0, 1.0].
+    *
+    * @param source the source image
+    * @param y      the y pivot
+    * @param flip   the flip reflection flag
+    * @param target the target image
+    *
+    * @return the mirrored image
+    *
+    * @see Utils#round(float)
+    * @see Pixels#mirrorY(int[], int, int, int, boolean, int[])
+    */
+   public static PImage mirrorY ( final PImage source, final float y,
+      final boolean flip, final PImage target ) {
+
+      final int yPx = Utils.round( ( 1.0f - y ) * ( source.pixelHeight + 1 )
+         - 0.5f);
+
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.mirrorY(target.pixels, target.pixelWidth, target.pixelHeight,
+            yPx, flip, target.pixels);
+         target.updatePixels();
+         return target;
+      }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int[] pxSrc = source.pixels;
+      target.pixels = Pixels.mirrorY(pxSrc, w, h, yPx, flip,
+         new int[pxSrc.length]);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = w;
+      target.pixelHeight = h;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
     * Multiplies the red, green and blue channels of each pixel in a source
     * image by the alpha channel.
     *
@@ -1779,8 +1945,7 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.premul(pxSrc, pxTrg);
+      target.pixels = Pixels.premul(pxSrc, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = w;
@@ -1852,192 +2017,63 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Resizes an image to new dimensions in pixels using
-    * <a href="https://www.wikiwand.com/en/Bicubic_interpolation">bicubic
-    * interpolation</a>.
+    * Resizes an image to a target width and height. The arguments are scaled
+    * by the image's pixel density within the method. Takes the absolute value
+    * of the arguments; does not flip an image based on sign.
     *
-    * @param target the image
-    * @param wPx    the new pixel width
-    * @param hPx    the new pixel height
+    * @param source the source image
+    * @param wTrg   the target width
+    * @param hTrg   the target height
+    * @param target the target image
     *
-    * @return the target
+    * @return the resized image
     */
-   public static PImage resizeBicubic ( final PImage target, final int wPx,
-      final int hPx ) {
+   public static PImage resize ( final PImage source, final int wTrg,
+      final int hTrg, final PImage target ) {
 
-      // TODO: Replace with resizeBilinear
+      return ZImage.resizeBilinear(source, wTrg, hTrg, target);
+   }
 
-      /*
-       * References: https://stackoverflow.com/questions/
-       * 17640173/implementation-of-bi-cubic-resize
-       * https://blog.demofox.org/2015/08/15/
-       * resizing-images-with-bicubic-interpolation/
-       */
+   /**
+    * Resizes an image to a target width and height. The arguments are scaled
+    * by the image's pixel density within the method. Takes the absolute value
+    * of the arguments; does not flip an image based on sign.
+    *
+    * @param source the source image
+    * @param wTrg   the target width
+    * @param hTrg   the target height
+    * @param target the target image
+    *
+    * @return the resized image
+    *
+    * @see Pixels#resizeBilinear(int[], int, int, int, int)
+    */
+   public static PImage resizeBilinear ( final PImage source, final int wTrg,
+      final int hTrg, final PImage target ) {
 
       if ( target instanceof PGraphics ) {
-         System.err.println("Do not resize PGraphics with this method.");
+         System.err.println("Do not use PGraphics with this method.");
          return target;
       }
 
+      final int wvTrg = wTrg < 0 ? -wTrg < 1 ? 1 : -wTrg : wTrg < 1 ? 1 : wTrg;
+      final int hvTrg = hTrg < 0 ? -hTrg < 1 ? 1 : -hTrg : hTrg < 1 ? 1 : hTrg;
+
+      source.loadPixels();
       target.loadPixels();
-      final int pd = target.pixelDensity;
-      final int sw = target.pixelWidth;
-      final int sh = target.pixelHeight;
-      final int dw = ( wPx < 2 ? 2 : wPx ) * pd;
-      final int dh = ( hPx < 2 ? 2 : hPx ) * pd;
-
-      if ( dw == sw && dh == sh ) { return target; }
-
-      final int srcFmt = target.format;
-      final int[] srcpx = target.pixels;
-
-      final int frameSize = 4;
-      final int[] frame = new int[frameSize];
-
-      /*
-       * Introducing a bias was not present in the reference code, but it helped
-       * with edge haloes in earlier versions of this algorithm. Without
-       * introducing a bias, beware that this should be float division.
-       */
-      final float tx = sw / ( float ) dw;
-      final float ty = sh / ( float ) dh;
-
-      /* Despite the name, RGB images retain alpha, and so have 4 channels. */
-      byte chnlCount;
-      switch ( srcFmt ) {
-         case PConstants.RGB: /* 1 */
-         case PConstants.ARGB: /* 2 */
-            chnlCount = 4;
-            break;
-
-         case PConstants.ALPHA: /* 4 */
-            chnlCount = 1;
-            break;
-
-         default:
-            chnlCount = 4;
-      }
-
-      /*
-       * The original algorithm consists of 4 nested for loops: rows (height),
-       * columns (width), kernel, channel. This flattens them to one loop.
-       */
-      final int newPxlLen = dw * dh;
-      final int[] clrs = new int[newPxlLen * frameSize];
-      final int len2 = frameSize * chnlCount;
-      final int len3 = dw * len2;
-      final int len4 = dh * len3;
-
-      final int swn1 = sw - 1;
-      final int shn1 = sh - 1;
-
-      for ( int k = 0; k < len4; ++k ) {
-         final int g = k / len3; /* row index */
-         final int m = k - g * len3; /* temporary */
-         final int h = m / len2; /* column index */
-         final int n = m - h * len2; /* temporary */
-         final int j = n % frameSize; /* kernel index */
-
-         /* Row. */
-         final float gf = g;
-         final int y = ( int ) ( ty * gf );
-         final float dy = ty * gf - y;
-         final float dysq = dy * dy;
-
-         /* Column. */
-         final float hf = h;
-         final int x = ( int ) ( tx * hf );
-         final float dx = tx * hf - x;
-         final float dxsq = dx * dx;
-
-         final int zu = y - 1 + j;
-         final int z = zu < 0 ? 0 : zu > shn1 ? shn1 : zu;
-
-         /*
-          * Channel index multiplied by size of byte, as it will be used to
-          * unpack color channels.
-          */
-         final int i8 = Byte.SIZE * ( n / frameSize );
-         final int zw = z * sw;
-
-         final int x0 = x < 0 ? 0 : x > swn1 ? swn1 : x;
-         int a0 = srcpx[zw + x0] >> i8 & 0xff;
-
-         final int x1u = x - 1;
-         final int x1 = x1u < 0 ? 0 : x1u > swn1 ? swn1 : x1u;
-         int d0 = srcpx[zw + x1] >> i8 & 0xff;
-
-         final int x2u = x + 1;
-         final int x2 = x2u < 0 ? 0 : x2u > swn1 ? swn1 : x2u;
-         int d2 = srcpx[zw + x2] >> i8 & 0xff;
-
-         final int x3u = x + 2;
-         final int x3 = x3u < 0 ? 0 : x3u > swn1 ? swn1 : x3u;
-         int d3 = srcpx[zw + x3] >> i8 & 0xff;
-
-         /* Subtract a0 no matter the boundary condition. */
-         d0 -= a0;
-         d2 -= a0;
-         d3 -= a0;
-
-         float d36 = IUtils.ONE_SIX * d3;
-         float a1 = -IUtils.ONE_THIRD * d0 + d2 - d36;
-         float a2 = 0.5f * ( d0 + d2 );
-         float a3 = -IUtils.ONE_SIX * d0 - 0.5f * d2 + d36;
-
-         int sample = a0 + ( int ) ( a1 * dx + a2 * dxsq + a3 * ( dx * dxsq ) );
-         frame[j] = sample < 0 ? 0 : sample > 255 ? 255 : sample;
-
-         a0 = frame[1];
-         d0 = frame[0] - a0;
-         d2 = frame[2] - a0;
-         d3 = frame[3] - a0;
-
-         d36 = IUtils.ONE_SIX * d3;
-         a1 = -IUtils.ONE_THIRD * d0 + d2 - d36;
-         a2 = 0.5f * ( d0 + d2 );
-         a3 = -IUtils.ONE_SIX * d0 - 0.5f * d2 + d36;
-
-         // rowStride = dw * chnlCount
-         // g * rowStride + h * chnlCount + i
-         sample = a0 + ( int ) ( a1 * dy + a2 * dysq + a3 * ( dy * dysq ) );
-         clrs[k / frameSize] = sample < 0 ? 0 : sample > 255 ? 255 : sample;
-      }
-
-      final int[] trgpx = new int[newPxlLen];
-      switch ( srcFmt ) {
-
-         case PConstants.RGB: /* 1 */
-
-            for ( int i = 0, j = 0; i < newPxlLen; ++i, j += 4 ) {
-               trgpx[i] = clrs[j] | clrs[j + 1] << 0x08 | clrs[j + 2] << 0x10
-                  | 0xff000000;
-            }
-
-            break;
-
-         case PConstants.ALPHA: /* 4 */
-
-            System.arraycopy(clrs, 0, trgpx, 0, newPxlLen);
-
-            break;
-
-         case PConstants.ARGB: /* 2 */
-         default:
-
-            for ( int i = 0, j = 0; i < newPxlLen; ++i, j += 4 ) {
-               trgpx[i] = clrs[j] | clrs[j + 1] << 0x08 | clrs[j + 2] << 0x10
-                  | clrs[j + 3] << 0x18;
-            }
-
-            break;
-      }
-
-      target.pixels = trgpx;
-      target.width = dw / pd;
-      target.height = dh / pd;
-      target.pixelWidth = dw;
-      target.pixelHeight = dh;
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int pd = source.pixelDensity;
+      final int[] pxSrc = source.pixels;
+      final int wpd = wvTrg * pd;
+      final int hpd = hvTrg * pd;
+      target.pixels = Pixels.resizeBilinear(pxSrc, w, h, wpd, hpd);
+      target.format = source.format;
+      target.pixelDensity = pd;
+      target.pixelWidth = wpd;
+      target.pixelHeight = hpd;
+      target.width = wvTrg;
+      target.height = hvTrg;
       target.updatePixels();
 
       return target;
@@ -2105,8 +2141,7 @@ public class ZImage extends PImage {
       source.loadPixels();
       target.loadPixels();
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.rotate180(pxSrc, pxTrg);
+      target.pixels = Pixels.rotate180(pxSrc, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = source.pixelWidth;
@@ -2141,8 +2176,7 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.rotate270(pxSrc, w, h, pxTrg);
+      target.pixels = Pixels.rotate270(pxSrc, w, h, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = w;
@@ -2176,8 +2210,7 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.rotate90(pxSrc, w, h, pxTrg);
+      target.pixels = Pixels.rotate90(pxSrc, w, h, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = w;
@@ -2228,47 +2261,72 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Scales an image by a percentage of its original dimensions.
+    * Scales an image by a percentage of its original width and height.
+    * Percentages are expected to be within [0.0, 1.0].
     *
-    * @param target the image
-    * @param prc    the percentage
+    * @param source the source image
+    * @param wPrc   the width percentage
+    * @param hPrc   the height percentage
+    * @param target the target image
     *
-    * @return the image
+    * @return the scaled image
     */
-   public static PImage scaleBicubic ( final PImage target, final float prc ) {
+   public static PImage scale ( final PImage source, final float wPrc,
+      final float hPrc, final PImage target ) {
 
-      return ZImage.scaleBicubic(target, prc, prc);
+      return ZImage.scaleBilinear(source, wPrc, hPrc, target);
    }
 
    /**
-    * Scales an image by percentages of its original dimensions.
+    * Scales an image by a percentage of its original width and height.
+    * Percentages are expected to be within [0.0, 1.0].
     *
-    * @param target the image
-    * @param xPrc   the x percent
-    * @param yPrc   the y percent
+    * @param source the source image
+    * @param prc    the width percentage
+    * @param target the target image
     *
-    * @return the image
-    *
-    * @see ZImage#resizeBicubic(PImage, int, int)
+    * @return the scaled image
     */
-   public static PImage scaleBicubic ( final PImage target, final float xPrc,
-      final float yPrc ) {
+   public static PImage scale ( final PImage source, final Vec2 prc,
+      final PImage target ) {
 
-      return ZImage.resizeBicubic(target, ( int ) ( 0.5f + target.width
-         * xPrc ), ( int ) ( 0.5f + target.height * yPrc ));
+      return ZImage.scaleBilinear(source, prc, target);
    }
 
    /**
-    * Scales an image by a percentage of its original dimensions.
+    * Scales an image by a percentage of its original width and height.
+    * Percentages are expected to be within [0.0, 1.0].
     *
-    * @param target the image
-    * @param v      the percentage
+    * @param source the source image
+    * @param wPrc   the width percentage
+    * @param hPrc   the height percentage
+    * @param target the target image
     *
-    * @return the image
+    * @return the scaled image
+    *
+    * @see Utils#round(float)
     */
-   public static PImage scaleBicubic ( final PImage target, final Vec2 v ) {
+   public static PImage scaleBilinear ( final PImage source, final float wPrc,
+      final float hPrc, final PImage target ) {
 
-      return ZImage.scaleBicubic(target, v.x, v.y);
+      return ZImage.resizeBilinear(source, Utils.round(wPrc * source.width),
+         Utils.round(hPrc * source.height), target);
+   }
+
+   /**
+    * Scales an image by a percentage of its original width and height.
+    * Percentages are expected to be within [0.0, 1.0].
+    *
+    * @param source the source image
+    * @param prc    the width percentage
+    * @param target the target image
+    *
+    * @return the scaled image
+    */
+   public static PImage scaleBilinear ( final PImage source, final Vec2 prc,
+      final PImage target ) {
+
+      return ZImage.scaleBilinear(source, prc.x, prc.y, target);
    }
 
    /**
@@ -2410,8 +2468,8 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.sRgbaTolRgba(pxSrc, adjustAlpha, pxTrg);
+      target.pixels = Pixels.sRgbaTolRgba(pxSrc, adjustAlpha,
+         new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = w;
@@ -2474,8 +2532,7 @@ public class ZImage extends PImage {
       source.loadPixels();
       target.loadPixels();
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.stretchContrast(pxSrc, fac, pxTrg);
+      target.pixels = Pixels.stretchContrast(pxSrc, fac, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = source.pixelWidth;
@@ -2572,8 +2629,8 @@ public class ZImage extends PImage {
       source.loadPixels();
       target.loadPixels();
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.tintLab(pxSrc, valTint, fac, pxTrg);
+      target.pixels = Pixels.tintLab(pxSrc, valTint, fac,
+         new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = source.pixelWidth;
@@ -2641,105 +2698,25 @@ public class ZImage extends PImage {
     */
    public static PImage trimAlpha ( final PImage source, final PImage target ) {
 
-      // TODO: Transfer to pixels.
-
       if ( target instanceof PGraphics ) {
-         System.err.println("Do not trim PGraphics with this method.");
+         System.err.println("Do not use PGraphics with this method.");
          return target;
       }
 
-      final int wSrc = source.pixelWidth;
-      final int hSrc = source.pixelHeight;
-      if ( wSrc < 2 || hSrc < 2 ) { return target; }
-
       source.loadPixels();
-      final int[] pxSrc = source.pixels;
+      target.loadPixels();
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
       final int pd = source.pixelDensity;
-
-      final int wn1 = wSrc - 1;
-      final int hn1 = hSrc - 1;
-      int minRight = wn1;
-      int minBottom = hn1;
-
-      /* Top search. y is outer loop, x is inner loop. */
-      int top = -1;
-      boolean goTop = true;
-      while ( top < hn1 && goTop ) {
-         ++top;
-         final int wtop = wSrc * top;
-         int x = -1;
-         while ( x < wn1 && goTop ) {
-            ++x;
-            if ( ( pxSrc[wtop + x] & 0xff000000 ) != 0 ) {
-               minRight = x;
-               minBottom = top;
-               goTop = false;
-            }
-         }
-      }
-
-      /* Left search. x is outer loop, y is inner loop. */
-      int left = -1;
-      boolean goLeft = true;
-      while ( left < minRight && goLeft ) {
-         ++left;
-         int y = hSrc;
-         while ( y > top && goLeft ) {
-            --y;
-            if ( ( pxSrc[y * wSrc + left] & 0xff000000 ) != 0 ) {
-               minBottom = y;
-               goLeft = false;
-            }
-         }
-      }
-
-      /* Bottom search. y is outer loop, x is inner loop. */
-      int bottom = hSrc;
-      boolean goBottom = true;
-      while ( bottom > minBottom && goBottom ) {
-         --bottom;
-         final int wbottom = wSrc * bottom;
-         int x = wSrc;
-         while ( x > left && goBottom ) {
-            --x;
-            if ( ( pxSrc[wbottom + x] & 0xff000000 ) != 0 ) {
-               minRight = x;
-               goBottom = false;
-            }
-         }
-      }
-
-      /* Right search. x is outer loop, y is inner loop. */
-      int right = wSrc;
-      boolean goRight = true;
-      while ( right > minRight && goRight ) {
-         --right;
-         int y = bottom + 1;
-         while ( y > top && goRight ) {
-            --y;
-            if ( ( pxSrc[y * wSrc + right] & 0xff000000 ) != 0 ) {
-               goRight = false;
-            }
-         }
-      }
-
-      final int wTrg = 1 + right - left;
-      final int hTrg = 1 + bottom - top;
-      if ( wTrg < 2 || hTrg < 2 ) { return target; }
-
-      final int lenTrg = wTrg * hTrg;
-      final int[] pxTrg = new int[lenTrg];
-      for ( int i = 0; i < lenTrg; ++i ) {
-         pxTrg[i] = pxSrc[wSrc * ( top + i / wTrg ) + left + i % wTrg];
-      }
-
-      if ( source != target ) { target.loadPixels(); }
-      target.format = PConstants.ARGB;
-      target.pixels = pxTrg;
-      target.width = wTrg / pd;
-      target.height = hTrg / pd;
-      target.pixelWidth = wTrg;
-      target.pixelHeight = hTrg;
+      final int[] pxSrc = source.pixels;
+      final Vec2 dim = new Vec2();
+      target.pixels = Pixels.trimAlpha(pxSrc, w, h, dim);
+      target.format = source.format;
+      target.pixelDensity = pd;
+      target.pixelWidth = ( int ) dim.x;
+      target.pixelHeight = ( int ) dim.y;
+      target.width = target.pixelWidth / pd;
+      target.height = target.pixelHeight / pd;
       target.updatePixels();
 
       return target;
@@ -2775,8 +2752,7 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      final int[] pxTrg = new int[pxSrc.length];
-      target.pixels = Pixels.unpremul(pxSrc, pxTrg);
+      target.pixels = Pixels.unpremul(pxSrc, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = w;
