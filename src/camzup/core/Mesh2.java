@@ -909,6 +909,13 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @param tr the output transform
     *
     * @return this mesh
+    *
+    * @see Mesh2#accumMinMax(Mesh2, Vec2, Vec2)
+    * @see Transform2#rotateTo(float)
+    * @see Utils#div(float, float)
+    * @see Utils#max(float, float)
+    * @see Vec2#mul(Vec2, float, Vec2)
+    * @see Vec2#sub(Vec2, Vec2, Vec2)
     */
    public Mesh2 reframe ( final Transform2 tr ) {
 

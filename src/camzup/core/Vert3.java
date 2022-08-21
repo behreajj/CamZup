@@ -129,8 +129,20 @@ public class Vert3 implements Comparable < Vert3 > {
     */
    public String toString ( final int places ) {
 
-      // TODO: Pass by reference version.
-      final StringBuilder sb = new StringBuilder(512);
+      return this.toString(new StringBuilder(512), places).toString();
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * vertices. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
       sb.append("{ coord: ");
       this.coord.toString(sb, places);
       sb.append(", texCoord: ");
@@ -139,7 +151,7 @@ public class Vert3 implements Comparable < Vert3 > {
       this.normal.toString(sb, places);
       sb.append(' ');
       sb.append('}');
-      return sb.toString();
+      return sb;
    }
 
    /**
@@ -187,6 +199,8 @@ public class Vert3 implements Comparable < Vert3 > {
     * @param tolerance the tolerance
     *
     * @return the evaluation
+    *
+    * @see Vec3#approx(Vec3, Vec3, float)
     */
    public static boolean approxCoord ( final Vert3 a, final Vert3 b,
       final float tolerance ) {
@@ -224,6 +238,7 @@ public class Vert3 implements Comparable < Vert3 > {
     * @return the orientation
     *
     * @see Transform3#fromDir(Vec3, Handedness, Transform3)
+    * @see Transform3#moveTo(Vec3)
     */
    @Experimental
    public static Transform3 orientation ( final Vert3 vert,

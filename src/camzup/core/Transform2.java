@@ -285,19 +285,17 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     *
     * @return this transform
     *
-    * @see Vec2#sub(Vec2, Vec2, Vec2)
-    * @see Vec2#none(Vec2)
     * @see Vec2#forward(Vec2)
-    * @see Vec2#right(Vec2)
+    * @see Vec2#headingSigned(Vec2)
+    * @see Vec2#none(Vec2)
     * @see Vec2#normalize(Vec2, Vec2)
     * @see Vec2#perpendicularCCW(Vec2, Vec2)
     * @see Vec2#perpendicularCW(Vec2, Vec2)
-    * @see Vec2#headingSigned(Vec2)
+    * @see Vec2#right(Vec2)
+    * @see Vec2#sub(Vec2, Vec2, Vec2)
     */
    public Transform2 lookAt ( final Vec2 point, final float step,
       final Handedness handedness ) {
-
-      // QUERY A 2D version of lookIn?
 
       /* The right axis is used as a temporary container. */
       Vec2.sub(point, this.location, this.right);
@@ -375,9 +373,9 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     *
     * @return this transform
     *
-    * @see Vec2#rotateZ(Vec2, float, float, Vec2)
-    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
+    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
+    * @see Vec2#rotateZ(Vec2, float, float, Vec2)
     */
    public Transform2 moveByLocal ( final Vec2 dir ) {
 
@@ -496,6 +494,9 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     * @param step    the step
     *
     * @return this transform
+    *
+    * @see Transform2#updateAxes()
+    * @see Utils#modRadians(float)
     */
    @Override
    public Transform2 rotateTo ( final float radians, final float step ) {
@@ -616,38 +617,44 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
    }
 
    /**
-    * Scales the transform to a uniform size.
+    * Scales the transform to a uniform size. Copies the sign of the
+    * transform's current scale.
     *
     * @param scalar the size
     *
     * @return this transform
+    *
+    * @see Utils#copySign(float, float)
     */
    @Override
    public Transform2 scaleTo ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
          this.scalePrev.set(this.scale);
-         this.scale.set(scalar, scalar);
+         this.scale.set(Utils.copySign(scalar, this.scale.x), Utils.copySign(
+            scalar, this.scale.y));
       }
 
       return this;
    }
 
    /**
-    * Scales the transform to a non-uniform size.
+    * Scales the transform to a non-uniform size. Copies the sign of the
+    * transform's current scale.
     *
     * @param scaleNew the new scale
     *
     * @return this transform
     *
     * @see Vec2#all(Vec2)
+    * @see Vec2#copySign(Vec2, Vec2, Vec2)
     */
    @Override
    public Transform2 scaleTo ( final Vec2 scaleNew ) {
 
       if ( Vec2.all(scaleNew) ) {
          this.scalePrev.set(this.scale);
-         this.scale.set(scaleNew);
+         Vec2.copySign(scaleNew, this.scale, this.scale);
       }
 
       return this;
@@ -655,7 +662,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
 
    /**
     * Eases the transform to a scale by a step. The static easing function is
-    * used.
+    * used. Copies the sign of the transform's current scale.
     *
     * @param scaleNew the new scale
     * @param step     the step in [0.0, 1.0]
@@ -663,13 +670,16 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     * @return this transform
     *
     * @see Vec2#all(Vec2)
+    * @see Vec2#copySign(Vec2, Vec2, Vec2)
+    * @see Vec2#mix(Vec2, Vec2, float, Vec2)
     */
    @Override
    public Transform2 scaleTo ( final Vec2 scaleNew, final float step ) {
 
       if ( Vec2.all(scaleNew) ) {
          this.scalePrev.set(this.scale);
-         Vec2.mix(this.scalePrev, scaleNew, step, this.scale);
+         Vec2.copySign(scaleNew, this.scale, this.scale);
+         Vec2.mix(this.scalePrev, this.scale, step, this.scale);
       }
 
       return this;
@@ -677,7 +687,8 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
 
    /**
     * Eases the transform to a scale by a step. The kind of easing is
-    * specified by a Vec2 easing function.
+    * specified by a Vec2 easing function. Copies the sign of the transform's
+    * current scale.
     *
     * @param scaleNew   the new scale
     * @param step       the step in [0.0, 1.0]
@@ -686,6 +697,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     * @return this transform
     *
     * @see Vec2#all(Vec2)
+    * @see Vec2#copySign(Vec2, Vec2, Vec2)
     * @see Vec2.AbstrEasing#apply(Vec2, Vec2, Float, Vec2)
     */
    public Transform2 scaleTo ( final Vec2 scaleNew, final float step,
@@ -693,7 +705,8 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
 
       if ( Vec2.all(scaleNew) ) {
          this.scalePrev.set(this.scale);
-         easingFunc.apply(this.scalePrev, scaleNew, step, this.scale);
+         Vec2.copySign(scaleNew, this.scale, this.scale);
+         easingFunc.apply(this.scalePrev, this.scale, step, this.scale);
       }
 
       return this;
@@ -710,7 +723,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     *
     * @return this transform
     *
-    * @see Transform2#rotateTo(float)
+    * @see Transform2#updateAxes()
     */
    public Transform2 set ( final float xLoc, final float yLoc,
       final float radians, final float xScale, final float yScale ) {
@@ -718,7 +731,9 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
       this.locPrev.set(this.location);
       this.location.set(xLoc, yLoc);
 
-      this.rotateTo(radians);
+      this.rotPrev = this.rotation;
+      this.rotation = radians;
+      this.updateAxes();
 
       if ( xScale != 0.0f && yScale != 0.0f ) {
          this.scalePrev.set(this.scale);
@@ -745,17 +760,29 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     * Sets the components of the transform.
     *
     * @param locNew   the new location
-    * @param rotNew   the new rotation
+    * @param radians  the new rotation
     * @param scaleNew the new scale
     *
     * @return this transform
+    *
+    * @see Transform2#updateAxes()
+    * @see Vec2#any(Vec2)
     */
-   public Transform2 set ( final Vec2 locNew, final float rotNew,
+   public Transform2 set ( final Vec2 locNew, final float radians,
       final Vec2 scaleNew ) {
 
-      this.moveTo(locNew);
-      this.rotateTo(rotNew);
-      this.scaleTo(scaleNew);
+      this.locPrev.set(this.location);
+      this.location.set(locNew);
+
+      this.rotPrev = this.rotation;
+      this.rotation = radians;
+      this.updateAxes();
+
+      /* scaleTo requires sign matching between old and new scale. */
+      if ( Vec2.any(scaleNew) ) {
+         this.scalePrev.set(this.scale);
+         this.scale.set(scaleNew);
+      }
 
       return this;
    }
@@ -772,8 +799,8 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     *
     * @return the transform
     *
-    * @see Vec2#normalize(Vec2, Vec2)
     * @see Vec2#headingSigned(Vec2)
+    * @see Vec2#normalize(Vec2, Vec2)
     */
    public Transform2 setAxes ( final float xRight, final float yForward,
       final float yRight, final float xForward ) {
@@ -864,6 +891,9 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     * @param pyCd the string builder
     *
     * @return the string builder
+    *
+    * @see Utils#modRadians(float)
+    * @see Utils#toFixed(StringBuilder, float, int)
     */
    @Experimental
    StringBuilder toBlenderCode ( final StringBuilder pyCd ) {
@@ -874,7 +904,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
        * when it is extruded.
        */
       final String rotationMode = "\"QUATERNION\"";
-      final double halfRad = Utils.modRadians(this.rotation) * 0.5d;
+      final double halfRad = this.rotation % IUtils.TAU_D * 0.5d;
       final float depth = ( this.scale.x + this.scale.y ) * 0.5f;
 
       pyCd.append("{\"location\": ");
@@ -898,6 +928,9 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     * The angle is converted from radians to degrees.
     *
     * @return the string builder
+    *
+    * @see Utils#modRadians(float)
+    * @see Utils#toFixed(StringBuilder, float, int)
     */
    StringBuilder toSvgString ( final StringBuilder svgp ) {
 
@@ -1021,8 +1054,8 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     *
     * @return the transform
     *
-    * @see Vec2#normalize(Vec2, Vec2)
     * @see Vec2#headingSigned(Vec2)
+    * @see Vec2#normalize(Vec2, Vec2)
     * @see Vec2#one(Vec2)
     * @see Vec2#zero(Vec2)
     */
@@ -1094,12 +1127,12 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     *
     * @return the transform
     *
+    * @see Vec2#forward(Vec2)
+    * @see Vec2#headingSigned(Vec2)
     * @see Vec2#none(Vec2)
     * @see Vec2#normalize(Vec2, Vec2)
-    * @see Vec2#perpendicularCW(Vec2, Vec2)
-    * @see Vec2#headingSigned(Vec2)
     * @see Vec2#one(Vec2)
-    * @see Vec2#forward(Vec2)
+    * @see Vec2#perpendicularCW(Vec2, Vec2)
     * @see Vec2#right(Vec2)
     * @see Vec2#zero(Vec2)
     */
@@ -1135,9 +1168,9 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     *
     * @return the identity
     *
+    * @see Vec2#forward(Vec2)
     * @see Vec2#one(Vec2)
     * @see Vec2#right(Vec2)
-    * @see Vec2#forward(Vec2)
     * @see Vec2#zero(Vec2)
     */
    public static Transform2 identity ( final Transform2 target ) {
@@ -1186,9 +1219,9 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     *
     * @return the point
     *
-    * @see Vec2#sub(Vec2, Vec2, Vec2)
     * @see Vec2#div(Vec2, Vec2, Vec2)
     * @see Vec2#rotateZ(Vec2, float, Vec2)
+    * @see Vec2#sub(Vec2, Vec2, Vec2)
     */
    public static Vec2 invMulPoint ( final Transform2 t, final Vec2 source,
       final Vec2 target ) {
@@ -1366,6 +1399,9 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     * @param target the output coordinate
     *
     * @return the transformed coordinate
+    *
+    * @see Vec2#div(Vec2, float, Vec2)
+    * @see Vec2#rotateZ(Vec2, float, float, Vec2)
     */
    public static Vec2 mulTexCoord ( final Transform2 t, final Vec2 source,
       final Vec2 target ) {
@@ -1389,8 +1425,8 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     *
     * @return the vector
     *
-    * @see Vec2#rotateZ(Vec2, float, Vec2)
     * @see Vec2#hadamard(Vec2, Vec2, Vec2)
+    * @see Vec2#rotateZ(Vec2, float, Vec2)
     */
    public static Vec2 mulVector ( final Transform2 t, final Vec2 source,
       final Vec2 target ) {
@@ -1415,6 +1451,8 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     * @param target the output transform
     *
     * @return the random transform
+    *
+    * @see Vec2#randomCartesian(java.util.Random, Vec2, Vec2, Vec2)
     */
    public static Transform2 random ( final java.util.Random rng,
       final float lbLoc, final float ubLoc, final float lbRot,
@@ -1499,6 +1537,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     */
    public static float rotDelta ( final Transform2 t ) {
 
+      // TODO: Create and use signed angular distance?
       return t.rotation - t.rotPrev;
    }
 

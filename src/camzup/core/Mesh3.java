@@ -98,6 +98,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * index in a face loop to an angle, then to Cartesian coordinates.
     *
     * @return this mesh
+    *
+    * @see Utils#div(float, float)
     */
    public Mesh3 calcUvs ( ) {
 
@@ -330,6 +332,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return this mesh
     *
     * @see Mesh#remove(int[][], int, int)
+    * @see Utils#mod(int, int)
     */
    public Mesh3 deleteVerts ( final int faceIndex, final int vertIndex,
       final int count ) {
@@ -496,6 +499,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return this new face indices
     *
     * @see Mesh3#shadeFlat(int, int)
+    * @see Utils#max(float, float)
+    * @see Utils#mod(int, int)
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#div(Vec3, float, Vec3)
+    * @see Vec3#negate(Vec3, Vec3)
+    * @see Vec3#normalize(Vec3, Vec3)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    @Experimental
    public Mesh3 extrudeFace ( final int faceIndex, final boolean fillCap,
@@ -1256,6 +1266,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param tr the output transform
     *
     * @return this mesh
+    *
+    * @see Mesh3#accumMinMax(Mesh3, Vec3, Vec3)
+    * @see Transform3#updateAxes()
+    * @see Utils#div(float, float)
+    * @see Utils#max(float, float, float)
+    * @see Vec3#mul(Vec3, float, Vec3)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    public Mesh3 reframe ( final Transform3 tr ) {
 
@@ -1328,20 +1345,23 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the mesh
     *
+    * @see Quaternion#any(Quaternion)
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     */
    public Mesh3 rotate ( final Quaternion q ) {
 
-      final int vsLen = this.coords.length;
-      for ( int i = 0; i < vsLen; ++i ) {
-         final Vec3 c = this.coords[i];
-         Quaternion.mulVector(q, c, c);
-      }
+      if ( Quaternion.any(q) ) {
+         final int vsLen = this.coords.length;
+         for ( int i = 0; i < vsLen; ++i ) {
+            final Vec3 c = this.coords[i];
+            Quaternion.mulVector(q, c, c);
+         }
 
-      final int vnsLen = this.normals.length;
-      for ( int j = 0; j < vnsLen; ++j ) {
-         final Vec3 n = this.normals[j];
-         Quaternion.mulVector(q, n, n);
+         final int vnsLen = this.normals.length;
+         for ( int j = 0; j < vnsLen; ++j ) {
+            final Vec3 n = this.normals[j];
+            Quaternion.mulVector(q, n, n);
+         }
       }
 
       return this;
@@ -3444,6 +3464,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param target      the output mesh
     *
     * @return the mesh
+    *
+    * @see Mesh3#calcUvs()
+    * @see Mesh3#shadeSmooth()
     */
    public static Mesh3 fromCurve3 ( final Curve3 source, final int resolution,
       final float colinearTol, final Mesh3 target ) {
@@ -3475,6 +3498,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param target      the output mesh
     *
     * @return the mesh
+    *
+    * @see Mesh3#calcUvs()
+    * @see Mesh3#shadeSmooth()
     */
    public static Mesh3 fromCurve3 ( final Curve3[] arr, final int resolution,
       final float colinearTol, final Mesh3 target ) {
@@ -3829,6 +3855,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the icosphere
     *
+    * @see Mesh3#castToSphere(Mesh3, float, Mesh3)
+    * @see Mesh3#clean()
+    * @see Mesh3#icosahedron(Mesh3)
     * @see Mesh3#subdivFaceInscribe(int)
     */
    public static Mesh3 icosphere ( final int itrs, final Mesh3 target ) {
@@ -3936,6 +3965,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param target     the output mesh
     *
     * @return the projected mesh
+    *
+    * @see Mat4#mul(Mat4, Vec4, Vec4)
     */
    @Experimental
    public static Mesh2 project ( final Mesh3 source, final Mat4 projection,
@@ -4885,9 +4916,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return the point list
     *
     * @see Utils#clamp01(float)
-    * @see Vec3#subNorm(Vec3, Vec3, Vec3)
-    * @see Vec3#dot(Vec3, Vec3)
     * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float, Vec3)
+    * @see Vec3#dot(Vec3, Vec3)
+    * @see Vec3#subNorm(Vec3, Vec3, Vec3)
     */
    static ArrayList < Vec3 > fromCurve3 ( final Curve3 source,
       final int resolution, final float colinearTol, final ArrayList <

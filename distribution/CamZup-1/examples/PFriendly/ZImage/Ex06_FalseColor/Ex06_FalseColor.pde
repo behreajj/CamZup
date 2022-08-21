@@ -9,6 +9,8 @@ PImage target;
 
 Yup2 graphics;
 Gradient lcd = Gradient.paletteLcd(new Gradient());
+Color.AbstrEasing mix = new Color.MixSrgba();
+Pixels.MapLuminance map = new Pixels.MapLuminance();
 
 void settings() {
     size(720, 405, Yup2.PATH_STR);
@@ -20,9 +22,9 @@ void setup() {
 
     source = loadImage("callingStMatthew.jpg");
     target = source.get();
-
+    
     long start = System.currentTimeMillis();
-    ZImage.falseColor(lcd, target);
+    ZImage.gradientMap(target, lcd, mix, map, target);
     long end = System.currentTimeMillis();
     println("Elapsed Time: " + (end - start));
 }

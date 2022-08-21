@@ -16,7 +16,7 @@ public class KtQuat extends Quaternion {
    public KtQuat ( ) {}
 
    /**
-    * Constructs a quaternion by float component.
+    * Constructs a quaternion from float values.
     *
     * @param real  the real component (w)
     * @param xImag the x component
@@ -38,6 +38,20 @@ public class KtQuat extends Quaternion {
    public KtQuat ( final float real, final Vec3 imag ) { super(real, imag); }
 
    /**
+    * Constructs a quaternion from integer values.
+    *
+    * @param real  the real component (w)
+    * @param xImag the x component
+    * @param yImag the y component
+    * @param zImag the z component
+    */
+   public KtQuat ( final int real, final int xImag, final int yImag,
+      final int zImag ) {
+
+      super(real, xImag, yImag, zImag);
+   }
+
+   /**
     * A copy constructor.
     *
     * @param source the source quaternion
@@ -50,6 +64,8 @@ public class KtQuat extends Quaternion {
     * @param v the value
     *
     * @return the evaluation
+    *
+    * @see Utils#approx(float, float)
     */
    public boolean contains ( final float v ) {
 
@@ -68,13 +84,11 @@ public class KtQuat extends Quaternion {
     */
    public KtQuat div ( final float b ) {
 
-      // TODO: What about divide and divAssign for q / v3?
-
       if ( b != 0.0f ) {
          return new KtQuat(this.real / b, this.imag.x / b, this.imag.y / b,
             this.imag.z / b);
       }
-      return new KtQuat();
+      return new KtQuat(1.0f, 0.0f, 0.0f, 0.0f);
    }
 
    /**
@@ -85,6 +99,8 @@ public class KtQuat extends Quaternion {
     * @param b the right operand
     *
     * @return the quotient
+    *
+    * @see Quaternion#div(Quaternion, Quaternion, Quaternion)
     */
    public KtQuat div ( final Quaternion b ) {
 
@@ -98,6 +114,8 @@ public class KtQuat extends Quaternion {
     * place). For interoperability with Kotlin: <code>a /= b</code> .
     *
     * @param b the right operand
+    *
+    * @see Quaternion#identity(Quaternion)
     */
    public void divAssign ( final float b ) {
 
@@ -109,7 +127,7 @@ public class KtQuat extends Quaternion {
          i.y *= bInv;
          i.z *= bInv;
       } else {
-         this.reset();
+         Quaternion.identity(this);
       }
    }
 
@@ -118,24 +136,12 @@ public class KtQuat extends Quaternion {
     * place). For interoperability with Kotlin: <code>a /= b</code> .
     *
     * @param b the right operand
+    *
+    * @see Quaternion#div(Quaternion, Quaternion, Quaternion)
     */
    public void divAssign ( final Quaternion b ) {
 
       Quaternion.div(this, b, this);
-   }
-
-   /**
-    * Returns a new quaternion with the subtraction of the right operand from
-    * the instance. For interoperability with Kotlin: <code>a - b</code> .
-    * <em>Does not mutate the quaternion in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the subtraction
-    */
-   public KtQuat minus ( final float b ) {
-
-      return new KtQuat(this.real - b, this.imag.x, this.imag.y, this.imag.z);
    }
 
    /**
@@ -155,30 +161,6 @@ public class KtQuat extends Quaternion {
    }
 
    /**
-    * Returns a new quaternion with the subtraction of the right operand from
-    * the instance. Promotes the vector to a pure quaternion. For
-    * interoperability with Kotlin: <code>a - b</code> . <em>Does not mutate
-    * the quaternion in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the subtraction
-    */
-   public KtQuat minus ( final Vec3 b ) {
-
-      return new KtQuat(this.real, this.imag.x - b.x, this.imag.y - b.y,
-         this.imag.z - b.z);
-   }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the quaternion in
-    * place). For interoperability with Kotlin: <code>a -= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void minusAssign ( final float b ) { this.real -= b; }
-
-   /**
     * Subtracts the right operand from the instance (mutates the quaternion in
     * place). For interoperability with Kotlin: <code>a -= b</code> .
     *
@@ -191,35 +173,6 @@ public class KtQuat extends Quaternion {
       i.x -= b.imag.x;
       i.y -= b.imag.y;
       i.z -= b.imag.z;
-   }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the quaternion in
-    * place). Promotes the vector to a pure quaternion. For interoperability
-    * with Kotlin: <code>a -= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void minusAssign ( final Vec3 b ) {
-
-      final Vec3 i = this.imag;
-      i.x -= b.x;
-      i.y -= b.y;
-      i.z -= b.z;
-   }
-
-   /**
-    * Returns a new quaternion with the addition of the right operand to the
-    * instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the quaternion in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the addition
-    */
-   public KtQuat plus ( final float b ) {
-
-      return new KtQuat(this.real + b, this.imag.x, this.imag.y, this.imag.z);
    }
 
    /**
@@ -237,30 +190,6 @@ public class KtQuat extends Quaternion {
       return new KtQuat(this.real + b.real, this.imag.x + bi.x, this.imag.y
          + bi.y, this.imag.z + bi.z);
    }
-
-   /**
-    * Returns a new quaternion with the addition of the right operand to the
-    * instance. Promotes the vector to a pure quaternion. For interoperability
-    * with Kotlin: <code>a + b</code> . <em>Does not mutate the quaternion in
-    * place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the addition
-    */
-   public KtQuat plus ( final Vec3 b ) {
-
-      return new KtQuat(this.real, this.imag.x + b.x, this.imag.y + b.y,
-         this.imag.z + b.z);
-   }
-
-   /**
-    * Adds the right operand to the instance (mutates the quaternion in
-    * place). For interoperability with Kotlin: <code>a += b</code> .
-    *
-    * @param b the right operand
-    */
-   public void plusAssign ( final float b ) { this.real += b; }
 
    /**
     * Adds the right operand to the instance (mutates the quaternion in
@@ -303,8 +232,11 @@ public class KtQuat extends Quaternion {
     */
    public KtQuat times ( final float b ) {
 
-      return new KtQuat(this.real * b, this.imag.x * b, this.imag.y * b,
-         this.imag.z * b);
+      if ( b != 0.0f ) {
+         return new KtQuat(this.real * b, this.imag.x * b, this.imag.y * b,
+            this.imag.z * b);
+      }
+      return new KtQuat(1.0f, 0.0f, 0.0f, 0.0f);
    }
 
    /**
@@ -329,36 +261,24 @@ public class KtQuat extends Quaternion {
    }
 
    /**
-    * Returns a new quaternion with the product of the instance and the right
-    * operand. Promotes the vector to a pure quaternion. For interoperability
-    * with Kotlin: <code>a * b</code> . <em>Does not mutate the quaternion in
-    * place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the product
-    */
-   public KtQuat times ( final Vec3 b ) {
-
-      return new KtQuat(- ( this.imag.x * b.x + this.imag.y * b.y + this.imag.z
-         * b.z ), this.real * b.x + this.imag.y * b.z - this.imag.z * b.y,
-         this.real * b.y + this.imag.z * b.x - this.imag.x * b.z, this.real
-            * b.z + this.imag.x * b.y - this.imag.y * b.x);
-   }
-
-   /**
     * Multiplies the right operand with the instance (mutates the quaternion
     * in place). For interoperability with Kotlin: <code>a *= b</code> .
     *
     * @param b the right operand
+    *
+    * @see Quaternion#identity(Quaternion)
     */
    public void timesAssign ( final float b ) {
 
-      this.real *= b;
       final Vec3 i = this.imag;
-      i.x *= b;
-      i.y *= b;
-      i.z *= b;
+      if ( b != 0.0f ) {
+         this.real *= b;
+         i.x *= b;
+         i.y *= b;
+         i.z *= b;
+      } else {
+         Quaternion.identity(this);
+      }
    }
 
    /**
@@ -372,21 +292,6 @@ public class KtQuat extends Quaternion {
    public void timesAssign ( final Quaternion b ) {
 
       Quaternion.mul(this, b, this);
-   }
-
-   /**
-    * Multiplies the right operand with the instance (mutates the quaternion
-    * in place). Promotes the vector to a pure quaternion. For
-    * interoperability with Kotlin: <code>a *= b</code> .
-    *
-    * @param b the right operand
-    */
-   public void timesAssign ( final Vec3 b ) {
-
-      this.set(- ( this.imag.x * b.x + this.imag.y * b.y + this.imag.z * b.z ),
-         this.real * b.x + this.imag.y * b.z - this.imag.z * b.y, this.real
-            * b.y + this.imag.z * b.x - this.imag.x * b.z, this.real * b.z
-               + this.imag.x * b.y - this.imag.y * b.x);
    }
 
    /**

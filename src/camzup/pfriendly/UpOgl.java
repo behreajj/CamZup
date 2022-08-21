@@ -274,16 +274,19 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Sets the renderer background to an image.
+    * Sets the renderer background to an image. Tiles background if smaller
+    * than sketch size.
     *
     * @param pimg the image
+    *
+    * @see ZImage#wrap(PImage, int, int, PImage)
     */
    @Override
    public void backgroundImpl ( final PImage pimg ) {
 
       /* PGL clearBackground method is not visible. */
       this.backgroundImpl();
-      ZImage.wrap(pimg, this, 0, 0);
+      ZImage.wrap(pimg, 0, 0, this);
       this.backgroundA = 1.0f;
       this.loaded = false;
    }
@@ -1655,6 +1658,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param top    the top edge of the window
     * @param near   the near clip plane
     * @param far    the far clip plane
+    *
+    * @see PMatAux#orthographic(float, float, float, float, float, float,
+    *      PMatrix3D)
     */
    @Override
    public void ortho ( final float left, final float right, final float bottom,
@@ -1709,6 +1715,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param aspect the aspect ratio, width over height
     * @param near   the near clip plane
     * @param far    the far clip plane
+    *
+    * @see PMatAux#perspective(float, float, float, float, PMatrix3D)
     */
    @Override
    public void perspective ( final float fov, final float aspect,

@@ -18,7 +18,7 @@ void setup() {
 
 void draw() {
   Vec2 m = graphics.mouse1s(new Vec2());
-  ZImage.conic(m, frameCount * 0.02f, gradient, img);
+  ZImage.gradientConic(gradient, m, frameCount * 0.02f, img);
   
   graphics.background();
   graphics.image(img);

@@ -167,6 +167,8 @@ public class KtMat4 extends Mat4 implements Iterable < KtVec4 > {
     * @param b the right operand
     *
     * @return the quotient
+    *
+    * @see KtMat4#times(float)
     */
    public KtMat4 div ( final float b ) {
 
@@ -179,13 +181,16 @@ public class KtMat4 extends Mat4 implements Iterable < KtVec4 > {
     * For interoperability with Kotlin: <code>a /= b</code> .
     *
     * @param b the right operand
+    *
+    * @see KtMat4#timesAssign(float)
+    * @see Mat4#identity(Mat4)
     */
    public void divAssign ( final float b ) {
 
       if ( b != 0.0f ) {
-         this.times(1.0f / b);
+         this.timesAssign(1.0f / b);
       } else {
-         this.reset();
+         Mat4.identity(this);
       }
    }
 

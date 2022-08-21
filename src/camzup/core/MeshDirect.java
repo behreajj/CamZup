@@ -398,8 +398,12 @@ public class MeshDirect {
     * @param q the quaternion
     *
     * @return this mesh
+    *
+    * @see Quaternion#none(Quaternion)
     */
    public MeshDirect rotateCoord ( final int i, final Quaternion q ) {
+
+      if ( Quaternion.none(q) ) { return this; }
 
       final int j = i * MeshDirect.COORD_STRIDE;
 
@@ -431,8 +435,12 @@ public class MeshDirect {
     * @param q the quaternion
     *
     * @return this mesh
+    *
+    * @see Quaternion#none(Quaternion)
     */
    public MeshDirect rotateCoords ( final Quaternion q ) {
+
+      if ( Quaternion.none(q) ) { return this; }
 
       final Vec3 imag = q.imag;
       final float qw = q.real;

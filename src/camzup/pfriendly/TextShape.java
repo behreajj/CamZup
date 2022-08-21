@@ -331,6 +331,9 @@ public abstract class TextShape {
 
             case PathIterator.SEG_MOVETO: /* 0 */
 
+               // TODO: Sonarlint: currCurve is nullable at all cases
+               // except for move to.
+
                /*
                 * Create a new curve, move to a point. The first knot of a shape
                 * copies the last; in the SEG_CLOSE case, its fore handle will

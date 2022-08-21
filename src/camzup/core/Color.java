@@ -154,6 +154,8 @@ public class Color implements Comparable < Color > {
     * Returns a hash code for this color based on its hexadecimal value.
     *
     * @return the hash code
+    *
+    * @see Color#toHexIntWrap(Color)
     */
    @Override
    public int hashCode ( ) { return Color.toHexIntWrap(this); }
@@ -287,6 +289,9 @@ public class Color implements Comparable < Color > {
     * @param inclAlpha include the alpha channel
     *
     * @return the string
+    *
+    * @see Utils#clamp01(float)
+    * @see Utils#toFixed(StringBuilder, float, int)
     */
    StringBuilder toBlenderCode ( final StringBuilder pyCd, final float gamma,
       final boolean inclAlpha ) {
@@ -319,6 +324,9 @@ public class Color implements Comparable < Color > {
     * clamped to the range.
     *
     * @return the string
+    *
+    * @see Utils#clamp01(float)
+    * @see Utils#toFixed(StringBuilder, float, int)
     */
    String toGgrString ( ) {
 
@@ -367,6 +375,8 @@ public class Color implements Comparable < Color > {
     * @param places the number of places
     *
     * @return the string builder
+    *
+    * @see Utils#toFixed(StringBuilder, float, int)
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
@@ -729,6 +739,8 @@ public class Color implements Comparable < Color > {
     * @param b the right comparisand
     *
     * @return the equivalence
+    *
+    * @see Utils#clamp01(float)
     */
    public static boolean eqAlphaSatArith ( final Color a, final Color b ) {
 
@@ -744,6 +756,8 @@ public class Color implements Comparable < Color > {
     * @param b the right comparisand
     *
     * @return the equivalence
+    *
+    * @see Utils#clamp01(float)
     */
    public static boolean eqRgbSatArith ( final Color a, final Color b ) {
 
@@ -846,6 +860,8 @@ public class Color implements Comparable < Color > {
     * @param cs the colors
     *
     * @return the array
+    *
+    * @see Color#fromHex(int, Color)
     */
    public static Color[] fromHex ( final int[] cs ) {
 
@@ -884,6 +900,8 @@ public class Color implements Comparable < Color > {
     * @param cs the colors
     *
     * @return the array
+    *
+    * @see Color#fromHex(long, Color)
     */
    public static Color[] fromHex ( final long[] cs ) {
 
@@ -913,9 +931,9 @@ public class Color implements Comparable < Color > {
     *
     * @return the color
     *
+    * @see Color#fromHex(int, Color)
     * @see Integer#parseInt(String, int)
     * @see Long#parseLong(String, int)
-    * @see Color#fromHex(int, Color)
     * @see String#replaceAll(String, String)
     * @see String#substring(int)
     */
@@ -981,6 +999,8 @@ public class Color implements Comparable < Color > {
     * @param cs the colors
     *
     * @return the array
+    *
+    * @see Color#fromHex(String, Color)
     */
    public static Color[] fromHex ( final String[] cs ) {
 
@@ -1190,6 +1210,9 @@ public class Color implements Comparable < Color > {
     * @param target the output vector
     *
     * @return the LCh vector
+    *
+    * @see Utils#clamp01(float)
+    * @see Utils#mod1(float)
     */
    public static Vec4 labaToLcha ( final float l, final float a, final float b,
       final float alpha, final Vec4 target ) {
@@ -1299,6 +1322,8 @@ public class Color implements Comparable < Color > {
     * @param target the output vector
     *
     * @return the lab vector
+    *
+    * @see Utils#mod1(float)
     */
    public static Vec4 lchaToLaba ( final float l, final float c, final float h,
       final float a, final Vec4 target ) {
@@ -2007,9 +2032,6 @@ public class Color implements Comparable < Color > {
     * @param cols the display columns
     *
     * @return the string
-    *
-    * @see Utils#ceil(float)
-    * @see Utils#sqrt(float)
     */
    public static String toGplString ( final Color[] arr, final String name,
       final int cols ) {
@@ -2083,6 +2105,8 @@ public class Color implements Comparable < Color > {
     * @param c the input color
     *
     * @return the color in hexadecimal
+    *
+    * @see Utils#clamp01(float)
     */
    public static int toHexIntSat ( final Color c ) {
 
@@ -2136,7 +2160,7 @@ public class Color implements Comparable < Color > {
     *
     * @return the string
     *
-    * @see Color#toHexDigit(StringBuilder, int)
+    * @see Color#toHexString(StringBuilder, Color)
     */
    public static String toHexString ( final int c ) {
 
@@ -2153,8 +2177,8 @@ public class Color implements Comparable < Color > {
     *
     * @return the string builder
     *
-    * @see Utils#clamp01(float)
     * @see Color#toHexString(StringBuilder, int, int, int, int)
+    * @see Utils#clamp01(float)
     */
    public static StringBuilder toHexString ( final StringBuilder sb,
       final Color c ) {
@@ -2315,6 +2339,8 @@ public class Color implements Comparable < Color > {
     * @param arr the array
     *
     * @return the string
+    *
+    * @see Color#toGplString(StringBuilder)
     */
    public static String toPalString ( final Color[] arr ) {
 
@@ -2543,6 +2569,8 @@ public class Color implements Comparable < Color > {
     * @param target the output color
     *
     * @return the mixed color
+    *
+    * @see Color#toHexIntWrap(Color)
     */
    static int mix ( final Color origin, final Color dest, final float step ) {
 

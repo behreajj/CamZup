@@ -144,14 +144,27 @@ public class Ray3 {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(196);
+      return this.toString(new StringBuilder(256), places).toString();
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * rays. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
       sb.append("{ origin: ");
       this.origin.toString(sb, places);
       sb.append(", dir: ");
       this.dir.toString(sb, places);
       sb.append(' ');
       sb.append('}');
-      return sb.toString();
+      return sb;
    }
 
    /**

@@ -164,8 +164,11 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
+         final Vert3 vert = this.vertices[i];
+         final Vec3 c = vert.coord;
+         final Vec3 n = vert.normal;
          Vec3.rotate(c, cosa, sina, axis, c);
+         Vec3.rotate(n, cosa, sina, axis, n);
       }
 
       return this;
@@ -197,14 +200,20 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @return this face
     *
+    * @see Quaternion#any(Quaternion)
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     */
    public Face3 rotateGlobal ( final Quaternion q ) {
 
-      final int len = this.vertices.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
-         Quaternion.mulVector(q, c, c);
+      if ( Quaternion.any(q) ) {
+         final int len = this.vertices.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vert3 vert = this.vertices[i];
+            final Vec3 c = vert.coord;
+            final Vec3 n = vert.normal;
+            Quaternion.mulVector(q, c, c);
+            Quaternion.mulVector(q, n, n);
+         }
       }
 
       return this;
@@ -233,10 +242,13 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
+         final Vert3 vert = this.vertices[i];
+         final Vec3 c = vert.coord;
+         final Vec3 n = vert.normal;
          Vec3.sub(c, center, c);
          Vec3.rotate(c, cosa, sina, axis, c);
          Vec3.add(c, center, c);
+         Vec3.rotate(n, cosa, sina, axis, n);
       }
 
       return this;
@@ -274,19 +286,24 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Face3#centerMean(Face3, Vec3)
     * @see Vec3#sub(Vec3, Vec3, Vec3)
+    * @see Quaternion#any(Quaternion)
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    public Face3 rotateLocal ( final Quaternion q, final Vec3 center ) {
 
-      Face3.centerMean(this, center);
-
-      final int len = this.vertices.length;
-      for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
-         Vec3.sub(c, center, c);
-         Quaternion.mulVector(q, c, c);
-         Vec3.add(c, center, c);
+      if ( Quaternion.any(q) ) {
+         Face3.centerMean(this, center);
+         final int len = this.vertices.length;
+         for ( int i = 0; i < len; ++i ) {
+            final Vert3 vert = this.vertices[i];
+            final Vec3 c = vert.coord;
+            final Vec3 n = vert.normal;
+            Vec3.sub(c, center, c);
+            Quaternion.mulVector(q, c, c);
+            Vec3.add(c, center, c);
+            Quaternion.mulVector(q, n, n);
+         }
       }
 
       return this;
@@ -324,8 +341,11 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
+         final Vert3 vert = this.vertices[i];
+         final Vec3 c = vert.coord;
+         final Vec3 n = vert.normal;
          Vec3.rotateX(c, cosa, sina, c);
+         Vec3.rotateX(n, cosa, sina, n);
       }
 
       return this;
@@ -342,9 +362,9 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @return this face
     *
     * @see Face3#centerMean(Face3, Vec3)
-    * @see Vec3#sub(Vec3, Vec3, Vec3)
-    * @see Vec3#rotateX(Vec3, float, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#rotateX(Vec3, float, float, Vec3)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    public Face3 rotateXLocal ( final float cosa, final float sina,
       final Vec3 center ) {
@@ -353,10 +373,13 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
+         final Vert3 vert = this.vertices[i];
+         final Vec3 c = vert.coord;
+         final Vec3 n = vert.normal;
          Vec3.sub(c, center, c);
          Vec3.rotateX(c, cosa, sina, c);
          Vec3.add(c, center, c);
+         Vec3.rotateX(n, cosa, sina, n);
       }
 
       return this;
@@ -413,8 +436,11 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
+         final Vert3 vert = this.vertices[i];
+         final Vec3 c = vert.coord;
+         final Vec3 n = vert.normal;
          Vec3.rotateY(c, cosa, sina, c);
+         Vec3.rotateY(n, cosa, sina, n);
       }
 
       return this;
@@ -431,9 +457,9 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @return this face
     *
     * @see Face3#centerMean(Face3, Vec3)
-    * @see Vec3#sub(Vec3, Vec3, Vec3)
-    * @see Vec3#rotateY(Vec3, float, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#rotateY(Vec3, float, float, Vec3)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    public Face3 rotateYLocal ( final float cosa, final float sina,
       final Vec3 center ) {
@@ -442,10 +468,13 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
+         final Vert3 vert = this.vertices[i];
+         final Vec3 c = vert.coord;
+         final Vec3 n = vert.normal;
          Vec3.sub(c, center, c);
          Vec3.rotateY(c, cosa, sina, c);
          Vec3.add(c, center, c);
+         Vec3.rotateY(n, cosa, sina, n);
       }
 
       return this;
@@ -502,8 +531,11 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
+         final Vert3 vert = this.vertices[i];
+         final Vec3 c = vert.coord;
+         final Vec3 n = vert.normal;
          Vec3.rotateZ(c, cosa, sina, c);
+         Vec3.rotateZ(n, cosa, sina, n);
       }
 
       return this;
@@ -520,9 +552,9 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @return this face
     *
     * @see Face3#centerMean(Face3, Vec3)
-    * @see Vec3#sub(Vec3, Vec3, Vec3)
-    * @see Vec3#rotateZ(Vec3, float, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#rotateZ(Vec3, float, float, Vec3)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    public Face3 rotateZLocal ( final float cosa, final float sina,
       final Vec3 center ) {
@@ -531,10 +563,13 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
+         final Vert3 vert = this.vertices[i];
+         final Vec3 c = vert.coord;
+         final Vec3 n = vert.normal;
          Vec3.sub(c, center, c);
          Vec3.rotateZ(c, cosa, sina, c);
          Vec3.add(c, center, c);
+         Vec3.rotateZ(n, cosa, sina, n);
       }
 
       return this;
@@ -611,10 +646,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
    /**
     * Scales all coordinates in the face by a scalar; uses global coordinates,
-    * i.e., doesn't consider the face's position. <br>
-    * <br>
-    * Beware, non-uniform scaling requires that normals be recalculated for
-    * correct shading.
+    * i.e., doesn't consider the face's position.
     *
     * @param scale the nonuniform scalar
     *
@@ -622,14 +654,22 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Vec3#all(Vec3)
     * @see Vec3#hadamard(Vec3, Vec3, Vec3)
+    * @see Vec3#normalize(Vec3, Vec3)
     */
    public Face3 scaleGlobal ( final Vec3 scale ) {
 
       if ( Vec3.all(scale) ) {
+         final float xInv = 1.0f / scale.x;
+         final float yInv = 1.0f / scale.y;
+         final float zInv = 1.0f / scale.z;
          final int len = this.vertices.length;
          for ( int i = 0; i < len; ++i ) {
-            final Vec3 c = this.vertices[i].coord;
+            final Vert3 vert = this.vertices[i];
+            final Vec3 c = vert.coord;
+            final Vec3 n = vert.normal;
             Vec3.hadamard(c, scale, c);
+            n.set(n.x * xInv, n.y * yInv, n.z * zInv);
+            Vec3.normalize(n, n);
          }
       }
 
@@ -669,10 +709,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
    /**
     * Scales all coordinates in the face by a scalar; subtracts the face's
-    * center from each vertex, scales, then adds the center.<br>
-    * <br>
-    * Beware, non-uniform scaling requires that normals be recalculated for
-    * correct shading.
+    * center from each vertex, scales, then adds the center.
     *
     * @param scale  the nonuniform scalar
     * @param center the center
@@ -683,6 +720,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @see Vec3#all(Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     * @see Vec3#hadamard(Vec3, Vec3, Vec3)
+    * @see Vec3#normalize(Vec3, Vec3)
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    public Face3 scaleLocal ( final Vec3 scale, final Vec3 center ) {
@@ -690,12 +728,19 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
       Face3.centerMean(this, center);
 
       if ( Vec3.all(scale) ) {
+         final float xInv = 1.0f / scale.x;
+         final float yInv = 1.0f / scale.y;
+         final float zInv = 1.0f / scale.z;
          final int len = this.vertices.length;
          for ( int i = 0; i < len; ++i ) {
-            final Vec3 c = this.vertices[i].coord;
+            final Vert3 vert = this.vertices[i];
+            final Vec3 c = vert.coord;
+            final Vec3 n = vert.normal;
             Vec3.sub(c, center, c);
             Vec3.hadamard(c, scale, c);
             Vec3.add(c, center, c);
+            n.set(n.x * xInv, n.y * yInv, n.z * zInv);
+            Vec3.normalize(n, n);
          }
       }
 
@@ -750,33 +795,32 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     */
    public String toString ( final int places ) {
 
-      final int len = this.vertices.length;
-      final int last = len - 1;
-      final StringBuilder sb = new StringBuilder(len * 512);
-      sb.append("{ vertices: [ ");
-      for ( int i = 0; i < len; ++i ) {
-         sb.append(this.vertices[i].toString(places));
-         if ( i < last ) { sb.append(',').append(' '); }
-      }
-      sb.append(" ] }");
-      return sb.toString();
+      return this.toString(new StringBuilder(512), places).toString();
    }
 
    /**
-    * Transforms all coordinates in the face by a matrix.
+    * Transforms all coordinates in the face by a matrix. Calculates the
+    * matrix inverse in order to transform normals.
     *
     * @param m the matrix
+    * @param h the matrix inverse
     *
     * @return this face
     *
+    * @see Mat4#inverse(Mat4, Mat4)
+    * @see Mat4#mulNormal(Vec3, Mat4, Mat4, Vec3)
     * @see Mat4#mulPoint(Mat4, Vec3, Vec3)
     */
-   public Face3 transform ( final Mat4 m ) {
+   public Face3 transform ( final Mat4 m, final Mat4 h ) {
 
+      Mat4.inverse(m, h);
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
+         final Vert3 vert = this.vertices[i];
+         final Vec3 c = vert.coord;
+         final Vec3 n = vert.normal;
          Mat4.mulPoint(m, c, c);
+         Mat4.mulNormal(n, m, h, n);
       }
 
       return this;
@@ -789,14 +833,16 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @return this face
     *
-    * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
+    * @see Transform3#mulPointAndNormal(Transform3, Vec3, Vec3, Vec3, Vec3)
     */
    public Face3 transform ( final Transform3 tr ) {
 
       final int len = this.vertices.length;
       for ( int i = 0; i < len; ++i ) {
-         final Vec3 c = this.vertices[i].coord;
-         Transform3.mulPoint(tr, c, c);
+         final Vert3 vert = this.vertices[i];
+         final Vec3 c = vert.coord;
+         final Vec3 n = vert.normal;
+         Transform3.mulPointAndNormal(tr, c, n, c, n);
       }
 
       return this;
@@ -848,8 +894,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @see Face3#orientation(Face3, Handedness, Transform3)
     * @see Transform3#mulDir(Transform3, Vec3, Vec3)
-    * @see Vec3#sub(Vec3, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    @Experimental
    public Face3 translateLocal ( final Vec3 v, final Handedness handedness ) {
@@ -876,6 +922,29 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @return the iterator
     */
    public Vert3Iterator vertIterator ( ) { return new Vert3Iterator(this); }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * faces. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      final int len = this.vertices.length;
+      final int last = len - 1;
+      sb.append("{ vertices: [ ");
+      for ( int i = 0; i < last; ++i ) {
+         this.vertices[i].toString(sb, places);
+         sb.append(',').append(' ');
+      }
+      this.vertices[last].toString(sb, places);
+      sb.append(" ] }");
+      return sb;
+   }
 
    /**
     * Finds the center of a face by averaging all the coordinates in its list
@@ -909,6 +978,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @param target the output vector
     *
     * @return the vector
+    *
+    * @see Utils#mod1(float)
     */
    public static Vec3 eval ( final Face3 face, final float step,
       final Vec3 target ) {
@@ -942,13 +1013,14 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    @Experimental
    public static Vec3 normal ( final Face3 face, final Vec3 target ) {
 
+      // TODO: Distinguish between two kinds of normal calculated?
+
       target.reset();
       final Vert3[] verts = face.vertices;
       final int len = verts.length;
       for ( int i = 0; i < len; ++i ) {
          Vec3.add(target, verts[i].normal, target);
       }
-      // Vec3.div(target, len, target);
       return Vec3.normalize(target, target);
 
       // target.reset();
@@ -983,6 +1055,9 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @param target     the output transform
     *
     * @return the transform
+    *
+    * @see Face3#normal(Face3, Vec3)
+    * @see Quaternion#fromDir(Vec3, Handedness, Quaternion)
     */
    @Experimental
    public static Quaternion orientation ( final Face3 face,
@@ -1006,6 +1081,11 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @param target     the output transform
     *
     * @return the transform
+    *
+    * @see Vec3#one(Vec3)
+    * @see Face3#normal(Face3, Vec3)
+    * @see Quaternion#fromDir(Vec3, Handedness, Quaternion, Vec3, Vec3, Vec3)
+    * @see Face3#centerMean(Face3, Vec3)
     */
    @Experimental
    public static Transform3 orientation ( final Face3 face,
@@ -1032,6 +1112,9 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @param target the output transform
     *
     * @return the transform
+    *
+    * @see Face3#centerMean(Face3, Vec3)
+    * @see Face3#normal(Face3, Vec3)
     */
    public static Ray3 orientation ( final Face3 face, final Ray3 target ) {
 

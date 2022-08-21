@@ -780,6 +780,9 @@ public abstract class PMatAux {
     * @param target the output matrix
     *
     * @return the perspective projection
+    *
+    * @see Utils#cot(float)
+    * @see Utils#div(float, float)
     */
    public static PMatrix3D perspective ( final float fov, final float aspect,
       final float near, final float far, final PMatrix3D target ) {

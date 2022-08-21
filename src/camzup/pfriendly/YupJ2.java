@@ -4024,14 +4024,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Sets the renderer background to an image.
+    * Sets the renderer background to an image. Tiles background if smaller
+    * than sketch size.
     *
     * @param pimg the image
+    *
+    * @see ZImage#wrap(PImage, int, int, PImage)
     */
    @Override
    protected void backgroundImpl ( final PImage pimg ) {
 
-      ZImage.wrap(pimg, this, 0, 0);
+      ZImage.wrap(pimg, 0, 0, this);
    }
 
    /**

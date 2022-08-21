@@ -115,15 +115,27 @@ public class Vert2 implements Comparable < Vert2 > {
     */
    public String toString ( final int places ) {
 
-      // TODO: Pass by reference version.
-      final StringBuilder sb = new StringBuilder(256);
+      return this.toString(new StringBuilder(256), places).toString();
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * vertices. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
       sb.append("{ coord: ");
       this.coord.toString(sb, places);
       sb.append(", texCoord: ");
       this.texCoord.toString(sb, places);
       sb.append(' ');
       sb.append('}');
-      return sb.toString();
+      return sb;
    }
 
    /**
@@ -167,6 +179,8 @@ public class Vert2 implements Comparable < Vert2 > {
     * @param tolerance the tolerance
     *
     * @return the evaluation
+    *
+    * @see Vec2#approx(Vec2, Vec2, float)
     */
    public static boolean approxCoord ( final Vert2 a, final Vert2 b,
       final float tolerance ) {

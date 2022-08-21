@@ -1512,6 +1512,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the new array
     *
+    * @see Utils#mod(int, int)
     * @see System#arraycopy(Object, int, Object, int, int)
     */
    public static Vec2[] insert ( final Vec2[] arr, final int index,

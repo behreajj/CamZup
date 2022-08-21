@@ -620,11 +620,15 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param q the quaternion
     *
     * @return this curve
+    *
+    * @see Quaternion#any(Quaternion)
     */
    public Curve3 rotate ( final Quaternion q ) {
 
-      final Iterator < Knot3 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) { itr.next().rotate(q); }
+      if ( Quaternion.any(q) ) {
+         final Iterator < Knot3 > itr = this.knots.iterator();
+         while ( itr.hasNext() ) { itr.next().rotate(q); }
+      }
 
       return this;
    }

@@ -419,16 +419,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     */
    public String toString ( final int places ) {
 
-      final int len = this.vertices.length;
-      final int last = len - 1;
-      final StringBuilder sb = new StringBuilder(len * 256);
-      sb.append("{ vertices: [ ");
-      for ( int i = 0; i < len; ++i ) {
-         sb.append(this.vertices[i].toString(places));
-         if ( i < last ) { sb.append(',').append(' '); }
-      }
-      sb.append(" ] }");
-      return sb.toString();
+      return this.toString(new StringBuilder(256), places).toString();
    }
 
    /**
@@ -513,6 +504,29 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    public Vert2Iterator vertIterator ( ) { return new Vert2Iterator(this); }
 
    /**
+    * Internal helper function to assist with methods that need to print many
+    * faces. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      final int len = this.vertices.length;
+      final int last = len - 1;
+      sb.append("{ vertices: [ ");
+      for ( int i = 0; i < last; ++i ) {
+         this.vertices[i].toString(sb, places);
+         sb.append(',').append(' ');
+      }
+      this.vertices[last].toString(sb, places);
+      sb.append(" ] }");
+      return sb;
+   }
+
+   /**
     * Finds the area of a face.
     *
     * @param face the face
@@ -533,7 +547,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     */
    public static float areaSigned ( final Face2 face ) {
 
-      // TODO: Test...
+      // TODO: TEST
 
       final Vert2[] verts = face.vertices;
       final int last = verts.length - 1;
@@ -628,6 +642,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     * @param target the output vector
     *
     * @return the vector
+    *
+    * @see Utils#mod1(float)
     */
    public static Vec2 eval ( final Face2 face, final float step,
       final Vec2 target ) {

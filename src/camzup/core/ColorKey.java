@@ -174,6 +174,8 @@ public class ColorKey implements Comparable < ColorKey > {
     * @param color the color
     *
     * @return this key
+    *
+    * @see Utils#clamp01(float)
     */
    public ColorKey set ( final float step, final Color color ) {
 
@@ -189,6 +191,9 @@ public class ColorKey implements Comparable < ColorKey > {
     * @param color the color
     *
     * @return this key
+    *
+    * @see Utils#clamp01(float)
+    * @see Color#fromHex(int, Color)
     */
    public ColorKey set ( final float step, final int color ) {
 
@@ -266,6 +271,8 @@ public class ColorKey implements Comparable < ColorKey > {
     * @param gamma the gamma adjustment
     *
     * @return the string builder
+    *
+    * @see Utils#toFixed(StringBuilder, float, int)
     */
    @Experimental
    StringBuilder toBlenderCode ( final StringBuilder pyCd, final float gamma ) {
@@ -286,6 +293,8 @@ public class ColorKey implements Comparable < ColorKey > {
     * @param places the number of places
     *
     * @return the string builder
+    *
+    * @see Utils#toFixed(StringBuilder, float, int)
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 

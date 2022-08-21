@@ -19,7 +19,7 @@ void setup() {
 
 void draw() {
   graphics.mouse1s(origin);
-  ZImage.radial(origin, 0.5f, gradient, img);
+  ZImage.gradientRadial(gradient, origin, 0.5f, img);
   graphics.background();
   graphics.image(img);
 }

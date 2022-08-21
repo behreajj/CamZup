@@ -28,7 +28,7 @@ void draw() {
   graphics.getSize(szvec);
   Vec2.hadamard(szvec, mouse, msscl);
 
-  ZImage.wrap(source, target, (int)msscl.x, (int)msscl.y);
+  ZImage.wrap(source, (int)msscl.x, (int)msscl.y, target);
   graphics.background();
   graphics.image(target, 0.0f, 0.0f, width, height);
 }

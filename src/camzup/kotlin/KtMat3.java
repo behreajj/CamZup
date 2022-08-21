@@ -102,6 +102,8 @@ public class KtMat3 extends Mat3 implements Iterable < KtVec3 > {
     * @param v the value
     *
     * @return the evaluation
+    *
+    * @see Utils#approx(float, float)
     */
    public boolean contains ( final float v ) {
 
@@ -124,6 +126,8 @@ public class KtMat3 extends Mat3 implements Iterable < KtVec3 > {
     * @param b the right operand
     *
     * @return the quotient
+    *
+    * @see KtMat3#times(float)
     */
    public KtMat3 div ( final float b ) {
 
@@ -136,13 +140,16 @@ public class KtMat3 extends Mat3 implements Iterable < KtVec3 > {
     * For interoperability with Kotlin: <code>a /= b</code> .
     *
     * @param b the right operand
+    *
+    * @see KtMat3#timesAssign(float)
+    * @see Mat3#identity(Mat3)
     */
    public void divAssign ( final float b ) {
 
       if ( b != 0.0f ) {
-         this.times(1.0f / b);
+         this.timesAssign(1.0f / b);
       } else {
-         this.reset();
+         Mat3.identity(this);
       }
    }
 

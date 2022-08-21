@@ -154,12 +154,18 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return this edge
     *
+    * @see Quaternion#any(Quaternion)
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     */
    public Edge3 rotateGlobal ( final Quaternion q ) {
 
-      Quaternion.mulVector(q, this.origin.coord, this.origin.coord);
-      Quaternion.mulVector(q, this.dest.coord, this.dest.coord);
+      if ( Quaternion.any(q) ) {
+         Quaternion.mulVector(q, this.origin.coord, this.origin.coord);
+         Quaternion.mulVector(q, this.dest.coord, this.dest.coord);
+
+         Quaternion.mulVector(q, this.origin.normal, this.origin.normal);
+         Quaternion.mulVector(q, this.dest.normal, this.dest.normal);
+      }
 
       return this;
    }
@@ -197,6 +203,9 @@ public class Edge3 implements Comparable < Edge3 > {
       Vec3.rotate(coDest, cosa, sina, axis, coDest);
       Vec3.add(coDest, center, coDest);
 
+      Vec3.rotate(this.origin.normal, cosa, sina, axis, this.origin.normal);
+      Vec3.rotate(this.dest.normal, cosa, sina, axis, this.dest.normal);
+
       return this;
    }
 
@@ -231,25 +240,28 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return this edge
     *
+    * @see Quaternion#any(Quaternion)
     * @see Vec3#sub(Vec3, Vec3, Vec3)
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    public Edge3 rotateLocal ( final Quaternion q, final Vec3 center ) {
 
-      final Vec3 coOrigin = this.origin.coord;
-      final Vec3 coDest = this.dest.coord;
+      if ( Quaternion.any(q) ) {
+         final Vec3 coOrigin = this.origin.coord;
+         final Vec3 coDest = this.dest.coord;
 
-      center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
-         * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+         center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+            * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
 
-      Vec3.sub(coOrigin, center, coOrigin);
-      Quaternion.mulVector(q, coOrigin, coOrigin);
-      Vec3.add(coOrigin, center, coOrigin);
+         Vec3.sub(coOrigin, center, coOrigin);
+         Quaternion.mulVector(q, coOrigin, coOrigin);
+         Vec3.add(coOrigin, center, coOrigin);
 
-      Vec3.sub(coDest, center, coDest);
-      Quaternion.mulVector(q, coDest, coDest);
-      Vec3.add(coDest, center, coDest);
+         Vec3.sub(coDest, center, coDest);
+         Quaternion.mulVector(q, coDest, coDest);
+         Vec3.add(coDest, center, coDest);
+      }
 
       return this;
    }
@@ -792,9 +804,9 @@ public class Edge3 implements Comparable < Edge3 > {
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
       sb.append("{ origin: ");
-      sb.append(this.origin.toString(places));
+      this.origin.toString(sb, places);
       sb.append(", dest: ");
-      sb.append(this.dest.toString(places));
+      this.dest.toString(sb, places);
       sb.append(' ');
       sb.append('}');
       return sb;

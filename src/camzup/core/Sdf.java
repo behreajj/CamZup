@@ -144,44 +144,6 @@ public abstract class Sdf {
    }
 
    /**
-    * Draws a conic gradient.
-    *
-    * @param xPoint  the x coordinate
-    * @param yPoint  the y coordinate
-    * @param radians the angular offset
-    *
-    * @return the factor
-    *
-    * @see Utils#mod1(float)
-    * @see Utils#atan2(float, float)
-    */
-   public static float conic ( final float xPoint, final float yPoint,
-      final float radians ) {
-
-      /*
-       * Judging by the appearance of ZImage gradients made with this function,
-       * Math#atan2 with double precision is necessary.
-       */
-      return Utils.mod1(( float ) ( ( Math.atan2(yPoint, xPoint) - radians )
-         * IUtils.ONE_TAU_D ));
-   }
-
-   /**
-    * Draws a conic gradient.
-    *
-    * @param point   the point
-    * @param radians the angular offset
-    *
-    * @return the factor
-    *
-    * @see Sdf#conic(float, float, float)
-    */
-   public static float conic ( final Vec2 point, final float radians ) {
-
-      return Sdf.conic(point.x, point.y, radians);
-   }
-
-   /**
     * Draws an ellipsoid.
     *
     * @param point  the point

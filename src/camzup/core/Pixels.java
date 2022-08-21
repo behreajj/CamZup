@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.IntFunction;
 
 /**
  * Holds methods that operate on arrays of pixels held by images.
@@ -14,10 +15,7 @@ public abstract class Pixels {
    /**
     * Discourage overriding with a private constructor.
     */
-   private Pixels ( ) {
-
-      // TODO: Scale bilinear
-   }
+   private Pixels ( ) {}
 
    /**
     * Look up table for converting colors from linear to standard RGB.
@@ -232,7 +230,6 @@ public abstract class Pixels {
     * @return the color array
     *
     * @see Bounds3#cieLab(Bounds3)
-    * @see Octree#insert(Vec3)
     * @see Color#fromHex(int, Color)
     * @see Color#sRgbaTolRgba(Color, boolean, Color)
     * @see Color#lRgbaToXyza(Color, Vec4)
@@ -241,6 +238,7 @@ public abstract class Pixels {
     * @see Color#xyzaTolRgba(Vec4, Color)
     * @see Color#lRgbaTosRgba(Color, boolean, Color)
     * @see Color#clearBlack(Color)
+    * @see Octree#insert(Vec3)
     */
    public static Color[] extractPalette ( final int[] source,
       final int capacity, final int threshold ) {
@@ -320,16 +318,16 @@ public abstract class Pixels {
     * Internal helper function to sample a source image with a bilinear color
     * mix. Returns a hexadecimal integer color
     *
-    * @param xSrc  the source x coordinate
-    * @param ySrc  the source y coordinate
-    * @param wSrc  the source image width
-    * @param hSrc  the source image height
-    * @param pxSrc the source pixel array
+    * @param xSrc   the source x coordinate
+    * @param ySrc   the source y coordinate
+    * @param wSrc   the source image width
+    * @param hSrc   the source image height
+    * @param source the source pixel array
     *
     * @return the color
     */
    public static final int filterBilinear ( final float xSrc, final float ySrc,
-      final int wSrc, final int hSrc, final int[] pxSrc ) {
+      final int wSrc, final int hSrc, final int[] source ) {
 
       final boolean yPos = ySrc > 0.0f;
       final boolean yNeg = ySrc < 0.0f;
@@ -350,10 +348,10 @@ public abstract class Pixels {
       final boolean xcInBounds = xc > -1 && xc < wSrc;
 
       /* Pixel corners colors. */
-      final int c00 = xfInBounds && yfInBounds ? pxSrc[xf + yf * wSrc] : 0;
-      final int c10 = xcInBounds && yfInBounds ? pxSrc[xc + yf * wSrc] : 0;
-      final int c11 = xcInBounds && ycInBounds ? pxSrc[xc + yc * wSrc] : 0;
-      final int c01 = xfInBounds && ycInBounds ? pxSrc[xf + yc * wSrc] : 0;
+      final int c00 = xfInBounds && yfInBounds ? source[xf + yf * wSrc] : 0;
+      final int c10 = xcInBounds && yfInBounds ? source[xc + yf * wSrc] : 0;
+      final int c11 = xcInBounds && ycInBounds ? source[xc + yc * wSrc] : 0;
+      final int c01 = xfInBounds && ycInBounds ? source[xf + yc * wSrc] : 0;
 
       final float xErr = xSrc - xf;
 
@@ -391,15 +389,14 @@ public abstract class Pixels {
          }
       }
 
-      float a2 = 0.0f;
-      float r2 = 0.0f;
-      float g2 = 0.0f;
-      float b2 = 0.0f;
-
       if ( a0 > 0.0f || a1 > 0.0f ) {
+         float r2 = 0.0f;
+         float g2 = 0.0f;
+         float b2 = 0.0f;
+
          final float yErr = ySrc - yf;
          final float u = 1.0f - yErr;
-         a2 = u * a0 + yErr * a1;
+         final float a2 = u * a0 + yErr * a1;
          if ( a2 > 0.0f ) {
             r2 = u * r0 + yErr * r1;
             g2 = u * g0 + yErr * g1;
@@ -413,6 +410,7 @@ public abstract class Pixels {
 
          return ai << 0x18 | ri << 0x10 | gi << 0x08 | bi;
       }
+
       return 0x00000000;
    }
 
@@ -484,6 +482,207 @@ public abstract class Pixels {
          for ( int i = 0; i < srcLen; ++i ) {
             target[ ( hn1 - i / w ) * w + i % w] = source[i];
          }
+      }
+
+      return target;
+   }
+
+   /**
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point. Best used with square images; for other aspect
+    * ratios, the origin should be adjusted accordingly.
+    *
+    * @param grd     the gradient
+    * @param xOrig   the origin x coordinate
+    * @param yOrig   the origin y coordinate
+    * @param radians the angle in radians
+    * @param wTrg    the image width
+    * @param hTrg    the image height
+    * @param easing  the easing function
+    * @param target  the target pixels
+    *
+    * @return the gradient pixels
+    *
+    * @see Color#toHexIntSat(Color)
+    * @see Gradient#eval(Gradient, float, Color.AbstrEasing, Color)
+    * @see Utils#mod1(float)
+    */
+   public static int[] gradientConic ( final Gradient grd, final float xOrig,
+      final float yOrig, final float radians, final Color.AbstrEasing easing,
+      final int wTrg, final int hTrg, final int[] target ) {
+
+      final float aspect = wTrg / ( float ) hTrg;
+      final float wInv = aspect / ( wTrg - 1.0f );
+      final float hInv = 1.0f / ( hTrg - 1.0f );
+      final float xo = ( xOrig * 0.5f + 0.5f ) * aspect * 2.0f - 1.0f;
+
+      final Color trgClr = new Color();
+      final int trgLen = target.length;
+      for ( int i = 0; i < trgLen; ++i ) {
+         final float xn = wInv * ( i % wTrg );
+         final float yn = hInv * ( i / wTrg );
+         final float fac = Utils.mod1(( float ) ( ( Math.atan2(1.0f - ( yn + yn
+            + yOrig ), xn + xn - xo - 1.0f) - radians ) * IUtils.ONE_TAU_D ));
+         Gradient.eval(grd, fac, easing, trgClr);
+         target[i] = Color.toHexIntSat(trgClr);
+      }
+
+      return target;
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The origin and destination should be in the range [-1.0, 1.0]. The
+    * scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param xOrig  the origin x coordinate
+    * @param yOrig  the origin y coordinate
+    * @param xDest  the destination x coordinate
+    * @param yDest  the destination y coordinate
+    * @param wTrg   the image width
+    * @param hTrg   the image height
+    * @param easing the easing function
+    * @param target the target pixels
+    *
+    * @return the gradient pixels
+    *
+    * @see Color#toHexIntSat(Color)
+    * @see Gradient#eval(Gradient, float, Color.AbstrEasing, Color)
+    * @see Utils#max(float, float)
+    * @see Utils#clamp01(float)
+    */
+   public static int[] gradientLinear ( final Gradient grd, final float xOrig,
+      final float yOrig, final float xDest, final float yDest,
+      final Color.AbstrEasing easing, final int wTrg, final int hTrg,
+      final int[] target ) {
+
+      final float bx = xOrig - xDest;
+      final float by = yOrig - yDest;
+
+      final float bbInv = 1.0f / Utils.max(IUtils.EPSILON, bx * bx + by * by);
+
+      final float bxbbinv = bx * bbInv;
+      final float bybbinv = by * bbInv;
+
+      final float xobx = xOrig * bxbbinv;
+      final float yoby = yOrig * bybbinv;
+      final float bxwInv2 = 2.0f / ( wTrg - 1.0f ) * bxbbinv;
+      final float byhInv2 = 2.0f / ( hTrg - 1.0f ) * bybbinv;
+
+      final Color trgClr = new Color();
+      final int trgLen = target.length;
+      for ( int i = 0; i < trgLen; ++i ) {
+         final float fac = Utils.clamp01(xobx + bxbbinv - bxwInv2 * ( i % wTrg )
+            + ( yoby + byhInv2 * ( i / wTrg ) - bybbinv ));
+         Gradient.eval(grd, fac, easing, trgClr);
+         target[i] = Color.toHexIntSat(trgClr);
+      }
+
+      return target;
+   }
+
+   /**
+    * Maps the colors of a source pixels array to those of a gradient using a
+    * mapping function. The mapping function accepts a pixel as an argument
+    * and returns a factor to be given to a gradient evaluation method.
+    *
+    * @param source the source pixels
+    * @param grd    the gradient
+    * @param easing the easing function
+    * @param map    the mapping function
+    * @param target the target pixels
+    *
+    * @return the mapped pixels
+    *
+    * @see Color#toHexIntSat(Color)
+    * @see Gradient#eval(Gradient, float, Color.AbstrEasing, Color)
+    */
+   public static int[] gradientMap ( final int[] source, final Gradient grd,
+      final Color.AbstrEasing easing, final IntFunction < Float > map,
+      final int[] target ) {
+
+      final int srcLen = source.length;
+      if ( srcLen == target.length ) {
+
+         /*
+          * Remove alpha from gradient evaluated color so that it can be
+          * replaced by source alpha.
+          */
+         final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
+         final Color trgClr = new Color();
+
+         for ( int i = 0; i < srcLen; ++i ) {
+            final int srgbKeyInt = source[i];
+            if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
+               final Integer srgbKeyObj = srgbKeyInt;
+               if ( !dict.containsKey(srgbKeyObj) ) {
+                  Gradient.eval(grd, map.apply(srgbKeyInt), easing, trgClr);
+                  dict.put(srgbKeyObj, Color.toHexIntSat(trgClr) & 0x00ffffff);
+               }
+            }
+         }
+
+         if ( dict.size() > 0 ) {
+            for ( int i = 0; i < srcLen; ++i ) {
+               final int srgbKeyInt = source[i];
+               final Integer srgbKeyObj = srgbKeyInt;
+               if ( dict.containsKey(srgbKeyObj) ) {
+                  final int maskAlpha = srgbKeyInt & 0xff000000;
+                  target[i] = maskAlpha | dict.get(srgbKeyObj);
+               } else {
+                  target[i] = 0x00000000;
+               }
+            }
+         } else {
+            for ( int i = 0; i < srcLen; ++i ) { target[i] = 0x00000000; }
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Generates a radial gradient from an origin point. The origin should be
+    * in the range [-1.0, 1.0]. Does not account for aspect ratio, so an image
+    * that isn't 1:1 will result in an ellipsoid.
+    *
+    * @param grd    the gradient
+    * @param xOrig  the origin x coordinate
+    * @param yOrig  the origin y coordinate
+    * @param radius the radius
+    * @param wTrg   the image width
+    * @param hTrg   the image height
+    * @param easing the easing function
+    * @param target the target pixels
+    *
+    * @return the gradient pixels
+    *
+    * @see Color#toHexIntSat(Color)
+    * @see Gradient#eval(Gradient, float, Color.AbstrEasing, Color)
+    * @see Utils#max(float, float)
+    */
+   public static int[] gradientRadial ( final Gradient grd, final float xOrig,
+      final float yOrig, final float radius, final Color.AbstrEasing easing,
+      final int wTrg, final int hTrg, final int[] target ) {
+
+      final float hInv2 = 2.0f / ( hTrg - 1.0f );
+      final float wInv2 = 2.0f / ( wTrg - 1.0f );
+
+      final float r2 = radius + radius;
+      final float rsqInv = 1.0f / Utils.max(IUtils.EPSILON, r2 * r2);
+
+      final float yon1 = yOrig - 1.0f;
+      final float xop1 = xOrig + 1.0f;
+
+      final Color trgClr = new Color();
+      final int trgLen = target.length;
+      for ( int i = 0; i < trgLen; ++i ) {
+         final float ay = yon1 + hInv2 * ( i / wTrg );
+         final float ax = xop1 - wInv2 * ( i % wTrg );
+         final float fac = 1.0f - ( ax * ax + ay * ay ) * rsqInv;
+         Gradient.eval(grd, fac, easing, trgClr);
+         target[i] = Color.toHexIntSat(trgClr);
       }
 
       return target;
@@ -770,8 +969,6 @@ public abstract class Pixels {
             if ( pxOpp > -1 && pxOpp < wSrc ) {
                target[k] = source[k / wSrc * wSrc + pxOpp];
             }
-
-            // target[k] = source[k / wSrc * wSrc + Utils.mod(pxOpp, wSrc)];
          }
       }
 
@@ -808,8 +1005,6 @@ public abstract class Pixels {
             if ( pyOpp > -1 && pyOpp < hSrc ) {
                target[k] = source[pyOpp * wSrc + k % wSrc];
             }
-
-            // target[k] = source[Utils.mod(pyOpp, hSrc) * wSrc + k % wSrc];
          }
       }
 
@@ -1333,7 +1528,7 @@ public abstract class Pixels {
          final Color lrgb = new Color();
          final Vec4 xyz = new Vec4();
 
-         final HashMap < Integer, Vec4 > dict = new HashMap <>();
+         final HashMap < Integer, Vec4 > dict = new HashMap <>(512, 0.75f);
 
          for ( int i = 0; i < srcLen; ++i ) {
             final int hex = source[i];
@@ -1371,7 +1566,8 @@ public abstract class Pixels {
                final float tDenom = t * ( 100.0f / diff );
                final float lumMintDenom = lumMin * tDenom;
 
-               final HashMap < Integer, Integer > stretched = new HashMap <>();
+               final HashMap < Integer, Integer > stretched = new HashMap <>(
+                  512, 0.75f);
                final Set < Map.Entry < Integer, Vec4 > > kvs = dict.entrySet();
                for ( final Map.Entry < Integer, Vec4 > kv : kvs ) {
                   stretchedLab.set(kv.getValue());
@@ -1557,14 +1753,9 @@ public abstract class Pixels {
          }
 
          final int hTrg = 1 + bottom - top;
-         // if ( hTrg > 0 ) {
          final int[] target = new int[hTrg];
          if ( dim != null ) { dim.set(1.0f, hTrg); }
          return target;
-         // } else {
-         // if ( dim != null ) { Vec2.zero(dim); }
-         // return new int[] {};
-         // }
 
       } else if ( hSrc == 1 ) {
 
@@ -1587,15 +1778,10 @@ public abstract class Pixels {
          }
 
          final int wTrg = 1 + right - left;
-         // if ( wTrg > 0 ) {
          final int[] target = new int[wTrg];
          System.arraycopy(source, left, target, 0, wTrg);
          if ( dim != null ) { dim.set(wTrg, 1.0f); }
          return target;
-         // } else {
-         // if ( dim != null ) { Vec2.zero(dim); }
-         // return new int[] {};
-         // }
 
       }
 
@@ -1719,6 +1905,73 @@ public abstract class Pixels {
       }
 
       return target;
+   }
+
+   /**
+    * Blits a source image's pixels onto a target image's pixels, using
+    * integer floor modulo to wrap the source image. The source image can be
+    * offset horizontally and/or vertically, creating the illusion of
+    * parallax.
+    *
+    * @param source the source pixels
+    * @param wSrc   the source image width
+    * @param hSrc   the source image height
+    * @param dx     the horizontal pixel offset
+    * @param dy     the vertical pixel offset
+    * @param wTrg   the target image width
+    * @param target the target pixels
+    *
+    * @return the wrapped pixels
+    */
+   public static int[] wrap ( final int[] source, final int wSrc,
+      final int hSrc, final int dx, final int dy, final int wTrg,
+      final int[] target ) {
+
+      final int trgLen = target.length;
+      for ( int i = 0; i < trgLen; ++i ) {
+         int ymod = ( i / wTrg - dy ) % hSrc;
+         if ( ( ymod ^ hSrc ) < 0 && ymod != 0 ) { ymod += hSrc; }
+
+         int xmod = ( i % wTrg + dx ) % wSrc;
+         if ( ( xmod ^ wSrc ) < 0 && xmod != 0 ) { xmod += wSrc; }
+
+         target[i] = source[xmod + wSrc * ymod];
+      }
+
+      return target;
+   }
+
+   /**
+    * Converts a color as a 32 bit integer to a factor to be supplied to a
+    * gradient evaluation. Uses luminance to determine the factor.
+    */
+   public static class MapLuminance implements IntFunction < Float > {
+
+      /**
+       * Evaluates a color's luminance.
+       *
+       * @param hex the hexadecimal color
+       *
+       * @return the factor
+       *
+       * @see Pixels#sRgbLuminance(int)
+       */
+      @Override
+      public Float apply ( final int hex ) {
+
+         final float lum = Pixels.sRgbLuminance(hex);
+         return lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math.pow(lum,
+            0.4166666666666667d) * 1.055d - 0.055d );
+      }
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
    }
 
 }

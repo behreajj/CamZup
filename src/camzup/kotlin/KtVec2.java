@@ -121,6 +121,8 @@ public class KtVec2 extends Vec2 implements Iterable < Float > {
     * For interoperability with Kotlin: <code>a /= b</code> .
     *
     * @param b the right operand
+    *
+    * @see Utils#div(float, float)
     */
    public void divAssign ( final Vec2 b ) {
 
@@ -177,7 +179,7 @@ public class KtVec2 extends Vec2 implements Iterable < Float > {
     *
     * @param b the right operand
     *
-    * @return the subtraction
+    * @return the difference
     */
    public KtVec2 minus ( final float b ) {
 
@@ -191,7 +193,7 @@ public class KtVec2 extends Vec2 implements Iterable < Float > {
     *
     * @param b the right operand
     *
-    * @return the subtraction
+    * @return the difference
     */
    public KtVec2 minus ( final Vec2 b ) {
 

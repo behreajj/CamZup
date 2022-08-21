@@ -294,6 +294,7 @@ Here is a brief list of issues with this library and differences which may be un
   - The [PShape](https://processing.org/reference/PShape.html) class has numerous problems stemming from both its implementation and its design. I encourage using `CurveEntity` and `MeshEntity` objects excepting the case where high poly count `PShapeOpenGL`s are more performant.
   - [shapeMode](https://processing.org/reference/shapeMode_.html) is not supported.
   - [textMode](https://processing.org/reference/textMode_.html) `SHAPE` is not supported. However you can retrieve glyph outlines from a [PFont](https://processing.org/reference/PFont.html) with the `TextShape` class from the `pfriendly` package. (Reminder: the `PFont` needs to be loaded with [createFont](https://processing.org/reference/createFont_.html)).
+  - Color methods no longer promote `int`s in `[0, 255]` to gray colors. Use `float`s or `Color` objects instead.
   
 ### 2D
   - The `image` function for `PGraphicsJava2D` is ineffective, both in terms of frame rate and appearance. I recommend that an OpenGL renderer be used instead. Alternatively, rescale images to display size and tint them in a raster image editor. I have made an image function which removes some of the padding around the native renderer's image function in cases where a `PImage` can be converted to a `java.awt.Image` in `setup`.

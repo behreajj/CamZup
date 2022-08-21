@@ -414,8 +414,8 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     * @return this transform
     *
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
-    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     */
    public Transform3 moveByLocal ( final Vec3 dir ) {
 
@@ -543,6 +543,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     *
     * @return this transform
     *
+    * @see Quaternion#any(Quaternion)
     * @see Transform3#updateAxes()
     */
    @Override
@@ -564,6 +565,10 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     * @param step   the step
     *
     * @return this transform
+    *
+    * @see Quaternion#any(Quaternion)
+    * @see Quaternion#mix(Quaternion, Quaternion, float, Quaternion)
+    * @see Transform3#updateAxes()
     */
    @Override
    public Transform3 rotateTo ( final Quaternion rotNew, final float step ) {
@@ -586,6 +591,11 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     * @param easingFunc the easing function
     *
     * @return this transform
+    *
+    * @see Quaternion#any(Quaternion)
+    * @see Quaternion.AbstrEasing#apply(Quaternion, Quaternion, Float,
+    *      Quaternion)
+    * @see Transform3#updateAxes()
     */
    public Transform3 rotateTo ( final Quaternion rotNew, final float step,
       final Quaternion.AbstrEasing easingFunc ) {
@@ -713,38 +723,44 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    }
 
    /**
-    * Scales the transform to a uniform size.
+    * Scales the transform to a uniform size. Copies the sign of the
+    * transform's current scale.
     *
     * @param scalar the size
     *
     * @return this transform
+    *
+    * @see Utils#copySign(float, float)
     */
    @Override
    public Transform3 scaleTo ( final float scalar ) {
 
       if ( scalar != 0.0f ) {
          this.scalePrev.set(this.scale);
-         this.scale.set(scalar, scalar, scalar);
+         this.scale.set(Utils.copySign(scalar, this.scale.x), Utils.copySign(
+            scalar, this.scale.y), Utils.copySign(scalar, this.scale.z));
       }
 
       return this;
    }
 
    /**
-    * Scales the transform to a non-uniform size.
+    * Scales the transform to a non-uniform size. Copies the sign of the
+    * transform's current scale.
     *
     * @param scaleNew the new scale
     *
     * @return this transform
     *
     * @see Vec3#all(Vec3)
+    * @see Vec3#copySign(Vec3, Vec3, Vec3)
     */
    @Override
    public Transform3 scaleTo ( final Vec3 scaleNew ) {
 
       if ( Vec3.all(scaleNew) ) {
          this.scalePrev.set(this.scale);
-         this.scale.set(scaleNew);
+         Vec3.copySign(scaleNew, this.scale, this.scale);
       }
 
       return this;
@@ -752,7 +768,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
 
    /**
     * Eases the transform to a scale by a step. The static easing function is
-    * used.
+    * used. Copies the sign of the transform's current scale.
     *
     * @param scaleNew the new scale
     * @param step     the step in [0.0, 1.0]
@@ -760,13 +776,16 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     * @return this transform
     *
     * @see Vec3#all(Vec3)
+    * @see Vec3#copySign(Vec3, Vec3, Vec3)
+    * @see Vec3#mix(Vec3, Vec3, float, Vec3)
     */
    @Override
    public Transform3 scaleTo ( final Vec3 scaleNew, final float step ) {
 
       if ( Vec3.all(scaleNew) ) {
          this.scalePrev.set(this.scale);
-         Vec3.mix(this.scalePrev, scaleNew, step, this.scale);
+         Vec3.copySign(scaleNew, this.scale, this.scale);
+         Vec3.mix(this.scalePrev, this.scale, step, this.scale);
       }
 
       return this;
@@ -774,7 +793,8 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
 
    /**
     * Eases the transform to a scale by a step. The kind of easing is
-    * specified by a Vec3 easing function.
+    * specified by a Vec3 easing function. Copies the sign of the transform's
+    * current scale.
     *
     * @param scaleNew   the new scale
     * @param step       the step in [0.0, 1.0]
@@ -783,6 +803,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     * @return this transform
     *
     * @see Vec3#all(Vec3)
+    * @see Vec3#copySign(Vec3, Vec3, Vec3)
     * @see Vec3.AbstrEasing#apply(Vec3, Vec3, Float, Vec3)
     */
    public Transform3 scaleTo ( final Vec3 scaleNew, final float step,
@@ -790,7 +811,8 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
 
       if ( Vec3.all(scaleNew) ) {
          this.scalePrev.set(this.scale);
-         easingFunc.apply(this.scalePrev, scaleNew, step, this.scale);
+         Vec3.copySign(scaleNew, this.scale, this.scale);
+         easingFunc.apply(this.scalePrev, this.scale, step, this.scale);
       }
 
       return this;
@@ -850,11 +872,16 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     */
    public Transform3 set ( final Transform2 source ) {
 
+      this.locPrev.set(this.location);
       this.location.set(source.location, 0.0f);
-      final double halfRadians = Utils.modRadians(source.rotation) * 0.5d;
+
+      final double halfRadians = source.rotation % IUtils.TAU_D * 0.5d;
+      this.rotPrev.set(this.rotation);
       this.rotation.set(( float ) Math.cos(halfRadians), 0.0f, 0.0f,
          ( float ) Math.sin(halfRadians));
       this.updateAxes();
+
+      this.scalePrev.set(this.scale);
       this.scale.set(source.scale, 1.0f);
 
       return this;
@@ -880,13 +907,28 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     * @param scaleNew the new scale
     *
     * @return this transform
+    *
+    * @see Quaternion#any(Quaternion)
+    * @see Transform3#updateAxes()
+    * @see Vec3#any(Vec3)
     */
    public Transform3 set ( final Vec3 locNew, final Quaternion rotNew,
       final Vec3 scaleNew ) {
 
-      this.moveTo(locNew);
-      this.rotateTo(rotNew);
-      this.scaleTo(scaleNew);
+      this.locPrev.set(this.location);
+      this.location.set(locNew);
+
+      if ( Quaternion.any(rotNew) ) {
+         this.rotPrev.set(this.rotation);
+         this.rotation.set(rotNew);
+         this.updateAxes();
+      }
+
+      /* scaleTo requires sign matching between old and new scale. */
+      if ( Vec3.any(scaleNew) ) {
+         this.scalePrev.set(this.scale);
+         this.scale.set(scaleNew);
+      }
 
       return this;
    }
@@ -1273,6 +1315,10 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     * @param target      the output transform
     *
     * @return the transform
+    *
+    * @see Quaternion#fromSpherical(float, float, Quaternion)
+    * @see Transform3#identity(Transform3)
+    * @see Transform3#updateAxes()
     */
    public static Transform3 fromSpherical ( final float azimuth,
       final float inclination, final float radius, final Vec3 origin,
@@ -1286,7 +1332,8 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
       Quaternion.fromSpherical(azimuth, inclination, target.rotation);
       target.updateAxes();
 
-      target.moveTo(origin);
+      target.locPrev.set(target.location);
+      target.location.set(origin);
 
       return target;
    }
@@ -1301,6 +1348,11 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     * @param target      the output transform
     *
     * @return the transform
+    *
+    * @see Quaternion#fromSpherical(float, float, Quaternion)
+    * @see Transform3#updateAxes()
+    * @see Vec3#one(Vec3)
+    * @see Vec3#zero(Vec3)
     */
    public static Transform3 fromSpherical ( final float azimuth,
       final float inclination, final Transform3 target ) {
@@ -1325,6 +1377,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     *
     * @return the identity
     *
+    * @see Quaternion#identity(Quaternion)
     * @see Vec3#one(Vec3)
     * @see Vec3#right(Vec3)
     * @see Vec3#forward(Vec3)
@@ -1377,6 +1430,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     *
     * @see Quaternion#invMulVector(Quaternion, Vec3, Vec3)
     * @see Vec3#hadamard(Vec3, Vec3, Vec3)
+    * @see Vec3#normalize(Vec3, Vec3)
     */
    @Experimental
    public static Vec3 invMulNormal ( final Transform3 t, final Vec3 source,
@@ -1399,9 +1453,9 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     *
     * @return the point
     *
-    * @see Vec3#sub(Vec3, Vec3, Vec3)
-    * @see Vec3#div(Vec3, Vec3, Vec3)
     * @see Quaternion#invMulVector(Quaternion, Vec3, Vec3)
+    * @see Vec3#div(Vec3, Vec3, Vec3)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    public static Vec3 invMulPoint ( final Transform3 t, final Vec3 source,
       final Vec3 target ) {
@@ -1422,8 +1476,8 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     *
     * @return the vector
     *
-    * @see Vec3#div(Vec3, Vec3, Vec3)
     * @see Quaternion#invMulVector(Quaternion, Vec3, Vec3)
+    * @see Vec3#div(Vec3, Vec3, Vec3)
     */
    public static Vec3 invMulVector ( final Transform3 t, final Vec3 source,
       final Vec3 target ) {
@@ -1572,8 +1626,9 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     *
     * @return the normal
     *
-    * @see Vec3#div(Vec3, Vec3, Vec3)
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
+    * @see Vec3#div(Vec3, Vec3, Vec3)
+    * @see Vec3#normalize(Vec3, Vec3)
     */
    @Experimental
    public static Vec3 mulNormal ( final Transform3 t, final Vec3 source,
@@ -1712,8 +1767,8 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     *
     * @return the random transform
     *
-    * @see Vec3#randomCartesian(java.util.Random, Vec3, Vec3, Vec3)
     * @see Quaternion#random(java.util.Random, Quaternion)
+    * @see Vec3#randomCartesian(java.util.Random, Vec3, Vec3, Vec3)
     */
    public static Transform3 random ( final java.util.Random rng,
       final float lbLoc, final float ubLoc, final float lbScl,
@@ -1765,8 +1820,8 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     *
     * @return the random transform
     *
-    * @see Vec3#randomCartesian(java.util.Random, Vec3, Vec3, Vec3)
     * @see Quaternion#random(java.util.Random, Quaternion)
+    * @see Vec3#randomCartesian(java.util.Random, Vec3, Vec3, Vec3)
     */
    public static Transform3 random ( final java.util.Random rng,
       final Vec3 lbLoc, final Vec3 ubLoc, final Vec3 lbScl, final Vec3 ubScl,

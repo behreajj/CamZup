@@ -32,11 +32,24 @@ public class KtComplex extends Complex {
    }
 
    /**
+    * Constructs a complex number from integer values.
+    *
+    * @param real the real component
+    * @param imag the imaginary component
+    */
+   public KtComplex ( final int real, final int imag ) {
+
+      super(real, imag);
+   }
+
+   /**
     * Tests to see if the complex number contains a value.
     *
     * @param v the value
     *
     * @return the evaluation
+    *
+    * @see Utils#approx(float, float)
     */
    public boolean contains ( final float v ) {
 
@@ -51,6 +64,8 @@ public class KtComplex extends Complex {
     * @param b the right operand
     *
     * @return the quotient
+    *
+    * @see Complex#absSq(Complex)
     */
    public KtComplex div ( final Complex b ) {
 
@@ -86,6 +101,7 @@ public class KtComplex extends Complex {
     *
     * @param b the right operand
     *
+    * @see Complex#absSq(Complex)
     * @see Complex#div(Complex, Complex, Complex)
     */
    public void divAssign ( final Complex b ) {
@@ -136,20 +152,6 @@ public class KtComplex extends Complex {
    }
 
    /**
-    * Returns a new complex number with the subtraction of the right operand
-    * from the instance. For interoperability with Kotlin: <code>a - b</code>
-    * . <em>Does not mutate the complex number in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the subtraction
-    */
-   public KtComplex minus ( final float b ) {
-
-      return new KtComplex(this.real - b, this.imag);
-   }
-
-   /**
     * Subtracts the right operand from the instance (mutates the complex
     * number in place). For interoperability with Kotlin: <code>a -= b</code>
     * .
@@ -160,18 +162,6 @@ public class KtComplex extends Complex {
 
       this.real -= b.real;
       this.imag -= b.imag;
-   }
-
-   /**
-    * Subtracts the right operand from the instance (mutates the complex
-    * number in place). For interoperability with Kotlin: <code>a -= b</code>
-    * .
-    *
-    * @param b the right operand
-    */
-   public void minusAssign ( final float b ) {
-
-      this.real -= b;
    }
 
    /**
@@ -189,20 +179,6 @@ public class KtComplex extends Complex {
    }
 
    /**
-    * Returns a new complex number with the addition of the right operand to
-    * the instance. For interoperability with Kotlin: <code>a + b</code> .
-    * <em>Does not mutate the complex number in place</em>.
-    *
-    * @param b the right operand
-    *
-    * @return the sum
-    */
-   public KtComplex plus ( final float b ) {
-
-      return new KtComplex(this.real + b, this.imag);
-   }
-
-   /**
     * Adds the right operand to the instance (mutates the complex number in
     * place). For interoperability with Kotlin: <code>a += b</code> .
     *
@@ -212,17 +188,6 @@ public class KtComplex extends Complex {
 
       this.real += b.real;
       this.imag += b.imag;
-   }
-
-   /**
-    * Adds the right operand to the instance (mutates the complex number in
-    * place). For interoperability with Kotlin: <code>a += b</code> .
-    *
-    * @param b the right operand
-    */
-   public void plusAssign ( final float b ) {
-
-      this.real += b;
    }
 
    /**

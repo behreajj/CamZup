@@ -2213,6 +2213,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param fh    the fore handle
     * @param rh    the rear handle
     * @param co    the coordinate
+    *
+    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
     */
    static void accumMinMax ( final Curve2 curve, final Vec2 lb, final Vec2 ub,
       final Transform2 tr, final Vec2 fh, final Vec2 rh, final Vec2 co ) {
@@ -2253,9 +2255,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return the knot
     *
+    * @see Vec2#add(Vec2, Vec2, Vec2)
     * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
     * @see Vec2#bezierTangent(Vec2, Vec2, Vec2, Vec2, float, Vec2)
-    * @see Vec2#add(Vec2, Vec2, Vec2)
     */
    @Experimental
    static Knot2 bezierKnot ( final Knot2 a, final Knot2 b, final float step,
@@ -2294,6 +2296,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param target      the output curve
     *
     * @return the circle
+    *
+    * @see Knot2#fromPolar(float, float, float, float, float, Knot2)
+    * @see Utils#tan(float)
     */
    static Curve2 circle ( final int sectors, final float offsetAngle,
       final float radius, final float xCenter, final float yCenter,

@@ -1399,6 +1399,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @see TreeSet#ceiling(Object)
     * @see TreeSet#first()
     * @see TreeSet#last()
+    * @see Utils#div(float, float)
     */
    public static Color eval ( final Gradient grd, final float step,
       final Color.AbstrEasing easing, final Color target ) {

@@ -2,6 +2,7 @@ package camzup.pfriendly;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 
 import camzup.core.Bounds3;
@@ -10,7 +11,7 @@ import camzup.core.Gradient;
 import camzup.core.IUtils;
 import camzup.core.Octree;
 import camzup.core.Pixels;
-import camzup.core.Sdf;
+import camzup.core.Pixels.MapLuminance;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
@@ -36,9 +37,6 @@ public class ZImage extends PImage {
     * @param height the image height
     */
    public ZImage ( final int width, final int height ) {
-
-      // TODO: Rename linear, radial, conic, etc. to gradientLinear,
-      // gradientRadial, gradientConic, gradientMap
 
       super(width, height);
    }
@@ -335,8 +333,7 @@ public class ZImage extends PImage {
     */
    public static PImage alphaToArgb ( final PImage image ) {
 
-      // QUERY: Depart from (source, target) signature for this function?
-
+      /* Depart from (source, target) signature for this function. */
       if ( image.format != PConstants.ALPHA ) { return image; }
 
       image.loadPixels();
@@ -413,6 +410,8 @@ public class ZImage extends PImage {
    public static PImage checker ( final int a, final int b, final int cols,
       final int rows, final PImage target ) {
 
+      // TODO: Shift to Pixels class.
+
       target.loadPixels();
 
       final int w = target.pixelWidth;
@@ -482,64 +481,6 @@ public class ZImage extends PImage {
 
       return ZImage.checker(ZImage.CHECKER_DARK, ZImage.CHECKER_LIGHT, count,
          count, target);
-   }
-
-   /**
-    * Generates a conic gradient, where the factor rotates on the z axis
-    * around an origin point. Best used with square images; for other aspect
-    * ratios, the origin should be adjusted accordingly.
-    *
-    * @param xOrigin the origin x coordinate
-    * @param yOrigin the origin y coordinate
-    * @param radians the angular offset
-    * @param grd     the gradient
-    * @param target  the output image
-    *
-    * @return the image
-    */
-   public static PImage conic ( final float xOrigin, final float yOrigin,
-      final float radians, final Gradient grd, final PImage target ) {
-
-      target.loadPixels();
-
-      final int w = target.pixelWidth;
-      final int h = target.pixelHeight;
-      final int[] px = target.pixels;
-      final int len = px.length;
-
-      final float aspect = w / ( float ) h;
-      final float wInv = aspect / ( w - 1.0f );
-      final float hInv = 1.0f / ( h - 1.0f );
-      final float xo = ( xOrigin * 0.5f + 0.5f ) * aspect * 2.0f - 1.0f;
-
-      for ( int i = 0; i < len; ++i ) {
-         final float xn = wInv * ( i % w );
-         final float yn = hInv * ( i / w );
-         px[i] = Gradient.eval(grd, Sdf.conic(xn + xn - xo - 1.0f, 1.0f - ( yn
-            + yn + yOrigin ), radians));
-      }
-
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Generates a conic gradient, where the factor rotates on the z axis
-    * around an origin point.
-    *
-    * @param origin  the origin
-    * @param radians the angular offset
-    * @param grd     the gradient
-    * @param target  the output image
-    *
-    * @return the image
-    */
-   public static PImage conic ( final Vec2 origin, final float radians,
-      final Gradient grd, final PImage target ) {
-
-      return ZImage.conic(origin.x, origin.y, radians, grd, target);
    }
 
    /**
@@ -789,35 +730,6 @@ public class ZImage extends PImage {
 
       source.loadPixels();
       return Pixels.extractPalette(source.pixels, capacity, threshold);
-   }
-
-   /**
-    * Recolors an image in-place with a color gradient. Also known as a
-    * gradient map. The evaluation factor is the product of a pixel's
-    * luminance and its transparency.
-    *
-    * @param grd    the color gradient
-    * @param target the target image
-    *
-    * @return the augmented image
-    */
-   public static PImage falseColor ( final Gradient grd, final PImage target ) {
-
-      // TODO: Refactor to use Pixels class. Rename to gradientMap?
-      target.loadPixels();
-      final int[] px = target.pixels;
-      final int len = px.length;
-      for ( int i = 0; i < len; ++i ) {
-         final float alpha = ( px[i] >> 0x18 & 0xff ) * IUtils.ONE_255;
-         float lum = Pixels.sRgbLuminance(px[i]);
-         lum = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math.pow(lum,
-            0.4166666666666667d) * 1.055d - 0.055d );
-         px[i] = Gradient.eval(grd, alpha * lum);
-      }
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-
-      return target;
    }
 
    /**
@@ -1353,6 +1265,450 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point.
+    *
+    * @param grd    the gradient
+    * @param easing the easing function
+    * @param target the target image
+    *
+    * @return the conic gradient
+    */
+   public static PImage gradientConic ( final Gradient grd,
+      final Color.AbstrEasing easing, final PImage target ) {
+
+      return ZImage.gradientConic(grd, 0.0f, 0.0f, IUtils.HALF_PI, easing,
+         target);
+   }
+
+   /**
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point. Best used with square images; for other aspect
+    * ratios, the origin should be adjusted accordingly.
+    *
+    * @param grd     the gradient
+    * @param xOrig   the origin x coordinate
+    * @param yOrig   the origin y coordinate
+    * @param radians the angle in radians
+    * @param easing  the easing function
+    * @param target  the target image
+    *
+    * @return the conic gradient
+    *
+    * @see Pixels#gradientConic(Gradient, float, float, float,
+    *      Color.AbstrEasing, int, int, int[])
+    */
+   public static PImage gradientConic ( final Gradient grd, final float xOrig,
+      final float yOrig, final float radians, final Color.AbstrEasing easing,
+      final PImage target ) {
+
+      target.loadPixels();
+      Pixels.gradientConic(grd, xOrig, yOrig, radians, easing,
+         target.pixelWidth, target.pixelHeight, target.pixels);
+      target.format = PConstants.ARGB;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point. Best used with square images; for other aspect
+    * ratios, the origin should be adjusted accordingly.
+    *
+    * @param grd     the gradient
+    * @param xOrig   the origin x coordinate
+    * @param yOrig   the origin y coordinate
+    * @param radians the angle in radians
+    * @param target  the target image
+    *
+    * @return the conic gradient
+    */
+   public static PImage gradientConic ( final Gradient grd, final float xOrig,
+      final float yOrig, final float radians, final PImage target ) {
+
+      return ZImage.gradientConic(grd, xOrig, yOrig, radians,
+         new Color.MixSrgba(), target);
+   }
+
+   /**
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point.
+    *
+    * @param grd    the gradient
+    * @param target the target image
+    *
+    * @return the conic gradient
+    */
+   public static PImage gradientConic ( final Gradient grd,
+      final PImage target ) {
+
+      return ZImage.gradientConic(grd, 0.0f, 0.0f, IUtils.HALF_PI, target);
+   }
+
+   /**
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point. Best used with square images; for other aspect
+    * ratios, the origin should be adjusted accordingly.
+    *
+    * @param grd     the gradient
+    * @param orig    the origin
+    * @param radians the angle in radians
+    * @param easing  the easing function
+    * @param target  the target image
+    *
+    * @return the conic gradient
+    *
+    * @see Pixels#gradientConic(Gradient, float, float, float,
+    *      Color.AbstrEasing, int, int, int[])
+    */
+   public static PImage gradientConic ( final Gradient grd, final Vec2 orig,
+      final float radians, final Color.AbstrEasing easing,
+      final PImage target ) {
+
+      return ZImage.gradientConic(grd, orig.x, orig.y, radians, easing, target);
+   }
+
+   /**
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point. Best used with square images; for other aspect
+    * ratios, the origin should be adjusted accordingly.
+    *
+    * @param grd     the gradient
+    * @param orig    the origin
+    * @param radians the angle in radians
+    * @param target  the target image
+    *
+    * @return the conic gradient
+    */
+   public static PImage gradientConic ( final Gradient grd, final Vec2 orig,
+      final float radians, final PImage target ) {
+
+      return ZImage.gradientConic(grd, orig.x, orig.y, radians, target);
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param easing the easing function
+    * @param target the target image
+    *
+    * @return the linear gradient
+    */
+   public static PImage gradientLinear ( final Gradient grd,
+      final Color.AbstrEasing easing, final PImage target ) {
+
+      return ZImage.gradientLinear(grd, -1.0f, 0.0f, 1.0f, 0.0f, easing,
+         target);
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The origin and destination should be in the range [-1.0, 1.0]. The
+    * scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param xOrig  the origin x coordinate
+    * @param yOrig  the origin y coordinate
+    * @param xDest  the destination x coordinate
+    * @param yDest  the destination y coordinate@param easing
+    * @param easing the easing function
+    * @param target the target image
+    *
+    * @return the linear gradient
+    *
+    * @see Pixels#gradientLinear(Gradient, float, float, float, float,
+    *      Color.AbstrEasing, int, int, int[])
+    */
+   public static PImage gradientLinear ( final Gradient grd, final float xOrig,
+      final float yOrig, final float xDest, final float yDest,
+      final Color.AbstrEasing easing, final PImage target ) {
+
+      target.loadPixels();
+      Pixels.gradientLinear(grd, xOrig, yOrig, xDest, yDest, easing,
+         target.pixelWidth, target.pixelHeight, target.pixels);
+      target.format = PConstants.ARGB;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The origin and destination should be in the range [-1.0, 1.0]. The
+    * scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param xOrig  the origin x coordinate
+    * @param yOrig  the origin y coordinate
+    * @param xDest  the destination x coordinate
+    * @param yDest  the destination y coordinate@param easing
+    * @param target the target image
+    *
+    * @return the linear gradient
+    */
+   public static PImage gradientLinear ( final Gradient grd, final float xOrig,
+      final float yOrig, final float xDest, final float yDest,
+      final PImage target ) {
+
+      return ZImage.gradientLinear(grd, xOrig, yOrig, xDest, yDest,
+         new Color.MixSrgba(), target);
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param target the target image
+    *
+    * @return the linear gradient
+    */
+   public static PImage gradientLinear ( final Gradient grd,
+      final PImage target ) {
+
+      return ZImage.gradientLinear(grd, -1.0f, 0.0f, 1.0f, 0.0f, target);
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The origin and destination should be in the range [-1.0, 1.0]. The
+    * scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param orig   the origin
+    * @param dest   the destination
+    * @param easing the easing function
+    * @param target the target image
+    *
+    * @return the linear gradient
+    */
+   public static PImage gradientLinear ( final Gradient grd, final Vec2 orig,
+      final Vec2 dest, final Color.AbstrEasing easing, final PImage target ) {
+
+      return ZImage.gradientLinear(grd, orig.x, orig.y, dest.x, dest.y, easing,
+         target);
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The origin and destination should be in the range [-1.0, 1.0]. The
+    * scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param orig   the origin
+    * @param dest   the destination
+    * @param target the target image
+    *
+    * @return the linear gradient
+    */
+   public static PImage gradientLinear ( final Gradient grd, final Vec2 orig,
+      final Vec2 dest, final PImage target ) {
+
+      return ZImage.gradientLinear(grd, orig.x, orig.y, dest.x, dest.y, target);
+   }
+
+   /**
+    * Maps the colors of a source image to a gradient using a mapping
+    * function. The mapping function accepts a pixel as an argument and
+    * returns a factor to be given to a gradient evaluation method.
+    *
+    * @param source the source pixels
+    * @param grd    the gradient
+    * @param easing the easing function
+    * @param map    the mapping function
+    * @param target the target pixels
+    *
+    * @return the mapped pixels
+    */
+   public static PImage gradientMap ( final PImage source, final Gradient grd,
+      final Color.AbstrEasing easing, final IntFunction < Float > map,
+      final PImage target ) {
+
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.gradientMap(target.pixels, grd, easing, map, target.pixels);
+         target.updatePixels();
+         return target;
+      }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int[] pxSrc = source.pixels;
+      target.pixels = Pixels.gradientMap(pxSrc, grd, easing, map,
+         new int[pxSrc.length]);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = source.pixelWidth;
+      target.pixelHeight = source.pixelHeight;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Maps the colors of a source image to a gradient using a mapping
+    * function. Defaults to using the source image's perceptual luminance as
+    * an input factor to the gradient evaluation.
+    *
+    * @param source the source pixels
+    * @param grd    the gradient
+    * @param easing the easing function
+    * @param target the target pixels
+    *
+    * @return the mapped pixels
+    */
+   public static PImage gradientMap ( final PImage source, final Gradient grd,
+      final Color.AbstrEasing easing, final PImage target ) {
+
+      return ZImage.gradientMap(source, grd, easing, new MapLuminance(),
+         target);
+   }
+
+   /**
+    * Maps the colors of a source image to a gradient using a mapping
+    * function. Defaults to using the source image's perceptual luminance as
+    * an input factor to the gradient evaluation.
+    *
+    * @param source the source pixels
+    * @param grd    the gradient
+    * @param target the target pixels
+    *
+    * @return the mapped pixels
+    */
+   public static PImage gradientMap ( final PImage source, final Gradient grd,
+      final PImage target ) {
+
+      return ZImage.gradientMap(source, grd, new Color.MixSrgba(), target);
+   }
+
+   /**
+    * Generates a radial gradient from an origin point.
+    *
+    * @param grd    the gradient
+    * @param easing the easing function
+    * @param target the target pixels
+    *
+    * @return the radial gradient
+    */
+   public static PImage gradientRadial ( final Gradient grd,
+      final Color.AbstrEasing easing, final PImage target ) {
+
+      return ZImage.gradientRadial(grd, 0.0f, 0.0f, 1.0f, easing, target);
+   }
+
+   /**
+    * Generates a radial gradient from an origin point. The origin should be
+    * in the range [-1.0, 1.0]. Does not account for aspect ratio, so an image
+    * that isn't 1:1 will result in an ellipsoid.
+    *
+    * @param grd    the gradient
+    * @param xOrig  the origin x coordinate
+    * @param yOrig  the origin y coordinate
+    * @param radius the radius
+    * @param easing the easing function
+    * @param target the target pixels
+    *
+    * @return the radial gradient
+    *
+    * @see Pixels#gradientRadial(Gradient, float, float, float,
+    *      Color.AbstrEasing, int, int, int[])
+    */
+   public static PImage gradientRadial ( final Gradient grd, final float xOrig,
+      final float yOrig, final float radius, final Color.AbstrEasing easing,
+      final PImage target ) {
+
+      target.loadPixels();
+      Pixels.gradientRadial(grd, xOrig, yOrig, radius, easing,
+         target.pixelWidth, target.pixelHeight, target.pixels);
+      target.format = PConstants.ARGB;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Generates a radial gradient from an origin point. The origin should be
+    * in the range [-1.0, 1.0]. Does not account for aspect ratio, so an image
+    * that isn't 1:1 will result in an ellipsoid.
+    *
+    * @param grd    the gradient
+    * @param xOrig  the origin x coordinate
+    * @param yOrig  the origin y coordinate
+    * @param radius the radius
+    * @param target the target pixels
+    *
+    * @return the radial gradient
+    */
+   public static PImage gradientRadial ( final Gradient grd, final float xOrig,
+      final float yOrig, final float radius, final PImage target ) {
+
+      return ZImage.gradientRadial(grd, xOrig, yOrig, radius,
+         new Color.MixSrgba(), target);
+   }
+
+   /**
+    * Generates a radial gradient from an origin point.
+    *
+    * @param grd    the gradient
+    * @param target the target pixels
+    *
+    * @return the radial gradient
+    */
+   public static PImage gradientRadial ( final Gradient grd,
+      final PImage target ) {
+
+      return ZImage.gradientRadial(grd, 0.0f, 0.0f, 1.0f, target);
+   }
+
+   /**
+    * Generates a radial gradient from an origin point. The origin should be
+    * in the range [-1.0, 1.0]. Does not account for aspect ratio, so an image
+    * that isn't 1:1 will result in an ellipsoid.
+    *
+    * @param grd    the gradient
+    * @param orig   the origin
+    * @param radius the radius
+    * @param easing the easing function
+    * @param target the target pixels
+    *
+    * @return the radial gradient
+    */
+   public static PImage gradientRadial ( final Gradient grd, final Vec2 orig,
+      final float radius, final Color.AbstrEasing easing,
+      final PImage target ) {
+
+      return ZImage.gradientRadial(grd, orig.x, orig.y, radius, easing, target);
+   }
+
+   /**
+    * Generates a radial gradient from an origin point. The origin should be
+    * in the range [-1.0, 1.0]. Does not account for aspect ratio, so an image
+    * that isn't 1:1 will result in an ellipsoid.
+    *
+    * @param grd    the gradient
+    * @param orig   the origin
+    * @param radius the radius
+    * @param target the target pixels
+    *
+    * @return the radial gradient
+    */
+   public static PImage gradientRadial ( final Gradient grd, final Vec2 orig,
+      final float radius, final PImage target ) {
+
+      return ZImage.gradientRadial(grd, orig.x, orig.y, radius, target);
+   }
+
+   /**
     * Converts a color image from color to gray.
     *
     * @param source the source image
@@ -1463,96 +1819,6 @@ public class ZImage extends PImage {
    public static PImage invert ( final PImage source, final PImage target ) {
 
       return ZImage.invert(source, true, true, true, target);
-   }
-
-   /**
-    * Generates a linear gradient from an origin point to a destination point.
-    * The origin and destination should be in the range [-1.0, 1.0]. The
-    * scalar projection is clamped to [0.0, 1.0].
-    *
-    * @param xOrigin the origin x coordinate
-    * @param yOrigin the origin y coordinate
-    * @param xDest   the destination x coordinate
-    * @param yDest   the destination y coordinate
-    * @param grd     the gradient
-    * @param target  the output image
-    *
-    * @return the image
-    */
-   public static PImage linear ( final float xOrigin, final float yOrigin,
-      final float xDest, final float yDest, final Gradient grd,
-      final PImage target ) {
-
-      target.loadPixels();
-
-      final int w = target.pixelWidth;
-      final int[] px = target.pixels;
-      final int len = px.length;
-
-      final float bx = xOrigin - xDest;
-      final float by = yOrigin - yDest;
-
-      final float bbInv = 1.0f / Utils.max(IUtils.EPSILON, bx * bx + by * by);
-
-      final float bxbbinv = bx * bbInv;
-      final float bybbinv = by * bbInv;
-
-      final float xobx = xOrigin * bxbbinv;
-      final float yoby = yOrigin * bybbinv;
-      final float bxwInv2 = 2.0f / ( w - 1.0f ) * bxbbinv;
-      final float byhInv2 = 2.0f / ( target.pixelHeight - 1.0f ) * bybbinv;
-
-      for ( int i = 0; i < len; ++i ) {
-         px[i] = Gradient.eval(grd, Utils.clamp01(xobx + bxbbinv - bxwInv2 * ( i
-            % w ) + ( yoby + byhInv2 * ( i / w ) - bybbinv )));
-      }
-
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Generates a horizontal linear gradient.
-    *
-    * @param grd    the gradient
-    * @param target the target image
-    *
-    * @return the image
-    */
-   public static PImage linear ( final Gradient grd, final PImage target ) {
-
-      target.loadPixels();
-      final int w = target.pixelWidth;
-      final int[] pixels = target.pixels;
-      final int len = pixels.length;
-      final float wInv = 1.0f / ( w - 1.0f );
-      for ( int i = 0; i < len; ++i ) {
-         pixels[i] = Gradient.eval(grd, i % w * wInv);
-      }
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Generates a linear gradient from an origin point to a destination point.
-    * The origin and destination should be in the range [-1.0, 1.0]. The
-    * scalar projection is clamped to [0.0, 1.0].
-    *
-    * @param origin the origin
-    * @param dest   the destination
-    * @param grd    the gradient
-    * @param target the output image
-    *
-    * @return the image
-    */
-   public static PImage linear ( final Vec2 origin, final Vec2 dest,
-      final Gradient grd, final PImage target ) {
-
-      return ZImage.linear(origin.x, origin.y, dest.x, dest.y, grd, target);
    }
 
    /**
@@ -1955,65 +2221,6 @@ public class ZImage extends PImage {
       target.updatePixels();
 
       return target;
-   }
-
-   /**
-    * Generates a radial gradient. This does not account for aspect ratio, so
-    * an image that is not 1:1 will result in an ellipsoid.
-    *
-    * @param xOrigin the x coordinate
-    * @param yOrigin the y coordinate
-    * @param radius  the radius
-    * @param grd     the gradient
-    * @param target  the output image
-    *
-    * @return the image
-    */
-   public static PImage radial ( final float xOrigin, final float yOrigin,
-      final float radius, final Gradient grd, final PImage target ) {
-
-      target.loadPixels();
-
-      final int w = target.pixelWidth;
-      final int[] px = target.pixels;
-      final int len = px.length;
-
-      final float hInv2 = 2.0f / ( target.pixelHeight - 1.0f );
-      final float wInv2 = 2.0f / ( w - 1.0f );
-
-      final float r2 = radius + radius;
-      final float rsqInv = 1.0f / Utils.max(IUtils.EPSILON, r2 * r2);
-
-      final float yon1 = yOrigin - 1.0f;
-      final float xop1 = xOrigin + 1.0f;
-
-      for ( int i = 0; i < len; ++i ) {
-         final float ay = yon1 + hInv2 * ( i / w );
-         final float ax = xop1 - wInv2 * ( i % w );
-         px[i] = Gradient.eval(grd, 1.0f - ( ax * ax + ay * ay ) * rsqInv);
-      }
-
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Generates a radial gradient. This does not account for aspect ratio, so
-    * an image that is not 1:1 will result in an ellipsoid.
-    *
-    * @param origin the origin
-    * @param radius the radius
-    * @param grd    the gradient
-    * @param target the output image
-    *
-    * @return the image
-    */
-   public static PImage radial ( final Vec2 origin, final float radius,
-      final Gradient grd, final PImage target ) {
-
-      return ZImage.radial(origin.x, origin.y, radius, grd, target);
    }
 
    /**
@@ -2685,16 +2892,14 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Removes excess transparent pixels from an image. Adapted from the
-    * implementation by Oleg Mikhailov: <a href=
-    * "https://stackoverflow.com/a/36938923">https://stackoverflow.com/a/36938923</a>.
+    * Removes excess transparent pixels from an image.
     *
     * @param source the source image
     * @param target the target image
     *
     * @return the trimmed image
     *
-    * @author Oleg Mikhailov
+    * @see Pixels#trimAlpha(int[], int, int, Vec2)
     */
    public static PImage trimAlpha ( final PImage source, final PImage target ) {
 
@@ -2770,58 +2975,22 @@ public class ZImage extends PImage {
     * offset horizontally and/or vertically, creating the illusion of
     * parallax.
     *
-    * @param source  source pixel array
-    * @param wSource source image width
-    * @param hSource source image height
-    * @param target  target pixel array
-    * @param wTarget target image width
-    * @param dx      horizontal pixel offset
-    * @param dy      vertical pixel offset
-    *
-    * @return the target pixels
-    */
-   public static int[] wrap ( final int[] source, final int wSource,
-      final int hSource, final int[] target, final int wTarget, final int dx,
-      final int dy ) {
-
-      // TODO: Should the sign of dx and dy be reversed? +dy, -dx?
-
-      if ( wSource < 1 || hSource < 1 ) { return target; }
-
-      final int trgLen = target.length;
-      for ( int i = 0; i < trgLen; ++i ) {
-         int ymod = ( i / wTarget - dy ) % hSource;
-         if ( ( ymod ^ hSource ) < 0 && ymod != 0 ) { ymod += hSource; }
-
-         int xmod = ( i % wTarget + dx ) % wSource;
-         if ( ( xmod ^ wSource ) < 0 && xmod != 0 ) { xmod += wSource; }
-
-         target[i] = source[xmod + wSource * ymod];
-      }
-
-      return target;
-   }
-
-   /**
-    * Blits a source image's pixels onto a target image's pixels, using
-    * integer floor modulo to wrap the source image. The source image can be
-    * offset horizontally and/or vertically, creating the illusion of
-    * parallax.
-    *
     * @param source the source image
-    * @param target the target image
     * @param dx     horizontal pixel offset
     * @param dy     vertical pixel offset
+    * @param target the target image
     *
     * @return the image
+    *
+    * @see Pixels#wrap(int[], int, int, int, int, int, int[])
     */
-   public static PImage wrap ( final PImage source, final PImage target,
-      final int dx, final int dy ) {
+   public static PImage wrap ( final PImage source, final int dx, final int dy,
+      final PImage target ) {
 
       source.loadPixels();
       target.loadPixels();
-      ZImage.wrap(source.pixels, source.pixelWidth, source.pixelHeight,
-         target.pixels, target.pixelWidth, dx, dy);
+      Pixels.wrap(source.pixels, source.pixelWidth, source.pixelHeight, dx, dy,
+         target.pixelWidth, target.pixels);
       target.format = source.format;
       target.updatePixels();
 

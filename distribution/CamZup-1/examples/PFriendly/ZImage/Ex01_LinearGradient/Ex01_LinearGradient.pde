@@ -21,7 +21,7 @@ void setup() {
 void draw() {
   graphics.mouse1s(origin);
   Vec2.negate(origin, dest);
-  ZImage.linear(origin, dest, gradient, img);
+  ZImage.gradientLinear(gradient, origin, dest, img);
   graphics.background();
   graphics.image(img);
 }

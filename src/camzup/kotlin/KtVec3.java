@@ -125,6 +125,8 @@ public class KtVec3 extends Vec3 implements Iterable < Float > {
     * @param b the right operand
     *
     * @return the quotient
+    *
+    * @see Utils#div(float, float)
     */
    public KtVec3 div ( final Vec3 b ) {
 
@@ -216,7 +218,7 @@ public class KtVec3 extends Vec3 implements Iterable < Float > {
     *
     * @param b the right operand
     *
-    * @return the subtraction
+    * @return the difference
     */
    public KtVec3 minus ( final float b ) {
 
@@ -230,7 +232,7 @@ public class KtVec3 extends Vec3 implements Iterable < Float > {
     *
     * @param b the right operand
     *
-    * @return the subtraction
+    * @return the difference
     */
    public KtVec3 minus ( final Vec3 b ) {
 

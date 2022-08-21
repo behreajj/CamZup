@@ -37,7 +37,7 @@ public abstract class ParserGpl {
 
             int i = 0;
             boolean aseExt = false;
-            int lastIndex = 4;
+            // int lastIndex = 4;
 
             for ( String ln = in.readLine(); ln != null; ln = in.readLine() ) {
                final String lnlc = ln.trim().toLowerCase();
@@ -52,7 +52,7 @@ public abstract class ParserGpl {
                } else if ( lnlc.equals("channels: rgba") ) {
 
                   aseExt = true;
-                  lastIndex = 5;
+                  // lastIndex = 5;
 
                } else {
 
@@ -63,17 +63,14 @@ public abstract class ParserGpl {
                      /*
                       * In a GPL, tokens 0, 1 and 2 are the RGB channels; token
                       * n - 1 is the optional name; token n - 1 is the optional
-                      * index. We don't care whether the start index is 1 or 0,
-                      * so long as the palette colors are in order.
+                      * index (sometimes). Other times it causes parsing errors.
                       */
-                     final int idx = len > lastIndex ? Integer.parseInt(
-                        tokens[lastIndex], 10) : i;
+                     // final int idx = len > lastIndex ? Integer.parseInt(
+                     // tokens[lastIndex], 10) : i;
+                     final int idx = i;
 
                      final float alpha = aseExt ? Float.parseFloat(tokens[3])
                         * IUtils.ONE_255 : 1.0f;
-
-                     // TODO: Provision for when clrs.contains index, yet two
-                     // colors are unequal?
 
                      /*
                       * It's possible that a GPL file could contain numbers
