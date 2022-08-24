@@ -1,5 +1,9 @@
 package camzup;
 
+import camzup.core.IUtils;
+import camzup.core.Rng;
+import camzup.core.Transform2;
+
 import processing.core.PApplet;
 
 /**
@@ -51,6 +55,14 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
+      final Rng rng = new Rng();
+      final Transform2 t = new Transform2();
+      System.out.println(Transform2.rotDelta(t));
+      t.rotateTo(rng.nextFloat() * IUtils.TAU - IUtils.PI);
+      t.rotateTo(rng.nextFloat() * IUtils.TAU - IUtils.PI);
+      System.out.println(IUtils.RAD_TO_DEG * t.getRotation() + ", "
+         + IUtils.RAD_TO_DEG * t.getRotPrev() + ", " + IUtils.RAD_TO_DEG
+            * Transform2.rotDelta(t));
       // int[] a = new int[] { 0, 0xff_000000, 0xff_ff0000, 0xff_00ff00,
       // 0xff_000000, 0, 0 };
       // int[] a = new int[] { 0xff000000, 0, 0x00_000000, 0x00_ff0000,

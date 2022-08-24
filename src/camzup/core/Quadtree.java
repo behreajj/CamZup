@@ -565,6 +565,139 @@ public class Quadtree {
    }
 
    /**
+    * Finds the average center in each leaf node of this quadtree and appends
+    * it to an array. If the node is empty, and includeEmpty is true, then the
+    * center of the cell bounds is used instead.
+    *
+    * @param includeEmpty include empty cells
+    * @param target       output array list
+    *
+    * @return centers
+    *
+    * @see Vec2#add(Vec2, Vec2, Vec2)
+    * @see Vec2#mul(Vec2, float, Vec2)
+    * @see Bounds2#center(Bounds2, Vec2)
+    */
+   @Recursive
+   ArrayList < Vec2 > centersMean ( final boolean includeEmpty,
+      final ArrayList < Vec2 > target ) {
+
+      boolean isLeaf = true;
+      for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
+         final Quadtree child = this.children[i];
+         if ( child != null ) {
+            isLeaf = false;
+            child.centersMean(includeEmpty, target);
+         }
+      }
+
+      if ( isLeaf ) {
+         final int ptsLen = this.points.size();
+         final Iterator < Vec2 > ptsItr = this.points.iterator();
+         if ( ptsLen > 1 ) {
+            final Vec2 result = new Vec2();
+            while ( ptsItr.hasNext() ) {
+               Vec2.add(result, ptsItr.next(), result);
+            }
+            Vec2.mul(result, 1.0f / ptsLen, result);
+            target.add(result);
+         } else if ( ptsLen > 0 ) {
+            target.add(new Vec2(ptsItr.next()));
+         } else if ( includeEmpty ) {
+            target.add(Bounds2.center(this.bounds, new Vec2()));
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Queries the quadtree with a rectangular range. If points in the quadtree
+    * are in range, they are added to a {@link java.util.TreeMap}.
+    *
+    * @param range the bounds
+    * @param found the output list
+    *
+    * @return found points
+    *
+    * @see Bounds2#intersect(Bounds2, Bounds2)
+    * @see Bounds2#containsInclusive(Bounds2, Vec2)
+    * @see Vec2#dist(Vec2, Vec2)
+    * @see Bounds2#center(Bounds2, Vec2)
+    */
+   @Recursive
+   TreeMap < Float, Vec2 > queryRange ( final Bounds2 range, final TreeMap <
+      Float, Vec2 > found ) {
+
+      if ( Bounds2.intersect(range, this.bounds) ) {
+         boolean isLeaf = true;
+         for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
+            final Quadtree child = this.children[i];
+            if ( child != null ) {
+               isLeaf = false;
+               child.queryRange(range, found);
+            }
+         }
+
+         if ( isLeaf ) {
+            final Iterator < Vec2 > itr = this.points.iterator();
+            final Vec2 rCenter = new Vec2();
+            Bounds2.center(range, rCenter);
+            while ( itr.hasNext() ) {
+               final Vec2 point = itr.next();
+               if ( Bounds2.containsInclusive(range, point) ) {
+                  found.put(Vec2.distChebyshev(point, rCenter), point);
+               }
+            }
+         }
+      }
+
+      return found;
+   }
+
+   /**
+    * Queries the quadtree with a circular range. If points in the quadtree
+    * are in range, they are added to a {@link java.util.TreeMap}.
+    *
+    * @param center the circle center
+    * @param radius the circle radius
+    * @param found  the output list
+    *
+    * @return found points
+    *
+    * @see Bounds2#intersect(Bounds2, Vec2, float)
+    * @see Vec2#distSq(Vec2, Vec2)
+    * @see Utils#sqrt(float)
+    */
+   @Recursive
+   TreeMap < Float, Vec2 > queryRange ( final Vec2 center, final float radius,
+      final TreeMap < Float, Vec2 > found ) {
+
+      if ( Bounds2.intersect(this.bounds, center, radius) ) {
+         boolean isLeaf = true;
+         for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
+            final Quadtree child = this.children[i];
+            if ( child != null ) {
+               isLeaf = false;
+               child.queryRange(center, radius, found);
+            }
+         }
+
+         if ( isLeaf ) {
+            final float rsq = radius * radius;
+            final Iterator < Vec2 > itr = this.points.iterator();
+            while ( itr.hasNext() ) {
+               final Vec2 point = itr.next();
+               final float dsq = Vec2.distSq(center, point);
+               if ( dsq < rsq ) { found.put(Utils.sqrt(dsq), point); }
+            }
+         }
+      }
+
+      return found;
+   }
+
+   /**
     * Internal helper function to append a quadtree's representation to a
     * {@link StringBuilder}.
     *
@@ -616,53 +749,6 @@ public class Quadtree {
    }
 
    /**
-    * Finds the average center in each leaf node of this quadtree and appends
-    * it to an array. If the node is empty, and includeEmpty is true, then the
-    * center of the cell bounds is used instead.
-    *
-    * @param includeEmpty include empty cells
-    * @param target       output array list
-    *
-    * @return centers
-    *
-    * @see Vec2#add(Vec2, Vec2, Vec2)
-    * @see Vec2#mul(Vec2, float, Vec2)
-    * @see Bounds2#center(Bounds2, Vec2)
-    */
-   @Recursive
-   protected ArrayList < Vec2 > centersMean ( final boolean includeEmpty,
-      final ArrayList < Vec2 > target ) {
-
-      boolean isLeaf = true;
-      for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
-         final Quadtree child = this.children[i];
-         if ( child != null ) {
-            isLeaf = false;
-            child.centersMean(includeEmpty, target);
-         }
-      }
-
-      if ( isLeaf ) {
-         final int ptsLen = this.points.size();
-         final Iterator < Vec2 > ptsItr = this.points.iterator();
-         if ( ptsLen > 1 ) {
-            final Vec2 result = new Vec2();
-            while ( ptsItr.hasNext() ) {
-               Vec2.add(result, ptsItr.next(), result);
-            }
-            Vec2.mul(result, 1.0f / ptsLen, result);
-            target.add(result);
-         } else if ( ptsLen > 0 ) {
-            target.add(new Vec2(ptsItr.next()));
-         } else if ( includeEmpty ) {
-            target.add(Bounds2.center(this.bounds, new Vec2()));
-         }
-      }
-
-      return target;
-   }
-
-   /**
     * Gets the leaf nodes in this node and its children. The leaf nodes will
     * still be stored by reference in the output array list, so this should be
     * used internally.
@@ -709,92 +795,6 @@ public class Quadtree {
       }
       if ( isLeaf ) { target.addAll(this.points); }
       return target;
-   }
-
-   /**
-    * Queries the quadtree with a rectangular range. If points in the quadtree
-    * are in range, they are added to a {@link java.util.TreeMap}.
-    *
-    * @param range the bounds
-    * @param found the output list
-    *
-    * @return found points
-    *
-    * @see Bounds2#intersect(Bounds2, Bounds2)
-    * @see Bounds2#containsInclusive(Bounds2, Vec2)
-    * @see Vec2#dist(Vec2, Vec2)
-    * @see Bounds2#center(Bounds2, Vec2)
-    */
-   @Recursive
-   protected TreeMap < Float, Vec2 > queryRange ( final Bounds2 range,
-      final TreeMap < Float, Vec2 > found ) {
-
-      if ( Bounds2.intersect(range, this.bounds) ) {
-         boolean isLeaf = true;
-         for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
-            final Quadtree child = this.children[i];
-            if ( child != null ) {
-               isLeaf = false;
-               child.queryRange(range, found);
-            }
-         }
-
-         if ( isLeaf ) {
-            final Iterator < Vec2 > itr = this.points.iterator();
-            final Vec2 rCenter = new Vec2();
-            Bounds2.center(range, rCenter);
-            while ( itr.hasNext() ) {
-               final Vec2 point = itr.next();
-               if ( Bounds2.containsInclusive(range, point) ) {
-                  found.put(Vec2.distChebyshev(point, rCenter), point);
-               }
-            }
-         }
-      }
-
-      return found;
-   }
-
-   /**
-    * Queries the quadtree with a circular range. If points in the quadtree
-    * are in range, they are added to a {@link java.util.TreeMap}.
-    *
-    * @param center the circle center
-    * @param radius the circle radius
-    * @param found  the output list
-    *
-    * @return found points
-    *
-    * @see Bounds2#intersect(Bounds2, Vec2, float)
-    * @see Vec2#distSq(Vec2, Vec2)
-    * @see Utils#sqrt(float)
-    */
-   @Recursive
-   protected TreeMap < Float, Vec2 > queryRange ( final Vec2 center,
-      final float radius, final TreeMap < Float, Vec2 > found ) {
-
-      if ( Bounds2.intersect(this.bounds, center, radius) ) {
-         boolean isLeaf = true;
-         for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
-            final Quadtree child = this.children[i];
-            if ( child != null ) {
-               isLeaf = false;
-               child.queryRange(center, radius, found);
-            }
-         }
-
-         if ( isLeaf ) {
-            final float rsq = radius * radius;
-            final Iterator < Vec2 > itr = this.points.iterator();
-            while ( itr.hasNext() ) {
-               final Vec2 point = itr.next();
-               final float dsq = Vec2.distSq(center, point);
-               if ( dsq < rsq ) { found.put(Utils.sqrt(dsq), point); }
-            }
-         }
-      }
-
-      return found;
    }
 
    /**

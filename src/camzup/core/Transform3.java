@@ -1004,7 +1004,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(354);
+      final StringBuilder sb = new StringBuilder(512);
       sb.append("{ location: ");
       this.location.toString(sb, places);
       sb.append(", rotation: ");
@@ -1168,6 +1168,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     *
     * @see Quaternion#fromAxes(float, float, float, float, float, float,
     *      float, float, float, Quaternion)
+    * @see Transform3#updateAxes()
     * @see Vec3#one(Vec3)
     * @see Vec3#zero(Vec3)
     */
@@ -1255,6 +1256,8 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     * @return the transform
     *
     * @see Quaternion#fromDir(Vec3, Handedness, Quaternion, Vec3, Vec3, Vec3)
+    * @see Vec3#one(Vec3)
+    * @see Vec3#zero(Vec3)
     */
    public static Transform3 fromDir ( final Vec3 dir,
       final Handedness handedness, final Transform3 target ) {
@@ -1284,6 +1287,11 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     * @param target      the output transform
     *
     * @return the transform
+    *
+    * @see Quaternion#fromSpherical(float, float, Quaternion)
+    * @see Transform3#updateAxes()
+    * @see Transform3#identity(Transform3)
+    * @see Vec3#zero(Vec3)
     */
    public static Transform3 fromSpherical ( final float azimuth,
       final float inclination, final float radius, final Transform3 target ) {
@@ -1382,6 +1390,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     * @see Vec3#right(Vec3)
     * @see Vec3#forward(Vec3)
     * @see Vec3#up(Vec3)
+    * @see Vec3#zero(Vec3)
     */
    public static Transform3 identity ( final Transform3 target ) {
 
@@ -1970,6 +1979,8 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
        * @param target the output transform
        *
        * @return the eased transform
+       *
+       * @see Transform3#updateAxes()
        */
       public Transform3 applyUnclamped ( final Transform3 origin,
          final Transform3 dest, final float step, final Transform3 target ) {

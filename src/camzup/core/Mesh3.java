@@ -100,6 +100,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @return this mesh
     *
     * @see Utils#div(float, float)
+    * @see Vec2#resize(Vec2[], int)
     */
    public Mesh3 calcUvs ( ) {
 
@@ -233,6 +234,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param fac       the offset factor
     *
     * @return this mesh
+    *
+    * @see Utils#mod(int, int)
+    * @see Utils#clamp01(float)
+    * @see Vec3#normalize(Vec3, Vec3)
     */
    @Experimental
    public Mesh3 collapseEdge ( final int faceIndex, final int edgeIndex,
@@ -1684,6 +1689,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * product.
     *
     * @return this mesh
+    *
+    * @see Vec3#crossNorm(Vec3, Vec3, Vec3)
+    * @see Vec3#resize(Vec3[], int)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    public Mesh3 shadeSmooth ( ) {
 
@@ -2692,6 +2701,13 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * calculates normals for side panels of an extruded face.
     *
     * @return this mesh
+    *
+    * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#concat(Vec3[], Vec3)
+    * @see Vec3#cross(Vec3, Vec3, Vec3)
+    * @see Vec3#normalize(Vec3, Vec3)
+    * @see Vec3#resize(Vec3[], int)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    protected Mesh3 shadeFlat ( final int faceIdx, final int count ) {
 
@@ -4880,6 +4896,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param ub   the upper bound
     */
    static void accumMinMax ( final Mesh3 mesh, final Vec3 lb, final Vec3 ub ) {
+
+      // TODO: Version which accepts Transform so a MeshEntity AABB can be
+      // calculated (See Mesh2)?
 
       final Vec3[] coords = mesh.coords;
       final int len = coords.length;

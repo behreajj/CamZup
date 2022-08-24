@@ -86,7 +86,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return this mesh
     *
-    * @see Vec2#div(float, Vec2, Vec2)
+    * @see Mesh2#accumMinMax(Mesh2, Vec2, Vec2)
+    * @see Vec2#resize(Vec2[], int)
+    * @see Vec2#sub(Vec2, Vec2, Vec2)
     */
    public Mesh2 calcUvs ( ) {
 
@@ -231,6 +233,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @param fac       the offset factor
     *
     * @return this mesh
+    *
+    * @see Utils#mod(int, int)
+    * @see Utils#clamp01(float)
+    * @see Vec2#append(Vec2[], Vec2)
+    * @see Mesh#splice(int[][], int, int, int[][])
     */
    @Experimental
    public Mesh2 collapseEdge ( final int faceIndex, final int edgeIndex,
@@ -1543,10 +1550,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     *
     * @return this mesh
     *
+    * @see Mesh2#accumMinMax(Mesh2, Vec2, Vec2)
     * @see Mesh2#translate(Vec2)
-    * @see Vec2#negate(Vec2, Vec2)
     * @see Transform2#rotateTo(float)
     * @see Transform2#scaleTo(float)
+    * @see Vec2#negate(Vec2, Vec2)
     */
    public Mesh2 toOrigin ( final Transform2 tr ) {
 
@@ -1653,6 +1661,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @param tr the transform
     *
     * @return this mesh
+    *
+    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
     */
    public Mesh2 transform ( final Transform2 tr ) {
 
@@ -2082,7 +2092,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final float step = k * toStep;
          final float theta = ( 1.0f - step ) * origAngle + step * destAngle;
 
-         // TODO: Switch back to scNorm?
          final double radd = theta;
          final float cosa = ( float ) Math.cos(radd);
          final float sina = ( float ) Math.sin(radd);
@@ -2495,7 +2504,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          ngon[i][0] = i;
       }
       target.calcUvs();
-      target.name = "Constellation";
+      target.name = "Points";
       return target;
    }
 
@@ -3246,6 +3255,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @param target the output mesh
     *
     * @return the traced mesh
+    *
+    * @see Utils#mod1(float)
+    * @see Vec2#resize(Vec2[], int)
     */
    public static Mesh2 tracePerimeter ( final Mesh2 source, final int count,
       final float offset, final Mesh2 target ) {
@@ -3313,6 +3325,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @param target the target mesh
     *
     * @return the mesh
+    *
+    * @see Vec2#resize(Vec2[], int)
     */
    public static Mesh2 uniformData ( final Mesh2 source, final Mesh2 target ) {
 
@@ -3397,13 +3411,17 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * An internal helper function to accumulate the minimum and maximum points
     * in a mesh. This may be called either by a single mesh, or by a mesh
-    * entity seeking the minimum and maximum for a collection of meshes.
+    * entity seeking the minimum and maximum for a collection of meshes. The
+    * transform parameter accepts the entity's transform, while the coordinate
+    * stores a mesh coordinate that has been multiplied by the transform.
     *
     * @param mesh the mesh
     * @param lb   the lower bound
     * @param ub   the upper bound
     * @param tr   the transform
     * @param co   the coordinate
+    *
+    * @see Transform2#mulPoint(Vec2, Vec2, Vec2)
     */
    static void accumMinMax ( final Mesh2 mesh, final Vec2 lb, final Vec2 ub,
       final Transform2 tr, final Vec2 co ) {
@@ -3439,9 +3457,9 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @return the point list
     *
     * @see Utils#clamp01(float)
-    * @see Vec2#subNorm(Vec2, Vec2, Vec2)
     * @see Vec2#dot(Vec2, Vec2)
     * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
+    * @see Vec2#subNorm(Vec2, Vec2, Vec2)
     */
    static ArrayList < Vec2 > fromCurve2 ( final Curve2 source,
       final int resolution, final float colinearTol, final ArrayList <

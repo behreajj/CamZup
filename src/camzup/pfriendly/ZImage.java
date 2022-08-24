@@ -1,20 +1,16 @@
 package camzup.pfriendly;
 
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 
-import camzup.core.Bounds3;
 import camzup.core.Color;
 import camzup.core.Gradient;
 import camzup.core.IUtils;
-import camzup.core.Octree;
 import camzup.core.Pixels;
 import camzup.core.Pixels.MapLuminance;
 import camzup.core.Utils;
 import camzup.core.Vec2;
-import camzup.core.Vec3;
 import camzup.core.Vec4;
 
 import processing.core.PApplet;
@@ -361,15 +357,15 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Renders a checker pattern on an image for diagnostic purposes.
+    * Creates a checker pattern in an array of pixels.
     *
     * @param a      the first color
     * @param b      the second color
     * @param cols   the column count
     * @param rows   the row count
-    * @param target the output image
+    * @param target the target image
     *
-    * @return the output image
+    * @return the checker pattern
     */
    public static PImage checker ( final Color a, final Color b, final int cols,
       final int rows, final PImage target ) {
@@ -379,14 +375,14 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Renders a checker pattern on an image for diagnostic purposes.
+    * Creates a checker pattern in an array of pixels.
     *
     * @param a      the first color
     * @param b      the second color
     * @param count  the count
-    * @param target the output image
+    * @param target the target image
     *
-    * @return the output image
+    * @return the checker pattern
     */
    public static PImage checker ( final Color a, final Color b, final int count,
       final PImage target ) {
@@ -395,71 +391,39 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Renders a checker pattern on an image for diagnostic purposes. Ideally,
-    * the image dimensions should be a power of 2 (32, 64, 128, 256, 512). The
-    * color is expected to be a 32-bit color integer.
+    * Creates a checker pattern in an array of pixels. Columns and rows are
+    * not automatically adjusted for pixel density.
     *
     * @param a      the first color
     * @param b      the second color
     * @param cols   the column count
     * @param rows   the row count
-    * @param target the output image
+    * @param target the target image
     *
-    * @return the output image
+    * @return the checker pattern
+    *
+    * @see Pixels#checker(int, int, int, int, int, int, int[])
     */
    public static PImage checker ( final int a, final int b, final int cols,
       final int rows, final PImage target ) {
 
-      // TODO: Shift to Pixels class.
-
       target.loadPixels();
-
-      final int w = target.pixelWidth;
-      final int h = target.pixelHeight;
-      final int pd = target.pixelDensity;
-
-      /*
-       * Rows and columns should have a maximum bound, because it will be easy
-       * to transpose color and columns & rows arguments.
-       */
-      final int limit = 2 * pd;
-      final int vCols = cols < 2 ? 2 : cols > w / limit ? w / limit : cols;
-      final int vRows = rows < 2 ? 2 : rows > h / limit ? h / limit : rows;
-
-      /*
-       * Alternatively, these could be adjusted according to the image's present
-       * pixel format; instead of changing the format.
-       */
-      final int va = a;
-      final int vb = b;
-
-      final int[] px = target.pixels;
-      final int len = px.length;
-
-      // QUERY: Do vrows and vcols also need to account for pixel density?
-      // This will have to go untested for now.
-      final int wch = w / vCols;
-      final int hchw = w * h / vRows;
-
-      for ( int i = 0; i < len; ++i ) {
-         /* % 2 can be replaced by & 1 for even or odd. */
-         px[i] = ( i % w / wch + i / hchw & 1 ) == 0 ? va : vb;
-      }
-
+      Pixels.checker(a, b, cols, rows, target.pixelWidth, target.pixelHeight,
+         target.pixels);
       target.format = PConstants.ARGB;
       target.updatePixels();
       return target;
    }
 
    /**
-    * Renders a checker pattern on an image for diagnostic purposes.
+    * Creates a checker pattern in an array of pixels.
     *
     * @param a      the first color
     * @param b      the second color
     * @param count  the count
-    * @param target the output image
+    * @param target the target image
     *
-    * @return the output image
+    * @return the checker pattern
     */
    public static PImage checker ( final int a, final int b, final int count,
       final PImage target ) {
@@ -468,268 +432,19 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Renders a checker pattern on an image for diagnostic purposes. Uses
+    * Creates a checker pattern in an array of pixels. Uses
     * {@value ZImage#CHECKER_DARK} and {@value ZImage#CHECKER_LIGHT} as
     * default colors.
     *
     * @param count  the count
-    * @param target the output image
+    * @param target the target image
     *
-    * @return the output image
+    * @return the checker pattern
     */
    public static PImage checker ( final int count, final PImage target ) {
 
       return ZImage.checker(ZImage.CHECKER_DARK, ZImage.CHECKER_LIGHT, count,
          count, target);
-   }
-
-   /**
-    * Dithers an image with the <a href=
-    * "https://www.wikiwand.com/en/Floyd-Steinberg">Floyd-Steinberg</a>
-    * method. Builds an octree in CIE L*a*b* from an input palette, then finds
-    * the nearest color according to Euclidean distance (see <a href=
-    * "https://www.wikiwand.com/en/Color_difference#/CIE76">CIE76</a>).
-    *
-    * @param target  image
-    * @param palette palette
-    *
-    * @return the image
-    */
-   public static PImage dither ( final PImage target, final Color[] palette ) {
-
-      final float fs_1_16 = 0.0625f;
-      final float fs_3_16 = 0.1875f;
-      final float fs_5_16 = 0.3125f;
-      final float fs_7_16 = 0.4375f;
-
-      final int octCapacity = 16;
-      final float queryRad = 175.0f;
-
-      final Color lrgb = new Color();
-      final Vec4 xyz = new Vec4();
-      final Vec4 lab = new Vec4();
-
-      final int palLen = palette.length;
-      final HashMap < Integer, Integer > ptToHexDict = new HashMap <>(palLen,
-         0.75f);
-
-      /* Ensure that at least 8 colors will be returned from the octree. */
-      final Octree octree = new Octree(Bounds3.cieLab(new Bounds3()),
-         octCapacity);
-      octree.subdivide(1, octCapacity);
-
-      for ( int i = 0; i < palLen; ++i ) {
-         final Color palEntry = palette[i];
-         Color.sRgbaTolRgba(palEntry, false, lrgb);
-         Color.lRgbaToXyza(lrgb, xyz);
-         Color.xyzaToLaba(xyz, lab);
-
-         final Vec3 point = new Vec3(lab.x, lab.y, lab.z);
-         ptToHexDict.put(point.hashCode(), Color.toHexIntSat(palEntry));
-         octree.insert(point);
-      }
-
-      octree.cull();
-
-      target.loadPixels();
-      final int[] px = target.pixels;
-      final int w = target.pixelWidth;
-      final int h = target.pixelHeight;
-      final int pxLen = px.length;
-
-      final Color srgb = new Color();
-      final Vec3 query = new Vec3();
-
-      for ( int k = 0; k < pxLen; ++k ) {
-         final int srcHex = px[k];
-         final int rSrc = srcHex >> 0x10 & 0xff;
-         final int gSrc = srcHex >> 0x08 & 0xff;
-         final int bSrc = srcHex & 0xff;
-
-         srgb.set(rSrc * IUtils.ONE_255, gSrc * IUtils.ONE_255, bSrc
-            * IUtils.ONE_255, 1.0f);
-         Color.sRgbaTolRgba(srgb, false, lrgb);
-         Color.lRgbaToXyza(lrgb, xyz);
-         Color.xyzaToLaba(xyz, lab);
-         query.set(lab.x, lab.y, lab.z);
-
-         int trgHex = 0x00000000;
-         int rTrg = 0;
-         int gTrg = 0;
-         int bTrg = 0;
-
-         final Vec3[] nearestPts = octree.queryRange(query, queryRad);
-         if ( nearestPts.length > 0 ) {
-            final Integer nearestHash = nearestPts[0].hashCode();
-            if ( ptToHexDict.containsKey(nearestHash) ) {
-               final int nearestHex = ptToHexDict.get(nearestHash);
-               rTrg = nearestHex >> 0x10 & 0xff;
-               gTrg = nearestHex >> 0x08 & 0xff;
-               bTrg = nearestHex & 0xff;
-               trgHex = srcHex & 0xff000000 | nearestHex & 0x00ffffff;
-            }
-         }
-
-         px[k] = trgHex;
-         final float rErr = rSrc - rTrg;
-         final float gErr = gSrc - gTrg;
-         final float bErr = bSrc - bTrg;
-
-         final int x = k % w;
-         final int y = k / w;
-         final int yp1 = y + 1;
-         final int xp1 = x + 1;
-         final boolean xp1InBounds = xp1 < w;
-         final boolean yp1InBounds = yp1 < h;
-         final int yp1w = yp1 * w;
-
-         if ( xp1InBounds ) {
-            final int k0 = xp1 + y * w;
-            final int neighbor0 = px[k0];
-
-            final int rn0 = neighbor0 >> 0x10 & 0xff;
-            final int gn0 = neighbor0 >> 0x08 & 0xff;
-            final int bn0 = neighbor0 & 0xff;
-
-            // Add 0.5f to round up to this and 3 other neighbors?
-            int rne0 = rn0 + ( int ) ( rErr * fs_7_16 );
-            int gne0 = gn0 + ( int ) ( gErr * fs_7_16 );
-            int bne0 = bn0 + ( int ) ( bErr * fs_7_16 );
-
-            if ( rne0 < 0 ) {
-               rne0 = 0;
-            } else if ( rne0 > 255 ) { rne0 = 255; }
-            if ( gne0 < 0 ) {
-               gne0 = 0;
-            } else if ( gne0 > 255 ) { gne0 = 255; }
-            if ( bne0 < 0 ) {
-               bne0 = 0;
-            } else if ( bne0 > 255 ) { bne0 = 255; }
-
-            px[k0] = neighbor0 & 0xff000000 | rne0 << 0x10 | gne0 << 0x08
-               | bne0;
-
-            if ( yp1InBounds ) {
-               final int k3 = xp1 + yp1w;
-               final int neighbor3 = px[k3];
-
-               final int rn3 = neighbor3 >> 0x10 & 0xff;
-               final int gn3 = neighbor3 >> 0x08 & 0xff;
-               final int bn3 = neighbor3 & 0xff;
-
-               int rne3 = rn3 + ( int ) ( rErr * fs_1_16 );
-               int gne3 = gn3 + ( int ) ( gErr * fs_1_16 );
-               int bne3 = bn3 + ( int ) ( bErr * fs_1_16 );
-
-               if ( rne3 < 0 ) {
-                  rne3 = 0;
-               } else if ( rne3 > 255 ) { rne3 = 255; }
-               if ( gne3 < 0 ) {
-                  gne3 = 0;
-               } else if ( gne3 > 255 ) { gne3 = 255; }
-               if ( bne3 < 0 ) {
-                  bne3 = 0;
-               } else if ( bne3 > 255 ) { bne3 = 255; }
-
-               px[k3] = neighbor3 & 0xff000000 | rne3 << 0x10 | gne3 << 0x08
-                  | bne3;
-            }
-         }
-
-         if ( yp1InBounds ) {
-            final int k2 = x + yp1w;
-            final int neighbor2 = px[k2];
-
-            final int rn2 = neighbor2 >> 0x10 & 0xff;
-            final int gn2 = neighbor2 >> 0x08 & 0xff;
-            final int bn2 = neighbor2 & 0xff;
-
-            int rne2 = rn2 + ( int ) ( rErr * fs_5_16 );
-            int gne2 = gn2 + ( int ) ( gErr * fs_5_16 );
-            int bne2 = bn2 + ( int ) ( bErr * fs_5_16 );
-
-            if ( rne2 < 0 ) {
-               rne2 = 0;
-            } else if ( rne2 > 255 ) { rne2 = 255; }
-            if ( gne2 < 0 ) {
-               gne2 = 0;
-            } else if ( gne2 > 255 ) { gne2 = 255; }
-            if ( bne2 < 0 ) {
-               bne2 = 0;
-            } else if ( bne2 > 255 ) { bne2 = 255; }
-
-            px[k2] = neighbor2 & 0xff000000 | rne2 << 0x10 | gne2 << 0x08
-               | bne2;
-
-            if ( x > 0 ) {
-               final int k1 = x - 1 + yp1w;
-               final int neighbor1 = px[k1];
-
-               final int rn1 = neighbor1 >> 0x10 & 0xff;
-               final int gn1 = neighbor1 >> 0x08 & 0xff;
-               final int bn1 = neighbor1 & 0xff;
-
-               int rne1 = rn1 + ( int ) ( rErr * fs_3_16 );
-               int gne1 = gn1 + ( int ) ( gErr * fs_3_16 );
-               int bne1 = bn1 + ( int ) ( bErr * fs_3_16 );
-
-               if ( rne1 < 0 ) {
-                  rne1 = 0;
-               } else if ( rne1 > 255 ) { rne1 = 255; }
-               if ( gne1 < 0 ) {
-                  gne1 = 0;
-               } else if ( gne1 > 255 ) { gne1 = 255; }
-               if ( bne1 < 0 ) {
-                  bne1 = 0;
-               } else if ( bne1 > 255 ) { bne1 = 255; }
-
-               px[k1] = neighbor1 & 0xff000000 | rne1 << 0x10 | gne1 << 0x08
-                  | bne1;
-            }
-         }
-      }
-
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-      return target;
-   }
-
-   /**
-    * Extracts a palette from an image with an octree in CIE LAB. The size of
-    * the palette depends on the capacity of each node in the octree. Does not
-    * retain alpha component of image pixels. Colors produced may not be in
-    * gamut.
-    *
-    * @param source   the source image
-    * @param capacity the octree capacity
-    *
-    * @return the color array
-    */
-   public static Color[] extractPalette ( final PImage source,
-      final int capacity ) {
-
-      return ZImage.extractPalette(source, capacity, 256);
-   }
-
-   /**
-    * Extracts a palette from an image with an octree in CIE LAB. The size of
-    * the palette depends on the capacity of each node in the octree. Does not
-    * retain alpha component of image pixels. The threshold describes the
-    * minimum number of unique colors in the image beneath which it is
-    * preferable to not engage the octree. Once the octree has been used,
-    * colors produced may not be in gamut.
-    *
-    * @param source    the source image
-    * @param capacity  the octree capacity
-    * @param threshold the minimum threshold
-    *
-    * @return the color array
-    */
-   public static Color[] extractPalette ( final PImage source,
-      final int capacity, final int threshold ) {
-
-      source.loadPixels();
-      return Pixels.extractPalette(source.pixels, capacity, threshold);
    }
 
    /**
@@ -1522,6 +1237,9 @@ public class ZImage extends PImage {
     * @param target the target pixels
     *
     * @return the mapped pixels
+    *
+    * @see Pixels#gradientMap(int[], Gradient, Color.AbstrEasing, IntFunction,
+    *      int[])
     */
    public static PImage gradientMap ( final PImage source, final Gradient grd,
       final Color.AbstrEasing easing, final IntFunction < Float > map,
@@ -1885,67 +1603,67 @@ public class ZImage extends PImage {
 
    /**
     * Masks the pixels of an under image with the alpha channel of the over
-    * image. Offsets the over image by pixel coordinates relative to the top
-    * left corner. The target image is set to the size of the under image.
+    * image. Offsets the over image by pixel coordinates relative to the
+    * approximate under image center.
     *
     * @param under  the under image
     * @param over   the over image
-    * @param x      the mask horizontal offset
-    * @param y      the mask vertical offset
+    * @param x      the x offset
+    * @param y      the y offset
     * @param target the target image
     *
     * @return the masked image
+    *
+    * @see Pixels#mask(int[], int, int, int[], int, int, int, int, Vec2)
     */
    public static PImage mask ( final PImage under, final PImage over,
       final int x, final int y, final PImage target ) {
 
-      // TODO: For efficiency, wouldn't the mask image be the size of
-      // the intersection between under an over image?
-
       if ( target instanceof PGraphics ) {
-         System.err.println("Don't use PGraphics as a target of this method.");
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      final int pdUdr = under.pixelDensity;
+      final int pdOvr = over.pixelDensity;
+      if ( pdUdr != pdOvr ) {
+         System.err.println(
+            "Under and over images have mismatched pixel density.");
+         return target;
+      }
+
+      final int fmtUdr = under.format;
+      if ( fmtUdr != PConstants.ARGB && fmtUdr != PConstants.RGB ) {
+         System.err.println("Under image format should be either RGB or ARGB.");
+         return target;
+      }
+
+      final int fmtOvr = over.format;
+      if ( fmtOvr != PConstants.ARGB ) {
+         System.err.println("Over image format should be ARGB.");
          return target;
       }
 
       under.loadPixels();
+      final int wUdr = under.pixelWidth;
+      final int hUdr = under.pixelHeight;
+      final int[] pxUdr = under.pixels;
+
       over.loadPixels();
+      final int wOvr = over.pixelWidth;
+      final int hOvr = over.pixelHeight;
+      final int[] pxOvr = over.pixels;
 
-      final int xShift = x;
-      final int yShift = y;
-
-      final int[] pxUnder = under.pixels;
-      final int pxLenUnder = pxUnder.length;
-      final int wUnder = under.pixelWidth;
-      final int hUnder = under.pixelHeight;
-
-      final int[] pxOver = over.pixels;
-      // final int pxLenOver = pxOver.length;
-      final int wOver = over.pixelWidth;
-      final int hOver = over.pixelHeight;
-
-      final int[] pxTarget = new int[pxLenUnder];
-      for ( int i = 0; i < pxLenUnder; ++i ) {
-         final int yUnder = i / wUnder;
-         final int yOver = yUnder - yShift;
-
-         final int xUnder = i % wUnder;
-         final int xOver = xUnder - xShift;
-
-         if ( yOver > -1 && yOver < hOver && xOver > -1 && xOver < wOver ) {
-            final int hexOver = pxOver[yOver * wOver + xOver];
-            final int hexUnder = pxUnder[i];
-
-            pxTarget[i] = hexOver & 0xff000000 | hexUnder & 0x00ffffff;
-         }
-      }
-
-      target.pixels = pxTarget;
-      target.width = under.width;
-      target.height = under.height;
-      target.pixelDensity = under.pixelDensity;
-      target.pixelWidth = wUnder;
-      target.pixelHeight = hUnder;
-      target.format = PConstants.ARGB;
+      target.loadPixels();
+      final Vec2 dim = new Vec2();
+      target.pixels = Pixels.mask(pxUdr, wUdr, hUdr, pxOvr, wOvr, hOvr, x, y,
+         dim);
+      target.format = fmtOvr;
+      target.pixelDensity = pdOvr;
+      target.pixelWidth = ( int ) dim.x;
+      target.pixelHeight = ( int ) dim.y;
+      target.width = target.pixelWidth / pdOvr;
+      target.height = target.pixelHeight / pdOvr;
       target.updatePixels();
 
       return target;
@@ -1953,7 +1671,7 @@ public class ZImage extends PImage {
 
    /**
     * Masks the pixels of an under image with the alpha channel of the over
-    * image. The target image is set to the size of the under image.
+    * image.
     *
     * @param under  the under image
     * @param over   the over image
@@ -2179,6 +1897,127 @@ public class ZImage extends PImage {
       target.updatePixels();
 
       return target;
+   }
+
+   /**
+    * Extracts a palette from an image with an octree in CIE LAB. The size of
+    * the palette depends on the capacity of each node in the octree. Does not
+    * retain alpha component of image pixels. Colors produced may not be in
+    * gamut.
+    *
+    * @param source   the source image
+    * @param capacity the octree capacity
+    *
+    * @return the color array
+    */
+   public static Color[] paletteExtract ( final PImage source,
+      final int capacity ) {
+
+      return ZImage.paletteExtract(source, capacity, 256);
+   }
+
+   /**
+    * Extracts a palette from an image with an octree in CIE LAB. The size of
+    * the palette depends on the capacity of each node in the octree. Does not
+    * retain alpha component of image pixels. The threshold describes the
+    * minimum number of unique colors in the image beneath which it is
+    * preferable to not engage the octree. Once the octree has been used,
+    * colors produced may not be in gamut.
+    *
+    * @param source    the source image
+    * @param capacity  the octree capacity
+    * @param threshold the minimum threshold
+    *
+    * @return the color array
+    */
+   public static Color[] paletteExtract ( final PImage source,
+      final int capacity, final int threshold ) {
+
+      source.loadPixels();
+      return Pixels.paletteExtract(source.pixels, capacity, threshold);
+   }
+
+   /**
+    * Applies a palette to an image using an Octree to find the nearest match
+    * in Euclidean space. Retains the original image's transparency.
+    *
+    * @param source   the source image
+    * @param palette  the color palette
+    * @param capacity the octree capacity
+    * @param radius   the query radius
+    * @param target   the target image
+    *
+    * @return the mapped image
+    *
+    * @see Pixels#paletteMap(int[], Color[], int, float, int[])
+    */
+   public static PImage paletteMap ( final PImage source, final Color[] palette,
+      final int capacity, final float radius, final PImage target ) {
+
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.paletteMap(target.pixels, palette, capacity, radius,
+            target.pixels);
+         target.updatePixels();
+         return target;
+      }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int[] pxSrc = source.pixels;
+      target.pixels = Pixels.paletteMap(pxSrc, palette, capacity, radius,
+         new int[pxSrc.length]);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = source.pixelWidth;
+      target.pixelHeight = source.pixelHeight;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Applies a palette to an image using an Octree to find the nearest match
+    * in Euclidean space. Retains the original image's transparency.
+    *
+    * @param source   the source image
+    * @param palette  the color palette
+    * @param capacity the octree capacity
+    * @param target   the target image
+    *
+    * @return the mapped image
+    *
+    * @see Pixels#paletteMap(int[], Color[], int, float, int[])
+    */
+   public static PImage paletteMap ( final PImage source, final Color[] palette,
+      final int capacity, final PImage target ) {
+
+      return ZImage.paletteMap(source, palette, capacity, 175.0f, target);
+   }
+
+   /**
+    * Applies a palette to an image using an Octree to find the nearest match
+    * in Euclidean space. Retains the original image's transparency.
+    *
+    * @param source  the source image
+    * @param palette the color palette
+    * @param target  the target image
+    *
+    * @return the mapped image
+    *
+    * @see Pixels#paletteMap(int[], Color[], int, float, int[])
+    */
+   public static PImage paletteMap ( final PImage source, final Color[] palette,
+      final PImage target ) {
+
+      return ZImage.paletteMap(source, palette, 256, 175.0f, target);
    }
 
    /**

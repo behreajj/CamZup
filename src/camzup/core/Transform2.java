@@ -135,6 +135,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
 
       this.scalePrev.set(this.scale);
       this.scale.x = -this.scale.x;
+
       return this;
    }
 
@@ -149,6 +150,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
 
       this.scalePrev.set(this.scale);
       this.scale.y = -this.scale.y;
+
       return this;
    }
 
@@ -164,6 +166,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
 
       r.set(this.right);
       f.set(this.forward);
+
       return this;
    }
 
@@ -1528,8 +1531,8 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
    }
 
    /**
-    * Finds the difference between the current and previous rotation of a
-    * transform.
+    * Finds the signed difference between the current and previous rotation of
+    * a transform.
     *
     * @param t the transform
     *
@@ -1537,8 +1540,9 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     */
    public static float rotDelta ( final Transform2 t ) {
 
-      // TODO: Create and use signed angular distance?
-      return t.rotation - t.rotPrev;
+      final float diff = ( t.rotation - t.rotPrev + IUtils.PI ) % IUtils.TAU
+         - IUtils.PI;
+      return diff < -IUtils.PI ? diff + IUtils.TAU : diff;
    }
 
    /**
@@ -1655,6 +1659,8 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
        * @param target the output transform
        *
        * @return the eased transform
+       *
+       * @see Transform2#updateAxes()
        */
       public Transform2 applyUnclamped ( final Transform2 origin,
          final Transform2 dest, final float step, final Transform2 target ) {

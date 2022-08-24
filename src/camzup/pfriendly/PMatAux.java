@@ -432,6 +432,8 @@ public abstract class PMatAux {
     * @param target the output matrix
     *
     * @return the matrix
+    *
+    * @see Vec3#magSq(Vec3)
     */
    public static PMatrix3D invRotate ( final Quaternion q,
       final PMatrix3D target ) {
@@ -884,6 +886,8 @@ public abstract class PMatAux {
     * @param places number of decimal places
     *
     * @return the string
+    *
+    * @see Utils#toFixed(float, int)
     */
    public static String toString ( final PMatrix2D m, final int places ) {
 
@@ -926,6 +930,8 @@ public abstract class PMatAux {
     * @param places number of decimal places
     *
     * @return the string
+    *
+    * @see Utils#toFixed(float, int)
     */
    public static String toString ( final PMatrix3D m, final int places ) {
 

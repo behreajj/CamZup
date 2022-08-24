@@ -579,7 +579,7 @@ public class Octree {
     * @see Bounds3#center(Bounds3, Vec3)
     */
    @Recursive
-   protected ArrayList < Vec3 > centersMean ( final boolean includeEmpty,
+   ArrayList < Vec3 > centersMean ( final boolean includeEmpty,
       final ArrayList < Vec3 > target ) {
 
       /* Even with a tree set, centersMedian is not worth it. */
@@ -611,6 +611,92 @@ public class Octree {
       }
 
       return target;
+   }
+
+   /**
+    * Queries the octree with a box range. If points in the octree are in
+    * range, they are added to a {@link java.util.TreeMap}.
+    *
+    * @param range the range
+    * @param found the output list
+    *
+    * @return found points
+    *
+    * @see Bounds3#intersect(Bounds3, Bounds3)
+    * @see Bounds3#containsInclusive(Bounds3, Vec3)
+    * @see Vec3#dist(Vec3, Vec3)
+    * @see Bounds3#center(Bounds3, Vec3)
+    */
+   @Recursive
+   TreeMap < Float, Vec3 > queryRange ( final Bounds3 range, final TreeMap <
+      Float, Vec3 > found ) {
+
+      if ( Bounds3.intersect(range, this.bounds) ) {
+         boolean isLeaf = true;
+         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+            final Octree child = this.children[i];
+            if ( child != null ) {
+               isLeaf = false;
+               child.queryRange(range, found);
+            }
+         }
+
+         if ( isLeaf ) {
+            final Iterator < Vec3 > itr = this.points.iterator();
+            final Vec3 rCenter = new Vec3();
+            Bounds3.center(range, rCenter);
+            while ( itr.hasNext() ) {
+               final Vec3 point = itr.next();
+               if ( Bounds3.containsInclusive(range, point) ) {
+                  found.put(Vec3.distChebyshev(point, rCenter), point);
+               }
+            }
+         }
+      }
+
+      return found;
+   }
+
+   /**
+    * Queries the octree with a spherical range. If points in the octree are
+    * in range, they are added to a {@link java.util.TreeMap}.
+    *
+    * @param center the sphere center
+    * @param radius the sphere radius
+    * @param found  the output list
+    *
+    * @return found points
+    *
+    * @see Bounds3#intersect(Bounds3, Vec3, float)
+    * @see Vec3#distSq(Vec3, Vec3)
+    * @see Utils#sqrt(float)
+    */
+   @Recursive
+   TreeMap < Float, Vec3 > queryRange ( final Vec3 center, final float radius,
+      final TreeMap < Float, Vec3 > found ) {
+
+      if ( Bounds3.intersect(this.bounds, center, radius) ) {
+         boolean isLeaf = true;
+         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+            final Octree child = this.children[i];
+            if ( child != null ) {
+               isLeaf = false;
+               child.queryRange(center, radius, found);
+            }
+         }
+
+         if ( isLeaf ) {
+            final float rsq = radius * radius;
+            final Iterator < Vec3 > itr = this.points.iterator();
+            while ( itr.hasNext() ) {
+               final Vec3 point = itr.next();
+               final float dsq = Vec3.distSq(center, point);
+               if ( dsq < rsq ) { found.put(Utils.sqrt(dsq), point); }
+            }
+         }
+      }
+
+      return found;
    }
 
    /**
@@ -660,92 +746,6 @@ public class Octree {
       }
       if ( isLeaf ) { target.addAll(this.points); }
       return target;
-   }
-
-   /**
-    * Queries the octree with a box range. If points in the octree are in
-    * range, they are added to a {@link java.util.TreeMap}.
-    *
-    * @param range the range
-    * @param found the output list
-    *
-    * @return found points
-    *
-    * @see Bounds3#intersect(Bounds3, Bounds3)
-    * @see Bounds3#containsInclusive(Bounds3, Vec3)
-    * @see Vec3#dist(Vec3, Vec3)
-    * @see Bounds3#center(Bounds3, Vec3)
-    */
-   @Recursive
-   protected TreeMap < Float, Vec3 > queryRange ( final Bounds3 range,
-      final TreeMap < Float, Vec3 > found ) {
-
-      if ( Bounds3.intersect(range, this.bounds) ) {
-         boolean isLeaf = true;
-         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
-            final Octree child = this.children[i];
-            if ( child != null ) {
-               isLeaf = false;
-               child.queryRange(range, found);
-            }
-         }
-
-         if ( isLeaf ) {
-            final Iterator < Vec3 > itr = this.points.iterator();
-            final Vec3 rCenter = new Vec3();
-            Bounds3.center(range, rCenter);
-            while ( itr.hasNext() ) {
-               final Vec3 point = itr.next();
-               if ( Bounds3.containsInclusive(range, point) ) {
-                  found.put(Vec3.distChebyshev(point, rCenter), point);
-               }
-            }
-         }
-      }
-
-      return found;
-   }
-
-   /**
-    * Queries the octree with a spherical range. If points in the octree are
-    * in range, they are added to a {@link java.util.TreeMap}.
-    *
-    * @param center the sphere center
-    * @param radius the sphere radius
-    * @param found  the output list
-    *
-    * @return found points
-    *
-    * @see Bounds3#intersect(Bounds3, Vec3, float)
-    * @see Vec3#distSq(Vec3, Vec3)
-    * @see Utils#sqrt(float)
-    */
-   @Recursive
-   protected TreeMap < Float, Vec3 > queryRange ( final Vec3 center,
-      final float radius, final TreeMap < Float, Vec3 > found ) {
-
-      if ( Bounds3.intersect(this.bounds, center, radius) ) {
-         boolean isLeaf = true;
-         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
-            final Octree child = this.children[i];
-            if ( child != null ) {
-               isLeaf = false;
-               child.queryRange(center, radius, found);
-            }
-         }
-
-         if ( isLeaf ) {
-            final float rsq = radius * radius;
-            final Iterator < Vec3 > itr = this.points.iterator();
-            while ( itr.hasNext() ) {
-               final Vec3 point = itr.next();
-               final float dsq = Vec3.distSq(center, point);
-               if ( dsq < rsq ) { found.put(Utils.sqrt(dsq), point); }
-            }
-         }
-      }
-
-      return found;
    }
 
    /**

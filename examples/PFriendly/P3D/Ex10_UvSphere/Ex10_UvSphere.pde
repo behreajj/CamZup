@@ -28,7 +28,7 @@ void setup() {
 
   PImage txtr = createImage(512, 512, ARGB);
   Gradient ryb = Gradient.paletteRyb(new Gradient());
-  ZImage.linear(ryb, txtr);
+  ZImage.gradientLinear(ryb, txtr);
   textured = new MaterialPImage(txtr);
 
   wire.setStroke(true)

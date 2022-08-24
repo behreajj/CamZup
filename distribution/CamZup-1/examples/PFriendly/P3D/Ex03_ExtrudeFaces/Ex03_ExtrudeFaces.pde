@@ -57,7 +57,7 @@ void setup() {
   }
 }
 
-void draw() {
+void draw() {  
   entity.rotateZ(0.01f);
 
   graphics.lights();

@@ -5,7 +5,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.TreeMap;
 import java.util.function.IntFunction;
+
+import camzup.pfriendly.ZImage;
 
 /**
  * Holds methods that operate on arrays of pixels held by images.
@@ -216,85 +219,41 @@ public abstract class Pixels {
    }
 
    /**
-    * Extracts a palette from a source pixels array using an octree in CIE
-    * LAB. The size of the palette depends on the capacity of each node in the
-    * octree. Does not retain alpha component of image pixels. The threshold
-    * describes the minimum number of unique colors in the image beneath which
-    * it is preferable to not engage the octree. Once the octree has been
-    * used, colors produced may not be in gamut.
+    * Creates a checker pattern in an array of pixels.
     *
-    * @param source    the source image
-    * @param capacity  the octree capacity
-    * @param threshold the minimum threshold
+    * @param a      the first color
+    * @param b      the second color
+    * @param cols   the column count
+    * @param rows   the row count
+    * @param w      the image width
+    * @param h      the image height
+    * @param target the target pixels
     *
-    * @return the color array
-    *
-    * @see Bounds3#cieLab(Bounds3)
-    * @see Color#fromHex(int, Color)
-    * @see Color#sRgbaTolRgba(Color, boolean, Color)
-    * @see Color#lRgbaToXyza(Color, Vec4)
-    * @see Color#xyzaToLaba(Vec4, Vec4)
-    * @see Color#labaToXyza(Vec4, Vec4)
-    * @see Color#xyzaTolRgba(Vec4, Color)
-    * @see Color#lRgbaTosRgba(Color, boolean, Color)
-    * @see Color#clearBlack(Color)
-    * @see Octree#insert(Vec3)
+    * @return the checker pattern
     */
-   public static Color[] extractPalette ( final int[] source,
-      final int capacity, final int threshold ) {
+   public static int[] checker ( final int a, final int b, final int cols,
+      final int rows, final int w, final int h, final int[] target ) {
 
-      /* Find unique opaque colors. */
-      final HashSet < Integer > uniqueColors = new HashSet <>(256, 0.75f);
-      final int srcLen = source.length;
-      for ( int i = 0; i < srcLen; ++i ) {
-         uniqueColors.add(0xff000000 | source[i]);
+      /*
+       * Rows and columns should have a maximum bound, because it will be easy
+       * to transpose color and columns & rows arguments.
+       */
+      final int limit = 2;
+      final int vCols = cols < 2 ? 2 : cols > w / limit ? w / limit : cols;
+      final int vRows = rows < 2 ? 2 : rows > h / limit ? h / limit : rows;
+      final int wch = w / vCols;
+      final int hchw = w * h / vRows;
+
+      final int va = a != b ? a : ZImage.CHECKER_DARK;
+      final int vb = a != b ? b : ZImage.CHECKER_LIGHT;
+
+      final int trgLen = target.length;
+      for ( int i = 0; i < trgLen; ++i ) {
+         /* % 2 can be replaced by & 1 for even or odd. */
+         target[i] = ( i % w / wch + i / hchw & 1 ) == 0 ? va : vb;
       }
 
-      final int uniquesLen = uniqueColors.size();
-      final Iterator < Integer > uniquesItr = uniqueColors.iterator();
-
-      /* If under threshold, do not engage octree. */
-      final int valThresh = threshold < 3 ? 3 : threshold;
-      if ( uniquesLen < valThresh ) {
-         /* Account for alpha at index 0, so less than threshold. */
-         final Color[] result = new Color[1 + uniquesLen];
-         for ( int i = 1; uniquesItr.hasNext(); ++i ) {
-            result[i] = Color.fromHex(uniquesItr.next(), new Color());
-         }
-         result[0] = Color.clearBlack(new Color());
-         return result;
-      }
-
-      final Bounds3 bounds = Bounds3.cieLab(new Bounds3());
-      final Octree oct = new Octree(bounds, capacity);
-      final Color srgb = new Color();
-      final Color lrgb = new Color();
-      final Vec4 xyz = new Vec4();
-      final Vec4 lab = new Vec4();
-
-      /* Place colors in octree. */
-      while ( uniquesItr.hasNext() ) {
-         Color.fromHex(uniquesItr.next(), srgb);
-         Color.sRgbaTolRgba(srgb, false, lrgb);
-         Color.lRgbaToXyza(lrgb, xyz);
-         Color.xyzaToLaba(xyz, lab);
-         oct.insert(new Vec3(lab.x, lab.y, lab.z));
-      }
-
-      /* Unlike dither, shouldn't have to keep 8 centers minimum. */
-      oct.cull();
-
-      final Vec3[] centers = oct.centersMean(false);
-      final int centersLen = centers.length;
-      final Color[] result = new Color[1 + centersLen];
-      for ( int i = 0; i < centersLen; ++i ) {
-         final Vec3 center = centers[i];
-         Color.labaToXyza(center.z, center.x, center.y, 1.0f, xyz);
-         Color.xyzaTolRgba(xyz, lrgb);
-         result[1 + i] = Color.lRgbaTosRgba(lrgb, false, new Color());
-      }
-      result[0] = Color.clearBlack(new Color());
-      return result;
+      return target;
    }
 
    /**
@@ -511,18 +470,20 @@ public abstract class Pixels {
       final float yOrig, final float radians, final Color.AbstrEasing easing,
       final int wTrg, final int hTrg, final int[] target ) {
 
-      final float aspect = wTrg / ( float ) hTrg;
-      final float wInv = aspect / ( wTrg - 1.0f );
-      final float hInv = 1.0f / ( hTrg - 1.0f );
-      final float xo = ( xOrig * 0.5f + 0.5f ) * aspect * 2.0f - 1.0f;
+      final double aspect = wTrg / ( double ) hTrg;
+      final double wInv = aspect / ( wTrg - 1.0d );
+      final double hInv = 1.0d / ( hTrg - 1.0d );
+      final double xo = ( xOrig * 0.5d + 0.5d ) * aspect * 2.0d - 1.0d;
+      final double yo = yOrig;
+      final double rd = radians;
 
       final Color trgClr = new Color();
       final int trgLen = target.length;
       for ( int i = 0; i < trgLen; ++i ) {
-         final float xn = wInv * ( i % wTrg );
-         final float yn = hInv * ( i / wTrg );
-         final float fac = Utils.mod1(( float ) ( ( Math.atan2(1.0f - ( yn + yn
-            + yOrig ), xn + xn - xo - 1.0f) - radians ) * IUtils.ONE_TAU_D ));
+         final double xn = wInv * ( i % wTrg );
+         final double yn = hInv * ( i / wTrg );
+         final float fac = Utils.mod1(( float ) ( ( Math.atan2(1.0d - ( yn + yn
+            + yo ), xn + xn - xo - 1.0d) - rd ) * IUtils.ONE_TAU_D ));
          Gradient.eval(grd, fac, easing, trgClr);
          target[i] = Color.toHexIntSat(trgClr);
       }
@@ -586,6 +547,7 @@ public abstract class Pixels {
     * Maps the colors of a source pixels array to those of a gradient using a
     * mapping function. The mapping function accepts a pixel as an argument
     * and returns a factor to be given to a gradient evaluation method.
+    * Retains the original color's transparency.
     *
     * @param source the source pixels
     * @param grd    the gradient
@@ -849,6 +811,58 @@ public abstract class Pixels {
    }
 
    /**
+    * Masks the pixels of an under image with the alpha channel of the over
+    * image. Offset coordinates are relative to the top-left corner.<br>
+    * <br>
+    * Emits the new image dimensions to a {@link Vec2}.
+    *
+    * @param under the under image pixels
+    * @param wUnd  the under image width
+    * @param hUnd  the under image height
+    * @param over  the over image pixels
+    * @param wOvr  the over image width
+    * @param hOvr  the over image height
+    * @param x     the x offset
+    * @param y     the y offset
+    * @param dim   the target dimensions
+    *
+    * @return the masked pixels
+    */
+   public static int[] mask ( final int[] under, final int wUnd, final int hUnd,
+      final int[] over, final int wOvr, final int hOvr, final int x,
+      final int y, final Vec2 dim ) {
+
+      final int trgLen = over.length;
+      final int[] target = new int[trgLen];
+      for ( int i = 0; i < trgLen; ++i ) {
+         final int xOrig = i % wOvr;
+         final int yOrig = i / wOvr;
+
+         final int hexOvr = over[i];
+         final int aOvr = hexOvr >> 0x18 & 0xff;
+
+         if ( aOvr > 0 ) {
+            final int xUdr = xOrig - x;
+            final int yUdr = yOrig - y;
+            if ( yUdr >= 0 && yUdr < hUnd && xUdr >= 0 && xUdr < wUnd ) {
+               final int idxUdr = xUdr + yUdr * wUnd;
+               final int hexUdr = under[idxUdr];
+               final int aUdr = hexUdr >> 0x18 & 0xff;
+               final int aTrg = aOvr * aUdr / 255;
+               target[i] = aTrg << 0x18 | hexUdr & 0x00ffffff;
+            } else {
+               target[i] = 0x00000000;
+            }
+         } else {
+            target[i] = 0x00000000;
+         }
+      }
+
+      if ( dim != null ) { dim.set(wOvr, hOvr); }
+      return target;
+   }
+
+   /**
     * Mirrors, or reflects, pixels from a source image across the axis
     * described by an origin and destination. Coordinates are expected to be
     * in the range [0.0, 1.0]. Out-of-bounds pixels are omitted from the
@@ -1004,6 +1018,186 @@ public abstract class Pixels {
             final int pyOpp = pivot - cross;
             if ( pyOpp > -1 && pyOpp < hSrc ) {
                target[k] = source[pyOpp * wSrc + k % wSrc];
+            }
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Extracts a palette from a source pixels array using an octree in CIE
+    * LAB. The size of the palette depends on the capacity of each node in the
+    * octree. Does not retain alpha component of image pixels. The threshold
+    * describes the minimum number of unique colors in the image beneath which
+    * it is preferable to not engage the octree. Once the octree has been
+    * used, colors produced may not be in gamut.
+    *
+    * @param source    the source image
+    * @param capacity  the octree capacity
+    * @param threshold the minimum threshold
+    *
+    * @return the color array
+    *
+    * @see Bounds3#cieLab(Bounds3)
+    * @see Color#fromHex(int, Color)
+    * @see Color#sRgbaTolRgba(Color, boolean, Color)
+    * @see Color#lRgbaToXyza(Color, Vec4)
+    * @see Color#xyzaToLaba(Vec4, Vec4)
+    * @see Color#labaToXyza(Vec4, Vec4)
+    * @see Color#xyzaTolRgba(Vec4, Color)
+    * @see Color#lRgbaTosRgba(Color, boolean, Color)
+    * @see Color#clearBlack(Color)
+    * @see Octree#insert(Vec3)
+    */
+   public static Color[] paletteExtract ( final int[] source,
+      final int capacity, final int threshold ) {
+
+      /* Find unique opaque colors. */
+      final HashSet < Integer > uniqueColors = new HashSet <>(256, 0.75f);
+      final int srcLen = source.length;
+      for ( int i = 0; i < srcLen; ++i ) {
+         uniqueColors.add(0xff000000 | source[i]);
+      }
+
+      final int uniquesLen = uniqueColors.size();
+      final Iterator < Integer > uniquesItr = uniqueColors.iterator();
+
+      /* If under threshold, do not engage octree. */
+      final int valThresh = threshold < 3 ? 3 : threshold;
+      if ( uniquesLen < valThresh ) {
+         /* Account for alpha at index 0, so less than threshold. */
+         final Color[] result = new Color[1 + uniquesLen];
+         for ( int i = 1; uniquesItr.hasNext(); ++i ) {
+            result[i] = Color.fromHex(uniquesItr.next(), new Color());
+         }
+         result[0] = Color.clearBlack(new Color());
+         return result;
+      }
+
+      final Bounds3 bounds = Bounds3.cieLab(new Bounds3());
+      final Octree oct = new Octree(bounds, capacity);
+      final Color srgb = new Color();
+      final Color lrgb = new Color();
+      final Vec4 xyz = new Vec4();
+      final Vec4 lab = new Vec4();
+
+      /* Place colors in octree. */
+      while ( uniquesItr.hasNext() ) {
+         Color.fromHex(uniquesItr.next(), srgb);
+         Color.sRgbaTolRgba(srgb, false, lrgb);
+         Color.lRgbaToXyza(lrgb, xyz);
+         Color.xyzaToLaba(xyz, lab);
+         oct.insert(new Vec3(lab.x, lab.y, lab.z));
+      }
+      oct.cull();
+
+      /* Trying to use package level with an array list throws an exception. */
+      final Vec3[] centers = oct.centersMean(false);
+      final int centersLen = centers.length;
+      final Color[] result = new Color[1 + centersLen];
+      for ( int i = 0; i < centersLen; ++i ) {
+         final Vec3 center = centers[i];
+         Color.labaToXyza(center.z, center.x, center.y, 1.0f, xyz);
+         Color.xyzaTolRgba(xyz, lrgb);
+         result[1 + i] = Color.lRgbaTosRgba(lrgb, false, new Color());
+      }
+      result[0] = Color.clearBlack(new Color());
+      return result;
+   }
+
+   /**
+    * Applies a palette to an array of pixels using an Octree to find the
+    * nearest match in Euclidean space. Retains the original color's
+    * transparency.
+    *
+    * @param source   the source pixels
+    * @param palette  the color palette
+    * @param capacity the octree capacity
+    * @param radius   the query radius
+    * @param target   the target pixels
+    *
+    * @return the modified pixels
+    *
+    * @see Bounds3#cieLab(Bounds3)
+    * @see Color#sRgbaTolRgba(Color, boolean, Color)
+    * @see Color#lRgbaToXyza(Color, Vec4)
+    * @see Color#xyzaToLaba(Vec4, Vec4)
+    * @see Color#toHexIntSat(Color)
+    * @see Color#fromHex(int, Color)
+    * @see Octree#insert(Vec3)
+    * @see Octree#cull()
+    * @see Utils#abs(float)
+    * @see Utils#max(float, float)
+    */
+   public static int[] paletteMap ( final int[] source, final Color[] palette,
+      final int capacity, final float radius, final int[] target ) {
+
+      final int srcLen = source.length;
+      if ( srcLen == target.length ) {
+         final Bounds3 bounds = Bounds3.cieLab(new Bounds3());
+         final Octree oct = new Octree(bounds, capacity);
+         oct.subdivide(1, capacity);
+
+         final Color srgb = new Color();
+         final Color lrgb = new Color();
+         final Vec4 xyz = new Vec4();
+         final Vec4 lab = new Vec4();
+         final Vec3 query = new Vec3();
+
+         final HashMap < Vec3, Integer > lookup = new HashMap <>(256, 0.75f);
+         final int palLen = palette.length;
+         for ( int h = 0; h < palLen; ++h ) {
+            final Color clrPal = palette[h];
+            if ( clrPal.a > 0.0f ) {
+               Color.sRgbaTolRgba(clrPal, false, lrgb);
+               Color.lRgbaToXyza(lrgb, xyz);
+               Color.xyzaToLaba(xyz, lab);
+               final Vec3 point = new Vec3(lab.x, lab.y, lab.z);
+               oct.insert(point);
+               lookup.put(point, Color.toHexIntSat(clrPal));
+            }
+         }
+         oct.cull();
+
+         final TreeMap < Float, Vec3 > found = new TreeMap <>();
+         final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
+         final float valRad = Utils.max(IUtils.EPSILON, Utils.abs(radius));
+         for ( int i = 0; i < srcLen; ++i ) {
+            final int srcHexInt = source[i];
+            if ( ( srcHexInt & 0xff000000 ) != 0 ) {
+               final int maskAlpha = srcHexInt & 0xff000000;
+               final int opaque = srcHexInt | 0xff000000;
+               final Integer srcHexObj = opaque;
+               if ( dict.containsKey(srcHexObj) ) {
+                  target[i] = maskAlpha | dict.get(srcHexObj);
+               } else {
+                  Color.fromHex(srcHexInt, srgb);
+                  Color.sRgbaTolRgba(srgb, false, lrgb);
+                  Color.lRgbaToXyza(lrgb, xyz);
+                  Color.xyzaToLaba(xyz, lab);
+                  query.set(lab.x, lab.y, lab.z);
+                  // final Vec3[] result = oct.queryRange(query, valRad);
+                  found.clear();
+                  oct.queryRange(query, valRad, found);
+                  // if ( result.length > 0 ) {
+                  if ( found.size() > 0 ) {
+                     // final Vec3 nearest = result[0];
+                     final Vec3 nearest = found.values().iterator().next();
+                     if ( lookup.containsKey(nearest) ) {
+                        final Integer hexNearObj = lookup.get(nearest)
+                           & 0x00ffffff;
+                        dict.put(srcHexObj, hexNearObj);
+                        target[i] = maskAlpha | hexNearObj;
+                     } else {
+                        target[i] = 0x00000000;
+                     }
+                  } else {
+                     target[i] = 0x00000000;
+                  }
+               }
+            } else {
+               target[i] = 0x00000000;
             }
          }
       }
@@ -1351,7 +1545,7 @@ public abstract class Pixels {
             final int trgLen = wTrg * hSrc;
             final int[] target = new int[trgLen];
             for ( int i = 0; i < trgLen; ++i ) {
-               final int yTrg = i / wTrg;
+               final float yTrg = i / wTrg;
                target[i] = Pixels.filterBilinear(xDiff + i % wTrg + tana
                   * ( yTrg - yCenter ), yTrg, wSrc, hSrc, source);
             }
@@ -1414,7 +1608,7 @@ public abstract class Pixels {
             final int trgLen = wSrc * hTrg;
             final int[] target = new int[trgLen];
             for ( int i = 0; i < trgLen; ++i ) {
-               final int xTrg = i % wSrc;
+               final float xTrg = i % wSrc;
                target[i] = Pixels.filterBilinear(xTrg, yDiff + i / wSrc + tana
                   * ( xTrg - xCenter ), wSrc, hSrc, source);
             }
