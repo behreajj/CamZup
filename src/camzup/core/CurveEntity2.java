@@ -513,9 +513,11 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       final float extrude, final float bevelDepth ) {
 
       final StringBuilder pyCd = new StringBuilder(2048);
-
       pyCd.append("from bpy import data as D, context as C\n\n");
-      pyCd.append("entity_src = {\"name\": \"CurveEntity2\", \"transform\": ");
+      pyCd.append("entity_src = {\"name\": \"");
+      if ( Character.isDigit(this.name.charAt(0)) ) { pyCd.append("id"); }
+      pyCd.append(this.name);
+      pyCd.append("\", \"transform\": ");
       this.transform.toBlenderCode(pyCd);
       pyCd.append(", \"curves\": [");
 

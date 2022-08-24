@@ -490,7 +490,10 @@ public class MaterialSolid extends Material {
       final float metallic, final float roughness, final float specular,
       final float clearcoat, final float clearcoatRough ) {
 
-      pyCd.append("{\"name\": \"Material\", \"fill\": ");
+      pyCd.append("{\"name\": \"");
+      if ( Character.isDigit(this.name.charAt(0)) ) { pyCd.append("id"); }
+      pyCd.append(this.name);
+      pyCd.append("\", \"fill\": ");
       this.fill.toBlenderCode(pyCd, gamma, true);
       pyCd.append(", \"metallic\": ");
       Utils.toFixed(pyCd, metallic, 6);

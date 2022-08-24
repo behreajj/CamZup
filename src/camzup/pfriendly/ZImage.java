@@ -1321,7 +1321,7 @@ public class ZImage extends PImage {
    public static PImage gradientRadial ( final Gradient grd,
       final Color.AbstrEasing easing, final PImage target ) {
 
-      return ZImage.gradientRadial(grd, 0.0f, 0.0f, 1.0f, easing, target);
+      return ZImage.gradientRadial(grd, 0.0f, 0.0f, 0.5f, easing, target);
    }
 
    /**
@@ -1385,7 +1385,7 @@ public class ZImage extends PImage {
    public static PImage gradientRadial ( final Gradient grd,
       final PImage target ) {
 
-      return ZImage.gradientRadial(grd, 0.0f, 0.0f, 1.0f, target);
+      return ZImage.gradientRadial(grd, 0.0f, 0.0f, 0.5f, target);
    }
 
    /**

@@ -349,25 +349,21 @@ public abstract class Pixels {
       }
 
       if ( a0 > 0.0f || a1 > 0.0f ) {
-         float r2 = 0.0f;
-         float g2 = 0.0f;
-         float b2 = 0.0f;
-
          final float yErr = ySrc - yf;
          final float u = 1.0f - yErr;
          final float a2 = u * a0 + yErr * a1;
          if ( a2 > 0.0f ) {
-            r2 = u * r0 + yErr * r1;
-            g2 = u * g0 + yErr * g1;
-            b2 = u * b0 + yErr * b1;
+            final float r2 = u * r0 + yErr * r1;
+            final float g2 = u * g0 + yErr * g1;
+            final float b2 = u * b0 + yErr * b1;
+
+            final int ai = a2 > 255.0f ? 255 : ( int ) a2;
+            final int ri = r2 > 255.0f ? 255 : ( int ) r2;
+            final int gi = g2 > 255.0f ? 255 : ( int ) g2;
+            final int bi = b2 > 255.0f ? 255 : ( int ) b2;
+
+            return ai << 0x18 | ri << 0x10 | gi << 0x08 | bi;
          }
-
-         final int ai = a2 > 255.0f ? 255 : ( int ) a2;
-         final int ri = r2 > 255.0f ? 255 : ( int ) r2;
-         final int gi = g2 > 255.0f ? 255 : ( int ) g2;
-         final int bi = b2 > 255.0f ? 255 : ( int ) b2;
-
-         return ai << 0x18 | ri << 0x10 | gi << 0x08 | bi;
       }
 
       return 0x00000000;

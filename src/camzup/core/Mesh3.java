@@ -2398,14 +2398,18 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int facesLen = this.faces.length;
       final int facesLast = facesLen - 1;
 
-      pyCd.append("{\"name\": \"Mesh3\", \"material_index\": ");
+      pyCd.append("{\"name\": \"");
+      if ( Character.isDigit(this.name.charAt(0)) ) { pyCd.append("id"); }
+      pyCd.append(this.name);
+      pyCd.append("\", \"material_index\": ");
       pyCd.append(this.materialIndex);
       pyCd.append(", \"vertices\": [");
 
-      for ( int i = 0; i < vsLen; ++i ) {
+      for ( int i = 0; i < vsLast; ++i ) {
          this.coords[i].toBlenderCode(pyCd);
-         if ( i < vsLast ) { pyCd.append(',').append(' '); }
+         pyCd.append(',').append(' ');
       }
+      this.coords[vsLast].toBlenderCode(pyCd);
 
       if ( includeEdges ) {
 
@@ -2450,10 +2454,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int vrtLast = vrtIndLen - 1;
 
          pyCd.append('(');
-         for ( int k = 0; k < vrtIndLen; ++k ) {
+         for ( int k = 0; k < vrtLast; ++k ) {
             pyCd.append(vrtInd[k][0]);
-            if ( k < vrtLast ) { pyCd.append(',').append(' '); }
+            pyCd.append(',').append(' ');
          }
+         pyCd.append(vrtInd[vrtLast][0]);
          pyCd.append(')');
 
          if ( j < facesLast ) { pyCd.append(',').append(' '); }
@@ -2464,10 +2469,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int vtsLast = vtsLen - 1;
 
          pyCd.append("], \"uvs\": [");
-         for ( int h = 0; h < vtsLen; ++h ) {
+         for ( int h = 0; h < vtsLast; ++h ) {
             this.texCoords[h].toBlenderCode(pyCd, true);
-            if ( h < vtsLast ) { pyCd.append(',').append(' '); }
+            pyCd.append(',').append(' ');
          }
+         this.texCoords[vtsLast].toBlenderCode(pyCd, true);
 
          pyCd.append("], \"uv_indices\": [");
          for ( int j = 0; j < facesLen; ++j ) {
@@ -2476,10 +2482,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final int vrtLast = vrtIndLen - 1;
 
             pyCd.append('(');
-            for ( int k = 0; k < vrtIndLen; ++k ) {
+            for ( int k = 0; k < vrtLast; ++k ) {
                pyCd.append(vrtInd[k][1]);
-               if ( k < vrtLast ) { pyCd.append(',').append(' '); }
+               pyCd.append(',').append(' ');
             }
+            pyCd.append(vrtInd[vrtLast][1]);
             pyCd.append(')');
 
             if ( j < facesLast ) { pyCd.append(',').append(' '); }
@@ -2490,10 +2497,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          pyCd.append("], \"normals\": [");
          final int vnsLen = this.normals.length;
          final int vnsLast = vnsLen - 1;
-         for ( int h = 0; h < vnsLen; ++h ) {
+         for ( int h = 0; h < vnsLast; ++h ) {
             this.normals[h].toBlenderCode(pyCd);
-            if ( h < vnsLast ) { pyCd.append(',').append(' '); }
+            pyCd.append(',').append(' ');
          }
+         this.normals[vnsLast].toBlenderCode(pyCd);
 
          pyCd.append("], \"normal_indices\": [");
          for ( int j = 0; j < facesLen; ++j ) {
@@ -4904,7 +4912,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int len = coords.length;
 
       for ( int i = 0; i < len; ++i ) {
-
          final Vec3 coord = coords[i];
          final float x = coord.x;
          final float y = coord.y;

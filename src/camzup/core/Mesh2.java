@@ -1717,14 +1717,18 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int facesLen = this.faces.length;
       final int facesLast = facesLen - 1;
 
-      pyCd.append("{\"name\": \"Mesh2\", \"material_index\": ");
+      pyCd.append("{\"name\": \"");
+      if ( Character.isDigit(this.name.charAt(0)) ) { pyCd.append("id"); }
+      pyCd.append(this.name);
+      pyCd.append("\", \"material_index\": ");
       pyCd.append(this.materialIndex);
       pyCd.append(", \"vertices\": [");
 
-      for ( int i = 0; i < vsLen; ++i ) {
+      for ( int i = 0; i < vsLast; ++i ) {
          this.coords[i].toBlenderCode(pyCd, z);
-         if ( i < vsLast ) { pyCd.append(',').append(' '); }
+         pyCd.append(',').append(' ');
       }
+      this.coords[vsLast].toBlenderCode(pyCd, z);
 
       if ( includeEdges ) {
 
@@ -1774,10 +1778,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final int vrtLast = vrtIndLen - 1;
 
          pyCd.append('(');
-         for ( int k = 0; k < vrtIndLen; ++k ) {
+         for ( int k = 0; k < vrtLast; ++k ) {
             pyCd.append(vrtInd[k][0]);
-            if ( k < vrtLast ) { pyCd.append(',').append(' '); }
+            pyCd.append(',').append(' ');
          }
+         pyCd.append(vrtInd[vrtLast][0]);
          pyCd.append(')');
 
          if ( j < facesLast ) { pyCd.append(',').append(' '); }
@@ -1788,10 +1793,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final int vtsLast = vtsLen - 1;
 
          pyCd.append("], \"uvs\": [");
-         for ( int h = 0; h < vtsLen; ++h ) {
+         for ( int h = 0; h < vtsLast; ++h ) {
             this.texCoords[h].toBlenderCode(pyCd, true);
-            if ( h < vtsLast ) { pyCd.append(',').append(' '); }
+            pyCd.append(',').append(' ');
          }
+         this.texCoords[vtsLast].toBlenderCode(pyCd, true);
 
          pyCd.append("], \"uv_indices\": [");
          for ( int j = 0; j < facesLen; ++j ) {
@@ -1800,10 +1806,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             final int vrtLast = vrtIndLen - 1;
 
             pyCd.append('(');
-            for ( int k = 0; k < vrtIndLen; ++k ) {
+            for ( int k = 0; k < vrtLast; ++k ) {
                pyCd.append(vrtInd[k][1]);
-               if ( k < vrtLast ) { pyCd.append(',').append(' '); }
+               pyCd.append(',').append(' ');
             }
+            pyCd.append(vrtInd[vrtLast][1]);
             pyCd.append(')');
 
             if ( j < facesLast ) { pyCd.append(',').append(' '); }
