@@ -41,7 +41,7 @@ public class CamZup {
    /**
     * The library's current version.
     */
-   public static final String VERSION = "##library.version##";
+   public static final String VERSION = "##library.prettyVersion##";
 
    /**
     * The main function.
@@ -50,8 +50,6 @@ public class CamZup {
     */
 
    public static void main ( final String[] args ) {
-
-      System.out.println(Integer.toHexString(-1235467897));
    }
 
    /**

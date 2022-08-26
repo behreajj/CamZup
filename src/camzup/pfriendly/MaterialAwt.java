@@ -146,8 +146,7 @@ public class MaterialAwt extends Material {
       result = prime * result + Float.floatToIntBits(this.strokeWeight);
       result = prime * result + ( this.texture == null ? 0 : this.texture
          .hashCode() );
-      result = prime * result + ( this.useStroke ? 1231 : 1237 );
-      return result;
+      return prime * result + ( this.useStroke ? 1231 : 1237 );
    }
 
    /**
@@ -382,8 +381,7 @@ public class MaterialAwt extends Material {
          result = prime * result + this.xBottomRight;
          result = prime * result + this.xTopLeft;
          result = prime * result + this.yBottomRight;
-         result = prime * result + this.yTopLeft;
-         return result;
+         return prime * result + this.yTopLeft;
       }
 
       /**

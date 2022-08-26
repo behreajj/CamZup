@@ -189,9 +189,8 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    public int hashCode ( ) {
 
       final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + this.meshes.hashCode();
-      return result;
+      final int result = super.hashCode();
+      return prime * result + this.meshes.hashCode();
    }
 
    /**
@@ -586,7 +585,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       sb.append(this.name);
       sb.append('\"');
       sb.append(", transform: ");
-      sb.append(this.transform.toString(places));
+      this.transform.toString(sb, places);
       sb.append(", meshes: [ ");
 
       final Iterator < Mesh3 > itr = this.meshes.iterator();

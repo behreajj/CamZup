@@ -381,8 +381,7 @@ public class Quaternion implements Comparable < Quaternion > {
       final Quaternion target, final Quaternion sum ) {
 
       Quaternion.add(a, b, sum);
-      Quaternion.normalize(sum, target);
-      return target;
+      return Quaternion.normalize(sum, target);
    }
 
    /**
@@ -518,23 +517,19 @@ public class Quaternion implements Comparable < Quaternion > {
    public static Quaternion div ( final float a, final Quaternion b,
       final Quaternion target ) {
 
-      if ( a != 0.0f ) {
-         final Vec3 bi = b.imag;
-         final float bw = b.real;
-         final float bx = bi.x;
-         final float by = bi.y;
-         final float bz = bi.z;
-         final float bmSq = bw * bw + bx * bx + by * by + bz * bz;
-         if ( bmSq != 0.0f ) {
-            final float abmSqInv = a / bmSq;
-            return target.set(bw * abmSqInv, -bx * abmSqInv, -by * abmSqInv, -bz
-               * abmSqInv);
-         } else {
-            return Quaternion.identity(target);
-         }
-      } else {
-         return Quaternion.identity(target);
+      if ( a == 0.0f ) { return Quaternion.identity(target); }
+      final Vec3 bi = b.imag;
+      final float bw = b.real;
+      final float bx = bi.x;
+      final float by = bi.y;
+      final float bz = bi.z;
+      final float bmSq = bw * bw + bx * bx + by * by + bz * bz;
+      if ( bmSq != 0.0f ) {
+         final float abmSqInv = a / bmSq;
+         return target.set(bw * abmSqInv, -bx * abmSqInv, -by * abmSqInv, -bz
+            * abmSqInv);
       }
+      return Quaternion.identity(target);
    }
 
    /**
@@ -562,11 +557,10 @@ public class Quaternion implements Comparable < Quaternion > {
          Quaternion.inverse(b, inverted, conjugate);
          Quaternion.mul(a, inverted, target);
          return target;
-      } else {
-         Quaternion.identity(conjugate);
-         Quaternion.identity(inverted);
-         return Quaternion.identity(target);
       }
+      Quaternion.identity(conjugate);
+      Quaternion.identity(inverted);
+      return Quaternion.identity(target);
    }
 
    /**
@@ -666,11 +660,10 @@ public class Quaternion implements Comparable < Quaternion > {
       if ( Quaternion.any(b) ) {
          Quaternion.inverse(b, inverted, conjugate);
          return Quaternion.mul(a, inverted, target);
-      } else {
-         Quaternion.identity(conjugate);
-         Quaternion.identity(inverted);
-         return Quaternion.identity(target);
       }
+      Quaternion.identity(conjugate);
+      Quaternion.identity(inverted);
+      return Quaternion.identity(target);
    }
 
    /**
@@ -711,6 +704,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * @see Math#sqrt(double)
     * @see Math#sin(double)
     * @see Math#cos(double)
+    * @see Quaternion#identity(Quaternion)
     */
    public static Quaternion exp ( final Quaternion q,
       final Quaternion target ) {
@@ -727,9 +721,8 @@ public class Quaternion implements Comparable < Quaternion > {
          final double scalar = wExp * Math.sin(mgIm) / mgIm;
          return target.set(( float ) ( wExp * Math.cos(mgIm) ), ( float ) ( x
             * scalar ), ( float ) ( y * scalar ), ( float ) ( z * scalar ));
-      } else {
-         return Quaternion.identity(target);
       }
+      return Quaternion.identity(target);
    }
 
    /**
@@ -793,9 +786,10 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @return the quaternion
     *
-    * @see Vec3#magSq(Vec3)
+    * @see Quaternion#identity(Quaternion)
     * @see Utils#approx(float, float)
     * @see Utils#invSqrtUnchecked(float)
+    * @see Vec3#magSq(Vec3)
     */
    public static Quaternion fromAxisAngle ( final float radians,
       final Vec3 axis, final Quaternion target ) {
@@ -823,7 +817,7 @@ public class Quaternion implements Comparable < Quaternion > {
                * sinHalf ));
       }
 
-      return target.reset();
+      return Quaternion.identity(target);
    }
 
    /**
@@ -840,14 +834,16 @@ public class Quaternion implements Comparable < Quaternion > {
     * @see Utils#invHypot(float, float, float)
     * @see Quaternion#fromAxes(float, float, float, float, float, float,
     *      float, float, float, Quaternion)
+    * @see Quaternion#identity(Quaternion)
+    * @see Vec3#magSq(Vec3)
+    * @see Vec3#none(Vec3)
     */
    @Experimental
    public static Quaternion fromDir ( final Vec3 dir,
       final Handedness handedness, final Quaternion target ) {
 
-      final float mSq0 = dir.x * dir.x + dir.y * dir.y + dir.z * dir.z;
-      if ( Utils.approx(mSq0, 0.0f) ) { return target.reset(); }
-
+      if ( Vec3.none(dir) ) { return Quaternion.identity(target); }
+      final float mSq0 = Vec3.magSq(dir);
       final float mInv0 = Utils.invSqrtUnchecked(mSq0);
       final float xForward = dir.x * mInv0;
       final float yForward = dir.y * mInv0;
@@ -869,7 +865,6 @@ public class Quaternion implements Comparable < Quaternion > {
 
       if ( parallel ) {
          if ( isRight ) {
-
             /*
              * In a right-handed coordinate system, the forward axis is either
              * (0.0, 0.0, 1.0) or (0.0, 0.0, -1.0) .
@@ -877,20 +872,16 @@ public class Quaternion implements Comparable < Quaternion > {
             if ( zForward < 0.0f ) {
                return target.set(-IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f,
                   0.0f);
-            } else {
-               return target.set(IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f,
-                  0.0f);
             }
-
-         } else if ( yForward < 0.0f ) {
-            /*
-             * In a left-handed coordinate system, the forward axis is either
-             * (0.0, 1.0, 0.0) or (0.0, -1.0, 0.0) .
-             */
-            return target.set(0.0f, 0.0f, 0.0f, 1.0f);
-         } else {
-            return target.set(0.0f, 0.0f, 1.0f, 0.0f);
+            return target.set(IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f, 0.0f);
          }
+
+         /*
+          * In a left-handed coordinate system, the forward axis is either (0.0,
+          * 1.0, 0.0) or (0.0, -1.0, 0.0) .
+          */
+         if ( yForward < 0.0f ) { return target.set(0.0f, 0.0f, 0.0f, 1.0f); }
+         return target.set(0.0f, 0.0f, 1.0f, 0.0f);
       }
 
       /* Normalize right. */
@@ -930,6 +921,7 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @see Quaternion#fromAxes(float, float, float, float, float, float,
     *      float, float, float, Quaternion)
+    * @see Quaternion#identity(Quaternion)
     * @see Vec3#crossNorm(Vec3, Vec3, Vec3)
     * @see Vec3#forward(Vec3)
     * @see Vec3#none(Vec3)
@@ -945,7 +937,7 @@ public class Quaternion implements Comparable < Quaternion > {
          Vec3.right(right);
          Vec3.forward(forward);
          Vec3.up(up);
-         return target.reset();
+         return Quaternion.identity(target);
       }
 
       Vec3.normalize(dir, forward);
@@ -971,30 +963,27 @@ public class Quaternion implements Comparable < Quaternion > {
                Vec3.forward(up);
                return target.set(-IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f,
                   0.0f);
-            } else {
-               Vec3.right(right);
-               Vec3.up(forward);
-               Vec3.back(up);
-               return target.set(IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f,
-                  0.0f);
             }
+            Vec3.right(right);
+            Vec3.up(forward);
+            Vec3.back(up);
+            return target.set(IUtils.ONE_SQRT_2, IUtils.ONE_SQRT_2, 0.0f, 0.0f);
+         }
 
-         } else if ( forward.y < 0.0f ) {
-            /*
-             * In a left-handed coordinate system, the forward axis is either
-             * (0.0, 1.0, 0.0) or (0.0, -1.0, 0.0) .
-             */
+         /*
+          * In a left-handed coordinate system, the forward axis is either (0.0,
+          * 1.0, 0.0) or (0.0, -1.0, 0.0) .
+          */
+         if ( forward.y < 0.0f ) {
             Vec3.left(right);
             Vec3.back(forward);
             Vec3.up(up);
             return target.set(0.0f, 0.0f, 0.0f, 1.0f);
-         } else {
-            Vec3.left(right);
-            Vec3.forward(forward);
-            Vec3.down(up);
-            return target.set(0.0f, 0.0f, 1.0f, 0.0f);
          }
-
+         Vec3.left(right);
+         Vec3.forward(forward);
+         Vec3.down(up);
+         return target.set(0.0f, 0.0f, 1.0f, 0.0f);
       }
 
       Vec3.normalize(right, right);
@@ -1231,7 +1220,7 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @see Quaternion#conj(Quaternion, Quaternion)
     * @see Quaternion#div(Quaternion, float, Quaternion)
-    * @see Quaternion#dot(Quaternion, Quaternion)
+    * @see Quaternion#magSq(Quaternion)
     */
    public static Quaternion inverse ( final Quaternion q,
       final Quaternion target, final Quaternion conjugate ) {
@@ -1370,8 +1359,8 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @return the magnitude
     *
+    * @see Quaternion#magSq(Quaternion)
     * @see Utils#sqrtUnchecked(float)
-    * @see Quaternion#dot(Quaternion, Quaternion)
     */
    public static float mag ( final Quaternion q ) {
 
@@ -1441,9 +1430,8 @@ public class Quaternion implements Comparable < Quaternion > {
          Vec3.mul(a, b.imag, target.imag);
          target.real = a * b.real;
          return target;
-      } else {
-         return Quaternion.identity(target);
       }
+      return Quaternion.identity(target);
    }
 
    /**
@@ -1465,9 +1453,8 @@ public class Quaternion implements Comparable < Quaternion > {
          Vec3.mul(a.imag, b, target.imag);
          target.real = a.real * b;
          return target;
-      } else {
-         return Quaternion.identity(target);
       }
+      return Quaternion.identity(target);
    }
 
    /**
@@ -1662,9 +1649,8 @@ public class Quaternion implements Comparable < Quaternion > {
          return target.set(( float ) ( lnwExp * Math.cos(lnMgIm) ),
             ( float ) ( lnx * lnSclr ), ( float ) ( lny * lnSclr ),
             ( float ) ( lnz * lnSclr ));
-      } else {
-         return Quaternion.identity(target);
       }
+      return Quaternion.identity(target);
    }
 
    /**
@@ -1682,9 +1668,9 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @return the output quaternion
     *
+    * @see Quaternion#exp(Quaternion, Quaternion)
     * @see Quaternion#log(Quaternion, Quaternion)
     * @see Quaternion#mul(Quaternion, float, Quaternion)
-    * @see Quaternion#exp(Quaternion, Quaternion)
     */
    public static Quaternion pow ( final Quaternion a, final float b,
       final Quaternion target, final Quaternion ln, final Quaternion scaled ) {
@@ -1949,8 +1935,7 @@ public class Quaternion implements Comparable < Quaternion > {
       final Quaternion target, final Quaternion diff ) {
 
       Quaternion.sub(a, b, diff);
-      Quaternion.normalize(diff, target);
-      return target;
+      return Quaternion.normalize(diff, target);
    }
 
    /**
@@ -2259,6 +2244,11 @@ public class Quaternion implements Comparable < Quaternion > {
    public static class Lerp extends AbstrEasing {
 
       /**
+       * The default constructor.
+       */
+      public Lerp ( ) {}
+
+      /**
        * Eases between the origin and destination quaternion by a step.
        * Normalizes the result.
        *
@@ -2306,6 +2296,11 @@ public class Quaternion implements Comparable < Quaternion > {
     * . The result is normalized following interpolation.
     */
    public static class Slerp extends AbstrEasing {
+
+      /**
+       * The default constructor.
+       */
+      public Slerp ( ) {}
 
       /**
        * Eases between two quaternions by a step.

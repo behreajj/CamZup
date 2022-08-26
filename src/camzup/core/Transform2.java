@@ -856,15 +856,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(160);
-      sb.append("{ location: ");
-      this.location.toString(sb, places);
-      sb.append(", rotation: ");
-      Utils.toFixed(sb, this.rotation, places);
-      sb.append(", scale: ");
-      this.scale.toString(sb, places);
-      sb.append(" }");
-      return sb.toString();
+      return this.toString(new StringBuilder(256), places).toString();
    }
 
    /**
@@ -922,6 +914,27 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
       this.scale.toBlenderCode(pyCd, depth);
       pyCd.append("}");
       return pyCd;
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * transforms. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ location: ");
+      this.location.toString(sb, places);
+      sb.append(", rotation: ");
+      Utils.toFixed(sb, this.rotation, places);
+      sb.append(", scale: ");
+      this.scale.toString(sb, places);
+      sb.append(" }");
+      return sb;
    }
 
    /**

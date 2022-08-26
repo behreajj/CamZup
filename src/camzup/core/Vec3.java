@@ -394,8 +394,7 @@ public class Vec3 implements Comparable < Vec3 > {
       final Vec3 sum ) {
 
       Vec3.add(a, b, sum);
-      Vec3.normalize(sum, target);
-      return target;
+      return Vec3.normalize(sum, target);
    }
 
    /**
@@ -459,9 +458,8 @@ public class Vec3 implements Comparable < Vec3 > {
          return ( float ) Math.acos( ( ax * bx + ay * by + az * bz ) / ( Math
             .sqrt(ax * ax + ay * ay + az * az) * Math.sqrt(bx * bx + by * by
                + bz * bz) ));
-      } else {
-         return 0.0f;
       }
+      return 0.0f;
    }
 
    /**
@@ -684,9 +682,8 @@ public class Vec3 implements Comparable < Vec3 > {
    public static Vec3 bezierPoint ( final Vec3 ap0, final Vec3 cp0,
       final Vec3 cp1, final Vec3 ap1, final float step, final Vec3 target ) {
 
-      if ( step <= 0.0f ) {
-         return target.set(ap0);
-      } else if ( step >= 1.0f ) { return target.set(ap1); }
+      if ( step <= 0.0f ) { return target.set(ap0); }
+      if ( step >= 1.0f ) { return target.set(ap1); }
 
       final float u = 1.0f - step;
       float tcb = step * step;
@@ -722,9 +719,8 @@ public class Vec3 implements Comparable < Vec3 > {
    public static Vec3 bezierTangent ( final Vec3 ap0, final Vec3 cp0,
       final Vec3 cp1, final Vec3 ap1, final float step, final Vec3 target ) {
 
-      if ( step <= 0.0f ) {
-         return Vec3.sub(cp0, ap0, target);
-      } else if ( step >= 1.0f ) { return Vec3.sub(ap1, cp1, target); }
+      if ( step <= 0.0f ) { return Vec3.sub(cp0, ap0, target); }
+      if ( step >= 1.0f ) { return Vec3.sub(ap1, cp1, target); }
 
       final float u = 1.0f - step;
       final float t3 = step + step + step;
@@ -936,8 +932,7 @@ public class Vec3 implements Comparable < Vec3 > {
       final Vec3 crossed ) {
 
       Vec3.cross(a, b, crossed);
-      Vec3.normalize(crossed, target);
-      return target;
+      return Vec3.normalize(crossed, target);
    }
 
    /**
@@ -2681,9 +2676,8 @@ public class Vec3 implements Comparable < Vec3 > {
       if ( scalar != 0.0f && mSq > 0.0f ) {
          final float sclMg = scalar * Utils.invSqrtUnchecked(mSq);
          return target.set(v.x * sclMg, v.y * sclMg, v.z * sclMg);
-      } else {
-         return target.reset();
       }
+      return target.reset();
    }
 
    /**
@@ -3035,8 +3029,7 @@ public class Vec3 implements Comparable < Vec3 > {
       final Vec3 dir ) {
 
       Vec3.sub(a, b, dir);
-      Vec3.normalize(dir, target);
-      return target;
+      return Vec3.normalize(dir, target);
    }
 
    /**
@@ -3052,23 +3045,21 @@ public class Vec3 implements Comparable < Vec3 > {
    public static StringBuilder toString ( final StringBuilder sb,
       final Vec3[] arr, final int places ) {
 
-      sb.append('[').append(' ');
+      /* Caches array element to a variable in case of null check. */
 
+      sb.append('[').append(' ');
       if ( arr != null ) {
          final int len = arr.length;
          final int last = len - 1;
-
          for ( int i = 0; i < last; ++i ) {
             final Vec3 v = arr[i];
             v.toString(sb, places);
             sb.append(',').append(' ');
          }
-
          final Vec3 vl = arr[last];
          vl.toString(sb, places);
          sb.append(' ');
       }
-
       sb.append(']');
 
       return sb;
@@ -3313,6 +3304,11 @@ public class Vec3 implements Comparable < Vec3 > {
    public static class Lerp extends AbstrEasing {
 
       /**
+       * The default constructor.
+       */
+      public Lerp ( ) {}
+
+      /**
        * Eases between two vectors by a step using the formula ( 1.0 -
        * <em>t</em> ) <em>a</em> + <em>t</em> <em>b</em>.
        *
@@ -3339,6 +3335,11 @@ public class Vec3 implements Comparable < Vec3 > {
     * <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> ) .
     */
    public static class SmoothStep extends AbstrEasing {
+
+      /**
+       * The default constructor.
+       */
+      public SmoothStep ( ) {}
 
       /**
        * Applies the function.
@@ -3412,6 +3413,11 @@ public class Vec3 implements Comparable < Vec3 > {
    public static class SortX extends AbstrComparator {
 
       /**
+       * The default constructor.
+       */
+      public SortX ( ) {}
+
+      /**
        * The compare function.
        *
        * @param a the left comparisand
@@ -3433,6 +3439,11 @@ public class Vec3 implements Comparable < Vec3 > {
    public static class SortY extends AbstrComparator {
 
       /**
+       * The default constructor.
+       */
+      public SortY ( ) {}
+
+      /**
        * The compare function.
        *
        * @param a the left comparisand
@@ -3452,6 +3463,11 @@ public class Vec3 implements Comparable < Vec3 > {
     * Compares two vectors on the z axis.
     */
    public static class SortZ extends AbstrComparator {
+
+      /**
+       * The default constructor.
+       */
+      public SortZ ( ) {}
 
       /**
        * The compare function.

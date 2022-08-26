@@ -3283,13 +3283,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    protected void drawCurve2 ( final Curve2 curve ) {
 
-      Vec2 co = null;
       Vec2 rh = null;
       Vec2 fh = null;
 
       final Iterator < Knot2 > itr = curve.iterator();
       final Knot2 firstKnot = itr.next();
-      co = firstKnot.coord;
+      Vec2 co = firstKnot.coord;
       this.beginShape(PConstants.POLYGON);
       this.normalPerShape(0.0f, 0.0f, 1.0f);
       this.vertexImpl(co.x, co.y, 0.0f, this.textureU, this.textureV);

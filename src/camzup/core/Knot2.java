@@ -1555,6 +1555,11 @@ public class Knot2 implements Comparable < Knot2 > {
    public static class Lerp extends AbstrEasing {
 
       /**
+       * The default constructor.
+       */
+      public Lerp ( ) {}
+
+      /**
        * Eases between two knots by a step using the formula (1.0 - t) * a + t *
        * b .
        *

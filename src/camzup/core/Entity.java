@@ -60,10 +60,9 @@ public abstract class Entity implements IEntity {
    @Override
    public int hashCode ( ) {
 
-      int hash = IUtils.HASH_BASE;
-      hash = hash * IUtils.HASH_MUL ^ ( this.name == null ? 0 : this.name
+      final int hash = IUtils.HASH_BASE;
+      return hash * IUtils.HASH_MUL ^ ( this.name == null ? 0 : this.name
          .hashCode() );
-      return hash;
    }
 
    /**

@@ -378,11 +378,11 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final int j = Utils.mod(edgeIndex, vertsLen);
       final int k = ( j + 1 ) % vertsLen;
-      final int[] idxOrigin = face[j];
+      final int[] idxOrig = face[j];
       final int[] idxDest = face[k];
 
-      final int idxV0 = idxOrigin[0];
-      final int idxVt0 = idxOrigin[1];
+      final int idxV0 = idxOrig[0];
+      final int idxVt0 = idxOrig[1];
 
       final int idxV3 = idxDest[0];
       final int idxVt3 = idxDest[1];
@@ -606,17 +606,17 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             final int[] idcsOrigin = fs[j];
             final int[] idcsDest = fs[ ( j + 1 ) % faceLen];
 
-            final int vIdxOrigin = idcsOrigin[0];
+            final int vIdxOrig = idcsOrigin[0];
             final int vIdxDest = idcsDest[0];
 
-            final Integer aHsh = ( IUtils.MUL_BASE ^ vIdxOrigin )
+            final Integer aHsh = ( IUtils.MUL_BASE ^ vIdxOrig )
                * IUtils.HASH_MUL ^ vIdxDest;
             final Integer bHsh = ( IUtils.MUL_BASE ^ vIdxDest )
-               * IUtils.HASH_MUL ^ vIdxOrigin;
+               * IUtils.HASH_MUL ^ vIdxOrig;
 
             if ( !result.containsKey(aHsh) && !result.containsKey(bHsh) ) {
-               result.put(vIdxOrigin < vIdxDest ? aHsh : bHsh, new Edge2(
-                  this.coords[vIdxOrigin], this.texCoords[idcsOrigin[1]],
+               result.put(vIdxOrig < vIdxDest ? aHsh : bHsh, new Edge2(
+                  this.coords[vIdxOrig], this.texCoords[idcsOrigin[1]],
                   this.coords[vIdxDest], this.texCoords[idcsDest[1]]));
             }
          }
@@ -734,8 +734,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       int hash = super.hashCode();
       hash = hash * IUtils.HASH_MUL ^ Arrays.hashCode(this.coords);
-      hash = hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
-      return hash;
+      return hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
    }
 
    /**

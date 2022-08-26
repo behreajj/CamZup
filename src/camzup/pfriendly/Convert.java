@@ -814,11 +814,11 @@ public abstract class Convert {
       final int facesLen = source.faces.length;
       if ( facesLen == audit.get(3) ) {
          return Convert.toPShapeUniform(rndr, source, PConstants.TRIANGLES);
-      } else if ( facesLen == audit.get(4) ) {
-         return Convert.toPShapeUniform(rndr, source, PConstants.QUADS);
-      } else {
-         return Convert.toPShapeNonUniform(rndr, source);
       }
+      if ( facesLen == audit.get(4) ) {
+         return Convert.toPShapeUniform(rndr, source, PConstants.QUADS);
+      }
+      return Convert.toPShapeNonUniform(rndr, source);
    }
 
    /**
@@ -845,11 +845,11 @@ public abstract class Convert {
       final int facesLen = source.faces.length;
       if ( facesLen == audit.get(3) ) {
          return Convert.toPShapeUniform(rndr, source, PConstants.TRIANGLES);
-      } else if ( facesLen == audit.get(4) ) {
-         return Convert.toPShapeUniform(rndr, source, PConstants.QUADS);
-      } else {
-         return Convert.toPShapeNonUniform(rndr, source);
       }
+      if ( facesLen == audit.get(4) ) {
+         return Convert.toPShapeUniform(rndr, source, PConstants.QUADS);
+      }
+      return Convert.toPShapeNonUniform(rndr, source);
    }
 
    /**
@@ -936,7 +936,6 @@ public abstract class Convert {
       final float maxDim = Transform3.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
       // shape.disableStyle();
-
       return shape;
    }
 
@@ -1073,7 +1072,6 @@ public abstract class Convert {
       for ( int i = 0; i < facesLen; ++i ) {
          final int[][] verts = faces[i];
          final int vertsLen = verts.length;
-
          for ( int j = 0; j < vertsLen; ++j ) {
             final int[] vert = verts[j];
             final Vec2 v = vs[vert[0]];
@@ -1116,7 +1114,6 @@ public abstract class Convert {
       for ( int i = 0; i < facesLen; ++i ) {
          final int[][] verts = faces[i];
          final int vertsLen = verts.length;
-
          for ( int j = 0; j < vertsLen; ++j ) {
             final int[] vert = verts[j];
             final Vec3 v = vs[vert[0]];

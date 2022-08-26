@@ -389,9 +389,7 @@ public class Mat4 {
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m30);
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m31);
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m32);
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m33);
-
-      return hash;
+      return hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m33);
    }
 
    /**
@@ -751,43 +749,7 @@ public class Mat4 {
     */
    public String toString ( final int places ) {
 
-      // TODO: Switch to pass by reference format.
-      final StringBuilder sb = new StringBuilder(512);
-      sb.append("{ m00: ");
-      Utils.toFixed(sb, this.m00, places);
-      sb.append(", m01: ");
-      Utils.toFixed(sb, this.m01, places);
-      sb.append(", m02: ");
-      Utils.toFixed(sb, this.m02, places);
-      sb.append(", m03: ");
-      Utils.toFixed(sb, this.m03, places);
-      sb.append(", m10: ");
-      Utils.toFixed(sb, this.m10, places);
-      sb.append(", m11: ");
-      Utils.toFixed(sb, this.m11, places);
-      sb.append(", m12: ");
-      Utils.toFixed(sb, this.m12, places);
-      sb.append(", m13: ");
-      Utils.toFixed(sb, this.m13, places);
-      sb.append(", m20: ");
-      Utils.toFixed(sb, this.m20, places);
-      sb.append(", m21: ");
-      Utils.toFixed(sb, this.m21, places);
-      sb.append(", m22: ");
-      Utils.toFixed(sb, this.m22, places);
-      sb.append(", m23: ");
-      Utils.toFixed(sb, this.m23, places);
-      sb.append(", m30: ");
-      Utils.toFixed(sb, this.m30, places);
-      sb.append(", m31: ");
-      Utils.toFixed(sb, this.m31, places);
-      sb.append(", m32: ");
-      Utils.toFixed(sb, this.m32, places);
-      sb.append(", m33: ");
-      Utils.toFixed(sb, this.m33, places);
-      sb.append(' ');
-      sb.append('}');
-      return sb.toString();
+      return this.toString(new StringBuilder(512), places).toString();
    }
 
    /**
@@ -844,6 +806,56 @@ public class Mat4 {
          .append('\n')
          .toString();
       /* @formatter:on */
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * matrices. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    *
+    * @see Utils#toFixed(StringBuilder, float, int)
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ m00: ");
+      Utils.toFixed(sb, this.m00, places);
+      sb.append(", m01: ");
+      Utils.toFixed(sb, this.m01, places);
+      sb.append(", m02: ");
+      Utils.toFixed(sb, this.m02, places);
+      sb.append(", m03: ");
+      Utils.toFixed(sb, this.m03, places);
+      sb.append(", m10: ");
+      Utils.toFixed(sb, this.m10, places);
+      sb.append(", m11: ");
+      Utils.toFixed(sb, this.m11, places);
+      sb.append(", m12: ");
+      Utils.toFixed(sb, this.m12, places);
+      sb.append(", m13: ");
+      Utils.toFixed(sb, this.m13, places);
+      sb.append(", m20: ");
+      Utils.toFixed(sb, this.m20, places);
+      sb.append(", m21: ");
+      Utils.toFixed(sb, this.m21, places);
+      sb.append(", m22: ");
+      Utils.toFixed(sb, this.m22, places);
+      sb.append(", m23: ");
+      Utils.toFixed(sb, this.m23, places);
+      sb.append(", m30: ");
+      Utils.toFixed(sb, this.m30, places);
+      sb.append(", m31: ");
+      Utils.toFixed(sb, this.m31, places);
+      sb.append(", m32: ");
+      Utils.toFixed(sb, this.m32, places);
+      sb.append(", m33: ");
+      Utils.toFixed(sb, this.m33, places);
+      sb.append(' ');
+      sb.append('}');
+      return sb;
    }
 
    /**
@@ -1003,6 +1015,11 @@ public class Mat4 {
     * @param k          the up axis
     *
     * @return the camera matrix
+    *
+    * @see Mat4#fromTranslation(Vec3, Mat4)
+    * @see Vec3#crossNorm(Vec3, Vec3, Vec3)
+    * @see Vec3#dot(Vec3, Vec3)
+    * @see Vec3#subNorm(Vec3, Vec3, Vec3)
     */
    public static Mat4 camera ( final Vec3 loc, final Vec3 focus, final Vec3 ref,
       final Handedness handedness, final Mat4 target, final Vec3 i,
@@ -1055,13 +1072,12 @@ public class Mat4 {
                * 0.38960868f - loc.y * 0.8345119f - loc.z * 0.38960868f,
             0.590089f, 0.55098987f, -0.590089f, -loc.x * 0.590089f - loc.y
                * 0.55098987f + loc.z * 0.590089f, 0.0f, 0.0f, 0.0f, 1.0f);
-      } else {
-         return target.set(0.70710677f, 0.70710677f, 0.0f, -loc.x * 0.70710677f
-            - loc.y * 0.70710677f, -0.38960868f, 0.38960868f, 0.8345119f, loc.x
-               * 0.38960868f - loc.y * 0.38960868f - loc.z * 0.8345119f,
-            0.590089f, -0.590089f, 0.55098987f, -loc.x * 0.590089f + loc.y
-               * 0.590089f - loc.z * 0.55098987f, 0.0f, 0.0f, 0.0f, 1.0f);
       }
+      return target.set(0.70710677f, 0.70710677f, 0.0f, -loc.x * 0.70710677f
+         - loc.y * 0.70710677f, -0.38960868f, 0.38960868f, 0.8345119f, loc.x
+            * 0.38960868f - loc.y * 0.38960868f - loc.z * 0.8345119f, 0.590089f,
+         -0.590089f, 0.55098987f, -loc.x * 0.590089f + loc.y * 0.590089f - loc.z
+            * 0.55098987f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1074,11 +1090,11 @@ public class Mat4 {
     * @param rot   the output rotation
     * @param scale the output scale
     *
-    * @see Utils#hypot(float, float, float)
     * @see Mat4#determinant(Mat4)
-    * @see Utils#div(float, float)
     * @see Quaternion#fromAxes(float, float, float, float, float, float,
     *      float, float, float, Quaternion)
+    * @see Utils#div(float, float)
+    * @see Utils#hypot(float, float, float)
     */
    public static void decompose ( final Mat4 m, final Vec3 trans,
       final Quaternion rot, final Vec3 scale ) {
@@ -1300,9 +1316,8 @@ public class Mat4 {
          final float norm = radians * IUtils.ONE_TAU;
          return Mat4.fromRotation(Utils.scNorm(norm), Utils.scNorm(norm
             - 0.25f), ax * mInv, ay * mInv, az * mInv, target);
-      } else {
-         return Mat4.identity(target);
       }
+      return Mat4.identity(target);
    }
 
    /**
@@ -1481,6 +1496,8 @@ public class Mat4 {
     * @param target the output matrix
     *
     * @return the matrix
+    *
+    * @see Vec2#all(Vec2)
     */
    public static Mat4 fromScale ( final Vec2 scalar, final Mat4 target ) {
 
@@ -1498,6 +1515,8 @@ public class Mat4 {
     * @param target the output matrix
     *
     * @return the matrix
+    *
+    * @see Vec3#all(Vec3)
     */
    public static Mat4 fromScale ( final Vec3 scalar, final Mat4 target ) {
 
@@ -1972,6 +1991,9 @@ public class Mat4 {
     * @param bm     the matrix conversion
     *
     * @return the product
+    *
+    * @see Mat4#fromRotation(Quaternion, Mat4)
+    * @see Mat4#mul(Mat4, Mat4, Mat4)
     */
    public static Mat4 mul ( final Mat4 a, final Quaternion b, final Mat4 target,
       final Mat4 bm ) {
@@ -2010,6 +2032,9 @@ public class Mat4 {
     * @param am     the matrix conversion
     *
     * @return the product
+    *
+    * @see Mat4#fromRotation(Quaternion, Mat4)
+    * @see Mat4#mul(Mat4, Mat4, Mat4)
     */
    public static Mat4 mul ( final Quaternion a, final Mat4 b, final Mat4 target,
       final Mat4 am ) {
@@ -2315,6 +2340,9 @@ public class Mat4 {
     * @param target the output matrix
     *
     * @return the perspective projection
+    *
+    * @see Utils#cot(float)
+    * @see Utils#div(float, float)
     */
    public static Mat4 perspective ( final float fov, final float aspect,
       final float near, final float far, final Mat4 target ) {

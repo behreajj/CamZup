@@ -356,6 +356,8 @@ public class Color implements Comparable < Color > {
     * @param gpl the string builder
     *
     * @return the string builder
+    *
+    * @see Utils#clamp01(float)
     */
    StringBuilder toGplString ( final StringBuilder gpl ) {
 
@@ -1222,10 +1224,9 @@ public class Color implements Comparable < Color > {
          final float fac = Utils.clamp01(l * 0.01f);
          return target.set(Utils.mod1( ( 1.0f - fac ) * Color.LCH_HUE_SHADOW
             + fac * ( 1.0f + Color.LCH_HUE_LIGHT )), 0.0f, l, alpha);
-      } else {
-         return target.set(Utils.mod1(IUtils.ONE_TAU * ( float ) Math.atan2(b,
-            a)), ( float ) Math.sqrt(cSq), l, alpha);
       }
+      return target.set(Utils.mod1(IUtils.ONE_TAU * ( float ) Math.atan2(b, a)),
+         ( float ) Math.sqrt(cSq), l, alpha);
    }
 
    /**
@@ -1489,32 +1490,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Maps an input vector from an original range to a target range. Useful
-    * for mapping colors back into [0.0, 1.0] after they have been mixed in
-    * another color space.
-    *
-    * @param c        the input vector
-    * @param lbOrigin lower bound of original range
-    * @param ubOrigin upper bound of original range
-    * @param lbDest   lower bound of destination range
-    * @param ubDest   upper bound of destination range
-    * @param target   the output vector
-    *
-    * @return the mapped value
-    *
-    * @see Utils#map(float, float, float, float, float)
-    */
-   public static Color map ( final Color c, final Color lbOrigin,
-      final Color ubOrigin, final Color lbDest, final Color ubDest,
-      final Color target ) {
-
-      return target.set(Utils.map(c.r, lbOrigin.r, ubOrigin.r, lbDest.r,
-         ubDest.r), Utils.map(c.g, lbOrigin.g, ubOrigin.g, lbDest.g, ubDest.g),
-         Utils.map(c.b, lbOrigin.b, ubOrigin.b, lbDest.b, ubDest.b), Utils.map(
-            c.a, lbOrigin.a, ubOrigin.a, lbDest.a, ubDest.a));
-   }
-
-   /**
     * Tests to see if the alpha channel of this color is less than or equal to
     * zero, i.e., if it is completely transparent.
     *
@@ -1559,13 +1534,9 @@ public class Color implements Comparable < Color > {
     */
    public static Color premul ( final Color c, final Color target ) {
 
-      if ( c.a <= 0.0f ) {
-         return target.set(0.0f, 0.0f, 0.0f, 0.0f);
-      } else if ( c.a >= 1.0f ) {
-         return target.set(c.r, c.g, c.b, 1.0f);
-      } else {
-         return target.set(c.r * c.a, c.g * c.a, c.b * c.a, c.a);
-      }
+      if ( c.a <= 0.0f ) { return target.set(0.0f, 0.0f, 0.0f, 0.0f); }
+      if ( c.a >= 1.0f ) { return target.set(c.r, c.g, c.b, 1.0f); }
+      return target.set(c.r * c.a, c.g * c.a, c.b * c.a, c.a);
    }
 
    /**
@@ -1775,26 +1746,27 @@ public class Color implements Comparable < Color > {
 
       if ( light < IUtils.ONE_255 ) {
          return target.set(Color.HSL_HUE_SHADOW, 0.0f, 0.0f, a);
-      } else if ( light > 1.0f - IUtils.ONE_255 ) {
+      }
+      if ( light > 1.0f - IUtils.ONE_255 ) {
          return target.set(Color.HSL_HUE_LIGHT, 0.0f, 1.0f, a);
-      } else if ( diff < IUtils.ONE_255 ) {
+      }
+      if ( diff < IUtils.ONE_255 ) {
          final float hue = light * ( 1.0f + Color.HSL_HUE_LIGHT ) + ( 1.0f
             - light ) * Color.HSL_HUE_SHADOW;
          return target.set(hue != 1.0f ? hue % 1.0f : 1.0f, 0.0f, light, a);
-      } else {
-         float hue;
-         if ( Utils.approx(r, mx, IUtils.ONE_255) ) {
-            hue = ( g - b ) / diff;
-            if ( g < b ) { hue += 6.0f; }
-         } else if ( Utils.approx(g, mx, IUtils.ONE_255) ) {
-            hue = 2.0f + ( b - r ) / diff;
-         } else {
-            hue = 4.0f + ( r - g ) / diff;
-         }
-
-         final float sat = light > 0.5f ? diff / ( 2.0f - sum ) : diff / sum;
-         return target.set(hue * IUtils.ONE_SIX, sat, light, a);
       }
+      float hue;
+      if ( Utils.approx(r, mx, IUtils.ONE_255) ) {
+         hue = ( g - b ) / diff;
+         if ( g < b ) { hue += 6.0f; }
+      } else if ( Utils.approx(g, mx, IUtils.ONE_255) ) {
+         hue = 2.0f + ( b - r ) / diff;
+      } else {
+         hue = 4.0f + ( r - g ) / diff;
+      }
+
+      final float sat = light > 0.5f ? diff / ( 2.0f - sum ) : diff / sum;
+      return target.set(hue * IUtils.ONE_SIX, sat, light, a);
    }
 
    /**
@@ -1852,32 +1824,29 @@ public class Color implements Comparable < Color > {
 
       if ( mx < IUtils.ONE_255 ) {
          return target.set(Color.HSL_HUE_SHADOW, 0.0f, 0.0f, a);
-      } else {
-         final float mn = gbmn < r ? gbmn : r;
-         final float diff = mx - mn;
-         if ( diff < IUtils.ONE_255 ) {
-            final float light = ( mx + mn ) * 0.5f;
-            if ( light > 1.0f - IUtils.ONE_255 ) {
-               return target.set(Color.HSL_HUE_LIGHT, 0.0f, 1.0f, a);
-            } else {
-               final float hue = light * ( 1.0f + Color.HSL_HUE_LIGHT ) + ( 1.0f
-                  - light ) * Color.HSL_HUE_SHADOW;
-               return target.set(hue != 1.0f ? hue % 1.0f : 1.0f, 0.0f, mx, a);
-            }
-         } else {
-            float hue;
-            if ( Utils.approx(r, mx, IUtils.ONE_255) ) {
-               hue = ( g - b ) / diff;
-               if ( g < b ) { hue += 6.0f; }
-            } else if ( Utils.approx(g, mx, IUtils.ONE_255) ) {
-               hue = 2.0f + ( b - r ) / diff;
-            } else {
-               hue = 4.0f + ( r - g ) / diff;
-            }
-
-            return target.set(hue * IUtils.ONE_SIX, diff / mx, mx, a);
-         }
       }
+      final float mn = gbmn < r ? gbmn : r;
+      final float diff = mx - mn;
+      if ( diff < IUtils.ONE_255 ) {
+         final float light = ( mx + mn ) * 0.5f;
+         if ( light > 1.0f - IUtils.ONE_255 ) {
+            return target.set(Color.HSL_HUE_LIGHT, 0.0f, 1.0f, a);
+         }
+         final float hue = light * ( 1.0f + Color.HSL_HUE_LIGHT ) + ( 1.0f
+            - light ) * Color.HSL_HUE_SHADOW;
+         return target.set(hue != 1.0f ? hue % 1.0f : 1.0f, 0.0f, mx, a);
+      }
+      float hue;
+      if ( Utils.approx(r, mx, IUtils.ONE_255) ) {
+         hue = ( g - b ) / diff;
+         if ( g < b ) { hue += 6.0f; }
+      } else if ( Utils.approx(g, mx, IUtils.ONE_255) ) {
+         hue = 2.0f + ( b - r ) / diff;
+      } else {
+         hue = 4.0f + ( r - g ) / diff;
+      }
+
+      return target.set(hue * IUtils.ONE_SIX, diff / mx, mx, a);
    }
 
    /**
@@ -2345,7 +2314,7 @@ public class Color implements Comparable < Color > {
    public static String toPalString ( final Color[] arr ) {
 
       final int len = arr.length;
-      final StringBuilder sb = new StringBuilder(32 + len * 12);
+      final StringBuilder sb = new StringBuilder(1024);
       sb.append("JASC-PAL\n0100\n");
       sb.append(len);
       for ( int i = 0; i < len; ++i ) {
@@ -2411,14 +2380,10 @@ public class Color implements Comparable < Color > {
     */
    public static Color unpremul ( final Color c, final Color target ) {
 
-      if ( c.a <= 0.0f ) {
-         return target.set(0.0f, 0.0f, 0.0f, 0.0f);
-      } else if ( c.a >= 1.0f ) {
-         return target.set(c.r, c.g, c.b, 1.0f);
-      } else {
-         final float aInv = 1.0f / c.a;
-         return target.set(c.r * aInv, c.g * aInv, c.b * aInv, c.a);
-      }
+      if ( c.a <= 0.0f ) { return target.set(0.0f, 0.0f, 0.0f, 0.0f); }
+      if ( c.a >= 1.0f ) { return target.set(c.r, c.g, c.b, 1.0f); }
+      final float aInv = 1.0f / c.a;
+      return target.set(c.r * aInv, c.g * aInv, c.b * aInv, c.a);
    }
 
    /**
@@ -2708,6 +2673,11 @@ public class Color implements Comparable < Color > {
    public static class HueCCW extends HueEasing {
 
       /**
+       * The default constructor.
+       */
+      public HueCCW ( ) {}
+
+      /**
        * Applies the function.
        *
        * @param origin the origin hue
@@ -2738,6 +2708,11 @@ public class Color implements Comparable < Color > {
     * Eases the hue in the counter-clockwise direction.
     */
    public static class HueCW extends HueEasing {
+
+      /**
+       * The default constructor.
+       */
+      public HueCW ( ) {}
 
       /**
        * Applies the function.
@@ -2869,6 +2844,11 @@ public class Color implements Comparable < Color > {
    public static class HueFar extends HueEasing {
 
       /**
+       * The default constructor.
+       */
+      public HueFar ( ) {}
+
+      /**
        * Applies the function.
        *
        * @param origin the origin hue
@@ -2902,6 +2882,11 @@ public class Color implements Comparable < Color > {
     * Eases between hues by the nearest rotational direction.
     */
    public static class HueNear extends HueEasing {
+
+      /**
+       * The default constructor.
+       */
+      public HueNear ( ) {}
 
       /**
        * Applies the function.
@@ -3008,10 +2993,9 @@ public class Color implements Comparable < Color > {
                * aSat + t * bSat, u * this.aHsl.z + t * this.bHsl.z, u
                   * this.aHsl.w + t * this.bHsl.w);
             return Color.hslaToRgba(this.cHsl, target);
-         } else {
-            return target.set(u * origin.r + t * dest.r, u * origin.g + t
-               * dest.g, u * origin.b + t * dest.b, u * origin.a + t * dest.a);
          }
+         return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g,
+            u * origin.b + t * dest.b, u * origin.a + t * dest.a);
       }
 
       /**
@@ -3106,10 +3090,9 @@ public class Color implements Comparable < Color > {
                * aSat + t * bSat, u * this.aHsv.z + t * this.bHsv.z, u
                   * this.aHsv.w + t * this.bHsv.w);
             return Color.hsvaToRgba(this.cHsv, target);
-         } else {
-            return target.set(u * origin.r + t * dest.r, u * origin.g + t
-               * dest.g, u * origin.b + t * dest.b, u * origin.a + t * dest.a);
          }
+         return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g,
+            u * origin.b + t * dest.b, u * origin.a + t * dest.a);
       }
 
       /**
@@ -3181,6 +3164,11 @@ public class Color implements Comparable < Color > {
        * The origin color in CIE XYZ.
        */
       protected final Vec4 oXyz = new Vec4();
+
+      /**
+       * The default constructor.
+       */
+      public MixLab ( ) {}
 
       /**
        * Applies the function.
@@ -3392,6 +3380,11 @@ public class Color implements Comparable < Color > {
     * Eases between two colors in sRGB, i.e., with no gamma correction.
     */
    public static class MixSrgba extends AbstrEasing {
+
+      /**
+       * The default constructor.
+       */
+      public MixSrgba ( ) {}
 
       /**
        * Applies the function.

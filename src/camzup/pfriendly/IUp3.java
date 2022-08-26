@@ -519,29 +519,27 @@ public interface IUp3 extends IUp {
     * Displays a ray, i.e., an origin point and a direction. The display
     * length of the direction is dictated by an input.
     *
-    * @param xOrigin the x origin
-    * @param yOrigin the y origin
-    * @param zOrigin the z origin
-    * @param xDir    the x direction
-    * @param yDir    the y direction
-    * @param zDir    the z direction
-    * @param dLen    the display length
+    * @param xOrig the x origin
+    * @param yOrig the y origin
+    * @param zOrig the z origin
+    * @param xDir  the x direction
+    * @param yDir  the y direction
+    * @param zDir  the z direction
+    * @param dLen  the display length
     */
-   default void ray ( final float xOrigin, final float yOrigin,
-      final float zOrigin, final float xDir, final float yDir, final float zDir,
-      final float dLen ) {
+   default void ray ( final float xOrig, final float yOrig, final float zOrig,
+      final float xDir, final float yDir, final float zDir, final float dLen ) {
 
-      this.ray(xOrigin, yOrigin, zOrigin, xDir, yDir, zDir, dLen, 1.0f, 4.0f,
-         2.0f);
+      this.ray(xOrig, yOrig, zOrig, xDir, yDir, zDir, dLen, 1.0f, 4.0f, 2.0f);
    }
 
    /**
     * Displays a ray, i.e., an origin point and a direction. The display
     * length of the direction is dictated by an input.
     *
-    * @param xOrigin the x origin
-    * @param yOrigin the y origin
-    * @param zOrigin the z origin
+    * @param xOrig   the x origin
+    * @param yOrig   the y origin
+    * @param zOrig   the z origin
     * @param xDir    the x direction
     * @param yDir    the y direction
     * @param zDir    the z direction
@@ -550,16 +548,15 @@ public interface IUp3 extends IUp {
     * @param oWeight the origin stroke weight
     * @param dWeight the direction stroke weight
     */
-   default void ray ( final float xOrigin, final float yOrigin,
-      final float zOrigin, final float xDir, final float yDir, final float zDir,
-      final float dLen, final float lnwgt, final float oWeight,
-      final float dWeight ) {
+   default void ray ( final float xOrig, final float yOrig, final float zOrig,
+      final float xDir, final float yDir, final float zDir, final float dLen,
+      final float lnwgt, final float oWeight, final float dWeight ) {
 
       final float mSq = xDir * xDir + yDir * yDir + zDir * zDir;
 
       this.pushStyle();
       this.strokeWeight(oWeight);
-      this.point(xOrigin, yOrigin, zOrigin);
+      this.point(xOrig, yOrig, zOrig);
 
       if ( mSq != 0.0f ) {
 
@@ -571,18 +568,18 @@ public interface IUp3 extends IUp {
 
          if ( Utils.approx(mSq, 1.0f, 0.0001f) ) {
 
-            dx = xOrigin + xDir * dLen;
-            dy = yOrigin + yDir * dLen;
-            dz = zOrigin + zDir * dLen;
-            this.line(xOrigin, yOrigin, zOrigin, dx, dy, dz);
+            dx = xOrig + xDir * dLen;
+            dy = yOrig + yDir * dLen;
+            dz = zOrig + zDir * dLen;
+            this.line(xOrig, yOrig, zOrig, dx, dy, dz);
 
          } else {
 
             final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
-            dx = xOrigin + xDir * mInv;
-            dy = yOrigin + yDir * mInv;
-            dz = zOrigin + zDir * mInv;
-            this.line(xOrigin, yOrigin, zOrigin, dx, dy, dz);
+            dx = xOrig + xDir * mInv;
+            dy = yOrig + yDir * mInv;
+            dz = zOrig + zDir * mInv;
+            this.line(xOrig, yOrig, zOrig, dx, dy, dz);
 
          }
 

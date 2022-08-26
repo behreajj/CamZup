@@ -78,9 +78,8 @@ public class Vert2 implements Comparable < Vert2 > {
       int result = 1;
       result = prime * result + ( this.coord == null ? 0 : this.coord
          .hashCode() );
-      result = prime * result + ( this.texCoord == null ? 0 : this.texCoord
+      return prime * result + ( this.texCoord == null ? 0 : this.texCoord
          .hashCode() );
-      return result;
    }
 
    /**

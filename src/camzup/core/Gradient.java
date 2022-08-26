@@ -414,10 +414,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @return the hash code
     */
    @Override
-   public int hashCode ( ) {
-
-      return this.keys.hashCode();
-   }
+   public int hashCode ( ) { return this.keys.hashCode(); }
 
    /**
     * Inserts a color key to this gradient. If a color key exists at the
@@ -645,36 +642,56 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Removes a key from the gradient. Returns true if successful.
+    * Removes a key if the gradient has more than 2 keys. Returns true if
+    * successful.
     *
     * @param key the key
     *
     * @return the success
+    *
+    * @see TreeSet#remove(Object)
     */
    public boolean remove ( final ColorKey key ) {
 
-      // TODO: Make consistent with Curve2,3?
-
-      return this.keys.remove(key);
+      if ( this.keys.size() > 2 ) { return this.keys.remove(key); }
+      return false;
    }
 
    /**
-    * Removes the first key from the gradient.
+    * Removes the first key if the gradient has more than 2 keys.
     *
-    * @return the key
+    * @param target the output color key
+    *
+    * @return the evaluation
     *
     * @see TreeSet#pollFirst()
     */
-   public ColorKey removeFirst ( ) { return this.keys.pollFirst(); }
+   public boolean removeFirst ( final ColorKey target ) {
+
+      if ( this.keys.size() > 2 ) {
+         target.set(this.keys.pollFirst());
+         return true;
+      }
+      return false;
+   }
 
    /**
-    * Removes the last key from the gradient.
+    * Removes the first key if the gradient has more than 2 keys.
     *
-    * @return the key
+    * @param target the output color key
+    *
+    * @return the evaluation
     *
     * @see TreeSet#pollLast()
     */
-   public ColorKey removeLast ( ) { return this.keys.pollLast(); }
+   public boolean removeLast ( final ColorKey target ) {
+
+      if ( this.keys.size() > 2 ) {
+         target.set(this.keys.pollLast());
+         return true;
+      }
+      return false;
+   }
 
    /**
     * Resets this gradient to an initial state, with two color keys: clear
@@ -805,6 +822,18 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes.
     *
+    * @return the string
+    */
+   public String toBlenderCode ( ) {
+
+      return this.toBlenderCode(Integer.toHexString(System.identityHashCode(
+         this)), this.keys.size());
+   }
+
+   /**
+    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * This code is brittle and is used for internal testing purposes.
+    *
     * @param name the material's name
     *
     * @return the string
@@ -869,6 +898,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       pyCd.append(']');
 
       pyCd.append("\n\nmaterial = D.materials.new(\"");
+      if ( Character.isDigit(name.charAt(0)) ) { pyCd.append("id"); }
       pyCd.append(name);
       pyCd.append("\")\n");
       pyCd.append("material.use_nodes = True\n");
@@ -954,7 +984,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       if ( nonZeroFirst ) { ++len; }
       if ( nonOneLast ) { ++len; }
 
-      final StringBuilder sb = new StringBuilder();
+      final StringBuilder sb = new StringBuilder(512);
       sb.append("GIMP Gradient\n");
       sb.append("Name: ");
       sb.append(name);
@@ -1054,15 +1084,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(16 + 128 * this.keys.size());
-      sb.append("{ keys: [ ");
-      final Iterator < ColorKey > itr = this.keys.iterator();
-      while ( itr.hasNext() ) {
-         itr.next().toString(sb, places);
-         if ( itr.hasNext() ) { sb.append(',').append(' '); }
-      }
-      sb.append(" ] }");
-      return sb.toString();
+      return this.toString(new StringBuilder(512), places).toString();
    }
 
    /**
@@ -1228,6 +1250,27 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
+    * Internal helper function to assist with methods that need to print many
+    * gradients. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ keys: [ ");
+      final Iterator < ColorKey > itr = this.keys.iterator();
+      while ( itr.hasNext() ) {
+         itr.next().toString(sb, places);
+         if ( itr.hasNext() ) { sb.append(',').append(' '); }
+      }
+      sb.append(" ] }");
+      return sb;
+   }
+
+   /**
     * Helper function that compresses existing keys to the left when a new
     * color is added to the gradient without a key.
     *
@@ -1283,7 +1326,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    /**
     * Clamps all colors in a gradient to the range [0.0, 1.0] . Useful for
     * gradients created by mixing colors in color spaces other than standard
-    * RGB, e.g., CIE L*a*b*.
+    * RGB, e.g., CIE LAB.
     *
     * @param source the source gradient
     * @param target the target gradient
@@ -1601,7 +1644,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       return Gradient.mix(origin, dest, samples, new Function < Float,
          Float >() {
          @Override
-         public Float apply ( final Float x ) { return step; }
+         public Float apply ( final Float x ) { return x; }
 
       }, mixer, mixer, target);
    }
@@ -1663,76 +1706,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final int samples, final Gradient target ) {
 
       return Gradient.mix(origin, dest, samples, 0.5f, target);
-   }
-
-   /**
-    * Finds the minimum and maximum RGB and alpha channels for all colors in a
-    * gradient, then maps those channels to the range [0.0, 1.0] . Useful for
-    * gradients created by mixing colors in color spaces other than standard
-    * RGB, e.g., CIE L*a*b*.
-    *
-    * @param source the source gradient
-    * @param target the target gradient
-    *
-    * @return the normalized gradient
-    *
-    * @see Color#rgbMax(Color)
-    * @see Color#rgbMin(Color)
-    * @see Color#map(Color, Color, Color, Color, Color, Color)
-    */
-   public static Gradient normalizeRange ( final Gradient source,
-      final Gradient target ) {
-
-      final TreeSet < ColorKey > srcKeys = source.keys;
-      Iterator < ColorKey > srcItr = srcKeys.iterator();
-
-      /*
-       * We don't need to expand the range if its within [0.0, 1.0], only
-       * compress it. So do not set these to Float#MIN_VALUE and Float#MAX_VALUE
-       * like usual.
-       */
-      float minRgb = 0.0f;
-      float maxRgb = 1.0f;
-      float minAlpha = 0.0f;
-      float maxAlpha = 1.0f;
-
-      while ( srcItr.hasNext() ) {
-         final Color clr = srcItr.next().clr;
-
-         final float minCurr = Color.rgbMin(clr);
-         final float maxCurr = Color.rgbMax(clr);
-         final float alpha = clr.a;
-
-         if ( minCurr < minRgb ) { minRgb = minCurr; }
-         if ( maxCurr > maxRgb ) { maxRgb = maxCurr; }
-         if ( alpha < minAlpha ) { minAlpha = alpha; }
-         if ( alpha > maxAlpha ) { maxAlpha = alpha; }
-      }
-
-      final Color lbOrigin = new Color(minRgb, minRgb, minRgb, minAlpha);
-      final Color ubOrigin = new Color(maxRgb, maxRgb, maxRgb, maxAlpha);
-      final Color lbDest = Color.clearBlack(new Color());
-      final Color ubDest = Color.white(new Color());
-
-      if ( source == target ) {
-         srcItr = srcKeys.iterator();
-         while ( srcItr.hasNext() ) {
-            final Color clr = srcItr.next().clr;
-            Color.map(clr, lbOrigin, ubOrigin, lbDest, ubDest, clr);
-         }
-      } else {
-         final TreeSet < ColorKey > trgKeys = target.keys;
-         trgKeys.clear();
-         srcItr = srcKeys.iterator();
-         while ( srcItr.hasNext() ) {
-            final ColorKey trgKey = new ColorKey(srcItr.next());
-            final Color trgClr = trgKey.clr;
-            Color.map(trgClr, lbOrigin, ubOrigin, lbDest, ubDest, trgClr);
-            trgKeys.add(trgKey);
-         }
-      }
-
-      return target;
    }
 
    /**

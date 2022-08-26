@@ -256,9 +256,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    @Override
    public int hashCode ( ) {
 
-      int hash = super.hashCode() ^ ( this.closedLoop ? 1231 : 1237 );
-      hash = hash * IUtils.HASH_MUL ^ this.knots.hashCode();
-      return hash;
+      final int hash = super.hashCode() ^ ( this.closedLoop ? 1231 : 1237 );
+      return hash * IUtils.HASH_MUL ^ this.knots.hashCode();
    }
 
    /**
@@ -472,7 +471,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @param i      the index
     * @param target the output knot
     *
-    * @return the removed knot value
+    * @return the evaluation
     */
    public boolean removeAt ( final int i, final Knot2 target ) {
 
@@ -481,7 +480,8 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          if ( this.closedLoop ) {
             target.set(this.knots.remove(Utils.mod(i, len)));
             return true;
-         } else if ( i > -1 && i < len ) {
+         }
+         if ( i > -1 && i < len ) {
             target.set(this.knots.remove(i));
             return true;
          }
@@ -496,7 +496,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @param target the output knot
     *
-    * @return the removed knot value
+    * @return the evaluation
     */
    public boolean removeFirst ( final Knot2 target ) {
 
@@ -514,7 +514,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @param target the output knot
     *
-    * @return the removed knot value
+    * @return the evaluation
     */
    public boolean removeLast ( final Knot2 target ) {
 
@@ -1574,12 +1574,12 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       final Vec2[] points, final float tightness, final Curve2 target ) {
 
       final int ptsLen = points.length;
-      if ( ptsLen < 2 ) {
-         return target;
-      } else if ( ptsLen < 3 ) {
+      if ( ptsLen < 2 ) { return target; }
+      if ( ptsLen < 3 ) {
          return Curve2.fromCatmull(false, new Vec2[] { points[0], points[0],
             points[1], points[1] }, tightness, target);
-      } else if ( ptsLen < 4 ) {
+      }
+      if ( ptsLen < 4 ) {
          return Curve2.fromCatmull(false, new Vec2[] { points[0], points[0],
             points[1], points[2], points[2] }, tightness, target);
       }
@@ -2407,11 +2407,11 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Creates a curve that forms a line with an origin and destination.
     *
-    * @param xOrigin the origin x
-    * @param yOrigin the origin y
-    * @param xDest   the destination x
-    * @param yDest   the destination y
-    * @param target  the output curve
+    * @param xOrig  the origin x
+    * @param yOrig  the origin y
+    * @param xDest  the destination x
+    * @param yDest  the destination y
+    * @param target the output curve
     *
     * @return the line
     *
@@ -2419,14 +2419,14 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @see Knot2#mirrorHandlesForward()
     * @see Knot2#mirrorHandlesBackward()
     */
-   static Curve2 line ( final float xOrigin, final float yOrigin,
-      final float xDest, final float yDest, final Curve2 target ) {
+   static Curve2 line ( final float xOrig, final float yOrig, final float xDest,
+      final float yDest, final Curve2 target ) {
 
       target.resize(2);
       final Knot2 first = target.knots.get(0);
       final Knot2 last = target.knots.get(1);
 
-      first.coord.set(xOrigin, yOrigin);
+      first.coord.set(xOrig, yOrig);
       last.coord.set(xDest, yDest);
 
       Curve2.lerp13(first.coord, last.coord, first.foreHandle);

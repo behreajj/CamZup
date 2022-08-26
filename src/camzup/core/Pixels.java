@@ -63,6 +63,41 @@ public abstract class Pixels {
       255 };
 
    /**
+    * Multiplies the alpha channel of each pixel in an array by the supplied
+    * alpha value.
+    *
+    * @param source the source pixels
+    * @param alpha  the alpha scalar
+    * @param target the target pixels
+    *
+    * @return the translucent pixels
+    */
+   public static int[] adjustAlpha ( final int[] source, final int alpha,
+      final int[] target ) {
+
+      final int srcLen = source.length;
+      if ( srcLen == target.length ) {
+         if ( alpha <= 0 ) {
+            for ( int i = 0; i < srcLen; ++i ) { target[i] = 0x00000000; }
+            return target;
+         }
+
+         if ( alpha >= 255 ) {
+            System.arraycopy(source, 0, target, 0, srcLen);
+            return target;
+         }
+
+         for ( int i = 0; i < srcLen; ++i ) {
+            final int hex = source[i];
+            final int srcAlpha = hex >> 0x18 & 0xff;
+            target[i] = srcAlpha * alpha / 255 << 0x18 | hex & 0x00ffffff;
+         }
+      }
+
+      return target;
+   }
+
+   /**
     * Adjusts the contrast of colors from a source pixels array by a factor.
     * Uses the CIE LAB color space. The adjustment factor is expected to be in
     * [-1.0, 1.0].
@@ -861,18 +896,18 @@ public abstract class Pixels {
    /**
     * Mirrors, or reflects, pixels from a source image across the axis
     * described by an origin and destination. Coordinates are expected to be
-    * in the range [0.0, 1.0]. Out-of-bounds pixels are omitted from the
+    * in the range [-1.0, 1.0]. Out-of-bounds pixels are omitted from the
     * mirror.
     *
-    * @param source  the source pixels
-    * @param wSrc    the source image width
-    * @param hSrc    the source image height
-    * @param xOrigin the origin x
-    * @param yOrigin the origin y
-    * @param xDest   the destination x
-    * @param yDest   the destination y
-    * @param flip    the flip reflection flag
-    * @param target  the target pixels
+    * @param source the source pixels
+    * @param wSrc   the source image width
+    * @param hSrc   the source image height
+    * @param xOrig  the origin x
+    * @param yOrig  the origin y
+    * @param xDest  the destination x
+    * @param yDest  the destination y
+    * @param flip   the flip reflection flag
+    * @param target the target pixels
     *
     * @return the mirrored pixels
     *
@@ -883,17 +918,16 @@ public abstract class Pixels {
     * @see Pixels#filterBilinear(float, float, int, int, int[])
     */
    public static int[] mirror ( final int[] source, final int wSrc,
-      final int hSrc, final float xOrigin, final float yOrigin,
-      final float xDest, final float yDest, final boolean flip,
-      final int[] target ) {
+      final int hSrc, final float xOrig, final float yOrig, final float xDest,
+      final float yDest, final boolean flip, final int[] target ) {
 
       final float wfn1 = wSrc - 1.0f;
       final float hfn1 = hSrc - 1.0f;
 
-      final float ax = xOrigin * ( wSrc + 1 ) - 0.5f;
-      final float bx = xDest * ( wSrc + 1 ) - 0.5f;
-      final float ay = ( 1.0f - yOrigin ) * ( hSrc + 1 ) - 0.5f;
-      final float by = ( 1.0f - yDest ) * ( hSrc + 1 ) - 0.5f;
+      final float ax = Utils.map(xOrig, -1.0f, 1.0f, -0.5f, wSrc + 0.5f);
+      final float bx = Utils.map(xDest, -1.0f, 1.0f, -0.5f, wSrc + 0.5f);
+      final float ay = Utils.map(yOrig, -1.0f, 1.0f, hSrc + 0.5f, -0.5f);
+      final float by = Utils.map(yDest, -1.0f, 1.0f, hSrc + 0.5f, -0.5f);
 
       final float dx = bx - ax;
       final float dy = by - ay;
@@ -1922,7 +1956,8 @@ public abstract class Pixels {
          System.arraycopy(source, 0, target, 0, srcLen);
          return target;
 
-      } else if ( wSrc == 1 ) {
+      }
+      if ( wSrc == 1 ) {
 
          int top = -1;
          int minBottom = hn1;
@@ -1947,7 +1982,8 @@ public abstract class Pixels {
          if ( dim != null ) { dim.set(1.0f, hTrg); }
          return target;
 
-      } else if ( hSrc == 1 ) {
+      }
+      if ( hSrc == 1 ) {
 
          int left = -1;
          int minRight = wn1;
@@ -2136,6 +2172,11 @@ public abstract class Pixels {
     * gradient evaluation. Uses luminance to determine the factor.
     */
    public static class MapLuminance implements IntFunction < Float > {
+
+      /**
+       * The default constructor.
+       */
+      public MapLuminance ( ) {}
 
       /**
        * Evaluates a color's luminance.

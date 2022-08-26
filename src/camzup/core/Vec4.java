@@ -505,9 +505,8 @@ public class Vec4 implements Comparable < Vec4 > {
    public static Vec4 bezierPoint ( final Vec4 ap0, final Vec4 cp0,
       final Vec4 cp1, final Vec4 ap1, final float step, final Vec4 target ) {
 
-      if ( step <= 0.0f ) {
-         return target.set(ap0);
-      } else if ( step >= 1.0f ) { return target.set(ap1); }
+      if ( step <= 0.0f ) { return target.set(ap0); }
+      if ( step >= 1.0f ) { return target.set(ap1); }
 
       final float u = 1.0f - step;
       float tcb = step * step;
@@ -544,9 +543,8 @@ public class Vec4 implements Comparable < Vec4 > {
    public static Vec4 bezierTangent ( final Vec4 ap0, final Vec4 cp0,
       final Vec4 cp1, final Vec4 ap1, final float step, final Vec4 target ) {
 
-      if ( step <= 0.0f ) {
-         return Vec4.sub(cp0, ap0, target);
-      } else if ( step >= 1.0f ) { return Vec4.sub(ap1, cp1, target); }
+      if ( step <= 0.0f ) { return Vec4.sub(cp0, ap0, target); }
+      if ( step >= 1.0f ) { return Vec4.sub(ap1, cp1, target); }
 
       final float u = 1.0f - step;
       final float t3 = step + step + step;
@@ -2029,9 +2027,8 @@ public class Vec4 implements Comparable < Vec4 > {
       if ( scalar != 0.0f && msq > 0.0f ) {
          final float sclMg = scalar * Utils.invSqrtUnchecked(msq);
          return target.set(v.x * sclMg, v.y * sclMg, v.z * sclMg, v.w * sclMg);
-      } else {
-         return target.reset();
       }
+      return target.reset();
    }
 
    /**
@@ -2403,6 +2400,11 @@ public class Vec4 implements Comparable < Vec4 > {
     * A linear interpolation functional class.
     */
    public static class Lerp extends AbstrEasing {
+
+      /**
+       * The default constructor.
+       */
+      public Lerp ( ) {}
 
       /**
        * Eases between two vectors by a step using the formula ( 1.0 -

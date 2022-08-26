@@ -201,9 +201,8 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public int hashCode ( ) {
 
       final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + this.curves.hashCode();
-      return result;
+      final int result = super.hashCode();
+      return prime * result + this.curves.hashCode();
    }
 
    /**
@@ -261,6 +260,9 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    }
 
    /**
+    * Relocates a knot within the curve to a point in global space. The point
+    * is inverse multiplied by the transform to put it in local space.
+    *
     * @param curveIndex the curve index
     * @param knotIndex  the knot index
     * @param global     the point in global space
@@ -601,7 +603,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
       sb.append(this.name);
       sb.append('\"');
       sb.append(", transform: ");
-      sb.append(this.transform.toString(places));
+      this.transform.toString(sb, places);
       sb.append(", curves: [ ");
 
       final Iterator < Curve3 > itr = this.curves.iterator();

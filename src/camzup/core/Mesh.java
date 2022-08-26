@@ -133,9 +133,8 @@ public abstract class Mesh extends EntityData implements IMesh {
    @Override
    public int hashCode ( ) {
 
-      int hash = super.hashCode();
-      hash = hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
-      return hash;
+      final int hash = super.hashCode();
+      return hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
    }
 
    /**

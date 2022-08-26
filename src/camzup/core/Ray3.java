@@ -67,8 +67,7 @@ public class Ray3 {
 
       int hash = IUtils.HASH_BASE;
       hash = hash * IUtils.HASH_MUL ^ this.origin.hashCode();
-      hash = hash * IUtils.HASH_MUL ^ this.dir.hashCode();
-      return hash;
+      return hash * IUtils.HASH_MUL ^ this.dir.hashCode();
    }
 
    /**
@@ -200,11 +199,10 @@ public class Ray3 {
          if ( Utils.approx(dmsq, 1.0f) ) {
             return target.set(origin.x + dir.x * time, origin.y + dir.y * time,
                origin.z + dir.z * time);
-         } else {
-            final float tm = time * Utils.invSqrtUnchecked(dmsq);
-            return target.set(origin.x + dir.x * tm, origin.y + dir.y * tm,
-               origin.z + dir.z * tm);
          }
+         final float tm = time * Utils.invSqrtUnchecked(dmsq);
+         return target.set(origin.x + dir.x * tm, origin.y + dir.y * tm,
+            origin.z + dir.z * tm);
       }
       return target.set(origin);
    }

@@ -119,8 +119,7 @@ public class ZImage extends PImage {
       result = prime * result + this.pixelWidth;
       result = prime * result + this.height;
       result = prime * result + this.width;
-      result = prime * result + Arrays.hashCode(this.pixels);
-      return result;
+      return prime * result + Arrays.hashCode(this.pixels);
    }
 
    /**
@@ -234,6 +233,65 @@ public class ZImage extends PImage {
     * text: {@value ZImage#DEFAULT_LEADING}.
     */
    public static final int DEFAULT_LEADING = 8;
+
+   /**
+    * Multiplies the alpha channel of each pixel in an array by a factor in
+    * [0.0, 1.0].
+    *
+    * @param source the source image
+    * @param fac    the factor
+    * @param target the target image
+    *
+    * @return the translucent image
+    */
+   public static PImage adjustAlpha ( final PImage source, final float fac,
+      final PImage target ) {
+
+      return ZImage.adjustAlpha(source, ( int ) ( fac * 255.0f + 0.5f ),
+         target);
+   }
+
+   /**
+    * Multiplies the alpha channel of each pixel in an array by the supplied
+    * alpha value.
+    *
+    * @param source the source image
+    * @param alpha  the alpha scalar
+    * @param target the target image
+    *
+    * @return the translucent image
+    *
+    * @see Pixels#adjustAlpha(int[], int, int[])
+    */
+   public static PImage adjustAlpha ( final PImage source, final int alpha,
+      final PImage target ) {
+
+      if ( source == target ) {
+         target.loadPixels();
+         Pixels.adjustAlpha(target.pixels, alpha, target.pixels);
+         target.updatePixels();
+         return target;
+      }
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int[] pxSrc = source.pixels;
+      target.pixels = Pixels.adjustAlpha(pxSrc, alpha, new int[pxSrc.length]);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = source.pixelWidth;
+      target.pixelHeight = source.pixelHeight;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
+
+      return target;
+   }
 
    /**
     * Adjusts the contrast of an image by a factor. Uses the CIE LAB color
@@ -1690,27 +1748,27 @@ public class ZImage extends PImage {
     * Coordinates are expected to be in the range [0.0, 1.0]. Out-of-bounds
     * pixels are omitted from the mirror.
     *
-    * @param source  the source image
-    * @param xOrigin the origin x
-    * @param yOrigin the origin y
-    * @param xDest   the destination x
-    * @param yDest   the destination y
-    * @param flip    the flip reflection flag
-    * @param target  the output image
+    * @param source the source image
+    * @param xOrig  the origin x
+    * @param yOrig  the origin y
+    * @param xDest  the destination x
+    * @param yDest  the destination y
+    * @param flip   the flip reflection flag
+    * @param target the output image
     *
     * @return the mirrored image
     *
     * @see Pixels#mirror(int[], int, int, float, float, float, float, boolean,
     *      int[])
     */
-   public static PImage mirror ( final PImage source, final float xOrigin,
-      final float yOrigin, final float xDest, final float yDest,
+   public static PImage mirror ( final PImage source, final float xOrig,
+      final float yOrig, final float xDest, final float yDest,
       final boolean flip, final PImage target ) {
 
       if ( source == target ) {
          target.loadPixels();
          Pixels.mirror(target.pixels, target.pixelWidth, target.pixelHeight,
-            xOrigin, yOrigin, xDest, yDest, flip, target.pixels);
+            xOrig, yOrig, xDest, yDest, flip, target.pixels);
          target.updatePixels();
          return target;
       }
@@ -1725,7 +1783,7 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      target.pixels = Pixels.mirror(pxSrc, w, h, xOrigin, yOrigin, xDest, yDest,
+      target.pixels = Pixels.mirror(pxSrc, w, h, xOrig, yOrig, xDest, yDest,
          flip, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
@@ -1743,21 +1801,20 @@ public class ZImage extends PImage {
     * Coordinates are expected to be in the range [0.0, 1.0]. Out-of-bounds
     * pixels are omitted from the mirror.
     *
-    * @param source  the source image
-    * @param xOrigin the origin x
-    * @param yOrigin the origin y
-    * @param xDest   the destination x
-    * @param yDest   the destination y
-    * @param target  the output image
+    * @param source the source image
+    * @param xOrig  the origin x
+    * @param yOrig  the origin y
+    * @param xDest  the destination x
+    * @param yDest  the destination y
+    * @param target the output image
     *
     * @return the mirrored image
     */
-   public static PImage mirror ( final PImage source, final float xOrigin,
-      final float yOrigin, final float xDest, final float yDest,
+   public static PImage mirror ( final PImage source, final float xOrig,
+      final float yOrig, final float xDest, final float yDest,
       final PImage target ) {
 
-      return ZImage.mirror(source, xOrigin, yOrigin, xDest, yDest, false,
-         target);
+      return ZImage.mirror(source, xOrig, yOrig, xDest, yDest, false, target);
    }
 
    /**

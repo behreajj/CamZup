@@ -41,8 +41,8 @@ public interface ISvgWritable {
     * to be in unit coordinates, [0.0, 1.0] ; it is multiplied by the view box
     * dimensions.
     *
-    * @param xOrigin    the origin x
-    * @param yOrigin    the origin y
+    * @param xOrig      the origin x
+    * @param yOrig      the origin y
     * @param xScale     the scale x
     * @param yScale     the scale y
     * @param viewWidth  the width
@@ -56,7 +56,7 @@ public interface ISvgWritable {
     * @see Utils#approx(float, float)
     * @see Utils#min(float, float)
     */
-   default String toSvgString ( final float xOrigin, final float yOrigin,
+   default String toSvgString ( final float xOrig, final float yOrig,
       final float xScale, final float yScale, final float viewWidth,
       final float viewHeight ) {
 
@@ -64,8 +64,8 @@ public interface ISvgWritable {
       final float vh = Utils.max(IUtils.EPSILON, viewHeight);
       final String widthStr = Utils.toFixed(vw, ISvgWritable.FIXED_PRINT);
       final String heightStr = Utils.toFixed(vh, ISvgWritable.FIXED_PRINT);
-      final float x = Utils.clamp01(xOrigin);
-      final float y = Utils.clamp01(yOrigin);
+      final float x = Utils.clamp01(xOrig);
+      final float y = Utils.clamp01(yOrig);
       final float vxscl = Utils.approx(xScale, 0.0f) ? 1.0f : xScale;
       final float vyscl = Utils.approx(yScale, 0.0f) ? 1.0f : yScale;
 

@@ -145,8 +145,7 @@ public class Bounds2 implements Comparable < Bounds2 > {
 
       int hash = IUtils.HASH_BASE;
       hash = hash * IUtils.HASH_MUL ^ this.min.hashCode();
-      hash = hash * IUtils.HASH_MUL ^ this.max.hashCode();
-      return hash;
+      return hash * IUtils.HASH_MUL ^ this.max.hashCode();
    }
 
    /**

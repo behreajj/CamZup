@@ -1576,21 +1576,18 @@ public abstract class ParserSvg {
 
          final int expectedCount = this.cmd.getDataCount();
          final int actualCount = this.data.size();
-         if ( expectedCount != actualCount ) {
-            if ( actualCount < expectedCount ) {
-               final int diff = expectedCount - actualCount;
-               for ( int i = 0; i < diff; ++i ) { this.data.add("0"); }
-            } else if ( actualCount % 2 != 0 && expectedCount % 2 == 0 ) {
-               // TODO: Maybe this should be actualCount % expectedCount != 0 ?
-               // Would have to account for close command being zero.
-               // A move-to command may have multiple iterations, and thus
-               // greater than expectedCount, but still be malformed.
-               this.data.add("0");
-            }
-            return false;
-         } else {
-            return true;
+         if ( expectedCount == actualCount ) { return true; }
+         if ( actualCount < expectedCount ) {
+            final int diff = expectedCount - actualCount;
+            for ( int i = 0; i < diff; ++i ) { this.data.add("0"); }
+         } else if ( actualCount % 2 != 0 && expectedCount % 2 == 0 ) {
+            // TODO: Maybe this should be actualCount % expectedCount != 0 ?
+            // Would have to account for close command being zero.
+            // A move-to command may have multiple iterations, and thus
+            // greater than expectedCount, but still be malformed.
+            this.data.add("0");
          }
+         return false;
       }
 
    }

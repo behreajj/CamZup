@@ -325,17 +325,16 @@ public class Quadtree {
             }
          }
 
-         if ( isLeaf ) {
-            this.points.add(point);
-            if ( this.points.size() > this.capacity ) {
-               this.split(this.capacity);
-            }
-            return true;
-         } else {
+         if ( !isLeaf ) {
             /* Case where a child has been culled. Try again. */
             this.split(this.capacity);
             return this.insert(point);
          }
+         this.points.add(point);
+         if ( this.points.size() > this.capacity ) {
+            this.split(this.capacity);
+         }
+         return true;
       }
       return false;
    }

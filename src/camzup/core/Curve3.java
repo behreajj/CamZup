@@ -279,9 +279,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    @Override
    public int hashCode ( ) {
 
-      int hash = super.hashCode() ^ ( this.closedLoop ? 1231 : 1237 );
-      hash = hash * IUtils.HASH_MUL ^ this.knots.hashCode();
-      return hash;
+      final int hash = super.hashCode() ^ ( this.closedLoop ? 1231 : 1237 );
+      return hash * IUtils.HASH_MUL ^ this.knots.hashCode();
    }
 
    /**
@@ -500,7 +499,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param i      the index
     * @param target the output knot
     *
-    * @return the removed knot value
+    * @return the evaluation
     */
    public boolean removeAt ( final int i, final Knot3 target ) {
 
@@ -509,7 +508,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          if ( this.closedLoop ) {
             target.set(this.knots.remove(Utils.mod(i, len)));
             return true;
-         } else if ( i > -1 && i < len ) {
+         }
+         if ( i > -1 && i < len ) {
             target.set(this.knots.remove(i));
             return true;
          }
@@ -524,7 +524,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @param target the output knot
     *
-    * @return the removed knot value
+    * @return the evaluation
     */
    public boolean removeFirst ( final Knot3 target ) {
 
@@ -542,7 +542,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @param target the output knot
     *
-    * @return the removed knot value
+    * @return the evaluation
     */
    public boolean removeLast ( final Knot3 target ) {
 
@@ -1441,12 +1441,12 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Vec3[] points, final float tightness, final Curve3 target ) {
 
       final int ptsLen = points.length;
-      if ( ptsLen < 2 ) {
-         return target;
-      } else if ( ptsLen < 3 ) {
+      if ( ptsLen < 2 ) { return target; }
+      if ( ptsLen < 3 ) {
          return Curve3.fromCatmull(false, new Vec3[] { points[0], points[0],
             points[1], points[1] }, tightness, target);
-      } else if ( ptsLen < 4 ) {
+      }
+      if ( ptsLen < 4 ) {
          return Curve3.fromCatmull(false, new Vec3[] { points[0], points[0],
             points[1], points[2], points[2] }, tightness, target);
       }
@@ -2066,8 +2066,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    /**
     * Creates a curve that forms a line with an origin and destination.
     *
-    * @param xOrigin the origin x
-    * @param yOrigin the origin y
+    * @param xOrig   the origin x
+    * @param yOrig   the origin y
     * @param zOrigin the origin z
     * @param xDest   the destination x
     * @param yDest   the destination y
@@ -2080,7 +2080,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @see Knot3#mirrorHandlesForward()
     * @see Knot3#mirrorHandlesBackward()
     */
-   static Curve3 line ( final float xOrigin, final float yOrigin,
+   static Curve3 line ( final float xOrig, final float yOrig,
       final float zOrigin, final float xDest, final float yDest,
       final float zDest, final Curve3 target ) {
 
@@ -2089,7 +2089,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final Knot3 first = target.knots.get(0);
       final Knot3 last = target.knots.get(1);
 
-      first.coord.set(xOrigin, yOrigin, zOrigin);
+      first.coord.set(xOrig, yOrig, zOrigin);
       last.coord.set(xDest, yDest, zDest);
 
       Curve3.lerp13(first.coord, last.coord, first.foreHandle);

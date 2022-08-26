@@ -536,24 +536,24 @@ public interface IYup2 extends IUp {
     * Displays a ray, i.e., an origin point and a direction. The display
     * length of the direction is dictated by an input.
     *
-    * @param xOrigin the x origin
-    * @param yOrigin the y origin
-    * @param xDir    the x direction
-    * @param yDir    the y direction
-    * @param dLen    the display length
+    * @param xOrig the x origin
+    * @param yOrig the y origin
+    * @param xDir  the x direction
+    * @param yDir  the y direction
+    * @param dLen  the display length
     */
-   default void ray ( final float xOrigin, final float yOrigin,
-      final float xDir, final float yDir, final float dLen ) {
+   default void ray ( final float xOrig, final float yOrig, final float xDir,
+      final float yDir, final float dLen ) {
 
-      this.ray(xOrigin, yOrigin, xDir, yDir, dLen, 1.0f, 4.0f, 2.0f);
+      this.ray(xOrig, yOrig, xDir, yDir, dLen, 1.0f, 4.0f, 2.0f);
    }
 
    /**
     * Displays a ray, i.e., an origin point and a direction. The display
     * length of the direction is dictated by an input.
     *
-    * @param xOrigin the x origin
-    * @param yOrigin the y origin
+    * @param xOrig   the x origin
+    * @param yOrig   the y origin
     * @param xDir    the x direction
     * @param yDir    the y direction
     * @param dLen    the display length
@@ -561,22 +561,22 @@ public interface IYup2 extends IUp {
     * @param oWeight the origin stroke weight
     * @param dWeight the direction stroke weight
     */
-   default void ray ( final float xOrigin, final float yOrigin,
-      final float xDir, final float yDir, final float dLen, final float lnwgt,
+   default void ray ( final float xOrig, final float yOrig, final float xDir,
+      final float yDir, final float dLen, final float lnwgt,
       final float oWeight, final float dWeight ) {
 
       this.pushStyle();
       this.strokeWeight(oWeight);
-      this.point(xOrigin, yOrigin);
+      this.point(xOrig, yOrig);
 
       final float mSq = xDir * xDir + yDir * yDir;
       if ( mSq > 0.0f ) {
          final float mInv = dLen * Utils.invSqrtUnchecked(mSq);
-         final float dx = xOrigin + xDir * mInv;
-         final float dy = yOrigin + yDir * mInv;
+         final float dx = xOrig + xDir * mInv;
+         final float dy = yOrig + yDir * mInv;
 
          this.strokeWeight(lnwgt);
-         this.line(xOrigin, yOrigin, dx, dy);
+         this.line(xOrig, yOrig, dx, dy);
          this.strokeWeight(dWeight);
          this.point(dx, dy);
       }
@@ -1201,9 +1201,8 @@ public interface IYup2 extends IUp {
          Color.toHexWeb(svgp, bgClr);
          svgp.append("\" />");
          return svgp.toString();
-      } else {
-         return "";
       }
+      return "";
    }
 
    /**

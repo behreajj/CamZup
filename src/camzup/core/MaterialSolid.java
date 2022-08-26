@@ -206,8 +206,7 @@ public class MaterialSolid extends Material {
       result = prime * result + ( this.useStroke ? 1231 : 1237 );
       result = prime * result + ( this.stroke == null ? 0 : this.stroke
          .hashCode() );
-      result = prime * result + Float.floatToIntBits(this.strokeWeight);
-      return result;
+      return prime * result + Float.floatToIntBits(this.strokeWeight);
    }
 
    /**

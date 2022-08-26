@@ -157,8 +157,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
 
       int hash = IUtils.HASH_BASE;
       hash = hash * IUtils.HASH_MUL ^ this.min.hashCode();
-      hash = hash * IUtils.HASH_MUL ^ this.max.hashCode();
-      return hash;
+      return hash * IUtils.HASH_MUL ^ this.max.hashCode();
    }
 
    /**

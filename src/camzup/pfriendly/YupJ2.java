@@ -510,8 +510,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param radians the angle in radians
     * @param zx      the zoom x
     * @param zy      the zoom y
-    *
-    * @see Utils#modRadians(float)
     */
    @Override
    public void camera ( final float x, final float y, final float radians,
@@ -623,7 +621,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       /*
        * See https://discourse.processing.org/t/colormode-and-rgba-values/31379
        */
-
       super.colorMode(mode, max1 < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN
          : max1 > IUp.COLOR_MODE_MAX ? IUp.COLOR_MODE_MAX : max1, max2
             < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN : max2
@@ -667,7 +664,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * can't be guaranteed to be a PImageAWT. See
        * https://github.com/processing/processing4/issues/169 .
        */
-
       this.g2.drawImage(YupJ2.convertPImageToNative(src), dx, dy, dx + ( dw < 0
          ? -dw : dw ), dy + ( dh < 0 ? -dh : dh ), sx, sy, sx + ( sw < 0 ? -sw
             : sw ), sy + ( sh < 0 ? -sh : sh ), null, null);
@@ -1999,14 +1995,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    /**
     * Draws a line between two coordinates.
     *
-    * @param xOrigin the origin x
-    * @param yOrigin the origin y
-    * @param xDest   the destination x
-    * @param yDest   the destination y
+    * @param xOrig the origin x
+    * @param yOrig the origin y
+    * @param xDest the destination x
+    * @param yDest the destination y
     */
    @Override
-   public void line ( final float xOrigin, final float yOrigin,
-      final float xDest, final float yDest ) {
+   public void line ( final float xOrig, final float yOrig, final float xDest,
+      final float yDest ) {
 
       /*
        * It doesn't make sense why turning off the stroke would also turn off a
@@ -2014,7 +2010,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        */
       if ( this.stroke ) {
          this.gp.reset();
-         this.gp.moveTo(xOrigin, yOrigin);
+         this.gp.moveTo(xOrig, yOrig);
          this.gp.lineTo(xDest, yDest);
          this.g2.setColor(this.strokeColorObject);
          this.g2.draw(this.gp);
@@ -2373,8 +2369,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Displays a ray, i.e., an origin point and a direction. The display
     * length of the direction is dictated by an input.
     *
-    * @param xOrigin the x origin
-    * @param yOrigin the y origin
+    * @param xOrig   the x origin
+    * @param yOrig   the y origin
     * @param xDir    the x direction
     * @param yDir    the y direction
     * @param dLen    the display length
@@ -2383,13 +2379,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param dWeight the direction stroke weight
     */
    @Override
-   public void ray ( final float xOrigin, final float yOrigin, final float xDir,
+   public void ray ( final float xOrig, final float yOrig, final float xDir,
       final float yDir, final float dLen, final float lnwgt,
       final float oWeight, final float dWeight ) {
 
       final float mSq = xDir * xDir + yDir * yDir;
-      final double xod = xOrigin;
-      final double yod = yOrigin;
+      final double xod = xOrig;
+      final double yod = yOrig;
 
       super.pushStyle();
 
@@ -2897,6 +2893,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param entity      the curve entity
     * @param materials   the materials array
     * @param windingRule the winding rule
+    *
+    * @see Curve2#calcBounds(Curve2, Bounds2)
     */
    public void shape ( final CurveEntity2 entity, final MaterialAwt[] materials,
       final int windingRule ) {
@@ -3047,6 +3045,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param entity      the mesh entity
     * @param material    the material
     * @param windingRule the winding rule
+    *
+    * @see MeshEntity2#calcBounds(MeshEntity2, Bounds2)
     */
    public void shape ( final MeshEntity2 entity, final MaterialAwt material,
       final int windingRule ) {
@@ -3096,6 +3096,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param entity      the mesh entity
     * @param materials   the materials array
     * @param windingRule the winding rule
+    *
+    * @see Mesh2#calcBounds(Mesh2, Bounds2)
     */
    public void shape ( final MeshEntity2 entity, final MaterialAwt[] materials,
       final int windingRule ) {
@@ -4722,7 +4724,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    protected void textLineImpl ( final char[] buffer, final int start,
       final int stop, final float x, final float y ) {
 
-      // QUERY Has this been updated in Processing 4?
+      // Has this been updated in Processing 4?
       // https://github.com/processing/processing4/blob/
       // 5b5f6eb95293aa5daa3fad31f847028f9fb59cb3/core/src/
       // processing/awt/PGraphicsJava2D.java#L2061

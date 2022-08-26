@@ -187,7 +187,7 @@ public class Vec2 implements Comparable < Vec2 > {
     */
    public String toString ( final int places ) {
 
-      return this.toString(new StringBuilder(48), places).toString();
+      return this.toString(new StringBuilder(64), places).toString();
    }
 
    /**
@@ -382,8 +382,7 @@ public class Vec2 implements Comparable < Vec2 > {
       final Vec2 sum ) {
 
       Vec2.add(a, b, sum);
-      Vec2.normalize(sum, target);
-      return target;
+      return Vec2.normalize(sum, target);
    }
 
    /**
@@ -443,9 +442,8 @@ public class Vec2 implements Comparable < Vec2 > {
 
          return ( float ) Math.acos( ( ax * bx + ay * by ) / ( Math.sqrt(ax * ax
             + ay * ay) * Math.sqrt(bx * bx + by * by) ));
-      } else {
-         return 0.0f;
       }
+      return 0.0f;
    }
 
    /**
@@ -625,9 +623,8 @@ public class Vec2 implements Comparable < Vec2 > {
        * cp.y + tsq * ap1.y);
        */
 
-      if ( step <= 0.0f ) {
-         return target.set(ap0);
-      } else if ( step >= 1.0f ) { return target.set(ap1); }
+      if ( step <= 0.0f ) { return target.set(ap0); }
+      if ( step >= 1.0f ) { return target.set(ap1); }
 
       final float u = 1.0f - step;
       float tcb = step * step;
@@ -662,9 +659,8 @@ public class Vec2 implements Comparable < Vec2 > {
    public static Vec2 bezierTangent ( final Vec2 ap0, final Vec2 cp0,
       final Vec2 cp1, final Vec2 ap1, final float step, final Vec2 target ) {
 
-      if ( step <= 0.0f ) {
-         return Vec2.sub(cp0, ap0, target);
-      } else if ( step >= 1.0f ) { return Vec2.sub(ap1, cp1, target); }
+      if ( step <= 0.0f ) { return Vec2.sub(cp0, ap0, target); }
+      if ( step >= 1.0f ) { return Vec2.sub(ap1, cp1, target); }
 
       final float u = 1.0f - step;
       final float t3 = step + step + step;
@@ -2615,8 +2611,7 @@ public class Vec2 implements Comparable < Vec2 > {
       final Vec2 dir ) {
 
       Vec2.sub(a, b, dir);
-      Vec2.normalize(dir, target);
-      return target;
+      return Vec2.normalize(dir, target);
    }
 
    /**
@@ -2632,8 +2627,9 @@ public class Vec2 implements Comparable < Vec2 > {
    public static StringBuilder toString ( final StringBuilder sb,
       final Vec2[] arr, final int places ) {
 
-      sb.append('[').append(' ');
+      /* Caches array element to a variable in case of null check. */
 
+      sb.append('[').append(' ');
       if ( arr != null ) {
          final int len = arr.length;
          final int last = len - 1;
@@ -2643,12 +2639,10 @@ public class Vec2 implements Comparable < Vec2 > {
             v.toString(sb, places);
             sb.append(',').append(' ');
          }
-
          final Vec2 vl = arr[last];
          vl.toString(sb, places);
          sb.append(' ');
       }
-
       sb.append(']');
 
       return sb;
@@ -2881,6 +2875,11 @@ public class Vec2 implements Comparable < Vec2 > {
    public static class Lerp extends AbstrEasing {
 
       /**
+       * The default constructor.
+       */
+      public Lerp ( ) {}
+
+      /**
        * Eases between two vectors by a step using the formula ( 1.0 -
        * <em>t</em> ) <em>a</em> + <em>t</em> <em>b</em>.
        *
@@ -2907,6 +2906,11 @@ public class Vec2 implements Comparable < Vec2 > {
     * <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> ) .
     */
    public static class SmoothStep extends AbstrEasing {
+
+      /**
+       * The default constructor.
+       */
+      public SmoothStep ( ) {}
 
       /**
        * Applies the function.
@@ -2980,6 +2984,11 @@ public class Vec2 implements Comparable < Vec2 > {
    public static class SortX extends AbstrComparator {
 
       /**
+       * The default constructor.
+       */
+      public SortX ( ) {}
+
+      /**
        * The compare function.
        *
        * @param a the left comparisand
@@ -2999,6 +3008,11 @@ public class Vec2 implements Comparable < Vec2 > {
     * Compares two vectors on the y axis.
     */
    public static class SortY extends AbstrComparator {
+
+      /**
+       * The default constructor.
+       */
+      public SortY ( ) {}
 
       /**
        * The compare function.

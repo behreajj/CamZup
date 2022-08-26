@@ -100,10 +100,9 @@ public class Entity2 extends Entity implements IOriented2, ISpatial2 {
    @Override
    public int hashCode ( ) {
 
-      int hash = super.hashCode();
-      hash = hash * IUtils.HASH_MUL ^ ( this.transform == null ? 0
+      final int hash = super.hashCode();
+      return hash * IUtils.HASH_MUL ^ ( this.transform == null ? 0
          : this.transform.hashCode() );
-      return hash;
    }
 
    /**
@@ -226,7 +225,7 @@ public class Entity2 extends Entity implements IOriented2, ISpatial2 {
       sb.append(this.name);
       sb.append('\"');
       sb.append(", transform: ");
-      sb.append(this.transform.toString(places));
+      this.transform.toString(sb, places);
       sb.append(' ');
       sb.append('}');
       return sb.toString();

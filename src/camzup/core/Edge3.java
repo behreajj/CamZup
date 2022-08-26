@@ -31,16 +31,16 @@ public class Edge3 implements Comparable < Edge3 > {
     * coordinate and normal data. Creates two vertex objects.
     *
     * @param coOrigin origin coordinate
-    * @param txOrigin origin texture coordinate
-    * @param nmOrigin origin normal
+    * @param txOrig   origin texture coordinate
+    * @param nmOrig   origin normal
     * @param coDest   destination coordinate
     * @param txDest   destination texture coordinate
     * @param nmDest   destination normal
     */
-   public Edge3 ( final Vec3 coOrigin, final Vec2 txOrigin, final Vec3 nmOrigin,
+   public Edge3 ( final Vec3 coOrigin, final Vec2 txOrig, final Vec3 nmOrig,
       final Vec3 coDest, final Vec2 txDest, final Vec3 nmDest ) {
 
-      this.origin = new Vert3(coOrigin, txOrigin, nmOrigin);
+      this.origin = new Vert3(coOrigin, txOrig, nmOrig);
       this.dest = new Vert3(coDest, txDest, nmDest);
    }
 
@@ -688,7 +688,7 @@ public class Edge3 implements Comparable < Edge3 > {
     * normal data by reference.
     *
     * @param coOrigin origin coordinate
-    * @param txOrigin origin texture coordinate
+    * @param txOrig   origin texture coordinate
     * @param nmOrigin origin normal
     * @param coDest   destination coordinate
     * @param txDest   destination texture coordinate
@@ -696,11 +696,11 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return this edge
     */
-   public Edge3 set ( final Vec3 coOrigin, final Vec2 txOrigin,
+   public Edge3 set ( final Vec3 coOrigin, final Vec2 txOrig,
       final Vec3 nmOrigin, final Vec3 coDest, final Vec2 txDest,
       final Vec3 nmDest ) {
 
-      this.origin.set(coOrigin, txOrigin, nmOrigin);
+      this.origin.set(coOrigin, txOrig, nmOrigin);
       this.dest.set(coDest, txDest, nmDest);
       return this;
    }

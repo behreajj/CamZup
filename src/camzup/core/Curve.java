@@ -81,9 +81,8 @@ public abstract class Curve extends EntityData implements ICurve {
    @Override
    public int hashCode ( ) {
 
-      int hash = super.hashCode();
-      hash = hash * IUtils.HASH_MUL ^ ( this.closedLoop ? 1231 : 1237 );
-      return hash;
+      final int hash = super.hashCode();
+      return hash * IUtils.HASH_MUL ^ ( this.closedLoop ? 1231 : 1237 );
    }
 
    /**

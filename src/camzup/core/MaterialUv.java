@@ -156,9 +156,8 @@ public abstract class MaterialUv extends Material implements IOriented2,
       int result = super.hashCode();
       result = prime * result + ( this.tint == null ? 0 : this.tint
          .hashCode() );
-      result = prime * result + ( this.transform == null ? 0 : this.transform
+      return prime * result + ( this.transform == null ? 0 : this.transform
          .hashCode() );
-      return result;
    }
 
    /**
@@ -399,7 +398,7 @@ public abstract class MaterialUv extends Material implements IOriented2,
       sb.append("\", tint: ");
       this.tint.toString(sb, places);
       sb.append(", transform: ");
-      sb.append(this.transform.toString(places));
+      this.transform.toString(sb, places);
       sb.append(' ');
       sb.append('}');
       return sb.toString();

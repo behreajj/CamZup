@@ -88,9 +88,8 @@ public class Vert3 implements Comparable < Vert3 > {
          .hashCode() );
       result = prime * result + ( this.normal == null ? 0 : this.normal
          .hashCode() );
-      result = prime * result + ( this.texCoord == null ? 0 : this.texCoord
+      return prime * result + ( this.texCoord == null ? 0 : this.texCoord
          .hashCode() );
-      return result;
    }
 
    /**

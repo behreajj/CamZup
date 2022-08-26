@@ -388,12 +388,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       final int j = Utils.mod(edgeIndex, vertsLen);
       final int k = ( j + 1 ) % vertsLen;
-      final int[] idxOrigin = face[j];
+      final int[] idxOrig = face[j];
       final int[] idxDest = face[k];
 
-      final int idxV0 = idxOrigin[0];
-      final int idxVt0 = idxOrigin[1];
-      final int idxVn0 = idxOrigin[2];
+      final int idxV0 = idxOrig[0];
+      final int idxVt0 = idxOrig[1];
+      final int idxVn0 = idxOrig[2];
 
       final int idxV3 = idxDest[0];
       final int idxVt3 = idxDest[1];
@@ -854,21 +854,21 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          for ( int j = 0; j < faceLen; ++j ) {
 
-            final int[] idcsOrigin = fs[j];
+            final int[] idcsOrig = fs[j];
             final int[] idcsDest = fs[ ( j + 1 ) % faceLen];
 
-            final int vIdxOrigin = idcsOrigin[0];
+            final int vIdxOrig = idcsOrig[0];
             final int vIdxDest = idcsDest[0];
 
-            final Integer aHsh = ( IUtils.MUL_BASE ^ vIdxOrigin )
+            final Integer aHsh = ( IUtils.MUL_BASE ^ vIdxOrig )
                * IUtils.HASH_MUL ^ vIdxDest;
             final Integer bHsh = ( IUtils.MUL_BASE ^ vIdxDest )
-               * IUtils.HASH_MUL ^ vIdxOrigin;
+               * IUtils.HASH_MUL ^ vIdxOrig;
 
             if ( !result.containsKey(aHsh) && !result.containsKey(bHsh) ) {
-               result.put(vIdxOrigin < vIdxDest ? aHsh : bHsh, new Edge3(
-                  this.coords[vIdxOrigin], this.texCoords[idcsOrigin[1]],
-                  this.normals[idcsOrigin[2]], this.coords[vIdxDest],
+               result.put(vIdxOrig < vIdxDest ? aHsh : bHsh, new Edge3(
+                  this.coords[vIdxOrig], this.texCoords[idcsOrig[1]],
+                  this.normals[idcsOrig[2]], this.coords[vIdxDest],
                   this.texCoords[idcsDest[1]], this.normals[idcsDest[2]]));
             }
          }
@@ -990,8 +990,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       int hash = super.hashCode();
       hash = hash * IUtils.HASH_MUL ^ Arrays.hashCode(this.coords);
-      hash = hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
-      return hash;
+      return hash * IUtils.HASH_MUL ^ Arrays.deepHashCode(this.faces);
    }
 
    /**
@@ -5100,9 +5099,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * caps with a centered triangle fan may optionally be included. This is
     * protected so that multiple public overloaded methods may access it.
     *
-    * @param xOrigin     origin x
-    * @param yOrigin     origin y
-    * @param zOrigin     origin z
+    * @param xOrig       origin x
+    * @param yOrig       origin y
+    * @param zOrig       origin z
     * @param xDest       destination x
     * @param yDest       destination y
     * @param zDest       destination z
@@ -5113,17 +5112,17 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     *
     * @return the cylinder
     */
-   protected static Mesh3 cylinder ( final float xOrigin, final float yOrigin,
-      final float zOrigin, final float xDest, final float yDest,
+   protected static Mesh3 cylinder ( final float xOrig, final float yOrig,
+      final float zOrig, final float xDest, final float yDest,
       final float zDest, final int sectors, final boolean includeCaps,
       final float radius, final Mesh3 target ) {
 
       target.name = "Cylinder";
 
       /* Find difference between destination and origin. */
-      float x0 = xDest - xOrigin;
-      float y0 = yDest - yOrigin;
-      float z0 = zDest - zOrigin;
+      float x0 = xDest - xOrig;
+      float y0 = yDest - yOrig;
+      float z0 = zDest - zOrig;
 
       /* If difference's length is zero, invalid inputs. */
       final float m0 = x0 * x0 + y0 * y0 + z0 * z0;
@@ -5254,9 +5253,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          v1.y = v0.y;
          v1.z = v0.z;
 
-         v0.x += xOrigin;
-         v0.y += yOrigin;
-         v0.z += zOrigin;
+         v0.x += xOrig;
+         v0.y += yOrig;
+         v0.z += zOrig;
 
          v1.x += xDest;
          v1.y += yDest;
@@ -5319,7 +5318,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final int vtCenterIdx = vts.length - 1;
 
          /* Convert origin, destination loose floats to vectors. */
-         vs[vLen].set(xOrigin, yOrigin, zOrigin);
+         vs[vLen].set(xOrig, yOrig, zOrig);
          vs[len1].set(xDest, yDest, zDest);
 
          /* Set UV Center. */

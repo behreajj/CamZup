@@ -112,10 +112,9 @@ public class MaterialPImage extends MaterialUv {
    public int hashCode ( ) {
 
       final int prime = 31;
-      int result = super.hashCode();
-      result = prime * result + ( this.texture == null ? 0 : this.texture
+      final int result = super.hashCode();
+      return prime * result + ( this.texture == null ? 0 : this.texture
          .hashCode() );
-      return result;
    }
 
    /**

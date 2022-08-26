@@ -280,9 +280,7 @@ public class Mat3 {
 
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m20);
       hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m21);
-      hash = hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m22);
-
-      return hash;
+      return hash * IUtils.HASH_MUL ^ Float.floatToIntBits(this.m22);
    }
 
    /**
@@ -550,29 +548,7 @@ public class Mat3 {
     */
    public String toString ( final int places ) {
 
-      // TODO: Switch to pass by reference format.
-      final StringBuilder sb = new StringBuilder(128);
-      sb.append("{ m00: ");
-      Utils.toFixed(sb, this.m00, places);
-      sb.append(", m01: ");
-      Utils.toFixed(sb, this.m01, places);
-      sb.append(", m02: ");
-      Utils.toFixed(sb, this.m02, places);
-      sb.append(", m10: ");
-      Utils.toFixed(sb, this.m10, places);
-      sb.append(", m11: ");
-      Utils.toFixed(sb, this.m11, places);
-      sb.append(", m12: ");
-      Utils.toFixed(sb, this.m12, places);
-      sb.append(", m20: ");
-      Utils.toFixed(sb, this.m20, places);
-      sb.append(", m21: ");
-      Utils.toFixed(sb, this.m21, places);
-      sb.append(", m22: ");
-      Utils.toFixed(sb, this.m22, places);
-      sb.append(' ');
-      sb.append('}');
-      return sb.toString();
+      return this.toString(new StringBuilder(128), places).toString();
    }
 
    /**
@@ -620,6 +596,42 @@ public class Mat3 {
          .append('\n')
          .toString();
       /* @formatter:on */
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * matrices. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    *
+    * @see Utils#toFixed(StringBuilder, float, int)
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
+      sb.append("{ m00: ");
+      Utils.toFixed(sb, this.m00, places);
+      sb.append(", m01: ");
+      Utils.toFixed(sb, this.m01, places);
+      sb.append(", m02: ");
+      Utils.toFixed(sb, this.m02, places);
+      sb.append(", m10: ");
+      Utils.toFixed(sb, this.m10, places);
+      sb.append(", m11: ");
+      Utils.toFixed(sb, this.m11, places);
+      sb.append(", m12: ");
+      Utils.toFixed(sb, this.m12, places);
+      sb.append(", m20: ");
+      Utils.toFixed(sb, this.m20, places);
+      sb.append(", m21: ");
+      Utils.toFixed(sb, this.m21, places);
+      sb.append(", m22: ");
+      Utils.toFixed(sb, this.m22, places);
+      sb.append(' ');
+      sb.append('}');
+      return sb;
    }
 
    /**

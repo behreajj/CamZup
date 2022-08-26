@@ -171,14 +171,27 @@ public class Complex implements Comparable < Complex > {
     */
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(64);
+      return this.toString(new StringBuilder(64), places).toString();
+   }
+
+   /**
+    * Internal helper function to assist with methods that need to print many
+    * complex numbers. Appends to an existing {@link StringBuilder}.
+    *
+    * @param sb     the string builder
+    * @param places the number of places
+    *
+    * @return the string builder
+    */
+   StringBuilder toString ( final StringBuilder sb, final int places ) {
+
       sb.append("{ real: ");
       Utils.toFixed(sb, this.real, places);
       sb.append(", imag: ");
       Utils.toFixed(sb, this.imag, places);
       sb.append(' ');
       sb.append('}');
-      return sb.toString();
+      return sb;
    }
 
    /**
@@ -355,7 +368,6 @@ public class Complex implements Comparable < Complex > {
 
       final double zr = z.real;
       final double zi = z.imag;
-
       return target.set(( float ) ( Math.cos(zr) * Math.cosh(zi) ),
          ( float ) ( -Math.sin(zr) * Math.sinh(zi) ));
    }
@@ -469,6 +481,92 @@ public class Complex implements Comparable < Complex > {
    }
 
    /**
+    * Flattens a two dimensional array of complex numbers to a one dimensional
+    * array.
+    *
+    * @param arr the 2D array
+    *
+    * @return the 1D array
+    *
+    * @see System#arraycopy(Object, int, Object, int, int)
+    */
+   public static Complex[] flat ( final Complex[][] arr ) {
+
+      /* Sum the lengths of inner arrays. */
+      int totalLen = 0;
+      final int sourceLen = arr.length;
+      for ( int i = 0; i < sourceLen; ++i ) { totalLen += arr[i].length; }
+
+      /*
+       * Copy each inner array to the result array, then move the cursor by the
+       * length of each array.
+       */
+      int j = 0;
+      final Complex[] result = new Complex[totalLen];
+      for ( int i = 0; i < sourceLen; ++i ) {
+         final Complex[] arrInner = arr[i];
+         final int len = arrInner.length;
+         System.arraycopy(arrInner, 0, result, j, len);
+         j += len;
+      }
+
+      return result;
+   }
+
+   /**
+    * Generates a 2D array of complex numbers. Defaults to the coordinate
+    * range of [-0.5, 0.5] .
+    *
+    * @param res the resolution
+    *
+    * @return the array
+    *
+    * @see Complex#grid(int, int)
+    */
+   public static Complex[][] grid ( final int res ) {
+
+      return Complex.grid(res, res);
+   }
+
+   /**
+    * Generates a 2D array of complex numbers. The result is in row-major
+    * order, but the parameters are supplied in reverse: columns first, then
+    * rows. Defaults to the coordinate range of [-0.5, 0.5] .
+    *
+    * @param cols number of columns
+    * @param rows number of rows
+    *
+    * @return the array
+    *
+    * @see Complex#grid(int, int, float, float, float, float)
+    */
+   public static Complex[][] grid ( final int cols, final int rows ) {
+
+      return Complex.grid(cols, rows, -0.5f, -0.5f, 0.5f, 0.5f);
+   }
+
+   /**
+    * Generates a 2D array of complex numbers. The result is in row-major
+    * order, but the parameters are supplied in reverse: columns first, then
+    * rows.
+    *
+    * @param cols       number of columns
+    * @param rows       number of rows
+    * @param lowerBound the lower bound
+    * @param upperBound the upper bound
+    *
+    * @return the array
+    *
+    * @see Complex#grid(int, int, float, float, float, float)
+    */
+   public static Complex[][] grid ( final int cols, final int rows,
+      final float lowerBound, final float upperBound ) {
+
+      return Complex.grid(cols, rows, lowerBound, lowerBound, upperBound,
+         upperBound);
+   }
+
+   /**
     * Returns the inverse, or reciprocal, of the complex number.
     *
     * @param z      the input complex number
@@ -509,6 +607,7 @@ public class Complex implements Comparable < Complex > {
          final float invAbsSq = 1.0f / absSq;
          return target.set(conj.real * invAbsSq, conj.imag * invAbsSq);
       }
+      conj.reset();
       return target.reset();
    }
 
@@ -718,7 +817,9 @@ public class Complex implements Comparable < Complex > {
    public static Complex pow ( final Complex a, final Complex b,
       final Complex target, final Complex prod, final Complex log ) {
 
-      return Complex.exp(Complex.mul(b, Complex.log(a, log), prod), target);
+      Complex.log(a, log);
+      Complex.mul(b, log, prod);
+      return Complex.exp(prod, target);
    }
 
    /**
@@ -912,6 +1013,50 @@ public class Complex implements Comparable < Complex > {
    public static Complex zero ( final Complex target ) {
 
       return target.set(0.0f, 0.0f);
+   }
+
+   /**
+    * Internal function for generating 2D array of complex numbers. The result
+    * is in row-major order, but the parameters are supplied in reverse:
+    * columns first, then rows.<br>
+    * <br>
+    * This is separated to make overriding the public grid functions easier.
+    * This is protected because it is too easy for integers to be quietly
+    * promoted to floats if the signature parameters are confused.
+    *
+    * @param cols number of columns
+    * @param rows number of rows
+    * @param lbr  lower bound real
+    * @param lbi  lower bound imaginary
+    * @param ubr  upper bound real
+    * @param ubi  upper bound imaginary
+    *
+    * @return the array
+    */
+   protected static Complex[][] grid ( final int cols, final int rows,
+      final float lbr, final float lbi, final float ubr, final float ubi ) {
+
+      final int rVal = rows < 2 ? 2 : rows;
+      final int cVal = cols < 2 ? 2 : cols;
+
+      final Complex[][] result = new Complex[rVal][cVal];
+
+      final float iToStep = 1.0f / ( rVal - 1.0f );
+      final float jToStep = 1.0f / ( cVal - 1.0f );
+
+      final int len = rVal * cVal;
+      for ( int k = 0; k < len; ++k ) {
+         final int i = k / cVal;
+         final int j = k % cVal;
+
+         final float iStep = i * iToStep;
+         final float jStep = j * jToStep;
+
+         result[i][j] = new Complex( ( 1.0f - jStep ) * lbr + jStep * ubr,
+            ( 1.0f - iStep ) * lbi + iStep * ubi);
+      }
+
+      return result;
    }
 
    /**
