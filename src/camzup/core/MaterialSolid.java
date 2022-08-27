@@ -533,8 +533,8 @@ public class MaterialSolid extends Material {
 
       /* Stroke style. */
       final float sw = Utils.div(this.strokeWeight, Utils.abs(scale));
-      final float sa = Utils.clamp01(this.stroke.a);
       if ( this.useStroke && sw > IUtils.EPSILON ) {
+         final float sa = Utils.clamp01(this.stroke.a);
          svgp.append("stroke-width=\"");
          Utils.toFixed(svgp, sw, ISvgWritable.FIXED_PRINT);
          svgp.append("\" stroke-opacity=\"");
@@ -552,8 +552,8 @@ public class MaterialSolid extends Material {
       }
 
       /* Fill style. */
-      final float fa = Utils.clamp01(this.fill.a);
       if ( this.useFill ) {
+         final float fa = Utils.clamp01(this.fill.a);
          svgp.append("fill-opacity=\"");
          Utils.toFixed(svgp, fa, ISvgWritable.FIXED_PRINT);
          svgp.append("\" fill=\"");

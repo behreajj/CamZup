@@ -13,7 +13,7 @@ public abstract class Utils implements IUtils {
    /**
     * Finds the absolute value of a single precision real number. An alias for
     * {@link Math#abs(float)}. Relies on bit-masking to remove the sign bit.
-    * Equivalent to max(-a, a) .
+    * Equivalent to <code>Utils.max(-a, a)</code>.
     *
     * @param value the input value
     *
@@ -29,9 +29,9 @@ public abstract class Utils implements IUtils {
 
    /**
     * A bounds checked approximation of the arc-cosine for single precision
-    * real numbers. Returns a value in the range [0.0, \u03c0] : \u03c0 when
-    * the input is less than or equal to -1.0; \u03c0 / 2.0 when the input is
-    * 0.0; 0.0 when the input is greater than or equal to 1.0.<br>
+    * real numbers. Returns a value in the range [0.0, π] : π when the input
+    * is less than or equal to -1.0; π / 2.0 when the input is 0.0; 0.0 when
+    * the input is greater than or equal to 1.0.<br>
     * <br>
     * {@link Math#acos(double) } defers to {@link StrictMath#acos(double) },
     * which is implemented natively. This is not a "fast" alternative.<br>
@@ -114,10 +114,9 @@ public abstract class Utils implements IUtils {
 
    /**
     * A bounds checked approximation of the arc-sine for single precision real
-    * numbers. Returns a value in the range [-\u03c0 / 2.0, \u03c0 / 2.0]:
-    * -\u03c0 / 2.0 when the input is less than or equal to -1.0; 0.0 when the
-    * input is 0.0; \u03c0 / 2.0 when the input is greater than or equal to
-    * 1.0.<br>
+    * numbers. Returns a value in the range [-π / 2.0, π / 2.0]: -π / 2.0 when
+    * the input is less than or equal to -1.0; 0.0 when the input is 0.0; π /
+    * 2.0 when the input is greater than or equal to 1.0.<br>
     * <br>
     * {@link Math#asin(double) } defers to {@link StrictMath#asin(double) },
     * which is implemented natively. This is not a "fast" alternative.<br>
@@ -154,7 +153,7 @@ public abstract class Utils implements IUtils {
    /**
     * Finds a single precision approximation of a signed angle given a
     * vertical and horizontal component. The vertical component precedes the
-    * horizontal. The return value falls in the range [-\u03c0, \u03c0] .<br>
+    * horizontal. The return value falls in the range [-π, π] .<br>
     * <br>
     * This is not a "fast" alternative to
     * {@link Math#atan2(double,double) }.<br>
@@ -807,7 +806,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Finds the greatest, or maximum, among a list of values. Returns
-    * {@link Float#MIN_VALUE} if the list's length is zero.
+    * {@link Float#MIN_VALUE}, {@value Float#MIN_VALUE}, if the list's length
+    * is zero.
     *
     * @param fs the list of values
     *
@@ -867,7 +867,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Finds the least, or minimum, among a list of values. Returns
-    * {@link Float#MAX_VALUE} if the list's length is zero.
+    * {@link Float#MAX_VALUE}, {@value Float#MAX_VALUE}, if the list's length
+    * is zero.
     *
     * @param fs the list of values
     *
@@ -1009,7 +1010,7 @@ public abstract class Utils implements IUtils {
 
    /**
     * A specialized version of modulo which shifts an angle in radians to the
-    * range [0.0, \u03c4] .
+    * range [0.0, τ] .
     *
     * @param radians the angle in radians
     *
@@ -1187,28 +1188,57 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Reduces the signal, or granularity, of a value. Applied to a color, this
-    * yields the 'posterization' effect. Applied to a vector, this yields a
-    * crenelated effect. Any level less than 2 returns the value unaltered.
+    * Reduces the signal, or granularity, of a value. Defaults to signed
+    * quantization.
     *
     * @param value  the value
     * @param levels the levels
     *
     * @return the quantized value
     *
-    * @see Utils#floor(float)
+    * @see Utils#quantizeSigned(float, int)
     */
    public static float quantize ( final float value, final int levels ) {
 
-      /*
-       * The method used to describe posterize in the Blender manual, round(m x
-       * n - 0.5) / (n - 1), should not be used. It will yield output values
-       * exceeding the magnitude of input values, e.g. 1.0 will return 2.0 .
-       */
+      return Utils.quantizeSigned(value, levels);
+   }
 
-      if ( levels < 2 ) { return value; }
-      final float levf = levels;
-      return Utils.floor(0.5f + value * levf) / levf;
+   /**
+    * Reduces the signal, or granularity, of a signed value. The quantization
+    * is centered about zero. Applied to a vector, this yields a crenelated
+    * effect. If the levels are zero, returns the value unaltered.
+    *
+    * @param value  the value
+    * @param levels the levels
+    *
+    * @return the quantized value
+    */
+   public static float quantizeSigned ( final float value, final int levels ) {
+
+      if ( levels == 0 ) { return value; }
+      final float levf = levels < 0 ? -levels : levels;
+      return Utils.quantizeSigned(value, levf, 1.0f / levf);
+   }
+
+   /**
+    * Reduces the signal, or granularity, of an unsigned value. The
+    * quantization treats zero as a left edge. Applied to a color, this yields
+    * a posterization effect. If the levels are 1 or -1, returns the value
+    * unaltered.
+    *
+    * @param value  the value
+    * @param levels the levels
+    *
+    * @return the quantized value
+    *
+    * @see Utils#abs(float)
+    */
+   public static float quantizeUnsigned ( final float value,
+      final int levels ) {
+
+      if ( levels == 1 || levels == -1 ) { return value; }
+      final float levf = levels < 0 ? -levels : levels;
+      return Utils.quantizeUnsigned(value, levf, 1.0f / ( levf - 1.0f ));
    }
 
    /**
@@ -1508,8 +1538,10 @@ public abstract class Utils implements IUtils {
     * An alias for {@link Byte#toUnsignedInt(byte)} . Converts a signed byte
     * in the range [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] to an
     * unsigned byte in the range [0, 255], promoted to an integer. Useful when
-    * working with colors. Defined for cross-language comparison with C#,
-    * which uses signed and unsigned versions of primitive data types.
+    * working with colors.<br>
+    * <br>
+    * Defined for cross-language comparison with C#, which uses signed and
+    * unsigned versions of primitive data types.
     *
     * @param a the signed byte
     *
@@ -1521,7 +1553,8 @@ public abstract class Utils implements IUtils {
     * An alias for {@link Integer#toUnsignedLong(int)}. Converts a signed
     * integer in the range [{@value Integer#MIN_VALUE},
     * {@value Integer#MAX_VALUE}] to an unsigned integer in the range [0,
-    * 4294967295], promoted to a long. Useful when working with colors.
+    * 4294967295], promoted to a long. Useful when working with colors.<br>
+    * <br>
     * Defined for cross-language comparison with C#, which uses signed and
     * unsigned versions of primitive data types.
     *
@@ -1566,6 +1599,43 @@ public abstract class Utils implements IUtils {
    public static int xor ( final float a, final float b ) {
 
       return ( a != 0.0f && a == a ? 1 : 0 ) ^ ( b != 0.0f && b == b ? 1 : 0 );
+   }
+
+   /**
+    * An internal helper function. Reduces the signal, or granularity, of a
+    * signed value. The quantization is centered about zero. Applied to a
+    * vector, this yields a crenelated effect.
+    *
+    * @param value  the value
+    * @param levels the levels
+    *
+    * @return the quantized value
+    *
+    * @see Utils#floor(float)
+    */
+   static float quantizeSigned ( final float value, final float levels,
+      final float delta ) {
+
+      return Utils.floor(0.5f + value * levels) * delta;
+   }
+
+   /**
+    * An internal helper function. Reduces the signal, or granularity, of an
+    * unsigned value. The quantization treats zero as a left edge. Applied to
+    * a color, this yields a posterization effect.
+    *
+    * @param value  the value
+    * @param levels the levels
+    *
+    * @return the quantized value
+    *
+    * @see Utils#ceil(float)
+    * @see Utils#max(float, float)
+    */
+   static float quantizeUnsigned ( final float value, final float levels,
+      final float delta ) {
+
+      return Utils.max(0.0f, ( Utils.ceil(value * levels) - 1.0f ) * delta);
    }
 
    /**
@@ -1695,6 +1765,8 @@ public abstract class Utils implements IUtils {
     * @param places the number of places
     *
     * @return the string builder
+    *
+    * @see Utils#toFixed(StringBuilder, float, int)
     */
    static StringBuilder toString ( final StringBuilder sb, final float[] arr,
       final int places ) {
@@ -1721,6 +1793,8 @@ public abstract class Utils implements IUtils {
     * @param padding the padding
     *
     * @return the string builder
+    *
+    * @see Utils#toPadded(StringBuilder, int, int)
     */
    static StringBuilder toString ( final StringBuilder sb, final int[] arr,
       final int padding ) {
@@ -1813,7 +1887,8 @@ public abstract class Utils implements IUtils {
    public static class LerpCCW extends PeriodicEasing {
 
       /**
-       * Constructs the lerp CCW functional object with a default range, TAU.
+       * Constructs the lerp CCW functional object with a default range,
+       * {@link IUtils#TAU} ({@value IUtils#TAU}).
        */
       public LerpCCW ( ) {}
 
@@ -1827,25 +1902,20 @@ public abstract class Utils implements IUtils {
       /**
        * Applies the lerp CCW function.
        *
-       * @param origin the origin
-       * @param dest   the destination
-       * @param step   the step
+       * @param step the step
        *
        * @return the eased value
        *
        * @see Utils#modUnchecked(float, float)
        */
       @Override
-      protected float applyPartial ( final float origin, final float dest,
-         final float step ) {
+      protected float applyPartial ( final float step ) {
 
          if ( this.diff == 0.0f ) { return this.o; }
-
          if ( this.oGtd ) {
             return Utils.modUnchecked( ( 1.0f - step ) * this.o + step
                * ( this.d + this.range ), this.range);
          }
-
          return ( 1.0f - step ) * this.o + step * this.d;
       }
 
@@ -1857,7 +1927,8 @@ public abstract class Utils implements IUtils {
    public static class LerpCW extends PeriodicEasing {
 
       /**
-       * Constructs the lerp CW functional object with a default range, TAU.
+       * Constructs the lerp CW functional object with a default range,
+       * {@link IUtils#TAU} ({@value IUtils#TAU}).
        */
       public LerpCW ( ) {}
 
@@ -1871,25 +1942,20 @@ public abstract class Utils implements IUtils {
       /**
        * Applies the lerp CW function.
        *
-       * @param origin the origin
-       * @param dest   the destination
-       * @param step   the step
+       * @param step the step
        *
        * @return the eased value
        *
        * @see Utils#modUnchecked(float, float)
        */
       @Override
-      protected float applyPartial ( final float origin, final float dest,
-         final float step ) {
+      protected float applyPartial ( final float step ) {
 
          if ( this.diff == 0.0f ) { return this.d; }
-
          if ( this.oLtd ) {
             return Utils.modUnchecked( ( 1.0f - step ) * ( this.o + this.range )
                + step * this.d, this.range);
          }
-
          return ( 1.0f - step ) * this.o + step * this.d;
       }
 
@@ -1901,7 +1967,8 @@ public abstract class Utils implements IUtils {
    public static class LerpNear extends PeriodicEasing {
 
       /**
-       * Constructs the lerp near functional object with a default range, TAU.
+       * Constructs the lerp near functional object with a default range,
+       * {@link IUtils#TAU} ({@value IUtils#TAU}).
        */
       public LerpNear ( ) {}
 
@@ -1915,30 +1982,24 @@ public abstract class Utils implements IUtils {
       /**
        * Applies the lerp near function.
        *
-       * @param origin the origin
-       * @param dest   the destination
-       * @param step   the step
+       * @param step the step
        *
        * @return the eased value
        *
        * @see Utils#modUnchecked(float, float)
        */
       @Override
-      protected float applyPartial ( final float origin, final float dest,
-         final float step ) {
+      protected float applyPartial ( final float step ) {
 
          if ( this.diff == 0.0f ) { return this.o; }
-
          if ( this.oLtd && this.diff > this.halfRange ) {
             return Utils.modUnchecked( ( 1.0f - step ) * ( this.o + this.range )
                + step * this.d, this.range);
          }
-
          if ( this.oGtd && this.diff < -this.halfRange ) {
             return Utils.modUnchecked( ( 1.0f - step ) * this.o + step
                * ( this.d + this.range ), this.range);
          }
-
          return ( 1.0f - step ) * this.o + step * this.d;
       }
 
@@ -2022,7 +2083,7 @@ public abstract class Utils implements IUtils {
          final float tf = step;
          if ( tf <= 0.0f ) { return this.o; }
          if ( tf >= 1.0f ) { return this.d; }
-         return this.applyPartial(origin, dest, tf);
+         return this.applyPartial(tf);
       }
 
       /**
@@ -2037,6 +2098,9 @@ public abstract class Utils implements IUtils {
        * non-zero value.
        *
        * @param range the range
+       *
+       * @see Utils#abs(float)
+       * @see Utils#max(float, float)
        */
       public void setRange ( final float range ) {
 
@@ -2058,14 +2122,11 @@ public abstract class Utils implements IUtils {
        * This function needs to be protected because the public apply above
        * verifies the data upon which applyUnclamped operates.
        *
-       * @param origin the origin value
-       * @param dest   the destination value
-       * @param step   the step
+       * @param step the step
        *
        * @return the interpolated value
        */
-      protected abstract float applyPartial ( final float origin,
-         final float dest, final float step );
+      protected abstract float applyPartial ( final float step );
 
       /**
        * A helper function which mutates fields {@link o}, {@link d},
@@ -2074,14 +2135,14 @@ public abstract class Utils implements IUtils {
        * mod origin and destination . Lastly, it evaluates which of the two is
        * greater than the other.
        *
-       * @param origin origin value
-       * @param dest   destination value
+       * @param orig the origin value
+       * @param dest the destination value
        *
        * @see Utils#modUnchecked(float, float)
        */
-      protected void eval ( final float origin, final float dest ) {
+      protected void eval ( final float orig, final float dest ) {
 
-         this.o = Utils.modUnchecked(origin, this.range);
+         this.o = Utils.modUnchecked(orig, this.range);
          this.d = Utils.modUnchecked(dest, this.range);
          this.diff = this.d - this.o;
          this.oLtd = this.o < this.d;

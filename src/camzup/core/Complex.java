@@ -363,6 +363,11 @@ public class Complex implements Comparable < Complex > {
     * @param target the output complex number
     *
     * @return the cosine
+    *
+    * @see Math#cos(double)
+    * @see Math#cosh(double)
+    * @see Math#sin(double)
+    * @see Math#sinh(double)
     */
    public static Complex cos ( final Complex z, final Complex target ) {
 
@@ -754,6 +759,8 @@ public class Complex implements Comparable < Complex > {
     * @param z the complex number
     *
     * @return the phase
+    *
+    * @see Utils#atan2(float, float)
     */
    public static float phase ( final Complex z ) {
 
@@ -933,6 +940,11 @@ public class Complex implements Comparable < Complex > {
     * @param target the output complex number
     *
     * @return the sine
+    *
+    * @see Math#cos(double)
+    * @see Math#cosh(double)
+    * @see Math#sin(double)
+    * @see Math#sinh(double)
     */
    public static Complex sin ( final Complex z, final Complex target ) {
 
@@ -951,6 +963,8 @@ public class Complex implements Comparable < Complex > {
     * @param target the output complex number
     *
     * @return the square root
+    *
+    * @see Utils#sqrtUnchecked(float)
     */
    public static Complex sqrt ( final float a, final Complex target ) {
 

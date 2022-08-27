@@ -1504,7 +1504,7 @@ public class Color implements Comparable < Color > {
     * step and a pause factor. When the pause is greater than 1.0, the value
     * will be clamped to the pole.
     *
-    * @param origin the original color
+    * @param orig   the origin color
     * @param dest   the destination color
     * @param step   the step
     * @param pause  the pause factor
@@ -1512,15 +1512,17 @@ public class Color implements Comparable < Color > {
     *
     * @return the oscillation
     */
-   public static Color pingPong ( final Color origin, final Color dest,
+   public static Color pingPong ( final Color orig, final Color dest,
       final float step, final float pause, final Color target ) {
 
+      // TODO: Where is this used? If not anywhere, remove.
+
       final float t = 0.5f + 0.5f * pause * Utils.scNorm(step - 0.5f);
-      if ( t <= 0.0f ) { return target.set(origin); }
+      if ( t <= 0.0f ) { return target.set(orig); }
       if ( t >= 1.0f ) { return target.set(dest); }
       final float u = 1.0f - t;
-      return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g, u
-         * origin.b + t * dest.b, u * origin.a + t * dest.a);
+      return target.set(u * orig.r + t * dest.r, u * orig.g + t * dest.g, u
+         * orig.b + t * dest.b, u * orig.a + t * dest.a);
    }
 
    /**
@@ -1540,8 +1542,8 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Reduces the signal, or granularity, of a color's channels. Any level
-    * less than 2 or greater than 255 returns sets the target to the input.
+    * Creates a posterized version of the color. Uses unsigned quantization. A
+    * level of 1 or -1 will copy the input color to the target.
     *
     * @param c      the color
     * @param levels the levels
@@ -1549,19 +1551,18 @@ public class Color implements Comparable < Color > {
     *
     * @return the posterized color
     *
-    * @see Utils#floor(float)
+    * @see Utils#abs(float)
+    * @see Utils#quantizeUnsigned(float, float, float)
     */
    public static Color quantize ( final Color c, final int levels,
       final Color target ) {
 
-      // TODO: Refine into quantizeSigned and unsigned for multiple levels?
-      if ( levels < 1 || levels > 255 ) { return target.set(c); }
-
-      final float levf = levels;
-      final float delta = 1.0f / levf;
-      return target.set(delta * Utils.floor(0.5f + c.r * levf), delta * Utils
-         .floor(0.5f + c.g * levf), delta * Utils.floor(0.5f + c.b * levf),
-         delta * Utils.floor(0.5f + c.a * levf));
+      if ( levels == 1 || levels == -1 ) { return target.set(c); }
+      final float levf = Utils.abs(levels);
+      final float delta = 1.0f / ( levf - 1.0f );
+      return target.set(Utils.quantizeUnsigned(c.r, levf, delta), Utils
+         .quantizeUnsigned(c.g, levf, delta), Utils.quantizeUnsigned(c.b, levf,
+            delta), Utils.quantizeUnsigned(c.a, levf, delta));
    }
 
    /**
@@ -2030,6 +2031,7 @@ public class Color implements Comparable < Color > {
       final StringBuilder sb = new StringBuilder(1024);
       sb.append("GIMP Palette");
       sb.append("\nName: ");
+      if ( Character.isDigit(name.charAt(0)) ) { sb.append("id"); }
       sb.append(name);
       sb.append("\nColumns: ");
       sb.append(cols);
@@ -2528,7 +2530,7 @@ public class Color implements Comparable < Color > {
     * Internal helper function for {@link Gradient} so that a new color does
     * not need to be created as a target.
     *
-    * @param origin the origin color
+    * @param orig   the origin color
     * @param dest   the destination color
     * @param step   the step
     * @param target the output color
@@ -2537,38 +2539,38 @@ public class Color implements Comparable < Color > {
     *
     * @see Color#toHexIntWrap(Color)
     */
-   static int mix ( final Color origin, final Color dest, final float step ) {
+   static int mix ( final Color orig, final Color dest, final float step ) {
 
-      if ( step <= 0.0f ) { return Color.toHexIntWrap(origin); }
+      if ( step <= 0.0f ) { return Color.toHexIntWrap(orig); }
       if ( step >= 1.0f ) { return Color.toHexIntWrap(dest); }
 
       final float u = 1.0f - step;
-      return ( int ) ( 0.5f + ( u * origin.a + step * dest.a ) * 0xff ) << 0x18
-         | ( int ) ( 0.5f + ( u * origin.r + step * dest.r ) * 0xff ) << 0x10
-         | ( int ) ( 0.5f + ( u * origin.g + step * dest.g ) * 0xff ) << 0x08
-         | ( int ) ( 0.5f + ( u * origin.b + step * dest.b ) * 0xff );
+      return ( int ) ( 0.5f + ( u * orig.a + step * dest.a ) * 0xff ) << 0x18
+         | ( int ) ( 0.5f + ( u * orig.r + step * dest.r ) * 0xff ) << 0x10
+         | ( int ) ( 0.5f + ( u * orig.g + step * dest.g ) * 0xff ) << 0x08
+         | ( int ) ( 0.5f + ( u * orig.b + step * dest.b ) * 0xff );
    }
 
    /**
     * Mixes two colors by a step in the range [0.0, 1.0] with linear
     * interpolation in standard RGB.
     *
-    * @param origin the origin color
+    * @param orig   the origin color
     * @param dest   the destination color
     * @param step   the step
     * @param target the output color
     *
     * @return the mixed color
     */
-   static Color mix ( final Color origin, final Color dest, final float step,
+   static Color mix ( final Color orig, final Color dest, final float step,
       final Color target ) {
 
-      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step <= 0.0f ) { return target.set(orig); }
       if ( step >= 1.0f ) { return target.set(dest); }
 
       final float u = 1.0f - step;
-      return target.set(u * origin.r + step * dest.r, u * origin.g + step
-         * dest.g, u * origin.b + step * dest.b, u * origin.a + step * dest.a);
+      return target.set(u * orig.r + step * dest.r, u * orig.g + step * dest.g,
+         u * orig.b + step * dest.b, u * orig.a + step * dest.a);
    }
 
    /**
@@ -2627,7 +2629,7 @@ public class Color implements Comparable < Color > {
        * an unclamped interpolation, which is to be defined by sub-classes of
        * this class.
        *
-       * @param origin the origin color
+       * @param orig   the origin color
        * @param dest   the destination color
        * @param step   a factor in [0, 1]
        * @param target the output color
@@ -2635,27 +2637,27 @@ public class Color implements Comparable < Color > {
        * @return the eased color
        */
       @Override
-      public Color apply ( final Color origin, final Color dest,
-         final Float step, final Color target ) {
+      public Color apply ( final Color orig, final Color dest, final Float step,
+         final Color target ) {
 
          final float tf = step;
-         if ( tf <= 0.0f ) { return target.set(origin); }
+         if ( tf <= 0.0f ) { return target.set(orig); }
          if ( tf >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, step, target);
+         return this.applyUnclamped(orig, dest, step, target);
       }
 
       /**
        * The interpolation to be defined by subclasses.
        *
-       * @param origin the origin color
+       * @param orig   the origin color
        * @param dest   the destination color
        * @param step   a factor in [0, 1]
        * @param target the output color
        *
        * @return the eased color
        */
-      public abstract Color applyUnclamped ( final Color origin,
-         final Color dest, final Float step, final Color target );
+      public abstract Color applyUnclamped ( final Color orig, final Color dest,
+         final Float step, final Color target );
 
       /**
        * Returns the simple name of this class.
@@ -2680,25 +2682,20 @@ public class Color implements Comparable < Color > {
       /**
        * Applies the function.
        *
-       * @param origin the origin hue
-       * @param dest   the destination hue
-       * @param step   the step in a range 0 to 1
+       * @param step the step in a range 0 to 1
        *
        * @return the eased hue
        *
        * @see Utils#mod1(float)
        */
       @Override
-      protected float applyPartial ( final float origin, final float dest,
-         final float step ) {
+      protected float applyPartial ( final float step ) {
 
          if ( this.diff == 0.0f ) { return this.o; }
-
          if ( this.oGtd ) {
             return Utils.mod1( ( 1.0f - step ) * this.o + step * ( this.d
                + 1.0f ));
          }
-
          return ( 1.0f - step ) * this.o + step * this.d;
       }
 
@@ -2717,25 +2714,20 @@ public class Color implements Comparable < Color > {
       /**
        * Applies the function.
        *
-       * @param origin the origin hue
-       * @param dest   the destination hue
-       * @param step   the step in a range 0 to 1
+       * @param step the step in a range 0 to 1
        *
        * @return the eased hue
        *
        * @see Utils#mod1(float)
        */
       @Override
-      protected float applyPartial ( final float origin, final float dest,
-         final float step ) {
+      protected float applyPartial ( final float step ) {
 
          if ( this.diff == 0.0f ) { return this.d; }
-
          if ( this.oLtd ) {
             return Utils.mod1( ( 1.0f - step ) * ( this.o + 1.0f ) + step
                * this.d);
          }
-
          return ( 1.0f - step ) * this.o + step * this.d;
       }
 
@@ -2780,21 +2772,21 @@ public class Color implements Comparable < Color > {
       /**
        * The clamped easing function.
        *
-       * @param origin the origin hue
-       * @param dest   the destination hue
-       * @param step   the step in range 0 to 1
+       * @param orig the origin hue
+       * @param dest the destination hue
+       * @param step the step in range 0 to 1
        *
        * @return the eased hue
        */
       @Override
-      public Float apply ( final Float origin, final Float dest,
+      public Float apply ( final Float orig, final Float dest,
          final Float step ) {
 
-         this.eval(origin, dest);
+         this.eval(orig, dest);
          final float t = step;
          if ( t <= 0.0f ) { return this.o; }
          if ( t >= 1.0f ) { return this.d; }
-         return this.applyPartial(origin, dest, t);
+         return this.applyPartial(t);
       }
 
       /**
@@ -2808,28 +2800,25 @@ public class Color implements Comparable < Color > {
       /**
        * The application function to be defined by sub-classes of this class.
        *
-       * @param origin the origin hue
-       * @param dest   the destination hue
-       * @param step   the step
+       * @param step the step
        *
        * @return the eased hue
        */
-      protected abstract float applyPartial ( final float origin,
-         final float dest, final float step );
+      protected abstract float applyPartial ( final float step );
 
       /**
        * A helper function to pass on to sub-classes of this class. Mutates the
        * fields {@link o}, {@link d}, {@link diff}, {@link oLtd} and
        * {@link oGtd}.
        *
-       * @param origin the origin hue
-       * @param dest   the destination hue
+       * @param orig the origin hue
+       * @param dest the destination hue
        *
        * @see Utils#mod1(float)
        */
-      protected void eval ( final float origin, final float dest ) {
+      protected void eval ( final float orig, final float dest ) {
 
-         this.o = Utils.mod1(origin);
+         this.o = Utils.mod1(orig);
          this.d = Utils.mod1(dest);
          this.diff = this.d - this.o;
          this.oLtd = this.o < this.d;
@@ -2851,28 +2840,23 @@ public class Color implements Comparable < Color > {
       /**
        * Applies the function.
        *
-       * @param origin the origin hue
-       * @param dest   the destination hue
-       * @param step   the step in a range 0 to 1
+       * @param step the step in a range 0 to 1
        *
        * @return the eased hue
        *
        * @see Utils#mod1(float)
        */
       @Override
-      protected float applyPartial ( final float origin, final float dest,
-         final float step ) {
+      protected float applyPartial ( final float step ) {
 
          if ( this.diff == 0.0f || this.oLtd && this.diff < 0.5f ) {
             return Utils.mod1( ( 1.0f - step ) * ( this.o + 1.0f ) + step
                * this.d);
          }
-
          if ( this.oGtd && this.diff > -0.5f ) {
             return Utils.mod1( ( 1.0f - step ) * this.o + step * ( this.d
                + 1.0f ));
          }
-
          return ( 1.0f - step ) * this.o + step * this.d;
       }
 
@@ -2891,30 +2875,24 @@ public class Color implements Comparable < Color > {
       /**
        * Applies the function.
        *
-       * @param origin the origin hue
-       * @param dest   the destination hue
-       * @param step   the step in a range 0 to 1
+       * @param step the step in a range 0 to 1
        *
        * @return the eased hue
        *
        * @see Utils#mod1(float)
        */
       @Override
-      protected float applyPartial ( final float origin, final float dest,
-         final float step ) {
+      protected float applyPartial ( final float step ) {
 
          if ( this.diff == 0.0f ) { return this.o; }
-
          if ( this.oLtd && this.diff > 0.5f ) {
             return Utils.mod1( ( 1.0f - step ) * ( this.o + 1.0f ) + step
                * this.d);
          }
-
          if ( this.oGtd && this.diff < -0.5f ) {
             return Utils.mod1( ( 1.0f - step ) * this.o + step * ( this.d
                + 1.0f ));
          }
-
          return ( 1.0f - step ) * this.o + step * this.d;
       }
 
@@ -2965,7 +2943,7 @@ public class Color implements Comparable < Color > {
       /**
        * Applies the function.
        *
-       * @param origin the origin color
+       * @param orig   the origin color
        * @param dest   the destination color
        * @param step   the step in a range 0 to 1
        * @param target the output color
@@ -2976,10 +2954,10 @@ public class Color implements Comparable < Color > {
        * @see Color#hslaToRgba(Vec4, Color)
        */
       @Override
-      public Color applyUnclamped ( final Color origin, final Color dest,
+      public Color applyUnclamped ( final Color orig, final Color dest,
          final Float step, final Color target ) {
 
-         Color.rgbaToHsla(origin, this.aHsl);
+         Color.rgbaToHsla(orig, this.aHsl);
          Color.rgbaToHsla(dest, this.bHsl);
 
          final float aSat = this.aHsl.y;
@@ -2994,8 +2972,8 @@ public class Color implements Comparable < Color > {
                   * this.aHsl.w + t * this.bHsl.w);
             return Color.hslaToRgba(this.cHsl, target);
          }
-         return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g,
-            u * origin.b + t * dest.b, u * origin.a + t * dest.a);
+         return target.set(u * orig.r + t * dest.r, u * orig.g + t * dest.g, u
+            * orig.b + t * dest.b, u * orig.a + t * dest.a);
       }
 
       /**
@@ -3062,7 +3040,7 @@ public class Color implements Comparable < Color > {
       /**
        * Applies the function.
        *
-       * @param origin the origin color
+       * @param orig   the origin color
        * @param dest   the destination color
        * @param step   the step in a range 0 to 1
        * @param target the output color
@@ -3073,10 +3051,10 @@ public class Color implements Comparable < Color > {
        * @see Color#hsvaToRgba(Vec4, Color)
        */
       @Override
-      public Color applyUnclamped ( final Color origin, final Color dest,
+      public Color applyUnclamped ( final Color orig, final Color dest,
          final Float step, final Color target ) {
 
-         Color.rgbaToHsva(origin, this.aHsv);
+         Color.rgbaToHsva(orig, this.aHsv);
          Color.rgbaToHsva(dest, this.bHsv);
 
          final float aSat = this.aHsv.y;
@@ -3091,8 +3069,8 @@ public class Color implements Comparable < Color > {
                   * this.aHsv.w + t * this.bHsv.w);
             return Color.hsvaToRgba(this.cHsv, target);
          }
-         return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g,
-            u * origin.b + t * dest.b, u * origin.a + t * dest.a);
+         return target.set(u * orig.r + t * dest.r, u * orig.g + t * dest.g, u
+            * orig.b + t * dest.b, u * orig.a + t * dest.a);
       }
 
       /**
@@ -3173,7 +3151,7 @@ public class Color implements Comparable < Color > {
       /**
        * Applies the function.
        *
-       * @param origin the origin color
+       * @param orig   the origin color
        * @param dest   the destination color
        * @param step   the step in a range 0 to 1
        * @param target the output color
@@ -3189,10 +3167,10 @@ public class Color implements Comparable < Color > {
        * @see Vec4#mix(Vec4, Vec4, float, Vec4)
        */
       @Override
-      public Color applyUnclamped ( final Color origin, final Color dest,
+      public Color applyUnclamped ( final Color orig, final Color dest,
          final Float step, final Color target ) {
 
-         Color.sRgbaTolRgba(origin, false, this.oLinear);
+         Color.sRgbaTolRgba(orig, false, this.oLinear);
          Color.lRgbaToXyza(this.oLinear, this.oXyz);
          Color.xyzaToLaba(this.oXyz, this.oLab);
 
@@ -3247,7 +3225,7 @@ public class Color implements Comparable < Color > {
       /**
        * Applies the function.
        *
-       * @param origin the origin color
+       * @param orig   the origin color
        * @param dest   the destination color
        * @param step   the step in a range 0 to 1
        * @param target the output color
@@ -3259,10 +3237,10 @@ public class Color implements Comparable < Color > {
        * @see Color#xyzaToLaba(Vec4, Vec4)
        */
       @Override
-      public Color applyUnclamped ( final Color origin, final Color dest,
+      public Color applyUnclamped ( final Color orig, final Color dest,
          final Float step, final Color target ) {
 
-         Color.sRgbaTolRgba(origin, false, this.oLinear);
+         Color.sRgbaTolRgba(orig, false, this.oLinear);
          Color.lRgbaToXyza(this.oLinear, this.oXyz);
          Color.xyzaToLaba(this.oXyz, this.oLab);
 
@@ -3348,7 +3326,7 @@ public class Color implements Comparable < Color > {
       /**
        * Applies the function.
        *
-       * @param origin the origin color
+       * @param orig   the origin color
        * @param dest   the destination color
        * @param step   the step in a range 0 to 1
        * @param target the output color
@@ -3359,10 +3337,10 @@ public class Color implements Comparable < Color > {
        * @see Color#lRgbaTosRgba(Color, boolean, Color)
        */
       @Override
-      public Color applyUnclamped ( final Color origin, final Color dest,
+      public Color applyUnclamped ( final Color orig, final Color dest,
          final Float step, final Color target ) {
 
-         Color.sRgbaTolRgba(origin, this.alpha, this.oLinear);
+         Color.sRgbaTolRgba(orig, this.alpha, this.oLinear);
          Color.sRgbaTolRgba(dest, this.alpha, this.dLinear);
 
          final float t = step;
@@ -3389,7 +3367,7 @@ public class Color implements Comparable < Color > {
       /**
        * Applies the function.
        *
-       * @param origin the origin color
+       * @param orig   the origin color
        * @param dest   the destination color
        * @param step   the step in a range 0 to 1
        * @param target the output color
@@ -3397,13 +3375,13 @@ public class Color implements Comparable < Color > {
        * @return the eased color
        */
       @Override
-      public Color applyUnclamped ( final Color origin, final Color dest,
+      public Color applyUnclamped ( final Color orig, final Color dest,
          final Float step, final Color target ) {
 
          final float t = step;
          final float u = 1.0f - t;
-         return target.set(u * origin.r + t * dest.r, u * origin.g + t * dest.g,
-            u * origin.b + t * dest.b, u * origin.a + t * dest.a);
+         return target.set(u * orig.r + t * dest.r, u * orig.g + t * dest.g, u
+            * orig.b + t * dest.b, u * orig.a + t * dest.a);
       }
 
    }

@@ -408,6 +408,8 @@ public class ZImage extends PImage {
     * @param image the image
     *
     * @return the aspect ratio
+    *
+    * @see Utils#div(float, float)
     */
    public static float aspect ( final PImage image ) {
 
@@ -424,6 +426,8 @@ public class ZImage extends PImage {
     * @param target the target image
     *
     * @return the checker pattern
+    *
+    * @see Color#toHexIntSat(Color)
     */
    public static PImage checker ( final Color a, final Color b, final int cols,
       final int rows, final PImage target ) {

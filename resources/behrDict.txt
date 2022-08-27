@@ -166,3 +166,4 @@ dither
 unpremultiplied
 premultiplied
 slivers
+inline

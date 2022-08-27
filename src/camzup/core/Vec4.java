@@ -840,10 +840,10 @@ public class Vec4 implements Comparable < Vec4 > {
 
    /**
     * Finds the dot product of two vectors by summing the products of their
-    * corresponding components. <em>a</em> \u00b7 <em>b</em> :=
-    * <em>a<sub>x</sub> b<sub>x</sub></em> + <em>a<sub>y</sub>
-    * b<sub>y</sub></em> + <em>a<sub>z</sub> b<sub>z</sub></em> +
-    * <em>a<sub>w</sub> b<sub>w</sub></em><br>
+    * corresponding components. <em>a</em> · <em>b</em> := <em>a<sub>x</sub>
+    * b<sub>x</sub></em> + <em>a<sub>y</sub> b<sub>y</sub></em> +
+    * <em>a<sub>z</sub> b<sub>z</sub></em> + <em>a<sub>w</sub>
+    * b<sub>w</sub></em><br>
     * <br>
     * The dot product of a vector with itself is equal to its magnitude
     * squared.
@@ -1387,8 +1387,8 @@ public class Vec4 implements Comparable < Vec4 > {
 
    /**
     * Finds the length, or magnitude, of a vector, |<em>a</em>| . Uses the
-    * formula \u221a <em>a</em> \u00b7 <em>a</em> . Where possible, use magSq
-    * or dot to avoid the computational cost of the square-root.
+    * formula \u221a <em>a</em> · <em>a</em> . Where possible, use magSq or
+    * dot to avoid the computational cost of the square-root.
     *
     * @param v the input vector
     *
@@ -1403,7 +1403,7 @@ public class Vec4 implements Comparable < Vec4 > {
 
    /**
     * Finds the length-, or magnitude-, squared of a vector,
-    * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> \u00b7
+    * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> ·
     * <em>a</em> . Useful when calculating the lengths of many vectors, so as
     * to avoid the computational cost of the square-root.
     *
@@ -1855,8 +1855,8 @@ public class Vec4 implements Comparable < Vec4 > {
     * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined
     * as<br>
     * <br>
-    * project ( <em>a</em>, <em>b</em> ) := <em>a</em> \u00b7 <em>b</em> /
-    * <em>b</em> \u00b7 <em>b</em>
+    * project ( <em>a</em>, <em>b</em> ) := <em>a</em> · <em>b</em> /
+    * <em>b</em> · <em>b</em>
     *
     * @param a left operand
     * @param b right operand
@@ -1878,8 +1878,8 @@ public class Vec4 implements Comparable < Vec4 > {
    /**
     * Projects one vector onto another. Defined as<br>
     * <br>
-    * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> \u00b7
-    * <em>b</em> / <em>b</em> \u00b7 <em>b</em> )
+    * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> ·
+    * <em>b</em> / <em>b</em> · <em>b</em> )
     *
     * @param a      left operand
     * @param b      right operand
@@ -1897,8 +1897,8 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
-    * Reduces the signal, or granularity, of a vector's components. Any level
-    * less than 2 returns sets the target to the input.
+    * Reduces the signal, or granularity, of a vector's components. A level of
+    * zero will copy the input vector to the target.
     *
     * @param v      the input vector
     * @param levels the levels
@@ -1906,18 +1906,17 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the quantized vector
     *
-    * @see Utils#floor(float)
+    * @see Utils#quantizeSigned(float, float, float)
     */
    public static Vec4 quantize ( final Vec4 v, final int levels,
       final Vec4 target ) {
 
-      if ( levels < 2 ) { return target.set(v); }
-
-      final float levf = levels;
+      if ( levels == 0 ) { return target.set(v); }
+      final float levf = levels < 0 ? -levels : levels;
       final float delta = 1.0f / levf;
-      return target.set(delta * Utils.floor(0.5f + v.x * levf), delta * Utils
-         .floor(0.5f + v.y * levf), delta * Utils.floor(0.5f + v.z * levf),
-         delta * Utils.floor(0.5f + v.w * levf));
+      return target.set(Utils.quantizeSigned(v.x, levf, delta), Utils
+         .quantizeSigned(v.y, levf, delta), Utils.quantizeSigned(v.z, levf,
+            delta), Utils.quantizeSigned(v.w, levf, delta));
    }
 
    /**

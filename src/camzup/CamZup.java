@@ -1,5 +1,7 @@
 package camzup;
 
+import camzup.core.Utils;
+
 import processing.core.PApplet;
 
 /**
@@ -50,6 +52,9 @@ public class CamZup {
     */
 
    public static void main ( final String[] args ) {
+
+      System.out.println(Utils.approx(-0.01f, 0.0f, 0.5f));
+
    }
 
    /**

@@ -37,7 +37,7 @@ without negative impact to your sketch, chances are you don't need this library.
 
 While Cam Z-Up can help with more complex sketches, it is a general purpose library. It aims to make a number of small tasks easier than in vanilla Processing. It will not be as effective as specialist libraries. For an easy mouse-controlled orbital camera with GUI support, I recommend [peasycam](https://github.com/jdf/peasycam) instead. Other great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
 
-Cam Z-Up is tested with Processing version [4.0 beta](https://github.com/processing/processing4/releases).
+Cam Z-Up is tested with Processing version [4.x](https://github.com/processing/processing4/releases).
 
 ## Getting Started
 
@@ -66,7 +66,7 @@ Cam Z-Up is split into three packages: `pfriendly`, `core` and `kotlin`. The `pf
 - `YupJ2`, which extends `PGraphicsJava2D`, a.k.a. `JAVA2D`, the default Processing renderer based on the Java AWT library;
 - `Yup2`, which extends `PGraphicsOpenGL`, similar to `P2D`, a "2.5D" renderer;
 
-The `FX2D` renderer, based on Java FX, is not fully supported by Processing, so it's not supported here. The `Yup3` renderer treats the positive y axis, (0.0, 1.0, 0.0), as world up.
+The `FX2D` renderer, based on Java FX, is not distributed with Processing, so it's not supported here. The `Yup3` renderer treats the positive y axis, (0.0, 1.0, 0.0), as world up.
 
 This library's `core` package includes basic utilities that were used to modify the Processing renderer. In this package, you'll find classes such as `Vec2`, `Vec3` and `Quaternion`. The division between `pfriendly` and `core` is a protective measure. The aim is to retain the library's usefulness even as bugs in `pfriendly`, or changes to the underlying `Processing` library, cause trouble.
 
@@ -155,7 +155,7 @@ The `Gradient` class allows you to create color ramps. This includes the followi
 
 ![Palette Diagram](data/paletteDiagram.png)
 
-Viridis and Magma are perceptually uniform color palettes used in data visualizations; Viridis in particular is sensitive to color blindnesses. [Sepia](https://www.wikiwand.com/en/Sepia_(color)) and [cyanotype](https://en.wikipedia.org/wiki/Cyanotype) replicate older photographic printing processes. The Temperature palette is intended for use with lights; it is an inaccurate representation of [blackbody radiation temperature](https://www.wikiwand.com/en/Color_temperature).  
+Viridis and Magma are color palettes used in data visualizations. [Sepia](https://www.wikiwand.com/en/Sepia_(color)) and [cyanotype](https://en.wikipedia.org/wiki/Cyanotype) replicate older photographic printing processes. The Temperature palette is intended for use with lights; it is an inaccurate representation of [blackbody radiation temperature](https://www.wikiwand.com/en/Color_temperature).  
 
 ### Harmony
 
@@ -171,7 +171,7 @@ A quick heuristic to decide if you are blending colors as you prefer is to take 
 
 ![Mix Diagram](data/mixDiagram.png)
 
-A hue mix can be either counter-clockwise or clockwise. Keep hue's periodicity in mind when working with HSL or HSV; do not use `Utils.clamp01` to confine a hue to [0.0, 1.0], use `Utils.mod1` instead. Mixing in [Standard RGB](https://www.wikiwand.com/en/SRGB) includes linear and smooth interpolation. Converting sRGB to linear RGB, interpolating, then converting back is computationally expensive. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
+A hue mix can be either counter-clockwise or clockwise. Keep hue's periodicity in mind when working with HSL or HSV; do not use `Utils.clamp01` to confine a hue to [0.0, 1.0], use `Utils.mod1` instead. Converting sRGB to linear RGB, interpolating, then converting back is computationally expensive. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
 
 ```java
 class Foo extends Color.AbstrEasing {
@@ -181,14 +181,6 @@ class Foo extends Color.AbstrEasing {
 }
 ```
 You will need to override the method `applyUnclamped`.
-
-### Shading
-
-When selecting shades of a hue, be conscientious that perception and display of brightness are not linear.
-
-![Tone](data/toneDiagram.png)
-
-Raising a color's red, green and blue channels - or a gradient's evaluation factor - to the power of `2.2`, will compress bright desaurated colors and expand darker shades. Raising to a power of `1.0 / 2.2` will compress darker shades and expand brighter whites.
 
 ## File Import & Export
 
@@ -211,7 +203,7 @@ void setup() {
 }
 ```
 
-This generates the file below. A header is followed by a name, the number of columns to use when displaying the palette and a comment preceded by a `#`. The color is broken into red, green and blue color channels; each channel is formatted as an unsigned byte in [0, 255] separated by a space. This is followed by a name, for which this library writes the color's hexadecimal representation. Last is an index for the color; this library begins the index at 1, not 0. The name and index of a palette entry may be optional for some importers, mandatory for others. Aseprite seems to require at least a name.
+This generates the file below. A header is followed by a name, the number of columns to use when displaying the palette and a comment preceded by a `#`. The color is broken into red, green and blue color channels; each channel is formatted as an unsigned byte in [0, 255] separated by a space. This is followed by a name, for which this library writes the color's hexadecimal representation. Last is an index for the color; this library begins the index at 1, not 0. The name and index of a palette entry may be optional for some importers, mandatory for others.
  
 ```
 GIMP Palette
@@ -302,7 +294,6 @@ Here is a brief list of issues with this library and differences which may be un
   - Using `YupJ2`'s `rotate` or `rotateZ` will cause shapes with strokes to jitter.
   - `CORNER` is supported for [rectMode](https://processing.org/reference/rectMode_.html), `ellipseMode` and [imageMode](https://processing.org/reference/imageMode_.html). However it is less intuitive with this library. For that reason, `CENTER` is the default alignment.
   - OpenGL renderers do not recognize contours in meshes and curves.
-  - `surface.setResizable` is not supported.
   
 ### 3D
   - Neither 3D primitive, [sphere](https://processing.org/reference/sphere_.html) and [box](https://processing.org/reference/box_.html), are supported; use `MeshEntity3`s instead.
@@ -330,8 +321,6 @@ Many core Processing functions are marked `final`, meaning they cannot be extend
 This library's `core` was originally designed to affiliate with Processing's code design. With exceptions, classes are defined to be mutable and extensible. Methods are at most `protected` and fields are public (no getters or setters). `static` methods are preferred where possible, and use the out parameter antipattern.
 
 As of v 0.6, this library provides limited interoperability with [Kotlin](https://kotlinlang.org/), specifically [operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html). As of v 0.7, this support is sectioned off in `camzup.kotlin`, where a Kotlin friendly class extends a core class; for example, `KtVec2` extends `Vec2`. Kotlin does not use `static` methods; instance methods do not always mutate the instance in place; and naming conventions differ to those of this library.
-
-For those reasons, the following functions may be confusing if used in Processing-Java.
 
 | Kotlin Operator |            Interop Method | Mutator | KtVec | KtComplex | KtQuat | KtMat |
 | --------------: | ------------------------: | :-----: | :---: | :-------: | :----: | :---: |

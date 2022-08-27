@@ -623,7 +623,7 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the vector's azimuth in the range [-\u03c0, \u03c0].
+    * Finds the vector's azimuth in the range [-π, π].
     *
     * @param v the input vector
     *
@@ -637,7 +637,7 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the vector's azimuth in the range [0.0, \u03c4].
+    * Finds the vector's azimuth in the range [0.0, τ].
     *
     * @param v the input vector
     *
@@ -1124,7 +1124,7 @@ public class Vec3 implements Comparable < Vec3 > {
     * Finds the dot product of two vectors by summing the products of their
     * corresponding components.<br>
     * <br>
-    * <em>a</em> \u00b7 <em>b</em> := <em>a<sub>x</sub> b<sub>x</sub></em> +
+    * <em>a</em> · <em>b</em> := <em>a<sub>x</sub> b<sub>x</sub></em> +
     * <em>a<sub>y</sub> b<sub>y</sub></em> + <em>a<sub>z</sub>
     * b<sub>z</sub></em><br>
     * <br>
@@ -1789,9 +1789,9 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the vector's inclination in the range [-\u03c0 / 2.0, \u03c0 /
-    * 2.0] . It is necessary to calculate the vector's magnitude in order to
-    * find its inclination.
+    * Finds the vector's inclination in the range [-π / 2.0, π / 2.0] . It is
+    * necessary to calculate the vector's magnitude in order to find its
+    * inclination.
     *
     * @param v the input vector
     *
@@ -1803,7 +1803,7 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the vector's inclination in the range [\u03c0, 0.0] .
+    * Finds the vector's inclination in the range [π, 0.0] .
     *
     * @param v the input vector
     *
@@ -1955,8 +1955,8 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Finds the length, or magnitude, of a vector, |<em>a</em>| . Also
     * referred to as the radius when using spherical coordinates. Uses the
-    * formula \u221a <em>a</em> \u00b7 <em>a</em> . Where possible, use magSq
-    * or dot to avoid the computational cost of the square-root.
+    * formula \u221a <em>a</em> · <em>a</em> . Where possible, use magSq or
+    * dot to avoid the computational cost of the square-root.
     *
     * @param v the input vector
     *
@@ -1971,7 +1971,7 @@ public class Vec3 implements Comparable < Vec3 > {
 
    /**
     * Finds the length-, or magnitude-, squared of a vector,
-    * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> \u00b7
+    * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> ·
     * <em>a</em> . Useful when calculating the lengths of many vectors, so as
     * to avoid the computational cost of the square-root.
     *
@@ -2416,8 +2416,8 @@ public class Vec3 implements Comparable < Vec3 > {
     * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined
     * as<br>
     * <br>
-    * project ( <em>a</em>, <em>b</em> ) := <em>a</em> \u00b7 <em>b</em> /
-    * <em>b</em> \u00b7 <em>b</em>
+    * project ( <em>a</em>, <em>b</em> ) := <em>a</em> · <em>b</em> /
+    * <em>b</em> · <em>b</em>
     *
     * @param a left operand
     * @param b right operand
@@ -2434,8 +2434,8 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Projects one vector onto another. Defined as<br>
     * <br>
-    * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> \u00b7
-    * <em>b</em> / <em>b</em> \u00b7 <em>b</em> )<br>
+    * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> ·
+    * <em>b</em> / <em>b</em> · <em>b</em> )<br>
     * <br>
     * Returns a zero vector if the right operand, <em>b</em>, has zero
     * magnitude.
@@ -2456,8 +2456,8 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Reduces the signal, or granularity, of a vector's components. Any level
-    * less than 2 returns sets the target to the input.
+    * Reduces the signal, or granularity, of a vector's components. A level of
+    * zero will copy the input vector to the target.
     *
     * @param v      the input vector
     * @param levels the levels
@@ -2465,17 +2465,17 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the quantized vector
     *
-    * @see Utils#floor(float)
+    * @see Utils#quantizeSigned(float, float, float)
     */
    public static Vec3 quantize ( final Vec3 v, final int levels,
       final Vec3 target ) {
 
-      if ( levels < 2 ) { return target.set(v); }
-
-      final float levf = levels;
+      if ( levels == 0 ) { return target.set(v); }
+      final float levf = levels < 0 ? -levels : levels;
       final float delta = 1.0f / levf;
-      return target.set(delta * Utils.floor(0.5f + v.x * levf), delta * Utils
-         .floor(0.5f + v.y * levf), delta * Utils.floor(0.5f + v.z * levf));
+      return target.set(Utils.quantizeSigned(v.x, levf, delta), Utils
+         .quantizeSigned(v.y, levf, delta), Utils.quantizeSigned(v.z, levf,
+            delta));
    }
 
    /**
@@ -2580,7 +2580,7 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Reflects an incident vector off a normal vector. Uses the formula <br>
     * <br>
-    * <em>i</em> - 2.0 (<em>n</em> \u00b7 <em>i</em>) <em>n</em><br>
+    * <em>i</em> - 2.0 (<em>n</em> · <em>i</em>) <em>n</em><br>
     * <br>
     *
     * @param incident the incident vector

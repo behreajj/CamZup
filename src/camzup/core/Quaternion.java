@@ -670,9 +670,8 @@ public class Quaternion implements Comparable < Quaternion > {
     * Finds the dot product of two quaternions by summing the products of
     * their corresponding components.<br>
     * <br>
-    * <em>a</em> \u00b7 <em>b</em> := <em>a<sub>real</sub>
-    * b<sub>real</sub></em> + <em>a<sub>imag</sub></em> \u00b7
-    * <em>b<sub>imag</sub></em><br>
+    * <em>a</em> · <em>b</em> := <em>a<sub>real</sub> b<sub>real</sub></em> +
+    * <em>a<sub>imag</sub></em> · <em>b<sub>imag</sub></em><br>
     * <br>
     * The dot product of a quaternion with itself is equal to its magnitude
     * squared.
@@ -1023,7 +1022,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * Creates a quaternion with reference to two vectors. This function
     * creates normalized copies of the vectors.<br>
     * <br>
-    * fromTo ( <em>a</em>, <em>b</em> ) := { <em>a</em> \u00b7 <em>b</em>,
+    * fromTo ( <em>a</em>, <em>b</em> ) := { <em>a</em> · <em>b</em>,
     * <em>a</em> x <em>b</em> }<br>
     * <br>
     * The real component is the dot product of the vectors; the imaginary
@@ -1351,7 +1350,7 @@ public class Quaternion implements Comparable < Quaternion > {
    /**
     * Finds the length, or magnitude, of a quaternion.<br>
     * <br>
-    * |<em>a</em>| := \u221a <em>a</em> \u00b7 <em>a</em><br>
+    * |<em>a</em>| := \u221a <em>a</em> · <em>a</em><br>
     * <br>
     * |<em>a</em>| := \u221a <em>a</em> <em>a*</em>
     *
@@ -1373,7 +1372,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * itself and to the product of a quaternion with its
     * {@link Quaternion#conj(Quaternion, Quaternion)}.<br>
     * <br>
-    * |<em>a</em>|<sup>2</sup> := <em>a</em> \u00b7 <em>a</em><br>
+    * |<em>a</em>|<sup>2</sup> := <em>a</em> · <em>a</em><br>
     * <br>
     * |<em>a</em>|<sup>2</sup> := <em>a</em> <em>a*</em>
     *
@@ -1462,8 +1461,8 @@ public class Quaternion implements Comparable < Quaternion > {
     * Uses the formula<br>
     * <br>
     * <em>a</em> <em>b</em> := { <em>a<sub>real</sub></em>
-    * <em>b<sub>real</sub></em> - <em>a<sub>imag</sub></em> \u00b7
-    * <em>b<sub>imag</sub></em> , <em>a<sub>imag</sub></em> \u00d7
+    * <em>b<sub>real</sub></em> - <em>a<sub>imag</sub></em> ·
+    * <em>b<sub>imag</sub></em> , <em>a<sub>imag</sub></em> x
     * <em>b<sub>imag</sub></em> + <em>a<sub>real</sub></em>
     * <em>b<sub>imag</sub></em> + <em>b<sub>real</sub></em>
     * <em>a<sub>imag</sub></em> }<br>
@@ -1778,6 +1777,7 @@ public class Quaternion implements Comparable < Quaternion > {
    public static Quaternion rotateX ( final Quaternion q, final float radians,
       final Quaternion target ) {
 
+      // QUERY: Is radians % TAU better?
       final double halfAngle = Utils.modRadians(radians) * 0.5d;
       return Quaternion.rotateX(q, ( float ) Math.cos(halfAngle), ( float ) Math
          .sin(halfAngle), target);
@@ -2261,6 +2261,7 @@ public class Quaternion implements Comparable < Quaternion > {
        *
        * @see Math#abs(double)
        * @see Math#sqrt(double)
+       * @see Quaternion#identity(Quaternion)
        */
       @Override
       public Quaternion applyUnclamped ( final Quaternion origin,
@@ -2280,7 +2281,7 @@ public class Quaternion implements Comparable < Quaternion > {
          /* Normalize. */
          final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
 
-         if ( mSq < IUtils.EPSILON_D ) { return target.reset(); }
+         if ( mSq < IUtils.EPSILON_D ) { return Quaternion.identity(target); }
 
          final double mInv = 1.0d / Math.sqrt(mSq);
          return target.set(( float ) ( cw * mInv ), ( float ) ( cx * mInv ),
@@ -2316,6 +2317,7 @@ public class Quaternion implements Comparable < Quaternion > {
        * @see Math#sqrt(double)
        * @see Math#sin(double)
        * @see Math#abs(double)
+       * @see Quaternion#identity(Quaternion)
        */
       @Override
       public Quaternion applyUnclamped ( final Quaternion origin,
@@ -2372,7 +2374,7 @@ public class Quaternion implements Comparable < Quaternion > {
          final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;
 
          /* Magnitude is approximately zero. */
-         if ( mSq < IUtils.EPSILON_D ) { return target.reset(); }
+         if ( mSq < IUtils.EPSILON_D ) { return Quaternion.identity(target); }
 
          /* Magnitude is approximately one. */
          if ( Math.abs(1.0d - mSq) < IUtils.EPSILON_D ) {

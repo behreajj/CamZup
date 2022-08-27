@@ -988,9 +988,8 @@ public class Vec2 implements Comparable < Vec2 > {
 
    /**
     * Finds the dot product of two vectors by summing the products of their
-    * corresponding components. <em>a</em> \u00b7 <em>b</em> :=
-    * <em>a<sub>x</sub> b<sub>x</sub></em> + <em>a<sub>y</sub>
-    * b<sub>y</sub></em><br>
+    * corresponding components. <em>a</em> · <em>b</em> := <em>a<sub>x</sub>
+    * b<sub>x</sub></em> + <em>a<sub>y</sub> b<sub>y</sub></em><br>
     * <br>
     * The dot product of a vector with itself is equal to its magnitude
     * squared.
@@ -1470,7 +1469,7 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Finds the vector's heading in the range [-\u03c0, \u03c0] .
+    * Finds the vector's heading in the range [-π, π] .
     *
     * @param v the input vector
     *
@@ -1484,7 +1483,7 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Finds the vector's heading in the range [0.0, \u03c4] .
+    * Finds the vector's heading in the range [0.0, τ] .
     *
     * @param v the input vector
     *
@@ -1639,8 +1638,8 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Finds the length, or magnitude, of a vector, |<em>a</em>| . Also
     * referred to as the radius when using polar coordinates. Uses the formula
-    * \u221a <em>a</em> \u00b7 <em>a</em> . Where possible, use magSq or dot
-    * to avoid the computational cost of the square-root.
+    * \u221a <em>a</em> · <em>a</em> . Where possible, use magSq or dot to
+    * avoid the computational cost of the square-root.
     *
     * @param v the input vector
     *
@@ -1655,7 +1654,7 @@ public class Vec2 implements Comparable < Vec2 > {
 
    /**
     * Finds the length-, or magnitude-, squared of a vector,
-    * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> \u00b7
+    * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> ·
     * <em>a</em> . Useful when calculating the lengths of many vectors, so as
     * to avoid the computational cost of the square-root.
     *
@@ -2160,8 +2159,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined
     * as<br>
     * <br>
-    * project ( <em>a</em>, <em>b</em> ) := <em>a</em> \u00b7 <em>b</em> /
-    * <em>b</em> \u00b7 <em>b</em>
+    * project ( <em>a</em>, <em>b</em> ) := <em>a</em> · <em>b</em> /
+    * <em>b</em> · <em>b</em>
     *
     * @param a left operand
     * @param b right operand
@@ -2178,8 +2177,8 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Projects one vector onto another. Defined as<br>
     * <br>
-    * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> \u00b7
-    * <em>b</em> / <em>b</em> \u00b7 <em>b</em> )
+    * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> ·
+    * <em>b</em> / <em>b</em> · <em>b</em> )
     *
     * @param a      left operand
     * @param b      right operand
@@ -2197,8 +2196,8 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Reduces the signal, or granularity, of a vector's components. Any level
-    * less than 2 returns sets the target to the input.
+    * Reduces the signal, or granularity, of a vector's components. A level of
+    * zero will copy the input vector to the target.
     *
     * @param v      the input vector
     * @param levels the levels
@@ -2206,17 +2205,16 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the quantized vector
     *
-    * @see Utils#floor(float)
+    * @see Utils#quantizeSigned(float, float, float)
     */
    public static Vec2 quantize ( final Vec2 v, final int levels,
       final Vec2 target ) {
 
-      if ( levels < 2 ) { return target.set(v); }
-
-      final float levf = levels;
+      if ( levels == 0 ) { return target.set(v); }
+      final float levf = levels < 0 ? -levels : levels;
       final float delta = 1.0f / levf;
-      return target.set(delta * Utils.floor(0.5f + v.x * levf), delta * Utils
-         .floor(0.5f + v.y * levf));
+      return target.set(Utils.quantizeSigned(v.x, levf, delta), Utils
+         .quantizeSigned(v.y, levf, delta));
    }
 
    /**
@@ -2315,7 +2313,7 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Reflects an incident vector off a normal vector. Uses the formula <br>
     * <br>
-    * <em>i</em> - 2.0 (<em>n</em> \u00b7 <em>i</em>) <em>n</em><br>
+    * <em>i</em> - 2.0 (<em>n</em> · <em>i</em>) <em>n</em><br>
     * <br>
     *
     * @param incident the incident vector

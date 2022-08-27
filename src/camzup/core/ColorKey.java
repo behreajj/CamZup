@@ -369,12 +369,14 @@ public class ColorKey implements Comparable < ColorKey > {
        * @param b the right comparisand
        *
        * @return the evaluation
+       * 
+       * @see Utils#quantizeUnsigned(float, int)
        */
       @Override
       public int compare ( final ColorKey a, final ColorKey b ) {
 
-         final float aq = Utils.quantize(a.step, this.level);
-         final float bq = Utils.quantize(b.step, this.level);
+         final float aq = Utils.quantizeUnsigned(a.step, this.level);
+         final float bq = Utils.quantizeUnsigned(b.step, this.level);
          return aq < bq ? -1 : aq > bq ? 1 : 0;
       }
 
