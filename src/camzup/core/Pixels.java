@@ -18,7 +18,10 @@ public abstract class Pixels {
    /**
     * Discourage overriding with a private constructor.
     */
-   private Pixels ( ) {}
+   private Pixels ( ) {
+
+      // QUERY: Separate RGB function?
+   }
 
    /**
     * Look up table for converting colors from linear to standard RGB.
@@ -248,128 +251,6 @@ public abstract class Pixels {
          }
       }
 
-      return target;
-   }
-
-   /**
-    * Blends two images together using the CIE LAB color space. Offset
-    * coordinates are relative to the top-left corner of the under image.<br>
-    * <br>
-    * Emits the new image dimensions to a {@link Vec2}.
-    *
-    * @param under the under image pixels
-    * @param wUnd  the under image width
-    * @param hUnd  the under image height
-    * @param over  the over image pixels
-    * @param wOvr  the over image width
-    * @param hOvr  the over image height
-    * @param x     the x offset
-    * @param y     the y offset
-    * @param dim   the target dimensions
-    *
-    * @return the blended pixels
-    */
-   @Experimental
-   public static int[] blendLab ( final int[] under, final int wUnd,
-      final int hUnd, final int[] over, final int wOvr, final int hOvr,
-      final int x, final int y, final Vec2 dim ) {
-
-      // TODO: See if there are any online references about LAB blending re:
-      // premultiply.
-
-      final Color srgb = new Color();
-      final Color lrgb = new Color();
-      final Vec4 xyz = new Vec4();
-      final HashMap < Integer, Vec4 > dictShared = new HashMap <>(512, 0.75f);
-
-      final int lenUnder = under.length;
-      for ( int i = 0; i < lenUnder; ++i ) {
-         final int hexUnderInt = under[i];
-         final Integer hexUnderObj = hexUnderInt;
-         if ( !dictShared.containsKey(hexUnderObj) ) {
-            Color.fromHex(hexUnderInt, srgb);
-            Color.sRgbaTolRgba(srgb, false, lrgb);
-            Color.lRgbaToXyza(lrgb, xyz);
-            final Vec4 lab = Color.xyzaToLaba(xyz, new Vec4());
-            dictShared.put(hexUnderObj, lab);
-         }
-      }
-
-      final int lenOver = over.length;
-      for ( int i = 0; i < lenOver; ++i ) {
-         final int hexOverInt = over[i];
-         final Integer hexOverObj = hexOverInt;
-         if ( !dictShared.containsKey(hexOverObj) ) {
-            Color.fromHex(hexOverInt, srgb);
-            Color.sRgbaTolRgba(srgb, false, lrgb);
-            Color.lRgbaToXyza(lrgb, xyz);
-            final Vec4 lab = Color.xyzaToLaba(xyz, new Vec4());
-            dictShared.put(hexOverObj, lab);
-         }
-      }
-
-      /*
-       * Unlike mask, blend is a union, not an intersection, of two images.
-       * However, simplify to use under image dimensions.
-       */
-      final Vec4 c = new Vec4();
-      final int trgLen = wUnd * hUnd;
-      final int[] target = new int[trgLen];
-      for ( int i = 0; i < trgLen; ++i ) {
-         final int aHex = under[i];
-
-         final int xOrig = i % wUnd;
-         final int yOrig = i / wUnd;
-         final int xOvr = x + xOrig;
-         final int yOvr = y + yOrig;
-
-         if ( yOvr > -1 && yOvr < hOvr && xOvr > -1 && xOvr < wOvr ) {
-            final int iOvr = yOvr * wOvr + xOvr;
-            final int bHex = over[iOvr];
-
-            final Integer aObj = aHex;
-            final Integer bObj = bHex;
-            final Vec4 a = dictShared.get(aObj);
-            final Vec4 b = dictShared.get(bObj);
-
-            final float t = b.w;
-            final float u = 1.0f - t;
-            final float v = a.w;
-            // final float uv = v * u;
-            // final float tuv = t + uv;
-
-            // Premultiply?
-            // if ( tuv >= 1.0f ) {
-            // c.set(b.x * t + a.x * uv, b.y * t + a.y * uv, b.z * t + a.z * uv,
-            // 1.0f);
-            // Color.labaToXyza(c, xyz);
-            // Color.xyzaTolRgba(xyz, lrgb);
-            // Color.lRgbaTosRgba(lrgb, false, srgb);
-            // target[i] = Color.toHexIntSat(srgb);
-            // } else if ( tuv > 0.0f ) {
-            // final float tuvInv = 1.0f / tuv;
-            // c.set(
-            // ( b.x * t + a.x * uv ) * tuvInv,
-            // ( b.y * t + a.y * uv ) * tuvInv,
-            // ( b.z * t + a.z * uv ) * tuvInv,
-            // tuv);
-            if ( t + v >= 0.0f ) {
-               c.set(b.x * t + a.x * u, b.y * t + a.y * u, b.z * t + a.z * u, t
-                  + v);
-
-               Color.labaToXyza(c, xyz);
-               Color.xyzaTolRgba(xyz, lrgb);
-               Color.lRgbaTosRgba(lrgb, false, srgb);
-               target[i] = Color.toHexIntSat(srgb);
-            } else {
-               target[i] = 0x00000000;
-            }
-         } else {
-            target[i] = under[i];
-         }
-      }
-
-      if ( dim != null ) { dim.set(wUnd, hUnd); }
       return target;
    }
 
@@ -1035,18 +916,13 @@ public abstract class Pixels {
 
       final float wfn1 = wSrc - 1.0f;
       final float hfn1 = hSrc - 1.0f;
+      final float wfp1Half = ( wSrc + 1.0f ) * 0.5f;
+      final float hfp1Half = ( hSrc + 1.0f ) * 0.5f;
 
-      final float ax = Utils.map(xOrig, -1.0f, 1.0f, -0.5f, wSrc + 0.5f);
-      final float bx = Utils.map(xDest, -1.0f, 1.0f, -0.5f, wSrc + 0.5f);
-      final float ay = Utils.map(yOrig, -1.0f, 1.0f, hSrc + 0.5f, -0.5f);
-      final float by = Utils.map(yDest, -1.0f, 1.0f, hSrc + 0.5f, -0.5f);
-      // TODO: Draft inline, need to flip y axis.
-      // final float wfp1Half = ( wSrc + 1.0f ) * 0.5f;
-      // final float hfp1Half = ( hSrc + 1.0f ) * 0.5f;
-      // final float ax = ( xOrig + 1.0f ) * wfp1Half - 0.5f;
-      // final float bx = ( xDest + 1.0f ) * wfp1Half - 0.5f;
-      // final float ay = ( yOrig + 1.0f ) * hfp1Half - 0.5f;
-      // final float by = ( yDest + 1.0f ) * hfp1Half - 0.5f;
+      final float ax = ( xOrig + 1.0f ) * wfp1Half - 0.5f;
+      final float bx = ( xDest + 1.0f ) * wfp1Half - 0.5f;
+      final float ay = ( yOrig - 1.0f ) * -hfp1Half - 0.5f;
+      final float by = ( yDest - 1.0f ) * -hfp1Half - 0.5f;
 
       final float dx = bx - ax;
       final float dy = by - ay;
@@ -1085,10 +961,12 @@ public abstract class Pixels {
          } else {
             final float t = ( ex * dx + ey * dy ) * dMagSqInv;
             final float u = 1.0f - t;
-            final float pxProj = u * ax + t * bx;
+
             final float pyProj = u * ay + t * by;
-            final float pxOpp = pxProj + pxProj - cx;
             final float pyOpp = pyProj + pyProj - cy;
+
+            final float pxProj = u * ax + t * bx;
+            final float pxOpp = pxProj + pxProj - cx;
 
             /*
              * Default to omitting pixels that are out-of-bounds, rather than
@@ -1098,6 +976,8 @@ public abstract class Pixels {
                <= wfn1 ) {
                target[k] = Pixels.filterBilinear(pxOpp, pyOpp, wSrc, hSrc,
                   source);
+            } else {
+               target[k] = 0x00000000;
             }
          }
       }
@@ -1131,6 +1011,8 @@ public abstract class Pixels {
             final int pxOpp = pivot - cross;
             if ( pxOpp > -1 && pxOpp < wSrc ) {
                target[k] = source[k / wSrc * wSrc + pxOpp];
+            } else {
+               target[k] = 0x00000000;
             }
          }
       }
@@ -1167,6 +1049,8 @@ public abstract class Pixels {
             final int pyOpp = pivot - cross;
             if ( pyOpp > -1 && pyOpp < hSrc ) {
                target[k] = source[pyOpp * wSrc + k % wSrc];
+            } else {
+               target[k] = 0x00000000;
             }
          }
       }
@@ -1242,7 +1126,7 @@ public abstract class Pixels {
       oct.cull();
 
       /* Trying to use package level with an array list throws an exception. */
-      final Vec3[] centers = oct.centersMean(false);
+      final Vec3[] centers = Octree.centersMean(oct, false);
       final int centersLen = centers.length;
       final Color[] result = new Color[1 + centersLen];
       for ( int i = 0; i < centersLen; ++i ) {
@@ -1326,18 +1210,15 @@ public abstract class Pixels {
                   Color.lRgbaToXyza(lrgb, xyz);
                   Color.xyzaToLaba(xyz, lab);
                   query.set(lab.x, lab.y, lab.z);
-                  // final Vec3[] result = oct.queryRange(query, valRad);
                   found.clear();
-                  oct.queryRange(query, valRad, found);
-                  // if ( result.length > 0 ) {
+                  Octree.query(oct, query, valRad, found);
                   if ( found.size() > 0 ) {
-                     // final Vec3 nearest = result[0];
-                     final Vec3 nearest = found.values().iterator().next();
-                     if ( lookup.containsKey(nearest) ) {
-                        final Integer hexNearObj = lookup.get(nearest)
-                           & 0x00ffffff;
-                        dict.put(srcHexObj, hexNearObj);
-                        target[i] = maskAlpha | hexNearObj;
+                     final Vec3 near = found.values().iterator().next();
+                     // final Vec3 near = found.ceilingEntry(0.0f).getValue();
+                     if ( near != null && lookup.containsKey(near) ) {
+                        final int hexNearInt = lookup.get(near) & 0x00ffffff;
+                        dict.put(srcHexObj, hexNearInt);
+                        target[i] = maskAlpha | hexNearInt;
                      } else {
                         target[i] = 0x00000000;
                      }
@@ -2274,13 +2155,13 @@ public abstract class Pixels {
 
       final int trgLen = target.length;
       for ( int i = 0; i < trgLen; ++i ) {
-         int ymod = ( i / wTrg - dy ) % hSrc;
-         if ( ( ymod ^ hSrc ) < 0 && ymod != 0 ) { ymod += hSrc; }
+         int yMod = ( i / wTrg + dy ) % hSrc;
+         if ( ( yMod ^ hSrc ) < 0 && yMod != 0 ) { yMod += hSrc; }
 
-         int xmod = ( i % wTrg + dx ) % wSrc;
-         if ( ( xmod ^ wSrc ) < 0 && xmod != 0 ) { xmod += wSrc; }
+         int xMod = ( i % wTrg - dx ) % wSrc;
+         if ( ( xMod ^ wSrc ) < 0 && xMod != 0 ) { xMod += wSrc; }
 
-         target[i] = source[xmod + wSrc * ymod];
+         target[i] = source[xMod + wSrc * yMod];
       }
 
       return target;

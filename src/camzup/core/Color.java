@@ -1500,32 +1500,6 @@ public class Color implements Comparable < Color > {
    public static boolean none ( final Color c ) { return c.a <= 0.0f; }
 
    /**
-    * Oscillates between an origin and destination color based on an input
-    * step and a pause factor. When the pause is greater than 1.0, the value
-    * will be clamped to the pole.
-    *
-    * @param orig   the origin color
-    * @param dest   the destination color
-    * @param step   the step
-    * @param pause  the pause factor
-    * @param target the output color
-    *
-    * @return the oscillation
-    */
-   public static Color pingPong ( final Color orig, final Color dest,
-      final float step, final float pause, final Color target ) {
-
-      // TODO: Where is this used? If not anywhere, remove.
-
-      final float t = 0.5f + 0.5f * pause * Utils.scNorm(step - 0.5f);
-      if ( t <= 0.0f ) { return target.set(orig); }
-      if ( t >= 1.0f ) { return target.set(dest); }
-      final float u = 1.0f - t;
-      return target.set(u * orig.r + t * dest.r, u * orig.g + t * dest.g, u
-         * orig.b + t * dest.b, u * orig.a + t * dest.a);
-   }
-
-   /**
     * Multiplies the red, green and blue color channels of a color by the
     * alpha channel.
     *

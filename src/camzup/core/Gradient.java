@@ -135,6 +135,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       this.compressKeysLeft(1);
       this.keys.add(new ColorKey(1.0f, color));
+
       return this;
    }
 
@@ -152,6 +153,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       this.compressKeysLeft(1);
       this.keys.add(new ColorKey(1.0f, scalar, scalar, scalar, scalar));
+
       return this;
    }
 
@@ -169,6 +171,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       this.compressKeysLeft(1);
       this.keys.add(new ColorKey(1.0f, color));
+
       return this;
    }
 
@@ -340,6 +343,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          itr.next().step = incr * denom;
       }
       this.keys.addAll(keyArr);
+
       return this;
    }
 
@@ -431,6 +435,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       if ( this.keys.contains(key) ) { this.keys.remove(key); }
       this.keys.add(key);
+
       return this;
    }
 
@@ -491,6 +496,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       this.compressKeysRight(1);
       this.keys.add(new ColorKey(0.0f, color));
+
       return this;
    }
 
@@ -508,6 +514,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       this.compressKeysRight(1);
       this.keys.add(new ColorKey(0.0f, scalar, scalar, scalar, scalar));
+
       return this;
    }
 
@@ -525,6 +532,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       this.compressKeysRight(1);
       this.keys.add(new ColorKey(0.0f, color));
+
       return this;
    }
 
@@ -752,6 +760,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       this.keys.clear();
       final Iterator < ColorKey > srcItr = source.keys.iterator();
       while ( srcItr.hasNext() ) { this.keys.add(new ColorKey(srcItr.next())); }
+
       return this;
    }
 
@@ -1407,6 +1416,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     *
     * @return the color
     *
+    * @see Color#mix(Color, Color, float, Color)
     * @see TreeSet#floor(Object)
     * @see TreeSet#ceiling(Object)
     * @see TreeSet#first()
@@ -1666,6 +1676,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @param target   the output gradient
     *
     * @return the gradient
+    *
+    * @see Gradient#eval(Gradient, float, Color.AbstrEasing, Color)
     */
    public static Gradient mix ( final Gradient origin, final Gradient dest,
       final int samples, final Function < Float, Float > stepFunc,

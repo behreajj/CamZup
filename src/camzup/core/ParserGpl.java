@@ -37,7 +37,6 @@ public abstract class ParserGpl {
 
             int i = 0;
             boolean aseExt = false;
-            // int lastIndex = 4;
 
             for ( String ln = in.readLine(); ln != null; ln = in.readLine() ) {
                final String lnlc = ln.trim().toLowerCase();
@@ -52,7 +51,6 @@ public abstract class ParserGpl {
                } else if ( lnlc.equals("channels: rgba") ) {
 
                   aseExt = true;
-                  // lastIndex = 5;
 
                } else {
 
@@ -63,12 +61,8 @@ public abstract class ParserGpl {
                      /*
                       * In a GPL, tokens 0, 1 and 2 are the RGB channels; token
                       * n - 1 is the optional name; token n - 1 is the optional
-                      * index (sometimes). Other times it causes parsing errors.
+                      * index (sometimes).
                       */
-                     // final int idx = len > lastIndex ? Integer.parseInt(
-                     // tokens[lastIndex], 10) : i;
-                     final int idx = i;
-
                      final float alpha = aseExt ? Float.parseFloat(tokens[3])
                         * IUtils.ONE_255 : 1.0f;
 
@@ -77,7 +71,7 @@ public abstract class ParserGpl {
                       * outside the range [0, 255]. Because colors are
                       * unclamped, this doesn't matter.
                       */
-                     clrs.put(idx, new Color(Float.parseFloat(tokens[0])
+                     clrs.put(i, new Color(Float.parseFloat(tokens[0])
                         * IUtils.ONE_255, Float.parseFloat(tokens[1])
                            * IUtils.ONE_255, Float.parseFloat(tokens[2])
                               * IUtils.ONE_255, alpha));

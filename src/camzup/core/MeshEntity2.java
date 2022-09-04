@@ -164,6 +164,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public MeshEntity2 flipX ( ) {
 
       this.transform.flipX();
+
       return this;
    }
 
@@ -176,6 +177,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public MeshEntity2 flipY ( ) {
 
       this.transform.flipY();
+
       return this;
    }
 
@@ -300,6 +302,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       super.reset();
       this.meshes.clear();
+
       return this;
    }
 
@@ -314,6 +317,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public MeshEntity2 scaleBy ( final float scalar ) {
 
       this.transform.scaleBy(scalar);
+
       return this;
    }
 
@@ -328,6 +332,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public MeshEntity2 scaleBy ( final Vec2 scalar ) {
 
       this.transform.scaleBy(scalar);
+
       return this;
    }
 
@@ -342,6 +347,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public MeshEntity2 scaleTo ( final float scalar ) {
 
       this.transform.scaleTo(scalar);
+
       return this;
    }
 
@@ -356,6 +362,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public MeshEntity2 scaleTo ( final Vec2 scalar ) {
 
       this.transform.scaleTo(scalar);
+
       return this;
    }
 
@@ -371,6 +378,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public MeshEntity2 scaleTo ( final Vec2 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
+
       return this;
    }
 
@@ -395,6 +403,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       final Vec2[] coords = this.get(meshIndex).coords;
       final int j = Utils.mod(coordIndex, coords.length);
       coords[j].set(local);
+
       return this;
    }
 

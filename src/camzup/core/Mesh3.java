@@ -243,8 +243,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    public Mesh3 collapseEdge ( final int faceIndex, final int edgeIndex,
       final float fac ) {
 
-      // TEST
-
       /* Find face. */
       final int facesLen = this.faces.length;
       final int i = Utils.mod(faceIndex, facesLen);
@@ -4904,9 +4902,6 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    static void accumMinMax ( final Mesh3 mesh, final Vec3 lb, final Vec3 ub ) {
 
-      // TODO: Version which accepts Transform so a MeshEntity AABB can be
-      // calculated (See Mesh2)?
-
       final Vec3[] coords = mesh.coords;
       final int len = coords.length;
 
@@ -4915,6 +4910,43 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final float x = coord.x;
          final float y = coord.y;
          final float z = coord.z;
+
+         /* Minimum, maximum need individual if checks, not if-else. */
+         if ( x < lb.x ) { lb.x = x; }
+         if ( x > ub.x ) { ub.x = x; }
+         if ( y < lb.y ) { lb.y = y; }
+         if ( y > ub.y ) { ub.y = y; }
+         if ( z < lb.z ) { lb.z = z; }
+         if ( z > ub.z ) { ub.z = z; }
+      }
+   }
+
+   /**
+    * An internal helper function to accumulate the minimum and maximum points
+    * in a mesh. This may be called either by a single mesh, or by a mesh
+    * entity seeking the minimum and maximum for a collection of meshes. The
+    * transform parameter accepts the entity's transform, while the coordinate
+    * stores a mesh coordinate that has been multiplied by the transform.
+    *
+    * @param mesh the mesh
+    * @param lb   the lower bound
+    * @param ub   the upper bound
+    * @param tr   the transform
+    * @param co   the coordinate
+    *
+    * @see Transform3#mulPoint(Vec3, Vec3, Vec3)
+    */
+   static void accumMinMax ( final Mesh3 mesh, final Vec3 lb, final Vec3 ub,
+      final Transform3 tr, final Vec3 co ) {
+
+      final Vec3[] coords = mesh.coords;
+      final int len = coords.length;
+
+      for ( int i = 0; i < len; ++i ) {
+         Transform3.mulPoint(tr, coords[i], co);
+         final float x = co.x;
+         final float y = co.y;
+         final float z = co.z;
 
          /* Minimum, maximum need individual if checks, not if-else. */
          if ( x < lb.x ) { lb.x = x; }

@@ -33,18 +33,18 @@ public class Octree {
    /**
     * The bounding volume.
     */
-   public Bounds3 bounds;
-
-   /**
-    * Children nodes.
-    */
-   public final Octree[] children = new Octree[Octree.CHILD_COUNT];
+   protected final Bounds3 bounds;
 
    /**
     * The number of elements an octree can hold before it is split into child
     * nodes.
     */
    protected int capacity;
+
+   /**
+    * Children nodes.
+    */
+   protected final Octree[] children = new Octree[Octree.CHILD_COUNT];
 
    /**
     * The depth, or level, of the octree node. The root node is at
@@ -55,22 +55,7 @@ public class Octree {
    /**
     * Elements contained by this octree if it is a leaf.
     */
-   protected TreeSet < Vec3 > points;
-
-   /**
-    * The default constructor.
-    */
-   public Octree ( ) {
-
-      /*
-       * This no longer implements Comparable<Octree> (based on its bounds
-       * center) because then it would also have to implement equals and
-       * hashCode to fulfill the interface contract, and it's not clear how two
-       * should be equated.
-       */
-
-      this(new Bounds3());
-   }
+   protected final TreeSet < Vec3 > points;
 
    /**
     * Constructs an octree node with a boundary.
@@ -108,6 +93,9 @@ public class Octree {
     *
     * @param points   the points
     * @param capacity capacity per node
+    *
+    * @see Bounds3#fromPoints(Vec3[], Bounds3)
+    * @see Octree#insertAll(Vec3[])
     */
    public Octree ( final Vec3[] points, final int capacity ) {
 
@@ -116,6 +104,23 @@ public class Octree {
       this.level = Octree.ROOT_LEVEL;
       this.points = new TreeSet <>();
       this.insertAll(points);
+   }
+
+   /**
+    * The default constructor. Creates a bounds of signed unit size.
+    *
+    * @see Bounds3#unitCubeSigned(Bounds3)
+    */
+   protected Octree ( ) {
+
+      /*
+       * This no longer implements Comparable<Octree> (based on its bounds
+       * center) because then it would also have to implement equals and
+       * hashCode to fulfill the interface contract, and it's not clear how two
+       * should be equated.
+       */
+
+      this(Bounds3.unitCubeSigned(new Bounds3()));
    }
 
    /**
@@ -133,29 +138,6 @@ public class Octree {
       this.capacity = capacity < 1 ? 1 : capacity;
       this.level = level < Octree.ROOT_LEVEL ? Octree.ROOT_LEVEL : level;
       this.points = new TreeSet <>();
-   }
-
-   /**
-    * Finds the average centers for each leaf node of this octree.
-    *
-    * @return centers
-    */
-   public Vec3[] centersMean ( ) { return this.centersMean(false); }
-
-   /**
-    * Finds the average centers for each leaf node of this octree. If the node
-    * is empty, and includeEmpty is true, then the center of the cell bounds
-    * is used instead.
-    *
-    * @param includeEmpty include empty cells
-    *
-    * @return centers
-    */
-   public Vec3[] centersMean ( final boolean includeEmpty ) {
-
-      final ArrayList < Vec3 > results = new ArrayList <>(32);
-      this.centersMean(includeEmpty, results);
-      return results.toArray(new Vec3[results.size()]);
    }
 
    /**
@@ -228,6 +210,18 @@ public class Octree {
       }
 
       return cullThis >= Octree.CHILD_COUNT && this.points.isEmpty();
+   }
+
+   /**
+    * Gets the octree bounds.
+    *
+    * @param target the output bounds
+    *
+    * @return the bounds
+    */
+   public Bounds3 getBounds ( final Bounds3 target ) {
+
+      return target.set(this.bounds);
    }
 
    /**
@@ -410,57 +404,8 @@ public class Octree {
    }
 
    /**
-    * Queries the octree with a rectangular range, returning points inside the
-    * range.
-    *
-    * @param range the range
-    *
-    * @return the points.
-    */
-   public Vec3[] queryRange ( final Bounds3 range ) {
-
-      final TreeMap < Float, Vec3 > found = new TreeMap <>();
-      this.queryRange(range, found);
-
-      /* Copy by value, so references can't change. */
-      final Collection < Vec3 > values = found.values();
-      final Iterator < Vec3 > itr = values.iterator();
-      final int len = values.size();
-      final Vec3[] result = new Vec3[len];
-      for ( int i = 0; itr.hasNext(); ++i ) {
-         result[i] = new Vec3(itr.next());
-      }
-      return result;
-   }
-
-   /**
-    * Queries the octree with a spherical range, returning points inside the
-    * range.
-    *
-    * @param center the sphere center
-    * @param radius the sphere radius
-    *
-    * @return the points.
-    */
-   public Vec3[] queryRange ( final Vec3 center, final float radius ) {
-
-      final TreeMap < Float, Vec3 > found = new TreeMap <>();
-      this.queryRange(center, radius, found);
-
-      /* Copy by value, so references can't change. */
-      final Collection < Vec3 > values = found.values();
-      final Iterator < Vec3 > itr = values.iterator();
-      final int len = values.size();
-      final Vec3[] result = new Vec3[len];
-      for ( int i = 0; itr.hasNext(); ++i ) {
-         result[i] = new Vec3(itr.next());
-      }
-      return result;
-   }
-
-   /**
-    * Resets this octree to an initial state, where its has no children and no
-    * points.
+    * Resets this tree to an initial state, where its has no children and no
+    * points. Leaves the tree's bounds unchanged.
     *
     * @return this octree
     */
@@ -475,6 +420,20 @@ public class Octree {
    }
 
    /**
+    * Resets this tree to an initial state, where its has no children and no
+    * points. Sets the bounds to the one supplied.
+    *
+    * @param b bounds
+    *
+    * @return this octree
+    */
+   public Octree reset ( final Bounds3 b ) {
+
+      this.bounds.set(b);
+      return this.reset();
+   }
+
+   /**
     * Sets the capacity of the node. If the node's point size exceeds the new
     * capacity, the node is split.
     *
@@ -486,7 +445,9 @@ public class Octree {
 
       if ( capacity > 0 ) {
          this.capacity = capacity;
-         if ( this.points.size() > capacity ) { this.split(this.capacity); }
+         if ( this.points.size() > this.capacity ) {
+            this.split(this.capacity);
+         }
       }
    }
 
@@ -516,7 +477,7 @@ public class Octree {
     * Subdivides this octree. For cases where a minimum number of children
     * nodes is desired, independent of point insertion. The result will be
     * {@value Octree#CHILD_COUNT} raised to the power of iterations, e.g., 8,
-    * 64, 512, etc.
+    * 64, 512.
     *
     * @param iterations    iteration count
     * @param childCapacity child capacity
@@ -525,6 +486,7 @@ public class Octree {
     *
     * @see Octree#split(int)
     */
+   @Recursive
    public Octree subdivide ( final int iterations, final int childCapacity ) {
 
       if ( iterations < 1 ) { return this; }
@@ -561,141 +523,6 @@ public class Octree {
    public String toString ( final int places ) {
 
       return this.toString(new StringBuilder(1024), places).toString();
-   }
-
-   /**
-    * Finds the average center in each leaf node of this octree and appends it
-    * to an array. If the node is empty, and includeEmpty is true, then the
-    * center of the cell bounds is used instead.
-    *
-    * @param includeEmpty include empty cells
-    * @param target       output array list
-    *
-    * @return centers
-    *
-    * @see Vec3#add(Vec3, Vec3, Vec3)
-    * @see Vec3#mul(Vec3, float, Vec3)
-    * @see Bounds3#center(Bounds3, Vec3)
-    */
-   @Recursive
-   ArrayList < Vec3 > centersMean ( final boolean includeEmpty,
-      final ArrayList < Vec3 > target ) {
-
-      /* Even with a tree set, centersMedian is not worth it. */
-
-      boolean isLeaf = true;
-      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
-         final Octree child = this.children[i];
-         if ( child != null ) {
-            isLeaf = false;
-            child.centersMean(includeEmpty, target);
-         }
-      }
-
-      if ( isLeaf ) {
-         final int ptsLen = this.points.size();
-         final Iterator < Vec3 > ptsItr = this.points.iterator();
-         if ( ptsLen > 1 ) {
-            final Vec3 result = new Vec3();
-            while ( ptsItr.hasNext() ) {
-               Vec3.add(result, ptsItr.next(), result);
-            }
-            Vec3.mul(result, 1.0f / ptsLen, result);
-            target.add(result);
-         } else if ( ptsLen > 0 ) {
-            target.add(new Vec3(ptsItr.next()));
-         } else if ( includeEmpty ) {
-            target.add(Bounds3.center(this.bounds, new Vec3()));
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Queries the octree with a box range. If points in the octree are in
-    * range, they are added to a {@link java.util.TreeMap}.
-    *
-    * @param range the range
-    * @param found the output list
-    *
-    * @return found points
-    *
-    * @see Bounds3#intersect(Bounds3, Bounds3)
-    * @see Bounds3#containsInclusive(Bounds3, Vec3)
-    * @see Vec3#dist(Vec3, Vec3)
-    * @see Bounds3#center(Bounds3, Vec3)
-    */
-   @Recursive
-   TreeMap < Float, Vec3 > queryRange ( final Bounds3 range, final TreeMap <
-      Float, Vec3 > found ) {
-
-      if ( Bounds3.intersect(range, this.bounds) ) {
-         boolean isLeaf = true;
-         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
-            final Octree child = this.children[i];
-            if ( child != null ) {
-               isLeaf = false;
-               child.queryRange(range, found);
-            }
-         }
-
-         if ( isLeaf ) {
-            final Iterator < Vec3 > itr = this.points.iterator();
-            final Vec3 rCenter = new Vec3();
-            Bounds3.center(range, rCenter);
-            while ( itr.hasNext() ) {
-               final Vec3 point = itr.next();
-               if ( Bounds3.containsInclusive(range, point) ) {
-                  found.put(Vec3.distChebyshev(point, rCenter), point);
-               }
-            }
-         }
-      }
-
-      return found;
-   }
-
-   /**
-    * Queries the octree with a spherical range. If points in the octree are
-    * in range, they are added to a {@link java.util.TreeMap}.
-    *
-    * @param center the sphere center
-    * @param radius the sphere radius
-    * @param found  the output list
-    *
-    * @return found points
-    *
-    * @see Bounds3#intersect(Bounds3, Vec3, float)
-    * @see Vec3#distSq(Vec3, Vec3)
-    * @see Utils#sqrt(float)
-    */
-   @Recursive
-   TreeMap < Float, Vec3 > queryRange ( final Vec3 center, final float radius,
-      final TreeMap < Float, Vec3 > found ) {
-
-      if ( Bounds3.intersect(this.bounds, center, radius) ) {
-         boolean isLeaf = true;
-         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
-            final Octree child = this.children[i];
-            if ( child != null ) {
-               isLeaf = false;
-               child.queryRange(center, radius, found);
-            }
-         }
-
-         if ( isLeaf ) {
-            final float rsq = radius * radius;
-            final Iterator < Vec3 > itr = this.points.iterator();
-            while ( itr.hasNext() ) {
-               final Vec3 point = itr.next();
-               final float dsq = Vec3.distSq(center, point);
-               if ( dsq < rsq ) { found.put(Utils.sqrt(dsq), point); }
-            }
-         }
-      }
-
-      return found;
    }
 
    /**
@@ -761,6 +588,9 @@ public class Octree {
     * @param childCapacity child capacity
     *
     * @return this octree
+    *
+    * @see Bounds#split(Bounds3, float, float, float, Bounds3, Bounds3,
+    *      Bounds3, Bounds3,Bounds3, Bounds3, Bounds3, Bounds3)
     */
    protected Octree split ( final int childCapacity ) {
 
@@ -795,7 +625,7 @@ public class Octree {
       while ( itr.hasNext() ) {
          final Vec3 v = itr.next();
          boolean found = false;
-         for ( int j = 0; j < Octree.CHILD_COUNT && !found; ++j ) {
+         for ( int j = 0; !found && j < Octree.CHILD_COUNT; ++j ) {
             final int k = ( idxOffset + j ) % Octree.CHILD_COUNT;
             found = this.children[k].insert(v);
             if ( found ) { idxOffset = k; }
@@ -912,5 +742,234 @@ public class Octree {
     * The root level, or depth, {@value Octree#ROOT_LEVEL}.
     */
    public static final int ROOT_LEVEL = 0;
+
+   /**
+    * Finds the average centers for each leaf node of this octree.
+    *
+    * @param o the octree
+    *
+    * @return the centers
+    */
+   public static Vec3[] centersMean ( final Octree o ) {
+
+      return Octree.centersMean(o, false);
+   }
+
+   /**
+    * Finds the average centers for each leaf node of this octree. If the node
+    * is empty, and includeEmpty is true, then the center of the cell bounds
+    * is used instead.
+    *
+    * @param o            the octree
+    * @param includeEmpty include empty cells
+    *
+    * @return the centers
+    */
+   public static Vec3[] centersMean ( final Octree o,
+      final boolean includeEmpty ) {
+
+      final ArrayList < Vec3 > results = new ArrayList <>(32);
+      Octree.centersMean(o, includeEmpty, results);
+      return results.toArray(new Vec3[results.size()]);
+   }
+
+   /**
+    * Queries the octree with a rectangular range, returning points inside the
+    * range.
+    *
+    * @param o     the octree
+    * @param range the range
+    *
+    * @return the points
+    *
+    * @see Bounds3#center(Bounds3, Vec3)
+    */
+   public static Vec3[] query ( final Octree o, final Bounds3 range ) {
+
+      final TreeMap < Float, Vec3 > found = new TreeMap <>();
+      final Vec3 rCenter = new Vec3();
+      Bounds3.center(range, rCenter);
+      Octree.query(o, range, rCenter, found);
+
+      /* Copy by value, so references can't change. */
+      final Collection < Vec3 > values = found.values();
+      final Iterator < Vec3 > itr = values.iterator();
+      final int len = values.size();
+      final Vec3[] result = new Vec3[len];
+      for ( int i = 0; itr.hasNext(); ++i ) {
+         result[i] = new Vec3(itr.next());
+      }
+      return result;
+   }
+
+   /**
+    * Queries the octree with a spherical range, returning points inside the
+    * range.
+    *
+    * @param o      the octree
+    * @param center the sphere center
+    * @param radius the sphere radius
+    *
+    * @return the points
+    */
+   public static Vec3[] query ( final Octree o, final Vec3 center,
+      final float radius ) {
+
+      final TreeMap < Float, Vec3 > found = new TreeMap <>();
+      Octree.query(o, center, radius, found);
+
+      /* Copy by value, so references can't change. */
+      final Collection < Vec3 > values = found.values();
+      final Iterator < Vec3 > itr = values.iterator();
+      final int len = values.size();
+      final Vec3[] result = new Vec3[len];
+      for ( int i = 0; itr.hasNext(); ++i ) {
+         result[i] = new Vec3(itr.next());
+      }
+      return result;
+   }
+
+   /**
+    * Finds the average center in each leaf node of this octree and appends it
+    * to an array. If the node is empty, and includeEmpty is true, then the
+    * center of the cell bounds is used instead.
+    *
+    * @param o            the octree
+    * @param includeEmpty include empty cells
+    * @param target       output array list
+    *
+    * @return the centers
+    *
+    * @see Bounds3#center(Bounds3, Vec3)
+    */
+   @Recursive
+   static ArrayList < Vec3 > centersMean ( final Octree o,
+      final boolean includeEmpty, final ArrayList < Vec3 > target ) {
+
+      /*
+       * Even with a tree set, centersMedian is not worth it. Because this is
+       * used by Pixels class to extract a palette, optimize where possible.
+       */
+
+      boolean isLeaf = true;
+      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+         final Octree child = o.children[i];
+         if ( child != null ) {
+            isLeaf = false;
+            Octree.centersMean(child, includeEmpty, target);
+         }
+      }
+
+      if ( isLeaf ) {
+         final int ptsLen = o.points.size();
+         final Iterator < Vec3 > ptsItr = o.points.iterator();
+         if ( ptsLen > 1 ) {
+            float xSum = 0.0f;
+            float ySum = 0.0f;
+            float zSum = 0.0f;
+            while ( ptsItr.hasNext() ) {
+               final Vec3 pt = ptsItr.next();
+               xSum += pt.x;
+               ySum += pt.y;
+               zSum += pt.z;
+            }
+            final float dn = 1.0f / ptsLen;
+            target.add(new Vec3(xSum * dn, ySum * dn, zSum * dn));
+         } else if ( ptsLen > 0 ) {
+            target.add(new Vec3(ptsItr.next()));
+         } else if ( includeEmpty ) {
+            target.add(Bounds3.center(o.bounds, new Vec3()));
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Queries the octree with a box range. If points in the octree are in
+    * range, they are added to a {@link java.util.TreeMap}. Each entry in the
+    * map uses the Chebyshev distance as the key. Expects the range center to
+    * be calculated in advance.
+    *
+    * @param range   the range
+    * @param rCenter the range center
+    * @param found   the output list
+    *
+    * @return found points
+    *
+    * @see Bounds3#containsInclusive(Bounds3, Vec3)
+    * @see Bounds3#intersect(Bounds3, Bounds3)
+    * @see Vec3#distChebyshev(Vec3, Vec3)
+    */
+   @Recursive
+   static TreeMap < Float, Vec3 > query ( final Octree o, final Bounds3 range,
+      final Vec3 rCenter, final TreeMap < Float, Vec3 > found ) {
+
+      if ( Bounds3.intersect(range, o.bounds) ) {
+         boolean isLeaf = true;
+         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+            final Octree child = o.children[i];
+            if ( child != null ) {
+               isLeaf = false;
+               Octree.query(child, range, rCenter, found);
+            }
+         }
+
+         if ( isLeaf ) {
+            final Iterator < Vec3 > itr = o.points.iterator();
+            while ( itr.hasNext() ) {
+               final Vec3 point = itr.next();
+               if ( Bounds3.containsInclusive(range, point) ) {
+                  found.put(Vec3.distChebyshev(point, rCenter), point);
+               }
+            }
+         }
+      }
+
+      return found;
+   }
+
+   /**
+    * Queries the octree with a spherical range. If points in the octree are
+    * in range, they are added to a {@link java.util.TreeMap}. Each entry in
+    * the map uses the squared Euclidean distance as the key.
+    *
+    * @param o      the octree
+    * @param center the sphere center
+    * @param radius the sphere radius
+    * @param found  the output list
+    *
+    * @return found points
+    *
+    * @see Bounds3#intersect(Bounds3, Vec3, float)
+    * @see Vec3#distSq(Vec3, Vec3)
+    */
+   @Recursive
+   static TreeMap < Float, Vec3 > query ( final Octree o, final Vec3 center,
+      final float radius, final TreeMap < Float, Vec3 > found ) {
+
+      if ( Bounds3.intersect(o.bounds, center, radius) ) {
+         boolean isLeaf = true;
+         for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+            final Octree child = o.children[i];
+            if ( child != null ) {
+               isLeaf = false;
+               Octree.query(child, center, radius, found);
+            }
+         }
+
+         if ( isLeaf ) {
+            final float rsq = radius * radius;
+            final Iterator < Vec3 > itr = o.points.iterator();
+            while ( itr.hasNext() ) {
+               final Vec3 point = itr.next();
+               final float dsq = Vec3.distSq(center, point);
+               if ( dsq < rsq ) { found.put(dsq, point); }
+            }
+         }
+      }
+
+      return found;
+   }
 
 }

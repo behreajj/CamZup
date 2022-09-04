@@ -385,9 +385,6 @@ public class Bounds2 implements Comparable < Bounds2 > {
     */
    protected Bounds2 scale ( final float w, final float h ) {
 
-      // TODO: Do (w, h) need to copy the sign of (mx - mn) for this to scale
-      // correctly?
-
       final float xCenter = Utils.diff(this.max.x, this.min.x) * 0.5f;
       final float yCenter = Utils.diff(this.max.y, this.min.y) * 0.5f;
 

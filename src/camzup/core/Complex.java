@@ -600,7 +600,6 @@ public class Complex implements Comparable < Complex > {
     *
     * @return the inverse
     *
-    * @see Complex#absSq(Complex)
     * @see Complex#conj(Complex, Complex)
     */
    public static Complex inverse ( final Complex z, final Complex target,
@@ -776,12 +775,12 @@ public class Complex implements Comparable < Complex > {
     *
     * @return the result
     *
-    * @see Math#log(double)
-    * @see Math#sqrt(double)
     * @see Math#atan2(double, double)
-    * @see Math#exp(double)
     * @see Math#cos(double)
+    * @see Math#exp(double)
+    * @see Math#log(double)
     * @see Math#sin(double)
+    * @see Math#sqrt(double)
     */
    public static Complex pow ( final Complex a, final Complex b,
       final Complex target ) {
@@ -838,12 +837,12 @@ public class Complex implements Comparable < Complex > {
     *
     * @return the result
     *
-    * @see Math#log(double)
-    * @see Math#sqrt(double)
     * @see Math#atan2(double, double)
-    * @see Math#exp(double)
     * @see Math#cos(double)
+    * @see Math#exp(double)
+    * @see Math#log(double)
     * @see Math#sin(double)
+    * @see Math#sqrt(double)
     */
    public static Complex pow ( final Complex a, final float b,
       final Complex target ) {
@@ -868,11 +867,11 @@ public class Complex implements Comparable < Complex > {
     *
     * @return the result
     *
-    * @see Math#log(double)
-    * @see Math#sqrt(double)
-    * @see Math#exp(double)
     * @see Math#cos(double)
+    * @see Math#exp(double)
+    * @see Math#log(double)
     * @see Math#sin(double)
+    * @see Math#sqrt(double)
     */
    public static Complex pow ( final float a, final Complex b,
       final Complex target ) {

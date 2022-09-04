@@ -181,6 +181,7 @@ public class ColorKey implements Comparable < ColorKey > {
 
       this.step = Utils.clamp01(step);
       this.clr.set(color);
+
       return this;
    }
 
@@ -199,6 +200,7 @@ public class ColorKey implements Comparable < ColorKey > {
 
       this.step = Utils.clamp01(step);
       Color.fromHex(color, this.clr);
+
       return this;
    }
 
@@ -260,6 +262,7 @@ public class ColorKey implements Comparable < ColorKey > {
 
       this.step = step;
       this.clr.set(red, green, blue, alpha);
+
       return this;
    }
 
@@ -369,7 +372,7 @@ public class ColorKey implements Comparable < ColorKey > {
        * @param b the right comparisand
        *
        * @return the evaluation
-       * 
+       *
        * @see Utils#quantizeUnsigned(float, int)
        */
       @Override

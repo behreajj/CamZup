@@ -1749,7 +1749,7 @@ public class ZImage extends PImage {
 
    /**
     * Mirrors an image across the axis described by an origin and destination.
-    * Coordinates are expected to be in the range [0.0, 1.0]. Out-of-bounds
+    * Coordinates are expected to be in the range [-1.0, 1.0]. Out-of-bounds
     * pixels are omitted from the mirror.
     *
     * @param source the source image

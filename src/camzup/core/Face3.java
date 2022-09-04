@@ -1013,7 +1013,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    @Experimental
    public static Vec3 normal ( final Face3 face, final Vec3 target ) {
 
-      // TODO: Distinguish between two kinds of normal calculated?
+      // QUERY: Distinguish between two kinds of normal calculated?
 
       target.reset();
       final Vert3[] verts = face.vertices;

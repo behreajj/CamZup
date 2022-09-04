@@ -336,7 +336,7 @@ public abstract class Simplex extends Generative {
       final float z0 = z - ( k - t );
       final float w0 = w - ( l - t );
 
-      // TODO: TEST
+      // TEST
       final int idx = 4 * ( ( x0 > y0 ? 0x20 : 0 ) | ( x0 > z0 ? 0x10 : 0 )
          | ( y0 > z0 ? 0x08 : 0 ) | ( x0 > w0 ? 0x04 : 0 ) | ( y0 > w0 ? 0x02
             : 0 ) | ( z0 > w0 ? 0x01 : 0 ) );

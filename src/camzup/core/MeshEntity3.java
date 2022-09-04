@@ -278,6 +278,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
       super.reset();
       this.meshes.clear();
+
       return this;
    }
 
@@ -292,6 +293,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    public MeshEntity3 scaleBy ( final float scalar ) {
 
       this.transform.scaleBy(scalar);
+
       return this;
    }
 
@@ -309,6 +311,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    public MeshEntity3 scaleBy ( final Vec3 scalar ) {
 
       this.transform.scaleBy(scalar);
+
       return this;
    }
 
@@ -323,6 +326,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    public MeshEntity3 scaleTo ( final float scaleNew ) {
 
       this.transform.scaleTo(scaleNew);
+
       return this;
    }
 
@@ -340,6 +344,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    public MeshEntity3 scaleTo ( final Vec3 scaleNew ) {
 
       this.transform.scaleTo(scaleNew);
+
       return this;
    }
 
@@ -358,6 +363,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    public MeshEntity3 scaleTo ( final Vec3 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
+
       return this;
    }
 
@@ -382,6 +388,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       final Vec3[] coords = this.get(meshIndex).coords;
       final int j = Utils.mod(coordIndex, coords.length);
       coords[j].set(local);
+
       return this;
    }
 
@@ -596,6 +603,30 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
       sb.append(" ] }");
       return sb.toString();
+   }
+
+   /**
+    * Calculates an Axis-Aligned Bounding Box (AABB) encompassing the entity.
+    *
+    * @param entity the entity
+    * @param target the output bounds
+    *
+    * @return the bounds
+    */
+   public static Bounds3 calcBounds ( final MeshEntity3 entity,
+      final Bounds3 target ) {
+
+      final Vec3 co = new Vec3();
+
+      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+
+      final Iterator < Mesh3 > itr = entity.iterator();
+      final Transform3 tr = entity.transform;
+      while ( itr.hasNext() ) {
+         Mesh3.accumMinMax(itr.next(), target.min, target.max, tr, co);
+      }
+
+      return target;
    }
 
 }

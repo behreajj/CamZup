@@ -113,6 +113,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public Curve3 append ( final Knot3 knot ) {
 
       this.knots.add(knot);
+
       return this;
    }
 
@@ -181,6 +182,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * Flips the curve on the x axis, then reverses the curve.
     *
     * @return this curve
+    *
+    * @see Collections#reverse(List)
+    * @see Knot3#reverse()
     */
    public Curve3 flipX ( ) {
 
@@ -193,6 +197,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          kn.reverse();
       }
       Collections.reverse(this.knots);
+
       return this;
    }
 
@@ -200,6 +205,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * Flips the curve on the y axis, then reverses the curve.
     *
     * @return this curve
+    *
+    * @see Collections#reverse(List)
+    * @see Knot3#reverse()
     */
    public Curve3 flipY ( ) {
 
@@ -212,6 +220,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          kn.reverse();
       }
       Collections.reverse(this.knots);
+
       return this;
    }
 
@@ -219,6 +228,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * Flips the curve on the y axis, then reverses the curve.
     *
     * @return this curve
+    *
+    * @see Collections#reverse(List)
+    * @see Knot3#reverse()
     */
    public Curve3 flipZ ( ) {
 
@@ -231,6 +243,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          kn.reverse();
       }
       Collections.reverse(this.knots);
+
       return this;
    }
 
@@ -321,6 +334,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
          : i;
       this.knots.addAll(vidx, kn);
+
       return this;
    }
 
@@ -341,11 +355,11 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       final int len = kn.length;
       final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1)
          : i;
-      int k = vidx;
+      int k = vidx - 1;
       for ( int j = 0; j < len; ++j ) {
+         ++k;
          final Knot3 knot = kn[j];
          this.knots.add(k, knot);
-         ++k;
       }
 
       return this;
@@ -384,6 +398,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public Curve3 prepend ( final Knot3 knot ) {
 
       this.knots.add(0, knot);
+
       return this;
    }
 
@@ -399,6 +414,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public Curve3 prependAll ( final Collection < Knot3 > kn ) {
 
       this.knots.addAll(0, kn);
+
       return this;
    }
 
@@ -413,13 +429,14 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 prependAll ( final Knot3... kn ) {
 
-      int j = 0;
+      int j = -1;
       final int len = kn.length;
       for ( int i = 0; i < len; ++i ) {
+         ++j;
          final Knot3 knot = kn[i];
          this.knots.add(j, knot);
-         ++j;
       }
+
       return this;
    }
 
@@ -482,7 +499,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param v the coordinate
     *
     * @return this curve
+    *
+    * @see Knot3#relocate(Vec3)
     */
+   @Experimental
    public Curve3 relocateKnot ( final int i, final Vec3 v ) {
 
       this.get(i).relocate(v);
@@ -622,6 +642,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @return this curve
     *
     * @see Quaternion#any(Quaternion)
+    * @see Knot3#rotate(Quaternion)
     */
    public Curve3 rotate ( final Quaternion q ) {
 
@@ -640,7 +661,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve
     *
-    * @see Knot3#rotateX(float)
+    * @see Knot3#rotateX(float, float)
     */
    public Curve3 rotateX ( final float radians ) {
 
@@ -661,7 +682,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve
     *
-    * @see Knot3#rotateY(float)
+    * @see Knot3#rotateY(float, float)
     */
    public Curve3 rotateY ( final float radians ) {
 
@@ -682,7 +703,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve
     *
-    * @see Knot3#rotateZ(float)
+    * @see Knot3#rotateZ(float, float)
     */
    public Curve3 rotateZ ( final float radians ) {
 
@@ -829,8 +850,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public String toString ( final int places ) {
 
-      return this.toString(new StringBuilder(64 + 384 * this.knots.size()),
-         places).toString();
+      return this.toString(new StringBuilder(512), places).toString();
    }
 
    /**
@@ -863,6 +883,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param tr the transform
     *
     * @return this curve
+    *
+    * @see Knot3#transform(Transform3)
     */
    public Curve3 transform ( final Transform3 tr ) {
 

@@ -547,7 +547,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
     */
    public static float areaSigned ( final Face2 face ) {
 
-      // TODO: TEST
+      // TEST
 
       final Vert2[] verts = face.vertices;
       final int last = verts.length - 1;

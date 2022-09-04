@@ -63,7 +63,6 @@ public abstract class EntityData implements IEntityData {
     *
     * @return this entity
     */
-
    public EntityData setName ( final String name ) {
 
       if ( name != null ) { this.name = name; }

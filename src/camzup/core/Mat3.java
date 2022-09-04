@@ -394,8 +394,9 @@ public class Mat3 {
       this.m00 = m00; this.m10 = m10; this.m20 = m20;
       this.m01 = m01; this.m11 = m11; this.m21 = m21;
       this.m02 = m02; this.m12 = m12; this.m22 = m22;
-      return this;
       /* @formatter:on */
+
+      return this;
    }
 
    /**

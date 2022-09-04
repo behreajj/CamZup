@@ -89,6 +89,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public CurveEntity3 append ( final Curve3 curve ) {
 
       if ( curve != null ) { this.curves.add(curve); }
+
       return this;
    }
 
@@ -103,6 +104,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
 
       final Iterator < Curve3 > itr = app.iterator();
       while ( itr.hasNext() ) { this.append(itr.next()); }
+
       return this;
    }
 
@@ -117,6 +119,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
 
       final int len = app.length;
       for ( int i = 0; i < len; ++i ) { this.append(app[i]); }
+
       return this;
    }
 
@@ -134,6 +137,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
       final Iterator < Curve3 > itr = this.curves.iterator();
       while ( itr.hasNext() ) { itr.next().transform(this.transform); }
       Transform3.identity(this.transform);
+
       return this;
    }
 
@@ -279,6 +283,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
 
       Transform3.invMulPoint(this.transform, global, local);
       this.get(curveIndex).relocateKnot(knotIndex, local);
+
       return this;
    }
 
@@ -315,6 +320,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
 
       super.reset();
       this.curves.clear();
+
       return this;
    }
 
@@ -329,6 +335,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public CurveEntity3 scaleBy ( final float scalar ) {
 
       this.transform.scaleBy(scalar);
+
       return this;
    }
 
@@ -343,6 +350,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public CurveEntity3 scaleBy ( final Vec3 scalar ) {
 
       this.transform.scaleBy(scalar);
+
       return this;
    }
 
@@ -357,6 +365,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public CurveEntity3 scaleTo ( final float scalar ) {
 
       this.transform.scaleTo(scalar);
+
       return this;
    }
 
@@ -371,6 +380,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public CurveEntity3 scaleTo ( final Vec3 scalar ) {
 
       this.transform.scaleTo(scalar);
+
       return this;
    }
 
@@ -386,6 +396,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public CurveEntity3 scaleTo ( final Vec3 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
+
       return this;
    }
 
@@ -410,6 +421,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
 
       Transform3.invMulPoint(this.transform, global, local);
       this.get(curveIndex).get(knotIndex).coord.set(local);
+
       return this;
    }
 
@@ -434,6 +446,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
 
       Transform3.invMulPoint(this.transform, global, local);
       this.get(curveIndex).get(knotIndex).foreHandle.set(local);
+
       return this;
    }
 
@@ -458,6 +471,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
 
       Transform3.invMulPoint(this.transform, global, local);
       this.get(curveIndex).get(knotIndex).rearHandle.set(local);
+
       return this;
    }
 

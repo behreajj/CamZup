@@ -103,6 +103,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
       final Iterator < Curve2 > itr = app.iterator();
       while ( itr.hasNext() ) { this.append(itr.next()); }
+
       return this;
    }
 
@@ -117,6 +118,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
       final int len = app.length;
       for ( int i = 0; i < len; ++i ) { this.append(app[i]); }
+
       return this;
    }
 
@@ -134,6 +136,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       final Iterator < Curve2 > itr = this.curves.iterator();
       while ( itr.hasNext() ) { itr.next().transform(this.transform); }
       Transform2.identity(this.transform);
+
       return this;
    }
 
@@ -176,6 +179,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public CurveEntity2 flipX ( ) {
 
       this.transform.flipX();
+
       return this;
    }
 
@@ -188,6 +192,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public CurveEntity2 flipY ( ) {
 
       this.transform.flipY();
+
       return this;
    }
 
@@ -301,6 +306,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
       Transform2.invMulPoint(this.transform, global, local);
       this.get(curveIndex).relocateKnot(knotIndex, local);
+
       return this;
    }
 
@@ -337,6 +343,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
       super.reset();
       this.curves.clear();
+
       return this;
    }
 
@@ -351,6 +358,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public CurveEntity2 scaleBy ( final float scalar ) {
 
       this.transform.scaleBy(scalar);
+
       return this;
    }
 
@@ -365,6 +373,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public CurveEntity2 scaleBy ( final Vec2 scalar ) {
 
       this.transform.scaleBy(scalar);
+
       return this;
    }
 
@@ -379,6 +388,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public CurveEntity2 scaleTo ( final float scalar ) {
 
       this.transform.scaleTo(scalar);
+
       return this;
    }
 
@@ -393,6 +403,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public CurveEntity2 scaleTo ( final Vec2 scalar ) {
 
       this.transform.scaleTo(scalar);
+
       return this;
    }
 
@@ -408,6 +419,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public CurveEntity2 scaleTo ( final Vec2 scalar, final float step ) {
 
       this.transform.scaleTo(scalar, step);
+
       return this;
    }
 
@@ -432,6 +444,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
       Transform2.invMulPoint(this.transform, global, local);
       this.get(curveIndex).get(knotIndex).coord.set(local);
+
       return this;
    }
 
@@ -456,6 +469,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
       Transform2.invMulPoint(this.transform, global, local);
       this.get(curveIndex).get(knotIndex).foreHandle.set(local);
+
       return this;
    }
 
@@ -480,6 +494,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
       Transform2.invMulPoint(this.transform, global, local);
       this.get(curveIndex).get(knotIndex).rearHandle.set(local);
+
       return this;
    }
 

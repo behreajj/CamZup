@@ -4,7 +4,6 @@ import camzup.core.Bounds3;
 import camzup.core.Handedness;
 import camzup.core.Octree;
 import camzup.core.Ray3;
-import camzup.core.Recursive;
 import camzup.core.Utils;
 import camzup.core.Vec3;
 
@@ -49,22 +48,14 @@ public interface IUp3 extends IUp {
    /**
     * Draws an octree.
     *
-    * @param ot the octree
+    * @param o the octree
     */
-   @Recursive
-   default void bounds ( final Octree ot ) {
+   default void bounds ( final Octree o ) {
 
-      boolean isLeaf = true;
-      final Octree[] children = ot.children;
-      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
-         final Octree child = children[i];
-         if ( child != null ) {
-            isLeaf = false;
-            this.bounds(child);
-         }
-      }
-
-      if ( isLeaf ) { this.bounds(ot.bounds); }
+      final Octree[] leaves = o.getLeaves();
+      final int len = leaves.length;
+      final Bounds3 b = new Bounds3();
+      for ( int i = 0; i < len; ++i ) { this.bounds(leaves[i].getBounds(b)); }
    }
 
    /**

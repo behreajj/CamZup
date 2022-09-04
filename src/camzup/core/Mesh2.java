@@ -332,8 +332,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final int j = Utils.mod(faceIndex, this.faces.length);
       final int[][] f = this.faces[j];
-
-      // TODO: Remove Math.min from this and Mesh3 version.
       final int vcount = Math.min(f.length - 3, count);
       this.faces[j] = Mesh.remove(f, vertIndex, vcount);
       return this;

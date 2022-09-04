@@ -1748,7 +1748,6 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
       nrmTrg.y = nmiy * qw + nmix * qz - nmiw * qy - nmiz * qx;
       nrmTrg.z = nmiz * qw + nmiy * qx - nmiw * qz - nmix * qy;
 
-      // TODO: Inline.
       Vec3.normalize(nrmTrg, nrmTrg);
 
       return ptTrg;

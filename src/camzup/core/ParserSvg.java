@@ -529,6 +529,9 @@ public abstract class ParserSvg {
     * @param target   the output curve
     *
     * @return the line curve
+    *
+    * @see Curve2#line(float, float, float, float, Curve2)
+    * @see ParserSvg#parsef(String, float)
     */
    protected static Curve2 parseLine ( final Node lineNode,
       final Curve2 target ) {
@@ -1193,6 +1196,12 @@ public abstract class ParserSvg {
     * @param target      the output curve
     *
     * @return the curve
+    *
+    * @see Knot2#fromSegLinear(float, float, Knot2, Knot2)
+    * @see Knot2#mirrorHandlesBackward()
+    * @see Knot2#mirrorHandlesForward()
+    * @see ParserSvg#parsef(String, float)
+    * @see ParserSvg#segmentChars(char[], int, int, ArrayList)
     */
    protected static Curve2 parsePoly ( final Node polygonNode,
       final Curve2 target ) {
@@ -1247,6 +1256,9 @@ public abstract class ParserSvg {
     * @param target   the output curve
     *
     * @return the rectangle curve
+    *
+    * @see Curve2#rect(float, float, float, float, float, Curve2)
+    * @see ParserSvg#parsef(String, float)
     */
    protected static Curve2 parseRect ( final Node rectNode,
       final Curve2 target ) {
@@ -1302,6 +1314,18 @@ public abstract class ParserSvg {
     * @param delta  a temporary matrix
     *
     * @return the matrix
+    *
+    * @see Mat3#fromTranslation(Vec2, Mat3)
+    * @see Mat3#fromRotZ(float, Mat3)
+    * @see Mat3#fromScale(float, float, Mat3)
+    * @see Mat3#fromSkewX(float, Mat3)
+    * @see Mat3#fromSkewY(float, Mat3)
+    * @see Mat3#mul(Mat3, Mat3, Mat3)
+    * @see ParserSvg#parseAngle(String, float)
+    * @see ParserSvg#parsef(String, float)
+    * @see ParserSvg#segmentChars(char[], int, int, ArrayList)
+    * @see SvgTransformCmd#fromString(String)
+    * @see Vec2#negate(Vec2, Vec2)
     */
    protected static Mat3 parseTransform ( final Node trNode, final Mat3 target,
       final Mat3 delta ) {

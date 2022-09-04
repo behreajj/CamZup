@@ -2899,7 +2899,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void shape ( final CurveEntity2 entity, final MaterialAwt[] materials,
       final int windingRule ) {
 
-      // TODO: TEST
+      // TEST
 
       final Vec2 fh = new Vec2();
       final Vec2 rh = new Vec2();
@@ -3102,7 +3102,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void shape ( final MeshEntity2 entity, final MaterialAwt[] materials,
       final int windingRule ) {
 
-      // TODO: TEST
+      // TEST
 
       final Bounds2 bounds = new Bounds2();
       final Vec2 v = new Vec2();

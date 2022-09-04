@@ -9,7 +9,6 @@ import camzup.core.MaterialSolid;
 import camzup.core.MeshEntity2;
 import camzup.core.Quadtree;
 import camzup.core.Ray2;
-import camzup.core.Recursive;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 
@@ -66,22 +65,14 @@ public interface IYup2 extends IUp {
    /**
     * Draws a quadtree.
     *
-    * @param qt the quadtree
+    * @param q the quadtree
     */
-   @Recursive
-   default void bounds ( final Quadtree qt ) {
+   default void bounds ( final Quadtree q ) {
 
-      boolean isLeaf = true;
-      final Quadtree[] children = qt.children;
-      for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
-         final Quadtree child = children[i];
-         if ( child != null ) {
-            isLeaf = false;
-            this.bounds(child);
-         }
-      }
-
-      if ( isLeaf ) { this.bounds(qt.bounds); }
+      final Quadtree[] leaves = q.getLeaves();
+      final int len = leaves.length;
+      final Bounds2 b = new Bounds2();
+      for ( int i = 0; i < len; ++i ) { this.bounds(leaves[i].getBounds(b)); }
    }
 
    /**
