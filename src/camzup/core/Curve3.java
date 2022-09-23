@@ -648,7 +648,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       if ( Quaternion.any(q) ) {
          final Iterator < Knot3 > itr = this.knots.iterator();
-         while ( itr.hasNext() ) { itr.next().rotate(q); }
+         while ( itr.hasNext() ) { itr.next().rotateUnchecked(q); }
       }
 
       return this;
@@ -724,13 +724,13 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @return this curve
     *
-    * @see Knot3#scale(float)
+    * @see Knot3#scaleUnchecked(float)
     */
    public Curve3 scale ( final float scale ) {
 
       if ( scale != 0.0f ) {
          final Iterator < Knot3 > itr = this.knots.iterator();
-         while ( itr.hasNext() ) { itr.next().scale(scale); }
+         while ( itr.hasNext() ) { itr.next().scaleUnchecked(scale); }
       }
 
       return this;
@@ -744,13 +744,13 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @return this curve
     *
     * @see Vec3#all(Vec3)
-    * @see Knot3#scale(Vec3)
+    * @see Knot3#scaleUnchecked(Vec3)
     */
    public Curve3 scale ( final Vec3 scale ) {
 
       if ( Vec3.all(scale) ) {
          final Iterator < Knot3 > itr = this.knots.iterator();
-         while ( itr.hasNext() ) { itr.next().scale(scale); }
+         while ( itr.hasNext() ) { itr.next().scaleUnchecked(scale); }
       }
 
       return this;

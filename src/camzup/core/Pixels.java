@@ -293,13 +293,12 @@ public abstract class Pixels {
    }
 
    /**
-    * Fills the pixels target array with a color. The color is expected to be
-    * a 32-bit color integer.
+    * Fills the pixels target array with a color.
     *
     * @param c      the fill color
     * @param target the target pixels
     *
-    * @return the filled array
+    * @return the filled pixels
     */
    public static int[] fill ( final int c, final int[] target ) {
 
@@ -986,8 +985,8 @@ public abstract class Pixels {
    }
 
    /**
-    * Mirrors, or reflects, pixels from a source image across a pivot. The
-    * pivot is expected to be in [-1, width + 1].
+    * Mirrors, or reflects, pixels from a source image horizontally across a
+    * pivot. The pivot is expected to be in [-1, width + 1].
     *
     * @param source the source pixels
     * @param wSrc   the source image width
@@ -1021,9 +1020,9 @@ public abstract class Pixels {
    }
 
    /**
-    * Mirrors, or reflects, pixels from a source image across a pivot. The
-    * pivot is expected to be in [-1, height + 1]. The up axis is not
-    * mirrored, so positive y points down to the bottom of the image.
+    * Mirrors, or reflects, pixels from a source image vertically across a
+    * pivot. The pivot is expected to be in [-1, height + 1]. Positive y
+    * points down to the bottom of the image.
     *
     * @param source the source pixels
     * @param wSrc   the source image width
@@ -1321,7 +1320,7 @@ public abstract class Pixels {
     * @param blue   the blue amount
     * @param target the target pixels
     *
-    * @return the filled pixels
+    * @return the RGB pixels
     */
    public static int[] rgb ( final int w, final int h, final int blue,
       final int[] target ) {

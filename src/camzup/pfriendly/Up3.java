@@ -642,7 +642,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          this.noFill();
          if ( material.useStroke ) {
             this.strokeWeight(material.strokeWeight);
-            this.stroke(Color.toHexIntWrap(material.stroke));
+            this.stroke(material.stroke);
          } else {
             this.noStroke();
          }

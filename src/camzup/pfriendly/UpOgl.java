@@ -4335,9 +4335,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    protected Vec3 screen ( final float xSource, final float ySource,
       final float zSource, final Vec3 target ) {
 
+      // TODO: Test. Originally multiplied by (w, h) without
+      // subtracting one.
       this.screen1s(xSource, ySource, zSource, target);
-      return target.set(this.width * ( 1.0f + target.x ) * 0.5f, this.height
-         * ( 1.0f - ( 1.0f + target.y ) * 0.5f ), ( 1.0f + target.z ) * 0.5f);
+      return target.set( ( this.width - 1 ) * ( 1.0f + target.x ) * 0.5f,
+         ( this.height - 1 ) * ( 1.0f - ( 1.0f + target.y ) * 0.5f ), ( 1.0f
+            + target.z ) * 0.5f);
    }
 
    /**

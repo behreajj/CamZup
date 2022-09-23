@@ -424,6 +424,8 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    public Knot3 rotate ( final float radians, final Vec3 axis ) {
 
+      // TODO: Make a checked and unchecked version?
+
       final double radd = radians;
       final float cosa = ( float ) Math.cos(radd);
       final float sina = ( float ) Math.sin(radd);
@@ -437,13 +439,12 @@ public class Knot3 implements Comparable < Knot3 > {
     *
     * @return this knot
     *
-    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
+    * @see Quaternion#any(Quaternion)
+    * @see Knot3#rotateUnchecked(Quaternion q)
     */
    public Knot3 rotate ( final Quaternion q ) {
 
-      Quaternion.mulVector(q, this.coord, this.coord);
-      Quaternion.mulVector(q, this.foreHandle, this.foreHandle);
-      Quaternion.mulVector(q, this.rearHandle, this.rearHandle);
+      if ( Quaternion.any(q) ) { return this.rotateUnchecked(q); }
 
       return this;
    }
@@ -630,13 +631,11 @@ public class Knot3 implements Comparable < Knot3 > {
     *
     * @return this knot
     *
-    * @see Vec3#mul(Vec3, float, Vec3)
+    * @see Knot3#scaleUnchecked(float)
     */
    public Knot3 scale ( final float scale ) {
 
-      Vec3.mul(this.coord, scale, this.coord);
-      Vec3.mul(this.foreHandle, scale, this.foreHandle);
-      Vec3.mul(this.rearHandle, scale, this.rearHandle);
+      if ( scale != 0.0f ) { return this.scaleUnchecked(scale); }
 
       return this;
    }
@@ -648,13 +647,11 @@ public class Knot3 implements Comparable < Knot3 > {
     *
     * @return this knot
     *
-    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
+    * @see Knot3#scaleUnchecked(Vec3)
     */
    public Knot3 scale ( final Vec3 scale ) {
 
-      Vec3.hadamard(this.coord, scale, this.coord);
-      Vec3.hadamard(this.foreHandle, scale, this.foreHandle);
-      Vec3.hadamard(this.rearHandle, scale, this.rearHandle);
+      if ( Vec3.all(scale) ) { return this.scaleUnchecked(scale); }
 
       return this;
    }
@@ -957,7 +954,7 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    public String toString ( final int places ) {
 
-      return this.toString(new StringBuilder(384), places).toString();
+      return this.toString(new StringBuilder(512), places).toString();
    }
 
    /**
@@ -1010,6 +1007,62 @@ public class Knot3 implements Comparable < Knot3 > {
       Vec3.add(this.coord, v, this.coord);
       Vec3.add(this.foreHandle, v, this.foreHandle);
       Vec3.add(this.rearHandle, v, this.rearHandle);
+
+      return this;
+   }
+
+   /**
+    * Rotates this knot by a quaternion. Does not check the quaternion for
+    * validity.
+    *
+    * @param q the quaternion
+    *
+    * @return this knot
+    *
+    * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
+    */
+   Knot3 rotateUnchecked ( final Quaternion q ) {
+
+      Quaternion.mulVector(q, this.coord, this.coord);
+      Quaternion.mulVector(q, this.foreHandle, this.foreHandle);
+      Quaternion.mulVector(q, this.rearHandle, this.rearHandle);
+
+      return this;
+   }
+
+   /**
+    * Scales this knot by a factor. Does not check scale for validity.
+    *
+    * @param scale the factor
+    *
+    * @return this knot
+    *
+    * @see Vec3#mul(Vec3, float, Vec3)
+    */
+   Knot3 scaleUnchecked ( final float scale ) {
+
+      Vec3.mul(this.coord, scale, this.coord);
+      Vec3.mul(this.foreHandle, scale, this.foreHandle);
+      Vec3.mul(this.rearHandle, scale, this.rearHandle);
+
+      return this;
+   }
+
+   /**
+    * Scales this knot by a non-uniform scalar. Does not check scale for
+    * validity.
+    *
+    * @param scale the non-uniform scalar
+    *
+    * @return this knot
+    *
+    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
+    */
+   Knot3 scaleUnchecked ( final Vec3 scale ) {
+
+      Vec3.hadamard(this.coord, scale, this.coord);
+      Vec3.hadamard(this.foreHandle, scale, this.foreHandle);
+      Vec3.hadamard(this.rearHandle, scale, this.rearHandle);
 
       return this;
    }

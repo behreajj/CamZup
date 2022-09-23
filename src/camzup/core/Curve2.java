@@ -606,13 +606,13 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return this curve
     *
-    * @see Knot2#scale(float)
+    * @see Knot2#scaleUnchecked(float)
     */
    public Curve2 scale ( final float scale ) {
 
       if ( scale != 0.0f ) {
          final Iterator < Knot2 > itr = this.knots.iterator();
-         while ( itr.hasNext() ) { itr.next().scale(scale); }
+         while ( itr.hasNext() ) { itr.next().scaleUnchecked(scale); }
       }
 
       return this;
@@ -626,13 +626,13 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @return this curve
     *
     * @see Vec2#all(Vec2)
-    * @see Knot2#scale(Vec2)
+    * @see Knot2#scaleUnchecked(Vec2)
     */
    public Curve2 scale ( final Vec2 scale ) {
 
       if ( Vec2.all(scale) ) {
          final Iterator < Knot2 > itr = this.knots.iterator();
-         while ( itr.hasNext() ) { itr.next().scale(scale); }
+         while ( itr.hasNext() ) { itr.next().scaleUnchecked(scale); }
       }
 
       return this;

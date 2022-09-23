@@ -189,6 +189,10 @@ public class Ray2 {
     * @param target the output vector
     *
     * @return the point
+    *
+    * @see Utils#approx(float, float)
+    * @see Utils#invSqrtUnchecked(float)
+    * @see Vec2#magSq(Vec2)
     */
    public static Vec2 eval ( final Ray2 ray, final float time,
       final Vec2 target ) {
@@ -234,6 +238,12 @@ public class Ray2 {
     * @param dest   the destination
     *
     * @return the distance
+    *
+    * @see Utils#approx(float, float)
+    * @see Vec2#cross(Vec2, Vec2)
+    * @see Vec2#dot(Vec2, Vec2)
+    * @see Vec2#perpendicularCCW(Vec2, Vec2)
+    * @see Vec2#sub(Vec2, Vec2, Vec2)
     */
    @Experimental
    public static float intersectLineSeg ( final Ray2 ray, final Vec2 origin,

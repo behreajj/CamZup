@@ -502,13 +502,11 @@ public class Knot2 implements Comparable < Knot2 > {
     *
     * @return this knot
     *
-    * @see Vec2#mul(Vec2, float, Vec2)
+    * @see Knot2#scaleUnchecked(float)
     */
    public Knot2 scale ( final float scale ) {
 
-      Vec2.mul(this.coord, scale, this.coord);
-      Vec2.mul(this.foreHandle, scale, this.foreHandle);
-      Vec2.mul(this.rearHandle, scale, this.rearHandle);
+      if ( scale != 0.0f ) { return this.scaleUnchecked(scale); }
 
       return this;
    }
@@ -520,13 +518,11 @@ public class Knot2 implements Comparable < Knot2 > {
     *
     * @return this knot
     *
-    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
+    * @see Knot2#scaleUnchecked(Vec2)
     */
    public Knot2 scale ( final Vec2 scale ) {
 
-      Vec2.hadamard(this.coord, scale, this.coord);
-      Vec2.hadamard(this.foreHandle, scale, this.foreHandle);
-      Vec2.hadamard(this.rearHandle, scale, this.rearHandle);
+      if ( Vec2.all(scale) ) { return this.scaleUnchecked(scale); }
 
       return this;
    }
@@ -831,6 +827,43 @@ public class Knot2 implements Comparable < Knot2 > {
       Vec2.add(this.coord, v, this.coord);
       Vec2.add(this.foreHandle, v, this.foreHandle);
       Vec2.add(this.rearHandle, v, this.rearHandle);
+
+      return this;
+   }
+
+   /**
+    * Scales this knot by a factor. Does not check scale for validity.
+    *
+    * @param scale the factor
+    *
+    * @return this knot
+    *
+    * @see Vec2#mul(Vec2, float, Vec2)
+    */
+   Knot2 scaleUnchecked ( final float scale ) {
+
+      Vec2.mul(this.coord, scale, this.coord);
+      Vec2.mul(this.foreHandle, scale, this.foreHandle);
+      Vec2.mul(this.rearHandle, scale, this.rearHandle);
+
+      return this;
+   }
+
+   /**
+    * Scales this knot by a non-uniform scalar. Does not check scale for
+    * validity.
+    *
+    * @param scale the non-uniform scalar
+    *
+    * @return this knot
+    *
+    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
+    */
+   Knot2 scaleUnchecked ( final Vec2 scale ) {
+
+      Vec2.hadamard(this.coord, scale, this.coord);
+      Vec2.hadamard(this.foreHandle, scale, this.foreHandle);
+      Vec2.hadamard(this.rearHandle, scale, this.rearHandle);
 
       return this;
    }

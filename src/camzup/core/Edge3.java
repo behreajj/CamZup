@@ -241,9 +241,9 @@ public class Edge3 implements Comparable < Edge3 > {
     * @return this edge
     *
     * @see Quaternion#any(Quaternion)
-    * @see Vec3#sub(Vec3, Vec3, Vec3)
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    public Edge3 rotateLocal ( final Quaternion q, final Vec3 center ) {
 

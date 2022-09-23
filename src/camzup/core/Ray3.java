@@ -187,6 +187,8 @@ public class Ray3 {
     *
     * @return the point
     *
+    * @see Utils#approx(float, float)
+    * @see Utils#invSqrtUnchecked(float)
     * @see Vec3#magSq(Vec3)
     */
    public static Vec3 eval ( final Ray3 ray, final float time,

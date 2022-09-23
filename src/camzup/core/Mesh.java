@@ -826,6 +826,8 @@ public abstract class Mesh extends EntityData implements IMesh {
        * @param b the right comparisand
        *
        * @return the evaluation
+       *
+       * @see Utils#floor(float)
        */
       @Override
       public int compare ( final Vec2 a, final Vec2 b ) {
@@ -915,6 +917,8 @@ public abstract class Mesh extends EntityData implements IMesh {
        * @param b the right comparisand
        *
        * @return the evaluation
+       *
+       * @see Utils#floor(float)
        */
       @Override
       public int compare ( final Vec3 a, final Vec3 b ) {

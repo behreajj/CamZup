@@ -164,6 +164,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
    /**
     * The default constructor.
+    *
+    * @see PMatAux#bezierBasisInverse(PMatrix3D)
     */
    public YupJ2 ( ) {
 
@@ -503,13 +505,20 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Sets the camera to a location, rotation and zoom level.
+    * Sets the camera to a location, rotation and zoom level. After the camera
+    * sets the graphics transform, the transform is scaled by pixel density.
     *
     * @param x       the translation x
     * @param y       the translation y
     * @param radians the angle in radians
     * @param zx      the zoom x
     * @param zy      the zoom y
+    *
+    * @see Graphics2D#scale(double, double)
+    * @see Graphics2D#setTransform(AffineTransform)
+    * @see Math#cos(double)
+    * @see Math#sin(double)
+    * @see Utils#abs(float)
     */
    @Override
    public void camera ( final float x, final float y, final float radians,
@@ -541,6 +550,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.affineNative.setTransform(m00, -m10, m01, -m11, this.width * 0.5d
          - cxd * m00 - cyd * m01, this.height * 0.5d + cxd * m10 + cyd * m11);
       this.g2.setTransform(this.affineNative);
+      final double pdd = this.pixelDensity;
+      this.g2.scale(pdd, pdd);
    }
 
    /**
@@ -1029,19 +1040,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public Mat3 getMatrix ( final Mat3 target ) {
 
-      /* @formatter:off */
+      final double pdInv = this.pixelDensity != 0 ? 1.0d / this.pixelDensity
+         : 1.0d;
       final AffineTransform tr = this.g2.getTransform();
-      return target.set(
-         ( float ) tr.getScaleX(),
-         ( float ) tr.getShearX(),
-         ( float ) tr.getTranslateX(),
-
-         ( float ) tr.getShearY(),
-         ( float ) tr.getScaleY(),
-         ( float ) tr.getTranslateY(),
-
-         0.0f, 0.0f, 1.0f);
-      /* @formatter:on */
+      return target.set(( float ) ( tr.getScaleX() * pdInv ), ( float ) ( tr
+         .getShearX() * pdInv ), ( float ) ( tr.getTranslateX() * pdInv ),
+         ( float ) ( tr.getShearY() * pdInv ), ( float ) ( tr.getScaleY()
+            * pdInv ), ( float ) ( tr.getTranslateY() * pdInv ), 0.0f, 0.0f,
+         1.0f);
    }
 
    /**
@@ -1053,22 +1059,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public Mat4 getMatrix ( final Mat4 target ) {
 
-      /* @formatter:off */
+      final double pdInv = this.pixelDensity != 0 ? 1.0d / this.pixelDensity
+         : 1.0d;
       final AffineTransform tr = this.g2.getTransform();
-      return target.set(
-         ( float ) tr.getScaleX(),
-         ( float ) tr.getShearX(),
-         0.0f,
-         ( float ) tr.getTranslateX(),
-
-         ( float ) tr.getShearY(),
-         ( float ) tr.getScaleY(),
-         0.0f,
-         ( float ) tr.getTranslateY(),
-
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
-      /* @formatter:on */
+      return target.set(( float ) ( tr.getScaleX() * pdInv ), ( float ) ( tr
+         .getShearX() * pdInv ), 0.0f, ( float ) ( tr.getTranslateX() * pdInv ),
+         ( float ) ( tr.getShearY() * pdInv ), ( float ) ( tr.getScaleY()
+            * pdInv ), 0.0f, ( float ) ( tr.getTranslateY() * pdInv ), 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
    }
 
    /**
@@ -1083,17 +1081,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public PMatrix2D getMatrix ( final PMatrix2D target ) {
 
-      /* @formatter:off */
+      final double pdInv = this.pixelDensity != 0 ? 1.0d / this.pixelDensity
+         : 1.0d;
       final AffineTransform tr = this.g2.getTransform();
-      target.set(
-         ( float ) tr.getScaleX(),
-         ( float ) tr.getShearX(),
-         ( float ) tr.getTranslateX(),
-         ( float ) tr.getShearY(),
-         ( float ) tr.getScaleY(),
-         ( float ) tr.getTranslateY());
+      target.set(( float ) ( tr.getScaleX() * pdInv ), ( float ) ( tr
+         .getShearX() * pdInv ), ( float ) ( tr.getTranslateX() * pdInv ),
+         ( float ) ( tr.getShearY() * pdInv ), ( float ) ( tr.getScaleY()
+            * pdInv ), ( float ) ( tr.getTranslateY() * pdInv ));
       return target;
-      /* @formatter:on */
    }
 
    /**
@@ -1108,21 +1103,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public PMatrix3D getMatrix ( final PMatrix3D target ) {
 
-      /* @formatter:off */
+      final double pdInv = this.pixelDensity != 0 ? 1.0d / this.pixelDensity
+         : 1.0d;
       final AffineTransform tr = this.g2.getTransform();
-      target.set(
-         ( float ) tr.getScaleX(),
-         ( float ) tr.getShearX(),
-         0.0f,
-         ( float ) tr.getTranslateX(),
-         ( float ) tr.getShearY(),
-         ( float ) tr.getScaleY(),
-         0.0f,
-         ( float ) tr.getTranslateY(),
-         0.0f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 1.0f);
+      target.set(( float ) ( tr.getScaleX() * pdInv ), ( float ) ( tr
+         .getShearX() * pdInv ), 0.0f, ( float ) ( tr.getTranslateX() * pdInv ),
+         ( float ) ( tr.getShearY() * pdInv ), ( float ) ( tr.getScaleY()
+            * pdInv ), 0.0f, ( float ) ( tr.getTranslateY() * pdInv ), 0.0f,
+         0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
       return target;
-      /* @formatter:on */
    }
 
    /**
@@ -2518,9 +2507,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void resetMatrix ( ) {
 
-      final double pdd = this.pixelDensity;
       this.affineNative.setToIdentity();
       this.g2.setTransform(this.affineNative);
+      final double pdd = this.pixelDensity;
       this.g2.scale(pdd, pdd);
    }
 
@@ -2542,7 +2531,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param angle the angle
     *
     * @see Graphics2D#scale(double, double)
-    * @see Utils#cos(float)
     */
    @Override
    public void rotateX ( final float angle ) {
@@ -2557,7 +2545,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param angle the angle
     *
     * @see Graphics2D#scale(double, double)
-    * @see Utils#cos(float)
     */
    @Override
    public void rotateY ( final float angle ) {
@@ -2596,23 +2583,37 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param target the target coordinate
     *
     * @return the screen coordinate
+    *
+    * @see AffineTransform#getScaleX()
+    * @see AffineTransform#getScaleY()
+    * @see AffineTransform#getShearX()
+    * @see AffineTransform#getShearY()
+    * @see AffineTransform#getTranslateX()
+    * @see AffineTransform#getTranslateY()
     */
    @Override
    @Experimental
    public Vec2 screen ( final Vec2 source, final Vec2 target ) {
 
+      /*
+       * See https://github.com/processing/processing4/issues/557 Pixel density
+       * is applied to affine transform, which impacts screen results.
+       */
+
       /* @formatter:off */
       final AffineTransform tr = this.g2.getTransform();
-      final double srcxd = source.x;
-      final double srcyd = source.y;
+      final double pdInv = this.pixelDensity != 0 ? 1.0d / this.pixelDensity
+         : 1.0d;
+      final double srcxd = source.x * pdInv;
+      final double srcyd = source.y * pdInv;
       return target.set(
          ( float ) ( tr.getScaleX() * srcxd +
                      tr.getShearX() * srcyd +
-                     tr.getTranslateX() ),
+                     tr.getTranslateX() * pdInv ),
 
          ( float ) ( tr.getShearY() * srcxd +
                      tr.getScaleY() * srcyd +
-                     tr.getTranslateY() ));
+                     tr.getTranslateY() * pdInv ));
       /* @formatter:on */
    }
 
@@ -2630,9 +2631,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Experimental
    public float screenX ( final float x, final float y ) {
 
+      final double pdInv = this.pixelDensity != 0 ? 1.0d / this.pixelDensity
+         : 1.0d;
       final AffineTransform tr = this.g2.getTransform();
-      return ( float ) ( tr.getScaleX() * x + tr.getShearX() * y + tr
-         .getTranslateX() );
+      return ( float ) ( x * tr.getScaleX() * pdInv + y * tr.getShearX() * pdInv
+         + tr.getTranslateX() * pdInv );
    }
 
    /**
@@ -2668,9 +2671,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Experimental
    public float screenY ( final float x, final float y ) {
 
+      final double pdInv = this.pixelDensity != 0 ? 1.0d / this.pixelDensity
+         : 1.0d;
       final AffineTransform tr = this.g2.getTransform();
-      return ( float ) ( tr.getShearY() * x + tr.getScaleY() * y + tr
-         .getTranslateY() );
+      return ( float ) ( x * tr.getShearY() * pdInv + y * tr.getScaleY() * pdInv
+         + tr.getTranslateY() * pdInv );
    }
 
    /**
@@ -2705,6 +2710,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
    /**
     * Sets the renderer's affine transform matrix to the supplied arguments.
+    * After the matrix is set, it is scaled by the pixel density.
     *
     * @param m00 right axis x
     * @param m01 up axis x
@@ -2716,6 +2722,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @see AffineTransform#setTransform(double, double, double, double,
     *      double, double)
     * @see Graphics2D#setTransform(AffineTransform)
+    * @see Graphics2D#scale(double, double)
     */
    public void setMatrix ( final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12 ) {
@@ -2726,6 +2733,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        */
       this.affineNative.setTransform(m00, m10, m01, m11, m02, m12);
       this.g2.setTransform(this.affineNative);
+      final double pdd = this.pixelDensity;
+      this.g2.scale(pdd, pdd);
 
       // this.cameraZoomX = Utils.hypot(m00, m10);
       // this.cameraZoomY = Utils.hypot(m01, m11);
@@ -2774,7 +2783,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void setMatrix ( final PMatrix3D source ) {
 
       this.setMatrix(source.m00, source.m01, source.m03, source.m10, source.m11,
-         source.m12);
+         source.m13);
    }
 
    /**
