@@ -138,9 +138,9 @@ public abstract class ParserGgr {
          final Color rtClr = new Color();
 
          /* Mixers. */
-         final Color.MixSrgba rgbaMix = new Color.MixSrgba();
-         final Color.MixHsva cwMix = new Color.MixHsva(new Color.HueCW());
-         final Color.MixHsva ccwMix = new Color.MixHsva(new Color.HueCCW());
+         final Color.MixSrgb rgbaMix = new Color.MixSrgb();
+         final Color.MixHsv cwMix = new Color.MixHsv(new Color.HueCW());
+         final Color.MixHsv ccwMix = new Color.MixHsv(new Color.HueCCW());
 
          /* The GGR file is sampled rather than transferred one-to-one. */
          final int vSamp = Utils.clamp(samples, 3, 32);

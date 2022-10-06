@@ -26,7 +26,7 @@ public class ColorKey implements Comparable < ColorKey > {
    public ColorKey ( ) {}
 
    /**
-    * Creates a key from a source
+    * Creates a key from a source.
     *
     * @param source the source key
     */

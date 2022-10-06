@@ -1,5 +1,7 @@
 package camzup;
 
+import camzup.core.Gradient;
+
 import processing.core.PApplet;
 
 /**
@@ -49,7 +51,11 @@ public class CamZup {
     * @param args the string of arguments
     */
 
-   public static void main ( final String[] args ) {}
+   public static void main ( final String[] args ) {
+
+      final Gradient g = new Gradient(-1.5f);
+      System.out.println(g);
+   }
 
    /**
     * Gets the version of the library.

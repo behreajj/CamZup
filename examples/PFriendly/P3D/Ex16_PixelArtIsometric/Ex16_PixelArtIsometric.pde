@@ -83,7 +83,7 @@ void setup() {
 
       // Scale cube based on SDF.
       locUnit.set(ifac, jfac);
-      float ofac = 1.0f - Sdf.conic(locUnit, 0.0f);
+      float ofac = Sdf.circle(locUnit, 0.0f);
       float scale = Utils.lerp(heightMax, heightMin, ofac);
       scale3.set(1.0f, 1.0f, correct * scale);
       cube.scale(scale3);

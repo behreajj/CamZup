@@ -17,8 +17,8 @@ import java.util.function.Function;
 public class Gradient implements IUtils, Iterable < ColorKey > {
 
    /**
-    * The set of keys. Quantized sorting closures should be used as a
-    * comparator supplied to this TreeSet's constructor, as it leads to bugs
+    * The set of keys. Quantized sorting closures shouldn't be used as a
+    * comparator supplied to this TreeSet's constructor, as that leads to bugs
     * when an unknown number of keys are supplied to the gradient.
     */
    public final TreeSet < ColorKey > keys = new TreeSet <>();
@@ -58,6 +58,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * boundary keys adopt the color's alpha.
     *
     * @param color the color
+    *
+    * @see Color#sRgbLuminance(Color)
+    * @see Utils#lerp(float, float, float)
     */
    public Gradient ( final Color color ) {
 
@@ -93,6 +96,22 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @param scalars the scalars
     */
    public Gradient ( final float... scalars ) { this.appendAll(scalars); }
+
+   /**
+    * Creates a gradient from a scalar. The scalar is placed between clear
+    * black at key 0.0 and opaque white at key 1.0. The boundary keys adopt
+    * the color's alpha.
+    *
+    * @param scalar the scalar
+    */
+   public Gradient ( final float scalar ) {
+
+      /* Insert scalar key first to ensure it is added to keys. */
+      final float a = Utils.clamp01(scalar);
+      this.keys.add(new ColorKey(a, scalar, scalar, scalar, scalar));
+      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
+      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, 1.0f));
+   }
 
    /**
     * Constructs a copy of a source gradient.
@@ -813,9 +832,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Returns an array containing the colors in the gradient. Unlike
-    * {@link Gradient#evalRange(Gradient, int)}, doesn't return equally
-    * distributed colors.
+    * Returns an array containing the colors in the gradient's color keys.
+    * Unlike {@link Gradient#evalRange(Gradient, int)}, doesn't return equally
+    * distributed colors derived from an easing function.
     *
     * @return the array
     */
@@ -1650,7 +1669,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    public static Gradient mix ( final Gradient origin, final Gradient dest,
       final int samples, final float step, final Gradient target ) {
 
-      final Color.MixSrgba mixer = new Color.MixSrgba();
+      // TODO: step is an unused parameter here.
+      final Color.MixSrgb mixer = new Color.MixSrgb();
       return Gradient.mix(origin, dest, samples, new Function < Float,
          Float >() {
          @Override

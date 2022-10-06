@@ -30,7 +30,11 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * The default constructor.
     */
-   public Curve2 ( ) {}
+   public Curve2 ( ) {
+
+      // TODO: cycleKnots method? If a curve is a loop, then move knot at i to
+      // i + 1.
+   }
 
    /**
     * Creates a curve from a collection of knots
@@ -42,6 +46,20 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       super(cl);
       this.appendAll(knots);
+   }
+
+   /**
+    * Creates a curve from a comma-separated list of knots.
+    *
+    * @param cl    whether or not the curve is closed
+    * @param count knot count
+    *
+    * @see Curve2#resize(int)
+    */
+   public Curve2 ( final boolean cl, final int count ) {
+
+      super(cl);
+      this.resize(count);
    }
 
    /**
@@ -85,6 +103,21 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
+    * Creates a named curve and initializes its list of knots to a count.
+    *
+    * @param name  the name
+    * @param cl    whether or not the curve is closed
+    * @param count knot count
+    *
+    * @see Curve2#resize(int)
+    */
+   public Curve2 ( final String name, final boolean cl, final int count ) {
+
+      super(name, cl);
+      this.resize(count);
+   }
+
+   /**
     * Creates a named curve from a comma-separated list of knots.
     *
     * @param name  the name
@@ -118,7 +151,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @param kn the collection of knots
     *
-    * @return this curve.
+    * @return this curve
+    *
+    * @see Curve3#append(Knot3)
     */
    public Curve2 appendAll ( final Collection < Knot2 > kn ) {
 
@@ -133,7 +168,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @param kn the array of knots
     *
-    * @return this curve.
+    * @return this curve
     */
    public Curve2 appendAll ( final Knot2... kn ) {
 
@@ -1251,7 +1286,20 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public static Curve2 circle ( final Curve2 target ) {
 
-      return Curve2.circle(ICurve.KNOTS_PER_CIRCLE, 0.0f, 0.5f, target);
+      return Curve2.circle(ICurve.KNOTS_PER_CIRCLE, target);
+   }
+
+   /**
+    * Creates a curve which approximates a circle.
+    *
+    * @param sectors the knot count
+    * @param target  the output curve
+    *
+    * @return the circle
+    */
+   public static Curve2 circle ( final int sectors, final Curve2 target ) {
+
+      return Curve2.circle(sectors, 0.0f, 0.5f, target);
    }
 
    /**
@@ -2686,9 +2734,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       public Curve2 apply ( final Curve2 origin, final Curve2 dest,
          final Float step, final Curve2 target ) {
 
-         if ( step <= 0.0f ) { return target.set(origin); }
-         if ( step >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, step, target);
+         final float t = step;
+         if ( t <= 0.0f ) { return target.set(origin); }
+         if ( t >= 1.0f ) { return target.set(dest); }
+         return this.applyUnclamped(origin, dest, t, target);
       }
 
       /**
@@ -2703,10 +2752,11 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          final Curve2 target ) {
 
          final int len = arr.length;
-         if ( len == 1 || step <= 0.0f ) { return target.set(arr[0]); }
-         if ( step >= 1.0f ) { return target.set(arr[len - 1]); }
+         final float t = step;
+         if ( len == 1 || t <= 0.0f ) { return target.set(arr[0]); }
+         if ( t >= 1.0f ) { return target.set(arr[len - 1]); }
 
-         final float scaledStep = step * ( len - 1 );
+         final float scaledStep = t * ( len - 1 );
          final int i = ( int ) scaledStep;
          return this.applyUnclamped(arr[i], arr[i + 1], scaledStep - i, target);
       }

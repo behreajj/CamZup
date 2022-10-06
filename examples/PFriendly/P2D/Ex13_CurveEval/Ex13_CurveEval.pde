@@ -21,7 +21,7 @@ MaterialSolid infMat = new MaterialSolid()
 CurveEntity2[] dotEntities = new CurveEntity2[count];
 MaterialSolid[] dotMats = new MaterialSolid[count];
 
-Color.AbstrEasing mixer = new Color.MixHsva();
+Color.AbstrEasing mixer = new Color.MixSrgb();
 Gradient grd = Gradient.paletteRyb(new Gradient());
 Ray2 local = new Ray2();
 Ray2 world = new Ray2();

@@ -1105,7 +1105,7 @@ public class ZImage extends PImage {
       final float yOrig, final float radians, final PImage target ) {
 
       return ZImage.gradientConic(grd, xOrig, yOrig, radians,
-         new Color.MixSrgba(), target);
+         new Color.MixSrgb(), target);
    }
 
    /**
@@ -1231,7 +1231,7 @@ public class ZImage extends PImage {
       final PImage target ) {
 
       return ZImage.gradientLinear(grd, xOrig, yOrig, xDest, yDest,
-         new Color.MixSrgba(), target);
+         new Color.MixSrgb(), target);
    }
 
    /**
@@ -1368,7 +1368,7 @@ public class ZImage extends PImage {
    public static PImage gradientMap ( final PImage source, final Gradient grd,
       final PImage target ) {
 
-      return ZImage.gradientMap(source, grd, new Color.MixSrgba(), target);
+      return ZImage.gradientMap(source, grd, new Color.MixSrgb(), target);
    }
 
    /**
@@ -1433,7 +1433,7 @@ public class ZImage extends PImage {
       final float yOrig, final float radius, final PImage target ) {
 
       return ZImage.gradientRadial(grd, xOrig, yOrig, radius,
-         new Color.MixSrgba(), target);
+         new Color.MixSrgb(), target);
    }
 
    /**

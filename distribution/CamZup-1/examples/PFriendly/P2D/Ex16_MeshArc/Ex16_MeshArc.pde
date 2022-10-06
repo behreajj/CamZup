@@ -8,7 +8,7 @@ float maxScale = 0.0f;
 float minScale = 0.0f;
 MeshEntity2 entity = new MeshEntity2();
 MaterialSolid[] materials = new MaterialSolid[count];
-Color.AbstrEasing mixer = new Color.MixSrgba();
+Color.AbstrEasing mixer = new Color.MixSrgb();
 Gradient grd = Gradient.paletteRyb(new Gradient());
 
 void settings() {

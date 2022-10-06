@@ -4158,7 +4158,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param z the third color channel, brightness or blue
     * @param w the alpha channel
     *
-    * @see Color#hsvaToRgba(float, float, float, float, Color)
+    * @see Color#hsvToRgb(float, float, float, float, Color)
     */
    @Override
    protected void colorCalc ( final float x, final float y, final float z,
@@ -4173,7 +4173,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          case PConstants.HSB: /* 3 */
 
-            Color.hsvaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
+            Color.hsvToRgb(this.calcR, this.calcG, this.calcB, this.calcA,
                this.aTemp);
 
             this.calcA = this.aTemp.a;
@@ -4656,13 +4656,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    protected void textCharImpl ( final char ch, final float x, final float y ) {
 
+      // TODO: Would any modifications here make a difference to font cut off?
+      // i.e., +/- 1 for bottom right coordinates vs. dimensions?
       final PFont.Glyph glyph = this.textFont.getGlyph(ch);
       if ( glyph != null ) {
          final float szNorm = this.textSize * Utils.div(1.0f, this.textFont
             .getSize());
          final float x0 = x + glyph.leftExtent * szNorm;
          final float y0 = y + glyph.topExtent * szNorm;
-
          this.textCharModelImpl(glyph.image, x0, y0, x0 + glyph.width * szNorm,
             y0 - glyph.height * szNorm, glyph.width, glyph.height);
       }
@@ -4705,7 +4706,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       /*
        * This calls the super implementation because the glyphs need to be
-       * tinted with the desired color.
+       * tinted with the desired color. Adding one to u and v doesn't resolve
+       * the clipped image issue.
        */
       super.imageImpl(glyph, x1, y1, x2, y2, 0, 0, u, v);
       this.imageMode = oldImgMd;

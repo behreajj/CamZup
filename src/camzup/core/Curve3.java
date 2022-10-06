@@ -45,6 +45,20 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * Creates a curve from a comma-separated list of knots.
     *
     * @param cl    whether or not the curve is closed
+    * @param count knot count
+    *
+    * @see Curve3#resize(int)
+    */
+   public Curve3 ( final boolean cl, final int count ) {
+
+      super(cl);
+      this.resize(count);
+   }
+
+   /**
+    * Creates a curve from a comma-separated list of knots.
+    *
+    * @param cl    whether or not the curve is closed
     * @param knots the list of knots
     */
    public Curve3 ( final boolean cl, final Knot3... knots ) {
@@ -89,6 +103,21 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * Creates a named curve and initializes its list of knots to a count.
+    *
+    * @param name  the name
+    * @param cl    whether or not the curve is closed
+    * @param count knot count
+    *
+    * @see Curve3#resize(int)
+    */
+   public Curve3 ( final String name, final boolean cl, final int count ) {
+
+      super(name, cl);
+      this.resize(count);
+   }
+
+   /**
     * Creates a curve from a comma-separated list of knots.
     *
     * @param name  the name
@@ -122,7 +151,9 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @param kn the collection of knots
     *
-    * @return this curve.
+    * @return this curve
+    *
+    * @see Curve3#append(Knot3)
     */
    public Curve3 appendAll ( final Collection < Knot3 > kn ) {
 
@@ -137,7 +168,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     *
     * @param kn the array of knots
     *
-    * @return this curve.
+    * @return this curve
     */
    public Curve3 appendAll ( final Knot3... kn ) {
 
@@ -642,7 +673,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @return this curve
     *
     * @see Quaternion#any(Quaternion)
-    * @see Knot3#rotate(Quaternion)
+    * @see Knot3#rotateUnchecked(Quaternion)
     */
    public Curve3 rotate ( final Quaternion q ) {
 
@@ -1139,7 +1170,20 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public static Curve3 circle ( final Curve3 target ) {
 
-      return Curve3.circle(ICurve.KNOTS_PER_CIRCLE, 0.0f, 0.5f, target);
+      return Curve3.circle(ICurve.KNOTS_PER_CIRCLE, target);
+   }
+
+   /**
+    * Creates a curve which approximates a circle.
+    *
+    * @param sectors the knot count
+    * @param target  the output curve
+    *
+    * @return the circle
+    */
+   public static Curve3 circle ( final int sectors, final Curve3 target ) {
+
+      return Curve3.circle(sectors, 0.0f, 0.5f, target);
    }
 
    /**
@@ -2165,9 +2209,10 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       public Curve3 apply ( final Curve3 origin, final Curve3 dest,
          final Float step, final Curve3 target ) {
 
-         if ( step <= 0.0f ) { return target.set(origin); }
-         if ( step >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, step, target);
+         final float t = step;
+         if ( t <= 0.0f ) { return target.set(origin); }
+         if ( t >= 1.0f ) { return target.set(dest); }
+         return this.applyUnclamped(origin, dest, t, target);
       }
 
       /**
@@ -2182,10 +2227,11 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
          final Curve3 target ) {
 
          final int len = arr.length;
-         if ( len == 1 || step <= 0.0f ) { return target.set(arr[0]); }
-         if ( step >= 1.0f ) { return target.set(arr[len - 1]); }
+         final float t = step;
+         if ( len == 1 || t <= 0.0f ) { return target.set(arr[0]); }
+         if ( t >= 1.0f ) { return target.set(arr[len - 1]); }
 
-         final float scaledStep = step * ( len - 1 );
+         final float scaledStep = t * ( len - 1 );
          final int i = ( int ) scaledStep;
          return this.applyUnclamped(arr[i], arr[i + 1], scaledStep - i, target);
       }

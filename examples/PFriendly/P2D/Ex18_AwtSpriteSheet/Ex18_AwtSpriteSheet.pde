@@ -58,8 +58,8 @@ void setup() {
   fontImg = loadImage("data/rasterFont.png");
   shadowImg = fontImg.get();
 
-  ZImage.tint(fontImg, fontClr, 1.0f);
-  ZImage.tint(shadowImg, shadowClr, 1.0f);
+  ZImage.tint(fontImg, fontClr, 1.0f, fontImg);
+  ZImage.tint(shadowImg, shadowClr, 1.0f, shadowImg);
 
   fontImgNtv = YupJ2.convertPImageToNative(fontImg);
   shadowImgNtv = YupJ2.convertPImageToNative(shadowImg);

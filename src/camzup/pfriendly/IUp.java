@@ -383,11 +383,11 @@ public interface IUp {
    /**
     * A cached easing function for HSVA colors.
     */
-   Color.AbstrEasing MIXER_HSVA = new Color.MixHsva();
+   Color.AbstrEasing MIXER_HSVA = new Color.MixHsv();
 
    /**
     * A cached easing function for RGBA colors.
     */
-   Color.AbstrEasing MIXER_RGBA = new Color.MixSrgba();
+   Color.AbstrEasing MIXER_RGBA = new Color.MixSrgb();
 
 }

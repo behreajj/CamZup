@@ -476,7 +476,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          case PConstants.HSB: /* 3 */
 
             /* Conversion clamps the results. */
-            Color.hsvaToRgba(this.calcR, this.calcG, this.calcB, this.calcA,
+            Color.hsvToRgb(this.calcR, this.calcG, this.calcB, this.calcA,
                this.aTemp);
 
             this.calcA = this.aTemp.a;

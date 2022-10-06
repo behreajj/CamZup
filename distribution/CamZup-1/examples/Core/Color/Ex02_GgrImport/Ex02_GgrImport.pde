@@ -18,7 +18,7 @@ void setup() {
   println("Elapsed Time: " + (end - start));
 
   orig = createImage(width, height, ARGB);
-  ZImage.linear(grd, orig);
+  ZImage.gradientLinear(grd, orig);
 }
 
 void draw() {
