@@ -8,7 +8,7 @@ PImage source;
 PImage target;
 
 Yup2 graphics;
-Gradient lcd = Gradient.paletteLcd(new Gradient());
+Gradient lcd = Gradient.paletteViridis(new Gradient());
 Color.AbstrEasing mix = new Color.MixSrgb();
 Pixels.MapLuminance map = new Pixels.MapLuminance();
 

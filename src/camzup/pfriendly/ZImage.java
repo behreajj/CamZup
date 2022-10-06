@@ -1611,14 +1611,14 @@ public class ZImage extends PImage {
     *
     * @return the linear image
     *
-    * @see Pixels#lRgbaTosRgba(int, boolean)
+    * @see Pixels#lRgbTosRgb(int, boolean)
     */
    public static PImage lRgbaTosRgba ( final PImage source,
       final boolean adjustAlpha, final PImage target ) {
 
       if ( source == target ) {
          target.loadPixels();
-         Pixels.lRgbaTosRgba(target.pixels, adjustAlpha, target.pixels);
+         Pixels.lRgbTosRgb(target.pixels, adjustAlpha, target.pixels);
          target.updatePixels();
          return target;
       }
@@ -1633,7 +1633,7 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      target.pixels = Pixels.lRgbaTosRgba(pxSrc, adjustAlpha,
+      target.pixels = Pixels.lRgbTosRgb(pxSrc, adjustAlpha,
          new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
@@ -1655,7 +1655,7 @@ public class ZImage extends PImage {
     *
     * @return the linear image
     *
-    * @see Pixels#lRgbaTosRgba(int, boolean)
+    * @see Pixels#lRgbTosRgb(int, boolean)
     */
    public static PImage lRgbaTosRgba ( final PImage source,
       final PImage target ) {
@@ -2553,14 +2553,14 @@ public class ZImage extends PImage {
     *
     * @return the linear image
     *
-    * @see Pixels#sRgbaTolRgba(int, boolean)
+    * @see Pixels#sRgbTolRgb(int, boolean)
     */
    public static PImage sRgbaTolRgba ( final PImage source,
       final boolean adjustAlpha, final PImage target ) {
 
       if ( source == target ) {
          target.loadPixels();
-         Pixels.sRgbaTolRgba(target.pixels, adjustAlpha, target.pixels);
+         Pixels.sRgbTolRgb(target.pixels, adjustAlpha, target.pixels);
          target.updatePixels();
          return target;
       }
@@ -2575,7 +2575,7 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      target.pixels = Pixels.sRgbaTolRgba(pxSrc, adjustAlpha,
+      target.pixels = Pixels.sRgbTolRgb(pxSrc, adjustAlpha,
          new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;

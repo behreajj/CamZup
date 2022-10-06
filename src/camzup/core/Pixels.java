@@ -798,7 +798,7 @@ public abstract class Pixels {
     *
     * @return the standard pixels
     */
-   public static int lRgbaTosRgba ( final int c, final boolean adjustAlpha ) {
+   public static int lRgbTosRgb ( final int c, final boolean adjustAlpha ) {
 
       final int lai = c >> 0x18 & 0xff;
       return ( adjustAlpha ? Pixels.LTS_LUT[lai] : lai ) << 0x18
@@ -816,15 +816,15 @@ public abstract class Pixels {
     *
     * @return the standard pixels
     *
-    * @see Pixels#lRgbaTosRgba(int, boolean)
+    * @see Pixels#lRgbTosRgb(int, boolean)
     */
-   public static int[] lRgbaTosRgba ( final int[] source,
+   public static int[] lRgbTosRgb ( final int[] source,
       final boolean adjustAlpha, final int[] target ) {
 
       final int srcLen = source.length;
       if ( srcLen == target.length ) {
          for ( int i = 0; i < srcLen; ++i ) {
-            target[i] = Pixels.lRgbaTosRgba(source[i], adjustAlpha);
+            target[i] = Pixels.lRgbTosRgb(source[i], adjustAlpha);
          }
       }
 
@@ -1655,7 +1655,7 @@ public abstract class Pixels {
     *
     * @return the standard pixels
     */
-   public static int sRgbaTolRgba ( final int c, final boolean adjustAlpha ) {
+   public static int sRgbTolRgb ( final int c, final boolean adjustAlpha ) {
 
       final int sai = c >> 0x18 & 0xff;
       return ( adjustAlpha ? Pixels.STL_LUT[sai] : sai ) << 0x18
@@ -1673,15 +1673,15 @@ public abstract class Pixels {
     *
     * @return the linear pixels
     *
-    * @see Pixels#sRgbaTolRgba(int, boolean)
+    * @see Pixels#sRgbTolRgb(int, boolean)
     */
-   public static int[] sRgbaTolRgba ( final int[] source,
+   public static int[] sRgbTolRgb ( final int[] source,
       final boolean adjustAlpha, final int[] target ) {
 
       final int srcLen = source.length;
       if ( srcLen == target.length ) {
          for ( int i = 0; i < srcLen; ++i ) {
-            target[i] = Pixels.sRgbaTolRgba(source[i], adjustAlpha);
+            target[i] = Pixels.sRgbTolRgb(source[i], adjustAlpha);
          }
       }
 
