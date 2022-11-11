@@ -586,10 +586,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Draws a curved line on the screen. The first three parameters specify
-    * the start control point; the last three parameters specify the ending
-    * control point. The middle parameters specify the start and stop of the
-    * curve.
+    * Draws a curved line. The first three parameters specify the start
+    * control point; the last three parameters specify the ending control
+    * point. The middle parameters specify the start and stop of the curve.
     *
     * @param x1 control point 0 x
     * @param y1 control point 0 y
@@ -4335,12 +4334,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    protected Vec3 screen ( final float xSource, final float ySource,
       final float zSource, final Vec3 target ) {
 
-      // TODO: Test. Originally multiplied by (w, h) without
-      // subtracting one.
+      // QUERY: Should this be w - 1, h - 1 ?
       this.screen1s(xSource, ySource, zSource, target);
-      return target.set( ( this.width - 1 ) * ( 1.0f + target.x ) * 0.5f,
-         ( this.height - 1 ) * ( 1.0f - ( 1.0f + target.y ) * 0.5f ), ( 1.0f
-            + target.z ) * 0.5f);
+      return target.set(this.width * ( 1.0f + target.x ) * 0.5f, this.height
+         * ( 1.0f - ( 1.0f + target.y ) * 0.5f ), ( 1.0f + target.z ) * 0.5f);
    }
 
    /**

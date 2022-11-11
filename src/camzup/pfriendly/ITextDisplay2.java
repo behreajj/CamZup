@@ -5,7 +5,7 @@ import camzup.core.Utils;
 
 /**
  * Maintains consistent behavior between 2D renderers which display text to
- * the screen.
+ * the sketch.
  */
 public interface ITextDisplay2 extends ITextDisplay {
 

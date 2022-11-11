@@ -1391,7 +1391,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * Mixes two vectors together by a step in [0.0, 1.0], then normalizes the
     * result.
     *
-    * @param origin the original quaternion
+    * @param orig   the original quaternion
     * @param dest   the destination quaternion
     * @param step   the step
     * @param target the output quaternion
@@ -1402,12 +1402,12 @@ public class Quaternion implements Comparable < Quaternion > {
     * @see Quaternion#slerpUnclamped(Quaternion, Quaternion, float,
     *      Quaternion)
     */
-   public static Quaternion mix ( final Quaternion origin,
-      final Quaternion dest, final float step, final Quaternion target ) {
+   public static Quaternion mix ( final Quaternion orig, final Quaternion dest,
+      final float step, final Quaternion target ) {
 
-      if ( step <= 0.0f ) { return Quaternion.normalize(origin, target); }
+      if ( step <= 0.0f ) { return Quaternion.normalize(orig, target); }
       if ( step >= 1.0f ) { return Quaternion.normalize(dest, target); }
-      return Quaternion.slerpUnclamped(origin, dest, step, target);
+      return Quaternion.slerpUnclamped(orig, dest, step, target);
    }
 
    /**
@@ -1707,37 +1707,6 @@ public class Quaternion implements Comparable < Quaternion > {
          ( float ) ( x1 * Math.sin(t1) ),
          ( float ) ( x1 * Math.cos(t1) ));
       /* @formatter:on */
-   }
-
-   /**
-    * Rotates a quaternion around an arbitrary axis by an angle.
-    *
-    * @param q       the input quaternion
-    * @param radians the angle in radians
-    * @param axis    the axis
-    * @param target  the output quaternion
-    *
-    * @return the rotated quaternion
-    *
-    * @see Quaternion#magSq(Quaternion)
-    * @see Utils#invSqrtUnchecked(float)
-    * @see Utils#acos(float)
-    * @see Utils#modRadians(float)
-    * @see Quaternion#fromAxisAngle(float, Vec3, Quaternion)
-    */
-   @Experimental
-   public static Quaternion rotate ( final Quaternion q, final float radians,
-      final Vec3 axis, final Quaternion target ) {
-
-      final float mSq = Quaternion.magSq(q);
-      if ( mSq > 0.0f ) {
-         final float wNorm = q.real * Utils.invSqrtUnchecked(mSq);
-         final float halfAngle = Utils.acos(wNorm);
-
-         return Quaternion.fromAxisAngle(halfAngle + halfAngle + radians, axis,
-            target);
-      }
-      return Quaternion.fromAxisAngle(radians, axis, target);
    }
 
    /**
@@ -2094,19 +2063,19 @@ public class Quaternion implements Comparable < Quaternion > {
     * Normalizes the result. Uses single precision methods over
     * {@link java.lang.Math}, and hence is less accurate.
     *
-    * @param origin the original quaternion
+    * @param orig   the original quaternion
     * @param dest   the destination quaternion
     * @param step   the step
     * @param target the output quaternion
     *
     * @return the mix
     */
-   static Quaternion slerpUnclamped ( final Quaternion origin,
+   static Quaternion slerpUnclamped ( final Quaternion orig,
       final Quaternion dest, final float step, final Quaternion target ) {
 
       /* Decompose origin quaternion. */
-      final Vec3 ai = origin.imag;
-      final float aw = origin.real;
+      final Vec3 ai = orig.imag;
+      final float aw = orig.real;
       final float ax = ai.x;
       final float ay = ai.y;
       final float az = ai.z;
@@ -2252,7 +2221,7 @@ public class Quaternion implements Comparable < Quaternion > {
        * Eases between the origin and destination quaternion by a step.
        * Normalizes the result.
        *
-       * @param origin the origin quaternion
+       * @param orig   the origin quaternion
        * @param dest   the destination quaternion
        * @param step   a factor in [0.0, 1.0]
        * @param target the output quaternion
@@ -2264,16 +2233,16 @@ public class Quaternion implements Comparable < Quaternion > {
        * @see Quaternion#identity(Quaternion)
        */
       @Override
-      public Quaternion applyUnclamped ( final Quaternion origin,
+      public Quaternion applyUnclamped ( final Quaternion orig,
          final Quaternion dest, final float step, final Quaternion target ) {
 
          final double u = step;
          final double v = 1.0d - u;
 
-         final Vec3 a = origin.imag;
+         final Vec3 a = orig.imag;
          final Vec3 b = dest.imag;
 
-         final double cw = u * origin.real + v * dest.real;
+         final double cw = u * orig.real + v * dest.real;
          final double cx = u * a.x + v * b.x;
          final double cy = u * a.y + v * b.y;
          final double cz = u * a.z + v * b.z;
@@ -2306,7 +2275,7 @@ public class Quaternion implements Comparable < Quaternion > {
       /**
        * Eases between two quaternions by a step.
        *
-       * @param origin the origin quaternion
+       * @param orig   the origin quaternion
        * @param dest   the destination quaternion
        * @param step   a factor
        * @param target the output quaternion
@@ -2320,12 +2289,12 @@ public class Quaternion implements Comparable < Quaternion > {
        * @see Quaternion#identity(Quaternion)
        */
       @Override
-      public Quaternion applyUnclamped ( final Quaternion origin,
+      public Quaternion applyUnclamped ( final Quaternion orig,
          final Quaternion dest, final float step, final Quaternion target ) {
 
          /* Decompose origin quaternion. */
-         final Vec3 ai = origin.imag;
-         final double aw = origin.real;
+         final Vec3 ai = orig.imag;
+         final double aw = orig.real;
          final double ax = ai.x;
          final double ay = ai.y;
          final double az = ai.z;

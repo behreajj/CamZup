@@ -9,7 +9,7 @@ import processing.core.PImage;
 /**
  * A convenience to create billboards which present text strings as a
  * single image texture. Useful for cases where unchanging text needs to be
- * displayed on the screen. Not intended for use with the AWT renderer.
+ * displayed on the sketch. Not intended for use with the AWT renderer.
  */
 public class TextEntity2 extends ImageEntity2 {
 

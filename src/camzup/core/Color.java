@@ -4,9 +4,9 @@ import java.util.Random;
 import java.util.regex.Pattern;
 
 /**
- * A mutable, extensible color class. Supports RGB, HSL and HSV color
- * spaces. Converts to and from integers where color channels are in the
- * format 0xAARRGGBB.
+ * A mutable, extensible color class. Assumes red, green and blue color
+ * channels are in the standard RGB (sRGB) color space. Converts to and
+ * from integers where color channels are in the format 0xAARRGGBB.
  */
 public class Color implements Comparable < Color > {
 
@@ -361,11 +361,11 @@ public class Color implements Comparable < Color > {
     */
    StringBuilder toGplString ( final StringBuilder gpl ) {
 
-      gpl.append(( int ) ( 0.5f + Utils.clamp01(this.r) * 0xff ));
+      gpl.append(( int ) ( Utils.clamp01(this.r) * 0xff + 0.5f ));
       gpl.append(' ');
-      gpl.append(( int ) ( 0.5f + Utils.clamp01(this.g) * 0xff ));
+      gpl.append(( int ) ( Utils.clamp01(this.g) * 0xff + 0.5f ));
       gpl.append(' ');
-      gpl.append(( int ) ( 0.5f + Utils.clamp01(this.b) * 0xff ));
+      gpl.append(( int ) ( Utils.clamp01(this.b) * 0xff + 0.5f ));
       return gpl;
    }
 
@@ -411,13 +411,13 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Arbitrary hue in LCh assigned to colors with no saturation that are
+    * Arbitrary hue in CIE LCH assigned to colors with no saturation that are
     * closer to light, {@value Color#CIE_LCH_HUE_LIGHT}. Defaults to a yellow.
     */
    public static final float CIE_LCH_HUE_LIGHT = 99.0f / 360.0f;
 
    /**
-    * Arbitrary hue in LCh assigned to colors with no saturation that are
+    * Arbitrary hue in CIE LCH assigned to colors with no saturation that are
     * closer to shadow, {@value Color#CIE_LCH_HUE_SHADOW}. Defaults to a
     * violet.
     */
@@ -473,14 +473,14 @@ public class Color implements Comparable < Color > {
 
       /* @formatter:off */
       return target.set(
-         ( ( int ) ( 0.5f + a.r * 0xff ) &
-           ( int ) ( 0.5f + b.r * 0xff ) ) * IUtils.ONE_255,
-         ( ( int ) ( 0.5f + a.g * 0xff ) &
-           ( int ) ( 0.5f + b.g * 0xff ) ) * IUtils.ONE_255,
-         ( ( int ) ( 0.5f + a.b * 0xff ) &
-           ( int ) ( 0.5f + b.b * 0xff ) ) * IUtils.ONE_255,
-         ( ( int ) ( 0.5f + a.a * 0xff ) &
-           ( int ) ( 0.5f + b.a * 0xff ) ) * IUtils.ONE_255);
+         ( ( int ) ( a.r * 0xff + 0.5f ) &
+           ( int ) ( b.r * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.g * 0xff + 0.5f ) &
+           ( int ) ( b.g * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.b * 0xff + 0.5f ) &
+           ( int ) ( b.b * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.a * 0xff + 0.5f ) &
+           ( int ) ( b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
       /* @formatter:on */
    }
 
@@ -497,10 +497,10 @@ public class Color implements Comparable < Color > {
 
       /* @formatter:off */
       return target.set(
-         ( ~( int ) ( 0.5f + a.r * 0xff ) & 0xff ) * IUtils.ONE_255,
-         ( ~( int ) ( 0.5f + a.g * 0xff ) & 0xff ) * IUtils.ONE_255,
-         ( ~( int ) ( 0.5f + a.b * 0xff ) & 0xff ) * IUtils.ONE_255,
-         ( ~( int ) ( 0.5f + a.a * 0xff ) & 0xff ) * IUtils.ONE_255);
+         ( ~( int ) ( a.r * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255,
+         ( ~( int ) ( a.g * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255,
+         ( ~( int ) ( a.b * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255,
+         ( ~( int ) ( a.a * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255);
       /* @formatter:on */
    }
 
@@ -519,14 +519,14 @@ public class Color implements Comparable < Color > {
 
       /* @formatter:off */
       return target.set(
-         ( ( int ) ( 0.5f + a.r * 0xff ) |
-           ( int ) ( 0.5f + b.r * 0xff ) ) * IUtils.ONE_255,
-         ( ( int ) ( 0.5f + a.g * 0xff ) |
-           ( int ) ( 0.5f + b.g * 0xff ) ) * IUtils.ONE_255,
-         ( ( int ) ( 0.5f + a.b * 0xff ) |
-           ( int ) ( 0.5f + b.b * 0xff ) ) * IUtils.ONE_255,
-         ( ( int ) ( 0.5f + a.a * 0xff ) |
-           ( int ) ( 0.5f + b.a * 0xff ) ) * IUtils.ONE_255);
+         ( ( int ) ( a.r * 0xff + 0.5f ) |
+           ( int ) ( b.r * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.g * 0xff + 0.5f ) |
+           ( int ) ( b.g * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.b * 0xff + 0.5f ) |
+           ( int ) ( b.b * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) ( a.a * 0xff + 0.5f ) |
+           ( int ) ( b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
       /* @formatter:on */
    }
 
@@ -647,14 +647,14 @@ public class Color implements Comparable < Color > {
 
       /* @formatter:off */
       return target.set(
-         ( ( int ) ( 0.5f + a.r * 0xff ) ^
-           ( int ) ( 0.5f + b.r * 0xff ) ) * IUtils.ONE_255,
-         ( ( int ) ( 0.5f + a.g * 0xff ) ^
-           ( int ) ( 0.5f + b.g * 0xff ) ) * IUtils.ONE_255,
-         ( ( int ) ( 0.5f + a.b * 0xff ) ^
-           ( int ) ( 0.5f + b.b * 0xff ) ) * IUtils.ONE_255,
-         ( ( int ) ( 0.5f + a.a * 0xff ) ^
-           ( int ) ( 0.5f + b.a * 0xff ) ) * IUtils.ONE_255);
+         ( ( int ) (a.r * 0xff + 0.5f ) ^
+           ( int ) (b.r * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) (a.g * 0xff + 0.5f ) ^
+           ( int ) (b.g * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) (a.b * 0xff + 0.5f ) ^
+           ( int ) (b.b * 0xff + 0.5f ) ) * IUtils.ONE_255,
+         ( ( int ) (a.a * 0xff + 0.5f ) ^
+           ( int ) (b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
       /* @formatter:on */
    }
 
@@ -1011,8 +1011,8 @@ public class Color implements Comparable < Color > {
     */
    public static boolean eqAlphaSatArith ( final Color a, final Color b ) {
 
-      return ( int ) ( 0.5f + Utils.clamp01(a.a) * 0xff ) == ( int ) ( 0.5f
-         + Utils.clamp01(b.a) * 0xff );
+      return ( int ) ( Utils.clamp01(a.a) * 0xff + 0.5f ) == ( int ) ( Utils
+         .clamp01(b.a) * 0xff + 0.5f );
    }
 
    /**
@@ -1029,12 +1029,12 @@ public class Color implements Comparable < Color > {
    public static boolean eqRgbSatArith ( final Color a, final Color b ) {
 
       /* @formatter:off */
-      return ( int ) ( 0.5f + Utils.clamp01(a.b) * 0xff )
-          == ( int ) ( 0.5f + Utils.clamp01(b.b) * 0xff )
-          && ( int ) ( 0.5f + Utils.clamp01(a.g) * 0xff )
-          == ( int ) ( 0.5f + Utils.clamp01(b.g) * 0xff )
-          && ( int ) ( 0.5f + Utils.clamp01(a.r) * 0xff )
-          == ( int ) ( 0.5f + Utils.clamp01(b.r) * 0xff );
+      return ( int ) ( Utils.clamp01(a.b) * 0xff + 0.5f )
+          == ( int ) ( Utils.clamp01(b.b) * 0xff + 0.5f )
+          && ( int ) ( Utils.clamp01(a.g) * 0xff + 0.5f )
+          == ( int ) ( Utils.clamp01(b.g) * 0xff + 0.5f )
+          && ( int ) ( Utils.clamp01(a.r) * 0xff + 0.5f )
+          == ( int ) ( Utils.clamp01(b.r) * 0xff + 0.5f );
       /* @formatter:on */
    }
 
@@ -1277,34 +1277,6 @@ public class Color implements Comparable < Color > {
          result[i] = Color.fromHex(cs[i], new Color());
       }
       return result;
-   }
-
-   /**
-    * Raises a color's red, green and blue channels to an exponent. If alpha
-    * is true, then the alpha channel is included. <em>Does not clamp the
-    * results</em>; a color channel may exceed the range [0.0, 1.0].
-    *
-    * @param c         the color
-    * @param gamma     the gamma
-    * @param amplitude the amplitude
-    * @param offset    the offset
-    * @param alpha     adjust the alpha
-    * @param target    the output color
-    *
-    * @return the result
-    */
-   public static Color gammaAdjust ( final Color c, final float gamma,
-      final float amplitude, final float offset, final boolean alpha,
-      final Color target ) {
-
-      final double gd = gamma;
-      final double ad = amplitude;
-      final double od = offset;
-
-      return target.set(( float ) ( Math.pow(c.r, gd) * ad + od ),
-         ( float ) ( Math.pow(c.g, gd) * ad + od ), ( float ) ( Math.pow(c.b,
-            gd) * ad + od ), alpha ? ( float ) ( Math.pow(c.a, gd) * ad + od )
-               : c.a);
    }
 
    /**
@@ -1694,6 +1666,8 @@ public class Color implements Comparable < Color > {
     * @param target     the output color
     *
     * @return the color
+    *
+    * @see Random#nextFloat()
     */
    public static Color randomRgb ( final Random rng, final Color lowerBound,
       final Color upperBound, final Color target ) {
@@ -1713,6 +1687,8 @@ public class Color implements Comparable < Color > {
     * @param target the output color
     *
     * @return the color
+    *
+    * @see Random#nextFloat()
     */
    public static Color randomRgba ( final Random rng, final Color target ) {
 
@@ -1729,6 +1705,8 @@ public class Color implements Comparable < Color > {
     * @param target     the output color
     *
     * @return the color
+    *
+    * @see Random#nextFloat()
     */
    public static Color randomRgba ( final Random rng, final Color lowerBound,
       final Color upperBound, final Color target ) {
@@ -2171,10 +2149,10 @@ public class Color implements Comparable < Color > {
    public static int toHexIntSat ( final Color c ) {
 
       /* @formatter:off */
-      return ( int ) ( 0.5f + Utils.clamp01(c.a) * 0xff ) << 0x18
-           | ( int ) ( 0.5f + Utils.clamp01(c.r) * 0xff ) << 0x10
-           | ( int ) ( 0.5f + Utils.clamp01(c.g) * 0xff ) << 0x08
-           | ( int ) ( 0.5f + Utils.clamp01(c.b) * 0xff );
+      return ( int ) ( Utils.clamp01(c.a) * 0xff + 0.5f ) << 0x18
+           | ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ) << 0x10
+           | ( int ) ( Utils.clamp01(c.g) * 0xff + 0.5f ) << 0x08
+           | ( int ) ( Utils.clamp01(c.b) * 0xff + 0.5f );
       /* @formatter:on */
    }
 
@@ -2190,10 +2168,10 @@ public class Color implements Comparable < Color > {
    public static int toHexIntWrap ( final Color c ) {
 
       /* @formatter:off */
-      return ( int ) ( 0.5f + c.a * 0xff ) << 0x18
-           | ( int ) ( 0.5f + c.r * 0xff ) << 0x10
-           | ( int ) ( 0.5f + c.g * 0xff ) << 0x08
-           | ( int ) ( 0.5f + c.b * 0xff );
+      return ( int ) ( c.a * 0xff + 0.5f ) << 0x18
+           | ( int ) ( c.r * 0xff + 0.5f ) << 0x10
+           | ( int ) ( c.g * 0xff + 0.5f ) << 0x08
+           | ( int ) ( c.b * 0xff + 0.5f );
       /* @formatter:on */
    }
 
@@ -2230,7 +2208,7 @@ public class Color implements Comparable < Color > {
    /**
     * Returns a representation of the color as a hexadecimal code, preceded by
     * a '0x', in the format AARRGGBB. Appends to an existing
-    * {@link StringBuilder}.<br>
+    * {@link StringBuilder}.
     *
     * @param sb the string builder
     * @param c  the color
@@ -2243,16 +2221,15 @@ public class Color implements Comparable < Color > {
    public static StringBuilder toHexString ( final StringBuilder sb,
       final Color c ) {
 
-      return Color.toHexString(sb, ( int ) ( 0.5f + Utils.clamp01(c.a) * 0xff ),
-         ( int ) ( 0.5f + Utils.clamp01(c.r) * 0xff ), ( int ) ( 0.5f + Utils
-            .clamp01(c.g) * 0xff ), ( int ) ( 0.5f + Utils.clamp01(c.b)
-               * 0xff ));
+      return Color.toHexString(sb, ( int ) ( Utils.clamp01(c.a) * 0xff + 0.5f ),
+         ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ), ( int ) ( Utils.clamp01(
+            c.g) * 0xff + 0.5f ), ( int ) ( Utils.clamp01(c.b) * 0xff + 0.5f ));
    }
 
    /**
     * Returns a representation of the color as a hexadecimal code, preceded by
     * a '0x', in the format AARRGGBB. Appends to an existing
-    * {@link StringBuilder}.<br>
+    * {@link StringBuilder}.
     *
     * @param sb the string builder
     * @param c  the color
@@ -2271,7 +2248,7 @@ public class Color implements Comparable < Color > {
    /**
     * Returns a representation of the color as a hexadecimal code, preceded by
     * a '0x', in the format AARRGGBB. Appends to an existing
-    * {@link StringBuilder}.<br>
+    * {@link StringBuilder}.
     *
     * @param sb the string builder
     * @param a  the alpha byte
@@ -2342,9 +2319,9 @@ public class Color implements Comparable < Color > {
    public static StringBuilder toHexWeb ( final StringBuilder sb,
       final Color c ) {
 
-      return Color.toHexWeb(sb, ( int ) ( 0.5f + Utils.clamp01(c.r) * 0xff ),
-         ( int ) ( 0.5f + Utils.clamp01(c.g) * 0xff ), ( int ) ( 0.5f + Utils
-            .clamp01(c.b) * 0xff ));
+      return Color.toHexWeb(sb, ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ),
+         ( int ) ( Utils.clamp01(c.g) * 0xff + 0.5f ), ( int ) ( Utils.clamp01(
+            c.b) * 0xff + 0.5f ));
    }
 
    /**
@@ -2371,7 +2348,7 @@ public class Color implements Comparable < Color > {
    /**
     * Creates a web-friendly representation of the color as a hexadecimal
     * code, preceded by a hash tag, '#', with no alpha. Appends to an existing
-    * {@link StringBuilder}.<br>
+    * {@link StringBuilder}.
     *
     * @param sb the string builder
     * @param r  the red byte
@@ -2523,10 +2500,10 @@ public class Color implements Comparable < Color > {
       if ( step >= 1.0f ) { return Color.toHexIntWrap(dest); }
 
       final float u = 1.0f - step;
-      return ( int ) ( 0.5f + ( u * orig.a + step * dest.a ) * 0xff ) << 0x18
-         | ( int ) ( 0.5f + ( u * orig.r + step * dest.r ) * 0xff ) << 0x10
-         | ( int ) ( 0.5f + ( u * orig.g + step * dest.g ) * 0xff ) << 0x08
-         | ( int ) ( 0.5f + ( u * orig.b + step * dest.b ) * 0xff );
+      return ( int ) ( ( u * orig.a + step * dest.a ) * 0xff + 0.5f ) << 0x18
+         | ( int ) ( ( u * orig.r + step * dest.r ) * 0xff + 0.5f ) << 0x10
+         | ( int ) ( ( u * orig.g + step * dest.g ) * 0xff + 0.5f ) << 0x08
+         | ( int ) ( ( u * orig.b + step * dest.b ) * 0xff + 0.5f );
    }
 
    /**
@@ -2942,12 +2919,12 @@ public class Color implements Comparable < Color > {
        *
        * @return the eased color
        *
-       * @see Color#sRgbTolRgb(Color, boolean, Color)
-       * @see Color#lRgbToCieXyz(Color, Vec4)
-       * @see Color#cieXyzToCieLab(Vec4, Vec4)
        * @see Color#cieLabToCieXyz(Vec4, Vec4)
+       * @see Color#cieXyzToCieLab(Vec4, Vec4)
        * @see Color#cieXyzTolRgb(Vec4, Color)
+       * @see Color#lRgbToCieXyz(Color, Vec4)
        * @see Color#lRgbTosRgb(Color, boolean, Color)
+       * @see Color#sRgbTolRgb(Color, boolean, Color)
        * @see Vec4#mix(Vec4, Vec4, float, Vec4)
        */
       @Override
@@ -2980,7 +2957,7 @@ public class Color implements Comparable < Color > {
    public static class MixCieLch extends MixCieLab {
 
       /**
-       * The new LCh color.
+       * The new CIE LCH color.
        */
       protected final Vec4 cLch = new Vec4();
 
@@ -3045,11 +3022,17 @@ public class Color implements Comparable < Color > {
          } else {
             final float t = step;
             final float u = 1.0f - t;
-            this.cLch.set(this.hueFunc.apply(Utils.modRadians(Utils.atan2(ob,
-               oa)) * IUtils.ONE_TAU, Utils.modRadians(Utils.atan2(db, da))
-                  * IUtils.ONE_TAU, step), u * Utils.sqrtUnchecked(ocsq) + t
-                     * Utils.sqrtUnchecked(dcsq), u * this.oLab.z + t
-                        * this.dLab.z, u * this.oLab.w + t * this.dLab.w);
+
+            float oh = Utils.atan2(ob, oa) * IUtils.ONE_TAU;
+            if ( oh < -0.0f ) { oh = oh + 1.0f; }
+            float dh = Utils.atan2(db, da) * IUtils.ONE_TAU;
+            if ( dh < -0.0f ) { dh = dh + 1.0f; }
+
+            this.cLch.set(this.hueFunc.apply(oh, dh, step), u * Utils
+               .sqrtUnchecked(ocsq) + t * Utils.sqrtUnchecked(dcsq), u
+                  * this.oLab.z + t * this.dLab.z, u * this.oLab.w + t
+                     * this.dLab.w);
+
             Color.cieLchToCieLab(this.cLch, this.cLab);
          }
 

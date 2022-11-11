@@ -515,22 +515,24 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    }
 
    /**
-    * Rotates the transform by adding a rotation. Updates the transform's
-    * axes.
+    * Rotates the transform by creating a quaternion from an axis angle, then
+    * multiplying with the previous rotation. Updates the transform's axes.
     *
     * @param angle the angle
     * @param axis  the axis
     *
     * @return this transform
     *
-    * @see Quaternion#rotate(Quaternion, float, Vec3, Quaternion)
+    * @see Quaternion#fromAxisAngle(float, Vec3, Quaternion)
+    * @see Quaternion#mul(Quaternion, Quaternion, Quaternion)
     * @see Transform3#updateAxes()
     */
-   @Experimental
+   @Override
    public Transform3 rotateBy ( final float angle, final Vec3 axis ) {
 
       this.rotPrev.set(this.rotation);
-      Quaternion.rotate(this.rotPrev, angle, axis, this.rotation);
+      Quaternion.fromAxisAngle(angle, axis, this.rotation);
+      Quaternion.mul(this.rotPrev, this.rotation, this.rotation);
       this.updateAxes();
       return this;
    }

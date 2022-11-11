@@ -89,7 +89,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Begins the heads-up display section of the sketch. Turns off lighting,
     * disables depth testing and depth masking. Sets the camera origin to the
-    * center of the screen and establishes an orthographic projection.
+    * center of the sketch and establishes an orthographic projection.
     */
    @Experimental
    public void beginHud ( ) {

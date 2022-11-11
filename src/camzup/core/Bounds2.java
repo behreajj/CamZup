@@ -814,4 +814,26 @@ public class Bounds2 implements Comparable < Bounds2 > {
       return target.set(-IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f);
    }
 
+   /**
+    * Evaluates whether a bounding area intersects a circle. Internal helper
+    * function, especially to optimize
+    * {@link Quadtree#query(Quadtree, Vec2, float)}.
+    *
+    * @param a      the bounds
+    * @param center the circle center, squared
+    * @param rsq    the circle radius
+    *
+    * @return the evaluation
+    */
+   static boolean intersectSq ( final Bounds2 a, final Vec2 center,
+      final float rsq ) {
+
+      final float yd = center.y < a.min.y ? center.y - a.min.y : center.y
+         > a.max.y ? center.y - a.max.y : 0.0f;
+      final float xd = center.x < a.min.x ? center.x - a.min.x : center.x
+         > a.max.x ? center.x - a.max.x : 0.0f;
+
+      return xd * xd + yd * yd < rsq;
+   }
+
 }

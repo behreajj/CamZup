@@ -367,8 +367,7 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
-    * Tests to see if all the vector's components are non-zero. Useful when
-    * testing valid dimensions (width and depth) stored in vectors.
+    * Tests to see if all the vector's components are non-zero.
     *
     * @param v the input vector
     *
@@ -603,7 +602,7 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param v      the input vector
     * @param target the output vector
     *
-    * @return the ceil
+    * @return the raised vector
     *
     * @see Utils#ceil(float)
     */
@@ -1024,7 +1023,7 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param v      the input vector
     * @param target the output vector
     *
-    * @return the floor
+    * @return the floored vector
     *
     * @see Utils#floor(float)
     */
@@ -1524,22 +1523,22 @@ public class Vec4 implements Comparable < Vec4 > {
    /**
     * Mixes two vectors together by a step in [0.0, 1.0] .
     *
-    * @param origin the original vector
+    * @param orig   the original vector
     * @param dest   the destination vector
     * @param step   the step
     * @param target the output vector
     *
     * @return the mix
     */
-   public static Vec4 mix ( final Vec4 origin, final Vec4 dest,
-      final float step, final Vec4 target ) {
+   public static Vec4 mix ( final Vec4 orig, final Vec4 dest, final float step,
+      final Vec4 target ) {
 
-      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step <= 0.0f ) { return target.set(orig); }
       if ( step >= 1.0f ) { return target.set(dest); }
 
       final float u = 1.0f - step;
-      return target.set(u * origin.x + step * dest.x, u * origin.y + step
-         * dest.y, u * origin.z + step * dest.z, u * origin.w + step * dest.w);
+      return target.set(u * orig.x + step * dest.x, u * orig.y + step * dest.y,
+         u * orig.z + step * dest.z, u * orig.w + step * dest.w);
    }
 
    /**
@@ -1779,59 +1778,6 @@ public class Vec4 implements Comparable < Vec4 > {
       final float step, final Vec4 target ) {
 
       return Vec4.pingPong(origin, dest, step, 1.0f, target);
-   }
-
-   /**
-    * Raises a scalar to a vector.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target the output vector
-    *
-    * @return the result
-    *
-    * @see Math#pow(double, double)
-    */
-   public static Vec4 pow ( final float a, final Vec4 b, final Vec4 target ) {
-
-      final double ad = a;
-      return target.set(( float ) Math.pow(ad, b.x), ( float ) Math.pow(ad,
-         b.y), ( float ) Math.pow(ad, b.z), ( float ) Math.pow(ad, b.w));
-   }
-
-   /**
-    * Raises a vector to the power of a scalar.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target the output vector
-    *
-    * @return the result
-    *
-    * @see Math#pow(double, double)
-    */
-   public static Vec4 pow ( final Vec4 a, final float b, final Vec4 target ) {
-
-      final double bd = b;
-      return target.set(( float ) Math.pow(a.x, bd), ( float ) Math.pow(a.y,
-         bd), ( float ) Math.pow(a.z, bd), ( float ) Math.pow(a.w, bd));
-   }
-
-   /**
-    * Raises a vector to the power of another vector.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target the output vector
-    *
-    * @return the result
-    *
-    * @see Math#pow(double, double)
-    */
-   public static Vec4 pow ( final Vec4 a, final Vec4 b, final Vec4 target ) {
-
-      return target.set(( float ) Math.pow(a.x, b.x), ( float ) Math.pow(a.y,
-         b.y), ( float ) Math.pow(a.z, b.z), ( float ) Math.pow(a.w, b.w));
    }
 
    /**

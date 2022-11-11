@@ -8,7 +8,7 @@ import processing.core.PApplet;
 
 /**
  * Maintains consistent behavior between renderers which display text to
- * the screen.
+ * the sketch.
  */
 public interface ITextDisplay {
 

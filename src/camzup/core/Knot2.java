@@ -1,9 +1,9 @@
 package camzup.core;
 
 /**
- * Organizes the vectors that shape a Bezier curve into a coordinate (or
- * anchor point), fore handle (the following control point) and rear handle
- * (the preceding control point).
+ * Organizes the vectors that shape a cubic Bezier curve into a coordinate
+ * (or anchor point), fore handle (the following control point) and rear
+ * handle (the preceding control point).
  */
 public class Knot2 implements Comparable < Knot2 > {
 
@@ -13,13 +13,13 @@ public class Knot2 implements Comparable < Knot2 > {
    public final Vec2 coord = new Vec2();
 
    /**
-    * The handle which warps the curve segment heading away from the knot
-    * along the direction of the curve.
+    * The handle that warps the curve segment heading away from the knot along
+    * the direction of the curve.
     */
    public final Vec2 foreHandle = new Vec2();
 
    /**
-    * The handle which warps the curve segment heading towards the knot along
+    * The handle that warps the curve segment heading towards the knot along
     * the direction of the curve.
     */
    public final Vec2 rearHandle = new Vec2();

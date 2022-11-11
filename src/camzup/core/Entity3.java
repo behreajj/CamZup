@@ -201,6 +201,21 @@ public class Entity3 extends Entity implements IOriented3, ISpatial3 {
    }
 
    /**
+    * Rotates this object by an angle around an axis.
+    *
+    * @param radians the angle
+    * @param axis    the axis
+    *
+    * @return this object
+    */
+   @Override
+   public Entity3 rotateBy ( final float radians, final Vec3 axis ) {
+
+      this.transform.rotateBy(radians, axis);
+      return this;
+   }
+
+   /**
     * Rotates this entity to a quaternion.
     *
     * @param rotNew the new rotation

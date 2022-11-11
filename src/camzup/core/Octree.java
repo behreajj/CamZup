@@ -816,7 +816,7 @@ public class Octree {
       final float radius ) {
 
       final TreeMap < Float, Vec3 > found = new TreeMap <>();
-      Octree.query(o, center, radius, found);
+      Octree.query(o, center, radius * radius, found);
 
       /* Copy by value, so references can't change. */
       final Collection < Vec3 > values = found.values();
@@ -936,7 +936,7 @@ public class Octree {
     *
     * @param o      the octree
     * @param center the sphere center
-    * @param radius the sphere radius
+    * @param rsq    the sphere radius, squared
     * @param found  the output list
     *
     * @return found points
@@ -946,20 +946,19 @@ public class Octree {
     */
    @Recursive
    static TreeMap < Float, Vec3 > query ( final Octree o, final Vec3 center,
-      final float radius, final TreeMap < Float, Vec3 > found ) {
+      final float rsq, final TreeMap < Float, Vec3 > found ) {
 
-      if ( Bounds3.intersect(o.bounds, center, radius) ) {
+      if ( Bounds3.intersectSq(o.bounds, center, rsq) ) {
          boolean isLeaf = true;
          for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
             final Octree child = o.children[i];
             if ( child != null ) {
                isLeaf = false;
-               Octree.query(child, center, radius, found);
+               Octree.query(child, center, rsq, found);
             }
          }
 
          if ( isLeaf ) {
-            final float rsq = radius * radius;
             final Iterator < Vec3 > itr = o.points.iterator();
             while ( itr.hasNext() ) {
                final Vec3 point = itr.next();

@@ -791,7 +791,7 @@ public class Quadtree {
       final float radius ) {
 
       final TreeMap < Float, Vec2 > found = new TreeMap <>();
-      Quadtree.query(q, center, radius, found);
+      Quadtree.query(q, center, radius * radius, found);
 
       /* Copy by value, so references can't change. */
       final Collection < Vec2 > values = found.values();
@@ -905,7 +905,7 @@ public class Quadtree {
     *
     * @param q      the quadtree
     * @param center the circle center
-    * @param radius the circle radius
+    * @param rsq    the circle radius, squared
     * @param found  the output list
     *
     * @return found points
@@ -915,20 +915,19 @@ public class Quadtree {
     */
    @Recursive
    static TreeMap < Float, Vec2 > query ( final Quadtree q, final Vec2 center,
-      final float radius, final TreeMap < Float, Vec2 > found ) {
+      final float rsq, final TreeMap < Float, Vec2 > found ) {
 
-      if ( Bounds2.intersect(q.bounds, center, radius) ) {
+      if ( Bounds2.intersectSq(q.bounds, center, rsq) ) {
          boolean isLeaf = true;
          for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
             final Quadtree child = q.children[i];
             if ( child != null ) {
                isLeaf = false;
-               Quadtree.query(child, center, radius, found);
+               Quadtree.query(child, center, rsq, found);
             }
          }
 
          if ( isLeaf ) {
-            final float rsq = radius * radius;
             final Iterator < Vec2 > itr = q.points.iterator();
             while ( itr.hasNext() ) {
                final Vec2 point = itr.next();

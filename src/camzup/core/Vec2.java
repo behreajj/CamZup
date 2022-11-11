@@ -386,8 +386,8 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Tests to see if all the vector's components are non-zero. Useful when
-    * testing valid dimensions (width and depth) stored in vectors.
+    * Tests to see if all the vector's components are non-zero. Useful for
+    * finding valid dimensions (width and depth) stored in vectors.
     *
     * @param v the input vector
     *
@@ -710,7 +710,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param v      the input vector
     * @param target the output vector
     *
-    * @return the result
+    * @return the raised number
     *
     * @see Utils#ceil(float)
     */
@@ -1075,7 +1075,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @param v      the input vector
     * @param target the output vector
     *
-    * @return the floor
+    * @return the floored vector
     *
     * @see Utils#floor(float)
     */
@@ -1766,22 +1766,21 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Mixes two vectors together by a step in [0.0, 1.0] .
     *
-    * @param origin the original vector
+    * @param orig   the original vector
     * @param dest   the destination vector
     * @param step   the step
     * @param target the output vector
     *
     * @return the mix
     */
-   public static Vec2 mix ( final Vec2 origin, final Vec2 dest,
-      final float step, final Vec2 target ) {
+   public static Vec2 mix ( final Vec2 orig, final Vec2 dest, final float step,
+      final Vec2 target ) {
 
-      if ( step <= 0.0f ) { return target.set(origin); }
+      if ( step <= 0.0f ) { return target.set(orig); }
       if ( step >= 1.0f ) { return target.set(dest); }
 
       final float u = 1.0f - step;
-      return target.set(u * origin.x + step * dest.x, u * origin.y + step
-         * dest.y);
+      return target.set(u * orig.x + step * dest.x, u * orig.y + step * dest.y);
    }
 
    /**
@@ -2083,59 +2082,6 @@ public class Vec2 implements Comparable < Vec2 > {
       final float step, final Vec2 target ) {
 
       return Vec2.pingPong(origin, dest, step, 1.0f, target);
-   }
-
-   /**
-    * Raises a scalar to a vector.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target the output vector
-    *
-    * @return the result
-    *
-    * @see Math#pow(double, double)
-    */
-   public static Vec2 pow ( final float a, final Vec2 b, final Vec2 target ) {
-
-      final double ad = a;
-      return target.set(( float ) Math.pow(ad, b.x), ( float ) Math.pow(ad,
-         b.y));
-   }
-
-   /**
-    * Raises a vector to the power of a scalar.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target the output vector
-    *
-    * @return the result
-    *
-    * @see Math#pow(double, double)
-    */
-   public static Vec2 pow ( final Vec2 a, final float b, final Vec2 target ) {
-
-      final double bd = b;
-      return target.set(( float ) Math.pow(a.x, bd), ( float ) Math.pow(a.y,
-         bd));
-   }
-
-   /**
-    * Raises a vector to the power of another vector.
-    *
-    * @param a      left operand
-    * @param b      right operand
-    * @param target the output vector
-    *
-    * @return the result
-    *
-    * @see Math#pow(double, double)
-    */
-   public static Vec2 pow ( final Vec2 a, final Vec2 b, final Vec2 target ) {
-
-      return target.set(( float ) Math.pow(a.x, b.x), ( float ) Math.pow(a.y,
-         b.y));
    }
 
    /**

@@ -1649,7 +1649,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Calculates the normals of a mesh. Defaults to flat shading.
+    * Calculates the normals of a mesh.
     *
     * @return this mesh
     */

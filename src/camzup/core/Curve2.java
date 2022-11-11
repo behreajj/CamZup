@@ -30,11 +30,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * The default constructor.
     */
-   public Curve2 ( ) {
-
-      // TODO: cycleKnots method? If a curve is a loop, then move knot at i to
-      // i + 1.
-   }
+   public Curve2 ( ) {}
 
    /**
     * Creates a curve from a collection of knots
@@ -190,6 +186,27 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public boolean contains ( final Knot2 kn ) {
 
       return this.knots.contains(kn);
+   }
+
+   /**
+    * If the curve is a closed loop, cycles the index of each knot in the
+    * curve list by 1. The last knot in the curve becomes the first.
+    *
+    * @return this curve
+    */
+   public Curve2 cycle ( ) {
+
+      // TODO: Cycle by multiple places, allow either direction?
+      if ( this.closedLoop ) {
+         final int len = this.knots.size();
+         final Knot2 temp = this.knots.get(len - 1);
+         for ( int i = len - 1; i > 0; --i ) {
+            this.knots.set(i, this.knots.get(i - 1));
+         }
+         this.knots.set(0, temp);
+      }
+
+      return this;
    }
 
    /**

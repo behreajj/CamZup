@@ -9,7 +9,7 @@ import processing.core.PImage;
 /**
  * A convenience to create billboards which present text strings as a
  * single image texture. Useful for cases where unchanging text needs to be
- * displayed on the screen.
+ * displayed on the sketch.
  */
 public class TextEntity3 extends ImageEntity3 {
 

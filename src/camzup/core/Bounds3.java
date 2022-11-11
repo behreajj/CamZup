@@ -735,14 +735,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
    public static boolean intersect ( final Bounds3 a, final Vec3 center,
       final float radius ) {
 
-      final float zd = center.z < a.min.z ? center.z - a.min.z : center.z
-         > a.max.z ? center.z - a.max.z : 0.0f;
-      final float yd = center.y < a.min.y ? center.y - a.min.y : center.y
-         > a.max.y ? center.y - a.max.y : 0.0f;
-      final float xd = center.x < a.min.x ? center.x - a.min.x : center.x
-         > a.max.x ? center.x - a.max.x : 0.0f;
-
-      return xd * xd + yd * yd + zd * zd < radius * radius;
+      return Bounds3.intersectSq(a, center, radius * radius);
    }
 
    /**
@@ -903,6 +896,30 @@ public class Bounds3 implements Comparable < Bounds3 > {
 
       return Utils.diff(b.min.x, b.max.x) * Utils.diff(b.min.y, b.max.y) * Utils
          .diff(b.min.z, b.max.z);
+   }
+
+   /**
+    * Evaluates whether a bounding volume intersects a sphere. Internal helper
+    * function, especially to optimize
+    * {@link Octree#query(Octree, Vec3, float)}.
+    *
+    * @param a      the bounds
+    * @param center the sphere center
+    * @param rsq    the sphere radius squared
+    *
+    * @return the evaluation
+    */
+   static boolean intersectSq ( final Bounds3 a, final Vec3 center,
+      final float rsq ) {
+
+      final float zd = center.z < a.min.z ? center.z - a.min.z : center.z
+         > a.max.z ? center.z - a.max.z : 0.0f;
+      final float yd = center.y < a.min.y ? center.y - a.min.y : center.y
+         > a.max.y ? center.y - a.max.y : 0.0f;
+      final float xd = center.x < a.min.x ? center.x - a.min.x : center.x
+         > a.max.x ? center.x - a.max.x : 0.0f;
+
+      return xd * xd + yd * yd + zd * zd < rsq;
    }
 
 }

@@ -193,6 +193,26 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
+    * If the curve is a closed loop, cycles the index of each knot in the
+    * curve list by 1. The last knot in the curve becomes the first.
+    *
+    * @return this curve
+    */
+   public Curve3 cycle ( ) {
+
+      if ( this.closedLoop ) {
+         final int len = this.knots.size();
+         final Knot3 temp = this.knots.get(len - 1);
+         for ( int i = len - 1; i > 0; --i ) {
+            this.knots.set(i, this.knots.get(i - 1));
+         }
+         this.knots.set(0, temp);
+      }
+
+      return this;
+   }
+
+   /**
     * Tests this curve for equality with another object.
     *
     * @param obj the object

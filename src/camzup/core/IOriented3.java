@@ -15,6 +15,16 @@ public interface IOriented3 {
    Quaternion getRotation ( final Quaternion target );
 
    /**
+    * Rotates this object by an angle around an axis.
+    *
+    * @param radians the angle
+    * @param axis    the axis
+    *
+    * @return this object
+    */
+   IOriented3 rotateBy ( final float radians, final Vec3 axis );
+
+   /**
     * Rotates this object to a quaternion.
     *
     * @param rotNew the new rotation

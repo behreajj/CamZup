@@ -21,6 +21,7 @@ public abstract class Pixels {
    private Pixels ( ) {
 
       // QUERY: Separate RGB function?
+      // QUERY: Quantize color?
    }
 
    /**
@@ -111,18 +112,20 @@ public abstract class Pixels {
     *
     * @return the adjusted pixels
     *
-    * @see Utils#clamp(float, float, float)
     * @see Color#fromHex(int, Color)
-    * @see Color#sRgbTolRgb(Color, boolean, Color)
-    * @see Color#lRgbToCieXyz(Color, Vec4)
-    * @see Color#cieXyzToCieLab(Vec4, Vec4)
     * @see Color#cieLabToCieXyz(Vec4, Vec4)
+    * @see Color#cieXyzToCieLab(Vec4, Vec4)
     * @see Color#cieXyzTolRgb(Vec4, Color)
+    * @see Color#lRgbToCieXyz(Color, Vec4)
     * @see Color#lRgbTosRgb(Color, boolean, Color)
+    * @see Color#sRgbTolRgb(Color, boolean, Color)
     * @see Color#toHexIntSat(Color)
+    * @see Utils#clamp(float, float, float)
     */
    public static int[] adjustContrast ( final int[] source, final float fac,
       final int[] target ) {
+
+      // TODO: Retest.
 
       final int srcLen = source.length;
       if ( srcLen == target.length ) {
@@ -141,7 +144,7 @@ public abstract class Pixels {
          for ( int i = 0; i < srcLen; ++i ) {
             final int srgbKeyInt = source[i];
             if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
-               final Integer srgbKeyObj = srgbKeyInt;
+               final Integer srgbKeyObj = 0xff000000 | srgbKeyInt;
                if ( !dict.containsKey(srgbKeyObj) ) {
                   Color.fromHex(srgbKeyInt, srgb);
                   Color.sRgbTolRgb(srgb, false, lrgb);
@@ -153,16 +156,17 @@ public abstract class Pixels {
                   Color.cieLabToCieXyz(lab, xyz);
                   Color.cieXyzTolRgb(xyz, lrgb);
                   Color.lRgbTosRgb(lrgb, false, srgb);
-                  dict.put(srgbKeyObj, Color.toHexIntSat(srgb));
+                  dict.put(srgbKeyObj, Color.toHexIntSat(srgb) & 0x00ffffff);
                }
             }
          }
 
          if ( dict.size() > 0 ) {
             for ( int i = 0; i < srcLen; ++i ) {
-               final Integer srgbKeyObj = source[i];
+               final int srgbKeyInt = source[i];
+               final Integer srgbKeyObj = 0xff000000 | srgbKeyInt;
                if ( dict.containsKey(srgbKeyObj) ) {
-                  target[i] = dict.get(srgbKeyObj);
+                  target[i] = srgbKeyInt & 0xff000000 | dict.get(srgbKeyObj);
                } else {
                   target[i] = 0x00000000;
                }
@@ -185,18 +189,18 @@ public abstract class Pixels {
     *
     * @return the adjusted pixels
     *
+    * @see Color#fromHex(int, Color)
+    * @see Color#cieLabToCieLch(Vec4, Vec4)
+    * @see Color#cieLabToCieXyz(Vec4, Vec4)
+    * @see Color#cieLchToCieLab(Vec4, Vec4)
+    * @see Color#cieXyzToCieLab(Vec4, Vec4)
+    * @see Color#cieXyzTolRgb(Vec4, Color)
+    * @see Color#lRgbToCieXyz(Color, Vec4)
+    * @see Color#lRgbTosRgb(Color, boolean, Color)
+    * @see Color#sRgbTolRgb(Color, boolean, Color)
+    * @see Color#toHexIntSat(Color)
     * @see Vec4#none(Vec4)
     * @see Vec4#add(Vec4, Vec4, Vec4)
-    * @see Color#fromHex(int, Color)
-    * @see Color#sRgbTolRgb(Color, boolean, Color)
-    * @see Color#lRgbToCieXyz(Color, Vec4)
-    * @see Color#cieXyzToCieLab(Vec4, Vec4)
-    * @see Color#cieLabToCieLch(Vec4, Vec4)
-    * @see Color#cieLchToCieLab(Vec4, Vec4)
-    * @see Color#cieLabToCieXyz(Vec4, Vec4)
-    * @see Color#cieXyzTolRgb(Vec4, Color)
-    * @see Color#lRgbTosRgb(Color, boolean, Color)
-    * @see Color#toHexIntSat(Color)
     */
    public static int[] adjustLch ( final int[] source, final Vec4 adjust,
       final int[] target ) {
@@ -725,22 +729,25 @@ public abstract class Pixels {
     * @return the inverted pixels
     *
     * @see Color#fromHex(int, Color)
-    * @see Color#sRgbTolRgb(Color, boolean, Color)
-    * @see Color#lRgbToCieXyz(Color, Vec4)
-    * @see Color#cieXyzToCieLab(Vec4, Vec4)
     * @see Color#cieLabToCieXyz(Vec4, Vec4)
+    * @see Color#cieXyzToCieLab(Vec4, Vec4)
     * @see Color#cieXyzTolRgb(Vec4, Color)
+    * @see Color#lRgbToCieXyz(Color, Vec4)
     * @see Color#lRgbTosRgb(Color, boolean, Color)
+    * @see Color#sRgbTolRgb(Color, boolean, Color)
     * @see Color#toHexIntSat(Color)
     */
    public static int[] invertLab ( final int[] source, final boolean l,
       final boolean a, final boolean b, final boolean alpha,
       final int[] target ) {
 
-      if ( !l && !a && !b && !alpha ) { return target; }
-
       final int srcLen = source.length;
       if ( srcLen == target.length ) {
+         if ( !l && !a && !b && !alpha ) {
+            System.arraycopy(source, 0, target, 0, srcLen);
+            return target;
+         }
+
          final Color srgb = new Color();
          final Color lrgb = new Color();
          final Vec4 xyz = new Vec4();
@@ -775,8 +782,7 @@ public abstract class Pixels {
 
          if ( dict.size() > 0 ) {
             for ( int i = 0; i < srcLen; ++i ) {
-               final int srgbKeyInt = source[i];
-               final Integer srgbKeyObj = srgbKeyInt;
+               final Integer srgbKeyObj = source[i];
                if ( dict.containsKey(srgbKeyObj) ) {
                   target[i] = dict.get(srgbKeyObj);
                }
@@ -902,11 +908,11 @@ public abstract class Pixels {
     *
     * @return the mirrored pixels
     *
-    * @see Utils#approx(float, float, float)
-    * @see Utils#round(float)
+    * @see Pixels#filterBilinear(float, float, int, int, int[])
     * @see Pixels#mirrorX(int[], int, int, boolean, int[])
     * @see Pixels#mirrorY(int[], int, int, int, boolean, int[])
-    * @see Pixels#filterBilinear(float, float, int, int, int[])
+    * @see Utils#approx(float, float, float)
+    * @see Utils#round(float)
     */
    public static int[] mirror ( final int[] source, final int wSrc,
       final int hSrc, final float xOrig, final float yOrig, final float xDest,
@@ -1071,14 +1077,14 @@ public abstract class Pixels {
     * @return the color array
     *
     * @see Bounds3#cieLab(Bounds3)
-    * @see Color#fromHex(int, Color)
-    * @see Color#sRgbTolRgb(Color, boolean, Color)
-    * @see Color#lRgbToCieXyz(Color, Vec4)
-    * @see Color#cieXyzToCieLab(Vec4, Vec4)
     * @see Color#cieLabToCieXyz(Vec4, Vec4)
+    * @see Color#cieXyzToCieLab(Vec4, Vec4)
     * @see Color#cieXyzTolRgb(Vec4, Color)
-    * @see Color#lRgbTosRgb(Color, boolean, Color)
     * @see Color#clearBlack(Color)
+    * @see Color#fromHex(int, Color)
+    * @see Color#lRgbToCieXyz(Color, Vec4)
+    * @see Color#lRgbTosRgb(Color, boolean, Color)
+    * @see Color#sRgbTolRgb(Color, boolean, Color)
     * @see Octree#insert(Vec3)
     */
    public static Color[] paletteExtract ( final int[] source,
@@ -1151,11 +1157,11 @@ public abstract class Pixels {
     * @return the modified pixels
     *
     * @see Bounds3#cieLab(Bounds3)
-    * @see Color#sRgbTolRgb(Color, boolean, Color)
-    * @see Color#lRgbToCieXyz(Color, Vec4)
     * @see Color#cieXyzToCieLab(Vec4, Vec4)
-    * @see Color#toHexIntSat(Color)
     * @see Color#fromHex(int, Color)
+    * @see Color#lRgbToCieXyz(Color, Vec4)
+    * @see Color#sRgbTolRgb(Color, boolean, Color)
+    * @see Color#toHexIntSat(Color)
     * @see Octree#insert(Vec3)
     * @see Octree#cull()
     * @see Utils#abs(float)
@@ -1193,7 +1199,8 @@ public abstract class Pixels {
 
          final TreeMap < Float, Vec3 > found = new TreeMap <>();
          final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
-         final float valRad = Utils.max(IUtils.EPSILON, Utils.abs(radius));
+         final float rVrf = Utils.max(IUtils.EPSILON, Utils.abs(radius));
+         final float rsq = rVrf * rVrf;
          for ( int i = 0; i < srcLen; ++i ) {
             final int srcHexInt = source[i];
             if ( ( srcHexInt & 0xff000000 ) != 0 ) {
@@ -1209,7 +1216,7 @@ public abstract class Pixels {
                   Color.cieXyzToCieLab(xyz, lab);
                   query.set(lab.x, lab.y, lab.z);
                   found.clear();
-                  Octree.query(oct, query, valRad, found);
+                  Octree.query(oct, query, rsq, found);
                   if ( found.size() > 0 ) {
                      final Vec3 near = found.values().iterator().next();
                      // final Vec3 near = found.ceilingEntry(0.0f).getValue();
@@ -1647,6 +1654,22 @@ public abstract class Pixels {
    }
 
    /**
+    * Finds the luminance of a color, represented as a 32-bit integer, in
+    * standard RGB. Converts the color to linear RGB, then calculates a
+    * weighted average.
+    *
+    * @param c color
+    *
+    * @return the luminance
+    */
+   public static float sRgbLuminance ( final int c ) {
+
+      return ( float ) ( 0.0008339189910613837d * Pixels.STL_LUT[c >> 0x10
+         & 0xff] + 0.002804584845905505d * Pixels.STL_LUT[c >> 0x08 & 0xff]
+         + 0.0002830647904840915d * Pixels.STL_LUT[c & 0xff] );
+   }
+
+   /**
     * Converts a pixel color from standard RGB to linear RGB. If the adjust
     * alpha flag is true, then alpha is converted as well.
     *
@@ -1689,22 +1712,6 @@ public abstract class Pixels {
    }
 
    /**
-    * Finds the luminance of a color, represented as a 32-bit integer, in
-    * standard RGB. Converts the color to linear RGB, then calculates a
-    * weighted average.
-    *
-    * @param c color
-    *
-    * @return the luminance
-    */
-   public static float sRgbLuminance ( final int c ) {
-
-      return ( float ) ( 0.0008339189910613837d * Pixels.STL_LUT[c >> 0x10
-         & 0xff] + 0.002804584845905505d * Pixels.STL_LUT[c >> 0x08 & 0xff]
-         + 0.0002830647904840915d * Pixels.STL_LUT[c & 0xff] );
-   }
-
-   /**
     * Finds the minimum, maximum and mean lightness in a source pixels array.
     * If factor is positive, stretches color to maximum lightness range in
     * [0.0, 100.0]. If factor is negative, compresses color to mean. Assigns
@@ -1719,16 +1726,16 @@ public abstract class Pixels {
     *
     * @return the contrast pixels
     *
+    * @see Color#fromHex(int, Color)
+    * @see Color#cieLabToCieXyz(Vec4, Vec4)
+    * @see Color#cieXyzToCieLab(Vec4, Vec4)
+    * @see Color#cieXyzTolRgb(Vec4, Color)
+    * @see Color#lRgbToCieXyz(Color, Vec4)
+    * @see Color#lRgbTosRgb(Color, boolean, Color)
+    * @see Color#sRgbTolRgb(Color, boolean, Color)
+    * @see Color#toHexIntSat(Color)
     * @see Utils#abs(float)
     * @see Utils#clamp(float, float, float)
-    * @see Color#fromHex(int, Color)
-    * @see Color#sRgbTolRgb(Color, boolean, Color)
-    * @see Color#lRgbToCieXyz(Color, Vec4)
-    * @see Color#cieXyzToCieLab(Vec4, Vec4)
-    * @see Color#cieLabToCieXyz(Vec4, Vec4)
-    * @see Color#cieXyzTolRgb(Vec4, Color)
-    * @see Color#lRgbTosRgb(Color, boolean, Color)
-    * @see Color#toHexIntSat(Color)
     */
    public static int[] stretchContrast ( final int[] source, final float fac,
       final int[] target ) {
@@ -1836,12 +1843,12 @@ public abstract class Pixels {
     * @return the tinted pixels
     *
     * @see Color#fromHex(int, Color)
-    * @see Color#sRgbTolRgb(Color, boolean, Color)
-    * @see Color#lRgbToCieXyz(Color, Vec4)
-    * @see Color#cieXyzToCieLab(Vec4, Vec4)
     * @see Color#cieLabToCieXyz(Vec4, Vec4)
+    * @see Color#cieXyzToCieLab(Vec4, Vec4)
     * @see Color#cieXyzTolRgb(Vec4, Color)
+    * @see Color#lRgbToCieXyz(Color, Vec4)
     * @see Color#lRgbTosRgb(Color, boolean, Color)
+    * @see Color#sRgbTolRgb(Color, boolean, Color)
     * @see Color#toHexIntSat(Color)
     */
    public static int[] tintLab ( final int[] source, final int tint,

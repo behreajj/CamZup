@@ -6,7 +6,7 @@ import camzup.core.Vec3;
 
 /**
  * Maintains consistent behavior between 3D renderers which display text to
- * the screen.
+ * the sketch.
  */
 public interface ITextDisplay3 extends ITextDisplay {
 

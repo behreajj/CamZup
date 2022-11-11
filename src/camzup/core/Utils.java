@@ -229,17 +229,33 @@ public abstract class Utils implements IUtils {
     * <code>0b01010011</code> would yield
     * <code>{ 1, 1, 0, 0, 1, 0, 1, 0 }</code> .
     *
-    * @param a the byte
+    * @param b the byte
     *
     * @return the bit array
     */
-   public static byte[] bitslm ( final byte a ) {
+   public static byte[] bitslm ( final byte b ) {
 
-      final byte[] result = new byte[Byte.SIZE];
-      for ( int i = 0; i < Byte.SIZE; ++i ) {
-         result[i] = ( byte ) ( a >> i & 1 );
+      return Utils.bitslm(b, new byte[Byte.SIZE], 0);
+   }
+
+   /**
+    * Appends to an array of bits from a byte, ordered from least to most
+    * significant digit, the reverse of a literal. For example,
+    * <code>0b01010011</code> would yield
+    * <code>{ 1, 1, 0, 0, 1, 0, 1, 0 }</code> .
+    *
+    * @param b   the byte
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the bit array
+    */
+   public static byte[] bitslm ( final byte b, final byte[] arr, final int i ) {
+
+      for ( int j = 0; j < Byte.SIZE; ++j ) {
+         arr[i + j] = ( byte ) ( b >> j & 1 );
       }
-      return result;
+      return arr;
    }
 
    /**
@@ -248,17 +264,33 @@ public abstract class Utils implements IUtils {
     * <code>0b01010011</code> would yield the array
     * <code>{ 0, 1, 0, 1, 0, 0, 1, 1 }</code> .
     *
-    * @param a the byte
+    * @param b the byte
     *
     * @return the bit array
     */
-   public static byte[] bitsml ( final byte a ) {
+   public static byte[] bitsml ( final byte b ) {
 
-      final byte[] result = new byte[Byte.SIZE];
-      for ( int i = 7, j = 0; i > -1; --i, ++j ) {
-         result[j] = ( byte ) ( a >> i & 1 );
+      return Utils.bitsml(b, new byte[Byte.SIZE], 0);
+   }
+
+   /**
+    * Appends to an array of bits from a byte, ordered from most to least
+    * significant digit, as a literal would be written. For example,
+    * <code>0b01010011</code> would yield the array
+    * <code>{ 0, 1, 0, 1, 0, 0, 1, 1 }</code> . * @param a the byte
+    *
+    * @param b   the byte
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the bit array
+    */
+   public static byte[] bitsml ( final byte b, final byte[] arr, final int i ) {
+
+      for ( int j = Byte.SIZE - 1, k = 0; j > -1; --j, ++k ) {
+         arr[i + k] = ( byte ) ( b >> j & 1 );
       }
-      return result;
+      return arr;
    }
 
    /**
@@ -268,7 +300,7 @@ public abstract class Utils implements IUtils {
     *
     * @param value the input value
     *
-    * @return the raised value.
+    * @return the raised value
     */
    public static int ceil ( final float value ) {
 
@@ -499,7 +531,7 @@ public abstract class Utils implements IUtils {
     *
     * @param value the input value
     *
-    * @return the floored value.
+    * @return the floored value
     */
    public static int floor ( final float value ) {
 
@@ -691,17 +723,17 @@ public abstract class Utils implements IUtils {
     * If the step is less than zero, returns the origin. If the step is
     * greater than one, returns the destination.
     *
-    * @param origin the origin value
-    * @param dest   the destination value
-    * @param step   the step
+    * @param orig the origin value
+    * @param dest the destination value
+    * @param step the step
     *
     * @return the interpolated value
     */
-   public static float lerp ( final float origin, final float dest,
+   public static float lerp ( final float orig, final float dest,
       final float step ) {
 
-      return step <= 0.0f ? origin : step >= 1.0f ? dest : ( 1.0f - step )
-         * origin + step * dest;
+      return step <= 0.0f ? orig : step >= 1.0f ? dest : ( 1.0f - step ) * orig
+         + step * dest;
    }
 
    /**
@@ -709,36 +741,35 @@ public abstract class Utils implements IUtils {
     * If the step is less than zero, returns the origin. If the step is
     * greater than one, returns the destination.
     *
-    * @param origin the origin value
-    * @param dest   the destination value
-    * @param step   the step
+    * @param orig the origin value
+    * @param dest the destination value
+    * @param step the step
     *
     * @return the interpolated value
     *
     * @see Utils#lerpUnclamped(float, float, float)
     */
-   public static int lerp ( final int origin, final int dest,
-      final float step ) {
+   public static int lerp ( final int orig, final int dest, final float step ) {
 
-      if ( step <= 0.0f ) { return origin; }
+      if ( step <= 0.0f ) { return orig; }
       if ( step >= 1.0f ) { return dest; }
-      return Utils.lerpUnclamped(origin, dest, step);
+      return Utils.lerpUnclamped(orig, dest, step);
    }
 
    /**
     * Linear interpolation from the origin to the destination value by a step.
     * Does not check to see if the step is beyond the range [0.0, 1.0] .
     *
-    * @param origin the origin value
-    * @param dest   the destination value
-    * @param step   the step
+    * @param orig the origin value
+    * @param dest the destination value
+    * @param step the step
     *
     * @return the interpolated value
     */
-   public static float lerpUnclamped ( final float origin, final float dest,
+   public static float lerpUnclamped ( final float orig, final float dest,
       final float step ) {
 
-      return ( 1.0f - step ) * origin + step * dest;
+      return ( 1.0f - step ) * orig + step * dest;
    }
 
    /**
@@ -746,18 +777,18 @@ public abstract class Utils implements IUtils {
     * Does not check to see if the step is beyond the range [0.0, 1.0] .
     * Rounds the result to an integer.
     *
-    * @param origin the origin value
-    * @param dest   the destination value
-    * @param step   the step
+    * @param orig the origin value
+    * @param dest the destination value
+    * @param step the step
     *
     * @return the interpolated value
     *
     * @see Utils#round(float)
     */
-   public static int lerpUnclamped ( final int origin, final int dest,
+   public static int lerpUnclamped ( final int orig, final int dest,
       final float step ) {
 
-      return Utils.round( ( 1.0f - step ) * origin + step * dest);
+      return Utils.round( ( 1.0f - step ) * orig + step * dest);
    }
 
    /**
@@ -1195,8 +1226,6 @@ public abstract class Utils implements IUtils {
     * @param levels the levels
     *
     * @return the quantized value
-    *
-    * @see Utils#quantizeSigned(float, int)
     */
    public static float quantize ( final float value, final int levels ) {
 
@@ -1230,8 +1259,6 @@ public abstract class Utils implements IUtils {
     * @param levels the levels
     *
     * @return the quantized value
-    *
-    * @see Utils#abs(float)
     */
    public static float quantizeUnsigned ( final float value,
       final int levels ) {
@@ -1263,8 +1290,6 @@ public abstract class Utils implements IUtils {
     * @param places the number of places
     *
     * @return the rounded value
-    *
-    * @see Utils#round(float)
     */
    public static float round ( final float value, final int places ) {
 
@@ -1428,7 +1453,7 @@ public abstract class Utils implements IUtils {
     *
     * @param a the input value
     *
-    * @return the swap.
+    * @return the swap
     */
    public static int swapEndian ( final int a ) {
 

@@ -1477,13 +1477,18 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    public static Color eval ( final Gradient grd, final float step,
       final Color.AbstrEasing easing, final Color target ) {
 
-      grd.query.step = step;
+      /*
+       * This is different from above evaluation methods in order to facilitate,
+       * e.g., mixing colors for normal maps.
+       */
 
-      final ColorKey prev = grd.keys.floor(grd.query);
-      if ( prev == null ) { return target.set(grd.keys.first().clr); }
+      grd.query.step = Utils.clamp01(step);
 
-      final ColorKey next = grd.keys.ceiling(grd.query);
-      if ( next == null ) { return target.set(grd.keys.last().clr); }
+      ColorKey prev = grd.keys.floor(grd.query);
+      if ( prev == null ) { prev = grd.keys.first(); }
+
+      ColorKey next = grd.keys.ceiling(grd.query);
+      if ( next == null ) { next = grd.keys.last(); }
 
       /* This needs to be Utils.div to avoid returning 0x0 as a color. */
       return easing.applyUnclamped(next.clr, prev.clr, Utils.div(step
@@ -1678,7 +1683,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Returns a monochrome palette with 4 colors that simulates an LCD screen.
+    * Returns a monochrome palette with 4 colors that simulates an LCD
+    * display.
     *
     * @param target the output gradient
     *

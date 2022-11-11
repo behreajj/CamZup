@@ -32,7 +32,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * The default constructor.
     */
-   public Mesh2 ( ) {}
+   public Mesh2 ( ) {
+      // TODO: skewX, skewY
+
+   }
 
    /**
     * Creates a mesh from arrays of faces, coordinates and texture
