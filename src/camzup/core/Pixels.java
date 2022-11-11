@@ -125,12 +125,12 @@ public abstract class Pixels {
    public static int[] adjustContrast ( final int[] source, final float fac,
       final int[] target ) {
 
-      // TODO: Retest.
+      // TODO: Test with image containing translucent pixels.
 
       final int srcLen = source.length;
       if ( srcLen == target.length ) {
          final float valAdjust = 1.0f + Utils.clamp(fac, -1.0f, 1.0f);
-         if ( Utils.approx(valAdjust, 0.0f) ) {
+         if ( Utils.approx(valAdjust, 1.0f) ) {
             System.arraycopy(source, 0, target, 0, srcLen);
             return target;
          }
