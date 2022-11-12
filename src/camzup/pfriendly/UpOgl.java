@@ -6,6 +6,7 @@ import camzup.core.ArcMode;
 import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.Curve3;
+import camzup.core.Experimental;
 import camzup.core.ICurve;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
@@ -4331,10 +4332,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @return the screen point
     */
+   @Experimental
    protected Vec3 screen ( final float xSource, final float ySource,
       final float zSource, final Vec3 target ) {
 
-      // QUERY: Should this be w - 1, h - 1 ?
       this.screen1s(xSource, ySource, zSource, target);
       return target.set(this.width * ( 1.0f + target.x ) * 0.5f, this.height
          * ( 1.0f - ( 1.0f + target.y ) * 0.5f ), ( 1.0f + target.z ) * 0.5f);

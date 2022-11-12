@@ -441,11 +441,8 @@ public class Quaternion implements Comparable < Quaternion > {
    public static boolean approx ( final Quaternion a, final Quaternion b,
       final float tolerance ) {
 
-      /* @formatter:off */
-      return a == b ||
-         Utils.approx(a.real, b.real, tolerance) &&
-         Vec3.approx(a.imag, b.imag, tolerance);
-      /* @formatter:on */
+      return a == b || Utils.approx(a.real, b.real, tolerance) && Vec3.approx(
+         a.imag, b.imag, tolerance);
    }
 
    /**
@@ -776,8 +773,8 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Sets a quaternion from an axis and angle. Normalizes the axis prior to
-    * calculating the quaternion.
+    * Sets a quaternion from an axis and angle. Normalizes the axis. If the
+    * axis has no magnitude, returns the identity.
     *
     * @param radians the angle in radians
     * @param axis    the axis
@@ -785,37 +782,22 @@ public class Quaternion implements Comparable < Quaternion > {
     *
     * @return the quaternion
     *
+    * @see Math#sqrt(double)
     * @see Quaternion#identity(Quaternion)
-    * @see Utils#approx(float, float)
-    * @see Utils#invSqrtUnchecked(float)
-    * @see Vec3#magSq(Vec3)
     */
    public static Quaternion fromAxisAngle ( final float radians,
       final Vec3 axis, final Quaternion target ) {
 
-      final float amSq = Vec3.magSq(axis);
-      if ( amSq > 0.0f ) {
-
-         float nx = axis.x;
-         float ny = axis.y;
-         float nz = axis.z;
-
-         if ( !Utils.approx(amSq, 1.0f, IUtils.EPSILON) ) {
-            final float amInv = Utils.invSqrtUnchecked(amSq);
-            nx *= amInv;
-            ny *= amInv;
-            nz *= amInv;
-         }
-
-         final double modRad = radians % IUtils.TAU_D;
-         final double halfAngle = 0.5d * modRad;
-         final double sinHalf = Math.sin(halfAngle);
-
-         return target.set(( float ) Math.cos(halfAngle), ( float ) ( nx
-            * sinHalf ), ( float ) ( ny * sinHalf ), ( float ) ( nz
-               * sinHalf ));
+      final double ax = axis.x;
+      final double ay = axis.y;
+      final double az = axis.z;
+      final double amSq = ax * ax + ay * ay + az * az;
+      if ( amSq > 0.0d ) {
+         final double rHalf = radians % IUtils.TAU_D * 0.5d;
+         final double amInv = Math.sin(rHalf) / Math.sqrt(amSq);
+         return target.set(( float ) Math.cos(rHalf), ( float ) ( ax * amInv ),
+            ( float ) ( ay * amInv ), ( float ) ( az * amInv ));
       }
-
       return Quaternion.identity(target);
    }
 

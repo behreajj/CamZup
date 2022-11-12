@@ -668,21 +668,19 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * Moves the camera by the given vector then updates the camera.
     *
     * @param v the vector
-    *
-    * @see IUp3#moveByGlobal(float, float, float)
     */
    @Override
    public void moveBy ( final Vec3 v ) { this.moveByLocal(v.x, v.y, v.z); }
 
    /**
-    * Moves the renderer's camera by a vector relative to its orientation;
-    * causes the camera to orbit around the locus at which it is looking.
+    * Moves the camera by a vector relative to its orientation; causes the
+    * camera to orbit around the locus at which it is looking.
     *
     * @param x the vector x
     * @param y the vector y
     * @param z the vector z
     */
-   @Experimental
+   @Override
    public void moveByLocal ( final float x, final float y, final float z ) {
 
       final PMatrix3D m = this.cameraInv;
@@ -696,17 +694,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
          this.moveTo(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
             + zLocal);
       }
-   }
-
-   /**
-    * Moves the renderer's camera by a vector relative to its orientation;
-    * causes the camera to orbit around the locus at which it is looking.
-    *
-    * @param v the vector
-    */
-   public void moveByLocal ( final Vec3 v ) {
-
-      this.moveByLocal(v.x, v.y, v.z);
    }
 
    /**
@@ -1206,8 +1193,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Moves the renderer's camera and its look target by a vector relative to
-    * its orientation.
+    * Moves the camera and its look target by a vector relative to its
+    * orientation.
     *
     * @param x the vector x
     * @param y the vector y
@@ -1231,8 +1218,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Moves the renderer's camera and its look target by a vector relative to
-    * its orientation.
+    * Moves the camera and its look target by a vector relative to its
+    * orientation.
     *
     * @param v the vector
     */

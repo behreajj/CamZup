@@ -1129,9 +1129,9 @@ public interface IYup2 extends IUp {
     */
    static Vec2 mouse1s ( final PApplet parent, final Vec2 target ) {
 
-      return target.set(2.0f * Utils.clamp01(parent.mouseX
-         / ( float ) parent.width) - 1.0f, 1.0f - 2.0f * Utils.clamp01(
-            parent.mouseY / ( float ) parent.height));
+      return target.set(2.0f * Utils.clamp01(parent.mouseX / ( parent.width
+         - 1.0f )) - 1.0f, 1.0f - 2.0f * Utils.clamp01(parent.mouseY
+            / ( parent.height - 1.0f )));
    }
 
    /**
@@ -1145,8 +1145,8 @@ public interface IYup2 extends IUp {
     */
    static Vec2 mouse1u ( final PApplet parent, final Vec2 target ) {
 
-      return target.set(Utils.clamp01(parent.mouseX / ( float ) parent.width),
-         1.0f - Utils.clamp01(parent.mouseY / ( float ) parent.height));
+      return target.set(Utils.clamp01(parent.mouseX / ( parent.width - 1.0f )),
+         1.0f - Utils.clamp01(parent.mouseY / ( parent.height - 1.0f )));
    }
 
    /**
@@ -1185,9 +1185,12 @@ public interface IYup2 extends IUp {
          svgp.append(hStr);
          svgp.append(" L 0.0 ");
          svgp.append(hStr);
-         svgp.append(" Z\" stroke=\"none\" fill-opacity=\"");
-         svgp.append(Utils.toFixed(bgai * IUtils.ONE_255,
-            ISvgWritable.FIXED_PRINT));
+         svgp.append(" Z\" stroke=\"none");
+         if ( bgai < 255 ) {
+            svgp.append("\" fill-opacity=\"");
+            svgp.append(Utils.toFixed(bgai * IUtils.ONE_255,
+               ISvgWritable.FIXED_PRINT));
+         }
          svgp.append("\" fill=\"");
          Color.toHexWeb(svgp, bgClr);
          svgp.append("\" />");

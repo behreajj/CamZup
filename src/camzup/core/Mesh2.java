@@ -32,10 +32,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * The default constructor.
     */
-   public Mesh2 ( ) {
-      // TODO: skewX, skewY
-
-   }
+   public Mesh2 ( ) {}
 
    /**
     * Creates a mesh from arrays of faces, coordinates and texture
@@ -2024,6 +2021,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
+    * The default texture coordinate (UV) profile to use when making a cube.
+    */
+   public static final UvProfile.Arc DEFAULT_ARC_UV_PROFILE
+      = UvProfile.Arc.BOUNDS;
+
+   /**
     * Type of polygon to draw when it is not supplied to the polygon function.
     */
    public static final PolyType DEFAULT_POLY_TYPE = PolyType.NGON;
@@ -2043,7 +2046,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final float oculus, final int sectors, final Mesh2 target ) {
 
       return Mesh2.arc(startAngle, stopAngle, oculus, sectors,
-         Mesh2.DEFAULT_POLY_TYPE, target);
+         Mesh2.DEFAULT_POLY_TYPE, Mesh2.DEFAULT_ARC_UV_PROFILE, target);
    }
 
    /**
@@ -2059,13 +2062,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * @param oculus     the size of the opening
     * @param sectors    number of sectors in a circle
     * @param poly       the polygon type
+    * @param profile    the uv profile
     * @param target     the output mesh
     *
     * @return the arc
     */
    public static Mesh2 arc ( final float startAngle, final float stopAngle,
       final float oculus, final int sectors, final PolyType poly,
-      final Mesh2 target ) {
+      final UvProfile.Arc profile, final Mesh2 target ) {
 
       target.name = "Arc";
 
@@ -2095,7 +2099,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final float origAngle = IUtils.TAU * a1;
       final float destAngle = IUtils.TAU * ( a1 + arcLen1 );
 
-      for ( int k = 0, i = 0, j = 1; k < sctCount; ++k, i += 2, j += 2 ) {
+      for ( int k = 0; k < sctCount; ++k ) {
          final float step = k * toStep;
          final float theta = ( 1.0f - step ) * origAngle + step * destAngle;
 
@@ -2103,23 +2107,50 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
          final float cosa = ( float ) Math.cos(radd);
          final float sina = ( float ) Math.sin(radd);
 
-         final Vec2 v0 = vs[i];
-         v0.set(0.5f * cosa, 0.5f * sina);
+         final int i = k + k;
+         vs[i].set(0.5f * cosa, 0.5f * sina);
+         vs[i + 1].set(oculRad * cosa, oculRad * sina);
+      }
 
-         final Vec2 v1 = vs[j];
-         v1.set(oculRad * cosa, oculRad * sina);
+      switch ( profile ) {
 
-         // TODO: Multiple UV profiles for this? One which treats ring as a bent
-         // strip. See
-         // https://discourse.processing.org/t/
-         // how-can-i-turn-an-image-in-png-or-svg-format-into-a-ring-shape/27479
-         final Vec2 vt0 = vts[i];
-         vt0.x = v0.x + 0.5f;
-         vt0.y = 0.5f - v0.y;
+         case CLIP:
 
-         final Vec2 vt1 = vts[j];
-         vt1.x = v1.x + 0.5f;
-         vt1.y = 0.5f - v1.y;
+            final float c1 = a1 + arcLen1;
+            for ( int k = 0; k < sctCount; ++k ) {
+               final float step = k * toStep;
+               final float v = ( 1.0f - step ) * c1 + step * a1;
+               final int i = k + k;
+               vts[i].set(1.0f, v);
+               vts[i + 1].set(0.0f, v);
+            }
+
+            break;
+
+         case STRETCH:
+
+            for ( int k = 0; k < sctCount; ++k ) {
+               final float step = 1.0f - k * toStep;
+               final int i = k + k;
+               vts[i].set(1.0f, step);
+               vts[i + 1].set(0.0f, step);
+            }
+
+            break;
+
+         case BOUNDS:
+
+         default:
+
+            for ( int k = 0; k < sctCount; ++k ) {
+               final int i = k + k;
+               final Vec2 v0 = vs[i];
+               vts[i].set(v0.x + 0.5f, 0.5f - v0.y);
+
+               final int j = i + 1;
+               final Vec2 v1 = vs[j];
+               vts[j].set(v1.x + 0.5f, 0.5f - v1.y);
+            }
       }
 
       int len;
@@ -2215,7 +2246,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final float oculus, final Mesh2 target ) {
 
       return Mesh2.arc(startAngle, stopAngle, oculus,
-         IMesh.DEFAULT_CIRCLE_SECTORS, Mesh2.DEFAULT_POLY_TYPE, target);
+         IMesh.DEFAULT_CIRCLE_SECTORS, Mesh2.DEFAULT_POLY_TYPE,
+         Mesh2.DEFAULT_ARC_UV_PROFILE, target);
    }
 
    /**
@@ -2232,7 +2264,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int sectors, final Mesh2 target ) {
 
       return Mesh2.arc(startAngle, stopAngle, IMesh.DEFAULT_OCULUS, sectors,
-         Mesh2.DEFAULT_POLY_TYPE, target);
+         Mesh2.DEFAULT_POLY_TYPE, Mesh2.DEFAULT_ARC_UV_PROFILE, target);
    }
 
    /**
@@ -2248,7 +2280,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Mesh2 target ) {
 
       return Mesh2.arc(startAngle, stopAngle, IMesh.DEFAULT_OCULUS,
-         IMesh.DEFAULT_CIRCLE_SECTORS, Mesh2.DEFAULT_POLY_TYPE, target);
+         IMesh.DEFAULT_CIRCLE_SECTORS, Mesh2.DEFAULT_POLY_TYPE,
+         Mesh2.DEFAULT_ARC_UV_PROFILE, target);
    }
 
    /**
@@ -2263,7 +2296,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public static Mesh2 arc ( final float stopAngle, final Mesh2 target ) {
 
       return Mesh2.arc(0.0f, stopAngle, IMesh.DEFAULT_OCULUS,
-         IMesh.DEFAULT_CIRCLE_SECTORS, Mesh2.DEFAULT_POLY_TYPE, target);
+         IMesh.DEFAULT_CIRCLE_SECTORS, Mesh2.DEFAULT_POLY_TYPE,
+         Mesh2.DEFAULT_ARC_UV_PROFILE, target);
    }
 
    /**

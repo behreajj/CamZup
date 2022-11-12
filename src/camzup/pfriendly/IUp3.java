@@ -2,6 +2,7 @@ package camzup.pfriendly;
 
 import camzup.core.Bounds3;
 import camzup.core.Handedness;
+import camzup.core.IUtils;
 import camzup.core.Octree;
 import camzup.core.Ray3;
 import camzup.core.Utils;
@@ -59,6 +60,20 @@ public interface IUp3 extends IUp {
    }
 
    /**
+    * Sets the camera to look at a center with the default up direction.
+    *
+    * @param xCenter target location x
+    * @param yCenter target location y
+    * @param zCenter target location z
+    */
+   default void camera ( final float xCenter, final float yCenter,
+      final float zCenter ) {
+
+      this.camera(this.getLocX(), this.getLocY(), this.getLocZ(), xCenter,
+         yCenter, zCenter);
+   }
+
+   /**
     * Looks at the center point from the eye point, using a default reference
     * up axis.
     *
@@ -71,6 +86,16 @@ public interface IUp3 extends IUp {
     */
    void camera ( final float xEye, final float yEye, final float zEye,
       final float xCenter, final float yCenter, final float zCenter );
+
+   /**
+    * Sets the camera to look at a center with the default up direction.
+    *
+    * @param center the center of the gaze
+    */
+   default void camera ( final Vec3 center ) {
+
+      this.camera(center.x, center.y, center.z);
+   }
 
    /**
     * Sets the camera to a location, looking at a center, with the default up
@@ -399,8 +424,28 @@ public interface IUp3 extends IUp {
    }
 
    /**
-    * Moves the renderer's camera to the given location, then updates the
-    * camera.
+    * Moves the camera by a vector relative to its orientation; causes the
+    * camera to orbit around the locus at which it is looking.
+    *
+    * @param x the vector x
+    * @param y the vector y
+    * @param z the vector z
+    */
+   void moveByLocal ( float x, float y, float z );
+
+   /**
+    * Moves the camera by a vector relative to its orientation; causes the
+    * camera to orbit around the locus at which it is looking.
+    *
+    * @param v the vector
+    */
+   default void moveByLocal ( final Vec3 v ) {
+
+      this.moveByLocal(v.x, v.y, v.z);
+   }
+
+   /**
+    * Moves the camera to the given location, then updates the camera.
     *
     * @param x the location x
     * @param y the location y
@@ -417,8 +462,7 @@ public interface IUp3 extends IUp {
    }
 
    /**
-    * Moves the renderer's camera to the given location, then updates the
-    * camera.
+    * Moves the camera to the given location, then updates the camera.
     *
     * @param locNew the new location
     *
@@ -430,9 +474,9 @@ public interface IUp3 extends IUp {
    }
 
    /**
-    * Moves the renderer's camera to a given location and updates the camera.
-    * Uses clamped linear interpolation, so the step should be smoothed prior
-    * to calling this function.
+    * Moves the camera to a given location and updates the camera. Prefers
+    * <a href="https://www.wikiwand.com/en/Slerp#Geometric_Slerp">geometric
+    * spherical linear interpolation</a> over linear interpolation.
     *
     * @param locNew the new location
     * @param step   the step
@@ -450,9 +494,34 @@ public interface IUp3 extends IUp {
          return;
       }
 
-      final float u = 1.0f - step;
-      this.moveTo(u * this.getLocX() + step * locNew.x, u * this.getLocY()
-         + step * locNew.y, u * this.getLocZ() + step * locNew.z);
+      final double td = step;
+
+      final double ox = this.getLocX();
+      final double oy = this.getLocY();
+      final double oz = this.getLocZ();
+
+      final double dx = locNew.x;
+      final double dy = locNew.y;
+      final double dz = locNew.z;
+
+      final double odDot = ox * dx + oy * dy + oz * dz;
+      if ( odDot < - ( 1.0d - IUtils.EPSILON_D ) || odDot > 1.0d
+         - IUtils.EPSILON_D ) {
+         /* Linear interpolation when origin and destination near parallel. */
+         final double ud = 1.0d - td;
+         this.moveTo(( float ) ( ud * ox + td * dx ), ( float ) ( ud * oy + td
+            * dy ), ( float ) ( ud * oz + td * dz ));
+      } else {
+         final double omega = Math.acos(odDot);
+         final double omSin = Math.sin(omega);
+         final double omSinInv = omSin != 0.0d ? 1.0d / omSin : 1.0d;
+
+         final double oFac = Math.sin( ( 1.0d - td ) * omega) * omSinInv;
+         final double dFac = Math.sin(td * omega) * omSinInv;
+
+         this.moveTo(( float ) ( oFac * ox + dFac * dx ), ( float ) ( oFac * oy
+            + dFac * dy ), ( float ) ( oFac * oz + dFac * dz ));
+      }
    }
 
    /**
@@ -647,7 +716,7 @@ public interface IUp3 extends IUp {
     * Tolerance beneath which the camera's forward direction will be
     * considered the world, or reference, up direction.
     */
-   float POLARITY_TOLERANCE = 0.001f;
+   float POLARITY_TOLERANCE = 0.0005f;
 
    /**
     * Gets a mouse within a unit square, where either component may be in the
@@ -661,9 +730,9 @@ public interface IUp3 extends IUp {
     */
    static Vec3 mouse1s ( final PApplet parent, final Vec3 target ) {
 
-      return target.set(2.0f * Utils.clamp01(parent.mouseX
-         / ( float ) parent.width) - 1.0f, 1.0f - 2.0f * Utils.clamp01(
-            parent.mouseY / ( float ) parent.height), 0.0f);
+      return target.set(2.0f * Utils.clamp01(parent.mouseX / ( parent.width
+         - 1.0f )) - 1.0f, 1.0f - 2.0f * Utils.clamp01(parent.mouseY
+            / ( parent.height - 1.0f )), 0.0f);
    }
 
    /**
@@ -677,8 +746,8 @@ public interface IUp3 extends IUp {
     */
    static Vec3 mouse1u ( final PApplet parent, final Vec3 target ) {
 
-      return target.set(Utils.clamp01(parent.mouseX / ( float ) parent.width),
-         1.0f - Utils.clamp01(parent.mouseY / ( float ) parent.height), 0.0f);
+      return target.set(Utils.clamp01(parent.mouseX / ( parent.width - 1.0f )),
+         1.0f - Utils.clamp01(parent.mouseY / ( parent.height - 1.0f )), 0.0f);
    }
 
 }

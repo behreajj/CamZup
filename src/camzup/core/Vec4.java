@@ -199,26 +199,23 @@ public class Vec4 implements Comparable < Vec4 > {
    /**
     * Promotes a Vec2 to a Vec4.
     *
-    * @param v2 the vector
+    * @param v the source vector
     *
     * @return this vector
     */
-   public Vec4 set ( final Vec2 v2 ) {
+   public Vec4 set ( final Vec2 v ) {
 
-      return this.set(v2.x, v2.y, 0.0f, 0.0f);
+      return this.set(v.x, v.y, 0.0f, 0.0f);
    }
 
    /**
     * Promotes a Vec3 to a Vec4.
     *
-    * @param v3 the vector
+    * @param v the source vector
     *
     * @return this vector
     */
-   public Vec4 set ( final Vec3 v3 ) {
-
-      return this.set(v3.x, v3.y, v3.z, 0.0f);
-   }
+   public Vec4 set ( final Vec3 v ) { return this.set(v.x, v.y, v.z, 0.0f); }
 
    /**
     * Promotes a Vec3 to a Vec4 with an extra component.<br>
@@ -226,27 +223,24 @@ public class Vec4 implements Comparable < Vec4 > {
     * Useful for multiplying a 4 x 4 matrix with either a 3D vector or a 3D
     * point. (For points, w is 1.0; for vectors, w is 0.0 .)
     *
-    * @param v3 the vector
-    * @param w  the w component
+    * @param v the source vector
+    * @param w the w component
     *
     * @return this vector
     */
-   public Vec4 set ( final Vec3 v3, final float w ) {
+   public Vec4 set ( final Vec3 v, final float w ) {
 
-      return this.set(v3.x, v3.y, v3.z, w);
+      return this.set(v.x, v.y, v.z, w);
    }
 
    /**
-    * Copies the components of the input vector to this vector.
+    * Copies the components of the source vector to this vector.
     *
-    * @param source the input vector
+    * @param v the source vector
     *
     * @return this vector
     */
-   public Vec4 set ( final Vec4 source ) {
-
-      return this.set(source.x, source.y, source.z, source.w);
-   }
+   public Vec4 set ( final Vec4 v ) { return this.set(v.x, v.y, v.z, v.w); }
 
    /**
     * Returns a float array of length 4 containing this vector's components.

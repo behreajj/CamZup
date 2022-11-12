@@ -170,36 +170,33 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Promotes a Vec2 to a Vec3.
     *
-    * @param v2 the vector
+    * @param v the source vector
     *
     * @return this vector
     */
-   public Vec3 set ( final Vec2 v2 ) { return this.set(v2.x, v2.y, 0.0f); }
+   public Vec3 set ( final Vec2 v ) { return this.set(v.x, v.y, 0.0f); }
 
    /**
     * Promotes a Vec2 to a Vec3 with an extra component.
     *
-    * @param v2 the vector
-    * @param z  the w component
+    * @param v the source vector
+    * @param z the w component
     *
     * @return this vector
     */
-   public Vec3 set ( final Vec2 v2, final float z ) {
+   public Vec3 set ( final Vec2 v, final float z ) {
 
-      return this.set(v2.x, v2.y, z);
+      return this.set(v.x, v.y, z);
    }
 
    /**
-    * Copies the components of the input vector to this vector.
+    * Copies the components of the source vector to this vector.
     *
-    * @param source the input vector
+    * @param v the source vector
     *
     * @return this vector
     */
-   public Vec3 set ( final Vec3 source ) {
-
-      return this.set(source.x, source.y, source.z);
-   }
+   public Vec3 set ( final Vec3 v ) { return this.set(v.x, v.y, v.z); }
 
    /**
     * Returns a float array of length 3 containing this vector's components.

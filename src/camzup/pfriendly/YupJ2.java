@@ -2498,7 +2498,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * 0.0, 1.0, 0.0,<br>
     * 0.0, 0.0, 1.0<br>
     * <br>
-    * - then scales by the screen pixel density.
+    * - then scales by pixel density.
     *
     * @see AffineTransform#setToIdentity()
     * @see Graphics2D#setTransform(AffineTransform)
@@ -4656,8 +4656,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    protected void textCharImpl ( final char ch, final float x, final float y ) {
 
-      // TODO: Would any modifications here make a difference to font cut off?
-      // i.e., +/- 1 for bottom right coordinates vs. dimensions?
       final PFont.Glyph glyph = this.textFont.getGlyph(ch);
       if ( glyph != null ) {
          final float szNorm = this.textSize * Utils.div(1.0f, this.textFont
@@ -4706,9 +4704,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       /*
        * This calls the super implementation because the glyphs need to be
-       * tinted with the desired color. Adding one to u and v doesn't resolve
-       * the clipped image issue.
+       * tinted with the desired color.
        */
+
+      // TODO: Test any way to minimize font cutoff and distortion?
       super.imageImpl(glyph, x1, y1, x2, y2, 0, 0, u, v);
       this.imageMode = oldImgMd;
 

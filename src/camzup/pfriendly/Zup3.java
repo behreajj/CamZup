@@ -162,10 +162,14 @@ public class Zup3 extends Up3 {
       final float xUp, final float yUp, final float zUp ) {
 
       this.refUp.set(xUp, yUp, zUp);
+      this.lookTarget.set(xCenter, yCenter, zCenter);
+      this.cameraX = xEye;
+      this.cameraY = yEye;
+      this.cameraZ = zEye;
+      this.eyeDist = Vec3.mag(this.lookDir);
 
       this.lookDir.set(xEye - this.lookTarget.x, yEye - this.lookTarget.y, zEye
          - this.lookTarget.z);
-
       Vec3.normalize(this.lookDir, this.k);
 
       final float dotp = Vec3.dot(this.k, this.refUp);
@@ -174,13 +178,6 @@ public class Zup3 extends Up3 {
 
       Vec3.crossNorm(this.refUp, this.k, this.i);
       Vec3.crossNorm(this.k, this.i, this.j);
-
-      this.cameraX = xEye;
-      this.cameraY = yEye;
-      this.cameraZ = zEye;
-      this.eyeDist = Vec3.mag(this.lookDir);
-      this.lookTarget.set(xCenter, yCenter, zCenter);
-
       this.updateCameraInv();
    }
 

@@ -277,7 +277,7 @@ public abstract class Utils implements IUtils {
     * Appends to an array of bits from a byte, ordered from most to least
     * significant digit, as a literal would be written. For example,
     * <code>0b01010011</code> would yield the array
-    * <code>{ 0, 1, 0, 1, 0, 0, 1, 1 }</code> . * @param a the byte
+    * <code>{ 0, 1, 0, 1, 0, 0, 1, 1 }</code> .
     *
     * @param b   the byte
     * @param arr the array

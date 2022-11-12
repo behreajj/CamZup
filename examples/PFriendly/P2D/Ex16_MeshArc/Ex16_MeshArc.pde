@@ -45,7 +45,8 @@ void draw() {
     float startAngle = startOffset * step;
     float stopAngle = stopOffset + Utils.lerp(Utils.PI, Utils.TAU, step);
     Mesh2 mesh = entity.get(i);
-    Mesh2.arc(startAngle, stopAngle, 0.975f, 64, PolyType.NGON, mesh);
+    Mesh2.arc(startAngle, stopAngle, 0.975f, 64,
+       PolyType.NGON, UvProfile.Arc.BOUNDS, mesh);
     mesh.scale(scale);
   }
 

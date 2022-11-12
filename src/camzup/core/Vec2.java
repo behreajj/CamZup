@@ -137,14 +137,11 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Copies the components of the input vector to this vector.
     *
-    * @param source the input vector
+    * @param v the source vector
     *
     * @return this vector
     */
-   public Vec2 set ( final Vec2 source ) {
-
-      return this.set(source.x, source.y);
-   }
+   public Vec2 set ( final Vec2 v ) { return this.set(v.x, v.y); }
 
    /**
     * Returns a float array of length 2 containing this vector's components.
