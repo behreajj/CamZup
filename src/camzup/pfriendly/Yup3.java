@@ -172,10 +172,10 @@ public class Yup3 extends Up3 {
       this.cameraX = xEye;
       this.cameraY = yEye;
       this.cameraZ = zEye;
-      this.eyeDist = Vec3.mag(this.lookDir);
 
       this.lookDir.set(xEye - this.lookTarget.x, yEye - this.lookTarget.y, zEye
          - this.lookTarget.z);
+      this.eyeDist = Vec3.mag(this.lookDir);
       Vec3.normalize(this.lookDir, this.k);
 
       final float dotp = Vec3.dot(this.k, this.refUp);

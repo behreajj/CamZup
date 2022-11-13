@@ -833,13 +833,8 @@ public class Vec4 implements Comparable < Vec4 > {
 
    /**
     * Finds the dot product of two vectors by summing the products of their
-    * corresponding components. <em>a</em> · <em>b</em> := <em>a<sub>x</sub>
-    * b<sub>x</sub></em> + <em>a<sub>y</sub> b<sub>y</sub></em> +
-    * <em>a<sub>z</sub> b<sub>z</sub></em> + <em>a<sub>w</sub>
-    * b<sub>w</sub></em><br>
-    * <br>
-    * The dot product of a vector with itself is equal to its magnitude
-    * squared.
+    * corresponding components. The dot product of a vector with itself is
+    * equal to its magnitude squared.
     *
     * @param a left operand
     * @param b right operand

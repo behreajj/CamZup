@@ -119,7 +119,14 @@ public interface IUp3 extends IUp {
    void dolly ( final float z );
 
    /**
-    * Gets the renderer's camera location.
+    * Gets the cached distance between the eye and its location.
+    *
+    * @return the eye distance
+    */
+   float getEyeDist ( );
+
+   /**
+    * Gets the camera location.
     *
     * @param target the output vector
     *
@@ -128,21 +135,21 @@ public interface IUp3 extends IUp {
    Vec3 getLocation ( Vec3 target );
 
    /**
-    * Gets the renderer's camera location on the x axis.
+    * Gets the camera location on the x axis.
     *
     * @return the camera x
     */
    float getLocX ( );
 
    /**
-    * Gets the renderer's camera location on the y axis.
+    * Gets the camera location on the y axis.
     *
     * @return the camera y
     */
    float getLocY ( );
 
    /**
-    * Gets the renderer's camera location on the z axis.
+    * Gets the camera location on the z axis.
     *
     * @return the camera z
     */
@@ -495,6 +502,7 @@ public interface IUp3 extends IUp {
       }
 
       final double td = step;
+      final double ud = 1.0d - td;
 
       final double ox = this.getLocX();
       final double oy = this.getLocY();
@@ -504,24 +512,43 @@ public interface IUp3 extends IUp {
       final double dy = locNew.y;
       final double dz = locNew.z;
 
+      final double ed = this.getEyeDist();
+      if ( ed < IUtils.EPSILON_D ) {
+         this.moveTo(( float ) ( ud * ox + td * dx ), ( float ) ( ud * oy + td
+            * dy ), ( float ) ( ud * oz + td * dz ));
+         return;
+      }
+
+      /* Linear interpolation when origin and destination near parallel. */
       final double odDot = ox * dx + oy * dy + oz * dz;
       if ( odDot < - ( 1.0d - IUtils.EPSILON_D ) || odDot > 1.0d
          - IUtils.EPSILON_D ) {
-         /* Linear interpolation when origin and destination near parallel. */
-         final double ud = 1.0d - td;
          this.moveTo(( float ) ( ud * ox + td * dx ), ( float ) ( ud * oy + td
             * dy ), ( float ) ( ud * oz + td * dz ));
-      } else {
-         final double omega = Math.acos(odDot);
-         final double omSin = Math.sin(omega);
-         final double omSinInv = omSin != 0.0d ? 1.0d / omSin : 1.0d;
-
-         final double oFac = Math.sin( ( 1.0d - td ) * omega) * omSinInv;
-         final double dFac = Math.sin(td * omega) * omSinInv;
-
-         this.moveTo(( float ) ( oFac * ox + dFac * dx ), ( float ) ( oFac * oy
-            + dFac * dy ), ( float ) ( oFac * oz + dFac * dz ));
+         return;
       }
+
+      final double omega = Math.acos(odDot);
+      final double omSin = Math.sin(omega);
+      final double omSinInv = omSin != 0.0d ? 1.0d / omSin : 1.0d;
+
+      final double oFac = Math.sin(ud * omega) * omSinInv;
+      final double dFac = Math.sin(td * omega) * omSinInv;
+
+      final double cx = oFac * ox + dFac * dx;
+      final double cy = oFac * oy + dFac * dy;
+      final double cz = oFac * oz + dFac * dz;
+
+      final double cmsq = cx * cx + cy * cy + cz * cz;
+      if ( cmsq < IUtils.EPSILON_D ) {
+         this.moveTo(( float ) ( ud * ox + td * dx ), ( float ) ( ud * oy + td
+            * dy ), ( float ) ( ud * oz + td * dz ));
+         return;
+      }
+
+      final double scalar = ed / Math.sqrt(cmsq);
+      this.moveTo(( float ) ( cx * scalar ), ( float ) ( cy * scalar ),
+         ( float ) ( cz * scalar ));
    }
 
    /**

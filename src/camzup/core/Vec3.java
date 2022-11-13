@@ -620,7 +620,7 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the vector's azimuth in the range [-π, π].
+    * Finds the vector's azimuth in the range [-pi, pi].
     *
     * @param v the input vector
     *
@@ -634,7 +634,7 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the vector's azimuth in the range [0.0, τ].
+    * Finds the vector's azimuth in the range [0.0, tau].
     *
     * @param v the input vector
     *
@@ -853,18 +853,10 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * The cross product returns a vector perpendicular to both <em>a</em> and
     * <em>b</em>, and therefore normal to the plane on which <em>a</em> and
-    * <em>b</em> rest.<br>
-    * <br>
-    * <em>a</em> x <em>b</em> := ( <em>a<sub>y</sub> b<sub>z</sub></em> -
-    * <em>a<sub>z</sub> b<sub>y</sub></em> , <em>a<sub>z</sub>
-    * b<sub>x</sub></em> - <em>a<sub>x</sub> b<sub>z</sub></em> ,
-    * <em>a<sub>x</sub> b<sub>y</sub></em> - <em>a<sub>y</sub>
-    * b<sub>x</sub></em> )<br>
-    * <br>
-    * The cross product is anti-commutative, meaning <em>a</em> x <em>b</em> =
-    * - ( <em>b</em> x <em>a</em> ) . A unit vector does not necessarily
-    * result from the cross of two unit vectors. The 3D equivalent to
-    * {@link Vec2#perpendicular(Vec2, Vec2)}.
+    * <em>b</em> rest. The cross product is anti-commutative, meaning
+    * <em>a</em> x <em>b</em> = - ( <em>b</em> x <em>a</em> ) . A unit vector
+    * does not necessarily result from the cross of two unit vectors. The 3D
+    * equivalent to {@link Vec2#perpendicular(Vec2, Vec2)}.
     *
     * @param a      left operand
     * @param b      right operand
@@ -1119,14 +1111,8 @@ public class Vec3 implements Comparable < Vec3 > {
 
    /**
     * Finds the dot product of two vectors by summing the products of their
-    * corresponding components.<br>
-    * <br>
-    * <em>a</em> · <em>b</em> := <em>a<sub>x</sub> b<sub>x</sub></em> +
-    * <em>a<sub>y</sub> b<sub>y</sub></em> + <em>a<sub>z</sub>
-    * b<sub>z</sub></em><br>
-    * <br>
-    * The dot product of a vector with itself is equal to its magnitude
-    * squared.
+    * corresponding components. The dot product of a vector with itself is
+    * equal to its magnitude squared.
     *
     * @param a left operand
     * @param b right operand
@@ -1400,11 +1386,10 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Creates a vector from spherical coordinates: (1) theta, \u03b8, the
-    * azimuth, yaw or longitude; (2) phi, \u03c6, the inclination, pitch or
-    * latitude; (3) rho, \u03c1, the radius or magnitude. The poles will be
-    * upright in a z-up coordinate system; sideways in a y-up coordinate
-    * system.
+    * Creates a vector from spherical coordinates: (1) theta, the azimuth, yaw
+    * or longitude; (2) phi, the inclination, pitch or latitude; (3) rho, the
+    * radius or magnitude. The poles will be upright in a z-up coordinate
+    * system; sideways in a y-up coordinate system.
     *
     * @param azimuth     the angle theta in radians
     * @param inclination the angle phi in radians
@@ -1786,8 +1771,8 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the vector's inclination in the range [-π / 2.0, π / 2.0] . It is
-    * necessary to calculate the vector's magnitude in order to find its
+    * Finds the vector's inclination in the range [-pi / 2.0, pi / 2.0] . It
+    * is necessary to calculate the vector's magnitude in order to find its
     * inclination.
     *
     * @param v the input vector
@@ -1800,7 +1785,7 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the vector's inclination in the range [π, 0.0] .
+    * Finds the vector's inclination in the range [pi, 0.0] .
     *
     * @param v the input vector
     *

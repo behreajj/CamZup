@@ -665,13 +665,8 @@ public class Quaternion implements Comparable < Quaternion > {
 
    /**
     * Finds the dot product of two quaternions by summing the products of
-    * their corresponding components.<br>
-    * <br>
-    * <em>a</em> · <em>b</em> := <em>a<sub>real</sub> b<sub>real</sub></em> +
-    * <em>a<sub>imag</sub></em> · <em>b<sub>imag</sub></em><br>
-    * <br>
-    * The dot product of a quaternion with itself is equal to its magnitude
-    * squared.
+    * their corresponding components. The dot product of a quaternion with
+    * itself is equal to its magnitude squared.
     *
     * @param a left operand
     * @param b right operand
@@ -1004,7 +999,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * Creates a quaternion with reference to two vectors. This function
     * creates normalized copies of the vectors.<br>
     * <br>
-    * fromTo ( <em>a</em>, <em>b</em> ) := { <em>a</em> · <em>b</em>,
+    * fromTo ( <em>a</em>, <em>b</em> ) := { <em>a</em> . <em>b</em>,
     * <em>a</em> x <em>b</em> }<br>
     * <br>
     * The real component is the dot product of the vectors; the imaginary
@@ -1332,7 +1327,7 @@ public class Quaternion implements Comparable < Quaternion > {
    /**
     * Finds the length, or magnitude, of a quaternion.<br>
     * <br>
-    * |<em>a</em>| := \u221a <em>a</em> · <em>a</em><br>
+    * |<em>a</em>| := \u221a <em>a</em> . <em>a</em><br>
     * <br>
     * |<em>a</em>| := \u221a <em>a</em> <em>a*</em>
     *
@@ -1354,7 +1349,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * itself and to the product of a quaternion with its
     * {@link Quaternion#conj(Quaternion, Quaternion)}.<br>
     * <br>
-    * |<em>a</em>|<sup>2</sup> := <em>a</em> · <em>a</em><br>
+    * |<em>a</em>|<sup>2</sup> := <em>a</em> . <em>a</em><br>
     * <br>
     * |<em>a</em>|<sup>2</sup> := <em>a</em> <em>a*</em>
     *
@@ -1443,7 +1438,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * Uses the formula<br>
     * <br>
     * <em>a</em> <em>b</em> := { <em>a<sub>real</sub></em>
-    * <em>b<sub>real</sub></em> - <em>a<sub>imag</sub></em> ·
+    * <em>b<sub>real</sub></em> - <em>a<sub>imag</sub></em> .
     * <em>b<sub>imag</sub></em> , <em>a<sub>imag</sub></em> x
     * <em>b<sub>imag</sub></em> + <em>a<sub>real</sub></em>
     * <em>b<sub>imag</sub></em> + <em>b<sub>real</sub></em>

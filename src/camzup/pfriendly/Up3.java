@@ -7,6 +7,7 @@ import camzup.core.Color;
 import camzup.core.Curve3;
 import camzup.core.CurveEntity3;
 import camzup.core.Experimental;
+import camzup.core.ICurve;
 import camzup.core.IUtils;
 import camzup.core.Knot3;
 import camzup.core.MaterialSolid;
@@ -346,6 +347,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     *
     * @return the eye distance
     */
+   @Override
    public float getEyeDist ( ) { return this.eyeDist; }
 
    /**
@@ -477,6 +479,141 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    public Vec3 getSize ( final Vec3 target ) {
 
       return target.set(this.width, this.height, 0.0f);
+   }
+
+   /**
+    * Draws the world orientation as three gimbals.
+    */
+   public void gimbal ( ) {
+
+      this.gimbal(IUp.DEFAULT_IJK_LINE_FAC * Utils.min(this.width,
+         this.height));
+   }
+
+   /**
+    * Draws the world orientation as three gimbals. Uses a default stroke
+    * weight.
+    *
+    * @param radius the radius
+    */
+   public void gimbal ( final float radius ) {
+
+      this.gimbal(radius, IUp.DEFAULT_IJK_SWEIGHT);
+   }
+
+   /**
+    * Draws the world orientation as three gimbals. Colors the axes according
+    * to {@link IUp#DEFAULT_I_COLOR}, {@link IUp#DEFAULT_J_COLOR} and
+    * {@link IUp#DEFAULT_K_COLOR}.
+    *
+    * @param radius the radius
+    * @param sw     the stroke weight
+    */
+   public void gimbal ( final float radius, final float sw ) {
+
+      this.gimbal(radius, sw, IUp.DEFAULT_I_COLOR, IUp.DEFAULT_J_COLOR,
+         IUp.DEFAULT_K_COLOR);
+   }
+
+   /**
+    * Draws the world orientation as three gimbals.
+    *
+    * @param radius the radius
+    * @param sw     the stroke weight
+    * @param xColor the color of the x ring
+    * @param yColor the color of the y ring
+    * @param zColor the color of the z ring
+    */
+   public void gimbal ( final float radius, final float sw, final int xColor,
+      final int yColor, final int zColor ) {
+
+      final float r = radius > IUtils.EPSILON ? radius : IUtils.EPSILON;
+      final float rk = r * ICurve.KAPPA;
+      final float swEmphasis = sw * 6.75f;
+
+      this.disableDepthMask();
+      this.disableDepthTest();
+      this.pushStyle();
+      this.strokeWeight(sw);
+      this.noFill();
+
+      this.stroke(zColor);
+      this.beginShape(PConstants.POLYGON);
+      this.normalPerShape(0.0f, 1.0f, 0.0f);
+      this.vertexImpl(0.0f, 0.0f, r, this.textureU, this.textureV);
+      this.bezierVertexImpl(rk, 0.0f, r, r, 0.0f, rk, r, 0.0f, 0.0f);
+      this.bezierVertexImpl(r, 0.0f, -rk, rk, 0.0f, -r, 0.0f, 0.0f, -r);
+      this.bezierVertexImpl(-rk, 0.0f, -r, -r, 0.0f, -rk, -r, 0.0f, 0.0f);
+      this.bezierVertexImpl(-r, 0.0f, rk, -rk, 0.0f, r, 0.0f, 0.0f, r);
+      this.endShape(PConstants.CLOSE);
+
+      this.stroke(yColor);
+      this.beginShape(PConstants.POLYGON);
+      this.normalPerShape(1.0f, 0.0f, 0.0f);
+      this.vertexImpl(0.0f, r, 0.0f, this.textureU, this.textureV);
+      this.bezierVertexImpl(0.0f, r, rk, 0.0f, rk, r, 0.0f, 0.0f, r);
+      this.bezierVertexImpl(0.0f, -rk, r, 0.0f, -r, rk, 0.0f, -r, 0.0f);
+      this.bezierVertexImpl(0.0f, -r, -rk, 0.0f, -rk, -r, 0.0f, 0.0f, -r);
+      this.bezierVertexImpl(0.0f, rk, -r, 0.0f, r, -rk, 0.0f, r, 0.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.stroke(xColor);
+      this.beginShape(PConstants.POLYGON);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
+      this.vertexImpl(r, 0.0f, 0.0f, this.textureU, this.textureV);
+      this.bezierVertexImpl(r, rk, 0.0f, rk, r, 0.0f, 0.0f, r, 0.0f);
+      this.bezierVertexImpl(-rk, r, 0.0f, -r, rk, 0.0f, -r, 0.0f, 0.0f);
+      this.bezierVertexImpl(-r, -rk, 0.0f, -rk, -r, 0.0f, 0.0f, -r, 0.0f);
+      this.bezierVertexImpl(rk, -r, 0.0f, r, -rk, 0.0f, r, 0.0f, 0.0f);
+      this.endShape(PConstants.CLOSE);
+
+      this.strokeWeight(swEmphasis);
+      this.stroke(zColor);
+      this.pointImpl(0.0f, 0.0f, r);
+      this.stroke(yColor);
+      this.pointImpl(0.0f, r, 0.0f);
+      this.stroke(xColor);
+      this.pointImpl(r, 0.0f, 0.0f);
+
+      this.popStyle();
+      this.enableDepthTest();
+      this.enableDepthMask();
+   }
+
+   /**
+    * Draws a transform orientation as three gimbals. Colors the axes
+    * according to {@link IUp#DEFAULT_I_COLOR}, {@link IUp#DEFAULT_J_COLOR}
+    * and {@link IUp#DEFAULT_K_COLOR}.
+    *
+    * @param tr     the transform
+    * @param radius the radius
+    * @param sw     the stroke weight
+    */
+   public void gimbal ( final Transform3 tr, final float radius,
+      final float sw ) {
+
+      this.gimbal(tr, radius, sw, IUp.DEFAULT_I_COLOR, IUp.DEFAULT_J_COLOR,
+         IUp.DEFAULT_K_COLOR);
+   }
+
+   /**
+    * Draws a transform orientation as three gimbals.
+    *
+    * @param tr     the transform
+    * @param radius the radius
+    * @param sw     the stroke weight
+    * @param xColor the color of the x ring
+    * @param yColor the color of the y ring
+    * @param zColor the color of the z ring
+    */
+   public void gimbal ( final Transform3 tr, final float radius, final float sw,
+      final int xColor, final int yColor, final int zColor ) {
+
+      this.pushMatrix();
+      this.transform(tr, TransformOrder.TR);
+      this.gimbal(radius * Transform3.maxDimension(tr), sw, xColor, yColor,
+         zColor);
+      this.popMatrix();
    }
 
    /**
@@ -770,7 +907,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    public void origin ( final float lineLength, final float sw,
       final int xColor, final int yColor, final int zColor ) {
 
-      final float vl = Utils.max(IUtils.EPSILON, lineLength);
+      final float vl = lineLength < IUtils.EPSILON ? IUtils.EPSILON
+         : lineLength;
 
       this.disableDepthMask();
       this.disableDepthTest();
@@ -792,6 +930,22 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
+    * Draws a transform origin. Colors the axes according to
+    * {@link IUp#DEFAULT_I_COLOR}, {@link IUp#DEFAULT_J_COLOR} and
+    * {@link IUp#DEFAULT_K_COLOR}.
+    *
+    * @param tr         the transform
+    * @param lineLength the line length
+    * @param sw         the stroke weight
+    */
+   public void origin ( final Transform3 tr, final float lineLength,
+      final float sw ) {
+
+      this.origin(tr, lineLength, sw, IUp.DEFAULT_I_COLOR, IUp.DEFAULT_J_COLOR,
+         IUp.DEFAULT_K_COLOR);
+   }
+
+   /**
     * Draws a transform origin.
     *
     * @param tr         the transform
@@ -803,6 +957,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    public void origin ( final Transform3 tr, final float lineLength,
       final float sw, final int xColor, final int yColor, final int zColor ) {
+
+      // QUERY: Simplify this to follow the pattern established by
+      // gimbal, where matrix is pushed onto stack? There might've been a reason
+      // not to do it that way in the first place.
 
       final Vec3 origin = new Vec3();
       final Vec3 right = new Vec3();

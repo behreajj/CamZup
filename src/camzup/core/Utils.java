@@ -15,22 +15,22 @@ public abstract class Utils implements IUtils {
     * {@link Math#abs(float)}. Relies on bit-masking to remove the sign bit.
     * Equivalent to <code>Utils.max(-a, a)</code>.
     *
-    * @param value the input value
+    * @param v the input value
     *
     * @return the absolute value
     *
     * @see Float#intBitsToFloat(int)
     * @see Float#floatToRawIntBits(float)
     */
-   public static float abs ( final float value ) {
+   public static float abs ( final float v ) {
 
-      return Float.intBitsToFloat(0x7fffffff & Float.floatToRawIntBits(value));
+      return Float.intBitsToFloat(0x7fffffff & Float.floatToRawIntBits(v));
    }
 
    /**
     * A bounds checked approximation of the arc-cosine for single precision
-    * real numbers. Returns a value in the range [0.0, π] : π when the input
-    * is less than or equal to -1.0; π / 2.0 when the input is 0.0; 0.0 when
+    * real numbers. Returns a value in the range [0.0, pi] : pi when the input
+    * is less than or equal to -1.0; pi / 2.0 when the input is 0.0; 0.0 when
     * the input is greater than or equal to 1.0.<br>
     * <br>
     * {@link Math#acos(double) } defers to {@link StrictMath#acos(double) },
@@ -42,7 +42,7 @@ public abstract class Utils implements IUtils {
     * Eds., <em>Handbook of Mathematical Functions</em>, possibly p. 83, which
     * cites <em>Approximations for Digital Computers</em> by C. Hastings, Jr.
     *
-    * @param y the input value
+    * @param v the input value
     *
     * @return the angle in radians
     *
@@ -52,12 +52,12 @@ public abstract class Utils implements IUtils {
     * @author C. Hastings, Jr
     * @author I. A. Stegun
     */
-   public static float acos ( final float y ) {
+   public static float acos ( final float v ) {
 
-      if ( y <= -1.0f ) { return IUtils.PI; }
-      if ( y >= 1.0f ) { return 0.0f; }
-      final boolean ltZero = y < -0.0f;
-      final float x = ltZero ? -y : y;
+      if ( v <= -1.0f ) { return IUtils.PI; }
+      if ( v >= 1.0f ) { return 0.0f; }
+      final boolean ltZero = v < -0.0f;
+      final float x = ltZero ? -v : v;
       float ret = ( 0.074261f - 0.0187293f * x ) * x - 0.2121144f;
       ret = ( ret * x + IUtils.HALF_PI ) * Utils.sqrtUnchecked(1.0f - x);
       return ltZero ? IUtils.PI - ret : ret;
@@ -114,9 +114,9 @@ public abstract class Utils implements IUtils {
 
    /**
     * A bounds checked approximation of the arc-sine for single precision real
-    * numbers. Returns a value in the range [-π / 2.0, π / 2.0]: -π / 2.0 when
-    * the input is less than or equal to -1.0; 0.0 when the input is 0.0; π /
-    * 2.0 when the input is greater than or equal to 1.0.<br>
+    * numbers. Returns a value in the range [-pi / 2.0, pi / 2.0]: -pi / 2.0
+    * when the input is less than or equal to -1.0; 0.0 when the input is 0.0;
+    * pi / 2.0 when the input is greater than or equal to 1.0.<br>
     * <br>
     * {@link Math#asin(double) } defers to {@link StrictMath#asin(double) },
     * which is implemented natively. This is not a "fast" alternative.<br>
@@ -153,7 +153,7 @@ public abstract class Utils implements IUtils {
    /**
     * Finds a single precision approximation of a signed angle given a
     * vertical and horizontal component. The vertical component precedes the
-    * horizontal. The return value falls in the range [-π, π] .<br>
+    * horizontal. The return value falls in the range [-pi, pi] .<br>
     * <br>
     * This is not a "fast" alternative to
     * {@link Math#atan2(double,double) }.<br>
@@ -590,8 +590,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the hypotenuse between two values, \u221a ( <em>a</em><sup>2</sup>
-    * + <em>b</em><sup>2</sup> ) . Useful when finding the magnitude of a
+    * Finds the hypotenuse between two values, sqrt ( <em>a</em><sup>2</sup> +
+    * <em>b</em><sup>2</sup> ) . Useful when finding the magnitude of a
     * vector.
     *
     * @param a the first value
@@ -612,9 +612,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the hypotenuse given three values, \u221a ( <em>a</em><sup>2</sup>
-    * + <em>b</em><sup>2</sup> + <em>c</em><sup>2</sup> ) . Useful when
-    * finding the magnitude of a vector.
+    * Finds the hypotenuse given three values, sqrt ( <em>a</em><sup>2</sup> +
+    * <em>b</em><sup>2</sup> + <em>c</em><sup>2</sup> ) . Useful when finding
+    * the magnitude of a vector.
     *
     * @param a the first value
     * @param b the second value
@@ -630,7 +630,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds one divided by the hypotenuse of two values, 1.0 / ( \u221a (
+    * Finds one divided by the hypotenuse of two values, 1.0 / ( sqrt (
     * <em>a</em><sup>2</sup> + <em>b</em><sup>2</sup> ) ) . Useful when
     * normalizing vectors.
     *
@@ -647,7 +647,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds one divided by the hypotenuse of three values, 1.0 / ( \u221a (
+    * Finds one divided by the hypotenuse of three values, 1.0 / ( sqrt (
     * <em>a</em><sup>2</sup> + <em>b</em><sup>2</sup> + <em>c</em><sup>2</sup>
     * ) ) . Useful when normalizing vectors.
     *
@@ -1041,7 +1041,7 @@ public abstract class Utils implements IUtils {
 
    /**
     * A specialized version of modulo which shifts an angle in radians to the
-    * range [0.0, τ] .
+    * range [0.0, tau] .
     *
     * @param radians the angle in radians
     *
@@ -1306,9 +1306,9 @@ public abstract class Utils implements IUtils {
    /**
     * A helper method to facilitate the approximate sine and cosine of an
     * angle with single precision real numbers. The radians supplied to this
-    * function should be normalized through division by \u03c4 ,
-    * {@link IUtils#ONE_TAU}. Subtract <code>0.25</code> from the input value
-    * to return the sine instead of the cosine.<br>
+    * function should be normalized through division by tau. Subtract
+    * <code>0.25</code> from the input value to return the sine instead of the
+    * cosine.<br>
     * <br>
     * This is based on the algorithm described in
     * <a href="https://developer.download.nvidia.com/cg/sin.html">Nvidia Cg

@@ -173,7 +173,12 @@ public class Vec2 implements Comparable < Vec2 > {
     * @return the string
     */
    @Override
-   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
+   public String toString ( ) {
+
+      // TODO: Sonarlint is reporting this and similar constructions
+      // as instance method calls that should be static calls.
+      return this.toString(IUtils.FIXED_PRINT);
+   }
 
    /**
     * Returns a string representation of this vector.
@@ -985,11 +990,8 @@ public class Vec2 implements Comparable < Vec2 > {
 
    /**
     * Finds the dot product of two vectors by summing the products of their
-    * corresponding components. <em>a</em> · <em>b</em> := <em>a<sub>x</sub>
-    * b<sub>x</sub></em> + <em>a<sub>y</sub> b<sub>y</sub></em><br>
-    * <br>
-    * The dot product of a vector with itself is equal to its magnitude
-    * squared.
+    * corresponding components. The dot product of a vector with itself is
+    * equal to its magnitude squared.
     *
     * @param a left operand
     * @param b right operand
@@ -1158,12 +1160,8 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Creates a vector from polar coordinates: (1) theta, \u03b8, an angle in
-    * radians, the vector's heading; (2) rho, \u03c1, a radius, the vector's
-    * magnitude. Uses the formula<br>
-    * <br>
-    * ( \u03c1 cos ( \u03b8 ),<br>
-    * \u03c1 sin ( \u03b8 ) ).
+    * Creates a vector from polar coordinates: (1) theta, an angle in radians,
+    * the vector's heading; (2) rho, a radius, the vector's magnitude.
     *
     * @param heading the angle in radians
     * @param radius  the radius
@@ -1466,7 +1464,7 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Finds the vector's heading in the range [-π, π] .
+    * Finds the vector's heading in the range [-pi, pi] .
     *
     * @param v the input vector
     *
@@ -1480,7 +1478,7 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Finds the vector's heading in the range [0.0, τ] .
+    * Finds the vector's heading in the range [0.0, tau] .
     *
     * @param v the input vector
     *

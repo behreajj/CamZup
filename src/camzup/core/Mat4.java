@@ -1066,6 +1066,9 @@ public class Mat4 {
     */
    public static Mat4 cameraDimetric ( final Vec3 loc,
       final Handedness handedness, final Mat4 target ) {
+		  
+	  // TODO: Consider removing this along with pfriendly
+	  // renderer versions? A pde example depends on this.
 
       if ( handedness == Handedness.LEFT ) {
          return target.set(0.70710677f, 0.0f, 0.70710677f, -loc.x * 0.70710677f
