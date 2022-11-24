@@ -6,31 +6,31 @@ import java.util.Comparator;
  * Compares two face indices (an array of vertex indices) by averaging the
  * vectors referenced by them, then comparing the averages.
  */
-public class SortLoops2 implements Comparator < int[][] > {
-
-   /**
-    * The coordinates array.
-    */
-   final Vec2[] coords;
+final class SortLoops2 implements Comparator < int[][] > {
 
    /**
     * Internal vector used to store the average coordinate for the left
     * comparisand.
     */
-   protected final Vec2 aAvg = new Vec2();
+   private final Vec2 aAvg = new Vec2();
 
    /**
     * Internal vector used to store the average coordinate for the right
     * comparisand.
     */
-   protected final Vec2 bAvg = new Vec2();
+   private final Vec2 bAvg = new Vec2();
+
+   /**
+    * The coordinates array.
+    */
+   private final Vec2[] coords;
 
    /**
     * Constructs a comparator with reference to the mesh's coordinates.
     *
     * @param coords the coordinate array.
     */
-   protected SortLoops2 ( final Vec2[] coords ) {
+   SortLoops2 ( final Vec2[] coords ) {
 
       this.coords = coords;
    }

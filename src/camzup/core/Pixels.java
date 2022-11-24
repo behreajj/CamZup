@@ -259,6 +259,144 @@ public abstract class Pixels {
    }
 
    /**
+    * Blends backdrop and overlay pixels. Forms a union of the bounding area
+    * of the two inputs. Emits the dimensions and top-left corner of the
+    * blended image.
+    *
+    * @param aPixels backdrop pixels
+    * @param aw      backdrop width
+    * @param ah      backdrop height
+    * @param ax      backdrop x offset
+    * @param ay      backdrop y offset
+    * @param bPixels overlay pixels
+    * @param bw      overlay width
+    * @param bh      overlay height
+    * @param bx      overlay x offset
+    * @param by      overlay y offset
+    * @param dim     dimensions
+    * @param tl      top-left
+    *
+    * @return the blended pixels
+    *
+    * @see Vec4#zero(Vec4)
+    */
+   public static int[] blend ( final int[] aPixels, final int aw, final int ah,
+      final int ax, final int ay, final int[] bPixels, final int bw,
+      final int bh, final int bx, final int by, final Vec2 dim,
+      final Vec2 tl ) {
+
+      final Color srgb = new Color();
+      final Color lrgb = new Color();
+      final Vec4 xyz = new Vec4();
+
+      final HashMap < Integer, Vec4 > dict = new HashMap <>(512, 0.75f);
+      dict.put(0x00000000, Vec4.zero(new Vec4()));
+
+      /* Get unique pixels from a. */
+      final int aLen = aPixels.length;
+      for ( int i = 0; i < aLen; ++i ) {
+         final int srgbKeyInt = aPixels[i];
+         final Integer srgbKeyObj = srgbKeyInt;
+         if ( !dict.containsKey(srgbKeyObj) ) {
+            final Vec4 lab = new Vec4();
+            Color.fromHex(srgbKeyInt, srgb);
+            Color.sRgbTolRgb(srgb, false, lrgb);
+            Color.lRgbToCieXyz(lrgb, xyz);
+            Color.cieXyzToCieLab(xyz, lab);
+            dict.put(srgbKeyObj, lab);
+         }
+      }
+
+      /* Get unique pixels from b. */
+      final int bLen = bPixels.length;
+      for ( int i = 0; i < bLen; ++i ) {
+         final int srgbKeyInt = bPixels[i];
+         final Integer srgbKeyObj = srgbKeyInt;
+         if ( !dict.containsKey(srgbKeyObj) ) {
+            final Vec4 lab = new Vec4();
+            Color.fromHex(srgbKeyInt, srgb);
+            Color.sRgbTolRgb(srgb, false, lrgb);
+            Color.lRgbToCieXyz(lrgb, xyz);
+            Color.cieXyzToCieLab(xyz, lab);
+            dict.put(srgbKeyObj, lab);
+         }
+      }
+
+      /* Find the bottom right corner for a and b. */
+      final int abrx = ax + aw - 1;
+      final int abry = ay + ah - 1;
+      final int bbrx = bx + bw - 1;
+      final int bbry = by + bh - 1;
+
+      /* The result dimensions are the union of a and b. */
+      final int cx = ax < bx ? ax : bx;
+      final int cy = ay < by ? ay : by;
+      final int cbrx = abrx > bbrx ? abrx : bbrx;
+      final int cbry = abry > bbry ? abry : bbry;
+      final int cw = 1 + cbrx - cx;
+      final int ch = 1 + cbry - cy;
+      final int clen = cw * ch;
+
+      /* Find the difference between the target top left and the inputs. */
+      final int axd = ax - cx;
+      final int ayd = ay - cy;
+      final int bxd = bx - cx;
+      final int byd = by - cy;
+
+      final Vec4 cLab = new Vec4();
+      final int[] target = new int[clen];
+      for ( int i = 0; i < clen; ++i ) {
+         final int x = i % cw;
+         final int y = i / cw;
+
+         int aHex = 0x00000000;
+         final int axs = x - axd;
+         final int ays = y - ayd;
+         if ( ays > -1 && ays < ah && axs > -1 && axs < aw ) {
+            aHex = aPixels[axs + ays * aw];
+         }
+
+         int bHex = 0x00000000;
+         final int bxs = x - bxd;
+         final int bys = y - byd;
+         if ( bys > -1 && bys < bh && bxs > -1 && bxs < bw ) {
+            bHex = bPixels[bxs + bys * bw];
+         }
+
+         final Vec4 aLab = dict.get(aHex);
+         final Vec4 bLab = dict.get(bHex);
+
+         final float t = bLab.w;
+         final float v = aLab.w;
+         final float u = 1.0f - t;
+         final float uv = u * v;
+         float tuv = t + uv;
+
+         if ( t >= 1.0f || v <= 0.0f ) {
+            target[i] = bHex;
+         } else if ( tuv <= 0.0f ) {
+            target[i] = 0x00000000;
+         } else {
+            if ( tuv >= 1.0f ) { tuv = 1.0f; }
+
+            /* Simulate alpha pre-multiply on lightness. */
+            cLab.set(u * aLab.x + t * bLab.x, u * aLab.y + t * bLab.y, ( uv
+               * aLab.z + t * bLab.z ) / tuv, tuv);
+
+            Color.cieLabToCieXyz(cLab, xyz);
+            Color.cieXyzTolRgb(xyz, lrgb);
+            Color.lRgbTosRgb(lrgb, false, srgb);
+            target[i] = Color.toHexIntSat(srgb);
+         }
+      }
+
+      if ( dim != null ) { dim.set(cw, ch); }
+      if ( tl != null ) { tl.set(cx, cy); }
+
+      return target;
+   }
+
+   /**
     * Creates a checker pattern in an array of pixels.
     *
     * @param a      the first color

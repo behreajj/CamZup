@@ -269,6 +269,7 @@ public class ZImage extends PImage {
       if ( source == target ) {
          target.loadPixels();
          Pixels.adjustAlpha(target.pixels, alpha, target.pixels);
+         target.format = PConstants.ARGB;
          target.updatePixels();
          return target;
       }
@@ -282,7 +283,7 @@ public class ZImage extends PImage {
       target.loadPixels();
       final int[] pxSrc = source.pixels;
       target.pixels = Pixels.adjustAlpha(pxSrc, alpha, new int[pxSrc.length]);
-      target.format = source.format;
+      target.format = PConstants.ARGB;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = source.pixelWidth;
       target.pixelHeight = source.pixelHeight;
@@ -353,6 +354,7 @@ public class ZImage extends PImage {
       if ( source == target ) {
          target.loadPixels();
          Pixels.adjustLch(target.pixels, adjust, target.pixels);
+         target.format = PConstants.ARGB;
          target.updatePixels();
          return target;
       }
@@ -366,7 +368,7 @@ public class ZImage extends PImage {
       target.loadPixels();
       final int[] pxSrc = source.pixels;
       target.pixels = Pixels.adjustLch(pxSrc, adjust, new int[pxSrc.length]);
-      target.format = source.format;
+      target.format = PConstants.ARGB;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = source.pixelWidth;
       target.pixelHeight = source.pixelHeight;
@@ -414,6 +416,128 @@ public class ZImage extends PImage {
    public static float aspect ( final PImage image ) {
 
       return Utils.div(( float ) image.width, ( float ) image.height);
+   }
+
+   /**
+    * Blends backdrop and overlay images. Forms a union of the bounding area
+    * of the two inputs. Emits the top-left corner for the union. Rounds the
+    * offsets to integers.
+    *
+    * @param a      backdrop
+    * @param ax     backdrop x offset
+    * @param ay     backdrop y offset
+    * @param b      overlay image
+    * @param bx     overlay x offset
+    * @param by     overlay y offset
+    * @param target target image
+    * @param tl     top left
+    *
+    * @return the blended pixels
+    */
+   public static PImage blend ( final PImage a, final float ax, final float ay,
+      final PImage b, final float bx, final float by, final PImage target,
+      final Vec2 tl ) {
+
+      return ZImage.blend(a, Utils.round(ax), Utils.round(ay), b, Utils.round(
+         bx), Utils.round(by), target, tl);
+   }
+
+   /**
+    * Blends backdrop and overlay images. Forms a union of the bounding area
+    * of the two inputs. Emits the top-left corner for the union.
+    *
+    * @param a      backdrop
+    * @param ax     backdrop x offset
+    * @param ay     backdrop y offset
+    * @param b      overlay image
+    * @param bx     overlay x offset
+    * @param by     overlay y offset
+    * @param target target image
+    * @param tl     top left
+    *
+    * @return the blended pixels
+    */
+   public static PImage blend ( final PImage a, final int ax, final int ay,
+      final PImage b, final int bx, final int by, final PImage target,
+      final Vec2 tl ) {
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      a.loadPixels();
+      b.loadPixels();
+      target.loadPixels();
+      final int pd = a.pixelDensity < b.pixelDensity ? a.pixelDensity
+         : b.pixelDensity;
+
+      final Vec2 dim = new Vec2();
+      target.pixels = Pixels.blend(a.pixels, a.pixelWidth, a.pixelHeight, ax,
+         ay, b.pixels, b.pixelWidth, b.pixelHeight, bx, by, dim, tl);
+      target.pixelDensity = pd;
+      target.pixelWidth = ( int ) dim.x;
+      target.pixelHeight = ( int ) dim.y;
+      target.width = target.pixelWidth / pd;
+      target.height = target.pixelHeight / pd;
+      target.format = PConstants.ARGB;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Blends backdrop and overlay images. Forms a union of the bounding area
+    * of the two inputs. Emits the top-left corner for the union.
+    *
+    * @param a      backdrop
+    * @param b      overlay image
+    * @param target target image
+    * @param tl     top left
+    *
+    * @return the blended pixels
+    */
+   public static PImage blend ( final PImage a, final PImage b,
+      final PImage target, final Vec2 tl ) {
+
+      final int aw = a.pixelWidth;
+      final int ah = a.pixelHeight;
+      final int bw = b.pixelWidth;
+      final int bh = b.pixelHeight;
+
+      final int wLrg = aw > bw ? aw : bw;
+      final int hLrg = ah > bh ? ah : bh;
+
+      /* The 0.5 is to bias the rounding. */
+      final float cx = 0.5f + wLrg * 0.5f;
+      final float cy = 0.5f + hLrg * 0.5f;
+
+      final int ax = aw == wLrg ? 0 : ( int ) ( cx - aw * 0.5f );
+      final int ay = ah == hLrg ? 0 : ( int ) ( cy - ah * 0.5f );
+      final int bx = bw == wLrg ? 0 : ( int ) ( cx - bw * 0.5f );
+      final int by = bh == hLrg ? 0 : ( int ) ( cy - bh * 0.5f );
+
+      return ZImage.blend(a, ax, ay, b, bx, by, target, tl);
+   }
+
+   /**
+    * Blends backdrop and overlay images. Forms a union of the bounding area
+    * of the two inputs. Emits the top-left corner for the union. Rounds the
+    * offsets to integers.
+    *
+    * @param a      backdrop
+    * @param atl    a top left corner
+    * @param b      overlay image
+    * @param btl    b top left corner
+    * @param target target image
+    * @param tl     top left
+    *
+    * @return the blended pixels
+    */
+   public static PImage blend ( final PImage a, final Vec2 atl, final PImage b,
+      final Vec2 btl, final PImage target, final Vec2 tl ) {
+
+      return ZImage.blend(a, atl.x, atl.y, b, btl.x, btl.y, target, tl);
    }
 
    /**

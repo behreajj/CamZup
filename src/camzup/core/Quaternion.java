@@ -479,6 +479,56 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
+    * Finds the quaternion's azimuth.
+    *
+    * @param q the input quaternion
+    *
+    * @return the angle in radians
+    */
+   public static float azimuth ( final Quaternion q ) {
+
+      return Quaternion.azimuthSigned(q);
+   }
+
+   /**
+    * Finds the quaternion's azimuth in the range [-pi, pi] . The azimuth
+    * refers to the quaternion's right axis.
+    *
+    * @param q the input quaternion
+    *
+    * @return the angle in radians
+    */
+   public static float azimuthSigned ( final Quaternion q ) {
+
+      final double w = q.real;
+      final Vec3 i = q.imag;
+      final double ix = i.x;
+      final double iy = i.y;
+      final double iz = i.z;
+
+      final double xy = ix * iy;
+      final double zw = iz * w;
+
+      return ( float ) Math.atan2(zw + zw + xy + xy, w * w + ix * ix - iy * iy
+         - iz * iz);
+   }
+
+   /**
+    * Finds the quaternion's azimuth in the range [0, tau] .
+    *
+    * @param q the input quaternion
+    *
+    * @return the angle in radians
+    *
+    * @see Quaternion#azimuthSigned(Quaternion)
+    */
+   public static float azimuthUnsigned ( final Quaternion q ) {
+
+      final float a = Quaternion.azimuthSigned(q);
+      return a < -0.0f ? a + IUtils.TAU : a;
+   }
+
+   /**
     * Returns the conjugate of the quaternion, where the imaginary component
     * is negated.<br>
     * <br>
@@ -983,16 +1033,17 @@ public class Quaternion implements Comparable < Quaternion > {
    public static Quaternion fromSpherical ( final float azimuth,
       final float inclination, final Quaternion target ) {
 
-      final float azimNorm = azimuth * IUtils.ONE_TAU_2;
-      final float cosAzim = Utils.scNorm(azimNorm);
-      final float sinAzim = Utils.scNorm(azimNorm - 0.25f);
+      final double azHalf = 0.5d * ( azimuth % IUtils.TAU_D );
+      final double cosAzim = Math.cos(azHalf);
+      final double sinAzim = Math.sin(azHalf);
 
-      final float inclNorm = 1.0f - inclination * IUtils.ONE_TAU_2;
-      final float cosIncl = Utils.scNorm(inclNorm);
-      final float sinIncl = Utils.scNorm(inclNorm - 0.25f);
+      final double inHalf = IUtils.TAU_D - inclination * 0.5d;
+      final double cosIncl = Math.cos(inHalf);
+      final double sinIncl = Math.sin(inHalf);
 
-      return target.set(cosAzim * cosIncl, sinAzim * -sinIncl, sinIncl
-         * cosAzim, sinAzim * cosIncl);
+      return target.set(( float ) ( cosAzim * cosIncl ), ( float ) ( sinAzim
+         * -sinIncl ), ( float ) ( sinIncl * cosAzim ), ( float ) ( sinAzim
+            * cosIncl ));
    }
 
    /**
@@ -1146,6 +1197,62 @@ public class Quaternion implements Comparable < Quaternion > {
    public static Quaternion identity ( final Quaternion target ) {
 
       return target.set(1.0f, 0.0f, 0.0f, 0.0f);
+   }
+
+   /**
+    * Finds the quaternion's inclination.
+    *
+    * @param q the input quaternion
+    *
+    * @return the inclination
+    */
+   public static float inclination ( final Quaternion q ) {
+
+      return Quaternion.inclinationSigned(q);
+   }
+
+   /**
+    * Finds the quaternion's inclination in the range [-pi / 2.0, pi / 2.0] .
+    *
+    * @param q the input quaternion
+    *
+    * @return the inclination
+    *
+    * @see Quaternion#inclinationUnsigned(Quaternion)
+    */
+   public static float inclinationSigned ( final Quaternion q ) {
+
+      return IUtils.HALF_PI - Quaternion.inclinationUnsigned(q);
+   }
+
+   /**
+    * Finds the quaternion's inclination in the range [pi, 0.0] . The azimuth
+    * refers to the quaternion's right axis.
+    *
+    * @param q the input quaternion
+    *
+    * @return the inclination
+    */
+   public static float inclinationUnsigned ( final Quaternion q ) {
+
+      final double w = q.real;
+      final Vec3 i = q.imag;
+      final double ix = i.x;
+      final double iy = i.y;
+      final double iz = i.z;
+
+      final double xy = ix * iy;
+      final double xz = ix * iz;
+      final double yw = iy * w;
+      final double zw = iz * w;
+
+      final double vx = w * w + ix * ix - iy * iy - iz * iz;
+      final double vy = zw + zw + xy + xy;
+      final double vz = xz + xz - ( yw + yw );
+
+      final double mSq = vx * vx + vy * vy + vz * vz;
+      return mSq > 0.0d ? ( float ) Math.acos(vz / Math.sqrt(mSq))
+         : IUtils.HALF_PI;
    }
 
    /**

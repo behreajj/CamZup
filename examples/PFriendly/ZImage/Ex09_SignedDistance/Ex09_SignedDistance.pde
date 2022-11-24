@@ -37,9 +37,9 @@ void draw() {
       xNorm + xNorm - 1.0f,
       yNorm + yNorm - 1.0f);
 
-    float fac1 = Sdf.arc(st, ang0, ang1, 0.25f, 0.35f);
-    float fac2 = Sdf.polygon(st, sides, -ang0, 1.25f);
-    float fac = Sdf.subtract(fac1, fac2);
+    float fac0 = Sdf.arc(st, ang0, ang1, 1.5f, 0.5f);
+    float fac1 = Sdf.polygon(st, sides, -ang0, 1.0f);
+    float fac = Sdf.intersectRound(fac0, fac1, 0.05f);
     fac = Utils.quantize(fac, 16);
     px[i] = Gradient.eval(gr, fac);
   }

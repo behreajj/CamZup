@@ -240,15 +240,15 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public int length ( ) { return this.meshes.size(); }
 
    /**
-    * Centers and rescales all curves in the mesh entity about a shared origin
-    * by calculating their dimensions, subtracting the center point, and
-    * scaling by the maximum dimension.
+    * Centers and rescales all meshes in the entity about a shared origin by
+    * calculating their dimensions, subtracting the center point, and scaling
+    * by the maximum dimension.
     *
     * @return this mesh entity.
     */
    public MeshEntity2 reframe ( ) {
 
-      /* Find lower and upper bound for all curves. */
+      /* Find lower and upper bound for all meshes. */
       final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
       final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
 
@@ -581,20 +581,20 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
-    * Centers all meshes in the mesh entity about a shared origin by
-    * calculating their dimensions then subtracting the center point.
+    * Centers all meshes in the entity about a shared origin by calculating
+    * their dimensions then subtracting the center point.
     *
     * @return this mesh entity.
     */
    public MeshEntity2 toOrigin ( ) {
 
-      /* Find lower and upper bound for all curves. */
+      /* Find lower and upper bound for all meshes. */
       final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
       final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
       Iterator < Mesh2 > itr = this.meshes.iterator();
       while ( itr.hasNext() ) { Mesh2.accumMinMax(itr.next(), lb, ub); }
 
-      /* Shift curves. */
+      /* Shift meshes. */
       lb.x = -0.5f * ( lb.x + ub.x );
       lb.y = -0.5f * ( lb.y + ub.y );
 

@@ -228,9 +228,9 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public int length ( ) { return this.curves.size(); }
 
    /**
-    * Centers and rescales all curves in the curve entity about a shared
-    * origin by calculating their dimensions, subtracting the center point,
-    * and scaling by the maximum dimension.
+    * Centers and rescales all curves in the entity about a shared origin by
+    * calculating their dimensions, subtracting the center point, and scaling
+    * by the maximum dimension.
     *
     * @return this curve entity.
     *
@@ -576,8 +576,8 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    }
 
    /**
-    * Centers all curves in the curve entity about a shared origin by
-    * calculating their dimensions then subtracting the center point.
+    * Centers all curves in the entity about a shared origin by calculating
+    * their dimensions then subtracting the center point.
     *
     * @return this curve entity.
     */

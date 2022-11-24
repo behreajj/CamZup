@@ -212,15 +212,15 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    public int length ( ) { return this.meshes.size(); }
 
    /**
-    * Centers and rescales all curves in the mesh entity about a shared origin
-    * by calculating their dimensions, subtracting the center point, and
-    * scaling by the maximum dimension.
+    * Centers and rescales all meshes in the entity about a shared origin by
+    * calculating their dimensions, subtracting the center point, and scaling
+    * by the maximum dimension.
     *
     * @return this mesh entity.
     */
    public MeshEntity3 reframe ( ) {
 
-      /* Find lower and upper bound for all curves. */
+      /* Find lower and upper bound for all meshes. */
       final Vec3 lb = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE,
          Float.MAX_VALUE);
       final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
@@ -551,14 +551,14 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    }
 
    /**
-    * Centers all meshes in the mesh entity about a shared origin by
-    * calculating their dimensions then subtracting the center point.
+    * Centers all meshes in the entity about a shared origin by calculating
+    * their dimensions then subtracting the center point.
     *
     * @return this mesh entity.
     */
    public MeshEntity3 toOrigin ( ) {
 
-      /* Find lower and upper bound for all curves. */
+      /* Find lower and upper bound for all meshes. */
       final Vec3 lb = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE,
          Float.MAX_VALUE);
       final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
@@ -566,7 +566,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       Iterator < Mesh3 > itr = this.meshes.iterator();
       while ( itr.hasNext() ) { Mesh3.accumMinMax(itr.next(), lb, ub); }
 
-      /* Shift curves. */
+      /* Shift meshes. */
       lb.x = -0.5f * ( lb.x + ub.x );
       lb.y = -0.5f * ( lb.y + ub.y );
       lb.z = -0.5f * ( lb.z + ub.z );

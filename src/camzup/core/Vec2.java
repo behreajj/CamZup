@@ -1633,7 +1633,7 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Finds the length, or magnitude, of a vector, |<em>a</em>| . Also
     * referred to as the radius when using polar coordinates. Uses the formula
-    * \u221a <em>a</em> · <em>a</em> . Where possible, use magSq or dot to
+    * \u221a <em>a</em> . <em>a</em> . Where possible, use magSq or dot to
     * avoid the computational cost of the square-root.
     *
     * @param v the input vector
@@ -1649,7 +1649,7 @@ public class Vec2 implements Comparable < Vec2 > {
 
    /**
     * Finds the length-, or magnitude-, squared of a vector,
-    * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> ·
+    * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> .
     * <em>a</em> . Useful when calculating the lengths of many vectors, so as
     * to avoid the computational cost of the square-root.
     *
@@ -2093,6 +2093,10 @@ public class Vec2 implements Comparable < Vec2 > {
    public static Vec2 project ( final Vec2 a, final Vec2 b,
       final Vec2 target ) {
 
+      // TODO: Simplify this and Vec3 version -- if there is
+      // a target parameter, projectVector is inferred, if not,
+      // projectScalar is inferred... Or make a second project
+      // alias with no target.
       return Vec2.projectVector(a, b, target);
    }
 
@@ -2100,8 +2104,10 @@ public class Vec2 implements Comparable < Vec2 > {
     * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined
     * as<br>
     * <br>
-    * project ( <em>a</em>, <em>b</em> ) := <em>a</em> · <em>b</em> /
-    * <em>b</em> · <em>b</em>
+    * project ( <em>a</em>, <em>b</em> ) := <em>a</em> . <em>b</em> /
+    * <em>b</em> . <em>b</em><br>
+    * <br>
+    * If the square magnitude of <em>b</em> is zero, then returns zero.
     *
     * @param a left operand
     * @param b right operand
@@ -2118,8 +2124,8 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Projects one vector onto another. Defined as<br>
     * <br>
-    * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> ·
-    * <em>b</em> / <em>b</em> · <em>b</em> )
+    * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> .
+    * <em>b</em> / <em>b</em> . <em>b</em> )
     *
     * @param a      left operand
     * @param b      right operand
@@ -2254,7 +2260,7 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Reflects an incident vector off a normal vector. Uses the formula <br>
     * <br>
-    * <em>i</em> - 2.0 (<em>n</em> · <em>i</em>) <em>n</em><br>
+    * <em>i</em> - 2.0 (<em>n</em> . <em>i</em>) <em>n</em><br>
     * <br>
     *
     * @param incident the incident vector
@@ -2876,7 +2882,7 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Compares two vectors against a locus with squared Euclidean distance.
     */
-   public static class SortDistSq extends AbstrComparator {
+   public static final class SortDistSq extends AbstrComparator {
 
       /**
        * The point against which distances are compared.
@@ -2920,7 +2926,7 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Compares two vectors on the x axis.
     */
-   public static class SortX extends AbstrComparator {
+   public static final class SortX extends AbstrComparator {
 
       /**
        * The default constructor.
@@ -2946,7 +2952,7 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Compares two vectors on the y axis.
     */
-   public static class SortY extends AbstrComparator {
+   public static final class SortY extends AbstrComparator {
 
       /**
        * The default constructor.

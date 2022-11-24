@@ -1,6 +1,6 @@
 package camzup;
 
-import camzup.core.Gradient;
+import camzup.core.Vec3;
 
 import processing.core.PApplet;
 
@@ -53,8 +53,16 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      final Gradient g = new Gradient(-1.5f);
-      System.out.println(g);
+      final int a = 0xff0680a7;
+      final int b = 0xff067fa7;
+      final int c = 0xff808080;
+      final int d = 0xff7f7f7f;
+
+      final Vec3 v = new Vec3();
+      System.out.println(Vec3.fromColor(a, v).toString(6));
+      System.out.println(Vec3.fromColor(b, v).toString(6));
+      System.out.println(Vec3.fromColor(c, v).toString(6));
+      System.out.println(Vec3.fromColor(d, v).toString(6));
    }
 
    /**

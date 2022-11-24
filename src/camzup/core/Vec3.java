@@ -605,14 +605,11 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the vector's azimuth. Defaults to azimuthSigned.
+    * Finds the vector's azimuth
     *
     * @param v the input vector
     *
     * @return the angle in radians
-    *
-    * @see Vec3#azimuthSigned(Vec3)
-    * @see Vec3#azimuthUnsigned(Vec3)
     */
    public static float azimuth ( final Vec3 v ) {
 
@@ -620,7 +617,7 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the vector's azimuth in the range [-pi, pi].
+    * Finds the vector's azimuth in the range [-pi, pi] .
     *
     * @param v the input vector
     *
@@ -634,7 +631,7 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the vector's azimuth in the range [0.0, tau].
+    * Finds the vector's azimuth in the range [0.0, tau] .
     *
     * @param v the input vector
     *
@@ -1361,6 +1358,48 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
+    * Converts a color to a direction. Multiplies each channel by two,
+    * subtracts one, then normalizes the result. Returns the up direction if
+    * the color's alpha channel is zero or if its magnitude is too small.
+    *
+    * @param c      the color
+    * @param target the output direction
+    *
+    * @return the direction
+    *
+    * @see Utils#abs(float)
+    * @see Utils#invSqrt(float)
+    * @see Vec3#up(Vec3)
+    */
+   public static Vec3 fromColor ( final int c, final Vec3 target ) {
+
+      final int a = c >> 0x18 & 0xff;
+      if ( a > 0 ) {
+         final int r = c >> 0x10 & 0xff;
+         final int g = c >> 0x08 & 0xff;
+         final int b = c & 0xff;
+
+         final float x = ( r + r - 255 ) * IUtils.ONE_255;
+         final float y = ( g + g - 255 ) * IUtils.ONE_255;
+         final float z = ( b + b - 255 ) * IUtils.ONE_255;
+
+         final float mSq = x * x + y * y + z * z;
+         if ( mSq > 0.0000461361f ) {
+            final float mInv = Utils.invSqrtUnchecked(mSq);
+            float xn = x * mInv;
+            float yn = y * mInv;
+            float zn = z * mInv;
+
+            if ( Utils.abs(xn) < IUtils.ONE_255 ) { xn = 0.0f; }
+            if ( Utils.abs(yn) < IUtils.ONE_255 ) { yn = 0.0f; }
+            if ( Utils.abs(zn) < IUtils.ONE_255 ) { zn = 0.0f; }
+            return target.set(xn, yn, zn);
+         }
+      }
+      return Vec3.up(target);
+   }
+
+   /**
     * Creates a vector from the cosine and sine of an azimuth and inclination.
     *
     * @param cosAzim the cosine of azimuth
@@ -1757,13 +1796,11 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the vector's inclination. Defaults to inclination signed.
+    * Finds the vector's inclination.
     *
     * @param v the input vector
     *
     * @return the inclination
-    *
-    * @see Vec3#inclinationSigned(Vec3)
     */
    public static float inclination ( final Vec3 v ) {
 
@@ -1937,7 +1974,7 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Finds the length, or magnitude, of a vector, |<em>a</em>| . Also
     * referred to as the radius when using spherical coordinates. Uses the
-    * formula \u221a <em>a</em> · <em>a</em> . Where possible, use magSq or
+    * formula \u221a <em>a</em> . <em>a</em> . Where possible, use magSq or
     * dot to avoid the computational cost of the square-root.
     *
     * @param v the input vector
@@ -1953,7 +1990,7 @@ public class Vec3 implements Comparable < Vec3 > {
 
    /**
     * Finds the length-, or magnitude-, squared of a vector,
-    * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> ·
+    * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> .
     * <em>a</em> . Useful when calculating the lengths of many vectors, so as
     * to avoid the computational cost of the square-root.
     *
@@ -2345,8 +2382,10 @@ public class Vec3 implements Comparable < Vec3 > {
     * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined
     * as<br>
     * <br>
-    * project ( <em>a</em>, <em>b</em> ) := <em>a</em> · <em>b</em> /
-    * <em>b</em> · <em>b</em>
+    * project ( <em>a</em>, <em>b</em> ) := <em>a</em> . <em>b</em> /
+    * <em>b</em> . <em>b</em><br>
+    * <br>
+    * If the square magnitude of <em>b</em> is zero, then returns zero.
     *
     * @param a left operand
     * @param b right operand
@@ -2363,8 +2402,8 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Projects one vector onto another. Defined as<br>
     * <br>
-    * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> ·
-    * <em>b</em> / <em>b</em> · <em>b</em> )<br>
+    * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> .
+    * <em>b</em> / <em>b</em> . <em>b</em> )<br>
     * <br>
     * Returns a zero vector if the right operand, <em>b</em>, has zero
     * magnitude.
@@ -2509,7 +2548,7 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Reflects an incident vector off a normal vector. Uses the formula <br>
     * <br>
-    * <em>i</em> - 2.0 (<em>n</em> · <em>i</em>) <em>n</em><br>
+    * <em>i</em> - 2.0 (<em>n</em> . <em>i</em>) <em>n</em><br>
     * <br>
     *
     * @param incident the incident vector
@@ -3295,7 +3334,7 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Compares two vectors against a locus with squared Euclidean distance.
     */
-   public static class SortDistSq extends AbstrComparator {
+   public static final class SortDistSq extends AbstrComparator {
 
       /**
        * The point against which distances are compared.
@@ -3339,7 +3378,7 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Compares two vectors on the x axis.
     */
-   public static class SortX extends AbstrComparator {
+   public static final class SortX extends AbstrComparator {
 
       /**
        * The default constructor.
@@ -3365,7 +3404,7 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Compares two vectors on the y axis.
     */
-   public static class SortY extends AbstrComparator {
+   public static final class SortY extends AbstrComparator {
 
       /**
        * The default constructor.
@@ -3391,7 +3430,7 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Compares two vectors on the z axis.
     */
-   public static class SortZ extends AbstrComparator {
+   public static final class SortZ extends AbstrComparator {
 
       /**
        * The default constructor.

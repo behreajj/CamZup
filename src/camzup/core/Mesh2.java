@@ -3,6 +3,7 @@ package camzup.core;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -3545,6 +3546,28 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       }
 
       return points;
+   }
+
+   /**
+    * An abstract class that may serve as an umbrella for any custom
+    * comparators of Mesh2 s.
+    */
+   public abstract static class AbstrComparator implements Comparator <
+      Mesh2 > {
+
+      /**
+       * The default constructor.
+       */
+      protected AbstrComparator ( ) {}
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
    }
 
    /**

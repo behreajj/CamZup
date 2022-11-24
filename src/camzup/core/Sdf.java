@@ -49,7 +49,8 @@ public abstract class Sdf {
 
    /**
     * Draws a two dimensional box whose dimensions are described by the
-    * bounds.
+    * bounds. See <a href=
+    * "https://www.ronja-tutorials.com/post/034-2d-sdf-basics/">https://www.ronja-tutorials.com/post/034-2d-sdf-basics/</a>.
     *
     * @param point  the point
     * @param bounds the bounds
@@ -65,8 +66,10 @@ public abstract class Sdf {
       final float qx = Utils.abs(point.x) - bounds.x;
       final float qy = Utils.abs(point.y) - bounds.y;
 
-      return Utils.hypot(Utils.max(qx, 0.0f), Utils.max(qy, 0.0f)) + Utils.min(
-         Utils.max(qx, qy), 0.0f);
+      final float outside = Utils.hypot(Utils.max(0.0f, qx), Utils.max(0.0f,
+         qy));
+      final float inside = Utils.min(Utils.max(qx, qy), 0.0f);
+      return outside + inside;
    }
 
    /**
@@ -106,8 +109,10 @@ public abstract class Sdf {
       final float qy = Utils.abs(point.y) - bounds.y;
       final float qz = Utils.abs(point.z) - bounds.z;
 
-      return Utils.hypot(Utils.max(qx, 0.0f), Utils.max(qy, 0.0f), Utils.max(qz,
-         0.0f)) + Utils.min(Utils.max(qx, qy, qz), 0.0f);
+      final float outside = Utils.hypot(Utils.max(0.0f, qx), Utils.max(0.0f,
+         qy), Utils.max(0.0f, qz));
+      final float inside = Utils.min(Utils.max(qx, qy, qz), 0.0f);
+      return outside + inside;
    }
 
    /**
@@ -376,8 +381,8 @@ public abstract class Sdf {
 
       final float a = angle + Utils.atan2(point.y, -point.x);
       final float b = IUtils.TAU / Utils.max(3, vertices);
-      return ( float ) Math.cos(b * Utils.floor(0.5f + a / b) - a) * Utils
-         .hypot(point.x, point.y) - bounds * 0.5f;
+      return Utils.div(( float ) Math.cos(b * Utils.floor(0.5f + a / b) - a)
+         * Utils.hypot(point.x, point.y), bounds);
    }
 
    /**

@@ -2,6 +2,10 @@ package camzup.core;
 
 /**
  * Facilitates simplex noise and voronoi patterns via hashing functions.
+ * Hashing functions are based on Bob Jenkins lookup3 script, <a href=
+ * "http://burtleburtle.net/bob/c/lookup3.c">http://burtleburtle.net/bob/c/lookup3.c</a>.
+ *
+ * @author Bob Jenkins
  */
 public abstract class Generative {
 
@@ -76,7 +80,6 @@ public abstract class Generative {
     *
     * @see Vec2#hashCode()
     * @see Float#intBitsToFloat(int)
-    * @see Simplex#hash(int, int, int)
     */
    public static float hash ( final Vec2 v, final int seed ) {
 
@@ -125,7 +128,6 @@ public abstract class Generative {
     *
     * @see Vec3#hashCode()
     * @see Float#intBitsToFloat(int)
-    * @see Simplex#hash(int, int, int)
     */
    public static float hash ( final Vec3 v, final int seed ) {
 
@@ -184,7 +186,6 @@ public abstract class Generative {
     *
     * @see Vec4#hashCode()
     * @see Float#intBitsToFloat(int)
-    * @see Simplex#hash(int, int, int)
     */
    public static float hash ( final Vec4 v, final int seed ) {
 

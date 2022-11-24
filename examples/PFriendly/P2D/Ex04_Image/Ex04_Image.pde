@@ -17,7 +17,7 @@ void setup() {
   frameRate(60.0f);
   noStroke();
   img = loadImage("diagnostic.png");
-  ZImage.tint(img, 0xafff7f00, 0.25f);
+  ZImage.tint(img, 0xafff7f00, 0.25f, img);
 
   // For OpenGL rendering.
   //graphics.textureSampling(TextureSampling.POINT);

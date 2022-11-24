@@ -1052,39 +1052,6 @@ public class Mat4 {
    }
 
    /**
-    * Creates an pseudo-isometric camera suitable to pixel art, with a rise of
-    * 1 pixel and a run of 2 pixels. The resulting angle from
-    * <code>atan2(1.0, 2.0)</code>, approximately 25.565 degrees, is
-    * subtracted from 60 degrees to get 33.435 degrees. This pitch, along with
-    * a yaw of 45 degrees, determines the camera's forward axis.<br>
-    *
-    * @param loc        the camera location
-    * @param handedness the handedness
-    * @param target     the output matrix
-    *
-    * @return the camera matrix
-    */
-   public static Mat4 cameraDimetric ( final Vec3 loc,
-      final Handedness handedness, final Mat4 target ) {
-		  
-	  // TODO: Consider removing this along with pfriendly
-	  // renderer versions? A pde example depends on this.
-
-      if ( handedness == Handedness.LEFT ) {
-         return target.set(0.70710677f, 0.0f, 0.70710677f, -loc.x * 0.70710677f
-            - loc.z * 0.70710677f, -0.38960868f, 0.8345119f, 0.38960868f, loc.x
-               * 0.38960868f - loc.y * 0.8345119f - loc.z * 0.38960868f,
-            0.590089f, 0.55098987f, -0.590089f, -loc.x * 0.590089f - loc.y
-               * 0.55098987f + loc.z * 0.590089f, 0.0f, 0.0f, 0.0f, 1.0f);
-      }
-      return target.set(0.70710677f, 0.70710677f, 0.0f, -loc.x * 0.70710677f
-         - loc.y * 0.70710677f, -0.38960868f, 0.38960868f, 0.8345119f, loc.x
-            * 0.38960868f - loc.y * 0.38960868f - loc.z * 0.8345119f, 0.590089f,
-         -0.590089f, 0.55098987f, -loc.x * 0.590089f + loc.y * 0.590089f - loc.z
-            * 0.55098987f, 0.0f, 0.0f, 0.0f, 1.0f);
-   }
-
-   /**
     * Decomposes a matrix into its constituent transforms: translation,
     * rotation and scale. Rotation is returned from the function, while
     * translation and scale are loaded into out parameters.

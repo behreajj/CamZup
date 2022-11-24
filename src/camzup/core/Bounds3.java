@@ -1,5 +1,7 @@
 package camzup.core;
 
+import java.util.Comparator;
+
 /**
  * An axis aligned bounding box (AABB) for a 3D volume, represented with a
  * minimum and maximum coordinate.
@@ -920,6 +922,154 @@ public class Bounds3 implements Comparable < Bounds3 > {
          > a.max.x ? center.x - a.max.x : 0.0f;
 
       return xd * xd + yd * yd + zd * zd < rsq;
+   }
+
+   /**
+    * An abstract class that may serve as an umbrella for any custom
+    * comparators of Bounds3 s.
+    */
+   public abstract static class AbstrComparator implements Comparator <
+      Bounds3 > {
+
+      /**
+       * The default constructor.
+       */
+      protected AbstrComparator ( ) {}
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
+   }
+
+   /**
+    * Compares two bounds on the x axis.
+    */
+   public static final class SortX extends AbstrComparator {
+
+      /**
+       * Stores the center for the left comparisand.
+       */
+      private final Vec3 aCenter = new Vec3();
+
+      /**
+       * Stores the center for the right comparisand.
+       */
+      private final Vec3 bCenter = new Vec3();
+
+      /**
+       * The comparator for the vector center.
+       */
+      private final Vec3.SortX comparator = new Vec3.SortX();
+
+      /**
+       * The default constructor.
+       */
+      public SortX ( ) {}
+
+      /**
+       * The compare function.
+       *
+       * @param a the left comparisand
+       * @param b the right comparisand
+       *
+       * @return the comparison
+       */
+      @Override
+      public int compare ( final Bounds3 a, final Bounds3 b ) {
+
+         return this.comparator.compare(Bounds3.center(a, this.aCenter), Bounds3
+            .center(b, this.bCenter));
+      }
+
+   }
+
+   /**
+    * Compares two bounds on the y axis.
+    */
+   public static final class SortY extends AbstrComparator {
+
+      /**
+       * Stores the center for the left comparisand.
+       */
+      private final Vec3 aCenter = new Vec3();
+
+      /**
+       * Stores the center for the right comparisand.
+       */
+      private final Vec3 bCenter = new Vec3();
+
+      /**
+       * The comparator for the vector center.
+       */
+      private final Vec3.SortY comparator = new Vec3.SortY();
+
+      /**
+       * The default constructor.
+       */
+      public SortY ( ) {}
+
+      /**
+       * The compare function.
+       *
+       * @param a the left comparisand
+       * @param b the right comparisand
+       *
+       * @return the comparison
+       */
+      @Override
+      public int compare ( final Bounds3 a, final Bounds3 b ) {
+
+         return this.comparator.compare(Bounds3.center(a, this.aCenter), Bounds3
+            .center(b, this.bCenter));
+      }
+
+   }
+
+   /**
+    * Compares two bounds on the z axis.
+    */
+   public static final class SortZ extends AbstrComparator {
+
+      /**
+       * Stores the center for the left comparisand.
+       */
+      private final Vec3 aCenter = new Vec3();
+
+      /**
+       * Stores the center for the right comparisand.
+       */
+      private final Vec3 bCenter = new Vec3();
+
+      /**
+       * The comparator for the vector center.
+       */
+      private final Vec3.SortZ comparator = new Vec3.SortZ();
+
+      /**
+       * The default constructor.
+       */
+      public SortZ ( ) {}
+
+      /**
+       * The compare function.
+       *
+       * @param a the left comparisand
+       * @param b the right comparisand
+       *
+       * @return the comparison
+       */
+      @Override
+      public int compare ( final Bounds3 a, final Bounds3 b ) {
+
+         return this.comparator.compare(Bounds3.center(a, this.aCenter), Bounds3
+            .center(b, this.bCenter));
+      }
+
    }
 
 }
