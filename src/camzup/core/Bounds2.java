@@ -68,20 +68,18 @@ public class Bounds2 implements Comparable < Bounds2 > {
     * coordinate before the x coordinate.
     *
     * @return the evaluation
-    *
-    * @see Utils#diff(float, float)
     */
    @Override
    public int compareTo ( final Bounds2 b ) {
 
-      final float ayCenter = Utils.diff(this.max.y, this.min.y) * 0.5f;
-      final float byCenter = Utils.diff(b.max.y, b.min.y) * 0.5f;
+      final float ayCenter = ( this.max.y - this.min.y ) * 0.5f;
+      final float byCenter = ( b.max.y - b.min.y ) * 0.5f;
 
       if ( ayCenter < byCenter ) { return -1; }
       if ( ayCenter > byCenter ) { return 1; }
 
-      final float axCenter = Utils.diff(this.max.x, this.min.x) * 0.5f;
-      final float bxCenter = Utils.diff(b.max.x, b.min.x) * 0.5f;
+      final float axCenter = ( this.max.x - this.min.x ) * 0.5f;
+      final float bxCenter = ( b.max.x - b.min.x ) * 0.5f;
 
       if ( axCenter < bxCenter ) { return -1; }
       if ( axCenter > bxCenter ) { return 1; }
@@ -381,41 +379,65 @@ public class Bounds2 implements Comparable < Bounds2 > {
     * @param h vertical scalar
     *
     * @return this bounds
-    *
-    * @see Utils#diff(float, float)
-    * @see Utils#max(float, float)
     */
    protected Bounds2 scale ( final float w, final float h ) {
-
-      final float xCenter = Utils.diff(this.max.x, this.min.x) * 0.5f;
-      final float yCenter = Utils.diff(this.max.y, this.min.y) * 0.5f;
 
       final float vw = w < -IUtils.EPSILON || w > IUtils.EPSILON ? w
          : IUtils.EPSILON;
       final float vh = h < -IUtils.EPSILON || h > IUtils.EPSILON ? h
          : IUtils.EPSILON;
 
-      this.min.x = ( this.min.x - xCenter ) * vw + xCenter;
-      this.min.y = ( this.min.y - yCenter ) * vh + yCenter;
+      final float xCenter = ( this.max.x + this.min.x ) * 0.5f;
+      final float yCenter = ( this.max.y + this.min.y ) * 0.5f;
 
-      this.max.x = ( this.max.x - xCenter ) * vw + xCenter;
-      this.max.y = ( this.max.y - yCenter ) * vh + yCenter;
+      final float xSclExt = ( this.max.x - this.min.x ) * 0.5f * vw;
+      final float ySclExt = ( this.max.y - this.min.y ) * 0.5f * vh;
+
+      this.min.x = xCenter - xSclExt;
+      this.min.y = yCenter - ySclExt;
+
+      this.max.x = xCenter + xSclExt;
+      this.max.y = yCenter + ySclExt;
 
       return this;
    }
 
    /**
-    * Finds the area of the bounds.
+    * Finds the area of the bounds. Defaults to the unsigned area.
+    *
+    * @param b the bounds
+    *
+    * @return the area
+    */
+   public static float area ( final Bounds2 b ) {
+
+      return Bounds2.areaUnsigned(b);
+   }
+
+   /**
+    * Finds the signed area of the bounds.
+    *
+    * @param b the bounds
+    *
+    * @return the area
+    */
+   public static float areaSigned ( final Bounds2 b ) {
+
+      return ( b.max.x - b.min.x ) * ( b.max.y - b.min.y );
+   }
+
+   /**
+    * Finds the unsigned area of the bounds.
     *
     * @param b the bounds
     *
     * @return the area
     *
-    * @see Utils#diff(float, float)
+    * @see Utils#abs(float)
     */
-   public static float area ( final Bounds2 b ) {
+   public static float areaUnsigned ( final Bounds2 b ) {
 
-      return Utils.diff(b.min.x, b.max.x) * Utils.diff(b.min.y, b.max.y);
+      return Utils.abs(b.max.x - b.min.x) * Utils.abs(b.max.y - b.min.y);
    }
 
    /**
@@ -544,6 +566,36 @@ public class Bounds2 implements Comparable < Bounds2 > {
    }
 
    /**
+    * Finds the extent of the bounds, the difference between its minimum and
+    * maximum corners.
+    *
+    * @param b      the bounds
+    * @param target the output vector
+    *
+    * @return the extent
+    */
+   public static Vec2 extent ( final Bounds2 b, final Vec2 target ) {
+
+      return Bounds2.extentUnsigned(b, target);
+   }
+
+   /**
+    * Finds the extent of the bounds, the difference between its minimum and
+    * maximum corners.
+    *
+    * @param b      the bounds
+    * @param target the output vector
+    *
+    * @return the extent
+    *
+    * @see Vec2#sub(Vec2, Vec2, Vec2)
+    */
+   public static Vec2 extentSigned ( final Bounds2 b, final Vec2 target ) {
+
+      return Vec2.sub(b.max, b.min, target);
+   }
+
+   /**
     * Finds the extent of the bounds, the absolute difference between its
     * minimum and maximum corners.
     *
@@ -552,11 +604,12 @@ public class Bounds2 implements Comparable < Bounds2 > {
     *
     * @return the extent
     *
-    * @see Vec2#diff(Vec2, Vec2, Vec2)
+    * @see Bounds2#extentSigned(Bounds2, Vec2)
+    * @see Vec2#abs(Vec2, Vec2)
     */
-   public static Vec2 extent ( final Bounds2 b, final Vec2 target ) {
+   public static Vec2 extentUnsigned ( final Bounds2 b, final Vec2 target ) {
 
-      return Vec2.diff(b.max, b.min, target);
+      return Vec2.abs(Bounds2.extentSigned(b, target), target);
    }
 
    /**
@@ -591,6 +644,27 @@ public class Bounds2 implements Comparable < Bounds2 > {
 
       return target.set(center.x - he.x, center.y - he.y, center.x + he.x,
          center.y + he.y);
+   }
+
+   /**
+    * Finds the intersection between two bounds, i.e. the overlapping area
+    * between the two.
+    *
+    * @param a      left operand
+    * @param b      right operand
+    * @param target the output bounds
+    *
+    * @return the intersection
+    *
+    * @see Vec2#max(Vec2, Vec2, Vec2)
+    * @see Vec2#min(Vec2, Vec2, Vec2)
+    */
+   public static Bounds2 fromIntersection ( final Bounds2 a, final Bounds2 b,
+      final Bounds2 target ) {
+
+      Vec2.max(a.min, b.min, target.min);
+      Vec2.min(a.max, b.max, target.max);
+      return target;
    }
 
    /**
@@ -634,19 +708,24 @@ public class Bounds2 implements Comparable < Bounds2 > {
    }
 
    /**
-    * Finds half the extent of the bounds.
+    * Finds the union between two bounds, i.e. a bounds that will contain both
+    * of them.
     *
-    * @param b      the bounds
-    * @param target the output vector
+    * @param a      left operand
+    * @param b      right operand
+    * @param target the output bounds
     *
-    * @return the half-extent
+    * @return the union
     *
-    * @see Bounds2#extent(Bounds2, Vec2)
-    * @see Vec2#mul(Vec2, float, Vec2)
+    * @see Vec2#max(Vec2, Vec2, Vec2)
+    * @see Vec2#min(Vec2, Vec2, Vec2)
     */
-   public static Vec2 halfExtent ( final Bounds2 b, final Vec2 target ) {
+   public static Bounds2 fromUnion ( final Bounds2 a, final Bounds2 b,
+      final Bounds2 target ) {
 
-      return Vec2.mul(Bounds2.extent(b, target), 0.5f, target);
+      Vec2.min(a.min, b.min, target.min);
+      Vec2.max(a.max, b.max, target.max);
+      return target;
    }
 
    /**
@@ -698,6 +777,19 @@ public class Bounds2 implements Comparable < Bounds2 > {
          > a.max.x ? center.x - a.max.x : 0.0f;
 
       return xd * xd + yd * yd < radius * radius;
+   }
+
+   /**
+    * Evaluates whether the bounds maximum is less than its minimum in any
+    * dimension.
+    *
+    * @param b the bounds
+    *
+    * @return the evaluation
+    */
+   public static boolean isNegative ( final Bounds2 b ) {
+
+      return b.max.y < b.min.y || b.max.x < b.min.x;
    }
 
    /**

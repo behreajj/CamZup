@@ -33,7 +33,7 @@ void setup() {
     0x7f7f00ff,
     0x3fff7f00,
     0xffffffff);
-  ZImage.radial(0.0f, 0.0f, 0.7071f, grd0, source);
+  ZImage.gradientRadial(grd0, 0.0f, 0.0f, 0.7071f, source);
 
   if (main.getClass().getSimpleName().equals("Yup2")) {
     ZImage.premul(source, source);
@@ -55,7 +55,7 @@ void setup() {
     long stop = System.currentTimeMillis();
 
     long diff0 = stop - start;
-    println("bicubic:", diff0,
+    println("elapsed:", diff0,
       ", w:", rszcb.width, ", h:", rszcb.height);
   }
   long concl = System.currentTimeMillis();

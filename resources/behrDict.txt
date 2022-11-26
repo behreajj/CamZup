@@ -168,3 +168,5 @@ premultiplied
 slivers
 inline
 gimbals
+unpremul
+premul

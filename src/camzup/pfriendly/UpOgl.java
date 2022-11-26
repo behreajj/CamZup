@@ -59,21 +59,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    protected ArcMode arcMode = ArcMode.OPEN;
 
    /**
-    * A placeholder color used during lerpColor.
-    */
-   protected final Color aTemp = new Color();
-
-   /**
-    * A placeholder color used during lerpColor.
-    */
-   protected final Color bTemp = new Color();
-
-   /**
-    * A placeholder color used during lerpColor.
-    */
-   protected final Color cTemp = new Color();
-
-   /**
     * One divided by the maximum for the alpha channel.
     */
    protected float invColorModeA = 1.0f;
@@ -472,18 +457,19 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.calcG = y * this.invColorModeY;
       this.calcR = x * this.invColorModeX;
 
+      this.calcA = this.calcA < 0.0f ? 0.0f : this.calcA > 1.0f ? 1.0f
+         : this.calcA;
+
       switch ( this.colorMode ) {
 
          case PConstants.HSB: /* 3 */
 
-            /* Conversion clamps the results. */
-            Color.hsvToRgb(this.calcR, this.calcG, this.calcB, this.calcA,
-               this.aTemp);
+            final float[] rgb = ColorAux.hsbToRgb(this.calcR, this.calcG,
+               this.calcB);
 
-            this.calcA = this.aTemp.a;
-            this.calcB = this.aTemp.b;
-            this.calcG = this.aTemp.g;
-            this.calcR = this.aTemp.r;
+            this.calcB = rgb[2];
+            this.calcG = rgb[1];
+            this.calcR = rgb[0];
 
             break;
 
@@ -491,12 +477,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
          default:
 
-            /* @formatter:off */
-            this.calcA = this.calcA < 0.0f ? 0.0f : this.calcA > 1.0f ? 1.0f : this.calcA;
-            this.calcB = this.calcB < 0.0f ? 0.0f : this.calcB > 1.0f ? 1.0f : this.calcB;
-            this.calcG = this.calcG < 0.0f ? 0.0f : this.calcG > 1.0f ? 1.0f : this.calcG;
-            this.calcR = this.calcR < 0.0f ? 0.0f : this.calcR > 1.0f ? 1.0f : this.calcR;
-            /* @formatter:on */
+            this.calcB = this.calcB < 0.0f ? 0.0f : this.calcB > 1.0f ? 1.0f
+               : this.calcB;
+            this.calcG = this.calcG < 0.0f ? 0.0f : this.calcG > 1.0f ? 1.0f
+               : this.calcG;
+            this.calcR = this.calcR < 0.0f ? 0.0f : this.calcR > 1.0f ? 1.0f
+               : this.calcR;
 
       }
 
@@ -1436,42 +1422,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param origin the origin color
     * @param dest   the destination color
     * @param step   the factor in [0, 1]
-    * @param target the output color
-    *
-    * @return the color
-    */
-   @Override
-   public Color lerpColor ( final Color origin, final Color dest,
-      final float step, final Color target ) {
-
-      switch ( this.colorMode ) {
-
-         case PConstants.HSB:
-
-            return IUp.MIXER_HSVA.apply(origin, dest, step, target);
-
-         case PConstants.RGB:
-
-         default:
-
-            return IUp.MIXER_RGBA.apply(origin, dest, step, target);
-      }
-   }
-
-   /**
-    * Eases from an origin color to a destination by a step.
-    *
-    * @param origin the origin color
-    * @param dest   the destination color
-    * @param step   the factor in [0, 1]
     *
     * @return the color
     */
    @Override
    public int lerpColor ( final int origin, final int dest, final float step ) {
 
-      return Color.toHexIntWrap(this.lerpColor(Color.fromHex(origin,
-         this.aTemp), Color.fromHex(dest, this.bTemp), step, this.cTemp));
+      return ColorAux.lerpColor(origin, dest, step, this.colorMode);
    }
 
    /**

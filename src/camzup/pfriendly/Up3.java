@@ -1625,9 +1625,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     */
    void ambientLight ( ) {
 
-      this.aTemp.set(IUpOgl.DEFAULT_AMB_R, IUpOgl.DEFAULT_AMB_G,
-         IUpOgl.DEFAULT_AMB_B, 1.0f);
-      this.ambientLight(this.aTemp);
+      // Cf. IUpOgl.DEFAULT_AMB_R, IUpOgl.DEFAULT_AMB_G, IUpOgl.DEFAULT_AMB_B
+      this.ambientLight(0xff202633);
    }
 
    /**
@@ -1822,8 +1821,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    void spotLight ( final Color clr, final Vec3 loc, final Vec3 dir,
       final float angle, final float concentration ) {
 
-      this.spotLight(Color.toHexIntWrap(this.aTemp), loc.x, loc.y, loc.z, dir.x,
-         dir.y, dir.z, angle, concentration);
+      this.spotLight(Color.toHexIntWrap(clr), loc.x, loc.y, loc.z, dir.x, dir.y,
+         dir.z, angle, concentration);
    }
 
    /**

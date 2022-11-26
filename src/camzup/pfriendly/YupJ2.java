@@ -92,26 +92,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    protected final Arc2D.Double arcd = new Arc2D.Double(Arc2D.OPEN);
 
    /**
-    * A placeholder color used during lerpColor.
-    */
-   protected final Color aTemp = new Color();
-
-   /**
-    * A placeholder color used during lerpColor.
-    */
-   protected final Color bTemp = new Color();
-
-   /**
     * Representation of a stroke cap in the native AWT library.
     *
     * @see BasicStroke
     */
    protected int capNative = BasicStroke.CAP_ROUND;
-
-   /**
-    * A placeholder color used during lerpColor.
-    */
-   protected final Color cTemp = new Color();
 
    /**
     * A Java AWT general path object. This is reset when a new shape needs to
@@ -1943,42 +1928,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param origin the origin color
     * @param dest   the destination color
     * @param step   the factor in [0, 1]
-    * @param target the output color
-    *
-    * @return the color
-    */
-   @Override
-   public Color lerpColor ( final Color origin, final Color dest,
-      final float step, final Color target ) {
-
-      switch ( this.colorMode ) {
-
-         case PConstants.HSB:
-
-            return IUp.MIXER_HSVA.apply(origin, dest, step, target);
-
-         case PConstants.RGB:
-
-         default:
-
-            return IUp.MIXER_RGBA.apply(origin, dest, step, target);
-      }
-   }
-
-   /**
-    * Eases from an origin color to a destination by a step.
-    *
-    * @param origin the origin color
-    * @param dest   the destination color
-    * @param step   the factor in [0, 1]
     *
     * @return the color
     */
    @Override
    public int lerpColor ( final int origin, final int dest, final float step ) {
 
-      return Color.toHexIntWrap(this.lerpColor(Color.fromHex(origin,
-         this.aTemp), Color.fromHex(dest, this.bTemp), step, this.cTemp));
+      return ColorAux.lerpColor(origin, dest, step, this.colorMode);
    }
 
    /**
@@ -4169,17 +4125,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.calcG = y * this.invColorModeY;
       this.calcR = x * this.invColorModeX;
 
+      this.calcA = this.calcA < 0.0f ? 0.0f : this.calcA > 1.0f ? 1.0f
+         : this.calcA;
+
       switch ( this.colorMode ) {
 
          case PConstants.HSB: /* 3 */
 
-            Color.hsvToRgb(this.calcR, this.calcG, this.calcB, this.calcA,
-               this.aTemp);
+            final float[] rgb = ColorAux.hsbToRgb(this.calcR, this.calcG,
+               this.calcB);
 
-            this.calcA = this.aTemp.a;
-            this.calcB = this.aTemp.b;
-            this.calcG = this.aTemp.g;
-            this.calcR = this.aTemp.r;
+            this.calcB = rgb[2];
+            this.calcG = rgb[1];
+            this.calcR = rgb[0];
 
             break;
 
@@ -4187,8 +4145,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
          default:
 
-            this.calcA = this.calcA < 0.0f ? 0.0f : this.calcA > 1.0f ? 1.0f
-               : this.calcA;
             this.calcB = this.calcB < 0.0f ? 0.0f : this.calcB > 1.0f ? 1.0f
                : this.calcB;
             this.calcG = this.calcG < 0.0f ? 0.0f : this.calcG > 1.0f ? 1.0f

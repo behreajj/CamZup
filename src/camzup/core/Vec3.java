@@ -605,7 +605,7 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Finds the vector's azimuth
+    * Finds the vector's azimuth.
     *
     * @param v the input vector
     *

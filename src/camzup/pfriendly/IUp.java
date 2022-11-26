@@ -121,19 +121,6 @@ public interface IUp {
    float getWidth ( );
 
    /**
-    * Eases from an origin color to a destination by a step.
-    *
-    * @param origin the origin color
-    * @param dest   the destination color
-    * @param step   the factor in [0, 1]
-    * @param target the output color
-    *
-    * @return the color
-    */
-   Color lerpColor ( final Color origin, final Color dest, final float step,
-      final Color target );
-
-   /**
     * Eases from an origin color to a destination by a step, where colors are
     * stored in integers.
     *
@@ -379,15 +366,5 @@ public interface IUp {
     * drawing handles, {@value IUp#HANDLE_REAR_WEIGHT}.
     */
    float HANDLE_REAR_WEIGHT = 4.0f;
-
-   /**
-    * A cached easing function for HSVA colors.
-    */
-   Color.AbstrEasing MIXER_HSVA = new Color.MixHsv();
-
-   /**
-    * A cached easing function for RGBA colors.
-    */
-   Color.AbstrEasing MIXER_RGBA = new Color.MixSrgb();
 
 }

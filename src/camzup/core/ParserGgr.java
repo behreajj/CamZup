@@ -139,8 +139,6 @@ public abstract class ParserGgr {
 
          /* Mixers. */
          final Color.MixSrgb rgbaMix = new Color.MixSrgb();
-         final Color.MixHsv cwMix = new Color.MixHsv(new Color.HueCW());
-         final Color.MixHsv ccwMix = new Color.MixHsv(new Color.HueCCW());
 
          /* The GGR file is sampled rather than transferred one-to-one. */
          final int vSamp = Utils.clamp(samples, 3, 32);
@@ -248,16 +246,12 @@ public abstract class ParserGgr {
                    */
                }
 
+               // TODO: How to support HSB?
+
                /* Mix color based on color space. Default to RGB. */
                switch ( clrSpc ) {
                   case ParserGgr.SPACE_HSB_CCW: /* 1 */
-                     ccwMix.apply(ltClr, rtClr, fac, evalClr);
-                     break;
-
                   case ParserGgr.SPACE_HSB_CW: /* 2 */
-                     cwMix.apply(ltClr, rtClr, fac, evalClr);
-                     break;
-
                   case ParserGgr.SPACE_RGB: /* 0 */
                   default:
                      rgbaMix.apply(ltClr, rtClr, fac, evalClr);

@@ -2,33 +2,33 @@
 
 Table of Contents
 
-  1. [Getting Started](#getting-started)
-     1. [Installation](#installation)
-     2. [Structure](#structure)
-     3. [Usage](#usage)
-     4. [Chirality](#chirality)
-     5. [Color](#color)
-        1. [Palettes](#palettes)
-        2. [Harmony](#harmony)
-        3. [Complement Mix Test](#complement-mix-test)
-        4. [Shading](#shading)
-     6. [File Import & Export](#file-import--export)
-        1. [GPL](#gpl)
-        2. [GGR](#ggr)
-        3. [OBJ](#obj)
-        4. [SVG](#svg)
-  2. [Differences, Problems](#differences-problems)
-     1. [2D & 3D](#2d--3d)
-     2. [2D](#2d)
-     3. [3D](#3d)
-  3. [Math Conventions](#programming-math-conventions)
-  4. [Kotlin Interoperability](#kotlin-interoperability)
+- [Welcome to Cam Z-Up](#welcome-to-cam-z-up)
+  - [Getting Started](#getting-started)
+    - [Installation](#installation)
+    - [Structure](#structure)
+    - [Usage](#usage)
+    - [Chirality](#chirality)
+    - [Color](#color)
+      - [Palettes](#palettes)
+    - [Harmony](#harmony)
+    - [Complement Mix Test](#complement-mix-test)
+  - [File Import \& Export](#file-import--export)
+    - [GPL](#gpl)
+    - [GGR](#ggr)
+    - [OBJ](#obj)
+    - [SVG](#svg)
+  - [Differences, Problems](#differences-problems)
+    - [2D \& 3D](#2d--3d)
+    - [2D](#2d)
+    - [3D](#3d)
+  - [Programming, Math Conventions](#programming-math-conventions)
+  - [Kotlin Interoperability](#kotlin-interoperability)
 
 Cam Z-Up is a Java-based library for the creative coding environment [Processing](https://processing.org/). Cam Z-Up flips Processing's default projection so that the positive z axis, (0.0, 0.0, 1.0), is the world up axis; the positive y axis, (0.0, 1.0, 0.0), is forward. The world origin, (0.0, 0.0, 0.0), is placed at the center of a sketch.
 
-This library supports two- and three-dimensional graphics. In 2D, if the camera is imagined to be above the sketch looking down, the positive y axis is forward. If the camera is imagined to be looking from a sideview, this is up.
+This library supports two- and three-dimensional graphics. In 2D, if the camera is imagined to be above the sketch looking down, the positive y axis is forward. If the camera is imagined to be looking from a sideview, the y axis is up.
 
-If you can flip the y-axis by either
+If you can flip the y axis by either
 
   - supplying -1.0 to [scale](https://processing.org/reference/scale_.html)'s y parameter or 
   - supplying (0.0, -1.0, 0.0) to the final parameters of [camera](https://processing.org/reference/camera_.html)
@@ -59,7 +59,7 @@ Alternatively, you can navigate to the the distribution `.zip` on Github and dow
 
 ### Structure
 
-Cam Z-Up is split into three packages: `pfriendly`, `core` and `kotlin`. The `pfriendly` package contains code compatible with Processing's API. Inside it, you'll find four graphics renderers:
+Cam Z-Up is split into three packages: `core`, `pfriendly` and `kotlin`. The `pfriendly` package contains code compatible with Processing's API. Inside it, you'll find four graphics renderers:
 
 - `Yup3`, which extends `PGraphicsOpenGL`, similar to `P3D`;
 - `Zup3`, which also extends `PGraphicsOpenGL`;
@@ -151,11 +151,11 @@ I am not a color scientist, nor do I pretend to be. Color is not the central foc
 
 #### Palettes
 
-The `Gradient` class allows you to create color ramps. This includes the following:
+The `Gradient` class allows you to create color ramps, including the following:
 
 ![Palette Diagram](data/paletteDiagram.png)
 
-Viridis and Magma are color palettes used in data visualizations. [Sepia](https://www.wikiwand.com/en/Sepia_(color)) and [cyanotype](https://en.wikipedia.org/wiki/Cyanotype) replicate older photographic printing processes. The Temperature palette is intended for use with lights; it is an inaccurate representation of [blackbody radiation temperature](https://www.wikiwand.com/en/Color_temperature).  
+Viridis and Magma are color palettes used in data visualizations. [Sepia](https://www.wikiwand.com/en/Sepia_(color)) and [cyanotype](https://en.wikipedia.org/wiki/Cyanotype) replicate older photographic printing processes.
 
 ### Harmony
 
@@ -163,7 +163,7 @@ RYB color is included above because popular tutorials on "Color Harmony" (or "Co
 
 ![Triadic](data/triadicDiagram.png)
 
-This RYB wheel's limitations should be apparent from the above. Oranges are dilated while blues are compressed. Brighter greens, cyans and magentas are not achievable. Blues and greens are desaturated. [This](https://youtu.be/YeI6Wqn4I78) tutorial on harmonies is one of the better I've found. Furthermore, [Coolors](https://coolors.co) can assist you in picking harmonies.
+This RYB wheel's limitations should be apparent from the above. Oranges are dilated while blues are compressed. Brighter greens, cyans and magentas are not achievable. Blues and greens are desaturated. [This](https://youtu.be/YeI6Wqn4I78) tutorial on harmonies is one of the better I've found.
 
 ### Complement Mix Test
 
@@ -171,7 +171,7 @@ A quick heuristic to decide if you are blending colors as you prefer is to take 
 
 ![Mix Diagram](data/mixDiagram.png)
 
-A hue mix can be either counter-clockwise or clockwise. Keep hue's periodicity in mind when working with HSL or HSV; do not use `Utils.clamp01` to confine a hue to [0.0, 1.0], use `Utils.mod1` instead. Converting sRGB to linear RGB, interpolating, then converting back is computationally expensive. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
+A hue mix can be either counter-clockwise or clockwise. Do not use `Utils.clamp01` to confine a hue to [0.0, 1.0], use `Utils.mod1` instead. Converting sRGB to linear RGB, interpolating, then converting back is computationally expensive. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Color.AbstrEasing`.
 
 ```java
 class Foo extends Color.AbstrEasing {
@@ -190,7 +190,7 @@ Specific to Processing import: methods like `loadImage` and `loadShape` have acc
 
 ### GPL
 
-This library supports the GIMP palette format (`.gpl`) because it is human readable, human writable and is also supported by [Aseprite](https://www.aseprite.org) and [Lospec](https://lospec.com/). To export a palette, provide an array of `Color`s to `Color.toGplString`.
+This library supports the GIMP palette format (`.gpl`) because it is human readable, human writable and is also supported by [Lospec](https://lospec.com/). To export a palette, provide an array of `Color`s to `Color.toGplString`.
 
 ```java
 import camzup.core.*;
@@ -223,7 +223,9 @@ To import a GPL file, use `ParserGpl.load` to return an array of `Color`s. Names
 
 ### GGR
 
-Support for the GIMP gradient format (`.ggr`) is partial. GIMP gradient color keys store a color at the left edge, right edge and median. This allows for both sharp edges and smooth transitions between color keys. Furthermore, it allows a GIMP gradient to meaningfully contain only one key, such as a HSB ramp that goes from red to red clockwise. CamZup gradients store only one color per key, and require a minimum of two keys. For this reason, upon import a GIMP gradient's keys are not transferred one-to-one; rather, the gradient is sampled at a resolution: `Gradient grd = ParserGgr.load(sketchPath() + "\\data\\filename.ggr", 16);`.
+Support for the GIMP gradient format (`.ggr`) is partial. GIMP gradient color keys store a color at the left edge, right edge and median. This allows for both sharp edges and smooth transitions between color keys. Furthermore, it allows a GIMP gradient to meaningfully contain only one key, such as a HSB ramp that goes from red to red clockwise. CamZup gradients store only one color per key, and require a minimum of two keys. As of November 2022, HSB is no longer supported
+
+For these reasons, upon import a GIMP gradient's keys are not transferred one-to-one; rather, the gradient is sampled at a resolution: `Gradient grd = ParserGgr.load(sketchPath() + "\\data\\filename.ggr", 16);`.
 
 To export, use code like this
 
@@ -308,7 +310,7 @@ Many core Processing functions are marked `final`, meaning they cannot be extend
 - `acos` and `asin` clamp the input value to the range `-1.0` to `1.0` so as to avoid exceptions.
 - As with Python, JavaScript and OSL, `x != 0` is `true`; `true` is `1` and `false` is `0`.
 - Where possible, `Vec2`, `Vec3` and `Vec4` parallel GLSL's `bvec`. Examples include: `Vec2 c = Vec2.lt(new Vec2(false, true), new Vec2(true, true));` and `boolean d = Vec2.any(c);`.
-- As with shader languages, I try to protect against divide-by-zero errors whenever possible. Though mathematically incorrect, `div(x, 0.0) = 0.0` ; in consequence `fmod(x, 0.0)` and `mod(x, 0.0)` return `x`.
+- As with shader languages, I try to protect against divide-by-zero errors when possible. Though mathematically incorrect, `div(x, 0.0) = 0.0` ; in consequence `fmod(x, 0.0)` and `mod(x, 0.0)` return `x`.
 - Unlike GLSL, `fract` is defined as `x - trunc(x)`, not `x - floor(x)`. This library refers to the latter as `mod1`.
 - The [linear interpolation](https://en.wikipedia.org/wiki/Linear_interpolation) (`lerp`) method in this library uses the formula `(1.0 - t) * a + t * b`, not `a + t * (b - a)`. Processing uses the latter. Furthermore, Processing's `lerp` is unclamped by default. This library Includes a clamped and unclamped version of `lerp`; clamped is assumed to be the default.
 - The step provided to easing functions is always a scalar (a `float`). There are no `step`, `smoothstep` and `linearstep` functions which generate the step to be supplied to `mix`. `mix` is, however, is defined in relevant classes.
@@ -320,7 +322,7 @@ Many core Processing functions are marked `final`, meaning they cannot be extend
 
 This library's `core` was originally designed to affiliate with Processing's code design. With exceptions, classes are defined to be mutable and extensible. Methods are at most `protected` and fields are public (no getters or setters). `static` methods are preferred where possible, and use the out parameter antipattern.
 
-As of v 0.6, this library provides limited interoperability with [Kotlin](https://kotlinlang.org/), specifically [operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html). As of v 0.7, this support is sectioned off in `camzup.kotlin`, where a Kotlin friendly class extends a core class; for example, `KtVec2` extends `Vec2`. Kotlin does not use `static` methods; instance methods do not always mutate the instance in place; and naming conventions differ to those of this library.
+As of v 0.6, this library provides limited interoperability with [Kotlin](https://kotlinlang.org/), specifically [operator overloading](https://kotlinlang.org/docs/reference/operator-overloading.html). As of v 0.7, this support is sectioned off to `camzup.kotlin`, where a Kotlin friendly class extends a core class; for example, `KtVec2` extends `Vec2`. Kotlin does not use `static` methods; instance methods do not always mutate the instance in place; and naming conventions differ to those of this library.
 
 | Kotlin Operator |            Interop Method | Mutator | KtVec | KtComplex | KtQuat | KtMat |
 | --------------: | ------------------------: | :-----: | :---: | :-------: | :----: | :---: |

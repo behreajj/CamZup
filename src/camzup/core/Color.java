@@ -424,19 +424,6 @@ public class Color implements Comparable < Color > {
    public static final float CIE_LCH_HUE_SHADOW = 308.0f / 360.0f;
 
    /**
-    * Arbitrary hue in HSL and HSV assigned to colors with no saturation that
-    * are closer to light, {@value Color#HSL_HUE_LIGHT}. Defaults to a yellow.
-    */
-   public static final float HSL_HUE_LIGHT = 48.0f / 360.0f;
-
-   /**
-    * Arbitrary hue in HSL and HSV assigned to colors with no saturation that
-    * are closer to shadow, {@value Color#HSL_HUE_SHADOW}. Defaults to a
-    * violet.
-    */
-   public static final float HSL_HUE_SHADOW = 255.0f / 360.0f;
-
-   /**
     * Tests to see if all color channels are greater than zero.
     *
     * @param c the color
@@ -707,8 +694,8 @@ public class Color implements Comparable < Color > {
          return target.set(Utils.mod1( ( 1.0f - fac ) * Color.CIE_LCH_HUE_SHADOW
             + fac * ( 1.0f + Color.CIE_LCH_HUE_LIGHT )), 0.0f, l, alpha);
       }
-      return target.set(Utils.mod1(IUtils.ONE_TAU * ( float ) Math.atan2(b, a)),
-         ( float ) Math.sqrt(cSq), l, alpha);
+      return target.set(Utils.mod1(( float ) ( IUtils.ONE_TAU_D * Math.atan2(b,
+         a) )), ( float ) Math.sqrt(cSq), l, alpha);
    }
 
    /**
@@ -796,6 +783,29 @@ public class Color implements Comparable < Color > {
    }
 
    /**
+    * Converts a color from CIE LAB to standard RGB (sRGB). The source should
+    * be organized as z: L or lightness, x: a or green-red, y: b or
+    * blue-yellow, w: alpha.
+    *
+    * @param lab  CIE LAB color
+    * @param srgb sRGB color
+    * @param lrgb linear sRGB color
+    * @param xyz  CIE XYZ color
+    *
+    * @return the output color
+    *
+    * @see Color#lRgbTosRgb(Color, boolean, Color)
+    * @see Color#cieLabToCieXyz(Vec4, Vec4)
+    * @see Color#cieXyzTolRgb(Vec4, Color)
+    */
+   public static Color cieLabTosRgb ( final Vec4 lab, final Color srgb,
+      final Color lrgb, final Vec4 xyz ) {
+
+      return Color.lRgbTosRgb(Color.cieXyzTolRgb(Color.cieLabToCieXyz(lab, xyz),
+         lrgb), false, srgb);
+   }
+
+   /**
     * Converts a color from CIE LCH to CIE LAB. The output is organized as z:
     * L or lightness, x: a or green-red, y: b or blue-yellow, w: alpha.
     *
@@ -832,6 +842,29 @@ public class Color implements Comparable < Color > {
 
       return Color.cieLchToCieLab(source.z, source.y, source.x, source.w,
          target);
+   }
+
+   /**
+    * Converts a color from CIE LCH to standard RBG (sRGB). The source should
+    * be organized as z: L or lightness, y: C or chroma, x: h or hue, w:
+    * alpha.
+    *
+    * @param lch  CIE LCH color
+    * @param srgb sRGB color
+    * @param lrgb linear sRGB color
+    * @param xyz  CIE XYZ color
+    * @param lab  CIE LAB color
+    *
+    * @return the output color
+    *
+    * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
+    * @see Color#cieLchToCieLab(Vec4, Vec4)
+    */
+   public static Color cieLchTosRgb ( final Vec4 lch, final Color srgb,
+      final Color lrgb, final Vec4 xyz, final Vec4 lab ) {
+
+      return Color.cieLabTosRgb(Color.cieLchToCieLab(lch, lab), srgb, lrgb,
+         xyz);
    }
 
    /**
@@ -1292,152 +1325,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts from hue, saturation, lightness and alpha to a color with red,
-    * green, blue and alpha channels. All arguments are expected to be in the
-    * range [0.0, 1.0] .
-    *
-    * @param hue    the hue
-    * @param sat    the saturation
-    * @param light  the lightness
-    * @param alpha  the transparency
-    * @param target the output color
-    *
-    * @return the color
-    *
-    * @see Utils#clamp01(float)
-    * @see Utils#mod1(float)
-    */
-   public static Color hslToRgb ( final float hue, final float sat,
-      final float light, final float alpha, final Color target ) {
-
-      final float acl = Utils.clamp01(alpha);
-      if ( light <= 0.0f ) { return target.set(0.0f, 0.0f, 0.0f, acl); }
-      if ( light >= 1.0f ) { return target.set(1.0f, 1.0f, 1.0f, acl); }
-      if ( sat <= 0.0f ) { return target.set(light, light, light, acl); }
-
-      final float scl = sat > 1.0f ? 1.0f : sat;
-      final float q = light < 0.5f ? light * ( 1.0f + scl ) : light + scl
-         - light * scl;
-      final float p = light + light - q;
-      final float qnp6 = ( q - p ) * 6.0f;
-
-      final float rHue = Utils.mod1(hue + IUtils.ONE_THIRD);
-      final float gHue = Utils.mod1(hue);
-      final float bHue = Utils.mod1(hue - IUtils.ONE_THIRD);
-
-      float r = p;
-      if ( rHue < IUtils.ONE_SIX ) {
-         r = p + qnp6 * rHue;
-      } else if ( rHue < 0.5f ) {
-         r = q;
-      } else if ( rHue < IUtils.TWO_THIRDS ) {
-         r = p + qnp6 * ( IUtils.TWO_THIRDS - rHue );
-      }
-
-      float g = p;
-      if ( gHue < IUtils.ONE_SIX ) {
-         g = p + qnp6 * gHue;
-      } else if ( gHue < 0.5f ) {
-         g = q;
-      } else if ( gHue < IUtils.TWO_THIRDS ) {
-         g = p + qnp6 * ( IUtils.TWO_THIRDS - gHue );
-      }
-
-      float b = p;
-      if ( bHue < IUtils.ONE_SIX ) {
-         b = p + qnp6 * bHue;
-      } else if ( bHue < 0.5f ) {
-         b = q;
-      } else if ( bHue < IUtils.TWO_THIRDS ) {
-         b = p + qnp6 * ( IUtils.TWO_THIRDS - bHue );
-      }
-
-      return target.set(r, g, b, acl);
-   }
-
-   /**
-    * Converts from hue, saturation, lightness and alpha to a color with red,
-    * green, blue and alpha channels.
-    *
-    * @param hsla   the HSL vector
-    * @param target the output color
-    *
-    * @return the color
-    */
-   public static Color hslToRgb ( final Vec4 hsla, final Color target ) {
-
-      return Color.hslToRgb(hsla.x, hsla.y, hsla.z, hsla.w, target);
-   }
-
-   /**
-    * Converts from hue, saturation, value and alpha to a color with red,
-    * green, blue and alpha channels. All arguments are expected to be in the
-    * range [0.0, 1.0] .
-    *
-    * @param hue    the hue
-    * @param sat    the saturation
-    * @param val    the value
-    * @param alpha  the transparency
-    * @param target the output color
-    *
-    * @return the color
-    *
-    * @see Utils#clamp01(float)
-    * @see Utils#mod1(float)
-    */
-   public static Color hsvToRgb ( final float hue, final float sat,
-      final float val, final float alpha, final Color target ) {
-
-      final float h = Utils.mod1(hue) * 6.0f;
-      final float s = Utils.clamp01(sat);
-      final float v = Utils.clamp01(val);
-      final float a = Utils.clamp01(alpha);
-
-      final int sector = ( int ) h;
-      final float secf = sector;
-      final float tint1 = v * ( 1.0f - s );
-      final float tint2 = v * ( 1.0f - s * ( h - secf ) );
-      final float tint3 = v * ( 1.0f - s * ( 1.0f + secf - h ) );
-
-      switch ( sector ) {
-         case 0:
-            return target.set(v, tint3, tint1, a);
-
-         case 1:
-            return target.set(tint2, v, tint1, a);
-
-         case 2:
-            return target.set(tint1, v, tint3, a);
-
-         case 3:
-            return target.set(tint1, tint2, v, a);
-
-         case 4:
-            return target.set(tint3, tint1, v, a);
-
-         case 5:
-            return target.set(v, tint1, tint2, a);
-
-         default:
-            return target.reset();
-      }
-   }
-
-   /**
-    * Converts from hue, saturation, value and alpha to a color with red,
-    * green, blue and alpha channels.
-    *
-    * @param hsva   the HSV vector
-    * @param target the output color
-    *
-    * @return the color
-    */
-   public static Color hsvToRgb ( final Vec4 hsva, final Color target ) {
-
-      return Color.hsvToRgb(hsva.x, hsva.y, hsva.z, hsva.w, target);
-   }
-
-   /**
     * Returns the relative luminance of the linear RGB color, based on
     * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
     * 709 relative luminance</a> coefficients: <code>0.2126</code> for red,
@@ -1813,169 +1700,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color to a vector which holds hue, saturation, lightness and
-    * alpha.
-    *
-    * @param c      the color
-    * @param target the output vector
-    *
-    * @return the HSL vector
-    *
-    * @see Color#rgbToHsl(float, float, float, float, Vec4)
-    */
-   public static Vec4 rgbToHsl ( final Color c, final Vec4 target ) {
-
-      return Color.rgbToHsl(c.r, c.g, c.b, c.a, target);
-   }
-
-   /**
-    * Converts RGBA channels to a vector which holds hue, saturation,
-    * lightness and alpha.
-    *
-    * @param red    the red channel
-    * @param green  the green channel
-    * @param blue   the blue channel
-    * @param alpha  the alpha channel
-    * @param target the output vector
-    *
-    * @return the HSL values
-    */
-   public static Vec4 rgbToHsl ( final float red, final float green,
-      final float blue, final float alpha, final Vec4 target ) {
-
-      final float r = red;
-      final float g = green;
-      final float b = blue;
-      final float a = alpha;
-
-      // if ( r < 0.0f ) {
-      // r = 0.0f;
-      // } else if ( r > 1.0f ) { r = 1.0f; }
-      // if ( g < 0.0f ) {
-      // g = 0.0f;
-      // } else if ( g > 1.0f ) { g = 1.0f; }
-      // if ( b < 0.0f ) {
-      // b = 0.0f;
-      // } else if ( b > 1.0f ) { b = 1.0f; }
-      // if ( a < 0.0f ) {
-      // a = 0.0f;
-      // } else if ( a > 1.0f ) { a = 1.0f; }
-
-      final float gbmx = g > b ? g : b;
-      final float gbmn = g < b ? g : b;
-      final float mx = gbmx > r ? gbmx : r;
-      final float mn = gbmn < r ? gbmn : r;
-
-      final float sum = mx + mn;
-      final float diff = mx - mn;
-      final float light = sum * 0.5f;
-
-      if ( light < IUtils.ONE_255 ) {
-         return target.set(Color.HSL_HUE_SHADOW, 0.0f, 0.0f, a);
-      }
-      if ( light > 1.0f - IUtils.ONE_255 ) {
-         return target.set(Color.HSL_HUE_LIGHT, 0.0f, 1.0f, a);
-      }
-      if ( diff < IUtils.ONE_255 ) {
-         final float hue = light * ( 1.0f + Color.HSL_HUE_LIGHT ) + ( 1.0f
-            - light ) * Color.HSL_HUE_SHADOW;
-         return target.set(hue != 1.0f ? hue % 1.0f : 1.0f, 0.0f, light, a);
-      }
-      float hue;
-      if ( Utils.approx(r, mx, IUtils.ONE_255) ) {
-         hue = ( g - b ) / diff;
-         if ( g < b ) { hue += 6.0f; }
-      } else if ( Utils.approx(g, mx, IUtils.ONE_255) ) {
-         hue = 2.0f + ( b - r ) / diff;
-      } else {
-         hue = 4.0f + ( r - g ) / diff;
-      }
-
-      final float sat = light > 0.5f ? diff / ( 2.0f - sum ) : diff / sum;
-      return target.set(hue * IUtils.ONE_SIX, sat, light, a);
-   }
-
-   /**
-    * Converts a color to a vector which holds hue, saturation, value and
-    * alpha.
-    *
-    * @param c      the color
-    * @param target the output vector
-    *
-    * @return the HSV vector
-    *
-    * @see Color#rgbToHsv(float, float, float, float, Vec4)
-    */
-   public static Vec4 rgbToHsv ( final Color c, final Vec4 target ) {
-
-      return Color.rgbToHsv(c.r, c.g, c.b, c.a, target);
-   }
-
-   /**
-    * Converts RGBA channels to a vector which holds hue, saturation, value
-    * and alpha.
-    *
-    * @param red    the red channel
-    * @param green  the green channel
-    * @param blue   the blue channel
-    * @param alpha  the alpha channel
-    * @param target the output vector
-    *
-    * @return the HSV values
-    */
-   public static Vec4 rgbToHsv ( final float red, final float green,
-      final float blue, final float alpha, final Vec4 target ) {
-
-      final float r = red;
-      final float g = green;
-      final float b = blue;
-      final float a = alpha;
-
-      // if ( r < 0.0f ) {
-      // r = 0.0f;
-      // } else if ( r > 1.0f ) { r = 1.0f; }
-      // if ( g < 0.0f ) {
-      // g = 0.0f;
-      // } else if ( g > 1.0f ) { g = 1.0f; }
-      // if ( b < 0.0f ) {
-      // b = 0.0f;
-      // } else if ( b > 1.0f ) { b = 1.0f; }
-      // if ( a < 0.0f ) {
-      // a = 0.0f;
-      // } else if ( a > 1.0f ) { a = 1.0f; }
-
-      final float gbmx = g > b ? g : b;
-      final float gbmn = g < b ? g : b;
-      final float mx = gbmx > r ? gbmx : r;
-
-      if ( mx < IUtils.ONE_255 ) {
-         return target.set(Color.HSL_HUE_SHADOW, 0.0f, 0.0f, a);
-      }
-      final float mn = gbmn < r ? gbmn : r;
-      final float diff = mx - mn;
-      if ( diff < IUtils.ONE_255 ) {
-         final float light = ( mx + mn ) * 0.5f;
-         if ( light > 1.0f - IUtils.ONE_255 ) {
-            return target.set(Color.HSL_HUE_LIGHT, 0.0f, 1.0f, a);
-         }
-         final float hue = light * ( 1.0f + Color.HSL_HUE_LIGHT ) + ( 1.0f
-            - light ) * Color.HSL_HUE_SHADOW;
-         return target.set(hue != 1.0f ? hue % 1.0f : 1.0f, 0.0f, mx, a);
-      }
-      float hue;
-      if ( Utils.approx(r, mx, IUtils.ONE_255) ) {
-         hue = ( g - b ) / diff;
-         if ( g < b ) { hue += 6.0f; }
-      } else if ( Utils.approx(g, mx, IUtils.ONE_255) ) {
-         hue = 2.0f + ( b - r ) / diff;
-      } else {
-         hue = 4.0f + ( r - g ) / diff;
-      }
-
-      return target.set(hue * IUtils.ONE_SIX, diff / mx, mx, a);
-   }
-
-   /**
     * Returns the relative luminance of the standard RGB color, based on
     * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
     * 709 relative luminance</a> coefficients: <code>0.2126</code> for red,
@@ -1996,6 +1720,51 @@ public class Color implements Comparable < Color > {
 
       return ( float ) ( 0.21264934272065283d * lr + 0.7151691357059038d * lg
          + 0.07218152157344333d * lb );
+   }
+
+   /**
+    * Converts a color from standard RGB (sRGB) to CIE LAB. The target is
+    * packaged as z: L or lightness, x: a or green-red, y: b or blue-yellow,
+    * w: alpha.
+    *
+    * @param srgb sRGB color
+    * @param lab  CIE LAB color
+    * @param xyz  CIE XYZ color
+    * @param lrgb linear sRGB color
+    *
+    * @return the output color
+    *
+    * @see Color#cieXyzToCieLab(Vec4, Vec4)
+    * @see Color#lRgbToCieXyz(Color, Vec4)
+    * @see Color#sRgbTolRgb(Color, boolean, Color)
+    */
+   public static Vec4 sRgbToCieLab ( final Color srgb, final Vec4 lab,
+      final Vec4 xyz, final Color lrgb ) {
+
+      return Color.cieXyzToCieLab(Color.lRgbToCieXyz(Color.sRgbTolRgb(srgb,
+         false, lrgb), xyz), lab);
+   }
+
+   /**
+    * Converts a color from standard RGB (sRGB) to CIE LCH. The output is
+    * organized as z: L or lightness, y: C or chroma, x: h or hue, w: alpha.
+    *
+    * @param srgb sRGB color
+    * @param lch  CIE LCH color
+    * @param lab  CIE LAB color
+    * @param xyz  CIE XYZ color
+    * @param lrgb linear sRGB color
+    *
+    * @return the output color
+    *
+    * @see Color#cieLabToCieLch(Vec4, Vec4)
+    * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
+    */
+   public static Vec4 sRgbToCieLch ( final Color srgb, final Vec4 lch,
+      final Vec4 lab, final Vec4 xyz, final Color lrgb ) {
+
+      return Color.cieLabToCieLch(Color.sRgbToCieLab(srgb, lab, xyz, lrgb),
+         lch);
    }
 
    /**
@@ -3001,17 +2770,13 @@ public class Color implements Comparable < Color > {
       public Color applyUnclamped ( final Color orig, final Color dest,
          final Float step, final Color target ) {
 
-         Color.sRgbTolRgb(orig, false, this.oLinear);
-         Color.lRgbToCieXyz(this.oLinear, this.oXyz);
-         Color.cieXyzToCieLab(this.oXyz, this.oLab);
+         Color.sRgbToCieLab(orig, this.oLab, this.oXyz, this.oLinear);
 
          final float oa = this.oLab.x;
          final float ob = this.oLab.y;
          final float ocsq = oa * oa + ob * ob;
 
-         Color.sRgbTolRgb(dest, false, this.dLinear);
-         Color.lRgbToCieXyz(this.dLinear, this.dXyz);
-         Color.cieXyzToCieLab(this.dXyz, this.dLab);
+         Color.sRgbToCieLab(dest, this.dLab, this.dXyz, this.dLinear);
 
          final float da = this.dLab.x;
          final float db = this.dLab.y;
@@ -3036,205 +2801,8 @@ public class Color implements Comparable < Color > {
             Color.cieLchToCieLab(this.cLch, this.cLab);
          }
 
-         Color.cieLabToCieXyz(this.cLab, this.cXyz);
-         Color.cieXyzTolRgb(this.cXyz, this.cLinear);
-         Color.lRgbTosRgb(this.cLinear, false, target);
-
+         Color.cieLabTosRgb(this.cLab, target, this.cLinear, this.cXyz);
          return target;
-      }
-
-   }
-
-   /**
-    * Eases between colors by hue, saturation and lightness.
-    */
-   public static class MixHsl extends AbstrEasing {
-
-      /**
-       * The origin color in HSL.
-       */
-      protected final Vec4 aHsl = new Vec4();
-
-      /**
-       * The destination color in HSL.
-       */
-      protected final Vec4 bHsl = new Vec4();
-
-      /**
-       * The mixed HSL color.
-       */
-      protected final Vec4 cHsl = new Vec4();
-
-      /**
-       * The hue easing function.
-       */
-      protected HueEasing hueFunc;
-
-      /**
-       * The default constructor. Creates a mixer with nearest hue interpolation
-       * and linear interpolation for saturation and lightness.
-       */
-      public MixHsl ( ) { this(new HueNear()); }
-
-      /**
-       * Creates a color HSL mixing function with the given easing functions for
-       * hue.
-       *
-       * @param hueFunc the hue easing function
-       */
-      public MixHsl ( final HueEasing hueFunc ) {
-
-         this.hueFunc = hueFunc;
-      }
-
-      /**
-       * Applies the function.
-       *
-       * @param orig   the origin color
-       * @param dest   the destination color
-       * @param step   the step in a range 0 to 1
-       * @param target the output color
-       *
-       * @return the eased color
-       *
-       * @see Color#rgbToHsl(Color, Vec4)
-       * @see Color#hslToRgb(Vec4, Color)
-       */
-      @Override
-      public Color applyUnclamped ( final Color orig, final Color dest,
-         final Float step, final Color target ) {
-
-         Color.rgbToHsl(orig, this.aHsl);
-         Color.rgbToHsl(dest, this.bHsl);
-
-         final float aSat = this.aHsl.y;
-         final float bSat = this.bHsl.y;
-
-         final float t = step;
-         final float u = 1.0f - t;
-
-         if ( aSat > IUtils.ONE_255 && bSat > IUtils.ONE_255 ) {
-            this.cHsl.set(this.hueFunc.apply(this.aHsl.x, this.bHsl.x, step), u
-               * aSat + t * bSat, u * this.aHsl.z + t * this.bHsl.z, u
-                  * this.aHsl.w + t * this.bHsl.w);
-            return Color.hslToRgb(this.cHsl, target);
-         }
-         return target.set(u * orig.r + t * dest.r, u * orig.g + t * dest.g, u
-            * orig.b + t * dest.b, u * orig.a + t * dest.a);
-      }
-
-      /**
-       * Gets the string identifier for the hue easing function.
-       *
-       * @return the string
-       */
-      public String getHueFuncString ( ) { return this.hueFunc.toString(); }
-
-      /**
-       * Sets the hue easing function.
-       *
-       * @param hueFunc the easing function
-       */
-      public void setHueFunc ( final HueEasing hueFunc ) {
-
-         if ( hueFunc != null ) { this.hueFunc = hueFunc; }
-      }
-
-   }
-
-   /**
-    * Eases between colors by hue, saturation and value.
-    */
-   public static class MixHsv extends AbstrEasing {
-
-      /**
-       * The origin color in HSV.
-       */
-      protected final Vec4 aHsv = new Vec4();
-
-      /**
-       * The destination color in HSV.
-       */
-      protected final Vec4 bHsv = new Vec4();
-
-      /**
-       * The mixed HSV color.
-       */
-      protected final Vec4 cHsv = new Vec4();
-
-      /**
-       * The hue easing function.
-       */
-      protected HueEasing hueFunc;
-
-      /**
-       * The default constructor. Creates a mixer with nearest hue interpolation
-       * and linear interpolation for saturation and value.
-       */
-      public MixHsv ( ) { this(new HueNear()); }
-
-      /**
-       * Creates a color HSV mixing function with the given easing functions for
-       * hue.
-       *
-       * @param hueFunc the hue easing function
-       */
-      public MixHsv ( final HueEasing hueFunc ) {
-
-         this.hueFunc = hueFunc;
-      }
-
-      /**
-       * Applies the function.
-       *
-       * @param orig   the origin color
-       * @param dest   the destination color
-       * @param step   the step in a range 0 to 1
-       * @param target the output color
-       *
-       * @return the eased color
-       *
-       * @see Color#rgbToHsv(Color, Vec4)
-       * @see Color#hsvToRgb(Vec4, Color)
-       */
-      @Override
-      public Color applyUnclamped ( final Color orig, final Color dest,
-         final Float step, final Color target ) {
-
-         Color.rgbToHsv(orig, this.aHsv);
-         Color.rgbToHsv(dest, this.bHsv);
-
-         final float aSat = this.aHsv.y;
-         final float bSat = this.bHsv.y;
-
-         final float t = step;
-         final float u = 1.0f - t;
-
-         if ( aSat > IUtils.ONE_255 && bSat > IUtils.ONE_255 ) {
-            this.cHsv.set(this.hueFunc.apply(this.aHsv.x, this.bHsv.x, step), u
-               * aSat + t * bSat, u * this.aHsv.z + t * this.bHsv.z, u
-                  * this.aHsv.w + t * this.bHsv.w);
-            return Color.hsvToRgb(this.cHsv, target);
-         }
-         return target.set(u * orig.r + t * dest.r, u * orig.g + t * dest.g, u
-            * orig.b + t * dest.b, u * orig.a + t * dest.a);
-      }
-
-      /**
-       * Gets the string identifier for the hue easing function.
-       *
-       * @return the string
-       */
-      public String getHueFuncString ( ) { return this.hueFunc.toString(); }
-
-      /**
-       * Sets the hue easing function.
-       *
-       * @param hueFunc the easing function
-       */
-      public void setHueFunc ( final HueEasing hueFunc ) {
-
-         if ( hueFunc != null ) { this.hueFunc = hueFunc; }
       }
 
    }

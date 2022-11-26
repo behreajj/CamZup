@@ -46,7 +46,7 @@ void setup() {
 void draw() {
   graphics.lights();
   graphics.ortho();
-  graphics.camDimetric();
+  graphics.camera();
   graphics.background();
   graphics.origin(75.0f, 1.0f);
 

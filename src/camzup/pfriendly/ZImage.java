@@ -235,8 +235,8 @@ public class ZImage extends PImage {
    public static final int DEFAULT_LEADING = 8;
 
    /**
-    * Multiplies the alpha channel of each pixel in an array by a factor in
-    * [0.0, 1.0].
+    * Multiplies the alpha channel of each pixel in an array by a factor
+    * greater than zero.
     *
     * @param source the source image
     * @param fac    the factor
@@ -247,13 +247,15 @@ public class ZImage extends PImage {
    public static PImage adjustAlpha ( final PImage source, final float fac,
       final PImage target ) {
 
-      return ZImage.adjustAlpha(source, ( int ) ( fac * 255.0f + 0.5f ),
-         target);
+      return ZImage.adjustAlpha(source, Utils.round(fac * 255.0f), target);
    }
 
    /**
     * Multiplies the alpha channel of each pixel in an array by the supplied
-    * alpha value.
+    * alpha value. Changes the image format to {@link PConstants#ARGB}.
+    * Depending on the renderer, the image may need adjustment with
+    * {@link ZImage#premul(PImage, PImage)} and
+    * {@link ZImage#unpremul(PImage, PImage)}.
     *
     * @param source the source image
     * @param alpha  the alpha scalar
@@ -338,7 +340,7 @@ public class ZImage extends PImage {
 
    /**
     * Adjusts a source image's colors in CIE LCH. Assigns the results to a
-    * target image.
+    * target image. Changes the image format to {@link PConstants#ARGB}.
     *
     * @param source the source image
     * @param adjust the adjustment
@@ -473,7 +475,7 @@ public class ZImage extends PImage {
          : b.pixelDensity;
 
       final Vec2 dim = new Vec2();
-      target.pixels = Pixels.blend(a.pixels, a.pixelWidth, a.pixelHeight, ax,
+      target.pixels = Pixels.blendLab(a.pixels, a.pixelWidth, a.pixelHeight, ax,
          ay, b.pixels, b.pixelWidth, b.pixelHeight, bx, by, dim, tl);
       target.pixelDensity = pd;
       target.pixelWidth = ( int ) dim.x;
@@ -1163,6 +1165,19 @@ public class ZImage extends PImage {
 
       target.updatePixels();
       return target;
+   }
+
+   /**
+    * Gets an image's size.
+    *
+    * @param image  the image
+    * @param target the output vector
+    *
+    * @return the size
+    */
+   public static Vec2 getSize ( final PImage image, final Vec2 target ) {
+
+      return target.set(image.width, image.height);
    }
 
    /**
