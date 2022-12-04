@@ -10,8 +10,8 @@ Table of Contents
     - [Chirality](#chirality)
     - [Color](#color)
       - [Palettes](#palettes)
-    - [Harmony](#harmony)
-    - [Complement Mix Test](#complement-mix-test)
+      - [Harmony](#harmony)
+      - [Complement Mix Test](#complement-mix-test)
   - [File Import \& Export](#file-import--export)
     - [GPL](#gpl)
     - [GGR](#ggr)
@@ -157,7 +157,7 @@ The `Gradient` class allows you to create color ramps, including the following:
 
 Viridis and Magma are color palettes used in data visualizations. [Sepia](https://www.wikiwand.com/en/Sepia_(color)) and [cyanotype](https://en.wikipedia.org/wiki/Cyanotype) replicate older photographic printing processes.
 
-### Harmony
+#### Harmony
 
 RYB color is included above because popular tutorials on "Color Harmony" (or "Color Theory") often assume a subtractive red-yellow-blue color model, even in the context of digital media. Processing defaults to additive sRGB, where cyan (`#00ffff`) is the complement of red (`#ff0000`), not green. This holds regardless of whether you use the `HSB` or the `RGB` [colorMode](https://processing.org/reference/colorMode_.html).
 
@@ -165,7 +165,7 @@ RYB color is included above because popular tutorials on "Color Harmony" (or "Co
 
 This RYB wheel's limitations should be apparent from the above. Oranges are dilated while blues are compressed. Brighter greens, cyans and magentas are not achievable. Blues and greens are desaturated. [This](https://youtu.be/YeI6Wqn4I78) tutorial on harmonies is one of the better I've found.
 
-### Complement Mix Test
+#### Complement Mix Test
 
 A quick heuristic to decide if you are blending colors as you prefer is to take two complementary colors - typically red and green - which you predict will yield an ugly blend and sample them.
 

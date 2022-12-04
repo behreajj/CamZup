@@ -175,9 +175,8 @@ public class Vec2 implements Comparable < Vec2 > {
    @Override
    public String toString ( ) {
 
-      // TODO: Sonarlint is reporting this and similar constructions
-      // as instance method calls that should be static calls.
-      return this.toString(IUtils.FIXED_PRINT);
+      return this.toString(new StringBuilder(64), IUtils.FIXED_PRINT)
+         .toString();
    }
 
    /**
@@ -2912,6 +2911,8 @@ public class Vec2 implements Comparable < Vec2 > {
        * @param b the right comparisand
        *
        * @return the comparison
+       *
+       * @see Vec2#distSq(Vec2, Vec2)
        */
       @Override
       public int compare ( final Vec2 a, final Vec2 b ) {

@@ -230,7 +230,11 @@ public class Vec3 implements Comparable < Vec3 > {
     * @return the string
     */
    @Override
-   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
+   public String toString ( ) {
+
+      return this.toString(new StringBuilder(96), IUtils.FIXED_PRINT)
+         .toString();
+   }
 
    /**
     * Returns a string representation of this vector.
@@ -3364,6 +3368,8 @@ public class Vec3 implements Comparable < Vec3 > {
        * @param b the right comparisand
        *
        * @return the comparison
+       *
+       * @see Vec3#distSq(Vec3, Vec3)
        */
       @Override
       public int compare ( final Vec3 a, final Vec3 b ) {

@@ -12,8 +12,8 @@ public interface IMesh extends IEntityData {
    int DEFAULT_CIRCLE_SECTORS = 32;
 
    /**
-    * Default oculus for rings, 0.25 * Math.sqrt(2.0) , approximately
-    * 0.35355338 .
+    * Default oculus for rings, sqrt(2.0) / 4.0 , approximately
+    * {@value IMesh#DEFAULT_OCULUS} .
     */
    float DEFAULT_OCULUS = 0.35355338f;
 

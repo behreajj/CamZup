@@ -17,18 +17,6 @@ public abstract class ColorAux {
    private ColorAux ( ) {}
 
    /**
-    * Arbitrary hue in HSL and HSV assigned to colors with no saturation that
-    * are closer to light. Defaults to a yellow.
-    */
-   public static final float HSB_HUE_LIGHT = 48.0f / 360.0f;
-
-   /**
-    * Arbitrary hue in HSL and HSV assigned to colors with no saturation that
-    * are closer to shadow. Defaults to a violet.
-    */
-   public static final float HSB_HUE_SHADOW = 255.0f / 360.0f;
-
-   /**
     * Converts from hue, saturation, brightness and alpha to a color with red,
     * green, blue and alpha channels. All arguments are expected to be in the
     * range [0.0, 1.0] .
@@ -97,6 +85,7 @@ public abstract class ColorAux {
 
       switch ( colorMode ) {
          case PConstants.HSB: /* 3 */
+
             return ColorAux.lerpHsb(o, d, t);
 
          case PConstants.RGB: /* 1 */
@@ -124,16 +113,16 @@ public abstract class ColorAux {
    public static int lerpHsb ( final int o, final int d, final float t ) {
 
       /* Unpack origin color to r, g, b, a. */
+      final float oa = ( o >> 0x18 & 0xff ) * IUtils.ONE_255;
       final float or = ( o >> 0x10 & 0xff ) * IUtils.ONE_255;
       final float og = ( o >> 0x08 & 0xff ) * IUtils.ONE_255;
       final float ob = ( o & 0xff ) * IUtils.ONE_255;
-      final float oa = ( o >> 0x18 & 0xff ) * IUtils.ONE_255;
 
       /* Unpack destination color to r, g, b, a. */
+      final float da = ( d >> 0x18 & 0xff ) * IUtils.ONE_255;
       final float dr = ( d >> 0x10 & 0xff ) * IUtils.ONE_255;
       final float dg = ( d >> 0x08 & 0xff ) * IUtils.ONE_255;
       final float db = ( d & 0xff ) * IUtils.ONE_255;
-      final float da = ( d >> 0x18 & 0xff ) * IUtils.ONE_255;
 
       /* Mix alpha. */
       final float u = 1.0f - t;
@@ -193,21 +182,21 @@ public abstract class ColorAux {
     */
    public static int lerpRgb ( final int o, final int d, final float t ) {
 
+      final float oa = ( o >> 0x18 & 0xff ) * IUtils.ONE_255;
       final float or = ( o >> 0x10 & 0xff ) * IUtils.ONE_255;
       final float og = ( o >> 0x08 & 0xff ) * IUtils.ONE_255;
       final float ob = ( o & 0xff ) * IUtils.ONE_255;
-      final float oa = ( o >> 0x18 & 0xff ) * IUtils.ONE_255;
 
+      final float da = ( d >> 0x18 & 0xff ) * IUtils.ONE_255;
       final float dr = ( d >> 0x10 & 0xff ) * IUtils.ONE_255;
       final float dg = ( d >> 0x08 & 0xff ) * IUtils.ONE_255;
       final float db = ( d & 0xff ) * IUtils.ONE_255;
-      final float da = ( d >> 0x18 & 0xff ) * IUtils.ONE_255;
 
       final float u = 1.0f - t;
+      final float ca = u * oa + t * da;
       final float cr = u * or + t * dr;
       final float cg = u * og + t * dg;
       final float cb = u * ob + t * db;
-      final float ca = u * oa + t * da;
 
       return ( int ) ( ca * 0xff + 0.5f ) << 0x18 | ( int ) ( cr * 0xff + 0.5f )
          << 0x10 | ( int ) ( cg * 0xff + 0.5f ) << 0x08 | ( int ) ( cb * 0xff
@@ -229,6 +218,11 @@ public abstract class ColorAux {
    public static float[] rgbToHsb ( final float red, final float green,
       final float blue ) {
 
+      /*
+       * Unnecessary to worry about red hues for gray colors in this case, as
+       * this shouldn't be used for any serious color matching.
+       */
+
       final float r = red;
       final float g = green;
       final float b = blue;
@@ -236,25 +230,21 @@ public abstract class ColorAux {
       final float gbmx = g > b ? g : b;
       final float gbmn = g < b ? g : b;
       final float mx = gbmx > r ? gbmx : r;
-      if ( mx < IUtils.ONE_255 ) {
-         return new float[] { ColorAux.HSB_HUE_SHADOW, 0.0f, 0.0f };
-      }
+      if ( mx < IUtils.ONE_255 ) { return new float[] { 0.0f, 0.0f, 0.0f }; }
       final float mn = gbmn < r ? gbmn : r;
       final float diff = mx - mn;
       if ( diff < IUtils.ONE_255 ) {
          final float light = ( mx + mn ) * 0.5f;
          if ( light > 1.0f - IUtils.ONE_255 ) {
-            return new float[] { ColorAux.HSB_HUE_LIGHT, 0.0f, 1.0f };
+            return new float[] { 0.0f, 0.0f, 1.0f };
          }
-         final float hue = light * ( 1.0f + ColorAux.HSB_HUE_LIGHT ) + ( 1.0f
-            - light ) * ColorAux.HSB_HUE_SHADOW;
-         return new float[] { hue != 1.0f ? hue % 1.0f : 1.0f, 0.0f, mx };
+         return new float[] { 0.0f, 0.0f, mx };
       }
       float hue;
-      if ( Utils.approx(r, mx, IUtils.ONE_255) ) {
+      if ( r == mx ) {
          hue = ( g - b ) / diff;
          if ( g < b ) { hue += 6.0f; }
-      } else if ( Utils.approx(g, mx, IUtils.ONE_255) ) {
+      } else if ( g == mx ) {
          hue = 2.0f + ( b - r ) / diff;
       } else {
          hue = 4.0f + ( r - g ) / diff;

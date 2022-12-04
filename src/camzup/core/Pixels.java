@@ -279,40 +279,56 @@ public abstract class Pixels {
       final Color lrgb = new Color();
       final Vec4 xyz = new Vec4();
 
-      final HashMap < Integer, Vec4 > dict = new HashMap <>(512, 0.75f);
-      dict.put(0x00000000, Vec4.zero(new Vec4()));
-
-      /* Get unique pixels from a. */
-      final int aLen = aPixels.length;
-      for ( int i = 0; i < aLen; ++i ) {
-         final int aKeyInt = aPixels[i];
-         final Integer aKeyObj = aKeyInt;
-         if ( !dict.containsKey(aKeyObj) ) {
-            final Vec4 aLab = new Vec4();
-            Color.fromHex(aKeyInt, srgb);
-            Color.sRgbToCieLab(srgb, aLab, xyz, lrgb);
-            dict.put(aKeyObj, aLab);
-         }
-      }
-
-      /* Get unique pixels from b. */
-      final int bLen = bPixels.length;
-      for ( int i = 0; i < bLen; ++i ) {
-         final int bKeyInt = bPixels[i];
-         final Integer bKeyObj = bKeyInt;
-         if ( !dict.containsKey(bKeyObj) ) {
-            final Vec4 bLab = new Vec4();
-            Color.fromHex(bKeyInt, srgb);
-            Color.sRgbToCieLab(srgb, bLab, xyz, lrgb);
-            dict.put(bKeyObj, bLab);
-         }
-      }
-
       /* Find the bottom right corner for a and b. */
       final int abrx = ax + aw - 1;
       final int abry = ay + ah - 1;
       final int bbrx = bx + bw - 1;
       final int bbry = by + bh - 1;
+
+      final HashMap < Integer, Vec4 > dict = new HashMap <>(512, 0.75f);
+      dict.put(0x00000000, Vec4.zero(new Vec4()));
+
+      /* Blending only necessary at the intersection of a and b. */
+      final int dx = ax > bx ? ax : bx;
+      final int dy = ay > by ? ay : by;
+      final int dbrx = abrx < bbrx ? abrx : bbrx;
+      final int dbry = abry < bbry ? abry : bbry;
+      final int dw = 1 + dbrx - dx;
+      final int dh = 1 + dbry - dy;
+      if ( dw > 0 && dh > 0 ) {
+         /*
+          * Find the difference between the intersection top left and the top
+          * left of a and b.
+          */
+         final int axid = ax - dx;
+         final int ayid = ay - dy;
+         final int bxid = bx - dx;
+         final int byid = by - dy;
+
+         final int dLen = dw * dh;
+         for ( int h = 0; h < dLen; ++h ) {
+            final int x = h % dw;
+            final int y = h / dw;
+
+            final int aHex = aPixels[x - axid + ( y - ayid ) * aw];
+            final Integer aKeyObj = aHex;
+            if ( !dict.containsKey(aKeyObj) ) {
+               final Vec4 aLab = new Vec4();
+               Color.fromHex(aHex, srgb);
+               Color.sRgbToCieLab(srgb, aLab, xyz, lrgb);
+               dict.put(aKeyObj, aLab);
+            }
+
+            final int bHex = bPixels[x - bxid + ( y - byid ) * bw];
+            final Integer bKeyObj = bHex;
+            if ( !dict.containsKey(bKeyObj) ) {
+               final Vec4 bLab = new Vec4();
+               Color.fromHex(bHex, srgb);
+               Color.sRgbToCieLab(srgb, bLab, xyz, lrgb);
+               dict.put(bKeyObj, bLab);
+            }
+         }
+      }
 
       /* The result dimensions are the union of a and b. */
       final int cx = ax < bx ? ax : bx;
@@ -321,47 +337,48 @@ public abstract class Pixels {
       final int cbry = abry > bbry ? abry : bbry;
       final int cw = 1 + cbrx - cx;
       final int ch = 1 + cbry - cy;
-      final int clen = cw * ch;
+      final int cLen = cw * ch;
 
-      /* Find the difference between the target top left and the inputs. */
-      final int axd = ax - cx;
-      final int ayd = ay - cy;
-      final int bxd = bx - cx;
-      final int byd = by - cy;
+      /*
+       * Find difference between the union top left and the top left of a and b.
+       */
+      final int axud = ax - cx;
+      final int ayud = ay - cy;
+      final int bxud = bx - cx;
+      final int byud = by - cy;
 
       final Vec4 cLab = new Vec4();
-
-      final int[] target = new int[clen];
-      for ( int i = 0; i < clen; ++i ) {
+      final int[] target = new int[cLen];
+      for ( int i = 0; i < cLen; ++i ) {
          final int x = i % cw;
          final int y = i / cw;
 
          int aHex = 0x00000000;
-         final int axs = x - axd;
-         final int ays = y - ayd;
+         final int axs = x - axud;
+         final int ays = y - ayud;
          if ( ays > -1 && ays < ah && axs > -1 && axs < aw ) {
             aHex = aPixels[axs + ays * aw];
          }
 
          int bHex = 0x00000000;
-         final int bxs = x - bxd;
-         final int bys = y - byd;
+         final int bxs = x - bxud;
+         final int bys = y - byud;
          if ( bys > -1 && bys < bh && bxs > -1 && bxs < bw ) {
             bHex = bPixels[bxs + bys * bw];
          }
 
-         final Vec4 dest = dict.get(bHex);
-         final float t = dest.w;
-
-         if ( t >= 1.0f ) {
+         final int t255 = bHex >> 0x18 & 0xff;
+         if ( t255 >= 0xff ) {
             target[i] = bHex;
+         } else if ( t255 <= 0x0 ) {
+            target[i] = aHex;
          } else {
-            final Vec4 orig = dict.get(aHex);
-            final float v = orig.w;
-
-            if ( v <= 0.0f ) {
+            final int v255 = aHex >> 0x18 & 0xff;
+            if ( v255 <= 0x0 ) {
                target[i] = bHex;
             } else {
+               final float t = t255 * IUtils.ONE_255;
+               final float v = v255 * IUtils.ONE_255;
                final float u = 1.0f - t;
                final float uv = u * v;
                final float tuv = t + uv;
@@ -369,11 +386,13 @@ public abstract class Pixels {
                if ( tuv <= 0.0f ) {
                   target[i] = 0x00000000;
                } else {
+                  final Vec4 orig = dict.get(aHex);
+                  final Vec4 dest = dict.get(bHex);
 
-                  /* Simulate alpha pre-multiply on lightness? */
+                  // Simulate alpha pre-multiply on lightness?
                   // if ( tuv >= 1.0f ) { tuv = 1.0f; }
-                  // cLab.set(u * aLab.x + t * bLab.x, u * aLab.y + t * bLab.y,
-                  // ( uv * aLab.z + t * bLab.z ) / tuv, tuv);
+                  // cLab.set(u * orig.x + t * dest.x, u * orig.y + t * dest.y,
+                  // ( uv * orig.z + t * dest.z ) / tuv, tuv);
 
                   cLab.set(u * orig.x + t * dest.x, u * orig.y + t * dest.y, u
                      * orig.z + t * dest.z, tuv);
@@ -387,7 +406,6 @@ public abstract class Pixels {
 
       if ( dim != null ) { dim.set(cw, ch); }
       if ( tl != null ) { tl.set(cx, cy); }
-
       return target;
    }
 
@@ -964,45 +982,74 @@ public abstract class Pixels {
 
    /**
     * Masks the pixels of an under image with the alpha channel of the over
-    * image. Offset coordinates are relative to the top-left corner of the
-    * under image.<br>
-    * <br>
-    * Emits the new image dimensions to a {@link Vec2}.
+    * image. Forms an intersection of the bounding area of the two inputs.
+    * Emits the dimensions and top-left corner of the blended image.
     *
-    * @param under the under image pixels
-    * @param wUnd  the under image width
-    * @param hUnd  the under image height
-    * @param over  the over image pixels
-    * @param wOvr  the over image width
-    * @param hOvr  the over image height
-    * @param x     the x offset
-    * @param y     the y offset
-    * @param dim   the target dimensions
+    * @param aPixels backdrop pixels
+    * @param aw      backdrop width
+    * @param ah      backdrop height
+    * @param ax      backdrop x offset
+    * @param ay      backdrop y offset
+    * @param bPixels overlay pixels
+    * @param bw      overlay width
+    * @param bh      overlay height
+    * @param bx      overlay x offset
+    * @param by      overlay y offset
+    * @param dim     dimensions
+    * @param tl      top-left
     *
-    * @return the masked pixels
+    * @return masked pixels
     */
-   public static int[] mask ( final int[] under, final int wUnd, final int hUnd,
-      final int[] over, final int wOvr, final int hOvr, final int x,
-      final int y, final Vec2 dim ) {
+   public static int[] mask ( final int[] aPixels, final int aw, final int ah,
+      final int ax, final int ay, final int[] bPixels, final int bw,
+      final int bh, final int bx, final int by, final Vec2 dim,
+      final Vec2 tl ) {
 
-      final int trgLen = over.length;
-      final int[] target = new int[trgLen];
-      for ( int i = 0; i < trgLen; ++i ) {
-         final int xOrig = i % wOvr;
-         final int yOrig = i / wOvr;
+      /* Find the bottom right corner for a and b. */
+      final int abrx = ax + aw - 1;
+      final int abry = ay + ah - 1;
+      final int bbrx = bx + bw - 1;
+      final int bbry = by + bh - 1;
 
-         final int hexOvr = over[i];
-         final int aOvr = hexOvr >> 0x18 & 0xff;
+      /* The result dimensions are the intersection of a and b. */
+      final int cx = ax > bx ? ax : bx;
+      final int cy = ay > by ? ay : by;
+      final int cbrx = abrx < bbrx ? abrx : bbrx;
+      final int cbry = abry < bbry ? abry : bbry;
+      final int cw = 1 + cbrx - cx;
+      final int ch = 1 + cbry - cy;
+      final int clen = cw * ch;
 
-         if ( aOvr > 0 ) {
-            final int xUdr = xOrig - x;
-            final int yUdr = yOrig - y;
-            if ( yUdr >= 0 && yUdr < hUnd && xUdr >= 0 && xUdr < wUnd ) {
-               final int idxUdr = xUdr + yUdr * wUnd;
-               final int hexUdr = under[idxUdr];
-               final int aUdr = hexUdr >> 0x18 & 0xff;
-               final int aTrg = aOvr * aUdr / 0xff;
-               target[i] = aTrg << 0x18 | hexUdr & 0x00ffffff;
+      /* Find the difference between the target top left and the inputs. */
+      final int axd = ax - cx;
+      final int ayd = ay - cy;
+      final int bxd = bx - cx;
+      final int byd = by - cy;
+
+      final int[] target = new int[clen];
+      for ( int i = 0; i < clen; ++i ) {
+         final int x = i % cw;
+         final int y = i / cw;
+         final int bxs = x - bxd;
+         final int bys = y - byd;
+         if ( bys > -1 && bys < bh && bxs > -1 && bxs < bw ) {
+            final int hexOvr = bPixels[bxs + bys * bw];
+            final int aOvr = hexOvr >> 0x18 & 0xff;
+            if ( aOvr > 0 ) {
+               final int axs = x - axd;
+               final int ays = y - ayd;
+               if ( ays > -1 && ays < ah && axs > -1 && axs < aw ) {
+                  final int hexUdr = aPixels[axs + ays * aw];
+                  final int aUdr = hexUdr >> 0x18 & 0xff;
+                  if ( aUdr > 0 ) {
+                     final int aTrg = aOvr * aUdr / 0xff;
+                     target[i] = aTrg << 0x18 | hexUdr & 0x00ffffff;
+                  } else {
+                     target[i] = 0x00000000;
+                  }
+               } else {
+                  target[i] = 0x00000000;
+               }
             } else {
                target[i] = 0x00000000;
             }
@@ -1011,7 +1058,8 @@ public abstract class Pixels {
          }
       }
 
-      if ( dim != null ) { dim.set(wOvr, hOvr); }
+      if ( dim != null ) { dim.set(cw, ch); }
+      if ( tl != null ) { tl.set(cx, cy); }
       return target;
    }
 
@@ -1119,27 +1167,27 @@ public abstract class Pixels {
     * pivot. The pivot is expected to be in [-1, width + 1].
     *
     * @param source the source pixels
-    * @param wSrc   the source image width
+    * @param w      the source image width
     * @param pivot  the x pivot
     * @param flip   the flip reflection flag
     * @param target the target pixels
     *
     * @return the mirrored pixels
     */
-   public static int[] mirrorX ( final int[] source, final int wSrc,
+   public static int[] mirrorX ( final int[] source, final int w,
       final int pivot, final boolean flip, final int[] target ) {
 
       final int trgLen = target.length;
       final int flipSign = flip ? 1 : -1;
 
       for ( int k = 0; k < trgLen; ++k ) {
-         final int cross = k % wSrc - pivot;
+         final int cross = k % w - pivot;
          if ( flipSign * cross < 0 ) {
             target[k] = source[k];
          } else {
             final int pxOpp = pivot - cross;
-            if ( pxOpp > -1 && pxOpp < wSrc ) {
-               target[k] = source[k / wSrc * wSrc + pxOpp];
+            if ( pxOpp > -1 && pxOpp < w ) {
+               target[k] = source[k / w * w + pxOpp];
             } else {
                target[k] = 0x00000000;
             }
@@ -1155,29 +1203,28 @@ public abstract class Pixels {
     * points down to the bottom of the image.
     *
     * @param source the source pixels
-    * @param wSrc   the source image width
-    * @param hSrc   the source image height
+    * @param w      the source image width
+    * @param h      the source image height
     * @param pivot  the y pivot
     * @param flip   the flip reflection flag
     * @param target the target pixels
     *
     * @return the mirrored pixels
     */
-   public static int[] mirrorY ( final int[] source, final int wSrc,
-      final int hSrc, final int pivot, final boolean flip,
-      final int[] target ) {
+   public static int[] mirrorY ( final int[] source, final int w, final int h,
+      final int pivot, final boolean flip, final int[] target ) {
 
       final int trgLen = target.length;
       final int flipSign = flip ? 1 : -1;
 
       for ( int k = 0; k < trgLen; ++k ) {
-         final int cross = k / wSrc - pivot;
+         final int cross = k / w - pivot;
          if ( flipSign * cross < 0 ) {
             target[k] = source[k];
          } else {
             final int pyOpp = pivot - cross;
-            if ( pyOpp > -1 && pyOpp < hSrc ) {
-               target[k] = source[pyOpp * wSrc + k % wSrc];
+            if ( pyOpp > -1 && pyOpp < h ) {
+               target[k] = source[pyOpp * w + k % w];
             } else {
                target[k] = 0x00000000;
             }
@@ -2054,6 +2101,8 @@ public abstract class Pixels {
     */
    public static int[] trimAlpha ( final int[] source, final int wSrc,
       final int hSrc, final Vec2 dim ) {
+
+      // TODO: Emit top-left corner as well?
 
       final int srcLen = source.length;
       final int wn1 = wSrc - 1;

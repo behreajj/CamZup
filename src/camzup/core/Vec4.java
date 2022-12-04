@@ -8,7 +8,7 @@ import java.util.Random;
  * limited, while most static methods require an explicit output variable
  * to be provided.<br>
  * <br>
- * May also be used to store color in HSLA and HSVA color spaces.
+ * May also be used to store alternative color representations.
  */
 public class Vec4 implements Comparable < Vec4 > {
 
@@ -277,7 +277,11 @@ public class Vec4 implements Comparable < Vec4 > {
     * @return the string
     */
    @Override
-   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
+   public String toString ( ) {
+
+      return this.toString(new StringBuilder(96), IUtils.FIXED_PRINT)
+         .toString();
+   }
 
    /**
     * Returns a string representation of this vector.

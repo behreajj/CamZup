@@ -258,7 +258,11 @@ public class Color implements Comparable < Color > {
     * @return the string
     */
    @Override
-   public String toString ( ) { return this.toString(IUtils.FIXED_PRINT); }
+   public String toString ( ) {
+
+      return this.toString(new StringBuilder(96), IUtils.FIXED_PRINT)
+         .toString();
+   }
 
    /**
     * Returns a string representation of this color.
@@ -2688,31 +2692,18 @@ public class Color implements Comparable < Color > {
        *
        * @return the eased color
        *
-       * @see Color#cieLabToCieXyz(Vec4, Vec4)
-       * @see Color#cieXyzToCieLab(Vec4, Vec4)
-       * @see Color#cieXyzTolRgb(Vec4, Color)
-       * @see Color#lRgbToCieXyz(Color, Vec4)
-       * @see Color#lRgbTosRgb(Color, boolean, Color)
-       * @see Color#sRgbTolRgb(Color, boolean, Color)
+       * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
+       * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
        * @see Vec4#mix(Vec4, Vec4, float, Vec4)
        */
       @Override
       public Color applyUnclamped ( final Color orig, final Color dest,
          final Float step, final Color target ) {
 
-         Color.sRgbTolRgb(orig, false, this.oLinear);
-         Color.lRgbToCieXyz(this.oLinear, this.oXyz);
-         Color.cieXyzToCieLab(this.oXyz, this.oLab);
-
-         Color.sRgbTolRgb(dest, false, this.dLinear);
-         Color.lRgbToCieXyz(this.dLinear, this.dXyz);
-         Color.cieXyzToCieLab(this.dXyz, this.dLab);
-
+         Color.sRgbToCieLab(orig, this.oLab, this.oXyz, this.oLinear);
+         Color.sRgbToCieLab(dest, this.dLab, this.dXyz, this.dLinear);
          Vec4.mix(this.oLab, this.dLab, step, this.cLab);
-
-         Color.cieLabToCieXyz(this.cLab, this.cXyz);
-         Color.cieXyzTolRgb(this.cXyz, this.cLinear);
-         Color.lRgbTosRgb(this.cLinear, false, target);
+         Color.cieLabTosRgb(this.cLab, target, this.cLinear, this.cXyz);
 
          return target;
       }
@@ -2762,9 +2753,10 @@ public class Color implements Comparable < Color > {
        *
        * @return the eased color
        *
-       * @see Color#sRgbTolRgb(Color, boolean, Color)
-       * @see Color#lRgbToCieXyz(Color, Vec4)
-       * @see Color#cieXyzToCieLab(Vec4, Vec4)
+       * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
+       * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
+       * @see Color#cieLchToCieLab(Vec4, Vec4)
+       * @see Vec4#mix(Vec4, Vec4, float, Vec4)
        */
       @Override
       public Color applyUnclamped ( final Color orig, final Color dest,

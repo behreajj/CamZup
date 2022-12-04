@@ -1803,87 +1803,107 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Masks the pixels of an under image with the alpha channel of the over
-    * image. Offsets the over image by pixel coordinates relative to the
-    * approximate under image center.
+    * Masks a backdrop image with an overlay. Forms an intersection of the
+    * bounding area of the two inputs. Emits the top-left corner for the
+    * intersection.
     *
-    * @param under  the under image
-    * @param over   the over image
-    * @param x      the x offset
-    * @param y      the y offset
-    * @param target the target image
+    * @param a      backdrop
+    * @param ax     backdrop x offset
+    * @param ay     backdrop y offset
+    * @param b      overlay image
+    * @param bx     overlay x offset
+    * @param by     overlay y offset
+    * @param target target image
+    * @param tl     top left
     *
-    * @return the masked image
-    *
-    * @see Pixels#mask(int[], int, int, int[], int, int, int, int, Vec2)
+    * @return the blended pixels
     */
-   public static PImage mask ( final PImage under, final PImage over,
-      final int x, final int y, final PImage target ) {
+   public static PImage mask ( final PImage a, final float ax, final float ay,
+      final PImage b, final float bx, final float by, final PImage target,
+      final Vec2 tl ) {
+
+      return ZImage.mask(a, Utils.round(ax), Utils.round(ay), b, Utils.round(
+         bx), Utils.round(by), target, tl);
+   }
+
+   /**
+    * Masks a backdrop image with an overlay. Forms an intersection of the
+    * bounding area of the two inputs. Emits the top-left corner for the
+    * intersection.
+    *
+    * @param a      backdrop
+    * @param ax     backdrop x offset
+    * @param ay     backdrop y offset
+    * @param b      overlay image
+    * @param bx     overlay x offset
+    * @param by     overlay y offset
+    * @param target target image
+    * @param tl     top left
+    *
+    * @return the blended pixels
+    */
+   public static PImage mask ( final PImage a, final int ax, final int ay,
+      final PImage b, final int bx, final int by, final PImage target,
+      final Vec2 tl ) {
 
       if ( target instanceof PGraphics ) {
          System.err.println("Do not use PGraphics with this method.");
          return target;
       }
 
-      final int pdUdr = under.pixelDensity;
-      final int pdOvr = over.pixelDensity;
-      if ( pdUdr != pdOvr ) {
-         System.err.println(
-            "Under and over images have mismatched pixel density.");
-         return target;
-      }
-
-      final int fmtUdr = under.format;
-      if ( fmtUdr != PConstants.ARGB && fmtUdr != PConstants.RGB ) {
-         System.err.println("Under image format should be either RGB or ARGB.");
-         return target;
-      }
-
-      final int fmtOvr = over.format;
-      if ( fmtOvr != PConstants.ARGB ) {
-         System.err.println("Over image format should be ARGB.");
-         return target;
-      }
-
-      under.loadPixels();
-      final int wUdr = under.pixelWidth;
-      final int hUdr = under.pixelHeight;
-      final int[] pxUdr = under.pixels;
-
-      over.loadPixels();
-      final int wOvr = over.pixelWidth;
-      final int hOvr = over.pixelHeight;
-      final int[] pxOvr = over.pixels;
-
+      a.loadPixels();
+      b.loadPixels();
       target.loadPixels();
+      final int pd = a.pixelDensity < b.pixelDensity ? a.pixelDensity
+         : b.pixelDensity;
+
       final Vec2 dim = new Vec2();
-      target.pixels = Pixels.mask(pxUdr, wUdr, hUdr, pxOvr, wOvr, hOvr, x, y,
-         dim);
-      target.format = fmtOvr;
-      target.pixelDensity = pdOvr;
+      target.pixels = Pixels.mask(a.pixels, a.pixelWidth, a.pixelHeight, ax, ay,
+         b.pixels, b.pixelWidth, b.pixelHeight, bx, by, dim, tl);
+      target.pixelDensity = pd;
       target.pixelWidth = ( int ) dim.x;
       target.pixelHeight = ( int ) dim.y;
-      target.width = target.pixelWidth / pdOvr;
-      target.height = target.pixelHeight / pdOvr;
+      target.width = target.pixelWidth / pd;
+      target.height = target.pixelHeight / pd;
+      target.format = PConstants.ARGB;
       target.updatePixels();
 
       return target;
    }
 
    /**
-    * Masks the pixels of an under image with the alpha channel of the over
-    * image.
+    * Masks a backdrop image with an overlay. Forms an intersection of the
+    * bounding area of the two inputs. Emits the top-left corner for the
+    * intersection.
     *
-    * @param under  the under image
-    * @param over   the over image
-    * @param target the target image
+    * @param a      backdrop
+    * @param b      overlay image
+    * @param target target image
+    * @param tl     top left
     *
-    * @return the masked image
+    * @return the blended pixels
     */
-   public static PImage mask ( final PImage under, final PImage over,
-      final PImage target ) {
+   public static PImage mask ( final PImage a, final PImage b,
+      final PImage target, final Vec2 tl ) {
 
-      return ZImage.mask(under, over, 0, 0, target);
+      final int aw = a.pixelWidth;
+      final int ah = a.pixelHeight;
+      final int bw = b.pixelWidth;
+      final int bh = b.pixelHeight;
+
+      final int wLrg = aw > bw ? aw : bw;
+      final int hLrg = ah > bh ? ah : bh;
+
+      /* The 0.5 is to bias the rounding. */
+      final float cx = 0.5f + wLrg * 0.5f;
+      final float cy = 0.5f + hLrg * 0.5f;
+
+      final int ax = aw == wLrg ? 0 : ( int ) ( cx - aw * 0.5f );
+      final int ay = ah == hLrg ? 0 : ( int ) ( cy - ah * 0.5f );
+      final int bx = bw == wLrg ? 0 : ( int ) ( cx - bw * 0.5f );
+      final int by = bh == hLrg ? 0 : ( int ) ( cy - bh * 0.5f );
+
+      return ZImage.mask(a, ax, ay, b, bx, by, target, tl);
    }
 
    /**
