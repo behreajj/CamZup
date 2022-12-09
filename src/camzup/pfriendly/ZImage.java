@@ -543,6 +543,46 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Blurs an image by finding averaging each color with its neighbors in 8
+    * directions. The step determines the size of the kernel, where the
+    * minimum step of 1 will make a 3x3, 9 pixel kernel.
+    * 
+    * @param source the source image
+    * @param step   the kernel step
+    * @param target the target image
+    * 
+    * @return the blurred image
+    * 
+    * @see Pixels#boxBlur(int[], int, int, int, int[])
+    */
+   public static PImage boxBlur ( final PImage source, final int step,
+      final PImage target ) {
+
+      if ( target instanceof PGraphics && ( source.pixelWidth
+         != target.pixelWidth || source.pixelHeight != target.pixelHeight ) ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int[] pxSrc = source.pixels;
+      final int wSrc = source.pixelWidth;
+      final int hSrc = source.pixelHeight;
+      target.pixels = Pixels.boxBlur(pxSrc, wSrc, hSrc, step,
+         new int[pxSrc.length]);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = wSrc;
+      target.pixelHeight = hSrc;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
     * Creates a checker pattern in an array of pixels.
     *
     * @param a      the first color
@@ -2954,13 +2994,15 @@ public class ZImage extends PImage {
     * Removes excess transparent pixels from an image.
     *
     * @param source the source image
+    * @param tl     top left
     * @param target the target image
-    *
+    * 
     * @return the trimmed image
     *
-    * @see Pixels#trimAlpha(int[], int, int, Vec2)
+    * @see Pixels#trimAlpha(int[], int, int, Vec2, Vec2)
     */
-   public static PImage trimAlpha ( final PImage source, final PImage target ) {
+   public static PImage trimAlpha ( final PImage source, final Vec2 tl,
+      final PImage target ) {
 
       if ( target instanceof PGraphics ) {
          System.err.println("Do not use PGraphics with this method.");
@@ -2974,7 +3016,7 @@ public class ZImage extends PImage {
       final int pd = source.pixelDensity;
       final int[] pxSrc = source.pixels;
       final Vec2 dim = new Vec2();
-      target.pixels = Pixels.trimAlpha(pxSrc, w, h, dim);
+      target.pixels = Pixels.trimAlpha(pxSrc, w, h, dim, tl);
       target.format = source.format;
       target.pixelDensity = pd;
       target.pixelWidth = ( int ) dim.x;

@@ -410,6 +410,95 @@ public abstract class Pixels {
    }
 
    /**
+    * Blurs an array of pixels by finding averaging each color with its
+    * neighbors in 8 directions. The step determines the size of the kernel,
+    * where the minimum step of 1 will make a 3x3, 9 pixel kernel. Averages
+    * the color's CIE LAB representation.
+    *
+    * @param source the source pixels
+    * @param wSrc   the image width
+    * @param hSrc   the image height
+    * @param step   the kernel step
+    * @param target the target pixels
+    *
+    * @return the blurred image
+    *
+    * @see Color#fromHex(int, Color)
+    * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
+    * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
+    * @see Color#toHexIntSat(Color)
+    */
+   public static int[] boxBlur ( final int[] source, final int wSrc,
+      final int hSrc, final int step, final int[] target ) {
+
+      final int srcLen = source.length;
+      if ( srcLen == target.length ) {
+
+         /* Place lab lookups in a dictionary. */
+         final Color srgb = new Color();
+         final Color lrgb = new Color();
+         final Vec4 xyz = new Vec4();
+         final HashMap < Integer, Vec4 > dict = new HashMap <>(512, 0.75f);
+         for ( int i = 0; i < srcLen; ++i ) {
+            final int hexInt = source[i];
+            final Integer hexObj = hexInt;
+            if ( !dict.containsKey(hexObj) ) {
+               final Vec4 lab = new Vec4();
+               Color.fromHex(hexInt, srgb);
+               Color.sRgbToCieLab(srgb, lab, xyz, lrgb);
+               dict.put(hexObj, lab);
+            }
+         }
+
+         // QUERY: Should there be an upper bound to step?
+         final int stepVal = step < 1 ? 1 : step;
+         final int wKrn = 1 + stepVal * 2;
+         final int krnLen = wKrn * wKrn;
+         final float denom = 1.0f / krnLen;
+         final Vec4 labAvg = new Vec4();
+
+         for ( int i = 0; i < srcLen; ++i ) {
+            /* Subtract step to center the kernel in the inner for loop. */
+            final int xSrc = i % wSrc - stepVal;
+            final int ySrc = i / wSrc - stepVal;
+            final int hexSrc = source[i];
+            final Integer hexSrcObj = hexSrc;
+
+            float lSum = 0.0f;
+            float aSum = 0.0f;
+            float bSum = 0.0f;
+            float tSum = 0.0f;
+
+            for ( int j = 0; j < krnLen; ++j ) {
+               final int xComp = xSrc + j % wKrn;
+               final int yComp = ySrc + j / wKrn;
+               if ( yComp > -1 && yComp < hSrc && xComp > -1 && xComp < wSrc ) {
+                  final Vec4 labNgbr = dict.get(source[xComp + yComp * wSrc]);
+                  lSum += labNgbr.z;
+                  aSum += labNgbr.x;
+                  bSum += labNgbr.y;
+                  tSum += labNgbr.w;
+               } else {
+                  /*
+                   * When the kernel is out of bounds, sample the central color
+                   * but do not tally alpha.
+                   */
+                  final Vec4 labCtr = dict.get(hexSrcObj);
+                  lSum += labCtr.z;
+                  aSum += labCtr.x;
+                  bSum += labCtr.y;
+               }
+            }
+
+            labAvg.set(aSum * denom, bSum * denom, lSum * denom, tSum * denom);
+            Color.cieLabTosRgb(labAvg, srgb, lrgb, xyz);
+            target[i] = Color.toHexIntSat(srgb);
+         }
+      }
+      return target;
+   }
+
+   /**
     * Creates a checker pattern in an array of pixels.
     *
     * @param a      the first color
@@ -2094,15 +2183,14 @@ public abstract class Pixels {
     * @param wSrc   the source image width
     * @param hSrc   the source image height
     * @param dim    the new dimension
+    * @param tl     top-left
     *
     * @return the trimmed pixels
     *
     * @author Oleg Mikhailov
     */
    public static int[] trimAlpha ( final int[] source, final int wSrc,
-      final int hSrc, final Vec2 dim ) {
-
-      // TODO: Emit top-left corner as well?
+      final int hSrc, final Vec2 dim, final Vec2 tl ) {
 
       final int srcLen = source.length;
       final int wn1 = wSrc - 1;
@@ -2251,6 +2339,7 @@ public abstract class Pixels {
       }
 
       if ( dim != null ) { dim.set(wTrg, hTrg); }
+      if ( tl != null ) { tl.set(left, top); }
       return target;
    }
 
