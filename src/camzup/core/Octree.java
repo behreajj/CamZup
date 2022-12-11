@@ -225,7 +225,8 @@ public class Octree {
    }
 
    /**
-    * Gets the capacity of the node.
+    * Gets the capacity of the node, regardless of whether or not it is a
+    * leaf.
     *
     * @return the capacity
     */
@@ -523,6 +524,30 @@ public class Octree {
    public String toString ( final int places ) {
 
       return this.toString(new StringBuilder(1024), places).toString();
+   }
+
+   /**
+    * Finds the total capacity of a node, including the cumulative capacities
+    * of its children.
+    *
+    * @return the sum
+    */
+   @Recursive
+   public int totalCapacity ( ) {
+
+      // TODO: TEST
+      int sum = 0;
+      boolean isLeaf = true;
+      for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+         final Octree child = this.children[i];
+         if ( child != null ) {
+            isLeaf = false;
+            sum += child.totalCapacity();
+         }
+      }
+
+      if ( isLeaf ) { sum += this.capacity; }
+      return sum;
    }
 
    /**

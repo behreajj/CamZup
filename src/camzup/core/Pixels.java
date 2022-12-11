@@ -1,5 +1,6 @@
 package camzup.core;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -410,10 +411,10 @@ public abstract class Pixels {
    }
 
    /**
-    * Blurs an array of pixels by finding averaging each color with its
-    * neighbors in 8 directions. The step determines the size of the kernel,
-    * where the minimum step of 1 will make a 3x3, 9 pixel kernel. Averages
-    * the color's CIE LAB representation.
+    * Blurs an array of pixels by averaging each color with its neighbors in 8
+    * directions. The step determines the size of the kernel, where the
+    * minimum step of 1 will make a 3x3, 9 pixel kernel. Averages the color's
+    * CIE LAB representation.
     *
     * @param source the source pixels
     * @param wSrc   the image width
@@ -428,7 +429,7 @@ public abstract class Pixels {
     * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
     * @see Color#toHexIntSat(Color)
     */
-   public static int[] boxBlur ( final int[] source, final int wSrc,
+   public static int[] blurBoxLab ( final int[] source, final int wSrc,
       final int hSrc, final int step, final int[] target ) {
 
       final int srcLen = source.length;
@@ -1442,7 +1443,7 @@ public abstract class Pixels {
          final int palLen = palette.length;
          for ( int h = 0; h < palLen; ++h ) {
             final Color clrPal = palette[h];
-            if ( clrPal.a > 0.0f ) {
+            if ( Color.any(clrPal) ) {
                Color.sRgbToCieLab(clrPal, lab, xyz, lrgb);
                final Vec3 point = new Vec3(lab.x, lab.y, lab.z);
                oct.insert(point);
@@ -2172,6 +2173,98 @@ public abstract class Pixels {
    }
 
    /**
+    * Constructs a mesh from the non-transparent pixels of an image. Useful as
+    * an intermediary to converting an image to an SVG or contour.
+    *
+    * @param source the source pixels
+    * @param wSrc   the source image width
+    * @param hSrc   the source image height
+    * @param target the output mesh
+    *
+    * @return the mesh
+    */
+   public static Mesh2 toMesh ( final int[] source, final int wSrc,
+      final int hSrc, final Mesh2 target ) {
+
+      // TODO: This doesn't really solve the problem, because you'd need each
+      // unique non-zero color to form an island, or a mesh, separately, so this
+      // could be toMeshEntity instead...
+      target.name = "Image";
+
+      final float tou = 1.0f / wSrc;
+      final float tov = 1.0f / hSrc;
+
+      float right = 0.5f;
+      float top = 0.5f;
+      if ( wSrc > hSrc ) {
+         top = 0.5f * ( hSrc / ( float ) wSrc );
+      } else {
+         right = 0.5f * ( wSrc / ( float ) hSrc );
+      }
+      final float left = -right;
+      final float bottom = -top;
+
+      final int srcLen = source.length;
+      final ArrayList < Integer > nonZeroIdcs = new ArrayList <>();
+      for ( int i = 0; i < srcLen; ++i ) {
+         final int srcHex = source[i];
+         if ( ( srcHex & 0xff000000 ) != 0 ) { nonZeroIdcs.add(i); }
+      }
+
+      final int fsLen = nonZeroIdcs.size();
+      final int vsLen = fsLen * 4;
+      final int vtsLen = vsLen;
+
+      final Vec2[] vs = target.coords = Vec2.resize(target.coords, vsLen);
+      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
+         vtsLen);
+      final int[][][] fs = target.faces = new int[fsLen][4][2];
+
+      final Iterator < Integer > itr = nonZeroIdcs.iterator();
+      for ( int i = 0, j = 0; itr.hasNext(); ++i, j += 4 ) {
+         final int idx = itr.next();
+         final int x = idx % wSrc;
+         final int y = idx / wSrc;
+
+         final float u0 = x * tou;
+         final float v0 = y * tov;
+         final float u1 = ( x + 1 ) * tou;
+         final float v1 = ( y + 1 ) * tov;
+
+         vts[j].set(u0, v0);
+         vts[j + 1].set(u1, v0);
+         vts[j + 2].set(u1, v1);
+         vts[j + 3].set(u0, v1);
+
+         final float x0 = ( 1.0f - u0 ) * left + u0 * right;
+         final float y0 = ( 1.0f - v0 ) * top + v0 * bottom;
+         final float x1 = ( 1.0f - u1 ) * left + u1 * right;
+         final float y1 = ( 1.0f - v1 ) * top + v1 * bottom;
+
+         vs[j].set(x0, y0);
+         vs[j + 1].set(x1, y0);
+         vs[j + 2].set(x1, y1);
+         vs[j + 3].set(x0, y1);
+
+         final int[][] f = fs[i];
+         final int[] vr00 = f[0];
+         vr00[0] = j;
+         vr00[1] = j;
+         final int[] vr10 = f[1];
+         vr10[0] = j + 1;
+         vr10[1] = j + 1;
+         final int[] vr11 = f[2];
+         vr11[0] = j + 2;
+         vr11[1] = j + 2;
+         final int[] vr01 = f[3];
+         vr01[0] = j + 3;
+         vr01[1] = j + 3;
+      }
+
+      return target;
+   }
+
+   /**
     * Removes excess transparent pixels from an array of pixels. Adapted from
     * the implementation by Oleg Mikhailov: <a href=
     * "https://stackoverflow.com/a/36938923">https://stackoverflow.com/a/36938923</a>.
@@ -2193,70 +2286,16 @@ public abstract class Pixels {
       final int hSrc, final Vec2 dim, final Vec2 tl ) {
 
       final int srcLen = source.length;
-      final int wn1 = wSrc - 1;
-      final int hn1 = hSrc - 1;
 
       if ( wSrc < 2 && hSrc < 2 ) {
-
          if ( dim != null ) { dim.set(wSrc, hSrc); }
          final int[] target = new int[srcLen];
          System.arraycopy(source, 0, target, 0, srcLen);
          return target;
-
       }
-      if ( wSrc == 1 ) {
 
-         int top = -1;
-         int minBottom = hn1;
-         boolean goTop = true;
-         while ( goTop && top < hn1 ) {
-            ++top;
-            if ( ( source[top] & 0xff000000 ) != 0 ) {
-               minBottom = top;
-               goTop = false;
-            }
-         }
-
-         int bottom = hSrc;
-         boolean goBottom = true;
-         while ( goBottom && bottom > minBottom ) {
-            --bottom;
-            goBottom = ( source[bottom] & 0xff000000 ) != 0;
-         }
-
-         final int hTrg = 1 + bottom - top;
-         final int[] target = new int[hTrg];
-         if ( dim != null ) { dim.set(1.0f, hTrg); }
-         return target;
-
-      }
-      if ( hSrc == 1 ) {
-
-         int left = -1;
-         int minRight = wn1;
-         boolean goLeft = true;
-         while ( goLeft && left < minRight ) {
-            ++left;
-            if ( ( source[left] & 0xff000000 ) != 0 ) {
-               minRight = left;
-               goLeft = false;
-            }
-         }
-
-         int right = wSrc;
-         boolean goRight = true;
-         while ( goRight && right > minRight ) {
-            --right;
-            goRight = ( source[right] & 0xff000000 ) != 0;
-         }
-
-         final int wTrg = 1 + right - left;
-         final int[] target = new int[wTrg];
-         System.arraycopy(source, left, target, 0, wTrg);
-         if ( dim != null ) { dim.set(wTrg, 1.0f); }
-         return target;
-
-      }
+      final int wn1 = wSrc > 1 ? wSrc - 1 : 0;
+      final int hn1 = hSrc > 1 ? hSrc - 1 : 0;
 
       int minRight = wn1;
       int minBottom = hn1;

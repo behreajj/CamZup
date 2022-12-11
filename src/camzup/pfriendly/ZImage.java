@@ -7,6 +7,7 @@ import java.util.regex.Pattern;
 import camzup.core.Color;
 import camzup.core.Gradient;
 import camzup.core.IUtils;
+import camzup.core.Mesh2;
 import camzup.core.Pixels;
 import camzup.core.Pixels.MapLuminance;
 import camzup.core.Utils;
@@ -543,19 +544,19 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Blurs an image by finding averaging each color with its neighbors in 8
+    * Blurs an image by averaging each color with its neighbors in 8
     * directions. The step determines the size of the kernel, where the
     * minimum step of 1 will make a 3x3, 9 pixel kernel.
-    * 
+    *
     * @param source the source image
     * @param step   the kernel step
     * @param target the target image
-    * 
+    *
     * @return the blurred image
-    * 
-    * @see Pixels#boxBlur(int[], int, int, int, int[])
+    *
+    * @see Pixels#blurBoxLab(int[], int, int, int, int[])
     */
-   public static PImage boxBlur ( final PImage source, final int step,
+   public static PImage blur ( final PImage source, final int step,
       final PImage target ) {
 
       if ( target instanceof PGraphics && ( source.pixelWidth
@@ -569,7 +570,7 @@ public class ZImage extends PImage {
       final int[] pxSrc = source.pixels;
       final int wSrc = source.pixelWidth;
       final int hSrc = source.pixelHeight;
-      target.pixels = Pixels.boxBlur(pxSrc, wSrc, hSrc, step,
+      target.pixels = Pixels.blurBoxLab(pxSrc, wSrc, hSrc, step,
          new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
@@ -2481,14 +2482,15 @@ public class ZImage extends PImage {
       target.loadPixels();
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
+      final int pd = source.pixelDensity;
       final int[] pxSrc = source.pixels;
       target.pixels = Pixels.rotate270(pxSrc, w, h, new int[pxSrc.length]);
       target.format = source.format;
-      target.pixelDensity = source.pixelDensity;
-      target.pixelWidth = w;
-      target.pixelHeight = h;
-      target.width = source.width;
-      target.height = source.height;
+      target.pixelDensity = pd;
+      target.pixelWidth = h;
+      target.pixelHeight = w;
+      target.width = h / pd;
+      target.height = w / pd;
       target.updatePixels();
 
       return target;
@@ -2515,14 +2517,15 @@ public class ZImage extends PImage {
       target.loadPixels();
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
+      final int pd = source.pixelDensity;
       final int[] pxSrc = source.pixels;
       target.pixels = Pixels.rotate90(pxSrc, w, h, new int[pxSrc.length]);
       target.format = source.format;
-      target.pixelDensity = source.pixelDensity;
-      target.pixelWidth = w;
-      target.pixelHeight = h;
-      target.width = source.width;
-      target.height = source.height;
+      target.pixelDensity = pd;
+      target.pixelWidth = h;
+      target.pixelHeight = w;
+      target.width = h / pd;
+      target.height = w / pd;
       target.updatePixels();
 
       return target;
@@ -2967,6 +2970,24 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Constructs a mesh from the non-transparent pixels of an image. Useful as
+    * an intermediary to converting an image to an SVG or contour.
+    *
+    * @param source the source image
+    * @param target the target mesh
+    *
+    * @return the mesh
+    *
+    * @see Pixels#toMesh(int[], int, int, Mesh2)
+    */
+   public static Mesh2 toMesh ( final PImage source, final Mesh2 target ) {
+
+      source.loadPixels();
+      return Pixels.toMesh(source.pixels, source.pixelWidth, source.pixelHeight,
+         target);
+   }
+
+   /**
     * Returns a string representation of an image, including its format,
     * width, height and pixel density.
     *
@@ -2996,7 +3017,7 @@ public class ZImage extends PImage {
     * @param source the source image
     * @param tl     top left
     * @param target the target image
-    * 
+    *
     * @return the trimmed image
     *
     * @see Pixels#trimAlpha(int[], int, int, Vec2, Vec2)
