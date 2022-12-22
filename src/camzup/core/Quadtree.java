@@ -789,7 +789,7 @@ public class Quadtree {
       final TreeMap < Float, Vec2 > found = new TreeMap <>();
       final Vec2 rCenter = new Vec2();
       Bounds2.center(range, rCenter);
-      Quadtree.query(q, range, rCenter, found);
+      Quadtree.query(q, range, rCenter, 0, found);
 
       /* Copy by value, so references can't change. */
       final Collection < Vec2 > values = found.values();
@@ -816,7 +816,7 @@ public class Quadtree {
       final float radius ) {
 
       final TreeMap < Float, Vec2 > found = new TreeMap <>();
-      Quadtree.query(q, center, radius * radius, found);
+      Quadtree.query(q, center, radius * radius, 0, found);
 
       /* Copy by value, so references can't change. */
       final Collection < Vec2 > values = found.values();
@@ -884,28 +884,31 @@ public class Quadtree {
     * in the map uses the Chebyshev distance as the key. Expects the range
     * center to be calculated in advance.
     *
-    * @param q       the quadtree
-    * @param range   the bounds
-    * @param rCenter the range center
-    * @param found   the output list
+    * @param q        the quadtree
+    * @param range    the bounds
+    * @param rCenter  the range center
+    * @param startIdx the start index
+    * @param found    the output list
     *
-    * @return found points
+    * @return evaluation
     *
     * @see Bounds2#containsInclusive(Bounds2, Vec2)
     * @see Bounds2#intersect(Bounds2, Bounds2)
     * @see Vec2#distChebyshev(Vec2, Vec2)
     */
    @Recursive
-   static TreeMap < Float, Vec2 > query ( final Quadtree q, final Bounds2 range,
-      final Vec2 rCenter, final TreeMap < Float, Vec2 > found ) {
+   static boolean query ( final Quadtree q, final Bounds2 range,
+      final Vec2 rCenter, final int startIdx, final TreeMap < Float,
+         Vec2 > found ) {
 
       if ( Bounds2.intersect(range, q.bounds) ) {
          boolean isLeaf = true;
          for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
-            final Quadtree child = q.children[i];
+            final Quadtree child = q.children[ ( startIdx + i )
+               % Quadtree.CHILD_COUNT];
             if ( child != null ) {
                isLeaf = false;
-               Quadtree.query(child, range, rCenter, found);
+               Quadtree.query(child, range, rCenter, i, found);
             }
          }
 
@@ -918,9 +921,10 @@ public class Quadtree {
                }
             }
          }
-      }
 
-      return found;
+         return true;
+      }
+      return false;
    }
 
    /**
@@ -928,27 +932,29 @@ public class Quadtree {
     * are in range, they are added to a {@link java.util.TreeMap}. Each entry
     * in the map uses the squared Euclidean distance as the key.
     *
-    * @param q      the quadtree
-    * @param center the circle center
-    * @param rsq    the circle radius, squared
-    * @param found  the output list
+    * @param q        the quadtree
+    * @param center   the circle center
+    * @param rsq      the circle radius, squared
+    * @param startIdx the start index
+    * @param found    the output list
     *
-    * @return found points
+    * @return evaluation
     *
     * @see Bounds2#intersect(Bounds2, Vec2, float)
     * @see Vec2#distSq(Vec2, Vec2)
     */
    @Recursive
-   static TreeMap < Float, Vec2 > query ( final Quadtree q, final Vec2 center,
-      final float rsq, final TreeMap < Float, Vec2 > found ) {
+   static boolean query ( final Quadtree q, final Vec2 center, final float rsq,
+      final int startIdx, final TreeMap < Float, Vec2 > found ) {
 
       if ( Bounds2.intersectSq(q.bounds, center, rsq) ) {
          boolean isLeaf = true;
          for ( int i = 0; i < Quadtree.CHILD_COUNT; ++i ) {
-            final Quadtree child = q.children[i];
+            final Quadtree child = q.children[ ( startIdx + i )
+               % Quadtree.CHILD_COUNT];
             if ( child != null ) {
                isLeaf = false;
-               Quadtree.query(child, center, rsq, found);
+               Quadtree.query(child, center, rsq, i, found);
             }
          }
 
@@ -960,9 +966,10 @@ public class Quadtree {
                if ( dsq < rsq ) { found.put(dsq, point); }
             }
          }
-      }
 
-      return found;
+         return true;
+      }
+      return false;
    }
 
 }

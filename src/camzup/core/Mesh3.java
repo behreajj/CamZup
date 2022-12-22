@@ -2375,8 +2375,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
    /**
     * An internal helper function to format a mesh as a Python tuple, then
-    * append it to a {@link StringBuilder}. Used for testing purposes to
-    * compare results with Blender 2.9x.
+    * append it to a {@link StringBuilder}.
     *
     * @param pyCd           the string builder
     * @param includeEdges   whether to include edge index data
@@ -4154,20 +4153,20 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       target.normals = Vec3.resize(target.normals, 1);
       Vec3.up(target.normals[0]);
 
-      /* @formatter:off */
       switch ( poly ) {
          case NGON:
-         case QUAD:
-            target.faces = new int[][][] {
-               { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 }, { 3, 3, 0 } } };
+         case QUAD: {
+            target.faces = new int[][][] { { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2,
+               0 }, { 3, 3, 0 } } };
+         }
             break;
+
          case TRI:
-         default:
-            target.faces = new int[][][] {
-               { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2, 0 } },
-               { { 0, 0, 0 }, { 2, 2, 0 }, { 3, 3, 0 } } };
+         default: {
+            target.faces = new int[][][] { { { 0, 0, 0 }, { 1, 1, 0 }, { 2, 2,
+               0 } }, { { 0, 0, 0 }, { 2, 2, 0 }, { 3, 3, 0 } } };
+         }
       }
-      /* @formatter:on */
 
       return target;
    }

@@ -1,16 +1,16 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-Yup2 graphics;
+YupJ2 graphics;
 PFont font;
 
 void settings() {
-  size(720, 405, Yup2.PATH_STR);
+  size(720, 405, YupJ2.PATH_STR);
 }
 
 void setup() {
   frameRate(60.0f);
-  graphics = (Yup2)getGraphics();
+  graphics = (YupJ2)getGraphics();
   noStroke();
 
   font = loadFont("ProcessingSansPro.vlw");

@@ -420,11 +420,12 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * Returns a String of Python code targeted toward the Blender 3.x API.
     * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how mesh geometry looks in Blender (the control) versus in the
     * library (the test).
     *
+    * @param decimate       decimate the shape
     * @param extrude        extrude the shape
     * @param offset         extrusion offset
     * @param useAutoSmooth  auto smooth normals
@@ -439,11 +440,13 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     *
     * @return the string
     */
-   public String toBlenderCode ( final float extrude, final float offset,
-      final boolean useAutoSmooth, final float autoAngle,
+   public String toBlenderCode ( final boolean decimate, final float extrude,
+      final float offset, final boolean useAutoSmooth, final float autoAngle,
       final MaterialSolid[] materials, final float gamma, final float metallic,
       final float roughness, final float specular, final float clearcoat,
       final float clearcoatRough ) {
+
+      final boolean includeEdges = false;
 
       final StringBuilder pyCd = new StringBuilder(2048);
       pyCd.append("from bpy import context as C, data as D\nimport bmesh\n\n");
@@ -457,7 +460,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       /* Append meshes. */
       final Iterator < Mesh2 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
-         meshItr.next().toBlenderCode(pyCd, true, true, 0.0f);
+         meshItr.next().toBlenderCode(pyCd, includeEdges, true, 0.0f);
          if ( meshItr.hasNext() ) { pyCd.append(',').append(' '); }
       }
 
@@ -481,7 +484,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       this.genParentString(pyCd);
       this.genMaterialString(pyCd);
-      this.genMeshString(pyCd, false, useAutoSmooth, autoAngle);
+      this.genMeshString(pyCd, includeEdges, useAutoSmooth, autoAngle);
 
       /* Add materials to mesh data. */
       pyCd.append("    md_mats = mesh_data.materials\n");
@@ -498,11 +501,19 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       pyCd.append("    mesh_obj = d_objs.new(mesh_data.name, mesh_data)\n");
       pyCd.append("    mesh_obj.rotation_mode = \"QUATERNION\"\n");
       pyCd.append("    mesh_obj.parent = parent_obj\n");
-      pyCd.append("    scene_objs.link(mesh_obj)\n\n");
+      pyCd.append("    scene_objs.link(mesh_obj)");
 
-      /* Optional extrude measure. */
+      /* Optional decimate modifier. */
+      if ( decimate ) {
+         pyCd.append("\n\n    if len(fc_idcs) > 3:\n");
+         pyCd.append("        dec = mesh_obj.modifiers.new(");
+         pyCd.append("\"Decimate\", \"DECIMATE\")\n");
+         pyCd.append("        dec.decimate_type = \"DISSOLVE\"");
+      }
+
+      /* Optional extrude modifier. */
       if ( extrude > 0.0f ) {
-         pyCd.append("    solidify = mesh_obj.modifiers.new(");
+         pyCd.append("\n\n    solidify = mesh_obj.modifiers.new(");
          pyCd.append("\"Solidify\", \"SOLIDIFY\")\n");
          pyCd.append("    solidify.thickness = ");
          Utils.toFixed(pyCd, extrude, 6);
@@ -517,6 +528,24 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    }
 
    /**
+    * Returns a String of Python code targeted toward the Blender 3.x API.
+    * This code is brittle and is used for internal testing purposes.
+    *
+    * @param decimate decimate the shape
+    * @param extrude  extrude the shape
+    * @param ms       the materials
+    *
+    * @return the string
+    */
+   @Experimental
+   public String toBlenderCode ( final boolean decimate, final float extrude,
+      final MaterialSolid[] ms ) {
+
+      return this.toBlenderCode(decimate, extrude, 0.0f, true, 0.523599f, ms,
+         2.2f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0001f);
+   }
+
+   /**
     * Returns a String of Python code targeted toward the Blender 2.8x API.
     * This code is brittle and is used for internal testing purposes.
     *
@@ -527,8 +556,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    @Experimental
    public String toBlenderCode ( final MaterialSolid[] ms ) {
 
-      return this.toBlenderCode(0.25f, 1.0f, true, 0.523599f, ms, 1.0f, 0.0f,
-         1.0f, 0.0f, 0.0f, 0.0001f);
+      return this.toBlenderCode(false, 0.0f, ms);
    }
 
    /**

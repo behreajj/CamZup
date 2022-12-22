@@ -881,7 +881,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public String toBlenderCode ( final String name, final int samples ) {
 
-      return this.toBlenderCode(name, samples, 1.0f);
+      return this.toBlenderCode(name, samples, 2.2f);
    }
 
    /**

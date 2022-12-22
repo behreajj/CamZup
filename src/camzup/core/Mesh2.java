@@ -753,7 +753,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * Insets a face by calculating its center then easing from the face's
     * vertices toward the center by the factor. The factor is expected to be
     * in the range [0.0, 1.0] . When it is less than 0.0, the face remains
-    * unchanged; when it is greater than 1.0, the face is subdivided by
+    * unchanged. When it is greater than 1.0, the face is subdivided by
     * center.
     *
     * @param faceIndex the face index
@@ -1695,9 +1695,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
    /**
     * An internal helper function to format a mesh as a Python tuple, then
-    * append it to a {@link StringBuilder}. Used for testing purposes to
-    * compare results with Blender 2.9x. Appends a z component to promote the
-    * vector to 3D.
+    * append it to a {@link StringBuilder}. Appends a z component to promote
+    * the vector to 3D.
     *
     * @param pyCd         the string builder
     * @param includeEdges whether to include edge index data
@@ -1736,11 +1735,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
           */
 
          final ArrayList < String > edgesList = new ArrayList <>();
-
-         // This doesn't work because 1, 10, 11, 12, 2, 24, 25 ordering.
-         // You'd have to use a TreeMap with integers...
-         // final TreeSet < String > edgesList = new TreeSet <>();
-
          for ( int j = 0; j < facesLen; ++j ) {
             final int[][] vrtInd = this.faces[j];
             final int vrtIndLen = vrtInd.length;
@@ -1753,7 +1747,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
                if ( edgesList.indexOf(query) < 0 && edgesList.indexOf(reverse)
                   < 0 ) {
-                  // edgesList.add(origin < dest ? query : reverse);
                   edgesList.add(query);
                }
             }
@@ -1966,7 +1959,6 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     * (default).
     *
     * @param svgp     the string builder
-    * @param id       the path id
     * @param fillRule the fill rule
     *
     * @return the string builder.
@@ -2115,8 +2107,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       switch ( profile ) {
 
-         case CLIP:
-
+         case CLIP: {
             final float c1 = a1 + arcLen1;
             for ( int k = 0; k < sctCount; ++k ) {
                final float step = k * toStep;
@@ -2125,24 +2116,21 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                vts[i].set(1.0f, v);
                vts[i + 1].set(0.0f, v);
             }
-
+         }
             break;
 
-         case STRETCH:
-
+         case STRETCH: {
             for ( int k = 0; k < sctCount; ++k ) {
                final float step = 1.0f - k * toStep;
                final int i = k + k;
                vts[i].set(1.0f, step);
                vts[i + 1].set(0.0f, step);
             }
-
+         }
             break;
 
          case BOUNDS:
-
-         default:
-
+         default: {
             for ( int k = 0; k < sctCount; ++k ) {
                final int i = k + k;
                final Vec2 v0 = vs[i];
@@ -2152,14 +2140,14 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                final Vec2 v1 = vs[j];
                vts[j].set(v1.x + 0.5f, 0.5f - v1.y);
             }
+         }
       }
 
       int len;
 
       switch ( poly ) {
 
-         case NGON:
-
+         case NGON: {
             len = sctCount2;
             final int last = len - 1;
             target.faces = new int[1][len][2];
@@ -2176,11 +2164,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                backward[0] = m;
                backward[1] = m;
             }
-
+         }
             break;
 
-         case QUAD:
-
+         case QUAD: {
             len = sctCount - 1;
             target.faces = new int[len][4][2];
 
@@ -2197,13 +2184,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                f[3][0] = j;
                f[3][1] = j;
             }
-
+         }
             break;
 
          case TRI:
 
-         default:
-
+         default: {
             len = sctCount2 - 2;
             target.faces = new int[len][3][2];
 
@@ -2227,7 +2213,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                f1[2][0] = j;
                f1[2][1] = j;
             }
-
+         }
       }
 
       return target;
@@ -2917,8 +2903,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
          case NGON:
 
-         case QUAD:
-
+         case QUAD: {
             fs = target.faces = new int[fLen][4][2];
             for ( int k = 0; k < fLen; ++k ) {
                final int i = k / cVal;
@@ -2950,13 +2935,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                vert3[0] = c01;
                vert3[1] = c01;
             }
-
+         }
             break;
 
          case TRI:
 
-         default:
-
+         default: {
             fs = target.faces = new int[fLen + fLen][3][2];
             for ( int m = 0, k = 0; k < fLen; ++k, m += 2 ) {
                final int i = k / cVal;
@@ -2971,31 +2955,32 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                final int c11 = c01 + 1;
 
                final int[][] f0 = fs[m];
-               final int[] vert00 = f0[0];
-               vert00[0] = c00;
-               vert00[1] = c00;
+               final int[] vr00 = f0[0];
+               vr00[0] = c00;
+               vr00[1] = c00;
 
-               final int[] vert01 = f0[1];
-               vert01[0] = c10;
-               vert01[1] = c10;
+               final int[] vr01 = f0[1];
+               vr01[0] = c10;
+               vr01[1] = c10;
 
-               final int[] vert02 = f0[2];
-               vert02[0] = c11;
-               vert02[1] = c11;
+               final int[] vr02 = f0[2];
+               vr02[0] = c11;
+               vr02[1] = c11;
 
                final int[][] f1 = fs[m + 1];
-               final int[] vert10 = f1[0];
-               vert10[0] = c11;
-               vert10[1] = c11;
+               final int[] vr10 = f1[0];
+               vr10[0] = c11;
+               vr10[1] = c11;
 
-               final int[] vert11 = f1[1];
-               vert11[0] = c01;
-               vert11[1] = c01;
+               final int[] vr11 = f1[1];
+               vr11[0] = c01;
+               vr11[1] = c01;
 
-               final int[] vert12 = f1[2];
-               vert12[0] = c00;
-               vert12[1] = c00;
+               final int[] vr12 = f1[2];
+               vr12[0] = c00;
+               vr12[1] = c00;
             }
+         }
       }
 
       return target;
@@ -3067,8 +3052,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       switch ( poly ) {
 
-         case NGON:
-
+         case NGON: {
             target.faces = new int[1][seg][2];
             final int[][] ngon = target.faces[0];
 
@@ -3083,11 +3067,10 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                ngon[i][0] = i;
                ngon[i][1] = i;
             }
-
+         }
             break;
 
-         case QUAD:
-
+         case QUAD: {
             final int[][][] fsQuad = target.faces = new int[seg][4][2];
             vs[0].set(0.0f, 0.0f);
             vts[0].set(0.5f, 0.5f);
@@ -3138,13 +3121,12 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                f[3][0] = u;
                f[3][1] = u;
             }
-
+         }
             break;
 
          case TRI:
 
-         default:
-
+         default: {
             final int[][][] fsTri = target.faces = new int[seg][3][2];
             vs[0].set(0.0f, 0.0f);
             vts[0].set(0.5f, 0.5f);
@@ -3168,7 +3150,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                f[2][0] = k;
                f[2][1] = k;
             }
-
+         }
       }
 
       return target;
@@ -3265,20 +3247,20 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       target.texCoords[2].set(1.0f, 0.0f);
       target.texCoords[3].set(0.0f, 0.0f);
 
-      /* @formatter:off */
       switch ( poly ) {
          case NGON:
-         case QUAD:
-            target.faces = new int[][][] {
-               { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3, 3 } } };
+         case QUAD: {
+            target.faces = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 }, { 3,
+               3 } } };
+         }
             break;
+
          case TRI:
-         default:
-            target.faces = new int[][][] {
-               { { 0, 0 }, { 1, 1 }, { 2, 2 } },
-               { { 0, 0 }, { 2, 2 }, { 3, 3 } } };
+         default: {
+            target.faces = new int[][][] { { { 0, 0 }, { 1, 1 }, { 2, 2 } }, { {
+               0, 0 }, { 2, 2 }, { 3, 3 } } };
+         }
       }
-      /* @formatter:on */
 
       return target;
    }

@@ -1108,11 +1108,10 @@ public interface IYup2 extends IUp {
        * values, it is okay to not use Utils.div here.
        */
 
-      // TODO: Should this clamp mouse to to 01 as seen below?
-      final float mx = ( parent.mouseX / ( parent.width - 1.0f ) - 0.5f )
-         * ( renderer.getWidth() / renderer.getZoomX() );
-      final float my = ( 0.5f - parent.mouseY / ( parent.height - 1.0f ) )
-         * ( renderer.getHeight() / renderer.getZoomY() );
+      final float mx = ( Utils.clamp01(parent.mouseX / ( parent.width - 1.0f ))
+         - 0.5f ) * ( renderer.getWidth() / renderer.getZoomX() );
+      final float my = ( 0.5f - Utils.clamp01(parent.mouseY / ( parent.height
+         - 1.0f )) ) * ( renderer.getHeight() / renderer.getZoomY() );
       return target.set(cosa * mx - sina * my + renderer.getLocX(), cosa * my
          + sina * mx + renderer.getLocY());
    }

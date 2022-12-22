@@ -1,7 +1,7 @@
 import camzup.pfriendly.*;
 import camzup.core.*;
 
-YupJ2 graphics;
+Yup2 graphics;
 PImage img;
 int currentMode = 0;
 int index = 0;
@@ -9,11 +9,11 @@ int[] modes = { CORNER, CORNERS, CENTER, RADIUS };
 String[] msStr = { "CORNER", "CORNERS", "CENTER", "RADIUS"};
 
 void settings() {
-  size(720, 405, YupJ2.PATH_STR);
+  size(720, 405, Yup2.PATH_STR);
 }
 
 void setup() {
-  graphics = (YupJ2)getGraphics();
+  graphics = (Yup2)getGraphics();
   frameRate(60.0f);
   noStroke();
   img = loadImage("diagnostic.png");

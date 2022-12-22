@@ -814,7 +814,7 @@ public class Octree {
       final TreeMap < Float, Vec3 > found = new TreeMap <>();
       final Vec3 rCenter = new Vec3();
       Bounds3.center(range, rCenter);
-      Octree.query(o, range, rCenter, found);
+      Octree.query(o, range, rCenter, 0, found);
 
       /* Copy by value, so references can't change. */
       final Collection < Vec3 > values = found.values();
@@ -841,7 +841,7 @@ public class Octree {
       final float radius ) {
 
       final TreeMap < Float, Vec3 > found = new TreeMap <>();
-      Octree.query(o, center, radius * radius, found);
+      Octree.query(o, center, radius * radius, 0, found);
 
       /* Copy by value, so references can't change. */
       final Collection < Vec3 > values = found.values();
@@ -878,6 +878,8 @@ public class Octree {
 
       boolean isLeaf = true;
       for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
+         // QUERY: Should this offset its search by an index in the same
+         // way that query does?
          final Octree child = o.children[i];
          if ( child != null ) {
             isLeaf = false;
@@ -916,27 +918,30 @@ public class Octree {
     * map uses the Chebyshev distance as the key. Expects the range center to
     * be calculated in advance.
     *
-    * @param range   the range
-    * @param rCenter the range center
-    * @param found   the output list
+    * @param range    the range
+    * @param rCenter  the range center
+    * @param startIdx the start index
+    * @param found    the output list
     *
-    * @return found points
+    * @return evaluation
     *
     * @see Bounds3#containsInclusive(Bounds3, Vec3)
     * @see Bounds3#intersect(Bounds3, Bounds3)
     * @see Vec3#distChebyshev(Vec3, Vec3)
     */
    @Recursive
-   static TreeMap < Float, Vec3 > query ( final Octree o, final Bounds3 range,
-      final Vec3 rCenter, final TreeMap < Float, Vec3 > found ) {
+   static boolean query ( final Octree o, final Bounds3 range,
+      final Vec3 rCenter, final int startIdx, final TreeMap < Float,
+         Vec3 > found ) {
 
       if ( Bounds3.intersect(range, o.bounds) ) {
          boolean isLeaf = true;
          for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
-            final Octree child = o.children[i];
+            final Octree child = o.children[ ( startIdx + i )
+               % Octree.CHILD_COUNT];
             if ( child != null ) {
                isLeaf = false;
-               Octree.query(child, range, rCenter, found);
+               Octree.query(child, range, rCenter, i, found);
             }
          }
 
@@ -949,9 +954,10 @@ public class Octree {
                }
             }
          }
-      }
 
-      return found;
+         return true;
+      }
+      return false;
    }
 
    /**
@@ -959,27 +965,29 @@ public class Octree {
     * in range, they are added to a {@link java.util.TreeMap}. Each entry in
     * the map uses the squared Euclidean distance as the key.
     *
-    * @param o      the octree
-    * @param center the sphere center
-    * @param rsq    the sphere radius, squared
-    * @param found  the output list
+    * @param o        the octree
+    * @param center   the sphere center
+    * @param rsq      the sphere radius, squared
+    * @param startIdx the start index
+    * @param found    the output list
     *
-    * @return found points
+    * @return evaluation
     *
     * @see Bounds3#intersect(Bounds3, Vec3, float)
     * @see Vec3#distSq(Vec3, Vec3)
     */
    @Recursive
-   static TreeMap < Float, Vec3 > query ( final Octree o, final Vec3 center,
-      final float rsq, final TreeMap < Float, Vec3 > found ) {
+   static boolean query ( final Octree o, final Vec3 center, final float rsq,
+      final int startIdx, final TreeMap < Float, Vec3 > found ) {
 
       if ( Bounds3.intersectSq(o.bounds, center, rsq) ) {
          boolean isLeaf = true;
          for ( int i = 0; i < Octree.CHILD_COUNT; ++i ) {
-            final Octree child = o.children[i];
+            final Octree child = o.children[ ( startIdx + i )
+               % Octree.CHILD_COUNT];
             if ( child != null ) {
                isLeaf = false;
-               Octree.query(child, center, rsq, found);
+               Octree.query(child, center, rsq, i, found);
             }
          }
 
@@ -991,9 +999,10 @@ public class Octree {
                if ( dsq < rsq ) { found.put(dsq, point); }
             }
          }
-      }
 
-      return found;
+         return true;
+      }
+      return false;
    }
 
 }

@@ -1522,23 +1522,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       /* @formatter:off */
       switch ( this.imageMode ) {
          case PConstants.CORNER: /* 0 */
+         case PConstants.CORNERS: /* 1 */
             this.imageImpl(img,
                x0, y0 - h, x0 + w,
                y0, 0, 0, w, h);
             break;
 
-         case PConstants.CORNERS: /* 1 */
-            this.imageImpl(img,
-               x0, y0, x0 + w, y0 + h,
-               0, 0, w, h);
-            break;
-
          case PConstants.RADIUS: /* 2 */
-            this.imageImpl(img,
-               x0 - w, y0 - h, x0 + w, y0 + h,
-               0, 0, w, h);
-            break;
-
          case PConstants.CENTER: /* 3 */
          default:
             final int wh = w / 2;
@@ -1613,44 +1603,36 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final int u1 = Math.floorMod(uBr, w1);
       final int v1 = Math.floorMod(vBr, h1);
 
-      /* @formatter:off */
       switch ( this.imageMode ) {
-         case PConstants.CORNER: /* 0 */
-
+         case PConstants.CORNER: { /* 0 */
             wDisp = x1i < 0 ? -x1i : x1i;
             hDisp = y1i < 0 ? -y1i : y1i;
-            this.imageImpl(img,
-               x0i, y0i - hDisp, x0i + wDisp, y0i,
-               u0, v0, u1, v1);
+            this.imageImpl(img, x0i, y0i - hDisp, x0i + wDisp, y0i, u0, v0, u1,
+               v1);
+         }
             break;
 
-         case PConstants.CORNERS: /* 1 */
-
-            this.imageImpl(img,
-               x0i, y0i, x1i, y1i,
-               u0, v0, u1, v1);
+         case PConstants.CORNERS: { /* 1 */
+            this.imageImpl(img, x0i, y0i, x1i, y1i, u0, v0, u1, v1);
+         }
             break;
 
-         case PConstants.RADIUS: /* 2 */
-
+         case PConstants.RADIUS: { /* 2 */
             wDisp = x1i < 1 ? 1 : x1i;
             hDisp = y1i < 1 ? 1 : y1i;
-            this.imageImpl(img,
-               x0i - wDisp, y0i - hDisp, x0i + wDisp, y0i + hDisp,
-               u0, v0, u1, v1);
+            this.imageImpl(img, x0i - wDisp, y0i - hDisp, x0i + wDisp, y0i
+               + hDisp, u0, v0, u1, v1);
+         }
             break;
 
          case PConstants.CENTER: /* 3 */
-         default:
-
+         default: {
             wDisp = x1i < 2 ? 1 : x1i / 2;
             hDisp = y1i < 2 ? 1 : y1i / 2;
-            this.imageImpl(img,
-               x0i - wDisp, y0i - hDisp, x0i + wDisp, y0i + hDisp,
-               u0, v0, u1, v1);
-
+            this.imageImpl(img, x0i - wDisp, y0i - hDisp, x0i + wDisp, y0i
+               + hDisp, u0, v0, u1, v1);
+         }
       }
-      /* @formatter:on */
    }
 
    /**
@@ -1705,7 +1687,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final int x1, final int y1, final int uTl, final int vTl, final int uBr,
       final int vBr ) {
 
-      if ( pimg.width > 2 && pimg.height > 2 ) {
+      if ( pimg.pixelWidth > 0 && pimg.pixelHeight > 0 ) {
          final int pd = pimg.pixelDensity;
          this.g2.drawImage(YupJ2.convertPImageToNative(pimg), x0, y0, x1, y1,
             uTl * pd, vBr * pd, uBr * pd, vTl * pd, null, null);
@@ -4618,8 +4600,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             .getSize());
          final float x0 = x + glyph.leftExtent * szNorm;
          final float y0 = y + glyph.topExtent * szNorm;
-         this.textCharModelImpl(glyph.image, x0, y0, x0 + glyph.width * szNorm,
-            y0 - glyph.height * szNorm, glyph.width, glyph.height);
+
+         /* Try subtracting one from bottom-right corner to mitigate cutoff. */
+         this.textCharModelImpl(glyph.image, x0, y0, x0 + ( glyph.width - 1 )
+            * szNorm, y0 - ( glyph.height - 1 ) * szNorm, glyph.width,
+            glyph.height);
       }
    }
 
@@ -4662,8 +4647,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * This calls the super implementation because the glyphs need to be
        * tinted with the desired color.
        */
-
-      // TODO: Test any way to minimize font cutoff and distortion?
       super.imageImpl(glyph, x1, y1, x2, y2, 0, 0, u, v);
       this.imageMode = oldImgMd;
 

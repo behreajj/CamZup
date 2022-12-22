@@ -393,7 +393,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * Returns a String of Python code targeted toward the Blender 3.x API.
     * This code is brittle and is used for internal testing purposes.
     *
     * @return the string
@@ -428,6 +428,8 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       final float metallic, final float roughness, final float specular,
       final float clearcoat, final float clearcoatRough ) {
 
+      final boolean includeEdges = false;
+
       final StringBuilder pyCd = new StringBuilder(2048);
       pyCd.append("from bpy import context as C, data as D\nimport bmesh\n\n");
       pyCd.append("entity_src = {\"name\": \"");
@@ -440,7 +442,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       /* Append meshes. */
       final Iterator < Mesh3 > meshItr = this.meshes.iterator();
       while ( meshItr.hasNext() ) {
-         meshItr.next().toBlenderCode(pyCd, true, true, false);
+         meshItr.next().toBlenderCode(pyCd, includeEdges, true, false);
          if ( meshItr.hasNext() ) { pyCd.append(',').append(' '); }
       }
 
@@ -464,7 +466,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
       this.genParentString(pyCd);
       this.genMaterialString(pyCd);
-      this.genMeshString(pyCd, false, useAutoSmooth, autoAngle);
+      this.genMeshString(pyCd, includeEdges, useAutoSmooth, autoAngle);
 
       /* Add materials to mesh data. */
       pyCd.append("    md_mats = mesh_data.materials\n");
@@ -497,7 +499,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    @Experimental
    public String toBlenderCode ( final MaterialSolid[] ms ) {
 
-      return this.toBlenderCode(true, 0.523599f, ms, 1.0f, 0.0f, 1.0f, 0.0f,
+      return this.toBlenderCode(true, 0.523599f, ms, 2.2f, 0.0f, 1.0f, 0.0f,
          0.0f, 0.0001f);
    }
 

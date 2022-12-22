@@ -471,8 +471,7 @@ public class MaterialSolid extends Material {
 
    /**
     * An internal helper function to format a vector as a Python tuple, then
-    * append it to a {@link StringBuilder}. Used for testing purposes to
-    * compare results with Blender 2.9x.
+    * append it to a {@link StringBuilder}.
     *
     * @param pyCd           the string builder
     * @param gamma          the gamma adjustment
@@ -525,7 +524,7 @@ public class MaterialSolid extends Material {
    StringBuilder toSvgString ( final StringBuilder svgp, final float scale ) {
 
       svgp.append("id=\"");
-      svgp.append(this.name);
+      svgp.append(this.name.toLowerCase());
       svgp.append("\" class=\"");
       svgp.append(this.getClass().getSimpleName().toLowerCase());
       svgp.append('\"');

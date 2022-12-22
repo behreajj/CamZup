@@ -10,7 +10,7 @@ package camzup.core;
 public abstract class Generative {
 
    /**
-    * Only extensions of Noise should be able to construct it.
+    * Constructor only available to extensions of Generative class.
     */
    protected Generative ( ) {}
 

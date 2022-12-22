@@ -1208,13 +1208,32 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * the second parameters.
     *
     * @param img the PImage
-    * @param x   the first x coordinate
-    * @param y   the first y coordinate
+    * @param x   the x coordinate
+    * @param y   the y coordinate
     */
    @Override
    public void image ( final PImage img, final float x, final float y ) {
 
-      this.image(img, x, y, img.width, img.height);
+      final boolean useImg = this.textureMode == PConstants.IMAGE;
+      final float u = useImg ? img.pixelWidth : 1.0f;
+      final float v = useImg ? img.pixelHeight : 1.0f;
+
+      final float xVrf = x;
+      final float yVrf = y;
+
+      switch ( this.imageMode ) {
+         case PConstants.CORNER: /* 0 */
+         case PConstants.CORNERS: /* 1 */
+            this.imageCorner(img, xVrf, yVrf, img.width, img.height, 0.0f, 0.0f,
+               0.0f, u, v);
+            break;
+
+         case PConstants.RADIUS: /* 2 */
+         case PConstants.CENTER: /* 3 */
+         default:
+            this.imageCenter(img, xVrf, yVrf, img.width, img.height, 0.0f, 0.0f,
+               0.0f, u, v);
+      }
    }
 
    /**
@@ -1232,8 +1251,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float x2, final float y2 ) {
 
       final boolean useImg = this.textureMode == PConstants.IMAGE;
-      this.image(img, x1, y1, x2, y2, 0.0f, 0.0f, 0.0f, useImg ? img.width
-         : 1.0f, useImg ? img.height : 1.0f);
+      final float u = useImg ? img.pixelWidth : 1.0f;
+      final float v = useImg ? img.pixelHeight : 1.0f;
+      this.image(img, x1, y1, x2, y2, 0.0f, 0.0f, 0.0f, u, v);
    }
 
    /**
@@ -1256,77 +1276,29 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float x2, final float y2, final float z, final float u1,
       final float v1, final float u2, final float v2 ) {
 
-      if ( img.width < 2 || img.height < 2 ) { return; }
+      /*
+       * Off-by-one issue when texture sampling is set to POINT and the image is
+       * displayed in the center as opposed to the top left corner. Drawing four
+       * quadrants instead of just one does not fix the issue.
+       */
 
-      this.pushStyle();
-      this.noStroke();
-
-      /* With REPEAT, artifacts appear at the edge of images. */
-      final int oldWrapMode = this.textureWrap;
-      this.textureWrap(PConstants.CLAMP);
-
-      /* To be consistent with YupJ2, rely on ZImage.alphaToArgb. */
-      // final boolean isAlphaFmt = img.format == PConstants.ALPHA;
-      // final int oldBlendMode = this.blendMode;
-      // if ( isAlphaFmt ) {
-      // this.blendMode = IUpOgl.TEXT_BLEND;
-      // this.blendModeImpl();
-      // }
-
-      this.beginShape(PConstants.POLYGON);
-      this.normalPerShape(0.0f, 0.0f, 1.0f);
-      this.texture(img);
       switch ( this.imageMode ) {
-
          case PConstants.CORNER: /* 0 */
-
-            this.vertexImpl(x1, y1, z, u1, v1);
-            this.vertexImpl(x1 + x2, y1, z, u2, v1);
-            this.vertexImpl(x1 + x2, y1 - y2, z, u2, v2);
-            this.vertexImpl(x1, y1 - y2, z, u1, v2);
-
+            this.imageCorner(img, x1, y1, x2, y2, z, u1, v1, u2, v2);
             break;
 
          case PConstants.CORNERS: /* 1 */
-
-            this.vertexImpl(x1, y1, z, u1, v2);
-            this.vertexImpl(x2, y1, z, u2, v2);
-            this.vertexImpl(x2, y2, z, u2, v1);
-            this.vertexImpl(x1, y2, z, u1, v1);
-
+            this.imageCorners(img, x1, y1, x2, y2, z, u1, v1, u2, v2);
             break;
 
          case PConstants.RADIUS: /* 2 */
-
-            this.vertexImpl(x1 - x2, y1 + y2, z, u1, v1);
-            this.vertexImpl(x1 + x2, y1 + y2, z, u2, v1);
-            this.vertexImpl(x1 + x2, y1 - y2, z, u2, v2);
-            this.vertexImpl(x1 - x2, y1 - y2, z, u1, v2);
-
+            this.imageRadius(img, x1, y1, x2, y2, z, u1, v1, u2, v2);
             break;
 
          case PConstants.CENTER: /* 3 */
-
          default:
-
-            final float hu = x2 * 0.5f;
-            final float hv = y2 * 0.5f;
-
-            this.vertexImpl(x1 - hu, y1 + hv, z, u1, v1);
-            this.vertexImpl(x1 + hu, y1 + hv, z, u2, v1);
-            this.vertexImpl(x1 + hu, y1 - hv, z, u2, v2);
-            this.vertexImpl(x1 - hu, y1 - hv, z, u1, v2);
+            this.imageCenter(img, x1, y1, x2, y2, z, u1, v1, u2, v2);
       }
-
-      this.endShape(PConstants.CLOSE);
-
-      // if ( isAlphaFmt ) {
-      // this.blendMode = oldBlendMode;
-      // this.blendModeImpl();
-      // }
-      this.textureWrap(oldWrapMode);
-
-      this.popStyle();
    }
 
    /**
@@ -1349,8 +1321,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       final float x2, final float y2, final int u1, final int v1, final int u2,
       final int v2 ) {
 
-      final float wInv = img.width > 0 ? 1.0f / img.width : 1.0f;
-      final float hInv = img.height > 0 ? 1.0f / img.height : 1.0f;
+      final float wInv = img.pixelWidth > 0 ? 1.0f / img.pixelWidth : 1.0f;
+      final float hInv = img.pixelHeight > 0 ? 1.0f / img.pixelHeight : 1.0f;
       this.image(img, x1, y1, x2, y2, 0.0f, u1 * wInv, v1 * hInv, u2 * wInv, v2
          * hInv);
    }
@@ -2993,6 +2965,176 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
+    * Displays a PImage from its center. The last four numbers specify the
+    * image texture coordinates (or UVs).
+    *
+    * @param img      the PImage
+    * @param xCenter  the x center
+    * @param yCenter  the y center
+    * @param wDisplay the display width
+    * @param hDisplay the display height
+    * @param z        the z coordinate
+    * @param u1       the image top-left corner u
+    * @param v1       the image top-left corner v
+    * @param u2       the image bottom-right corner u
+    * @param v2       the image bottom-right corner v
+    */
+   void imageCenter ( final PImage img, final float xCenter,
+      final float yCenter, final float wDisplay, final float hDisplay,
+      final float z, final float u1, final float v1, final float u2,
+      final float v2 ) {
+
+      if ( img.width < 1 || img.height < 1 ) { return; }
+
+      final float wHalf = wDisplay * 0.5f;
+      final float hHalf = hDisplay * 0.5f;
+      final float left = xCenter - wHalf;
+      final float top = yCenter + hHalf;
+      final float right = xCenter + wHalf;
+      final float bottom = yCenter - hHalf;
+
+      this.pushStyle();
+      this.noStroke();
+
+      final int oldWrapMode = this.textureWrap;
+      this.textureWrap(PConstants.CLAMP);
+      this.beginShape(PConstants.POLYGON);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
+      this.texture(img);
+      this.vertexImpl(left, top, z, u1, v1);
+      this.vertexImpl(right, top, z, u2, v1);
+      this.vertexImpl(right, bottom, z, u2, v2);
+      this.vertexImpl(left, bottom, z, u1, v2);
+      this.endShape(PConstants.CLOSE);
+      this.textureWrap(oldWrapMode);
+      this.popStyle();
+   }
+
+   /**
+    * Displays a PImage from top left corner. The last four numbers specify
+    * the image texture coordinates (or UVs).
+    *
+    * @param img      the PImage
+    * @param xtl      the top left corner x
+    * @param ytl      the top left corner y
+    * @param wDisplay the display width
+    * @param hDisplay the display height
+    * @param z        the z coordinate
+    * @param u1       the image top-left corner u
+    * @param v1       the image top-left corner v
+    * @param u2       the image bottom-right corner u
+    * @param v2       the image bottom-right corner v
+    */
+   void imageCorner ( final PImage img, final float xtl, final float ytl,
+      final float wDisplay, final float hDisplay, final float z, final float u1,
+      final float v1, final float u2, final float v2 ) {
+
+      if ( img.width < 1 || img.height < 1 ) { return; }
+
+      final float left = xtl;
+      final float top = ytl;
+      final float right = xtl + wDisplay;
+      final float bottom = ytl - hDisplay;
+
+      this.pushStyle();
+      this.noStroke();
+
+      final int oldWrapMode = this.textureWrap;
+      this.textureWrap(PConstants.CLAMP);
+      this.beginShape(PConstants.POLYGON);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
+      this.texture(img);
+      this.vertexImpl(left, top, z, u1, v1);
+      this.vertexImpl(right, top, z, u2, v1);
+      this.vertexImpl(right, bottom, z, u2, v2);
+      this.vertexImpl(left, bottom, z, u1, v2);
+      this.endShape(PConstants.CLOSE);
+      this.textureWrap(oldWrapMode);
+      this.popStyle();
+   }
+
+   /**
+    * Displays a PImage according to four corners.The last four numbers
+    * specify the image texture coordinates (or UVs).
+    *
+    * @param img the PImage
+    * @param x1  the first x coordinate
+    * @param y1  the first y coordinate
+    * @param x2  the second x coordinate
+    * @param y2  the second y coordinate
+    * @param z   the z coordinate
+    * @param u1  the image top-left corner u
+    * @param v1  the image top-left corner v
+    * @param u2  the image bottom-right corner u
+    * @param v2  the image bottom-right corner v
+    */
+   void imageCorners ( final PImage img, final float x1, final float y1,
+      final float x2, final float y2, final float z, final float u1,
+      final float v1, final float u2, final float v2 ) {
+
+      if ( img.width < 1 || img.height < 1 ) { return; }
+
+      this.pushStyle();
+      this.noStroke();
+      final int oldWrapMode = this.textureWrap;
+      this.textureWrap(PConstants.CLAMP);
+      this.beginShape(PConstants.POLYGON);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
+      this.texture(img);
+      this.vertexImpl(x1, y1, z, u1, v1);
+      this.vertexImpl(x2, y1, z, u2, v1);
+      this.vertexImpl(x2, y2, z, u2, v2);
+      this.vertexImpl(x1, y2, z, u1, v2);
+      this.endShape(PConstants.CLOSE);
+      this.textureWrap(oldWrapMode);
+      this.popStyle();
+   }
+
+   /**
+    * Displays a PImage from its center. The width and height are treated as
+    * radii. The last four numbers specify the image texture coordinates (or
+    * UVs).
+    *
+    * @param img      the PImage
+    * @param xCenter  the x center
+    * @param yCenter  the y center
+    * @param wDisplay the display width
+    * @param hDisplay the display height
+    * @param z        the z coordinate
+    * @param u1       the image top-left corner u
+    * @param v1       the image top-left corner v
+    * @param u2       the image bottom-right corner u
+    * @param v2       the image bottom-right corner v
+    */
+   void imageRadius ( final PImage img, final float xCenter,
+      final float yCenter, final float wDisplay, final float hDisplay,
+      final float z, final float u1, final float v1, final float u2,
+      final float v2 ) {
+
+      if ( img.width < 1 || img.height < 1 ) { return; }
+
+      final float left = xCenter - wDisplay;
+      final float top = yCenter + hDisplay;
+      final float right = xCenter + wDisplay;
+      final float bottom = yCenter - hDisplay;
+
+      this.pushStyle();
+      this.noStroke();
+      final int oldWrapMode = this.textureWrap;
+      this.textureWrap(PConstants.CLAMP);
+      this.beginShape(PConstants.POLYGON);
+      this.normalPerShape(0.0f, 0.0f, 1.0f);
+      this.texture(img);
+      this.vertexImpl(left, top, z, u1, v1);
+      this.vertexImpl(right, top, z, u2, v1);
+      this.vertexImpl(right, bottom, z, u2, v2);
+      this.vertexImpl(left, bottom, z, u1, v2);
+      this.endShape(PConstants.CLOSE);
+      this.textureWrap(oldWrapMode);
+      this.popStyle();
+   }
+
+   /**
     * Applies the matrix to the renderer.
     *
     * @param n00 row 0, column 0
@@ -3580,8 +3722,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * This will have to go untested... as this code is being written on a low
        * density monitor.
        */
-      final float pd = img.pixelDensity;
-      this.image(img, x1, y1, x2, y2, 0.0f, u1 * pd, v1 * pd, u2 * pd, v2 * pd);
+      this.image(img, x1, y1, x2, y2, 0.0f, u1, v1, u2, v2);
       this.textureMode = savedTextureMode;
    }
 
@@ -4214,7 +4355,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       /* Axis is verified here because PMatAux compound rotate will not. */
       final float mSq = xAxis * xAxis + yAxis * yAxis + zAxis * zAxis;
       if ( mSq > 0.0f ) {
-
          final float normRad = radians * IUtils.ONE_TAU;
          final float cosa = Utils.scNorm(normRad);
          final float sina = Utils.scNorm(normRad - 0.25f);
@@ -4383,17 +4523,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    protected void textCharImpl ( final char ch, final float x, final float y ) {
 
       switch ( this.textMode ) {
-
          case PConstants.SHAPE: /* 5 */
-
             super.textCharShapeImpl(ch, x, y);
-
             break;
 
          case PConstants.MODEL: /* 4 */
-
          default:
-
             this.textCharModelImpl(ch, x, y, 0.0f);
       }
    }
@@ -4628,8 +4763,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       /* This operation is also performed by vertexImpl. */
       if ( this.textureMode == PConstants.IMAGE && this.textureImage != null ) {
-         this.textureU = Utils.div(u, this.textureImage.width);
-         this.textureV = Utils.div(v, this.textureImage.height);
+         this.textureU = Utils.div(u, this.textureImage.pixelWidth);
+         this.textureV = Utils.div(v, this.textureImage.pixelHeight);
       } else {
          this.textureU = u;
          this.textureV = v;

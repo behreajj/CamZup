@@ -1880,10 +1880,10 @@ public class Color implements Comparable < Color > {
       final int len = arr.length;
       for ( int i = 0; i < len; ++i ) {
          sb.append('\n');
-         final Color clr = arr[i];
-         clr.toGplString(sb);
+         final Color c = arr[i];
+         c.toGplString(sb);
          sb.append(' ');
-         sb.append(Color.toHexWeb(clr).substring(1).toUpperCase());
+         sb.append(Color.toHexWeb(c).substring(1).toUpperCase());
          if ( useIdx ) {
             sb.append(' ');
             sb.append(i + 1);
