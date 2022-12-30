@@ -1,7 +1,6 @@
 package camzup.core;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -2547,8 +2546,7 @@ public abstract class Pixels {
 
       int[][][] fs;
       switch ( poly ) {
-         case TRI:
-
+         case TRI: {
             fs = target.faces = new int[idcsLen + idcsLen][3][2];
             for ( int i = idcsLen - 1, j00 = vsLen - 1; i > -1; --i, j00
                -= 4 ) {
@@ -2582,13 +2580,12 @@ public abstract class Pixels {
                vr02[0] = j11;
                vr02[1] = j11;
             }
-
+         }
             break;
 
          case NGON:
          case QUAD:
-         default:
-
+         default: {
             fs = target.faces = new int[idcsLen][4][2];
             for ( int i = idcsLen - 1, j00 = vsLen - 1; i > -1; --i, j00
                -= 4 ) {
@@ -2613,32 +2610,10 @@ public abstract class Pixels {
                vr01[0] = j01;
                vr01[1] = j01;
             }
-
+         }
       }
 
       return target;
-   }
-
-   /**
-    * An abstract class that may serve as an umbrella for any custom
-    * comparators of integers that represent colors.
-    */
-   public abstract static class AbstrComparator implements Comparator <
-      Integer > {
-
-      /**
-       * The default constructor.
-       */
-      protected AbstrComparator ( ) {}
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
-
    }
 
    /**

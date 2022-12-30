@@ -1206,17 +1206,17 @@ public abstract class Convert {
 
       switch ( family ) {
 
-         case PConstants.GROUP: /* 0 */
+         case PConstants.GROUP: { /* 0 */
 
             final PShape[] children = source.getChildren();
             final int childLen = children.length;
             for ( int i = 0; i < childLen; ++i ) {
                Convert.toCurve2(children[i], curves);
             }
-
+         }
             break;
 
-         case PShape.PRIMITIVE: /* 101 */
+         case PShape.PRIMITIVE: { /* 101 */
 
             final float[] params = source.getParams();
             final int paramsLen = params.length;
@@ -1224,29 +1224,28 @@ public abstract class Convert {
 
             switch ( kind ) {
 
-               case PConstants.LINE: /* 4 */
-
+               case PConstants.LINE: { /* 4 */
                   curves.add(Curve2.line(new Vec2(params[0], params[1]),
                      new Vec2(params[2], params[3]), new Curve2(sourceName)));
+               }
                   break;
 
-               case PConstants.TRIANGLE: /* 8 */
-
+               case PConstants.TRIANGLE: { /* 8 */
                   curves.add(Curve2.straightHandles(new Curve2(sourceName, true,
                      new Knot2(params[0], params[1]), new Knot2(params[2],
                         params[3]), new Knot2(params[4], params[5]))));
+               }
                   break;
 
-               case PConstants.QUAD: /* 16 */
-
+               case PConstants.QUAD: { /* 16 */
                   curves.add(Curve2.straightHandles(new Curve2(sourceName, true,
                      new Knot2(params[0], params[1]), new Knot2(params[2],
                         params[3]), new Knot2(params[4], params[5]), new Knot2(
                            params[6], params[7]))));
+               }
                   break;
 
-               case PConstants.RECT: /* 30 */
-
+               case PConstants.RECT: { /* 30 */
                   final Vec2 tl = new Vec2(params[0], params[1]);
                   final Vec2 br = new Vec2(params[2], params[3]);
 
@@ -1263,11 +1262,10 @@ public abstract class Convert {
                   } else {
                      curves.add(Curve2.rect(tl, br, new Curve2(sourceName)));
                   }
-
+               }
                   break;
 
-               case PConstants.ELLIPSE: /* 31 */
-
+               case PConstants.ELLIPSE: { /* 31 */
                   final float xEllipse = params[2];
                   final float yEllipse = params[3];
                   final float major = Utils.max(xEllipse, yEllipse);
@@ -1278,11 +1276,10 @@ public abstract class Convert {
                   ellipse.translate(new Vec2(params[0] + 0.5f * xEllipse,
                      params[1] + 0.5f * yEllipse));
                   curves.add(ellipse);
-
+               }
                   break;
 
-               case PConstants.ARC: /* 32 */
-
+               case PConstants.ARC: { /* 32 */
                   final int arcMode = paramsLen > 6 ? ( int ) params[6]
                      : PConstants.OPEN;
                   final Curve2 arc = new Curve2(sourceName);
@@ -1292,17 +1289,18 @@ public abstract class Convert {
                         : ArcMode.OPEN, arc);
                   arc.translate(new Vec2(params[0], params[1]));
                   curves.add(arc);
+               }
                   break;
 
                default:
 
                   System.err.println(kind + " is an unsupported kind.");
             }
-
+         }
             break;
 
          case PShape.GEOMETRY: /* 103 */
-         case PShape.PATH: /* 102 */
+         case PShape.PATH: { /* 102 */
 
             /* Get vertex data. */
             // final boolean isogl =
@@ -1336,20 +1334,16 @@ public abstract class Convert {
             final int cmdLen = cmds.length;
             for ( int i = 0; i < cmdLen; ++i ) {
                final int cmd = cmds[i];
-
-               /* @formatter:off */
                switch ( cmd ) {
 
-                  case PConstants.VERTEX: /* 0 */
-
+                  case PConstants.VERTEX: { /* 0 */
                      if ( initialVertex ) {
 
                         /* Treat as "moveTo" command. */
                         currCurve = new Curve2(sourceName);
                         currCurve.closedLoop = spendContour || srcClosed;
-                        currKnot = new Knot2(
-                           source.getVertexX(cursor),
-                           source.getVertexY(cursor++));
+                        currKnot = new Knot2(source.getVertexX(cursor), source
+                           .getVertexY(cursor++));
                         initialVertex = false;
                         spendContour = false;
                         currCurve.append(currKnot);
@@ -1358,53 +1352,42 @@ public abstract class Convert {
                      } else if ( cursor < vertLen ) {
 
                         /*
-                         * Treat as "lineSegTo" command. In PShapeOpenGLs
-                         * loaded from SVGs, it's possible for the cursor
-                         * to exceed the vertex length.
+                         * Treat as "lineSegTo" command. In PShapeOpenGLs loaded
+                         * from SVGs, it's possible for the cursor to exceed the
+                         * vertex length.
                          */
                         currKnot = new Knot2();
-                        Knot2.fromSegLinear(
-                           source.getVertexX(cursor),
-                           source.getVertexY(cursor++),
-                           prevKnot, currKnot);
+                        Knot2.fromSegLinear(source.getVertexX(cursor), source
+                           .getVertexY(cursor++), prevKnot, currKnot);
                         currCurve.append(currKnot);
                         prevKnot = currKnot;
 
                      }
-
+                  }
                      break;
 
-                  case PConstants.BEZIER_VERTEX: /* 1 */
-
+                  case PConstants.BEZIER_VERTEX: { /* 1 */
                      currKnot = new Knot2();
-                     Knot2.fromSegCubic(
-                        source.getVertexX(cursor),
-                        source.getVertexY(cursor++),
-                        source.getVertexX(cursor),
-                        source.getVertexY(cursor++),
-                        source.getVertexX(cursor),
-                        source.getVertexY(cursor++),
-                        prevKnot, currKnot);
+                     Knot2.fromSegCubic(source.getVertexX(cursor), source
+                        .getVertexY(cursor++), source.getVertexX(cursor), source
+                           .getVertexY(cursor++), source.getVertexX(cursor),
+                        source.getVertexY(cursor++), prevKnot, currKnot);
                      currCurve.append(currKnot);
                      prevKnot = currKnot;
-
+                  }
                      break;
 
-                  case PConstants.QUADRATIC_VERTEX: /* 2 */
-
+                  case PConstants.QUADRATIC_VERTEX: { /* 2 */
                      currKnot = new Knot2();
-                     Knot2.fromSegQuadratic(
-                        source.getVertexX(cursor),
-                        source.getVertexY(cursor++),
-                        source.getVertexX(cursor),
-                        source.getVertexY(cursor++),
-                        prevKnot, currKnot);
+                     Knot2.fromSegQuadratic(source.getVertexX(cursor), source
+                        .getVertexY(cursor++), source.getVertexX(cursor), source
+                           .getVertexY(cursor++), prevKnot, currKnot);
                      currCurve.append(currKnot);
                      prevKnot = currKnot;
-
+                  }
                      break;
 
-                  case PConstants.CURVE_VERTEX: /* 3 */
+                  case PConstants.CURVE_VERTEX: { /* 3 */
 
                      /*
                       * PShape doesn't support this?
@@ -1415,24 +1398,19 @@ public abstract class Convert {
                      final int ni = Math.min(cursor + 2, vertLen - 1);
 
                      currKnot = new Knot2();
-                     Knot2.fromSegCatmull(
-                        source.getVertexX(pi),
-                        source.getVertexY(pi),
-                        source.getVertexX(cursor),
-                        source.getVertexY(cursor),
-                        source.getVertexX(ci),
-                        source.getVertexY(ci),
-                        source.getVertexX(ni),
-                        source.getVertexY(ni),
-                        0.0f, prevKnot, currKnot);
+                     Knot2.fromSegCatmull(source.getVertexX(pi), source
+                        .getVertexY(pi), source.getVertexX(cursor), source
+                           .getVertexY(cursor), source.getVertexX(ci), source
+                              .getVertexY(ci), source.getVertexX(ni), source
+                                 .getVertexY(ni), 0.0f, prevKnot, currKnot);
                      ++cursor;
 
                      currCurve.append(currKnot);
                      prevKnot = currKnot;
-
+                  }
                      break;
 
-                  case PConstants.BREAK: /* 4 */
+                  case PConstants.BREAK: { /* 4 */
 
                      /*
                       * It's possible with PShapeOpenGLs loaded from SVGs for
@@ -1442,22 +1420,21 @@ public abstract class Convert {
                         currCurve.closedLoop = true;
                         final Knot2 first = currCurve.getFirst();
                         final Knot2 last = currCurve.getLast();
-                        Vec2.mix(first.coord, last.coord,
-                           IUtils.ONE_THIRD, first.rearHandle);
-                        Vec2.mix(last.coord, first.coord,
-                           IUtils.ONE_THIRD, last.foreHandle);
+                        Vec2.mix(first.coord, last.coord, IUtils.ONE_THIRD,
+                           first.rearHandle);
+                        Vec2.mix(last.coord, first.coord, IUtils.ONE_THIRD,
+                           last.foreHandle);
                         curves.add(currCurve);
                         initialVertex = true;
                         spendContour = true;
                      }
-
+                  }
                      break;
 
                   default:
 
                      System.err.println(cmd + " is an unsupported command.");
                }
-               /* @formatter:on */
             }
 
             /* Deal with closed or open loop. */
@@ -1473,7 +1450,7 @@ public abstract class Convert {
             }
 
             curves.add(currCurve);
-
+         }
             break;
 
          default:
@@ -1509,17 +1486,17 @@ public abstract class Convert {
       final int family = source.getFamily();
 
       switch ( family ) {
-         case PConstants.GROUP: /* 0 */
+         case PConstants.GROUP: { /* 0 */
 
             final PShape[] children = source.getChildren();
             final int childLen = children.length;
             for ( int i = 0; i < childLen; ++i ) {
                Convert.toMesh3(children[i], meshes);
             }
-
+         }
             break;
 
-         case PShape.PRIMITIVE: /* 101 */
+         case PShape.PRIMITIVE: { /* 101 */
 
             final float[] params = source.getParams();
             final int paramsLen = params.length;
@@ -1532,8 +1509,7 @@ public abstract class Convert {
                   System.err.println("Lines are not supported.");
                   break;
 
-               case PConstants.TRIANGLE: /* 8 */
-
+               case PConstants.TRIANGLE: { /* 8 */
                   meshes.add(new Mesh3(sourceName, new int[][][] { { { 0, 0 }, {
                      1, 1 }, { 2, 2 } } }, new Vec3[] { new Vec3(params[0],
                         params[1], 0.0f), new Vec3(params[2], params[3], 0.0f),
@@ -1541,10 +1517,10 @@ public abstract class Convert {
                            new Vec2(1.0f, 0.5f), new Vec2(0.25f, 0.066987306f),
                            new Vec2(0.25f, 0.9330127f) }, new Vec3[] { Vec3.up(
                               new Vec3()) }));
+               }
                   break;
 
-               case PConstants.QUAD: /* 16 */
-
+               case PConstants.QUAD: { /* 16 */
                   meshes.add(new Mesh3(sourceName, new int[][][] { { { 0, 0 }, {
                      1, 1 }, { 2, 2 }, { 3, 3 } } }, new Vec3[] { new Vec3(
                         params[0], params[1], 0.0f), new Vec3(params[2],
@@ -1553,38 +1529,36 @@ public abstract class Convert {
                      new Vec2[] { new Vec2(1.0f, 0.5f), new Vec2(0.5f, 0.0f),
                         new Vec2(0.0f, 0.5f), new Vec2(0.5f, 1.0f) },
                      new Vec3[] { Vec3.up(new Vec3()) }));
+               }
                   break;
 
-               case PConstants.RECT: /* 30 */
-
+               case PConstants.RECT: { /* 30 */
                   if ( paramsLen > 4 ) {
                      System.err.println("Rounded rectangles aren't supported.");
                   } else {
                      System.err.println("Rectangles are not supported.");
                   }
+               }
                   break;
 
                case PConstants.ELLIPSE: /* 31 */
-
                   System.err.println("Ellipses are not supported.");
                   break;
 
                case PConstants.ARC: /* 32 */
-
                   System.err.println("Arcs are not supported.");
                   break;
 
-               case PConstants.SPHERE: /* 40 */
-
+               case PConstants.SPHERE: { /* 40 */
                   if ( paramsLen > 0 ) {
                      meshes.add(Mesh3.uvSphere(new Mesh3()).scale(params[0]));
                   } else {
                      meshes.add(Mesh3.uvSphere(new Mesh3()));
                   }
+               }
                   break;
 
-               case PConstants.BOX: /* 41 */
-
+               case PConstants.BOX: { /* 41 */
                   if ( paramsLen > 2 ) {
                      meshes.add(Mesh3.cube(new Mesh3()).scale(new Vec3(
                         params[0], params[1], params[2])));
@@ -1593,13 +1567,14 @@ public abstract class Convert {
                   } else {
                      meshes.add(Mesh3.cube(new Mesh3()));
                   }
+               }
                   break;
 
                default:
 
                   System.err.println(kind + " is an unsupported kind.");
             }
-
+         }
             break;
 
          case PShape.PATH: /* 102 */
@@ -1609,7 +1584,7 @@ public abstract class Convert {
              * make quadratic and cubic Bezier paths more accurate.
              */
 
-         case PShape.GEOMETRY: /* 103 */
+         case PShape.GEOMETRY: { /* 103 */
 
             final boolean is3d = source.is3D();
             final int vertLen = source.getVertexCount();
@@ -1688,7 +1663,7 @@ public abstract class Convert {
                normals);
             if ( is3d && !diverseNormals ) { mesh.shadeFlat(); }
             meshes.add(mesh);
-
+         }
             break;
 
          default:

@@ -291,7 +291,7 @@ public class MaterialAwt extends Material {
       sb.append("{ name: \"");
       sb.append(this.name);
       sb.append(", sample: ");
-      sb.append(this.sample.toString(0));
+      this.sample.toString(sb, 0);
       sb.append(", stroke: ");
       sb.append(this.stroke.toString(places));
       sb.append(", strokeWeight: ");
@@ -422,7 +422,20 @@ public class MaterialAwt extends Material {
        */
       public String toString ( final int padding ) {
 
-         final StringBuilder sb = new StringBuilder(96);
+         return this.toString(new StringBuilder(96), padding).toString();
+      }
+
+      /**
+       * Internal helper function to assist with methods that need to print many
+       * samples. Appends to an existing {@link StringBuilder}.
+       *
+       * @param sb      the string builder
+       * @param padding the padding
+       *
+       * @return the string builder
+       */
+      StringBuilder toString ( final StringBuilder sb, final int padding ) {
+
          sb.append("{ xTopLeft: ");
          sb.append(Utils.toPadded(this.xTopLeft, padding));
          sb.append(", yTopLeft: ");
@@ -433,7 +446,7 @@ public class MaterialAwt extends Material {
          sb.append(Utils.toPadded(this.yBottomRight, padding));
          sb.append(' ');
          sb.append('}');
-         return sb.toString();
+         return sb;
       }
 
    }

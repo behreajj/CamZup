@@ -34,6 +34,7 @@ import camzup.core.Vec2;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
+import processing.core.PFont.Glyph;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PMatrix2D;
@@ -658,7 +659,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       /*
        * The parent version uses getNative, which returns null if the PImage
        * can't be guaranteed to be a PImageAWT. See
-       * https://github.com/processing/processing4/issues/169 .
+       * https://github.com/processing/processing4/issues/169 ,
+       * https://github.com/processing/processing4/issues/624 .
        */
       this.g2.drawImage(YupJ2.convertPImageToNative(src), dx, dy, dx + ( dw < 0
          ? -dw : dw ), dy + ( dh < 0 ? -dh : dh ), sx, sy, sx + ( sw < 0 ? -sw
@@ -824,8 +826,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.ellipseMode ) {
 
-         case PConstants.CORNER: /* 0 */
-
+         case PConstants.CORNER: { /* 0 */
             extapw = 0.5d * w;
             extcpw = ICurve.KAPPA_2_D * w;
             extaph = 0.5d * h;
@@ -833,11 +834,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
             xc = x + extapw;
             yc = y - extaph;
-
+         }
             break;
 
-         case PConstants.CORNERS: /* 1 */
-
+         case PConstants.CORNERS: { /* 1 */
             final double wcalc = Math.abs(w - x);
             final double hcalc = Math.abs(h - y);
 
@@ -848,11 +848,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             extcpw = ICurve.KAPPA_2_D * wcalc;
             extaph = 0.5d * hcalc;
             extcph = ICurve.KAPPA_2_D * hcalc;
-
+         }
             break;
 
-         case PConstants.RADIUS: /* 2 */
-
+         case PConstants.RADIUS: { /* 2 */
             xc = x;
             yc = y;
 
@@ -860,13 +859,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             extcpw = ICurve.KAPPA_D * extapw;
             extaph = h;
             extcph = ICurve.KAPPA_D * extaph;
-
+         }
             break;
 
          case PConstants.CENTER: /* 3 */
 
-         default:
-
+         default: {
             xc = x;
             yc = y;
 
@@ -874,7 +872,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             extcpw = ICurve.KAPPA_2_D * w;
             extaph = 0.5d * h;
             extcph = ICurve.KAPPA_2_D * h;
-
+         }
       }
 
       final double right = xc + extapw;
@@ -1438,15 +1436,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    public void image ( final PImage img ) {
 
-      /*
-       * Skips straight to imageImpl because CENTER is assumed to be the
-       * default.
-       */
-      final int w = img.width;
-      final int h = img.height;
-      final int wh = w / 2;
-      final int hh = h / 2;
-      this.imageImpl(img, -wh, -hh, wh, hh, 0, 0, w, h);
+      this.image(img, 0, 0);
    }
 
    /**
@@ -1519,25 +1509,21 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final int w = img.width;
       final int h = img.height;
 
-      /* @formatter:off */
       switch ( this.imageMode ) {
          case PConstants.CORNER: /* 0 */
-         case PConstants.CORNERS: /* 1 */
-            this.imageImpl(img,
-               x0, y0 - h, x0 + w,
-               y0, 0, 0, w, h);
+         case PConstants.CORNERS: { /* 1 */
+            this.imageImpl(img, x0, y0 - h, x0 + w, y0, 0, 0, w, h);
+         }
             break;
 
          case PConstants.RADIUS: /* 2 */
          case PConstants.CENTER: /* 3 */
-         default:
+         default: {
             final int wh = w / 2;
             final int hh = h / 2;
-            this.imageImpl(img,
-               x0 - wh, y0 - hh, x0 + wh, y0 + hh,
-               0, 0, w, h);
+            this.imageImpl(img, x0 - wh, y0 - hh, x0 + wh, y0 + hh, 0, 0, w, h);
+         }
       }
-      /* @formatter:on */
    }
 
    /**
@@ -1730,9 +1716,22 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final ImageObserver io = null;
       final int w = imgNtv.getWidth(io);
       final int h = imgNtv.getHeight(io);
-      final int wh = w / 2;
-      final int hh = h / 2;
-      this.imageNative(imgNtv, 0, 0, w, h, -wh, -hh, wh, hh);
+
+      switch ( this.imageMode ) {
+         case PConstants.CORNER: /* 0 */
+         case PConstants.CORNERS: { /* 1 */
+            this.imageNative(imgNtv, 0, 0, w, h, 0, 0, w, h);
+         }
+            break;
+
+         case PConstants.RADIUS: /* 2 */
+         case PConstants.CENTER: /* 3 */
+         default: {
+            final int wh = w / 2;
+            final int hh = h / 2;
+            this.imageNative(imgNtv, 0, 0, w, h, -wh, -hh, wh, hh);
+         }
+      }
    }
 
    /**
@@ -1982,16 +1981,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void material ( final MaterialSolid material ) {
 
       this.stroke = material.useStroke;
-      this.fill = material.useFill;
-
-      if ( material.useStroke ) {
+      if ( this.stroke ) {
          this.strokeWeight(material.strokeWeight);
          final camzup.core.Color coreStr = material.stroke;
          this.strokeColorObject = new java.awt.Color(coreStr.r, coreStr.g,
             coreStr.b, coreStr.a);
       }
 
-      if ( material.useFill ) {
+      this.fill = material.useFill;
+      if ( this.fill ) {
          final camzup.core.Color coreFll = material.fill;
          this.fillColorObject = new java.awt.Color(coreFll.r, coreFll.g,
             coreFll.b, coreFll.a);
@@ -2538,12 +2536,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * is applied to affine transform, which impacts screen results.
        */
 
-      /* @formatter:off */
       final AffineTransform tr = this.g2.getTransform();
       final double pdInv = this.pixelDensity != 0 ? 1.0d / this.pixelDensity
          : 1.0d;
       final double srcxd = source.x * pdInv;
       final double srcyd = source.y * pdInv;
+
+      /* @formatter:off */
       return target.set(
          ( float ) ( tr.getScaleX() * srcxd +
                      tr.getShearX() * srcyd +
@@ -3360,7 +3359,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       }
 
       this.textBuffer[0] = character;
-      super.textLineAlignImpl(this.textBuffer, 0, 1, x, yMut);
+      this.textLineAlignImpl(this.textBuffer, 0, 1, x, yMut);
    }
 
    /**
@@ -3407,7 +3406,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       int index = 0;
       while ( index < stop ) {
          if ( chars[index] == '\n' ) {
-            super.textLineAlignImpl(chars, stMut, index, x, yMut);
+            this.textLineAlignImpl(chars, stMut, index, x, yMut);
             stMut = index + 1;
             yMut -= this.textLeading;
          }
@@ -3415,7 +3414,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       }
 
       if ( stMut < stop ) {
-         super.textLineAlignImpl(chars, stMut, index, x, yMut);
+         this.textLineAlignImpl(chars, stMut, index, x, yMut);
       }
    }
 
@@ -3501,6 +3500,72 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    @Override
    public void textureWrap ( final int wrap ) { /* Unsupported. */ }
+
+   /**
+    * Finds the width of a character.
+    *
+    * @param c the character
+    *
+    * @return the width
+    */
+   @Override
+   public float textWidth ( final char c ) {
+
+      return this.textFont.width(c) * this.textSize;
+   }
+
+   /**
+    * Finds the width of an array of characters.
+    *
+    * @param chars  the characters
+    * @param start  the start index
+    * @param length the array length
+    *
+    * @return the width
+    */
+   @Override
+   public float textWidth ( final char[] chars, final int start,
+      final int length ) {
+
+      return this.textWidthImpl(chars, start, start + length);
+   }
+
+   /**
+    * Finds the width of a string.
+    *
+    * @param str the string
+    *
+    * @return the width
+    */
+   @Override
+   public float textWidth ( final String str ) {
+
+      if ( this.textFont == null ) { this.defaultFontOrDeath("textWidth"); }
+
+      final int length = str.length();
+      if ( length > this.textWidthBuffer.length ) {
+         this.textWidthBuffer = new char[length + 10];
+      }
+      str.getChars(0, length, this.textWidthBuffer, 0);
+
+      float wide = 0;
+      int index = 0;
+      int start = 0;
+
+      while ( index < length ) {
+         if ( this.textWidthBuffer[index] == '\n' ) {
+            wide = Math.max(wide, this.textWidthImpl(this.textWidthBuffer,
+               start, index));
+            start = index + 1;
+         }
+         index++;
+      }
+      if ( start < length ) {
+         wide = Math.max(wide, this.textWidthImpl(this.textWidthBuffer, start,
+            index));
+      }
+      return wide;
+   }
 
    /**
     * Tint is not supported by this renderer.
@@ -4112,20 +4177,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.colorMode ) {
 
-         case PConstants.HSB: /* 3 */
-
+         case PConstants.HSB: { /* 3 */
             final float[] rgb = ColorAux.hsbToRgb(this.calcR, this.calcG,
                this.calcB);
 
             this.calcB = rgb[2];
             this.calcG = rgb[1];
             this.calcR = rgb[0];
-
+         }
             break;
 
          case PConstants.RGB: /* 1 */
 
-         default:
+         default: {
 
             this.calcB = this.calcB < 0.0f ? 0.0f : this.calcB > 1.0f ? 1.0f
                : this.calcB;
@@ -4133,7 +4197,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
                : this.calcG;
             this.calcR = this.calcR < 0.0f ? 0.0f : this.calcR > 1.0f ? 1.0f
                : this.calcR;
-
+         }
       }
 
       /* Convert from [0.0, 1.0] to [0, 255] . */
@@ -4320,8 +4384,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.rectMode ) {
 
-         case PConstants.CORNER: /* 0 */
-
+         case PConstants.CORNER: { /* 0 */
             w = c < 0.0f ? -c : c;
             h = d < 0.0f ? -d : d;
 
@@ -4329,20 +4392,18 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             y0 = b - h;
             x1 = a + w;
             y1 = b;
-
+         }
             break;
 
-         case PConstants.CORNERS: /* 1 */
-
+         case PConstants.CORNERS: { /* 1 */
             x0 = a < c ? a : c;
             x1 = c > a ? c : a;
             y0 = b < d ? b : d;
             y1 = d > b ? d : b;
-
+         }
             break;
 
-         case PConstants.RADIUS: /* 2 */
-
+         case PConstants.RADIUS: { /* 2 */
             w = c < 0.0f ? -c : c;
             h = d < 0.0f ? -d : d;
 
@@ -4350,12 +4411,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             x1 = a + w;
             y0 = b + h;
             y1 = b - h;
-
+         }
             break;
 
          case PConstants.CENTER: /* 3 */
 
-         default:
+         default: {
             w = 0.5d * ( c < 0.0f ? -c : c );
             h = 0.5d * ( d < 0.0f ? -d : d );
 
@@ -4363,6 +4424,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             x1 = a + w;
             y0 = b + h;
             y1 = b - h;
+         }
       }
 
       this.gp.reset();
@@ -4401,8 +4463,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       switch ( this.rectMode ) {
 
-         case PConstants.CORNER: /* 0 */
-
+         case PConstants.CORNER: { /* 0 */
             w = c < 0.0f ? -c : c;
             h = d < 0.0f ? -d : d;
 
@@ -4410,11 +4471,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             y1 = b - h;
             x1 = a + w;
             y0 = b;
-
+         }
             break;
 
-         case PConstants.CORNERS: /* 1 */
-
+         case PConstants.CORNERS: { /* 1 */
             w = Utils.abs(c - a);
             h = Utils.abs(b - d);
 
@@ -4422,11 +4482,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             x1 = c > a ? c : a;
             y1 = b < d ? b : d;
             y0 = d > b ? d : b;
-
+         }
             break;
 
-         case PConstants.RADIUS: /* 2 */
-
+         case PConstants.RADIUS: { /* 2 */
             w = c < 0.0f ? -c : c;
             h = d < 0.0f ? -d : d;
 
@@ -4434,12 +4493,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             x1 = a + w;
             y0 = b + h;
             y1 = b - h;
-
+         }
             break;
 
          case PConstants.CENTER: /* 3 */
 
-         default:
+         default: {
 
             w = c < 0.0f ? -c : c;
             h = d < 0.0f ? -d : d;
@@ -4448,6 +4507,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             x1 = a + w * 0.5d;
             y0 = b + h * 0.5d;
             y1 = b - h * 0.5d;
+         }
       }
 
       final double limit = 0.5d * ( w < h ? w : h );
@@ -4598,13 +4658,16 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       if ( glyph != null ) {
          final float szNorm = this.textSize * Utils.div(1.0f, this.textFont
             .getSize());
-         final float x0 = x + glyph.leftExtent * szNorm;
-         final float y0 = y + glyph.topExtent * szNorm;
 
-         /* Try subtracting one from bottom-right corner to mitigate cutoff. */
-         this.textCharModelImpl(glyph.image, x0, y0, x0 + ( glyph.width - 1 )
-            * szNorm, y0 - ( glyph.height - 1 ) * szNorm, glyph.width,
-            glyph.height);
+         final int gw = glyph.width;
+         final int gh = glyph.height;
+
+         final float x0 = x + glyph.leftExtent * szNorm;
+         final float y0 = y + 0.5f + glyph.topExtent * szNorm;
+         final float x1 = x0 + gw * szNorm;
+         final float y1 = y0 + 0.5f - gh * szNorm;
+
+         this.textCharModelImpl(glyph.image, x0, y0, x1, y1, gw, gh);
       }
    }
 
@@ -4673,16 +4736,122 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    protected void textLineImpl ( final char[] buffer, final int start,
       final int stop, final float x, final float y ) {
 
-      // Has this been updated in Processing 4?
-      // https://github.com/processing/processing4/blob/
-      // 5b5f6eb95293aa5daa3fad31f847028f9fb59cb3/core/src/
-      // processing/awt/PGraphicsJava2D.java#L2061
-      float cursor = x;
+      final boolean savedTint = this.tint;
+      final int savedTintColor = this.tintColor;
+      final float savedTintR = this.tintR;
+      final float savedTintG = this.tintG;
+      final float savedTintB = this.tintB;
+      final float savedTintA = this.tintA;
+      final boolean savedTintAlpha = this.tintAlpha;
+      final int oldImgMd = this.imageMode;
+
+      this.tint = true;
+      this.tintColor = this.fillColor;
+      this.tintR = this.fillR;
+      this.tintG = this.fillG;
+      this.tintB = this.fillB;
+      this.tintA = this.fillA;
+      this.tintAlpha = this.fillAlpha;
+      this.imageMode = PConstants.CORNERS;
+
+      final int fontSize = this.textFont.getSize();
+      final float szNorm = Utils.div(this.textSize, fontSize);
+      final Glyph whiteSpace = this.textFont.getGlyph('-');
+      final float spaceWidth = whiteSpace != null ? whiteSpace.width * szNorm
+         : fontSize * IUtils.ONE_THIRD;
+
+      float x0 = x;
       for ( int index = start; index < stop; ++index ) {
          final char c = buffer[index];
-         this.textCharImpl(c, cursor, y);
-         cursor += super.textWidth(c);
+         if ( c == ' ' || c == '\t' ) {
+            x0 += spaceWidth;
+         } else {
+            final PFont.Glyph glyph = this.textFont.getGlyph(c);
+            if ( glyph != null ) {
+               final int wGlyph = glyph.width;
+               final int hGlyph = glyph.height;
+               final int lExtent = glyph.leftExtent;
+               final int tExtent = glyph.topExtent;
+
+               /* Bias y0 and y1 to avoid cutoffs with AWT renderer. */
+               x0 += lExtent * szNorm;
+               final float y0 = y + 0.5f + tExtent * szNorm;
+               final float x1 = x0 + wGlyph * szNorm;
+               final float y1 = y0 + 0.5f - hGlyph * szNorm;
+
+               super.imageImpl(glyph.image, x0, y0, x1, y1, 0, 0, wGlyph,
+                  hGlyph);
+               x0 += wGlyph * szNorm;
+            }
+         }
       }
+
+      this.imageMode = oldImgMd;
+      this.tint = savedTint;
+      this.tintColor = savedTintColor;
+      this.tintR = savedTintR;
+      this.tintG = savedTintG;
+      this.tintB = savedTintB;
+      this.tintA = savedTintA;
+      this.tintAlpha = savedTintAlpha;
+   }
+
+   /**
+    * Finds the width of an array of characters. The stop index is exclusive.
+    *
+    * @param chars the characters
+    * @param start the start index
+    * @param stop  the stop index
+    * 
+    * @return the width
+    */
+   @Override
+   protected float textWidthImpl ( final char[] chars, final int start,
+      final int stop ) {
+
+      // TODO: Test that this is accurate in relation to width of a string
+      // disregarding left and right edges of first and last character.
+
+      /*
+       * For more, see
+       * https://discourse.processing.org/t/a-more-accurate-approach-
+       * to-calculating-text-width-text-height/ .
+       */
+
+      final int fontSize = this.textFont.getSize();
+      final float szNorm = Utils.div(this.textSize, fontSize);
+      final Glyph whiteSpace = this.textFont.getGlyph('-');
+      final float spaceWidth = whiteSpace != null ? whiteSpace.width * szNorm
+         : fontSize * IUtils.ONE_THIRD;
+
+      float xMin = Float.MAX_VALUE;
+      float xMax = Float.MIN_VALUE;
+      float x = 0.0f;
+
+      for ( int i = start; i < stop; ++i ) {
+         final char c = chars[i];
+         float left = x;
+         float right = x;
+         float w = 0.0f;
+
+         if ( c == ' ' || c == '\t' ) {
+            left = x;
+            right = left + spaceWidth;
+         } else {
+            final PFont.Glyph glyph = this.textFont.getGlyph(c);
+            if ( glyph != null ) {
+               w = glyph.width * szNorm;
+               left = x + glyph.leftExtent * szNorm;
+               right = left + w;
+            }
+         }
+
+         if ( left < xMin ) { xMin = left; }
+         if ( right > xMax ) { xMax = right; }
+         x += right - left;
+      }
+
+      return xMax - xMin;
    }
 
    /**

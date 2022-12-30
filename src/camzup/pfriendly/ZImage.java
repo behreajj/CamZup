@@ -679,6 +679,42 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Copies a source image's pixels and properties to a target. If the target
+    * is a {@link PGraphics}, then wraps the source image without changing the
+    * target's dimensions.
+    *
+    * @param source the source image
+    * @param target the target image
+    *
+    * @return the copied image.
+    *
+    * @see ZImage#wrap(PImage, int, int, PImage)
+    */
+   public static PImage copy ( final PImage source, final PImage target ) {
+
+      if ( source == target ) { return target; }
+
+      if ( target instanceof PGraphics && ( source.pixelWidth
+         != target.pixelWidth || source.pixelHeight != target.pixelHeight ) ) {
+         return ZImage.wrap(source, 0, 0, target);
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int len = source.pixels.length;
+      target.pixels = new int[len];
+      System.arraycopy(source, 0, target, 0, len);
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = source.pixelWidth;
+      target.pixelHeight = source.pixelHeight;
+      target.width = source.width;
+      target.height = source.height;
+      target.updatePixels();
+      return target;
+   }
+
+   /**
     * Fills an image in place with a color.
     *
     * @param target the target image

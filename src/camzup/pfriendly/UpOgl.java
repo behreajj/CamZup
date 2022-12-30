@@ -1223,16 +1223,18 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       switch ( this.imageMode ) {
          case PConstants.CORNER: /* 0 */
-         case PConstants.CORNERS: /* 1 */
+         case PConstants.CORNERS: { /* 1 */
             this.imageCorner(img, xVrf, yVrf, img.width, img.height, 0.0f, 0.0f,
                0.0f, u, v);
+         }
             break;
 
          case PConstants.RADIUS: /* 2 */
          case PConstants.CENTER: /* 3 */
-         default:
+         default: {
             this.imageCenter(img, xVrf, yVrf, img.width, img.height, 0.0f, 0.0f,
                0.0f, u, v);
+         }
       }
    }
 
@@ -4552,7 +4554,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
        * FontTexture.TextureInfo is a static inner class, and so cannot be
        * accessed from here.
        */
-
       final PFont.Glyph glyph = this.textFont.getGlyph(ch);
       if ( glyph != null ) {
 
@@ -4564,16 +4565,16 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          this.blendMode = IUpOgl.TEXT_BLEND;
          this.blendModeImpl();
 
-         final float invSz = 1.0f / this.textFont.getSize();
-         final float wGlyph = glyph.width * invSz;
-         final float hGlyph = glyph.height * invSz;
-         final float lExtent = glyph.leftExtent * invSz;
-         final float tExtent = glyph.topExtent * invSz;
+         final int wGlyph = glyph.width;
+         final int hGlyph = glyph.height;
+         final int lExtent = glyph.leftExtent;
+         final int tExtent = glyph.topExtent;
 
-         final float x0 = x + lExtent * this.textSize;
-         final float x1 = x0 + wGlyph * this.textSize;
-         final float y0 = y + tExtent * this.textSize;
-         final float y1 = y0 - hGlyph * this.textSize;
+         final float szNorm = Utils.div(this.textSize, this.textFont.getSize());
+         final float x0 = x + lExtent * szNorm;
+         final float x1 = x0 + wGlyph * szNorm;
+         final float y0 = y + tExtent * szNorm;
+         final float y1 = y0 - hGlyph * szNorm;
 
          /* Cache prior styles. */
          final boolean savedTint = this.tint;

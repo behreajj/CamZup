@@ -1,8 +1,8 @@
 package camzup.core;
 
 /**
- * Facilitates simplex noise and voronoi patterns via hashing functions.
- * Hashing functions are based on Bob Jenkins lookup3 script, <a href=
+ * Facilitates noise and voronoi patterns via hashing functions. Hashing
+ * functions are based on Bob Jenkins lookup3 script, <a href=
  * "http://burtleburtle.net/bob/c/lookup3.c">http://burtleburtle.net/bob/c/lookup3.c</a>.
  *
  * @author Bob Jenkins
