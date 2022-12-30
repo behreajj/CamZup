@@ -15,7 +15,7 @@ void setup() {
 
   graphics = (Zup3)getGraphics();
   graphics.ortho();
-  graphics.camDimetric();
+  graphics.camera();
 
   //PFont font = loadFont("ProcessingSansPro.vlw");
   PFont font = loadFont("NotoSerif-Bold-48.vlw");

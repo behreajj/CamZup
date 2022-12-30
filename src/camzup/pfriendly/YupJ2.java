@@ -4644,30 +4644,32 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    /**
     * Displays a character in the sketch.
     *
-    * @param ch the character
-    * @param x  the location x
-    * @param y  the location y
+    * @param c the character
+    * @param x the location x
+    * @param y the location y
     *
     * @see PFont#getGlyph(char)
     * @see PFont#getSize()
     */
    @Override
-   protected void textCharImpl ( final char ch, final float x, final float y ) {
+   protected void textCharImpl ( final char c, final float x, final float y ) {
 
-      final PFont.Glyph glyph = this.textFont.getGlyph(ch);
+      final PFont.Glyph glyph = this.textFont.getGlyph(c);
       if ( glyph != null ) {
-         final float szNorm = this.textSize * Utils.div(1.0f, this.textFont
-            .getSize());
+         final int fontSize = this.textFont.getSize();
+         final float szNorm = Utils.div(this.textSize, fontSize);
 
-         final int gw = glyph.width;
-         final int gh = glyph.height;
+         final int wsGlyph = glyph.setWidth;
+         final int hGlyph = glyph.height;
+         final int tExtent = glyph.topExtent;
 
-         final float x0 = x + glyph.leftExtent * szNorm;
-         final float y0 = y + 0.5f + glyph.topExtent * szNorm;
-         final float x1 = x0 + gw * szNorm;
-         final float y1 = y0 + 0.5f - gh * szNorm;
+         /* Bias y0 and y1 to avoid cutoffs with AWT renderer. */
+         final float wsz = wsGlyph * szNorm;
+         final float y0 = y + 0.5f + tExtent * szNorm;
+         final float x1 = x + wsz;
+         final float y1 = y0 + 0.5f - hGlyph * szNorm;
 
-         this.textCharModelImpl(glyph.image, x0, y0, x1, y1, gw, gh);
+         super.imageImpl(glyph.image, x, y0, x1, y1, 0, 0, wsGlyph, hGlyph);
       }
    }
 
@@ -4675,16 +4677,16 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Draws an image representing a glyph from a font.
     *
     * @param glyph the glyph image
-    * @param x1    the first x coordinate
-    * @param y1    the first y coordinate
-    * @param x2    the second x coordinate
-    * @param y2    the second y coordinate
+    * @param x0    the first x coordinate
+    * @param y0    the first y coordinate
+    * @param x1    the second x coordinate
+    * @param y1    the second y coordinate
     * @param u     the u coordinate
     * @param v     the v coordinate
     */
    @Override
-   protected void textCharModelImpl ( final PImage glyph, final float x1,
-      final float y1, final float x2, final float y2, final int u,
+   protected void textCharModelImpl ( final PImage glyph, final float x0,
+      final float y0, final float x1, final float y1, final int u,
       final int v ) {
 
       final boolean savedTint = this.tint;
@@ -4710,7 +4712,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
        * This calls the super implementation because the glyphs need to be
        * tinted with the desired color.
        */
-      super.imageImpl(glyph, x1, y1, x2, y2, 0, 0, u, v);
+      super.imageImpl(glyph, x0, y0, x1, y1, 0, 0, u, v);
       this.imageMode = oldImgMd;
 
       this.tint = savedTint;
@@ -4723,8 +4725,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Helper function for text with multiple lines. Handles the horizontal
-    * display of a character along a line.
+    * Helper function for text with multiple lines. Offsets the text x
+    * position according to the renderer's text alignment and the width of the
+    * text. The stop index is exclusive.
     *
     * @param buffer the array of characters
     * @param start  the start index, inclusive
@@ -4733,7 +4736,41 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param y      the vertical location
     */
    @Override
-   protected void textLineImpl ( final char[] buffer, final int start,
+   protected void textLineAlignImpl ( final char[] buffer, final int start,
+      final int stop, final float x, final float y ) {
+
+      float xa;
+      switch ( this.textAlign ) {
+         case PConstants.CENTER: { /* 3 */
+            xa = x - this.textWidthImpl(buffer, start, stop) * 0.5f;
+         }
+            break;
+
+         case PConstants.RIGHT: { /* 39 */
+            xa = x - this.textWidthImpl(buffer, start, stop);
+         }
+            break;
+
+         default: {
+            xa = x;
+         }
+      }
+
+      this.textLineImpl(buffer, start, stop, xa, y);
+   }
+
+   /**
+    * Helper function for text with multiple lines. Handles the horizontal
+    * display of a character along a line. The stop index is exclusive.
+    *
+    * @param chars the array of characters
+    * @param start the start index, inclusive
+    * @param stop  the stop index, exclusive
+    * @param x     the horizontal location
+    * @param y     the vertical location
+    */
+   @Override
+   protected void textLineImpl ( final char[] chars, final int start,
       final int stop, final float x, final float y ) {
 
       final boolean savedTint = this.tint;
@@ -4756,32 +4793,31 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       final int fontSize = this.textFont.getSize();
       final float szNorm = Utils.div(this.textSize, fontSize);
-      final Glyph whiteSpace = this.textFont.getGlyph('-');
+      final Glyph whiteSpace = this.textFont.getGlyph('i');
       final float spaceWidth = whiteSpace != null ? whiteSpace.width * szNorm
          : fontSize * IUtils.ONE_THIRD;
 
       float x0 = x;
-      for ( int index = start; index < stop; ++index ) {
-         final char c = buffer[index];
+      for ( int i = start; i < stop; ++i ) {
+         final char c = chars[i];
          if ( c == ' ' || c == '\t' ) {
             x0 += spaceWidth;
          } else {
             final PFont.Glyph glyph = this.textFont.getGlyph(c);
             if ( glyph != null ) {
-               final int wGlyph = glyph.width;
+               final int wsGlyph = glyph.setWidth;
                final int hGlyph = glyph.height;
-               final int lExtent = glyph.leftExtent;
                final int tExtent = glyph.topExtent;
 
                /* Bias y0 and y1 to avoid cutoffs with AWT renderer. */
-               x0 += lExtent * szNorm;
+               final float wsz = wsGlyph * szNorm;
                final float y0 = y + 0.5f + tExtent * szNorm;
-               final float x1 = x0 + wGlyph * szNorm;
+               final float x1 = x0 + wsz;
                final float y1 = y0 + 0.5f - hGlyph * szNorm;
 
-               super.imageImpl(glyph.image, x0, y0, x1, y1, 0, 0, wGlyph,
+               super.imageImpl(glyph.image, x0, y0, x1, y1, 0, 0, wsGlyph,
                   hGlyph);
-               x0 += wGlyph * szNorm;
+               x0 += wsz;
             }
          }
       }
@@ -4802,56 +4838,30 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param chars the characters
     * @param start the start index
     * @param stop  the stop index
-    * 
+    *
     * @return the width
     */
    @Override
    protected float textWidthImpl ( final char[] chars, final int start,
       final int stop ) {
 
-      // TODO: Test that this is accurate in relation to width of a string
-      // disregarding left and right edges of first and last character.
-
-      /*
-       * For more, see
-       * https://discourse.processing.org/t/a-more-accurate-approach-
-       * to-calculating-text-width-text-height/ .
-       */
-
       final int fontSize = this.textFont.getSize();
       final float szNorm = Utils.div(this.textSize, fontSize);
-      final Glyph whiteSpace = this.textFont.getGlyph('-');
+      final Glyph whiteSpace = this.textFont.getGlyph('i');
       final float spaceWidth = whiteSpace != null ? whiteSpace.width * szNorm
          : fontSize * IUtils.ONE_THIRD;
 
-      float xMin = Float.MAX_VALUE;
-      float xMax = Float.MIN_VALUE;
-      float x = 0.0f;
-
+      float sum = 0.0f;
       for ( int i = start; i < stop; ++i ) {
          final char c = chars[i];
-         float left = x;
-         float right = x;
-         float w = 0.0f;
-
          if ( c == ' ' || c == '\t' ) {
-            left = x;
-            right = left + spaceWidth;
+            sum += spaceWidth;
          } else {
             final PFont.Glyph glyph = this.textFont.getGlyph(c);
-            if ( glyph != null ) {
-               w = glyph.width * szNorm;
-               left = x + glyph.leftExtent * szNorm;
-               right = left + w;
-            }
+            if ( glyph != null ) { sum += glyph.setWidth * szNorm; }
          }
-
-         if ( left < xMin ) { xMin = left; }
-         if ( right > xMax ) { xMax = right; }
-         x += right - left;
       }
-
-      return xMax - xMin;
+      return sum;
    }
 
    /**
