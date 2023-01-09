@@ -4794,7 +4794,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final int fontSize = this.textFont.getSize();
       final float szNorm = Utils.div(this.textSize, fontSize);
       final Glyph whiteSpace = this.textFont.getGlyph('i');
-      final float spaceWidth = whiteSpace != null ? whiteSpace.width * szNorm
+      final float spaceWidth = whiteSpace != null ? whiteSpace.setWidth * szNorm
          : fontSize * IUtils.ONE_THIRD;
 
       float x0 = x;
@@ -4848,7 +4848,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final int fontSize = this.textFont.getSize();
       final float szNorm = Utils.div(this.textSize, fontSize);
       final Glyph whiteSpace = this.textFont.getGlyph('i');
-      final float spaceWidth = whiteSpace != null ? whiteSpace.width * szNorm
+      final float spaceWidth = whiteSpace != null ? whiteSpace.setWidth * szNorm
          : fontSize * IUtils.ONE_THIRD;
 
       float sum = 0.0f;

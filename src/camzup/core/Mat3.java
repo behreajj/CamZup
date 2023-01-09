@@ -741,7 +741,15 @@ public class Mat3 {
    }
 
    /**
-    * Finds the determinant of the matrix.
+    * Finds the determinant of the matrix. Equivalent to the scalar triple
+    * product of the matrix's rows or columns.<br>
+    * <br>
+    * det ( <em>m</em> ) := <em>m<sub>i</sub></em> . ( <em>m<sub>j</sub></em>
+    * x <em>m<sub>k</sub></em> )<br>
+    * <br>
+    * See <a href=
+    * "https://en.wikipedia.org/wiki/Triple_product">https://en.wikipedia.org/wiki/Triple_product</a>
+    * .
     *
     * @param m the matrix
     *
@@ -750,9 +758,9 @@ public class Mat3 {
    public static float determinant ( final Mat3 m ) {
 
       /* @formatter:off */
-      return m.m00 * ( m.m22 * m.m11 - m.m12 * m.m21 ) +
-             m.m01 * ( m.m12 * m.m20 - m.m22 * m.m10 ) +
-             m.m02 * ( m.m21 * m.m10 - m.m11 * m.m20 );
+      return m.m00 * ( m.m11 * m.m22 - m.m12 * m.m21 ) +
+             m.m01 * ( m.m12 * m.m20 - m.m10 * m.m22 ) +
+             m.m02 * ( m.m10 * m.m21 - m.m11 * m.m20 );
       /* @formatter:on */
    }
 
@@ -987,12 +995,11 @@ public class Mat3 {
       final float b01 = m.m22 * m.m11 - m.m12 * m.m21;
       final float b11 = m.m12 * m.m20 - m.m22 * m.m10;
       final float b21 = m.m21 * m.m10 - m.m11 * m.m20;
-
       final float det = m.m00 * b01 + m.m01 * b11 + m.m02 * b21;
 
-      /* @formatter:off */
       if ( det != 0.0f ) {
          final float detInv = 1.0f / det;
+         /* @formatter:off */
          return target.set(
             b01 * detInv,
             ( m.m02 * m.m21 - m.m22 * m.m01 ) * detInv,
@@ -1003,9 +1010,10 @@ public class Mat3 {
             b21 * detInv,
             ( m.m01 * m.m20 - m.m21 * m.m00 ) * detInv,
             ( m.m11 * m.m00 - m.m01 * m.m10 ) * detInv);
+         /* @formatter:on */
       }
       return target.reset();
-      /* @formatter:on */
+
    }
 
    /**

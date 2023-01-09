@@ -693,7 +693,9 @@ public class ZImage extends PImage {
    public static PImage copy ( final PImage source, final PImage target ) {
 
       if ( source == target ) { return target; }
+      if ( source == null ) { return ZImage.fill(0xffffffff, target); }
 
+      // TODO: Extend this logic to other parts of ZImage .
       if ( target instanceof PGraphics && ( source.pixelWidth
          != target.pixelWidth || source.pixelHeight != target.pixelHeight ) ) {
          return ZImage.wrap(source, 0, 0, target);
@@ -703,7 +705,7 @@ public class ZImage extends PImage {
       target.loadPixels();
       final int len = source.pixels.length;
       target.pixels = new int[len];
-      System.arraycopy(source, 0, target, 0, len);
+      System.arraycopy(source.pixels, 0, target.pixels, 0, len);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = source.pixelWidth;
@@ -1050,7 +1052,7 @@ public class ZImage extends PImage {
       final int fontSize = font.getSize();
 
       /* Determine width of a space. */
-      final Glyph whiteSpace = font.getGlyph('-');
+      final Glyph whiteSpace = font.getGlyph('i');
       final int spaceWidth = whiteSpace != null ? whiteSpace.width
          : ( int ) ( fontSize * IUtils.ONE_THIRD );
 
@@ -1198,7 +1200,6 @@ public class ZImage extends PImage {
                   final PImage source = glyph.image;
 
                   if ( source != null ) {
-                     // target.loadPixels();
                      source.loadPixels();
 
                      /*
@@ -1226,8 +1227,6 @@ public class ZImage extends PImage {
                         pxTrg[ ( yStart + idxSrc / wSrc ) * wMax + xCursor
                            + idxSrc % wSrc] |= pxSrc[idxSrc] << 0x18 | vClr;
                      }
-
-                     // target.updatePixels(xCursor, yCursor, wSrc, hSrc);
                   }
                   /* End of null check for glyph image. */
                   xCursor += glyph.width + vKern;
