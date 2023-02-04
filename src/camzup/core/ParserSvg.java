@@ -72,7 +72,7 @@ public abstract class ParserSvg {
    public static final float PX_TO_UNIT = 1.0f;
 
    /**
-    * For use in parsing arcs to between points, one divided by \u03c0 ,
+    * For use in parsing arcs to between points, one divided by pi,
     * approximately {@value ParserSvg#TWO_DIV_PI} .
     */
    public static final float TWO_DIV_PI = 0.63661975f;
@@ -135,24 +135,6 @@ public abstract class ParserSvg {
       }
 
       return result;
-   }
-
-   /**
-    * Parses a flag to a boolean
-    *
-    * @param v the flag string
-    *
-    * @return the boolean
-    */
-   public static boolean parseFlag ( final String v ) {
-
-      int x = 0;
-      try {
-         x = Integer.parseInt(v, 10);
-      } catch ( final Exception e ) {
-         x = 0;
-      }
-      return x != 0;
    }
 
    /**
@@ -520,6 +502,24 @@ public abstract class ParserSvg {
       } catch ( final Exception e ) { /* Do nothing. */ }
 
       return x;
+   }
+
+   /**
+    * Parses a flag to a boolean
+    *
+    * @param v the flag string
+    *
+    * @return the boolean
+    */
+   protected static boolean parseFlag ( final String v ) {
+
+      int x = 0;
+      try {
+         x = Integer.parseInt(v, 10);
+      } catch ( final Exception e ) {
+         x = 0;
+      }
+      return x != 0;
    }
 
    /**

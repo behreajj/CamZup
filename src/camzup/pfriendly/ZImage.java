@@ -13,6 +13,7 @@ import camzup.core.Pixels;
 import camzup.core.Pixels.MapLuminance;
 import camzup.core.PolyType;
 import camzup.core.Utils;
+import camzup.core.Utils.TriFunction;
 import camzup.core.Vec2;
 import camzup.core.Vec4;
 
@@ -279,7 +280,8 @@ public class ZImage extends PImage {
          return target;
       }
 
-      if ( target instanceof PGraphics ) {
+      if ( target instanceof PGraphics && ( source.pixelWidth
+         != target.pixelWidth || source.pixelHeight != target.pixelHeight ) ) {
          System.err.println("Do not use PGraphics with this method.");
          return target;
       }
@@ -747,6 +749,52 @@ public class ZImage extends PImage {
       target.loadPixels();
       Pixels.fill(c, target.pixels);
       target.format = PConstants.ARGB;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Filters an image. The function delegate is expected to filter the color
+    * according to an upper and lower bound. Both bounds should be inclusive.
+    *
+    * @param source the source image
+    * @param lb     the lower bound
+    * @param ub     the upper bound
+    * @param f      the filter function
+    * @param target the target image
+    *
+    * @return the filtered image
+    */
+   public static PImage filter ( final PImage source, final float lb,
+      final float ub, final TriFunction < Integer, Float, Float, Boolean > f,
+      final PImage target ) {
+
+      if ( target instanceof PGraphics && ( source.pixelWidth
+         != target.pixelWidth || source.pixelHeight != target.pixelHeight ) ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+
+      final int[] srcPixels = source.pixels;
+      final int[] trgPixels = new int[srcPixels.length];
+      final int[] indices = Pixels.filter(srcPixels, lb, ub, f);
+      final int idcsLen = indices.length;
+      for ( int i = 0; i < idcsLen; ++i ) {
+         final int j = indices[i];
+         trgPixels[j] = srcPixels[j];
+      }
+
+      target.pixels = trgPixels;
+      target.format = source.format;
+      target.pixelDensity = source.pixelDensity;
+      target.pixelWidth = source.pixelWidth;
+      target.pixelHeight = source.pixelHeight;
+      target.width = source.width;
+      target.height = source.height;
       target.updatePixels();
 
       return target;
@@ -1894,7 +1942,7 @@ public class ZImage extends PImage {
     * @param target target image
     * @param tl     top left
     *
-    * @return the blended pixels
+    * @return the masked pixels
     */
    public static PImage mask ( final PImage a, final float ax, final float ay,
       final PImage b, final float bx, final float by, final PImage target,
@@ -1918,7 +1966,7 @@ public class ZImage extends PImage {
     * @param target target image
     * @param tl     top left
     *
-    * @return the blended pixels
+    * @return the masked pixels
     */
    public static PImage mask ( final PImage a, final int ax, final int ay,
       final PImage b, final int bx, final int by, final PImage target,
@@ -1959,7 +2007,7 @@ public class ZImage extends PImage {
     * @param target target image
     * @param tl     top left
     *
-    * @return the blended pixels
+    * @return the masked pixels
     */
    public static PImage mask ( final PImage a, final PImage b,
       final PImage target, final Vec2 tl ) {
@@ -2334,6 +2382,7 @@ public class ZImage extends PImage {
       if ( source == target ) {
          target.loadPixels();
          Pixels.premul(target.pixels, target.pixels);
+         target.format = PConstants.ARGB;
          target.updatePixels();
          return target;
       }
@@ -2349,7 +2398,7 @@ public class ZImage extends PImage {
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
       target.pixels = Pixels.premul(pxSrc, new int[pxSrc.length]);
-      target.format = source.format;
+      target.format = PConstants.ARGB;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = w;
       target.pixelHeight = h;
@@ -3165,6 +3214,7 @@ public class ZImage extends PImage {
       if ( source == target ) {
          target.loadPixels();
          Pixels.unpremul(target.pixels, target.pixels);
+         target.format = PConstants.ARGB;
          target.updatePixels();
          return target;
       }
@@ -3180,7 +3230,7 @@ public class ZImage extends PImage {
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
       target.pixels = Pixels.unpremul(pxSrc, new int[pxSrc.length]);
-      target.format = source.format;
+      target.format = PConstants.ARGB;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = w;
       target.pixelHeight = h;

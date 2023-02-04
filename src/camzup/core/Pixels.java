@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -10,6 +11,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.IntFunction;
+
+import camzup.core.Utils.TriFunction;
 
 import camzup.pfriendly.ZImage;
 
@@ -282,14 +285,14 @@ public abstract class Pixels {
       final Color lrgb = new Color();
       final Vec4 xyz = new Vec4();
 
+      final HashMap < Integer, Vec4 > dict = new HashMap <>(512, 0.75f);
+      dict.put(0x00000000, Vec4.zero(new Vec4()));
+
       /* Find the bottom right corner for a and b. */
       final int abrx = ax + aw - 1;
       final int abry = ay + ah - 1;
       final int bbrx = bx + bw - 1;
       final int bbry = by + bh - 1;
-
-      final HashMap < Integer, Vec4 > dict = new HashMap <>(512, 0.75f);
-      dict.put(0x00000000, Vec4.zero(new Vec4()));
 
       /* Blending only necessary at the intersection of a and b. */
       final int dx = ax > bx ? ax : bx;
@@ -298,6 +301,7 @@ public abstract class Pixels {
       final int dbry = abry < bbry ? abry : bbry;
       final int dw = 1 + dbrx - dx;
       final int dh = 1 + dbry - dy;
+
       if ( dw > 0 && dh > 0 ) {
          /*
           * Find difference between the intersection top left and the top left
@@ -451,11 +455,10 @@ public abstract class Pixels {
             }
          }
 
-         // QUERY: Should there be an upper bound to step?
          final int stepVal = step < 1 ? 1 : step;
          final int wKrn = 1 + stepVal * 2;
          final int krnLen = wKrn * wKrn;
-         final float denom = 1.0f / krnLen;
+         final float toAvg = 1.0f / krnLen;
          final Vec4 labAvg = new Vec4();
 
          for ( int i = 0; i < srcLen; ++i ) {
@@ -491,7 +494,7 @@ public abstract class Pixels {
                }
             }
 
-            labAvg.set(aSum * denom, bSum * denom, lSum * denom, tSum * denom);
+            labAvg.set(aSum * toAvg, bSum * toAvg, lSum * toAvg, tSum * toAvg);
             Color.cieLabTosRgb(labAvg, srgb, lrgb, xyz);
             target[i] = Color.toHexIntSat(srgb);
          }
@@ -554,99 +557,41 @@ public abstract class Pixels {
    }
 
    /**
-    * Internal helper function to sample a source image with a bilinear color
-    * mix. Returns a hexadecimal integer color
+    * Filters an array of pixels. The function delegate is expected to filter
+    * the color according to an upper and lower bound. Both bounds should be
+    * inclusive. Returns an array of indices that refer to the source array,
+    * not an array of colors.
     *
-    * @param xSrc   the source x coordinate
-    * @param ySrc   the source y coordinate
-    * @param wSrc   the source image width
-    * @param hSrc   the source image height
-    * @param source the source pixel array
+    * @param source the source pixels
+    * @param lb     the lower bound
+    * @param ub     the upper bound
+    * @param f      the filter function
     *
-    * @return the color
+    * @return the indices array
     */
-   public static final int filterBilinear ( final float xSrc, final float ySrc,
-      final int wSrc, final int hSrc, final int[] source ) {
+   public static int[] filter ( final int[] source, final float lb,
+      final float ub, final TriFunction < Integer, Float, Float, Boolean > f ) {
 
-      final boolean yPos = ySrc > 0.0f;
-      final boolean yNeg = ySrc < 0.0f;
-      final int yi = ( int ) ySrc;
-      final int yf = yPos ? yi : yNeg ? yi - 1 : 0;
-      final int yc = yPos ? yi + 1 : yNeg ? yi : 0;
+      final HashMap < Integer, ArrayList < Integer > > dict = new HashMap <>(
+         512, 0.75f);
+      Pixels.filter(source, lb, ub, f, dict);
+      final Collection < ArrayList < Integer > > idcsTotal = dict.values();
 
-      final boolean yfInBounds = yf > -1 && yf < hSrc;
-      final boolean ycInBounds = yc > -1 && yc < hSrc;
+      int compLen = 0;
+      Iterator < ArrayList < Integer > > itrTotal = idcsTotal.iterator();
+      while ( itrTotal.hasNext() ) { compLen += itrTotal.next().size(); }
+      final int[] result = new int[compLen];
 
-      final boolean xPos = xSrc > 0.0f;
-      final boolean xNeg = xSrc < 0.0f;
-      final int xi = ( int ) xSrc;
-      final int xf = xPos ? xi : xNeg ? xi - 1 : 0;
-      final int xc = xPos ? xi + 1 : xNeg ? xi : 0;
-
-      final boolean xfInBounds = xf > -1 && xf < wSrc;
-      final boolean xcInBounds = xc > -1 && xc < wSrc;
-
-      /* Pixel corners colors. */
-      final int c00 = xfInBounds && yfInBounds ? source[xf + yf * wSrc] : 0;
-      final int c10 = xcInBounds && yfInBounds ? source[xc + yf * wSrc] : 0;
-      final int c11 = xcInBounds && ycInBounds ? source[xc + yc * wSrc] : 0;
-      final int c01 = xfInBounds && ycInBounds ? source[xf + yc * wSrc] : 0;
-
-      final float xErr = xSrc - xf;
-
-      float a0 = 0.0f;
-      float r0 = 0.0f;
-      float g0 = 0.0f;
-      float b0 = 0.0f;
-
-      final int a00 = c00 >> 0x18 & 0xff;
-      final int a10 = c10 >> 0x18 & 0xff;
-      if ( a00 > 0 || a10 > 0 ) {
-         final float u = 1.0f - xErr;
-         a0 = u * a00 + xErr * a10;
-         if ( a0 > 0.0f ) {
-            r0 = u * ( c00 >> 0x10 & 0xff ) + xErr * ( c10 >> 0x10 & 0xff );
-            g0 = u * ( c00 >> 0x08 & 0xff ) + xErr * ( c10 >> 0x08 & 0xff );
-            b0 = u * ( c00 & 0xff ) + xErr * ( c10 & 0xff );
+      int i = 0;
+      itrTotal = idcsTotal.iterator();
+      while ( itrTotal.hasNext() ) {
+         final ArrayList < Integer > idcsLocal = itrTotal.next();
+         for ( final Iterator < Integer > itrLocal = idcsLocal.iterator();
+            itrLocal.hasNext(); ++i ) {
+            result[i] = itrLocal.next();
          }
       }
-
-      float a1 = 0.0f;
-      float r1 = 0.0f;
-      float g1 = 0.0f;
-      float b1 = 0.0f;
-
-      final int a01 = c01 >> 0x18 & 0xff;
-      final int a11 = c11 >> 0x18 & 0xff;
-      if ( a01 > 0 || a11 > 0 ) {
-         final float u = 1.0f - xErr;
-         a1 = u * a01 + xErr * a11;
-         if ( a1 > 0.0f ) {
-            r1 = u * ( c01 >> 0x10 & 0xff ) + xErr * ( c11 >> 0x10 & 0xff );
-            g1 = u * ( c01 >> 0x08 & 0xff ) + xErr * ( c11 >> 0x08 & 0xff );
-            b1 = u * ( c01 & 0xff ) + xErr * ( c11 & 0xff );
-         }
-      }
-
-      if ( a0 > 0.0f || a1 > 0.0f ) {
-         final float yErr = ySrc - yf;
-         final float u = 1.0f - yErr;
-         final float a2 = u * a0 + yErr * a1;
-         if ( a2 > 0.0f ) {
-            final float r2 = u * r0 + yErr * r1;
-            final float g2 = u * g0 + yErr * g1;
-            final float b2 = u * b0 + yErr * b1;
-
-            final int ai = a2 > 255.0f ? 0xff : ( int ) a2;
-            final int ri = r2 > 255.0f ? 0xff : ( int ) r2;
-            final int gi = g2 > 255.0f ? 0xff : ( int ) g2;
-            final int bi = b2 > 255.0f ? 0xff : ( int ) b2;
-
-            return ai << 0x18 | ri << 0x10 | gi << 0x08 | bi;
-         }
-      }
-
-      return 0x00000000;
+      return result;
    }
 
    /**
@@ -1088,16 +1033,12 @@ public abstract class Pixels {
     * @param dim     dimensions
     * @param tl      top-left
     *
-    * @return masked pixels
+    * @return the masked pixels
     */
    public static int[] mask ( final int[] aPixels, final int aw, final int ah,
       final int ax, final int ay, final int[] bPixels, final int bw,
       final int bh, final int bx, final int by, final Vec2 dim,
       final Vec2 tl ) {
-
-      // TODO: Can these calculations be simplified by removing the
-      // need for bottom right corners and just finding intersection
-      // of aw, bw, ah, bh?
 
       /* Find the bottom right corner for a and b. */
       final int abrx = ax + aw - 1;
@@ -1175,7 +1116,7 @@ public abstract class Pixels {
     *
     * @return the mirrored pixels
     *
-    * @see Pixels#filterBilinear(float, float, int, int, int[])
+    * @see Pixels#sampleBilinear(int[], int, int, float, float)
     * @see Pixels#mirrorX(int[], int, int, boolean, int[])
     * @see Pixels#mirrorY(int[], int, int, int, boolean, int[])
     * @see Utils#approx(float, float, float)
@@ -1245,8 +1186,8 @@ public abstract class Pixels {
              */
             if ( pyOpp >= 0.0f && pyOpp <= hfn1 && pxOpp >= 0.0f && pxOpp
                <= wfn1 ) {
-               target[k] = Pixels.filterBilinear(pxOpp, pyOpp, wSrc, hSrc,
-                  source);
+               target[k] = Pixels.sampleBilinear(source, wSrc, hSrc, pxOpp,
+                  pyOpp);
             } else {
                target[k] = 0x00000000;
             }
@@ -1549,7 +1490,7 @@ public abstract class Pixels {
     *
     * @return the resized image
     *
-    * @see Pixels#filterBilinear(float, float, int, int, int[])
+    * @see Pixels#sampleBilinear(int[], int, int, float, float)
     */
    public static int[] resizeBilinear ( final int[] source, final int wSrc,
       final int hSrc, final int wTrg, final int hTrg ) {
@@ -1567,8 +1508,8 @@ public abstract class Pixels {
       final int trgLen = wTrg * hTrg;
       final int[] target = new int[trgLen];
       for ( int i = 0; i < trgLen; ++i ) {
-         target[i] = Pixels.filterBilinear(tx * ( i % wTrg ), ty * ( i / wTrg ),
-            wSrc, hSrc, source);
+         target[i] = Pixels.sampleBilinear(source, wSrc, hSrc, tx * ( i
+            % wTrg ), ty * ( i / wTrg ));
       }
 
       return target;
@@ -1697,7 +1638,7 @@ public abstract class Pixels {
     *
     * @return rotated pixels
     *
-    * @see Pixels#filterBilinear(float, float, int, int, int[])
+    * @see Pixels#sampleBilinear(int[], int, int, float, float)
     * @see Utils#abs(float)
     */
    public static int[] rotateBilinear ( final int[] source, final int wSrc,
@@ -1724,8 +1665,8 @@ public abstract class Pixels {
       for ( int i = 0; i < trgLen; ++i ) {
          final float ySgn = i / wTrg - yTrgCenter;
          final float xSgn = i % wTrg - xTrgCenter;
-         target[i] = Pixels.filterBilinear(xSrcCenter + cosa * xSgn - sina
-            * ySgn, ySrcCenter + cosa * ySgn + sina * xSgn, wSrc, hSrc, source);
+         target[i] = Pixels.sampleBilinear(source, wSrc, hSrc, xSrcCenter + cosa
+            * xSgn - sina * ySgn, ySrcCenter + cosa * ySgn + sina * xSgn);
       }
 
       if ( dim != null ) { dim.set(wTrgf, hTrgf); }
@@ -1786,6 +1727,102 @@ public abstract class Pixels {
    }
 
    /**
+    * Internal helper function to sample a source image with a bilinear color
+    * mix. Returns a hexadecimal integer color.
+    *
+    * @param source the source pixel array
+    * @param wSrc   the source image width
+    * @param hSrc   the source image height
+    * @param xSrc   the source x coordinate
+    * @param ySrc   the source y coordinate
+    *
+    * @return the color
+    */
+   public static int sampleBilinear ( final int[] source, final int wSrc,
+      final int hSrc, final float xSrc, final float ySrc ) {
+
+      final boolean yPos = ySrc > 0.0f;
+      final boolean yNeg = ySrc < 0.0f;
+      final int yi = ( int ) ySrc;
+      final int yf = yPos ? yi : yNeg ? yi - 1 : 0;
+      final int yc = yPos ? yi + 1 : yNeg ? yi : 0;
+
+      final boolean yfInBounds = yf > -1 && yf < hSrc;
+      final boolean ycInBounds = yc > -1 && yc < hSrc;
+
+      final boolean xPos = xSrc > 0.0f;
+      final boolean xNeg = xSrc < 0.0f;
+      final int xi = ( int ) xSrc;
+      final int xf = xPos ? xi : xNeg ? xi - 1 : 0;
+      final int xc = xPos ? xi + 1 : xNeg ? xi : 0;
+
+      final boolean xfInBounds = xf > -1 && xf < wSrc;
+      final boolean xcInBounds = xc > -1 && xc < wSrc;
+
+      /* Pixel corners colors. */
+      final int c00 = xfInBounds && yfInBounds ? source[xf + yf * wSrc] : 0;
+      final int c10 = xcInBounds && yfInBounds ? source[xc + yf * wSrc] : 0;
+      final int c11 = xcInBounds && ycInBounds ? source[xc + yc * wSrc] : 0;
+      final int c01 = xfInBounds && ycInBounds ? source[xf + yc * wSrc] : 0;
+
+      final float xErr = xSrc - xf;
+
+      float a0 = 0.0f;
+      float r0 = 0.0f;
+      float g0 = 0.0f;
+      float b0 = 0.0f;
+
+      final int a00 = c00 >> 0x18 & 0xff;
+      final int a10 = c10 >> 0x18 & 0xff;
+      if ( a00 > 0 || a10 > 0 ) {
+         final float u = 1.0f - xErr;
+         a0 = u * a00 + xErr * a10;
+         if ( a0 > 0.0f ) {
+            r0 = u * ( c00 >> 0x10 & 0xff ) + xErr * ( c10 >> 0x10 & 0xff );
+            g0 = u * ( c00 >> 0x08 & 0xff ) + xErr * ( c10 >> 0x08 & 0xff );
+            b0 = u * ( c00 & 0xff ) + xErr * ( c10 & 0xff );
+         }
+      }
+
+      float a1 = 0.0f;
+      float r1 = 0.0f;
+      float g1 = 0.0f;
+      float b1 = 0.0f;
+
+      final int a01 = c01 >> 0x18 & 0xff;
+      final int a11 = c11 >> 0x18 & 0xff;
+      if ( a01 > 0 || a11 > 0 ) {
+         final float u = 1.0f - xErr;
+         a1 = u * a01 + xErr * a11;
+         if ( a1 > 0.0f ) {
+            r1 = u * ( c01 >> 0x10 & 0xff ) + xErr * ( c11 >> 0x10 & 0xff );
+            g1 = u * ( c01 >> 0x08 & 0xff ) + xErr * ( c11 >> 0x08 & 0xff );
+            b1 = u * ( c01 & 0xff ) + xErr * ( c11 & 0xff );
+         }
+      }
+
+      if ( a0 > 0.0f || a1 > 0.0f ) {
+         final float yErr = ySrc - yf;
+         final float u = 1.0f - yErr;
+         final float a2 = u * a0 + yErr * a1;
+         if ( a2 > 0.0f ) {
+            final float r2 = u * r0 + yErr * r1;
+            final float g2 = u * g0 + yErr * g1;
+            final float b2 = u * b0 + yErr * b1;
+
+            final int ai = a2 > 255.0f ? 0xff : ( int ) a2;
+            final int ri = r2 > 255.0f ? 0xff : ( int ) r2;
+            final int gi = g2 > 255.0f ? 0xff : ( int ) g2;
+            final int bi = b2 > 255.0f ? 0xff : ( int ) b2;
+
+            return ai << 0x18 | ri << 0x10 | gi << 0x08 | bi;
+         }
+      }
+
+      return 0x00000000;
+   }
+
+   /**
     * Skews the pixels of a source image horizontally. If the angle is
     * approximately zero, copies the source array. If the angle is
     * approximately {@link IUtils#HALF_PI} ({@value IUtils#HALF_PI}, returns
@@ -1801,33 +1838,72 @@ public abstract class Pixels {
     *
     * @return the skewed array
     *
-    * @see Pixels#filterBilinear(float, float, int, int, int[])
+    * @see Pixels#sampleBilinear(int[], int, int, float, float)
+    * @see Pixels#skewXInteger(int[], int, int, int, int, Vec2)
     * @see Utils#abs(float)
     * @see Utils#mod(int, int)
     * @see Utils#round(float)
     */
-   @Experimental
    public static int[] skewXBilinear ( final int[] source, final int wSrc,
       final int hSrc, final float angle, final Vec2 dim ) {
 
       final float wSrcf = wSrc;
       final float hSrcf = hSrc;
-      final int srcLen = source.length;
-      final int deg = Utils.mod(Utils.round(angle * IUtils.RAD_TO_DEG), 180);
-      switch ( deg ) {
+      final int deg = Utils.round(angle * IUtils.RAD_TO_DEG);
+      final int deg360 = Utils.mod(deg, 360);
+      switch ( deg360 ) {
          case 0:
+         case 180: {
             if ( dim != null ) { dim.set(wSrcf, hSrcf); }
-            final int[] cpy = new int[srcLen];
-            System.arraycopy(source, 0, cpy, 0, srcLen);
+            final int[] cpy = new int[source.length];
+            System.arraycopy(source, 0, cpy, 0, source.length);
             return cpy;
+         }
 
+         /*
+          * case 27: { return Pixels.skewXInteger(source, wSrc, hSrc, 1, 2,
+          * dim); }
+          */
+
+         case 45: {
+            return Pixels.skewXInteger(source, wSrc, hSrc, 1, 1, dim);
+         }
+
+         /*
+          * case 63: { return Pixels.skewXInteger(source, wSrc, hSrc, 2, 1,
+          * dim); }
+          */
+
+         case 88:
          case 89:
          case 90:
          case 91:
-            if ( dim != null ) { dim.set(wSrcf, hSrcf); }
-            return new int[srcLen];
+         case 92:
 
-         default:
+         case 268:
+         case 269:
+         case 270:
+         case 271:
+         case 272: {
+            if ( dim != null ) { dim.set(wSrcf, hSrcf); }
+            return new int[source.length];
+         }
+
+         /*
+          * case 297: { return Pixels.skewXInteger(source, wSrc, hSrc, -2, 1,
+          * dim); }
+          */
+
+         case 315: {
+            return Pixels.skewXInteger(source, wSrc, hSrc, -1, 1, dim);
+         }
+
+         /*
+          * case 333: { return Pixels.skewXInteger(source, wSrc, hSrc, -1, 2,
+          * dim); }
+          */
+
+         default: {
             final float tana = ( float ) Math.tan(angle);
             final int wTrg = ( int ) ( 0.5f + wSrcf + Utils.abs(tana) * hSrcf );
             final float wTrgf = wTrg;
@@ -1838,13 +1914,65 @@ public abstract class Pixels {
             final int[] target = new int[trgLen];
             for ( int i = 0; i < trgLen; ++i ) {
                final float yTrg = i / wTrg;
-               target[i] = Pixels.filterBilinear(xDiff + i % wTrg + tana
-                  * ( yTrg - yCenter ), yTrg, wSrc, hSrc, source);
+               target[i] = Pixels.sampleBilinear(source, wSrc, hSrc, xDiff + i
+                  % wTrg + tana * ( yTrg - yCenter ), yTrg);
             }
 
             if ( dim != null ) { dim.set(wTrgf, hSrcf); }
             return target;
+         }
       }
+   }
+
+   /**
+    * Skews the pixels of a source image horizontally by an integer rise. The
+    * run specifies the number of pixels to skip on the x axis for each rise.
+    * If the rise or run are zero, copies the source array.<br>
+    * <br>
+    * Emits the new image dimensions to a {@link Vec2}.
+    *
+    * @param source the source pixels
+    * @param wSrc   the source image width
+    * @param hSrc   the source image height
+    * @param rise   the rise, or step
+    * @param run    the run, or skip
+    * @param dim    the new dimension
+    *
+    * @return the skewed array
+    */
+   public static int[] skewXInteger ( final int[] source, final int wSrc,
+      final int hSrc, final int rise, final int run, final Vec2 dim ) {
+
+      final float wSrcf = wSrc;
+      final float hSrcf = hSrc;
+
+      if ( rise == 0 || run == 0 ) {
+         if ( dim != null ) { dim.set(wSrcf, hSrcf); }
+         final int[] cpy = new int[source.length];
+         System.arraycopy(source, 0, cpy, 0, source.length);
+         return cpy;
+      }
+
+      final int absRun = run < 0 ? -run : run;
+      final int sgnRise = run < 0 ? -rise : rise;
+      final int absRise = sgnRise < 0 ? -sgnRise : sgnRise;
+
+      final int hn1Run = ( hSrc - 1 ) / absRun;
+      final int offset = sgnRise < 0 ? 0 : hn1Run * sgnRise;
+      final int wTrg = wSrc + hn1Run * absRise;
+      final int[] target = new int[wTrg * hSrc];
+
+      final int srcLen = source.length;
+      for ( int i = 0; i < srcLen; ++i ) {
+         final int xSrc = i % wSrc;
+         final int ySrc = i / wSrc;
+         final int shift = sgnRise * ( ySrc / absRun );
+         final int xTrg = xSrc + offset - shift;
+         target[xTrg + ySrc * wTrg] = source[i];
+      }
+
+      if ( dim != null ) { dim.set(wTrg, hSrcf); }
+      return target;
    }
 
    /**
@@ -1863,33 +1991,72 @@ public abstract class Pixels {
     *
     * @return the skewed array
     *
-    * @see Pixels#filterBilinear(float, float, int, int, int[])
+    * @see Pixels#sampleBilinear(int[], int, int, float, float)
+    * @see Pixels#skewYInteger(int[], int, int, int, int, Vec2)
     * @see Utils#abs(float)
     * @see Utils#mod(int, int)
     * @see Utils#round(float)
     */
-   @Experimental
    public static int[] skewYBilinear ( final int[] source, final int wSrc,
       final int hSrc, final float angle, final Vec2 dim ) {
 
       final float wSrcf = wSrc;
       final float hSrcf = hSrc;
-      final int srcLen = source.length;
-      final int deg = Utils.mod(Utils.round(angle * IUtils.RAD_TO_DEG), 180);
-      switch ( deg ) {
+      final int deg = Utils.round(angle * IUtils.RAD_TO_DEG);
+      final int deg360 = Utils.mod(deg, 360);
+      switch ( deg360 ) {
          case 0:
+         case 180: {
             if ( dim != null ) { dim.set(wSrcf, hSrcf); }
-            final int[] cpy = new int[srcLen];
-            System.arraycopy(source, 0, cpy, 0, srcLen);
+            final int[] cpy = new int[source.length];
+            System.arraycopy(source, 0, cpy, 0, source.length);
             return cpy;
+         }
 
+         /*
+          * case 27: { return Pixels.skewYInteger(source, wSrc, hSrc, 1, 2,
+          * dim); }
+          */
+
+         case 45: {
+            return Pixels.skewYInteger(source, wSrc, hSrc, 1, 1, dim);
+         }
+
+         /*
+          * case 63: { return Pixels.skewYInteger(source, wSrc, hSrc, 2, 1,
+          * dim); }
+          */
+
+         case 88:
          case 89:
          case 90:
          case 91:
-            if ( dim != null ) { dim.set(wSrcf, hSrcf); }
-            return new int[srcLen];
+         case 92:
 
-         default:
+         case 268:
+         case 269:
+         case 270:
+         case 271:
+         case 272: {
+            if ( dim != null ) { dim.set(wSrcf, hSrcf); }
+            return new int[source.length];
+         }
+
+         /*
+          * case 297: { return Pixels.skewYInteger(source, wSrc, hSrc, -2, 1,
+          * dim); }
+          */
+
+         case 315: {
+            return Pixels.skewYInteger(source, wSrc, hSrc, -1, 1, dim);
+         }
+
+         /*
+          * case 333: { return Pixels.skewYInteger(source, wSrc, hSrc, -1, 2,
+          * dim); }
+          */
+
+         default: {
             final float tana = ( float ) Math.tan(angle);
             final int hTrg = ( int ) ( 0.5f + hSrcf + Utils.abs(tana) * wSrcf );
             final float hTrgf = hTrg;
@@ -1900,13 +2067,65 @@ public abstract class Pixels {
             final int[] target = new int[trgLen];
             for ( int i = 0; i < trgLen; ++i ) {
                final float xTrg = i % wSrc;
-               target[i] = Pixels.filterBilinear(xTrg, yDiff + i / wSrc + tana
-                  * ( xTrg - xCenter ), wSrc, hSrc, source);
+               target[i] = Pixels.sampleBilinear(source, wSrc, hSrc, xTrg, yDiff
+                  + i / wSrc + tana * ( xTrg - xCenter ));
             }
 
             if ( dim != null ) { dim.set(wSrcf, hTrgf); }
             return target;
+         }
       }
+   }
+
+   /**
+    * Skews the pixels of a source image vertically by an integer rise. The
+    * run specifies the number of pixels to skip on the y axis for each rise.
+    * If the rise or run are zero, copies the source array.<br>
+    * <br>
+    * Emits the new image dimensions to a {@link Vec2}.
+    *
+    * @param source the source pixels
+    * @param wSrc   the source image width
+    * @param hSrc   the source image height
+    * @param rise   the rise, or step
+    * @param run    the run, or skip
+    * @param dim    the new dimension
+    *
+    * @return the skewed array
+    */
+   public static int[] skewYInteger ( final int[] source, final int wSrc,
+      final int hSrc, final int rise, final int run, final Vec2 dim ) {
+
+      final float wSrcf = wSrc;
+      final float hSrcf = hSrc;
+
+      if ( rise == 0 || run == 0 ) {
+         if ( dim != null ) { dim.set(wSrcf, hSrcf); }
+         final int[] cpy = new int[source.length];
+         System.arraycopy(source, 0, cpy, 0, source.length);
+         return cpy;
+      }
+
+      final int absRun = run < 0 ? -run : run;
+      final int sgnRise = run < 0 ? -rise : rise;
+      final int absRise = sgnRise < 0 ? -sgnRise : sgnRise;
+
+      final int wn1Run = ( wSrc - 1 ) / absRun;
+      final int offset = sgnRise < 0 ? 0 : wn1Run * sgnRise;
+      final int hTrg = hSrc + wn1Run * absRise;
+      final int[] target = new int[wSrc * hTrg];
+
+      final int srcLen = source.length;
+      for ( int i = 0; i < srcLen; ++i ) {
+         final int xSrc = i % wSrc;
+         final int ySrc = i / wSrc;
+         final int shift = sgnRise * ( xSrc / absRun );
+         final int yTrg = ySrc + offset - shift;
+         target[xSrc + yTrg * wSrc] = source[i];
+      }
+
+      if ( dim != null ) { dim.set(wSrcf, hTrg); }
+      return target;
    }
 
    /**
@@ -2236,7 +2455,8 @@ public abstract class Pixels {
    /**
     * Creates an array of meshes from the non-transparent pixels of an image.
     * Each unique color is assigned a mesh. Intended for smaller images with
-    * relatively few colors.
+    * relatively few colors. Each mesh's {@link Mesh#materialIndex}
+    * corresponds to its index in the array.
     *
     * @param source the source pixels
     * @param wSrc   the source image width
@@ -2486,6 +2706,52 @@ public abstract class Pixels {
    }
 
    /**
+    * Internal helper function to filter an array of pixels into a dictionary.
+    * The color serves as the key. The value is a list of indices that
+    * reference the source array. The function delegate is expected to filter
+    * the color according to an upper and lower bound. Both bounds should be
+    * inclusive.
+    *
+    * @param source the source pixels
+    * @param lb     the lower bound
+    * @param ub     the upper bound
+    * @param f      the filter function
+    * @param dict   the target dictionary
+    *
+    * @return the dictionary
+    */
+   protected static HashMap < Integer, ArrayList < Integer > > filter (
+      final int[] source, final float lb, final float ub, final TriFunction <
+         Integer, Float, Float, Boolean > f, final HashMap < Integer,
+            ArrayList < Integer > > dict ) {
+
+      final Float lbObj = lb;
+      final Float ubObj = ub;
+
+      final HashSet < Integer > visited = new HashSet <>(512, 0.75f);
+      final HashMap < Integer, Boolean > included = new HashMap <>(512, 0.75f);
+
+      final int srcLen = source.length;
+      for ( int i = 0; i < srcLen; ++i ) {
+         final int cInt = source[i];
+         final Integer cObj = cInt;
+         boolean include = false;
+         if ( visited.contains(cObj) ) {
+            include = included.get(cObj);
+         } else {
+            include = f.apply(cObj, lbObj, ubObj);
+            if ( include ) { dict.put(cObj, new ArrayList < Integer >(32)); }
+            visited.add(cObj);
+            included.put(cObj, include);
+         }
+
+         if ( include ) { dict.get(cObj).add(i); }
+      }
+
+      return dict;
+   }
+
+   /**
     * Internal helper method to create a mesh from a list of indices and other
     * conversion data. Makes no optimizations to the mesh by, e.g., removing
     * interior or colinear vertices.
@@ -2614,6 +2880,47 @@ public abstract class Pixels {
       }
 
       return target;
+   }
+
+   /**
+    * Evaluates whether a color should be included according to a lower and
+    * upper bound, both inclusive. Luminance is expected to be in the range
+    * [0.0, 1.0].
+    */
+   public static class FilterLuminance implements TriFunction < Integer, Float,
+      Float, Boolean > {
+
+      /**
+       * The default constructor.
+       */
+      public FilterLuminance ( ) {}
+
+      /**
+       * Evalutes whether a color is in bounds.
+       *
+       * @param c  the color
+       * @param lb the lower bounds
+       * @param ub the upper bounds
+       *
+       * @return the evaluation
+       */
+      @Override
+      public Boolean apply ( final Integer c, final Float lb, final Float ub ) {
+
+         final float lum = Pixels.sRgbLuminance(c);
+         final float lin = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math
+            .pow(lum, 0.4166666666666667d) * 1.055d - 0.055d );
+         return lin >= lb && lin <= ub;
+      }
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
    }
 
    /**
