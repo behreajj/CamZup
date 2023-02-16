@@ -1741,29 +1741,26 @@ public abstract class Pixels {
    public static int sampleBilinear ( final int[] source, final int wSrc,
       final int hSrc, final float xSrc, final float ySrc ) {
 
-      final boolean yPos = ySrc > 0.0f;
-      final boolean yNeg = ySrc < 0.0f;
+      /* Find truncation, floor and ceiling. */
       final int yi = ( int ) ySrc;
-      final int yf = yPos ? yi : yNeg ? yi - 1 : 0;
-      final int yc = yPos ? yi + 1 : yNeg ? yi : 0;
+      final int yf = ySrc > 0.0f ? yi : ySrc < 0.0f ? yi - 1 : 0;
+      final int yc = yf + 1;
 
       final boolean yfInBounds = yf > -1 && yf < hSrc;
       final boolean ycInBounds = yc > -1 && yc < hSrc;
 
-      final boolean xPos = xSrc > 0.0f;
-      final boolean xNeg = xSrc < 0.0f;
       final int xi = ( int ) xSrc;
-      final int xf = xPos ? xi : xNeg ? xi - 1 : 0;
-      final int xc = xPos ? xi + 1 : xNeg ? xi : 0;
+      final int xf = xSrc > 0.0f ? xi : xSrc < 0.0f ? xi - 1 : 0;
+      final int xc = xf + 1;
 
       final boolean xfInBounds = xf > -1 && xf < wSrc;
       final boolean xcInBounds = xc > -1 && xc < wSrc;
 
       /* Pixel corners colors. */
-      final int c00 = xfInBounds && yfInBounds ? source[xf + yf * wSrc] : 0;
-      final int c10 = xcInBounds && yfInBounds ? source[xc + yf * wSrc] : 0;
-      final int c11 = xcInBounds && ycInBounds ? source[xc + yc * wSrc] : 0;
-      final int c01 = xfInBounds && ycInBounds ? source[xf + yc * wSrc] : 0;
+      final int c00 = yfInBounds && xfInBounds ? source[yf * wSrc + xf] : 0;
+      final int c10 = yfInBounds && xcInBounds ? source[yf * wSrc + xc] : 0;
+      final int c11 = ycInBounds && xcInBounds ? source[yc * wSrc + xc] : 0;
+      final int c01 = ycInBounds && xfInBounds ? source[yc * wSrc + xf] : 0;
 
       final float xErr = xSrc - xf;
 
@@ -1810,10 +1807,15 @@ public abstract class Pixels {
             final float g2 = u * g0 + yErr * g1;
             final float b2 = u * b0 + yErr * b1;
 
-            final int ai = a2 > 255.0f ? 0xff : ( int ) a2;
-            final int ri = r2 > 255.0f ? 0xff : ( int ) r2;
-            final int gi = g2 > 255.0f ? 0xff : ( int ) g2;
-            final int bi = b2 > 255.0f ? 0xff : ( int ) b2;
+            int ai = ( int ) ( 0.5f + a2 );
+            int ri = ( int ) ( 0.5f + r2 );
+            int gi = ( int ) ( 0.5f + g2 );
+            int bi = ( int ) ( 0.5f + b2 );
+
+            if ( ai > 0xff ) { ai = 0xff; }
+            if ( ri > 0xff ) { ri = 0xff; }
+            if ( gi > 0xff ) { gi = 0xff; }
+            if ( bi > 0xff ) { bi = 0xff; }
 
             return ai << 0x18 | ri << 0x10 | gi << 0x08 | bi;
          }
@@ -1860,19 +1862,9 @@ public abstract class Pixels {
             return cpy;
          }
 
-         /*
-          * case 27: { return Pixels.skewXInteger(source, wSrc, hSrc, 1, 2,
-          * dim); }
-          */
-
          case 45: {
             return Pixels.skewXInteger(source, wSrc, hSrc, 1, 1, dim);
          }
-
-         /*
-          * case 63: { return Pixels.skewXInteger(source, wSrc, hSrc, 2, 1,
-          * dim); }
-          */
 
          case 88:
          case 89:
@@ -1889,19 +1881,9 @@ public abstract class Pixels {
             return new int[source.length];
          }
 
-         /*
-          * case 297: { return Pixels.skewXInteger(source, wSrc, hSrc, -2, 1,
-          * dim); }
-          */
-
          case 315: {
             return Pixels.skewXInteger(source, wSrc, hSrc, -1, 1, dim);
          }
-
-         /*
-          * case 333: { return Pixels.skewXInteger(source, wSrc, hSrc, -1, 2,
-          * dim); }
-          */
 
          default: {
             final float tana = ( float ) Math.tan(angle);
@@ -1926,7 +1908,7 @@ public abstract class Pixels {
 
    /**
     * Skews the pixels of a source image horizontally by an integer rise. The
-    * run specifies the number of pixels to skip on the x axis for each rise.
+    * run specifies the number of pixels to skip on the y axis for each rise.
     * If the rise or run are zero, copies the source array.<br>
     * <br>
     * Emits the new image dimensions to a {@link Vec2}.
@@ -2013,19 +1995,9 @@ public abstract class Pixels {
             return cpy;
          }
 
-         /*
-          * case 27: { return Pixels.skewYInteger(source, wSrc, hSrc, 1, 2,
-          * dim); }
-          */
-
          case 45: {
             return Pixels.skewYInteger(source, wSrc, hSrc, 1, 1, dim);
          }
-
-         /*
-          * case 63: { return Pixels.skewYInteger(source, wSrc, hSrc, 2, 1,
-          * dim); }
-          */
 
          case 88:
          case 89:
@@ -2042,19 +2014,9 @@ public abstract class Pixels {
             return new int[source.length];
          }
 
-         /*
-          * case 297: { return Pixels.skewYInteger(source, wSrc, hSrc, -2, 1,
-          * dim); }
-          */
-
          case 315: {
             return Pixels.skewYInteger(source, wSrc, hSrc, -1, 1, dim);
          }
-
-         /*
-          * case 333: { return Pixels.skewYInteger(source, wSrc, hSrc, -1, 2,
-          * dim); }
-          */
 
          default: {
             final float tana = ( float ) Math.tan(angle);
@@ -2079,7 +2041,7 @@ public abstract class Pixels {
 
    /**
     * Skews the pixels of a source image vertically by an integer rise. The
-    * run specifies the number of pixels to skip on the y axis for each rise.
+    * run specifies the number of pixels to skip on the x axis for each rise.
     * If the rise or run are zero, copies the source array.<br>
     * <br>
     * Emits the new image dimensions to a {@link Vec2}.
@@ -2740,7 +2702,7 @@ public abstract class Pixels {
             include = included.get(cObj);
          } else {
             include = f.apply(cObj, lbObj, ubObj);
-            if ( include ) { dict.put(cObj, new ArrayList < Integer >(32)); }
+            if ( include ) { dict.put(cObj, new ArrayList <>(32)); }
             visited.add(cObj);
             included.put(cObj, include);
          }

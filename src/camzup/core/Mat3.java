@@ -293,8 +293,6 @@ public class Mat3 {
     * </pre>
     *
     * @return this matrix
-    *
-    * @see Mat3#identity(Mat3)
     */
    public Mat3 reset ( ) {
 
@@ -834,6 +832,30 @@ public class Mat3 {
    }
 
    /**
+    * Creates a reflection matrix from an axis representing a plane. The axis
+    * will be normalized by the function.
+    *
+    * @param axis   the axis
+    * @param target the output matrix
+    *
+    * @return the reflection
+    *
+    * @see Mat3#fromReflection(float, float, Mat3)
+    * @see Mat3#identity(Mat3)
+    */
+   public static Mat3 fromReflection ( final Vec2 axis, final Mat3 target ) {
+
+      final float ax = axis.x;
+      final float ay = axis.y;
+      final float mSq = ax * ax + ay * ay;
+      if ( mSq != 0.0f ) {
+         final float mInv = Utils.invSqrtUnchecked(mSq);
+         return Mat3.fromReflection(ax * mInv, ay * mInv, target);
+      }
+      return Mat3.identity(target);
+   }
+
+   /**
     * Creates a rotation matrix from a cosine and sine around the z axis.
     *
     * @param cosa   the cosine of an angle
@@ -864,21 +886,18 @@ public class Mat3 {
    }
 
    /**
-    * Creates a scale matrix from a scalar. The bottom right corner, m22, is
-    * set to 1.0 .
+    * Creates a scale matrix from a scalar.
     *
     * @param scalar the scalar
     * @param target the output matrix
     *
     * @return the matrix
+    *
+    * @see Mat3#fromScale(float, float, Mat3)
     */
    public static Mat3 fromScale ( final float scalar, final Mat3 target ) {
 
-      if ( scalar != 0.0f ) {
-         return target.set(scalar, 0.0f, 0.0f, 0.0f, scalar, 0.0f, 0.0f, 0.0f,
-            1.0f);
-      }
-      return target.reset();
+      return Mat3.fromScale(scalar, scalar, target);
    }
 
    /**
@@ -888,6 +907,8 @@ public class Mat3 {
     * @param target the output matrix
     *
     * @return the matrix
+    *
+    * @see Mat3#fromScale(float, float, Mat3)
     */
    public static Mat3 fromScale ( final Vec2 scalar, final Mat3 target ) {
 
@@ -897,7 +918,8 @@ public class Mat3 {
    /**
     * Creates skew, or shear, matrix from an angle and axes. Vectors
     * <em>a</em> and <em>b</em> are expected to be orthonormal, i.e.
-    * perpendicular and of unit length.
+    * perpendicular and of unit length. Returns the identity if the angle is
+    * divisible by pi.
     *
     * @param radians the angle in radians
     * @param a       the skew axis
@@ -905,16 +927,37 @@ public class Mat3 {
     * @param target  the output matrix
     *
     * @return the skew matrix
+    *
+    * @see Mat3#fromSkew(float, float, float, float, float, Mat3)
+    * @see Mat3#identity(Mat3)
+    * @see Utils#approx(float, float)
+    * @see Utils#invSqrtUnchecked(float)
+    * @see Utils#mod(float, float)
+    * @see Utils#tan(float)
     */
    public static Mat3 fromSkew ( final float radians, final Vec2 a,
       final Vec2 b, final Mat3 target ) {
 
-      final float t = Utils.tan(radians);
-      final float tax = a.x * t;
-      final float tay = a.y * t;
+      if ( Utils.approx(Utils.mod(radians, IUtils.PI), 0.0f) ) {
+         return Mat3.identity(target);
+      }
 
-      return target.set(tax * b.x + 1.0f, tax * b.y, 0.0f, tay * b.x, tay * b.y
-         + 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      final float ax = a.x;
+      final float ay = a.y;
+      final float amSq = ax * ax + ay * ay;
+      if ( amSq <= IUtils.EPSILON ) { return Mat3.identity(target); }
+
+      final float bx = b.x;
+      final float by = b.y;
+      final float bmSq = bx * bx + by * by;
+      if ( bmSq <= IUtils.EPSILON ) { return Mat3.identity(target); }
+
+      final float t = Utils.tan(radians);
+      final float amInv = Utils.invSqrtUnchecked(amSq);
+      final float bmInv = Utils.invSqrtUnchecked(bmSq);
+
+      return Mat3.fromSkew(t, ax * amInv, ay * amInv, bx * bmInv, by * bmInv,
+         target);
    }
 
    /**
@@ -924,6 +967,8 @@ public class Mat3 {
     * @param target the output matrix
     *
     * @return the matrix
+    *
+    * @see Mat3#fromTranslation(float, float, Mat3)
     */
    public static Mat3 fromTranslation ( final Vec2 tr, final Mat3 target ) {
 
@@ -983,12 +1028,15 @@ public class Mat3 {
    }
 
    /**
-    * Inverts the input matrix.
+    * Inverts the input matrix. Returns the identity if the matrix's
+    * determinant is zero.
     *
     * @param m      the matrix
     * @param target the output matrix
     *
     * @return the inverse
+    *
+    * @see Mat3#identity(Mat3)
     */
    public static Mat3 inverse ( final Mat3 m, final Mat3 target ) {
 
@@ -1012,7 +1060,7 @@ public class Mat3 {
             ( m.m11 * m.m00 - m.m01 * m.m10 ) * detInv);
          /* @formatter:on */
       }
-      return target.reset();
+      return Mat3.identity(target);
 
    }
 
@@ -1394,7 +1442,29 @@ public class Mat3 {
    }
 
    /**
-    * Creates a scale matrix from a nonuniform scalar.<br>
+    * Creates a reflection matrix from an axis representing a plane.
+    *
+    * @param ax     the axis x
+    * @param ay     the axis y
+    * @param target the output matrix
+    *
+    * @return the reflection
+    */
+   static Mat3 fromReflection ( final float ax, final float ay,
+      final Mat3 target ) {
+
+      final float x = - ( ax + ax );
+      final float y = - ( ay + ay );
+      final float axay = x * ay;
+
+      return target.set(x * ax + 1.0f, axay, 0.0f, axay, y * ay + 1.0f, 0.0f,
+         0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Creates a scale matrix from a nonuniform scalar. The bottom right
+    * corner, m22, is set to 1.0 . Returns the identity if the scalar is
+    * zero.<br>
     * <br>
     * A package level function that uses loose floats to facilitate parsing of
     * SVG transforms.
@@ -1404,17 +1474,44 @@ public class Mat3 {
     * @param target the output matrix
     *
     * @return the matrix
+    *
+    * @see Mat3#identity(Mat3)
     */
    static Mat3 fromScale ( final float sx, final float sy, final Mat3 target ) {
 
       if ( sx != 0.0f && sy != 0.0f ) {
          return target.set(sx, 0.0f, 0.0f, 0.0f, sy, 0.0f, 0.0f, 0.0f, 1.0f);
       }
-      return target.reset();
+      return Mat3.identity(target);
    }
 
    /**
-    * Creates a horizontal skew matrix from an angle in radians.<br>
+    * Creates skew, or shear, matrix from the tangent of an angle and axes.
+    * Axes <em>a</em> and <em>b</em> are expected to be orthonormal, i.e.
+    * perpendicular and of unit length.
+    *
+    * @param t      the tangent of the angle
+    * @param ax     the skew axis x
+    * @param ay     the skew axis y
+    * @param bx     the perpendicular axis x
+    * @param by     the perpendicular axis y
+    * @param target the output matrix
+    *
+    * @return the skew matrix
+    */
+   static Mat3 fromSkew ( final float t, final float ax, final float ay,
+      final float bx, final float by, final Mat3 target ) {
+
+      final float tax = ax * t;
+      final float tay = ay * t;
+
+      return target.set(tax * bx + 1.0f, tax * by, 0.0f, tay * bx, tay * by
+         + 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Creates a horizontal skew matrix from an angle in radians. Returns the
+    * identity if the angle is divisible by pi.<br>
     * <br>
     * A package level function that uses loose floats to facilitate parsing of
     * SVG transforms.
@@ -1423,15 +1520,25 @@ public class Mat3 {
     * @param target  the output matrix
     *
     * @return the skew matrix
+    *
+    * @see Mat3#identity(Mat3)
+    * @see Utils#approx(float, float)
+    * @see Utils#mod(float, float)
+    * @see Utils#tan(float)
     */
    static Mat3 fromSkewX ( final float radians, final Mat3 target ) {
+
+      if ( Utils.approx(Utils.mod(radians, IUtils.PI), 0.0f) ) {
+         return Mat3.identity(target);
+      }
 
       return target.set(1.0f, Utils.tan(radians), 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
          0.0f, 1.0f);
    }
 
    /**
-    * Creates a vertical skew matrix from an angle in radians.<br>
+    * Creates a vertical skew matrix from an angle in radians. Returns the
+    * identity if the angle is divisible by pi.<br>
     * <br>
     * A package level function that uses loose floats to facilitate parsing of
     * SVG transforms.
@@ -1440,8 +1547,17 @@ public class Mat3 {
     * @param target  the output matrix
     *
     * @return the skew matrix
+    *
+    * @see Mat3#identity(Mat3)
+    * @see Utils#approx(float, float)
+    * @see Utils#mod(float, float)
+    * @see Utils#tan(float)
     */
    static Mat3 fromSkewY ( final float radians, final Mat3 target ) {
+
+      if ( Utils.approx(Utils.mod(radians, IUtils.PI), 0.0f) ) {
+         return Mat3.identity(target);
+      }
 
       return target.set(1.0f, 0.0f, 0.0f, Utils.tan(radians), 1.0f, 0.0f, 0.0f,
          0.0f, 1.0f);

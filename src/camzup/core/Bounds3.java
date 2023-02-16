@@ -986,12 +986,12 @@ public class Bounds3 implements Comparable < Bounds3 > {
     *
     * @return the volume
     *
+    * @see Bounds3#volumeSigned(Bounds3)
     * @see Utils#abs(float)
     */
    public static float volumeUnsigned ( final Bounds3 b ) {
 
-      return Utils.abs(b.max.x - b.min.x) * Utils.abs(b.max.y - b.min.y) * Utils
-         .abs(b.max.z - b.min.z);
+      return Utils.abs(Bounds3.volumeSigned(b));
    }
 
    /**

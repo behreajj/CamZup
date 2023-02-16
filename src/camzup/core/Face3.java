@@ -1007,7 +1007,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @return the normal
     *
     * @see Vec3#add(Vec3, Vec3, Vec3)
-    * @see Vec3#div(Vec3, Vec3, Vec3)
     * @see Vec3#normalize(Vec3, Vec3)
     */
    @Experimental
@@ -1082,10 +1081,10 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @return the transform
     *
-    * @see Vec3#one(Vec3)
+    * @see Face3#centerMean(Face3, Vec3)
     * @see Face3#normal(Face3, Vec3)
     * @see Quaternion#fromDir(Vec3, Handedness, Quaternion, Vec3, Vec3, Vec3)
-    * @see Face3#centerMean(Face3, Vec3)
+    * @see Vec3#one(Vec3)
     */
    @Experimental
    public static Transform3 orientation ( final Face3 face,

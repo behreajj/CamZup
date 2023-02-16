@@ -50,11 +50,11 @@ public interface ISvgWritable {
     *
     * @return the SVG string
     *
-    * @see Utils#max(float, float)
-    * @see Utils#toFixed(float, int)
-    * @see Utils#clamp01(float)
     * @see Utils#approx(float, float)
+    * @see Utils#clamp01(float)
+    * @see Utils#max(float, float)
     * @see Utils#min(float, float)
+    * @see Utils#toFixed(float, int)
     */
    default String toSvgString ( final float xOrig, final float yOrig,
       final float xScale, final float yScale, final float viewWidth,

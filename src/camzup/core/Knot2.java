@@ -316,8 +316,8 @@ public class Knot2 implements Comparable < Knot2 > {
     *
     * @return this knot
     *
-    * @see Vec2#sub(Vec2, Vec2, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
+    * @see Vec2#sub(Vec2, Vec2, Vec2)
     */
    @Experimental
    public Knot2 relocate ( final Vec2 v ) {
@@ -551,9 +551,9 @@ public class Knot2 implements Comparable < Knot2 > {
     *
     * @return this knot
     *
-    * @see Vec2#subNorm(Vec2, Vec2, Vec2)
-    * @see Vec2#mul(Vec2, float, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
+    * @see Vec2#mul(Vec2, float, Vec2)
+    * @see Vec2#subNorm(Vec2, Vec2, Vec2)
     */
    public Knot2 scaleForeHandleTo ( final float magnitude ) {
 
@@ -624,9 +624,9 @@ public class Knot2 implements Comparable < Knot2 > {
     *
     * @return this knot
     *
-    * @see Vec2#subNorm(Vec2, Vec2, Vec2)
-    * @see Vec2#mul(Vec2, float, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
+    * @see Vec2#mul(Vec2, float, Vec2)
+    * @see Vec2#subNorm(Vec2, Vec2, Vec2)
     */
    public Knot2 scaleRearHandleTo ( final float magnitude ) {
 

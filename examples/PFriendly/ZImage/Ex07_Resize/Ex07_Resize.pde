@@ -9,13 +9,12 @@ float minScale = 0.25f;
 float maxScale = 5.0f;
 int wOriginal = 96;
 int hOriginal = 96;
-boolean nearToggle = false;
 
 PImage source;
 int wOrig;
 int hOrig;
 
-PImage[] bicubic = new PImage[samples];
+PImage[] bilinear = new PImage[samples];
 float[] scales = new float[samples];
 
 void settings() {
@@ -48,7 +47,7 @@ void setup() {
     float step = i * toStep;
     float scale = Utils.lerp(minScale, maxScale, step);
     scales[i] = scale;
-    PImage rszcb = bicubic[i] = source.get();
+    PImage rszcb = bilinear[i] = source.get();
 
     long start = System.currentTimeMillis();
     ZImage.scaleBilinear(source, scale, scale, rszcb);
@@ -70,11 +69,11 @@ void draw() {
   buff.textSize(14);
 
   float halfWidth = buff.width * 0.5f;
-  float right = halfWidth - bicubic[samples - 1].width * 0.525f;
-  float left = bicubic[0].width * 0.525f - halfWidth;
+  float right = halfWidth - bilinear[samples - 1].width * 0.525f;
+  float left = bilinear[0].width * 0.525f - halfWidth;
   float toStep = 1.0f / (samples - 1.0f);
   for (int i = 0; i < samples; ++i) {
-    PImage img = bicubic[i];
+    PImage img = bilinear[i];
     float step = i * toStep;
     float x = Utils.lerp(left, right, Utils.pow(step, 1.5f));
     buff.image(img, x, 0.0f);

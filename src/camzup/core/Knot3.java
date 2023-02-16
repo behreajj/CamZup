@@ -360,8 +360,8 @@ public class Knot3 implements Comparable < Knot3 > {
     *
     * @return this knot
     *
-    * @see Vec3#sub(Vec3, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#sub(Vec3, Vec3, Vec3)
     */
    @Experimental
    public Knot3 relocate ( final Vec3 v ) {
@@ -682,9 +682,9 @@ public class Knot3 implements Comparable < Knot3 > {
     *
     * @return this knot
     *
-    * @see Vec3#subNorm(Vec3, Vec3, Vec3)
-    * @see Vec3#mul(Vec3, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#mul(Vec3, float, Vec3)
+    * @see Vec3#subNorm(Vec3, Vec3, Vec3)
     */
    public Knot3 scaleForeHandleTo ( final float magnitude ) {
 
@@ -757,9 +757,9 @@ public class Knot3 implements Comparable < Knot3 > {
     *
     * @return this knot
     *
-    * @see Vec3#subNorm(Vec3, Vec3, Vec3)
-    * @see Vec3#mul(Vec3, float, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
+    * @see Vec3#mul(Vec3, float, Vec3)
+    * @see Vec3#subNorm(Vec3, Vec3, Vec3)
     */
    public Knot3 scaleRearHandleTo ( final float magnitude ) {
 

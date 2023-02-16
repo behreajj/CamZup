@@ -64,7 +64,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Evaluates two floats like booleans using the AND logic gate.
+    * Evaluates two floats like booleans using the AND logic gate. Non-zero
+    * inputs evaluate to true, or 1. Zero evaluates to false, or 0.
     *
     * @param a the left operand
     * @param b the right operand
@@ -1076,11 +1077,12 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the negation of a float holding a boolean value.
+    * Finds the logical opposite of a float holding a boolean value. Returns 0
+    * for non-zero inputs. Returns 1 for inputs equal to zero.
     *
     * @param value the input value
     *
-    * @return the negation
+    * @return the opposite
     */
    public static int not ( final float value ) {
 
@@ -1089,7 +1091,8 @@ public abstract class Utils implements IUtils {
 
    /**
     * Evaluates two floats like booleans, using the inclusive or (OR) logic
-    * gate.
+    * gate. Non-zero inputs evaluate to true, or 1. Zero evaluates to false,
+    * or 0.
     *
     * @param a the left operand
     * @param b the right operand
@@ -1613,8 +1616,9 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Evaluates two floats like booleans, using the exclusive or (XOR) logic
-    * gate.
+    * Evaluates two floats like booleans using the exclusive or (XOR) logic
+    * gate. Non-zero inputs evaluate to true, or 1. Zero evaluates to false,
+    * or 0.
     *
     * @param a the left operand
     * @param b the right operand

@@ -180,10 +180,10 @@ public abstract class Sdf {
     * @return the signed distance
     *
     * @see Utils#abs(float)
-    * @see Utils#min(float, float)
-    * @see Math#copySign(float, float)
-    * @see Utils#hypot(float, float)
     * @see Utils#clamp(float, float, float)
+    * @see Utils#copySign(float, float)
+    * @see Utils#hypot(float, float)
+    * @see Utils#min(float, float)
     */
    public static float hexagon ( final Vec2 point, final float bounds ) {
 
@@ -317,8 +317,8 @@ public abstract class Sdf {
     *
     * @return the signed distance
     *
-    * @see Utils#hypot(float, float, float)
     * @see Utils#clamp01(float)
+    * @see Utils#hypot(float, float, float)
     */
    public static float line ( final Vec3 point, final Vec3 origin,
       final Vec3 dest ) {
@@ -399,7 +399,7 @@ public abstract class Sdf {
     * @see Utils#clamp01(float)
     * @see Utils#div(float, float)
     * @see Utils#min(float, float)
-    * @see Math#sqrt(double)
+    * @see Utils#sqrtUnchecked(float)
     */
    public static float polygon ( final Vec2 point, final Vec2[] vertices ) {
 
@@ -470,6 +470,8 @@ public abstract class Sdf {
     * @param bounds the bounds
     *
     * @return the signed distance
+    *
+    * @see Vec3#mag(Vec3)
     */
    public static float sphere ( final Vec3 point, final float bounds ) {
 
@@ -516,6 +518,9 @@ public abstract class Sdf {
     * @param thickness the thickness
     *
     * @return the signed distance
+    *
+    * @see Utils#sqrtUnchecked(float)
+    * @see Vec2#mag(Vec2)
     */
    public static float torus ( final Vec2 point, final float radius,
       final float thickness ) {
@@ -532,6 +537,8 @@ public abstract class Sdf {
     * @param thickness the thickness
     *
     * @return the signed distance
+    *
+    * @see Utils#hypot(float, float)
     */
    public static float torus ( final Vec3 point, final float radius,
       final float thickness ) {

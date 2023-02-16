@@ -655,11 +655,11 @@ public class Edge3 implements Comparable < Edge3 > {
     *
     * @return this edge
     *
+    * @see Vec3#add(Vec3, Vec3, Vec3)
     * @see Vec3#all(Vec3)
+    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     * @see Vec3#none(Vec3)
     * @see Vec3#sub(Vec3, Vec3, Vec3)
-    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
-    * @see Vec3#add(Vec3, Vec3, Vec3)
     */
    public Edge3 scaleLocal ( final Vec3 scalar, final Vec3 center ) {
 

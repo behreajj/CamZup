@@ -695,7 +695,14 @@ public class ZImage extends PImage {
    public static PImage copy ( final PImage source, final PImage target ) {
 
       if ( source == target ) { return target; }
-      if ( source == null ) { return ZImage.fill(0xffffffff, target); }
+
+      /*
+       * An image can have dimensions of -1, -1 when invalid. See
+       * https://processing.org/reference/loadImage_.html
+       */
+      if ( source == null || source.pixelWidth < 1 || source.pixelHeight < 1 ) {
+         return ZImage.fill(0xffffffff, target);
+      }
 
       // TODO: Extend this logic to other parts of ZImage .
       if ( target instanceof PGraphics && ( source.pixelWidth

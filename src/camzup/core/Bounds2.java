@@ -433,11 +433,12 @@ public class Bounds2 implements Comparable < Bounds2 > {
     *
     * @return the area
     *
+    * @see Bounds2#areaSigned(Bounds2)
     * @see Utils#abs(float)
     */
    public static float areaUnsigned ( final Bounds2 b ) {
 
-      return Utils.abs(b.max.x - b.min.x) * Utils.abs(b.max.y - b.min.y);
+      return Utils.abs(Bounds2.areaSigned(b));
    }
 
    /**

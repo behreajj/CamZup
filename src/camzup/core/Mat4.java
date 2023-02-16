@@ -403,8 +403,6 @@ public class Mat4 {
     * </pre>
     *
     * @return this matrix
-    *
-    * @see Mat4#identity(Mat4)
     */
    public Mat4 reset ( ) {
 
@@ -1245,6 +1243,31 @@ public class Mat4 {
    }
 
    /**
+    * Creates a reflection matrix from an axis representing a plane. The axis
+    * will be normalized by the function.
+    *
+    * @param axis   the axis
+    * @param target the output matrix
+    *
+    * @return the reflection
+    *
+    * @see Mat4#fromReflection(float, float, float, Mat4)
+    * @see Mat4#identity(Mat4)
+    */
+   public static Mat4 fromReflection ( final Vec3 axis, final Mat4 target ) {
+
+      final float ax = axis.x;
+      final float ay = axis.y;
+      final float az = axis.z;
+      final float mSq = ax * ax + ay * ay + az * az;
+      if ( mSq != 0.0f ) {
+         final float mInv = Utils.invSqrtUnchecked(mSq);
+         return Mat4.fromReflection(ax * mInv, ay * mInv, az * mInv, target);
+      }
+      return Mat4.identity(target);
+   }
+
+   /**
     * Creates a rotation matrix from an angle in radians around an axis. The
     * axis will not be checked for validity.
     *
@@ -1274,6 +1297,7 @@ public class Mat4 {
     * @return the matrix
     *
     * @see Mat4#fromRotation(float, float, float, float, float, Mat4)
+    * @see Mat4#identity(Mat4)
     */
    public static Mat4 fromRotation ( final float radians, final Vec3 axis,
       final Mat4 target ) {
@@ -1443,12 +1467,14 @@ public class Mat4 {
 
    /**
     * Creates a scale matrix from a scalar. The bottom right corner, m33, is
-    * set to 1.0 .
+    * set to 1.0 . Returns the identity if the scalar is zero.
     *
     * @param scalar the scalar
     * @param target the output matrix
     *
     * @return the matrix
+    *
+    * @see Mat4#identity(Mat4)
     */
    public static Mat4 fromScale ( final float scalar, final Mat4 target ) {
 
@@ -1456,12 +1482,13 @@ public class Mat4 {
          return target.set(scalar, 0.0f, 0.0f, 0.0f, 0.0f, scalar, 0.0f, 0.0f,
             0.0f, 0.0f, scalar, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
       }
-      return target.reset();
+      return Mat4.identity(target);
    }
 
    /**
     * Creates a scale matrix from a nonuniform scalar stored in a vector. The
-    * scale on the z axis is assumed to be 1.0 .
+    * scale on the z axis is assumed to be 1.0 . Returns the identity if the
+    * scalar is zero.
     *
     * @param scalar the nonuniform scalar
     * @param target the output matrix
@@ -1469,6 +1496,7 @@ public class Mat4 {
     * @return the matrix
     *
     * @see Vec2#all(Vec2)
+    * @see Mat4#identity(Mat4)
     */
    public static Mat4 fromScale ( final Vec2 scalar, final Mat4 target ) {
 
@@ -1476,11 +1504,12 @@ public class Mat4 {
          return target.set(scalar.x, 0.0f, 0.0f, 0.0f, 0.0f, scalar.y, 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
       }
-      return target.reset();
+      return Mat4.identity(target);
    }
 
    /**
     * Creates a scale matrix from a nonuniform scalar stored in a vector.
+    * Returns the identity if the scalar is zero.
     *
     * @param scalar the nonuniform scalar
     * @param target the output matrix
@@ -1488,6 +1517,7 @@ public class Mat4 {
     * @return the matrix
     *
     * @see Vec3#all(Vec3)
+    * @see Mat4#identity(Mat4)
     */
    public static Mat4 fromScale ( final Vec3 scalar, final Mat4 target ) {
 
@@ -1495,13 +1525,14 @@ public class Mat4 {
          return target.set(scalar.x, 0.0f, 0.0f, 0.0f, 0.0f, scalar.y, 0.0f,
             0.0f, 0.0f, 0.0f, scalar.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
       }
-      return target.reset();
+      return Mat4.identity(target);
    }
 
    /**
     * Creates skew, or shear, matrix from an angle and axes. Vectors
     * <em>a</em> and <em>b</em> are expected to be orthonormal, i.e.
-    * perpendicular and of unit length.
+    * perpendicular and of unit length. Returns the identity if the angle is
+    * divisible by pi.
     *
     * @param radians the angle in radians
     * @param a       the skew axis
@@ -1509,18 +1540,40 @@ public class Mat4 {
     * @param target  the output matrix
     *
     * @return the skew matrix
+    *
+    * @see Mat4#fromSkew(float, float, float, float, float, float, float,
+    *      Mat4)
+    * @see Mat4#identity(Mat4)
+    * @see Utils#approx(float, float)
+    * @see Utils#invSqrtUnchecked(float)
+    * @see Utils#mod(float, float)
+    * @see Utils#tan(float)
     */
    public static Mat4 fromSkew ( final float radians, final Vec3 a,
       final Vec3 b, final Mat4 target ) {
 
-      final float t = Utils.tan(radians);
-      final float tax = a.x * t;
-      final float tay = a.y * t;
-      final float taz = a.z * t;
+      if ( Utils.approx(Utils.mod(radians, IUtils.PI), 0.0f) ) {
+         return Mat4.identity(target);
+      }
 
-      return target.set(tax * b.x + 1.0f, tax * b.y, tax * b.z, 0.0f, tay * b.x,
-         tay * b.y + 1.0f, tay * b.z, 0.0f, taz * b.x, taz * b.y, taz * b.z
-            + 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      final float ax = a.x;
+      final float ay = a.y;
+      final float az = a.z;
+      final float amSq = ax * ax + ay * ay + az * az;
+      if ( amSq <= IUtils.EPSILON ) { return Mat4.identity(target); }
+
+      final float bx = b.x;
+      final float by = b.y;
+      final float bz = b.z;
+      final float bmSq = bx * bx + by * by + bz * bz;
+      if ( bmSq <= IUtils.EPSILON ) { return Mat4.identity(target); }
+
+      final float t = Utils.tan(radians);
+      final float amInv = Utils.invSqrtUnchecked(amSq);
+      final float bmInv = Utils.invSqrtUnchecked(bmSq);
+
+      return Mat4.fromSkew(t, ax * amInv, ay * amInv, az * amInv, bx * bmInv, by
+         * bmInv, bz * bmInv, target);
    }
 
    /**
@@ -1540,7 +1593,7 @@ public class Mat4 {
    public static Mat4 fromSpherical ( final float azimuth,
       final float inclination, final float radius, final Mat4 target ) {
 
-      if ( radius == 0.0f ) { return target.reset(); }
+      if ( radius == 0.0f ) { return Mat4.identity(target); }
 
       final float azimNorm = azimuth * IUtils.ONE_TAU;
       final float cosAzim = Utils.scNorm(azimNorm);
@@ -1697,12 +1750,15 @@ public class Mat4 {
    }
 
    /**
-    * Inverts the input matrix.
+    * Inverts the input matrix. Returns the identity if the matrix's
+    * determinant is zero.
     *
     * @param m      the matrix
     * @param target the output matrix
     *
     * @return the inverse
+    *
+    * @see Mat4#identity(Mat4)
     */
    public static Mat4 inverse ( final Mat4 m, final Mat4 target ) {
 
@@ -1743,8 +1799,9 @@ public class Mat4 {
             ( m.m31 * b01 - m.m30 * b03 - m.m32 * b00 ) * detInv,
             ( m.m20 * b03 - m.m21 * b01 + m.m22 * b00 ) * detInv);
       }
-      return target.reset();
       /* @formatter:on */
+
+      return Mat4.identity(target);
    }
 
    /**
@@ -2430,6 +2487,37 @@ public class Mat4 {
    }
 
    /**
+    * Creates a reflection matrix from an axis representing a plane. The axis
+    * will be normalized by the function.
+    *
+    * @param ax     the axis x
+    * @param ay     the axis y
+    * @param az     the axis z
+    * @param target the output matrix
+    *
+    * @return the reflection
+    */
+   static Mat4 fromReflection ( final float ax, final float ay, final float az,
+      final Mat4 target ) {
+
+      final float x = - ( ax + ax );
+      final float y = - ( ay + ay );
+      final float z = - ( az + az );
+
+      final float axay = x * ay;
+      final float axaz = x * az;
+      final float ayaz = y * az;
+
+      /* @formatter:off */
+      return target.set(
+         x * ax + 1.0f, axay, axaz, 0.0f,
+         axay, y * ay + 1.0f, ayaz, 0.0f,
+         axaz, ayaz, z * az + 1.0f, 0.0f,
+         0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
+   }
+
+   /**
     * Creates a rotation matrix from an angle in radians around an axis. The
     * axis will not be checked for validity.
     *
@@ -2459,6 +2547,39 @@ public class Mat4 {
          cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
          axay + sina * az, cosa + y * ay, ayaz - sina * ax, 0.0f,
          axaz - sina * ay, ayaz + sina * ax, cosa + z * az, 0.0f,
+         0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
+   }
+
+   /**
+    * Creates skew, or shear, matrix from the tangent of an angle and axes.
+    * Axes <em>a</em> and <em>b</em> are expected to be orthonormal, i.e.
+    * perpendicular and of unit length.
+    *
+    * @param t      the tangent of the angle
+    * @param ax     the skew axis x
+    * @param ay     the skew axis y
+    * @param az     the skew axis z
+    * @param bx     the perpendicular axis x
+    * @param by     the perpendicular axis y
+    * @param bz     the perpendicular axis z
+    * @param target the output matrix
+    *
+    * @return the skew matrix
+    */
+   static Mat4 fromSkew ( final float t, final float ax, final float ay,
+      final float az, final float bx, final float by, final float bz,
+      final Mat4 target ) {
+
+      final float tax = ax * t;
+      final float tay = ay * t;
+      final float taz = az * t;
+
+      /* @formatter:off */
+      return target.set(
+         tax * bx + 1.0f, tax * by, tax * bz, 0.0f,
+         tay * bx, tay * by + 1.0f, tay * bz, 0.0f,
+         taz * bx, taz * by, taz * bz + 1.0f, 0.0f,
          0.0f, 0.0f, 0.0f, 1.0f);
       /* @formatter:on */
    }

@@ -279,9 +279,9 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return this edge
     *
-    * @see Vec2#sub(Vec2, Vec2, Vec2)
-    * @see Vec2#mul(Vec2, float, Vec2)
     * @see Vec2#add(Vec2, Vec2, Vec2)
+    * @see Vec2#mul(Vec2, float, Vec2)
+    * @see Vec2#sub(Vec2, Vec2, Vec2)
     */
    public Edge2 scaleLocal ( final float scalar, final Vec2 center ) {
 
@@ -314,11 +314,11 @@ public class Edge2 implements Comparable < Edge2 > {
     *
     * @return this edge
     *
+    * @see Vec2#add(Vec2, Vec2, Vec2)
     * @see Vec2#all(Vec2)
+    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     * @see Vec2#none(Vec2)
     * @see Vec2#sub(Vec2, Vec2, Vec2)
-    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
-    * @see Vec2#add(Vec2, Vec2, Vec2)
     */
    @Experimental
    public Edge2 scaleLocal ( final Vec2 scalar, final Vec2 center ) {

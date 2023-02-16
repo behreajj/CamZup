@@ -1,5 +1,8 @@
 package camzup;
 
+import camzup.core.IUtils;
+import camzup.core.Mat4;
+
 import processing.core.PApplet;
 
 /**
@@ -49,7 +52,15 @@ public class CamZup {
     * @param args the string of arguments
     */
 
-   public static void main ( final String[] args ) {}
+   public static void main ( final String[] args ) {
+
+      // float plasticf = 1.324718f;
+      // double plasticd = 1.324717957244746d;
+      // System.out.println(plasticf);
+
+      System.out.println(Mat4.perspective(IUtils.PI, 1.0f, 0.01f, 1000.0f,
+         new Mat4()).toStringCol());
+   }
 
    /**
     * Gets the version of the library.
