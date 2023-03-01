@@ -1,1 +1,0 @@
-packageSearchIndex = [{"l":"All Packages","u":"allpackages-index.html"},{"l":"camzup"},{"l":"camzup.core"},{"l":"camzup.kotlin"},{"l":"camzup.pfriendly"}];updateSearchResults();
