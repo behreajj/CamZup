@@ -280,8 +280,7 @@ public class ZImage extends PImage {
          return target;
       }
 
-      if ( target instanceof PGraphics && ( source.pixelWidth
-         != target.pixelWidth || source.pixelHeight != target.pixelHeight ) ) {
+      if ( target instanceof PGraphics ) {
          System.err.println("Do not use PGraphics with this method.");
          return target;
       }
@@ -563,8 +562,7 @@ public class ZImage extends PImage {
    public static PImage blur ( final PImage source, final int step,
       final PImage target ) {
 
-      if ( target instanceof PGraphics && ( source.pixelWidth
-         != target.pixelWidth || source.pixelHeight != target.pixelHeight ) ) {
+      if ( target instanceof PGraphics ) {
          System.err.println("Do not use PGraphics with this method.");
          return target;
       }
@@ -704,7 +702,6 @@ public class ZImage extends PImage {
          return ZImage.fill(0xffffffff, target);
       }
 
-      // TODO: Extend this logic to other parts of ZImage .
       if ( target instanceof PGraphics && ( source.pixelWidth
          != target.pixelWidth || source.pixelHeight != target.pixelHeight ) ) {
          return ZImage.wrap(source, 0, 0, target);
@@ -777,8 +774,7 @@ public class ZImage extends PImage {
       final float ub, final TriFunction < Integer, Float, Float, Boolean > f,
       final PImage target ) {
 
-      if ( target instanceof PGraphics && ( source.pixelWidth
-         != target.pixelWidth || source.pixelHeight != target.pixelHeight ) ) {
+      if ( target instanceof PGraphics ) {
          System.err.println("Do not use PGraphics with this method.");
          return target;
       }

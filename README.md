@@ -41,7 +41,7 @@ Cam Z-Up is tested with Processing version [4.x](https://github.com/processing/p
 
 ## Getting Started
 
-For more thorough information, please refer to the documentation included with this library in the `doc` directory. For more examples, see the `examples` directory.
+For more thorough information, please refer to the documentation included within the distribution. For examples, see the `examples` directory.
 
 ### Installation
 

@@ -18,15 +18,15 @@ println(c);
 println(hex(0xff80bf40 & 0xff40ff40), Color.toHexString(c));
 println("");
 
-Color.randomRgba(rng, a);
+a.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), 1.0f);
 Color.bitNot(a, b);
 println(a);
 println(b);
 println(Color.bitOr(a, b, c));
 println("");
 
-Color.randomRgb(rng, a);
-Color.randomRgb(rng, b);
+a.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), 1.0f);
+b.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), 1.0f);
 Color.bitXor(a, b, c);
 println(a);
 println(b);

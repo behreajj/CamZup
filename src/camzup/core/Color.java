@@ -1,6 +1,5 @@
 package camzup.core;
 
-import java.util.Random;
 import java.util.regex.Pattern;
 
 /**
@@ -952,8 +951,6 @@ public class Color implements Comparable < Color > {
     * @param target the output color
     *
     * @return the color
-    *
-    * @see Color#lRgbToCieXyz(float, float, float, float, Vec4)
     */
    public static Color cieXyzTolRgb ( final float x, final float y,
       final float z, final float a, final Color target ) {
@@ -1198,26 +1195,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts an array of longs that represent colors in hexadecimal into an
-    * array of colors
-    *
-    * @param cs the colors
-    *
-    * @return the array
-    *
-    * @see Color#fromHex(long, Color)
-    */
-   public static Color[] fromHex ( final long[] cs ) {
-
-      final int len = cs.length;
-      final Color[] result = new Color[len];
-      for ( int i = 0; i < len; ++i ) {
-         result[i] = Color.fromHex(cs[i], new Color());
-      }
-      return result;
-   }
-
-   /**
     * Attempts to convert a hexadecimal String to a color. Recognized formats
     * include:
     * <ul>
@@ -1294,26 +1271,6 @@ public class Color implements Comparable < Color > {
       }
 
       return target.reset();
-   }
-
-   /**
-    * Converts an array of Strings that represent colors in hexadecimal into
-    * an array of colors
-    *
-    * @param cs the colors
-    *
-    * @return the array
-    *
-    * @see Color#fromHex(String, Color)
-    */
-   public static Color[] fromHex ( final String[] cs ) {
-
-      final int len = cs.length;
-      final Color[] result = new Color[len];
-      for ( int i = 0; i < len; ++i ) {
-         result[i] = Color.fromHex(cs[i], new Color());
-      }
-      return result;
    }
 
    /**
@@ -1398,8 +1355,6 @@ public class Color implements Comparable < Color > {
     * @param target the output vector
     *
     * @return the XYZ values.
-    *
-    * @see Color#cieXyzTolRgb(float, float, float, float, Color)
     */
    public static Vec4 lRgbToCieXyz ( final float r, final float g,
       final float b, final float a, final Vec4 target ) {
@@ -1415,8 +1370,7 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from linear RGB to
-    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
+    * Converts a color from linear RGB to standard RGB (sRGB).
     *
     * @param source the linear color
     * @param alpha  adjust the alpha channel
@@ -1518,104 +1472,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Creates a random color. Defaults to a random RGB channel.
-    *
-    * @param rng    the random number generator
-    * @param target the output color
-    *
-    * @return the color
-    */
-   public static Color random ( final Random rng, final Color target ) {
-
-      return Color.randomRgb(rng, target);
-   }
-
-   /**
-    * Creates a random color from red, green and blue channels. The alpha
-    * channel is not included.
-    *
-    * @param rng    the random number generator
-    * @param target the output color
-    *
-    * @return the color
-    *
-    * @see Random#nextFloat()
-    */
-   public static Color randomRgb ( final Random rng, final Color target ) {
-
-      return target.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(),
-         1.0f);
-   }
-
-   /**
-    * Creates a random color from a lower- and upper-bound. The alpha channel
-    * is not included.
-    *
-    * @param rng        the random number generator
-    * @param lowerBound the lower bound
-    * @param upperBound the upper bound
-    * @param target     the output color
-    *
-    * @return the color
-    *
-    * @see Random#nextFloat()
-    */
-   public static Color randomRgb ( final Random rng, final Color lowerBound,
-      final Color upperBound, final Color target ) {
-
-      final float rx = rng.nextFloat();
-      final float ry = rng.nextFloat();
-      final float rz = rng.nextFloat();
-      return target.set( ( 1.0f - rx ) * lowerBound.r + rx * upperBound.r,
-         ( 1.0f - ry ) * lowerBound.g + ry * upperBound.g, ( 1.0f - rz )
-            * lowerBound.b + rz * upperBound.b, 1.0f);
-   }
-
-   /**
-    * Creates a random color from red, green, blue and alpha channels.
-    *
-    * @param rng    the random number generator
-    * @param target the output color
-    *
-    * @return the color
-    *
-    * @see Random#nextFloat()
-    */
-   public static Color randomRgba ( final Random rng, final Color target ) {
-
-      return target.set(rng.nextFloat(), rng.nextFloat(), rng.nextFloat(), rng
-         .nextFloat());
-   }
-
-   /**
-    * Creates a random color from a lower- and upper-bound.
-    *
-    * @param rng        the random number generator
-    * @param lowerBound the lower bound
-    * @param upperBound the upper bound
-    * @param target     the output color
-    *
-    * @return the color
-    *
-    * @see Random#nextFloat()
-    */
-   public static Color randomRgba ( final Random rng, final Color lowerBound,
-      final Color upperBound, final Color target ) {
-
-      /* @formatter:off */
-      final float rx = rng.nextFloat();
-      final float ry = rng.nextFloat();
-      final float rz = rng.nextFloat();
-      final float rw = rng.nextFloat();
-      return target.set(
-         ( 1.0f - rx ) * lowerBound.r + rx * upperBound.r,
-         ( 1.0f - ry ) * lowerBound.g + ry * upperBound.g,
-         ( 1.0f - rz ) * lowerBound.b + rz * upperBound.b,
-         ( 1.0f - rw ) * lowerBound.a + rw * upperBound.a);
-      /* @formatter:on */
-   }
-
-   /**
     * Returns the color red, ( 1.0, 0.0, 0.0, 1.0 ) .
     *
     * @param target the output color
@@ -1705,9 +1561,8 @@ public class Color implements Comparable < Color > {
 
    /**
     * Returns the relative luminance of the standard RGB color, based on
-    * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients"> Rec.
-    * 709 relative luminance</a> coefficients: <code>0.2126</code> for red,
-    * <code>0.7152</code> for green and <code>0.0722</code> for blue.
+    * <a href="https://www.wikiwand.com/en/Rec._709#/Luma_coefficients">Rec.
+    * 709 relative luminance</a> coefficients.
     *
     * @param c the input color
     *
@@ -1772,9 +1627,7 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from
-    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB) to
-    * linear RGB.
+    * Converts a color from standard RGB (sRGB) to linear RGB.
     *
     * @param source the standard color
     * @param alpha  adjust the alpha channel
@@ -1879,8 +1732,8 @@ public class Color implements Comparable < Color > {
 
       final int len = arr.length;
       for ( int i = 0; i < len; ++i ) {
-         sb.append('\n');
          final Color c = arr[i];
+         sb.append('\n');
          c.toGplString(sb);
          sb.append(' ');
          sb.append(Color.toHexWeb(c).substring(1).toUpperCase());

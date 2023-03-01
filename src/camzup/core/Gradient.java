@@ -151,6 +151,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public Gradient append ( final Color color ) {
 
+      // TODO: Retest this, it doesn't seem to be working properly...
       this.compressKeysLeft(1);
       this.keys.add(new ColorKey(1.0f, color));
 

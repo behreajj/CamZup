@@ -979,15 +979,10 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       while ( itr.hasNext() ) {
          final Knot2 currKnot = itr.next();
 
-         // final Vec2 coPrev = prevKnot.coord;
          final Vec2 fhPrev = prevKnot.foreHandle;
          final Vec2 rhNext = currKnot.rearHandle;
          final Vec2 coNext = currKnot.coord;
 
-         // Vec2.subNorm(fhPrev, coPrev, dir0);
-         // Vec2.subNorm(rhNext, coNext, dir1);
-         // final float dotp = Vec2.dot(dir0, dir1);
-         // if ( dotp > -vtol && dotp < vtol ) {
          svgp.append(' ');
          svgp.append('C');
          svgp.append(' ');
@@ -996,26 +991,15 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          rhNext.toSvgString(svgp, ' ');
          svgp.append(',');
          coNext.toSvgString(svgp, ' ');
-         // } else {
-         // svgp.append(' ');
-         // svgp.append('L');
-         // svgp.append(' ');
-         // coNext.toSvgString(svgp, ' ');
-         // }
 
          prevKnot = currKnot;
       }
 
       if ( this.closedLoop ) {
-         // final Vec2 coPrev = prevKnot.coord;
          final Vec2 fhPrev = prevKnot.foreHandle;
          final Vec2 rhNext = firstKnot.rearHandle;
          final Vec2 coNext = firstKnot.coord;
 
-         // Vec2.subNorm(fhPrev, coPrev, dir0);
-         // Vec2.subNorm(rhNext, coNext, dir1);
-         // final float dotp = Vec2.dot(dir0, dir1);
-         // if ( dotp > -vtol && dotp < vtol ) {
          svgp.append(' ');
          svgp.append('C');
          svgp.append(' ');
@@ -1026,14 +1010,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          coNext.toSvgString(svgp, ' ');
          svgp.append(' ');
          svgp.append('Z');
-         // } else {
-         // svgp.append(' ');
-         // svgp.append('L');
-         // svgp.append(' ');
-         // firstKnot.coord.toSvgString(svgp, ' ');
-         // svgp.append(' ');
-         // svgp.append('Z');
-         // }
       }
 
       return svgp;

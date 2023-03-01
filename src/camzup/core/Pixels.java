@@ -1743,14 +1743,14 @@ public abstract class Pixels {
 
       /* Find truncation, floor and ceiling. */
       final int yi = ( int ) ySrc;
-      final int yf = ySrc > 0.0f ? yi : ySrc < 0.0f ? yi - 1 : 0;
+      final int yf = ySrc > 0.0f ? yi : ySrc < -0.0f ? yi - 1 : 0;
       final int yc = yf + 1;
 
       final boolean yfInBounds = yf > -1 && yf < hSrc;
       final boolean ycInBounds = yc > -1 && yc < hSrc;
 
       final int xi = ( int ) xSrc;
-      final int xf = xSrc > 0.0f ? xi : xSrc < 0.0f ? xi - 1 : 0;
+      final int xf = xSrc > 0.0f ? xi : xSrc < -0.0f ? xi - 1 : 0;
       final int xc = xf + 1;
 
       final boolean xfInBounds = xf > -1 && xf < wSrc;
