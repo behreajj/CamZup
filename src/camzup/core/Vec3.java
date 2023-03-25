@@ -2529,8 +2529,8 @@ public class Vec3 implements Comparable < Vec3 > {
       final float rp = rng.nextFloat();
       final float rr = rng.nextFloat();
       return Vec3.fromSpherical( ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI,
-         ( 1.0f - rp ) * IUtils.PI + rp * 0.0f, ( 1.0f - rr ) * rhoMin + rr
-            * rhoMax, target);
+         ( 1.0f - rp ) * -IUtils.HALF_PI + rp * IUtils.HALF_PI, ( 1.0f - rr )
+            * rhoMin + rr * rhoMax, target);
    }
 
    /**
