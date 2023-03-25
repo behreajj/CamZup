@@ -1,4 +1,5 @@
 /doc/
+/distribution/*/reference/
 
 # Log file
 *.log
