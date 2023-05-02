@@ -83,6 +83,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    protected UpOgl ( ) {
 
+      /*
+       * For issues with beginDraw, see:
+       * https://github.com/processing/processing4/issues/641
+       */
       this.bezierBasisInverse = PMatAux.bezierBasisInverse(new PMatrix3D());
       this.curveToBezierMatrix = new PMatrix3D();
    }

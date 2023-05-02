@@ -2368,6 +2368,21 @@ public class Vec3 implements Comparable < Vec3 > {
    /**
     * Projects one vector onto another.
     *
+    * @param a left operand
+    * @param b right operand
+    *
+    * @return the projection
+    *
+    * @see Vec3#projectScalar(Vec3, Vec3)
+    */
+   public static float project ( final Vec3 a, final Vec3 b ) {
+
+      return Vec3.projectScalar(a, b);
+   }
+
+   /**
+    * Projects one vector onto another.
+    *
     * @param a      left operand
     * @param b      right operand
     * @param target the output vector
@@ -2458,12 +2473,10 @@ public class Vec3 implements Comparable < Vec3 > {
     * @param target the output vector
     *
     * @return the random vector
-    *
-    * @see Vec3#randomSpherical(Random, float, float, Vec3)
     */
    public static Vec3 random ( final Random rng, final Vec3 target ) {
 
-      return Vec3.randomSpherical(rng, 1.0f, 1.0f, target);
+      return Vec3.randomSpherical(rng, target);
    }
 
    /**
@@ -2511,42 +2524,45 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Creates a vector at a random azimuth, inclination and radius.
+    * Creates a random vector that lies on a sphere. Uses 3 random numbers
+    * with normal distribution, then rescales to the sphere radius.
     *
     * @param rng    the random number generator
-    * @param rhoMin the minimum radius
-    * @param rhoMax the maximum radius
+    * @param radius the sphere radius
     * @param target the output vector
     *
     * @return the random vector
     *
-    * @see Vec3#fromSpherical(float, float, float, Vec3)
+    * @see Random#nextGaussian()
     */
-   public static Vec3 randomSpherical ( final Random rng, final float rhoMin,
-      final float rhoMax, final Vec3 target ) {
+   public static Vec3 randomSpherical ( final Random rng, final float radius,
+      final Vec3 target ) {
 
-      final float rt = rng.nextFloat();
-      final float rp = rng.nextFloat();
-      final float rr = rng.nextFloat();
-      return Vec3.fromSpherical( ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI,
-         ( 1.0f - rp ) * -IUtils.HALF_PI + rp * IUtils.HALF_PI, ( 1.0f - rr )
-            * rhoMin + rr * rhoMax, target);
+      final double x = rng.nextGaussian();
+      final double y = rng.nextGaussian();
+      final double z = rng.nextGaussian();
+      final double sqMag = x * x + y * y + z * z;
+      if ( sqMag != 0.0d ) {
+         final double invMag = radius / Math.sqrt(sqMag);
+         return target.set(( float ) ( x * invMag ), ( float ) ( y * invMag ),
+            ( float ) ( z * invMag ));
+      }
+      return target.reset();
    }
 
    /**
-    * Creates a vector with a magnitude of 1.0 at a random azimuth and
-    * inclination, such that it lies on the unit sphere.
+    * Creates a random vector that lies on the unit sphere.
     *
     * @param rng    the random number generator
     * @param target the output vector
     *
     * @return the random vector
     *
-    * @see Vec3#randomSpherical(Random, float, float, Vec3)
+    * @see Vec3#randomSpherical(Random, float, Vec3)
     */
    public static Vec3 randomSpherical ( final Random rng, final Vec3 target ) {
 
-      return Vec3.randomSpherical(rng, 1.0f, 1.0f, target);
+      return Vec3.randomSpherical(rng, 1.0f, target);
    }
 
    /**
@@ -3163,15 +3179,23 @@ public class Vec3 implements Comparable < Vec3 > {
       final int layers, final float lbx, final float lby, final float lbz,
       final float ubx, final float uby, final float ubz ) {
 
-      final int lVal = layers < 2 ? 2 : layers;
-      final int rVal = rows < 2 ? 2 : rows;
-      final int cVal = cols < 2 ? 2 : cols;
+      final int lVal = layers < 1 ? 1 : layers;
+      final int rVal = rows < 1 ? 1 : rows;
+      final int cVal = cols < 1 ? 1 : cols;
 
       final Vec3[][][] result = new Vec3[lVal][rVal][cVal];
 
-      final float hToStep = 1.0f / ( lVal - 1.0f );
-      final float iToStep = 1.0f / ( rVal - 1.0f );
-      final float jToStep = 1.0f / ( cVal - 1.0f );
+      final boolean lOne = lVal == 1;
+      final boolean rOne = rVal == 1;
+      final boolean cOne = cVal == 1;
+
+      final float hToStep = lOne ? 0.0f : 1.0f / ( lVal - 1.0f );
+      final float iToStep = rOne ? 0.0f : 1.0f / ( rVal - 1.0f );
+      final float jToStep = cOne ? 0.0f : 1.0f / ( cVal - 1.0f );
+
+      final float hOff = lOne ? 0.5f : 0.0f;
+      final float iOff = rOne ? 0.5f : 0.0f;
+      final float jOff = cOne ? 0.5f : 0.0f;
 
       final int rcVal = rVal * cVal;
       final int len = lVal * rcVal;
@@ -3181,9 +3205,9 @@ public class Vec3 implements Comparable < Vec3 > {
          final int i = m / cVal;
          final int j = m % cVal;
 
-         final float hStep = h * hToStep;
-         final float iStep = i * iToStep;
-         final float jStep = j * jToStep;
+         final float hStep = h * hToStep + hOff;
+         final float iStep = i * iToStep + iOff;
+         final float jStep = j * jToStep + jOff;
 
          result[h][i][j] = new Vec3( ( 1.0f - jStep ) * lbx + jStep * ubx,
             ( 1.0f - iStep ) * lby + iStep * uby, ( 1.0f - hStep ) * lbz + hStep

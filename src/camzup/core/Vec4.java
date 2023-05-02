@@ -2221,17 +2221,27 @@ public class Vec4 implements Comparable < Vec4 > {
       final float lbz, final float lbw, final float ubx, final float uby,
       final float ubz, final float ubw ) {
 
-      final int sVal = strata < 2 ? 2 : strata;
-      final int lVal = layers < 2 ? 2 : layers;
-      final int rVal = rows < 2 ? 2 : rows;
-      final int cVal = cols < 2 ? 2 : cols;
+      final int sVal = strata < 1 ? 1 : strata;
+      final int lVal = layers < 1 ? 1 : layers;
+      final int rVal = rows < 1 ? 1 : rows;
+      final int cVal = cols < 1 ? 1 : cols;
 
       final Vec4[][][][] result = new Vec4[sVal][lVal][rVal][cVal];
 
-      final float gToStep = 1.0f / ( sVal - 1.0f );
-      final float hToStep = 1.0f / ( lVal - 1.0f );
-      final float iToStep = 1.0f / ( rVal - 1.0f );
-      final float jToStep = 1.0f / ( cVal - 1.0f );
+      final boolean sOne = sVal == 1;
+      final boolean lOne = lVal == 1;
+      final boolean rOne = rVal == 1;
+      final boolean cOne = cVal == 1;
+
+      final float gToStep = sOne ? 0.0f : 1.0f / ( sVal - 1.0f );
+      final float hToStep = lOne ? 0.0f : 1.0f / ( lVal - 1.0f );
+      final float iToStep = rOne ? 0.0f : 1.0f / ( rVal - 1.0f );
+      final float jToStep = cOne ? 0.0f : 1.0f / ( cVal - 1.0f );
+
+      final float gOff = sOne ? 0.5f : 0.0f;
+      final float hOff = lOne ? 0.5f : 0.0f;
+      final float iOff = rOne ? 0.5f : 0.0f;
+      final float jOff = cOne ? 0.5f : 0.0f;
 
       final int rcVal = rVal * cVal;
       final int lrcVal = lVal * rcVal;
@@ -2244,10 +2254,10 @@ public class Vec4 implements Comparable < Vec4 > {
          final int i = n / cVal;
          final int j = n % cVal;
 
-         final float gStep = g * gToStep;
-         final float hStep = h * hToStep;
-         final float iStep = i * iToStep;
-         final float jStep = j * jToStep;
+         final float gStep = g * gToStep + gOff;
+         final float hStep = h * hToStep + hOff;
+         final float iStep = i * iToStep + iOff;
+         final float jStep = j * jToStep + jOff;
 
          result[g][h][i][j] = new Vec4( ( 1.0f - jStep ) * lbx + jStep * ubx,
             ( 1.0f - iStep ) * lby + iStep * uby, ( 1.0f - hStep ) * lbz + hStep

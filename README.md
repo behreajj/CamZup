@@ -147,7 +147,7 @@ In OpenGL renderers, texture coordinates default to `NORMAL` [textureMode](https
 
 ### Color
 
-I am not a color scientist, nor do I pretend to be. Color is not the central focus of this library and I'm not interested in debating the "correct" way to mix it. Do not use this library for advanced or photorealistic color work. However, vanilla Processing's approach to color can't not be addressed, so I've introduced enough to allow users to get the job done, namely an RGBA `Color` and `Gradient` class.
+I am not versed in color science, nor do I pretend to be. However, vanilla Processing's approach to color can't not be addressed, so I've introduced enough to allow users to get the job done, namely an RGBA `Color` and `Gradient` class. Color is not the central focus of this library and I'm not interested in debating the "correct" way to mix it. Do not use this library for advanced or photorealistic color work.
 
 #### Palettes
 

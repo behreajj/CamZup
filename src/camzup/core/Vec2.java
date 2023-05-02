@@ -2081,6 +2081,21 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * Projects one vector onto another.
     *
+    * @param a left operand
+    * @param b right operand
+    *
+    * @return the projection
+    *
+    * @see Vec2#projectScalar(Vec2, Vec2)
+    */
+   public static float project ( final Vec2 a, final Vec2 b ) {
+
+      return Vec2.projectScalar(a, b);
+   }
+
+   /**
+    * Projects one vector onto another.
+    *
     * @param a      left operand
     * @param b      right operand
     * @param target the output vector
@@ -2092,10 +2107,6 @@ public class Vec2 implements Comparable < Vec2 > {
    public static Vec2 project ( final Vec2 a, final Vec2 b,
       final Vec2 target ) {
 
-      // TODO: Simplify this and Vec3 version -- if there is
-      // a target parameter, projectVector is inferred, if not,
-      // projectScalar is inferred... Or make a second project
-      // alias with no target.
       return Vec2.projectVector(a, b, target);
    }
 
@@ -2172,11 +2183,11 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the random vector
     *
-    * @see Vec2#randomPolar(Random, float, float, Vec2)
+    * @see Vec2#randomPolar(Random, float, Vec2)
     */
    public static Vec2 random ( final Random rng, final Vec2 target ) {
 
-      return Vec2.randomPolar(rng, 1.0f, 1.0f, target);
+      return Vec2.randomPolar(rng, target);
    }
 
    /**
@@ -2220,24 +2231,28 @@ public class Vec2 implements Comparable < Vec2 > {
    }
 
    /**
-    * Creates a vector at a random heading and radius.
+    * Creates a random vector that lies on a circle. Uses 2 random numbers
+    * with normal distribution, then rescales to the sphere radius.
     *
     * @param rng    the random number generator
-    * @param rhoMin the minimum radius
-    * @param rhoMax the maximum radius
+    * @param radius the radius
     * @param target the output vector
     *
     * @return the random vector
     *
-    * @see Vec2#fromPolar(float, float, Vec2)
+    * @see Random#nextGaussian()
     */
-   public static Vec2 randomPolar ( final Random rng, final float rhoMin,
-      final float rhoMax, final Vec2 target ) {
+   public static Vec2 randomPolar ( final Random rng, final float radius,
+      final Vec2 target ) {
 
-      final float rt = rng.nextFloat();
-      final float rr = rng.nextFloat();
-      return Vec2.fromPolar( ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI, ( 1.0f
-         - rr ) * rhoMin + rr * rhoMax, target);
+      final double x = rng.nextGaussian();
+      final double y = rng.nextGaussian();
+      final double sqMag = x * x + y * y;
+      if ( sqMag != 0.0d ) {
+         final double invMag = radius / Math.sqrt(sqMag);
+         return target.set(( float ) ( x * invMag ), ( float ) ( y * invMag ));
+      }
+      return target.reset();
    }
 
    /**
@@ -2249,11 +2264,11 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the random vector
     *
-    * @see Vec2#randomPolar(Random, float, float, Vec2)
+    * @see Vec2#randomPolar(Random, float, Vec2)
     */
    public static Vec2 randomPolar ( final Random rng, final Vec2 target ) {
 
-      return Vec2.randomPolar(rng, 1.0f, 1.0f, target);
+      return Vec2.randomPolar(rng, 1.0f, target);
    }
 
    /**
@@ -2713,21 +2728,27 @@ public class Vec2 implements Comparable < Vec2 > {
    protected static Vec2[][] grid ( final int cols, final int rows,
       final float lbx, final float lby, final float ubx, final float uby ) {
 
-      final int rVal = rows < 2 ? 2 : rows;
-      final int cVal = cols < 2 ? 2 : cols;
+      final int rVal = rows < 1 ? 1 : rows;
+      final int cVal = cols < 1 ? 1 : cols;
 
       final Vec2[][] result = new Vec2[rVal][cVal];
 
-      final float iToStep = 1.0f / ( rVal - 1.0f );
-      final float jToStep = 1.0f / ( cVal - 1.0f );
+      final boolean rOne = rVal == 1;
+      final boolean cOne = cVal == 1;
+
+      final float iToStep = rOne ? 0.0f : 1.0f / ( rVal - 1.0f );
+      final float jToStep = cOne ? 0.0f : 1.0f / ( cVal - 1.0f );
+
+      final float iOff = rOne ? 0.5f : 0.0f;
+      final float jOff = cOne ? 0.5f : 0.0f;
 
       final int len = rVal * cVal;
       for ( int k = 0; k < len; ++k ) {
          final int i = k / cVal;
          final int j = k % cVal;
 
-         final float iStep = i * iToStep;
-         final float jStep = j * jToStep;
+         final float iStep = i * iToStep + iOff;
+         final float jStep = j * jToStep + jOff;
 
          result[i][j] = new Vec2( ( 1.0f - jStep ) * lbx + jStep * ubx, ( 1.0f
             - iStep ) * lby + iStep * uby);

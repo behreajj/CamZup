@@ -211,6 +211,9 @@ public abstract class ParserSvg {
       final float minor, final float ang, final boolean largeArc,
       final boolean sweep, final float xDest, final float yDest ) {
 
+      // See
+      // https://mortoray.com/rendering-an-svg-elliptical-arc-as-bezier-curves/
+
       if ( Utils.approx(prior.coord.x, xDest) && Utils.approx(prior.coord.y,
          yDest) || major < IUtils.EPSILON || minor < IUtils.EPSILON ) {
          return new Knot2[] { new Knot2(xDest, yDest) };

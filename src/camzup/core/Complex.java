@@ -894,21 +894,38 @@ public class Complex implements Comparable < Complex > {
     * Creates a random complex number.
     *
     * @param rng    the random number generator
-    * @param rMin   the radius minimum
-    * @param rMax   the radius maximum
     * @param target the output complex number
     *
     * @return the random complex number
     *
-    * @see Complex#rect(float, float, Complex)
+    * @see Complex#random(Random, float, Complex)
     */
-   public static Complex random ( final Random rng, final float rMin,
-      final float rMax, final Complex target ) {
+   public static Complex random ( final Random rng, final Complex target ) {
 
-      final float rt = rng.nextFloat();
-      final float rr = rng.nextFloat();
-      return Complex.rect( ( 1.0f - rt ) * -IUtils.PI + rt * IUtils.PI, ( 1.0f
-         - rr ) * rMin + rr * rMax, target);
+      return Complex.random(rng, 1.0f, target);
+   }
+
+   /**
+    * Creates a random complex number.
+    *
+    * @param rng    the random number generator
+    * @param radius the radius
+    * @param target the output complex number
+    *
+    * @return the random complex number
+    */
+   public static Complex random ( final Random rng, final float radius,
+      final Complex target ) {
+
+      final double zr = rng.nextGaussian();
+      final double zi = rng.nextGaussian();
+      final double abSq = zr * zr + zi * zi;
+      if ( abSq != 0.0d ) {
+         final double absInv = radius / Math.sqrt(abSq);
+         return target.set(( float ) ( zr * absInv ), ( float ) ( zi
+            * absInv ));
+      }
+      return target.reset();
    }
 
    /**
@@ -1049,21 +1066,27 @@ public class Complex implements Comparable < Complex > {
    protected static Complex[][] grid ( final int cols, final int rows,
       final float lbr, final float lbi, final float ubr, final float ubi ) {
 
-      final int rVal = rows < 2 ? 2 : rows;
-      final int cVal = cols < 2 ? 2 : cols;
+      final int rVal = rows < 1 ? 1 : rows;
+      final int cVal = cols < 1 ? 1 : cols;
 
       final Complex[][] result = new Complex[rVal][cVal];
 
-      final float iToStep = 1.0f / ( rVal - 1.0f );
-      final float jToStep = 1.0f / ( cVal - 1.0f );
+      final boolean rOne = rVal == 1;
+      final boolean cOne = cVal == 1;
+
+      final float iToStep = rOne ? 0.0f : 1.0f / ( rVal - 1.0f );
+      final float jToStep = cOne ? 0.0f : 1.0f / ( cVal - 1.0f );
+
+      final float iOff = rOne ? 0.5f : 0.0f;
+      final float jOff = cOne ? 0.5f : 0.0f;
 
       final int len = rVal * cVal;
       for ( int k = 0; k < len; ++k ) {
          final int i = k / cVal;
          final int j = k % cVal;
 
-         final float iStep = i * iToStep;
-         final float jStep = j * jToStep;
+         final float iStep = i * iToStep + iOff;
+         final float jStep = j * jToStep + jOff;
 
          result[i][j] = new Complex( ( 1.0f - jStep ) * lbr + jStep * ubr,
             ( 1.0f - iStep ) * lbi + iStep * ubi);
