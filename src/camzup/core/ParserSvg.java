@@ -1253,8 +1253,8 @@ public abstract class ParserSvg {
    }
 
    /**
-    * Parses a SVG node and returns a Curve2 representing a rectangle. Only
-    * Support for corner rounding is limited.
+    * Parses a SVG node and returns a Curve2 representing a rectangle. Support
+    * for corner rounding is limited.
     *
     * @param rectNode the rectangle node
     * @param target   the output curve

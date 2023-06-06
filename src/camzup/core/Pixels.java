@@ -2910,7 +2910,7 @@ public abstract class Pixels {
                @Override
                public Float apply ( final Float x ) {
 
-                  if ( x <= 0.0f || x >= 1.0f ) { return 0.0f; }
+                  if ( x <= 0.0f || x >= 1.0f ) { return 1.0f; }
                   final float y = Utils.abs(1.0f - 2.0f * x);
                   return y * y * ( 3.0f - 2.0f * y );
                }
