@@ -10,6 +10,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.function.IntFunction;
 
 import camzup.core.Utils.TriFunction;
@@ -24,11 +25,27 @@ public abstract class Pixels {
    /**
     * Discourage overriding with a private constructor.
     */
-   private Pixels ( ) {
+   private Pixels ( ) {}
 
-      // QUERY: Separate RGB function?
-      // QUERY: Quantize color?
-   }
+   /**
+    * A flag to target colors in an image with greater than 66.67% lightness.
+    * May be composited with {@link Pixels#SHADOWS} or
+    * {@link Pixels#MIDTONES}.
+    */
+   public static final int HIGHLIGHTS = 0b0100;
+
+   /**
+    * A flag to target colors in an image with between 33.33% and 66.67%
+    * lightness. May be composited with {@link Pixels#SHADOWS} or
+    * {@link Pixels#HIGHLIGHTS}.
+    */
+   public static final int MIDTONES = 0b0010;
+
+   /**
+    * A flag to target colors in an image with less than 33.33% lightness. May
+    * be composited with {@link Pixels#MIDTONES} or {@link Pixels#HIGHLIGHTS}.
+    */
+   public static final int SHADOWS = 0b0001;
 
    /**
     * Look up table for converting colors from linear to standard RGB.
@@ -1067,6 +1084,7 @@ public abstract class Pixels {
          final int y = i / cw;
          final int bxs = x - bxd;
          final int bys = y - byd;
+         int trgHex = 0x00000000;
          if ( bys > -1 && bys < bh && bxs > -1 && bxs < bw ) {
             final int hexOvr = bPixels[bxs + bys * bw];
             final int aOvr = hexOvr >> 0x18 & 0xff;
@@ -1078,19 +1096,12 @@ public abstract class Pixels {
                   final int aUdr = hexUdr >> 0x18 & 0xff;
                   if ( aUdr > 0 ) {
                      final int aTrg = aOvr * aUdr / 0xff;
-                     target[i] = aTrg << 0x18 | hexUdr & 0x00ffffff;
-                  } else {
-                     target[i] = 0x00000000;
+                     trgHex = aTrg << 0x18 | hexUdr & 0x00ffffff;
                   }
-               } else {
-                  target[i] = 0x00000000;
                }
-            } else {
-               target[i] = 0x00000000;
             }
-         } else {
-            target[i] = 0x00000000;
          }
+         target[i] = trgHex;
       }
 
       if ( dim != null ) { dim.set(cw, ch); }
@@ -2260,12 +2271,17 @@ public abstract class Pixels {
    }
 
    /**
-    * Mixes an image with a color in CIE LAB according to a factor.
+    * Tints an image with a color in CIE LAB according to a factor. If the
+    * preserveLight flag is true, the source image's original lightness is
+    * retained. The image's {@link Pixels#SHADOWS}, {@link Pixels#MIDTONES}
+    * and/or {@link Pixels#HIGHLIGHTS} may be targeted with an integer flag.
     *
-    * @param source the source pixels
-    * @param tint   the tint color
-    * @param fac    the factor
-    * @param target the target pixels
+    * @param source        the source pixels
+    * @param tint          the tint color
+    * @param fac           the factor
+    * @param preserveLight the preserve light flag
+    * @param toneFlag      the tone flags
+    * @param target        the target pixels
     *
     * @return the tinted pixels
     *
@@ -2273,9 +2289,11 @@ public abstract class Pixels {
     * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
     * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
     * @see Color#toHexIntSat(Color)
+    * @see Pixels#toneFlagToResponse(int)
     */
    public static int[] tintLab ( final int[] source, final int tint,
-      final float fac, final int[] target ) {
+      final float fac, final boolean preserveLight, final int toneFlag,
+      final int[] target ) {
 
       final int srcLen = source.length;
       if ( srcLen == target.length ) {
@@ -2284,68 +2302,47 @@ public abstract class Pixels {
             return target;
          }
 
-         if ( fac >= 1.0f ) {
-            final int tintNoAlpha = tint & 0x00ffffff;
-            for ( int i = 0; i < srcLen; ++i ) {
-               final int alphaMasked = source[i] & 0xff000000;
-               if ( alphaMasked != 0 ) {
-                  target[i] = alphaMasked | tintNoAlpha;
-               } else {
-                  target[i] = 0x00000000;
-               }
-            }
-            return target;
-         }
-
-         // QUERY: Could make a version of this method that accepts a Vec4 lab
-         // color to skip this step. Problem would be if you ever switch from
-         // CIE LAB to SR LAB 2.
-         final Vec4 dest = new Vec4();
-         Color.sRgbToCieLab(Color.fromHex(tint, new Color()), dest, new Vec4(),
-            new Color());
-
-         final float u = 1.0f - fac;
-         final float tdx = fac * dest.x;
-         final float tdy = fac * dest.y;
-         final float tdz = fac * dest.z;
+         final float facVrf = fac >= 1.0f ? 1.0f : fac;
+         final Function < Float, Float > response = Pixels.toneFlagToResponse(
+            toneFlag);
 
          final Color srgb = new Color();
          final Color lrgb = new Color();
          final Vec4 xyz = new Vec4();
-         final Vec4 origin = new Vec4();
-         final Vec4 mix = new Vec4();
+         final Vec4 srcLab = new Vec4();
+         final Vec4 mixLab = new Vec4();
+         final Vec4 tintLab = new Vec4();
+
+         /* Convert tint from integer to LAB. Decompose to loose floats. */
+         Color.sRgbToCieLab(Color.fromHex(tint, srgb), tintLab, xyz, lrgb);
+         final float lTint = tintLab.z;
+         final float aTint = tintLab.x;
+         final float bTint = tintLab.y;
 
          final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
-
          for ( int i = 0; i < srcLen; ++i ) {
             final int srgbKeyInt = source[i];
-            if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
-               final Integer srgbKeyObj = 0xff000000 | srgbKeyInt;
-               if ( !dict.containsKey(srgbKeyObj) ) {
-                  Color.fromHex(srgbKeyInt, srgb);
-                  Color.sRgbToCieLab(srgb, origin, xyz, lrgb);
+            final Integer srgbKeyObj = srgbKeyInt;
+            if ( dict.containsKey(srgbKeyObj) ) {
+               target[i] = dict.get(srgbKeyObj);
+            } else if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
+               Color.fromHex(srgbKeyInt, srgb);
+               Color.sRgbToCieLab(srgb, srcLab, xyz, lrgb);
 
-                  mix.set(u * origin.x + tdx, u * origin.y + tdy, u * origin.z
-                     + tdz, 1.0f);
+               final float lOrig = srcLab.z;
+               final float t = facVrf * response.apply(lOrig * 0.01f);
+               final float u = 1.0f - t;
+               mixLab.set(u * srcLab.x + t * aTint, u * srcLab.y + t * bTint,
+                  preserveLight ? lOrig : u * lOrig + t * lTint, srcLab.w);
 
-                  Color.cieLabTosRgb(mix, srgb, lrgb, xyz);
-                  dict.put(srgbKeyObj, 0x00ffffff & Color.toHexIntSat(srgb));
-               }
+               Color.cieLabTosRgb(mixLab, srgb, lrgb, xyz);
+               final int trgHex = Color.toHexIntSat(srgb);
+               target[i] = trgHex;
+               dict.put(srgbKeyObj, trgHex);
+            } else {
+               target[i] = 0;
+               dict.put(srgbKeyObj, 0);
             }
-         }
-
-         if ( dict.size() > 0 ) {
-            for ( int i = 0; i < srcLen; ++i ) {
-               final int srgbKeyInt = source[i];
-               final Integer srgbKeyObj = 0xff000000 | srgbKeyInt;
-               if ( dict.containsKey(srgbKeyObj) ) {
-                  target[i] = srgbKeyInt & 0xff000000 | dict.get(srgbKeyObj);
-               } else {
-                  target[i] = 0x00000000;
-               }
-            }
-         } else {
-            for ( int i = 0; i < srcLen; ++i ) { target[i] = 0x00000000; }
          }
       }
 
@@ -2842,6 +2839,116 @@ public abstract class Pixels {
       }
 
       return target;
+   }
+
+   /**
+    * Converts an integer flag indicating which portion of an image to target
+    * into a response function.
+    *
+    * @param toneFlag tone flag
+    *
+    * @return response function
+    */
+   protected static Function < Float, Float > toneFlagToResponse (
+      final int toneFlag ) {
+
+      switch ( toneFlag ) {
+
+         case Pixels.SHADOWS:
+            return new Function <>() {
+               @Override
+               public Float apply ( final Float x ) {
+
+                  if ( x <= 0.0f ) { return 1.0f; }
+                  if ( x >= 0.5f ) { return 0.0f; }
+                  final float y = 1.0f - 2.0f * x;
+                  return y * y * ( 3.0f - 2.0f * y );
+               }
+
+            };
+
+         case Pixels.MIDTONES:
+            return new Function <>() {
+               @Override
+               public Float apply ( final Float x ) {
+
+                  if ( x <= 0.0f || x >= 1.0f ) { return 0.0f; }
+                  final float y = Utils.abs(2.0f * x - 1.0f);
+                  return 1.0f - y * y * ( 3.0f - 2.0f * y );
+               }
+
+            };
+
+         case Pixels.HIGHLIGHTS:
+            return new Function <>() {
+               @Override
+               public Float apply ( final Float x ) {
+
+                  if ( x <= 0.5f ) { return 0.0f; }
+                  if ( x >= 1.0f ) { return 1.0f; }
+                  final float y = 2.0f * x - 1.0f;
+                  return y * y * ( 3.0f - 2.0f * y );
+               }
+
+            };
+
+         case Pixels.SHADOWS | Pixels.MIDTONES:
+            return new Function <>() {
+               @Override
+               public Float apply ( final Float x ) {
+
+                  if ( x <= 0.0f ) { return 1.0f; }
+                  if ( x >= 0.75f ) { return 0.0f; }
+                  final float y = 1.0f - IUtils.FOUR_THIRDS * x;
+                  return y * y * ( 3.0f - 2.0f * y );
+               }
+
+            };
+
+         case Pixels.SHADOWS | Pixels.HIGHLIGHTS:
+            return new Function <>() {
+               @Override
+               public Float apply ( final Float x ) {
+
+                  if ( x <= 0.0f || x >= 1.0f ) { return 0.0f; }
+                  final float y = Utils.abs(1.0f - 2.0f * x);
+                  return y * y * ( 3.0f - 2.0f * y );
+               }
+
+            };
+
+         case Pixels.MIDTONES | Pixels.HIGHLIGHTS:
+            return new Function <>() {
+               @Override
+               public Float apply ( final Float x ) {
+
+                  if ( x <= 0.25f ) { return 0.0f; }
+                  if ( x >= 1.0f ) { return 1.0f; }
+                  final float y = IUtils.FOUR_THIRDS * x - IUtils.ONE_THIRD;
+                  return y * y * ( 3.0f - 2.0f * y );
+               }
+
+            };
+
+         case Pixels.SHADOWS | Pixels.MIDTONES | Pixels.HIGHLIGHTS:
+            return new Function <>() {
+               @Override
+               public Float apply ( final Float x ) {
+
+                  if ( x <= 0.0f ) { return 0.0f; }
+                  if ( x >= 1.0f ) { return 1.0f; }
+                  return x * x * ( 3.0f - 2.0f * x );
+               }
+
+            };
+
+         default:
+            return new Function <>() {
+               @Override
+               public Float apply ( final Float x ) { return 1.0f; }
+
+            };
+      }
    }
 
    /**

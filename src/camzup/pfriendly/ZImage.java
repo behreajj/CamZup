@@ -38,6 +38,10 @@ public class ZImage extends PImage {
     */
    public ZImage ( final int width, final int height ) {
 
+      // TODO: protected instance method blurARGB errors if r is too great at
+      // https://github.com/processing/processing4/blob/main/core/src/processing/core/PImage.java#L1318
+      // See https://github.com/processing/processing4/issues/723 .
+
       super(width, height);
    }
 
@@ -2960,8 +2964,53 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Tints an image to a color by a factor. The image's alpha channel is
-    * converted to a factor to mix the colors.
+    * Tints an image to a color by a factor. If the preserveLight flag is
+    * true, the source image's original lightness is retained. The image's
+    * {@link Pixels#SHADOWS}, {@link Pixels#MIDTONES} and/or
+    * {@link Pixels#HIGHLIGHTS} may be targeted with an integer flag.
+    *
+    * @param source        the source image
+    * @param tint          the tint color
+    * @param fac           the factor
+    * @param preserveLight the preserve light flag
+    * @param toneFlag      the tone flags
+    * @param target        the target image
+    *
+    * @return the tinted image
+    *
+    * @see Color#toHexIntSat(Color)
+    */
+   public static PImage tint ( final PImage source, final Color tint,
+      final float fac, final boolean preserveLight, final int toneFlag,
+      final PImage target ) {
+
+      return ZImage.tint(source, Color.toHexIntSat(tint), fac, preserveLight,
+         toneFlag, target);
+   }
+
+   /**
+    * Tints an image to a color by a factor. If the preserveLight flag is
+    * true, the source image's original lightness is retained.
+    *
+    * @param source        the source image
+    * @param tint          the tint color
+    * @param fac           the factor
+    * @param preserveLight the preserve light flag
+    * @param target        the target image
+    *
+    * @return the tinted image
+    *
+    * @see Color#toHexIntSat(Color)
+    */
+   public static PImage tint ( final PImage source, final Color tint,
+      final float fac, final boolean preserveLight, final PImage target ) {
+
+      return ZImage.tint(source, Color.toHexIntSat(tint), fac, preserveLight,
+         target);
+   }
+
+   /**
+    * Tints an image to a color by a factor.
     *
     * @param source the source image
     * @param tint   the tint color
@@ -2979,8 +3028,7 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Tints an image to a color. The image's alpha channel is converted to a
-    * factor to mix the colors.
+    * Tints an image to a color.
     *
     * @param source the source image
     * @param tint   the tint color
@@ -2997,24 +3045,31 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Tints an image to a color by a factor.
+    * Tints an image to a color by a factor. If the preserveLight flag is
+    * true, the source image's original lightness is retained. The image's
+    * {@link Pixels#SHADOWS}, {@link Pixels#MIDTONES} and/or
+    * {@link Pixels#HIGHLIGHTS} may be targeted with an integer flag.
     *
-    * @param source the source image
-    * @param tint   the tint color
-    * @param fac    the factor
-    * @param target the target image
+    * @param source        the source image
+    * @param tint          the tint color
+    * @param fac           the factor
+    * @param preserveLight the preserve light flag
+    * @param toneFlag      the tone flags
+    * @param target        the target image
     *
     * @return the tinted image
     */
    public static PImage tint ( final PImage source, final int tint,
-      final float fac, final PImage target ) {
+      final float fac, final boolean preserveLight, final int toneFlag,
+      final PImage target ) {
 
       final int valTint = source.format == PConstants.RGB ? 0xff000000 | tint
          : tint;
 
       if ( source == target ) {
          target.loadPixels();
-         Pixels.tintLab(target.pixels, valTint, fac, target.pixels);
+         Pixels.tintLab(target.pixels, valTint, fac, preserveLight, toneFlag,
+            target.pixels);
          target.updatePixels();
          return target;
       }
@@ -3027,8 +3082,8 @@ public class ZImage extends PImage {
       source.loadPixels();
       target.loadPixels();
       final int[] pxSrc = source.pixels;
-      target.pixels = Pixels.tintLab(pxSrc, valTint, fac,
-         new int[pxSrc.length]);
+      target.pixels = Pixels.tintLab(pxSrc, valTint, fac, preserveLight,
+         toneFlag, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = source.pixelWidth;
@@ -3041,8 +3096,41 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Tints an image to a color by a factor. The image's alpha channel is
-    * converted to a factor to mix the colors.
+    * Tints an image to a color by a factor. If the preserveLight flag is
+    * true, the source image's original lightness is retained.
+    *
+    * @param source        the source image
+    * @param tint          the tint color
+    * @param fac           the factor
+    * @param preserveLight the preserve light flag
+    * @param target        the target image
+    *
+    * @return the tinted image
+    */
+   public static PImage tint ( final PImage source, final int tint,
+      final float fac, final boolean preserveLight, final PImage target ) {
+
+      return ZImage.tint(source, tint, fac, preserveLight, 0, target);
+   }
+
+   /**
+    * Tints an image to a color by a factor.
+    *
+    * @param source the source image
+    * @param tint   the tint color
+    * @param fac    the factor
+    * @param target the target image
+    *
+    * @return the tinted image
+    */
+   public static PImage tint ( final PImage source, final int tint,
+      final float fac, final PImage target ) {
+
+      return ZImage.tint(source, tint, fac, true, target);
+   }
+
+   /**
+    * Tints an image to a color.
     *
     * @param source the source image
     * @param tint   the tint color
@@ -3053,9 +3141,7 @@ public class ZImage extends PImage {
    public static PImage tint ( final PImage source, final int tint,
       final PImage target ) {
 
-      final int a255 = tint >> 0x18 & 0xff;
-      final float fac = a255 * IUtils.ONE_255;
-      return ZImage.tint(source, 0xff000000 | tint, fac, target);
+      return ZImage.tint(source, tint, 0.5f, target);
    }
 
    /**

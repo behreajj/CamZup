@@ -70,7 +70,7 @@ public abstract class Convert {
       final CurveEntity2 target ) {
 
       target.reset();
-      target.appendAll(Convert.toCurve2(source, new ArrayList < Curve2 >()));
+      target.appendAll(Convert.toCurve2(source, new ArrayList <>()));
       target.name = Convert.getPShapeName(source);
       return target;
    }
@@ -137,7 +137,7 @@ public abstract class Convert {
       final MeshEntity3 target ) {
 
       target.reset();
-      target.appendAll(Convert.toMesh3(source, new ArrayList < Mesh3 >()));
+      target.appendAll(Convert.toMesh3(source, new ArrayList <>()));
       target.name = Convert.getPShapeName(source);
       return target;
    }
