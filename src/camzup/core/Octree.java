@@ -8,7 +8,7 @@ import java.util.TreeSet;
 
 /**
  * Partitions space to improve collision and intersection tests. An octree
- * node holds a list of points up to a given capacity; when that capacity
+ * node holds a list of points up to a given capacity. When that capacity
  * is exceeded, the node is split into eight children nodes (octants) and
  * its list of points is emptied into them. The octants are indexed in an
  * array as follows:
@@ -641,14 +641,8 @@ public class Octree {
          this.children[Octree.FRONT_NORTH_WEST].bounds,
          this.children[Octree.FRONT_NORTH_EAST].bounds);
 
-      /*
-       * Pass on points to children. Begin search for the appropriate child node
-       * at the index where the previous point was inserted.
-       */
-      final Iterator < Vec3 > itr = this.points.iterator();
       int idxOffset = 0;
-      while ( itr.hasNext() ) {
-         final Vec3 v = itr.next();
+      for ( final Vec3 v : this.points ) {
          boolean found = false;
          for ( int j = 0; !found && j < Octree.CHILD_COUNT; ++j ) {
             final int k = ( idxOffset + j ) % Octree.CHILD_COUNT;
@@ -686,7 +680,6 @@ public class Octree {
             itr.next().toString(sb, places);
             if ( itr.hasNext() ) { sb.append(',').append(' '); }
          }
-         sb.append(' ').append(']');
       } else {
          sb.append(", children: [ ");
          for ( int i = 0; i < Octree.CHILD_COUNT - 1; ++i ) {
@@ -705,9 +698,8 @@ public class Octree {
          } else {
             sb.append("null");
          }
-
-         sb.append(' ').append(']');
       }
+      sb.append(' ').append(']');
 
       sb.append(' ').append('}');
       return sb;
@@ -889,13 +881,11 @@ public class Octree {
 
       if ( isLeaf ) {
          final int ptsLen = o.points.size();
-         final Iterator < Vec3 > ptsItr = o.points.iterator();
          if ( ptsLen > 1 ) {
             float xSum = 0.0f;
             float ySum = 0.0f;
             float zSum = 0.0f;
-            while ( ptsItr.hasNext() ) {
-               final Vec3 pt = ptsItr.next();
+            for ( final Vec3 pt : o.points ) {
                xSum += pt.x;
                ySum += pt.y;
                zSum += pt.z;
@@ -903,7 +893,7 @@ public class Octree {
             final float dn = 1.0f / ptsLen;
             target.add(new Vec3(xSum * dn, ySum * dn, zSum * dn));
          } else if ( ptsLen > 0 ) {
-            target.add(new Vec3(ptsItr.next()));
+            target.add(new Vec3(o.points.iterator().next()));
          } else if ( includeEmpty ) {
             target.add(Bounds3.center(o.bounds, new Vec3()));
          }
@@ -946,9 +936,7 @@ public class Octree {
          }
 
          if ( isLeaf ) {
-            final Iterator < Vec3 > itr = o.points.iterator();
-            while ( itr.hasNext() ) {
-               final Vec3 point = itr.next();
+            for ( final Vec3 point : o.points ) {
                if ( Bounds3.containsInclusive(range, point) ) {
                   found.put(Vec3.distChebyshev(point, rCenter), point);
                }
@@ -992,9 +980,7 @@ public class Octree {
          }
 
          if ( isLeaf ) {
-            final Iterator < Vec3 > itr = o.points.iterator();
-            while ( itr.hasNext() ) {
-               final Vec3 point = itr.next();
+            for ( final Vec3 point : o.points ) {
                final float dsq = Vec3.distSq(center, point);
                if ( dsq < rsq ) { found.put(dsq, point); }
             }

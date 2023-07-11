@@ -228,7 +228,7 @@ public class Vert3 implements Comparable < Vert3 > {
 
    /**
     * Returns the orientation of the vertex as a transform based on the
-    * vertex's normal.
+    * vertex's normal and coordinate.
     *
     * @param vert       the vertex
     * @param handedness the handedness
@@ -253,7 +253,7 @@ public class Vert3 implements Comparable < Vert3 > {
     * normal and coordinate.
     *
     * @param vert   the vertex
-    * @param target the output transform
+    * @param target the output ray
     *
     * @return the orientation
     */

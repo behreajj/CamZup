@@ -42,7 +42,7 @@ public abstract class Utils implements IUtils {
     * Eds., <em>Handbook of Mathematical Functions</em>, possibly p. 83, which
     * cites <em>Approximations for Digital Computers</em> by C. Hastings, Jr.
     *
-    * @param v the input value
+    * @param y the input value
     *
     * @return the angle in radians
     *
@@ -52,12 +52,12 @@ public abstract class Utils implements IUtils {
     * @author C. Hastings, Jr
     * @author I. A. Stegun
     */
-   public static float acos ( final float v ) {
+   public static float acos ( final float y ) {
 
-      if ( v <= -1.0f ) { return IUtils.PI; }
-      if ( v >= 1.0f ) { return 0.0f; }
-      final boolean ltZero = v < -0.0f;
-      final float x = ltZero ? -v : v;
+      if ( y <= -1.0f ) { return IUtils.PI; }
+      if ( y >= 1.0f ) { return 0.0f; }
+      final boolean ltZero = y < -0.0f;
+      final float x = ltZero ? -y : y;
       float ret = ( 0.074261f - 0.0187293f * x ) * x - 0.2121144f;
       ret = ( ret * x + IUtils.HALF_PI ) * Utils.sqrtUnchecked(1.0f - x);
       return ltZero ? IUtils.PI - ret : ret;
@@ -299,58 +299,53 @@ public abstract class Utils implements IUtils {
     * {@link Math#ceil(double)} . ceil ( <em>x</em> ) = - floor ( -<em>x</em>
     * ) .
     *
-    * @param value the input value
+    * @param v the input value
     *
     * @return the raised value
     */
-   public static int ceil ( final float value ) {
+   public static int ceil ( final float v ) {
 
-      return value > 0.0f ? ( int ) value + 1 : value < 0.0f ? ( int ) value
-         : 0;
+      return v > 0.0f ? ( int ) v + 1 : v < 0.0f ? ( int ) v : 0;
    }
 
    /**
     * Clamps a real number between a lower and an upper bound.
     *
-    * @param value      the input value
-    * @param lowerBound the upper bound
-    * @param upperBound the lower bound
+    * @param v  the input value
+    * @param lb the upper bound
+    * @param ub the lower bound
     *
     * @return the clamped value
     */
-   public static float clamp ( final float value, final float lowerBound,
-      final float upperBound ) {
+   public static float clamp ( final float v, final float lb, final float ub ) {
 
-      return value < lowerBound ? lowerBound : value > upperBound ? upperBound
-         : value;
+      return v < lb ? lb : v > ub ? ub : v;
    }
 
    /**
     * Clamps an integer between a lower and an upper bound.
     *
-    * @param value      the input value
-    * @param lowerBound the lower bound
-    * @param upperBound the upper bound
+    * @param v  the input value
+    * @param lb the lower bound
+    * @param ub the upper bound
     *
     * @return the clamped value
     */
-   public static int clamp ( final int value, final int lowerBound,
-      final int upperBound ) {
+   public static int clamp ( final int v, final int lb, final int ub ) {
 
-      return value < lowerBound ? lowerBound : value > upperBound ? upperBound
-         : value;
+      return v < lb ? lb : v > ub ? ub : v;
    }
 
    /**
     * Clamps a value to the range [0.0, 1.0] .
     *
-    * @param value the input value
+    * @param v the input value
     *
     * @return the clamped value
     */
-   public static float clamp01 ( final float value ) {
+   public static float clamp01 ( final float v ) {
 
-      return value < 0.0f ? 0.0f : value > 1.0f ? 1.0f : value;
+      return v < 0.0f ? 0.0f : v > 1.0f ? 1.0f : v;
    }
 
    /**
@@ -514,30 +509,29 @@ public abstract class Utils implements IUtils {
     * Returns the value if it is greater than the lower bound, inclusive, and
     * less than the upper bound, exclusive. Otherwise, returns 0.0 .
     *
-    * @param value the input value
-    * @param lb    the lower bound
-    * @param ub    the upper bound
+    * @param v  the input value
+    * @param lb the lower bound
+    * @param ub the upper bound
     *
     * @return the filtered value
     */
-   public static float filter ( final float value, final float lb,
+   public static float filter ( final float v, final float lb,
       final float ub ) {
 
-      return value >= lb && value < ub ? value : 0.0f;
+      return v >= lb && v < ub ? v : 0.0f;
    }
 
    /**
     * Floors a real number to the next least integer. An alternative to
     * {@link Math#floor(double)} .
     *
-    * @param value the input value
+    * @param v the input value
     *
     * @return the floored value
     */
-   public static int floor ( final float value ) {
+   public static int floor ( final float v ) {
 
-      return value > 0.0f ? ( int ) value : value < 0.0f ? ( int ) value - 1
-         : 0;
+      return v > 0.0f ? ( int ) v : v < 0.0f ? ( int ) v - 1 : 0;
    }
 
    /**
@@ -581,14 +575,11 @@ public abstract class Utils implements IUtils {
     * <br>
     * Use this instead of fmod ( <em>a</em>, 1.0 ) or <em>a</em> % 1.0 .
     *
-    * @param value the input value
+    * @param v the input value
     *
     * @return the fractional portion
     */
-   public static float fract ( final float value ) {
-
-      return value - ( int ) value;
-   }
+   public static float fract ( final float v ) { return v - ( int ) v; }
 
    /**
     * Finds the hypotenuse between two values, sqrt ( <em>a</em><sup>2</sup> +
@@ -870,9 +861,9 @@ public abstract class Utils implements IUtils {
    /**
     * Finds the greatest, or maximum, among three values.
     *
-    * @param a the first input
-    * @param b the second input
-    * @param c the third input
+    * @param a the first value
+    * @param b the second value
+    * @param c the third value
     *
     * @return the maximum value
     */
@@ -885,9 +876,9 @@ public abstract class Utils implements IUtils {
    /**
     * Finds the greatest, or maximum, among three values.
     *
-    * @param a the first input
-    * @param b the second input
-    * @param c the third input
+    * @param a the first value
+    * @param b the second value
+    * @param c the third value
     *
     * @return the maximum value
     */
@@ -931,9 +922,9 @@ public abstract class Utils implements IUtils {
    /**
     * Finds the least, or minimum, among three values.
     *
-    * @param a the first input
-    * @param b the second input
-    * @param c the third input
+    * @param a the first value
+    * @param b the second value
+    * @param c the third value
     *
     * @return the minimum value
     */
@@ -946,9 +937,9 @@ public abstract class Utils implements IUtils {
    /**
     * Finds the least, or minimum, among three values.
     *
-    * @param a the first input
-    * @param b the second input
-    * @param c the third input
+    * @param a the first value
+    * @param b the second value
+    * @param c the third value
     *
     * @return the minimum value
     */
@@ -975,9 +966,9 @@ public abstract class Utils implements IUtils {
    public static float mod ( final float a, final float b ) {
 
       if ( b != 0.0f ) {
-         final float value = a / b;
-         return a - b * ( value > 0.0f ? ( int ) value : value < 0.0f
-            ? ( int ) value - 1.0f : 0.0f );
+         final float quot = a / b;
+         return a - b * ( quot > 0.0f ? ( int ) quot : quot < 0.0f
+            ? ( int ) quot - 1.0f : 0.0f );
       }
       return a;
    }
@@ -1012,23 +1003,23 @@ public abstract class Utils implements IUtils {
     * positive value in the range [0.0, 1.0] . Equivalent to GLSL's
     * <code>fract</code>.
     *
-    * @param value the input value
+    * @param v the value
     *
     * @return the result
     */
-   public static float mod1 ( final float value ) {
+   public static float mod1 ( final float v ) {
 
-      return value > 0.0f ? value - ( int ) value : value < 0.0f ? value
-         - ( ( int ) value - 1.0f ) : 0.0f;
+      return v > 0.0f ? v - ( int ) v : v < 0.0f ? v - ( ( int ) v - 1.0f )
+         : 0.0f;
    }
 
    /**
     * A specialized version of modulo which shifts an angle in degrees to the
     * range [0.0, 360.0] .
     *
-    * @param degrees the input angle
+    * @param degrees the angle in degrees
     *
-    * @return the output angle
+    * @return the wrapped angle
     *
     * @see Utils#floor(float)
     */
@@ -1046,7 +1037,7 @@ public abstract class Utils implements IUtils {
     *
     * @param radians the angle in radians
     *
-    * @return the unsigned radians
+    * @return the wrapped radians
     *
     * @see Utils#mod(float, float)
     * @see Utils#floor(float)
@@ -1080,13 +1071,13 @@ public abstract class Utils implements IUtils {
     * Finds the logical opposite of a float holding a boolean value. Returns 0
     * for non-zero inputs. Returns 1 for inputs equal to zero.
     *
-    * @param value the input value
+    * @param v the input value
     *
     * @return the opposite
     */
-   public static int not ( final float value ) {
+   public static int not ( final float v ) {
 
-      return value != 0.0f && value == value ? 0 : 1;
+      return v != 0.0f && v == v ? 0 : 1;
    }
 
    /**
@@ -1225,14 +1216,14 @@ public abstract class Utils implements IUtils {
     * Reduces the signal, or granularity, of a value. Defaults to signed
     * quantization.
     *
-    * @param value  the value
+    * @param v      the value
     * @param levels the levels
     *
     * @return the quantized value
     */
-   public static float quantize ( final float value, final int levels ) {
+   public static float quantize ( final float v, final int levels ) {
 
-      return Utils.quantizeSigned(value, levels);
+      return Utils.quantizeSigned(v, levels);
    }
 
    /**
@@ -1240,16 +1231,16 @@ public abstract class Utils implements IUtils {
     * is centered about zero. Applied to a vector, this yields a crenelated
     * effect. If the levels are zero, returns the value unaltered.
     *
-    * @param value  the value
+    * @param v      the value
     * @param levels the levels
     *
     * @return the quantized value
     */
-   public static float quantizeSigned ( final float value, final int levels ) {
+   public static float quantizeSigned ( final float v, final int levels ) {
 
-      if ( levels == 0 ) { return value; }
+      if ( levels == 0 ) { return v; }
       final float levf = levels < 0 ? -levels : levels;
-      return Utils.quantizeSigned(value, levf, 1.0f / levf);
+      return Utils.quantizeSigned(v, levf, 1.0f / levf);
    }
 
    /**
@@ -1258,52 +1249,51 @@ public abstract class Utils implements IUtils {
     * a posterization effect. If the levels are 1 or -1, returns the value
     * unaltered.
     *
-    * @param value  the value
+    * @param v      the value
     * @param levels the levels
     *
     * @return the quantized value
     */
-   public static float quantizeUnsigned ( final float value,
-      final int levels ) {
+   public static float quantizeUnsigned ( final float v, final int levels ) {
 
-      if ( levels == 1 || levels == -1 ) { return value; }
+      if ( levels == 1 || levels == -1 ) { return v; }
       final float levf = levels < 0 ? -levels : levels;
-      return Utils.quantizeUnsigned(value, levf, 1.0f / ( levf - 1.0f ));
+      return Utils.quantizeUnsigned(v, levf, 1.0f / ( levf - 1.0f ));
    }
 
    /**
     * Rounds a value to an integer based on whether its fractional portion is
     * greater than or equal to plus or minus 0.5 .
     *
-    * @param value the input value
+    * @param v the input value
     *
     * @return the rounded value
     */
-   public static int round ( final float value ) {
+   public static int round ( final float v ) {
 
-      return value < -0.0f ? ( int ) ( value - 0.5f ) : value > 0.0f
-         ? ( int ) ( value + 0.5f ) : 0;
+      return v < -0.0f ? ( int ) ( v - 0.5f ) : v > 0.0f ? ( int ) ( v + 0.5f )
+         : 0;
    }
 
    /**
     * Rounds a value to a number of places right of the decimal point.
     * Promotes the float to a double, rounds it, then demotes back to a float.
     *
-    * @param value  value
+    * @param v      the value
     * @param places the number of places
     *
     * @return the rounded value
     */
-   public static float round ( final float value, final int places ) {
+   public static float round ( final float v, final int places ) {
 
-      if ( places < 1 ) { return Utils.round(value); }
-      if ( places > 7 ) { return value; }
+      if ( places < 1 ) { return Utils.round(v); }
+      if ( places > 7 ) { return v; }
 
       int n = 10;
       for ( int i = 1; i < places; ++i ) { n *= 10; }
 
       final float nf = n;
-      return Utils.round(value * nf) / nf;
+      return Utils.round(v * nf) / nf;
    }
 
    /**
@@ -1370,15 +1360,15 @@ public abstract class Utils implements IUtils {
     * integer 0 for both -0.0 (signed negative zero) and 0.0 (signed positive
     * zero).
     *
-    * @param value the input value
+    * @param v the value
     *
     * @return the sign
     *
     * @see Math#signum(float)
     */
-   public static int sign ( final float value ) {
+   public static int sign ( final float v ) {
 
-      return value < -0.0f ? -1 : value > 0.0f ? 1 : 0;
+      return v < -0.0f ? -1 : v > 0.0f ? 1 : 0;
    }
 
    /**
@@ -1399,19 +1389,19 @@ public abstract class Utils implements IUtils {
    /**
     * Eases between an origin and destination by a step in [0.0, 1.0] .
     *
-    * @param origin the origin
-    * @param dest   the destination
-    * @param step   the step
+    * @param orig the origin
+    * @param dest the destination
+    * @param step the step
     *
     * @return the eased value
     */
-   public static float smoothStep ( final float origin, final float dest,
+   public static float smoothStep ( final float orig, final float dest,
       final float step ) {
 
-      if ( step <= 0.0f ) { return origin; }
+      if ( step <= 0.0f ) { return orig; }
       if ( step >= 1.0f ) { return dest; }
       final float t = step * step * ( 3.0f - ( step + step ) );
-      return ( 1.0f - t ) * origin + t * dest;
+      return ( 1.0f - t ) * orig + t * dest;
    }
 
    /**
@@ -1421,30 +1411,30 @@ public abstract class Utils implements IUtils {
     * positive. Use {@link Complex#sqrt(float, Complex)} when the input may be
     * negative and a complex output is desired.
     *
-    * @param value the value
+    * @param v the value
     *
     * @return the square root
     *
     * @see Utils#sqrtUnchecked(float)
     */
-   public static float sqrt ( final float value ) {
+   public static float sqrt ( final float v ) {
 
-      return value > 0.0f ? Utils.sqrtUnchecked(value) : 0.0f;
+      return v > 0.0f ? Utils.sqrtUnchecked(v) : 0.0f;
    }
 
    /**
     * Finds the approximate square root of a value. Does so by multiplying the
     * value by its inverse square root.
     *
-    * @param value the value
+    * @param v the value
     *
     * @return the square root
     *
     * @see Utils#invSqrtUnchecked(float)
     */
-   public static float sqrtUnchecked ( final float value ) {
+   public static float sqrtUnchecked ( final float v ) {
 
-      return value * Utils.invSqrtUnchecked(value);
+      return v * Utils.invSqrtUnchecked(v);
    }
 
    /**
@@ -1454,13 +1444,13 @@ public abstract class Utils implements IUtils {
     * <br>
     * An alias for {@link Integer#reverseBytes(int)}.
     *
-    * @param a the input value
+    * @param v the value
     *
     * @return the swap
     */
-   public static int swapEndian ( final int a ) {
+   public static int swapEndian ( final int v ) {
 
-      return a << 24 | ( a & '\uff00' ) << 8 | a >>> 8 & '\uff00' | a >>> 24;
+      return v << 24 | ( v & '\uff00' ) << 8 | v >>> 8 & '\uff00' | v >>> 24;
    }
 
    /**
@@ -1501,27 +1491,27 @@ public abstract class Utils implements IUtils {
     * {@link String#format(String, Object...)}, which is very slow, and
     * DecimalFormat, which extrapolates values beyond the last decimal place.
     *
-    * @param value  the real number
+    * @param v      the real number
     * @param places the number of decimal places
     *
     * @return the string
     */
-   public static String toFixed ( final float value, final int places ) {
+   public static String toFixed ( final float v, final int places ) {
 
-      return Utils.toFixed(new StringBuilder(16), value, places).toString();
+      return Utils.toFixed(new StringBuilder(16), v, places).toString();
    }
 
    /**
     * Returns an integer formatted as a string padded by initial zeroes.
     *
-    * @param value  the integer
+    * @param v      the integer
     * @param places the number of places
     *
     * @return the string
     */
-   public static String toPadded ( final int value, final int places ) {
+   public static String toPadded ( final int v, final int places ) {
 
-      return Utils.toPadded(new StringBuilder(16), value, places).toString();
+      return Utils.toPadded(new StringBuilder(16), v, places).toString();
    }
 
    /**
@@ -1556,11 +1546,11 @@ public abstract class Utils implements IUtils {
     * Truncates the input value. This is an alias for explicitly casting a
     * float to an integer, then implicitly casting the integral to a float.
     *
-    * @param value the input value
+    * @param v the input value
     *
     * @return the integral
     */
-   public static float trunc ( final float value ) { return ( int ) value; }
+   public static float trunc ( final float v ) { return ( int ) v; }
 
    /**
     * An alias for {@link Byte#toUnsignedInt(byte)} . Converts a signed byte
@@ -1571,11 +1561,11 @@ public abstract class Utils implements IUtils {
     * Defined for cross-language comparison with C#, which uses signed and
     * unsigned versions of primitive data types.
     *
-    * @param a the signed byte
+    * @param v the signed byte
     *
     * @return the unsigned byte, promoted
     */
-   public static int ubyte ( final byte a ) { return a & 0xff; }
+   public static int ubyte ( final byte v ) { return v & 0xff; }
 
    /**
     * An alias for {@link Integer#toUnsignedLong(int)}. Converts a signed
@@ -1586,33 +1576,32 @@ public abstract class Utils implements IUtils {
     * Defined for cross-language comparison with C#, which uses signed and
     * unsigned versions of primitive data types.
     *
-    * @param a the signed integer
+    * @param v the signed integer
     *
     * @return the unsigned integer, promoted
     */
-   public static long uint ( final int a ) { return a & 0xffffffffL; }
+   public static long uint ( final int v ) { return v & 0xffffffffL; }
 
    /**
     * Wraps a value around a periodic range as defined by an upper and lower
     * bound. The lower bound is inclusive; the upper bound is exclusive.
     * Returns the value unchanged if the range is zero.
     *
-    * @param value the value
-    * @param lb    the lower bound
-    * @param ub    the upper bound
+    * @param v  the value
+    * @param lb the lower bound
+    * @param ub the upper bound
     *
     * @return the wrapped value
     */
-   public static float wrap ( final float value, final float lb,
-      final float ub ) {
+   public static float wrap ( final float v, final float lb, final float ub ) {
 
       final float range = ub - lb;
       if ( range != 0.0f ) {
-         final float b = ( value - lb ) / range;
-         return value - range * ( b > 0.0f ? ( int ) b : b < 0.0f ? ( int ) b
-            - 1.0f : 0.0f );
+         final float b = ( v - lb ) / range;
+         return v - range * ( b > 0.0f ? ( int ) b : b < 0.0f ? ( int ) b - 1.0f
+            : 0.0f );
       }
-      return value;
+      return v;
    }
 
    /**
@@ -1635,17 +1624,17 @@ public abstract class Utils implements IUtils {
     * signed value. The quantization is centered about zero. Applied to a
     * vector, this yields a crenelated effect.
     *
-    * @param value  the value
+    * @param v      the value
     * @param levels the levels
     *
     * @return the quantized value
     *
     * @see Utils#floor(float)
     */
-   static float quantizeSigned ( final float value, final float levels,
+   static float quantizeSigned ( final float v, final float levels,
       final float delta ) {
 
-      return Utils.floor(0.5f + value * levels) * delta;
+      return Utils.floor(0.5f + v * levels) * delta;
    }
 
    /**
@@ -1653,7 +1642,7 @@ public abstract class Utils implements IUtils {
     * unsigned value. The quantization treats zero as a left edge. Applied to
     * a color, this yields a posterization effect.
     *
-    * @param value  the value
+    * @param v      the value
     * @param levels the levels
     *
     * @return the quantized value
@@ -1661,10 +1650,10 @@ public abstract class Utils implements IUtils {
     * @see Utils#ceil(float)
     * @see Utils#max(float, float)
     */
-   static float quantizeUnsigned ( final float value, final float levels,
+   static float quantizeUnsigned ( final float v, final float levels,
       final float delta ) {
 
-      return Utils.max(0.0f, ( Utils.ceil(value * levels) - 1.0f ) * delta);
+      return Utils.max(0.0f, ( Utils.ceil(v * levels) - 1.0f ) * delta);
    }
 
    /**
@@ -1673,15 +1662,15 @@ public abstract class Utils implements IUtils {
     * {@link StringBuilder} passed in by reference.
     *
     * @param sb     the string builder
-    * @param value  the real number
+    * @param v      the real number
     * @param places the number of decimal places
     *
     * @return the string builder
     */
-   static StringBuilder toFixed ( final StringBuilder sb, final float value,
+   static StringBuilder toFixed ( final StringBuilder sb, final float v,
       final int places ) {
 
-      final int raw = Float.floatToRawIntBits(value);
+      final int raw = Float.floatToRawIntBits(v);
       switch ( raw ) {
          case 0x0: /* Positive zero. */
          case 0x80000000: /* Negative zero. */
@@ -1699,8 +1688,8 @@ public abstract class Utils implements IUtils {
          default:
       }
 
-      if ( places < 0 ) { return sb.append(Integer.toString(( int ) value)); }
-      if ( places < 1 ) { return sb.append(Float.toString(( int ) value)); }
+      if ( places < 0 ) { return sb.append(Integer.toString(( int ) v)); }
+      if ( places < 1 ) { return sb.append(Float.toString(( int ) v)); }
 
       final float sign = Float.intBitsToFloat(raw & -2147483648 | 1065353216);
       final float abs = Float.intBitsToFloat(raw & 2147483647);
@@ -1728,7 +1717,7 @@ public abstract class Utils implements IUtils {
        * The integral has so many digits that it has consumed the allotment.
        * (Might be scientific notation?)
        */
-      if ( maxPlaces < 1 ) { return sb.append(Float.toString(value)); }
+      if ( maxPlaces < 1 ) { return sb.append(Float.toString(v)); }
 
       final int vetPlaces = places < maxPlaces ? places : maxPlaces;
       float frac = abs - trunc;
@@ -1750,12 +1739,12 @@ public abstract class Utils implements IUtils {
     * {@link StringBuilder} passed in by reference.
     *
     * @param sb     the string builder
-    * @param value  the integer
+    * @param v      the integer
     * @param places the number of places
     *
     * @return the string builder
     */
-   static StringBuilder toPadded ( final StringBuilder sb, final int value,
+   static StringBuilder toPadded ( final StringBuilder sb, final int v,
       final int places ) {
 
       /*
@@ -1765,8 +1754,8 @@ public abstract class Utils implements IUtils {
        * Integer#MIN_VALUE to overflow to zero.
        */
 
-      final boolean isNeg = value < 0;
-      int nAbsVal = isNeg ? value : -value;
+      final boolean isNeg = v < 0;
+      int nAbsVal = isNeg ? v : -v;
 
       final int[] digits = new int[10];
       int filled = 0;
@@ -1875,7 +1864,7 @@ public abstract class Utils implements IUtils {
       /**
        * Apply the function.
        *
-       * @param origin the origin
+       * @param orig   the origin
        * @param dest   the destination
        * @param step   the step
        * @param target the target object
@@ -1883,7 +1872,7 @@ public abstract class Utils implements IUtils {
        * @return the eased object
        */
       @Override
-      T apply ( final T origin, final T dest, final Float step, T target );
+      T apply ( final T orig, final T dest, final Float step, T target );
 
    }
 
@@ -1898,14 +1887,14 @@ public abstract class Utils implements IUtils {
       /**
        * Apply the function.
        *
-       * @param origin the origin
-       * @param dest   the destination
-       * @param step   the step
+       * @param orig the origin
+       * @param dest the destination
+       * @param step the step
        *
        * @return the eased object
        */
       @Override
-      T apply ( final T origin, final T dest, final Float step );
+      T apply ( final T orig, final T dest, final Float step );
 
    }
 
@@ -2105,10 +2094,10 @@ public abstract class Utils implements IUtils {
        * @see PeriodicEasing#eval(float, float)
        */
       @Override
-      public Float apply ( final Float origin, final Float dest,
+      public Float apply ( final Float orig, final Float dest,
          final Float step ) {
 
-         this.eval(origin, dest);
+         this.eval(orig, dest);
          final float tf = step;
          if ( tf <= 0.0f ) { return this.o; }
          if ( tf >= 1.0f ) { return this.d; }

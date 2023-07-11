@@ -2211,7 +2211,7 @@ public class Quaternion implements Comparable < Quaternion > {
 
    /**
     * An abstract class that may serve as an umbrella for any custom
-    * comparators of Quaternions.
+    * comparators of quaternions.
     */
    public abstract static class AbstrComparator implements Comparator <
       Quaternion > {

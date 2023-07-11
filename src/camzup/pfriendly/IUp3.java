@@ -7,7 +7,6 @@ import camzup.core.Octree;
 import camzup.core.Ray3;
 import camzup.core.Utils;
 import camzup.core.Vec3;
-
 import processing.core.PApplet;
 import processing.core.PConstants;
 
@@ -658,7 +657,6 @@ public interface IUp3 extends IUp {
             dx = xOrig + xDir * dLen;
             dy = yOrig + yDir * dLen;
             dz = zOrig + zDir * dLen;
-            this.line(xOrig, yOrig, zOrig, dx, dy, dz);
 
          } else {
 
@@ -666,9 +664,9 @@ public interface IUp3 extends IUp {
             dx = xOrig + xDir * mInv;
             dy = yOrig + yDir * mInv;
             dz = zOrig + zDir * mInv;
-            this.line(xOrig, yOrig, zOrig, dx, dy, dz);
 
          }
+         this.line(xOrig, yOrig, zOrig, dx, dy, dz);
 
          this.strokeWeight(dWeight);
          this.point(dx, dy, dz);

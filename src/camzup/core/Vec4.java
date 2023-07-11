@@ -1801,9 +1801,6 @@ public class Vec4 implements Comparable < Vec4 > {
     * @param b right operand
     *
     * @return the scalar projection
-    *
-    * @see Vec4#magSq(Vec4)
-    * @see Vec4#dot(Vec4, Vec4)
     */
    public static float projectScalar ( final Vec4 a, final Vec4 b ) {
 

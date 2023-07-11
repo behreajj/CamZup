@@ -13,7 +13,7 @@ public class Ray3 {
    public final Vec3 dir = Vec3.forward(new Vec3());
 
    /**
-    * The ray's origin point.
+    * The ray's origin.
     */
    public final Vec3 origin = new Vec3();
 
@@ -33,7 +33,7 @@ public class Ray3 {
     * Creates a new ray from an origin and direction.
     *
     * @param origin the origin
-    * @param dir    the direction.
+    * @param dir    the direction
     */
    public Ray3 ( final Vec3 origin, final Vec3 dir ) {
 

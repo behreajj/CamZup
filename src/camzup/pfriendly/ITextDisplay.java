@@ -3,7 +3,6 @@ package camzup.pfriendly;
 import camzup.core.IUtils;
 import camzup.core.Utils;
 import camzup.core.Vec2;
-
 import processing.core.PApplet;
 
 /**

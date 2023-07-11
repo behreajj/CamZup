@@ -1,7 +1,6 @@
 package camzup.pfriendly;
 
 import camzup.core.Color;
-
 import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PImage;

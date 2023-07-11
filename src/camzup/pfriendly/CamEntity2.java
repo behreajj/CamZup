@@ -6,9 +6,7 @@ import camzup.core.Entity2;
 import camzup.core.Experimental;
 import camzup.core.Transform2;
 import camzup.core.Vec2;
-
 import processing.awt.PGraphicsJava2D;
-
 import processing.opengl.PGraphicsOpenGL;
 
 /**

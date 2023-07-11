@@ -56,21 +56,21 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * perceived luminance between black at key 0.0 and white at key 1.0. The
     * boundary keys adopt the color's alpha.
     *
-    * @param color the color
+    * @param c the color
     *
     * @see Color#sRgbLuminance(Color)
     * @see Utils#lerp(float, float, float)
     */
-   public Gradient ( final Color color ) {
+   public Gradient ( final Color c ) {
 
-      final float lum = Color.sRgbLuminance(color);
+      final float lum = Color.sRgbLuminance(c);
       final float vf = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math.pow(
          lum, 0.4166666666666667d) * 1.055d - 0.055d );
       final float step = Utils.lerp(IUtils.ONE_THIRD, IUtils.TWO_THIRDS, vf);
 
-      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, color.a));
-      this.keys.add(new ColorKey(step, color));
-      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, color.a));
+      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, c.a));
+      this.keys.add(new ColorKey(step, c));
+      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, c.a));
    }
 
    /**
@@ -124,11 +124,11 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * perceived luminance between black at key 0.0 and white at key 1.0. The
     * boundary keys adopt the color's alpha.
     *
-    * @param color the color
+    * @param c the color
     */
-   public Gradient ( final int color ) {
+   public Gradient ( final int c ) {
 
-      this(Color.fromHex(color, new Color()));
+      this(Color.fromHex(c, new Color()));
    }
 
    /**
@@ -142,18 +142,18 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    /**
     * Appends a color at step 1.0 . Compresses existing keys to the left.
     *
-    * @param color the color
+    * @param c the color
     *
     * @return this gradient
     *
     * @see Gradient#compressKeysLeft(int)
     * @see TreeSet#add(Object)
     */
-   public Gradient append ( final Color color ) {
+   public Gradient append ( final Color c ) {
 
       // TODO: Retest this, it doesn't seem to be working properly...
       this.compressKeysLeft(1);
-      this.keys.add(new ColorKey(1.0f, color));
+      this.keys.add(new ColorKey(1.0f, c));
 
       return this;
    }
@@ -179,17 +179,17 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    /**
     * Appends a color at step 1.0 . Compresses existing keys to the left.
     *
-    * @param color the color
+    * @param c the color
     *
     * @return this gradient
     *
     * @see Gradient#compressKeysLeft(int)
     * @see TreeSet#add(Object)
     */
-   public Gradient append ( final int color ) {
+   public Gradient append ( final int c ) {
 
       this.compressKeysLeft(1);
-      this.keys.add(new ColorKey(1.0f, color));
+      this.keys.add(new ColorKey(1.0f, c));
 
       return this;
    }
@@ -504,17 +504,17 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    /**
     * Prepends a color at step 0.0 . Compresses existing keys to the right.
     *
-    * @param color the color
+    * @param c the color
     *
     * @return this gradient
     *
     * @see Gradient#compressKeysRight(int)
     * @see TreeSet#add(Object)
     */
-   public Gradient prepend ( final Color color ) {
+   public Gradient prepend ( final Color c ) {
 
       this.compressKeysRight(1);
-      this.keys.add(new ColorKey(0.0f, color));
+      this.keys.add(new ColorKey(0.0f, c));
 
       return this;
    }
@@ -540,17 +540,17 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    /**
     * Prepends a color at step 0.0 . Compresses existing keys to the right.
     *
-    * @param color the color
+    * @param c the color
     *
     * @return this gradient
     *
     * @see Gradient#compressKeysRight(int)
     * @see TreeSet#add(Object)
     */
-   public Gradient prepend ( final int color ) {
+   public Gradient prepend ( final int c ) {
 
       this.compressKeysRight(1);
-      this.keys.add(new ColorKey(0.0f, color));
+      this.keys.add(new ColorKey(0.0f, c));
 
       return this;
    }
@@ -1328,12 +1328,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    protected Gradient compressKeysRight ( final int added ) {
 
-      /* Simplification of Utils.map(key.step, 0.0f, 1.0f, scalar, 1.0f); */
-      final Iterator < ColorKey > itr = this.keys.iterator();
       final float scalar = added / ( this.keys.size() + added - 1.0f );
       final float coeff = 1.0f - scalar;
-      while ( itr.hasNext() ) {
-         final ColorKey key = itr.next();
+      for ( final ColorKey key : this.keys ) {
          key.step = scalar + coeff * key.step;
       }
       return this;

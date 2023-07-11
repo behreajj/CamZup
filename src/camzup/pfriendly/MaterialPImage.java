@@ -4,7 +4,6 @@ import camzup.core.Color;
 import camzup.core.IUtils;
 import camzup.core.MaterialUv;
 import camzup.core.Transform2;
-
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PImage;

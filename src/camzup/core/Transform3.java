@@ -193,7 +193,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    }
 
    /**
-    * Gets the transform's location
+    * Gets the transform's location.
     *
     * @param target the output vector
     *
@@ -206,7 +206,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    }
 
    /**
-    * Gets the transform's previous location
+    * Gets the transform's previous location.
     *
     * @param target the output vector
     *
@@ -230,7 +230,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    }
 
    /**
-    * Gets the transform's rotation
+    * Gets the transform's rotation.
     *
     * @param target the output quaternion
     *
@@ -257,7 +257,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    }
 
    /**
-    * Gets the transform's previous rotation
+    * Gets the transform's previous rotation.
     *
     * @param target the output quaternion
     *

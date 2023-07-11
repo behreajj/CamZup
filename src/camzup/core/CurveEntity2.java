@@ -745,10 +745,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
          svgp.append('>');
          svgp.append('\n');
 
-         final Iterator < Curve2 > curveItr = this.curves.iterator();
-         while ( curveItr.hasNext() ) {
-            final Curve2 curve = curveItr.next();
-
+         for ( final Curve2 curve : this.curves ) {
             /*
              * It'd be more efficient to create a definitions block that
              * contains the data for each material, which is then used by a mesh
@@ -969,12 +966,10 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       target.name = me.name;
       target.transform.set(me.transform);
 
-      final Iterator < Mesh2 > meshItr = me.meshes.iterator();
       final ArrayList < Curve2 > curves = target.curves;
       curves.clear();
 
-      while ( meshItr.hasNext() ) {
-         final Mesh2 mesh = meshItr.next();
+      for ( final Mesh2 mesh : me.meshes ) {
          final int facesLen = mesh.faces.length;
          for ( int i = 0; i < facesLen; ++i ) {
             final Curve2 curve = new Curve2();

@@ -243,7 +243,7 @@ public class Complex implements Comparable < Complex > {
     *
     * @param a      the left operand
     * @param b      the right operand
-    * @param target the output complex quaternion
+    * @param target the output complex number
     *
     * @return the sum
     */
@@ -258,7 +258,7 @@ public class Complex implements Comparable < Complex > {
     *
     * @param a      the left operand
     * @param b      the right operand
-    * @param target the output complex quaternion
+    * @param target the output complex number
     *
     * @return the sum
     */
@@ -273,7 +273,7 @@ public class Complex implements Comparable < Complex > {
     *
     * @param a      the left operand
     * @param b      the right operand
-    * @param target the output complex quaternion
+    * @param target the output complex number
     *
     * @return the sum
     */

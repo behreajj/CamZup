@@ -183,7 +183,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
    }
 
    /**
-    * Gets the transform's location
+    * Gets the transform's location.
     *
     * @param target the output vector
     *
@@ -196,7 +196,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
    }
 
    /**
-    * Gets the transform's previous location
+    * Gets the transform's previous location.
     *
     * @param target the output vector
     *

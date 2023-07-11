@@ -215,9 +215,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public Curve2 flipX ( ) {
 
-      final Iterator < Knot2 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot2 kn = itr.next();
+      for ( final Knot2 kn : this.knots ) {
          kn.coord.x = -kn.coord.x;
          kn.foreHandle.x = -kn.foreHandle.x;
          kn.rearHandle.x = -kn.rearHandle.x;
@@ -238,9 +236,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     */
    public Curve2 flipY ( ) {
 
-      final Iterator < Knot2 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot2 kn = itr.next();
+      for ( final Knot2 kn : this.knots ) {
          kn.coord.y = -kn.coord.y;
          kn.foreHandle.y = -kn.foreHandle.y;
          kn.rearHandle.y = -kn.rearHandle.y;
@@ -469,10 +465,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       lb.y = 0.5f * ( lb.y + ub.y );
       final float scl = Utils.div(1.0f, Utils.max(dim.x, dim.y));
 
-      final Iterator < Knot2 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot2 kn = itr.next();
-
+      for ( final Knot2 kn : this.knots ) {
          final Vec2 co = kn.coord;
          Vec2.sub(co, lb, co);
          Vec2.mul(co, scl, co);
@@ -2218,9 +2211,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    static void accumMinMax ( final Curve2 curve, final Vec2 lb,
       final Vec2 ub ) {
 
-      final Iterator < Knot2 > itr = curve.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot2 kn = itr.next();
+      for ( final Knot2 kn : curve.knots ) {
          final Vec2 co = kn.coord;
          final Vec2 fh = kn.foreHandle;
          final Vec2 rh = kn.rearHandle;
@@ -2260,9 +2251,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    static void accumMinMax ( final Curve2 curve, final Vec2 lb, final Vec2 ub,
       final Transform2 tr, final Vec2 fh, final Vec2 rh, final Vec2 co ) {
 
-      final Iterator < Knot2 > itr = curve.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot2 kn = itr.next();
+      for ( final Knot2 kn : curve.knots ) {
          Transform2.mulPoint(tr, kn.foreHandle, fh);
          Transform2.mulPoint(tr, kn.rearHandle, rh);
          Transform2.mulPoint(tr, kn.coord, co);

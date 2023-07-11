@@ -13,7 +13,7 @@ public class Ray2 {
    public final Vec2 dir = Vec2.forward(new Vec2());
 
    /**
-    * The ray's origin point.
+    * The ray's origin.
     */
    public final Vec2 origin = new Vec2();
 
@@ -33,7 +33,7 @@ public class Ray2 {
     * Creates a new ray from an origin and direction.
     *
     * @param origin the origin
-    * @param dir    the direction.
+    * @param dir    the direction
     */
    public Ray2 ( final Vec2 origin, final Vec2 dir ) {
 

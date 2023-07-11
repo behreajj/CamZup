@@ -2,7 +2,6 @@ package camzup.pfriendly;
 
 import camzup.core.IUtils;
 import camzup.core.Utils;
-
 import processing.core.PConstants;
 
 /**

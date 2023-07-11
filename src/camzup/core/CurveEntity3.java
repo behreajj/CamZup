@@ -726,12 +726,10 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
       target.name = me.name;
       target.transform.set(me.transform);
 
-      final Iterator < Mesh3 > meshItr = me.meshes.iterator();
       final ArrayList < Curve3 > curves = target.curves;
       curves.clear();
 
-      while ( meshItr.hasNext() ) {
-         final Mesh3 mesh = meshItr.next();
+      for ( final Mesh3 mesh : me.meshes ) {
          final int facesLen = mesh.faces.length;
          for ( int i = 0; i < facesLen; ++i ) {
             final Curve3 curve = new Curve3();

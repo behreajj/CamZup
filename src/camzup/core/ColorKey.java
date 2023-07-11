@@ -188,18 +188,18 @@ public class ColorKey implements Comparable < ColorKey > {
    /**
     * Sets this key with a step and a color in hexadecimal.
     *
-    * @param step  the step
-    * @param color the color
+    * @param step the step
+    * @param c    the color
     *
     * @return this key
     *
     * @see Utils#clamp01(float)
     * @see Color#fromHex(int, Color)
     */
-   public ColorKey set ( final float step, final int color ) {
+   public ColorKey set ( final float step, final int c ) {
 
       this.step = Utils.clamp01(step);
-      Color.fromHex(color, this.clr);
+      Color.fromHex(c, this.clr);
 
       return this;
    }
@@ -314,7 +314,9 @@ public class ColorKey implements Comparable < ColorKey > {
     * Returns a String representation of this color stop for an SVG gradient.
     * Includes the offset, color and opacity.
     *
-    * @return the string
+    * @param svgp the string builder
+    *
+    * @return the string builder
     */
    StringBuilder toSvgString ( final StringBuilder svgp ) {
 

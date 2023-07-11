@@ -19,12 +19,10 @@ import camzup.core.TransformOrder;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
-
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PMatrix3D;
-
 import processing.opengl.PGraphicsOpenGL;
 
 /**
@@ -670,8 +668,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
       final float swCoord = sw * IUp.HANDLE_COORD_WEIGHT;
 
       final Transform3 tr = ce.transform;
-      final Iterator < Curve3 > curveItr = ce.iterator();
-
       final Vec3 rh = new Vec3();
       final Vec3 co = new Vec3();
       final Vec3 fh = new Vec3();
@@ -681,13 +677,8 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
 
       this.pushStyle();
 
-      while ( curveItr.hasNext() ) {
-         final Curve3 curve = curveItr.next();
-         final Iterator < Knot3 > knItr = curve.iterator();
-
-         while ( knItr.hasNext() ) {
-            final Knot3 knot = knItr.next();
-
+      for ( final Curve3 curve : ce ) {
+         for ( final Knot3 knot : curve ) {
             Transform3.mulPoint(tr, knot.rearHandle, rh);
             Transform3.mulPoint(tr, knot.coord, co);
             Transform3.mulPoint(tr, knot.foreHandle, fh);
@@ -1184,12 +1175,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Draws a 3D curve entity.
     *
-    * @param entity the curve entity
+    * @param ce the curve entity
     */
-   public void shape ( final CurveEntity3 entity ) {
+   public void shape ( final CurveEntity3 ce ) {
 
-      final Transform3 tr = entity.transform;
-      final Iterator < Curve3 > itr = entity.iterator();
+      final Transform3 tr = ce.transform;
+      final Iterator < Curve3 > itr = ce.iterator();
 
       final Vec3 fh = new Vec3();
       final Vec3 rh = new Vec3();
@@ -1201,36 +1192,33 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Draws a 3D curve entity.
     *
-    * @param entity   the curve entity
+    * @param ce   the curve entity
     * @param material the material
     */
-   public void shape ( final CurveEntity3 entity,
+   public void shape ( final CurveEntity3 ce,
       final MaterialSolid material ) {
 
       this.pushStyle();
       this.material(material);
-      this.shape(entity);
+      this.shape(ce);
       this.popStyle();
    }
 
    /**
     * Draws a 3D curve entity.
     *
-    * @param entity    the curve entity
+    * @param ce    the curve entity
     * @param materials the array of materials
     */
-   public void shape ( final CurveEntity3 entity,
+   public void shape ( final CurveEntity3 ce,
       final MaterialSolid[] materials ) {
 
-      final Transform3 tr = entity.transform;
-      final Iterator < Curve3 > itr = entity.iterator();
-
+      final Transform3 tr = ce.transform;
       final Vec3 fh = new Vec3();
       final Vec3 rh = new Vec3();
       final Vec3 co = new Vec3();
 
-      while ( itr.hasNext() ) {
-         final Curve3 curve = itr.next();
+      for ( final Curve3 curve : ce ) {
          this.pushStyle();
          this.material(materials[curve.materialIndex]);
          this.drawCurve3(curve, tr, fh, rh, co);
@@ -1265,14 +1253,14 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Draws a 3D mesh entity.
     *
-    * @param entity   the mesh entity
+    * @param me   the mesh entity
     * @param material the material
     */
-   public void shape ( final MeshEntity3 entity,
+   public void shape ( final MeshEntity3 me,
       final MaterialPImage material ) {
 
-      final Transform3 tr = entity.transform;
-      final Iterator < Mesh3 > meshItr = entity.iterator();
+      final Transform3 tr = me.transform;
+      final Iterator < Mesh3 > meshItr = me.iterator();
 
       final Vec3 v = new Vec3();
       final Vec2 vt = new Vec2();
@@ -1289,23 +1277,20 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Draws a 3D mesh entity.
     *
-    * @param entity    the mesh entity
+    * @param me    the mesh entity
     * @param materials the materials
     */
-   public void shape ( final MeshEntity3 entity,
+   public void shape ( final MeshEntity3 me,
       final MaterialPImage[] materials ) {
 
-      final Transform3 tr = entity.transform;
-      final Iterator < Mesh3 > meshItr = entity.iterator();
-
+      final Transform3 tr = me.transform;
       final Vec3 v = new Vec3();
       final Vec2 vt = new Vec2();
       final Vec3 vn = new Vec3();
 
       this.pushStyle();
       this.noStroke();
-      while ( meshItr.hasNext() ) {
-         final Mesh3 mesh = meshItr.next();
+      for ( final Mesh3 mesh : me ) {
          this.drawMesh3(mesh, tr, materials[mesh.materialIndex], v, vt, vn);
       }
       this.popStyle();
@@ -1314,35 +1299,32 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Draws a 3D mesh entity.
     *
-    * @param entity   the mesh entity
+    * @param me   the mesh entity
     * @param material the material
     */
-   public void shape ( final MeshEntity3 entity,
+   public void shape ( final MeshEntity3 me,
       final MaterialSolid material ) {
 
       this.pushStyle();
       this.material(material);
-      this.shape(entity);
+      this.shape(me);
       this.popStyle();
    }
 
    /**
     * Draws a mesh entity.
     *
-    * @param entity    the mesh entity
+    * @param me    the mesh entity
     * @param materials the materials
     */
-   public void shape ( final MeshEntity3 entity,
+   public void shape ( final MeshEntity3 me,
       final MaterialSolid[] materials ) {
 
-      final Transform3 tr = entity.transform;
-      final Iterator < Mesh3 > meshItr = entity.iterator();
-
+      final Transform3 tr = me.transform;
       final Vec3 v = new Vec3();
       final Vec3 vn = new Vec3();
 
-      while ( meshItr.hasNext() ) {
-         final Mesh3 mesh = meshItr.next();
+      for ( final Mesh3 mesh : me ) {
          this.pushStyle();
          this.material(materials[mesh.materialIndex]);
          this.drawMesh3(mesh, tr, v, vn);

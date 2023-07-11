@@ -2,7 +2,6 @@ package camzup.core;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -266,14 +265,9 @@ public abstract class ParserObj {
          final int texCoordLen = texCoordArr.length;
          final int normalLen = normalArr.length;
 
-         /* Convert from hash map to meshes. */
-         final Iterator < Entry < String, ArrayList < int[][] > > > itr
-            = faceGroups.entrySet().iterator();
-
          /* Loop over entries in dictionary. */
-         while ( itr.hasNext() ) {
-            final Entry < String, ArrayList < int[][] > > entry = itr.next();
-
+         for ( final Entry < String, ArrayList < int[][] > > entry : faceGroups
+            .entrySet() ) {
             final Mesh3 mesh = new Mesh3();
             mesh.name = entry.getKey();
 

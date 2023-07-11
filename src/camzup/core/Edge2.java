@@ -163,15 +163,15 @@ public class Edge2 implements Comparable < Edge2 > {
    public Edge2 rotateZLocal ( final float cosa, final float sina,
       final Vec2 center ) {
 
-      final Vec2 coOrigin = this.origin.coord;
+      final Vec2 coOrig = this.origin.coord;
       final Vec2 coDest = this.dest.coord;
 
-      center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+      center.set( ( coOrig.x + coDest.x ) * 0.5f, ( coOrig.y + coDest.y )
          * 0.5f);
 
-      Vec2.sub(coOrigin, center, coOrigin);
-      Vec2.rotateZ(coOrigin, cosa, sina, coOrigin);
-      Vec2.add(coOrigin, center, coOrigin);
+      Vec2.sub(coOrig, center, coOrig);
+      Vec2.rotateZ(coOrig, cosa, sina, coOrig);
+      Vec2.add(coOrig, center, coOrig);
 
       Vec2.sub(coDest, center, coDest);
       Vec2.rotateZ(coDest, cosa, sina, coDest);
@@ -287,15 +287,15 @@ public class Edge2 implements Comparable < Edge2 > {
 
       if ( scalar != 0.0f ) {
 
-         final Vec2 coOrigin = this.origin.coord;
+         final Vec2 coOrig = this.origin.coord;
          final Vec2 coDest = this.dest.coord;
 
-         center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+         center.set( ( coOrig.x + coDest.x ) * 0.5f, ( coOrig.y + coDest.y )
             * 0.5f);
 
-         Vec2.sub(coOrigin, center, coOrigin);
-         Vec2.mul(coOrigin, scalar, coOrigin);
-         Vec2.add(coOrigin, center, coOrigin);
+         Vec2.sub(coOrig, center, coOrig);
+         Vec2.mul(coOrig, scalar, coOrig);
+         Vec2.add(coOrig, center, coOrig);
 
          Vec2.sub(coDest, center, coDest);
          Vec2.mul(coDest, scalar, coDest);
@@ -325,15 +325,15 @@ public class Edge2 implements Comparable < Edge2 > {
 
       if ( Vec2.all(scalar) ) {
 
-         final Vec2 coOrigin = this.origin.coord;
+         final Vec2 coOrig = this.origin.coord;
          final Vec2 coDest = this.dest.coord;
 
-         center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
+         center.set( ( coOrig.x + coDest.x ) * 0.5f, ( coOrig.y + coDest.y )
             * 0.5f);
 
-         Vec2.sub(coOrigin, center, coOrigin);
-         Vec2.hadamard(coOrigin, scalar, coOrigin);
-         Vec2.add(coOrigin, center, coOrigin);
+         Vec2.sub(coOrig, center, coOrig);
+         Vec2.hadamard(coOrig, scalar, coOrig);
+         Vec2.add(coOrig, center, coOrig);
 
          Vec2.sub(coDest, center, coDest);
          Vec2.hadamard(coDest, scalar, coDest);
@@ -365,14 +365,14 @@ public class Edge2 implements Comparable < Edge2 > {
    /**
     * Sets this edge by vertex.
     *
-    * @param origin the origin vertex
-    * @param dest   the destination vertex
+    * @param orig the origin vertex
+    * @param dest the destination vertex
     *
     * @return this edge
     */
-   public Edge2 set ( final Vert2 origin, final Vert2 dest ) {
+   public Edge2 set ( final Vert2 orig, final Vert2 dest ) {
 
-      this.origin = origin;
+      this.origin = orig;
       this.dest = dest;
 
       return this;
@@ -493,8 +493,8 @@ public class Edge2 implements Comparable < Edge2 > {
     * Evaluates whether two edges are complements or neighbors, i.e., whether
     * one edge's origin is the other's destination.
     *
-    * @param a left comparisand
-    * @param b right comparisand
+    * @param a the left comparisand
+    * @param b the right comparisand
     *
     * @return the evaluation
     *
@@ -523,18 +523,18 @@ public class Edge2 implements Comparable < Edge2 > {
        * The magnitude of the rejection of u from v, where u equals b -
        * a.origin.
        */
-      final Vec2 aOrigin = a.origin.coord;
+      final Vec2 aOrig = a.origin.coord;
       final Vec2 aDest = a.dest.coord;
 
       /* Represent edge as point and vector. */
-      final float vx = aDest.x - aOrigin.x;
-      final float vy = aDest.y - aOrigin.y;
+      final float vx = aDest.x - aOrig.x;
+      final float vy = aDest.y - aOrig.y;
       final float dotvv = vx * vx + vy * vy;
       if ( dotvv <= 0.0f ) { return 0.0f; }
 
       /* Find difference between point and edge origin. */
-      final float ux = b.x - aOrigin.x;
-      final float uy = b.y - aOrigin.y;
+      final float ux = b.x - aOrig.x;
+      final float uy = b.y - aOrig.y;
 
       /* Cross difference with edge vector. */
       final float az = ux * vy - uy * vx;
@@ -557,14 +557,14 @@ public class Edge2 implements Comparable < Edge2 > {
    public static Vec2 eval ( final Edge2 edge, final float step,
       final Vec2 target ) {
 
-      final Vec2 coOrigin = edge.origin.coord;
+      final Vec2 coOrig = edge.origin.coord;
       final Vec2 coDest = edge.dest.coord;
 
-      if ( step <= 0.0f ) { return target.set(coOrigin); }
+      if ( step <= 0.0f ) { return target.set(coOrig); }
       if ( step >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - step;
-      return target.set(u * coOrigin.x + step * coDest.x, u * coOrigin.y + step
+      return target.set(u * coOrig.x + step * coDest.x, u * coOrig.y + step
          * coDest.y);
    }
 
@@ -580,9 +580,9 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public static float heading ( final Edge2 edge ) {
 
+      final Vec2 orig = edge.origin.coord;
       final Vec2 dest = edge.dest.coord;
-      final Vec2 origin = edge.origin.coord;
-      return Utils.atan2(dest.y - origin.y, dest.x - origin.x);
+      return Utils.atan2(dest.y - orig.y, dest.x - orig.x);
    }
 
    /**
@@ -629,23 +629,23 @@ public class Edge2 implements Comparable < Edge2 > {
    public static Vec2 projectVector ( final Edge2 edge, final Vec2 v,
       final Vec2 target ) {
 
-      final Vec2 coOrigin = edge.origin.coord;
+      final Vec2 coOrig = edge.origin.coord;
       final Vec2 coDest = edge.dest.coord;
 
-      final float bx = coDest.x - coOrigin.x;
-      final float by = coDest.y - coOrigin.y;
+      final float bx = coDest.x - coOrig.x;
+      final float by = coDest.y - coOrig.y;
       final float bSq = bx * bx + by * by;
 
-      if ( bSq <= 0.0f ) { return target.set(coOrigin); }
+      if ( bSq <= 0.0f ) { return target.set(coOrig); }
 
-      final float ax = v.x - coOrigin.x;
-      final float ay = v.y - coOrigin.y;
+      final float ax = v.x - coOrig.x;
+      final float ay = v.y - coOrig.y;
       final float fac = ( ax * bx + ay * by ) / bSq;
 
       if ( fac >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - fac;
-      return target.set(u * coOrigin.x + fac * coDest.x, u * coOrigin.y + fac
+      return target.set(u * coOrig.x + fac * coDest.x, u * coOrig.y + fac
          * coDest.y);
    }
 
@@ -676,14 +676,14 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public static int sharedCoord ( final Edge2 a, final Edge2 b ) {
 
-      final Vert2 aOrigin = a.origin;
+      final Vert2 aOrig = a.origin;
       final Vert2 aDest = a.dest;
-      final Vert2 bOrigin = b.origin;
+      final Vert2 bOrig = b.origin;
       final Vert2 bDest = b.dest;
 
-      if ( Vert2.approxCoord(aDest, bOrigin) ) { return 1; }
-      if ( Vert2.approxCoord(aOrigin, bOrigin) ) { return 2; }
-      if ( Vert2.approxCoord(aOrigin, bDest) ) { return -1; }
+      if ( Vert2.approxCoord(aDest, bOrig) ) { return 1; }
+      if ( Vert2.approxCoord(aOrig, bOrig) ) { return 2; }
+      if ( Vert2.approxCoord(aOrig, bDest) ) { return -1; }
       if ( Vert2.approxCoord(aDest, bDest) ) { return -2; }
       return 0;
    }

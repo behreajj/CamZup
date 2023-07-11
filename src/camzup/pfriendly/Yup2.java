@@ -16,13 +16,11 @@ import camzup.core.Transform2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec4;
-
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
 import processing.core.PImage;
 import processing.core.PMatrix2D;
-
 import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
@@ -511,21 +509,14 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
       final float swCoord = sw * IUp.HANDLE_COORD_WEIGHT;
 
       final Transform2 tr = ce.transform;
-      final Iterator < Curve2 > curveItr = ce.iterator();
-
       final Vec2 rh = new Vec2();
       final Vec2 co = new Vec2();
       final Vec2 fh = new Vec2();
 
       this.pushStyle();
 
-      while ( curveItr.hasNext() ) {
-         final Curve2 curve = curveItr.next();
-         final Iterator < Knot2 > knItr = curve.iterator();
-
-         while ( knItr.hasNext() ) {
-            final Knot2 knot = knItr.next();
-
+      for ( final Curve2 curve : ce ) {
+         for ( final Knot2 knot : curve ) {
             Transform2.mulPoint(tr, knot.rearHandle, rh);
             Transform2.mulPoint(tr, knot.coord, co);
             Transform2.mulPoint(tr, knot.foreHandle, fh);
@@ -1074,12 +1065,12 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a 2D curve entity.
     *
-    * @param entity the curve entity
+    * @param ce the curve entity
     */
-   public void shape ( final CurveEntity2 entity ) {
+   public void shape ( final CurveEntity2 ce ) {
 
-      final Transform2 tr = entity.transform;
-      final Iterator < Curve2 > itr = entity.iterator();
+      final Transform2 tr = ce.transform;
+      final Iterator < Curve2 > itr = ce.iterator();
 
       final Vec2 rh = new Vec2();
       final Vec2 fh = new Vec2();
@@ -1091,36 +1082,33 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a 2D curve entity.
     *
-    * @param entity   the curve entity
+    * @param ce   the curve entity
     * @param material the material
     */
-   public void shape ( final CurveEntity2 entity,
+   public void shape ( final CurveEntity2 ce,
       final MaterialSolid material ) {
 
       this.pushStyle();
       this.material(material);
-      this.shape(entity);
+      this.shape(ce);
       this.popStyle();
    }
 
    /**
     * Draws a 2D curve entity.
     *
-    * @param entity    the curve entity
+    * @param ce    the curve entity
     * @param materials the materials array
     */
-   public void shape ( final CurveEntity2 entity,
+   public void shape ( final CurveEntity2 ce,
       final MaterialSolid[] materials ) {
 
-      final Transform2 tr = entity.transform;
-      final Iterator < Curve2 > itr = entity.iterator();
-
+      final Transform2 tr = ce.transform;
       final Vec2 fh = new Vec2();
       final Vec2 rh = new Vec2();
       final Vec2 co = new Vec2();
 
-      while ( itr.hasNext() ) {
-         final Curve2 curve = itr.next();
+      for ( final Curve2 curve : ce ) {
          this.pushStyle();
          this.material(materials[curve.materialIndex]);
          this.drawCurve2(curve, tr, fh, rh, co);
@@ -1131,12 +1119,12 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a 2D mesh entity.
     *
-    * @param entity the mesh entity
+    * @param me the mesh entity
     */
-   public void shape ( final MeshEntity2 entity ) {
+   public void shape ( final MeshEntity2 me ) {
 
-      final Transform2 tr = entity.transform;
-      final Iterator < Mesh2 > meshItr = entity.iterator();
+      final Transform2 tr = me.transform;
+      final Iterator < Mesh2 > meshItr = me.iterator();
       final Vec2 v = new Vec2();
 
       while ( meshItr.hasNext() ) { this.drawMesh2(meshItr.next(), tr, v); }
@@ -1145,14 +1133,14 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a 2D mesh entity with a textured material.
     *
-    * @param entity   the mesh entity
+    * @param me   the mesh entity
     * @param material the material
     */
-   public void shape ( final MeshEntity2 entity,
+   public void shape ( final MeshEntity2 me,
       final MaterialPImage material ) {
 
-      final Transform2 tr = entity.transform;
-      final Iterator < Mesh2 > meshItr = entity.iterator();
+      final Transform2 tr = me.transform;
+      final Iterator < Mesh2 > meshItr = me.iterator();
       final Vec2 v = new Vec2();
       final Vec2 vt = new Vec2();
 
@@ -1167,21 +1155,19 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a 2D mesh entity.
     *
-    * @param entity    the mesh entity
+    * @param me    the mesh entity
     * @param materials the materials
     */
-   public void shape ( final MeshEntity2 entity,
+   public void shape ( final MeshEntity2 me,
       final MaterialPImage[] materials ) {
 
-      final Transform2 tr = entity.transform;
-      final Iterator < Mesh2 > meshItr = entity.iterator();
+      final Transform2 tr = me.transform;
       final Vec2 v = new Vec2();
       final Vec2 vt = new Vec2();
 
       this.pushStyle();
       this.noStroke();
-      while ( meshItr.hasNext() ) {
-         final Mesh2 mesh = meshItr.next();
+      for ( final Mesh2 mesh : me ) {
          this.drawMesh2(mesh, tr, materials[mesh.materialIndex], v, vt);
       }
       this.popStyle();
@@ -1190,33 +1176,31 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a 2D mesh entity.
     *
-    * @param entity   the mesh entity
+    * @param me   the mesh entity
     * @param material the material
     */
-   public void shape ( final MeshEntity2 entity,
+   public void shape ( final MeshEntity2 me,
       final MaterialSolid material ) {
 
       this.pushStyle();
       this.material(material);
-      this.shape(entity);
+      this.shape(me);
       this.popStyle();
    }
 
    /**
     * Draws a 2D mesh entity.
     *
-    * @param entity    the mesh entity
+    * @param me    the mesh entity
     * @param materials the materials
     */
-   public void shape ( final MeshEntity2 entity,
+   public void shape ( final MeshEntity2 me,
       final MaterialSolid[] materials ) {
 
-      final Transform2 tr = entity.transform;
-      final Iterator < Mesh2 > meshItr = entity.iterator();
+      final Transform2 tr = me.transform;
       final Vec2 v = new Vec2();
 
-      while ( meshItr.hasNext() ) {
-         final Mesh2 mesh = meshItr.next();
+      for ( final Mesh2 mesh : me ) {
          this.pushStyle();
          this.material(materials[mesh.materialIndex]);
          this.drawMesh2(mesh, tr, v);

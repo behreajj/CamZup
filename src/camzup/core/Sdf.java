@@ -255,28 +255,28 @@ public abstract class Sdf {
     * Draws a line from the origin to the destination, where the distance
     * field is characterized by a third point's distance from the line.
     *
-    * @param point  the point
-    * @param origin the origin
-    * @param dest   the destination
+    * @param point the point
+    * @param orig  the origin
+    * @param dest  the destination
     *
     * @return the signed distance
     *
     * @see Utils#hypot(float, float)
     * @see Utils#clamp01(float)
     */
-   public static float line ( final Vec2 point, final Vec2 origin,
+   public static float line ( final Vec2 point, final Vec2 orig,
       final Vec2 dest ) {
 
       /* Denominator: b - a */
-      final float bax = dest.x - origin.x;
-      final float bay = dest.y - origin.y;
+      final float bax = dest.x - orig.x;
+      final float bay = dest.y - orig.y;
 
       /* dot(ba, ba) */
       final float baba = bax * bax + bay * bay;
 
       /* Numerator: p - a */
-      final float pax = point.x - origin.x;
-      final float pay = point.y - origin.y;
+      final float pax = point.x - orig.x;
+      final float pay = point.y - orig.y;
 
       if ( baba == 0.0f ) { return Utils.hypot(pax, pay); }
 
@@ -293,7 +293,7 @@ public abstract class Sdf {
     * field is characterized by a third point's distance from the line.
     *
     * @param point    the point
-    * @param origin   the origin
+    * @param orig     the origin
     * @param dest     the destination
     * @param rounding the rounding factor.
     *
@@ -301,40 +301,40 @@ public abstract class Sdf {
     *
     * @see Sdf#line(Vec2, Vec2, Vec2)
     */
-   public static float line ( final Vec2 point, final Vec2 origin,
+   public static float line ( final Vec2 point, final Vec2 orig,
       final Vec2 dest, final float rounding ) {
 
-      return Sdf.line(point, origin, dest) - rounding;
+      return Sdf.line(point, orig, dest) - rounding;
    }
 
    /**
     * Draws a line from the origin to the destination, where the distance
     * field is characterized by a third point's distance from the line.
     *
-    * @param point  the point
-    * @param origin the origin
-    * @param dest   the destination
+    * @param point the point
+    * @param orig  the origin
+    * @param dest  the destination
     *
     * @return the signed distance
     *
     * @see Utils#clamp01(float)
     * @see Utils#hypot(float, float, float)
     */
-   public static float line ( final Vec3 point, final Vec3 origin,
+   public static float line ( final Vec3 point, final Vec3 orig,
       final Vec3 dest ) {
 
       /* Denominator: b - a */
-      final float bax = dest.x - origin.x;
-      final float bay = dest.y - origin.y;
-      final float baz = dest.z - origin.z;
+      final float bax = dest.x - orig.x;
+      final float bay = dest.y - orig.y;
+      final float baz = dest.z - orig.z;
 
       /* dot(ba, ba) */
       final float baba = bax * bax + bay * bay + baz * baz;
 
       /* Numerator: p - a */
-      final float pax = point.x - origin.x;
-      final float pay = point.y - origin.y;
-      final float paz = point.z - origin.z;
+      final float pax = point.x - orig.x;
+      final float pay = point.y - orig.y;
+      final float paz = point.z - orig.z;
 
       if ( baba == 0.0f ) { return Utils.hypot(pax, pay, paz); }
 
@@ -351,7 +351,7 @@ public abstract class Sdf {
     * field is characterized by a third point's distance from the line.
     *
     * @param point    the point
-    * @param origin   the origin
+    * @param orig     the origin
     * @param dest     the destination
     * @param rounding the rounding factor.
     *
@@ -359,10 +359,10 @@ public abstract class Sdf {
     *
     * @see Sdf#line(Vec3, Vec3, Vec3)
     */
-   public static float line ( final Vec3 point, final Vec3 origin,
+   public static float line ( final Vec3 point, final Vec3 orig,
       final Vec3 dest, final float rounding ) {
 
-      return Sdf.line(point, origin, dest) - rounding;
+      return Sdf.line(point, orig, dest) - rounding;
    }
 
    /**
@@ -389,7 +389,7 @@ public abstract class Sdf {
     * Draws a polygon from a series of vertices. The number of vertices is
     * assumed to be greater than three. With reference to
     * <a href="https://www.shadertoy.com/view/wdBXRW">
-    * https://www.shadertoy.com/view/wdBXRW</a> .
+    * https://www.shadertoy.com/view/wdBXRW</a>.
     *
     * @param point    the point
     * @param vertices the vertices

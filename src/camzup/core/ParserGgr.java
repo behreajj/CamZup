@@ -2,7 +2,6 @@ package camzup.core;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-
 import java.util.ArrayList;
 import java.util.TreeSet;
 import java.util.regex.Pattern;
@@ -139,15 +138,16 @@ public abstract class ParserGgr {
 
          /* Mixers. */
          final Color.MixSrgb rgbaMix = new Color.MixSrgb();
+         final Color.MixSrLch cwMix = new Color.MixSrLch(new Color.HueCW());
+         final Color.MixSrLch ccwMix = new Color.MixSrLch(new Color.HueCCW());
 
          /* The GGR file is sampled rather than transferred one-to-one. */
-         final int vSamp = Utils.clamp(samples, 3, 32);
-         final float toStep = 1.0f / ( vSamp - 1.0f );
-         for ( int k = 0; k < vSamp; ++k ) {
+         final int vrfSamples = Utils.clamp(samples, 3, 32);
+         final float toStep = 1.0f / ( vrfSamples - 1.0f );
+         for ( int k = 0; k < vrfSamples; ++k ) {
 
             /* Create new color key data. */
             final float step = k * toStep;
-            float[] seg = keyArr[0];
             final Color evalClr = new Color();
 
             /*
@@ -159,35 +159,34 @@ public abstract class ParserGgr {
             if ( step <= keyArr[0][0] ) {
 
                /* If less than lower bound, set to left color of key 0. */
-               seg = keyArr[0];
+               final float[] seg = keyArr[0];
                evalClr.set(seg[3], seg[4], seg[5], seg[6]);
-               trgKeys.add(new ColorKey(step, evalClr));
 
             } else if ( step >= keyArr[keyLen - 1][2] ) {
 
                /* If greater than upper bound, set to right color of key - 1. */
-               seg = keyArr[keyLen - 1];
+               final float[] seg = keyArr[keyLen - 1];
                evalClr.set(seg[7], seg[8], seg[9], seg[10]);
-               trgKeys.add(new ColorKey(step, evalClr));
 
             } else {
 
                /* Search for segment within which the step falls. */
                boolean segFound = false;
+               float[] seg = {};
                for ( int m = 0; !segFound && m < keyLen; ++m ) {
                   seg = keyArr[m];
                   segFound = seg[0] <= step && step <= seg[2];
                }
 
                /* Cache the segment's left, mid and right steps. */
-               final float segl = seg[0];
-               final float segm = seg[1];
-               final float segr = seg[2];
+               final float segLft = seg[0];
+               final float segMid = seg[1];
+               final float segRgt = seg[2];
 
                /* Find normalized step. */
-               final float denom = Utils.div(1.0f, segr - segl);
-               final float mid = ( segm - segl ) * denom;
-               final float pos = ( step - segl ) * denom;
+               final float denom = Utils.div(1.0f, segRgt - segLft);
+               final float mid = ( segMid - segLft ) * denom;
+               final float pos = ( step - segLft ) * denom;
 
                float fac = 0.5f;
                if ( pos <= mid ) {
@@ -200,31 +199,28 @@ public abstract class ParserGgr {
                final int blndFunc = ( int ) seg[11];
                switch ( blndFunc ) {
 
-                  case ParserGgr.BLEND_CURVED: /* 1 */
-                     final double logMid = Math.log(mid);
-                     fac = ( float ) Math.pow(pos, logMid != 0.0d
-                        ? ParserGgr.LOG_HALF_D / logMid : 0.0d);
-
+                  case ParserGgr.BLEND_CURVED: { /* 1 */
+                     final double logMid = mid != 0.0f ? Math.log(mid) : 0.0d;
+                     final double exponent = logMid != 0.0d
+                        ? ParserGgr.LOG_HALF_D / logMid : 0.0d;
+                     fac = ( float ) Math.pow(pos, exponent);
+                  }
                      break;
 
-                  case ParserGgr.BLEND_SINE: /* 2 */
-
-                     fac = 0.5f * ( ( float ) Math.sin(IUtils.PI * fac
-                        - IUtils.HALF_PI) + 1.0f );
-
+                  case ParserGgr.BLEND_SINE: { /* 2 */
+                     fac = ( float ) ( 0.5d * ( Math.sin(IUtils.PI * fac
+                        - IUtils.HALF_PI) + 1.0d ) );
+                  }
                      break;
 
-                  case ParserGgr.BLEND_SPHERE_INCR: /* 3 */
-
-                     fac -= 1.0f;
-                     fac = Utils.sqrt(1.0f - fac * fac);
-
+                  case ParserGgr.BLEND_SPHERE_INCR: { /* 3 */
+                     fac = Utils.sqrt(1.0f - ( fac - 1.0f ) * ( fac - 1.0f ));
+                  }
                      break;
 
-                  case ParserGgr.BLEND_SPHERE_DECR: /* 4 */
-
+                  case ParserGgr.BLEND_SPHERE_DECR: { /* 4 */
                      fac = 1.0f - Utils.sqrt(1.0f - fac * fac);
-
+                  }
                      break;
 
                   case ParserGgr.BLEND_LINEAR: /* 0 */
@@ -236,31 +232,31 @@ public abstract class ParserGgr {
                ltClr.set(seg[3], seg[4], seg[5], seg[6]);
                rtClr.set(seg[7], seg[8], seg[9], seg[10]);
 
+               /*
+                * Mix color based on color space. Default to RGB. HSB clockwise
+                * and counter-clockwise use CIE LCH as a substitute. Full
+                * extension for ramps that go from red to red is not supported.
+                * For better control, add epsilon to the left or right hue.
+                */
                final int clrSpc = ( int ) seg[12];
-               if ( ltClr.equals(rtClr) ) {
-                  /*
-                   * Formerly a hack for case in which colors are equal. The
-                   * color interpolation below does not recognize multiple
-                   * revolutions around the color wheel where hues are equal, so
-                   * an epsilon shift needs to take place.
-                   */
-               }
-
-               // TODO: How to support HSB?
-
-               /* Mix color based on color space. Default to RGB. */
                switch ( clrSpc ) {
-                  case ParserGgr.SPACE_HSB_CCW: /* 1 */
-                  case ParserGgr.SPACE_HSB_CW: /* 2 */
-                  case ParserGgr.SPACE_RGB: /* 0 */
-                  default:
+                  case ParserGgr.SPACE_HSB_CCW: { /* 1 */
+                     ccwMix.apply(ltClr, rtClr, fac, evalClr);
+                  }
+                     break;
+
+                  case ParserGgr.SPACE_HSB_CW: { /* 2 */
+                     cwMix.apply(ltClr, rtClr, fac, evalClr);
+                  }
+                     break;
+
+                  case ParserGgr.SPACE_RGB:
+                  default: {
                      rgbaMix.apply(ltClr, rtClr, fac, evalClr);
-
+                  }
                }
-
-               /* Create key and add to the tree set. */
-               trgKeys.add(new ColorKey(step, evalClr));
             }
+            trgKeys.add(new ColorKey(step, evalClr));
 
          }
 

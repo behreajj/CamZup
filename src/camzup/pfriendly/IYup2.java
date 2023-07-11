@@ -11,7 +11,6 @@ import camzup.core.Quadtree;
 import camzup.core.Ray2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
-
 import processing.core.PApplet;
 import processing.core.PImage;
 

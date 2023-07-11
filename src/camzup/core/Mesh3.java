@@ -251,7 +251,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       /* Find edge. */
       final int faceLen = face.length;
       final int j = Utils.mod(edgeIndex, faceLen);
-      final int[] origin = face[j];
+      final int[] orig = face[j];
       final int[] dest = face[ ( j + 1 ) % faceLen];
 
       /* Cache these prior to appending to coordinates. */
@@ -264,22 +264,22 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final float u = 1.0f - t;
 
       /* Mix coordinates. */
-      final Vec3 vOrigin = this.coords[origin[0]];
+      final Vec3 vOrig = this.coords[orig[0]];
       final Vec3 vDest = this.coords[dest[0]];
-      final Vec3 vMidPoint = new Vec3(u * vOrigin.x + t * vDest.x, u * vOrigin.y
-         + t * vDest.y, u * vOrigin.z + t * vDest.z);
+      final Vec3 vMidPoint = new Vec3(u * vOrig.x + t * vDest.x, u * vOrig.y + t
+         * vDest.y, u * vOrig.z + t * vDest.z);
 
       /* Mix texture coordinates. */
-      final Vec2 vtOrigin = this.texCoords[origin[1]];
+      final Vec2 vtOrig = this.texCoords[orig[1]];
       final Vec2 vtDest = this.texCoords[dest[1]];
-      final Vec2 vtMidPoint = new Vec2(u * vtOrigin.x + t * vtDest.x, u
-         * vtOrigin.y + t * vtDest.y);
+      final Vec2 vtMidPoint = new Vec2(u * vtOrig.x + t * vtDest.x, u * vtOrig.y
+         + t * vtDest.y);
 
       /* Mix normals. */
-      final Vec3 vnOrigin = this.normals[origin[2]];
+      final Vec3 vnOrig = this.normals[orig[2]];
       final Vec3 vnDest = this.normals[dest[2]];
-      final Vec3 vnMidPoint = new Vec3(u * vnOrigin.x + t * vnDest.x, u
-         * vnOrigin.y + t * vnDest.y, u * vnOrigin.z + t * vnDest.z);
+      final Vec3 vnMidPoint = new Vec3(u * vnOrig.x + t * vnDest.x, u * vnOrig.y
+         + t * vnDest.y, u * vnOrig.z + t * vnDest.z);
       Vec3.normalize(vnMidPoint, vnMidPoint);
 
       /* Append new data. */
@@ -367,7 +367,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Extrudes an edge, creating a new quadrilateral tangent to the edge.
     *
-    * @param faceIndex the face index.
+    * @param faceIndex the face index
     * @param edgeIndex the edge index
     * @param amount    the extrusion amount
     *
@@ -408,44 +408,43 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int idxV2 = vsOldLen + 1;
       final int idxVt2 = vtsOldLen + 1;
 
-      final Vec3 vOrigin = this.coords[idxV0];
-      final Vec2 vtOrigin = this.texCoords[idxVt0];
-      final Vec3 vnOrigin = this.normals[idxVn0];
+      final Vec3 vOrig = this.coords[idxV0];
+      final Vec2 vtOrig = this.texCoords[idxVt0];
+      final Vec3 vnOrig = this.normals[idxVn0];
 
       final Vec3 vDest = this.coords[idxV3];
       final Vec2 vtDest = this.texCoords[idxVt3];
       final Vec3 vnDest = this.normals[idxVn3];
 
-      final Vec3 vnDiff = Vec3.addNorm(vnDest, vnOrigin, new Vec3());
+      final Vec3 vnDiff = Vec3.addNorm(vnDest, vnOrig, new Vec3());
 
       final Vec3 vDiff = new Vec3();
-      Vec3.sub(vDest, vOrigin, vDiff);
+      Vec3.sub(vDest, vOrig, vDiff);
       final float edgeMag = Vec3.mag(vDiff);
 
       final Vec3 extrude = new Vec3();
       Vec3.crossNorm(vDiff, vnDiff, extrude);
       Vec3.mul(extrude, amount * edgeMag, extrude);
 
-      final Vec3 vNewOrigin = new Vec3();
+      final Vec3 vNewOrig = new Vec3();
       final Vec3 vNewDest = new Vec3();
-      Vec3.add(vOrigin, extrude, vNewOrigin);
+      Vec3.add(vOrig, extrude, vNewOrig);
       Vec3.add(vDest, extrude, vNewDest);
 
       final Vec2 vtPerp = new Vec2();
-      Vec2.sub(vtOrigin, vtDest, vtPerp);
+      Vec2.sub(vtOrig, vtDest, vtPerp);
       Vec2.perpendicularCW(vtPerp, vtPerp);
 
-      final Vec2 vtNewOrigin = new Vec2();
+      final Vec2 vtNewOrig = new Vec2();
       final Vec2 vtNewDest = new Vec2();
-      Vec2.add(vtOrigin, vtPerp, vtNewOrigin);
+      Vec2.add(vtOrig, vtPerp, vtNewOrig);
       Vec2.add(vtDest, vtPerp, vtNewDest);
 
       final int[][][] faceNew = { { { idxV1, idxVt1, idxVn1 }, { idxV2, idxVt2,
          idxVn1 }, { idxV3, idxVt3, idxVn1 }, { idxV0, idxVt0, idxVn1 } } };
 
-      this.coords = Vec3.concat(this.coords, new Vec3[] { vNewOrigin,
-         vNewDest });
-      this.texCoords = Vec2.concat(this.texCoords, new Vec2[] { vtNewOrigin,
+      this.coords = Vec3.concat(this.coords, new Vec3[] { vNewOrig, vNewDest });
+      this.texCoords = Vec2.concat(this.texCoords, new Vec2[] { vtNewOrig,
          vtNewDest });
       this.normals = Vec3.append(this.normals, vnDiff);
       this.faces = Mesh.splice(this.faces, i + 1, 0, faceNew);
@@ -456,7 +455,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Extrudes all edges of a face, creating new tangential quadrilaterals.
     *
-    * @param faceIndex the face index.
+    * @param faceIndex the face index
     * @param amount    the extrusion amount
     *
     * @return this mesh
@@ -780,13 +779,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int[][] face = this.faces[Utils.mod(faceIndex, this.faces.length)];
       final int faceLen = face.length;
       final int j = Utils.mod(edgeIndex, faceLen);
-      final int[] idcsOrigin = face[j];
+      final int[] idcsOrig = face[j];
       final int[] idcsDest = face[ ( j + 1 ) % faceLen];
 
-      return target.set(this.coords[idcsOrigin[0]],
-         this.texCoords[idcsOrigin[1]], this.normals[idcsOrigin[2]],
-         this.coords[idcsDest[0]], this.texCoords[idcsDest[1]],
-         this.normals[idcsDest[2]]);
+      return target.set(this.coords[idcsOrig[0]], this.texCoords[idcsOrig[1]],
+         this.normals[idcsOrig[2]], this.coords[idcsDest[0]],
+         this.texCoords[idcsDest[1]], this.normals[idcsDest[2]]);
    }
 
    /**
@@ -816,11 +814,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
          for ( int j = 0; j < faceLen; ++j ) {
 
-            final int[] idcsOrigin = f[j];
+            final int[] idcsOrig = f[j];
             final int[] idcsDest = f[ ( j + 1 ) % faceLen];
 
-            trial.set(this.coords[idcsOrigin[0]], this.texCoords[idcsOrigin[1]],
-               this.normals[idcsOrigin[2]], this.coords[idcsDest[0]],
+            trial.set(this.coords[idcsOrig[0]], this.texCoords[idcsOrig[1]],
+               this.normals[idcsOrig[2]], this.coords[idcsDest[0]],
                this.texCoords[idcsDest[1]], this.normals[idcsDest[2]]);
 
             if ( result.indexOf(trial) < 0 ) {
@@ -1779,9 +1777,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       /* Find edge origin vertex. */
       final int j0 = Utils.mod(edgeIndex, faceLen);
       final int[] vert0Idx = face[j0];
-      final Vec3 vOrigin = this.coords[vert0Idx[0]];
-      final Vec2 vtOrigin = this.texCoords[vert0Idx[1]];
-      final Vec3 vnOrigin = this.normals[vert0Idx[2]];
+      final Vec3 vOrig = this.coords[vert0Idx[0]];
+      final Vec2 vtOrig = this.texCoords[vert0Idx[1]];
+      final Vec3 vnOrig = this.normals[vert0Idx[2]];
 
       /* Find edge destination vertex. */
       final int j1 = ( j0 + 1 ) % faceLen;
@@ -1813,12 +1811,12 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
          final float step = toStep + k * toStep;
          final float u = 1.0f - step;
 
-         vsNew[k] = new Vec3(u * vOrigin.x + step * vDest.x, u * vOrigin.y
-            + step * vDest.y, u * vOrigin.z + step * vDest.z);
-         vtsNew[k] = new Vec2(u * vtOrigin.x + step * vtDest.x, u * vtOrigin.y
+         vsNew[k] = new Vec3(u * vOrig.x + step * vDest.x, u * vOrig.y + step
+            * vDest.y, u * vOrig.z + step * vDest.z);
+         vtsNew[k] = new Vec2(u * vtOrig.x + step * vtDest.x, u * vtOrig.y
             + step * vtDest.y);
-         final Vec3 vn = vnsNew[k] = new Vec3(u * vnOrigin.x + step * vnDest.x,
-            u * vnOrigin.y + step * vnDest.y, u * vnOrigin.z + step * vnDest.z);
+         final Vec3 vn = vnsNew[k] = new Vec3(u * vnOrig.x + step * vnDest.x, u
+            * vnOrig.y + step * vnDest.y, u * vnOrig.z + step * vnDest.z);
          Vec3.normalize(vn, vn);
 
          final int[] fNew = fsNew[k];
@@ -2419,11 +2417,11 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             final int[][] vrtInd = this.faces[j];
             final int vrtIndLen = vrtInd.length;
             for ( int k = 0; k < vrtIndLen; ++k ) {
-               final int origin = vrtInd[k][0];
+               final int orig = vrtInd[k][0];
                final int dest = vrtInd[ ( k + 1 ) % vrtIndLen][0];
 
-               final String query = origin + ", " + dest;
-               final String reverse = dest + ", " + origin;
+               final String query = orig + ", " + dest;
+               final String reverse = dest + ", " + orig;
 
                if ( edgesList.indexOf(query) < 0 && edgesList.indexOf(reverse)
                   < 0 ) {
@@ -4086,9 +4084,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
        * so calculate portions of the map(distance, minDist, maxDist, nearBound,
        * farBound) function outside of the for loop.
        */
-      final float spanOrigin = maxDist - minDist;
-      final float scalar = spanOrigin != 0.0f ? ( farBound - nearBound )
-         / spanOrigin : 0.0f;
+      final float spanOrig = maxDist - minDist;
+      final float scalar = spanOrig != 0.0f ? ( farBound - nearBound )
+         / spanOrig : 0.0f;
       final TreeMap < Float, Vert3 > result = new TreeMap <>();
       for ( int j = 0; j < vertLen; ++j ) {
          final float fac = nearBound + scalar * ( dists[j] - minDist );

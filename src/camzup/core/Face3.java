@@ -607,10 +607,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Scales all coordinates in the face by a scalar.<br>
-    * <br>
-    * Beware, non-uniform scaling requires that normals be recalculated for
-    * correct shading.
+    * Scales all coordinates in the face by a vector.
     *
     * @param scale the nonuniform scalar
     *
@@ -645,7 +642,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Scales all coordinates in the face by a scalar; uses global coordinates,
+    * Scales all coordinates in the face by a vector; uses global coordinates,
     * i.e., doesn't consider the face's position.
     *
     * @param scale the nonuniform scalar
@@ -708,7 +705,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Scales all coordinates in the face by a scalar; subtracts the face's
+    * Scales all coordinates in the face by a vector; subtracts the face's
     * center from each vertex, scales, then adds the center.
     *
     * @param scale  the nonuniform scalar
@@ -1051,9 +1048,9 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     *
     * @param face       the face
     * @param handedness the handedness
-    * @param target     the output transform
+    * @param target     the output quaternion
     *
-    * @return the transform
+    * @return the orientation
     *
     * @see Face3#normal(Face3, Vec3)
     * @see Quaternion#fromDir(Vec3, Handedness, Quaternion)
@@ -1079,7 +1076,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @param handedness the handedness
     * @param target     the output transform
     *
-    * @return the transform
+    * @return the orientation
     *
     * @see Face3#centerMean(Face3, Vec3)
     * @see Face3#normal(Face3, Vec3)
@@ -1108,9 +1105,9 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * Returns the orientation of the face as a ray based on the face's normal.
     *
     * @param face   the face
-    * @param target the output transform
+    * @param target the output ray
     *
-    * @return the transform
+    * @return the orientation
     *
     * @see Face3#centerMean(Face3, Vec3)
     * @see Face3#normal(Face3, Vec3)

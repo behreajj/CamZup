@@ -8,9 +8,7 @@ import camzup.core.Mat4;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
 import camzup.core.Vec4;
-
 import processing.core.PApplet;
-
 import processing.opengl.PShader;
 
 /**

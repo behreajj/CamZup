@@ -219,9 +219,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 flipX ( ) {
 
-      final Iterator < Knot3 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot3 kn = itr.next();
+      for ( final Knot3 kn : this.knots ) {
          kn.coord.x = -kn.coord.x;
          kn.foreHandle.x = -kn.foreHandle.x;
          kn.rearHandle.x = -kn.rearHandle.x;
@@ -242,9 +240,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 flipY ( ) {
 
-      final Iterator < Knot3 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot3 kn = itr.next();
+      for ( final Knot3 kn : this.knots ) {
          kn.coord.y = -kn.coord.y;
          kn.foreHandle.y = -kn.foreHandle.y;
          kn.rearHandle.y = -kn.rearHandle.y;
@@ -265,9 +261,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    public Curve3 flipZ ( ) {
 
-      final Iterator < Knot3 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot3 kn = itr.next();
+      for ( final Knot3 kn : this.knots ) {
          kn.coord.z = -kn.coord.z;
          kn.foreHandle.z = -kn.foreHandle.z;
          kn.rearHandle.z = -kn.rearHandle.z;
@@ -498,10 +492,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       lb.z = 0.5f * ( lb.z + ub.z );
       final float scl = Utils.div(1.0f, Utils.max(dim.x, dim.y, dim.z));
 
-      final Iterator < Knot3 > itr = this.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot3 kn = itr.next();
-
+      for ( final Knot3 kn : this.knots ) {
          final Vec3 co = kn.coord;
          Vec3.sub(co, lb, co);
          Vec3.mul(co, scl, co);
@@ -2000,9 +1991,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    static void accumMinMax ( final Curve3 curve, final Vec3 lb,
       final Vec3 ub ) {
 
-      final Iterator < Knot3 > itr = curve.knots.iterator();
-      while ( itr.hasNext() ) {
-         final Knot3 kn = itr.next();
+      for ( final Knot3 kn : curve.knots ) {
          final Vec3 co = kn.coord;
          final Vec3 fh = kn.foreHandle;
          final Vec3 rh = kn.rearHandle;

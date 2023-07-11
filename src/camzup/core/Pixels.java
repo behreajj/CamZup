@@ -14,7 +14,6 @@ import java.util.function.Function;
 import java.util.function.IntFunction;
 
 import camzup.core.Utils.TriFunction;
-
 import camzup.pfriendly.ZImage;
 
 /**
@@ -50,44 +49,43 @@ public abstract class Pixels {
    /**
     * Look up table for converting colors from linear to standard RGB.
     */
-   private static final int[] LTS_LUT = new int[] { 0, 13, 22, 28, 34, 38, 42,
-      46, 50, 53, 56, 59, 61, 64, 66, 69, 71, 73, 75, 77, 79, 81, 83, 85, 86,
-      88, 90, 92, 93, 95, 96, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110,
-      112, 113, 114, 115, 117, 118, 119, 120, 121, 122, 124, 125, 126, 127, 128,
-      129, 130, 131, 132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143,
-      144, 145, 146, 147, 148, 148, 149, 150, 151, 152, 153, 154, 155, 155, 156,
-      157, 158, 159, 159, 160, 161, 162, 163, 163, 164, 165, 166, 167, 167, 168,
-      169, 170, 170, 171, 172, 173, 173, 174, 175, 175, 176, 177, 178, 178, 179,
-      180, 180, 181, 182, 182, 183, 184, 185, 185, 186, 187, 187, 188, 189, 189,
-      190, 190, 191, 192, 192, 193, 194, 194, 195, 196, 196, 197, 197, 198, 199,
-      199, 200, 200, 201, 202, 202, 203, 203, 204, 205, 205, 206, 206, 207, 208,
-      208, 209, 209, 210, 210, 211, 212, 212, 213, 213, 214, 214, 215, 215, 216,
-      216, 217, 218, 218, 219, 219, 220, 220, 221, 221, 222, 222, 223, 223, 224,
-      224, 225, 226, 226, 227, 227, 228, 228, 229, 229, 230, 230, 231, 231, 232,
-      232, 233, 233, 234, 234, 235, 235, 236, 236, 237, 237, 238, 238, 238, 239,
-      239, 240, 240, 241, 241, 242, 242, 243, 243, 244, 244, 245, 245, 246, 246,
-      246, 247, 247, 248, 248, 249, 249, 250, 250, 251, 251, 251, 252, 252, 253,
-      253, 254, 254, 255, 255 };
+   private static final int[] LTS_LUT = { 0, 13, 22, 28, 34, 38, 42, 46, 50, 53,
+      56, 59, 61, 64, 66, 69, 71, 73, 75, 77, 79, 81, 83, 85, 86, 88, 90, 92,
+      93, 95, 96, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 112, 113, 114,
+      115, 117, 118, 119, 120, 121, 122, 124, 125, 126, 127, 128, 129, 130, 131,
+      132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
+      147, 148, 148, 149, 150, 151, 152, 153, 154, 155, 155, 156, 157, 158, 159,
+      159, 160, 161, 162, 163, 163, 164, 165, 166, 167, 167, 168, 169, 170, 170,
+      171, 172, 173, 173, 174, 175, 175, 176, 177, 178, 178, 179, 180, 180, 181,
+      182, 182, 183, 184, 185, 185, 186, 187, 187, 188, 189, 189, 190, 190, 191,
+      192, 192, 193, 194, 194, 195, 196, 196, 197, 197, 198, 199, 199, 200, 200,
+      201, 202, 202, 203, 203, 204, 205, 205, 206, 206, 207, 208, 208, 209, 209,
+      210, 210, 211, 212, 212, 213, 213, 214, 214, 215, 215, 216, 216, 217, 218,
+      218, 219, 219, 220, 220, 221, 221, 222, 222, 223, 223, 224, 224, 225, 226,
+      226, 227, 227, 228, 228, 229, 229, 230, 230, 231, 231, 232, 232, 233, 233,
+      234, 234, 235, 235, 236, 236, 237, 237, 238, 238, 238, 239, 239, 240, 240,
+      241, 241, 242, 242, 243, 243, 244, 244, 245, 245, 246, 246, 246, 247, 247,
+      248, 248, 249, 249, 250, 250, 251, 251, 251, 252, 252, 253, 253, 254, 254,
+      255, 255 };
 
    /**
     * Look up table for converting colors from standard to linear RGB.
     */
-   private static final int[] STL_LUT = new int[] { 0, 0, 0, 0, 0, 0, 0, 1, 1,
-      1, 1, 1, 1, 1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4,
-      4, 4, 4, 5, 5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 10, 10, 10,
-      11, 11, 12, 12, 12, 13, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 17, 18,
-      18, 19, 19, 20, 20, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 27, 27, 28,
-      29, 29, 30, 30, 31, 32, 32, 33, 34, 35, 35, 36, 37, 37, 38, 39, 40, 41,
-      41, 42, 43, 44, 45, 45, 46, 47, 48, 49, 50, 51, 51, 52, 53, 54, 55, 56,
-      57, 58, 59, 60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74,
-      76, 77, 78, 79, 80, 81, 82, 84, 85, 86, 87, 88, 90, 91, 92, 93, 95, 96,
-      97, 99, 100, 101, 103, 104, 105, 107, 108, 109, 111, 112, 114, 115, 116,
-      118, 119, 121, 122, 124, 125, 127, 128, 130, 131, 133, 134, 136, 138, 139,
-      141, 142, 144, 146, 147, 149, 151, 152, 154, 156, 157, 159, 161, 163, 164,
-      166, 168, 170, 171, 173, 175, 177, 179, 181, 183, 184, 186, 188, 190, 192,
-      194, 196, 198, 200, 202, 204, 206, 208, 210, 212, 214, 216, 218, 220, 222,
-      224, 226, 229, 231, 233, 235, 237, 239, 242, 244, 246, 248, 250, 253,
-      255 };
+   private static final int[] STL_LUT = { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
+      1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5,
+      5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 12,
+      12, 12, 13, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 17, 18, 18, 19, 19,
+      20, 20, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 27, 27, 28, 29, 29, 30,
+      30, 31, 32, 32, 33, 34, 35, 35, 36, 37, 37, 38, 39, 40, 41, 41, 42, 43,
+      44, 45, 45, 46, 47, 48, 49, 50, 51, 51, 52, 53, 54, 55, 56, 57, 58, 59,
+      60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 76, 77, 78,
+      79, 80, 81, 82, 84, 85, 86, 87, 88, 90, 91, 92, 93, 95, 96, 97, 99, 100,
+      101, 103, 104, 105, 107, 108, 109, 111, 112, 114, 115, 116, 118, 119, 121,
+      122, 124, 125, 127, 128, 130, 131, 133, 134, 136, 138, 139, 141, 142, 144,
+      146, 147, 149, 151, 152, 154, 156, 157, 159, 161, 163, 164, 166, 168, 170,
+      171, 173, 175, 177, 179, 181, 183, 184, 186, 188, 190, 192, 194, 196, 198,
+      200, 202, 204, 206, 208, 210, 212, 214, 216, 218, 220, 222, 224, 226, 229,
+      231, 233, 235, 237, 239, 242, 244, 246, 248, 250, 253, 255 };
 
    /**
     * Multiplies the alpha channel of each pixel in an array by the supplied
@@ -99,7 +97,7 @@ public abstract class Pixels {
     * @param alpha  the alpha scalar
     * @param target the target pixels
     *
-    * @return the translucent pixels
+    * @return the adjusted pixels
     */
    public static int[] adjustAlpha ( final int[] source, final int alpha,
       final int[] target ) {
@@ -131,8 +129,8 @@ public abstract class Pixels {
 
    /**
     * Adjusts the contrast of colors from a source pixels array by a factor.
-    * Uses the CIE LAB color space. The adjustment factor is expected to be in
-    * [-1.0, 1.0].
+    * Uses the SR LAB 2 color space. The adjustment factor is expected to be
+    * in [-1.0, 1.0].
     *
     * @param source the source pixels
     * @param fac    the contrast factor
@@ -141,8 +139,8 @@ public abstract class Pixels {
     * @return the adjusted pixels
     *
     * @see Color#fromHex(int, Color)
-    * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
-    * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
+    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
+    * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
     * @see Color#toHexIntSat(Color)
     * @see Utils#clamp(float, float, float)
     */
@@ -171,11 +169,11 @@ public abstract class Pixels {
                final Integer srgbKeyObj = 0xff000000 | srgbKeyInt;
                if ( !dict.containsKey(srgbKeyObj) ) {
                   Color.fromHex(srgbKeyInt, srgb);
-                  Color.sRgbToCieLab(srgb, lab, xyz, lrgb);
+                  Color.sRgbToSrLab2(srgb, lab, xyz, lrgb);
 
                   lab.z = ( lab.z - 50.0f ) * valAdjust + 50.0f;
 
-                  Color.cieLabTosRgb(lab, srgb, lrgb, xyz);
+                  Color.srLab2TosRgb(lab, srgb, lrgb, xyz);
                   dict.put(srgbKeyObj, Color.toHexIntSat(srgb) & 0x00ffffff);
                }
             }
@@ -200,8 +198,8 @@ public abstract class Pixels {
    }
 
    /**
-    * Adjusts a source pixels array's colors in CIE LCH. Assigns the results
-    * to a target array.
+    * Adjusts a source pixels array's colors in SR LCH. Assigns the results to
+    * a target array.
     *
     * @param source the source pixels
     * @param adjust the adjustment
@@ -210,8 +208,8 @@ public abstract class Pixels {
     * @return the adjusted pixels
     *
     * @see Color#fromHex(int, Color)
-    * @see Color#sRgbToCieLch(Color, Vec4, Vec4, Vec4, Color)
-    * @see Color#cieLchTosRgb(Vec4, Color, Color, Vec4, Vec4)
+    * @see Color#sRgbToSrLch(Color, Vec4, Vec4, Vec4, Color)
+    * @see Color#srLchTosRgb(Vec4, Color, Color, Vec4, Vec4)
     * @see Color#toHexIntSat(Color)
     * @see Vec4#none(Vec4)
     * @see Vec4#add(Vec4, Vec4, Vec4)
@@ -239,11 +237,11 @@ public abstract class Pixels {
                final Integer srgbKeyObj = srgbKeyInt;
                if ( !dict.containsKey(srgbKeyObj) ) {
                   Color.fromHex(srgbKeyInt, srgb);
-                  Color.sRgbToCieLch(srgb, lch, lab, xyz, lrgb);
+                  Color.sRgbToSrLch(srgb, lch, lab, xyz, lrgb);
 
                   Vec4.add(lch, adjust, lch);
 
-                  Color.cieLchTosRgb(lch, srgb, lrgb, xyz, lab);
+                  Color.srLchTosRgb(lch, srgb, lrgb, xyz, lab);
                   dict.put(srgbKeyObj, Color.toHexIntSat(srgb));
                }
             }
@@ -286,9 +284,9 @@ public abstract class Pixels {
     *
     * @return the blended pixels
     *
-    * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
+    * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
     * @see Color#fromHex(int, Color)
-    * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
+    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
     * @see Color#toHexIntSat(Color)
     * @see Vec4#zero(Vec4)
     */
@@ -339,7 +337,7 @@ public abstract class Pixels {
             if ( !dict.containsKey(aKeyObj) ) {
                final Vec4 aLab = new Vec4();
                Color.fromHex(aHex, srgb);
-               Color.sRgbToCieLab(srgb, aLab, xyz, lrgb);
+               Color.sRgbToSrLab2(srgb, aLab, xyz, lrgb);
                dict.put(aKeyObj, aLab);
             }
 
@@ -348,7 +346,7 @@ public abstract class Pixels {
             if ( !dict.containsKey(bKeyObj) ) {
                final Vec4 bLab = new Vec4();
                Color.fromHex(bHex, srgb);
-               Color.sRgbToCieLab(srgb, bLab, xyz, lrgb);
+               Color.sRgbToSrLab2(srgb, bLab, xyz, lrgb);
                dict.put(bKeyObj, bLab);
             }
          }
@@ -419,7 +417,7 @@ public abstract class Pixels {
                   cLab.set(u * orig.x + t * dest.x, u * orig.y + t * dest.y, u
                      * orig.z + t * dest.z, tuv);
 
-                  Color.cieLabTosRgb(cLab, srgb, lrgb, xyz);
+                  Color.srLab2TosRgb(cLab, srgb, lrgb, xyz);
                   target[i] = Color.toHexIntSat(srgb);
                }
             }
@@ -435,7 +433,7 @@ public abstract class Pixels {
     * Blurs an array of pixels by averaging each color with its neighbors in 8
     * directions. The step determines the size of the kernel, where the
     * minimum step of 1 will make a 3x3, 9 pixel kernel. Averages the color's
-    * CIE LAB representation.
+    * SR LAB 2 representation.
     *
     * @param source the source pixels
     * @param wSrc   the image width
@@ -446,8 +444,8 @@ public abstract class Pixels {
     * @return the blurred image
     *
     * @see Color#fromHex(int, Color)
-    * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
-    * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
+    * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
+    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
     * @see Color#toHexIntSat(Color)
     */
    public static int[] blurBoxLab ( final int[] source, final int wSrc,
@@ -467,7 +465,7 @@ public abstract class Pixels {
             if ( !dict.containsKey(hexObj) ) {
                final Vec4 lab = new Vec4();
                Color.fromHex(hexInt, srgb);
-               Color.sRgbToCieLab(srgb, lab, xyz, lrgb);
+               Color.sRgbToSrLab2(srgb, lab, xyz, lrgb);
                dict.put(hexObj, lab);
             }
          }
@@ -484,6 +482,7 @@ public abstract class Pixels {
             final int ySrc = i / wSrc - stepVal;
             final int hexSrc = source[i];
             final Integer hexSrcObj = hexSrc;
+            final Vec4 labCtr = dict.get(hexSrcObj);
 
             float lSum = 0.0f;
             float aSum = 0.0f;
@@ -504,7 +503,6 @@ public abstract class Pixels {
                    * When the kernel is out of bounds, sample the central color
                    * but do not tally alpha.
                    */
-                  final Vec4 labCtr = dict.get(hexSrcObj);
                   lSum += labCtr.z;
                   aSum += labCtr.x;
                   bSum += labCtr.y;
@@ -512,7 +510,7 @@ public abstract class Pixels {
             }
 
             labAvg.set(aSum * toAvg, bSum * toAvg, lSum * toAvg, tSum * toAvg);
-            Color.cieLabTosRgb(labAvg, srgb, lrgb, xyz);
+            Color.srLab2TosRgb(labAvg, srgb, lrgb, xyz);
             target[i] = Color.toHexIntSat(srgb);
          }
       }
@@ -920,7 +918,7 @@ public abstract class Pixels {
    }
 
    /**
-    * Inverts colors from a source pixels array in CIE LAB.
+    * Inverts colors from a source pixels array in SR LAB 2.
     *
     * @param source the source pixels
     * @param l      invert lightness
@@ -932,8 +930,8 @@ public abstract class Pixels {
     * @return the inverted pixels
     *
     * @see Color#fromHex(int, Color)
-    * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
-    * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
+    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
+    * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
     * @see Color#toHexIntSat(Color)
     */
    public static int[] invertLab ( final int[] source, final boolean l,
@@ -963,14 +961,14 @@ public abstract class Pixels {
 
             if ( !dict.containsKey(srgbKeyObj) ) {
                Color.fromHex(srgbKeyInt, srgb);
-               Color.sRgbToCieLab(srgb, lab, xyz, lrgb);
+               Color.sRgbToSrLab2(srgb, lab, xyz, lrgb);
 
                lab.x *= aSign;
                lab.y *= bSign;
                if ( l ) { lab.z = 100.0f - lab.z; }
                if ( alpha ) { lab.w = 1.0f - lab.w; }
 
-               Color.cieLabTosRgb(lab, srgb, lrgb, xyz);
+               Color.srLab2TosRgb(lab, srgb, lrgb, xyz);
                dict.put(srgbKeyObj, Color.toHexIntSat(srgb));
             }
          }
@@ -1281,8 +1279,8 @@ public abstract class Pixels {
    }
 
    /**
-    * Extracts a palette from a source pixels array using an octree in CIE
-    * LAB. The size of the palette depends on the capacity of each node in the
+    * Extracts a palette from a source pixels array using an octree in SR LAB.
+    * The size of the palette depends on the capacity of each node in the
     * octree. Does not retain alpha component of image pixels. The threshold
     * describes the minimum number of unique colors in the image beneath which
     * it is preferable to not engage the octree. Once the octree has been
@@ -1294,12 +1292,12 @@ public abstract class Pixels {
     *
     * @return the color array
     *
-    * @see Bounds3#cieLab(Bounds3)
-    * @see Color#cieLabToCieXyz(Vec4, Vec4)
-    * @see Color#cieXyzTolRgb(Vec4, Color)
+    * @see Bounds3#lab(Bounds3)
+    * @see Color#srLab2ToSrXyz(Vec4, Vec4)
+    * @see Color#srXyzTolRgb(Vec4, Color)
     * @see Color#clearBlack(Color)
     * @see Color#fromHex(int, Color)
-    * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
+    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
     * @see Octree#insert(Vec3)
     */
    public static Color[] paletteExtract ( final int[] source,
@@ -1327,7 +1325,7 @@ public abstract class Pixels {
          return result;
       }
 
-      final Bounds3 bounds = Bounds3.cieLab(new Bounds3());
+      final Bounds3 bounds = Bounds3.lab(new Bounds3());
       final Octree oct = new Octree(bounds, capacity);
       final Color srgb = new Color();
       final Color lrgb = new Color();
@@ -1337,7 +1335,7 @@ public abstract class Pixels {
       /* Place colors in octree. */
       while ( uniquesItr.hasNext() ) {
          Color.fromHex(uniquesItr.next(), srgb);
-         Color.sRgbToCieLab(srgb, lab, xyz, lrgb);
+         Color.sRgbToSrLab2(srgb, lab, xyz, lrgb);
          oct.insert(new Vec3(lab.x, lab.y, lab.z));
       }
       oct.cull();
@@ -1349,8 +1347,8 @@ public abstract class Pixels {
       for ( int i = 0; i < centersLen; ++i ) {
          final Vec3 center = centers[i];
          final Color target = new Color();
-         Color.cieLabToCieXyz(center.z, center.x, center.y, 1.0f, xyz);
-         Color.cieXyzTolRgb(xyz, lrgb);
+         Color.srLab2ToSrXyz(center.z, center.x, center.y, 1.0f, xyz);
+         Color.srXyzTolRgb(xyz, lrgb);
          Color.lRgbTosRgb(lrgb, false, target);
          result[1 + i] = target;
       }
@@ -1371,8 +1369,8 @@ public abstract class Pixels {
     *
     * @return the modified pixels
     *
-    * @see Bounds3#cieLab(Bounds3)
-    * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
+    * @see Bounds3#lab(Bounds3)
+    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
     * @see Color#fromHex(int, Color)
     * @see Color#toHexIntSat(Color)
     * @see Octree#insert(Vec3)
@@ -1385,7 +1383,7 @@ public abstract class Pixels {
 
       final int srcLen = source.length;
       if ( srcLen == target.length ) {
-         final Bounds3 bounds = Bounds3.cieLab(new Bounds3());
+         final Bounds3 bounds = Bounds3.lab(new Bounds3());
          final Octree oct = new Octree(bounds, capacity);
          oct.subdivide(1, capacity);
 
@@ -1400,7 +1398,7 @@ public abstract class Pixels {
          for ( int h = 0; h < palLen; ++h ) {
             final Color clrPal = palette[h];
             if ( Color.any(clrPal) ) {
-               Color.sRgbToCieLab(clrPal, lab, xyz, lrgb);
+               Color.sRgbToSrLab2(clrPal, lab, xyz, lrgb);
                final Vec3 point = new Vec3(lab.x, lab.y, lab.z);
                oct.insert(point);
                lookup.put(point, Color.toHexIntSat(clrPal));
@@ -1422,7 +1420,7 @@ public abstract class Pixels {
                   target[i] = maskAlpha | dict.get(srcHexObj);
                } else {
                   Color.fromHex(srcHexInt, srgb);
-                  Color.sRgbToCieLab(srgb, lab, xyz, lrgb);
+                  Color.sRgbToSrLab2(srgb, lab, xyz, lrgb);
 
                   query.set(lab.x, lab.y, lab.z);
                   found.clear();
@@ -2175,8 +2173,8 @@ public abstract class Pixels {
     * @return the contrast pixels
     *
     * @see Color#fromHex(int, Color)
-    * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
-    * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
+    * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
+    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
     * @see Color#toHexIntSat(Color)
     * @see Utils#abs(float)
     * @see Utils#clamp(float, float, float)
@@ -2210,7 +2208,7 @@ public abstract class Pixels {
                if ( !dict.containsKey(hexObj) ) {
                   final Vec4 lab = new Vec4();
                   Color.fromHex(hex, srgb);
-                  Color.sRgbToCieLab(srgb, lab, xyz, lrgb);
+                  Color.sRgbToSrLab2(srgb, lab, xyz, lrgb);
                   dict.put(hexObj, lab);
 
                   final float lum = lab.z;
@@ -2247,7 +2245,7 @@ public abstract class Pixels {
                      stretchedLab.z = u * stretchedLab.z + tLumAvg;
                   }
 
-                  Color.cieLabTosRgb(stretchedLab, srgb, lrgb, xyz);
+                  Color.srLab2TosRgb(stretchedLab, srgb, lrgb, xyz);
                   stretched.put(kv.getKey(), Color.toHexIntSat(srgb));
                }
 
@@ -2271,7 +2269,7 @@ public abstract class Pixels {
    }
 
    /**
-    * Tints an image with a color in CIE LAB according to a factor. If the
+    * Tints an image with a color in SR LAB 2 according to a factor. If the
     * preserveLight flag is true, the source image's original lightness is
     * retained. The image's {@link Pixels#SHADOWS}, {@link Pixels#MIDTONES}
     * and/or {@link Pixels#HIGHLIGHTS} may be targeted with an integer flag.
@@ -2286,8 +2284,8 @@ public abstract class Pixels {
     * @return the tinted pixels
     *
     * @see Color#fromHex(int, Color)
-    * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
-    * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
+    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
+    * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
     * @see Color#toHexIntSat(Color)
     * @see Pixels#toneFlagToResponse(int)
     */
@@ -2314,7 +2312,7 @@ public abstract class Pixels {
          final Vec4 tintLab = new Vec4();
 
          /* Convert tint from integer to LAB. Decompose to loose floats. */
-         Color.sRgbToCieLab(Color.fromHex(tint, srgb), tintLab, xyz, lrgb);
+         Color.sRgbToSrLab2(Color.fromHex(tint, srgb), tintLab, xyz, lrgb);
          final float lTint = tintLab.z;
          final float aTint = tintLab.x;
          final float bTint = tintLab.y;
@@ -2327,7 +2325,7 @@ public abstract class Pixels {
                target[i] = dict.get(srgbKeyObj);
             } else if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
                Color.fromHex(srgbKeyInt, srgb);
-               Color.sRgbToCieLab(srgb, srcLab, xyz, lrgb);
+               Color.sRgbToSrLab2(srgb, srcLab, xyz, lrgb);
 
                final float lOrig = srcLab.z;
                final float t = facVrf * response.apply(lOrig * 0.01f);
@@ -2335,7 +2333,7 @@ public abstract class Pixels {
                mixLab.set(u * srcLab.x + t * aTint, u * srcLab.y + t * bTint,
                   preserveLight ? lOrig : u * lOrig + t * lTint, srcLab.w);
 
-               Color.cieLabTosRgb(mixLab, srgb, lrgb, xyz);
+               Color.srLab2TosRgb(mixLab, srgb, lrgb, xyz);
                final int trgHex = Color.toHexIntSat(srgb);
                target[i] = trgHex;
                dict.put(srgbKeyObj, trgHex);
@@ -2633,8 +2631,8 @@ public abstract class Pixels {
    /**
     * Blits a source image's pixels onto a target image's pixels, using
     * integer floor modulo to wrap the source image. The source image can be
-    * offset horizontally and/or vertically, creating the illusion of
-    * parallax.
+    * offset horizontally and/or vertically, creating the illusion of infinite
+    * background.
     *
     * @param source the source pixels
     * @param wSrc   the source image width
@@ -2845,9 +2843,9 @@ public abstract class Pixels {
     * Converts an integer flag indicating which portion of an image to target
     * into a response function.
     *
-    * @param toneFlag tone flag
+    * @param toneFlag the tone flag
     *
-    * @return response function
+    * @return the response function
     */
    protected static Function < Float, Float > toneFlagToResponse (
       final int toneFlag ) {

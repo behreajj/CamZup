@@ -323,8 +323,8 @@ public class Knot3 implements Comparable < Knot3 > {
    public Knot3 mirrorHandles ( ) { return this.mirrorHandlesForward(); }
 
    /**
-    * Sets the forward-facing handle to mirror the rear-facing handle: the
-    * fore will have the same magnitude and negated direction of the rear.
+    * Sets the fore handle to mirror the rear handle: the fore will have the
+    * same magnitude and negated direction of the rear.
     *
     * @return this knot
     */
@@ -338,8 +338,8 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Sets the rear-facing handle to mirror the forward-facing handle: the
-    * rear will have the same magnitude and negated direction of the fore.
+    * Sets the rear handle to mirror the fore handle: the rear will have the
+    * same magnitude and negated direction of the fore.
     *
     * @return this knot
     */
@@ -376,7 +376,7 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Reverses the knot's direction by swapping the fore- and rear-handles.
+    * Reverses the knot's direction by swapping the fore and rear handles.
     *
     * @return this knot
     */
@@ -771,7 +771,7 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Sets the coordinate, fore- and rear-handles to the input coordinate.
+    * Sets the coordinate, fore and rear handles to the input coordinate.
     *
     * @param xCoord the x coordinate
     * @param yCoord the y coordinate
@@ -892,7 +892,7 @@ public class Knot3 implements Comparable < Knot3 > {
    }
 
    /**
-    * Sets the coordinate, fore- and rear-handles to the input coordinate.
+    * Sets the coordinate, fore and rear handles to the input coordinate.
     *
     * @param coord the coordinate
     *

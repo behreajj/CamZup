@@ -29,7 +29,6 @@ import camzup.core.Utils;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
 import camzup.core.Vec4;
-
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
@@ -37,7 +36,6 @@ import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
 import processing.core.PVector;
-
 import processing.opengl.PGraphicsOpenGL;
 import processing.opengl.PShapeOpenGL;
 

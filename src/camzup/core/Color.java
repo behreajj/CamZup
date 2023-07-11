@@ -229,10 +229,9 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Overrides the parent set function for the sake of making RGB parameters
-    * clearer and for chainability. The expected range for each channel is
-    * [0.0, 1.0], however these bounds are not checked so as to facilitate
-    * color mixing in other color spaces.
+    * Sets the red, green, blue and alpha color channels of this color. The
+    * expected range for each channel is [0.0, 1.0], however these bounds are
+    * not checked so as to facilitate color mixing in other color spaces.
     *
     * @param red   the red channel
     * @param green the green channel
@@ -414,17 +413,52 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Arbitrary hue in CIE LCH assigned to colors with no saturation that are
-    * closer to light, {@value Color#CIE_LCH_HUE_LIGHT}. Defaults to a yellow.
+    * The maximum value on the green-magenta axis in SR LAB 2 for a color
+    * converted from standard RGB.
     */
-   public static final float CIE_LCH_HUE_LIGHT = 99.0f / 360.0f;
+   public static final float A_MAX = 104.49946f;
 
    /**
-    * Arbitrary hue in CIE LCH assigned to colors with no saturation that are
-    * closer to shadow, {@value Color#CIE_LCH_HUE_SHADOW}. Defaults to a
+    * The minimum value on the green-magenta axis in SR LAB 2 for a color
+    * converted from standard RGB.
+    */
+   public static final float A_MIN = -82.955986f;
+
+   /**
+    * The maximum value on the blue-yellow axis in SR LAB 2 for a color
+    * converted from standard RGB.
+    */
+   public static final float B_MAX = 95.18662f;
+
+   /**
+    * The minimum value on the blue-yellow axis in SR LAB 2 for a color
+    * converted from standard RGB.
+    */
+   public static final float B_MIN = -110.8078f;
+
+   /**
+    * The smallest non-zero chroma in SR LCH for a color converted from
+    * standard RGB.
+    */
+   public static final float C_EPSILON = 0.27146554f;
+
+   /**
+    * The maximum chroma in SR LCH for a color converted from standard RGB.
+    */
+   public static final float C_MAX = 119.431305f;
+
+   /**
+    * Arbitrary hue in SR LCH assigned to colors with no saturation that are
+    * closer to light, {@value Color#SR_LCH_HUE_LIGHT}. Defaults to a yellow.
+    */
+   public static final float SR_LCH_HUE_LIGHT = 0.306391f;
+
+   /**
+    * Arbitrary hue in SR LCH assigned to colors with no saturation that are
+    * closer to shadow, {@value Color#SR_LCH_HUE_SHADOW}. Defaults to a
     * violet.
     */
-   public static final float CIE_LCH_HUE_SHADOW = 308.0f / 360.0f;
+   public static final float SR_LCH_HUE_SHADOW = 0.874676f;
 
    /**
     * Tests to see if all color channels are greater than zero.
@@ -449,206 +483,6 @@ public class Color implements Comparable < Color > {
    public static boolean any ( final Color c ) { return c.a > 0.0f; }
 
    /**
-    * Converts two colors to integers, performs the bitwise and operation on
-    * them, then converts the result to a color.
-    *
-    * @param a      the left operand
-    * @param b      the right operand
-    * @param target the output color
-    *
-    * @return the result
-    */
-   public static Color bitAnd ( final Color a, final Color b,
-      final Color target ) {
-
-      /* @formatter:off */
-      return target.set(
-         ( ( int ) ( a.r * 0xff + 0.5f ) &
-           ( int ) ( b.r * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.g * 0xff + 0.5f ) &
-           ( int ) ( b.g * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.b * 0xff + 0.5f ) &
-           ( int ) ( b.b * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.a * 0xff + 0.5f ) &
-           ( int ) ( b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
-      /* @formatter:on */
-   }
-
-   /**
-    * Converts a color to an integer, performs the bitwise not operation on
-    * it, then converts the result to a color.
-    *
-    * @param a      the input color
-    * @param target the output color
-    *
-    * @return the negation
-    */
-   public static Color bitNot ( final Color a, final Color target ) {
-
-      /* @formatter:off */
-      return target.set(
-         ( ~( int ) ( a.r * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255,
-         ( ~( int ) ( a.g * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255,
-         ( ~( int ) ( a.b * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255,
-         ( ~( int ) ( a.a * 0xff + 0.5f ) & 0xff ) * IUtils.ONE_255);
-      /* @formatter:on */
-   }
-
-   /**
-    * Converts two colors to integers, performs the bitwise inclusive or
-    * operation on them, then converts the result to a color.
-    *
-    * @param a      the left operand
-    * @param b      the right operand
-    * @param target the output color
-    *
-    * @return the color
-    */
-   public static Color bitOr ( final Color a, final Color b,
-      final Color target ) {
-
-      /* @formatter:off */
-      return target.set(
-         ( ( int ) ( a.r * 0xff + 0.5f ) |
-           ( int ) ( b.r * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.g * 0xff + 0.5f ) |
-           ( int ) ( b.g * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.b * 0xff + 0.5f ) |
-           ( int ) ( b.b * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) ( a.a * 0xff + 0.5f ) |
-           ( int ) ( b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
-      /* @formatter:on */
-   }
-
-   /**
-    * Converts a color to an integer, rotates to the left by the number of
-    * places, then converts the result to a color. The rotate a whole color
-    * channel, use increments of 8 (8, 16, 24).
-    *
-    * @param a      the color
-    * @param places the number of places
-    * @param target the output color
-    *
-    * @return the rotated color
-    *
-    * @see Color#fromHex(int, Color)
-    * @see Color#toHexIntWrap(Color)
-    */
-   public static Color bitRotateLeft ( final Color a, final int places,
-      final Color target ) {
-
-      final int i = Color.toHexIntWrap(a);
-      return Color.fromHex(i << places | i >>> -places, target);
-   }
-
-   /**
-    * Converts a color to an integer, rotates to the right by the number of
-    * places, then converts the result to a color. The rotate a whole color
-    * channel, use increments of 8 (8, 16, 24).
-    *
-    * @param a      the color
-    * @param places the number of places
-    * @param target the output color
-    *
-    * @return the rotated color
-    *
-    * @see Color#fromHex(int, Color)
-    * @see Color#toHexIntWrap(Color)
-    */
-   public static Color bitRotateRight ( final Color a, final int places,
-      final Color target ) {
-
-      final int i = Color.toHexIntWrap(a);
-      return Color.fromHex(i >>> places | i << -places, target);
-   }
-
-   /**
-    * Converts a color to an integer, performs a bitwise left shift operation,
-    * then converts the result to a color. To shift a whole color channel, use
-    * increments of 8 (8, 16, 24).
-    *
-    * @param a      the color
-    * @param places the number of places
-    * @param target the output color
-    *
-    * @return the shifted color
-    *
-    * @see Color#fromHex(int, Color)
-    * @see Color#toHexIntWrap(Color)
-    */
-   public static Color bitShiftLeft ( final Color a, final int places,
-      final Color target ) {
-
-      return Color.fromHex(Color.toHexIntWrap(a) << places, target);
-   }
-
-   /**
-    * Converts a color to an integer, performs a bitwise right shift
-    * operation, then converts the result to a color. To shift a whole color
-    * channel, use increments of 8 (8, 16, 24).
-    *
-    * @param a      the color
-    * @param places the number of places
-    * @param target the output color
-    *
-    * @return the shifted color
-    *
-    * @see Color#fromHex(int, Color)
-    * @see Color#toHexIntWrap(Color)
-    */
-   public static Color bitShiftRight ( final Color a, final int places,
-      final Color target ) {
-
-      return Color.fromHex(Color.toHexIntWrap(a) >> places, target);
-   }
-
-   /**
-    * Converts a color to an integer, performs an unsigned bitwise right shift
-    * operation, then converts the result to a color. To shift a whole color
-    * channel, use increments of 8 (8, 16, 24).
-    *
-    * @param a      the color
-    * @param places the number of places
-    * @param target the output color
-    *
-    * @return the shifted color
-    *
-    * @see Color#fromHex(int, Color)
-    * @see Color#toHexIntWrap(Color)
-    */
-   public static Color bitShiftRightUnsigned ( final Color a, final int places,
-      final Color target ) {
-
-      return Color.fromHex(Color.toHexIntWrap(a) >>> places, target);
-   }
-
-   /**
-    * Converts two colors to integers, performs the bitwise exclusive or
-    * operation on them, then converts the result to a color.
-    *
-    * @param a      the left operand
-    * @param b      the right operand
-    * @param target the output color
-    *
-    * @return the color
-    */
-   public static Color bitXor ( final Color a, final Color b,
-      final Color target ) {
-
-      /* @formatter:off */
-      return target.set(
-         ( ( int ) (a.r * 0xff + 0.5f ) ^
-           ( int ) (b.r * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) (a.g * 0xff + 0.5f ) ^
-           ( int ) (b.g * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) (a.b * 0xff + 0.5f ) ^
-           ( int ) (b.b * 0xff + 0.5f ) ) * IUtils.ONE_255,
-         ( ( int ) (a.a * 0xff + 0.5f ) ^
-           ( int ) (b.a * 0xff + 0.5f ) ) * IUtils.ONE_255);
-      /* @formatter:on */
-   }
-
-   /**
     * Returns the color black, ( 0.0, 0.0, 0.0, 1.0 ) .
     *
     * @param target the output color
@@ -670,314 +504,6 @@ public class Color implements Comparable < Color > {
    public static Color blue ( final Color target ) {
 
       return target.set(0.0f, 0.0f, 1.0f, 1.0f);
-   }
-
-   /**
-    * Converts a color from CIE LAB to CIE LCH. The output is organized as z:
-    * L or lightness, y: C or chroma, x: h or hue, w: alpha. The returned hue
-    * is in the range [0.0, 1.0] .
-    *
-    * @param l      the lightness
-    * @param a      the green to red range
-    * @param b      the blue to yellow range
-    * @param alpha  the alpha channel
-    * @param target the output vector
-    *
-    * @return the LCh vector
-    *
-    * @see Utils#clamp01(float)
-    * @see Utils#mod1(float)
-    */
-   public static Vec4 cieLabToCieLch ( final float l, final float a,
-      final float b, final float alpha, final Vec4 target ) {
-
-      final float cSq = a * a + b * b;
-      if ( cSq < 0.00005f ) {
-         final float fac = Utils.clamp01(l * 0.01f);
-         return target.set(Utils.mod1( ( 1.0f - fac ) * Color.CIE_LCH_HUE_SHADOW
-            + fac * ( 1.0f + Color.CIE_LCH_HUE_LIGHT )), 0.0f, l, alpha);
-      }
-      return target.set(Utils.mod1(( float ) ( IUtils.ONE_TAU_D * Math.atan2(b,
-         a) )), ( float ) Math.sqrt(cSq), l, alpha);
-   }
-
-   /**
-    * Converts a color from CIE LAB to CIE LCH. The source should be organized
-    * as z: L or lightness, x: a or green-red, y: b or blue-yellow, w: alpha.
-    * The output is organized as z: L or lightness, y: C or chroma, x: h or
-    * hue, w: alpha. The returned hue is in the range [0.0, 1.0] .
-    *
-    * @param source the lab vector
-    * @param target the output vector
-    *
-    * @return the LCh color
-    */
-   public static Vec4 cieLabToCieLch ( final Vec4 source, final Vec4 target ) {
-
-      return Color.cieLabToCieLch(source.z, source.x, source.y, source.w,
-         target);
-   }
-
-   /**
-    * Converts a color from CIE LAB to CIE XYZ. Assumes D65 illuminant, CIE
-    * 1931 2 degrees referents.
-    *
-    * @param l      the lightness
-    * @param a      the green to red range
-    * @param b      the blue to yellow range
-    * @param alpha  the alpha channel
-    * @param target the output vector
-    *
-    * @return the CIE XYZ color
-    */
-   public static Vec4 cieLabToCieXyz ( final float l, final float a,
-      final float b, final float alpha, final Vec4 target ) {
-
-      /*
-       * http://www.easyrgb.com/en/math.php D65, CIE 1931 2 degrees; 95.047,
-       * 100.0, 108.883; 16.0 / 116.0 = 0.13793103448275862; 1.0 / 116.0 =
-       * 0.008620689655172414; 1.0 / 7.787 = 0.12841751101180157
-       */
-
-      float vy = ( l + 16.0f ) * 0.00862069f;
-      float vx = a * 0.002f + vy;
-      float vz = vy - b * 0.005f;
-
-      final float vye3 = vy * vy * vy;
-      if ( vye3 > 0.008856f ) {
-         vy = vye3;
-      } else {
-         vy = ( vy - 0.13793103f ) * 0.1284175f;
-      }
-
-      final float vxe3 = vx * vx * vx;
-      if ( vxe3 > 0.008856f ) {
-         vx = vxe3;
-      } else {
-         vx = ( vx - 0.13793103f ) * 0.1284175f;
-      }
-
-      final float vze3 = vz * vz * vz;
-      if ( vze3 > 0.008856f ) {
-         vz = vze3;
-      } else {
-         vz = ( vz - 0.13793103f ) * 0.1284175f;
-      }
-
-      return target.set(vx * 0.95047f, vy, vz * 1.08883f, alpha);
-
-   }
-
-   /**
-    * Converts a color from CIE LAB to CIE XYZ. The source should be organized
-    * as z: L or lightness, x: a or green-red, y: b or blue-yellow, w: alpha.
-    *
-    * @param source the XYZ vector
-    * @param target the output vector
-    *
-    * @return the lab color
-    *
-    * @see Color#cieLabToCieXyz(float, float, float, float, Vec4)
-    */
-   public static Vec4 cieLabToCieXyz ( final Vec4 source, final Vec4 target ) {
-
-      return Color.cieLabToCieXyz(source.z, source.x, source.y, source.w,
-         target);
-   }
-
-   /**
-    * Converts a color from CIE LAB to standard RGB (sRGB). The source should
-    * be organized as z: L or lightness, x: a or green-red, y: b or
-    * blue-yellow, w: alpha.
-    *
-    * @param lab  CIE LAB color
-    * @param srgb sRGB color
-    * @param lrgb linear sRGB color
-    * @param xyz  CIE XYZ color
-    *
-    * @return the output color
-    *
-    * @see Color#lRgbTosRgb(Color, boolean, Color)
-    * @see Color#cieLabToCieXyz(Vec4, Vec4)
-    * @see Color#cieXyzTolRgb(Vec4, Color)
-    */
-   public static Color cieLabTosRgb ( final Vec4 lab, final Color srgb,
-      final Color lrgb, final Vec4 xyz ) {
-
-      return Color.lRgbTosRgb(Color.cieXyzTolRgb(Color.cieLabToCieXyz(lab, xyz),
-         lrgb), false, srgb);
-   }
-
-   /**
-    * Converts a color from CIE LCH to CIE LAB. The output is organized as z:
-    * L or lightness, x: a or green-red, y: b or blue-yellow, w: alpha.
-    *
-    * @param l      the lightness
-    * @param c      the chroma
-    * @param h      the hue
-    * @param a      the alpha channel
-    * @param target the output vector
-    *
-    * @return the lab vector
-    *
-    * @see Utils#mod1(float)
-    */
-   public static Vec4 cieLchToCieLab ( final float l, final float c,
-      final float h, final float a, final Vec4 target ) {
-
-      final double hRad = Utils.mod1(h) * IUtils.TAU_D;
-      return target.set(c * ( float ) Math.cos(hRad), c * ( float ) Math.sin(
-         hRad), l, a);
-   }
-
-   /**
-    * Converts a color from CIE LCH to CIE LAB. The source should be organized
-    * as z: L or lightness, y: C or chroma, x: h or hue, w: alpha. The output
-    * is organized as z: L or lightness, x: a or green-red, y: b or
-    * blue-yellow, w: alpha
-    *
-    * @param source the LCH vector
-    * @param target the output vector
-    *
-    * @return the lab vector
-    */
-   public static Vec4 cieLchToCieLab ( final Vec4 source, final Vec4 target ) {
-
-      return Color.cieLchToCieLab(source.z, source.y, source.x, source.w,
-         target);
-   }
-
-   /**
-    * Converts a color from CIE LCH to standard RBG (sRGB). The source should
-    * be organized as z: L or lightness, y: C or chroma, x: h or hue, w:
-    * alpha.
-    *
-    * @param lch  CIE LCH color
-    * @param srgb sRGB color
-    * @param lrgb linear sRGB color
-    * @param xyz  CIE XYZ color
-    * @param lab  CIE LAB color
-    *
-    * @return the output color
-    *
-    * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
-    * @see Color#cieLchToCieLab(Vec4, Vec4)
-    */
-   public static Color cieLchTosRgb ( final Vec4 lch, final Color srgb,
-      final Color lrgb, final Vec4 xyz, final Vec4 lab ) {
-
-      return Color.cieLabTosRgb(Color.cieLchToCieLab(lch, lab), srgb, lrgb,
-         xyz);
-   }
-
-   /**
-    * Converts a color from CIE XYZ to CIE LAB. Assumes D65 illuminant, CIE
-    * 1931 2 degrees referents.<br>
-    * <br>
-    * The target is packaged as z: L or lightness, x: a or green-red, y: b or
-    * blue-yellow, w: alpha.
-    *
-    * @param x      the x coordinate
-    * @param y      the y coordinate
-    * @param z      the z coordinate
-    * @param a      the alpha component
-    * @param target the output vector
-    *
-    * @return the Lab color
-    *
-    * @see Math#pow(double, double)
-    */
-   public static Vec4 cieXyzToCieLab ( final float x, final float y,
-      final float z, final float a, final Vec4 target ) {
-
-      /*
-       * http://www.easyrgb.com/en/math.php 100.0d / 95.047d =
-       * 1.0521110608435826d; 100.0d / 108.883d = 0.9184170164304805d; 16.0d /
-       * 116.0d = 0.13793103448275862d
-       */
-
-      double vx = x * 1.0521110608435826d;
-      if ( vx > 0.008856d ) {
-         vx = Math.pow(vx, 0.3333333333333333d);
-      } else {
-         vx = 7.787d * vx + 0.13793103448275862d;
-      }
-
-      double vy = y;
-      if ( vy > 0.008856d ) {
-         vy = Math.pow(vy, 0.3333333333333333d);
-      } else {
-         vy = 7.787d * vy + 0.13793103448275862d;
-      }
-
-      double vz = z * 0.9184170164304805d;
-      if ( vz > 0.008856d ) {
-         vz = Math.pow(vz, 0.3333333333333333d);
-      } else {
-         vz = 7.787d * vz + 0.13793103448275862d;
-      }
-
-      return target.set(( float ) ( 500.0d * ( vx - vy ) ), ( float ) ( 200.0d
-         * ( vy - vz ) ), ( float ) ( 116.0d * vy - 16.0d ), a);
-   }
-
-   /**
-    * Converts a color from CIE XYZ to CIE LAB. The target is packaged as z: L
-    * or lightness, x: a or green-red, y: b or blue-yellow, w: alpha.
-    *
-    * @param source the XYZ vector
-    * @param target the output vector
-    *
-    * @return the Lab color
-    *
-    * @see Color#cieXyzToCieLab(float, float, float, float, Vec4)
-    */
-   public static Vec4 cieXyzToCieLab ( final Vec4 source, final Vec4 target ) {
-
-      return Color.cieXyzToCieLab(source.x, source.y, source.z, source.w,
-         target);
-   }
-
-   /**
-    * Converts a color from CIE XYZ to linear RGB. Expects input values to be
-    * in the range [0.0, 1.0]. References Pharr, Jakob, and Humphreys'
-    * <a href="http://www.pbr-book.org/">Physically Based Rendering</a>,
-    * section 5.2.2, page 327.
-    *
-    * @param x      the x coordinate
-    * @param y      the y coordinate
-    * @param z      the z coordinate
-    * @param a      the alpha component
-    * @param target the output color
-    *
-    * @return the color
-    */
-   public static Color cieXyzTolRgb ( final float x, final float y,
-      final float z, final float a, final Color target ) {
-
-      // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
-      // 3.2404542 -1.5371385 -0.4985314
-      // -0.9692660 1.8760108 0.0415560
-      // 0.0556434 -0.2040259 1.0572252
-
-      return target.set(3.2408123f * x - 1.5373085f * y - 0.49858654f * z,
-         -0.969243f * x + 1.8759663f * y + 0.041555032f * z, 0.0556384f * x
-            - 0.20400746f * y + 1.0571296f * z, a);
-   }
-
-   /**
-    * Converts a color from CIE XYZ to linear RGB.
-    *
-    * @param source the XYZ vector
-    * @param target the output color
-    *
-    * @return the color
-    *
-    * @see Color#cieXyzTolRgb(float, float, float, float, Color)
-    */
-   public static Color cieXyzTolRgb ( final Vec4 source, final Color target ) {
-
-      return Color.cieXyzTolRgb(source.x, source.y, source.z, source.w, target);
    }
 
    /**
@@ -1135,7 +661,7 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Convert a hexadecimal representation of a color stored as 0xAARRGGBB
+    * Converts a hexadecimal representation of a color stored as 0xAARRGGBB
     * into a color. Does so by dividing each color channel by 255.
     *
     * @param c      the color in hexadecimal
@@ -1267,7 +793,7 @@ public class Color implements Comparable < Color > {
          }
 
       } catch ( final Exception e ) {
-         System.err.println("Could not parse input String correctly.");
+         System.err.println("Could not parse input String \"" + c + "\".");
       }
 
       return target.reset();
@@ -1328,48 +854,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Converts a color from linear RGB to CIE XYZ.
-    *
-    * @param c      the color
-    * @param target the output vector
-    *
-    * @return the XYZ color
-    *
-    * @see Color#lRgbToCieXyz(float, float, float, float, Vec4)
-    */
-   public static Vec4 lRgbToCieXyz ( final Color c, final Vec4 target ) {
-
-      return Color.lRgbToCieXyz(c.r, c.g, c.b, c.a, target);
-   }
-
-   /**
-    * Converts a color from linear RGB to CIE XYZ. The values returned are in
-    * the range [0.0, 1.0]. References Pharr, Jakob, and Humphreys'
-    * <a href="http://www.pbr-book.org/">Physically Based Rendering</a>,
-    * section 5.2.2, page 328.
-    *
-    * @param r      the red component
-    * @param g      the green component
-    * @param b      the blue component
-    * @param a      the alpha component
-    * @param target the output vector
-    *
-    * @return the XYZ values.
-    */
-   public static Vec4 lRgbToCieXyz ( final float r, final float g,
-      final float b, final float a, final Vec4 target ) {
-
-      // http://www.brucelindbloom.com/index.html?Eqn_RGB_XYZ_Matrix.html
-      // 0.4124564 0.3575761 0.1804375
-      // 0.2126729 0.7151522 0.0721750
-      // 0.0193339 0.1191920 0.9503041
-
-      return target.set(0.41241086f * r + 0.35758457f * g + 0.1804538f * b,
-         0.21264935f * r + 0.71516913f * g + 0.07218152f * b, 0.019331759f * r
-            + 0.11919486f * g + 0.95039004f * b, a);
-   }
-
-   /**
     * Converts a color from linear RGB to standard RGB (sRGB).
     *
     * @param source the linear color
@@ -1393,6 +877,45 @@ public class Color implements Comparable < Color > {
                            ? source.a * 12.92f : ( float ) ( Math.pow(source.a,
                               0.4166666666666667d) * 1.055d - 0.055d )
                            : source.a);
+   }
+
+   /**
+    * Converts a color from linear RGB to the XYZ coordinates for SR LAB 2.
+    * The values returned are in the range [0.0, 1.0].
+    *
+    * @param c      the color
+    * @param target the output vector
+    *
+    * @return the XYZ values
+    *
+    * @see Color#lRgbToSrXyz(Color, Vec4)
+    */
+   public static Vec4 lRgbToSrXyz ( final Color c, final Vec4 target ) {
+
+      return Color.lRgbToSrXyz(c.r, c.g, c.b, c.a, target);
+   }
+
+   /**
+    * Converts a color from linear RGB to the XYZ coordinates for SR LAB 2.
+    * The values returned are in the range [0.0, 1.0]. See <a href=
+    * "https://www.magnetkern.de/srlab2.html">https://www.magnetkern.de/srlab2.html</a>.
+    *
+    * @param r      the red component
+    * @param g      the green component
+    * @param b      the blue component
+    * @param a      the alpha component
+    * @param target the output vector
+    *
+    * @return the XYZ values
+    *
+    * @author Jan Behrens
+    */
+   public static Vec4 lRgbToSrXyz ( final float r, final float g, final float b,
+      final float a, final Vec4 target ) {
+
+      return target.set(0.32053f * r + 0.63692f * g + 0.04256f * b, 0.161987f
+         * r + 0.756636f * g + 0.081376f * b, 0.017228f * r + 0.10866f * g
+            + 0.874112f * b, a);
    }
 
    /**
@@ -1448,14 +971,14 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Creates a posterized version of the color. Uses unsigned quantization. A
+    * Creates a quantized version of the color. Uses unsigned quantization. A
     * level of 1 or -1 will copy the input color to the target.
     *
     * @param c      the color
     * @param levels the levels
     * @param target the output color
     *
-    * @return the posterized color
+    * @return the quantized color
     *
     * @see Utils#abs(float)
     * @see Utils#quantizeUnsigned(float, float, float)
@@ -1514,34 +1037,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Finds the maximum color channel of a color, excluding alpha.
-    *
-    * @param c the color
-    *
-    * @return the maximum channel
-    *
-    * @see Utils#max(float, float, float)
-    */
-   public static float rgbMax ( final Color c ) {
-
-      return Utils.max(c.r, c.g, c.b);
-   }
-
-   /**
-    * Finds the minimum color channel of a color, excluding alpha.
-    *
-    * @param c the color
-    *
-    * @return the minimum channel
-    *
-    * @see Utils#min(float, float, float)
-    */
-   public static float rgbMin ( final Color c ) {
-
-      return Utils.min(c.r, c.g, c.b);
-   }
-
-   /**
     * Convert a color to gray-scale based on its perceived luminance.
     *
     * @param c      the input color
@@ -1550,6 +1045,7 @@ public class Color implements Comparable < Color > {
     * @return the gray scale color
     *
     * @see Color#sRgbLuminance(Color)
+    * @see Math#pow(double, double)
     */
    public static Color rgbToGray ( final Color c, final Color target ) {
 
@@ -1567,6 +1063,8 @@ public class Color implements Comparable < Color > {
     * @param c the input color
     *
     * @return the luminance
+    *
+    * @see Math#pow(double, double)
     */
    public static float sRgbLuminance ( final Color c ) {
 
@@ -1579,51 +1077,6 @@ public class Color implements Comparable < Color > {
 
       return ( float ) ( 0.21264934272065283d * lr + 0.7151691357059038d * lg
          + 0.07218152157344333d * lb );
-   }
-
-   /**
-    * Converts a color from standard RGB (sRGB) to CIE LAB. The target is
-    * packaged as z: L or lightness, x: a or green-red, y: b or blue-yellow,
-    * w: alpha.
-    *
-    * @param srgb sRGB color
-    * @param lab  CIE LAB color
-    * @param xyz  CIE XYZ color
-    * @param lrgb linear sRGB color
-    *
-    * @return the output color
-    *
-    * @see Color#cieXyzToCieLab(Vec4, Vec4)
-    * @see Color#lRgbToCieXyz(Color, Vec4)
-    * @see Color#sRgbTolRgb(Color, boolean, Color)
-    */
-   public static Vec4 sRgbToCieLab ( final Color srgb, final Vec4 lab,
-      final Vec4 xyz, final Color lrgb ) {
-
-      return Color.cieXyzToCieLab(Color.lRgbToCieXyz(Color.sRgbTolRgb(srgb,
-         false, lrgb), xyz), lab);
-   }
-
-   /**
-    * Converts a color from standard RGB (sRGB) to CIE LCH. The output is
-    * organized as z: L or lightness, y: C or chroma, x: h or hue, w: alpha.
-    *
-    * @param srgb sRGB color
-    * @param lch  CIE LCH color
-    * @param lab  CIE LAB color
-    * @param xyz  CIE XYZ color
-    * @param lrgb linear sRGB color
-    *
-    * @return the output color
-    *
-    * @see Color#cieLabToCieLch(Vec4, Vec4)
-    * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
-    */
-   public static Vec4 sRgbToCieLch ( final Color srgb, final Vec4 lch,
-      final Vec4 lab, final Vec4 xyz, final Color lrgb ) {
-
-      return Color.cieLabToCieLch(Color.sRgbToCieLab(srgb, lab, xyz, lrgb),
-         lch);
    }
 
    /**
@@ -1653,6 +1106,320 @@ public class Color implements Comparable < Color > {
                            <= 0.04045f ? source.a * 0.07739938f : ( float ) Math
                               .pow( ( source.a + 0.055d ) * 0.9478672985781991d,
                                  2.4d) : source.a);
+   }
+
+   /**
+    * Converts a color from standard RGB (sRGB) to SR LAB 2. The target is
+    * packaged as z: L or lightness, x: a or green-red, y: b or blue-yellow,
+    * w: alpha.
+    *
+    * @param srgb the sRGB color
+    * @param lab  the LAB color
+    * @param xyz  the XYZ color
+    * @param lrgb the linear sRGB color
+    *
+    * @return the output color
+    *
+    * @see Color#srXyzToSrLab2(Vec4, Vec4)
+    * @see Color#lRgbToSrXyz(Color, Vec4)
+    * @see Color#sRgbTolRgb(Color, boolean, Color)
+    */
+   public static Vec4 sRgbToSrLab2 ( final Color srgb, final Vec4 lab,
+      final Vec4 xyz, final Color lrgb ) {
+
+      return Color.srXyzToSrLab2(Color.lRgbToSrXyz(Color.sRgbTolRgb(srgb, false,
+         lrgb), xyz), lab);
+   }
+
+   /**
+    * Converts a color from standard RGB (sRGB) to SR LCH. The output is
+    * organized as z: L or lightness, y: C or chroma, x: h or hue, w: alpha.
+    *
+    * @param srgb the sRGB color
+    * @param lch  the LCH color
+    * @param lab  the LAB color
+    * @param xyz  the XYZ color
+    * @param lrgb linear sRGB color
+    *
+    * @return the output color
+    *
+    * @see Color#srLab2ToSrLch(Vec4, Vec4)
+    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
+    */
+   public static Vec4 sRgbToSrLch ( final Color srgb, final Vec4 lch,
+      final Vec4 lab, final Vec4 xyz, final Color lrgb ) {
+
+      return Color.srLab2ToSrLch(Color.sRgbToSrLab2(srgb, lab, xyz, lrgb), lch);
+   }
+
+   /**
+    * Converts a color from SR LAB 2 to standard RGB (sRGB). The source should
+    * be organized as z: L or lightness, x: a or green-red, y: b or
+    * blue-yellow, w: alpha.
+    *
+    * @param lab  LAB color
+    * @param srgb sRGB color
+    * @param lrgb linear sRGB color
+    * @param xyz  XYZ color
+    *
+    * @return the output color
+    *
+    * @see Color#lRgbTosRgb(Color, boolean, Color)
+    * @see Color#srLab2ToSrXyz(Vec4, Vec4)
+    * @see Color#srXyzTolRgb(Vec4, Color)
+    */
+   public static Color srLab2TosRgb ( final Vec4 lab, final Color srgb,
+      final Color lrgb, final Vec4 xyz ) {
+
+      return Color.lRgbTosRgb(Color.srXyzTolRgb(Color.srLab2ToSrXyz(lab, xyz),
+         lrgb), false, srgb);
+   }
+
+   /**
+    * Converts a color from SR LAB 2 to SR LCH. The output is organized as z:
+    * L or lightness, y: C or chroma, x: h or hue, w: alpha. The returned hue
+    * is in the range [0.0, 1.0] .
+    *
+    * @param l      the lightness
+    * @param a      the green to red range
+    * @param b      the blue to yellow range
+    * @param alpha  the alpha channel
+    * @param target the output vector
+    *
+    * @return the LCh vector
+    *
+    * @see Utils#clamp01(float)
+    * @see Utils#mod1(float)
+    */
+   public static Vec4 srLab2ToSrLch ( final float l, final float a,
+      final float b, final float alpha, final Vec4 target ) {
+
+      final float cSq = a * a + b * b;
+      if ( cSq < 0.00005f ) {
+         final float fac = Utils.clamp01(l * 0.01f);
+         return target.set(Utils.mod1( ( 1.0f - fac ) * Color.SR_LCH_HUE_SHADOW
+            + fac * ( 1.0f + Color.SR_LCH_HUE_LIGHT )), 0.0f, l, alpha);
+      }
+      return target.set(Utils.mod1(( float ) ( IUtils.ONE_TAU_D * Math.atan2(b,
+         a) )), ( float ) Math.sqrt(cSq), l, alpha);
+   }
+
+   /**
+    * Converts a color from SR LAB 2 to SR LCH. The source should be organized
+    * as z: L or lightness, x: a or green-red, y: b or blue-yellow, w: alpha.
+    * The output is organized as z: L or lightness, y: C or chroma, x: h or
+    * hue, w: alpha. The returned hue is in the range [0.0, 1.0] .
+    *
+    * @param source the lab vector
+    * @param target the output vector
+    *
+    * @return the LCh color
+    */
+   public static Vec4 srLab2ToSrLch ( final Vec4 source, final Vec4 target ) {
+
+      return Color.srLab2ToSrLch(source.z, source.x, source.y, source.w,
+         target);
+   }
+
+   /**
+    * Converts a color from SR LAB 2 to SR XYZ. See <a href=
+    * "https://www.magnetkern.de/srlab2.html">https://www.magnetkern.de/srlab2.html</a>.
+    *
+    * @param l      the lightness
+    * @param a      the green to red range
+    * @param b      the blue to yellow range
+    * @param alpha  the alpha channel
+    * @param target the output vector
+    *
+    * @return the XYZ color
+    *
+    * @author Jan Behrens
+    */
+   public static Vec4 srLab2ToSrXyz ( final float l, final float a,
+      final float b, final float alpha, final Vec4 target ) {
+
+      final double l01 = l * 0.01d;
+      final double ad = a;
+      final double bd = b;
+
+      final double xd = l01 + 0.000904127d * ad + 0.000456344d * bd;
+      final double yd = l01 - 0.000533159d * ad - 0.000269178d * bd;
+      final double zd = l01 - 0.0058d * bd;
+
+      return target.set(( float ) ( xd <= 0.08d ? xd * 2700.0d / 24389.0d : Math
+         .pow( ( xd + 0.16d ) / 1.16d, 3.0d) ), ( float ) ( yd <= 0.08d ? yd
+            * 2700.0d / 24389.0d : Math.pow( ( yd + 0.16d ) / 1.16d, 3.0d) ),
+         ( float ) ( zd <= 0.08d ? zd * 2700.0d / 24389.0d : Math.pow( ( zd
+            + 0.16d ) / 1.16d, 3.0d) ), alpha);
+   }
+
+   /**
+    * Converts a color from SR LAB 2 to SR XYZ.<br>
+    * <br>
+    * The source should be organized as z: L or lightness, x: a or green-red,
+    * y: b or blue-yellow, w: alpha.
+    *
+    * @param source the XYZ vector
+    * @param target the output vector
+    *
+    * @return the lab color
+    *
+    * @see Color#srLab2ToSrXyz(float, float, float, float, Vec4)
+    */
+   public static Vec4 srLab2ToSrXyz ( final Vec4 source, final Vec4 target ) {
+
+      return Color.srLab2ToSrXyz(source.z, source.x, source.y, source.w,
+         target);
+   }
+
+   /**
+    * Converts a color from SR LCH to standard RBG (sRGB). The source should
+    * be organized as z: L or lightness, y: C or chroma, x: h or hue, w:
+    * alpha.
+    *
+    * @param lch  the LCH color
+    * @param srgb the sRGB color
+    * @param lrgb the linear sRGB color
+    * @param xyz  the XYZ color
+    * @param lab  the LAB color
+    *
+    * @return the output color
+    *
+    * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
+    * @see Color#srLchToSrLab2(Vec4, Vec4)
+    */
+   public static Color srLchTosRgb ( final Vec4 lch, final Color srgb,
+      final Color lrgb, final Vec4 xyz, final Vec4 lab ) {
+
+      return Color.srLab2TosRgb(Color.srLchToSrLab2(lch, lab), srgb, lrgb, xyz);
+   }
+
+   /**
+    * Converts a color from SR LCH to SR LAB 2. The output is organized as z:
+    * L or lightness, x: a or green-red, y: b or blue-yellow, w: alpha.
+    *
+    * @param l      the lightness
+    * @param c      the chroma
+    * @param h      the hue
+    * @param a      the alpha channel
+    * @param target the output vector
+    *
+    * @return the lab vector
+    *
+    * @see Utils#mod1(float)
+    */
+   public static Vec4 srLchToSrLab2 ( final float l, final float c,
+      final float h, final float a, final Vec4 target ) {
+
+      final double hRad = Utils.mod1(h) * IUtils.TAU_D;
+      return target.set(c * ( float ) Math.cos(hRad), c * ( float ) Math.sin(
+         hRad), l, a);
+   }
+
+   /**
+    * Converts a color from SR LCH to SR LAB 2. The source should be organized
+    * as z: L or lightness, y: C or chroma, x: h or hue, w: alpha. The output
+    * is organized as z: L or lightness, x: a or green-red, y: b or
+    * blue-yellow, w: alpha
+    *
+    * @param source the LCH vector
+    * @param target the output vector
+    *
+    * @return the lab vector
+    */
+   public static Vec4 srLchToSrLab2 ( final Vec4 source, final Vec4 target ) {
+
+      return Color.srLchToSrLab2(source.z, source.y, source.x, source.w,
+         target);
+   }
+
+   /**
+    * Converts a color from SR XYZ to linear RGB. Expects input values to be
+    * in the range [0.0, 1.0].
+    *
+    * @param x      the x coordinate
+    * @param y      the y coordinate
+    * @param z      the z coordinate
+    * @param a      the alpha component
+    * @param target the output color
+    *
+    * @return the color
+    *
+    * @author Jan Behrens
+    */
+   public static Color srXyzTolRgb ( final float x, final float y,
+      final float z, final float a, final Color target ) {
+
+      return target.set(5.435679f * x - 4.599131f * y + 0.163593f * z, -1.16809f
+         * x + 2.327977f * y - 0.159798f * z, 0.03784f * x - 0.198564f * y
+            + 1.160644f * z, a);
+   }
+
+   /**
+    * Converts a color from SR XYZ to linear RGB.
+    *
+    * @param source the XYZ vector
+    * @param target the output color
+    *
+    * @return the color
+    *
+    * @see Color#srXyzTolRgb(float, float, float, float, Color)
+    */
+   public static Color srXyzTolRgb ( final Vec4 source, final Color target ) {
+
+      return Color.srXyzTolRgb(source.x, source.y, source.z, source.w, target);
+   }
+
+   /**
+    * Converts a color from SR XYZ to SR LAB 2.<br>
+    * <br>
+    * The target is packaged as z: L or lightness, x: a or green-red, y: b or
+    * blue-yellow, w: alpha.
+    *
+    * @param x      the x coordinate
+    * @param y      the y coordinate
+    * @param z      the z coordinate
+    * @param a      the alpha component
+    * @param target the output vector
+    *
+    * @return the Lab color
+    *
+    * @see Math#pow(double, double)
+    *
+    * @author Jan Behrens
+    */
+   public static Vec4 srXyzToSrLab2 ( final float x, final float y,
+      final float z, final float a, final Vec4 target ) {
+
+      final double xd = x <= 0.008856452f ? x * 9.032962962962962d : 1.16d
+         * Math.pow(x, 0.3333333333333333d) - 0.16d;
+      final double yd = y <= 0.008856452f ? y * 9.032962962962962d : 1.16d
+         * Math.pow(y, 0.3333333333333333d) - 0.16d;
+      final double zd = z <= 0.008856452f ? z * 9.032962962962962d : 1.16d
+         * Math.pow(z, 0.3333333333333333d) - 0.16d;
+
+      return target.set(( float ) ( 663.4684d * xd - 750.5078d * yd + 87.0328
+         * zd ), ( float ) ( 63.9569d * xd + 108.4576d * yd - 172.4152d * zd ),
+         ( float ) ( 37.0950d * xd + 62.9054d * yd - 0.0008d * zd ), a);
+   }
+
+   /**
+    * Converts a color from SR XYZ to SR LAB 2.<br>
+    * <br>
+    * The target is packaged as z: L or lightness, x: a or green-red, y: b or
+    * blue-yellow, w: alpha.
+    *
+    * @param source the XYZ vector
+    * @param target the output vector
+    *
+    * @return the Lab color
+    *
+    * @see Color#srXyzToSrLab2(float, float, float, float, Vec4)
+    */
+   public static Vec4 srXyzToSrLab2 ( final Vec4 source, final Vec4 target ) {
+
+      return Color.srXyzToSrLab2(source.x, source.y, source.z, source.w,
+         target);
    }
 
    /**
@@ -2480,179 +2247,6 @@ public class Color implements Comparable < Color > {
    }
 
    /**
-    * Eases between two colors in CIE LAB color space. May return colors
-    * outside the range [0.0, 1.0] .
-    */
-   public static class MixCieLab extends AbstrEasing {
-
-      /**
-       * The mixed color in CIE LAB.
-       */
-      protected final Vec4 cLab = new Vec4();
-
-      /**
-       * The mixed color in linear RGB.
-       */
-      protected final Color cLinear = new Color();
-
-      /**
-       * The mixed color in CIE XYZ.
-       */
-      protected final Vec4 cXyz = new Vec4();
-
-      /**
-       * The destination color in CIE LAB.
-       */
-      protected final Vec4 dLab = new Vec4();
-
-      /**
-       * The destination color in linear RGB.
-       */
-      protected final Color dLinear = new Color();
-
-      /**
-       * The destination color in CIE XYZ.
-       */
-      protected final Vec4 dXyz = new Vec4();
-
-      /**
-       * The origin color in CIE LAB.
-       */
-      protected final Vec4 oLab = new Vec4();
-
-      /**
-       * The origin color in linear RGB.
-       */
-      protected final Color oLinear = new Color();
-
-      /**
-       * The origin color in CIE XYZ.
-       */
-      protected final Vec4 oXyz = new Vec4();
-
-      /**
-       * The default constructor.
-       */
-      public MixCieLab ( ) {}
-
-      /**
-       * Applies the function.
-       *
-       * @param orig   the origin color
-       * @param dest   the destination color
-       * @param step   the step in a range 0 to 1
-       * @param target the output color
-       *
-       * @return the eased color
-       *
-       * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
-       * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
-       * @see Vec4#mix(Vec4, Vec4, float, Vec4)
-       */
-      @Override
-      public Color applyUnclamped ( final Color orig, final Color dest,
-         final Float step, final Color target ) {
-
-         Color.sRgbToCieLab(orig, this.oLab, this.oXyz, this.oLinear);
-         Color.sRgbToCieLab(dest, this.dLab, this.dXyz, this.dLinear);
-         Vec4.mix(this.oLab, this.dLab, step, this.cLab);
-         Color.cieLabTosRgb(this.cLab, target, this.cLinear, this.cXyz);
-
-         return target;
-      }
-
-   }
-
-   /**
-    * Eases between two colors in CIE LCH color space. May return colors
-    * outside the range [0.0, 1.0] .
-    */
-   public static class MixCieLch extends MixCieLab {
-
-      /**
-       * The new CIE LCH color.
-       */
-      protected final Vec4 cLch = new Vec4();
-
-      /**
-       * The hue easing function.
-       */
-      protected HueEasing hueFunc;
-
-      /**
-       * The default constructor. Creates a mixer with nearest hue interpolation
-       * and linear interpolation for saturation and value.
-       */
-      public MixCieLch ( ) { this(new HueNear()); }
-
-      /**
-       * Creates a color CIE LCH mixing function with the given easing functions
-       * for hue.
-       *
-       * @param hueFunc the hue easing function
-       */
-      public MixCieLch ( final HueEasing hueFunc ) {
-
-         this.hueFunc = hueFunc;
-      }
-
-      /**
-       * Applies the function.
-       *
-       * @param orig   the origin color
-       * @param dest   the destination color
-       * @param step   the step in a range 0 to 1
-       * @param target the output color
-       *
-       * @return the eased color
-       *
-       * @see Color#sRgbToCieLab(Color, Vec4, Vec4, Color)
-       * @see Color#cieLabTosRgb(Vec4, Color, Color, Vec4)
-       * @see Color#cieLchToCieLab(Vec4, Vec4)
-       * @see Vec4#mix(Vec4, Vec4, float, Vec4)
-       */
-      @Override
-      public Color applyUnclamped ( final Color orig, final Color dest,
-         final Float step, final Color target ) {
-
-         Color.sRgbToCieLab(orig, this.oLab, this.oXyz, this.oLinear);
-
-         final float oa = this.oLab.x;
-         final float ob = this.oLab.y;
-         final float ocsq = oa * oa + ob * ob;
-
-         Color.sRgbToCieLab(dest, this.dLab, this.dXyz, this.dLinear);
-
-         final float da = this.dLab.x;
-         final float db = this.dLab.y;
-         final float dcsq = da * da + db * db;
-
-         if ( ocsq <= IUtils.EPSILON || dcsq <= IUtils.EPSILON ) {
-            Vec4.mix(this.oLab, this.dLab, step, this.cLab);
-         } else {
-            final float t = step;
-            final float u = 1.0f - t;
-
-            float oh = Utils.atan2(ob, oa) * IUtils.ONE_TAU;
-            if ( oh < -0.0f ) { oh = oh + 1.0f; }
-            float dh = Utils.atan2(db, da) * IUtils.ONE_TAU;
-            if ( dh < -0.0f ) { dh = dh + 1.0f; }
-
-            this.cLch.set(this.hueFunc.apply(oh, dh, step), u * Utils
-               .sqrtUnchecked(ocsq) + t * Utils.sqrtUnchecked(dcsq), u
-                  * this.oLab.z + t * this.dLab.z, u * this.oLab.w + t
-                     * this.dLab.w);
-
-            Color.cieLchToCieLab(this.cLch, this.cLab);
-         }
-
-         Color.cieLabTosRgb(this.cLab, target, this.cLinear, this.cXyz);
-         return target;
-      }
-
-   }
-
-   /**
     * Converts two colors from
     * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> to linear
     * RGB, mixes them with linear interpolation, then converts back to
@@ -2756,6 +2350,180 @@ public class Color implements Comparable < Color > {
          final float u = 1.0f - t;
          return target.set(u * orig.r + t * dest.r, u * orig.g + t * dest.g, u
             * orig.b + t * dest.b, u * orig.a + t * dest.a);
+      }
+
+   }
+
+   /**
+    * Eases between two colors in SR LAB 2 color space. May return colors
+    * outside the range [0.0, 1.0] .
+    */
+   public static class MixSrLab2 extends AbstrEasing {
+
+      /**
+       * The mixed color in LAB.
+       */
+      protected final Vec4 cLab = new Vec4();
+
+      /**
+       * The mixed color in linear RGB.
+       */
+      protected final Color cLinear = new Color();
+
+      /**
+       * The mixed color in XYZ.
+       */
+      protected final Vec4 cXyz = new Vec4();
+
+      /**
+       * The destination color in LAB.
+       */
+      protected final Vec4 dLab = new Vec4();
+
+      /**
+       * The destination color in linear RGB.
+       */
+      protected final Color dLinear = new Color();
+
+      /**
+       * The destination color in XYZ.
+       */
+      protected final Vec4 dXyz = new Vec4();
+
+      /**
+       * The origin color in LAB.
+       */
+      protected final Vec4 oLab = new Vec4();
+
+      /**
+       * The origin color in linear RGB.
+       */
+      protected final Color oLinear = new Color();
+
+      /**
+       * The origin color in XYZ.
+       */
+      protected final Vec4 oXyz = new Vec4();
+
+      /**
+       * The default constructor.
+       */
+      public MixSrLab2 ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param orig   the origin color
+       * @param dest   the destination color
+       * @param step   the step in a range 0 to 1
+       * @param target the output color
+       *
+       * @return the eased color
+       *
+       * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
+       * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
+       * @see Vec4#mix(Vec4, Vec4, float, Vec4)
+       */
+      @Override
+      public Color applyUnclamped ( final Color orig, final Color dest,
+         final Float step, final Color target ) {
+
+         Color.sRgbToSrLab2(orig, this.oLab, this.oXyz, this.oLinear);
+         Color.sRgbToSrLab2(dest, this.dLab, this.dXyz, this.dLinear);
+         Vec4.mix(this.oLab, this.dLab, step, this.cLab);
+         Color.srLab2TosRgb(this.cLab, target, this.cLinear, this.cXyz);
+
+         return target;
+      }
+
+   }
+
+   /**
+    * Eases between two colors in SR LCH color space. May return colors
+    * outside the range [0.0, 1.0] .
+    */
+   public static class MixSrLch extends MixSrLab2 {
+
+      /**
+       * The new LCH color.
+       */
+      protected final Vec4 cLch = new Vec4();
+
+      /**
+       * The hue easing function.
+       */
+      protected HueEasing hueFunc;
+
+      /**
+       * The default constructor. Creates a mixer with nearest hue
+       * interpolation.
+       */
+      public MixSrLch ( ) { this(new HueNear()); }
+
+      /**
+       * Creates a color SR LCH mixing function with the given easing functions
+       * for hue.
+       *
+       * @param hueFunc the hue easing function
+       */
+      public MixSrLch ( final HueEasing hueFunc ) {
+
+         this.hueFunc = hueFunc;
+      }
+
+      /**
+       * Applies the function.
+       *
+       * @param orig   the origin color
+       * @param dest   the destination color
+       * @param step   the step in a range 0 to 1
+       * @param target the output color
+       *
+       * @return the eased color
+       *
+       * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
+       * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
+       * @see Color#srLchToSrLab2(Vec4, Vec4)
+       * @see Vec4#mix(Vec4, Vec4, float, Vec4)
+       */
+      @Override
+      public Color applyUnclamped ( final Color orig, final Color dest,
+         final Float step, final Color target ) {
+
+         Color.sRgbToSrLab2(orig, this.oLab, this.oXyz, this.oLinear);
+
+         final float oa = this.oLab.x;
+         final float ob = this.oLab.y;
+         final float ocsq = oa * oa + ob * ob;
+
+         Color.sRgbToSrLab2(dest, this.dLab, this.dXyz, this.dLinear);
+
+         final float da = this.dLab.x;
+         final float db = this.dLab.y;
+         final float dcsq = da * da + db * db;
+
+         if ( ocsq < Color.C_EPSILON * Color.C_EPSILON || dcsq < Color.C_EPSILON
+            * Color.C_EPSILON ) {
+            Vec4.mix(this.oLab, this.dLab, step, this.cLab);
+         } else {
+            final float t = step;
+            final float u = 1.0f - t;
+
+            float oh = Utils.atan2(ob, oa) * IUtils.ONE_TAU;
+            if ( oh < -0.0f ) { oh = oh + 1.0f; }
+            float dh = Utils.atan2(db, da) * IUtils.ONE_TAU;
+            if ( dh < -0.0f ) { dh = dh + 1.0f; }
+
+            this.cLch.set(this.hueFunc.apply(oh, dh, step), u * Utils
+               .sqrtUnchecked(ocsq) + t * Utils.sqrtUnchecked(dcsq), u
+                  * this.oLab.z + t * this.dLab.z, u * this.oLab.w + t
+                     * this.dLab.w);
+
+            Color.srLchToSrLab2(this.cLch, this.cLab);
+         }
+
+         Color.srLab2TosRgb(this.cLab, target, this.cLinear, this.cXyz);
+         return target;
       }
 
    }

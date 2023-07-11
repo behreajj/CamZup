@@ -443,10 +443,6 @@ public class Vec3 implements Comparable < Vec3 > {
 
       /* To match distAngleUnsigned, this requires double precision. */
 
-      // return Vec3.any(a) && Vec3.any(b) ? Utils.acos(Vec3.dot(a, b) * Utils
-      // .invSqrtUnchecked(Vec3.magSq(a)) * Utils.invSqrtUnchecked(Vec3.magSq(
-      // b))) : 0.0f;
-
       if ( Vec3.any(a) && Vec3.any(b) ) {
          final double ax = a.x;
          final double ay = a.y;

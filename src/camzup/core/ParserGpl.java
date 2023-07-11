@@ -2,7 +2,6 @@ package camzup.core;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
-
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
@@ -105,7 +104,7 @@ public abstract class ParserGpl {
     */
    public static Color[] load ( final String fileName ) {
 
-      Color[] result = new Color[0];
+      Color[] result = {};
       try ( BufferedReader br = new BufferedReader(new FileReader(fileName)) ) {
          result = ParserGpl.load(br);
       } catch ( final Exception e ) {

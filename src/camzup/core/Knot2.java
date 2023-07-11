@@ -281,8 +281,8 @@ public class Knot2 implements Comparable < Knot2 > {
    public Knot2 mirrorHandles ( ) { return this.mirrorHandlesForward(); }
 
    /**
-    * Sets the forward-facing handle to mirror the rear-facing handle: the
-    * fore will have the same magnitude and negated direction of the rear.
+    * Sets the fore handle to mirror the rear handle: the fore will have the
+    * same magnitude and negated direction of the rear.
     *
     * @return this knot
     */
@@ -295,8 +295,8 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Sets the rear-facing handle to mirror the forward-facing handle: the
-    * rear will have the same magnitude and negated direction of the fore.
+    * Sets the rear handle to mirror the fore handle: the rear will have the
+    * same magnitude and negated direction of the fore.
     *
     * @return this knot
     */
@@ -332,7 +332,7 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Reverses the knot's direction by swapping the fore- and rear-handles.
+    * Reverses the knot's direction by swapping the fore and rear handles.
     *
     * @return this knot
     */
@@ -658,7 +658,7 @@ public class Knot2 implements Comparable < Knot2 > {
 
    /**
     * Sets the knot's coordinate and fore handle. The rear handle is a mirror
-    * of the forehandle.
+    * of the fore handle.
     *
     * @param xCoord the x coordinate
     * @param yCoord the y coordinate
@@ -679,7 +679,7 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Sets the knot's coordinate, forehandle and rearhandle by component.
+    * Sets the knot's coordinate, fore handle and rear handle by component.
     *
     * @param xCoord the x coordinate
     * @param yCoord the y coordinate
@@ -713,7 +713,7 @@ public class Knot2 implements Comparable < Knot2 > {
    }
 
    /**
-    * Sets the coordinate, fore- and rear-handles to the input coordinate.
+    * Sets the coordinate, fore and rear handles to the input coordinate.
     *
     * @param coord the coordinate
     *
@@ -726,7 +726,7 @@ public class Knot2 implements Comparable < Knot2 > {
 
    /**
     * Sets the knot's coordinates and fore handle. The rear handle is a mirror
-    * of the forehandle.
+    * of the fore handle.
     *
     * @param coord      the coordinate
     * @param foreHandle the fore handle

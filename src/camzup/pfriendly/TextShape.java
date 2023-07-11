@@ -1,8 +1,5 @@
 package camzup.pfriendly;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import java.awt.Font;
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -11,6 +8,7 @@ import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
+import java.util.ArrayList;
 
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
@@ -18,10 +16,8 @@ import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
-
-import processing.core.PFont;
-
 import processing.awt.PGraphicsJava2D;
+import processing.core.PFont;
 
 /**
  * Converts AWT font glyphs to curves or meshes.
@@ -195,24 +191,27 @@ public abstract class TextShape {
                   yCursor -= ( lineHeight + leading ) * scalar;
                   xCursor = 0.0f;
                   newLineFlag = true;
-               } else if ( character == ' ' || character == '\t' ) {
-                  xCursor += spaceWidth * scalar;
-                  newLineFlag = false;
                } else {
+                  if ( character == ' ' || character == '\t' ) {
+                     xCursor += spaceWidth * scalar;
+                  } else {
 
-                  final CurveEntity2 entity = new CurveEntity2(Character
-                     .toString(character));
-                  entities.add(entity);
+                     final CurveEntity2 entity = new CurveEntity2(Character
+                        .toString(character));
+                     entities.add(entity);
 
-                  TextShape.processGlyphCurve(font, frc, null, valDispScl,
-                     detail, character, entity.curves);
+                     TextShape.processGlyphCurve(font, frc, null, valDispScl,
+                        detail, character, entity.curves);
 
-                  tr.set(xCursor, yCursor);
-                  entity.moveTo(tr);
+                     tr.set(xCursor, yCursor);
+                     entity.moveTo(tr);
 
-                  final PFont.Glyph glyph = pfont.getGlyph(character);
-                  xCursor += ( glyph.width + kerning ) * scalar;
-                  if ( !newLineFlag ) { xCursor += glyph.leftExtent * scalar; }
+                     final PFont.Glyph glyph = pfont.getGlyph(character);
+                     xCursor += ( glyph.width + kerning ) * scalar;
+                     if ( !newLineFlag ) {
+                        xCursor += glyph.leftExtent * scalar;
+                     }
+                  }
                   newLineFlag = false;
                }
             }

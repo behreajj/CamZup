@@ -456,19 +456,6 @@ public class Bounds3 implements Comparable < Bounds3 > {
    }
 
    /**
-    * Returns a boundary encompassing the CIE LAB color space, with a minimum
-    * at (-111.0, -111.0, -1.0) and a maximum of (111.0, 111.0, 101.0).
-    *
-    * @param target the output bounds
-    *
-    * @return the CIE LAB bounds
-    */
-   public static Bounds3 cieLab ( final Bounds3 target ) {
-
-      return target.set(-111.0f, -111.0f, -1.0f, 111.0f, 111.0f, 101.0f);
-   }
-
-   /**
     * Evaluates whether a point is within the bounding volume, lower bounds
     * inclusive, upper bounds exclusive. For cases where multiple bounds must
     * cover an volume without overlap or gaps.
@@ -807,6 +794,22 @@ public class Bounds3 implements Comparable < Bounds3 > {
    public static boolean isNegative ( final Bounds3 b ) {
 
       return b.max.z < b.min.z || b.max.y < b.min.y || b.max.x < b.min.x;
+   }
+
+   /**
+    * Returns a boundary encompassing the LAB color space, with a minimum at
+    * ({@value Color#A_MIN}, {@value Color#B_MIN}, 0.0) and a maximum at
+    * ({@value Color#A_MAX}, {@value Color#B_MAX}, 100.0).
+    *
+    * @param target the output bounds
+    *
+    * @return the LAB bounds
+    */
+   public static Bounds3 lab ( final Bounds3 target ) {
+
+      return target.set(Color.A_MIN - IUtils.EPSILON, Color.B_MIN
+         - IUtils.EPSILON, -IUtils.EPSILON, Color.A_MAX + IUtils.EPSILON,
+         Color.B_MAX + IUtils.EPSILON, 100.0f + IUtils.EPSILON);
    }
 
    /**

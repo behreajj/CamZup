@@ -3,10 +3,8 @@ package camzup.pfriendly;
 import camzup.core.Experimental;
 import camzup.core.Handedness;
 import camzup.core.Vec3;
-
 import processing.core.PApplet;
 import processing.core.PConstants;
-
 import processing.opengl.PGraphicsOpenGL;
 
 /**

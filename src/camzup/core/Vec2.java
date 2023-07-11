@@ -430,10 +430,6 @@ public class Vec2 implements Comparable < Vec2 > {
 
       /* To match distAngleUnsigned, this requires double precision. */
 
-      // return Vec2.any(a) && Vec2.any(b) ? Utils.acos(Vec2.dot(a, b) * Utils
-      // .invSqrtUnchecked(Vec2.magSq(a)) * Utils.invSqrtUnchecked(Vec2.magSq(
-      // b))) : 0.0f;
-
       if ( Vec2.any(a) && Vec2.any(b) ) {
          final double ax = a.x;
          final double ay = a.y;

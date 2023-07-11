@@ -8,7 +8,7 @@ import java.util.TreeSet;
 
 /**
  * Partitions space to improve collision and intersection tests. A quadtree
- * node holds a list of points up to a given capacity; when that capacity
+ * node holds a list of points up to a given capacity. When that capacity
  * is exceeded, the node is split into four children nodes (quadrants) and
  * its list of points is emptied into them. The quadrants are indexed in an
  * array as follows
@@ -573,7 +573,6 @@ public class Quadtree {
             itr.next().toString(sb, places);
             if ( itr.hasNext() ) { sb.append(',').append(' '); }
          }
-         sb.append(' ').append(']');
       } else {
          sb.append(", children: [ ");
          for ( int i = 0; i < Quadtree.CHILD_COUNT - 1; ++i ) {
@@ -592,9 +591,8 @@ public class Quadtree {
          } else {
             sb.append("null");
          }
-
-         sb.append(' ').append(']');
       }
+      sb.append(' ').append(']');
 
       sb.append(' ').append('}');
       return sb;
@@ -687,14 +685,8 @@ public class Quadtree {
          this.children[Quadtree.NORTH_WEST].bounds,
          this.children[Quadtree.NORTH_EAST].bounds);
 
-      /*
-       * Pass on points to children. Begin search for the appropriate child node
-       * at the index where the previous point was inserted.
-       */
-      final Iterator < Vec2 > itr = this.points.iterator();
       int idxOffset = 0;
-      while ( itr.hasNext() ) {
-         final Vec2 v = itr.next();
+      for ( final Vec2 v : this.points ) {
          boolean found = false;
          for ( int j = 0; !found && j < Quadtree.CHILD_COUNT; ++j ) {
             final int k = ( idxOffset + j ) % Quadtree.CHILD_COUNT;
@@ -857,19 +849,17 @@ public class Quadtree {
 
       if ( isLeaf ) {
          final int ptsLen = q.points.size();
-         final Iterator < Vec2 > ptsItr = q.points.iterator();
          if ( ptsLen > 1 ) {
             float xSum = 0.0f;
             float ySum = 0.0f;
-            while ( ptsItr.hasNext() ) {
-               final Vec2 pt = ptsItr.next();
+            for ( final Vec2 pt : q.points ) {
                xSum += pt.x;
                ySum += pt.y;
             }
             final float dn = 1.0f / ptsLen;
             target.add(new Vec2(xSum * dn, ySum * dn));
          } else if ( ptsLen > 0 ) {
-            target.add(new Vec2(ptsItr.next()));
+            target.add(new Vec2(q.points.iterator().next()));
          } else if ( includeEmpty ) {
             target.add(Bounds2.center(q.bounds, new Vec2()));
          }
@@ -913,9 +903,7 @@ public class Quadtree {
          }
 
          if ( isLeaf ) {
-            final Iterator < Vec2 > itr = q.points.iterator();
-            while ( itr.hasNext() ) {
-               final Vec2 point = itr.next();
+            for ( final Vec2 point : q.points ) {
                if ( Bounds2.containsInclusive(range, point) ) {
                   found.put(Vec2.distChebyshev(point, rCenter), point);
                }
@@ -959,9 +947,7 @@ public class Quadtree {
          }
 
          if ( isLeaf ) {
-            final Iterator < Vec2 > itr = q.points.iterator();
-            while ( itr.hasNext() ) {
-               final Vec2 point = itr.next();
+            for ( final Vec2 point : q.points ) {
                final float dsq = Vec2.distSq(center, point);
                if ( dsq < rsq ) { found.put(dsq, point); }
             }

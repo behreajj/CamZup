@@ -4,7 +4,6 @@ import camzup.core.IUtils;
 import camzup.core.Quaternion;
 import camzup.core.Utils;
 import camzup.core.Vec3;
-
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 

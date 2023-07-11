@@ -7,7 +7,6 @@ import camzup.core.PolyType;
 import camzup.core.Transform2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
-
 import processing.core.PConstants;
 import processing.core.PImage;
 

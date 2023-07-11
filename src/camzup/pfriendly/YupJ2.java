@@ -1,7 +1,5 @@
 package camzup.pfriendly;
 
-import java.util.Iterator;
-
 import java.awt.BasicStroke;
 import java.awt.Graphics2D;
 import java.awt.Image;
@@ -11,6 +9,7 @@ import java.awt.geom.Arc2D;
 import java.awt.geom.Path2D;
 import java.awt.image.BufferedImage;
 import java.awt.image.ImageObserver;
+import java.util.Iterator;
 
 import camzup.core.Bounds2;
 import camzup.core.Color;
@@ -30,7 +29,7 @@ import camzup.core.Transform2;
 import camzup.core.TransformOrder;
 import camzup.core.Utils;
 import camzup.core.Vec2;
-
+import processing.awt.PGraphicsJava2D;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
@@ -40,8 +39,6 @@ import processing.core.PImage;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
-
-import processing.awt.PGraphicsJava2D;
 
 /**
  * A 2D renderer based on the Java AWT (Abstract Window Toolkit). Supposes
@@ -1277,21 +1274,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);
 
       final Transform2 tr = ce.transform;
-      final Iterator < Curve2 > curveItr = ce.iterator();
-
       final Vec2 rh = new Vec2();
       final Vec2 co = new Vec2();
       final Vec2 fh = new Vec2();
 
       this.pushStyle();
 
-      while ( curveItr.hasNext() ) {
-         final Curve2 curve = curveItr.next();
-         final Iterator < Knot2 > knItr = curve.iterator();
-
-         while ( knItr.hasNext() ) {
-            final Knot2 knot = knItr.next();
-
+      for ( final Curve2 curve : ce ) {
+         for ( final Knot2 knot : curve ) {
             Transform2.mulPoint(tr, knot.rearHandle, rh);
             Transform2.mulPoint(tr, knot.coord, co);
             Transform2.mulPoint(tr, knot.foreHandle, fh);
@@ -2856,12 +2846,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final Vec2 max = bounds.max;
 
       final Transform2 tr = entity.transform;
-      final Iterator < Curve2 > itr = entity.iterator();
-
       this.gp.setWindingRule(windingRule);
 
-      while ( itr.hasNext() ) {
-         final Curve2 curve = itr.next();
+      for ( final Curve2 curve : entity ) {
          Curve2.calcBounds(curve, bounds);
          final MaterialAwt material = materials[curve.materialIndex];
          final Image texture = material.texture;
@@ -2935,12 +2922,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final Vec2 co = new Vec2();
 
       final Transform2 tr = entity.transform;
-      final Iterator < Curve2 > itr = entity.iterator();
-
       this.gp.setWindingRule(windingRule);
 
-      while ( itr.hasNext() ) {
-         final Curve2 curve = itr.next();
+      for ( final Curve2 curve : entity ) {
          super.pushStyle();
          this.material(materials[curve.materialIndex]);
          this.gp.reset();
@@ -3055,12 +3039,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final Vec2 min = bounds.min;
       final Vec2 max = bounds.max;
       final Transform2 tr = entity.transform;
-      final Iterator < Mesh2 > itr = entity.iterator();
-
       this.gp.setWindingRule(windingRule);
 
-      while ( itr.hasNext() ) {
-         final Mesh2 mesh = itr.next();
+      for ( final Mesh2 mesh : entity ) {
          Mesh2.calcBounds(mesh, bounds);
          final MaterialAwt material = materials[mesh.materialIndex];
          final Image texture = material.texture;
@@ -3139,12 +3120,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       final Vec2 v = new Vec2();
       final Transform2 tr = entity.transform;
-      final Iterator < Mesh2 > itr = entity.iterator();
-
       this.gp.setWindingRule(windingRule);
 
-      while ( itr.hasNext() ) {
-         final Mesh2 mesh = itr.next();
+      for ( final Mesh2 mesh : entity ) {
          super.pushStyle();
          this.material(materials[mesh.materialIndex]);
          this.gp.reset();

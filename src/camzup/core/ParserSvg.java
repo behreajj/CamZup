@@ -1,6 +1,10 @@
 package camzup.core;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Iterator;
+import java.util.LinkedList;
 
 import javax.xml.XMLConstants;
 import javax.xml.parsers.DocumentBuilder;
@@ -10,11 +14,6 @@ import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.LinkedList;
 
 /**
  * A scalable vector graphics (SVG) parser class. SVG parsing is at best
@@ -684,10 +683,7 @@ public abstract class ParserSvg {
          }
 
          if ( path != null ) {
-            final Iterator < Curve2 > itr = path.iterator();
-            while ( itr.hasNext() ) {
-               final Curve2 pathCurve = itr.next();
-
+            for ( final Curve2 pathCurve : path ) {
                if ( !curves.contains(pathCurve) ) {
                   pathCurve.transform(prev);
                   curves.add(pathCurve);
@@ -765,10 +761,7 @@ public abstract class ParserSvg {
             Knot2 curr = null;
             Knot2 prev = null;
 
-            /* Add data to each instruction. */
-            final Iterator < PathData > pathItr = paths.iterator();
-            while ( pathItr.hasNext() ) {
-               final PathData entry = pathItr.next();
+            for ( final PathData entry : paths ) {
                final SvgPathCmd cmd = entry.cmd;
                final ArrayList < String > data = entry.data;
 
@@ -1170,10 +1163,7 @@ public abstract class ParserSvg {
                result.add(target);
             }
 
-            /* Deal with first and last knots in open versus closed loop. */
-            final Iterator < Curve2 > resultItr = result.iterator();
-            while ( resultItr.hasNext() ) {
-               final Curve2 curve = resultItr.next();
+            for ( final Curve2 curve : result ) {
                final Knot2 kn0 = curve.getFirst();
                final Knot2 kn1 = curve.getLast();
 
@@ -1355,10 +1345,8 @@ public abstract class ParserSvg {
          }
       }
 
-      final Iterator < TransformData > trItr = transforms.iterator();
-      while ( trItr.hasNext() ) {
+      for ( final TransformData entry : transforms ) {
 
-         final TransformData entry = trItr.next();
          ParserSvg.segmentChars(chars, entry.lbDat, entry.ubDat, entry.data);
          final SvgTransformCmd cmd = entry.cmd;
          final Iterator < String > dtItr = entry.data.iterator();

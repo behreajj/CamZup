@@ -189,15 +189,15 @@ public class Edge3 implements Comparable < Edge3 > {
    public Edge3 rotateLocal ( final float cosa, final float sina,
       final Vec3 axis, final Vec3 center ) {
 
-      final Vec3 coOrigin = this.origin.coord;
+      final Vec3 coOrig = this.origin.coord;
       final Vec3 coDest = this.dest.coord;
 
-      center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
-         * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+      center.set( ( coOrig.x + coDest.x ) * 0.5f, ( coOrig.y + coDest.y )
+         * 0.5f, ( coOrig.z + coDest.z ) * 0.5f);
 
-      Vec3.sub(coOrigin, center, coOrigin);
-      Vec3.rotate(coOrigin, cosa, sina, axis, coOrigin);
-      Vec3.add(coOrigin, center, coOrigin);
+      Vec3.sub(coOrig, center, coOrig);
+      Vec3.rotate(coOrig, cosa, sina, axis, coOrig);
+      Vec3.add(coOrig, center, coOrig);
 
       Vec3.sub(coDest, center, coDest);
       Vec3.rotate(coDest, cosa, sina, axis, coDest);
@@ -248,15 +248,15 @@ public class Edge3 implements Comparable < Edge3 > {
    public Edge3 rotateLocal ( final Quaternion q, final Vec3 center ) {
 
       if ( Quaternion.any(q) ) {
-         final Vec3 coOrigin = this.origin.coord;
+         final Vec3 coOrig = this.origin.coord;
          final Vec3 coDest = this.dest.coord;
 
-         center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
-            * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+         center.set( ( coOrig.x + coDest.x ) * 0.5f, ( coOrig.y + coDest.y )
+            * 0.5f, ( coOrig.z + coDest.z ) * 0.5f);
 
-         Vec3.sub(coOrigin, center, coOrigin);
-         Quaternion.mulVector(q, coOrigin, coOrigin);
-         Vec3.add(coOrigin, center, coOrigin);
+         Vec3.sub(coOrig, center, coOrig);
+         Quaternion.mulVector(q, coOrig, coOrig);
+         Vec3.add(coOrig, center, coOrig);
 
          Vec3.sub(coDest, center, coDest);
          Quaternion.mulVector(q, coDest, coDest);
@@ -321,15 +321,15 @@ public class Edge3 implements Comparable < Edge3 > {
    public Edge3 rotateXLocal ( final float cosa, final float sina,
       final Vec3 center ) {
 
-      final Vec3 coOrigin = this.origin.coord;
+      final Vec3 coOrig = this.origin.coord;
       final Vec3 coDest = this.dest.coord;
 
-      center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
-         * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+      center.set( ( coOrig.x + coDest.x ) * 0.5f, ( coOrig.y + coDest.y )
+         * 0.5f, ( coOrig.z + coDest.z ) * 0.5f);
 
-      Vec3.sub(coOrigin, center, coOrigin);
-      Vec3.rotateX(coOrigin, cosa, sina, coOrigin);
-      Vec3.add(coOrigin, center, coOrigin);
+      Vec3.sub(coOrig, center, coOrig);
+      Vec3.rotateX(coOrig, cosa, sina, coOrig);
+      Vec3.add(coOrig, center, coOrig);
 
       Vec3.sub(coDest, center, coDest);
       Vec3.rotateX(coDest, cosa, sina, coDest);
@@ -413,15 +413,15 @@ public class Edge3 implements Comparable < Edge3 > {
    public Edge3 rotateYLocal ( final float cosa, final float sina,
       final Vec3 center ) {
 
-      final Vec3 coOrigin = this.origin.coord;
+      final Vec3 coOrig = this.origin.coord;
       final Vec3 coDest = this.dest.coord;
 
-      center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
-         * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+      center.set( ( coOrig.x + coDest.x ) * 0.5f, ( coOrig.y + coDest.y )
+         * 0.5f, ( coOrig.z + coDest.z ) * 0.5f);
 
-      Vec3.sub(coOrigin, center, coOrigin);
-      Vec3.rotateY(coOrigin, cosa, sina, coOrigin);
-      Vec3.add(coOrigin, center, coOrigin);
+      Vec3.sub(coOrig, center, coOrig);
+      Vec3.rotateY(coOrig, cosa, sina, coOrig);
+      Vec3.add(coOrig, center, coOrig);
 
       Vec3.sub(coDest, center, coDest);
       Vec3.rotateY(coDest, cosa, sina, coDest);
@@ -505,15 +505,15 @@ public class Edge3 implements Comparable < Edge3 > {
    public Edge3 rotateZLocal ( final float cosa, final float sina,
       final Vec3 center ) {
 
-      final Vec3 coOrigin = this.origin.coord;
+      final Vec3 coOrig = this.origin.coord;
       final Vec3 coDest = this.dest.coord;
 
-      center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
-         * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+      center.set( ( coOrig.x + coDest.x ) * 0.5f, ( coOrig.y + coDest.y )
+         * 0.5f, ( coOrig.z + coDest.z ) * 0.5f);
 
-      Vec3.sub(coOrigin, center, coOrigin);
-      Vec3.rotateZ(coOrigin, cosa, sina, coOrigin);
-      Vec3.add(coOrigin, center, coOrigin);
+      Vec3.sub(coOrig, center, coOrig);
+      Vec3.rotateZ(coOrig, cosa, sina, coOrig);
+      Vec3.add(coOrig, center, coOrig);
 
       Vec3.sub(coDest, center, coDest);
       Vec3.rotateZ(coDest, cosa, sina, coDest);
@@ -628,15 +628,15 @@ public class Edge3 implements Comparable < Edge3 > {
 
       if ( scalar != 0.0f ) {
 
-         final Vec3 coOrigin = this.origin.coord;
+         final Vec3 coOrig = this.origin.coord;
          final Vec3 coDest = this.dest.coord;
 
-         center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
-            * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+         center.set( ( coOrig.x + coDest.x ) * 0.5f, ( coOrig.y + coDest.y )
+            * 0.5f, ( coOrig.z + coDest.z ) * 0.5f);
 
-         Vec3.sub(coOrigin, center, coOrigin);
-         Vec3.mul(coOrigin, scalar, coOrigin);
-         Vec3.add(coOrigin, center, coOrigin);
+         Vec3.sub(coOrig, center, coOrig);
+         Vec3.mul(coOrig, scalar, coOrig);
+         Vec3.add(coOrig, center, coOrig);
 
          Vec3.sub(coDest, center, coDest);
          Vec3.mul(coDest, scalar, coDest);
@@ -665,15 +665,15 @@ public class Edge3 implements Comparable < Edge3 > {
 
       if ( Vec3.all(scalar) ) {
 
-         final Vec3 coOrigin = this.origin.coord;
+         final Vec3 coOrig = this.origin.coord;
          final Vec3 coDest = this.dest.coord;
 
-         center.set( ( coOrigin.x + coDest.x ) * 0.5f, ( coOrigin.y + coDest.y )
-            * 0.5f, ( coOrigin.z + coDest.z ) * 0.5f);
+         center.set( ( coOrig.x + coDest.x ) * 0.5f, ( coOrig.y + coDest.y )
+            * 0.5f, ( coOrig.z + coDest.z ) * 0.5f);
 
-         Vec3.sub(coOrigin, center, coOrigin);
-         Vec3.hadamard(coOrigin, scalar, coOrigin);
-         Vec3.add(coOrigin, center, coOrigin);
+         Vec3.sub(coOrig, center, coOrig);
+         Vec3.hadamard(coOrig, scalar, coOrig);
+         Vec3.add(coOrig, center, coOrig);
 
          Vec3.sub(coDest, center, coDest);
          Vec3.hadamard(coDest, scalar, coDest);
@@ -708,14 +708,14 @@ public class Edge3 implements Comparable < Edge3 > {
    /**
     * Sets this edge by vertex.
     *
-    * @param origin the origin vertex
-    * @param dest   the destination vertex
+    * @param orig the origin vertex
+    * @param dest the destination vertex
     *
     * @return this edge
     */
-   public Edge3 set ( final Vert3 origin, final Vert3 dest ) {
+   public Edge3 set ( final Vert3 orig, final Vert3 dest ) {
 
-      this.origin = origin;
+      this.origin = orig;
       this.dest = dest;
       return this;
    }
@@ -835,8 +835,8 @@ public class Edge3 implements Comparable < Edge3 > {
     * Evaluates whether two edges are complements or neighbors, i.e., whether
     * one edge's origin is the other's destination.
     *
-    * @param a left comparisand
-    * @param b right comparisand
+    * @param a the left comparisand
+    * @param b the right comparisand
     *
     * @return the evaluation
     *
@@ -860,9 +860,9 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public static float azimuth ( final Edge3 edge ) {
 
+      final Vec3 orig = edge.origin.coord;
       final Vec3 dest = edge.dest.coord;
-      final Vec3 origin = edge.origin.coord;
-      return Utils.atan2(dest.y - origin.y, dest.x - origin.x);
+      return Utils.atan2(dest.y - orig.y, dest.x - orig.x);
    }
 
    /**
@@ -882,20 +882,20 @@ public class Edge3 implements Comparable < Edge3 > {
        * The magnitude of the rejection of u from v, where u equals b -
        * a.origin.
        */
-      final Vec3 aOrigin = a.origin.coord;
+      final Vec3 aOrig = a.origin.coord;
       final Vec3 aDest = a.dest.coord;
 
       /* Represent edge as point and vector. */
-      final float vx = aDest.x - aOrigin.x;
-      final float vy = aDest.y - aOrigin.y;
-      final float vz = aDest.z - aOrigin.z;
+      final float vx = aDest.x - aOrig.x;
+      final float vy = aDest.y - aOrig.y;
+      final float vz = aDest.z - aOrig.z;
       final float dotvv = vx * vx + vy * vy + vz * vz;
       if ( dotvv <= 0.0f ) { return 0.0f; }
 
       /* Find difference between point and edge origin. */
-      final float ux = b.x - aOrigin.x;
-      final float uy = b.y - aOrigin.y;
-      final float uz = b.z - aOrigin.z;
+      final float ux = b.x - aOrig.x;
+      final float uy = b.y - aOrig.y;
+      final float uz = b.z - aOrig.z;
 
       /* Cross difference with edge vector. */
       final float ax = uy * vz - uz * vy;
@@ -920,15 +920,15 @@ public class Edge3 implements Comparable < Edge3 > {
    public static Vec3 eval ( final Edge3 edge, final float step,
       final Vec3 target ) {
 
-      final Vec3 coOrigin = edge.origin.coord;
+      final Vec3 coOrig = edge.origin.coord;
       final Vec3 coDest = edge.dest.coord;
 
-      if ( step <= 0.0f ) { return target.set(coOrigin); }
+      if ( step <= 0.0f ) { return target.set(coOrig); }
       if ( step >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - step;
-      return target.set(u * coOrigin.x + step * coDest.x, u * coOrigin.y + step
-         * coDest.y, u * coOrigin.z + step * coDest.z);
+      return target.set(u * coOrig.x + step * coDest.x, u * coOrig.y + step
+         * coDest.y, u * coOrig.z + step * coDest.z);
    }
 
    /**
@@ -944,12 +944,12 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public static float inclination ( final Edge3 edge ) {
 
+      final Vec3 orig = edge.origin.coord;
       final Vec3 dest = edge.dest.coord;
-      final Vec3 origin = edge.origin.coord;
 
-      final float dx = dest.x - origin.x;
-      final float dy = dest.y - origin.y;
-      final float dz = dest.z - origin.z;
+      final float dx = dest.x - orig.x;
+      final float dy = dest.y - orig.y;
+      final float dz = dest.z - orig.z;
 
       return Utils.asin(dz * Utils.invHypot(dx, dy, dz));
    }
@@ -999,26 +999,26 @@ public class Edge3 implements Comparable < Edge3 > {
    public static Vec3 projectVector ( final Edge3 edge, final Vec3 v,
       final Vec3 target ) {
 
-      final Vec3 coOrigin = edge.origin.coord;
+      final Vec3 coOrig = edge.origin.coord;
       final Vec3 coDest = edge.dest.coord;
 
-      final float bx = coDest.x - coOrigin.x;
-      final float by = coDest.y - coOrigin.y;
-      final float bz = coDest.z - coOrigin.z;
+      final float bx = coDest.x - coOrig.x;
+      final float by = coDest.y - coOrig.y;
+      final float bz = coDest.z - coOrig.z;
       final float bSq = bx * bx + by * by + bz * bz;
 
-      if ( bSq <= 0.0f ) { return target.set(coOrigin); }
+      if ( bSq <= 0.0f ) { return target.set(coOrig); }
 
-      final float ax = v.x - coOrigin.x;
-      final float ay = v.y - coOrigin.y;
-      final float az = v.z - coOrigin.z;
+      final float ax = v.x - coOrig.x;
+      final float ay = v.y - coOrig.y;
+      final float az = v.z - coOrig.z;
       final float fac = ( ax * bx + ay * by + az * bz ) / bSq;
 
       if ( fac >= 1.0f ) { return target.set(coDest); }
 
       final float u = 1.0f - fac;
-      return target.set(u * coOrigin.x + fac * coDest.x, u * coOrigin.y + fac
-         * coDest.y, u * coOrigin.z + fac * coDest.z);
+      return target.set(u * coOrig.x + fac * coDest.x, u * coOrig.y + fac
+         * coDest.y, u * coOrig.z + fac * coDest.z);
    }
 
    /**
@@ -1043,14 +1043,14 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public static int sharedCoord ( final Edge3 a, final Edge3 b ) {
 
-      final Vert3 aOrigin = a.origin;
+      final Vert3 aOrig = a.origin;
       final Vert3 aDest = a.dest;
-      final Vert3 bOrigin = b.origin;
+      final Vert3 bOrig = b.origin;
       final Vert3 bDest = b.dest;
 
-      if ( Vert3.approxCoord(aDest, bOrigin) ) { return 1; }
-      if ( Vert3.approxCoord(aOrigin, bOrigin) ) { return 2; }
-      if ( Vert3.approxCoord(aOrigin, bDest) ) { return -1; }
+      if ( Vert3.approxCoord(aDest, bOrig) ) { return 1; }
+      if ( Vert3.approxCoord(aOrig, bOrig) ) { return 2; }
+      if ( Vert3.approxCoord(aOrig, bDest) ) { return -1; }
       if ( Vert3.approxCoord(aDest, bDest) ) { return -2; }
       return 0;
    }

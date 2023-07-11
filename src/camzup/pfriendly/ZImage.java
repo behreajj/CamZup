@@ -16,7 +16,6 @@ import camzup.core.Utils;
 import camzup.core.Utils.TriFunction;
 import camzup.core.Vec2;
 import camzup.core.Vec4;
-
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;

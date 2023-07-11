@@ -740,10 +740,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       svgp.append('>');
       svgp.append('\n');
 
-      final Iterator < Mesh2 > meshItr = this.meshes.iterator();
-      while ( meshItr.hasNext() ) {
-         final Mesh2 mesh = meshItr.next();
-
+      for ( final Mesh2 mesh : this.meshes ) {
          /*
           * It'd be more efficient to create a definitions block that contains
           * the data for each material, which is then used by a mesh element
@@ -822,9 +819,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public static boolean contains ( final MeshEntity2 me,
       final Vec2 pointLocal ) {
 
-      final Iterator < Mesh2 > meshItr = me.meshes.iterator();
-      while ( meshItr.hasNext() ) {
-         final Mesh2 mesh = meshItr.next();
+      for ( final Mesh2 mesh : me.meshes ) {
          if ( Mesh2.contains(mesh, pointLocal) ) { return true; }
       }
       return false;
