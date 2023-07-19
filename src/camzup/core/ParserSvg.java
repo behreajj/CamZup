@@ -110,7 +110,7 @@ public abstract class ParserSvg {
 
          /*
           * Because nodes are hierarchical and transformations compound upon
-          * transformations, a stack is needed (a double-ended que is the
+          * transformations, a stack is needed (a double-ended queue is the
           * closest in Java).
           */
          final Mat3 curr = new Mat3();
@@ -639,6 +639,7 @@ public abstract class ParserSvg {
 
             case 3433509:
                /* "path" */
+
                path = ParserSvg.parsePath(node, id);
                break;
 
@@ -766,10 +767,6 @@ public abstract class ParserSvg {
                final ArrayList < String > data = entry.data;
 
                ParserSvg.segmentChars(chars, entry.lbDat, entry.ubDat, data);
-
-               // TODO: Working on entry validation.
-               // entry.validate();
-               // System.out.println(entry);
 
                final Iterator < String > dataItr = data.iterator();
 
@@ -1329,6 +1326,7 @@ public abstract class ParserSvg {
       final ArrayList < TransformData > transforms = new ArrayList <>(4);
       TransformData currData = null;
       int parClsIdx = -1;
+      boolean inParen = false;
 
       /* Parse transform commands. */
       for ( int i = 0; i < charsLen; ++i ) {
@@ -1339,14 +1337,22 @@ public abstract class ParserSvg {
             final SvgTransformCmd cmd = SvgTransformCmd.fromString(str);
             currData = new TransformData(cmd, i + 1, charsLen);
             transforms.add(currData);
+            inParen = true;
          } else if ( c == ')' ) {
             parClsIdx = i;
             currData.ubDat = i;
+            inParen = false;
+         } else if ( !inParen && c == ',' ) {
+            /*
+             * In case commands within the transform quotes are comma separated,
+             * e.g., transform="translate(50, 100), rotate(-45)".
+             */
+            parClsIdx = i;
          }
       }
 
       for ( final TransformData entry : transforms ) {
-
+         
          ParserSvg.segmentChars(chars, entry.lbDat, entry.ubDat, entry.data);
          final SvgTransformCmd cmd = entry.cmd;
          final Iterator < String > dtItr = entry.data.iterator();
@@ -1379,9 +1385,11 @@ public abstract class ParserSvg {
 
             case ROTATE:
 
-               final String ang = dtItr.next();
+               final String angStr = dtItr.next();
                final String xPivStr = dtItr.hasNext() ? dtItr.next() : "0";
                final String yPivStr = dtItr.hasNext() ? dtItr.next() : "0";
+
+               final float angle = ParserSvg.parseAngle(angStr, 0.0f);
                final float xPiv = ParserSvg.parsef(xPivStr, 0.0f);
                final float yPiv = ParserSvg.parsef(yPivStr, 0.0f);
                final Vec2 pivot = new Vec2(xPiv, yPiv);
@@ -1389,7 +1397,7 @@ public abstract class ParserSvg {
                Mat3.fromTranslation(pivot, delta);
                Mat3.mul(target, delta, target);
 
-               Mat3.fromRotZ(ParserSvg.parseAngle(ang, 0.0f), delta);
+               Mat3.fromRotZ(angle, delta);
                Mat3.mul(target, delta, target);
 
                Mat3.fromTranslation(Vec2.negate(pivot, pivot), delta);
@@ -1423,10 +1431,13 @@ public abstract class ParserSvg {
 
             case TRANSLATE:
 
-               final String tx = dtItr.next();
-               final String ty = dtItr.hasNext() ? dtItr.next() : "0";
-               Mat3.fromTranslation(ParserSvg.parsef(tx, 0.0f), ParserSvg
-                  .parsef(ty, 0.0f), delta);
+               final String txStr = dtItr.next();
+               final String tyStr = dtItr.hasNext() ? dtItr.next() : "0";
+
+               final float tx = ParserSvg.parsef(txStr, 0.0f);
+               final float ty = ParserSvg.parsef(tyStr, 0.0f);
+
+               Mat3.fromTranslation(tx, ty, delta);
                Mat3.mul(target, delta, target);
 
                break;
@@ -1469,11 +1480,6 @@ public abstract class ParserSvg {
             if ( !str.isEmpty() ) { target.add(str); }
             count = 0;
             decimalDelim = false;
-         } else if ( c == '-' || c == '+' ) {
-            final String str = new String(chars, i - count, count).trim();
-            if ( !str.isEmpty() ) { target.add(str); }
-            count = 1;
-            decimalDelim = false;
          } else if ( c == '.' ) {
             // TODO: It's possible to have multiple decimal point delimiters
             // between numbers.
@@ -1486,6 +1492,16 @@ public abstract class ParserSvg {
                decimalDelim = true;
                ++count;
             }
+         } else if ( ( c == '-' || c == '+' ) && ( i <= 0 || chars[i - 1] != 'e'
+            && chars[i - 1] != 'E' ) ) {
+            /*
+             * Beware of scientific notation, e.g., "6.5e-4". See
+             * https://github.com/processing/processing4/issues/750 .
+             */
+            final String str = new String(chars, i - count, count).trim();
+            if ( !str.isEmpty() ) { target.add(str); }
+            count = 1;
+            decimalDelim = false;
          } else {
             ++count;
          }
@@ -1578,32 +1594,6 @@ public abstract class ParserSvg {
 
          sb.append(" ] }");
          return sb.toString();
-      }
-
-      /**
-       * Checks whether the number of entries in the path's data matches the
-       * number expected by its command. Returns true if the numbers match;
-       * otherwise, returns false. Fills the array list with empty values in
-       * cases where actual is less than expected number.
-       *
-       * @return the evaluation
-       */
-      public boolean validate ( ) {
-
-         final int expectedCount = this.cmd.getDataCount();
-         final int actualCount = this.data.size();
-         if ( expectedCount == actualCount ) { return true; }
-         if ( actualCount < expectedCount ) {
-            final int diff = expectedCount - actualCount;
-            for ( int i = 0; i < diff; ++i ) { this.data.add("0"); }
-         } else if ( actualCount % 2 != 0 && expectedCount % 2 == 0 ) {
-            // TODO: Maybe this should be actualCount % expectedCount != 0 ?
-            // Would have to account for close command being zero.
-            // A move-to command may have multiple iterations, and thus
-            // greater than expectedCount, but still be malformed.
-            this.data.add("0");
-         }
-         return false;
       }
 
    }

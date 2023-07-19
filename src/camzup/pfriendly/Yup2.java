@@ -1082,11 +1082,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a 2D curve entity.
     *
-    * @param ce   the curve entity
+    * @param ce       the curve entity
     * @param material the material
     */
-   public void shape ( final CurveEntity2 ce,
-      final MaterialSolid material ) {
+   public void shape ( final CurveEntity2 ce, final MaterialSolid material ) {
 
       this.pushStyle();
       this.material(material);
@@ -1097,7 +1096,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a 2D curve entity.
     *
-    * @param ce    the curve entity
+    * @param ce        the curve entity
     * @param materials the materials array
     */
    public void shape ( final CurveEntity2 ce,
@@ -1133,11 +1132,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a 2D mesh entity with a textured material.
     *
-    * @param me   the mesh entity
+    * @param me       the mesh entity
     * @param material the material
     */
-   public void shape ( final MeshEntity2 me,
-      final MaterialPImage material ) {
+   public void shape ( final MeshEntity2 me, final MaterialPImage material ) {
 
       final Transform2 tr = me.transform;
       final Iterator < Mesh2 > meshItr = me.iterator();
@@ -1155,7 +1153,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a 2D mesh entity.
     *
-    * @param me    the mesh entity
+    * @param me        the mesh entity
     * @param materials the materials
     */
    public void shape ( final MeshEntity2 me,
@@ -1176,11 +1174,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a 2D mesh entity.
     *
-    * @param me   the mesh entity
+    * @param me       the mesh entity
     * @param material the material
     */
-   public void shape ( final MeshEntity2 me,
-      final MaterialSolid material ) {
+   public void shape ( final MeshEntity2 me, final MaterialSolid material ) {
 
       this.pushStyle();
       this.material(material);
@@ -1191,11 +1188,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    /**
     * Draws a 2D mesh entity.
     *
-    * @param me    the mesh entity
+    * @param me        the mesh entity
     * @param materials the materials
     */
-   public void shape ( final MeshEntity2 me,
-      final MaterialSolid[] materials ) {
+   public void shape ( final MeshEntity2 me, final MaterialSolid[] materials ) {
 
       final Transform2 tr = me.transform;
       final Vec2 v = new Vec2();

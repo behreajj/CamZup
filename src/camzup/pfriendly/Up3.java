@@ -1192,11 +1192,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Draws a 3D curve entity.
     *
-    * @param ce   the curve entity
+    * @param ce       the curve entity
     * @param material the material
     */
-   public void shape ( final CurveEntity3 ce,
-      final MaterialSolid material ) {
+   public void shape ( final CurveEntity3 ce, final MaterialSolid material ) {
 
       this.pushStyle();
       this.material(material);
@@ -1207,7 +1206,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Draws a 3D curve entity.
     *
-    * @param ce    the curve entity
+    * @param ce        the curve entity
     * @param materials the array of materials
     */
    public void shape ( final CurveEntity3 ce,
@@ -1253,11 +1252,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Draws a 3D mesh entity.
     *
-    * @param me   the mesh entity
+    * @param me       the mesh entity
     * @param material the material
     */
-   public void shape ( final MeshEntity3 me,
-      final MaterialPImage material ) {
+   public void shape ( final MeshEntity3 me, final MaterialPImage material ) {
 
       final Transform3 tr = me.transform;
       final Iterator < Mesh3 > meshItr = me.iterator();
@@ -1277,7 +1275,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Draws a 3D mesh entity.
     *
-    * @param me    the mesh entity
+    * @param me        the mesh entity
     * @param materials the materials
     */
    public void shape ( final MeshEntity3 me,
@@ -1299,11 +1297,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Draws a 3D mesh entity.
     *
-    * @param me   the mesh entity
+    * @param me       the mesh entity
     * @param material the material
     */
-   public void shape ( final MeshEntity3 me,
-      final MaterialSolid material ) {
+   public void shape ( final MeshEntity3 me, final MaterialSolid material ) {
 
       this.pushStyle();
       this.material(material);
@@ -1314,11 +1311,10 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Draws a mesh entity.
     *
-    * @param me    the mesh entity
+    * @param me        the mesh entity
     * @param materials the materials
     */
-   public void shape ( final MeshEntity3 me,
-      final MaterialSolid[] materials ) {
+   public void shape ( final MeshEntity3 me, final MaterialSolid[] materials ) {
 
       final Transform3 tr = me.transform;
       final Vec3 v = new Vec3();

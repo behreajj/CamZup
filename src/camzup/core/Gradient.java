@@ -1213,6 +1213,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       for ( int idx = 0; itr.hasNext(); ++idx ) {
          final ColorKey ck = itr.next();
          final Color clr = ck.clr;
+         final String hex = Color.toHexWeb(clr);
 
          /* Color stops in linear gradient. */
          ck.toSvgString(svgp);
@@ -1224,9 +1225,13 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          final float fac1 = ( idx + 1.0f ) * toFac;
          final float xr = ( 1.0f - fac1 ) * swLeft + fac1 * swRight;
 
-         final String hex = Color.toHexWeb(clr);
+         /*
+          * It's possible for the same color to appear more than once, but ids
+          * should be unique, so don't use hex code.
+          */
          sbSwatch.append("<path id=\"");
-         sbSwatch.append("swatch." + hex.substring(1));
+         sbSwatch.append("swatch.");
+         sbSwatch.append(idx);
 
          sbSwatch.append("\" d=\"M ");
          Utils.toFixed(sbSwatch, xl, ISvgWritable.FIXED_PRINT);
@@ -1349,9 +1354,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Clamps all colors in a gradient to the range [0.0, 1.0] . Useful for
-    * gradients created by mixing colors in color spaces other than standard
-    * RGB, e.g., CIE LAB.
+    * Clamps all colors in a gradient to the range [0.0, 1.0] .
     *
     * @param source the source gradient
     * @param target the target gradient

@@ -9,6 +9,7 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
+import java.util.List;
 
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;

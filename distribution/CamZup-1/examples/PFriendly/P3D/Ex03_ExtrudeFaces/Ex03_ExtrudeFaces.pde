@@ -9,6 +9,7 @@ Mesh3 mesh = new Mesh3();
 MeshEntity3 entity = new MeshEntity3();
 MaterialSolid[] materials;
 Gradient grd = Gradient.paletteViridis(new Gradient());
+Rng gen = new Rng();
 
 void settings() {
   size(720, 405, Zup3.PATH_STR);
@@ -37,10 +38,8 @@ void setup() {
     Face3.centerMean(face, center);
     Vec3.mul(center, roughness, center);
 
-    float rnd = Simplex.fbm(center,
-      Simplex.DEFAULT_SEED, 32, 1.0f, 0.65f);
-    rnd = Utils.abs(rnd);
-    rnd = Utils.quantize(rnd, 10);
+    float rnd = gen.uniform(0.001f, 1.0f);
+    rnd = Utils.quantize(rnd, 5);
 
     float scl = Utils.lerp(0.825f, 0.75f, rnd);
     face.scaleLocal(scl, center);

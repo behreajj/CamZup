@@ -304,7 +304,7 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Adjusts the contrast of an image by a factor. Uses the CIE LAB color
+    * Adjusts the contrast of an image by a factor. Uses the SR LAB 2 color
     * space. The adjustment factor is expected to be in [-1.0, 1.0].
     *
     * @param source the source image
@@ -346,7 +346,7 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Adjusts a source image's colors in CIE LCH. Assigns the results to a
+    * Adjusts a source image's colors in SR LCH. Assigns the results to a
     * target image. Changes the image format to {@link PConstants#ARGB}.
     *
     * @param source the source image
@@ -2252,7 +2252,7 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Extracts a palette from an image with an octree in CIE LAB. The size of
+    * Extracts a palette from an image with an octree in SR LAB 2. The size of
     * the palette depends on the capacity of each node in the octree. Does not
     * retain alpha component of image pixels. Colors produced may not be in
     * gamut.
@@ -2269,7 +2269,7 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Extracts a palette from an image with an octree in CIE LAB. The size of
+    * Extracts a palette from an image with an octree in SR LAB 2. The size of
     * the palette depends on the capacity of each node in the octree. Does not
     * retain alpha component of image pixels. The threshold describes the
     * minimum number of unique colors in the image beneath which it is

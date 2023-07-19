@@ -234,7 +234,7 @@ public abstract class ParserGgr {
 
                /*
                 * Mix color based on color space. Default to RGB. HSB clockwise
-                * and counter-clockwise use CIE LCH as a substitute. Full
+                * and counter-clockwise use SR LCH as a substitute. Full
                 * extension for ramps that go from red to red is not supported.
                 * For better control, add epsilon to the left or right hue.
                 */

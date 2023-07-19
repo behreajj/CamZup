@@ -8,7 +8,6 @@ PImage source;
 PImage target;
 
 Yup2 graphics;
-Gradient lcd = Gradient.paletteLcd(new Gradient());
 
 void settings() {
   size(720, 405, Yup2.PATH_STR);
