@@ -419,8 +419,8 @@ public abstract class ParserSvg {
     * <li>1 point (pt) = {@value ParserSvg#PT_TO_UNIT} units</li>
     * <li>1 pixel (px) = {@value ParserSvg#PX_TO_UNIT} units</li>
     * </ul>
-    * View box relative units, namely <code>%</code> is limited; all this
-    * parser will do is divide the value by 100.<br>
+    * Support for relative units, namely those followed by <code>%</code> is
+    * limited. This parser will only divide the value by 100.<br>
     * <br>
     * Font-relative units, namely <code>em</code> and <code>ex</code> are not
     * supported.
@@ -771,10 +771,9 @@ public abstract class ParserSvg {
                final Iterator < String > dataItr = data.iterator();
 
                switch ( cmd ) {
-                  case CLOSE_PATH:
-
+                  case CLOSE_PATH: {
                      target.closedLoop = true;
-
+                  }
                      break;
 
                   case MOVE_TO_ABS:
@@ -851,8 +850,7 @@ public abstract class ParserSvg {
 
                      break;
 
-                  case HORIZ_ABS:
-
+                  case HORIZ_ABS: {
                      while ( dataItr.hasNext() ) {
                         prev = curr;
                         curr = new Knot2();
@@ -863,11 +861,10 @@ public abstract class ParserSvg {
 
                         rel.set(curr.coord);
                      }
-
+                  }
                      break;
 
-                  case HORIZ_REL:
-
+                  case HORIZ_REL: {
                      while ( dataItr.hasNext() ) {
                         prev = curr;
                         curr = new Knot2();
@@ -878,11 +875,10 @@ public abstract class ParserSvg {
 
                         rel.set(curr.coord);
                      }
-
+                  }
                      break;
 
-                  case VERT_ABS:
-
+                  case VERT_ABS: {
                      while ( dataItr.hasNext() ) {
                         prev = curr;
                         curr = new Knot2();
@@ -893,11 +889,10 @@ public abstract class ParserSvg {
 
                         rel.set(curr.coord);
                      }
-
+                  }
                      break;
 
-                  case VERT_REL:
-
+                  case VERT_REL: {
                      while ( dataItr.hasNext() ) {
                         prev = curr;
                         curr = new Knot2();
@@ -908,11 +903,10 @@ public abstract class ParserSvg {
 
                         rel.set(curr.coord);
                      }
-
+                  }
                      break;
 
-                  case QUADRATIC_TO_ABS:
-
+                  case QUADRATIC_TO_ABS: {
                      while ( dataItr.hasNext() ) {
                         prev = curr;
                         curr = new Knot2();
@@ -932,11 +926,10 @@ public abstract class ParserSvg {
                      }
 
                      rel.set(curr.coord);
-
+                  }
                      break;
 
-                  case QUADRATIC_TO_REL:
-
+                  case QUADRATIC_TO_REL: {
                      while ( dataItr.hasNext() ) {
                         prev = curr;
                         curr = new Knot2();
@@ -959,11 +952,10 @@ public abstract class ParserSvg {
 
                         rel.set(curr.coord);
                      }
-
+                  }
                      break;
 
-                  case REFLECT_QUADRATIC_ABS:
-
+                  case REFLECT_QUADRATIC_ABS: {
                      while ( dataItr.hasNext() ) {
                         prev = curr;
                         curr = new Knot2();
@@ -984,11 +976,10 @@ public abstract class ParserSvg {
                      }
 
                      rel.set(curr.coord);
-
+                  }
                      break;
 
-                  case REFLECT_QUADRATIC_REL:
-
+                  case REFLECT_QUADRATIC_REL: {
                      while ( dataItr.hasNext() ) {
                         prev = curr;
                         curr = new Knot2();
@@ -1010,11 +1001,10 @@ public abstract class ParserSvg {
 
                         rel.set(curr.coord);
                      }
-
+                  }
                      break;
 
-                  case CUBIC_TO_ABS:
-
+                  case CUBIC_TO_ABS: {
                      while ( dataItr.hasNext() ) {
                         prev = curr;
                         curr = new Knot2();
@@ -1033,11 +1023,10 @@ public abstract class ParserSvg {
                      }
 
                      rel.set(curr.coord);
-
+                  }
                      break;
 
-                  case CUBIC_TO_REL:
-
+                  case CUBIC_TO_REL: {
                      /* Add manually, do not use Knot2#translate . */
                      while ( dataItr.hasNext() ) {
                         prev = curr;
@@ -1057,11 +1046,10 @@ public abstract class ParserSvg {
 
                         rel.set(curr.coord);
                      }
-
+                  }
                      break;
 
-                  case REFLECT_CUBIC_ABS:
-
+                  case REFLECT_CUBIC_ABS: {
                      while ( dataItr.hasNext() ) {
                         prev = curr;
                         curr = new Knot2();
@@ -1074,11 +1062,10 @@ public abstract class ParserSvg {
                      }
 
                      rel.set(curr.coord);
-
+                  }
                      break;
 
-                  case REFLECT_CUBIC_REL:
-
+                  case REFLECT_CUBIC_REL: {
                      /* Add manually, do not use Knot2#translate . */
                      while ( dataItr.hasNext() ) {
                         prev = curr;
@@ -1096,11 +1083,10 @@ public abstract class ParserSvg {
 
                         rel.set(curr.coord);
                      }
-
+                  }
                      break;
 
-                  case ARC_TO_ABS:
-
+                  case ARC_TO_ABS: {
                      /* @formatter:off */
                      while ( dataItr.hasNext() ) {
                         prev = curr;
@@ -1118,11 +1104,10 @@ public abstract class ParserSvg {
                      /* @formatter:on */
 
                      rel.set(curr.coord);
-
+                  }
                      break;
 
-                  case ARC_TO_REL:
-
+                  case ARC_TO_REL: {
                      /* @formatter:off */
                      while ( dataItr.hasNext() ) {
                         prev = curr;
@@ -1140,7 +1125,7 @@ public abstract class ParserSvg {
                         rel.set(curr.coord);
                      }
                      /* @formatter:on */
-
+                  }
                      break;
 
                   default:
@@ -1352,15 +1337,14 @@ public abstract class ParserSvg {
       }
 
       for ( final TransformData entry : transforms ) {
-         
+
          ParserSvg.segmentChars(chars, entry.lbDat, entry.ubDat, entry.data);
          final SvgTransformCmd cmd = entry.cmd;
          final Iterator < String > dtItr = entry.data.iterator();
 
          switch ( cmd ) {
 
-            case MATRIX:
-
+            case MATRIX: {
                /* Column major order. */
                final String m00 = dtItr.next();
                final String m10 = dtItr.next();
@@ -1380,11 +1364,10 @@ public abstract class ParserSvg {
                   0.0f, 0.0f, 1.0f);
                Mat3.mul(target, delta, target);
                /* @formatter:on */
-
+            }
                break;
 
-            case ROTATE:
-
+            case ROTATE: {
                final String angStr = dtItr.next();
                final String xPivStr = dtItr.hasNext() ? dtItr.next() : "0";
                final String yPivStr = dtItr.hasNext() ? dtItr.next() : "0";
@@ -1402,35 +1385,31 @@ public abstract class ParserSvg {
 
                Mat3.fromTranslation(Vec2.negate(pivot, pivot), delta);
                Mat3.mul(target, delta, target);
-
+            }
                break;
 
-            case SCALE:
-
+            case SCALE: {
                final String scx = dtItr.next();
                final String scy = dtItr.hasNext() ? dtItr.next() : scx;
                Mat3.fromScale(ParserSvg.parsef(scx, 1.0f), ParserSvg.parsef(scy,
                   1.0f), delta);
                Mat3.mul(target, delta, target);
-
+            }
                break;
 
-            case SKEW_X:
-
+            case SKEW_X: {
                Mat3.fromSkewX(ParserSvg.parseAngle(dtItr.next(), 0.0f), delta);
                Mat3.mul(target, delta, target);
-
+            }
                break;
 
-            case SKEW_Y:
-
+            case SKEW_Y: {
                Mat3.fromSkewY(ParserSvg.parseAngle(dtItr.next(), 0.0f), delta);
                Mat3.mul(target, delta, target);
-
+            }
                break;
 
-            case TRANSLATE:
-
+            case TRANSLATE: {
                final String txStr = dtItr.next();
                final String tyStr = dtItr.hasNext() ? dtItr.next() : "0";
 
@@ -1439,7 +1418,7 @@ public abstract class ParserSvg {
 
                Mat3.fromTranslation(tx, ty, delta);
                Mat3.mul(target, delta, target);
-
+            }
                break;
 
             default:
@@ -1468,7 +1447,9 @@ public abstract class ParserSvg {
        * coordinates. A decimal point may also be a delimiter; see
        * https://discourse.processing.org/t/why-arent-my-svg-images-rendering-
        * properly-in-processing/29548 ,
-       * https://github.com/processing/processing4/issues/515 .
+       * https://github.com/processing/processing4/issues/515 . An exception,
+       * however, is scientific notation, e.g., "6.5e-4". See
+       * https://github.com/processing/processing4/issues/750 .
        */
 
       int count = 0;
@@ -1494,10 +1475,6 @@ public abstract class ParserSvg {
             }
          } else if ( ( c == '-' || c == '+' ) && ( i <= 0 || chars[i - 1] != 'e'
             && chars[i - 1] != 'E' ) ) {
-            /*
-             * Beware of scientific notation, e.g., "6.5e-4". See
-             * https://github.com/processing/processing4/issues/750 .
-             */
             final String str = new String(chars, i - count, count).trim();
             if ( !str.isEmpty() ) { target.add(str); }
             count = 1;
