@@ -423,9 +423,9 @@ public abstract class PMatAux {
 
    /**
     * Inverse-rotates a matrix by a quaternion in place. Does so by inverting
-    * the matrix, converting it to a matrix, then multiplying the conversion
-    * and the input matrix. (I.e., unlike rotation, the quaternion is the left
-    * hand operand.)
+    * the quaternion, converting it to a matrix, then multiplying the
+    * conversion and the input matrix. (I.e., unlike rotation, the quaternion
+    * is the left hand operand.)
     *
     * @param q      the quaternion
     * @param target the output matrix
@@ -614,16 +614,14 @@ public abstract class PMatAux {
    /**
     * Multiplies two matrices together. Matrix multiplication is not
     * commutative, so the PMatrix3D class calls in-place multiplication
-    * "apply" and "preApply."
+    * {@link PMatrix3D#apply(PMatrix3D)} and
+    * {@link PMatrix3D#preApply(PMatrix3D)}.
     *
     * @param a      the left operand
     * @param b      the right operand
     * @param target the output matrix
     *
     * @return the product
-    *
-    * @see PMatrix3D#apply(PMatrix3D)
-    * @see PMatrix3D#preApply(PMatrix3D)
     */
    public static PMatrix3D mul ( final PMatrix3D a, final PMatrix3D b,
       final PMatrix3D target ) {

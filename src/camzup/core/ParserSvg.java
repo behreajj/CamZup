@@ -1444,7 +1444,7 @@ public abstract class ParserSvg {
 
       /*
        * In optimized SVGs, a negative sign may be a delimiter between
-       * coordinates. A decimal point may also be a delimiter; see
+       * coordinates. A decimal point may also be a delimiter. See
        * https://discourse.processing.org/t/why-arent-my-svg-images-rendering-
        * properly-in-processing/29548 ,
        * https://github.com/processing/processing4/issues/515 . An exception,

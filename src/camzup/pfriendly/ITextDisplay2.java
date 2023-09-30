@@ -42,7 +42,7 @@ public interface ITextDisplay2 extends ITextDisplay {
 
    /**
     * Displays a real number as text at a 2D location. Ignores the z
-    * coordinate. Registers up to four decimal places.
+    * coordinate. Registers up to {@value IUtils#FIXED_PRINT} decimal places.
     *
     * @param real the real number
     * @param x    the x coordinate
@@ -59,7 +59,7 @@ public interface ITextDisplay2 extends ITextDisplay {
 
    /**
     * Displays an integer as text at a 2D location. Ignores the z coordinate.
-    * Registers up to four decimal places.
+    * Registers up to {@value IUtils#FIXED_PRINT} decimal places.
     *
     * @param i the integer
     * @param x the x coordinate

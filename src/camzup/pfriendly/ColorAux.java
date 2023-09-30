@@ -65,9 +65,9 @@ public abstract class ColorAux {
    }
 
    /**
-    * Mixes to integers holding 32-bit standard RGB colors in 0xAARRGGBB order
-    * according to a step. They are mixed according to a color mode flag,
-    * {@link PConstants#HSB} or {@link PConstants#RGB}.
+    * Mixes two integers holding 32-bit standard RGB colors in 0xAARRGGBB
+    * order according to a step. They are mixed according to a color mode
+    * flag, {@link PConstants#HSB} or {@link PConstants#RGB}.
     *
     * @param o         the origin
     * @param d         the destination
@@ -95,10 +95,10 @@ public abstract class ColorAux {
    }
 
    /**
-    * Mixes to integers holding 32-bit standard RGB colors in 0xAARRGGBB order
-    * according to a step. Converts them to Hue Saturation Brightness, then
-    * performs the mix. If the saturation of either color is near zero, then
-    * defaults to standard RGB mix.
+    * Mixes two integers holding 32-bit standard RGB colors in 0xAARRGGBB
+    * order according to a step. Converts them to Hue Saturation Brightness,
+    * then performs the mix. If the saturation of either color is near zero,
+    * then defaults to standard RGB mix.
     *
     * @param o the origin
     * @param d the destination
@@ -170,8 +170,8 @@ public abstract class ColorAux {
    }
 
    /**
-    * Mixes to integers holding 32-bit standard RGB colors in 0xAARRGGBB order
-    * according to a step.
+    * Mixes two integers holding 32-bit standard RGB colors in 0xAARRGGBB
+    * order according to a step.
     *
     * @param o the origin
     * @param d the destination

@@ -385,8 +385,6 @@ public class Complex implements Comparable < Complex > {
     * @param target the output complex number
     *
     * @return the quotient
-    *
-    * @see Complex#absSq(Complex)
     */
    public static Complex div ( final Complex a, final Complex b,
       final Complex target ) {

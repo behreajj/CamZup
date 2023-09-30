@@ -439,7 +439,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Draws a cubic Bezier curve segment to the next anchor point; the first
+    * Draws a cubic Bezier curve segment to the next anchor point. The first
     * and second control point shape the curve segment.
     *
     * @param cp0 the first control point
@@ -1786,7 +1786,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
    /**
     * A hack to work around the performance issues with Processing image
-    * display.The coordinate order is switched; specify the sample region
+    * display. The coordinate order is switched; specify the sample region
     * <em>first</em>, the display region <em>second</em>.<br>
     * <br>
     * It is recommended that {@link PImage}s be edited and converted to
@@ -2499,7 +2499,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public void scale ( final Vec2 dim ) { this.g2.scale(dim.x, dim.y); }
 
    /**
-    * Finds the screen position of a point in the world. <br>
+    * Finds the screen position of a point in the world.<br>
     * <br>
     * More efficient than calling {@link PApplet#screenX(float, float, float)}
     * and {@link PApplet#screenY(float, float, float)} separately. However, it
@@ -3536,7 +3536,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
                start, index));
             start = index + 1;
          }
-         index++;
+         ++index;
       }
       if ( start < length ) {
          wide = Math.max(wide, this.textWidthImpl(this.textWidthBuffer, start,
@@ -4543,11 +4543,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final Vec2 fh = new Vec2();
       final Vec2 co = new Vec2();
       final Transform2 tr = entity.transform;
-      final Iterator < Curve2 > itr = entity.iterator();
 
       this.gp.reset();
       this.gp.setWindingRule(windingRule);
 
+      final Iterator < Curve2 > itr = entity.iterator();
       while ( itr.hasNext() ) {
          this.appendToGeneralPath(itr.next(), tr, rh, fh, co);
       }
@@ -4567,11 +4567,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
       final Vec2 v = new Vec2();
       final Transform2 tr = entity.transform;
-      final Iterator < Mesh2 > itr = entity.iterator();
 
       this.gp.reset();
       this.gp.setWindingRule(windingRule);
 
+      final Iterator < Mesh2 > itr = entity.iterator();
       while ( itr.hasNext() ) { this.appendToGeneralPath(itr.next(), tr, v); }
    }
 
@@ -4750,6 +4750,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    @Override
    protected void textLineImpl ( final char[] chars, final int start,
       final int stop, final float x, final float y ) {
+
+      // TODO: Check kerning for these, as calculations
+      // may have changed in original Processing renderer.
 
       final boolean savedTint = this.tint;
       final int savedTintColor = this.tintColor;

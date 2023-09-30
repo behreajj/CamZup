@@ -148,7 +148,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Draws a bezier vertex with three vectors: the following control point,
+    * Draws a Bezier vertex with three vectors: the following control point,
     * the rear control point of the ensuing point, and the ensuing anchor
     * point.
     *
@@ -164,7 +164,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Draws a bounding volume
+    * Draws a bounding volume.
     *
     * @param b the bounds
     */
@@ -759,10 +759,6 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    @Override
    public void material ( final MaterialSolid material ) {
 
-      /*
-       * Due to stroke flickering issues, a material in 3D will not have both a
-       * stroke and a fill.
-       */
       if ( material.useFill ) {
          this.noStroke();
          this.fill(material.fill);
@@ -801,7 +797,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    public void moveBy ( final Vec3 v ) { this.moveByLocal(v.x, v.y, v.z); }
 
    /**
-    * Moves the camera by a vector relative to its orientation; causes the
+    * Moves the camera by a vector relative to its orientation. Causes the
     * camera to orbit around the locus at which it is looking.
     *
     * @param x the vector x
@@ -1017,7 +1013,7 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    }
 
    /**
-    * Draws a point at a given coordinate
+    * Draws a point at a given coordinate.
     *
     * @param v the coordinate
     */

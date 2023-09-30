@@ -50,15 +50,15 @@ public abstract class TextShape {
 
    /**
     * Converts a list of characters to a an array of curve entities. When the
-    * level of detail is 0, uses Bezier curves; when the detail is non-zero,
+    * level of detail is 0, uses Bezier curves. When the detail is non-zero,
     * approximates the glyph with a series of straight line segments. The
     * PFont should have been created with createFont, not loadFont.
     *
     * @param pfont      the PFont
     * @param scale      the curve scale
     * @param detail     the level of detail
-    * @param characters the characters
     * @param separate   separate curve per char
+    * @param characters the characters
     *
     * @return the array
     */
@@ -79,7 +79,7 @@ public abstract class TextShape {
 
    /**
     * Converts a string to a an array of curve entities. When the level of
-    * detail is 0, uses Bezier curves; when the detail is non-zero,
+    * detail is 0, uses Bezier curves. When the detail is non-zero,
     * approximates the glyph with a series of straight line segments. The
     * PFont should have been created with createFont, not loadFont.
     *
@@ -101,7 +101,7 @@ public abstract class TextShape {
 
    /**
     * Converts a list of characters to a an array of curve entities. When the
-    * level of detail is 0, uses Bezier curves; when the detail is non-zero,
+    * level of detail is 0, uses Bezier curves. When the detail is non-zero,
     * approximates the glyph with a series of straight line segments. The
     * PFont should have been created with createFont, not loadFont.
     *
@@ -109,8 +109,8 @@ public abstract class TextShape {
     * @param pfont      the PFont
     * @param scale      the curve scale
     * @param detail     the level of detail
-    * @param characters the characters
     * @param separate   separate curve per char
+    * @param characters the characters
     *
     * @return the array
     */
@@ -124,7 +124,7 @@ public abstract class TextShape {
 
    /**
     * Converts a string to a an array of curve entities. When the level of
-    * detail is 0, uses Bezier curves; when the detail is non-zero,
+    * detail is 0, uses Bezier curves. When the detail is non-zero,
     * approximates the glyph with a series of straight line segments. The
     * PFont should have been created with createFont, not loadFont.
     *
@@ -153,8 +153,8 @@ public abstract class TextShape {
     * @param pfont        the Processing font
     * @param displayScale the display scale
     * @param detail       the curve detail
-    * @param characters   the characters
     * @param separate     separate curve per char
+    * @param characters   the characters
     *
     * @return the array of glyphs
     */
@@ -296,9 +296,9 @@ public abstract class TextShape {
 
       /*
        * Acquire an iterator, run through it in a while loop, and deal with 5
-       * possible cases: the 'pen' moves to a point; the 'pen' draws a straight
-       * line to the next point; the 'pen' draws a curved line where the fore-
-       * and rear-handles share a mid point; the 'pen' draws a curved line with
+       * possible cases: the pen moves to a point; the pen draws a straight line
+       * to the next point; the pen draws a curved line where the fore- and
+       * rear-handles share a mid point; the pen draws a curved line with
        * different fore- and rear-handles; the pen lifts and stops drawing.
        */
       final PathIterator itr = detail < IUtils.EPSILON ? shp.getPathIterator(
@@ -329,7 +329,7 @@ public abstract class TextShape {
          final int segType = itr.currentSegment(itrpts);
          switch ( segType ) {
 
-            case PathIterator.SEG_MOVETO: /* 0 */
+            case PathIterator.SEG_MOVETO: { /* 0 */
 
                // TODO: Sonarlint: currCurve is nullable at all cases
                // except for move to.
@@ -348,10 +348,10 @@ public abstract class TextShape {
                   ( float ) ( -itrpts[1] * invScalar ));
                currCurve.append(currKnot);
                prevKnot = currKnot;
-
+            }
                break;
 
-            case PathIterator.SEG_LINETO: /* 1 */
+            case PathIterator.SEG_LINETO: { /* 1 */
 
                /*
                 * For straight lines, create a new knot from a point. The
@@ -365,10 +365,10 @@ public abstract class TextShape {
                   ( float ) ( -itrpts[1] * invScalar ), prevKnot, currKnot);
                currCurve.append(currKnot);
                prevKnot = currKnot;
-
+            }
                break;
 
-            case PathIterator.SEG_QUADTO: /* 2 */
+            case PathIterator.SEG_QUADTO: { /* 2 */
 
                /*
                 * The order of a quadratic curve is: (0, 1) a shared handle, or
@@ -389,10 +389,10 @@ public abstract class TextShape {
                currCurve.append(currKnot);
                prevKnot = currKnot;
                /* @formatter:on */
-
+            }
                break;
 
-            case PathIterator.SEG_CUBICTO: /* 3 */
+            case PathIterator.SEG_CUBICTO: { /* 3 */
 
                /*
                 * The order of a cubic curve: (0, 1) previous knot fore handle;
@@ -412,10 +412,10 @@ public abstract class TextShape {
                currCurve.append(currKnot);
                prevKnot = currKnot;
                /* @formatter:on */
-
+            }
                break;
 
-            case PathIterator.SEG_CLOSE: /* 4 */
+            case PathIterator.SEG_CLOSE: { /* 4 */
 
                prevKnot = currKnot;
 
@@ -427,7 +427,7 @@ public abstract class TextShape {
                currCurve.reverse();
                currCurve.closedLoop = true;
                curves.add(currCurve);
-
+            }
                break;
 
             default:

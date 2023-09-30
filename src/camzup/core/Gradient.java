@@ -1182,9 +1182,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       svgp.append("<svg ");
       svgp.append("xmlns=\"http://www.w3.org/2000/svg\" ");
       svgp.append("xmlns:xlink=\"http://www.w3.org/1999/xlink\" ");
-      svgp.append("shape-rendering=\"");
-      svgp.append("geometricPrecision");
-      svgp.append("\" viewBox=\"0 0 ");
+      svgp.append("stroke=\"none\" ");
+      svgp.append("shape-rendering=\"geometricPrecision\" ");
+      svgp.append("viewBox=\"0 0 ");
       svgp.append(vw);
       svgp.append(' ');
       svgp.append(vh);
@@ -1253,7 +1253,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          sbSwatch.append(' ');
          sbSwatch.append(hBtmStr);
 
-         sbSwatch.append(" Z\" stroke=\"none\" fill-opacity=\"");
+         sbSwatch.append(" Z\" fill-opacity=\"");
          Utils.toFixed(sbSwatch, Utils.clamp01(clr.a),
             ISvgWritable.FIXED_PRINT);
 

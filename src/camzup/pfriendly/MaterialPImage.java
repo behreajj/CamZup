@@ -46,7 +46,7 @@ public class MaterialPImage extends MaterialUv {
    }
 
    /**
-    * Constructs a name material with a fill and texture.
+    * Constructs a named material with a fill and texture.
     *
     * @param name      the name
     * @param transform the UV transform
@@ -60,7 +60,7 @@ public class MaterialPImage extends MaterialUv {
    }
 
    /**
-    * Constructs a name material with a texture.
+    * Constructs a named material with a texture.
     *
     * @param name      the name
     * @param transform the UV transform

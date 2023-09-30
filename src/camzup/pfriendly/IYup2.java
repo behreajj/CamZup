@@ -45,7 +45,7 @@ public interface IYup2 extends IUp {
       final Vec2 ap1 );
 
    /**
-    * Draws a cubic Bezier curve segment to the next anchor point; the first
+    * Draws a cubic Bezier curve segment to the next anchor point. The first
     * and second control point shape the curve segment.
     *
     * @param cp0 the first control point
@@ -99,7 +99,7 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Draws a circle at a location
+    * Draws a circle at a location.
     *
     * @param coord the coordinate
     * @param size  the size
@@ -124,7 +124,7 @@ public interface IYup2 extends IUp {
    void curveVertex ( final Vec2 a );
 
    /**
-    * Draws an ellipse; the meaning of the two parameters depends on the
+    * Draws an ellipse. The meaning of the two parameters depends on the
     * renderer's ellipseMode.
     *
     * @param a the first parameter
@@ -378,7 +378,7 @@ public interface IYup2 extends IUp {
    default void moveBy ( final Vec2 v ) { this.moveByLocal(v.x, v.y); }
 
    /**
-    * Moves the camera by the given vector in global space, then updates the
+    * Moves the camera by the given vector in global space then updates the
     * camera.
     *
     * @param x the vector x
@@ -394,7 +394,7 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Moves the camera by the given vector in global space, then updates the
+    * Moves the camera by the given vector in global space then updates the
     * camera.
     *
     * @param v the vector
@@ -407,8 +407,8 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Moves the camera by the given vector according to the camera's roll,
-    * then updates the camera.
+    * Moves the camera by the given vector according to the camera's roll then
+    * updates the camera.
     *
     * @param x the vector x
     * @param y the vector y
@@ -427,8 +427,8 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Moves the camera by the given vector according to the camera's roll,
-    * then updates the camera.
+    * Moves the camera by the given vector according to the camera's roll then
+    * updates the camera.
     *
     * @param v the vector
     *
@@ -437,7 +437,7 @@ public interface IYup2 extends IUp {
    default void moveByLocal ( final Vec2 v ) { this.moveByLocal(v.x, v.y); }
 
    /**
-    * Moves the renderer's camera to the given location, then updates the
+    * Moves the renderer's camera to the given location then updates the
     * camera.
     *
     * @param x the location x
@@ -454,7 +454,7 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Moves the renderer's camera to the given location, then updates the
+    * Moves the renderer's camera to the given location then updates the
     * camera.
     *
     * @param v the new location
@@ -514,7 +514,7 @@ public interface IYup2 extends IUp {
    void quad ( final Vec2 a, final Vec2 b, final Vec2 c, final Vec2 d );
 
    /**
-    * Draws a quadratic Bezier curve segment to the next anchor point; the
+    * Draws a quadratic Bezier curve segment to the next anchor point. The
     * control point shapes the curve segment.
     *
     * @param cp  the control point
@@ -603,7 +603,7 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Draws a rectangle; the meaning of the two parameters depends on the
+    * Draws a rectangle. The meaning of the two parameters depends on the
     * renderer's rectMode.
     *
     * @param a the first parameter
@@ -612,7 +612,7 @@ public interface IYup2 extends IUp {
    void rect ( final Vec2 a, final Vec2 b );
 
    /**
-    * Draws a rounded rectangle; the meaning of the first two parameters
+    * Draws a rounded rectangle. The meaning of the first two parameters
     * depends on the renderer's rectMode.
     *
     * @param a        the first parameter
@@ -622,7 +622,7 @@ public interface IYup2 extends IUp {
    void rect ( final Vec2 a, final Vec2 b, final float rounding );
 
    /**
-    * Increases the camera's roll by an angle in radians, then updates the
+    * Increases the camera's roll by an angle in radians then updates the
     * camera.
     *
     * @param radians the angle in radians
@@ -635,7 +635,7 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Sets the camera's roll to an angle in radians, then updates the camera.
+    * Sets the camera's roll to an angle in radians then updates the camera.
     *
     * @param radians the angle in radians
     *
@@ -957,7 +957,7 @@ public interface IYup2 extends IUp {
    void vertex ( final Vec2 v );
 
    /**
-    * Increases the renderer's zoom by a scalar, then updates the camera.
+    * Increases the renderer's zoom by a scalar then updates the camera.
     *
     * @param s the scalar
     *
@@ -966,7 +966,7 @@ public interface IYup2 extends IUp {
    default void zoomBy ( final float s ) { this.zoomBy(s, s); }
 
    /**
-    * Increases the renderer's zoom by a horizontal and vertical scalar, then
+    * Increases the renderer's zoom by a horizontal and vertical scalar then
     * updates the camera.
     *
     * @param w the width
@@ -980,7 +980,7 @@ public interface IYup2 extends IUp {
    }
 
    /**
-    * Increases the renderer's zoom by the vector, then updates the camera.
+    * Increases the renderer's zoom by the vector then updates the camera.
     *
     * @param v the vector
     *
@@ -1117,8 +1117,7 @@ public interface IYup2 extends IUp {
 
    /**
     * Gets a mouse within a unit square, where either component may be in the
-    * range [-1.0, 1.0]. The mouse's y coordinate is flipped. (This is not a
-    * normalized vector.)
+    * range [-1.0, 1.0]. The mouse's y coordinate is flipped.
     *
     * @param parent the parent applet
     * @param target the output vector

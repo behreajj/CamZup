@@ -1612,7 +1612,6 @@ public class Mat4 {
          rhoCosIncl * sinAzim, radius *  cosAzim, -rhoSinIncl * sinAzim,  0.0f,
                    rhoSinIncl,              0.0f,            rhoCosIncl,  0.0f,
                          0.0f,              0.0f,                  0.0f,  1.0f);
-
       /* @formatter:on */
    }
 
@@ -2013,8 +2012,8 @@ public class Mat4 {
     * Multiplies a matrix and a quaternion. Stores the quaternion's matrix
     * representation in an output variable.
     *
-    * @param a      matrix
-    * @param b      quaternion
+    * @param a      the matrix
+    * @param b      the quaternion
     * @param target the output matrix
     * @param bm     the matrix conversion
     *
@@ -2054,8 +2053,8 @@ public class Mat4 {
     * Multiplies a quaternion and a matrix. Stores the quaternion's matrix
     * representation in an output variable.
     *
-    * @param a      quaternion
-    * @param b      matrix
+    * @param a      the quaternion
+    * @param b      the matrix
     * @param target the output matrix
     * @param am     the matrix conversion
     *

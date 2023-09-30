@@ -29,7 +29,7 @@ public interface IUp3 extends IUp {
       final Vec3 ap1 );
 
    /**
-    * Draws a cubic Bezier curve segment to the next anchor point; the first
+    * Draws a cubic Bezier curve segment to the next anchor point. The first
     * and second control point shape the curve segment.
     *
     * @param cp0 the first control point
@@ -240,9 +240,11 @@ public interface IUp3 extends IUp {
       final int vCount = count < 3 ? 3 : count;
       final int vCountSq = vCount * vCount;
       final float toPercent = 1.0f / ( vCount + 1.0f );
-      final float[] xs = new float[vCount];
-      final float[] ys = new float[vCount];
-      final float[] zs = new float[vCount];
+
+      final int xIdxOff = 0;
+      final int yIdxOff = xIdxOff + vCount;
+      final int zIdxOff = yIdxOff + vCount;
+      final float[] pts = new float[zIdxOff + vCount];
 
       this.hint(PConstants.DISABLE_DEPTH_TEST);
       this.hint(PConstants.DISABLE_DEPTH_MASK);
@@ -259,7 +261,7 @@ public interface IUp3 extends IUp {
       for ( int j = 0; j < vCount; ++j ) {
          final float jPercent = ( 1 + j ) * toPercent;
          final float x = ( 1.0f - jPercent ) * right + jPercent * left;
-         xs[j] = x;
+         pts[xIdxOff + j] = x;
          this.point(x, bottom, far);
       }
 
@@ -268,7 +270,7 @@ public interface IUp3 extends IUp {
       for ( int i = 0; i < vCount; ++i ) {
          final float iPercent = ( 1 + i ) * toPercent;
          final float y = ( 1.0f - iPercent ) * top + iPercent * bottom;
-         ys[i] = y;
+         pts[yIdxOff + i] = y;
          this.point(left, y, far);
       }
 
@@ -277,7 +279,7 @@ public interface IUp3 extends IUp {
       for ( int h = 0; h < vCount; ++h ) {
          final float hPercent = ( 1 + h ) * toPercent;
          final float z = ( 1.0f - hPercent ) * near + hPercent * far;
-         zs[h] = z;
+         pts[zIdxOff + h] = z;
          this.point(left, bottom, z);
       }
 
@@ -287,11 +289,11 @@ public interface IUp3 extends IUp {
       for ( int k = 0; k < vCountSq; ++k ) {
          final int i = k / vCount;
          final int j = k % vCount;
-         final float x = xs[j];
-         final float z = zs[i];
-         this.point(left, ys[j], z); /* x plane. */
+         final float x = pts[xIdxOff + j];
+         final float z = pts[zIdxOff + i];
+         this.point(left, pts[yIdxOff + j], z); /* x plane. */
          this.point(x, bottom, z); /* y plane. */
-         this.point(x, ys[i], far); /* z plane. */
+         this.point(x, pts[yIdxOff + i], far); /* z plane. */
       }
 
       this.popStyle();
@@ -745,8 +747,7 @@ public interface IUp3 extends IUp {
 
    /**
     * Gets a mouse within a unit square, where either component may be in the
-    * range [-1.0, 1.0] . The mouse's y coordinate is flipped and assigned to
-    * the vector's y component. (This is not a normalized vector.)
+    * range [-1.0, 1.0] . The mouse's y coordinate is flipped.
     *
     * @param parent the parent applet
     * @param target the output vector

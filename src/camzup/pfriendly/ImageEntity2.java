@@ -119,6 +119,13 @@ public class ImageEntity2 extends MeshEntity2 {
       this.material = new MaterialPImage(name, new Transform2(), texture, tint);
    }
 
+   /**
+    * Tests this entity for equality with another object.
+    *
+    * @param obj the object
+    *
+    * @return the evaluation
+    */
    @Override
    public boolean equals ( final Object obj ) {
 
@@ -133,6 +140,11 @@ public class ImageEntity2 extends MeshEntity2 {
       return true;
    }
 
+   /**
+    * Calculates this entity's hash code.
+    *
+    * @return the hash
+    */
    @Override
    public int hashCode ( ) {
 

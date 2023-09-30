@@ -905,6 +905,7 @@ public abstract class Pixels {
             final int srcHex = source[i];
             final int ai = srcHex & 0xff000000;
             if ( ai != 0 ) {
+               // TODO: Remove dependence on look up table.
                final int v = Pixels.LTS_LUT[( int ) ( Pixels.sRgbLuminance(
                   srcHex) * 0xff + 0.5f )];
                target[i] = ai | v << 0x10 | v << 0x08 | v;
@@ -2110,6 +2111,7 @@ public abstract class Pixels {
     */
    public static float sRgbLuminance ( final int c ) {
 
+      // TODO: Remove dependence on look up tables.
       return ( float ) ( 0.0008339189910613837d * Pixels.STL_LUT[c >> 0x10
          & 0xff] + 0.002804584845905505d * Pixels.STL_LUT[c >> 0x08 & 0xff]
          + 0.0002830647904840915d * Pixels.STL_LUT[c & 0xff] );
@@ -2397,8 +2399,7 @@ public abstract class Pixels {
       final int srcLen = source.length;
       final ArrayList < Integer > nonZeroIdcs = new ArrayList <>(srcLen);
       for ( int i = 0; i < srcLen; ++i ) {
-         final int srcHex = source[i];
-         if ( ( srcHex & 0xff000000 ) != 0 ) { nonZeroIdcs.add(i); }
+         if ( ( source[i] & 0xff000000 ) != 0 ) { nonZeroIdcs.add(i); }
       }
 
       final float wf = wSrc;

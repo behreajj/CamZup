@@ -22,7 +22,7 @@ public class Quaternion implements Comparable < Quaternion > {
    public final Vec3 imag = new Vec3();
 
    /**
-    * The real component (also known as w).
+    * The real component, also known as w.
     */
    public float real = 1.0f;
 

@@ -129,8 +129,8 @@ public interface ITextDisplay3 extends ITextDisplay {
    }
 
    /**
-    * Displays a number as text at a location. Registers up to four decimal
-    * places.
+    * Displays a number as text at a location. Registers up to
+    * {@value IUtils#FIXED_PRINT} decimal places.
     *
     * @param real the real number
     * @param v    the location
@@ -143,8 +143,8 @@ public interface ITextDisplay3 extends ITextDisplay {
    }
 
    /**
-    * Displays an integer as text at a location. Registers up to four decimal
-    * places.
+    * Displays an integer as text at a location. Registers up to
+    * {@value IUtils#FIXED_PRINT} decimal places.
     *
     * @param i the integer
     * @param x the x coordinate

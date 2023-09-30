@@ -913,9 +913,13 @@ public class Color implements Comparable < Color > {
    public static Vec4 lRgbToSrXyz ( final float r, final float g, final float b,
       final float a, final Vec4 target ) {
 
-      return target.set(0.32053f * r + 0.63692f * g + 0.04256f * b, 0.161987f
-         * r + 0.756636f * g + 0.081376f * b, 0.017228f * r + 0.10866f * g
-            + 0.874112f * b, a);
+      /* @formatter:off */
+      return target.set(
+         0.32053f * r + 0.63692f * g + 0.04256f * b,
+         0.161987f * r + 0.756636f * g + 0.081376f * b,
+         0.017228f * r + 0.10866f * g + 0.874112f * b,
+         a);
+      /* @formatter:on */
    }
 
    /**
@@ -1246,11 +1250,16 @@ public class Color implements Comparable < Color > {
       final double yd = l01 - 0.000533159d * ad - 0.000269178d * bd;
       final double zd = l01 - 0.0058d * bd;
 
-      return target.set(( float ) ( xd <= 0.08d ? xd * 2700.0d / 24389.0d : Math
-         .pow( ( xd + 0.16d ) / 1.16d, 3.0d) ), ( float ) ( yd <= 0.08d ? yd
-            * 2700.0d / 24389.0d : Math.pow( ( yd + 0.16d ) / 1.16d, 3.0d) ),
-         ( float ) ( zd <= 0.08d ? zd * 2700.0d / 24389.0d : Math.pow( ( zd
-            + 0.16d ) / 1.16d, 3.0d) ), alpha);
+      /* @formatter:off */
+      return target.set(
+         ( float ) ( xd <= 0.08d ? xd * 2700.0d / 24389.0d :
+            Math.pow( ( xd + 0.16d ) / 1.16d, 3.0d) ),
+         ( float ) ( yd <= 0.08d ? yd * 2700.0d / 24389.0d :
+            Math.pow( ( yd + 0.16d ) / 1.16d, 3.0d) ),
+         ( float ) ( zd <= 0.08d ? zd * 2700.0d / 24389.0d :
+            Math.pow( ( zd + 0.16d ) / 1.16d, 3.0d) ),
+         alpha);
+      /* @formatter:on */
    }
 
    /**
@@ -1350,9 +1359,13 @@ public class Color implements Comparable < Color > {
    public static Color srXyzTolRgb ( final float x, final float y,
       final float z, final float a, final Color target ) {
 
-      return target.set(5.435679f * x - 4.599131f * y + 0.163593f * z, -1.16809f
-         * x + 2.327977f * y - 0.159798f * z, 0.03784f * x - 0.198564f * y
-            + 1.160644f * z, a);
+      /* @formatter:off */
+      return target.set(
+         5.435679f * x - 4.599131f * y + 0.163593f * z,
+         -1.16809f * x + 2.327977f * y - 0.159798f * z,
+         0.03784f * x - 0.198564f * y + 1.160644f * z,
+         a);
+      /* @formatter:off */
    }
 
    /**
@@ -1398,9 +1411,13 @@ public class Color implements Comparable < Color > {
       final double zd = z <= 0.008856452f ? z * 9.032962962962962d : 1.16d
          * Math.pow(z, 0.3333333333333333d) - 0.16d;
 
-      return target.set(( float ) ( 663.4684d * xd - 750.5078d * yd + 87.0328
-         * zd ), ( float ) ( 63.9569d * xd + 108.4576d * yd - 172.4152d * zd ),
-         ( float ) ( 37.0950d * xd + 62.9054d * yd - 0.0008d * zd ), a);
+      /* @formatter:off */
+      return target.set(
+         ( float ) ( 663.4684d * xd - 750.5078d * yd + 87.0328d * zd ),
+         ( float ) ( 63.9569d * xd + 108.4576d * yd - 172.4152d * zd ),
+         ( float ) ( 37.095d * xd + 62.9054d * yd - 0.0008d * zd ),
+         a);
+      /* @formatter:on */
    }
 
    /**
@@ -1515,7 +1532,7 @@ public class Color implements Comparable < Color > {
 
    /**
     * Converts a color to an integer where hexadecimal represents the ARGB
-    * color channels: 0xAARRGGB . Defaults to modular arithmetic.
+    * color channels: 0xAARRGGBB . Defaults to modular arithmetic.
     *
     * @param c the input color
     *
@@ -1530,7 +1547,7 @@ public class Color implements Comparable < Color > {
 
    /**
     * Converts a color to an integer where hexadecimal represents the ARGB
-    * color channels: 0xAARRGGB . Uses saturation arithmetic. Two colors with
+    * color channels: 0xAARRGGBB . Uses saturation arithmetic. Two colors with
     * unequal values beyond [0.0, 1.0] may yield equal integers.
     *
     * @param c the input color
@@ -1551,7 +1568,7 @@ public class Color implements Comparable < Color > {
 
    /**
     * Converts a color to an integer where hexadecimal represents the ARGB
-    * color channels: 0xAARRGGB . Uses modular arithmetic, so out-of-gamut
+    * color channels: 0xAARRGGBB . Uses modular arithmetic, so out-of-gamut
     * colors may cause overflow and unexpected hexadecimal colors.
     *
     * @param c the input color
@@ -2510,9 +2527,9 @@ public class Color implements Comparable < Color > {
             final float u = 1.0f - t;
 
             float oh = Utils.atan2(ob, oa) * IUtils.ONE_TAU;
-            if ( oh < -0.0f ) { oh = oh + 1.0f; }
+            if ( oh < -0.0f ) { ++oh; }
             float dh = Utils.atan2(db, da) * IUtils.ONE_TAU;
-            if ( dh < -0.0f ) { dh = dh + 1.0f; }
+            if ( dh < -0.0f ) { ++dh; }
 
             this.cLch.set(this.hueFunc.apply(oh, dh, step), u * Utils
                .sqrtUnchecked(ocsq) + t * Utils.sqrtUnchecked(dcsq), u

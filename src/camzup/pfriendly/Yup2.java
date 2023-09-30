@@ -99,7 +99,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
    }
 
    /**
-    * Draws a cubic Bezier curve segment to the next anchor point; the first
+    * Draws a cubic Bezier curve segment to the next anchor point. The first
     * and second control point shape the curve segment.
     *
     * @param cp0 the first control point

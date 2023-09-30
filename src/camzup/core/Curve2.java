@@ -961,7 +961,6 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    StringBuilder toSvgSubPath ( final StringBuilder svgp,
       final float colinearTol, final Vec2 dir0, final Vec2 dir1 ) {
 
-      // final float vtol = Utils.clamp01(1.0f - colinearTol);
       final Iterator < Knot2 > itr = this.knots.iterator();
       final Knot2 firstKnot = itr.next();
       Knot2 prevKnot = firstKnot;
@@ -2358,10 +2357,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Creates a curve which approximates an ellipse. Currently, only 4 knot
-    * ellipses are supported. The aspect is the ratio between the width and
-    * height of the ellipse. This is package level to provide extra
-    * functionality for translating a ellipse's origin.
+    * Creates a curve which approximates an ellipse. The aspect is the ratio
+    * between the width and height of the ellipse. This is package level to
+    * provide extra functionality for translating a ellipse's origin.
     *
     * @param radius  the radius
     * @param aspect  the aspect ratio
