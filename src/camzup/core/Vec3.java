@@ -1339,7 +1339,7 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the direction
     *
-    * @see Utils#invSqrt(float)
+    * @see Utils#invSqrtUnchecked(float)
     * @see Vec3#up(Vec3)
     */
    public static Vec3 fromColor ( final Color c, final Vec3 target ) {

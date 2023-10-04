@@ -1,6 +1,3 @@
-/**
- *
- */
 package camzup.core;
 
 import static java.lang.annotation.ElementType.METHOD;

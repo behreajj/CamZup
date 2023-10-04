@@ -445,8 +445,7 @@ public class Vec4 implements Comparable < Vec4 > {
     *
     * @return the evaluation
     *
-    * @see Utils#approx(float, float)
-    * @see Vec4#magSq(Vec4)
+    * @see Vec4#approxMag(Vec4, float, float)
     */
    public static boolean approxMag ( final Vec4 a, final float b ) {
 
@@ -463,7 +462,7 @@ public class Vec4 implements Comparable < Vec4 > {
     * @return the evaluation
     *
     * @see Utils#approx(float, float, float)
-    * @see Vec4#dot(Vec4, Vec4)
+    * @see Vec4#magSq(Vec4)
     */
    public static boolean approxMag ( final Vec4 a, final float b,
       final float tolerance ) {

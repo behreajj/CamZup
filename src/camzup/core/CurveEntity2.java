@@ -701,10 +701,6 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       final StringBuilder svgp = new StringBuilder(1024);
       if ( this.length() < 1 ) { return svgp.toString(); }
 
-      /* For determining if handles are parallel. */
-      final Vec2 dir0 = new Vec2();
-      final Vec2 dir1 = new Vec2();
-
       /* Decide how many groups to create based on material. */
       int matLen = 0;
       boolean includesMats = false;
@@ -730,8 +726,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       }
 
       if ( !multipleMats && useSubPaths ) {
-         this.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE, IUtils.EPSILON,
-            dir0, dir1);
+         this.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
       } else {
 
          /* Append entity group. */
@@ -761,8 +756,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
                svgp.append('\n');
             }
 
-            curve.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE,
-               IUtils.EPSILON, dir0, dir1);
+            curve.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
 
             /* Close out material group. */
             if ( multipleMats ) { svgp.append("</g>\n"); }
@@ -810,16 +804,12 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
     * with sub-paths. The fill rule may be either <code>"evenodd"</code> or
     * <code>"nonzero"</code> (default).
     *
-    * @param svgp        the string builder
-    * @param fillRule    the fill rule
-    * @param colinearTol the colinear tolerance
-    * @param dir0        the first direction
-    * @param dir1        the second direction
+    * @param svgp     the string builder
+    * @param fillRule the fill rule
     *
     * @return the string builder
     */
-   StringBuilder toSvgPath ( final StringBuilder svgp, final String fillRule,
-      final float colinearTol, final Vec2 dir0, final Vec2 dir1 ) {
+   StringBuilder toSvgPath ( final StringBuilder svgp, final String fillRule ) {
 
       if ( this.length() > 0 ) {
          svgp.append("<path id=\"");
@@ -834,7 +824,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
          svgp.append(" d=\"");
          final Iterator < Curve2 > curveItr = this.curves.iterator();
          while ( curveItr.hasNext() ) {
-            curveItr.next().toSvgSubPath(svgp, colinearTol, dir0, dir1);
+            curveItr.next().toSvgSubPath(svgp);
             svgp.append(' ');
          }
          svgp.append("\" />\n");

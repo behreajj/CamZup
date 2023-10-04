@@ -10,7 +10,7 @@ import java.util.regex.Pattern;
 public class Color implements Comparable < Color > {
 
    /**
-    * The alpha channel (opacity).
+    * The alpha channel, which governs transparency.
     */
    public float a = 1.0f;
 

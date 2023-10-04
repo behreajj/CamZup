@@ -110,7 +110,7 @@ public interface ISvgWritable {
    }
 
    /**
-    * Renders this curve as an SVG string. A default material renders the
+    * Renders this object as an SVG string. A default material renders the
     * mesh's fill and stroke. The background of the SVG is transparent. The
     * width and height supplied form both the view box dimensions, the
     * translation and the scale of the shape.

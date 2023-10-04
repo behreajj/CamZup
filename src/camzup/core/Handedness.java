@@ -6,7 +6,7 @@ package camzup.core;
  * thumb points out (the x axis), index finger points forward (the y axis)
  * and middle finger points up (the z axis).<br>
  * <br>
- * Associates left with -1; right, with 1. <br>
+ * Associates left with -1; right, with 1.<br>
  * <br>
  * In right handed renderers, a positive angle rotates counter-clockwise;
  * in left handed renderers, clockwise.

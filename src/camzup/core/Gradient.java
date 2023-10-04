@@ -367,7 +367,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Tests to see if this gradient equals an object
+    * Tests to see if this gradient equals an object.
     *
     * @param obj the object
     *

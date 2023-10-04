@@ -745,8 +745,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       final StringBuilder svgp = new StringBuilder(1024);
       MaterialSolid.defaultSvgMaterial(svgp, zoom);
-      this.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE, IUtils.EPSILON,
-         new Vec2(), new Vec2());
+      this.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
       svgp.append("</g>\n");
       return svgp.toString();
    }
@@ -921,16 +920,12 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * may be either <code>"evenodd"</code> or <code>"nonzero"</code>
     * (default).
     *
-    * @param svgp        the string builder
-    * @param fillRule    the fill rule
-    * @param colinearTol the colinear tolerance
-    * @param dir0        the first direction
-    * @param dir1        the second direction
+    * @param svgp     the string builder
+    * @param fillRule the fill rule
     *
     * @return the string builder.
     */
-   StringBuilder toSvgPath ( final StringBuilder svgp, final String fillRule,
-      final float colinearTol, final Vec2 dir0, final Vec2 dir1 ) {
+   StringBuilder toSvgPath ( final StringBuilder svgp, final String fillRule ) {
 
       if ( this.knots.size() < 2 ) { return svgp; }
 
@@ -941,7 +936,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       svgp.append("\" fill-rule=\"");
       svgp.append(fillRule);
       svgp.append("\" d=\"");
-      this.toSvgSubPath(svgp, colinearTol, dir0, dir1);
+      this.toSvgSubPath(svgp);
       svgp.append("\" />\n");
       return svgp;
    }
@@ -951,15 +946,11 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * command. Its separation allows for curves to be rendered as multiple
     * sub-paths rather than one big path.
     *
-    * @param svgp        the string builder
-    * @param colinearTol the colinear tolerance
-    * @param dir0        the first direction
-    * @param dir1        the second direction
+    * @param svgp the string builder
     *
     * @return the string builder
     */
-   StringBuilder toSvgSubPath ( final StringBuilder svgp,
-      final float colinearTol, final Vec2 dir0, final Vec2 dir1 ) {
+   StringBuilder toSvgSubPath ( final StringBuilder svgp ) {
 
       final Iterator < Knot2 > itr = this.knots.iterator();
       final Knot2 firstKnot = itr.next();

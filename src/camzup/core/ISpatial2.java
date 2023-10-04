@@ -7,7 +7,7 @@ package camzup.core;
 public interface ISpatial2 {
 
    /**
-    * Gets the spatial object's location.
+    * Gets this object's location.
     *
     * @param target the output vector
     *
