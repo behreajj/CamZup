@@ -37,7 +37,7 @@ without negative impact to your sketch, chances are you don't need this library.
 
 While Cam Z-Up can help with more complex sketches, it is a general purpose library. It aims to make a number of small tasks easier than in vanilla Processing. It will not be as effective as specialist libraries. For an easy mouse-controlled orbital camera with GUI support, I recommend [peasycam](https://github.com/jdf/peasycam) instead. Other great libraries are [HE_Mesh](https://github.com/wblut/HE_Mesh) and [ToxicLibs](https://github.com/postspectacular/toxiclibs).
 
-Cam Z-Up is tested with Processing version [4.x](https://github.com/processing/processing4/releases).
+Cam Z-Up is tested with Processing version [4.x](https://github.com/benfry/processing4/releases).
 
 ## Getting Started
 
@@ -155,7 +155,7 @@ The `Gradient` class allows you to create color ramps, including the following:
 
 ![Palette Diagram](data/paletteDiagram.png)
 
-Viridis and Magma are color palettes used in data visualizations. [Sepia](https://www.wikiwand.com/en/Sepia_(color)) and [cyanotype](https://en.wikipedia.org/wiki/Cyanotype) replicate older photographic printing processes.
+Viridis and Magma are color palettes used in data visualizations. [Sepia](https://en.wikipedia.org/wiki/Sepia_(color)) and [cyanotype](https://en.wikipedia.org/wiki/Cyanotype) replicate older photographic printing processes.
 
 #### Harmony
 
@@ -263,7 +263,7 @@ Unlike a `.gpl`, a `.ggr`'s color channels are in [0.0, 1.0]. A GIMP gradient re
 
 ### OBJ
 
-The Wavefront `.obj` file format is human readable; an overview of the particulars can be found at [Wikipedia](https://www.wikiwand.com/en/Wavefront_.obj_file). It can support a broad array of data, including poly-lines and Bezier surfaces. This library recognizes only meshes. The material library files associated with `.obj`s are not supported for three reasons: (1.) different renderers have different capacities to display materials, so this library separates these concerns; (2.) the information stored by `.mtl` files is outdated relative to modern materials; (3.) Processing's lighting and materials pipeline is limited.
+The Wavefront `.obj` file format is human readable; an overview of the particulars can be found at [Wikipedia](https://en.wikipedia.org/wiki/Wavefront_.obj_file). It can support a broad array of data, including poly-lines and Bezier surfaces. This library recognizes only meshes. The material library files associated with `.obj`s are not supported for three reasons: (1.) different renderers have different capacities to display materials, so this library separates these concerns; (2.) the information stored by `.mtl` files is outdated relative to modern materials; (3.) Processing's lighting and materials pipeline is limited.
 
 Import functionality is tested against [Blender](https://www.blender.org/) exports. For best results, use the following:
 
@@ -316,7 +316,7 @@ Many core Processing functions are marked `final`, meaning they cannot be extend
 - The step provided to easing functions is always a scalar (a `float`). There are no `step`, `smoothstep` and `linearstep` functions which generate the step to be supplied to `mix`. `mix` is, however, is defined in relevant classes.
 - A quaternion's real component is assumed to be its first element, `{ w, x, y, z }`. Its imaginary components are stored in a vector. This is in contrast to other APIs, such as [Unity](https://docs.unity3d.com/ScriptReference/Quaternion.html)'s.
 - The convention established by Java's `indexOf` function is to return `-1` when an array or collection does not contain a query. Some collections in this library, particularly `Mesh`s and `Curve`s, match Pythonic idiom insofar as they accept negative indices to `get` functions. For example, `curve.get(-1)` will return the last `Knot` in a curve, provided that it is a `closedLoop`. As a consequence, the reciprocity between Java's `indexOf` and `get` is broken. For example: `curve.get(curve.knots.indexOf(elmNotInCurve)) != elmNotInCurve`. For this reason, `contains` should always be preferred over `indexOf`, and no custom `contains` method should depend on `indexOf` unless `get`s definition is guaranteed.
-- Between two vectors, the [Hadamard product](https://www.wikiwand.com/en/Hadamard_product_(matrices)), is the default multiplication associated with the `*` operator.
+- Between two vectors, the [Hadamard product](https://en.wikipedia.org/wiki/Hadamard_product_(matrices)), is the default multiplication associated with the `*` operator.
 
 ## Kotlin Interoperability
 
