@@ -1,11 +1,5 @@
 package camzup;
 
-import java.util.Random;
-
-import camzup.core.Lab;
-import camzup.core.Lch;
-import camzup.core.Rgb;
-import camzup.core.Vec4;
 import processing.core.PApplet;
 
 /**
@@ -57,24 +51,24 @@ public class CamZup {
 
    public static void main ( final String[] args ) {
 
-      final Lab oLab = Lab.random(new Random(), new Lab());
-      final Lch oLch = Lch.fromLab(oLab, new Lch());
-      final Lab[] labHarms = Lab.harmonyTriadic(oLab);
-      final Lch[] lchHarms = Lch.harmonyTriadic(oLch);
-
-      for ( int i = 0; i < labHarms.length; ++i ) {
-         final Lab labHarm = labHarms[i];
-         final Lch lchHarm = lchHarms[i];
-
-         final Rgb fromLab = Rgb.srLab2TosRgb(labHarm, new Rgb(), new Rgb(),
-            new Vec4());
-         final Rgb fromLch = Rgb.srLchTosRgb(lchHarm, new Rgb(), new Rgb(),
-            new Vec4(), new Lab());
-
-         System.out.println(fromLab);
-         System.out.println(fromLch);
-         System.out.println(fromLab.equals(fromLch));
-      }
+      // final Lab oLab = Lab.random(new Random(), new Lab());
+      // final Lch oLch = Lch.fromLab(oLab, new Lch());
+      // final Lab[] labHarms = Lab.harmonyTriadic(oLab);
+      // final Lch[] lchHarms = Lch.harmonyTriadic(oLch);
+      //
+      // for ( int i = 0; i < labHarms.length; ++i ) {
+      // final Lab labHarm = labHarms[i];
+      // final Lch lchHarm = lchHarms[i];
+      //
+      // final Rgb fromLab = Rgb.srLab2TosRgb(labHarm, new Rgb(), new Rgb(),
+      // new Vec4());
+      // final Rgb fromLch = Rgb.srLchTosRgb(lchHarm, new Rgb(), new Rgb(),
+      // new Vec4(), new Lab());
+      //
+      // System.out.println(fromLab);
+      // System.out.println(fromLch);
+      // System.out.println(fromLab.equals(fromLch));
+      // }
 
       // float aMin = Float.MAX_VALUE;
       // float bMin = Float.MAX_VALUE;
