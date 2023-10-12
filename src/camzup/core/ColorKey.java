@@ -13,7 +13,7 @@ public class ColorKey implements Comparable < ColorKey > {
     * The key's color. Abbreviated to 'clr' because 'color' is a data type in
     * Processing IDE.
     */
-   public final Color clr = new Color(0.0f, 0.0f, 0.0f, 0.0f);
+   public final Rgb clr = new Rgb(0.0f, 0.0f, 0.0f, 0.0f);
 
    /**
     * The key's step, expected to be in the range [0.0, 1.0] .
@@ -47,23 +47,23 @@ public class ColorKey implements Comparable < ColorKey > {
    }
 
    /**
-    * Creates a new key with a step and color.
-    *
-    * @param step  the step
-    * @param color the color
-    */
-   public ColorKey ( final float step, final Color color ) {
-
-      this.set(step, color);
-   }
-
-   /**
     * Creates a new key with a step and a color in hexadecimal.
     *
     * @param step  the step
     * @param color the color
     */
    public ColorKey ( final float step, final int color ) {
+
+      this.set(step, color);
+   }
+
+   /**
+    * Creates a new key with a step and color.
+    *
+    * @param step  the step
+    * @param color the color
+    */
+   public ColorKey ( final float step, final Rgb color ) {
 
       this.set(step, color);
    }
@@ -168,6 +168,25 @@ public class ColorKey implements Comparable < ColorKey > {
    }
 
    /**
+    * Sets this key with a step and a color in hexadecimal.
+    *
+    * @param step the step
+    * @param c    the color
+    *
+    * @return this key
+    *
+    * @see Utils#clamp01(float)
+    * @see Rgb#fromHex(int, Rgb)
+    */
+   public ColorKey set ( final float step, final int c ) {
+
+      this.step = Utils.clamp01(step);
+      Rgb.fromHex(c, this.clr);
+
+      return this;
+   }
+
+   /**
     * Sets this key with a step and color.
     *
     * @param step  the step
@@ -177,29 +196,10 @@ public class ColorKey implements Comparable < ColorKey > {
     *
     * @see Utils#clamp01(float)
     */
-   public ColorKey set ( final float step, final Color color ) {
+   public ColorKey set ( final float step, final Rgb color ) {
 
       this.step = Utils.clamp01(step);
       this.clr.set(color);
-
-      return this;
-   }
-
-   /**
-    * Sets this key with a step and a color in hexadecimal.
-    *
-    * @param step the step
-    * @param c    the color
-    *
-    * @return this key
-    *
-    * @see Utils#clamp01(float)
-    * @see Color#fromHex(int, Color)
-    */
-   public ColorKey set ( final float step, final int c ) {
-
-      this.step = Utils.clamp01(step);
-      Color.fromHex(c, this.clr);
 
       return this;
    }
@@ -323,9 +323,10 @@ public class ColorKey implements Comparable < ColorKey > {
       svgp.append("<stop offset=\"");
       Utils.toFixed(svgp, this.step, ISvgWritable.FIXED_PRINT);
       svgp.append("\" stop-opacity=\"");
-      Utils.toFixed(svgp, Utils.clamp01(this.clr.a), ISvgWritable.FIXED_PRINT);
+      Utils.toFixed(svgp, Utils.clamp01(this.clr.alpha),
+         ISvgWritable.FIXED_PRINT);
       svgp.append("\" stop-color=\"");
-      Color.toHexWeb(svgp, this.clr);
+      Rgb.toHexWeb(svgp, this.clr);
       svgp.append("\" />");
       return svgp;
    }

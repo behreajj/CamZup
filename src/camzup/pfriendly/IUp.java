@@ -1,7 +1,7 @@
 package camzup.pfriendly;
 
-import camzup.core.Color;
 import camzup.core.IUtils;
+import camzup.core.Rgb;
 import camzup.core.TransformOrder;
 import camzup.core.Utils;
 import camzup.core.Vec2;
@@ -28,21 +28,21 @@ public interface IUp {
    default void background ( ) { this.background(IUp.DEFAULT_BKG_COLOR); }
 
    /**
-    * Set the renderer's background color.
-    *
-    * @param c the color
-    */
-   default void background ( final Color c ) {
-
-      this.background(Color.toHexIntWrap(c));
-   }
-
-   /**
     * Sets the renderer's background color to the hexadecimal value.
     *
     * @param c the color hexadecimal
     */
    void background ( final int c );
+
+   /**
+    * Set the renderer's background color.
+    *
+    * @param c the color
+    */
+   default void background ( final Rgb c ) {
+
+      this.background(Rgb.toHexIntWrap(c));
+   }
 
    /**
     * Sets the renderer's camera with default parameters.
@@ -60,18 +60,18 @@ public interface IUp {
    default void fill ( ) { this.fill(IUp.DEFAULT_FILL_COLOR); }
 
    /**
-    * Sets the renderer's current fill to the color.
-    *
-    * @param c the color
-    */
-   default void fill ( final Color c ) { this.fill(Color.toHexIntWrap(c)); }
-
-   /**
     * Sets the renderer's current fill to the hexadecimal value.
     *
     * @param c the color in hexadecimal
     */
    void fill ( final int c );
+
+   /**
+    * Sets the renderer's current fill to the color.
+    *
+    * @param c the color
+    */
+   default void fill ( final Rgb c ) { this.fill(Rgb.toHexIntWrap(c)); }
 
    /**
     * Gets the renderer's background color as an integer.
@@ -87,7 +87,7 @@ public interface IUp {
     *
     * @return the background
     */
-   Color getBackground ( Color target );
+   Rgb getBackground ( Rgb target );
 
    /**
     * Gets the renderer's height.
@@ -152,21 +152,21 @@ public interface IUp {
    default void stroke ( ) { this.stroke(IUp.DEFAULT_STROKE_COLOR); }
 
    /**
-    * Sets the renderer's current stroke to the color.
-    *
-    * @param c the color
-    */
-   default void stroke ( final Color c ) {
-
-      this.stroke(Color.toHexIntWrap(c));
-   }
-
-   /**
     * Sets the renderer's current stroke to the hexadecimal value.
     *
     * @param c the color in hexadecimal
     */
    void stroke ( final int c );
+
+   /**
+    * Sets the renderer's current stroke to the color.
+    *
+    * @param c the color
+    */
+   default void stroke ( final Rgb c ) {
+
+      this.stroke(Rgb.toHexIntWrap(c));
+   }
 
    /**
     * Uses the renderer's default stroke weight.

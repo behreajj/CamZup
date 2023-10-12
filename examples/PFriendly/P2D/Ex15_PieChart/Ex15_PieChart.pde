@@ -10,7 +10,7 @@ TextEntity2[] labels = new TextEntity2[count];
 MaterialSolid[] materials = new MaterialSolid[count];
 
 float labelScale = 1.0f;
-Color labelColor = Color.black(new Color());
+Rgb labelRgb = Rgb.black(new Rgb());
 
 void settings() {
   size(720, 405, YupJ2.PATH_STR);
@@ -40,7 +40,7 @@ void setup() {
     Transform2.mulPoint(pie.transform, loc, loc);
     String str = Utils.toFixed(vals[i] * 100.0f, 1) + "%";
     TextEntity2 label = labels[i] = new TextEntity2(
-      font, str, labelColor, 0, 2, CENTER, CENTER, labelScale);
+      font, str, labelRgb, 0, 2, CENTER, CENTER, labelScale);
     label.moveTo(loc);
 
     float percent = i / (count - 1.0f);

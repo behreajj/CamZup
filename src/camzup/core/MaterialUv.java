@@ -12,7 +12,7 @@ public abstract class MaterialUv extends Material implements IOriented2,
    /**
     * The texture tint.
     */
-   public final Color tint = Color.white(new Color());
+   public final Rgb tint = Rgb.white(new Rgb());
 
    /**
     * The UV coordinate transform.
@@ -55,7 +55,7 @@ public abstract class MaterialUv extends Material implements IOriented2,
     * @param tint      the tint color
     */
    protected MaterialUv ( final String name, final Transform2 transform,
-      final Color tint ) {
+      final Rgb tint ) {
 
       super(name);
       this.transform = transform;
@@ -320,19 +320,6 @@ public abstract class MaterialUv extends Material implements IOriented2,
    /**
     * Sets the material's tint color.
     *
-    * @param tint the tint color
-    *
-    * @return this material
-    */
-   public MaterialUv setTint ( final Color tint ) {
-
-      this.tint.set(tint);
-      return this;
-   }
-
-   /**
-    * Sets the material's tint color.
-    *
     * @param r red
     * @param g green
     * @param b blue
@@ -371,7 +358,20 @@ public abstract class MaterialUv extends Material implements IOriented2,
     */
    public MaterialUv setTint ( final int tint ) {
 
-      Color.fromHex(tint, this.tint);
+      Rgb.fromHex(tint, this.tint);
+      return this;
+   }
+
+   /**
+    * Sets the material's tint color.
+    *
+    * @param tint the tint color
+    *
+    * @return this material
+    */
+   public MaterialUv setTint ( final Rgb tint ) {
+
+      this.tint.set(tint);
       return this;
    }
 

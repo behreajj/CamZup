@@ -2,7 +2,7 @@ import camzup.core.*;
 import camzup.pfriendly.*;
 
 YupJ2 graphics;
-Color[] palette;
+Rgb[] palette;
 int cols = 4;
 int swatch = 32;
 
@@ -28,13 +28,13 @@ void draw() {
     float x = swatch * (i / cols);
     float y = swatch * (i % cols);
 
-    graphics.fill(Color.toHexInt(palette[i]));
+    graphics.fill(Rgb.toHexInt(palette[i]));
     graphics.rect(x, y, x + swatch, y + swatch);
   }
 }
 
 void mouseReleased() {
-  String gplStr = Color.toGplString(
+  String gplStr = Rgb.toGplString(
     Gradient.paletteCyanotype(new Gradient()).toArray(),
     "Cyanotype");
   saveStrings("data/cyanotype.gpl", new String[] { gplStr });

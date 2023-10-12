@@ -3,7 +3,6 @@ package camzup.pfriendly;
 import java.util.Iterator;
 
 import camzup.core.ArcMode;
-import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.Curve3;
 import camzup.core.Experimental;
@@ -16,6 +15,7 @@ import camzup.core.Mat4;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
 import camzup.core.Mesh3;
+import camzup.core.Rgb;
 import camzup.core.Transform2;
 import camzup.core.Transform3;
 import camzup.core.TransformOrder;
@@ -416,32 +416,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Calculates the color channels from a color object. Does not check
-    * whether the color should be pre-multiplied by alpha; the user is trusted
-    * to do so manually if desired.
-    *
-    * @param c the color
-    */
-   public void colorCalc ( final Color c ) {
-
-      /* Clamp values to the range [0.0, 1.0] . */
-      this.calcA = c.a < 0.0f ? 0.0f : c.a > 1.0f ? 1.0f : c.a;
-      this.calcB = c.b < 0.0f ? 0.0f : c.b > 1.0f ? 1.0f : c.b;
-      this.calcG = c.g < 0.0f ? 0.0f : c.g > 1.0f ? 1.0f : c.g;
-      this.calcR = c.r < 0.0f ? 0.0f : c.r > 1.0f ? 1.0f : c.r;
-
-      /* Convert from [0.0, 1.0] to [0, 255] . */
-      this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
-      this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
-      this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
-      this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
-
-      this.calcAlpha = this.calcAi != 0xff;
-      this.calcColor = this.calcAi << 0x18 | this.calcRi << 0x10 | this.calcGi
-         << 0x08 | this.calcBi;
-   }
-
-   /**
     * Exposes the color calculation to the public. Includes the option to pre
     * multiply alpha.
     *
@@ -534,6 +508,32 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
       this.calcAlpha = this.calcAi != 0xff;
 
+      this.calcColor = this.calcAi << 0x18 | this.calcRi << 0x10 | this.calcGi
+         << 0x08 | this.calcBi;
+   }
+
+   /**
+    * Calculates the color channels from a color object. Does not check
+    * whether the color should be pre-multiplied by alpha; the user is trusted
+    * to do so manually if desired.
+    *
+    * @param c the color
+    */
+   public void colorCalc ( final Rgb c ) {
+
+      /* Clamp values to the range [0.0, 1.0] . */
+      this.calcA = c.alpha < 0.0f ? 0.0f : c.alpha > 1.0f ? 1.0f : c.alpha;
+      this.calcB = c.b < 0.0f ? 0.0f : c.b > 1.0f ? 1.0f : c.b;
+      this.calcG = c.g < 0.0f ? 0.0f : c.g > 1.0f ? 1.0f : c.g;
+      this.calcR = c.r < 0.0f ? 0.0f : c.r > 1.0f ? 1.0f : c.r;
+
+      /* Convert from [0.0, 1.0] to [0, 255] . */
+      this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
+      this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
+      this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
+      this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
+
+      this.calcAlpha = this.calcAi != 0xff;
       this.calcColor = this.calcAi << 0x18 | this.calcRi << 0x10 | this.calcGi
          << 0x08 | this.calcBi;
    }
@@ -951,7 +951,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param c the color
     */
    @Override
-   public void fill ( final Color c ) {
+   public void fill ( final Rgb c ) {
 
       this.colorCalc(c);
       this.fillFromCalc();
@@ -1002,9 +1002,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @return the background color
     */
    @Override
-   public Color getBackground ( final Color target ) {
+   public Rgb getBackground ( final Rgb target ) {
 
-      return Color.fromHex(this.backgroundColor, target);
+      return Rgb.fromHex(this.backgroundColor, target);
    }
 
    /**
@@ -2270,7 +2270,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param c the color
     */
    @Override
-   public void stroke ( final Color c ) {
+   public void stroke ( final Rgb c ) {
 
       /*
        * strokeFromCalc is not overridden in the OpenGL, so it calls the method
@@ -2443,7 +2443,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     *
     * @param c the color
     */
-   public void tint ( final Color c ) {
+   public void tint ( final Rgb c ) {
 
       /*
        * tintFromCalc is not overridden in the OpenGL, so it calls the method
@@ -3731,23 +3731,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * An internal helper function to ambientLight. Sets ambient lighting. The
-    * color will be submitted to color calculation.
-    *
-    * @param num the index
-    * @param clr the color
-    */
-   protected void lightAmbient ( final int num, final Color clr ) {
-
-      this.colorCalc(clr);
-
-      final int num3 = num + num + num;
-      this.lightAmbient[num3] = this.calcR;
-      this.lightAmbient[num3 + 1] = this.calcG;
-      this.lightAmbient[num3 + 2] = this.calcB;
-   }
-
-   /**
     * An internal helper function to ambientLight. Sets ambient lighting.
     * Color channels will be submitted to color calculation.
     *
@@ -3786,20 +3769,20 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * An internal helper function to diffuseLight. Sets diffuse lighting.
-    * Color channels will be submitted to color calculation.
+    * An internal helper function to ambientLight. Sets ambient lighting. The
+    * color will be submitted to color calculation.
     *
     * @param num the index
     * @param clr the color
     */
-   protected void lightDiffuse ( final int num, final Color clr ) {
+   protected void lightAmbient ( final int num, final Rgb clr ) {
 
       this.colorCalc(clr);
 
       final int num3 = num + num + num;
-      this.lightDiffuse[num3] = this.calcR;
-      this.lightDiffuse[num3 + 1] = this.calcG;
-      this.lightDiffuse[num3 + 2] = this.calcB;
+      this.lightAmbient[num3] = this.calcR;
+      this.lightAmbient[num3 + 1] = this.calcG;
+      this.lightAmbient[num3 + 2] = this.calcB;
    }
 
    /**
@@ -3833,6 +3816,23 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    protected void lightDiffuse ( final int num, final int clr ) {
 
       this.colorCalc(clr, false);
+
+      final int num3 = num + num + num;
+      this.lightDiffuse[num3] = this.calcR;
+      this.lightDiffuse[num3 + 1] = this.calcG;
+      this.lightDiffuse[num3 + 2] = this.calcB;
+   }
+
+   /**
+    * An internal helper function to diffuseLight. Sets diffuse lighting.
+    * Color channels will be submitted to color calculation.
+    *
+    * @param num the index
+    * @param clr the color
+    */
+   protected void lightDiffuse ( final int num, final Rgb clr ) {
+
+      this.colorCalc(clr);
 
       final int num3 = num + num + num;
       this.lightDiffuse[num3] = this.calcR;
@@ -4172,56 +4172,49 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       float a1;
       float b1;
 
-      float w;
-      float h;
-
       switch ( this.rectMode ) {
 
-         case PConstants.CORNER: /* 0 */
-
-            w = Utils.abs(x1);
-            h = Utils.abs(y1);
+         case PConstants.CORNER: { /* 0 */
+            final float w = Utils.abs(x1);
+            final float h = Utils.abs(y1);
 
             a0 = x0;
             b0 = y0 - h;
             a1 = x0 + w;
             b1 = y0;
-
+         }
             break;
 
-         case PConstants.CORNERS: /* 1 */
-
+         case PConstants.CORNERS: { /* 1 */
             a0 = Utils.min(x0, x1);
             a1 = Utils.max(x0, x1);
-
             b0 = Utils.min(y0, y1);
             b1 = Utils.max(y0, y1);
-
+         }
             break;
 
-         case PConstants.RADIUS: /* 2 */
-
-            w = Utils.abs(x1);
-            h = Utils.abs(y1);
+         case PConstants.RADIUS: { /* 2 */
+            final float w = Utils.abs(x1);
+            final float h = Utils.abs(y1);
 
             a0 = x0 - w;
             a1 = x0 + w;
             b0 = y0 + h;
             b1 = y0 - h;
-
+         }
             break;
 
          case PConstants.CENTER: /* 3 */
 
-         default:
-
-            w = Utils.abs(x1) * 0.5f;
-            h = Utils.abs(y1) * 0.5f;
+         default: {
+            final float w = Utils.abs(x1) * 0.5f;
+            final float h = Utils.abs(y1) * 0.5f;
 
             a0 = x0 - w;
             a1 = x0 + w;
             b0 = y0 + h;
             b1 = y0 - h;
+         }
       }
 
       this.beginShape(PConstants.POLYGON);

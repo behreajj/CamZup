@@ -5,8 +5,8 @@ Yup2 main;
 Yup2 buff;
 ZShader linearGradient;
 
-Color aColor = Color.fromHex(0xff003fff, new Color());
-Color bColor = Color.fromHex(0xff3fff7f, new Color());
+Rgb aColor = Rgb.fromHex(0xff003fff, new Rgb());
+Rgb bColor = Rgb.fromHex(0xff3fff7f, new Rgb());
 Vec2 origin = new Vec2();
 Vec2 dest = new Vec2();
 

@@ -9,7 +9,7 @@ PImage target;
 
 Yup2 graphics;
 Gradient lcd = Gradient.paletteViridis(new Gradient());
-Color.AbstrEasing mix = new Color.MixSrgb();
+Rgb.AbstrEasing mix = new Rgb.MixSrgb();
 Pixels.MapLuminance map = new Pixels.MapLuminance();
 
 void settings() {

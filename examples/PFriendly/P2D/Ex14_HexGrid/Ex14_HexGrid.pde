@@ -37,7 +37,7 @@ void setup() {
     material.setStrokeWeight(0.5f);
     material.setStroke(0xffffffff);
     Gradient.eval(gradient, fac, material.fill);
-    material.name = Color.toHexString(material.fill);
+    material.name = Rgb.toHexString(material.fill);
     materials[i] = material;
 
     if (i % 3 == 2) {

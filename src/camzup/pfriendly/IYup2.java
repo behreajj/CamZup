@@ -1,7 +1,6 @@
 package camzup.pfriendly;
 
 import camzup.core.Bounds2;
-import camzup.core.Color;
 import camzup.core.CurveEntity2;
 import camzup.core.ISvgWritable;
 import camzup.core.IUtils;
@@ -9,6 +8,7 @@ import camzup.core.MaterialSolid;
 import camzup.core.MeshEntity2;
 import camzup.core.Quadtree;
 import camzup.core.Ray2;
+import camzup.core.Rgb;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.core.PApplet;
@@ -1159,7 +1159,7 @@ public interface IYup2 extends IUp {
     *
     * @see IYup2#getWidth()
     * @see IYup2#getHeight()
-    * @see Color#toHexWeb(StringBuilder, int)
+    * @see Rgb#toHexWeb(StringBuilder, int)
     * @see IYup2#getBackground()
     */
    static String svgBackground ( final IYup2 renderer ) {
@@ -1191,7 +1191,7 @@ public interface IYup2 extends IUp {
                ISvgWritable.FIXED_PRINT));
          }
          svgp.append("\" fill=\"");
-         Color.toHexWeb(svgp, bgClr);
+         Rgb.toHexWeb(svgp, bgClr);
          svgp.append("\" />");
          return svgp.toString();
       }

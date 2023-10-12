@@ -2,9 +2,9 @@ package camzup.pfriendly;
 
 import java.net.URL;
 
-import camzup.core.Color;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
+import camzup.core.Rgb;
 import camzup.core.Vec2;
 import camzup.core.Vec3;
 import camzup.core.Vec4;
@@ -71,19 +71,6 @@ public class ZShader extends PShader {
    }
 
    /**
-    * Sets a GLSL vec4 uniform to a color. The alpha channel is treated as the
-    * w component.
-    *
-    * @param name the uniform name
-    * @param c    the color
-    */
-   public void set ( final String name, final Color c ) {
-
-      this.setUniformImpl(name, ZShader.VEC4_IDX, new float[] { c.r, c.g, c.b,
-         c.a });
-   }
-
-   /**
     * Sets a GLSL mat3 uniform to a Mat3.
     *
     * @param name the uniform name
@@ -103,6 +90,19 @@ public class ZShader extends PShader {
    public void set ( final String name, final Mat4 m ) {
 
       this.setUniformImpl(name, ZShader.MAT4_IDX, m.toArray1());
+   }
+
+   /**
+    * Sets a GLSL vec4 uniform to a color. The alpha channel is treated as the
+    * w component.
+    *
+    * @param name the uniform name
+    * @param c    the color
+    */
+   public void set ( final String name, final Rgb c ) {
+
+      this.setUniformImpl(name, ZShader.VEC4_IDX, new float[] { c.r, c.g, c.b,
+         c.alpha });
    }
 
    /**

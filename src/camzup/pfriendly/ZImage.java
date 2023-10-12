@@ -4,18 +4,18 @@ import java.util.Arrays;
 import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 
-import camzup.core.Color;
 import camzup.core.Gradient;
 import camzup.core.IUtils;
+import camzup.core.Lch;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
 import camzup.core.Pixels;
 import camzup.core.Pixels.MapLuminance;
 import camzup.core.PolyType;
+import camzup.core.Rgb;
 import camzup.core.Utils;
 import camzup.core.Utils.TriFunction;
 import camzup.core.Vec2;
-import camzup.core.Vec4;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
@@ -355,9 +355,9 @@ public class ZImage extends PImage {
     *
     * @return the adjusted image
     *
-    * @see Pixels#adjustLch(int[], Vec4, int[])
+    * @see Pixels#adjustLch(int[], Lch, int[])
     */
-   public static PImage adjustLch ( final PImage source, final Vec4 adjust,
+   public static PImage adjustLch ( final PImage source, final Lch adjust,
       final PImage target ) {
 
       if ( source == target ) {
@@ -589,42 +589,6 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Creates a checker pattern in an array of pixels.
-    *
-    * @param a      the first color
-    * @param b      the second color
-    * @param cols   the column count
-    * @param rows   the row count
-    * @param target the target image
-    *
-    * @return the checker pattern
-    *
-    * @see Color#toHexIntSat(Color)
-    */
-   public static PImage checker ( final Color a, final Color b, final int cols,
-      final int rows, final PImage target ) {
-
-      return ZImage.checker(Color.toHexIntSat(a), Color.toHexIntSat(b), cols,
-         rows, target);
-   }
-
-   /**
-    * Creates a checker pattern in an array of pixels.
-    *
-    * @param a      the first color
-    * @param b      the second color
-    * @param count  the count
-    * @param target the target image
-    *
-    * @return the checker pattern
-    */
-   public static PImage checker ( final Color a, final Color b, final int count,
-      final PImage target ) {
-
-      return ZImage.checker(a, b, count, count, target);
-   }
-
-   /**
     * Creates a checker pattern in an array of pixels. Columns and rows are
     * not automatically adjusted for pixel density.
     *
@@ -682,6 +646,42 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Creates a checker pattern in an array of pixels.
+    *
+    * @param a      the first color
+    * @param b      the second color
+    * @param cols   the column count
+    * @param rows   the row count
+    * @param target the target image
+    *
+    * @return the checker pattern
+    *
+    * @see Rgb#toHexIntSat(Rgb)
+    */
+   public static PImage checker ( final Rgb a, final Rgb b, final int cols,
+      final int rows, final PImage target ) {
+
+      return ZImage.checker(Rgb.toHexIntSat(a), Rgb.toHexIntSat(b), cols, rows,
+         target);
+   }
+
+   /**
+    * Creates a checker pattern in an array of pixels.
+    *
+    * @param a      the first color
+    * @param b      the second color
+    * @param count  the count
+    * @param target the target image
+    *
+    * @return the checker pattern
+    */
+   public static PImage checker ( final Rgb a, final Rgb b, final int count,
+      final PImage target ) {
+
+      return ZImage.checker(a, b, count, count, target);
+   }
+
+   /**
     * Copies a source image's pixels and properties to a target. If the target
     * is a {@link PGraphics}, then wraps the source image without changing the
     * target's dimensions.
@@ -726,21 +726,6 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Fills an image in place with a color.
-    *
-    * @param target the target image
-    * @param c      the fill color
-    *
-    * @return the image
-    *
-    * @see Color#toHexIntSat(Color)
-    */
-   public static PImage fill ( final Color c, final PImage target ) {
-
-      return ZImage.fill(Color.toHexIntSat(c), target);
-   }
-
-   /**
     * Fills an image with a color in place. The color is expected to be a
     * 32-bit color integer.
     *
@@ -759,6 +744,21 @@ public class ZImage extends PImage {
       target.updatePixels();
 
       return target;
+   }
+
+   /**
+    * Fills an image in place with a color.
+    *
+    * @param target the target image
+    * @param c      the fill color
+    *
+    * @return the image
+    *
+    * @see Rgb#toHexIntSat(Rgb)
+    */
+   public static PImage fill ( final Rgb c, final PImage target ) {
+
+      return ZImage.fill(Rgb.toHexIntSat(c), target);
    }
 
    /**
@@ -900,93 +900,6 @@ public class ZImage extends PImage {
 
       return ZImage.fromText(font, text, 0xffffffff, ZImage.DEFAULT_LEADING,
          ZImage.DEFAULT_KERNING, ZImage.DEFAULT_ALIGN);
-   }
-
-   /**
-    * Blits glyph images from a {@link PFont} onto a single image. <br>
-    * Images created with this method do not have a reference to a parent
-    * PApplet.
-    *
-    * @param font    the Processing font
-    * @param text    the string of text
-    * @param fillClr the color
-    *
-    * @return the new image
-    */
-   public static PImage fromText ( final PFont font, final String text,
-      final Color fillClr ) {
-
-      return ZImage.fromText(font, text, Color.toHexIntSat(fillClr));
-   }
-
-   /**
-    * Blits glyph images from a {@link PFont} onto a single image. The leading
-    * and is measured in pixels; negative values are not allowed.<br>
-    * <br>
-    * Images created with this method do not have a reference to a parent
-    * PApplet.
-    *
-    * @param font    the Processing font
-    * @param text    the string of text
-    * @param fillClr the color
-    * @param leading spacing between lines
-    *
-    * @return the new image
-    */
-   public static PImage fromText ( final PFont font, final String text,
-      final Color fillClr, final int leading ) {
-
-      return ZImage.fromText(font, text, Color.toHexIntSat(fillClr), leading);
-   }
-
-   /**
-    * Blits glyph images from a {@link PFont} onto a single image. The leading
-    * and kerning are measured in pixels; negative values are not allowed<br>
-    * <br>
-    * Images created with this method do not have a reference to a parent
-    * PApplet.
-    *
-    * @param font    the Processing font
-    * @param text    the string of text
-    * @param fillClr the color
-    * @param leading spacing between lines
-    * @param kerning spacing between characters
-    *
-    * @return the new image
-    */
-   public static PImage fromText ( final PFont font, final String text,
-      final Color fillClr, final int leading, final int kerning ) {
-
-      return ZImage.fromText(font, text, Color.toHexIntSat(fillClr), leading,
-         kerning);
-   }
-
-   /**
-    * Blits glyph images from a {@link PFont} onto a single image. The leading
-    * and kerning are measured in pixels; negative values are not allowed. The
-    * horizontal text alignment may be either center {@link PConstants#CENTER}
-    * ( {@value PConstants#CENTER} ), right {@link PConstants#RIGHT} (
-    * {@value PConstants#RIGHT} ) or left {@link PConstants#LEFT} (
-    * {@value PConstants#LEFT} ).<br>
-    * <br>
-    * Images created with this method do not have a reference to a parent
-    * PApplet.
-    *
-    * @param font      the Processing font
-    * @param text      the string of text
-    * @param fillClr   the color
-    * @param leading   spacing between lines
-    * @param kerning   spacing between characters
-    * @param textAlign the horizontal alignment
-    *
-    * @return the new image
-    */
-   public static PImage fromText ( final PFont font, final String text,
-      final Color fillClr, final int leading, final int kerning,
-      final int textAlign ) {
-
-      return ZImage.fromText(font, text, Color.toHexIntSat(fillClr), leading,
-         kerning, textAlign);
    }
 
    /**
@@ -1300,6 +1213,93 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Blits glyph images from a {@link PFont} onto a single image. <br>
+    * Images created with this method do not have a reference to a parent
+    * PApplet.
+    *
+    * @param font    the Processing font
+    * @param text    the string of text
+    * @param fillClr the color
+    *
+    * @return the new image
+    */
+   public static PImage fromText ( final PFont font, final String text,
+      final Rgb fillClr ) {
+
+      return ZImage.fromText(font, text, Rgb.toHexIntSat(fillClr));
+   }
+
+   /**
+    * Blits glyph images from a {@link PFont} onto a single image. The leading
+    * and is measured in pixels; negative values are not allowed.<br>
+    * <br>
+    * Images created with this method do not have a reference to a parent
+    * PApplet.
+    *
+    * @param font    the Processing font
+    * @param text    the string of text
+    * @param fillClr the color
+    * @param leading spacing between lines
+    *
+    * @return the new image
+    */
+   public static PImage fromText ( final PFont font, final String text,
+      final Rgb fillClr, final int leading ) {
+
+      return ZImage.fromText(font, text, Rgb.toHexIntSat(fillClr), leading);
+   }
+
+   /**
+    * Blits glyph images from a {@link PFont} onto a single image. The leading
+    * and kerning are measured in pixels; negative values are not allowed<br>
+    * <br>
+    * Images created with this method do not have a reference to a parent
+    * PApplet.
+    *
+    * @param font    the Processing font
+    * @param text    the string of text
+    * @param fillClr the color
+    * @param leading spacing between lines
+    * @param kerning spacing between characters
+    *
+    * @return the new image
+    */
+   public static PImage fromText ( final PFont font, final String text,
+      final Rgb fillClr, final int leading, final int kerning ) {
+
+      return ZImage.fromText(font, text, Rgb.toHexIntSat(fillClr), leading,
+         kerning);
+   }
+
+   /**
+    * Blits glyph images from a {@link PFont} onto a single image. The leading
+    * and kerning are measured in pixels; negative values are not allowed. The
+    * horizontal text alignment may be either center {@link PConstants#CENTER}
+    * ( {@value PConstants#CENTER} ), right {@link PConstants#RIGHT} (
+    * {@value PConstants#RIGHT} ) or left {@link PConstants#LEFT} (
+    * {@value PConstants#LEFT} ).<br>
+    * <br>
+    * Images created with this method do not have a reference to a parent
+    * PApplet.
+    *
+    * @param font      the Processing font
+    * @param text      the string of text
+    * @param fillClr   the color
+    * @param leading   spacing between lines
+    * @param kerning   spacing between characters
+    * @param textAlign the horizontal alignment
+    *
+    * @return the new image
+    */
+   public static PImage fromText ( final PFont font, final String text,
+      final Rgb fillClr, final int leading, final int kerning,
+      final int textAlign ) {
+
+      return ZImage.fromText(font, text, Rgb.toHexIntSat(fillClr), leading,
+         kerning, textAlign);
+   }
+
+   /**
     * Gets an image's size.
     *
     * @param image  the image
@@ -1310,53 +1310,6 @@ public class ZImage extends PImage {
    public static Vec2 getSize ( final PImage image, final Vec2 target ) {
 
       return target.set(image.width, image.height);
-   }
-
-   /**
-    * Generates a conic gradient, where the factor rotates on the z axis
-    * around an origin point.
-    *
-    * @param grd    the gradient
-    * @param easing the easing function
-    * @param target the target image
-    *
-    * @return the conic gradient
-    */
-   public static PImage gradientConic ( final Gradient grd,
-      final Color.AbstrEasing easing, final PImage target ) {
-
-      return ZImage.gradientConic(grd, 0.0f, 0.0f, IUtils.HALF_PI, easing,
-         target);
-   }
-
-   /**
-    * Generates a conic gradient, where the factor rotates on the z axis
-    * around an origin point. Best used with square images; for other aspect
-    * ratios, the origin should be adjusted accordingly.
-    *
-    * @param grd     the gradient
-    * @param xOrig   the origin x coordinate
-    * @param yOrig   the origin y coordinate
-    * @param radians the angle in radians
-    * @param easing  the easing function
-    * @param target  the target image
-    *
-    * @return the conic gradient
-    *
-    * @see Pixels#gradientConic(Gradient, float, float, float,
-    *      Color.AbstrEasing, int, int, int[])
-    */
-   public static PImage gradientConic ( final Gradient grd, final float xOrig,
-      final float yOrig, final float radians, final Color.AbstrEasing easing,
-      final PImage target ) {
-
-      target.loadPixels();
-      Pixels.gradientConic(grd, xOrig, yOrig, radians, easing,
-         target.pixelWidth, target.pixelHeight, target.pixels);
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-
-      return target;
    }
 
    /**
@@ -1375,8 +1328,38 @@ public class ZImage extends PImage {
    public static PImage gradientConic ( final Gradient grd, final float xOrig,
       final float yOrig, final float radians, final PImage target ) {
 
-      return ZImage.gradientConic(grd, xOrig, yOrig, radians,
-         new Color.MixSrgb(), target);
+      return ZImage.gradientConic(grd, xOrig, yOrig, radians, new Rgb.MixSrgb(),
+         target);
+   }
+
+   /**
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point. Best used with square images; for other aspect
+    * ratios, the origin should be adjusted accordingly.
+    *
+    * @param grd     the gradient
+    * @param xOrig   the origin x coordinate
+    * @param yOrig   the origin y coordinate
+    * @param radians the angle in radians
+    * @param easing  the easing function
+    * @param target  the target image
+    *
+    * @return the conic gradient
+    *
+    * @see Pixels#gradientConic(Gradient, float, float, float,
+    *      Rgb.AbstrEasing, int, int, int[])
+    */
+   public static PImage gradientConic ( final Gradient grd, final float xOrig,
+      final float yOrig, final float radians, final Rgb.AbstrEasing easing,
+      final PImage target ) {
+
+      target.loadPixels();
+      Pixels.gradientConic(grd, xOrig, yOrig, radians, easing,
+         target.pixelWidth, target.pixelHeight, target.pixels);
+      target.format = PConstants.ARGB;
+      target.updatePixels();
+
+      return target;
    }
 
    /**
@@ -1396,25 +1379,19 @@ public class ZImage extends PImage {
 
    /**
     * Generates a conic gradient, where the factor rotates on the z axis
-    * around an origin point. Best used with square images; for other aspect
-    * ratios, the origin should be adjusted accordingly.
+    * around an origin point.
     *
-    * @param grd     the gradient
-    * @param orig    the origin
-    * @param radians the angle in radians
-    * @param easing  the easing function
-    * @param target  the target image
+    * @param grd    the gradient
+    * @param easing the easing function
+    * @param target the target image
     *
     * @return the conic gradient
-    *
-    * @see Pixels#gradientConic(Gradient, float, float, float,
-    *      Color.AbstrEasing, int, int, int[])
     */
-   public static PImage gradientConic ( final Gradient grd, final Vec2 orig,
-      final float radians, final Color.AbstrEasing easing,
-      final PImage target ) {
+   public static PImage gradientConic ( final Gradient grd,
+      final Rgb.AbstrEasing easing, final PImage target ) {
 
-      return ZImage.gradientConic(grd, orig.x, orig.y, radians, easing, target);
+      return ZImage.gradientConic(grd, 0.0f, 0.0f, IUtils.HALF_PI, easing,
+         target);
    }
 
    /**
@@ -1436,51 +1413,25 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Generates a linear gradient from an origin point to a destination point.
-    * The scalar projection is clamped to [0.0, 1.0].
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point. Best used with square images; for other aspect
+    * ratios, the origin should be adjusted accordingly.
     *
-    * @param grd    the gradient
-    * @param easing the easing function
-    * @param target the target image
+    * @param grd     the gradient
+    * @param orig    the origin
+    * @param radians the angle in radians
+    * @param easing  the easing function
+    * @param target  the target image
     *
-    * @return the linear gradient
+    * @return the conic gradient
+    *
+    * @see Pixels#gradientConic(Gradient, float, float, float,
+    *      Rgb.AbstrEasing, int, int, int[])
     */
-   public static PImage gradientLinear ( final Gradient grd,
-      final Color.AbstrEasing easing, final PImage target ) {
+   public static PImage gradientConic ( final Gradient grd, final Vec2 orig,
+      final float radians, final Rgb.AbstrEasing easing, final PImage target ) {
 
-      return ZImage.gradientLinear(grd, -1.0f, 0.0f, 1.0f, 0.0f, easing,
-         target);
-   }
-
-   /**
-    * Generates a linear gradient from an origin point to a destination point.
-    * The origin and destination should be in the range [-1.0, 1.0]. The
-    * scalar projection is clamped to [0.0, 1.0].
-    *
-    * @param grd    the gradient
-    * @param xOrig  the origin x coordinate
-    * @param yOrig  the origin y coordinate
-    * @param xDest  the destination x coordinate
-    * @param yDest  the destination y coordinate@param easing
-    * @param easing the easing function
-    * @param target the target image
-    *
-    * @return the linear gradient
-    *
-    * @see Pixels#gradientLinear(Gradient, float, float, float, float,
-    *      Color.AbstrEasing, int, int, int[])
-    */
-   public static PImage gradientLinear ( final Gradient grd, final float xOrig,
-      final float yOrig, final float xDest, final float yDest,
-      final Color.AbstrEasing easing, final PImage target ) {
-
-      target.loadPixels();
-      Pixels.gradientLinear(grd, xOrig, yOrig, xDest, yDest, easing,
-         target.pixelWidth, target.pixelHeight, target.pixels);
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-
-      return target;
+      return ZImage.gradientConic(grd, orig.x, orig.y, radians, easing, target);
    }
 
    /**
@@ -1502,7 +1453,38 @@ public class ZImage extends PImage {
       final PImage target ) {
 
       return ZImage.gradientLinear(grd, xOrig, yOrig, xDest, yDest,
-         new Color.MixSrgb(), target);
+         new Rgb.MixSrgb(), target);
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The origin and destination should be in the range [-1.0, 1.0]. The
+    * scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param xOrig  the origin x coordinate
+    * @param yOrig  the origin y coordinate
+    * @param xDest  the destination x coordinate
+    * @param yDest  the destination y coordinate@param easing
+    * @param easing the easing function
+    * @param target the target image
+    *
+    * @return the linear gradient
+    *
+    * @see Pixels#gradientLinear(Gradient, float, float, float, float,
+    *      Rgb.AbstrEasing, int, int, int[])
+    */
+   public static PImage gradientLinear ( final Gradient grd, final float xOrig,
+      final float yOrig, final float xDest, final float yDest,
+      final Rgb.AbstrEasing easing, final PImage target ) {
+
+      target.loadPixels();
+      Pixels.gradientLinear(grd, xOrig, yOrig, xDest, yDest, easing,
+         target.pixelWidth, target.pixelHeight, target.pixels);
+      target.format = PConstants.ARGB;
+      target.updatePixels();
+
+      return target;
    }
 
    /**
@@ -1522,21 +1504,18 @@ public class ZImage extends PImage {
 
    /**
     * Generates a linear gradient from an origin point to a destination point.
-    * The origin and destination should be in the range [-1.0, 1.0]. The
-    * scalar projection is clamped to [0.0, 1.0].
+    * The scalar projection is clamped to [0.0, 1.0].
     *
     * @param grd    the gradient
-    * @param orig   the origin
-    * @param dest   the destination
     * @param easing the easing function
     * @param target the target image
     *
     * @return the linear gradient
     */
-   public static PImage gradientLinear ( final Gradient grd, final Vec2 orig,
-      final Vec2 dest, final Color.AbstrEasing easing, final PImage target ) {
+   public static PImage gradientLinear ( final Gradient grd,
+      final Rgb.AbstrEasing easing, final PImage target ) {
 
-      return ZImage.gradientLinear(grd, orig.x, orig.y, dest.x, dest.y, easing,
+      return ZImage.gradientLinear(grd, -1.0f, 0.0f, 1.0f, 0.0f, easing,
          target);
    }
 
@@ -1559,6 +1538,43 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The origin and destination should be in the range [-1.0, 1.0]. The
+    * scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param orig   the origin
+    * @param dest   the destination
+    * @param easing the easing function
+    * @param target the target image
+    *
+    * @return the linear gradient
+    */
+   public static PImage gradientLinear ( final Gradient grd, final Vec2 orig,
+      final Vec2 dest, final Rgb.AbstrEasing easing, final PImage target ) {
+
+      return ZImage.gradientLinear(grd, orig.x, orig.y, dest.x, dest.y, easing,
+         target);
+   }
+
+   /**
+    * Maps the colors of a source image to a gradient using a mapping
+    * function. Defaults to using the source image's perceptual luminance as
+    * an input factor to the gradient evaluation.
+    *
+    * @param source the source pixels
+    * @param grd    the gradient
+    * @param target the target pixels
+    *
+    * @return the mapped pixels
+    */
+   public static PImage gradientMap ( final PImage source, final Gradient grd,
+      final PImage target ) {
+
+      return ZImage.gradientMap(source, grd, new Rgb.MixSrgb(), target);
+   }
+
+   /**
     * Maps the colors of a source image to a gradient using a mapping
     * function. The mapping function accepts a pixel as an argument and
     * returns a factor to be given to a gradient evaluation method.
@@ -1571,11 +1587,11 @@ public class ZImage extends PImage {
     *
     * @return the mapped pixels
     *
-    * @see Pixels#gradientMap(int[], Gradient, Color.AbstrEasing, IntFunction,
+    * @see Pixels#gradientMap(int[], Gradient, Rgb.AbstrEasing, IntFunction,
     *      int[])
     */
    public static PImage gradientMap ( final PImage source, final Gradient grd,
-      final Color.AbstrEasing easing, final IntFunction < Float > map,
+      final Rgb.AbstrEasing easing, final IntFunction < Float > map,
       final PImage target ) {
 
       if ( source == target ) {
@@ -1619,72 +1635,10 @@ public class ZImage extends PImage {
     * @return the mapped pixels
     */
    public static PImage gradientMap ( final PImage source, final Gradient grd,
-      final Color.AbstrEasing easing, final PImage target ) {
+      final Rgb.AbstrEasing easing, final PImage target ) {
 
       return ZImage.gradientMap(source, grd, easing, new MapLuminance(),
          target);
-   }
-
-   /**
-    * Maps the colors of a source image to a gradient using a mapping
-    * function. Defaults to using the source image's perceptual luminance as
-    * an input factor to the gradient evaluation.
-    *
-    * @param source the source pixels
-    * @param grd    the gradient
-    * @param target the target pixels
-    *
-    * @return the mapped pixels
-    */
-   public static PImage gradientMap ( final PImage source, final Gradient grd,
-      final PImage target ) {
-
-      return ZImage.gradientMap(source, grd, new Color.MixSrgb(), target);
-   }
-
-   /**
-    * Generates a radial gradient from an origin point.
-    *
-    * @param grd    the gradient
-    * @param easing the easing function
-    * @param target the target pixels
-    *
-    * @return the radial gradient
-    */
-   public static PImage gradientRadial ( final Gradient grd,
-      final Color.AbstrEasing easing, final PImage target ) {
-
-      return ZImage.gradientRadial(grd, 0.0f, 0.0f, 0.5f, easing, target);
-   }
-
-   /**
-    * Generates a radial gradient from an origin point. The origin should be
-    * in the range [-1.0, 1.0]. Does not account for aspect ratio, so an image
-    * that isn't 1:1 will result in an ellipsoid.
-    *
-    * @param grd    the gradient
-    * @param xOrig  the origin x coordinate
-    * @param yOrig  the origin y coordinate
-    * @param radius the radius
-    * @param easing the easing function
-    * @param target the target pixels
-    *
-    * @return the radial gradient
-    *
-    * @see Pixels#gradientRadial(Gradient, float, float, float,
-    *      Color.AbstrEasing, int, int, int[])
-    */
-   public static PImage gradientRadial ( final Gradient grd, final float xOrig,
-      final float yOrig, final float radius, final Color.AbstrEasing easing,
-      final PImage target ) {
-
-      target.loadPixels();
-      Pixels.gradientRadial(grd, xOrig, yOrig, radius, easing,
-         target.pixelWidth, target.pixelHeight, target.pixels);
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-
-      return target;
    }
 
    /**
@@ -1703,8 +1657,38 @@ public class ZImage extends PImage {
    public static PImage gradientRadial ( final Gradient grd, final float xOrig,
       final float yOrig, final float radius, final PImage target ) {
 
-      return ZImage.gradientRadial(grd, xOrig, yOrig, radius,
-         new Color.MixSrgb(), target);
+      return ZImage.gradientRadial(grd, xOrig, yOrig, radius, new Rgb.MixSrgb(),
+         target);
+   }
+
+   /**
+    * Generates a radial gradient from an origin point. The origin should be
+    * in the range [-1.0, 1.0]. Does not account for aspect ratio, so an image
+    * that isn't 1:1 will result in an ellipsoid.
+    *
+    * @param grd    the gradient
+    * @param xOrig  the origin x coordinate
+    * @param yOrig  the origin y coordinate
+    * @param radius the radius
+    * @param easing the easing function
+    * @param target the target pixels
+    *
+    * @return the radial gradient
+    *
+    * @see Pixels#gradientRadial(Gradient, float, float, float,
+    *      Rgb.AbstrEasing, int, int, int[])
+    */
+   public static PImage gradientRadial ( final Gradient grd, final float xOrig,
+      final float yOrig, final float radius, final Rgb.AbstrEasing easing,
+      final PImage target ) {
+
+      target.loadPixels();
+      Pixels.gradientRadial(grd, xOrig, yOrig, radius, easing,
+         target.pixelWidth, target.pixelHeight, target.pixels);
+      target.format = PConstants.ARGB;
+      target.updatePixels();
+
+      return target;
    }
 
    /**
@@ -1722,23 +1706,18 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Generates a radial gradient from an origin point. The origin should be
-    * in the range [-1.0, 1.0]. Does not account for aspect ratio, so an image
-    * that isn't 1:1 will result in an ellipsoid.
+    * Generates a radial gradient from an origin point.
     *
     * @param grd    the gradient
-    * @param orig   the origin
-    * @param radius the radius
     * @param easing the easing function
     * @param target the target pixels
     *
     * @return the radial gradient
     */
-   public static PImage gradientRadial ( final Gradient grd, final Vec2 orig,
-      final float radius, final Color.AbstrEasing easing,
-      final PImage target ) {
+   public static PImage gradientRadial ( final Gradient grd,
+      final Rgb.AbstrEasing easing, final PImage target ) {
 
-      return ZImage.gradientRadial(grd, orig.x, orig.y, radius, easing, target);
+      return ZImage.gradientRadial(grd, 0.0f, 0.0f, 0.5f, easing, target);
    }
 
    /**
@@ -1757,6 +1736,25 @@ public class ZImage extends PImage {
       final float radius, final PImage target ) {
 
       return ZImage.gradientRadial(grd, orig.x, orig.y, radius, target);
+   }
+
+   /**
+    * Generates a radial gradient from an origin point. The origin should be
+    * in the range [-1.0, 1.0]. Does not account for aspect ratio, so an image
+    * that isn't 1:1 will result in an ellipsoid.
+    *
+    * @param grd    the gradient
+    * @param orig   the origin
+    * @param radius the radius
+    * @param easing the easing function
+    * @param target the target pixels
+    *
+    * @return the radial gradient
+    */
+   public static PImage gradientRadial ( final Gradient grd, final Vec2 orig,
+      final float radius, final Rgb.AbstrEasing easing, final PImage target ) {
+
+      return ZImage.gradientRadial(grd, orig.x, orig.y, radius, easing, target);
    }
 
    /**
@@ -2262,7 +2260,7 @@ public class ZImage extends PImage {
     *
     * @return the color array
     */
-   public static Color[] paletteExtract ( final PImage source,
+   public static Rgb[] paletteExtract ( final PImage source,
       final int capacity ) {
 
       return ZImage.paletteExtract(source, capacity, 256);
@@ -2282,8 +2280,8 @@ public class ZImage extends PImage {
     *
     * @return the color array
     */
-   public static Color[] paletteExtract ( final PImage source,
-      final int capacity, final int threshold ) {
+   public static Rgb[] paletteExtract ( final PImage source, final int capacity,
+      final int threshold ) {
 
       source.loadPixels();
       return Pixels.paletteExtract(source.pixels, capacity, threshold);
@@ -2301,9 +2299,9 @@ public class ZImage extends PImage {
     *
     * @return the mapped image
     *
-    * @see Pixels#paletteMap(int[], Color[], int, float, int[])
+    * @see Pixels#paletteMap(int[], Rgb[], int, float, int[])
     */
-   public static PImage paletteMap ( final PImage source, final Color[] palette,
+   public static PImage paletteMap ( final PImage source, final Rgb[] palette,
       final int capacity, final float radius, final PImage target ) {
 
       if ( source == target ) {
@@ -2346,9 +2344,9 @@ public class ZImage extends PImage {
     *
     * @return the mapped image
     *
-    * @see Pixels#paletteMap(int[], Color[], int, float, int[])
+    * @see Pixels#paletteMap(int[], Rgb[], int, float, int[])
     */
-   public static PImage paletteMap ( final PImage source, final Color[] palette,
+   public static PImage paletteMap ( final PImage source, final Rgb[] palette,
       final int capacity, final PImage target ) {
 
       return ZImage.paletteMap(source, palette, capacity, 175.0f, target);
@@ -2364,9 +2362,9 @@ public class ZImage extends PImage {
     *
     * @return the mapped image
     *
-    * @see Pixels#paletteMap(int[], Color[], int, float, int[])
+    * @see Pixels#paletteMap(int[], Rgb[], int, float, int[])
     */
-   public static PImage paletteMap ( final PImage source, final Color[] palette,
+   public static PImage paletteMap ( final PImage source, final Rgb[] palette,
       final PImage target ) {
 
       return ZImage.paletteMap(source, palette, 256, 175.0f, target);
@@ -2976,87 +2974,6 @@ public class ZImage extends PImage {
     * @param target        the target image
     *
     * @return the tinted image
-    *
-    * @see Color#toHexIntSat(Color)
-    */
-   public static PImage tint ( final PImage source, final Color tint,
-      final float fac, final boolean preserveLight, final int toneFlag,
-      final PImage target ) {
-
-      return ZImage.tint(source, Color.toHexIntSat(tint), fac, preserveLight,
-         toneFlag, target);
-   }
-
-   /**
-    * Tints an image to a color by a factor. If the preserveLight flag is
-    * true, the source image's original lightness is retained.
-    *
-    * @param source        the source image
-    * @param tint          the tint color
-    * @param fac           the factor
-    * @param preserveLight the preserve light flag
-    * @param target        the target image
-    *
-    * @return the tinted image
-    *
-    * @see Color#toHexIntSat(Color)
-    */
-   public static PImage tint ( final PImage source, final Color tint,
-      final float fac, final boolean preserveLight, final PImage target ) {
-
-      return ZImage.tint(source, Color.toHexIntSat(tint), fac, preserveLight,
-         target);
-   }
-
-   /**
-    * Tints an image to a color by a factor.
-    *
-    * @param source the source image
-    * @param tint   the tint color
-    * @param fac    the factor
-    * @param target the target image
-    *
-    * @return the tinted image
-    *
-    * @see Color#toHexIntSat(Color)
-    */
-   public static PImage tint ( final PImage source, final Color tint,
-      final float fac, final PImage target ) {
-
-      return ZImage.tint(source, Color.toHexIntSat(tint), fac, target);
-   }
-
-   /**
-    * Tints an image to a color.
-    *
-    * @param source the source image
-    * @param tint   the tint color
-    * @param target the target image
-    *
-    * @return the tinted image
-    *
-    * @see Color#toHexIntSat(Color)
-    */
-   public static PImage tint ( final PImage source, final Color tint,
-      final PImage target ) {
-
-      return ZImage.tint(source, Color.toHexIntSat(tint), target);
-   }
-
-   /**
-    * Tints an image to a color by a factor. If the preserveLight flag is
-    * true, the source image's original lightness is retained. The image's
-    * {@link Pixels#SHADOWS}, {@link Pixels#MIDTONES} and/or
-    * {@link Pixels#HIGHLIGHTS} may be targeted with an integer flag.
-    *
-    * @param source        the source image
-    * @param tint          the tint color
-    * @param fac           the factor
-    * @param preserveLight the preserve light flag
-    * @param toneFlag      the tone flags
-    * @param target        the target image
-    *
-    * @return the tinted image
     */
    public static PImage tint ( final PImage source, final int tint,
       final float fac, final boolean preserveLight, final int toneFlag,
@@ -3141,6 +3058,87 @@ public class ZImage extends PImage {
       final PImage target ) {
 
       return ZImage.tint(source, tint, 0.5f, target);
+   }
+
+   /**
+    * Tints an image to a color by a factor. If the preserveLight flag is
+    * true, the source image's original lightness is retained. The image's
+    * {@link Pixels#SHADOWS}, {@link Pixels#MIDTONES} and/or
+    * {@link Pixels#HIGHLIGHTS} may be targeted with an integer flag.
+    *
+    * @param source        the source image
+    * @param tint          the tint color
+    * @param fac           the factor
+    * @param preserveLight the preserve light flag
+    * @param toneFlag      the tone flags
+    * @param target        the target image
+    *
+    * @return the tinted image
+    *
+    * @see Rgb#toHexIntSat(Rgb)
+    */
+   public static PImage tint ( final PImage source, final Rgb tint,
+      final float fac, final boolean preserveLight, final int toneFlag,
+      final PImage target ) {
+
+      return ZImage.tint(source, Rgb.toHexIntSat(tint), fac, preserveLight,
+         toneFlag, target);
+   }
+
+   /**
+    * Tints an image to a color by a factor. If the preserveLight flag is
+    * true, the source image's original lightness is retained.
+    *
+    * @param source        the source image
+    * @param tint          the tint color
+    * @param fac           the factor
+    * @param preserveLight the preserve light flag
+    * @param target        the target image
+    *
+    * @return the tinted image
+    *
+    * @see Rgb#toHexIntSat(Rgb)
+    */
+   public static PImage tint ( final PImage source, final Rgb tint,
+      final float fac, final boolean preserveLight, final PImage target ) {
+
+      return ZImage.tint(source, Rgb.toHexIntSat(tint), fac, preserveLight,
+         target);
+   }
+
+   /**
+    * Tints an image to a color by a factor.
+    *
+    * @param source the source image
+    * @param tint   the tint color
+    * @param fac    the factor
+    * @param target the target image
+    *
+    * @return the tinted image
+    *
+    * @see Rgb#toHexIntSat(Rgb)
+    */
+   public static PImage tint ( final PImage source, final Rgb tint,
+      final float fac, final PImage target ) {
+
+      return ZImage.tint(source, Rgb.toHexIntSat(tint), fac, target);
+   }
+
+   /**
+    * Tints an image to a color.
+    *
+    * @param source the source image
+    * @param tint   the tint color
+    * @param target the target image
+    *
+    * @return the tinted image
+    *
+    * @see Rgb#toHexIntSat(Rgb)
+    */
+   public static PImage tint ( final PImage source, final Rgb tint,
+      final PImage target ) {
+
+      return ZImage.tint(source, Rgb.toHexIntSat(tint), target);
    }
 
    /**

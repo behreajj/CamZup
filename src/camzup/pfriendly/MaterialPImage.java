@@ -1,8 +1,8 @@
 package camzup.pfriendly;
 
-import camzup.core.Color;
 import camzup.core.IUtils;
 import camzup.core.MaterialUv;
+import camzup.core.Rgb;
 import camzup.core.Transform2;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -68,7 +68,7 @@ public class MaterialPImage extends MaterialUv {
     * @param tint      the fill or tint
     */
    public MaterialPImage ( final String name, final Transform2 transform,
-      final PImage texture, final Color tint ) {
+      final PImage texture, final Rgb tint ) {
 
       super(name, transform, tint);
       this.setTexture(texture);

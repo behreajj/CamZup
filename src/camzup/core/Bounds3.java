@@ -798,8 +798,8 @@ public class Bounds3 implements Comparable < Bounds3 > {
 
    /**
     * Returns a boundary encompassing the LAB color space, with a minimum at
-    * ({@value Color#A_MIN}, {@value Color#B_MIN}, 0.0) and a maximum at
-    * ({@value Color#A_MAX}, {@value Color#B_MAX}, 100.0).
+    * ({@value Lab#SR_A_MIN}, {@value Lab#SR_B_MIN}, 0.0) and a maximum at
+    * ({@value Lab#SR_A_MAX}, {@value Lab#SR_B_MAX}, 100.0).
     *
     * @param target the output bounds
     *
@@ -807,9 +807,9 @@ public class Bounds3 implements Comparable < Bounds3 > {
     */
    public static Bounds3 lab ( final Bounds3 target ) {
 
-      return target.set(Color.A_MIN - IUtils.EPSILON, Color.B_MIN
-         - IUtils.EPSILON, -IUtils.EPSILON, Color.A_MAX + IUtils.EPSILON,
-         Color.B_MAX + IUtils.EPSILON, 100.0f + IUtils.EPSILON);
+      return target.set(Lab.SR_A_MIN - IUtils.EPSILON, Lab.SR_B_MIN
+         - IUtils.EPSILON, -IUtils.EPSILON, Lab.SR_A_MAX + IUtils.EPSILON,
+         Lab.SR_B_MAX + IUtils.EPSILON, 100.0f + IUtils.EPSILON);
    }
 
    /**

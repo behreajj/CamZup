@@ -21,7 +21,7 @@ MaterialSolid infMat = new MaterialSolid()
 CurveEntity2[] dotEntities = new CurveEntity2[count];
 MaterialSolid[] dotMats = new MaterialSolid[count];
 
-Color.AbstrEasing mixer = new Color.MixSrgb();
+Rgb.AbstrEasing mixer = new Rgb.MixSrgb();
 Gradient grd = Gradient.paletteRyb(new Gradient());
 Ray2 local = new Ray2();
 Ray2 world = new Ray2();
@@ -52,7 +52,7 @@ void setup() {
     MaterialSolid dotMat = new MaterialSolid();
     dotMats[i] = dotMat;
     Gradient.eval(grd, prc, mixer, dotMat.fill);
-    dotMat.name = Color.toHexString(dotMat.fill);
+    dotMat.name = Rgb.toHexString(dotMat.fill);
   }
 }
 

@@ -7,11 +7,11 @@ YupJ2 buff;
 
 PImage fontImg;
 Image fontImgNtv;
-Color fontClr = Color.white(new Color());
+Rgb fontClr = Rgb.white(new Rgb());
 
 PImage shadowImg;
 Image shadowImgNtv;
-Color shadowClr = new Color(0.125f, 0.125f, 0.125f, 1.0f);
+Rgb shadowClr = new Rgb(0.125f, 0.125f, 0.125f, 1.0f);
 
 int pxPerGlyph = 8;
 

@@ -2,7 +2,7 @@ import camzup.core.*;
 import camzup.pfriendly.*;
 
 Zup3 graphics;
-Color clr = new Color(1.0f, 0.85f, 0.0f, 1.0f);
+Rgb clr = new Rgb(1.0f, 0.85f, 0.0f, 1.0f);
 String msg = "The Quick\nBrown Fox\nJumps Over\nThe Lazy Dog!";
 TextEntity3 te3;
 

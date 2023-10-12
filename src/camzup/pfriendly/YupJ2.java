@@ -1,6 +1,7 @@
 package camzup.pfriendly;
 
 import java.awt.BasicStroke;
+import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.Shape;
@@ -12,7 +13,6 @@ import java.awt.image.ImageObserver;
 import java.util.Iterator;
 
 import camzup.core.Bounds2;
-import camzup.core.Color;
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
 import camzup.core.Experimental;
@@ -25,6 +25,7 @@ import camzup.core.Mat4;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
 import camzup.core.MeshEntity2;
+import camzup.core.Rgb;
 import camzup.core.Transform2;
 import camzup.core.TransformOrder;
 import camzup.core.Utils;
@@ -333,19 +334,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Set the renderer's background color.
-    *
-    * @param c the color
-    */
-   @Override
-   public void background ( final Color c ) {
-
-      /* backgroundFromCalc calls backgroundImpl. */
-      this.colorCalc(c);
-      this.backgroundFromCalc();
-   }
-
-   /**
     * Sets the renderer background to an image.
     *
     * @param pimg the image
@@ -359,6 +347,19 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       } else {
          this.backgroundImpl(pimg);
       }
+   }
+
+   /**
+    * Set the renderer's background color.
+    *
+    * @param c the color
+    */
+   @Override
+   public void background ( final Rgb c ) {
+
+      /* backgroundFromCalc calls backgroundImpl. */
+      this.colorCalc(c);
+      this.backgroundFromCalc();
    }
 
    /**
@@ -906,7 +907,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param c the color
     */
    @Override
-   public void fill ( final camzup.core.Color c ) {
+   public void fill ( final camzup.core.Rgb c ) {
 
       this.colorCalc(c);
 
@@ -923,7 +924,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.fillColor = this.calcColor;
       this.fillAlpha = this.calcAlpha;
 
-      this.fillColorObject = new java.awt.Color(this.fillColor, true);
+      this.fillColorObject = new Color(this.fillColor, true);
       this.fillGradient = false;
    }
 
@@ -943,9 +944,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @return the background color
     */
    @Override
-   public Color getBackground ( final Color target ) {
+   public Rgb getBackground ( final Rgb target ) {
 
-      return Color.fromHex(this.backgroundColor, target);
+      return Rgb.fromHex(this.backgroundColor, target);
    }
 
    /**
@@ -1199,9 +1200,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          this.gp.reset();
          this.gp.moveTo(x + IUtils.EPSILON_D, y);
          this.gp.lineTo(x, y);
-         this.g2.setColor(new java.awt.Color(0xff000080 | ( int ) ( iPercent
-            * 0xff + 0.5f ) << 0x08 | ( int ) ( jPercent * 0xff + 0.5f )
-               << 0x10, true));
+         this.g2.setColor(new Color(0xff000080 | ( int ) ( iPercent * 0xff
+            + 0.5f ) << 0x08 | ( int ) ( jPercent * 0xff + 0.5f ) << 0x10,
+            true));
          this.g2.draw(this.gp);
       }
 
@@ -1258,10 +1259,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       final int coordColor ) {
 
       /* Cache stroke colors. */
-      final java.awt.Color lineClrAwt = new java.awt.Color(lineColor, true);
-      final java.awt.Color rearClrAwt = new java.awt.Color(rearColor, true);
-      final java.awt.Color foreClrAwt = new java.awt.Color(foreColor, true);
-      final java.awt.Color crdClrAwt = new java.awt.Color(coordColor, true);
+      final Color lineClrAwt = new Color(lineColor, true);
+      final Color rearClrAwt = new Color(rearColor, true);
+      final Color foreClrAwt = new Color(foreColor, true);
+      final Color crdClrAwt = new Color(coordColor, true);
 
       /* Cache stroke weights. */
       final BasicStroke swLine = new BasicStroke(sw, BasicStroke.CAP_ROUND,
@@ -1644,7 +1645,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Returns early if true.</li>
     * <li>Calls {@link YupJ2#convertPImageToNative(PImage)}.</li>
     * <li>Calls
-    * {@link Graphics2D#drawImage(Image, int, int, int, int, int, int, int, int, java.awt.Color, ImageObserver)}.</li>
+    * {@link Graphics2D#drawImage(Image, int, int, int, int, int, int, int, int, Color, ImageObserver)}.</li>
     * </ul>
     * This ignores Processing's tint, {@link PGraphics#imageMode} and
     * {@link PGraphics#textureMode}.
@@ -1794,7 +1795,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * {@link PApplet#draw()}.<br>
     * <br>
     * Calls
-    * {@link java.awt.Graphics2D#drawImage(Image, int, int, int, int, int, int, int, int, java.awt.Color, ImageObserver) }.
+    * {@link java.awt.Graphics2D#drawImage(Image, int, int, int, int, int, int, int, int, Color, ImageObserver) }.
     * Multiplies the display coordinates by the pixel density.<br>
     * <br>
     * Does not account for Processing's tint, {@link PGraphics#imageMode} or
@@ -1956,9 +1957,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.stroke = material.useStroke;
       if ( material.useStroke ) {
          this.strokeWeight(material.strokeWeight);
-         final camzup.core.Color coreStr = material.stroke;
-         this.strokeColorObject = new java.awt.Color(coreStr.r, coreStr.g,
-            coreStr.b, coreStr.a);
+         final camzup.core.Rgb coreStr = material.stroke;
+         this.strokeColorObject = new Color(coreStr.r, coreStr.g, coreStr.b,
+            coreStr.alpha);
       }
    }
 
@@ -1973,16 +1974,16 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.stroke = material.useStroke;
       if ( this.stroke ) {
          this.strokeWeight(material.strokeWeight);
-         final camzup.core.Color coreStr = material.stroke;
-         this.strokeColorObject = new java.awt.Color(coreStr.r, coreStr.g,
-            coreStr.b, coreStr.a);
+         final camzup.core.Rgb coreStr = material.stroke;
+         this.strokeColorObject = new Color(coreStr.r, coreStr.g, coreStr.b,
+            coreStr.alpha);
       }
 
       this.fill = material.useFill;
       if ( this.fill ) {
-         final camzup.core.Color coreFll = material.fill;
-         this.fillColorObject = new java.awt.Color(coreFll.r, coreFll.g,
-            coreFll.b, coreFll.a);
+         final camzup.core.Rgb coreFll = material.fill;
+         this.fillColorObject = new Color(coreFll.r, coreFll.g, coreFll.b,
+            coreFll.alpha);
       }
    }
 
@@ -2055,14 +2056,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.gp.reset();
       this.gp.moveTo(0.0d, 0.0d);
       this.gp.lineTo(vl, 0.0d);
-      this.g2.setColor(new java.awt.Color(xColor, true));
+      this.g2.setColor(new Color(xColor, true));
       this.g2.draw(this.gp);
 
       /* Draw y (forward) axis. */
       this.gp.reset();
       this.gp.moveTo(0.0d, 0.0d);
       this.gp.lineTo(0.0d, vl);
-      this.g2.setColor(new java.awt.Color(yColor, true));
+      this.g2.setColor(new Color(yColor, true));
       this.g2.draw(this.gp);
 
       super.popStyle();
@@ -2102,13 +2103,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.gp.reset();
       this.gp.moveTo(ox, oy);
       this.gp.lineTo(right.x, right.y);
-      this.g2.setColor(new java.awt.Color(xColor, true));
+      this.g2.setColor(new Color(xColor, true));
       this.g2.draw(this.gp);
 
       this.gp.reset();
       this.gp.moveTo(ox, oy);
       this.gp.lineTo(forward.x, forward.y);
-      this.g2.setColor(new java.awt.Color(yColor, true));
+      this.g2.setColor(new Color(yColor, true));
       this.g2.draw(this.gp);
 
       super.popStyle();
@@ -3229,7 +3230,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param c the color
     */
    @Override
-   public void stroke ( final camzup.core.Color c ) {
+   public void stroke ( final camzup.core.Rgb c ) {
 
       this.colorCalc(c);
 
@@ -3246,7 +3247,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       this.strokeColor = this.calcColor;
       this.strokeAlpha = this.calcAlpha;
 
-      this.strokeColorObject = new java.awt.Color(this.strokeColor, true);
+      this.strokeColorObject = new Color(this.strokeColor, true);
       this.strokeGradient = false;
    }
 
@@ -3423,7 +3424,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       /* Needs to use super imageImpl because of the tint. */
       this.colorCalc(mat.tint);
       super.tintFromCalc();
-      this.tintColorObject = new java.awt.Color(this.tintColor, true);
+      this.tintColorObject = new Color(this.tintColor, true);
       super.imageImpl(txtr, -wHalf, hHalf, wHalf, -hHalf, 0, 0, w, h);
       super.popStyle();
       this.popMatrix();
@@ -3908,7 +3909,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param stopAngle  the stop angle
     * @param arcMode    the arc mode
     *
-    * @see Graphics2D#setColor(java.awt.Color)
+    * @see Graphics2D#setColor(Color)
     * @see Graphics2D#fill(Shape)
     * @see Graphics2D#draw(Shape)
     */
@@ -4100,35 +4101,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
-    * Calculates the color channels from a color object.
-    *
-    * @param c the color
-    */
-   protected void colorCalc ( final Color c ) {
-
-      /* Clamp values to the range [0.0, 1.0] . */
-      this.calcA = c.a < 0.0f ? 0.0f : c.a > 1.0f ? 1.0f : c.a;
-      this.calcB = c.b < 0.0f ? 0.0f : c.b > 1.0f ? 1.0f : c.b;
-      this.calcG = c.g < 0.0f ? 0.0f : c.g > 1.0f ? 1.0f : c.g;
-      this.calcR = c.r < 0.0f ? 0.0f : c.r > 1.0f ? 1.0f : c.r;
-
-      /* Convert from [0.0, 1.0] to [0, 255] . */
-      this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
-      this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
-      this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
-      this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
-
-      this.calcAlpha = this.calcAi != 0xff;
-
-      /* @formatter:off */
-      this.calcColor = this.calcAi << 0x18
-                     | this.calcRi << 0x10
-                     | this.calcGi << 0x08
-                     | this.calcBi;
-      /* @formatter:on */
-   }
-
-   /**
     * Calculates the color channels from four input channels. The manner in
     * which the first three are interpreted depends on color mode. For HSB
     * color mode, the first channel, x, is interpreted as a periodic, not a
@@ -4139,7 +4111,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param z the third color channel, brightness or blue
     * @param w the alpha channel
     *
-    * @see Color#hsvToRgb(float, float, float, float, Color)
+    * @see Rgb#hsvToRgb(float, float, float, float, Rgb)
     */
    @Override
    protected void colorCalc ( final float x, final float y, final float z,
@@ -4231,6 +4203,35 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    }
 
    /**
+    * Calculates the color channels from a color object.
+    *
+    * @param c the color
+    */
+   protected void colorCalc ( final Rgb c ) {
+
+      /* Clamp values to the range [0.0, 1.0] . */
+      this.calcA = c.alpha < 0.0f ? 0.0f : c.alpha > 1.0f ? 1.0f : c.alpha;
+      this.calcB = c.b < 0.0f ? 0.0f : c.b > 1.0f ? 1.0f : c.b;
+      this.calcG = c.g < 0.0f ? 0.0f : c.g > 1.0f ? 1.0f : c.g;
+      this.calcR = c.r < 0.0f ? 0.0f : c.r > 1.0f ? 1.0f : c.r;
+
+      /* Convert from [0.0, 1.0] to [0, 255] . */
+      this.calcAi = ( int ) ( this.calcA * 0xff + 0.5f );
+      this.calcBi = ( int ) ( this.calcB * 0xff + 0.5f );
+      this.calcGi = ( int ) ( this.calcG * 0xff + 0.5f );
+      this.calcRi = ( int ) ( this.calcR * 0xff + 0.5f );
+
+      this.calcAlpha = this.calcAi != 0xff;
+
+      /* @formatter:off */
+      this.calcColor = this.calcAi << 0x18
+                     | this.calcRi << 0x10
+                     | this.calcGi << 0x08
+                     | this.calcBi;
+      /* @formatter:on */
+   }
+
+   /**
     * Decomposes a hexadecimal color into RGBA channels. Two versions of these
     * channels are stored: the unsigned byte values in the range [0, 255] and
     * the decimal values in [0.0, 1.0].
@@ -4319,7 +4320,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     *
     * @param s the shape
     *
-    * @see Graphics2D#setColor(java.awt.Color)
+    * @see Graphics2D#setColor(Color)
     * @see Graphics2D#fill(Shape)
     * @see Graphics2D#draw(Shape)
     */
@@ -4357,14 +4358,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
       double y0;
       double x1;
       double y1;
-      double w;
-      double h;
 
       switch ( this.rectMode ) {
 
          case PConstants.CORNER: { /* 0 */
-            w = c < 0.0f ? -c : c;
-            h = d < 0.0f ? -d : d;
+            final double w = c < 0.0f ? -c : c;
+            final double h = d < 0.0f ? -d : d;
 
             x0 = a;
             y0 = b - h;
@@ -4382,8 +4381,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             break;
 
          case PConstants.RADIUS: { /* 2 */
-            w = c < 0.0f ? -c : c;
-            h = d < 0.0f ? -d : d;
+            final double w = c < 0.0f ? -c : c;
+            final double h = d < 0.0f ? -d : d;
 
             x0 = a - w;
             x1 = a + w;
@@ -4395,8 +4394,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          case PConstants.CENTER: /* 3 */
 
          default: {
-            w = 0.5d * ( c < 0.0f ? -c : c );
-            h = 0.5d * ( d < 0.0f ? -d : d );
+            final double w = 0.5d * ( c < 0.0f ? -c : c );
+            final double h = 0.5d * ( d < 0.0f ? -d : d );
 
             x0 = a - w;
             x1 = a + w;
@@ -4477,7 +4476,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          case PConstants.CENTER: /* 3 */
 
          default: {
-
             w = c < 0.0f ? -c : c;
             h = d < 0.0f ? -d : d;
 

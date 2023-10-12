@@ -138,10 +138,10 @@ public abstract class Pixels {
     *
     * @return the adjusted pixels
     *
-    * @see Color#fromHex(int, Color)
-    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
-    * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
-    * @see Color#toHexIntSat(Color)
+    * @see Rgb#fromHex(int, Rgb)
+    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
+    * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
+    * @see Rgb#toHexIntSat(Rgb)
     * @see Utils#clamp(float, float, float)
     */
    public static int[] adjustContrast ( final int[] source, final float fac,
@@ -157,10 +157,10 @@ public abstract class Pixels {
             return target;
          }
 
-         final Color srgb = new Color();
-         final Color lrgb = new Color();
+         final Rgb srgb = new Rgb();
+         final Rgb lrgb = new Rgb();
          final Vec4 xyz = new Vec4();
-         final Vec4 lab = new Vec4();
+         final Lab lab = new Lab();
          final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
 
          for ( int i = 0; i < srcLen; ++i ) {
@@ -168,13 +168,13 @@ public abstract class Pixels {
             if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
                final Integer srgbKeyObj = 0xff000000 | srgbKeyInt;
                if ( !dict.containsKey(srgbKeyObj) ) {
-                  Color.fromHex(srgbKeyInt, srgb);
-                  Color.sRgbToSrLab2(srgb, lab, xyz, lrgb);
+                  Rgb.fromHex(srgbKeyInt, srgb);
+                  Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
 
-                  lab.z = ( lab.z - 50.0f ) * valAdjust + 50.0f;
+                  lab.l = ( lab.l - 50.0f ) * valAdjust + 50.0f;
 
-                  Color.srLab2TosRgb(lab, srgb, lrgb, xyz);
-                  dict.put(srgbKeyObj, Color.toHexIntSat(srgb) & 0x00ffffff);
+                  Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
+                  dict.put(srgbKeyObj, Rgb.toHexIntSat(srgb) & 0x00ffffff);
                }
             }
          }
@@ -207,28 +207,29 @@ public abstract class Pixels {
     *
     * @return the adjusted pixels
     *
-    * @see Color#fromHex(int, Color)
-    * @see Color#sRgbToSrLch(Color, Vec4, Vec4, Vec4, Color)
-    * @see Color#srLchTosRgb(Vec4, Color, Color, Vec4, Vec4)
-    * @see Color#toHexIntSat(Color)
+    * @see Rgb#fromHex(int, Rgb)
+    * @see Rgb#sRgbToSrLch(Rgb, Lch, Lab, Vec4, Rgb)
+    * @see Rgb#srLchTosRgb(Lch, Rgb, Rgb, Vec4, Lab)
+    * @see Rgb#toHexIntSat(Rgb)
     * @see Vec4#none(Vec4)
     * @see Vec4#add(Vec4, Vec4, Vec4)
     */
-   public static int[] adjustLch ( final int[] source, final Vec4 adjust,
+   public static int[] adjustLch ( final int[] source, final Lch adjust,
       final int[] target ) {
 
       final int srcLen = source.length;
       if ( srcLen == target.length ) {
-         if ( Vec4.none(adjust) ) {
+         if ( adjust.l == 0.0f && adjust.c == 0.0f && Utils.mod1(adjust.h)
+            == 0.0f && adjust.alpha == 0.0f ) {
             System.arraycopy(source, 0, target, 0, srcLen);
             return target;
          }
 
-         final Color srgb = new Color();
-         final Color lrgb = new Color();
+         final Rgb srgb = new Rgb();
+         final Rgb lrgb = new Rgb();
          final Vec4 xyz = new Vec4();
-         final Vec4 lab = new Vec4();
-         final Vec4 lch = new Vec4();
+         final Lab lab = new Lab();
+         final Lch lch = new Lch();
          final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
 
          for ( int i = 0; i < srcLen; ++i ) {
@@ -236,13 +237,17 @@ public abstract class Pixels {
             if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
                final Integer srgbKeyObj = srgbKeyInt;
                if ( !dict.containsKey(srgbKeyObj) ) {
-                  Color.fromHex(srgbKeyInt, srgb);
-                  Color.sRgbToSrLch(srgb, lch, lab, xyz, lrgb);
+                  Rgb.fromHex(srgbKeyInt, srgb);
+                  Rgb.sRgbToSrLch(srgb, lch, lab, xyz, lrgb);
 
-                  Vec4.add(lch, adjust, lch);
+                  // Vec4.add(lch, adjust, lch);
+                  lch.l = lch.l + adjust.l;
+                  lch.c = lch.c + adjust.c;
+                  lch.h = lch.h + adjust.h;
+                  lch.alpha = lch.alpha + adjust.alpha;
 
-                  Color.srLchTosRgb(lch, srgb, lrgb, xyz, lab);
-                  dict.put(srgbKeyObj, Color.toHexIntSat(srgb));
+                  Rgb.srLchTosRgb(lch, srgb, lrgb, xyz, lab);
+                  dict.put(srgbKeyObj, Rgb.toHexIntSat(srgb));
                }
             }
          }
@@ -284,10 +289,10 @@ public abstract class Pixels {
     *
     * @return the blended pixels
     *
-    * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
-    * @see Color#fromHex(int, Color)
-    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
-    * @see Color#toHexIntSat(Color)
+    * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
+    * @see Rgb#fromHex(int, Rgb)
+    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
+    * @see Rgb#toHexIntSat(Rgb)
     * @see Vec4#zero(Vec4)
     */
    @Experimental
@@ -296,12 +301,12 @@ public abstract class Pixels {
       final int bw, final int bh, final int bx, final int by, final Vec2 dim,
       final Vec2 tl ) {
 
-      final Color srgb = new Color();
-      final Color lrgb = new Color();
+      final Rgb srgb = new Rgb();
+      final Rgb lrgb = new Rgb();
       final Vec4 xyz = new Vec4();
 
-      final HashMap < Integer, Vec4 > dict = new HashMap <>(512, 0.75f);
-      dict.put(0x00000000, Vec4.zero(new Vec4()));
+      final HashMap < Integer, Lab > dict = new HashMap <>(512, 0.75f);
+      dict.put(0x00000000, Lab.clearBlack(new Lab()));
 
       /* Find the bottom right corner for a and b. */
       final int abrx = ax + aw - 1;
@@ -335,18 +340,18 @@ public abstract class Pixels {
             final int aHex = aPixels[x - axid + ( y - ayid ) * aw];
             final Integer aKeyObj = aHex;
             if ( !dict.containsKey(aKeyObj) ) {
-               final Vec4 aLab = new Vec4();
-               Color.fromHex(aHex, srgb);
-               Color.sRgbToSrLab2(srgb, aLab, xyz, lrgb);
+               final Lab aLab = new Lab();
+               Rgb.fromHex(aHex, srgb);
+               Rgb.sRgbToSrLab2(srgb, aLab, xyz, lrgb);
                dict.put(aKeyObj, aLab);
             }
 
             final int bHex = bPixels[x - bxid + ( y - byid ) * bw];
             final Integer bKeyObj = bHex;
             if ( !dict.containsKey(bKeyObj) ) {
-               final Vec4 bLab = new Vec4();
-               Color.fromHex(bHex, srgb);
-               Color.sRgbToSrLab2(srgb, bLab, xyz, lrgb);
+               final Lab bLab = new Lab();
+               Rgb.fromHex(bHex, srgb);
+               Rgb.sRgbToSrLab2(srgb, bLab, xyz, lrgb);
                dict.put(bKeyObj, bLab);
             }
          }
@@ -367,7 +372,7 @@ public abstract class Pixels {
       final int bxud = bx - cx;
       final int byud = by - cy;
 
-      final Vec4 cLab = new Vec4();
+      final Lab cLab = new Lab();
       final int[] target = new int[cLen];
       for ( int i = 0; i < cLen; ++i ) {
          final int x = i % cw;
@@ -406,19 +411,19 @@ public abstract class Pixels {
                if ( tuv <= 0.0f ) {
                   target[i] = 0x00000000;
                } else {
-                  final Vec4 orig = dict.get(aHex);
-                  final Vec4 dest = dict.get(bHex);
+                  final Lab orig = dict.get(aHex);
+                  final Lab dest = dict.get(bHex);
 
                   // Simulate alpha pre-multiply on lightness?
                   // if ( tuv >= 1.0f ) { tuv = 1.0f; }
                   // cLab.set(u * orig.x + t * dest.x, u * orig.y + t * dest.y,
                   // ( uv * orig.z + t * dest.z ) / tuv, tuv);
 
-                  cLab.set(u * orig.x + t * dest.x, u * orig.y + t * dest.y, u
-                     * orig.z + t * dest.z, tuv);
+                  cLab.set(u * orig.l + t * dest.l, u * orig.a + t * dest.a, u
+                     * orig.b + t * dest.b, tuv);
 
-                  Color.srLab2TosRgb(cLab, srgb, lrgb, xyz);
-                  target[i] = Color.toHexIntSat(srgb);
+                  Rgb.srLab2TosRgb(cLab, srgb, lrgb, xyz);
+                  target[i] = Rgb.toHexIntSat(srgb);
                }
             }
          }
@@ -443,10 +448,10 @@ public abstract class Pixels {
     *
     * @return the blurred image
     *
-    * @see Color#fromHex(int, Color)
-    * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
-    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
-    * @see Color#toHexIntSat(Color)
+    * @see Rgb#fromHex(int, Rgb)
+    * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
+    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
+    * @see Rgb#toHexIntSat(Rgb)
     */
    public static int[] blurBoxLab ( final int[] source, final int wSrc,
       final int hSrc, final int step, final int[] target ) {
@@ -455,17 +460,17 @@ public abstract class Pixels {
       if ( srcLen == target.length ) {
 
          /* Place lab lookups in a dictionary. */
-         final Color srgb = new Color();
-         final Color lrgb = new Color();
+         final Rgb srgb = new Rgb();
+         final Rgb lrgb = new Rgb();
          final Vec4 xyz = new Vec4();
-         final HashMap < Integer, Vec4 > dict = new HashMap <>(512, 0.75f);
+         final HashMap < Integer, Lab > dict = new HashMap <>(512, 0.75f);
          for ( int i = 0; i < srcLen; ++i ) {
             final int hexInt = source[i];
             final Integer hexObj = hexInt;
             if ( !dict.containsKey(hexObj) ) {
-               final Vec4 lab = new Vec4();
-               Color.fromHex(hexInt, srgb);
-               Color.sRgbToSrLab2(srgb, lab, xyz, lrgb);
+               final Lab lab = new Lab();
+               Rgb.fromHex(hexInt, srgb);
+               Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
                dict.put(hexObj, lab);
             }
          }
@@ -474,7 +479,7 @@ public abstract class Pixels {
          final int wKrn = 1 + stepVal * 2;
          final int krnLen = wKrn * wKrn;
          final float toAvg = 1.0f / krnLen;
-         final Vec4 labAvg = new Vec4();
+         final Lab labAvg = new Lab();
 
          for ( int i = 0; i < srcLen; ++i ) {
             /* Subtract step to center the kernel in the inner for loop. */
@@ -482,7 +487,7 @@ public abstract class Pixels {
             final int ySrc = i / wSrc - stepVal;
             final int hexSrc = source[i];
             final Integer hexSrcObj = hexSrc;
-            final Vec4 labCtr = dict.get(hexSrcObj);
+            final Lab labCtr = dict.get(hexSrcObj);
 
             float lSum = 0.0f;
             float aSum = 0.0f;
@@ -493,25 +498,25 @@ public abstract class Pixels {
                final int xComp = xSrc + j % wKrn;
                final int yComp = ySrc + j / wKrn;
                if ( yComp > -1 && yComp < hSrc && xComp > -1 && xComp < wSrc ) {
-                  final Vec4 labNgbr = dict.get(source[xComp + yComp * wSrc]);
-                  lSum += labNgbr.z;
-                  aSum += labNgbr.x;
-                  bSum += labNgbr.y;
-                  tSum += labNgbr.w;
+                  final Lab labNgbr = dict.get(source[xComp + yComp * wSrc]);
+                  lSum += labNgbr.l;
+                  aSum += labNgbr.a;
+                  bSum += labNgbr.b;
+                  tSum += labNgbr.alpha;
                } else {
                   /*
                    * When the kernel is out of bounds, sample the central color
                    * but do not tally alpha.
                    */
-                  lSum += labCtr.z;
-                  aSum += labCtr.x;
-                  bSum += labCtr.y;
+                  lSum += labCtr.l;
+                  aSum += labCtr.a;
+                  bSum += labCtr.b;
                }
             }
 
-            labAvg.set(aSum * toAvg, bSum * toAvg, lSum * toAvg, tSum * toAvg);
-            Color.srLab2TosRgb(labAvg, srgb, lrgb, xyz);
-            target[i] = Color.toHexIntSat(srgb);
+            labAvg.set(lSum * toAvg, aSum * toAvg, bSum * toAvg, tSum * toAvg);
+            Rgb.srLab2TosRgb(labAvg, srgb, lrgb, xyz);
+            target[i] = Rgb.toHexIntSat(srgb);
          }
       }
       return target;
@@ -698,12 +703,12 @@ public abstract class Pixels {
     *
     * @return the gradient pixels
     *
-    * @see Color#toHexIntSat(Color)
-    * @see Gradient#eval(Gradient, float, Color.AbstrEasing, Color)
+    * @see Rgb#toHexIntSat(Rgb)
+    * @see Gradient#eval(Gradient, float, Rgb.AbstrEasing, Rgb)
     * @see Utils#mod1(float)
     */
    public static int[] gradientConic ( final Gradient grd, final float xOrig,
-      final float yOrig, final float radians, final Color.AbstrEasing easing,
+      final float yOrig, final float radians, final Rgb.AbstrEasing easing,
       final int wTrg, final int hTrg, final int[] target ) {
 
       final double aspect = wTrg / ( double ) hTrg;
@@ -713,7 +718,7 @@ public abstract class Pixels {
       final double yo = yOrig;
       final double rd = radians;
 
-      final Color trgClr = new Color();
+      final Rgb trgClr = new Rgb();
       final int trgLen = target.length;
       for ( int i = 0; i < trgLen; ++i ) {
          final double xn = wInv * ( i % wTrg );
@@ -721,7 +726,7 @@ public abstract class Pixels {
          final float fac = Utils.mod1(( float ) ( ( Math.atan2(1.0d - ( yn + yn
             + yo ), xn + xn - xo - 1.0d) - rd ) * IUtils.ONE_TAU_D ));
          Gradient.eval(grd, fac, easing, trgClr);
-         target[i] = Color.toHexIntSat(trgClr);
+         target[i] = Rgb.toHexIntSat(trgClr);
       }
 
       return target;
@@ -744,14 +749,14 @@ public abstract class Pixels {
     *
     * @return the gradient pixels
     *
-    * @see Color#toHexIntSat(Color)
-    * @see Gradient#eval(Gradient, float, Color.AbstrEasing, Color)
+    * @see Rgb#toHexIntSat(Rgb)
+    * @see Gradient#eval(Gradient, float, Rgb.AbstrEasing, Rgb)
     * @see Utils#max(float, float)
     * @see Utils#clamp01(float)
     */
    public static int[] gradientLinear ( final Gradient grd, final float xOrig,
       final float yOrig, final float xDest, final float yDest,
-      final Color.AbstrEasing easing, final int wTrg, final int hTrg,
+      final Rgb.AbstrEasing easing, final int wTrg, final int hTrg,
       final int[] target ) {
 
       final float bx = xOrig - xDest;
@@ -767,13 +772,13 @@ public abstract class Pixels {
       final float bxwInv2 = 2.0f / ( wTrg - 1.0f ) * bxbbinv;
       final float byhInv2 = 2.0f / ( hTrg - 1.0f ) * bybbinv;
 
-      final Color trgClr = new Color();
+      final Rgb trgClr = new Rgb();
       final int trgLen = target.length;
       for ( int i = 0; i < trgLen; ++i ) {
          final float fac = Utils.clamp01(xobx + bxbbinv - bxwInv2 * ( i % wTrg )
             + ( yoby + byhInv2 * ( i / wTrg ) - bybbinv ));
          Gradient.eval(grd, fac, easing, trgClr);
-         target[i] = Color.toHexIntSat(trgClr);
+         target[i] = Rgb.toHexIntSat(trgClr);
       }
 
       return target;
@@ -793,11 +798,11 @@ public abstract class Pixels {
     *
     * @return the mapped pixels
     *
-    * @see Color#toHexIntSat(Color)
-    * @see Gradient#eval(Gradient, float, Color.AbstrEasing, Color)
+    * @see Rgb#toHexIntSat(Rgb)
+    * @see Gradient#eval(Gradient, float, Rgb.AbstrEasing, Rgb)
     */
    public static int[] gradientMap ( final int[] source, final Gradient grd,
-      final Color.AbstrEasing easing, final IntFunction < Float > map,
+      final Rgb.AbstrEasing easing, final IntFunction < Float > map,
       final int[] target ) {
 
       final int srcLen = source.length;
@@ -808,7 +813,7 @@ public abstract class Pixels {
           * replaced by source alpha.
           */
          final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
-         final Color trgClr = new Color();
+         final Rgb trgClr = new Rgb();
 
          for ( int i = 0; i < srcLen; ++i ) {
             final int srgbKeyInt = source[i];
@@ -816,7 +821,7 @@ public abstract class Pixels {
                final Integer srgbKeyObj = 0xff000000 | srgbKeyInt;
                if ( !dict.containsKey(srgbKeyObj) ) {
                   Gradient.eval(grd, map.apply(srgbKeyInt), easing, trgClr);
-                  dict.put(srgbKeyObj, Color.toHexIntSat(trgClr) & 0x00ffffff);
+                  dict.put(srgbKeyObj, Rgb.toHexIntSat(trgClr) & 0x00ffffff);
                }
             }
          }
@@ -855,12 +860,12 @@ public abstract class Pixels {
     *
     * @return the gradient pixels
     *
-    * @see Color#toHexIntSat(Color)
-    * @see Gradient#eval(Gradient, float, Color.AbstrEasing, Color)
+    * @see Rgb#toHexIntSat(Rgb)
+    * @see Gradient#eval(Gradient, float, Rgb.AbstrEasing, Rgb)
     * @see Utils#max(float, float)
     */
    public static int[] gradientRadial ( final Gradient grd, final float xOrig,
-      final float yOrig, final float radius, final Color.AbstrEasing easing,
+      final float yOrig, final float radius, final Rgb.AbstrEasing easing,
       final int wTrg, final int hTrg, final int[] target ) {
 
       final float hInv2 = 2.0f / ( hTrg - 1.0f );
@@ -872,14 +877,14 @@ public abstract class Pixels {
       final float yon1 = yOrig - 1.0f;
       final float xop1 = xOrig + 1.0f;
 
-      final Color trgClr = new Color();
+      final Rgb trgClr = new Rgb();
       final int trgLen = target.length;
       for ( int i = 0; i < trgLen; ++i ) {
          final float ay = yon1 + hInv2 * ( i / wTrg );
          final float ax = xop1 - wInv2 * ( i % wTrg );
          final float fac = 1.0f - ( ax * ax + ay * ay ) * rsqInv;
          Gradient.eval(grd, fac, easing, trgClr);
-         target[i] = Color.toHexIntSat(trgClr);
+         target[i] = Rgb.toHexIntSat(trgClr);
       }
 
       return target;
@@ -930,10 +935,10 @@ public abstract class Pixels {
     *
     * @return the inverted pixels
     *
-    * @see Color#fromHex(int, Color)
-    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
-    * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
-    * @see Color#toHexIntSat(Color)
+    * @see Rgb#fromHex(int, Rgb)
+    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
+    * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
+    * @see Rgb#toHexIntSat(Rgb)
     */
    public static int[] invertLab ( final int[] source, final boolean l,
       final boolean a, final boolean b, final boolean alpha,
@@ -946,10 +951,10 @@ public abstract class Pixels {
             return target;
          }
 
-         final Color srgb = new Color();
-         final Color lrgb = new Color();
+         final Rgb srgb = new Rgb();
+         final Rgb lrgb = new Rgb();
          final Vec4 xyz = new Vec4();
-         final Vec4 lab = new Vec4();
+         final Lab lab = new Lab();
          final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
 
          final float aSign = a ? -1.0f : 1.0f;
@@ -961,16 +966,16 @@ public abstract class Pixels {
             final Integer srgbKeyObj = srgbKeyInt;
 
             if ( !dict.containsKey(srgbKeyObj) ) {
-               Color.fromHex(srgbKeyInt, srgb);
-               Color.sRgbToSrLab2(srgb, lab, xyz, lrgb);
+               Rgb.fromHex(srgbKeyInt, srgb);
+               Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
 
-               lab.x *= aSign;
-               lab.y *= bSign;
-               if ( l ) { lab.z = 100.0f - lab.z; }
-               if ( alpha ) { lab.w = 1.0f - lab.w; }
+               lab.a *= aSign;
+               lab.b *= bSign;
+               if ( l ) { lab.l = 100.0f - lab.l; }
+               if ( alpha ) { lab.alpha = 1.0f - lab.alpha; }
 
-               Color.srLab2TosRgb(lab, srgb, lrgb, xyz);
-               dict.put(srgbKeyObj, Color.toHexIntSat(srgb));
+               Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
+               dict.put(srgbKeyObj, Rgb.toHexIntSat(srgb));
             }
          }
 
@@ -1294,15 +1299,15 @@ public abstract class Pixels {
     * @return the color array
     *
     * @see Bounds3#lab(Bounds3)
-    * @see Color#srLab2ToSrXyz(Vec4, Vec4)
-    * @see Color#srXyzTolRgb(Vec4, Color)
-    * @see Color#clearBlack(Color)
-    * @see Color#fromHex(int, Color)
-    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
+    * @see Lab#toSrXyz(Lab, Vec4)
+    * @see Rgb#srXyzTolRgb(Vec4, Rgb)
+    * @see Rgb#clearBlack(Rgb)
+    * @see Rgb#fromHex(int, Rgb)
+    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
     * @see Octree#insert(Vec3)
     */
-   public static Color[] paletteExtract ( final int[] source,
-      final int capacity, final int threshold ) {
+   public static Rgb[] paletteExtract ( final int[] source, final int capacity,
+      final int threshold ) {
 
       /* Find unique opaque colors. */
       final HashSet < Integer > uniqueColors = new HashSet <>(256, 0.75f);
@@ -1318,42 +1323,42 @@ public abstract class Pixels {
       final int valThresh = threshold < 3 ? 3 : threshold;
       if ( uniquesLen < valThresh ) {
          /* Account for alpha at index 0, so less than threshold. */
-         final Color[] result = new Color[1 + uniquesLen];
+         final Rgb[] result = new Rgb[1 + uniquesLen];
          for ( int i = 1; uniquesItr.hasNext(); ++i ) {
-            result[i] = Color.fromHex(uniquesItr.next(), new Color());
+            result[i] = Rgb.fromHex(uniquesItr.next(), new Rgb());
          }
-         result[0] = Color.clearBlack(new Color());
+         result[0] = Rgb.clearBlack(new Rgb());
          return result;
       }
 
       final Bounds3 bounds = Bounds3.lab(new Bounds3());
       final Octree oct = new Octree(bounds, capacity);
-      final Color srgb = new Color();
-      final Color lrgb = new Color();
+      final Rgb srgb = new Rgb();
+      final Rgb lrgb = new Rgb();
       final Vec4 xyz = new Vec4();
-      final Vec4 lab = new Vec4();
+      final Lab lab = new Lab();
 
       /* Place colors in octree. */
       while ( uniquesItr.hasNext() ) {
-         Color.fromHex(uniquesItr.next(), srgb);
-         Color.sRgbToSrLab2(srgb, lab, xyz, lrgb);
-         oct.insert(new Vec3(lab.x, lab.y, lab.z));
+         Rgb.fromHex(uniquesItr.next(), srgb);
+         Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
+         oct.insert(new Vec3(lab.a, lab.b, lab.l));
       }
       oct.cull();
 
       /* Trying to use package level with an array list throws an exception. */
       final Vec3[] centers = Octree.centersMean(oct, false);
       final int centersLen = centers.length;
-      final Color[] result = new Color[1 + centersLen];
+      final Rgb[] result = new Rgb[1 + centersLen];
       for ( int i = 0; i < centersLen; ++i ) {
          final Vec3 center = centers[i];
-         final Color target = new Color();
-         Color.srLab2ToSrXyz(center.z, center.x, center.y, 1.0f, xyz);
-         Color.srXyzTolRgb(xyz, lrgb);
-         Color.lRgbTosRgb(lrgb, false, target);
+         final Rgb target = new Rgb();
+         Lab.toSrXyz(center.z, center.x, center.y, 1.0f, xyz);
+         Rgb.srXyzTolRgb(xyz, lrgb);
+         Rgb.lRgbTosRgb(lrgb, false, target);
          result[1 + i] = target;
       }
-      result[0] = Color.clearBlack(new Color());
+      result[0] = Rgb.clearBlack(new Rgb());
       return result;
    }
 
@@ -1371,15 +1376,15 @@ public abstract class Pixels {
     * @return the modified pixels
     *
     * @see Bounds3#lab(Bounds3)
-    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
-    * @see Color#fromHex(int, Color)
-    * @see Color#toHexIntSat(Color)
+    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
+    * @see Rgb#fromHex(int, Rgb)
+    * @see Rgb#toHexIntSat(Rgb)
     * @see Octree#insert(Vec3)
     * @see Octree#cull()
     * @see Utils#abs(float)
     * @see Utils#max(float, float)
     */
-   public static int[] paletteMap ( final int[] source, final Color[] palette,
+   public static int[] paletteMap ( final int[] source, final Rgb[] palette,
       final int capacity, final float radius, final int[] target ) {
 
       final int srcLen = source.length;
@@ -1388,21 +1393,21 @@ public abstract class Pixels {
          final Octree oct = new Octree(bounds, capacity);
          oct.subdivide(1, capacity);
 
-         final Color srgb = new Color();
-         final Color lrgb = new Color();
+         final Rgb srgb = new Rgb();
+         final Rgb lrgb = new Rgb();
          final Vec4 xyz = new Vec4();
-         final Vec4 lab = new Vec4();
+         final Lab lab = new Lab();
          final Vec3 query = new Vec3();
 
          final HashMap < Vec3, Integer > lookup = new HashMap <>(256, 0.75f);
          final int palLen = palette.length;
          for ( int h = 0; h < palLen; ++h ) {
-            final Color clrPal = palette[h];
-            if ( Color.any(clrPal) ) {
-               Color.sRgbToSrLab2(clrPal, lab, xyz, lrgb);
-               final Vec3 point = new Vec3(lab.x, lab.y, lab.z);
+            final Rgb clrPal = palette[h];
+            if ( Rgb.any(clrPal) ) {
+               Rgb.sRgbToSrLab2(clrPal, lab, xyz, lrgb);
+               final Vec3 point = new Vec3(lab.a, lab.b, lab.l);
                oct.insert(point);
-               lookup.put(point, Color.toHexIntSat(clrPal));
+               lookup.put(point, Rgb.toHexIntSat(clrPal));
             }
          }
          oct.cull();
@@ -1420,10 +1425,10 @@ public abstract class Pixels {
                if ( dict.containsKey(srcHexObj) ) {
                   target[i] = maskAlpha | dict.get(srcHexObj);
                } else {
-                  Color.fromHex(srcHexInt, srgb);
-                  Color.sRgbToSrLab2(srgb, lab, xyz, lrgb);
+                  Rgb.fromHex(srcHexInt, srgb);
+                  Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
 
-                  query.set(lab.x, lab.y, lab.z);
+                  query.set(lab.a, lab.b, lab.l);
                   found.clear();
                   Octree.query(oct, query, rsq, 0, found);
                   if ( found.size() > 0 ) {
@@ -2174,10 +2179,10 @@ public abstract class Pixels {
     *
     * @return the contrast pixels
     *
-    * @see Color#fromHex(int, Color)
-    * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
-    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
-    * @see Color#toHexIntSat(Color)
+    * @see Rgb#fromHex(int, Rgb)
+    * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
+    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
+    * @see Rgb#toHexIntSat(Rgb)
     * @see Utils#abs(float)
     * @see Utils#clamp(float, float, float)
     */
@@ -2197,23 +2202,23 @@ public abstract class Pixels {
          float lumMax = Float.MIN_VALUE;
          float lumSum = 0.0f;
 
-         final Color srgb = new Color();
-         final Color lrgb = new Color();
+         final Rgb srgb = new Rgb();
+         final Rgb lrgb = new Rgb();
          final Vec4 xyz = new Vec4();
 
-         final HashMap < Integer, Vec4 > dict = new HashMap <>(512, 0.75f);
+         final HashMap < Integer, Lab > dict = new HashMap <>(512, 0.75f);
 
          for ( int i = 0; i < srcLen; ++i ) {
             final int hex = source[i];
             if ( ( hex & 0xff000000 ) != 0 ) {
                final Integer hexObj = hex;
                if ( !dict.containsKey(hexObj) ) {
-                  final Vec4 lab = new Vec4();
-                  Color.fromHex(hex, srgb);
-                  Color.sRgbToSrLab2(srgb, lab, xyz, lrgb);
+                  final Lab lab = new Lab();
+                  Rgb.fromHex(hex, srgb);
+                  Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
                   dict.put(hexObj, lab);
 
-                  final float lum = lab.z;
+                  final float lum = lab.l;
                   if ( lum < lumMin ) { lumMin = lum; }
                   if ( lum > lumMax ) { lumMax = lum; }
                   lumSum += lum;
@@ -2230,25 +2235,25 @@ public abstract class Pixels {
                final boolean gtZero = valFac > 0.0f;
                final boolean ltZero = valFac < -0.0f;
 
-               final Vec4 stretchedLab = new Vec4();
+               final Lab stretchedLab = new Lab();
                final float tLumAvg = t * ( lumSum / dictLen );
                final float tDenom = t * ( 100.0f / diff );
                final float lumMintDenom = lumMin * tDenom;
 
                final HashMap < Integer, Integer > stretched = new HashMap <>(
                   512, 0.75f);
-               final Set < Map.Entry < Integer, Vec4 > > kvs = dict.entrySet();
-               for ( final Map.Entry < Integer, Vec4 > kv : kvs ) {
+               final Set < Map.Entry < Integer, Lab > > kvs = dict.entrySet();
+               for ( final Map.Entry < Integer, Lab > kv : kvs ) {
                   stretchedLab.set(kv.getValue());
                   if ( gtZero ) {
-                     stretchedLab.z = u * stretchedLab.z + stretchedLab.z
+                     stretchedLab.l = u * stretchedLab.l + stretchedLab.l
                         * tDenom - lumMintDenom;
                   } else if ( ltZero ) {
-                     stretchedLab.z = u * stretchedLab.z + tLumAvg;
+                     stretchedLab.l = u * stretchedLab.l + tLumAvg;
                   }
 
-                  Color.srLab2TosRgb(stretchedLab, srgb, lrgb, xyz);
-                  stretched.put(kv.getKey(), Color.toHexIntSat(srgb));
+                  Rgb.srLab2TosRgb(stretchedLab, srgb, lrgb, xyz);
+                  stretched.put(kv.getKey(), Rgb.toHexIntSat(srgb));
                }
 
                for ( int i = 0; i < srcLen; ++i ) {
@@ -2285,10 +2290,10 @@ public abstract class Pixels {
     *
     * @return the tinted pixels
     *
-    * @see Color#fromHex(int, Color)
-    * @see Color#sRgbToSrLab2(Color, Vec4, Vec4, Color)
-    * @see Color#srLab2TosRgb(Vec4, Color, Color, Vec4)
-    * @see Color#toHexIntSat(Color)
+    * @see Rgb#fromHex(int, Rgb)
+    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
+    * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
+    * @see Rgb#toHexIntSat(Rgb)
     * @see Pixels#toneFlagToResponse(int)
     */
    public static int[] tintLab ( final int[] source, final int tint,
@@ -2306,18 +2311,18 @@ public abstract class Pixels {
          final Function < Float, Float > response = Pixels.toneFlagToResponse(
             toneFlag);
 
-         final Color srgb = new Color();
-         final Color lrgb = new Color();
+         final Rgb srgb = new Rgb();
+         final Rgb lrgb = new Rgb();
          final Vec4 xyz = new Vec4();
-         final Vec4 srcLab = new Vec4();
-         final Vec4 mixLab = new Vec4();
-         final Vec4 tintLab = new Vec4();
+         final Lab srcLab = new Lab();
+         final Lab mixLab = new Lab();
+         final Lab tintLab = new Lab();
 
          /* Convert tint from integer to LAB. Decompose to loose floats. */
-         Color.sRgbToSrLab2(Color.fromHex(tint, srgb), tintLab, xyz, lrgb);
-         final float lTint = tintLab.z;
-         final float aTint = tintLab.x;
-         final float bTint = tintLab.y;
+         Rgb.sRgbToSrLab2(Rgb.fromHex(tint, srgb), tintLab, xyz, lrgb);
+         final float lTint = tintLab.l;
+         final float aTint = tintLab.a;
+         final float bTint = tintLab.b;
 
          final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
          for ( int i = 0; i < srcLen; ++i ) {
@@ -2326,17 +2331,18 @@ public abstract class Pixels {
             if ( dict.containsKey(srgbKeyObj) ) {
                target[i] = dict.get(srgbKeyObj);
             } else if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
-               Color.fromHex(srgbKeyInt, srgb);
-               Color.sRgbToSrLab2(srgb, srcLab, xyz, lrgb);
+               Rgb.fromHex(srgbKeyInt, srgb);
+               Rgb.sRgbToSrLab2(srgb, srcLab, xyz, lrgb);
 
-               final float lOrig = srcLab.z;
+               final float lOrig = srcLab.l;
                final float t = facVrf * response.apply(lOrig * 0.01f);
                final float u = 1.0f - t;
-               mixLab.set(u * srcLab.x + t * aTint, u * srcLab.y + t * bTint,
-                  preserveLight ? lOrig : u * lOrig + t * lTint, srcLab.w);
+               mixLab.set(preserveLight ? lOrig : u * lOrig + t * lTint, u
+                  * srcLab.a + t * aTint, u * srcLab.b + t * bTint,
+                  srcLab.alpha);
 
-               Color.srLab2TosRgb(mixLab, srgb, lrgb, xyz);
-               final int trgHex = Color.toHexIntSat(srgb);
+               Rgb.srLab2TosRgb(mixLab, srgb, lrgb, xyz);
+               final int trgHex = Rgb.toHexIntSat(srgb);
                target[i] = trgHex;
                dict.put(srgbKeyObj, trgHex);
             } else {
@@ -2371,7 +2377,7 @@ public abstract class Pixels {
          final MaterialSolid material = new MaterialSolid();
          material.setFill(hex);
          material.setStroke(0x00000000);
-         material.setName("Material." + Color.toHexString(hex));
+         material.setName("Material." + Rgb.toHexString(hex));
          result[j] = material;
       }
 
@@ -2462,7 +2468,7 @@ public abstract class Pixels {
          .entrySet().iterator();
       for ( int j = 0; itr.hasNext(); ++j ) {
          final Entry < Integer, ArrayList < Integer > > entry = itr.next();
-         final Mesh2 mesh = new Mesh2("Mesh." + Color.toHexString(entry
+         final Mesh2 mesh = new Mesh2("Mesh." + Rgb.toHexString(entry
             .getKey()));
          mesh.setMaterialIndex(j);
          Pixels.toMesh(entry.getValue(), wSrc, left, top, right, bottom, tou,

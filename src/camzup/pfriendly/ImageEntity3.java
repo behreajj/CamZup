@@ -1,9 +1,9 @@
 package camzup.pfriendly;
 
-import camzup.core.Color;
 import camzup.core.Mesh3;
 import camzup.core.MeshEntity3;
 import camzup.core.PolyType;
+import camzup.core.Rgb;
 import camzup.core.Transform2;
 import camzup.core.Utils;
 import camzup.core.Vec3;
@@ -29,7 +29,7 @@ public class ImageEntity3 extends MeshEntity3 {
     */
    public ImageEntity3 ( final PImage texture ) {
 
-      this("ImageEntity3", texture, new Color(1.0f, 1.0f, 1.0f, 1.0f), 1.0f,
+      this("ImageEntity3", texture, new Rgb(1.0f, 1.0f, 1.0f, 1.0f), 1.0f,
          PConstants.CENTER, PConstants.CENTER);
    }
 
@@ -39,7 +39,7 @@ public class ImageEntity3 extends MeshEntity3 {
     * @param texture the image texture
     * @param tint    the tint
     */
-   public ImageEntity3 ( final PImage texture, final Color tint ) {
+   public ImageEntity3 ( final PImage texture, final Rgb tint ) {
 
       this("ImageEntity3", texture, tint, 1.0f, PConstants.CENTER,
          PConstants.CENTER);
@@ -53,7 +53,7 @@ public class ImageEntity3 extends MeshEntity3 {
     */
    public ImageEntity3 ( final String name, final PImage texture ) {
 
-      this(name, texture, new Color(1.0f, 1.0f, 1.0f, 1.0f), 1.0f,
+      this(name, texture, new Rgb(1.0f, 1.0f, 1.0f, 1.0f), 1.0f,
          PConstants.CENTER, PConstants.CENTER);
    }
 
@@ -69,7 +69,7 @@ public class ImageEntity3 extends MeshEntity3 {
     * @param alignVert  the vertical alignment
     */
    public ImageEntity3 ( final String name, final PImage texture,
-      final Color tint, final float scale, final int alignHoriz,
+      final Rgb tint, final float scale, final int alignHoriz,
       final int alignVert ) {
 
       super(name);
@@ -158,7 +158,7 @@ public class ImageEntity3 extends MeshEntity3 {
     *
     * @return this entity
     */
-   public ImageEntity3 setTint ( final Color clr ) {
+   public ImageEntity3 setTint ( final int clr ) {
 
       this.material.setTint(clr);
       return this;
@@ -171,7 +171,7 @@ public class ImageEntity3 extends MeshEntity3 {
     *
     * @return this entity
     */
-   public ImageEntity3 setTint ( final int clr ) {
+   public ImageEntity3 setTint ( final Rgb clr ) {
 
       this.material.setTint(clr);
       return this;

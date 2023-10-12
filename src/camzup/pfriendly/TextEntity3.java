@@ -1,6 +1,6 @@
 package camzup.pfriendly;
 
-import camzup.core.Color;
+import camzup.core.Rgb;
 import processing.core.PConstants;
 import processing.core.PFont;
 import processing.core.PImage;
@@ -21,7 +21,7 @@ public class TextEntity3 extends ImageEntity3 {
     */
    public TextEntity3 ( final PFont font, final String text ) {
 
-      this(font, text, Color.fromHex(IUp.DEFAULT_STROKE_COLOR, new Color()));
+      this(font, text, Rgb.fromHex(IUp.DEFAULT_STROKE_COLOR, new Rgb()));
    }
 
    /**
@@ -32,8 +32,7 @@ public class TextEntity3 extends ImageEntity3 {
     * @param text the string of text
     * @param tint the color
     */
-   public TextEntity3 ( final PFont font, final String text,
-      final Color tint ) {
+   public TextEntity3 ( final PFont font, final String text, final Rgb tint ) {
 
       this(font, text, tint, ZImage.DEFAULT_LEADING);
    }
@@ -47,7 +46,7 @@ public class TextEntity3 extends ImageEntity3 {
     * @param tint    the color
     * @param leading spacing between lines
     */
-   public TextEntity3 ( final PFont font, final String text, final Color tint,
+   public TextEntity3 ( final PFont font, final String text, final Rgb tint,
       final int leading ) {
 
       this(font, text, tint, leading, ZImage.DEFAULT_KERNING);
@@ -63,7 +62,7 @@ public class TextEntity3 extends ImageEntity3 {
     * @param leading spacing between lines
     * @param kerning spacing between characters
     */
-   public TextEntity3 ( final PFont font, final String text, final Color tint,
+   public TextEntity3 ( final PFont font, final String text, final Rgb tint,
       final int leading, final int kerning ) {
 
       this(font, text, tint, leading, kerning, ZImage.DEFAULT_ALIGN,
@@ -86,7 +85,7 @@ public class TextEntity3 extends ImageEntity3 {
     * @see ZImage#fromText(PFont, String, int, int, int, int)
     * @see ZImage#premul(PImage, PImage)
     */
-   public TextEntity3 ( final PFont font, final String text, final Color tint,
+   public TextEntity3 ( final PFont font, final String text, final Rgb tint,
       final int leading, final int kerning, final int alignHoriz,
       final int alignVert, final float scale ) {
 

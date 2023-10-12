@@ -11,13 +11,12 @@ public class MaterialSolid extends Material {
    /**
     * The fill color.
     */
-   public final Color fill = Color.fromHex(IMaterial.DEFAULT_FILL, new Color());
+   public final Rgb fill = Rgb.fromHex(IMaterial.DEFAULT_FILL, new Rgb());
 
    /**
     * The stroke color.
     */
-   public final Color stroke = Color.fromHex(IMaterial.DEFAULT_STROKE,
-      new Color());
+   public final Rgb stroke = Rgb.fromHex(IMaterial.DEFAULT_STROKE, new Rgb());
 
    /**
     * The weight, or width, of the stroke.
@@ -40,11 +39,22 @@ public class MaterialSolid extends Material {
    public MaterialSolid ( ) {}
 
    /**
+    * Creates a new solid material with copied data from a source.
+    *
+    * @param source the source material
+    */
+   public MaterialSolid ( final MaterialSolid source ) {
+
+      this(source.name, source.fill, source.stroke, source.strokeWeight,
+         source.useFill, source.useStroke);
+   }
+
+   /**
     * Creates a material from a fill color.
     *
     * @param fill the fill color
     */
-   public MaterialSolid ( final Color fill ) {
+   public MaterialSolid ( final Rgb fill ) {
 
       /*
        * Stroke cap and join are not implemented because it would require
@@ -53,7 +63,7 @@ public class MaterialSolid extends Material {
        * hard to guarantee.
        */
 
-      this(fill, Color.clearBlack(new Color()), 0.0f);
+      this(fill, Rgb.clearBlack(new Rgb()), 0.0f);
    }
 
    /**
@@ -66,10 +76,10 @@ public class MaterialSolid extends Material {
     * @param stroke       the stroke color
     * @param strokeWeight the stroke weight
     */
-   public MaterialSolid ( final Color fill, final Color stroke,
+   public MaterialSolid ( final Rgb fill, final Rgb stroke,
       final float strokeWeight ) {
 
-      this(fill, stroke, strokeWeight, fill.a > 0.0f, stroke.a > 0.0f
+      this(fill, stroke, strokeWeight, fill.alpha > 0.0f, stroke.alpha > 0.0f
          && strokeWeight > 0.0f);
    }
 
@@ -82,23 +92,12 @@ public class MaterialSolid extends Material {
     * @param useFill      whether to use fill
     * @param useStroke    whether to use stroke
     */
-   public MaterialSolid ( final Color fill, final Color stroke,
+   public MaterialSolid ( final Rgb fill, final Rgb stroke,
       final float strokeWeight, final boolean useFill,
       final boolean useStroke ) {
 
-      this(Color.toHexString(fill), fill, stroke, strokeWeight, useFill,
+      this(Rgb.toHexString(fill), fill, stroke, strokeWeight, useFill,
          useStroke);
-   }
-
-   /**
-    * Creates a new solid material with copied data from a source.
-    *
-    * @param source the source material
-    */
-   public MaterialSolid ( final MaterialSolid source ) {
-
-      this(source.name, source.fill, source.stroke, source.strokeWeight,
-         source.useFill, source.useStroke);
    }
 
    /**
@@ -114,9 +113,9 @@ public class MaterialSolid extends Material {
     * @param name the material name
     * @param fill the fill color
     */
-   public MaterialSolid ( final String name, final Color fill ) {
+   public MaterialSolid ( final String name, final Rgb fill ) {
 
-      this(name, fill, Color.clearBlack(new Color()), 0.0f);
+      this(name, fill, Rgb.clearBlack(new Rgb()), 0.0f);
    }
 
    /**
@@ -130,11 +129,11 @@ public class MaterialSolid extends Material {
     * @param stroke       the stroke color
     * @param strokeWeight the stroke weight
     */
-   public MaterialSolid ( final String name, final Color fill,
-      final Color stroke, final float strokeWeight ) {
+   public MaterialSolid ( final String name, final Rgb fill, final Rgb stroke,
+      final float strokeWeight ) {
 
-      this(name, fill, stroke, strokeWeight, fill.a > 0.0f, stroke.a > 0.0f
-         && strokeWeight > 0.0f);
+      this(name, fill, stroke, strokeWeight, fill.alpha > 0.0f, stroke.alpha
+         > 0.0f && strokeWeight > 0.0f);
    }
 
    /**
@@ -147,8 +146,8 @@ public class MaterialSolid extends Material {
     * @param useFill      whether to use fill
     * @param useStroke    whether to use stroke
     */
-   public MaterialSolid ( final String name, final Color fill,
-      final Color stroke, final float strokeWeight, final boolean useFill,
+   public MaterialSolid ( final String name, final Rgb fill, final Rgb stroke,
+      final float strokeWeight, final boolean useFill,
       final boolean useStroke ) {
 
       super(name);
@@ -243,19 +242,6 @@ public class MaterialSolid extends Material {
    /**
     * Sets the material's fill color.
     *
-    * @param fill the fill color
-    *
-    * @return this material
-    */
-   public MaterialSolid setFill ( final Color fill ) {
-
-      this.fill.set(fill);
-      return this;
-   }
-
-   /**
-    * Sets the material's fill color.
-    *
     * @param r red
     * @param g green
     * @param b blue
@@ -293,11 +279,24 @@ public class MaterialSolid extends Material {
     *
     * @return this material
     *
-    * @see Color#fromHex(int, Color)
+    * @see Rgb#fromHex(int, Rgb)
     */
    public MaterialSolid setFill ( final int fill ) {
 
-      Color.fromHex(fill, this.fill);
+      Rgb.fromHex(fill, this.fill);
+      return this;
+   }
+
+   /**
+    * Sets the material's fill color.
+    *
+    * @param fill the fill color
+    *
+    * @return this material
+    */
+   public MaterialSolid setFill ( final Rgb fill ) {
+
+      this.fill.set(fill);
       return this;
    }
 
@@ -311,19 +310,6 @@ public class MaterialSolid extends Material {
    public MaterialSolid setStroke ( final boolean stroke ) {
 
       this.useStroke = stroke;
-      return this;
-   }
-
-   /**
-    * Sets the material's stroke color.
-    *
-    * @param stroke the color
-    *
-    * @return this material
-    */
-   public MaterialSolid setStroke ( final Color stroke ) {
-
-      this.stroke.set(stroke);
       return this;
    }
 
@@ -367,11 +353,24 @@ public class MaterialSolid extends Material {
     *
     * @return this material
     *
-    * @see Color#fromHex(int, Color)
+    * @see Rgb#fromHex(int, Rgb)
     */
    public MaterialSolid setStroke ( final int stroke ) {
 
-      Color.fromHex(stroke, this.stroke);
+      Rgb.fromHex(stroke, this.stroke);
+      return this;
+   }
+
+   /**
+    * Sets the material's stroke color.
+    *
+    * @param stroke the color
+    *
+    * @return this material
+    */
+   public MaterialSolid setStroke ( final Rgb stroke ) {
+
+      this.stroke.set(stroke);
       return this;
    }
 
@@ -405,7 +404,7 @@ public class MaterialSolid extends Material {
       final float fr = this.fill.r;
       final float fg = this.fill.g;
       final float fb = this.fill.b;
-      final float fa = this.fill.a;
+      final float fa = this.fill.alpha;
       this.fill.set(this.stroke);
       this.stroke.set(fr, fg, fb, fa);
 
@@ -519,7 +518,7 @@ public class MaterialSolid extends Material {
     * @see Utils#div(float, float)
     * @see Utils#abs(float)
     * @see Utils#clamp01(float)
-    * @see Color#toHexWeb(StringBuilder, Color)
+    * @see Rgb#toHexWeb(StringBuilder, Rgb)
     */
    StringBuilder toSvgString ( final StringBuilder svgp, final float scale ) {
 
@@ -532,7 +531,7 @@ public class MaterialSolid extends Material {
 
       /* Stroke style. */
       final float sw = Utils.div(this.strokeWeight, Utils.abs(scale));
-      final float sa = this.stroke.a;
+      final float sa = this.stroke.alpha;
       if ( this.useStroke && sa > 0.0f && sw > IUtils.EPSILON ) {
          svgp.append("stroke-width=\"");
          Utils.toFixed(svgp, sw, ISvgWritable.FIXED_PRINT);
@@ -541,7 +540,7 @@ public class MaterialSolid extends Material {
             Utils.toFixed(svgp, sa, ISvgWritable.FIXED_PRINT);
          }
          svgp.append("\" stroke=\"");
-         Color.toHexWeb(svgp, this.stroke);
+         Rgb.toHexWeb(svgp, this.stroke);
          svgp.append("\" stroke-linejoin=\"");
          svgp.append(ISvgWritable.DEFAULT_STR_JOIN);
          svgp.append("\" stroke-linecap=\"");
@@ -553,7 +552,7 @@ public class MaterialSolid extends Material {
       }
 
       /* Fill style. */
-      final float fa = this.fill.a;
+      final float fa = this.fill.alpha;
       if ( this.useFill && fa > 0.0f ) {
          if ( fa < 1.0f ) {
             svgp.append("fill-opacity=\"");
@@ -561,7 +560,7 @@ public class MaterialSolid extends Material {
             svgp.append("\" ");
          }
          svgp.append("fill=\"");
-         Color.toHexWeb(svgp, this.fill);
+         Rgb.toHexWeb(svgp, this.fill);
          svgp.append('\"');
       } else {
          svgp.append("fill=\"none\"");
@@ -577,12 +576,12 @@ public class MaterialSolid extends Material {
     *
     * @return the string builder
     *
-    * @see Color#fromHex(int, Color)
+    * @see Rgb#fromHex(int, Rgb)
     */
    static StringBuilder defaultBlenderMaterial ( final StringBuilder pyCd,
       final float gamma ) {
 
-      final Color c = Color.fromHex(IUp.DEFAULT_FILL_COLOR, new Color());
+      final Rgb c = Rgb.fromHex(IUp.DEFAULT_FILL_COLOR, new Rgb());
       pyCd.append("{\"name\": \"");
       pyCd.append("CamZupDefault");
       pyCd.append("\", \"fill\": ");
@@ -608,7 +607,7 @@ public class MaterialSolid extends Material {
     *
     * @see Utils#div(float, float)
     * @see Utils#abs(float)
-    * @see Color#toHexWeb(StringBuilder, int)
+    * @see Rgb#toHexWeb(StringBuilder, int)
     * @see Utils#toFixed(StringBuilder, float, int)
     */
    static StringBuilder defaultSvgMaterial ( final StringBuilder svgp,
@@ -624,7 +623,7 @@ public class MaterialSolid extends Material {
       // svgp.append("\" fill-opacity=\"");
       // svgp.append("1.0");
       svgp.append("\" fill=\"");
-      Color.toHexWeb(svgp, IUp.DEFAULT_FILL_COLOR);
+      Rgb.toHexWeb(svgp, IUp.DEFAULT_FILL_COLOR);
       svgp.append('\"');
       svgp.append(' ');
 
@@ -635,7 +634,7 @@ public class MaterialSolid extends Material {
          // svgp.append("\" stroke-opacity=\"");
          // svgp.append("1.0");
          svgp.append("\" stroke=\"");
-         Color.toHexWeb(svgp, IUp.DEFAULT_STROKE_COLOR);
+         Rgb.toHexWeb(svgp, IUp.DEFAULT_STROKE_COLOR);
          svgp.append("\" stroke-linejoin=\"");
          svgp.append(ISvgWritable.DEFAULT_STR_JOIN);
          svgp.append("\" stroke-linecap=\"");

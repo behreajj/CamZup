@@ -23,24 +23,24 @@ MaterialSolid[] materials = new MaterialSolid[] {
   new MaterialSolid()
   .setStroke(true)
   .setStrokeWeight(1.5)
-  .setStroke(Color.red(new Color()))
+  .setStroke(Rgb.red(new Rgb()))
   .setFill(false),
   new MaterialSolid()
   .setStroke(true)
   .setStrokeWeight(1.5)
-  .setStroke(Color.green(new Color()))
+  .setStroke(Rgb.green(new Rgb()))
   .setFill(false),
   new MaterialSolid()
   .setStroke(true)
   .setStrokeWeight(1.5)
-  .setStroke(Color.blue(new Color()))
+  .setStroke(Rgb.blue(new Rgb()))
   .setFill(false),
 
-  new MaterialSolid(Color.red(new Color())),
-  new MaterialSolid(Color.green(new Color())),
-  new MaterialSolid(Color.blue(new Color())),
+  new MaterialSolid(Rgb.red(new Rgb())),
+  new MaterialSolid(Rgb.green(new Rgb())),
+  new MaterialSolid(Rgb.blue(new Rgb())),
 
-  new MaterialSolid(Color.white(new Color()))
+  new MaterialSolid(Rgb.white(new Rgb()))
 };
 
 void settings() {

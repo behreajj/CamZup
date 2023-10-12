@@ -16,7 +16,7 @@ Mesh3 cube = Mesh3.cube(0.5f, new Mesh3())
 Vec3 barScale = new Vec3(50.0f, 50.0f, 50.0f);
 
 float labelScale = 0.175f;
-Color labelColor = new Color(0.2f, 0.2f, 0.2f, 1.0f);
+Rgb labelColor = new Rgb(0.2f, 0.2f, 0.2f, 1.0f);
 Vec3 labelOffset = new Vec3(0.0f, -25.0f, 0.0f);
 Vec3 mouse1 = new Vec3();
 

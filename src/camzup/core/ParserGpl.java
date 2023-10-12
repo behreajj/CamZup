@@ -25,13 +25,13 @@ public abstract class ParserGpl {
     *
     * @return the gradient
     */
-   public static Color[] load ( final BufferedReader in ) {
+   public static Rgb[] load ( final BufferedReader in ) {
 
       try {
 
          try {
 
-            final TreeMap < Integer, Color > clrs = new TreeMap <>();
+            final TreeMap < Integer, Rgb > clrs = new TreeMap <>();
             final Pattern ptrn = Pattern.compile("\\s+");
 
             int i = 0;
@@ -70,7 +70,7 @@ public abstract class ParserGpl {
                       * outside the range [0, 255]. Because colors are
                       * unclamped, this doesn't matter.
                       */
-                     clrs.put(i, new Color(Float.parseFloat(tokens[0])
+                     clrs.put(i, new Rgb(Float.parseFloat(tokens[0])
                         * IUtils.ONE_255, Float.parseFloat(tokens[1])
                            * IUtils.ONE_255, Float.parseFloat(tokens[2])
                               * IUtils.ONE_255, alpha));
@@ -80,7 +80,7 @@ public abstract class ParserGpl {
                }
             }
 
-            return clrs.values().toArray(new Color[clrs.size()]);
+            return clrs.values().toArray(new Rgb[clrs.size()]);
 
          } catch ( final Exception e ) {
             e.printStackTrace();
@@ -92,7 +92,7 @@ public abstract class ParserGpl {
          e.printStackTrace();
       }
 
-      return new Color[0];
+      return new Rgb[0];
    }
 
    /**
@@ -102,9 +102,9 @@ public abstract class ParserGpl {
     *
     * @return the gradient
     */
-   public static Color[] load ( final String fileName ) {
+   public static Rgb[] load ( final String fileName ) {
 
-      Color[] result = {};
+      Rgb[] result = {};
       try ( BufferedReader br = new BufferedReader(new FileReader(fileName)) ) {
          result = ParserGpl.load(br);
       } catch ( final Exception e ) {

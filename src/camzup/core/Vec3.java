@@ -1339,34 +1339,6 @@ public class Vec3 implements Comparable < Vec3 > {
     *
     * @return the direction
     *
-    * @see Utils#invSqrtUnchecked(float)
-    * @see Vec3#up(Vec3)
-    */
-   public static Vec3 fromColor ( final Color c, final Vec3 target ) {
-
-      if ( c.a > 0.0f ) {
-         final float x = c.r + c.r - 1.0f;
-         final float y = c.g + c.g - 1.0f;
-         final float z = c.b + c.b - 1.0f;
-         final float mSq = x * x + y * y + z * z;
-         if ( mSq > 0.0f ) {
-            final float mInv = Utils.invSqrtUnchecked(mSq);
-            return target.set(x * mInv, y * mInv, z * mInv);
-         }
-      }
-      return Vec3.up(target);
-   }
-
-   /**
-    * Converts a color to a direction. Multiplies each channel by two,
-    * subtracts one, then normalizes the result. Returns the up direction if
-    * the color's alpha channel is zero or if its magnitude is too small.
-    *
-    * @param c      the color
-    * @param target the output direction
-    *
-    * @return the direction
-    *
     * @see Utils#abs(float)
     * @see Utils#invSqrt(float)
     * @see Vec3#up(Vec3)
@@ -1394,6 +1366,34 @@ public class Vec3 implements Comparable < Vec3 > {
             if ( Utils.abs(yn) < IUtils.ONE_255 ) { yn = 0.0f; }
             if ( Utils.abs(zn) < IUtils.ONE_255 ) { zn = 0.0f; }
             return target.set(xn, yn, zn);
+         }
+      }
+      return Vec3.up(target);
+   }
+
+   /**
+    * Converts a color to a direction. Multiplies each channel by two,
+    * subtracts one, then normalizes the result. Returns the up direction if
+    * the color's alpha channel is zero or if its magnitude is too small.
+    *
+    * @param c      the color
+    * @param target the output direction
+    *
+    * @return the direction
+    *
+    * @see Utils#invSqrtUnchecked(float)
+    * @see Vec3#up(Vec3)
+    */
+   public static Vec3 fromColor ( final Rgb c, final Vec3 target ) {
+
+      if ( c.alpha > 0.0f ) {
+         final float x = c.r + c.r - 1.0f;
+         final float y = c.g + c.g - 1.0f;
+         final float z = c.b + c.b - 1.0f;
+         final float mSq = x * x + y * y + z * z;
+         if ( mSq > 0.0f ) {
+            final float mInv = Utils.invSqrtUnchecked(mSq);
+            return target.set(x * mInv, y * mInv, z * mInv);
          }
       }
       return Vec3.up(target);
@@ -1482,9 +1482,9 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Generates a 3D array of vectors. The result is in layer-major order, but
-    * the parameters are supplied in reverse: columns first, then rows, then
-    * layers. Defaults to the coordinate range of [-0.5, 0.5] .
+    * Generates a 3D array of vectors. The result is in layer-row-major order,
+    * but the parameters are supplied in reverse: columns first, then rows,
+    * then layers. Defaults to the coordinate range of [-0.5, 0.5] .
     *
     * @param cols   number of columns
     * @param rows   number of rows
@@ -1502,9 +1502,9 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Generates a 3D array of vectors. The result is in layer-major order, but
-    * the parameters are supplied in reverse: columns first, then rows, then
-    * layers.
+    * Generates a 3D array of vectors. The result is in layer-row-major order,
+    * but the parameters are supplied in reverse: columns first, then rows,
+    * then layers.
     *
     * @param cols       number of columns
     * @param rows       number of rows
@@ -1524,9 +1524,9 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Generates a 3D array of vectors. The result is in layer-major order, but
-    * the parameters are supplied in reverse: columns first, then rows, then
-    * layers.
+    * Generates a 3D array of vectors. The result is in layer-row-major order,
+    * but the parameters are supplied in reverse: columns first, then rows,
+    * then layers.
     *
     * @param cols       number of columns
     * @param rows       number of rows
@@ -3151,9 +3151,9 @@ public class Vec3 implements Comparable < Vec3 > {
    }
 
    /**
-    * Generates a 3D array of vectors. The result is in layer-major order, but
-    * the parameters are supplied in reverse: columns first, then rows, then
-    * layers.<br>
+    * Generates a 3D array of vectors. The result is in layer-row-major order,
+    * but the parameters are supplied in reverse: columns first, then rows,
+    * then layers.<br>
     * <br>
     * This is separated to make overriding the public grid functions easier.
     * This is protected because it is too easy for integers to be quietly
@@ -3175,31 +3175,31 @@ public class Vec3 implements Comparable < Vec3 > {
       final int layers, final float lbx, final float lby, final float lbz,
       final float ubx, final float uby, final float ubz ) {
 
-      final int lVal = layers < 1 ? 1 : layers;
-      final int rVal = rows < 1 ? 1 : rows;
-      final int cVal = cols < 1 ? 1 : cols;
+      final int lVrf = layers < 1 ? 1 : layers;
+      final int rVrf = rows < 1 ? 1 : rows;
+      final int cVrf = cols < 1 ? 1 : cols;
 
-      final Vec3[][][] result = new Vec3[lVal][rVal][cVal];
+      final Vec3[][][] result = new Vec3[lVrf][rVrf][cVrf];
 
-      final boolean lOne = lVal == 1;
-      final boolean rOne = rVal == 1;
-      final boolean cOne = cVal == 1;
+      final boolean lOne = lVrf == 1;
+      final boolean rOne = rVrf == 1;
+      final boolean cOne = cVrf == 1;
 
-      final float hToStep = lOne ? 0.0f : 1.0f / ( lVal - 1.0f );
-      final float iToStep = rOne ? 0.0f : 1.0f / ( rVal - 1.0f );
-      final float jToStep = cOne ? 0.0f : 1.0f / ( cVal - 1.0f );
+      final float hToStep = lOne ? 0.0f : 1.0f / ( lVrf - 1.0f );
+      final float iToStep = rOne ? 0.0f : 1.0f / ( rVrf - 1.0f );
+      final float jToStep = cOne ? 0.0f : 1.0f / ( cVrf - 1.0f );
 
       final float hOff = lOne ? 0.5f : 0.0f;
       final float iOff = rOne ? 0.5f : 0.0f;
       final float jOff = cOne ? 0.5f : 0.0f;
 
-      final int rcVal = rVal * cVal;
-      final int len = lVal * rcVal;
+      final int rcVal = rVrf * cVrf;
+      final int len = lVrf * rcVal;
       for ( int k = 0; k < len; ++k ) {
          final int h = k / rcVal;
          final int m = k - h * rcVal;
-         final int i = m / cVal;
-         final int j = m % cVal;
+         final int i = m / cVrf;
+         final int j = m % cVrf;
 
          final float hStep = h * hToStep + hOff;
          final float iStep = i * iToStep + iOff;

@@ -133,13 +133,13 @@ public abstract class ParserGgr {
          final float[][] keyArr = keys.toArray(new float[keyLen][13]);
 
          /* Temporary variables to store left and right edge of each key. */
-         final Color ltClr = new Color();
-         final Color rtClr = new Color();
+         final Rgb ltClr = new Rgb();
+         final Rgb rtClr = new Rgb();
 
          /* Mixers. */
-         final Color.MixSrgb rgbaMix = new Color.MixSrgb();
-         final Color.MixSrLch cwMix = new Color.MixSrLch(new Color.HueCW());
-         final Color.MixSrLch ccwMix = new Color.MixSrLch(new Color.HueCCW());
+         final Rgb.MixSrgb rgbaMix = new Rgb.MixSrgb();
+         final Rgb.MixSrLch cwMix = new Rgb.MixSrLch(new Rgb.HueCW());
+         final Rgb.MixSrLch ccwMix = new Rgb.MixSrLch(new Rgb.HueCCW());
 
          /* The GGR file is sampled rather than transferred one-to-one. */
          final int vrfSamples = Utils.clamp(samples, 3, 32);
@@ -148,7 +148,7 @@ public abstract class ParserGgr {
 
             /* Create new color key data. */
             final float step = k * toStep;
-            final Color evalClr = new Color();
+            final Rgb evalClr = new Rgb();
 
             /*
              * Deal with boundary cases: when step is less than or equal to left

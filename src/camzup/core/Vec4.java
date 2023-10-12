@@ -2217,38 +2217,38 @@ public class Vec4 implements Comparable < Vec4 > {
       final float lbz, final float lbw, final float ubx, final float uby,
       final float ubz, final float ubw ) {
 
-      final int sVal = strata < 1 ? 1 : strata;
-      final int lVal = layers < 1 ? 1 : layers;
-      final int rVal = rows < 1 ? 1 : rows;
-      final int cVal = cols < 1 ? 1 : cols;
+      final int sVrf = strata < 1 ? 1 : strata;
+      final int lVrf = layers < 1 ? 1 : layers;
+      final int rVrf = rows < 1 ? 1 : rows;
+      final int cVrf = cols < 1 ? 1 : cols;
 
-      final Vec4[][][][] result = new Vec4[sVal][lVal][rVal][cVal];
+      final Vec4[][][][] result = new Vec4[sVrf][lVrf][rVrf][cVrf];
 
-      final boolean sOne = sVal == 1;
-      final boolean lOne = lVal == 1;
-      final boolean rOne = rVal == 1;
-      final boolean cOne = cVal == 1;
+      final boolean sOne = sVrf == 1;
+      final boolean lOne = lVrf == 1;
+      final boolean rOne = rVrf == 1;
+      final boolean cOne = cVrf == 1;
 
-      final float gToStep = sOne ? 0.0f : 1.0f / ( sVal - 1.0f );
-      final float hToStep = lOne ? 0.0f : 1.0f / ( lVal - 1.0f );
-      final float iToStep = rOne ? 0.0f : 1.0f / ( rVal - 1.0f );
-      final float jToStep = cOne ? 0.0f : 1.0f / ( cVal - 1.0f );
+      final float gToStep = sOne ? 0.0f : 1.0f / ( sVrf - 1.0f );
+      final float hToStep = lOne ? 0.0f : 1.0f / ( lVrf - 1.0f );
+      final float iToStep = rOne ? 0.0f : 1.0f / ( rVrf - 1.0f );
+      final float jToStep = cOne ? 0.0f : 1.0f / ( cVrf - 1.0f );
 
       final float gOff = sOne ? 0.5f : 0.0f;
       final float hOff = lOne ? 0.5f : 0.0f;
       final float iOff = rOne ? 0.5f : 0.0f;
       final float jOff = cOne ? 0.5f : 0.0f;
 
-      final int rcVal = rVal * cVal;
-      final int lrcVal = lVal * rcVal;
-      final int len = sVal * lrcVal;
+      final int rcVal = rVrf * cVrf;
+      final int lrcVal = lVrf * rcVal;
+      final int len = sVrf * lrcVal;
       for ( int k = 0; k < len; ++k ) {
          final int g = k / lrcVal;
          final int m = k - g * lrcVal;
          final int h = m / rcVal;
          final int n = m - h * rcVal;
-         final int i = n / cVal;
-         final int j = n % cVal;
+         final int i = n / cVrf;
+         final int j = n % cVrf;
 
          final float gStep = g * gToStep + gOff;
          final float hStep = h * hToStep + hOff;

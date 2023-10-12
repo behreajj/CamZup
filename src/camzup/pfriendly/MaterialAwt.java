@@ -3,11 +3,11 @@ package camzup.pfriendly;
 import java.awt.Image;
 import java.awt.image.BufferedImage;
 
-import camzup.core.Color;
 import camzup.core.Experimental;
 import camzup.core.IMaterial;
 import camzup.core.IUtils;
 import camzup.core.Material;
+import camzup.core.Rgb;
 import camzup.core.Utils;
 
 /**
@@ -24,8 +24,7 @@ public class MaterialAwt extends Material {
    /**
     * The stroke color.
     */
-   public final Color stroke = Color.fromHex(IMaterial.DEFAULT_STROKE,
-      new Color());
+   public final Rgb stroke = Rgb.fromHex(IMaterial.DEFAULT_STROKE, new Rgb());
 
    /**
     * The weight, or width, of the stroke.
@@ -165,19 +164,6 @@ public class MaterialAwt extends Material {
    /**
     * Sets the material's stroke color.
     *
-    * @param stroke the color
-    *
-    * @return this material
-    */
-   public MaterialAwt setStroke ( final Color stroke ) {
-
-      this.stroke.set(stroke);
-      return this;
-   }
-
-   /**
-    * Sets the material's stroke color.
-    *
     * @param r red
     * @param g green
     * @param b blue
@@ -217,7 +203,20 @@ public class MaterialAwt extends Material {
     */
    public MaterialAwt setStroke ( final int stroke ) {
 
-      Color.fromHex(stroke, this.stroke);
+      Rgb.fromHex(stroke, this.stroke);
+      return this;
+   }
+
+   /**
+    * Sets the material's stroke color.
+    *
+    * @param stroke the color
+    *
+    * @return this material
+    */
+   public MaterialAwt setStroke ( final Rgb stroke ) {
+
+      this.stroke.set(stroke);
       return this;
    }
 

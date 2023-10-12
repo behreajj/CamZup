@@ -197,7 +197,7 @@ public class MeshDirect {
     *
     * @return the coordinate
     */
-   public Color getColor ( final int i, final Color target ) {
+   public Rgb getColor ( final int i, final Rgb target ) {
 
       final int j = i * MeshDirect.COLOR_STRIDE;
       return target.set(this.colors[j], this.colors[j + 1], this.colors[j + 2],
@@ -618,19 +618,6 @@ public class MeshDirect {
     * Sets a vertex color at an index.
     *
     * @param i the index
-    * @param c the color
-    *
-    * @return this mesh
-    */
-   public MeshDirect setColor ( final int i, final Color c ) {
-
-      return this.setColor(i, c.r, c.g, c.b, c.a);
-   }
-
-   /**
-    * Sets a vertex color at an index.
-    *
-    * @param i the index
     * @param r the red channel
     * @param g the green channel
     * @param b the blue channel
@@ -648,6 +635,19 @@ public class MeshDirect {
       this.colors[j + 3] = a;
 
       return this;
+   }
+
+   /**
+    * Sets a vertex color at an index.
+    *
+    * @param i the index
+    * @param c the color
+    *
+    * @return this mesh
+    */
+   public MeshDirect setColor ( final int i, final Rgb c ) {
+
+      return this.setColor(i, c.r, c.g, c.b, c.alpha);
    }
 
    /**

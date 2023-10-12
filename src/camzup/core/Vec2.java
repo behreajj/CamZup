@@ -2724,24 +2724,24 @@ public class Vec2 implements Comparable < Vec2 > {
    protected static Vec2[][] grid ( final int cols, final int rows,
       final float lbx, final float lby, final float ubx, final float uby ) {
 
-      final int rVal = rows < 1 ? 1 : rows;
-      final int cVal = cols < 1 ? 1 : cols;
+      final int rVrf = rows < 1 ? 1 : rows;
+      final int cVrf = cols < 1 ? 1 : cols;
 
-      final Vec2[][] result = new Vec2[rVal][cVal];
+      final Vec2[][] result = new Vec2[rVrf][cVrf];
 
-      final boolean rOne = rVal == 1;
-      final boolean cOne = cVal == 1;
+      final boolean rOne = rVrf == 1;
+      final boolean cOne = cVrf == 1;
 
-      final float iToStep = rOne ? 0.0f : 1.0f / ( rVal - 1.0f );
-      final float jToStep = cOne ? 0.0f : 1.0f / ( cVal - 1.0f );
+      final float iToStep = rOne ? 0.0f : 1.0f / ( rVrf - 1.0f );
+      final float jToStep = cOne ? 0.0f : 1.0f / ( cVrf - 1.0f );
 
       final float iOff = rOne ? 0.5f : 0.0f;
       final float jOff = cOne ? 0.5f : 0.0f;
 
-      final int len = rVal * cVal;
+      final int len = rVrf * cVrf;
       for ( int k = 0; k < len; ++k ) {
-         final int i = k / cVal;
-         final int j = k % cVal;
+         final int i = k / cVrf;
+         final int j = k % cVrf;
 
          final float iStep = i * iToStep + iOff;
          final float jStep = j * jToStep + jOff;
