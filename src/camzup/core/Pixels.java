@@ -47,47 +47,6 @@ public abstract class Pixels {
    public static final int SHADOWS = 0b0001;
 
    /**
-    * Look up table for converting colors from linear to standard RGB.
-    */
-   private static final int[] LTS_LUT = { 0, 13, 22, 28, 34, 38, 42, 46, 50, 53,
-      56, 59, 61, 64, 66, 69, 71, 73, 75, 77, 79, 81, 83, 85, 86, 88, 90, 92,
-      93, 95, 96, 98, 99, 101, 102, 104, 105, 106, 108, 109, 110, 112, 113, 114,
-      115, 117, 118, 119, 120, 121, 122, 124, 125, 126, 127, 128, 129, 130, 131,
-      132, 133, 134, 135, 136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146,
-      147, 148, 148, 149, 150, 151, 152, 153, 154, 155, 155, 156, 157, 158, 159,
-      159, 160, 161, 162, 163, 163, 164, 165, 166, 167, 167, 168, 169, 170, 170,
-      171, 172, 173, 173, 174, 175, 175, 176, 177, 178, 178, 179, 180, 180, 181,
-      182, 182, 183, 184, 185, 185, 186, 187, 187, 188, 189, 189, 190, 190, 191,
-      192, 192, 193, 194, 194, 195, 196, 196, 197, 197, 198, 199, 199, 200, 200,
-      201, 202, 202, 203, 203, 204, 205, 205, 206, 206, 207, 208, 208, 209, 209,
-      210, 210, 211, 212, 212, 213, 213, 214, 214, 215, 215, 216, 216, 217, 218,
-      218, 219, 219, 220, 220, 221, 221, 222, 222, 223, 223, 224, 224, 225, 226,
-      226, 227, 227, 228, 228, 229, 229, 230, 230, 231, 231, 232, 232, 233, 233,
-      234, 234, 235, 235, 236, 236, 237, 237, 238, 238, 238, 239, 239, 240, 240,
-      241, 241, 242, 242, 243, 243, 244, 244, 245, 245, 246, 246, 246, 247, 247,
-      248, 248, 249, 249, 250, 250, 251, 251, 251, 252, 252, 253, 253, 254, 254,
-      255, 255 };
-
-   /**
-    * Look up table for converting colors from standard to linear RGB.
-    */
-   private static final int[] STL_LUT = { 0, 0, 0, 0, 0, 0, 0, 1, 1, 1, 1, 1, 1,
-      1, 1, 1, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 3, 3, 3, 3, 4, 4, 4, 4, 4, 5,
-      5, 5, 5, 6, 6, 6, 6, 7, 7, 7, 8, 8, 8, 8, 9, 9, 9, 10, 10, 10, 11, 11, 12,
-      12, 12, 13, 13, 13, 14, 14, 15, 15, 16, 16, 17, 17, 17, 18, 18, 19, 19,
-      20, 20, 21, 22, 22, 23, 23, 24, 24, 25, 25, 26, 27, 27, 28, 29, 29, 30,
-      30, 31, 32, 32, 33, 34, 35, 35, 36, 37, 37, 38, 39, 40, 41, 41, 42, 43,
-      44, 45, 45, 46, 47, 48, 49, 50, 51, 51, 52, 53, 54, 55, 56, 57, 58, 59,
-      60, 61, 62, 63, 64, 65, 66, 67, 68, 69, 70, 71, 72, 73, 74, 76, 77, 78,
-      79, 80, 81, 82, 84, 85, 86, 87, 88, 90, 91, 92, 93, 95, 96, 97, 99, 100,
-      101, 103, 104, 105, 107, 108, 109, 111, 112, 114, 115, 116, 118, 119, 121,
-      122, 124, 125, 127, 128, 130, 131, 133, 134, 136, 138, 139, 141, 142, 144,
-      146, 147, 149, 151, 152, 154, 156, 157, 159, 161, 163, 164, 166, 168, 170,
-      171, 173, 175, 177, 179, 181, 183, 184, 186, 188, 190, 192, 194, 196, 198,
-      200, 202, 204, 206, 208, 210, 212, 214, 216, 218, 220, 222, 224, 226, 229,
-      231, 233, 235, 237, 239, 242, 244, 246, 248, 250, 253, 255 };
-
-   /**
     * Multiplies the alpha channel of each pixel in an array by the supplied
     * alpha value. Pixels may need further adjustment with
     * {@link Pixels#premul(int[], int[])} and
@@ -899,8 +858,6 @@ public abstract class Pixels {
     * @param target the target pixels
     *
     * @return the gray pixels
-    *
-    * @see Pixels#sRgbLuminance(int)
     */
    public static int[] grayscale ( final int[] source, final int[] target ) {
 
@@ -910,10 +867,9 @@ public abstract class Pixels {
             final int srcHex = source[i];
             final int ai = srcHex & 0xff000000;
             if ( ai != 0 ) {
-               // TODO: Remove dependence on look up table.
-               final int v = Pixels.LTS_LUT[( int ) ( Pixels.sRgbLuminance(
-                  srcHex) * 0xff + 0.5f )];
-               target[i] = ai | v << 0x10 | v << 0x08 | v;
+               final int v255 = ( int ) ( Pixels.luminance(source[i]) * 255.0f
+                  + 0.5f );
+               target[i] = ai | v255 << 0x10 | v255 << 0x08 | v255;
             } else {
                target[i] = 0x00000000;
             }
@@ -988,48 +944,6 @@ public abstract class Pixels {
             }
          } else {
             for ( int i = 0; i < srcLen; ++i ) { target[i] = 0x00000000; }
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Converts a pixel color from linear RGB to standard RGB. If the adjust
-    * alpha flag is true, then alpha is converted as well.
-    *
-    * @param c           the color
-    * @param adjustAlpha adjust alpha flag
-    *
-    * @return the standard pixels
-    */
-   public static int lRgbTosRgb ( final int c, final boolean adjustAlpha ) {
-
-      final int lai = c >> 0x18 & 0xff;
-      return ( adjustAlpha ? Pixels.LTS_LUT[lai] : lai ) << 0x18
-         | Pixels.LTS_LUT[c >> 0x10 & 0xff] << 0x10 | Pixels.LTS_LUT[c >> 0x08
-            & 0xff] << 0x08 | Pixels.LTS_LUT[c & 0xff];
-   }
-
-   /**
-    * Converts a source pixel array from linear RGB to standard RGB. If the
-    * adjust alpha flag is true, then alpha is converted as well.
-    *
-    * @param source      the source pixels
-    * @param adjustAlpha adjust alpha flag
-    * @param target      the target pixels
-    *
-    * @return the standard pixels
-    *
-    * @see Pixels#lRgbTosRgb(int, boolean)
-    */
-   public static int[] lRgbTosRgb ( final int[] source,
-      final boolean adjustAlpha, final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-         for ( int i = 0; i < srcLen; ++i ) {
-            target[i] = Pixels.lRgbTosRgb(source[i], adjustAlpha);
          }
       }
 
@@ -2106,65 +2020,6 @@ public abstract class Pixels {
    }
 
    /**
-    * Finds the luminance of a color, represented as a 32-bit integer, in
-    * standard RGB. Converts the color to linear RGB, then calculates a
-    * weighted average.
-    *
-    * @param c color
-    *
-    * @return the luminance
-    */
-   public static float sRgbLuminance ( final int c ) {
-
-      // TODO: Remove dependence on look up tables.
-      return ( float ) ( 0.0008339189910613837d * Pixels.STL_LUT[c >> 0x10
-         & 0xff] + 0.002804584845905505d * Pixels.STL_LUT[c >> 0x08 & 0xff]
-         + 0.0002830647904840915d * Pixels.STL_LUT[c & 0xff] );
-   }
-
-   /**
-    * Converts a pixel color from standard RGB to linear RGB. If the adjust
-    * alpha flag is true, then alpha is converted as well.
-    *
-    * @param c           color
-    * @param adjustAlpha adjust alpha flag
-    *
-    * @return the standard pixels
-    */
-   public static int sRgbTolRgb ( final int c, final boolean adjustAlpha ) {
-
-      final int sai = c >> 0x18 & 0xff;
-      return ( adjustAlpha ? Pixels.STL_LUT[sai] : sai ) << 0x18
-         | Pixels.STL_LUT[c >> 0x10 & 0xff] << 0x10 | Pixels.STL_LUT[c >> 0x08
-            & 0xff] << 0x08 | Pixels.STL_LUT[c & 0xff];
-   }
-
-   /**
-    * Converts a source pixel array from standard RGB to linear RGB. If the
-    * adjust alpha flag is true, then alpha is converted as well.
-    *
-    * @param source      the source pixels
-    * @param adjustAlpha adjust alpha flag
-    * @param target      the target pixels
-    *
-    * @return the linear pixels
-    *
-    * @see Pixels#sRgbTolRgb(int, boolean)
-    */
-   public static int[] sRgbTolRgb ( final int[] source,
-      final boolean adjustAlpha, final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-         for ( int i = 0; i < srcLen; ++i ) {
-            target[i] = Pixels.sRgbTolRgb(source[i], adjustAlpha);
-         }
-      }
-
-      return target;
-   }
-
-   /**
     * Finds the minimum, maximum and mean lightness in a source pixels array.
     * If factor is positive, stretches color to maximum lightness range in
     * [0.0, 100.0]. If factor is negative, compresses color to mean. Assigns
@@ -2289,14 +2144,8 @@ public abstract class Pixels {
     * @param target        the target pixels
     *
     * @return the tinted pixels
-    *
-    * @see Rgb#fromHex(int, Rgb)
-    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
-    * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
-    * @see Rgb#toHexIntSat(Rgb)
-    * @see Pixels#toneFlagToResponse(int)
     */
-   public static int[] tintLab ( final int[] source, final int tint,
+   public static int[] tintLab ( final int[] source, final Lab tint,
       final float fac, final boolean preserveLight, final int toneFlag,
       final int[] target ) {
 
@@ -2316,13 +2165,10 @@ public abstract class Pixels {
          final Vec4 xyz = new Vec4();
          final Lab srcLab = new Lab();
          final Lab mixLab = new Lab();
-         final Lab tintLab = new Lab();
 
-         /* Convert tint from integer to LAB. Decompose to loose floats. */
-         Rgb.sRgbToSrLab2(Rgb.fromHex(tint, srgb), tintLab, xyz, lrgb);
-         final float lTint = tintLab.l;
-         final float aTint = tintLab.a;
-         final float bTint = tintLab.b;
+         final float lTint = tint.l;
+         final float aTint = tint.a;
+         final float bTint = tint.b;
 
          final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
          for ( int i = 0; i < srcLen; ++i ) {
@@ -2957,6 +2803,32 @@ public abstract class Pixels {
    }
 
    /**
+    * Finds the relative luminance of a 32-bit ARGB integer. Does not check
+    * the input color's alpha.
+    *
+    * @param c the color
+    *
+    * @return the luminance
+    */
+   private static float luminance ( final int c ) {
+
+      final double sr = ( c >> 0x10 & 0xff ) / 255.0d;
+      final double sg = ( c >> 0x08 & 0xff ) / 255.0d;
+      final double sb = ( c >> 0x00 & 0xff ) / 255.0d;
+
+      final double lr = sr <= 0.04045d ? sr / 12.92d : Math.pow( ( sr + 0.055d )
+         / 1.055d, 2.4d);
+      final double lg = sg <= 0.04045d ? sg / 12.92d : Math.pow( ( sg + 0.055d )
+         / 1.055d, 2.4d);
+      final double lb = sb <= 0.04045d ? sb / 12.92d : Math.pow( ( sb + 0.055d )
+         / 1.055d, 2.4d);
+
+      final double y = 0.2126d * lr + 0.7152d * lg + 0.0722d * lb;
+      return ( float ) ( y <= 0.0031308d ? 12.92d * y : Math.pow(1.055d * y,
+         1.0d / 2.4d) - 0.055d );
+   }
+
+   /**
     * Evaluates whether a color should be included according to a lower and
     * upper bound, both inclusive. Luminance is expected to be in the range
     * [0.0, 1.0].
@@ -2977,14 +2849,15 @@ public abstract class Pixels {
        * @param ub the upper bounds
        *
        * @return the evaluation
+       *
+       * @see Pixels#luminance(int)
        */
       @Override
       public Boolean apply ( final Integer c, final Float lb, final Float ub ) {
 
-         final float lum = Pixels.sRgbLuminance(c);
-         final float lin = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math
-            .pow(lum, 0.4166666666666667d) * 1.055d - 0.055d );
-         return lin >= lb && lin <= ub;
+         final float v = Pixels.luminance(c);
+         return v >= lb && v <= ub;
+
       }
 
       /**
@@ -3015,14 +2888,12 @@ public abstract class Pixels {
        *
        * @return the factor
        *
-       * @see Pixels#sRgbLuminance(int)
+       * @see Pixels#luminance(int)
        */
       @Override
       public Float apply ( final int hex ) {
 
-         final float lum = Pixels.sRgbLuminance(hex);
-         return lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math.pow(lum,
-            0.4166666666666667d) * 1.055d - 0.055d );
+         return Pixels.luminance(hex);
       }
 
       /**

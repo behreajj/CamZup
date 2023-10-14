@@ -6,6 +6,7 @@ import java.util.regex.Pattern;
 
 import camzup.core.Gradient;
 import camzup.core.IUtils;
+import camzup.core.Lab;
 import camzup.core.Lch;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
@@ -16,6 +17,7 @@ import camzup.core.Rgb;
 import camzup.core.Utils;
 import camzup.core.Utils.TriFunction;
 import camzup.core.Vec2;
+import camzup.core.Vec4;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
@@ -1871,68 +1873,6 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Converts an image from linear RGB to
-    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
-    *
-    * @param source      the source image
-    * @param adjustAlpha include the alpha channel in the adjustment
-    * @param target      the target image
-    *
-    * @return the linear image
-    *
-    * @see Pixels#lRgbTosRgb(int, boolean)
-    */
-   public static PImage lRgbaTosRgba ( final PImage source,
-      final boolean adjustAlpha, final PImage target ) {
-
-      if ( source == target ) {
-         target.loadPixels();
-         Pixels.lRgbTosRgb(target.pixels, adjustAlpha, target.pixels);
-         target.updatePixels();
-         return target;
-      }
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not use PGraphics with this method.");
-         return target;
-      }
-
-      source.loadPixels();
-      target.loadPixels();
-      final int w = source.pixelWidth;
-      final int h = source.pixelHeight;
-      final int[] pxSrc = source.pixels;
-      target.pixels = Pixels.lRgbTosRgb(pxSrc, adjustAlpha,
-         new int[pxSrc.length]);
-      target.format = source.format;
-      target.pixelDensity = source.pixelDensity;
-      target.pixelWidth = w;
-      target.pixelHeight = h;
-      target.width = source.width;
-      target.height = source.height;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Converts an image from linear RGB to
-    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB).
-    *
-    * @param source the source image
-    * @param target the target image
-    *
-    * @return the linear image
-    *
-    * @see Pixels#lRgbTosRgb(int, boolean)
-    */
-   public static PImage lRgbaTosRgba ( final PImage source,
-      final PImage target ) {
-
-      return ZImage.lRgbaTosRgba(source, false, target);
-   }
-
-   /**
     * Masks a backdrop image with an overlay. Forms an intersection of the
     * bounding area of the two inputs. Emits the top-left corner for the
     * intersection.
@@ -2835,68 +2775,6 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Converts an image from
-    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB) to
-    * linear RGB.
-    *
-    * @param source      the source image
-    * @param adjustAlpha include the alpha channel in the adjustment
-    * @param target      the target image
-    *
-    * @return the linear image
-    *
-    * @see Pixels#sRgbTolRgb(int, boolean)
-    */
-   public static PImage sRgbaTolRgba ( final PImage source,
-      final boolean adjustAlpha, final PImage target ) {
-
-      if ( source == target ) {
-         target.loadPixels();
-         Pixels.sRgbTolRgb(target.pixels, adjustAlpha, target.pixels);
-         target.updatePixels();
-         return target;
-      }
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not use PGraphics with this method.");
-         return target;
-      }
-
-      source.loadPixels();
-      target.loadPixels();
-      final int w = source.pixelWidth;
-      final int h = source.pixelHeight;
-      final int[] pxSrc = source.pixels;
-      target.pixels = Pixels.sRgbTolRgb(pxSrc, adjustAlpha,
-         new int[pxSrc.length]);
-      target.format = source.format;
-      target.pixelDensity = source.pixelDensity;
-      target.pixelWidth = w;
-      target.pixelHeight = h;
-      target.width = source.width;
-      target.height = source.height;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Converts an image from
-    * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> (sRGB) to
-    * linear RGB.
-    *
-    * @param source the source image
-    * @param target the target image
-    *
-    * @return the linear image
-    */
-   public static PImage sRgbaTolRgba ( final PImage source,
-      final PImage target ) {
-
-      return ZImage.sRgbaTolRgba(source, false, target);
-   }
-
-   /**
     * Finds the minimum, maximum and mean lightness in a source image. If
     * factor is positive, stretches color to maximum lightness range in [0.0,
     * 100.0]. If factor is negative, compresses color to mean. Assigns result
@@ -2979,12 +2857,20 @@ public class ZImage extends PImage {
       final float fac, final boolean preserveLight, final int toneFlag,
       final PImage target ) {
 
-      final int valTint = source.format == PConstants.RGB ? 0xff000000 | tint
+      // TODO: Redo the method overload hierarchy so that Lab is primary,
+      // then Rgb, then integers.
+      final int tintVrf = source.format == PConstants.RGB ? 0xff000000 | tint
          : tint;
+      final Rgb tintsRgb = new Rgb();
+      final Rgb tintlRgb = new Rgb();
+      final Vec4 tintXyz = new Vec4();
+      final Lab tintLab = new Lab();
+      Rgb.fromHex(tintVrf, tintsRgb);
+      Rgb.sRgbToSrLab2(tintsRgb, tintLab, tintXyz, tintlRgb);
 
       if ( source == target ) {
          target.loadPixels();
-         Pixels.tintLab(target.pixels, valTint, fac, preserveLight, toneFlag,
+         Pixels.tintLab(target.pixels, tintLab, fac, preserveLight, toneFlag,
             target.pixels);
          target.updatePixels();
          return target;
@@ -2998,7 +2884,7 @@ public class ZImage extends PImage {
       source.loadPixels();
       target.loadPixels();
       final int[] pxSrc = source.pixels;
-      target.pixels = Pixels.tintLab(pxSrc, valTint, fac, preserveLight,
+      target.pixels = Pixels.tintLab(pxSrc, tintLab, fac, preserveLight,
          toneFlag, new int[pxSrc.length]);
       target.format = source.format;
       target.pixelDensity = source.pixelDensity;

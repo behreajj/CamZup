@@ -171,3 +171,4 @@ gimbals
 unpremul
 premul
 lch
+composited

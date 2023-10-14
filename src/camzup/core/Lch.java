@@ -609,7 +609,7 @@ public class Lch implements Comparable < Lch > {
     * @param o the key color
     *
     * @return the harmonies
-    * 
+    *
     * @see Utils#mod1(float)
     */
    public static Lch[] harmonyAnalogous ( final Lch o ) {
@@ -630,7 +630,7 @@ public class Lch implements Comparable < Lch > {
     * @param o the key color
     *
     * @return the harmony
-    * 
+    *
     * @see Utils#mod1(float)
     */
    public static Lch[] harmonyComplement ( final Lch o ) {
@@ -639,8 +639,7 @@ public class Lch implements Comparable < Lch > {
 
       final float h180 = o.h + 0.5f;
 
-      return new Lch[] { new Lch(lCmp, o.c, Utils.mod1(h180),
-         o.alpha) };
+      return new Lch[] { new Lch(lCmp, o.c, Utils.mod1(h180), o.alpha) };
    }
 
    /**
@@ -650,7 +649,7 @@ public class Lch implements Comparable < Lch > {
     * @param o the key color
     *
     * @return the harmonies
-    * 
+    *
     * @see Utils#mod1(float)
     */
    public static Lch[] harmonySplit ( final Lch o ) {
@@ -671,7 +670,7 @@ public class Lch implements Comparable < Lch > {
     * @param o the key color
     *
     * @return the harmonies
-    * 
+    *
     * @see Utils#mod1(float)
     */
    public static Lch[] harmonySquare ( final Lch o ) {

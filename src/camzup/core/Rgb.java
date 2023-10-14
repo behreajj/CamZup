@@ -2331,10 +2331,13 @@ public class Rgb implements Comparable < Rgb > {
             float dh = Utils.atan2(db, da) * IUtils.ONE_TAU;
             if ( dh < -0.0f ) { ++dh; }
 
-            this.cLch.set(this.hueFunc.apply(oh, dh, step), u * Utils
-               .sqrtUnchecked(ocsq) + t * Utils.sqrtUnchecked(dcsq), u
-                  * this.oLab.l + t * this.dLab.l, u * this.oLab.alpha + t
-                     * this.dLab.alpha);
+            /* @formatter:off */
+            this.cLch.set(
+               u * this.oLab.l + t * this.dLab.l,
+               u * Utils.sqrtUnchecked(ocsq) + t * Utils.sqrtUnchecked(dcsq),
+               this.hueFunc.apply(oh, dh, step),
+               u * this.oLab.alpha + t * this.dLab.alpha);
+            /* @formatter:on */
 
             Lab.fromLch(this.cLch, this.cLab);
          }
