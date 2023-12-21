@@ -702,6 +702,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public String toSvgElm ( final float zoom,
       final MaterialSolid[] materials ) {
 
+      // TODO: Allow user to specify SVG cap and join rounding?
+
       final StringBuilder svgp = new StringBuilder(1024);
       if ( this.length() < 1 ) { return svgp.toString(); }
 

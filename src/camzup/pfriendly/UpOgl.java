@@ -81,6 +81,17 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     */
    protected UpOgl ( ) {
 
+      // TODO: Is there a way to allow for face culling if the user wants it?
+      // See https://discourse.processing.org/t/cull-faces-in-p3d/43127/4
+      // https://github.com/benfry/processing4/blob/main/core/src/processing/opengl/PGL.java#L2912
+      // https://github.com/benfry/processing4/blob/main/core/src/processing/opengl/PJOGL.java#L835
+      // https://github.com/benfry/processing4/blob/main/core/src/processing/opengl/PGraphicsOpenGL.java#L1553
+      // https://github.com/benfry/processing4/blob/main/core/src/processing/opengl/PGraphicsOpenGL.java#L6820
+      //
+      // pgl.enable(PGL.CULL_FACE);
+      // pgl.cullFace(PGL.BACK);
+      // pgl.cullFace(PGL.FRONT);
+
       /*
        * For issues with beginDraw, see:
        * https://github.com/processing/processing4/issues/641

@@ -377,7 +377,6 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     * @return this transform
     *
     * @see Vec2#add(Vec2, Vec2, Vec2)
-    * @see Vec2#hadamard(Vec2, Vec2, Vec2)
     * @see Vec2#rotateZ(Vec2, float, float, Vec2)
     */
    public Transform2 moveByLocal ( final Vec2 dir ) {

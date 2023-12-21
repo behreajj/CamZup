@@ -514,13 +514,32 @@ public class MaterialSolid extends Material {
     * @param scale the transform scale.
     *
     * @return the string builder
+    */
+   StringBuilder toSvgString ( final StringBuilder svgp, final float scale ) {
+
+      return this.toSvgString(svgp, scale, ISvgWritable.DEFAULT_STR_JOIN,
+         ISvgWritable.DEFAULT_STR_CAP);
+   }
+
+   /**
+    * Appends a representation of this material to a {@link StringBuilder} for
+    * writing an SVG. The stroke join may be either "bevel," "miter" or
+    * "round". The stroke cap may be either "butt," "round" or "square".
+    *
+    * @param svgp       the string builder
+    * @param scale      the transform scale.
+    * @param strokeJoin the stroke join.
+    * @param strokeCap  the stroke cap.
+    *
+    * @return the string builder
     *
     * @see Utils#div(float, float)
     * @see Utils#abs(float)
     * @see Utils#clamp01(float)
     * @see Rgb#toHexWeb(StringBuilder, Rgb)
     */
-   StringBuilder toSvgString ( final StringBuilder svgp, final float scale ) {
+   StringBuilder toSvgString ( final StringBuilder svgp, final float scale,
+      final String strokeJoin, final String strokeCap ) {
 
       svgp.append("id=\"");
       svgp.append(this.name.toLowerCase());
@@ -542,9 +561,9 @@ public class MaterialSolid extends Material {
          svgp.append("\" stroke=\"");
          Rgb.toHexWeb(svgp, this.stroke);
          svgp.append("\" stroke-linejoin=\"");
-         svgp.append(ISvgWritable.DEFAULT_STR_JOIN);
+         svgp.append(strokeJoin);
          svgp.append("\" stroke-linecap=\"");
-         svgp.append(ISvgWritable.DEFAULT_STR_CAP);
+         svgp.append(strokeCap);
          svgp.append('\"');
          svgp.append(' ');
       } else {

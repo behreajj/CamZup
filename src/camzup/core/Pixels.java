@@ -199,7 +199,6 @@ public abstract class Pixels {
                   Rgb.fromHex(srgbKeyInt, srgb);
                   Rgb.sRgbToSrLch(srgb, lch, lab, xyz, lrgb);
 
-                  // Vec4.add(lch, adjust, lch);
                   lch.l = lch.l + adjust.l;
                   lch.c = lch.c + adjust.c;
                   lch.h = lch.h + adjust.h;
@@ -867,8 +866,8 @@ public abstract class Pixels {
             final int srcHex = source[i];
             final int ai = srcHex & 0xff000000;
             if ( ai != 0 ) {
-               final int v255 = ( int ) ( Pixels.luminance(source[i]) * 255.0f
-                  + 0.5f );
+               final int v255 = ( int ) ( Pixels.srgbLuminance(source[i])
+                  * 255.0f + 0.5f );
                target[i] = ai | v255 << 0x10 | v255 << 0x08 | v255;
             } else {
                target[i] = 0x00000000;
@@ -1431,14 +1430,18 @@ public abstract class Pixels {
          return target;
       }
 
-      final float tx = ( wSrc - 1.0f ) / ( wTrg - 1.0f );
-      final float ty = ( hSrc - 1.0f ) / ( hTrg - 1.0f );
+      final float wDenom = wTrg - 1.0f;
+      final float hDenom = hTrg - 1.0f;
+      final float tx = wDenom != 0.0f ? ( wSrc - 1.0f ) / wDenom : 0.0f;
+      final float ty = hDenom != 0.0f ? ( hSrc - 1.0f ) / hDenom : 0.0f;
+      final float ox = wDenom != 0.0f ? 0.0f : 0.5f;
+      final float oy = hDenom != 0.0f ? 0.0f : 0.5f;
 
       final int trgLen = wTrg * hTrg;
       final int[] target = new int[trgLen];
       for ( int i = 0; i < trgLen; ++i ) {
-         target[i] = Pixels.sampleBilinear(source, wSrc, hSrc, tx * ( i
-            % wTrg ), ty * ( i / wTrg ));
+         target[i] = Pixels.sampleBilinear(source, wSrc, hSrc, tx * ( i % wTrg )
+            + ox, ty * ( i / wTrg ) + oy);
       }
 
       return target;
@@ -2810,7 +2813,7 @@ public abstract class Pixels {
     *
     * @return the luminance
     */
-   private static float luminance ( final int c ) {
+   private static float srgbLuminance ( final int c ) {
 
       final double sr = ( c >> 0x10 & 0xff ) / 255.0d;
       final double sg = ( c >> 0x08 & 0xff ) / 255.0d;
@@ -2842,7 +2845,7 @@ public abstract class Pixels {
       public FilterLuminance ( ) {}
 
       /**
-       * Evalutes whether a color is in bounds.
+       * Evaluates whether a color is in bounds.
        *
        * @param c  the color
        * @param lb the lower bounds
@@ -2850,12 +2853,12 @@ public abstract class Pixels {
        *
        * @return the evaluation
        *
-       * @see Pixels#luminance(int)
+       * @see Pixels#srgbLuminance(int)
        */
       @Override
       public Boolean apply ( final Integer c, final Float lb, final Float ub ) {
 
-         final float v = Pixels.luminance(c);
+         final float v = Pixels.srgbLuminance(c);
          return v >= lb && v <= ub;
 
       }
@@ -2888,12 +2891,12 @@ public abstract class Pixels {
        *
        * @return the factor
        *
-       * @see Pixels#luminance(int)
+       * @see Pixels#srgbLuminance(int)
        */
       @Override
       public Float apply ( final int hex ) {
 
-         return Pixels.luminance(hex);
+         return Pixels.srgbLuminance(hex);
       }
 
       /**

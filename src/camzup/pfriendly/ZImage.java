@@ -2857,8 +2857,6 @@ public class ZImage extends PImage {
       final float fac, final boolean preserveLight, final int toneFlag,
       final PImage target ) {
 
-      // TODO: Redo the method overload hierarchy so that Lab is primary,
-      // then Rgb, then integers.
       final int tintVrf = source.format == PConstants.RGB ? 0xff000000 | tint
          : tint;
       final Rgb tintsRgb = new Rgb();

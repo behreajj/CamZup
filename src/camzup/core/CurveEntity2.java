@@ -698,6 +698,8 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    public String toSvgElm ( final float zoom, final boolean useSubPaths,
       final MaterialSolid[] materials ) {
 
+      // TODO: Allow user to specify SVG cap and join rounding?
+
       final StringBuilder svgp = new StringBuilder(1024);
       if ( this.length() < 1 ) { return svgp.toString(); }
 

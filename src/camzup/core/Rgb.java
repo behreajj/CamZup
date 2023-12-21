@@ -277,7 +277,7 @@ public class Rgb implements Comparable < Rgb > {
    }
 
    /**
-    * An internal helper function to format a vector as a Python tuple, then
+    * An internal helper function to format a color as a Python tuple, then
     * append it to a {@link StringBuilder}. Used for testing purposes to
     * compare results with Blender 2.9x.<br>
     * <br>
@@ -1092,8 +1092,7 @@ public class Rgb implements Comparable < Rgb > {
    }
 
    /**
-    * Converts a color from standard RGB (sRGB) to SR LCH. The output is
-    * organized as z: L or lightness, y: C or chroma, x: h or hue, w: alpha.
+    * Converts a color from standard RGB (sRGB) to SR LCH.
     *
     * @param srgb the sRGB color
     * @param lch  the LCH color
@@ -1113,9 +1112,7 @@ public class Rgb implements Comparable < Rgb > {
    }
 
    /**
-    * Converts a color from SR LAB 2 to standard RGB (sRGB). The source should
-    * be organized as z: L or lightness, x: a or green-red, y: b or
-    * blue-yellow, w: alpha.
+    * Converts a color from SR LAB 2 to standard RGB (sRGB).
     *
     * @param lab  LAB color
     * @param srgb sRGB color
@@ -1136,9 +1133,7 @@ public class Rgb implements Comparable < Rgb > {
    }
 
    /**
-    * Converts a color from SR LCH to standard RBG (sRGB). The source should
-    * be organized as z: L or lightness, y: C or chroma, x: h or hue, w:
-    * alpha.
+    * Converts a color from SR LCH to standard RBG (sRGB).
     *
     * @param lch  the LCH color
     * @param srgb the sRGB color
@@ -1199,43 +1194,6 @@ public class Rgb implements Comparable < Rgb > {
    public static Rgb srXyzTolRgb ( final Vec4 source, final Rgb target ) {
 
       return Rgb.srXyzTolRgb(source.x, source.y, source.z, source.w, target);
-   }
-
-   /**
-    * Converts a color from SR XYZ to SR LAB 2.<br>
-    * <br>
-    * The target is packaged as z: L or lightness, x: a or green-red, y: b or
-    * blue-yellow, w: alpha.
-    *
-    * @param x      the x coordinate
-    * @param y      the y coordinate
-    * @param z      the z coordinate
-    * @param a      the alpha component
-    * @param target the output vector
-    *
-    * @return the Lab color
-    *
-    * @see Math#pow(double, double)
-    *
-    * @author Jan Behrens
-    */
-   public static Vec4 srXyzToSrLab2 ( final float x, final float y,
-      final float z, final float a, final Vec4 target ) {
-
-      final double xd = x <= 0.008856452f ? x * 9.032962962962962d : 1.16d
-         * Math.pow(x, 0.3333333333333333d) - 0.16d;
-      final double yd = y <= 0.008856452f ? y * 9.032962962962962d : 1.16d
-         * Math.pow(y, 0.3333333333333333d) - 0.16d;
-      final double zd = z <= 0.008856452f ? z * 9.032962962962962d : 1.16d
-         * Math.pow(z, 0.3333333333333333d) - 0.16d;
-
-      /* @formatter:off */
-      return target.set(
-         ( float ) ( 663.4684d * xd - 750.5078d * yd + 87.0328d * zd ),
-         ( float ) ( 63.9569d * xd + 108.4576d * yd - 172.4152d * zd ),
-         ( float ) ( 37.095d * xd + 62.9054d * yd - 0.0008d * zd ),
-         a);
-      /* @formatter:on */
    }
 
    /**
@@ -2269,9 +2227,19 @@ public class Rgb implements Comparable < Rgb > {
       protected final Lch cLch = new Lch();
 
       /**
+       * The destination color in LCH.
+       */
+      protected final Lch dLch = new Lch();
+
+      /**
        * The hue easing function.
        */
       protected HueEasing hueFunc;
+
+      /**
+       * The origin color in LCH.
+       */
+      protected final Lch oLch = new Lch();
 
       /**
        * The default constructor. Creates a mixer with nearest hue
@@ -2300,49 +2268,19 @@ public class Rgb implements Comparable < Rgb > {
        *
        * @return the eased color
        *
-       * @see Lab#mix(Lab, Lab, float, Lab)
-       * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
-       * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
+       * @see Lch#mix(Lch, Lch, float, HueEasing, Lch)
+       * @see Rgb#sRgbToSrLch(Rgb, Lch, Lab, Vec4, Rgb)
+       * @see Rgb#srLchTosRgb(Lch, Rgb, Rgb, Vec4, Lab)
        */
       @Override
       public Rgb applyUnclamped ( final Rgb orig, final Rgb dest,
          final Float step, final Rgb target ) {
 
-         Rgb.sRgbToSrLab2(orig, this.oLab, this.oXyz, this.oLinear);
+         Rgb.sRgbToSrLch(orig, this.oLch, this.oLab, this.oXyz, this.oLinear);
+         Rgb.sRgbToSrLch(dest, this.dLch, this.dLab, this.dXyz, this.dLinear);
+         Lch.mix(this.oLch, this.dLch, step, this.hueFunc, this.cLch);
+         Rgb.srLchTosRgb(this.cLch, target, this.cLinear, this.cXyz, this.cLab);
 
-         final float oa = this.oLab.a;
-         final float ob = this.oLab.b;
-         final float ocsq = oa * oa + ob * ob;
-
-         Rgb.sRgbToSrLab2(dest, this.dLab, this.dXyz, this.dLinear);
-
-         final float da = this.dLab.a;
-         final float db = this.dLab.b;
-         final float dcsq = da * da + db * db;
-
-         if ( ocsq < IUtils.EPSILON_D || dcsq < IUtils.EPSILON_D ) {
-            Lab.mix(this.oLab, this.dLab, step, this.cLab);
-         } else {
-            final float t = step;
-            final float u = 1.0f - t;
-
-            float oh = Utils.atan2(ob, oa) * IUtils.ONE_TAU;
-            if ( oh < -0.0f ) { ++oh; }
-            float dh = Utils.atan2(db, da) * IUtils.ONE_TAU;
-            if ( dh < -0.0f ) { ++dh; }
-
-            /* @formatter:off */
-            this.cLch.set(
-               u * this.oLab.l + t * this.dLab.l,
-               u * Utils.sqrtUnchecked(ocsq) + t * Utils.sqrtUnchecked(dcsq),
-               this.hueFunc.apply(oh, dh, step),
-               u * this.oLab.alpha + t * this.dLab.alpha);
-            /* @formatter:on */
-
-            Lab.fromLch(this.cLch, this.cLab);
-         }
-
-         Rgb.srLab2TosRgb(this.cLab, target, this.cLinear, this.cXyz);
          return target;
       }
 

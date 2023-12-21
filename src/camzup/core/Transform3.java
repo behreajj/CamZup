@@ -415,7 +415,6 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     *
     * @see Quaternion#mulVector(Quaternion, Vec3, Vec3)
     * @see Vec3#add(Vec3, Vec3, Vec3)
-    * @see Vec3#hadamard(Vec3, Vec3, Vec3)
     */
    public Transform3 moveByLocal ( final Vec3 dir ) {
 
