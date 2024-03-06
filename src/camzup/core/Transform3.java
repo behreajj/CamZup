@@ -119,8 +119,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    }
 
    /**
-    * Compares this transform to another based on a comparison between
-    * locations.
+    * Compares this transform to another based on location.
     *
     * @param tr the other transform
     *

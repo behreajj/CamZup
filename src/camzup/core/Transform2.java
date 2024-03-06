@@ -96,8 +96,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
    }
 
    /**
-    * Compares this transform to another based on a comparison between
-    * locations.
+    * Compares this transform to another based location.
     *
     * @param tr the other transform
     *

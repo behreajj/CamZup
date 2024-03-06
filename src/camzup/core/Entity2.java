@@ -5,7 +5,8 @@ package camzup.core;
  * transform, but contains no other data. Useful when a 'target' entity is
  * needed.
  */
-public class Entity2 extends Entity implements IOriented2, ISpatial2 {
+public class Entity2 extends Entity implements Comparable < Entity2 >,
+   IOriented2, ISpatial2 {
 
    /**
     * The entity's transform.
@@ -51,6 +52,19 @@ public class Entity2 extends Entity implements IOriented2, ISpatial2 {
    public Entity2 ( final Transform2 transform ) {
 
       this.transform = transform;
+   }
+
+   /**
+    * Compares this entity to another based on transform.
+    *
+    * @param entity the other entity
+    *
+    * @return the evaluation
+    */
+   @Override
+   public int compareTo ( final Entity2 entity ) {
+
+      return this.transform.compareTo(entity.transform);
    }
 
    /**

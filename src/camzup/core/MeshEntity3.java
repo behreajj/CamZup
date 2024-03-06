@@ -610,20 +610,20 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    /**
     * Calculates an Axis-Aligned Bounding Box (AABB) encompassing the entity.
     *
-    * @param entity the entity
+    * @param me     the entity
     * @param target the output bounds
     *
     * @return the bounds
     */
-   public static Bounds3 calcBounds ( final MeshEntity3 entity,
+   public static Bounds3 calcBounds ( final MeshEntity3 me,
       final Bounds3 target ) {
 
       final Vec3 co = new Vec3();
 
       target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
 
-      final Iterator < Mesh3 > itr = entity.iterator();
-      final Transform3 tr = entity.transform;
+      final Iterator < Mesh3 > itr = me.iterator();
+      final Transform3 tr = me.transform;
       while ( itr.hasNext() ) {
          Mesh3.accumMinMax(itr.next(), target.min, target.max, tr, co);
       }

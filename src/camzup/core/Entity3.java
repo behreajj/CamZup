@@ -5,7 +5,8 @@ package camzup.core;
  * transform, but contains no other data. Useful when a 'target' entity is
  * needed.
  */
-public class Entity3 extends Entity implements IOriented3, ISpatial3 {
+public class Entity3 extends Entity implements Comparable < Entity3 >,
+   IOriented3, ISpatial3 {
 
    /**
     * The entity's transform.
@@ -51,6 +52,19 @@ public class Entity3 extends Entity implements IOriented3, ISpatial3 {
    public Entity3 ( final Transform3 transform ) {
 
       this.transform = transform;
+   }
+
+   /**
+    * Compares this entity to another based on transform.
+    *
+    * @param entity the other entity
+    *
+    * @return the evaluation
+    */
+   @Override
+   public int compareTo ( final Entity3 entity ) {
+
+      return this.transform.compareTo(entity.transform);
    }
 
    /**
