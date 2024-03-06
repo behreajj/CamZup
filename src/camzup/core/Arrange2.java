@@ -4,7 +4,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 
 /**
- * Provides methods to align and distribute entities.
+ * Provides methods to align and distribute 2D entities.
  */
 public abstract class Arrange2 {
 
@@ -39,8 +39,7 @@ public abstract class Arrange2 {
 
       final float sgnVrf = 0.5f * Utils.sign(sign);
       final int len = mes.length;
-      final Vec2 bMin = b.min;
-      final float bottom = bMin.y;
+      final float bottom = b.min.y;
       final Bounds2 eb = new Bounds2();
       final Vec2 extent = new Vec2();
       final Vec2 pos = new Vec2();
@@ -125,8 +124,7 @@ public abstract class Arrange2 {
 
       final float sgnVrf = 0.5f * Utils.sign(sign);
       final int len = mes.length;
-      final Vec2 bMin = b.min;
-      final float left = bMin.x;
+      final float left = b.min.x;
       final Bounds2 eb = new Bounds2();
       final Vec2 extent = new Vec2();
       final Vec2 pos = new Vec2();
@@ -167,8 +165,7 @@ public abstract class Arrange2 {
 
       final float sgnVrf = 0.5f * Utils.sign(sign);
       final int len = mes.length;
-      final Vec2 bMax = b.max;
-      final float right = bMax.x;
+      final float right = b.max.x;
       final Bounds2 eb = new Bounds2();
       final Vec2 extent = new Vec2();
       final Vec2 pos = new Vec2();
@@ -209,8 +206,7 @@ public abstract class Arrange2 {
 
       final float sgnVrf = 0.5f * Utils.sign(sign);
       final int len = mes.length;
-      final Vec2 bMax = b.max;
-      final float top = bMax.y;
+      final float top = b.max.y;
       final Bounds2 eb = new Bounds2();
       final Vec2 extent = new Vec2();
       final Vec2 pos = new Vec2();
@@ -427,8 +423,8 @@ public abstract class Arrange2 {
    public static void toRow ( final Bounds2 b, final MeshEntity2[] mes,
       final int sign, final float fac ) {
 
-      Arrange2.alignVertical(b, mes, 0, fac);
       Arrange2.distributeHorizontal(b, mes, sign, fac);
+      Arrange2.alignVertical(b, mes, 0, fac);
    }
 
 }
