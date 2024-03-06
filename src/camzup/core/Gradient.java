@@ -685,7 +685,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Removes the first key if the gradient has more than 2 keys.
+    * Removes the first key if the gradient has more than 2 keys. Returns true
+    * if successful.
     *
     * @param target the output color key
     *
@@ -703,7 +704,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Removes the first key if the gradient has more than 2 keys.
+    * Removes the last key if the gradient has more than 2 keys. Returns true
+    * if successful.
     *
     * @param target the output color key
     *

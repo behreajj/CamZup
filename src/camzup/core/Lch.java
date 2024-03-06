@@ -2,6 +2,12 @@ package camzup.core;
 
 import java.util.Random;
 
+/**
+ * A mutable, extensible color class that represents colors in the polar
+ * form of a perceptual color space. Lightness falls in the range [0.0,
+ * 100.0] . Hue is within the range [0.0, 1.0] . Chroma's minimum bound is
+ * 0.0 but it has no upper bound. Alpha is expected to be in [0.0, 1.0] .
+ */
 public class Lch implements Comparable < Lch > {
 
    /**

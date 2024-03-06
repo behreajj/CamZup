@@ -116,7 +116,10 @@ public class Yup3 extends Up3 {
 
       final float dotp = Vec3.dot(this.k, this.refUp);
       final float tol = 1.0f - IUp3.POLARITY_TOLERANCE;
-      if ( dotp < -tol || dotp > tol ) { return; }
+      if ( dotp < -tol || dotp > tol ) {
+         // TODO: Come up with a better solution to this.
+         return;
+      }
 
       Vec3.crossNorm(this.k, this.refUp, this.i);
       Vec3.crossNorm(this.i, this.k, this.j);

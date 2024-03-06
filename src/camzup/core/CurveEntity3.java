@@ -241,8 +241,8 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
       /* Find lower and upper bound for all curves. */
       final Vec3 lb = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE,
          Float.MAX_VALUE);
-      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
-         Float.MIN_VALUE);
+      final Vec3 ub = new Vec3(-Float.MAX_VALUE, -Float.MAX_VALUE,
+         -Float.MAX_VALUE);
 
       Iterator < Curve3 > crvItr = this.curves.iterator();
       while ( crvItr.hasNext() ) { Curve3.accumMinMax(crvItr.next(), lb, ub); }
@@ -586,8 +586,8 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
       /* Find lower and upper bound for all curves. */
       final Vec3 lb = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE,
          Float.MAX_VALUE);
-      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
-         Float.MIN_VALUE);
+      final Vec3 ub = new Vec3(-Float.MAX_VALUE, -Float.MAX_VALUE,
+         -Float.MAX_VALUE);
       Iterator < Curve3 > itr = this.curves.iterator();
       while ( itr.hasNext() ) { Curve3.accumMinMax(itr.next(), lb, ub); }
 

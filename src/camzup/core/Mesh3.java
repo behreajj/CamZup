@@ -1281,8 +1281,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       final Vec3 dim = tr.scale;
       final Vec3 lb = tr.location;
-      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
-         Float.MIN_VALUE);
+      final Vec3 ub = new Vec3(-Float.MAX_VALUE, -Float.MAX_VALUE,
+         -Float.MAX_VALUE);
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
       Mesh3.accumMinMax(this, lb, ub);
       Vec3.sub(ub, lb, dim);
@@ -2244,8 +2244,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
 
       final Vec3 lb = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE,
          Float.MAX_VALUE);
-      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
-         Float.MIN_VALUE);
+      final Vec3 ub = new Vec3(-Float.MAX_VALUE, -Float.MAX_VALUE,
+         -Float.MAX_VALUE);
       Mesh3.accumMinMax(this, lb, ub);
 
       lb.x = -0.5f * ( lb.x + ub.x );
@@ -2807,7 +2807,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public static Bounds3 calcBounds ( final Mesh3 mesh, final Bounds3 target ) {
 
-      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+      target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
       Mesh3.accumMinMax(mesh, target.min, target.max);
       return target;
    }
@@ -3307,8 +3307,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Creates an array of meshes, each with one face from the source mesh.
     * Leaves the source mesh unaltered. New meshes are created through
-    * visitation of each face in the source, so they may contain redundant
-    * data to be removed with {@link Mesh3#clean()}.
+    * visitation of each face in the source, so they contain data that
+    * would've been redundant in the original.
     *
     * @param source the source mesh
     *
@@ -3316,6 +3316,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public static Mesh3[] detachFaces ( final Mesh3 source ) {
 
+      final String namePrefix = source.name + ".";
       final int[][][] fsSrc = source.faces;
       final Vec3[] vsSrc = source.coords;
       final Vec2[] vtsSrc = source.texCoords;
@@ -3347,7 +3348,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             vertTrg[2] = j;
          }
 
-         meshes[i] = new Mesh3(fsTrg, vsTrg, vtsTrg, vnsTrg);
+         final Mesh3 mesh = new Mesh3(fsTrg, vsTrg, vtsTrg, vnsTrg);
+         mesh.name = namePrefix + Utils.toPadded(i, 3);
+         meshes[i] = mesh;
       }
 
       return meshes;
@@ -4071,7 +4074,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final int vertLen = verts.length;
       final float[] dists = new float[vertLen];
       float minDist = Float.MAX_VALUE;
-      float maxDist = Float.MIN_VALUE;
+      float maxDist = -Float.MAX_VALUE;
       for ( int i = 0; i < vertLen; ++i ) {
          final float distSq = Vec3.distSq(verts[i].coord, p);
          dists[i] = distSq;
@@ -5072,6 +5075,59 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                      { { 4,  9, 3 }, { 5,  8, 3 }, { 1,  0, 3 }, { 0,  1, 3 } },
                      { { 0,  4, 4 }, { 1,  5, 4 }, { 3,  3, 4 }, { 2,  2, 4 } },
                      { { 2,  2, 5 }, { 3,  3, 5 }, { 7,  6, 5 }, { 6,  7, 5 } } };
+                  /* @formatter:on */
+            }
+
+            break;
+
+         case DIAGONAL:
+
+            target.texCoords = Vec2.resize(target.texCoords, 14);
+            target.texCoords[0].set(IUtils.TWO_THIRDS, 0.0f);
+            target.texCoords[1].set(1.0f, 0.0f);
+            target.texCoords[2].set(IUtils.ONE_THIRD, 0.25f);
+            target.texCoords[3].set(IUtils.TWO_THIRDS, 0.25f);
+            target.texCoords[4].set(1.0f, 0.25f);
+            target.texCoords[5].set(0.0f, 0.5f);
+            target.texCoords[6].set(IUtils.ONE_THIRD, 0.5f);
+            target.texCoords[7].set(IUtils.TWO_THIRDS, 0.5f);
+            target.texCoords[8].set(1.0f, 0.5f);
+            target.texCoords[9].set(0.0f, 0.75f);
+            target.texCoords[10].set(IUtils.ONE_THIRD, 0.75f);
+            target.texCoords[11].set(IUtils.TWO_THIRDS, 0.75f);
+            target.texCoords[12].set(0.0f, 1.0f);
+            target.texCoords[13].set(IUtils.ONE_THIRD, 1.0f);
+
+            switch ( poly ) {
+               case TRI:
+                  /* @formatter:off */
+                  target.faces = new int[][][] {
+                     { { 0,  4, 0 }, { 1,  3, 0 }, { 3,  7, 0 } },
+                     { { 0,  4, 0 }, { 3,  7, 0 }, { 2,  8, 0 } },
+                     { { 4,  1, 5 }, { 1,  3, 5 }, { 0,  4, 5 } },
+                     { { 2, 13, 3 }, { 4,  9, 3 }, { 0, 12, 3 } },
+                     { { 7,  6, 4 }, { 3,  7, 4 }, { 1,  3, 4 } },
+                     { { 2, 11, 2 }, { 3,  7, 2 }, { 7,  6, 2 } },
+                     { { 4,  1, 5 }, { 5,  0, 5 }, { 1,  3, 5 } },
+                     { { 7,  6, 4 }, { 1,  3, 4 }, { 5,  2, 4 } },
+                     { { 2, 13, 3 }, { 6, 10, 3 }, { 4,  9, 3 } },
+                     { { 2, 11, 2 }, { 7,  6, 2 }, { 6, 10, 2 } },
+                     { { 6, 10, 1 }, { 5,  5, 1 }, { 4,  9, 1 } },
+                     { { 6, 10, 1 }, { 7,  6, 1 }, { 5,  5, 1 } } };
+                     /* @formatter:on */
+                  break;
+
+               case NGON:
+               case QUAD:
+               default:
+                  /* @formatter:off */
+                  target.faces = new int[][][] {
+                     { { 2, 13, 0 }, { 3, 10, 0 }, { 1,  9, 0 }, { 0, 12, 0 } },
+                     { { 1,  1, 1 }, { 5,  0, 1 }, { 4,  3, 1 }, { 0,  4, 1 } },
+                     { { 0,  4, 2 }, { 4,  3, 2 }, { 6,  7, 2 }, { 2,  8, 2 } },
+                     { { 3, 10, 3 }, { 7,  6, 3 }, { 5,  5, 3 }, { 1,  9, 3 } },
+                     { { 2, 11, 4 }, { 6,  7, 4 }, { 7,  6, 4 }, { 3, 10, 4 } },
+                     { { 7,  6, 5 }, { 6,  7, 5 }, { 4,  3, 5 }, { 5,  2, 5 } } };
                   /* @formatter:on */
             }
 

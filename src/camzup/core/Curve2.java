@@ -456,7 +456,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       final Vec2 dim = tr.scale;
       final Vec2 lb = tr.location;
-      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      final Vec2 ub = new Vec2(-Float.MAX_VALUE, -Float.MAX_VALUE);
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE);
       Curve2.accumMinMax(this, lb, ub);
       Vec2.sub(ub, lb, dim);
@@ -697,7 +697,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    public Curve2 toOrigin ( final Transform2 tr ) {
 
       final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
-      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      final Vec2 ub = new Vec2(-Float.MAX_VALUE, -Float.MAX_VALUE);
       Curve2.accumMinMax(this, lb, ub);
 
       lb.x = -0.5f * ( lb.x + ub.x );
@@ -1227,7 +1227,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
        * https://pomax.github.io/bezierinfo/#derivatives
        */
 
-      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+      target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
       Curve2.accumMinMax(curve, target.min, target.max);
       return target;
    }

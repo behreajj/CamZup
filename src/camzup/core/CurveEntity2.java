@@ -267,7 +267,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
       /* Find lower and upper bound for all curves. */
       final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
-      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      final Vec2 ub = new Vec2(-Float.MAX_VALUE, -Float.MAX_VALUE);
 
       Iterator < Curve2 > crvItr = this.curves.iterator();
       while ( crvItr.hasNext() ) { Curve2.accumMinMax(crvItr.next(), lb, ub); }
@@ -604,7 +604,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
 
       /* Find lower and upper bound for all curves. */
       final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
-      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      final Vec2 ub = new Vec2(-Float.MAX_VALUE, -Float.MAX_VALUE);
       Iterator < Curve2 > itr = this.curves.iterator();
       while ( itr.hasNext() ) { Curve2.accumMinMax(itr.next(), lb, ub); }
 
@@ -851,7 +851,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
       final Vec2 rh = new Vec2();
       final Vec2 co = new Vec2();
 
-      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+      target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
 
       final Iterator < Curve2 > itr = entity.iterator();
       final Transform2 tr = entity.transform;

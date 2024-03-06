@@ -223,8 +223,8 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       /* Find lower and upper bound for all meshes. */
       final Vec3 lb = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE,
          Float.MAX_VALUE);
-      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
-         Float.MIN_VALUE);
+      final Vec3 ub = new Vec3(-Float.MAX_VALUE, -Float.MAX_VALUE,
+         -Float.MAX_VALUE);
 
       Iterator < Mesh3 > itr = this.meshes.iterator();
       while ( itr.hasNext() ) { Mesh3.accumMinMax(itr.next(), lb, ub); }
@@ -563,8 +563,8 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       /* Find lower and upper bound for all meshes. */
       final Vec3 lb = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE,
          Float.MAX_VALUE);
-      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
-         Float.MIN_VALUE);
+      final Vec3 ub = new Vec3(-Float.MAX_VALUE, -Float.MAX_VALUE,
+         -Float.MAX_VALUE);
       Iterator < Mesh3 > itr = this.meshes.iterator();
       while ( itr.hasNext() ) { Mesh3.accumMinMax(itr.next(), lb, ub); }
 
@@ -620,7 +620,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
       final Vec3 co = new Vec3();
 
-      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+      target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
 
       final Iterator < Mesh3 > itr = entity.iterator();
       final Transform3 tr = entity.transform;

@@ -838,7 +838,7 @@ public abstract class Utils implements IUtils {
     */
    public static float max ( final float... fs ) {
 
-      float max = Float.MIN_VALUE;
+      float max = -Float.MAX_VALUE;
       final int len = fs.length;
       for ( int i = 0; i < len; ++i ) { if ( fs[i] > max ) { max = fs[i]; } }
       return max;

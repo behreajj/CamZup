@@ -121,9 +121,9 @@ public class MeshDirect {
       float lby = Float.MAX_VALUE;
       float lbz = Float.MAX_VALUE;
 
-      float ubx = Float.MIN_VALUE;
-      float uby = Float.MIN_VALUE;
-      float ubz = Float.MIN_VALUE;
+      float ubx = -Float.MAX_VALUE;
+      float uby = -Float.MAX_VALUE;
+      float ubz = -Float.MAX_VALUE;
 
       final int coLen = this.coords.length;
       for ( int i = 0; i < coLen; i += MeshDirect.COORD_STRIDE ) {
@@ -357,9 +357,9 @@ public class MeshDirect {
       float lby = Float.MAX_VALUE;
       float lbz = Float.MAX_VALUE;
 
-      float ubx = Float.MIN_VALUE;
-      float uby = Float.MIN_VALUE;
-      float ubz = Float.MIN_VALUE;
+      float ubx = -Float.MAX_VALUE;
+      float uby = -Float.MAX_VALUE;
+      float ubz = -Float.MAX_VALUE;
 
       final int coLen = this.coords.length;
       for ( int i = 0; i < coLen; i += MeshDirect.COORD_STRIDE ) {

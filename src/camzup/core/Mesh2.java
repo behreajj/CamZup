@@ -97,7 +97,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Vec2 lb = new Vec2();
       final Vec2 ub = new Vec2();
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE);
-      ub.set(Float.MIN_VALUE, Float.MIN_VALUE);
+      ub.set(-Float.MAX_VALUE, -Float.MAX_VALUE);
       Mesh2.accumMinMax(this, lb, ub);
       Vec2.sub(ub, lb, dim);
 
@@ -927,7 +927,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
 
       final Vec2 dim = tr.scale;
       final Vec2 lb = tr.location;
-      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      final Vec2 ub = new Vec2(-Float.MAX_VALUE, -Float.MAX_VALUE);
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE);
       Mesh2.accumMinMax(this, lb, ub);
       Vec2.sub(ub, lb, dim);
@@ -1555,7 +1555,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    public Mesh2 toOrigin ( final Transform2 tr ) {
 
       final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
-      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      final Vec2 ub = new Vec2(-Float.MAX_VALUE, -Float.MAX_VALUE);
       Mesh2.accumMinMax(this, lb, ub);
 
       lb.x = -0.5f * ( lb.x + ub.x );
@@ -2295,7 +2295,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
     */
    public static Bounds2 calcBounds ( final Mesh2 mesh, final Bounds2 target ) {
 
-      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+      target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
       Mesh2.accumMinMax(mesh, target.min, target.max);
       return target;
    }
@@ -2396,8 +2396,8 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    /**
     * Creates an array of meshes, each with one face from the source mesh.
     * Leaves the source mesh unaltered. New meshes are created through
-    * visitation of each face in the source, so they may contain redundant
-    * data to be removed with {@link Mesh2#clean()}.
+    * visitation of each face in the source, so they contain data that
+    * would've been redundant in the original.
     *
     * @param source the source mesh
     *
@@ -3183,7 +3183,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final int vertLen = verts.length;
       final float[] dists = new float[vertLen];
       float minDist = Float.MAX_VALUE;
-      float maxDist = Float.MIN_VALUE;
+      float maxDist = -Float.MAX_VALUE;
       for ( int i = 0; i < vertLen; ++i ) {
          final float distSq = Vec2.distSq(verts[i].coord, p);
          dists[i] = distSq;

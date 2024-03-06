@@ -37,6 +37,11 @@ public interface UvProfile {
       CROSS,
 
       /**
+       * Diagonal step pattern that wraps around cube.
+       */
+      DIAGONAL,
+
+      /**
        * Each cube face repeats the same square texture.
        */
       PER_FACE

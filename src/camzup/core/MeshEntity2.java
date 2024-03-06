@@ -250,7 +250,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       /* Find lower and upper bound for all meshes. */
       final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
-      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      final Vec2 ub = new Vec2(-Float.MAX_VALUE, -Float.MAX_VALUE);
 
       Iterator < Mesh2 > itr = this.meshes.iterator();
       while ( itr.hasNext() ) { Mesh2.accumMinMax(itr.next(), lb, ub); }
@@ -618,7 +618,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       /* Find lower and upper bound for all meshes. */
       final Vec2 lb = new Vec2(Float.MAX_VALUE, Float.MAX_VALUE);
-      final Vec2 ub = new Vec2(Float.MIN_VALUE, Float.MIN_VALUE);
+      final Vec2 ub = new Vec2(-Float.MAX_VALUE, -Float.MAX_VALUE);
       Iterator < Mesh2 > itr = this.meshes.iterator();
       while ( itr.hasNext() ) { Mesh2.accumMinMax(itr.next(), lb, ub); }
 
@@ -789,20 +789,20 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    /**
     * Calculates an Axis-Aligned Bounding Box (AABB) encompassing the entity.
     *
-    * @param entity the entity
+    * @param me     the entity
     * @param target the output bounds
     *
     * @return the bounds
     */
-   public static Bounds2 calcBounds ( final MeshEntity2 entity,
+   public static Bounds2 calcBounds ( final MeshEntity2 me,
       final Bounds2 target ) {
 
       final Vec2 co = new Vec2();
 
-      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+      target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
 
-      final Iterator < Mesh2 > itr = entity.iterator();
-      final Transform2 tr = entity.transform;
+      final Iterator < Mesh2 > itr = me.iterator();
+      final Transform2 tr = me.transform;
       while ( itr.hasNext() ) {
          Mesh2.accumMinMax(itr.next(), target.min, target.max, tr, co);
       }

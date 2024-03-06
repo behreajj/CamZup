@@ -481,8 +481,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       final Vec3 dim = tr.scale;
       final Vec3 lb = tr.location;
-      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
-         Float.MIN_VALUE);
+      final Vec3 ub = new Vec3(-Float.MAX_VALUE, -Float.MAX_VALUE,
+         -Float.MAX_VALUE);
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
       Curve3.accumMinMax(this, lb, ub);
       Vec3.sub(ub, lb, dim);
@@ -834,8 +834,8 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
 
       final Vec3 lb = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE,
          Float.MAX_VALUE);
-      final Vec3 ub = new Vec3(Float.MIN_VALUE, Float.MIN_VALUE,
-         Float.MIN_VALUE);
+      final Vec3 ub = new Vec3(-Float.MAX_VALUE, -Float.MAX_VALUE,
+         -Float.MAX_VALUE);
       Curve3.accumMinMax(this, lb, ub);
 
       lb.x = -0.5f * ( lb.x + ub.x );
@@ -1147,7 +1147,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    public static Bounds3 calcBounds ( final Curve3 curve,
       final Bounds3 target ) {
 
-      target.set(Float.MAX_VALUE, Float.MIN_VALUE);
+      target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
       Curve3.accumMinMax(curve, target.min, target.max);
       return target;
    }

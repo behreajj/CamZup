@@ -2,10 +2,10 @@ package camzup.core;
 
 /**
  * Facilitates implicit shapes created with signed distance fields. Adapted
- * from the GLSL of Inigo Quilez: <a href=
- * "https://www.iquilezles.org/www/articles/distfunctions2d/distfunctions2d.htm">2D
- * Distance Functions</a>, <a href=
- * "https://www.iquilezles.org/www/articles/distfunctions/distfunctions.htm">Distance
+ * from the GLSL of Inigo Quilez:
+ * <a href= "https://iquilezles.org/articles/distfunctions2d/">2D Distance
+ * Functions</a>,
+ * <a href= "https://iquilezles.org/articles/distfunctions">Distance
  * Functions</a>.
  *
  * @author Inigo Quilez

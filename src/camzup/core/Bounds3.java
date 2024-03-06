@@ -688,7 +688,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
       final Vec3 ub = target.max;
 
       lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
-      ub.set(Float.MIN_VALUE, Float.MIN_VALUE, Float.MIN_VALUE);
+      ub.set(-Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE);
 
       for ( int i = 0; i < len; ++i ) {
          final Vec3 p = points[i];

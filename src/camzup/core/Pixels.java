@@ -2057,7 +2057,7 @@ public abstract class Pixels {
          }
 
          float lumMin = Float.MAX_VALUE;
-         float lumMax = Float.MIN_VALUE;
+         float lumMax = -Float.MAX_VALUE;
          float lumSum = 0.0f;
 
          final Rgb srgb = new Rgb();
