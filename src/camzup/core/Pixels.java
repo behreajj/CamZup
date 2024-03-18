@@ -73,7 +73,6 @@ public abstract class Pixels {
             return target;
          }
 
-         // TODO: Test allowing a translucent image to become more opaque.
          for ( int i = 0; i < srcLen; ++i ) {
             final int hex = source[i];
             final int srcAlpha = hex >> 0x18 & 0xff;
@@ -105,8 +104,6 @@ public abstract class Pixels {
     */
    public static int[] adjustContrast ( final int[] source, final float fac,
       final int[] target ) {
-
-      // TODO: Test with image containing translucent pixels.
 
       final int srcLen = source.length;
       if ( srcLen == target.length ) {

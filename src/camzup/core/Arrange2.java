@@ -55,50 +55,6 @@ public abstract class Arrange2 {
    }
 
    /**
-    * Aligns all mesh entities in the array to the horizontal center of the
-    * bounds.
-    *
-    * @param b   the bounds
-    * @param mes the mesh entities
-    */
-   public static void alignHorizontal ( final Bounds2 b,
-      final MeshEntity2[] mes ) {
-
-      Arrange2.alignHorizontal(b, mes, 0, 1.0f);
-   }
-
-   /**
-    * Aligns all mesh entities in the array to the horizontal center of the
-    * bounds. The sign indicates whether to align to the right of the edge
-    * (1), on the edge (0) or to the left of the edge (-1).
-    *
-    * @param b    the bounds
-    * @param mes  the mesh entities
-    * @param sign the alignment sign
-    * @param fac  the factor
-    */
-   public static void alignHorizontal ( final Bounds2 b,
-      final MeshEntity2[] mes, final int sign, final float fac ) {
-
-      final float sgnVrf = 0.5f * Utils.sign(sign);
-      final int len = mes.length;
-      final Vec2 bCenter = Bounds2.center(b, new Vec2());
-      final float xCenter = bCenter.x;
-      final Bounds2 eb = new Bounds2();
-      final Vec2 extent = new Vec2();
-      final Vec2 pos = new Vec2();
-
-      for ( int i = 0; i < len; ++i ) {
-         final MeshEntity2 entity = mes[i];
-         MeshEntity2.calcBounds(entity, eb);
-         Bounds2.extentUnsigned(eb, extent);
-         entity.getLocation(pos);
-         pos.set(xCenter + extent.x * sgnVrf, pos.y);
-         entity.moveTo(pos, fac);
-      }
-   }
-
-   /**
     * Aligns all mesh entities in the array to the left edge of a bounds.
     *
     * @param b   the bounds
@@ -222,20 +178,62 @@ public abstract class Arrange2 {
    }
 
    /**
-    * Aligns all mesh entities in the array to the vertical center of the
+    * Aligns all mesh entities in the array to the x axis center of the
     * bounds.
     *
     * @param b   the bounds
     * @param mes the mesh entities
     */
-   public static void alignVertical ( final Bounds2 b,
-      final MeshEntity2[] mes ) {
+   public static void alignX ( final Bounds2 b, final MeshEntity2[] mes ) {
 
-      Arrange2.alignVertical(b, mes, 0, 1.0f);
+      Arrange2.alignX(b, mes, 0, 1.0f);
    }
 
    /**
-    * Aligns all mesh entities in the array to the vertical center of the
+    * Aligns all mesh entities in the array to the x axis center of the
+    * bounds. The sign indicates whether to align to the right of the edge
+    * (1), on the edge (0) or to the left of the edge (-1).
+    *
+    * @param b    the bounds
+    * @param mes  the mesh entities
+    * @param sign the alignment sign
+    * @param fac  the factor
+    */
+   public static void alignX ( final Bounds2 b, final MeshEntity2[] mes,
+      final int sign, final float fac ) {
+
+      final float sgnVrf = 0.5f * Utils.sign(sign);
+      final int len = mes.length;
+      final Vec2 bCenter = Bounds2.center(b, new Vec2());
+      final float xCenter = bCenter.x;
+      final Bounds2 eb = new Bounds2();
+      final Vec2 extent = new Vec2();
+      final Vec2 pos = new Vec2();
+
+      for ( int i = 0; i < len; ++i ) {
+         final MeshEntity2 entity = mes[i];
+         MeshEntity2.calcBounds(entity, eb);
+         Bounds2.extentUnsigned(eb, extent);
+         entity.getLocation(pos);
+         pos.set(xCenter + extent.x * sgnVrf, pos.y);
+         entity.moveTo(pos, fac);
+      }
+   }
+
+   /**
+    * Aligns all mesh entities in the array to the y axis center of the
+    * bounds.
+    *
+    * @param b   the bounds
+    * @param mes the mesh entities
+    */
+   public static void alignY ( final Bounds2 b, final MeshEntity2[] mes ) {
+
+      Arrange2.alignY(b, mes, 0, 1.0f);
+   }
+
+   /**
+    * Aligns all mesh entities in the array to the y axis center of the
     * bounds. The sign indicates whether to align above the edge (1), on the
     * edge (0) or to below the edge (-1).
     *
@@ -244,7 +242,7 @@ public abstract class Arrange2 {
     * @param sign the alignment sign
     * @param fac  the factor
     */
-   public static void alignVertical ( final Bounds2 b, final MeshEntity2[] mes,
+   public static void alignY ( final Bounds2 b, final MeshEntity2[] mes,
       final int sign, final float fac ) {
 
       final float sgnVrf = 0.5f * Utils.sign(sign);
@@ -271,10 +269,9 @@ public abstract class Arrange2 {
     * @param b   the bounds
     * @param mes the mesh entities
     */
-   public static void distributeHorizontal ( final Bounds2 b,
-      final MeshEntity2[] mes ) {
+   public static void distributeX ( final Bounds2 b, final MeshEntity2[] mes ) {
 
-      Arrange2.distributeHorizontal(b, mes, 1, 1.0f);
+      Arrange2.distributeX(b, mes, 1, 1.0f);
    }
 
    /**
@@ -289,8 +286,8 @@ public abstract class Arrange2 {
     * @param sign the alignment sign
     * @param fac  the factor
     */
-   public static void distributeHorizontal ( final Bounds2 b,
-      final MeshEntity2[] mes, final int sign, final float fac ) {
+   public static void distributeX ( final Bounds2 b, final MeshEntity2[] mes,
+      final int sign, final float fac ) {
 
       final int len = mes.length;
       final MeshEntity2[] sorted = new MeshEntity2[len];
@@ -337,10 +334,9 @@ public abstract class Arrange2 {
     * @param b   the bounds
     * @param mes the mesh entities
     */
-   public static void distributeVertical ( final Bounds2 b,
-      final MeshEntity2[] mes ) {
+   public static void distributeY ( final Bounds2 b, final MeshEntity2[] mes ) {
 
-      Arrange2.distributeVertical(b, mes, 1, 1.0f);
+      Arrange2.distributeY(b, mes, 1, 1.0f);
    }
 
    /**
@@ -355,8 +351,8 @@ public abstract class Arrange2 {
     * @param sign the alignment sign
     * @param fac  the factor
     */
-   public static void distributeVertical ( final Bounds2 b,
-      final MeshEntity2[] mes, final int sign, final float fac ) {
+   public static void distributeY ( final Bounds2 b, final MeshEntity2[] mes,
+      final int sign, final float fac ) {
 
       final int len = mes.length;
       final MeshEntity2[] sorted = new MeshEntity2[len];
@@ -400,16 +396,41 @@ public abstract class Arrange2 {
    /**
     * Arranges mesh entities into a column.
     *
+    * @param b   the bounds
+    * @param mes the mesh entities
+    */
+   public static void toColumn ( final Bounds2 b, final MeshEntity2[] mes ) {
+
+      Arrange2.toColumn(b, mes, 1, 1.0f);
+   }
+
+   /**
+    * Arranges mesh entities into a column.
+    *
     * @param b    the bounds
     * @param mes  the mesh entities
     * @param sign the alignment sign
     * @param fac  the factor
+    *
+    * @see Arrange2#alignX(Bounds2, MeshEntity2[], int, float)
+    * @see Arrange2#distributeY(Bounds2, MeshEntity2[], int, float)
     */
    public static void toColumn ( final Bounds2 b, final MeshEntity2[] mes,
       final int sign, final float fac ) {
 
-      Arrange2.alignHorizontal(b, mes, 0, fac);
-      Arrange2.distributeVertical(b, mes, sign, fac);
+      Arrange2.alignX(b, mes, 0, fac);
+      Arrange2.distributeY(b, mes, sign, fac);
+   }
+
+   /**
+    * Arranges mesh entities into a row.
+    *
+    * @param b   the bounds
+    * @param mes the mesh entities
+    */
+   public static void toRow ( final Bounds2 b, final MeshEntity2[] mes ) {
+
+      Arrange2.toRow(b, mes, 1, 1.0f);
    }
 
    /**
@@ -419,12 +440,15 @@ public abstract class Arrange2 {
     * @param mes  the mesh entities
     * @param sign the alignment sign
     * @param fac  the factor
+    *
+    * @see Arrange2#distributeX(Bounds2, MeshEntity2[], int, float)
+    * @see Arrange2#alignY(Bounds2, MeshEntity2[], int, float)
     */
    public static void toRow ( final Bounds2 b, final MeshEntity2[] mes,
       final int sign, final float fac ) {
 
-      Arrange2.distributeHorizontal(b, mes, sign, fac);
-      Arrange2.alignVertical(b, mes, 0, fac);
+      Arrange2.distributeX(b, mes, sign, fac);
+      Arrange2.alignY(b, mes, 0, fac);
    }
 
 }

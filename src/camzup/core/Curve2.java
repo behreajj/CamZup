@@ -1220,7 +1220,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       /*
        * For information on finding AABB by extrema:
        * http://nishiohirokazu.blogspot.com/2009/06/how-to-calculate-bezier-
-       * curves-bounding.html , https://stackoverflow.com/questions/2587751/ //
+       * curves-bounding.html , https://stackoverflow.com/questions/2587751/
        * an-algorithm-to-find-bounding-box-of-closed-bezier-curves ,
        * https://computergraphics.stackexchange.com/questions/3697/algorithm-to-
        * find-the-center-of-a-bezier-curve ,

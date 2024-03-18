@@ -1678,6 +1678,9 @@ public abstract class Utils implements IUtils {
             return sb.append("0.0");
 
          case 0xff800000: /* Negative infinity. */
+         case 0xff7fffff:
+            return sb.append("-3.4028235E38");
+
          case 0x1: /* Minimum value. */
             return sb.append("1.4E-45");
 
