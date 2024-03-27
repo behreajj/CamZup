@@ -2326,6 +2326,35 @@ public abstract class Pixels {
    }
 
    /**
+    * Transposes the source pixel array. The transposition is stored in the
+    * target array.
+    *
+    * @param source the source pixels
+    * @param w      the image width
+    * @param h      the image height
+    * @param target the target pixels
+    *
+    * @return the transposed pixels
+    */
+   public static int[] transpose ( final int[] source, final int w, final int h,
+      final int[] target ) {
+
+      /**
+       * See https://en.wikipedia.org/wiki/In-place_matrix_transposition and
+       * https://johnloomis.org/ece563/notes/geom/basic/geom.htm for notes on
+       * transposing in place.
+       */
+      final int srcLen = source.length;
+      if ( srcLen == target.length ) {
+         for ( int i = 0; i < srcLen; ++i ) {
+            target[i % w * h + i / w] = source[i];
+         }
+      }
+
+      return target;
+   }
+
+   /**
     * Removes excess transparent pixels from an array of pixels. Adapted from
     * the implementation by Oleg Mikhailov: <a href=
     * "https://stackoverflow.com/a/36938923">https://stackoverflow.com/a/36938923</a>.

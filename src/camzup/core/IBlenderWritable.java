@@ -38,14 +38,7 @@ public interface IBlenderWritable {
       pyCd.append("    pbr_in = pbr.inputs\n");
       pyCd.append("    pbr_in[\"Base Color\"].default_value = fill_clr\n");
       pyCd.append("    pbr_in[\"Metallic\"].default_value = metal_val\n");
-      pyCd.append("    pbr_in[\"Roughness\"].default_value = rough_val\n");
-      pyCd.append("    specular = pbr_in[\"Specular\"]\n");
-      pyCd.append("    specular.default_value = material[\"specular\"]\n");
-      pyCd.append("    clearcoat = pbr_in[\"Clearcoat\"]\n");
-      pyCd.append("    clearcoat.default_value = material[\"clearcoat\"]\n");
-      pyCd.append("    cr = pbr_in[\"Clearcoat Roughness\"]\n");
-      pyCd.append("    cr.default_value = ");
-      pyCd.append("material[\"clearcoat_roughness\"]\n\n");
+      pyCd.append("    pbr_in[\"Roughness\"].default_value = rough_val\n\n");
 
       return pyCd;
    }
@@ -80,13 +73,7 @@ public interface IBlenderWritable {
       pyCd.append("    fc_idcs = mesh[\"faces\"]\n");
       pyCd.append("    mesh_data = d_meshes.new(name)\n");
       pyCd.append("    mesh_data.from_pydata(vert_dat, edge_idcs, fc_idcs)\n");
-      pyCd.append("    mesh_data.validate(verbose=True)\n");
-      pyCd.append("    mesh_data.use_auto_smooth = ");
-      pyCd.append(pyUseAutoSmooth);
-      pyCd.append('\n');
-      pyCd.append("    mesh_data.auto_smooth_angle = ");
-      Utils.toFixed(pyCd, autoAngle, 6);
-      pyCd.append("\n\n");
+      pyCd.append("    mesh_data.validate(verbose=True)\n\n");
 
       /* Create BMesh. Set UVs. */
       pyCd.append("    bm = bmesh.new()\n");

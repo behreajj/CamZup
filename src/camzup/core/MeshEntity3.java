@@ -410,23 +410,19 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * compare how mesh geometry looks in Blender (the control) versus in the
     * library (the test).
     *
-    * @param useAutoSmooth  auto smooth normals
-    * @param autoAngle      auto smooth angle
-    * @param materials      the materials
-    * @param gamma          color gamma adjustment
-    * @param metallic       metallic factor
-    * @param roughness      roughness factor
-    * @param specular       specular highlight strength
-    * @param clearcoat      clear coat factor
-    * @param clearcoatRough clear coat roughness
+    * @param useAutoSmooth auto smooth normals
+    * @param autoAngle     auto smooth angle
+    * @param materials     the materials
+    * @param gamma         color gamma adjustment
+    * @param metallic      metallic factor
+    * @param roughness     roughness factor
     *
     * @return the string
     */
    @Experimental
    public String toBlenderCode ( final boolean useAutoSmooth,
       final float autoAngle, final MaterialSolid[] materials, final float gamma,
-      final float metallic, final float roughness, final float specular,
-      final float clearcoat, final float clearcoatRough ) {
+      final float metallic, final float roughness ) {
 
       final boolean includeEdges = false;
 
@@ -453,12 +449,10 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
          final int matLen = materials.length;
          final int matLast = matLen - 1;
          for ( int i = 0; i < matLast; ++i ) {
-            materials[i].toBlenderCode(pyCd, gamma, metallic, roughness,
-               specular, clearcoat, clearcoatRough);
+            materials[i].toBlenderCode(pyCd, gamma, metallic, roughness);
             pyCd.append(',').append(' ');
          }
-         materials[matLast].toBlenderCode(pyCd, gamma, metallic, roughness,
-            specular, clearcoat, clearcoatRough);
+         materials[matLast].toBlenderCode(pyCd, gamma, metallic, roughness);
       } else {
          MaterialSolid.defaultBlenderMaterial(pyCd, gamma);
       }
@@ -499,8 +493,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    @Experimental
    public String toBlenderCode ( final MaterialSolid[] ms ) {
 
-      return this.toBlenderCode(true, 0.523599f, ms, 2.2f, 0.0f, 1.0f, 0.0f,
-         0.0f, 0.0001f);
+      return this.toBlenderCode(true, 0.523599f, ms, 2.2f, 0.0f, 1.0f);
    }
 
    /**

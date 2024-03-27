@@ -425,26 +425,22 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * compare how mesh geometry looks in Blender (the control) versus in the
     * library (the test).
     *
-    * @param decimate       decimate the shape
-    * @param extrude        extrude the shape
-    * @param offset         extrusion offset
-    * @param useAutoSmooth  auto smooth normals
-    * @param autoAngle      auto smooth angle
-    * @param materials      the materials
-    * @param gamma          color adjustment
-    * @param metallic       metallic factor
-    * @param roughness      roughness factor
-    * @param specular       specular highlight strength
-    * @param clearcoat      clear coat factor
-    * @param clearcoatRough clear coat roughness
+    * @param decimate      decimate the shape
+    * @param extrude       extrude the shape
+    * @param offset        extrusion offset
+    * @param useAutoSmooth auto smooth normals
+    * @param autoAngle     auto smooth angle
+    * @param materials     the materials
+    * @param gamma         color adjustment
+    * @param metallic      metallic factor
+    * @param roughness     roughness factor
     *
     * @return the string
     */
    public String toBlenderCode ( final boolean decimate, final float extrude,
       final float offset, final boolean useAutoSmooth, final float autoAngle,
       final MaterialSolid[] materials, final float gamma, final float metallic,
-      final float roughness, final float specular, final float clearcoat,
-      final float clearcoatRough ) {
+      final float roughness ) {
 
       final boolean includeEdges = false;
 
@@ -471,12 +467,10 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
          final int matLen = materials.length;
          final int matLast = matLen - 1;
          for ( int i = 0; i < matLast; ++i ) {
-            materials[i].toBlenderCode(pyCd, gamma, metallic, roughness,
-               specular, clearcoat, clearcoatRough);
+            materials[i].toBlenderCode(pyCd, gamma, metallic, roughness);
             pyCd.append(',').append(' ');
          }
-         materials[matLast].toBlenderCode(pyCd, gamma, metallic, roughness,
-            specular, clearcoat, clearcoatRough);
+         materials[matLast].toBlenderCode(pyCd, gamma, metallic, roughness);
       } else {
          MaterialSolid.defaultBlenderMaterial(pyCd, gamma);
       }
@@ -542,7 +536,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       final MaterialSolid[] ms ) {
 
       return this.toBlenderCode(decimate, extrude, 0.0f, true, 0.523599f, ms,
-         2.2f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0001f);
+         2.2f, 0.0f, 1.0f);
    }
 
    /**

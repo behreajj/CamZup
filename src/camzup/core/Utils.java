@@ -828,8 +828,8 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Finds the greatest, or maximum, among a list of values. Returns
-    * {@link Float#MIN_VALUE}, {@value Float#MIN_VALUE}, if the list's length
+    * Finds the greatest, or maximum, among a list of values. Returns negative
+    * {@link Float#MAX_VALUE}, {@value Float#MAX_VALUE}, if the list's length
     * is zero.
     *
     * @param fs the list of values

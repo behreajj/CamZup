@@ -472,20 +472,16 @@ public class MaterialSolid extends Material {
     * An internal helper function to format a vector as a Python tuple, then
     * append it to a {@link StringBuilder}.
     *
-    * @param pyCd           the string builder
-    * @param gamma          the gamma adjustment
-    * @param metallic       the metallic factor
-    * @param roughness      the roughness
-    * @param specular       specular highlight strength
-    * @param clearcoat      clear coat factor
-    * @param clearcoatRough clear coat roughness
+    * @param pyCd      the string builder
+    * @param gamma     the gamma adjustment
+    * @param metallic  the metallic factor
+    * @param roughness the roughness
     *
     * @return the string builder
     */
    @Experimental
    StringBuilder toBlenderCode ( final StringBuilder pyCd, final float gamma,
-      final float metallic, final float roughness, final float specular,
-      final float clearcoat, final float clearcoatRough ) {
+      final float metallic, final float roughness ) {
 
       pyCd.append("{\"name\": \"");
       if ( Character.isDigit(this.name.charAt(0)) ) { pyCd.append("id"); }
@@ -496,12 +492,6 @@ public class MaterialSolid extends Material {
       Utils.toFixed(pyCd, metallic, 6);
       pyCd.append(", \"roughness\": ");
       Utils.toFixed(pyCd, roughness, 6);
-      pyCd.append(", \"specular\": ");
-      Utils.toFixed(pyCd, specular, 6);
-      pyCd.append(", \"clearcoat\": ");
-      Utils.toFixed(pyCd, clearcoat, 6);
-      pyCd.append(", \"clearcoat_roughness\": ");
-      Utils.toFixed(pyCd, clearcoatRough, 6);
       pyCd.append('}');
       return pyCd;
    }
@@ -607,9 +597,6 @@ public class MaterialSolid extends Material {
       c.toBlenderCode(pyCd, gamma, true);
       pyCd.append(", \"metallic\": 0.0");
       pyCd.append(", \"roughness\": 1.0");
-      pyCd.append(", \"specular\": 0.0");
-      pyCd.append(", \"clearcoat\": 0.0");
-      pyCd.append(", \"clearcoat_roughness\": 0.001");
       pyCd.append('}');
       return pyCd;
    }

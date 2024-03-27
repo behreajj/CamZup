@@ -3131,6 +3131,41 @@ public class ZImage extends PImage {
    }
 
    /**
+    * Transposes an image. Also known as flipping it diagonally.
+    *
+    * @param source the source image
+    * @param target the target image
+    *
+    * @return the transpose image
+    *
+    * @see Pixels#transpose(int[], int, int, int[])
+    */
+   public static PImage transpose ( final PImage source, final PImage target ) {
+
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
+      source.loadPixels();
+      target.loadPixels();
+      final int w = source.pixelWidth;
+      final int h = source.pixelHeight;
+      final int pd = source.pixelDensity;
+      final int[] pxSrc = source.pixels;
+      target.pixels = Pixels.transpose(pxSrc, w, h, new int[pxSrc.length]);
+      target.format = source.format;
+      target.pixelDensity = pd;
+      target.pixelWidth = h;
+      target.pixelHeight = w;
+      target.width = h / pd;
+      target.height = w / pd;
+      target.updatePixels();
+
+      return target;
+   }
+
+   /**
     * Removes excess transparent pixels from an image.
     *
     * @param source the source image
