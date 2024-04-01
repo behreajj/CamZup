@@ -40,6 +40,12 @@ public interface IBlenderWritable {
       pyCd.append("    pbr_in[\"Metallic\"].default_value = metal_val\n");
       pyCd.append("    pbr_in[\"Roughness\"].default_value = rough_val\n\n");
 
+      /*
+       * As of 4.1.0, PBR node names are "Specular IOR Level" (12),
+       * "Coat Weight" (18), "Coat Roughness" (19), "Coat IOR" (20), Coat Tint
+       * (21)
+       */
+
       return pyCd;
    }
 
@@ -49,13 +55,11 @@ public interface IBlenderWritable {
     * @param pyCd          the string builder
     * @param includeEdges  whether to include edge data
     * @param useAutoSmooth use auto smoothed normals
-    * @param autoAngle     the auto smooth angle
     *
     * @return the string builder
     */
    default StringBuilder genMeshString ( final StringBuilder pyCd,
-      final boolean includeEdges, final boolean useAutoSmooth,
-      final float autoAngle ) {
+      final boolean includeEdges, final boolean useAutoSmooth ) {
 
       /* Append meshes. */
       final String pyUseAutoSmooth = useAutoSmooth ? "True" : "False";

@@ -411,7 +411,6 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     * library (the test).
     *
     * @param useAutoSmooth auto smooth normals
-    * @param autoAngle     auto smooth angle
     * @param materials     the materials
     * @param gamma         color gamma adjustment
     * @param metallic      metallic factor
@@ -421,8 +420,8 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
     */
    @Experimental
    public String toBlenderCode ( final boolean useAutoSmooth,
-      final float autoAngle, final MaterialSolid[] materials, final float gamma,
-      final float metallic, final float roughness ) {
+      final MaterialSolid[] materials, final float gamma, final float metallic,
+      final float roughness ) {
 
       final boolean includeEdges = false;
 
@@ -460,7 +459,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
 
       this.genParentString(pyCd);
       this.genMaterialString(pyCd);
-      this.genMeshString(pyCd, includeEdges, useAutoSmooth, autoAngle);
+      this.genMeshString(pyCd, includeEdges, useAutoSmooth);
 
       /* Add materials to mesh data. */
       pyCd.append("    md_mats = mesh_data.materials\n");
@@ -493,7 +492,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    @Experimental
    public String toBlenderCode ( final MaterialSolid[] ms ) {
 
-      return this.toBlenderCode(true, 0.523599f, ms, 2.2f, 0.0f, 1.0f);
+      return this.toBlenderCode(true, ms, 2.2f, 0.0f, 1.0f);
    }
 
    /**

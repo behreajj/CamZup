@@ -429,7 +429,6 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @param extrude       extrude the shape
     * @param offset        extrusion offset
     * @param useAutoSmooth auto smooth normals
-    * @param autoAngle     auto smooth angle
     * @param materials     the materials
     * @param gamma         color adjustment
     * @param metallic      metallic factor
@@ -438,7 +437,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
     * @return the string
     */
    public String toBlenderCode ( final boolean decimate, final float extrude,
-      final float offset, final boolean useAutoSmooth, final float autoAngle,
+      final float offset, final boolean useAutoSmooth,
       final MaterialSolid[] materials, final float gamma, final float metallic,
       final float roughness ) {
 
@@ -478,7 +477,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
 
       this.genParentString(pyCd);
       this.genMaterialString(pyCd);
-      this.genMeshString(pyCd, includeEdges, useAutoSmooth, autoAngle);
+      this.genMeshString(pyCd, includeEdges, useAutoSmooth);
 
       /* Add materials to mesh data. */
       pyCd.append("    md_mats = mesh_data.materials\n");
@@ -535,8 +534,8 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    public String toBlenderCode ( final boolean decimate, final float extrude,
       final MaterialSolid[] ms ) {
 
-      return this.toBlenderCode(decimate, extrude, 0.0f, true, 0.523599f, ms,
-         2.2f, 0.0f, 1.0f);
+      return this.toBlenderCode(decimate, extrude, 0.0f, true, ms, 2.2f, 0.0f,
+         1.0f);
    }
 
    /**

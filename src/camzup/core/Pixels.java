@@ -1781,10 +1781,9 @@ public abstract class Pixels {
       final float wSrcf = wSrc;
       final float hSrcf = hSrc;
       final int deg = Utils.round(angle * IUtils.RAD_TO_DEG);
-      final int deg360 = Utils.mod(deg, 360);
-      switch ( deg360 ) {
-         case 0:
-         case 180: {
+      final int deg180 = Utils.mod(deg, 180);
+      switch ( deg180 ) {
+         case 0: {
             if ( dim != null ) { dim.set(wSrcf, hSrcf); }
             final int[] cpy = new int[source.length];
             System.arraycopy(source, 0, cpy, 0, source.length);
@@ -1799,18 +1798,12 @@ public abstract class Pixels {
          case 89:
          case 90:
          case 91:
-         case 92:
-
-         case 268:
-         case 269:
-         case 270:
-         case 271:
-         case 272: {
+         case 92: {
             if ( dim != null ) { dim.set(wSrcf, hSrcf); }
             return new int[source.length];
          }
 
-         case 315: {
+         case 135: {
             return Pixels.skewXInteger(source, wSrc, hSrc, -1, 1, dim);
          }
 
@@ -1914,10 +1907,9 @@ public abstract class Pixels {
       final float wSrcf = wSrc;
       final float hSrcf = hSrc;
       final int deg = Utils.round(angle * IUtils.RAD_TO_DEG);
-      final int deg360 = Utils.mod(deg, 360);
-      switch ( deg360 ) {
-         case 0:
-         case 180: {
+      final int deg180 = Utils.mod(deg, 180);
+      switch ( deg180 ) {
+         case 0: {
             if ( dim != null ) { dim.set(wSrcf, hSrcf); }
             final int[] cpy = new int[source.length];
             System.arraycopy(source, 0, cpy, 0, source.length);
@@ -1932,18 +1924,12 @@ public abstract class Pixels {
          case 89:
          case 90:
          case 91:
-         case 92:
-
-         case 268:
-         case 269:
-         case 270:
-         case 271:
-         case 272: {
+         case 92: {
             if ( dim != null ) { dim.set(wSrcf, hSrcf); }
             return new int[source.length];
          }
 
-         case 315: {
+         case 135: {
             return Pixels.skewYInteger(source, wSrc, hSrc, -1, 1, dim);
          }
 
