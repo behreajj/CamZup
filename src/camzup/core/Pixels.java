@@ -1670,20 +1670,23 @@ public abstract class Pixels {
    public static int sampleBilinear ( final int[] source, final int wSrc,
       final int hSrc, final float xSrc, final float ySrc ) {
 
-      /* Find truncation, floor and ceiling. */
+      /*
+       * Find truncation, floor and ceiling. The ceiling cannot use yc = yf + 1
+       * as a shortcut due to the case where y = 0.
+       */
       final int yi = ( int ) ySrc;
       final int yf = ySrc > 0.0f ? yi : ySrc < -0.0f ? yi - 1 : 0;
-      final int yc = yf + 1;
+      final int yc = ySrc > 0.0f ? yi + 1 : ySrc < -0.0f ? yi : 0;
 
-      final boolean yfInBounds = yf > -1 && yf < hSrc;
-      final boolean ycInBounds = yc > -1 && yc < hSrc;
+      final boolean yfInBounds = yf >= 0 && yf < hSrc;
+      final boolean ycInBounds = yc >= 0 && yc < hSrc;
 
       final int xi = ( int ) xSrc;
       final int xf = xSrc > 0.0f ? xi : xSrc < -0.0f ? xi - 1 : 0;
-      final int xc = xf + 1;
+      final int xc = xSrc > 0.0f ? xi + 1 : xSrc < -0.0f ? xi : 0;
 
-      final boolean xfInBounds = xf > -1 && xf < wSrc;
-      final boolean xcInBounds = xc > -1 && xc < wSrc;
+      final boolean xfInBounds = xf >= 0 && xf < wSrc;
+      final boolean xcInBounds = xc >= 0 && xc < wSrc;
 
       /* Pixel corners colors. */
       final int c00 = yfInBounds && xfInBounds ? source[yf * wSrc + xf] : 0;
@@ -1770,7 +1773,6 @@ public abstract class Pixels {
     * @return the skewed array
     *
     * @see Pixels#sampleBilinear(int[], int, int, float, float)
-    * @see Pixels#skewXInteger(int[], int, int, int, int, Vec2)
     * @see Utils#abs(float)
     * @see Utils#mod(int, int)
     * @see Utils#round(float)
@@ -1790,10 +1792,6 @@ public abstract class Pixels {
             return cpy;
          }
 
-         case 45: {
-            return Pixels.skewXInteger(source, wSrc, hSrc, 1, 1, dim);
-         }
-
          case 88:
          case 89:
          case 90:
@@ -1801,10 +1799,6 @@ public abstract class Pixels {
          case 92: {
             if ( dim != null ) { dim.set(wSrcf, hSrcf); }
             return new int[source.length];
-         }
-
-         case 135: {
-            return Pixels.skewXInteger(source, wSrc, hSrc, -1, 1, dim);
          }
 
          default: {
@@ -1829,57 +1823,6 @@ public abstract class Pixels {
    }
 
    /**
-    * Skews the pixels of a source image horizontally by an integer rise. The
-    * run specifies the number of pixels to skip on the y axis for each rise.
-    * If the rise or run are zero, copies the source array.<br>
-    * <br>
-    * Emits the new image dimensions to a {@link Vec2}.
-    *
-    * @param source the source pixels
-    * @param wSrc   the source image width
-    * @param hSrc   the source image height
-    * @param rise   the rise, or step
-    * @param run    the run, or skip
-    * @param dim    the new dimension
-    *
-    * @return the skewed array
-    */
-   public static int[] skewXInteger ( final int[] source, final int wSrc,
-      final int hSrc, final int rise, final int run, final Vec2 dim ) {
-
-      final float wSrcf = wSrc;
-      final float hSrcf = hSrc;
-
-      if ( rise == 0 || run == 0 ) {
-         if ( dim != null ) { dim.set(wSrcf, hSrcf); }
-         final int[] cpy = new int[source.length];
-         System.arraycopy(source, 0, cpy, 0, source.length);
-         return cpy;
-      }
-
-      final int absRun = run < 0 ? -run : run;
-      final int sgnRise = run < 0 ? -rise : rise;
-      final int absRise = sgnRise < 0 ? -sgnRise : sgnRise;
-
-      final int hn1Run = ( hSrc - 1 ) / absRun;
-      final int offset = sgnRise < 0 ? 0 : hn1Run * sgnRise;
-      final int wTrg = wSrc + hn1Run * absRise;
-      final int[] target = new int[wTrg * hSrc];
-
-      final int srcLen = source.length;
-      for ( int i = 0; i < srcLen; ++i ) {
-         final int xSrc = i % wSrc;
-         final int ySrc = i / wSrc;
-         final int shift = sgnRise * ( ySrc / absRun );
-         final int xTrg = xSrc + offset - shift;
-         target[xTrg + ySrc * wTrg] = source[i];
-      }
-
-      if ( dim != null ) { dim.set(wTrg, hSrcf); }
-      return target;
-   }
-
-   /**
     * Skews the pixels of a source image vertically. If the angle is
     * approximately zero, copies the source array. If the angle is
     * approximately {@link IUtils#HALF_PI} ({@value IUtils#HALF_PI}, returns
@@ -1896,7 +1839,6 @@ public abstract class Pixels {
     * @return the skewed array
     *
     * @see Pixels#sampleBilinear(int[], int, int, float, float)
-    * @see Pixels#skewYInteger(int[], int, int, int, int, Vec2)
     * @see Utils#abs(float)
     * @see Utils#mod(int, int)
     * @see Utils#round(float)
@@ -1916,10 +1858,6 @@ public abstract class Pixels {
             return cpy;
          }
 
-         case 45: {
-            return Pixels.skewYInteger(source, wSrc, hSrc, 1, 1, dim);
-         }
-
          case 88:
          case 89:
          case 90:
@@ -1927,10 +1865,6 @@ public abstract class Pixels {
          case 92: {
             if ( dim != null ) { dim.set(wSrcf, hSrcf); }
             return new int[source.length];
-         }
-
-         case 135: {
-            return Pixels.skewYInteger(source, wSrc, hSrc, -1, 1, dim);
          }
 
          default: {
@@ -1952,57 +1886,6 @@ public abstract class Pixels {
             return target;
          }
       }
-   }
-
-   /**
-    * Skews the pixels of a source image vertically by an integer rise. The
-    * run specifies the number of pixels to skip on the x axis for each rise.
-    * If the rise or run are zero, copies the source array.<br>
-    * <br>
-    * Emits the new image dimensions to a {@link Vec2}.
-    *
-    * @param source the source pixels
-    * @param wSrc   the source image width
-    * @param hSrc   the source image height
-    * @param rise   the rise, or step
-    * @param run    the run, or skip
-    * @param dim    the new dimension
-    *
-    * @return the skewed array
-    */
-   public static int[] skewYInteger ( final int[] source, final int wSrc,
-      final int hSrc, final int rise, final int run, final Vec2 dim ) {
-
-      final float wSrcf = wSrc;
-      final float hSrcf = hSrc;
-
-      if ( rise == 0 || run == 0 ) {
-         if ( dim != null ) { dim.set(wSrcf, hSrcf); }
-         final int[] cpy = new int[source.length];
-         System.arraycopy(source, 0, cpy, 0, source.length);
-         return cpy;
-      }
-
-      final int absRun = run < 0 ? -run : run;
-      final int sgnRise = run < 0 ? -rise : rise;
-      final int absRise = sgnRise < 0 ? -sgnRise : sgnRise;
-
-      final int wn1Run = ( wSrc - 1 ) / absRun;
-      final int offset = sgnRise < 0 ? 0 : wn1Run * sgnRise;
-      final int hTrg = hSrc + wn1Run * absRise;
-      final int[] target = new int[wSrc * hTrg];
-
-      final int srcLen = source.length;
-      for ( int i = 0; i < srcLen; ++i ) {
-         final int xSrc = i % wSrc;
-         final int ySrc = i / wSrc;
-         final int shift = sgnRise * ( xSrc / absRun );
-         final int yTrg = ySrc + offset - shift;
-         target[xSrc + yTrg * wSrc] = source[i];
-      }
-
-      if ( dim != null ) { dim.set(wSrcf, hTrg); }
-      return target;
    }
 
    /**
