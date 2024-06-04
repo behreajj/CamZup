@@ -305,42 +305,6 @@ public class Bounds2 implements Comparable < Bounds2 > {
    }
 
    /**
-    * Verifies that all components of minimum are less than those of the
-    * maximum, and that the minimums and maximums do not equal each other.
-    *
-    * @return this bounds
-    */
-   public Bounds2 verify ( ) {
-
-      final Vec2 mn = this.min;
-      final Vec2 mx = this.max;
-
-      final float xMin = mn.x;
-      final float yMin = mn.y;
-
-      final float xMax = mx.x;
-      final float yMax = mx.y;
-
-      mn.x = xMin < xMax ? xMin : xMax;
-      mn.y = yMin < yMax ? yMin : yMax;
-
-      mx.x = xMax > xMin ? xMax : xMin;
-      mx.y = yMax > yMin ? yMax : yMin;
-
-      if ( Utils.approx(mn.x, mx.x, IUtils.EPSILON) ) {
-         mn.x -= IUtils.EPSILON * 2.0f;
-         mx.x += IUtils.EPSILON * 2.0f;
-      }
-
-      if ( Utils.approx(mn.y, mx.y, IUtils.EPSILON) ) {
-         mn.y -= IUtils.EPSILON * 2.0f;
-         mx.y += IUtils.EPSILON * 2.0f;
-      }
-
-      return this;
-   }
-
-   /**
     * Internal helper function to assist with methods that need to print many
     * bounds. Appends to an existing {@link StringBuilder}.
     *
@@ -649,7 +613,8 @@ public class Bounds2 implements Comparable < Bounds2 > {
 
    /**
     * Finds the intersection between two bounds, i.e. the overlapping area
-    * between the two.
+    * between the two. To avoid unexpected results from zero and negative
+    * bounds, use {@link Bounds2#verified} on inputs.
     *
     * @param a      left operand
     * @param b      right operand
@@ -710,7 +675,8 @@ public class Bounds2 implements Comparable < Bounds2 > {
 
    /**
     * Finds the union between two bounds, i.e. a bounds that will contain both
-    * of them.
+    * of them. To avoid unexpected results from zero and negative bounds, use
+    * {@link Bounds2#verified} on inputs.
     *
     * @param a      left operand
     * @param b      right operand
@@ -730,7 +696,9 @@ public class Bounds2 implements Comparable < Bounds2 > {
    }
 
    /**
-    * Evaluates whether two bounding areas intersect.
+    * Evaluates whether two bounding areas intersect. To avoid unexpected
+    * results from zero and negative bounds, use {@link Bounds2#verified} on
+    * inputs.
     *
     * @param a left comparisand
     * @param b right comparisand
@@ -745,7 +713,8 @@ public class Bounds2 implements Comparable < Bounds2 > {
 
    /**
     * Evaluates whether two bounding areas intersect. A boolean vector holds
-    * the evaluation.
+    * the evaluation. To avoid unexpected results from zero and negative
+    * bounds, use {@link Bounds2#verified} on inputs.
     *
     * @param a      left comparisand
     * @param b      right comparisand
@@ -761,7 +730,9 @@ public class Bounds2 implements Comparable < Bounds2 > {
    }
 
    /**
-    * Evaluates whether a bounding area intersects a circle.
+    * Evaluates whether a bounding area intersects a circle. To avoid
+    * unexpected results from zero and negative bounds, use
+    * {@link Bounds2#verified} on left operand.
     *
     * @param a      the bounds
     * @param center the circle center
@@ -791,6 +762,36 @@ public class Bounds2 implements Comparable < Bounds2 > {
    public static boolean isNegative ( final Bounds2 b ) {
 
       return b.max.y < b.min.y || b.max.x < b.min.x;
+   }
+
+   /**
+    * Evaluates whether the bounds maximum is approximately equal to its
+    * minimum in any dimension.
+    *
+    * @param b the bounds
+    *
+    * @return the evaluation
+    */
+   public static boolean isZero ( final Bounds2 b ) {
+
+      return Bounds2.isZero(b, IUtils.EPSILON);
+   }
+
+   /**
+    * Evaluates whether the bounds maximum is approximately equal to its
+    * minimum in any dimension.
+    *
+    * @param b the bounds
+    * @param t tolerance
+    *
+    * @return the evaluation
+    *
+    * @see Utils#approx(float, float, float)
+    */
+   public static boolean isZero ( final Bounds2 b, final float t ) {
+
+      return Utils.approx(b.min.x, b.max.x, t) || Utils.approx(b.min.y, b.max.y,
+         t);
    }
 
    /**
@@ -892,8 +893,7 @@ public class Bounds2 implements Comparable < Bounds2 > {
     */
    public static Bounds2 unitSquareSigned ( final Bounds2 target ) {
 
-      return target.set(-1.0f - IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON
-         * 2.0f);
+      return target.set(-1.0f, 1.0f);
    }
 
    /**
@@ -906,7 +906,48 @@ public class Bounds2 implements Comparable < Bounds2 > {
     */
    public static Bounds2 unitSquareUnsigned ( final Bounds2 target ) {
 
-      return target.set(-IUtils.EPSILON * 2.0f, 1.0f + IUtils.EPSILON * 2.0f);
+      return target.set(0.0f, 1.0f);
+   }
+
+   /**
+    * Returns a bounds where all components of the minimum are less than those
+    * of the maximum, and that the edges of the bounds do not equal each
+    * other.
+    *
+    * @param source the source bounds
+    * @param target the output bounds
+    *
+    * @return the verified bounds
+    */
+   public static Bounds2 verified ( final Bounds2 source,
+      final Bounds2 target ) {
+
+      final Vec2 mn = source.min;
+      final Vec2 mx = source.max;
+
+      final float xMin = mn.x;
+      final float yMin = mn.y;
+
+      final float xMax = mx.x;
+      final float yMax = mx.y;
+
+      float bxMin = xMin < xMax ? xMin : xMax;
+      float byMin = yMin < yMax ? yMin : yMax;
+
+      float bxMax = xMax > xMin ? xMax : xMin;
+      float byMax = yMax > yMin ? yMax : yMin;
+
+      if ( Utils.approx(bxMin, bxMax, IUtils.EPSILON) ) {
+         bxMin -= IUtils.EPSILON * 2.0f;
+         bxMax += IUtils.EPSILON * 2.0f;
+      }
+
+      if ( Utils.approx(byMin, byMax, IUtils.EPSILON) ) {
+         byMin -= IUtils.EPSILON * 2.0f;
+         byMax += IUtils.EPSILON * 2.0f;
+      }
+
+      return target.set(bxMin, byMin, bxMax, byMax);
    }
 
    /**
