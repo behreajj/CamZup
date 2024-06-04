@@ -800,9 +800,8 @@ public class Bounds3 implements Comparable < Bounds3 > {
     */
    public static Bounds3 lab ( final Bounds3 target ) {
 
-      return target.set(Lab.SR_A_MIN - IUtils.EPSILON, Lab.SR_B_MIN
-         - IUtils.EPSILON, -IUtils.EPSILON, Lab.SR_A_MAX + IUtils.EPSILON,
-         Lab.SR_B_MAX + IUtils.EPSILON, 100.0f + IUtils.EPSILON);
+      return target.set(Lab.SR_A_MIN, Lab.SR_B_MIN, 0.0f, Lab.SR_A_MAX,
+         Lab.SR_B_MAX, 100.0f);
    }
 
    /**
