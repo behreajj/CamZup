@@ -1,7 +1,5 @@
 package camzup.core;
 
-import java.util.Comparator;
-
 /**
  * An axis aligned bounding box (AABB) for a 2D area, represented with a
  * minimum and maximum coordinate.
@@ -765,7 +763,20 @@ public class Bounds2 implements Comparable < Bounds2 > {
    }
 
    /**
-    * Evaluates whether the bounds maximum is approximately equal to its
+    * Evaluates whether the bounds maximum is greater than its minimum in all
+    * dimensions.
+    *
+    * @param b the bounds
+    *
+    * @return the evaluation
+    */
+   public static boolean isPositive ( final Bounds2 b ) {
+
+      return b.max.y > b.min.y && b.max.x > b.min.x;
+   }
+
+   /**
+    * Evaluates whether the bounds maximum is equal to its
     * minimum in any dimension.
     *
     * @param b the bounds
@@ -774,24 +785,7 @@ public class Bounds2 implements Comparable < Bounds2 > {
     */
    public static boolean isZero ( final Bounds2 b ) {
 
-      return Bounds2.isZero(b, IUtils.EPSILON);
-   }
-
-   /**
-    * Evaluates whether the bounds maximum is approximately equal to its
-    * minimum in any dimension.
-    *
-    * @param b the bounds
-    * @param t tolerance
-    *
-    * @return the evaluation
-    *
-    * @see Utils#approx(float, float, float)
-    */
-   public static boolean isZero ( final Bounds2 b, final float t ) {
-
-      return Utils.approx(b.min.x, b.max.x, t) || Utils.approx(b.min.y, b.max.y,
-         t);
+      return b.max.y - b.min.y == 0.0f || b.max.x - b.min.x == 0.0f;
    }
 
    /**
@@ -971,111 +965,4 @@ public class Bounds2 implements Comparable < Bounds2 > {
 
       return xd * xd + yd * yd < rsq;
    }
-
-   /**
-    * An abstract class that may serve as an umbrella for any custom
-    * comparators of Bounds2 s.
-    */
-   public abstract static class AbstrComparator implements Comparator <
-      Bounds2 > {
-
-      /**
-       * The default constructor.
-       */
-      protected AbstrComparator ( ) {}
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
-
-   }
-
-   /**
-    * Compares two bounds on the x axis.
-    */
-   public static final class SortX extends AbstrComparator {
-
-      /**
-       * Stores the center for the left comparisand.
-       */
-      private final Vec2 aCenter = new Vec2();
-
-      /**
-       * Stores the center for the right comparisand.
-       */
-      private final Vec2 bCenter = new Vec2();
-
-      /**
-       * The comparator for the vector center.
-       */
-      private final Vec2.SortX comparator = new Vec2.SortX();
-
-      /**
-       * The default constructor.
-       */
-      public SortX ( ) {}
-
-      /**
-       * The compare function.
-       *
-       * @param a the left comparisand
-       * @param b the right comparisand
-       *
-       * @return the comparison
-       */
-      @Override
-      public int compare ( final Bounds2 a, final Bounds2 b ) {
-
-         return this.comparator.compare(Bounds2.center(a, this.aCenter), Bounds2
-            .center(b, this.bCenter));
-      }
-
-   }
-
-   /**
-    * Compares two bounds on the y axis.
-    */
-   public static final class SortY extends AbstrComparator {
-
-      /**
-       * Stores the center for the left comparisand.
-       */
-      private final Vec2 aCenter = new Vec2();
-
-      /**
-       * Stores the center for the right comparisand.
-       */
-      private final Vec2 bCenter = new Vec2();
-
-      /**
-       * The comparator for the vector center.
-       */
-      private final Vec2.SortY comparator = new Vec2.SortY();
-
-      /**
-       * The default constructor.
-       */
-      public SortY ( ) {}
-
-      /**
-       * The compare function.
-       *
-       * @param a the left comparisand
-       * @param b the right comparisand
-       *
-       * @return the comparison
-       */
-      @Override
-      public int compare ( final Bounds2 a, final Bounds2 b ) {
-
-         return this.comparator.compare(Bounds2.center(a, this.aCenter), Bounds2
-            .center(b, this.bCenter));
-      }
-
-   }
-
 }
