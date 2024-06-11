@@ -770,8 +770,8 @@ public class Bounds3 implements Comparable < Bounds3 > {
    }
 
    /**
-    * Evaluates whether the bounds maximum is equal to its
-    * minimum in any dimension.
+    * Evaluates whether the bounds maximum is equal to its minimum in any
+    * dimension.
     *
     * @param b the bounds
     *
@@ -779,9 +779,8 @@ public class Bounds3 implements Comparable < Bounds3 > {
     */
    public static boolean isZero ( final Bounds3 b ) {
 
-      return b.max.z - b.min.z == 0.0f
-         || b.max.y - b.min.y == 0.0f
-         || b.max.x - b.min.x == 0.0f;
+      return b.max.z - b.min.z == 0.0f || b.max.y - b.min.y == 0.0f || b.max.x
+         - b.min.x == 0.0f;
    }
 
    /**
@@ -1056,4 +1055,5 @@ public class Bounds3 implements Comparable < Bounds3 > {
 
       return xd * xd + yd * yd + zd * zd < rsq;
    }
+
 }

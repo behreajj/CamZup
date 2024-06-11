@@ -776,8 +776,8 @@ public class Bounds2 implements Comparable < Bounds2 > {
    }
 
    /**
-    * Evaluates whether the bounds maximum is equal to its
-    * minimum in any dimension.
+    * Evaluates whether the bounds maximum is equal to its minimum in any
+    * dimension.
     *
     * @param b the bounds
     *
@@ -965,4 +965,5 @@ public class Bounds2 implements Comparable < Bounds2 > {
 
       return xd * xd + yd * yd < rsq;
    }
+
 }

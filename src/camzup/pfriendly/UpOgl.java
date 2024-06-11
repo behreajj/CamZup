@@ -3089,6 +3089,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
       if ( img.width < 1 || img.height < 1 ) { return; }
 
+      final float left = x1 < x2 ? x1 : x2;
+      final float top = y1 > y2 ? y1 : y2;
+      final float right = x1 > x2 ? x1 : x2;
+      final float bottom = y1 < y2 ? y1 : y2;
+
       this.pushStyle();
       this.noStroke();
       final int oldWrapMode = this.textureWrap;
@@ -3096,10 +3101,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
       this.beginShape(PConstants.POLYGON);
       this.normalPerShape(0.0f, 0.0f, 1.0f);
       this.texture(img);
-      this.vertexImpl(x1, y1, z, u1, v1);
-      this.vertexImpl(x2, y1, z, u2, v1);
-      this.vertexImpl(x2, y2, z, u2, v2);
-      this.vertexImpl(x1, y2, z, u1, v2);
+      this.vertexImpl(left, top, z, u1, v1);
+      this.vertexImpl(right, top, z, u2, v1);
+      this.vertexImpl(right, bottom, z, u2, v2);
+      this.vertexImpl(left, bottom, z, u1, v2);
       this.endShape(PConstants.CLOSE);
       this.textureWrap(oldWrapMode);
       this.popStyle();
