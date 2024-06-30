@@ -106,6 +106,33 @@ public abstract class TextShape {
    }
 
    /**
+    * Converts a list of glyph indices to a an array of curve entities. When
+    * the level of detail is 0, uses Bezier curves. When the detail is
+    * non-zero, approximates the glyph with a series of straight line
+    * segments. The PFont should have been created with createFont, not
+    * loadFont.
+    *
+    * @param pfont   the PFont
+    * @param scale   the curve scale
+    * @param detail  the level of detail
+    * @param indices the glyph indices
+    *
+    * @return the array
+    */
+   public static CurveEntity2[] glyphCurve ( final PFont pfont,
+      final float scale, final float detail, final int... indices ) {
+
+      final Font font = ( Font ) pfont.getNative();
+      if ( font != null ) {
+         @SuppressWarnings ( "deprecation" )
+         final FontRenderContext frc = Toolkit.getDefaultToolkit()
+            .getFontMetrics(font).getFontRenderContext();
+         return TextShape.processGlyphCe(frc, pfont, scale, detail, indices);
+      }
+      return new CurveEntity2[] {};
+   }
+
+   /**
     * Converts a list of characters to a an array of curve entities. When the
     * level of detail is 0, uses Bezier curves. When the detail is non-zero,
     * approximates the glyph with a series of straight line segments. The
@@ -152,6 +179,29 @@ public abstract class TextShape {
    }
 
    /**
+    * Converts a list of glyph indices to a an array of curve entities. When
+    * the level of detail is 0, uses Bezier curves. When the detail is
+    * non-zero, approximates the glyph with a series of straight line
+    * segments. The PFont should have been created with createFont, not
+    * loadFont.
+    *
+    * @param rndr    the renderer
+    * @param pfont   the PFont
+    * @param scale   the curve scale
+    * @param detail  the level of detail
+    * @param indices the glyph indices
+    *
+    * @return the array
+    */
+   public static CurveEntity2[] glyphCurve ( final PGraphicsJava2D rndr,
+      final PFont pfont, final float scale, final float detail,
+      final int... indices ) {
+
+      return TextShape.processGlyphCe( ( ( Graphics2D ) rndr.getNative() )
+         .getFontRenderContext(), pfont, scale, detail, indices);
+   }
+
+   /**
     * Appends curve entities to an array list based on a font rendering
     * context, font and array of characters.
     *
@@ -180,14 +230,19 @@ public abstract class TextShape {
             float yCursor = 0.0f;
             final Vec2 tr = new Vec2();
 
-            final float scalar = valDispScl / pfont.getSize();
+            final float scalar = Utils.div(valDispScl, pfont.getSize());
             final float kerning = 0.25f;
             final float leading = 1.0f;
-            final float spaceWidth = pfont.getGlyph(
-               TextShape.SPACE_WIDTH_SAMPLE).width;
-            final float lineHeight = Utils.max(pfont.getGlyph(
-               TextShape.LINE_HEIGHT_SAMPLE_A).height, pfont.getGlyph(
-                  TextShape.LINE_HEIGHT_SAMPLE_B).height);
+            final PFont.Glyph spaceGlyph = pfont.getGlyph(
+               TextShape.SPACE_WIDTH_SAMPLE);
+            final float spaceWidth = spaceGlyph != null ? spaceGlyph.width : 1;
+
+            final PFont.Glyph aSample = pfont.getGlyph(
+               TextShape.LINE_HEIGHT_SAMPLE_A);
+            final PFont.Glyph bSample = pfont.getGlyph(
+               TextShape.LINE_HEIGHT_SAMPLE_B);
+            final float lineHeight = Utils.max(aSample != null ? aSample.height
+               : 1, bSample != null ? bSample.height : 1);
             boolean newLineFlag = false;
 
             final int len = characters.length;
@@ -237,11 +292,45 @@ public abstract class TextShape {
 
             final String name = new String(characters);
             final CurveEntity2 entity = new CurveEntity2(name);
-            TextShape.processGlyphCurve(font, frc, null, valDispScl, detail,
-               characters, entity.curves);
+            final GlyphVector gv = font.createGlyphVector(frc, characters);
+            final String namePrefix = name + ".";
+            final float fontSize = font.getSize2D();
+            TextShape.processGlyphVector(gv, null, valDispScl, detail,
+               namePrefix, fontSize, entity.curves);
             entities.add(entity);
 
          }
+      }
+      return entities.toArray(new CurveEntity2[entities.size()]);
+   }
+
+   /**
+    * Appends curve entities to an array list based on a font rendering
+    * context, font and array of glyph indices
+    *
+    * @param frc          the font rendering context
+    * @param pfont        the Processing font
+    * @param displayScale the display scale
+    * @param detail       the curve detail
+    * @param indices      the glyph indices
+    *
+    * @return the array of glyphs
+    */
+   protected static CurveEntity2[] processGlyphCe ( final FontRenderContext frc,
+      final PFont pfont, final float displayScale, final float detail,
+      final int... indices ) {
+
+      final ArrayList < CurveEntity2 > entities = new ArrayList <>();
+      final Font font = ( Font ) pfont.getNative();
+      if ( font != null ) {
+         final float valDispScl = displayScale != 0.0f ? displayScale : 1.0f;
+         final CurveEntity2 entity = new CurveEntity2("CurveEntity2");
+         final GlyphVector gv = font.createGlyphVector(frc, indices);
+         final String namePrefix = "Curve2.";
+         final float fontSize = font.getSize2D();
+         TextShape.processGlyphVector(gv, null, valDispScl, detail, namePrefix,
+            fontSize, entity.curves);
+         entities.add(entity);
       }
       return entities.toArray(new CurveEntity2[entities.size()]);
    }
@@ -272,51 +361,12 @@ public abstract class TextShape {
       final float scale, final float detail, final char character,
       final ArrayList < Curve2 > curves ) {
 
-      return TextShape.processGlyphCurve(font, frc, transform, scale, detail,
-         new char[] { character }, curves);
-   }
-
-   /**
-    * Converts an array of characters to an list of curve entities. A helper
-    * function for other variants of getGlyph.<br>
-    * <br>
-    * When multiple characters are provided, the kerning between characters is
-    * better; when one character is supplied, glyphs with multiple curves (i,
-    * j, p, etc.) are easier to organize.
-    *
-    * @param font       the AWT font
-    * @param frc        the font render context
-    * @param transform  the AWT affine transform
-    * @param scale      the glyph scale
-    * @param detail     the detail
-    * @param characters the characters array
-    * @param curves     the list of curves
-    *
-    * @return the list of curves
-    *
-    * @see Font#createGlyphVector(FontRenderContext, char[])
-    * @see Font#getSize()
-    */
-   protected static ArrayList < Curve2 > processGlyphCurve ( final Font font,
-      final FontRenderContext frc, final AffineTransform transform,
-      final float scale, final float detail, final char[] characters,
-      final ArrayList < Curve2 > curves ) {
-
-      /*
-       * Exposing the integer array overload for createGlyphVector doesn't grant
-       * you any advantages, because the integers are not character codes, but
-       * glyphs as they appear in an array.
-       */
+      final char[] characters = { character };
       final GlyphVector gv = font.createGlyphVector(frc, characters);
       final String namePrefix = new String(characters) + ".";
-
-      /*
-       * Neutralize the font size so output is close to unit scale. Multiply by
-       * display scale.
-       */
       final float fontSize = font.getSize2D();
-
-      return processGlyphVector(gv, transform, scale, detail, namePrefix, fontSize, curves);
+      return TextShape.processGlyphVector(gv, transform, scale, detail,
+         namePrefix, fontSize, curves);
    }
 
    /**
@@ -327,17 +377,17 @@ public abstract class TextShape {
     * @param namePrefix the curve name prefix
     * @param fontSize   the font size
     * @param curves     the list of curves
-    * 
+    *
     * @return the list of curves
-    * 
+    *
     * @see GlyphVector#getOutline()
     * @see PathIterator#currentSegment(float[])
     * @see Shape#getPathIterator(java.awt.geom.AffineTransform)
     * @see Shape#getPathIterator(java.awt.geom.AffineTransform, double)
     */
-   protected static ArrayList < Curve2 > processGlyphVector ( final GlyphVector gv,
-      final AffineTransform transform, final float scale, final float detail,
-      final String namePrefix, final float fontSize,
+   protected static ArrayList < Curve2 > processGlyphVector (
+      final GlyphVector gv, final AffineTransform transform, final float scale,
+      final float detail, final String namePrefix, final float fontSize,
       final ArrayList < Curve2 > curves ) {
 
       /*
@@ -371,10 +421,6 @@ public abstract class TextShape {
          switch ( segType ) {
 
             case PathIterator.SEG_MOVETO: { /* 0 */
-
-               // TODO: Sonarlint: currCurve is nullable at all cases
-               // except for move to.
-
                /*
                 * Create a new curve, move to a point. The first knot of a shape
                 * copies the last; in the SEG_CLOSE case, its fore handle will
@@ -404,7 +450,7 @@ public abstract class TextShape {
                currKnot = new Knot2();
                Knot2.fromSegLinear(( float ) ( itrpts[0] * invScalar ),
                   ( float ) ( -itrpts[1] * invScalar ), prevKnot, currKnot);
-               currCurve.append(currKnot);
+               if ( currCurve != null ) { currCurve.append(currKnot); }
                prevKnot = currKnot;
             }
                break;
@@ -427,7 +473,7 @@ public abstract class TextShape {
                   ( float ) (  itrpts[2] * invScalar ),
                   ( float ) ( -itrpts[3] * invScalar ),
                   prevKnot, currKnot);
-               currCurve.append(currKnot);
+               if ( currCurve != null ) { currCurve.append(currKnot); }
                prevKnot = currKnot;
                /* @formatter:on */
             }
@@ -450,7 +496,7 @@ public abstract class TextShape {
                   ( float ) (  itrpts[4] * invScalar ),
                   ( float ) ( -itrpts[5] * invScalar ),
                   prevKnot, currKnot);
-               currCurve.append(currKnot);
+               if ( currCurve != null ) { currCurve.append(currKnot);}
                prevKnot = currKnot;
                /* @formatter:on */
             }
@@ -460,14 +506,19 @@ public abstract class TextShape {
 
                prevKnot = currKnot;
 
-               /* The knot appended at move-to duplicates the last knot. */
-               currCurve.removeAt(0, currKnot);
-               prevKnot.foreHandle.set(currKnot.foreHandle);
+               if ( currCurve != null ) {
+                  // TODO: This duplication may not always be the case. Check
+                  // for example, Webdings and Wingdings.
 
-               /* The y-down to y-up flips the winding order. */
-               currCurve.reverse();
-               currCurve.closedLoop = true;
-               curves.add(currCurve);
+                  /* The knot appended at move-to duplicates the last knot. */
+                  currCurve.removeAt(0, currKnot);
+                  prevKnot.foreHandle.set(currKnot.foreHandle);
+
+                  /* The y-down to y-up flips the winding order. */
+                  currCurve.reverse();
+                  currCurve.closedLoop = true;
+                  curves.add(currCurve);
+               }
             }
                break;
 
@@ -480,4 +531,5 @@ public abstract class TextShape {
 
       return curves;
    }
+
 }
