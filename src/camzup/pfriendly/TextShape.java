@@ -29,6 +29,7 @@ public abstract class TextShape {
     * Discourage overriding with a private constructor.
     */
    private TextShape ( ) {
+
       /**
        * See Getting a PShape from an emoji...?
        * https://discourse.processing.org/t/getting-a-pshape-from-an-emoji/44479/
@@ -100,8 +101,6 @@ public abstract class TextShape {
       final float scale, final float detail, final boolean separate,
       final String str ) {
 
-      // TODO: Breaking strings up into chars ignores the fact that some
-      // string elements may be emojis that do not fit into 255 bit char.
       return TextShape.glyphCurve(pfont, scale, detail, separate, str
          .toCharArray());
    }
@@ -214,6 +213,12 @@ public abstract class TextShape {
                      tr.set(xCursor, yCursor);
                      entity.moveTo(tr);
 
+                     /**
+                      * getGlyph would not be able to handle cases like emojis,
+                      * where a char cannot hold the address, e.g., 0x1F310, in
+                      * memory. See Getting a PShape from an emoji...?
+                      * https://discourse.processing.org/t/getting-a-pshape-from-an-emoji/44479/
+                      */
                      final PFont.Glyph glyph = pfont.getGlyph(character);
                      if ( glyph != null ) {
                         xCursor += ( glyph.width + kerning ) * scalar;
@@ -290,11 +295,7 @@ public abstract class TextShape {
     * @return the list of curves
     *
     * @see Font#createGlyphVector(FontRenderContext, char[])
-    * @see GlyphVector#getOutline()
-    * @see Shape#getPathIterator(java.awt.geom.AffineTransform)
-    * @see Shape#getPathIterator(java.awt.geom.AffineTransform, double)
     * @see Font#getSize()
-    * @see PathIterator#currentSegment(float[])
     */
    protected static ArrayList < Curve2 > processGlyphCurve ( final Font font,
       final FontRenderContext frc, final AffineTransform transform,
@@ -308,7 +309,36 @@ public abstract class TextShape {
        */
       final GlyphVector gv = font.createGlyphVector(frc, characters);
       final String namePrefix = new String(characters) + ".";
-      final Shape shp = gv.getOutline();
+
+      /*
+       * Neutralize the font size so output is close to unit scale. Multiply by
+       * display scale.
+       */
+      final float fontSize = font.getSize2D();
+
+      return processGlyphVector(gv, transform, scale, detail, namePrefix, fontSize, curves);
+   }
+
+   /**
+    * @param gv         the glyph vector
+    * @param transform  the AWT affine transform
+    * @param scale      the glyph scale
+    * @param detail     the detail
+    * @param namePrefix the curve name prefix
+    * @param fontSize   the font size
+    * @param curves     the list of curves
+    * 
+    * @return the list of curves
+    * 
+    * @see GlyphVector#getOutline()
+    * @see PathIterator#currentSegment(float[])
+    * @see Shape#getPathIterator(java.awt.geom.AffineTransform)
+    * @see Shape#getPathIterator(java.awt.geom.AffineTransform, double)
+    */
+   protected static ArrayList < Curve2 > processGlyphVector ( final GlyphVector gv,
+      final AffineTransform transform, final float scale, final float detail,
+      final String namePrefix, final float fontSize,
+      final ArrayList < Curve2 > curves ) {
 
       /*
        * Acquire an iterator, run through it in a while loop, and deal with 5
@@ -317,22 +347,17 @@ public abstract class TextShape {
        * rear-handles share a mid point; the pen draws a curved line with
        * different fore- and rear-handles; the pen lifts and stops drawing.
        */
+      final Shape shp = gv.getOutline();
       final PathIterator itr = detail < IUtils.EPSILON ? shp.getPathIterator(
          transform) : shp.getPathIterator(transform, detail);
+      final double dispScl = scale == 0.0f ? 1.0d : scale;
+      final double invScalar = fontSize == 0.0f ? dispScl : dispScl / fontSize;
 
       /*
        * A double precision array is filled by the iterator when currentSegment
        * is called. A single precision (float) array can also be used.
        */
       final double[] itrpts = new double[6];
-
-      /*
-       * Neutralize the font size so output is close to unit scale. Multiply by
-       * display scale.
-       */
-      final float fontSize = font.getSize2D();
-      final double dispScl = scale == 0.0f ? 1.0d : scale;
-      final double invScalar = fontSize == 0.0f ? dispScl : dispScl / fontSize;
 
       Curve2 currCurve = null;
       Knot2 prevKnot = null;
@@ -455,5 +480,4 @@ public abstract class TextShape {
 
       return curves;
    }
-
 }
