@@ -9,7 +9,6 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
-import java.util.List;
 
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
@@ -352,9 +351,6 @@ public abstract class TextShape {
     * @param curves    the list of curves
     *
     * @return the list of curves
-    *
-    * @see TextShape#processGlyphCurve(Font, FontRenderContext,
-    *      AffineTransform, float, char[], List)
     */
    protected static ArrayList < Curve2 > processGlyphCurve ( final Font font,
       final FontRenderContext frc, final AffineTransform transform,
@@ -370,6 +366,9 @@ public abstract class TextShape {
    }
 
    /**
+    * Internal helper function to convert an AWT path iterator's points to a
+    * curve.
+    * 
     * @param gv         the glyph vector
     * @param transform  the AWT affine transform
     * @param scale      the glyph scale
@@ -522,9 +521,8 @@ public abstract class TextShape {
                         lastKnot.mirrorHandlesForward();
                      }
                   } else {
-                     // Not sure if there's a way to test this case.
                      firstKnot.mirrorHandlesForward();
-                     lastKnot.mirrorHandlesForward();
+                     lastKnot.mirrorHandlesBackward();
                   }
 
                   /* The y-down to y-up flips the winding order. */
