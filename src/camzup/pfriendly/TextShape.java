@@ -507,12 +507,25 @@ public abstract class TextShape {
                prevKnot = currKnot;
 
                if ( currCurve != null ) {
-                  // TODO: This duplication may not always be the case. Check
-                  // for example, Webdings and Wingdings.
-
                   /* The knot appended at move-to duplicates the last knot. */
-                  currCurve.removeAt(0, currKnot);
-                  prevKnot.foreHandle.set(currKnot.foreHandle);
+                  final Knot2 firstKnot = currCurve.getFirst();
+                  final Knot2 lastKnot = currCurve.getLast();
+                  if ( Vec2.approx(firstKnot.coord, lastKnot.coord) ) {
+                     currCurve.removeAt(0, firstKnot);
+                     lastKnot.foreHandle.set(firstKnot.foreHandle);
+
+                     /*
+                      * In the case of some webdings, the rear handle would not
+                      * be set, leading to a flat spot on curvatures.
+                      */
+                     if ( Vec2.approx(lastKnot.rearHandle, lastKnot.coord) ) {
+                        lastKnot.mirrorHandlesForward();
+                     }
+                  } else {
+                     // Not sure if there's a way to test this case.
+                     firstKnot.mirrorHandlesForward();
+                     lastKnot.mirrorHandlesForward();
+                  }
 
                   /* The y-down to y-up flips the winding order. */
                   currCurve.reverse();
