@@ -28,7 +28,12 @@ public abstract class TextShape {
    /**
     * Discourage overriding with a private constructor.
     */
-   private TextShape ( ) {}
+   private TextShape ( ) {
+      /**
+       * See Getting a PShape from an emoji...?
+       * https://discourse.processing.org/t/getting-a-pshape-from-an-emoji/44479/
+       */
+   }
 
    /**
     * One of two characters sampled from a font to establish an appropriate
@@ -95,6 +100,8 @@ public abstract class TextShape {
       final float scale, final float detail, final boolean separate,
       final String str ) {
 
+      // TODO: Breaking strings up into chars ignores the fact that some
+      // string elements may be emojis that do not fit into 255 bit char.
       return TextShape.glyphCurve(pfont, scale, detail, separate, str
          .toCharArray());
    }
@@ -208,9 +215,13 @@ public abstract class TextShape {
                      entity.moveTo(tr);
 
                      final PFont.Glyph glyph = pfont.getGlyph(character);
-                     xCursor += ( glyph.width + kerning ) * scalar;
-                     if ( !newLineFlag ) {
-                        xCursor += glyph.leftExtent * scalar;
+                     if ( glyph != null ) {
+                        xCursor += ( glyph.width + kerning ) * scalar;
+                        if ( !newLineFlag ) {
+                           xCursor += glyph.leftExtent * scalar;
+                        }
+                     } else {
+                        xCursor += ( spaceWidth + kerning ) * scalar;
                      }
                   }
                   newLineFlag = false;
@@ -290,6 +301,11 @@ public abstract class TextShape {
       final float scale, final float detail, final char[] characters,
       final ArrayList < Curve2 > curves ) {
 
+      /*
+       * Exposing the integer array overload for createGlyphVector doesn't grant
+       * you any advantages, because the integers are not character codes, but
+       * glyphs as they appear in an array.
+       */
       final GlyphVector gv = font.createGlyphVector(frc, characters);
       final String namePrefix = new String(characters) + ".";
       final Shape shp = gv.getOutline();
