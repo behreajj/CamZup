@@ -807,24 +807,61 @@ public abstract class Utils implements IUtils {
    /**
     * Maps an input value from an original range to a target range. If the
     * upper and lower bound of the original range are equal, will return the
-    * value.
+    * value unchanged. Clamps the result to the lower and upper bounds of the
+    * target range.
     *
-    * @param value    the input value
-    * @param lbOrigin lower bound of original range
-    * @param ubOrigin upper bound of original range
-    * @param lbDest   lower bound of destination range
-    * @param ubDest   upper bound of destination range
+    * @param v      the input value
+    * @param lbOrig the lower bound of original range
+    * @param ubOrig the upper bound of original range
+    * @param lbDest the lower bound of destination range
+    * @param ubDest the upper bound of destination range
     *
     * @return the mapped value
     */
-   public static float map ( final float value, final float lbOrigin,
-      final float ubOrigin, final float lbDest, final float ubDest ) {
+   public static float map ( final float v, final float lbOrig,
+      final float ubOrig, final float lbDest, final float ubDest ) {
 
-      final float denom = ubOrigin - lbOrigin;
-      if ( denom != 0.0f ) {
-         return lbDest + ( ubDest - lbDest ) * ( ( value - lbOrigin ) / denom );
+      final float d = ubOrig - lbOrig;
+      if ( d == 0.0f ) { return v; }
+      final float n = ( v - lbOrig ) / d;
+      if ( n <= 0.0f ) { return lbDest; }
+      if ( n >= 1.0f ) { return ubDest; }
+      return lbDest + n * ( ubDest - lbDest );
+   }
+
+   /**
+    * Maps an input value from an original range to a target range. If the
+    * upper and lower bound of the original range are equal, will return the
+    * value unchanged. Clamps the result to the lower and upper bounds of the
+    * target range. If gamma is zero, returns the linear remap. Takes the
+    * absolute of gamma.
+    *
+    * @param v      the input value
+    * @param lbOrig the lower bound of original range
+    * @param ubOrig the upper bound of original range
+    * @param lbDest the lower bound of destination range
+    * @param ubDest the upper bound of destination range
+    * @param gamma  the exponent
+    *
+    * @return the mapped value
+    */
+   public static float map ( final float v, final float lbOrig,
+      final float ubOrig, final float lbDest, final float ubDest,
+      final float gamma ) {
+
+      if ( gamma == 0.0f ) {
+         return Utils.map(v, lbOrig, ubOrig, lbDest, ubDest);
       }
-      return value;
+
+      final double d = ubOrig - lbOrig;
+      if ( d == 0.0d ) { return v; }
+
+      final double n = ( v - lbOrig ) / d;
+      if ( n <= 0.0d ) { return lbDest; }
+      if ( n >= 1.0d ) { return ubDest; }
+
+      return ( float ) ( lbDest + Math.pow(n, 1.0d / Math.abs(gamma)) * ( ubDest
+         - lbDest ) );
    }
 
    /**
