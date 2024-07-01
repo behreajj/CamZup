@@ -4986,14 +4986,15 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       final Iterator < Knot3 > itr = source.iterator();
       Knot3 prevKnot = source.getLast();
 
-      if ( resolution < 2 ) {
+      if ( resolution < 1 ) {
          for ( Knot3 currKnot = null; itr.hasNext(); prevKnot = currKnot ) {
             currKnot = itr.next();
             points.add(new Vec3(prevKnot.coord));
          }
       } else {
          final float vtol = Utils.clamp01(1.0f - colinearTol);
-         final float toPercent = 1.0f / resolution;
+         final int resp1 = resolution + 1;
+         final float toPercent = 1.0f / resp1;
 
          for ( Knot3 currKnot = null; itr.hasNext(); prevKnot = currKnot ) {
             currKnot = itr.next();
@@ -5009,7 +5010,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             Vec3.subNorm(rhNext, coNext, dir1);
             final float dotp = Vec3.dot(dir0, dir1);
             if ( dotp > -vtol && dotp < vtol ) {
-               for ( int i = 1; i < resolution; ++i ) {
+               for ( int i = 1; i < resp1; ++i ) {
                   points.add(Vec3.bezierPoint(coPrev, fhPrev, rhNext, coNext, i
                      * toPercent, new Vec3()));
                }

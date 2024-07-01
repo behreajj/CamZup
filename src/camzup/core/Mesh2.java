@@ -3493,14 +3493,15 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       final Iterator < Knot2 > itr = source.iterator();
       Knot2 prevKnot = source.getLast();
 
-      if ( resolution < 2 ) {
+      if ( resolution < 1 ) {
          for ( Knot2 currKnot = null; itr.hasNext(); prevKnot = currKnot ) {
             currKnot = itr.next();
             points.add(new Vec2(prevKnot.coord));
          }
       } else {
          final float vtol = Utils.clamp01(1.0f - colinearTol);
-         final float toPercent = 1.0f / resolution;
+         final int resp1 = resolution + 1;
+         final float toPercent = 1.0f / resp1;
 
          /*
           * Test if vector from fore handle to previous coordinate is colinear
@@ -3524,7 +3525,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             final float dotp = Vec2.dot(dir0, dir1);
 
             if ( dotp > -vtol && dotp < vtol ) {
-               for ( int i = 1; i < resolution; ++i ) {
+               for ( int i = 1; i < resp1; ++i ) {
                   points.add(Vec2.bezierPoint(coPrev, fhPrev, rhNext, coNext, i
                      * toPercent, new Vec2()));
                }
