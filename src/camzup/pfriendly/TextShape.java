@@ -27,13 +27,7 @@ public abstract class TextShape {
    /**
     * Discourage overriding with a private constructor.
     */
-   private TextShape ( ) {
-
-      /**
-       * See Getting a PShape from an emoji...?
-       * https://discourse.processing.org/t/getting-a-pshape-from-an-emoji/44479/
-       */
-   }
+   private TextShape ( ) {}
 
    /**
     * One of two characters sampled from a font to establish an appropriate
@@ -368,7 +362,7 @@ public abstract class TextShape {
    /**
     * Internal helper function to convert an AWT path iterator's points to a
     * curve.
-    * 
+    *
     * @param gv         the glyph vector
     * @param transform  the AWT affine transform
     * @param scale      the glyph scale
