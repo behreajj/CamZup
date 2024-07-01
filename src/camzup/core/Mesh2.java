@@ -3490,37 +3490,44 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       /* Open curves not supported. */
       if ( !source.closedLoop ) { return points; }
 
-      final int vres = resolution < 2 ? 2 : resolution;
-      final float vtol = Utils.clamp01(1.0f - colinearTol);
-      final float toPercent = 1.0f / vres;
       final Iterator < Knot2 > itr = source.iterator();
       Knot2 prevKnot = source.getLast();
 
-      /*
-       * Test if vector from fore handle to previous coordinate is colinear with
-       * vector from rear handle to next coordinate. If so, then the curve drawn
-       * between them will be a straight line, and Bezier interpolation is not
-       * needed. The vectors are colinear if the absolute dot product is greater
-       * than 1.0 minus a tolerance.
-       */
-      for ( Knot2 currKnot = null; itr.hasNext(); prevKnot = currKnot ) {
-         currKnot = itr.next();
-         final Vec2 coPrev = prevKnot.coord;
-         final Vec2 fhPrev = prevKnot.foreHandle;
-         final Vec2 rhNext = currKnot.rearHandle;
-         final Vec2 coNext = currKnot.coord;
+      if ( resolution < 2 ) {
+         for ( Knot2 currKnot = null; itr.hasNext(); prevKnot = currKnot ) {
+            currKnot = itr.next();
+            points.add(new Vec2(prevKnot.coord));
+         }
+      } else {
+         final float vtol = Utils.clamp01(1.0f - colinearTol);
+         final float toPercent = 1.0f / resolution;
 
-         /* Add previous knot coordinate no matter the colinear status. */
-         points.add(new Vec2(coPrev));
+         /*
+          * Test if vector from fore handle to previous coordinate is colinear
+          * with vector from rear handle to next coordinate. If so, then the
+          * curve drawn between them will be a straight line, and Bezier
+          * interpolation is not needed. The vectors are colinear if the
+          * absolute dot product is greater than 1.0 minus a tolerance.
+          */
+         for ( Knot2 currKnot = null; itr.hasNext(); prevKnot = currKnot ) {
+            currKnot = itr.next();
+            final Vec2 coPrev = prevKnot.coord;
+            final Vec2 fhPrev = prevKnot.foreHandle;
+            final Vec2 rhNext = currKnot.rearHandle;
+            final Vec2 coNext = currKnot.coord;
 
-         Vec2.subNorm(fhPrev, coPrev, dir0);
-         Vec2.subNorm(rhNext, coNext, dir1);
-         final float dotp = Vec2.dot(dir0, dir1);
+            /* Add previous knot coordinate no matter the colinear status. */
+            points.add(new Vec2(coPrev));
 
-         if ( dotp > -vtol && dotp < vtol ) {
-            for ( int i = 1; i < vres; ++i ) {
-               points.add(Vec2.bezierPoint(coPrev, fhPrev, rhNext, coNext, i
-                  * toPercent, new Vec2()));
+            Vec2.subNorm(fhPrev, coPrev, dir0);
+            Vec2.subNorm(rhNext, coNext, dir1);
+            final float dotp = Vec2.dot(dir0, dir1);
+
+            if ( dotp > -vtol && dotp < vtol ) {
+               for ( int i = 1; i < resolution; ++i ) {
+                  points.add(Vec2.bezierPoint(coPrev, fhPrev, rhNext, coNext, i
+                     * toPercent, new Vec2()));
+               }
             }
          }
       }

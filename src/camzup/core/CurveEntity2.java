@@ -2,7 +2,6 @@ package camzup.core;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 
@@ -349,7 +348,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    }
 
    /**
-    * Reverses all curves in this entity, then reverses the list of curves.
+    * Reverses all curves in this entity.
     *
     * @return this curve entity
     *
@@ -357,7 +356,7 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
     */
    public CurveEntity2 reverse ( ) {
 
-      Collections.reverse(this.curves);
+      // Collections.reverse(this.curves);
       final Iterator < Curve2 > itr = this.curves.iterator();
       while ( itr.hasNext() ) { itr.next().reverse(); }
 
