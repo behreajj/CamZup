@@ -1033,7 +1033,7 @@ public abstract class Convert {
          face.set3D(dim);
 
          face.beginShape(PConstants.POLYGON);
-         for ( int j = 0; j < vertsLen; ++j ) {
+         for ( int j = vertsLen - 1; j >= 0; --j ) {
             final int[] vert = verts[j];
             final Vec2 v = vs[vert[0]];
             final Vec2 vt = vts[vert[1]];
@@ -1084,7 +1084,7 @@ public abstract class Convert {
          face.set3D(dim);
 
          face.beginShape(PConstants.POLYGON);
-         for ( int j = 0; j < vertsLen; ++j ) {
+         for ( int j = vertsLen - 1; j >= 0; --j ) {
             final int[] vert = verts[j];
             final Vec3 v = vs[vert[0]];
             final Vec2 vt = vts[vert[1]];
@@ -1129,7 +1129,8 @@ public abstract class Convert {
       for ( int i = 0; i < facesLen; ++i ) {
          final int[][] verts = faces[i];
          final int vertsLen = verts.length;
-         for ( int j = 0; j < vertsLen; ++j ) {
+
+         for ( int j = vertsLen - 1; j >= 0; --j ) {
             final int[] vert = verts[j];
             final Vec2 v = vs[vert[0]];
             final Vec2 vt = vts[vert[1]];
@@ -1171,7 +1172,8 @@ public abstract class Convert {
       for ( int i = 0; i < facesLen; ++i ) {
          final int[][] verts = faces[i];
          final int vertsLen = verts.length;
-         for ( int j = 0; j < vertsLen; ++j ) {
+
+         for ( int j = vertsLen - 1; j >= 0; --j ) {
             final int[] vert = verts[j];
             final Vec3 v = vs[vert[0]];
             final Vec2 vt = vts[vert[1]];
