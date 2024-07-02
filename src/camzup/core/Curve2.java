@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.NoSuchElementException;
 import java.util.Random;
 
 import camzup.core.Utils.EasingFuncArr;
@@ -374,7 +375,37 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     * @see List#iterator()
     */
    @Override
-   public Iterator < Knot2 > iterator ( ) { return this.knots.iterator(); }
+   public Iterator < Knot2 > iterator ( ) {
+
+      return this.knots.iterator();
+   }
+
+   /**
+    * Returns an iterator, which allows access to the knots in a curve in
+    * reverse order.
+    *
+    * @return the iterator
+    */
+   public Iterator < Knot2 > iteratorReverse ( ) {
+
+      return new Iterator <>() {
+
+         private int cursor = Curve2.this.knots.size();
+
+         @Override
+         public boolean hasNext ( ) { return this.cursor > 0; }
+
+         @Override
+         public Knot2 next ( ) {
+
+            if ( this.hasNext() ) {
+               return Curve2.this.knots.get(--this.cursor);
+            }
+            throw new NoSuchElementException();
+         }
+
+      };
+   }
 
    /**
     * Gets the number of knots in the curve.

@@ -451,7 +451,7 @@ public abstract class Convert {
       target.setName(source.name);
       target.set3D(dim);
 
-      final Iterator < Knot2 > itr = source.iterator();
+      final Iterator < Knot2 > itr = source.iteratorReverse();
 
       final Knot2 firstKnot = itr.next();
       Knot2 prevKnot = firstKnot;
@@ -466,8 +466,8 @@ public abstract class Convert {
 
       while ( itr.hasNext() ) {
          currKnot = itr.next();
-         foreHandle = prevKnot.foreHandle;
-         rearHandle = currKnot.rearHandle;
+         foreHandle = prevKnot.rearHandle;
+         rearHandle = currKnot.foreHandle;
          coord = currKnot.coord;
          target.bezierVertex(foreHandle.x, foreHandle.y, rearHandle.x,
             rearHandle.y, coord.x, coord.y);
@@ -475,8 +475,8 @@ public abstract class Convert {
       }
 
       if ( source.closedLoop ) {
-         foreHandle = prevKnot.foreHandle;
-         rearHandle = firstKnot.rearHandle;
+         foreHandle = prevKnot.rearHandle;
+         rearHandle = firstKnot.foreHandle;
          coord = firstKnot.coord;
 
          target.bezierVertex(foreHandle.x, foreHandle.y, rearHandle.x,
@@ -681,7 +681,7 @@ public abstract class Convert {
       target.setName(source.name);
       target.set3D(dim);
 
-      final Iterator < Knot2 > itr = source.iterator();
+      final Iterator < Knot2 > itr = source.iteratorReverse();
 
       final Knot2 firstKnot = itr.next();
       Knot2 prevKnot = firstKnot;
@@ -696,8 +696,8 @@ public abstract class Convert {
 
       while ( itr.hasNext() ) {
          currKnot = itr.next();
-         foreHandle = prevKnot.foreHandle;
-         rearHandle = currKnot.rearHandle;
+         foreHandle = prevKnot.rearHandle;
+         rearHandle = currKnot.foreHandle;
          coord = currKnot.coord;
          target.bezierVertex(foreHandle.x, foreHandle.y, rearHandle.x,
             rearHandle.y, coord.x, coord.y);
@@ -705,8 +705,8 @@ public abstract class Convert {
       }
 
       if ( source.closedLoop ) {
-         foreHandle = prevKnot.foreHandle;
-         rearHandle = firstKnot.rearHandle;
+         foreHandle = prevKnot.rearHandle;
+         rearHandle = firstKnot.foreHandle;
          coord = firstKnot.coord;
 
          target.bezierVertex(foreHandle.x, foreHandle.y, rearHandle.x,
@@ -735,7 +735,7 @@ public abstract class Convert {
       target.setName(source.name);
       target.set3D(dim);
 
-      final Iterator < Knot3 > itr = source.iterator();
+      final Iterator < Knot3 > itr = source.iteratorReverse();
 
       final Knot3 firstKnot = itr.next();
       Knot3 prevKnot = firstKnot;
@@ -750,8 +750,8 @@ public abstract class Convert {
 
       while ( itr.hasNext() ) {
          currKnot = itr.next();
-         foreHandle = prevKnot.foreHandle;
-         rearHandle = currKnot.rearHandle;
+         foreHandle = prevKnot.rearHandle;
+         rearHandle = currKnot.foreHandle;
          coord = currKnot.coord;
          target.bezierVertex(foreHandle.x, foreHandle.y, foreHandle.z,
             rearHandle.x, rearHandle.y, rearHandle.z, coord.x, coord.y,
@@ -760,8 +760,8 @@ public abstract class Convert {
       }
 
       if ( source.closedLoop ) {
-         foreHandle = prevKnot.foreHandle;
-         rearHandle = firstKnot.rearHandle;
+         foreHandle = prevKnot.rearHandle;
+         rearHandle = firstKnot.foreHandle;
          coord = firstKnot.coord;
 
          target.bezierVertex(foreHandle.x, foreHandle.y, foreHandle.z,
@@ -1033,7 +1033,7 @@ public abstract class Convert {
          face.set3D(dim);
 
          face.beginShape(PConstants.POLYGON);
-         for ( int j = 0; j < vertsLen; ++j ) {
+         for ( int j = vertsLen - 1; j >= 0; --j ) {
             final int[] vert = verts[j];
             final Vec2 v = vs[vert[0]];
             final Vec2 vt = vts[vert[1]];
@@ -1084,7 +1084,7 @@ public abstract class Convert {
          face.set3D(dim);
 
          face.beginShape(PConstants.POLYGON);
-         for ( int j = 0; j < vertsLen; ++j ) {
+         for ( int j = vertsLen - 1; j >= 0; --j ) {
             final int[] vert = verts[j];
             final Vec3 v = vs[vert[0]];
             final Vec2 vt = vts[vert[1]];
@@ -1129,7 +1129,7 @@ public abstract class Convert {
       for ( int i = 0; i < facesLen; ++i ) {
          final int[][] verts = faces[i];
          final int vertsLen = verts.length;
-         for ( int j = 0; j < vertsLen; ++j ) {
+         for ( int j = vertsLen - 1; j >= 0; --j ) {
             final int[] vert = verts[j];
             final Vec2 v = vs[vert[0]];
             final Vec2 vt = vts[vert[1]];
@@ -1171,7 +1171,7 @@ public abstract class Convert {
       for ( int i = 0; i < facesLen; ++i ) {
          final int[][] verts = faces[i];
          final int vertsLen = verts.length;
-         for ( int j = 0; j < vertsLen; ++j ) {
+         for ( int j = vertsLen - 1; j >= 0; --j ) {
             final int[] vert = verts[j];
             final Vec3 v = vs[vert[0]];
             final Vec2 vt = vts[vert[1]];
@@ -1282,43 +1282,42 @@ public abstract class Convert {
             switch ( kind ) {
 
                case PConstants.LINE: { /* 4 */
-                  curves.add(Curve2.line(new Vec2(params[0], params[1]),
-                     new Vec2(params[2], params[3]), new Curve2(sourceName)));
+                  curves.add(Curve2.line(new Vec2(params[2], params[3]),
+                     new Vec2(params[0], params[1]), new Curve2(sourceName)));
                }
                   break;
 
                case PConstants.TRIANGLE: { /* 8 */
                   curves.add(Curve2.straightHandles(new Curve2(sourceName, true,
-                     new Knot2(params[0], params[1]), new Knot2(params[2],
-                        params[3]), new Knot2(params[4], params[5]))));
+                     new Knot2(params[4], params[5]), new Knot2(params[2],
+                        params[3]), new Knot2(params[0], params[1]))));
                }
                   break;
 
                case PConstants.QUAD: { /* 16 */
                   curves.add(Curve2.straightHandles(new Curve2(sourceName, true,
-                     new Knot2(params[0], params[1]), new Knot2(params[2],
-                        params[3]), new Knot2(params[4], params[5]), new Knot2(
-                           params[6], params[7]))));
+                     new Knot2(params[6], params[7]), new Knot2(params[4],
+                        params[5]), new Knot2(params[2], params[3]), new Knot2(
+                           params[0], params[1]))));
                }
                   break;
 
                case PConstants.RECT: { /* 30 */
                   final Vec2 tl = new Vec2(params[0], params[1]);
                   final Vec2 br = new Vec2(params[2], params[3]);
-
+                  final Curve2 rect;
                   if ( paramsLen > 7 ) {
-
                      /* Non-uniform rounded corners. */
-                     curves.add(Curve2.rect(tl, br, params[4], params[5],
-                        params[6], params[7], new Curve2(sourceName)));
+                     rect = Curve2.rect(tl, br, params[4], params[5], params[6],
+                        params[7], new Curve2(sourceName));
                   } else if ( paramsLen > 4 ) {
-
                      /* Uniform rounded corners. */
-                     curves.add(Curve2.rect(tl, br, params[4], new Curve2(
-                        sourceName)));
+                     rect = Curve2.rect(tl, br, params[4], new Curve2(
+                        sourceName));
                   } else {
-                     curves.add(Curve2.rect(tl, br, new Curve2(sourceName)));
+                     rect = Curve2.rect(tl, br, new Curve2(sourceName));
                   }
+                  curves.add(rect);
                }
                   break;
 
@@ -1506,6 +1505,7 @@ public abstract class Convert {
                currCurve.getLast().mirrorHandlesBackward();
             }
 
+            currCurve.reverse();
             curves.add(currCurve);
          }
             break;
@@ -1567,25 +1567,29 @@ public abstract class Convert {
                   break;
 
                case PConstants.TRIANGLE: { /* 8 */
-                  meshes.add(new Mesh3(sourceName, new int[][][] { { { 0, 0 }, {
-                     1, 1 }, { 2, 2 } } }, new Vec3[] { new Vec3(params[0],
-                        params[1], 0.0f), new Vec3(params[2], params[3], 0.0f),
-                        new Vec3(params[4], params[5], 0.0f) }, new Vec2[] {
-                           new Vec2(1.0f, 0.5f), new Vec2(0.25f, 0.066987306f),
-                           new Vec2(0.25f, 0.9330127f) }, new Vec3[] { Vec3.up(
-                              new Vec3()) }));
+                  final Mesh3 m = new Mesh3(sourceName, new int[][][] { { { 2,
+                     2 }, { 1, 1 }, { 0, 0 } } }, new Vec3[] { new Vec3(
+                        params[0], params[1], 0.0f), new Vec3(params[2],
+                           params[3], 0.0f), new Vec3(params[4], params[5],
+                              0.0f) }, new Vec2[] { new Vec2(1.0f, 0.5f),
+                                 new Vec2(0.25f, 0.066987306f), new Vec2(0.25f,
+                                    0.9330127f) }, new Vec3[] { Vec3.up(
+                                       new Vec3()) });
+                  meshes.add(m);
                }
                   break;
 
                case PConstants.QUAD: { /* 16 */
-                  meshes.add(new Mesh3(sourceName, new int[][][] { { { 0, 0 }, {
-                     1, 1 }, { 2, 2 }, { 3, 3 } } }, new Vec3[] { new Vec3(
-                        params[0], params[1], 0.0f), new Vec3(params[2],
-                           params[3], 0.0f), new Vec3(params[4], params[5],
-                              0.0f), new Vec3(params[6], params[7], 0.0f) },
-                     new Vec2[] { new Vec2(1.0f, 0.5f), new Vec2(0.5f, 0.0f),
-                        new Vec2(0.0f, 0.5f), new Vec2(0.5f, 1.0f) },
-                     new Vec3[] { Vec3.up(new Vec3()) }));
+                  final Mesh3 m = new Mesh3(sourceName, new int[][][] { { { 3,
+                     3 }, { 2, 2 }, { 1, 1 }, { 0, 0 } } }, new Vec3[] {
+                        new Vec3(params[0], params[1], 0.0f), new Vec3(
+                           params[2], params[3], 0.0f), new Vec3(params[4],
+                              params[5], 0.0f), new Vec3(params[6], params[7],
+                                 0.0f) }, new Vec2[] { new Vec2(1.0f, 0.5f),
+                                    new Vec2(0.5f, 0.0f), new Vec2(0.0f, 0.5f),
+                                    new Vec2(0.5f, 1.0f) }, new Vec3[] { Vec3
+                                       .up(new Vec3()) });
+                  meshes.add(m);
                }
                   break;
 
@@ -1608,22 +1612,27 @@ public abstract class Convert {
 
                case PConstants.SPHERE: { /* 40 */
                   if ( paramsLen > 0 ) {
-                     meshes.add(Mesh3.uvSphere(new Mesh3()).scale(params[0]));
+                     final Mesh3 m = Mesh3.uvSphere(new Mesh3()).scale(
+                        params[0]);
+                     meshes.add(m);
                   } else {
-                     meshes.add(Mesh3.uvSphere(new Mesh3()));
+                     final Mesh3 m = Mesh3.uvSphere(new Mesh3());
+                     meshes.add(m);
                   }
                }
                   break;
 
                case PConstants.BOX: { /* 41 */
+                  Mesh3 m;
                   if ( paramsLen > 2 ) {
-                     meshes.add(Mesh3.cube(new Mesh3()).scale(new Vec3(
-                        params[0], params[1], params[2])));
+                     m = Mesh3.cube(new Mesh3()).scale(new Vec3(params[0],
+                        params[1], params[2]));
                   } else if ( paramsLen > 0 ) {
-                     meshes.add(Mesh3.cube(new Mesh3()).scale(params[0]));
+                     m = Mesh3.cube(new Mesh3()).scale(params[0]);
                   } else {
-                     meshes.add(Mesh3.cube(new Mesh3()));
+                     m = Mesh3.cube(new Mesh3());
                   }
+                  meshes.add(m);
                }
                   break;
 
@@ -1716,10 +1725,11 @@ public abstract class Convert {
             }
 
             /* Mesh is not cleaned, so it could contain duplicates. */
-            final Mesh3 mesh = new Mesh3(sourceName, faces, coords, texCoords,
+            final Mesh3 m = new Mesh3(sourceName, faces, coords, texCoords,
                normals);
-            if ( is3d && !diverseNormals ) { mesh.shadeFlat(); }
-            meshes.add(mesh);
+            if ( is3d && !diverseNormals ) { m.shadeFlat(); }
+            m.reverseFaces();
+            meshes.add(m);
          }
             break;
 
