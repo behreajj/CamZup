@@ -612,6 +612,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
       final Vert2[] verts = face.vertices;
       final int len = verts.length;
 
+      // TODO: Since you don't return the winding number anyway, you can
+      // probably just make it a float and remove the gt or lt checks.
       for ( int i = 0; i < len; ++i ) {
 
          final Vec2 curr = verts[i].coord;

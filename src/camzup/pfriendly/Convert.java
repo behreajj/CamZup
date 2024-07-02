@@ -531,7 +531,8 @@ public abstract class Convert {
     * Converts a 2D mesh to a PShape. Returns a {@link PConstants#GROUP} which
     * contains, as a child, each face of the source mesh. Each child is of the
     * type {@link PShape#PATH}. Child shapes record only 2D coordinates, not
-    * texture coordinates.
+    * texture coordinates. Faces with clockwise winding that follow after
+    * those with counter clockwise winding will be drawn as contours.
     *
     * @param rndr   the renderer
     * @param source the source mesh
@@ -546,29 +547,87 @@ public abstract class Convert {
 
       /* Create output target. */
       final boolean dim = rndr.is3D();
-      final PShape target = new PShape(rndr, PConstants.GROUP);
-      target.setName(source.name);
-      target.set3D(dim);
+      final PShape parent = new PShape(rndr, PConstants.GROUP);
+      parent.setName(source.name);
+      parent.set3D(dim);
 
       final int facesLen = faces.length;
+      PShape child = null;
+      boolean drawingConvex = false;
+
       for ( int i = 0; i < facesLen; ++i ) {
          final int[][] verts = faces[i];
          final int vertsLen = verts.length;
 
-         final PShape face = new PShape(rndr, PShape.PATH);
-         face.setName("face." + Utils.toPadded(i, 3));
-         face.set3D(dim);
-
-         face.beginShape(PConstants.POLYGON);
+         /*
+          * Find whether vertex winding is clockwise or counter-clockwise to
+          * determine if the PShape should be a contour or not.
+          * https://en.wikipedia.org/wiki/Curve_orientation
+          * https://stackoverflow.com/questions/1165647/how-to-determine-if-a-
+          * list-of-polygon-points-are-in-clockwise-order/
+          */
+         float sum = 0.0f;
          for ( int j = 0; j < vertsLen; ++j ) {
-            final Vec2 v = vs[verts[j][0]];
-            face.vertex(v.x, v.y);
+            final int k = ( j + 1 ) % vertsLen;
+            final Vec2 v0 = vs[verts[j][0]];
+            final Vec2 v1 = vs[verts[k][0]];
+            sum += ( v1.x - v0.x ) * ( v1.y + v0.y );
          }
-         face.endShape(PConstants.CLOSE);
-         target.addChild(face);
+
+         final boolean faceIsCcw = sum < -0.0f;
+         final boolean faceIsCw = sum > 0.0f;
+
+         if ( faceIsCcw ) {
+            if ( drawingConvex ) {
+               /* Close the previous child and add it to the parent. */
+               child.endShape(PConstants.CLOSE);
+               drawingConvex = false;
+               parent.addChild(child);
+            }
+
+            child = new PShape(rndr, PShape.PATH);
+            child.setName("face." + Utils.toPadded(i, 3));
+            child.set3D(dim);
+
+            drawingConvex = true;
+            child.beginShape(PConstants.POLYGON);
+            for ( int j = vertsLen - 1; j >= 0; --j ) {
+               final Vec2 v = vs[verts[j][0]];
+               child.vertex(v.x, v.y);
+            }
+         } else if ( faceIsCw ) {
+            if ( drawingConvex ) {
+               child.beginContour();
+               for ( int j = vertsLen - 1; j >= 0; --j ) {
+                  final Vec2 v = vs[verts[j][0]];
+                  child.vertex(v.x, v.y);
+               }
+               child.endContour();
+            } else {
+               /* Degenerate case, where a contour precedes a convex shape. */
+               child = new PShape(rndr, PShape.PATH);
+               child.setName("face." + Utils.toPadded(i, 3));
+               child.set3D(dim);
+               drawingConvex = true;
+               child.beginShape(PConstants.POLYGON);
+               for ( int j = 0; j < vertsLen; ++j ) {
+                  final Vec2 v = vs[verts[j][0]];
+                  child.vertex(v.x, v.y);
+               }
+               child.endShape(PConstants.CLOSE);
+               drawingConvex = false;
+               parent.addChild(child);
+            }
+         }
       }
 
-      return target;
+      if ( drawingConvex ) {
+         child.endShape(PConstants.CLOSE);
+         parent.addChild(child);
+         drawingConvex = false;
+      }
+
+      return parent;
    }
 
    /**
