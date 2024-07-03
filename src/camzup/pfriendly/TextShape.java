@@ -9,14 +9,11 @@ import java.awt.font.GlyphVector;
 import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
-import java.util.Collections;
 
 import camzup.core.Curve2;
 import camzup.core.CurveEntity2;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
-import camzup.core.Mesh2;
-import camzup.core.MeshEntity2;
 import camzup.core.Utils;
 import camzup.core.Vec2;
 import processing.awt.PGraphicsJava2D;
@@ -126,30 +123,6 @@ public abstract class TextShape {
          return TextShape.processGlyphCe(frc, pfont, scale, detail, indices);
       }
       return new CurveEntity2[] {};
-   }
-
-   /**
-    * Converts a list of glyph indices to a a mesh entity.The PFont should
-    * have been created with createFont, not loadFont.
-    *
-    * @param pfont   the PFont
-    * @param scale   the curve scale
-    * @param detail  the level of detail
-    * @param indices the glyph indices
-    *
-    * @return the array
-    */
-   public static MeshEntity2 glyphMesh ( final PFont pfont, final float scale,
-      final float detail, final int... indices ) {
-
-      final Font font = ( Font ) pfont.getNative();
-      if ( font != null ) {
-         @SuppressWarnings ( "deprecation" )
-         final FontRenderContext frc = Toolkit.getDefaultToolkit()
-            .getFontMetrics(font).getFontRenderContext();
-         return TextShape.processGlyphMe(frc, pfont, scale, detail, indices);
-      }
-      return new MeshEntity2();
    }
 
    /**
@@ -344,7 +317,7 @@ public abstract class TextShape {
       final Font font = ( Font ) pfont.getNative();
       if ( font != null ) {
          final float valDispScl = displayScale != 0.0f ? displayScale : 1.0f;
-         final CurveEntity2 entity = new CurveEntity2();
+         final CurveEntity2 entity = new CurveEntity2("CurveEntity2");
          final GlyphVector gv = font.createGlyphVector(frc, indices);
          final String namePrefix = "Curve2.";
          final float fontSize = font.getSize2D();
@@ -353,22 +326,6 @@ public abstract class TextShape {
          entities.add(entity);
       }
       return entities.toArray(new CurveEntity2[entities.size()]);
-   }
-
-   protected static MeshEntity2 processGlyphMe ( final FontRenderContext frc,
-      final PFont pfont, final float displayScale, final float detail,
-      final int... indices ) {
-
-      final Font font = ( Font ) pfont.getNative();
-      if ( font != null ) {
-         final float valDispScl = displayScale != 0.0f ? displayScale : 1.0f;
-         final GlyphVector gv = font.createGlyphVector(frc, indices);
-         final float fontSize = font.getSize2D();
-
-         return new MeshEntity2(TextShape.processGlyphVector(gv, null,
-            valDispScl, detail, fontSize, new Mesh2()));
-      }
-      return new MeshEntity2();
    }
 
    /**
@@ -578,119 +535,6 @@ public abstract class TextShape {
       }
 
       return curves;
-   }
-
-   /**
-    * Internal helper function to convert an AWT path iterator's points to a
-    * mesh.
-    *
-    * @param gv        the glyph vector
-    * @param transform the AWT affine transform
-    * @param scale     the glyph scale
-    * @param detail    the detail
-    * @param fontSize  the font size
-    * @param mesh      the output mesh
-    *
-    * @return the list of curves
-    *
-    * @see GlyphVector#getOutline()
-    * @see PathIterator#currentSegment(float[])
-    * @see Shape#getPathIterator(java.awt.geom.AffineTransform)
-    * @see Shape#getPathIterator(java.awt.geom.AffineTransform, double)
-    */
-   protected static Mesh2 processGlyphVector ( final GlyphVector gv,
-      final AffineTransform transform, final float scale, final float detail,
-      final float fontSize, final Mesh2 target ) {
-
-      final Shape shp = gv.getOutline();
-      final PathIterator itr = detail < IUtils.EPSILON ? shp.getPathIterator(
-         transform) : shp.getPathIterator(transform, detail);
-      final double dispScl = scale == 0.0f ? 1.0d : scale;
-      final double invScalar = fontSize == 0.0f ? dispScl : dispScl / fontSize;
-      final double[] itrpts = new double[6];
-
-      int vCursor = 0;
-      final ArrayList < Vec2 > vsLocal = new ArrayList <>();
-      final ArrayList < Vec2 > vs = new ArrayList <>();
-      final ArrayList < int[] > f = new ArrayList <>();
-      final ArrayList < int[][] > fs = new ArrayList <>();
-
-      while ( !itr.isDone() ) {
-         final int segType = itr.currentSegment(itrpts);
-         switch ( segType ) {
-            case PathIterator.SEG_MOVETO: {
-               vsLocal.add(new Vec2(( float ) ( itrpts[0] * invScalar ),
-                  ( float ) ( -itrpts[1] * invScalar )));
-               f.add(new int[] { vCursor, 0 });
-               ++vCursor;
-            }
-               break;
-
-            case PathIterator.SEG_LINETO: {
-               vsLocal.add(new Vec2(( float ) ( itrpts[0] * invScalar ),
-                  ( float ) ( -itrpts[1] * invScalar )));
-               f.add(new int[] { vCursor, 0 });
-               ++vCursor;
-            }
-               break;
-
-            case PathIterator.SEG_QUADTO: {
-               vsLocal.add(new Vec2(( float ) ( itrpts[2] * invScalar ),
-                  ( float ) ( -itrpts[3] * invScalar )));
-               f.add(new int[] { vCursor, 0 });
-               ++vCursor;
-            }
-               break;
-
-            case PathIterator.SEG_CUBICTO: {
-               vsLocal.add(new Vec2(( float ) ( itrpts[4] * invScalar ),
-                  ( float ) ( -itrpts[5] * invScalar )));
-               f.add(new int[] { vCursor, 0 });
-               ++vCursor;
-            }
-               break;
-
-            case PathIterator.SEG_CLOSE: {
-               final Vec2 vFirst = vsLocal.get(0);
-               final Vec2 vLast = vsLocal.get(vsLocal.size() - 1);
-               if ( Vec2.approx(vFirst, vLast) ) {
-                  vsLocal.remove(vsLocal.size() - 1);
-                  f.remove(f.size() - 1);
-                  --vCursor;
-               }
-
-               Collections.reverse(vsLocal);
-
-               final int[][] fArr = new int[f.size()][2];
-               f.toArray(fArr);
-               fs.add(fArr);
-               vs.addAll(vsLocal);
-
-               vsLocal.clear();
-               f.clear();
-            }
-               break;
-
-            default:
-         }
-
-         itr.next();
-      }
-
-      final int[][][] fsArr = new int[fs.size()][][];
-      fs.toArray(fsArr);
-
-      final Vec2[] vsArr = new Vec2[vs.size()];
-      vs.toArray(vsArr);
-
-      final Vec2[] vtsArr = { Vec2.uvCenter(new Vec2()) };
-
-      target.faces = fsArr;
-      target.coords = vsArr;
-      target.texCoords = vtsArr;
-      target.calcUvs();
-
-      return target;
    }
 
 }
