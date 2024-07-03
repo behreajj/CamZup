@@ -348,22 +348,6 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
    }
 
    /**
-    * Reverses all curves in this entity.
-    *
-    * @return this curve entity
-    *
-    * @see Curve2#reverse()
-    */
-   public CurveEntity2 reverse ( ) {
-
-      // Collections.reverse(this.curves);
-      final Iterator < Curve2 > itr = this.curves.iterator();
-      while ( itr.hasNext() ) { itr.next().reverse(); }
-
-      return this;
-   }
-
-   /**
     * Scales the entity by a scalar.
     *
     * @param scalar the scalar

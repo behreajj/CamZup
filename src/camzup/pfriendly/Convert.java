@@ -446,10 +446,9 @@ public abstract class Convert {
        * PShape is buggy. See
        * https://github.com/processing/processing/issues/4879 .
        */
-      final boolean dim = rndr.is3D();
       final PShape target = new PShape(rndr, PShape.PATH);
       target.setName(source.name);
-      target.set3D(dim);
+      target.set3D(rndr.is3D());
 
       final Iterator < Knot2 > itr = source.iteratorReverse();
 
@@ -546,10 +545,10 @@ public abstract class Convert {
       final int[][][] faces = source.faces;
 
       /* Create output target. */
-      final boolean dim = rndr.is3D();
+      final boolean is3d = rndr.is3D();
       final PShape parent = new PShape(rndr, PConstants.GROUP);
       parent.setName(source.name);
-      parent.set3D(dim);
+      parent.set3D(is3d);
 
       final int facesLen = faces.length;
       PShape child = null;
@@ -566,28 +565,26 @@ public abstract class Convert {
           * https://stackoverflow.com/questions/1165647/how-to-determine-if-a-
           * list-of-polygon-points-are-in-clockwise-order/
           */
-         float sum = 0.0f;
+         float winding = 0.0f;
          for ( int j = 0; j < vertsLen; ++j ) {
-            final int k = ( j + 1 ) % vertsLen;
             final Vec2 v0 = vs[verts[j][0]];
-            final Vec2 v1 = vs[verts[k][0]];
-            sum += ( v1.x - v0.x ) * ( v1.y + v0.y );
+            final Vec2 v1 = vs[verts[ ( j + 1 ) % vertsLen][0]];
+            winding += ( v1.x - v0.x ) * ( v1.y + v0.y );
          }
 
-         final boolean faceIsCcw = sum < -0.0f;
-         final boolean faceIsCw = sum > 0.0f;
+         final boolean faceIsCcw = winding < -0.0f;
+         final boolean faceIsCw = winding > 0.0f;
 
          if ( faceIsCcw ) {
             if ( drawingConvex ) {
                /* Close the previous child and add it to the parent. */
                child.endShape(PConstants.CLOSE);
-               drawingConvex = false;
                parent.addChild(child);
             }
 
             child = new PShape(rndr, PShape.PATH);
             child.setName("face." + Utils.toPadded(i, 3));
-            child.set3D(dim);
+            child.set3D(is3d);
 
             drawingConvex = true;
             child.beginShape(PConstants.POLYGON);
@@ -607,15 +604,13 @@ public abstract class Convert {
                /* Degenerate case, where a contour precedes a convex shape. */
                child = new PShape(rndr, PShape.PATH);
                child.setName("face." + Utils.toPadded(i, 3));
-               child.set3D(dim);
-               drawingConvex = true;
+               child.set3D(is3d);
                child.beginShape(PConstants.POLYGON);
                for ( int j = 0; j < vertsLen; ++j ) {
                   final Vec2 v = vs[verts[j][0]];
                   child.vertex(v.x, v.y);
                }
                child.endShape(PConstants.CLOSE);
-               drawingConvex = false;
                parent.addChild(child);
             }
          }
@@ -624,7 +619,6 @@ public abstract class Convert {
       if ( drawingConvex ) {
          child.endShape(PConstants.CLOSE);
          parent.addChild(child);
-         drawingConvex = false;
       }
 
       return parent;
@@ -676,10 +670,9 @@ public abstract class Convert {
    public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
       final Curve2 source ) {
 
-      final boolean dim = rndr.is3D();
       final PShapeOpenGL target = new PShapeOpenGL(rndr, PShape.GEOMETRY);
       target.setName(source.name);
-      target.set3D(dim);
+      target.set3D(rndr.is3D());
 
       final Iterator < Knot2 > itr = source.iteratorReverse();
 
@@ -730,10 +723,9 @@ public abstract class Convert {
    public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
       final Curve3 source ) {
 
-      final boolean dim = rndr.is3D();
       final PShapeOpenGL target = new PShapeOpenGL(rndr, PShape.GEOMETRY);
       target.setName(source.name);
-      target.set3D(dim);
+      target.set3D(rndr.is3D());
 
       final Iterator < Knot3 > itr = source.iteratorReverse();
 
@@ -1016,11 +1008,11 @@ public abstract class Convert {
       final int[][][] faces = source.faces;
 
       /* Create output target. */
-      final boolean dim = rndr.is3D();
+      final boolean is3d = rndr.is3D();
       final PShapeOpenGL target = new PShapeOpenGL(rndr, PConstants.GROUP);
       target.setName(source.name);
       target.setTextureMode(PConstants.NORMAL);
-      target.set3D(dim);
+      target.set3D(is3d);
 
       final int facesLen = faces.length;
       for ( int i = 0; i < facesLen; ++i ) {
@@ -1030,7 +1022,7 @@ public abstract class Convert {
          final PShapeOpenGL face = new PShapeOpenGL(rndr, PShape.GEOMETRY);
          face.setName("face." + Utils.toPadded(i, 3));
          face.setTextureMode(PConstants.NORMAL);
-         face.set3D(dim);
+         face.set3D(is3d);
 
          face.beginShape(PConstants.POLYGON);
          for ( int j = vertsLen - 1; j >= 0; --j ) {
@@ -1067,11 +1059,11 @@ public abstract class Convert {
       final int[][][] faces = source.faces;
 
       /* Create output target. */
-      final boolean dim = rndr.is3D();
+      final boolean is3d = rndr.is3D();
       final PShapeOpenGL target = new PShapeOpenGL(rndr, PConstants.GROUP);
       target.setName(source.name);
       target.setTextureMode(PConstants.NORMAL);
-      target.set3D(dim);
+      target.set3D(is3d);
 
       final int facesLen = faces.length;
       for ( int i = 0; i < facesLen; ++i ) {
@@ -1081,7 +1073,7 @@ public abstract class Convert {
          final PShapeOpenGL face = new PShapeOpenGL(rndr, PShape.GEOMETRY);
          face.setName("face." + Utils.toPadded(i, 3));
          face.setTextureMode(PConstants.NORMAL);
-         face.set3D(dim);
+         face.set3D(is3d);
 
          face.beginShape(PConstants.POLYGON);
          for ( int j = vertsLen - 1; j >= 0; --j ) {
