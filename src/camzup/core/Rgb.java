@@ -277,6 +277,76 @@ public class Rgb implements Comparable < Rgb > {
    }
 
    /**
+    * Writes a color's data as a 40 byte entry in an Adobe Swatch Exchange
+    * (ase) palette file beginning at the cursor index.
+    *
+    * @param c      the color
+    * @param target the byte array
+    * @param cursor the cursor
+    *
+    * @return the bytes
+    */
+   byte[] toAseBytes ( final byte[] target, final int cursor ) {
+
+      /* Color entry code (2 bytes). */
+      target[cursor + 0] = 0;
+      target[cursor + 1] = 1;
+
+      /* Block length (4 bytes). */
+      target[cursor + 2] = 0;
+      target[cursor + 3] = 0;
+      target[cursor + 4] = 0;
+      target[cursor + 5] = 34;
+
+      /* Name length (2 bytes). */
+      target[cursor + 6] = 0;
+      target[cursor + 7] = 7;
+
+      /* Name (14 bytes). */
+      final String hexWeb = Rgb.toHexWeb(this);
+      final char[] hexChars = hexWeb.toCharArray();
+      for ( int i = 1; i < 7; ++i ) {
+         final int i2 = ( i - 1 ) * 2;
+         target[cursor + 8 + i2] = 0;
+         target[cursor + 9 + i2] = ( byte ) hexChars[i];
+      }
+
+      /* Name must be terminated by a zero. */
+      target[cursor + 20] = 0;
+      target[cursor + 21] = 0;
+
+      /* color format (4 bytes). */
+      target[cursor + 22] = 'R';
+      target[cursor + 23] = 'G';
+      target[cursor + 24] = 'B';
+      target[cursor + 25] = ' ';
+
+      final int rBytes = Float.floatToIntBits(this.r);
+      target[cursor + 26] = ( byte ) ( rBytes >> 0x18 & 0xff );
+      target[cursor + 27] = ( byte ) ( rBytes >> 0x10 & 0xff );
+      target[cursor + 28] = ( byte ) ( rBytes >> 0x08 & 0xff );
+      target[cursor + 29] = ( byte ) ( rBytes & 0xff );
+
+      final int gBytes = Float.floatToIntBits(this.g);
+      target[cursor + 30] = ( byte ) ( gBytes >> 0x18 & 0xff );
+      target[cursor + 31] = ( byte ) ( gBytes >> 0x10 & 0xff );
+      target[cursor + 32] = ( byte ) ( gBytes >> 0x08 & 0xff );
+      target[cursor + 33] = ( byte ) ( gBytes & 0xff );
+
+      final int bBytes = Float.floatToIntBits(this.b);
+      target[cursor + 34] = ( byte ) ( bBytes >> 0x18 & 0xff );
+      target[cursor + 35] = ( byte ) ( bBytes >> 0x10 & 0xff );
+      target[cursor + 36] = ( byte ) ( bBytes >> 0x08 & 0xff );
+      target[cursor + 37] = ( byte ) ( bBytes & 0xff );
+
+      /* Normal color mode, as opposed to spot or global. */
+      target[cursor + 38] = 0;
+      target[cursor + 39] = 2;
+
+      return target;
+   }
+
+   /**
     * An internal helper function to format a color as a Python tuple, then
     * append it to a {@link StringBuilder}. Used for testing purposes to
     * compare results with Blender 2.9x.<br>
@@ -1194,6 +1264,51 @@ public class Rgb implements Comparable < Rgb > {
    public static Rgb srXyzTolRgb ( final Vec4 source, final Rgb target ) {
 
       return Rgb.srXyzTolRgb(source.x, source.y, source.z, source.w, target);
+   }
+
+   /**
+    * Returns a byte array representing the colors in the Adobe Swatch
+    * Exchange (ase) palette format.
+    *
+    * @param arr the color array
+    *
+    * @return the byte array
+    *
+    * @see Rgb#toAseBytes(byte[], int)
+    */
+   public static byte[] toAseBytes ( final Rgb[] arr ) {
+
+      /* Adding a group entry will not make GIMP read the file properly. */
+
+      final int len = arr.length;
+      final int bufLen = 12 + len * 40;
+      final byte[] target = new byte[bufLen];
+
+      /* Write signature. */
+      target[0] = 'A';
+      target[1] = 'S';
+      target[2] = 'E';
+      target[3] = 'F';
+
+      /* Write version. */
+      target[4] = 0;
+      target[5] = 1;
+      target[6] = 0;
+      target[7] = 0;
+
+      /* Write number of colors. */
+      target[8] = ( byte ) ( len >> 0x18 & 0xff );
+      target[9] = ( byte ) ( len >> 0x10 & 0xff );
+      target[10] = ( byte ) ( len >> 0x08 & 0xff );
+      target[11] = ( byte ) ( len & 0xff );
+
+      int cursor = 12;
+      for ( int i = 0; i < len; ++i ) {
+         arr[i].toAseBytes(target, cursor);
+         cursor += 40;
+      }
+
+      return target;
    }
 
    /**

@@ -503,27 +503,31 @@ public abstract class Convert {
    public static PShape toPShape ( final PGraphics rndr,
       final CurveEntity2 source ) {
 
-      final PShape shape = new PShape(rndr, PConstants.GROUP);
-      shape.setName(source.name);
-      shape.set3D(rndr.is3D());
+      final PShape parent = new PShape(rndr, PConstants.GROUP);
+      parent.setName(source.name);
+      parent.set3D(rndr.is3D());
 
       final Iterator < Curve2 > itr = source.curves.iterator();
       while ( itr.hasNext() ) {
-         shape.addChild(Convert.toPShape(rndr, itr.next()));
+         // TODO: To make this preserve contours like the mesh version, you'd
+         // have to perform this here because contours must be written within
+         // shapes and there'd be some redundancy with the Curve2 toPShape
+         // method.
+         final PShape child = Convert.toPShape(rndr, itr.next());
+         parent.addChild(child);
       }
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform2 srctr = source.transform;
       final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
          new PMatrix2D());
-      shape.resetMatrix();
-      shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
+      parent.resetMatrix();
+      parent.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
 
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
-      shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      // shape.disableStyle();
-      return shape;
+      parent.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
+      return parent;
    }
 
    /**
@@ -636,27 +640,27 @@ public abstract class Convert {
    public static PShape toPShape ( final PGraphics rndr,
       final MeshEntity2 source ) {
 
-      final PShape shape = new PShape(rndr, PConstants.GROUP);
-      shape.setName(source.name);
-      shape.set3D(rndr.is3D());
+      final PShape parent = new PShape(rndr, PConstants.GROUP);
+      parent.setName(source.name);
+      parent.set3D(rndr.is3D());
 
       final Iterator < Mesh2 > itr = source.meshes.iterator();
       while ( itr.hasNext() ) {
-         shape.addChild(Convert.toPShape(rndr, itr.next()));
+         final PShape child = Convert.toPShape(rndr, itr.next());
+         parent.addChild(child);
       }
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform2 srctr = source.transform;
       final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
          new PMatrix2D());
-      shape.resetMatrix();
-      shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
+      parent.resetMatrix();
+      parent.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
 
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
-      shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      // shape.disableStyle();
-      return shape;
+      parent.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
+      return parent;
    }
 
    /**
@@ -780,27 +784,27 @@ public abstract class Convert {
    public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
       final CurveEntity2 source ) {
 
-      final PShapeOpenGL shape = new PShapeOpenGL(rndr, PConstants.GROUP);
-      shape.setName(source.name);
-      shape.set3D(rndr.is3D());
+      final PShapeOpenGL parent = new PShapeOpenGL(rndr, PConstants.GROUP);
+      parent.setName(source.name);
+      parent.set3D(rndr.is3D());
 
       final Iterator < Curve2 > itr = source.curves.iterator();
       while ( itr.hasNext() ) {
-         shape.addChild(Convert.toPShape(rndr, itr.next()));
+         final PShapeOpenGL child = Convert.toPShape(rndr, itr.next());
+         parent.addChild(child);
       }
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform2 srctr = source.transform;
       final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
          new PMatrix2D());
-      shape.resetMatrix();
-      shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
+      parent.resetMatrix();
+      parent.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
 
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
-      shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      // shape.disableStyle();
-      return shape;
+      parent.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
+      return parent;
    }
 
    /**
@@ -816,27 +820,27 @@ public abstract class Convert {
    public static PShapeOpenGL toPShape ( final PGraphicsOpenGL rndr,
       final CurveEntity3 source ) {
 
-      final PShapeOpenGL shape = new PShapeOpenGL(rndr, PConstants.GROUP);
-      shape.set3D(rndr.is3D());
+      final PShapeOpenGL parent = new PShapeOpenGL(rndr, PConstants.GROUP);
+      parent.set3D(rndr.is3D());
 
       final Iterator < Curve3 > itr = source.curves.iterator();
       while ( itr.hasNext() ) {
-         shape.addChild(Convert.toPShape(rndr, itr.next()));
+         final PShapeOpenGL child = Convert.toPShape(rndr, itr.next());
+         parent.addChild(child);
       }
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform3 srctr = source.transform;
       final PMatrix3D m = Convert.toPMatrix3D(srctr, TransformOrder.RST,
          new PMatrix3D());
-      shape.resetMatrix();
-      shape.applyMatrix(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12, m.m13,
+      parent.resetMatrix();
+      parent.applyMatrix(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12, m.m13,
          m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
 
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform3.maxDimension(srctr);
-      shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      // shape.disableStyle();
-      return shape;
+      parent.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
+      return parent;
    }
 
    /**
@@ -941,7 +945,6 @@ public abstract class Convert {
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform2.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      // shape.disableStyle();
       return shape;
    }
 
@@ -984,7 +987,6 @@ public abstract class Convert {
       /* Stroke weight is scaled with the transform above. */
       final float maxDim = Transform3.maxDimension(srctr);
       shape.setStrokeWeight(Utils.div(rndr.strokeWeight, maxDim));
-      // shape.disableStyle();
       return shape;
    }
 
