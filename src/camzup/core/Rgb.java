@@ -1,7 +1,5 @@
 package camzup.core;
 
-import java.util.regex.Pattern;
-
 /**
  * A mutable, extensible color class that stores red, green, blue and alpha
  * in the range [0.0, 1.0]. Assumes color channels are in the standard RGB
@@ -725,96 +723,68 @@ public class Rgb implements Comparable < Rgb > {
    }
 
    /**
-    * Convert a hexadecimal representation of a color stored as 0xAARRGGBB
-    * into a color.
-    *
-    * @param c      the color in hexadecimal
-    * @param target the output color
-    *
-    * @return the color
-    */
-   public static Rgb fromHex ( final long c, final Rgb target ) {
-
-      /* @formatter:off */
-      return target.set(
-         ( c >> 0x10 & 0xffL ) * IUtils.ONE_255,
-         ( c >> 0x08 & 0xffL ) * IUtils.ONE_255,
-         ( c         & 0xffL ) * IUtils.ONE_255,
-         ( c >> 0x18 & 0xffL ) * IUtils.ONE_255);
-      /* @formatter:on */
-   }
-
-   /**
     * Attempts to convert a hexadecimal String to a color. Recognized formats
     * include:
     * <ul>
     * <li>"abc" - RGB, one digit per channel.</li>
-    * <li>"#abc" - hash tag, RGB, one digit per channel.</li>
-    * <li>"aabbcc" - RRGGBB, two digits per channel.
-    * <li>"#aabbcc" - hash tag, RRGGBB, two digits per channel.</li>
+    * <li>"aabbcc" - RRGGBB, two digits per channel.</li>
+    * <li>"abcd" - 5 bits per red, 6 bits per green, 5 bits per blue.</li>
     * <li>"aabbccdd" - AARRGGBB, two digits per channel.</li>
-    * <li>"0xaabbccdd" - '0x' prefix, AARRGGBB, two digits per channel.</li>
     * </ul>
     * The output color will be reset if no suitable format is recognized.
+    * Checks for and removes "#" and "0x" prefixes.
     *
     * @param c      the input String
     * @param target the output color
     *
     * @return the color
     *
-    * @see Rgb#fromHex(int, Rgb)
     * @see Integer#parseInt(String, int)
     * @see Long#parseLong(String, int)
-    * @see String#replaceAll(String, String)
-    * @see String#substring(int)
     */
    public static Rgb fromHex ( final String c, final Rgb target ) {
 
+      String cVerif = c;
+      if ( c.charAt(0) == '#' ) {
+         cVerif = c.substring(1);
+      } else if ( c.substring(0, 2).equals("0x") ) { cVerif = c.substring(2); }
+
+      final int len = cVerif.length();
+
       try {
-
-         final int len = c.length();
          switch ( len ) {
+            case 3: {
+               /* RGB 444. */
+               final int c16 = Integer.parseInt(cVerif, 16);
+               return target.set( ( c16 >> 0x8 & 0xf ) / 15.0f, ( c16 >> 0x4
+                  & 0xf ) / 15.0f, ( c16 & 0xf ) / 15.0f, 1.0f);
+            }
 
-            case 3:
+            case 4: {
+               /* RGB 565. */
+               final int c16 = Integer.parseInt(cVerif, 16);
+               return target.set( ( c16 >> 0xb & 0x1f ) / 31.0f, ( c16 >> 0x5
+                  & 0x3f ) / 63.0f, ( c16 & 0x1f ) / 31.0f, 1.0f);
+            }
 
-               /* Example: "abc" */
-               return Rgb.fromHex(0xff000000 | Integer.parseInt(Pattern.compile(
-                  "^(.)(.)(.)$").matcher(c).replaceAll("$1$1$2$2$3$3"), 16),
-                  target);
+            case 6: {
+               /* RGB 888. */
+               final int c16 = Integer.parseInt(cVerif, 16);
+               return target.set( ( c16 >> 0x10 & 0xff ) / 255.0f, ( c16 >> 0x08
+                  & 0xff ) / 255.0f, ( c16 & 0xff ) / 255.0f, 1.0f);
+            }
 
-            case 4:
-
-               /* Example: "#abc" */
-               return Rgb.fromHex(0xff000000 | Integer.parseInt(Pattern.compile(
-                  "^#(.)(.)(.)$").matcher(c).replaceAll("#$1$1$2$2$3$3")
-                  .substring(1), 16), target);
-
-            case 6:
-
-               /* Example: "aabbcc" */
-               return Rgb.fromHex(0xff000000 | Integer.parseInt(c, 16), target);
-
-            case 7:
-
-               /* Example: "#aabbcc" */
-               return Rgb.fromHex(0xff000000 | Integer.parseInt(c.substring(1),
-                  16), target);
-
-            case 8:
-
-               /* Example: "aabbccdd" */
-               return Rgb.fromHex(Long.parseLong(c, 16), target);
-
-            case 10:
-
-               /* Example: "0xaabbccdd" */
-               return Rgb.fromHex(Long.parseLong(c.substring(2), 16), target);
+            case 8: {
+               /* RGBA 8888. */
+               final long c16 = Long.parseLong(cVerif, 16);
+               return target.set( ( c16 >> 0x10L & 0xffL ) / 255.0f, ( c16
+                  >> 0x08L & 0xffL ) / 255.0f, ( c16 & 0xffL ) / 255.0f, ( c16
+                     >> 0x18L & 0xffL ) / 255.0f);
+            }
 
             default:
-
                return target.reset();
          }
-
       } catch ( final Exception e ) {
          System.err.println("Could not parse input String \"" + c + "\".");
       }

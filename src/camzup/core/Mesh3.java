@@ -2266,6 +2266,123 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
+    * Writes the mesh to a byte array in the stl format.
+    *
+    * @return the byte array
+    */
+   public byte[] toStlBytes ( ) {
+
+      int sum = 0;
+      final int facesLen = this.faces.length;
+      for ( int i = 0; i < facesLen; ++i ) { sum += this.faces[i].length; }
+
+      return this.toStlBytes(new byte[84 + facesLen * 14 + sum * 12], 80);
+   }
+
+   /**
+    * Writes the mesh to an existing byte array at an offset in the stl
+    * format. Does not write the initial 80 byte header, so the default offset
+    * would be 80.
+    *
+    * @param arr    the byte array
+    * @param offset the offset
+    *
+    * @return the byte array
+    */
+   public byte[] toStlBytes ( final byte[] arr, final int offset ) {
+
+      // Header.
+      int cursor = offset;
+      // for ( int i = 0; i < 80; ++i, ++cursor ) { arr[cursor] = 0; }
+
+      final int facesLen = this.faces.length;
+      arr[cursor + 0] = ( byte ) ( facesLen & 0xff );
+      arr[cursor + 1] = ( byte ) ( facesLen >> 0x08 & 0xff );
+      arr[cursor + 2] = ( byte ) ( facesLen >> 0x10 & 0xff );
+      arr[cursor + 3] = ( byte ) ( facesLen >> 0x18 & 0xff );
+      cursor += 4;
+
+      Vec3 prev = null;
+      Vec3 curr = null;
+      Vec3 next = null;
+
+      final Vec3 edge0 = new Vec3();
+      final Vec3 edge1 = new Vec3();
+      final Vec3 cross = new Vec3();
+      final Vec3 vn = new Vec3();
+
+      for ( int i = 0; i < facesLen; ++i ) {
+
+         final int[][] face = this.faces[i];
+         final int faceLen = face.length;
+         final int fl12 = faceLen * 12;
+         prev = this.coords[face[faceLen - 1][0]];
+         vn.reset();
+
+         for ( int j = 0; j < faceLen; ++j ) {
+            curr = this.coords[face[j][0]];
+            next = this.coords[face[ ( j + 1 ) % faceLen][0]];
+
+            Vec3.sub(prev, curr, edge0);
+            Vec3.sub(curr, next, edge1);
+            Vec3.cross(edge0, edge1, cross);
+            Vec3.add(vn, cross, vn);
+
+            final int cursorLocal = cursor + 12 * ( j + 1 );
+
+            final int vxInt = Float.floatToIntBits(curr.x);
+            final int vyInt = Float.floatToIntBits(curr.y);
+            final int vzInt = Float.floatToIntBits(curr.z);
+
+            arr[cursorLocal + 0] = ( byte ) ( vxInt & 0xff );
+            arr[cursorLocal + 1] = ( byte ) ( vxInt >> 0x08 & 0xff );
+            arr[cursorLocal + 2] = ( byte ) ( vxInt >> 0x10 & 0xff );
+            arr[cursorLocal + 3] = ( byte ) ( vxInt >> 0x18 & 0xff );
+
+            arr[cursorLocal + 4] = ( byte ) ( vyInt & 0xff );
+            arr[cursorLocal + 5] = ( byte ) ( vyInt >> 0x08 & 0xff );
+            arr[cursorLocal + 6] = ( byte ) ( vyInt >> 0x10 & 0xff );
+            arr[cursorLocal + 7] = ( byte ) ( vyInt >> 0x18 & 0xff );
+
+            arr[cursorLocal + 8] = ( byte ) ( vzInt & 0xff );
+            arr[cursorLocal + 9] = ( byte ) ( vzInt >> 0x08 & 0xff );
+            arr[cursorLocal + 10] = ( byte ) ( vzInt >> 0x10 & 0xff );
+            arr[cursorLocal + 11] = ( byte ) ( vzInt >> 0x18 & 0xff );
+
+            prev = curr;
+         }
+
+         Vec3.normalize(vn, vn);
+
+         final int vnxInt = Float.floatToIntBits(vn.x);
+         final int vnyInt = Float.floatToIntBits(vn.y);
+         final int vnzInt = Float.floatToIntBits(vn.z);
+
+         arr[cursor + 0] = ( byte ) ( vnxInt & 0xff );
+         arr[cursor + 1] = ( byte ) ( vnxInt >> 0x08 & 0xff );
+         arr[cursor + 2] = ( byte ) ( vnxInt >> 0x10 & 0xff );
+         arr[cursor + 3] = ( byte ) ( vnxInt >> 0x18 & 0xff );
+
+         arr[cursor + 4] = ( byte ) ( vnyInt & 0xff );
+         arr[cursor + 5] = ( byte ) ( vnyInt >> 0x08 & 0xff );
+         arr[cursor + 6] = ( byte ) ( vnyInt >> 0x10 & 0xff );
+         arr[cursor + 7] = ( byte ) ( vnyInt >> 0x18 & 0xff );
+
+         arr[cursor + 8] = ( byte ) ( vnzInt & 0xff );
+         arr[cursor + 9] = ( byte ) ( vnzInt >> 0x08 & 0xff );
+         arr[cursor + 10] = ( byte ) ( vnzInt >> 0x10 & 0xff );
+         arr[cursor + 11] = ( byte ) ( vnzInt >> 0x18 & 0xff );
+
+         arr[cursor + 12 + fl12] = 0;
+         arr[cursor + 13 + fl12] = 0;
+
+         cursor += 14 + fl12;
+      }
+
+      return arr;
+   }
+
+   /**
     * Returns a string representation of the mesh.
     *
     * @return the string

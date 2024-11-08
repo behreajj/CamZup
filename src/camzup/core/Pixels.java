@@ -1,5 +1,6 @@
 package camzup.core;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -640,6 +641,29 @@ public abstract class Pixels {
       }
 
       return target;
+   }
+
+   /**
+    * Hashes an image according to the <a href=
+    * "https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function">Fowler–Noll–Vo</a>
+    * method.
+    *
+    * @param source the source pixels
+    *
+    * @return the hash
+    */
+   public static BigInteger fnvHash ( final int[] source ) {
+
+      // TODO: Test...
+
+      final BigInteger fnvPrime = new BigInteger("1099511628211");
+      BigInteger hash = new BigInteger("14695981039346656037");
+      final int len = source.length;
+      for ( int i = 0; i < len; ++i ) {
+         hash = hash.xor(BigInteger.valueOf(source[i])).multiply(fnvPrime);
+      }
+
+      return hash;
    }
 
    /**

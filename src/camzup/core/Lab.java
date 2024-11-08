@@ -333,13 +333,13 @@ public class Lab implements Comparable < Lab > {
    public static final double DEFAULT_ALPHA_SCALAR_D = 100.0d;
 
    /**
-    * A scalar to convert a number in [0, 255] to lightness in [0, 100].
+    * A scalar to convert a number in [0, 255] to lightness in [0.0, 100.0].
     * Equivalent to 100.0 / 255.0.
     */
    public static final float L_FROM_BYTE = 0.39215687f;
 
    /**
-    * A scalar to convert lightness in [0, 100] to a number in [0, 255].
+    * A scalar to convert lightness in [0.0, 100.0] to a number in [0, 255].
     * Equivalent to 255.0 / 100.0.
     */
    public static final float L_TO_BYTE = 2.55f;
@@ -1294,7 +1294,7 @@ public class Lab implements Comparable < Lab > {
    /**
     * Converts a color to an integer where hexadecimal represents the color
     * components as 0xTTLLAABB, T being alpha. Uses saturation arithmetic,
-    * i.e., clamps the a and b components to [-127.5, 127.5], floors, then
+    * i.e., clamps the a and b components to [-127.5, 127.5], floors, then and
     * adds 128. Scales lightness from [0.0, 100.0] to [0, 255]. Scales alpha
     * from [0.0, 1.0] to [0, 255].
     *

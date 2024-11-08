@@ -48,8 +48,9 @@ public class CamZup {
     *
     * @param args the string of arguments
     */
+   public static void main ( final String[] args ) {
 
-   public static void main ( final String[] args ) {}
+   }
 
    /**
     * Gets the version of the library.
