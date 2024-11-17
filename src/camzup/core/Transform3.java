@@ -1086,13 +1086,12 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ location: ");
+      sb.append("{\"location\":");
       this.location.toString(sb, places);
-      sb.append(", rotation: ");
+      sb.append(",\"rotation\":");
       this.rotation.toString(sb, places);
-      sb.append(", scale: ");
+      sb.append(",\"scale\":");
       this.scale.toString(sb, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }

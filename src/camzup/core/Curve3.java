@@ -12,8 +12,8 @@ import camzup.core.Utils.EasingFuncArr;
 import camzup.core.Utils.EasingFuncObj;
 
 /**
- * Implements a <a href=
- * "https://www.wikiwand.com/en/Composite_B%C3%A9zier_curve">composite</a>
+ * Implements a
+ * <a href= "https://en.wikipedia.org/wiki/B%C3%A9zier_curve">composite</a>
  * piecewise cubic Bezier curve. Provides a function to retrieve a point
  * and tangent on a curve from a step in the range [0.0, 1.0] .
  */
@@ -43,7 +43,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Creates a curve from a comma-separated list of knots.
+    * Creates a curve from a comma separated list of knots.
     *
     * @param cl    whether or not the curve is closed
     * @param count knot count
@@ -57,7 +57,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Creates a curve from a comma-separated list of knots.
+    * Creates a curve from a comma separated list of knots.
     *
     * @param cl    whether or not the curve is closed
     * @param knots the list of knots
@@ -119,7 +119,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Creates a curve from a comma-separated list of knots.
+    * Creates a curve from a comma separated list of knots.
     *
     * @param name  the name
     * @param cl    whether or not the curve is closed
@@ -1045,21 +1045,21 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ name: \"");
+      sb.append("{\"name\":\"");
       sb.append(this.name);
-      sb.append("\", closedLoop: ");
+      sb.append("\",\"closedLoop\":");
       sb.append(this.closedLoop);
-      sb.append(", materialIndex: ");
+      sb.append(",\"materialIndex\":");
       sb.append(this.materialIndex);
-      sb.append(", knots: [ ");
+      sb.append(",\"knots\":[");
 
       final Iterator < Knot3 > itr = this.knots.iterator();
       while ( itr.hasNext() ) {
          itr.next().toString(sb, places);
-         if ( itr.hasNext() ) { sb.append(',').append(' '); }
+         if ( itr.hasNext() ) { sb.append(','); }
       }
 
-      sb.append(" ] }");
+      sb.append("]}");
       return sb;
    }
 

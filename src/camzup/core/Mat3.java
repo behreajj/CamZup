@@ -610,25 +610,24 @@ public class Mat3 {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ m00: ");
+      sb.append("{\"m00\":");
       Utils.toFixed(sb, this.m00, places);
-      sb.append(", m01: ");
+      sb.append(",\"m01\":");
       Utils.toFixed(sb, this.m01, places);
-      sb.append(", m02: ");
+      sb.append(",\"m02\":");
       Utils.toFixed(sb, this.m02, places);
-      sb.append(", m10: ");
+      sb.append(",\"m10\":");
       Utils.toFixed(sb, this.m10, places);
-      sb.append(", m11: ");
+      sb.append(",\"m11\":");
       Utils.toFixed(sb, this.m11, places);
-      sb.append(", m12: ");
+      sb.append(",\"m12\":");
       Utils.toFixed(sb, this.m12, places);
-      sb.append(", m20: ");
+      sb.append(",\"m20\":");
       Utils.toFixed(sb, this.m20, places);
-      sb.append(", m21: ");
+      sb.append(",\"m21\":");
       Utils.toFixed(sb, this.m21, places);
-      sb.append(", m22: ");
+      sb.append(",\"m22\":");
       Utils.toFixed(sb, this.m22, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }

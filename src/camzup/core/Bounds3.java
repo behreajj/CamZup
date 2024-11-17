@@ -334,11 +334,10 @@ public class Bounds3 implements Comparable < Bounds3 > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ min: ");
+      sb.append("{\"min\":");
       this.min.toString(sb, places);
-      sb.append(", max: ");
+      sb.append(",\"max\":");
       this.max.toString(sb, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }

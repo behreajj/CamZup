@@ -301,11 +301,10 @@ public class ColorKey implements Comparable < ColorKey > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ step: ");
+      sb.append("{\"step\":");
       Utils.toFixed(sb, this.step, places);
-      sb.append(", clr: ");
+      sb.append(",\"clr\":");
       this.clr.toString(sb, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }

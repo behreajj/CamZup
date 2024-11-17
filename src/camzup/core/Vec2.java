@@ -271,11 +271,10 @@ public class Vec2 implements Comparable < Vec2 > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ x: ");
+      sb.append("{\"x\":");
       Utils.toFixed(sb, this.x, places);
-      sb.append(", y: ");
+      sb.append(",\"y\":");
       Utils.toFixed(sb, this.y, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }
@@ -2584,7 +2583,7 @@ public class Vec2 implements Comparable < Vec2 > {
 
       /* Caches array element to a variable in case of null check. */
 
-      sb.append('[').append(' ');
+      sb.append('[');
       if ( arr != null ) {
          final int len = arr.length;
          final int last = len - 1;
@@ -2592,11 +2591,10 @@ public class Vec2 implements Comparable < Vec2 > {
          for ( int i = 0; i < last; ++i ) {
             final Vec2 v = arr[i];
             v.toString(sb, places);
-            sb.append(',').append(' ');
+            sb.append(',');
          }
          final Vec2 vl = arr[last];
          vl.toString(sb, places);
-         sb.append(' ');
       }
       sb.append(']');
 

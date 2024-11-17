@@ -28,7 +28,7 @@ public class Edge2 implements Comparable < Edge2 > {
 
    /**
     * Constructs an edge from the origin and destination coordinate and
-    * texture coordinate data. Creates two vertex objects.`
+    * texture coordinate data. Creates two vertex objects.
     *
     * @param coOrig origin coordinate
     * @param txOrig origin texture coordinate
@@ -461,11 +461,10 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ origin: ");
+      sb.append("{\"origin\":");
       this.origin.toString(sb, places);
-      sb.append(", dest: ");
+      sb.append(",\"dest\":");
       this.dest.toString(sb, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }

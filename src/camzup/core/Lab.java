@@ -292,15 +292,14 @@ public class Lab implements Comparable < Lab > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ l: ");
+      sb.append("{\"l\":");
       Utils.toFixed(sb, this.l, places);
-      sb.append(", a: ");
+      sb.append(",\"a\":");
       Utils.toFixed(sb, this.a, places);
-      sb.append(", b: ");
+      sb.append(",\"b\":");
       Utils.toFixed(sb, this.b, places);
-      sb.append(", alpha: ");
+      sb.append(",\"alpha\":");
       Utils.toFixed(sb, this.alpha, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }

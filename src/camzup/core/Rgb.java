@@ -286,6 +286,8 @@ public class Rgb implements Comparable < Rgb > {
     */
    byte[] toAseBytes ( final byte[] target, final int cursor ) {
 
+      // TODO: Test this.
+
       /* Color entry code (2 bytes). */
       target[cursor + 0] = 0;
       target[cursor + 1] = 1;
@@ -319,23 +321,9 @@ public class Rgb implements Comparable < Rgb > {
       target[cursor + 24] = 'B';
       target[cursor + 25] = ' ';
 
-      final int rBytes = Float.floatToIntBits(this.r);
-      target[cursor + 26] = ( byte ) ( rBytes >> 0x18 & 0xff );
-      target[cursor + 27] = ( byte ) ( rBytes >> 0x10 & 0xff );
-      target[cursor + 28] = ( byte ) ( rBytes >> 0x08 & 0xff );
-      target[cursor + 29] = ( byte ) ( rBytes & 0xff );
-
-      final int gBytes = Float.floatToIntBits(this.g);
-      target[cursor + 30] = ( byte ) ( gBytes >> 0x18 & 0xff );
-      target[cursor + 31] = ( byte ) ( gBytes >> 0x10 & 0xff );
-      target[cursor + 32] = ( byte ) ( gBytes >> 0x08 & 0xff );
-      target[cursor + 33] = ( byte ) ( gBytes & 0xff );
-
-      final int bBytes = Float.floatToIntBits(this.b);
-      target[cursor + 34] = ( byte ) ( bBytes >> 0x18 & 0xff );
-      target[cursor + 35] = ( byte ) ( bBytes >> 0x10 & 0xff );
-      target[cursor + 36] = ( byte ) ( bBytes >> 0x08 & 0xff );
-      target[cursor + 37] = ( byte ) ( bBytes & 0xff );
+      Utils.bytesml(this.r, target, cursor + 26);
+      Utils.bytesml(this.g, target, cursor + 30);
+      Utils.bytesml(this.b, target, cursor + 34);
 
       /* Normal color mode, as opposed to spot or global. */
       target[cursor + 38] = 0;
@@ -454,15 +442,14 @@ public class Rgb implements Comparable < Rgb > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ r: ");
+      sb.append("{\"r\":");
       Utils.toFixed(sb, this.r, places);
-      sb.append(", g: ");
+      sb.append(",\"g\":");
       Utils.toFixed(sb, this.g, places);
-      sb.append(", b: ");
+      sb.append(",\"b\":");
       Utils.toFixed(sb, this.b, places);
-      sb.append(", alpha: ");
+      sb.append(",\"alpha\":");
       Utils.toFixed(sb, this.alpha, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }

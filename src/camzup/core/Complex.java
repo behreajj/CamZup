@@ -185,11 +185,10 @@ public class Complex implements Comparable < Complex > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ real: ");
+      sb.append("{\"real\":");
       Utils.toFixed(sb, this.real, places);
-      sb.append(", imag: ");
+      sb.append(",\"imag\":");
       Utils.toFixed(sb, this.imag, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }

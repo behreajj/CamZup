@@ -816,22 +816,22 @@ public class MeshDirect {
 
       final StringBuilder sb = new StringBuilder(2048);
 
-      sb.append("{ indices: ");
+      sb.append("{\"indices\":");
       Utils.toString(sb, this.indices, 0);
 
-      sb.append(", coords: ");
+      sb.append(",\"coords\":");
       Utils.toString(sb, this.coords, places);
 
-      sb.append(", texCoords: ");
+      sb.append(",\"texCoords\":");
       Utils.toString(sb, this.texCoords, places);
 
-      sb.append(", normals: ");
+      sb.append(",\"normals\":");
       Utils.toString(sb, this.normals, places);
 
-      sb.append(", colors: ");
+      sb.append(",\"colors\":");
       Utils.toString(sb, this.colors, places);
 
-      sb.append(" }");
+      sb.append('}');
       return sb.toString();
    }
 

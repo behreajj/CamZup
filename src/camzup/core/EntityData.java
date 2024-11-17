@@ -78,10 +78,9 @@ public abstract class EntityData implements IEntityData {
    public String toString ( ) {
 
       final StringBuilder sb = new StringBuilder(64);
-      sb.append("{ name: \"");
+      sb.append("{\"name\":\"");
       sb.append(this.name);
       sb.append('\"');
-      sb.append(' ');
       sb.append('}');
       return sb.toString();
    }

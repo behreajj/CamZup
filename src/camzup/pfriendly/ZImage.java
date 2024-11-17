@@ -3117,15 +3117,14 @@ public class ZImage extends PImage {
    public static String toString ( final PImage img ) {
 
       final StringBuilder sb = new StringBuilder(64);
-      sb.append("{ format: ");
+      sb.append("{\"format\":");
       sb.append(img.format);
-      sb.append(", width: ");
+      sb.append(",\"width\":");
       sb.append(img.width);
-      sb.append(", height: ");
+      sb.append(",\"height\":");
       sb.append(img.height);
-      sb.append(", pixelDensity: ");
+      sb.append(",\"pixelDensity\":");
       sb.append(img.pixelDensity);
-      sb.append(' ');
       sb.append('}');
       return sb.toString();
    }

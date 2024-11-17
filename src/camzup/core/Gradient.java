@@ -1294,13 +1294,13 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ keys: [ ");
+      sb.append("{\"keys\":[");
       final Iterator < ColorKey > itr = this.keys.iterator();
       while ( itr.hasNext() ) {
          itr.next().toString(sb, places);
-         if ( itr.hasNext() ) { sb.append(',').append(' '); }
+         if ( itr.hasNext() ) { sb.append(','); }
       }
-      sb.append(" ] }");
+      sb.append("]}");
       return sb;
    }
 

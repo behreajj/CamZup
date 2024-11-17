@@ -301,13 +301,12 @@ public class Vec3 implements Comparable < Vec3 > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ x: ");
+      sb.append("{\"x\":");
       Utils.toFixed(sb, this.x, places);
-      sb.append(", y: ");
+      sb.append(",\"y\":");
       Utils.toFixed(sb, this.y, places);
-      sb.append(", z: ");
+      sb.append(",\"z\":");
       Utils.toFixed(sb, this.z, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }
@@ -3031,18 +3030,17 @@ public class Vec3 implements Comparable < Vec3 > {
 
       /* Caches array element to a variable in case of null check. */
 
-      sb.append('[').append(' ');
+      sb.append('[');
       if ( arr != null ) {
          final int len = arr.length;
          final int last = len - 1;
          for ( int i = 0; i < last; ++i ) {
             final Vec3 v = arr[i];
             v.toString(sb, places);
-            sb.append(',').append(' ');
+            sb.append(',');
          }
          final Vec3 vl = arr[last];
          vl.toString(sb, places);
-         sb.append(' ');
       }
       sb.append(']');
 

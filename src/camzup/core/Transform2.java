@@ -925,13 +925,13 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ location: ");
+      sb.append("{\"location\":");
       this.location.toString(sb, places);
-      sb.append(", rotation: ");
+      sb.append(",\"rotation\":");
       Utils.toFixed(sb, this.rotation, places);
-      sb.append(", scale: ");
+      sb.append(",\"scale\":");
       this.scale.toString(sb, places);
-      sb.append(" }");
+      sb.append('}');
       return sb;
    }
 

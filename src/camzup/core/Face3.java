@@ -933,13 +933,13 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
 
       final int len = this.vertices.length;
       final int last = len - 1;
-      sb.append("{ vertices: [ ");
+      sb.append("{\"vertices\":[");
       for ( int i = 0; i < last; ++i ) {
          this.vertices[i].toString(sb, places);
-         sb.append(',').append(' ');
+         sb.append(',');
       }
       this.vertices[last].toString(sb, places);
-      sb.append(" ] }");
+      sb.append("]}");
       return sb;
    }
 

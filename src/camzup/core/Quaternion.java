@@ -288,11 +288,10 @@ public class Quaternion implements Comparable < Quaternion > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ real: ");
+      sb.append("{\"real\":");
       Utils.toFixed(sb, this.real, places);
-      sb.append(", imag: ");
+      sb.append(",\"imag\":");
       this.imag.toString(sb, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }

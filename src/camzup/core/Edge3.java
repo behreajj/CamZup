@@ -803,11 +803,10 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ origin: ");
+      sb.append("{\"origin\":");
       this.origin.toString(sb, places);
-      sb.append(", dest: ");
+      sb.append(",\"dest\":");
       this.dest.toString(sb, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }

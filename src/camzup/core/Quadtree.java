@@ -561,27 +561,27 @@ public class Quadtree {
    @Recursive
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ bounds: ");
+      sb.append("{\"bounds\":");
       this.bounds.toString(sb, places);
-      sb.append(", capacity: ");
+      sb.append(",\"capacity\":");
       sb.append(this.capacity);
 
       if ( this.isLeaf() ) {
-         sb.append(", points: [ ");
+         sb.append(",\"points\":[");
          final Iterator < Vec2 > itr = this.points.iterator();
          while ( itr.hasNext() ) {
             itr.next().toString(sb, places);
-            if ( itr.hasNext() ) { sb.append(',').append(' '); }
+            if ( itr.hasNext() ) { sb.append(','); }
          }
       } else {
-         sb.append(", children: [ ");
+         sb.append(",\"children\":[");
          for ( int i = 0; i < Quadtree.CHILD_COUNT - 1; ++i ) {
             final Quadtree child = this.children[i];
             if ( child != null ) {
                child.toString(sb, places);
-               sb.append(',').append(' ');
+               sb.append(',');
             } else {
-               sb.append("null, ");
+               sb.append("null,");
             }
          }
 
@@ -592,9 +592,9 @@ public class Quadtree {
             sb.append("null");
          }
       }
-      sb.append(' ').append(']');
+      sb.append(']');
 
-      sb.append(' ').append('}');
+      sb.append('}');
       return sb;
    }
 

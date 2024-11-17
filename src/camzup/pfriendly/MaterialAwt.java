@@ -287,19 +287,18 @@ public class MaterialAwt extends Material {
    public String toString ( final int places ) {
 
       final StringBuilder sb = new StringBuilder(256);
-      sb.append("{ name: \"");
+      sb.append("{\"name\":\"");
       sb.append(this.name);
-      sb.append(", sample: ");
+      sb.append("\",\"sample\":");
       this.sample.toString(sb, 0);
-      sb.append(", stroke: ");
+      sb.append(",\"stroke\":");
       sb.append(this.stroke.toString(places));
-      sb.append(", strokeWeight: ");
+      sb.append(",\"strokeWeight\":");
       sb.append(Utils.toFixed(this.strokeWeight, places));
-      sb.append(", texture: ");
+      sb.append(",\"texture\":");
       sb.append(this.texture.toString());
-      sb.append(", useStroke: ");
+      sb.append(",\"useStroke\":");
       sb.append(this.useStroke);
-      sb.append(' ');
       sb.append('}');
       return sb.toString();
    }
@@ -435,15 +434,14 @@ public class MaterialAwt extends Material {
        */
       StringBuilder toString ( final StringBuilder sb, final int padding ) {
 
-         sb.append("{ xTopLeft: ");
+         sb.append("{\"xTopLeft\":");
          sb.append(Utils.toPadded(this.xTopLeft, padding));
-         sb.append(", yTopLeft: ");
+         sb.append(",\"yTopLeft\":");
          sb.append(Utils.toPadded(this.yTopLeft, padding));
-         sb.append(", xBottomRight: ");
+         sb.append(",\"xBottomRight\":");
          sb.append(Utils.toPadded(this.xBottomRight, padding));
-         sb.append(", yBottomRight: ");
+         sb.append(",\"yBottomRight\":");
          sb.append(Utils.toPadded(this.yBottomRight, padding));
-         sb.append(' ');
          sb.append('}');
          return sb;
       }

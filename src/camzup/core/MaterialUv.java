@@ -393,13 +393,12 @@ public abstract class MaterialUv extends Material implements IOriented2,
    public String toString ( final int places ) {
 
       final StringBuilder sb = new StringBuilder(256);
-      sb.append("{ name: \"");
+      sb.append("{\"name\":\"");
       sb.append(this.name);
-      sb.append("\", tint: ");
+      sb.append("\",\"tint\":");
       this.tint.toString(sb, places);
-      sb.append(", transform: ");
+      sb.append(",\"transform\":");
       this.transform.toString(sb, places);
-      sb.append(' ');
       sb.append('}');
       return sb.toString();
    }

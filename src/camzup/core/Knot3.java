@@ -1110,13 +1110,12 @@ public class Knot3 implements Comparable < Knot3 > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ coord: ");
+      sb.append("{\"coord\":");
       this.coord.toString(sb, places);
-      sb.append(", foreHandle: ");
+      sb.append(",\"foreHandle\":");
       this.foreHandle.toString(sb, places);
-      sb.append(", rearHandle: ");
+      sb.append(",\"rearHandle\":");
       this.rearHandle.toString(sb, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }

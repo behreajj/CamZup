@@ -119,13 +119,12 @@ public abstract class Curve extends EntityData implements ICurve {
    public String toString ( ) {
 
       final StringBuilder sb = new StringBuilder(64);
-      sb.append("{ name: \"");
+      sb.append("{\"name\":\"");
       sb.append(this.name);
-      sb.append("\", closedLoop: ");
+      sb.append("\",\"closedLoop\":");
       sb.append(this.closedLoop);
-      sb.append(", materialIndex: ");
+      sb.append(",\"materialIndex\":");
       sb.append(this.materialIndex);
-      sb.append(' ');
       sb.append('}');
       return sb.toString();
    }

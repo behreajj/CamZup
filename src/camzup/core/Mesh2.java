@@ -1572,6 +1572,66 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
    }
 
    /**
+    * Writes the mesh to a byte array in the stl format. The mesh should be
+    * triangulated prior to calling this method.
+    *
+    * @return the byte array
+    */
+   public byte[] toStlBytes ( ) {
+
+      int sum = 0;
+      final int facesLen = this.faces.length;
+      for ( int i = 0; i < facesLen; ++i ) { sum += this.faces[i].length; }
+
+      return this.toStlBytes(new byte[84 + facesLen * 14 + sum * 12], 80);
+   }
+
+   /**
+    * Writes the mesh to an existing byte array at an offset in the stl
+    * format. Does not write the initial 80 byte header, so the default offset
+    * would be 80. The mesh should be triangulated prior to calling this
+    * method.
+    *
+    * @param arr    the byte array
+    * @param offset the offset
+    *
+    * @return the byte array
+    */
+   public byte[] toStlBytes ( final byte[] arr, final int offset ) {
+
+      int cursor = offset;
+      final int facesLen = this.faces.length;
+      Utils.byteslm(facesLen, arr, cursor);
+      cursor += 4;
+
+      for ( int i = 0; i < facesLen; ++i ) {
+
+         final int[][] face = this.faces[i];
+         final int faceLen = face.length;
+         final int fl12 = faceLen * 12;
+
+         for ( int j = 0; j < faceLen; ++j ) {
+            final Vec2 v = this.coords[face[j][0]];
+            final int cursorLocal = cursor + 12 * ( j + 1 );
+            Utils.byteslm(v.x, arr, cursorLocal);
+            Utils.byteslm(v.y, arr, cursorLocal + 4);
+            Utils.byteslm(0.0f, arr, cursorLocal + 8);
+         }
+
+         Utils.byteslm(0.0f, arr, cursor);
+         Utils.byteslm(0.0f, arr, cursor + 4);
+         Utils.byteslm(1.0f, arr, cursor + 8);
+
+         arr[cursor + 12 + fl12] = 0;
+         arr[cursor + 13 + fl12] = 0;
+
+         cursor += 14 + fl12;
+      }
+
+      return arr;
+   }
+
+   /**
     * Returns a string representation of the mesh.
     *
     * @return the string

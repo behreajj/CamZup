@@ -306,15 +306,14 @@ public class Vec4 implements Comparable < Vec4 > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ x: ");
+      sb.append("{\"x\":");
       Utils.toFixed(sb, this.x, places);
-      sb.append(", y: ");
+      sb.append(",\"y\":");
       Utils.toFixed(sb, this.y, places);
-      sb.append(", z: ");
+      sb.append(",\"z\":");
       Utils.toFixed(sb, this.z, places);
-      sb.append(", w: ");
+      sb.append(",\"w\":");
       Utils.toFixed(sb, this.w, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }
@@ -2065,7 +2064,7 @@ public class Vec4 implements Comparable < Vec4 > {
    public static StringBuilder toString ( final StringBuilder sb,
       final Vec4[] arr, final int places ) {
 
-      sb.append('[').append(' ');
+      sb.append('[');
 
       if ( arr != null ) {
          final int len = arr.length;
@@ -2074,12 +2073,11 @@ public class Vec4 implements Comparable < Vec4 > {
          for ( int i = 0; i < last; ++i ) {
             final Vec4 v = arr[i];
             v.toString(sb, places);
-            sb.append(',').append(' ');
+            sb.append(',');
          }
 
          final Vec4 vl = arr[last];
          vl.toString(sb, places);
-         sb.append(' ');
       }
 
       sb.append(']');

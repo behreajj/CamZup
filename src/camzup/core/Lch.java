@@ -295,15 +295,14 @@ public class Lch implements Comparable < Lch > {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ l: ");
+      sb.append("{\"l\":");
       Utils.toFixed(sb, this.l, places);
-      sb.append(", c: ");
+      sb.append(",\"c\":");
       Utils.toFixed(sb, this.c, places);
-      sb.append(", h: ");
+      sb.append(",\"h\":");
       Utils.toFixed(sb, this.h, places);
-      sb.append(", alpha: ");
+      sb.append(",\"alpha\":");
       Utils.toFixed(sb, this.alpha, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }

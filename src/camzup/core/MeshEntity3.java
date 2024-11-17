@@ -582,20 +582,20 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    public String toString ( final int places ) {
 
       final StringBuilder sb = new StringBuilder(1024);
-      sb.append("{ name: \"");
+      sb.append("{\"name\":\"");
       sb.append(this.name);
       sb.append('\"');
-      sb.append(", transform: ");
+      sb.append(",\"transform\":");
       this.transform.toString(sb, places);
-      sb.append(", meshes: [ ");
+      sb.append(",\"meshes\":[");
 
       final Iterator < Mesh3 > itr = this.meshes.iterator();
       while ( itr.hasNext() ) {
          itr.next().toString(sb, places);
-         if ( itr.hasNext() ) { sb.append(',').append(' '); }
+         if ( itr.hasNext() ) { sb.append(','); }
       }
 
-      sb.append(" ] }");
+      sb.append("]}");
       return sb.toString();
    }
 

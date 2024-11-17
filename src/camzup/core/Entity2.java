@@ -235,12 +235,11 @@ public class Entity2 extends Entity implements Comparable < Entity2 >,
    public String toString ( final int places ) {
 
       final StringBuilder sb = new StringBuilder(512);
-      sb.append("{ name: \"");
+      sb.append("{\"name\":\"");
       sb.append(this.name);
       sb.append('\"');
-      sb.append(", transform: ");
+      sb.append(",\"transform\":");
       this.transform.toString(sb, places);
-      sb.append(' ');
       sb.append('}');
       return sb.toString();
    }

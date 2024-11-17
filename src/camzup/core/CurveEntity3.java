@@ -613,20 +613,20 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public String toString ( final int places ) {
 
       final StringBuilder sb = new StringBuilder(1024);
-      sb.append("{ name: \"");
+      sb.append("{\"name\":\"");
       sb.append(this.name);
       sb.append('\"');
-      sb.append(", transform: ");
+      sb.append(",\"transform\":");
       this.transform.toString(sb, places);
-      sb.append(", curves: [ ");
+      sb.append(",\"curves\":[");
 
       final Iterator < Curve3 > itr = this.curves.iterator();
       while ( itr.hasNext() ) {
          itr.next().toString(sb, places);
-         if ( itr.hasNext() ) { sb.append(',').append(' '); }
+         if ( itr.hasNext() ) { sb.append(','); }
       }
 
-      sb.append(" ] }");
+      sb.append("]}");
       return sb.toString();
    }
 

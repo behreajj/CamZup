@@ -2266,7 +2266,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Writes the mesh to a byte array in the stl format.
+    * Writes the mesh to a byte array in the stl format. The mesh should be
+    * triangulated prior to calling this method.
     *
     * @return the byte array
     */
@@ -2282,7 +2283,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Writes the mesh to an existing byte array at an offset in the stl
     * format. Does not write the initial 80 byte header, so the default offset
-    * would be 80.
+    * would be 80. The mesh should be triangulated prior to calling this
+    * method.
     *
     * @param arr    the byte array
     * @param offset the offset
@@ -2291,15 +2293,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public byte[] toStlBytes ( final byte[] arr, final int offset ) {
 
-      // Header.
       int cursor = offset;
-      // for ( int i = 0; i < 80; ++i, ++cursor ) { arr[cursor] = 0; }
-
       final int facesLen = this.faces.length;
-      arr[cursor + 0] = ( byte ) ( facesLen & 0xff );
-      arr[cursor + 1] = ( byte ) ( facesLen >> 0x08 & 0xff );
-      arr[cursor + 2] = ( byte ) ( facesLen >> 0x10 & 0xff );
-      arr[cursor + 3] = ( byte ) ( facesLen >> 0x18 & 0xff );
+      Utils.byteslm(facesLen, arr, cursor);
       cursor += 4;
 
       Vec3 prev = null;
@@ -2329,49 +2325,18 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             Vec3.add(vn, cross, vn);
 
             final int cursorLocal = cursor + 12 * ( j + 1 );
-
-            final int vxInt = Float.floatToIntBits(curr.x);
-            final int vyInt = Float.floatToIntBits(curr.y);
-            final int vzInt = Float.floatToIntBits(curr.z);
-
-            arr[cursorLocal + 0] = ( byte ) ( vxInt & 0xff );
-            arr[cursorLocal + 1] = ( byte ) ( vxInt >> 0x08 & 0xff );
-            arr[cursorLocal + 2] = ( byte ) ( vxInt >> 0x10 & 0xff );
-            arr[cursorLocal + 3] = ( byte ) ( vxInt >> 0x18 & 0xff );
-
-            arr[cursorLocal + 4] = ( byte ) ( vyInt & 0xff );
-            arr[cursorLocal + 5] = ( byte ) ( vyInt >> 0x08 & 0xff );
-            arr[cursorLocal + 6] = ( byte ) ( vyInt >> 0x10 & 0xff );
-            arr[cursorLocal + 7] = ( byte ) ( vyInt >> 0x18 & 0xff );
-
-            arr[cursorLocal + 8] = ( byte ) ( vzInt & 0xff );
-            arr[cursorLocal + 9] = ( byte ) ( vzInt >> 0x08 & 0xff );
-            arr[cursorLocal + 10] = ( byte ) ( vzInt >> 0x10 & 0xff );
-            arr[cursorLocal + 11] = ( byte ) ( vzInt >> 0x18 & 0xff );
+            Utils.byteslm(curr.x, arr, cursorLocal);
+            Utils.byteslm(curr.y, arr, cursorLocal + 4);
+            Utils.byteslm(curr.z, arr, cursorLocal + 8);
 
             prev = curr;
          }
 
          Vec3.normalize(vn, vn);
 
-         final int vnxInt = Float.floatToIntBits(vn.x);
-         final int vnyInt = Float.floatToIntBits(vn.y);
-         final int vnzInt = Float.floatToIntBits(vn.z);
-
-         arr[cursor + 0] = ( byte ) ( vnxInt & 0xff );
-         arr[cursor + 1] = ( byte ) ( vnxInt >> 0x08 & 0xff );
-         arr[cursor + 2] = ( byte ) ( vnxInt >> 0x10 & 0xff );
-         arr[cursor + 3] = ( byte ) ( vnxInt >> 0x18 & 0xff );
-
-         arr[cursor + 4] = ( byte ) ( vnyInt & 0xff );
-         arr[cursor + 5] = ( byte ) ( vnyInt >> 0x08 & 0xff );
-         arr[cursor + 6] = ( byte ) ( vnyInt >> 0x10 & 0xff );
-         arr[cursor + 7] = ( byte ) ( vnyInt >> 0x18 & 0xff );
-
-         arr[cursor + 8] = ( byte ) ( vnzInt & 0xff );
-         arr[cursor + 9] = ( byte ) ( vnzInt >> 0x08 & 0xff );
-         arr[cursor + 10] = ( byte ) ( vnzInt >> 0x10 & 0xff );
-         arr[cursor + 11] = ( byte ) ( vnzInt >> 0x18 & 0xff );
+         Utils.byteslm(vn.x, arr, cursor);
+         Utils.byteslm(vn.y, arr, cursor + 4);
+         Utils.byteslm(vn.z, arr, cursor + 8);
 
          arr[cursor + 12 + fl12] = 0;
          arr[cursor + 13 + fl12] = 0;

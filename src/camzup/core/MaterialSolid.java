@@ -451,19 +451,18 @@ public class MaterialSolid extends Material {
    public String toString ( final int places ) {
 
       final StringBuilder sb = new StringBuilder(256);
-      sb.append("{ name: \"");
+      sb.append("{\"name\":\"");
       sb.append(this.name);
-      sb.append("\", fill: ");
+      sb.append("\",\"fill\":");
       this.fill.toString(sb, places);
-      sb.append(", stroke: ");
+      sb.append(",\"stroke\":");
       this.stroke.toString(sb, places);
-      sb.append(", strokeWeight: ");
+      sb.append(",\"strokeWeight\":");
       Utils.toFixed(sb, this.strokeWeight, places);
-      sb.append(", useFill: ");
+      sb.append(",\"useFill\":");
       sb.append(this.useFill);
-      sb.append(", useStroke: ");
+      sb.append(",\"useStroke\":");
       sb.append(this.useStroke);
-      sb.append(' ');
       sb.append('}');
       return sb.toString();
    }

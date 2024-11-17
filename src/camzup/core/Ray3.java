@@ -157,11 +157,10 @@ public class Ray3 {
     */
    StringBuilder toString ( final StringBuilder sb, final int places ) {
 
-      sb.append("{ origin: ");
+      sb.append("{\"origin\":");
       this.origin.toString(sb, places);
-      sb.append(", dir: ");
+      sb.append(",\"dir\":");
       this.dir.toString(sb, places);
-      sb.append(' ');
       sb.append('}');
       return sb;
    }

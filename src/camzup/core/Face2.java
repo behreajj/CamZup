@@ -516,13 +516,13 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
 
       final int len = this.vertices.length;
       final int last = len - 1;
-      sb.append("{ vertices: [ ");
+      sb.append("{\"vertices\":[");
       for ( int i = 0; i < last; ++i ) {
          this.vertices[i].toString(sb, places);
-         sb.append(',').append(' ');
+         sb.append(',');
       }
       this.vertices[last].toString(sb, places);
-      sb.append(" ] }");
+      sb.append("]}");
       return sb;
    }
 

@@ -195,102 +195,108 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Gets a bit from a byte at an index, ordered from least to most
-    * significant digit. There are 8 bits in a byte, so the index should be in
-    * the range [0, 7] . The bit is promoted to a byte.
+    * Appends to an array of bytes, ordered from most to least significant
+    * digit (little endian).
     *
-    * @param a the byte
-    * @param i the bit position
-    *
-    * @return the bit
-    */
-   public static byte bitlm ( final byte a, final int i ) {
-
-      return ( byte ) ( a >> i & 1 );
-   }
-
-   /**
-    * Gets a bit from a byte at an index, ordered from most to least
-    * significant digit. There are 8 bits in a byte, so the index should be in
-    * the range [0, 7] . The bit is promoted to a byte.
-    *
-    * @param a the byte
-    * @param i the bit position
-    *
-    * @return the bit
-    */
-   public static byte bitml ( final byte a, final int i ) {
-
-      return ( byte ) ( a >> 7 - i & 1 );
-   }
-
-   /**
-    * Gets an array of bits from a byte, ordered from least to most
-    * significant digit, the reverse of a literal. For example,
-    * <code>0b01010011</code> would yield
-    * <code>{ 1, 1, 0, 0, 1, 0, 1, 0 }</code> .
-    *
-    * @param b the byte
-    *
-    * @return the bit array
-    */
-   public static byte[] bitslm ( final byte b ) {
-
-      return Utils.bitslm(b, new byte[Byte.SIZE], 0);
-   }
-
-   /**
-    * Appends to an array of bits from a byte, ordered from least to most
-    * significant digit, the reverse of a literal. For example,
-    * <code>0b01010011</code> would yield
-    * <code>{ 1, 1, 0, 0, 1, 0, 1, 0 }</code> .
-    *
-    * @param b   the byte
+    * @param x   the float
     * @param arr the array
     * @param i   the index
     *
-    * @return the bit array
+    * @return the byte array
     */
-   public static byte[] bitslm ( final byte b, final byte[] arr, final int i ) {
+   public static byte[] byteslm ( final float x, final byte[] arr,
+      final int i ) {
 
-      for ( int j = 0; j < Byte.SIZE; ++j ) {
-         arr[i + j] = ( byte ) ( b >> j & 1 );
-      }
+      return Utils.byteslm(Float.floatToIntBits(x), arr, i);
+   }
+
+   /**
+    * Appends to an array of bytes, ordered from least to most significant
+    * digit (little endian).
+    *
+    * @param x   the integer
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the byte array
+    */
+   public static byte[] byteslm ( final int x, final byte[] arr, final int i ) {
+
+      arr[i] = ( byte ) ( x & 0xff );
+      arr[i + 1] = ( byte ) ( x >> 0x08 & 0xff );
+      arr[i + 2] = ( byte ) ( x >> 0x10 & 0xff );
+      arr[i + 3] = ( byte ) ( x >> 0x18 & 0xff );
       return arr;
    }
 
    /**
-    * Gets an array of bits from a byte, ordered from most to least
-    * significant digit, as a literal would be written. For example,
-    * <code>0b01010011</code> would yield the array
-    * <code>{ 0, 1, 0, 1, 0, 0, 1, 1 }</code> .
+    * Appends to an array of bytes, ordered from most to least significant
+    * digit (little endian).
     *
-    * @param b the byte
-    *
-    * @return the bit array
-    */
-   public static byte[] bitsml ( final byte b ) {
-
-      return Utils.bitsml(b, new byte[Byte.SIZE], 0);
-   }
-
-   /**
-    * Appends to an array of bits from a byte, ordered from most to least
-    * significant digit, as a literal would be written. For example,
-    * <code>0b01010011</code> would yield the array
-    * <code>{ 0, 1, 0, 1, 0, 0, 1, 1 }</code> .
-    *
-    * @param b   the byte
+    * @param x   the short
     * @param arr the array
     * @param i   the index
     *
-    * @return the bit array
+    * @return the byte array
     */
-   public static byte[] bitsml ( final byte b, final byte[] arr, final int i ) {
+   public static byte[] byteslm ( final short x, final byte[] arr,
+      final int i ) {
 
-      for ( int j = Byte.SIZE - 1, k = 0; j > -1; --j, ++k ) {
-         arr[i + k] = ( byte ) ( b >> j & 1 );
-      }
+      arr[i] = ( byte ) ( x & 0xff );
+      arr[i + 1] = ( byte ) ( x >> 0x08 & 0xff );
+      return arr;
+   }
+
+   /**
+    * Appends to an array of bytes, ordered from most to least significant
+    * digit (big endian).
+    *
+    * @param x   the float
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the byte array
+    */
+   public static byte[] bytesml ( final float x, final byte[] arr,
+      final int i ) {
+
+      return Utils.bytesml(Float.floatToIntBits(x), arr, i);
+   }
+
+   /**
+    * Appends to an array of bytes, ordered from most to least significant
+    * digit (big endian).
+    *
+    * @param x   the integer
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the byte array
+    */
+   public static byte[] bytesml ( final int x, final byte[] arr, final int i ) {
+
+      arr[i] = ( byte ) ( x >> 0x18 & 0xff );
+      arr[i + 1] = ( byte ) ( x >> 0x10 & 0xff );
+      arr[i + 2] = ( byte ) ( x >> 0x08 & 0xff );
+      arr[i + 3] = ( byte ) ( x & 0xff );
+      return arr;
+   }
+
+   /**
+    * Appends to an array of bytes, ordered from most to least significant
+    * digit (big endian).
+    *
+    * @param x   the short
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the byte array
+    */
+   public static byte[] bytesml ( final short x, final byte[] arr,
+      final int i ) {
+
+      arr[i] = ( byte ) ( x >> 0x08 & 0xff );
+      arr[i + 1] = ( byte ) ( x & 0xff );
       return arr;
    }
 

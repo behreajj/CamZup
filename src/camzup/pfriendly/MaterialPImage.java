@@ -169,15 +169,14 @@ public class MaterialPImage extends MaterialUv {
    public String toString ( final int places ) {
 
       final StringBuilder sb = new StringBuilder(256);
-      sb.append("{ name: \"");
+      sb.append("{\"name\":\"");
       sb.append(this.name);
-      sb.append("\", tint: ");
+      sb.append("\",\"tint\":");
       sb.append(this.tint.toString(places));
-      sb.append(", texture: ");
+      sb.append(",\"texture\":");
       sb.append(ZImage.toString(this.texture));
-      sb.append(", transform: ");
+      sb.append(",\"transform\":");
       sb.append(this.transform.toString(places));
-      sb.append(' ');
       sb.append('}');
       return sb.toString();
    }
