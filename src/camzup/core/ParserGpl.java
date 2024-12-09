@@ -23,7 +23,7 @@ public abstract class ParserGpl {
     *
     * @param in the buffered reader
     *
-    * @return the gradient
+    * @return the palette
     */
    public static Rgb[] load ( final BufferedReader in ) {
 
@@ -96,11 +96,11 @@ public abstract class ParserGpl {
    }
 
    /**
-    * Parses a .ggr file containing a GIMP gradient.
+    * Parses a .gpl file containing a GIMP palette.
     *
     * @param fileName the file name
     *
-    * @return the gradient
+    * @return the palette
     */
    public static Rgb[] load ( final String fileName ) {
 

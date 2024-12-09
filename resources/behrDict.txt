@@ -172,3 +172,4 @@ unpremul
 premul
 lch
 composited
+swatch

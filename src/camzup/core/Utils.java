@@ -528,6 +528,40 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Parses four bytes in an array to a floating point real number, ordered
+    * from least to most significant digit (little endian).
+    *
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the float
+    *
+    * @see Utils#intlm(byte[], int)
+    * @see Float#intBitsToFloat(int)
+    */
+   public static float floatlm ( final byte[] arr, final int i ) {
+
+      return Float.intBitsToFloat(Utils.intlm(arr, i));
+   }
+
+   /**
+    * Parses four bytes in an array to a floating point real number, ordered
+    * from most to least significant digit (big endian).
+    *
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the float
+    *
+    * @see Utils#intml(byte[], int)
+    * @see Float#intBitsToFloat(int)
+    */
+   public static float floatml ( final byte[] arr, final int i ) {
+
+      return Float.intBitsToFloat(Utils.intml(arr, i));
+   }
+
+   /**
     * Floors a real number to the next least integer. An alternative to
     * {@link Math#floor(double)} .
     *
@@ -625,6 +659,36 @@ public abstract class Utils implements IUtils {
    public static float hypot ( final float a, final float b, final float c ) {
 
       return Utils.sqrtUnchecked(a * a + b * b + c * c);
+   }
+
+   /**
+    * Parses four bytes in an array to a 32 bit integer, ordered from least to
+    * most significant digit (little endian).
+    *
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the float
+    */
+   public static int intlm ( final byte[] arr, final int i ) {
+
+      return arr[i] & 0xff | ( arr[i + 1] & 0xff ) << 0x08 | ( arr[i + 2]
+         & 0xff ) << 0x10 | ( arr[i + 3] & 0xff ) << 0x18;
+   }
+
+   /**
+    * Parses four bytes in an array to a 32 bit integer, ordered from most to
+    * least significant digit (big endian).
+    *
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the float
+    */
+   public static int intml ( final byte[] arr, final int i ) {
+
+      return ( arr[i] & 0xff ) << 0x18 | ( arr[i + 1] & 0xff ) << 0x10 | ( arr[i
+         + 2] & 0xff ) << 0x08 | arr[i + 3] & 0xff;
    }
 
    /**
@@ -1396,6 +1460,34 @@ public abstract class Utils implements IUtils {
       }
 
       return -r1x - r1z - r1y;
+   }
+
+   /**
+    * Parses two bytes in an array to a 16 bit integer (short), ordered from
+    * least to most significant digit (little endian).
+    *
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the short
+    */
+   public static short shortlm ( final byte[] arr, final int i ) {
+
+      return ( short ) ( arr[i] & 0xff | ( arr[i + 1] & 0xff ) << 0x08 );
+   }
+
+   /**
+    * Parses two bytes in an array to a 16 bit integer (short), ordered from
+    * most to least significant digit (big endian).
+    *
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the short
+    */
+   public static short shortml ( final byte[] arr, final int i ) {
+
+      return ( short ) ( ( arr[i] & 0xff ) << 0x08 | arr[i + 1] & 0xff );
    }
 
    /**

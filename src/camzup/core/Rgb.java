@@ -275,64 +275,6 @@ public class Rgb implements Comparable < Rgb > {
    }
 
    /**
-    * Writes a color's data as a 40 byte entry in an Adobe Swatch Exchange
-    * (ase) palette file beginning at the cursor index.
-    *
-    * @param c      the color
-    * @param target the byte array
-    * @param cursor the cursor
-    *
-    * @return the bytes
-    */
-   byte[] toAseBytes ( final byte[] target, final int cursor ) {
-
-      // TODO: Test this.
-
-      /* Color entry code (2 bytes). */
-      target[cursor + 0] = 0;
-      target[cursor + 1] = 1;
-
-      /* Block length (4 bytes). */
-      target[cursor + 2] = 0;
-      target[cursor + 3] = 0;
-      target[cursor + 4] = 0;
-      target[cursor + 5] = 34;
-
-      /* Name length (2 bytes). */
-      target[cursor + 6] = 0;
-      target[cursor + 7] = 7;
-
-      /* Name (14 bytes). */
-      final String hexWeb = Rgb.toHexWeb(this);
-      final char[] hexChars = hexWeb.toCharArray();
-      for ( int i = 1; i < 7; ++i ) {
-         final int i2 = ( i - 1 ) * 2;
-         target[cursor + 8 + i2] = 0;
-         target[cursor + 9 + i2] = ( byte ) hexChars[i];
-      }
-
-      /* Name must be terminated by a zero. */
-      target[cursor + 20] = 0;
-      target[cursor + 21] = 0;
-
-      /* color format (4 bytes). */
-      target[cursor + 22] = 'R';
-      target[cursor + 23] = 'G';
-      target[cursor + 24] = 'B';
-      target[cursor + 25] = ' ';
-
-      Utils.bytesml(this.r, target, cursor + 26);
-      Utils.bytesml(this.g, target, cursor + 30);
-      Utils.bytesml(this.b, target, cursor + 34);
-
-      /* Normal color mode, as opposed to spot or global. */
-      target[cursor + 38] = 0;
-      target[cursor + 39] = 2;
-
-      return target;
-   }
-
-   /**
     * An internal helper function to format a color as a Python tuple, then
     * append it to a {@link StringBuilder}. Used for testing purposes to
     * compare results with Blender 2.9x.<br>
@@ -1224,6 +1166,63 @@ public class Rgb implements Comparable < Rgb > {
    }
 
    /**
+    * Writes a color's data as a 40 byte entry in an Adobe Swatch Exchange
+    * (ase) palette file beginning at the cursor index.
+    *
+    * @param c      the color
+    * @param target the byte array
+    * @param cursor the cursor
+    *
+    * @return the bytes
+    */
+   public static byte[] toAseBytes ( final Rgb c, final byte[] target,
+      final int cursor ) {
+
+      /* Color entry code (2 bytes). */
+      target[cursor + 0] = 0;
+      target[cursor + 1] = 1;
+
+      /* Block length (4 bytes). */
+      target[cursor + 2] = 0;
+      target[cursor + 3] = 0;
+      target[cursor + 4] = 0;
+      target[cursor + 5] = 34;
+
+      /* Name length (2 bytes). */
+      target[cursor + 6] = 0;
+      target[cursor + 7] = 7;
+
+      /* Name (14 bytes). */
+      final String hexWeb = Rgb.toHexWeb(c);
+      final char[] hexChars = hexWeb.toCharArray();
+      for ( int i = 1; i < 7; ++i ) {
+         final int i2 = ( i - 1 ) * 2;
+         target[cursor + 8 + i2] = 0;
+         target[cursor + 9 + i2] = ( byte ) hexChars[i];
+      }
+
+      /* Name must be terminated by a zero. */
+      target[cursor + 20] = 0;
+      target[cursor + 21] = 0;
+
+      /* color format (4 bytes). */
+      target[cursor + 22] = 'R';
+      target[cursor + 23] = 'G';
+      target[cursor + 24] = 'B';
+      target[cursor + 25] = ' ';
+
+      Utils.bytesml(c.r, target, cursor + 26);
+      Utils.bytesml(c.g, target, cursor + 30);
+      Utils.bytesml(c.b, target, cursor + 34);
+
+      /* Normal color mode, as opposed to spot or global. */
+      target[cursor + 38] = 0;
+      target[cursor + 39] = 2;
+
+      return target;
+   }
+
+   /**
     * Returns a byte array representing the colors in the Adobe Swatch
     * Exchange (ase) palette format.
     *
@@ -1231,39 +1230,52 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return the byte array
     *
-    * @see Rgb#toAseBytes(byte[], int)
+    * @see Rgb#toAseBytes(Rgb, byte[], int)
     */
    public static byte[] toAseBytes ( final Rgb[] arr ) {
 
-      /* Adding a group entry will not make GIMP read the file properly. */
-
-      final int len = arr.length;
-      final int bufLen = 12 + len * 40;
+      final int numColors = arr.length;
+      final int bufLen = 42 + numColors * 40;
       final byte[] target = new byte[bufLen];
 
-      /* Write signature. */
-      target[0] = 'A';
-      target[1] = 'S';
-      target[2] = 'E';
-      target[3] = 'F';
+      /* Write ASEF signature (4 bytes). */
+      Utils.bytesml(0x41534546, target, 0);
 
-      /* Write version. */
-      target[4] = 0;
-      target[5] = 1;
-      target[6] = 0;
-      target[7] = 0;
+      /* Write version (4 bytes). */
+      Utils.bytesml(0x00010000, target, 4);
 
-      /* Write number of colors. */
-      target[8] = ( byte ) ( len >> 0x18 & 0xff );
-      target[9] = ( byte ) ( len >> 0x10 & 0xff );
-      target[10] = ( byte ) ( len >> 0x08 & 0xff );
-      target[11] = ( byte ) ( len & 0xff );
+      /* Write number of blocks, not colors (4 bytes). */
+      Utils.bytesml(numColors + 2, target, 8);
 
-      int cursor = 12;
-      for ( int i = 0; i < len; ++i ) {
-         arr[i].toAseBytes(target, cursor);
+      /* Write open group block (2 bytes). */
+      Utils.bytesml(( short ) 0xc001, target, 12);
+
+      /* Write open group block length (4 bytes). */
+      Utils.bytesml(12, target, 14);
+
+      /* Write name string length plus terminal zero. */
+      Utils.bytesml(( short ) 8, target, 18);
+
+      target[21] = 'P';
+      target[23] = 'a';
+      target[25] = 'l';
+      target[27] = 'e';
+      target[29] = 't';
+      target[31] = 't';
+      target[33] = 'e';
+      target[35] = 0;
+
+      int cursor = 36;
+      for ( int i = 0; i < numColors; ++i ) {
+         Rgb.toAseBytes(arr[i], target, cursor);
          cursor += 40;
       }
+
+      /* Write close group block. */
+      Utils.bytesml(( short ) 0xc002, target, cursor);
+
+      /* Write close group block length. */
+      Utils.bytesml(0, target, cursor + 2);
 
       return target;
    }
