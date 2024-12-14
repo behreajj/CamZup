@@ -3,7 +3,7 @@ import camzup.pfriendly.*;
 
 YupJ2 graphics;
 Rgb[] palette;
-int cols = 4;
+int rows = 4;
 int swatch = 32;
 
 void settings() {
@@ -25,8 +25,8 @@ void draw() {
 
   int len = palette.length;
   for (int i = 0; i < len; ++i) {
-    float x = swatch * (i / cols);
-    float y = swatch * (i % cols);
+    float x = swatch * (i / rows);
+    float y = swatch * (i % rows);
 
     graphics.fill(Rgb.toHexInt(palette[i]));
     graphics.rect(x, y, x + swatch, y + swatch);

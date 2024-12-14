@@ -21,8 +21,6 @@ public abstract class ParserAse {
     */
    public static Rgb[] load ( final byte[] arr ) {
 
-      // final int signature = Utils.intml(arr, 0);
-      // final int version = Utils.intml(arr, 4);
       final int numBlocks = Utils.intml(arr, 8);
       final int lenFileData = arr.length;
       final ArrayList < Rgb > colors = new ArrayList <>(numBlocks);
@@ -87,8 +85,8 @@ public abstract class ParserAse {
                   z = ze3 > 0.008856d ? ze3 : ( z - 0.13793103448275862d )
                      * 0.12841751101180157d;
 
-                  x = x * 0.95047d;
-                  z = z * 1.08883d;
+                  x *= 0.95047d;
+                  z *= 1.08883d;
 
                   final double r01Linear = 3.2408123d * x - 1.5373085d * y
                      - 0.49858654d * z;
@@ -143,7 +141,6 @@ public abstract class ParserAse {
          result = ParserAse.load(arr);
       } catch ( final Exception e ) {
          e.printStackTrace();
-
       }
       return result;
    }
