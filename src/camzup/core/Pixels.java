@@ -656,7 +656,7 @@ public abstract class Pixels {
 
       // TODO: Test...
 
-      final BigInteger fnvPrime = new BigInteger("1099511628211");
+      final BigInteger fnvPrime = BigInteger.valueOf(1099511628211L);
       BigInteger hash = new BigInteger("14695981039346656037");
       final int len = source.length;
       for ( int i = 0; i < len; ++i ) {
