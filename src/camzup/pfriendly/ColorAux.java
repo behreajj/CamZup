@@ -206,25 +206,21 @@ public abstract class ColorAux {
     * Converts RGBA channels to a vector which holds hue, saturation,
     * brightness and alpha.
     *
-    * @param red   the red channel
-    * @param green the green channel
-    * @param blue  the blue channel
+    * @param r the red channel
+    * @param g the green channel
+    * @param b the blue channel
     *
     * @return the HSB values
     *
     * @see Utils#approx(float, float, float)
     */
-   public static float[] rgbToHsb ( final float red, final float green,
-      final float blue ) {
+   public static float[] rgbToHsb ( final float r, final float g,
+      final float b ) {
 
       /*
        * Unnecessary to worry about red hues for gray colors in this case, as
        * this shouldn't be used for any serious color matching.
        */
-
-      final float r = red;
-      final float g = green;
-      final float b = blue;
 
       final float gbmx = g > b ? g : b;
       final float gbmn = g < b ? g : b;

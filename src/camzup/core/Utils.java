@@ -1930,13 +1930,13 @@ public abstract class Utils implements IUtils {
       final int len = arr.length;
       final int last = len - 1;
 
-      sb.append('[').append(' ');
+      sb.append('[');
       for ( int i = 0; i < last; ++i ) {
          Utils.toFixed(sb, arr[i], places);
-         sb.append(',').append(' ');
+         sb.append(',');
       }
       Utils.toFixed(sb, arr[last], places);
-      sb.append(' ').append(']');
+      sb.append(']');
       return sb;
    }
 
@@ -1958,13 +1958,13 @@ public abstract class Utils implements IUtils {
       final int len = arr.length;
       final int last = len - 1;
 
-      sb.append('[').append(' ');
+      sb.append('[');
       for ( int i = 0; i < last; ++i ) {
          Utils.toPadded(sb, arr[i], padding);
-         sb.append(',').append(' ');
+         sb.append(',');
       }
       Utils.toPadded(sb, arr[last], padding);
-      sb.append(' ').append(']');
+      sb.append(']');
       return sb;
    }
 

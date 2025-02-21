@@ -33,20 +33,6 @@ public class ColorKey implements Comparable < ColorKey > {
    public ColorKey ( final ColorKey source ) { this.set(source); }
 
    /**
-    * Creates a key at a given step. All values of the color (including alpha)
-    * are set to the step. To prevent confusion between step and color
-    * channels, a color key cannot be set with a single step, only
-    * constructed.
-    *
-    * @param step the step
-    */
-   public ColorKey ( final float step ) {
-
-      final float stcl = Utils.clamp01(step);
-      this.set(stcl, stcl, stcl, stcl);
-   }
-
-   /**
     * Creates a new key with a step and a color in hexadecimal.
     *
     * @param step  the step
@@ -339,7 +325,7 @@ public class ColorKey implements Comparable < ColorKey > {
     */
    protected boolean equals ( final ColorKey key ) {
 
-      return this.step == key.step;
+      return this.hashCode() == key.hashCode();
    }
 
    /**

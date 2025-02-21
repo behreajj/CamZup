@@ -380,6 +380,63 @@ public class Lab implements Comparable < Lab > {
    public static final float SR_B_MIN = -110.8078f;
 
    /**
+    * Assigns the chroma of the destination color to the origin.
+    *
+    * @param u      the origin color
+    * @param o      the destination color
+    * @param target the target color
+    *
+    * @return the color
+    *
+    * @see Math#sqrt(double)
+    */
+   public static Lab adoptChroma ( final Lab u, final Lab o,
+      final Lab target ) {
+
+      final double ua = u.a;
+      final double ub = u.b;
+      final double ucSq = ua * ua + ub * ub;
+      if ( ucSq > IUtils.EPSILON_D ) {
+         final double oa = o.a;
+         final double ob = o.b;
+         final double ocSq = oa * oa + ob * ob;
+
+         final double s = Math.sqrt(ocSq) / Math.sqrt(ucSq);
+         return target.set(u.l, ( float ) ( s * ua ), ( float ) ( s * ub ),
+            u.alpha);
+      }
+      return Lab.gray(u, target);
+   }
+
+   /**
+    * Assigns the hue of the destination color to the origin.
+    *
+    * @param u      the origin color
+    * @param o      the destination color
+    * @param target the target color
+    *
+    * @return the color
+    *
+    * @see Math#sqrt(double)
+    */
+   public static Lab adoptHue ( final Lab u, final Lab o, final Lab target ) {
+
+      final double oa = o.a;
+      final double ob = o.b;
+      final double ocSq = oa * oa + ob * ob;
+      if ( ocSq > IUtils.EPSILON_D ) {
+         final double ua = u.a;
+         final double ub = u.b;
+         final double ucSq = ua * ua + ub * ub;
+
+         final double s = Math.sqrt(ucSq) / Math.sqrt(ocSq);
+         return target.set(u.l, ( float ) ( s * oa ), ( float ) ( s * ob ),
+            u.alpha);
+      }
+      return Lab.gray(u, target);
+   }
+
+   /**
     * Tests to see if a color's alpha and lightness are greater than zero.
     * Tests to see if its a and b components are not zero.
     *
@@ -1064,6 +1121,34 @@ public class Lab implements Comparable < Lab > {
    }
 
    /**
+    * Finds the hue distance between two colors. When either color is gray,
+    * returns 0.0. Otherwise, returns a value in the range [0.0, 0.5].
+    *
+    * @param o the first color
+    * @param d the second color
+    *
+    * @return hue distance
+    */
+   public static float hueDistance ( final Lab o, final Lab d ) {
+
+      final double oa = o.a;
+      final double ob = o.b;
+      final double ocSq = oa * oa + ob * ob;
+      final boolean oIsGray = ocSq < IUtils.EPSILON_D;
+
+      final double da = d.a;
+      final double db = d.b;
+      final double dcSq = da * da + db * db;
+      final boolean dIsGray = dcSq < IUtils.EPSILON_D;
+
+      if ( oIsGray || dIsGray ) { return 0.0f; }
+
+      final double num = oa * da + ob * db;
+      final double denom = Math.sqrt(ocSq) * Math.sqrt(dcSq);
+      return ( float ) ( Math.acos(num / denom) / IUtils.TAU_D );
+   }
+
+   /**
     * Mixes two colors together by a step in [0.0, 1.0] .
     *
     * @param orig   the original color
@@ -1152,13 +1237,13 @@ public class Lab implements Comparable < Lab > {
    public static Lab rescaleChroma ( final Lab o, final float scalar,
       final Lab target ) {
 
-      final double ad = o.a;
-      final double bd = o.b;
-      final double cSq = ad * ad + bd * bd;
+      final double oa = o.a;
+      final double ob = o.b;
+      final double cSq = oa * oa + ob * ob;
       if ( cSq > IUtils.EPSILON_D ) {
-         final double scInv = scalar / Math.sqrt(cSq);
-         return target.set(o.l, ( float ) ( ad * scInv ), ( float ) ( bd
-            * scInv ), o.alpha);
+         final double s = scalar / Math.sqrt(cSq);
+         return target.set(o.l, ( float ) ( s * oa ), ( float ) ( s * ob ),
+            o.alpha);
       }
       return Lab.gray(o, target);
    }

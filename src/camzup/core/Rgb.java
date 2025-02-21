@@ -1039,9 +1039,7 @@ public class Rgb implements Comparable < Rgb > {
    }
 
    /**
-    * Converts a color from standard RGB (sRGB) to SR LAB 2. The target is
-    * packaged as z: L or lightness, x: a or green-red, y: b or blue-yellow,
-    * w: alpha.
+    * Converts a color from standard RGB (sRGB) to SR LAB 2.
     *
     * @param srgb the sRGB color
     * @param lab  the LAB color
@@ -1058,6 +1056,28 @@ public class Rgb implements Comparable < Rgb > {
 
       return Lab.fromSrXyz(Rgb.lRgbToSrXyz(Rgb.sRgbTolRgb(srgb, false, lrgb),
          xyz), lab);
+   }
+
+   /**
+    * Converts an array of colors from standard RGB (sRGB) to SR LAB 2.
+    *
+    * @param source the sRGB color array
+    * @param target the LAB color array
+    * @param xyz    the XYZ color
+    * @param lrgb   the linear sRGB color
+    *
+    * @return the output color
+    *
+    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
+    */
+   public static Lab[] sRgbToSrLab2 ( final Rgb[] source, final Lab[] target,
+      final Vec4 xyz, final Rgb lrgb ) {
+
+      final int srcLen = source.length;
+      for ( int i = 0; i < srcLen; ++i ) {
+         target[i] = Rgb.sRgbToSrLab2(source[i], new Lab(), xyz, lrgb);
+      }
+      return target;
    }
 
    /**
@@ -1081,12 +1101,35 @@ public class Rgb implements Comparable < Rgb > {
    }
 
    /**
+    * Converts an array of colors from standard RGB (sRGB) to SR LCH.
+    *
+    * @param source the sRGB color array
+    * @param target the LCH color array
+    * @param lab    the LAB color
+    * @param xyz    the XYZ color
+    * @param lrgb   the linear sRGB color
+    *
+    * @return the output color
+    *
+    * @see Rgb#sRgbToSrLch(Rgb, Lch, Lab, Vec4, Rgb)
+    */
+   public static Lch[] sRgbToSrLch ( final Rgb[] source, final Lch[] target,
+      final Lab lab, final Vec4 xyz, final Rgb lrgb ) {
+
+      final int srcLen = source.length;
+      for ( int i = 0; i < srcLen; ++i ) {
+         target[i] = Rgb.sRgbToSrLch(source[i], new Lch(), lab, xyz, lrgb);
+      }
+      return target;
+   }
+
+   /**
     * Converts a color from SR LAB 2 to standard RGB (sRGB).
     *
-    * @param lab  LAB color
-    * @param srgb sRGB color
-    * @param lrgb linear sRGB color
-    * @param xyz  XYZ color
+    * @param lab  the LAB color
+    * @param srgb the sRGB color
+    * @param lrgb the linear sRGB color
+    * @param xyz  the XYZ color
     *
     * @return the output color
     *
@@ -1099,6 +1142,28 @@ public class Rgb implements Comparable < Rgb > {
 
       return Rgb.lRgbTosRgb(Rgb.srXyzTolRgb(Lab.toSrXyz(lab, xyz), lrgb), false,
          srgb);
+   }
+
+   /**
+    * Converts an array of colors from SR LAB 2 to standard RGB (sRGB).
+    *
+    * @param source the LAB color array
+    * @param target the sRGB color array
+    * @param lrgb   the linear sRGB color
+    * @param xyz    the XYZ color
+    *
+    * @return the output color
+    *
+    * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
+    */
+   public static Rgb[] srLab2TosRgb ( final Lab[] source, final Rgb[] target,
+      final Rgb lrgb, final Vec4 xyz ) {
+
+      final int srcLen = source.length;
+      for ( int i = 0; i < srcLen; ++i ) {
+         target[i] = Rgb.srLab2TosRgb(source[i], new Rgb(), lrgb, xyz);
+      }
+      return target;
    }
 
    /**
@@ -1119,6 +1184,29 @@ public class Rgb implements Comparable < Rgb > {
       final Rgb lrgb, final Vec4 xyz, final Lab lab ) {
 
       return Rgb.srLab2TosRgb(Lab.fromLch(lch, lab), srgb, lrgb, xyz);
+   }
+
+   /**
+    * Converts an array of colors from SR LCH to standard RBG (sRGB).
+    *
+    * @param source the LCH color array
+    * @param target the sRGB color array
+    * @param lrgb   the linear sRGB color
+    * @param xyz    the XYZ color
+    * @param lab    the LAB color
+    *
+    * @return the output color
+    *
+    * @see Rgb#srLchTosRgb(Lch, Rgb, Rgb, Vec4, Lab)
+    */
+   public static Rgb[] srLchTosRgb ( final Lch[] source, final Rgb[] target,
+      final Rgb lrgb, final Vec4 xyz, final Lab lab ) {
+
+      final int srcLen = source.length;
+      for ( int i = 0; i < srcLen; ++i ) {
+         target[i] = Rgb.srLchTosRgb(source[i], new Rgb(), lrgb, xyz, lab);
+      }
+      return target;
    }
 
    /**
@@ -1668,7 +1756,7 @@ public class Rgb implements Comparable < Rgb > {
    public static String toString ( final Rgb[] arr, final int places ) {
 
       final StringBuilder sb = new StringBuilder(1024);
-      sb.append('[').append(' ');
+      sb.append('[');
 
       if ( arr != null ) {
          final int len = arr.length;
@@ -1677,12 +1765,11 @@ public class Rgb implements Comparable < Rgb > {
          for ( int i = 0; i < last; ++i ) {
             final Rgb c = arr[i];
             c.toString(sb, places);
-            sb.append(',').append(' ');
+            sb.append(',');
          }
 
          final Rgb cl = arr[last];
          cl.toString(sb, places);
-         sb.append(' ');
       }
 
       sb.append(']');

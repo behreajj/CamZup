@@ -1,6 +1,5 @@
 package camzup.pfriendly;
 
-import java.util.Arrays;
 import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 
@@ -38,10 +37,6 @@ public class ZImage extends PImage {
     * @param height the image height
     */
    public ZImage ( final int width, final int height ) {
-
-      // TODO: protected instance method blurARGB errors if r is too great at
-      // https://github.com/processing/processing4/blob/main/core/src/processing/core/PImage.java#L1318
-      // See https://github.com/processing/processing4/issues/723 .
 
       super(width, height);
    }
@@ -115,7 +110,7 @@ public class ZImage extends PImage {
     *
     * @return the hash code
     *
-    * @see Arrays#hashCode(int[])
+    * @see ZImage#fnvHash(PImage)
     */
    @Override
    public int hashCode ( ) {
@@ -128,7 +123,7 @@ public class ZImage extends PImage {
       result = prime * result + this.pixelWidth;
       result = prime * result + this.height;
       result = prime * result + this.width;
-      return prime * result + Arrays.hashCode(this.pixels);
+      return prime * result + ZImage.fnvHash(this);
    }
 
    /**
@@ -886,6 +881,21 @@ public class ZImage extends PImage {
       target.updatePixels();
 
       return target;
+   }
+
+   /**
+    * Hashes an image's pixels according to the <a href=
+    * "https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function">Fowler–Noll–Vo</a>
+    * method.
+    *
+    * @param source the source image
+    *
+    * @return the hash
+    */
+   public static int fnvHash ( final PImage source ) {
+
+      source.loadPixels();
+      return Pixels.fnvHash(source.pixels).intValue();
    }
 
    /**
