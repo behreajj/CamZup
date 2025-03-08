@@ -50,6 +50,11 @@ public abstract class Convert {
    private Convert ( ) {}
 
    /**
+    * Default transform order when converting a transform to a matrix.
+    */
+   public static final TransformOrder DEFAULT_ORDER = TransformOrder.SRT;
+
+   /**
     * Converts a 2D PShape to a curve entity. Support for this conversion is
     * <em>very</em> limited; its primary target is PShapes created from
     * importing an SVG. For best results, use a PShape consisting of quadratic
@@ -422,6 +427,7 @@ public abstract class Convert {
             return target;
 
          case TRS:
+
          default:
 
             target.translate(loc.x, loc.y, loc.z);
@@ -519,7 +525,7 @@ public abstract class Convert {
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform2 srctr = source.transform;
-      final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
+      final PMatrix2D m = Convert.toPMatrix2D(srctr, Convert.DEFAULT_ORDER,
          new PMatrix2D());
       parent.resetMatrix();
       parent.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
@@ -650,9 +656,13 @@ public abstract class Convert {
          parent.addChild(child);
       }
 
+      // TODO: DEFAULT_ORDER used to be RST, but now it is SRT. This function,
+      // and its variants, would have to be re-tested for parity between forward
+      // and reverse transformation of PShape and Mesh.
+
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform2 srctr = source.transform;
-      final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
+      final PMatrix2D m = Convert.toPMatrix2D(srctr, Convert.DEFAULT_ORDER,
          new PMatrix2D());
       parent.resetMatrix();
       parent.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
@@ -796,7 +806,7 @@ public abstract class Convert {
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform2 srctr = source.transform;
-      final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
+      final PMatrix2D m = Convert.toPMatrix2D(srctr, Convert.DEFAULT_ORDER,
          new PMatrix2D());
       parent.resetMatrix();
       parent.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
@@ -831,7 +841,7 @@ public abstract class Convert {
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform3 srctr = source.transform;
-      final PMatrix3D m = Convert.toPMatrix3D(srctr, TransformOrder.RST,
+      final PMatrix3D m = Convert.toPMatrix3D(srctr, Convert.DEFAULT_ORDER,
          new PMatrix3D());
       parent.resetMatrix();
       parent.applyMatrix(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12, m.m13,
@@ -937,7 +947,7 @@ public abstract class Convert {
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform2 srctr = source.transform;
-      final PMatrix2D m = Convert.toPMatrix2D(srctr, TransformOrder.RST,
+      final PMatrix2D m = Convert.toPMatrix2D(srctr, Convert.DEFAULT_ORDER,
          new PMatrix2D());
       shape.resetMatrix();
       shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
@@ -978,7 +988,7 @@ public abstract class Convert {
 
       /* Use loose float version of apply matrix to avoid PShape bug. */
       final Transform3 srctr = source.transform;
-      final PMatrix3D m = Convert.toPMatrix3D(srctr, TransformOrder.RST,
+      final PMatrix3D m = Convert.toPMatrix3D(srctr, Convert.DEFAULT_ORDER,
          new PMatrix3D());
       shape.resetMatrix();
       shape.applyMatrix(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12, m.m13,

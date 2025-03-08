@@ -125,8 +125,8 @@ public enum TransformOrder {
          case SRT: return TransformOrder.TRS;
          case STR: return TransformOrder.RTS;
          case TRS: return TransformOrder.SRT;
-         case TSR:
-         default: return TransformOrder.RST;
+         case TSR: return TransformOrder.RST;
+         default: return TransformOrder.SRT;
       }
       /* @formatter:on */
    }
