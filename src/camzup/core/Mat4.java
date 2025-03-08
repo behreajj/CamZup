@@ -92,7 +92,11 @@ public class Mat4 {
    /**
     * The default constructor. Creates an identity matrix.
     */
-   public Mat4 ( ) {}
+   public Mat4 ( ) {
+
+      // TODO: Include Bradford chromatic adaptation matrix?
+      // http://www.brucelindbloom.com/index.html?Eqn_ChromAdapt.html
+   }
 
    /**
     * Constructs a matrix from boolean values.
@@ -123,6 +127,20 @@ public class Mat4 {
 
       this.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30,
          m31, m32, m33);
+   }
+
+   /**
+    * Constructs a matrix from float values.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    */
+   public Mat4 ( final float m00, final float m01, final float m10,
+      final float m11 ) {
+
+      this.set(m00, m01, m10, m11);
    }
 
    /**
@@ -463,8 +481,26 @@ public class Mat4 {
    }
 
    /**
-    * Sets the three axis columns of this matrix. The last row and column are
-    * set to (0.0, 0.0, 0.0, 1.0).
+    * Sets the upper left 2 by 2 corner of this matrix. The remaining values
+    * are set to the identity.
+    *
+    * @param m00 row 0, column 0
+    * @param m01 row 0, column 1
+    * @param m10 row 1, column 0
+    * @param m11 row 1, column 1
+    *
+    * @return this matrix
+    */
+   public Mat4 set ( final float m00, final float m01, final float m10,
+      final float m11 ) {
+
+      return this.set(m00, m01, 0.0f, 0.0f, m10, m11, 0.0f, 0.0f, 0.0f, 0.0f,
+         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+   }
+
+   /**
+    * Sets the upper left 3 by 3 corner of this matrix. The remaining values
+    * are set to the identity.
     *
     * @param m00 row 0, column 0
     * @param m01 row 0, column 1
@@ -1141,8 +1177,13 @@ public class Mat4 {
    public static Mat4 fromAxes ( final Vec2 right, final Vec2 forward,
       final Mat4 target ) {
 
-      return target.set(right.x, forward.x, 0.0f, 0.0f, right.y, forward.y,
-         0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      return target.set(
+         right.x, forward.x, 0.0f, 0.0f,
+         right.y, forward.y, 0.0f, 0.0f,
+            0.0f,      0.0f, 1.0f, 0.0f,
+            0.0f,      0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1160,9 +1201,13 @@ public class Mat4 {
    public static Mat4 fromAxes ( final Vec2 right, final Vec2 forward,
       final Vec2 translation, final Mat4 target ) {
 
-      return target.set(right.x, forward.x, 0.0f, translation.x, right.y,
-         forward.y, 0.0f, translation.y, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-         0.0f, 1.0f);
+      /* @formatter:off */
+      return target.set(
+         right.x, forward.x, 0.0f, translation.x,
+         right.y, forward.y, 0.0f, translation.y,
+            0.0f,      0.0f, 1.0f,          0.0f,
+            0.0f,      0.0f, 0.0f,          1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1179,8 +1224,13 @@ public class Mat4 {
    public static Mat4 fromAxes ( final Vec3 right, final Vec3 forward,
       final Vec3 up, final Mat4 target ) {
 
-      return target.set(right.x, forward.x, up.x, 0.0f, right.y, forward.y,
-         up.y, 0.0f, right.z, forward.z, up.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      return target.set(
+         right.x, forward.x, up.x, 0.0f,
+         right.y, forward.y, up.y, 0.0f,
+         right.z, forward.z, up.z, 0.0f,
+            0.0f,      0.0f, 0.0f, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1198,9 +1248,13 @@ public class Mat4 {
    public static Mat4 fromAxes ( final Vec3 right, final Vec3 forward,
       final Vec3 up, final Vec3 translation, final Mat4 target ) {
 
-      return target.set(right.x, forward.x, up.x, translation.x, right.y,
-         forward.y, up.y, translation.y, right.z, forward.z, up.z,
-         translation.z, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      return target.set(
+         right.x, forward.x, up.x, translation.x,
+         right.y, forward.y, up.y, translation.y,
+         right.z, forward.z, up.z, translation.z,
+            0.0f,      0.0f, 0.0f,          1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1217,9 +1271,13 @@ public class Mat4 {
    public static Mat4 fromAxes ( final Vec4 right, final Vec4 forward,
       final Vec4 up, final Mat4 target ) {
 
-      return target.set(right.x, forward.x, up.x, 0.0f, right.y, forward.y,
-         up.y, 0.0f, right.z, forward.z, up.z, 0.0f, right.w, forward.w, up.w,
-         1.0f);
+      /* @formatter:off */
+      return target.set(
+         right.x, forward.x, up.x, 0.0f,
+         right.y, forward.y, up.y, 0.0f,
+         right.z, forward.z, up.z, 0.0f,
+         right.w, forward.w, up.w, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1236,9 +1294,13 @@ public class Mat4 {
    public static Mat4 fromAxes ( final Vec4 right, final Vec4 forward,
       final Vec4 up, final Vec4 translation, final Mat4 target ) {
 
-      return target.set(right.x, forward.x, up.x, translation.x, right.y,
-         forward.y, up.y, translation.y, right.z, forward.z, up.z,
-         translation.z, right.w, forward.w, up.w, translation.w);
+      /* @formatter:off */
+      return target.set(
+         right.x, forward.x, up.x, translation.x,
+         right.y, forward.y, up.y, translation.y,
+         right.z, forward.z, up.z, translation.z,
+         right.w, forward.w, up.w, translation.w);
+      /* @formatter:on */
    }
 
    /**
@@ -1860,20 +1922,20 @@ public class Mat4 {
     * Multiplies each component in a matrix by a scalar. Not to be confused
     * with scaling affine transform matrix.
     *
-    * @param a      the left operand
-    * @param b      the right operand
+    * @param s      the left operand
+    * @param m      the right operand
     * @param target the output matrix
     *
     * @return the product
     */
-   public static Mat4 mul ( final float a, final Mat4 b, final Mat4 target ) {
+   public static Mat4 mul ( final float s, final Mat4 m, final Mat4 target ) {
 
       /* @formatter:off */
       return target.set(
-         a * b.m00, a * b.m01, a * b.m02, a * b.m03,
-         a * b.m10, a * b.m11, a * b.m12, a * b.m13,
-         a * b.m20, a * b.m21, a * b.m22, a * b.m23,
-         a * b.m30, a * b.m31, a * b.m32, a * b.m33);
+         s * m.m00, s * m.m01, s * m.m02, s * m.m03,
+         s * m.m10, s * m.m11, s * m.m12, s * m.m13,
+         s * m.m20, s * m.m21, s * m.m22, s * m.m23,
+         s * m.m30, s * m.m31, s * m.m32, s * m.m33);
       /* @formatter:on */
    }
 
@@ -1881,20 +1943,20 @@ public class Mat4 {
     * Multiplies each component in a matrix by a scalar. Not to be confused
     * with scaling affine transform matrix.
     *
-    * @param a      the left operand
-    * @param b      the right operand
+    * @param m      the left operand
+    * @param s      the right operand
     * @param target the output matrix
     *
     * @return the product
     */
-   public static Mat4 mul ( final Mat4 a, final float b, final Mat4 target ) {
+   public static Mat4 mul ( final Mat4 m, final float s, final Mat4 target ) {
 
       /* @formatter:off */
       return target.set(
-         a.m00 * b, a.m01 * b, a.m02 * b, a.m03 * b,
-         a.m10 * b, a.m11 * b, a.m12 * b, a.m13 * b,
-         a.m20 * b, a.m21 * b, a.m22 * b, a.m23 * b,
-         a.m30 * b, a.m31 * b, a.m32 * b, a.m33 * b);
+         m.m00 * s, m.m01 * s, m.m02 * s, m.m03 * s,
+         m.m10 * s, m.m11 * s, m.m12 * s, m.m13 * s,
+         m.m20 * s, m.m21 * s, m.m22 * s, m.m23 * s,
+         m.m30 * s, m.m31 * s, m.m32 * s, m.m33 * s);
       /* @formatter:on */
    }
 
@@ -2011,8 +2073,8 @@ public class Mat4 {
     * Multiplies a matrix and a quaternion. Stores the quaternion's matrix
     * representation in an output variable.
     *
-    * @param a      the matrix
-    * @param b      the quaternion
+    * @param m      the matrix
+    * @param q      the quaternion
     * @param target the output matrix
     * @param bm     the matrix conversion
     *
@@ -2021,30 +2083,90 @@ public class Mat4 {
     * @see Mat4#fromRotation(Quaternion, Mat4)
     * @see Mat4#mul(Mat4, Mat4, Mat4)
     */
-   public static Mat4 mul ( final Mat4 a, final Quaternion b, final Mat4 target,
+   public static Mat4 mul ( final Mat4 m, final Quaternion q, final Mat4 target,
       final Mat4 bm ) {
 
-      Mat4.fromRotation(b, bm);
-      return Mat4.mul(a, bm, target);
+      Mat4.fromRotation(q, bm);
+      return Mat4.mul(m, bm, target);
+   }
+
+   /**
+    * Multiplies a matrix and a color.
+    *
+    * @param m      the matrix
+    * @param c      the color
+    * @param target the output vector
+    *
+    * @return the product
+    */
+   public static Vec4 mul ( final Mat4 m, final Rgb c, final Vec4 target ) {
+
+      /* @formatter:off */
+      return target.set(
+         m.m00 * c.r + m.m01 * c.g + m.m02 * c.b + m.m03 * c.alpha,
+         m.m10 * c.r + m.m11 * c.g + m.m12 * c.b + m.m13 * c.alpha,
+         m.m20 * c.r + m.m21 * c.g + m.m22 * c.b + m.m23 * c.alpha,
+         m.m30 * c.r + m.m31 * c.g + m.m32 * c.b + m.m33 * c.alpha);
+      /* @formatter:on */
    }
 
    /**
     * Multiplies a matrix and a vector.
     *
-    * @param a      the matrix
-    * @param b      the vector
+    * @param m      the matrix
+    * @param v      the vector
+    * @param target the output matrix
+    *
+    * @return the product
+    */
+   public static Mat4 mul ( final Mat4 m, final Vec4 v, final Mat4 target ) {
+
+      /* @formatter:off */
+      return target.set(
+         m.m00 * v.x, m.m01 * v.y, m.m02 * v.z, m.m03 * v.w,
+         m.m10 * v.x, m.m11 * v.y, m.m12 * v.z, m.m13 * v.w,
+         m.m20 * v.x, m.m21 * v.y, m.m22 * v.z, m.m23 * v.w,
+         m.m30 * v.x, m.m31 * v.y, m.m32 * v.z, m.m33 * v.w);
+      /* @formatter:on */
+   }
+
+   /**
+    * Multiplies a matrix and a vector.
+    *
+    * @param m      the matrix
+    * @param v      the vector
+    * @param target the output color
+    *
+    * @return the product
+    */
+   public static Rgb mul ( final Mat4 m, final Vec4 v, final Rgb target ) {
+
+      /* @formatter:off */
+      return target.set(
+         m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
+         m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13 * v.w,
+         m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23 * v.w,
+         m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33 * v.w);
+      /* @formatter:on */
+   }
+
+   /**
+    * Multiplies a matrix and a vector.
+    *
+    * @param m      the matrix
+    * @param v      the vector
     * @param target the output vector
     *
     * @return the product
     */
-   public static Vec4 mul ( final Mat4 a, final Vec4 b, final Vec4 target ) {
+   public static Vec4 mul ( final Mat4 m, final Vec4 v, final Vec4 target ) {
 
       /* @formatter:off */
       return target.set(
-         a.m00 * b.x + a.m01 * b.y + a.m02 * b.z + a.m03 * b.w,
-         a.m10 * b.x + a.m11 * b.y + a.m12 * b.z + a.m13 * b.w,
-         a.m20 * b.x + a.m21 * b.y + a.m22 * b.z + a.m23 * b.w,
-         a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33 * b.w);
+         m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
+         m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13 * v.w,
+         m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23 * v.w,
+         m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33 * v.w);
       /* @formatter:on */
    }
 
@@ -2052,8 +2174,8 @@ public class Mat4 {
     * Multiplies a quaternion and a matrix. Stores the quaternion's matrix
     * representation in an output variable.
     *
-    * @param a      the quaternion
-    * @param b      the matrix
+    * @param q      the quaternion
+    * @param m      the matrix
     * @param target the output matrix
     * @param am     the matrix conversion
     *
@@ -2062,11 +2184,79 @@ public class Mat4 {
     * @see Mat4#fromRotation(Quaternion, Mat4)
     * @see Mat4#mul(Mat4, Mat4, Mat4)
     */
-   public static Mat4 mul ( final Quaternion a, final Mat4 b, final Mat4 target,
+   public static Mat4 mul ( final Quaternion q, final Mat4 m, final Mat4 target,
       final Mat4 am ) {
 
-      Mat4.fromRotation(a, am);
-      return Mat4.mul(am, b, target);
+      Mat4.fromRotation(q, am);
+      return Mat4.mul(am, m, target);
+   }
+
+   /**
+    * Following <a href=
+    * "https://en.wikibooks.org/wiki/GLSL_Programming/Vector_and_Matrix_Operations#Operators">GLSL
+    * convention</a>, multiplies a color and the transpose of a matrix.<br>
+    * <br>
+    * v<sup>T</sup> M = ( M<sup>T</sup> c )<sup>T</sup>
+    *
+    * @param c      the color
+    * @param m      the matrix
+    * @param target the output vector
+    *
+    * @return the product
+    */
+   public static Vec4 mul ( final Rgb c, final Mat4 m, final Vec4 target ) {
+
+      /* @formatter:off */
+      return target.set(
+         c.r * m.m00 + c.g * m.m10 + c.b * m.m20 + c.alpha * m.m30,
+         c.r * m.m01 + c.g * m.m11 + c.b * m.m21 + c.alpha * m.m31,
+         c.r * m.m02 + c.g * m.m12 + c.b * m.m22 + c.alpha * m.m32,
+         c.r * m.m03 + c.g * m.m13 + c.b * m.m23 + c.alpha * m.m33);
+      /* @formatter:on */
+   }
+
+   /**
+    * Multiplies a vector and the transpose of a matrix.
+    *
+    * @param v      the vector
+    * @param m      the matrix
+    * @param target the output matrix
+    *
+    * @return the product
+    */
+   public static Mat4 mul ( final Vec4 v, final Mat4 m, final Mat4 target ) {
+
+      /* @formatter:off */
+      return target.set(
+         v.x * m.m00, v.y * m.m10, v.z * m.m20, v.w * m.m30,
+         v.x * m.m01, v.y * m.m11, v.z * m.m21, v.w * m.m31,
+         v.x * m.m02, v.y * m.m12, v.z * m.m22, v.w * m.m32,
+         v.x * m.m03, v.y * m.m13, v.z * m.m23, v.w * m.m33);
+      /* @formatter:on */
+   }
+
+   /**
+    * Following <a href=
+    * "https://en.wikibooks.org/wiki/GLSL_Programming/Vector_and_Matrix_Operations#Operators">GLSL
+    * convention</a>, multiplies a vector and the transpose of a matrix.<br>
+    * <br>
+    * c<sup>T</sup> M = ( M<sup>T</sup> v )<sup>T</sup>
+    *
+    * @param v      the vector
+    * @param m      the matrix
+    * @param target the output color
+    *
+    * @return the product
+    */
+   public static Rgb mul ( final Vec4 v, final Mat4 m, final Rgb target ) {
+
+      /* @formatter:off */
+      return target.set(
+         v.x * m.m00 + v.y * m.m10 + v.z * m.m20 + v.w * m.m30,
+         v.x * m.m01 + v.y * m.m11 + v.z * m.m21 + v.w * m.m31,
+         v.x * m.m02 + v.y * m.m12 + v.z * m.m22 + v.w * m.m32,
+         v.x * m.m03 + v.y * m.m13 + v.z * m.m23 + v.w * m.m33);
+      /* @formatter:on */
    }
 
    /**
@@ -2076,20 +2266,20 @@ public class Mat4 {
     * <br>
     * v<sup>T</sup> M = ( M<sup>T</sup> v )<sup>T</sup>
     *
-    * @param b      the matrix
-    * @param a      the vector
+    * @param v      the vector
+    * @param m      the matrix
     * @param target the output vector
     *
     * @return the product
     */
-   public static Vec4 mul ( final Vec4 a, final Mat4 b, final Vec4 target ) {
+   public static Vec4 mul ( final Vec4 v, final Mat4 m, final Vec4 target ) {
 
       /* @formatter:off */
       return target.set(
-         b.m00 * a.x + b.m10 * a.y + b.m20 * a.z + b.m30 * a.w,
-         b.m01 * a.x + b.m11 * a.y + b.m21 * a.z + b.m31 * a.w,
-         b.m02 * a.x + b.m12 * a.y + b.m22 * a.z + b.m32 * a.w,
-         b.m03 * a.x + b.m13 * a.y + b.m23 * a.z + b.m33 * a.w);
+         v.x * m.m00 + v.y * m.m10 + v.z * m.m20 + v.w * m.m30,
+         v.x * m.m01 + v.y * m.m11 + v.z * m.m21 + v.w * m.m31,
+         v.x * m.m02 + v.y * m.m12 + v.z * m.m22 + v.w * m.m32,
+         v.x * m.m03 + v.y * m.m13 + v.z * m.m23 + v.w * m.m33);
       /* @formatter:on */
    }
 
@@ -2144,22 +2334,25 @@ public class Mat4 {
     * to be 0.0 . The w component of the point is assumed to be 1.0 , so the
     * point is impacted by the matrix's translation.
     *
-    * @param a      the matrix
-    * @param b      the point
+    * @param m      the matrix
+    * @param p      the point
     * @param target the output point
     *
     * @return the product
     */
    @Experimental
-   public static Vec3 mulPoint ( final Mat4 a, final Vec2 b,
+   public static Vec3 mulPoint ( final Mat4 m, final Vec2 p,
       final Vec3 target ) {
 
-      final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
+      final float w = m.m30 * p.x + m.m31 * p.y + m.m33;
       if ( w != 0.0f ) {
          final float wInv = 1.0f / w;
-         return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m03 ) * wInv,
-            ( a.m10 * b.x + a.m11 * b.y + a.m13 ) * wInv, ( a.m20 * b.x + a.m21
-               * b.y + a.m23 ) * wInv);
+         /* @formatter:off */
+         return target.set(
+            ( m.m00 * p.x + m.m01 * p.y + m.m03 ) * wInv,
+            ( m.m10 * p.x + m.m11 * p.y + m.m13 ) * wInv,
+            ( m.m20 * p.x + m.m21 * p.y + m.m23 ) * wInv);
+         /* @formatter:on */
       }
       return target.reset();
    }
@@ -2168,22 +2361,25 @@ public class Mat4 {
     * Multiplies a matrix and a point. The w component of the point is assumed
     * to be 1.0 , so the point is impacted by the matrix's translation.
     *
-    * @param a      the matrix
-    * @param b      the point
+    * @param m      the matrix
+    * @param p      the point
     * @param target the output point
     *
     * @return the product
     */
    @Experimental
-   public static Vec3 mulPoint ( final Mat4 a, final Vec3 b,
+   public static Vec3 mulPoint ( final Mat4 m, final Vec3 p,
       final Vec3 target ) {
 
-      final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
+      final float w = m.m30 * p.x + m.m31 * p.y + m.m32 * p.z + m.m33;
       if ( w != 0.0f ) {
          final float wInv = 1.0f / w;
-         return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 * b.z + a.m03 )
-            * wInv, ( a.m10 * b.x + a.m11 * b.y + a.m12 * b.z + a.m13 ) * wInv,
-            ( a.m20 * b.x + a.m21 * b.y + a.m22 * b.z + a.m23 ) * wInv);
+         /* @formatter:off */
+         return target.set(
+            ( m.m00 * p.x + m.m01 * p.y + m.m02 * p.z + m.m03 ) * wInv,
+            ( m.m10 * p.x + m.m11 * p.y + m.m12 * p.z + m.m13 ) * wInv,
+            ( m.m20 * p.x + m.m21 * p.y + m.m22 * p.z + m.m23 ) * wInv);
+         /* @formatter:on */
       }
       return target.reset();
    }
@@ -2193,21 +2389,25 @@ public class Mat4 {
     * are assumed to be 0.0 , so the vector is not impacted by the matrix's
     * translation.
     *
-    * @param a      the matrix
-    * @param b      the vector
+    * @param m      the matrix
+    * @param v      the vector
     * @param target the output vector
     *
     * @return the product
     */
    @Experimental
-   public static Vec3 mulVector ( final Mat4 a, final Vec2 b,
+   public static Vec3 mulVector ( final Mat4 m, final Vec2 v,
       final Vec3 target ) {
 
-      final float w = a.m30 * b.x + a.m31 * b.y + a.m33;
+      final float w = m.m30 * v.x + m.m31 * v.y + m.m33;
       if ( w != 0.0f ) {
          final float wInv = 1.0f / w;
-         return target.set( ( a.m00 * b.x + a.m01 * b.y ) * wInv, ( a.m10 * b.x
-            + a.m11 * b.y ) * wInv, ( a.m20 * b.x + a.m21 * b.y ) * wInv);
+         /* @formatter:off */
+         return target.set(
+            ( m.m00 * v.x + m.m01 * v.y ) * wInv,
+            ( m.m10 * v.x + m.m11 * v.y ) * wInv,
+            ( m.m20 * v.x + m.m21 * v.y ) * wInv);
+         /* @formatter:on */
       }
       return target.reset();
    }
@@ -2217,22 +2417,25 @@ public class Mat4 {
     * assumed to be 0.0 , so the vector is not impacted by the matrix's
     * translation.
     *
-    * @param a      the matrix
-    * @param b      the vector
+    * @param m      the matrix
+    * @param v      the vector
     * @param target the output vector
     *
     * @return the product
     */
    @Experimental
-   public static Vec3 mulVector ( final Mat4 a, final Vec3 b,
+   public static Vec3 mulVector ( final Mat4 m, final Vec3 v,
       final Vec3 target ) {
 
-      final float w = a.m30 * b.x + a.m31 * b.y + a.m32 * b.z + a.m33;
+      final float w = m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33;
       if ( w != 0.0f ) {
          final float wInv = 1.0f / w;
-         return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 * b.z ) * wInv,
-            ( a.m10 * b.x + a.m11 * b.y + a.m12 * b.z ) * wInv, ( a.m20 * b.x
-               + a.m21 * b.y + a.m22 * b.z ) * wInv);
+         /* @formatter:off */
+         return target.set(
+            ( m.m00 * v.x + m.m01 * v.y + m.m02 * v.z ) * wInv,
+            ( m.m10 * v.x + m.m11 * v.y + m.m12 * v.z ) * wInv,
+            ( m.m20 * v.x + m.m21 * v.y + m.m22 * v.z ) * wInv);
+         /* @formatter:on */
       }
       return target.reset();
    }

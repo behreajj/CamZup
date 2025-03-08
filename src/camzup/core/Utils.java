@@ -22,7 +22,7 @@ public abstract class Utils implements IUtils {
     * @see Float#intBitsToFloat(int)
     * @see Float#floatToRawIntBits(float)
     */
-   public static float abs ( final float v ) {
+   public static final float abs ( final float v ) {
 
       return Float.intBitsToFloat(0x7fffffff & Float.floatToRawIntBits(v));
    }
@@ -52,7 +52,7 @@ public abstract class Utils implements IUtils {
     * @author C. Hastings, Jr
     * @author I. A. Stegun
     */
-   public static float acos ( final float y ) {
+   public static final float acos ( final float y ) {
 
       if ( y <= -1.0f ) { return IUtils.PI; }
       if ( y >= 1.0f ) { return 0.0f; }
@@ -72,7 +72,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the evaluation
     */
-   public static int and ( final float a, final float b ) {
+   public static final int and ( final float a, final float b ) {
 
       return ( a != 0.0f && a == a ? 1 : 0 ) & ( b != 0.0f && b == b ? 1 : 0 );
    }
@@ -90,7 +90,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#approx(float, float, float)
     */
-   public static boolean approx ( final float a, final float b ) {
+   public static final boolean approx ( final float a, final float b ) {
 
       return Utils.approx(a, b, IUtils.EPSILON);
    }
@@ -106,7 +106,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the evaluation
     */
-   public static boolean approx ( final float a, final float b,
+   public static final boolean approx ( final float a, final float b,
       final float t ) {
 
       final float diff = b - a;
@@ -139,7 +139,7 @@ public abstract class Utils implements IUtils {
     * @author C. Hastings, Jr
     * @author I. A. Stegun
     */
-   public static float asin ( final float y ) {
+   public static final float asin ( final float y ) {
 
       if ( y <= -1.0f ) { return -IUtils.HALF_PI; }
       if ( y >= 1.0f ) { return IUtils.HALF_PI; }
@@ -168,7 +168,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the angle in radians
     */
-   public static float atan2 ( final float y, final float x ) {
+   public static final float atan2 ( final float y, final float x ) {
 
       final boolean yLtZero = y < -0.0f;
       final boolean xLtZero = x < -0.0f;
@@ -195,7 +195,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Appends to an array of bytes, ordered from most to least significant
+    * Appends to an array of bytes, ordered from least to most significant
     * digit (little endian).
     *
     * @param x   the float
@@ -203,8 +203,10 @@ public abstract class Utils implements IUtils {
     * @param i   the index
     *
     * @return the byte array
+    *
+    * @see Utils#byteslm(int, byte[], int)
     */
-   public static byte[] byteslm ( final float x, final byte[] arr,
+   public static final byte[] byteslm ( final float x, final byte[] arr,
       final int i ) {
 
       return Utils.byteslm(Float.floatToIntBits(x), arr, i);
@@ -220,7 +222,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the byte array
     */
-   public static byte[] byteslm ( final int x, final byte[] arr, final int i ) {
+   public static final byte[] byteslm ( final int x, final byte[] arr,
+      final int i ) {
 
       arr[i] = ( byte ) ( x & 0xff );
       arr[i + 1] = ( byte ) ( x >> 0x08 & 0xff );
@@ -230,7 +233,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * Appends to an array of bytes, ordered from most to least significant
+    * Appends to an array of bytes, ordered from least to most significant
     * digit (little endian).
     *
     * @param x   the short
@@ -239,7 +242,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the byte array
     */
-   public static byte[] byteslm ( final short x, final byte[] arr,
+   public static final byte[] byteslm ( final short x, final byte[] arr,
       final int i ) {
 
       arr[i] = ( byte ) ( x & 0xff );
@@ -257,7 +260,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the byte array
     */
-   public static byte[] bytesml ( final float x, final byte[] arr,
+   public static final byte[] bytesml ( final float x, final byte[] arr,
       final int i ) {
 
       return Utils.bytesml(Float.floatToIntBits(x), arr, i);
@@ -273,7 +276,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the byte array
     */
-   public static byte[] bytesml ( final int x, final byte[] arr, final int i ) {
+   public static final byte[] bytesml ( final int x, final byte[] arr,
+      final int i ) {
 
       arr[i] = ( byte ) ( x >> 0x18 & 0xff );
       arr[i + 1] = ( byte ) ( x >> 0x10 & 0xff );
@@ -292,7 +296,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the byte array
     */
-   public static byte[] bytesml ( final short x, final byte[] arr,
+   public static final byte[] bytesml ( final short x, final byte[] arr,
       final int i ) {
 
       arr[i] = ( byte ) ( x >> 0x08 & 0xff );
@@ -309,7 +313,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the raised value
     */
-   public static int ceil ( final float v ) {
+   public static final int ceil ( final float v ) {
 
       return v > 0.0f ? ( int ) v + 1 : v < 0.0f ? ( int ) v : 0;
    }
@@ -323,7 +327,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the clamped value
     */
-   public static float clamp ( final float v, final float lb, final float ub ) {
+   public static final float clamp ( final float v, final float lb,
+      final float ub ) {
 
       return v < lb ? lb : v > ub ? ub : v;
    }
@@ -337,7 +342,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the clamped value
     */
-   public static int clamp ( final int v, final int lb, final int ub ) {
+   public static final int clamp ( final int v, final int lb, final int ub ) {
 
       return v < lb ? lb : v > ub ? ub : v;
    }
@@ -349,7 +354,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the clamped value
     */
-   public static float clamp01 ( final float v ) {
+   public static final float clamp01 ( final float v ) {
 
       return v < 0.0f ? 0.0f : v > 1.0f ? 1.0f : v;
    }
@@ -370,7 +375,8 @@ public abstract class Utils implements IUtils {
     * @see Float#intBitsToFloat(int)
     * @see Float#floatToRawIntBits(float)
     */
-   public static float copySign ( final float magnitude, final float sign ) {
+   public static final float copySign ( final float magnitude,
+      final float sign ) {
 
       return Float.intBitsToFloat(Float.floatToRawIntBits(sign) & 0x80000000
          | Float.floatToRawIntBits(magnitude) & 0x7fffffff);
@@ -389,7 +395,8 @@ public abstract class Utils implements IUtils {
     * @see Float#intBitsToFloat(int)
     * @see Float#floatToRawIntBits(float)
     */
-   public static float copySign ( final float magnitude, final int sign ) {
+   public static final float copySign ( final float magnitude,
+      final int sign ) {
 
       return Float.intBitsToFloat(sign & 0x80000000 | Float.floatToRawIntBits(
          magnitude) & 0x7fffffff);
@@ -405,7 +412,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the cosine of the angle
     */
-   public static float cos ( final float radians ) {
+   public static final float cos ( final float radians ) {
 
       return ( float ) Math.cos(radians);
    }
@@ -419,7 +426,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the cotangent
     */
-   public static float cot ( final float radians ) {
+   public static final float cot ( final float radians ) {
 
       final float nrmRad = radians * IUtils.ONE_TAU;
       final float sint = Utils.scNorm(nrmRad - 0.25f);
@@ -437,7 +444,7 @@ public abstract class Utils implements IUtils {
     * @see Float#intBitsToFloat(int)
     * @see Float#floatToRawIntBits(float)
     */
-   public static float diff ( final float a, final float b ) {
+   public static final float diff ( final float a, final float b ) {
 
       return Float.intBitsToFloat(0x7fffffff & Float.floatToRawIntBits(b - a));
    }
@@ -450,7 +457,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the difference
     */
-   public static int diff ( final int a, final int b ) {
+   public static final int diff ( final int a, final int b ) {
 
       final int d = b - a;
       return d < 0 ? -d : d;
@@ -468,7 +475,8 @@ public abstract class Utils implements IUtils {
     * @see Utils#modRadians(float)
     * @see Utils#abs(float)
     */
-   public static float distAngleUnsigned ( final float a, final float b ) {
+   public static final float distAngleUnsigned ( final float a,
+      final float b ) {
 
       /*
        * See https://gamedev.stackexchange.com/a/4472,
@@ -490,7 +498,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the quotient
     */
-   public static float div ( final float a, final float b ) {
+   public static final float div ( final float a, final float b ) {
 
       return b != 0.0f ? a / b : 0.0f;
    }
@@ -506,7 +514,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the quotient
     */
-   public static int div ( final int a, final int b ) {
+   public static final int div ( final int a, final int b ) {
 
       return b != 0 ? a / b : 0;
    }
@@ -521,7 +529,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the filtered value
     */
-   public static float filter ( final float v, final float lb,
+   public static final float filter ( final float v, final float lb,
       final float ub ) {
 
       return v >= lb && v < ub ? v : 0.0f;
@@ -539,7 +547,7 @@ public abstract class Utils implements IUtils {
     * @see Utils#intlm(byte[], int)
     * @see Float#intBitsToFloat(int)
     */
-   public static float floatlm ( final byte[] arr, final int i ) {
+   public static final float floatlm ( final byte[] arr, final int i ) {
 
       return Float.intBitsToFloat(Utils.intlm(arr, i));
    }
@@ -556,7 +564,7 @@ public abstract class Utils implements IUtils {
     * @see Utils#intml(byte[], int)
     * @see Float#intBitsToFloat(int)
     */
-   public static float floatml ( final byte[] arr, final int i ) {
+   public static final float floatml ( final byte[] arr, final int i ) {
 
       return Float.intBitsToFloat(Utils.intml(arr, i));
    }
@@ -569,7 +577,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the floored value
     */
-   public static int floor ( final float v ) {
+   public static final int floor ( final float v ) {
 
       return v > 0.0f ? ( int ) v : v < 0.0f ? ( int ) v - 1 : 0;
    }
@@ -588,7 +596,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the result
     */
-   public static float fmod ( final float a, final float b ) {
+   public static final float fmod ( final float a, final float b ) {
 
       return b != 0.0f ? a % b : a;
    }
@@ -603,7 +611,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the result
     */
-   public static int fmod ( final int a, final int b ) {
+   public static final int fmod ( final int a, final int b ) {
 
       return b != 0 ? a % b : a;
    }
@@ -619,7 +627,10 @@ public abstract class Utils implements IUtils {
     *
     * @return the fractional portion
     */
-   public static float fract ( final float v ) { return v - ( int ) v; }
+   public static final float fract ( final float v ) {
+
+      return v - ( int ) v;
+   }
 
    /**
     * Finds the hypotenuse between two values, sqrt ( <em>a</em><sup>2</sup> +
@@ -633,7 +644,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#sqrtUnchecked(float)
     */
-   public static float hypot ( final float a, final float b ) {
+   public static final float hypot ( final float a, final float b ) {
 
       /*
        * Do not use Math.hypot . It is not a HotSpotIntrinsicCandidate , and it
@@ -656,7 +667,8 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#sqrtUnchecked(float)
     */
-   public static float hypot ( final float a, final float b, final float c ) {
+   public static final float hypot ( final float a, final float b,
+      final float c ) {
 
       return Utils.sqrtUnchecked(a * a + b * b + c * c);
    }
@@ -670,7 +682,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the float
     */
-   public static int intlm ( final byte[] arr, final int i ) {
+   public static final int intlm ( final byte[] arr, final int i ) {
 
       return arr[i] & 0xff | ( arr[i + 1] & 0xff ) << 0x08 | ( arr[i + 2]
          & 0xff ) << 0x10 | ( arr[i + 3] & 0xff ) << 0x18;
@@ -685,7 +697,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the float
     */
-   public static int intml ( final byte[] arr, final int i ) {
+   public static final int intml ( final byte[] arr, final int i ) {
 
       return ( arr[i] & 0xff ) << 0x18 | ( arr[i + 1] & 0xff ) << 0x10 | ( arr[i
          + 2] & 0xff ) << 0x08 | arr[i + 3] & 0xff;
@@ -703,7 +715,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#invSqrtUnchecked
     */
-   public static float invHypot ( final float a, final float b ) {
+   public static final float invHypot ( final float a, final float b ) {
 
       return Utils.invSqrtUnchecked(a * a + b * b);
    }
@@ -721,7 +733,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#invSqrtUnchecked
     */
-   public static float invHypot ( final float a, final float b,
+   public static final float invHypot ( final float a, final float b,
       final float c ) {
 
       return Utils.invSqrtUnchecked(a * a + b * b + c * c);
@@ -738,7 +750,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#invSqrtUnchecked(float)
     */
-   public static float invSqrt ( final float value ) {
+   public static final float invSqrt ( final float value ) {
 
       return value > 0.0f ? Utils.invSqrtUnchecked(value) : 0.0f;
    }
@@ -767,7 +779,7 @@ public abstract class Utils implements IUtils {
     * @see Float#floatToIntBits(float)
     * @see Float#intBitsToFloat(int)
     */
-   public static float invSqrtUnchecked ( final float x ) {
+   public static final float invSqrtUnchecked ( final float x ) {
 
       float y = Float.intBitsToFloat(0x5f375a86 - ( Float.floatToIntBits(x)
          >> 1 ));
@@ -791,7 +803,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the interpolated value
     */
-   public static float lerp ( final float orig, final float dest,
+   public static final float lerp ( final float orig, final float dest,
       final float step ) {
 
       return step <= 0.0f ? orig : step >= 1.0f ? dest : ( 1.0f - step ) * orig
@@ -811,7 +823,8 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#lerpUnclamped(float, float, float)
     */
-   public static int lerp ( final int orig, final int dest, final float step ) {
+   public static final int lerp ( final int orig, final int dest,
+      final float step ) {
 
       if ( step <= 0.0f ) { return orig; }
       if ( step >= 1.0f ) { return dest; }
@@ -828,7 +841,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the interpolated value
     */
-   public static float lerpUnclamped ( final float orig, final float dest,
+   public static final float lerpUnclamped ( final float orig, final float dest,
       final float step ) {
 
       return ( 1.0f - step ) * orig + step * dest;
@@ -847,7 +860,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#round(float)
     */
-   public static int lerpUnclamped ( final int orig, final int dest,
+   public static final int lerpUnclamped ( final int orig, final int dest,
       final float step ) {
 
       return Utils.round( ( 1.0f - step ) * orig + step * dest);
@@ -866,7 +879,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Math#log(double)
     */
-   public static float log ( final float a, final float b ) {
+   public static final float log ( final float a, final float b ) {
 
       if ( a > 0.0f && b > 0.0f ) {
          return ( float ) ( Math.log(a) / Math.log(b) );
@@ -888,7 +901,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the mapped value
     */
-   public static float map ( final float v, final float lbOrig,
+   public static final float map ( final float v, final float lbOrig,
       final float ubOrig, final float lbDest, final float ubDest ) {
 
       final float d = ubOrig - lbOrig;
@@ -915,7 +928,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the mapped value
     */
-   public static float map ( final float v, final float lbOrig,
+   public static final float map ( final float v, final float lbOrig,
       final float ubOrig, final float lbDest, final float ubDest,
       final float gamma ) {
 
@@ -943,7 +956,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the maximum value
     */
-   public static float max ( final float... fs ) {
+   public static final float max ( final float... fs ) {
 
       float max = -Float.MAX_VALUE;
       final int len = fs.length;
@@ -960,7 +973,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the maximum value
     */
-   public static float max ( final float a, final float b ) {
+   public static final float max ( final float a, final float b ) {
 
       return a > b ? a : b;
    }
@@ -974,7 +987,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the maximum value
     */
-   public static float max ( final float a, final float b, final float c ) {
+   public static final float max ( final float a, final float b,
+      final float c ) {
 
       final float d = a > b ? a : b;
       return d > c ? d : c;
@@ -989,7 +1003,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the maximum value
     */
-   public static int max ( final int a, final int b, final int c ) {
+   public static final int max ( final int a, final int b, final int c ) {
 
       final int d = a > b ? a : b;
       return d > c ? d : c;
@@ -1004,7 +1018,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the minimum value
     */
-   public static float min ( final float... fs ) {
+   public static final float min ( final float... fs ) {
 
       float min = Float.MAX_VALUE;
       final int len = fs.length;
@@ -1021,7 +1035,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the minimum value
     */
-   public static float min ( final float a, final float b ) {
+   public static final float min ( final float a, final float b ) {
 
       return a < b ? a : b;
    }
@@ -1035,7 +1049,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the minimum value
     */
-   public static float min ( final float a, final float b, final float c ) {
+   public static final float min ( final float a, final float b,
+      final float c ) {
 
       final float d = a < b ? a : b;
       return d < c ? d : c;
@@ -1050,7 +1065,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the minimum value
     */
-   public static int min ( final int a, final int b, final int c ) {
+   public static final int min ( final int a, final int b, final int c ) {
 
       final int d = a < b ? a : b;
       return d < c ? d : c;
@@ -1070,7 +1085,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#modUnchecked(float, float)
     */
-   public static float mod ( final float a, final float b ) {
+   public static final float mod ( final float a, final float b ) {
 
       if ( b != 0.0f ) {
          final float quot = a / b;
@@ -1090,7 +1105,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the result
     */
-   public static int mod ( final int a, final int b ) {
+   public static final int mod ( final int a, final int b ) {
 
       /*
        * Floor mod is not the same as Euclidean remainder. See
@@ -1114,7 +1129,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the result
     */
-   public static float mod1 ( final float v ) {
+   public static final float mod1 ( final float v ) {
 
       return v > 0.0f ? v - ( int ) v : v < 0.0f ? v - ( ( int ) v - 1.0f )
          : 0.0f;
@@ -1130,7 +1145,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#floor(float)
     */
-   public static float modDegrees ( final float degrees ) {
+   public static final float modDegrees ( final float degrees ) {
 
       // return degrees - 360.0f * Utils.floor(degrees * IUtils.ONE_360);
       final float dNorm = degrees * IUtils.ONE_360;
@@ -1149,7 +1164,7 @@ public abstract class Utils implements IUtils {
     * @see Utils#mod(float, float)
     * @see Utils#floor(float)
     */
-   public static float modRadians ( final float radians ) {
+   public static final float modRadians ( final float radians ) {
 
       // return radians - IUtils.TAU * Utils.floor(radians * IUtils.ONE_TAU);
       final float rNorm = radians * IUtils.ONE_TAU;
@@ -1166,7 +1181,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the result
     */
-   public static float modUnchecked ( final float a, final float b ) {
+   public static final float modUnchecked ( final float a, final float b ) {
 
       // return a - b * Utils.floor(a / b);
       final float q = a / b;
@@ -1182,7 +1197,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the opposite
     */
-   public static int not ( final float v ) {
+   public static final int not ( final float v ) {
 
       return v != 0.0f && v == v ? 0 : 1;
    }
@@ -1197,7 +1212,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the evaluation
     */
-   public static int or ( final float a, final float b ) {
+   public static final int or ( final float a, final float b ) {
 
       return ( a != 0.0f && a == a ? 1 : 0 ) | ( b != 0.0f && b == b ? 1 : 0 );
    }
@@ -1209,7 +1224,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the oscillation
     */
-   public static float pingPong ( final float step ) {
+   public static final float pingPong ( final float step ) {
 
       return Utils.pingPong(0.0f, 1.0f, step, 1.0f);
    }
@@ -1224,7 +1239,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the oscillation
     */
-   public static float pingPong ( final float step, final float pause ) {
+   public static final float pingPong ( final float step, final float pause ) {
 
       return Utils.pingPong(0.0f, 1.0f, step, pause);
    }
@@ -1238,7 +1253,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the oscillation
     */
-   public static float pingPong ( final float lb, final float ub,
+   public static final float pingPong ( final float lb, final float ub,
       final float step ) {
 
       return Utils.pingPong(lb, ub, step, 1.0f);
@@ -1256,7 +1271,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the oscillation
     */
-   public static float pingPong ( final float lb, final float ub,
+   public static final float pingPong ( final float lb, final float ub,
       final float step, final float pause ) {
 
       /*
@@ -1280,7 +1295,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the oscillation
     */
-   public static int pingPong ( final int lb, final int ub, final float step ) {
+   public static final int pingPong ( final int lb, final int ub,
+      final float step ) {
 
       return ( int ) Utils.pingPong(( float ) lb, ( float ) ub, step);
    }
@@ -1297,8 +1313,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the oscillation
     */
-   public static int pingPong ( final int lb, final int ub, final float step,
-      final float pause ) {
+   public static final int pingPong ( final int lb, final int ub,
+      final float step, final float pause ) {
 
       return ( int ) Utils.pingPong(( float ) lb, ( float ) ub, step, pause);
    }
@@ -1314,7 +1330,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Math#pow(double, double)
     */
-   public static float pow ( final float a, final float b ) {
+   public static final float pow ( final float a, final float b ) {
 
       return ( float ) Math.pow(a, b);
    }
@@ -1328,7 +1344,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the quantized value
     */
-   public static float quantize ( final float v, final int levels ) {
+   public static final float quantize ( final float v, final int levels ) {
 
       return Utils.quantizeSigned(v, levels);
    }
@@ -1343,7 +1359,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the quantized value
     */
-   public static float quantizeSigned ( final float v, final int levels ) {
+   public static final float quantizeSigned ( final float v,
+      final int levels ) {
 
       if ( levels == 0 ) { return v; }
       final float levf = levels < 0 ? -levels : levels;
@@ -1361,7 +1378,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the quantized value
     */
-   public static float quantizeUnsigned ( final float v, final int levels ) {
+   public static final float quantizeUnsigned ( final float v,
+      final int levels ) {
 
       if ( levels == 1 || levels == -1 ) { return v; }
       final float levf = levels < 0 ? -levels : levels;
@@ -1376,7 +1394,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the rounded value
     */
-   public static int round ( final float v ) {
+   public static final int round ( final float v ) {
 
       return v < -0.0f ? ( int ) ( v - 0.5f ) : v > 0.0f ? ( int ) ( v + 0.5f )
          : 0;
@@ -1391,7 +1409,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the rounded value
     */
-   public static float round ( final float v, final int places ) {
+   public static final float round ( final float v, final int places ) {
 
       if ( places < 1 ) { return Utils.round(v); }
       if ( places > 7 ) { return v; }
@@ -1419,7 +1437,7 @@ public abstract class Utils implements IUtils {
     * @return the approximate value
     */
    @Experimental
-   public static float scNorm ( final float normRad ) {
+   public static final float scNorm ( final float normRad ) {
 
       // float r1y = Utils.mod1(normRad);
       float r1y = normRad > 0.0f ? normRad - ( int ) normRad : normRad < 0.0f
@@ -1471,7 +1489,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the short
     */
-   public static short shortlm ( final byte[] arr, final int i ) {
+   public static final short shortlm ( final byte[] arr, final int i ) {
 
       return ( short ) ( arr[i] & 0xff | ( arr[i + 1] & 0xff ) << 0x08 );
    }
@@ -1485,7 +1503,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the short
     */
-   public static short shortml ( final byte[] arr, final int i ) {
+   public static final short shortml ( final byte[] arr, final int i ) {
 
       return ( short ) ( ( arr[i] & 0xff ) << 0x08 | arr[i + 1] & 0xff );
    }
@@ -1501,7 +1519,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Math#signum(float)
     */
-   public static int sign ( final float v ) {
+   public static final int sign ( final float v ) {
 
       return v < -0.0f ? -1 : v > 0.0f ? 1 : 0;
    }
@@ -1516,7 +1534,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the sine of the angle
     */
-   public static float sin ( final float radians ) {
+   public static final float sin ( final float radians ) {
 
       return ( float ) Math.sin(radians);
    }
@@ -1530,8 +1548,11 @@ public abstract class Utils implements IUtils {
     *
     * @return the eased value
     */
-   public static float smoothStep ( final float orig, final float dest,
+   public static final float smoothStep ( final float orig, final float dest,
       final float step ) {
+
+      // TODO: smoothStepInverse:
+      // 0.5 - sin(arcsin(1 - 2 * x) / 3)
 
       if ( step <= 0.0f ) { return orig; }
       if ( step >= 1.0f ) { return dest; }
@@ -1552,7 +1573,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#sqrtUnchecked(float)
     */
-   public static float sqrt ( final float v ) {
+   public static final float sqrt ( final float v ) {
 
       return v > 0.0f ? Utils.sqrtUnchecked(v) : 0.0f;
    }
@@ -1567,7 +1588,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#invSqrtUnchecked(float)
     */
-   public static float sqrtUnchecked ( final float v ) {
+   public static final float sqrtUnchecked ( final float v ) {
 
       return v * Utils.invSqrtUnchecked(v);
    }
@@ -1583,7 +1604,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the swap
     */
-   public static int swapEndian ( final int v ) {
+   public static final int swapEndian ( final int v ) {
 
       return v << 24 | ( v & '\uff00' ) << 8 | v >>> 8 & '\uff00' | v >>> 24;
    }
@@ -1599,7 +1620,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#scNorm(float)
     */
-   public static float tan ( final float radians ) {
+   public static final float tan ( final float radians ) {
 
       final float nrmRad = radians * IUtils.ONE_TAU;
       final float cost = Utils.scNorm(nrmRad);
@@ -1685,7 +1706,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the integral
     */
-   public static float trunc ( final float v ) { return ( int ) v; }
+   public static final float trunc ( final float v ) { return ( int ) v; }
 
    /**
     * An alias for {@link Byte#toUnsignedInt(byte)} . Converts a signed byte
@@ -1700,7 +1721,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the unsigned byte, promoted
     */
-   public static int ubyte ( final byte v ) { return v & 0xff; }
+   public static final int ubyte ( final byte v ) { return v & 0xff; }
 
    /**
     * An alias for {@link Integer#toUnsignedLong(int)}. Converts a signed
@@ -1715,7 +1736,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the unsigned integer, promoted
     */
-   public static long uint ( final int v ) { return v & 0xffffffffL; }
+   public static final long uint ( final int v ) { return v & 0xffffffffL; }
 
    /**
     * Wraps a value around a periodic range as defined by an upper and lower
@@ -1728,7 +1749,8 @@ public abstract class Utils implements IUtils {
     *
     * @return the wrapped value
     */
-   public static float wrap ( final float v, final float lb, final float ub ) {
+   public static final float wrap ( final float v, final float lb,
+      final float ub ) {
 
       final float range = ub - lb;
       if ( range != 0.0f ) {
@@ -1749,7 +1771,7 @@ public abstract class Utils implements IUtils {
     *
     * @return the evaluation
     */
-   public static int xor ( final float a, final float b ) {
+   public static final int xor ( final float a, final float b ) {
 
       return ( a != 0.0f && a == a ? 1 : 0 ) ^ ( b != 0.0f && b == b ? 1 : 0 );
    }
@@ -1766,7 +1788,7 @@ public abstract class Utils implements IUtils {
     *
     * @see Utils#floor(float)
     */
-   static float quantizeSigned ( final float v, final float levels,
+   static final float quantizeSigned ( final float v, final float levels,
       final float delta ) {
 
       return Utils.floor(0.5f + v * levels) * delta;
@@ -1785,7 +1807,7 @@ public abstract class Utils implements IUtils {
     * @see Utils#ceil(float)
     * @see Utils#max(float, float)
     */
-   static float quantizeUnsigned ( final float v, final float levels,
+   static final float quantizeUnsigned ( final float v, final float levels,
       final float delta ) {
 
       return Utils.max(0.0f, ( Utils.ceil(v * levels) - 1.0f ) * delta);

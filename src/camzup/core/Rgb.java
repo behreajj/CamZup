@@ -196,9 +196,13 @@ public class Rgb implements Comparable < Rgb > {
    public Rgb set ( final byte red, final byte green, final byte blue,
       final byte alpha ) {
 
-      return this.set(IUtils.ONE_255 * ( red & 0xff ), IUtils.ONE_255 * ( green
-         & 0xff ), IUtils.ONE_255 * ( blue & 0xff ), IUtils.ONE_255 * ( alpha
-            & 0xff ));
+      /* @formatter:off */
+      return this.set(
+         IUtils.ONE_255 * ( red & 0xff ),
+         IUtils.ONE_255 * ( green & 0xff ),
+         IUtils.ONE_255 * ( blue & 0xff ),
+         IUtils.ONE_255 * ( alpha & 0xff ));
+      /* @formatter:on */
    }
 
    /**
@@ -757,10 +761,12 @@ public class Rgb implements Comparable < Rgb > {
     */
    public static boolean isInGamut ( final Rgb c, final float tol ) {
 
+      /* @formatter:off */
       final float oneptol = 1.0f + tol;
-      return c.r >= -tol && c.r <= oneptol && c.g >= -tol && c.g <= oneptol
+      return c.r >= -tol && c.r <= oneptol
+         && c.g >= -tol && c.g <= oneptol
          && c.b >= -tol && c.b <= oneptol;
-
+      /* @formatter:on */
    }
 
    /**
@@ -1262,6 +1268,10 @@ public class Rgb implements Comparable < Rgb > {
     * @param cursor the cursor
     *
     * @return the bytes
+    *
+    * @see Rgb#toHexWeb(Rgb)
+    * @see String#toCharArray()
+    * @see Utils#bytesml(float, byte[], int)
     */
    public static byte[] toAseBytes ( final Rgb c, final byte[] target,
       final int cursor ) {
@@ -1319,6 +1329,8 @@ public class Rgb implements Comparable < Rgb > {
     * @return the byte array
     *
     * @see Rgb#toAseBytes(Rgb, byte[], int)
+    * @see Utils#bytesml(int, byte[], int)
+    * @see Utils#bytesml(short, byte[], int)
     */
    public static byte[] toAseBytes ( final Rgb[] arr ) {
 
@@ -1837,13 +1849,14 @@ public class Rgb implements Comparable < Rgb > {
 
       if ( step <= 0.0f ) { return Rgb.toHexIntWrap(orig); }
       if ( step >= 1.0f ) { return Rgb.toHexIntWrap(dest); }
-
       final float u = 1.0f - step;
-      return ( int ) ( ( u * orig.alpha + step * dest.alpha ) * 0xff + 0.5f )
-         << 0x18 | ( int ) ( ( u * orig.r + step * dest.r ) * 0xff + 0.5f )
-            << 0x10 | ( int ) ( ( u * orig.g + step * dest.g ) * 0xff + 0.5f )
-               << 0x08 | ( int ) ( ( u * orig.b + step * dest.b ) * 0xff
-                  + 0.5f );
+
+      /* @formatter:off */
+      return ( int ) ( ( u * orig.alpha + step * dest.alpha ) * 0xff + 0.5f ) << 0x18
+         | ( int ) ( ( u * orig.r + step * dest.r ) * 0xff + 0.5f ) << 0x10
+         | ( int ) ( ( u * orig.g + step * dest.g ) * 0xff + 0.5f ) << 0x08
+         | ( int ) ( ( u * orig.b + step * dest.b ) * 0xff + 0.5f );
+      /* @formatter:on */
    }
 
    /**
@@ -1926,7 +1939,7 @@ public class Rgb implements Comparable < Rgb > {
        *
        * @param orig   the origin color
        * @param dest   the destination color
-       * @param step   a factor in [0, 1]
+       * @param step   a factor in [0.0, 1.0]
        * @param target the output color
        *
        * @return the eased color

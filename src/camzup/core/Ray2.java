@@ -229,37 +229,149 @@ public class Ray2 {
    }
 
    /**
-    * Finds an intersection between a ray and a line segment. Returns -1.0 if
-    * there is no intersection. Otherwise, returns a value in [0.0, 1.0] .
+    * Finds points of intersection, if any, between a ray and a bounds.
     *
     * @param ray    the ray
-    * @param origin the origin
-    * @param dest   the destination
+    * @param bounds the bounds
+    *
+    * @return the points
+    *
+    * @see Ray2#intersectLineSeg(float, float, float, float, float, float,
+    *      float, float)
+    */
+   public static Vec2[] intersections ( final Ray2 ray, final Bounds2 bounds ) {
+
+      final Vec2 rOrg = ray.origin;
+      final float rx = rOrg.x;
+      final float ry = rOrg.y;
+
+      final Vec2 rDir = ray.dir;
+      final float dx = rDir.x;
+      final float dy = rDir.y;
+
+      final Vec2 min = bounds.min;
+      final float x0 = min.x;
+      final float y0 = min.y;
+
+      final Vec2 max = bounds.max;
+      final float x1 = max.x;
+      final float y1 = max.y;
+
+      final float i0 = Ray2.intersectLineSeg(rx, ry, dx, dy, x0, y0, x1, y0);
+      final float i1 = Ray2.intersectLineSeg(rx, ry, dx, dy, x1, y0, x1, y1);
+      final float i2 = Ray2.intersectLineSeg(rx, ry, dx, dy, x1, y1, x0, y1);
+      final float i3 = Ray2.intersectLineSeg(rx, ry, dx, dy, x0, y1, x0, y0);
+
+      final boolean i0Val = i0 != -1.0f;
+      final boolean i1Val = i1 != -1.0f;
+      final boolean i2Val = i2 != -1.0f;
+      final boolean i3Val = i3 != -1.0f;
+
+      int count = 0;
+      if ( i0Val ) ++count;
+      if ( i1Val ) ++count;
+      if ( i2Val ) ++count;
+      if ( i3Val ) ++count;
+
+      final Vec2[] result = new Vec2[count];
+      int j = -1;
+
+      if ( i0Val ) {
+         j++;
+         result[j] = Vec2.mix(min, new Vec2(x1, y0), i0, new Vec2());
+      }
+
+      if ( i1Val ) {
+         j++;
+         result[j] = Vec2.mix(new Vec2(x1, y0), max, i1, new Vec2());
+      }
+
+      if ( i2Val ) {
+         j++;
+         result[j] = Vec2.mix(max, new Vec2(x0, y1), i2, new Vec2());
+      }
+
+      if ( i3Val ) {
+         j++;
+         result[j] = Vec2.mix(new Vec2(x0, y1), min, i3, new Vec2());
+      }
+
+      return result;
+   }
+
+   /**
+    * Finds points of intersection, if any, between a ray and a line segment.
+    *
+    * @param ray  the ray
+    * @param orig the origin
+    * @param dest the destination
+    *
+    * @return the points
+    *
+    * @see Ray2#intersectLineSeg(Ray2, Vec2, Vec2)
+    */
+   public static Vec2[] intersections ( final Ray2 ray, final Vec2 orig,
+      final Vec2 dest ) {
+
+      final float i = Ray2.intersectLineSeg(ray, orig, dest);
+      final boolean iVal = i != -1.0f;
+      final Vec2[] result = new Vec2[iVal ? 1 : 0];
+      if ( iVal ) { result[0] = Vec2.mix(orig, dest, i, new Vec2()); }
+      return result;
+   }
+
+   /**
+    * Finds an intersection between a ray and a line segment. Returns -1.0 if
+    * there is no intersection. Otherwise, returns a factor in [0.0, 1.0] .
+    *
+    * @param ray  the ray
+    * @param orig the origin
+    * @param dest the destination
     *
     * @return the distance
     *
-    * @see Utils#approx(float, float)
-    * @see Vec2#cross(Vec2, Vec2)
-    * @see Vec2#dot(Vec2, Vec2)
-    * @see Vec2#perpendicularCCW(Vec2, Vec2)
-    * @see Vec2#sub(Vec2, Vec2, Vec2)
+    * @see Ray2#intersectLineSeg(float, float, float, float, float, float,
+    *      float, float)
     */
-   @Experimental
-   public static float intersectLineSeg ( final Ray2 ray, final Vec2 origin,
+   public static float intersectLineSeg ( final Ray2 ray, final Vec2 orig,
       final Vec2 dest ) {
 
-      // TEST
+      return Ray2.intersectLineSeg(ray.origin.x, ray.origin.y, ray.dir.x,
+         ray.dir.y, orig.x, orig.y, dest.x, dest.y);
+   }
 
-      final Vec2 v1 = Vec2.sub(dest, origin, new Vec2());
-      final Vec2 v2 = Vec2.perpendicularCCW(ray.dir, new Vec2());
-      final float dot = Vec2.dot(v1, v2);
+   /**
+    * Finds an intersection between a ray and a line segment. Returns -1.0 if
+    * there is no intersection. Otherwise, returns a factor in [0.0, 1.0] .
+    *
+    * @param xRayOrig the ray origin x
+    * @param yRayOrig the ray origin y
+    * @param xRayDir  the ray direction x
+    * @param yRayDir  the ray direction y
+    * @param xSegOrig the segment origin x
+    * @param ySegOrig the segment origin y
+    * @param xSegDest the segment destination x
+    * @param ySegDest the segment destination y
+    *
+    * @return the factor
+    */
+   static float intersectLineSeg ( final float xRayOrig, final float yRayOrig,
+      final float xRayDir, final float yRayDir, final float xSegOrig,
+      final float ySegOrig, final float xSegDest, final float ySegDest ) {
+
+      final float v1x = xSegDest - xSegOrig;
+      final float v1y = ySegDest - ySegOrig;
+      final float v2x = -yRayDir;
+      final float v2y = xRayDir;
+      final float dot = v1x * v2x + v1y * v2y;
       if ( Utils.approx(dot, 0.0f) ) { return -1.0f; }
 
-      final Vec2 v0 = Vec2.sub(ray.origin, origin, new Vec2());
-      final float t1 = Vec2.cross(v1, v0) / dot;
-      if ( t1 >= 0.0f ) {
-         final float t2 = Vec2.dot(v0, v2) / dot;
-         if ( t2 >= 0.0f && t2 <= 1.0f ) { return t1; }
+      final float v0x = xRayOrig - xSegOrig;
+      final float v0y = yRayOrig - ySegOrig;
+      final float t1 = ( v1x * v0y - v1y * v0x ) / dot;
+      if ( t1 > 0.0f ) {
+         final float t2 = ( v0x * v2x + v0y * v2y ) / dot;
+         if ( t2 >= 0.0f && t2 <= 1.0f ) { return t2; }
       }
 
       return -1.0f;

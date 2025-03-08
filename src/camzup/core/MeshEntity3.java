@@ -393,7 +393,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 3.x API.
+    * Returns a String of Python code targeted toward the Blender 4.x API.
     * This code is brittle and is used for internal testing purposes.
     *
     * @return the string
@@ -405,7 +405,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * Returns a String of Python code targeted toward the Blender 4.x API.
     * This code is brittle and is used for internal testing purposes, i.e., to
     * compare how mesh geometry looks in Blender (the control) versus in the
     * library (the test).
@@ -482,7 +482,7 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
    }
 
    /**
-    * Returns a String of Python code targeted toward the Blender 2.8x API.
+    * Returns a String of Python code targeted toward the Blender 4.x API.
     * This code is brittle and is used for internal testing purposes.
     *
     * @param ms the materials

@@ -2454,8 +2454,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * An internal helper function to format a mesh as a Python tuple, then
-    * append it to a {@link StringBuilder}.
+    * An internal helper function to format a mesh in Python, then append it
+    * to a {@link StringBuilder}.
     *
     * @param pyCd           the string builder
     * @param includeEdges   whether to include edge index data
@@ -2597,6 +2597,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
       }
 
       pyCd.append(']').append('}');
+
       return pyCd;
    }
 

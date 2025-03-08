@@ -593,6 +593,52 @@ public class Vec4 implements Comparable < Vec4 > {
    }
 
    /**
+    * Appends to an array of bytes, ordered from least to most significant
+    * digit (little endian). Writes a total of 16 bytes.
+    *
+    * @param v   the vector
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the byte array
+    *
+    * @see Utils#byteslm(float, byte[], int)
+    */
+   public static byte[] byteslm ( final Vec4 v, final byte[] arr,
+      final int i ) {
+
+      Utils.byteslm(v.x, arr, i);
+      Utils.byteslm(v.y, arr, i + 4);
+      Utils.byteslm(v.z, arr, i + 8);
+      Utils.byteslm(v.w, arr, i + 12);
+
+      return arr;
+   }
+
+   /**
+    * Appends to an array of bytes, ordered from most to least significant
+    * digit (big endian). Writes a total of 16 bytes.
+    *
+    * @param v   the vector
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the byte array
+    *
+    * @see Utils#bytesml(float, byte[], int)
+    */
+   public static byte[] bytesml ( final Vec4 v, final byte[] arr,
+      final int i ) {
+
+      Utils.bytesml(v.x, arr, i);
+      Utils.bytesml(v.y, arr, i + 4);
+      Utils.bytesml(v.z, arr, i + 8);
+      Utils.bytesml(v.w, arr, i + 12);
+
+      return arr;
+   }
+
+   /**
     * Raises each component of the vector to the nearest greater integer.
     *
     * @param v      the input vector

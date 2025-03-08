@@ -468,8 +468,8 @@ public class MaterialSolid extends Material {
    }
 
    /**
-    * An internal helper function to format a vector as a Python tuple, then
-    * append it to a {@link StringBuilder}.
+    * An internal helper function to format a material in Python, then append
+    * it to a {@link StringBuilder}.
     *
     * @param pyCd      the string builder
     * @param gamma     the gamma adjustment
@@ -492,6 +492,7 @@ public class MaterialSolid extends Material {
       pyCd.append(", \"roughness\": ");
       Utils.toFixed(pyCd, roughness, 6);
       pyCd.append('}');
+
       return pyCd;
    }
 

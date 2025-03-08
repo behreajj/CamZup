@@ -334,8 +334,8 @@ public class Mat3 {
    }
 
    /**
-    * Sets the two axis columns of this matrix. The last row and column are
-    * set to (0.0, 0.0, 1.0) .
+    * Sets the upper left 2 by 2 corner of this matrix. The remaining values
+    * are set to the identity.
     *
     * @param m00 row 0, column 0
     * @param m01 row 0, column 1
@@ -774,8 +774,12 @@ public class Mat3 {
    public static Mat3 fromAxes ( final Vec2 right, final Vec2 forward,
       final Mat3 target ) {
 
-      return target.set(right.x, forward.x, 0.0f, right.y, forward.y, 0.0f,
-         0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      return target.set(
+         right.x, forward.x, 0.0f,
+         right.y, forward.y, 0.0f,
+            0.0f,      0.0f, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -792,8 +796,12 @@ public class Mat3 {
    public static Mat3 fromAxes ( final Vec2 right, final Vec2 forward,
       final Vec2 translation, final Mat3 target ) {
 
-      return target.set(right.x, forward.x, translation.x, right.y, forward.y,
-         translation.y, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      return target.set(
+         right.x, forward.x, translation.x,
+         right.y, forward.y, translation.y,
+            0.0f,      0.0f,          1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -809,8 +817,12 @@ public class Mat3 {
    public static Mat3 fromAxes ( final Vec3 right, final Vec3 forward,
       final Mat3 target ) {
 
-      return target.set(right.x, forward.x, 0.0f, right.y, forward.y, 0.0f,
+      /* @formatter:off */
+      return target.set(
+         right.x, forward.x, 0.0f,
+         right.y, forward.y, 0.0f,
          right.z, forward.z, 1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -826,8 +838,12 @@ public class Mat3 {
    public static Mat3 fromAxes ( final Vec3 right, final Vec3 forward,
       final Vec3 translation, final Mat3 target ) {
 
-      return target.set(right.x, forward.x, translation.x, right.y, forward.y,
-         translation.y, right.z, forward.z, translation.z);
+      /* @formatter:off */
+      return target.set(
+         right.x, forward.x, translation.x,
+         right.y, forward.y, translation.y,
+         right.z, forward.z, translation.z);
+      /* @formatter:on */
    }
 
    /**
@@ -1117,32 +1133,32 @@ public class Mat3 {
     * Multiplies each component in a matrix by a scalar. Not to be confused
     * with scaling affine transform matrix.
     *
-    * @param a      the left operand
-    * @param b      the right operand
+    * @param s      the left operand
+    * @param m      the right operand
     * @param target the output matrix
     *
     * @return the product
     */
-   public static Mat3 mul ( final float a, final Mat3 b, final Mat3 target ) {
+   public static Mat3 mul ( final float s, final Mat3 m, final Mat3 target ) {
 
-      return target.set(a * b.m00, a * b.m01, a * b.m02, a * b.m10, a * b.m11, a
-         * b.m12, a * b.m20, a * b.m21, a * b.m22);
+      return target.set(s * m.m00, s * m.m01, s * m.m02, s * m.m10, s * m.m11, s
+         * m.m12, s * m.m20, s * m.m21, s * m.m22);
    }
 
    /**
     * Multiplies each component in a matrix by a scalar. Not to be confused
     * with scaling affine transform matrix.
     *
-    * @param a      the left operand
-    * @param b      the right operand
+    * @param m      the left operand
+    * @param s      the right operand
     * @param target the output matrix
     *
     * @return the product
     */
-   public static Mat3 mul ( final Mat3 a, final float b, final Mat3 target ) {
+   public static Mat3 mul ( final Mat3 m, final float s, final Mat3 target ) {
 
-      return target.set(a.m00 * b, a.m01 * b, a.m02 * b, a.m10 * b, a.m11 * b,
-         a.m12 * b, a.m20 * b, a.m21 * b, a.m22 * b);
+      return target.set(m.m00 * s, m.m01 * s, m.m02 * s, m.m10 * s, m.m11 * s,
+         m.m12 * s, m.m20 * s, m.m21 * s, m.m22 * s);
    }
 
    /**
@@ -1217,16 +1233,58 @@ public class Mat3 {
    /**
     * Multiplies a matrix and a vector.
     *
-    * @param a      the matrix
-    * @param b      the vector
+    * @param m      the matrix
+    * @param v      the vector
+    * @param target the output matrix
+    *
+    * @return the product
+    */
+   public static Mat3 mul ( final Mat3 m, final Vec3 v, final Mat3 target ) {
+
+      /* @formatter:off */
+      return target.set(
+         m.m00 * v.x, m.m01 * v.y, m.m02 * v.z,
+         m.m10 * v.x, m.m11 * v.y, m.m12 * v.z,
+         m.m20 * v.x, m.m21 * v.y, m.m22 * v.z);
+      /* @formatter:on */
+   }
+
+   /**
+    * Multiplies a matrix and a vector.
+    *
+    * @param m      the matrix
+    * @param v      the vector
     * @param target the output vector
     *
     * @return the product
     */
-   public static Vec3 mul ( final Mat3 a, final Vec3 b, final Vec3 target ) {
+   public static Vec3 mul ( final Mat3 m, final Vec3 v, final Vec3 target ) {
 
-      return target.set(a.m00 * b.x + a.m01 * b.y + a.m02 * b.z, a.m10 * b.x
-         + a.m11 * b.y + a.m12 * b.z, a.m20 * b.x + a.m21 * b.y + a.m22 * b.z);
+      /* @formatter:off */
+      return target.set(
+         m.m00 * v.x + m.m01 * v.y + m.m02 * v.z,
+         m.m10 * v.x + m.m11 * v.y + m.m12 * v.z,
+         m.m20 * v.x + m.m21 * v.y + m.m22 * v.z);
+      /* @formatter:on */
+   }
+
+   /**
+    * Multiplies a vector and the transpose of a matrix.
+    *
+    * @param v      the vector
+    * @param m      the matrix
+    * @param target the output matrix
+    *
+    * @return the product
+    */
+   public static Mat3 mul ( final Vec3 v, final Mat3 m, final Mat3 target ) {
+
+      /* @formatter:off */
+      return target.set(
+         v.x * m.m00, v.y * m.m10, v.z * m.m20,
+         v.x * m.m01, v.y * m.m11, v.z * m.m21,
+         v.x * m.m02, v.y * m.m12, v.z * m.m22);
+      /* @formatter:on */
    }
 
    /**
@@ -1236,37 +1294,41 @@ public class Mat3 {
     * <br>
     * v<sup>T</sup> M = ( M<sup>T</sup> v )<sup>T</sup>
     *
-    * @param b      the matrix
-    * @param a      the vector
+    * @param m      the matrix
+    * @param v      the vector
     * @param target the output vector
     *
     * @return the product
     */
-   public static Vec3 mul ( final Vec3 a, final Mat3 b, final Vec3 target ) {
+   public static Vec3 mul ( final Vec3 v, final Mat3 m, final Vec3 target ) {
 
-      return target.set(b.m00 * a.x + b.m10 * a.y + b.m20 * a.z, b.m01 * a.x
-         + b.m11 * a.y + b.m21 * a.z, b.m02 * a.x + b.m12 * a.y + b.m22 * a.z);
+      /* @formatter:off */
+      return target.set(
+         v.x * m.m00 + v.y * m.m10 + v.z * m.m20,
+         v.x * m.m01 + v.y * m.m11 + v.z * m.m21,
+         v.x * m.m02 + v.y * m.m12 + v.z * m.m22);
+      /* @formatter:on */
    }
 
    /**
     * Multiplies a matrix and a point. The z component of the point is assumed
     * to be 1.0, so the point is impacted by the matrix's translation.
     *
-    * @param a      the matrix
-    * @param b      the point
+    * @param m      the matrix
+    * @param p      the point
     * @param target the output point
     *
     * @return the product
     */
    @Experimental
-   public static Vec2 mulPoint ( final Mat3 a, final Vec2 b,
+   public static Vec2 mulPoint ( final Mat3 m, final Vec2 p,
       final Vec2 target ) {
 
-      final float w = a.m20 * b.x + a.m21 * b.y + a.m22;
+      final float w = m.m20 * p.x + m.m21 * p.y + m.m22;
       if ( w != 0.0f ) {
          final float wInv = 1.0f / w;
-         return target.set( ( a.m00 * b.x + a.m01 * b.y + a.m02 ) * wInv,
-            ( a.m10 * b.x + a.m11 * b.y + a.m12 ) * wInv);
+         return target.set( ( m.m00 * p.x + m.m01 * p.y + m.m02 ) * wInv,
+            ( m.m10 * p.x + m.m11 * p.y + m.m12 ) * wInv);
       }
       return target.reset();
    }
@@ -1276,21 +1338,21 @@ public class Mat3 {
     * assumed to be 0.0 , so the vector is not impacted by the matrix's
     * translation.
     *
-    * @param a      the matrix
-    * @param b      the vector
+    * @param m      the matrix
+    * @param v      the vector
     * @param target the output vector
     *
     * @return the product
     */
    @Experimental
-   public static Vec2 mulVector ( final Mat3 a, final Vec2 b,
+   public static Vec2 mulVector ( final Mat3 m, final Vec2 v,
       final Vec2 target ) {
 
-      final float w = a.m20 * b.x + a.m21 * b.y + a.m22;
+      final float w = m.m20 * v.x + m.m21 * v.y + m.m22;
       if ( w != 0.0f ) {
          final float wInv = 1.0f / w;
-         return target.set( ( a.m00 * b.x + a.m01 * b.y ) * wInv, ( a.m10 * b.x
-            + a.m11 * b.y ) * wInv);
+         return target.set( ( m.m00 * v.x + m.m01 * v.y ) * wInv, ( m.m10 * v.x
+            + m.m11 * v.y ) * wInv);
       }
       return target.reset();
    }

@@ -323,7 +323,7 @@ public class Lab implements Comparable < Lab > {
     * The default alpha scalar when finding the distance between two colors,
     * {@value Lab#DEFAULT_ALPHA_SCALAR}.
     */
-   public static final float DEFAULT_ALPHA_SCALAR = 100.0f;
+   public static final float DEFAULT_ALPHA_SCALAR = 0.0f;
 
    /**
     * The default alpha scalar when finding the distance between two colors,
@@ -380,60 +380,112 @@ public class Lab implements Comparable < Lab > {
    public static final float SR_B_MIN = -110.8078f;
 
    /**
-    * Assigns the chroma of the destination color to the origin.
+    * Adds two colors together.
     *
-    * @param u      the origin color
-    * @param o      the destination color
+    * @param o      the left operand
+    * @param d      the right operand
     * @param target the target color
     *
     * @return the color
-    *
-    * @see Math#sqrt(double)
     */
-   public static Lab adoptChroma ( final Lab u, final Lab o,
-      final Lab target ) {
+   public static Lab add ( final Lab o, final Lab d, final Lab target ) {
 
-      final double ua = u.a;
-      final double ub = u.b;
-      final double ucSq = ua * ua + ub * ub;
-      if ( ucSq > IUtils.EPSILON_D ) {
-         final double oa = o.a;
-         final double ob = o.b;
-         final double ocSq = oa * oa + ob * ob;
-
-         final double s = Math.sqrt(ocSq) / Math.sqrt(ucSq);
-         return target.set(u.l, ( float ) ( s * ua ), ( float ) ( s * ub ),
-            u.alpha);
-      }
-      return Lab.gray(u, target);
+      /* @formatter:off */
+      return target.set(
+         Utils.clamp(o.l + d.l, 0.0f, 100.0f),
+         o.a + d.a,
+         o.b + d.b,
+         Utils.clamp01(o.alpha + d.alpha));
+      /* @formatter:on */
    }
 
    /**
-    * Assigns the hue of the destination color to the origin.
+    * Adds two colors together through their polar representation.
     *
-    * @param u      the origin color
-    * @param o      the destination color
+    * @param o      the left operand
+    * @param d      the right operand
+    * @param target the target color
+    *
+    * @return the color
+    */
+   public static Lab addPolar ( final Lab o, final Lab d, final Lab target ) {
+
+      final double oa = o.a;
+      final double ob = o.b;
+
+      final double da = d.a;
+      final double db = d.b;
+
+      final double cc = Math.max(Math.sqrt(oa * oa + ob * ob) + Math.sqrt(da
+         * da + db * db), 0.0d);
+      final double ch = Math.atan2(ob, oa) + Math.atan2(db, da);
+
+      /* @formatter:off */
+      return target.set(
+         Utils.clamp(o.l + d.l, 0.0f, 100.0f),
+         ( float ) ( cc * Math.cos(ch) ),
+         ( float ) ( cc * Math.sin(ch) ),
+         Utils.clamp01(o.alpha + d.alpha));
+      /* @formatter:on */
+   }
+
+   /**
+    * Assigns the chroma of the destination color to the origin.
+    *
+    * @param o      the origin color
+    * @param d      the destination color
     * @param target the target color
     *
     * @return the color
     *
     * @see Math#sqrt(double)
+    * @see Lab#gray(Lab, Lab)
     */
-   public static Lab adoptHue ( final Lab u, final Lab o, final Lab target ) {
+   public static Lab adoptChroma ( final Lab o, final Lab d,
+      final Lab target ) {
 
       final double oa = o.a;
       final double ob = o.b;
       final double ocSq = oa * oa + ob * ob;
       if ( ocSq > IUtils.EPSILON_D ) {
-         final double ua = u.a;
-         final double ub = u.b;
-         final double ucSq = ua * ua + ub * ub;
+         final double da = d.a;
+         final double db = d.b;
+         final double dcSq = da * da + db * db;
 
-         final double s = Math.sqrt(ucSq) / Math.sqrt(ocSq);
-         return target.set(u.l, ( float ) ( s * oa ), ( float ) ( s * ob ),
-            u.alpha);
+         final double s = Math.sqrt(dcSq) / Math.sqrt(ocSq);
+         return target.set(o.l, ( float ) ( s * oa ), ( float ) ( s * ob ),
+            o.alpha);
       }
-      return Lab.gray(u, target);
+      return Lab.gray(o, target);
+   }
+
+   /**
+    * Assigns the hue of the destination color to the origin.
+    *
+    * @param o      the origin color
+    * @param d      the destination color
+    * @param target the target color
+    *
+    * @return the color
+    *
+    * @see Math#sqrt(double)
+    * @see Lab#gray(Lab, Lab)
+    */
+   public static Lab adoptHue ( final Lab o, final Lab d, final Lab target ) {
+
+      final double da = d.a;
+      final double db = d.b;
+      final double dcSq = da * da + db * db;
+      if ( dcSq > IUtils.EPSILON_D ) {
+         final double oa = o.a;
+         final double ob = o.b;
+         final double ocSq = oa * oa + ob * ob;
+
+         final double s = Math.sqrt(ocSq) / Math.sqrt(dcSq);
+         return target.set(o.l, ( float ) ( s * da ), ( float ) ( s * db ),
+            o.alpha);
+      }
+      return Lab.gray(o, target);
    }
 
    /**
@@ -534,43 +586,60 @@ public class Lab implements Comparable < Lab > {
     * @param d the right operand
     *
     * @return the distance
+    */
+   public static float dist ( final Lab o, final Lab d ) {
+
+      return Lab.dist(o, d, Lab.DEFAULT_ALPHA_SCALAR);
+   }
+
+   /**
+    * Finds the distance between two colors. Uses the Euclidean distance of A
+    * and B and the Manhattan distance for L and alpha. Alpha is scaled by
+    * 100.0. Since the alpha range is less than that of the other channels, a
+    * scalar is provided to increase its weight.
+    *
+    * @param o           the left operand
+    * @param d           the right operand
+    * @param alphaScalar the alpha scalar
+    *
+    * @return the distance
     *
     * @see Math#abs(double)
     * @see Math#sqrt(double)
     */
-   public static float dist ( final Lab o, final Lab d ) {
+   public static float dist ( final Lab o, final Lab d,
+      final float alphaScalar ) {
 
       /*
        * https://github.com/svgeesus/svgeesus.github.io/blob/master/Color/OKLab-
        * notes.md
        */
 
-      final double da = d.a - o.a;
-      final double db = d.b - o.b;
-      return ( float ) ( Math.abs(Lab.DEFAULT_ALPHA_SCALAR_D * ( d.alpha
-         - o.alpha )) + Math.abs(d.l - o.l) + Math.sqrt(da * da + db * db) );
+      final double ca = d.a - o.a;
+      final double cb = d.b - o.b;
+      return ( float ) ( Math.abs(alphaScalar * ( d.alpha - o.alpha )) + Math
+         .abs(d.l - o.l) + Math.sqrt(ca * ca + cb * cb) );
    }
 
    /**
-    * Finds the Euclidean distance between two colors. Includes the colors'
-    * alpha channel in the calculation.
+    * Finds the Euclidean distance between two colors.
     *
     * @param o the left operand
     * @param d the right operand
     *
     * @return the distance
     *
-    * @see Lab#distEuclideanAlpha(Lab, Lab, float)
+    * @see Lab#distEuclidean(Lab, Lab, float)
     */
-   public static float distEuclideanAlpha ( final Lab o, final Lab d ) {
+   public static float distEuclidean ( final Lab o, final Lab d ) {
 
-      return Lab.distEuclideanAlpha(o, d, Lab.DEFAULT_ALPHA_SCALAR);
+      return Lab.distEuclidean(o, d, Lab.DEFAULT_ALPHA_SCALAR);
    }
 
    /**
-    * Finds the Euclidean distance between two colors. Includes the colors'
-    * alpha channel in the calculation. Since the alpha range is less than
-    * that of the other channels, a scalar is provided to increase its weight.
+    * Finds the Euclidean distance between two colors. Since the alpha range
+    * is less than that of the other channels, a scalar is provided to
+    * increase its weight.
     *
     * @param o           the left operand
     * @param d           the right operand
@@ -580,33 +649,14 @@ public class Lab implements Comparable < Lab > {
     *
     * @see Math#sqrt(double)
     */
-   public static float distEuclideanAlpha ( final Lab o, final Lab d,
+   public static float distEuclidean ( final Lab o, final Lab d,
       final float alphaScalar ) {
 
-      final double dt = alphaScalar * ( d.alpha - o.alpha );
-      final double dl = d.l - o.l;
-      final double da = d.a - o.a;
-      final double db = d.b - o.b;
-      return ( float ) Math.sqrt(dt * dt + dl * dl + da * da + db * db);
-   }
-
-   /**
-    * Finds the Euclidean distance between two colors. Does not include the
-    * colors' alpha channel in the calculation.
-    *
-    * @param o the left operand
-    * @param d the right operand
-    *
-    * @return the distance
-    *
-    * @see Math#sqrt(double)
-    */
-   public static float distEuclideanNoAlpha ( final Lab o, final Lab d ) {
-
-      final double dl = d.l - o.l;
-      final double da = d.a - o.a;
-      final double db = d.b - o.b;
-      return ( float ) Math.sqrt(dl * dl + da * da + db * db);
+      final double ct = alphaScalar * ( d.alpha - o.alpha );
+      final double cl = d.l - o.l;
+      final double ca = d.a - o.a;
+      final double cb = d.b - o.b;
+      return ( float ) Math.sqrt(ct * ct + cl * cl + ca * ca + cb * cb);
    }
 
    /**
@@ -776,7 +826,7 @@ public class Lab implements Comparable < Lab > {
    }
 
    /**
-    * Creates a color in LCH to a color in LAB.
+    * Creates a color in LAB from a color in LCH.
     *
     * @param l      the light component
     * @param c      the chroma
@@ -793,14 +843,14 @@ public class Lab implements Comparable < Lab > {
    public static Lab fromLch ( final float l, final float c, final float h,
       final float alpha, final Lab target ) {
 
-      final double cd = Math.max(0.0d, c);
+      final double cd = Math.max(c, 0.0d);
       final double hd = h * IUtils.TAU_D;
       return target.set(l, ( float ) ( cd * Math.cos(hd) ), ( float ) ( cd
          * Math.sin(hd) ), alpha);
    }
 
    /**
-    * Creates a color in LCH to a color in LAB.
+    * Creates a color in LAB from a color in LCH.
     *
     * @param source the source color
     * @param target the target color
@@ -841,16 +891,23 @@ public class Lab implements Comparable < Lab > {
       final double comparisand = 216.0d / 24389.0d;
       final double scalar = 24389.0d / 2700.0d;
 
-      xd = xd <= comparisand ? xd * scalar : Math.pow(xd, IUtils.ONE_THIRD_D)
-         * 1.16d - 0.16d;
-      yd = yd <= comparisand ? yd * scalar : Math.pow(yd, IUtils.ONE_THIRD_D)
-         * 1.16d - 0.16d;
-      zd = zd <= comparisand ? zd * scalar : Math.pow(zd, IUtils.ONE_THIRD_D)
-         * 1.16d - 0.16d;
+      /* @formatter:off */
+      xd = xd <= comparisand ?
+         xd * scalar :
+         Math.pow(xd, IUtils.ONE_THIRD_D) * 1.16d - 0.16d;
+      yd = yd <= comparisand ?
+         yd * scalar :
+         Math.pow(yd, IUtils.ONE_THIRD_D) * 1.16d - 0.16d;
+      zd = zd <= comparisand ?
+         zd * scalar :
+         Math.pow(zd, IUtils.ONE_THIRD_D) * 1.16d - 0.16d;
 
-      return target.set(( float ) ( 37.0950d * xd + 62.9054d * yd - 0.0008d
-         * zd ), ( float ) ( 663.4684d * xd - 750.5078d * yd + 87.0328d * zd ),
-         ( float ) ( 63.9569d * xd + 108.4576d * yd - 172.4152d * zd ), w);
+      return target.set(
+         ( float ) ( 37.095d * xd + 62.9054d * yd - 0.0008d * zd ),
+         ( float ) ( 663.4684d * xd - 750.5078d * yd + 87.0328d * zd ),
+         ( float ) ( 63.9569d * xd + 108.4576d * yd - 172.4152d * zd ),
+         w);
+      /* @formatter:on */
    }
 
    /**
@@ -1128,20 +1185,21 @@ public class Lab implements Comparable < Lab > {
     * @param d the second color
     *
     * @return hue distance
+    *
+    * @see Math#acos(double)
+    * @see Math#sqrt(double)
     */
-   public static float hueDistance ( final Lab o, final Lab d ) {
+   public static float hueBetween ( final Lab o, final Lab d ) {
 
       final double oa = o.a;
       final double ob = o.b;
       final double ocSq = oa * oa + ob * ob;
-      final boolean oIsGray = ocSq < IUtils.EPSILON_D;
 
       final double da = d.a;
       final double db = d.b;
       final double dcSq = da * da + db * db;
-      final boolean dIsGray = dcSq < IUtils.EPSILON_D;
 
-      if ( oIsGray || dIsGray ) { return 0.0f; }
+      if ( ocSq < IUtils.EPSILON_D || dcSq < IUtils.EPSILON_D ) { return 0.0f; }
 
       final double num = oa * da + ob * db;
       final double denom = Math.sqrt(ocSq) * Math.sqrt(dcSq);
@@ -1358,6 +1416,57 @@ public class Lab implements Comparable < Lab > {
    public static Lab srYellow ( final Lab target ) {
 
       return target.set(97.34526f, -37.154266f, 95.18662f, 1.0f);
+   }
+
+   /**
+    * Subtracts the right color from the left.
+    *
+    * @param o      the left operand
+    * @param d      the right operand
+    * @param target the target color
+    *
+    * @return the color
+    */
+   public static Lab sub ( final Lab o, final Lab d, final Lab target ) {
+
+      /* @formatter:off */
+      return target.set(
+         Utils.clamp(o.l - d.l, 0.0f, 100.0f),
+         o.a - d.a,
+         o.b - d.b,
+         Utils.clamp01(o.alpha - d.alpha));
+      /* @formatter:on */
+   }
+
+   /**
+    * Subtracts the right color from the left through their polar
+    * representation.
+    *
+    * @param o      the left operand
+    * @param d      the right operand
+    * @param target the target color
+    *
+    * @return the color
+    */
+   public static Lab subPolar ( final Lab o, final Lab d, final Lab target ) {
+
+      final double oa = o.a;
+      final double ob = o.b;
+
+      final double da = d.a;
+      final double db = d.b;
+
+      final double cc = Math.max(Math.sqrt(oa * oa + ob * ob) - Math.sqrt(da
+         * da + db * db), 0.0d);
+      final double ch = Math.atan2(ob, oa) - Math.atan2(db, da);
+
+      /* @formatter:off */
+      return target.set(
+         Utils.clamp(o.l - d.l, 0.0f, 100.0f),
+         ( float ) ( cc * Math.cos(ch) ),
+         ( float ) ( cc * Math.sin(ch) ),
+         Utils.clamp01(o.alpha - d.alpha));
+      /* @formatter:on */
    }
 
    /**

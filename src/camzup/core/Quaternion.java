@@ -528,6 +528,52 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
+    * Appends to an array of bytes, ordered from least to most significant
+    * digit (little endian). Writes the real component last. Writes a total of
+    * 16 bytes.
+    *
+    * @param q   the quaternion
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the byte array
+    *
+    * @see Utils#byteslm(float, byte[], int)
+    * @see Vec3#byteslm(Vec3, byte[], int)
+    */
+   public static byte[] byteslm ( final Quaternion q, final byte[] arr,
+      final int i ) {
+
+      Vec3.byteslm(q.imag, arr, i);
+      Utils.byteslm(q.real, arr, i + 12);
+
+      return arr;
+   }
+
+   /**
+    * Appends to an array of bytes, ordered from most to least significant
+    * digit (big endian). Writes the real component last. Writes a total of 16
+    * bytes.
+    *
+    * @param q   the quaternion
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the byte array
+    *
+    * @see Utils#bytesml(float, byte[], int)
+    * @see Vec3#bytesml(Vec3, byte[], int)
+    */
+   public static byte[] bytesml ( final Quaternion q, final byte[] arr,
+      final int i ) {
+
+      Vec3.bytesml(q.imag, arr, i);
+      Utils.bytesml(q.real, arr, i + 12);
+
+      return arr;
+   }
+
+   /**
     * Returns the conjugate of the quaternion, where the imaginary component
     * is negated.<br>
     * <br>
@@ -1057,7 +1103,7 @@ public class Quaternion implements Comparable < Quaternion > {
     * <br>
     * Returns the identity if either vector is zero.
     *
-    * @param origin the origin vector
+    * @param orig   the origin vector
     * @param dest   the destination vector
     * @param target the output quaternion
     *
@@ -1067,12 +1113,12 @@ public class Quaternion implements Comparable < Quaternion > {
     * @see Utils#approx(float, float)
     * @see Utils#invSqrtUnchecked(float)
     */
-   public static Quaternion fromTo ( final Vec3 origin, final Vec3 dest,
+   public static Quaternion fromTo ( final Vec3 orig, final Vec3 dest,
       final Quaternion target ) {
 
-      float anx = origin.x;
-      float any = origin.y;
-      float anz = origin.z;
+      float anx = orig.x;
+      float any = orig.y;
+      float anz = orig.z;
       final float amSq = anx * anx + any * any + anz * anz;
       if ( amSq <= 0.0f ) { return Quaternion.identity(target); }
 
@@ -2247,7 +2293,7 @@ public class Quaternion implements Comparable < Quaternion > {
        * the result even when the step is out of bounds. Defers to an unclamped
        * interpolation, which is to be defined by sub-classes of this class.
        *
-       * @param origin the origin quaternion
+       * @param orig   the origin quaternion
        * @param dest   the destination quaternion
        * @param step   a factor in [0.0, 1.0]
        * @param target the output quaternion
@@ -2257,26 +2303,26 @@ public class Quaternion implements Comparable < Quaternion > {
        * @see Quaternion#normalize(Quaternion, Quaternion)
        */
       @Override
-      public Quaternion apply ( final Quaternion origin, final Quaternion dest,
+      public Quaternion apply ( final Quaternion orig, final Quaternion dest,
          final Float step, final Quaternion target ) {
 
          final float tf = step;
-         if ( tf <= 0.0f ) { return Quaternion.normalize(origin, target); }
+         if ( tf <= 0.0f ) { return Quaternion.normalize(orig, target); }
          if ( tf >= 1.0f ) { return Quaternion.normalize(dest, target); }
-         return this.applyUnclamped(origin, dest, tf, target);
+         return this.applyUnclamped(orig, dest, tf, target);
       }
 
       /**
        * The interpolation to be defined by subclasses.
        *
-       * @param origin the origin quaternion
+       * @param orig   the origin quaternion
        * @param dest   the destination quaternion
        * @param step   a factor in [0.0, 1.0]
        * @param target the output quaternion
        *
        * @return the eased quaternion
        */
-      public abstract Quaternion applyUnclamped ( final Quaternion origin,
+      public abstract Quaternion applyUnclamped ( final Quaternion orig,
          final Quaternion dest, final float step, final Quaternion target );
 
       /**

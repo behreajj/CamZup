@@ -539,7 +539,7 @@ public class Lch implements Comparable < Lch > {
    }
 
    /**
-    * Creates a color in LAB to a color in LCH.
+    * Creates a color in LCH from a color in LAB.
     *
     * @param l      the light component
     * @param a      the green-magenta component
@@ -576,7 +576,7 @@ public class Lch implements Comparable < Lch > {
    }
 
    /**
-    * Creates a color in LAB to a color in LCH.
+    * Creates a color in LCH from a color in LAB.
     *
     * @param source the source color
     * @param target the target color

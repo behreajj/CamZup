@@ -2385,6 +2385,7 @@ public abstract class Pixels {
                target[i] = 0x00000000;
             } else if ( ai < 0xff ) {
                final float af = 255.0f / ai;
+               // TODO: This can be simplified by using 255 * r8 / a8
                int ru = ( int ) ( ( srcHex >> 0x10 & 0xff ) * af + 0.5f );
                int gu = ( int ) ( ( srcHex >> 0x08 & 0xff ) * af + 0.5f );
                int bu = ( int ) ( ( srcHex & 0xff ) * af + 0.5f );
