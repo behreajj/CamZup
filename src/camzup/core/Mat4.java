@@ -494,8 +494,14 @@ public class Mat4 {
    public Mat4 set ( final float m00, final float m01, final float m10,
       final float m11 ) {
 
-      return this.set(m00, m01, 0.0f, 0.0f, m10, m11, 0.0f, 0.0f, 0.0f, 0.0f,
-         0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      this.m00 =  m00; this.m01 =  m01; this.m02 = 0.0f; this.m03 = 0.0f;
+      this.m10 =  m10; this.m11 =  m11; this.m12 = 0.0f; this.m13 = 0.0f;
+      this.m20 = 0.0f; this.m21 = 0.0f; this.m22 = 0.0f; this.m23 = 0.0f;
+      this.m30 = 0.0f; this.m31 = 0.0f; this.m32 = 0.0f; this.m33 = 1.0f;
+      /* @formatter:on */
+
+      return this;
    }
 
    /**
@@ -518,8 +524,14 @@ public class Mat4 {
       final float m10, final float m11, final float m12, final float m20,
       final float m21, final float m22 ) {
 
-      return this.set(m00, m01, m02, 0.0f, m10, m11, m12, 0.0f, m20, m21, m22,
-         0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      this.m00 =  m00; this.m01 =  m01; this.m02 =  m02; this.m03 = 0.0f;
+      this.m10 =  m10; this.m11 =  m11; this.m12 =  m12; this.m13 = 0.0f;
+      this.m20 =  m20; this.m21 =  m21; this.m22 =  m22; this.m23 = 0.0f;
+      this.m30 = 0.0f; this.m31 = 0.0f; this.m32 = 0.0f; this.m33 = 1.0f;
+      /* @formatter:on */
+
+      return this;
    }
 
    /**
@@ -546,8 +558,14 @@ public class Mat4 {
       final float m13, final float m20, final float m21, final float m22,
       final float m23 ) {
 
-      return this.set(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22,
-         m23, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      this.m00 =  m00; this.m01 =  m01; this.m02 =  m02; this.m03 =  m03;
+      this.m10 =  m10; this.m11 =  m11; this.m12 =  m12; this.m13 =  m13;
+      this.m20 =  m20; this.m21 =  m21; this.m22 =  m22; this.m23 =  m23;
+      this.m30 = 0.0f; this.m31 = 0.0f; this.m32 = 0.0f; this.m33 = 1.0f;
+      /* @formatter:on */
+
+      return this;
    }
 
    /**
@@ -579,10 +597,10 @@ public class Mat4 {
       final float m33 ) {
 
       /* @formatter:off */
-      this.m00 = m00; this.m10 = m10; this.m20 = m20; this.m30 = m30;
-      this.m01 = m01; this.m11 = m11; this.m21 = m21; this.m31 = m31;
-      this.m02 = m02; this.m12 = m12; this.m22 = m22; this.m32 = m32;
-      this.m03 = m03; this.m13 = m13; this.m23 = m23; this.m33 = m33;
+      this.m00 = m00; this.m01 = m01; this.m02 = m02; this.m03 = m03;
+      this.m10 = m10; this.m11 = m11; this.m12 = m12; this.m13 = m13;
+      this.m20 = m20; this.m21 = m21; this.m22 = m22; this.m23 = m23;
+      this.m30 = m30; this.m31 = m31; this.m32 = m32; this.m33 = m33;
       /* @formatter:on */
 
       return this;
@@ -1540,8 +1558,13 @@ public class Mat4 {
    public static Mat4 fromScale ( final float scalar, final Mat4 target ) {
 
       if ( scalar != 0.0f ) {
-         return target.set(scalar, 0.0f, 0.0f, 0.0f, 0.0f, scalar, 0.0f, 0.0f,
-            0.0f, 0.0f, scalar, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+         /* @formatter:off */
+         return target.set(
+            scalar,   0.0f,   0.0f, 0.0f,
+              0.0f, scalar,   0.0f, 0.0f,
+              0.0f,   0.0f, scalar, 0.0f,
+              0.0f,   0.0f,   0.0f, 1.0f);
+         /* @formatter:on */
       }
       return Mat4.identity(target);
    }
@@ -1562,8 +1585,13 @@ public class Mat4 {
    public static Mat4 fromScale ( final Vec2 scalar, final Mat4 target ) {
 
       if ( Vec2.all(scalar) ) {
-         return target.set(scalar.x, 0.0f, 0.0f, 0.0f, 0.0f, scalar.y, 0.0f,
-            0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+         /* @formatter:off */
+         return target.set(
+            scalar.x,     0.0f, 0.0f, 0.0f,
+                0.0f, scalar.y, 0.0f, 0.0f,
+                0.0f,     0.0f, 1.0f, 0.0f,
+                0.0f,     0.0f, 0.0f, 1.0f);
+         /* @formatter:on */
       }
       return Mat4.identity(target);
    }
@@ -1583,8 +1611,13 @@ public class Mat4 {
    public static Mat4 fromScale ( final Vec3 scalar, final Mat4 target ) {
 
       if ( Vec3.all(scalar) ) {
-         return target.set(scalar.x, 0.0f, 0.0f, 0.0f, 0.0f, scalar.y, 0.0f,
-            0.0f, 0.0f, 0.0f, scalar.z, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+         /* @formatter:off */
+         return target.set(
+            scalar.x,     0.0f,     0.0f, 0.0f,
+                0.0f, scalar.y,     0.0f, 0.0f,
+                0.0f,     0.0f, scalar.z, 0.0f,
+                0.0f,     0.0f,     0.0f, 1.0f);
+         /* @formatter:on */
       }
       return Mat4.identity(target);
    }

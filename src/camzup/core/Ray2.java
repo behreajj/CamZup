@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.Comparator;
+import java.util.TreeSet;
 
 /**
  * A direction that extends from an originating point.
@@ -257,46 +258,27 @@ public class Ray2 {
       final float x1 = max.x;
       final float y1 = max.y;
 
-      final float i0 = Ray2.intersectLineSeg(rx, ry, dx, dy, x0, y0, x1, y0);
-      final float i1 = Ray2.intersectLineSeg(rx, ry, dx, dy, x1, y0, x1, y1);
-      final float i2 = Ray2.intersectLineSeg(rx, ry, dx, dy, x1, y1, x0, y1);
-      final float i3 = Ray2.intersectLineSeg(rx, ry, dx, dy, x0, y1, x0, y0);
+      final float t0 = Ray2.intersectLineSeg(rx, ry, dx, dy, x0, y0, x1, y0);
+      final float t1 = Ray2.intersectLineSeg(rx, ry, dx, dy, x1, y0, x1, y1);
+      final float t2 = Ray2.intersectLineSeg(rx, ry, dx, dy, x1, y1, x0, y1);
+      final float t3 = Ray2.intersectLineSeg(rx, ry, dx, dy, x0, y1, x0, y0);
 
-      final boolean i0Val = i0 != -1.0f;
-      final boolean i1Val = i1 != -1.0f;
-      final boolean i2Val = i2 != -1.0f;
-      final boolean i3Val = i3 != -1.0f;
+      final boolean t0Val = t0 != -1.0f;
+      final boolean t1Val = t1 != -1.0f;
+      final boolean t2Val = t2 != -1.0f;
+      final boolean t3Val = t3 != -1.0f;
 
-      int count = 0;
-      if ( i0Val ) ++count;
-      if ( i1Val ) ++count;
-      if ( i2Val ) ++count;
-      if ( i3Val ) ++count;
+      /*
+       * Avoid the possibility of duplicates when a ray intersects a corner
+       * where two line segments meet.
+       */
+      final TreeSet < Vec2 > vs = new TreeSet <>();
+      if ( t0Val ) { vs.add(new Vec2( ( 1.0f - t0 ) * x0 + t0 * x1, y0)); }
+      if ( t1Val ) { vs.add(new Vec2(x1, ( 1.0f - t1 ) * y0 + t1 * y1)); }
+      if ( t2Val ) { vs.add(new Vec2( ( 1.0f - t2 ) * x1 + t2 * x0, y1)); }
+      if ( t3Val ) { vs.add(new Vec2(x0, ( 1.0f - t3 ) * y1 + t3 * y0)); }
 
-      final Vec2[] result = new Vec2[count];
-      int j = -1;
-
-      if ( i0Val ) {
-         j++;
-         result[j] = Vec2.mix(min, new Vec2(x1, y0), i0, new Vec2());
-      }
-
-      if ( i1Val ) {
-         j++;
-         result[j] = Vec2.mix(new Vec2(x1, y0), max, i1, new Vec2());
-      }
-
-      if ( i2Val ) {
-         j++;
-         result[j] = Vec2.mix(max, new Vec2(x0, y1), i2, new Vec2());
-      }
-
-      if ( i3Val ) {
-         j++;
-         result[j] = Vec2.mix(new Vec2(x0, y1), min, i3, new Vec2());
-      }
-
-      return result;
+      return vs.toArray(new Vec2[vs.size()]);
    }
 
    /**
@@ -313,11 +295,11 @@ public class Ray2 {
    public static Vec2[] intersections ( final Ray2 ray, final Vec2 orig,
       final Vec2 dest ) {
 
-      final float i = Ray2.intersectLineSeg(ray, orig, dest);
-      final boolean iVal = i != -1.0f;
-      final Vec2[] result = new Vec2[iVal ? 1 : 0];
-      if ( iVal ) { result[0] = Vec2.mix(orig, dest, i, new Vec2()); }
-      return result;
+      final float t = Ray2.intersectLineSeg(ray, orig, dest);
+      final boolean tVal = t != -1.0f;
+      final Vec2[] vs = new Vec2[tVal ? 1 : 0];
+      if ( tVal ) { vs[0] = Vec2.mix(orig, dest, t, new Vec2()); }
+      return vs;
    }
 
    /**
@@ -359,19 +341,34 @@ public class Ray2 {
       final float xRayDir, final float yRayDir, final float xSegOrig,
       final float ySegOrig, final float xSegDest, final float ySegDest ) {
 
-      final float v1x = xSegDest - xSegOrig;
-      final float v1y = ySegDest - ySegOrig;
-      final float v2x = -yRayDir;
-      final float v2y = xRayDir;
-      final float dot = v1x * v2x + v1y * v2y;
-      if ( Utils.approx(dot, 0.0f) ) { return -1.0f; }
+      // TODO: Better naming convention to distinguish this from intersections,
+      // which returns points.
 
-      final float v0x = xRayOrig - xSegOrig;
-      final float v0y = yRayOrig - ySegOrig;
-      final float t1 = ( v1x * v0y - v1y * v0x ) / dot;
-      if ( t1 > 0.0f ) {
-         final float t2 = ( v0x * v2x + v0y * v2y ) / dot;
-         if ( t2 >= 0.0f && t2 <= 1.0f ) { return t2; }
+      /* Subtract destination from origin to get vector. */
+      final double v1x = xSegDest - xSegOrig;
+      final double v1y = ySegDest - ySegOrig;
+
+      /* Find CCW perpendicular of ray direction. */
+      final double v2x = -yRayDir;
+      final double v2y = xRayDir;
+
+      /* Find dot product between vector and and perpendicular. */
+      final double dot = v1x * v2x + v1y * v2y;
+      if ( dot != 0.0d ) {
+
+         /* Find vector from ray origin to segment origin. */
+         final double v0x = xRayOrig - xSegOrig;
+         final double v0y = yRayOrig - ySegOrig;
+
+         /* Find 2D cross product of v1 and v0, normalize. */
+         final double t1 = ( v1x * v0y - v1y * v0x ) / dot;
+         if ( t1 > 0.0d ) {
+            // TODO: Why is t1 > 0.0 not >= 0.0 and not <= 1.0?
+
+            /* Find dot product of v0 and v2, normalize. */
+            final double t2 = ( v0x * v2x + v0y * v2y ) / dot;
+            if ( t2 >= 0.0d && t2 <= 1.0d ) { return ( float ) t2; }
+         }
       }
 
       return -1.0f;

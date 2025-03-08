@@ -50,13 +50,13 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // final Bounds2 b = new Bounds2(0, 0, 320, 180);
+      // final Bounds2 b = new Bounds2(0, 0, 100, 100);
       // System.out.println(b);
       //
-      // final Ray2 rightPos = new Ray2(new Vec2(160, 90), new Vec2(1, -1));
+      // final Ray2 rightPos = new Ray2(new Vec2(50, 50), new Vec2(1, -1));
       // System.out.println(rightPos);
       //
-      // final Ray2 rightNeg = new Ray2(new Vec2(160, 90), new Vec2(-1, 1));
+      // final Ray2 rightNeg = new Ray2(new Vec2(50, 50), new Vec2(-1, 1));
       // System.out.println(rightNeg);
       //
       // final Vec2[] arr0 = Ray2.intersections(rightPos, b);
@@ -65,10 +65,10 @@ public class CamZup {
       // final Vec2[] arr1 = Ray2.intersections(rightNeg, b);
       // for ( final Vec2 v : arr1 ) { System.out.println(v); }
       //
-      // final Ray2 leftPos = new Ray2(new Vec2(160, 90), new Vec2(1, 1));
+      // final Ray2 leftPos = new Ray2(new Vec2(50, 50), new Vec2(1, 1));
       // System.out.println(leftPos);
       //
-      // final Ray2 leftNeg = new Ray2(new Vec2(160, 90), new Vec2(-1, -1));
+      // final Ray2 leftNeg = new Ray2(new Vec2(50, 50), new Vec2(-1, -1));
       // System.out.println(leftNeg);
       //
       // final Vec2[] arr2 = Ray2.intersections(leftPos, b);
@@ -76,24 +76,6 @@ public class CamZup {
       //
       // final Vec2[] arr3 = Ray2.intersections(leftNeg, b);
       // for ( final Vec2 v : arr3 ) { System.out.println(v); }
-
-      // final Vec2 orig0 = new Vec2(0, 180);
-      // final Vec2 dest0 = new Vec2(320, 180);
-      // final float result0 = Ray2.intersectLineSeg(r0, orig0, dest0);
-      // System.out.println(result0);
-      // final Vec2 point0 = Vec2.mix(orig0, dest0, result0,
-      // new Vec2());
-      // System.out.println(point0);
-      //
-      // final Vec2 orig1 = new Vec2(0, 0);
-      // final Vec2 dest1 = new Vec2(320, 0);
-      // // final float result1 = Ray2.intersectLineSeg(r1, orig1, dest1);
-      // // System.out.println(result1);
-      // // final Vec2 point1 = Vec2.mix(orig1, dest1, result1, new Vec2());
-      // // System.out.println(point1);
-      //
-      // Vec2[] arr = Ray2.intersections(r1, orig1, dest1);
-      // System.out.println(arr[0]);
 
       // Mesh3 m = new Mesh3();
       // Mesh3.cube(0.5f, PolyType.TRI, UvProfile.Cube.CROSS, m);

@@ -347,7 +347,13 @@ public class Mat3 {
    public Mat3 set ( final float m00, final float m01, final float m10,
       final float m11 ) {
 
-      return this.set(m00, m01, 0.0f, m10, m11, 0.0f, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      this.m00 =  m00; this.m01 =  m01; this.m02 = 0.0f;
+      this.m10 =  m10; this.m11 =  m11; this.m12 = 0.0f;
+      this.m20 = 0.0f; this.m21 = 0.0f; this.m22 = 1.0f;
+      /* @formatter:on */
+
+      return this;
    }
 
    /**
@@ -366,7 +372,13 @@ public class Mat3 {
    public Mat3 set ( final float m00, final float m01, final float m02,
       final float m10, final float m11, final float m12 ) {
 
-      return this.set(m00, m01, m02, m10, m11, m12, 0.0f, 0.0f, 1.0f);
+      /* @formatter:off */
+      this.m00 =  m00; this.m01 =  m01; this.m02 =  m02;
+      this.m10 =  m10; this.m11 =  m11; this.m12 =  m12;
+      this.m20 = 0.0f; this.m21 = 0.0f; this.m22 = 1.0f;
+      /* @formatter:on */
+
+      return this;
    }
 
    /**
@@ -389,9 +401,9 @@ public class Mat3 {
       final float m21, final float m22 ) {
 
       /* @formatter:off */
-      this.m00 = m00; this.m10 = m10; this.m20 = m20;
-      this.m01 = m01; this.m11 = m11; this.m21 = m21;
-      this.m02 = m02; this.m12 = m12; this.m22 = m22;
+      this.m00 = m00; this.m01 = m01; this.m02 = m02;
+      this.m10 = m10; this.m11 = m11; this.m12 = m12;
+      this.m20 = m20; this.m21 = m21; this.m22 = m22;
       /* @formatter:on */
 
       return this;
