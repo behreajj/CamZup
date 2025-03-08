@@ -25,7 +25,10 @@ public abstract class Pixels {
    /**
     * Discourage overriding with a private constructor.
     */
-   private Pixels ( ) {}
+   private Pixels ( ) {
+
+      // TODO: byteslm and bytesml methods?
+   }
 
    /**
     * A flag to target colors in an image with greater than 66.67% lightness.

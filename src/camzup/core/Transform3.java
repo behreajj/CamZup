@@ -1446,8 +1446,31 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    }
 
    /**
-    * Multiplies a direction by a transform's inverse. This rotates the
-    * direction by the inverse quaternion.
+    * Multiplies a ray by a transform's inverse.
+    *
+    * @param t      the transform
+    * @param source the input ray
+    * @param target the output ray
+    *
+    * @return the ray
+    *
+    * @see Transform3#invMulPoint(Transform3, Vec3, Vec3)
+    * @see Transform3#invMulVector(Transform3, Vec3, Vec3)
+    * @see Vec3#normalize(Vec3, Vec3)
+    */
+   @Experimental
+   public static Ray3 invMul ( final Transform3 t, final Ray3 source,
+      final Ray3 target ) {
+
+      Transform3.invMulPoint(t, source.origin, target.origin);
+      Transform3.invMulVector(t, source.dir, target.dir);
+      Vec3.normalize(target.dir, target.dir);
+
+      return target;
+   }
+
+   /**
+    * Multiplies a direction by a transform's inverse.
     *
     * @param t      the transform
     * @param source the input direction
@@ -1464,8 +1487,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    }
 
    /**
-    * Multiplies a normal by a transform's inverse. This rotates the normal by
-    * the inverse quaternion, then multiplies the normal by the scale.
+    * Multiplies a normal by a transform's inverse.
     *
     * @param t      the transform
     * @param source the input normal
@@ -1484,13 +1506,12 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
       Quaternion.invMulVector(t.rotation, source, target);
       Vec3.hadamard(target, t.scale, target);
       Vec3.normalize(target, target);
+
       return target;
    }
 
    /**
-    * Multiplies a point by a transform's inverse. This subtracts the
-    * translation from the point, divides the point by the scale, then rotates
-    * by the inverse quaternion.
+    * Multiplies a point by a transform's inverse.
     *
     * @param t      the transform
     * @param source the input point
@@ -1506,14 +1527,14 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
       final Vec3 target ) {
 
       Vec3.sub(source, t.location, target);
-      Vec3.div(target, t.scale, target);
       Quaternion.invMulVector(t.rotation, target, target);
+      Vec3.div(target, t.scale, target);
+
       return target;
    }
 
    /**
-    * Multiplies a vector by the transform's inverse. This divides the vector
-    * by the scale, then rotates by the inverse quaternion.
+    * Multiplies a vector by the transform's inverse.
     *
     * @param t      the transform
     * @param source the input vector
@@ -1527,8 +1548,9 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    public static Vec3 invMulVector ( final Transform3 t, final Vec3 source,
       final Vec3 target ) {
 
-      Vec3.div(source, t.scale, target);
-      Quaternion.invMulVector(t.rotation, target, target);
+      Quaternion.invMulVector(t.rotation, source, target);
+      Vec3.div(target, t.scale, target);
+
       return target;
    }
 
@@ -1578,6 +1600,30 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
 
       return Utils.min(Utils.abs(t.scale.x), Utils.abs(t.scale.y), Utils.abs(
          t.scale.z));
+   }
+
+   /**
+    * Multiplies a ray by a transform.
+    *
+    * @param t      the transform
+    * @param source the input ray
+    * @param target the output ray
+    *
+    * @return the ray
+    *
+    * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
+    * @see Transform3#mulVector(Transform3, Vec3, Vec3)
+    * @see Vec3#normalize(Vec3, Vec3)
+    */
+   @Experimental
+   public static Ray3 mul ( final Transform3 t, final Ray3 source,
+      final Ray3 target ) {
+
+      Transform3.mulPoint(t, source.origin, target.origin);
+      Transform3.mulVector(t, source.dir, target.dir);
+      Vec3.normalize(target.dir, target.dir);
+
+      return target;
    }
 
    /**
@@ -1644,8 +1690,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    }
 
    /**
-    * Multiplies a direction by a transform. This rotates the direction by the
-    * transform's rotation.
+    * Multiplies a direction by a transform.
     *
     * @param t      the transform
     * @param source the input direction
@@ -1662,8 +1707,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    }
 
    /**
-    * Multiplies a normal by a transform. This divides the normal by the
-    * transform's scale and then rotates it by the transform's rotation.
+    * Multiplies a normal by a transform.
     *
     * @param t      the transform
     * @param source the input normal
@@ -1682,12 +1726,12 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
       Vec3.div(source, t.scale, target);
       Quaternion.mulVector(t.rotation, target, target);
       Vec3.normalize(target, target);
+
       return target;
    }
 
    /**
-    * Multiplies a point by a transform. This rotates the point, multiplies
-    * the point by the scale, then adds the translation.
+    * Multiplies a point by a transform.
     *
     * @param t      the transform
     * @param source the input point
@@ -1698,35 +1742,15 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    public static Vec3 mulPoint ( final Transform3 t, final Vec3 source,
       final Vec3 target ) {
 
-      /* Inlined for optimization purposes. */
-      // Quaternion.mulVector(t.rotation, source, target);
-      // Vec3.mul(target, t.scale, target);
-      // Vec3.add(target, t.location, target);
-      // return target;
-
-      final Vec3 imag = t.rotation.imag;
-      final float qw = t.rotation.real;
-      final float qx = imag.x;
-      final float qy = imag.y;
-      final float qz = imag.z;
-
-      final float iw = -qx * source.x - qy * source.y - qz * source.z;
-      final float ix = qw * source.x + qy * source.z - qz * source.y;
-      final float iy = qw * source.y + qz * source.x - qx * source.z;
-      final float iz = qw * source.z + qx * source.y - qy * source.x;
-
-      final Vec3 sc = t.scale;
-      final Vec3 tr = t.location;
-      target.x = ( ix * qw + iz * qy - iw * qx - iy * qz ) * sc.x + tr.x;
-      target.y = ( iy * qw + ix * qz - iw * qy - iz * qx ) * sc.y + tr.y;
-      target.z = ( iz * qw + iy * qx - iw * qz - ix * qy ) * sc.z + tr.z;
+      Vec3.hadamard(source, t.scale, target);
+      Quaternion.mulVector(t.rotation, target, target);
+      Vec3.add(target, t.location, target);
 
       return target;
    }
 
    /**
-    * Multiplies a point and normal by a transform. A convenience for drawing
-    * mesh data. Returns the transformed point.
+    * Multiplies a point and normal by a transform.
     *
     * @param t      the transform
     * @param ptSrc  the input point
@@ -1739,46 +1763,14 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    public static Vec3 mulPointAndNormal ( final Transform3 t, final Vec3 ptSrc,
       final Vec3 nrmSrc, final Vec3 ptTrg, final Vec3 nrmTrg ) {
 
-      final Vec3 tr = t.location;
-      final Vec3 sc = t.scale;
-      final Quaternion q = t.rotation;
-
-      final Vec3 imag = q.imag;
-      final float qw = q.real;
-      final float qx = imag.x;
-      final float qy = imag.y;
-      final float qz = imag.z;
-
-      final float ptiw = -qx * ptSrc.x - qy * ptSrc.y - qz * ptSrc.z;
-      final float ptix = qw * ptSrc.x + qy * ptSrc.z - qz * ptSrc.y;
-      final float ptiy = qw * ptSrc.y + qz * ptSrc.x - qx * ptSrc.z;
-      final float ptiz = qw * ptSrc.z + qx * ptSrc.y - qy * ptSrc.x;
-
-      ptTrg.x = ( ptix * qw + ptiz * qy - ptiw * qx - ptiy * qz ) * sc.x + tr.x;
-      ptTrg.y = ( ptiy * qw + ptix * qz - ptiw * qy - ptiz * qx ) * sc.y + tr.y;
-      ptTrg.z = ( ptiz * qw + ptiy * qx - ptiw * qz - ptix * qy ) * sc.z + tr.z;
-
-      nrmTrg.x = nrmSrc.x / sc.x;
-      nrmTrg.y = nrmSrc.y / sc.y;
-      nrmTrg.z = nrmSrc.z / sc.z;
-
-      final float nmiw = -qx * nrmTrg.x - qy * nrmTrg.y - qz * nrmTrg.z;
-      final float nmix = qw * nrmTrg.x + qy * nrmTrg.z - qz * nrmTrg.y;
-      final float nmiy = qw * nrmTrg.y + qz * nrmTrg.x - qx * nrmTrg.z;
-      final float nmiz = qw * nrmTrg.z + qx * nrmTrg.y - qy * nrmTrg.x;
-
-      nrmTrg.x = nmix * qw + nmiz * qy - nmiw * qx - nmiy * qz;
-      nrmTrg.y = nmiy * qw + nmix * qz - nmiw * qy - nmiz * qx;
-      nrmTrg.z = nmiz * qw + nmiy * qx - nmiw * qz - nmix * qy;
-
-      Vec3.normalize(nrmTrg, nrmTrg);
+      Transform3.mulPoint(t, ptSrc, ptTrg);
+      Transform3.mulNormal(t, nrmSrc, nrmTrg);
 
       return ptTrg;
    }
 
    /**
-    * Multiplies a vector by a transform. This rotates the vector by the
-    * transform's rotation and then multiplies it by the transform's scale.
+    * Multiplies a vector by a transform.
     *
     * @param t      the transform
     * @param source the input vector
@@ -1792,8 +1784,9 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    public static Vec3 mulVector ( final Transform3 t, final Vec3 source,
       final Vec3 target ) {
 
-      Quaternion.mulVector(t.rotation, source, target);
-      Vec3.hadamard(target, t.scale, target);
+      Vec3.hadamard(source, t.scale, target);
+      Quaternion.mulVector(t.rotation, target, target);
+
       return target;
    }
 

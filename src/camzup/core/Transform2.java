@@ -1204,8 +1204,31 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
    }
 
    /**
-    * Multiplies a direction by a transform's inverse. This rotates the
-    * direction by the transform's negative angle.
+    * Multiplies a ray by a transform's inverse.
+    *
+    * @param t      the transform
+    * @param source the input ray
+    * @param target the output ray
+    *
+    * @return the ray
+    *
+    * @see Transform2#invMulPoint(Transform2, Vec2, Vec2)
+    * @see Transform2#invMulVector(Transform2, Vec2, Vec2)
+    * @see Vec2#normalize(Vec2, Vec2)
+    */
+   @Experimental
+   public static Ray2 invMul ( final Transform2 t, final Ray2 source,
+      final Ray2 target ) {
+
+      Transform2.invMulPoint(t, source.origin, target.origin);
+      Transform2.invMulVector(t, source.dir, target.dir);
+      Vec2.normalize(target.dir, target.dir);
+
+      return target;
+   }
+
+   /**
+    * Multiplies a direction by a transform's inverse.
     *
     * @param t      the transform
     * @param source the input direction
@@ -1223,9 +1246,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
    }
 
    /**
-    * Multiplies a point by a transform's inverse. This subtracts the
-    * translation from the point, divides the point by the scale, then rotates
-    * by the negative angle.
+    * Multiplies a point by a transform's inverse.
     *
     * @param t      the transform
     * @param source the input point
@@ -1241,14 +1262,14 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
       final Vec2 target ) {
 
       Vec2.sub(source, t.location, target);
-      Vec2.div(target, t.scale, target);
       Vec2.rotateZ(target, t.right.x, -t.right.y, target);
+      Vec2.div(target, t.scale, target);
+
       return target;
    }
 
    /**
-    * Multiplies a vector by a transform's inverse. This divides the vector by
-    * the scale, then rotates by the negative angle.
+    * Multiplies a vector by a transform's inverse.
     *
     * @param t      the transform
     * @param source the input point
@@ -1262,8 +1283,9 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
    public static Vec2 invMulVector ( final Transform2 t, final Vec2 source,
       final Vec2 target ) {
 
-      Vec2.div(source, t.scale, target);
-      Vec2.rotateZ(target, t.right.x, -t.right.y, target);
+      Vec2.rotateZ(source, t.right.x, -t.right.y, target);
+      Vec2.div(target, t.scale, target);
+
       return target;
    }
 
@@ -1314,6 +1336,30 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
    }
 
    /**
+    * Multiplies a ray by a transform.
+    *
+    * @param t      the transform
+    * @param source the input ray
+    * @param target the output ray
+    *
+    * @return the ray
+    *
+    * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
+    * @see Transform2#mulVector(Transform2, Vec2, Vec2)
+    * @see Vec2#normalize(Vec2, Vec2)
+    */
+   @Experimental
+   public static Ray2 mul ( final Transform2 t, final Ray2 source,
+      final Ray2 target ) {
+
+      Transform2.mulPoint(t, source.origin, target.origin);
+      Transform2.mulVector(t, source.dir, target.dir);
+      Vec2.normalize(target.dir, target.dir);
+
+      return target;
+   }
+
+   /**
     * Multiplies a curve segment by a transform. A convenience for drawing
     * curves in a renderer. The segment is represented by the first control
     * point, second control point and destination anchor point.
@@ -1332,31 +1378,15 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
       final Vec2 rhSrc, final Vec2 coSrc, final Vec2 fhTrg, final Vec2 rhTrg,
       final Vec2 coTrg ) {
 
-      final float xtr = t.location.x;
-      final float ytr = t.location.y;
-      final float cosa = t.right.x;
-      final float sina = t.right.y;
-      final float w = t.scale.x;
-      final float d = t.scale.y;
-
-      float temp = fhSrc.x;
-      fhTrg.x = ( cosa * temp - sina * fhSrc.y ) * w + xtr;
-      fhTrg.y = ( cosa * fhSrc.y + sina * temp ) * d + ytr;
-
-      temp = rhSrc.x;
-      rhTrg.x = ( cosa * temp - sina * rhSrc.y ) * w + xtr;
-      rhTrg.y = ( cosa * rhSrc.y + sina * temp ) * d + ytr;
-
-      temp = coSrc.x;
-      coTrg.x = ( cosa * temp - sina * coSrc.y ) * w + xtr;
-      coTrg.y = ( cosa * coSrc.y + sina * temp ) * d + ytr;
+      Transform2.mulPoint(t, coSrc, coTrg);
+      Transform2.mulPoint(t, fhSrc, fhTrg);
+      Transform2.mulPoint(t, rhSrc, rhTrg);
 
       return coTrg;
    }
 
    /**
-    * Multiplies a direction by a transform. This rotates the direction by the
-    * transform's rotation.
+    * Multiplies a direction by a transform.
     *
     * @param t      the transform
     * @param source the input direction
@@ -1373,8 +1403,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
    }
 
    /**
-    * Multiplies a point by a transform. This rotates the point, multiplies
-    * the point by the scale, then adds the translation.
+    * Multiplies a point by a transform.
     *
     * @param t      the transform
     * @param source the input point
@@ -1385,22 +1414,9 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
    public static Vec2 mulPoint ( final Transform2 t, final Vec2 source,
       final Vec2 target ) {
 
-      /* Inlined for optimization. */
-      // Vec2.rotateZ(source, t.right.x, t.right.y, target);
-      // Vec2.mul(target, t.scale, target);
-      // Vec2.add(target, t.location, target);
-
-      final float xtr = t.location.x;
-      final float ytr = t.location.y;
-      final float cosa = t.right.x;
-      final float sina = t.right.y;
-      final float w = t.scale.x;
-      final float d = t.scale.y;
-
-      /* Must account for cases where source == target. */
-      final float temp = source.x;
-      target.x = ( cosa * temp - sina * source.y ) * w + xtr;
-      target.y = ( cosa * source.y + sina * temp ) * d + ytr;
+      Vec2.hadamard(source, t.scale, target);
+      Vec2.rotateZ(target, t.right.x, t.right.y, target);
+      Vec2.add(target, t.location, target);
 
       return target;
    }
@@ -1430,8 +1446,7 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
    }
 
    /**
-    * Multiplies a vector by a transform. This rotates the vector by the
-    * transform's rotation and then multiplies it by the transform's scale.
+    * Multiplies a vector by a transform.
     *
     * @param t      the transform
     * @param source the input vector
@@ -1445,8 +1460,9 @@ public class Transform2 implements Comparable < Transform2 >, ISpatial2,
    public static Vec2 mulVector ( final Transform2 t, final Vec2 source,
       final Vec2 target ) {
 
-      Vec2.rotateZ(source, t.right.x, t.right.y, target);
-      Vec2.hadamard(target, t.scale, target);
+      Vec2.hadamard(source, t.scale, target);
+      Vec2.rotateZ(target, t.right.x, t.right.y, target);
+
       return target;
    }
 

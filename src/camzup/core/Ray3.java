@@ -32,12 +32,12 @@ public class Ray3 {
    /**
     * Creates a new ray from an origin and direction.
     *
-    * @param origin the origin
-    * @param dir    the direction
+    * @param orig the origin
+    * @param dir  the direction
     */
-   public Ray3 ( final Vec3 origin, final Vec3 dir ) {
+   public Ray3 ( final Vec3 orig, final Vec3 dir ) {
 
-      this.set(origin, dir);
+      this.set(orig, dir);
    }
 
    /**
@@ -112,16 +112,16 @@ public class Ray3 {
    /**
     * Sets the origin and direction of this ray. Normalizes the direction.
     *
-    * @param origin the origin
-    * @param dir    the direction
+    * @param orig the origin
+    * @param dir  the direction
     *
     * @return this ray
     *
     * @see Vec3#normalize(Vec3, Vec3)
     */
-   public Ray3 set ( final Vec3 origin, final Vec3 dir ) {
+   public Ray3 set ( final Vec3 orig, final Vec3 dir ) {
 
-      this.origin.set(origin);
+      this.origin.set(orig);
       Vec3.normalize(dir, this.dir);
       return this;
    }
@@ -211,7 +211,7 @@ public class Ray3 {
    /**
     * Sets a ray from an origin and destination point.
     *
-    * @param origin the origin
+    * @param orig   the origin
     * @param dest   the destination
     * @param target the output ray
     *
@@ -219,11 +219,11 @@ public class Ray3 {
     *
     * @see Vec3#subNorm(Vec3, Vec3, Vec3)
     */
-   public static Ray3 fromPoints ( final Vec3 origin, final Vec3 dest,
+   public static Ray3 fromPoints ( final Vec3 orig, final Vec3 dest,
       final Ray3 target ) {
 
-      target.origin.set(origin);
-      Vec3.subNorm(dest, origin, target.dir);
+      target.origin.set(orig);
+      Vec3.subNorm(dest, orig, target.dir);
       return target;
    }
 

@@ -2418,6 +2418,10 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     */
    public Mesh3 transform ( final Transform3 tr ) {
 
+      // TODO: Test this. It may no longer have parity with the Mat3 transform
+      // function above. In which case, it'd need to use the same transform
+      // order as it used to. Or... just don't worry about them being different.
+
       final int vsLen = this.coords.length;
       for ( int i = 0; i < vsLen; ++i ) {
          final Vec3 c = this.coords[i];

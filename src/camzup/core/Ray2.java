@@ -33,12 +33,12 @@ public class Ray2 {
    /**
     * Creates a new ray from an origin and direction.
     *
-    * @param origin the origin
-    * @param dir    the direction
+    * @param orig the origin
+    * @param dir  the direction
     */
-   public Ray2 ( final Vec2 origin, final Vec2 dir ) {
+   public Ray2 ( final Vec2 orig, final Vec2 dir ) {
 
-      this.set(origin, dir);
+      this.set(orig, dir);
    }
 
    /**
@@ -116,16 +116,16 @@ public class Ray2 {
    /**
     * Sets the origin and direction of this ray. Normalizes the direction.
     *
-    * @param origin the origin
-    * @param dir    the direction
+    * @param orig the origin
+    * @param dir  the direction
     *
     * @return this ray
     *
     * @see Vec2#normalize(Vec2, Vec2)
     */
-   public Ray2 set ( final Vec2 origin, final Vec2 dir ) {
+   public Ray2 set ( final Vec2 orig, final Vec2 dir ) {
 
-      this.origin.set(origin);
+      this.origin.set(orig);
       Vec2.normalize(dir, this.dir);
       return this;
    }
@@ -211,9 +211,29 @@ public class Ray2 {
    }
 
    /**
+    * Finds an intersection between a ray and a line segment as a factor in
+    * [0.0, 1.0] . Returns -1.0 if there is no intersection.
+    *
+    * @param ray  the ray
+    * @param orig the origin
+    * @param dest the destination
+    *
+    * @return the distance
+    *
+    * @see Ray2#factorLineSeg(float, float, float, float, float, float, float,
+    *      float)
+    */
+   public static float factorLineSeg ( final Ray2 ray, final Vec2 orig,
+      final Vec2 dest ) {
+
+      return Ray2.factorLineSeg(ray.origin.x, ray.origin.y, ray.dir.x,
+         ray.dir.y, orig.x, orig.y, dest.x, dest.y);
+   }
+
+   /**
     * Sets a ray from an origin and destination point.
     *
-    * @param origin the origin
+    * @param orig   the origin
     * @param dest   the destination
     * @param target the output ray
     *
@@ -221,11 +241,11 @@ public class Ray2 {
     *
     * @see Vec2#subNorm(Vec2, Vec2, Vec2)
     */
-   public static Ray2 fromPoints ( final Vec2 origin, final Vec2 dest,
+   public static Ray2 fromPoints ( final Vec2 orig, final Vec2 dest,
       final Ray2 target ) {
 
-      target.origin.set(origin);
-      Vec2.subNorm(dest, origin, target.dir);
+      target.origin.set(orig);
+      Vec2.subNorm(dest, orig, target.dir);
       return target;
    }
 
@@ -237,14 +257,14 @@ public class Ray2 {
     *
     * @return the points
     *
-    * @see Ray2#intersectLineSeg(float, float, float, float, float, float,
-    *      float, float)
+    * @see Ray2#factorLineSeg(float, float, float, float, float, float, float,
+    *      float)
     */
    public static Vec2[] intersections ( final Ray2 ray, final Bounds2 bounds ) {
 
-      final Vec2 rOrg = ray.origin;
-      final float rx = rOrg.x;
-      final float ry = rOrg.y;
+      final Vec2 rOrig = ray.origin;
+      final float rx = rOrig.x;
+      final float ry = rOrig.y;
 
       final Vec2 rDir = ray.dir;
       final float dx = rDir.x;
@@ -258,10 +278,10 @@ public class Ray2 {
       final float x1 = max.x;
       final float y1 = max.y;
 
-      final float t0 = Ray2.intersectLineSeg(rx, ry, dx, dy, x0, y0, x1, y0);
-      final float t1 = Ray2.intersectLineSeg(rx, ry, dx, dy, x1, y0, x1, y1);
-      final float t2 = Ray2.intersectLineSeg(rx, ry, dx, dy, x1, y1, x0, y1);
-      final float t3 = Ray2.intersectLineSeg(rx, ry, dx, dy, x0, y1, x0, y0);
+      final float t0 = Ray2.factorLineSeg(rx, ry, dx, dy, x0, y0, x1, y0);
+      final float t1 = Ray2.factorLineSeg(rx, ry, dx, dy, x1, y0, x1, y1);
+      final float t2 = Ray2.factorLineSeg(rx, ry, dx, dy, x1, y1, x0, y1);
+      final float t3 = Ray2.factorLineSeg(rx, ry, dx, dy, x0, y1, x0, y0);
 
       final boolean t0Val = t0 != -1.0f;
       final boolean t1Val = t1 != -1.0f;
@@ -282,6 +302,53 @@ public class Ray2 {
    }
 
    /**
+    * Finds points of intersection, if any, between a ray and a mesh entity.
+    *
+    * @param r the ray
+    * @param m the mesh
+    *
+    * @return the points
+    *
+    * @see Ray2#intersections(Ray2, Mesh2, TreeSet)
+    */
+   @Experimental
+   public static Vec2[] intersections ( final Ray2 r, final Mesh2 m ) {
+
+      final TreeSet < Vec2 > vs = new TreeSet <>();
+      Ray2.intersections(r, m, vs);
+      return vs.toArray(new Vec2[vs.size()]);
+   }
+
+   /**
+    * Finds points of intersection, if any, between a ray and a mesh entity.
+    * Transforms the ray to local space.
+    *
+    * @param r  the ray
+    * @param me the mesh entity
+    *
+    * @return the points
+    *
+    * @see Transform2#invMul(Transform2, Ray2, Ray2)
+    * @see Ray2#intersections(Ray2, Mesh2, TreeSet)
+    */
+   @Experimental
+   public static Vec2[] intersections ( final Ray2 r, final MeshEntity2 me ) {
+
+      final Transform2 t = me.transform;
+      final Ray2 local = Transform2.invMul(t, r, new Ray2());
+      final TreeSet < Vec2 > vs = new TreeSet <>();
+      for ( final Mesh2 m : me ) { Ray2.intersections(local, m, vs); }
+
+      final Vec2[] arr = vs.toArray(new Vec2[vs.size()]);
+      final int len = arr.length;
+      for ( int i = 0; i < len; ++i ) {
+         Transform2.mulPoint(t, arr[i], arr[i]);
+      }
+
+      return arr;
+   }
+
+   /**
     * Finds points of intersection, if any, between a ray and a line segment.
     *
     * @param ray  the ray
@@ -290,12 +357,12 @@ public class Ray2 {
     *
     * @return the points
     *
-    * @see Ray2#intersectLineSeg(Ray2, Vec2, Vec2)
+    * @see Ray2#factorLineSeg(Ray2, Vec2, Vec2)
     */
    public static Vec2[] intersections ( final Ray2 ray, final Vec2 orig,
       final Vec2 dest ) {
 
-      final float t = Ray2.intersectLineSeg(ray, orig, dest);
+      final float t = Ray2.factorLineSeg(ray, orig, dest);
       final boolean tVal = t != -1.0f;
       final Vec2[] vs = new Vec2[tVal ? 1 : 0];
       if ( tVal ) { vs[0] = Vec2.mix(orig, dest, t, new Vec2()); }
@@ -303,28 +370,8 @@ public class Ray2 {
    }
 
    /**
-    * Finds an intersection between a ray and a line segment. Returns -1.0 if
-    * there is no intersection. Otherwise, returns a factor in [0.0, 1.0] .
-    *
-    * @param ray  the ray
-    * @param orig the origin
-    * @param dest the destination
-    *
-    * @return the distance
-    *
-    * @see Ray2#intersectLineSeg(float, float, float, float, float, float,
-    *      float, float)
-    */
-   public static float intersectLineSeg ( final Ray2 ray, final Vec2 orig,
-      final Vec2 dest ) {
-
-      return Ray2.intersectLineSeg(ray.origin.x, ray.origin.y, ray.dir.x,
-         ray.dir.y, orig.x, orig.y, dest.x, dest.y);
-   }
-
-   /**
-    * Finds an intersection between a ray and a line segment. Returns -1.0 if
-    * there is no intersection. Otherwise, returns a factor in [0.0, 1.0] .
+    * Finds an intersection between a ray and a line segment as a factor in
+    * [0.0, 1.0] . Returns -1.0 if there is no intersection.
     *
     * @param xRayOrig the ray origin x
     * @param yRayOrig the ray origin y
@@ -337,12 +384,9 @@ public class Ray2 {
     *
     * @return the factor
     */
-   static float intersectLineSeg ( final float xRayOrig, final float yRayOrig,
+   static float factorLineSeg ( final float xRayOrig, final float yRayOrig,
       final float xRayDir, final float yRayDir, final float xSegOrig,
       final float ySegOrig, final float xSegDest, final float ySegDest ) {
-
-      // TODO: Better naming convention to distinguish this from intersections,
-      // which returns points.
 
       /* Subtract destination from origin to get vector. */
       final double v1x = xSegDest - xSegOrig;
@@ -372,6 +416,59 @@ public class Ray2 {
       }
 
       return -1.0f;
+   }
+
+   /**
+    * Internal helper function to find intersections between a ray and a mesh.
+    *
+    * @param local  the ray in local space
+    * @param m      the mesh
+    * @param result the points
+    *
+    * @return the points
+    *
+    * @see Ray2#factorLineSeg(float, float, float, float, float, float, float,
+    *      float)
+    */
+   static TreeSet < Vec2 > intersections ( final Ray2 local, final Mesh2 m,
+      final TreeSet < Vec2 > result ) {
+
+      final Vec2 rOrig = local.origin;
+      final float rx = rOrig.x;
+      final float ry = rOrig.y;
+
+      final Vec2 rDir = local.dir;
+      final float dx = rDir.x;
+      final float dy = rDir.y;
+
+      final Vec2[] vs = m.coords;
+      final int[][][] fs = m.faces;
+      final int fsLen = fs.length;
+
+      for ( int i = 0; i < fsLen; ++i ) {
+
+         final int[][] f = fs[i];
+         final int fLen = f.length;
+
+         for ( int j = 0; j < fLen; ++j ) {
+
+            final int k = ( j + 1 ) % fLen;
+
+            final int[] vert0 = f[j];
+            final int[] vert1 = f[k];
+
+            final Vec2 curr = vs[vert0[0]];
+            final Vec2 next = vs[vert1[0]];
+
+            final float t = Ray2.factorLineSeg(rx, ry, dx, dy, curr.x, curr.y,
+               next.x, next.y);
+            if ( t != -1.0f ) {
+               result.add(Vec2.mix(curr, next, t, new Vec2()));
+            }
+         }
+      }
+
+      return result;
    }
 
    /**

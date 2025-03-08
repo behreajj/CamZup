@@ -50,8 +50,22 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // final Bounds2 b = new Bounds2(0, 0, 100, 100);
+      // final Bounds2 b = new Bounds2(0, 0, 320, 180);
       // System.out.println(b);
+      //
+      // final Mesh2 m = new Mesh2();
+      // Mesh2.fromPoints(new Vec2[] { new Vec2(0, 0), new Vec2(320, 0), new
+      // Vec2(
+      // 320, 180), new Vec2(0, 180) }, m);
+      // System.out.println(m);
+      //
+      // final Ray2 r = new Ray2(new Vec2(160, 90), new Vec2(1, 1));
+      // System.out.println(r);
+      //
+      // final Vec2[] points = Ray2.intersections(r, m);
+      // System.out.println("Intersections:");
+      // for ( Vec2 pt : points ) { System.out.println(pt); }
+
       //
       // final Ray2 rightPos = new Ray2(new Vec2(50, 50), new Vec2(1, -1));
       // System.out.println(rightPos);
