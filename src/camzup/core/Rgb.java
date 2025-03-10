@@ -1588,16 +1588,16 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return the string builder
     *
-    * @see Rgb#toHexDigit(StringBuilder, int)
+    * @see Utils#toHexDigit(StringBuilder, int)
     */
    public static StringBuilder toHexString ( final StringBuilder sb,
       final int a, final int r, final int g, final int b ) {
 
       sb.append("0x");
-      Rgb.toHexDigit(sb, a);
-      Rgb.toHexDigit(sb, r);
-      Rgb.toHexDigit(sb, g);
-      Rgb.toHexDigit(sb, b);
+      Utils.toHexDigit(sb, a);
+      Utils.toHexDigit(sb, r);
+      Utils.toHexDigit(sb, g);
+      Utils.toHexDigit(sb, b);
       return sb;
    }
 
@@ -1688,15 +1688,15 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return the string builder
     *
-    * @see Rgb#toHexDigit(StringBuilder, int)
+    * @see Utils#toHexDigit(StringBuilder, int)
     */
    public static StringBuilder toHexWeb ( final StringBuilder sb, final int r,
       final int g, final int b ) {
 
       sb.append('#');
-      Rgb.toHexDigit(sb, r);
-      Rgb.toHexDigit(sb, g);
-      Rgb.toHexDigit(sb, b);
+      Utils.toHexDigit(sb, r);
+      Utils.toHexDigit(sb, g);
+      Utils.toHexDigit(sb, b);
       return sb;
    }
 
@@ -1879,46 +1879,6 @@ public class Rgb implements Comparable < Rgb > {
       final float u = 1.0f - step;
       return target.set(u * orig.r + step * dest.r, u * orig.g + step * dest.g,
          u * orig.b + step * dest.b, u * orig.alpha + step * dest.alpha);
-   }
-
-   /**
-    * A helper function to translate a byte to a hexadecimal string. Does
-    * <em>not</em> prefix the String with a hexadecimal indicator, '0x'; this
-    * is so that Strings can be concatenated together.
-    *
-    * @param sb the string builder
-    * @param b  the byte
-    *
-    * @return the string
-    */
-   static StringBuilder toHexDigit ( final StringBuilder sb, final int b ) {
-
-      final int digit0 = b >> 0x4 & 0xf;
-      final int digit1 = b & 0xf;
-
-      /* @formatter:off */
-      switch ( digit0 ) {
-         case 0xa: sb.append('a'); break;
-         case 0xb: sb.append('b'); break;
-         case 0xc: sb.append('c'); break;
-         case 0xd: sb.append('d'); break;
-         case 0xe: sb.append('e'); break;
-         case 0xf: sb.append('f'); break;
-         default: sb.append(( char ) ( '0' + digit0 ));
-      }
-
-      switch ( digit1 ) {
-         case 0xa: sb.append('a'); break;
-         case 0xb: sb.append('b'); break;
-         case 0xc: sb.append('c'); break;
-         case 0xd: sb.append('d'); break;
-         case 0xe: sb.append('e'); break;
-         case 0xf: sb.append('f'); break;
-         default: sb.append(( char ) ( '0' + digit1 ));
-      }
-      /* @formatter:on */
-
-      return sb;
    }
 
    /**

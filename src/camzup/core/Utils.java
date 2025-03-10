@@ -1551,8 +1551,7 @@ public abstract class Utils implements IUtils {
    public static final float smoothStep ( final float orig, final float dest,
       final float step ) {
 
-      // TODO: smoothStepInverse:
-      // 0.5 - sin(arcsin(1 - 2 * x) / 3)
+      /* smoothStepInverse: 0.5 - sin(arcsin(1 - 2 * x) / 3) */
 
       if ( step <= 0.0f ) { return orig; }
       if ( step >= 1.0f ) { return dest; }
@@ -1625,6 +1624,31 @@ public abstract class Utils implements IUtils {
       final float nrmRad = radians * IUtils.ONE_TAU;
       final float cost = Utils.scNorm(nrmRad);
       return cost != 0.0f ? Utils.scNorm(nrmRad - 0.25f) / cost : 0.0f;
+   }
+
+   /**
+    * Returns a string representation of an array of bytes. Places a space
+    * every byte, a second space every word, and a line break every 16 bytes.
+    *
+    * @param arr the byte array
+    *
+    * @return the string
+    */
+   public static String toDiagnosticString ( final byte[] arr ) {
+
+      final StringBuilder sb = new StringBuilder(256);
+      final int len = arr.length;
+      for ( int i = 0; i < len; ++i ) {
+         Utils.toHexDigit(sb, arr[i]);
+         if ( i % 16 < 15 ) {
+            sb.append(' ');
+            if ( i % 4 == 3 ) { sb.append(' '); }
+         } else {
+            sb.append("\r\n");
+         }
+      }
+
+      return sb.toString().toUpperCase();
    }
 
    /**
@@ -1712,10 +1736,7 @@ public abstract class Utils implements IUtils {
     * An alias for {@link Byte#toUnsignedInt(byte)} . Converts a signed byte
     * in the range [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] to an
     * unsigned byte in the range [0, 255], promoted to an integer. Useful when
-    * working with colors.<br>
-    * <br>
-    * Defined for cross-language comparison with C#, which uses signed and
-    * unsigned versions of primitive data types.
+    * working with colors.
     *
     * @param v the signed byte
     *
@@ -1727,16 +1748,24 @@ public abstract class Utils implements IUtils {
     * An alias for {@link Integer#toUnsignedLong(int)}. Converts a signed
     * integer in the range [{@value Integer#MIN_VALUE},
     * {@value Integer#MAX_VALUE}] to an unsigned integer in the range [0,
-    * 4294967295], promoted to a long. Useful when working with colors.<br>
-    * <br>
-    * Defined for cross-language comparison with C#, which uses signed and
-    * unsigned versions of primitive data types.
+    * 4294967295], promoted to a long. Useful when working with colors.
     *
     * @param v the signed integer
     *
     * @return the unsigned integer, promoted
     */
    public static final long uint ( final int v ) { return v & 0xffffffffL; }
+
+   /**
+    * An alias for {@link Short#toUnsignedInt(short)} . Converts a signed
+    * short in the range [{@value Short#MIN_VALUE}, {@value Short#MAX_VALUE}]
+    * to an unsigned short in the range [0, 65535], promoted to an integer.
+    *
+    * @param v the signed byte
+    *
+    * @return the unsigned byte, promoted
+    */
+   public static final int ushort ( final short v ) { return v & 0xffff; }
 
    /**
     * Wraps a value around a periodic range as defined by an upper and lower
@@ -1889,6 +1918,46 @@ public abstract class Utils implements IUtils {
          frac -= tr;
          sb.append(tr);
       }
+
+      return sb;
+   }
+
+   /**
+    * A helper function to translate a byte to a hexadecimal string. Does
+    * <em>not</em> prefix the String with a hexadecimal indicator, '0x'; this
+    * is so that Strings can be concatenated together.
+    *
+    * @param sb the string builder
+    * @param b  the byte
+    *
+    * @return the string
+    */
+   static StringBuilder toHexDigit ( final StringBuilder sb, final int b ) {
+
+      final int digit0 = b >> 0x4 & 0xf;
+      final int digit1 = b & 0xf;
+
+      /* @formatter:off */
+      switch ( digit0 ) {
+         case 0xa: sb.append('a'); break;
+         case 0xb: sb.append('b'); break;
+         case 0xc: sb.append('c'); break;
+         case 0xd: sb.append('d'); break;
+         case 0xe: sb.append('e'); break;
+         case 0xf: sb.append('f'); break;
+         default: sb.append(( char ) ( '0' + digit0 ));
+      }
+
+      switch ( digit1 ) {
+         case 0xa: sb.append('a'); break;
+         case 0xb: sb.append('b'); break;
+         case 0xc: sb.append('c'); break;
+         case 0xd: sb.append('d'); break;
+         case 0xe: sb.append('e'); break;
+         case 0xf: sb.append('f'); break;
+         default: sb.append(( char ) ( '0' + digit1 ));
+      }
+      /* @formatter:on */
 
       return sb;
    }

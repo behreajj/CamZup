@@ -25,10 +25,7 @@ public abstract class Pixels {
    /**
     * Discourage overriding with a private constructor.
     */
-   private Pixels ( ) {
-
-      // TODO: byteslm and bytesml methods?
-   }
+   private Pixels ( ) {}
 
    /**
     * A flag to target colors in an image with greater than 66.67% lightness.
@@ -477,6 +474,50 @@ public abstract class Pixels {
             Rgb.srLab2TosRgb(labAvg, srgb, lrgb, xyz);
             target[i] = Rgb.toHexIntSat(srgb);
          }
+      }
+      return target;
+   }
+
+   /**
+    * Appends to an array of bytes, ordered from least to most significant
+    * digit (little endian).
+    *
+    * @param source the pixels array
+    * @param target the byte array
+    * @param i      the index
+    *
+    * @return the byte array
+    *
+    * @see Utils#byteslm(float, byte[], int)
+    */
+   public static byte[] byteslm ( final int[] source, final byte[] target,
+      final int i ) {
+
+      final int len = source.length;
+      for ( int j = 0; j < len; ++j ) {
+         Utils.byteslm(source[j], target, j * 4 + i);
+      }
+      return target;
+   }
+
+   /**
+    * Appends to an array of bytes, ordered from most to least significant
+    * digit (big endian).
+    *
+    * @param source the pixels array
+    * @param target the byte array
+    * @param i      the index
+    *
+    * @return the byte array
+    *
+    * @see Utils#bytesml(float, byte[], int)
+    */
+   public static byte[] bytesml ( final int[] source, final byte[] target,
+      final int i ) {
+
+      final int len = source.length;
+      for ( int j = 0; j < len; ++j ) {
+         Utils.bytesml(source[j], target, j * 4 + i);
       }
       return target;
    }

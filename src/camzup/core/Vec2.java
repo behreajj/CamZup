@@ -325,7 +325,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#abs(float)
     */
-   public static Vec2 abs ( final Vec2 v, final Vec2 target ) {
+   public static final Vec2 abs ( final Vec2 v, final Vec2 target ) {
 
       return target.set(Utils.abs(v.x), Utils.abs(v.y));
    }
@@ -339,7 +339,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the sum
     */
-   public static Vec2 add ( final Vec2 a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 add ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(a.x + b.x, a.y + b.y);
    }
@@ -355,7 +356,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#invSqrtUnchecked(float)
     */
-   public static Vec2 addNorm ( final Vec2 a, final Vec2 b,
+   public static final Vec2 addNorm ( final Vec2 a, final Vec2 b,
       final Vec2 target ) {
 
       final float dx = a.x + b.x;
@@ -378,8 +379,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Vec2#add(Vec2, Vec2, Vec2)
     * @see Vec2#normalize(Vec2, Vec2)
     */
-   public static Vec2 addNorm ( final Vec2 a, final Vec2 b, final Vec2 target,
-      final Vec2 sum ) {
+   public static final Vec2 addNorm ( final Vec2 a, final Vec2 b,
+      final Vec2 target, final Vec2 sum ) {
 
       Vec2.add(a, b, sum);
       return Vec2.normalize(sum, target);
@@ -393,7 +394,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the evaluation
     */
-   public static boolean all ( final Vec2 v ) {
+   public static final boolean all ( final Vec2 v ) {
 
       return v.y != 0.0f && v.x != 0.0f;
    }
@@ -409,7 +410,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#and(float, float)
     */
-   public static Vec2 and ( final Vec2 a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 and ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(Utils.and(a.x, b.x), Utils.and(a.y, b.y));
    }
@@ -425,7 +427,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#any(Vec2)
     */
-   public static float angleBetween ( final Vec2 a, final Vec2 b ) {
+   public static final float angleBetween ( final Vec2 a, final Vec2 b ) {
 
       /* To match distAngleUnsigned, this requires double precision. */
 
@@ -449,7 +451,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the evaluation
     */
-   public static boolean any ( final Vec2 v ) {
+   public static final boolean any ( final Vec2 v ) {
 
       return v.y != 0.0f || v.x != 0.0f;
    }
@@ -464,7 +466,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
-   public static Vec2[] append ( final Vec2[] a, final Vec2 b ) {
+   public static final Vec2[] append ( final Vec2[] a, final Vec2 b ) {
 
       final boolean aNull = a == null;
       final boolean bNull = b == null;
@@ -493,7 +495,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#approx(Vec2, Vec2, float)
     */
-   public static boolean approx ( final Vec2 a, final Vec2 b ) {
+   public static final boolean approx ( final Vec2 a, final Vec2 b ) {
 
       return Vec2.approx(a, b, IUtils.EPSILON);
    }
@@ -509,7 +511,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#approx(float, float, float)
     */
-   public static boolean approx ( final Vec2 a, final Vec2 b,
+   public static final boolean approx ( final Vec2 a, final Vec2 b,
       final float tolerance ) {
 
       return a == b || Utils.approx(a.y, b.y, tolerance) && Utils.approx(a.x,
@@ -526,7 +528,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#approxMag(Vec2, float, float)
     */
-   public static boolean approxMag ( final Vec2 a, final float b ) {
+   public static final boolean approxMag ( final Vec2 a, final float b ) {
 
       return Vec2.approxMag(a, b, IUtils.EPSILON);
    }
@@ -543,7 +545,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Utils#approx(float, float, float)
     * @see Vec2#magSq(Vec2)
     */
-   public static boolean approxMag ( final Vec2 a, final float b,
+   public static final boolean approxMag ( final Vec2 a, final float b,
       final float tolerance ) {
 
       return Utils.approx(Vec2.magSq(a), b * b, tolerance);
@@ -559,7 +561,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#areParallel(Vec2, Vec2, float)
     */
-   public static boolean areParallel ( final Vec2 a, final Vec2 b ) {
+   public static final boolean areParallel ( final Vec2 a, final Vec2 b ) {
 
       return Vec2.areParallel(a, b, IUtils.EPSILON);
    }
@@ -576,7 +578,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#abs(float)
     */
-   public static boolean areParallel ( final Vec2 a, final Vec2 b,
+   public static final boolean areParallel ( final Vec2 a, final Vec2 b,
       final float tolerance ) {
 
       return Utils.abs(a.x * b.y - a.y * b.x) <= tolerance;
@@ -589,7 +591,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the back vector
     */
-   public static Vec2 back ( final Vec2 target ) {
+   public static final Vec2 back ( final Vec2 target ) {
 
       return target.set(0.0f, -1.0f);
    }
@@ -609,7 +611,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the point along the curve
     */
-   public static Vec2 bezierPoint ( final Vec2 ap0, final Vec2 cp0,
+   public static final Vec2 bezierPoint ( final Vec2 ap0, final Vec2 cp0,
       final Vec2 cp1, final Vec2 ap1, final float step, final Vec2 target ) {
 
       /*
@@ -652,7 +654,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#sub(Vec2, Vec2, Vec2)
     */
-   public static Vec2 bezierTangent ( final Vec2 ap0, final Vec2 cp0,
+   public static final Vec2 bezierTangent ( final Vec2 ap0, final Vec2 cp0,
       final Vec2 cp1, final Vec2 ap1, final float step, final Vec2 target ) {
 
       if ( step <= 0.0f ) { return Vec2.sub(cp0, ap0, target); }
@@ -692,7 +694,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Vec2#bezierTangent(Vec2, Vec2, Vec2, Vec2, float, Vec2)
     * @see Utils#invHypot(float, float)
     */
-   public static Vec2 bezierTanUnit ( final Vec2 ap0, final Vec2 cp0,
+   public static final Vec2 bezierTanUnit ( final Vec2 ap0, final Vec2 cp0,
       final Vec2 cp1, final Vec2 ap1, final float step, final Vec2 target ) {
 
       Vec2.bezierTangent(ap0, cp0, cp1, ap1, step, target);
@@ -712,7 +714,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#byteslm(float, byte[], int)
     */
-   public static byte[] byteslm ( final Vec2 v, final byte[] arr,
+   public static final byte[] byteslm ( final Vec2 v, final byte[] arr,
       final int i ) {
 
       Utils.byteslm(v.x, arr, i);
@@ -733,7 +735,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#bytesml(float, byte[], int)
     */
-   public static byte[] bytesml ( final Vec2 v, final byte[] arr,
+   public static final byte[] bytesml ( final Vec2 v, final byte[] arr,
       final int i ) {
 
       Utils.bytesml(v.x, arr, i);
@@ -752,7 +754,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#ceil(float)
     */
-   public static Vec2 ceil ( final Vec2 v, final Vec2 target ) {
+   public static final Vec2 ceil ( final Vec2 v, final Vec2 target ) {
 
       return target.set(Utils.ceil(v.x), Utils.ceil(v.y));
    }
@@ -768,7 +770,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#clamp01(float)
     */
-   public static Vec2 clamp01 ( final Vec2 v, final Vec2 target ) {
+   public static final Vec2 clamp01 ( final Vec2 v, final Vec2 target ) {
 
       return target.set(Utils.clamp01(v.x), Utils.clamp01(v.y));
    }
@@ -783,7 +785,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
-   public static Vec2[] concat ( final Vec2[] a, final Vec2[] b ) {
+   public static final Vec2[] concat ( final Vec2[] a, final Vec2[] b ) {
 
       final boolean aNull = a == null;
       final boolean bNull = b == null;
@@ -821,7 +823,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#copySign(float, float)
     */
-   public static Vec2 copySign ( final Vec2 magnitude, final Vec2 sign,
+   public static final Vec2 copySign ( final Vec2 magnitude, final Vec2 sign,
       final Vec2 target ) {
 
       return target.set(Utils.copySign(magnitude.x, sign.x), Utils.copySign(
@@ -839,7 +841,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the cross z component
     */
-   public static float cross ( final Vec2 a, final Vec2 b ) {
+   public static final float cross ( final Vec2 a, final Vec2 b ) {
 
       return a.x * b.y - a.y * b.x;
    }
@@ -855,7 +857,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#diff(float, float)
     */
-   public static Vec2 diff ( final Vec2 a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 diff ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y));
    }
@@ -870,7 +873,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#distEuclidean(Vec2, Vec2)
     */
-   public static float dist ( final Vec2 a, final Vec2 b ) {
+   public static final float dist ( final Vec2 a, final Vec2 b ) {
 
       return Vec2.distEuclidean(a, b);
    }
@@ -887,7 +890,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Utils#max(float, float)
     * @see Utils#diff(float, float)
     */
-   public static float distChebyshev ( final Vec2 a, final Vec2 b ) {
+   public static final float distChebyshev ( final Vec2 a, final Vec2 b ) {
 
       return Utils.max(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y));
    }
@@ -904,7 +907,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Vec2#distSq(Vec2, Vec2)
     * @see Utils#sqrtUnchecked(float)
     */
-   public static float distEuclidean ( final Vec2 a, final Vec2 b ) {
+   public static final float distEuclidean ( final Vec2 a, final Vec2 b ) {
 
       return Utils.sqrtUnchecked(Vec2.distSq(a, b));
    }
@@ -920,7 +923,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#diff(float, float)
     */
-   public static float distManhattan ( final Vec2 a, final Vec2 b ) {
+   public static final float distManhattan ( final Vec2 a, final Vec2 b ) {
 
       return Utils.diff(a.x, b.x) + Utils.diff(a.y, b.y);
    }
@@ -940,7 +943,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Math#pow(double, double)
     * @see Math#abs(double)
     */
-   public static float distMinkowski ( final Vec2 a, final Vec2 b,
+   public static final float distMinkowski ( final Vec2 a, final Vec2 b,
       final float c ) {
 
       if ( c != 0.0f ) {
@@ -965,7 +968,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the distance squared
     */
-   public static float distSq ( final Vec2 a, final Vec2 b ) {
+   public static final float distSq ( final Vec2 a, final Vec2 b ) {
 
       final float xDist = b.x - a.x;
       final float yDist = b.y - a.y;
@@ -983,7 +986,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#div(float, float)
     */
-   public static Vec2 div ( final float a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 div ( final float a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(Utils.div(a, b.x), Utils.div(a, b.y));
    }
@@ -997,7 +1001,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the quotient
     */
-   public static Vec2 div ( final Vec2 a, final float b, final Vec2 target ) {
+   public static final Vec2 div ( final Vec2 a, final float b,
+      final Vec2 target ) {
 
       if ( b != 0.0f ) {
          final float denom = 1.0f / b;
@@ -1019,7 +1024,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#div(float, float)
     */
-   public static Vec2 div ( final Vec2 a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 div ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(Utils.div(a.x, b.x), Utils.div(a.y, b.y));
    }
@@ -1034,7 +1040,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the dot product
     */
-   public static float dot ( final Vec2 a, final Vec2 b ) {
+   public static final float dot ( final Vec2 a, final Vec2 b ) {
 
       return a.x * b.x + a.y * b.y;
    }
@@ -1047,7 +1053,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return epsilon
     */
-   public static Vec2 epsilon ( final Vec2 target ) {
+   public static final Vec2 epsilon ( final Vec2 target ) {
 
       return target.set(IUtils.EPSILON, IUtils.EPSILON);
    }
@@ -1065,7 +1071,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#filter(float, float, float)
     */
-   public static Vec2 filter ( final Vec2 v, final Vec2 lb, final Vec2 ub,
+   public static final Vec2 filter ( final Vec2 v, final Vec2 lb, final Vec2 ub,
       final Vec2 target ) {
 
       return target.set(Utils.filter(v.x, lb.x, ub.x), Utils.filter(v.y, lb.y,
@@ -1081,7 +1087,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
-   public static Vec2[] flat ( final Vec2[][] arr ) {
+   public static final Vec2[] flat ( final Vec2[][] arr ) {
 
       /* Sum the lengths of inner arrays. */
       int totalLen = 0;
@@ -1114,7 +1120,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#floor(float)
     */
-   public static Vec2 floor ( final Vec2 v, final Vec2 target ) {
+   public static final Vec2 floor ( final Vec2 v, final Vec2 target ) {
 
       return target.set(Utils.floor(v.x), Utils.floor(v.y));
    }
@@ -1130,7 +1136,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#fmod(float, float)
     */
-   public static Vec2 fmod ( final float a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 fmod ( final float a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(Utils.fmod(a, b.x), Utils.fmod(a, b.y));
    }
@@ -1145,7 +1152,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the result
     */
-   public static Vec2 fmod ( final Vec2 a, final float b, final Vec2 target ) {
+   public static final Vec2 fmod ( final Vec2 a, final float b,
+      final Vec2 target ) {
 
       if ( b != 0.0f ) { return target.set(a.x % b, a.y % b); }
       return target.set(a);
@@ -1163,7 +1171,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#fmod(float, float)
     */
-   public static Vec2 fmod ( final Vec2 a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 fmod ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(Utils.fmod(a.x, b.x), Utils.fmod(a.x, b.y));
    }
@@ -1175,7 +1184,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the forward vector
     */
-   public static Vec2 forward ( final Vec2 target ) {
+   public static final Vec2 forward ( final Vec2 target ) {
 
       return target.set(0.0f, 1.0f);
    }
@@ -1190,7 +1199,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#fract(float)
     */
-   public static Vec2 fract ( final Vec2 v, final Vec2 target ) {
+   public static final Vec2 fract ( final Vec2 v, final Vec2 target ) {
 
       return target.set(Utils.fract(v.x), Utils.fract(v.y));
    }
@@ -1205,7 +1214,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the vector
     */
-   public static Vec2 fromPolar ( final float heading, final float radius,
+   public static final Vec2 fromPolar ( final float heading, final float radius,
       final Vec2 target ) {
 
       final float nrm = heading * IUtils.ONE_TAU;
@@ -1222,7 +1231,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the vector
     */
-   public static Vec2 fromPolar ( final float heading, final Vec2 target ) {
+   public static final Vec2 fromPolar ( final float heading,
+      final Vec2 target ) {
 
       final float nrm = heading * IUtils.ONE_TAU;
       return target.set(Utils.scNorm(nrm), Utils.scNorm(nrm - 0.25f));
@@ -1238,7 +1248,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#grid(int, int)
     */
-   public static Vec2[][] grid ( final int res ) {
+   public static final Vec2[][] grid ( final int res ) {
 
       return Vec2.grid(res, res);
    }
@@ -1255,7 +1265,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#grid(int, int, float, float, float, float)
     */
-   public static Vec2[][] grid ( final int cols, final int rows ) {
+   public static final Vec2[][] grid ( final int cols, final int rows ) {
 
       return Vec2.grid(cols, rows, -0.5f, -0.5f, 0.5f, 0.5f);
    }
@@ -1273,7 +1283,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#grid(int, int, float, float, float, float)
     */
-   public static Vec2[][] grid ( final int cols, final int rows,
+   public static final Vec2[][] grid ( final int cols, final int rows,
       final float lowerBound, final float upperBound ) {
 
       return Vec2.grid(cols, rows, lowerBound, lowerBound, upperBound,
@@ -1293,7 +1303,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#grid(int, int, float, float, float, float)
     */
-   public static Vec2[][] grid ( final int cols, final int rows,
+   public static final Vec2[][] grid ( final int cols, final int rows,
       final Vec2 lowerBound, final Vec2 upperBound ) {
 
       return Vec2.grid(cols, rows, lowerBound.x, lowerBound.y, upperBound.x,
@@ -1311,7 +1321,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#gridPolar(int, int, float, float, float, boolean)
     */
-   public static Vec2[][] gridPolar ( final int sectors, final float radius ) {
+   public static final Vec2[][] gridPolar ( final int sectors,
+      final float radius ) {
 
       return Vec2.gridPolar(sectors, 1, radius, radius, 0.0f, true);
    }
@@ -1329,7 +1340,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#gridPolar(int, int, float, float, float, boolean)
     */
-   public static Vec2[][] gridPolar ( final int sectors, final int rings,
+   public static final Vec2[][] gridPolar ( final int sectors, final int rings,
       final float radiusMin, final float radiusMax ) {
 
       return Vec2.gridPolar(sectors, rings, radiusMin, radiusMax, 0.0f, true);
@@ -1349,7 +1360,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#gridPolar(int, int, float, float, float, boolean)
     */
-   public static Vec2[][] gridPolar ( final int sectors, final int rings,
+   public static final Vec2[][] gridPolar ( final int sectors, final int rings,
       final float radiusMin, final float radiusMax, final float angOffset ) {
 
       return Vec2.gridPolar(sectors, rings, radiusMin, radiusMax, angOffset,
@@ -1373,7 +1384,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Utils#max(float, float)
     * @see Utils#min(float, float)
     */
-   public static Vec2[][] gridPolar ( final int sectors, final int rings,
+   public static final Vec2[][] gridPolar ( final int sectors, final int rings,
       final float radiusMin, final float radiusMax, final float angOffset,
       final boolean includeCenter ) {
 
@@ -1421,7 +1432,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the evaluation
     */
-   public static boolean gt ( final Vec2 a, final Vec2 b ) {
+   public static final boolean gt ( final Vec2 a, final Vec2 b ) {
 
       return a.x > b.x && a.y > b.y;
    }
@@ -1436,7 +1447,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the evaluation
     */
-   public static Vec2 gt ( final Vec2 a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 gt ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(a.x > b.x, a.y > b.y);
    }
@@ -1450,7 +1462,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the evaluation
     */
-   public static boolean gtEq ( final Vec2 a, final Vec2 b ) {
+   public static final boolean gtEq ( final Vec2 a, final Vec2 b ) {
 
       return a.x >= b.x && a.y >= b.y;
    }
@@ -1465,7 +1477,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the evaluation
     */
-   public static Vec2 gtEq ( final Vec2 a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 gtEq ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(a.x >= b.x, a.y >= b.y);
    }
@@ -1479,7 +1492,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the product
     */
-   public static Vec2 hadamard ( final Vec2 a, final Vec2 b,
+   public static final Vec2 hadamard ( final Vec2 a, final Vec2 b,
       final Vec2 target ) {
 
       return target.set(a.x * b.x, a.y * b.y);
@@ -1494,7 +1507,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#headingSigned(Vec2)
     */
-   public static float heading ( final Vec2 v ) {
+   public static final float heading ( final Vec2 v ) {
 
       return Vec2.headingSigned(v);
    }
@@ -1508,7 +1521,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#atan2(float, float)
     */
-   public static float headingSigned ( final Vec2 v ) {
+   public static final float headingSigned ( final Vec2 v ) {
 
       return Utils.atan2(v.y, v.x);
    }
@@ -1522,7 +1535,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#headingSigned(Vec2)
     */
-   public static float headingUnsigned ( final Vec2 v ) {
+   public static final float headingUnsigned ( final Vec2 v ) {
 
       final float h = Vec2.headingSigned(v);
       return h < -0.0f ? h + IUtils.TAU : h;
@@ -1541,7 +1554,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Utils#mod(int, int)
     * @see System#arraycopy(Object, int, Object, int, int)
     */
-   public static Vec2[] insert ( final Vec2[] arr, final int index,
+   public static final Vec2[] insert ( final Vec2[] arr, final int index,
       final Vec2[] insert ) {
 
       final int alen = arr.length;
@@ -1567,7 +1580,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Utils#approx(float, float)
     * @see Vec2#magSq(Vec2)
     */
-   public static boolean isUnit ( final Vec2 v ) {
+   public static final boolean isUnit ( final Vec2 v ) {
 
       return Utils.approx(Vec2.magSq(v), 1.0f);
    }
@@ -1579,7 +1592,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the left vector
     */
-   public static Vec2 left ( final Vec2 target ) {
+   public static final Vec2 left ( final Vec2 target ) {
 
       return target.set(-1.0f, 0.0f);
    }
@@ -1596,7 +1609,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#invSqrtUnchecked(float)
     */
-   public static Vec2 limit ( final Vec2 v, final float limit,
+   public static final Vec2 limit ( final Vec2 v, final float limit,
       final Vec2 target ) {
 
       final float mSq = v.x * v.x + v.y * v.y;
@@ -1617,7 +1630,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the evaluation
     */
-   public static boolean lt ( final Vec2 a, final Vec2 b ) {
+   public static final boolean lt ( final Vec2 a, final Vec2 b ) {
 
       return a.x < b.x && a.y < b.y;
    }
@@ -1632,7 +1645,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the evaluation
     */
-   public static Vec2 lt ( final Vec2 a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 lt ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(a.x < b.x, a.y < b.y);
    }
@@ -1646,7 +1660,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the evaluation
     */
-   public static boolean ltEq ( final Vec2 a, final Vec2 b ) {
+   public static final boolean ltEq ( final Vec2 a, final Vec2 b ) {
 
       return a.x <= b.x && a.y <= b.y;
    }
@@ -1661,7 +1675,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the evaluation
     */
-   public static Vec2 ltEq ( final Vec2 a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 ltEq ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(a.x <= b.x, a.y <= b.y);
    }
@@ -1678,7 +1693,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#sqrtUnchecked(float)
     */
-   public static float mag ( final Vec2 v ) {
+   public static final float mag ( final Vec2 v ) {
 
       return Utils.sqrtUnchecked(v.x * v.x + v.y * v.y);
    }
@@ -1693,7 +1708,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the magnitude squared
     */
-   public static float magSq ( final Vec2 v ) {
+   public static final float magSq ( final Vec2 v ) {
 
       return v.x * v.x + v.y * v.y;
    }
@@ -1712,7 +1727,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#map(float, float, float, float, float)
     */
-   public static Vec2 map ( final Vec2 v, final Vec2 lbOrigin,
+   public static final Vec2 map ( final Vec2 v, final Vec2 lbOrigin,
       final Vec2 ubOrigin, final Vec2 lbDest, final Vec2 ubDest,
       final Vec2 target ) {
 
@@ -1732,7 +1747,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#max(float, float)
     */
-   public static Vec2 max ( final Vec2 a, final float lowerBound,
+   public static final Vec2 max ( final Vec2 a, final float lowerBound,
       final Vec2 target ) {
 
       return target.set(Utils.max(a.x, lowerBound), Utils.max(a.y, lowerBound));
@@ -1750,7 +1765,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#max(float, float)
     */
-   public static Vec2 max ( final Vec2 a, final Vec2 lowerBound,
+   public static final Vec2 max ( final Vec2 a, final Vec2 lowerBound,
       final Vec2 target ) {
 
       return target.set(Utils.max(a.x, lowerBound.x), Utils.max(a.y,
@@ -1769,7 +1784,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#min(float, float)
     */
-   public static Vec2 min ( final Vec2 a, final float upperBound,
+   public static final Vec2 min ( final Vec2 a, final float upperBound,
       final Vec2 target ) {
 
       return target.set(Utils.min(a.x, upperBound), Utils.min(a.y, upperBound));
@@ -1787,7 +1802,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#min(float, float)
     */
-   public static Vec2 min ( final Vec2 a, final Vec2 upperBound,
+   public static final Vec2 min ( final Vec2 a, final Vec2 upperBound,
       final Vec2 target ) {
 
       return target.set(Utils.min(a.x, upperBound.x), Utils.min(a.y,
@@ -1804,8 +1819,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the mix
     */
-   public static Vec2 mix ( final Vec2 orig, final Vec2 dest, final float step,
-      final Vec2 target ) {
+   public static final Vec2 mix ( final Vec2 orig, final Vec2 dest,
+      final float step, final Vec2 target ) {
 
       if ( step <= 0.0f ) { return target.set(orig); }
       if ( step >= 1.0f ) { return target.set(dest); }
@@ -1825,7 +1840,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#mod(float, float)
     */
-   public static Vec2 mod ( final float a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 mod ( final float a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(Utils.mod(a, b.x), Utils.mod(a, b.y));
    }
@@ -1841,7 +1857,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#modUnchecked(float, float)
     */
-   public static Vec2 mod ( final Vec2 a, final float b, final Vec2 target ) {
+   public static final Vec2 mod ( final Vec2 a, final float b,
+      final Vec2 target ) {
 
       if ( b != 0.0f ) {
          return target.set(Utils.modUnchecked(a.x, b), Utils.modUnchecked(a.y,
@@ -1861,7 +1878,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#mod(float, float)
     */
-   public static Vec2 mod ( final Vec2 a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 mod ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(Utils.mod(a.x, b.x), Utils.mod(a.y, b.y));
    }
@@ -1878,7 +1896,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#mod1(float)
     */
-   public static Vec2 mod1 ( final Vec2 v, final Vec2 target ) {
+   public static final Vec2 mod1 ( final Vec2 v, final Vec2 target ) {
 
       return target.set(Utils.mod1(v.x), Utils.mod1(v.y));
    }
@@ -1892,7 +1910,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the product
     */
-   public static Vec2 mul ( final float a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 mul ( final float a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(a * b.x, a * b.y);
    }
@@ -1906,7 +1925,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the product
     */
-   public static Vec2 mul ( final Vec2 a, final float b, final Vec2 target ) {
+   public static final Vec2 mul ( final Vec2 a, final float b,
+      final Vec2 target ) {
 
       return target.set(a.x * b, a.y * b);
    }
@@ -1919,7 +1939,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the negation
     */
-   public static Vec2 negate ( final Vec2 v, final Vec2 target ) {
+   public static final Vec2 negate ( final Vec2 v, final Vec2 target ) {
 
       return target.set(-v.x, -v.y);
    }
@@ -1931,7 +1951,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return negative one
     */
-   public static Vec2 negOne ( final Vec2 target ) {
+   public static final Vec2 negOne ( final Vec2 target ) {
 
       return target.set(-1.0f, -1.0f);
    }
@@ -1944,7 +1964,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the evaluation
     */
-   public static boolean none ( final Vec2 v ) {
+   public static final boolean none ( final Vec2 v ) {
 
       return v.y == 0.0f && v.x == 0.0f;
    }
@@ -1961,7 +1981,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#invSqrt(float)
     */
-   public static Vec2 normalize ( final Vec2 v, final Vec2 target ) {
+   public static final Vec2 normalize ( final Vec2 v, final Vec2 target ) {
 
       final float mInv = Utils.invSqrt(v.x * v.x + v.y * v.y);
       return target.set(v.x * mInv, v.y * mInv);
@@ -1975,7 +1995,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the truth table opposite
     */
-   public static Vec2 not ( final Vec2 v, final Vec2 target ) {
+   public static final Vec2 not ( final Vec2 v, final Vec2 target ) {
 
       return target.set(v.x != 0.0f ? 0.0f : 1.0f, v.y != 0.0f ? 0.0f : 1.0f);
    }
@@ -1987,7 +2007,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return one
     */
-   public static Vec2 one ( final Vec2 target ) {
+   public static final Vec2 one ( final Vec2 target ) {
 
       return target.set(1.0f, 1.0f);
    }
@@ -2003,7 +2023,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#or(float, float)
     */
-   public static Vec2 or ( final Vec2 a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 or ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(Utils.or(a.x, b.x), Utils.or(a.y, b.y));
    }
@@ -2020,7 +2041,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#perpendicularCCW(Vec2, Vec2)
     */
-   public static Vec2 perpendicular ( final Vec2 v, final Vec2 target ) {
+   public static final Vec2 perpendicular ( final Vec2 v, final Vec2 target ) {
 
       return Vec2.perpendicularCCW(v, target);
    }
@@ -2045,7 +2066,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the perpendicular
     */
-   public static Vec2 perpendicularCCW ( final Vec2 a, final Vec2 target ) {
+   public static final Vec2 perpendicularCCW ( final Vec2 a,
+      final Vec2 target ) {
 
       return target.set(-a.y, a.x);
    }
@@ -2070,7 +2092,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the perpendicular
     */
-   public static Vec2 perpendicularCW ( final Vec2 a, final Vec2 target ) {
+   public static final Vec2 perpendicularCW ( final Vec2 a,
+      final Vec2 target ) {
 
       return target.set(a.y, -a.x);
    }
@@ -2088,7 +2111,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the oscillation
     */
-   public static Vec2 pingPong ( final Vec2 origin, final Vec2 dest,
+   public static final Vec2 pingPong ( final Vec2 origin, final Vec2 dest,
       final float step, final float pause, final Vec2 target ) {
 
       final float t = 0.5f + 0.5f * pause * Utils.scNorm(step - 0.5f);
@@ -2109,7 +2132,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the oscillation
     */
-   public static Vec2 pingPong ( final Vec2 origin, final Vec2 dest,
+   public static final Vec2 pingPong ( final Vec2 origin, final Vec2 dest,
       final float step, final Vec2 target ) {
 
       return Vec2.pingPong(origin, dest, step, 1.0f, target);
@@ -2125,7 +2148,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#projectScalar(Vec2, Vec2)
     */
-   public static float project ( final Vec2 a, final Vec2 b ) {
+   public static final float project ( final Vec2 a, final Vec2 b ) {
 
       return Vec2.projectScalar(a, b);
    }
@@ -2141,7 +2164,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#projectVector(Vec2, Vec2, Vec2)
     */
-   public static Vec2 project ( final Vec2 a, final Vec2 b,
+   public static final Vec2 project ( final Vec2 a, final Vec2 b,
       final Vec2 target ) {
 
       return Vec2.projectVector(a, b, target);
@@ -2161,7 +2184,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the scalar projection
     */
-   public static float projectScalar ( final Vec2 a, final Vec2 b ) {
+   public static final float projectScalar ( final Vec2 a, final Vec2 b ) {
 
       final float bSq = b.x * b.x + b.y * b.y;
       if ( bSq > 0.0f ) { return ( a.x * b.x + a.y * b.y ) / bSq; }
@@ -2183,7 +2206,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Vec2#projectScalar(Vec2, Vec2)
     * @see Vec2#mul(Vec2, float, Vec2)
     */
-   public static Vec2 projectVector ( final Vec2 a, final Vec2 b,
+   public static final Vec2 projectVector ( final Vec2 a, final Vec2 b,
       final Vec2 target ) {
 
       return Vec2.mul(b, Vec2.projectScalar(a, b), target);
@@ -2201,7 +2224,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#quantizeSigned(float, float, float)
     */
-   public static Vec2 quantize ( final Vec2 v, final int levels,
+   public static final Vec2 quantize ( final Vec2 v, final int levels,
       final Vec2 target ) {
 
       if ( levels == 0 ) { return target.set(v); }
@@ -2222,7 +2245,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#randomPolar(Random, float, Vec2)
     */
-   public static Vec2 random ( final Random rng, final Vec2 target ) {
+   public static final Vec2 random ( final Random rng, final Vec2 target ) {
 
       return Vec2.randomPolar(rng, target);
    }
@@ -2238,7 +2261,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the random vector
     */
-   public static Vec2 randomCartesian ( final Random rng,
+   public static final Vec2 randomCartesian ( final Random rng,
       final float lowerBound, final float upperBound, final Vec2 target ) {
 
       final float rx = rng.nextFloat();
@@ -2258,8 +2281,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the random vector
     */
-   public static Vec2 randomCartesian ( final Random rng, final Vec2 lowerBound,
-      final Vec2 upperBound, final Vec2 target ) {
+   public static final Vec2 randomCartesian ( final Random rng,
+      final Vec2 lowerBound, final Vec2 upperBound, final Vec2 target ) {
 
       final float rx = rng.nextFloat();
       final float ry = rng.nextFloat();
@@ -2279,7 +2302,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Random#nextGaussian()
     */
-   public static Vec2 randomPolar ( final Random rng, final float radius,
+   public static final Vec2 randomPolar ( final Random rng, final float radius,
       final Vec2 target ) {
 
       final double x = rng.nextGaussian();
@@ -2303,7 +2326,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Vec2#randomPolar(Random, float, Vec2)
     */
-   public static Vec2 randomPolar ( final Random rng, final Vec2 target ) {
+   public static final Vec2 randomPolar ( final Random rng,
+      final Vec2 target ) {
 
       return Vec2.randomPolar(rng, 1.0f, target);
    }
@@ -2323,7 +2347,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Vec2#magSq(Vec2)
     * @see Utils#invSqrtUnchecked(float)
     */
-   public static Vec2 reflect ( final Vec2 incident, final Vec2 normal,
+   public static final Vec2 reflect ( final Vec2 incident, final Vec2 normal,
       final Vec2 target ) {
 
       final float nMSq = Vec2.magSq(normal);
@@ -2349,7 +2373,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Vec2#dot(Vec2, Vec2)
     * @see Utils#sqrtUnchecked(float)
     */
-   public static Vec2 refract ( final Vec2 incident, final Vec2 normal,
+   public static final Vec2 refract ( final Vec2 incident, final Vec2 normal,
       final float eta, final Vec2 target ) {
 
       final float nDotI = Vec2.dot(normal, incident);
@@ -2372,7 +2396,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#invSqrtUnchecked(float)
     */
-   public static Vec2 rescale ( final Vec2 v, final float scalar,
+   public static final Vec2 rescale ( final Vec2 v, final float scalar,
       final Vec2 target ) {
 
       final float mSq = v.x * v.x + v.y * v.y;
@@ -2397,7 +2421,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Vec2#normalize(Vec2, Vec2)
     * @see Vec2#mul(Vec2, float, Vec2)
     */
-   public static Vec2 rescale ( final Vec2 v, final float scalar,
+   public static final Vec2 rescale ( final Vec2 v, final float scalar,
       final Vec2 target, final Vec2 normalized ) {
 
       if ( scalar != 0.0f ) {
@@ -2422,7 +2446,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the array
     */
-   public static Vec2[] resize ( final Vec2[] arr, final int sz ) {
+   public static final Vec2[] resize ( final Vec2[] arr, final int sz ) {
 
       if ( sz < 1 ) { return new Vec2[] {}; }
       final Vec2[] result = new Vec2[sz];
@@ -2451,7 +2475,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the right vector
     */
-   public static Vec2 right ( final Vec2 target ) {
+   public static final Vec2 right ( final Vec2 target ) {
 
       return target.set(1.0f, 0.0f);
    }
@@ -2466,7 +2490,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the rotated vector
     */
-   public static Vec2 rotateX ( final Vec2 v, final float radians,
+   public static final Vec2 rotateX ( final Vec2 v, final float radians,
       final Vec2 target ) {
 
       return target.set(v.x, v.y * ( float ) Math.cos(radians));
@@ -2482,7 +2506,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the rotated vector
     */
-   public static Vec2 rotateY ( final Vec2 v, final float radians,
+   public static final Vec2 rotateY ( final Vec2 v, final float radians,
       final Vec2 target ) {
 
       return target.set(v.x * ( float ) Math.cos(radians), v.y);
@@ -2500,7 +2524,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the rotated vector
     */
-   public static Vec2 rotateZ ( final Vec2 v, final float cosa,
+   public static final Vec2 rotateZ ( final Vec2 v, final float cosa,
       final float sina, final Vec2 target ) {
 
       return target.set(cosa * v.x - sina * v.y, cosa * v.y + sina * v.x);
@@ -2515,6 +2539,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the rotated vector
     */
+   @Experimental
    public static Vec2 rotateZ ( final Vec2 v, final float radians,
       final Vec2 target ) {
 
@@ -2534,7 +2559,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#round(float)
     */
-   public static Vec2 round ( final Vec2 v, final Vec2 target ) {
+   public static final Vec2 round ( final Vec2 v, final Vec2 target ) {
 
       return target.set(Utils.round(v.x), Utils.round(v.y));
    }
@@ -2547,7 +2572,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the sign
     */
-   public static Vec2 sign ( final Vec2 v, final Vec2 target ) {
+   public static final Vec2 sign ( final Vec2 v, final Vec2 target ) {
 
       /* Sign returns an integer; this is inlined to avoid cast. */
       return target.set(v.x < -0.0f ? -1.0f : v.x > 0.0f ? 1.0f : 0.0f, v.y
@@ -2563,7 +2588,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the difference
     */
-   public static Vec2 sub ( final Vec2 a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 sub ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(a.x - b.x, a.y - b.y);
    }
@@ -2580,7 +2606,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#invSqrtUnchecked(float)
     */
-   public static Vec2 subNorm ( final Vec2 a, final Vec2 b,
+   public static final Vec2 subNorm ( final Vec2 a, final Vec2 b,
       final Vec2 target ) {
 
       final float dx = a.x - b.x;
@@ -2603,8 +2629,8 @@ public class Vec2 implements Comparable < Vec2 > {
     * @see Vec2#sub(Vec2, Vec2, Vec2)
     * @see Vec2#normalize(Vec2, Vec2)
     */
-   public static Vec2 subNorm ( final Vec2 a, final Vec2 b, final Vec2 target,
-      final Vec2 dir ) {
+   public static final Vec2 subNorm ( final Vec2 a, final Vec2 b,
+      final Vec2 target, final Vec2 dir ) {
 
       Vec2.sub(a, b, dir);
       return Vec2.normalize(dir, target);
@@ -2676,7 +2702,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the truncation
     */
-   public static Vec2 trunc ( final Vec2 v, final Vec2 target ) {
+   public static final Vec2 trunc ( final Vec2 v, final Vec2 target ) {
 
       return target.set(( int ) v.x, ( int ) v.y);
    }
@@ -2689,7 +2715,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the texture coordinate center
     */
-   public static Vec2 uvCenter ( final Vec2 target ) {
+   public static final Vec2 uvCenter ( final Vec2 target ) {
 
       return target.set(0.5f, 0.5f);
    }
@@ -2707,7 +2733,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#wrap(float, float, float)
     */
-   public static Vec2 wrap ( final Vec2 v, final Vec2 lb, final Vec2 ub,
+   public static final Vec2 wrap ( final Vec2 v, final Vec2 lb, final Vec2 ub,
       final Vec2 target ) {
 
       return target.set(Utils.wrap(v.x, lb.x, ub.x), Utils.wrap(v.y, lb.y,
@@ -2726,7 +2752,8 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @see Utils#xor(float, float)
     */
-   public static Vec2 xor ( final Vec2 a, final Vec2 b, final Vec2 target ) {
+   public static final Vec2 xor ( final Vec2 a, final Vec2 b,
+      final Vec2 target ) {
 
       return target.set(Utils.xor(a.x, b.x), Utils.xor(a.y, b.y));
    }
@@ -2738,7 +2765,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the zero vector
     */
-   public static Vec2 zero ( final Vec2 target ) {
+   public static final Vec2 zero ( final Vec2 target ) {
 
       return target.set(0.0f, 0.0f);
    }
@@ -2761,7 +2788,7 @@ public class Vec2 implements Comparable < Vec2 > {
     *
     * @return the array
     */
-   protected static Vec2[][] grid ( final int cols, final int rows,
+   protected static final Vec2[][] grid ( final int cols, final int rows,
       final float lbx, final float lby, final float ubx, final float uby ) {
 
       final int rVrf = rows < 1 ? 1 : rows;
@@ -2873,7 +2900,7 @@ public class Vec2 implements Comparable < Vec2 > {
    /**
     * A linear interpolation functional class.
     */
-   public static class Lerp extends AbstrEasing {
+   public static final class Lerp extends AbstrEasing {
 
       /**
        * The default constructor.
@@ -2906,7 +2933,7 @@ public class Vec2 implements Comparable < Vec2 > {
     * Eases between two vectors with the smooth step formula:
     * <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> ) .
     */
-   public static class SmoothStep extends AbstrEasing {
+   public static final class SmoothStep extends AbstrEasing {
 
       /**
        * The default constructor.

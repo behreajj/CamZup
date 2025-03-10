@@ -1750,26 +1750,6 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
    }
 
    /**
-    * Multiplies a point and normal by a transform.
-    *
-    * @param t      the transform
-    * @param ptSrc  the input point
-    * @param nrmSrc the input normal
-    * @param ptTrg  the output point
-    * @param nrmTrg the output normal
-    *
-    * @return the transformed point
-    */
-   public static Vec3 mulPointAndNormal ( final Transform3 t, final Vec3 ptSrc,
-      final Vec3 nrmSrc, final Vec3 ptTrg, final Vec3 nrmTrg ) {
-
-      Transform3.mulPoint(t, ptSrc, ptTrg);
-      Transform3.mulNormal(t, nrmSrc, nrmTrg);
-
-      return ptTrg;
-   }
-
-   /**
     * Multiplies a vector by a transform.
     *
     * @param t      the transform

@@ -829,8 +829,6 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     * @param tr the matrix
     *
     * @return this face
-    *
-    * @see Transform3#mulPointAndNormal(Transform3, Vec3, Vec3, Vec3, Vec3)
     */
    public Face3 transform ( final Transform3 tr ) {
 
@@ -839,7 +837,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
          final Vert3 vert = this.vertices[i];
          final Vec3 c = vert.coord;
          final Vec3 n = vert.normal;
-         Transform3.mulPointAndNormal(tr, c, n, c, n);
+         Transform3.mulPoint(tr, c, c);
+         Transform3.mulNormal(tr, n, n);
       }
 
       return this;
@@ -896,6 +895,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
     */
    @Experimental
    public Face3 translateLocal ( final Vec3 v, final Handedness handedness ) {
+
+      // TODO: Re-test this now that transform order has changed to SRT.
 
       final Transform3 tr = Face3.orientation(this, handedness,
          new Transform3());

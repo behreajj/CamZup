@@ -876,7 +876,6 @@ public class CurveEntity2 extends Entity2 implements Iterable < Curve2 >,
     *
     * @see Curve2#eval(Curve2, float, Vec2, Vec2)
     * @see Transform2#mulPoint(Transform2, Vec2, Vec2)
-    * @see Transform2#mulDir(Transform2, Vec2, Vec2)
     */
    @Experimental
    public static Knot2 eval ( final CurveEntity2 ce, final int curveIndex,

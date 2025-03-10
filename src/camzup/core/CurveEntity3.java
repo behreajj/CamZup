@@ -644,7 +644,6 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
     *
     * @see Curve3#eval(Curve3, float, Vec3, Vec3)
     * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
-    * @see Transform3#mulDir(Transform3, Vec3, Vec3)
     */
    @Experimental
    public static Knot3 eval ( final CurveEntity3 ce, final int curveIndex,
@@ -705,6 +704,9 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
    public static Vec3 eval ( final CurveEntity3 ce, final int curveIndex,
       final float step, final Vec3 coWorld, final Vec3 tnWorld,
       final Vec3 coLocal, final Vec3 tnLocal ) {
+
+      // TODO: Now that mulPoint order has changed to SRT, is mulDir the right
+      // choice here, or would mulVector be better?
 
       Curve3.eval(ce.get(curveIndex), step, coLocal, tnLocal);
       Transform3.mulPoint(ce.transform, coLocal, coWorld);

@@ -3595,7 +3595,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param vn   a temporary vector
     *
     * @see Transform2#mulTexCoord(Transform2, Vec2, Vec2)
-    * @see Transform3#mulPointAndNormal(Transform3, Vec3, Vec3, Vec3, Vec3)
     */
    protected void drawMesh3 ( final Mesh3 mesh, final Transform3 tr,
       final MaterialPImage mat, final Vec3 v, final Vec2 vt, final Vec3 vn ) {
@@ -3623,9 +3622,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          for ( int j = 0; j < fLen; ++j ) {
 
             final int[] data = f[j];
+            Transform3.mulPoint(tr, vs[data[0]], v);
             Transform2.mulTexCoord(uvtr, vts[data[1]], vt);
-            Transform3.mulPointAndNormal(tr, vs[data[0]], vns[data[2]], v, vn);
-
+            Transform3.mulNormal(tr, vns[data[2]], vn);
             this.normalX = vn.x;
             this.normalY = vn.y;
             this.normalZ = vn.z;
@@ -3643,8 +3642,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * @param tr   the transform
     * @param v    a temporary vector
     * @param vn   a temporary vector
-    *
-    * @see Transform3#mulPointAndNormal(Transform3, Vec3, Vec3, Vec3, Vec3)
     */
    protected void drawMesh3 ( final Mesh3 mesh, final Transform3 tr,
       final Vec3 v, final Vec3 vn ) {
@@ -3666,7 +3663,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          for ( int j = 0; j < fLen; ++j ) {
 
             final int[] data = f[j];
-            Transform3.mulPointAndNormal(tr, vs[data[0]], vns[data[2]], v, vn);
+            Transform3.mulPoint(tr, vs[data[0]], v);
+            Transform3.mulNormal(tr, vns[data[2]], vn);
 
             this.normalX = vn.x;
             this.normalY = vn.y;
