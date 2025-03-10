@@ -2218,7 +2218,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
       /**
        * Eases between an origin and destination curve by a step in [0.0, 1.0].
        *
-       * @param origin the origin
+       * @param orig   the origin
        * @param dest   the destination
        * @param step   the step
        * @param target the output curve
@@ -2226,13 +2226,16 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
        * @return the eased curve
        */
       @Override
-      public Curve3 apply ( final Curve3 origin, final Curve3 dest,
+      public Curve3 apply ( final Curve3 orig, final Curve3 dest,
          final Float step, final Curve3 target ) {
 
-         final float t = step;
-         if ( t <= 0.0f ) { return target.set(origin); }
-         if ( t >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, t, target);
+         final float tf = step;
+         if ( Float.isNaN(tf) ) {
+            return this.applyUnclamped(orig, dest, 0.5f, target);
+         }
+         if ( tf <= 0.0f ) { return target.set(orig); }
+         if ( tf >= 1.0f ) { return target.set(dest); }
+         return this.applyUnclamped(orig, dest, tf, target);
       }
 
       /**

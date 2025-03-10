@@ -22,9 +22,7 @@ public class Ray2 {
    /**
     * The default constructor.
     */
-   public Ray2 ( ) {
-      // TODO: circle intersection?
-   }
+   public Ray2 ( ) {}
 
    /**
     * Creates a new ray from a source.
@@ -240,7 +238,7 @@ public class Ray2 {
     *
     * @return the points
     */
-   public static Vec2[] intersections ( final Ray2 ray, final Bounds2 bounds ) {
+   public static Vec2[] intersect ( final Ray2 ray, final Bounds2 bounds ) {
 
       /*
        * Avoid the possibility of duplicates when a ray intersects a corner
@@ -248,10 +246,10 @@ public class Ray2 {
        */
       final TreeSet < Vec2 > uniques = new TreeSet <>();
 
-      final Vec2 min = bounds.min;
-      final Vec2 max = bounds.max;
       final Vec2 rOrig = ray.origin;
       final Vec2 rDir = ray.dir;
+      final Vec2 min = bounds.min;
+      final Vec2 max = bounds.max;
 
       final double x0 = min.x;
       final double y0 = min.y;
@@ -339,13 +337,13 @@ public class Ray2 {
     *
     * @return the points
     *
-    * @see Ray2#intersections(Ray2, Mesh2, TreeSet)
+    * @see Ray2#intersect(Ray2, Mesh2, TreeSet)
     */
    @Experimental
-   public static Vec2[] intersections ( final Ray2 r, final Mesh2 m ) {
+   public static Vec2[] intersect ( final Ray2 r, final Mesh2 m ) {
 
       final TreeSet < Vec2 > uniques = new TreeSet <>();
-      Ray2.intersections(r, m, uniques);
+      Ray2.intersect(r, m, uniques);
       final Vec2[] arr = uniques.toArray(new Vec2[uniques.size()]);
       Arrays.sort(arr, new Vec2.SortDistSq(r.origin));
 
@@ -362,15 +360,15 @@ public class Ray2 {
     * @return the points
     *
     * @see Transform2#invMul(Transform2, Ray2, Ray2)
-    * @see Ray2#intersections(Ray2, Mesh2, TreeSet)
+    * @see Ray2#intersect(Ray2, Mesh2, TreeSet)
     */
    @Experimental
-   public static Vec2[] intersections ( final Ray2 r, final MeshEntity2 me ) {
+   public static Vec2[] intersect ( final Ray2 r, final MeshEntity2 me ) {
 
       final Transform2 t = me.transform;
       final Ray2 local = Transform2.invMul(t, r, new Ray2());
       final TreeSet < Vec2 > uniques = new TreeSet <>();
-      for ( final Mesh2 m : me ) { Ray2.intersections(local, m, uniques); }
+      for ( final Mesh2 m : me ) { Ray2.intersect(local, m, uniques); }
 
       final Vec2[] arr = uniques.toArray(new Vec2[uniques.size()]);
       final int len = arr.length;
@@ -384,6 +382,73 @@ public class Ray2 {
    }
 
    /**
+    * Finds points of intersection, if any, between a ray and a mesh entity.
+    * Transforms the ray to local space.
+    *
+    * @param ray    the ray
+    * @param center the circle center
+    * @param radius the circle radius
+    *
+    * @return the points
+    */
+   public static Vec2[] intersect ( final Ray2 ray, final Vec2 center,
+      final float radius ) {
+
+      final TreeSet < Vec2 > uniques = new TreeSet <>();
+
+      final Vec2 rOrig = ray.origin;
+      final Vec2 rDir = ray.dir;
+
+      final double rx = rOrig.x;
+      final double ry = rOrig.y;
+      final double dx = rDir.x;
+      final double dy = rDir.y;
+
+      final double cx = center.x;
+      final double cy = center.y;
+      final double cr = radius;
+
+      final double ux = cx - rx;
+      final double uy = cy - ry;
+
+      /* Project u onto d. */
+      final double vmsq = dx * dx + dy * dy;
+      final double dotuv = ux * dx + uy * dy;
+      final double uvScalarProj = vmsq > 0.0d ? dotuv / vmsq : 0.0d;
+      final double u1x = dx * uvScalarProj;
+      final double u1y = dy * uvScalarProj;
+
+      final double u2x = ux - u1x;
+      final double u2y = uy - u1y;
+
+      final double u2msq = u2x * u2x + u2y * u2y;
+      final double rSq = cr * cr;
+      final double m = Math.sqrt(rSq - u2msq);
+
+      final double opu1x = rx + u1x;
+      final double opu1y = ry + u1y;
+
+      final double mvx = m * dx;
+      final double mvy = m * dy;
+
+      if ( u2msq <= rSq ) {
+         final double p0x = opu1x + mvx;
+         final double p0y = opu1y + mvy;
+
+         final double p1x = opu1x - mvx;
+         final double p1y = opu1y - mvy;
+
+         uniques.add(new Vec2(( float ) p0x, ( float ) p0y));
+         uniques.add(new Vec2(( float ) p1x, ( float ) p1y));
+      }
+
+      final Vec2[] arr = uniques.toArray(new Vec2[uniques.size()]);
+      Arrays.sort(arr, new Vec2.SortDistSq(ray.origin));
+
+      return arr;
+   }
+
+   /**
     * Finds points of intersection, if any, between a ray and a line segment.
     *
     * @param ray  the ray
@@ -392,12 +457,12 @@ public class Ray2 {
     *
     * @return the points
     */
-   public static Vec2[] intersections ( final Ray2 ray, final Vec2 orig,
+   public static Vec2[] intersect ( final Ray2 ray, final Vec2 orig,
       final Vec2 dest ) {
 
-      final TreeSet < Vec2 > uniques = new TreeSet < >();
-      Ray2.factorLineSeg(ray.origin.x, ray.origin.y, ray.dir.x, ray.dir.y,
-         orig.x, orig.y, dest.x, dest.y, uniques);
+      final TreeSet < Vec2 > uniques = new TreeSet <>();
+      Ray2.factorEdge(ray.origin.x, ray.origin.y, ray.dir.x, ray.dir.y, orig.x,
+         orig.y, dest.x, dest.y, uniques);
       return uniques.toArray(new Vec2[uniques.size()]);
    }
 
@@ -417,7 +482,7 @@ public class Ray2 {
     *
     * @return the factor
     */
-   static float factorLineSeg ( final float xRayOrig, final float yRayOrig,
+   static float factorEdge ( final float xRayOrig, final float yRayOrig,
       final float xRayDir, final float yRayDir, final float xSegOrig,
       final float ySegOrig, final float xSegDest, final float ySegDest,
       final TreeSet < Vec2 > uniques ) {
@@ -482,7 +547,7 @@ public class Ray2 {
     * @see Ray2#factorLineSeg(float, float, float, float, float, float, float,
     *      float)
     */
-   static TreeSet < Vec2 > intersections ( final Ray2 local, final Mesh2 m,
+   static TreeSet < Vec2 > intersect ( final Ray2 local, final Mesh2 m,
       final TreeSet < Vec2 > uniques ) {
 
       final Vec2 rOrig = local.origin;
@@ -507,7 +572,7 @@ public class Ray2 {
             final int k = ( j + 1 ) % fLen;
             final Vec2 curr = vs[f[j][0]];
             final Vec2 next = vs[f[k][0]];
-            Ray2.factorLineSeg(rx, ry, dx, dy, curr.x, curr.y, next.x, next.y,
+            Ray2.factorEdge(rx, ry, dx, dy, curr.x, curr.y, next.x, next.y,
                uniques);
          }
       }

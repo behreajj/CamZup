@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.Random;
+import java.util.function.Function;
 
 /**
  * A mutable, extensible color class that represents colors in a perceptual
@@ -11,7 +12,7 @@ import java.util.Random;
  * . For a and b, the practical range is roughly [-111.0, 111.0] . Alpha is
  * expected to be in [0.0, 1.0] .
  */
-public class Lab implements Comparable < Lab > {
+public class Lab implements IColor < Lab > {
 
    /**
     * The green-magenta component.
@@ -166,6 +167,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return this color
     */
+   @Override
    public Lab reset ( ) { return this.set(100.0f, 0.0f, 0.0f, 1.0f); }
 
    /**
@@ -250,6 +252,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return this color
     */
+   @Override
    public Lab set ( final Lab source ) {
 
       return this.set(source.l, source.a, source.b, source.alpha);
@@ -388,7 +391,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return the color
     */
-   public static Lab add ( final Lab o, final Lab d, final Lab target ) {
+   public static final Lab add ( final Lab o, final Lab d, final Lab target ) {
 
       /* @formatter:off */
       return target.set(
@@ -408,7 +411,8 @@ public class Lab implements Comparable < Lab > {
     *
     * @return the color
     */
-   public static Lab addPolar ( final Lab o, final Lab d, final Lab target ) {
+   public static final Lab addPolar ( final Lab o, final Lab d,
+      final Lab target ) {
 
       final double oa = o.a;
       final double ob = o.b;
@@ -441,7 +445,7 @@ public class Lab implements Comparable < Lab > {
     * @see Math#sqrt(double)
     * @see Lab#gray(Lab, Lab)
     */
-   public static Lab adoptChroma ( final Lab o, final Lab d,
+   public static final Lab adoptChroma ( final Lab o, final Lab d,
       final Lab target ) {
 
       final double oa = o.a;
@@ -471,7 +475,8 @@ public class Lab implements Comparable < Lab > {
     * @see Math#sqrt(double)
     * @see Lab#gray(Lab, Lab)
     */
-   public static Lab adoptHue ( final Lab o, final Lab d, final Lab target ) {
+   public static final Lab adoptHue ( final Lab o, final Lab d,
+      final Lab target ) {
 
       final double da = d.a;
       final double db = d.b;
@@ -518,7 +523,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return black
     */
-   public static Lab black ( final Lab target ) {
+   public static final Lab black ( final Lab target ) {
 
       return target.set(0.0f, 0.0f, 0.0f, 1.0f);
    }
@@ -532,7 +537,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @see Math#sqrt(double)
     */
-   public static float chroma ( final Lab o ) {
+   public static final float chroma ( final Lab o ) {
 
       final double ad = o.a;
       final double bd = o.b;
@@ -546,7 +551,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return the chroma squared
     */
-   public static float chromaSq ( final Lab o ) {
+   public static final float chromaSq ( final Lab o ) {
 
       final double ad = o.a;
       final double bd = o.b;
@@ -560,7 +565,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return clear black
     */
-   public static Lab clearBlack ( final Lab target ) {
+   public static final Lab clearBlack ( final Lab target ) {
 
       return target.set(0.0f, 0.0f, 0.0f, 0.0f);
    }
@@ -572,7 +577,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return clear white
     */
-   public static Lab clearWhite ( final Lab target ) {
+   public static final Lab clearWhite ( final Lab target ) {
 
       return target.set(100.0f, 0.0f, 0.0f, 0.0f);
    }
@@ -587,7 +592,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return the distance
     */
-   public static float dist ( final Lab o, final Lab d ) {
+   public static final float dist ( final Lab o, final Lab d ) {
 
       return Lab.dist(o, d, Lab.DEFAULT_ALPHA_SCALAR);
    }
@@ -607,7 +612,7 @@ public class Lab implements Comparable < Lab > {
     * @see Math#abs(double)
     * @see Math#sqrt(double)
     */
-   public static float dist ( final Lab o, final Lab d,
+   public static final float dist ( final Lab o, final Lab d,
       final float alphaScalar ) {
 
       /*
@@ -631,7 +636,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @see Lab#distEuclidean(Lab, Lab, float)
     */
-   public static float distEuclidean ( final Lab o, final Lab d ) {
+   public static final float distEuclidean ( final Lab o, final Lab d ) {
 
       return Lab.distEuclidean(o, d, Lab.DEFAULT_ALPHA_SCALAR);
    }
@@ -649,7 +654,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @see Math#sqrt(double)
     */
-   public static float distEuclidean ( final Lab o, final Lab d,
+   public static final float distEuclidean ( final Lab o, final Lab d,
       final float alphaScalar ) {
 
       final double ct = alphaScalar * ( d.alpha - o.alpha );
@@ -670,7 +675,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @see Utils#clamp01(float)
     */
-   public static boolean eqAlphaSatArith ( final Lab o, final Lab d ) {
+   public static final boolean eqAlphaSatArith ( final Lab o, final Lab d ) {
 
       return ( int ) ( Utils.clamp01(o.alpha) * 0xff + 0.5f ) == ( int ) ( Utils
          .clamp01(d.alpha) * 0xff + 0.5f );
@@ -727,7 +732,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
-   public static Lab[] flat ( final Lab[][] arr ) {
+   public static final Lab[] flat ( final Lab[][] arr ) {
 
       final int sourceLen = arr.length;
       int totalLen = 0;
@@ -758,7 +763,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @see System#arraycopy(Object, int, Object, int, int)
     */
-   public static Lab[] flat ( final Lab[][][] arr ) {
+   public static final Lab[] flat ( final Lab[][][] arr ) {
 
       int totalLen = 0;
       final int sourceLen0 = arr.length;
@@ -840,8 +845,8 @@ public class Lab implements Comparable < Lab > {
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Lab fromLch ( final float l, final float c, final float h,
-      final float alpha, final Lab target ) {
+   public static final Lab fromLch ( final float l, final float c,
+      final float h, final float alpha, final Lab target ) {
 
       final double cd = Math.max(c, 0.0d);
       final double hd = h * IUtils.TAU_D;
@@ -859,7 +864,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @see Lab#fromLch(float, float, float, float, Lab)
     */
-   public static Lab fromLch ( final Lch source, final Lab target ) {
+   public static final Lab fromLch ( final Lch source, final Lab target ) {
 
       return Lab.fromLch(source.l, source.c, source.h, source.alpha, target);
    }
@@ -881,8 +886,8 @@ public class Lab implements Comparable < Lab > {
     *
     * @author Jan Behrens
     */
-   public static Lab fromSrXyz ( final float x, final float y, final float z,
-      final float w, final Lab target ) {
+   public static final Lab fromSrXyz ( final float x, final float y,
+      final float z, final float w, final Lab target ) {
 
       double xd = x;
       double yd = y;
@@ -921,7 +926,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @see Lab#fromSrXyz(float, float, float, float, Lab)
     */
-   public static Lab fromSrXyz ( final Vec4 v, final Lab target ) {
+   public static final Lab fromSrXyz ( final Vec4 v, final Lab target ) {
 
       return Lab.fromSrXyz(v.x, v.y, v.z, v.w, target);
    }
@@ -934,7 +939,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return the gray color
     */
-   public static Lab gray ( final Lab o, final Lab target ) {
+   public static final Lab gray ( final Lab o, final Lab target ) {
 
       return target.set(o.l, 0.0f, 0.0f, o.alpha);
    }
@@ -948,7 +953,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @see Lab#grid(int, int, int)
     */
-   public static Lab[][][] grid ( final int res ) {
+   public static final Lab[][][] grid ( final int res ) {
 
       return Lab.grid(res, res, res);
    }
@@ -967,7 +972,7 @@ public class Lab implements Comparable < Lab > {
     * @see Lab#grid(int, int, int, float, float, float, float, float, float,
     *      float)
     */
-   public static Lab[][][] grid ( final int cols, final int rows,
+   public static final Lab[][][] grid ( final int cols, final int rows,
       final int layers ) {
 
       final float absa = Utils.max(Utils.abs(Lab.SR_A_MIN), Utils.abs(
@@ -994,170 +999,11 @@ public class Lab implements Comparable < Lab > {
     * @see Lab#grid(int, int, int, float, float, float, float, float, float,
     *      float)
     */
-   public static Lab[][][] grid ( final int cols, final int rows,
+   public static final Lab[][][] grid ( final int cols, final int rows,
       final int layers, final Lab lowerBound, final Lab upperBound ) {
 
       return Lab.grid(cols, rows, layers, lowerBound.l, lowerBound.a,
          lowerBound.b, upperBound.l, upperBound.a, upperBound.b, 1.0f);
-   }
-
-   /**
-    * Finds the analogous harmonies for the key color, plus and minus 30
-    * degrees from the key hue. Returns an array containing 2 colors.
-    *
-    * @param o the key color
-    *
-    * @return the harmonies
-    */
-   public static Lab[] harmonyAnalogous ( final Lab o ) {
-
-      /* 30, 330 degrees */
-      final float lAna = ( float ) ( ( o.l * 2.0d + 50.0d ) / 3.0d );
-      final double ad = o.a;
-      final double bd = o.b;
-      final float t = o.alpha;
-
-      final double rt32ca = IUtils.SQRT_3_2_D * ad;
-      final double rt32cb = IUtils.SQRT_3_2_D * bd;
-      final double halfca = 0.5d * ad;
-      final double halfcb = 0.5d * bd;
-
-      /* @formatter:off */
-      return new Lab[] {
-         new Lab(lAna, ( float ) ( rt32ca - halfcb ), ( float ) ( rt32cb + halfca ), t),
-         new Lab(lAna, ( float ) ( rt32ca + halfcb ), ( float ) ( rt32cb - halfca ), t)
-      };
-      /* @formatter:on */
-   }
-
-   /**
-    * Finds the complementary harmony for the key color, 180 degrees from the
-    * key hue. Returns an array containing 1 color.
-    *
-    * @param o the key color
-    *
-    * @return the harmony
-    */
-   public static Lab[] harmonyComplement ( final Lab o ) {
-
-      /* @formatter:off */
-      return new Lab[] {
-         new Lab(( float ) ( 100.0d - o.l ), -o.a, -o.b, o.alpha)
-      };
-      /* @formatter:on */
-   }
-
-   /**
-    * Finds the split-analogous harmonies for the key color, plus and minus
-    * 150 degrees from the key hue. Returns an array containing 2 colors.
-    *
-    * @param o the key color
-    *
-    * @return the harmonies
-    */
-   public static Lab[] harmonySplit ( final Lab o ) {
-
-      /* 150, 210 degrees */
-      final float lSpl = ( float ) ( ( 250.0d - o.l * 2.0d ) / 3.0d );
-      final double ad = o.a;
-      final double bd = o.b;
-      final float t = o.alpha;
-
-      final double rt32ca = -IUtils.SQRT_3_2_D * ad;
-      final double rt32cb = -IUtils.SQRT_3_2_D * bd;
-      final double halfca = 0.5d * ad;
-      final double halfcb = 0.5d * bd;
-
-      /* @formatter:off */
-      return new Lab[] {
-         new Lab(lSpl, ( float ) ( rt32ca - halfcb ), ( float ) ( rt32cb + halfca ), t),
-         new Lab(lSpl, ( float ) ( rt32ca + halfcb ), ( float ) ( rt32cb - halfca ), t)
-      };
-      /* @formatter:on */
-   }
-
-   /**
-    * Finds the square harmonies for the key color, at 90, 180 and 270 degrees
-    * away from the key hue. Returns an array containing 3 colors.
-    *
-    * @param o the key color
-    *
-    * @return the harmonies
-    */
-   public static Lab[] harmonySquare ( final Lab o ) {
-
-      /* @formatter:off */
-      return new Lab[] {
-         new Lab(50.0f, -o.b, o.a, o.alpha),
-         new Lab(( float ) ( 100.0d - o.l ), -o.a, -o.b, o.alpha),
-         new Lab(50.0f, o.b, -o.a, o.alpha)
-      };
-      /* @formatter:on */
-   }
-
-   /**
-    * Finds the tetradic harmonies for the key color, at 120, 180 and 300
-    * degrees from the key hue. Returns an array containing 3 colors.
-    *
-    * @param o the key color
-    *
-    * @return the harmonies
-    */
-   public static Lab[] harmonyTetradic ( final Lab o ) {
-
-      /* 120, 300 degrees */
-      final double ld = o.l;
-      final double ad = o.a;
-      final double bd = o.b;
-      final float t = o.alpha;
-
-      final double rt32ca = IUtils.SQRT_3_2_D * ad;
-      final double rt32cb = IUtils.SQRT_3_2_D * bd;
-      final double halfca = 0.5d * ad;
-      final double halfcb = 0.5d * bd;
-
-      /* @formatter:off */
-      return new Lab[] {
-         new Lab(
-            ( float ) ( ( 200.0d - ld ) / 3.0d ),
-            ( float ) ( -halfca - rt32cb ),
-            ( float ) ( -halfcb + rt32ca ), t),
-         new Lab(( float ) ( 100.0d - ld ), -o.a, -o.b, t),
-         new Lab(
-            ( float ) ( ( 100.0d + ld ) / 3.0d ),
-            ( float ) ( halfca + rt32cb ),
-            ( float ) ( halfcb - rt32ca ), t)
-      };
-      /* @formatter:on */
-   }
-
-   /**
-    * Finds the triadic harmonies for the key color, plus and minus 120
-    * degrees from the key hue. Returns an array containing 2 colors.
-    *
-    * @param o the key color
-    *
-    * @return the harmonies
-    */
-   public static Lab[] harmonyTriadic ( final Lab o ) {
-
-      /* 120, 240 degrees */
-      final float lTri = ( float ) ( ( 200.0d - o.l ) / 3.0d );
-      final double ad = o.a;
-      final double bd = o.b;
-      final float t = o.alpha;
-
-      final double rt32ca = IUtils.SQRT_3_2_D * ad;
-      final double rt32cb = IUtils.SQRT_3_2_D * bd;
-      final double halfca = -0.5d * ad;
-      final double halfcb = -0.5d * bd;
-
-      /* @formatter:off */
-      return new Lab[] {
-         new Lab(lTri, ( float ) ( halfca - rt32cb ), ( float ) ( halfcb + rt32ca ), t),
-         new Lab(lTri, ( float ) ( halfca + rt32cb ), ( float ) ( halfcb - rt32ca ), t)
-      };
-      /* @formatter:on */
    }
 
    /**
@@ -1169,7 +1015,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @see Math#atan2(double, double)
     */
-   public static float hue ( final Lab o ) {
+   public static final float hue ( final Lab o ) {
 
       final double hueSigned = Math.atan2(o.b, o.a);
       final double hueUnsigned = hueSigned < 0.0d ? hueSigned + IUtils.TAU_D
@@ -1189,7 +1035,7 @@ public class Lab implements Comparable < Lab > {
     * @see Math#acos(double)
     * @see Math#sqrt(double)
     */
-   public static float hueBetween ( final Lab o, final Lab d ) {
+   public static final float hueBetween ( final Lab o, final Lab d ) {
 
       final double oa = o.a;
       final double ob = o.b;
@@ -1216,8 +1062,8 @@ public class Lab implements Comparable < Lab > {
     *
     * @return the mix
     */
-   public static Lab mix ( final Lab orig, final Lab dest, final float step,
-      final Lab target ) {
+   public static final Lab mix ( final Lab orig, final Lab dest,
+      final float step, final Lab target ) {
 
       final float u = 1.0f - step;
       return target.set(u * orig.l + step * dest.l, u * orig.a + step * dest.a,
@@ -1292,7 +1138,7 @@ public class Lab implements Comparable < Lab > {
     * @see Math#sqrt(double)
     * @see Lab#gray(Lab, Lab)
     */
-   public static Lab rescaleChroma ( final Lab o, final float scalar,
+   public static final Lab rescaleChroma ( final Lab o, final float scalar,
       final Lab target ) {
 
       final double oa = o.a;
@@ -1319,7 +1165,7 @@ public class Lab implements Comparable < Lab > {
     * @see Math#cos(double)
     * @see Math#sin(double)
     */
-   public static Lab rotateHue ( final Lab o, final float amount,
+   public static final Lab rotateHue ( final Lab o, final float amount,
       final Lab target ) {
 
       final double ad = o.a;
@@ -1340,7 +1186,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return the scaled color
     */
-   public static Lab scaleChroma ( final Lab o, final float scalar,
+   public static final Lab scaleChroma ( final Lab o, final float scalar,
       final Lab target ) {
 
       return target.set(o.l, o.a * scalar, o.b * scalar, o.alpha);
@@ -1427,7 +1273,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return the color
     */
-   public static Lab sub ( final Lab o, final Lab d, final Lab target ) {
+   public static final Lab sub ( final Lab o, final Lab d, final Lab target ) {
 
       /* @formatter:off */
       return target.set(
@@ -1448,7 +1294,8 @@ public class Lab implements Comparable < Lab > {
     *
     * @return the color
     */
-   public static Lab subPolar ( final Lab o, final Lab d, final Lab target ) {
+   public static final Lab subPolar ( final Lab o, final Lab d,
+      final Lab target ) {
 
       final double oa = o.a;
       final double ob = o.b;
@@ -1545,8 +1392,8 @@ public class Lab implements Comparable < Lab > {
     *
     * @author Jan Behrens
     */
-   public static Vec4 toSrXyz ( final float l, final float a, final float b,
-      final float t, final Vec4 target ) {
+   public static final Vec4 toSrXyz ( final float l, final float a,
+      final float b, final float t, final Vec4 target ) {
 
       final double ld = l * 0.01d;
       final double ad = a;
@@ -1592,7 +1439,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return the vector
     */
-   public static Vec4 toSrXyz ( final Lab o, final Vec4 target ) {
+   public static final Vec4 toSrXyz ( final Lab o, final Vec4 target ) {
 
       return Lab.toSrXyz(o.l, o.a, o.b, o.alpha, target);
    }
@@ -1604,7 +1451,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return white
     */
-   public static Lab white ( final Lab target ) {
+   public static final Lab white ( final Lab target ) {
 
       return target.set(100.0f, 0.0f, 0.0f, 1.0f);
    }
@@ -1631,7 +1478,7 @@ public class Lab implements Comparable < Lab > {
     *
     * @return the array
     */
-   protected static Lab[][][] grid ( final int cols, final int rows,
+   protected static final Lab[][][] grid ( final int cols, final int rows,
       final int layers, final float lbl, final float lba, final float lbb,
       final float ubl, final float uba, final float ubb, final float alpha ) {
 
@@ -1672,6 +1519,264 @@ public class Lab implements Comparable < Lab > {
       }
 
       return result;
+   }
+
+   /**
+    * An abstract class to facilitate the creation of harmony functions.
+    */
+   public abstract static class AbstrHarmony implements Function < Lab,
+      Lab[] > {
+
+      /**
+       * The default constructor.
+       */
+      protected AbstrHarmony ( ) {}
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
+   }
+
+   /**
+    * Finds the analogous harmonies for the key color, plus and minus 30
+    * degrees from the key hue. Returns an array containing 2 colors.
+    */
+   public static final class HarmonyAnalogous extends AbstrHarmony {
+
+      /**
+       * The default constructor.
+       */
+      public HarmonyAnalogous ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param o the key color
+       *
+       * @return the harmonies
+       */
+      @Override
+      public Lab[] apply ( final Lab o ) {
+
+         /* 30, 330 degrees */
+         final float lAna = ( float ) ( ( o.l * 2.0d + 50.0d ) / 3.0d );
+         final double ad = o.a;
+         final double bd = o.b;
+         final float t = o.alpha;
+
+         final double rt32ca = IUtils.SQRT_3_2_D * ad;
+         final double rt32cb = IUtils.SQRT_3_2_D * bd;
+         final double halfca = 0.5d * ad;
+         final double halfcb = 0.5d * bd;
+
+         /* @formatter:off */
+         return new Lab[] {
+            new Lab(lAna, ( float ) ( rt32ca - halfcb ), ( float ) ( rt32cb + halfca ), t),
+            new Lab(lAna, ( float ) ( rt32ca + halfcb ), ( float ) ( rt32cb - halfca ), t)
+         };
+         /* @formatter:on */
+      }
+
+   }
+
+   /**
+    * Finds the complementary harmony for the key color, 180 degrees from the
+    * key hue. Returns an array containing 1 color.
+    */
+   public static final class HarmonyComplement extends AbstrHarmony {
+
+      /**
+       * The default constructor.
+       */
+      public HarmonyComplement ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param o the key color
+       *
+       * @return the harmonies
+       */
+      @Override
+      public Lab[] apply ( final Lab o ) {
+
+         /* @formatter:off */
+         return new Lab[] {
+            new Lab(( float ) ( 100.0d - o.l ), -o.a, -o.b, o.alpha)
+         };
+         /* @formatter:on */
+      }
+
+   }
+
+   /**
+    * Finds the split-analogous harmonies for the key color, plus and minus
+    * 150 degrees from the key hue. Returns an array containing 2 colors.
+    */
+   public static final class HarmonySplit extends AbstrHarmony {
+
+      /**
+       * The default constructor.
+       */
+      public HarmonySplit ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param o the key color
+       *
+       * @return the harmonies
+       */
+      @Override
+      public Lab[] apply ( final Lab o ) {
+
+         /* 150, 210 degrees */
+         final float lSpl = ( float ) ( ( 250.0d - o.l * 2.0d ) / 3.0d );
+         final double ad = o.a;
+         final double bd = o.b;
+         final float t = o.alpha;
+
+         final double rt32ca = -IUtils.SQRT_3_2_D * ad;
+         final double rt32cb = -IUtils.SQRT_3_2_D * bd;
+         final double halfca = 0.5d * ad;
+         final double halfcb = 0.5d * bd;
+
+         /* @formatter:off */
+         return new Lab[] {
+            new Lab(lSpl, ( float ) ( rt32ca - halfcb ), ( float ) ( rt32cb + halfca ), t),
+            new Lab(lSpl, ( float ) ( rt32ca + halfcb ), ( float ) ( rt32cb - halfca ), t)
+         };
+         /* @formatter:on */
+      }
+
+   }
+
+   /**
+    * Finds the square harmonies for the key color, at 90, 180 and 270 degrees
+    * away from the key hue. Returns an array containing 3 colors.
+    */
+   public static final class HarmonySquare extends AbstrHarmony {
+
+      /**
+       * The default constructor.
+       */
+      public HarmonySquare ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param o the key color
+       *
+       * @return the harmonies
+       */
+      @Override
+      public Lab[] apply ( final Lab o ) {
+
+         /* @formatter:off */
+         return new Lab[] {
+            new Lab(50.0f, -o.b, o.a, o.alpha),
+            new Lab(( float ) ( 100.0d - o.l ), -o.a, -o.b, o.alpha),
+            new Lab(50.0f, o.b, -o.a, o.alpha)
+         };
+         /* @formatter:on */
+      }
+
+   }
+
+   /**
+    * Finds the tetradic harmonies for the key color, at 120, 180 and 300
+    * degrees from the key hue. Returns an array containing 3 colors.
+    */
+   public static final class HarmonyTetradic extends AbstrHarmony {
+
+      /**
+       * The default constructor.
+       */
+      public HarmonyTetradic ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param o the key color
+       *
+       * @return the harmonies
+       */
+      @Override
+      public Lab[] apply ( final Lab o ) {
+
+         /* 120, 300 degrees */
+         final double ld = o.l;
+         final double ad = o.a;
+         final double bd = o.b;
+         final float t = o.alpha;
+
+         final double rt32ca = IUtils.SQRT_3_2_D * ad;
+         final double rt32cb = IUtils.SQRT_3_2_D * bd;
+         final double halfca = 0.5d * ad;
+         final double halfcb = 0.5d * bd;
+
+         /* @formatter:off */
+         return new Lab[] {
+            new Lab(
+               ( float ) ( ( 200.0d - ld ) / 3.0d ),
+               ( float ) ( -halfca - rt32cb ),
+               ( float ) ( -halfcb + rt32ca ), t),
+            new Lab(( float ) ( 100.0d - ld ), -o.a, -o.b, t),
+            new Lab(
+               ( float ) ( ( 100.0d + ld ) / 3.0d ),
+               ( float ) ( halfca + rt32cb ),
+               ( float ) ( halfcb - rt32ca ), t)
+         };
+         /* @formatter:on */
+      }
+
+   }
+
+   /**
+    * Finds the triadic harmonies for the key color, plus and minus 120
+    * degrees from the key hue. Returns an array containing 2 colors.
+    */
+   public static final class HarmonyTriadic extends AbstrHarmony {
+
+      /**
+       * The default constructor.
+       */
+      public HarmonyTriadic ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param o the key color
+       *
+       * @return the harmonies
+       */
+      @Override
+      public Lab[] apply ( final Lab o ) {
+
+         /* 120, 240 degrees */
+         final float lTri = ( float ) ( ( 200.0d - o.l ) / 3.0d );
+         final double ad = o.a;
+         final double bd = o.b;
+         final float t = o.alpha;
+
+         final double rt32ca = IUtils.SQRT_3_2_D * ad;
+         final double rt32cb = IUtils.SQRT_3_2_D * bd;
+         final double halfca = -0.5d * ad;
+         final double halfcb = -0.5d * bd;
+
+         /* @formatter:off */
+         return new Lab[] {
+            new Lab(lTri, ( float ) ( halfca - rt32cb ), ( float ) ( halfcb + rt32ca ), t),
+            new Lab(lTri, ( float ) ( halfca + rt32cb ), ( float ) ( halfcb - rt32ca ), t)
+         };
+         /* @formatter:on */
+      }
+
    }
 
 }

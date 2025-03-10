@@ -1940,7 +1940,7 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
        * Eases between an origin and destination transform by a step in [0.0,
        * 1.0] .
        *
-       * @param origin the origin
+       * @param orig   the origin
        * @param dest   the destination
        * @param step   the step
        * @param target the output transform
@@ -1948,12 +1948,16 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
        * @return the eased transform
        */
       @Override
-      public Transform3 apply ( final Transform3 origin, final Transform3 dest,
+      public Transform3 apply ( final Transform3 orig, final Transform3 dest,
          final Float step, final Transform3 target ) {
 
-         if ( step <= 0.0f ) { return target.set(origin); }
-         if ( step >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, step, target);
+         final float tf = step;
+         if ( Float.isNaN(tf) ) {
+            return this.applyUnclamped(orig, dest, 0.5f, target);
+         }
+         if ( tf <= 0.0f ) { return target.set(orig); }
+         if ( tf >= 1.0f ) { return target.set(dest); }
+         return this.applyUnclamped(orig, dest, tf, target);
       }
 
       /**
@@ -1969,10 +1973,13 @@ public class Transform3 implements Comparable < Transform3 >, ISpatial3,
          final Transform3 target ) {
 
          final int len = arr.length;
-         if ( len == 1 || step <= 0.0f ) { return target.set(arr[0]); }
-         if ( step >= 1.0f ) { return target.set(arr[len - 1]); }
+         final float tf = step;
+         if ( len == 1 || Float.isNaN(tf) || tf <= 0.0f ) {
+            return target.set(arr[0]);
+         }
+         if ( tf >= 1.0f ) { return target.set(arr[len - 1]); }
 
-         final float scaledStep = step * ( len - 1 );
+         final float scaledStep = tf * ( len - 1 );
          final int i = ( int ) scaledStep;
          return this.applyUnclamped(arr[i], arr[i + 1], scaledStep - i, target);
       }

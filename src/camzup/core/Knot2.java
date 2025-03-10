@@ -1541,7 +1541,7 @@ public class Knot2 implements Comparable < Knot2 > {
        * an unclamped interpolation, which is to be defined by sub-classes of
        * this class.
        *
-       * @param origin the origin knot
+       * @param orig   the origin knot
        * @param dest   the destination knot
        * @param step   a factor in [0.0, 1.0]
        * @param target the output knot
@@ -1549,13 +1549,16 @@ public class Knot2 implements Comparable < Knot2 > {
        * @return the eased knot
        */
       @Override
-      public Knot2 apply ( final Knot2 origin, final Knot2 dest,
-         final Float step, final Knot2 target ) {
+      public Knot2 apply ( final Knot2 orig, final Knot2 dest, final Float step,
+         final Knot2 target ) {
 
-         final float t = step;
-         if ( t <= 0.0f ) { return target.set(origin); }
-         if ( t >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, t, target);
+         final float tf = step;
+         if ( Float.isNaN(tf) ) {
+            return this.applyUnclamped(orig, dest, 0.5f, target);
+         }
+         if ( tf <= 0.0f ) { return target.set(orig); }
+         if ( tf >= 1.0f ) { return target.set(dest); }
+         return this.applyUnclamped(orig, dest, tf, target);
       }
 
       /**

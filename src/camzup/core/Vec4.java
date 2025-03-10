@@ -2365,7 +2365,7 @@ public class Vec4 implements Comparable < Vec4 > {
        * an unclamped interpolation, which is to be defined by sub-classes of
        * this class.
        *
-       * @param origin the origin vector
+       * @param orig   the origin vector
        * @param dest   the destination vector
        * @param step   a factor in [0.0, 1.0]
        * @param target the output vector
@@ -2373,13 +2373,16 @@ public class Vec4 implements Comparable < Vec4 > {
        * @return the eased vector
        */
       @Override
-      public Vec4 apply ( final Vec4 origin, final Vec4 dest, final Float step,
+      public Vec4 apply ( final Vec4 orig, final Vec4 dest, final Float step,
          final Vec4 target ) {
 
          final float tf = step;
-         if ( tf <= 0.0f ) { return target.set(origin); }
+         if ( Float.isNaN(tf) ) {
+            return this.applyUnclamped(orig, dest, 0.5f, target);
+         }
+         if ( tf <= 0.0f ) { return target.set(orig); }
          if ( tf >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, tf, target);
+         return this.applyUnclamped(orig, dest, tf, target);
       }
 
       /**

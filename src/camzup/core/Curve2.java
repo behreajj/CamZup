@@ -2704,7 +2704,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
       /**
        * Eases between an origin and destination curve by a step in [0.0, 1.0].
        *
-       * @param origin the origin
+       * @param orig   the origin
        * @param dest   the destination
        * @param step   the step
        * @param target the output curve
@@ -2712,13 +2712,16 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
        * @return the eased curve
        */
       @Override
-      public Curve2 apply ( final Curve2 origin, final Curve2 dest,
+      public Curve2 apply ( final Curve2 orig, final Curve2 dest,
          final Float step, final Curve2 target ) {
 
-         final float t = step;
-         if ( t <= 0.0f ) { return target.set(origin); }
-         if ( t >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, t, target);
+         final float tf = step;
+         if ( Float.isNaN(tf) ) {
+            return this.applyUnclamped(orig, dest, 0.5f, target);
+         }
+         if ( tf <= 0.0f ) { return target.set(orig); }
+         if ( tf >= 1.0f ) { return target.set(dest); }
+         return this.applyUnclamped(orig, dest, tf, target);
       }
 
       /**
@@ -2733,11 +2736,13 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
          final Curve2 target ) {
 
          final int len = arr.length;
-         final float t = step;
-         if ( len == 1 || t <= 0.0f ) { return target.set(arr[0]); }
-         if ( t >= 1.0f ) { return target.set(arr[len - 1]); }
+         final float tf = step;
+         if ( len == 1 || Float.isNaN(tf) || tf <= 0.0f ) {
+            return target.set(arr[0]);
+         }
+         if ( tf >= 1.0f ) { return target.set(arr[len - 1]); }
 
-         final float scaledStep = t * ( len - 1 );
+         final float scaledStep = tf * ( len - 1 );
          final int i = ( int ) scaledStep;
          return this.applyUnclamped(arr[i], arr[i + 1], scaledStep - i, target);
       }

@@ -6,7 +6,7 @@ package camzup.core;
  * (sRGB) color space. Converts to and from integers where color channels
  * are in the format 0xAARRGGBB.
  */
-public class Rgb implements Comparable < Rgb > {
+public class Rgb implements IColor < Rgb > {
 
    /**
     * The alpha channel, which governs transparency.
@@ -164,6 +164,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return this color
     */
+   @Override
    public Rgb reset ( ) { return this.set(1.0f, 1.0f, 1.0f, 1.0f); }
 
    /**
@@ -249,6 +250,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return this color
     */
+   @Override
    public Rgb set ( final Rgb source ) {
 
       return this.set(source.r, source.g, source.b, source.alpha);
@@ -444,7 +446,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return black
     */
-   public static Rgb black ( final Rgb target ) {
+   public static final Rgb black ( final Rgb target ) {
 
       return target.set(0.0f, 0.0f, 0.0f, 1.0f);
    }
@@ -456,7 +458,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return blue
     */
-   public static Rgb blue ( final Rgb target ) {
+   public static final Rgb blue ( final Rgb target ) {
 
       return target.set(0.0f, 0.0f, 1.0f, 1.0f);
    }
@@ -471,7 +473,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @see Utils#clamp01(float)
     */
-   public static Rgb clamp01 ( final Rgb c, final Rgb target ) {
+   public static final Rgb clamp01 ( final Rgb c, final Rgb target ) {
 
       return target.set(Utils.clamp01(c.r), Utils.clamp01(c.g), Utils.clamp01(
          c.b), Utils.clamp01(c.alpha));
@@ -484,7 +486,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return clear black
     */
-   public static Rgb clearBlack ( final Rgb target ) {
+   public static final Rgb clearBlack ( final Rgb target ) {
 
       return target.set(0.0f, 0.0f, 0.0f, 0.0f);
    }
@@ -496,7 +498,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return clear white
     */
-   public static Rgb clearWhite ( final Rgb target ) {
+   public static final Rgb clearWhite ( final Rgb target ) {
 
       return target.set(1.0f, 1.0f, 1.0f, 0.0f);
    }
@@ -524,7 +526,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @see Utils#clamp01(float)
     */
-   public static boolean eqAlphaSatArith ( final Rgb o, final Rgb d ) {
+   public static final boolean eqAlphaSatArith ( final Rgb o, final Rgb d ) {
 
       return ( int ) ( Utils.clamp01(o.alpha) * 0xff + 0.5f ) == ( int ) ( Utils
          .clamp01(d.alpha) * 0xff + 0.5f );
@@ -541,7 +543,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @see Utils#clamp01(float)
     */
-   public static boolean eqRgbSatArith ( final Rgb o, final Rgb d ) {
+   public static final boolean eqRgbSatArith ( final Rgb o, final Rgb d ) {
 
       /* @formatter:off */
       return ( int ) ( Utils.clamp01(o.b) * 0xff + 0.5f )
@@ -565,7 +567,7 @@ public class Rgb implements Comparable < Rgb > {
     * @see Rgb#eqAlphaSatArith(Rgb, Rgb)
     * @see Rgb#eqRgbSatArith(Rgb, Rgb)
     */
-   public static boolean eqSatArith ( final Rgb o, final Rgb d ) {
+   public static final boolean eqSatArith ( final Rgb o, final Rgb d ) {
 
       return Rgb.eqAlphaSatArith(o, d) && Rgb.eqRgbSatArith(o, d);
    }
@@ -732,7 +734,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return green
     */
-   public static Rgb green ( final Rgb target ) {
+   public static final Rgb green ( final Rgb target ) {
 
       return target.set(0.0f, 1.0f, 0.0f, 1.0f);
    }
@@ -745,7 +747,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return the evaluation
     */
-   public static boolean isInGamut ( final Rgb c ) {
+   public static final boolean isInGamut ( final Rgb c ) {
 
       return Rgb.isInGamut(c, 0.0f);
    }
@@ -759,7 +761,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return the evaluation
     */
-   public static boolean isInGamut ( final Rgb c, final float tol ) {
+   public static final boolean isInGamut ( final Rgb c, final float tol ) {
 
       /* @formatter:off */
       final float oneptol = 1.0f + tol;
@@ -820,8 +822,8 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return the standard color
     */
-   public static Rgb lRgbTosRgb ( final Rgb source, final boolean inclAlpha,
-      final Rgb target ) {
+   public static final Rgb lRgbTosRgb ( final Rgb source,
+      final boolean inclAlpha, final Rgb target ) {
 
       /* pow(x, y) := exp(y * ln(x)) does not lead to better performance. */
 
@@ -853,8 +855,8 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @author Jan Behrens
     */
-   public static Vec4 lRgbToSrXyz ( final float r, final float g, final float b,
-      final float a, final Vec4 target ) {
+   public static final Vec4 lRgbToSrXyz ( final float r, final float g,
+      final float b, final float a, final Vec4 target ) {
 
       final double rd = r;
       final double gd = g;
@@ -879,7 +881,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @see Rgb#lRgbToSrXyz(Rgb, Vec4)
     */
-   public static Vec4 lRgbToSrXyz ( final Rgb c, final Vec4 target ) {
+   public static final Vec4 lRgbToSrXyz ( final Rgb c, final Vec4 target ) {
 
       return Rgb.lRgbToSrXyz(c.r, c.g, c.b, c.alpha, target);
    }
@@ -905,7 +907,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return magenta
     */
-   public static Rgb magenta ( final Rgb target ) {
+   public static final Rgb magenta ( final Rgb target ) {
 
       return target.set(1.0f, 0.0f, 1.0f, 1.0f);
    }
@@ -929,7 +931,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return the multiplied color
     */
-   public static Rgb premul ( final Rgb c, final Rgb target ) {
+   public static final Rgb premul ( final Rgb c, final Rgb target ) {
 
       if ( c.alpha <= 0.0f ) { return target.set(0.0f, 0.0f, 0.0f, 0.0f); }
       if ( c.alpha >= 1.0f ) { return target.set(c.r, c.g, c.b, 1.0f); }
@@ -949,7 +951,7 @@ public class Rgb implements Comparable < Rgb > {
     * @see Utils#abs(float)
     * @see Utils#quantizeUnsigned(float, float, float)
     */
-   public static Rgb quantize ( final Rgb c, final int levels,
+   public static final Rgb quantize ( final Rgb c, final int levels,
       final Rgb target ) {
 
       if ( levels == 1 || levels == -1 ) { return target.set(c); }
@@ -967,7 +969,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return red
     */
-   public static Rgb red ( final Rgb target ) {
+   public static final Rgb red ( final Rgb target ) {
 
       return target.set(1.0f, 0.0f, 0.0f, 1.0f);
    }
@@ -1024,7 +1026,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return the linear color
     */
-   public static Rgb sRgbTolRgb ( final Rgb source, final boolean alpha,
+   public static final Rgb sRgbTolRgb ( final Rgb source, final boolean alpha,
       final Rgb target ) {
 
       /*
@@ -1057,7 +1059,7 @@ public class Rgb implements Comparable < Rgb > {
     * @see Rgb#lRgbToSrXyz(Rgb, Vec4)
     * @see Rgb#sRgbTolRgb(Rgb, boolean, Rgb)
     */
-   public static Lab sRgbToSrLab2 ( final Rgb srgb, final Lab lab,
+   public static final Lab sRgbToSrLab2 ( final Rgb srgb, final Lab lab,
       final Vec4 xyz, final Rgb lrgb ) {
 
       return Lab.fromSrXyz(Rgb.lRgbToSrXyz(Rgb.sRgbTolRgb(srgb, false, lrgb),
@@ -1076,8 +1078,8 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
     */
-   public static Lab[] sRgbToSrLab2 ( final Rgb[] source, final Lab[] target,
-      final Vec4 xyz, final Rgb lrgb ) {
+   public static final Lab[] sRgbToSrLab2 ( final Rgb[] source,
+      final Lab[] target, final Vec4 xyz, final Rgb lrgb ) {
 
       final int srcLen = source.length;
       for ( int i = 0; i < srcLen; ++i ) {
@@ -1100,8 +1102,8 @@ public class Rgb implements Comparable < Rgb > {
     * @see Lch#fromLab(Lab, Lch)
     * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
     */
-   public static Lch sRgbToSrLch ( final Rgb srgb, final Lch lch, final Lab lab,
-      final Vec4 xyz, final Rgb lrgb ) {
+   public static final Lch sRgbToSrLch ( final Rgb srgb, final Lch lch,
+      final Lab lab, final Vec4 xyz, final Rgb lrgb ) {
 
       return Lch.fromLab(Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb), lch);
    }
@@ -1119,8 +1121,8 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @see Rgb#sRgbToSrLch(Rgb, Lch, Lab, Vec4, Rgb)
     */
-   public static Lch[] sRgbToSrLch ( final Rgb[] source, final Lch[] target,
-      final Lab lab, final Vec4 xyz, final Rgb lrgb ) {
+   public static final Lch[] sRgbToSrLch ( final Rgb[] source,
+      final Lch[] target, final Lab lab, final Vec4 xyz, final Rgb lrgb ) {
 
       final int srcLen = source.length;
       for ( int i = 0; i < srcLen; ++i ) {
@@ -1143,7 +1145,7 @@ public class Rgb implements Comparable < Rgb > {
     * @see Rgb#lRgbTosRgb(Rgb, boolean, Rgb)
     * @see Rgb#srXyzTolRgb(Vec4, Rgb)
     */
-   public static Rgb srLab2TosRgb ( final Lab lab, final Rgb srgb,
+   public static final Rgb srLab2TosRgb ( final Lab lab, final Rgb srgb,
       final Rgb lrgb, final Vec4 xyz ) {
 
       return Rgb.lRgbTosRgb(Rgb.srXyzTolRgb(Lab.toSrXyz(lab, xyz), lrgb), false,
@@ -1162,8 +1164,8 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
     */
-   public static Rgb[] srLab2TosRgb ( final Lab[] source, final Rgb[] target,
-      final Rgb lrgb, final Vec4 xyz ) {
+   public static final Rgb[] srLab2TosRgb ( final Lab[] source,
+      final Rgb[] target, final Rgb lrgb, final Vec4 xyz ) {
 
       final int srcLen = source.length;
       for ( int i = 0; i < srcLen; ++i ) {
@@ -1186,7 +1188,7 @@ public class Rgb implements Comparable < Rgb > {
     * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
     * @see Lab#fromLch(Lch, Lab)
     */
-   public static Rgb srLchTosRgb ( final Lch lch, final Rgb srgb,
+   public static final Rgb srLchTosRgb ( final Lch lch, final Rgb srgb,
       final Rgb lrgb, final Vec4 xyz, final Lab lab ) {
 
       return Rgb.srLab2TosRgb(Lab.fromLch(lch, lab), srgb, lrgb, xyz);
@@ -1205,8 +1207,8 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @see Rgb#srLchTosRgb(Lch, Rgb, Rgb, Vec4, Lab)
     */
-   public static Rgb[] srLchTosRgb ( final Lch[] source, final Rgb[] target,
-      final Rgb lrgb, final Vec4 xyz, final Lab lab ) {
+   public static final Rgb[] srLchTosRgb ( final Lch[] source,
+      final Rgb[] target, final Rgb lrgb, final Vec4 xyz, final Lab lab ) {
 
       final int srcLen = source.length;
       for ( int i = 0; i < srcLen; ++i ) {
@@ -1229,8 +1231,8 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @author Jan Behrens
     */
-   public static Rgb srXyzTolRgb ( final float x, final float y, final float z,
-      final float a, final Rgb target ) {
+   public static final Rgb srXyzTolRgb ( final float x, final float y,
+      final float z, final float a, final Rgb target ) {
 
       final double xd = x;
       final double yd = y;
@@ -1254,7 +1256,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @see Rgb#srXyzTolRgb(float, float, float, float, Rgb)
     */
-   public static Rgb srXyzTolRgb ( final Vec4 source, final Rgb target ) {
+   public static final Rgb srXyzTolRgb ( final Vec4 source, final Rgb target ) {
 
       return Rgb.srXyzTolRgb(source.x, source.y, source.z, source.w, target);
    }
@@ -1497,7 +1499,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @see Utils#clamp01(float)
     */
-   public static int toHexIntSat ( final Rgb c ) {
+   public static final int toHexIntSat ( final Rgb c ) {
 
       /* @formatter:off */
       return ( int ) ( Utils.clamp01(c.alpha) * 0xff + 0.5f ) << 0x18
@@ -1516,7 +1518,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return the color in hexadecimal
     */
-   public static int toHexIntWrap ( final Rgb c ) {
+   public static final int toHexIntWrap ( final Rgb c ) {
 
       /* @formatter:off */
       return ( int ) ( c.alpha * 0xff + 0.5f ) << 0x18
@@ -1797,7 +1799,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return the divided color
     */
-   public static Rgb unpremul ( final Rgb c, final Rgb target ) {
+   public static final Rgb unpremul ( final Rgb c, final Rgb target ) {
 
       if ( c.alpha <= 0.0f ) { return target.set(0.0f, 0.0f, 0.0f, 0.0f); }
       if ( c.alpha >= 1.0f ) { return target.set(c.r, c.g, c.b, 1.0f); }
@@ -1812,7 +1814,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return white
     */
-   public static Rgb white ( final Rgb target ) {
+   public static final Rgb white ( final Rgb target ) {
 
       return target.set(1.0f, 1.0f, 1.0f, 1.0f);
    }
@@ -1824,7 +1826,7 @@ public class Rgb implements Comparable < Rgb > {
     *
     * @return yellow
     */
-   public static Rgb yellow ( final Rgb target ) {
+   public static final Rgb yellow ( final Rgb target ) {
 
       return target.set(1.0f, 1.0f, 0.0f, 1.0f);
    }
@@ -1909,6 +1911,9 @@ public class Rgb implements Comparable < Rgb > {
          final Rgb target ) {
 
          final float tf = step;
+         if ( Float.isNaN(tf) ) {
+            return this.applyUnclamped(orig, dest, 0.5f, target);
+         }
          if ( tf <= 0.0f ) { return target.set(orig); }
          if ( tf >= 1.0f ) { return target.set(dest); }
          return this.applyUnclamped(orig, dest, step, target);
@@ -1938,241 +1943,12 @@ public class Rgb implements Comparable < Rgb > {
    }
 
    /**
-    * Eases between hues in the clockwise direction.
-    */
-   public static class HueCCW extends HueEasing {
-
-      /**
-       * The default constructor.
-       */
-      public HueCCW ( ) {}
-
-      /**
-       * Applies the function.
-       *
-       * @param step the step in a range 0 to 1
-       *
-       * @return the eased hue
-       *
-       * @see Utils#mod1(float)
-       */
-      @Override
-      protected float applyPartial ( final float step ) {
-
-         if ( this.diff == 0.0f ) { return this.o; }
-         if ( this.oGtd ) {
-            return Utils.mod1( ( 1.0f - step ) * this.o + step * ( this.d
-               + 1.0f ));
-         }
-         return ( 1.0f - step ) * this.o + step * this.d;
-      }
-
-   }
-
-   /**
-    * Eases the hue in the counter-clockwise direction.
-    */
-   public static class HueCW extends HueEasing {
-
-      /**
-       * The default constructor.
-       */
-      public HueCW ( ) {}
-
-      /**
-       * Applies the function.
-       *
-       * @param step the step in a range 0 to 1
-       *
-       * @return the eased hue
-       *
-       * @see Utils#mod1(float)
-       */
-      @Override
-      protected float applyPartial ( final float step ) {
-
-         if ( this.diff == 0.0f ) { return this.d; }
-         if ( this.oLtd ) {
-            return Utils.mod1( ( 1.0f - step ) * ( this.o + 1.0f ) + step
-               * this.d);
-         }
-         return ( 1.0f - step ) * this.o + step * this.d;
-      }
-
-   }
-
-   /**
-    * An abstract parent class for hue easing functions.
-    */
-   public abstract static class HueEasing implements Utils.EasingFuncPrm <
-      Float > {
-
-      /**
-       * The modulated destination hue.
-       */
-      protected float d = 0.0f;
-
-      /**
-       * The difference between the stop and start hue.
-       */
-      protected float diff = 0.0f;
-
-      /**
-       * The modulated origin hue.
-       */
-      protected float o = 0.0f;
-
-      /**
-       * Whether or not {@link o} is greater than {@link d}.
-       */
-      protected boolean oGtd = false;
-
-      /**
-       * Whether or not {@link o} is less than {@link d}.
-       */
-      protected boolean oLtd = false;
-
-      /**
-       * The default constructor.
-       */
-      protected HueEasing ( ) {}
-
-      /**
-       * The clamped easing function.
-       *
-       * @param orig the origin hue
-       * @param dest the destination hue
-       * @param step the step in range 0 to 1
-       *
-       * @return the eased hue
-       */
-      @Override
-      public Float apply ( final Float orig, final Float dest,
-         final Float step ) {
-
-         this.eval(orig, dest);
-         final float t = step;
-         if ( t <= 0.0f ) { return this.o; }
-         if ( t >= 1.0f ) { return this.d; }
-         return this.applyPartial(t);
-      }
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
-
-      /**
-       * The application function to be defined by sub-classes of this class.
-       *
-       * @param step the step
-       *
-       * @return the eased hue
-       */
-      protected abstract float applyPartial ( final float step );
-
-      /**
-       * A helper function to pass on to sub-classes of this class. Mutates the
-       * fields {@link o}, {@link d}, {@link diff}, {@link oLtd} and
-       * {@link oGtd}.
-       *
-       * @param orig the origin hue
-       * @param dest the destination hue
-       *
-       * @see Utils#mod1(float)
-       */
-      protected void eval ( final float orig, final float dest ) {
-
-         this.o = Utils.mod1(orig);
-         this.d = Utils.mod1(dest);
-         this.diff = this.d - this.o;
-         this.oLtd = this.o < this.d;
-         this.oGtd = this.o > this.d;
-      }
-
-   }
-
-   /**
-    * Eases between hues by the farthest rotational direction.
-    */
-   public static class HueFar extends HueEasing {
-
-      /**
-       * The default constructor.
-       */
-      public HueFar ( ) {}
-
-      /**
-       * Applies the function.
-       *
-       * @param step the step in a range 0 to 1
-       *
-       * @return the eased hue
-       *
-       * @see Utils#mod1(float)
-       */
-      @Override
-      protected float applyPartial ( final float step ) {
-
-         if ( this.diff == 0.0f || this.oLtd && this.diff < 0.5f ) {
-            return Utils.mod1( ( 1.0f - step ) * ( this.o + 1.0f ) + step
-               * this.d);
-         }
-         if ( this.oGtd && this.diff > -0.5f ) {
-            return Utils.mod1( ( 1.0f - step ) * this.o + step * ( this.d
-               + 1.0f ));
-         }
-         return ( 1.0f - step ) * this.o + step * this.d;
-      }
-
-   }
-
-   /**
-    * Eases between hues by the nearest rotational direction.
-    */
-   public static class HueNear extends HueEasing {
-
-      /**
-       * The default constructor.
-       */
-      public HueNear ( ) {}
-
-      /**
-       * Applies the function.
-       *
-       * @param step the step in a range 0 to 1
-       *
-       * @return the eased hue
-       *
-       * @see Utils#mod1(float)
-       */
-      @Override
-      protected float applyPartial ( final float step ) {
-
-         if ( this.diff == 0.0f ) { return this.o; }
-         if ( this.oLtd && this.diff > 0.5f ) {
-            return Utils.mod1( ( 1.0f - step ) * ( this.o + 1.0f ) + step
-               * this.d);
-         }
-         if ( this.oGtd && this.diff < -0.5f ) {
-            return Utils.mod1( ( 1.0f - step ) * this.o + step * ( this.d
-               + 1.0f ));
-         }
-         return ( 1.0f - step ) * this.o + step * this.d;
-      }
-
-   }
-
-   /**
     * Converts two colors from
     * <a href="https://www.wikiwand.com/en/SRGB">standard RGB</a> to linear
     * RGB, mixes them with linear interpolation, then converts back to
     * standard RGB.
     */
-   public static class MixLrgb extends AbstrEasing {
+   public static final class MixLrgb extends AbstrEasing {
 
       /**
        * Whether or not to include the alpha in the adjustment.
@@ -2246,7 +2022,7 @@ public class Rgb implements Comparable < Rgb > {
    /**
     * Eases between two colors in sRGB, i.e., with no gamma correction.
     */
-   public static class MixSrgb extends AbstrEasing {
+   public static final class MixSrgb extends AbstrEasing {
 
       /**
        * The default constructor.
@@ -2363,7 +2139,7 @@ public class Rgb implements Comparable < Rgb > {
     * Eases between two colors in SR LCH color space. May return colors
     * outside the range [0.0, 1.0] .
     */
-   public static class MixSrLch extends MixSrLab2 {
+   public static final class MixSrLch extends MixSrLab2 {
 
       /**
        * The new LCH color.
@@ -2378,7 +2154,7 @@ public class Rgb implements Comparable < Rgb > {
       /**
        * The hue easing function.
        */
-      protected HueEasing hueFunc;
+      protected IColor.HueEasing hueFunc;
 
       /**
        * The origin color in LCH.
@@ -2389,7 +2165,7 @@ public class Rgb implements Comparable < Rgb > {
        * The default constructor. Creates a mixer with nearest hue
        * interpolation.
        */
-      public MixSrLch ( ) { this(new HueNear()); }
+      public MixSrLch ( ) { this(new IColor.HueNear()); }
 
       /**
        * Creates a color SR LCH mixing function with the given easing functions
@@ -2397,7 +2173,7 @@ public class Rgb implements Comparable < Rgb > {
        *
        * @param hueFunc the hue easing function
        */
-      public MixSrLch ( final HueEasing hueFunc ) {
+      public MixSrLch ( final IColor.HueEasing hueFunc ) {
 
          this.hueFunc = hueFunc;
       }
@@ -2412,7 +2188,6 @@ public class Rgb implements Comparable < Rgb > {
        *
        * @return the eased color
        *
-       * @see Lch#mix(Lch, Lch, float, HueEasing, Lch)
        * @see Rgb#sRgbToSrLch(Rgb, Lch, Lab, Vec4, Rgb)
        * @see Rgb#srLchTosRgb(Lch, Rgb, Rgb, Vec4, Lab)
        */

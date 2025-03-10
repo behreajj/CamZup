@@ -348,3 +348,5 @@ As of v 0.6, this library provides limited interoperability with [Kotlin](https:
 Operations between all the objects above are subject to ambiguity. Do not, for example, assume commutativity for operators (`a * b` will not always yield a result equal in value to `b * a`). Even when an operator is not supported by `camzup.kotlin`, Kotlin may infer a viable alternative, e.g., `+` may coerce both the left and right operand to a collection, then concatenate the two. Operators should never be assumed to be more efficient than named methods in languages where objects are allowed to override operators. 
 
 There are more differences between Kotlin and Processing-Java than can be discussed here, please see the Kotlin documentation above for more information.
+
+🇹🇼 🇺🇦

@@ -1,6 +1,7 @@
 package camzup.core;
 
 import java.util.Random;
+import java.util.function.Function;
 
 /**
  * A mutable, extensible color class that represents colors in the polar
@@ -8,7 +9,7 @@ import java.util.Random;
  * 100.0] . Hue is within the range [0.0, 1.0] . Chroma's minimum bound is
  * 0.0 but it has no upper bound. Alpha is expected to be in [0.0, 1.0] .
  */
-public class Lch implements Comparable < Lch > {
+public class Lch implements IColor < Lch > {
 
    /**
     * The alpha channel, which governs transparency.
@@ -166,6 +167,7 @@ public class Lch implements Comparable < Lch > {
     *
     * @return this color
     */
+   @Override
    public Lch reset ( ) {
 
       return this.set(100.0f, 0.0f, Lch.SR_HUE_LIGHT, 1.0f);
@@ -253,6 +255,7 @@ public class Lch implements Comparable < Lch > {
     *
     * @return this color
     */
+   @Override
    public Lch set ( final Lch source ) {
 
       return this.set(source.l, source.c, source.h, source.alpha);
@@ -411,7 +414,7 @@ public class Lch implements Comparable < Lch > {
     *
     * @return black
     */
-   public static Lch black ( final Lch target ) {
+   public static final Lch black ( final Lch target ) {
 
       return target.set(0.0f, 0.0f, Lch.SR_HUE_SHADE, 1.0f);
    }
@@ -423,7 +426,7 @@ public class Lch implements Comparable < Lch > {
     *
     * @return clear black
     */
-   public static Lch clearBlack ( final Lch target ) {
+   public static final Lch clearBlack ( final Lch target ) {
 
       return target.set(0.0f, 0.0f, Lch.SR_HUE_SHADE, 0.0f);
    }
@@ -435,7 +438,7 @@ public class Lch implements Comparable < Lch > {
     *
     * @return clear white
     */
-   public static Lch clearWhite ( final Lch target ) {
+   public static final Lch clearWhite ( final Lch target ) {
 
       return target.set(100.0f, 0.0f, Lch.SR_HUE_LIGHT, 0.0f);
    }
@@ -451,7 +454,7 @@ public class Lch implements Comparable < Lch > {
     *
     * @see Utils#clamp01(float)
     */
-   public static boolean eqAlphaSatArith ( final Lch o, final Lch d ) {
+   public static final boolean eqAlphaSatArith ( final Lch o, final Lch d ) {
 
       return ( int ) ( Utils.clamp01(o.alpha) * 0xff + 0.5f ) == ( int ) ( Utils
          .clamp01(d.alpha) * 0xff + 0.5f );
@@ -553,8 +556,8 @@ public class Lch implements Comparable < Lch > {
     * @see Math#sqrt(double)
     * @see Utils#mod1(float)
     */
-   public static Lch fromLab ( final float l, final float a, final float b,
-      final float alpha, final Lch target ) {
+   public static final Lch fromLab ( final float l, final float a,
+      final float b, final float alpha, final Lch target ) {
 
       final double ad = a;
       final double bd = b;
@@ -585,7 +588,7 @@ public class Lch implements Comparable < Lch > {
     *
     * @see Lch#fromLab(float, float, float, float, Lch)
     */
-   public static Lch fromLab ( final Lab source, final Lch target ) {
+   public static final Lch fromLab ( final Lab source, final Lch target ) {
 
       return Lch.fromLab(source.l, source.a, source.b, source.alpha, target);
    }
@@ -600,137 +603,11 @@ public class Lch implements Comparable < Lch > {
     *
     * @see Utils#mod1(float)
     */
-   public static Lch gray ( final Lch o, final Lch target ) {
+   public static final Lch gray ( final Lch o, final Lch target ) {
 
       final float t = o.l * 0.01f;
       return target.set(o.l, 0.0f, Utils.mod1( ( 1.0f - t ) * Lch.SR_HUE_SHADE
          + t * ( Lch.SR_HUE_LIGHT + 1.0f )), o.alpha);
-   }
-
-   /**
-    * Finds the analogous harmonies for the key color, plus and minus 30
-    * degrees from the key hue. Returns an array containing 2 colors.
-    *
-    * @param o the key color
-    *
-    * @return the harmonies
-    *
-    * @see Utils#mod1(float)
-    */
-   public static Lch[] harmonyAnalogous ( final Lch o ) {
-
-      final float lAna = ( o.l * 2.0f + 50.0f ) / 3.0f;
-
-      final float h30 = o.h + 0.083333333f;
-      final float h330 = o.h - 0.083333333f;
-
-      return new Lch[] { new Lch(lAna, o.c, Utils.mod1(h30), o.alpha), new Lch(
-         lAna, o.c, Utils.mod1(h330), o.alpha) };
-   }
-
-   /**
-    * Finds the complementary harmony for the key color, 180 degrees from the
-    * key hue. Returns an array containing 1 color.
-    *
-    * @param o the key color
-    *
-    * @return the harmony
-    *
-    * @see Utils#mod1(float)
-    */
-   public static Lch[] harmonyComplement ( final Lch o ) {
-
-      final float lCmp = 100.0f - o.l;
-
-      final float h180 = o.h + 0.5f;
-
-      return new Lch[] { new Lch(lCmp, o.c, Utils.mod1(h180), o.alpha) };
-   }
-
-   /**
-    * Finds the split-analogous harmonies for the key color, plus and minus
-    * 150 degrees from the key hue. Returns an array containing 2 colors.
-    *
-    * @param o the key color
-    *
-    * @return the harmonies
-    *
-    * @see Utils#mod1(float)
-    */
-   public static Lch[] harmonySplit ( final Lch o ) {
-
-      final float lSpl = ( 250.0f - o.l * 2.0f ) / 3.0f;
-
-      final float h150 = o.h + 0.41666667f;
-      final float h210 = o.h - 0.41666667f;
-
-      return new Lch[] { new Lch(lSpl, o.c, Utils.mod1(h150), o.alpha), new Lch(
-         lSpl, o.c, Utils.mod1(h210), o.alpha) };
-   }
-
-   /**
-    * Finds the square harmonies for the key color, at 90, 180 and 270 degrees
-    * away from the key hue. Returns an array containing 3 colors.
-    *
-    * @param o the key color
-    *
-    * @return the harmonies
-    *
-    * @see Utils#mod1(float)
-    */
-   public static Lch[] harmonySquare ( final Lch o ) {
-
-      final float lCmp = 100.0f - o.l;
-
-      final float h90 = o.h + 0.25f;
-      final float h180 = o.h + 0.5f;
-      final float h270 = o.h - 0.25f;
-
-      return new Lch[] { new Lch(50.0f, o.c, Utils.mod1(h90), o.alpha), new Lch(
-         lCmp, o.c, Utils.mod1(h180), o.alpha), new Lch(50.0f, o.c, Utils.mod1(
-            h270), o.alpha) };
-   }
-
-   /**
-    * Finds the tetradic harmonies for the key color, at 120, 180 and 300
-    * degrees from the key hue. Returns an array containing 3 colors.
-    *
-    * @param o the key color
-    *
-    * @return the harmonies
-    */
-   public static Lch[] harmonyTetradic ( final Lch o ) {
-
-      final float lTri = ( 200.0f - o.l ) / 3.0f;
-      final float lCmp = 100.0f - o.l;
-      final float lTet = ( 100.0f + o.l ) / 3.0f;
-
-      final float h120 = o.h + IUtils.ONE_THIRD;
-      final float h180 = o.h + 0.5f;
-      final float h300 = o.h - IUtils.ONE_SIX;
-
-      return new Lch[] { new Lch(lTri, o.c, Utils.mod1(h120), o.alpha), new Lch(
-         lCmp, o.c, Utils.mod1(h180), o.alpha), new Lch(lTet, o.c, Utils.mod1(
-            h300), o.alpha) };
-   }
-
-   /**
-    * Finds the triadic harmonies for the key color, plus and minus 120
-    * degrees from the key hue. Returns an array containing 2 colors.
-    *
-    * @param o the key color
-    *
-    * @return the harmonies
-    */
-   public static Lch[] harmonyTriadic ( final Lch o ) {
-
-      final float lTri = ( 200.0f - o.l ) / 3.0f;
-
-      final float h120 = o.h + IUtils.ONE_THIRD;
-      final float h240 = o.h - IUtils.ONE_THIRD;
-
-      return new Lch[] { new Lch(lTri, o.c, Utils.mod1(h120), o.alpha), new Lch(
-         lTri, o.c, Utils.mod1(h240), o.alpha) };
    }
 
    /**
@@ -744,8 +621,8 @@ public class Lch implements Comparable < Lch > {
     *
     * @return the mix
     */
-   public static Lch mix ( final Lch orig, final Lch dest, final float step,
-      final Rgb.HueEasing easing, final Lch target ) {
+   public static final Lch mix ( final Lch orig, final Lch dest,
+      final float step, final IColor.HueEasing easing, final Lch target ) {
 
       final float u = 1.0f - step;
       final float cl = u * orig.l + step * dest.l;
@@ -760,7 +637,6 @@ public class Lch implements Comparable < Lch > {
       }
 
       if ( oIsGray || dIsGray ) {
-
          double oa = 0.0d;
          double ob = 0.0d;
          if ( !oIsGray ) {
@@ -791,7 +667,6 @@ public class Lch implements Comparable < Lch > {
          ch *= IUtils.ONE_TAU_2_D;
 
          return target.set(cl, ( float ) cc, ( float ) ch, calpha);
-
       }
 
       return target.set(cl, u * orig.c + step * dest.c, easing.apply(orig.h,
@@ -964,9 +839,256 @@ public class Lch implements Comparable < Lch > {
     *
     * @return white
     */
-   public static Lch white ( final Lch target ) {
+   public static final Lch white ( final Lch target ) {
 
       return target.set(100.0f, 0.0f, Lch.SR_HUE_LIGHT, 1.0f);
+   }
+
+   /**
+    * An abstract class to facilitate the creation of harmony functions.
+    */
+   public abstract static class AbstrHarmony implements Function < Lch,
+      Lch[] > {
+
+      /**
+       * The default constructor.
+       */
+      protected AbstrHarmony ( ) {}
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
+   }
+
+   /**
+    * Finds the analogous harmonies for the key color, plus and minus 30
+    * degrees from the key hue. Returns an array containing 2 colors.
+    */
+   public static final class HarmonyAnalogous extends AbstrHarmony {
+
+      /**
+       * The default constructor.
+       */
+      public HarmonyAnalogous ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param o the key color
+       *
+       * @return the harmonies
+       */
+      @Override
+      public Lch[] apply ( final Lch o ) {
+
+         final float lAna = ( o.l * 2.0f + 50.0f ) / 3.0f;
+
+         /*
+          * Since the intent is to provide hue harmonies, this doesn't seem like
+          * a great solution. For many cases, all colors in the array would be
+          * the same.
+          */
+         final float h30 = o.h + 0.083333333f;
+         final float h330 = o.h - 0.083333333f;
+
+         /*
+          * if(o.c < IUtils.EPSILON) { final float t = lAna * 0.01f; h30 = h330
+          * = ( 1.0f - t ) * Lch.SR_HUE_SHADE + t * ( Lch.SR_HUE_LIGHT + 1.0f );
+          * }
+          */
+
+         /* @formatter:off */
+         return new Lch[] {
+            new Lch(lAna, o.c, Utils.mod1(h30), o.alpha),
+            new Lch(lAna, o.c, Utils.mod1(h330), o.alpha)
+         };
+         /* @formatter:on */
+      }
+
+   }
+
+   /**
+    * Finds the complementary harmony for the key color, 180 degrees from the
+    * key hue. Returns an array containing 1 color.
+    */
+   public static final class HarmonyComplement extends AbstrHarmony {
+
+      /**
+       * The default constructor.
+       */
+      public HarmonyComplement ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param o the key color
+       *
+       * @return the harmonies
+       */
+      @Override
+      public Lch[] apply ( final Lch o ) {
+
+         final float lCmp = 100.0f - o.l;
+
+         final float h180 = o.h + 0.5f;
+
+         return new Lch[] { new Lch(lCmp, o.c, Utils.mod1(h180), o.alpha) };
+      }
+
+   }
+
+   /**
+    * Finds the split-analogous harmonies for the key color, plus and minus
+    * 150 degrees from the key hue. Returns an array containing 2 colors.
+    */
+   public static final class HarmonySplit extends AbstrHarmony {
+
+      /**
+       * The default constructor.
+       */
+      public HarmonySplit ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param o the key color
+       *
+       * @return the harmonies
+       */
+      @Override
+      public Lch[] apply ( final Lch o ) {
+
+         final float lSpl = ( 250.0f - o.l * 2.0f ) / 3.0f;
+
+         final float h150 = o.h + 0.41666667f;
+         final float h210 = o.h - 0.41666667f;
+
+         /* @formatter:off */
+         return new Lch[] {
+            new Lch(lSpl, o.c, Utils.mod1(h150), o.alpha),
+            new Lch(lSpl, o.c, Utils.mod1(h210), o.alpha)
+         };
+         /* @formatter:on */
+      }
+
+   }
+
+   /**
+    * Finds the square harmonies for the key color, at 90, 180 and 270 degrees
+    * away from the key hue. Returns an array containing 3 colors.
+    */
+   public static final class HarmonySquare extends AbstrHarmony {
+
+      /**
+       * The default constructor.
+       */
+      public HarmonySquare ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param o the key color
+       *
+       * @return the harmonies
+       */
+      @Override
+      public Lch[] apply ( final Lch o ) {
+
+         final float lCmp = 100.0f - o.l;
+
+         final float h90 = o.h + 0.25f;
+         final float h180 = o.h + 0.5f;
+         final float h270 = o.h - 0.25f;
+
+         /* @formatter:off */
+         return new Lch[] {
+            new Lch(50.0f, o.c, Utils.mod1(h90), o.alpha),
+            new Lch(lCmp, o.c, Utils.mod1(h180), o.alpha),
+            new Lch(50.0f, o.c, Utils.mod1(h270), o.alpha)
+         };
+         /* @formatter:on */
+      }
+
+   }
+
+   /**
+    * Finds the tetradic harmonies for the key color, at 120, 180 and 300
+    * degrees from the key hue. Returns an array containing 3 colors.
+    */
+   public static final class HarmonyTetradic extends AbstrHarmony {
+
+      /**
+       * The default constructor.
+       */
+      public HarmonyTetradic ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param o the key color
+       *
+       * @return the harmonies
+       */
+      @Override
+      public Lch[] apply ( final Lch o ) {
+
+         final float lTri = ( 200.0f - o.l ) / 3.0f;
+         final float lCmp = 100.0f - o.l;
+         final float lTet = ( 100.0f + o.l ) / 3.0f;
+
+         final float h120 = o.h + IUtils.ONE_THIRD;
+         final float h180 = o.h + 0.5f;
+         final float h300 = o.h - IUtils.ONE_SIX;
+
+         /* @formatter:off */
+         return new Lch[] {
+            new Lch(lTri, o.c, Utils.mod1(h120), o.alpha),
+            new Lch(lCmp, o.c, Utils.mod1(h180), o.alpha),
+            new Lch(lTet, o.c, Utils.mod1(h300), o.alpha) };
+         /* @formatter:on */
+      }
+
+   }
+
+   /**
+    * Finds the triadic harmonies for the key color, plus and minus 120
+    * degrees from the key hue. Returns an array containing 2 colors.
+    */
+   public static final class HarmonyTriadic extends AbstrHarmony {
+
+      /**
+       * The default constructor.
+       */
+      public HarmonyTriadic ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param o the key color
+       *
+       * @return the harmonies
+       */
+      @Override
+      public Lch[] apply ( final Lch o ) {
+
+         final float lTri = ( 200.0f - o.l ) / 3.0f;
+
+         final float h120 = o.h + IUtils.ONE_THIRD;
+         final float h240 = o.h - IUtils.ONE_THIRD;
+
+         /* @formatter:off */
+         return new Lch[] {
+            new Lch(lTri, o.c, Utils.mod1(h120), o.alpha),
+            new Lch(lTri, o.c, Utils.mod1(h240), o.alpha)
+         };
+         /* @formatter:on */
+      }
+
    }
 
 }

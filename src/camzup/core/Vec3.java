@@ -3320,7 +3320,7 @@ public class Vec3 implements Comparable < Vec3 > {
        * an unclamped interpolation, which is to be defined by sub-classes of
        * this class.
        *
-       * @param origin the origin vector
+       * @param orig   the origin vector
        * @param dest   the destination vector
        * @param step   a factor in [0.0, 1.0]
        * @param target the output vector
@@ -3328,13 +3328,16 @@ public class Vec3 implements Comparable < Vec3 > {
        * @return the eased vector
        */
       @Override
-      public Vec3 apply ( final Vec3 origin, final Vec3 dest, final Float step,
+      public Vec3 apply ( final Vec3 orig, final Vec3 dest, final Float step,
          final Vec3 target ) {
 
          final float tf = step;
-         if ( tf <= 0.0f ) { return target.set(origin); }
+         if ( Float.isNaN(tf) ) {
+            return this.applyUnclamped(orig, dest, 0.5f, target);
+         }
+         if ( tf <= 0.0f ) { return target.set(orig); }
          if ( tf >= 1.0f ) { return target.set(dest); }
-         return this.applyUnclamped(origin, dest, tf, target);
+         return this.applyUnclamped(orig, dest, tf, target);
       }
 
       /**

@@ -2307,6 +2307,9 @@ public class Quaternion implements Comparable < Quaternion > {
          final Float step, final Quaternion target ) {
 
          final float tf = step;
+         if ( Float.isNaN(tf) ) {
+            return this.applyUnclamped(orig, dest, 0.5f, target);
+         }
          if ( tf <= 0.0f ) { return Quaternion.normalize(orig, target); }
          if ( tf >= 1.0f ) { return Quaternion.normalize(dest, target); }
          return this.applyUnclamped(orig, dest, tf, target);

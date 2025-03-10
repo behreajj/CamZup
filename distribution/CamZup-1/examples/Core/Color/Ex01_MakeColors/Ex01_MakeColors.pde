@@ -41,7 +41,7 @@ Rgb.sRgbToSrLab2(w, t, new Vec4(), new Rgb());
 println(t);
 
 // Harmonies.
-Lab[] analogues = Lab.harmonyAnalogous(x);
+Lab[] analogues = new Lab.HarmonyAnalogous().apply(x);
 println("\nAnalogous:");
 for (int i = 0; i < analogues.length; ++i) {
   println(analogues[i]);
@@ -49,7 +49,7 @@ for (int i = 0; i < analogues.length; ++i) {
   println("Hue: " + ah + ", Degrees: " + (ah * 360.0));
 }
 
-Lab[] splits = Lab.harmonySplit(x);
+Lab[] splits = new Lab.HarmonySplit().apply(x);
 println("\nSplit-Analogous:");
 for (int i = 0; i < splits.length; ++i) {
   println(splits[i]);
@@ -57,7 +57,7 @@ for (int i = 0; i < splits.length; ++i) {
   println("Hue: " + sh + ", Degrees: " + (sh * 360.0));
 }
 
-Lab[] squares = Lab.harmonySquare(x);
+Lab[] squares = new Lab.HarmonySquare().apply(x);
 println("\nSquares:");
 for (int i = 0; i < squares.length; ++i) {
   println(squares[i]);
@@ -65,7 +65,7 @@ for (int i = 0; i < squares.length; ++i) {
   println("Hue: " + sh + ", Degrees: " + (sh * 360.0));
 }
 
-Lab[] tetrads = Lab.harmonyTetradic(x);
+Lab[] tetrads =  new Lab.HarmonyTetradic().apply(x);
 println("\nTetrads:");
 for (int i = 0; i < tetrads.length; ++i) {
   println(tetrads[i]);
@@ -73,7 +73,7 @@ for (int i = 0; i < tetrads.length; ++i) {
   println("Hue: " + th + ", Degrees: " + (th * 360.0));
 }
 
-Lab[] triads = Lab.harmonyTriadic(x);
+Lab[] triads =  new Lab.HarmonyTriadic().apply(x);
 println("\nTriads:");
 for (int i = 0; i < triads.length; ++i) {
   println(triads[i]);
