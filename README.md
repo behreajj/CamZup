@@ -174,7 +174,7 @@ A quick heuristic to decide if you are blending colors as you prefer is to take 
 A hue mix can be either counter-clockwise or clockwise. Do not use `Utils.clamp01` to confine a hue to [0.0, 1.0], use `Utils.mod1` instead. Converting sRGB to linear RGB, interpolating, then converting back is computationally expensive. If you don't like what you see, you can create your own mixing function by `extend`ing the class `Rgb.AbstrEasing`.
 
 ```java
-class Foo extends Rgb.AbstrEasing {
+class Foo extends IColor.AbstrEasing {
   Rgb applyUnclamped(Rgb a, Rgb b, Float t, Rgb target) {
     return target;
   }
