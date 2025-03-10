@@ -645,20 +645,18 @@ public class ZImage extends PImage {
    /**
     * Creates a checker pattern in an array of pixels.
     *
-    * @param a      the first color
-    * @param b      the second color
+    * @param o      the first color
+    * @param d      the second color
     * @param cols   the column count
     * @param rows   the row count
     * @param target the target image
     *
     * @return the checker pattern
-    *
-    * @see Rgb#toHexIntSat(Rgb)
     */
-   public static PImage checker ( final Rgb a, final Rgb b, final int cols,
+   public static PImage checker ( final Rgb o, final Rgb d, final int cols,
       final int rows, final PImage target ) {
 
-      return ZImage.checker(Rgb.toHexIntSat(a), Rgb.toHexIntSat(b), cols, rows,
+      return ZImage.checker(o.toHexIntSat(), d.toHexIntSat(), cols, rows,
          target);
    }
 
@@ -750,12 +748,10 @@ public class ZImage extends PImage {
     * @param c      the fill color
     *
     * @return the image
-    *
-    * @see Rgb#toHexIntSat(Rgb)
     */
    public static PImage fill ( final Rgb c, final PImage target ) {
 
-      return ZImage.fill(Rgb.toHexIntSat(c), target);
+      return ZImage.fill(c.toHexIntSat(), target);
    }
 
    /**
@@ -1238,7 +1234,7 @@ public class ZImage extends PImage {
    public static PImage fromText ( final PFont font, final String text,
       final Rgb fillClr ) {
 
-      return ZImage.fromText(font, text, Rgb.toHexIntSat(fillClr));
+      return ZImage.fromText(font, text, fillClr.toHexIntSat());
    }
 
    /**
@@ -1258,7 +1254,7 @@ public class ZImage extends PImage {
    public static PImage fromText ( final PFont font, final String text,
       final Rgb fillClr, final int leading ) {
 
-      return ZImage.fromText(font, text, Rgb.toHexIntSat(fillClr), leading);
+      return ZImage.fromText(font, text, fillClr.toHexIntSat(), leading);
    }
 
    /**
@@ -1279,7 +1275,7 @@ public class ZImage extends PImage {
    public static PImage fromText ( final PFont font, final String text,
       final Rgb fillClr, final int leading, final int kerning ) {
 
-      return ZImage.fromText(font, text, Rgb.toHexIntSat(fillClr), leading,
+      return ZImage.fromText(font, text, fillClr.toHexIntSat(), leading,
          kerning);
    }
 
@@ -1307,7 +1303,7 @@ public class ZImage extends PImage {
       final Rgb fillClr, final int leading, final int kerning,
       final int textAlign ) {
 
-      return ZImage.fromText(font, text, Rgb.toHexIntSat(fillClr), leading,
+      return ZImage.fromText(font, text, fillClr.toHexIntSat(), leading,
          kerning, textAlign);
    }
 
@@ -2968,14 +2964,12 @@ public class ZImage extends PImage {
     * @param target        the target image
     *
     * @return the tinted image
-    *
-    * @see Rgb#toHexIntSat(Rgb)
     */
    public static PImage tint ( final PImage source, final Rgb tint,
       final float fac, final boolean preserveLight, final int toneFlag,
       final PImage target ) {
 
-      return ZImage.tint(source, Rgb.toHexIntSat(tint), fac, preserveLight,
+      return ZImage.tint(source, tint.toHexIntSat(), fac, preserveLight,
          toneFlag, target);
    }
 
@@ -2990,13 +2984,11 @@ public class ZImage extends PImage {
     * @param target        the target image
     *
     * @return the tinted image
-    *
-    * @see Rgb#toHexIntSat(Rgb)
     */
    public static PImage tint ( final PImage source, final Rgb tint,
       final float fac, final boolean preserveLight, final PImage target ) {
 
-      return ZImage.tint(source, Rgb.toHexIntSat(tint), fac, preserveLight,
+      return ZImage.tint(source, tint.toHexIntSat(), fac, preserveLight,
          target);
    }
 
@@ -3009,13 +3001,11 @@ public class ZImage extends PImage {
     * @param target the target image
     *
     * @return the tinted image
-    *
-    * @see Rgb#toHexIntSat(Rgb)
     */
    public static PImage tint ( final PImage source, final Rgb tint,
       final float fac, final PImage target ) {
 
-      return ZImage.tint(source, Rgb.toHexIntSat(tint), fac, target);
+      return ZImage.tint(source, tint.toHexIntSat(), fac, target);
    }
 
    /**
@@ -3026,13 +3016,11 @@ public class ZImage extends PImage {
     * @param target the target image
     *
     * @return the tinted image
-    *
-    * @see Rgb#toHexIntSat(Rgb)
     */
    public static PImage tint ( final PImage source, final Rgb tint,
       final PImage target ) {
 
-      return ZImage.tint(source, Rgb.toHexIntSat(tint), target);
+      return ZImage.tint(source, tint.toHexIntSat(), target);
    }
 
    /**

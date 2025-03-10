@@ -28,7 +28,7 @@ void draw() {
     float x = swatch * (i / rows);
     float y = swatch * (i % rows);
 
-    graphics.fill(Rgb.toHexInt(palette[i]));
+    graphics.fill(palette[i].toHexInt());
     graphics.rect(x, y, x + swatch, y + swatch);
   }
 }

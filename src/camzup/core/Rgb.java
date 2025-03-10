@@ -103,17 +103,15 @@ public class Rgb implements IColor < Rgb > {
     * greater than; 0 when the two are 'equal'. The implementation of this
     * method allows collections of colors to be sorted.
     *
-    * @param c the comparisand
+    * @param d the comparisand
     *
     * @return the numeric code
-    *
-    * @see Rgb#toHexIntWrap(Rgb)
     */
    @Override
-   public int compareTo ( final Rgb c ) {
+   public int compareTo ( final Rgb d ) {
 
-      final int left = Rgb.toHexIntWrap(this);
-      final int right = Rgb.toHexIntWrap(c);
+      final int left = this.toHexInt();
+      final int right = d.toHexInt();
       return left < right ? -1 : left > right ? 1 : 0;
    }
 
@@ -124,12 +122,10 @@ public class Rgb implements IColor < Rgb > {
     * @param other the color integer
     *
     * @return the equivalence
-    *
-    * @see Rgb#toHexIntWrap(Rgb)
     */
    public boolean equals ( final int other ) {
 
-      return Rgb.toHexIntWrap(this) == other;
+      return this.toHexInt() == other;
    }
 
    /**
@@ -153,11 +149,9 @@ public class Rgb implements IColor < Rgb > {
     * Returns a hash code for this color based on its hexadecimal value.
     *
     * @return the hash code
-    *
-    * @see Rgb#toHexIntWrap(Rgb)
     */
    @Override
-   public int hashCode ( ) { return Rgb.toHexIntWrap(this); }
+   public int hashCode ( ) { return this.toHexInt(); }
 
    /**
     * Resets this color to opaque white.
@@ -254,6 +248,56 @@ public class Rgb implements IColor < Rgb > {
    public Rgb set ( final Rgb source ) {
 
       return this.set(source.r, source.g, source.b, source.alpha);
+   }
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the color
+    * channels as 0xAARRGGBB . Defaults to modular arithmetic.
+    *
+    * @return the color in hexadecimal
+    */
+   @Override
+   public int toHexInt ( ) {
+
+      return this.toHexIntWrap();
+   }
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the color
+    * channels as 0xAARRGGBB . Uses saturation arithmetic. Two colors with
+    * unequal values beyond [0.0, 1.0] may yield equal integers.
+    *
+    * @return the color in hexadecimal
+    *
+    * @see Utils#clamp01(float)
+    */
+   @Override
+   public int toHexIntSat ( ) {
+
+      /* @formatter:off */
+      return ( int ) ( Utils.clamp01(this.alpha) * 0xff + 0.5f ) << 0x18
+           | ( int ) ( Utils.clamp01(this.r) * 0xff + 0.5f ) << 0x10
+           | ( int ) ( Utils.clamp01(this.g) * 0xff + 0.5f ) << 0x08
+           | ( int ) ( Utils.clamp01(this.b) * 0xff + 0.5f );
+      /* @formatter:on */
+   }
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the color
+    * channels as 0xAARRGGBB . Uses modular arithmetic, so out-of-gamut colors
+    * may cause overflow and unexpected hexadecimal colors.
+    *
+    * @return the color in hexadecimal
+    */
+   @Override
+   public int toHexIntWrap ( ) {
+
+      /* @formatter:off */
+      return ( int ) ( this.alpha * 0xff + 0.5f ) << 0x18
+           | ( int ) ( this.r * 0xff + 0.5f ) << 0x10
+           | ( int ) ( this.g * 0xff + 0.5f ) << 0x08
+           | ( int ) ( this.b * 0xff + 0.5f );
+      /* @formatter:on */
    }
 
    /**
@@ -1474,61 +1518,6 @@ public class Rgb implements IColor < Rgb > {
    }
 
    /**
-    * Converts a color to an integer where hexadecimal represents the color
-    * channels as 0xAARRGGBB . Defaults to modular arithmetic.
-    *
-    * @param c the input color
-    *
-    * @return the color in hexadecimal
-    *
-    * @see Rgb#toHexIntWrap(Rgb)
-    */
-   public static int toHexInt ( final Rgb c ) {
-
-      return Rgb.toHexIntWrap(c);
-   }
-
-   /**
-    * Converts a color to an integer where hexadecimal represents the color
-    * channels as 0xAARRGGBB . Uses saturation arithmetic. Two colors with
-    * unequal values beyond [0.0, 1.0] may yield equal integers.
-    *
-    * @param c the input color
-    *
-    * @return the color in hexadecimal
-    *
-    * @see Utils#clamp01(float)
-    */
-   public static final int toHexIntSat ( final Rgb c ) {
-
-      /* @formatter:off */
-      return ( int ) ( Utils.clamp01(c.alpha) * 0xff + 0.5f ) << 0x18
-           | ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ) << 0x10
-           | ( int ) ( Utils.clamp01(c.g) * 0xff + 0.5f ) << 0x08
-           | ( int ) ( Utils.clamp01(c.b) * 0xff + 0.5f );
-      /* @formatter:on */
-   }
-
-   /**
-    * Converts a color to an integer where hexadecimal represents the color
-    * channels as 0xAARRGGBB . Uses modular arithmetic, so out-of-gamut colors
-    * may cause overflow and unexpected hexadecimal colors.
-    *
-    * @param c the input color
-    *
-    * @return the color in hexadecimal
-    */
-   public static final int toHexIntWrap ( final Rgb c ) {
-
-      /* @formatter:off */
-      return ( int ) ( c.alpha * 0xff + 0.5f ) << 0x18
-           | ( int ) ( c.r * 0xff + 0.5f ) << 0x10
-           | ( int ) ( c.g * 0xff + 0.5f ) << 0x08
-           | ( int ) ( c.b * 0xff + 0.5f );
-      /* @formatter:on */
-   }
-
-   /**
     * Returns a representation of the color as a hexadecimal code, preceded by
     * a '0x', in the format AARRGGBB.
     *
@@ -1540,6 +1529,8 @@ public class Rgb implements IColor < Rgb > {
     */
    public static String toHexString ( final int c ) {
 
+      // TODO: Make this an instance method that is enforced by IColor
+      // interface?
       return Rgb.toHexString(new StringBuilder(10), c).toString();
    }
 
@@ -1849,8 +1840,8 @@ public class Rgb implements IColor < Rgb > {
     */
    static int mix ( final Rgb orig, final Rgb dest, final float step ) {
 
-      if ( step <= 0.0f ) { return Rgb.toHexIntWrap(orig); }
-      if ( step >= 1.0f ) { return Rgb.toHexIntWrap(dest); }
+      if ( step <= 0.0f ) { return orig.toHexIntWrap(); }
+      if ( step >= 1.0f ) { return dest.toHexIntWrap(); }
       final float u = 1.0f - step;
 
       /* @formatter:off */

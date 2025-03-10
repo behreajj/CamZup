@@ -109,14 +109,12 @@ public class Lab implements IColor < Lab > {
     * @param d the comparisand
     *
     * @return the numeric code
-    *
-    * @see Lab#toHexIntWrap(Lab)
     */
    @Override
    public int compareTo ( final Lab d ) {
 
-      final int left = Lab.toHexIntWrap(this);
-      final int right = Lab.toHexIntWrap(d);
+      final int left = this.toHexInt();
+      final int right = d.toHexInt();
       return left < right ? -1 : left > right ? 1 : 0;
    }
 
@@ -127,12 +125,10 @@ public class Lab implements IColor < Lab > {
     * @param other the color integer
     *
     * @return the equivalence
-    *
-    * @see Lab#toHexIntWrap(Lab)
     */
    public boolean equals ( final int other ) {
 
-      return Lab.toHexIntWrap(this) == other;
+      return this.toHexInt() == other;
    }
 
    /**
@@ -156,11 +152,9 @@ public class Lab implements IColor < Lab > {
     * Returns a hash code for this color based on its hexadecimal value.
     *
     * @return the hash code
-    *
-    * @see Lab#toHexIntWrap(Lab)
     */
    @Override
-   public int hashCode ( ) { return Lab.toHexIntWrap(this); }
+   public int hashCode ( ) { return this.toHexInt(); }
 
    /**
     * Resets this color to opaque white.
@@ -256,6 +250,62 @@ public class Lab implements IColor < Lab > {
    public Lab set ( final Lab source ) {
 
       return this.set(source.l, source.a, source.b, source.alpha);
+   }
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the color
+    * components as 0xTTLLAABB, T being alpha. Defaults to modular arithmetic.
+    *
+    * @return the color in hexadecimal
+    */
+   @Override
+   public int toHexInt ( ) {
+
+      return this.toHexIntWrap();
+   }
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the color
+    * components as 0xTTLLAABB, T being alpha. Uses saturation arithmetic,
+    * i.e., clamps the a and b components to [-127.5, 127.5], floors, then and
+    * adds 128. Scales lightness from [0.0, 100.0] to [0, 255]. Scales alpha
+    * from [0.0, 1.0] to [0, 255].
+    *
+    * @return the color in hexadecimal
+    *
+    * @see Utils#clamp(float, float, float)
+    * @see Utils#clamp01(float)
+    * @see Utils#floor(float)
+    */
+   @Override
+   public int toHexIntSat ( ) {
+
+      final int t8 = ( int ) ( Utils.clamp01(this.alpha) * 0xff + 0.5f );
+      final int l8 = ( int ) ( Utils.clamp(this.l, 0.0f, 100.0f) * Lab.L_TO_BYTE
+         + 0.5f );
+      final int a8 = 128 + Utils.floor(Utils.clamp(this.a, -127.5f, 127.5f));
+      final int b8 = 128 + Utils.floor(Utils.clamp(this.b, -127.5f, 127.5f));
+      return t8 << 0x18 | l8 << 0x10 | a8 << 0x08 | b8;
+   }
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the color
+    * components as 0xTTLLAABB, T being alpha. Uses modular arithmetic. Scales
+    * lightness from [0.0, 100.0] to [0, 255]. Scales alpha from [0.0, 1.0] to
+    * [0, 255]. Assumes a and b are in [-127.5, 127.5]; adds 128 to each.
+    *
+    * @return the color in hexadecimal
+    *
+    * @see Utils#floor(float)
+    */
+   @Override
+   public int toHexIntWrap ( ) {
+
+      final int t8 = ( int ) ( this.alpha * 0xff + 0.5f );
+      final int l8 = ( int ) ( this.l * Lab.L_TO_BYTE + 0.5f );
+      final int a8 = 128 + Utils.floor(this.a);
+      final int b8 = 128 + Utils.floor(this.b);
+      return t8 << 0x18 | l8 << 0x10 | a8 << 0x08 | b8;
    }
 
    /**
@@ -1314,67 +1364,6 @@ public class Lab implements IColor < Lab > {
          ( float ) ( cc * Math.sin(ch) ),
          Utils.clamp01(o.alpha - d.alpha));
       /* @formatter:on */
-   }
-
-   /**
-    * Converts a color to an integer where hexadecimal represents the color
-    * components as 0xTTLLAABB, T being alpha. Defaults to modular arithmetic.
-    *
-    * @param o the input color
-    *
-    * @return the color in hexadecimal
-    *
-    * @see Lab#toHexIntWrap(Lab)
-    */
-   public static int toHexInt ( final Lab o ) {
-
-      return Lab.toHexIntWrap(o);
-   }
-
-   /**
-    * Converts a color to an integer where hexadecimal represents the color
-    * components as 0xTTLLAABB, T being alpha. Uses saturation arithmetic,
-    * i.e., clamps the a and b components to [-127.5, 127.5], floors, then and
-    * adds 128. Scales lightness from [0.0, 100.0] to [0, 255]. Scales alpha
-    * from [0.0, 1.0] to [0, 255].
-    *
-    * @param o the input color
-    *
-    * @return the color in hexadecimal
-    *
-    * @see Utils#clamp(float, float, float)
-    * @see Utils#clamp01(float)
-    * @see Utils#floor(float)
-    */
-   public static int toHexIntSat ( final Lab o ) {
-
-      final int t = ( int ) ( Utils.clamp01(o.alpha) * 0xff + 0.5f );
-      final int l = ( int ) ( Utils.clamp(o.l, 0.0f, 100.0f) * Lab.L_TO_BYTE
-         + 0.5f );
-      final int a = 128 + Utils.floor(Utils.clamp(o.a, -127.5f, 127.5f));
-      final int b = 128 + Utils.floor(Utils.clamp(o.b, -127.5f, 127.5f));
-      return t << 0x18 | l << 0x10 | a << 0x08 | b;
-   }
-
-   /**
-    * Converts a color to an integer where hexadecimal represents the color
-    * components as 0xTTLLAABB, T being alpha. Uses modular arithmetic. Scales
-    * lightness from [0.0, 100.0] to [0, 255]. Scales alpha from [0.0, 1.0] to
-    * [0, 255]. Assumes a and b are in [-127.5, 127.5]; adds 128 to each.
-    *
-    * @param o the input color
-    *
-    * @return the color in hexadecimal
-    *
-    * @see Utils#floor(float)
-    */
-   public static int toHexIntWrap ( final Lab o ) {
-
-      final int t = ( int ) ( o.alpha * 0xff + 0.5f );
-      final int l = ( int ) ( o.l * Lab.L_TO_BYTE + 0.5f );
-      final int a = 128 + Utils.floor(o.a);
-      final int b = 128 + Utils.floor(o.b);
-      return t << 0x18 | l << 0x10 | a << 0x08 | b;
    }
 
    /**

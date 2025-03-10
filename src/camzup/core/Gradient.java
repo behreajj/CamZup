@@ -1404,7 +1404,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     *
     * @return the color
     *
-    * @see Rgb#toHexIntWrap(Rgb)
     * @see TreeSet#floor(Object)
     * @see TreeSet#ceiling(Object)
     * @see TreeSet#first()
@@ -1416,10 +1415,10 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       grd.query.step = step;
 
       final ColorKey prev = grd.keys.floor(grd.query);
-      if ( prev == null ) { return Rgb.toHexIntWrap(grd.keys.first().clr); }
+      if ( prev == null ) { return grd.keys.first().clr.toHexIntWrap(); }
 
       final ColorKey next = grd.keys.ceiling(grd.query);
-      if ( next == null ) { return Rgb.toHexIntWrap(grd.keys.last().clr); }
+      if ( next == null ) { return grd.keys.last().clr.toHexIntWrap(); }
 
       return Rgb.mix(next.clr, prev.clr, Utils.div(step - next.step, prev.step
          - next.step));

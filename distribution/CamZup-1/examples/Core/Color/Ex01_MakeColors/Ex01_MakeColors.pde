@@ -13,7 +13,7 @@ println("Chroma: " + c);
 println("Hue: " + h + ", Degrees: " + (h * 360.0));
 
 // Convert to and from hex.
-int labHex = Lab.toHexIntSat(x);
+int labHex = x.toHexIntSat();
 println(String.format("\n%08X", labHex));
 println(Lab.fromHex(labHex, new Lab()));
 
@@ -27,7 +27,7 @@ Lab.fromLch(y, z);
 println(z);
 
 // Convert to and from hex.
-int lchHex = Lch.toHexIntSat(y);
+int lchHex = y.toHexIntSat();
 println(String.format("\n%08X", lchHex));
 println(Lch.fromHex(lchHex, new Lch()));
 

@@ -1664,24 +1664,24 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * used as the location. Ambient light illuminates an object evenly from
     * all sides.
     *
-    * @param clr the color
+    * @param c the color
     */
-   void ambientLight ( final Rgb clr ) {
+   void ambientLight ( final Rgb c ) {
 
-      this.ambientLight(Rgb.toHexIntWrap(clr), this.lookTarget.x,
-         this.lookTarget.y, this.lookTarget.z);
+      this.ambientLight(c.toHexIntWrap(), this.lookTarget.x, this.lookTarget.y,
+         this.lookTarget.z);
    }
 
    /**
     * Initializes an ambient light with a color and location. Ambient light
     * illuminates an object evenly from all sides.
     *
-    * @param clr the color
+    * @param c   the color
     * @param loc the location
     */
-   void ambientLight ( final Rgb clr, final Vec3 loc ) {
+   void ambientLight ( final Rgb c, final Vec3 loc ) {
 
-      this.ambientLight(Rgb.toHexIntWrap(clr), loc.x, loc.y, loc.z);
+      this.ambientLight(c.toHexIntWrap(), loc.x, loc.y, loc.z);
    }
 
    /**
@@ -1731,12 +1731,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Initialize a directional light with a color and a direction.
     *
-    * @param clr the color
+    * @param c   the color
     * @param dir the direction
     */
-   void directionalLight ( final Rgb clr, final Vec3 dir ) {
+   void directionalLight ( final Rgb c, final Vec3 dir ) {
 
-      this.directionalLight(Rgb.toHexIntWrap(clr), dir.x, dir.y, dir.z);
+      this.directionalLight(c.toHexIntWrap(), dir.x, dir.y, dir.z);
    }
 
    /**
@@ -1772,12 +1772,12 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
    /**
     * Initializes a point light at a location.
     *
-    * @param clr the color
+    * @param c   the color
     * @param loc the location
     */
-   void pointLight ( final Rgb clr, final Vec3 loc ) {
+   void pointLight ( final Rgb c, final Vec3 loc ) {
 
-      this.pointLight(Rgb.toHexIntWrap(clr), loc.x, loc.y, loc.z);
+      this.pointLight(c.toHexIntWrap(), loc.x, loc.y, loc.z);
    }
 
    /**
@@ -1844,17 +1844,17 @@ public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
     * parameter affects angle of the spotlight cone, while concentration sets
     * the bias of light focusing toward the center of that cone.
     *
-    * @param clr           the color
+    * @param c             the color
     * @param loc           the location
     * @param dir           the direction
     * @param angle         the angle
     * @param concentration cone center bias
     */
-   void spotLight ( final Rgb clr, final Vec3 loc, final Vec3 dir,
+   void spotLight ( final Rgb c, final Vec3 loc, final Vec3 dir,
       final float angle, final float concentration ) {
 
-      this.spotLight(Rgb.toHexIntWrap(clr), loc.x, loc.y, loc.z, dir.x, dir.y,
-         dir.z, angle, concentration);
+      this.spotLight(c.toHexIntWrap(), loc.x, loc.y, loc.z, dir.x, dir.y, dir.z,
+         angle, concentration);
    }
 
    /**

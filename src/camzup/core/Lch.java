@@ -109,14 +109,12 @@ public class Lch implements IColor < Lch > {
     * @param d the comparisand
     *
     * @return the numeric code
-    *
-    * @see Lch#toHexIntWrap(Lch)
     */
    @Override
    public int compareTo ( final Lch d ) {
 
-      final int left = Lch.toHexIntWrap(this);
-      final int right = Lch.toHexIntWrap(d);
+      final int left = this.toHexInt();
+      final int right = d.toHexInt();
       return left < right ? -1 : left > right ? 1 : 0;
    }
 
@@ -127,12 +125,10 @@ public class Lch implements IColor < Lch > {
     * @param other the color integer
     *
     * @return the equivalence
-    *
-    * @see Lch#toHexIntWrap(Lch)
     */
    public boolean equals ( final int other ) {
 
-      return Lch.toHexIntWrap(this) == other;
+      return this.toHexInt() == other;
    }
 
    /**
@@ -156,11 +152,9 @@ public class Lch implements IColor < Lch > {
     * Returns a hash code for this color based on its hexadecimal value.
     *
     * @return the hash code
-    *
-    * @see Lch#toHexIntWrap(Lch)
     */
    @Override
-   public int hashCode ( ) { return Lch.toHexIntWrap(this); }
+   public int hashCode ( ) { return this.toHexInt(); }
 
    /**
     * Resets this color to opaque white.
@@ -259,6 +253,60 @@ public class Lch implements IColor < Lch > {
    public Lch set ( final Lch source ) {
 
       return this.set(source.l, source.c, source.h, source.alpha);
+   }
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the color
+    * components as 0xTTLLCCHH, T being alpha. Defaults to modular arithmetic.
+    *
+    * @return the color in hexadecimal
+    */
+   @Override
+   public int toHexInt ( ) {
+
+      return this.toHexIntWrap();
+   }
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the color
+    * components as 0xTTLLCCHH, T being alpha. Uses saturation arithmetic.
+    * Scales lightness from [0.0, 100.0] to [0, 255]. Scales hue and alpha
+    * from [0.0, 1.0] to [0, 255].
+    *
+    * @return the color in hexadecimal
+    *
+    * @see Utils#clamp(float, float, float)
+    * @see Utils#clamp01(float)
+    * @see Utils#mod1(float)
+    */
+   @Override
+   public int toHexIntSat ( ) {
+
+      final int t8 = ( int ) ( Utils.clamp01(this.alpha) * 0xff + 0.5f );
+      final int l8 = ( int ) ( Utils.clamp(this.l, 0.0f, 100.0f) * Lab.L_TO_BYTE
+         + 0.5f );
+      final int c8 = ( int ) ( Utils.clamp(this.c * Lch.C_TO_BYTE, 0.0f, 254.5f)
+         + 0.5f );
+      final int h8 = ( int ) ( Utils.mod1(this.h) * Lch.H_TO_BYTE + 0.5f );
+      return t8 << 0x18 | l8 << 0x10 | c8 << 0x08 | h8;
+   }
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the color
+    * components as 0xTTLLCCHH, T being alpha. Uses modular arithmetic. Scales
+    * lightness from [0.0, 100.0] to [0, 255]. Scales hue and alpha from [0.0,
+    * 1.0] to [0, 255]. Rounds chroma to an int; assumes it is less than 255.
+    *
+    * @return the color in hexadecimal
+    */
+   @Override
+   public int toHexIntWrap ( ) {
+
+      final int t8 = ( int ) ( this.alpha * 0xff + 0.5f );
+      final int l8 = ( int ) ( this.l * Lab.L_TO_BYTE + 0.5f );
+      final int c8 = ( int ) ( this.c * Lch.C_TO_BYTE + 0.5f );
+      final int h8 = ( int ) ( this.h * Lch.H_TO_BYTE + 0.5f );
+      return t8 << 0x18 | l8 << 0x10 | c8 << 0x08 | h8;
    }
 
    /**
@@ -771,65 +819,6 @@ public class Lch implements IColor < Lch > {
    public static Lch srYellow ( final Lch target ) {
 
       return target.set(97.34526f, 102.18088f, 0.30922842f, 1.0f);
-   }
-
-   /**
-    * Converts a color to an integer where hexadecimal represents the color
-    * components as 0xTTLLCCHH, T being alpha. Defaults to modular arithmetic.
-    *
-    * @param o the input color
-    *
-    * @return the color in hexadecimal
-    *
-    * @see Lch#toHexIntWrap(Lch)
-    */
-   public static int toHexInt ( final Lch o ) {
-
-      return Lch.toHexIntWrap(o);
-   }
-
-   /**
-    * Converts a color to an integer where hexadecimal represents the color
-    * components as 0xTTLLCCHH, T being alpha. Uses saturation arithmetic.
-    * Scales lightness from [0.0, 100.0] to [0, 255]. Scales hue and alpha
-    * from [0.0, 1.0] to [0, 255].
-    *
-    * @param o the input color
-    *
-    * @return the color in hexadecimal
-    *
-    * @see Utils#clamp(float, float, float)
-    * @see Utils#clamp01(float)
-    * @see Utils#mod1(float)
-    */
-   public static int toHexIntSat ( final Lch o ) {
-
-      final int t = ( int ) ( Utils.clamp01(o.alpha) * 0xff + 0.5f );
-      final int l = ( int ) ( Utils.clamp(o.l, 0.0f, 100.0f) * Lab.L_TO_BYTE
-         + 0.5f );
-      final int c = ( int ) ( Utils.clamp(o.c * Lch.C_TO_BYTE, 0.0f, 254.5f)
-         + 0.5f );
-      final int h = ( int ) ( Utils.mod1(o.h) * Lch.H_TO_BYTE + 0.5f );
-      return t << 0x18 | l << 0x10 | c << 0x08 | h;
-   }
-
-   /**
-    * Converts a color to an integer where hexadecimal represents the color
-    * components as 0xTTLLCCHH, T being alpha. Uses modular arithmetic. Scales
-    * lightness from [0.0, 100.0] to [0, 255]. Scales hue and alpha from [0.0,
-    * 1.0] to [0, 255]. Rounds chroma to an int; assumes it is less than 255.
-    *
-    * @param o the input color
-    *
-    * @return the color in hexadecimal
-    */
-   public static int toHexIntWrap ( final Lch o ) {
-
-      final int t = ( int ) ( o.alpha * 0xff + 0.5f );
-      final int l = ( int ) ( o.l * Lab.L_TO_BYTE + 0.5f );
-      final int c = ( int ) ( o.c * Lch.C_TO_BYTE + 0.5f );
-      final int h = ( int ) ( o.h * Lch.H_TO_BYTE + 0.5f );
-      return t << 0x18 | l << 0x10 | c << 0x08 | h;
    }
 
    /**

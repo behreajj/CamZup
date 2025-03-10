@@ -12,12 +12,12 @@ public interface IColor < T > extends Comparable < T > {
     * greater than; 0 when the two are 'equal'. The implementation of this
     * method allows collections of colors to be sorted.
     *
-    * @param c the comparisand
+    * @param d the comparisand
     *
     * @return the numeric code
     */
    @Override
-   int compareTo ( final T c );
+   int compareTo ( final T d );
 
    /**
     * Tests this color for equivalence with another object.
@@ -52,6 +52,32 @@ public interface IColor < T > extends Comparable < T > {
     * @return this color
     */
    T set ( T source );
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the color
+    * components.
+    *
+    * @param source the input color
+    *
+    * @return the color in hexadecimal
+    */
+   int toHexInt ( );
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the color
+    * channels as 0xAARRGGBB . Uses saturation arithmetic.
+    *
+    * @return the color in hexadecimal
+    */
+   int toHexIntSat ( );
+
+   /**
+    * Converts a color to an integer where hexadecimal represents the color
+    * channels as 0xAARRGGBB . Uses modular arithmetic.
+    *
+    * @return the color in hexadecimal
+    */
+   int toHexIntWrap ( );
 
    /**
     * Returns a string representation of this color.

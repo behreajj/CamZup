@@ -41,7 +41,7 @@ public interface IUp {
     */
    default void background ( final Rgb c ) {
 
-      this.background(Rgb.toHexIntWrap(c));
+      this.background(c.toHexIntWrap());
    }
 
    /**
@@ -71,7 +71,7 @@ public interface IUp {
     *
     * @param c the color
     */
-   default void fill ( final Rgb c ) { this.fill(Rgb.toHexIntWrap(c)); }
+   default void fill ( final Rgb c ) { this.fill(c.toHexIntWrap()); }
 
    /**
     * Gets the renderer's background color as an integer.
@@ -165,7 +165,7 @@ public interface IUp {
     */
    default void stroke ( final Rgb c ) {
 
-      this.stroke(Rgb.toHexIntWrap(c));
+      this.stroke(c.toHexIntWrap());
    }
 
    /**
