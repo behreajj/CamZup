@@ -412,34 +412,29 @@ public class Ray2 {
       final double uy = cy - ry;
 
       /* Project u onto d. */
-      final double vmsq = dx * dx + dy * dy;
       final double dotuv = ux * dx + uy * dy;
+      final double vmsq = dx * dx + dy * dy;
       final double uvScalarProj = vmsq > 0.0d ? dotuv / vmsq : 0.0d;
       final double u1x = dx * uvScalarProj;
       final double u1y = dy * uvScalarProj;
 
       final double u2x = ux - u1x;
       final double u2y = uy - u1y;
-
       final double u2msq = u2x * u2x + u2y * u2y;
       final double rSq = cr * cr;
-      final double m = Math.sqrt(rSq - u2msq);
-
-      final double opu1x = rx + u1x;
-      final double opu1y = ry + u1y;
-
-      final double mvx = m * dx;
-      final double mvy = m * dy;
 
       if ( u2msq <= rSq ) {
-         final double p0x = opu1x + mvx;
-         final double p0y = opu1y + mvy;
+         final double opu1x = rx + u1x;
+         final double opu1y = ry + u1y;
 
-         final double p1x = opu1x - mvx;
-         final double p1y = opu1y - mvy;
+         final double m = Math.sqrt(rSq - u2msq);
+         final double mvx = m * dx;
+         final double mvy = m * dy;
 
-         uniques.add(new Vec2(( float ) p0x, ( float ) p0y));
-         uniques.add(new Vec2(( float ) p1x, ( float ) p1y));
+         uniques.add(new Vec2(( float ) ( opu1x + mvx ), ( float ) ( opu1y
+            + mvy )));
+         uniques.add(new Vec2(( float ) ( opu1x - mvx ), ( float ) ( opu1y
+            - mvy )));
       }
 
       final Vec2[] arr = uniques.toArray(new Vec2[uniques.size()]);

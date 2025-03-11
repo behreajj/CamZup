@@ -65,7 +65,7 @@ public interface IColor < T > extends Comparable < T > {
 
    /**
     * Converts a color to an integer where hexadecimal represents the color
-    * channels as 0xAARRGGBB . Uses saturation arithmetic.
+    * channels. Uses saturation arithmetic.
     *
     * @return the color in hexadecimal
     */
@@ -73,7 +73,7 @@ public interface IColor < T > extends Comparable < T > {
 
    /**
     * Converts a color to an integer where hexadecimal represents the color
-    * channels as 0xAARRGGBB . Uses modular arithmetic.
+    * channels. Uses modular arithmetic.
     *
     * @return the color in hexadecimal
     */
