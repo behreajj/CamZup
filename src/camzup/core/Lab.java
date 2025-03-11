@@ -12,7 +12,7 @@ import java.util.function.Function;
  * . For a and b, the practical range is roughly [-111.0, 111.0] . Alpha is
  * expected to be in [0.0, 1.0] .
  */
-public class Lab implements IColor < Lab > {
+public class Lab implements IColor {
 
    /**
     * The green-magenta component.
@@ -37,7 +37,10 @@ public class Lab implements IColor < Lab > {
    /**
     * The default constructor. Creates a white color.
     */
-   public Lab ( ) {}
+   public Lab ( ) {
+
+      // TODO: Define some comparators for light, a, b, alpha, etc?
+   }
 
    /**
     * Creates a color from bytes. In Java, bytes are signed, within the range
@@ -102,20 +105,32 @@ public class Lab implements IColor < Lab > {
    public Lab ( final Lab source ) { this.set(source); }
 
    /**
-    * Returns -1 when this color is less than the comparisand; 1 when it is
-    * greater than; 0 when the two are 'equal'. The implementation of this
-    * method allows collections of colors to be sorted.
+    * Creates a color from shorts. In Java, shorts are signed, within the
+    * range [{@value Short#MIN_VALUE}, {@value Short#MAX_VALUE}] . The alpha
+    * channel defaults to 1.0 .
     *
-    * @param d the comparisand
-    *
-    * @return the numeric code
+    * @param l the light component
+    * @param a the green-magenta component
+    * @param b the blue-yellow component
     */
-   @Override
-   public int compareTo ( final Lab d ) {
+   public Lab ( final short l, final short a, final short b ) {
 
-      final int left = this.toHexInt();
-      final int right = d.toHexInt();
-      return left < right ? -1 : left > right ? 1 : 0;
+      this.set(l, a, b);
+   }
+
+   /**
+    * Creates a color from shorts. In Java, shorts are signed, within the
+    * range [{@value Short#MIN_VALUE}, {@value Short#MAX_VALUE}] .
+    *
+    * @param l     the light component
+    * @param a     the green-magenta component
+    * @param b     the blue-yellow component
+    * @param alpha the alpha channel
+    */
+   public Lab ( final short l, final short a, final short b,
+      final short alpha ) {
+
+      this.set(l, a, b, alpha);
    }
 
    /**
@@ -161,7 +176,6 @@ public class Lab implements IColor < Lab > {
     *
     * @return this color
     */
-   @Override
    public Lab reset ( ) { return this.set(100.0f, 0.0f, 0.0f, 1.0f); }
 
    /**
@@ -246,10 +260,48 @@ public class Lab implements IColor < Lab > {
     *
     * @return this color
     */
-   @Override
    public Lab set ( final Lab source ) {
 
       return this.set(source.l, source.a, source.b, source.alpha);
+   }
+
+   /**
+    * Sets a color with shorts. In Java, shorts are signed, within the range
+    * [{@value Short#MIN_VALUE}, {@value Short#MAX_VALUE}] . The alpha channel
+    * defaults to 1.0 .
+    *
+    * @param l the light component
+    * @param a the green-magenta component
+    * @param b the blue-yellow component
+    *
+    * @return this color
+    */
+   public Lab set ( final short l, final short a, final short b ) {
+
+      return this.set(l, a, b, ( short ) -1);
+   }
+
+   /**
+    * Sets a color with shorts. In Java, bytes are signed, within the range
+    * [{@value Short#MIN_VALUE}, {@value Short#MAX_VALUE}] .
+    *
+    * @param l     the light component
+    * @param a     the green-magenta component
+    * @param b     the blue-yellow component
+    * @param alpha the alpha channel
+    *
+    * @return this color
+    */
+   public Lab set ( final short l, final short a, final short b,
+      final short alpha ) {
+
+      /* @formatter:off */
+      return this.set(
+         ( l & 0xffff ) * Lab.L_FROM_SHORT,
+         ((a & 0xffff) - 32768) * Lab.AB_FROM_SHORT,
+         ((b & 0xffff) - 32768) * Lab.AB_FROM_SHORT,
+         ( alpha & 0xffff ) / 65535.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -265,11 +317,11 @@ public class Lab implements IColor < Lab > {
    }
 
    /**
-    * Converts a color to an integer where hexadecimal represents the color
-    * components as 0xTTLLAABB, T being alpha. Uses saturation arithmetic,
-    * i.e., clamps the a and b components to [-127.5, 127.5], floors, then and
-    * adds 128. Scales lightness from [0.0, 100.0] to [0, 255]. Scales alpha
-    * from [0.0, 1.0] to [0, 255].
+    * Converts a color to a 32-bit integer where hexadecimal represents the
+    * color components as 0xTTLLAABB, T being alpha. Uses saturation
+    * arithmetic, i.e., clamps the a and b components to [-127.5, 127.5],
+    * floors, then and adds 128. Scales lightness from [0.0, 100.0] to [0,
+    * 255]. Scales alpha from [0.0, 1.0] to [0, 255].
     *
     * @return the color in hexadecimal
     *
@@ -285,6 +337,7 @@ public class Lab implements IColor < Lab > {
          + 0.5f );
       final int a8 = 128 + Utils.floor(Utils.clamp(this.a, -127.5f, 127.5f));
       final int b8 = 128 + Utils.floor(Utils.clamp(this.b, -127.5f, 127.5f));
+
       return t8 << 0x18 | l8 << 0x10 | a8 << 0x08 | b8;
    }
 
@@ -305,7 +358,53 @@ public class Lab implements IColor < Lab > {
       final int l8 = ( int ) ( this.l * Lab.L_TO_BYTE + 0.5f );
       final int a8 = 128 + Utils.floor(this.a);
       final int b8 = 128 + Utils.floor(this.b);
+
       return t8 << 0x18 | l8 << 0x10 | a8 << 0x08 | b8;
+   }
+
+   /**
+    * Converts a color to a 64-bit integer where hexadecimal represents the
+    * color components as 0xTTTTLLLLAAAABBBB, T being alpha. Uses saturation
+    * arithmetic.
+    *
+    * @return the color in hexadecimal
+    *
+    * @see Utils#clamp(float, float, float)
+    * @see Utils#clamp01(float)
+    * @see Utils#floor(float)
+    */
+   public long toHexLongSat ( ) {
+
+      final long t16 = ( long ) ( Utils.clamp01(this.alpha) * 0xffff + 0.5f );
+      final long l16 = ( long ) ( Utils.clamp(this.l, 0.0f, 100.0f)
+         * Lab.L_TO_SHORT + 0.5f );
+      final long a16 = 32768L + Utils.floor(Utils.clamp(this.a
+         * Lab.AB_TO_SHORT, -32767.5f, 32767.5f));
+      final long b16 = 32768L + Utils.floor(Utils.clamp(this.b
+         * Lab.AB_TO_SHORT, -32767.5f, 32767.5f));
+
+      return t16 << 0x30L | l16 << 0x20L | a16 << 0x10L | b16;
+   }
+
+   /**
+    * Converts a color to a 64-bit integer where hexadecimal represents the
+    * color components as 0xTTTTLLLLAAAABBBB, T being alpha. Uses modular
+    * arithmetic.
+    *
+    * @return the color in hexadecimal
+    *
+    * @see Utils#clamp(float, float, float)
+    * @see Utils#clamp01(float)
+    * @see Utils#floor(float)
+    */
+   public long toHexLongWrap ( ) {
+
+      final long t16 = ( long ) ( this.alpha * 0xffff + 0.5f );
+      final long l16 = ( long ) ( this.l * Lab.L_TO_SHORT + 0.5f );
+      final long a16 = 32768L + Utils.floor(this.a * Lab.AB_TO_SHORT);
+      final long b16 = 32768L + Utils.floor(this.b * Lab.AB_TO_SHORT);
+
+      return t16 << 0x30L | l16 << 0x20L | a16 << 0x10L | b16;
    }
 
    /**
@@ -373,6 +472,17 @@ public class Lab implements IColor < Lab > {
    }
 
    /**
+    * A scalar used when converting a number in [0, 65535] to a and b
+    * components.
+    */
+   public static final float AB_FROM_SHORT = 0.0038910506f;
+
+   /**
+    * A scalar to convert a and b components to a number in [0, 65535].
+    */
+   public static final float AB_TO_SHORT = 257.0f;
+
+   /**
     * The default alpha scalar when finding the distance between two colors,
     * {@value Lab#DEFAULT_ALPHA_SCALAR}.
     */
@@ -382,7 +492,7 @@ public class Lab implements IColor < Lab > {
     * The default alpha scalar when finding the distance between two colors,
     * {@value Lab#DEFAULT_ALPHA_SCALAR_D}.
     */
-   public static final double DEFAULT_ALPHA_SCALAR_D = 100.0d;
+   public static final double DEFAULT_ALPHA_SCALAR_D = 0.0d;
 
    /**
     * A scalar to convert a number in [0, 255] to lightness in [0.0, 100.0].
@@ -391,10 +501,22 @@ public class Lab implements IColor < Lab > {
    public static final float L_FROM_BYTE = 0.39215687f;
 
    /**
+    * A scalar to convert a number in [0, 255] to lightness in [0.0, 100.0].
+    * Equivalent to 100.0 / 65535.0.
+    */
+   public static final float L_FROM_SHORT = 0.0015259022f;
+
+   /**
     * A scalar to convert lightness in [0.0, 100.0] to a number in [0, 255].
     * Equivalent to 255.0 / 100.0.
     */
    public static final float L_TO_BYTE = 2.55f;
+
+   /**
+    * A scalar to convert lightness in [0.0, 100.0] to a number in [0, 65535].
+    * Equivalent to 65535.0 / 100.0.
+    */
+   public static final float L_TO_SHORT = 655.35f;
 
    /**
     * Maximum light used when generating a random color,
@@ -433,54 +555,21 @@ public class Lab implements IColor < Lab > {
    public static final float SR_B_MIN = -110.8078f;
 
    /**
-    * Adds two colors together.
+    * Assigns the alpha of the destination color to the origin.
     *
-    * @param o      the left operand
-    * @param d      the right operand
+    * @param o      the origin color
+    * @param d      the destination color
     * @param target the target color
     *
     * @return the color
-    */
-   public static final Lab add ( final Lab o, final Lab d, final Lab target ) {
-
-      /* @formatter:off */
-      return target.set(
-         Utils.clamp(o.l + d.l, 0.0f, 100.0f),
-         o.a + d.a,
-         o.b + d.b,
-         Utils.clamp01(o.alpha + d.alpha));
-      /* @formatter:on */
-   }
-
-   /**
-    * Adds two colors together through their polar representation.
     *
-    * @param o      the left operand
-    * @param d      the right operand
-    * @param target the target color
-    *
-    * @return the color
+    * @see Math#sqrt(double)
+    * @see Lab#gray(Lab, Lab)
     */
-   public static final Lab addPolar ( final Lab o, final Lab d,
+   public static final Lab adoptAlpha ( final Lab o, final Lab d,
       final Lab target ) {
 
-      final double oa = o.a;
-      final double ob = o.b;
-
-      final double da = d.a;
-      final double db = d.b;
-
-      final double cc = Math.max(Math.sqrt(oa * oa + ob * ob) + Math.sqrt(da
-         * da + db * db), 0.0d);
-      final double ch = Math.atan2(ob, oa) + Math.atan2(db, da);
-
-      /* @formatter:off */
-      return target.set(
-         Utils.clamp(o.l + d.l, 0.0f, 100.0f),
-         ( float ) ( cc * Math.cos(ch) ),
-         ( float ) ( cc * Math.sin(ch) ),
-         Utils.clamp01(o.alpha + d.alpha));
-      /* @formatter:on */
+      return target.set(o.l, o.a, o.b, d.alpha);
    }
 
    /**
@@ -842,6 +931,31 @@ public class Lab implements IColor < Lab > {
    }
 
    /**
+    * Converts a hexadecimal representation of a color stored as
+    * 0xTTTTLLLLAAAABBBB, T being alpha.
+    *
+    * @param hex    the color in hexadecimal
+    * @param target the output color
+    *
+    * @return the color
+    */
+   public static Lab fromHex ( final long hex, final Lab target ) {
+
+      final long t16 = hex >> 0x30L & 0xffffL;
+      final long l16 = hex >> 0x20L & 0xffffL;
+      final long a16 = hex >> 0x10L & 0xffffL;
+      final long b16 = hex & 0xffffL;
+
+      /* @formatter:off */
+      return target.set(
+         l16 * Lab.L_FROM_SHORT,
+         ( a16 - 32768L ) * Lab.AB_FROM_SHORT,
+         ( b16 - 32768L ) * Lab.AB_FROM_SHORT,
+         t16 / 65535.0f);
+      /* @formatter:on */
+   }
+
+   /**
     * Converts a hexadecimal representation of a color stored as 0xTTLLAABB, T
     * being alpha.
     *
@@ -852,12 +966,18 @@ public class Lab implements IColor < Lab > {
     */
    public static Lab fromHex ( final int hex, final Lab target ) {
 
-      final int t = hex >> 0x18 & 0xff;
-      final int l = hex >> 0x10 & 0xff;
-      final int a = hex >> 0x08 & 0xff;
-      final int b = hex & 0xff;
-      return target.set(l * Lab.L_FROM_BYTE, a - 128.0f, b - 128.0f, t
-         * IUtils.ONE_255);
+      final int t8 = hex >> 0x18 & 0xff;
+      final int l8 = hex >> 0x10 & 0xff;
+      final int a8 = hex >> 0x08 & 0xff;
+      final int b8 = hex & 0xff;
+
+      /* @formatter:off */
+      return target.set(
+         l8 * Lab.L_FROM_BYTE,
+         a8 - 128.0f,
+         b8 - 128.0f,
+         t8 * IUtils.ONE_255);
+      /* @formatter:on */
    }
 
    /**
@@ -871,6 +991,8 @@ public class Lab implements IColor < Lab > {
     * @see Lab#fromHex(int, Lab)
     */
    public static Lab[] fromHex ( final int[] hexes ) {
+
+      // TODO: Make an array version of long fromHex?
 
       final int len = hexes.length;
       final Lab[] result = new Lab[len];
@@ -1115,9 +1237,14 @@ public class Lab implements IColor < Lab > {
    public static final Lab mix ( final Lab orig, final Lab dest,
       final float step, final Lab target ) {
 
+      /* @formatter:off */
       final float u = 1.0f - step;
-      return target.set(u * orig.l + step * dest.l, u * orig.a + step * dest.a,
-         u * orig.b + step * dest.b, u * orig.alpha + step * dest.alpha);
+      return target.set(
+         u * orig.l + step * dest.l,
+         u * orig.a + step * dest.a,
+         u * orig.b + step * dest.b,
+         u * orig.alpha + step * dest.alpha);
+      /* @formatter:on */
    }
 
    /**
@@ -1146,9 +1273,14 @@ public class Lab implements IColor < Lab > {
       final float rl = rng.nextFloat();
       final float ra = rng.nextFloat();
       final float rb = rng.nextFloat();
-      return target.set( ( 1.0f - rl ) * Lab.RNG_L_MIN + rl * Lab.RNG_L_MAX,
-         ( 1.0f - ra ) * Lab.SR_A_MIN + ra * Lab.SR_A_MAX, ( 1.0f - rb )
-            * Lab.SR_B_MIN + rb * Lab.SR_B_MAX, 1.0f);
+
+      /* @formatter:off */
+      return target.set(
+         ( 1.0f - rl ) * Lab.RNG_L_MIN + rl * Lab.RNG_L_MAX,
+         ( 1.0f - ra ) * Lab.SR_A_MIN + ra * Lab.SR_A_MAX,
+         ( 1.0f - rb ) * Lab.SR_B_MIN + rb * Lab.SR_B_MAX,
+         1.0f);
+      /* @formatter:on */
    }
 
    /**
@@ -1168,10 +1300,14 @@ public class Lab implements IColor < Lab > {
       final float ra = rng.nextFloat();
       final float rb = rng.nextFloat();
       final float rt = rng.nextFloat();
-      return target.set( ( 1.0f - rl ) * lowerBound.l + rl * upperBound.l,
-         ( 1.0f - ra ) * lowerBound.a + ra * upperBound.a, ( 1.0f - rb )
-            * lowerBound.b + rb * upperBound.b, ( 1.0f - rt ) * lowerBound.alpha
-               + rt * upperBound.alpha);
+
+      /* @formatter:off */
+      return target.set(
+         ( 1.0f - rl ) * lowerBound.l + rl * upperBound.l,
+         ( 1.0f - ra ) * lowerBound.a + ra * upperBound.a,
+         ( 1.0f - rb ) * lowerBound.b + rb * upperBound.b,
+         ( 1.0f - rt ) * lowerBound.alpha + rt * upperBound.alpha);
+      /* @formatter:on */
    }
 
    /**
@@ -1315,58 +1451,6 @@ public class Lab implements IColor < Lab > {
    }
 
    /**
-    * Subtracts the right color from the left.
-    *
-    * @param o      the left operand
-    * @param d      the right operand
-    * @param target the target color
-    *
-    * @return the color
-    */
-   public static final Lab sub ( final Lab o, final Lab d, final Lab target ) {
-
-      /* @formatter:off */
-      return target.set(
-         Utils.clamp(o.l - d.l, 0.0f, 100.0f),
-         o.a - d.a,
-         o.b - d.b,
-         Utils.clamp01(o.alpha - d.alpha));
-      /* @formatter:on */
-   }
-
-   /**
-    * Subtracts the right color from the left through their polar
-    * representation.
-    *
-    * @param o      the left operand
-    * @param d      the right operand
-    * @param target the target color
-    *
-    * @return the color
-    */
-   public static final Lab subPolar ( final Lab o, final Lab d,
-      final Lab target ) {
-
-      final double oa = o.a;
-      final double ob = o.b;
-
-      final double da = d.a;
-      final double db = d.b;
-
-      final double cc = Math.max(Math.sqrt(oa * oa + ob * ob) - Math.sqrt(da
-         * da + db * db), 0.0d);
-      final double ch = Math.atan2(ob, oa) - Math.atan2(db, da);
-
-      /* @formatter:off */
-      return target.set(
-         Utils.clamp(o.l - d.l, 0.0f, 100.0f),
-         ( float ) ( cc * Math.cos(ch) ),
-         ( float ) ( cc * Math.sin(ch) ),
-         Utils.clamp01(o.alpha - d.alpha));
-      /* @formatter:on */
-   }
-
-   /**
     * Converts from SR LAB 2 to SR XYZ. The alpha component is assigned to w.
     * See <a href=
     * "https://www.magnetkern.de/srlab2.html">https://www.magnetkern.de/srlab2.html</a>.
@@ -1446,6 +1530,21 @@ public class Lab implements IColor < Lab > {
    }
 
    /**
+    * Converts a scalar to the the lightness and alpha channel. For use by the
+    * gradient class.
+    *
+    * @param scalar the scalar
+    * @param target the output color
+    *
+    * @return the color
+    */
+   static final Lab fromScalar ( final float scalar, final Lab target ) {
+
+      final float s = Utils.clamp01(scalar);
+      return target.set(s * 100.0f, 0.0f, 0.0f, s);
+   }
+
+   /**
     * Generates a 3D array of vectors. The result is in layer-row-major order,
     * but the parameters are supplied in reverse: columns first, then rows,
     * then layers.<br>
@@ -1508,6 +1607,65 @@ public class Lab implements IColor < Lab > {
       }
 
       return result;
+   }
+
+   /**
+    * An abstract class to facilitate the creation of color easing functions.
+    */
+   public abstract static class AbstrEasing implements Utils.EasingFuncObj <
+      Lab > {
+
+      /**
+       * The default constructor.
+       */
+      protected AbstrEasing ( ) {}
+
+      /**
+       * A clamped interpolation between the origin and destination. Defers to
+       * an unclamped interpolation, which is to be defined by sub-classes of
+       * this class.
+       *
+       * @param orig   the origin color
+       * @param dest   the destination color
+       * @param step   a factor in [0.0, 1.0]
+       * @param target the output color
+       *
+       * @return the eased color
+       */
+      @Override
+      public Lab apply ( final Lab orig, final Lab dest, final Float step,
+         final Lab target ) {
+
+         final float tf = step;
+         if ( Float.isNaN(tf) ) {
+            return this.applyUnclamped(orig, dest, 0.5f, target);
+         }
+         if ( tf <= 0.0f ) { return target.set(orig); }
+         if ( tf >= 1.0f ) { return target.set(dest); }
+         return this.applyUnclamped(orig, dest, step, target);
+      }
+
+      /**
+       * The interpolation to be defined by subclasses.
+       *
+       * @param orig   the origin color
+       * @param dest   the destination color
+       * @param step   a factor in [0, 1]
+       * @param target the output color
+       *
+       * @return the eased color
+       */
+      public abstract Lab applyUnclamped ( final Lab orig, final Lab dest,
+         final Float step, final Lab target );
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
    }
 
    /**
@@ -1764,6 +1922,207 @@ public class Lab implements IColor < Lab > {
             new Lab(lTri, ( float ) ( halfca + rt32cb ), ( float ) ( halfcb - rt32ca ), t)
          };
          /* @formatter:on */
+      }
+
+   }
+
+   /**
+    * Eases between two colors in the LAB color space.
+    */
+   public static final class MixLab extends AbstrEasing {
+
+      /**
+       * The default constructor.
+       */
+      public MixLab ( ) {}
+
+      /**
+       * Applies the function.
+       *
+       * @param orig   the origin color
+       * @param dest   the destination color
+       * @param step   the step in a range 0 to 1
+       * @param target the output color
+       *
+       * @return the eased color
+       */
+      @Override
+      public Lab applyUnclamped ( final Lab orig, final Lab dest,
+         final Float step, final Lab target ) {
+
+         final float t = step;
+         final float u = 1.0f - t;
+
+         /* @formatter:off */
+         return target.set(
+            u * orig.l + t * dest.l,
+            u * orig.a + t * dest.a,
+            u * orig.b + t * dest.b,
+            u * orig.alpha + t * dest.alpha);
+         /* @formatter:on */
+      }
+
+   }
+
+   /**
+    * Eases between two colors in the LCH color space.
+    */
+   public static final class MixLch extends AbstrEasing {
+
+      /**
+       * The new LCH color.
+       */
+      protected final Lch cLch = new Lch();
+
+      /**
+       * The destination color in LCH.
+       */
+      protected final Lch dLch = new Lch();
+
+      /**
+       * The hue easing function.
+       */
+      protected IColor.HueEasing hueFunc;
+
+      /**
+       * The origin color in LCH.
+       */
+      protected final Lch oLch = new Lch();
+
+      /**
+       * The default constructor. Creates a mixer with nearest hue
+       * interpolation.
+       */
+      public MixLch ( ) { this(new IColor.HueNear()); }
+
+      /**
+       * Creates a color SR LCH mixing function with the given easing functions
+       * for hue.
+       *
+       * @param hueFunc the hue easing function
+       */
+      public MixLch ( final IColor.HueEasing hueFunc ) {
+
+         this.hueFunc = hueFunc;
+      }
+
+      /**
+       * Applies the function.
+       *
+       * @param orig   the origin color
+       * @param dest   the destination color
+       * @param step   the step in a range 0 to 1
+       * @param target the output color
+       *
+       * @return the eased color
+       *
+       * @see Lab#fromLch(Lch, Lab)
+       * @see Lch#fromLab(Lab, Lch)
+       * @see Lch#mix(Lch, Lch, float, camzup.core.IColor.HueEasing, Lch)
+       */
+      @Override
+      public Lab applyUnclamped ( final Lab orig, final Lab dest,
+         final Float step, final Lab target ) {
+
+         Lch.fromLab(orig, this.oLch);
+         Lch.fromLab(dest, this.dLch);
+         Lch.mix(this.oLch, this.dLch, step, this.hueFunc, this.cLch);
+         Lab.fromLch(this.cLch, target);
+
+         return target;
+      }
+
+   }
+
+   /**
+    * Eases between two colors in the standard RGB. Assumes that the LAB space
+    * used is SR LAB 2.
+    */
+   public static final class MixSrgb extends AbstrEasing {
+
+      /**
+       * The mixed color in linear RGB.
+       */
+      protected final Rgb cLinear = new Rgb();
+
+      /**
+       * The mixed color in standard RGB.
+       */
+      protected final Rgb cStandard = new Rgb();
+
+      /**
+       * The mixed color in XYZ.
+       */
+      protected final Vec4 cXyz = new Vec4();
+
+      /**
+       * The destination color in LAB.
+       */
+      protected final Lab dLab = new Lab();
+
+      /**
+       * The destination color in linear RGB.
+       */
+      protected final Rgb dLinear = new Rgb();
+
+      /**
+       * The destination color in linear RGB.
+       */
+      protected final Rgb dStandard = new Rgb();
+
+      /**
+       * The destination color in XYZ.
+       */
+      protected final Vec4 dXyz = new Vec4();
+
+      /**
+       * The origin color in LAB.
+       */
+      protected final Lab oLab = new Lab();
+
+      /**
+       * The origin color in linear RGB.
+       */
+      protected final Rgb oLinear = new Rgb();
+
+      /**
+       * The origin color in linear RGB.
+       */
+      protected final Rgb oStandard = new Rgb();
+
+      /**
+       * The origin color in XYZ.
+       */
+      protected final Vec4 oXyz = new Vec4();
+
+      /**
+       * The default constructor.
+       */
+      public MixSrgb ( ) {
+
+         // TODO: Lrgb mix class? Use individual transformation steps.
+      }
+
+      /**
+       * Applies the function.
+       *
+       * @param orig   the origin color
+       * @param dest   the destination color
+       * @param step   the step in a range 0 to 1
+       * @param target the output color
+       *
+       * @return the eased color
+       */
+      @Override
+      public Lab applyUnclamped ( final Lab orig, final Lab dest,
+         final Float step, final Lab target ) {
+
+         Rgb.srLab2TosRgb(orig, this.oStandard, this.oLinear, this.oXyz);
+         Rgb.srLab2TosRgb(dest, this.dStandard, this.dLinear, this.dXyz);
+         Rgb.mix(this.oStandard, this.dStandard, step, this.cStandard);
+         Rgb.sRgbToSrLab2(this.cStandard, target, this.cXyz, this.cLinear);
+
+         return target;
       }
 
    }

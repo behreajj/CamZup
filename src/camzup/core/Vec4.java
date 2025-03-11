@@ -596,7 +596,7 @@ public class Vec4 implements Comparable < Vec4 > {
 
    /**
     * Appends to an array of bytes, ordered from least to most significant
-    * digit (little endian). Writes a total of 16 bytes.
+    * digit (little endian). Writes 16 bytes.
     *
     * @param v   the vector
     * @param arr the array
@@ -619,7 +619,7 @@ public class Vec4 implements Comparable < Vec4 > {
 
    /**
     * Appends to an array of bytes, ordered from most to least significant
-    * digit (big endian). Writes a total of 16 bytes.
+    * digit (big endian). Writes 16 bytes.
     *
     * @param v   the vector
     * @param arr the array

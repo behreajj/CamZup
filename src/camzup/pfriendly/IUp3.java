@@ -358,7 +358,7 @@ public interface IUp3 extends IUp {
     */
    default Vec3 mouse1s ( final Vec3 target ) {
 
-      return IUp3.mouse1s(this.getParent(), target);
+      return IUp3.mouse1sClamp(this.getParent(), target);
    }
 
    /**
@@ -371,7 +371,7 @@ public interface IUp3 extends IUp {
     */
    default Vec3 mouse1u ( final Vec3 target ) {
 
-      return IUp3.mouse1u(this.getParent(), target);
+      return IUp3.mouse1uClamp(this.getParent(), target);
    }
 
    /**
@@ -754,11 +754,33 @@ public interface IUp3 extends IUp {
     *
     * @return the mouse
     */
-   static Vec3 mouse1s ( final PApplet parent, final Vec3 target ) {
+   static Vec3 mouse1sClamp ( final PApplet parent, final Vec3 target ) {
 
       return target.set(2.0f * Utils.clamp01(parent.mouseX / ( parent.width
          - 1.0f )) - 1.0f, 1.0f - 2.0f * Utils.clamp01(parent.mouseY
             / ( parent.height - 1.0f )), 0.0f);
+   }
+
+   /**
+    * Gets a mouse within a unit square, where either component may be in the
+    * range [-1.0, 1.0]. The mouse's y coordinate is flipped.
+    *
+    * @param parent the parent applet
+    * @param target the output vector
+    *
+    * @return the mouse
+    *
+    * @see Utils#clamp01(float)
+    */
+   static Vec3 mouse1sWrap ( final PApplet parent, final Vec3 target ) {
+
+      // TODO: TEST
+
+      final float x = 2.0f * ( parent.mouseX / ( parent.width - 1.0f ) ) - 1.0f;
+      final float y = 1.0f - 2.0f * ( parent.mouseY / ( parent.height
+         - 1.0f ) );
+      return target.set(Utils.wrap(x, -1.0f, 1.0f), Utils.wrap(y, -1.0f, 1.0f),
+         0.0f);
    }
 
    /**
@@ -770,10 +792,25 @@ public interface IUp3 extends IUp {
     *
     * @return the mouse
     */
-   static Vec3 mouse1u ( final PApplet parent, final Vec3 target ) {
+   static Vec3 mouse1uClamp ( final PApplet parent, final Vec3 target ) {
 
       return target.set(Utils.clamp01(parent.mouseX / ( parent.width - 1.0f )),
          1.0f - Utils.clamp01(parent.mouseY / ( parent.height - 1.0f )), 0.0f);
+   }
+
+   /**
+    * Gets a mouse within the range [0.0, 1.0]. The mouse's y coordinate is
+    * flipped.
+    *
+    * @param parent the parent applet
+    * @param target the output vector
+    *
+    * @return the mouse
+    */
+   static Vec3 mouse1uWrap ( final PApplet parent, final Vec3 target ) {
+
+      return target.set(Utils.mod1(parent.mouseX / ( parent.width - 1.0f )),
+         1.0f - Utils.mod1(parent.mouseY / ( parent.height - 1.0f )), 0.0f);
    }
 
 }

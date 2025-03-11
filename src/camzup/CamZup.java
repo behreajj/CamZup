@@ -50,7 +50,7 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // final Rng rng = new Rng();
+
       // final Vec4 v0 = Vec4.random(rng, new Vec4());
       // final Vec3 v1 = Vec3.random(rng, new Vec3());
       // final byte[] arr = new byte[28];

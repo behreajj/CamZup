@@ -764,7 +764,7 @@ public class Vec3 implements Comparable < Vec3 > {
 
    /**
     * Appends to an array of bytes, ordered from least to most significant
-    * digit (little endian). Writes a total of 12 bytes.
+    * digit (little endian). Writes 12 bytes.
     *
     * @param v   the vector
     * @param arr the array
@@ -786,7 +786,7 @@ public class Vec3 implements Comparable < Vec3 > {
 
    /**
     * Appends to an array of bytes, ordered from most to least significant
-    * digit (big endian). Writes a total of 12 bytes.
+    * digit (big endian). Writes 12 bytes.
     *
     * @param v   the vector
     * @param arr the array

@@ -704,7 +704,7 @@ public class Vec2 implements Comparable < Vec2 > {
 
    /**
     * Appends to an array of bytes, ordered from least to most significant
-    * digit (little endian). Writes a total of 8 bytes.
+    * digit (little endian). Writes 8 bytes.
     *
     * @param v   the vector
     * @param arr the array
@@ -725,7 +725,7 @@ public class Vec2 implements Comparable < Vec2 > {
 
    /**
     * Appends to an array of bytes, ordered from most to least significant
-    * digit (big endian). Writes a total of 8 bytes.
+    * digit (big endian). Writes 8 bytes.
     *
     * @param v   the vector
     * @param arr the array

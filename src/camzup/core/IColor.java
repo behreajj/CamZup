@@ -2,11 +2,8 @@ package camzup.core;
 
 /**
  * Maintains consistent behavior between color objects.
- *
- * @param <T> the color type
  */
-public interface IColor < T > extends Comparable < T > {
-
+public interface IColor extends Comparable < IColor > {
    /**
     * Returns -1 when this color is less than the comparisand; 1 when it is
     * greater than; 0 when the two are 'equal'. The implementation of this
@@ -17,7 +14,12 @@ public interface IColor < T > extends Comparable < T > {
     * @return the numeric code
     */
    @Override
-   int compareTo ( final T d );
+   default int compareTo ( final IColor d ) {
+
+      final int left = this.toHexInt();
+      final int right = d.toHexInt();
+      return left < right ? -1 : left > right ? 1 : 0;
+   }
 
    /**
     * Tests this color for equivalence with another object.
@@ -36,22 +38,6 @@ public interface IColor < T > extends Comparable < T > {
     */
    @Override
    int hashCode ( );
-
-   /**
-    * Resets this color to an initial state.
-    *
-    * @return this color
-    */
-   T reset ( );
-
-   /**
-    * Sets this color to the source color.
-    *
-    * @param source the source color
-    *
-    * @return this color
-    */
-   T set ( T source );
 
    /**
     * Converts a color to an integer where hexadecimal represents the color

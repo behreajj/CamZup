@@ -9,7 +9,7 @@ import java.util.function.Function;
  * 100.0] . Hue is within the range [0.0, 1.0] . Chroma's minimum bound is
  * 0.0 but it has no upper bound. Alpha is expected to be in [0.0, 1.0] .
  */
-public class Lch implements IColor < Lch > {
+public class Lch implements IColor {
 
    /**
     * The alpha channel, which governs transparency.
@@ -102,23 +102,6 @@ public class Lch implements IColor < Lch > {
    }
 
    /**
-    * Returns -1 when this color is less than the comparisand; 1 when it is
-    * greater than; 0 when the two are 'equal'. The implementation of this
-    * method allows collections of colors to be sorted.
-    *
-    * @param d the comparisand
-    *
-    * @return the numeric code
-    */
-   @Override
-   public int compareTo ( final Lch d ) {
-
-      final int left = this.toHexInt();
-      final int right = d.toHexInt();
-      return left < right ? -1 : left > right ? 1 : 0;
-   }
-
-   /**
     * Tests this color for equivalence to another based on its hexadecimal
     * representation.
     *
@@ -161,7 +144,6 @@ public class Lch implements IColor < Lch > {
     *
     * @return this color
     */
-   @Override
    public Lch reset ( ) {
 
       return this.set(100.0f, 0.0f, Lch.SR_HUE_LIGHT, 1.0f);
@@ -249,7 +231,6 @@ public class Lch implements IColor < Lch > {
     *
     * @return this color
     */
-   @Override
    public Lch set ( final Lch source ) {
 
       return this.set(source.l, source.c, source.h, source.alpha);
@@ -288,6 +269,7 @@ public class Lch implements IColor < Lch > {
       final int c8 = ( int ) ( Utils.clamp(this.c * Lch.C_TO_BYTE, 0.0f, 254.5f)
          + 0.5f );
       final int h8 = ( int ) ( Utils.mod1(this.h) * Lch.H_TO_BYTE + 0.5f );
+
       return t8 << 0x18 | l8 << 0x10 | c8 << 0x08 | h8;
    }
 
@@ -306,6 +288,7 @@ public class Lch implements IColor < Lch > {
       final int l8 = ( int ) ( this.l * Lab.L_TO_BYTE + 0.5f );
       final int c8 = ( int ) ( this.c * Lch.C_TO_BYTE + 0.5f );
       final int h8 = ( int ) ( this.h * Lch.H_TO_BYTE + 0.5f );
+
       return t8 << 0x18 | l8 << 0x10 | c8 << 0x08 | h8;
    }
 

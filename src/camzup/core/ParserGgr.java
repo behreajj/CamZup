@@ -136,6 +136,11 @@ public abstract class ParserGgr {
          final Rgb ltClr = new Rgb();
          final Rgb rtClr = new Rgb();
 
+         /* Temporary variables to convert to lab color key. */
+         final Rgb lrgb = new Rgb();
+         final Vec4 xyz = new Vec4();
+         final Lab lab = new Lab();
+
          /* Mixers. */
          final Rgb.MixSrgb rgbaMix = new Rgb.MixSrgb();
          final Rgb.MixSrLch cwMix = new Rgb.MixSrLch(new Rgb.HueCW());
@@ -256,7 +261,9 @@ public abstract class ParserGgr {
                   }
                }
             }
-            trgKeys.add(new ColorKey(step, evalClr));
+
+            Rgb.sRgbToSrLab2(evalClr, lab, xyz, lrgb);
+            trgKeys.add(new ColorKey(step, lab));
 
          }
 

@@ -722,11 +722,11 @@ public abstract class Pixels {
     *
     * @return the gradient pixels
     *
-    * @see Gradient#eval(Gradient, float, Rgb.AbstrEasing, Rgb)
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
     * @see Utils#mod1(float)
     */
    public static int[] gradientConic ( final Gradient grd, final float xOrig,
-      final float yOrig, final float radians, final Rgb.AbstrEasing easing,
+      final float yOrig, final float radians, final Lab.AbstrEasing easing,
       final int wTrg, final int hTrg, final int[] target ) {
 
       final double aspect = wTrg / ( double ) hTrg;
@@ -736,7 +736,7 @@ public abstract class Pixels {
       final double yo = yOrig;
       final double rd = radians;
 
-      final Rgb trgClr = new Rgb();
+      final Lab trgClr = new Lab();
       final int trgLen = target.length;
       for ( int i = 0; i < trgLen; ++i ) {
          final double xn = wInv * ( i % wTrg );
@@ -744,6 +744,7 @@ public abstract class Pixels {
          final float fac = Utils.mod1(( float ) ( ( Math.atan2(1.0d - ( yn + yn
             + yo ), xn + xn - xo - 1.0d) - rd ) * IUtils.ONE_TAU_D ));
          Gradient.eval(grd, fac, easing, trgClr);
+         // TODO: Fix this. Might have to use a dictionary of existing colors.
          target[i] = trgClr.toHexIntSat();
       }
 
@@ -767,13 +768,13 @@ public abstract class Pixels {
     *
     * @return the gradient pixels
     *
-    * @see Gradient#eval(Gradient, float, Rgb.AbstrEasing, Rgb)
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
     * @see Utils#max(float, float)
     * @see Utils#clamp01(float)
     */
    public static int[] gradientLinear ( final Gradient grd, final float xOrig,
       final float yOrig, final float xDest, final float yDest,
-      final Rgb.AbstrEasing easing, final int wTrg, final int hTrg,
+      final Lab.AbstrEasing easing, final int wTrg, final int hTrg,
       final int[] target ) {
 
       final float bx = xOrig - xDest;
@@ -789,12 +790,13 @@ public abstract class Pixels {
       final float bxwInv2 = 2.0f / ( wTrg - 1.0f ) * bxbbinv;
       final float byhInv2 = 2.0f / ( hTrg - 1.0f ) * bybbinv;
 
-      final Rgb trgClr = new Rgb();
+      final Lab trgClr = new Lab();
       final int trgLen = target.length;
       for ( int i = 0; i < trgLen; ++i ) {
          final float fac = Utils.clamp01(xobx + bxbbinv - bxwInv2 * ( i % wTrg )
             + ( yoby + byhInv2 * ( i / wTrg ) - bybbinv ));
          Gradient.eval(grd, fac, easing, trgClr);
+         // TODO: Fix this. Might have to use a dictionary of existing colors.
          target[i] = trgClr.toHexIntSat();
       }
 
@@ -815,10 +817,10 @@ public abstract class Pixels {
     *
     * @return the mapped pixels
     *
-    * @see Gradient#eval(Gradient, float, Rgb.AbstrEasing, Rgb)
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
     */
    public static int[] gradientMap ( final int[] source, final Gradient grd,
-      final Rgb.AbstrEasing easing, final IntFunction < Float > map,
+      final Lab.AbstrEasing easing, final IntFunction < Float > map,
       final int[] target ) {
 
       final int srcLen = source.length;
@@ -829,14 +831,18 @@ public abstract class Pixels {
           * replaced by source alpha.
           */
          final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
-         final Rgb trgClr = new Rgb();
+         final Lab trgClr = new Lab();
 
          for ( int i = 0; i < srcLen; ++i ) {
             final int srgbKeyInt = source[i];
             if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
                final Integer srgbKeyObj = 0xff000000 | srgbKeyInt;
                if ( !dict.containsKey(srgbKeyObj) ) {
+                  // TODO: Might have to use presets or change the map to work
+                  // on lab?
                   Gradient.eval(grd, map.apply(srgbKeyInt), easing, trgClr);
+                  // TODO: Fix this. Might have to use a dictionary of existing
+                  // colors.
                   dict.put(srgbKeyObj, trgClr.toHexIntSat() & 0x00ffffff);
                }
             }
@@ -876,11 +882,11 @@ public abstract class Pixels {
     *
     * @return the gradient pixels
     *
-    * @see Gradient#eval(Gradient, float, Rgb.AbstrEasing, Rgb)
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
     * @see Utils#max(float, float)
     */
    public static int[] gradientRadial ( final Gradient grd, final float xOrig,
-      final float yOrig, final float radius, final Rgb.AbstrEasing easing,
+      final float yOrig, final float radius, final Lab.AbstrEasing easing,
       final int wTrg, final int hTrg, final int[] target ) {
 
       final float hInv2 = 2.0f / ( hTrg - 1.0f );
@@ -892,13 +898,14 @@ public abstract class Pixels {
       final float yon1 = yOrig - 1.0f;
       final float xop1 = xOrig + 1.0f;
 
-      final Rgb trgClr = new Rgb();
+      final Lab trgClr = new Lab();
       final int trgLen = target.length;
       for ( int i = 0; i < trgLen; ++i ) {
          final float ay = yon1 + hInv2 * ( i / wTrg );
          final float ax = xop1 - wInv2 * ( i % wTrg );
          final float fac = 1.0f - ( ax * ax + ay * ay ) * rsqInv;
          Gradient.eval(grd, fac, easing, trgClr);
+         // TODO: Fix this.
          target[i] = trgClr.toHexIntSat();
       }
 

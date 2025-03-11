@@ -13,7 +13,7 @@ public class ColorKey implements Comparable < ColorKey > {
     * The key's color. Abbreviated to 'clr' because 'color' is a data type in
     * Processing IDE.
     */
-   public final Rgb clr = new Rgb(0.0f, 0.0f, 0.0f, 0.0f);
+   public final Lab clr = Lab.clearBlack(new Lab());
 
    /**
     * The key's step, expected to be in the range [0.0, 1.0] .
@@ -33,23 +33,12 @@ public class ColorKey implements Comparable < ColorKey > {
    public ColorKey ( final ColorKey source ) { this.set(source); }
 
    /**
-    * Creates a new key with a step and a color in hexadecimal.
-    *
-    * @param step  the step
-    * @param color the color
-    */
-   public ColorKey ( final float step, final int color ) {
-
-      this.set(step, color);
-   }
-
-   /**
     * Creates a new key with a step and color.
     *
     * @param step  the step
     * @param color the color
     */
-   public ColorKey ( final float step, final Rgb color ) {
+   public ColorKey ( final float step, final Lab color ) {
 
       this.set(step, color);
    }
@@ -59,15 +48,14 @@ public class ColorKey implements Comparable < ColorKey > {
     * be 1.0 . This is for package-level use only, so that the step can be set
     * without clamp protection.
     *
-    * @param step  the step
-    * @param red   the red channel
-    * @param green the green channel
-    * @param blue  the blue channel
+    * @param step the step
+    * @param l    the light component
+    * @param a    the green-magenta component
+    * @param b    the blue-yellow component
     */
-   ColorKey ( final float step, final float red, final float green,
-      final float blue ) {
+   ColorKey ( final float step, final float l, final float a, final float b ) {
 
-      this.set(step, red, green, blue);
+      this.set(step, l, a, b);
    }
 
    /**
@@ -75,15 +63,15 @@ public class ColorKey implements Comparable < ColorKey > {
     * only, so that the step can be set without clamp protection.
     *
     * @param step  the step
-    * @param red   the red channel
-    * @param green the green channel
-    * @param blue  the blue channel
+    * @param l     the light component
+    * @param a     the green-magenta component
+    * @param b     the blue-yellow component
     * @param alpha the transparency channel
     */
-   ColorKey ( final float step, final float red, final float green,
-      final float blue, final float alpha ) {
+   ColorKey ( final float step, final float l, final float a, final float b,
+      final float alpha ) {
 
-      this.set(step, red, green, blue, alpha);
+      this.set(step, l, a, b, alpha);
    }
 
    /**
@@ -137,7 +125,7 @@ public class ColorKey implements Comparable < ColorKey > {
    public ColorKey reset ( ) {
 
       this.step = 0.0f;
-      this.clr.set(0.0f, 0.0f, 0.0f, 0.0f);
+      Lab.clearBlack(this.clr);
       return this;
    }
 
@@ -154,7 +142,7 @@ public class ColorKey implements Comparable < ColorKey > {
    }
 
    /**
-    * Sets this key with a step and a color in hexadecimal.
+    * Sets this key with a step and color.
     *
     * @param step the step
     * @param c    the color
@@ -162,30 +150,11 @@ public class ColorKey implements Comparable < ColorKey > {
     * @return this key
     *
     * @see Utils#clamp01(float)
-    * @see Rgb#fromHex(int, Rgb)
     */
-   public ColorKey set ( final float step, final int c ) {
+   public ColorKey set ( final float step, final Lab c ) {
 
       this.step = Utils.clamp01(step);
-      Rgb.fromHex(c, this.clr);
-
-      return this;
-   }
-
-   /**
-    * Sets this key with a step and color.
-    *
-    * @param step  the step
-    * @param color the color
-    *
-    * @return this key
-    *
-    * @see Utils#clamp01(float)
-    */
-   public ColorKey set ( final float step, final Rgb color ) {
-
-      this.step = Utils.clamp01(step);
-      this.clr.set(color);
+      this.clr.set(c);
 
       return this;
    }
@@ -215,18 +184,18 @@ public class ColorKey implements Comparable < ColorKey > {
     * be 1.0 . This is for package-level use only, so that the step can be set
     * without clamp protection.
     *
-    * @param step  the step
-    * @param red   the red channel
-    * @param green the green channel
-    * @param blue  the blue channel
+    * @param step the step
+    * @param l    the light component
+    * @param a    the green-magenta component
+    * @param b    the blue-yellow component
     *
     * @return this key
     */
-   ColorKey set ( final float step, final float red, final float green,
-      final float blue ) {
+   ColorKey set ( final float step, final float l, final float a,
+      final float b ) {
 
       this.step = step;
-      this.clr.set(red, green, blue);
+      this.clr.set(l, a, b);
 
       return this;
    }
@@ -236,18 +205,18 @@ public class ColorKey implements Comparable < ColorKey > {
     * only, so that the step can be set without clamp protection.
     *
     * @param step  the step
-    * @param red   the red channel
-    * @param green the green channel
-    * @param blue  the blue channel
+    * @param l     the light component
+    * @param a     the green-magenta component
+    * @param b     the blue-yellow component
     * @param alpha the transparency channel
     *
     * @return this key
     */
-   ColorKey set ( final float step, final float red, final float green,
-      final float blue, final float alpha ) {
+   ColorKey set ( final float step, final float l, final float a, final float b,
+      final float alpha ) {
 
       this.step = step;
-      this.clr.set(red, green, blue, alpha);
+      this.clr.set(l, a, b, alpha);
 
       return this;
    }
@@ -269,7 +238,9 @@ public class ColorKey implements Comparable < ColorKey > {
       pyCd.append("{\"position\": ");
       Utils.toFixed(pyCd, Utils.clamp01(this.step), 3);
       pyCd.append(", \"color\": ");
-      this.clr.toBlenderCode(pyCd, gamma, true);
+      final Rgb srgb = Rgb.srLab2TosRgb(this.clr, new Rgb(), new Rgb(),
+         new Vec4());
+      srgb.toBlenderCode(pyCd, gamma, true);
       pyCd.append('}');
       return pyCd;
    }
@@ -311,7 +282,9 @@ public class ColorKey implements Comparable < ColorKey > {
       Utils.toFixed(svgp, Utils.clamp01(this.clr.alpha),
          ISvgWritable.FIXED_PRINT);
       svgp.append("\" stop-color=\"");
-      Rgb.toHexWeb(svgp, this.clr);
+      final Rgb srgb = Rgb.srLab2TosRgb(this.clr, new Rgb(), new Rgb(),
+         new Vec4());
+      Rgb.toHexWeb(svgp, srgb);
       svgp.append("\" />");
       return svgp;
    }

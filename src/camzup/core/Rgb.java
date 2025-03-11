@@ -6,7 +6,7 @@ package camzup.core;
  * (sRGB) color space. Converts to and from integers where color channels
  * are in the format 0xAARRGGBB.
  */
-public class Rgb implements IColor < Rgb > {
+public class Rgb implements IColor {
 
    /**
     * The alpha channel, which governs transparency.
@@ -99,23 +99,6 @@ public class Rgb implements IColor < Rgb > {
    public Rgb ( final Rgb c ) { this.set(c); }
 
    /**
-    * Returns -1 when this color is less than the comparisand; 1 when it is
-    * greater than; 0 when the two are 'equal'. The implementation of this
-    * method allows collections of colors to be sorted.
-    *
-    * @param d the comparisand
-    *
-    * @return the numeric code
-    */
-   @Override
-   public int compareTo ( final Rgb d ) {
-
-      final int left = this.toHexInt();
-      final int right = d.toHexInt();
-      return left < right ? -1 : left > right ? 1 : 0;
-   }
-
-   /**
     * Tests this color for equivalence to another based on its hexadecimal
     * representation.
     *
@@ -158,7 +141,6 @@ public class Rgb implements IColor < Rgb > {
     *
     * @return this color
     */
-   @Override
    public Rgb reset ( ) { return this.set(1.0f, 1.0f, 1.0f, 1.0f); }
 
    /**
@@ -244,7 +226,6 @@ public class Rgb implements IColor < Rgb > {
     *
     * @return this color
     */
-   @Override
    public Rgb set ( final Rgb source ) {
 
       return this.set(source.r, source.g, source.b, source.alpha);
@@ -871,17 +852,26 @@ public class Rgb implements IColor < Rgb > {
 
       /* pow(x, y) := exp(y * ln(x)) does not lead to better performance. */
 
-      return target.set(source.r <= 0.0031308f ? source.r * 12.92f
-         : ( float ) ( Math.pow(source.r, 0.4166666666666667d) * 1.055d
-            - 0.055d ), source.g <= 0.0031308f ? source.g * 12.92f
-               : ( float ) ( Math.pow(source.g, 0.4166666666666667d) * 1.055d
-                  - 0.055d ), source.b <= 0.0031308f ? source.b * 12.92f
-                     : ( float ) ( Math.pow(source.b, 0.4166666666666667d)
-                        * 1.055d - 0.055d ), inclAlpha ? source.alpha
-                           <= 0.0031308f ? source.alpha * 12.92f
-                              : ( float ) ( Math.pow(source.alpha,
-                                 0.4166666666666667d) * 1.055d - 0.055d )
-                           : source.alpha);
+      /* @formatter:off */
+      return target.set(
+         source.r <= 0.0031308f ?
+         source.r * 12.92f :
+         ( float ) ( Math.pow(source.r, 0.4166666666666667d) * 1.055d - 0.055d ),
+
+         source.g <= 0.0031308f ?
+         source.g * 12.92f :
+         ( float ) ( Math.pow(source.g, 0.4166666666666667d) * 1.055d - 0.055d ),
+
+         source.b <= 0.0031308f ?
+         source.b * 12.92f :
+         ( float ) ( Math.pow(source.b, 0.4166666666666667d) * 1.055d - 0.055d ),
+
+         inclAlpha ?
+         source.alpha <= 0.0031308f ?
+         source.alpha * 12.92f :
+         ( float ) ( Math.pow(source.alpha, 0.4166666666666667d) * 1.055d - 0.055d ) :
+         source.alpha);
+      /* @formatter:on */
    }
 
    /**
@@ -1529,8 +1519,6 @@ public class Rgb implements IColor < Rgb > {
     */
    public static String toHexString ( final int c ) {
 
-      // TODO: Make this an instance method that is enforced by IColor
-      // interface?
       return Rgb.toHexString(new StringBuilder(10), c).toString();
    }
 
@@ -1709,9 +1697,12 @@ public class Rgb implements IColor < Rgb > {
    public static StringBuilder toHexWeb ( final StringBuilder sb,
       final Rgb c ) {
 
-      return Rgb.toHexWeb(sb, ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ),
-         ( int ) ( Utils.clamp01(c.g) * 0xff + 0.5f ), ( int ) ( Utils.clamp01(
-            c.b) * 0xff + 0.5f ));
+      /* @formatter:off */
+      return Rgb.toHexWeb(sb,
+         ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ),
+         ( int ) ( Utils.clamp01(c.g) * 0xff + 0.5f ),
+         ( int ) ( Utils.clamp01(c.b) * 0xff + 0.5f ));
+      /* @formatter:on */
    }
 
    /**
@@ -1883,7 +1874,10 @@ public class Rgb implements IColor < Rgb > {
       /**
        * The default constructor.
        */
-      protected AbstrEasing ( ) {}
+      protected AbstrEasing ( ) {
+
+         // TODO: Delete.
+      }
 
       /**
        * A clamped interpolation between the origin and destination. Defers to
@@ -1975,6 +1969,7 @@ public class Rgb implements IColor < Rgb > {
        */
       public MixLrgb ( final boolean useAlpha ) {
 
+         // TODO: Delete.
          this.inclAlpha = useAlpha;
       }
 
@@ -2018,7 +2013,10 @@ public class Rgb implements IColor < Rgb > {
       /**
        * The default constructor.
        */
-      public MixSrgb ( ) {}
+      public MixSrgb ( ) {
+
+         // TODO: Delete
+      }
 
       /**
        * Applies the function.
@@ -2096,7 +2094,10 @@ public class Rgb implements IColor < Rgb > {
       /**
        * The default constructor.
        */
-      public MixSrLab2 ( ) {}
+      public MixSrLab2 ( ) {
+
+         // TODO: Delete.
+      }
 
       /**
        * Applies the function.
@@ -2166,6 +2167,7 @@ public class Rgb implements IColor < Rgb > {
        */
       public MixSrLch ( final IColor.HueEasing hueFunc ) {
 
+         // TODO: Delete.
          this.hueFunc = hueFunc;
       }
 

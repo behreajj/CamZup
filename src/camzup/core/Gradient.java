@@ -30,14 +30,11 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    /**
     * Creates a gradient with two default color keys, clear black at 0.0 and
     * opaque white at 1.0.
-    *
-    * @see Rgb#clearBlack(Rgb)
-    * @see Rgb#white(Rgb)
     */
    public Gradient ( ) {
 
-      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
-      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, 1.0f));
+      this.keys.add(new ColorKey(0.0f, Lab.clearBlack(new Lab())));
+      this.keys.add(new ColorKey(1.0f, Lab.white(new Lab())));
    }
 
    /**
@@ -46,7 +43,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     *
     * @param colors the colors
     */
-   public Gradient ( final Collection < Rgb > colors ) {
+   public Gradient ( final Collection < Lab > colors ) {
 
       this.appendAll(colors);
    }
@@ -76,10 +73,10 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    public Gradient ( final float scalar ) {
 
       /* Insert scalar key first to ensure it is added to keys. */
-      final float a = Utils.clamp01(scalar);
-      this.keys.add(new ColorKey(a, scalar, scalar, scalar, scalar));
-      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
-      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, 1.0f));
+      this.keys.add(new ColorKey(Utils.clamp01(scalar), Lab.fromScalar(scalar,
+         new Lab())));
+      this.keys.add(new ColorKey(0.0f, Lab.clearBlack(new Lab())));
+      this.keys.add(new ColorKey(1.0f, Lab.white(new Lab())));
    }
 
    /**
@@ -95,40 +92,23 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * boundary keys adopt the color's alpha.
     *
     * @param c the color
-    */
-   public Gradient ( final int c ) {
-
-      this(Rgb.fromHex(c, new Rgb()));
-   }
-
-   /**
-    * Creates a gradient from a list of color integers; the resultant keys are
-    * evenly distributed over the range [0.0, 1.0] .
     *
-    * @param colors the colors
-    */
-   public Gradient ( final int... colors ) { this.appendAll(colors); }
-
-   /**
-    * Creates a gradient from a color. The color is placed according to its
-    * perceived luminance between black at key 0.0 and white at key 1.0. The
-    * boundary keys adopt the color's alpha.
-    *
-    * @param c the color
-    *
-    * @see Rgb#sRgbLuminance(Rgb)
     * @see Utils#lerp(float, float, float)
     */
-   public Gradient ( final Rgb c ) {
+   public Gradient ( final Lab c ) {
 
-      final float lum = Rgb.sRgbLuminance(c);
-      final float vf = lum <= 0.0031308f ? lum * 12.92f : ( float ) ( Math.pow(
-         lum, 0.4166666666666667d) * 1.055d - 0.055d );
-      final float step = Utils.lerp(IUtils.ONE_THIRD, IUtils.TWO_THIRDS, vf);
+      final float step = Utils.lerp(IUtils.ONE_THIRD, IUtils.TWO_THIRDS, c.l
+         * 0.01f);
 
-      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, c.alpha));
+      final Lab black = Lab.clearBlack(new Lab());
+      final Lab white = Lab.white(new Lab());
+
+      Lab.adoptAlpha(black, c, black);
+      Lab.adoptAlpha(white, c, white);
+
+      this.keys.add(new ColorKey(0.0f, black));
       this.keys.add(new ColorKey(step, c));
-      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, c.alpha));
+      this.keys.add(new ColorKey(1.0f, white));
    }
 
    /**
@@ -137,7 +117,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     *
     * @param colors the colors
     */
-   public Gradient ( final Rgb... colors ) { this.appendAll(colors); }
+   public Gradient ( final Lab... colors ) { this.appendAll(colors); }
 
    /**
     * Appends a scalar at step 1.0 . Compresses existing keys to the left.
@@ -152,7 +132,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    public Gradient append ( final float scalar ) {
 
       this.compressKeysLeft(1);
-      this.keys.add(new ColorKey(1.0f, scalar, scalar, scalar, scalar));
+      this.keys.add(new ColorKey(1.0f, Lab.fromScalar(scalar, new Lab())));
 
       return this;
    }
@@ -167,25 +147,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @see Gradient#compressKeysLeft(int)
     * @see TreeSet#add(Object)
     */
-   public Gradient append ( final int c ) {
-
-      this.compressKeysLeft(1);
-      this.keys.add(new ColorKey(1.0f, c));
-
-      return this;
-   }
-
-   /**
-    * Appends a color at step 1.0 . Compresses existing keys to the left.
-    *
-    * @param c the color
-    *
-    * @return this gradient
-    *
-    * @see Gradient#compressKeysLeft(int)
-    * @see TreeSet#add(Object)
-    */
-   public Gradient append ( final Rgb c ) {
+   public Gradient append ( final Lab c ) {
 
       // TODO: Retest this, it doesn't seem to be working properly...
       this.compressKeysLeft(1);
@@ -206,14 +168,14 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
-   public Gradient appendAll ( final Collection < Rgb > colors ) {
+   public Gradient appendAll ( final Collection < Lab > colors ) {
 
       final int len = colors.size();
       this.compressKeysLeft(len);
       final float oldLen = this.keys.size();
       final float denom = 1.0f / ( oldLen + len - 1.0f );
 
-      final Iterator < Rgb > clrItr = colors.iterator();
+      final Iterator < Lab > clrItr = colors.iterator();
       for ( int i = 0; clrItr.hasNext(); ++i ) {
          this.keys.add(new ColorKey( ( oldLen + i ) * denom, clrItr.next()));
       }
@@ -239,37 +201,12 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       this.compressKeysLeft(len);
       final int oldLen = this.keys.size();
       final float denom = 1.0f / ( oldLen + len - 1.0f );
+      final Lab gray = new Lab();
 
       for ( int i = 0; i < len; ++i ) {
          final float scalar = scalars[i];
-         this.keys.add(new ColorKey( ( oldLen + i ) * denom, scalar, scalar,
-            scalar, scalar));
-      }
-
-      return this;
-   }
-
-   /**
-    * Appends a list of color integers to this gradient. Shifts existing keys
-    * to the left.
-    *
-    * @param colors the colors
-    *
-    * @return this gradient
-    *
-    * @see Gradient#compressKeysLeft(int)
-    * @see TreeSet#size()
-    * @see TreeSet#add(Object)
-    */
-   public Gradient appendAll ( final int... colors ) {
-
-      final int len = colors.length;
-      this.compressKeysLeft(len);
-      final int oldLen = this.keys.size();
-      final float denom = 1.0f / ( oldLen + len - 1.0f );
-
-      for ( int i = 0; i < len; ++i ) {
-         this.keys.add(new ColorKey( ( oldLen + i ) * denom, colors[i]));
+         this.keys.add(new ColorKey( ( oldLen + i ) * denom, Lab.fromScalar(
+            scalar, gray)));
       }
 
       return this;
@@ -287,7 +224,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
-   public Gradient appendAll ( final Rgb... colors ) {
+   public Gradient appendAll ( final Lab... colors ) {
 
       final int len = colors.length;
       this.compressKeysLeft(len);
@@ -514,7 +451,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    public Gradient prepend ( final float scalar ) {
 
       this.compressKeysRight(1);
-      this.keys.add(new ColorKey(0.0f, scalar, scalar, scalar, scalar));
+      this.keys.add(new ColorKey(0.0f, Lab.fromScalar(scalar, new Lab())));
 
       return this;
    }
@@ -529,25 +466,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @see Gradient#compressKeysRight(int)
     * @see TreeSet#add(Object)
     */
-   public Gradient prepend ( final int c ) {
-
-      this.compressKeysRight(1);
-      this.keys.add(new ColorKey(0.0f, c));
-
-      return this;
-   }
-
-   /**
-    * Prepends a color at step 0.0 . Compresses existing keys to the right.
-    *
-    * @param c the color
-    *
-    * @return this gradient
-    *
-    * @see Gradient#compressKeysRight(int)
-    * @see TreeSet#add(Object)
-    */
-   public Gradient prepend ( final Rgb c ) {
+   public Gradient prepend ( final Lab c ) {
 
       this.compressKeysRight(1);
       this.keys.add(new ColorKey(0.0f, c));
@@ -567,13 +486,13 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
-   public Gradient prependAll ( final Collection < Rgb > colors ) {
+   public Gradient prependAll ( final Collection < Lab > colors ) {
 
       final int len = colors.size();
       this.compressKeysRight(len);
       final float denom = 1.0f / ( this.keys.size() + len - 1.0f );
 
-      final Iterator < Rgb > clrItr = colors.iterator();
+      final Iterator < Lab > clrItr = colors.iterator();
       for ( int i = 0; clrItr.hasNext(); ++i ) {
          this.keys.add(new ColorKey(i * denom, clrItr.next()));
       }
@@ -598,35 +517,11 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final int len = scalars.length;
       this.compressKeysRight(len);
       final float denom = 1.0f / ( this.keys.size() + len - 1.0f );
+      final Lab gray = new Lab();
 
       for ( int i = 0; i < len; ++i ) {
          final float scalar = scalars[i];
-         this.keys.add(new ColorKey(i * denom, scalar, scalar, scalar, scalar));
-      }
-
-      return this;
-   }
-
-   /**
-    * Prepends a list of color integers to this gradient. Compresses existing
-    * keys to the right.
-    *
-    * @param colors the colors
-    *
-    * @return this gradient
-    *
-    * @see Gradient#compressKeysRight(int)
-    * @see TreeSet#size()
-    * @see TreeSet#add(Object)
-    */
-   public Gradient prependAll ( final int... colors ) {
-
-      final int len = colors.length;
-      this.compressKeysRight(len);
-      final float denom = 1.0f / ( this.keys.size() + len - 1.0f );
-
-      for ( int i = 0; i < len; ++i ) {
-         this.keys.add(new ColorKey(i * denom, colors[i]));
+         this.keys.add(new ColorKey(i * denom, Lab.fromScalar(scalar, gray)));
       }
 
       return this;
@@ -644,7 +539,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @see TreeSet#size()
     * @see TreeSet#add(Object)
     */
-   public Gradient prependAll ( final Rgb... colors ) {
+   public Gradient prependAll ( final Lab... colors ) {
 
       final int len = colors.length;
       this.compressKeysRight(len);
@@ -728,16 +623,14 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     *
     * @return this gradient
     *
-    * @see Rgb#clearBlack(Rgb)
-    * @see Rgb#white(Rgb)
     * @see TreeSet#clear()
     * @see TreeSet#add(Object)
     */
    public Gradient reset ( ) {
 
       this.keys.clear();
-      this.keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.0f, 0.0f));
-      this.keys.add(new ColorKey(1.0f, 1.0f, 1.0f, 1.0f, 1.0f));
+      this.keys.add(new ColorKey(0.0f, Lab.clearBlack(new Lab())));
+      this.keys.add(new ColorKey(1.0f, Lab.white(new Lab())));
 
       return this;
    }
@@ -801,7 +694,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     *
     * @return the gradient
     */
-   public Gradient sort ( final Comparator < Rgb > sorter ) {
+   public Gradient sort ( final Comparator < Lab > sorter ) {
 
       /*
        * Separate color keys into an array of steps and of colors. The key steps
@@ -809,7 +702,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
        */
       final int len = this.keys.size();
       final float[] steps = new float[len];
-      final ArrayList < Rgb > clrList = new ArrayList <>(len);
+      final ArrayList < Lab > clrList = new ArrayList <>(len);
 
       final Iterator < ColorKey > keyItr = this.keys.iterator();
       for ( int i = 0; keyItr.hasNext(); ++i ) {
@@ -825,7 +718,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       Collections.sort(clrList, sorter);
 
       /* Reconstitute the keys from the steps and colors. */
-      final Iterator < Rgb > clrItr = clrList.iterator();
+      final Iterator < Lab > clrItr = clrList.iterator();
       for ( int i = 0; clrItr.hasNext(); ++i ) {
          this.keys.add(new ColorKey(steps[i], clrItr.next()));
       }
@@ -840,9 +733,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     *
     * @return the array
     */
-   public Rgb[] toArray ( ) {
+   public Lab[] toArray ( ) {
 
-      final Rgb[] result = new Rgb[this.keys.size()];
+      final Lab[] result = new Lab[this.keys.size()];
       final Iterator < ColorKey > itr = this.keys.iterator();
       for ( int i = 0; itr.hasNext(); ++i ) { result[i] = itr.next().clr; }
       return result;
@@ -906,20 +799,25 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
        * contain a minimum of only 1, they default to 2 keys when created.
        */
 
-      final Rgb[] clrs = Gradient.evalRange(this, Utils.clamp(samples, 2, 32));
-      final int len = clrs.length;
+      final Lab[] labs = Gradient.evalRange(this, Utils.clamp(samples, 2, 32));
+      final int len = labs.length;
       final int last = len - 1;
-      final float toPercent = 1.0f / last;
+      final float toPercent = Utils.div(1.0f, last);
 
       final StringBuilder pyCd = new StringBuilder(2048);
       pyCd.append("from bpy import data as D, context as C\n\n");
       pyCd.append("grd_data = [");
 
+      final Rgb srgb = new Rgb();
+      final Rgb lrgb = new Rgb();
+      final Vec4 xyz = new Vec4();
+
       for ( int i = 0; i < len; ++i ) {
          pyCd.append("\n    {\"position\": ");
          Utils.toFixed(pyCd, i * toPercent, 6);
          pyCd.append(", \"color\": ");
-         clrs[i].toBlenderCode(pyCd, gamma, true);
+         Rgb.srLab2TosRgb(labs[i], srgb, lrgb, xyz);
+         srgb.toBlenderCode(pyCd, gamma, true);
          pyCd.append('}');
 
          if ( i < last ) { pyCd.append(',').append(' '); }
@@ -1001,13 +899,17 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       final ColorKey first = this.keys.first();
       final float firstStep = first.step;
-      final Rgb firstColor = first.clr;
+      final Lab firstColor = first.clr;
       final boolean nonZeroFirst = firstStep > 0.0f;
 
       final ColorKey last = this.keys.last();
       final float lastStep = last.step;
-      final Rgb lastColor = last.clr;
+      final Lab lastColor = last.clr;
       final boolean nonOneLast = lastStep < 1.0f;
+
+      final Rgb srgb = new Rgb();
+      final Rgb lrgb = new Rgb();
+      final Vec4 xyz = new Vec4();
 
       int len = this.keys.size() - 1;
       if ( nonZeroFirst ) { ++len; }
@@ -1022,7 +924,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       sb.append('\n');
 
       if ( nonZeroFirst ) {
-         final String frstClrStr = firstColor.toGgrString();
+         Rgb.srLab2TosRgb(firstColor, srgb, lrgb, xyz);
+         final String frstClrStr = srgb.toGgrString();
          sb.append("0.000000 ");
          Utils.toFixed(sb, firstStep * 0.5f, 6);
          sb.append(' ');
@@ -1041,7 +944,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final Iterator < ColorKey > itr = this.keys.iterator();
       ColorKey curr = itr.next();
       float prevStep = curr.step;
-      String prevClrStr = curr.clr.toGgrString();
+      Rgb.srLab2TosRgb(curr.clr, srgb, lrgb, xyz);
+      String prevClrStr = srgb.toGgrString();
 
       /*
        * Fence posting problem due to differences in gradient implementation.
@@ -1052,7 +956,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       while ( itr.hasNext() ) {
          curr = itr.next();
          final float currStep = curr.step;
-         final String currClrStr = curr.clr.toGgrString();
+         Rgb.srLab2TosRgb(curr.clr, srgb, lrgb, xyz);
+         final String currClrStr = srgb.toGgrString();
 
          Utils.toFixed(sb, prevStep, 6);
          sb.append(' ');
@@ -1079,7 +984,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       }
 
       if ( nonOneLast ) {
-         final String lastClrStr = lastColor.toGgrString();
+         Rgb.srLab2TosRgb(lastColor, srgb, lrgb, xyz);
+         final String lastClrStr = srgb.toGgrString();
          Utils.toFixed(sb, lastStep, 6);
          sb.append(' ');
          Utils.toFixed(sb, ( 1.0f + lastStep ) * 0.5f, 6);
@@ -1204,6 +1110,9 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       Utils.toFixed(svgp, y2, ISvgWritable.FIXED_PRINT);
       svgp.append("\">\n");
 
+      final Rgb srgb = new Rgb();
+      final Rgb lrgb = new Rgb();
+      final Vec4 xyz = new Vec4();
       final StringBuilder sbSwatch = new StringBuilder(1024);
       sbSwatch.append("<g id=\"swatches\">\n");
 
@@ -1213,8 +1122,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
 
       for ( int idx = 0; itr.hasNext(); ++idx ) {
          final ColorKey ck = itr.next();
-         final Rgb clr = ck.clr;
-         final String hex = Rgb.toHexWeb(clr);
+         Rgb.srLab2TosRgb(ck.clr, srgb, lrgb, xyz);
+         final String hex = Rgb.toHexWeb(srgb);
 
          /* Color stops in linear gradient. */
          ck.toSvgString(svgp);
@@ -1255,7 +1164,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          sbSwatch.append(hBtmStr);
 
          sbSwatch.append(" Z\" fill-opacity=\"");
-         Utils.toFixed(sbSwatch, Utils.clamp01(clr.alpha),
+         Utils.toFixed(sbSwatch, Utils.clamp01(srgb.alpha),
             ISvgWritable.FIXED_PRINT);
 
          sbSwatch.append("\" fill=\"");
@@ -1355,43 +1264,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
    }
 
    /**
-    * Clamps all colors in a gradient to the range [0.0, 1.0] .
-    *
-    * @param source the source gradient
-    * @param target the target gradient
-    *
-    * @return the clamped gradient
-    *
-    * @see Rgb#clamp01(Rgb, Rgb)
-    */
-   public static Gradient clamp01 ( final Gradient source,
-      final Gradient target ) {
-
-      final TreeSet < ColorKey > srcKeys = source.keys;
-      Iterator < ColorKey > srcItr;
-
-      if ( source == target ) {
-         srcItr = srcKeys.iterator();
-         while ( srcItr.hasNext() ) {
-            final Rgb clr = srcItr.next().clr;
-            Rgb.clamp01(clr, clr);
-         }
-      } else {
-         final TreeSet < ColorKey > trgKeys = target.keys;
-         trgKeys.clear();
-         srcItr = srcKeys.iterator();
-         while ( srcItr.hasNext() ) {
-            final ColorKey trgKey = new ColorKey(srcItr.next());
-            final Rgb trgClr = trgKey.clr;
-            Rgb.clamp01(trgClr, trgClr);
-            trgKeys.add(trgKey);
-         }
-      }
-
-      return target;
-   }
-
-   /**
     * Finds a color given a step in the range [0.0, 1.0] . When the step falls
     * between color keys, the resultant color is generated by an easing
     * function.<br>
@@ -1403,25 +1275,12 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @param step the step
     *
     * @return the color
-    *
-    * @see TreeSet#floor(Object)
-    * @see TreeSet#ceiling(Object)
-    * @see TreeSet#first()
-    * @see TreeSet#last()
-    * @see Utils#div(float, float)
     */
    public static int eval ( final Gradient grd, final float step ) {
 
-      grd.query.step = step;
-
-      final ColorKey prev = grd.keys.floor(grd.query);
-      if ( prev == null ) { return grd.keys.first().clr.toHexIntWrap(); }
-
-      final ColorKey next = grd.keys.ceiling(grd.query);
-      if ( next == null ) { return grd.keys.last().clr.toHexIntWrap(); }
-
-      return Rgb.mix(next.clr, prev.clr, Utils.div(step - next.step, prev.step
-         - next.step));
+      final Lab lab = Gradient.eval(grd, step, new Lab());
+      final Rgb rgb = Rgb.srLab2TosRgb(lab, new Rgb(), new Rgb(), new Vec4());
+      return rgb.toHexIntSat();
    }
 
    /**
@@ -1442,8 +1301,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @see TreeSet#last()
     * @see Utils#div(float, float)
     */
-   public static Rgb eval ( final Gradient grd, final float step,
-      final Rgb target ) {
+   public static Lab eval ( final Gradient grd, final float step,
+      final Lab target ) {
 
       grd.query.step = step;
 
@@ -1453,7 +1312,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final ColorKey next = grd.keys.ceiling(grd.query);
       if ( next == null ) { return target.set(grd.keys.last().clr); }
 
-      return Rgb.mix(next.clr, prev.clr, Utils.div(step - next.step, prev.step
+      return Lab.mix(next.clr, prev.clr, Utils.div(step - next.step, prev.step
          - next.step), target);
    }
 
@@ -1475,8 +1334,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @see TreeSet#last()
     * @see Utils#div(float, float)
     */
-   public static Rgb eval ( final Gradient grd, final float step,
-      final Rgb.AbstrEasing easing, final Rgb target ) {
+   public static Lab eval ( final Gradient grd, final float step,
+      final Lab.AbstrEasing easing, final Lab target ) {
 
       /*
        * This is different from above evaluation methods in order to facilitate,
@@ -1504,7 +1363,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     *
     * @return the array
     */
-   public static Rgb[] evalRange ( final Gradient grd, final int count ) {
+   public static Lab[] evalRange ( final Gradient grd, final int count ) {
 
       return Gradient.evalRange(grd, count, 0.0f, 1.0f);
    }
@@ -1521,20 +1380,20 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @return the array
     *
     * @see Utils#clamp01(float)
-    * @see Gradient#eval(Gradient, float, Rgb)
+    * @see Gradient#eval(Gradient, float, Lab)
     */
-   public static Rgb[] evalRange ( final Gradient grd, final int count,
+   public static Lab[] evalRange ( final Gradient grd, final int count,
       final float origin, final float dest ) {
 
       final int vCount = count < 2 ? 2 : count;
       final float vOrigin = Utils.clamp01(origin);
       final float vDest = Utils.clamp01(dest);
-      final Rgb[] result = new Rgb[vCount];
+      final Lab[] result = new Lab[vCount];
       final float toPercent = 1.0f / ( vCount - 1.0f );
       for ( int i = 0; i < vCount; ++i ) {
          final float prc = i * toPercent;
          result[i] = Gradient.eval(grd, ( 1.0f - prc ) * vOrigin + prc * vDest,
-            new Rgb());
+            new Lab());
       }
       return result;
    }
@@ -1552,20 +1411,20 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @return the array
     *
     * @see Utils#clamp01(float)
-    * @see Gradient#eval(Gradient, float, Rgb.AbstrEasing, Rgb)
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
     */
-   public static Rgb[] evalRange ( final Gradient grd, final int count,
-      final float origin, final float dest, final Rgb.AbstrEasing easing ) {
+   public static Lab[] evalRange ( final Gradient grd, final int count,
+      final float origin, final float dest, final Lab.AbstrEasing easing ) {
 
       final int vCount = count < 2 ? 2 : count;
       final float vOrigin = Utils.clamp01(origin);
       final float vDest = Utils.clamp01(dest);
-      final Rgb[] result = new Rgb[vCount];
+      final Lab[] result = new Lab[vCount];
       final float toPercent = 1.0f / ( vCount - 1.0f );
       for ( int i = 0; i < vCount; ++i ) {
          final float prc = i * toPercent;
          result[i] = Gradient.eval(grd, ( 1.0f - prc ) * vOrigin + prc * vDest,
-            easing, new Rgb());
+            easing, new Lab());
       }
       return result;
    }
@@ -1590,7 +1449,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
             .size());
          final Iterator < ColorKey > srcItr = srcKeys.iterator();
          while ( srcItr.hasNext() ) {
-            final Rgb srcClr = srcItr.next().clr;
+            final Lab srcClr = srcItr.next().clr;
             trgKeys.add(new ColorKey(srcClr.alpha, srcClr));
          }
          srcKeys.clear();
@@ -1602,7 +1461,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          trgKeys.clear();
          final Iterator < ColorKey > srcItr = source.keys.iterator();
          while ( srcItr.hasNext() ) {
-            final Rgb srcClr = srcItr.next().clr;
+            final Lab srcClr = srcItr.next().clr;
             trgKeys.add(new ColorKey(srcClr.alpha, srcClr));
          }
 
@@ -1625,9 +1484,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     *
     * @return the gradient
     *
-    * @see Rgb#sRgbLuminance(Rgb)
     */
-   public static Gradient keysByLuminance ( final Gradient source,
+   public static Gradient keysByLightness ( final Gradient source,
       final Gradient target ) {
 
       if ( source == target ) {
@@ -1637,8 +1495,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
             .size());
          final Iterator < ColorKey > srcItr = srcKeys.iterator();
          while ( srcItr.hasNext() ) {
-            final Rgb srcClr = srcItr.next().clr;
-            trgKeys.add(new ColorKey(Rgb.sRgbLuminance(srcClr), srcClr));
+            final Lab srcClr = srcItr.next().clr;
+            trgKeys.add(new ColorKey(srcClr.l * 0.01f, srcClr));
          }
          srcKeys.clear();
          srcKeys.addAll(trgKeys);
@@ -1649,8 +1507,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
          trgKeys.clear();
          final Iterator < ColorKey > srcItr = source.keys.iterator();
          while ( srcItr.hasNext() ) {
-            final Rgb srcClr = srcItr.next().clr;
-            trgKeys.add(new ColorKey(Rgb.sRgbLuminance(srcClr), srcClr));
+            final Lab srcClr = srcItr.next().clr;
+            trgKeys.add(new ColorKey(srcClr.l * 0.01f, srcClr));
          }
 
       }
@@ -1667,6 +1525,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @return the gradient
     */
    public static Gradient paletteCyanotype ( final Gradient target ) {
+
+      // TODO: This needs to be fixed.
 
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
@@ -1693,6 +1553,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public static Gradient paletteLcd ( final Gradient target ) {
 
+      // TODO: This needs to be fixed.
+
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
@@ -1712,6 +1574,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @return the gradient
     */
    public static Gradient paletteMagma ( final Gradient target ) {
+
+      // TODO: This needs to be fixed.
 
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
@@ -1748,17 +1612,16 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @return the gradient
     */
    public static Gradient paletteRgb ( final Gradient target ) {
-
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      keys.add(new ColorKey(0.0f, 1.0f, 0.0f, 0.0f));
-      keys.add(new ColorKey(0.16666667f, 1.0f, 1.0f, 0.0f));
-      keys.add(new ColorKey(0.33333334f, 0.0f, 1.0f, 0.0f));
-      keys.add(new ColorKey(0.5f, 0.0f, 1.0f, 1.0f));
-      keys.add(new ColorKey(0.6666667f, 0.0f, 0.0f, 1.0f));
-      keys.add(new ColorKey(0.8333333f, 1.0f, 0.0f, 1.0f));
-      keys.add(new ColorKey(1.0f, 1.0f, 0.0f, 0.0f));
+      keys.add(new ColorKey(0.0f, Lab.srRed(new Lab())));
+      keys.add(new ColorKey(0.16666667f, Lab.srYellow(new Lab())));
+      keys.add(new ColorKey(0.33333334f, Lab.srGreen(new Lab())));
+      keys.add(new ColorKey(0.5f, Lab.srCyan(new Lab())));
+      keys.add(new ColorKey(0.6666667f, Lab.srBlue(new Lab())));
+      keys.add(new ColorKey(0.8333333f, Lab.srMagenta(new Lab())));
+      keys.add(new ColorKey(1.0f, Lab.srRed(new Lab())));
 
       return target;
    }
@@ -1772,6 +1635,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @return the gradient
     */
    public static Gradient paletteRyb ( final Gradient target ) {
+
+      // TODO: This needs to be fixed.
 
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
@@ -1802,6 +1667,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public static Gradient paletteSepia ( final Gradient target ) {
 
+      // TODO: This needs to be fixed.
+
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
@@ -1830,6 +1697,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public static Gradient paletteTemperature ( final Gradient target ) {
 
+      // TODO: This needs to be fixed.
+
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
@@ -1851,6 +1720,8 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @return the gradient
     */
    public static Gradient paletteViridis ( final Gradient target ) {
+
+      // TODO: This needs to be fixed.
 
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();

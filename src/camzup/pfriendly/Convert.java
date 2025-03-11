@@ -13,6 +13,7 @@ import camzup.core.Experimental;
 import camzup.core.IUtils;
 import camzup.core.Knot2;
 import camzup.core.Knot3;
+import camzup.core.LabImage;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
 import camzup.core.Mesh;
@@ -32,6 +33,7 @@ import camzup.core.Vec4;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PGraphics;
+import processing.core.PImage;
 import processing.core.PMatrix2D;
 import processing.core.PMatrix3D;
 import processing.core.PShape;
@@ -76,6 +78,20 @@ public abstract class Convert {
       target.appendAll(Convert.toCurve2(source, new ArrayList <>()));
       target.name = Convert.getPShapeName(source);
       return target;
+   }
+
+   /**
+    * Converts a PImage to a LabImage.
+    *
+    * @param source the source image
+    *
+    * @return the lab image
+    */
+   public static LabImage toLabImage ( final PImage source ) {
+
+      source.loadPixels();
+      return LabImage.fromArgb32(source.pixelWidth, source.pixelHeight,
+         source.pixels);
    }
 
    /**
@@ -142,6 +158,28 @@ public abstract class Convert {
       target.reset();
       target.appendAll(Convert.toMesh3(source, new ArrayList <>()));
       target.name = Convert.getPShapeName(source);
+      return target;
+   }
+
+   /**
+    * Converts a LabImage to a PImage.
+    *
+    * @param source the source image
+    *
+    * @return the PImage
+    */
+   public static PImage toPImage ( final LabImage source ) {
+
+      // TODO: How to handle pixel density? Might have to do a resize.
+
+      // TODO: Provide Hable tone mapping, see CSharpWork for reference?
+
+      final PImage target = new PImage(source.getWidth(), source.getHeight(),
+         PConstants.ARGB, 1);
+      target.loadPixels();
+      target.pixels = LabImage.toArgb32(source);
+      target.updatePixels();
+
       return target;
    }
 

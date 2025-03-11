@@ -196,7 +196,7 @@ public abstract class Utils implements IUtils {
 
    /**
     * Appends to an array of bytes, ordered from least to most significant
-    * digit (little endian).
+    * digit (little endian). Writes 4 bytes.
     *
     * @param x   the float
     * @param arr the array
@@ -214,7 +214,7 @@ public abstract class Utils implements IUtils {
 
    /**
     * Appends to an array of bytes, ordered from least to most significant
-    * digit (little endian).
+    * digit (little endian). Writes 4 bytes.
     *
     * @param x   the integer
     * @param arr the array
@@ -229,12 +229,39 @@ public abstract class Utils implements IUtils {
       arr[i + 1] = ( byte ) ( x >> 0x08 & 0xff );
       arr[i + 2] = ( byte ) ( x >> 0x10 & 0xff );
       arr[i + 3] = ( byte ) ( x >> 0x18 & 0xff );
+
       return arr;
    }
 
    /**
     * Appends to an array of bytes, ordered from least to most significant
-    * digit (little endian).
+    * digit (little endian). Writes 8 bytes.
+    *
+    * @param x   the long
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the byte array
+    */
+   public static final byte[] byteslm ( final long x, final byte[] arr,
+      final int i ) {
+
+      arr[i] = ( byte ) ( x & 0xff );
+      arr[i + 1] = ( byte ) ( x >> 0x08 & 0xff );
+      arr[i + 2] = ( byte ) ( x >> 0x10 & 0xff );
+      arr[i + 3] = ( byte ) ( x >> 0x18 & 0xff );
+
+      arr[i + 4] = ( byte ) ( x >> 0x20 & 0xff );
+      arr[i + 5] = ( byte ) ( x >> 0x28 & 0xff );
+      arr[i + 6] = ( byte ) ( x >> 0x30 & 0xff );
+      arr[i + 7] = ( byte ) ( x >> 0x38 & 0xff );
+
+      return arr;
+   }
+
+   /**
+    * Appends to an array of bytes, ordered from least to most significant
+    * digit (little endian). Writes 2 bytes.
     *
     * @param x   the short
     * @param arr the array
@@ -252,7 +279,7 @@ public abstract class Utils implements IUtils {
 
    /**
     * Appends to an array of bytes, ordered from most to least significant
-    * digit (big endian).
+    * digit (big endian). Writes 4 bytes.
     *
     * @param x   the float
     * @param arr the array
@@ -268,7 +295,7 @@ public abstract class Utils implements IUtils {
 
    /**
     * Appends to an array of bytes, ordered from most to least significant
-    * digit (big endian).
+    * digit (big endian). Writes 4 bytes.
     *
     * @param x   the integer
     * @param arr the array
@@ -283,12 +310,39 @@ public abstract class Utils implements IUtils {
       arr[i + 1] = ( byte ) ( x >> 0x10 & 0xff );
       arr[i + 2] = ( byte ) ( x >> 0x08 & 0xff );
       arr[i + 3] = ( byte ) ( x & 0xff );
+
       return arr;
    }
 
    /**
     * Appends to an array of bytes, ordered from most to least significant
-    * digit (big endian).
+    * digit (big endian). Writes 8 bytes.
+    *
+    * @param x   the long
+    * @param arr the array
+    * @param i   the index
+    *
+    * @return the byte array
+    */
+   public static final byte[] bytesml ( final long x, final byte[] arr,
+      final int i ) {
+
+      arr[i] = ( byte ) ( x >> 0x38 & 0xff );
+      arr[i + 1] = ( byte ) ( x >> 0x30 & 0xff );
+      arr[i + 2] = ( byte ) ( x >> 0x28 & 0xff );
+      arr[i + 3] = ( byte ) ( x >> 0x20 & 0xff );
+
+      arr[i + 4] = ( byte ) ( x >> 0x18 & 0xff );
+      arr[i + 5] = ( byte ) ( x >> 0x10 & 0xff );
+      arr[i + 6] = ( byte ) ( x >> 0x08 & 0xff );
+      arr[i + 7] = ( byte ) ( x & 0xff );
+
+      return arr;
+   }
+
+   /**
+    * Appends to an array of bytes, ordered from most to least significant
+    * digit (big endian). Writes 2 bytes.
     *
     * @param x   the short
     * @param arr the array
