@@ -1,5 +1,6 @@
 package camzup;
 
+import camzup.core.Img;
 import processing.core.PApplet;
 
 /**
@@ -50,6 +51,15 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
+
+      Img x = new Img(16, 16);
+      Img.rgb(x);
+      System.out.println(x);
+
+
+      for ( Long y : x ) {
+         System.out.println(String.format("%016X", y));
+      }
 
       // final Vec4 v0 = Vec4.random(rng, new Vec4());
       // final Vec3 v1 = Vec3.random(rng, new Vec3());

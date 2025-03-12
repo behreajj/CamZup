@@ -1,9 +1,12 @@
 package camzup.core;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.NoSuchElementException;
 import java.util.Objects;
+import java.util.PrimitiveIterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -15,7 +18,7 @@ import processing.core.PImage;
  * is 0xTTTTLLLLAAAABBBB. The alpha channel is abbreviated to 'T', since
  * 'A' is already taken.
  */
-public class LabImage {
+public class Img implements Iterable < Long > {
 
    /**
     * The image height.
@@ -33,13 +36,25 @@ public class LabImage {
    protected final int width;
 
    /**
+    * Constructs an image from a source.
+    *
+    * @param source the source image.
+    */
+   public Img ( final Img source ) {
+
+      this.width = source.width;
+      this.height = source.height;
+      this.pixels = source.getPixels();
+   }
+
+   /**
     * Constructs an image from width and height. The image is filled with
-    * {@link LabImage#CLEAR_PIXEL}, {@value LabImage#CLEAR_PIXEL}.
+    * {@link Img#CLEAR_PIXEL}, {@value Img#CLEAR_PIXEL}.
     *
     * @param width  the width
     * @param height the height
     */
-   public LabImage ( final int width, final int height ) {
+   public Img ( final int width, final int height ) {
 
       // TODO: The final width height choice will make image rotate, skew and
       // resize a bitch. For now implement protected static methods that only
@@ -47,15 +62,22 @@ public class LabImage {
 
       // TODO: Function to set all zero alpha pixels to clear pixel?
 
-      // TODO: Separate lab method
-      // TODO: Separate rgb method
-
       // TODO: Mark out of gamut pixels with a color. Problem is that you have
       // to assume srgb.
 
-      // TODO: Normalize light method.
+      // TODO: swap alpha to light, light to alpha methods?
 
-      this(width, height, LabImage.CLEAR_PIXEL);
+      // TODO: explore concept of saturation adjustment?
+      // https://en.wikipedia.org/wiki/Colorfulness#Saturation
+      // simple formula: S = C / L
+      // complex formula: S = C / sqrt(C * C + L * L)
+      // Sorig = formula(C, L)
+      // Sadj = (Sorig - Spivot) * fac + Spivot
+      // Cadj = inverseFormula(Sadj, Lorig)
+      // Cadj = Sadj * Lorig
+      // Cadj = Sadj * sqrt(CC+LL)
+
+      this(width, height, Img.CLEAR_PIXEL);
    }
 
    /**
@@ -66,7 +88,7 @@ public class LabImage {
     * @param height the height
     * @param fill   the color
     */
-   public LabImage ( final int width, final int height, final Lab fill ) {
+   public Img ( final int width, final int height, final Lab fill ) {
 
       this(width, height, fill.toHexLongSat());
    }
@@ -75,32 +97,20 @@ public class LabImage {
     * Constructs an image from width and height. The image is filled with the
     * provided color. The absolute value of width and height are used. Width
     * and height are expected to be at least 1 and at most
-    * {@link LabImage#MAX_DIMENSION}, {@value LabImage#MAX_DIMENSION}.
+    * {@link Img#MAX_DIMENSION}, {@value Img#MAX_DIMENSION}.
     *
     * @param width  the width
     * @param height the height
     * @param fill   the color
     */
-   public LabImage ( final int width, final int height, final long fill ) {
+   public Img ( final int width, final int height, final long fill ) {
 
-      this.width = Utils.clamp(Math.abs(width), 1, LabImage.MAX_DIMENSION);
-      this.height = Utils.clamp(Math.abs(height), 1, LabImage.MAX_DIMENSION);
+      this.width = Utils.clamp(Math.abs(width), 1, Img.MAX_DIMENSION);
+      this.height = Utils.clamp(Math.abs(height), 1, Img.MAX_DIMENSION);
 
       final int area = this.width * this.height;
       this.pixels = new long[area];
       for ( int i = 0; i < area; ++i ) { this.pixels[i] = fill; }
-   }
-
-   /**
-    * Constructs an image from a source.
-    *
-    * @param source the source image.
-    */
-   public LabImage ( final LabImage source ) {
-
-      this.width = source.width;
-      this.height = source.height;
-      this.pixels = source.getPixels();
    }
 
    /**
@@ -111,8 +121,7 @@ public class LabImage {
     * @param height the height
     * @param pixels the pixels
     */
-   protected LabImage ( final int width, final int height,
-      final long[] pixels ) {
+   protected Img ( final int width, final int height, final long[] pixels ) {
 
       this.width = width;
       this.height = height;
@@ -126,7 +135,7 @@ public class LabImage {
     *
     * @return the equivalence
     */
-   public boolean equals ( final LabImage other ) {
+   public boolean equals ( final Img other ) {
 
       return this.height == other.height && Arrays.equals(this.pixels,
          other.pixels) && this.width == other.width;
@@ -144,7 +153,7 @@ public class LabImage {
 
       if ( this == obj ) return true;
       if ( obj == null || this.getClass() != obj.getClass() ) return false;
-      final LabImage other = ( LabImage ) obj;
+      final Img other = ( Img ) obj;
       return this.equals(other);
    }
 
@@ -154,6 +163,18 @@ public class LabImage {
     * @return the width
     */
    public final int getHeight ( ) { return this.height; }
+
+   /**
+    * Gets a pixel at an index.
+    *
+    * @param i the index
+    *
+    * @return the pixel
+    */
+   public long getPixel ( final int i ) {
+
+      return this.getPixelOmit(i);
+   }
 
    /**
     * Gets a pixel at local coordinates x and y.
@@ -169,26 +190,23 @@ public class LabImage {
    }
 
    /**
-    * Gets a pixel at local coordinates x and y. Clamps the coordinates to fit
-    * within image bounds.
+    * Gets a pixel at local coordinates x and y. If the index is out of
+    * bounds, then returns {@link Img#CLEAR_PIXEL},
+    * {@value Img#CLEAR_PIXEL}.
     *
-    * @param x the x coordinate
-    * @param y the y coordinate
+    * @param i the index
     *
     * @return the pixel
     */
-   public final long getPixelClamp ( final int x, final int y ) {
+   public final long getPixelOmit ( final int i ) {
 
-      final int xcl = Utils.clamp(x, 0, this.width - 1);
-      final int ycl = Utils.clamp(y, 0, this.height - 1);
-      final int i = ycl * this.width + xcl;
-      return this.pixels[i];
+      return this.getPixelOmit(i, Img.CLEAR_PIXEL);
    }
 
    /**
     * Gets a pixel at local coordinates x and y. If the coordinates are out of
-    * bounds, then returns {@link LabImage#CLEAR_PIXEL},
-    * {@value LabImage#CLEAR_PIXEL}.
+    * bounds, then returns {@link Img#CLEAR_PIXEL},
+    * {@value Img#CLEAR_PIXEL}.
     *
     * @param x the x coordinate
     * @param y the y coordinate
@@ -197,10 +215,42 @@ public class LabImage {
     */
    public final long getPixelOmit ( final int x, final int y ) {
 
+      return this.getPixelOmit(x, y, Img.CLEAR_PIXEL);
+   }
+
+   /**
+    * Gets a pixel at local coordinates x and y. If the coordinates are out of
+    * bounds, then returns the default pixel.
+    *
+    * @param x            the x coordinate
+    * @param y            the y coordinate
+    * @param defaultPixel the default pixel
+    *
+    * @return the pixel
+    */
+   public final long getPixelOmit ( final int x, final int y,
+      final long defaultPixel ) {
+
       if ( y >= 0 && y < this.height && x >= 0 && x < this.width ) {
          return this.pixels[y * this.width + x];
       }
-      return LabImage.CLEAR_PIXEL;
+      return defaultPixel;
+   }
+
+   /**
+    * Gets a pixel at an index. If the index is out of bounds, then returns
+    * the default pixel.
+    *
+    * @param i            the index
+    * @param defaultPixel the default pixel
+    *
+    * @return the pixel
+    */
+
+   public final long getPixelOmit ( final int i, final long defaultPixel ) {
+
+      if ( i >= 0 && i < this.pixels.length ) { return this.pixels[i]; }
+      return defaultPixel;
    }
 
    /**
@@ -214,6 +264,19 @@ public class LabImage {
       final long[] arr = new long[len];
       System.arraycopy(this.pixels, 0, arr, 0, len);
       return arr;
+   }
+
+   /**
+    * Gets a pixel at an index. Does not check the index for validity.
+    *
+    * @param i the index
+    *
+    * @return the pixel
+    */
+
+   public final long getPixelUnchecked ( final int i ) {
+
+      return this.pixels[i];
    }
 
    /**
@@ -231,8 +294,21 @@ public class LabImage {
    }
 
    /**
-    * Gets a pixel at local coordinates x and y. Wraps the pixels around the
-    * image boundaries.
+    * Gets a pixel at an index. Wraps the index around the pixels array
+    * length.
+    *
+    * @param i the index
+    *
+    * @return the pixel
+    */
+   public final long getPixelWrap ( final int i ) {
+
+      return this.pixels[Utils.mod(i, this.pixels.length)];
+   }
+
+   /**
+    * Gets a pixel at local coordinates x and y. Wraps the coordinates around
+    * the image boundaries.
     *
     * @param x the x coordinate
     * @param y the y coordinate
@@ -244,6 +320,7 @@ public class LabImage {
       final int xwr = Utils.mod(x, this.width);
       final int ywr = Utils.mod(y, this.height);
       final int i = ywr * this.width + xwr;
+
       return this.pixels[i];
    }
 
@@ -261,6 +338,15 @@ public class LabImage {
       int result = 1;
       result = prime * result + Arrays.hashCode(this.pixels);
       return prime * result + Objects.hash(this.height, this.width);
+   }
+
+   /**
+    * Gets a pixel iterator.
+    */
+   @Override
+   public ImageIterator iterator ( ) {
+
+      return new ImageIterator(this);
    }
 
    /**
@@ -283,19 +369,14 @@ public class LabImage {
    }
 
    /**
-    * Sets a pixel at local coordinates x and y. Clamps the coordinates to fit
-    * within image bounds.
+    * Sets a pixel at local coordinates x and y.
     *
-    * @param x the x coordinate
-    * @param y the y coordinate
+    * @param i the index
     * @param c the color
     */
-   public final void setPixelClamp ( final int x, final int y, final long c ) {
+   public void setPixel ( final int i, final long c ) {
 
-      final int xcl = Utils.clamp(x, 0, this.width - 1);
-      final int ycl = Utils.clamp(y, 0, this.height - 1);
-      final int i = ycl * this.width + xcl;
-      this.pixels[i] = c;
+      this.setPixelOmit(i, c);
    }
 
    /**
@@ -314,6 +395,17 @@ public class LabImage {
    }
 
    /**
+    * If the index is in bounds, then sets the pixel to the given color.
+    *
+    * @param i the index
+    * @param c the color
+    */
+   public final void setPixelOmit ( final int i, final long c ) {
+
+      if ( i >= 0 && i < this.pixels.length ) { this.pixels[i] = c; }
+   }
+
+   /**
     * Sets a pixel at local coordinates x and y. Does not check the
     * coordinates for validity.
     *
@@ -328,8 +420,19 @@ public class LabImage {
    }
 
    /**
-    * Sets a pixel at local coordinates x and y. Wraps the pixels around the
-    * image boundaries.
+    * Sets a pixel at an index. Does not check the index for validity.
+    *
+    * @param i the index
+    * @param c the color
+    */
+   public final void setPixelUnchecked ( final int i, final long c ) {
+
+      this.pixels[i] = c;
+   }
+
+   /**
+    * Sets a pixel at local coordinates x and y. Wraps the coordinates around
+    * the image boundaries.
     *
     * @param x the x coordinate
     * @param y the y coordinate
@@ -341,6 +444,46 @@ public class LabImage {
       final int ywr = Utils.mod(y, this.height);
       final int i = ywr * this.width + xwr;
       this.pixels[i] = c;
+   }
+
+   /**
+    * Sets a pixel at an index. Wraps the index around the pixel boundaries.
+    *
+    * @param i the index
+    * @param c the color
+    */
+   public final void setPixelWrap ( final int i, final long c ) {
+
+      this.pixels[Utils.mod(i, this.pixels.length)] = c;
+   }
+
+   /**
+    * Returns a string representation of an image, including its format,
+    * width, height and pixel density.
+    *
+    * @return the string
+    */
+   @Override
+   public String toString ( ) {
+
+      final StringBuilder sb = new StringBuilder(64);
+
+      sb.append("{\"width\":");
+      sb.append(this.width);
+      sb.append(",\"height\":");
+      sb.append(this.height);
+      sb.append(",\"pixels\":[");
+
+      final int lenn1 = this.pixels.length - 1;
+      for ( int i = 0; i < lenn1; ++i ) {
+         sb.append(this.pixels[i]);
+         sb.append(',');
+      }
+      sb.append(this.pixels[lenn1]);
+      sb.append(']');
+      sb.append('}');
+
+      return sb.toString();
    }
 
    /**
@@ -356,14 +499,14 @@ public class LabImage {
    public static final long B_SHIFT = 0x00L;
 
    /**
-    * Default color for dark checker squares, {@value LabImage#CHECKER_DARK},
-    * or 1.0 / 3.0 of 65535 lightness.
+    * Default color for dark checker squares, {@value Img#CHECKER_DARK}, or
+    * 1.0 / 3.0 of 65535 lightness.
     */
    public static final long CHECKER_DARK = 0xffff_5555_8000_8000L;
 
    /**
-    * Default color for light checker squares,
-    * {@value LabImage#CHECKER_LIGHT}, or 2.0 / 3.0 of 65535 lightness.
+    * Default color for light checker squares, {@value Img#CHECKER_LIGHT},
+    * or 2.0 / 3.0 of 65535 lightness.
     */
    public static final long CHECKER_LIGHT = 0xffff_aaaa_8000_8000L;
 
@@ -375,6 +518,16 @@ public class LabImage {
    public static final long CLEAR_PIXEL = 0x0000_0000_8000_8000L;
 
    /**
+    * Default alpha value when creating a diagnostic RGB image.
+    */
+   public final static float DEFAULT_ALPHA = 1.0f;
+
+   /**
+    * Default blue value when creating a diagnostic RGB image.
+    */
+   public final static float DEFAULT_BLUE = 0.5f;
+
+   /**
     * The default policy on gray colors when adjusting by LCH.
     */
    public static final GrayPolicy DEFAULT_GRAY_POLICY = GrayPolicy.OMIT;
@@ -382,8 +535,7 @@ public class LabImage {
    /**
     * The default policy on pivots when adjusting chroma by a factor.
     */
-   public static final PivotPolicy DEFAULT_PIVOT_POLICY_CHROMA
-      = PivotPolicy.MEAN;
+   public static final PivotPolicy DEFAULT_PIVOT_POLICY = PivotPolicy.MEAN;
 
    /**
     * Mask to isolate the a channel.
@@ -393,8 +545,8 @@ public class LabImage {
    /**
     * Mask to isolate the a and b channels.
     */
-   public static final long ISOLATE_AB_MASK = LabImage.ISOLATE_A_MASK
-      | LabImage.ISOLATE_B_MASK;
+   public static final long ISOLATE_AB_MASK = Img.ISOLATE_A_MASK
+      | Img.ISOLATE_B_MASK;
 
    /**
     * Mask to isolate the b channel.
@@ -409,8 +561,8 @@ public class LabImage {
    /**
     * Mask to isolate the l, a and b channels.
     */
-   public static final long ISOLATE_LAB_MASK = LabImage.ISOLATE_L_MASK
-      | LabImage.ISOLATE_A_MASK | LabImage.ISOLATE_B_MASK;
+   public static final long ISOLATE_LAB_MASK = Img.ISOLATE_L_MASK
+      | Img.ISOLATE_A_MASK | Img.ISOLATE_B_MASK;
 
    /**
     * Mask to isolate the alpha channel.
@@ -420,15 +572,14 @@ public class LabImage {
    /**
     * Mask to isolate the alpha and l channels.
     */
-   public static final long ISOLATE_TL_MASK = LabImage.ISOLATE_T_MASK
-      | LabImage.ISOLATE_L_MASK;
+   public static final long ISOLATE_TL_MASK = Img.ISOLATE_T_MASK
+      | Img.ISOLATE_L_MASK;
 
    /**
     * Mask for all color channels.
     */
-   public static final long ISOLATE_TLAB_MASK = LabImage.ISOLATE_T_MASK
-      | LabImage.ISOLATE_L_MASK | LabImage.ISOLATE_A_MASK
-      | LabImage.ISOLATE_B_MASK;
+   public static final long ISOLATE_TLAB_MASK = Img.ISOLATE_T_MASK
+      | Img.ISOLATE_L_MASK | Img.ISOLATE_A_MASK | Img.ISOLATE_B_MASK;
 
    /**
     * The amount to shift the lightness channel to the left or right when
@@ -440,6 +591,12 @@ public class LabImage {
     * Max image width and height allowed.
     */
    public static final int MAX_DIMENSION = Short.MAX_VALUE;
+
+   /**
+    * The minimum difference between minimum and maximum light needed when
+    * normalizing light.
+    */
+   public static final float MIN_LIGHT_DIFF = 0.07f;
 
    /**
     * The amount to shift the alpha channel to the left or right when packing
@@ -457,10 +614,10 @@ public class LabImage {
     *
     * @return the adjusted pixels
     */
-   public static LabImage adjustContrast ( final LabImage source,
-      final float fac, final LabImage target ) {
+   public static Img adjustContrast ( final Img source, final float fac,
+      final Img target ) {
 
-      return LabImage.adjustContrastLight(source, fac, target);
+      return Img.adjustContrastLight(source, fac, target);
    }
 
    /**
@@ -473,11 +630,11 @@ public class LabImage {
     *
     * @return the adjusted pixels
     */
-   public static final LabImage adjustContrastChroma ( final LabImage source,
-      final float fac, final LabImage target ) {
+   public static final Img adjustContrastChroma ( final Img source,
+      final float fac, final Img target ) {
 
-      return LabImage.adjustContrastChroma(source, fac,
-         LabImage.DEFAULT_PIVOT_POLICY_CHROMA, target);
+      return Img.adjustContrastChroma(source, fac, Img.DEFAULT_PIVOT_POLICY,
+         target);
    }
 
    /**
@@ -493,12 +650,12 @@ public class LabImage {
     *
     * @return the adjusted pixels
     */
-   public static final LabImage adjustContrastChroma ( final LabImage source,
-      final float fac, final PivotPolicy policy, final LabImage target ) {
+   public static final Img adjustContrastChroma ( final Img source,
+      final float fac, final PivotPolicy policy, final Img target ) {
 
       /* Tested March 11 2025. */
 
-      if ( !LabImage.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) { return target; }
 
       final int len = source.pixels.length;
       final float noNanFac = Float.isNaN(fac) ? 0.5f : fac;
@@ -551,12 +708,12 @@ public class LabImage {
 
       final Lch defLch = Lch.clearBlack(new Lch());
       final HashMap < Long, Long > convert = new HashMap <>();
-      convert.put(LabImage.CLEAR_PIXEL, LabImage.CLEAR_PIXEL);
+      convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
 
       for ( int j = 0; j < len; ++j ) {
          final long srcPixel = source.pixels[j];
          final Long srcPixelObj = srcPixel;
-         long trgPixel = LabImage.CLEAR_PIXEL;
+         long trgPixel = Img.CLEAR_PIXEL;
 
          if ( convert.containsKey(srcPixelObj) ) {
             trgPixel = convert.get(srcPixelObj);
@@ -585,12 +742,12 @@ public class LabImage {
     *
     * @return the adjusted pixels
     */
-   public static final LabImage adjustContrastLight ( final LabImage source,
-      final float fac, final LabImage target ) {
+   public static final Img adjustContrastLight ( final Img source,
+      final float fac, final Img target ) {
 
       /* Tested March 11 2025. */
 
-      if ( !LabImage.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) { return target; }
 
       final int len = source.pixels.length;
       final float noNanFac = Float.isNaN(fac) ? 0.5f : fac;
@@ -607,12 +764,12 @@ public class LabImage {
 
       final Lab lab = new Lab();
       final HashMap < Long, Long > convert = new HashMap <>();
-      convert.put(LabImage.CLEAR_PIXEL, LabImage.CLEAR_PIXEL);
+      convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
 
       for ( int i = 0; i < len; ++i ) {
          final long srcPixel = source.pixels[i];
          final Long srcPixelObj = srcPixel;
-         long trgPixel = LabImage.CLEAR_PIXEL;
+         long trgPixel = Img.CLEAR_PIXEL;
 
          if ( convert.containsKey(srcPixelObj) ) {
             trgPixel = convert.get(srcPixelObj);
@@ -638,20 +795,20 @@ public class LabImage {
     *
     * @return the adjusted image
     */
-   public static final LabImage adjustLab ( final LabImage source,
-      final Lab adjust, final LabImage target ) {
+   public static final Img adjustLab ( final Img source, final Lab adjust,
+      final Img target ) {
 
       /* Tested March 11 2025. */
 
-      if ( !LabImage.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) { return target; }
 
       final int len = source.pixels.length;
 
       /* @formatter:off */
-      if ( Float.floatToIntBits(adjust.l) == 0
-         && Float.floatToIntBits(adjust.a) == 0
-         && Float.floatToIntBits(adjust.b) == 0
-         && Float.floatToIntBits(adjust.alpha) == 0 ) {
+      if ( Utils.approx(adjust.l, 0.0f)
+         && Utils.approx(adjust.a, 0.0f)
+         && Utils.approx(adjust.b, 0.0f)
+         && Utils.approx(adjust.alpha, 0.0f) ) {
 
          System.arraycopy(source.pixels, 0, target.pixels, 0, len);
          return target;
@@ -665,7 +822,7 @@ public class LabImage {
       for ( int i = 0; i < len; ++i ) {
          final long srcPixel = source.pixels[i];
          final Long srcPixelObj = srcPixel;
-         long trgPixel = LabImage.CLEAR_PIXEL;
+         long trgPixel = Img.CLEAR_PIXEL;
 
          if ( convert.containsKey(srcPixelObj) ) {
             trgPixel = convert.get(srcPixelObj);
@@ -699,18 +856,18 @@ public class LabImage {
     *
     * @return the adjusted image
     */
-   public static final LabImage adjustLch ( final LabImage source,
-      final Lch adjust, final GrayPolicy policy, final LabImage target ) {
+   public static final Img adjustLch ( final Img source, final Lch adjust,
+      final GrayPolicy policy, final Img target ) {
 
-      if ( !LabImage.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) { return target; }
 
       final int len = source.pixels.length;
 
       /* @formatter:off */
-      if ( Float.floatToIntBits(adjust.l) == 0
-         && Float.floatToIntBits(adjust.c) == 0
-         && Float.floatToIntBits(Utils.mod1(adjust.h)) == 0
-         && Float.floatToIntBits(adjust.alpha) == 0 ) {
+      if ( Utils.approx(adjust.l, 0.0f)
+         && Utils.approx(adjust.c, 0.0f)
+         && Utils.approx(Utils.mod1(adjust.h), 0.0f)
+         && Utils.approx(adjust.alpha, 0.0f) ) {
 
          System.arraycopy(source.pixels, 0, target.pixels, 0, len);
          return target;
@@ -729,7 +886,7 @@ public class LabImage {
       for ( int i = 0; i < len; ++i ) {
          final long srcPixel = source.pixels[i];
          final Long srcPixelObj = srcPixel;
-         long trgPixel = LabImage.CLEAR_PIXEL;
+         long trgPixel = Img.CLEAR_PIXEL;
 
          if ( convert.containsKey(srcPixelObj) ) {
             trgPixel = convert.get(srcPixelObj);
@@ -744,6 +901,8 @@ public class LabImage {
                float hTrg = 0.0f;
                final boolean isGray = lch.c < IUtils.EPSILON;
                if ( isGray ) {
+                  // TODO: This needs to be tested.
+
                   switch ( policy ) {
                      case COOL: {
                         final float t = lch.l * 0.01f;
@@ -807,11 +966,10 @@ public class LabImage {
     *
     * @return the adjusted image
     */
-   public static final LabImage adjustLch ( final LabImage source,
-      final Lch adjust, final LabImage target ) {
+   public static final Img adjustLch ( final Img source, final Lch adjust,
+      final Img target ) {
 
-      return LabImage.adjustLch(source, adjust, LabImage.DEFAULT_GRAY_POLICY,
-         target);
+      return Img.adjustLch(source, adjust, Img.DEFAULT_GRAY_POLICY, target);
    }
 
    /**
@@ -828,6 +986,59 @@ public class LabImage {
       return Utils.div(( float ) image.width, ( float ) image.height);
    }
 
+   public static final Img blend (
+   /* @formatter:off */
+      final Img under, final int xUnder, final int yUnder,
+      final Img over, final int xOver, final int yOver,
+
+      final BlendMode.Space bmSpace,
+      final BlendMode.Alpha bmAlpha,
+      final BlendMode.L bmLight,
+      final BlendMode.AB bmAb,
+      final BlendMode.C bmChroma,
+      final BlendMode.H bmHue
+   /* @formatter:on */
+   ) {
+
+      // TODO: This may have to be generalized to accept an array of images.
+
+      // TODO: Maybe the blend space and LCH options can be omitted
+      // if you fold them into the AB blend mode, and do CH conversions
+      // with the Lab class.
+
+      /*
+       * Images do not need to be similar to each other.
+       */
+
+      // final int ax = xUnder;
+      // final int ay = yUnder;
+      // final int aw = under.width;
+      // final int ah = under.height;
+      //
+      // final int bx = xOver;
+      // final int by = yOver;
+      // final int bw = over.width;
+      // final int bh = over.height;
+
+      /* Find the bottom right corner for a and b. */
+      // final int abrx = ax + aw - 1;
+      // final int abry = ay + ah - 1;
+      // final int bbrx = bx + bw - 1;
+      // final int bbry = by + bh - 1;
+
+      /* Blending only necessary at the intersection of a and b. */
+      // final int dx = ax > bx ? ax : bx;
+      // final int dy = ay > by ? ay : by;
+      // final int dbrx = abrx < bbrx ? abrx : bbrx;
+      // final int dbry = abry < bbry ? abry : bbry;
+      // final int dw = 1 + dbrx - dx;
+      // final int dh = 1 + dbry - dy;
+
+      // TODO: Implement.
+
+      return null;
+   }
+
    /**
     * Gets the image pixel data as a byte array. Bytes are ordered from least
     * to most significant digit (little endian).
@@ -838,7 +1049,7 @@ public class LabImage {
     *
     * @see Utils#byteslm(long, byte[], int)
     */
-   public static byte[] byteslm ( final LabImage source ) {
+   public static final byte[] byteslm ( final Img source ) {
 
       final int len = source.pixels.length;
       final byte[] arr = new byte[len * 8];
@@ -858,7 +1069,7 @@ public class LabImage {
     *
     * @see Utils#bytesml(long, byte[], int)
     */
-   public static byte[] bytesml ( final LabImage source ) {
+   public static final byte[] bytesml ( final Img source ) {
 
       final int len = source.pixels.length;
       final byte[] arr = new byte[len * 8];
@@ -876,29 +1087,11 @@ public class LabImage {
     *
     * @return the checker image
     */
-   public static LabImage checker ( final int sizeCheck,
-      final LabImage target ) {
+   public static final Img checker ( final int sizeCheck,
+      final Img target ) {
 
-      return LabImage.checker(LabImage.CHECKER_DARK, LabImage.CHECKER_LIGHT,
-         sizeCheck, sizeCheck, target);
-   }
-
-   /**
-    * Creates a checker pattern in an image.
-    *
-    * @param a      the first color
-    * @param b      the second color
-    * @param wCheck the checker width
-    * @param hCheck the checker height
-    * @param target the output image
-    *
-    * @return the checker image
-    */
-   public static LabImage checker ( final Lab a, final Lab b, final int wCheck,
-      final int hCheck, final LabImage target ) {
-
-      return LabImage.checker(a.toHexLongSat(), b.toHexLongSat(), wCheck,
-         hCheck, target);
+      return Img.checker(Img.CHECKER_DARK, Img.CHECKER_LIGHT, sizeCheck,
+         sizeCheck, target);
    }
 
    /**
@@ -911,15 +1104,49 @@ public class LabImage {
     *
     * @return the checker image
     */
-   public static LabImage checker ( final Lab a, final Lab b,
-      final int sizeCheck, final LabImage target ) {
+   public static final Img checker ( final Lab a, final Lab b,
+      final int sizeCheck, final Img target ) {
 
-      return LabImage.checker(a.toHexLongSat(), b.toHexLongSat(), sizeCheck,
+      return Img.checker(a.toHexLongSat(), b.toHexLongSat(), sizeCheck,
          sizeCheck, target);
    }
 
    /**
-    * Creates a checker pattern in an image. For making a background canvas
+    * Creates a checker pattern in an image.
+    *
+    * @param a      the first color
+    * @param b      the second color
+    * @param wCheck the checker width
+    * @param hCheck the checker height
+    * @param target the output image
+    *
+    * @return the checker image
+    */
+   public static final Img checker ( final Lab a, final Lab b,
+      final int wCheck, final int hCheck, final Img target ) {
+
+      return Img.checker(a.toHexLongSat(), b.toHexLongSat(), wCheck, hCheck,
+         target);
+   }
+
+   /**
+    * Creates a checker pattern in an image.
+    *
+    * @param a         the first color
+    * @param b         the second color
+    * @param sizeCheck the checker size
+    * @param target    the output image
+    *
+    * @return the checker image
+    */
+   public static Img checker ( final long a, final long b,
+      final int sizeCheck, final Img target ) {
+
+      return Img.checker(a, b, sizeCheck, sizeCheck, target);
+   }
+
+   /**
+    * Creates )a checker pattern in an image. For making a background canvas
     * that signals transparency in the pixels of an image layer(s) above it.
     *
     * @param a      the first color
@@ -930,8 +1157,8 @@ public class LabImage {
     *
     * @return the checker image
     */
-   public static LabImage checker ( final long a, final long b,
-      final int wCheck, final int hCheck, final LabImage target ) {
+   public static Img checker ( final long a, final long b, final int wCheck,
+      final int hCheck, final Img target ) {
 
       /* Tested March 11 2025. */
 
@@ -941,10 +1168,12 @@ public class LabImage {
       final int wcVerif = Utils.clamp(wCheck, 1, shortEdge / 2);
       final int hcVerif = Utils.clamp(hCheck, 1, shortEdge / 2);
 
-      final long va = a != b && a != LabImage.CLEAR_PIXEL ? a
-         : LabImage.CHECKER_DARK;
-      final long vb = a != b && b != LabImage.CLEAR_PIXEL ? b
-         : LabImage.CHECKER_LIGHT;
+      /*
+       * User may want to blend checker over a layer beneath, so clear pixel
+       * should be allowed.F
+       */
+      final long va = a != b ? a : Img.CHECKER_DARK;
+      final long vb = a != b ? b : Img.CHECKER_LIGHT;
 
       final int len = target.pixels.length;
       for ( int i = 0; i < len; ++i ) {
@@ -956,32 +1185,16 @@ public class LabImage {
    }
 
    /**
-    * Creates a checker pattern in an image.
-    *
-    * @param a         the first color
-    * @param b         the second color
-    * @param sizeCheck the checker size
-    * @param target    the output image
-    *
-    * @return the checker image
-    */
-   public static LabImage checker ( final long a, final long b,
-      final int sizeCheck, final LabImage target ) {
-
-      return LabImage.checker(a, b, sizeCheck, sizeCheck, target);
-   }
-
-   /**
-    * Clears all pixels in an image to {@link LabImage#CLEAR_PIXEL},
-    * {@value LabImage#CLEAR_PIXEL}.
+    * Clears all pixels in an image to {@link Img#CLEAR_PIXEL},
+    * {@value Img#CLEAR_PIXEL}.
     *
     * @param target the output image
     *
     * @return the filled image
     */
-   public static final LabImage clear ( final LabImage target ) {
+   public static final Img clear ( final Img target ) {
 
-      return LabImage.fill(LabImage.CLEAR_PIXEL, target);
+      return Img.fill(Img.CLEAR_PIXEL, target);
    }
 
    /**
@@ -992,9 +1205,9 @@ public class LabImage {
     *
     * @return the filled image
     */
-   public static final LabImage fill ( final Lab fill, final LabImage target ) {
+   public static final Img fill ( final Lab fill, final Img target ) {
 
-      return LabImage.fill(fill.toHexLongSat(), target);
+      return Img.fill(fill.toHexLongSat(), target);
    }
 
    /**
@@ -1005,8 +1218,7 @@ public class LabImage {
     *
     * @return the filled image
     */
-   public static final LabImage fill ( final long fill,
-      final LabImage target ) {
+   public static final Img fill ( final long fill, final Img target ) {
 
       final int len = target.pixels.length;
       for ( int i = 0; i < len; ++i ) { target.pixels[i] = fill; }
@@ -1024,21 +1236,19 @@ public class LabImage {
     *
     * @return the image
     */
-   public static final LabImage fromArgb32 ( final int width, final int height,
+   public static final Img fromArgb32 ( final int width, final int height,
       final int[] argb32s ) {
 
       /* Tested March 11 2025. */
 
-      final int wVerif = Utils.clamp(Math.abs(width), 1,
-         LabImage.MAX_DIMENSION);
-      final int hVerif = Utils.clamp(Math.abs(height), 1,
-         LabImage.MAX_DIMENSION);
+      final int wVerif = Utils.clamp(Math.abs(width), 1, Img.MAX_DIMENSION);
+      final int hVerif = Utils.clamp(Math.abs(height), 1, Img.MAX_DIMENSION);
 
       final int area = wVerif * hVerif;
       final int len = argb32s.length;
       if ( area != len ) {
          System.err.println("Pixel length does not match image area.");
-         return new LabImage(width, height);
+         return new Img(width, height);
       }
 
       final Rgb srgb = new Rgb();
@@ -1048,12 +1258,12 @@ public class LabImage {
 
       final long[] tlab64s = new long[len];
       final HashMap < Integer, Long > convert = new HashMap <>();
-      convert.put(0, LabImage.CLEAR_PIXEL);
+      convert.put(0, Img.CLEAR_PIXEL);
 
       for ( int i = 0; i < len; ++i ) {
          final int argb32 = argb32s[i];
          final Integer argb32Obj = argb32;
-         long tlab64 = LabImage.CLEAR_PIXEL;
+         long tlab64 = Img.CLEAR_PIXEL;
 
          if ( convert.containsKey(argb32Obj) ) {
             tlab64 = convert.get(argb32Obj);
@@ -1067,7 +1277,161 @@ public class LabImage {
          tlab64s[i] = tlab64;
       }
 
-      return new LabImage(wVerif, hVerif, tlab64s);
+      return new Img(wVerif, hVerif, tlab64s);
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The origin and destination should be in the range [-1.0, 1.0]. The
+    * scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param xOrig  the origin x coordinate
+    * @param yOrig  the origin y coordinate
+    * @param xDest  the destination x coordinate
+    * @param yDest  the destination y coordinate
+    * @param easing the easing function
+    * @param target the target pixels
+    *
+    * @return the gradient pixels
+    *
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
+    * @see Utils#max(float, float)
+    * @see Utils#clamp01(float)
+    */
+   public final static Img gradientLinear ( final Gradient grd,
+      final float xOrig, final float yOrig, final float xDest,
+      final float yDest, final Lab.AbstrEasing easing, final Img target ) {
+
+      // TODO: ZImage had a lot of overloads for this method so as to simplify
+      // the signature. You'll have to look at a past git commit to restore
+      // them.
+
+      final int wTrg = target.width;
+      final int hTrg = target.height;
+
+      final float bx = xOrig - xDest;
+      final float by = yOrig - yDest;
+
+      final float bbInv = 1.0f / Utils.max(IUtils.EPSILON, bx * bx + by * by);
+
+      final float bxbbinv = bx * bbInv;
+      final float bybbinv = by * bbInv;
+
+      final float xobx = xOrig * bxbbinv;
+      final float yoby = yOrig * bybbinv;
+      final float bxwInv2 = 2.0f / ( wTrg - 1.0f ) * bxbbinv;
+      final float byhInv2 = 2.0f / ( hTrg - 1.0f ) * bybbinv;
+
+      final Lab trgLab = new Lab();
+      final int len = target.pixels.length;
+      for ( int i = 0; i < len; ++i ) {
+         final float fac = Utils.clamp01(xobx + bxbbinv - bxwInv2 * ( i % wTrg )
+            + ( yoby + byhInv2 * ( i / wTrg ) - bybbinv ));
+         Gradient.eval(grd, fac, easing, trgLab);
+         target.pixels[i] = trgLab.toHexLongSat();
+      }
+
+      return target;
+   }
+
+   /**
+    * Generates a radial gradient from an origin point. The origin should be
+    * in the range [-1.0, 1.0]. Does not account for aspect ratio, so an image
+    * that isn't 1:1 will result in an ellipsoid.
+    *
+    * @param grd    the gradient
+    * @param xOrig  the origin x coordinate
+    * @param yOrig  the origin y coordinate
+    * @param radius the radius
+    * @param easing the easing function
+    * @param target the target pixels
+    *
+    * @return the gradient pixels
+    *
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
+    * @see Utils#max(float, float)
+    */
+   public static Img gradientRadial ( final Gradient grd, final float xOrig,
+      final float yOrig, final float radius, final Lab.AbstrEasing easing,
+      final Img target ) {
+
+      // TODO: ZImage had a lot of overloads for this method so as to simplify
+      // the signature. You'll have to look at a past git commit to restore
+      // them.
+
+      final int wTrg = target.width;
+      final int hTrg = target.height;
+
+      final float hInv2 = 2.0f / ( hTrg - 1.0f );
+      final float wInv2 = 2.0f / ( wTrg - 1.0f );
+
+      final float r2 = radius + radius;
+      final float rsqInv = 1.0f / Utils.max(IUtils.EPSILON, r2 * r2);
+
+      final float yon1 = yOrig - 1.0f;
+      final float xop1 = xOrig + 1.0f;
+
+      final Lab trgLab = new Lab();
+      final int len = target.pixels.length;
+      for ( int i = 0; i < len; ++i ) {
+         final float ay = yon1 + hInv2 * ( i / wTrg );
+         final float ax = xop1 - wInv2 * ( i % wTrg );
+         final float fac = 1.0f - ( ax * ax + ay * ay ) * rsqInv;
+         Gradient.eval(grd, fac, easing, trgLab);
+         target.pixels[i] = trgLab.toHexLongSat();
+      }
+
+      return target;
+   }
+
+   /**
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point. Best used with square images; for other aspect
+    * ratios, the origin should be adjusted accordingly.
+    *
+    * @param grd     the gradient
+    * @param xOrig   the origin x coordinate
+    * @param yOrig   the origin y coordinate
+    * @param radians the angle in radians
+    * @param easing  the easing function
+    * @param target  the target pixels
+    *
+    * @return the gradient pixels
+    *
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
+    * @see Utils#mod1(float)
+    */
+   public final static Img gradientSweep ( final Gradient grd,
+      final float xOrig, final float yOrig, final float radians,
+      final Lab.AbstrEasing easing, final Img target ) {
+
+      // TODO: ZImage had a lot of overloads for this method so as to simplify
+      // the signature. You'll have to look at a past git commit to restore
+      // them.
+
+      final int wTrg = target.width;
+      final int hTrg = target.height;
+
+      final double aspect = wTrg / ( double ) hTrg;
+      final double wInv = aspect / ( wTrg - 1.0d );
+      final double hInv = 1.0d / ( hTrg - 1.0d );
+      final double xo = ( xOrig * 0.5d + 0.5d ) * aspect * 2.0d - 1.0d;
+      final double yo = yOrig;
+      final double rd = radians;
+
+      final Lab trgLab = new Lab();
+      final int len = target.pixels.length;
+      for ( int i = 0; i < len; ++i ) {
+         final double xn = wInv * ( i % wTrg );
+         final double yn = hInv * ( i / wTrg );
+         final float fac = Utils.mod1(( float ) ( ( Math.atan2(1.0d - ( yn + yn
+            + yo ), xn + xn - xo - 1.0d) - rd ) * IUtils.ONE_TAU_D ));
+         Gradient.eval(grd, fac, easing, trgLab);
+         target.pixels[i] = trgLab.toHexLongSat();
+      }
+
+      return target;
    }
 
    /**
@@ -1079,16 +1443,16 @@ public class LabImage {
     *
     * @return the gray image
     */
-   public static final LabImage grayscale ( final LabImage source,
-      final float fac, final LabImage target ) {
+   public static final Img grayscale ( final Img source, final float fac,
+      final Img target ) {
 
       /* Tested March 11 2025. */
 
       if ( Float.isNaN(fac) || fac >= 1.0f ) {
-         return LabImage.grayscale(source, target);
+         return Img.grayscale(source, target);
       }
 
-      if ( !LabImage.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) { return target; }
 
       final int len = source.pixels.length;
 
@@ -1100,12 +1464,12 @@ public class LabImage {
       final float u = 1.0f - fac;
       final Lab lab = new Lab();
       final HashMap < Long, Long > convert = new HashMap <>();
-      convert.put(LabImage.CLEAR_PIXEL, LabImage.CLEAR_PIXEL);
+      convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
 
       for ( int i = 0; i < len; ++i ) {
          final long srcPixel = source.pixels[i];
          final Long srcPixelObj = srcPixel;
-         long trgPixel = LabImage.CLEAR_PIXEL;
+         long trgPixel = Img.CLEAR_PIXEL;
 
          if ( convert.containsKey(srcPixelObj) ) {
             trgPixel = convert.get(srcPixelObj);
@@ -1131,15 +1495,15 @@ public class LabImage {
     *
     * @return the gray image
     */
-   public static final LabImage grayscale ( final LabImage source,
-      final LabImage target ) {
+   public static final Img grayscale ( final Img source,
+      final Img target ) {
 
-      if ( !LabImage.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) { return target; }
 
       final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
-         target.pixels[i] = source.pixels[i] & LabImage.ISOLATE_TL_MASK
-            | LabImage.CLEAR_PIXEL;
+         target.pixels[i] = source.pixels[i] & Img.ISOLATE_TL_MASK
+            | Img.CLEAR_PIXEL;
       }
 
       return target;
@@ -1153,10 +1517,9 @@ public class LabImage {
     *
     * @return the inverted image
     */
-   public static LabImage invert ( final LabImage source,
-      final LabImage target ) {
+   public static Img invert ( final Img source, final Img target ) {
 
-      return LabImage.invert(source, LabImage.ISOLATE_TLAB_MASK, target);
+      return Img.invert(source, Img.ISOLATE_TLAB_MASK, target);
    }
 
    /**
@@ -1167,10 +1530,10 @@ public class LabImage {
     *
     * @return the inverted image
     */
-   public static final LabImage invertAB ( final LabImage source,
-      final LabImage target ) {
+   public static final Img invertAB ( final Img source,
+      final Img target ) {
 
-      return LabImage.invert(source, LabImage.ISOLATE_AB_MASK, target);
+      return Img.invert(source, Img.ISOLATE_AB_MASK, target);
    }
 
    /**
@@ -1181,10 +1544,10 @@ public class LabImage {
     *
     * @return the inverted image
     */
-   public static final LabImage invertAlpha ( final LabImage source,
-      final LabImage target ) {
+   public static final Img invertAlpha ( final Img source,
+      final Img target ) {
 
-      return LabImage.invert(source, LabImage.ISOLATE_T_MASK, target);
+      return Img.invert(source, Img.ISOLATE_T_MASK, target);
    }
 
    /**
@@ -1195,10 +1558,34 @@ public class LabImage {
     *
     * @return the inverted image
     */
-   public static final LabImage invertLAB ( final LabImage source,
-      final LabImage target ) {
+   public static final Img invertLAB ( final Img source,
+      final Img target ) {
 
-      return LabImage.invert(source, LabImage.ISOLATE_LAB_MASK, target);
+      return Img.invert(source, Img.ISOLATE_LAB_MASK, target);
+   }
+
+   /**
+    * Hashes an image according to the <a href=
+    * "https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function">Fowler–Noll–Vo</a>
+    * method.
+    *
+    * @param source the image
+    *
+    * @return the hash
+    */
+   public static BigInteger fnvHash ( final Img source ) {
+
+      // TODO: TEST
+
+      final BigInteger fnvPrime = BigInteger.valueOf(1099511628211L);
+      BigInteger hash = new BigInteger("14695981039346656037");
+      final long[] srcPixels = source.pixels;
+      final int len = srcPixels.length;
+      for ( int i = 0; i < len; ++i ) {
+         hash = hash.xor(BigInteger.valueOf(srcPixels[i])).multiply(fnvPrime);
+      }
+
+      return hash;
    }
 
    /**
@@ -1209,10 +1596,10 @@ public class LabImage {
     *
     * @return the inverted image
     */
-   public static final LabImage invertLight ( final LabImage source,
-      final LabImage target ) {
+   public static final Img invertLight ( final Img source,
+      final Img target ) {
 
-      return LabImage.invert(source, LabImage.ISOLATE_L_MASK, target);
+      return Img.invert(source, Img.ISOLATE_L_MASK, target);
    }
 
    /**
@@ -1222,9 +1609,9 @@ public class LabImage {
     *
     * @return the evaluation
     */
-   public static boolean isClear ( final LabImage source ) {
+   public static boolean isClear ( final Img source ) {
 
-      return LabImage.isClearCasual(source);
+      return Img.isClearCasual(source);
    }
 
    /**
@@ -1236,11 +1623,11 @@ public class LabImage {
     *
     * @return the evaluation
     */
-   public static final boolean isClearCasual ( final LabImage source ) {
+   public static final boolean isClearCasual ( final Img source ) {
 
       final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
-         if ( ( source.pixels[i] & LabImage.ISOLATE_T_MASK ) != 0 ) {
+         if ( ( source.pixels[i] & Img.ISOLATE_T_MASK ) != 0 ) {
             return false;
          }
       }
@@ -1249,18 +1636,18 @@ public class LabImage {
 
    /**
     * Tests whether an image contains all clear pixels. Pixels must be equal
-    * to {@link LabImage#CLEAR_PIXEL}, {@value LabImage#CLEAR_PIXEL}, to be
+    * to {@link Img#CLEAR_PIXEL}, {@value Img#CLEAR_PIXEL}, to be
     * considered clear.
     *
     * @param source the source image
     *
     * @return the evaluation
     */
-   public static final boolean isClearStrict ( final LabImage source ) {
+   public static final boolean isClearStrict ( final Img source ) {
 
       final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
-         if ( source.pixels[i] != LabImage.CLEAR_PIXEL ) { return false; }
+         if ( source.pixels[i] != Img.CLEAR_PIXEL ) { return false; }
       }
       return true;
    }
@@ -1275,12 +1662,13 @@ public class LabImage {
     *
     * @return the mixed image
     */
-   public static LabImage mix ( final LabImage orig, final LabImage dest,
-      final float fac, final LabImage target ) {
+   public static Img mix ( final Img orig, final Img dest,
+      final float fac, final Img target ) {
 
       /* Tested March 11 2025. */
 
-      if ( !LabImage.similar(orig, dest) || !LabImage.similar(dest, target) ) {
+      if ( !Img.similar(orig, dest) || !Img.similar(orig, target) || !Img
+         .similar(dest, target) ) {
          return target;
       }
 
@@ -1319,10 +1707,116 @@ public class LabImage {
     *
     * @return the multiplied alpha
     */
-   public static final LabImage mulAlpha ( final LabImage target,
+   public static final Img mulAlpha ( final Img target,
       final float alpha ) {
 
-      return LabImage.mulAlpha(target, Utils.round(Utils.abs(alpha) * 0xffff));
+      return Img.mulAlpha(target, Utils.round(Utils.abs(alpha) * 0xffff));
+   }
+
+   /**
+    * Normalizes an image's lightness so that it fills the complete range from
+    * [0.0, 100.0]. Accepts a factor in [-1.0, 1.0]. If the factor is
+    * negative, reduces contrast towards the average lightness.
+    *
+    * @param source the input image
+    * @param fac    the factor
+    * @param target the output image
+    *
+    * @return the normalized image
+    */
+   public static final Img normalizeLight ( final Img source,
+      final float fac, final Img target ) {
+
+      if ( !Img.similar(source, target) ) { return target; }
+
+      final int len = source.pixels.length;
+      final float noNanFac = Float.isNaN(fac) ? 1.0f : fac;
+      final float facVerif = Utils.clamp(noNanFac, -1.0f, 1.0f);
+
+      if ( Utils.approx(facVerif, 0.0f) ) {
+         System.arraycopy(source.pixels, 0, target.pixels, 0, len);
+         return target;
+      }
+
+      final HashMap < Long, Lab > uniques = new HashMap <>();
+
+      float minLight = Float.MAX_VALUE;
+      float maxLight = -Float.MAX_VALUE;
+      float sumLight = 0.0f;
+      int sumTally = 0;
+
+      for ( int i = 0; i < len; ++i ) {
+         final long srcPixel = source.pixels[i];
+         final Long srcPixelObj = srcPixel;
+         if ( !uniques.containsKey(srcPixelObj) ) {
+            final Lab lab = Lab.fromHex(srcPixel, new Lab());
+            if ( lab.alpha > 0.0f ) {
+               final float light = lab.l;
+               if ( light > maxLight ) maxLight = light;
+               if ( light < minLight ) minLight = light;
+               sumLight += light;
+               ++sumTally;
+            }
+            uniques.put(srcPixelObj, lab);
+         }
+      }
+
+      final float dff = Utils.diff(minLight, maxLight);
+      if ( sumTally == 0 || dff < Img.MIN_LIGHT_DIFF ) {
+         System.arraycopy(source.pixels, 0, target.pixels, 0, len);
+         return target;
+      }
+
+      final float t = Utils.abs(facVerif);
+      final float u = 1.0f - t;
+      final boolean gtZero = facVerif > 0.0f;
+      final boolean ltZero = facVerif < -0.0f;
+
+      final float tLumAvg = t * ( sumLight / sumTally );
+      final float tDenom = t * ( 100.0f / dff );
+      final float lumMintDenom = minLight * tDenom;
+
+      final Lab defLab = Lab.clearBlack(new Lab());
+      final HashMap < Long, Long > convert = new HashMap <>();
+      convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
+
+      for ( int j = 0; j < len; ++j ) {
+         final long srcPixel = source.pixels[j];
+         final Long srcPixelObj = srcPixel;
+         long trgPixel = Img.CLEAR_PIXEL;
+
+         if ( convert.containsKey(srcPixelObj) ) {
+            trgPixel = convert.get(srcPixelObj);
+         } else {
+            final Lab lab = uniques.getOrDefault(srcPixelObj, defLab);
+
+            if ( gtZero ) {
+               lab.l = u * lab.l + lab.l * tDenom - lumMintDenom;
+            } else if ( ltZero ) { lab.l = u * lab.l + tLumAvg; }
+
+            trgPixel = lab.toHexLongSat();
+            convert.put(srcPixelObj, trgPixel);
+         }
+
+         target.pixels[j] = trgPixel;
+      }
+
+      return target;
+   }
+
+   /**
+    * Normalizes an image's lightness so that it fills the complete range from
+    * [0.0, 100.0].
+    *
+    * @param source the input image
+    * @param target the output image
+    *
+    * @return the normalized image
+    */
+   public static final Img normalizeLight ( final Img source,
+      final Img target ) {
+
+      return Img.normalizeLight(source, 1f, target);
    }
 
    /**
@@ -1332,11 +1826,11 @@ public class LabImage {
     *
     * @return the opaque image
     */
-   public static final LabImage opaque ( final LabImage target ) {
+   public static final Img opaque ( final Img target ) {
 
       final int len = target.pixels.length;
       for ( int i = 0; i < len; ++i ) {
-         target.pixels[i] = target.pixels[i] | LabImage.ISOLATE_T_MASK;
+         target.pixels[i] = target.pixels[i] | Img.ISOLATE_T_MASK;
       }
       return target;
    }
@@ -1349,17 +1843,245 @@ public class LabImage {
     *
     * @return the binary alpha image
     */
-   public static final LabImage removeTranslucency ( final LabImage target ) {
+   public static final Img removeTranslucency ( final Img target ) {
 
       final int len = target.pixels.length;
       for ( int i = 0; i < len; ++i ) {
          final long c = target.pixels[i];
-         final long t16Src = c >> LabImage.T_SHIFT & 0xffffL;
+         final long t16Src = c >> Img.T_SHIFT & 0xffffL;
          final long t16Trg = t16Src < 0x80000L ? 0x0000L : 0xffffL;
-         target.pixels[i] = t16Trg << LabImage.T_SHIFT | c
-            & LabImage.ISOLATE_LAB_MASK;
+         target.pixels[i] = t16Trg << Img.T_SHIFT | c
+            & Img.ISOLATE_LAB_MASK;
       }
       return target;
+   }
+
+   /**
+    * Creates an image with a diagnostic image where the pixel's x coordinate
+    * correlates to the red channel. Its y coordinate coordinates to the green
+    * channel. The blue and alpha channels are expected to be in [0.0, 1.0].
+    *
+    * @param blue   the blue channel
+    * @param alpha  the alpha channel
+    * @param target the output image
+    *
+    * @return the RGB square
+    */
+   public static final Img rgb ( final float blue, final float alpha,
+      final Img target ) {
+
+      final int w = target.width;
+      final int h = target.height;
+
+      /*
+       * Do not return a clear black image as with other images. If user wants
+       * to make a zero alpha image that has rgb channels, let them.
+       */
+      final float tVerif = Utils.clamp01(alpha);
+      final float bVerif = Utils.clamp01(blue);
+      final float yNorm = 1.0f / ( h - 1.0f );
+      final float xNorm = 1.0f / ( w - 1.0f );
+
+      final Rgb srgb = new Rgb();
+      final Rgb lrgb = new Rgb();
+      final Vec4 xyz = new Vec4();
+      final Lab lab = new Lab();
+
+      final int len = target.pixels.length;
+      for ( int i = 0; i < len; ++i ) {
+         final int x = i % w;
+         final int y = i / w;
+         srgb.set(x * xNorm, 1.0f - y * yNorm, bVerif, tVerif);
+         Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
+         target.pixels[i] = lab.toHexLongSat();
+      }
+
+      return target;
+   }
+
+   /**
+    * Creates an image with a diagnostic image where the pixel's x coordinate
+    * correlates to the red channel. Its y coordinate coordinates to the green
+    * channel. The blue channel is expected to be in [0.0, 1.0].
+    *
+    * @param blue   the blue channel
+    * @param target the output image
+    *
+    * @return the RGB square
+    */
+   public static final Img rgb ( final float blue, final Img target ) {
+
+      return Img.rgb(blue, Img.DEFAULT_ALPHA, target);
+   }
+
+   /**
+    * Creates an image with a diagnostic image where the pixel's x coordinate
+    * correlates to the red channel. Its y coordinate coordinates to the green
+    * channel.
+    *
+    * @param target the output image
+    *
+    * @return the RGB square
+    */
+   public static final Img rgb ( final Img target ) {
+
+      return Img.rgb(Img.DEFAULT_BLUE, target);
+   }
+
+   /**
+    * Rotates the source pixel array 180 degrees counter-clockwise. The
+    * rotation is stored in the target pixel array.
+    *
+    * @param source the source image
+    * @param target the target image
+    *
+    * @return the rotated pixels
+    */
+   public static final Img rotate180 ( final Img source,
+      final Img target ) {
+
+      if ( !Img.similar(source, target) ) { return target; }
+      final int len = source.pixels.length;
+      for ( int i = 0, j = len - 1; i < len; ++i, --j ) {
+         target.pixels[j] = source.pixels[i];
+      }
+
+      return target;
+   }
+
+   /**
+    * Separates a source image into four images which emphasize the LAB
+    * components. The appropriate lightness for some channels will depend on
+    * whether they'll be recombined with additive blending later. Expected
+    * range for lightness is [0, 65535].
+    *
+    * @param source the source image
+    * @param lForAb lightness for chroma channel images
+    * @param lForT  lightness for alpha channel images
+    *
+    * @return the separated images
+    */
+   @Experimental
+   public static Img[] sepLab ( final Img source, final long lForAb,
+      final long lForT ) {
+
+      // TODO: If or when this is sorted out, make an override image that
+      // accepts lforabj and lfort as floats in [0.0, 1.0].
+
+      final long[] srcPixels = source.pixels;
+      final int len = srcPixels.length;
+
+      final long[] lPixels = new long[len];
+      final long[] aPixels = new long[len];
+      final long[] bPixels = new long[len];
+      final long[] tPixels = new long[len];
+
+      final long lForTMask = lForT << Img.L_SHIFT;
+      final long lForAbMask = lForAb << Img.L_SHIFT;
+
+      for ( int i = 0; i < len; ++i ) {
+         final long srcPixel = srcPixels[i];
+         final long tIso = srcPixel & Img.ISOLATE_T_MASK;
+         final long lIso = srcPixel & Img.ISOLATE_L_MASK;
+         final long aIso = srcPixel & Img.ISOLATE_A_MASK;
+         final long bIso = srcPixel & Img.ISOLATE_B_MASK;
+
+         tPixels[i] = tIso | lForTMask;
+         lPixels[i] = tIso | lIso;
+         aPixels[i] = tIso | lForAbMask | aIso;
+         bPixels[i] = tIso | lForAbMask | bIso;
+      }
+
+      final int w = source.width;
+      final int h = source.height;
+
+      /* @formatter:off */
+      return new Img[] {
+         new Img(w, h, tPixels),
+         new Img(w, h, lPixels),
+         new Img(w, h, aPixels),
+         new Img(w, h, bPixels)
+      };
+      /* @formatter:on */
+   }
+
+   /**
+    * Separates a source image into four images which emphasize the LAB
+    * components.
+    *
+    * @param source         the source image
+    * @param usePreMultiply multiply color by alpha
+    *
+    * @return the separated images
+    */
+   @Experimental
+   public static Img[] sepRgb ( final Img source,
+      final boolean usePreMultiply ) {
+
+      final int len = source.pixels.length;
+      final long[] tPixels = new long[len];
+      final long[] rPixels = new long[len];
+      final long[] gPixels = new long[len];
+      final long[] bPixels = new long[len];
+
+      final Rgb srgb = new Rgb();
+      final Rgb lrgb = new Rgb();
+      final Vec4 xyz = new Vec4();
+      final Lab lab = new Lab();
+
+      final Rgb rIso = new Rgb();
+      final Rgb gIso = new Rgb();
+      final Rgb bIso = new Rgb();
+
+      for ( int i = 0; i < len; ++i ) {
+         final long tlab64 = source.pixels[i];
+
+         Lab.fromHex(tlab64, lab);
+         Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
+
+         if ( usePreMultiply ) { Rgb.premul(srgb, srgb); }
+         Rgb.clamp01(srgb, srgb);
+
+         rIso.set(srgb.r, 0.0f, 0.0f, 1.0f);
+         gIso.set(0.0f, srgb.g, 0.0f, 1.0f);
+         bIso.set(0.0f, 0.0f, srgb.b, 1.0f);
+
+         final long rLab64 = Rgb.sRgbToSrLab2(rIso, lab, xyz, lrgb)
+            .toHexLongSat() & Img.ISOLATE_LAB_MASK;
+         final long gLab64 = Rgb.sRgbToSrLab2(gIso, lab, xyz, lrgb)
+            .toHexLongSat() & Img.ISOLATE_LAB_MASK;
+         final long bLab64 = Rgb.sRgbToSrLab2(bIso, lab, xyz, lrgb)
+            .toHexLongSat() & Img.ISOLATE_LAB_MASK;
+
+         // Not sure if this is an effective option.
+         // if ( correctLight ) {
+         // final long lIso = tlab64 & Image.ISOLATE_L_MASK;
+         // rLab64 = lIso | rLab64 & Image.ISOLATE_AB_MASK;
+         // gLab64 = lIso | gLab64 & Image.ISOLATE_AB_MASK;
+         // bLab64 = lIso | bLab64 & Image.ISOLATE_AB_MASK;
+         // }
+
+         final long tIso = tlab64 & Img.ISOLATE_T_MASK;
+         final long lForT = usePreMultiply ? tIso >> Img.T_SHIFT
+            << Img.L_SHIFT : Img.ISOLATE_L_MASK;
+
+         tPixels[i] = tIso | lForT;
+         rPixels[i] = tIso | rLab64;
+         gPixels[i] = tIso | gLab64;
+         bPixels[i] = tIso | bLab64;
+      }
+
+      final int w = source.width;
+      final int h = source.height;
+
+      /* @formatter:off */
+      return new Img[] {
+         new Img(w, h, tPixels),
+         new Img(w, h, rPixels),
+         new Img(w, h, gPixels),
+         new Img(w, h, bPixels)
+      };
+      /* @formatter:on */
    }
 
    /**
@@ -1369,14 +2091,14 @@ public class LabImage {
     *
     * @return the pixels
     */
-   public static final int[] toArgb32 ( final LabImage source ) {
+   public static final int[] toArgb32 ( final Img source ) {
 
       /* Tested March 11 2025. */
 
       final int len = source.pixels.length;
       final int[] argb32s = new int[len];
       final HashMap < Long, Integer > convert = new HashMap <>();
-      convert.put(LabImage.CLEAR_PIXEL, 0);
+      convert.put(Img.CLEAR_PIXEL, 0);
 
       final Rgb srgb = new Rgb();
       final Rgb lrgb = new Rgb();
@@ -1410,9 +2132,9 @@ public class LabImage {
     *
     * @return the dictionary
     */
-   public static final long[] uniques ( final LabImage source ) {
+   public static final long[] uniques ( final Img source ) {
 
-      final TreeSet < Long > u = LabImage.toTreeSet(source, new TreeSet <>());
+      final TreeSet < Long > u = Img.toTreeSet(source, new TreeSet <>());
       final int size = u.size();
       final long[] arr = new long[size];
       int i = -1;
@@ -1431,10 +2153,10 @@ public class LabImage {
     *
     * @return the inverted image
     */
-   protected static final LabImage invert ( final LabImage source,
-      final long mask, final LabImage target ) {
+   protected static final Img invert ( final Img source, final long mask,
+      final Img target ) {
 
-      if ( !LabImage.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) { return target; }
 
       final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
@@ -1452,20 +2174,20 @@ public class LabImage {
     *
     * @return the multiplied alpha
     */
-   protected static final LabImage mulAlpha ( final LabImage target,
+   protected static final Img mulAlpha ( final Img target,
       final long alpha ) {
 
-      if ( alpha <= 0x0000L ) { return LabImage.clear(target); }
+      if ( alpha <= 0x0000L ) { return Img.clear(target); }
       if ( alpha == 0xffffL ) { return target; }
 
       final int len = target.pixels.length;
       for ( int i = 0; i < len; ++i ) {
          final long c = target.pixels[i];
-         final long t16Src = c >> LabImage.T_SHIFT & 0xffffL;
+         final long t16Src = c >> Img.T_SHIFT & 0xffffL;
          final long t16Trg = t16Src * alpha / 0xffffL;
          final long t16TrgCl = t16Trg > 0xffffL ? 0xffffL : t16Trg;
-         target.pixels[i] = t16TrgCl << LabImage.T_SHIFT | c
-            & LabImage.ISOLATE_LAB_MASK;
+         target.pixels[i] = t16TrgCl << Img.T_SHIFT | c
+            & Img.ISOLATE_LAB_MASK;
       }
 
       return target;
@@ -1481,7 +2203,7 @@ public class LabImage {
     *
     * @return the evaluation
     */
-   protected static boolean similar ( final LabImage a, final LabImage b ) {
+   protected static boolean similar ( final Img a, final Img b ) {
 
       return a == b || a.width == b.width && a.height == b.height
          && a.pixels.length == b.pixels.length;
@@ -1499,7 +2221,7 @@ public class LabImage {
     * @return the dictionary
     */
    protected static final TreeMap < Long, ArrayList < Integer > > toTreeMap (
-      final LabImage source, final TreeMap < Long, ArrayList <
+      final Img source, final TreeMap < Long, ArrayList <
          Integer > > target ) {
 
       // TODO: What would the public facing version of this method look like?
@@ -1532,7 +2254,7 @@ public class LabImage {
     *
     * @return the dictionary
     */
-   protected static final TreeSet < Long > toTreeSet ( final LabImage source,
+   protected static final TreeSet < Long > toTreeSet ( final Img source,
       final TreeSet < Long > target ) {
 
       final int len = source.pixels.length;
@@ -1544,6 +2266,65 @@ public class LabImage {
     * Policy for handling gray colors when adjusting by LCH.
     */
    public enum GrayPolicy { COOL, OMIT, WARM, ZERO }
+
+   /**
+    * An iterator, which allows a face's edges to be accessed in an enhanced
+    * for loop.
+    */
+   public static final class ImageIterator implements PrimitiveIterator.OfLong {
+
+      /**
+       * The image being iterated over.
+       */
+      private final Img image;
+
+      /**
+       * The current index.
+       */
+      private int index = 0;
+
+      /**
+       * The default constructor.
+       *
+       * @param image the image to iterate.
+       */
+      public ImageIterator ( final Img image ) {
+
+         this.image = image;
+      }
+
+      /**
+       * Determines whether another pixel is available in the list.
+       *
+       * @return the evaluation
+       */
+      @Override
+      public boolean hasNext ( ) {
+
+         return this.index < this.image.pixels.length;
+      }
+
+      /**
+       * Gets the next pixel.
+       *
+       * @return the pixel
+       */
+      @Override
+      public long nextLong ( ) {
+
+         if ( !this.hasNext() ) { throw new NoSuchElementException(); }
+         return this.image.pixels[this.index++];
+      }
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+
+   }
 
    /**
     * Policy for handling the pivot when adjusting contrast.

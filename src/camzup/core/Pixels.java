@@ -1,21 +1,17 @@
 package camzup.core;
 
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.function.Function;
 import java.util.function.IntFunction;
 
 import camzup.core.Utils.TriFunction;
-import camzup.pfriendly.ZImage;
 
 /**
  * Holds methods that operate on arrays of pixels held by images.
@@ -46,182 +42,6 @@ public abstract class Pixels {
     * be composited with {@link Pixels#MIDTONES} or {@link Pixels#HIGHLIGHTS}.
     */
    public static final int SHADOWS = 0b0001;
-
-   /**
-    * Multiplies the alpha channel of each pixel in an array by the supplied
-    * alpha value. Pixels may need further adjustment with
-    * {@link Pixels#premul(int[], int[])} and
-    * {@link Pixels#unpremul(int[], int[])}.
-    *
-    * @param source the source pixels
-    * @param alpha  the alpha scalar
-    * @param target the target pixels
-    *
-    * @return the adjusted pixels
-    */
-   public static int[] adjustAlpha ( final int[] source, final int alpha,
-      final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-         if ( alpha <= 0x0 ) {
-            for ( int i = 0; i < srcLen; ++i ) { target[i] = 0x00000000; }
-            return target;
-         }
-
-         if ( alpha == 0xff ) {
-            System.arraycopy(source, 0, target, 0, srcLen);
-            return target;
-         }
-
-         for ( int i = 0; i < srcLen; ++i ) {
-            final int hex = source[i];
-            final int srcAlpha = hex >> 0x18 & 0xff;
-            final int trgAlpha = srcAlpha * alpha / 0xff;
-            target[i] = ( trgAlpha > 0xff ? 0xff : trgAlpha ) << 0x18 | hex
-               & 0x00ffffff;
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Adjusts the contrast of colors from a source pixels array by a factor.
-    * Uses the SR LAB 2 color space. The adjustment factor is expected to be
-    * in [-1.0, 1.0].
-    *
-    * @param source the source pixels
-    * @param fac    the contrast factor
-    * @param target the target pixels
-    *
-    * @return the adjusted pixels
-    *
-    * @see Rgb#fromHex(int, Rgb)
-    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
-    * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
-    * @see Utils#clamp(float, float, float)
-    */
-   public static int[] adjustContrast ( final int[] source, final float fac,
-      final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-         final float valAdjust = 1.0f + Utils.clamp(fac, -1.0f, 1.0f);
-         if ( Utils.approx(valAdjust, 1.0f) ) {
-            System.arraycopy(source, 0, target, 0, srcLen);
-            return target;
-         }
-
-         final Rgb srgb = new Rgb();
-         final Rgb lrgb = new Rgb();
-         final Vec4 xyz = new Vec4();
-         final Lab lab = new Lab();
-         final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
-
-         for ( int i = 0; i < srcLen; ++i ) {
-            final int srgbKeyInt = source[i];
-            if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
-               final Integer srgbKeyObj = 0xff000000 | srgbKeyInt;
-               if ( !dict.containsKey(srgbKeyObj) ) {
-                  Rgb.fromHex(srgbKeyInt, srgb);
-                  Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
-
-                  lab.l = ( lab.l - 50.0f ) * valAdjust + 50.0f;
-
-                  Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
-                  dict.put(srgbKeyObj, srgb.toHexIntSat() & 0x00ffffff);
-               }
-            }
-         }
-
-         if ( dict.size() > 0 ) {
-            for ( int i = 0; i < srcLen; ++i ) {
-               final int srgbKeyInt = source[i];
-               final Integer srgbKeyObj = 0xff000000 | srgbKeyInt;
-               if ( dict.containsKey(srgbKeyObj) ) {
-                  target[i] = srgbKeyInt & 0xff000000 | dict.get(srgbKeyObj);
-               } else {
-                  target[i] = 0x00000000;
-               }
-            }
-         } else {
-            for ( int i = 0; i < srcLen; ++i ) { target[i] = 0x00000000; }
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Adjusts a source pixels array's colors in SR LCH. Assigns the results to
-    * a target array.
-    *
-    * @param source the source pixels
-    * @param adjust the adjustment
-    * @param target the target pixels
-    *
-    * @return the adjusted pixels
-    *
-    * @see Rgb#fromHex(int, Rgb)
-    * @see Rgb#sRgbToSrLch(Rgb, Lch, Lab, Vec4, Rgb)
-    * @see Rgb#srLchTosRgb(Lch, Rgb, Rgb, Vec4, Lab)
-    * @see Vec4#none(Vec4)
-    * @see Vec4#add(Vec4, Vec4, Vec4)
-    */
-   public static int[] adjustLch ( final int[] source, final Lch adjust,
-      final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-         if ( adjust.l == 0.0f && adjust.c == 0.0f && Utils.mod1(adjust.h)
-            == 0.0f && adjust.alpha == 0.0f ) {
-            System.arraycopy(source, 0, target, 0, srcLen);
-            return target;
-         }
-
-         final Rgb srgb = new Rgb();
-         final Rgb lrgb = new Rgb();
-         final Vec4 xyz = new Vec4();
-         final Lab lab = new Lab();
-         final Lch lch = new Lch();
-         final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
-
-         for ( int i = 0; i < srcLen; ++i ) {
-            final int srgbKeyInt = source[i];
-            if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
-               final Integer srgbKeyObj = srgbKeyInt;
-               if ( !dict.containsKey(srgbKeyObj) ) {
-                  Rgb.fromHex(srgbKeyInt, srgb);
-                  Rgb.sRgbToSrLch(srgb, lch, lab, xyz, lrgb);
-
-                  lch.l = lch.l + adjust.l;
-                  lch.c = lch.c + adjust.c;
-                  lch.h = lch.h + adjust.h;
-                  lch.alpha = lch.alpha + adjust.alpha;
-
-                  Rgb.srLchTosRgb(lch, srgb, lrgb, xyz, lab);
-                  dict.put(srgbKeyObj, srgb.toHexIntSat());
-               }
-            }
-         }
-
-         if ( dict.size() > 0 ) {
-            for ( int i = 0; i < srcLen; ++i ) {
-               final Integer srgbKeyObj = source[i];
-               if ( dict.containsKey(srgbKeyObj) ) {
-                  target[i] = dict.get(srgbKeyObj);
-               } else {
-                  target[i] = 0x00000000;
-               }
-            }
-         } else {
-            for ( int i = 0; i < srcLen; ++i ) { target[i] = 0x00000000; }
-         }
-      }
-
-      return target;
-   }
 
    /**
     * Blends backdrop and overlay pixels. Forms a union of the bounding area
@@ -519,44 +339,6 @@ public abstract class Pixels {
    }
 
    /**
-    * Creates a checker pattern in an array of pixels.
-    *
-    * @param a      the first color
-    * @param b      the second color
-    * @param cols   the column count
-    * @param rows   the row count
-    * @param w      the image width
-    * @param h      the image height
-    * @param target the target pixels
-    *
-    * @return the checker pattern
-    */
-   public static int[] checker ( final int a, final int b, final int cols,
-      final int rows, final int w, final int h, final int[] target ) {
-
-      /*
-       * Rows and columns should have a maximum bound, because it will be easy
-       * to transpose color and columns & rows arguments.
-       */
-      final int limit = 2;
-      final int vCols = cols < 2 ? 2 : cols > w / limit ? w / limit : cols;
-      final int vRows = rows < 2 ? 2 : rows > h / limit ? h / limit : rows;
-      final int wch = w / vCols;
-      final int hchw = w * h / vRows;
-
-      final int va = a != b ? a : ZImage.CHECKER_DARK;
-      final int vb = a != b ? b : ZImage.CHECKER_LIGHT;
-
-      final int trgLen = target.length;
-      for ( int i = 0; i < trgLen; ++i ) {
-         /* % 2 can be replaced by & 1 for even or odd. */
-         target[i] = ( i % w / wch + i / hchw & 1 ) == 0 ? va : vb;
-      }
-
-      return target;
-   }
-
-   /**
     * Fills the pixels target array with a color.
     *
     * @param c      the fill color
@@ -684,126 +466,6 @@ public abstract class Pixels {
    }
 
    /**
-    * Hashes an image according to the <a href=
-    * "https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function">Fowler–Noll–Vo</a>
-    * method.
-    *
-    * @param source the source pixels
-    *
-    * @return the hash
-    */
-   public static BigInteger fnvHash ( final int[] source ) {
-
-      // TODO: TEST
-
-      final BigInteger fnvPrime = BigInteger.valueOf(1099511628211L);
-      BigInteger hash = new BigInteger("14695981039346656037");
-      final int len = source.length;
-      for ( int i = 0; i < len; ++i ) {
-         hash = hash.xor(BigInteger.valueOf(source[i])).multiply(fnvPrime);
-      }
-
-      return hash;
-   }
-
-   /**
-    * Generates a conic gradient, where the factor rotates on the z axis
-    * around an origin point. Best used with square images; for other aspect
-    * ratios, the origin should be adjusted accordingly.
-    *
-    * @param grd     the gradient
-    * @param xOrig   the origin x coordinate
-    * @param yOrig   the origin y coordinate
-    * @param radians the angle in radians
-    * @param wTrg    the image width
-    * @param hTrg    the image height
-    * @param easing  the easing function
-    * @param target  the target pixels
-    *
-    * @return the gradient pixels
-    *
-    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
-    * @see Utils#mod1(float)
-    */
-   public static int[] gradientConic ( final Gradient grd, final float xOrig,
-      final float yOrig, final float radians, final Lab.AbstrEasing easing,
-      final int wTrg, final int hTrg, final int[] target ) {
-
-      final double aspect = wTrg / ( double ) hTrg;
-      final double wInv = aspect / ( wTrg - 1.0d );
-      final double hInv = 1.0d / ( hTrg - 1.0d );
-      final double xo = ( xOrig * 0.5d + 0.5d ) * aspect * 2.0d - 1.0d;
-      final double yo = yOrig;
-      final double rd = radians;
-
-      final Lab trgClr = new Lab();
-      final int trgLen = target.length;
-      for ( int i = 0; i < trgLen; ++i ) {
-         final double xn = wInv * ( i % wTrg );
-         final double yn = hInv * ( i / wTrg );
-         final float fac = Utils.mod1(( float ) ( ( Math.atan2(1.0d - ( yn + yn
-            + yo ), xn + xn - xo - 1.0d) - rd ) * IUtils.ONE_TAU_D ));
-         Gradient.eval(grd, fac, easing, trgClr);
-         // TODO: Fix this. Might have to use a dictionary of existing colors.
-         target[i] = trgClr.toHexIntSat();
-      }
-
-      return target;
-   }
-
-   /**
-    * Generates a linear gradient from an origin point to a destination point.
-    * The origin and destination should be in the range [-1.0, 1.0]. The
-    * scalar projection is clamped to [0.0, 1.0].
-    *
-    * @param grd    the gradient
-    * @param xOrig  the origin x coordinate
-    * @param yOrig  the origin y coordinate
-    * @param xDest  the destination x coordinate
-    * @param yDest  the destination y coordinate
-    * @param wTrg   the image width
-    * @param hTrg   the image height
-    * @param easing the easing function
-    * @param target the target pixels
-    *
-    * @return the gradient pixels
-    *
-    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
-    * @see Utils#max(float, float)
-    * @see Utils#clamp01(float)
-    */
-   public static int[] gradientLinear ( final Gradient grd, final float xOrig,
-      final float yOrig, final float xDest, final float yDest,
-      final Lab.AbstrEasing easing, final int wTrg, final int hTrg,
-      final int[] target ) {
-
-      final float bx = xOrig - xDest;
-      final float by = yOrig - yDest;
-
-      final float bbInv = 1.0f / Utils.max(IUtils.EPSILON, bx * bx + by * by);
-
-      final float bxbbinv = bx * bbInv;
-      final float bybbinv = by * bbInv;
-
-      final float xobx = xOrig * bxbbinv;
-      final float yoby = yOrig * bybbinv;
-      final float bxwInv2 = 2.0f / ( wTrg - 1.0f ) * bxbbinv;
-      final float byhInv2 = 2.0f / ( hTrg - 1.0f ) * bybbinv;
-
-      final Lab trgClr = new Lab();
-      final int trgLen = target.length;
-      for ( int i = 0; i < trgLen; ++i ) {
-         final float fac = Utils.clamp01(xobx + bxbbinv - bxwInv2 * ( i % wTrg )
-            + ( yoby + byhInv2 * ( i / wTrg ) - bybbinv ));
-         Gradient.eval(grd, fac, easing, trgClr);
-         // TODO: Fix this. Might have to use a dictionary of existing colors.
-         target[i] = trgClr.toHexIntSat();
-      }
-
-      return target;
-   }
-
-   /**
     * Maps the colors of a source pixels array to those of a gradient using a
     * mapping function. The mapping function accepts a pixel as an argument
     * and returns a factor to be given to a gradient evaluation method.
@@ -856,152 +518,6 @@ public abstract class Pixels {
                   target[i] = srgbKeyInt & 0xff000000 | dict.get(srgbKeyObj);
                } else {
                   target[i] = 0x00000000;
-               }
-            }
-         } else {
-            for ( int i = 0; i < srcLen; ++i ) { target[i] = 0x00000000; }
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Generates a radial gradient from an origin point. The origin should be
-    * in the range [-1.0, 1.0]. Does not account for aspect ratio, so an image
-    * that isn't 1:1 will result in an ellipsoid.
-    *
-    * @param grd    the gradient
-    * @param xOrig  the origin x coordinate
-    * @param yOrig  the origin y coordinate
-    * @param radius the radius
-    * @param wTrg   the image width
-    * @param hTrg   the image height
-    * @param easing the easing function
-    * @param target the target pixels
-    *
-    * @return the gradient pixels
-    *
-    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
-    * @see Utils#max(float, float)
-    */
-   public static int[] gradientRadial ( final Gradient grd, final float xOrig,
-      final float yOrig, final float radius, final Lab.AbstrEasing easing,
-      final int wTrg, final int hTrg, final int[] target ) {
-
-      final float hInv2 = 2.0f / ( hTrg - 1.0f );
-      final float wInv2 = 2.0f / ( wTrg - 1.0f );
-
-      final float r2 = radius + radius;
-      final float rsqInv = 1.0f / Utils.max(IUtils.EPSILON, r2 * r2);
-
-      final float yon1 = yOrig - 1.0f;
-      final float xop1 = xOrig + 1.0f;
-
-      final Lab trgClr = new Lab();
-      final int trgLen = target.length;
-      for ( int i = 0; i < trgLen; ++i ) {
-         final float ay = yon1 + hInv2 * ( i / wTrg );
-         final float ax = xop1 - wInv2 * ( i % wTrg );
-         final float fac = 1.0f - ( ax * ax + ay * ay ) * rsqInv;
-         Gradient.eval(grd, fac, easing, trgClr);
-         // TODO: Fix this.
-         target[i] = trgClr.toHexIntSat();
-      }
-
-      return target;
-   }
-
-   /**
-    * Converts a pixels source array to gray, then stores the result in the
-    * target array. The result still uses 32-bit integers in ARGB format; the
-    * gray value is repeated three times.
-    *
-    * @param source the source pixels
-    * @param target the target pixels
-    *
-    * @return the gray pixels
-    */
-   public static int[] grayscale ( final int[] source, final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-         for ( int i = 0; i < srcLen; ++i ) {
-            final int srcHex = source[i];
-            final int ai = srcHex & 0xff000000;
-            if ( ai != 0 ) {
-               final int v255 = ( int ) ( Pixels.srgbLuminance(source[i])
-                  * 255.0f + 0.5f );
-               target[i] = ai | v255 << 0x10 | v255 << 0x08 | v255;
-            } else {
-               target[i] = 0x00000000;
-            }
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Inverts colors from a source pixels array in SR LAB 2.
-    *
-    * @param source the source pixels
-    * @param l      invert lightness
-    * @param a      invert a
-    * @param b      invert b
-    * @param alpha  invert transparency
-    * @param target the target pixels
-    *
-    * @return the inverted pixels
-    *
-    * @see Rgb#fromHex(int, Rgb)
-    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
-    * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
-    */
-   public static int[] invertLab ( final int[] source, final boolean l,
-      final boolean a, final boolean b, final boolean alpha,
-      final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-         if ( !l && !a && !b && !alpha ) {
-            System.arraycopy(source, 0, target, 0, srcLen);
-            return target;
-         }
-
-         final Rgb srgb = new Rgb();
-         final Rgb lrgb = new Rgb();
-         final Vec4 xyz = new Vec4();
-         final Lab lab = new Lab();
-         final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
-
-         final float aSign = a ? -1.0f : 1.0f;
-         final float bSign = b ? -1.0f : 1.0f;
-
-         for ( int i = 0; i < srcLen; ++i ) {
-            int srgbKeyInt = source[i];
-            if ( ( srgbKeyInt & 0xff000000 ) == 0 ) { srgbKeyInt = 0; }
-            final Integer srgbKeyObj = srgbKeyInt;
-
-            if ( !dict.containsKey(srgbKeyObj) ) {
-               Rgb.fromHex(srgbKeyInt, srgb);
-               Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
-
-               lab.a *= aSign;
-               lab.b *= bSign;
-               if ( l ) { lab.l = 100.0f - lab.l; }
-               if ( alpha ) { lab.alpha = 1.0f - lab.alpha; }
-
-               Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
-               dict.put(srgbKeyObj, srgb.toHexIntSat());
-            }
-         }
-
-         if ( dict.size() > 0 ) {
-            for ( int i = 0; i < srcLen; ++i ) {
-               final Integer srgbKeyObj = source[i];
-               if ( dict.containsKey(srgbKeyObj) ) {
-                  target[i] = dict.get(srgbKeyObj);
                }
             }
          } else {
@@ -1510,62 +1026,6 @@ public abstract class Pixels {
    }
 
    /**
-    * Fills the target array with a diagnostic image where the pixel's x
-    * coordinate correlates to the red channel; its y coordinate correlates to
-    * the green channel. The blue contribution is expected to be in [0, 255].
-    *
-    * @param w      the image width
-    * @param h      the image height
-    * @param blue   the blue amount
-    * @param target the target pixels
-    *
-    * @return the RGB pixels
-    */
-   public static int[] rgb ( final int w, final int h, final int blue,
-      final int[] target ) {
-
-      final int len = target.length;
-      final float hInv = 0xff / ( h - 1.0f );
-      final float wInv = 0xff / ( w - 1.0f );
-      final int bmsk = 0xff000000 | blue & 0xff;
-      for ( int i = 0; i < len; ++i ) {
-         target[i] = bmsk | ( int ) ( 0.5f + wInv * ( i % w ) ) << 0x10
-            | ( int ) ( 255.5f - hInv * ( i / w ) ) << 0x08;
-      }
-
-      return target;
-   }
-
-   /**
-    * Rotates the source pixel array 180 degrees counter-clockwise. The
-    * rotation is stored in the target pixel array.
-    *
-    * @param source the source pixels
-    * @param target the target pixels
-    *
-    * @return the rotated pixels
-    */
-   public static int[] rotate180 ( final int[] source, final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( source == target ) {
-         final int srcHalfLen = srcLen / 2;
-         final int srcLenn1 = srcLen - 1;
-         for ( int i = 0; i < srcHalfLen; ++i ) {
-            final int t = source[i];
-            source[i] = source[srcLenn1 - i];
-            source[srcLenn1 - i] = t;
-         }
-      } else if ( srcLen == target.length ) {
-         for ( int i = 0, j = srcLen - 1; i < srcLen; ++i, --j ) {
-            target[j] = source[i];
-         }
-      }
-
-      return target;
-   }
-
-   /**
     * Rotates the source pixel array 270 degrees counter-clockwise. The
     * rotation is stored in the target pixel array.
     *
@@ -1682,7 +1142,6 @@ public abstract class Pixels {
     *
     * @return rotated pixels
     *
-    * @see Pixels#rotate180(int[], int[])
     * @see Pixels#rotate90(int[], int, int, int[])
     * @see Pixels#rotate270(int[], int, int, int[])
     * @see Utils#mod(int, int)
@@ -1704,9 +1163,9 @@ public abstract class Pixels {
             if ( dim != null ) { dim.set(hSrc, wSrc); }
             return Pixels.rotate90(source, wSrc, hSrc, new int[srcLen]);
 
-         case 180:
-            if ( dim != null ) { dim.set(wSrc, hSrc); }
-            return Pixels.rotate180(source, new int[srcLen]);
+         // case 180:
+         // if ( dim != null ) { dim.set(wSrc, hSrc); }
+         // return Pixels.rotate180(source, new int[srcLen]);
 
          case 270:
             if ( dim != null ) { dim.set(hSrc, wSrc); }
@@ -1951,116 +1410,6 @@ public abstract class Pixels {
             return target;
          }
       }
-   }
-
-   /**
-    * Finds the minimum, maximum and mean lightness in a source pixels array.
-    * If factor is positive, stretches color to maximum lightness range in
-    * [0.0, 100.0]. If factor is negative, compresses color to mean. Assigns
-    * result to target array. The factor is expected to be in [-1.0, 1.0].<br>
-    * <br>
-    * If difference between minimum and maximum lightness is negligible,
-    * copies source array to target.
-    *
-    * @param source the source pixels
-    * @param fac    the stretch or compress factor
-    * @param target the target pixels
-    *
-    * @return the contrast pixels
-    *
-    * @see Rgb#fromHex(int, Rgb)
-    * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
-    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
-    * @see Utils#abs(float)
-    * @see Utils#clamp(float, float, float)
-    */
-   public static int[] stretchContrast ( final int[] source, final float fac,
-      final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-
-         final float valFac = Utils.clamp(fac, -1.0f, 1.0f);
-         if ( valFac == 0.0f ) {
-            System.arraycopy(source, 0, target, 0, srcLen);
-            return target;
-         }
-
-         float lumMin = Float.MAX_VALUE;
-         float lumMax = -Float.MAX_VALUE;
-         float lumSum = 0.0f;
-
-         final Rgb srgb = new Rgb();
-         final Rgb lrgb = new Rgb();
-         final Vec4 xyz = new Vec4();
-
-         final HashMap < Integer, Lab > dict = new HashMap <>(512, 0.75f);
-
-         for ( int i = 0; i < srcLen; ++i ) {
-            final int hex = source[i];
-            if ( ( hex & 0xff000000 ) != 0 ) {
-               final Integer hexObj = hex;
-               if ( !dict.containsKey(hexObj) ) {
-                  final Lab lab = new Lab();
-                  Rgb.fromHex(hex, srgb);
-                  Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
-                  dict.put(hexObj, lab);
-
-                  final float lum = lab.l;
-                  if ( lum < lumMin ) { lumMin = lum; }
-                  if ( lum > lumMax ) { lumMax = lum; }
-                  lumSum += lum;
-               }
-            }
-         }
-
-         final int dictLen = dict.size();
-         if ( dictLen > 0 ) {
-            final float diff = Utils.abs(lumMax - lumMin);
-            if ( diff > IUtils.EPSILON ) {
-               final float t = Utils.abs(valFac);
-               final float u = 1.0f - t;
-               final boolean gtZero = valFac > 0.0f;
-               final boolean ltZero = valFac < -0.0f;
-
-               final Lab stretchedLab = new Lab();
-               final float tLumAvg = t * ( lumSum / dictLen );
-               final float tDenom = t * ( 100.0f / diff );
-               final float lumMintDenom = lumMin * tDenom;
-
-               final HashMap < Integer, Integer > stretched = new HashMap <>(
-                  512, 0.75f);
-               final Set < Map.Entry < Integer, Lab > > kvs = dict.entrySet();
-               for ( final Map.Entry < Integer, Lab > kv : kvs ) {
-                  stretchedLab.set(kv.getValue());
-                  if ( gtZero ) {
-                     stretchedLab.l = u * stretchedLab.l + stretchedLab.l
-                        * tDenom - lumMintDenom;
-                  } else if ( ltZero ) {
-                     stretchedLab.l = u * stretchedLab.l + tLumAvg;
-                  }
-
-                  Rgb.srLab2TosRgb(stretchedLab, srgb, lrgb, xyz);
-                  stretched.put(kv.getKey(), srgb.toHexIntSat());
-               }
-
-               for ( int i = 0; i < srcLen; ++i ) {
-                  final Integer srgbKeyObj = source[i];
-                  if ( stretched.containsKey(srgbKeyObj) ) {
-                     target[i] = stretched.get(srgbKeyObj);
-                  } else {
-                     target[i] = 0x00000000;
-                  }
-               }
-            } else {
-               System.arraycopy(source, 0, target, 0, srcLen);
-            }
-         } else {
-            for ( int i = 0; i < srcLen; ++i ) { target[i] = 0x00000000; }
-         }
-      }
-
-      return target;
    }
 
    /**

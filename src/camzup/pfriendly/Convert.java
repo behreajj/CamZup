@@ -11,9 +11,9 @@ import camzup.core.CurveEntity2;
 import camzup.core.CurveEntity3;
 import camzup.core.Experimental;
 import camzup.core.IUtils;
+import camzup.core.Img;
 import camzup.core.Knot2;
 import camzup.core.Knot3;
-import camzup.core.LabImage;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
 import camzup.core.Mesh;
@@ -81,16 +81,16 @@ public abstract class Convert {
    }
 
    /**
-    * Converts a PImage to a LabImage.
+    * Converts a PImage to an Img.
     *
     * @param source the source image
     *
     * @return the lab image
     */
-   public static LabImage toLabImage ( final PImage source ) {
+   public static Img toImg ( final PImage source ) {
 
       source.loadPixels();
-      return LabImage.fromArgb32(source.pixelWidth, source.pixelHeight,
+      return Img.fromArgb32(source.pixelWidth, source.pixelHeight,
          source.pixels);
    }
 
@@ -168,7 +168,7 @@ public abstract class Convert {
     *
     * @return the PImage
     */
-   public static PImage toPImage ( final LabImage source ) {
+   public static PImage toPImage ( final Img source ) {
 
       // TODO: How to handle pixel density? Might have to do a resize.
 
@@ -177,7 +177,7 @@ public abstract class Convert {
       final PImage target = new PImage(source.getWidth(), source.getHeight(),
          PConstants.ARGB, 1);
       target.loadPixels();
-      target.pixels = LabImage.toArgb32(source);
+      target.pixels = Img.toArgb32(source);
       target.updatePixels();
 
       return target;
