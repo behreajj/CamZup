@@ -446,7 +446,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
       final StringBuilder pyCd = new StringBuilder(2048);
       pyCd.append("from bpy import context as C, data as D\nimport bmesh\n\n");
       pyCd.append("entity_src = {\"name\": \"");
-      if ( Character.isDigit(this.name.charAt(0)) ) { pyCd.append("id"); }
+      pyCd.append("id");
       pyCd.append(this.name);
       pyCd.append("\", \"transform\": ");
       this.transform.toBlenderCode(pyCd);

@@ -825,7 +825,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       pyCd.append(']');
 
       pyCd.append("\n\nmaterial = D.materials.new(\"");
-      if ( Character.isDigit(name.charAt(0)) ) { pyCd.append("id"); }
+      pyCd.append("id");
       pyCd.append(name);
       pyCd.append("\")\n");
       pyCd.append("material.use_nodes = True\n");
@@ -1483,7 +1483,6 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @param target the output gradient
     *
     * @return the gradient
-    *
     */
    public static Gradient keysByLightness ( final Gradient source,
       final Gradient target ) {
@@ -1612,6 +1611,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     * @return the gradient
     */
    public static Gradient paletteRgb ( final Gradient target ) {
+
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 

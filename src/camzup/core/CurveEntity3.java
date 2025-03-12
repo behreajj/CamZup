@@ -512,7 +512,7 @@ public class CurveEntity3 extends Entity3 implements Iterable < Curve3 >,
       final StringBuilder pyCd = new StringBuilder(2048);
       pyCd.append("from bpy import data as D, context as C\n\n");
       pyCd.append("entity_src = {\"name\": \"");
-      if ( Character.isDigit(this.name.charAt(0)) ) { pyCd.append("id"); }
+      pyCd.append("id");
       pyCd.append(this.name);
       pyCd.append("\", \"transform\": ");
       this.transform.toBlenderCode(pyCd);

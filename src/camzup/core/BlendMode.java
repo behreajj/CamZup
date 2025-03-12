@@ -8,22 +8,29 @@ public interface BlendMode {
     * A and B chroma axes blend mode operations.
     */
    public enum AB {
-      /* Adds over chroma to under. */
+
+      /** Adds over chroma to under. */
       ADD,
 
-      /* Adds over and under chroma, then halves the sum. */
+      /** Adds over and under chroma, then halves the sum. */
       AVERAGE,
 
-      /* Blends over and under layer chroma per alpha. */
+      /** Blends over and under layer chroma per alpha. */
       BLEND,
 
-      /* Adopts the over layer chroma. */
+      /** Adopts the chroma of the over layer. */
+      CHROMA,
+
+      /** Adopts the hue of the over layer. */
+      HUE,
+
+      /** Adopts the over layer chroma. */
       OVER,
 
-      /* Subtracts the over layer chroma from the under. */
+      /** Subtracts the over layer chroma from the under. */
       SUBTRACT,
 
-      /* Adopts the under layer chroma. */
+      /** Adopts the under layer chroma. */
       UNDER
    }
 
@@ -32,58 +39,22 @@ public interface BlendMode {
     */
    public enum Alpha {
 
-      /* Default blending operation. */
+      /** Default blending operation. */
       BLEND,
 
-      /* Adopts the greater alpha. */
+      /** Adopts the greater alpha. */
       MAX,
 
-      /* Adopts the lesser alpha. */
+      /** Adopts the lesser alpha. */
       MIN,
 
-      /* Multiplies the over and under layer alpha. */
+      /** Multiplies the over and under layer alpha. */
       MULTIPLY,
 
-      /* Adopts the over layer alpha. */
+      /** Adopts the over layer alpha. */
       OVER,
 
-      /* Adopts the under layer alpha. */
-      UNDER
-   }
-
-   /**
-    * Chroma blend mode operations.
-    */
-   public enum C {
-
-      /* Blends over and under layer chroma per alpha. */
-      BLEND,
-
-      /* Adopts the over layer chroma. */
-      OVER,
-
-      /* Adopts the under layer chroma. */
-      UNDER
-   }
-
-   /**
-    * Hue blend mode operations. Gray colors are exception cases.
-    */
-   public enum H {
-
-      /* Blends from under to over in the counter clockwise hue direction. */
-      CCW,
-
-      /* Blends from under to over in the clockwise hue direction. */
-      CW,
-
-      /* Blends from under to over in the nearest hue direction. */
-      NEAR,
-
-      /* Adopts the over layer hue. */
-      OVER,
-
-      /* Adopts the under layer hue. */
+      /** Adopts the under layer alpha. */
       UNDER
    }
 
@@ -92,22 +63,22 @@ public interface BlendMode {
     */
    public enum L {
 
-      /* Adds over lightness to under. */
+      /** Adds over lightness to under. */
       ADD,
 
-      /* Adds over and under lightness, then halves the sum. */
+      /** Adds over and under lightness, then halves the sum. */
       AVERAGE,
 
-      /* Blends over and under layer lightness per alpha. */
+      /** Blends over and under layer lightness per alpha. */
       BLEND,
 
-      /* Divides under lightness by over. */
+      /** Divides under lightness by over. */
       DIVIDE,
 
-      /* Multiplies over and under lightness. */
+      /** Multiplies over and under lightness. */
       MULTIPLY,
 
-      /* Adopts the over layer lightness. */
+      /** Adopts the over layer lightness. */
       OVER,
 
       /*
@@ -116,23 +87,12 @@ public interface BlendMode {
        */
       SCREEN,
 
-      /* Subtracts the over layer lightness from the under. */
+      /** Subtracts the over layer lightness from the under. */
       SUBTRACT,
 
-      /* Adopts the under layer lightness. */
+      /** Adopts the under layer lightness. */
       UNDER
    }
 
-   /**
-    * Color space in which to mix color.
-    */
-   public enum Space {
-
-      /* Lightness a and b */
-      LAB,
-
-      /* Lightness chroma hue */
-      LCH
-   }
 
 }

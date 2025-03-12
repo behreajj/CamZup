@@ -1485,7 +1485,7 @@ public class Rgb implements IColor {
       final StringBuilder sb = new StringBuilder(1024);
       sb.append("GIMP Palette");
       sb.append("\nName: ");
-      if ( Character.isDigit(name.charAt(0)) ) { sb.append("id"); }
+      sb.append("id");
       sb.append(name);
       sb.append("\nColumns: ");
       sb.append(cols);

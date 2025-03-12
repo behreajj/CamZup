@@ -23,7 +23,7 @@ public class Img implements Iterable < Long > {
    /**
     * The image height.
     */
-   protected final int height;
+   protected int height;
 
    /**
     * The image pixels.
@@ -33,7 +33,7 @@ public class Img implements Iterable < Long > {
    /**
     * The image width.
     */
-   protected final int width;
+   protected int width;
 
    /**
     * Constructs an image from a source.
@@ -66,16 +66,6 @@ public class Img implements Iterable < Long > {
       // to assume srgb.
 
       // TODO: swap alpha to light, light to alpha methods?
-
-      // TODO: explore concept of saturation adjustment?
-      // https://en.wikipedia.org/wiki/Colorfulness#Saturation
-      // simple formula: S = C / L
-      // complex formula: S = C / sqrt(C * C + L * L)
-      // Sorig = formula(C, L)
-      // Sadj = (Sorig - Spivot) * fac + Spivot
-      // Cadj = inverseFormula(Sadj, Lorig)
-      // Cadj = Sadj * Lorig
-      // Cadj = Sadj * sqrt(CC+LL)
 
       this(width, height, Img.CLEAR_PIXEL);
    }
@@ -191,8 +181,7 @@ public class Img implements Iterable < Long > {
 
    /**
     * Gets a pixel at local coordinates x and y. If the index is out of
-    * bounds, then returns {@link Img#CLEAR_PIXEL},
-    * {@value Img#CLEAR_PIXEL}.
+    * bounds, then returns {@link Img#CLEAR_PIXEL}, {@value Img#CLEAR_PIXEL}.
     *
     * @param i the index
     *
@@ -205,8 +194,7 @@ public class Img implements Iterable < Long > {
 
    /**
     * Gets a pixel at local coordinates x and y. If the coordinates are out of
-    * bounds, then returns {@link Img#CLEAR_PIXEL},
-    * {@value Img#CLEAR_PIXEL}.
+    * bounds, then returns {@link Img#CLEAR_PIXEL}, {@value Img#CLEAR_PIXEL}.
     *
     * @param x the x coordinate
     * @param y the y coordinate
@@ -505,8 +493,8 @@ public class Img implements Iterable < Long > {
    public static final long CHECKER_DARK = 0xffff_5555_8000_8000L;
 
    /**
-    * Default color for light checker squares, {@value Img#CHECKER_LIGHT},
-    * or 2.0 / 3.0 of 65535 lightness.
+    * Default color for light checker squares, {@value Img#CHECKER_LIGHT}, or
+    * 2.0 / 3.0 of 65535 lightness.
     */
    public static final long CHECKER_LIGHT = 0xffff_aaaa_8000_8000L;
 
@@ -605,8 +593,171 @@ public class Img implements Iterable < Long > {
    public static final long T_SHIFT = 0x30L;
 
    /**
-    * Adjusts the contrast of colors from a source pixels array by a factor.
-    * The adjustment factor is expected to be in [-1.0, 1.0].
+    * Adjusts an image's lightness and saturation contrast by a factor. The
+    * adjustment factor is expected to be in [-1.0, 1.0].
+    *
+    * @param source the source pixels
+    * @param sFac   the saturation contrast factor
+    * @param lFac   the lightness contrast factor
+    * @param target the target pixels
+    *
+    * @return the adjusted pixels
+    */
+   public static Img adjustContrast ( final Img source, final float sFac,
+      final float lFac, final Img target ) {
+
+      return Img.adjustContrast(source, sFac, lFac, Img.DEFAULT_PIVOT_POLICY,
+         target);
+   }
+
+   /**
+    * Adjusts an image's lightness and saturation contrast by a factor. The
+    * adjustment factor is expected to be in [-1.0, 1.0]. See
+    * https://en.wikipedia.org/wiki/Colorfulness#Saturation .
+    *
+    * @param source the source pixels
+    * @param sFac   the saturation contrast factor
+    * @param lFac   the lightness contrast factor
+    * @param policy the pivot policy
+    * @param target the target pixels
+    *
+    * @return the adjusted pixels
+    */
+   @Experimental
+   public static Img adjustContrast ( final Img source, final float sFac,
+      final float lFac, final PivotPolicy policy, final Img target ) {
+
+      if ( !Img.similar(source, target) ) { return target; }
+
+      final int len = source.pixels.length;
+
+      final float sNoNanFac = Float.isNaN(sFac) ? 0.5f : sFac;
+      final float sAdjVerif = 1.0f + Utils.clamp(sNoNanFac, -1.0f, 1.0f);
+
+      final float lNoNanFac = Float.isNaN(lFac) ? 0.5f : lFac;
+      final float lAdjVerif = 1.0f + Utils.clamp(lNoNanFac, -1.0f, 1.0f);
+
+      if ( Utils.approx(sAdjVerif, 1.0f) && Utils.approx(lAdjVerif, 1.0f) ) {
+         System.arraycopy(source.pixels, 0, target.pixels, 0, len);
+         return target;
+      }
+
+      final HashMap < Long, Lab > uniques = new HashMap <>();
+
+      double minSat = Double.MAX_VALUE;
+      double maxSat = -Double.MAX_VALUE;
+      double sumSat = 0.0f;
+
+      double minLight = Double.MAX_VALUE;
+      double maxLight = -Double.MAX_VALUE;
+      double sumLight = 0.0f;
+
+      int sumTally = 0;
+
+      for ( int i = 0; i < len; ++i ) {
+         final long srcPixel = source.pixels[i];
+         final Long srcPixelObj = srcPixel;
+         if ( !uniques.containsKey(srcPixelObj) ) {
+            final Lab lab = Lab.fromHex(srcPixel, new Lab());
+            if ( lab.alpha > 0.0f ) {
+               final double l = lab.l;
+               final double a = lab.a;
+               final double b = lab.b;
+
+               final double csq = a * a + b * b;
+               final double mcpl = Math.sqrt(csq + l * l);
+               final double sat = mcpl != 0.0d ? Math.sqrt(csq) / mcpl : 0.0d;
+
+               if ( sat > maxSat ) maxSat = sat;
+               if ( sat < minSat ) minSat = sat;
+               sumSat += sat;
+
+               if ( l > maxLight ) maxLight = l;
+               if ( l < minLight ) minLight = l;
+               sumLight += l;
+
+               ++sumTally;
+            }
+            uniques.put(srcPixelObj, lab);
+         }
+      }
+
+      if ( sumTally == 0 || minSat >= maxSat && minLight >= maxLight ) {
+         System.arraycopy(source.pixels, 0, target.pixels, 0, len);
+         return target;
+      }
+
+      final double sadjd = sAdjVerif;
+      final double ladjd = lAdjVerif;
+      double pivotSat = sumSat / sumTally;
+      double pivotLight = sumLight / sumTally;
+      switch ( policy ) {
+         case RANGE:
+            pivotSat = ( minSat + maxSat ) * 0.5d;
+            pivotLight = ( minLight + maxLight ) * 0.5d;
+            break;
+
+         case FIXED:
+            pivotSat = sumSat / sumTally;
+            pivotLight = 50.0d;
+            break;
+
+         case MEAN:
+         default:
+            pivotSat = sumSat / sumTally;
+            pivotLight = sumLight / sumTally;
+      }
+
+      final Lab defLab = Lab.clearBlack(new Lab());
+      final HashMap < Long, Long > convert = new HashMap <>();
+      convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
+
+      for ( int j = 0; j < len; ++j ) {
+         final long srcPixel = source.pixels[j];
+         final Long srcPixelObj = srcPixel;
+         long trgPixel = Img.CLEAR_PIXEL;
+
+         if ( convert.containsKey(srcPixelObj) ) {
+            trgPixel = convert.get(srcPixelObj);
+         } else {
+            final Lab lab = uniques.getOrDefault(srcPixelObj, defLab);
+
+            final double lSrc = lab.l;
+            final double aSrc = lab.a;
+            final double bSrc = lab.b;
+
+            final double lAdj = ( lSrc - pivotLight ) * ladjd + pivotLight;
+
+            final double csqSrc = aSrc * aSrc + bSrc * bSrc;
+            final double cSrc = Math.sqrt(csqSrc);
+            final double mcplSrc = Math.sqrt(csqSrc + lSrc * lSrc);
+            final double mcplAdj = Math.sqrt(csqSrc + lAdj * lAdj);
+            final double sSrc = mcplSrc != 0.0d ? cSrc / mcplSrc : 0.0d;
+            // final double sSrc = mcplAdj != 0.0d ? cSrc / mcplAdj : 0.0d;
+
+            final double sAdj = ( sSrc - pivotSat ) * sadjd + pivotSat;
+            final double cAdj = sAdj * mcplAdj;
+
+            final double abScalar = cSrc != 0.0d ? cAdj / cSrc : 0.0d;
+            final double aAdj = aSrc * abScalar;
+            final double bAdj = bSrc * abScalar;
+
+            lab.l = ( float ) lAdj;
+            lab.a = ( float ) aAdj;
+            lab.b = ( float ) bAdj;
+            trgPixel = lab.toHexLongSat();
+            convert.put(srcPixelObj, trgPixel);
+         }
+
+         target.pixels[j] = trgPixel;
+      }
+
+      return target;
+   }
+
+   /**
+    * Adjusts an image's lightness and saturation contrast by a factor. The
+    * adjustment factor is expected to be in [-1.0, 1.0].
     *
     * @param source the source pixels
     * @param fac    the contrast factor
@@ -617,7 +768,25 @@ public class Img implements Iterable < Long > {
    public static Img adjustContrast ( final Img source, final float fac,
       final Img target ) {
 
-      return Img.adjustContrastLight(source, fac, target);
+      return Img.adjustContrast(source, fac, fac, Img.DEFAULT_PIVOT_POLICY,
+         target);
+   }
+
+   /**
+    * Adjusts an image's lightness and saturation contrast by a factor. The
+    * adjustment factor is expected to be in [-1.0, 1.0].
+    *
+    * @param source the source pixels
+    * @param fac    the contrast factor
+    * @param target the target pixels
+    *
+    * @return the adjusted pixels
+    */
+   public static Img adjustContrast ( final Img source, final Vec2 fac,
+      final Img target ) {
+
+      return Img.adjustContrast(source, fac.x, fac.y, Img.DEFAULT_PIVOT_POLICY,
+         target);
    }
 
    /**
@@ -638,10 +807,8 @@ public class Img implements Iterable < Long > {
    }
 
    /**
-    * Adjusts the chroma contrast of colors from a source pixels array by a
-    * factor. The adjustment factor is expected to be in [-1.0, 1.0]. The use
-    * range option chooses the average of the minimum and maximum chroma
-    * rather than the mean chroma.
+    * Adjusts an image's he chroma contrast by a factor. The adjustment factor
+    * is expected to be in [-1.0, 1.0].
     *
     * @param source the source pixels
     * @param fac    the contrast factor
@@ -729,12 +896,11 @@ public class Img implements Iterable < Long > {
       }
 
       return target;
-
    }
 
    /**
-    * Adjusts the light contrast of colors from a source pixels array by a
-    * factor. The adjustment factor is expected to be in [-1.0, 1.0].
+    * Adjusts an image's light contrast by a factor. The adjustment factor is
+    * expected to be in [-1.0, 1.0].
     *
     * @param source the source pixels
     * @param fac    the contrast factor
@@ -758,8 +924,6 @@ public class Img implements Iterable < Long > {
          return target;
       }
 
-      // TODO: Provide an int flag or enum for options: AVERAGE, RANGE, 50?
-      // If an enum is created, it should replace the boolean flag in chroma.
       final float pivotLight = 50.0f;
 
       final Lab lab = new Lab();
@@ -988,15 +1152,12 @@ public class Img implements Iterable < Long > {
 
    public static final Img blend (
    /* @formatter:off */
-      final Img under, final int xUnder, final int yUnder,
-      final Img over, final int xOver, final int yOver,
+      final Img imgUnder, final int xUnder, final int yUnder,
+      final Img imgOver, final int xOver, final int yOver,
 
-      final BlendMode.Space bmSpace,
       final BlendMode.Alpha bmAlpha,
       final BlendMode.L bmLight,
-      final BlendMode.AB bmAb,
-      final BlendMode.C bmChroma,
-      final BlendMode.H bmHue
+      final BlendMode.AB bmAb
    /* @formatter:on */
    ) {
 
@@ -1010,33 +1171,328 @@ public class Img implements Iterable < Long > {
        * Images do not need to be similar to each other.
        */
 
-      // final int ax = xUnder;
-      // final int ay = yUnder;
-      // final int aw = under.width;
-      // final int ah = under.height;
-      //
-      // final int bx = xOver;
-      // final int by = yOver;
-      // final int bw = over.width;
-      // final int bh = over.height;
+      final int ax = xUnder;
+      final int ay = yUnder;
+      final int aw = imgUnder.width;
+      final int ah = imgUnder.height;
+      final long[] pxUnder = imgUnder.pixels;
+
+      final int bx = xOver;
+      final int by = yOver;
+      final int bw = imgOver.width;
+      final int bh = imgOver.height;
+      final long[] pxOver = imgOver.pixels;
 
       /* Find the bottom right corner for a and b. */
-      // final int abrx = ax + aw - 1;
-      // final int abry = ay + ah - 1;
-      // final int bbrx = bx + bw - 1;
-      // final int bbry = by + bh - 1;
+      final int abrx = ax + aw - 1;
+      final int abry = ay + ah - 1;
+      final int bbrx = bx + bw - 1;
+      final int bbry = by + bh - 1;
 
-      /* Blending only necessary at the intersection of a and b. */
-      // final int dx = ax > bx ? ax : bx;
-      // final int dy = ay > by ? ay : by;
-      // final int dbrx = abrx < bbrx ? abrx : bbrx;
-      // final int dbry = abry < bbry ? abry : bbry;
-      // final int dw = 1 + dbrx - dx;
-      // final int dh = 1 + dbry - dy;
+      /*
+       * Find the union of a and b. This used to be an intersection, but
+       * different alpha blend modes necessitate a union.
+       */
 
-      // TODO: Implement.
+      // TODO: Adjust this based on the alpha comp type?
 
-      return null;
+      final int dx = ax < bx ? ax : bx;
+      final int dy = ay < by ? ay : by;
+      final int dbrx = abrx > bbrx ? abrx : bbrx;
+      final int dbry = abry > bbry ? abry : bbry;
+      final int dw = 1 + dbrx - dx;
+      final int dh = 1 + dbry - dy;
+
+      final HashMap < Long, Lab > dict = new HashMap <>();
+      final Lab clearLab = Lab.clearBlack(new Lab());
+      dict.put(Img.CLEAR_PIXEL, clearLab);
+
+      if ( dw > 0 && dh > 0 ) {
+
+         /*
+          * Find difference between the intersection top left and the top left
+          * of a and b.
+          */
+         final int axid = ax - dx;
+         final int ayid = ay - dy;
+         final int bxid = bx - dx;
+         final int byid = by - dy;
+
+         final int dLen = dw * dh;
+         for ( int h = 0; h < dLen; ++h ) {
+            final int x = h % dw;
+            final int y = h / dw;
+
+            long hexUnder = Img.CLEAR_PIXEL;
+            final int axs = x - axid;
+            final int ays = y - ayid;
+            if ( ays >= 0 && ays < ah && axs >= 0 && axs < aw ) {
+               hexUnder = pxUnder[axs + ays * aw];
+               dict.put(hexUnder, Lab.fromHex(hexUnder, new Lab()));
+            }
+
+            long hexOver = Img.CLEAR_PIXEL;
+            final int bxs = x - bxid;
+            final int bys = y - byid;
+            if ( bys >= 0 && bys < bh && bxs >= 0 && bxs < bw ) {
+               hexOver = pxOver[bxs + bys * bw];
+               dict.put(hexOver, Lab.fromHex(hexOver, new Lab()));
+            }
+         }
+      }
+
+      /* The result dimensions are the union of a and b. */
+      final int cx = ax < bx ? ax : bx;
+      final int cy = ay < by ? ay : by;
+      final int cbrx = abrx > bbrx ? abrx : bbrx;
+      final int cbry = abry > bbry ? abry : bbry;
+      final int cw = 1 + cbrx - cx;
+      final int ch = 1 + cbry - cy;
+      final int cLen = cw * ch;
+
+      /* Find difference between the union top left and top left of a and b. */
+      final int axud = ax - cx;
+      final int ayud = ay - cy;
+      final int bxud = bx - cx;
+      final int byud = by - cy;
+
+      final Lab cLab = new Lab();
+      final long[] trgPixels = new long[cLen];
+      for ( int i = 0; i < cLen; ++i ) {
+         final int x = i % cw;
+         final int y = i / cw;
+
+         long hexUnder = Img.CLEAR_PIXEL;
+         final int axs = x - axud;
+         final int ays = y - ayud;
+         if ( ays >= 0 && ays < ah && axs >= 0 && axs < aw ) {
+            hexUnder = pxUnder[axs + ays * aw];
+         }
+
+         long hexOver = Img.CLEAR_PIXEL;
+         final int bxs = x - bxud;
+         final int bys = y - byud;
+         if ( bys >= 0 && bys < bh && bxs >= 0 && bxs < bw ) {
+            hexOver = pxOver[bxs + bys * bw];
+         }
+
+         final Lab labUnder = dict.getOrDefault(hexUnder, clearLab);
+         final Lab labOver = dict.getOrDefault(hexOver, clearLab);
+
+         final double t = labOver.alpha;
+         final double v = labUnder.alpha;
+         final double u = 1.0d - t;
+         double tuv = t + u * v;
+
+         switch ( bmAlpha ) {
+            case MAX: {
+               tuv = t > v ? t : v;
+            }
+               break;
+
+            case MIN: {
+               tuv = t < v ? t : v;
+            }
+               break;
+
+            case MULTIPLY: {
+               tuv = t * v;
+            }
+               break;
+
+            case OVER: {
+               tuv = t;
+            }
+               break;
+
+            case UNDER: {
+               tuv = v;
+            }
+               break;
+
+            case BLEND:
+            default:
+
+         } // End alpha blend mode.
+
+         long hexComp = Img.CLEAR_PIXEL;
+         if ( tuv > 0.0d ) {
+            // Does lab over need to default to lab under if it has zero alpha
+            // and vice versa?
+            final boolean vgt0 = v > 0.0d;
+            final boolean tgt0 = t > 0.0d;
+
+            final double lOver = labOver.l;
+            final double aOver = labOver.a;
+            final double bOver = labOver.b;
+
+            final double lUnder = labUnder.l;
+            final double aUnder = labUnder.a;
+            final double bUnder = labUnder.b;
+
+            double lComp = u * lUnder + t * lOver;
+            double aComp = u * aUnder + t * aOver;
+            double bComp = u * bUnder + t * bOver;
+
+            switch ( bmLight ) {
+               case ADD: {
+                  final double sum = vgt0 ? lUnder + lOver : lOver;
+                  lComp = u * lUnder + t * sum;
+               }
+                  break;
+
+               case AVERAGE: {
+                  final double avg = vgt0 ? ( lUnder + lOver ) * 0.5d : lOver;
+                  lComp = u * lUnder + t * avg;
+               }
+                  break;
+
+               case DIVIDE: {
+                  final double quo = vgt0 ? lOver != 0.0d ? lUnder / lOver
+                     * 100.0d : 100.0d : lOver;
+                  lComp = u * lUnder + t * quo;
+               }
+                  break;
+
+               case MULTIPLY: {
+                  final double prod = vgt0 ? lUnder * lOver * 0.01d : lOver;
+                  lComp = u * lUnder + t * prod;
+               }
+                  break;
+
+               case OVER: {
+                  lComp = lOver;
+               }
+                  break;
+
+               case SCREEN: {
+                  final double scr = vgt0 ? lUnder + lOver - lUnder * lOver
+                     * 0.01 : lOver;
+                  lComp = u * lUnder + t * scr;
+               }
+                  break;
+
+               case SUBTRACT: {
+                  final double dff = vgt0 ? lUnder - lOver : lOver;
+                  lComp = u * lUnder + t * dff;
+               }
+                  break;
+
+               case UNDER: {
+                  lComp = lUnder;
+               }
+                  break;
+
+               case BLEND:
+               default:
+
+            } // End light blend mode.
+
+            switch ( bmAb ) {
+               case ADD: {
+                  final double aSum = vgt0 ? aUnder + aOver : aOver;
+                  final double bSum = vgt0 ? bUnder + bOver : bOver;
+                  aComp = u * aUnder + t * aSum;
+                  bComp = u * bUnder + t * bSum;
+               }
+                  break;
+
+               case AVERAGE: {
+                  final double aAvg = vgt0 ? ( aUnder + aOver ) * 0.5d : aOver;
+                  final double bAvg = vgt0 ? ( bUnder + bOver ) * 0.5d : bOver;
+                  aComp = u * aUnder + t * aAvg;
+                  bComp = u * bUnder + t * bAvg;
+               }
+                  break;
+
+               case CHROMA: {
+
+                  if ( vgt0 && tgt0 ) {
+
+                     final double csqUnder = aUnder * aUnder + bUnder * bUnder;
+
+                     if ( csqUnder > IUtils.EPSILON_D ) {
+                        final double csqOver = aOver * aOver + bOver * bOver;
+                        final double s = Math.sqrt(csqOver) / Math.sqrt(
+                           csqUnder);
+                        aComp = s * aUnder;
+                        bComp = s * bUnder;
+
+                     } else {
+
+                        aComp = 0.0d;
+                        bComp = 0.0d;
+                     } // End chroma under is greater than zero.
+
+                  } // End under alpha is greater than zero.
+               }
+                  break;
+
+               case HUE: {
+
+                  if ( vgt0 && tgt0 ) {
+
+                     final double csqOver = aOver * aOver + bOver * bOver;
+
+                     if ( csqOver > IUtils.EPSILON_D ) {
+
+                        final double csqUnder = aUnder * aUnder + bUnder
+                           * bUnder;
+                        final double s = Math.sqrt(csqUnder) / Math.sqrt(
+                           csqOver);
+                        aComp = s * aOver;
+                        bComp = s * bOver;
+
+                     } else {
+
+                        aComp = 0.0d;
+                        bComp = 0.0d;
+
+                     } // End chroma over is greater than zero.
+
+                  } // End under alpha is greater than zero.
+
+               }
+                  break;
+
+               case OVER: {
+                  aComp = aOver;
+                  bComp = bOver;
+               }
+                  break;
+
+               case SUBTRACT: {
+                  // TODO: Should default case for aDiff be -aOver, -bOver, not
+                  // positive?
+                  final double aDff = vgt0 ? aUnder - aOver : aOver;
+                  final double bDff = vgt0 ? bUnder - bOver : bOver;
+                  aComp = u * aUnder + t * aDff;
+                  bComp = u * bUnder + t * bDff;
+               }
+                  break;
+
+               case UNDER: {
+                  aComp = aUnder;
+                  bComp = bUnder;
+               }
+                  break;
+
+               case BLEND:
+               default:
+
+            } // End ab blend mode.
+
+            cLab.set(( float ) lComp, ( float ) aComp, ( float ) bComp,
+               ( float ) tuv);
+            hexComp = cLab.toHexLongSat();
+
+         } // End alpha is greater than zero.
+
+         trgPixels[i] = hexComp;
+
+      } // End pixels loop.
+
+      return new Img(cw, ch, trgPixels);
    }
 
    /**
@@ -1087,8 +1543,7 @@ public class Img implements Iterable < Long > {
     *
     * @return the checker image
     */
-   public static final Img checker ( final int sizeCheck,
-      final Img target ) {
+   public static final Img checker ( final int sizeCheck, final Img target ) {
 
       return Img.checker(Img.CHECKER_DARK, Img.CHECKER_LIGHT, sizeCheck,
          sizeCheck, target);
@@ -1122,8 +1577,8 @@ public class Img implements Iterable < Long > {
     *
     * @return the checker image
     */
-   public static final Img checker ( final Lab a, final Lab b,
-      final int wCheck, final int hCheck, final Img target ) {
+   public static final Img checker ( final Lab a, final Lab b, final int wCheck,
+      final int hCheck, final Img target ) {
 
       return Img.checker(a.toHexLongSat(), b.toHexLongSat(), wCheck, hCheck,
          target);
@@ -1139,8 +1594,8 @@ public class Img implements Iterable < Long > {
     *
     * @return the checker image
     */
-   public static Img checker ( final long a, final long b,
-      final int sizeCheck, final Img target ) {
+   public static Img checker ( final long a, final long b, final int sizeCheck,
+      final Img target ) {
 
       return Img.checker(a, b, sizeCheck, sizeCheck, target);
    }
@@ -1170,7 +1625,7 @@ public class Img implements Iterable < Long > {
 
       /*
        * User may want to blend checker over a layer beneath, so clear pixel
-       * should be allowed.F
+       * should be allowed.
        */
       final long va = a != b ? a : Img.CHECKER_DARK;
       final long vb = a != b ? b : Img.CHECKER_LIGHT;
@@ -1223,6 +1678,30 @@ public class Img implements Iterable < Long > {
       final int len = target.pixels.length;
       for ( int i = 0; i < len; ++i ) { target.pixels[i] = fill; }
       return target;
+   }
+
+   /**
+    * Hashes an image according to the <a href=
+    * "https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function">Fowler–Noll–Vo</a>
+    * method.
+    *
+    * @param source the image
+    *
+    * @return the hash
+    */
+   public static BigInteger fnvHash ( final Img source ) {
+
+      // TODO: TEST
+
+      final BigInteger fnvPrime = BigInteger.valueOf(1099511628211L);
+      BigInteger hash = new BigInteger("14695981039346656037");
+      final long[] srcPixels = source.pixels;
+      final int len = srcPixels.length;
+      for ( int i = 0; i < len; ++i ) {
+         hash = hash.xor(BigInteger.valueOf(srcPixels[i])).multiply(fnvPrime);
+      }
+
+      return hash;
    }
 
    /**
@@ -1291,9 +1770,9 @@ public class Img implements Iterable < Long > {
     * @param xDest  the destination x coordinate
     * @param yDest  the destination y coordinate
     * @param easing the easing function
-    * @param target the target pixels
+    * @param target the output image
     *
-    * @return the gradient pixels
+    * @return the gradient image
     *
     * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
     * @see Utils#max(float, float)
@@ -1345,9 +1824,9 @@ public class Img implements Iterable < Long > {
     * @param yOrig  the origin y coordinate
     * @param radius the radius
     * @param easing the easing function
-    * @param target the target pixels
+    * @param target the output image
     *
-    * @return the gradient pixels
+    * @return the gradient image
     *
     * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
     * @see Utils#max(float, float)
@@ -1395,9 +1874,9 @@ public class Img implements Iterable < Long > {
     * @param yOrig   the origin y coordinate
     * @param radians the angle in radians
     * @param easing  the easing function
-    * @param target  the target pixels
+    * @param target  the target image
     *
-    * @return the gradient pixels
+    * @return the gradient image
     *
     * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
     * @see Utils#mod1(float)
@@ -1495,8 +1974,7 @@ public class Img implements Iterable < Long > {
     *
     * @return the gray image
     */
-   public static final Img grayscale ( final Img source,
-      final Img target ) {
+   public static final Img grayscale ( final Img source, final Img target ) {
 
       if ( !Img.similar(source, target) ) { return target; }
 
@@ -1530,8 +2008,7 @@ public class Img implements Iterable < Long > {
     *
     * @return the inverted image
     */
-   public static final Img invertAB ( final Img source,
-      final Img target ) {
+   public static final Img invertAB ( final Img source, final Img target ) {
 
       return Img.invert(source, Img.ISOLATE_AB_MASK, target);
    }
@@ -1544,8 +2021,7 @@ public class Img implements Iterable < Long > {
     *
     * @return the inverted image
     */
-   public static final Img invertAlpha ( final Img source,
-      final Img target ) {
+   public static final Img invertAlpha ( final Img source, final Img target ) {
 
       return Img.invert(source, Img.ISOLATE_T_MASK, target);
    }
@@ -1558,34 +2034,9 @@ public class Img implements Iterable < Long > {
     *
     * @return the inverted image
     */
-   public static final Img invertLAB ( final Img source,
-      final Img target ) {
+   public static final Img invertLAB ( final Img source, final Img target ) {
 
       return Img.invert(source, Img.ISOLATE_LAB_MASK, target);
-   }
-
-   /**
-    * Hashes an image according to the <a href=
-    * "https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function">Fowler–Noll–Vo</a>
-    * method.
-    *
-    * @param source the image
-    *
-    * @return the hash
-    */
-   public static BigInteger fnvHash ( final Img source ) {
-
-      // TODO: TEST
-
-      final BigInteger fnvPrime = BigInteger.valueOf(1099511628211L);
-      BigInteger hash = new BigInteger("14695981039346656037");
-      final long[] srcPixels = source.pixels;
-      final int len = srcPixels.length;
-      for ( int i = 0; i < len; ++i ) {
-         hash = hash.xor(BigInteger.valueOf(srcPixels[i])).multiply(fnvPrime);
-      }
-
-      return hash;
    }
 
    /**
@@ -1596,8 +2047,7 @@ public class Img implements Iterable < Long > {
     *
     * @return the inverted image
     */
-   public static final Img invertLight ( final Img source,
-      final Img target ) {
+   public static final Img invertLight ( final Img source, final Img target ) {
 
       return Img.invert(source, Img.ISOLATE_L_MASK, target);
    }
@@ -1627,17 +2077,15 @@ public class Img implements Iterable < Long > {
 
       final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
-         if ( ( source.pixels[i] & Img.ISOLATE_T_MASK ) != 0 ) {
-            return false;
-         }
+         if ( ( source.pixels[i] & Img.ISOLATE_T_MASK ) != 0 ) { return false; }
       }
       return true;
    }
 
    /**
     * Tests whether an image contains all clear pixels. Pixels must be equal
-    * to {@link Img#CLEAR_PIXEL}, {@value Img#CLEAR_PIXEL}, to be
-    * considered clear.
+    * to {@link Img#CLEAR_PIXEL}, {@value Img#CLEAR_PIXEL}, to be considered
+    * clear.
     *
     * @param source the source image
     *
@@ -1662,8 +2110,8 @@ public class Img implements Iterable < Long > {
     *
     * @return the mixed image
     */
-   public static Img mix ( final Img orig, final Img dest,
-      final float fac, final Img target ) {
+   public static Img mix ( final Img orig, final Img dest, final float fac,
+      final Img target ) {
 
       /* Tested March 11 2025. */
 
@@ -1707,8 +2155,7 @@ public class Img implements Iterable < Long > {
     *
     * @return the multiplied alpha
     */
-   public static final Img mulAlpha ( final Img target,
-      final float alpha ) {
+   public static final Img mulAlpha ( final Img target, final float alpha ) {
 
       return Img.mulAlpha(target, Utils.round(Utils.abs(alpha) * 0xffff));
    }
@@ -1724,8 +2171,8 @@ public class Img implements Iterable < Long > {
     *
     * @return the normalized image
     */
-   public static final Img normalizeLight ( final Img source,
-      final float fac, final Img target ) {
+   public static final Img normalizeLight ( final Img source, final float fac,
+      final Img target ) {
 
       if ( !Img.similar(source, target) ) { return target; }
 
@@ -1850,8 +2297,7 @@ public class Img implements Iterable < Long > {
          final long c = target.pixels[i];
          final long t16Src = c >> Img.T_SHIFT & 0xffffL;
          final long t16Trg = t16Src < 0x80000L ? 0x0000L : 0xffffL;
-         target.pixels[i] = t16Trg << Img.T_SHIFT | c
-            & Img.ISOLATE_LAB_MASK;
+         target.pixels[i] = t16Trg << Img.T_SHIFT | c & Img.ISOLATE_LAB_MASK;
       }
       return target;
    }
@@ -1935,10 +2381,9 @@ public class Img implements Iterable < Long > {
     * @param source the source image
     * @param target the target image
     *
-    * @return the rotated pixels
+    * @return the rotated image
     */
-   public static final Img rotate180 ( final Img source,
-      final Img target ) {
+   public static final Img rotate180 ( final Img source, final Img target ) {
 
       if ( !Img.similar(source, target) ) { return target; }
       final int len = source.pixels.length;
@@ -1950,23 +2395,68 @@ public class Img implements Iterable < Long > {
    }
 
    /**
-    * Separates a source image into four images which emphasize the LAB
+    * Rotates the source image 270 degrees counter-clockwise (90 degrees
+    * clockwise). The rotation is stored in the target. Changes the target's
+    * width and height.
+    *
+    * @param source the input image
+    * @param target the output image
+    *
+    * @return the rotated image
+    */
+   public static final Img rotate270 ( final Img source, final Img target ) {
+
+      final int w = source.width;
+      final int h = source.height;
+      final int len = source.pixels.length;
+      final int hn1 = h - 1;
+      for ( int i = 0; i < len; ++i ) {
+         target.pixels[i % w * h + hn1 - i / w] = source.pixels[i];
+      }
+
+      target.width = h;
+      target.height = w;
+
+      return target;
+   }
+
+   /**
+    * Rotates the source image 90 degrees counter-clockwise. The rotation is
+    * stored in the target. Changes the target's width and height.
+    *
+    * @param source the input image
+    * @param target the output image
+    *
+    * @return the rotated image
+    */
+   public static final Img rotate90 ( final Img source, final Img target ) {
+
+      final int w = source.width;
+      final int h = source.height;
+      final int len = source.pixels.length;
+      final int lennh = len - h;
+      for ( int i = 0; i < len; ++i ) {
+         target.pixels[lennh + i / w - i % w * h] = source.pixels[i];
+      }
+
+      target.width = h;
+      target.height = w;
+
+      return target;
+   }
+
+   /**
+    * Separates a source image into 3 images which emphasize the LAB
     * components. The appropriate lightness for some channels will depend on
-    * whether they'll be recombined with additive blending later. Expected
-    * range for lightness is [0, 65535].
+    * whether they'll be recombined with additive blending later.
     *
     * @param source the source image
     * @param lForAb lightness for chroma channel images
-    * @param lForT  lightness for alpha channel images
     *
     * @return the separated images
     */
    @Experimental
-   public static Img[] sepLab ( final Img source, final long lForAb,
-      final long lForT ) {
-
-      // TODO: If or when this is sorted out, make an override image that
-      // accepts lforabj and lfort as floats in [0.0, 1.0].
+   public static Img[] sepLab ( final Img source, final float lForAb ) {
 
       final long[] srcPixels = source.pixels;
       final int len = srcPixels.length;
@@ -1974,10 +2464,9 @@ public class Img implements Iterable < Long > {
       final long[] lPixels = new long[len];
       final long[] aPixels = new long[len];
       final long[] bPixels = new long[len];
-      final long[] tPixels = new long[len];
 
-      final long lForTMask = lForT << Img.L_SHIFT;
-      final long lForAbMask = lForAb << Img.L_SHIFT;
+      final long lForAbMask = ( long ) ( Utils.clamp(lForAb, 0.0f, 100.0f)
+         * Lab.L_TO_SHORT + 0.5f ) << Img.L_SHIFT;
 
       for ( int i = 0; i < len; ++i ) {
          final long srcPixel = srcPixels[i];
@@ -1986,7 +2475,6 @@ public class Img implements Iterable < Long > {
          final long aIso = srcPixel & Img.ISOLATE_A_MASK;
          final long bIso = srcPixel & Img.ISOLATE_B_MASK;
 
-         tPixels[i] = tIso | lForTMask;
          lPixels[i] = tIso | lIso;
          aPixels[i] = tIso | lForAbMask | aIso;
          bPixels[i] = tIso | lForAbMask | bIso;
@@ -1997,7 +2485,6 @@ public class Img implements Iterable < Long > {
 
       /* @formatter:off */
       return new Img[] {
-         new Img(w, h, tPixels),
          new Img(w, h, lPixels),
          new Img(w, h, aPixels),
          new Img(w, h, bPixels)
@@ -2006,7 +2493,7 @@ public class Img implements Iterable < Long > {
    }
 
    /**
-    * Separates a source image into four images which emphasize the LAB
+    * Separates a source image into 3 images which emphasize the LAB
     * components.
     *
     * @param source         the source image
@@ -2019,7 +2506,6 @@ public class Img implements Iterable < Long > {
       final boolean usePreMultiply ) {
 
       final int len = source.pixels.length;
-      final long[] tPixels = new long[len];
       final long[] rPixels = new long[len];
       final long[] gPixels = new long[len];
       final long[] bPixels = new long[len];
@@ -2042,6 +2528,7 @@ public class Img implements Iterable < Long > {
          if ( usePreMultiply ) { Rgb.premul(srgb, srgb); }
          Rgb.clamp01(srgb, srgb);
 
+         // TODO: Can you set alpha to zero here and avoid the bit and below?
          rIso.set(srgb.r, 0.0f, 0.0f, 1.0f);
          gIso.set(0.0f, srgb.g, 0.0f, 1.0f);
          bIso.set(0.0f, 0.0f, srgb.b, 1.0f);
@@ -2062,10 +2549,7 @@ public class Img implements Iterable < Long > {
          // }
 
          final long tIso = tlab64 & Img.ISOLATE_T_MASK;
-         final long lForT = usePreMultiply ? tIso >> Img.T_SHIFT
-            << Img.L_SHIFT : Img.ISOLATE_L_MASK;
 
-         tPixels[i] = tIso | lForT;
          rPixels[i] = tIso | rLab64;
          gPixels[i] = tIso | gLab64;
          bPixels[i] = tIso | bLab64;
@@ -2076,7 +2560,6 @@ public class Img implements Iterable < Long > {
 
       /* @formatter:off */
       return new Img[] {
-         new Img(w, h, tPixels),
          new Img(w, h, rPixels),
          new Img(w, h, gPixels),
          new Img(w, h, bPixels)
@@ -2115,6 +2598,8 @@ public class Img implements Iterable < Long > {
          } else {
             Lab.fromHex(tlab64, lab);
             Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
+            // TODO: If you wanted to tone map the image, it'd have to be
+            // done here.
             argb32 = srgb.toHexIntSat();
             convert.put(tlab64Obj, argb32);
          }
@@ -2174,8 +2659,7 @@ public class Img implements Iterable < Long > {
     *
     * @return the multiplied alpha
     */
-   protected static final Img mulAlpha ( final Img target,
-      final long alpha ) {
+   protected static final Img mulAlpha ( final Img target, final long alpha ) {
 
       if ( alpha <= 0x0000L ) { return Img.clear(target); }
       if ( alpha == 0xffffL ) { return target; }
@@ -2186,8 +2670,7 @@ public class Img implements Iterable < Long > {
          final long t16Src = c >> Img.T_SHIFT & 0xffffL;
          final long t16Trg = t16Src * alpha / 0xffffL;
          final long t16TrgCl = t16Trg > 0xffffL ? 0xffffL : t16Trg;
-         target.pixels[i] = t16TrgCl << Img.T_SHIFT | c
-            & Img.ISOLATE_LAB_MASK;
+         target.pixels[i] = t16TrgCl << Img.T_SHIFT | c & Img.ISOLATE_LAB_MASK;
       }
 
       return target;
@@ -2221,8 +2704,7 @@ public class Img implements Iterable < Long > {
     * @return the dictionary
     */
    protected static final TreeMap < Long, ArrayList < Integer > > toTreeMap (
-      final Img source, final TreeMap < Long, ArrayList <
-         Integer > > target ) {
+      final Img source, final TreeMap < Long, ArrayList < Integer > > target ) {
 
       // TODO: What would the public facing version of this method look like?
       // Maybe it would be TreeMap < Lab, integer[] >.
@@ -2265,7 +2747,21 @@ public class Img implements Iterable < Long > {
    /**
     * Policy for handling gray colors when adjusting by LCH.
     */
-   public enum GrayPolicy { COOL, OMIT, WARM, ZERO }
+   public enum GrayPolicy {
+
+      /** Gray colors have a hue on the cool side of the color wheel. */
+      COOL,
+
+      /** Do not saturate gray colors. */
+      OMIT,
+
+      /** Gray colors have a hue on the warm side of the color wheel. */
+      WARM,
+
+      /** Gray colors have zero hue. */
+      ZERO
+
+   }
 
    /**
     * An iterator, which allows a face's edges to be accessed in an enhanced
@@ -2329,6 +2825,17 @@ public class Img implements Iterable < Long > {
    /**
     * Policy for handling the pivot when adjusting contrast.
     */
-   public enum PivotPolicy { FIXED, MEAN, RANGE }
+   public enum PivotPolicy {
+
+      /** Pivot around a fixed number. */
+      FIXED,
+
+      /** Pivot around the arithmetic mean (average). */
+      MEAN,
+
+      /** Pivot around the average of the minimum and maximum. */
+      RANGE
+
+   }
 
 }

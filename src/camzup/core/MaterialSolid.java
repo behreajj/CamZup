@@ -483,7 +483,7 @@ public class MaterialSolid extends Material {
       final float metallic, final float roughness ) {
 
       pyCd.append("{\"name\": \"");
-      if ( Character.isDigit(this.name.charAt(0)) ) { pyCd.append("id"); }
+      pyCd.append("id");
       pyCd.append(this.name);
       pyCd.append("\", \"fill\": ");
       this.fill.toBlenderCode(pyCd, gamma, true);

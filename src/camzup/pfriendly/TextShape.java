@@ -251,8 +251,7 @@ public abstract class TextShape {
                      xCursor += spaceWidth * scalar;
                   } else {
 
-                     final CurveEntity2 entity = new CurveEntity2(Character
-                        .toString(character));
+                     final CurveEntity2 entity = new CurveEntity2();
                      entities.add(entity);
 
                      TextShape.processGlyphCurve(font, frc, null, valDispScl,

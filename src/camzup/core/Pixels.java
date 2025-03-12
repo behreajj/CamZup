@@ -1026,56 +1026,6 @@ public abstract class Pixels {
    }
 
    /**
-    * Rotates the source pixel array 270 degrees counter-clockwise. The
-    * rotation is stored in the target pixel array.
-    *
-    * @param source the source pixels
-    * @param w      the image width
-    * @param h      the image height
-    * @param target the target pixels
-    *
-    * @return the rotated pixels
-    */
-   public static int[] rotate270 ( final int[] source, final int w, final int h,
-      final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-         final int hn1 = h - 1;
-         for ( int i = 0; i < srcLen; ++i ) {
-            target[i % w * h + hn1 - i / w] = source[i];
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Rotates the source pixel array 90 degrees counter-clockwise. The
-    * rotation is stored in the target pixel array.
-    *
-    * @param source the source pixels
-    * @param w      the image width
-    * @param h      the image height
-    * @param target the target pixels
-    *
-    * @return the rotated pixels
-    */
-   public static int[] rotate90 ( final int[] source, final int w, final int h,
-      final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-         final int srcLennh = srcLen - h;
-         for ( int i = 0; i < srcLen; ++i ) {
-            target[srcLennh + i / w - i % w * h] = source[i];
-         }
-      }
-
-      return target;
-   }
-
-   /**
     * Rotates the pixels of a source image around the image center by an angle
     * in radians. Assumes that the sine and cosine of the angle have already
     * been calculated and simple cases (0, 90, 180, 270 degrees) have been
@@ -1142,13 +1092,15 @@ public abstract class Pixels {
     *
     * @return rotated pixels
     *
-    * @see Pixels#rotate90(int[], int, int, int[])
-    * @see Pixels#rotate270(int[], int, int, int[])
     * @see Utils#mod(int, int)
     * @see Utils#round(float)
     */
    public static int[] rotateBilinear ( final int[] source, final int wSrc,
       final int hSrc, final float angle, final Vec2 dim ) {
+
+      // TODO: Split into an internal function which accepts a sine and cosine
+      // and a public function that accepts an angle but vets to see if 90, 180
+      // and 270 can be used.
 
       final int srcLen = source.length;
       final int deg = Utils.mod(Utils.round(angle * IUtils.RAD_TO_DEG), 360);
@@ -1159,17 +1111,17 @@ public abstract class Pixels {
             System.arraycopy(source, 0, target, 0, srcLen);
             return target;
 
-         case 90:
-            if ( dim != null ) { dim.set(hSrc, wSrc); }
-            return Pixels.rotate90(source, wSrc, hSrc, new int[srcLen]);
+         // case 90:
+         // if ( dim != null ) { dim.set(hSrc, wSrc); }
+         // return Pixels.rotate90(source, wSrc, hSrc, new int[srcLen]);
 
          // case 180:
          // if ( dim != null ) { dim.set(wSrc, hSrc); }
          // return Pixels.rotate180(source, new int[srcLen]);
 
-         case 270:
-            if ( dim != null ) { dim.set(hSrc, wSrc); }
-            return Pixels.rotate270(source, wSrc, hSrc, new int[srcLen]);
+         // case 270:
+         // if ( dim != null ) { dim.set(hSrc, wSrc); }
+         // return Pixels.rotate270(source, wSrc, hSrc, new int[srcLen]);
 
          default:
             final double avd = angle;

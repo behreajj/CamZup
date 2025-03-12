@@ -557,8 +557,8 @@ public class Lab implements IColor {
    /**
     * Assigns the alpha of the destination color to the origin.
     *
-    * @param o      the origin color
-    * @param d      the destination color
+    * @param u      the under color
+    * @param o      the over color
     * @param target the target color
     *
     * @return the color
@@ -566,17 +566,17 @@ public class Lab implements IColor {
     * @see Math#sqrt(double)
     * @see Lab#gray(Lab, Lab)
     */
-   public static final Lab adoptAlpha ( final Lab o, final Lab d,
+   public static final Lab adoptAlpha ( final Lab u, final Lab o,
       final Lab target ) {
 
-      return target.set(o.l, o.a, o.b, d.alpha);
+      return target.set(u.l, u.a, u.b, o.alpha);
    }
 
    /**
     * Assigns the chroma of the destination color to the origin.
     *
-    * @param o      the origin color
-    * @param d      the destination color
+    * @param u      the under color
+    * @param o      the over color
     * @param target the target color
     *
     * @return the color
@@ -584,52 +584,52 @@ public class Lab implements IColor {
     * @see Math#sqrt(double)
     * @see Lab#gray(Lab, Lab)
     */
-   public static final Lab adoptChroma ( final Lab o, final Lab d,
+   public static final Lab adoptChroma ( final Lab u, final Lab o,
+      final Lab target ) {
+
+      final double ua = u.a;
+      final double ub = u.b;
+      final double ucSq = ua * ua + ub * ub;
+      if ( ucSq > IUtils.EPSILON_D ) {
+         final double oa = o.a;
+         final double ob = o.b;
+         final double ocSq = oa * oa + ob * ob;
+
+         final double s = Math.sqrt(ocSq) / Math.sqrt(ucSq);
+         return target.set(u.l, ( float ) ( s * ua ), ( float ) ( s * ub ),
+            u.alpha);
+      }
+      return Lab.gray(u, target);
+   }
+
+   /**
+    * Assigns the hue of the destination color to the origin.
+    *
+    * @param u      the under color
+    * @param o      the over color
+    * @param target the target color
+    *
+    * @return the color
+    *
+    * @see Math#sqrt(double)
+    * @see Lab#gray(Lab, Lab)
+    */
+   public static final Lab adoptHue ( final Lab u, final Lab o,
       final Lab target ) {
 
       final double oa = o.a;
       final double ob = o.b;
       final double ocSq = oa * oa + ob * ob;
       if ( ocSq > IUtils.EPSILON_D ) {
-         final double da = d.a;
-         final double db = d.b;
-         final double dcSq = da * da + db * db;
+         final double ua = u.a;
+         final double ub = u.b;
+         final double ucSq = ua * ua + ub * ub;
 
-         final double s = Math.sqrt(dcSq) / Math.sqrt(ocSq);
-         return target.set(o.l, ( float ) ( s * oa ), ( float ) ( s * ob ),
-            o.alpha);
+         final double s = Math.sqrt(ucSq) / Math.sqrt(ocSq);
+         return target.set(u.l, ( float ) ( s * oa ), ( float ) ( s * ob ),
+            u.alpha);
       }
-      return Lab.gray(o, target);
-   }
-
-   /**
-    * Assigns the hue of the destination color to the origin.
-    *
-    * @param o      the origin color
-    * @param d      the destination color
-    * @param target the target color
-    *
-    * @return the color
-    *
-    * @see Math#sqrt(double)
-    * @see Lab#gray(Lab, Lab)
-    */
-   public static final Lab adoptHue ( final Lab o, final Lab d,
-      final Lab target ) {
-
-      final double da = d.a;
-      final double db = d.b;
-      final double dcSq = da * da + db * db;
-      if ( dcSq > IUtils.EPSILON_D ) {
-         final double oa = o.a;
-         final double ob = o.b;
-         final double ocSq = oa * oa + ob * ob;
-
-         final double s = Math.sqrt(ocSq) / Math.sqrt(dcSq);
-         return target.set(o.l, ( float ) ( s * da ), ( float ) ( s * db ),
-            o.alpha);
-      }
-      return Lab.gray(o, target);
+      return Lab.gray(u, target);
    }
 
    /**
@@ -931,31 +931,6 @@ public class Lab implements IColor {
    }
 
    /**
-    * Converts a hexadecimal representation of a color stored as
-    * 0xTTTTLLLLAAAABBBB, T being alpha.
-    *
-    * @param hex    the color in hexadecimal
-    * @param target the output color
-    *
-    * @return the color
-    */
-   public static Lab fromHex ( final long hex, final Lab target ) {
-
-      final long t16 = hex >> 0x30L & 0xffffL;
-      final long l16 = hex >> 0x20L & 0xffffL;
-      final long a16 = hex >> 0x10L & 0xffffL;
-      final long b16 = hex & 0xffffL;
-
-      /* @formatter:off */
-      return target.set(
-         l16 * Lab.L_FROM_SHORT,
-         ( a16 - 32768L ) * Lab.AB_FROM_SHORT,
-         ( b16 - 32768L ) * Lab.AB_FROM_SHORT,
-         t16 / 65535.0f);
-      /* @formatter:on */
-   }
-
-   /**
     * Converts a hexadecimal representation of a color stored as 0xTTLLAABB, T
     * being alpha.
     *
@@ -1000,6 +975,31 @@ public class Lab implements IColor {
          result[i] = Lab.fromHex(hexes[i], new Lab());
       }
       return result;
+   }
+
+   /**
+    * Converts a hexadecimal representation of a color stored as
+    * 0xTTTTLLLLAAAABBBB, T being alpha.
+    *
+    * @param hex    the color in hexadecimal
+    * @param target the output color
+    *
+    * @return the color
+    */
+   public static Lab fromHex ( final long hex, final Lab target ) {
+
+      final long t16 = hex >> 0x30L & 0xffffL;
+      final long l16 = hex >> 0x20L & 0xffffL;
+      final long a16 = hex >> 0x10L & 0xffffL;
+      final long b16 = hex & 0xffffL;
+
+      /* @formatter:off */
+      return target.set(
+         l16 * Lab.L_FROM_SHORT,
+         ( a16 - 32768L ) * Lab.AB_FROM_SHORT,
+         ( b16 - 32768L ) * Lab.AB_FROM_SHORT,
+         t16 / 65535.0f);
+      /* @formatter:on */
    }
 
    /**
