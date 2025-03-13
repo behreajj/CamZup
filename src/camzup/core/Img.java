@@ -32,6 +32,19 @@ public class Img {
    protected int width;
 
    /**
+    * Constructs an image with a {@link Img#DEFAULT_WIDTH} and
+    * {@link Img#DEFAULT_HEIGHT}.
+    */
+   public Img ( ) {
+
+      // TODO: Function to set all zero alpha pixels to clear pixel?
+
+      // TODO: swap alpha to light, light to alpha methods?
+
+      this(Img.DEFAULT_WIDTH, Img.DEFAULT_HEIGHT, Img.CLEAR_PIXEL);
+   }
+
+   /**
     * Constructs an image from a source.
     *
     * @param source the source image.
@@ -51,10 +64,6 @@ public class Img {
     * @param height the height
     */
    public Img ( final int width, final int height ) {
-
-      // TODO: Function to set all zero alpha pixels to clear pixel?
-
-      // TODO: swap alpha to light, light to alpha methods?
 
       this(width, height, Img.CLEAR_PIXEL);
    }
@@ -208,7 +217,7 @@ public class Img {
    public final long getPixelOmit ( final int x, final int y,
       final long defaultPixel ) {
 
-      return ( y >= 0 && y < this.height && x >= 0 && x < this.width )
+      return y >= 0 && y < this.height && x >= 0 && x < this.width
          ? this.pixels[y * this.width + x] : defaultPixel;
    }
 
@@ -538,10 +547,16 @@ public class Img {
     */
    public static final GrayPolicy DEFAULT_GRAY_POLICY = GrayPolicy.OMIT;
 
+   /* The default height when none is given. */
+   public static final int DEFAULT_HEIGHT = 128;
+
    /**
     * The default policy on pivots when adjusting chroma by a factor.
     */
    public static final PivotPolicy DEFAULT_PIVOT_POLICY = PivotPolicy.MEAN;
+
+   /* The default width when none is given. */
+   public static final int DEFAULT_WIDTH = 128;
 
    /**
     * Mask to isolate the lightness channel.
