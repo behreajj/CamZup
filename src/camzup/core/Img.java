@@ -4310,7 +4310,7 @@ public class Img {
    public enum PivotPolicy {
 
       /**
-       * Pivot around a fixed number. 
+       * Pivot around a fixed number.
        */
       FIXED,
 

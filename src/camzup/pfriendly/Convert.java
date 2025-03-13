@@ -165,7 +165,7 @@ public abstract class Convert {
    /**
     * Converts a LabImage to a PImage.
     *
-    * @param source  the source image
+    * @param source the source image
     *
     * @return the PImage
     */

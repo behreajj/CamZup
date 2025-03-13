@@ -1685,32 +1685,6 @@ public class Rgb implements IColor {
    }
 
    /**
-    * Clamps the RGB channels to the range [0.0, 1.0].
-    */
-   public static final class ToneMapClamp extends AbstrToneMap {
-
-      /**
-       * The default constructor.
-       */
-      public ToneMapClamp ( ) {}
-
-      /**
-       * Applies a tone map.
-       *
-       * @param source the input color
-       * @param target the output color
-       *
-       * @return the mapped color
-       */
-      @Override
-      public Rgb apply ( final Rgb source, final Rgb target ) {
-
-         return Rgb.clamp01(source, target);
-      }
-
-   }
-
-   /**
     * Tone maps RGB channels using the ACES method. See
     * https://64.github.io/tonemapping/ .
     */
@@ -1739,17 +1713,23 @@ public class Rgb implements IColor {
 
          Rgb.sRgbTolRgb(source, false, this.lrgb);
 
-         final float rFrwrd = 0.59719f * this.lrgb.r + 0.35458f * this.lrgb.g + 0.04823f * this.lrgb.b;
-         final float gFrwrd = 0.076f * this.lrgb.r + 0.90834f * this.lrgb.g + 0.01566f * this.lrgb.b;
-         final float bFrwrd = 0.0284f * this.lrgb.r + 0.13383f * this.lrgb.g + 0.83777f * this.lrgb.b;
+         final float rFrwrd = 0.59719f * this.lrgb.r + 0.35458f * this.lrgb.g
+            + 0.04823f * this.lrgb.b;
+         final float gFrwrd = 0.076f * this.lrgb.r + 0.90834f * this.lrgb.g
+            + 0.01566f * this.lrgb.b;
+         final float bFrwrd = 0.0284f * this.lrgb.r + 0.13383f * this.lrgb.g
+            + 0.83777f * this.lrgb.b;
 
-         final float ar = rFrwrd * (rFrwrd + 0.0245786f) - 0.000090537f;
-         final float ag = gFrwrd * (gFrwrd + 0.0245786f) - 0.000090537f;
-         final float ab = bFrwrd * (bFrwrd + 0.0245786f) - 0.000090537f;
+         final float ar = rFrwrd * ( rFrwrd + 0.0245786f ) - 0.000090537f;
+         final float ag = gFrwrd * ( gFrwrd + 0.0245786f ) - 0.000090537f;
+         final float ab = bFrwrd * ( bFrwrd + 0.0245786f ) - 0.000090537f;
 
-         final float br = rFrwrd * (0.983729f * rFrwrd + 0.432951f) + 0.238081f;
-         final float bg = gFrwrd * (0.983729f * gFrwrd + 0.432951f) + 0.238081f;
-         final float bb = bFrwrd * (0.983729f * bFrwrd + 0.432951f) + 0.238081f;
+         final float br = rFrwrd * ( 0.983729f * rFrwrd + 0.432951f )
+            + 0.238081f;
+         final float bg = gFrwrd * ( 0.983729f * gFrwrd + 0.432951f )
+            + 0.238081f;
+         final float bb = bFrwrd * ( 0.983729f * bFrwrd + 0.432951f )
+            + 0.238081f;
 
          final float cr = Utils.div(ar, br);
          final float cg = Utils.div(ag, bg);
@@ -1762,6 +1742,33 @@ public class Rgb implements IColor {
          target.set(rBckwd, gBckwd, bBckwd, this.lrgb.alpha);
          return Rgb.lRgbTosRgb(Rgb.clamp01(target, target), false, target);
       }
+
+   }
+
+   /**
+    * Clamps the RGB channels to the range [0.0, 1.0].
+    */
+   public static final class ToneMapClamp extends AbstrToneMap {
+
+      /**
+       * The default constructor.
+       */
+      public ToneMapClamp ( ) {}
+
+      /**
+       * Applies a tone map.
+       *
+       * @param source the input color
+       * @param target the output color
+       *
+       * @return the mapped color
+       */
+      @Override
+      public Rgb apply ( final Rgb source, final Rgb target ) {
+
+         return Rgb.clamp01(source, target);
+      }
+
    }
 
    /**
