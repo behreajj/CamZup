@@ -23,6 +23,7 @@ import camzup.core.MeshEntity2;
 import camzup.core.MeshEntity3;
 import camzup.core.Quaternion;
 import camzup.core.Recursive;
+import camzup.core.Rgb;
 import camzup.core.Transform2;
 import camzup.core.Transform3;
 import camzup.core.TransformOrder;
@@ -164,20 +165,19 @@ public abstract class Convert {
    /**
     * Converts a LabImage to a PImage.
     *
-    * @param source the source image
+    * @param source  the source image
+    * @param toneMap the tone map
     *
     * @return the PImage
     */
-   public static PImage toPImage ( final Img source ) {
-
+   public static PImage toPImage ( final Img source,
+      final Rgb.AbstrToneMap toneMap ) {
       // TODO: How to handle pixel density? Might have to do a resize.
-
-      // TODO: Provide Hable tone mapping, see CSharpWork for reference?
 
       final PImage target = new PImage(source.getWidth(), source.getHeight(),
          PConstants.ARGB, 1);
       target.loadPixels();
-      target.pixels = Img.toArgb32(source);
+      target.pixels = Img.toArgb32(source, toneMap);
       target.updatePixels();
 
       return target;
