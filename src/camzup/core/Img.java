@@ -1101,8 +1101,6 @@ public class Img {
                float hTrg = 0.0f;
                final boolean isGray = lch.c < IUtils.EPSILON;
                if ( isGray ) {
-                  // TODO: This needs to be tested.
-
                   switch ( policy ) {
                      case COOL: {
                         final float t = lch.l * 0.01f;
@@ -1829,8 +1827,6 @@ public class Img {
     */
    public static BigInteger fnvHash ( final Img source ) {
 
-      // TODO: TEST
-
       final BigInteger fnvPrime = BigInteger.valueOf(1099511628211L);
       BigInteger hash = new BigInteger("14695981039346656037");
       final long[] srcPixels = source.pixels;
@@ -2486,6 +2482,108 @@ public class Img {
    }
 
    /**
+    * Mirrors, or reflects, pixels from a source image across the axis
+    * described by an origin and destination. Coordinates are expected to be
+    * in the range [-1.0, 1.0]. Out-of-bounds pixels are omitted from the
+    * mirror.
+    *
+    * @param source the source image
+    * @param xOrig  the origin x
+    * @param yOrig  the origin y
+    * @param xDest  the destination x
+    * @param yDest  the destination y
+    * @param flip   the flip reflection flag
+    * @param target the target image
+    *
+    * @return the mirrored image
+    */
+   public static Img mirror ( final Img source, final float xOrig,
+      final float yOrig, final float xDest, final float yDest,
+      final boolean flip, final Img target ) {
+
+      // TODO: Provide method overloads with Vec2 for orig and dest.
+
+      final int wSrc = source.width;
+      final int hSrc = source.height;
+      final int srcLen = source.pixels.length;
+
+      if ( !Img.similar(source, target) ) {
+         target.width = wSrc;
+         target.height = hSrc;
+         target.pixels = new long[srcLen];
+      }
+
+      final float wfn1 = wSrc - 1.0f;
+      final float hfn1 = hSrc - 1.0f;
+      final float wfp1Half = ( wSrc + 1.0f ) * 0.5f;
+      final float hfp1Half = ( hSrc + 1.0f ) * 0.5f;
+
+      final float ax = ( xOrig + 1.0f ) * wfp1Half - 0.5f;
+      final float bx = ( xDest + 1.0f ) * wfp1Half - 0.5f;
+      final float ay = ( yOrig - 1.0f ) * -hfp1Half - 0.5f;
+      final float by = ( yDest - 1.0f ) * -hfp1Half - 0.5f;
+
+      final float dx = bx - ax;
+      final float dy = by - ay;
+      final boolean dxZero = Utils.approx(dx, 0.0f, 0.5f);
+      final boolean dyZero = Utils.approx(dy, 0.0f, 0.5f);
+
+      final int trgLen = target.pixels.length;
+      if ( dxZero && dyZero ) {
+         System.arraycopy(source.pixels, 0, target, 0, srcLen < trgLen ? srcLen
+            : trgLen);
+         return target;
+      }
+
+      if ( dxZero ) {
+         return Img.mirrorX(source, Utils.round(bx), flip ? ay > by : by > ay,
+            target);
+      }
+
+      if ( dyZero ) {
+         return Img.mirrorY(source, Utils.round(by), flip ? bx > ax : ax > bx,
+            target);
+      }
+
+      final float dMagSqInv = 1.0f / ( dx * dx + dy * dy );
+      final float flipSign = flip ? -1.0f : 1.0f;
+
+      for ( int k = 0; k < trgLen; ++k ) {
+         final float cy = k / wSrc;
+         final float ey = cy - ay;
+         final float cx = k % wSrc;
+         final float ex = cx - ax;
+
+         final float cross = ex * dy - ey * dx;
+         if ( flipSign * cross < 0.0f ) {
+            target.pixels[k] = source.pixels[k];
+         } else {
+            final float t = ( ex * dx + ey * dy ) * dMagSqInv;
+            final float u = 1.0f - t;
+
+            final float pyProj = u * ay + t * by;
+            final float pyOpp = pyProj + pyProj - cy;
+
+            final float pxProj = u * ax + t * bx;
+            final float pxOpp = pxProj + pxProj - cx;
+
+            /*
+             * Default to omitting pixels that are out-of-bounds, rather than
+             * wrapping with floor modulo or clamping.
+             */
+            if ( pyOpp >= 0.0f && pyOpp <= hfn1 && pxOpp >= 0.0f && pxOpp
+               <= wfn1 ) {
+               target.pixels[k] = Img.sampleBilinear(source, pxOpp, pyOpp);
+            } else {
+               target.pixels[k] = Img.CLEAR_PIXEL;
+            }
+         }
+      }
+
+      return target;
+   }
+
+   /**
     * Mirrors, or reflects, pixels from a source image horizontally across a
     * pivot. The pivot is expected to be in [-1, width + 1].
     *
@@ -2499,11 +2597,18 @@ public class Img {
    public static Img mirrorX ( final Img source, final int pivot,
       final boolean flip, final Img target ) {
 
-      final int trgLen = target.pixels.length;
-      final int flipSign = flip ? 1 : -1;
       final int w = source.width;
+      final int h = source.height;
+      final int srcLen = source.pixels.length;
 
-      for ( int k = 0; k < trgLen; ++k ) {
+      if ( !Img.similar(source, target) ) {
+         target.width = w;
+         target.height = h;
+         target.pixels = new long[srcLen];
+      }
+
+      final int flipSign = flip ? 1 : -1;
+      for ( int k = 0; k < srcLen; ++k ) {
          final int cross = k % w - pivot;
          if ( flipSign * cross < 0 ) {
             target.pixels[k] = source.pixels[k];
@@ -2535,12 +2640,18 @@ public class Img {
    public static Img mirrorY ( final Img source, final int pivot,
       final boolean flip, final Img target ) {
 
-      final int trgLen = target.pixels.length;
-      final int flipSign = flip ? 1 : -1;
       final int w = source.width;
       final int h = source.height;
+      final int srcLen = source.pixels.length;
 
-      for ( int k = 0; k < trgLen; ++k ) {
+      if ( !Img.similar(source, target) ) {
+         target.width = w;
+         target.height = h;
+         target.pixels = new long[srcLen];
+      }
+
+      final int flipSign = flip ? 1 : -1;
+      for ( int k = 0; k < srcLen; ++k ) {
          final int cross = k / w - pivot;
          if ( flipSign * cross < 0 ) {
             target.pixels[k] = source.pixels[k];
@@ -3794,6 +3905,8 @@ public class Img {
          final float u = 1.0f - xErr;
          t1 = u * t01 + xErr * t11;
          if ( t1 > 0.0f ) {
+            // TODO: Do you need to subtract 0x8000L from a and b?
+
             /* @formatter:off */
             l1 =    u * ( c01 >> Img.L_SHIFT & 0xffffL )
                + xErr * ( c11 >> Img.L_SHIFT & 0xffffL );
