@@ -1092,26 +1092,4 @@ public class Complex implements Comparable < Complex > {
       return result;
    }
 
-   /**
-    * An abstract class that may serve as an umbrella for any custom
-    * comparators of complex numbers.
-    */
-   public abstract static class AbstrComparator implements Comparator <
-      Complex > {
-
-      /**
-       * The default constructor.
-       */
-      protected AbstrComparator ( ) {}
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
-
-   }
-
 }
