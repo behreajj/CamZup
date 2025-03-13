@@ -1,5 +1,7 @@
 package camzup.core;
 
+import java.util.function.BiFunction;
+
 /**
  * A mutable, extensible color class that stores red, green, blue and alpha
  * in the range [0.0, 1.0]. Assumes color channels are in the standard RGB
@@ -660,26 +662,6 @@ public class Rgb implements IColor {
          ( hex         & 0xff ) * IUtils.ONE_255,
          ( hex >> 0x18 & 0xff ) * IUtils.ONE_255);
       /* @formatter:on */
-   }
-
-   /**
-    * Converts an array of integers that represent colors in hexadecimal into
-    * an array of colors
-    *
-    * @param hexes the colors
-    *
-    * @return the array
-    *
-    * @see Rgb#fromHex(int, Rgb)
-    */
-   public static Rgb[] fromHex ( final int[] hexes ) {
-
-      final int len = hexes.length;
-      final Rgb[] result = new Rgb[len];
-      for ( int i = 0; i < len; ++i ) {
-         result[i] = Rgb.fromHex(hexes[i], new Rgb());
-      }
-      return result;
    }
 
    /**
@@ -1680,4 +1662,46 @@ public class Rgb implements IColor {
          u * orig.b + step * dest.b, u * orig.alpha + step * dest.alpha);
    }
 
+   /**
+    * An abstract class to facilitate the creation of RGB tone mapping functions.
+    */
+   public abstract static class AbstrToneMap implements BiFunction < Rgb, Rgb, Rgb>  {
+
+      /**
+       * The default constructor.
+       */
+      protected AbstrToneMap () {}
+
+      /**
+       * Returns the simple name of this class.
+       *
+       * @return the string
+       */
+      @Override
+      public String toString ( ) { return this.getClass().getSimpleName(); }
+   }
+
+   /**
+    * Clamps the RGB channels to the range [0.0, 1.0].
+    */
+   public static class ToneMapClamp extends AbstrToneMap {
+      
+      /**
+       * The default constructor.
+       */
+      public ToneMapClamp () {}
+
+      /**
+       * Applies a tone map.
+       * 
+       * @param source the input color
+       * @param target the output color
+       * 
+       * @return the mapped color
+       */
+      @Override
+      public Rgb apply(final Rgb source, final Rgb target) {
+         return Rgb.clamp01(source, target);
+      }
+   }
 }

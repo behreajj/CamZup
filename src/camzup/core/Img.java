@@ -47,6 +47,9 @@ public class Img {
       // a mask and shift would be outside the for loop, e.g.,
       // mask = useLight ? L_MASK : T_MASK .
 
+      // TODO: Option to quantize image? Maybe in rgb or maybe the light
+      // channel only?
+
       this(Img.DEFAULT_WIDTH, Img.DEFAULT_HEIGHT, Img.CLEAR_PIXEL);
    }
 
@@ -3707,13 +3710,28 @@ public class Img {
     *
     * @return the pixels
     */
-   public static final int[] toArgb32 ( final Img source ) {
+   public static final int[] toArgb32 (Img source) {
+      return toArgb32(source, new Rgb.ToneMapClamp());
+   }
+
+   /**
+    * Converts a LAB image to an array of 32-bit AARRGGBB pixels.
+    *
+    * @param source the source image
+    * @param mapFunc the tone mapping function
+    *
+    * @return the pixels
+    */
+   public static final int[] toArgb32 (
+      final Img source,
+      final Rgb.AbstrToneMap mapFunc) {
 
       final int len = source.pixels.length;
       final int[] argb32s = new int[len];
       final HashMap < Long, Integer > convert = new HashMap <>();
       convert.put(Img.CLEAR_PIXEL, 0);
 
+      final Rgb mapped = new Rgb();
       final Rgb srgb = new Rgb();
       final Rgb lrgb = new Rgb();
       final Vec4 xyz = new Vec4();
@@ -3729,9 +3747,8 @@ public class Img {
          } else {
             Lab.fromHex(tlab64, lab);
             Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
-            // TODO: If you wanted to tone map the image, it'd have to be
-            // done here.
-            argb32 = srgb.toHexIntSat();
+            mapFunc.apply(srgb, mapped);
+            argb32 = mapped.toHexIntWrap();
             convert.put(tlab64Obj, argb32);
          }
 
