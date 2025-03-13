@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -3169,6 +3170,140 @@ public class Img {
    }
 
    /**
+    * Skews the pixels of a source image vertically. If the angle is
+    * approximately zero, copies the source array. If the angle is
+    * approximately {@link IUtils#HALF_PI} ({@value IUtils#HALF_PI}, returns a
+    * clear image.
+    *
+    * @param source the source image
+    * @param angle  the angle in radians
+    * @param target the target image
+    *
+    * @return the skewed array
+    */
+   public static Img skewXBilinear ( final Img source, final float angle,
+      final Img target ) {
+
+      final int wSrc = source.width;
+      final int hSrc = source.height;
+      final int srcLen = source.pixels.length;
+
+      if ( !Img.similar(source, target) ) {
+         target.width = wSrc;
+         target.height = hSrc;
+         target.pixels = new long[srcLen];
+      }
+
+      final float wSrcf = wSrc;
+      final float hSrcf = hSrc;
+      final int deg = Utils.round(angle * IUtils.RAD_TO_DEG);
+      final int deg180 = Utils.mod(deg, 180);
+
+      switch ( deg180 ) {
+         case 0: {
+            System.arraycopy(source.pixels, 0, target.pixels, 0, srcLen);
+            return target;
+         }
+
+         case 88:
+         case 89:
+         case 90:
+         case 91:
+         case 92: {
+            return Img.clear(target);
+         }
+
+         default: {
+            final float tana = ( float ) Math.tan(angle);
+            final int wTrg = ( int ) ( 0.5f + wSrcf + Utils.abs(tana) * hSrcf );
+            final float wTrgf = wTrg;
+            final float yCenter = hSrcf * 0.5f;
+            final float xDiff = ( wSrcf - wTrgf ) * 0.5f;
+
+            final int trgLen = wTrg * hSrc;
+            final long[] trgPixels = new long[trgLen];
+            for ( int i = 0; i < trgLen; ++i ) {
+               final float yTrg = i / wTrg;
+               trgPixels[i] = Img.sampleBilinear(source, xDiff + i % wTrg + tana
+                  * ( yTrg - yCenter ), yTrg);
+            }
+
+            target.width = wTrg;
+            target.pixels = trgPixels;
+
+            return target;
+         }
+      }
+   }
+
+   /**
+    * Skews the pixels of a source image vertically. If the angle is
+    * approximately zero, copies the source array. If the angle is
+    * approximately {@link IUtils#HALF_PI} ({@value IUtils#HALF_PI}, returns a
+    * clear image.
+    *
+    * @param source the source image
+    * @param angle  the angle in radians
+    * @param target the target image
+    *
+    * @return the skewed array
+    */
+   public static Img skewYBilinear ( final Img source, final float angle,
+      final Img target ) {
+
+      final int wSrc = source.width;
+      final int hSrc = source.height;
+      final int srcLen = source.pixels.length;
+
+      if ( !Img.similar(source, target) ) {
+         target.width = wSrc;
+         target.height = hSrc;
+         target.pixels = new long[srcLen];
+      }
+
+      final float wSrcf = wSrc;
+      final float hSrcf = hSrc;
+      final int deg = Utils.round(angle * IUtils.RAD_TO_DEG);
+      final int deg180 = Utils.mod(deg, 180);
+
+      switch ( deg180 ) {
+         case 0: {
+            System.arraycopy(source.pixels, 0, target.pixels, 0, srcLen);
+            return target;
+         }
+
+         case 88:
+         case 89:
+         case 90:
+         case 91:
+         case 92: {
+            return Img.clear(target);
+         }
+
+         default: {
+            final float tana = ( float ) Math.tan(angle);
+            final int hTrg = ( int ) ( 0.5f + hSrcf + Utils.abs(tana) * wSrcf );
+            final float hTrgf = hTrg;
+            final float xCenter = wSrcf * 0.5f;
+            final float yDiff = ( hSrcf - hTrgf ) * 0.5f;
+
+            final int trgLen = wSrc * hTrg;
+            final long[] trgPixels = new long[trgLen];
+            for ( int i = 0; i < trgLen; ++i ) {
+               final float xTrg = i % wSrc;
+               trgPixels[i] = Img.sampleBilinear(source, xTrg, yDiff + i / wSrc
+                  + tana * ( xTrg - xCenter ));
+            }
+
+            target.height = hTrg;
+            target.pixels = trgPixels;
+
+            return target;
+         }
+      }
+   }
+
+   /**
     * Converts a LAB image to an array of 32-bit AARRGGBB pixels.
     *
     * @param source the source image
@@ -3563,6 +3698,8 @@ public class Img {
          final float u = 1.0f - xErr;
          t0 = u * t00 + xErr * t10;
          if ( t0 > 0.0f ) {
+            // TODO: Do you need to subtract 0x8000L from a and b?
+
             /* @formatter:off */
             l0 =    u * ( c00 >> Img.L_SHIFT & 0xffffL )
                + xErr * ( c10 >> Img.L_SHIFT & 0xffffL );
@@ -3605,6 +3742,7 @@ public class Img {
             final float a2 = u * a0 + yErr * a1;
             final float b2 = u * b0 + yErr * b1;
 
+            // TODO: Do you need to add 0x8000L to a and b here?
             long ti = ( long ) ( 0.5f + t2 );
             long li = ( long ) ( 0.5f + l2 );
             long ai = ( long ) ( 0.5f + a2 );
@@ -3650,8 +3788,8 @@ public class Img {
     *
     * @return the dictionary
     */
-   protected static final HashMap < Long, ArrayList < Integer > > toDict (
-      final Img source, final HashMap < Long, ArrayList < Integer > > target ) {
+   protected static final TreeMap < Long, ArrayList < Integer > > toDict (
+      final Img source, final TreeMap < Long, ArrayList < Integer > > target ) {
 
       // TODO: What would the public facing version of this method look like?
       // Maybe it would be TreeMap < Lab, integer[] >.
