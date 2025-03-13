@@ -1663,14 +1663,16 @@ public class Rgb implements IColor {
    }
 
    /**
-    * An abstract class to facilitate the creation of RGB tone mapping functions.
+    * An abstract class to facilitate the creation of RGB tone mapping
+    * functions.
     */
-   public abstract static class AbstrToneMap implements BiFunction < Rgb, Rgb, Rgb>  {
+   public abstract static class AbstrToneMap implements BiFunction < Rgb, Rgb,
+      Rgb > {
 
       /**
        * The default constructor.
        */
-      protected AbstrToneMap () {}
+      protected AbstrToneMap ( ) {}
 
       /**
        * Returns the simple name of this class.
@@ -1679,17 +1681,18 @@ public class Rgb implements IColor {
        */
       @Override
       public String toString ( ) { return this.getClass().getSimpleName(); }
+
    }
 
    /**
     * Clamps the RGB channels to the range [0.0, 1.0].
     */
-   public static class ToneMapClamp extends AbstrToneMap {
-      
+   public static final class ToneMapClamp extends AbstrToneMap {
+
       /**
        * The default constructor.
        */
-      public ToneMapClamp () {}
+      public ToneMapClamp ( ) {}
 
       /**
        * Applies a tone map.
@@ -1700,8 +1703,74 @@ public class Rgb implements IColor {
        * @return the mapped color
        */
       @Override
-      public Rgb apply(final Rgb source, final Rgb target) {
+      public Rgb apply ( final Rgb source, final Rgb target ) {
+
          return Rgb.clamp01(source, target);
       }
+
    }
+
+   /**
+    * Tone maps RGB channels using the Hable method. See https://64.github.io/tonemapping/ .
+    */
+   public static final class ToneMapHable extends AbstrToneMap {
+      /** Constant A. */
+      public static final float A = 0.15f;
+      /** Constant B. */
+      public static final float B = 0.50f;
+      /** Constant C. */
+      public static final float C = 0.10f;
+      /** Constant D. */
+      public static final float D = 0.20f;
+      /** Constant E. */
+      public static final float E = 0.02f;
+      /** Constant F. */
+      public static final float F = 0.30f;
+      /** Constant W. */
+      public static final float W = 11.2f;
+      /** White scale. */
+      public static final float whiteScale = 1.0f / ( ( ( W * ( A * W + C * B )
+         + D * E ) / ( W * ( A * W + B ) + D * F ) ) - E / F );
+      /** Exposure bias. */
+      public static final float exposureBias = 2.0f;
+
+      /**
+       * Stores conversion from gamma to linear.
+       */
+      protected final Rgb lrgb = new Rgb();
+
+      /**
+       * The default constructor.
+       */
+      public ToneMapHable ( ) {}
+
+      /**
+       * Applies a tone map.
+       * 
+       * @param source the input color
+       * @param target the output color
+       * 
+       * @return the mapped color
+       */
+      @Override
+      public final Rgb apply ( final Rgb source, final Rgb target ) {
+         Rgb.sRgbTolRgb(source, false, this.lrgb);
+
+         final float er = this.lrgb.r * exposureBias;
+         final float eg = this.lrgb.g * exposureBias;
+         final float eb = this.lrgb.b * exposureBias;
+
+         float xr = whiteScale * ( ( ( er * ( A * er + C * B ) + D * E ) / ( er
+            * ( A * er + B ) + D * F ) ) - E / F );
+         float xg = whiteScale * ( ( ( eg * ( A * eg + C * B ) + D * E ) / ( eg
+            * ( A * eg + B ) + D * F ) ) - E / F );
+         float xb = whiteScale * ( ( ( eb * ( A * eb + C * B ) + D * E ) / ( eb
+            * ( A * eb + B ) + D * F ) ) - E / F );
+         target.set(xr, xg, xb, this.lrgb.alpha);
+
+         return Rgb.lRgbTosRgb(Rgb.clamp01(target, target), false, target);
+      }
+
+   }
+
 }
