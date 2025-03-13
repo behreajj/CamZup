@@ -3734,18 +3734,6 @@ public class Img {
    /**
     * Converts a LAB image to an array of 32-bit AARRGGBB pixels.
     *
-    * @param source the source image
-    *
-    * @return the pixels
-    */
-   public static final int[] toArgb32 ( final Img source ) {
-
-      return Img.toArgb32(source, new Rgb.ToneMapClamp());
-   }
-
-   /**
-    * Converts a LAB image to an array of 32-bit AARRGGBB pixels.
-    *
     * @param source  the source image
     * @param mapFunc the tone mapping function
     *
@@ -4277,16 +4265,24 @@ public class Img {
     */
    public enum GrayPolicy {
 
-      /** Gray colors have a hue on the cool side of the color wheel. */
+      /**
+       * Gray colors have a hue on the cool side of the color wheel.
+       */
       COOL,
 
-      /** Do not saturate gray colors. */
+      /**
+       * Do not saturate gray colors.
+       */
       OMIT,
 
-      /** Gray colors have a hue on the warm side of the color wheel. */
+      /**
+       * Gray colors have a hue on the warm side of the color wheel.
+       */
       WARM,
 
-      /** Gray colors have zero hue. */
+      /**
+       * Gray colors have zero hue.
+       */
       ZERO
 
    }
@@ -4296,10 +4292,14 @@ public class Img {
     */
    public enum MapChannel {
 
-      /** The chroma channel. */
+      /**
+       * The chroma channel.
+       */
       C,
 
-      /** The lightness channel. */
+      /**
+       * The lightness channel.
+       */
       L
 
    }
@@ -4309,13 +4309,19 @@ public class Img {
     */
    public enum PivotPolicy {
 
-      /** Pivot around a fixed number. */
+      /**
+       * Pivot around a fixed number. 
+       */
       FIXED,
 
-      /** Pivot around the arithmetic mean (average). */
+      /**
+       * Pivot around the arithmetic mean (average).
+       */
       MEAN,
 
-      /** Pivot around the average of the minimum and maximum. */
+      /**
+       * Pivot around the average of the minimum and maximum.
+       */
       RANGE
 
    }

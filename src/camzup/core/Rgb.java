@@ -1711,10 +1711,65 @@ public class Rgb implements IColor {
    }
 
    /**
+    * Tone maps RGB channels using the ACES method. See
+    * https://64.github.io/tonemapping/ .
+    */
+   public static final class ToneMapAces extends AbstrToneMap {
+
+      /**
+       * Stores conversion from gamma to linear.
+       */
+      protected final Rgb lrgb = new Rgb();
+
+      /**
+       * The default constructor.
+       */
+      public ToneMapAces ( ) {}
+
+      /**
+       * Applies a tone map.
+       *
+       * @param source the input color
+       * @param target the output color
+       *
+       * @return the mapped color
+       */
+      @Override
+      public Rgb apply ( final Rgb source, final Rgb target ) {
+
+         Rgb.sRgbTolRgb(source, false, this.lrgb);
+
+         final float rFrwrd = 0.59719f * this.lrgb.r + 0.35458f * this.lrgb.g + 0.04823f * this.lrgb.b;
+         final float gFrwrd = 0.076f * this.lrgb.r + 0.90834f * this.lrgb.g + 0.01566f * this.lrgb.b;
+         final float bFrwrd = 0.0284f * this.lrgb.r + 0.13383f * this.lrgb.g + 0.83777f * this.lrgb.b;
+
+         final float ar = rFrwrd * (rFrwrd + 0.0245786f) - 0.000090537f;
+         final float ag = gFrwrd * (gFrwrd + 0.0245786f) - 0.000090537f;
+         final float ab = bFrwrd * (bFrwrd + 0.0245786f) - 0.000090537f;
+
+         final float br = rFrwrd * (0.983729f * rFrwrd + 0.432951f) + 0.238081f;
+         final float bg = gFrwrd * (0.983729f * gFrwrd + 0.432951f) + 0.238081f;
+         final float bb = bFrwrd * (0.983729f * bFrwrd + 0.432951f) + 0.238081f;
+
+         final float cr = Utils.div(ar, br);
+         final float cg = Utils.div(ag, bg);
+         final float cb = Utils.div(ab, bb);
+
+         final float rBckwd = 1.60475f * cr - 0.53108f * cg - 0.07367f * cb;
+         final float gBckwd = -0.10208f * cr + 1.10813f * cg - 0.00605f * cb;
+         final float bBckwd = -0.00327f * cr - 0.07276f * cg + 1.07602f * cb;
+
+         target.set(rBckwd, gBckwd, bBckwd, this.lrgb.alpha);
+         return Rgb.lRgbTosRgb(Rgb.clamp01(target, target), false, target);
+      }
+   }
+
+   /**
     * Tone maps RGB channels using the Hable method. See
     * https://64.github.io/tonemapping/ .
     */
    public static final class ToneMapHable extends AbstrToneMap {
+
       /**
        * Stores conversion from gamma to linear.
        */

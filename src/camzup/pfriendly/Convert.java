@@ -166,6 +166,18 @@ public abstract class Convert {
     * Converts a LabImage to a PImage.
     *
     * @param source  the source image
+    *
+    * @return the PImage
+    */
+   public static PImage toPImage ( final Img source ) {
+
+      return Convert.toPImage(source, new Rgb.ToneMapClamp());
+   }
+
+   /**
+    * Converts a LabImage to a PImage.
+    *
+    * @param source  the source image
     * @param toneMap the tone map
     *
     * @return the PImage
