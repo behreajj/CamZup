@@ -1358,21 +1358,17 @@ public class Img {
          }
             break;
 
+         /* @formatter:off */
          case OVER: {
-            dx = bx;
-            dy = by;
-            dbrx = bbrx;
-            dbry = bbry;
+            dx = bx; dy = by; dbrx = bbrx; dbry = bbry;
          }
             break;
 
          case UNDER: {
-            dx = ax;
-            dy = ay;
-            dbrx = abrx;
-            dbry = abry;
+            dx = ax; dy = ay; dbrx = abrx; dbry = abry;
          }
             break;
+         /* @formatter:on */
 
          case BLEND:
          case MAX:
@@ -1386,11 +1382,6 @@ public class Img {
       final int dw = 1 + dbrx - dx;
       final int dh = 1 + dbry - dy;
       if ( dw > 0 && dh > 0 ) {
-
-         /*
-          * Find difference between the intersection top left and the top left
-          * of a and b.
-          */
          final int axid = ax - dx;
          final int ayid = ay - dy;
          final int bxid = bx - dx;
@@ -1405,8 +1396,7 @@ public class Img {
             final int ays = y - ayid;
             if ( ays >= 0 && ays < ah && axs >= 0 && axs < aw ) {
                final long hexUnder = pxUnder[axs + ays * aw];
-               dict.put(hexUnder, Lab.fromHex(pxUnder[axs + ays * aw],
-                  new Lab()));
+               dict.put(hexUnder, Lab.fromHex(hexUnder, new Lab()));
             }
 
             final int bxs = x - bxid;
@@ -1468,8 +1458,7 @@ public class Img {
             case MULTIPLY: { tuv = t * v; } break;
             case OVER: { tuv = t; } break;
             case UNDER: { tuv = v; } break;
-            case BLEND:
-            default:
+            case BLEND: default:
          }
          /* @formatter:on */
 
@@ -2550,8 +2539,7 @@ public class Img {
 
       final int hn1 = h - 1;
       for ( int i = 0; i < len; ++i ) {
-         target.pixels[ ( hn1 - i / w ) * w + i % w]
-            = source.pixels[i];
+         target.pixels[ ( hn1 - i / w ) * w + i % w] = source.pixels[i];
       }
 
       return target;
