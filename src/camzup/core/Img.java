@@ -4,6 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Objects;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -40,6 +41,11 @@ public class Img {
       // TODO: Function to set all zero alpha pixels to clear pixel?
 
       // TODO: swap alpha to light, light to alpha methods?
+
+      // TODO: Is a mask function still necessary? If so, then offer
+      // to pull from either the alpha channel or the lightness. Where
+      // a mask and shift would be outside the for loop, e.g.,
+      // mask = useLight ? L_MASK : T_MASK .
 
       this(Img.DEFAULT_WIDTH, Img.DEFAULT_HEIGHT, Img.CLEAR_PIXEL);
    }
@@ -232,8 +238,7 @@ public class Img {
     */
    public final long getPixelOmit ( final int i, final long defaultPixel ) {
 
-      if ( i >= 0 && i < this.pixels.length ) { return this.pixels[i]; }
-      return defaultPixel;
+      return i >= 0 && i < this.pixels.length ? this.pixels[i] : defaultPixel;
    }
 
    /**
@@ -2215,9 +2220,8 @@ public class Img {
     * @see Utils#max(float, float)
     */
    public static final Img gradientRadial ( final Gradient grd,
-      final float xOrig,
-      final float yOrig, final float radius, final Lab.AbstrEasing easing,
-      final Img target ) {
+      final float xOrig, final float yOrig, final float radius,
+      final Lab.AbstrEasing easing, final Img target ) {
 
       // TODO: ZImage had a lot of overloads for this method so as to simplify
       // the signature. You'll have to look at a past git commit to restore
@@ -2744,8 +2748,7 @@ public class Img {
     * @return the mixed image
     */
    public static final Img mix ( final Img orig, final Img dest,
-      final float fac,
-      final Img target ) {
+      final float fac, final Img target ) {
 
       if ( !Img.similar(orig, dest) ) {
          System.err.println("Cannot mix between two images of unequal sizes.");
@@ -2952,6 +2955,60 @@ public class Img {
          target.pixels[i] = target.pixels[i] | Img.T_MASK;
       }
       return target;
+   }
+
+   public static Lab[] paletteExtra ( final Img source, final int capacity,
+      final int threshold ) {
+
+      final TreeSet < Long > uniqueOpaques = new TreeSet <>();
+      final long[] srcPixels = source.pixels;
+      final int srcLen = srcPixels.length;
+      for ( int i = 0; i < srcLen; ++i ) {
+         final long tlab64 = srcPixels[i];
+         if ( ( tlab64 & Img.T_MASK ) != 0 ) uniqueOpaques.add(Img.T_MASK
+            | tlab64);
+      }
+
+      final int uniquesLen = uniqueOpaques.size();
+      final Iterator < Long > uniquesItr = uniqueOpaques.iterator();
+
+      final int valThresh = threshold < 3 ? 3 : threshold;
+      if ( uniquesLen < valThresh ) {
+         /* Account for alpha at index 0, so less than threshold. */
+         final Lab[] arr = new Lab[1 + uniquesLen];
+         for ( int i = 1; uniquesItr.hasNext(); ++i ) {
+            arr[i] = Lab.fromHex(uniquesItr.next(), new Lab());
+         }
+         arr[0] = Lab.clearBlack(new Lab());
+         return arr;
+      }
+
+      final Bounds3 bounds = Bounds3.lab(new Bounds3());
+      final Octree oct = new Octree(bounds, capacity);
+      final Rgb srgb = new Rgb();
+      final Rgb lrgb = new Rgb();
+      final Vec4 xyz = new Vec4();
+      final Lab lab = new Lab();
+
+      /* Place colors in octree. */
+      while ( uniquesItr.hasNext() ) {
+         Lab.fromHex(uniquesItr.next(), lab);
+         oct.insert(new Vec3(lab.a, lab.b, lab.l));
+      }
+      oct.cull();
+
+      /* Trying to use package level with an array list throws an exception. */
+      final Vec3[] centers = Octree.centersMean(oct, false);
+      final int centersLen = centers.length;
+      final Lab[] arr = new Lab[1 + centersLen];
+
+      for ( int i = 0; i < centersLen; ++i ) {
+         final Vec3 center = centers[i];
+         arr[1 + i] = new Lab(center.z, center.x, center.y, 1.0f);
+      }
+
+      arr[0] = Lab.clearBlack(new Lab());
+      return arr;
    }
 
    /**
