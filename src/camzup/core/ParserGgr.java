@@ -141,11 +141,6 @@ public abstract class ParserGgr {
          final Vec4 xyz = new Vec4();
          final Lab lab = new Lab();
 
-         /* Mixers. */
-         final Rgb.MixSrgb rgbaMix = new Rgb.MixSrgb();
-         final Rgb.MixSrLch cwMix = new Rgb.MixSrLch(new Rgb.HueCW());
-         final Rgb.MixSrLch ccwMix = new Rgb.MixSrLch(new Rgb.HueCCW());
-
          /* The GGR file is sampled rather than transferred one-to-one. */
          final int vrfSamples = Utils.clamp(samples, 3, 32);
          final float toStep = 1.0f / ( vrfSamples - 1.0f );
@@ -245,19 +240,14 @@ public abstract class ParserGgr {
                 */
                final int clrSpc = ( int ) seg[12];
                switch ( clrSpc ) {
-                  case ParserGgr.SPACE_HSB_CCW: { /* 1 */
-                     ccwMix.apply(ltClr, rtClr, fac, evalClr);
-                  }
-                     break;
-
-                  case ParserGgr.SPACE_HSB_CW: { /* 2 */
-                     cwMix.apply(ltClr, rtClr, fac, evalClr);
-                  }
-                     break;
-
+                  // TODO: If you wanted to support these again, you'd
+                  // have to convert RGB to LAB sooner, at the point of
+                  // ltClr and rtClr.
+                  case ParserGgr.SPACE_HSB_CCW:
+                  case ParserGgr.SPACE_HSB_CW: 
                   case ParserGgr.SPACE_RGB:
                   default: {
-                     rgbaMix.apply(ltClr, rtClr, fac, evalClr);
+                     Rgb.mix(ltClr, rtClr, fac, evalClr);
                   }
                }
             }

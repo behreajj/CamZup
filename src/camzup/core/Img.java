@@ -223,7 +223,6 @@ public class Img {
     *
     * @return the pixel
     */
-
    public final long getPixelOmit ( final int i, final long defaultPixel ) {
 
       if ( i >= 0 && i < this.pixels.length ) { return this.pixels[i]; }
@@ -250,7 +249,6 @@ public class Img {
     *
     * @return the pixel
     */
-
    public final long getPixelUnchecked ( final int i ) {
 
       return this.pixels[i];
@@ -302,12 +300,29 @@ public class Img {
    }
 
    /**
+    * Gets the image's size as a vector.
+    *
+    * @param target the output size
+    *
+    * @return the size
+    */
+   public final Vec2 getSize ( final Vec2 target ) {
+
+      return target.set(this.width, this.height);
+   }
+
+   /**
     * Gets the image width.
     *
     * @return the width
     */
    public final int getWidth ( ) { return this.width; }
 
+   /**
+    * Gets the image's hash code.
+    *
+    * @return the hash code.
+    */
    @Override
    public int hashCode ( ) {
 
@@ -488,12 +503,12 @@ public class Img {
    /**
     * Default alpha value when creating a diagnostic RGB image.
     */
-   public final static float DEFAULT_ALPHA = 1.0f;
+   public static final float DEFAULT_ALPHA = 1.0f;
 
    /**
     * Default blue value when creating a diagnostic RGB image.
     */
-   public final static float DEFAULT_BLUE = 0.5f;
+   public static final float DEFAULT_BLUE = 0.5f;
 
    /**
     * The default blend mode for the a and b channels.
@@ -523,46 +538,43 @@ public class Img {
    /**
     * Mask to isolate the a channel.
     */
-   public static final long ISOLATE_A_MASK = 0x0000_0000_ffff_0000L;
+   public static final long A_MASK = 0x0000_0000_ffff_0000L;
 
    /**
     * Mask to isolate the a and b channels.
     */
-   public static final long ISOLATE_AB_MASK = Img.ISOLATE_A_MASK
-      | Img.ISOLATE_B_MASK;
+   public static final long AB_MASK = Img.A_MASK | Img.B_MASK;
 
    /**
     * Mask to isolate the b channel.
     */
-   public static final long ISOLATE_B_MASK = 0x0000_0000_0000_ffffL;
+   public static final long B_MASK = 0x0000_0000_0000_ffffL;
 
    /**
     * Mask to isolate the lightness channel.
     */
-   public static final long ISOLATE_L_MASK = 0x0000_ffff_0000_0000L;
+   public static final long L_MASK = 0x0000_ffff_0000_0000L;
 
    /**
     * Mask to isolate the l, a and b channels.
     */
-   public static final long ISOLATE_LAB_MASK = Img.ISOLATE_L_MASK
-      | Img.ISOLATE_A_MASK | Img.ISOLATE_B_MASK;
+   public static final long LAB_MASK = Img.L_MASK | Img.A_MASK | Img.B_MASK;
 
    /**
     * Mask to isolate the alpha channel.
     */
-   public static final long ISOLATE_T_MASK = 0xffff_0000_0000_0000L;
+   public static final long T_MASK = 0xffff_0000_0000_0000L;
 
    /**
     * Mask to isolate the alpha and l channels.
     */
-   public static final long ISOLATE_TL_MASK = Img.ISOLATE_T_MASK
-      | Img.ISOLATE_L_MASK;
+   public static final long TL_MASK = Img.T_MASK | Img.L_MASK;
 
    /**
     * Mask for all color channels.
     */
-   public static final long ISOLATE_TLAB_MASK = Img.ISOLATE_T_MASK
-      | Img.ISOLATE_L_MASK | Img.ISOLATE_A_MASK | Img.ISOLATE_B_MASK;
+   public static final long TLAB_MASK = Img.T_MASK | Img.L_MASK | Img.A_MASK
+      | Img.B_MASK;
 
    /**
     * The amount to shift the lightness channel to the left or right when
@@ -1730,7 +1742,7 @@ public class Img {
     *
     * @return the checker image
     */
-   public static Img checker ( final long a, final long b, final int sizeCheck,
+   public static final Img checker ( final long a, final long b, final int sizeCheck,
       final Img target ) {
 
       return Img.checker(a, b, sizeCheck, sizeCheck, target);
@@ -1748,7 +1760,7 @@ public class Img {
     *
     * @return the checker image
     */
-   public static Img checker ( final long a, final long b, final int wCheck,
+   public static final Img checker ( final long a, final long b, final int wCheck,
       final int hCheck, final Img target ) {
 
       final int w = target.width;
@@ -1908,7 +1920,7 @@ public class Img {
     *
     * @return the gradient image
     */
-   public final static Img gradientLinear ( final Gradient grd,
+   public static final Img gradientLinear ( final Gradient grd,
       final float xOrig, final float yOrig, final float xDest,
       final float yDest, final Img target ) {
 
@@ -1935,7 +1947,7 @@ public class Img {
     * @see Utils#max(float, float)
     * @see Utils#clamp01(float)
     */
-   public final static Img gradientLinear ( final Gradient grd,
+   public static final Img gradientLinear ( final Gradient grd,
       final float xOrig, final float yOrig, final float xDest,
       final float yDest, final Lab.AbstrEasing easing, final Img target ) {
 
@@ -1976,7 +1988,7 @@ public class Img {
     *
     * @return the gradient image
     */
-   public final static Img gradientLinear ( final Gradient grd,
+   public static final Img gradientLinear ( final Gradient grd,
       final Img target ) {
 
       return Img.gradientLinear(grd, -1.0f, 0.0f, 1.0f, 0.0f, target);
@@ -1992,7 +2004,7 @@ public class Img {
     *
     * @return the gradient image
     */
-   public final static Img gradientLinear ( final Gradient grd,
+   public static final Img gradientLinear ( final Gradient grd,
       final Lab.AbstrEasing easing, final Img target ) {
 
       return Img.gradientLinear(grd, -1.0f, 0.0f, 1.0f, 0.0f, easing, target);
@@ -2010,7 +2022,7 @@ public class Img {
     *
     * @return the gradient image
     */
-   public final static Img gradientLinear ( final Gradient grd, final Vec2 orig,
+   public static final Img gradientLinear ( final Gradient grd, final Vec2 orig,
       final Vec2 dest, final Img target ) {
 
       return Img.gradientLinear(grd, orig, dest, new Lab.MixLab(), target);
@@ -2029,7 +2041,7 @@ public class Img {
     *
     * @return the gradient image
     */
-   public final static Img gradientLinear ( final Gradient grd, final Vec2 orig,
+   public static final Img gradientLinear ( final Gradient grd, final Vec2 orig,
       final Vec2 dest, final Lab.AbstrEasing easing, final Img target ) {
 
       return Img.gradientLinear(grd, orig.x, orig.y, dest.x, dest.y, easing,
@@ -2258,7 +2270,7 @@ public class Img {
     * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
     * @see Utils#mod1(float)
     */
-   public final static Img gradientSweep ( final Gradient grd,
+   public static final Img gradientSweep ( final Gradient grd,
       final float xOrig, final float yOrig, final float radians,
       final Lab.AbstrEasing easing, final Img target ) {
 
@@ -2362,8 +2374,7 @@ public class Img {
 
       final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
-         target.pixels[i] = source.pixels[i] & Img.ISOLATE_TL_MASK
-            | Img.CLEAR_PIXEL;
+         target.pixels[i] = source.pixels[i] & Img.TL_MASK | Img.CLEAR_PIXEL;
       }
 
       return target;
@@ -2379,7 +2390,7 @@ public class Img {
     */
    public static Img invert ( final Img source, final Img target ) {
 
-      return Img.invert(source, Img.ISOLATE_TLAB_MASK, target);
+      return Img.invert(source, Img.TLAB_MASK, target);
    }
 
    /**
@@ -2392,7 +2403,7 @@ public class Img {
     */
    public static final Img invertAB ( final Img source, final Img target ) {
 
-      return Img.invert(source, Img.ISOLATE_AB_MASK, target);
+      return Img.invert(source, Img.AB_MASK, target);
    }
 
    /**
@@ -2405,7 +2416,7 @@ public class Img {
     */
    public static final Img invertAlpha ( final Img source, final Img target ) {
 
-      return Img.invert(source, Img.ISOLATE_T_MASK, target);
+      return Img.invert(source, Img.T_MASK, target);
    }
 
    /**
@@ -2418,7 +2429,7 @@ public class Img {
     */
    public static final Img invertLab ( final Img source, final Img target ) {
 
-      return Img.invert(source, Img.ISOLATE_LAB_MASK, target);
+      return Img.invert(source, Img.LAB_MASK, target);
    }
 
    /**
@@ -2431,7 +2442,7 @@ public class Img {
     */
    public static final Img invertLight ( final Img source, final Img target ) {
 
-      return Img.invert(source, Img.ISOLATE_L_MASK, target);
+      return Img.invert(source, Img.L_MASK, target);
    }
 
    /**
@@ -2459,7 +2470,7 @@ public class Img {
 
       final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
-         if ( ( source.pixels[i] & Img.ISOLATE_T_MASK ) != 0 ) { return false; }
+         if ( ( source.pixels[i] & Img.T_MASK ) != 0 ) { return false; }
       }
       return true;
    }
@@ -2566,7 +2577,7 @@ public class Img {
          final long t16Src = c >> Img.T_SHIFT & 0xffffL;
          final long t16Trg = t16Src * alpha / 0xffffL;
          final long t16TrgCl = t16Trg > 0xffffL ? 0xffffL : t16Trg;
-         target.pixels[i] = t16TrgCl << Img.T_SHIFT | c & Img.ISOLATE_LAB_MASK;
+         target.pixels[i] = t16TrgCl << Img.T_SHIFT | c & Img.LAB_MASK;
       }
 
       return target;
@@ -2695,7 +2706,7 @@ public class Img {
 
       final int len = target.pixels.length;
       for ( int i = 0; i < len; ++i ) {
-         target.pixels[i] = target.pixels[i] | Img.ISOLATE_T_MASK;
+         target.pixels[i] = target.pixels[i] | Img.T_MASK;
       }
       return target;
    }
@@ -2717,7 +2728,7 @@ public class Img {
          final long c = target.pixels[i];
          final long t16Src = c >> Img.T_SHIFT & 0xffffL;
          final long t16Trg = t16Src < 0x80000L ? 0x0000L : 0xffffL;
-         target.pixels[i] = t16Trg << Img.T_SHIFT | c & Img.ISOLATE_LAB_MASK;
+         target.pixels[i] = t16Trg << Img.T_SHIFT | c & Img.LAB_MASK;
       }
       return target;
    }
@@ -3077,10 +3088,10 @@ public class Img {
 
       for ( int i = 0; i < len; ++i ) {
          final long srcPixel = srcPixels[i];
-         final long tIso = srcPixel & Img.ISOLATE_T_MASK;
-         final long lIso = srcPixel & Img.ISOLATE_L_MASK;
-         final long aIso = srcPixel & Img.ISOLATE_A_MASK;
-         final long bIso = srcPixel & Img.ISOLATE_B_MASK;
+         final long tIso = srcPixel & Img.T_MASK;
+         final long lIso = srcPixel & Img.L_MASK;
+         final long aIso = srcPixel & Img.A_MASK;
+         final long bIso = srcPixel & Img.B_MASK;
 
          lPixels[i] = tIso | lIso;
          aPixels[i] = tIso | lForAbMask | aIso;
@@ -3108,8 +3119,7 @@ public class Img {
     *
     * @return the separated images
     */
-   @Experimental
-   public static Img[] sepRgb ( final Img source,
+   public static final Img[] sepRgb ( final Img source,
       final boolean usePreMultiply ) {
 
       final int len = source.pixels.length;
@@ -3146,7 +3156,7 @@ public class Img {
          final long bLab64 = Rgb.sRgbToSrLab2(bIso, lab, xyz, lrgb)
             .toHexLongSat();
 
-         final long tIso = tlab64 & Img.ISOLATE_T_MASK;
+         final long tIso = tlab64 & Img.T_MASK;
 
          rPixels[i] = tIso | rLab64;
          gPixels[i] = tIso | gLab64;
@@ -3217,7 +3227,7 @@ public class Img {
     *
     * @return the transposed image
     */
-   public static Img transpose ( final Img source, final int w, final int h,
+   public static final Img transpose ( final Img source, final int w, final int h,
       final Img target ) {
 
       /**
@@ -3248,7 +3258,7 @@ public class Img {
     *
     * @return the trimmed image
     */
-   public static Img trimAlpha ( final Img source ) {
+   public static final Img trimAlpha ( final Img source ) {
 
       return Img.trimAlpha(source, null);
    }
@@ -3268,7 +3278,7 @@ public class Img {
     *
     * @author Oleg Mikhailov
     */
-   public static Img trimAlpha ( final Img source, final Vec2 tl ) {
+   public static final Img trimAlpha ( final Img source, final Vec2 tl ) {
 
       // TODO: Since pixels can be reassigned, this may now accept a target
       // image.
@@ -3299,7 +3309,7 @@ public class Img {
          int x = -1;
          while ( goTop && x < wn1 ) {
             ++x;
-            if ( ( srcPixels[wtop + x] & Img.ISOLATE_T_MASK ) != 0L ) {
+            if ( ( srcPixels[wtop + x] & Img.T_MASK ) != 0L ) {
                minRight = x;
                minBottom = top;
                goTop = false;
@@ -3315,7 +3325,7 @@ public class Img {
          int y = hSrc;
          while ( goLeft && y > top ) {
             --y;
-            if ( ( srcPixels[y * wSrc + left] & Img.ISOLATE_T_MASK ) != 0 ) {
+            if ( ( srcPixels[y * wSrc + left] & Img.T_MASK ) != 0 ) {
                minBottom = y;
                goLeft = false;
             }
@@ -3331,7 +3341,7 @@ public class Img {
          int x = wSrc;
          while ( goBottom && x > left ) {
             --x;
-            if ( ( srcPixels[wbottom + x] & Img.ISOLATE_T_MASK ) != 0 ) {
+            if ( ( srcPixels[wbottom + x] & Img.T_MASK ) != 0 ) {
                minRight = x;
                goBottom = false;
             }
@@ -3346,7 +3356,7 @@ public class Img {
          int y = bottom + 1;
          while ( goRight && y > top ) {
             --y;
-            if ( ( srcPixels[y * wSrc + right] & Img.ISOLATE_T_MASK ) != 0 ) {
+            if ( ( srcPixels[y * wSrc + right] & Img.T_MASK ) != 0 ) {
                goRight = false;
             }
          }
@@ -3403,7 +3413,7 @@ public class Img {
     *
     * @return the wrapped pixels
     */
-   public static Img wrap ( final Img source, final int dx, final int dy,
+   public static final Img wrap ( final Img source, final int dx, final int dy,
       final Img target ) {
 
       final int len = target.pixels.length;

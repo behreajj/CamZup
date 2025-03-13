@@ -893,6 +893,8 @@ public abstract class Pixels {
    public static int[] skewYBilinear ( final int[] source, final int wSrc,
       final int hSrc, final float angle, final Vec2 dim ) {
 
+      // TODO: Transfer these to Img next.
+
       final float wSrcf = wSrc;
       final float hSrcf = hSrc;
       final int deg = Utils.round(angle * IUtils.RAD_TO_DEG);
@@ -1473,42 +1475,6 @@ public abstract class Pixels {
          final float v = Pixels.srgbLuminance(c);
          return v >= lb && v <= ub;
 
-      }
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
-
-   }
-
-   /**
-    * Converts a color as a 32 bit integer to a factor to be supplied to a
-    * gradient evaluation. Uses luminance to determine the factor.
-    */
-   public static class MapLuminance implements IntFunction < Float > {
-
-      /**
-       * The default constructor.
-       */
-      public MapLuminance ( ) {}
-
-      /**
-       * Evaluates a color's luminance.
-       *
-       * @param hex the hexadecimal color
-       *
-       * @return the factor
-       *
-       * @see Pixels#srgbLuminance(int)
-       */
-      @Override
-      public Float apply ( final int hex ) {
-
-         return Pixels.srgbLuminance(hex);
       }
 
       /**
