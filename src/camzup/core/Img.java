@@ -2486,6 +2486,78 @@ public class Img {
    }
 
    /**
+    * Mirrors, or reflects, pixels from a source image horizontally across a
+    * pivot. The pivot is expected to be in [-1, width + 1].
+    *
+    * @param source the input image
+    * @param pivot  the x pivot
+    * @param flip   the flip reflection flag
+    * @param target the output image
+    *
+    * @return the mirrored image
+    */
+   public static Img mirrorX ( final Img source, final int pivot,
+      final boolean flip, final Img target ) {
+
+      final int trgLen = target.pixels.length;
+      final int flipSign = flip ? 1 : -1;
+      final int w = source.width;
+
+      for ( int k = 0; k < trgLen; ++k ) {
+         final int cross = k % w - pivot;
+         if ( flipSign * cross < 0 ) {
+            target.pixels[k] = source.pixels[k];
+         } else {
+            final int pxOpp = pivot - cross;
+            if ( pxOpp >= 0 && pxOpp < w ) {
+               target.pixels[k] = source.pixels[k / w * w + pxOpp];
+            } else {
+               target.pixels[k] = Img.CLEAR_PIXEL;
+            }
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Mirrors, or reflects, pixels from a source image vertically across a
+    * pivot. The pivot is expected to be in [-1, height + 1]. Positive y
+    * points down to the bottom of the image.
+    *
+    * @param source the input image
+    * @param pivot  the y pivot
+    * @param flip   the flip reflection flag
+    * @param target the output image
+    *
+    * @return the mirrored image
+    */
+   public static Img mirrorY ( final Img source, final int pivot,
+      final boolean flip, final Img target ) {
+
+      final int trgLen = target.pixels.length;
+      final int flipSign = flip ? 1 : -1;
+      final int w = source.width;
+      final int h = source.height;
+
+      for ( int k = 0; k < trgLen; ++k ) {
+         final int cross = k / w - pivot;
+         if ( flipSign * cross < 0 ) {
+            target.pixels[k] = source.pixels[k];
+         } else {
+            final int pyOpp = pivot - cross;
+            if ( pyOpp > -1 && pyOpp < h ) {
+               target.pixels[k] = source.pixels[pyOpp * w + k % w];
+            } else {
+               target.pixels[k] = Img.CLEAR_PIXEL;
+            }
+         }
+      }
+
+      return target;
+   }
+
+   /**
     * Mixes between two images by a factor.
     *
     * @param orig   the origin image

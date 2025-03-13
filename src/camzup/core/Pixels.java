@@ -389,6 +389,9 @@ public abstract class Pixels {
       final int hSrc, final float xOrig, final float yOrig, final float xDest,
       final float yDest, final boolean flip, final int[] target ) {
 
+      // TODO: Transfer this after mirrorx and mirrory. Then you can get rid of
+      // sample bilinear.
+
       final float wfn1 = wSrc - 1.0f;
       final float hfn1 = hSrc - 1.0f;
       final float wfp1Half = ( wSrc + 1.0f ) * 0.5f;
