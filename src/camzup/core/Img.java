@@ -208,10 +208,8 @@ public class Img {
    public final long getPixelOmit ( final int x, final int y,
       final long defaultPixel ) {
 
-      if ( y >= 0 && y < this.height && x >= 0 && x < this.width ) {
-         return this.pixels[y * this.width + x];
-      }
-      return defaultPixel;
+      return ( y >= 0 && y < this.height && x >= 0 && x < this.width )
+         ? this.pixels[y * this.width + x] : defaultPixel;
    }
 
    /**
@@ -292,11 +290,8 @@ public class Img {
     */
    public final long getPixelWrap ( final int x, final int y ) {
 
-      final int xwr = Utils.mod(x, this.width);
-      final int ywr = Utils.mod(y, this.height);
-      final int i = ywr * this.width + xwr;
-
-      return this.pixels[i];
+      return this.pixels[Utils.mod(y, this.height) * this.width + Utils.mod(x,
+         this.width)];
    }
 
    /**
@@ -423,10 +418,8 @@ public class Img {
     */
    public final void setPixelWrap ( final int x, final int y, final long c ) {
 
-      final int xwr = Utils.mod(x, this.width);
-      final int ywr = Utils.mod(y, this.height);
-      final int i = ywr * this.width + xwr;
-      this.pixels[i] = c;
+      this.pixels[Utils.mod(y, this.height) * this.width + Utils.mod(x,
+         this.width)] = c;
    }
 
    /**
@@ -470,10 +463,25 @@ public class Img {
    }
 
    /**
+    * Mask to isolate the a channel.
+    */
+   public static final long A_MASK = 0x0000_0000_ffff_0000L;
+
+   /**
     * The amount to shift the a channel to the left or right when packing and
     * unpacking a pixel.
     */
    public static final long A_SHIFT = 0x10L;
+
+   /**
+    * Mask to isolate the a and b channels.
+    */
+   public static final long AB_MASK = Img.A_MASK | Img.B_MASK;
+
+   /**
+    * Mask to isolate the b channel.
+    */
+   public static final long B_MASK = 0x0000_0000_0000_ffffL;
 
    /**
     * The amount to shift the b channel to the left or right when packing and
@@ -536,51 +544,20 @@ public class Img {
    public static final PivotPolicy DEFAULT_PIVOT_POLICY = PivotPolicy.MEAN;
 
    /**
-    * Mask to isolate the a channel.
-    */
-   public static final long A_MASK = 0x0000_0000_ffff_0000L;
-
-   /**
-    * Mask to isolate the a and b channels.
-    */
-   public static final long AB_MASK = Img.A_MASK | Img.B_MASK;
-
-   /**
-    * Mask to isolate the b channel.
-    */
-   public static final long B_MASK = 0x0000_0000_0000_ffffL;
-
-   /**
     * Mask to isolate the lightness channel.
     */
    public static final long L_MASK = 0x0000_ffff_0000_0000L;
-
-   /**
-    * Mask to isolate the l, a and b channels.
-    */
-   public static final long LAB_MASK = Img.L_MASK | Img.A_MASK | Img.B_MASK;
-
-   /**
-    * Mask to isolate the alpha channel.
-    */
-   public static final long T_MASK = 0xffff_0000_0000_0000L;
-
-   /**
-    * Mask to isolate the alpha and l channels.
-    */
-   public static final long TL_MASK = Img.T_MASK | Img.L_MASK;
-
-   /**
-    * Mask for all color channels.
-    */
-   public static final long TLAB_MASK = Img.T_MASK | Img.L_MASK | Img.A_MASK
-      | Img.B_MASK;
 
    /**
     * The amount to shift the lightness channel to the left or right when
     * packing and unpacking a pixel.
     */
    public static final long L_SHIFT = 0x20L;
+
+   /**
+    * Mask to isolate the l, a and b channels.
+    */
+   public static final long LAB_MASK = Img.L_MASK | Img.A_MASK | Img.B_MASK;
 
    /**
     * Max image width and height allowed.
@@ -594,10 +571,26 @@ public class Img {
    public static final float MIN_LIGHT_DIFF = 0.07f;
 
    /**
+    * Mask to isolate the alpha channel.
+    */
+   public static final long T_MASK = 0xffff_0000_0000_0000L;
+
+   /**
     * The amount to shift the alpha channel to the left or right when packing
     * and unpacking a pixel.
     */
    public static final long T_SHIFT = 0x30L;
+
+   /**
+    * Mask to isolate the alpha and l channels.
+    */
+   public static final long TL_MASK = Img.T_MASK | Img.L_MASK;
+
+   /**
+    * Mask for all color channels.
+    */
+   public static final long TLAB_MASK = Img.T_MASK | Img.L_MASK | Img.A_MASK
+      | Img.B_MASK;
 
    /**
     * Adjusts an image's lightness and saturation contrast by a factor. The
@@ -976,6 +969,12 @@ public class Img {
     */
    public static final Img adjustLab ( final Img source, final Lab adjust,
       final Img target ) {
+
+      /*
+       * It's possible to take a long adjust, and then add and subtract 0x8000L
+       * for a and b. The problem, though, is the l channel, since an adjustment
+       * has to support negative light and negative alpha.
+       */
 
       if ( !Img.similar(source, target) ) {
          target.width = source.width;
@@ -1742,8 +1741,8 @@ public class Img {
     *
     * @return the checker image
     */
-   public static final Img checker ( final long a, final long b, final int sizeCheck,
-      final Img target ) {
+   public static final Img checker ( final long a, final long b,
+      final int sizeCheck, final Img target ) {
 
       return Img.checker(a, b, sizeCheck, sizeCheck, target);
    }
@@ -1760,8 +1759,8 @@ public class Img {
     *
     * @return the checker image
     */
-   public static final Img checker ( final long a, final long b, final int wCheck,
-      final int hCheck, final Img target ) {
+   public static final Img checker ( final long a, final long b,
+      final int wCheck, final int hCheck, final Img target ) {
 
       final int w = target.width;
       final int h = target.height;
@@ -3227,8 +3226,8 @@ public class Img {
     *
     * @return the transposed image
     */
-   public static final Img transpose ( final Img source, final int w, final int h,
-      final Img target ) {
+   public static final Img transpose ( final Img source, final int w,
+      final int h, final Img target ) {
 
       /**
        * See https://en.wikipedia.org/wiki/In-place_matrix_transposition and

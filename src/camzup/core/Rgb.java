@@ -1679,4 +1679,5 @@ public class Rgb implements IColor {
       return target.set(u * orig.r + step * dest.r, u * orig.g + step * dest.g,
          u * orig.b + step * dest.b, u * orig.alpha + step * dest.alpha);
    }
+
 }

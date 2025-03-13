@@ -244,7 +244,7 @@ public abstract class ParserGgr {
                   // have to convert RGB to LAB sooner, at the point of
                   // ltClr and rtClr.
                   case ParserGgr.SPACE_HSB_CCW:
-                  case ParserGgr.SPACE_HSB_CW: 
+                  case ParserGgr.SPACE_HSB_CW:
                   case ParserGgr.SPACE_RGB:
                   default: {
                      Rgb.mix(ltClr, rtClr, fac, evalClr);
