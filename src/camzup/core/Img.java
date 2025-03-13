@@ -658,10 +658,12 @@ public class Img {
       }
 
       final int len = source.pixels.length;
-      final float sAdjVerif = Float.isNaN(sFac) ? 1.0f : 1.0f + Utils.clamp(
-         sFac, -1.0f, 1.0f);
-      final float lAdjVerif = Float.isNaN(lFac) ? 1.0f : 1.0f + Utils.clamp(
-         lFac, -1.0f, 1.0f);
+      final float sAdjVerif = Float.isNaN(sFac) ?
+         1.0f :
+         1.0f + Utils.clamp(sFac, -1.0f, 1.0f);
+      final float lAdjVerif = Float.isNaN(lFac) ?
+         1.0f :
+         1.0f + Utils.clamp(lFac, -1.0f, 1.0f);
 
       if ( Utils.approx(sAdjVerif, 1.0f) && Utils.approx(lAdjVerif, 1.0f) ) {
          System.arraycopy(source.pixels, 0, target.pixels, 0, len);
@@ -724,7 +726,7 @@ public class Img {
             break;
 
          case FIXED:
-            pivotSat = sumSat / sumTally;
+            pivotSat = 0.5d;
             pivotLight = 50.0d;
             break;
 
@@ -897,6 +899,9 @@ public class Img {
             break;
 
          case FIXED:
+            pivotChroma = Lch.SR_CHROMA_MEAN;
+            break;
+
          case MEAN:
          default:
       }

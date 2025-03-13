@@ -404,6 +404,11 @@ public class Lch implements IColor {
    public static final float SR_CHROMA_MAX = 119.431305f;
 
    /**
+    *  The average chroma in SR LCH for a color converted from standard RGB.
+    */
+   public static final float SR_CHROMA_MEAN = 56.141006f;
+
+   /**
     * Arbitrary hue in SR LCH assigned to colors with no saturation that are
     * closer to light, {@value Lch#SR_HUE_LIGHT}. Defaults to a yellow.
     */
