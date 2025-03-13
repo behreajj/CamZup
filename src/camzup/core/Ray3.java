@@ -219,7 +219,7 @@ public class Ray3 {
     *
     * @see Vec3#subNorm(Vec3, Vec3, Vec3)
     */
-   public static Ray3 fromPoints ( final Vec3 orig, final Vec3 dest,
+   public static final Ray3 fromPoints ( final Vec3 orig, final Vec3 dest,
       final Ray3 target ) {
 
       target.origin.set(orig);
