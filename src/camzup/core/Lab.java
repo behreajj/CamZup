@@ -956,8 +956,8 @@ public class Lab implements IColor {
    }
 
    /**
-    * Converts an array of integers that represent colors in hexadecimal into
-    * an array of colors
+    * Converts an array of 32 bit integers that represent colors in
+    * hexadecimal into an array of colors.
     *
     * @param hexes the colors
     *
@@ -966,8 +966,6 @@ public class Lab implements IColor {
     * @see Lab#fromHex(int, Lab)
     */
    public static Lab[] fromHex ( final int[] hexes ) {
-
-      // TODO: Make an array version of long fromHex?
 
       final int len = hexes.length;
       final Lab[] result = new Lab[len];
@@ -1000,6 +998,26 @@ public class Lab implements IColor {
          ( b16 - 32768L ) * Lab.AB_FROM_SHORT,
          t16 / 65535.0f);
       /* @formatter:on */
+   }
+
+   /**
+    * Converts an array of 64 bit integers that represent colors in
+    * hexadecimal into an array of colors.
+    *
+    * @param hexes the colors
+    *
+    * @return the array
+    *
+    * @see Lab#fromHex(int, Lab)
+    */
+   public static Lab[] fromHex ( final long[] hexes ) {
+
+      final int len = hexes.length;
+      final Lab[] result = new Lab[len];
+      for ( int i = 0; i < len; ++i ) {
+         result[i] = Lab.fromHex(hexes[i], new Lab());
+      }
+      return result;
    }
 
    /**

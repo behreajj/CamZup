@@ -4,9 +4,7 @@ import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.NoSuchElementException;
 import java.util.Objects;
-import java.util.PrimitiveIterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -16,7 +14,7 @@ import java.util.TreeSet;
  * is 0xTTTTLLLLAAAABBBB. The alpha channel is abbreviated to 'T', since
  * 'A' is already taken.
  */
-public class Img implements Iterable < Long > {
+public class Img {
 
    /**
     * The image height.
@@ -26,7 +24,7 @@ public class Img implements Iterable < Long > {
    /**
     * The image pixels.
     */
-   protected final long[] pixels;
+   protected long[] pixels;
 
    /**
     * The image width.
@@ -54,14 +52,7 @@ public class Img implements Iterable < Long > {
     */
    public Img ( final int width, final int height ) {
 
-      // TODO: The final width height choice will make image rotate, skew and
-      // resize a bitch. For now implement protected static methods that only
-      // work on long[] arrays of pixels.
-
       // TODO: Function to set all zero alpha pixels to clear pixel?
-
-      // TODO: Mark out of gamut pixels with a color. Problem is that you have
-      // to assume srgb.
 
       // TODO: swap alpha to light, light to alpha methods?
 
@@ -327,15 +318,6 @@ public class Img implements Iterable < Long > {
    }
 
    /**
-    * Gets a pixel iterator.
-    */
-   @Override
-   public ImageIterator iterator ( ) {
-
-      return new ImageIterator(this);
-   }
-
-   /**
     * Gets the image pixel length.
     *
     * @return the pixel length
@@ -514,6 +496,21 @@ public class Img implements Iterable < Long > {
    public final static float DEFAULT_BLUE = 0.5f;
 
    /**
+    * The default blend mode for the a and b channels.
+    */
+   public static final BlendMode.AB DEFAULT_BM_AB = BlendMode.AB.BLEND;
+
+   /**
+    * The default blend mode for the alpha channel.
+    */
+   public static final BlendMode.Alpha DEFAULT_BM_ALPHA = BlendMode.Alpha.BLEND;
+
+   /**
+    * The default blend mode for the lightness channel.
+    */
+   public static final BlendMode.L DEFAULT_BM_L = BlendMode.L.BLEND;
+
+   /**
     * The default policy on gray colors when adjusting by LCH.
     */
    public static final GrayPolicy DEFAULT_GRAY_POLICY = GrayPolicy.OMIT;
@@ -594,12 +591,12 @@ public class Img implements Iterable < Long > {
     * Adjusts an image's lightness and saturation contrast by a factor. The
     * adjustment factor is expected to be in [-1.0, 1.0].
     *
-    * @param source the source pixels
+    * @param source the source image
     * @param sFac   the saturation contrast factor
     * @param lFac   the lightness contrast factor
-    * @param target the target pixels
+    * @param target the target image
     *
-    * @return the adjusted pixels
+    * @return the adjusted image
     */
    public static Img adjustContrast ( final Img source, final float sFac,
       final float lFac, final Img target ) {
@@ -613,11 +610,11 @@ public class Img implements Iterable < Long > {
     * adjustment factor is expected to be in [-1.0, 1.0]. See
     * https://en.wikipedia.org/wiki/Colorfulness#Saturation .
     *
-    * @param source the source pixels
+    * @param source the source image
     * @param sFac   the saturation contrast factor
     * @param lFac   the lightness contrast factor
     * @param policy the pivot policy
-    * @param target the target pixels
+    * @param target the target image
     *
     * @return the adjusted pixels
     */
@@ -625,7 +622,11 @@ public class Img implements Iterable < Long > {
    public static Img adjustContrast ( final Img source, final float sFac,
       final float lFac, final PivotPolicy policy, final Img target ) {
 
-      if ( !Img.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[source.pixels.length];
+      }
 
       final int len = source.pixels.length;
 
@@ -644,11 +645,11 @@ public class Img implements Iterable < Long > {
 
       double minSat = Double.MAX_VALUE;
       double maxSat = -Double.MAX_VALUE;
-      double sumSat = 0.0f;
+      double sumSat = 0.0d;
 
       double minLight = Double.MAX_VALUE;
       double maxLight = -Double.MAX_VALUE;
-      double sumLight = 0.0f;
+      double sumLight = 0.0d;
 
       int sumTally = 0;
 
@@ -757,11 +758,11 @@ public class Img implements Iterable < Long > {
     * Adjusts an image's lightness and saturation contrast by a factor. The
     * adjustment factor is expected to be in [-1.0, 1.0].
     *
-    * @param source the source pixels
+    * @param source the source image
     * @param fac    the contrast factor
-    * @param target the target pixels
+    * @param target the target image
     *
-    * @return the adjusted pixels
+    * @return the adjusted image
     */
    public static Img adjustContrast ( final Img source, final float fac,
       final Img target ) {
@@ -774,11 +775,11 @@ public class Img implements Iterable < Long > {
     * Adjusts an image's lightness and saturation contrast by a factor. The
     * adjustment factor is expected to be in [-1.0, 1.0].
     *
-    * @param source the source pixels
+    * @param source the source image
     * @param fac    the contrast factor
-    * @param target the target pixels
+    * @param target the target image
     *
-    * @return the adjusted pixels
+    * @return the adjusted image
     */
    public static Img adjustContrast ( final Img source, final Vec2 fac,
       final Img target ) {
@@ -788,14 +789,14 @@ public class Img implements Iterable < Long > {
    }
 
    /**
-    * Adjusts the chroma contrast of colors from a source pixels array by a
-    * factor. The adjustment factor is expected to be in [-1.0, 1.0].
+    * Adjusts the chroma contrast of colors from a source image by a factor.
+    * The adjustment factor is expected to be in [-1.0, 1.0].
     *
-    * @param source the source pixels
+    * @param source the source image
     * @param fac    the contrast factor
-    * @param target the target pixels
+    * @param target the target image
     *
-    * @return the adjusted pixels
+    * @return the adjusted image
     */
    public static final Img adjustContrastChroma ( final Img source,
       final float fac, final Img target ) {
@@ -808,19 +809,21 @@ public class Img implements Iterable < Long > {
     * Adjusts an image's he chroma contrast by a factor. The adjustment factor
     * is expected to be in [-1.0, 1.0].
     *
-    * @param source the source pixels
+    * @param source the source image
     * @param fac    the contrast factor
     * @param policy the pivot policy
-    * @param target the target pixels
+    * @param target the target image
     *
-    * @return the adjusted pixels
+    * @return the adjusted image
     */
    public static final Img adjustContrastChroma ( final Img source,
       final float fac, final PivotPolicy policy, final Img target ) {
 
-      /* Tested March 11 2025. */
-
-      if ( !Img.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[source.pixels.length];
+      }
 
       final int len = source.pixels.length;
       final float noNanFac = Float.isNaN(fac) ? 0.5f : fac;
@@ -900,18 +903,20 @@ public class Img implements Iterable < Long > {
     * Adjusts an image's light contrast by a factor. The adjustment factor is
     * expected to be in [-1.0, 1.0].
     *
-    * @param source the source pixels
+    * @param source the source image
     * @param fac    the contrast factor
-    * @param target the target pixels
+    * @param target the target image
     *
-    * @return the adjusted pixels
+    * @return the adjusted image
     */
    public static final Img adjustContrastLight ( final Img source,
       final float fac, final Img target ) {
 
-      /* Tested March 11 2025. */
-
-      if ( !Img.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[source.pixels.length];
+      }
 
       final int len = source.pixels.length;
       final float noNanFac = Float.isNaN(fac) ? 0.5f : fac;
@@ -960,9 +965,11 @@ public class Img implements Iterable < Long > {
    public static final Img adjustLab ( final Img source, final Lab adjust,
       final Img target ) {
 
-      /* Tested March 11 2025. */
-
-      if ( !Img.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[source.pixels.length];
+      }
 
       final int len = source.pixels.length;
 
@@ -1021,7 +1028,11 @@ public class Img implements Iterable < Long > {
    public static final Img adjustLch ( final Img source, final Lch adjust,
       final GrayPolicy policy, final Img target ) {
 
-      if ( !Img.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[source.pixels.length];
+      }
 
       final int len = source.pixels.length;
 
@@ -1150,7 +1161,83 @@ public class Img implements Iterable < Long > {
 
    /**
     * Blends an under and over image.
-    * 
+    *
+    * @param imgUnder the under image
+    * @param imgOver  the over image
+    *
+    * @return the blended image
+    */
+   public static final Img blend ( final Img imgUnder, final Img imgOver ) {
+
+      return Img.blend(imgUnder, 0, 0, imgOver, 0, 0, Img.DEFAULT_BM_ALPHA,
+         Img.DEFAULT_BM_L, Img.DEFAULT_BM_AB, null);
+   }
+
+   /**
+    * Blends an under and over image.
+    *
+    * @param imgUnder the under image
+    * @param xUnder   the under x offset
+    * @param yUnder   the under y offset
+    * @param imgOver  the over image
+    * @param xOver    the over x offset
+    * @param yOver    the over y offset
+    *
+    * @return the blended image
+    */
+   public static final Img blend ( final Img imgUnder, final int xUnder,
+      final int yUnder, final Img imgOver, final int xOver, final int yOver ) {
+
+      return Img.blend(imgUnder, xUnder, yUnder, imgOver, xOver, yOver,
+         Img.DEFAULT_BM_ALPHA, Img.DEFAULT_BM_L, Img.DEFAULT_BM_AB, null);
+   }
+
+   /**
+    * Blends an under and over image.
+    *
+    * @param imgUnder the under image
+    * @param xUnder   the under x offset
+    * @param yUnder   the under y offset
+    * @param imgOver  the over image
+    * @param xOver    the over x offset
+    * @param yOver    the over y offset
+    * @param bmAlpha  the alpha blend mode
+    *
+    * @return the blended image
+    */
+   public static final Img blend ( final Img imgUnder, final int xUnder,
+      final int yUnder, final Img imgOver, final int xOver, final int yOver,
+      final BlendMode.Alpha bmAlpha ) {
+
+      return Img.blend(imgUnder, xUnder, yUnder, imgOver, xOver, yOver, bmAlpha,
+         Img.DEFAULT_BM_L, Img.DEFAULT_BM_AB, null);
+   }
+
+   /**
+    * Blends an under and over image.
+    *
+    * @param imgUnder the under image
+    * @param xUnder   the under x offset
+    * @param yUnder   the under y offset
+    * @param imgOver  the over image
+    * @param xOver    the over x offset
+    * @param yOver    the over y offset
+    * @param bmAlpha  the alpha blend mode
+    * @param bmLight  the light blend mode
+    *
+    * @return the blended image
+    */
+   public static final Img blend ( final Img imgUnder, final int xUnder,
+      final int yUnder, final Img imgOver, final int xOver, final int yOver,
+      final BlendMode.Alpha bmAlpha, final BlendMode.L bmLight ) {
+
+      return Img.blend(imgUnder, xUnder, yUnder, imgOver, xOver, yOver, bmAlpha,
+         bmLight, Img.DEFAULT_BM_AB, null);
+   }
+
+   /**
+    * Blends an under and over image.
+    *
     * @param imgUnder the under image
     * @param xUnder   the under x offset
     * @param yUnder   the under y offset
@@ -1160,19 +1247,43 @@ public class Img implements Iterable < Long > {
     * @param bmAlpha  the alpha blend mode
     * @param bmLight  the light blend mode
     * @param bmAb     the ab blend mode
-    * 
+    *
     * @return the blended image
     */
-   public static final Img blend (
-      final Img imgUnder, final int xUnder, final int yUnder,
-      final Img imgOver, final int xOver, final int yOver,
+   public static final Img blend ( final Img imgUnder, final int xUnder,
+      final int yUnder, final Img imgOver, final int xOver, final int yOver,
+      final BlendMode.Alpha bmAlpha, final BlendMode.L bmLight,
+      final BlendMode.AB bmAb ) {
 
-      final BlendMode.Alpha bmAlpha,
-      final BlendMode.L bmLight,
-      final BlendMode.AB bmAb
-   ) {
+      return Img.blend(imgUnder, xUnder, yUnder, imgOver, xOver, yOver, bmAlpha,
+         bmLight, bmAb, null);
+   }
+
+   /**
+    * Blends an under and over image.
+    *
+    * @param imgUnder the under image
+    * @param xUnder   the under x offset
+    * @param yUnder   the under y offset
+    * @param imgOver  the over image
+    * @param xOver    the over x offset
+    * @param yOver    the over y offset
+    * @param bmAlpha  the alpha blend mode
+    * @param bmLight  the light blend mode
+    * @param bmAb     the ab blend mode
+    * @param tl       the composite offset
+    *
+    * @return the blended image
+    */
+   public static final Img blend ( final Img imgUnder, final int xUnder,
+      final int yUnder, final Img imgOver, final int xOver, final int yOver,
+      final BlendMode.Alpha bmAlpha, final BlendMode.L bmLight,
+      final BlendMode.AB bmAb, final Vec2 tl ) {
 
       // TODO: This may have to be generalized to accept an array of images.
+
+      // TODO: Test blending, adding longs so you don't have to convert to Lab
+      // objects.
 
       final int ax = xUnder;
       final int ay = yUnder;
@@ -1201,8 +1312,6 @@ public class Img implements Iterable < Long > {
       int dbry = abry > bbry ? abry : bbry;
 
       switch ( bmAlpha ) {
-
-         case BLEND:
          case MIN:
          case MULTIPLY: {
             dx = ax > bx ? ax : bx;
@@ -1228,6 +1337,7 @@ public class Img implements Iterable < Long > {
          }
             break;
 
+         case BLEND:
          case MAX:
          default:
       }
@@ -1441,9 +1551,8 @@ public class Img implements Iterable < Long > {
                      final double csqUnder = aUnder * aUnder + bUnder * bUnder;
 
                      if ( csqUnder > IUtils.EPSILON_D ) {
-                        final double csqOver = aOver * aOver + bOver * bOver;
-                        final double s = Math.sqrt(csqOver) / Math.sqrt(
-                           csqUnder);
+                        final double s = Math.sqrt(aOver * aOver + bOver
+                           * bOver) / Math.sqrt(csqUnder);
                         aComp = s * aUnder;
                         bComp = s * bUnder;
 
@@ -1451,6 +1560,7 @@ public class Img implements Iterable < Long > {
 
                         aComp = 0.0d;
                         bComp = 0.0d;
+
                      } // End chroma under is greater than zero.
 
                   } // End under alpha is greater than zero.
@@ -1465,10 +1575,8 @@ public class Img implements Iterable < Long > {
 
                      if ( csqOver > IUtils.EPSILON_D ) {
 
-                        final double csqUnder = aUnder * aUnder + bUnder
-                           * bUnder;
-                        final double s = Math.sqrt(csqUnder) / Math.sqrt(
-                           csqOver);
+                        final double s = Math.sqrt(aUnder * aUnder + bUnder
+                           * bUnder) / Math.sqrt(csqOver);
                         aComp = s * aOver;
                         bComp = s * bOver;
 
@@ -1519,6 +1627,7 @@ public class Img implements Iterable < Long > {
 
       } // End pixels loop.
 
+      if ( tl != null ) { tl.set(dx, dy); }
       return new Img(cw, ch, trgPixels);
    }
 
@@ -1642,8 +1751,6 @@ public class Img implements Iterable < Long > {
    public static Img checker ( final long a, final long b, final int wCheck,
       final int hCheck, final Img target ) {
 
-      /* Tested March 11 2025. */
-
       final int w = target.width;
       final int h = target.height;
       final int shortEdge = w < h ? w : h;
@@ -1745,7 +1852,8 @@ public class Img implements Iterable < Long > {
    public static final Img fromArgb32 ( final int width, final int height,
       final int[] argb32s ) {
 
-      /* Tested March 11 2025. */
+      // TODO: Now that the pixels array can be reassigned, you can specify a
+      // target image.
 
       final int wVerif = Utils.clamp(Math.abs(width), 1, Img.MAX_DIMENSION);
       final int hVerif = Utils.clamp(Math.abs(height), 1, Img.MAX_DIMENSION);
@@ -1796,6 +1904,28 @@ public class Img implements Iterable < Long > {
     * @param yOrig  the origin y coordinate
     * @param xDest  the destination x coordinate
     * @param yDest  the destination y coordinate
+    * @param target the output image
+    *
+    * @return the gradient image
+    */
+   public final static Img gradientLinear ( final Gradient grd,
+      final float xOrig, final float yOrig, final float xDest,
+      final float yDest, final Img target ) {
+
+      return Img.gradientLinear(grd, xOrig, yOrig, xDest, yDest,
+         new Lab.MixLab(), target);
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The origin and destination should be in the range [-1.0, 1.0]. The
+    * scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param xOrig  the origin x coordinate
+    * @param yOrig  the origin y coordinate
+    * @param xDest  the destination x coordinate
+    * @param yDest  the destination y coordinate
     * @param easing the easing function
     * @param target the output image
     *
@@ -1808,10 +1938,6 @@ public class Img implements Iterable < Long > {
    public final static Img gradientLinear ( final Gradient grd,
       final float xOrig, final float yOrig, final float xDest,
       final float yDest, final Lab.AbstrEasing easing, final Img target ) {
-
-      // TODO: ZImage had a lot of overloads for this method so as to simplify
-      // the signature. You'll have to look at a past git commit to restore
-      // them.
 
       final int wTrg = target.width;
       final int hTrg = target.height;
@@ -1839,6 +1965,230 @@ public class Img implements Iterable < Long > {
       }
 
       return target;
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param target the output image
+    *
+    * @return the gradient image
+    */
+   public final static Img gradientLinear ( final Gradient grd,
+      final Img target ) {
+
+      return Img.gradientLinear(grd, -1.0f, 0.0f, 1.0f, 0.0f, target);
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param easing the easing function
+    * @param target the output image
+    *
+    * @return the gradient image
+    */
+   public final static Img gradientLinear ( final Gradient grd,
+      final Lab.AbstrEasing easing, final Img target ) {
+
+      return Img.gradientLinear(grd, -1.0f, 0.0f, 1.0f, 0.0f, easing, target);
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The origin and destination should be in the range [-1.0, 1.0]. The
+    * scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param orig   the origin
+    * @param dest   the destination
+    * @param target the output image
+    *
+    * @return the gradient image
+    */
+   public final static Img gradientLinear ( final Gradient grd, final Vec2 orig,
+      final Vec2 dest, final Img target ) {
+
+      return Img.gradientLinear(grd, orig, dest, new Lab.MixLab(), target);
+   }
+
+   /**
+    * Generates a linear gradient from an origin point to a destination point.
+    * The origin and destination should be in the range [-1.0, 1.0]. The
+    * scalar projection is clamped to [0.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param orig   the origin
+    * @param dest   the destination
+    * @param easing the easing function
+    * @param target the output image
+    *
+    * @return the gradient image
+    */
+   public final static Img gradientLinear ( final Gradient grd, final Vec2 orig,
+      final Vec2 dest, final Lab.AbstrEasing easing, final Img target ) {
+
+      return Img.gradientLinear(grd, orig.x, orig.y, dest.x, dest.y, easing,
+         target);
+   }
+
+   /**
+    * Maps the colors of a source image to a color gradient. Retains the
+    * original color's transparency.
+    *
+    * @param grd    the gradient
+    * @param source the input image
+    * @param target the output image
+    *
+    * @return the mapped image
+    */
+   public static Img gradientMap ( final Gradient grd, final Img source,
+      final Img target ) {
+
+      return Img.gradientMap(grd, source, new Lab.MixLab(), MapChannel.L, true,
+         target);
+   }
+
+   /**
+    * Maps the colors of a source image to a color gradient. Retains the
+    * original color's transparency.
+    *
+    * @param grd    the gradient
+    * @param source the input image
+    * @param easing the easing function
+    * @param target the output image
+    *
+    * @return the mapped image
+    */
+   public static Img gradientMap ( final Gradient grd, final Img source,
+      final Lab.AbstrEasing easing, final Img target ) {
+
+      return Img.gradientMap(grd, source, easing, MapChannel.L, true, target);
+   }
+
+   /**
+    * Maps the colors of a source image to a color gradient. Retains the
+    * original color's transparency.
+    *
+    * @param grd          the gradient
+    * @param source       the input image
+    * @param easing       the easing function
+    * @param channel      the color channel
+    * @param useNormalize normalize channel range
+    * @param target       the output image
+    *
+    * @return the mapped image
+    */
+   public static Img gradientMap ( final Gradient grd, final Img source,
+      final Lab.AbstrEasing easing, final Img.MapChannel channel,
+      final boolean useNormalize, final Img target ) {
+
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[source.pixels.length];
+      }
+
+      final HashMap < Long, Long > convert = new HashMap <>();
+      convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
+
+      final Lab lab = new Lab();
+      final int len = source.pixels.length;
+      final HashMap < Long, Lch > uniques = new HashMap <>();
+
+      float minChannel = Float.MAX_VALUE;
+      float maxChannel = -Float.MAX_VALUE;
+      int sumTally = 0;
+
+      for ( int i = 0; i < len; ++i ) {
+         final long srcPixel = source.pixels[i];
+         final Long srcPixelObj = srcPixel;
+         if ( !uniques.containsKey(srcPixelObj) ) {
+            Lab.fromHex(srcPixel, lab);
+            final Lch lch = Lch.fromLab(lab, new Lch());
+            if ( lch.alpha > 0.0f ) {
+               switch ( channel ) {
+                  case C: {
+                     final float c = lch.c;
+                     if ( c > maxChannel ) maxChannel = c;
+                     if ( c < minChannel ) minChannel = c;
+                  }
+                     break;
+
+                  case L:
+                  default: {
+                     final float l = lch.l;
+                     if ( l > maxChannel ) maxChannel = l;
+                     if ( l < minChannel ) minChannel = l;
+                  }
+               } // Channel switch.
+               ++sumTally;
+            } // Alpha greater than zero.
+            uniques.put(srcPixelObj, lch);
+         } // Uniques doesn't contain pixel.
+      } // Pixels loop.
+
+      final boolean useNormVerif = useNormalize && sumTally != 0 && maxChannel
+         > minChannel;
+      final float dff = Utils.diff(maxChannel, minChannel);
+      final float denom = Utils.div(1.0f, dff);
+      final Lch defLch = Lch.clearBlack(new Lch());
+
+      for ( int j = 0; j < len; ++j ) {
+         final long srcPixel = source.pixels[j];
+         final Long srcPixelObj = srcPixel;
+         long trgPixel = Img.CLEAR_PIXEL;
+         if ( convert.containsKey(srcPixelObj) ) {
+            trgPixel = convert.get(srcPixelObj);
+         } else {
+            final Lch lch = uniques.getOrDefault(srcPixelObj, defLch);
+
+            float fac = 0.5f;
+            switch ( channel ) {
+               case C: {}
+                  fac = useNormVerif ? ( lch.c - minChannel ) * denom : lch.c
+                     / Lch.SR_CHROMA_MAX;
+                  break;
+
+               case L:
+               default: {
+                  fac = useNormVerif ? ( lch.l - minChannel ) * denom : lch.l
+                     * 0.01f;
+               }
+            }
+
+            Gradient.eval(grd, fac, easing, lab);
+            trgPixel = lab.toHexLongSat();
+            convert.put(srcPixelObj, trgPixel);
+         }
+
+         target.pixels[j] = trgPixel;
+      }
+
+      return target;
+   }
+
+   /**
+    * Maps the colors of a source image to a color gradient. Retains the
+    * original color's transparency.
+    *
+    * @param grd     the gradient
+    * @param source  the input image
+    * @param easing  the easing function
+    * @param channel the color channel
+    * @param target  the output image
+    *
+    * @return the mapped image
+    */
+   public static Img gradientMap ( final Gradient grd, final Img source,
+      final Lab.AbstrEasing easing, final Img.MapChannel channel,
+      final Img target ) {
+
+      return Img.gradientMap(grd, source, easing, channel, false, target);
    }
 
    /**
@@ -1952,16 +2302,17 @@ public class Img implements Iterable < Long > {
    public static final Img grayscale ( final Img source, final float fac,
       final Img target ) {
 
-      /* Tested March 11 2025. */
-
       if ( Float.isNaN(fac) || fac >= 1.0f ) {
          return Img.grayscale(source, target);
       }
 
-      if ( !Img.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[source.pixels.length];
+      }
 
       final int len = source.pixels.length;
-
       if ( fac <= 0.0f ) {
          System.arraycopy(source.pixels, 0, target.pixels, 0, len);
          return target;
@@ -2003,7 +2354,11 @@ public class Img implements Iterable < Long > {
     */
    public static final Img grayscale ( final Img source, final Img target ) {
 
-      if ( !Img.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[source.pixels.length];
+      }
 
       final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
@@ -2061,7 +2416,7 @@ public class Img implements Iterable < Long > {
     *
     * @return the inverted image
     */
-   public static final Img invertLAB ( final Img source, final Img target ) {
+   public static final Img invertLab ( final Img source, final Img target ) {
 
       return Img.invert(source, Img.ISOLATE_LAB_MASK, target);
    }
@@ -2140,11 +2495,15 @@ public class Img implements Iterable < Long > {
    public static Img mix ( final Img orig, final Img dest, final float fac,
       final Img target ) {
 
-      /* Tested March 11 2025. */
-
-      if ( !Img.similar(orig, dest) || !Img.similar(orig, target) || !Img
-         .similar(dest, target) ) {
+      if ( !Img.similar(orig, dest) ) {
+         System.err.println("Cannot mix between two images of unequal sizes.");
          return target;
+      }
+
+      if ( !Img.similar(orig, target) ) {
+         target.width = orig.width;
+         target.height = orig.height;
+         target.pixels = new long[orig.pixels.length];
       }
 
       final int len = target.pixels.length;
@@ -2175,16 +2534,42 @@ public class Img implements Iterable < Long > {
    }
 
    /**
-    * Multiplies the image's alpha by the scalar.
+    * Multiplies the image's alpha by the scalar. Expected range is within [0,
+    * 65535]. Clears the image if the alpha is less than or equal to zero.
     *
+    * @param source the input image
+    * @param a01    the alpha scalar
     * @param target the output image
-    * @param alpha  the alpha scalar
     *
     * @return the multiplied alpha
     */
-   public static final Img mulAlpha ( final Img target, final float alpha ) {
+   public static final Img mulAlpha ( final Img source, final float a01,
+      final Img target ) {
 
-      return Img.mulAlpha(target, Utils.round(Utils.abs(alpha) * 0xffff));
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[source.pixels.length];
+      }
+
+      if ( a01 <= 0.0f ) { return Img.clear(target); }
+
+      final int len = source.pixels.length;
+      if ( a01 == 1.0f ) {
+         System.arraycopy(source.pixels, 0, target.pixels, 0, len);
+         return target;
+      }
+
+      final long alpha = Utils.round(Utils.abs(a01) * 0xffff);
+      for ( int i = 0; i < len; ++i ) {
+         final long c = source.pixels[i];
+         final long t16Src = c >> Img.T_SHIFT & 0xffffL;
+         final long t16Trg = t16Src * alpha / 0xffffL;
+         final long t16TrgCl = t16Trg > 0xffffL ? 0xffffL : t16Trg;
+         target.pixels[i] = t16TrgCl << Img.T_SHIFT | c & Img.ISOLATE_LAB_MASK;
+      }
+
+      return target;
    }
 
    /**
@@ -2201,7 +2586,11 @@ public class Img implements Iterable < Long > {
    public static final Img normalizeLight ( final Img source, final float fac,
       final Img target ) {
 
-      if ( !Img.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[source.pixels.length];
+      }
 
       final int len = source.pixels.length;
       final float noNanFac = Float.isNaN(fac) ? 1.0f : fac;
@@ -2235,7 +2624,7 @@ public class Img implements Iterable < Long > {
          }
       }
 
-      final float dff = Utils.diff(minLight, maxLight);
+      final float dff = Utils.diff(maxLight, minLight);
       if ( sumTally == 0 || dff < Img.MIN_LIGHT_DIFF ) {
          System.arraycopy(source.pixels, 0, target.pixels, 0, len);
          return target;
@@ -2302,6 +2691,8 @@ public class Img implements Iterable < Long > {
     */
    public static final Img opaque ( final Img target ) {
 
+      // TODO: Follow source, target pattern?
+
       final int len = target.pixels.length;
       for ( int i = 0; i < len; ++i ) {
          target.pixels[i] = target.pixels[i] | Img.ISOLATE_T_MASK;
@@ -2319,6 +2710,8 @@ public class Img implements Iterable < Long > {
     */
    public static final Img removeTranslucency ( final Img target ) {
 
+      // TODO: Follow source, target pattern?
+
       final int len = target.pixels.length;
       for ( int i = 0; i < len; ++i ) {
          final long c = target.pixels[i];
@@ -2326,6 +2719,56 @@ public class Img implements Iterable < Long > {
          final long t16Trg = t16Src < 0x80000L ? 0x0000L : 0xffffL;
          target.pixels[i] = t16Trg << Img.T_SHIFT | c & Img.ISOLATE_LAB_MASK;
       }
+      return target;
+   }
+
+   /**
+    * Resizes a source image and places the pixels into a target image.
+    *
+    * @param source the source image
+    * @param wTrg   the target width
+    * @param hTrg   the target height
+    * @param target the target image
+    *
+    * @return the resized image
+    */
+   public static Img resizeBilinear ( final Img source, final int wTrg,
+      final int hTrg, final Img target ) {
+
+      final int wTrgVerif = Utils.clamp(Math.abs(wTrg), 1, Img.MAX_DIMENSION);
+      final int hTrgVerif = Utils.clamp(Math.abs(hTrg), 1, Img.MAX_DIMENSION);
+
+      final int wSrc = source.width;
+      final int hSrc = source.height;
+      final int srcLen = source.pixels.length;
+
+      if ( wSrc == wTrgVerif && hSrc == hTrgVerif ) {
+         target.width = wSrc;
+         target.height = hSrc;
+         target.pixels = new long[srcLen];
+         System.arraycopy(source.pixels, 0, target.pixels, 0, srcLen);
+         return target;
+      }
+
+      final float wDenom = wTrgVerif - 1.0f;
+      final float hDenom = hTrgVerif - 1.0f;
+      final float tx = wDenom != 0.0f ? ( wSrc - 1.0f ) / wDenom : 0.0f;
+      final float ty = hDenom != 0.0f ? ( hSrc - 1.0f ) / hDenom : 0.0f;
+      final float ox = wDenom != 0.0f ? 0.0f : 0.5f;
+      final float oy = hDenom != 0.0f ? 0.0f : 0.5f;
+
+      final int trgLen = wTrgVerif * hTrgVerif;
+      final long[] trgPixels = new long[trgLen];
+
+      for ( int i = 0; i < trgLen; ++i ) {
+         trgPixels[i] = Img.sampleBilinear(source, tx * ( i % wTrgVerif ) + ox,
+            ty * ( i / wTrgVerif ) + oy);
+      }
+
+      target.width = wTrgVerif;
+      target.height = hTrgVerif;
+      target.pixels = trgPixels;
+
       return target;
    }
 
@@ -2402,6 +2845,25 @@ public class Img implements Iterable < Long > {
    }
 
    /**
+    * Rotates the pixels of a source image around the image center by an angle
+    * in radians.
+    *
+    * @param source the source image
+    * @param angle  the angle in radians
+    * @param target the target image
+    *
+    * @return rotated image
+    *
+    * @see Utils#mod(int, int)
+    * @see Utils#round(float)
+    */
+   public static final Img rotate ( final Img source, final float angle,
+      final Img target ) {
+
+      return Img.rotateBilinear(source, angle, target);
+   }
+
+   /**
     * Rotates the source pixel array 180 degrees counter-clockwise. The
     * rotation is stored in the target pixel array.
     *
@@ -2412,7 +2874,12 @@ public class Img implements Iterable < Long > {
     */
    public static final Img rotate180 ( final Img source, final Img target ) {
 
-      if ( !Img.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[source.pixels.length];
+      }
+
       final int len = source.pixels.length;
       for ( int i = 0, j = len - 1; i < len; ++i, --j ) {
          target.pixels[j] = source.pixels[i];
@@ -2432,6 +2899,10 @@ public class Img implements Iterable < Long > {
     * @return the rotated image
     */
    public static final Img rotate270 ( final Img source, final Img target ) {
+
+      if ( !Img.similar(source, target) ) {
+         target.pixels = new long[source.pixels.length];
+      }
 
       final int w = source.width;
       final int h = source.height;
@@ -2458,6 +2929,10 @@ public class Img implements Iterable < Long > {
     */
    public static final Img rotate90 ( final Img source, final Img target ) {
 
+      if ( !Img.similar(source, target) ) {
+         target.pixels = new long[source.pixels.length];
+      }
+
       final int w = source.width;
       final int h = source.height;
       final int len = source.pixels.length;
@@ -2470,6 +2945,111 @@ public class Img implements Iterable < Long > {
       target.height = w;
 
       return target;
+   }
+
+   /**
+    * Rotates the pixels of a source image around the image center by an angle
+    * in radians. Where the angle is approximately 0, 90, 180 and 270 degrees,
+    * resorts to faster methods. Uses bilinear filtering.
+    *
+    * @param source the source pixels
+    * @param angle  the angle in radians
+    * @param target the target pixels
+    *
+    * @return rotated pixels
+    *
+    * @see Utils#mod(int, int)
+    * @see Utils#round(float)
+    */
+   public static final Img rotateBilinear ( final Img source, final float angle,
+      final Img target ) {
+
+      final long[] srcPixels = source.pixels;
+      final int srcLen = srcPixels.length;
+      final int deg = Utils.mod(Utils.round(angle * IUtils.RAD_TO_DEG), 360);
+      switch ( deg ) {
+         case 0: {
+            final long[] trgPixels = new long[srcLen];
+            System.arraycopy(srcPixels, 0, trgPixels, 0, srcLen);
+
+            target.width = source.width;
+            target.height = source.height;
+            target.pixels = trgPixels;
+
+            return target;
+         }
+
+         case 90: {
+            return Img.rotate90(source, target);
+         }
+
+         case 180: {
+            return Img.rotate180(source, target);
+         }
+
+         case 270: {
+            return Img.rotate270(source, target);
+         }
+
+         default: {
+            final double avd = angle;
+            final float cosa = ( float ) Math.cos(avd);
+            final float sina = ( float ) Math.sin(avd);
+            return Img.rotateBilinear(source, cosa, sina, target);
+         }
+      }
+   }
+
+   /**
+    * Scales an image by a percentage of its original width and height.
+    * Percentages are expected to be within [0.0, 1.0].
+    *
+    * @param source the source image
+    * @param wPrc   the width percentage
+    * @param hPrc   the height percentage
+    * @param target the target image
+    *
+    * @return the scaled image
+    *
+    * @see Utils#round(float)
+    */
+   public static Img scaleBilinear ( final Img source, final float wPrc,
+      final float hPrc, final Img target ) {
+
+      return Img.resizeBilinear(source, Utils.round(wPrc * source.width), Utils
+         .round(hPrc * source.width), target);
+   }
+
+   /**
+    * Scales an image by a percentage of its original width and height.
+    * Percentages are expected to be within [0.0, 1.0].
+    *
+    * @param source the source image
+    * @param prc    the percentage
+    * @param target the target image
+    *
+    * @return the scaled image
+    */
+   public static Img scaleBilinear ( final Img source, final float prc,
+      final Img target ) {
+
+      return Img.scaleBilinear(source, prc, prc, target);
+   }
+
+   /**
+    * Scales an image by a percentage of its original width and height.
+    * Percentages are expected to be within [0.0, 1.0].
+    *
+    * @param source the source image
+    * @param prc    the percentage
+    * @param target the target image
+    *
+    * @return the scaled image
+    */
+   public static Img scaleBilinear ( final Img source, final Vec2 prc,
+      final Img target ) {
+
+      return Img.scaleBilinear(source, prc.x, prc.y, target);
    }
 
    /**
@@ -2555,25 +3135,16 @@ public class Img implements Iterable < Long > {
          if ( usePreMultiply ) { Rgb.premul(srgb, srgb); }
          Rgb.clamp01(srgb, srgb);
 
-         // TODO: Can you set alpha to zero here and avoid the bit and below?
-         rIso.set(srgb.r, 0.0f, 0.0f, 1.0f);
-         gIso.set(0.0f, srgb.g, 0.0f, 1.0f);
-         bIso.set(0.0f, 0.0f, srgb.b, 1.0f);
+         rIso.set(srgb.r, 0.0f, 0.0f, 0.0f);
+         gIso.set(0.0f, srgb.g, 0.0f, 0.0f);
+         bIso.set(0.0f, 0.0f, srgb.b, 0.0f);
 
          final long rLab64 = Rgb.sRgbToSrLab2(rIso, lab, xyz, lrgb)
-            .toHexLongSat() & Img.ISOLATE_LAB_MASK;
+            .toHexLongSat();
          final long gLab64 = Rgb.sRgbToSrLab2(gIso, lab, xyz, lrgb)
-            .toHexLongSat() & Img.ISOLATE_LAB_MASK;
+            .toHexLongSat();
          final long bLab64 = Rgb.sRgbToSrLab2(bIso, lab, xyz, lrgb)
-            .toHexLongSat() & Img.ISOLATE_LAB_MASK;
-
-         // Not sure if this is an effective option.
-         // if ( correctLight ) {
-         // final long lIso = tlab64 & Image.ISOLATE_L_MASK;
-         // rLab64 = lIso | rLab64 & Image.ISOLATE_AB_MASK;
-         // gLab64 = lIso | gLab64 & Image.ISOLATE_AB_MASK;
-         // bLab64 = lIso | bLab64 & Image.ISOLATE_AB_MASK;
-         // }
+            .toHexLongSat();
 
          final long tIso = tlab64 & Img.ISOLATE_T_MASK;
 
@@ -2602,8 +3173,6 @@ public class Img implements Iterable < Long > {
     * @return the pixels
     */
    public static final int[] toArgb32 ( final Img source ) {
-
-      /* Tested March 11 2025. */
 
       final int len = source.pixels.length;
       final int[] argb32s = new int[len];
@@ -2638,6 +3207,170 @@ public class Img implements Iterable < Long > {
    }
 
    /**
+    * Transposes the source image, stores the transposition in the target
+    * image.
+    *
+    * @param source the source image
+    * @param w      the image width
+    * @param h      the image height
+    * @param target the target image
+    *
+    * @return the transposed image
+    */
+   public static Img transpose ( final Img source, final int w, final int h,
+      final Img target ) {
+
+      /**
+       * See https://en.wikipedia.org/wiki/In-place_matrix_transposition and
+       * https://johnloomis.org/ece563/notes/geom/basic/geom.htm for notes on
+       * transposing in place.
+       */
+
+      if ( !Img.similar(source, target) ) {
+         target.pixels = new long[source.pixels.length];
+      }
+
+      final int len = source.pixels.length;
+      for ( int i = 0; i < len; ++i ) {
+         target.pixels[i % w * h + i / w] = source.pixels[i];
+      }
+
+      target.width = h;
+      target.height = w;
+
+      return target;
+   }
+
+   /**
+    * Removes excess transparent pixels from an array of pixels.
+    *
+    * @param source the source image
+    *
+    * @return the trimmed image
+    */
+   public static Img trimAlpha ( final Img source ) {
+
+      return Img.trimAlpha(source, null);
+   }
+
+   /**
+    * Removes excess transparent pixels from an array of pixels. Adapted from
+    * the implementation by Oleg Mikhailov: <a href=
+    * "https://stackoverflow.com/a/36938923">https://stackoverflow.com/a/36938923</a>.
+    * <br>
+    * <br>
+    * Emits the new image dimensions to a {@link Vec2}.
+    *
+    * @param source the source image
+    * @param tl     top left
+    *
+    * @return the trimmed image
+    *
+    * @author Oleg Mikhailov
+    */
+   public static Img trimAlpha ( final Img source, final Vec2 tl ) {
+
+      // TODO: Since pixels can be reassigned, this may now accept a target
+      // image.
+
+      final long[] srcPixels = source.pixels;
+      final int srcLen = srcPixels.length;
+      final int wSrc = source.width;
+      final int hSrc = source.height;
+
+      if ( wSrc < 2 && hSrc < 2 ) {
+         final long[] trgPixels = new long[srcLen];
+         System.arraycopy(source, 0, trgPixels, 0, srcLen);
+         return new Img(wSrc, hSrc, trgPixels);
+      }
+
+      final int wn1 = wSrc > 1 ? wSrc - 1 : 0;
+      final int hn1 = hSrc > 1 ? hSrc - 1 : 0;
+
+      int minRight = wn1;
+      int minBottom = hn1;
+
+      /* Top search. y is outer loop, x is inner loop. */
+      int top = -1;
+      boolean goTop = true;
+      while ( goTop && top < hn1 ) {
+         ++top;
+         final int wtop = wSrc * top;
+         int x = -1;
+         while ( goTop && x < wn1 ) {
+            ++x;
+            if ( ( srcPixels[wtop + x] & Img.ISOLATE_T_MASK ) != 0L ) {
+               minRight = x;
+               minBottom = top;
+               goTop = false;
+            }
+         }
+      }
+
+      /* Left search. x is outer loop, y is inner loop. */
+      int left = -1;
+      boolean goLeft = true;
+      while ( goLeft && left < minRight ) {
+         ++left;
+         int y = hSrc;
+         while ( goLeft && y > top ) {
+            --y;
+            if ( ( srcPixels[y * wSrc + left] & Img.ISOLATE_T_MASK ) != 0 ) {
+               minBottom = y;
+               goLeft = false;
+            }
+         }
+      }
+
+      /* Bottom search. y is outer loop, x is inner loop. */
+      int bottom = hSrc;
+      boolean goBottom = true;
+      while ( goBottom && bottom > minBottom ) {
+         --bottom;
+         final int wbottom = wSrc * bottom;
+         int x = wSrc;
+         while ( goBottom && x > left ) {
+            --x;
+            if ( ( srcPixels[wbottom + x] & Img.ISOLATE_T_MASK ) != 0 ) {
+               minRight = x;
+               goBottom = false;
+            }
+         }
+      }
+
+      /* Right search. x is outer loop, y is inner loop. */
+      int right = wSrc;
+      boolean goRight = true;
+      while ( goRight && right > minRight ) {
+         --right;
+         int y = bottom + 1;
+         while ( goRight && y > top ) {
+            --y;
+            if ( ( srcPixels[y * wSrc + right] & Img.ISOLATE_T_MASK ) != 0 ) {
+               goRight = false;
+            }
+         }
+      }
+
+      final int wTrg = 1 + right - left;
+      final int hTrg = 1 + bottom - top;
+      if ( wTrg < 1 || hTrg < 1 ) {
+         final long[] trgPixels = new long[srcLen];
+         System.arraycopy(source, 0, trgPixels, 0, srcLen);
+         return new Img(wSrc, hSrc, trgPixels);
+      }
+
+      final int trgLen = wTrg * hTrg;
+      final long[] trgPixels = new long[trgLen];
+      for ( int i = 0; i < trgLen; ++i ) {
+         trgPixels[i] = srcPixels[wSrc * ( top + i / wTrg ) + left + i % wTrg];
+      }
+
+      if ( tl != null ) { tl.set(left, top); }
+      return new Img(wTrg, hTrg, trgPixels);
+   }
+
+   /**
     * Gets the source image's unique pixels as an ordered set.
     *
     * @param source the input image
@@ -2658,7 +3391,41 @@ public class Img implements Iterable < Long > {
    }
 
    /**
-    * Inverts an image per a mask.
+    * Blits a source image's pixels onto a target image, using integer floor
+    * modulo to wrap the source image. The source image can be offset
+    * horizontally and/or vertically, creating the illusion of infinite
+    * background.
+    *
+    * @param source the source image
+    * @param dx     the horizontal pixel offset
+    * @param dy     the vertical pixel offset
+    * @param target the target image
+    *
+    * @return the wrapped pixels
+    */
+   public static Img wrap ( final Img source, final int dx, final int dy,
+      final Img target ) {
+
+      final int len = target.pixels.length;
+      final int wTrg = target.width;
+      final int wSrc = source.width;
+      final int hSrc = source.height;
+
+      for ( int i = 0; i < len; ++i ) {
+         int yMod = ( i / wTrg + dy ) % hSrc;
+         if ( ( yMod ^ hSrc ) < 0 && yMod != 0 ) { yMod += hSrc; }
+
+         int xMod = ( i % wTrg - dx ) % wSrc;
+         if ( ( xMod ^ wSrc ) < 0 && xMod != 0 ) { xMod += wSrc; }
+
+         target.pixels[i] = source.pixels[xMod + wSrc * yMod];
+      }
+
+      return target;
+   }
+
+   /**
+    * Inverts an image colors per a mask.
     *
     * @param source the input image
     * @param target the output image
@@ -2668,7 +3435,11 @@ public class Img implements Iterable < Long > {
    protected static final Img invert ( final Img source, final long mask,
       final Img target ) {
 
-      if ( !Img.similar(source, target) ) { return target; }
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[source.pixels.length];
+      }
 
       final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
@@ -2678,29 +3449,175 @@ public class Img implements Iterable < Long > {
    }
 
    /**
-    * Multiplies the image's alpha by the scalar. Expected range is within [0,
-    * 65535]. Clears the image if the alpha is less than or equal to zero.
+    * Rotates the pixels of a source image around the image center by an angle
+    * in radians. Assumes that the sine and cosine of the angle have already
+    * been calculated and simple cases (0, 90, 180, 270 degrees) have been
+    * filtered out.
     *
-    * @param target the output image
-    * @param alpha  the alpha scalar
+    * @param source the source image
+    * @param cosa   the cosine of the angle
+    * @param sina   the sine of the angle
+    * @param target the target image
     *
-    * @return the multiplied alpha
+    * @return rotated pixels
+    *
+    * @see Utils#abs(float)
     */
-   protected static final Img mulAlpha ( final Img target, final long alpha ) {
+   protected static final Img rotateBilinear ( final Img source,
+      final float cosa, final float sina, final Img target ) {
 
-      if ( alpha <= 0x0000L ) { return Img.clear(target); }
-      if ( alpha == 0xffffL ) { return target; }
+      final int wSrc = source.width;
+      final int hSrc = source.height;
+      final float wSrcf = wSrc;
+      final float hSrcf = hSrc;
+      final float absCosa = Utils.abs(cosa);
+      final float absSina = Utils.abs(sina);
 
-      final int len = target.pixels.length;
-      for ( int i = 0; i < len; ++i ) {
-         final long c = target.pixels[i];
-         final long t16Src = c >> Img.T_SHIFT & 0xffffL;
-         final long t16Trg = t16Src * alpha / 0xffffL;
-         final long t16TrgCl = t16Trg > 0xffffL ? 0xffffL : t16Trg;
-         target.pixels[i] = t16TrgCl << Img.T_SHIFT | c & Img.ISOLATE_LAB_MASK;
+      final int wTrg = ( int ) ( 0.5f + hSrcf * absSina + wSrcf * absCosa );
+      final int hTrg = ( int ) ( 0.5f + hSrcf * absCosa + wSrcf * absSina );
+      final float wTrgf = wTrg;
+      final float hTrgf = hTrg;
+
+      final float xSrcCenter = wSrcf * 0.5f;
+      final float ySrcCenter = hSrcf * 0.5f;
+      final float xTrgCenter = wTrgf * 0.5f;
+      final float yTrgCenter = hTrgf * 0.5f;
+
+      final int trgLen = wTrg * hTrg;
+      final long[] trgPixels = new long[trgLen];
+
+      for ( int i = 0; i < trgLen; ++i ) {
+         final float ySgn = i / wTrg - yTrgCenter;
+         final float xSgn = i % wTrg - xTrgCenter;
+         trgPixels[i] = Img.sampleBilinear(source, xSrcCenter + cosa * xSgn
+            - sina * ySgn, ySrcCenter + cosa * ySgn + sina * xSgn);
       }
 
+      target.width = wTrg;
+      target.height = hTrg;
+      target.pixels = trgPixels;
+
       return target;
+   }
+
+   /**
+    * Internal helper function to sample a source image with a bilinear color
+    * mix. Returns a hexadecimal integer color.
+    *
+    * @param img  the source image
+    * @param xSrc the x coordinate
+    * @param ySrc the y coordinate
+    *
+    * @return the color
+    */
+   protected static final long sampleBilinear ( final Img img, final float xSrc,
+      final float ySrc ) {
+
+      final long[] source = img.pixels;
+      final int wSrc = img.width;
+      final int hSrc = img.height;
+
+      /*
+       * Find truncation, floor and ceiling. The ceiling cannot use yc = yf + 1
+       * as a shortcut due to the case where y = 0.
+       */
+      final int yi = ( int ) ySrc;
+      final int yf = ySrc > 0.0f ? yi : ySrc < -0.0f ? yi - 1 : 0;
+      final int yc = ySrc > 0.0f ? yi + 1 : ySrc < -0.0f ? yi : 0;
+
+      final boolean yfInBounds = yf >= 0 && yf < hSrc;
+      final boolean ycInBounds = yc >= 0 && yc < hSrc;
+
+      final int xi = ( int ) xSrc;
+      final int xf = xSrc > 0.0f ? xi : xSrc < -0.0f ? xi - 1 : 0;
+      final int xc = xSrc > 0.0f ? xi + 1 : xSrc < -0.0f ? xi : 0;
+
+      /* Pixel corners colors. */
+      final boolean xfInBounds = xf >= 0 && xf < wSrc;
+      final boolean xcInBounds = xc >= 0 && xc < wSrc;
+
+      /* @formatter:off */
+      final long c00 = yfInBounds && xfInBounds ?
+         source[yf * wSrc + xf] : Img.CLEAR_PIXEL;
+      final long c10 = yfInBounds && xcInBounds ?
+         source[yf * wSrc + xc] : Img.CLEAR_PIXEL;
+      final long c11 = ycInBounds && xcInBounds ?
+         source[yc * wSrc + xc] : Img.CLEAR_PIXEL;
+      final long c01 = ycInBounds && xfInBounds ?
+         source[yc * wSrc + xf] : Img.CLEAR_PIXEL;
+      /* @formatter:on */
+
+      final float xErr = xSrc - xf;
+
+      float t0 = 0.0f;
+      float l0 = 0.0f;
+      float a0 = 0.0f;
+      float b0 = 0.0f;
+
+      final long t00 = c00 >> Img.T_SHIFT & 0xffffL;
+      final long t10 = c10 >> Img.T_SHIFT & 0xffffL;
+      if ( t00 > 0 || t10 > 0 ) {
+         final float u = 1.0f - xErr;
+         t0 = u * t00 + xErr * t10;
+         if ( t0 > 0.0f ) {
+            /* @formatter:off */
+            l0 =    u * ( c00 >> Img.L_SHIFT & 0xffffL )
+               + xErr * ( c10 >> Img.L_SHIFT & 0xffffL );
+            a0 =    u * ( c00 >> Img.A_SHIFT & 0xffffL )
+               + xErr * ( c10 >> Img.A_SHIFT & 0xffffL );
+            b0 =    u * ( c00 >> Img.B_SHIFT & 0xffffL )
+               + xErr * ( c10 >> Img.B_SHIFT & 0xffffL );
+            /* @formatter:on */
+         }
+      }
+
+      float t1 = 0.0f;
+      float l1 = 0.0f;
+      float a1 = 0.0f;
+      float b1 = 0.0f;
+
+      final long t01 = c01 >> Img.T_SHIFT & 0xffffL;
+      final long t11 = c11 >> Img.T_SHIFT & 0xffffL;
+      if ( t01 > 0 || t11 > 0 ) {
+         final float u = 1.0f - xErr;
+         t1 = u * t01 + xErr * t11;
+         if ( t1 > 0.0f ) {
+            /* @formatter:off */
+            l1 =    u * ( c01 >> Img.L_SHIFT & 0xffffL )
+               + xErr * ( c11 >> Img.L_SHIFT & 0xffffL );
+            a1 =    u * ( c01 >> Img.A_SHIFT & 0xffffL )
+               + xErr * ( c11 >> Img.A_SHIFT & 0xffffL );
+            b1 =    u * ( c01 >> Img.B_SHIFT & 0xffffL )
+               + xErr * ( c11 >> Img.B_SHIFT & 0xffffL );
+            /* @formatter:on */
+         }
+      }
+
+      if ( t0 > 0.0f || t1 > 0.0f ) {
+         final float yErr = ySrc - yf;
+         final float u = 1.0f - yErr;
+         final float t2 = u * t0 + yErr * t1;
+         if ( t2 > 0.0f ) {
+            final float r2 = u * l0 + yErr * l1;
+            final float g2 = u * a0 + yErr * a1;
+            final float b2 = u * b0 + yErr * b1;
+
+            long ti = ( long ) ( 0.5f + t2 );
+            long ri = ( long ) ( 0.5f + r2 );
+            long gi = ( long ) ( 0.5f + g2 );
+            long bi = ( long ) ( 0.5f + b2 );
+
+            if ( ti > 0xffffL ) { ti = 0xffffL; }
+            if ( ri > 0xffffL ) { ri = 0xffffL; }
+            if ( gi > 0xffffL ) { gi = 0xffffL; }
+            if ( bi > 0xffffL ) { bi = 0xffffL; }
+
+            return ti << Img.T_SHIFT | ri << Img.L_SHIFT | gi << Img.A_SHIFT
+               | bi << Img.B_SHIFT;
+         }
+      }
+
+      return Img.CLEAR_PIXEL;
    }
 
    /**
@@ -2791,61 +3708,15 @@ public class Img implements Iterable < Long > {
    }
 
    /**
-    * An iterator, which allows a face's edges to be accessed in an enhanced
-    * for loop.
+    * Channel to use in the gradient map.
     */
-   public static final class ImageIterator implements PrimitiveIterator.OfLong {
+   public enum MapChannel {
 
-      /**
-       * The image being iterated over.
-       */
-      private final Img image;
+      /** The chroma channel. */
+      C,
 
-      /**
-       * The current index.
-       */
-      private int index = 0;
-
-      /**
-       * The default constructor.
-       *
-       * @param image the image to iterate.
-       */
-      public ImageIterator ( final Img image ) {
-
-         this.image = image;
-      }
-
-      /**
-       * Determines whether another pixel is available in the list.
-       *
-       * @return the evaluation
-       */
-      @Override
-      public boolean hasNext ( ) {
-
-         return this.index < this.image.pixels.length;
-      }
-
-      /**
-       * Gets the next pixel.
-       *
-       * @return the pixel
-       */
-      @Override
-      public long nextLong ( ) {
-
-         if ( !this.hasNext() ) { throw new NoSuchElementException(); }
-         return this.image.pixels[this.index++];
-      }
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
+      /** The lightness channel. */
+      L
 
    }
 

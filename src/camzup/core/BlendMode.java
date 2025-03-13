@@ -94,5 +94,4 @@ public interface BlendMode {
       UNDER
    }
 
-
 }

@@ -44,170 +44,6 @@ public abstract class Pixels {
    public static final int SHADOWS = 0b0001;
 
    /**
-    * Blends backdrop and overlay pixels. Forms a union of the bounding area
-    * of the two inputs. Emits the dimensions and top-left corner of the
-    * blended image.
-    *
-    * @param aPixels backdrop pixels
-    * @param aw      backdrop width
-    * @param ah      backdrop height
-    * @param ax      backdrop x offset
-    * @param ay      backdrop y offset
-    * @param bPixels overlay pixels
-    * @param bw      overlay width
-    * @param bh      overlay height
-    * @param bx      overlay x offset
-    * @param by      overlay y offset
-    * @param dim     dimensions
-    * @param tl      top-left
-    *
-    * @return the blended pixels
-    *
-    * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
-    * @see Rgb#fromHex(int, Rgb)
-    * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
-    * @see Vec4#zero(Vec4)
-    */
-   @Experimental
-   public static int[] blendLab ( final int[] aPixels, final int aw,
-      final int ah, final int ax, final int ay, final int[] bPixels,
-      final int bw, final int bh, final int bx, final int by, final Vec2 dim,
-      final Vec2 tl ) {
-
-      final Rgb srgb = new Rgb();
-      final Rgb lrgb = new Rgb();
-      final Vec4 xyz = new Vec4();
-
-      final HashMap < Integer, Lab > dict = new HashMap <>(512, 0.75f);
-      dict.put(0x00000000, Lab.clearBlack(new Lab()));
-
-      /* Find the bottom right corner for a and b. */
-      final int abrx = ax + aw - 1;
-      final int abry = ay + ah - 1;
-      final int bbrx = bx + bw - 1;
-      final int bbry = by + bh - 1;
-
-      /* Blending only necessary at the intersection of a and b. */
-      final int dx = ax > bx ? ax : bx;
-      final int dy = ay > by ? ay : by;
-      final int dbrx = abrx < bbrx ? abrx : bbrx;
-      final int dbry = abry < bbry ? abry : bbry;
-      final int dw = 1 + dbrx - dx;
-      final int dh = 1 + dbry - dy;
-
-      if ( dw > 0 && dh > 0 ) {
-         /*
-          * Find difference between the intersection top left and the top left
-          * of a and b.
-          */
-         final int axid = ax - dx;
-         final int ayid = ay - dy;
-         final int bxid = bx - dx;
-         final int byid = by - dy;
-
-         final int dLen = dw * dh;
-         for ( int h = 0; h < dLen; ++h ) {
-            final int x = h % dw;
-            final int y = h / dw;
-
-            final int aHex = aPixels[x - axid + ( y - ayid ) * aw];
-            final Integer aKeyObj = aHex;
-            if ( !dict.containsKey(aKeyObj) ) {
-               final Lab aLab = new Lab();
-               Rgb.fromHex(aHex, srgb);
-               Rgb.sRgbToSrLab2(srgb, aLab, xyz, lrgb);
-               dict.put(aKeyObj, aLab);
-            }
-
-            final int bHex = bPixels[x - bxid + ( y - byid ) * bw];
-            final Integer bKeyObj = bHex;
-            if ( !dict.containsKey(bKeyObj) ) {
-               final Lab bLab = new Lab();
-               Rgb.fromHex(bHex, srgb);
-               Rgb.sRgbToSrLab2(srgb, bLab, xyz, lrgb);
-               dict.put(bKeyObj, bLab);
-            }
-         }
-      }
-
-      /* The result dimensions are the union of a and b. */
-      final int cx = ax < bx ? ax : bx;
-      final int cy = ay < by ? ay : by;
-      final int cbrx = abrx > bbrx ? abrx : bbrx;
-      final int cbry = abry > bbry ? abry : bbry;
-      final int cw = 1 + cbrx - cx;
-      final int ch = 1 + cbry - cy;
-      final int cLen = cw * ch;
-
-      /* Find difference between the union top left and top left of a and b. */
-      final int axud = ax - cx;
-      final int ayud = ay - cy;
-      final int bxud = bx - cx;
-      final int byud = by - cy;
-
-      final Lab cLab = new Lab();
-      final int[] target = new int[cLen];
-      for ( int i = 0; i < cLen; ++i ) {
-         final int x = i % cw;
-         final int y = i / cw;
-
-         int aHex = 0x00000000;
-         final int axs = x - axud;
-         final int ays = y - ayud;
-         if ( ays > -1 && ays < ah && axs > -1 && axs < aw ) {
-            aHex = aPixels[axs + ays * aw];
-         }
-
-         int bHex = 0x00000000;
-         final int bxs = x - bxud;
-         final int bys = y - byud;
-         if ( bys > -1 && bys < bh && bxs > -1 && bxs < bw ) {
-            bHex = bPixels[bxs + bys * bw];
-         }
-
-         final int t255 = bHex >> 0x18 & 0xff;
-         if ( t255 >= 0xff ) {
-            target[i] = bHex;
-         } else if ( t255 <= 0x0 ) {
-            target[i] = aHex;
-         } else {
-            final int v255 = aHex >> 0x18 & 0xff;
-            if ( v255 <= 0x0 ) {
-               target[i] = bHex;
-            } else {
-               final float t = t255 * IUtils.ONE_255;
-               final float v = v255 * IUtils.ONE_255;
-               final float u = 1.0f - t;
-               final float uv = u * v;
-               final float tuv = t + uv;
-
-               if ( tuv <= 0.0f ) {
-                  target[i] = 0x00000000;
-               } else {
-                  final Lab orig = dict.get(aHex);
-                  final Lab dest = dict.get(bHex);
-
-                  // Simulate alpha pre-multiply on lightness?
-                  // if ( tuv >= 1.0f ) { tuv = 1.0f; }
-                  // cLab.set(u * orig.x + t * dest.x, u * orig.y + t * dest.y,
-                  // ( uv * orig.z + t * dest.z ) / tuv, tuv);
-
-                  cLab.set(u * orig.l + t * dest.l, u * orig.a + t * dest.a, u
-                     * orig.b + t * dest.b, tuv);
-
-                  Rgb.srLab2TosRgb(cLab, srgb, lrgb, xyz);
-                  target[i] = srgb.toHexIntSat();
-               }
-            }
-         }
-      }
-
-      if ( dim != null ) { dim.set(cw, ch); }
-      if ( tl != null ) { tl.set(cx, cy); }
-      return target;
-   }
-
-   /**
     * Blurs an array of pixels by averaging each color with its neighbors in 8
     * directions. The step determines the size of the kernel, where the
     * minimum step of 1 will make a 3x3, 9 pixel kernel. Averages the color's
@@ -335,22 +171,6 @@ public abstract class Pixels {
       for ( int j = 0; j < len; ++j ) {
          Utils.bytesml(source[j], target, j * 4 + i);
       }
-      return target;
-   }
-
-   /**
-    * Fills the pixels target array with a color.
-    *
-    * @param c      the fill color
-    * @param target the target pixels
-    *
-    * @return the filled pixels
-    */
-   public static int[] fill ( final int c, final int[] target ) {
-
-      final int len = target.length;
-      for ( int i = 0; i < len; ++i ) { target[i] = c; }
-
       return target;
    }
 
@@ -587,7 +407,7 @@ public abstract class Pixels {
             if ( aOvr > 0 ) {
                final int axs = x - axd;
                final int ays = y - ayd;
-               if ( ays > -1 && ays < ah && axs > -1 && axs < aw ) {
+               if ( ays >= 0 && ays < ah && axs >= 0 && axs < aw ) {
                   final int hexUdr = aPixels[axs + ays * aw];
                   final int aUdr = hexUdr >> 0x18 & 0xff;
                   if ( aUdr > 0 ) {
@@ -946,192 +766,6 @@ public abstract class Pixels {
    }
 
    /**
-    * Multiplies the red, green and blue channels of each pixel by its alpha
-    * channel.
-    *
-    * @param source the source pixels
-    * @param target the target pixels
-    *
-    * @return the premultiplied image
-    */
-   public static int[] premul ( final int[] source, final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-         for ( int i = 0; i < srcLen; ++i ) {
-            final int srcHex = source[i];
-            final int ai = srcHex >> 0x18 & 0xff;
-            if ( ai < 1 ) {
-               target[i] = 0x00000000;
-            } else if ( ai < 0xff ) {
-               final float af = ai * IUtils.ONE_255;
-               int rp = ( int ) ( ( srcHex >> 0x10 & 0xff ) * af + 0.5f );
-               int gp = ( int ) ( ( srcHex >> 0x08 & 0xff ) * af + 0.5f );
-               int bp = ( int ) ( ( srcHex & 0xff ) * af + 0.5f );
-
-               if ( rp > 0xff ) { rp = 0xff; }
-               if ( gp > 0xff ) { gp = 0xff; }
-               if ( bp > 0xff ) { bp = 0xff; }
-
-               target[i] = ai << 0x18 | rp << 0x10 | gp << 0x08 | bp;
-            } else {
-               target[i] = srcHex;
-            }
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Resizes pixels from a source image to a requested size using a bilinear
-    * filter. Copies the source to the target if source and target dimensions
-    * are equal.
-    *
-    * @param source the source pixels
-    * @param wSrc   the source image width
-    * @param hSrc   the source image height
-    * @param wTrg   the target width
-    * @param hTrg   the target height
-    *
-    * @return the resized image
-    *
-    * @see Pixels#sampleBilinear(int[], int, int, float, float)
-    */
-   public static int[] resizeBilinear ( final int[] source, final int wSrc,
-      final int hSrc, final int wTrg, final int hTrg ) {
-
-      final int srcLen = source.length;
-      if ( wSrc == wTrg && hSrc == hTrg ) {
-         final int[] target = new int[srcLen];
-         System.arraycopy(source, 0, target, 0, srcLen);
-         return target;
-      }
-
-      final float wDenom = wTrg - 1.0f;
-      final float hDenom = hTrg - 1.0f;
-      final float tx = wDenom != 0.0f ? ( wSrc - 1.0f ) / wDenom : 0.0f;
-      final float ty = hDenom != 0.0f ? ( hSrc - 1.0f ) / hDenom : 0.0f;
-      final float ox = wDenom != 0.0f ? 0.0f : 0.5f;
-      final float oy = hDenom != 0.0f ? 0.0f : 0.5f;
-
-      final int trgLen = wTrg * hTrg;
-      final int[] target = new int[trgLen];
-      for ( int i = 0; i < trgLen; ++i ) {
-         target[i] = Pixels.sampleBilinear(source, wSrc, hSrc, tx * ( i % wTrg )
-            + ox, ty * ( i / wTrg ) + oy);
-      }
-
-      return target;
-   }
-
-   /**
-    * Rotates the pixels of a source image around the image center by an angle
-    * in radians. Assumes that the sine and cosine of the angle have already
-    * been calculated and simple cases (0, 90, 180, 270 degrees) have been
-    * filtered out.<br>
-    * <br>
-    * Emits the new image dimensions to a {@link Vec2}.
-    *
-    * @param source the source pixels
-    * @param wSrc   the source image width
-    * @param hSrc   the source image height
-    * @param cosa   the cosine of the angle
-    * @param sina   the sine of the angle
-    * @param dim    the new dimension
-    *
-    * @return rotated pixels
-    *
-    * @see Pixels#sampleBilinear(int[], int, int, float, float)
-    * @see Utils#abs(float)
-    */
-   public static int[] rotateBilinear ( final int[] source, final int wSrc,
-      final int hSrc, final float cosa, final float sina, final Vec2 dim ) {
-
-      final float wSrcf = wSrc;
-      final float hSrcf = hSrc;
-      final float absCosa = Utils.abs(cosa);
-      final float absSina = Utils.abs(sina);
-
-      final int wTrg = ( int ) ( 0.5f + hSrcf * absSina + wSrcf * absCosa );
-      final int hTrg = ( int ) ( 0.5f + hSrcf * absCosa + wSrcf * absSina );
-      final float wTrgf = wTrg;
-      final float hTrgf = hTrg;
-
-      final float xSrcCenter = wSrcf * 0.5f;
-      final float ySrcCenter = hSrcf * 0.5f;
-      final float xTrgCenter = wTrgf * 0.5f;
-      final float yTrgCenter = hTrgf * 0.5f;
-
-      final int trgLen = wTrg * hTrg;
-      final int[] target = new int[trgLen];
-
-      for ( int i = 0; i < trgLen; ++i ) {
-         final float ySgn = i / wTrg - yTrgCenter;
-         final float xSgn = i % wTrg - xTrgCenter;
-         target[i] = Pixels.sampleBilinear(source, wSrc, hSrc, xSrcCenter + cosa
-            * xSgn - sina * ySgn, ySrcCenter + cosa * ySgn + sina * xSgn);
-      }
-
-      if ( dim != null ) { dim.set(wTrgf, hTrgf); }
-      return target;
-   }
-
-   /**
-    * Rotates the pixels of a source image around the image center by an angle
-    * in radians. Where the angle is approximately 0, 90, 180 and 270 degrees,
-    * resorts to faster methods. Uses bilinear filtering.<br>
-    * <br>
-    * Emits the new image dimensions to a {@link Vec2}.
-    *
-    * @param source the source pixels
-    * @param wSrc   the source image width
-    * @param hSrc   the source image height
-    * @param angle  the angle in radians
-    * @param dim    the new dimension
-    *
-    * @return rotated pixels
-    *
-    * @see Utils#mod(int, int)
-    * @see Utils#round(float)
-    */
-   public static int[] rotateBilinear ( final int[] source, final int wSrc,
-      final int hSrc, final float angle, final Vec2 dim ) {
-
-      // TODO: Split into an internal function which accepts a sine and cosine
-      // and a public function that accepts an angle but vets to see if 90, 180
-      // and 270 can be used.
-
-      final int srcLen = source.length;
-      final int deg = Utils.mod(Utils.round(angle * IUtils.RAD_TO_DEG), 360);
-      switch ( deg ) {
-         case 0:
-            if ( dim != null ) { dim.set(wSrc, hSrc); }
-            final int[] target = new int[srcLen];
-            System.arraycopy(source, 0, target, 0, srcLen);
-            return target;
-
-         // case 90:
-         // if ( dim != null ) { dim.set(hSrc, wSrc); }
-         // return Pixels.rotate90(source, wSrc, hSrc, new int[srcLen]);
-
-         // case 180:
-         // if ( dim != null ) { dim.set(wSrc, hSrc); }
-         // return Pixels.rotate180(source, new int[srcLen]);
-
-         // case 270:
-         // if ( dim != null ) { dim.set(hSrc, wSrc); }
-         // return Pixels.rotate270(source, wSrc, hSrc, new int[srcLen]);
-
-         default:
-            final double avd = angle;
-            final float cosa = ( float ) Math.cos(avd);
-            final float sina = ( float ) Math.sin(avd);
-            return Pixels.rotateBilinear(source, wSrc, hSrc, cosa, sina, dim);
-      }
-   }
-
-   /**
     * Internal helper function to sample a source image with a bilinear color
     * mix. Returns a hexadecimal integer color.
     *
@@ -1172,7 +806,7 @@ public abstract class Pixels {
 
       final float xErr = xSrc - xf;
 
-      float a0 = 0.0f;
+      float t0 = 0.0f;
       float r0 = 0.0f;
       float g0 = 0.0f;
       float b0 = 0.0f;
@@ -1181,15 +815,15 @@ public abstract class Pixels {
       final int a10 = c10 >> 0x18 & 0xff;
       if ( a00 > 0 || a10 > 0 ) {
          final float u = 1.0f - xErr;
-         a0 = u * a00 + xErr * a10;
-         if ( a0 > 0.0f ) {
+         t0 = u * a00 + xErr * a10;
+         if ( t0 > 0.0f ) {
             r0 = u * ( c00 >> 0x10 & 0xff ) + xErr * ( c10 >> 0x10 & 0xff );
             g0 = u * ( c00 >> 0x08 & 0xff ) + xErr * ( c10 >> 0x08 & 0xff );
             b0 = u * ( c00 & 0xff ) + xErr * ( c10 & 0xff );
          }
       }
 
-      float a1 = 0.0f;
+      float t1 = 0.0f;
       float r1 = 0.0f;
       float g1 = 0.0f;
       float b1 = 0.0f;
@@ -1198,34 +832,34 @@ public abstract class Pixels {
       final int a11 = c11 >> 0x18 & 0xff;
       if ( a01 > 0 || a11 > 0 ) {
          final float u = 1.0f - xErr;
-         a1 = u * a01 + xErr * a11;
-         if ( a1 > 0.0f ) {
+         t1 = u * a01 + xErr * a11;
+         if ( t1 > 0.0f ) {
             r1 = u * ( c01 >> 0x10 & 0xff ) + xErr * ( c11 >> 0x10 & 0xff );
             g1 = u * ( c01 >> 0x08 & 0xff ) + xErr * ( c11 >> 0x08 & 0xff );
             b1 = u * ( c01 & 0xff ) + xErr * ( c11 & 0xff );
          }
       }
 
-      if ( a0 > 0.0f || a1 > 0.0f ) {
+      if ( t0 > 0.0f || t1 > 0.0f ) {
          final float yErr = ySrc - yf;
          final float u = 1.0f - yErr;
-         final float a2 = u * a0 + yErr * a1;
-         if ( a2 > 0.0f ) {
+         final float t2 = u * t0 + yErr * t1;
+         if ( t2 > 0.0f ) {
             final float r2 = u * r0 + yErr * r1;
             final float g2 = u * g0 + yErr * g1;
             final float b2 = u * b0 + yErr * b1;
 
-            int ai = ( int ) ( 0.5f + a2 );
+            int ti = ( int ) ( 0.5f + t2 );
             int ri = ( int ) ( 0.5f + r2 );
             int gi = ( int ) ( 0.5f + g2 );
             int bi = ( int ) ( 0.5f + b2 );
 
-            if ( ai > 0xff ) { ai = 0xff; }
+            if ( ti > 0xff ) { ti = 0xff; }
             if ( ri > 0xff ) { ri = 0xff; }
             if ( gi > 0xff ) { gi = 0xff; }
             if ( bi > 0xff ) { bi = 0xff; }
 
-            return ai << 0x18 | ri << 0x10 | gi << 0x08 | bi;
+            return ti << 0x18 | ri << 0x10 | gi << 0x08 | bi;
          }
       }
 
@@ -1557,225 +1191,6 @@ public abstract class Pixels {
       }
 
       return result;
-   }
-
-   /**
-    * Transposes the source pixel array. The transposition is stored in the
-    * target array.
-    *
-    * @param source the source pixels
-    * @param w      the image width
-    * @param h      the image height
-    * @param target the target pixels
-    *
-    * @return the transposed pixels
-    */
-   public static int[] transpose ( final int[] source, final int w, final int h,
-      final int[] target ) {
-
-      /**
-       * See https://en.wikipedia.org/wiki/In-place_matrix_transposition and
-       * https://johnloomis.org/ece563/notes/geom/basic/geom.htm for notes on
-       * transposing in place.
-       */
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-         for ( int i = 0; i < srcLen; ++i ) {
-            target[i % w * h + i / w] = source[i];
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Removes excess transparent pixels from an array of pixels. Adapted from
-    * the implementation by Oleg Mikhailov: <a href=
-    * "https://stackoverflow.com/a/36938923">https://stackoverflow.com/a/36938923</a>.
-    * <br>
-    * <br>
-    * Emits the new image dimensions to a {@link Vec2}.
-    *
-    * @param source the source pixels
-    * @param wSrc   the source image width
-    * @param hSrc   the source image height
-    * @param dim    the new dimension
-    * @param tl     top-left
-    *
-    * @return the trimmed pixels
-    *
-    * @author Oleg Mikhailov
-    */
-   public static int[] trimAlpha ( final int[] source, final int wSrc,
-      final int hSrc, final Vec2 dim, final Vec2 tl ) {
-
-      final int srcLen = source.length;
-
-      if ( wSrc < 2 && hSrc < 2 ) {
-         if ( dim != null ) { dim.set(wSrc, hSrc); }
-         final int[] target = new int[srcLen];
-         System.arraycopy(source, 0, target, 0, srcLen);
-         return target;
-      }
-
-      final int wn1 = wSrc > 1 ? wSrc - 1 : 0;
-      final int hn1 = hSrc > 1 ? hSrc - 1 : 0;
-
-      int minRight = wn1;
-      int minBottom = hn1;
-
-      /* Top search. y is outer loop, x is inner loop. */
-      int top = -1;
-      boolean goTop = true;
-      while ( goTop && top < hn1 ) {
-         ++top;
-         final int wtop = wSrc * top;
-         int x = -1;
-         while ( goTop && x < wn1 ) {
-            ++x;
-            if ( ( source[wtop + x] & 0xff000000 ) != 0 ) {
-               minRight = x;
-               minBottom = top;
-               goTop = false;
-            }
-         }
-      }
-
-      /* Left search. x is outer loop, y is inner loop. */
-      int left = -1;
-      boolean goLeft = true;
-      while ( goLeft && left < minRight ) {
-         ++left;
-         int y = hSrc;
-         while ( goLeft && y > top ) {
-            --y;
-            if ( ( source[y * wSrc + left] & 0xff000000 ) != 0 ) {
-               minBottom = y;
-               goLeft = false;
-            }
-         }
-      }
-
-      /* Bottom search. y is outer loop, x is inner loop. */
-      int bottom = hSrc;
-      boolean goBottom = true;
-      while ( goBottom && bottom > minBottom ) {
-         --bottom;
-         final int wbottom = wSrc * bottom;
-         int x = wSrc;
-         while ( goBottom && x > left ) {
-            --x;
-            if ( ( source[wbottom + x] & 0xff000000 ) != 0 ) {
-               minRight = x;
-               goBottom = false;
-            }
-         }
-      }
-
-      /* Right search. x is outer loop, y is inner loop. */
-      int right = wSrc;
-      boolean goRight = true;
-      while ( goRight && right > minRight ) {
-         --right;
-         int y = bottom + 1;
-         while ( goRight && y > top ) {
-            --y;
-            if ( ( source[y * wSrc + right] & 0xff000000 ) != 0 ) {
-               goRight = false;
-            }
-         }
-      }
-
-      final int wTrg = 1 + right - left;
-      final int hTrg = 1 + bottom - top;
-      if ( wTrg < 1 || hTrg < 1 ) {
-         if ( dim != null ) { Vec2.zero(dim); }
-         final int[] target = new int[srcLen];
-         System.arraycopy(source, 0, target, 0, srcLen);
-         return target;
-      }
-
-      final int trgLen = wTrg * hTrg;
-      final int[] target = new int[trgLen];
-      for ( int i = 0; i < trgLen; ++i ) {
-         target[i] = source[wSrc * ( top + i / wTrg ) + left + i % wTrg];
-      }
-
-      if ( dim != null ) { dim.set(wTrg, hTrg); }
-      if ( tl != null ) { tl.set(left, top); }
-      return target;
-   }
-
-   /**
-    * Divides the red, green and blue channels of each pixel in the image by
-    * its alpha channel. Reverse pre-multiplication.
-    *
-    * @param source the source pixels
-    * @param target the target pixels
-    *
-    * @return the unpremultiplied pixels
-    */
-   public static int[] unpremul ( final int[] source, final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-         for ( int i = 0; i < srcLen; ++i ) {
-            final int srcHex = source[i];
-            final int ai = srcHex >> 0x18 & 0xff;
-            if ( ai < 1 ) {
-               target[i] = 0x00000000;
-            } else if ( ai < 0xff ) {
-               final float af = 255.0f / ai;
-               int ru = ( int ) ( ( srcHex >> 0x10 & 0xff ) * af + 0.5f );
-               int gu = ( int ) ( ( srcHex >> 0x08 & 0xff ) * af + 0.5f );
-               int bu = ( int ) ( ( srcHex & 0xff ) * af + 0.5f );
-
-               if ( ru > 0xff ) { ru = 0xff; }
-               if ( gu > 0xff ) { gu = 0xff; }
-               if ( bu > 0xff ) { bu = 0xff; }
-
-               target[i] = ai << 0x18 | ru << 0x10 | gu << 0x08 | bu;
-            } else {
-               target[i] = srcHex;
-            }
-         }
-      }
-
-      return target;
-   }
-
-   /**
-    * Blits a source image's pixels onto a target image's pixels, using
-    * integer floor modulo to wrap the source image. The source image can be
-    * offset horizontally and/or vertically, creating the illusion of infinite
-    * background.
-    *
-    * @param source the source pixels
-    * @param wSrc   the source image width
-    * @param hSrc   the source image height
-    * @param dx     the horizontal pixel offset
-    * @param dy     the vertical pixel offset
-    * @param wTrg   the target image width
-    * @param target the target pixels
-    *
-    * @return the wrapped pixels
-    */
-   public static int[] wrap ( final int[] source, final int wSrc,
-      final int hSrc, final int dx, final int dy, final int wTrg,
-      final int[] target ) {
-
-      final int trgLen = target.length;
-      for ( int i = 0; i < trgLen; ++i ) {
-         int yMod = ( i / wTrg + dy ) % hSrc;
-         if ( ( yMod ^ hSrc ) < 0 && yMod != 0 ) { yMod += hSrc; }
-
-         int xMod = ( i % wTrg - dx ) % wSrc;
-         if ( ( xMod ^ wSrc ) < 0 && xMod != 0 ) { xMod += wSrc; }
-
-         target[i] = source[xMod + wSrc * yMod];
-      }
-
-      return target;
    }
 
    /**

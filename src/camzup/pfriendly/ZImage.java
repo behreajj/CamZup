@@ -125,19 +125,6 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Resizes the image to a requested size in pixels using bicubic
-    * interpolation.
-    *
-    * @param w width
-    * @param h height
-    */
-   @Override
-   public void resize ( final int w, final int h ) {
-
-      ZImage.resizeBilinear(this, w, h, this);
-   }
-
-   /**
     * Returns a string representation of an image, including its format,
     * width, height and pixel density.
     *
@@ -186,22 +173,6 @@ public class ZImage extends PImage {
    public static final int DEFAULT_LEADING = 8;
 
    /**
-    * Multiplies the alpha channel of each pixel in an array by a factor
-    * greater than zero.
-    *
-    * @param source the source image
-    * @param fac    the factor
-    * @param target the target image
-    *
-    * @return the translucent image
-    */
-   public static PImage adjustAlpha ( final PImage source, final float fac,
-      final PImage target ) {
-
-      return ZImage.adjustAlpha(source, Utils.round(fac * 255.0f), target);
-   }
-
-   /**
     * Convert an image in the {@link PConstants#ALPHA} format to an image in
     * the {@link PConstants#ARGB} format.
     *
@@ -224,142 +195,6 @@ public class ZImage extends PImage {
       image.format = PConstants.ARGB;
       image.updatePixels();
       return image;
-   }
-
-   /**
-    * Finds the aspect ratio of an image, its width divided by its height.
-    *
-    * @param image the image
-    *
-    * @return the aspect ratio
-    *
-    * @see Utils#div(float, float)
-    */
-   public static float aspect ( final PImage image ) {
-
-      return Utils.div(( float ) image.width, ( float ) image.height);
-   }
-
-   /**
-    * Blends backdrop and overlay images. Forms a union of the bounding area
-    * of the two inputs. Emits the top-left corner for the union. Rounds the
-    * offsets to integers.
-    *
-    * @param a      backdrop
-    * @param ax     backdrop x offset
-    * @param ay     backdrop y offset
-    * @param b      overlay image
-    * @param bx     overlay x offset
-    * @param by     overlay y offset
-    * @param target target image
-    * @param tl     top left
-    *
-    * @return the blended pixels
-    */
-   public static PImage blend ( final PImage a, final float ax, final float ay,
-      final PImage b, final float bx, final float by, final PImage target,
-      final Vec2 tl ) {
-
-      return ZImage.blend(a, Utils.round(ax), Utils.round(ay), b, Utils.round(
-         bx), Utils.round(by), target, tl);
-   }
-
-   /**
-    * Blends backdrop and overlay images. Forms a union of the bounding area
-    * of the two inputs. Emits the top-left corner for the union.
-    *
-    * @param a      backdrop
-    * @param ax     backdrop x offset
-    * @param ay     backdrop y offset
-    * @param b      overlay image
-    * @param bx     overlay x offset
-    * @param by     overlay y offset
-    * @param target target image
-    * @param tl     top left
-    *
-    * @return the blended pixels
-    */
-   public static PImage blend ( final PImage a, final int ax, final int ay,
-      final PImage b, final int bx, final int by, final PImage target,
-      final Vec2 tl ) {
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not use PGraphics with this method.");
-         return target;
-      }
-
-      a.loadPixels();
-      b.loadPixels();
-      target.loadPixels();
-      final int pd = a.pixelDensity < b.pixelDensity ? a.pixelDensity
-         : b.pixelDensity;
-
-      final Vec2 dim = new Vec2();
-      target.pixels = Pixels.blendLab(a.pixels, a.pixelWidth, a.pixelHeight, ax,
-         ay, b.pixels, b.pixelWidth, b.pixelHeight, bx, by, dim, tl);
-      target.pixelDensity = pd;
-      target.pixelWidth = ( int ) dim.x;
-      target.pixelHeight = ( int ) dim.y;
-      target.width = target.pixelWidth / pd;
-      target.height = target.pixelHeight / pd;
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Blends backdrop and overlay images. Forms a union of the bounding area
-    * of the two inputs. Emits the top-left corner for the union.
-    *
-    * @param a      backdrop
-    * @param b      overlay image
-    * @param target target image
-    * @param tl     top left
-    *
-    * @return the blended pixels
-    */
-   public static PImage blend ( final PImage a, final PImage b,
-      final PImage target, final Vec2 tl ) {
-
-      final int aw = a.pixelWidth;
-      final int ah = a.pixelHeight;
-      final int bw = b.pixelWidth;
-      final int bh = b.pixelHeight;
-
-      final int wLrg = aw > bw ? aw : bw;
-      final int hLrg = ah > bh ? ah : bh;
-
-      /* The 0.5 is to bias the rounding. */
-      final float cx = 0.5f + wLrg * 0.5f;
-      final float cy = 0.5f + hLrg * 0.5f;
-
-      final int ax = aw == wLrg ? 0 : ( int ) ( cx - aw * 0.5f );
-      final int ay = ah == hLrg ? 0 : ( int ) ( cy - ah * 0.5f );
-      final int bx = bw == wLrg ? 0 : ( int ) ( cx - bw * 0.5f );
-      final int by = bh == hLrg ? 0 : ( int ) ( cy - bh * 0.5f );
-
-      return ZImage.blend(a, ax, ay, b, bx, by, target, tl);
-   }
-
-   /**
-    * Blends backdrop and overlay images. Forms a union of the bounding area
-    * of the two inputs. Emits the top-left corner for the union. Rounds the
-    * offsets to integers.
-    *
-    * @param a      backdrop
-    * @param atl    a top left corner
-    * @param b      overlay image
-    * @param btl    b top left corner
-    * @param target target image
-    * @param tl     top left
-    *
-    * @return the blended pixels
-    */
-   public static PImage blend ( final PImage a, final Vec2 atl, final PImage b,
-      final Vec2 btl, final PImage target, final Vec2 tl ) {
-
-      return ZImage.blend(a, atl.x, atl.y, b, btl.x, btl.y, target, tl);
    }
 
    /**
@@ -454,12 +289,12 @@ public class ZImage extends PImage {
     *
     * @return the image
     *
-    * @see Pixels#fill(int, int[])
+    * @see ZImage#fill(int, int[])
     */
    public static PImage fill ( final int c, final PImage target ) {
 
       target.loadPixels();
-      Pixels.fill(c, target.pixels);
+      ZImage.fill(c, target.pixels);
       target.format = PConstants.ARGB;
       target.updatePixels();
 
@@ -1561,13 +1396,13 @@ public class ZImage extends PImage {
     *
     * @return the image
     *
-    * @see Pixels#premul(int[], int[])
+    * @see ZImage#premul(int[], int[])
     */
    public static PImage premul ( final PImage source, final PImage target ) {
 
       if ( source == target ) {
          target.loadPixels();
-         Pixels.premul(target.pixels, target.pixels);
+         ZImage.premul(target.pixels, target.pixels);
          target.format = PConstants.ARGB;
          target.updatePixels();
          return target;
@@ -1583,7 +1418,7 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      target.pixels = Pixels.premul(pxSrc, new int[pxSrc.length]);
+      target.pixels = ZImage.premul(pxSrc, new int[pxSrc.length]);
       target.format = PConstants.ARGB;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = w;
@@ -1593,191 +1428,6 @@ public class ZImage extends PImage {
       target.updatePixels();
 
       return target;
-   }
-
-   /**
-    * Resizes an image to a target width and height. The arguments are scaled
-    * by the image's pixel density within the method. Takes the absolute value
-    * of the arguments; does not flip an image based on sign.
-    *
-    * @param source the source image
-    * @param wTrg   the target width
-    * @param hTrg   the target height
-    * @param target the target image
-    *
-    * @return the resized image
-    */
-   public static PImage resize ( final PImage source, final int wTrg,
-      final int hTrg, final PImage target ) {
-
-      return ZImage.resizeBilinear(source, wTrg, hTrg, target);
-   }
-
-   /**
-    * Resizes an image to a target width and height. The arguments are scaled
-    * by the image's pixel density within the method. Takes the absolute value
-    * of the arguments; does not flip an image based on sign.
-    *
-    * @param source the source image
-    * @param wTrg   the target width
-    * @param hTrg   the target height
-    * @param target the target image
-    *
-    * @return the resized image
-    *
-    * @see Pixels#resizeBilinear(int[], int, int, int, int)
-    */
-   public static PImage resizeBilinear ( final PImage source, final int wTrg,
-      final int hTrg, final PImage target ) {
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not use PGraphics with this method.");
-         return target;
-      }
-
-      final int wvTrg = wTrg < 0 ? -wTrg < 1 ? 1 : -wTrg : wTrg < 1 ? 1 : wTrg;
-      final int hvTrg = hTrg < 0 ? -hTrg < 1 ? 1 : -hTrg : hTrg < 1 ? 1 : hTrg;
-
-      source.loadPixels();
-      target.loadPixels();
-      final int w = source.pixelWidth;
-      final int h = source.pixelHeight;
-      final int pd = source.pixelDensity;
-      final int[] pxSrc = source.pixels;
-      final int wpd = wvTrg * pd;
-      final int hpd = hvTrg * pd;
-      target.pixels = Pixels.resizeBilinear(pxSrc, w, h, wpd, hpd);
-      target.format = source.format;
-      target.pixelDensity = pd;
-      target.pixelWidth = wpd;
-      target.pixelHeight = hpd;
-      target.width = wvTrg;
-      target.height = hvTrg;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Rotates a source image around its center by an angle in radians.
-    *
-    * @param source the source image
-    * @param angle  the angle in radians
-    * @param target the target image
-    *
-    * @return the rotated image
-    */
-   public static PImage rotate ( final PImage source, final float angle,
-      final PImage target ) {
-
-      return ZImage.rotateBilinear(source, angle, target);
-   }
-
-   /**
-    * Rotates a source image around its center by an angle in radians.
-    *
-    * @param source the source image
-    * @param angle  the angle in radians
-    * @param target the target image
-    *
-    * @return the rotated image
-    *
-    * @see Pixels#rotateBilinear(int[], int, int, float, Vec2)
-    */
-   public static PImage rotateBilinear ( final PImage source, final float angle,
-      final PImage target ) {
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not use PGraphics with this method.");
-         return target;
-      }
-
-      source.loadPixels();
-      target.loadPixels();
-      final int w = source.pixelWidth;
-      final int h = source.pixelHeight;
-      final int pd = source.pixelDensity;
-      final int[] pxSrc = source.pixels;
-      final Vec2 dim = new Vec2();
-      target.pixels = Pixels.rotateBilinear(pxSrc, w, h, angle, dim);
-      target.format = source.format;
-      target.pixelDensity = pd;
-      target.pixelWidth = ( int ) dim.x;
-      target.pixelHeight = ( int ) dim.y;
-      target.width = target.pixelWidth / pd;
-      target.height = target.pixelHeight / pd;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Scales an image by a percentage of its original width and height.
-    * Percentages are expected to be within [0.0, 1.0].
-    *
-    * @param source the source image
-    * @param wPrc   the width percentage
-    * @param hPrc   the height percentage
-    * @param target the target image
-    *
-    * @return the scaled image
-    */
-   public static PImage scale ( final PImage source, final float wPrc,
-      final float hPrc, final PImage target ) {
-
-      return ZImage.scaleBilinear(source, wPrc, hPrc, target);
-   }
-
-   /**
-    * Scales an image by a percentage of its original width and height.
-    * Percentages are expected to be within [0.0, 1.0].
-    *
-    * @param source the source image
-    * @param prc    the width percentage
-    * @param target the target image
-    *
-    * @return the scaled image
-    */
-   public static PImage scale ( final PImage source, final Vec2 prc,
-      final PImage target ) {
-
-      return ZImage.scaleBilinear(source, prc, target);
-   }
-
-   /**
-    * Scales an image by a percentage of its original width and height.
-    * Percentages are expected to be within [0.0, 1.0].
-    *
-    * @param source the source image
-    * @param wPrc   the width percentage
-    * @param hPrc   the height percentage
-    * @param target the target image
-    *
-    * @return the scaled image
-    *
-    * @see Utils#round(float)
-    */
-   public static PImage scaleBilinear ( final PImage source, final float wPrc,
-      final float hPrc, final PImage target ) {
-
-      return ZImage.resizeBilinear(source, Utils.round(wPrc * source.width),
-         Utils.round(hPrc * source.height), target);
-   }
-
-   /**
-    * Scales an image by a percentage of its original width and height.
-    * Percentages are expected to be within [0.0, 1.0].
-    *
-    * @param source the source image
-    * @param prc    the width percentage
-    * @param target the target image
-    *
-    * @return the scaled image
-    */
-   public static PImage scaleBilinear ( final PImage source, final Vec2 prc,
-      final PImage target ) {
-
-      return ZImage.scaleBilinear(source, prc.x, prc.y, target);
    }
 
    /**
@@ -2170,79 +1820,6 @@ public class ZImage extends PImage {
    }
 
    /**
-    * Transposes an image. Also known as flipping it diagonally.
-    *
-    * @param source the source image
-    * @param target the target image
-    *
-    * @return the transpose image
-    *
-    * @see Pixels#transpose(int[], int, int, int[])
-    */
-   public static PImage transpose ( final PImage source, final PImage target ) {
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not use PGraphics with this method.");
-         return target;
-      }
-
-      source.loadPixels();
-      target.loadPixels();
-      final int w = source.pixelWidth;
-      final int h = source.pixelHeight;
-      final int pd = source.pixelDensity;
-      final int[] pxSrc = source.pixels;
-      target.pixels = Pixels.transpose(pxSrc, w, h, new int[pxSrc.length]);
-      target.format = source.format;
-      target.pixelDensity = pd;
-      target.pixelWidth = h;
-      target.pixelHeight = w;
-      target.width = h / pd;
-      target.height = w / pd;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Removes excess transparent pixels from an image.
-    *
-    * @param source the source image
-    * @param tl     top left
-    * @param target the target image
-    *
-    * @return the trimmed image
-    *
-    * @see Pixels#trimAlpha(int[], int, int, Vec2, Vec2)
-    */
-   public static PImage trimAlpha ( final PImage source, final Vec2 tl,
-      final PImage target ) {
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not use PGraphics with this method.");
-         return target;
-      }
-
-      source.loadPixels();
-      target.loadPixels();
-      final int w = source.pixelWidth;
-      final int h = source.pixelHeight;
-      final int pd = source.pixelDensity;
-      final int[] pxSrc = source.pixels;
-      final Vec2 dim = new Vec2();
-      target.pixels = Pixels.trimAlpha(pxSrc, w, h, dim, tl);
-      target.format = source.format;
-      target.pixelDensity = pd;
-      target.pixelWidth = ( int ) dim.x;
-      target.pixelHeight = ( int ) dim.y;
-      target.width = target.pixelWidth / pd;
-      target.height = target.pixelHeight / pd;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
     * Divides the red, green and blue channels of each pixel in a source image
     * by the alpha channel. Reverse pre-multiplication.
     *
@@ -2251,13 +1828,13 @@ public class ZImage extends PImage {
     *
     * @return the image
     *
-    * @see Pixels#unpremul(int[], int[])
+    * @see ZImage#unpremul(int[], int[])
     */
    public static PImage unpremul ( final PImage source, final PImage target ) {
 
       if ( source == target ) {
          target.loadPixels();
-         Pixels.unpremul(target.pixels, target.pixels);
+         ZImage.unpremul(target.pixels, target.pixels);
          target.format = PConstants.ARGB;
          target.updatePixels();
          return target;
@@ -2273,7 +1850,7 @@ public class ZImage extends PImage {
       final int w = source.pixelWidth;
       final int h = source.pixelHeight;
       final int[] pxSrc = source.pixels;
-      target.pixels = Pixels.unpremul(pxSrc, new int[pxSrc.length]);
+      target.pixels = ZImage.unpremul(pxSrc, new int[pxSrc.length]);
       target.format = PConstants.ARGB;
       target.pixelDensity = source.pixelDensity;
       target.pixelWidth = w;
@@ -2298,17 +1875,143 @@ public class ZImage extends PImage {
     *
     * @return the image
     *
-    * @see Pixels#wrap(int[], int, int, int, int, int, int[])
+    * @see ZImage#wrap(int[], int, int, int, int, int, int[])
     */
    public static PImage wrap ( final PImage source, final int dx, final int dy,
       final PImage target ) {
 
       source.loadPixels();
       target.loadPixels();
-      Pixels.wrap(source.pixels, source.pixelWidth, source.pixelHeight, dx, dy,
+      ZImage.wrap(source.pixels, source.pixelWidth, source.pixelHeight, dx, dy,
          target.pixelWidth, target.pixels);
       target.format = source.format;
       target.updatePixels();
+
+      return target;
+   }
+
+   /**
+    * Fills the pixels target array with a color.
+    *
+    * @param c      the fill color
+    * @param target the target pixels
+    *
+    * @return the filled pixels
+    */
+   protected static int[] fill ( final int c, final int[] target ) {
+
+      final int len = target.length;
+      for ( int i = 0; i < len; ++i ) { target[i] = c; }
+
+      return target;
+   }
+
+   /**
+    * Multiplies the red, green and blue channels of each pixel by its alpha
+    * channel.
+    *
+    * @param source the source pixels
+    * @param target the target pixels
+    *
+    * @return the premultiplied image
+    */
+   protected static int[] premul ( final int[] source, final int[] target ) {
+
+      final int srcLen = source.length;
+      if ( srcLen == target.length ) {
+         for ( int i = 0; i < srcLen; ++i ) {
+            final int srcHex = source[i];
+            final int ai = srcHex >> 0x18 & 0xff;
+            if ( ai < 1 ) {
+               target[i] = 0x00000000;
+            } else if ( ai < 0xff ) {
+               final float af = ai * IUtils.ONE_255;
+               int rp = ( int ) ( ( srcHex >> 0x10 & 0xff ) * af + 0.5f );
+               int gp = ( int ) ( ( srcHex >> 0x08 & 0xff ) * af + 0.5f );
+               int bp = ( int ) ( ( srcHex & 0xff ) * af + 0.5f );
+
+               if ( rp > 0xff ) { rp = 0xff; }
+               if ( gp > 0xff ) { gp = 0xff; }
+               if ( bp > 0xff ) { bp = 0xff; }
+
+               target[i] = ai << 0x18 | rp << 0x10 | gp << 0x08 | bp;
+            } else {
+               target[i] = srcHex;
+            }
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Divides the red, green and blue channels of each pixel in the image by
+    * its alpha channel. Reverse pre-multiplication.
+    *
+    * @param source the source pixels
+    * @param target the target pixels
+    *
+    * @return the unpremultiplied pixels
+    */
+   protected static int[] unpremul ( final int[] source, final int[] target ) {
+
+      final int srcLen = source.length;
+      if ( srcLen == target.length ) {
+         for ( int i = 0; i < srcLen; ++i ) {
+            final int srcHex = source[i];
+            final int ai = srcHex >> 0x18 & 0xff;
+            if ( ai < 1 ) {
+               target[i] = 0x00000000;
+            } else if ( ai < 0xff ) {
+               final float af = 255.0f / ai;
+               int ru = ( int ) ( ( srcHex >> 0x10 & 0xff ) * af + 0.5f );
+               int gu = ( int ) ( ( srcHex >> 0x08 & 0xff ) * af + 0.5f );
+               int bu = ( int ) ( ( srcHex & 0xff ) * af + 0.5f );
+
+               if ( ru > 0xff ) { ru = 0xff; }
+               if ( gu > 0xff ) { gu = 0xff; }
+               if ( bu > 0xff ) { bu = 0xff; }
+
+               target[i] = ai << 0x18 | ru << 0x10 | gu << 0x08 | bu;
+            } else {
+               target[i] = srcHex;
+            }
+         }
+      }
+
+      return target;
+   }
+
+   /**
+    * Blits a source image's pixels onto a target image's pixels, using
+    * integer floor modulo to wrap the source image. The source image can be
+    * offset horizontally and/or vertically, creating the illusion of infinite
+    * background.
+    *
+    * @param source the source pixels
+    * @param wSrc   the source image width
+    * @param hSrc   the source image height
+    * @param dx     the horizontal pixel offset
+    * @param dy     the vertical pixel offset
+    * @param wTrg   the target image width
+    * @param target the target pixels
+    *
+    * @return the wrapped pixels
+    */
+   protected static int[] wrap ( final int[] source, final int wSrc,
+      final int hSrc, final int dx, final int dy, final int wTrg,
+      final int[] target ) {
+
+      final int trgLen = target.length;
+      for ( int i = 0; i < trgLen; ++i ) {
+         int yMod = ( i / wTrg + dy ) % hSrc;
+         if ( ( yMod ^ hSrc ) < 0 && yMod != 0 ) { yMod += hSrc; }
+
+         int xMod = ( i % wTrg - dx ) % wSrc;
+         if ( ( xMod ^ wSrc ) < 0 && xMod != 0 ) { xMod += wSrc; }
+
+         target[i] = source[xMod + wSrc * yMod];
+      }
 
       return target;
    }
