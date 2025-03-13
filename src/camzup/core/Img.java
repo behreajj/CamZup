@@ -10,8 +10,6 @@ import java.util.PrimitiveIterator;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
-import processing.core.PImage;
-
 /**
  * An image class for images in the LAB color format. The bytes per pixel
  * is 64, a long. The bytes per channel is 16, a short. The channel format
@@ -1145,31 +1143,36 @@ public class Img implements Iterable < Long > {
     *
     * @see Utils#div(float, float)
     */
-   public static final float aspect ( final PImage image ) {
+   public static final float aspect ( final Img image ) {
 
       return Utils.div(( float ) image.width, ( float ) image.height);
    }
 
+   /**
+    * Blends an under and over image.
+    * 
+    * @param imgUnder the under image
+    * @param xUnder   the under x offset
+    * @param yUnder   the under y offset
+    * @param imgOver  the over image
+    * @param xOver    the over x offset
+    * @param yOver    the over y offset
+    * @param bmAlpha  the alpha blend mode
+    * @param bmLight  the light blend mode
+    * @param bmAb     the ab blend mode
+    * 
+    * @return the blended image
+    */
    public static final Img blend (
-   /* @formatter:off */
       final Img imgUnder, final int xUnder, final int yUnder,
       final Img imgOver, final int xOver, final int yOver,
 
       final BlendMode.Alpha bmAlpha,
       final BlendMode.L bmLight,
       final BlendMode.AB bmAb
-   /* @formatter:on */
    ) {
 
       // TODO: This may have to be generalized to accept an array of images.
-
-      // TODO: Maybe the blend space and LCH options can be omitted
-      // if you fold them into the AB blend mode, and do CH conversions
-      // with the Lab class.
-
-      /*
-       * Images do not need to be similar to each other.
-       */
 
       final int ax = xUnder;
       final int ay = yUnder;
@@ -1190,23 +1193,51 @@ public class Img implements Iterable < Long > {
       final int bbry = by + bh - 1;
 
       /*
-       * Find the union of a and b. This used to be an intersection, but
-       * different alpha blend modes necessitate a union.
+       * Based on alpha blend, find the union or intersection.
        */
+      int dx = ax < bx ? ax : bx;
+      int dy = ay < by ? ay : by;
+      int dbrx = abrx > bbrx ? abrx : bbrx;
+      int dbry = abry > bbry ? abry : bbry;
 
-      // TODO: Adjust this based on the alpha comp type?
+      switch ( bmAlpha ) {
 
-      final int dx = ax < bx ? ax : bx;
-      final int dy = ay < by ? ay : by;
-      final int dbrx = abrx > bbrx ? abrx : bbrx;
-      final int dbry = abry > bbry ? abry : bbry;
-      final int dw = 1 + dbrx - dx;
-      final int dh = 1 + dbry - dy;
+         case BLEND:
+         case MIN:
+         case MULTIPLY: {
+            dx = ax > bx ? ax : bx;
+            dy = ay > by ? ay : by;
+            dbrx = abrx < bbrx ? abrx : bbrx;
+            dbry = abry < bbry ? abry : bbry;
+         }
+            break;
+
+         case OVER: {
+            dx = bx;
+            dy = by;
+            dbrx = bbrx;
+            dbry = bbry;
+         }
+            break;
+
+         case UNDER: {
+            dx = ax;
+            dy = ay;
+            dbrx = abrx;
+            dbry = abry;
+         }
+            break;
+
+         case MAX:
+         default:
+      }
 
       final HashMap < Long, Lab > dict = new HashMap <>();
       final Lab clearLab = Lab.clearBlack(new Lab());
       dict.put(Img.CLEAR_PIXEL, clearLab);
 
+      final int dw = 1 + dbrx - dx;
+      final int dh = 1 + dbry - dy;
       if ( dw > 0 && dh > 0 ) {
 
          /*
@@ -1223,19 +1254,17 @@ public class Img implements Iterable < Long > {
             final int x = h % dw;
             final int y = h / dw;
 
-            long hexUnder = Img.CLEAR_PIXEL;
             final int axs = x - axid;
             final int ays = y - ayid;
             if ( ays >= 0 && ays < ah && axs >= 0 && axs < aw ) {
-               hexUnder = pxUnder[axs + ays * aw];
+               final long hexUnder = pxUnder[axs + ays * aw];
                dict.put(hexUnder, Lab.fromHex(hexUnder, new Lab()));
             }
 
-            long hexOver = Img.CLEAR_PIXEL;
             final int bxs = x - bxid;
             final int bys = y - byid;
             if ( bys >= 0 && bys < bh && bxs >= 0 && bxs < bw ) {
-               hexOver = pxOver[bxs + bys * bw];
+               final long hexOver = pxOver[bxs + bys * bw];
                dict.put(hexOver, Lab.fromHex(hexOver, new Lab()));
             }
          }
@@ -1462,8 +1491,6 @@ public class Img implements Iterable < Long > {
                   break;
 
                case SUBTRACT: {
-                  // TODO: Should default case for aDiff be -aOver, -bOver, not
-                  // positive?
                   final double aDff = vgt0 ? aUnder - aOver : aOver;
                   final double bDff = vgt0 ? bUnder - bOver : bOver;
                   aComp = u * aUnder + t * aDff;
@@ -2286,7 +2313,7 @@ public class Img implements Iterable < Long > {
     * Removes translucent pixels from an image, so colors are either
     * transparent or opaque.
     *
-    * @param target
+    * @param target the output image
     *
     * @return the binary alpha image
     */
@@ -2613,7 +2640,7 @@ public class Img implements Iterable < Long > {
    /**
     * Gets the source image's unique pixels as an ordered set.
     *
-    * @param source
+    * @param source the input image
     *
     * @return the dictionary
     */

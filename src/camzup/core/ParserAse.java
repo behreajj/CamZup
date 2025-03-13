@@ -5,6 +5,9 @@ import java.io.FileInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
+/**
+ * Parses an Adobe Swatch Exchange (ase) palette file.
+ */
 public abstract class ParserAse {
 
    /**

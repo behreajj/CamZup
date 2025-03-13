@@ -9,28 +9,28 @@ public interface BlendMode {
     */
    public enum AB {
 
-      /** Adds over chroma to under. */
+      /** Adds over layer to under. */
       ADD,
 
-      /** Adds over and under chroma, then halves the sum. */
+      /** Adds over and under layer, then halves the sum. */
       AVERAGE,
 
-      /** Blends over and under layer chroma per alpha. */
+      /** Blends over and under layer per alpha. */
       BLEND,
 
-      /** Adopts the chroma of the over layer. */
+      /** Adopts the over layer chroma. */
       CHROMA,
 
-      /** Adopts the hue of the over layer. */
+      /** Adopts the over layer hue. */
       HUE,
 
-      /** Adopts the over layer chroma. */
+      /** Adopts the over layer. */
       OVER,
 
-      /** Subtracts the over layer chroma from the under. */
+      /** Subtracts the over layer from the under. */
       SUBTRACT,
 
-      /** Adopts the under layer chroma. */
+      /** Adopts the under layer. */
       UNDER
    }
 

@@ -1525,19 +1525,18 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public static Gradient paletteCyanotype ( final Gradient target ) {
 
-      // TODO: This needs to be fixed.
-
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      keys.add(new ColorKey(0.0f, 0.03049412f, 0.10188236f, 0.17378825f));
-      keys.add(new ColorKey(0.14285715f, 0.05563067f, 0.21327104f, 0.3482909f));
-      keys.add(new ColorKey(0.2857143f, 0.0880449f, 0.3129639f, 0.4667135f));
-      keys.add(new ColorKey(0.42857143f, 0.12713926f, 0.40834653f, 0.5497747f));
-      keys.add(new ColorKey(0.5714286f, 0.27109164f, 0.5239352f, 0.63098204f));
-      keys.add(new ColorKey(0.71428573f, 0.48638815f, 0.6944785f, 0.7600696f));
-      keys.add(new ColorKey(0.85714287f, 0.7537112f, 0.85927427f, 0.8739126f));
-      keys.add(new ColorKey(1.0f, 0.9926431f, 0.9935216f, 0.9940706f));
+      keys.add(new ColorKey(0.000000f, 8.613134f, -3.721971f, -14.823075f));
+      keys.add(new ColorKey(0.142857f, 21.631306f, -7.210958f, -25.105259f));
+      keys.add(new ColorKey(0.285714f, 31.980478f, -10.507741f, -28.090473f));
+      keys.add(new ColorKey(0.428571f, 41.108681f, -14.172106f, -26.727585f));
+
+      keys.add(new ColorKey(0.571429f, 52.432716f, -14.872755f, -21.311859f));
+      keys.add(new ColorKey(0.714286f, 69.020493f, -13.751400f, -14.435276f));
+      keys.add(new ColorKey(0.857143f, 85.554993f, -7.959521f, -5.002866f));
+      keys.add(new ColorKey(1.000000f, 99.415680f, -0.054422f, -0.094921f));
 
       return target;
    }
@@ -1552,15 +1551,13 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public static Gradient paletteLcd ( final Gradient target ) {
 
-      // TODO: This needs to be fixed.
-
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      keys.add(new ColorKey(0.0f, 0.054901965f, 0.18823531f, 0.16078432f));
-      keys.add(new ColorKey(0.25f, 0.27450982f, 0.40784317f, 0.32156864f));
-      keys.add(new ColorKey(0.75f, 0.54901963f, 0.7254902f, 0.41176474f));
-      keys.add(new ColorKey(1.0f, 0.7686275f, 0.89019614f, 0.6505883f));
+      keys.add(new ColorKey(0.000000f, 17.207016f, -12.651218f, 0.649666f));
+      keys.add(new ColorKey(0.333333f, 40.848148f, -15.700788f, 8.435310f));
+      keys.add(new ColorKey(0.666667f, 70.372322f, -28.815866f, 35.844276f));
+      keys.add(new ColorKey(1.000000f, 86.723526f, -20.063959f, 26.639313f));
 
       return target;
    }
@@ -1574,31 +1571,29 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public static Gradient paletteMagma ( final Gradient target ) {
 
-      // TODO: This needs to be fixed.
-
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      keys.add(new ColorKey(0.0f, 0.0f, 0.0f, 0.019608f));
-      keys.add(new ColorKey(0.06666667f, 0.040784f, 0.028758f, 0.110327f));
-      keys.add(new ColorKey(0.13333333f, 0.093856f, 0.036863f, 0.232941f));
-      keys.add(new ColorKey(0.2f, 0.174118f, 0.006275f, 0.357647f));
-
-      keys.add(new ColorKey(0.26666668f, 0.267974f, 0.002353f, 0.416732f));
-      keys.add(new ColorKey(0.33333334f, 0.36732f, 0.045752f, 0.43268f));
-      keys.add(new ColorKey(0.4f, 0.471373f, 0.080784f, 0.430588f));
-      keys.add(new ColorKey(0.46666667f, 0.584052f, 0.110588f, 0.413856f));
-
-      keys.add(new ColorKey(0.5333333f, 0.703268f, 0.142484f, 0.383007f));
-      keys.add(new ColorKey(0.6f, 0.824314f, 0.198431f, 0.334902f));
-      keys.add(new ColorKey(0.6666667f, 0.912418f, 0.286275f, 0.298039f));
-      keys.add(new ColorKey(0.73333335f, 0.962353f, 0.412549f, 0.301176f));
-
-      keys.add(new ColorKey(0.8f, 0.981176f, 0.548235f, 0.35451f));
-      keys.add(new ColorKey(0.8666667f, 0.984314f, 0.694118f, 0.446275f));
-      keys.add(new ColorKey(0.93333334f, 0.98719f, 0.843137f, 0.562092f));
-      keys.add(new ColorKey(1.0f, 0.988235f, 1.0f, 0.698039f));
-
+      keys.add(new ColorKey(0.000000f, 0.091809f, 0.592775f, -1.907756f));
+      keys.add(new ColorKey(0.066667f, 2.769536f, 4.405124f, -11.467472f));
+      keys.add(new ColorKey(0.133333f, 6.330423f, 10.966581f, -29.439524f));
+      keys.add(new ColorKey(0.200000f, 11.302176f, 21.493853f, -43.331696f));
+      
+      keys.add(new ColorKey(0.266667f, 16.834465f, 34.209873f, -44.099174f));
+      keys.add(new ColorKey(0.333333f, 22.770105f, 44.663292f, -36.876053f));
+      keys.add(new ColorKey(0.400000f, 28.520067f, 54.185238f, -27.044201f));
+      keys.add(new ColorKey(0.466667f, 34.554302f, 62.516632f, -14.479840f));
+      
+      keys.add(new ColorKey(0.533333f, 40.940407f, 68.791847f, 0.703665f));
+      keys.add(new ColorKey(0.600000f, 48.024292f, 70.197952f, 19.177029f));
+      keys.add(new ColorKey(0.666667f, 54.783279f, 64.218079f, 34.308880f));
+      keys.add(new ColorKey(0.733333f, 62.043285f, 50.232311f, 43.066158f));
+      
+      keys.add(new ColorKey(0.800000f, 69.615410f, 33.422905f, 44.987713f));
+      keys.add(new ColorKey(0.866667f, 78.234879f, 15.744173f, 43.420521f));
+      keys.add(new ColorKey(0.933333f, 87.799080f, 0.195737f, 40.491623f));
+      keys.add(new ColorKey(1.000000f, 98.310959f, -13.797366f, 36.818932f));
+      
       return target;
    }
 
@@ -1636,24 +1631,22 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public static Gradient paletteRyb ( final Gradient target ) {
 
-      // TODO: This needs to be fixed.
-
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      keys.add(new ColorKey(0.0f, 1.0f, 0.0f, 0.0f));
-      keys.add(new ColorKey(0.08333333f, 1.0f, 0.4166667f, 0.0f));
-      keys.add(new ColorKey(0.16666667f, 1.0f, 0.6363637f, 0.0f));
-      keys.add(new ColorKey(0.25f, 1.0f, 0.8125f, 0.0f));
-      keys.add(new ColorKey(0.3333333f, 1.0f, 1.0f, 0.0f));
-      keys.add(new ColorKey(0.4166667f, 0.5058824f, 0.8313726f, 0.1019608f));
-      keys.add(new ColorKey(0.5f, 0.0f, 0.6627451f, 0.2f));
-      keys.add(new ColorKey(0.5833333f, 0.082352884f, 0.5176469f, 0.4f));
-      keys.add(new ColorKey(0.6666667f, 0.06666667f, 0.34901962f, 0.6509804f));
-      keys.add(new ColorKey(0.75f, 0.23559582f, 0.16500752f, 0.57254905f));
-      keys.add(new ColorKey(0.8333333f, 0.4109478f, 0.04575158f, 0.5204248f));
-      keys.add(new ColorKey(0.9166667f, 0.66666667f, 0.0f, 0.33333333f));
-      keys.add(new ColorKey(1.0f, 1.0f, 0.0f, 0.0f));
+      keys.add(new ColorKey(0.000000f, 53.225975f, 78.204277f, 67.700623f));
+      keys.add(new ColorKey(0.083333f, 63.294071f, 41.628414f, 72.584358f));
+      keys.add(new ColorKey(0.166667f, 74.635468f, 9.574734f, 79.463249f));
+      keys.add(new ColorKey(0.250000f, 85.266159f, -14.495931f, 86.603149f));
+      keys.add(new ColorKey(0.333333f, 97.345261f, -37.154263f, 95.186623f));
+      keys.add(new ColorKey(0.416667f, 77.147675f, -55.465858f, 72.887413f));
+      keys.add(new ColorKey(0.500000f, 60.259987f, -55.182827f, 48.260632f));
+      keys.add(new ColorKey(0.583333f, 48.814213f, -31.473946f, 7.567694f));
+      keys.add(new ColorKey(0.666667f, 37.366413f, -9.335724f, -48.161968f));
+      keys.add(new ColorKey(0.750000f, 25.478336f, 13.484400f, -55.239174f));
+      keys.add(new ColorKey(0.833333f, 26.442522f, 47.946320f, -45.106098f));
+      keys.add(new ColorKey(0.916667f, 36.376442f, 74.160706f, 1.910957f));
+      keys.add(new ColorKey(1.000000f, 53.225975f, 78.204277f, 67.700623f));
 
       return target;
    }
@@ -1667,20 +1660,17 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public static Gradient paletteSepia ( final Gradient target ) {
 
-      // TODO: This needs to be fixed.
-
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      /* Second key is pushed a little closer to zero. */
-      keys.add(new ColorKey(0.0f, 0.11774882f, 0.09636405f, 0.07582238f));
-      keys.add(new ColorKey(0.12f, 0.17625594f, 0.141371f, 0.1127016f));
-      keys.add(new ColorKey(0.2857143f, 0.40054432f, 0.30952805f, 0.22960682f));
-      keys.add(new ColorKey(0.42857146f, 0.527977f, 0.40815717f, 0.27178848f));
-      keys.add(new ColorKey(0.5714286f, 0.6450869f, 0.5168457f, 0.34436274f));
-      keys.add(new ColorKey(0.71428573f, 0.759382f, 0.64926106f, 0.4650265f));
-      keys.add(new ColorKey(0.8571429f, 0.8737513f, 0.81925327f, 0.63157284f));
-      keys.add(new ColorKey(1.0f, 0.9761859f, 0.93075234f, 0.74810547f));
+      keys.add(new ColorKey(0.000000f, 9.039095f, 1.541970f, 4.551196f));
+      keys.add(new ColorKey(0.142857f, 15.049420f, 2.519861f, 6.559138f));
+      keys.add(new ColorKey(0.285714f, 35.558064f, 5.560180f, 15.985915f));
+      keys.add(new ColorKey(0.428571f, 46.415211f, 5.320652f, 24.526014f));
+      keys.add(new ColorKey(0.571429f, 57.325619f, 4.106241f, 28.784594f));
+      keys.add(new ColorKey(0.714286f, 69.518433f, 1.687564f, 28.475378f));
+      keys.add(new ColorKey(0.857143f, 83.969940f, -3.398645f, 25.784210f));
+      keys.add(new ColorKey(1.000000f, 93.835083f, -3.805666f, 24.245275f));
 
       return target;
    }
@@ -1697,17 +1687,16 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public static Gradient paletteTemperature ( final Gradient target ) {
 
-      // TODO: This needs to be fixed.
-
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      keys.add(new ColorKey(0.0f, 1.0f, 0.0f, 0.0f));
-      keys.add(new ColorKey(0.125f, 1.0f, 0.4313f, 0.047f));
-      keys.add(new ColorKey(0.25f, 1.0f, 0.7019f, 0.4235f));
-      keys.add(new ColorKey(0.375f, 1.0f, 0.8549f, 0.7176f));
-      keys.add(new ColorKey(0.5f, 1.0f, 1.0f, 1.0f)); /* 6500K */
-      keys.add(new ColorKey(1.0f, 0.7372f, 0.8156f, 1.0f)); /* 12000K */
+      keys.add(new ColorKey(0.000000f, 53.225975f, 78.204277f, 67.700623f));
+      keys.add(new ColorKey(0.200000f, 63.974377f, 40.397732f, 71.018539f));
+      keys.add(new ColorKey(0.400000f, 79.069832f, 14.975408f, 47.488724f));
+      keys.add(new ColorKey(0.600000f, 89.464226f, 6.906213f, 22.329275f));
+      keys.add(new ColorKey(0.800000f, 99.999718f, -0.003737f, -0.000495f));
+      keys.add(new ColorKey(1.000000f, 83.282845f, 0.112235f, -25.521570f));
+      
 
       return target;
    }
@@ -1721,30 +1710,29 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public static Gradient paletteViridis ( final Gradient target ) {
 
-      // TODO: This needs to be fixed.
-
       final TreeSet < ColorKey > keys = target.keys;
       keys.clear();
 
-      keys.add(new ColorKey(0.0f, 0.266667f, 0.003922f, 0.329412f));
-      keys.add(new ColorKey(0.06666667f, 0.282353f, 0.100131f, 0.420654f));
-      keys.add(new ColorKey(0.13333333f, 0.276078f, 0.184575f, 0.487582f));
-      keys.add(new ColorKey(0.2f, 0.254902f, 0.265882f, 0.527843f));
+      keys.add(new ColorKey(0.000000f, 14.838412f, 37.483562f, -32.474392f));
+      keys.add(new ColorKey(0.066667f, 20.570141f, 28.441080f, -38.628178f));
+      keys.add(new ColorKey(0.133333f, 26.025185f, 17.570065f, -40.752884f));
+      keys.add(new ColorKey(0.200000f, 31.498125f, 6.671634f, -38.397491f));
 
-      keys.add(new ColorKey(0.26666668f, 0.221961f, 0.340654f, 0.549281f));
-      keys.add(new ColorKey(0.33333334f, 0.192157f, 0.405229f, 0.554248f));
-      keys.add(new ColorKey(0.4f, 0.164706f, 0.469804f, 0.556863f));
-      keys.add(new ColorKey(0.46666667f, 0.139869f, 0.534379f, 0.553464f));
+      keys.add(new ColorKey(0.266667f, 36.736752f, -3.131694f, -33.448982f));
+      keys.add(new ColorKey(0.333333f, 41.478966f, -10.817966f, -26.788832f));
+      keys.add(new ColorKey(0.400000f, 46.456280f, -17.727476f, -19.503687f));
+      keys.add(new ColorKey(0.466667f, 51.524525f, -24.320143f, -11.305546f));
 
-      keys.add(new ColorKey(0.5333333f, 0.122092f, 0.595033f, 0.543007f));
-      keys.add(new ColorKey(0.6f, 0.139608f, 0.658039f, 0.516863f));
-      keys.add(new ColorKey(0.6666667f, 0.210458f, 0.717647f, 0.471895f));
-      keys.add(new ColorKey(0.73333335f, 0.326797f, 0.773595f, 0.407582f));
+      keys.add(new ColorKey(0.533333f, 56.316334f, -30.459932f, -2.642304f));
+      keys.add(new ColorKey(0.600000f, 61.361664f, -36.782661f, 8.446353f));
+      keys.add(new ColorKey(0.666667f, 66.306084f, -42.510315f, 21.677887f));
+      keys.add(new ColorKey(0.733333f, 71.333786f, -46.810425f, 36.986534f));
 
-      keys.add(new ColorKey(0.8f, 0.477647f, 0.821961f, 0.316863f));
-      keys.add(new ColorKey(0.8666667f, 0.648366f, 0.858039f, 0.208889f));
-      keys.add(new ColorKey(0.93333334f, 0.825098f, 0.884967f, 0.114771f));
-      keys.add(new ColorKey(1.0f, 0.992157f, 0.905882f, 0.145098f));
+      keys.add(new ColorKey(0.800000f, 76.373627f, -48.478462f, 54.282032f));
+      keys.add(new ColorKey(0.866667f, 81.250488f, -45.616154f, 70.487045f));
+      keys.add(new ColorKey(0.933333f, 86.185860f, -37.458225f, 82.004410f));
+      keys.add(new ColorKey(1.000000f, 91.094627f, -24.817217f, 86.018288f));
+
 
       return target;
    }
