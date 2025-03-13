@@ -658,12 +658,10 @@ public class Img {
       }
 
       final int len = source.pixels.length;
-      final float sAdjVerif = Float.isNaN(sFac) ?
-         1.0f :
-         1.0f + Utils.clamp(sFac, -1.0f, 1.0f);
-      final float lAdjVerif = Float.isNaN(lFac) ?
-         1.0f :
-         1.0f + Utils.clamp(lFac, -1.0f, 1.0f);
+      final float sAdjVerif = Float.isNaN(sFac) ? 1.0f : 1.0f + Utils.clamp(
+         sFac, -1.0f, 1.0f);
+      final float lAdjVerif = Float.isNaN(lFac) ? 1.0f : 1.0f + Utils.clamp(
+         lFac, -1.0f, 1.0f);
 
       if ( Utils.approx(sAdjVerif, 1.0f) && Utils.approx(lAdjVerif, 1.0f) ) {
          System.arraycopy(source.pixels, 0, target.pixels, 0, len);
@@ -2208,6 +2206,67 @@ public class Img {
    }
 
    /**
+    * Generates a radial gradient.
+    *
+    * @param grd    the gradient
+    * @param target the output image
+    *
+    * @return the gradient image
+    *
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
+    * @see Utils#max(float, float)
+    */
+   public static final Img gradientRadial ( final Gradient grd,
+      final Img target ) {
+
+      return gradientRadial(grd, 0.0f, 0.0f, 0.5f, new Lab.MixLab(), target);
+   }
+
+   /**
+    * Generates a radial gradient from an origin point. The origin should be
+    * in the range [-1.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param orig   the origin
+    * @param radius the radius
+    * @param target the output image
+    *
+    * @return the gradient image
+    *
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
+    * @see Utils#max(float, float)
+    */
+   public static final Img gradientRadial ( final Gradient grd, final Vec2 orig,
+      final float radius, final Img target ) {
+
+      return gradientRadial(grd, orig.x, orig.y, radius, new Lab.MixLab(),
+         target);
+   }
+
+   /**
+    * Generates a radial gradient from an origin point. The origin should be
+    * in the range [-1.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param xOrig  the origin x coordinate
+    * @param yOrig  the origin y coordinate
+    * @param radius the radius
+    * @param target the output image
+    *
+    * @return the gradient image
+    *
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
+    * @see Utils#max(float, float)
+    */
+   public static final Img gradientRadial ( final Gradient grd,
+      final float xOrig, final float yOrig, final float radius,
+      final Img target ) {
+
+      return gradientRadial(grd, xOrig, yOrig, radius, new Lab.MixLab(),
+         target);
+   }
+
+   /**
     * Generates a radial gradient from an origin point. The origin should be
     * in the range [-1.0, 1.0]. Does not account for aspect ratio, so an image
     * that isn't 1:1 will result in an ellipsoid.
@@ -2227,10 +2286,6 @@ public class Img {
    public static final Img gradientRadial ( final Gradient grd,
       final float xOrig, final float yOrig, final float radius,
       final Lab.AbstrEasing easing, final Img target ) {
-
-      // TODO: ZImage had a lot of overloads for this method so as to simplify
-      // the signature. You'll have to look at a past git commit to restore
-      // them.
 
       final int wTrg = target.width;
       final int hTrg = target.height;
@@ -2558,6 +2613,45 @@ public class Img {
    /**
     * Mirrors, or reflects, pixels from a source image across the axis
     * described by an origin and destination. Coordinates are expected to be
+    * in the range [-1.0, 1.0].
+    *
+    * @param source the source image
+    * @param orig   the origin
+    * @param dest   the destination
+    * @param target the target image
+    *
+    * @return the mirrored image
+    */
+   public static final Img mirror ( final Img source, final Vec2 orig,
+      final Vec2 dest, final Img target ) {
+
+      return mirror(source, orig.x, orig.y, dest.x, dest.y, false, target);
+   }
+
+   /**
+    * Mirrors, or reflects, pixels from a source image across the axis
+    * described by an origin and destination. Coordinates are expected to be
+    * in the range [-1.0, 1.0].
+    *
+    * @param source the source image
+    * @param xOrig  the origin x
+    * @param yOrig  the origin y
+    * @param xDest  the destination x
+    * @param yDest  the destination y
+    * @param target the target image
+    *
+    * @return the mirrored image
+    */
+   public static final Img mirror ( final Img source, final float xOrig,
+      final float yOrig, final float xDest, final float yDest,
+      final Img target ) {
+
+      return mirror(source, xOrig, yOrig, xDest, yDest, false, target);
+   }
+
+   /**
+    * Mirrors, or reflects, pixels from a source image across the axis
+    * described by an origin and destination. Coordinates are expected to be
     * in the range [-1.0, 1.0]. Out-of-bounds pixels are omitted from the
     * mirror.
     *
@@ -2574,8 +2668,6 @@ public class Img {
    public static final Img mirror ( final Img source, final float xOrig,
       final float yOrig, final float xDest, final float yDest,
       final boolean flip, final Img target ) {
-
-      // TODO: Provide method overloads with Vec2 for orig and dest.
 
       final int wSrc = source.width;
       final int hSrc = source.height;
