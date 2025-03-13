@@ -404,7 +404,7 @@ public class Lch implements IColor {
    public static final float SR_CHROMA_MAX = 119.431305f;
 
    /**
-    *  The average chroma in SR LCH for a color converted from standard RGB.
+    * The average chroma in SR LCH for a color converted from standard RGB.
     */
    public static final float SR_CHROMA_MEAN = 56.141006f;
 
@@ -861,7 +861,7 @@ public class Lch implements IColor {
        * @return the harmonies
        */
       @Override
-      public final Lch[] apply ( final Lch o ) {
+      public Lch[] apply ( final Lch o ) {
 
          final float lAna = ( o.l * 2.0f + 50.0f ) / 3.0f;
 
@@ -908,7 +908,7 @@ public class Lch implements IColor {
        * @return the harmonies
        */
       @Override
-      public final Lch[] apply ( final Lch o ) {
+      public Lch[] apply ( final Lch o ) {
 
          final float lCmp = 100.0f - o.l;
 
@@ -938,7 +938,7 @@ public class Lch implements IColor {
        * @return the harmonies
        */
       @Override
-      public final Lch[] apply ( final Lch o ) {
+      public Lch[] apply ( final Lch o ) {
 
          final float lSpl = ( 250.0f - o.l * 2.0f ) / 3.0f;
 
@@ -974,7 +974,7 @@ public class Lch implements IColor {
        * @return the harmonies
        */
       @Override
-      public final Lch[] apply ( final Lch o ) {
+      public Lch[] apply ( final Lch o ) {
 
          final float lCmp = 100.0f - o.l;
 
@@ -1012,7 +1012,7 @@ public class Lch implements IColor {
        * @return the harmonies
        */
       @Override
-      public final Lch[] apply ( final Lch o ) {
+      public Lch[] apply ( final Lch o ) {
 
          final float lTri = ( 200.0f - o.l ) / 3.0f;
          final float lCmp = 100.0f - o.l;
@@ -1051,7 +1051,7 @@ public class Lch implements IColor {
        * @return the harmonies
        */
       @Override
-      public final Lch[] apply ( final Lch o ) {
+      public Lch[] apply ( final Lch o ) {
 
          final float lTri = ( 200.0f - o.l ) / 3.0f;
 

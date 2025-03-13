@@ -1696,10 +1696,10 @@ public class Rgb implements IColor {
 
       /**
        * Applies a tone map.
-       * 
+       *
        * @param source the input color
        * @param target the output color
-       * 
+       *
        * @return the mapped color
        */
       @Override
@@ -1711,29 +1711,10 @@ public class Rgb implements IColor {
    }
 
    /**
-    * Tone maps RGB channels using the Hable method. See https://64.github.io/tonemapping/ .
+    * Tone maps RGB channels using the Hable method. See
+    * https://64.github.io/tonemapping/ .
     */
    public static final class ToneMapHable extends AbstrToneMap {
-      /** Constant A. */
-      public static final float A = 0.15f;
-      /** Constant B. */
-      public static final float B = 0.50f;
-      /** Constant C. */
-      public static final float C = 0.10f;
-      /** Constant D. */
-      public static final float D = 0.20f;
-      /** Constant E. */
-      public static final float E = 0.02f;
-      /** Constant F. */
-      public static final float F = 0.30f;
-      /** Constant W. */
-      public static final float W = 11.2f;
-      /** White scale. */
-      public static final float whiteScale = 1.0f / ( ( ( W * ( A * W + C * B )
-         + D * E ) / ( W * ( A * W + B ) + D * F ) ) - E / F );
-      /** Exposure bias. */
-      public static final float exposureBias = 2.0f;
-
       /**
        * Stores conversion from gamma to linear.
        */
@@ -1746,30 +1727,90 @@ public class Rgb implements IColor {
 
       /**
        * Applies a tone map.
-       * 
+       *
        * @param source the input color
        * @param target the output color
-       * 
+       *
        * @return the mapped color
        */
       @Override
-      public final Rgb apply ( final Rgb source, final Rgb target ) {
+      public Rgb apply ( final Rgb source, final Rgb target ) {
+
          Rgb.sRgbTolRgb(source, false, this.lrgb);
 
-         final float er = this.lrgb.r * exposureBias;
-         final float eg = this.lrgb.g * exposureBias;
-         final float eb = this.lrgb.b * exposureBias;
+         final float er = this.lrgb.r * ToneMapHable.exposureBias;
+         final float eg = this.lrgb.g * ToneMapHable.exposureBias;
+         final float eb = this.lrgb.b * ToneMapHable.exposureBias;
 
-         float xr = whiteScale * ( ( ( er * ( A * er + C * B ) + D * E ) / ( er
-            * ( A * er + B ) + D * F ) ) - E / F );
-         float xg = whiteScale * ( ( ( eg * ( A * eg + C * B ) + D * E ) / ( eg
-            * ( A * eg + B ) + D * F ) ) - E / F );
-         float xb = whiteScale * ( ( ( eb * ( A * eb + C * B ) + D * E ) / ( eb
-            * ( A * eb + B ) + D * F ) ) - E / F );
+         final float xr = ToneMapHable.whiteScale * ( ( er * ( ToneMapHable.A
+            * er + ToneMapHable.C * ToneMapHable.B ) + ToneMapHable.D
+               * ToneMapHable.E ) / ( er * ( ToneMapHable.A * er
+                  + ToneMapHable.B ) + ToneMapHable.D * ToneMapHable.F )
+            - ToneMapHable.E / ToneMapHable.F );
+         final float xg = ToneMapHable.whiteScale * ( ( eg * ( ToneMapHable.A
+            * eg + ToneMapHable.C * ToneMapHable.B ) + ToneMapHable.D
+               * ToneMapHable.E ) / ( eg * ( ToneMapHable.A * eg
+                  + ToneMapHable.B ) + ToneMapHable.D * ToneMapHable.F )
+            - ToneMapHable.E / ToneMapHable.F );
+         final float xb = ToneMapHable.whiteScale * ( ( eb * ( ToneMapHable.A
+            * eb + ToneMapHable.C * ToneMapHable.B ) + ToneMapHable.D
+               * ToneMapHable.E ) / ( eb * ( ToneMapHable.A * eb
+                  + ToneMapHable.B ) + ToneMapHable.D * ToneMapHable.F )
+            - ToneMapHable.E / ToneMapHable.F );
          target.set(xr, xg, xb, this.lrgb.alpha);
 
          return Rgb.lRgbTosRgb(Rgb.clamp01(target, target), false, target);
       }
+
+      /**
+       * Constant A.
+       */
+      public static final float A = 0.15f;
+
+      /**
+       * Constant B.
+       */
+      public static final float B = 0.50f;
+
+      /**
+       * Constant C.
+       */
+      public static final float C = 0.10f;
+
+      /**
+       * Constant D.
+       */
+      public static final float D = 0.20f;
+
+      /**
+       * Constant E.
+       */
+      public static final float E = 0.02f;
+
+      /**
+       * Exposure bias.
+       */
+      public static final float exposureBias = 2.0f;
+
+      /**
+       * Constant F.
+       */
+      public static final float F = 0.30f;
+
+      /**
+       * Constant W.
+       */
+      public static final float W = 11.2f;
+
+      /**
+       * White scale.
+       */
+      public static final float whiteScale = 1.0f / ( ( ToneMapHable.W
+         * ( ToneMapHable.A * ToneMapHable.W + ToneMapHable.C * ToneMapHable.B )
+         + ToneMapHable.D * ToneMapHable.E ) / ( ToneMapHable.W
+            * ( ToneMapHable.A * ToneMapHable.W + ToneMapHable.B )
+            + ToneMapHable.D * ToneMapHable.F ) - ToneMapHable.E
+               / ToneMapHable.F );
 
    }
 

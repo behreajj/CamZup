@@ -561,6 +561,11 @@ public class Img {
    public static final int DEFAULT_HEIGHT = 128;
 
    /**
+    * Default maximum number for a palette extracted from an image.s
+    */
+   public static final int DEFAULT_PALETTE_THRESHOLD = 256;
+
+   /**
     * The default policy on pivots when adjusting chroma by a factor.
     */
    public static final PivotPolicy DEFAULT_PIVOT_POLICY = PivotPolicy.MEAN;
@@ -1834,6 +1839,64 @@ public class Img {
    }
 
    /**
+    * Flips the pixels source image vertically, on the y axis, and stores the
+    * result in the target image.
+    *
+    * @param source the input image
+    * @param target the output image
+    *
+    * @return the flipped image
+    */
+   public static final Img flipX ( final Img source, final Img target ) {
+
+      final int w = source.width;
+      final int h = source.height;
+      final int len = source.pixels.length;
+
+      if ( !Img.similar(source, target) ) {
+         target.width = w;
+         target.height = h;
+         target.pixels = new long[len];
+      }
+
+      final int wn1 = w - 1;
+      for ( int i = 0; i < len; ++i ) {
+         target.pixels[i / w * w + wn1 - i % w] = source.pixels[i];
+      }
+
+      return target;
+   }
+
+   /**
+    * Flips the pixels source image vertically, on the y axis, and stores the
+    * result in the target image.
+    *
+    * @param source the input image
+    * @param target the output image
+    *
+    * @return the flipped image
+    */
+   public static final Img flipY ( final Img source, final Img target ) {
+
+      final int w = source.width;
+      final int h = source.height;
+      final int len = source.pixels.length;
+
+      if ( !Img.similar(source, target) ) {
+         target.width = w;
+         target.height = h;
+         target.pixels = new long[len];
+      }
+
+      final int hn1 = h - 1;
+      for ( int i = 0; i < len; ++i ) {
+         target.pixels[ ( hn1 - i / w ) * w + i % w] = source.pixels[i];
+      }
+
+      return target;
+   }
+
+   /**
     * Hashes an image according to the <a href=
     * "https://en.wikipedia.org/wiki/Fowler%E2%80%93Noll%E2%80%93Vo_hash_function">Fowler–Noll–Vo</a>
     * method.
@@ -2209,44 +2272,6 @@ public class Img {
    }
 
    /**
-    * Generates a radial gradient.
-    *
-    * @param grd    the gradient
-    * @param target the output image
-    *
-    * @return the gradient image
-    *
-    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
-    * @see Utils#max(float, float)
-    */
-   public static final Img gradientRadial ( final Gradient grd,
-      final Img target ) {
-
-      return gradientRadial(grd, 0.0f, 0.0f, 0.5f, new Lab.MixLab(), target);
-   }
-
-   /**
-    * Generates a radial gradient from an origin point. The origin should be
-    * in the range [-1.0, 1.0].
-    *
-    * @param grd    the gradient
-    * @param orig   the origin
-    * @param radius the radius
-    * @param target the output image
-    *
-    * @return the gradient image
-    *
-    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
-    * @see Utils#max(float, float)
-    */
-   public static final Img gradientRadial ( final Gradient grd, final Vec2 orig,
-      final float radius, final Img target ) {
-
-      return gradientRadial(grd, orig.x, orig.y, radius, new Lab.MixLab(),
-         target);
-   }
-
-   /**
     * Generates a radial gradient from an origin point. The origin should be
     * in the range [-1.0, 1.0].
     *
@@ -2265,7 +2290,7 @@ public class Img {
       final float xOrig, final float yOrig, final float radius,
       final Img target ) {
 
-      return gradientRadial(grd, xOrig, yOrig, radius, new Lab.MixLab(),
+      return Img.gradientRadial(grd, xOrig, yOrig, radius, new Lab.MixLab(),
          target);
    }
 
@@ -2313,6 +2338,45 @@ public class Img {
       }
 
       return target;
+   }
+
+   /**
+    * Generates a radial gradient.
+    *
+    * @param grd    the gradient
+    * @param target the output image
+    *
+    * @return the gradient image
+    *
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
+    * @see Utils#max(float, float)
+    */
+   public static final Img gradientRadial ( final Gradient grd,
+      final Img target ) {
+
+      return Img.gradientRadial(grd, 0.0f, 0.0f, 0.5f, new Lab.MixLab(),
+         target);
+   }
+
+   /**
+    * Generates a radial gradient from an origin point. The origin should be
+    * in the range [-1.0, 1.0].
+    *
+    * @param grd    the gradient
+    * @param orig   the origin
+    * @param radius the radius
+    * @param target the output image
+    *
+    * @return the gradient image
+    *
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
+    * @see Utils#max(float, float)
+    */
+   public static final Img gradientRadial ( final Gradient grd, final Vec2 orig,
+      final float radius, final Img target ) {
+
+      return Img.gradientRadial(grd, orig.x, orig.y, radius, new Lab.MixLab(),
+         target);
    }
 
    /**
@@ -2556,103 +2620,6 @@ public class Img {
    }
 
    /**
-    * Flips the pixels source image vertically, on the y axis, and stores the
-    * result in the target image.
-    *
-    * @param source the input image
-    * @param target the output image
-    *
-    * @return the flipped image
-    */
-   public static final Img flipX ( final Img source, final Img target ) {
-
-      final int w = source.width;
-      final int h = source.height;
-      final int len = source.pixels.length;
-
-      if ( !Img.similar(source, target) ) {
-         target.width = w;
-         target.height = h;
-         target.pixels = new long[len];
-      }
-
-      final int wn1 = w - 1;
-      for ( int i = 0; i < len; ++i ) {
-         target.pixels[i / w * w + wn1 - i % w] = source.pixels[i];
-      }
-
-      return target;
-   }
-
-   /**
-    * Flips the pixels source image vertically, on the y axis, and stores the
-    * result in the target image.
-    *
-    * @param source the input image
-    * @param target the output image
-    *
-    * @return the flipped image
-    */
-   public static final Img flipY ( final Img source, final Img target ) {
-
-      final int w = source.width;
-      final int h = source.height;
-      final int len = source.pixels.length;
-
-      if ( !Img.similar(source, target) ) {
-         target.width = w;
-         target.height = h;
-         target.pixels = new long[len];
-      }
-
-      final int hn1 = h - 1;
-      for ( int i = 0; i < len; ++i ) {
-         target.pixels[ ( hn1 - i / w ) * w + i % w] = source.pixels[i];
-      }
-
-      return target;
-   }
-
-   /**
-    * Mirrors, or reflects, pixels from a source image across the axis
-    * described by an origin and destination. Coordinates are expected to be
-    * in the range [-1.0, 1.0].
-    *
-    * @param source the source image
-    * @param orig   the origin
-    * @param dest   the destination
-    * @param target the target image
-    *
-    * @return the mirrored image
-    */
-   public static final Img mirror ( final Img source, final Vec2 orig,
-      final Vec2 dest, final Img target ) {
-
-      return mirror(source, orig.x, orig.y, dest.x, dest.y, false, target);
-   }
-
-   /**
-    * Mirrors, or reflects, pixels from a source image across the axis
-    * described by an origin and destination. Coordinates are expected to be
-    * in the range [-1.0, 1.0].
-    *
-    * @param source the source image
-    * @param xOrig  the origin x
-    * @param yOrig  the origin y
-    * @param xDest  the destination x
-    * @param yDest  the destination y
-    * @param target the target image
-    *
-    * @return the mirrored image
-    */
-   public static final Img mirror ( final Img source, final float xOrig,
-      final float yOrig, final float xDest, final float yDest,
-      final Img target ) {
-
-      return mirror(source, xOrig, yOrig, xDest, yDest, false, target);
-   }
-
-   /**
     * Mirrors, or reflects, pixels from a source image across the axis
     * described by an origin and destination. Coordinates are expected to be
     * in the range [-1.0, 1.0]. Out-of-bounds pixels are omitted from the
@@ -2750,6 +2717,45 @@ public class Img {
       }
 
       return target;
+   }
+
+   /**
+    * Mirrors, or reflects, pixels from a source image across the axis
+    * described by an origin and destination. Coordinates are expected to be
+    * in the range [-1.0, 1.0].
+    *
+    * @param source the source image
+    * @param xOrig  the origin x
+    * @param yOrig  the origin y
+    * @param xDest  the destination x
+    * @param yDest  the destination y
+    * @param target the target image
+    *
+    * @return the mirrored image
+    */
+   public static final Img mirror ( final Img source, final float xOrig,
+      final float yOrig, final float xDest, final float yDest,
+      final Img target ) {
+
+      return Img.mirror(source, xOrig, yOrig, xDest, yDest, false, target);
+   }
+
+   /**
+    * Mirrors, or reflects, pixels from a source image across the axis
+    * described by an origin and destination. Coordinates are expected to be
+    * in the range [-1.0, 1.0].
+    *
+    * @param source the source image
+    * @param orig   the origin
+    * @param dest   the destination
+    * @param target the target image
+    *
+    * @return the mirrored image
+    */
+   public static final Img mirror ( final Img source, final Vec2 orig,
+      final Vec2 dest, final Img target ) {
+
+      return Img.mirror(source, orig.x, orig.y, dest.x, dest.y, false, target);
    }
 
    /**
@@ -3057,7 +3063,32 @@ public class Img {
       return target;
    }
 
-   public static Lab[] paletteExtra ( final Img source, final int capacity,
+   /**
+    * Extracts a palette from an image. If there are more colors than the
+    * threshold, engages an octree to reduce the number of colors.
+    *
+    * @param source   the input image
+    * @param capacity the octree capacity
+    *
+    * @return the palette
+    */
+   public static Lab[] paletteExtract ( final Img source, final int capacity ) {
+
+      return Img.paletteExtract(source, capacity,
+         Img.DEFAULT_PALETTE_THRESHOLD);
+   }
+
+   /**
+    * Extracts a palette from an image. If there are more colors than the
+    * threshold, engages an octree to reduce the number of colors.
+    *
+    * @param source    the input image
+    * @param capacity  the octree capacity
+    * @param threshold the threshold
+    *
+    * @return the palette
+    */
+   public static Lab[] paletteExtract ( final Img source, final int capacity,
       final int threshold ) {
 
       final TreeSet < Long > uniqueOpaques = new TreeSet <>();
@@ -3085,9 +3116,6 @@ public class Img {
 
       final Bounds3 bounds = Bounds3.lab(new Bounds3());
       final Octree oct = new Octree(bounds, capacity);
-      final Rgb srgb = new Rgb();
-      final Rgb lrgb = new Rgb();
-      final Vec4 xyz = new Vec4();
       final Lab lab = new Lab();
 
       /* Place colors in octree. */
@@ -3710,21 +3738,21 @@ public class Img {
     *
     * @return the pixels
     */
-   public static final int[] toArgb32 (Img source) {
-      return toArgb32(source, new Rgb.ToneMapClamp());
+   public static final int[] toArgb32 ( final Img source ) {
+
+      return Img.toArgb32(source, new Rgb.ToneMapClamp());
    }
 
    /**
     * Converts a LAB image to an array of 32-bit AARRGGBB pixels.
     *
-    * @param source the source image
+    * @param source  the source image
     * @param mapFunc the tone mapping function
     *
     * @return the pixels
     */
-   public static final int[] toArgb32 (
-      final Img source,
-      final Rgb.AbstrToneMap mapFunc) {
+   public static final int[] toArgb32 ( final Img source,
+      final Rgb.AbstrToneMap mapFunc ) {
 
       final int len = source.pixels.length;
       final int[] argb32s = new int[len];

@@ -1726,7 +1726,7 @@ public class Lab implements IColor {
        * @return the harmonies
        */
       @Override
-      public final Lab[] apply ( final Lab o ) {
+      public Lab[] apply ( final Lab o ) {
 
          /* 30, 330 degrees */
          final float lAna = ( float ) ( ( o.l * 2.0d + 50.0d ) / 3.0d );
@@ -1768,7 +1768,7 @@ public class Lab implements IColor {
        * @return the harmonies
        */
       @Override
-      public final Lab[] apply ( final Lab o ) {
+      public Lab[] apply ( final Lab o ) {
 
          /* @formatter:off */
          return new Lab[] {
@@ -1798,7 +1798,7 @@ public class Lab implements IColor {
        * @return the harmonies
        */
       @Override
-      public final Lab[] apply ( final Lab o ) {
+      public Lab[] apply ( final Lab o ) {
 
          /* 150, 210 degrees */
          final float lSpl = ( float ) ( ( 250.0d - o.l * 2.0d ) / 3.0d );
@@ -1840,7 +1840,7 @@ public class Lab implements IColor {
        * @return the harmonies
        */
       @Override
-      public final Lab[] apply ( final Lab o ) {
+      public Lab[] apply ( final Lab o ) {
 
          /* @formatter:off */
          return new Lab[] {
@@ -1872,7 +1872,7 @@ public class Lab implements IColor {
        * @return the harmonies
        */
       @Override
-      public final Lab[] apply ( final Lab o ) {
+      public Lab[] apply ( final Lab o ) {
 
          /* 120, 300 degrees */
          final double ld = o.l;
@@ -1921,7 +1921,7 @@ public class Lab implements IColor {
        * @return the harmonies
        */
       @Override
-      public final Lab[] apply ( final Lab o ) {
+      public Lab[] apply ( final Lab o ) {
 
          /* 120, 240 degrees */
          final float lTri = ( float ) ( ( 200.0d - o.l ) / 3.0d );
@@ -1965,7 +1965,7 @@ public class Lab implements IColor {
        * @return the eased color
        */
       @Override
-      public final Lab applyUnclamped ( final Lab orig, final Lab dest,
+      public Lab applyUnclamped ( final Lab orig, final Lab dest,
          final Float step, final Lab target ) {
 
          final float t = step;
@@ -2039,7 +2039,7 @@ public class Lab implements IColor {
        * @see Lch#mix(Lch, Lch, float, camzup.core.IColor.HueEasing, Lch)
        */
       @Override
-      public final Lab applyUnclamped ( final Lab orig, final Lab dest,
+      public Lab applyUnclamped ( final Lab orig, final Lab dest,
          final Float step, final Lab target ) {
 
          Lch.fromLab(orig, this.oLch);
@@ -2132,7 +2132,7 @@ public class Lab implements IColor {
        * @return the eased color
        */
       @Override
-      public final Lab applyUnclamped ( final Lab orig, final Lab dest,
+      public Lab applyUnclamped ( final Lab orig, final Lab dest,
          final Float step, final Lab target ) {
 
          Rgb.srLab2TosRgb(orig, this.oStandard, this.oLinear, this.oXyz);
