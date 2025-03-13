@@ -1,16 +1,13 @@
 package camzup.pfriendly;
 
 import java.util.Arrays;
-import java.util.function.IntFunction;
 import java.util.regex.Pattern;
 
-import camzup.core.Gradient;
 import camzup.core.IUtils;
 import camzup.core.Lab;
 import camzup.core.MaterialSolid;
 import camzup.core.Mesh2;
 import camzup.core.Pixels;
-import camzup.core.Pixels.MapLuminance;
 import camzup.core.PolyType;
 import camzup.core.Rgb;
 import camzup.core.Utils;
@@ -850,103 +847,6 @@ public class ZImage extends PImage {
 
       return ZImage.fromText(font, text, fillClr.toHexIntSat(), leading,
          kerning, textAlign);
-   }
-
-   /**
-    * Gets an image's size.
-    *
-    * @param image  the image
-    * @param target the output vector
-    *
-    * @return the size
-    */
-   public static Vec2 getSize ( final PImage image, final Vec2 target ) {
-
-      return target.set(image.width, image.height);
-   }
-
-   /**
-    * Maps the colors of a source image to a gradient using a mapping
-    * function. The mapping function accepts a pixel as an argument and
-    * returns a factor to be given to a gradient evaluation method.
-    *
-    * @param source the source pixels
-    * @param grd    the gradient
-    * @param easing the easing function
-    * @param map    the mapping function
-    * @param target the target pixels
-    *
-    * @return the mapped pixels
-    *
-    * @see Pixels#gradientMap(int[], Gradient, Lab.AbstrEasing, IntFunction,
-    *      int[])
-    */
-   public static PImage gradientMap ( final PImage source, final Gradient grd,
-      final Lab.AbstrEasing easing, final IntFunction < Float > map,
-      final PImage target ) {
-
-      if ( source == target ) {
-         target.loadPixels();
-         Pixels.gradientMap(target.pixels, grd, easing, map, target.pixels);
-         target.updatePixels();
-         return target;
-      }
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not use PGraphics with this method.");
-         return target;
-      }
-
-      source.loadPixels();
-      target.loadPixels();
-      final int[] pxSrc = source.pixels;
-      target.pixels = Pixels.gradientMap(pxSrc, grd, easing, map,
-         new int[pxSrc.length]);
-      target.format = source.format;
-      target.pixelDensity = source.pixelDensity;
-      target.pixelWidth = source.pixelWidth;
-      target.pixelHeight = source.pixelHeight;
-      target.width = source.width;
-      target.height = source.height;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Maps the colors of a source image to a gradient using a mapping
-    * function. Defaults to using the source image's perceptual luminance as
-    * an input factor to the gradient evaluation.
-    *
-    * @param source the source pixels
-    * @param grd    the gradient
-    * @param easing the easing function
-    * @param target the target pixels
-    *
-    * @return the mapped pixels
-    */
-   public static PImage gradientMap ( final PImage source, final Gradient grd,
-      final Lab.AbstrEasing easing, final PImage target ) {
-
-      return ZImage.gradientMap(source, grd, easing, new MapLuminance(),
-         target);
-   }
-
-   /**
-    * Maps the colors of a source image to a gradient using a mapping
-    * function. Defaults to using the source image's perceptual luminance as
-    * an input factor to the gradient evaluation.
-    *
-    * @param source the source pixels
-    * @param grd    the gradient
-    * @param target the target pixels
-    *
-    * @return the mapped pixels
-    */
-   public static PImage gradientMap ( final PImage source, final Gradient grd,
-      final PImage target ) {
-
-      return ZImage.gradientMap(source, grd, new Lab.MixLab(), target);
    }
 
    /**

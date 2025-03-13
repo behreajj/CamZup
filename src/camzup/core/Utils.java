@@ -402,6 +402,21 @@ public abstract class Utils implements IUtils {
    }
 
    /**
+    * Clamps an integer between a lower and an upper bound.
+    *
+    * @param v  the input value
+    * @param lb the lower bound
+    * @param ub the upper bound
+    *
+    * @return the clamped value
+    */
+   public static final long clamp ( final long v, final long lb,
+      final long ub ) {
+
+      return v < lb ? lb : v > ub ? ub : v;
+   }
+
+   /**
     * Clamps a value to the range [0.0, 1.0] .
     *
     * @param v the input value
@@ -1169,6 +1184,26 @@ public abstract class Utils implements IUtils {
       // return b != 0 ? ( a % b + b ) % b : a;
       if ( b != 0 ) {
          final int result = a - b * ( a / b );
+         return result < 0 ? result + b : result;
+      }
+      return a;
+   }
+
+   /**
+    * Applies floor modulo to the operands. Returns the left operand when the
+    * right operand is zero. An alternative to {@link Math#floorMod(int, int)}
+    * .
+    *
+    * @param a the left operand
+    * @param b the right operand
+    *
+    * @return the result
+    */
+   public static final long mod ( final long a, final long b ) {
+
+      // return b != 0 ? ( a % b + b ) % b : a;
+      if ( b != 0 ) {
+         final long result = a - b * ( a / b );
          return result < 0 ? result + b : result;
       }
       return a;

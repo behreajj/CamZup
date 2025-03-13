@@ -298,8 +298,8 @@ public class Lab implements IColor {
       /* @formatter:off */
       return this.set(
          ( l & 0xffff ) * Lab.L_FROM_SHORT,
-         ((a & 0xffff) - 32768) * Lab.AB_FROM_SHORT,
-         ((b & 0xffff) - 32768) * Lab.AB_FROM_SHORT,
+         ((a & 0xffff) - 0x8000) * Lab.AB_FROM_SHORT,
+         ((b & 0xffff) - 0x8000) * Lab.AB_FROM_SHORT,
          ( alpha & 0xffff ) / 65535.0f);
       /* @formatter:on */
    }
@@ -378,9 +378,9 @@ public class Lab implements IColor {
       final long t16 = ( long ) ( Utils.clamp01(this.alpha) * 0xffff + 0.5f );
       final long l16 = ( long ) ( Utils.clamp(this.l, 0.0f, 100.0f)
          * Lab.L_TO_SHORT + 0.5f );
-      final long a16 = 32768L + Utils.floor(Utils.clamp(this.a
+      final long a16 = 0x8000L + Utils.floor(Utils.clamp(this.a
          * Lab.AB_TO_SHORT, -32767.5f, 32767.5f));
-      final long b16 = 32768L + Utils.floor(Utils.clamp(this.b
+      final long b16 = 0x8000L + Utils.floor(Utils.clamp(this.b
          * Lab.AB_TO_SHORT, -32767.5f, 32767.5f));
 
       return t16 << 0x30L | l16 << 0x20L | a16 << 0x10L | b16;
@@ -401,8 +401,8 @@ public class Lab implements IColor {
 
       final long t16 = ( long ) ( this.alpha * 0xffff + 0.5f );
       final long l16 = ( long ) ( this.l * Lab.L_TO_SHORT + 0.5f );
-      final long a16 = 32768L + Utils.floor(this.a * Lab.AB_TO_SHORT);
-      final long b16 = 32768L + Utils.floor(this.b * Lab.AB_TO_SHORT);
+      final long a16 = 0x8000L + Utils.floor(this.a * Lab.AB_TO_SHORT);
+      final long b16 = 0x8000L + Utils.floor(this.b * Lab.AB_TO_SHORT);
 
       return t16 << 0x30L | l16 << 0x20L | a16 << 0x10L | b16;
    }
@@ -994,8 +994,8 @@ public class Lab implements IColor {
       /* @formatter:off */
       return target.set(
          l16 * Lab.L_FROM_SHORT,
-         ( a16 - 32768L ) * Lab.AB_FROM_SHORT,
-         ( b16 - 32768L ) * Lab.AB_FROM_SHORT,
+         ( a16 - 0x8000L ) * Lab.AB_FROM_SHORT,
+         ( b16 - 0x8000L ) * Lab.AB_FROM_SHORT,
          t16 / 65535.0f);
       /* @formatter:on */
    }

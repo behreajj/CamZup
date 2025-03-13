@@ -81,7 +81,7 @@ public interface BlendMode {
       /** Adopts the over layer lightness. */
       OVER,
 
-      /*
+      /**
        * Multiplies the inverse of over and of under lightness, then inverts the
        * product.
        */

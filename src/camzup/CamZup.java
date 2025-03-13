@@ -50,47 +50,29 @@ public class CamZup {
     */
    public static void main ( final String[] args ) {
 
-      // final Img x = new Img(16, 16);
-      // Img.rgb(x);
-      // System.out.println(x);
+      // Rng rng = new Rng();
       //
-      // for ( final Long y : x ) {
-      // System.out.println(String.format("%016X", y));
-      // }
-
-      // final Vec4 v0 = Vec4.random(rng, new Vec4());
-      // final Vec3 v1 = Vec3.random(rng, new Vec3());
-      // final byte[] arr = new byte[28];
-      // Vec4.byteslm(v0, arr, 0);
-      // Vec3.byteslm(v1, arr, 16);
-      // System.out.println(Utils.toDiagnosticString(arr));
-
-      // final Bounds2 b = new Bounds2(Vec2.randomCartesian(rng, -1f, 1f,
-      // new Vec2()), Vec2.randomCartesian(rng, -1f, 1f, new Vec2()));
-      // Bounds2.verified(b, b);
-      // System.out.println(b);
+      // Img a = Img.random(rng, true, new Img(3, 3));
+      // Img b = new Img(a);
       //
-      // final Ray2 r = new Ray2(Vec2.randomCartesian(rng, -1f, 1f, new Vec2()),
-      // Vec2.randomPolar(rng, new Vec2()));
-      // System.out.println(r);
-
-      // Mesh3 m = new Mesh3();
-      // Mesh3.cube(0.5f, PolyType.TRI, UvProfile.Cube.CROSS, m);
-      // m.triangulate();
-      // m.clean();
-      // MeshEntity3 me = new MeshEntity3(m);
-      // String s = me.toBlenderCode();
-      // System.out.println(s);
-
-      // byte[] bytes = m.toGltfData();
-      // for ( int i = 0; i < bytes.length; ++i ) {
-      // if ( ( i ) % 16 == 0 ) System.out.print(String.format("\n%04x | ", i));
-      // System.out.print(String.format("%02x", bytes[i]));
-      // if ( ( i + 1 ) % 4 == 0 )
-      // System.out.print(" ");
-      // else
-      // System.out.print(" ");
-      // }
+      // Lab adjObj = Lab.random(rng, new Lab());
+      // long adjLong = adjObj.toHexLongSat();
+      //
+      // System.out.println(adjObj);
+      // System.out.println(String.format("%016x", adjLong));
+      //
+      // long start0 = System.currentTimeMillis();
+      // Img.adjustLab(a, adjObj, a);
+      // long end0 = System.currentTimeMillis();
+      // System.out.println(String.format("Elapsed Obj: %d", end0 - start0));
+      //
+      // long start1 = System.currentTimeMillis();
+      // Img.adjustLab(b, adjLong, b);
+      // long end1 = System.currentTimeMillis();
+      // System.out.println(String.format("Elapsed Long: %d", end1 - start1));
+      //
+      // System.out.println(Utils.toDiagnosticString(Img.byteslm(a)));
+      // System.out.println(Utils.toDiagnosticString(Img.byteslm(b)));
 
       // https://www.russellcottrell.com/photo/matrixCalculator.htm
 

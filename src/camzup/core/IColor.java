@@ -43,8 +43,6 @@ public interface IColor extends Comparable < IColor > {
     * Converts a color to an integer where hexadecimal represents the color
     * components.
     *
-    * @param source the input color
-    *
     * @return the color in hexadecimal
     */
    int toHexInt ( );

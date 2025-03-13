@@ -286,69 +286,6 @@ public abstract class Pixels {
    }
 
    /**
-    * Maps the colors of a source pixels array to those of a gradient using a
-    * mapping function. The mapping function accepts a pixel as an argument
-    * and returns a factor to be given to a gradient evaluation method.
-    * Retains the original color's transparency.
-    *
-    * @param source the source pixels
-    * @param grd    the gradient
-    * @param easing the easing function
-    * @param map    the mapping function
-    * @param target the target pixels
-    *
-    * @return the mapped pixels
-    *
-    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
-    */
-   public static int[] gradientMap ( final int[] source, final Gradient grd,
-      final Lab.AbstrEasing easing, final IntFunction < Float > map,
-      final int[] target ) {
-
-      final int srcLen = source.length;
-      if ( srcLen == target.length ) {
-
-         /*
-          * Remove alpha from gradient evaluated color so that it can be
-          * replaced by source alpha.
-          */
-         final HashMap < Integer, Integer > dict = new HashMap <>(512, 0.75f);
-         final Lab trgClr = new Lab();
-
-         for ( int i = 0; i < srcLen; ++i ) {
-            final int srgbKeyInt = source[i];
-            if ( ( srgbKeyInt & 0xff000000 ) != 0 ) {
-               final Integer srgbKeyObj = 0xff000000 | srgbKeyInt;
-               if ( !dict.containsKey(srgbKeyObj) ) {
-                  // TODO: Might have to use presets or change the map to work
-                  // on lab?
-                  Gradient.eval(grd, map.apply(srgbKeyInt), easing, trgClr);
-                  // TODO: Fix this. Might have to use a dictionary of existing
-                  // colors.
-                  dict.put(srgbKeyObj, trgClr.toHexIntSat() & 0x00ffffff);
-               }
-            }
-         }
-
-         if ( dict.size() > 0 ) {
-            for ( int i = 0; i < srcLen; ++i ) {
-               final int srgbKeyInt = source[i];
-               final Integer srgbKeyObj = 0xff000000 | srgbKeyInt;
-               if ( dict.containsKey(srgbKeyObj) ) {
-                  target[i] = srgbKeyInt & 0xff000000 | dict.get(srgbKeyObj);
-               } else {
-                  target[i] = 0x00000000;
-               }
-            }
-         } else {
-            for ( int i = 0; i < srcLen; ++i ) { target[i] = 0x00000000; }
-         }
-      }
-
-      return target;
-   }
-
-   /**
     * Masks the pixels of an under image with the alpha channel of the over
     * image. Forms an intersection of the bounding area of the two inputs.
     * Emits the dimensions and top-left corner of the blended image.

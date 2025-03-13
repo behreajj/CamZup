@@ -11,7 +11,6 @@ Yup2 graphics;
 Img srcImg;
 Img trgImg = new Img(512, 512);
 Gradient grd = Gradient.paletteViridis(new Gradient());
-Lab.AbstrEasing mix = new Lab.MixLab();
 Pixels.MapLuminance map = new Pixels.MapLuminance();
 
 void settings() {
@@ -26,7 +25,7 @@ void setup() {
     srcImg = Convert.toImg(source);
     
     long start = System.currentTimeMillis();
-    Img.gradientMap(grd, srcImg, mix, Img.MapChannel.L, false, trgImg);
+    Img.gradientMap(grd, srcImg, trgImg);
     target = Convert.toPImage(trgImg);
     long end = System.currentTimeMillis();
     println("Elapsed Time: " + (end - start));
