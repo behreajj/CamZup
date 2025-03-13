@@ -2482,6 +2482,65 @@ public class Img {
    }
 
    /**
+    * Flips the pixels source image vertically, on the y axis, and stores the
+    * result in the target image.
+    *
+    * @param source the input image
+    * @param target the output image
+    *
+    * @return the flipped image
+    */
+   public static Img flipX ( final Img source, final Img target ) {
+
+      final int w = source.width;
+      final int h = source.height;
+      final int len = source.pixels.length;
+
+      if ( !Img.similar(source, target) ) {
+         target.width = w;
+         target.height = h;
+         target.pixels = new long[len];
+      }
+
+      final int wn1 = w - 1;
+      for ( int i = 0; i < len; ++i ) {
+         target.pixels[i / w * w + wn1 - i % w] = source.pixels[i];
+      }
+
+      return target;
+   }
+
+   /**
+    * Flips the pixels source image vertically, on the y axis, and stores the
+    * result in the target image.
+    *
+    * @param source the input image
+    * @param target the output image
+    *
+    * @return the flipped image
+    */
+   public static Img flipY ( final Img source, final Img target ) {
+
+      final int w = source.width;
+      final int h = source.height;
+      final int len = source.pixels.length;
+
+      if ( !Img.similar(source, target) ) {
+         target.width = w;
+         target.height = h;
+         target.pixels = new long[len];
+      }
+
+      final int hn1 = h - 1;
+      for ( int i = 0; i < len; ++i ) {
+         target.pixels[ ( hn1 - i / w ) * w + i % w]
+            = source.pixels[i];
+      }
+
+      return target;
+   }
+
+   /**
     * Mirrors, or reflects, pixels from a source image across the axis
     * described by an origin and destination. Coordinates are expected to be
     * in the range [-1.0, 1.0]. Out-of-bounds pixels are omitted from the
