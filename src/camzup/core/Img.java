@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.TreeMap;
 import java.util.TreeSet;
 
 /**
@@ -2527,6 +2526,8 @@ public class Img {
       final Lab tLab = new Lab();
 
       for ( int i = 0; i < len; ++i ) {
+         // TODO: You might be able to get away with mixing with just longs.
+         // See the sample method for reference.
          Lab.fromHex(dest.pixels[i], dLab);
          Lab.fromHex(orig.pixels[i], oLab);
          Lab.mix(oLab, dLab, t, tLab);
@@ -2596,8 +2597,8 @@ public class Img {
       }
 
       final int len = source.pixels.length;
-      final float noNanFac = Float.isNaN(fac) ? 1.0f : fac;
-      final float facVerif = Utils.clamp(noNanFac, -1.0f, 1.0f);
+      final float facVerif = Float.isNaN(fac) ? 1.0f : Utils.clamp(fac, -1.0f,
+         1.0f);
 
       if ( Utils.approx(facVerif, 0.0f) ) {
          System.arraycopy(source.pixels, 0, target.pixels, 0, len);
@@ -2682,7 +2683,7 @@ public class Img {
    public static final Img normalizeLight ( final Img source,
       final Img target ) {
 
-      return Img.normalizeLight(source, 1f, target);
+      return Img.normalizeLight(source, 1.0f, target);
    }
 
    /**
@@ -3600,21 +3601,21 @@ public class Img {
          final float u = 1.0f - yErr;
          final float t2 = u * t0 + yErr * t1;
          if ( t2 > 0.0f ) {
-            final float r2 = u * l0 + yErr * l1;
-            final float g2 = u * a0 + yErr * a1;
+            final float l2 = u * l0 + yErr * l1;
+            final float a2 = u * a0 + yErr * a1;
             final float b2 = u * b0 + yErr * b1;
 
             long ti = ( long ) ( 0.5f + t2 );
-            long ri = ( long ) ( 0.5f + r2 );
-            long gi = ( long ) ( 0.5f + g2 );
+            long li = ( long ) ( 0.5f + l2 );
+            long ai = ( long ) ( 0.5f + a2 );
             long bi = ( long ) ( 0.5f + b2 );
 
             if ( ti > 0xffffL ) { ti = 0xffffL; }
-            if ( ri > 0xffffL ) { ri = 0xffffL; }
-            if ( gi > 0xffffL ) { gi = 0xffffL; }
+            if ( li > 0xffffL ) { li = 0xffffL; }
+            if ( ai > 0xffffL ) { ai = 0xffffL; }
             if ( bi > 0xffffL ) { bi = 0xffffL; }
 
-            return ti << Img.T_SHIFT | ri << Img.L_SHIFT | gi << Img.A_SHIFT
+            return ti << Img.T_SHIFT | li << Img.L_SHIFT | ai << Img.A_SHIFT
                | bi << Img.B_SHIFT;
          }
       }
@@ -3649,13 +3650,12 @@ public class Img {
     *
     * @return the dictionary
     */
-   protected static final TreeMap < Long, ArrayList < Integer > > toTreeMap (
-      final Img source, final TreeMap < Long, ArrayList < Integer > > target ) {
+   protected static final HashMap < Long, ArrayList < Integer > > toDict (
+      final Img source, final HashMap < Long, ArrayList < Integer > > target ) {
 
       // TODO: What would the public facing version of this method look like?
       // Maybe it would be TreeMap < Lab, integer[] >.
-      // TODO: Sort according to first entry in array. If it's going to be
-      // reordered anyway, use hashmap instead?
+      // TODO: Sort according to first entry in array.
 
       final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
