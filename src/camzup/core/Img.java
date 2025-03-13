@@ -1194,7 +1194,24 @@ public class Img {
     */
    public static final Img blend ( final Img imgUnder, final Img imgOver ) {
 
-      return Img.blend(imgUnder, 0, 0, imgOver, 0, 0, Img.DEFAULT_BM_ALPHA,
+      final int aw = imgUnder.width;
+      final int ah = imgUnder.height;
+      final int bw = imgOver.width;
+      final int bh = imgOver.height;
+
+      final int wLrg = aw > bw ? aw : bw;
+      final int hLrg = ah > bh ? ah : bh;
+
+      /* The 0.5 is to bias the rounding. */
+      final float cx = 0.5f + wLrg * 0.5f;
+      final float cy = 0.5f + hLrg * 0.5f;
+
+      final int ax = aw == wLrg ? 0 : ( int ) ( cx - aw * 0.5f );
+      final int ay = ah == hLrg ? 0 : ( int ) ( cy - ah * 0.5f );
+      final int bx = bw == wLrg ? 0 : ( int ) ( cx - bw * 0.5f );
+      final int by = bh == hLrg ? 0 : ( int ) ( cy - bh * 0.5f );
+
+      return Img.blend(imgUnder, ax, ay, imgOver, bx, by, Img.DEFAULT_BM_ALPHA,
          Img.DEFAULT_BM_L, Img.DEFAULT_BM_AB, null);
    }
 

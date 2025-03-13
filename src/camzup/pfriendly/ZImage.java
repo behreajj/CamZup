@@ -10,9 +10,7 @@ import camzup.core.Mesh2;
 import camzup.core.Pixels;
 import camzup.core.PolyType;
 import camzup.core.Rgb;
-import camzup.core.Utils;
 import camzup.core.Utils.TriFunction;
-import camzup.core.Vec2;
 import camzup.core.Vec4;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -767,110 +765,6 @@ public class ZImage extends PImage {
 
       return ZImage.fromText(font, text, fillClr.toHexIntSat(), leading,
          kerning, textAlign);
-   }
-
-   /**
-    * Masks a backdrop image with an overlay. Forms an intersection of the
-    * bounding area of the two inputs. Emits the top-left corner for the
-    * intersection.
-    *
-    * @param a      backdrop
-    * @param ax     backdrop x offset
-    * @param ay     backdrop y offset
-    * @param b      overlay image
-    * @param bx     overlay x offset
-    * @param by     overlay y offset
-    * @param target target image
-    * @param tl     top left
-    *
-    * @return the masked pixels
-    */
-   public static PImage mask ( final PImage a, final float ax, final float ay,
-      final PImage b, final float bx, final float by, final PImage target,
-      final Vec2 tl ) {
-
-      return ZImage.mask(a, Utils.round(ax), Utils.round(ay), b, Utils.round(
-         bx), Utils.round(by), target, tl);
-   }
-
-   /**
-    * Masks a backdrop image with an overlay. Forms an intersection of the
-    * bounding area of the two inputs. Emits the top-left corner for the
-    * intersection.
-    *
-    * @param a      backdrop
-    * @param ax     backdrop x offset
-    * @param ay     backdrop y offset
-    * @param b      overlay image
-    * @param bx     overlay x offset
-    * @param by     overlay y offset
-    * @param target target image
-    * @param tl     top left
-    *
-    * @return the masked pixels
-    */
-   public static PImage mask ( final PImage a, final int ax, final int ay,
-      final PImage b, final int bx, final int by, final PImage target,
-      final Vec2 tl ) {
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not use PGraphics with this method.");
-         return target;
-      }
-
-      a.loadPixels();
-      b.loadPixels();
-      target.loadPixels();
-      final int pd = a.pixelDensity < b.pixelDensity ? a.pixelDensity
-         : b.pixelDensity;
-
-      final Vec2 dim = new Vec2();
-      target.pixels = Pixels.mask(a.pixels, a.pixelWidth, a.pixelHeight, ax, ay,
-         b.pixels, b.pixelWidth, b.pixelHeight, bx, by, dim, tl);
-      target.pixelDensity = pd;
-      target.pixelWidth = ( int ) dim.x;
-      target.pixelHeight = ( int ) dim.y;
-      target.width = target.pixelWidth / pd;
-      target.height = target.pixelHeight / pd;
-      target.format = PConstants.ARGB;
-      target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Masks a backdrop image with an overlay. Forms an intersection of the
-    * bounding area of the two inputs. Emits the top-left corner for the
-    * intersection.
-    *
-    * @param a      backdrop
-    * @param b      overlay image
-    * @param target target image
-    * @param tl     top left
-    *
-    * @return the masked pixels
-    */
-   public static PImage mask ( final PImage a, final PImage b,
-      final PImage target, final Vec2 tl ) {
-
-      final int aw = a.pixelWidth;
-      final int ah = a.pixelHeight;
-      final int bw = b.pixelWidth;
-      final int bh = b.pixelHeight;
-
-      final int wLrg = aw > bw ? aw : bw;
-      final int hLrg = ah > bh ? ah : bh;
-
-      /* The 0.5 is to bias the rounding. */
-      final float cx = 0.5f + wLrg * 0.5f;
-      final float cy = 0.5f + hLrg * 0.5f;
-
-      final int ax = aw == wLrg ? 0 : ( int ) ( cx - aw * 0.5f );
-      final int ay = ah == hLrg ? 0 : ( int ) ( cy - ah * 0.5f );
-      final int bx = bw == wLrg ? 0 : ( int ) ( cx - bw * 0.5f );
-      final int by = bh == hLrg ? 0 : ( int ) ( cy - bh * 0.5f );
-
-      return ZImage.mask(a, ax, ay, b, bx, by, target, tl);
    }
 
    /**
