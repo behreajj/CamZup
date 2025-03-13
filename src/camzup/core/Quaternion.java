@@ -2255,28 +2255,6 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * An abstract class that may serve as an umbrella for any custom
-    * comparators of quaternions.
-    */
-   public abstract static class AbstrComparator implements Comparator <
-      Quaternion > {
-
-      /**
-       * The default constructor.
-       */
-      protected AbstrComparator ( ) {}
-
-      /**
-       * Returns the simple name of this class.
-       *
-       * @return the string
-       */
-      @Override
-      public String toString ( ) { return this.getClass().getSimpleName(); }
-
-   }
-
-   /**
     * An abstract class to facilitate the creation of quaternion easing
     * functions.
     */
