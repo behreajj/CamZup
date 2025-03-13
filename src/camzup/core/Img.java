@@ -547,7 +547,9 @@ public class Img {
     */
    public static final GrayPolicy DEFAULT_GRAY_POLICY = GrayPolicy.OMIT;
 
-   /* The default height when none is given. */
+   /**
+    * The default height when none is given.
+    */
    public static final int DEFAULT_HEIGHT = 128;
 
    /**
@@ -555,7 +557,9 @@ public class Img {
     */
    public static final PivotPolicy DEFAULT_PIVOT_POLICY = PivotPolicy.MEAN;
 
-   /* The default width when none is given. */
+   /**
+    * The default width when none is given.
+    */
    public static final int DEFAULT_WIDTH = 128;
 
    /**
@@ -649,12 +653,10 @@ public class Img {
       }
 
       final int len = source.pixels.length;
-
-      final float sNoNanFac = Float.isNaN(sFac) ? 0.5f : sFac;
-      final float sAdjVerif = 1.0f + Utils.clamp(sNoNanFac, -1.0f, 1.0f);
-
-      final float lNoNanFac = Float.isNaN(lFac) ? 0.5f : lFac;
-      final float lAdjVerif = 1.0f + Utils.clamp(lNoNanFac, -1.0f, 1.0f);
+      final float sAdjVerif = Float.isNaN(sFac) ? 1.0f : 1.0f + Utils.clamp(
+         sFac, -1.0f, 1.0f);
+      final float lAdjVerif = Float.isNaN(lFac) ? 1.0f : 1.0f + Utils.clamp(
+         lFac, -1.0f, 1.0f);
 
       if ( Utils.approx(sAdjVerif, 1.0f) && Utils.approx(lAdjVerif, 1.0f) ) {
          System.arraycopy(source.pixels, 0, target.pixels, 0, len);
@@ -846,8 +848,8 @@ public class Img {
       }
 
       final int len = source.pixels.length;
-      final float noNanFac = Float.isNaN(fac) ? 0.5f : fac;
-      final float adjVerif = 1.0f + Utils.clamp(noNanFac, -1.0f, 1.0f);
+      final float adjVerif = Float.isNaN(fac) ? 1.0f : 1.0f + Utils.clamp(fac,
+         -1.0f, 1.0f);
 
       if ( Utils.approx(adjVerif, 1.0f) ) {
          System.arraycopy(source.pixels, 0, target.pixels, 0, len);
@@ -939,8 +941,8 @@ public class Img {
       }
 
       final int len = source.pixels.length;
-      final float noNanFac = Float.isNaN(fac) ? 0.5f : fac;
-      final float adjVerif = 1.0f + Utils.clamp(noNanFac, -1.0f, 1.0f);
+      final float adjVerif = Float.isNaN(fac) ? 1.0f : 1.0f + Utils.clamp(fac,
+         -1.0f, 1.0f);
 
       if ( Utils.approx(adjVerif, 1.0f) ) {
          System.arraycopy(source.pixels, 0, target.pixels, 0, len);
@@ -948,7 +950,6 @@ public class Img {
       }
 
       final float pivotLight = 50.0f;
-
       final Lab lab = new Lab();
       final HashMap < Long, Long > convert = new HashMap <>();
       convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
@@ -1306,11 +1307,6 @@ public class Img {
       final BlendMode.Alpha bmAlpha, final BlendMode.L bmLight,
       final BlendMode.AB bmAb, final Vec2 tl ) {
 
-      // TODO: This may have to be generalized to accept an array of images.
-
-      // TODO: Test blending, adding longs so you don't have to convert to Lab
-      // objects.
-
       final int ax = xUnder;
       final int ay = yUnder;
       final int aw = imgUnder.width;
@@ -1394,7 +1390,8 @@ public class Img {
             final int ays = y - ayid;
             if ( ays >= 0 && ays < ah && axs >= 0 && axs < aw ) {
                final long hexUnder = pxUnder[axs + ays * aw];
-               dict.put(hexUnder, Lab.fromHex(hexUnder, new Lab()));
+               dict.put(hexUnder, Lab.fromHex(pxUnder[axs + ays * aw],
+                  new Lab()));
             }
 
             final int bxs = x - bxid;
@@ -1449,36 +1446,17 @@ public class Img {
          final double u = 1.0d - t;
          double tuv = t + u * v;
 
+         /* @formatter:off */
          switch ( bmAlpha ) {
-            case MAX: {
-               tuv = t > v ? t : v;
-            }
-               break;
-
-            case MIN: {
-               tuv = t < v ? t : v;
-            }
-               break;
-
-            case MULTIPLY: {
-               tuv = t * v;
-            }
-               break;
-
-            case OVER: {
-               tuv = t;
-            }
-               break;
-
-            case UNDER: {
-               tuv = v;
-            }
-               break;
-
+            case MAX: { tuv = t > v ? t : v; } break;
+            case MIN: { tuv = t < v ? t : v; } break;
+            case MULTIPLY: { tuv = t * v; } break;
+            case OVER: { tuv = t; } break;
+            case UNDER: { tuv = v; } break;
             case BLEND:
             default:
-
-         } // End alpha blend mode.
+         }
+         /* @formatter:on */
 
          long hexComp = Img.CLEAR_PIXEL;
          if ( tuv > 0.0d ) {
@@ -2155,7 +2133,7 @@ public class Img {
                ++sumTally;
             } // Alpha greater than zero.
             uniques.put(srcPixelObj, lch);
-         } // Uniques doesn't contain pixel.
+         } // Doesn't contain pixel.
       } // Pixels loop.
 
       final boolean useNormVerif = useNormalize && sumTally != 0 && maxChannel
