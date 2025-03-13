@@ -2052,7 +2052,7 @@ public class Img {
     *
     * @return the mapped image
     */
-   public static Img gradientMap ( final Gradient grd, final Img source,
+   public static final Img gradientMap ( final Gradient grd, final Img source,
       final Img target ) {
 
       return Img.gradientMap(grd, source, new Lab.MixLab(), MapChannel.L, true,
@@ -2070,7 +2070,7 @@ public class Img {
     *
     * @return the mapped image
     */
-   public static Img gradientMap ( final Gradient grd, final Img source,
+   public static final Img gradientMap ( final Gradient grd, final Img source,
       final Lab.AbstrEasing easing, final Img target ) {
 
       return Img.gradientMap(grd, source, easing, MapChannel.L, true, target);
@@ -2089,7 +2089,7 @@ public class Img {
     *
     * @return the mapped image
     */
-   public static Img gradientMap ( final Gradient grd, final Img source,
+   public static final Img gradientMap ( final Gradient grd, final Img source,
       final Lab.AbstrEasing easing, final Img.MapChannel channel,
       final boolean useNormalize, final Img target ) {
 
@@ -2190,7 +2190,7 @@ public class Img {
     *
     * @return the mapped image
     */
-   public static Img gradientMap ( final Gradient grd, final Img source,
+   public static final Img gradientMap ( final Gradient grd, final Img source,
       final Lab.AbstrEasing easing, final Img.MapChannel channel,
       final Img target ) {
 
@@ -2214,7 +2214,8 @@ public class Img {
     * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
     * @see Utils#max(float, float)
     */
-   public static Img gradientRadial ( final Gradient grd, final float xOrig,
+   public static final Img gradientRadial ( final Gradient grd,
+      final float xOrig,
       final float yOrig, final float radius, final Lab.AbstrEasing easing,
       final Img target ) {
 
@@ -2382,7 +2383,7 @@ public class Img {
     *
     * @return the inverted image
     */
-   public static Img invert ( final Img source, final Img target ) {
+   public static final Img invert ( final Img source, final Img target ) {
 
       return Img.invert(source, Img.TLAB_MASK, target);
    }
@@ -2496,7 +2497,7 @@ public class Img {
     *
     * @return the flipped image
     */
-   public static Img flipX ( final Img source, final Img target ) {
+   public static final Img flipX ( final Img source, final Img target ) {
 
       final int w = source.width;
       final int h = source.height;
@@ -2525,7 +2526,7 @@ public class Img {
     *
     * @return the flipped image
     */
-   public static Img flipY ( final Img source, final Img target ) {
+   public static final Img flipY ( final Img source, final Img target ) {
 
       final int w = source.width;
       final int h = source.height;
@@ -2561,7 +2562,7 @@ public class Img {
     *
     * @return the mirrored image
     */
-   public static Img mirror ( final Img source, final float xOrig,
+   public static final Img mirror ( final Img source, final float xOrig,
       final float yOrig, final float xDest, final float yDest,
       final boolean flip, final Img target ) {
 
@@ -2658,7 +2659,7 @@ public class Img {
     *
     * @return the mirrored image
     */
-   public static Img mirrorX ( final Img source, final int pivot,
+   public static final Img mirrorX ( final Img source, final int pivot,
       final boolean flip, final Img target ) {
 
       final int w = source.width;
@@ -2701,7 +2702,7 @@ public class Img {
     *
     * @return the mirrored image
     */
-   public static Img mirrorY ( final Img source, final int pivot,
+   public static final Img mirrorY ( final Img source, final int pivot,
       final boolean flip, final Img target ) {
 
       final int w = source.width;
@@ -2742,7 +2743,8 @@ public class Img {
     *
     * @return the mixed image
     */
-   public static Img mix ( final Img orig, final Img dest, final float fac,
+   public static final Img mix ( final Img orig, final Img dest,
+      final float fac,
       final Img target ) {
 
       if ( !Img.similar(orig, dest) ) {
@@ -2984,7 +2986,7 @@ public class Img {
     *
     * @return the resized image
     */
-   public static Img resizeBilinear ( final Img source, final int wTrg,
+   public static final Img resizeBilinear ( final Img source, final int wTrg,
       final int hTrg, final Img target ) {
 
       final int wTrgVerif = Utils.clamp(Math.abs(wTrg), 1, Img.MAX_DIMENSION);
@@ -3231,17 +3233,11 @@ public class Img {
             return target;
          }
 
-         case 90: {
-            return Img.rotate90(source, target);
-         }
-
-         case 180: {
-            return Img.rotate180(source, target);
-         }
-
-         case 270: {
-            return Img.rotate270(source, target);
-         }
+         /* @formatter:off */
+         case 90: { return Img.rotate90(source, target); }
+         case 180: { return Img.rotate180(source, target); }
+         case 270: { return Img.rotate270(source, target); }
+         /* @formatter:on */
 
          default: {
             final double avd = angle;
@@ -3265,7 +3261,7 @@ public class Img {
     *
     * @see Utils#round(float)
     */
-   public static Img scaleBilinear ( final Img source, final float wPrc,
+   public static final Img scaleBilinear ( final Img source, final float wPrc,
       final float hPrc, final Img target ) {
 
       return Img.resizeBilinear(source, Utils.round(wPrc * source.width), Utils
@@ -3282,7 +3278,7 @@ public class Img {
     *
     * @return the scaled image
     */
-   public static Img scaleBilinear ( final Img source, final float prc,
+   public static final Img scaleBilinear ( final Img source, final float prc,
       final Img target ) {
 
       return Img.scaleBilinear(source, prc, prc, target);
@@ -3298,7 +3294,7 @@ public class Img {
     *
     * @return the scaled image
     */
-   public static Img scaleBilinear ( final Img source, final Vec2 prc,
+   public static final Img scaleBilinear ( final Img source, final Vec2 prc,
       final Img target ) {
 
       return Img.scaleBilinear(source, prc.x, prc.y, target);
@@ -3428,7 +3424,7 @@ public class Img {
     *
     * @return the skewed array
     */
-   public static Img skewXBilinear ( final Img source, final float angle,
+   public static final Img skewXBilinear ( final Img source, final float angle,
       final Img target ) {
 
       final int wSrc = source.width;
@@ -3495,7 +3491,7 @@ public class Img {
     *
     * @return the skewed array
     */
-   public static Img skewYBilinear ( final Img source, final float angle,
+   public static final Img skewYBilinear ( final Img source, final float angle,
       final Img target ) {
 
       final int wSrc = source.width;
