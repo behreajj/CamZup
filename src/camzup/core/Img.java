@@ -37,9 +37,6 @@ public class Img {
     */
    public Img ( ) {
 
-      // TODO: Function to set all zero alpha pixels to clear pixel? What to
-      // call it? clearToClearBlack?
-
       // TODO: swap alpha to light, light to alpha methods?
 
       // TODO: Is a mask function still necessary? If so, then offer
@@ -48,7 +45,8 @@ public class Img {
       // mask = useLight ? L_MASK : T_MASK .
 
       // TODO: Option to quantize image? Maybe in rgb or maybe the light
-      // channel only?
+      // channel only? Might have to quantize a and b by their relative
+      // min and max.
 
       this(Img.DEFAULT_WIDTH, Img.DEFAULT_HEIGHT, Img.CLEAR_PIXEL);
    }
@@ -1574,50 +1572,34 @@ public class Img {
                   break;
 
                case CHROMA: {
-
                   if ( vgt0 && tgt0 ) {
-
                      final double csqUnder = aUnder * aUnder + bUnder * bUnder;
-
                      if ( csqUnder > IUtils.EPSILON_D ) {
                         final double s = Math.sqrt(aOver * aOver + bOver
                            * bOver) / Math.sqrt(csqUnder);
                         aComp = s * aUnder;
                         bComp = s * bUnder;
-
                      } else {
-
                         aComp = 0.0d;
                         bComp = 0.0d;
-
                      } /* End chroma under is greater than zero. */
-
                   } /* End under alpha is greater than zero. */
                }
                   break;
 
                case HUE: {
-
                   if ( vgt0 && tgt0 ) {
-
                      final double csqOver = aOver * aOver + bOver * bOver;
-
                      if ( csqOver > IUtils.EPSILON_D ) {
-
                         final double s = Math.sqrt(aUnder * aUnder + bUnder
                            * bUnder) / Math.sqrt(csqOver);
                         aComp = s * aOver;
                         bComp = s * bOver;
-
                      } else {
-
                         aComp = 0.0d;
                         bComp = 0.0d;
-
                      } /* End chroma over is greater than zero. */
-
                   } /* End under alpha is greater than zero. */
-
                }
                   break;
 
@@ -1673,6 +1655,9 @@ public class Img {
     */
    public static final Img blur ( final Img source, final int step,
       final Img target ) {
+
+      // TODO: Wouldn't the target image width and height need to be padded
+      // out by the kernel size to accomodoate for blurring at the edges?
 
       final int wSrc = source.width;
       final int hSrc = source.height;
@@ -2736,7 +2721,7 @@ public class Img {
 
       final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
-         if ( ( source.pixels[i] & Img.T_MASK ) != 0 ) { return false; }
+         if ( ( source.pixels[i] & Img.T_MASK ) != 0L ) { return false; }
       }
       return true;
    }
@@ -3068,6 +3053,35 @@ public class Img {
    }
 
    /**
+    * Sets an image pixel to {@link Img#CLEAR_PIXEL} if it has zero alpha.
+    * 
+    * @param source the input image
+    * @param target the output image
+    *
+    * @return the alpha corrected image
+    */
+   public static final Img correctZeroAlpha (
+      final Img source,
+      final Img target) {
+
+      final int len = source.pixels.length;
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[len];
+      }
+
+      for ( int i = 0; i < len; ++i ) {
+         final long srcPixel = source.pixels[i];
+         target.pixels[i] = (srcPixel & Img.T_MASK) != 0L ?
+            srcPixel :
+            Img.CLEAR_PIXEL;
+      }
+
+      return target;
+   }
+
+   /**
     * Multiplies the image's alpha by the scalar. Expected range is within [0,
     * 65535]. Clears the image if the alpha is less than or equal to zero.
     *
@@ -3080,15 +3094,14 @@ public class Img {
    public static final Img mulAlpha ( final Img source, final float a01,
       final Img target ) {
 
+      final int len = source.pixels.length;
       if ( !Img.similar(source, target) ) {
          target.width = source.width;
          target.height = source.height;
-         target.pixels = new long[source.pixels.length];
+         target.pixels = new long[len];
       }
 
       if ( a01 <= 0.0f ) { return Img.clear(target); }
-
-      final int len = source.pixels.length;
       if ( a01 == 1.0f ) {
          System.arraycopy(source.pixels, 0, target.pixels, 0, len);
          return target;
@@ -3309,7 +3322,7 @@ public class Img {
       int tally = 0;
       for ( int i = 0; i < srcLen; ++i ) {
          final long tlab64 = srcPixels[i];
-         if ( ( tlab64 & Img.T_MASK ) != 0 ) {
+         if ( ( tlab64 & Img.T_MASK ) != 0L ) {
             final Long masked = mask | tlab64;
             if ( !uniqueOpaques.containsKey(masked) ) {
                ++tally;
@@ -4122,6 +4135,7 @@ public class Img {
             lab.l = preserveLight ? lab.l : u * lab.l + t * tint.l;
             lab.a = u * lab.a + t * tint.a;
             lab.b = u * lab.b + t * tint.b;
+            lab.alpha = u * lab.alpha + t * (lab.alpha * tint.alpha);
             trgPixel = lab.toHexLongSat();
             convert.put(srcPixelObj, trgPixel);
          }
@@ -4316,7 +4330,7 @@ public class Img {
          int y = hSrc;
          while ( goLeft && y > top ) {
             --y;
-            if ( ( srcPixels[y * wSrc + left] & Img.T_MASK ) != 0 ) {
+            if ( ( srcPixels[y * wSrc + left] & Img.T_MASK ) != 0L ) {
                minBottom = y;
                goLeft = false;
             }
@@ -4332,7 +4346,7 @@ public class Img {
          int x = wSrc;
          while ( goBottom && x > left ) {
             --x;
-            if ( ( srcPixels[wbottom + x] & Img.T_MASK ) != 0 ) {
+            if ( ( srcPixels[wbottom + x] & Img.T_MASK ) != 0L ) {
                minRight = x;
                goBottom = false;
             }
@@ -4347,7 +4361,7 @@ public class Img {
          int y = bottom + 1;
          while ( goRight && y > top ) {
             --y;
-            if ( ( srcPixels[y * wSrc + right] & Img.T_MASK ) != 0 ) {
+            if ( ( srcPixels[y * wSrc + right] & Img.T_MASK ) != 0L ) {
                goRight = false;
             }
          }
