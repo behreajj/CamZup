@@ -65,9 +65,6 @@ public class Img {
       // TODO: Replace Color Approx
       // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L2093
 
-      // TODO: Replace Color Exact
-      // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L2093
-
       this(Img.DEFAULT_WIDTH, Img.DEFAULT_HEIGHT, Img.CLEAR_PIXEL);
    }
 
@@ -3543,6 +3540,76 @@ public class Img {
          final long t16Trg = t16Src < 0x80000L ? 0x0000L : 0xffffL;
          target.pixels[i] = t16Trg << Img.T_SHIFT | c & Img.LAB_MASK;
       }
+      return target;
+   }
+
+   public static final Img replaceColorApprox ( final Img source,
+      final Lab fromColor, final Lab toColor, final float tolerance,
+      final Img target ) {
+
+      if ( tolerance <= 0.0f ) {
+         return Img.replaceColorExact(source, fromColor, toColor, target);
+      }
+
+      final int len = source.pixels.length;
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[len];
+      }
+
+      final long toPixel = toColor.toHexLongSat();
+      final Lab lab = new Lab();
+      final HashMap < Long, Long > convert = new HashMap <>();
+      final float alphaScalar = 100.0f;
+      for ( int i = 0; i < len; ++i ) {
+         final long srcPixel = source.pixels[i];
+         final Long srcPixelObj = srcPixel;
+         long trgPixel = Img.CLEAR_PIXEL;
+         if ( convert.containsKey(srcPixelObj) ) {
+            trgPixel = convert.get(srcPixelObj);
+         } else {
+            Lab.fromHex(srcPixel, lab);
+            trgPixel = Lab.dist(lab, fromColor, alphaScalar) <= tolerance
+               ? toPixel : srcPixel;
+            convert.put(srcPixelObj, trgPixel);
+         }
+         target.pixels[i] = trgPixel;
+      }
+
+      return target;
+   }
+
+   /**
+    * Replaces the color in the source pixels that are equal to the from color
+    * with the to color.
+    *
+    * @param source    the input image
+    * @param fromColor the color to replace
+    * @param toColor   the substitute color
+    * @param target    the output image
+    *
+    * @return the updated image
+    */
+   public static final Img replaceColorExact ( final Img source,
+      final Lab fromColor, final Lab toColor, final Img target ) {
+
+      // TODO: Option to ignore alpha?
+
+      final int len = source.pixels.length;
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[len];
+      }
+
+      final long frPixel = fromColor.toHexLongSat();
+      final long toPixel = toColor.toHexLongSat();
+      for ( int i = 0; i < len; ++i ) {
+         final long srcPixel = source.pixels[i];
+         target.pixels[i] = srcPixel == frPixel ? toPixel : srcPixel;
+      }
+
       return target;
    }
 
