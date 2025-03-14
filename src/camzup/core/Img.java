@@ -1554,7 +1554,7 @@ public class Img {
                case BLEND:
                default:
 
-            } // End light blend mode.
+            } /* End light blend mode. */
 
             switch ( bmAb ) {
                case ADD: {
@@ -1590,9 +1590,9 @@ public class Img {
                         aComp = 0.0d;
                         bComp = 0.0d;
 
-                     } // End chroma under is greater than zero.
+                     } /* End chroma under is greater than zero. */
 
-                  } // End under alpha is greater than zero.
+                  } /* End under alpha is greater than zero. */
                }
                   break;
 
@@ -1614,9 +1614,9 @@ public class Img {
                         aComp = 0.0d;
                         bComp = 0.0d;
 
-                     } // End chroma over is greater than zero.
+                     } /* End chroma over is greater than zero. */
 
-                  } // End under alpha is greater than zero.
+                  } /* End under alpha is greater than zero. */
 
                }
                   break;
@@ -1644,20 +1644,95 @@ public class Img {
                case BLEND:
                default:
 
-            } // End ab blend mode.
+            } /* End ab blend mode. */
 
             cLab.set(( float ) lComp, ( float ) aComp, ( float ) bComp,
                ( float ) tuv);
             hexComp = cLab.toHexLongSat();
 
-         } // End alpha is greater than zero.
+         } /* End alpha is greater than zero. */
 
          trgPixels[i] = hexComp;
 
-      } // End pixels loop.
+      } /* End pixels loop. */
 
       if ( tl != null ) { tl.set(dx, dy); }
       return new Img(cw, ch, trgPixels);
+   }
+
+   /**
+    * Blurs an image by averaging each pixel with its neighbors in 8
+    * directions. The step determine the size of the kernel, where the minimum
+    * step of 1 will make a 3x3, 9 pixel kernel.
+    * 
+    * @param source the input image
+    * @param step   the kernel step
+    * @param target the output image
+    *
+    * @return the blurred image
+    */
+   public static final Img blur ( final Img source, final int step,
+      final Img target ) {
+
+      final int wSrc = source.width;
+      final int hSrc = source.height;
+      final long[] srcPixels = source.pixels;
+      final int srcLen = srcPixels.length;
+
+      if ( !Img.similar(source, target) ) {
+         target.width = wSrc;
+         target.height = hSrc;
+         target.pixels = new long[srcLen];
+      }
+
+      final long[] trgPixels = target.pixels;
+
+      final Lab labCenter = new Lab();
+      final Lab labNgbr = new Lab();
+      final Lab labAvg = new Lab();
+
+      final int stepVal = step < 1 ? 1 : step;
+      final int wKrn = 1 + stepVal * 2;
+      final int krnLen = wKrn * wKrn;
+      final float toAvg = 1.0f / krnLen;
+
+      for ( int i = 0; i < srcLen; ++i ) {
+         final long tlab64Src = srcPixels[i];
+         Lab.fromHex(tlab64Src, labCenter);
+
+         final int xSrc = i % wSrc - stepVal;
+         final int ySrc = i / wSrc - stepVal;
+
+         float lSum = 0.0f;
+         float aSum = 0.0f;
+         float bSum = 0.0f;
+         float tSum = 0.0f;
+
+         for ( int j = 0; j < krnLen; ++j ) {
+            final int xComp = xSrc + j % wKrn;
+            final int yComp = ySrc + j / wKrn;
+            if ( yComp >= 0 && yComp < hSrc && xComp >= 0 && xComp < wSrc ) {
+               Lab.fromHex(srcPixels[xComp + yComp * wSrc], labNgbr);
+               lSum += labNgbr.l;
+               aSum += labNgbr.a;
+               bSum += labNgbr.b;
+               tSum += labNgbr.alpha;
+            } else {
+               /*
+                * When the kernel is out of bounds, sample the central color but
+                * do not tally alpha.
+                */
+               lSum += labCenter.l;
+               aSum += labCenter.a;
+               bSum += labCenter.b;
+            } /* End pixel is in bounds. */
+         } /* End kernel loop. */
+
+         labAvg.set(lSum * toAvg, aSum * toAvg, bSum * toAvg, tSum * toAvg);
+         trgPixels[i] = labAvg.toHexLong();
+      }
+
+      return target;
    }
 
    /**
@@ -2950,8 +3025,8 @@ public class Img {
       final Lab tLab = new Lab();
 
       for ( int i = 0; i < len; ++i ) {
-         // TODO: You might be able to get away with mixing with just longs.
-         // See the sample method for reference.
+         // TODO: You might be able to mix with longs... or
+         // pass in a mixer functional object instead.
          Lab.fromHex(dest.pixels[i], dLab);
          Lab.fromHex(orig.pixels[i], oLab);
          Lab.mix(oLab, dLab, t, tLab);

@@ -91,6 +91,16 @@ public abstract class Convert {
     */
    public static Img toImg ( final PImage source, final Img target ) {
 
+      if (source == null) {
+         System.err.println("Source image is null.");
+         return Img.clear(target);
+      }
+
+      if (source.pixelWidth < 1 || source.pixelHeight < 1) {
+         System.err.println("Source dimensions are invalid..");
+         return Img.clear(target);
+      }
+
       source.loadPixels();
       return Img.fromArgb32(source.pixelWidth, source.pixelHeight,
          source.pixels, target);
@@ -188,7 +198,12 @@ public abstract class Convert {
    public static PImage toPImage ( final Img source,
       final Rgb.AbstrToneMap toneMap, final PImage target ) {
 
-      if ( target instanceof PGraphics ) {
+      final int wSrc = source.getWidth();
+      final int hSrc = source.getHeight();
+
+      if ( target instanceof PGraphics
+         && ( wSrc != target.pixelWidth
+            || hSrc != target.pixelHeight )) {
          System.err.println("Do not use PGraphics with this method.");
          return target;
       }
@@ -196,9 +211,10 @@ public abstract class Convert {
       target.loadPixels();
       target.pixels = Img.toArgb32(source, toneMap);
       target.format = PConstants.ARGB;
-      target.pixelDensity = 1;
-      target.pixelWidth = target.width = source.getWidth();
-      target.pixelHeight = target.height = source.getHeight();
+      target.pixelWidth = wSrc;
+      target.pixelHeight = hSrc;
+      target.width = wSrc / target.pixelDensity;
+      target.height = hSrc / target.pixelDensity;
       target.updatePixels();
 
       return target;

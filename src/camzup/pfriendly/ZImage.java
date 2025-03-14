@@ -9,7 +9,6 @@ import camzup.core.Mesh2;
 import camzup.core.Pixels;
 import camzup.core.PolyType;
 import camzup.core.Rgb;
-import camzup.core.Utils.TriFunction;
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.core.PFont;
@@ -143,7 +142,7 @@ public class ZImage extends PImage {
     */
    PImage setParent ( final PApplet parent ) {
 
-      this.parent = parent;
+      if ( parent != null ) { this.parent = parent; }
       return this;
    }
 
@@ -188,45 +187,6 @@ public class ZImage extends PImage {
       image.format = PConstants.ARGB;
       image.updatePixels();
       return image;
-   }
-
-   /**
-    * Blurs an image by averaging each color with its neighbors in 8
-    * directions. The step determines the size of the kernel, where the
-    * minimum step of 1 will make a 3x3, 9 pixel kernel.
-    *
-    * @param source the source image
-    * @param step   the kernel step
-    * @param target the target image
-    *
-    * @return the blurred image
-    *
-    * @see Pixels#blurBoxLab(int[], int, int, int, int[])
-    */
-   public static PImage blur ( final PImage source, final int step,
-      final PImage target ) {
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not use PGraphics with this method.");
-         return target;
-      }
-
-      source.loadPixels();
-      target.loadPixels();
-      final int[] pxSrc = source.pixels;
-      final int wSrc = source.pixelWidth;
-      final int hSrc = source.pixelHeight;
-      target.pixels = Pixels.blurBoxLab(pxSrc, wSrc, hSrc, step,
-         new int[pxSrc.length]);
-      target.format = source.format;
-      target.pixelDensity = source.pixelDensity;
-      target.pixelWidth = wSrc;
-      target.pixelHeight = hSrc;
-      target.width = source.width;
-      target.height = source.height;
-      target.updatePixels();
-
-      return target;
    }
 
    /**
@@ -305,51 +265,6 @@ public class ZImage extends PImage {
    public static PImage fill ( final Rgb c, final PImage target ) {
 
       return ZImage.fill(c.toHexIntSat(), target);
-   }
-
-   /**
-    * Filters an image. The function delegate is expected to filter the color
-    * according to an upper and lower bound. Both bounds should be inclusive.
-    *
-    * @param source the source image
-    * @param lb     the lower bound
-    * @param ub     the upper bound
-    * @param f      the filter function
-    * @param target the target image
-    *
-    * @return the filtered image
-    */
-   public static PImage filter ( final PImage source, final float lb,
-      final float ub, final TriFunction < Integer, Float, Float, Boolean > f,
-      final PImage target ) {
-
-      if ( target instanceof PGraphics ) {
-         System.err.println("Do not use PGraphics with this method.");
-         return target;
-      }
-
-      source.loadPixels();
-      target.loadPixels();
-
-      final int[] srcPixels = source.pixels;
-      final int[] trgPixels = new int[srcPixels.length];
-      final int[] indices = Pixels.filter(srcPixels, lb, ub, f);
-      final int idcsLen = indices.length;
-      for ( int i = 0; i < idcsLen; ++i ) {
-         final int j = indices[i];
-         trgPixels[j] = srcPixels[j];
-      }
-
-      target.pixels = trgPixels;
-      target.format = source.format;
-      target.pixelDensity = source.pixelDensity;
-      target.pixelWidth = source.pixelWidth;
-      target.pixelHeight = source.pixelHeight;
-      target.width = source.width;
-      target.height = source.height;
-      target.updatePixels();
-
-      return target;
    }
 
    /**
@@ -660,19 +575,14 @@ public class ZImage extends PImage {
                         pxTrg[ ( yStart + idxSrc / wSrc ) * wMax + xCursor
                            + idxSrc % wSrc] |= pxSrc[idxSrc] << 0x18 | vClr;
                      }
-                  }
-                  /* End of null check for glyph image. */
+                  } /* End of null check for glyph image. */
                   xCursor += glyph.width + vKern;
-               }
-               /* End of null check for glyph. */
-            }
-            /* End of letters loop. */
+               } /* End of null check for glyph. */
+            } /* End of letters loop. */
             xCursor += spaceWidth + vKern;
-         }
-         /* End of words loop. */
+         } /* End of words loop. */
          yCursor += lineHeight;
-      }
-      /* End of lines loop. */
+      } /* End of lines loop. */
 
       target.updatePixels();
       return target;
