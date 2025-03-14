@@ -2124,8 +2124,7 @@ public class Img {
    }
 
    /**
-    * Maps the colors of a source image to a color gradient. Retains the
-    * original color's transparency.
+    * Maps the colors of a source image to a color gradient.
     *
     * @param grd    the gradient
     * @param source the input image
@@ -2141,8 +2140,7 @@ public class Img {
    }
 
    /**
-    * Maps the colors of a source image to a color gradient. Retains the
-    * original color's transparency.
+    * Maps the colors of a source image to a color gradient.
     *
     * @param grd    the gradient
     * @param source the input image
@@ -2158,8 +2156,7 @@ public class Img {
    }
 
    /**
-    * Maps the colors of a source image to a color gradient. Retains the
-    * original color's transparency.
+    * Maps the colors of a source image to a color gradient.
     *
     * @param grd          the gradient
     * @param source       the input image
@@ -2249,6 +2246,7 @@ public class Img {
             }
 
             Gradient.eval(grd, fac, easing, lab);
+            lab.alpha = lab.alpha * lch.alpha;
             trgPixel = lab.toHexLongSat();
             convert.put(srcPixelObj, trgPixel);
          }
@@ -2260,8 +2258,7 @@ public class Img {
    }
 
    /**
-    * Maps the colors of a source image to a color gradient. Retains the
-    * original color's transparency.
+    * Maps the colors of a source image to a color gradient.
     *
     * @param grd     the gradient
     * @param source  the input image
