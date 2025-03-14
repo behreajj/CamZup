@@ -134,12 +134,19 @@ public abstract class ParserGgr {
 
          /* Temporary variables to store left and right edge of each key. */
          final Rgb ltClr = new Rgb();
-         final Rgb rtClr = new Rgb();
+         final Rgb ltLinear = new Rgb();
+         final Vec4 ltXyz = new Vec4();
+         final Lab ltLab = new Lab();
 
-         /* Temporary variables to convert to lab color key. */
-         final Rgb lrgb = new Rgb();
-         final Vec4 xyz = new Vec4();
-         final Lab lab = new Lab();
+         final Rgb rtClr = new Rgb();
+         final Rgb rtLinear = new Rgb();
+         final Vec4 rtXyz = new Vec4();
+         final Lab rtLab = new Lab();
+
+         final Lab mixedLab = new Lab();
+         final Lab.MixLab mixLab = new Lab.MixLab();
+         final Lab.MixLch mixLchCW = new Lab.MixLch(new IColor.HueCW());
+         final Lab.MixLch mixLchCCW = new Lab.MixLch(new IColor.HueCCW());
 
          /* The GGR file is sampled rather than transferred one-to-one. */
          final int vrfSamples = Utils.clamp(samples, 3, 32);
@@ -232,6 +239,9 @@ public abstract class ParserGgr {
                ltClr.set(seg[3], seg[4], seg[5], seg[6]);
                rtClr.set(seg[7], seg[8], seg[9], seg[10]);
 
+               Rgb.sRgbToSrLab2(ltClr, ltLab, ltXyz, ltLinear);
+               Rgb.sRgbToSrLab2(rtClr, rtLab, rtXyz, rtLinear);
+
                /*
                 * Mix color based on color space. Default to RGB. HSB clockwise
                 * and counter-clockwise use SR LCH as a substitute. Full
@@ -240,21 +250,26 @@ public abstract class ParserGgr {
                 */
                final int clrSpc = ( int ) seg[12];
                switch ( clrSpc ) {
-                  // TODO: If you wanted to support these again, you'd
-                  // have to convert RGB to LAB sooner, at the point of
-                  // ltClr and rtClr.
                   case ParserGgr.SPACE_HSB_CCW:
+                     mixLchCCW.apply(ltLab, rtLab, fac, mixedLab);
+                     break;
+
                   case ParserGgr.SPACE_HSB_CW:
+                     mixLchCW.apply(ltLab, rtLab, fac, mixedLab);
+                     break;
+
                   case ParserGgr.SPACE_RGB:
                   default: {
-                     Rgb.mix(ltClr, rtClr, fac, evalClr);
+                     mixLab.apply(ltLab, rtLab, fac, mixedLab);
                   }
                }
             }
 
-            Rgb.sRgbToSrLab2(evalClr, lab, xyz, lrgb);
-            trgKeys.add(new ColorKey(step, lab));
-
+            /*
+             * Lab color is assigned to key by value, not reference, so it can
+             * be reused across many keys.
+             */
+            trgKeys.add(new ColorKey(step, mixedLab));
          }
 
       } catch ( final Exception e ) {

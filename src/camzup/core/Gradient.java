@@ -1294,7 +1294,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     *
     * @return the color
     *
-    * @see Rgb#mix(Rgb, Rgb, float, Rgb)
+    * @see Lab#mix(Lab, Lab, float, Lab)
     * @see TreeSet#floor(Object)
     * @see TreeSet#ceiling(Object)
     * @see TreeSet#first()

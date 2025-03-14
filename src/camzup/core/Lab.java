@@ -2061,20 +2061,15 @@ public class Lab implements IColor {
    }
 
    /**
-    * Eases between two colors in the standard RGB. Assumes that the LAB space
+    * Eases between two colors in linear standard RGB. Assumes that the LAB
     * used is SR LAB 2.
     */
-   public static final class MixSrgb extends AbstrEasing {
+   public static class MixLrgb extends AbstrEasing {
 
       /**
        * The mixed color in linear RGB.
        */
       protected final Rgb cLinear = new Rgb();
-
-      /**
-       * The mixed color in standard RGB.
-       */
-      protected final Rgb cStandard = new Rgb();
 
       /**
        * The mixed color in XYZ.
@@ -2092,11 +2087,6 @@ public class Lab implements IColor {
       protected final Rgb dLinear = new Rgb();
 
       /**
-       * The destination color in linear RGB.
-       */
-      protected final Rgb dStandard = new Rgb();
-
-      /**
        * The destination color in XYZ.
        */
       protected final Vec4 dXyz = new Vec4();
@@ -2112,11 +2102,6 @@ public class Lab implements IColor {
       protected final Rgb oLinear = new Rgb();
 
       /**
-       * The origin color in linear RGB.
-       */
-      protected final Rgb oStandard = new Rgb();
-
-      /**
        * The origin color in XYZ.
        */
       protected final Vec4 oXyz = new Vec4();
@@ -2124,10 +2109,68 @@ public class Lab implements IColor {
       /**
        * The default constructor.
        */
-      public MixSrgb ( ) {
+      public MixLrgb ( ) {}
 
-         // TODO: Lrgb mix class? Use individual transformation steps.
+      /**
+       * Applies the function.
+       *
+       * @param orig   the origin color
+       * @param dest   the destination color
+       * @param step   the step in a range 0 to 1
+       * @param target the output color
+       *
+       * @return the eased color
+       */
+      @Override
+      public Lab applyUnclamped ( final Lab orig, final Lab dest,
+         final Float step, final Lab target ) {
+
+         Lab.toSrXyz(orig, this.oXyz);
+         Lab.toSrXyz(dest, this.dXyz);
+         Rgb.srXyzTolRgb(this.oXyz, this.oLinear);
+         Rgb.srXyzTolRgb(this.dXyz, this.dLinear);
+
+         final float t = step;
+         final float u = 1.0f - t;
+         this.cLinear.set(
+            u * this.oLinear.r + t * this.dLinear.r,
+            u * this.oLinear.g + t * this.dLinear.g,
+            u * this.oLinear.b + t * this.dLinear.b,
+            u * this.oLinear.alpha + t * this.dLinear.alpha);
+         
+         Rgb.lRgbToSrXyz(this.cLinear, this.cXyz);
+         Lab.fromSrXyz(this.cXyz, target);
+
+         return target;
       }
+
+   }
+
+   /**
+    * Eases between two colors in standard RGB. Assumes that the LAB used is
+    * SR LAB 2.
+    */
+   public static class MixSrgb extends MixLrgb {
+
+      /**
+       * The mixed color in standard RGB.
+       */
+      protected final Rgb cStandard = new Rgb();
+
+      /**
+       * The destination color in linear RGB.
+       */
+      protected final Rgb dStandard = new Rgb();
+
+      /**
+       * The origin color in linear RGB.
+       */
+      protected final Rgb oStandard = new Rgb();
+
+      /**
+       * The default constructor.
+       */
+      public MixSrgb ( ) {}
 
       /**
        * Applies the function.
@@ -2145,7 +2188,15 @@ public class Lab implements IColor {
 
          Rgb.srLab2TosRgb(orig, this.oStandard, this.oLinear, this.oXyz);
          Rgb.srLab2TosRgb(dest, this.dStandard, this.dLinear, this.dXyz);
-         Rgb.mix(this.oStandard, this.dStandard, step, this.cStandard);
+
+         final float t = step;
+         final float u = 1.0f - t;
+         this.cStandard.set(
+            u * this.oStandard.r + t * this.dStandard.r,
+            u * this.oStandard.g + t * this.dStandard.g,
+            u * this.oStandard.b + t * this.dStandard.b,
+            u * this.oStandard.alpha + t * this.dStandard.alpha);
+
          Rgb.sRgbToSrLab2(this.cStandard, target, this.cXyz, this.cLinear);
 
          return target;

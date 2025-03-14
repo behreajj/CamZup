@@ -1638,28 +1638,6 @@ public class Rgb implements IColor {
    }
 
    /**
-    * Mixes two colors by a step in the range [0.0, 1.0] with linear
-    * interpolation in standard RGB.
-    *
-    * @param orig   the origin color
-    * @param dest   the destination color
-    * @param step   the step
-    * @param target the output color
-    *
-    * @return the mixed color
-    */
-   static Rgb mix ( final Rgb orig, final Rgb dest, final float step,
-      final Rgb target ) {
-
-      if ( step <= 0.0f ) { return target.set(orig); }
-      if ( step >= 1.0f ) { return target.set(dest); }
-
-      final float u = 1.0f - step;
-      return target.set(u * orig.r + step * dest.r, u * orig.g + step * dest.g,
-         u * orig.b + step * dest.b, u * orig.alpha + step * dest.alpha);
-   }
-
-   /**
     * An abstract class to facilitate the creation of RGB tone mapping
     * functions.
     */
