@@ -962,15 +962,15 @@ public class Rgb implements IColor {
          source.r <= 0.04045f ?
          source.r * 0.07739938f :
          ( float ) Math.pow( ( source.r + 0.055d ) * 0.9478672985781991d, 2.4d),
-         
+
          source.g <= 0.04045f ?
          source.g * 0.07739938f :
          ( float ) Math.pow( ( source.g + 0.055d ) * 0.9478672985781991d, 2.4d),
-         
+
          source.b <= 0.04045f ?
          source.b * 0.07739938f :
          ( float ) Math.pow( ( source.b + 0.055d ) * 0.9478672985781991d, 2.4d),
-         
+
          alpha ? source.alpha <= 0.04045f ?
          source.alpha * 0.07739938f :
          ( float ) Math.pow( ( source.alpha + 0.055d ) * 0.9478672985781991d, 2.4d) :

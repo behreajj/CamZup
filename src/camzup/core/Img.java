@@ -1,12 +1,14 @@
 package camzup.core;
 
 import java.math.BigInteger;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.TreeMap;
+import java.util.TreeSet;
 
 /**
  * An image class for images in the LAB color format. The bytes per pixel
@@ -47,6 +49,24 @@ public class Img {
       // TODO: Option to quantize image? Maybe in rgb or maybe the light
       // channel only? Might have to quantize a and b by their relative
       // min and max.
+
+      // TODO: Expand to pow2
+      // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L53
+
+      // TODO: Flip All
+      // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L121
+
+      // TODO: Get Region
+      // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L224
+
+      // TODO: Set Region
+      // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L490
+
+      // TODO: Replace Color Approx
+      // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L2093
+
+      // TODO: Replace Color Exact
+      // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L2093
 
       this(Img.DEFAULT_WIDTH, Img.DEFAULT_HEIGHT, Img.CLEAR_PIXEL);
    }
@@ -1646,7 +1666,7 @@ public class Img {
     * Blurs an image by averaging each pixel with its neighbors in 8
     * directions. The step determine the size of the kernel, where the minimum
     * step of 1 will make a 3x3, 9 pixel kernel.
-    * 
+    *
     * @param source the input image
     * @param step   the kernel step
     * @param target the output image
@@ -1657,7 +1677,7 @@ public class Img {
       final Img target ) {
 
       // TODO: Wouldn't the target image width and height need to be padded
-      // out by the kernel size to accomodoate for blurring at the edges?
+      // out by the kernel size to accommodate for blurring at the edges?
 
       final int wSrc = source.width;
       final int hSrc = source.height;
@@ -1873,6 +1893,33 @@ public class Img {
    public static final Img clear ( final Img target ) {
 
       return Img.fill(Img.CLEAR_PIXEL, target);
+   }
+
+   /**
+    * Sets an image pixel to {@link Img#CLEAR_PIXEL} if it has zero alpha.
+    *
+    * @param source the input image
+    * @param target the output image
+    *
+    * @return the alpha corrected image
+    */
+   public static final Img correctZeroAlpha ( final Img source,
+      final Img target ) {
+
+      final int len = source.pixels.length;
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[len];
+      }
+
+      for ( int i = 0; i < len; ++i ) {
+         final long srcPixel = source.pixels[i];
+         target.pixels[i] = ( srcPixel & Img.T_MASK ) != 0L ? srcPixel
+            : Img.CLEAR_PIXEL;
+      }
+
+      return target;
    }
 
    /**
@@ -2969,21 +3016,6 @@ public class Img {
    }
 
    /**
-    * Mixes between two images.
-    *
-    * @param orig   the origin image
-    * @param dest   the destination image
-    * @param target the output image
-    *
-    * @return the mixed image
-    */
-   public static final Img mix ( final Img orig, final Img dest,
-      final Img target ) {
-
-      return mix(orig, dest, 0.5f, new Lab.MixLab(), target);
-   }
-
-   /**
     * Mixes between two images by a factor.
     *
     * @param orig   the origin image
@@ -2996,7 +3028,7 @@ public class Img {
    public static final Img mix ( final Img orig, final Img dest,
       final float fac, final Img target ) {
 
-      return mix(orig, dest, fac, new Lab.MixLab(), target);
+      return Img.mix(orig, dest, fac, new Lab.MixLab(), target);
    }
 
    /**
@@ -3053,32 +3085,18 @@ public class Img {
    }
 
    /**
-    * Sets an image pixel to {@link Img#CLEAR_PIXEL} if it has zero alpha.
-    * 
-    * @param source the input image
+    * Mixes between two images.
+    *
+    * @param orig   the origin image
+    * @param dest   the destination image
     * @param target the output image
     *
-    * @return the alpha corrected image
+    * @return the mixed image
     */
-   public static final Img correctZeroAlpha (
-      final Img source,
-      final Img target) {
+   public static final Img mix ( final Img orig, final Img dest,
+      final Img target ) {
 
-      final int len = source.pixels.length;
-      if ( !Img.similar(source, target) ) {
-         target.width = source.width;
-         target.height = source.height;
-         target.pixels = new long[len];
-      }
-
-      for ( int i = 0; i < len; ++i ) {
-         final long srcPixel = source.pixels[i];
-         target.pixels[i] = (srcPixel & Img.T_MASK) != 0L ?
-            srcPixel :
-            Img.CLEAR_PIXEL;
-      }
-
-      return target;
+      return Img.mix(orig, dest, 0.5f, new Lab.MixLab(), target);
    }
 
    /**
@@ -3260,7 +3278,7 @@ public class Img {
     *
     * @return the palette
     */
-   public static Lab[] paletteExtract ( final Img source ) {
+   public static final Lab[] paletteExtract ( final Img source ) {
 
       return Img.paletteExtract(source, Img.DEFAULT_PALETTE_THRESHOLD,
          Octree.DEFAULT_CAPACITY, false);
@@ -3275,7 +3293,7 @@ public class Img {
     *
     * @return the palette
     */
-   public static Lab[] paletteExtract ( final Img source,
+   public static final Lab[] paletteExtract ( final Img source,
       final int threshold ) {
 
       return Img.paletteExtract(source, threshold, Octree.DEFAULT_CAPACITY,
@@ -3292,8 +3310,8 @@ public class Img {
     *
     * @return the palette
     */
-   public static Lab[] paletteExtract ( final Img source, final int threshold,
-      final int capacity ) {
+   public static final Lab[] paletteExtract ( final Img source,
+      final int threshold, final int capacity ) {
 
       return Img.paletteExtract(source, threshold, capacity, false);
    }
@@ -3301,7 +3319,9 @@ public class Img {
    /**
     * Extracts a palette from an image. If there are more colors than the
     * threshold, engages an octree to reduce the number of colors. Alpha is no
-    * longer supported once the octree is engaged.
+    * longer supported once the octree is engaged.<br>
+    * <br>
+    * Clear black is always the first entry in the palette.
     *
     * @param source    the input image
     * @param threshold the threshold
@@ -3310,8 +3330,8 @@ public class Img {
     *
     * @return the palette
     */
-   public static Lab[] paletteExtract ( final Img source, final int threshold,
-      final int capacity, final boolean inclAlpha ) {
+   public static final Lab[] paletteExtract ( final Img source,
+      final int threshold, final int capacity, final boolean inclAlpha ) {
 
       final long mask = inclAlpha ? 0 : Img.T_MASK;
       final long[] srcPixels = source.pixels;
@@ -3381,7 +3401,7 @@ public class Img {
     *
     * @return the mapped image
     */
-   public static Img paletteMap ( final Img source, final Lab[] palette,
+   public static final Img paletteMap ( final Img source, final Lab[] palette,
       final Img target ) {
 
       return Img.paletteMap(source, palette, Octree.DEFAULT_CAPACITY,
@@ -3400,7 +3420,7 @@ public class Img {
     *
     * @return the mapped image
     */
-   public static Img paletteMap ( final Img source, final Lab[] palette,
+   public static final Img paletteMap ( final Img source, final Lab[] palette,
       final int capacity, final float radius, final Img target ) {
 
       final int len = source.pixels.length;
@@ -3471,7 +3491,7 @@ public class Img {
     *
     * @return the mapped image
     */
-   public static Img paletteMap ( final Img source, final Lab[] palette,
+   public static final Img paletteMap ( final Img source, final Lab[] palette,
       final int capacity, final Img target ) {
 
       return Img.paletteMap(source, palette, capacity,
@@ -3487,7 +3507,7 @@ public class Img {
     *
     * @return the image
     */
-   public static Img random ( final Rng rng, final boolean inclAlpha,
+   public static final Img random ( final Rng rng, final boolean inclAlpha,
       final Img target ) {
 
       final long mask = inclAlpha ? 0 : Img.T_MASK;
@@ -4104,8 +4124,8 @@ public class Img {
     *
     * @return the tinted pixels
     */
-   public static Img tint ( final Img source, final Lab tint, final float fac,
-      final boolean preserveLight, final Img target ) {
+   public static final Img tint ( final Img source, final Lab tint,
+      final float fac, final boolean preserveLight, final Img target ) {
 
       final int wSrc = source.width;
       final int hSrc = source.height;
@@ -4135,7 +4155,7 @@ public class Img {
             lab.l = preserveLight ? lab.l : u * lab.l + t * tint.l;
             lab.a = u * lab.a + t * tint.a;
             lab.b = u * lab.b + t * tint.b;
-            lab.alpha = u * lab.alpha + t * (lab.alpha * tint.alpha);
+            lab.alpha = u * lab.alpha + t * ( lab.alpha * tint.alpha );
             trgPixel = lab.toHexLongSat();
             convert.put(srcPixelObj, trgPixel);
          }
@@ -4218,6 +4238,131 @@ public class Img {
       }
 
       return argb32s;
+   }
+
+   /**
+    * Creates an array of materials from the non-transparent pixels of an
+    * image. Intended for smaller images with relatively few colors.
+    *
+    * @param source the source image
+    *
+    * @return the materials
+    */
+   public static final MaterialSolid[] toMaterials ( final Img source ) {
+
+      final TreeSet < Long > uniqueColors = new TreeSet <>();
+      final long[] srcPixels = source.pixels;
+      final int srcLen = srcPixels.length;
+      for ( int i = 0; i < srcLen; ++i ) { uniqueColors.add(srcPixels[i]); }
+
+      final Rgb srgb = new Rgb();
+      final Rgb lrgb = new Rgb();
+      final Vec4 xyz = new Vec4();
+      final Lab lab = new Lab();
+
+      final int uniquesLen = uniqueColors.size();
+      final MaterialSolid[] result = new MaterialSolid[uniquesLen];
+      final Iterator < Long > itr = uniqueColors.iterator();
+      for ( int j = 0; itr.hasNext(); ++j ) {
+         final long hex = itr.next();
+         Lab.fromHex(hex, lab);
+         Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
+
+         final MaterialSolid material = new MaterialSolid();
+         material.setStroke(0x00000000);
+         material.setFill(srgb);
+         material.setName("Material." + Rgb.toHexString(srgb));
+         result[j] = material;
+      }
+
+      return result;
+   }
+
+   /**
+    * Creates a mesh from the non-transparent pixels of an image. Intended for
+    * smaller images with relatively few colors.
+    *
+    * @param source the source pixels
+    * @param poly   the polygon type
+    * @param target the output mesh
+    *
+    * @return the mesh
+    */
+   public static final Mesh2 toMesh ( final Img source, final PolyType poly,
+      final Mesh2 target ) {
+
+      final long[] srcPixels = source.pixels;
+      final int srcLen = srcPixels.length;
+      final ArrayList < Integer > nonZeroIdcs = new ArrayList <>(srcLen);
+      for ( int i = 0; i < srcLen; ++i ) {
+         if ( ( srcPixels[i] & Img.T_MASK ) != 0L ) { nonZeroIdcs.add(i); }
+      }
+
+      final int wSrc = source.width;
+      final int hSrc = source.height;
+      final float wf = wSrc;
+      final float hf = hSrc;
+      final float right = wSrc > hSrc ? 0.5f : 0.5f * ( wf / hf );
+      final float top = wSrc <= hSrc ? 0.5f : 0.5f * ( hf / wf );
+      return Img.toMesh(nonZeroIdcs, wSrc, -right, top, right, -top, 1.0f / wf,
+         1.0f / hf, poly, target);
+   }
+
+   /**
+    * Creates an array of meshes from the non-transparent pixels of an image.
+    * Each unique color is assigned a mesh. Intended for smaller images with
+    * relatively few colors. Each mesh's {@link Mesh#materialIndex}
+    * corresponds to its index in the array.
+    *
+    * @param source the source image
+    * @param poly   the polygon type
+    *
+    * @return the meshes
+    */
+   public static final Mesh2[] toMeshes ( final Img source,
+      final PolyType poly ) {
+
+      final long[] srcPixels = source.pixels;
+      final int srcLen = srcPixels.length;
+      final TreeMap < Long, ArrayList < Integer > > islands = new TreeMap <>();
+      for ( int i = 0; i < srcLen; ++i ) {
+         final long srcHexLong = srcPixels[i];
+         if ( ( srcHexLong & Img.T_MASK ) != 0L ) {
+            final Long srcHexObj = srcHexLong;
+            if ( islands.containsKey(srcHexObj) ) {
+               islands.get(srcHexObj).add(i);
+            } else {
+               final ArrayList < Integer > indices = new ArrayList <>();
+               indices.add(i);
+               islands.put(srcHexObj, indices);
+            }
+         }
+      }
+
+      final int wSrc = source.width;
+      final int hSrc = source.height;
+      final float wf = wSrc;
+      final float hf = hSrc;
+      final float right = wSrc > hSrc ? 0.5f : 0.5f * ( wf / hf );
+      final float top = wSrc <= hSrc ? 0.5f : 0.5f * ( hf / wf );
+      final float left = -right;
+      final float bottom = -top;
+      final float tou = 1.0f / wf;
+      final float tov = 1.0f / hf;
+
+      final Mesh2[] result = new Mesh2[islands.size()];
+
+      final Iterator < Entry < Long, ArrayList < Integer > > > itr = islands
+         .entrySet().iterator();
+      for ( int j = 0; itr.hasNext(); ++j ) {
+         final Mesh2 mesh = new Mesh2();
+         mesh.setMaterialIndex(j);
+         Img.toMesh(itr.next().getValue(), wSrc, left, top, right, bottom, tou,
+            tov, poly, mesh);
+         result[j] = mesh;
+      }
+
+      return result;
    }
 
    /**
@@ -4634,10 +4779,141 @@ public class Img {
     *
     * @return the evaluation
     */
-   protected static boolean similar ( final Img a, final Img b ) {
+   protected static final boolean similar ( final Img a, final Img b ) {
 
       return a == b || a.width == b.width && a.height == b.height
          && a.pixels.length == b.pixels.length;
+   }
+
+   /**
+    * Internal helper method to create a mesh from a list of indices and other
+    * conversion data. Makes no optimizations to the mesh by, e.g., removing
+    * interior or colinear vertices.
+    *
+    * @param indices the non-zero image pixel indices
+    * @param wSrc    the image width
+    * @param left    the left edge
+    * @param top     the top edge
+    * @param right   the right edge
+    * @param bottom  the bottom edge
+    * @param tou     width to uv conversion
+    * @param tov     height to uv conversion
+    * @param poly    polygon type
+    * @param target  the output mesh
+    *
+    * @return the mesh
+    */
+   protected static final Mesh2 toMesh ( final ArrayList < Integer > indices,
+      final int wSrc, final float left, final float top, final float right,
+      final float bottom, final float tou, final float tov, final PolyType poly,
+      final Mesh2 target ) {
+
+      final int idcsLen = indices.size();
+      final int vsLen = idcsLen * 4;
+      final Vec2[] vs = target.coords = Vec2.resize(target.coords, vsLen);
+      final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords,
+         vsLen);
+
+      for ( int i = 0, j00 = 0; i < idcsLen; ++i, j00 += 4 ) {
+         final int j10 = j00 + 1;
+         final int j11 = j00 + 2;
+         final int j01 = j00 + 3;
+
+         final int idx = indices.get(i);
+         final float x = idx % wSrc;
+         final float y = idx / wSrc;
+
+         final float u0 = x * tou;
+         final float v0 = y * tov;
+         final float u1 = ( x + 1.0f ) * tou;
+         final float v1 = ( y + 1.0f ) * tov;
+
+         vts[j00].set(u0, v0);
+         vts[j10].set(u1, v0);
+         vts[j11].set(u1, v1);
+         vts[j01].set(u0, v1);
+
+         final float x0 = ( 1.0f - u0 ) * left + u0 * right;
+         final float y0 = ( 1.0f - v0 ) * top + v0 * bottom;
+         final float x1 = ( 1.0f - u1 ) * left + u1 * right;
+         final float y1 = ( 1.0f - v1 ) * top + v1 * bottom;
+
+         vs[j00].set(x0, y0);
+         vs[j10].set(x1, y0);
+         vs[j11].set(x1, y1);
+         vs[j01].set(x0, y1);
+      }
+
+      int[][][] fs;
+      switch ( poly ) {
+         case TRI: {
+            fs = target.faces = new int[idcsLen + idcsLen][3][2];
+            for ( int i = idcsLen - 1, j00 = vsLen - 1; i > -1; --i, j00
+               -= 4 ) {
+               final int j10 = j00 - 1;
+               final int j11 = j00 - 2;
+               final int j01 = j00 - 3;
+
+               final int[][] f1 = fs[i + i];
+               final int[] vr10 = f1[0];
+               vr10[0] = j11;
+               vr10[1] = j11;
+
+               final int[] vr11 = f1[1];
+               vr11[0] = j01;
+               vr11[1] = j01;
+
+               final int[] vr12 = f1[2];
+               vr12[0] = j00;
+               vr12[1] = j00;
+
+               final int[][] f0 = fs[i + i + 1];
+               final int[] vr00 = f0[0];
+               vr00[0] = j00;
+               vr00[1] = j00;
+
+               final int[] vr01 = f0[1];
+               vr01[0] = j10;
+               vr01[1] = j10;
+
+               final int[] vr02 = f0[2];
+               vr02[0] = j11;
+               vr02[1] = j11;
+            }
+         }
+            break;
+
+         case NGON:
+         case QUAD:
+         default: {
+            fs = target.faces = new int[idcsLen][4][2];
+            for ( int i = idcsLen - 1, j00 = vsLen - 1; i > -1; --i, j00
+               -= 4 ) {
+               final int j10 = j00 - 1;
+               final int j11 = j00 - 2;
+               final int j01 = j00 - 3;
+
+               final int[][] f = fs[i];
+               final int[] vr00 = f[0];
+               vr00[0] = j00;
+               vr00[1] = j00;
+
+               final int[] vr10 = f[1];
+               vr10[0] = j10;
+               vr10[1] = j10;
+
+               final int[] vr11 = f[2];
+               vr11[0] = j11;
+               vr11[1] = j11;
+
+               final int[] vr01 = f[3];
+               vr01[0] = j01;
+               vr01[1] = j01;
+            }
+         }
+      }
+
+      return target;
    }
 
    /**

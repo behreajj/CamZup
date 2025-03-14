@@ -4,10 +4,6 @@ import java.util.Arrays;
 import java.util.regex.Pattern;
 
 import camzup.core.IUtils;
-import camzup.core.MaterialSolid;
-import camzup.core.Mesh2;
-import camzup.core.Pixels;
-import camzup.core.PolyType;
 import camzup.core.Rgb;
 import processing.core.PApplet;
 import processing.core.PConstants;
@@ -716,87 +712,6 @@ public class ZImage extends PImage {
       target.updatePixels();
 
       return target;
-   }
-
-   /**
-    * Creates an array of materials from the non-transparent pixels of an
-    * image. Intended for smaller images with relatively few colors.
-    *
-    * @param source the source image
-    *
-    * @return the materials
-    *
-    * @see Pixels#toMaterials(int[])
-    */
-   public static MaterialSolid[] toMaterials ( final PImage source ) {
-
-      source.loadPixels();
-      return Pixels.toMaterials(source.pixels);
-   }
-
-   /**
-    * Creates a mesh from the non-transparent pixels of an image.
-    *
-    * @param source the source image
-    * @param target the target mesh
-    *
-    * @return the mesh
-    */
-   public static Mesh2 toMesh ( final PImage source, final Mesh2 target ) {
-
-      return ZImage.toMesh(source, PolyType.QUAD, target);
-   }
-
-   /**
-    * Creates a mesh from the non-transparent pixels of an image.
-    *
-    * @param source the source image
-    * @param poly   the polygon type
-    * @param target the target mesh
-    *
-    * @return the mesh
-    *
-    * @see Pixels#toMesh(int[], int, int, PolyType, Mesh2)
-    */
-   public static Mesh2 toMesh ( final PImage source, final PolyType poly,
-      final Mesh2 target ) {
-
-      source.loadPixels();
-      return Pixels.toMesh(source.pixels, source.pixelWidth, source.pixelHeight,
-         poly, target);
-   }
-
-   /**
-    * Creates an array of meshes from the non-transparent pixels of an image.
-    * Each unique color is assigned a mesh. Intended for smaller images with
-    * relatively few colors.
-    *
-    * @param source the source image
-    *
-    * @return the meshes
-    */
-   public static Mesh2[] toMeshes ( final PImage source ) {
-
-      return ZImage.toMeshes(source, PolyType.QUAD);
-   }
-
-   /**
-    * Creates an array of meshes from the non-transparent pixels of an image.
-    * Each unique color is assigned a mesh. Intended for smaller images with
-    * relatively few colors.
-    *
-    * @param source the source image
-    * @param poly   the polygon type
-    *
-    * @return the meshes
-    *
-    * @see Pixels#toMeshes(int[], int, int, PolyType)
-    */
-   public static Mesh2[] toMeshes ( final PImage source, final PolyType poly ) {
-
-      source.loadPixels();
-      return Pixels.toMeshes(source.pixels, source.pixelWidth,
-         source.pixelHeight, poly);
    }
 
    /**

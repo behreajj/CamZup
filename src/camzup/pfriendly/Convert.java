@@ -91,12 +91,12 @@ public abstract class Convert {
     */
    public static Img toImg ( final PImage source, final Img target ) {
 
-      if (source == null) {
+      if ( source == null ) {
          System.err.println("Source image is null.");
          return Img.clear(target);
       }
 
-      if (source.pixelWidth < 1 || source.pixelHeight < 1) {
+      if ( source.pixelWidth < 1 || source.pixelHeight < 1 ) {
          System.err.println("Source dimensions are invalid..");
          return Img.clear(target);
       }
@@ -201,9 +201,8 @@ public abstract class Convert {
       final int wSrc = source.getWidth();
       final int hSrc = source.getHeight();
 
-      if ( target instanceof PGraphics
-         && ( wSrc != target.pixelWidth
-            || hSrc != target.pixelHeight )) {
+      if ( target instanceof PGraphics && ( wSrc != target.pixelWidth || hSrc
+         != target.pixelHeight ) ) {
          System.err.println("Do not use PGraphics with this method.");
          return target;
       }

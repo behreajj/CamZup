@@ -2132,12 +2132,11 @@ public class Lab implements IColor {
 
          final float t = step;
          final float u = 1.0f - t;
-         this.cLinear.set(
-            u * this.oLinear.r + t * this.dLinear.r,
-            u * this.oLinear.g + t * this.dLinear.g,
-            u * this.oLinear.b + t * this.dLinear.b,
-            u * this.oLinear.alpha + t * this.dLinear.alpha);
-         
+         this.cLinear.set(u * this.oLinear.r + t * this.dLinear.r, u
+            * this.oLinear.g + t * this.dLinear.g, u * this.oLinear.b + t
+               * this.dLinear.b, u * this.oLinear.alpha + t
+                  * this.dLinear.alpha);
+
          Rgb.lRgbToSrXyz(this.cLinear, this.cXyz);
          Lab.fromSrXyz(this.cXyz, target);
 
@@ -2191,11 +2190,10 @@ public class Lab implements IColor {
 
          final float t = step;
          final float u = 1.0f - t;
-         this.cStandard.set(
-            u * this.oStandard.r + t * this.dStandard.r,
-            u * this.oStandard.g + t * this.dStandard.g,
-            u * this.oStandard.b + t * this.dStandard.b,
-            u * this.oStandard.alpha + t * this.dStandard.alpha);
+         this.cStandard.set(u * this.oStandard.r + t * this.dStandard.r, u
+            * this.oStandard.g + t * this.dStandard.g, u * this.oStandard.b + t
+               * this.dStandard.b, u * this.oStandard.alpha + t
+                  * this.dStandard.alpha);
 
          Rgb.sRgbToSrLab2(this.cStandard, target, this.cXyz, this.cLinear);
 
