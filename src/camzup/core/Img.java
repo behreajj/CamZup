@@ -2984,6 +2984,21 @@ public class Img {
    }
 
    /**
+    * Mixes between two images.
+    *
+    * @param orig   the origin image
+    * @param dest   the destination image
+    * @param target the output image
+    *
+    * @return the mixed image
+    */
+   public static final Img mix ( final Img orig, final Img dest,
+      final Img target ) {
+
+      return mix(orig, dest, 0.5f, new Lab.MixLab(), target);
+   }
+
+   /**
     * Mixes between two images by a factor.
     *
     * @param orig   the origin image
@@ -2995,6 +3010,23 @@ public class Img {
     */
    public static final Img mix ( final Img orig, final Img dest,
       final float fac, final Img target ) {
+
+      return mix(orig, dest, fac, new Lab.MixLab(), target);
+   }
+
+   /**
+    * Mixes between two images by a factor.
+    *
+    * @param orig   the origin image
+    * @param dest   the destination image
+    * @param fac    the factor
+    * @param mixer  the mixing function
+    * @param target the output image
+    *
+    * @return the mixed image
+    */
+   public static final Img mix ( final Img orig, final Img dest,
+      final float fac, final Lab.AbstrEasing mixer, final Img target ) {
 
       if ( !Img.similar(orig, dest) ) {
          System.err.println("Cannot mix between two images of unequal sizes.");
@@ -3020,16 +3052,15 @@ public class Img {
          return target;
       }
 
+      final Float tObj = t;
       final Lab oLab = new Lab();
       final Lab dLab = new Lab();
       final Lab tLab = new Lab();
 
       for ( int i = 0; i < len; ++i ) {
-         // TODO: You might be able to mix with longs... or
-         // pass in a mixer functional object instead.
          Lab.fromHex(dest.pixels[i], dLab);
          Lab.fromHex(orig.pixels[i], oLab);
-         Lab.mix(oLab, dLab, t, tLab);
+         mixer.applyUnclamped(oLab, dLab, tObj, tLab);
          target.pixels[i] = tLab.toHexLongSat();
       }
 
