@@ -1,6 +1,5 @@
 /doc/
 /distribution/*/reference/
-/examples/*/*/data/
 
 # Log file
 *.log
