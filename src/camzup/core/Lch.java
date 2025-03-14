@@ -243,10 +243,7 @@ public class Lch implements IColor {
     * @return the color in hexadecimal
     */
    @Override
-   public int toHexInt ( ) {
-
-      return this.toHexIntWrap();
-   }
+   public int toHexInt ( ) { return this.toHexIntWrap(); }
 
    /**
     * Converts a color to an integer where hexadecimal represents the color

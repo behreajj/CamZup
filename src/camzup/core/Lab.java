@@ -305,16 +305,14 @@ public class Lab implements IColor {
    }
 
    /**
-    * Converts a color to an integer where hexadecimal represents the color
-    * components as 0xTTLLAABB, T being alpha. Defaults to modular arithmetic.
+    * Converts a color to a 32-bit integer where hexadecimal represents the
+    * color components as 0xTTLLAABB, T being alpha. Defaults to modular
+    * arithmetic.
     *
     * @return the color in hexadecimal
     */
    @Override
-   public int toHexInt ( ) {
-
-      return this.toHexIntWrap();
-   }
+   public int toHexInt ( ) { return this.toHexIntWrap(); }
 
    /**
     * Converts a color to a 32-bit integer where hexadecimal represents the
@@ -342,10 +340,11 @@ public class Lab implements IColor {
    }
 
    /**
-    * Converts a color to an integer where hexadecimal represents the color
-    * components as 0xTTLLAABB, T being alpha. Uses modular arithmetic. Scales
-    * lightness from [0.0, 100.0] to [0, 255]. Scales alpha from [0.0, 1.0] to
-    * [0, 255]. Assumes a and b are in [-127.5, 127.5]; adds 128 to each.
+    * Converts a color to a 32-bit integer where hexadecimal represents the
+    * color components as 0xTTLLAABB, T being alpha. Uses modular arithmetic.
+    * Scales lightness from [0.0, 100.0] to [0, 255]. Scales alpha from [0.0,
+    * 1.0] to [0, 255]. Assumes a and b are in [-127.5, 127.5]; adds 128 to
+    * each.
     *
     * @return the color in hexadecimal
     *
@@ -361,6 +360,15 @@ public class Lab implements IColor {
 
       return t8 << 0x18 | l8 << 0x10 | a8 << 0x08 | b8;
    }
+
+   /**
+    * Converts a color to a 64-bit integer where hexadecimal represents the
+    * color components as 0xTTTTLLLLAAAABBBB, T being alpha. Defaults to
+    * modular arithmetic.
+    *
+    * @return the color in hexadecimal
+    */
+   public long toHexLong ( ) { return this.toHexLongWrap(); }
 
    /**
     * Converts a color to a 64-bit integer where hexadecimal represents the

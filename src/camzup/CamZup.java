@@ -51,8 +51,15 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       // Rng rng = new Rng();
-      //
       // Img a = Img.random(rng, true, new Img(3, 3));
+      // System.out.println(Utils.toDiagnosticString(Img.bytesml(a)));
+      //
+      // Lab[] palette = Img.paletteExtract(a, 256, 16, false);
+      // for(Lab swatch : palette) {
+      // System.out.println(swatch);
+      // System.out.println(String.format("%016X", swatch.toHexLongSat()));
+      // }
+
       // Img b = new Img(a);
       //
       // Lab adjObj = Lab.random(rng, new Lab());
@@ -71,7 +78,7 @@ public class CamZup {
       // long end1 = System.currentTimeMillis();
       // System.out.println(String.format("Elapsed Long: %d", end1 - start1));
       //
-      // System.out.println(Utils.toDiagnosticString(Img.byteslm(a)));
+
       // System.out.println(Utils.toDiagnosticString(Img.byteslm(b)));
 
       // https://www.russellcottrell.com/photo/matrixCalculator.htm

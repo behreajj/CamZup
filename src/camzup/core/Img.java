@@ -5,9 +5,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.TreeMap;
-import java.util.TreeSet;
 
 /**
  * An image class for images in the LAB color format. The bytes per pixel
@@ -2381,6 +2381,29 @@ public class Img {
 
    /**
     * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point.
+    *
+    * @param grd     the gradient
+    * @param xOrig   the origin x coordinate
+    * @param yOrig   the origin y coordinate
+    * @param radians the angle in radians
+    * @param target  the target image
+    *
+    * @return the gradient image
+    *
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
+    * @see Utils#mod1(float)
+    */
+   public static final Img gradientSweep ( final Gradient grd,
+      final float xOrig, final float yOrig, final float radians,
+      final Img target ) {
+
+      return Img.gradientSweep(grd, xOrig, yOrig, radians, new Lab.MixLab(),
+         target);
+   }
+
+   /**
+    * Generates a conic gradient, where the factor rotates on the z axis
     * around an origin point. Best used with square images; for other aspect
     * ratios, the origin should be adjusted accordingly.
     *
@@ -2399,10 +2422,6 @@ public class Img {
    public static final Img gradientSweep ( final Gradient grd,
       final float xOrig, final float yOrig, final float radians,
       final Lab.AbstrEasing easing, final Img target ) {
-
-      // TODO: ZImage had a lot of overloads for this method so as to simplify
-      // the signature. You'll have to look at a past git commit to restore
-      // them.
 
       final int wTrg = target.width;
       final int hTrg = target.height;
@@ -2426,6 +2445,48 @@ public class Img {
       }
 
       return target;
+   }
+
+   /**
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point.
+    *
+    * @param grd    the gradient
+    * @param xOrig  the origin x coordinate
+    * @param yOrig  the origin y coordinate
+    * @param target the target image
+    *
+    * @return the gradient image
+    *
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
+    * @see Utils#mod1(float)
+    */
+   public static final Img gradientSweep ( final Gradient grd,
+      final float xOrig, final float yOrig, final Img target ) {
+
+      return Img.gradientSweep(grd, xOrig, yOrig, IUtils.HALF_PI,
+         new Lab.MixLab(), target);
+   }
+
+   /**
+    * Generates a conic gradient, where the factor rotates on the z axis
+    * around an origin point.
+    *
+    * @param grd    the gradient
+    * @param orig   the origin
+    * @param angle  the angle
+    * @param target the target image
+    *
+    * @return the gradient image
+    *
+    * @see Gradient#eval(Gradient, float, Lab.AbstrEasing, Lab)
+    * @see Utils#mod1(float)
+    */
+   public static final Img gradientSweep ( final Gradient grd, final Vec2 orig,
+      final float angle, final Img target ) {
+
+      return Img.gradientSweep(grd, orig.x, orig.y, angle, new Lab.MixLab(),
+         target);
    }
 
    /**
@@ -3048,17 +3109,22 @@ public class Img {
    /**
     * Sets all pixels in an image to opaque.
     *
+    * @param source the input image
     * @param target the output image
     *
     * @return the opaque image
     */
-   public static final Img opaque ( final Img target ) {
+   public static final Img opaque ( final Img source, final Img target ) {
 
-      // TODO: Follow source, target pattern?
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[source.pixels.length];
+      }
 
-      final int len = target.pixels.length;
+      final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
-         target.pixels[i] = target.pixels[i] | Img.T_MASK;
+         target.pixels[i] = source.pixels[i] | Img.T_MASK;
       }
       return target;
    }
@@ -3067,15 +3133,14 @@ public class Img {
     * Extracts a palette from an image. If there are more colors than the
     * threshold, engages an octree to reduce the number of colors.
     *
-    * @param source   the input image
-    * @param capacity the octree capacity
+    * @param source the input image
     *
     * @return the palette
     */
-   public static Lab[] paletteExtract ( final Img source, final int capacity ) {
+   public static Lab[] paletteExtract ( final Img source ) {
 
-      return Img.paletteExtract(source, capacity,
-         Img.DEFAULT_PALETTE_THRESHOLD);
+      return Img.paletteExtract(source, Img.DEFAULT_PALETTE_THRESHOLD,
+         Octree.DEFAULT_CAPACITY, false);
    }
 
    /**
@@ -3083,32 +3148,76 @@ public class Img {
     * threshold, engages an octree to reduce the number of colors.
     *
     * @param source    the input image
-    * @param capacity  the octree capacity
     * @param threshold the threshold
     *
     * @return the palette
     */
-   public static Lab[] paletteExtract ( final Img source, final int capacity,
+   public static Lab[] paletteExtract ( final Img source,
       final int threshold ) {
 
-      final TreeSet < Long > uniqueOpaques = new TreeSet <>();
+      return Img.paletteExtract(source, threshold, Octree.DEFAULT_CAPACITY,
+         false);
+   }
+
+   /**
+    * Extracts a palette from an image. If there are more colors than the
+    * threshold, engages an octree to reduce the number of colors.
+    *
+    * @param source    the input image
+    * @param threshold the threshold
+    * @param capacity  the octree capacity
+    *
+    * @return the palette
+    */
+   public static Lab[] paletteExtract ( final Img source, final int threshold,
+      final int capacity ) {
+
+      return Img.paletteExtract(source, threshold, capacity, false);
+   }
+
+   /**
+    * Extracts a palette from an image. If there are more colors than the
+    * threshold, engages an octree to reduce the number of colors. Alpha is no
+    * longer supported once the octree is engaged.
+    *
+    * @param source    the input image
+    * @param threshold the threshold
+    * @param capacity  the octree capacity
+    * @param inclAlpha whether to include alpha
+    *
+    * @return the palette
+    */
+   public static Lab[] paletteExtract ( final Img source, final int threshold,
+      final int capacity, final boolean inclAlpha ) {
+
+      final long mask = inclAlpha ? 0 : Img.T_MASK;
       final long[] srcPixels = source.pixels;
       final int srcLen = srcPixels.length;
+      final TreeMap < Long, Integer > uniqueOpaques = new TreeMap <>();
+
+      /* Account for alpha at index 0, so less than threshold. */
+      int tally = 0;
       for ( int i = 0; i < srcLen; ++i ) {
          final long tlab64 = srcPixels[i];
-         if ( ( tlab64 & Img.T_MASK ) != 0 ) uniqueOpaques.add(Img.T_MASK
-            | tlab64);
+         if ( ( tlab64 & Img.T_MASK ) != 0 ) {
+            final Long masked = mask | tlab64;
+            if ( !uniqueOpaques.containsKey(masked) ) {
+               ++tally;
+               uniqueOpaques.put(masked, tally);
+            }
+         }
       }
 
       final int uniquesLen = uniqueOpaques.size();
-      final Iterator < Long > uniquesItr = uniqueOpaques.iterator();
+      final Iterator < Entry < Long, Integer > > uniquesItr = uniqueOpaques
+         .entrySet().iterator();
 
       final int valThresh = threshold < 3 ? 3 : threshold;
       if ( uniquesLen < valThresh ) {
-         /* Account for alpha at index 0, so less than threshold. */
          final Lab[] arr = new Lab[1 + uniquesLen];
-         for ( int i = 1; uniquesItr.hasNext(); ++i ) {
-            arr[i] = Lab.fromHex(uniquesItr.next(), new Lab());
+         while ( uniquesItr.hasNext() ) {
+            final Entry < Long, Integer > entry = uniquesItr.next();
+            arr[entry.getValue()] = Lab.fromHex(entry.getKey(), new Lab());
          }
          arr[0] = Lab.clearBlack(new Lab());
          return arr;
@@ -3120,7 +3229,8 @@ public class Img {
 
       /* Place colors in octree. */
       while ( uniquesItr.hasNext() ) {
-         Lab.fromHex(uniquesItr.next(), lab);
+         final Entry < Long, Integer > entry = uniquesItr.next();
+         Lab.fromHex(entry.getKey(), lab);
          oct.insert(new Vec3(lab.a, lab.b, lab.l));
       }
       oct.cull();
@@ -3137,6 +3247,26 @@ public class Img {
 
       arr[0] = Lab.clearBlack(new Lab());
       return arr;
+   }
+
+   /**
+    * Generates an image with random pixels for diagnostic purposes.
+    *
+    * @param rng       the random number generator
+    * @param inclAlpha whether to include alpha
+    * @param target    the output image
+    *
+    * @return the image
+    */
+   public static Img random ( final Rng rng, final boolean inclAlpha,
+      final Img target ) {
+
+      final long mask = inclAlpha ? 0 : Img.T_MASK;
+      final int len = target.pixels.length;
+      for ( int i = 0; i < len; ++i ) {
+         target.pixels[i] = mask | rng.nextLong();
+      }
+      return target;
    }
 
    /**
@@ -3939,26 +4069,6 @@ public class Img {
    }
 
    /**
-    * Gets the source image's unique pixels as an ordered set.
-    *
-    * @param source the input image
-    *
-    * @return the dictionary
-    */
-   public static final long[] uniques ( final Img source ) {
-
-      final TreeSet < Long > u = Img.toTreeSet(source, new TreeSet <>());
-      final int size = u.size();
-      final long[] arr = new long[size];
-      int i = -1;
-      for ( final Long cObj : u ) {
-         ++i;
-         arr[i] = cObj;
-      }
-      return arr;
-   }
-
-   /**
     * Blits a source image's pixels onto a target image, using integer floor
     * modulo to wrap the source image. The source image can be offset
     * horizontally and/or vertically, creating the illusion of infinite
@@ -4240,23 +4350,6 @@ public class Img {
          }
       }
 
-      return target;
-   }
-
-   /**
-    * Gets the source image's unique pixels as an ordered set. The key is the
-    * color as a 64-bit integer in LAB.
-    *
-    * @param source the source image
-    * @param target the tree set
-    *
-    * @return the dictionary
-    */
-   protected static final TreeSet < Long > toTreeSet ( final Img source,
-      final TreeSet < Long > target ) {
-
-      final int len = source.pixels.length;
-      for ( int i = 0; i < len; ++i ) { target.add(source.pixels[i]); }
       return target;
    }
 
