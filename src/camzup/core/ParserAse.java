@@ -24,6 +24,8 @@ public abstract class ParserAse {
     */
    public static Rgb[] load ( final byte[] arr ) {
 
+      // TODO: Return Lab[] array instead.
+
       final int numBlocks = Utils.intml(arr, 8);
       final int lenFileData = arr.length;
       final ArrayList < Rgb > colors = new ArrayList <>(numBlocks);

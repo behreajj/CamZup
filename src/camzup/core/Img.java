@@ -1931,14 +1931,15 @@ public class Img {
     * @param width   the width
     * @param height  the height
     * @param argb32s the pixel array
+    * @param target the output image
     *
     * @return the image
     */
-   public static final Img fromArgb32 ( final int width, final int height,
-      final int[] argb32s ) {
-
-      // TODO: Now that the pixels array can be reassigned, you can specify a
-      // target image.
+   public static final Img fromArgb32 (
+      final int width,
+      final int height,
+      final int[] argb32s,
+      final Img target ) {
 
       final int wVerif = Utils.clamp(Math.abs(width), 1, Img.MAX_DIMENSION);
       final int hVerif = Utils.clamp(Math.abs(height), 1, Img.MAX_DIMENSION);
@@ -1947,7 +1948,7 @@ public class Img {
       final int len = argb32s.length;
       if ( area != len ) {
          System.err.println("Pixel length does not match image area.");
-         return new Img(width, height);
+         return target;
       }
 
       final Rgb srgb = new Rgb();
@@ -1976,7 +1977,11 @@ public class Img {
          tlab64s[i] = tlab64;
       }
 
-      return new Img(wVerif, hVerif, tlab64s);
+      target.width = wVerif;
+      target.height = hVerif;
+      target.pixels = tlab64s;
+      
+      return target;
    }
 
    /**

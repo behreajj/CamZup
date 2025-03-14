@@ -25,13 +25,17 @@ public abstract class ParserGpl {
     *
     * @return the palette
     */
-   public static Rgb[] load ( final BufferedReader in ) {
+   public static Lab[] load ( final BufferedReader in ) {
 
       try {
 
          try {
 
-            final TreeMap < Integer, Rgb > clrs = new TreeMap <>();
+            final Rgb srgb = new Rgb();
+            final Rgb lrgb = new Rgb();
+            final Vec4 xyz = new Vec4();
+
+            final TreeMap < Integer, Lab > clrs = new TreeMap <>();
             final Pattern ptrn = Pattern.compile("\\s+");
 
             int i = 0;
@@ -70,17 +74,21 @@ public abstract class ParserGpl {
                       * outside the range [0, 255]. Because colors are
                       * unclamped, this doesn't matter.
                       */
-                     clrs.put(i, new Rgb(Float.parseFloat(tokens[0])
-                        * IUtils.ONE_255, Float.parseFloat(tokens[1])
-                           * IUtils.ONE_255, Float.parseFloat(tokens[2])
-                              * IUtils.ONE_255, alpha));
+                     srgb.set(
+                        Float.parseFloat(tokens[0]) * IUtils.ONE_255,
+                        Float.parseFloat(tokens[1]) * IUtils.ONE_255,
+                        Float.parseFloat(tokens[2]) * IUtils.ONE_255,
+                        alpha);
+                     Lab lab = new Lab();
+                     Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
+                     clrs.put(i, lab);
 
                      ++i;
                   }
                }
             }
 
-            return clrs.values().toArray(new Rgb[clrs.size()]);
+            return clrs.values().toArray(new Lab[clrs.size()]);
 
          } catch ( final Exception e ) {
             e.printStackTrace();
@@ -92,7 +100,7 @@ public abstract class ParserGpl {
          e.printStackTrace();
       }
 
-      return new Rgb[0];
+      return new Lab[0];
    }
 
    /**
@@ -102,9 +110,9 @@ public abstract class ParserGpl {
     *
     * @return the palette
     */
-   public static Rgb[] load ( final String fileName ) {
+   public static Lab[] load ( final String fileName ) {
 
-      Rgb[] result = {};
+      Lab[] result = {};
       try ( BufferedReader br = new BufferedReader(new FileReader(fileName)) ) {
          result = ParserGpl.load(br);
       } catch ( final Exception e ) {

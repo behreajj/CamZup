@@ -84,15 +84,21 @@ public abstract class Convert {
    /**
     * Converts a PImage to an Img.
     *
-    * @param source the source image
+    * @param source the input image
+    * @param target the output image
     *
     * @return the lab image
     */
-   public static Img toImg ( final PImage source ) {
+   public static Img toImg (
+      final PImage source,
+      final Img target ) {
 
       source.loadPixels();
-      return Img.fromArgb32(source.pixelWidth, source.pixelHeight,
-         source.pixels);
+      return Img.fromArgb32(
+         source.pixelWidth,
+         source.pixelHeight,
+         source.pixels,
+         target);
    }
 
    /**
@@ -165,13 +171,16 @@ public abstract class Convert {
    /**
     * Converts a LabImage to a PImage.
     *
-    * @param source the source image
+    * @param source the input image
+    * @param target the output image
     *
     * @return the PImage
     */
-   public static PImage toPImage ( final Img source ) {
+   public static PImage toPImage (
+      final Img source,
+      final PImage target ) {
 
-      return Convert.toPImage(source, new Rgb.ToneMapClamp());
+      return Convert.toPImage(source, new Rgb.ToneMapClamp(), target);
    }
 
    /**
@@ -179,17 +188,26 @@ public abstract class Convert {
     *
     * @param source  the source image
     * @param toneMap the tone map
+    * @param target the target image
     *
     * @return the PImage
     */
-   public static PImage toPImage ( final Img source,
-      final Rgb.AbstrToneMap toneMap ) {
-      // TODO: How to handle pixel density? Might have to do a resize.
+   public static PImage toPImage (
+      final Img source,
+      final Rgb.AbstrToneMap toneMap,
+      final PImage target ) {
 
-      final PImage target = new PImage(source.getWidth(), source.getHeight(),
-         PConstants.ARGB, 1);
+      if ( target instanceof PGraphics ) {
+         System.err.println("Do not use PGraphics with this method.");
+         return target;
+      }
+
       target.loadPixels();
       target.pixels = Img.toArgb32(source, toneMap);
+      target.format = PConstants.ARGB;
+      target.pixelDensity = 1;
+      target.pixelWidth = target.width = source.getWidth();
+      target.pixelHeight = target.height = source.getHeight();
       target.updatePixels();
 
       return target;

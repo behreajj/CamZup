@@ -1189,7 +1189,7 @@ public class ZImage extends PImage {
     *
     * @return the premultiplied image
     */
-   protected static int[] premul ( final int[] source, final int[] target ) {
+   protected static final int[] premul ( final int[] source, final int[] target ) {
 
       final int srcLen = source.length;
       if ( srcLen == target.length ) {
@@ -1227,7 +1227,7 @@ public class ZImage extends PImage {
     *
     * @return the unpremultiplied pixels
     */
-   protected static int[] unpremul ( final int[] source, final int[] target ) {
+   protected static final int[] unpremul ( final int[] source, final int[] target ) {
 
       final int srcLen = source.length;
       if ( srcLen == target.length ) {
@@ -1272,7 +1272,7 @@ public class ZImage extends PImage {
     *
     * @return the wrapped pixels
     */
-   protected static int[] wrap ( final int[] source, final int wSrc,
+   protected static final int[] wrap ( final int[] source, final int wSrc,
       final int hSrc, final int dx, final int dy, final int wTrg,
       final int[] target ) {
 
