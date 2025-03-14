@@ -3316,7 +3316,7 @@ public class Img {
       final long mask = inclAlpha ? 0 : Img.T_MASK;
       final long[] srcPixels = source.pixels;
       final int srcLen = srcPixels.length;
-      final TreeMap < Long, Integer > uniqueOpaques = new TreeMap <>();
+      final HashMap < Long, Integer > uniqueOpaques = new HashMap <>();
 
       /* Account for alpha at index 0, so less than threshold. */
       int tally = 0;
