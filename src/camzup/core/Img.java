@@ -1,7 +1,6 @@
 package camzup.core;
 
 import java.math.BigInteger;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -3978,6 +3977,90 @@ public class Img {
    }
 
    /**
+    * Tints an image with a color according to a factor. If the preserveLight
+    * flag is true, the source image's original lightness is retained.
+    *
+    * @param source        the source pixels
+    * @param tint          the tint color
+    * @param fac           the factor
+    * @param preserveLight the preserve light flag
+    * @param target        the target pixels
+    *
+    * @return the tinted pixels
+    */
+   public static Img tint ( final Img source, final Lab tint, final float fac,
+      final boolean preserveLight, final Img target ) {
+
+      final int wSrc = source.width;
+      final int hSrc = source.height;
+      final int srcLen = source.pixels.length;
+
+      if ( !Img.similar(source, target) ) {
+         target.width = wSrc;
+         target.height = hSrc;
+         target.pixels = new long[srcLen];
+      }
+
+      final Lab lab = new Lab();
+      final float t = Float.isNaN(fac) ? 1.0f : Utils.clamp01(fac);
+      final float u = 1.0f - t;
+      final HashMap < Long, Long > convert = new HashMap <>();
+
+      for ( int i = 0; i < srcLen; ++i ) {
+         final long srcPixel = source.pixels[i];
+         final Long srcPixelObj = srcPixel;
+         long trgPixel = Img.CLEAR_PIXEL;
+
+         if ( convert.containsKey(srcPixelObj) ) {
+            trgPixel = convert.get(srcPixelObj);
+         } else {
+            // TODO: You might be able to add these as longs.
+            Lab.fromHex(srcPixel, lab);
+            lab.l = preserveLight ? lab.l : u * lab.l + t * tint.l;
+            lab.a = u * lab.a + t * tint.a;
+            lab.b = u * lab.b + t * tint.b;
+            trgPixel = lab.toHexLongSat();
+            convert.put(srcPixelObj, trgPixel);
+         }
+
+         target.pixels[i] = trgPixel;
+      }
+
+      return target;
+   }
+
+   /**
+    * Tints an image with a color according to a factor.
+    *
+    * @param source the source pixels
+    * @param tint   the tint color
+    * @param fac    the factor
+    * @param target the target pixels
+    *
+    * @return the tinted pixels
+    */
+   public static Img tint ( final Img source, final Lab tint, final float fac,
+      final Img target ) {
+
+      return Img.tint(source, tint, fac, true, target);
+   }
+
+   /**
+    * Tints an image with a color.
+    *
+    * @param source the source pixels
+    * @param tint   the tint color
+    * @param target the target pixels
+    *
+    * @return the tinted pixels
+    */
+   public static Img tint ( final Img source, final Lab tint,
+      final Img target ) {
+
+      return Img.tint(source, tint, 0.5f, true, target);
+   }
+
+   /**
     * Converts a LAB image to an array of 32-bit AARRGGBB pixels.
     *
     * @param source  the source image
@@ -4364,8 +4447,6 @@ public class Img {
          final float u = 1.0f - xErr;
          t0 = u * t00 + xErr * t10;
          if ( t0 > 0.0f ) {
-            // TODO: Do you need to subtract 0x8000L from a and b?
-
             /* @formatter:off */
             l0 =    u * ( c00 >> Img.L_SHIFT & 0xffffL )
                + xErr * ( c10 >> Img.L_SHIFT & 0xffffL );
@@ -4388,8 +4469,6 @@ public class Img {
          final float u = 1.0f - xErr;
          t1 = u * t01 + xErr * t11;
          if ( t1 > 0.0f ) {
-            // TODO: Do you need to subtract 0x8000L from a and b?
-
             /* @formatter:off */
             l1 =    u * ( c01 >> Img.L_SHIFT & 0xffffL )
                + xErr * ( c11 >> Img.L_SHIFT & 0xffffL );
@@ -4410,7 +4489,6 @@ public class Img {
             final float a2 = u * a0 + yErr * a1;
             final float b2 = u * b0 + yErr * b1;
 
-            // TODO: Do you need to add 0x8000L to a and b here?
             long ti = ( long ) ( 0.5f + t2 );
             long li = ( long ) ( 0.5f + l2 );
             long ai = ( long ) ( 0.5f + a2 );
@@ -4443,40 +4521,6 @@ public class Img {
 
       return a == b || a.width == b.width && a.height == b.height
          && a.pixels.length == b.pixels.length;
-   }
-
-   /**
-    * Gets the source image's unique pixels as a dictionary. The key is the
-    * color as a 64-bit integer in LAB. The value is an array of indices at
-    * which the pixel was found in the source array. These indices can be
-    * converted to x,y coordinates using the source image's width.
-    *
-    * @param source the source image
-    * @param target the tree map
-    *
-    * @return the dictionary
-    */
-   protected static final TreeMap < Long, ArrayList < Integer > > toDict (
-      final Img source, final TreeMap < Long, ArrayList < Integer > > target ) {
-
-      // TODO: What would the public facing version of this method look like?
-      // Maybe it would be TreeMap < Lab, integer[] >.
-      // TODO: Sort according to first entry in array.
-
-      final int len = source.pixels.length;
-      for ( int i = 0; i < len; ++i ) {
-         final long c = source.pixels[i];
-         final Long cObj = c;
-         if ( target.containsKey(cObj) ) {
-            target.get(cObj).add(i);
-         } else {
-            final ArrayList < Integer > coords = new ArrayList <>();
-            coords.add(i);
-            target.put(cObj, coords);
-         }
-      }
-
-      return target;
    }
 
    /**

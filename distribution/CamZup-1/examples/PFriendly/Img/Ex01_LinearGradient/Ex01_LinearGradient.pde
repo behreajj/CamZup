@@ -9,6 +9,7 @@ Vec2 origin = new Vec2(-1.0f, -1.0f);
 Vec2 dest = new Vec2(1.0f, 1.0f);
 Lab.AbstrEasing mix = new Lab.MixLab();
 Rgb.AbstrToneMap mapper = new Rgb.ToneMapClamp();
+PImage pimg = new PImage(1, 1);
 
 void settings() {
   size(512, 512, Yup2.PATH_STR);
@@ -25,8 +26,8 @@ void draw() {
   Img.gradientLinear(gradient,
     origin, dest,
     mix, img);
-  PImage pimg = Convert.toPImage(img, mapper);
-  
+  Convert.toPImage(img, mapper, pimg);
+
   graphics.background();
   graphics.image(pimg);
 }

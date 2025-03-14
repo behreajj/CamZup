@@ -6,11 +6,11 @@ import camzup.pfriendly.*;
 
 Yup2 graphics;
 
-Img source;
+Img source = new Img();
 Img target = new Img();
 
-PImage pimgSrc;
-PImage pimgTrg;
+PImage pimgSrc = new PImage(1, 1);
+PImage pimgTrg = new PImage(1, 1);
 
 Gradient grd = Gradient.paletteViridis(new Gradient());
 Lab.AbstrEasing mixer = new Lab.MixLab();
@@ -27,8 +27,7 @@ void setup() {
   graphics = (Yup2)getGraphics();
 
   pimgSrc = loadImage("callingStMatthew.jpg");
-  source = Convert.toImg(pimgSrc);
-  
+  Convert.toImg(pimgSrc, source);
 
   long start = System.currentTimeMillis();
   Img.gradientMap(grd, source, mixer,
@@ -36,7 +35,7 @@ void setup() {
   long end = System.currentTimeMillis();
   println("Elapsed Time: " + (end - start));
 
-  pimgTrg = Convert.toPImage(target);
+  Convert.toPImage(target, mapper, pimgTrg);
 }
 
 void draw() {
