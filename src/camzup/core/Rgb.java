@@ -499,8 +499,13 @@ public class Rgb implements IColor {
     */
    public static final Rgb clamp01 ( final Rgb c, final Rgb target ) {
 
-      return target.set(Utils.clamp01(c.r), Utils.clamp01(c.g), Utils.clamp01(
-         c.b), Utils.clamp01(c.alpha));
+      /* @formatter:off */
+      return target.set(
+         Utils.clamp01(c.r),
+         Utils.clamp01(c.g),
+         Utils.clamp01(c.b),
+         Utils.clamp01(c.alpha));
+      /* @formatter:on */
    }
 
    /**
@@ -914,9 +919,13 @@ public class Rgb implements IColor {
       if ( levels == 1 || levels == -1 ) { return target.set(c); }
       final float levf = Utils.abs(levels);
       final float delta = 1.0f / ( levf - 1.0f );
-      return target.set(Utils.quantizeUnsigned(c.r, levf, delta), Utils
-         .quantizeUnsigned(c.g, levf, delta), Utils.quantizeUnsigned(c.b, levf,
-            delta), Utils.quantizeUnsigned(c.alpha, levf, delta));
+      /* @formatter:off */
+      return target.set(
+         Utils.quantizeUnsigned(c.r, levf, delta),
+         Utils.quantizeUnsigned(c.g, levf, delta),
+         Utils.quantizeUnsigned(c.b, levf, delta),
+         Utils.quantizeUnsigned(c.alpha, levf, delta));
+      /* @formatter:on */
    }
 
    /**
@@ -948,16 +957,25 @@ public class Rgb implements IColor {
        * pow(x, 2.4) := x * x * pow(x, 0.4) needs more testing...
        */
 
-      return target.set(source.r <= 0.04045f ? source.r * 0.07739938f
-         : ( float ) Math.pow( ( source.r + 0.055d ) * 0.9478672985781991d,
-            2.4d), source.g <= 0.04045f ? source.g * 0.07739938f
-               : ( float ) Math.pow( ( source.g + 0.055d )
-                  * 0.9478672985781991d, 2.4d), source.b <= 0.04045f ? source.b
-                     * 0.07739938f : ( float ) Math.pow( ( source.b + 0.055d )
-                        * 0.9478672985781991d, 2.4d), alpha ? source.alpha
-                           <= 0.04045f ? source.alpha * 0.07739938f
-                              : ( float ) Math.pow( ( source.alpha + 0.055d )
-                                 * 0.9478672985781991d, 2.4d) : source.alpha);
+      /* @formatter:off */
+      return target.set(
+         source.r <= 0.04045f ?
+         source.r * 0.07739938f :
+         ( float ) Math.pow( ( source.r + 0.055d ) * 0.9478672985781991d, 2.4d),
+         
+         source.g <= 0.04045f ?
+         source.g * 0.07739938f :
+         ( float ) Math.pow( ( source.g + 0.055d ) * 0.9478672985781991d, 2.4d),
+         
+         source.b <= 0.04045f ?
+         source.b * 0.07739938f :
+         ( float ) Math.pow( ( source.b + 0.055d ) * 0.9478672985781991d, 2.4d),
+         
+         alpha ? source.alpha <= 0.04045f ?
+         source.alpha * 0.07739938f :
+         ( float ) Math.pow( ( source.alpha + 0.055d ) * 0.9478672985781991d, 2.4d) :
+         source.alpha);
+      /* @formatter:on */
    }
 
    /**
@@ -1605,36 +1623,6 @@ public class Rgb implements IColor {
    public static final Rgb yellow ( final Rgb target ) {
 
       return target.set(1.0f, 1.0f, 0.0f, 1.0f);
-   }
-
-   /**
-    * Mixes two colors by a step in the range [0.0, 1.0] with linear
-    * interpolation, then returns an integer.<br>
-    * <br>
-    * Internal helper function for {@link Gradient} so that a new color does
-    * not need to be created as a target.
-    *
-    * @param orig   the origin color
-    * @param dest   the destination color
-    * @param step   the step
-    * @param target the output color
-    *
-    * @return the mixed color
-    *
-    * @see Rgb#toHexIntWrap(Rgb)
-    */
-   static int mix ( final Rgb orig, final Rgb dest, final float step ) {
-
-      if ( step <= 0.0f ) { return orig.toHexIntWrap(); }
-      if ( step >= 1.0f ) { return dest.toHexIntWrap(); }
-      final float u = 1.0f - step;
-
-      /* @formatter:off */
-      return ( int ) ( ( u * orig.alpha + step * dest.alpha ) * 0xff + 0.5f ) << 0x18
-         | ( int ) ( ( u * orig.r + step * dest.r ) * 0xff + 0.5f ) << 0x10
-         | ( int ) ( ( u * orig.g + step * dest.g ) * 0xff + 0.5f ) << 0x08
-         | ( int ) ( ( u * orig.b + step * dest.b ) * 0xff + 0.5f );
-      /* @formatter:on */
    }
 
    /**
