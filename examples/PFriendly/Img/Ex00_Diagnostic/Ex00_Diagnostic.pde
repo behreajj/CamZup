@@ -3,11 +3,14 @@ import camzup.pfriendly.*;
 
 Yup2 graphics;
 
-Img imgRgb;
-PImage pimgRgb;
+Img imgRgb = new Img(512, 512);
+PImage pimgRgb = new PImage(512, 512);
 
-Img imgRng;
-PImage pimgRng;
+Img imgRng = new Img(512, 512);
+PImage pimgRng = new PImage(512, 512);
+
+Img imgCheck = new Img(512, 512);
+PImage pimgCheck = new PImage(512, 512);
 
 void settings() {
   size(702, 405, Yup2.PATH_STR);
@@ -17,23 +20,27 @@ void setup() {
   frameRate(60.0f);
   graphics = (Yup2)getGraphics();
 
-  imgRgb = new Img(512, 512);
   Img.rgb(imgRgb);
-  pimgRgb = Convert.toPImage(imgRgb);
+  Convert.toPImage(imgRgb, pimgRgb);
 
   boolean includeAlpha = false;
   Rng rng = new Rng();
-  imgRng = new Img(512, 512);
   Img.random(rng, includeAlpha, imgRng);
-  pimgRng = Convert.toPImage(imgRng);
+  Convert.toPImage(imgRng, pimgRng);
+  
+  Img.checker(32, imgCheck);
+  Convert.toPImage(imgCheck, pimgCheck);
 }
 
 void draw() {
   graphics.background();
+  graphics.image(pimgCheck,
+    0.0, 0.0,
+    180.0, 180.0);
   graphics.image(pimgRgb,
-    -graphics.width * 0.25, 0.0,
-    256.0, 256.0);
+    -graphics.width * IUtils.ONE_THIRD, 0.0,
+    180.0, 180.0);
   graphics.image(pimgRng,
-    graphics.width * 0.25, 0.0,
-    256.0, 256.0);
+    graphics.width * IUtils.ONE_THIRD, 0.0,
+    180.0, 180.0);
 }
