@@ -74,12 +74,10 @@ public abstract class ParserGpl {
                       * outside the range [0, 255]. Because colors are
                       * unclamped, this doesn't matter.
                       */
-                     srgb.set(
-                        Float.parseFloat(tokens[0]) * IUtils.ONE_255,
-                        Float.parseFloat(tokens[1]) * IUtils.ONE_255,
-                        Float.parseFloat(tokens[2]) * IUtils.ONE_255,
-                        alpha);
-                     Lab lab = new Lab();
+                     srgb.set(Float.parseFloat(tokens[0]) * IUtils.ONE_255,
+                        Float.parseFloat(tokens[1]) * IUtils.ONE_255, Float
+                           .parseFloat(tokens[2]) * IUtils.ONE_255, alpha);
+                     final Lab lab = new Lab();
                      Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
                      clrs.put(i, lab);
 

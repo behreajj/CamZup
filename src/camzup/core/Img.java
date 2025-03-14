@@ -38,7 +38,8 @@ public class Img {
     */
    public Img ( ) {
 
-      // TODO: Function to set all zero alpha pixels to clear pixel?
+      // TODO: Function to set all zero alpha pixels to clear pixel? What to
+      // call it? clearToClearBlack?
 
       // TODO: swap alpha to light, light to alpha methods?
 
@@ -1931,15 +1932,12 @@ public class Img {
     * @param width   the width
     * @param height  the height
     * @param argb32s the pixel array
-    * @param target the output image
+    * @param target  the output image
     *
     * @return the image
     */
-   public static final Img fromArgb32 (
-      final int width,
-      final int height,
-      final int[] argb32s,
-      final Img target ) {
+   public static final Img fromArgb32 ( final int width, final int height,
+      final int[] argb32s, final Img target ) {
 
       final int wVerif = Utils.clamp(Math.abs(width), 1, Img.MAX_DIMENSION);
       final int hVerif = Utils.clamp(Math.abs(height), 1, Img.MAX_DIMENSION);
@@ -1980,7 +1978,7 @@ public class Img {
       target.width = wVerif;
       target.height = hVerif;
       target.pixels = tlab64s;
-      
+
       return target;
    }
 
@@ -4058,13 +4056,14 @@ public class Img {
    /**
     * Removes excess transparent pixels from an array of pixels.
     *
-    * @param source the source image
+    * @param source the input image
+    * @param target the output image
     *
     * @return the trimmed image
     */
-   public static final Img trimAlpha ( final Img source ) {
+   public static final Img trimAlpha ( final Img source, final Img target ) {
 
-      return Img.trimAlpha(source, null);
+      return Img.trimAlpha(source, null, target);
    }
 
    /**
@@ -4077,15 +4076,14 @@ public class Img {
     *
     * @param source the source image
     * @param tl     top left
+    * @param target the target image
     *
     * @return the trimmed image
     *
     * @author Oleg Mikhailov
     */
-   public static final Img trimAlpha ( final Img source, final Vec2 tl ) {
-
-      // TODO: Since pixels can be reassigned, this may now accept a target
-      // image.
+   public static final Img trimAlpha ( final Img source, final Vec2 tl,
+      final Img target ) {
 
       final long[] srcPixels = source.pixels;
       final int srcLen = srcPixels.length;
@@ -4095,7 +4093,10 @@ public class Img {
       if ( wSrc < 2 && hSrc < 2 ) {
          final long[] trgPixels = new long[srcLen];
          System.arraycopy(source, 0, trgPixels, 0, srcLen);
-         return new Img(wSrc, hSrc, trgPixels);
+         target.width = wSrc;
+         target.height = hSrc;
+         target.pixels = trgPixels;
+         return target;
       }
 
       final int wn1 = wSrc > 1 ? wSrc - 1 : 0;
@@ -4171,7 +4172,10 @@ public class Img {
       if ( wTrg < 1 || hTrg < 1 ) {
          final long[] trgPixels = new long[srcLen];
          System.arraycopy(source, 0, trgPixels, 0, srcLen);
-         return new Img(wSrc, hSrc, trgPixels);
+         target.width = wSrc;
+         target.height = hSrc;
+         target.pixels = trgPixels;
+         return target;
       }
 
       final int trgLen = wTrg * hTrg;
@@ -4181,7 +4185,12 @@ public class Img {
       }
 
       if ( tl != null ) { tl.set(left, top); }
-      return new Img(wTrg, hTrg, trgPixels);
+
+      target.width = wSrc;
+      target.height = hSrc;
+      target.pixels = trgPixels;
+
+      return target;
    }
 
    /**

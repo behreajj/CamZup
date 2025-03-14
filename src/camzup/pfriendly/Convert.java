@@ -89,16 +89,11 @@ public abstract class Convert {
     *
     * @return the lab image
     */
-   public static Img toImg (
-      final PImage source,
-      final Img target ) {
+   public static Img toImg ( final PImage source, final Img target ) {
 
       source.loadPixels();
-      return Img.fromArgb32(
-         source.pixelWidth,
-         source.pixelHeight,
-         source.pixels,
-         target);
+      return Img.fromArgb32(source.pixelWidth, source.pixelHeight,
+         source.pixels, target);
    }
 
    /**
@@ -176,9 +171,7 @@ public abstract class Convert {
     *
     * @return the PImage
     */
-   public static PImage toPImage (
-      final Img source,
-      final PImage target ) {
+   public static PImage toPImage ( final Img source, final PImage target ) {
 
       return Convert.toPImage(source, new Rgb.ToneMapClamp(), target);
    }
@@ -188,14 +181,12 @@ public abstract class Convert {
     *
     * @param source  the source image
     * @param toneMap the tone map
-    * @param target the target image
+    * @param target  the target image
     *
     * @return the PImage
     */
-   public static PImage toPImage (
-      final Img source,
-      final Rgb.AbstrToneMap toneMap,
-      final PImage target ) {
+   public static PImage toPImage ( final Img source,
+      final Rgb.AbstrToneMap toneMap, final PImage target ) {
 
       if ( target instanceof PGraphics ) {
          System.err.println("Do not use PGraphics with this method.");
