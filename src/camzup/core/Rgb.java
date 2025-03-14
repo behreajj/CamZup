@@ -1410,10 +1410,13 @@ public class Rgb implements IColor {
    public static StringBuilder toHexString ( final StringBuilder sb,
       final Rgb c ) {
 
-      return Rgb.toHexString(sb, ( int ) ( Utils.clamp01(c.alpha) * 0xff
-         + 0.5f ), ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ), ( int ) ( Utils
-            .clamp01(c.g) * 0xff + 0.5f ), ( int ) ( Utils.clamp01(c.b) * 0xff
-               + 0.5f ));
+      /* @formatter:off */
+      return Rgb.toHexString(sb,
+         ( int ) ( Utils.clamp01(c.alpha) * 0xff + 0.5f ),
+         ( int ) ( Utils.clamp01(c.r) * 0xff + 0.5f ),
+         ( int ) ( Utils.clamp01(c.g) * 0xff + 0.5f ),
+         ( int ) ( Utils.clamp01(c.b) * 0xff + 0.5f ));
+      /* @formatter:on */
    }
 
    /**
