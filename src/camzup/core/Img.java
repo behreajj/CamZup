@@ -561,6 +561,11 @@ public class Img {
    public static final int DEFAULT_HEIGHT = 128;
 
    /**
+    * Default radius when querying an octree in palette mapping.
+    */
+   public static final float DEFAULT_OCTREE_QUERY_RADIUS = 175.0f;
+
+   /**
     * Default maximum number for a palette extracted from an image.s
     */
    public static final int DEFAULT_PALETTE_THRESHOLD = 256;
@@ -3116,13 +3121,13 @@ public class Img {
     */
    public static final Img opaque ( final Img source, final Img target ) {
 
+      final int len = source.pixels.length;
       if ( !Img.similar(source, target) ) {
          target.width = source.width;
          target.height = source.height;
-         target.pixels = new long[source.pixels.length];
+         target.pixels = new long[len];
       }
 
-      final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
          target.pixels[i] = source.pixels[i] | Img.T_MASK;
       }
@@ -3223,8 +3228,7 @@ public class Img {
          return arr;
       }
 
-      final Bounds3 bounds = Bounds3.lab(new Bounds3());
-      final Octree oct = new Octree(bounds, capacity);
+      final Octree oct = new Octree(Bounds3.lab(new Bounds3()), capacity);
       final Lab lab = new Lab();
 
       /* Place colors in octree. */
@@ -3247,6 +3251,113 @@ public class Img {
 
       arr[0] = Lab.clearBlack(new Lab());
       return arr;
+   }
+
+   /**
+    * Applies a palette to an image. Uses an Octree to find the nearest match
+    * in Euclidean space. Retains the original color's transparency.
+    *
+    * @param source  the source pixels
+    * @param palette the color palette
+    * @param target  the target pixels
+    *
+    * @return the mapped image
+    */
+   public static Img paletteMap ( final Img source, final Lab[] palette,
+      final Img target ) {
+
+      return Img.paletteMap(source, palette, Octree.DEFAULT_CAPACITY,
+         Img.DEFAULT_OCTREE_QUERY_RADIUS, target);
+   }
+
+   /**
+    * Applies a palette to an image. Uses an Octree to find the nearest match
+    * in Euclidean space. Retains the original color's transparency.
+    *
+    * @param source   the source pixels
+    * @param palette  the color palette
+    * @param capacity the octree capacity
+    * @param radius   the query radius
+    * @param target   the target pixels
+    *
+    * @return the mapped image
+    */
+   public static Img paletteMap ( final Img source, final Lab[] palette,
+      final int capacity, final float radius, final Img target ) {
+
+      final int len = source.pixels.length;
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[len];
+      }
+
+      final Octree oct = new Octree(Bounds3.lab(new Bounds3()), capacity);
+      oct.subdivide(1, capacity);
+
+      final HashMap < Vec3, Long > lookup = new HashMap <>(256, 0.75f);
+      final int palLen = palette.length;
+      for ( int i = 0; i < palLen; ++i ) {
+         final Lab swatch = palette[i];
+         if ( Lab.any(swatch) ) {
+            final Vec3 point = new Vec3(swatch.a, swatch.b, swatch.l);
+            oct.insert(point);
+            lookup.put(point, swatch.toHexLongSat());
+         }
+      }
+
+      oct.cull();
+
+      final float rVrf = Utils.max(IUtils.EPSILON, Utils.abs(radius));
+      final float rsq = rVrf * rVrf;
+      final Lab lab = new Lab();
+      final Vec3 query = new Vec3();
+      final TreeMap < Float, Vec3 > found = new TreeMap <>();
+      final HashMap < Long, Long > convert = new HashMap <>();
+      convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
+
+      for ( int j = 0; j < len; ++j ) {
+         final long tlab64Src = source.pixels[j];
+         final long alphaSrc = tlab64Src & Img.T_MASK;
+         final Long tlab64SrcObj = tlab64Src;
+         long tlab64Trg = Img.CLEAR_PIXEL;
+         if ( convert.containsKey(tlab64SrcObj) ) {
+            tlab64Trg = convert.get(tlab64SrcObj);
+         } else {
+            Lab.fromHex(tlab64Src, lab);
+            query.set(lab.a, lab.b, lab.l);
+            found.clear();
+            Octree.query(oct, query, rsq, 0, found);
+            if ( found.size() > 0 ) {
+               final Vec3 near = found.values().iterator().next();
+               if ( near != null && lookup.containsKey(near) ) {
+                  tlab64Trg = lookup.get(near);
+               }
+            }
+            convert.put(tlab64SrcObj, tlab64Trg);
+         }
+         target.pixels[j] = alphaSrc | tlab64Trg & Img.LAB_MASK;
+      }
+
+      return target;
+   }
+
+   /**
+    * Applies a palette to an image. Uses an Octree to find the nearest match
+    * in Euclidean space. Retains the original color's transparency.
+    *
+    * @param source   the source pixels
+    * @param palette  the color palette
+    * @param capacity the octree capacity
+    * @param target   the target pixels
+    *
+    * @return the mapped image
+    */
+   public static Img paletteMap ( final Img source, final Lab[] palette,
+      final int capacity, final Img target ) {
+
+      return Img.paletteMap(source, palette, capacity,
+         Img.DEFAULT_OCTREE_QUERY_RADIUS, target);
    }
 
    /**
@@ -3273,17 +3384,23 @@ public class Img {
     * Removes translucent pixels from an image, so colors are either
     * transparent or opaque.
     *
+    * @param source the input image
     * @param target the output image
     *
     * @return the binary alpha image
     */
-   public static final Img removeTranslucency ( final Img target ) {
+   public static final Img removeTranslucency ( final Img source,
+      final Img target ) {
 
-      // TODO: Follow source, target pattern?
+      final int len = source.pixels.length;
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[len];
+      }
 
-      final int len = target.pixels.length;
       for ( int i = 0; i < len; ++i ) {
-         final long c = target.pixels[i];
+         final long c = source.pixels[i];
          final long t16Src = c >> Img.T_SHIFT & 0xffffL;
          final long t16Trg = t16Src < 0x80000L ? 0x0000L : 0xffffL;
          target.pixels[i] = t16Trg << Img.T_SHIFT | c & Img.LAB_MASK;
@@ -3359,8 +3476,8 @@ public class Img {
       final int h = target.height;
 
       /*
-       * Do not return a clear black image as with other images. If user wants
-       * to make a zero alpha image that has rgb channels, let them.
+       * If user wants to make a zero alpha image that has rgb channels, let
+       * them.
        */
       final float tVerif = Utils.clamp01(alpha);
       final float bVerif = Utils.clamp01(blue);
@@ -3443,13 +3560,13 @@ public class Img {
     */
    public static final Img rotate180 ( final Img source, final Img target ) {
 
+      final int len = source.pixels.length;
       if ( !Img.similar(source, target) ) {
          target.width = source.width;
          target.height = source.height;
-         target.pixels = new long[source.pixels.length];
+         target.pixels = new long[len];
       }
 
-      final int len = source.pixels.length;
       for ( int i = 0, j = len - 1; i < len; ++i, --j ) {
          target.pixels[j] = source.pixels[i];
       }
@@ -3469,13 +3586,11 @@ public class Img {
     */
    public static final Img rotate270 ( final Img source, final Img target ) {
 
-      if ( !Img.similar(source, target) ) {
-         target.pixels = new long[source.pixels.length];
-      }
+      final int len = source.pixels.length;
+      if ( !Img.similar(source, target) ) { target.pixels = new long[len]; }
 
       final int w = source.width;
       final int h = source.height;
-      final int len = source.pixels.length;
       final int hn1 = h - 1;
       for ( int i = 0; i < len; ++i ) {
          target.pixels[i % w * h + hn1 - i / w] = source.pixels[i];
@@ -3498,13 +3613,11 @@ public class Img {
     */
    public static final Img rotate90 ( final Img source, final Img target ) {
 
-      if ( !Img.similar(source, target) ) {
-         target.pixels = new long[source.pixels.length];
-      }
+      final int len = source.pixels.length;
+      if ( !Img.similar(source, target) ) { target.pixels = new long[len]; }
 
       final int w = source.width;
       final int h = source.height;
-      final int len = source.pixels.length;
       final int lennh = len - h;
       for ( int i = 0; i < len; ++i ) {
          target.pixels[lennh + i / w - i % w * h] = source.pixels[i];
@@ -3924,11 +4037,9 @@ public class Img {
        * transposing in place.
        */
 
-      if ( !Img.similar(source, target) ) {
-         target.pixels = new long[source.pixels.length];
-      }
-
       final int len = source.pixels.length;
+      if ( !Img.similar(source, target) ) { target.pixels = new long[len]; }
+
       for ( int i = 0; i < len; ++i ) {
          target.pixels[i % w * h + i / w] = source.pixels[i];
       }
@@ -4113,16 +4224,17 @@ public class Img {
    protected static final Img invert ( final Img source, final long mask,
       final Img target ) {
 
+      final int len = source.pixels.length;
       if ( !Img.similar(source, target) ) {
          target.width = source.width;
          target.height = source.height;
-         target.pixels = new long[source.pixels.length];
+         target.pixels = new long[len];
       }
 
-      final int len = source.pixels.length;
       for ( int i = 0; i < len; ++i ) {
          target.pixels[i] = source.pixels[i] ^ mask;
       }
+
       return target;
    }
 
