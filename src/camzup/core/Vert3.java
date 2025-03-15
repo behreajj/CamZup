@@ -168,10 +168,8 @@ public class Vert3 implements Comparable < Vert3 > {
       } else if ( !this.normal.equals(vert3.normal) ) { return false; }
 
       if ( this.texCoord == null ) {
-         if ( vert3.texCoord != null ) { return false; }
-      } else if ( !this.texCoord.equals(vert3.texCoord) ) { return false; }
-
-      return true;
+          return vert3.texCoord == null;
+      } else return this.texCoord.equals(vert3.texCoord);
    }
 
    /**

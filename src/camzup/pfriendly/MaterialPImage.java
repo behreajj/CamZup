@@ -90,9 +90,8 @@ public class MaterialPImage extends MaterialUv {
       }
       final MaterialPImage other = ( MaterialPImage ) obj;
       if ( this.texture == null ) {
-         if ( other.texture != null ) { return false; }
-      } else if ( !this.texture.equals(other.texture) ) { return false; }
-      return true;
+          return other.texture == null;
+      } else return this.texture.equals(other.texture);
    }
 
    /**
@@ -168,17 +167,16 @@ public class MaterialPImage extends MaterialUv {
    @Override
    public String toString ( final int places ) {
 
-      final StringBuilder sb = new StringBuilder(256);
-      sb.append("{\"name\":\"");
-      sb.append(this.name);
-      sb.append("\",\"tint\":");
-      sb.append(this.tint.toString(places));
-      sb.append(",\"texture\":");
-      sb.append(ZImage.toString(this.texture));
-      sb.append(",\"transform\":");
-      sb.append(this.transform.toString(places));
-      sb.append('}');
-      return sb.toString();
+       String sb = "{\"name\":\"" +
+               this.name +
+               "\",\"tint\":" +
+               this.tint.toString(places) +
+               ",\"texture\":" +
+               ZImage.toString(this.texture) +
+               ",\"transform\":" +
+               this.transform.toString(places) +
+               '}';
+      return sb;
    }
 
 }

@@ -416,7 +416,7 @@ public class MeshEntity2 extends Entity2 implements Iterable < Mesh2 >,
    @Experimental
    public String toBlenderCode ( ) {
 
-      return this.toBlenderCode(( MaterialSolid[] ) null);
+      return this.toBlenderCode(null);
    }
 
    /**

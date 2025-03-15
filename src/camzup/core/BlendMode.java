@@ -7,7 +7,7 @@ public interface BlendMode {
    /**
     * A and B chroma axes blend mode operations.
     */
-   public enum AB {
+   enum AB {
 
       /** Adds over layer to under. */
       ADD,
@@ -37,7 +37,7 @@ public interface BlendMode {
    /**
     * Alpha blend mode operations.
     */
-   public enum Alpha {
+   enum Alpha {
 
       /** Default blending operation. */
       BLEND,
@@ -61,7 +61,7 @@ public interface BlendMode {
    /**
     * Lightness blend mode operations.
     */
-   public enum L {
+   enum L {
 
       /** Adds over lightness to under. */
       ADD,

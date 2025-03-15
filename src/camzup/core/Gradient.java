@@ -389,7 +389,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
     */
    public Gradient insert ( final ColorKey key ) {
 
-      if ( this.keys.contains(key) ) { this.keys.remove(key); }
+       this.keys.remove(key);
       this.keys.add(key);
 
       return this;
@@ -411,7 +411,7 @@ public class Gradient implements IUtils, Iterable < ColorKey > {
       final int len = insertion.length;
       for ( int i = 0; i < len; ++i ) {
          final ColorKey key = insertion[i];
-         if ( this.keys.contains(key) ) { this.keys.remove(key); }
+          this.keys.remove(key);
          this.keys.add(key);
       }
 

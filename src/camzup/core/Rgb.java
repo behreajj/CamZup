@@ -691,7 +691,7 @@ public class Rgb implements IColor {
       String cVerif = c;
       if ( c.charAt(0) == '#' ) {
          cVerif = c.substring(1);
-      } else if ( c.substring(0, 2).equals("0x") ) { cVerif = c.substring(2); }
+      } else if ( c.startsWith("0x") ) { cVerif = c.substring(2); }
 
       final int len = cVerif.length();
 
@@ -1125,7 +1125,7 @@ public class Rgb implements IColor {
       final int cursor ) {
 
       /* Color entry code (2 bytes). */
-      target[cursor + 0] = 0;
+      target[cursor] = 0;
       target[cursor + 1] = 1;
 
       /* Block length (4 bytes). */
@@ -1659,7 +1659,7 @@ public class Rgb implements IColor {
       /**
        * Stores conversion from gamma to linear.
        */
-      protected final Rgb lrgb = new Rgb();
+      private final Rgb lrgb = new Rgb();
 
       /**
        * The default constructor.
@@ -1746,7 +1746,7 @@ public class Rgb implements IColor {
       /**
        * Stores conversion from gamma to linear.
        */
-      protected final Rgb lrgb = new Rgb();
+      private final Rgb lrgb = new Rgb();
 
       /**
        * The default constructor.

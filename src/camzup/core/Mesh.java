@@ -279,14 +279,13 @@ public abstract class Mesh extends EntityData implements IMesh {
    @Override
    public String toString ( ) {
 
-      final StringBuilder sb = new StringBuilder(64);
-      sb.append("{ name: \"");
-      sb.append(this.name);
-      sb.append("\", materialIndex: ");
-      sb.append(this.materialIndex);
-      sb.append(' ');
-      sb.append('}');
-      return sb.toString();
+       String sb = "{ name: \"" +
+               this.name +
+               "\", materialIndex: " +
+               this.materialIndex +
+               ' ' +
+               '}';
+      return sb;
    }
 
    /**
@@ -777,27 +776,27 @@ public abstract class Mesh extends EntityData implements IMesh {
       /**
        * Quantization level.
        */
-      protected final int levels;
+      private final int levels;
 
       /**
        * Quantization level cast to a float.
        */
-      protected final float levf;
+      private final float levf;
 
       /**
        * Inverse of the quantization level.
        */
-      protected final float levInv;
+      private final float levInv;
 
       /**
        * Internal vector to hold quantized left operand.
        */
-      protected final Vec2 qa = new Vec2();
+      private final Vec2 qa = new Vec2();
 
       /**
        * Internal vector to hold quantized right operand.
        */
-      protected final Vec2 qb = new Vec2();
+      private final Vec2 qb = new Vec2();
 
       /**
        * The default constructor.
@@ -867,27 +866,27 @@ public abstract class Mesh extends EntityData implements IMesh {
       /**
        * Quantization level.
        */
-      protected final int levels;
+      private final int levels;
 
       /**
        * Quantization level cast to a float.
        */
-      protected final float levf;
+      private final float levf;
 
       /**
        * Inverse of the quantization level.
        */
-      protected final float levInv;
+      private final float levInv;
 
       /**
        * Internal vector to hold quantized left operand.
        */
-      protected final Vec3 qa = new Vec3();
+      private final Vec3 qa = new Vec3();
 
       /**
        * Internal vector to hold quantized right operand.
        */
-      protected final Vec3 qb = new Vec3();
+      private final Vec3 qb = new Vec3();
 
       /**
        * The default constructor.

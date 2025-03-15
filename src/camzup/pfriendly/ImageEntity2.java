@@ -135,9 +135,8 @@ public class ImageEntity2 extends MeshEntity2 {
       }
       final ImageEntity2 other = ( ImageEntity2 ) obj;
       if ( this.material == null ) {
-         if ( other.material != null ) { return false; }
-      } else if ( !this.material.equals(other.material) ) { return false; }
-      return true;
+          return other.material == null;
+      } else return this.material.equals(other.material);
    }
 
    /**

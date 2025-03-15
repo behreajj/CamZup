@@ -118,9 +118,8 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public Edge2 rotateZGlobal ( final float radians ) {
 
-      final double radd = radians;
-      final float cosa = ( float ) Math.cos(radd);
-      final float sina = ( float ) Math.sin(radd);
+      final float cosa = ( float ) Math.cos(radians);
+      final float sina = ( float ) Math.sin(radians);
 
       return this.rotateZGlobal(cosa, sina);
    }
@@ -194,9 +193,8 @@ public class Edge2 implements Comparable < Edge2 > {
     */
    public Edge2 rotateZLocal ( final float radians, final Vec2 center ) {
 
-      final double radd = radians;
-      final float cosa = ( float ) Math.cos(radd);
-      final float sina = ( float ) Math.sin(radd);
+      final float cosa = ( float ) Math.cos(radians);
+      final float sina = ( float ) Math.sin(radians);
 
       return this.rotateZLocal(cosa, sina, center);
    }
@@ -482,10 +480,8 @@ public class Edge2 implements Comparable < Edge2 > {
       } else if ( !this.dest.equals(edge2.dest) ) { return false; }
 
       if ( this.origin == null ) {
-         if ( edge2.origin != null ) { return false; }
-      } else if ( !this.origin.equals(edge2.origin) ) { return false; }
-
-      return true;
+          return edge2.origin == null;
+      } else return this.origin.equals(edge2.origin);
    }
 
    /**

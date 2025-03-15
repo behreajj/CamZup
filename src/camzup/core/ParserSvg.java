@@ -1141,7 +1141,7 @@ public abstract class ParserSvg {
              * added; for multiple "sub-path"s which are not closed. As before,
              * final curve should have more than 2 knots.
              */
-            if ( result.indexOf(target) < 0 && target.length() > 1 ) {
+            if (!result.contains(target) && target.length() > 1 ) {
                result.add(target);
             }
 
@@ -1186,11 +1186,7 @@ public abstract class ParserSvg {
 
          /* Close loop if the node is a polygon. */
          final String name = polygonNode.getNodeName();
-         if ( name.equals("polygon") ) {
-            target.closedLoop = true;
-         } else {
-            target.closedLoop = false;
-         }
+          target.closedLoop = name.equals("polygon");
 
          final Node ptsNode = attributes.getNamedItem("points");
          final String ptsSt = ptsNode != null ? ptsNode.getNodeValue() : "0,0";

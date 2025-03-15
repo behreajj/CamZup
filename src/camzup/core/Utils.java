@@ -1028,8 +1028,11 @@ public abstract class Utils implements IUtils {
    public static final float max ( final float... fs ) {
 
       float max = -Float.MAX_VALUE;
-      final int len = fs.length;
-      for ( int i = 0; i < len; ++i ) { if ( fs[i] > max ) { max = fs[i]; } }
+       for (float f : fs) {
+           if (f > max) {
+               max = f;
+           }
+       }
       return max;
    }
 
@@ -1090,8 +1093,11 @@ public abstract class Utils implements IUtils {
    public static final float min ( final float... fs ) {
 
       float min = Float.MAX_VALUE;
-      final int len = fs.length;
-      for ( int i = 0; i < len; ++i ) { if ( fs[i] < min ) { min = fs[i]; } }
+       for (float f : fs) {
+           if (f < min) {
+               min = f;
+           }
+       }
       return min;
    }
 
@@ -1966,7 +1972,7 @@ public abstract class Utils implements IUtils {
          default:
       }
 
-      if ( places < 0 ) { return sb.append(Integer.toString(( int ) v)); }
+      if ( places < 0 ) { return sb.append((int) v); }
       if ( places < 1 ) { return sb.append(Float.toString(( int ) v)); }
 
       final float sign = Float.intBitsToFloat(raw & -2147483648 | 1065353216);
@@ -1995,7 +2001,7 @@ public abstract class Utils implements IUtils {
        * The integral has so many digits that it has consumed the allotment.
        * (Might be scientific notation?)
        */
-      if ( maxPlaces < 1 ) { return sb.append(Float.toString(v)); }
+      if ( maxPlaces < 1 ) { return sb.append(v); }
 
       final int vetPlaces = places < maxPlaces ? places : maxPlaces;
       float frac = abs - trunc;
@@ -2465,8 +2471,7 @@ public abstract class Utils implements IUtils {
       protected abstract float applyPartial ( final float step );
 
       /**
-       * A helper function which mutates fields {@link o}, {@link d},
-       * {@link diff}, {@link oLtd} and {@link oGtd}. This mods the origin and
+       * A helper function that mods the origin and
        * destination by the range. It then finds the signed distance between the
        * mod origin and destination . Lastly, it evaluates which of the two is
        * greater than the other.

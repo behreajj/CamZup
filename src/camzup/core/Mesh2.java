@@ -571,7 +571,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             trial.set(this.coords[idcsOrig[0]], this.texCoords[idcsOrig[1]],
                this.coords[idcsDest[0]], this.texCoords[idcsDest[1]]);
 
-            if ( result.indexOf(trial) < 0 ) {
+            if (!result.contains(trial)) {
                result.add(trial);
                trial = new Edge2();
             }
@@ -710,7 +710,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
             final int[] f = fs[j];
             trial.set(this.coords[f[0]], this.texCoords[f[1]]);
 
-            if ( result.indexOf(trial) < 0 ) {
+            if (!result.contains(trial)) {
                result.add(trial);
                trial = new Vert2();
             }
@@ -1807,8 +1807,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
                final String query = orig + ", " + dest;
                final String reverse = dest + ", " + orig;
 
-               if ( edgesList.indexOf(query) < 0 && edgesList.indexOf(reverse)
-                  < 0 ) {
+               if (!edgesList.contains(query) && !edgesList.contains(reverse)) {
                   edgesList.add(query);
                }
             }

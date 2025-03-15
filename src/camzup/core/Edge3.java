@@ -140,9 +140,8 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateGlobal ( final float radians, final Vec3 axis ) {
 
-      final double radd = radians;
-      final float cosa = ( float ) Math.cos(radd);
-      final float sina = ( float ) Math.sin(radd);
+      final float cosa = ( float ) Math.cos(radians);
+      final float sina = ( float ) Math.sin(radians);
       return this.rotateGlobal(cosa, sina, axis);
    }
 
@@ -225,9 +224,8 @@ public class Edge3 implements Comparable < Edge3 > {
    public Edge3 rotateLocal ( final float radians, final Vec3 axis,
       final Vec3 center ) {
 
-      final double radd = radians;
-      final float cosa = ( float ) Math.cos(radd);
-      final float sina = ( float ) Math.sin(radd);
+      final float cosa = ( float ) Math.cos(radians);
+      final float sina = ( float ) Math.sin(radians);
       return this.rotateLocal(cosa, sina, axis, center);
    }
 
@@ -278,9 +276,8 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateXGlobal ( final float radians ) {
 
-      final double radd = radians;
-      final float cosa = ( float ) Math.cos(radd);
-      final float sina = ( float ) Math.sin(radd);
+      final float cosa = ( float ) Math.cos(radians);
+      final float sina = ( float ) Math.sin(radians);
       return this.rotateXGlobal(cosa, sina);
    }
 
@@ -352,9 +349,8 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateXLocal ( final float radians, final Vec3 center ) {
 
-      final double radd = radians;
-      final float cosa = ( float ) Math.cos(radd);
-      final float sina = ( float ) Math.sin(radd);
+      final float cosa = ( float ) Math.cos(radians);
+      final float sina = ( float ) Math.sin(radians);
       return this.rotateXLocal(cosa, sina, center);
    }
 
@@ -370,9 +366,8 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateYGlobal ( final float radians ) {
 
-      final double radd = radians;
-      final float cosa = ( float ) Math.cos(radd);
-      final float sina = ( float ) Math.sin(radd);
+      final float cosa = ( float ) Math.cos(radians);
+      final float sina = ( float ) Math.sin(radians);
       return this.rotateYGlobal(cosa, sina);
    }
 
@@ -444,9 +439,8 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateYLocal ( final float radians, final Vec3 center ) {
 
-      final double radd = radians;
-      final float cosa = ( float ) Math.cos(radd);
-      final float sina = ( float ) Math.sin(radd);
+      final float cosa = ( float ) Math.cos(radians);
+      final float sina = ( float ) Math.sin(radians);
       return this.rotateYLocal(cosa, sina, center);
    }
 
@@ -462,9 +456,8 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateZGlobal ( final float radians ) {
 
-      final double radd = radians;
-      final float cosa = ( float ) Math.cos(radd);
-      final float sina = ( float ) Math.sin(radd);
+      final float cosa = ( float ) Math.cos(radians);
+      final float sina = ( float ) Math.sin(radians);
       return this.rotateZGlobal(cosa, sina);
    }
 
@@ -536,9 +529,8 @@ public class Edge3 implements Comparable < Edge3 > {
     */
    public Edge3 rotateZLocal ( final float radians, final Vec3 center ) {
 
-      final double radd = radians;
-      final float cosa = ( float ) Math.cos(radd);
-      final float sina = ( float ) Math.sin(radd);
+      final float cosa = ( float ) Math.cos(radians);
+      final float sina = ( float ) Math.sin(radians);
       return this.rotateZLocal(cosa, sina, center);
    }
 
@@ -824,10 +816,8 @@ public class Edge3 implements Comparable < Edge3 > {
       } else if ( !this.dest.equals(edge3.dest) ) { return false; }
 
       if ( this.origin == null ) {
-         if ( edge3.origin != null ) { return false; }
-      } else if ( !this.origin.equals(edge3.origin) ) { return false; }
-
-      return true;
+          return edge3.origin == null;
+      } else return this.origin.equals(edge3.origin);
    }
 
    /**

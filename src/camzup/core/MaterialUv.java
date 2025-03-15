@@ -81,9 +81,8 @@ public abstract class MaterialUv extends Material implements IOriented2,
          if ( other.tint != null ) { return false; }
       } else if ( !this.tint.equals(other.tint) ) { return false; }
       if ( this.transform == null ) {
-         if ( other.transform != null ) { return false; }
-      } else if ( !this.transform.equals(other.transform) ) { return false; }
-      return true;
+          return other.transform == null;
+      } else return this.transform.equals(other.transform);
    }
 
    /**

@@ -74,7 +74,7 @@ public interface IColor extends Comparable < IColor > {
    /**
     * Eases between hues in the clockwise direction.
     */
-   public static final class HueCCW extends HueEasing {
+   final class HueCCW extends HueEasing {
 
       /**
        * The default constructor.
@@ -106,7 +106,7 @@ public interface IColor extends Comparable < IColor > {
    /**
     * Eases the hue in the counter-clockwise direction.
     */
-   public static final class HueCW extends HueEasing {
+   final class HueCW extends HueEasing {
 
       /**
        * The default constructor.
@@ -138,7 +138,7 @@ public interface IColor extends Comparable < IColor > {
    /**
     * An abstract parent class for hue easing functions.
     */
-   public abstract static class HueEasing implements Utils.EasingFuncPrm <
+   abstract class HueEasing implements Utils.EasingFuncPrm <
       Float > {
 
       /**
@@ -232,7 +232,7 @@ public interface IColor extends Comparable < IColor > {
    /**
     * Eases between hues by the farthest rotational direction.
     */
-   public static final class HueFar extends HueEasing {
+   final class HueFar extends HueEasing {
 
       /**
        * The default constructor.
@@ -267,7 +267,7 @@ public interface IColor extends Comparable < IColor > {
    /**
     * Eases between hues by the nearest rotational direction.
     */
-   public static final class HueNear extends HueEasing {
+   final class HueNear extends HueEasing {
 
       /**
        * The default constructor.

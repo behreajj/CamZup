@@ -29,13 +29,12 @@ public class CamZup {
    @Override
    public String toString ( ) {
 
-      final StringBuilder sb = new StringBuilder(64);
-      sb.append("{ version: ");
-      sb.append(CamZup.VERSION);
-      sb.append(", parent: ");
-      sb.append(this.parent);
-      sb.append(" }");
-      return sb.toString();
+       String sb = "{ version: " +
+               CamZup.VERSION +
+               ", parent: " +
+               this.parent +
+               " }";
+      return sb;
    }
 
    /**

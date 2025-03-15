@@ -77,12 +77,11 @@ public abstract class EntityData implements IEntityData {
    @Override
    public String toString ( ) {
 
-      final StringBuilder sb = new StringBuilder(64);
-      sb.append("{\"name\":\"");
-      sb.append(this.name);
-      sb.append('\"');
-      sb.append('}');
-      return sb.toString();
+       String sb = "{\"name\":\"" +
+               this.name +
+               '\"' +
+               '}';
+      return sb;
    }
 
    /**
@@ -95,10 +94,8 @@ public abstract class EntityData implements IEntityData {
    protected boolean equals ( final EntityData other ) {
 
       if ( this.name == null ) {
-         if ( other.name != null ) { return false; }
-      } else if ( !this.name.equals(other.name) ) { return false; }
-
-      return true;
+          return other.name == null;
+      } else return this.name.equals(other.name);
    }
 
 }

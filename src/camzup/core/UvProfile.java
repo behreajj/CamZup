@@ -8,7 +8,7 @@ public interface UvProfile {
    /**
     * Texture coordinate patterns for an arc.
     */
-   public enum Arc {
+   enum Arc {
 
       /**
        * Pattern follows the rectangular bounding area around the arc.
@@ -29,7 +29,7 @@ public interface UvProfile {
    /**
     * Texture coordinate patterns for a cube.
     */
-   public enum Cube {
+   enum Cube {
 
       /**
        * Cross pattern that wraps around cube.

@@ -1998,22 +1998,22 @@ public class Lab implements IColor {
       /**
        * The new LCH color.
        */
-      protected final Lch cLch = new Lch();
+      private final Lch cLch = new Lch();
 
       /**
        * The destination color in LCH.
        */
-      protected final Lch dLch = new Lch();
+      private final Lch dLch = new Lch();
 
       /**
        * The hue easing function.
        */
-      protected IColor.HueEasing hueFunc;
+      private IColor.HueEasing hueFunc;
 
       /**
        * The origin color in LCH.
        */
-      protected final Lch oLch = new Lch();
+      private final Lch oLch = new Lch();
 
       /**
        * The default constructor. Creates a mixer with nearest hue

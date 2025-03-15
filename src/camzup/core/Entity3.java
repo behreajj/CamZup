@@ -350,10 +350,8 @@ public class Entity3 extends Entity implements Comparable < Entity3 >,
    protected boolean equals ( final Entity3 entity ) {
 
       if ( this.transform == null ) {
-         if ( entity.transform != null ) { return false; }
-      } else if ( !this.transform.equals(entity.transform) ) { return false; }
-
-      return true;
+          return entity.transform == null;
+      } else return this.transform.equals(entity.transform);
    }
 
 }

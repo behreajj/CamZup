@@ -9,7 +9,7 @@ public abstract class Entity implements IEntity {
    /**
     * The entity's name.
     */
-   public String name = "";
+   public String name;
 
    /**
     * The default constructor. Assigns the entity's name with the hash
@@ -40,9 +40,8 @@ public abstract class Entity implements IEntity {
       if ( obj == null || this.getClass() != obj.getClass() ) { return false; }
       final Entity other = ( Entity ) obj;
       if ( this.name == null ) {
-         if ( other.name != null ) { return false; }
-      } else if ( !this.name.equals(other.name) ) { return false; }
-      return true;
+          return other.name == null;
+      } else return this.name.equals(other.name);
    }
 
    /**
@@ -60,8 +59,7 @@ public abstract class Entity implements IEntity {
    @Override
    public int hashCode ( ) {
 
-      final int hash = IUtils.HASH_BASE;
-      return hash * IUtils.HASH_MUL ^ ( this.name == null ? 0 : this.name
+       return IUtils.HASH_BASE * IUtils.HASH_MUL ^ ( this.name == null ? 0 : this.name
          .hashCode() );
    }
 
@@ -87,12 +85,10 @@ public abstract class Entity implements IEntity {
    @Override
    public String toString ( ) {
 
-      final StringBuilder sb = new StringBuilder(64);
-      sb.append("{\"name\":\"");
-      sb.append(this.name);
-      sb.append('\"');
-      sb.append('}');
-      return sb.toString();
+       return "{\"name\":\"" +
+               this.name +
+               '\"' +
+               '}';
    }
 
 }
