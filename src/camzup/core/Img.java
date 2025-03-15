@@ -710,12 +710,12 @@ public class Img {
                final double mcpl = Math.sqrt(csq + l * l);
                final double sat = mcpl != 0.0d ? Math.sqrt(csq) / mcpl : 0.0d;
 
-               if ( sat > maxSat ) maxSat = sat;
-               if ( sat < minSat ) minSat = sat;
+               if ( sat > maxSat ) { maxSat = sat; }
+               if ( sat < minSat ) { minSat = sat; }
                sumSat += sat;
 
-               if ( l > maxLight ) maxLight = l;
-               if ( l < minLight ) minLight = l;
+               if ( l > maxLight ) { maxLight = l; }
+               if ( l < minLight ) { minLight = l; }
                sumLight += l;
 
                ++sumTally;
@@ -862,16 +862,15 @@ public class Img {
    public static final Img adjustContrastChroma ( final Img source,
       final float fac, final PivotPolicy policy, final Img target ) {
 
+      final int len = source.pixels.length;
       if ( !Img.similar(source, target) ) {
          target.width = source.width;
          target.height = source.height;
-         target.pixels = new long[source.pixels.length];
+         target.pixels = new long[len];
       }
 
-      final int len = source.pixels.length;
       final float adjVerif = Float.isNaN(fac) ? 1.0f : 1.0f + Utils.clamp(fac,
          -1.0f, 1.0f);
-
       if ( Utils.approx(adjVerif, 1.0f) ) {
          System.arraycopy(source.pixels, 0, target.pixels, 0, len);
          return target;
@@ -890,14 +889,14 @@ public class Img {
          final Long srcPixelObj = srcPixel;
          if ( !uniques.containsKey(srcPixelObj) ) {
             Lab.fromHex(srcPixel, lab);
+            Lch lch = Lch.fromLab(lab, new Lch());
             if ( lab.alpha > 0.0f ) {
-               final float chroma = Lab.chroma(lab);
-               if ( chroma > maxChroma ) maxChroma = chroma;
-               if ( chroma < minChroma ) minChroma = chroma;
-               sumChroma += chroma;
+               if ( lch.c > maxChroma ) { maxChroma = lch.c; }
+               if ( lch.c < minChroma ) { minChroma = lch.c; }
+               sumChroma += lch.c;
                ++sumTally;
             }
-            uniques.put(srcPixelObj, Lch.fromLab(lab, new Lch()));
+            uniques.put(srcPixelObj, lch);
          }
       }
 
@@ -1079,13 +1078,12 @@ public class Img {
    public static final Img adjustLch ( final Img source, final Lch adjust,
       final GrayPolicy policy, final Img target ) {
 
+      final int len = source.pixels.length;
       if ( !Img.similar(source, target) ) {
          target.width = source.width;
          target.height = source.height;
          target.pixels = new long[source.pixels.length];
       }
-
-      final int len = source.pixels.length;
 
       /* @formatter:off */
       if ( Utils.approx(adjust.l, 0.0f)
@@ -2349,24 +2347,22 @@ public class Img {
             if ( lch.alpha > 0.0f ) {
                switch ( channel ) {
                   case C: {
-                     final float c = lch.c;
-                     if ( c > maxChannel ) maxChannel = c;
-                     if ( c < minChannel ) minChannel = c;
+                     if ( lch.c > maxChannel ) { maxChannel = lch.c; }
+                     if ( lch.c < minChannel ) { minChannel = lch.c; }
                   }
                      break;
 
                   case L:
                   default: {
-                     final float l = lch.l;
-                     if ( l > maxChannel ) maxChannel = l;
-                     if ( l < minChannel ) minChannel = l;
+                     if ( lch.l > maxChannel ) { maxChannel = lch.l; }
+                     if ( lch.l < minChannel ) { minChannel = lch.l; }
                   }
-               } // Channel switch.
+               }
                ++sumTally;
-            } // Alpha greater than zero.
+            }
             uniques.put(srcPixelObj, lch);
-         } // Doesn't contain pixel.
-      } // Pixels loop.
+         }
+      }
 
       final boolean useNormVerif = useNormalize && sumTally != 0 && maxChannel
          > minChannel;
@@ -3225,8 +3221,8 @@ public class Img {
             final Lab lab = Lab.fromHex(srcPixel, new Lab());
             if ( lab.alpha > 0.0f ) {
                final float light = lab.l;
-               if ( light > maxLight ) maxLight = light;
-               if ( light < minLight ) minLight = light;
+               if ( light > maxLight ) { maxLight = light; }
+               if ( light < minLight ) { minLight = light; }
                sumLight += light;
                ++sumTally;
             }
@@ -3541,6 +3537,106 @@ public class Img {
 
       return Img.paletteMap(source, palette, capacity,
          Img.DEFAULT_OCTREE_QUERY_RADIUS, target);
+   }
+
+   /**
+    * Quantizes an image in LCH. For the chroma, finds the minimum and maximum
+    * chroma in the image, normalizes the chroma, quantizes, then rescales.
+    * 
+    * @param source  the input image
+    * @param lLevels the lightness quantization
+    * @param cLevels the chroma quantization
+    * @param hLevels the hue quantization
+    * @param tLevels the alpha quantization
+    * @param target  the output image
+    *
+    * @return the quantized image
+    */
+   public static final Img quantizeLch ( final Img source, final int lLevels,
+      final int cLevels, final int hLevels, final int tLevels,
+      final Img target ) {
+
+      final int len = source.pixels.length;
+      if ( !Img.similar(source, target) ) {
+         target.width = source.width;
+         target.height = source.height;
+         target.pixels = new long[len];
+      }
+
+      float minChroma = Float.MAX_VALUE;
+      float maxChroma = -Float.MAX_VALUE;
+      final Lab lab = new Lab();
+      final HashMap < Long, Lch > uniques = new HashMap <>();
+
+      for ( int i = 0; i < len; ++i ) {
+         final long srcPixel = source.pixels[i];
+         final Long srcPixelObj = srcPixel;
+         if ( !uniques.containsKey(srcPixelObj) ) {
+            Lab.fromHex(srcPixel, lab);
+            Lch lch = Lch.fromLab(lab, new Lch());
+            if ( lab.alpha > 0.0f ) {
+               if ( lch.c > maxChroma ) { maxChroma = lch.c; }
+               if ( lch.c < minChroma ) { minChroma = lch.c; }
+            }
+            uniques.put(srcPixelObj, lch);
+         }
+      }
+
+      final boolean lIsValid = lLevels > 1;
+      final boolean cIsValid = cLevels > 1 && minChroma < maxChroma;
+      final boolean hIsValid = hLevels > 0;
+      final boolean tIsValid = tLevels > 1;
+
+      final float lInvLevels = lIsValid ? 1.0f / ( lLevels - 1.0f ) : 0.0f;
+      final float cInvLevels = cIsValid ? 1.0f / ( cLevels - 1.0f ) : 0.0f;
+      final float hInvLevels = hIsValid ? 1.0f / hLevels : 0.0f;
+      final float tInvLevels = tIsValid ? 1.0f / ( tLevels - 1.0f ) : 0.0f;
+
+      final float rangeChroma = maxChroma - minChroma;
+      final float denomChroma = cIsValid ? 1.0f / rangeChroma : 0.0f;
+
+      final Lch defLch = Lch.clearBlack(new Lch());
+      final HashMap < Long, Long > convert = new HashMap <>();
+      convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
+
+      for ( int j = 0; j < len; ++j ) {
+         final long srcPixel = source.pixels[j];
+         final Long srcPixelObj = srcPixel;
+         long trgPixel = Img.CLEAR_PIXEL;
+
+         if ( convert.containsKey(srcPixelObj) ) {
+            trgPixel = convert.get(srcPixelObj);
+         } else {
+            final Lch lch = uniques.getOrDefault(srcPixelObj, defLch);
+
+            if ( lIsValid ) {
+               lch.l = 100.0f * Utils.quantizeUnsigned(0.01f * lch.l, lLevels,
+                  lInvLevels);
+            }
+
+            if ( cIsValid ) {
+               lch.c = minChroma + rangeChroma * Utils.quantizeUnsigned( ( lch.c
+                  - minChroma ) * denomChroma, cLevels, cInvLevels);
+            }
+
+            if ( hIsValid ) {
+               lch.h = Utils.quantizeSigned(lch.h, hLevels, hInvLevels);
+            }
+
+            if ( tIsValid ) {
+               lch.alpha = Utils.quantizeUnsigned(lch.alpha, tLevels,
+                  tInvLevels);
+            }
+
+            Lab.fromLch(lch, lab);
+            trgPixel = lab.toHexLongSat();
+            convert.put(srcPixelObj, trgPixel);
+         }
+
+         target.pixels[j] = trgPixel;
+      }
+
+      return target;
    }
 
    /**
