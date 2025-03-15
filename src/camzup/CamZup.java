@@ -51,8 +51,21 @@ public class CamZup {
    public static void main ( final String[] args ) {
 
       // Rng rng = new Rng();
-      // Img a = Img.random(rng, true, new Img(3, 3));
-      // System.out.println(Utils.toDiagnosticString(Img.bytesml(a)));
+      //
+      // Img a = Img.random(rng, true, new Img(9, 9));
+      // System.out.println("A");
+      // // System.out.println(Utils.toDiagnosticString(Img.bytesml(a)));
+      // System.out.println(a);
+      //
+      // Img b = Img.random(rng, true, new Img(9, 9));
+      // // System.out.println("B");
+      // // System.out.println(Utils.toDiagnosticString(Img.bytesml(b)));
+      //
+      // Img.getRegion(a, 1, 2, 4, 5, b);
+      // System.out.println("B");
+      // // System.out.println(Utils.toDiagnosticString(Img.bytesml(b)));
+      // System.out.println(b);
+
       //
       // Lab[] palette = Img.paletteExtract(a, 256, 16, false);
       // for(Lab swatch : palette) {

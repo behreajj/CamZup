@@ -56,14 +56,7 @@ public class Img {
       // TODO: Flip All
       // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L121
 
-      // TODO: Get Region
-      // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L224
-
-      // TODO: Set Region
-      // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L490
-
-      // TODO: Replace Color Approx
-      // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L2093
+      // TODO: rotateX, rotateY
 
       this(Img.DEFAULT_WIDTH, Img.DEFAULT_HEIGHT, Img.CLEAR_PIXEL);
    }
@@ -488,6 +481,7 @@ public class Img {
          sb.append(',');
       }
       sb.append(this.pixels[lenn1]);
+
       sb.append(']');
       sb.append('}');
 
@@ -2086,6 +2080,66 @@ public class Img {
    }
 
    /**
+    * Gets a region defined by a top left and bottom right corner. May return
+    * a clear image if coordinates are invalid.
+    *
+    * @param source the input image
+    * @param xtl    the top left corner x
+    * @param ytl    the top left corner y
+    * @param xbr    the bottom right corner x
+    * @param ybr    the bottom right corner y
+    * @param target the output image
+    *
+    * @return the region
+    */
+   public static final Img getRegion ( final Img source, final int xtl,
+      final int ytl, final int xbr, final int ybr, final Img target ) {
+
+      final int wSrc = source.width;
+      final int hSrc = source.height;
+
+      int xtlVrf = xtl < 0 ? 0 : xtl > wSrc - 1 ? wSrc - 1 : xtl;
+      int ytlVrf = ytl < 0 ? 0 : ytl > hSrc - 1 ? hSrc - 1 : ytl;
+      int xbrVrf = xbr < 0 ? 0 : xbr > wSrc - 1 ? wSrc - 1 : xbr;
+      int ybrVrf = ybr < 0 ? 0 : ybr > hSrc - 1 ? hSrc - 1 : ybr;
+
+      /* Swap pixels if in wrong order. */
+      xtlVrf = xtlVrf < xbrVrf ? xtlVrf : xbrVrf;
+      ytlVrf = ytlVrf < ybrVrf ? ytlVrf : ybrVrf;
+      xbrVrf = xtlVrf > xbrVrf ? xtlVrf : xbrVrf;
+      ybrVrf = ytlVrf > ybrVrf ? ytlVrf : ybrVrf;
+
+      final int wTrg = 1 + xbrVrf - xtlVrf;
+      final int hTrg = 1 + ybrVrf - ytlVrf;
+      final long[] srcPixels = source.pixels;
+
+      if ( wTrg <= 0 || hTrg <= 0 ) {
+         target.width = wSrc;
+         target.height = hSrc;
+         target.pixels = new long[srcPixels.length];
+         return Img.clear(target);
+      }
+
+      final int trgLen = wTrg * hTrg;
+      final long[] trgPixels = new long[trgLen];
+
+      for ( int i = 0; i < trgLen; ++i ) {
+         final int xTrg = i % wTrg;
+         final int yTrg = i / wTrg;
+         final int xSrc = xtlVrf + xTrg;
+         final int ySrc = ytlVrf + yTrg;
+         final int j = xSrc + ySrc * wSrc;
+         trgPixels[i] = srcPixels[j];
+      }
+
+      target.width = wTrg;
+      target.height = hTrg;
+      target.pixels = trgPixels;
+
+      return target;
+   }
+
+   /**
     * Generates a linear gradient from an origin point to a destination point.
     * The origin and destination should be in the range [-1.0, 1.0]. The
     * scalar projection is clamped to [0.0, 1.0].
@@ -3543,9 +3597,28 @@ public class Img {
       return target;
    }
 
+   /**
+    * Replaces source pixel colors that are similar to the from color with the
+    * to color.<br>
+    * <br>
+    * The tolerance is the radius beneath which colors are considered
+    * similar.<br>
+    * <br>
+    * The alpha scalar adjusts how much alpha contributes to color difference.
+    * Set it to zero for none, or to 100 for parity with lightness.
+    *
+    * @param source      the source image
+    * @param fromColor   the color to replace
+    * @param toColor     the substitute color
+    * @param tolerance   the distance radius
+    * @param alphaScalar alpha scalar
+    * @param target      the output image
+    *
+    * @return the updated image
+    */
    public static final Img replaceColorApprox ( final Img source,
       final Lab fromColor, final Lab toColor, final float tolerance,
-      final Img target ) {
+      final float alphaScalar, final Img target ) {
 
       if ( tolerance <= 0.0f ) {
          return Img.replaceColorExact(source, fromColor, toColor, target);
@@ -3561,7 +3634,6 @@ public class Img {
       final long toPixel = toColor.toHexLongSat();
       final Lab lab = new Lab();
       final HashMap < Long, Long > convert = new HashMap <>();
-      final float alphaScalar = 100.0f;
       for ( int i = 0; i < len; ++i ) {
          final long srcPixel = source.pixels[i];
          final Long srcPixelObj = srcPixel;
@@ -3581,8 +3653,8 @@ public class Img {
    }
 
    /**
-    * Replaces the color in the source pixels that are equal to the from color
-    * with the to color.
+    * Replaces source pixel colors that are equal to the from color with the
+    * to color.
     *
     * @param source    the input image
     * @param fromColor the color to replace
@@ -3594,8 +3666,6 @@ public class Img {
    public static final Img replaceColorExact ( final Img source,
       final Lab fromColor, final Lab toColor, final Img target ) {
 
-      // TODO: Option to ignore alpha?
-
       final int len = source.pixels.length;
       if ( !Img.similar(source, target) ) {
          target.width = source.width;
@@ -3605,10 +3675,25 @@ public class Img {
 
       final long frPixel = fromColor.toHexLongSat();
       final long toPixel = toColor.toHexLongSat();
+
+      // TODO: What if to or from color is CLEAR_PIXEL?
+      // if ( ignoreAlpha ) {
+      // final long frPixelMasked = frPixel & LAB_MASK;
+      // final long toPixelMasked = toPixel & LAB_MASK;
+      // for ( int i = 0; i < len; ++i ) {
+      // final long srcPixel = source.pixels[i];
+      // final long srcPixelAlpha = srcPixel & T_MASK;
+      // if ( ( srcPixelAlpha ) != 0L ) {
+      // target.pixels[i] = ( srcPixel & LAB_MASK ) == frPixelMasked
+      // ? ( srcPixelAlpha | toPixelMasked ) : srcPixel;
+      // }
+      // }
+      // } else {
       for ( int i = 0; i < len; ++i ) {
          final long srcPixel = source.pixels[i];
          target.pixels[i] = srcPixel == frPixel ? toPixel : srcPixel;
       }
+      // }
 
       return target;
    }
@@ -4043,6 +4128,115 @@ public class Img {
          new Img(w, h, bPixels)
       };
       /* @formatter:on */
+   }
+
+   /**
+    * Sets a region of an image's pixels.
+    *
+    * @param read  the read image
+    * @param write the write image
+    *
+    * @return the write image
+    */
+   public static final Img setRegion ( final Img read, final Img write ) {
+
+      return setRegion(read, 0, 0, read.width - 1, read.height - 1, write);
+   }
+
+   /**
+    * Sets a region of an image's pixels.
+    *
+    * @param read   the read image
+    * @param xtlRd  the top left corner x
+    * @param ytlRd  the top left corner y
+    * @param xbrRd  the bottom right corner x
+    * @param ybrRd  the bottom right corner y
+    * @param write  the write image
+    *
+    * @return the write image
+    */
+   public static final Img setRegion ( final Img read, final int xtlRd,
+      final int ytlRd, final int xbrRd, final int ybrRd, final Img write ) {
+
+      return setRegion(read, xtlRd, ytlRd, xbrRd, ybrRd, 0, 0, write.width - 1,
+         write.height - 1, write);
+   }
+
+   /**
+    * Sets a region of an image's pixels.
+    *
+    * @param read   the read image
+    * @param xtlRd  the top left corner x
+    * @param ytlRd  the top left corner y
+    * @param xbrRd  the bottom right corner x
+    * @param ybrRd  the bottom right corner y
+    * @param xtlWrt the top left corner x
+    * @param ytlWrt the top left corner y
+    * @param xbrWrt the bottom right corner x
+    * @param ybrWrt the bottom right corner y
+    * @param write  the write image
+    *
+    * @return the write image
+    */
+   public static final Img setRegion ( final Img read, final int xtlRd,
+      final int ytlRd, final int xbrRd, final int ybrRd, final int xtlWrt,
+      final int ytlWrt, final int xbrWrt, final int ybrWrt, final Img write ) {
+
+      // TODO: TEST
+
+      final int wImgWr = write.width;
+      final int hImgWr = write.height;
+
+      int xtlWrVrf = xtlWrt < 0 ? 0 : xtlWrt > wImgWr - 1 ? wImgWr - 1 : xtlWrt;
+      int ytlWrVrf = ytlWrt < 0 ? 0 : ytlWrt > hImgWr - 1 ? hImgWr - 1 : ytlWrt;
+      int xbrWrVrf = xbrWrt < 0 ? 0 : xbrWrt > wImgWr - 1 ? wImgWr - 1 : xbrWrt;
+      int ybrWrVrf = ybrWrt < 0 ? 0 : ybrWrt > hImgWr - 1 ? hImgWr - 1 : ybrWrt;
+
+      xtlWrVrf = xtlWrVrf < xbrWrVrf ? xtlWrVrf : xbrWrVrf;
+      ytlWrVrf = ytlWrVrf < ybrWrVrf ? ytlWrVrf : ybrWrVrf;
+      xbrWrVrf = xtlWrVrf > xbrWrVrf ? xtlWrVrf : xbrWrVrf;
+      ybrWrVrf = ytlWrVrf > ybrWrVrf ? ytlWrVrf : ybrWrVrf;
+
+      final int wrWidth = 1 + xbrWrVrf - xtlWrVrf;
+      final int wrHeight = 1 + ybrWrVrf - ytlWrVrf;
+
+      final int wImgRd = read.width;
+      final int hImgRd = read.height;
+
+      int xtlRdVrf = xtlRd < 0 ? 0 : xtlRd > wImgRd - 1 ? wImgRd - 1 : xtlRd;
+      int ytlRdVrf = ytlRd < 0 ? 0 : ytlRd > hImgRd - 1 ? hImgRd - 1 : ytlRd;
+      int xbrRdVrf = xbrRd < 0 ? 0 : xbrRd > wImgRd - 1 ? wImgRd - 1 : xbrRd;
+      int ybrRdVrf = ybrRd < 0 ? 0 : ybrRd > hImgRd - 1 ? hImgRd - 1 : ybrRd;
+
+      xtlRdVrf = xtlRdVrf < xbrRdVrf ? xtlRdVrf : xbrRdVrf;
+      ytlRdVrf = ytlRdVrf < ybrRdVrf ? ytlRdVrf : ybrRdVrf;
+      xbrRdVrf = xtlRdVrf > xbrRdVrf ? xtlRdVrf : xbrRdVrf;
+      ybrRdVrf = ytlRdVrf > ybrRdVrf ? ytlRdVrf : ybrRdVrf;
+
+      final int rdWidth = 1 + xbrRdVrf - xtlRdVrf;
+      final int rdHeight = 1 + ybrRdVrf - ytlRdVrf;
+
+      final int regWidth = rdWidth < wrWidth ? rdWidth : wrWidth;
+      final int regHeight = rdHeight < wrHeight ? rdHeight : wrHeight;
+      if ( regWidth <= 0 || regHeight <= 0 ) { return write; }
+
+      final int regArea = regWidth * regHeight;
+      for ( int i = 0; i < regArea; ++i ) {
+         final int xReg = i % regWidth;
+         final int yReg = i / regWidth;
+
+         final int xWr = xtlWrVrf + xReg;
+         final int yWr = ytlWrVrf + yReg;
+         final int j = yWr * wImgWr + xWr;
+
+         final int xRd = xtlRdVrf + xReg;
+         final int yRd = ytlRdVrf + yReg;
+         final int k = yRd * wImgRd + xRd;
+
+         write.pixels[j] = read.pixels[k];
+      }
+
+      return write;
    }
 
    /**
