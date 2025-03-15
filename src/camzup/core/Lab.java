@@ -2008,7 +2008,7 @@ public class Lab implements IColor {
       /**
        * The hue easing function.
        */
-      private IColor.HueEasing hueFunc;
+      private final IColor.HueEasing hueFunc;
 
       /**
        * The origin color in LCH.

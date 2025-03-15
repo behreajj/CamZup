@@ -284,7 +284,6 @@ public class Edge2 implements Comparable < Edge2 > {
    public Edge2 scaleLocal ( final float scalar, final Vec2 center ) {
 
       if ( scalar != 0.0f ) {
-
          final Vec2 coOrig = this.origin.coord;
          final Vec2 coDest = this.dest.coord;
 
@@ -322,7 +321,6 @@ public class Edge2 implements Comparable < Edge2 > {
    public Edge2 scaleLocal ( final Vec2 scalar, final Vec2 center ) {
 
       if ( Vec2.all(scalar) ) {
-
          final Vec2 coOrig = this.origin.coord;
          final Vec2 coDest = this.dest.coord;
 
@@ -479,9 +477,8 @@ public class Edge2 implements Comparable < Edge2 > {
          if ( edge2.dest != null ) { return false; }
       } else if ( !this.dest.equals(edge2.dest) ) { return false; }
 
-      if ( this.origin == null ) {
-          return edge2.origin == null;
-      } else return this.origin.equals(edge2.origin);
+      if ( this.origin == null ) { return edge2.origin == null; }
+      return this.origin.equals(edge2.origin);
    }
 
    /**

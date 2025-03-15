@@ -619,7 +619,6 @@ public class Edge3 implements Comparable < Edge3 > {
    public Edge3 scaleLocal ( final float scalar, final Vec3 center ) {
 
       if ( scalar != 0.0f ) {
-
          final Vec3 coOrig = this.origin.coord;
          final Vec3 coDest = this.dest.coord;
 
@@ -656,7 +655,6 @@ public class Edge3 implements Comparable < Edge3 > {
    public Edge3 scaleLocal ( final Vec3 scalar, final Vec3 center ) {
 
       if ( Vec3.all(scalar) ) {
-
          final Vec3 coOrig = this.origin.coord;
          final Vec3 coDest = this.dest.coord;
 
@@ -815,9 +813,8 @@ public class Edge3 implements Comparable < Edge3 > {
          if ( edge3.dest != null ) { return false; }
       } else if ( !this.dest.equals(edge3.dest) ) { return false; }
 
-      if ( this.origin == null ) {
-          return edge3.origin == null;
-      } else return this.origin.equals(edge3.origin);
+      if ( this.origin == null ) { return edge3.origin == null; }
+      return this.origin.equals(edge3.origin);
    }
 
    /**

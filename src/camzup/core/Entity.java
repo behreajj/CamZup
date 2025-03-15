@@ -39,9 +39,8 @@ public abstract class Entity implements IEntity {
       if ( this == obj ) { return true; }
       if ( obj == null || this.getClass() != obj.getClass() ) { return false; }
       final Entity other = ( Entity ) obj;
-      if ( this.name == null ) {
-          return other.name == null;
-      } else return this.name.equals(other.name);
+      if ( this.name == null ) { return other.name == null; }
+      return this.name.equals(other.name);
    }
 
    /**
@@ -59,8 +58,8 @@ public abstract class Entity implements IEntity {
    @Override
    public int hashCode ( ) {
 
-       return IUtils.HASH_BASE * IUtils.HASH_MUL ^ ( this.name == null ? 0 : this.name
-         .hashCode() );
+      return IUtils.HASH_BASE * IUtils.HASH_MUL ^ ( this.name == null ? 0
+         : this.name.hashCode() );
    }
 
    /**
@@ -85,10 +84,7 @@ public abstract class Entity implements IEntity {
    @Override
    public String toString ( ) {
 
-       return "{\"name\":\"" +
-               this.name +
-               '\"' +
-               '}';
+      return "{\"name\":\"" + this.name + '\"' + '}';
    }
 
 }

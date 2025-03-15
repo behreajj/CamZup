@@ -89,9 +89,8 @@ public class MaterialPImage extends MaterialUv {
          return false;
       }
       final MaterialPImage other = ( MaterialPImage ) obj;
-      if ( this.texture == null ) {
-          return other.texture == null;
-      } else return this.texture.equals(other.texture);
+      if ( this.texture == null ) { return other.texture == null; }
+      return this.texture.equals(other.texture);
    }
 
    /**
@@ -167,16 +166,9 @@ public class MaterialPImage extends MaterialUv {
    @Override
    public String toString ( final int places ) {
 
-       String sb = "{\"name\":\"" +
-               this.name +
-               "\",\"tint\":" +
-               this.tint.toString(places) +
-               ",\"texture\":" +
-               ZImage.toString(this.texture) +
-               ",\"transform\":" +
-               this.transform.toString(places) +
-               '}';
-      return sb;
+      return "{\"name\":\"" + this.name + "\",\"tint\":" + this.tint.toString(
+         places) + ",\"texture\":" + ZImage.toString(this.texture)
+         + ",\"transform\":" + this.transform.toString(places) + '}';
    }
 
 }

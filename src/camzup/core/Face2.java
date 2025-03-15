@@ -619,8 +619,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
          final Vec2 curr = verts[i].coord;
          final Vec2 next = verts[ ( i + 1 ) % len].coord;
 
+         /* @formatter:off */
          if ( curr.y <= point.y && next.y > point.y ) {
-            /* @formatter:off */
             final float eval = ( next.x - curr.x ) * ( point.y - curr.y ) -
                                ( point.x - curr.x ) * ( next.y - curr.y );
             if ( eval > 0.0f ) { ++wn; }
@@ -628,8 +628,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
             final float eval = ( next.x - curr.x ) * ( point.y - curr.y ) -
                                ( point.x - curr.x ) * ( next.y - curr.y );
             if ( eval < 0.0f ) { --wn; }
-            /* @formatter:on */
          }
+         /* @formatter:on */
       }
 
       return wn > 0;

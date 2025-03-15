@@ -46,17 +46,11 @@ public class Img {
       // a mask and shift would be outside the for loop, e.g.,
       // mask = useLight ? L_MASK : T_MASK .
 
-      // TODO: Option to quantize image? Maybe in rgb or maybe the light
-      // channel only? Might have to quantize a and b by their relative
-      // min and max.
-
       // TODO: Expand to pow2
       // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L53
 
       // TODO: Flip All
       // https://github.com/behreajj/CSharpWork/blob/master/Pixels.cs#L121
-
-      // TODO: rotateX, rotateY
 
       this(Img.DEFAULT_WIDTH, Img.DEFAULT_HEIGHT, Img.CLEAR_PIXEL);
    }
@@ -4140,26 +4134,26 @@ public class Img {
     */
    public static final Img setRegion ( final Img read, final Img write ) {
 
-      return setRegion(read, 0, 0, read.width - 1, read.height - 1, write);
+      return Img.setRegion(read, 0, 0, read.width - 1, read.height - 1, write);
    }
 
    /**
     * Sets a region of an image's pixels.
     *
-    * @param read   the read image
-    * @param xtlRd  the top left corner x
-    * @param ytlRd  the top left corner y
-    * @param xbrRd  the bottom right corner x
-    * @param ybrRd  the bottom right corner y
-    * @param write  the write image
+    * @param read  the read image
+    * @param xtlRd the top left corner x
+    * @param ytlRd the top left corner y
+    * @param xbrRd the bottom right corner x
+    * @param ybrRd the bottom right corner y
+    * @param write the write image
     *
     * @return the write image
     */
    public static final Img setRegion ( final Img read, final int xtlRd,
       final int ytlRd, final int xbrRd, final int ybrRd, final Img write ) {
 
-      return setRegion(read, xtlRd, ytlRd, xbrRd, ybrRd, 0, 0, write.width - 1,
-         write.height - 1, write);
+      return Img.setRegion(read, xtlRd, ytlRd, xbrRd, ybrRd, 0, 0, write.width
+         - 1, write.height - 1, write);
    }
 
    /**
@@ -4411,7 +4405,6 @@ public class Img {
          if ( convert.containsKey(srcPixelObj) ) {
             trgPixel = convert.get(srcPixelObj);
          } else {
-            // TODO: You might be able to add these as longs.
             Lab.fromHex(srcPixel, lab);
             lab.l = preserveLight ? lab.l : u * lab.l + t * tint.l;
             lab.a = u * lab.a + t * tint.a;
@@ -4525,12 +4518,11 @@ public class Img {
       final MaterialSolid[] result = new MaterialSolid[uniquesLen];
       final Iterator < Long > itr = uniqueColors.iterator();
       for ( int j = 0; itr.hasNext(); ++j ) {
-         final long hex = itr.next();
-         Lab.fromHex(hex, lab);
+         Lab.fromHex(itr.next(), lab);
          Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
 
          final MaterialSolid material = new MaterialSolid();
-         material.setStroke(0x00000000);
+         material.setStroke(false);
          material.setFill(srgb);
          material.setName("Material." + Rgb.toHexString(srgb));
          result[j] = material;

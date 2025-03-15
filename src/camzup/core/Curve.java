@@ -118,13 +118,8 @@ public abstract class Curve extends EntityData implements ICurve {
    @Override
    public String toString ( ) {
 
-       return "{\"name\":\"" +
-               this.name +
-               "\",\"closedLoop\":" +
-               this.closedLoop +
-               ",\"materialIndex\":" +
-               this.materialIndex +
-               '}';
+      return "{\"name\":\"" + this.name + "\",\"closedLoop\":" + this.closedLoop
+         + ",\"materialIndex\":" + this.materialIndex + '}';
    }
 
 }

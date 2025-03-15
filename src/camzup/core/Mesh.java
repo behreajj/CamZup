@@ -279,13 +279,8 @@ public abstract class Mesh extends EntityData implements IMesh {
    @Override
    public String toString ( ) {
 
-       String sb = "{ name: \"" +
-               this.name +
-               "\", materialIndex: " +
-               this.materialIndex +
-               ' ' +
-               '}';
-      return sb;
+      return "{ name: \"" + this.name + "\", materialIndex: "
+         + this.materialIndex + ' ' + '}';
    }
 
    /**

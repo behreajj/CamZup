@@ -29,12 +29,7 @@ public class CamZup {
    @Override
    public String toString ( ) {
 
-       String sb = "{ version: " +
-               CamZup.VERSION +
-               ", parent: " +
-               this.parent +
-               " }";
-      return sb;
+      return "{ version: " + CamZup.VERSION + ", parent: " + this.parent + " }";
    }
 
    /**

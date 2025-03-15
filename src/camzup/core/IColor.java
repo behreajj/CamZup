@@ -138,8 +138,7 @@ public interface IColor extends Comparable < IColor > {
    /**
     * An abstract parent class for hue easing functions.
     */
-   abstract class HueEasing implements Utils.EasingFuncPrm <
-      Float > {
+   abstract class HueEasing implements Utils.EasingFuncPrm < Float > {
 
       /**
        * The modulated destination hue.

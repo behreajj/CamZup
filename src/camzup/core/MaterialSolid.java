@@ -197,11 +197,9 @@ public class MaterialSolid extends Material {
 
       final int prime = 31;
       int result = super.hashCode();
-
       result = prime * result + ( this.useFill ? 1231 : 1237 );
       result = prime * result + ( this.fill == null ? 0 : this.fill
          .hashCode() );
-
       result = prime * result + ( this.useStroke ? 1231 : 1237 );
       result = prime * result + ( this.stroke == null ? 0 : this.stroke
          .hashCode() );

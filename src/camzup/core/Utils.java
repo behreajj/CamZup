@@ -74,7 +74,8 @@ public abstract class Utils implements IUtils {
     */
    public static final int and ( final float a, final float b ) {
 
-      return ( a != 0.0f && a == a ? 1 : 0 ) & ( b != 0.0f && b == b ? 1 : 0 );
+      return ( a != 0.0f && !Float.isNaN(a) ? 1 : 0 ) & ( b != 0.0f && !Float
+         .isNaN(a) ? 1 : 0 );
    }
 
    /**
@@ -1028,11 +1029,7 @@ public abstract class Utils implements IUtils {
    public static final float max ( final float... fs ) {
 
       float max = -Float.MAX_VALUE;
-       for (float f : fs) {
-           if (f > max) {
-               max = f;
-           }
-       }
+      for ( final float f : fs ) { if ( f > max ) { max = f; } }
       return max;
    }
 
@@ -1093,11 +1090,7 @@ public abstract class Utils implements IUtils {
    public static final float min ( final float... fs ) {
 
       float min = Float.MAX_VALUE;
-       for (float f : fs) {
-           if (f < min) {
-               min = f;
-           }
-       }
+      for ( final float f : fs ) { if ( f < min ) { min = f; } }
       return min;
    }
 
@@ -1294,7 +1287,7 @@ public abstract class Utils implements IUtils {
     */
    public static final int not ( final float v ) {
 
-      return v != 0.0f && v == v ? 0 : 1;
+      return v != 0.0f && !Float.isNaN(v) ? 0 : 1;
    }
 
    /**
@@ -1309,7 +1302,8 @@ public abstract class Utils implements IUtils {
     */
    public static final int or ( final float a, final float b ) {
 
-      return ( a != 0.0f && a == a ? 1 : 0 ) | ( b != 0.0f && b == b ? 1 : 0 );
+      return ( a != 0.0f && !Float.isNaN(a) ? 1 : 0 ) | ( b != 0.0f && !Float
+         .isNaN(a) ? 1 : 0 );
    }
 
    /**
@@ -1897,7 +1891,8 @@ public abstract class Utils implements IUtils {
     */
    public static final int xor ( final float a, final float b ) {
 
-      return ( a != 0.0f && a == a ? 1 : 0 ) ^ ( b != 0.0f && b == b ? 1 : 0 );
+      return ( a != 0.0f && !Float.isNaN(a) ? 1 : 0 ) ^ ( b != 0.0f && !Float
+         .isNaN(b) ? 1 : 0 );
    }
 
    /**
@@ -1972,7 +1967,7 @@ public abstract class Utils implements IUtils {
          default:
       }
 
-      if ( places < 0 ) { return sb.append((int) v); }
+      if ( places < 0 ) { return sb.append(( int ) v); }
       if ( places < 1 ) { return sb.append(Float.toString(( int ) v)); }
 
       final float sign = Float.intBitsToFloat(raw & -2147483648 | 1065353216);
@@ -2471,10 +2466,9 @@ public abstract class Utils implements IUtils {
       protected abstract float applyPartial ( final float step );
 
       /**
-       * A helper function that mods the origin and
-       * destination by the range. It then finds the signed distance between the
-       * mod origin and destination . Lastly, it evaluates which of the two is
-       * greater than the other.
+       * A helper function that mods the origin and destination by the range. It
+       * then finds the signed distance between the mod origin and destination .
+       * Lastly, it evaluates which of the two is greater than the other.
        *
        * @param orig the origin value
        * @param dest the destination value

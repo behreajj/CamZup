@@ -821,7 +821,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                this.normals[idcsOrig[2]], this.coords[idcsDest[0]],
                this.texCoords[idcsDest[1]], this.normals[idcsDest[2]]);
 
-            if (!result.contains(trial)) {
+            if ( !result.contains(trial) ) {
                result.add(trial);
                trial = new Edge3();
             }
@@ -965,7 +965,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
             trial.set(this.coords[f[0]], this.texCoords[f[1]],
                this.normals[f[2]]);
 
-            if (!result.contains(trial)) {
+            if ( !result.contains(trial) ) {
                result.add(trial);
                trial = new Vert3();
             }
@@ -2509,7 +2509,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
                final String query = orig + ", " + dest;
                final String reverse = dest + ", " + orig;
 
-               if (!edgesList.contains(query) && !edgesList.contains(reverse)) {
+               if ( !edgesList.contains(query) && !edgesList.contains(
+                  reverse) ) {
                   // edgesList.add(origin < dest ? query : reverse);
                   edgesList.add(query);
                }

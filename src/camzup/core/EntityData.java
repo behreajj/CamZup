@@ -77,11 +77,7 @@ public abstract class EntityData implements IEntityData {
    @Override
    public String toString ( ) {
 
-       String sb = "{\"name\":\"" +
-               this.name +
-               '\"' +
-               '}';
-      return sb;
+      return "{\"name\":\"" + this.name + '\"' + '}';
    }
 
    /**
@@ -93,9 +89,8 @@ public abstract class EntityData implements IEntityData {
     */
    protected boolean equals ( final EntityData other ) {
 
-      if ( this.name == null ) {
-          return other.name == null;
-      } else return this.name.equals(other.name);
+      if ( this.name == null ) { return other.name == null; }
+      return this.name.equals(other.name);
    }
 
 }

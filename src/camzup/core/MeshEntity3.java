@@ -615,8 +615,9 @@ public class MeshEntity3 extends Entity3 implements Iterable < Mesh3 >,
       target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
 
       final Iterator < Mesh3 > itr = me.iterator();
-       while ( itr.hasNext() ) {
-         Mesh3.accumMinMax(itr.next(), target.min, target.max, me.transform, co);
+      while ( itr.hasNext() ) {
+         Mesh3.accumMinMax(itr.next(), target.min, target.max, me.transform,
+            co);
       }
 
       return target;

@@ -253,9 +253,8 @@ public class Entity2 extends Entity implements Comparable < Entity2 >,
     */
    protected boolean equals ( final Entity2 entity ) {
 
-      if ( this.transform == null ) {
-          return entity.transform == null;
-      } else return this.transform.equals(entity.transform);
+      if ( this.transform == null ) { return entity.transform == null; }
+      return this.transform.equals(entity.transform);
    }
 
 }

@@ -147,9 +147,8 @@ public class Vert2 implements Comparable < Vert2 > {
          if ( vert2.coord != null ) { return false; }
       } else if ( !this.coord.equals(vert2.coord) ) { return false; }
 
-      if ( this.texCoord == null ) {
-          return vert2.texCoord == null;
-      } else return this.texCoord.equals(vert2.texCoord);
+      if ( this.texCoord == null ) { return vert2.texCoord == null; }
+      return this.texCoord.equals(vert2.texCoord);
    }
 
    /**
