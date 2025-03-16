@@ -849,7 +849,7 @@ public class Img {
    }
 
    /**
-    * Adjusts an image's he chroma contrast by a factor. The adjustment factor
+    * Adjusts an image's chroma contrast by a factor. The adjustment factor
     * is expected to be in [-1.0, 1.0].
     *
     * @param source the source image
@@ -1829,7 +1829,7 @@ public class Img {
    }
 
    /**
-    * Creates )a checker pattern in an image. For making a background canvas
+    * Creates a checker pattern in an image. For making a background canvas
     * that signals transparency in the pixels of an image layer(s) above it.
     *
     * @param a      the first color
