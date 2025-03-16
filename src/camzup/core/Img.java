@@ -3681,7 +3681,7 @@ public class Img {
       for ( int i = 0; i < len; ++i ) {
          final long c = source.pixels[i];
          final long t16Src = c >> Img.T_SHIFT & 0xffffL;
-         final long t16Trg = t16Src < 0x80000L ? 0x0000L : 0xffffL;
+         final long t16Trg = t16Src < 0x8000L ? 0x0000L : 0xffffL;
          target.pixels[i] = t16Trg << Img.T_SHIFT | c & Img.LAB_MASK;
       }
       return target;
