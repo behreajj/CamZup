@@ -4786,7 +4786,7 @@ public class Img {
 
       if ( wSrc < 2 && hSrc < 2 ) {
          final long[] trgPixels = new long[srcLen];
-         System.arraycopy(source, 0, trgPixels, 0, srcLen);
+         System.arraycopy(srcPixels, 0, trgPixels, 0, srcLen);
          target.width = wSrc;
          target.height = hSrc;
          target.pixels = trgPixels;
@@ -4865,7 +4865,7 @@ public class Img {
       final int hTrg = 1 + bottom - top;
       if ( wTrg < 1 || hTrg < 1 ) {
          final long[] trgPixels = new long[srcLen];
-         System.arraycopy(source, 0, trgPixels, 0, srcLen);
+         System.arraycopy(srcPixels, 0, trgPixels, 0, srcLen);
          target.width = wSrc;
          target.height = hSrc;
          target.pixels = trgPixels;
