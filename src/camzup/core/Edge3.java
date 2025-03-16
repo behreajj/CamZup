@@ -805,6 +805,8 @@ public class Edge3 implements Comparable < Edge3 > {
     * Tests this edge for equivalence with another. To be true, the edges'
     * origins must be equal and their destinations must be equal.
     *
+    * @param edge3 the comparisand
+    *
     * @return the evaluation
     */
    protected boolean equalsDirected ( final Edge3 edge3 ) {

@@ -1137,8 +1137,9 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       /*
        * Find the magnitude of the curve handles (or control points for each
-       * knot). Multiply toStep by arcLen1 to find the arc-length that each curve
-       * has to cover, then divide by four. This is then supplied to tangent.
+       * knot). Multiply toStep by arcLen1 to find the arc-length that each
+       * curve has to cover, then divide by four. This is then supplied to
+       * tangent.
        */
       final float hndtn = 0.25f * toStep * arcLen1;
 

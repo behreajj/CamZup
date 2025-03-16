@@ -1725,50 +1725,19 @@ public class Rgb implements IColor {
          final float eg = this.lrgb.g * ToneMapHable.exposureBias;
          final float eb = this.lrgb.b * ToneMapHable.exposureBias;
 
-         final float xr = ToneMapHable.whiteScale * ( ( er * ( ToneMapHable.A
-            * er + ToneMapHable.C * ToneMapHable.B ) + ToneMapHable.D
-               * ToneMapHable.E ) / ( er * ( ToneMapHable.A * er
-                  + ToneMapHable.B ) + ToneMapHable.D * ToneMapHable.F )
-            - ToneMapHable.E / ToneMapHable.F );
-         final float xg = ToneMapHable.whiteScale * ( ( eg * ( ToneMapHable.A
-            * eg + ToneMapHable.C * ToneMapHable.B ) + ToneMapHable.D
-               * ToneMapHable.E ) / ( eg * ( ToneMapHable.A * eg
-                  + ToneMapHable.B ) + ToneMapHable.D * ToneMapHable.F )
-            - ToneMapHable.E / ToneMapHable.F );
-         final float xb = ToneMapHable.whiteScale * ( ( eb * ( ToneMapHable.A
-            * eb + ToneMapHable.C * ToneMapHable.B ) + ToneMapHable.D
-               * ToneMapHable.E ) / ( eb * ( ToneMapHable.A * eb
-                  + ToneMapHable.B ) + ToneMapHable.D * ToneMapHable.F )
-            - ToneMapHable.E / ToneMapHable.F );
+         final float xr = ToneMapHable.whiteScale * ( ( er * ( 0.15f * er + 0.1f
+            * 0.5f ) + 0.2f * 0.02f ) / ( er * ( 0.15f * er + 0.5f ) + 0.2f
+               * 0.3f ) - 0.02f / 0.3f );
+         final float xg = ToneMapHable.whiteScale * ( ( eg * ( 0.15f * eg + 0.1f
+            * 0.5f ) + 0.2f * 0.02f ) / ( eg * ( 0.15f * eg + 0.5f ) + 0.2f
+               * 0.3f ) - 0.02f / 0.3f );
+         final float xb = ToneMapHable.whiteScale * ( ( eb * ( 0.15f * eb + 0.1f
+            * 0.5f ) + 0.2f * 0.02f ) / ( eb * ( 0.15f * eb + 0.5f ) + 0.2f
+               * 0.3f ) - 0.02f / 0.3f );
          target.set(xr, xg, xb, this.lrgb.alpha);
 
          return Rgb.lRgbTosRgb(Rgb.clamp01(target, target), false, target);
       }
-
-      /**
-       * Constant A.
-       */
-      public static final float A = 0.15f;
-
-      /**
-       * Constant B.
-       */
-      public static final float B = 0.50f;
-
-      /**
-       * Constant C.
-       */
-      public static final float C = 0.10f;
-
-      /**
-       * Constant D.
-       */
-      public static final float D = 0.20f;
-
-      /**
-       * Constant E.
-       */
-      public static final float E = 0.02f;
 
       /**
        * Exposure bias.
@@ -1776,24 +1745,11 @@ public class Rgb implements IColor {
       public static final float exposureBias = 2.0f;
 
       /**
-       * Constant F.
-       */
-      public static final float F = 0.30f;
-
-      /**
-       * Constant W.
-       */
-      public static final float W = 11.2f;
-
-      /**
        * White scale.
        */
-      public static final float whiteScale = 1.0f / ( ( ToneMapHable.W
-         * ( ToneMapHable.A * ToneMapHable.W + ToneMapHable.C * ToneMapHable.B )
-         + ToneMapHable.D * ToneMapHable.E ) / ( ToneMapHable.W
-            * ( ToneMapHable.A * ToneMapHable.W + ToneMapHable.B )
-            + ToneMapHable.D * ToneMapHable.F ) - ToneMapHable.E
-               / ToneMapHable.F );
+      public static final float whiteScale = 1.0f / ( ( 11.2f * ( 0.15f * 11.2f
+         + 0.1f * 0.5f ) + 0.2f * 0.02f ) / ( 11.2f * ( 0.15f * 11.2f + 0.5f )
+            + 0.2f * 0.3f ) - 0.02f / 0.3f );
 
    }
 

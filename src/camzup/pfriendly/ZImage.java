@@ -226,6 +226,7 @@ public class ZImage extends PImage {
       target.width = source.width;
       target.height = source.height;
       target.updatePixels();
+
       return target;
    }
 
@@ -237,13 +238,12 @@ public class ZImage extends PImage {
     * @param target the target image
     *
     * @return the image
-    *
-    * @see ZImage#fill(int, int[])
     */
    public static PImage fill ( final int c, final PImage target ) {
 
       target.loadPixels();
-      ZImage.fill(c, target.pixels);
+      final int len = target.pixels.length;
+      for ( int i = 0; i < len; ++i ) { target.pixels[i] = c; }
       target.format = PConstants.ARGB;
       target.updatePixels();
 
@@ -800,26 +800,21 @@ public class ZImage extends PImage {
 
       source.loadPixels();
       target.loadPixels();
-      ZImage.wrap(source.pixels, source.pixelWidth, source.pixelHeight, dx, dy,
-         target.pixelWidth, target.pixels);
+      final int wSrc = source.pixelWidth;
+      final int hSrc = source.pixelHeight;
+      final int wTrg = target.pixelWidth;
+      final int trgLen = target.pixels.length;
+      for ( int i = 0; i < trgLen; ++i ) {
+         int yMod = ( i / wTrg + dy ) % hSrc;
+         if ( ( yMod ^ hSrc ) < 0 && yMod != 0 ) { yMod += hSrc; }
+
+         int xMod = ( i % wTrg - dx ) % wSrc;
+         if ( ( xMod ^ wSrc ) < 0 && xMod != 0 ) { xMod += wSrc; }
+
+         target.pixels[i] = source.pixels[xMod + wSrc * yMod];
+      }
       target.format = source.format;
       target.updatePixels();
-
-      return target;
-   }
-
-   /**
-    * Fills the pixels target array with a color.
-    *
-    * @param c      the fill color
-    * @param target the target pixels
-    *
-    * @return the filled pixels
-    */
-   protected static int[] fill ( final int c, final int[] target ) {
-
-      final int len = target.length;
-      for ( int i = 0; i < len; ++i ) { target[i] = c; }
 
       return target;
    }
@@ -897,40 +892,6 @@ public class ZImage extends PImage {
                target[i] = srcHex;
             }
          }
-      }
-
-      return target;
-   }
-
-   /**
-    * Blits a source image's pixels onto a target image's pixels, using
-    * integer floor modulo to wrap the source image. The source image can be
-    * offset horizontally and/or vertically, creating the illusion of infinite
-    * background.
-    *
-    * @param source the source pixels
-    * @param wSrc   the source image width
-    * @param hSrc   the source image height
-    * @param dx     the horizontal pixel offset
-    * @param dy     the vertical pixel offset
-    * @param wTrg   the target image width
-    * @param target the target pixels
-    *
-    * @return the wrapped pixels
-    */
-   protected static final int[] wrap ( final int[] source, final int wSrc,
-      final int hSrc, final int dx, final int dy, final int wTrg,
-      final int[] target ) {
-
-      final int trgLen = target.length;
-      for ( int i = 0; i < trgLen; ++i ) {
-         int yMod = ( i / wTrg + dy ) % hSrc;
-         if ( ( yMod ^ hSrc ) < 0 && yMod != 0 ) { yMod += hSrc; }
-
-         int xMod = ( i % wTrg - dx ) % wSrc;
-         if ( ( xMod ^ wSrc ) < 0 && xMod != 0 ) { xMod += wSrc; }
-
-         target[i] = source[xMod + wSrc * yMod];
       }
 
       return target;

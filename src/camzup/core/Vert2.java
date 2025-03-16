@@ -139,6 +139,8 @@ public class Vert2 implements Comparable < Vert2 > {
    /**
     * Tests this vertex for equivalence with another.
     *
+    * @param vert2 the comparisand
+    *
     * @return the evaluation
     */
    protected boolean equals ( final Vert2 vert2 ) {

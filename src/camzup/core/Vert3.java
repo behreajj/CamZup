@@ -155,6 +155,8 @@ public class Vert3 implements Comparable < Vert3 > {
    /**
     * Tests this vertex for equivalence with another.
     *
+    * @param vert3 the comparisand
+    *
     * @return the evaluation
     */
    protected boolean equals ( final Vert3 vert3 ) {

@@ -469,6 +469,8 @@ public class Edge2 implements Comparable < Edge2 > {
     * Tests this edge for equivalence with another. To be true the edges'
     * origins must be equal and their destinations must be equal.
     *
+    * @param edge2 the comparisand
+    *
     * @return the evaluation
     */
    protected boolean equalsDirected ( final Edge2 edge2 ) {

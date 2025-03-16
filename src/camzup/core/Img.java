@@ -4927,6 +4927,7 @@ public class Img {
     * Inverts an image colors per a mask.
     *
     * @param source the input image
+    * @param mask   the mask
     * @param target the output image
     *
     * @return the inverted image

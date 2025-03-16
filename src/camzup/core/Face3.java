@@ -914,8 +914,8 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Returns a vertex iterator for this face, which allows its vertices to
-    * be accessed in an enhanced for-loop.
+    * Returns a vertex iterator for this face, which allows its vertices to be
+    * accessed in an enhanced for-loop.
     *
     * @return the iterator
     */

@@ -2789,6 +2789,9 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * Needed because {@link Mesh3#extrudeFace(int, boolean, float, float)}
     * calculates normals for side panels of an extruded face.
     *
+    * @param faceIdx the face index
+    * @param count   the count
+    *
     * @return this mesh
     *
     * @see Vec3#add(Vec3, Vec3, Vec3)
@@ -4306,8 +4309,8 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates a flat representation of a mesh's texture coordinates as a
-    * net, or map.
+    * Creates a flat representation of a mesh's texture coordinates as a net,
+    * or map.
     *
     * @param source the source mesh
     * @param target the output mesh
