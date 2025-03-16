@@ -390,7 +390,7 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
-    * Sets this face's vertices to refer to a an array of vertices.
+    * Sets this face's vertices to refer to an array of vertices.
     *
     * @param vertices the array of vertices
     *
@@ -496,8 +496,8 @@ public class Face2 implements Iterable < Edge2 >, Comparable < Face2 > {
    }
 
    /**
-    * Returns an vertex iterator for this face, which allows its vertices to
-    * be accessed in an enhanced for-loop.
+    * Returns a vertex iterator for this face, which allows its vertices to be
+    * accessed in an enhanced for-loop.
     *
     * @return the iterator
     */

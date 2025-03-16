@@ -502,7 +502,7 @@ public class Ray2 {
        */
       float fac = -1.0f;
 
-      /* Find dot product between vector and and perpendicular. */
+      /* Find dot product between vector and perpendicular. */
       final double dot = v1x * v2x + v1y * v2y;
       if ( dot != 0.0d ) {
 

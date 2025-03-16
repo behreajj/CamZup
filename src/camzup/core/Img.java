@@ -889,7 +889,7 @@ public class Img {
          final Long srcPixelObj = srcPixel;
          if ( !uniques.containsKey(srcPixelObj) ) {
             Lab.fromHex(srcPixel, lab);
-            Lch lch = Lch.fromLab(lab, new Lch());
+            final Lch lch = Lch.fromLab(lab, new Lch());
             if ( lab.alpha > 0.0f ) {
                if ( lch.c > maxChroma ) { maxChroma = lch.c; }
                if ( lch.c < minChroma ) { minChroma = lch.c; }
@@ -3542,7 +3542,7 @@ public class Img {
    /**
     * Quantizes an image in LCH. For the chroma, finds the minimum and maximum
     * chroma in the image, normalizes the chroma, quantizes, then rescales.
-    * 
+    *
     * @param source  the input image
     * @param lLevels the lightness quantization
     * @param cLevels the chroma quantization
@@ -3573,7 +3573,7 @@ public class Img {
          final Long srcPixelObj = srcPixel;
          if ( !uniques.containsKey(srcPixelObj) ) {
             Lab.fromHex(srcPixel, lab);
-            Lch lch = Lch.fromLab(lab, new Lch());
+            final Lch lch = Lch.fromLab(lab, new Lch());
             if ( lab.alpha > 0.0f ) {
                if ( lch.c > maxChroma ) { maxChroma = lch.c; }
                if ( lch.c < minChroma ) { minChroma = lch.c; }

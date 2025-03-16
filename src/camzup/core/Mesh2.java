@@ -3258,7 +3258,7 @@ public class Mesh2 extends Mesh implements Iterable < Face2 >, ISvgWritable {
       /*
        * The span of the origin range and destination range are already known,
        * so calculate portions of the map(distance, minDist, maxDist, nearBound,
-       * farBound) function outside of the for loop.
+       * farBound) function outside the for loop.
        */
       final float spanOrig = maxDist - minDist;
       final float scalar = spanOrig != 0.0f ? ( farBound - nearBound )

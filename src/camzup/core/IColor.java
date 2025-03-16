@@ -199,7 +199,7 @@ public interface IColor extends Comparable < IColor > {
       public String toString ( ) { return this.getClass().getSimpleName(); }
 
       /**
-       * The application function to be defined by sub-classes of this class.
+       * The application function to be defined by subclasses of this class.
        *
        * @param step the step
        *
@@ -208,7 +208,7 @@ public interface IColor extends Comparable < IColor > {
       protected abstract float applyPartial ( final float step );
 
       /**
-       * A helper function to pass on to sub-classes of this class. Mutates the
+       * A helper function to pass on to subclasses of this class. Mutates the
        * fields {@link o}, {@link d}, {@link diff}, {@link oLtd} and
        * {@link oGtd}.
        *

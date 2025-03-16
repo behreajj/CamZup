@@ -602,51 +602,6 @@ public class Rgb implements IColor {
    }
 
    /**
-    * Converts a direction to a color. Normalizes the direction, multiplies it
-    * by 0.5, then adds 0.5 . Returns (0.5, 0.5, 1.0, 1.0) if the direction
-    * has no magnitude.
-    *
-    * @param v      the direction
-    * @param target the output color
-    *
-    * @return the color
-    *
-    * @see Utils#invSqrtUnchecked(float)
-    */
-   public static Rgb fromDir ( final Vec2 v, final Rgb target ) {
-
-      final float mSq = v.x * v.x + v.y * v.y;
-      if ( mSq > 0.0f ) {
-         final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-         return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, 0.5f, 1.0f);
-      }
-      return target.set(0.5f, 0.5f, 1.0f, 1.0f);
-   }
-
-   /**
-    * Converts a direction to a color. Normalizes the direction, multiplies it
-    * by 0.5, then adds 0.5 . Returns (0.5, 0.5, 1.0, 1.0) if the direction
-    * has no magnitude.
-    *
-    * @param v      the direction
-    * @param target the output color
-    *
-    * @return the color
-    *
-    * @see Utils#invSqrtUnchecked(float)
-    */
-   public static Rgb fromDir ( final Vec3 v, final Rgb target ) {
-
-      final float mSq = v.x * v.x + v.y * v.y + v.z * v.z;
-      if ( mSq > 0.0f ) {
-         final float mInv = 0.5f * Utils.invSqrtUnchecked(mSq);
-         return target.set(v.x * mInv + 0.5f, v.y * mInv + 0.5f, v.z * mInv
-            + 0.5f, 1.0f);
-      }
-      return target.set(0.5f, 0.5f, 1.0f, 1.0f);
-   }
-
-   /**
     * Converts a hexadecimal representation of a color stored as 0xAARRGGBB
     * into a color. Does so by dividing each color channel by 255.
     *

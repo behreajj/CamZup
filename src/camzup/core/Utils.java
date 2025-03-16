@@ -810,7 +810,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * An inverse square-root. Returns 0.0 when the value is less then or equal
+    * An inverse square-root. Returns 0.0 when the value is less than or equal
     * to zero. Use the unchecked version when the input value is known to be
     * positive.
     *
@@ -2150,7 +2150,7 @@ public abstract class Utils implements IUtils {
    }
 
    /**
-    * A functional interface for an easing function which interpolates an an
+    * A functional interface for an easing function which interpolates an
     * array.
     *
     * @param <T> the parameter type

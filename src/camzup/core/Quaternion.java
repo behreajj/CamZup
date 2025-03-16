@@ -1331,7 +1331,7 @@ public class Quaternion implements Comparable < Quaternion > {
    }
 
    /**
-    * Finds the inverse, or reciprocal, of a quaternion, which is the its
+    * Finds the inverse, or reciprocal, of a quaternion, which is the
     * conjugate divided by its magnitude squared.<br>
     * <br>
     * <em>a</em><sup>-1</sup> := <em>a</em>* / |<em>a</em>|<sup>2</sup><br>
@@ -1689,7 +1689,7 @@ public class Quaternion implements Comparable < Quaternion > {
 
    /**
     * Divides a quaternion by its magnitude, such that its new magnitude is
-    * one and it lies on a 4D hyper-sphere. Uses the formula: <br>
+    * one, and it lies on a 4D hyper-sphere. Uses the formula: <br>
     * <br>
     * <em>\u00e2</em> = <em>a</em> / |<em>a</em>|<br>
     * <br>
@@ -2268,7 +2268,7 @@ public class Quaternion implements Comparable < Quaternion > {
       /**
        * A clamped interpolation between the origin and destination. Normalizes
        * the result even when the step is out of bounds. Defers to an unclamped
-       * interpolation, which is to be defined by sub-classes of this class.
+       * interpolation, which is to be defined by subclasses of this class.
        *
        * @param orig   the origin quaternion
        * @param dest   the destination quaternion

@@ -2854,7 +2854,7 @@ public class Vec2 implements Comparable < Vec2 > {
 
       /**
        * A clamped interpolation between the origin and destination. Defers to
-       * an unclamped interpolation, which is to be defined by sub-classes of
+       * an unclamped interpolation, which is to be defined by subclasses of
        * this class.
        *
        * @param orig   the origin vector

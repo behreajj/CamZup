@@ -699,8 +699,7 @@ public abstract class Mesh extends EntityData implements IMesh {
    /**
     * Internal helper function to reverse an array of indices.
     *
-    * @param arr   the array
-    * @param start the start index
+    * @param arr the array
     *
     * @return the array
     */
@@ -732,8 +731,7 @@ public abstract class Mesh extends EntityData implements IMesh {
    /**
     * Internal helper function to reverse an array of indices.
     *
-    * @param arr   the array
-    * @param start the start index
+    * @param arr the array
     *
     * @return the array
     */

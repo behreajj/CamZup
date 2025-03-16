@@ -642,7 +642,7 @@ public class Lab implements IColor {
 
    /**
     * Tests to see if a color's alpha and lightness are greater than zero.
-    * Tests to see if its a and b components are not zero.
+    * Tests to see if a and b components are not zero.
     *
     * @param o the color
     *
@@ -1556,7 +1556,7 @@ public class Lab implements IColor {
    }
 
    /**
-    * Converts a scalar to the the lightness and alpha channel. For use by the
+    * Converts a scalar to the lightness and alpha channel. For use by the
     * gradient class.
     *
     * @param scalar the scalar
@@ -1648,7 +1648,7 @@ public class Lab implements IColor {
 
       /**
        * A clamped interpolation between the origin and destination. Defers to
-       * an unclamped interpolation, which is to be defined by sub-classes of
+       * an unclamped interpolation, which is to be defined by subclasses of
        * this class.
        *
        * @param orig   the origin color

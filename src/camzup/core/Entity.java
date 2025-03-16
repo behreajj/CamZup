@@ -17,7 +17,10 @@ public abstract class Entity implements IEntity {
     *
     * @see IUtils#hashIdentityString()
     */
-   protected Entity ( ) { this.name = this.hashIdentityString(); }
+   protected Entity ( ) {
+
+      this.name = Integer.toHexString(System.identityHashCode(this));
+   }
 
    /**
     * Creates an entity with a given name.

@@ -1,7 +1,5 @@
 package camzup.core;
 
-import camzup.pfriendly.IUp;
-
 /**
  * A material which holds data to display materials with solid colors only
  * (no textures, or patterns). Contains data for a fill and/or stroke.
@@ -588,7 +586,7 @@ public class MaterialSolid extends Material {
    static StringBuilder defaultBlenderMaterial ( final StringBuilder pyCd,
       final float gamma ) {
 
-      final Rgb c = Rgb.fromHex(IUp.DEFAULT_FILL_COLOR, new Rgb());
+      final Rgb c = Rgb.fromHex(IMaterial.DEFAULT_FILL, new Rgb());
       pyCd.append("{\"name\": \"");
       pyCd.append("CamZupDefault");
       pyCd.append("\", \"fill\": ");
@@ -627,18 +625,19 @@ public class MaterialSolid extends Material {
       // svgp.append("\" fill-opacity=\"");
       // svgp.append("1.0");
       svgp.append("\" fill=\"");
-      Rgb.toHexWeb(svgp, IUp.DEFAULT_FILL_COLOR);
+      Rgb.toHexWeb(svgp, IMaterial.DEFAULT_FILL);
       svgp.append('\"');
       svgp.append(' ');
 
-      final float sw = Utils.div(IUp.DEFAULT_STROKE_WEIGHT, Utils.abs(scale));
+      final float sw = Utils.div(IMaterial.DEFAULT_STROKE_WEIGHT, Utils.abs(
+         scale));
       if ( sw > IUtils.EPSILON ) {
          svgp.append("stroke-width=\"");
          Utils.toFixed(svgp, sw, ISvgWritable.FIXED_PRINT);
          // svgp.append("\" stroke-opacity=\"");
          // svgp.append("1.0");
          svgp.append("\" stroke=\"");
-         Rgb.toHexWeb(svgp, IUp.DEFAULT_STROKE_COLOR);
+         Rgb.toHexWeb(svgp, IMaterial.DEFAULT_STROKE);
          svgp.append("\" stroke-linejoin=\"");
          svgp.append(ISvgWritable.DEFAULT_STR_JOIN);
          svgp.append("\" stroke-linecap=\"");
