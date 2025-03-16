@@ -2069,6 +2069,7 @@ public class Vec2 implements Comparable < Vec2 > {
    public static final Vec2 perpendicularCCW ( final Vec2 a,
       final Vec2 target ) {
 
+      //noinspection SuspiciousNameCombination
       return target.set(-a.y, a.x);
    }
 
@@ -2095,6 +2096,7 @@ public class Vec2 implements Comparable < Vec2 > {
    public static final Vec2 perpendicularCW ( final Vec2 a,
       final Vec2 target ) {
 
+      //noinspection SuspiciousNameCombination
       return target.set(a.y, -a.x);
    }
 
