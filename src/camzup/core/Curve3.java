@@ -1,5 +1,8 @@
 package camzup.core;
 
+import camzup.core.Utils.EasingFuncArr;
+import camzup.core.Utils.EasingFuncObj;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -7,9 +10,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
-
-import camzup.core.Utils.EasingFuncArr;
-import camzup.core.Utils.EasingFuncObj;
 
 /**
  * Implements a
@@ -148,7 +148,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
    }
 
    /**
-    * Append an collection of knots to the curve's list of knots.
+    * Append a collection of knots to the curve's list of knots.
     *
     * @param kn the collection of knots
     *
@@ -1002,7 +1002,7 @@ public class Curve3 extends Curve implements Iterable < Knot3 > {
     * @param pyCd      the string builder
     * @param uRes      the resolution u
     * @param tiltStart the tilt start
-    * @param tilEnd    the tilt end
+    * @param tiltEnd    the tilt end
     *
     * @return the string builder
     */

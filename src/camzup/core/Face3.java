@@ -763,7 +763,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Sets this face's vertices to refer to a an array of vertices.
+    * Sets this face's vertices to refer to an array of vertices.
     *
     * @param vertices the array of vertices
     *
@@ -914,7 +914,7 @@ public class Face3 implements Iterable < Edge3 >, Comparable < Face3 > {
    }
 
    /**
-    * Returns an vertex iterator for this face, which allows its vertices to
+    * Returns a vertex iterator for this face, which allows its vertices to
     * be accessed in an enhanced for-loop.
     *
     * @return the iterator

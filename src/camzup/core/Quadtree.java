@@ -76,7 +76,7 @@ public class Quadtree {
    }
 
    /**
-    * Constructs an quadtree from an array of points.
+    * Constructs a quadtree from an array of points.
     *
     * @param points the points
     */
@@ -86,7 +86,7 @@ public class Quadtree {
    }
 
    /**
-    * Constructs an quadtree from an array of points and a capacity per node.
+    * Constructs a quadtree from an array of points and a capacity per node.
     *
     * @param points   the points
     * @param capacity capacity per node
@@ -106,7 +106,7 @@ public class Quadtree {
    /**
     * The default constructor. Creates a bounds of signed unit size.
     *
-    * @see Bounds2#unitCubeSigned(Bounds2)
+    * @see Bounds2#unitSquareSigned(Bounds2)
     */
    protected Quadtree ( ) {
 
@@ -662,7 +662,7 @@ public class Quadtree {
     *
     * @return this quadtree
     *
-    * @see Bounds#split(Bounds2, float, float, Bounds2, Bounds2, Bounds2,
+    * @see Bounds2#split(Bounds2, float, float, Bounds2, Bounds2, Bounds2,
     *      Bounds2)
     */
    protected Quadtree split ( final int childCapacity ) {

@@ -624,7 +624,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Extrudes all faces in the mesh by an amount. Creates quadrilateral sides
     * to connect extruded face to original. Does not check as to whether a
-    * face is an bordered by other faces; best used on disconnected faces.
+    * face is bordered by other faces; best used on disconnected faces.
     *
     * @param fillCap whether to cap the extruded faces
     * @param depth   the extrusion depth
@@ -639,7 +639,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    /**
     * Extrudes all faces in the mesh by an amount. Creates quadrilateral sides
     * to connect extruded face to original. Does not check as to whether a
-    * face is an bordered by other faces; best used on disconnected faces. The
+    * face is bordered by other faces; best used on disconnected faces. The
     * taper is a scalar applied to a face's size, e.g., a taper of .75 would
     * result in an extruded face 75% the size of the original.
     *
@@ -665,7 +665,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Negates all normals in this mesh, then reverses the meshes's faces.
+    * Negates all normals in this mesh, then reverses the mesh's faces.
     *
     * @return this mesh
     *
@@ -3444,7 +3444,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates an dodecahedron, a Platonic solid with 12 faces and 20
+    * Creates a dodecahedron, a Platonic solid with 12 faces and 20
     * coordinates.
     *
     * @param target the output mesh
@@ -4306,7 +4306,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
    }
 
    /**
-    * Creates a flat representation of a a mesh's texture coordinates as a
+    * Creates a flat representation of a mesh's texture coordinates as a
     * net, or map.
     *
     * @param source the source mesh
@@ -5021,7 +5021,7 @@ public class Mesh3 extends Mesh implements Iterable < Face3 > {
     * @param tr   the transform
     * @param co   the coordinate
     *
-    * @see Transform3#mulPoint(Vec3, Vec3, Vec3)
+    * @see Transform3#mulPoint(Transform3, Vec3, Vec3)
     */
    static void accumMinMax ( final Mesh3 mesh, final Vec3 lb, final Vec3 ub,
       final Transform3 tr, final Vec3 co ) {
