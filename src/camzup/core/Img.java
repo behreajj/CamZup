@@ -849,8 +849,8 @@ public class Img {
    }
 
    /**
-    * Adjusts an image's chroma contrast by a factor. The adjustment factor
-    * is expected to be in [-1.0, 1.0].
+    * Adjusts an image's chroma contrast by a factor. The adjustment factor is
+    * expected to be in [-1.0, 1.0].
     *
     * @param source the source image
     * @param fac    the contrast factor
@@ -2879,8 +2879,8 @@ public class Img {
 
       final int trgLen = target.pixels.length;
       if ( dxZero && dyZero ) {
-         System.arraycopy(source.pixels, 0, target.pixels, 0, srcLen < trgLen ? srcLen
-            : trgLen);
+         System.arraycopy(source.pixels, 0, target.pixels, 0, srcLen < trgLen
+            ? srcLen : trgLen);
          return target;
       }
 
