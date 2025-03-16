@@ -4728,7 +4728,7 @@ public class Img {
    public static final Img transpose ( final Img source, final int w,
       final int h, final Img target ) {
 
-      /**
+      /*
        * See https://en.wikipedia.org/wiki/In-place_matrix_transposition and
        * https://johnloomis.org/ece563/notes/geom/basic/geom.htm for notes on
        * transposing in place.
