@@ -2879,7 +2879,7 @@ public class Img {
 
       final int trgLen = target.pixels.length;
       if ( dxZero && dyZero ) {
-         System.arraycopy(source.pixels, 0, target, 0, srcLen < trgLen ? srcLen
+         System.arraycopy(source.pixels, 0, target.pixels, 0, srcLen < trgLen ? srcLen
             : trgLen);
          return target;
       }
