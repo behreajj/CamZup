@@ -144,13 +144,13 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    }
 
    /**
-    * Append an collection of knots to the curve's list of knots.
+    * Append a collection of knots to the curve's list of knots.
     *
     * @param kn the collection of knots
     *
     * @return this curve
     *
-    * @see Curve3#append(Knot3)
+    * @see Curve2#append(Knot2)
     */
    public Curve2 appendAll ( final Collection < Knot2 > kn ) {
 
@@ -610,7 +610,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       this.closedLoop = false;
       this.materialIndex = 0;
-      this.name = this.hashIdentityString();
+      this.name = Integer.toHexString(System.identityHashCode(this));
 
       return this;
    }
@@ -1137,7 +1137,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
 
       /*
        * Find the magnitude of the curve handles (or control points for each
-       * knot. Multiply toStep by arcLen1 to find the arc-length that each curve
+       * knot). Multiply toStep by arcLen1 to find the arc-length that each curve
        * has to cover, then divide by four. This is then supplied to tangent.
        */
       final float hndtn = 0.25f * toStep * arcLen1;
@@ -1457,7 +1457,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return the coordinate
     *
-    * @see Curve3#evalFirst(Curve3, Vec3, Vec3)
+    * @see Curve2#evalFirst(Curve2, Vec2, Vec2)
     */
    public static Transform2 evalFirst ( final Curve2 curve,
       final Handedness handedness, final Transform2 target ) {
@@ -1538,7 +1538,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
     *
     * @return the coordinate
     *
-    * @see Curve3#evalLast(Curve3, Vec3, Vec3)
+    * @see Curve2#evalLast(Curve2, Vec2, Vec2)
     */
    public static Transform2 evalLast ( final Curve2 curve,
       final Handedness handedness, final Transform2 target ) {
@@ -2381,7 +2381,7 @@ public class Curve2 extends Curve implements Iterable < Knot2 >, ISvgWritable {
    /**
     * Creates a curve which approximates an ellipse. The aspect is the ratio
     * between the width and height of the ellipse. This is package level to
-    * provide extra functionality for translating a ellipse's origin.
+    * provide extra functionality for translating an ellipse's origin.
     *
     * @param radius  the radius
     * @param aspect  the aspect ratio

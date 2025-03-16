@@ -2090,10 +2090,10 @@ public class Img {
       final int wSrc = source.width;
       final int hSrc = source.height;
 
-      int xtlVrf = xtl < 0 ? 0 : xtl > wSrc - 1 ? wSrc - 1 : xtl;
-      int ytlVrf = ytl < 0 ? 0 : ytl > hSrc - 1 ? hSrc - 1 : ytl;
-      int xbrVrf = xbr < 0 ? 0 : xbr > wSrc - 1 ? wSrc - 1 : xbr;
-      int ybrVrf = ybr < 0 ? 0 : ybr > hSrc - 1 ? hSrc - 1 : ybr;
+      int xtlVrf = Utils.clamp(xtl, 0, wSrc - 1);
+      int ytlVrf = Utils.clamp(ytl, 0, hSrc - 1);
+      int xbrVrf = Utils.clamp(xbr, 0, wSrc - 1);
+      int ybrVrf = Utils.clamp(ybr, 0, hSrc - 1);
 
       /* Swap pixels if in wrong order. */
       xtlVrf = xtlVrf < xbrVrf ? xtlVrf : xbrVrf;
@@ -4277,15 +4277,16 @@ public class Img {
       final int wImgWr = write.width;
       final int hImgWr = write.height;
 
-      int xtlWrVrf = xtlWrt < 0 ? 0 : xtlWrt > wImgWr - 1 ? wImgWr - 1 : xtlWrt;
-      int ytlWrVrf = ytlWrt < 0 ? 0 : ytlWrt > hImgWr - 1 ? hImgWr - 1 : ytlWrt;
-      int xbrWrVrf = xbrWrt < 0 ? 0 : xbrWrt > wImgWr - 1 ? wImgWr - 1 : xbrWrt;
-      int ybrWrVrf = ybrWrt < 0 ? 0 : ybrWrt > hImgWr - 1 ? hImgWr - 1 : ybrWrt;
+      int xtlWrVrf = Utils.clamp(xtlWrt, 0, wImgWr - 1);
+      int ytlWrVrf = Utils.clamp(ytlWrt, 0, hImgWr - 1);
+      int xbrWrVrf = Utils.clamp(xbrWrt, 0, wImgWr - 1);
+      int ybrWrVrf = Utils.clamp(ybrWrt, 0, hImgWr - 1);
 
-      xtlWrVrf = xtlWrVrf < xbrWrVrf ? xtlWrVrf : xbrWrVrf;
-      ytlWrVrf = ytlWrVrf < ybrWrVrf ? ytlWrVrf : ybrWrVrf;
-      xbrWrVrf = xtlWrVrf > xbrWrVrf ? xtlWrVrf : xbrWrVrf;
-      ybrWrVrf = ytlWrVrf > ybrWrVrf ? ytlWrVrf : ybrWrVrf;
+      /* Swap coordinates in reversed order. */
+      xtlWrVrf = Math.min(xtlWrVrf, xbrWrVrf);
+      ytlWrVrf = Math.min(ytlWrVrf, ybrWrVrf);
+      xbrWrVrf = Math.max(xtlWrVrf, xbrWrVrf);
+      ybrWrVrf = Math.max(ytlWrVrf, ybrWrVrf);
 
       final int wrWidth = 1 + xbrWrVrf - xtlWrVrf;
       final int wrHeight = 1 + ybrWrVrf - ytlWrVrf;
@@ -4293,15 +4294,16 @@ public class Img {
       final int wImgRd = read.width;
       final int hImgRd = read.height;
 
-      int xtlRdVrf = xtlRd < 0 ? 0 : xtlRd > wImgRd - 1 ? wImgRd - 1 : xtlRd;
-      int ytlRdVrf = ytlRd < 0 ? 0 : ytlRd > hImgRd - 1 ? hImgRd - 1 : ytlRd;
-      int xbrRdVrf = xbrRd < 0 ? 0 : xbrRd > wImgRd - 1 ? wImgRd - 1 : xbrRd;
-      int ybrRdVrf = ybrRd < 0 ? 0 : ybrRd > hImgRd - 1 ? hImgRd - 1 : ybrRd;
+      int xtlRdVrf = Utils.clamp(xtlRd, 0, wImgRd);
+      int ytlRdVrf = Utils.clamp(ytlRd, 0, hImgRd);
+      int xbrRdVrf = Utils.clamp(xbrRd, 0, wImgRd);
+      int ybrRdVrf = Utils.clamp(ybrRd, 0, hImgRd);
 
-      xtlRdVrf = xtlRdVrf < xbrRdVrf ? xtlRdVrf : xbrRdVrf;
-      ytlRdVrf = ytlRdVrf < ybrRdVrf ? ytlRdVrf : ybrRdVrf;
-      xbrRdVrf = xtlRdVrf > xbrRdVrf ? xtlRdVrf : xbrRdVrf;
-      ybrRdVrf = ytlRdVrf > ybrRdVrf ? ytlRdVrf : ybrRdVrf;
+      /* Swap coordinates in reversed order. */
+      xtlRdVrf = Math.min(xtlRdVrf, xbrRdVrf);
+      ytlRdVrf = Math.min(ytlRdVrf, ybrRdVrf);
+      xbrRdVrf = Math.max(xtlRdVrf, xbrRdVrf);
+      ybrRdVrf = Math.max(ytlRdVrf, ybrRdVrf);
 
       final int rdWidth = 1 + xbrRdVrf - xtlRdVrf;
       final int rdHeight = 1 + ybrRdVrf - ytlRdVrf;
