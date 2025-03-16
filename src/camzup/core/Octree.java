@@ -614,7 +614,7 @@ public class Octree {
     *
     * @return this octree
     *
-    * @see Bounds#split(Bounds3, float, float, float, Bounds3, Bounds3,
+    * @see Bounds3#split(Bounds3, float, float, float, Bounds3, Bounds3,
     *      Bounds3, Bounds3,Bounds3, Bounds3, Bounds3, Bounds3)
     */
    protected Octree split ( final int childCapacity ) {

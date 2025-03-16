@@ -410,7 +410,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
    /**
     * Evaluates whether a point is within the bounding volume, lower bounds
     * inclusive, upper bounds exclusive. For cases where multiple bounds must
-    * cover an volume without overlap or gaps.
+    * cover a volume without overlap or gaps.
     *
     * @param b the bounds
     * @param v the vector
@@ -426,7 +426,7 @@ public class Bounds3 implements Comparable < Bounds3 > {
    /**
     * Evaluates whether a point is within the bounding volume, lower bounds
     * inclusive upper bounds exclusive. For cases where multiple bounds must
-    * cover an volume without overlap or gaps.<br>
+    * cover a volume without overlap or gaps.<br>
     * <br>
     * A boolean vector is returned; useful for cases where a point may be
     * contained in one dimension but not in another.
