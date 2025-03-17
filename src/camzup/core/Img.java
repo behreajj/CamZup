@@ -4073,7 +4073,7 @@ public class Img {
       final float hPrc, final Img target ) {
 
       return Img.resizeBilinear(source, Utils.round(wPrc * source.width), Utils
-         .round(hPrc * source.width), target);
+         .round(hPrc * source.height), target);
    }
 
    /**
