@@ -260,11 +260,12 @@ public abstract class TextShape {
                      tr.set(xCursor, yCursor);
                      entity.moveTo(tr);
 
-                     /**
+                     /*
                       * getGlyph would not be able to handle cases like emojis,
                       * where a char cannot hold the address, e.g., 0x1F310, in
                       * memory. See Getting a PShape from an emoji...?
-                      * https://discourse.processing.org/t/getting-a-pshape-from-an-emoji/44479/
+                      * https://discourse.processing.org/t/getting-a-pshape-from
+                      * -an-emoji/44479/
                       */
                      final PFont.Glyph glyph = pfont.getGlyph(character);
                      if ( glyph != null ) {

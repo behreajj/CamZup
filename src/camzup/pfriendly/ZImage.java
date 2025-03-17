@@ -792,8 +792,6 @@ public class ZImage extends PImage {
     * @param target the target image
     *
     * @return the image
-    *
-    * @see ZImage#wrap(int[], int, int, int, int, int, int[])
     */
    public static PImage wrap ( final PImage source, final int dx, final int dy,
       final PImage target ) {

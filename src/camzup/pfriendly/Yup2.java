@@ -25,11 +25,11 @@ import processing.opengl.PGL;
 import processing.opengl.PGraphicsOpenGL;
 
 /**
- * A 2.5D renderer based on OpenGL. Supposes that the the camera is looking
+ * A 2.5D renderer based on OpenGL. Supposes that the camera is looking
  * down on a 2D plane from the z axis, making (0.0, 1.0) the forward -- or
  * up -- axis.
  */
-public class Yup2 extends UpOgl implements ITextDisplay2, IUpOgl, IYup2 {
+public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
 
    /**
     * The camera rotation in radians.

@@ -3371,10 +3371,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     * Draws a curve. A special case to assist with drawing {@link UpOgl#arc}s.
     *
     * @param curve the curve
-    * @param tr    the transform
-    * @param fh    the temporary fore handle
-    * @param rh    the temporary rear handle
-    * @param co    the temporary coordinate
     */
    protected void drawCurve2 ( final Curve2 curve ) {
 
@@ -4534,7 +4530,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
    }
 
    /**
-    * Draws a character with reference to a a glyph retrieved from the current
+    * Draws a character with reference to a glyph retrieved from the current
     * font.
     *
     * @param ch the character

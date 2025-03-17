@@ -19,6 +19,7 @@ import camzup.core.Experimental;
 import camzup.core.ICurve;
 import camzup.core.IMesh;
 import camzup.core.IUtils;
+import camzup.core.Img;
 import camzup.core.Knot2;
 import camzup.core.Mat3;
 import camzup.core.Mat4;
@@ -43,8 +44,8 @@ import processing.core.PShape;
 
 /**
  * A 2D renderer based on the Java AWT (Abstract Window Toolkit). Supposes
- * that the the camera is looking down on a 2D plane from the z axis,
- * making (0.0, 1.0) the forward -- or up -- axis.
+ * that the camera is looking down on a 2D plane from the z axis, making
+ * (0.0, 1.0) the forward -- or up -- axis.
  */
 public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
@@ -4069,7 +4070,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * Converts a stroke cap PConstant to a BasicStroke constant. Sets both
     * fields.
     *
-    * @param cap the processing constant
+    * @param join the processing constant
     *
     * @see BasicStroke
     */
@@ -4110,8 +4111,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * @param y the second color channel, saturation or green
     * @param z the third color channel, brightness or blue
     * @param w the alpha channel
-    *
-    * @see Rgb#hsvToRgb(float, float, float, float, Rgb)
     */
    @Override
    protected void colorCalc ( final float x, final float y, final float z,
@@ -4194,7 +4193,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     * integer and a 32-bit ARGB hexadecimal, e.g., between
     * <code>fill(128, 255);</code> and <code>fill(#808080, 255);</code>.
     *
-    * @param argb the hexadecimal color
+    * @param rgb   the hexadecimal color
+    * @param alpha the alpha channel
     */
    @Override
    protected void colorCalc ( final int rgb, final float alpha ) {
@@ -4873,6 +4873,26 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
    public static final float TEXT_LEADING_SCALAR = 1.275f;
 
    /**
+    * Converts an image to a {@link java.awt.Image}. This is an incredibly
+    * slow and inefficient method. It should <em>not</em> be used in draw.
+    *
+    * @param img the CamZup image
+    *
+    * @return the AWT image
+    */
+   public static Image convertImgToNative ( final Img img ) {
+
+      final int w = img.getWidth();
+      final int h = img.getHeight();
+      final BufferedImage imgNtv = new BufferedImage(w, h,
+         BufferedImage.TYPE_INT_ARGB);
+      imgNtv.getRaster().setDataElements(0, 0, w, h, Img.toArgb32(img,
+         new Rgb.ToneMapClamp()));
+
+      return imgNtv;
+   }
+
+   /**
     * Converts a PImage to a {@link java.awt.Image}. This is an incredibly
     * slow and inefficient method. It should <em>not</em> be used in draw.
     *
@@ -4882,13 +4902,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     */
    public static Image convertPImageToNative ( final PImage pimg ) {
 
-      final int pw = pimg.pixelWidth;
-      final int ph = pimg.pixelHeight;
-      pimg.loadPixels();
+      final int pw = Math.max(pimg.pixelDensity, pimg.pixelWidth);
+      final int ph = Math.max(pimg.pixelDensity, pimg.pixelHeight);
       final BufferedImage imgNtv = new BufferedImage(pw, ph, pimg.format
          == PConstants.RGB ? BufferedImage.TYPE_INT_RGB
             : BufferedImage.TYPE_INT_ARGB);
-      imgNtv.getRaster().setDataElements(0, 0, pw, ph, pimg.pixels);
+
+      if ( pimg.pixelWidth > 0 && pimg.pixelHeight > 0 ) {
+         pimg.loadPixels();
+         imgNtv.getRaster().setDataElements(0, 0, pw, ph, pimg.pixels);
+      }
+
       return imgNtv;
    }
 

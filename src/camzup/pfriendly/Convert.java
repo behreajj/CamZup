@@ -97,7 +97,7 @@ public abstract class Convert {
       }
 
       if ( source.pixelWidth < 1 || source.pixelHeight < 1 ) {
-         System.err.println("Source dimensions are invalid..");
+         System.err.println("Source dimensions are invalid.");
          return Img.clear(target);
       }
 
@@ -1605,7 +1605,7 @@ public abstract class Convert {
     * {@link PApplet#ellipseMode(int)}, {@link PApplet#rectMode(int)} or to UV
     * sphere settings.<br>
     * <br>
-    * For shapes in the {@link PShape.GEOMETRY} family, faces are assumed to
+    * For shapes in the {@link PShape#GEOMETRY} family, faces are assumed to
     * be triangles.
     *
     * @param source the source shape

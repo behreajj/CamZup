@@ -28,7 +28,7 @@ import processing.opengl.PGraphicsOpenGL;
 /**
  * An abstract parent class for 3D renderers.
  */
-public abstract class Up3 extends UpOgl implements IUpOgl, IUp3, ITextDisplay2 {
+public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
 
    /**
     * A vector to store the x axis (first column) when creating a camera

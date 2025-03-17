@@ -720,7 +720,7 @@ public interface IYup2 extends IUp {
     *
     * @return the screen y coordinate
     *
-    * @see YupJ2#screen(Vec2, Vec2)
+    * @see IYup2#screen(Vec2, Vec2)
     */
    default float screenX ( final Vec2 v ) { return this.screenX(v.x, v.y); }
 
@@ -734,7 +734,7 @@ public interface IYup2 extends IUp {
     *
     * @return the screen y coordinate
     *
-    * @see YupJ2#screen(Vec2, Vec2)
+    * @see IYup2#screen(Vec2, Vec2)
     */
    float screenY ( final float x, final float y );
 
@@ -747,7 +747,7 @@ public interface IYup2 extends IUp {
     *
     * @return the screen y coordinate
     *
-    * @see YupJ2#screen(Vec2, Vec2)
+    * @see IYup2#screen(Vec2, Vec2)
     */
    default float screenY ( final Vec2 v ) { return this.screenY(v.x, v.y); }
 
