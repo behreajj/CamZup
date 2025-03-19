@@ -31,7 +31,7 @@ without negative impact to your sketch, chances are you don't need this library.
 
 While Cam Z-Up can help with more complex sketches, it is a general purpose library. It aims to make a number of small tasks easier than in vanilla Processing. It will not be as effective as specialist libraries.
 
-Cam Z-Up is tested with Processing version [4.x](https://github.com/processing/processing4/releases). It's been around for a while, so it was overhauled to use the accepted [library template](https://discourse.processing.org/t/a-new-processing-library-template/45390/5) on March 19, 2025, commit #e2441d5ecb2c92cf2a705f860a767e1d9a507259 .
+Cam Z-Up is tested with Processing version [4.x](https://github.com/processing/processing4/releases). It's been around for a while, so it was overhauled to use the accepted [library template](https://discourse.processing.org/t/a-new-processing-library-template/45390/5) on March 19, 2025,  this [commit]().
 
 ## Getting Started
 
