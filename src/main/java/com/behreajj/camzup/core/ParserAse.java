@@ -22,13 +22,15 @@ public abstract class ParserAse {
      * @param arr the byte array
      * @return the palette
      */
-    public static Rgb[] load(final byte[] arr) {
-
-        // TODO: Return Lab[] array instead.
+    public static Lab[] load(final byte[] arr) {
 
         final int numBlocks = Utils.intml(arr, 8);
         final int lenFileData = arr.length;
-        final ArrayList<Rgb> colors = new ArrayList<>(numBlocks);
+        final ArrayList<Lab> colors = new ArrayList<>(numBlocks);
+
+        final Rgb srgb = new Rgb();
+        final Rgb lrgb = new Rgb();
+        final Vec4 xyz = new Vec4();
 
         int i = 12;
         while (i < lenFileData) {
@@ -52,12 +54,13 @@ public abstract class ParserAse {
 
                     switch (colorFormat) {
                         case "rgb " -> {
-                            final float r01 = Utils.floatml(arr, iOffset + 12);
-                            final float g01 = Utils.floatml(arr, iOffset + 16);
-                            final float b01 = Utils.floatml(arr, iOffset + 20);
-
-                            final Rgb color = new Rgb(r01, g01, b01, 1.0f);
-                            colors.add(color);
+                            srgb.set(
+                                Utils.floatml(arr, iOffset + 12),
+                                Utils.floatml(arr, iOffset + 16),
+                                Utils.floatml(arr, iOffset + 20),
+                                1.0f);
+                            colors.add(Rgb.sRgbToSrLab2(srgb, new Lab(),
+                                xyz, lrgb));
                         }
                         case "cmyk" -> {
                             final float c = Utils.floatml(arr, iOffset + 12);
@@ -66,12 +69,13 @@ public abstract class ParserAse {
                             final float k = Utils.floatml(arr, iOffset + 24);
 
                             final float u = 1.0f - k;
-                            final float r01 = (1.0f - c) * u;
-                            final float g01 = (1.0f - m) * u;
-                            final float b01 = (1.0f - y) * u;
-
-                            final Rgb color = new Rgb(r01, g01, b01, 1.0f);
-                            colors.add(color);
+                            srgb.set(
+                                (1.0f - c) * u,
+                                (1.0f - m) * u,
+                                (1.0f - y) * u,
+                                1.0f);
+                            colors.add(Rgb.sRgbToSrLab2(srgb, new Lab(),
+                                xyz, lrgb));
                         }
                         case "lab " -> {
                             final double l = 100.0d * Utils.floatml(arr, iOffset + 12);
@@ -97,24 +101,17 @@ public abstract class ParserAse {
                             final double g01Linear = -0.969243d * x + 1.8759663d * y + 0.041555032d * z;
                             final double b01Linear = 0.0556384d * x - 0.20400746d * y + 1.0571296d * z;
 
-                            final double r01Gamma = r01Linear <= 0.0031308d
-                                ? r01Linear * 12.92d
-                                : Math.pow(r01Linear, 0.41666666666667d) * 1.055d - 0.055d;
-                            final double g01Gamma = g01Linear <= 0.0031308d
-                                ? g01Linear * 12.92d
-                                : Math.pow(g01Linear, 0.41666666666667d) * 1.055d - 0.055d;
-                            final double b01Gamma = b01Linear <= 0.0031308d
-                                ? b01Linear * 12.92d
-                                : Math.pow(b01Linear, 0.41666666666667d) * 1.055d - 0.055d;
-
-                            final Rgb color = new Rgb((float) r01Gamma, (float) g01Gamma, (float) b01Gamma, 1.0f);
-                            colors.add(color);
+                            lrgb.set(
+                                (float)r01Linear,
+                                (float)g01Linear,
+                                (float)b01Linear,
+                                1.0f);
+                            Rgb.lRgbToSrXyz(lrgb, xyz);
+                            colors.add(Lab.fromSrXyz(xyz, new Lab()));
                         }
                         case "gray" -> {
                             final float v01 = Utils.floatml(arr, iOffset + 12);
-
-                            final Rgb color = new Rgb(v01, v01, v01, 1.0f);
-                            colors.add(color);
+                            colors.add(new Lab(v01 * 100.0f, 0.0f, 0.0f, 1.0f));
                         }
                     }
                 }
@@ -123,7 +120,7 @@ public abstract class ParserAse {
             i += blockLen;
         }
 
-        return colors.toArray(new Rgb[0]);
+        return colors.toArray(new Lab[0]);
     }
 
     /**
@@ -132,9 +129,9 @@ public abstract class ParserAse {
      * @param fileName the file name
      * @return the palette
      */
-    public static Rgb[] load(final String fileName) {
+    public static Lab[] load(final String fileName) {
 
-        Rgb[] result = {};
+        Lab[] result = {};
         try {
             final File file = new File(fileName);
             final FileInputStream fis = new FileInputStream(file);

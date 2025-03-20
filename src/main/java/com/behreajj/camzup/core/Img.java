@@ -370,20 +370,12 @@ public class Img {
                     final double mcpl = Math.sqrt(csq + l * l);
                     final double sat = mcpl != 0.0d ? Math.sqrt(csq) / mcpl : 0.0d;
 
-                    if (sat > maxSat) {
-                        maxSat = sat;
-                    }
-                    if (sat < minSat) {
-                        minSat = sat;
-                    }
+                    if (sat > maxSat) { maxSat = sat; }
+                    if (sat < minSat) { minSat = sat; }
                     sumSat += sat;
 
-                    if (l > maxLight) {
-                        maxLight = l;
-                    }
-                    if (l < minLight) {
-                        minLight = l;
-                    }
+                    if (l > maxLight) { maxLight = l; }
+                    if (l < minLight) { minLight = l; }
                     sumLight += l;
 
                     ++sumTally;
@@ -562,12 +554,8 @@ public class Img {
                 Lab.fromHex(srcPixel, lab);
                 final Lch lch = Lch.fromLab(lab, new Lch());
                 if (lab.alpha > 0.0f) {
-                    if (lch.c > maxChroma) {
-                        maxChroma = lch.c;
-                    }
-                    if (lch.c < minChroma) {
-                        minChroma = lch.c;
-                    }
+                    if (lch.c > maxChroma) { maxChroma = lch.c; }
+                    if (lch.c < minChroma) { minChroma = lch.c; }
                     sumChroma += lch.c;
                     ++sumTally;
                 }
@@ -705,7 +693,6 @@ public class Img {
             && Utils.approx(adjust.a, 0.0f)
             && Utils.approx(adjust.b, 0.0f)
             && Utils.approx(adjust.alpha, 0.0f)) {
-
             System.arraycopy(source.pixels, 0, target.pixels, 0, len);
             return target;
         }
@@ -767,7 +754,6 @@ public class Img {
             && Utils.approx(adjust.c, 0.0f)
             && Utils.approx(Utils.mod1(adjust.h), 0.0f)
             && Utils.approx(adjust.alpha, 0.0f)) {
-
             System.arraycopy(source.pixels, 0, target.pixels, 0, len);
             return target;
         }
@@ -1143,28 +1129,12 @@ public class Img {
             double tuv = t + u * v;
 
             switch (bmAlpha) {
-                case MAX: {
-                    tuv = Math.max(t, v);
-                }
-                break;
-                case MIN: {
-                    tuv = Math.min(t, v);
-                }
-                break;
-                case MULTIPLY: {
-                    tuv = t * v;
-                }
-                break;
-                case OVER: {
-                    tuv = t;
-                }
-                break;
-                case UNDER: {
-                    tuv = v;
-                }
-                break;
-                case BLEND:
-                default:
+                case MAX: { tuv = Math.max(t, v); } break;
+                case MIN: { tuv = Math.min(t, v); } break;
+                case MULTIPLY: { tuv = t * v; } break;
+                case OVER: { tuv = t; } break;
+                case UNDER: { tuv = v; } break;
+                case BLEND:  default:
             }
 
             long hexComp = Img.CLEAR_PIXEL;
@@ -1210,7 +1180,7 @@ public class Img {
                     break;
 
                     case OVER: {
-                        lComp = tgt0 ? lOver : u * lUnder + t * lOver;
+                         lComp = lOver;
                     }
                     break;
 
@@ -1227,7 +1197,7 @@ public class Img {
                     break;
 
                     case UNDER: {
-                        lComp = vgt0 ? lUnder : u * lUnder + t * lOver;
+                        lComp = lUnder;
                     }
                     break;
 
@@ -1257,11 +1227,13 @@ public class Img {
                             final double csqUnder = aUnder * aUnder + bUnder * bUnder;
                             if (csqUnder > Utils.EPSILON_D) {
                                 final double s = Math.sqrt(aOver * aOver + bOver * bOver) / Math.sqrt(csqUnder);
-                                aComp = s * aUnder;
-                                bComp = s * bUnder;
+                                final double aAdopt = s * aUnder;
+                                final double bAdopt = s * bUnder;
+                                aComp = u * aUnder + t * aAdopt;
+                                bComp = u * bUnder + t * bAdopt;
                             } else {
-                                aComp = 0.0d;
-                                bComp = 0.0d;
+                                aComp = u * aUnder;
+                                bComp = u * bUnder;
                             } /* End chroma under is greater than zero. */
                         } /* End under alpha is greater than zero. */
                     }
@@ -1272,19 +1244,21 @@ public class Img {
                             final double csqOver = aOver * aOver + bOver * bOver;
                             if (csqOver > Utils.EPSILON_D) {
                                 final double s = Math.sqrt(aUnder * aUnder + bUnder * bUnder) / Math.sqrt(csqOver);
-                                aComp = s * aOver;
-                                bComp = s * bOver;
+                                final double aAdopt = s * aOver;
+                                final double bAdopt = s * bOver;
+                                aComp = u * aUnder + t * aAdopt;
+                                bComp = u * bUnder + t * bAdopt;
                             } else {
-                                aComp = 0.0d;
-                                bComp = 0.0d;
+                                aComp = u * aUnder;
+                                bComp = u * bUnder;
                             } /* End chroma over is greater than zero. */
                         } /* End under alpha is greater than zero. */
                     }
                     break;
 
                     case OVER: {
-                        aComp = tgt0 ? aOver : u * aUnder + t * aOver;
-                        bComp = tgt0 ? bOver : u * bUnder + t * bOver;
+                        aComp = aOver;
+                        bComp = bOver;
                     }
                     break;
 
@@ -1297,8 +1271,8 @@ public class Img {
                     break;
 
                     case UNDER: {
-                        aComp = vgt0 ? aUnder : u * aUnder + t * aOver;
-                        bComp = vgt0 ? bUnder : u * bUnder + t * bOver;
+                        aComp = aUnder;
+                        bComp = bUnder;
                     }
                     break;
 
@@ -4919,18 +4893,10 @@ public class Img {
                 long ai = (long) (0.5f + a2);
                 long bi = (long) (0.5f + b2);
 
-                if (ti > 0xffffL) {
-                    ti = 0xffffL;
-                }
-                if (li > 0xffffL) {
-                    li = 0xffffL;
-                }
-                if (ai > 0xffffL) {
-                    ai = 0xffffL;
-                }
-                if (bi > 0xffffL) {
-                    bi = 0xffffL;
-                }
+                if (ti > 0xffffL) { ti = 0xffffL; }
+                if (li > 0xffffL) { li = 0xffffL; }
+                if (ai > 0xffffL) { ai = 0xffffL; }
+                if (bi > 0xffffL) { bi = 0xffffL; }
 
                 return ti << Img.T_SHIFT
                     | li << Img.L_SHIFT

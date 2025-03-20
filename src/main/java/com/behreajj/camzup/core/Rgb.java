@@ -265,12 +265,12 @@ public class Rgb implements IColor {
     public static Rgb fromHex(final int hex, final Rgb target) {
 
         /* @formatter:off */
-    return target.set(
-        (hex >> 0x10 & 0xff) * Utils.ONE_255,
-        (hex >> 0x08 & 0xff) * Utils.ONE_255,
-        (hex & 0xff) * Utils.ONE_255,
-        (hex >> 0x18 & 0xff) * Utils.ONE_255);
-    /* @formatter:on */
+        return target.set(
+            (hex >> 0x10 & 0xff) * Utils.ONE_255,
+            (hex >> 0x08 & 0xff) * Utils.ONE_255,
+            (hex & 0xff) * Utils.ONE_255,
+            (hex >> 0x18 & 0xff) * Utils.ONE_255);
+        /* @formatter:on */
     }
 
     /**
@@ -311,7 +311,10 @@ public class Rgb implements IColor {
                     /* RGB 444. */
                     final int c16 = Integer.parseInt(cVerif, 16);
                     return target.set(
-                        (c16 >> 0x8 & 0xf) / 15.0f, (c16 >> 0x4 & 0xf) / 15.0f, (c16 & 0xf) / 15.0f, 1.0f);
+                        (c16 >> 0x8 & 0xf) / 15.0f,
+                        (c16 >> 0x4 & 0xf) / 15.0f,
+                        (c16 & 0xf) / 15.0f,
+                        1.0f);
                 }
 
                 case 4: {
@@ -377,9 +380,8 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Evaluates whether the color is within the standard RGB gamut of [0.0, 1.0],
-     * according to a
-     * tolerance.
+     * Evaluates whether the color is within the standard RGB gamut of
+     * [0.0, 1.0], according to a tolerance.
      *
      * @param c   color
      * @param tol tolerance
@@ -388,14 +390,14 @@ public class Rgb implements IColor {
     public static boolean isInGamut(final Rgb c, final float tol) {
 
         /* @formatter:off */
-    final float oneptol = 1.0f + tol;
-    return c.r >= -tol
-        && c.r <= oneptol
-        && c.g >= -tol
-        && c.g <= oneptol
-        && c.b >= -tol
-        && c.b <= oneptol;
-    /* @formatter:on */
+        final float oneptol = 1.0f + tol;
+        return c.r >= -tol
+            && c.r <= oneptol
+            && c.g >= -tol
+            && c.g <= oneptol
+            && c.b >= -tol
+            && c.b <= oneptol;
+        /* @formatter:on */
     }
 
     /**
@@ -406,27 +408,30 @@ public class Rgb implements IColor {
      * @param target    the output color
      * @return the standard color
      */
-    public static Rgb lRgbTosRgb(final Rgb source, final boolean inclAlpha, final Rgb target) {
+    public static Rgb lRgbTosRgb(
+        final Rgb source,
+        final boolean inclAlpha,
+        final Rgb target) {
 
         /* pow(x, y) := exp(y * ln(x)) does not lead to better performance. */
 
         /* @formatter:off */
-    return target.set(
-        source.r <= 0.0031308f
-            ? source.r * 12.92f
-            : (float) (Math.pow(source.r, 0.4166666666666667d) * 1.055d - 0.055d),
-        source.g <= 0.0031308f
-            ? source.g * 12.92f
-            : (float) (Math.pow(source.g, 0.4166666666666667d) * 1.055d - 0.055d),
-        source.b <= 0.0031308f
-            ? source.b * 12.92f
-            : (float) (Math.pow(source.b, 0.4166666666666667d) * 1.055d - 0.055d),
-        inclAlpha
-            ? source.alpha <= 0.0031308f
-                ? source.alpha * 12.92f
-                : (float) (Math.pow(source.alpha, 0.4166666666666667d) * 1.055d - 0.055d)
-            : source.alpha);
-    /* @formatter:on */
+        return target.set(
+            source.r <= 0.0031308f
+                ? source.r * 12.92f
+                : (float) (Math.pow(source.r, 0.4166666666666667d) * 1.055d - 0.055d),
+            source.g <= 0.0031308f
+                ? source.g * 12.92f
+                : (float) (Math.pow(source.g, 0.4166666666666667d) * 1.055d - 0.055d),
+            source.b <= 0.0031308f
+                ? source.b * 12.92f
+                : (float) (Math.pow(source.b, 0.4166666666666667d) * 1.055d - 0.055d),
+            inclAlpha
+                ? source.alpha <= 0.0031308f
+                    ? source.alpha * 12.92f
+                    : (float) (Math.pow(source.alpha, 0.4166666666666667d) * 1.055d - 0.055d)
+                : source.alpha);
+        /* @formatter:on */
     }
 
     /**
@@ -444,21 +449,22 @@ public class Rgb implements IColor {
      * @author Jan Behrens
      */
     public static Vec4 lRgbToSrXyz(
-        final float r, final float g, final float b, final float a, final Vec4 target) {
+        final float r,
+        final float g,
+        final float b,
+        final float a,
+        final Vec4 target) {
 
-        /* @formatter:off */
-    return target.set(
-        (float) (0.32053d * (double) r + 0.63692d * (double) g + 0.04256d * (double) b),
-        (float) (0.161987d * (double) r + 0.756636d * (double) g + 0.081376d * (double) b),
-        (float) (0.017228d * (double) r + 0.10866d * (double) g + 0.874112d * (double) b),
-        a);
-    /* @formatter:on */
+        return target.set(
+            (float) (0.32053d * (double) r + 0.63692d * (double) g + 0.04256d * (double) b),
+            (float) (0.161987d * (double) r + 0.756636d * (double) g + 0.081376d * (double) b),
+            (float) (0.017228d * (double) r + 0.10866d * (double) g + 0.874112d * (double) b),
+            a);
     }
 
     /**
-     * Converts a color from linear RGB to the XYZ coordinates for SR LAB 2. The
-     * values returned are
-     * in the range [0.0, 1.0].
+     * Converts a color from linear RGB to the XYZ coordinates for SR LAB 2.
+     * The values returned are in the range [0.0, 1.0].
      *
      * @param c      the color
      * @param target the output vector
@@ -483,8 +489,7 @@ public class Rgb implements IColor {
 
     /**
      * Tests to see if the alpha channel of this color is less than or equal to
-     * zero, i.e., if it is
-     * completely transparent.
+     * zero, i.e., if it is completely transparent.
      *
      * @param c the color
      * @return the evaluation
@@ -513,32 +518,6 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Creates a quantized version of the color. Uses unsigned quantization. A level
-     * of 1 or -1 will
-     * copy the input color to the target.
-     *
-     * @param c      the color
-     * @param levels the levels
-     * @param target the output color
-     * @return the quantized color
-     * @see Utils#abs(float)
-     * @see Utils#quantizeUnsigned(float, float, float)
-     */
-    public static Rgb quantize(final Rgb c, final int levels, final Rgb target) {
-
-        if (levels == 1 || levels == -1) {
-            return target.set(c);
-        }
-        final float levf = Utils.abs(levels);
-        final float delta = 1.0f / (levf - 1.0f);
-        return target.set(
-            Utils.quantizeUnsigned(c.r, levf, delta),
-            Utils.quantizeUnsigned(c.g, levf, delta),
-            Utils.quantizeUnsigned(c.b, levf, delta),
-            Utils.quantizeUnsigned(c.alpha, levf, delta));
-    }
-
-    /**
      * Returns the color red, ( 1.0, 0.0, 0.0, 1.0 ) .
      *
      * @param target the output color
@@ -557,7 +536,10 @@ public class Rgb implements IColor {
      * @param target the output color
      * @return the linear color
      */
-    public static Rgb sRgbTolRgb(final Rgb source, final boolean alpha, final Rgb target) {
+    public static Rgb sRgbTolRgb(
+        final Rgb source,
+        final boolean alpha,
+        final Rgb target) {
 
         /*
          * pow(x, y) := exp(y * log(x)) does not lead to better performance.
@@ -565,22 +547,22 @@ public class Rgb implements IColor {
          */
 
         /* @formatter:off */
-    return target.set(
-        source.r <= 0.04045f
-            ? source.r * 0.07739938f
-            : (float) Math.pow((source.r + 0.055d) * 0.9478672985781991d, 2.4d),
-        source.g <= 0.04045f
-            ? source.g * 0.07739938f
-            : (float) Math.pow((source.g + 0.055d) * 0.9478672985781991d, 2.4d),
-        source.b <= 0.04045f
-            ? source.b * 0.07739938f
-            : (float) Math.pow((source.b + 0.055d) * 0.9478672985781991d, 2.4d),
-        alpha
-            ? source.alpha <= 0.04045f
-                ? source.alpha * 0.07739938f
-                : (float) Math.pow((source.alpha + 0.055d) * 0.9478672985781991d, 2.4d)
-            : source.alpha);
-    /* @formatter:on */
+        return target.set(
+            source.r <= 0.04045f
+                ? source.r * 0.07739938f
+                : (float) Math.pow((source.r + 0.055d) * 0.9478672985781991d, 2.4d),
+            source.g <= 0.04045f
+                ? source.g * 0.07739938f
+                : (float) Math.pow((source.g + 0.055d) * 0.9478672985781991d, 2.4d),
+            source.b <= 0.04045f
+                ? source.b * 0.07739938f
+                : (float) Math.pow((source.b + 0.055d) * 0.9478672985781991d, 2.4d),
+            alpha
+                ? source.alpha <= 0.04045f
+                    ? source.alpha * 0.07739938f
+                    : (float) Math.pow((source.alpha + 0.055d) * 0.9478672985781991d, 2.4d)
+                : source.alpha);
+        /* @formatter:on */
     }
 
     /**
@@ -594,9 +576,14 @@ public class Rgb implements IColor {
      * @see Rgb#lRgbToSrXyz(Rgb, Vec4)
      * @see Rgb#sRgbTolRgb(Rgb, boolean, Rgb)
      */
-    public static Lab sRgbToSrLab2(final Rgb srgb, final Lab lab, final Vec4 xyz, final Rgb lrgb) {
+    public static Lab sRgbToSrLab2(
+        final Rgb srgb,
+        final Lab lab,
+        final Vec4 xyz,
+        final Rgb lrgb) {
 
-        return Lab.fromSrXyz(Rgb.lRgbToSrXyz(Rgb.sRgbTolRgb(srgb, false, lrgb), xyz), lab);
+        return Lab.fromSrXyz(Rgb.lRgbToSrXyz(Rgb.sRgbTolRgb(
+            srgb, false, lrgb), xyz), lab);
     }
 
     /**
@@ -610,7 +597,10 @@ public class Rgb implements IColor {
      * @see Rgb#sRgbToSrLab2(Rgb, Lab, Vec4, Rgb)
      */
     public static Lab[] sRgbToSrLab2(
-        final Rgb[] source, final Lab[] target, final Vec4 xyz, final Rgb lrgb) {
+        final Rgb[] source,
+        final Lab[] target,
+        final Vec4 xyz,
+        final Rgb lrgb) {
 
         final int srcLen = source.length;
         for (int i = 0; i < srcLen; ++i) {
@@ -631,9 +621,14 @@ public class Rgb implements IColor {
      * @see Rgb#lRgbTosRgb(Rgb, boolean, Rgb)
      * @see Rgb#srXyzTolRgb(Vec4, Rgb)
      */
-    public static Rgb srLab2TosRgb(final Lab lab, final Rgb srgb, final Rgb lrgb, final Vec4 xyz) {
+    public static Rgb srLab2TosRgb(
+        final Lab lab,
+        final Rgb srgb,
+        final Rgb lrgb,
+        final Vec4 xyz) {
 
-        return Rgb.lRgbTosRgb(Rgb.srXyzTolRgb(Lab.toSrXyz(lab, xyz), lrgb), false, srgb);
+        return Rgb.lRgbTosRgb(Rgb.srXyzTolRgb(Lab.toSrXyz(
+            lab, xyz), lrgb), false, srgb);
     }
 
     /**
@@ -647,7 +642,10 @@ public class Rgb implements IColor {
      * @see Rgb#srLab2TosRgb(Lab, Rgb, Rgb, Vec4)
      */
     public static Rgb[] srLab2TosRgb(
-        final Lab[] source, final Rgb[] target, final Rgb lrgb, final Vec4 xyz) {
+        final Lab[] source,
+        final Rgb[] target,
+        final Rgb lrgb,
+        final Vec4 xyz) {
 
         final int srcLen = source.length;
         for (int i = 0; i < srcLen; ++i) {
@@ -669,15 +667,19 @@ public class Rgb implements IColor {
      * @author Jan Behrens
      */
     public static Rgb srXyzTolRgb(
-        final float x, final float y, final float z, final float a, final Rgb target) {
+        final float x,
+        final float y,
+        final float z,
+        final float a,
+        final Rgb target) {
 
         /* @formatter:off */
-    return target.set(
-        (float) (5.435679d * (double) x - 4.599131d * (double) y + 0.163593d * (double) z),
-        (float) (-1.16809d * (double) x + 2.327977d * (double) y - 0.159798d * (double) z),
-        (float) (0.03784d * (double) x - 0.198564d * (double) y + 1.160644d * (double) z),
-        a);
-    /* @formatter:on */
+        return target.set(
+            (float) (5.435679d * (double) x - 4.599131d * (double) y + 0.163593d * (double) z),
+            (float) (-1.16809d * (double) x + 2.327977d * (double) y - 0.159798d * (double) z),
+            (float) (0.03784d * (double) x - 0.198564d * (double) y + 1.160644d * (double) z),
+            a);
+        /* @formatter:on */
     }
 
     /**
@@ -694,9 +696,8 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Writes a color's data as a 40 byte entry in an Adobe Swatch Exchange (ase)
-     * palette file
-     * beginning at the cursor index.
+     * Writes a color's data as a 40 byte entry in an Adobe Swatch Exchange
+     * (ase) palette file beginning at the cursor index.
      *
      * @param c      the color
      * @param target the byte array
@@ -706,7 +707,10 @@ public class Rgb implements IColor {
      * @see String#toCharArray()
      * @see Utils#bytesml(float, byte[], int)
      */
-    public static byte[] toAseBytes(final Rgb c, final byte[] target, final int cursor) {
+    public static byte[] toAseBytes(
+        final Rgb c,
+        final byte[] target,
+        final int cursor) {
 
         /* Color entry code (2 bytes). */
         target[cursor] = 0;
@@ -824,10 +828,8 @@ public class Rgb implements IColor {
 
     /**
      * Returns a String representing the color array in the GIMP palette file
-     * format. The number of
-     * columns defaults to the square root of the array's length; for example, 16
-     * colors would have 4
-     * columns.
+     * format. The number of columns defaults to the square root of the array's
+     * length; for example, 16 colors would have 4 columns.
      *
      * @param arr  the array
      * @param name the palette name
@@ -842,25 +844,26 @@ public class Rgb implements IColor {
 
     /**
      * Returns a String representing the color array in the GIMP palette file
-     * format. The number of
-     * columns is for displaying the palette.
+     * format. The number of columns is for displaying the palette.
      *
      * @param arr  the array
      * @param name the palette name
      * @param cols the display columns
      * @return the string
      */
-    public static String toGplString(final Rgb[] arr, final String name, final int cols) {
+    public static String toGplString(
+        final Rgb[] arr,
+        final String name,
+        final int cols) {
 
         return Rgb.toGplString(arr, name, cols, false);
     }
 
     /**
      * Returns a String representing the color array in the GIMP palette file
-     * format. The number of
-     * columns is for displaying the palette. A flag indicates whether to append the
-     * color's index as
-     * the final column of each row. Indices begin at 1, not 0.
+     * format. The number of columns is for displaying the palette. A flag
+     * indicates whether to append the color's index as the final column of
+     * each row. Indices begin at 1, not 0.
      *
      * @param arr    the array
      * @param name   the palette name
@@ -871,7 +874,10 @@ public class Rgb implements IColor {
      * @see Rgb#toHexWeb(Rgb)
      */
     public static String toGplString(
-        final Rgb[] arr, final String name, final int cols, final boolean useIdx) {
+        final Rgb[] arr,
+        final String name,
+        final int cols,
+        final boolean useIdx) {
 
         final StringBuilder sb = new StringBuilder(1024);
         sb.append("GIMP Palette");
@@ -899,9 +905,8 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Returns a representation of the color as a hexadecimal code, preceded by a
-     * '0x', in the format
-     * AARRGGBB.
+     * Returns a representation of the color as a hexadecimal code, preceded by
+     * a '0x', in the format AARRGGBB.
      *
      * @param c the color
      * @return the string
@@ -913,9 +918,8 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Returns a representation of the color as a hexadecimal code, preceded by a
-     * '0x', in the format
-     * AARRGGBB.
+     * Returns a representation of the color as a hexadecimal code, preceded by
+     * a '0x', in the format AARRGGBB.
      *
      * @param c the color
      * @return the string
@@ -927,9 +931,9 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Returns a representation of the color as a hexadecimal code, preceded by a
-     * '0x', in the format
-     * AARRGGBB. Appends to an existing {@link StringBuilder}.
+     * Returns a representation of the color as a hexadecimal code, preceded by
+     * a '0x', in the format AARRGGBB. Appends to an existing
+     * {@link StringBuilder}.
      *
      * @param sb the string builder
      * @param c  the color
@@ -938,13 +942,18 @@ public class Rgb implements IColor {
      */
     public static StringBuilder toHexString(final StringBuilder sb, final int c) {
 
-        return Rgb.toHexString(sb, c >> 0x18 & 0xff, c >> 0x10 & 0xff, c >> 0x08 & 0xff, c & 0xff);
+        return Rgb.toHexString(
+            sb,
+            c >> 0x18 & 0xff,
+            c >> 0x10 & 0xff,
+            c >> 0x08 & 0xff,
+            c & 0xff);
     }
 
     /**
-     * Returns a representation of the color as a hexadecimal code, preceded by a
-     * '0x', in the format
-     * AARRGGBB. Appends to an existing {@link StringBuilder}.
+     * Returns a representation of the color as a hexadecimal code, preceded by
+     * a '0x', in the format AARRGGBB. Appends to an existing
+     * {@link StringBuilder}.
      *
      * @param sb the string builder
      * @param a  the alpha byte
@@ -955,7 +964,11 @@ public class Rgb implements IColor {
      * @see Utils#toHexDigit(StringBuilder, int)
      */
     public static StringBuilder toHexString(
-        final StringBuilder sb, final int a, final int r, final int g, final int b) {
+        final StringBuilder sb,
+        final int a,
+        final int r,
+        final int g,
+        final int b) {
 
         sb.append("0x");
         Utils.toHexDigit(sb, a);
@@ -966,9 +979,9 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Returns a representation of the color as a hexadecimal code, preceded by a
-     * '0x', in the format
-     * AARRGGBB. Appends to an existing {@link StringBuilder}.
+     * Returns a representation of the color as a hexadecimal code, preceded by
+     * a '0x', in the format AARRGGBB. Appends to an existing
+     * {@link StringBuilder}.
      *
      * @param sb the string builder
      * @param c  the color
@@ -979,21 +992,20 @@ public class Rgb implements IColor {
     public static StringBuilder toHexString(final StringBuilder sb, final Rgb c) {
 
         /* @formatter:off */
-    return Rgb.toHexString(
-        sb,
-        (int) (Utils.clamp01(c.alpha) * 0xff + 0.5f),
-        (int) (Utils.clamp01(c.r) * 0xff + 0.5f),
-        (int) (Utils.clamp01(c.g) * 0xff + 0.5f),
-        (int) (Utils.clamp01(c.b) * 0xff + 0.5f));
-    /* @formatter:on */
+        return Rgb.toHexString(
+            sb,
+            (int) (Utils.clamp01(c.alpha) * 0xff + 0.5f),
+            (int) (Utils.clamp01(c.r) * 0xff + 0.5f),
+            (int) (Utils.clamp01(c.g) * 0xff + 0.5f),
+            (int) (Utils.clamp01(c.b) * 0xff + 0.5f));
+        /* @formatter:on */
     }
 
     /**
      * Returns a web-friendly representation of the color as a hexadecimal code,
-     * preceded by a
-     * hashtag, '#', with no alpha. Assumes the number will be formatted as
-     * <code>0xAARRGGBB</code> ,
-     * where alpha is the first channel, followed by red, green and blue.
+     * preceded by a hashtag, '#', with no alpha. Assumes the number will be
+     * formatted as <code>0xAARRGGBB</code>, where alpha is the first channel,
+     * followed by red, green and blue.
      *
      * @param c the color
      * @return the string
@@ -1006,8 +1018,7 @@ public class Rgb implements IColor {
 
     /**
      * Creates a web-friendly representation of the color as a hexadecimal code,
-     * preceded by a
-     * hashtag, '#', with no alpha.
+     * preceded by a hashtag, '#', with no alpha.
      *
      * @param c the color
      * @return the string
@@ -1020,13 +1031,11 @@ public class Rgb implements IColor {
 
     /**
      * Creates a web-friendly representation of the color as a hexadecimal code,
-     * preceded by a
-     * hashtag, '#', with no alpha. Appends to an existing
+     * preceded by a hashtag, '#', with no alpha. Appends to an existing
      * {@link StringBuilder}.<br>
      * <br>
-     * Assumes the number will be formatted as <code>0xAARRGGBB</code> , where alpha
-     * is the first
-     * channel, followed by red, green and blue.
+     * Assumes the number will be formatted as <code>0xAARRGGBB</code>, where
+     * alpha is the first channel, followed by red, green and blue.
      *
      * @param sb the string builder
      * @param c  the color
@@ -1043,8 +1052,8 @@ public class Rgb implements IColor {
 
     /**
      * Creates a web-friendly representation of the color as a hexadecimal code,
-     * preceded by a
-     * hashtag, '#', with no alpha. Appends to an existing {@link StringBuilder}.
+     * preceded by a hashtag, '#', with no alpha. Appends to an existing
+     * {@link StringBuilder}.
      *
      * @param sb the string builder
      * @param r  the red byte
@@ -1065,8 +1074,8 @@ public class Rgb implements IColor {
 
     /**
      * Creates a web-friendly representation of the color as a hexadecimal code,
-     * preceded by a
-     * hashtag, '#', with no alpha. Appends to an existing {@link StringBuilder}.
+     * preceded by a hashtag, '#', with no alpha. Appends to an existing
+     * {@link StringBuilder}.
      *
      * @param sb the string builder
      * @param c  color
@@ -1077,17 +1086,17 @@ public class Rgb implements IColor {
     public static StringBuilder toHexWeb(final StringBuilder sb, final Rgb c) {
 
         /* @formatter:off */
-    return Rgb.toHexWeb(
-        sb,
-        (int) (Utils.clamp01(c.r) * 0xff + 0.5f),
-        (int) (Utils.clamp01(c.g) * 0xff + 0.5f),
-        (int) (Utils.clamp01(c.b) * 0xff + 0.5f));
-    /* @formatter:on */
+        return Rgb.toHexWeb(
+            sb,
+            (int) (Utils.clamp01(c.r) * 0xff + 0.5f),
+            (int) (Utils.clamp01(c.g) * 0xff + 0.5f),
+            (int) (Utils.clamp01(c.b) * 0xff + 0.5f));
+        /* @formatter:on */
     }
 
     /**
-     * Returns a String representing the color array in the JASC-PAL palette file
-     * format.
+     * Returns a String representing the color array in the JASC-PAL palette
+     * file format.
      *
      * @param arr the array
      * @return the string
@@ -1244,8 +1253,8 @@ public class Rgb implements IColor {
 
     /**
      * Sets a color with bytes. In Java, bytes are signed, within the range
-     * [{@value Byte#MIN_VALUE},
-     * {@value Byte#MAX_VALUE}] . The alpha channel defaults to 1.0 .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] . The alpha channel
+     * defaults to 1.0 .
      *
      * @param red   the red channel
      * @param green the green channel
@@ -1259,8 +1268,7 @@ public class Rgb implements IColor {
 
     /**
      * Sets a color with bytes. In Java, bytes are signed, within the range
-     * [{@value Byte#MIN_VALUE},
-     * {@value Byte#MAX_VALUE}] .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .
      *
      * @param red   the red channel
      * @param green the green channel
@@ -1268,20 +1276,24 @@ public class Rgb implements IColor {
      * @param alpha the alpha channel
      * @return this color
      */
-    public Rgb set(final byte red, final byte green, final byte blue, final byte alpha) {
+    public Rgb set(
+        final byte red,
+        final byte green,
+        final byte blue,
+        final byte alpha) {
 
         /* @formatter:off */
-    return this.set(
-        Utils.ONE_255 * (red & 0xff),
-        Utils.ONE_255 * (green & 0xff),
-        Utils.ONE_255 * (blue & 0xff),
-        Utils.ONE_255 * (alpha & 0xff));
-    /* @formatter:on */
+        return this.set(
+            Utils.ONE_255 * (red & 0xff),
+            Utils.ONE_255 * (green & 0xff),
+            Utils.ONE_255 * (blue & 0xff),
+            Utils.ONE_255 * (alpha & 0xff));
+        /* @formatter:on */
     }
 
     /**
-     * Sets the red, green and blue color channels of this color. The alpha channel
-     * defaults to 1.0 .
+     * Sets the red, green and blue color channels of this color. The alpha
+     * channel defaults to 1.0 .
      *
      * @param red   the red channel
      * @param green the green channel
@@ -1295,10 +1307,8 @@ public class Rgb implements IColor {
 
     /**
      * Sets the red, green, blue and alpha color channels of this color. The
-     * expected range for each
-     * channel is [0.0, 1.0], however these bounds are not checked to facilitate
-     * color mixing in other
-     * color spaces.
+     * expected range for each channel is [0.0, 1.0], however these bounds are
+     * not checked to facilitate color mixing in other color spaces.
      *
      * @param red   the red channel
      * @param green the green channel
@@ -1333,8 +1343,7 @@ public class Rgb implements IColor {
 
     /**
      * Converts a color to an integer where hexadecimal represents the color
-     * channels as 0xAARRGGBB .
-     * Defaults to modular arithmetic.
+     * channels as 0xAARRGGBB. Defaults to modular arithmetic.
      *
      * @return the color in hexadecimal
      */
@@ -1345,10 +1354,8 @@ public class Rgb implements IColor {
 
     /**
      * Converts a color to an integer where hexadecimal represents the color
-     * channels as 0xAARRGGBB .
-     * Uses saturation arithmetic. Two colors with unequal values beyond [0.0, 1.0]
-     * may yield equal
-     * integers.
+     * channels as 0xAARRGGBB. Uses saturation arithmetic. Two colors with
+     * unequal values beyond [0.0, 1.0] may yield equal integers.
      *
      * @return the color in hexadecimal
      * @see Utils#clamp01(float)
@@ -1357,19 +1364,17 @@ public class Rgb implements IColor {
     public int toHexIntSat() {
 
         /* @formatter:off */
-    return (int) (Utils.clamp01(this.alpha) * 0xff + 0.5f) << 0x18
-        | (int) (Utils.clamp01(this.r) * 0xff + 0.5f) << 0x10
-        | (int) (Utils.clamp01(this.g) * 0xff + 0.5f) << 0x08
-        | (int) (Utils.clamp01(this.b) * 0xff + 0.5f);
-    /* @formatter:on */
+        return (int) (Utils.clamp01(this.alpha) * 0xff + 0.5f) << 0x18
+            | (int) (Utils.clamp01(this.r) * 0xff + 0.5f) << 0x10
+            | (int) (Utils.clamp01(this.g) * 0xff + 0.5f) << 0x08
+            | (int) (Utils.clamp01(this.b) * 0xff + 0.5f);
+        /* @formatter:on */
     }
 
     /**
      * Converts a color to an integer where hexadecimal represents the color
-     * channels as 0xAARRGGBB .
-     * Uses modular arithmetic, so out-of-gamut colors may cause overflow and
-     * unexpected hexadecimal
-     * colors.
+     * channels as 0xAARRGGBB. Uses modular arithmetic, so out-of-gamut colors
+     * may cause overflow and unexpected hexadecimal colors.
      *
      * @return the color in hexadecimal
      */
@@ -1377,11 +1382,11 @@ public class Rgb implements IColor {
     public int toHexIntWrap() {
 
         /* @formatter:off */
-    return (int) (this.alpha * 0xff + 0.5f) << 0x18
-        | (int) (this.r * 0xff + 0.5f) << 0x10
-        | (int) (this.g * 0xff + 0.5f) << 0x08
-        | (int) (this.b * 0xff + 0.5f);
-    /* @formatter:on */
+        return (int) (this.alpha * 0xff + 0.5f) << 0x18
+            | (int) (this.r * 0xff + 0.5f) << 0x10
+            | (int) (this.g * 0xff + 0.5f) << 0x08
+            | (int) (this.b * 0xff + 0.5f);
+        /* @formatter:on */
     }
 
     /**
@@ -1407,18 +1412,16 @@ public class Rgb implements IColor {
     }
 
     /**
-     * An internal helper function to format a color as a Python tuple, then append
-     * it to a {@link
-     * StringBuilder}. Used for testing purposes to compare results with Blender
-     * 2.9x.<br>
+     * An internal helper function to format a color as a Python tuple, then
+     * append it to a {@link StringBuilder}. Used for testing purposes to
+     * compare results with Blender 4.x.<br>
      * <br>
      * This is formatted as a tuple where red, green and blue channels have been
-     * raised to the power
-     * of gamma (usually 2.2, Blender's default sRGB color management setting).<br>
+     * raised to the power of gamma (usually 2.2, Blender's default sRGB color
+     * management setting).<br>
      * <br>
-     * If alpha is included, then a four tuple is appended, where alpha is the last
-     * element; if not
-     * then a three tuple is appended.
+     * If alpha is included, then a four tuple is appended, where alpha is the
+     * last element; if not then a three tuple is appended.
      *
      * @param pyCd  the string builder
      * @param gamma the exponent
@@ -1445,10 +1448,9 @@ public class Rgb implements IColor {
 
     /**
      * Returns a String representation of the color compatible with .ggr (GIMP
-     * gradient) file formats.
-     * Each channel, including alpha, is represented as a float in [0.0, 1.0]
-     * separated by a space.
-     * Out of bounds values are clamped to the range.
+     * gradient) file formats. Each channel, including alpha, is represented as
+     * a float in [0.0, 1.0] separated by a space. Out of bounds values are
+     * clamped to the range.
      *
      * @return the string
      * @see Utils#clamp01(float)

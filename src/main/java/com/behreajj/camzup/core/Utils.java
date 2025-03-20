@@ -1275,15 +1275,17 @@ public abstract class Utils {
 
         if (b != 0.0f) {
             final float quot = a / b;
-            return a - b * (quot > 0.0f ? (int) quot : quot < 0.0f ? (int) quot - 1.0f : 0.0f);
+            return a - b * (quot > 0.0f
+                ? (int) quot
+                : quot < 0.0f ? (int) quot - 1.0f
+                : 0.0f);
         }
         return a;
     }
 
     /**
-     * Applies floor modulo to the operands. Returns the left operand when the right
-     * operand is zero.
-     * An alternative to {@link Math#floorMod(int, int)} .
+     * Applies floor modulo to the operands. Returns the left operand when the
+     * right operand is zero. An alternative to {@link Math#floorMod(int, int)}.
      *
      * @param a the left operand
      * @param b the right operand
@@ -1305,9 +1307,8 @@ public abstract class Utils {
     }
 
     /**
-     * Applies floor modulo to the operands. Returns the left operand when the right
-     * operand is zero.
-     * An alternative to {@link Math#floorMod(int, int)} .
+     * Applies floor modulo to the operands. Returns the left operand when the
+     * right operand is zero. An alternative to {@link Math#floorMod(int, int)}.
      *
      * @param a the left operand
      * @param b the right operand
@@ -1324,9 +1325,9 @@ public abstract class Utils {
     }
 
     /**
-     * Subtracts the floor of the input value from the value. Returns a positive
-     * value in the range
-     * [0.0, 1.0] . Equivalent to GLSL's <code>fract</code>.
+     * Subtracts the floor of the input value from the value. Returns a
+     * positive value in the range [0.0, 1.0] . Equivalent to GLSL's
+     * <code>fract</code>.
      *
      * @param v the value
      * @return the result
@@ -1337,8 +1338,8 @@ public abstract class Utils {
     }
 
     /**
-     * A specialized version of modulo which shifts an angle in degrees to the range
-     * [0.0, 360.0] .
+     * A specialized version of modulo which shifts an angle in degrees to the
+     * range [0.0, 360.0] .
      *
      * @param degrees the angle in degrees
      * @return the wrapped angle
@@ -1348,8 +1349,11 @@ public abstract class Utils {
 
         // return degrees - 360.0f * Utils.floor(degrees * Utils.ONE_360);
         final float dNorm = degrees * Utils.ONE_360;
-        return degrees
-            - 360.0f * (dNorm > 0.0f ? (int) dNorm : dNorm < 0.0f ? (int) dNorm - 1.0f : 0.0f);
+        return degrees - 360.0f * (dNorm > 0.0f
+            ? (int) dNorm
+            : dNorm < 0.0f
+            ? (int) dNorm - 1.0f
+            : 0.0f);
     }
 
     /**
@@ -1365,8 +1369,11 @@ public abstract class Utils {
 
         // return radians - Utils.TAU * Utils.floor(radians * Utils.ONE_TAU);
         final float rNorm = radians * Utils.ONE_TAU;
-        return radians
-            - Utils.TAU * (rNorm > 0.0f ? (int) rNorm : rNorm < 0.0f ? (int) rNorm - 1.0f : 0.0f);
+        return radians - Utils.TAU * (rNorm > 0.0f
+            ? (int) rNorm
+            : rNorm < 0.0f
+            ? (int) rNorm - 1.0f
+            : 0.0f);
     }
 
     /**
