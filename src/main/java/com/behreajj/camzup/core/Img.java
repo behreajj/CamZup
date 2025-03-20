@@ -194,6 +194,9 @@ public class Img {
         // a mask and shift would be outside the for loop, e.g.,
         // mask = useLight ? L_MASK : T_MASK .
 
+        // TODO: Filter layers to alpha based on response func?
+        // Use preset enums instead of a function.s
+
         this(Img.DEFAULT_WIDTH, Img.DEFAULT_HEIGHT, Img.CLEAR_PIXEL);
     }
 
@@ -1049,14 +1052,14 @@ public class Img {
                 final int axs = x - axid;
                 final int ays = y - ayid;
                 if (ays >= 0 && ays < ah && axs >= 0 && axs < aw) {
-                    final long hexUnder = pxUnder[axs + ays * aw];
+                    final long hexUnder = pxUnder[ays * aw + axs];
                     dict.put(hexUnder, Lab.fromHex(hexUnder, new Lab()));
                 }
 
                 final int bxs = x - bxid;
                 final int bys = y - byid;
                 if (bys >= 0 && bys < bh && bxs >= 0 && bxs < bw) {
-                    final long hexOver = pxOver[bxs + bys * bw];
+                    final long hexOver = pxOver[bys * bw + bxs];
                     dict.put(hexOver, Lab.fromHex(hexOver, new Lab()));
                 }
             }
@@ -1087,14 +1090,14 @@ public class Img {
             final int axs = x - axud;
             final int ays = y - ayud;
             if (ays >= 0 && ays < ah && axs >= 0 && axs < aw) {
-                hexUnder = pxUnder[axs + ays * aw];
+                hexUnder = pxUnder[ays * aw + axs];
             }
 
             long hexOver = Img.CLEAR_PIXEL;
             final int bxs = x - bxud;
             final int bys = y - byud;
             if (bys >= 0 && bys < bh && bxs >= 0 && bxs < bw) {
-                hexOver = pxOver[bxs + bys * bw];
+                hexOver = pxOver[bys * bw + bxs];
             }
 
             final Lab labUnder = dict.getOrDefault(hexUnder, clearLab);
@@ -1283,7 +1286,7 @@ public class Img {
         }
 
         target.width = cw;
-        target.height = cw;
+        target.height = ch;
         target.pixels = trgPixels;
 
         return target;
@@ -1304,8 +1307,7 @@ public class Img {
         final int step,
         final Img target) {
 
-        // TODO: Wouldn't the target image width and height need to be padded
-        // out by the kernel size to accommodate for blurring at the edges?
+        // TODO: TEST
 
         final int wSrc = source.width;
         final int hSrc = source.height;
@@ -1636,35 +1638,6 @@ public class Img {
     }
 
     /**
-     * Transposes and flips the source image. The flipped transposition is
-     * stored in the target image. The transposed image's width and
-     * height are swapped.
-     *
-     * @param source the input image
-     * @param target the output image
-     * @return the flipped image
-     */
-    public static Img flipAll(final Img source, final Img target) {
-        final int len = source.pixels.length;
-        if (!Img.similar(source, target)) {
-            target.pixels = new long[len];
-        }
-
-        final int w = source.width;
-        final int h = source.height;
-        final int wn1 = w - 1;
-        final int hn1 = h - 1;
-        for (int i = 0; i < len; ++i) {
-            target.pixels[(wn1 - i % w) * h + hn1 - i / w] = source.pixels[i];
-        }
-
-        target.width = h;
-        target.height = w;
-
-        return target;
-    }
-
-    /**
      * Flips the pixels source image vertically, on the y axis, and stores the
      * result in the target
      * image.
@@ -1787,6 +1760,7 @@ public class Img {
                 tlab64 = convert.get(argb32Obj);
             } else {
                 Rgb.fromHex(argb32, srgb);
+                // TODO: Option to unpremultiply?
                 Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
                 tlab64 = lab.toHexLongSat();
                 convert.put(argb32Obj, tlab64);
@@ -1819,6 +1793,8 @@ public class Img {
         final int xtl, final int ytl,
         final int xbr, final int ybr,
         final Img target) {
+
+        // TODO: overload to except Vec2 uvs as arguments? Bounds2?
 
         final int wSrc = source.width;
         final int hSrc = source.height;
@@ -3793,49 +3769,6 @@ public class Img {
     }
 
     /**
-     * Separates a source image into 3 images which emphasize the LAB
-     * components. The appropriate lightness for some channels will depend on
-     * whether they'll be recombined with additive blending later.
-     *
-     * @param source the source image
-     * @param lForAb lightness for chroma channel images
-     * @return the separated images
-     */
-    public static Img[] sepLab(final Img source, final float lForAb) {
-
-        final long[] srcPixels = source.pixels;
-        final int len = srcPixels.length;
-
-        final long[] lPixels = new long[len];
-        final long[] aPixels = new long[len];
-        final long[] bPixels = new long[len];
-
-        final long lForAbMask = (long) (Utils.clamp(lForAb, 0.0f, 100.0f)
-            * Lab.L_TO_SHORT + 0.5f) << Img.L_SHIFT;
-
-        for (int i = 0; i < len; ++i) {
-            final long srcPixel = srcPixels[i];
-            final long tIso = srcPixel & Img.T_MASK;
-            final long lIso = srcPixel & Img.L_MASK;
-            final long aIso = srcPixel & Img.A_MASK;
-            final long bIso = srcPixel & Img.B_MASK;
-
-            lPixels[i] = tIso | lIso;
-            aPixels[i] = tIso | lForAbMask | aIso;
-            bPixels[i] = tIso | lForAbMask | bIso;
-        }
-
-        final int w = source.width;
-        final int h = source.height;
-
-        return new Img[]{
-            new Img(w, h, lPixels),
-            new Img(w, h, aPixels),
-            new Img(w, h, bPixels)
-        };
-    }
-
-    /**
      * Separates a source image into 3 images which emphasize the LAB components.
      *
      * @param source         the source image
@@ -4230,7 +4163,7 @@ public class Img {
     }
 
     /**
-     * Converts a LAB image to an array of 32-bit AARRGGBB pixels.
+     * Converts a LAB image to an array of 32-bit 0xAARRGGBB pixels.
      * Does not validate that zero alpha pixels also have zero red, green
      * or blue.
      *
@@ -4264,6 +4197,9 @@ public class Img {
                 Lab.fromHex(tlab64, lab);
                 Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
                 mapFunc.apply(srgb, mapped);
+
+                // TODO: Does this need to support alpha premultiply?
+
                 argb32 = mapped.toHexIntWrap();
                 convert.put(tlab64Obj, argb32);
             }
@@ -4322,7 +4258,10 @@ public class Img {
      * @param target the output mesh
      * @return the mesh
      */
-    public static Mesh2 toMesh(final Img source, final PolyType poly, final Mesh2 target) {
+    public static Mesh2 toMesh(
+        final Img source,
+        final PolyType poly,
+        final Mesh2 target) {
 
         final long[] srcPixels = source.pixels;
         final int srcLen = srcPixels.length;
@@ -4489,6 +4428,7 @@ public class Img {
             } else {
                 Lab.fromHex(tlab64, lab);
                 Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
+                // TODO: Require that color be premultiplied by alpha here?
                 mapped = mapFunc.apply(srgb, new Rgb());
                 convert.put(tlab64Obj, mapped);
             }
@@ -4547,33 +4487,6 @@ public class Img {
         }
 
         return bytes;
-    }
-
-    /**
-     * Transposes the source image, stores the transposition in the
-     * target image.
-     *
-     * @param source the source image
-     * @param target the target image
-     * @return the transposed image
-     */
-    public static Img transpose(final Img source, final Img target) {
-
-        final int len = source.pixels.length;
-        if (!Img.similar(source, target)) {
-            target.pixels = new long[len];
-        }
-
-        final int w = source.width;
-        final int h = source.height;
-        for (int i = 0; i < len; ++i) {
-            target.pixels[i % w * h + i / w] = source.pixels[i];
-        }
-
-        target.width = h;
-        target.height = w;
-
-        return target;
     }
 
     /**
@@ -4951,7 +4864,10 @@ public class Img {
                     bi = 0xffffL;
                 }
 
-                return ti << Img.T_SHIFT | li << Img.L_SHIFT | ai << Img.A_SHIFT | bi << Img.B_SHIFT;
+                return ti << Img.T_SHIFT
+                    | li << Img.L_SHIFT
+                    | ai << Img.A_SHIFT
+                    | bi << Img.B_SHIFT;
             }
         }
 
@@ -5524,6 +5440,7 @@ public class Img {
      * ppm file format options.
      */
     public enum PpmFormat {
+
         /**
          * Writes a binary file.
          */

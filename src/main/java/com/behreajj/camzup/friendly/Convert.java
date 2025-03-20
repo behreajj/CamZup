@@ -139,7 +139,7 @@ public abstract class Convert {
     }
 
     /**
-     * Converts a LabImage to a PImage.
+     * Converts a {@link Img} to a PImage.
      *
      * @param source the input image
      * @param target the output image
@@ -151,7 +151,7 @@ public abstract class Convert {
     }
 
     /**
-     * Converts a LabImage to a PImage.
+     * Converts a {@link Img} to a PImage.
      *
      * @param source  the source image
      * @param toneMap the tone map
@@ -164,7 +164,9 @@ public abstract class Convert {
         final int wSrc = source.getWidth();
         final int hSrc = source.getHeight();
 
-        if (target instanceof PGraphics && (wSrc != target.pixelWidth || hSrc != target.pixelHeight)) {
+        if (target instanceof PGraphics
+            && (wSrc != target.pixelWidth
+            || hSrc != target.pixelHeight)) {
             System.err.println("Do not use PGraphics with this method.");
             return target;
         }
@@ -191,8 +193,9 @@ public abstract class Convert {
     public static PMatrix2D toPMatrix2D(final Mat3 source,
         final PMatrix2D target) {
 
-        target.set(source.m00, source.m01, source.m02, source.m01, source.m11,
-            source.m12);
+        target.set(
+            source.m00, source.m01, source.m02,
+            source.m01, source.m11, source.m12);
         return target;
     }
 
@@ -341,13 +344,11 @@ public abstract class Convert {
         final float wy2 = w * y2;
         final float wz2 = w * z2;
 
-        /* @formatter:off */
         target.set(
-                1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f,
-                xy2 + wz2, 1.0f - xsq2 - zsq2, yz2 - wx2, 0.0f,
-                xz2 - wy2, yz2 + wx2, 1.0f - xsq2 - ysq2, 0.0f,
-                0.0f, 0.0f, 0.0f, 1.0f);
-        /* @formatter:on */
+            1.0f - ysq2 - zsq2, xy2 - wz2, xz2 + wy2, 0.0f,
+            xy2 + wz2, 1.0f - xsq2 - zsq2, yz2 - wx2, 0.0f,
+            xz2 - wy2, yz2 + wx2, 1.0f - xsq2 - ysq2, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
         return target;
     }
 
@@ -504,8 +505,10 @@ public abstract class Convert {
             foreHandle = prevKnot.rearHandle;
             rearHandle = currKnot.foreHandle;
             coord = currKnot.coord;
-            target.bezierVertex(foreHandle.x, foreHandle.y, rearHandle.x,
-                rearHandle.y, coord.x, coord.y);
+            target.bezierVertex(
+                foreHandle.x, foreHandle.y,
+                rearHandle.x, rearHandle.y,
+                coord.x, coord.y);
             prevKnot = currKnot;
         }
 
@@ -514,8 +517,10 @@ public abstract class Convert {
             rearHandle = firstKnot.foreHandle;
             coord = firstKnot.coord;
 
-            target.bezierVertex(foreHandle.x, foreHandle.y, rearHandle.x,
-                rearHandle.y, coord.x, coord.y);
+            target.bezierVertex(
+                foreHandle.x, foreHandle.y,
+                rearHandle.x, rearHandle.y,
+                coord.x, coord.y);
             target.endShape(PConstants.CLOSE);
         } else {
             target.endShape(PConstants.OPEN);
@@ -543,8 +548,8 @@ public abstract class Convert {
 
         for (Curve2 knot2s : source.curves) {
             // TODO: To make this preserve contours like the mesh version, you'd
-            // have to perform this here because contours must be written within
-            // shapes and there'd be some redundancy with the Curve2 toPShape
+            // have to revise here because contours must be written within
+            // shapes and there would be redundancy with the Curve2 toPShape
             // method.
             final PShape child = Convert.toPShape(rndr, knot2s);
             parent.addChild(child);
@@ -555,7 +560,9 @@ public abstract class Convert {
         final PMatrix2D m = Convert.toPMatrix2D(srctr, Convert.DEFAULT_ORDER,
             new PMatrix2D());
         parent.resetMatrix();
-        parent.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
+        parent.applyMatrix(
+            m.m00, m.m01, m.m02,
+            m.m10, m.m11, m.m12);
 
         /* Stroke weight is scaled with the transform above. */
         final float maxDim = Transform2.maxDimension(srctr);
@@ -689,7 +696,9 @@ public abstract class Convert {
         final PMatrix2D m = Convert.toPMatrix2D(srctr, Convert.DEFAULT_ORDER,
             new PMatrix2D());
         parent.resetMatrix();
-        parent.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
+        parent.applyMatrix(
+            m.m00, m.m01, m.m02,
+            m.m10, m.m11, m.m12);
 
         /* Stroke weight is scaled with the transform above. */
         final float maxDim = Transform2.maxDimension(srctr);
@@ -729,8 +738,10 @@ public abstract class Convert {
             foreHandle = prevKnot.rearHandle;
             rearHandle = currKnot.foreHandle;
             coord = currKnot.coord;
-            target.bezierVertex(foreHandle.x, foreHandle.y, rearHandle.x,
-                rearHandle.y, coord.x, coord.y);
+            target.bezierVertex(
+                foreHandle.x, foreHandle.y,
+                rearHandle.x, rearHandle.y,
+                coord.x, coord.y);
             prevKnot = currKnot;
         }
 
@@ -739,8 +750,10 @@ public abstract class Convert {
             rearHandle = firstKnot.foreHandle;
             coord = firstKnot.coord;
 
-            target.bezierVertex(foreHandle.x, foreHandle.y, rearHandle.x,
-                rearHandle.y, coord.x, coord.y);
+            target.bezierVertex(
+                foreHandle.x, foreHandle.y,
+                rearHandle.x, rearHandle.y,
+                coord.x, coord.y);
             target.endShape(PConstants.CLOSE);
         } else {
             target.endShape(PConstants.OPEN);
@@ -781,9 +794,10 @@ public abstract class Convert {
             foreHandle = prevKnot.rearHandle;
             rearHandle = currKnot.foreHandle;
             coord = currKnot.coord;
-            target.bezierVertex(foreHandle.x, foreHandle.y, foreHandle.z,
-                rearHandle.x, rearHandle.y, rearHandle.z, coord.x, coord.y,
-                coord.z);
+            target.bezierVertex(
+                foreHandle.x, foreHandle.y, foreHandle.z,
+                rearHandle.x, rearHandle.y, rearHandle.z,
+                coord.x, coord.y, coord.z);
             prevKnot = currKnot;
         }
 
@@ -792,9 +806,10 @@ public abstract class Convert {
             rearHandle = firstKnot.foreHandle;
             coord = firstKnot.coord;
 
-            target.bezierVertex(foreHandle.x, foreHandle.y, foreHandle.z,
-                rearHandle.x, rearHandle.y, rearHandle.z, coord.x, coord.y,
-                coord.z);
+            target.bezierVertex(
+                foreHandle.x, foreHandle.y, foreHandle.z,
+                rearHandle.x, rearHandle.y, rearHandle.z,
+                coord.x, coord.y, coord.z);
             target.endShape(PConstants.CLOSE);
         } else {
             target.endShape(PConstants.OPEN);
@@ -829,7 +844,9 @@ public abstract class Convert {
         final PMatrix2D m = Convert.toPMatrix2D(srctr, Convert.DEFAULT_ORDER,
             new PMatrix2D());
         parent.resetMatrix();
-        parent.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
+        parent.applyMatrix(
+            m.m00, m.m01, m.m02,
+            m.m10, m.m11, m.m12);
 
         /* Stroke weight is scaled with the transform above. */
         final float maxDim = Transform2.maxDimension(srctr);
@@ -862,8 +879,11 @@ public abstract class Convert {
         final PMatrix3D m = Convert.toPMatrix3D(srctr, Convert.DEFAULT_ORDER,
             new PMatrix3D());
         parent.resetMatrix();
-        parent.applyMatrix(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12, m.m13,
-            m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
+        parent.applyMatrix(
+            m.m00, m.m01, m.m02, m.m03,
+            m.m10, m.m11, m.m12, m.m13,
+            m.m20, m.m21, m.m22, m.m23,
+            m.m30, m.m31, m.m32, m.m33);
 
         /* Stroke weight is scaled with the transform above. */
         final float maxDim = Transform3.maxDimension(srctr);
@@ -961,7 +981,9 @@ public abstract class Convert {
         final PMatrix2D m = Convert.toPMatrix2D(srctr, Convert.DEFAULT_ORDER,
             new PMatrix2D());
         shape.resetMatrix();
-        shape.applyMatrix(m.m00, m.m01, m.m02, m.m10, m.m11, m.m12);
+        shape.applyMatrix(
+            m.m00, m.m01, m.m02,
+            m.m10, m.m11, m.m12);
 
         /* Stroke weight is scaled with the transform above. */
         final float maxDim = Transform2.maxDimension(srctr);
@@ -1000,8 +1022,11 @@ public abstract class Convert {
         final PMatrix3D m = Convert.toPMatrix3D(srctr, Convert.DEFAULT_ORDER,
             new PMatrix3D());
         shape.resetMatrix();
-        shape.applyMatrix(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12, m.m13,
-            m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
+        shape.applyMatrix(
+            m.m00, m.m01, m.m02, m.m03,
+            m.m10, m.m11, m.m12, m.m13,
+            m.m20, m.m21, m.m22, m.m23,
+            m.m30, m.m31, m.m32, m.m33);
 
         /* Stroke weight is scaled with the transform above. */
         final float maxDim = Transform3.maxDimension(srctr);
@@ -1019,7 +1044,8 @@ public abstract class Convert {
      * @param source the source mesh
      * @return the PShape
      */
-    public static PShapeOpenGL toPShapeNonUniform(final PGraphicsOpenGL rndr,
+    public static PShapeOpenGL toPShapeNonUniform(
+        final PGraphicsOpenGL rndr,
         final Mesh2 source) {
 
         /* Decompose source mesh elements. */
@@ -1316,8 +1342,9 @@ public abstract class Convert {
                         final Curve2 rect;
                         if (paramsLen > 7) {
                             /* Non-uniform rounded corners. */
-                            rect = Curve2.rect(tl, br, params[4], params[5], params[6],
-                                params[7], new Curve2(sourceName));
+                            rect = Curve2.rect(tl, br,
+                                params[4], params[5], params[6],  params[7],
+                                new Curve2(sourceName));
                         } else if (paramsLen > 4) {
                             /* Uniform rounded corners. */
                             rect = Curve2.rect(tl, br, params[4], new Curve2(
@@ -1333,22 +1360,25 @@ public abstract class Convert {
                         final float xEllipse = params[2];
                         final float yEllipse = params[3];
                         final float major = Math.max(xEllipse, yEllipse);
+                        final float minor = Math.min(xEllipse, yEllipse);
                         final Curve2 ellipse = new Curve2(sourceName);
-                        Curve2.ellipse(Utils.div(Math.min(xEllipse, yEllipse),
-                            major), ellipse);
+                        Curve2.ellipse(Utils.div(minor, major), ellipse);
                         ellipse.scale(major);
-                        ellipse.translate(new Vec2(params[0] + 0.5f * xEllipse,
+                        ellipse.translate(new Vec2(
+                            params[0] + 0.5f * xEllipse,
                             params[1] + 0.5f * yEllipse));
                         curves.add(ellipse);
                     }
                     break;
 
                     case PConstants.ARC: { /* 32 */
-                        final int arcMode = paramsLen > 6 ? (int) params[6]
+                        final int arcMode = paramsLen > 6
+                            ? (int) params[6]
                             : PConstants.OPEN;
                         final Curve2 arc = new Curve2(sourceName);
-                        Curve2.arc(params[4], params[5], Math.min(params[2],
-                                params[3]),
+                        Curve2.arc(
+                            params[4], params[5],
+                            Math.min(params[2], params[3]),
                             arcMode == PConstants.PIE
                                 ? ArcMode.PIE
                                 : arcMode == PConstants.CHORD
@@ -1378,8 +1408,8 @@ public abstract class Convert {
                 }
 
                 /*
-                 * Get command history. If it is null or empty, create a new default
-                 * array consisting of vertex commands.
+                 * Get command history. If it is null or empty, create a new
+                 * default array consisting of vertex commands.
                  */
                 int[] cmds = source.getVertexCodes();
                 if (cmds == null || cmds.length < 1) {
@@ -1409,8 +1439,9 @@ public abstract class Convert {
                                 /* Treat as "moveTo" command. */
                                 currCurve = new Curve2(sourceName);
                                 currCurve.closedLoop = spendContour || srcClosed;
-                                currKnot = new Knot2(source.getVertexX(cursor), source
-                                    .getVertexY(cursor++));
+                                currKnot = new Knot2(
+                                    source.getVertexX(cursor),
+                                    source .getVertexY(cursor++));
                                 initialVertex = false;
                                 spendContour = false;
                                 currCurve.append(currKnot);
@@ -1419,9 +1450,10 @@ public abstract class Convert {
                             } else if (cursor < vertLen) {
 
                                 /*
-                                 * Treat as "lineSegTo" command. In PShapeOpenGLs loaded
-                                 * from SVGs, it's possible for the cursor to exceed the
-                                 * vertex length.
+                                 * Treat as "lineSegTo" command. In
+                                 * PShapeOpenGLs loaded from SVGs, it's
+                                 * possible for the cursor to exceed vertex
+                                 * length.
                                  */
                                 currKnot = new Knot2();
                                 Knot2.fromSegLinear(
@@ -1488,10 +1520,12 @@ public abstract class Convert {
                         break;
 
                         case PConstants.BREAK: { /* 4 */
+
                             /*
-                             * It's possible with PShapeOpenGLs loaded from SVGs for
-                             * break to be the initial command.
+                             * It's possible with PShapeOpenGLs loaded from SVGs
+                             * for break to be the initial command.
                              */
+
                             if (currCurve != null) {
                                 currCurve.closedLoop = true;
                                 final Knot2 first = currCurve.getFirst();
@@ -1523,9 +1557,15 @@ public abstract class Convert {
                 if (currCurve != null) {
                     if (currCurve.closedLoop) {
                         currKnot = currCurve.getFirst();
-                        Vec2.mix(currKnot.coord, prevKnot.coord, Utils.ONE_THIRD,
+                        Vec2.mix(
+                            currKnot.coord,
+                            prevKnot.coord,
+                            Utils.ONE_THIRD,
                             currKnot.rearHandle);
-                        Vec2.mix(prevKnot.coord, currKnot.coord, Utils.ONE_THIRD,
+                        Vec2.mix(
+                            prevKnot.coord,
+                            currKnot.coord,
+                            Utils.ONE_THIRD,
                             prevKnot.foreHandle);
                     } else {
                         currCurve.getFirst().mirrorHandlesForward();
@@ -1634,9 +1674,14 @@ public abstract class Convert {
                     break;
 
                     case PConstants.RECT: { /* 30 */
-                        if (paramsLen > 4) {
+                        if (paramsLen > 7) {
+                            System.err.println("Rounded rectangles aren't supported.");
+                        } else if (paramsLen > 4) {
                             System.err.println("Rounded rectangles aren't supported.");
                         } else {
+                            // TODO: Add support now that you no longer have a
+                            // custom SVG import?
+
                             System.err.println("Rectangles are not supported.");
                         }
                     }
@@ -1647,6 +1692,10 @@ public abstract class Convert {
                         break;
 
                     case PConstants.ARC: /* 32 */
+                        // TODO: Add support now that you no longer have a
+                        // custom SVG import? See ArcMode for sector type
+                        // meshes. Maybe use a Mesh2 that is converted.
+
                         System.err.println("Arcs are not supported.");
                         break;
 
@@ -1664,7 +1713,10 @@ public abstract class Convert {
                     case PConstants.BOX: { /* 41 */
                         final Mesh3 m = new Mesh3();
                         if (paramsLen > 2) {
-                            final Vec3 s = new Vec3(params[0], params[1], params[2]);
+                            final Vec3 s = new Vec3(
+                                params[0],
+                                params[1],
+                                params[2]);
                             Mesh3.cube(m).scale(s);
                         } else if (paramsLen > 0) {
                             Mesh3.cube(m).scale(params[0]);
@@ -1685,8 +1737,8 @@ public abstract class Convert {
             case PShape.PATH: /* 102 */
 
                 /*
-                 * Not worth it to adhere to path commands, although doing so could
-                 * make quadratic and cubic Bezier paths more accurate.
+                 * Not worth it to adhere to path commands, although doing so
+                 * could make quadratic and cubic Bezier paths more accurate.
                  */
 
             case PShape.GEOMETRY: { /* 103 */
@@ -1695,8 +1747,8 @@ public abstract class Convert {
                 final int vertLen = source.getVertexCount();
 
                 /*
-                 * Unsure how to find number of vertices in a face loop except as an
-                 * educated guess. Support hexagonal faces maximum.
+                 * Unsure how to find number of vertices in a face loop except
+                 * as an educated guess. Support hexagonal faces maximum.
                  */
                 int loopLen = 3;
                 if (vertLen % 3 != 0) {
@@ -1710,15 +1762,17 @@ public abstract class Convert {
                 final int faceLen = vertLen / loopLen;
 
                 /*
-                 * Possible for all texture coordinates to be (0.0, 0.0); also, for
-                 * all normals to be (0.0, 0.0, 1.0).
+                 * Possible for all texture coordinates to be (0.0, 0.0).
+                 * Also, for all normals to be (0.0, 0.0, 1.0).
                  */
                 boolean diverseNormals = true;
 
                 final int[][][] faces = new int[faceLen][loopLen][3];
                 final Vec3[] coords = new Vec3[vertLen];
                 final Vec2[] texCoords = new Vec2[vertLen];
-                final Vec3[] normals = is3d ? new Vec3[vertLen] : new Vec3[]{Vec3.up(new Vec3())};
+                final Vec3[] normals = is3d
+                    ? new Vec3[vertLen]
+                    : new Vec3[]{Vec3.up(new Vec3())};
 
                 if (is3d) {
 
@@ -1736,10 +1790,13 @@ public abstract class Convert {
                         final float vnz = source.getNormalZ(k);
                         diverseNormals = vnx != 0.0f || vny != 0.0f || vnz != 1.0f;
 
-                        coords[k] = new Vec3(source.getVertexX(k), source.getVertexY(
-                            k), source.getVertexZ(k));
-                        texCoords[k] = new Vec2(source.getTextureU(k), source
-                            .getTextureV(k));
+                        coords[k] = new Vec3(
+                            source.getVertexX(k),
+                            source.getVertexY(k),
+                            source.getVertexZ(k));
+                        texCoords[k] = new Vec2(
+                            source.getTextureU(k),
+                            source.getTextureV(k));
                         normals[k] = new Vec3(vnx, vny, vnz);
                     }
 
@@ -1754,10 +1811,13 @@ public abstract class Convert {
                         vert[1] = k;
                         vert[2] = 0;
 
-                        coords[k] = new Vec3(source.getVertexX(k), source.getVertexY(
-                            k), 0.0f);
-                        texCoords[k] = new Vec2(source.getTextureU(k), source
-                            .getTextureV(k));
+                        coords[k] = new Vec3(
+                            source.getVertexX(k),
+                            source.getVertexY(k),
+                            0.0f);
+                        texCoords[k] = new Vec2(
+                            source.getTextureU(k),
+                            source.getTextureV(k));
                     }
 
                 }

@@ -176,25 +176,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     }
 
     /**
-     * Converts an image to a {@link java.awt.Image}. This is an incredibly
-     * slow and inefficient method. It should <em>not</em> be used in draw.
-     *
-     * @param img the CamZup image
-     * @return the AWT image
-     */
-    public static Image convertImgToNative(final Img img) {
-
-        final int w = img.getWidth();
-        final int h = img.getHeight();
-        final BufferedImage imgNtv = new BufferedImage(w, h,
-            BufferedImage.TYPE_INT_ARGB);
-        imgNtv.getRaster().setDataElements(0, 0, w, h, Img.toArgb32(img,
-            new Rgb.ToneMapClamp()));
-
-        return imgNtv;
-    }
-
-    /**
      * Applies an affine transform matrix to the current renderer transform.
      *
      * @param m00 right axis x

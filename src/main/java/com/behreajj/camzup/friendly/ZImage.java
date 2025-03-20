@@ -15,20 +15,19 @@ import java.util.regex.Pattern;
 public class ZImage extends PImage {
 
     /**
-     * Default horizontal alignment when creating an image from text:
-     * {@link PConstants#LEFT}, {@value
-     * PConstants#LEFT}.
+     * Default horizontal alignment when creating an image from text.
      */
     public static final int DEFAULT_ALIGN = PConstants.LEFT;
 
     /**
-     * Default spacing between characters, in pixels, when creating an image from
-     * text.
+     * Default spacing between characters, in pixels, when creating an image
+     * from text.
      */
     public static final int DEFAULT_KERNING = 0;
 
     /**
-     * Default spacing between lines, in pixels, when creating an image from text.
+     * Default spacing between lines, in pixels, when creating an image from
+     * text.
      */
     public static final int DEFAULT_LEADING = 8;
 
@@ -63,7 +62,11 @@ public class ZImage extends PImage {
      * @param format       the format
      * @param pixelDensity the pixel density
      */
-    public ZImage(final int width, final int height, final int format, final int pixelDensity) {
+    public ZImage(
+        final int width,
+        final int height,
+        final int format,
+        final int pixelDensity) {
 
         super(width, height, format, pixelDensity);
     }
@@ -75,9 +78,8 @@ public class ZImage extends PImage {
     }
 
     /**
-     * Convert an image in the {@link PConstants#ALPHA} format to an image in the
-     * {@link
-     * PConstants#ARGB} format.
+     * Convert an image in the {@link PConstants#ALPHA} format to an image in
+     * the {@link PConstants#ARGB} format.
      *
      * @param image the image
      * @return the conversion
@@ -85,7 +87,9 @@ public class ZImage extends PImage {
     public static PImage alphaToArgb(final PImage image) {
 
         /* Depart from (source, target) signature for this function. */
-        if (image.format != PConstants.ALPHA || image.pixelWidth < 1 || image.pixelHeight < 1) {
+        if (image.format != PConstants.ALPHA
+            || image.pixelWidth < 1
+            || image.pixelHeight < 1) {
             return image;
         }
 
@@ -102,10 +106,11 @@ public class ZImage extends PImage {
     }
 
     /**
-     * Copies a source image's pixels and properties to a target. If the target is a
-     * {@link
-     * PGraphics}, then wraps the source image without changing the target's
-     * dimensions.
+     * Copies a source image's pixels to a target. If the target is a
+     * {@link PGraphics}, then wraps the source image without changing the
+     * target's dimensions.<br>
+     * <br>
+     * Does not copy the parent PApplet field.
      *
      * @param source the source image
      * @param target the target image
@@ -122,12 +127,15 @@ public class ZImage extends PImage {
          * An image can have dimensions of -1, -1 when invalid. See
          * https://processing.org/reference/loadImage_.html
          */
-        if (source == null || source.pixelWidth < 1 || source.pixelHeight < 1) {
+        if (source == null
+            || source.pixelWidth < 1
+            || source.pixelHeight < 1) {
             return ZImage.fill(0xffffffff, target);
         }
 
         if (target instanceof PGraphics
-            && (source.pixelWidth != target.pixelWidth || source.pixelHeight != target.pixelHeight)) {
+            && (source.pixelWidth != target.pixelWidth
+            || source.pixelHeight != target.pixelHeight)) {
             return ZImage.wrap(source, 0, 0, target);
         }
 
@@ -148,8 +156,8 @@ public class ZImage extends PImage {
     }
 
     /**
-     * Fills an image with a color in place. The color is expected to be a 32-bit
-     * color integer.
+     * Fills an image with a color in place. The color is expected to be a
+     * 32-bit color integer.
      *
      * @param c      the fill color
      * @param target the target image
@@ -182,9 +190,8 @@ public class ZImage extends PImage {
 
     /**
      * Blits glyph images from a {@link PFont} onto a single image. <br>
-     * Images created with this method do not have a reference to a parent PApplet.
-     * Defaults to the
-     * fill color white.
+     * Images created with this method do not have a reference to a parent
+     * PApplet. Defaults to the fill color white.
      *
      * @param font the Processing font
      * @param text the string of text
@@ -203,25 +210,29 @@ public class ZImage extends PImage {
 
     /**
      * Blits glyph images from a {@link PFont} onto a single image. <br>
-     * Images created with this method do not have a reference to a parent PApplet.
+     * Images created with this method do not have a reference to a parent
+     * PApplet.
      *
      * @param font    the Processing font
      * @param text    the string of text
      * @param fillClr the color
      * @return the new image
      */
-    public static PImage fromText(final PFont font, final String text, final int fillClr) {
+    public static PImage fromText(
+        final PFont font,
+        final String text,
+        final int fillClr) {
 
-        return ZImage.fromText(
-            font, text, fillClr, ZImage.DEFAULT_LEADING, ZImage.DEFAULT_KERNING, ZImage.DEFAULT_ALIGN);
+        return ZImage.fromText(font, text, fillClr, ZImage.DEFAULT_LEADING,
+            ZImage.DEFAULT_KERNING, ZImage.DEFAULT_ALIGN);
     }
 
     /**
-     * Blits glyph images from a {@link PFont} onto a single image. The leading and
-     * is measured in
-     * pixels; negative values are not allowed.<br>
+     * Blits glyph images from a {@link PFont} onto a single image. The leading
+     * is measured in pixels; negative values are not allowed.<br>
      * <br>
-     * Images created with this method do not have a reference to a parent PApplet.
+     * Images created with this method do not have a reference to a parent
+     * PApplet.
      *
      * @param font    the Processing font
      * @param text    the string of text
@@ -230,18 +241,21 @@ public class ZImage extends PImage {
      * @return the new image
      */
     public static PImage fromText(
-        final PFont font, final String text, final int fillClr, final int leading) {
+        final PFont font,
+        final String text,
+        final int fillClr,
+        final int leading) {
 
-        return ZImage.fromText(
-            font, text, fillClr, leading, ZImage.DEFAULT_KERNING, ZImage.DEFAULT_ALIGN);
+        return ZImage.fromText(font, text, fillClr, leading,
+            ZImage.DEFAULT_KERNING, ZImage.DEFAULT_ALIGN);
     }
 
     /**
-     * Blits glyph images from a {@link PFont} onto a single image. The leading and
-     * kerning are
-     * measured in pixels; negative values are not allowed<br>
+     * Blits glyph images from a {@link PFont} onto a single image. The leading
+     * and kerning are measured in pixels; negative values are not allowed<br>
      * <br>
-     * Images created with this method do not have a reference to a parent PApplet.
+     * Images created with this method do not have a reference to a parent
+     * PApplet.
      *
      * @param font    the Processing font
      * @param text    the string of text
@@ -257,21 +271,20 @@ public class ZImage extends PImage {
         final int leading,
         final int kerning) {
 
-        return ZImage.fromText(font, text, fillClr, leading, kerning, ZImage.DEFAULT_ALIGN);
+        return ZImage.fromText(font, text, fillClr, leading, kerning,
+            ZImage.DEFAULT_ALIGN);
     }
 
     /**
-     * Blits glyph images from a {@link PFont} onto a single image. The leading and
-     * kerning are
-     * measured in pixels; negative values are not allowed. The horizontal text
-     * alignment may be
-     * either center {@link PConstants#CENTER} ( {@value PConstants#CENTER} ), right
-     * {@link
-     * PConstants#RIGHT} ( {@value PConstants#RIGHT} ) or left
-     * {@link PConstants#LEFT} ( {@value
-     * PConstants#LEFT} ).<br>
+     * Blits glyph images from a {@link PFont} onto a single image. The leading
+     * and kerning are measured in pixels; negative values are not allowed.
+     * The horizontal text alignment may be either center
+     * {@link PConstants#CENTER} ( {@value PConstants#CENTER} ), right
+     * {@link PConstants#RIGHT} ( {@value PConstants#RIGHT} ) or left
+     * {@link PConstants#LEFT} ( {@value PConstants#LEFT} ).<br>
      * <br>
-     * Images created with this method do not have a reference to a parent PApplet.
+     * Images created with this method do not have a reference to a parent
+     * PApplet.
      *
      * @param font      the Processing font
      * @param text      the string of text
@@ -323,7 +336,9 @@ public class ZImage extends PImage {
 
         /* Determine width of a space. */
         final Glyph whiteSpace = font.getGlyph('i');
-        final int spaceWidth = whiteSpace != null ? whiteSpace.width : (int) (fontSize * Utils.ONE_THIRD);
+        final int spaceWidth = whiteSpace != null
+            ? whiteSpace.width
+            : (int) (fontSize * Utils.ONE_THIRD);
 
         /*
          * If a line contains only a space, then maxHeight below may wind up as
@@ -506,25 +521,30 @@ public class ZImage extends PImage {
     }
 
     /**
-     * Blits glyph images from a {@link PFont} onto a single image. <br>
-     * Images created with this method do not have a reference to a parent PApplet.
+     * Blits glyph images from a {@link PFont} onto a single image.<br>
+     * <br>
+     * Images created with this method do not have a reference to a parent
+     * PApplet.
      *
      * @param font    the Processing font
      * @param text    the string of text
      * @param fillClr the color
      * @return the new image
      */
-    public static PImage fromText(final PFont font, final String text, final Rgb fillClr) {
+    public static PImage fromText(
+        final PFont font,
+        final String text,
+        final Rgb fillClr) {
 
         return ZImage.fromText(font, text, fillClr.toHexIntSat());
     }
 
     /**
-     * Blits glyph images from a {@link PFont} onto a single image. The leading and
-     * is measured in
-     * pixels; negative values are not allowed.<br>
+     * Blits glyph images from a {@link PFont} onto a single image. The leading
+     * is measured in pixels; negative values are not allowed.<br>
      * <br>
-     * Images created with this method do not have a reference to a parent PApplet.
+     * Images created with this method do not have a reference to a parent
+     * PApplet.
      *
      * @param font    the Processing font
      * @param text    the string of text
@@ -533,17 +553,20 @@ public class ZImage extends PImage {
      * @return the new image
      */
     public static PImage fromText(
-        final PFont font, final String text, final Rgb fillClr, final int leading) {
+        final PFont font,
+        final String text,
+        final Rgb fillClr,
+        final int leading) {
 
         return ZImage.fromText(font, text, fillClr.toHexIntSat(), leading);
     }
 
     /**
-     * Blits glyph images from a {@link PFont} onto a single image. The leading and
-     * kerning are
-     * measured in pixels; negative values are not allowed<br>
+     * Blits glyph images from a {@link PFont} onto a single image. The leading
+     * and kerning are measured in pixels; negative values are not allowed<br>
      * <br>
-     * Images created with this method do not have a reference to a parent PApplet.
+     * Images created with this method do not have a reference to a parent
+     * PApplet.
      *
      * @param font    the Processing font
      * @param text    the string of text
@@ -559,21 +582,20 @@ public class ZImage extends PImage {
         final int leading,
         final int kerning) {
 
-        return ZImage.fromText(font, text, fillClr.toHexIntSat(), leading, kerning);
+        return ZImage.fromText(font, text, fillClr.toHexIntSat(),
+            leading, kerning);
     }
 
     /**
-     * Blits glyph images from a {@link PFont} onto a single image. The leading and
-     * kerning are
-     * measured in pixels; negative values are not allowed. The horizontal text
-     * alignment may be
-     * either center {@link PConstants#CENTER} ( {@value PConstants#CENTER} ), right
-     * {@link
-     * PConstants#RIGHT} ( {@value PConstants#RIGHT} ) or left
-     * {@link PConstants#LEFT} ( {@value
-     * PConstants#LEFT} ).<br>
+     * Blits glyph images from a {@link PFont} onto a single image. The leading
+     * and kerning are measured in pixels; negative values are not allowed.
+     * The horizontal text alignment may be either center
+     * {@link PConstants#CENTER} ( {@value PConstants#CENTER} ), right
+     * {@link PConstants#RIGHT} ( {@value PConstants#RIGHT} ) or left
+     * {@link PConstants#LEFT} ( {@value PConstants#LEFT} ).<br>
      * <br>
-     * Images created with this method do not have a reference to a parent PApplet.
+     * Images created with this method do not have a reference to a parent
+     * PApplet.
      *
      * @param font      the Processing font
      * @param text      the string of text
@@ -591,13 +613,13 @@ public class ZImage extends PImage {
         final int kerning,
         final int textAlign) {
 
-        return ZImage.fromText(font, text, fillClr.toHexIntSat(), leading, kerning, textAlign);
+        return ZImage.fromText(font, text, fillClr.toHexIntSat(), leading,
+            kerning, textAlign);
     }
 
     /**
-     * Multiplies the red, green and blue channels of each pixel in a source image
-     * by the alpha
-     * channel.
+     * Multiplies the red, green and blue channels of each pixel in a source
+     * image by the alpha channel.
      *
      * @param source the source image
      * @param target the target image
@@ -658,8 +680,8 @@ public class ZImage extends PImage {
     }
 
     /**
-     * Divides the red, green and blue channels of each pixel in a source image by
-     * the alpha channel.
+     * Divides the red, green and blue channels of each pixel in a source image
+     * by the alpha channel.
      * Reverse pre-multiplication.
      *
      * @param source the source image
@@ -700,11 +722,10 @@ public class ZImage extends PImage {
     }
 
     /**
-     * Blits a source image's pixels onto a target image's pixels, using integer
-     * floor modulo to wrap
-     * the source image. The source image can be offset horizontally and/or
-     * vertically, creating the
-     * illusion of parallax.
+     * Blits a source image's pixels onto a target image's pixels, using
+     * integer floor modulo to wrap the source image. The source image can be
+     * offset horizontally and/or vertically, creating the illusion of
+     * parallax.
      *
      * @param source the source image
      * @param dx     horizontal pixel offset
@@ -712,7 +733,10 @@ public class ZImage extends PImage {
      * @param target the target image
      * @return the image
      */
-    public static PImage wrap(final PImage source, final int dx, final int dy, final PImage target) {
+    public static PImage wrap(
+        final PImage source,
+        final int dx, final int dy,
+        final PImage target) {
 
         source.loadPixels();
         target.loadPixels();
@@ -783,9 +807,8 @@ public class ZImage extends PImage {
     }
 
     /**
-     * Divides the red, green and blue channels of each pixel in the image by its
-     * alpha channel.
-     * Reverse pre-multiplication.
+     * Divides the red, green and blue channels of each pixel in the image by
+     * its alpha channel. Reverse pre-multiplication.
      *
      * @param source the source pixels
      * @param target the target pixels
@@ -893,9 +916,8 @@ public class ZImage extends PImage {
     }
 
     /**
-     * Returns a string representation of an image, including its format, width,
-     * height and pixel
-     * density.
+     * Returns a string representation of an image, including its format,
+     * width, height and pixel density.
      *
      * @return the string
      */
@@ -914,8 +936,8 @@ public class ZImage extends PImage {
     }
 
     /**
-     * Sets the parent of this PImage. The parent reference is needed for the save
-     * function.
+     * Sets the parent of this PImage. The parent reference is needed for the
+     * save function.
      *
      * @param parent the PApplet
      * @return this image

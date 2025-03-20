@@ -11,30 +11,61 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 
 /**
- * Facilitates the export of images.
+ * Facilitates the conversion of {@link com.behreajj.camzup.core.Img}s to
+ * {@link java.awt.image.BufferedImage}s and their subsequent export.
  */
 public abstract class ImgExport {
 
     /**
-     * Formats an image to a byte array.
+     * Converts an image to a {@link java.awt.image.BufferedImage}.
+     *
+     * @param img the image
+     *
+     * @return the AWT image
+     */
+    public static BufferedImage toAwtImage(final Img img) {
+
+        return ImgExport.toAwtImage(img, new Rgb.ToneMapClamp());
+    }
+
+    /**
+     * Converts an image to a {@link java.awt.image.BufferedImage}.
+
+     * @param img the image
+     * @param mapFunc the mapping function
+     * @return the AWT image
+     */
+    public static BufferedImage toAwtImage(
+        final Img img,
+        final Rgb.AbstrToneMap mapFunc) {
+
+        final int w = img.getWidth();
+        final int h = img.getHeight();
+        final int[] px = Img.toArgb32(img, mapFunc);
+
+        final BufferedImage imgAwt = new BufferedImage(
+            w, h, BufferedImage.TYPE_INT_ARGB);
+        imgAwt.getRaster().setDataElements(0, 0, w, h, px);
+
+        return imgAwt;
+    }
+
+    /**
+     * Encodes an image to a file format per its extension, e.g., "png" or
+     * "jpg", then returns the encoded image as a byte. Defaults to a binary
+     * ppm image if there is an error.
      *
      * @param fileExt the file extension
      * @param img     the image
      * @param mapFunc the tone mapping function
-     * @return the success condition
+     * @return the encoded bytes
      */
     public static byte[] toBytes(
         final String fileExt,
         final Img img,
         final Rgb.AbstrToneMap mapFunc) {
-        final int w = img.getWidth();
-        final int h = img.getHeight();
-        final int[] argb32s = Img.toArgb32(img, mapFunc);
 
-        final int format = BufferedImage.TYPE_INT_ARGB;
-        final BufferedImage imgNtv = new BufferedImage(w, h, format);
-        imgNtv.getRaster().setDataElements(0, 0, w, h, argb32s);
-
+        final BufferedImage imgNtv = ImgExport.toAwtImage(img, mapFunc);
         final String lcFileExt = fileExt.toLowerCase();
         final ByteArrayOutputStream bos = new ByteArrayOutputStream();
 
@@ -47,7 +78,6 @@ public abstract class ImgExport {
 
         return Img.toPpmBytes(img);
     }
-
 
     /**
      * Saves an image to a file path.
@@ -88,22 +118,15 @@ public abstract class ImgExport {
                     "Unsupported file extension.");
             }
 
+            final File file = new File(path);
             if (isPpm) {
                 final byte[] arr = Img.toPpmBytes(
                     img, mapFunc, Img.PpmFormat.BINARY, 256);
-                final File file = new File(path);
                 try (final FileOutputStream fos = new FileOutputStream(file)) {
                     fos.write(arr);
                 }
             } else {
-                final int w = img.getWidth();
-                final int h = img.getHeight();
-                final int[] argb32s = Img.toArgb32(img, mapFunc);
-
-                final int format = BufferedImage.TYPE_INT_ARGB;
-                final BufferedImage imgNtv = new BufferedImage(w, h, format);
-                imgNtv.getRaster().setDataElements(0, 0, w, h, argb32s);
-                final File file = new File(path);
+                final BufferedImage imgNtv = ImgExport.toAwtImage(img, mapFunc);
                 ImageIO.write(imgNtv, lcFileExt, file);
             }
 

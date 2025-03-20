@@ -7,9 +7,9 @@ import processing.opengl.PShader;
 import java.net.URL;
 
 /**
- * Extends PShader to provide support for Cam Z-up core objects: Vec2, Vec3,
- * Vec4, Quaternion, Mat3
- * and Mat4.
+ * Extends PShader to provide support for Cam Z-up core objects:
+ * {@link Vec2}, {@link Vec3}, {@link Vec4}, {@link Quaternion}, {@link Mat3}
+ * and {@link Mat4}.
  */
 public class ZShader extends PShader {
 
@@ -61,7 +61,10 @@ public class ZShader extends PShader {
      * @param vertFileName the vertex shader file name
      * @param fragFileName the fragment shader file name
      */
-    public ZShader(final PApplet parent, final String vertFileName, final String fragFileName) {
+    public ZShader(
+        final PApplet parent,
+        final String vertFileName,
+        final String fragFileName) {
 
         super(parent, vertFileName, fragFileName);
     }
@@ -73,7 +76,10 @@ public class ZShader extends PShader {
      * @param vertSource the vertex shader source code
      * @param fragSource the fragment shader source code
      */
-    public ZShader(final PApplet parent, final String[] vertSource, final String[] fragSource) {
+    public ZShader(
+        final PApplet parent,
+        final String[] vertSource,
+        final String[] fragSource) {
 
         super(parent, vertSource, fragSource);
     }
@@ -113,15 +119,16 @@ public class ZShader extends PShader {
     }
 
     /**
-     * Sets a GLSL vec4 uniform to a color. The alpha channel is treated as the w
-     * component.
+     * Sets a GLSL vec4 uniform to a color. The alpha channel is treated as the
+     * w component.
      *
      * @param name the uniform name
      * @param c    the color
      */
     public void set(final String name, final Rgb c) {
 
-        this.setUniformImpl(name, ZShader.VEC4_IDX, new float[]{c.r, c.g, c.b, c.alpha});
+        this.setUniformImpl(name, ZShader.VEC4_IDX,
+            new float[]{c.r, c.g, c.b, c.alpha});
     }
 
     /**

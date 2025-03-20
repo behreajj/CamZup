@@ -8,7 +8,7 @@ import java.util.*;
 public abstract class Mesh extends EntityData {
 
     /**
-     * Default count of sectors in a regular convex polygon, so as to approximate a
+     * Default count of sectors in a regular convex polygon, to approximate a
      * circle.
      */
     public static final int DEFAULT_CIRCLE_SECTORS = 32;
@@ -87,24 +87,24 @@ public abstract class Mesh extends EntityData {
     }
 
     /**
-     * Counts the occurrence of faces with a given number of vertices. Useful for
-     * determining whether
-     * a face is composed entirely of triangles, quadrilaterals, or is non-uniform.
-     * Returns a {@link
-     * Map}, where the vertex count is the key and the tally is the value.<br>
+     * Counts the occurrence of faces with a given number of vertices. Useful
+     * for determining whether a face is composed entirely of triangles,
+     * quadrilaterals, or is non-uniform.<br>
+     * <br>
+     * Returns a {@link Map}, where the vertex count is the key and the tally
+     * are the value.<br>
      * <br>
      * The audit places 3 and 4 into the map, even if the mesh contains neither
-     * triangles nor
-     * quadrilaterals, because they are common entries to query. When querying other
-     * possibilities,
-     * check whether the map contains a key prior to using its get method.
+     * triangles nor quadrilaterals, because they are common entries to query.
+     * When querying other possibilities, check whether the map contains a key
+     * prior to using its get method.
      *
      * @param m the mesh
      * @return the audit
      */
     public static Map<Integer, Integer> auditFaceType(final Mesh m) {
 
-        final HashMap<Integer, Integer> audit = new HashMap<>(32, 0.75f);
+        final TreeMap<Integer, Integer> audit = new TreeMap<>();
         audit.put(3, 0);
         audit.put(4, 0);
         final int[][][] faces = m.faces;
@@ -120,17 +120,17 @@ public abstract class Mesh extends EntityData {
     }
 
     /**
-     * Evaluates whether two edges are permutations of each other. This is based on
-     * whether they refer
-     * to the same coordinates, but do so in a different sequence.<br>
+     * Evaluates whether two edges are permutations of each other. This is
+     * based on whether they refer to the same coordinates, but do so in a
+     * different sequence.<br>
      * <br>
-     * Because edge indices are assumed to be positive integers, a sum and product
-     * algorithm is used.
+     * Because edge indices are assumed to be positive integers, a sum and
+     * product algorithm is used.
      *
      * @param a    the left comparisand
-     * @param aIdx the a edge index
+     * @param aIdx the edge index
      * @param b    the right comparisand
-     * @param bIdx the b edge index
+     * @param bIdx the edge index
      * @return the evaluation
      */
     public static boolean edgesPermute(
@@ -156,39 +156,37 @@ public abstract class Mesh extends EntityData {
         final int bSum = bv0 + bv1;
         int bZeroes = 0;
 
-        /* @formatter:off */
-    if (av0 != 0) {
-      aMul *= av0;
-    } else {
-      ++aZeroes;
-    }
-    if (av1 != 0) {
-      aMul *= av1;
-    } else {
-      ++aZeroes;
-    }
-    if (bv0 != 0) {
-      bMul *= bv0;
-    } else {
-      ++bZeroes;
-    }
-    if (bv1 != 0) {
-      bMul *= bv1;
-    } else {
-      ++bZeroes;
-    }
-    /* @formatter:on */
+        if (av0 != 0) {
+            aMul *= av0;
+        } else {
+            ++aZeroes;
+        }
+        if (av1 != 0) {
+            aMul *= av1;
+        } else {
+            ++aZeroes;
+        }
+        if (bv0 != 0) {
+            bMul *= bv0;
+        } else {
+            ++bZeroes;
+        }
+        if (bv1 != 0) {
+            bMul *= bv1;
+        } else {
+            ++bZeroes;
+        }
 
         return aMul == bMul && aSum == bSum && aZeroes == bZeroes;
     }
 
     /**
-     * Evaluates whether two faces are permutations of each other. This is based on
-     * whether they refer
-     * to the same coordinates, but do so in a different sequence.<br>
+     * Evaluates whether two faces are permutations of each other. This is
+     * based on whether they refer to the same coordinates, but do so in a
+     * different sequence.<br>
      * <br>
-     * Because face indices are assumed to be positive integers, a sum and product
-     * algorithm is used.
+     * Because face indices are assumed to be positive integers, a sum and
+     * product algorithm is used.
      *
      * @param a the left comparisand
      * @param b the right comparisand
@@ -210,24 +208,22 @@ public abstract class Mesh extends EntityData {
         int bSum = 0;
         int bZeroes = 0;
 
-        /* @formatter:off */
-    for (int i = 0; i < aLen; ++i) {
-      final int av = a[i][0];
-      final int bv = b[i][0];
-      aSum += av;
-      bSum += bv;
-      if (av != 0) {
-        aMul *= av;
-      } else {
-        ++aZeroes;
-      }
-      if (bv != 0) {
-        bMul *= bv;
-      } else {
-        ++bZeroes;
-      }
-    }
-    /* @formatter:on */
+        for (int i = 0; i < aLen; ++i) {
+            final int av = a[i][0];
+            final int bv = b[i][0];
+            aSum += av;
+            bSum += bv;
+            if (av != 0) {
+                aMul *= av;
+            } else {
+                ++aZeroes;
+            }
+            if (bv != 0) {
+                bMul *= bv;
+            } else {
+                ++bZeroes;
+            }
+        }
 
         return aMul == bMul && aSum == bSum && aZeroes == bZeroes;
     }
@@ -255,16 +251,18 @@ public abstract class Mesh extends EntityData {
     }
 
     /**
-     * Removes a number of elements from a 2D integer array at a given start index.
-     * Returns a copy of
-     * the original array with the removal.
+     * Removes a number of elements from a 2D integer array at a given start
+     * index. Returns a copy of the original array with the removal.
      *
      * @param arr       the array
      * @param index     the index
      * @param deletions the number of deletions
      * @return the array
      */
-    public static int[][] remove(final int[][] arr, final int index, final int deletions) {
+    public static int[][] remove(
+        final int[][] arr,
+        final int index,
+        final int deletions) {
 
         final int aLen = arr.length;
         final int valIdx = Utils.mod(index, aLen);
@@ -277,16 +275,18 @@ public abstract class Mesh extends EntityData {
     }
 
     /**
-     * Removes a number of elements from a 3D integer array at a given start index.
-     * Returns a copy of
-     * the original array with the removal.
+     * Removes a number of elements from a 3D integer array at a given start
+     * index. Returns a copy of the original array with the removal.
      *
      * @param arr       the array
      * @param index     the index
      * @param deletions the number of deletions
      * @return the array
      */
-    public static int[][][] remove(final int[][][] arr, final int index, final int deletions) {
+    public static int[][][] remove(
+        final int[][][] arr,
+        final int index,
+        final int deletions) {
 
         final int aLen = arr.length;
         final int valIdx = Utils.mod(index, aLen);
@@ -299,11 +299,10 @@ public abstract class Mesh extends EntityData {
     }
 
     /**
-     * Splices a 2D array of integers into the midst of another and returns a new
-     * array containing the
-     * splice. Does not mutate arrays in place. If the number of deletions exceeds
-     * the length of the
-     * target array, then a copy of the insert array is returned.
+     * Splices a 2D array of integers into the midst of another and returns a
+     * new array containing the splice. Does not mutate arrays in place. If the
+     * number of deletions exceeds the length of the target array, then a copy
+     * of the insert array is returned.
      *
      * @param arr       the array
      * @param index     the insertion point
@@ -313,7 +312,10 @@ public abstract class Mesh extends EntityData {
      * @see System#arraycopy(Object, int, Object, int, int)
      */
     public static int[][] splice(
-        final int[][] arr, final int index, final int deletions, final int[][] insert) {
+        final int[][] arr,
+        final int index,
+        final int deletions,
+        final int[][] insert) {
 
         final int aLen = arr.length;
 
@@ -342,11 +344,10 @@ public abstract class Mesh extends EntityData {
     }
 
     /**
-     * Splices a 3D array of integers into the midst of another and returns a new
-     * array containing the
-     * splice. Does not mutate arrays in place. If the number of deletions exceeds
-     * the length of the
-     * target array, then a copy of the insert array is returned.
+     * Splices a 3D array of integers into the midst of another and returns a
+     * new array containing the splice. Does not mutate arrays in place. If the
+     * number of deletions exceeds the length of the target array, then a copy
+     * of the insert array is returned.
      *
      * @param arr       the array
      * @param index     the insertion point
@@ -356,7 +357,10 @@ public abstract class Mesh extends EntityData {
      * @see System#arraycopy(Object, int, Object, int, int)
      */
     public static int[][][] splice(
-        final int[][][] arr, final int index, final int deletions, final int[][][] insert) {
+        final int[][][] arr,
+        final int index,
+        final int deletions,
+        final int[][][] insert) {
 
         final int aLen = arr.length;
 
@@ -385,7 +389,8 @@ public abstract class Mesh extends EntityData {
     }
 
     /**
-     * Evaluates whether all faces in a mesh have a specified number of vertices.
+     * Evaluates whether all faces in a mesh have a specified number of
+     * vertices.
      *
      * @param m the mesh
      * @param c the number of vertices.
@@ -416,7 +421,10 @@ public abstract class Mesh extends EntityData {
      * @return the new array
      * @see System#arraycopy(Object, int, Object, int, int)
      */
-    protected static int[][] insert(final int[][] arr, final int index, final int[][] insert) {
+    protected static int[][] insert(
+        final int[][] arr,
+        final int index,
+        final int[][] insert) {
 
         final int aLen = arr.length;
         final int bLen = insert.length;
@@ -424,10 +432,10 @@ public abstract class Mesh extends EntityData {
         final int[][] result = new int[aLen + bLen][];
 
         /*
-         * (1.) Copy values from source array into result up to insert point. (2.)
-         * Copy insertion into result array at the insertion point. (3.) Copy
-         * portion of source array after the insertion point into the result at
-         * the point after the length of the insertion.
+         * (1.) Copy values from source array into result up to insert point.
+         * (2.) Copy insertion into result array at the insertion point.
+         * (3.) Copy portion of source array after the insertion point into the
+         * result at the point after the length of the insertion.
          */
         System.arraycopy(arr, 0, result, 0, valIdx);
         System.arraycopy(insert, 0, result, valIdx, bLen);
@@ -455,7 +463,10 @@ public abstract class Mesh extends EntityData {
      * @param end   the end index
      * @return the array
      */
-    protected static int[][] reverse(final int[][] arr, final int start, final int end) {
+    protected static int[][] reverse(
+        final int[][] arr,
+        final int start,
+        final int end) {
 
         for (int st = start, ed = end; st < ed; ++st, --ed) {
             final int[] temp = arr[st];
@@ -484,7 +495,10 @@ public abstract class Mesh extends EntityData {
      * @param end   the end index
      * @return the array
      */
-    protected static int[][][] reverse(final int[][][] arr, final int start, final int end) {
+    protected static int[][][] reverse(
+        final int[][][] arr,
+        final int start,
+        final int end) {
 
         for (int st = start, ed = end; st < ed; ++st, --ed) {
             final int[][] temp = arr[st];
@@ -495,11 +509,10 @@ public abstract class Mesh extends EntityData {
     }
 
     /**
-     * Cycles the array of indices in the faces array by a number of places. The
-     * number of places can
-     * be positive or negative, indicating which direction to shift the array:
-     * positive numbers shift
-     * to the right; negative, to the left.
+     * Cycles the array of indices in the faces array by a number of places.
+     * The number of places can be positive or negative, indicating which
+     * direction to shift the array: positive numbers shift to the right;
+     * negative, to the left.
      *
      * @param places number of places
      * @return this mesh
@@ -515,12 +528,10 @@ public abstract class Mesh extends EntityData {
     }
 
     /**
-     * Cycles the array of indices in a face which indicate vertex (and therefore
-     * edge) order by a
-     * number of places. The number of places can be positive or negative,
-     * indicating which direction
-     * to shift the array: positive numbers shift to the right; negative, to the
-     * left.
+     * Cycles the array of indices in a face which indicate vertex (and
+     * therefore edge) order by a number of places. The number of places can be
+     * positive or negative, indicating which direction to shift the array:
+     * positive numbers shift to the right; negative, to the left.
      *
      * @param faceIndex the face index
      * @param places    number of places
@@ -604,9 +615,8 @@ public abstract class Mesh extends EntityData {
     }
 
     /**
-     * Flips the indices which specify a face. Changes the winding of a face from
-     * counter-clockwise
-     * (CCW) to clockwise (CW) or vice versa.
+     * Flips the indices which specify a face. Changes the winding of a face
+     * from counter-clockwise (CCW) to clockwise (CW) or vice versa.
      *
      * @param i face index
      * @return this mesh
@@ -620,8 +630,7 @@ public abstract class Mesh extends EntityData {
 
     /**
      * Flips the indices which specify all faces. Changes the winding from
-     * counter-clockwise (CCW) to
-     * clockwise (CW) or vice versa.
+     * counter-clockwise (CCW) to clockwise (CW) or vice versa.
      *
      * @return this mesh
      */
@@ -635,18 +644,20 @@ public abstract class Mesh extends EntityData {
     }
 
     /**
-     * Splits a face into two halves according to an origin and destination vertex.
-     * The face must have
-     * at least 3 vertices. The destination index should not equal the origin index
-     * or either of its
-     * neighbors. Returns a boolean whether the method was successful.
+     * Splits a face into two halves according to an origin and destination
+     * vertex. The face must have at least 3 vertices. The destination index
+     * should not equal the origin index or either of its neighbors. Returns a
+     * boolean whether the method was successful.
      *
      * @param faceIndex the face index
      * @param origIndex the origin index
      * @param destIndex the destination index
      * @return operation success
      */
-    public boolean sectionFace(final int faceIndex, final int origIndex, final int destIndex) {
+    public boolean sectionFace(
+        final int faceIndex,
+        final int origIndex,
+        final int destIndex) {
 
         /* Find face. */
         final int facesLen = this.faces.length;
@@ -665,7 +676,9 @@ public abstract class Mesh extends EntityData {
          * If the destination vertex equals the origin vertex, the origin's
          * previous neighbor, or its next neighbor, invalid selection.
          */
-        if (j == k || (j + 1) % srcFaceLen == k || Utils.mod(j - 1, srcFaceLen) == k) {
+        if (j == k
+            || (j + 1) % srcFaceLen == k
+            || Utils.mod(j - 1, srcFaceLen) == k) {
             return false;
         }
 
@@ -676,7 +689,10 @@ public abstract class Mesh extends EntityData {
             k = swap;
         }
 
-        /* Find length of travel in indices. Each new face adds an extra edge. */
+        /*
+         * Find length of travel in indices.
+         * Each new face adds an extra edge.
+         */
         final int diff = k - j;
 
         /* Origin to destination. */
@@ -699,7 +715,8 @@ public abstract class Mesh extends EntityData {
             System.arraycopy(srcVert, 0, trgVert1, 0, srcLen);
         }
 
-        this.faces = Mesh.splice(this.faces, i, 1, new int[][][]{trgFace0, trgFace1});
+        this.faces = Mesh.splice(this.faces, i, 1,
+            new int[][][]{trgFace0, trgFace1});
         return true;
     }
 
@@ -711,13 +728,13 @@ public abstract class Mesh extends EntityData {
     @Override
     public String toString() {
 
-        return "{ name: \"" + this.name + "\", materialIndex: " + this.materialIndex + ' ' + '}';
+        return "{ name: \"" + this.name + "\", materialIndex: "
+            + this.materialIndex + ' ' + '}';
     }
 
     /**
-     * Triangulates all faces in a mesh by drawing diagonals from the face's first
-     * vertex to all
-     * non-adjacent vertices.
+     * Triangulates all faces in a mesh by drawing diagonals from the face's
+     * first vertex to all non-adjacent vertices.
      *
      * @return this mesh
      * @see Mesh#triangulate(int)
@@ -736,9 +753,8 @@ public abstract class Mesh extends EntityData {
     }
 
     /**
-     * Triangulates a convex face by drawing diagonals from its first vertex to all
-     * non-adjacent
-     * vertices.
+     * Triangulates a convex face by drawing diagonals from its first vertex to
+     * all non-adjacent vertices.
      *
      * @param faceIndex the face index
      * @return this mesh
@@ -755,8 +771,8 @@ public abstract class Mesh extends EntityData {
         }
 
         /*
-         * Use first vertex to determine how much data is in each (i.e., whether
-         * it is a 2D vertex or a 3D vertex).
+         * Use first vertex to determine how much data is in each (i.e.,
+         * whether it is a 2D vertex or a 3D vertex).
          */
         final int[] vert0 = face[0];
         final int vertLen = vert0.length;
@@ -875,9 +891,8 @@ public abstract class Mesh extends EntityData {
     }
 
     /**
-     * Compares two vectors by their quantized z component, y component, then by
-     * their quantized x
-     * component.
+     * Compares two vectors by their quantized z component, y component, then
+     * by their quantized x component.
      */
     public static final class SortQuantized3 implements Comparator<Vec3> {
 
@@ -927,7 +942,8 @@ public abstract class Mesh extends EntityData {
         }
 
         /**
-         * Compares the quantized z, y and x components of the comparisand vectors.
+         * Compares the quantized z, y and x components of the comparisand
+         * vectors.
          *
          * @param a the left comparisand
          * @param b the right comparisand

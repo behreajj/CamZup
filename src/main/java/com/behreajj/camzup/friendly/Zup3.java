@@ -3,6 +3,7 @@ package com.behreajj.camzup.friendly;
 import com.behreajj.camzup.core.Handedness;
 import com.behreajj.camzup.core.Utils;
 import com.behreajj.camzup.core.Vec3;
+
 import processing.core.PApplet;
 import processing.core.PConstants;
 import processing.opengl.PGraphicsOpenGL;
