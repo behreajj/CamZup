@@ -56,6 +56,22 @@ public abstract class Convert {
      */
     public static Img toImg(final PImage source, final Img target) {
 
+        return Convert.toImg(source, false, target);
+    }
+
+    /**
+     * Converts a PImage to an Img.
+     *
+     * @param source      the input image
+     * @param useUnpremul divide color channels by alpha
+     * @param target      the output image
+     * @return the lab image
+     */
+    public static Img toImg(
+        final PImage source,
+        final boolean useUnpremul,
+        final Img target) {
+
         if (source == null) {
             System.err.println("Source image is null.");
             return Img.clear(target);
@@ -67,8 +83,12 @@ public abstract class Convert {
         }
 
         source.loadPixels();
-        return Img.fromArgb32(source.pixelWidth, source.pixelHeight,
-            source.pixels, target);
+        return Img.fromArgb32(
+            source.pixelWidth,
+            source.pixelHeight,
+            source.pixels,
+            useUnpremul,
+            target);
     }
 
     /**
@@ -147,19 +167,23 @@ public abstract class Convert {
      */
     public static PImage toPImage(final Img source, final PImage target) {
 
-        return Convert.toPImage(source, new Rgb.ToneMapClamp(), target);
+        return Convert.toPImage(source, new Rgb.ToneMapClamp(), false, target);
     }
 
     /**
      * Converts a {@link Img} to a PImage.
      *
-     * @param source  the source image
-     * @param toneMap the tone map
-     * @param target  the target image
+     * @param source    the source image
+     * @param toneMap   the tone map
+     * @param usePremul multiply color by alpha
+     * @param target    the target image
      * @return the PImage
      */
-    public static PImage toPImage(final Img source,
-        final Rgb.AbstrToneMap toneMap, final PImage target) {
+    public static PImage toPImage(
+        final Img source,
+        final Rgb.AbstrToneMap toneMap,
+        final boolean usePremul,
+        final PImage target) {
 
         final int wSrc = source.getWidth();
         final int hSrc = source.getHeight();
@@ -172,7 +196,7 @@ public abstract class Convert {
         }
 
         target.loadPixels();
-        target.pixels = Img.toArgb32(source, toneMap);
+        target.pixels = Img.toArgb32(source, toneMap, usePremul);
         target.format = PConstants.ARGB;
         target.pixelWidth = wSrc;
         target.pixelHeight = hSrc;
@@ -1343,7 +1367,7 @@ public abstract class Convert {
                         if (paramsLen > 7) {
                             /* Non-uniform rounded corners. */
                             rect = Curve2.rect(tl, br,
-                                params[4], params[5], params[6],  params[7],
+                                params[4], params[5], params[6], params[7],
                                 new Curve2(sourceName));
                         } else if (paramsLen > 4) {
                             /* Uniform rounded corners. */
@@ -1441,7 +1465,7 @@ public abstract class Convert {
                                 currCurve.closedLoop = spendContour || srcClosed;
                                 currKnot = new Knot2(
                                     source.getVertexX(cursor),
-                                    source .getVertexY(cursor++));
+                                    source.getVertexY(cursor++));
                                 initialVertex = false;
                                 spendContour = false;
                                 currCurve.append(currKnot);

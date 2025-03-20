@@ -276,8 +276,7 @@ public class Img {
 
     /**
      * Adjusts an image's lightness and saturation contrast by a factor. The
-     * adjustment factor is
-     * expected to be in [-1.0, 1.0].
+     * adjustment factor is expected to be in [-1.0, 1.0].
      *
      * @param source the source image
      * @param sFac   the saturation contrast factor
@@ -292,7 +291,7 @@ public class Img {
         final Img target) {
 
         return Img.adjustContrast(source, sFac, lFac,
-            Img.DEFAULT_PIVOT_POLICY, target);
+                Img.DEFAULT_PIVOT_POLICY, target);
     }
 
     /**
@@ -310,11 +309,11 @@ public class Img {
      * @return the adjusted pixels
      */
     public static Img adjustContrast(
-        final Img source,
-        final float sFac,
-        final float lFac,
-        final PivotPolicy policy,
-        final Img target) {
+            final Img source,
+            final float sFac,
+            final float lFac,
+            final PivotPolicy policy,
+            final Img target) {
 
         if (!Img.similar(source, target)) {
             target.width = source.width;
@@ -468,7 +467,7 @@ public class Img {
         final Img target) {
 
         return Img.adjustContrast(source, fac, fac,
-            Img.DEFAULT_PIVOT_POLICY, target);
+                Img.DEFAULT_PIVOT_POLICY, target);
     }
 
     /**
@@ -481,9 +480,9 @@ public class Img {
      * @return the adjusted image
      */
     public static Img adjustContrast(
-        final Img source,
-        final Vec2 fac,
-        final Img target) {
+            final Img source,
+            final Vec2 fac,
+            final Img target) {
 
         return Img.adjustContrast(source, fac.x, fac.y,
             Img.DEFAULT_PIVOT_POLICY, target);
@@ -499,12 +498,12 @@ public class Img {
      * @return the adjusted image
      */
     public static Img adjustContrastChroma(
-        final Img source,
-        final float fac,
-        final Img target) {
+            final Img source,
+            final float fac,
+            final Img target) {
 
         return Img.adjustContrastChroma(source, fac,
-            Img.DEFAULT_PIVOT_POLICY, target);
+                Img.DEFAULT_PIVOT_POLICY, target);
     }
 
     /**
@@ -798,7 +797,7 @@ public class Img {
                                 cTrg = lch.c + adjust.c;
                                 hTrg = hg + adjust.h;
                             }
-                            break;
+                                break;
 
                             case WARM: {
                                 final float t = lch.l * 0.01f;
@@ -807,13 +806,13 @@ public class Img {
                                 cTrg = lch.c + adjust.c;
                                 hTrg = hg + adjust.h;
                             }
-                            break;
+                                break;
 
                             case ZERO: {
                                 cTrg = lch.c + adjust.c;
                                 hTrg = hZero + adjust.h;
                             }
-                            break;
+                                break;
 
                             case OMIT:
 
@@ -873,30 +872,12 @@ public class Img {
         final Img imgOver,
         final Img target) {
 
-        final int aw = imgUnder.width;
-        final int ah = imgUnder.height;
-        final int bw = imgOver.width;
-        final int bh = imgOver.height;
-
-        final int wLrg = Math.max(aw, bw);
-        final int hLrg = Math.max(ah, bh);
-
-        /* The 0.5 is to bias the rounding. */
-        final float cx = 0.5f + wLrg * 0.5f;
-        final float cy = 0.5f + hLrg * 0.5f;
-
-        final int ax = aw == wLrg ? 0 : (int) (cx - aw * 0.5f);
-        final int ay = ah == hLrg ? 0 : (int) (cy - ah * 0.5f);
-        final int bx = bw == wLrg ? 0 : (int) (cx - bw * 0.5f);
-        final int by = bh == hLrg ? 0 : (int) (cy - bh * 0.5f);
-
         return Img.blend(
-            imgUnder, ax, ay,
-            imgOver, bx, by,
+            imgUnder, imgOver,
             Img.DEFAULT_BM_ALPHA,
             Img.DEFAULT_BM_L,
             Img.DEFAULT_BM_AB,
-            target, null);
+            target);
     }
 
     /**
@@ -922,6 +903,49 @@ public class Img {
             Img.DEFAULT_BM_ALPHA,
             Img.DEFAULT_BM_L,
             Img.DEFAULT_BM_AB,
+            target, null);
+    }
+
+    /**
+     * Blends an under and over image.
+     *
+     * @param imgUnder the under image
+     * @param imgOver  the over image
+     * @param target   the output image
+     * @param bmAlpha  the alpha blend mode
+     * @param bmLight  the light blend mode
+     * @param bmAb     the ab blend mode
+     * @return the blended image
+     */
+    public static Img blend(
+        final Img imgUnder,
+        final Img imgOver,
+        final BlendMode.Alpha bmAlpha,
+        final BlendMode.L bmLight,
+        final BlendMode.AB bmAb,
+        final Img target) {
+
+        final int aw = imgUnder.width;
+        final int ah = imgUnder.height;
+        final int bw = imgOver.width;
+        final int bh = imgOver.height;
+
+        final int wLrg = Math.max(aw, bw);
+        final int hLrg = Math.max(ah, bh);
+
+        /* The 0.5 is to bias the rounding. */
+        final float cx = 0.5f + wLrg * 0.5f;
+        final float cy = 0.5f + hLrg * 0.5f;
+
+        final int ax = aw == wLrg ? 0 : (int) (cx - aw * 0.5f);
+        final int ay = ah == hLrg ? 0 : (int) (cy - ah * 0.5f);
+        final int bx = bw == wLrg ? 0 : (int) (cx - bw * 0.5f);
+        final int by = bh == hLrg ? 0 : (int) (cy - bh * 0.5f);
+
+        return Img.blend(
+            imgUnder, ax, ay,
+            imgOver, bx, by,
+            bmAlpha, bmLight, bmAb,
             target, null);
     }
 
@@ -1009,7 +1033,7 @@ public class Img {
                 dbrx = Math.min(abrx, bbrx);
                 dbry = Math.min(abry, bbry);
             }
-            break;
+                break;
 
             case OVER: {
                 dx = xOver;
@@ -1017,7 +1041,7 @@ public class Img {
                 dbrx = bbrx;
                 dbry = bbry;
             }
-            break;
+                break;
 
             case UNDER: {
                 dx = xUnder;
@@ -1025,7 +1049,7 @@ public class Img {
                 dbrx = abrx;
                 dbry = abry;
             }
-            break;
+                break;
 
             case BLEND:
             case MAX:
@@ -1112,23 +1136,23 @@ public class Img {
                 case MAX: {
                     tuv = Math.max(t, v);
                 }
-                break;
+                    break;
                 case MIN: {
                     tuv = Math.min(t, v);
                 }
-                break;
+                    break;
                 case MULTIPLY: {
                     tuv = t * v;
                 }
-                break;
+                    break;
                 case OVER: {
                     tuv = t;
                 }
-                break;
+                    break;
                 case UNDER: {
                     tuv = v;
                 }
-                break;
+                    break;
                 case BLEND:
                 default:
             }
@@ -1157,47 +1181,47 @@ public class Img {
                         final double sum = vgt0 ? lUnder + lOver : lOver;
                         lComp = u * lUnder + t * sum;
                     }
-                    break;
+                        break;
 
                     case AVERAGE: {
                         final double avg = vgt0 ? (lUnder + lOver) * 0.5d : lOver;
                         lComp = u * lUnder + t * avg;
                     }
-                    break;
+                        break;
 
                     case DIVIDE: {
                         final double quo = vgt0 ? lOver != 0.0d ? lUnder / lOver * 100.0d : 100.0d : lOver;
                         lComp = u * lUnder + t * quo;
                     }
-                    break;
+                        break;
 
                     case MULTIPLY: {
                         final double prod = vgt0 ? lUnder * lOver * 0.01d : lOver;
                         lComp = u * lUnder + t * prod;
                     }
-                    break;
+                        break;
 
                     case OVER: {
-                        lComp = lOver;
+                        lComp = tgt0 ? lOver : u * lUnder + t * lOver;
                     }
-                    break;
+                        break;
 
                     case SCREEN: {
-                        final double scr = vgt0 ? lUnder + lOver - lUnder * lOver * 0.01 : lOver;
+                        final double scr = vgt0 ? lUnder + lOver - lUnder * lOver * 0.01d : lOver;
                         lComp = u * lUnder + t * scr;
                     }
-                    break;
+                        break;
 
                     case SUBTRACT: {
-                        final double dff = vgt0 ? lUnder - lOver : lOver;
+                        final double dff = vgt0 ? lUnder - lOver : 50.0d - lOver;
                         lComp = u * lUnder + t * dff;
                     }
-                    break;
+                        break;
 
                     case UNDER: {
-                        lComp = lUnder;
+                        lComp = vgt0 ? lUnder : u * lUnder + t * lOver;
                     }
-                    break;
+                        break;
 
                     case BLEND:
                     default:
@@ -1210,7 +1234,7 @@ public class Img {
                         aComp = u * aUnder + t * aSum;
                         bComp = u * bUnder + t * bSum;
                     }
-                    break;
+                        break;
 
                     case AVERAGE: {
                         final double aAvg = vgt0 ? (aUnder + aOver) * 0.5d : aOver;
@@ -1218,7 +1242,7 @@ public class Img {
                         aComp = u * aUnder + t * aAvg;
                         bComp = u * bUnder + t * bAvg;
                     }
-                    break;
+                        break;
 
                     case CHROMA: {
                         if (vgt0 && tgt0) {
@@ -1233,7 +1257,7 @@ public class Img {
                             } /* End chroma under is greater than zero. */
                         } /* End under alpha is greater than zero. */
                     }
-                    break;
+                        break;
 
                     case HUE: {
                         if (vgt0 && tgt0) {
@@ -1248,27 +1272,27 @@ public class Img {
                             } /* End chroma over is greater than zero. */
                         } /* End under alpha is greater than zero. */
                     }
-                    break;
+                        break;
 
                     case OVER: {
-                        aComp = aOver;
-                        bComp = bOver;
+                        aComp = tgt0 ? aOver : u * aUnder + t * aOver;
+                        bComp = tgt0 ? bOver : u * bUnder + t * bOver;
                     }
-                    break;
+                        break;
 
                     case SUBTRACT: {
-                        final double aDff = vgt0 ? aUnder - aOver : aOver;
-                        final double bDff = vgt0 ? bUnder - bOver : bOver;
+                        final double aDff = vgt0 ? aUnder - aOver : -aOver;
+                        final double bDff = vgt0 ? bUnder - bOver : -bOver;
                         aComp = u * aUnder + t * aDff;
                         bComp = u * bUnder + t * bDff;
                     }
-                    break;
+                        break;
 
                     case UNDER: {
-                        aComp = aUnder;
-                        bComp = bUnder;
+                        aComp = vgt0 ? aUnder : u * aUnder + t * aOver;
+                        bComp = vgt0 ? bUnder : u * bUnder + t * bOver;
                     }
-                    break;
+                        break;
 
                     case BLEND:
                     default:
@@ -1608,7 +1632,6 @@ public class Img {
         return target;
     }
 
-
     /**
      * Fills an image with a color.
      *
@@ -1720,16 +1743,18 @@ public class Img {
      * a LAB image. Width and height should be in pixels. It should not be
      * the virtual width and height that accounts for pixel density.
      *
-     * @param width   the width
-     * @param height  the height
-     * @param argb32s the pixel array
-     * @param target  the output image
+     * @param width       the width
+     * @param height      the height
+     * @param argb32s     the pixel array
+     * @param useUnpremul divide color channels by alpha
+     * @param target      the output image
      * @return the image
      */
     public static Img fromArgb32(
         final int width,
         final int height,
         final int[] argb32s,
+        final boolean useUnpremul,
         final Img target) {
 
         final int wVerif = Utils.clamp(Math.abs(width), 1, Img.MAX_DIMENSION);
@@ -1760,7 +1785,9 @@ public class Img {
                 tlab64 = convert.get(argb32Obj);
             } else {
                 Rgb.fromHex(argb32, srgb);
-                // TODO: Option to unpremultiply?
+                if (useUnpremul) {
+                    Rgb.unpremul(srgb, srgb);
+                }
                 Rgb.sRgbToSrLab2(srgb, lab, xyz, lrgb);
                 tlab64 = lab.toHexLongSat();
                 convert.put(argb32Obj, tlab64);
@@ -1858,7 +1885,7 @@ public class Img {
         final Img target) {
 
         return Img.gradientLinear(grd, xOrig, yOrig, xDest, yDest,
-            new Lab.MixLab(), target);
+                new Lab.MixLab(), target);
     }
 
     /**
@@ -1936,7 +1963,9 @@ public class Img {
      * @return the gradient image
      */
     public static Img gradientLinear(
-        final Gradient grd, final Lab.AbstrEasing easing, final Img target) {
+        final Gradient grd,
+        final Lab.AbstrEasing easing,
+        final Img target) {
 
         return Img.gradientLinear(grd, -1.0f, 0.0f, 1.0f, 0.0f, easing, target);
     }
@@ -2000,7 +2029,7 @@ public class Img {
         final Img target) {
 
         return Img.gradientMap(grd, source, new Lab.MixLab(),
-            MapChannel.L, true, target);
+                MapChannel.L, true, target);
     }
 
     /**
@@ -2019,7 +2048,7 @@ public class Img {
         final Img target) {
 
         return Img.gradientMap(grd, source, easing,
-            MapChannel.L, true, target);
+                MapChannel.L, true, target);
     }
 
     /**
@@ -2074,7 +2103,7 @@ public class Img {
                                 minChannel = lch.c;
                             }
                         }
-                        break;
+                            break;
 
                         case L:
                         default: {
@@ -2111,10 +2140,10 @@ public class Img {
                 switch (channel) {
                     case C: {
                     }
-                    fac = useNormVerif
-                        ? (lch.c - minChannel) * denom
-                        : lch.c / Lch.SR_CHROMA_MAX;
-                    break;
+                        fac = useNormVerif
+                            ? (lch.c - minChannel) * denom
+                            : lch.c / Lch.SR_CHROMA_MAX;
+                        break;
 
                     case L:
                     default: {
@@ -2321,8 +2350,8 @@ public class Img {
             final double xn = wInv * (i % wTrg);
             final double yn = hInv * (float) (i / wTrg);
             final float fac = Utils.mod1((float) ((Math.atan2(1.0d
-                - (yn + yn + (double) yOrig), xn + xn - xo - 1.0d)
-                - (double) radians) * Utils.ONE_TAU_D));
+                    - (yn + yn + (double) yOrig), xn + xn - xo - 1.0d)
+                    - (double) radians) * Utils.ONE_TAU_D));
             Gradient.eval(grd, fac, easing, trgLab);
             target.pixels[i] = trgLab.toHexLongSat();
         }
@@ -2380,7 +2409,10 @@ public class Img {
      * @param target the target image
      * @return the gray image
      */
-    public static Img grayscale(final Img source, final float fac, final Img target) {
+    public static Img grayscale(
+        final Img source,
+        final float fac,
+        final Img target) {
 
         if (Float.isNaN(fac) || fac >= 1.0f) {
             return Img.grayscale(source, target);
@@ -2572,10 +2604,8 @@ public class Img {
      */
     public static Img mirror(
         final Img source,
-        final float xOrig,
-        final float yOrig,
-        final float xDest,
-        final float yDest,
+        final float xOrig, final float yOrig,
+        final float xDest, final float yDest,
         final boolean flip,
         final Img target) {
 
@@ -2670,10 +2700,8 @@ public class Img {
      */
     public static Img mirror(
         final Img source,
-        final float xOrig,
-        final float yOrig,
-        final float xDest,
-        final float yDest,
+        final float xOrig, final float yOrig,
+        final float xDest, final float yDest,
         final Img target) {
 
         return Img.mirror(source, xOrig, yOrig, xDest, yDest, false, target);
@@ -2939,8 +2967,8 @@ public class Img {
 
         final int len = source.pixels.length;
         final float facVerif = Float.isNaN(fac)
-            ? 1.0f
-            : Utils.clamp(fac, -1.0f, 1.0f);
+                ? 1.0f
+                : Utils.clamp(fac, -1.0f, 1.0f);
 
         if (Utils.approx(facVerif, 0.0f)) {
             System.arraycopy(source.pixels, 0, target.pixels, 0, len);
@@ -3393,8 +3421,7 @@ public class Img {
                 trgPixel = convert.get(srcPixelObj);
             } else {
                 Lab.fromHex(srcPixel, lab);
-                trgPixel = Lab.dist(lab, fromColor, alphaScalar)
-                    <= tolerance ? toPixel : srcPixel;
+                trgPixel = Lab.dist(lab, fromColor, alphaScalar) <= tolerance ? toPixel : srcPixel;
                 convert.put(srcPixelObj, trgPixel);
             }
             target.pixels[i] = trgPixel;
@@ -3730,8 +3757,8 @@ public class Img {
         final Img target) {
 
         return Img.resizeBilinear(
-            source, Utils.round(wPrc * source.width),
-            Utils.round(hPrc * source.height), target);
+                source, Utils.round(wPrc * source.width),
+                Utils.round(hPrc * source.height), target);
     }
 
     /**
@@ -3822,7 +3849,7 @@ public class Img {
         final int w = source.width;
         final int h = source.height;
 
-        return new Img[]{
+        return new Img[] {
             new Img(w, h, rPixels),
             new Img(w, h, gPixels),
             new Img(w, h, bPixels)
@@ -3861,7 +3888,7 @@ public class Img {
         final Img write) {
 
         return Img.setRegion(read, xtlRd, ytlRd, xbrRd, ybrRd, 0, 0,
-            write.width - 1, write.height - 1, write);
+                write.width - 1, write.height - 1, write);
     }
 
     /**
@@ -3998,7 +4025,7 @@ public class Img {
                 for (int i = 0; i < trgLen; ++i) {
                     final float yTrg = (float) (i / wTrg);
                     trgPixels[i] = Img.sampleBilinear(source,
-                        xDiff + i % wTrg + tana * (yTrg - yCenter), yTrg);
+                            xDiff + i % wTrg + tana * (yTrg - yCenter), yTrg);
                 }
 
                 target.width = wTrg;
@@ -4167,13 +4194,15 @@ public class Img {
      * Does not validate that zero alpha pixels also have zero red, green
      * or blue.
      *
-     * @param source  the source image
-     * @param mapFunc the tone mapping function
+     * @param source    the source image
+     * @param mapFunc   the tone mapping function
+     * @param usePremul multiply color by alpha
      * @return the pixels
      */
     public static int[] toArgb32(
         final Img source,
-        final Rgb.AbstrToneMap mapFunc) {
+        final Rgb.AbstrToneMap mapFunc,
+        final boolean usePremul) {
 
         final int len = source.pixels.length;
         final int[] argb32s = new int[len];
@@ -4197,10 +4226,10 @@ public class Img {
                 Lab.fromHex(tlab64, lab);
                 Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
                 mapFunc.apply(srgb, mapped);
-
-                // TODO: Does this need to support alpha premultiply?
-
-                argb32 = mapped.toHexIntWrap();
+                if (usePremul) {
+                    Rgb.premul(mapped, mapped);
+                }
+                argb32 = mapped.toHexIntSat();
                 convert.put(tlab64Obj, argb32);
             }
 
@@ -4469,7 +4498,7 @@ public class Img {
                     sb.append('\n');
                 }
             }
-            break;
+                break;
 
             case BINARY:
             default:
@@ -4503,7 +4532,8 @@ public class Img {
 
     /**
      * Removes excess transparent pixels from an array of pixels. Adapted from
-     * the implementation by Oleg Mikhailov: <a href="https://stackoverflow.com/a/36938923">
+     * the implementation by Oleg Mikhailov:
+     * <a href="https://stackoverflow.com/a/36938923">
      * https://stackoverflow.com/a/36938923</a>.
      * <br>
      * <br>
@@ -4787,13 +4817,17 @@ public class Img {
         final boolean xcInBounds = xc >= 0 && xc < wSrc;
 
         final long c00 = yfInBounds && xfInBounds
-            ? source[yf * wSrc + xf] : Img.CLEAR_PIXEL;
+            ? source[yf * wSrc + xf]
+            : Img.CLEAR_PIXEL;
         final long c10 = yfInBounds && xcInBounds
-            ? source[yf * wSrc + xc] : Img.CLEAR_PIXEL;
+            ? source[yf * wSrc + xc]
+            : Img.CLEAR_PIXEL;
         final long c11 = ycInBounds && xcInBounds
-            ? source[yc * wSrc + xc] : Img.CLEAR_PIXEL;
+            ? source[yc * wSrc + xc]
+            : Img.CLEAR_PIXEL;
         final long c01 = ycInBounds && xfInBounds
-            ? source[yc * wSrc + xf] : Img.CLEAR_PIXEL;
+            ? source[yc * wSrc + xf]
+            : Img.CLEAR_PIXEL;
 
         final float xErr = xSrc - xf;
 
@@ -4991,7 +5025,7 @@ public class Img {
                     vr02[1] = j11;
                 }
             }
-            break;
+                break;
 
             case NGON:
             case QUAD:
@@ -5150,7 +5184,8 @@ public class Img {
     public final long getPixelOmit(final int i, final long defaultPixel) {
 
         return i >= 0 && i < this.pixels.length
-            ? this.pixels[i] : defaultPixel;
+            ? this.pixels[i]
+            : defaultPixel;
     }
 
     /**

@@ -447,6 +447,25 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     }
 
     /**
+     * Changes the renderer blend mode
+     *
+     * @param mode the mode
+     */
+    @Override
+    public void blendMode(int mode) {
+        if(mode == PConstants.BLEND || mode == PConstants.REPLACE) {
+            this.blendMode = mode;
+            this.blendModeImpl();
+        } else {
+            System.err.println(
+                """
+                    Blend modes are not supported by this renderer.
+                    Blending should be conducted in perceptual color space,
+                    not in gamma-encoded standard RGB.""");
+        }
+    }
+
+    /**
      * Draws a bounding area.
      *
      * @param b the bounds
@@ -1752,9 +1771,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      */
     public void imageNative(final Image imgNtv) {
 
-        final ImageObserver io = null;
-        final int w = imgNtv.getWidth(io);
-        final int h = imgNtv.getHeight(io);
+        final int w = imgNtv.getWidth(null);
+        final int h = imgNtv.getHeight(null);
 
         switch (this.imageMode) {
             case PConstants.CORNER: /* 0 */
@@ -2185,6 +2203,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             /* Processing SQUARE is AWT BUTT; PROJECT is AWT SQUARE. */
             if (this.capNative == BasicStroke.CAP_BUTT) {
 
+                //noinspection MagicConstant
                 this.strokeObject = new BasicStroke(this.strokeWeight,
                     BasicStroke.CAP_SQUARE, this.joinNative, this.miterLimit);
                 this.g2.setStroke(this.strokeObject);
@@ -2195,6 +2214,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
                 this.g2.setColor(this.strokeColorObject);
                 this.g2.draw(this.gp);
 
+                //noinspection MagicConstant
                 this.strokeObject = new BasicStroke(this.strokeWeight,
                     this.capNative, this.joinNative, this.miterLimit);
                 this.g2.setStroke(this.strokeObject);
@@ -2698,14 +2718,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
         this.g2.setTransform(this.affineNative);
         final double pdd = this.pixelDensity;
         this.g2.scale(pdd, pdd);
-
-        // this.cameraZoomX = Utils.hypot(m00, m10);
-        // this.cameraZoomY = Utils.hypot(m01, m11);
-        // final float det = m00 * m11 - m01 * m10;
-        // if ( det < 0.0f ) { this.cameraZoomY = -this.cameraZoomY; }
-        // this.cameraRot = Utils.modRadians(Utils.atan2(m10, m00));
-        // this.cameraX = m02;
-        // this.cameraY = m12;
     }
 
     /**
@@ -4607,6 +4619,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     @Override
     protected void strokeImpl() {
 
+        //noinspection MagicConstant
         this.strokeObject = new BasicStroke(this.strokeWeight, this.capNative,
             this.joinNative, this.miterLimit);
         this.g2.setStroke(this.strokeObject);
@@ -4820,7 +4833,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
         final int fontSize = this.textFont.getSize();
         final float szNorm = Utils.div(this.textSize, fontSize);
         final Glyph whiteSpace = this.textFont.getGlyph('i');
-        final float spaceWidth = whiteSpace != null ? whiteSpace.setWidth * szNorm
+        final float spaceWidth = whiteSpace != null
+            ? whiteSpace.setWidth * szNorm
             : fontSize * Utils.ONE_THIRD;
 
         float sum = 0.0f;

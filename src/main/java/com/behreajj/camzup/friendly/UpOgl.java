@@ -354,6 +354,27 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     }
 
     /**
+     * Changes the renderer blend mode
+     *
+     * @param mode the mode
+     */
+    @Override
+    public void blendMode(int mode) {
+        if(mode == PConstants.BLEND
+            || mode == PConstants.REPLACE
+            || mode == IUpOgl.TEXT_BLEND) {
+            this.blendMode = mode;
+            this.blendModeImpl();
+        } else {
+            System.err.println(
+                """
+                    Blend modes are not supported by this renderer.
+                    Blending should be conducted in perceptual color space,
+                    not in gamma-encoded standard RGB.""");
+        }
+    }
+
+    /**
      * Unsupported by this renderer. Use a MeshEntity and Mesh instead.
      *
      * @param size the size
@@ -3155,7 +3176,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     @Override
     protected void blendModeImpl() {
 
-        /* See https://github.com/processing/processing/issues/3391 . */
+        /*
+         * For original discussion of premultiplied alpha, see
+         * https://github.com/processing/processing/issues/3391 .
+         */
 
         if (this.blendMode != this.lastBlendMode) {
             this.flush();
@@ -3180,74 +3204,6 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
                 }
                 this.pgl.blendFuncSeparate(PGL.ONE, PGL.ONE_MINUS_SRC_ALPHA,
                     PGL.ONE, PGL.ONE_MINUS_SRC_ALPHA);
-
-                break;
-
-            case PConstants.ADD: /* 2 */
-
-                if (PGraphicsOpenGL.blendEqSupported) {
-                    this.pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
-                }
-
-                this.pgl.blendFuncSeparate(PGL.ONE, PGL.ONE, PGL.ONE, PGL.ONE);
-
-                break;
-
-            case PConstants.SUBTRACT: /* 4 */
-
-                if (PGraphicsOpenGL.blendEqSupported) {
-                    this.pgl.blendEquationSeparate(PGL.FUNC_REVERSE_SUBTRACT,
-                        PGL.FUNC_ADD);
-                }
-
-                this.pgl.blendFuncSeparate(PGL.ONE, PGL.ONE, PGL.ONE, PGL.ONE);
-
-                break;
-
-            case PConstants.LIGHTEST: /* 8 */
-
-                if (PGraphicsOpenGL.blendEqSupported) {
-                    this.pgl.blendEquationSeparate(PGL.FUNC_MAX, PGL.FUNC_ADD);
-                    this.pgl.blendFuncSeparate(PGL.ONE, PGL.ONE, PGL.ONE, PGL.ONE);
-                }
-
-                break;
-
-            case PConstants.DARKEST: /* 16 */
-
-                if (PGraphicsOpenGL.blendEqSupported) {
-                    this.pgl.blendEquationSeparate(PGL.FUNC_MIN, PGL.FUNC_ADD);
-                    this.pgl.blendFuncSeparate(PGL.ONE, PGL.ONE, PGL.ONE, PGL.ONE);
-                }
-
-                break;
-
-            case PConstants.EXCLUSION: /* 64 */
-
-                if (PGraphicsOpenGL.blendEqSupported) {
-                    this.pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
-                }
-                this.pgl.blendFuncSeparate(PGL.ONE_MINUS_DST_COLOR,
-                    PGL.ONE_MINUS_SRC_COLOR, PGL.ONE, PGL.ONE);
-
-                break;
-
-            case PConstants.MULTIPLY: /* 128 */
-
-                if (PGraphicsOpenGL.blendEqSupported) {
-                    this.pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
-                }
-
-                this.pgl.blendFunc(PGL.DST_COLOR, PGL.ONE_MINUS_SRC_ALPHA);
-                break;
-
-            case PConstants.SCREEN: /* 256 */
-
-                if (PGraphicsOpenGL.blendEqSupported) {
-                    this.pgl.blendEquationSeparate(PGL.FUNC_ADD, PGL.FUNC_ADD);
-                }
-                this.pgl.blendFuncSeparate(PGL.ONE_MINUS_DST_COLOR, PGL.ONE,
-                    PGL.ONE, PGL.ONE);
 
                 break;
 
