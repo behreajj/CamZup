@@ -208,6 +208,7 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
      * @param app the curves
      * @return this curve entity
      */
+    @SuppressWarnings("UnusedReturnValue")
     public CurveEntity3 appendAll(final Curve3... app) {
 
         for (Curve3 knot3s : app) {
@@ -604,7 +605,7 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
         int curveIndex = 0;
         final int curveLast = this.curves.size() - 1;
         for (Curve3 curve : this.curves) {
-            curve.toBlenderCode(pyCd, uRes, tiltStart, tiltEnd);
+            curve.toBlenderCode(pyCd, uRes);
             if (curveIndex < curveLast) {
                 pyCd.append(',').append(' ');
             }

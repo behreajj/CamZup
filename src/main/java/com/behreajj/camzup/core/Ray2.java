@@ -318,9 +318,8 @@ public class Ray2 {
      * @param xSegDest the segment destination x
      * @param ySegDest the segment destination y
      * @param uniques  the unique vectors
-     * @return the factor
      */
-    static float factorEdge(
+    static void factorEdge(
         final float xRayOrig,
         final float yRayOrig,
         final float xRayDir,
@@ -360,8 +359,6 @@ public class Ray2 {
                 /* Find dot product of v0 and v2, normalize. */
                 final double t2 = (v0x * v2x + v0y * (double) xRayDir) / dot;
                 if (t2 >= 0.0d && t2 <= 1.0d) {
-                    fac = (float) t2;
-
                     final double u2 = 1.0d - t2;
                     final double x = u2 * (double) xSegOrig + t2 * (double) xSegDest;
                     final double y = u2 * (double) ySegOrig + t2 * (double) ySegDest;
@@ -370,7 +367,6 @@ public class Ray2 {
             }
         }
 
-        return fac;
     }
 
     /**

@@ -538,6 +538,7 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @param target the output knot
      * @return the knot
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static Knot2 evalFirst(final Curve2 curve, final Knot2 target) {
 
         target.set(curve.knots.get(0));
@@ -611,6 +612,7 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @param target the output knot
      * @return the knot
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static Knot2 evalLast(final Curve2 curve, final Knot2 target) {
 
         target.set(curve.knots.get(curve.knots.size() - 1));
@@ -1309,20 +1311,23 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * A helper function. Returns a knot given two knots and a step. Assumes the
-     * step has already been
-     * checked, and that the knots are in sequence along the curve.
+     * A helper function. Returns a knot given two knots and a step. Assumes
+     * the step has already been checked, and that the knots are in sequence
+     * along the curve.
      *
      * @param a      the origin knot
      * @param b      the destination knot
      * @param step   the step
      * @param target the output knot
-     * @return the knot
      * @see Vec2#add(Vec2, Vec2, Vec2)
      * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
      * @see Vec2#bezierTangent(Vec2, Vec2, Vec2, Vec2, float, Vec2)
      */
-    static Knot2 bezierKnot(final Knot2 a, final Knot2 b, final float step, final Knot2 target) {
+    static void bezierKnot(
+        final Knot2 a,
+        final Knot2 b,
+        final float step,
+        final Knot2 target) {
 
         final Vec2 aco = a.coord;
         final Vec2 afh = a.foreHandle;
@@ -1342,7 +1347,6 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         Vec2.add(tco, tfh, tfh);
         Vec2.add(tco, trh, trh);
 
-        return target;
     }
 
     /**
@@ -1359,6 +1363,7 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @return the circle
      * @see Utils#tan(float)
      */
+    @SuppressWarnings("SameParameterValue")
     static Curve2 circle(
         final int sectors,
         final float offsetAngle,
@@ -1409,6 +1414,7 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @param target  the output curve
      * @return the ellipse
      */
+    @SuppressWarnings("SameParameterValue")
     static Curve2 ellipse(
         final float radius,
         final float aspect,
@@ -1718,6 +1724,7 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @return this curve
      * @see Curve2#append(Knot2)
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Curve2 appendAll(final Collection<Knot2> kn) {
 
         for (Knot2 knot2 : kn) {
@@ -1733,6 +1740,7 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @param kn the array of knots
      * @return this curve
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Curve2 appendAll(final Knot2... kn) {
 
         for (Knot2 knot2 : kn) {
@@ -2002,8 +2010,7 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         int j = -1;
         for (Knot2 knot2 : kn) {
             ++j;
-            final Knot2 knot = knot2;
-            this.knots.add(j, knot);
+            this.knots.add(j, knot2);
         }
 
         return this;
@@ -2082,6 +2089,7 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @param target the output knot
      * @return the evaluation
      */
+    @SuppressWarnings("UnusedReturnValue")
     public boolean removeAt(final int i, final Knot2 target) {
 
         final int len = this.knots.size();
@@ -2430,10 +2438,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      *
      * @param pyCd the string builder
      * @param uRes the resolution u
-     * @param z    the z offset
-     * @return the string builder
      */
-    StringBuilder toBlenderCode(final StringBuilder pyCd, final int uRes, final float z) {
+    void toBlenderCode(final StringBuilder pyCd, final int uRes) {
 
         pyCd.append("{\"closed_loop\": ");
         pyCd.append(this.closedLoop ? "True" : "False");
@@ -2443,7 +2449,7 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
 
         final Iterator<Knot2> itr = this.knots.iterator();
         while (itr.hasNext()) {
-            itr.next().toBlenderCode(pyCd, z);
+            itr.next().toBlenderCode(pyCd);
             if (itr.hasNext()) {
                 pyCd.append(',').append(' ');
             }
@@ -2451,7 +2457,6 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
 
         pyCd.append(']');
         pyCd.append('}');
-        return pyCd;
     }
 
     /**
@@ -2494,12 +2499,12 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      *
      * @param svgp     the string builder
      * @param fillRule the fill rule
-     * @return the string builder.
      */
-    StringBuilder toSvgPath(final StringBuilder svgp, final String fillRule) {
+    @SuppressWarnings("SameParameterValue")
+    void toSvgPath(final StringBuilder svgp, final String fillRule) {
 
         if (this.knots.size() < 2) {
-            return svgp;
+            return;
         }
 
         svgp.append("<path id=\"");
@@ -2511,7 +2516,6 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         svgp.append("\" d=\"");
         this.toSvgSubPath(svgp);
         svgp.append("\" />\n");
-        return svgp;
     }
 
     /**
@@ -2520,9 +2524,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * for curves to be rendered as multiple sub-paths rather than one big path.
      *
      * @param svgp the string builder
-     * @return the string builder
      */
-    StringBuilder toSvgSubPath(final StringBuilder svgp) {
+    void toSvgSubPath(final StringBuilder svgp) {
 
         final Iterator<Knot2> itr = this.knots.iterator();
         final Knot2 firstKnot = itr.next();
@@ -2567,7 +2570,6 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
             svgp.append('Z');
         }
 
-        return svgp;
     }
 
     /**

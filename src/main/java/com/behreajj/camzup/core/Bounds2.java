@@ -4,8 +4,7 @@ import java.util.Objects;
 
 /**
  * An axis aligned bounding box (AABB) for a 2D area, represented with a minimum
- * and maximum
- * coordinate.
+ * and maximum coordinate.
  */
 public class Bounds2 implements Comparable<Bounds2> {
 

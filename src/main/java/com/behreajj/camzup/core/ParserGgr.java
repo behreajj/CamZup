@@ -95,7 +95,7 @@ public abstract class ParserGgr {
             final ArrayList<float[]> keys = new ArrayList<>(8);
             final Pattern spacePattern = Pattern.compile("\\s+");
 
-            try {
+            try (in) {
 
                 for (String ln = in.readLine(); ln != null; ln = in.readLine()) {
                     final String lnlc = ln.trim().toLowerCase();
@@ -120,9 +120,8 @@ public abstract class ParserGgr {
                 }
 
             } catch (final Exception e) {
+                // noinspection CallToPrintStackTrace
                 e.printStackTrace();
-            } finally {
-                in.close();
             }
 
             /* Cache target keys, then clear out old keys. */
@@ -195,12 +194,9 @@ public abstract class ParserGgr {
                     final float mid = (segMid - segLft) * denom;
                     final float pos = (step - segLft) * denom;
 
-                    float fac = 0.5f;
-                    if (pos <= mid) {
-                        fac = 0.5f * Utils.div(pos, mid);
-                    } else {
-                        fac = 0.5f + 0.5f * Utils.div(pos - mid, 1.0f - mid);
-                    }
+                    float fac = pos <= mid
+                        ? 0.5f * Utils.div(pos, mid)
+                        : 0.5f + 0.5f * Utils.div(pos - mid, 1.0f - mid);
 
                     /* Adjust step based on interpolation type. */
                     final int blndFunc = (int) seg[11];
@@ -273,6 +269,7 @@ public abstract class ParserGgr {
             }
 
         } catch (final Exception e) {
+            // noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
 
@@ -292,6 +289,7 @@ public abstract class ParserGgr {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             result = ParserGgr.load(br, samples);
         } catch (final Exception e) {
+            // noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
         return result;

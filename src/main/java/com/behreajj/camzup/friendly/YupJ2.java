@@ -453,15 +453,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      */
     @Override
     public void blendMode(int mode) {
-        if(mode == PConstants.BLEND || mode == PConstants.REPLACE) {
+        if (mode == PConstants.BLEND || mode == PConstants.REPLACE) {
             this.blendMode = mode;
             this.blendModeImpl();
         } else {
-            System.err.println(
-                """
-                    Blend modes are not supported by this renderer.
-                    Blending should be conducted in perceptual color space,
-                    not in gamma-encoded standard RGB.""");
+            System.err.println("Blend modes not supported by this renderer.");
         }
     }
 

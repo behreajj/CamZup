@@ -12,6 +12,7 @@ public interface IBlenderWritable {
      * @param pyCd the string builder
      * @return the string builder
      */
+    @SuppressWarnings("UnusedReturnValue")
     default StringBuilder genMaterialString(final StringBuilder pyCd) {
 
         /* Create materials. */
@@ -55,8 +56,11 @@ public interface IBlenderWritable {
      * @param useAutoSmooth use auto smoothed normals
      * @return the string builder
      */
+    @SuppressWarnings("UnusedReturnValue")
     default StringBuilder genMeshString(
-        final StringBuilder pyCd, final boolean includeEdges, final boolean useAutoSmooth) {
+        final StringBuilder pyCd,
+        final boolean includeEdges,
+        final boolean useAutoSmooth) {
 
         /* Append meshes. */
         final String pyUseAutoSmooth = useAutoSmooth ? "True" : "False";
@@ -101,6 +105,7 @@ public interface IBlenderWritable {
      * @param pyCd the string builder
      * @return the string builder
      */
+    @SuppressWarnings("UnusedReturnValue")
     default StringBuilder genParentString(final StringBuilder pyCd) {
 
         pyCd.append("d_objs = D.objects\n");

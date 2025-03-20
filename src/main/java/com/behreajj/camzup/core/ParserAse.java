@@ -34,7 +34,7 @@ public abstract class ParserAse {
         while (i < lenFileData) {
             int blockLen = 2;
 
-            final short blockHeader = Utils.shortml(arr, i);
+            final int blockHeader = Utils.ushort(Utils.shortml(arr, i));
             final boolean isGroupOpen = blockHeader == 0xc001;
             final boolean isGroupClose = blockHeader == 0xc002;
             final boolean isEntry = blockHeader == 0x0001;
@@ -142,6 +142,7 @@ public abstract class ParserAse {
             fis.close();
             result = ParserAse.load(arr);
         } catch (final Exception e) {
+            // noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
         return result;

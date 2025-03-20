@@ -56,7 +56,9 @@ public abstract class PMatAux {
      * @param target the output matrix
      * @return the basis
      */
-    public static PMatrix3D catmullBasis(final float s,
+    @SuppressWarnings("UnusedReturnValue")
+    public static PMatrix3D catmullBasis(
+        final float s,
         final PMatrix3D target) {
 
         final float u = 1.0f - s;
@@ -186,8 +188,11 @@ public abstract class PMatAux {
      * @param mInv the matrix inverse
      * @return the rotated matrix
      */
-    public static PMatrix3D compoundRotateX(final float c, final float s,
-        final PMatrix3D m, final PMatrix3D mInv) {
+    @SuppressWarnings("UnusedReturnValue")
+    public static PMatrix3D compoundRotateX(
+        final float c, final float s,
+        final PMatrix3D m,
+        final PMatrix3D mInv) {
 
         float t1 = m.m01;
         float t2 = m.m02;
@@ -235,8 +240,11 @@ public abstract class PMatAux {
      * @param mInv the matrix inverse
      * @return the rotated matrix
      */
-    public static PMatrix3D compoundRotateY(final float c, final float s,
-        final PMatrix3D m, final PMatrix3D mInv) {
+    @SuppressWarnings("UnusedReturnValue")
+    public static PMatrix3D compoundRotateY(
+        final float c, final float s,
+        final PMatrix3D m,
+        final PMatrix3D mInv) {
 
         float t0 = m.m00;
         float t2 = m.m02;
@@ -284,8 +292,11 @@ public abstract class PMatAux {
      * @param mInv the matrix inverse
      * @return the rotated matrix
      */
-    public static PMatrix3D compoundRotateZ(final float c, final float s,
-        final PMatrix3D m, final PMatrix3D mInv) {
+    @SuppressWarnings("UnusedReturnValue")
+    public static PMatrix3D compoundRotateZ(
+        final float c, final float s,
+        final PMatrix3D m,
+        final PMatrix3D mInv) {
 
         float t0 = m.m00;
         float t1 = m.m01;
@@ -335,8 +346,11 @@ public abstract class PMatAux {
      * @param target the output matrix
      * @return the view frustum
      */
-    public static PMatrix3D frustum(final float left, final float right,
-        final float bottom, final float top, final float near, final float far,
+    @SuppressWarnings("UnusedReturnValue")
+    public static PMatrix3D frustum(
+        final float left, final float right,
+        final float bottom, final float top,
+        final float near, final float far,
         final PMatrix3D target) {
 
         final float n2 = near + near;
@@ -426,6 +440,7 @@ public abstract class PMatAux {
      * @return the matrix
      * @see Vec3#magSq(Vec3)
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static PMatrix3D invRotate(final Quaternion q,
         final PMatrix3D target) {
 

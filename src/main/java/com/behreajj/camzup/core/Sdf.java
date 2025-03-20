@@ -381,9 +381,10 @@ public abstract class Sdf {
         }
 
         /*
-         * i begins at zero, and so the initial distance from 0 to length - 1 does
-         * not need to be calculated prior to the for-loop. d will be replaced by
-         * any lesser value, so it makes sense to start with MAX_VALUE instead.
+         * Index begins at zero, and so the initial distance from 0 to
+         * length - 1 does not need to be calculated prior to the for-loop.
+         * d will be replaced by any lesser value, so it makes sense to start
+         * with MAX_VALUE instead.
          */
         float d = Float.MAX_VALUE;
         float s = 1.0f;

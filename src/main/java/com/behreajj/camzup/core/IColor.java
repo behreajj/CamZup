@@ -4,11 +4,11 @@ package com.behreajj.camzup.core;
  * Maintains consistent behavior between color objects.
  */
 public interface IColor extends Comparable<IColor> {
+
     /**
-     * Returns -1 when this color is less than the comparisand; 1 when it is greater
-     * than; 0 when the
-     * two are 'equal'. The implementation of this method allows collections of
-     * colors to be sorted.
+     * Returns -1 when this color is less than the comparisand; 1 when it is
+     * greater than; 0 when the two are 'equal'. The implementation of this
+     * method allows collections of colors to be sorted.
      *
      * @param d the comparisand
      * @return the numeric code
@@ -48,8 +48,7 @@ public interface IColor extends Comparable<IColor> {
 
     /**
      * Converts a color to an integer where hexadecimal represents the color
-     * channels. Uses saturation
-     * arithmetic.
+     * channels. Uses saturation arithmetic.
      *
      * @return the color in hexadecimal
      */
@@ -57,8 +56,7 @@ public interface IColor extends Comparable<IColor> {
 
     /**
      * Converts a color to an integer where hexadecimal represents the color
-     * channels. Uses modular
-     * arithmetic.
+     * channels. Uses modular arithmetic.
      *
      * @return the color in hexadecimal
      */

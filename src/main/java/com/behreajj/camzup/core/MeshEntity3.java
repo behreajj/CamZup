@@ -90,9 +90,8 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
 
         target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
 
-        final Iterator<Mesh3> itr = me.iterator();
-        while (itr.hasNext()) {
-            Mesh3.accumMinMax(itr.next(), target.min, target.max, me.transform, co);
+        for (Mesh3 face3s : me) {
+            Mesh3.accumMinMax(face3s, target.min, target.max, me.transform, co);
         }
 
         return target;
@@ -132,6 +131,7 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
      * @param app the list of meshes
      * @return this mesh entity
      */
+    @SuppressWarnings("UnusedReturnValue")
     public MeshEntity3 appendAll(final Mesh3... app) {
 
         for (Mesh3 face3s : app) {
@@ -458,7 +458,7 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
         /* Append meshes. */
         final Iterator<Mesh3> meshItr = this.meshes.iterator();
         while (meshItr.hasNext()) {
-            meshItr.next().toBlenderCode(pyCd, includeEdges, true, false);
+            meshItr.next().toBlenderCode(pyCd);
             if (meshItr.hasNext()) {
                 pyCd.append(',').append(' ');
             }

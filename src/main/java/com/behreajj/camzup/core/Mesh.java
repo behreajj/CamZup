@@ -739,6 +739,7 @@ public abstract class Mesh extends EntityData {
      * @return this mesh
      * @see Mesh#triangulate(int)
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Mesh triangulate() {
 
         int k = 0;

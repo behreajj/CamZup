@@ -27,6 +27,7 @@ public interface IOriented2 {
      * @param step   the step
      * @return this object
      */
+    @SuppressWarnings("UnusedReturnValue")
     IOriented2 rotateTo(final float rotNew, final float step);
 
     /**

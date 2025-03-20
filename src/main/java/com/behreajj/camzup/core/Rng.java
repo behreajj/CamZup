@@ -62,6 +62,7 @@ public class Rng extends Random {
         if ((vb & m) == 0) {
             r = (int) (vb * (long) r >> 31);
         } else {
+            //noinspection StatementWithEmptyBody
             for (int u = r; u - (r = u % vb) + m < 0; u = this.next(31)) {
             }
         }

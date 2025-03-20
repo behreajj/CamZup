@@ -4,8 +4,7 @@ import java.util.Objects;
 
 /**
  * An axis aligned bounding box (AABB) for a 3D volume, represented with a
- * minimum and maximum
- * coordinate.
+ * minimum and maximum coordinate.
  */
 public class Bounds3 implements Comparable<Bounds3> {
 

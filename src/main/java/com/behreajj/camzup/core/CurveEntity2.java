@@ -227,6 +227,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
      * @param app the curves
      * @return this curve entity
      */
+    @SuppressWarnings("UnusedReturnValue")
     public CurveEntity2 appendAll(final Curve2... app) {
 
         for (Curve2 knot2s : app) {
@@ -648,7 +649,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
         final float zoff = 0.0f;
         for (Curve2 curve : this.curves) {
             // final float zoff = 0.0001f * curveIndex;
-            curve.toBlenderCode(pyCd, uRes, zoff);
+            curve.toBlenderCode(pyCd, uRes);
             if (curveIndex < curveLast) {
                 pyCd.append(',').append(' ');
             }
@@ -843,7 +844,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
         }
 
         if (!multipleMats && useSubPaths) {
-            this.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
+            this.toSvgPath(svgp);
         } else {
 
             /* Append entity group. */
@@ -929,11 +930,9 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
      * rule may be either <code>"evenodd"</code> or <code>"nonzero"</code>
      * (default).
      *
-     * @param svgp     the string builder
-     * @param fillRule the fill rule
-     * @return the string builder
+     * @param svgp the string builder
      */
-    StringBuilder toSvgPath(final StringBuilder svgp, final String fillRule) {
+    void toSvgPath(final StringBuilder svgp) {
 
         if (this.length() > 0) {
             svgp.append("<path id=\"");
@@ -941,7 +940,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
             svgp.append("\" class=\"");
             svgp.append(this.getClass().getSimpleName().toLowerCase());
             svgp.append("\" fill-rule=\"");
-            svgp.append(fillRule);
+            svgp.append(ISvgWritable.DEFAULT_WINDING_RULE);
             svgp.append('\"');
             svgp.append(' ');
             this.transform.toSvgString(svgp);
@@ -952,6 +951,5 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
             }
             svgp.append("\" />\n");
         }
-        return svgp;
     }
 }

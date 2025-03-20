@@ -113,6 +113,16 @@ public class Img {
     public static final PpmFormat DEFAULT_PPM_FORMAT = PpmFormat.BINARY;
 
     /**
+     * The default channel levels for the ppm format.
+     */
+    public static final int DEFAULT_PPM_LEVELS = 256;
+
+    /**
+     * Default setting for whether to premultiply color by alpha.
+     */
+    public static final boolean DEFAULT_USE_PREMUL = false;
+
+    /**
      * The default width when none is given.
      */
     public static final int DEFAULT_WIDTH = 128;
@@ -291,7 +301,7 @@ public class Img {
         final Img target) {
 
         return Img.adjustContrast(source, sFac, lFac,
-                Img.DEFAULT_PIVOT_POLICY, target);
+            Img.DEFAULT_PIVOT_POLICY, target);
     }
 
     /**
@@ -309,11 +319,11 @@ public class Img {
      * @return the adjusted pixels
      */
     public static Img adjustContrast(
-            final Img source,
-            final float sFac,
-            final float lFac,
-            final PivotPolicy policy,
-            final Img target) {
+        final Img source,
+        final float sFac,
+        final float lFac,
+        final PivotPolicy policy,
+        final Img target) {
 
         if (!Img.similar(source, target)) {
             target.width = source.width;
@@ -467,7 +477,7 @@ public class Img {
         final Img target) {
 
         return Img.adjustContrast(source, fac, fac,
-                Img.DEFAULT_PIVOT_POLICY, target);
+            Img.DEFAULT_PIVOT_POLICY, target);
     }
 
     /**
@@ -480,9 +490,9 @@ public class Img {
      * @return the adjusted image
      */
     public static Img adjustContrast(
-            final Img source,
-            final Vec2 fac,
-            final Img target) {
+        final Img source,
+        final Vec2 fac,
+        final Img target) {
 
         return Img.adjustContrast(source, fac.x, fac.y,
             Img.DEFAULT_PIVOT_POLICY, target);
@@ -498,12 +508,12 @@ public class Img {
      * @return the adjusted image
      */
     public static Img adjustContrastChroma(
-            final Img source,
-            final float fac,
-            final Img target) {
+        final Img source,
+        final float fac,
+        final Img target) {
 
         return Img.adjustContrastChroma(source, fac,
-                Img.DEFAULT_PIVOT_POLICY, target);
+            Img.DEFAULT_PIVOT_POLICY, target);
     }
 
     /**
@@ -797,7 +807,7 @@ public class Img {
                                 cTrg = lch.c + adjust.c;
                                 hTrg = hg + adjust.h;
                             }
-                                break;
+                            break;
 
                             case WARM: {
                                 final float t = lch.l * 0.01f;
@@ -806,13 +816,13 @@ public class Img {
                                 cTrg = lch.c + adjust.c;
                                 hTrg = hg + adjust.h;
                             }
-                                break;
+                            break;
 
                             case ZERO: {
                                 cTrg = lch.c + adjust.c;
                                 hTrg = hZero + adjust.h;
                             }
-                                break;
+                            break;
 
                             case OMIT:
 
@@ -1033,7 +1043,7 @@ public class Img {
                 dbrx = Math.min(abrx, bbrx);
                 dbry = Math.min(abry, bbry);
             }
-                break;
+            break;
 
             case OVER: {
                 dx = xOver;
@@ -1041,7 +1051,7 @@ public class Img {
                 dbrx = bbrx;
                 dbry = bbry;
             }
-                break;
+            break;
 
             case UNDER: {
                 dx = xUnder;
@@ -1049,7 +1059,7 @@ public class Img {
                 dbrx = abrx;
                 dbry = abry;
             }
-                break;
+            break;
 
             case BLEND:
             case MAX:
@@ -1136,31 +1146,29 @@ public class Img {
                 case MAX: {
                     tuv = Math.max(t, v);
                 }
-                    break;
+                break;
                 case MIN: {
                     tuv = Math.min(t, v);
                 }
-                    break;
+                break;
                 case MULTIPLY: {
                     tuv = t * v;
                 }
-                    break;
+                break;
                 case OVER: {
                     tuv = t;
                 }
-                    break;
+                break;
                 case UNDER: {
                     tuv = v;
                 }
-                    break;
+                break;
                 case BLEND:
                 default:
             }
 
             long hexComp = Img.CLEAR_PIXEL;
             if (tuv > 0.0d) {
-                // Does lab over need to default to lab under if it has zero
-                // alpha and vice versa?
                 final boolean vgt0 = v > 0.0d;
                 final boolean tgt0 = t > 0.0d;
 
@@ -1181,47 +1189,47 @@ public class Img {
                         final double sum = vgt0 ? lUnder + lOver : lOver;
                         lComp = u * lUnder + t * sum;
                     }
-                        break;
+                    break;
 
                     case AVERAGE: {
                         final double avg = vgt0 ? (lUnder + lOver) * 0.5d : lOver;
                         lComp = u * lUnder + t * avg;
                     }
-                        break;
+                    break;
 
                     case DIVIDE: {
                         final double quo = vgt0 ? lOver != 0.0d ? lUnder / lOver * 100.0d : 100.0d : lOver;
                         lComp = u * lUnder + t * quo;
                     }
-                        break;
+                    break;
 
                     case MULTIPLY: {
                         final double prod = vgt0 ? lUnder * lOver * 0.01d : lOver;
                         lComp = u * lUnder + t * prod;
                     }
-                        break;
+                    break;
 
                     case OVER: {
                         lComp = tgt0 ? lOver : u * lUnder + t * lOver;
                     }
-                        break;
+                    break;
 
                     case SCREEN: {
                         final double scr = vgt0 ? lUnder + lOver - lUnder * lOver * 0.01d : lOver;
                         lComp = u * lUnder + t * scr;
                     }
-                        break;
+                    break;
 
                     case SUBTRACT: {
-                        final double dff = vgt0 ? lUnder - lOver : 50.0d - lOver;
+                        final double dff = vgt0 ? lUnder - lOver : lOver;
                         lComp = u * lUnder + t * dff;
                     }
-                        break;
+                    break;
 
                     case UNDER: {
                         lComp = vgt0 ? lUnder : u * lUnder + t * lOver;
                     }
-                        break;
+                    break;
 
                     case BLEND:
                     default:
@@ -1234,7 +1242,7 @@ public class Img {
                         aComp = u * aUnder + t * aSum;
                         bComp = u * bUnder + t * bSum;
                     }
-                        break;
+                    break;
 
                     case AVERAGE: {
                         final double aAvg = vgt0 ? (aUnder + aOver) * 0.5d : aOver;
@@ -1242,7 +1250,7 @@ public class Img {
                         aComp = u * aUnder + t * aAvg;
                         bComp = u * bUnder + t * bAvg;
                     }
-                        break;
+                    break;
 
                     case CHROMA: {
                         if (vgt0 && tgt0) {
@@ -1257,7 +1265,7 @@ public class Img {
                             } /* End chroma under is greater than zero. */
                         } /* End under alpha is greater than zero. */
                     }
-                        break;
+                    break;
 
                     case HUE: {
                         if (vgt0 && tgt0) {
@@ -1272,13 +1280,13 @@ public class Img {
                             } /* End chroma over is greater than zero. */
                         } /* End under alpha is greater than zero. */
                     }
-                        break;
+                    break;
 
                     case OVER: {
                         aComp = tgt0 ? aOver : u * aUnder + t * aOver;
                         bComp = tgt0 ? bOver : u * bUnder + t * bOver;
                     }
-                        break;
+                    break;
 
                     case SUBTRACT: {
                         final double aDff = vgt0 ? aUnder - aOver : -aOver;
@@ -1286,13 +1294,13 @@ public class Img {
                         aComp = u * aUnder + t * aDff;
                         bComp = u * bUnder + t * bDff;
                     }
-                        break;
+                    break;
 
                     case UNDER: {
                         aComp = vgt0 ? aUnder : u * aUnder + t * aOver;
                         bComp = vgt0 ? bUnder : u * bUnder + t * bOver;
                     }
-                        break;
+                    break;
 
                     case BLEND:
                     default:
@@ -1885,7 +1893,7 @@ public class Img {
         final Img target) {
 
         return Img.gradientLinear(grd, xOrig, yOrig, xDest, yDest,
-                new Lab.MixLab(), target);
+            new Lab.MixLab(), target);
     }
 
     /**
@@ -2029,7 +2037,7 @@ public class Img {
         final Img target) {
 
         return Img.gradientMap(grd, source, new Lab.MixLab(),
-                MapChannel.L, true, target);
+            MapChannel.L, true, target);
     }
 
     /**
@@ -2048,7 +2056,7 @@ public class Img {
         final Img target) {
 
         return Img.gradientMap(grd, source, easing,
-                MapChannel.L, true, target);
+            MapChannel.L, true, target);
     }
 
     /**
@@ -2103,7 +2111,7 @@ public class Img {
                                 minChannel = lch.c;
                             }
                         }
-                            break;
+                        break;
 
                         case L:
                         default: {
@@ -2140,10 +2148,10 @@ public class Img {
                 switch (channel) {
                     case C: {
                     }
-                        fac = useNormVerif
-                            ? (lch.c - minChannel) * denom
-                            : lch.c / Lch.SR_CHROMA_MAX;
-                        break;
+                    fac = useNormVerif
+                        ? (lch.c - minChannel) * denom
+                        : lch.c / Lch.SR_CHROMA_MAX;
+                    break;
 
                     case L:
                     default: {
@@ -2350,8 +2358,8 @@ public class Img {
             final double xn = wInv * (i % wTrg);
             final double yn = hInv * (float) (i / wTrg);
             final float fac = Utils.mod1((float) ((Math.atan2(1.0d
-                    - (yn + yn + (double) yOrig), xn + xn - xo - 1.0d)
-                    - (double) radians) * Utils.ONE_TAU_D));
+                - (yn + yn + (double) yOrig), xn + xn - xo - 1.0d)
+                - (double) radians) * Utils.ONE_TAU_D));
             Gradient.eval(grd, fac, easing, trgLab);
             target.pixels[i] = trgLab.toHexLongSat();
         }
@@ -2967,8 +2975,8 @@ public class Img {
 
         final int len = source.pixels.length;
         final float facVerif = Float.isNaN(fac)
-                ? 1.0f
-                : Utils.clamp(fac, -1.0f, 1.0f);
+            ? 1.0f
+            : Utils.clamp(fac, -1.0f, 1.0f);
 
         if (Utils.approx(facVerif, 0.0f)) {
             System.arraycopy(source.pixels, 0, target.pixels, 0, len);
@@ -3757,8 +3765,8 @@ public class Img {
         final Img target) {
 
         return Img.resizeBilinear(
-                source, Utils.round(wPrc * source.width),
-                Utils.round(hPrc * source.height), target);
+            source, Utils.round(wPrc * source.width),
+            Utils.round(hPrc * source.height), target);
     }
 
     /**
@@ -3849,7 +3857,7 @@ public class Img {
         final int w = source.width;
         final int h = source.height;
 
-        return new Img[] {
+        return new Img[]{
             new Img(w, h, rPixels),
             new Img(w, h, gPixels),
             new Img(w, h, bPixels)
@@ -3888,7 +3896,7 @@ public class Img {
         final Img write) {
 
         return Img.setRegion(read, xtlRd, ytlRd, xbrRd, ybrRd, 0, 0,
-                write.width - 1, write.height - 1, write);
+            write.width - 1, write.height - 1, write);
     }
 
     /**
@@ -4025,7 +4033,7 @@ public class Img {
                 for (int i = 0; i < trgLen; ++i) {
                     final float yTrg = (float) (i / wTrg);
                     trgPixels[i] = Img.sampleBilinear(source,
-                            xDiff + i % wTrg + tana * (yTrg - yCenter), yTrg);
+                        xDiff + i % wTrg + tana * (yTrg - yCenter), yTrg);
                 }
 
                 target.width = wTrg;
@@ -4372,7 +4380,8 @@ public class Img {
     public static byte[] toPpmBytes(final Img source) {
 
         return Img.toPpmBytes(source, new Rgb.ToneMapClamp(),
-            Img.DEFAULT_PPM_FORMAT, 256);
+            Img.DEFAULT_PPM_FORMAT, Img.DEFAULT_PPM_LEVELS,
+            Img.DEFAULT_USE_PREMUL);
     }
 
     /**
@@ -4386,7 +4395,8 @@ public class Img {
         final Img source,
         final Rgb.AbstrToneMap mapFunc) {
 
-        return Img.toPpmBytes(source, mapFunc, Img.DEFAULT_PPM_FORMAT, 256);
+        return Img.toPpmBytes(source, mapFunc, Img.DEFAULT_PPM_FORMAT,
+            Img.DEFAULT_PPM_LEVELS, Img.DEFAULT_USE_PREMUL);
     }
 
     /**
@@ -4402,7 +4412,8 @@ public class Img {
         final Rgb.AbstrToneMap mapFunc,
         final PpmFormat format) {
 
-        return Img.toPpmBytes(source, mapFunc, format, 256);
+        return Img.toPpmBytes(source, mapFunc, format, Img.DEFAULT_PPM_LEVELS,
+            Img.DEFAULT_USE_PREMUL);
     }
 
     /**
@@ -4419,6 +4430,27 @@ public class Img {
         final Rgb.AbstrToneMap mapFunc,
         final PpmFormat format,
         final int levels) {
+
+        return Img.toPpmBytes(source, mapFunc, format, levels,
+            Img.DEFAULT_USE_PREMUL);
+    }
+
+    /**
+     * Writes an image to ppm formatted bytes.
+     *
+     * @param source  the source image
+     * @param mapFunc the tone mapping function
+     * @param format  the data format
+     * @param levels  the quantization levels
+     * @param usePremul multiply color by alpha
+     * @return the bytes
+     */
+    public static byte[] toPpmBytes(
+        final Img source,
+        final Rgb.AbstrToneMap mapFunc,
+        final PpmFormat format,
+        final int levels,
+        final boolean usePremul) {
 
         final long[] srcPixels = source.pixels;
         final int len = srcPixels.length;
@@ -4457,8 +4489,10 @@ public class Img {
             } else {
                 Lab.fromHex(tlab64, lab);
                 Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
-                // TODO: Require that color be premultiplied by alpha here?
                 mapped = mapFunc.apply(srgb, new Rgb());
+                if(usePremul) {
+                    Rgb.premul(mapped, mapped);
+                }
                 convert.put(tlab64Obj, mapped);
             }
 
@@ -4498,7 +4532,7 @@ public class Img {
                     sb.append('\n');
                 }
             }
-                break;
+            break;
 
             case BINARY:
             default:
@@ -5025,7 +5059,7 @@ public class Img {
                     vr02[1] = j11;
                 }
             }
-                break;
+            break;
 
             case NGON:
             case QUAD:
@@ -5068,8 +5102,8 @@ public class Img {
     public boolean equals(final Img other) {
 
         return this.height == other.height
-            && Arrays.equals(this.pixels, other.pixels)
-            && this.width == other.width;
+            && this.width == other.width
+            && Arrays.equals(this.pixels, other.pixels);
     }
 
     @Override
@@ -5082,7 +5116,7 @@ public class Img {
 
     @Override
     public int hashCode() {
-        return Objects.hash(height, Arrays.hashCode(pixels), width);
+        return Objects.hash(height, width, Arrays.hashCode(pixels));
     }
 
     /**

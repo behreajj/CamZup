@@ -2331,13 +2331,12 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
      * @param points      the point list
      * @param dir0        the first direction
      * @param dir1        the second direction
-     * @return the point list
      * @see Utils#clamp01(float)
      * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float, Vec3)
      * @see Vec3#dot(Vec3, Vec3)
      * @see Vec3#subNorm(Vec3, Vec3, Vec3)
      */
-    static ArrayList<Vec3> fromCurve3(
+    static void fromCurve3(
         final Curve3 source,
         final int resolution,
         final float colinearTol,
@@ -2346,7 +2345,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         final Vec3 dir1) {
 
         if (!source.closedLoop) {
-            return points;
+            return;
         }
 
         final Iterator<Knot3> itr = source.iterator();
@@ -2383,7 +2382,6 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
             }
         }
 
-        return points;
     }
 
     /**
@@ -3103,7 +3101,11 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
      * @param amount    the extrusion amount
      * @return this mesh
      */
-    public Mesh3 extrudeEdge(final int faceIndex, final int edgeIndex, final float amount) {
+    @SuppressWarnings("UnusedReturnValue")
+    public Mesh3 extrudeEdge(
+        final int faceIndex,
+        final int edgeIndex,
+        final float amount) {
 
         if (amount == 0.0f) {
             return this;
@@ -4881,6 +4883,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
      * @return this mesh
      * @see Mesh3#subdivFaceInscribe(int)
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Mesh3 subdivFacesInscribe(final int itr) {
 
         for (int i = 0; i < itr; ++i) {
@@ -5151,17 +5154,10 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
      * {@link
      * StringBuilder}.
      *
-     * @param pyCd           the string builder
-     * @param includeEdges   whether to include edge index data
-     * @param includeUvs     whether or not to include UVs
-     * @param includeNormals whether to include normals
-     * @return the string builder
+     * @param pyCd the string builder
      */
-    StringBuilder toBlenderCode(
-        final StringBuilder pyCd,
-        final boolean includeEdges,
-        final boolean includeUvs,
-        final boolean includeNormals) {
+    void toBlenderCode(
+        final StringBuilder pyCd) {
 
         final int vsLen = this.coords.length;
         final int vsLast = vsLen - 1;
@@ -5180,43 +5176,6 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
             pyCd.append(',').append(' ');
         }
         this.coords[vsLast].toBlenderCode(pyCd);
-
-        if (includeEdges) {
-
-            /*
-             * Edges should be undirected, not directed, e.g., (0, 1) and (1, 0)
-             * should be treated as equivalent.
-             */
-
-            final ArrayList<String> edgesList = new ArrayList<>();
-            for (int j = 0; j < facesLen; ++j) {
-                final int[][] vrtInd = this.faces[j];
-                final int vrtIndLen = vrtInd.length;
-                for (int k = 0; k < vrtIndLen; ++k) {
-                    final int orig = vrtInd[k][0];
-                    final int dest = vrtInd[(k + 1) % vrtIndLen][0];
-
-                    final String query = orig + ", " + dest;
-                    final String reverse = dest + ", " + orig;
-
-                    if (!edgesList.contains(query) && !edgesList.contains(reverse)) {
-                        // edgesList.add(origin < dest ? query : reverse);
-                        edgesList.add(query);
-                    }
-                }
-            }
-
-            pyCd.append("], \"edges\": [");
-            final Iterator<String> edgesItr = edgesList.iterator();
-            while (edgesItr.hasNext()) {
-                pyCd.append('(');
-                pyCd.append(edgesItr.next());
-                pyCd.append(')');
-                if (edgesItr.hasNext()) {
-                    pyCd.append(',').append(' ');
-                }
-            }
-        }
 
         pyCd.append("], \"faces\": [");
         for (int j = 0; j < facesLen; ++j) {
@@ -5237,71 +5196,37 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
             }
         }
 
-        if (includeUvs) {
-            final int vtsLen = this.texCoords.length;
-            final int vtsLast = vtsLen - 1;
+        final int vtsLen = this.texCoords.length;
+        final int vtsLast = vtsLen - 1;
 
-            pyCd.append("], \"uvs\": [");
-            for (int h = 0; h < vtsLast; ++h) {
-                this.texCoords[h].toBlenderCode(pyCd, true);
-                pyCd.append(',').append(' ');
-            }
-            this.texCoords[vtsLast].toBlenderCode(pyCd, true);
-
-            pyCd.append("], \"uv_indices\": [");
-            for (int j = 0; j < facesLen; ++j) {
-                final int[][] vrtInd = this.faces[j];
-                final int vrtIndLen = vrtInd.length;
-                final int vrtLast = vrtIndLen - 1;
-
-                pyCd.append('(');
-                for (int k = 0; k < vrtLast; ++k) {
-                    pyCd.append(vrtInd[k][1]);
-                    pyCd.append(',').append(' ');
-                }
-                pyCd.append(vrtInd[vrtLast][1]);
-                pyCd.append(')');
-
-                if (j < facesLast) {
-                    pyCd.append(',').append(' ');
-                }
-            }
+        pyCd.append("], \"uvs\": [");
+        for (int h = 0; h < vtsLast; ++h) {
+            this.texCoords[h].toBlenderCode(pyCd, true);
+            pyCd.append(',').append(' ');
         }
+        this.texCoords[vtsLast].toBlenderCode(pyCd, true);
 
-        if (includeNormals) {
-            pyCd.append("], \"normals\": [");
-            final int vnsLen = this.normals.length;
-            final int vnsLast = vnsLen - 1;
-            for (int h = 0; h < vnsLast; ++h) {
-                this.normals[h].toBlenderCode(pyCd);
+        pyCd.append("], \"uv_indices\": [");
+        for (int j = 0; j < facesLen; ++j) {
+            final int[][] vrtInd = this.faces[j];
+            final int vrtIndLen = vrtInd.length;
+            final int vrtLast = vrtIndLen - 1;
+
+            pyCd.append('(');
+            for (int k = 0; k < vrtLast; ++k) {
+                pyCd.append(vrtInd[k][1]);
                 pyCd.append(',').append(' ');
             }
-            this.normals[vnsLast].toBlenderCode(pyCd);
+            pyCd.append(vrtInd[vrtLast][1]);
+            pyCd.append(')');
 
-            pyCd.append("], \"normal_indices\": [");
-            for (int j = 0; j < facesLen; ++j) {
-                final int[][] vrtInd = this.faces[j];
-                final int vrtIndLen = vrtInd.length;
-                final int vrtLast = vrtIndLen - 1;
-
-                pyCd.append('(');
-                for (int k = 0; k < vrtIndLen; ++k) {
-                    pyCd.append(vrtInd[k][2]);
-                    if (k < vrtLast) {
-                        pyCd.append(',').append(' ');
-                    }
-                }
-                pyCd.append(')');
-
-                if (j < facesLast) {
-                    pyCd.append(',').append(' ');
-                }
+            if (j < facesLast) {
+                pyCd.append(',').append(' ');
             }
         }
 
         pyCd.append(']').append('}');
 
-        return pyCd;
     }
 
     /**

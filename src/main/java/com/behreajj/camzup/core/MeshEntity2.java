@@ -167,6 +167,7 @@ public class MeshEntity2 extends Entity2
      * @param app the list of meshes
      * @return this mesh entity
      */
+    @SuppressWarnings("UnusedReturnValue")
     public MeshEntity2 appendAll(final Mesh2... app) {
 
         for (Mesh2 face2s : app) {
@@ -516,7 +517,7 @@ public class MeshEntity2 extends Entity2
         /* Append meshes. */
         final Iterator<Mesh2> meshItr = this.meshes.iterator();
         while (meshItr.hasNext()) {
-            meshItr.next().toBlenderCode(pyCd, includeEdges, true, 0.0f);
+            meshItr.next().toBlenderCode(pyCd);
             if (meshItr.hasNext()) {
                 pyCd.append(',').append(' ');
             }
@@ -817,7 +818,7 @@ public class MeshEntity2 extends Entity2
                 svgp.append(">\n");
             }
 
-            mesh.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
+            mesh.toSvgPath(svgp);
 
             /* Close out material group. */
             if (multipleMats) {

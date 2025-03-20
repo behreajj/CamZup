@@ -237,6 +237,7 @@ public class Lab implements IColor {
      * @see Math#sqrt(double)
      * @see Lab#gray(Lab, Lab)
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static Lab adoptAlpha(final Lab u, final Lab o, final Lab target) {
 
         return target.set(u.l, u.a, u.b, o.alpha);

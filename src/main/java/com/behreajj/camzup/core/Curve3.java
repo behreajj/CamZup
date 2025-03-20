@@ -422,6 +422,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
      * @param target the output knot
      * @return the knot
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static Knot3 evalFirst(final Curve3 curve, final Knot3 target) {
 
         target.set(curve.knots.get(0));
@@ -491,6 +492,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
      * @param target the output knot
      * @return the knot
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static Knot3 evalLast(final Curve3 curve, final Knot3 target) {
 
         target.set(curve.knots.get(curve.knots.size() - 1));
@@ -1034,12 +1036,11 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
      * @param b      the destination knot
      * @param step   the step
      * @param target the output knot
-     * @return the knot
      * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float, Vec3)
      * @see Vec3#bezierTangent(Vec3, Vec3, Vec3, Vec3, float, Vec3)
      * @see Vec3#add(Vec3, Vec3, Vec3)
      */
-    static Knot3 bezierKnot(final Knot3 a, final Knot3 b, final float step, final Knot3 target) {
+    static void bezierKnot(final Knot3 a, final Knot3 b, final float step, final Knot3 target) {
 
         final Vec3 aco = a.coord;
         final Vec3 afh = a.foreHandle;
@@ -1059,7 +1060,6 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
         Vec3.add(tco, tfh, tfh);
         Vec3.add(tco, trh, trh);
 
-        return target;
     }
 
     /**
@@ -1076,6 +1076,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
      * @param target      the output curve
      * @return the circle
      */
+    @SuppressWarnings("SameParameterValue")
     static Curve3 circle(
         final int knotCount,
         final float offsetAngle,
@@ -1194,6 +1195,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
      * @return this curve
      * @see Curve3#append(Knot3)
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Curve3 appendAll(final Collection<Knot3> kn) {
 
         for (Knot3 knot3 : kn) {
@@ -1209,6 +1211,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
      * @param kn the array of knots
      * @return this curve
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Curve3 appendAll(final Knot3... kn) {
 
         for (Knot3 knot3 : kn) {
@@ -1990,14 +1993,11 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
      * StringBuilder}. Used for testing purposes to compare results with Blender
      * 2.9x.
      *
-     * @param pyCd      the string builder
-     * @param uRes      the resolution u
-     * @param tiltStart the tilt start
-     * @param tiltEnd   the tilt end
-     * @return the string builder
+     * @param pyCd the string builder
+     * @param uRes the resolution u
      */
-    StringBuilder toBlenderCode(
-        final StringBuilder pyCd, final int uRes, final float tiltStart, final float tiltEnd) {
+    void toBlenderCode(
+        final StringBuilder pyCd, final int uRes) {
 
         pyCd.append("{\"closed_loop\": ");
         pyCd.append(this.closedLoop ? "True" : "False");
@@ -2012,9 +2012,9 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
         for (final Iterator<Knot3> itr = this.knots.iterator(); itr.hasNext(); ++i) {
             final float t = i * toPercent;
             final float ang = this.closedLoop
-                ? Utils.pingPong(tiltStart, tiltEnd, t, 1.0f)
-                : Utils.lerpUnclamped(tiltStart, tiltEnd, t);
-            itr.next().toBlenderCode(pyCd, 1.0f, 1.0f, ang);
+                ? Utils.pingPong((float) 0.0, (float) 0.0, t, 1.0f)
+                : Utils.lerpUnclamped((float) 0.0, (float) 0.0, t);
+            itr.next().toBlenderCode(pyCd, ang);
             if (itr.hasNext()) {
                 pyCd.append(',').append(' ');
             }
@@ -2022,7 +2022,6 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
 
         pyCd.append(']');
         pyCd.append('}');
-        return pyCd;
     }
 
     /**

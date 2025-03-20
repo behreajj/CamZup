@@ -2,8 +2,8 @@ package com.behreajj.camzup.friendly;
 
 /**
  * Duplicates and clarifies the texture sampling options available to
- * Processing's OpenGL renderers (P2D and P3D). The integer value of each
- * is intended to match with integer constants in Processing's
+ * OpenGL renderers (P2D and P3D). The integer value of each
+ * is intended to match with integer constants in the
  * {@link processing.opengl.Texture} class. The enum's ordinal should not
  * be used.
  */

@@ -534,25 +534,28 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Sets two knots from a segment of a quadratic curve. Assumes that the previous
-     * knot's coordinate
-     * is set to the first anchor point.<br>
+     * Sets two knots from a segment of a quadratic curve. Assumes that the
+     * previous knot's coordinate is set to the first anchor point.<br>
      * <br>
      * The previous knot's fore handle, the next knot's rear handle and the next
-     * knot's coordinate are
-     * set by this function.
+     * knot's coordinate are set by this function.
      *
      * @param control    the control point
      * @param nextAnchor the next anchor point
      * @param prev       the previous knot
      * @param next       the next knot
-     * @return the next knot
      * @see Knot2#fromSegQuadratic(float, float, float, float, Knot2, Knot2)
      */
-    public static Knot2 fromSegQuadratic(
-        final Vec2 control, final Vec2 nextAnchor, final Knot2 prev, final Knot2 next) {
+    static void fromSegQuadratic(
+        final Vec2 control,
+        final Vec2 nextAnchor,
+        final Knot2 prev,
+        final Knot2 next) {
 
-        return Knot2.fromSegQuadratic(control.x, control.y, nextAnchor.x, nextAnchor.y, prev, next);
+        Knot2.fromSegQuadratic(
+            control.x, control.y,
+            nextAnchor.x, nextAnchor.y,
+            prev, next);
     }
 
     /**
@@ -732,9 +735,8 @@ public class Knot2 implements Comparable<Knot2> {
      * @param xCenter   the x center
      * @param yCenter   the y center
      * @param target    the output knot
-     * @return the knot
      */
-    static Knot2 fromPolar(
+    static void fromPolar(
         final float cosa,
         final float sina,
         final float radius,
@@ -752,7 +754,6 @@ public class Knot2 implements Comparable<Knot2> {
         target.foreHandle.set(coord.x - hmsina, coord.y + hmcosa);
         target.rearHandle.set(coord.x + hmsina, coord.y - hmcosa);
 
-        return target;
     }
 
     /**
@@ -761,6 +762,7 @@ public class Knot2 implements Comparable<Knot2> {
      * @param source the source knot
      * @return this knot
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Knot2 adoptForeHandle(final Knot2 source) {
 
         this.foreHandle.set(
@@ -790,6 +792,7 @@ public class Knot2 implements Comparable<Knot2> {
      * @param source the source knot
      * @return this knot
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Knot2 adoptRearHandle(final Knot2 source) {
 
         this.rearHandle.set(
@@ -1441,26 +1444,22 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * An internal helper function to format a vector as a Python tuple, then append
-     * it to a {@link
-     * StringBuilder}. Used for testing purposes to compare results with Blender
-     * 2.9x. Appends a z
-     * component to promote the vector to 3D.
+     * An internal helper function to format a vector as a Python tuple, then
+     * append it to a {@link StringBuilder}. Used for testing purposes to
+     * compare results with Blender 4.x. Appends a z component to promote the
+     * vector to 3D.
      *
      * @param pyCd the string builder
-     * @param z    the z offset
-     * @return the string builder
      */
-    StringBuilder toBlenderCode(final StringBuilder pyCd, final float z) {
+    void toBlenderCode(final StringBuilder pyCd) {
 
         pyCd.append("{\"co\": ");
-        this.coord.toBlenderCode(pyCd, z);
+        this.coord.toBlenderCode(pyCd, 0.0f);
         pyCd.append(", \"handle_right\": ");
-        this.foreHandle.toBlenderCode(pyCd, z);
+        this.foreHandle.toBlenderCode(pyCd, 0.0f);
         pyCd.append(", \"handle_left\": ");
-        this.rearHandle.toBlenderCode(pyCd, z);
+        this.rearHandle.toBlenderCode(pyCd, 0.0f);
         pyCd.append('}');
-        return pyCd;
     }
 
     /**

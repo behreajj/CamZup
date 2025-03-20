@@ -1637,9 +1637,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Finds the perpendicular of a vector. Defaults to counter-clockwise rotation,
-     * such that the
-     * perpendicular of ( 1.0, 0.0 ) is ( 0.0, 1.0 ) .
+     * Finds the perpendicular of a vector. Defaults to counter-clockwise
+     * rotation, such that the perpendicular of ( 1.0, 0.0 ) is ( 0.0, 1.0 ) .
      *
      * @param v      the input vector
      * @param target the output vector
@@ -2528,9 +2527,9 @@ public class Vec2 implements Comparable<Vec2> {
      *
      * @param pyCd  string builder
      * @param flipv whether to subtract y from 1.0
-     * @return the string builder
      */
-    StringBuilder toBlenderCode(final StringBuilder pyCd, final boolean flipv) {
+    @SuppressWarnings("SameParameterValue")
+    void toBlenderCode(final StringBuilder pyCd, final boolean flipv) {
 
         pyCd.append('(');
         Utils.toFixed(pyCd, flipv ? this.x : 1.0f - this.x, 6);
@@ -2538,7 +2537,6 @@ public class Vec2 implements Comparable<Vec2> {
         pyCd.append(' ');
         Utils.toFixed(pyCd, flipv ? 1.0f - this.y : this.y, 6);
         pyCd.append(')');
-        return pyCd;
     }
 
     /**
@@ -2550,9 +2548,8 @@ public class Vec2 implements Comparable<Vec2> {
      *
      * @param pyCd string builder
      * @param z    the z component
-     * @return the string builder
      */
-    StringBuilder toBlenderCode(final StringBuilder pyCd, final float z) {
+    void toBlenderCode(final StringBuilder pyCd, final float z) {
 
         pyCd.append('(');
         Utils.toFixed(pyCd, this.x, 6);
@@ -2563,7 +2560,6 @@ public class Vec2 implements Comparable<Vec2> {
         pyCd.append(' ');
         Utils.toFixed(pyCd, z, 6);
         pyCd.append(')');
-        return pyCd;
     }
 
     /**
@@ -2573,14 +2569,12 @@ public class Vec2 implements Comparable<Vec2> {
      *
      * @param objs  the string builder
      * @param flipv whether to subtract y from 1.0
-     * @return the string builder
      */
-    StringBuilder toObjString(final StringBuilder objs, final boolean flipv) {
+    void toObjString(final StringBuilder objs, final boolean flipv) {
 
         Utils.toFixed(objs, flipv ? this.x : 1.0f - this.x, 6);
         objs.append(' ');
         Utils.toFixed(objs, flipv ? 1.0f - this.y : this.y, 6);
-        return objs;
     }
 
     /**
@@ -2613,14 +2607,13 @@ public class Vec2 implements Comparable<Vec2> {
      *
      * @param svgp  string builder
      * @param delim the delimiter
-     * @return the string builder
      */
-    StringBuilder toSvgString(final StringBuilder svgp, final char delim) {
+    @SuppressWarnings("SameParameterValue")
+    void toSvgString(final StringBuilder svgp, final char delim) {
 
         Utils.toFixed(svgp, this.x, ISvgWritable.FIXED_PRINT);
         svgp.append(delim);
         Utils.toFixed(svgp, this.y, ISvgWritable.FIXED_PRINT);
-        return svgp;
     }
 
     /**

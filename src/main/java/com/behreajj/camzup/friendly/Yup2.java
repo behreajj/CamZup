@@ -1302,9 +1302,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
      * @param xSource the source x
      * @param ySource the source y
      * @param target  the output vector
-     * @return the screen point
      */
-    protected Vec2 screen1s(final float xSource, final float ySource,
+    protected void screen1s(final float xSource, final float ySource,
         final Vec2 target) {
 
         /* Multiply by model-view matrix; multiply product by projection. */
@@ -1331,7 +1330,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
             this.projection.m32 * az +
             this.projection.m33 * aw;
 
-        if ( bw == 0.0f ) { return target.reset(); }
+        if ( bw == 0.0f ) { target.reset();return ; }
 
         final float bx = this.projection.m00 * ax +
             this.projection.m01 * ay +
@@ -1347,9 +1346,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
         /* Convert homogeneous coordinate to point. */
         if (bw != 1.0f) {
             final float wInv = 1.0f / bw;
-            return target.set(bx * wInv, by * wInv);
+            target.set(bx * wInv, by * wInv);
+            return;
         }
 
-        return target.set(bx, by);
+        target.set(bx, by);
     }
 }

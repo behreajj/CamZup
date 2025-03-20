@@ -2941,9 +2941,8 @@ public class Vec3 implements Comparable<Vec3> {
      * 2.9x.
      *
      * @param pyCd string builder
-     * @return the string builder
      */
-    StringBuilder toBlenderCode(final StringBuilder pyCd) {
+    void toBlenderCode(final StringBuilder pyCd) {
 
         pyCd.append('(');
         Utils.toFixed(pyCd, this.x, 6);
@@ -2954,7 +2953,6 @@ public class Vec3 implements Comparable<Vec3> {
         pyCd.append(' ');
         Utils.toFixed(pyCd, this.z, 6);
         pyCd.append(')');
-        return pyCd;
     }
 
     /**
@@ -2963,16 +2961,14 @@ public class Vec3 implements Comparable<Vec3> {
      * format to a {@link StringBuilder}.
      *
      * @param objs the string builder
-     * @return the string builder
      */
-    StringBuilder toObjString(final StringBuilder objs) {
+    void toObjString(final StringBuilder objs) {
 
         Utils.toFixed(objs, this.x, 6);
         objs.append(' ');
         Utils.toFixed(objs, this.y, 6);
         objs.append(' ');
         Utils.toFixed(objs, this.z, 6);
-        return objs;
     }
 
     /**

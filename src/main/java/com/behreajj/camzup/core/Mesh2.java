@@ -1508,6 +1508,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @see Vec2#resize(Vec2[], int)
      * @see Vec2#sub(Vec2, Vec2, Vec2)
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Mesh2 calcUvs() {
 
         final Vec2 dim = new Vec2();
@@ -1555,12 +1556,12 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Removes elements from the coordinate, texture coordinate and normal arrays of
-     * the mesh which
-     * are not visited by the face indices.
+     * Removes elements from the coordinate, texture coordinate and normal
+     * arrays of the mesh which are not visited by the face indices.
      *
      * @return this mesh
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Mesh2 clean() {
 
         /* Transfer arrays to hash maps where the face index is the key. */
@@ -1697,6 +1698,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @return this mesh
      * @see Mesh2#deleteFaces(int, int)
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Mesh2 deleteFace(final int faceIndex) {
 
         return this.deleteFaces(faceIndex, 1);
@@ -1764,7 +1766,11 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @param amount    the extrusion amount
      * @return this mesh
      */
-    public Mesh2 extrudeEdge(final int faceIndex, final int edgeIndex, final float amount) {
+    @SuppressWarnings("UnusedReturnValue")
+    public Mesh2 extrudeEdge(
+        final int faceIndex,
+        final int edgeIndex,
+        final float amount) {
 
         if (amount == 0.0f) {
             return this;
@@ -3041,7 +3047,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
         final StringBuilder svgp = new StringBuilder(1024);
         MaterialSolid.defaultSvgMaterial(svgp, zoom);
-        this.toSvgPath(svgp, ISvgWritable.DEFAULT_WINDING_RULE);
+        this.toSvgPath(svgp);
         svgp.append("</g>\n");
         return svgp.toString();
     }
@@ -3129,17 +3135,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * it to a {@link
      * StringBuilder}. Appends a z component to promote the vector to 3D.
      *
-     * @param pyCd         the string builder
-     * @param includeEdges whether to include edge index data
-     * @param includeUvs   whether or not to include UVs
-     * @param z            z offset
-     * @return the string builder
+     * @param pyCd the string builder
      */
-    StringBuilder toBlenderCode(
-        final StringBuilder pyCd,
-        final boolean includeEdges,
-        final boolean includeUvs,
-        final float z) {
+    void toBlenderCode(
+        final StringBuilder pyCd) {
 
         final int vsLen = this.coords.length;
         final int vsLast = vsLen - 1;
@@ -3154,46 +3153,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         pyCd.append(", \"vertices\": [");
 
         for (int i = 0; i < vsLast; ++i) {
-            this.coords[i].toBlenderCode(pyCd, z);
+            this.coords[i].toBlenderCode(pyCd, (float) 0.0);
             pyCd.append(',').append(' ');
         }
-        this.coords[vsLast].toBlenderCode(pyCd, z);
-
-        if (includeEdges) {
-
-            /*
-             * Edges should be undirected, not directed, e.g., (0, 1) and (1, 0)
-             * should be treated as equivalent.
-             */
-
-            final ArrayList<String> edgesList = new ArrayList<>();
-            for (int j = 0; j < facesLen; ++j) {
-                final int[][] vrtInd = this.faces[j];
-                final int vrtIndLen = vrtInd.length;
-                for (int k = 0; k < vrtIndLen; ++k) {
-                    final int orig = vrtInd[k][0];
-                    final int dest = vrtInd[(k + 1) % vrtIndLen][0];
-
-                    final String query = orig + ", " + dest;
-                    final String reverse = dest + ", " + orig;
-
-                    if (!edgesList.contains(query) && !edgesList.contains(reverse)) {
-                        edgesList.add(query);
-                    }
-                }
-            }
-
-            pyCd.append("], \"edges\": [");
-            final Iterator<String> edgesItr = edgesList.iterator();
-            while (edgesItr.hasNext()) {
-                pyCd.append('(');
-                pyCd.append(edgesItr.next());
-                pyCd.append(')');
-                if (edgesItr.hasNext()) {
-                    pyCd.append(',').append(' ');
-                }
-            }
-        }
+        this.coords[vsLast].toBlenderCode(pyCd, (float) 0.0);
 
         pyCd.append("], \"faces\": [");
         for (int j = 0; j < facesLen; ++j) {
@@ -3214,39 +3177,36 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
             }
         }
 
-        if (includeUvs) {
-            final int vtsLen = this.texCoords.length;
-            final int vtsLast = vtsLen - 1;
+        final int vtsLen = this.texCoords.length;
+        final int vtsLast = vtsLen - 1;
 
-            pyCd.append("], \"uvs\": [");
-            for (int h = 0; h < vtsLast; ++h) {
-                this.texCoords[h].toBlenderCode(pyCd, true);
+        pyCd.append("], \"uvs\": [");
+        for (int h = 0; h < vtsLast; ++h) {
+            this.texCoords[h].toBlenderCode(pyCd, true);
+            pyCd.append(',').append(' ');
+        }
+        this.texCoords[vtsLast].toBlenderCode(pyCd, true);
+
+        pyCd.append("], \"uv_indices\": [");
+        for (int j = 0; j < facesLen; ++j) {
+            final int[][] vrtInd = this.faces[j];
+            final int vrtIndLen = vrtInd.length;
+            final int vrtLast = vrtIndLen - 1;
+
+            pyCd.append('(');
+            for (int k = 0; k < vrtLast; ++k) {
+                pyCd.append(vrtInd[k][1]);
                 pyCd.append(',').append(' ');
             }
-            this.texCoords[vtsLast].toBlenderCode(pyCd, true);
+            pyCd.append(vrtInd[vrtLast][1]);
+            pyCd.append(')');
 
-            pyCd.append("], \"uv_indices\": [");
-            for (int j = 0; j < facesLen; ++j) {
-                final int[][] vrtInd = this.faces[j];
-                final int vrtIndLen = vrtInd.length;
-                final int vrtLast = vrtIndLen - 1;
-
-                pyCd.append('(');
-                for (int k = 0; k < vrtLast; ++k) {
-                    pyCd.append(vrtInd[k][1]);
-                    pyCd.append(',').append(' ');
-                }
-                pyCd.append(vrtInd[vrtLast][1]);
-                pyCd.append(')');
-
-                if (j < facesLast) {
-                    pyCd.append(',').append(' ');
-                }
+            if (j < facesLast) {
+                pyCd.append(',').append(' ');
             }
         }
 
         pyCd.append(']').append('}');
-        return pyCd;
     }
 
     /**
@@ -3406,11 +3366,9 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * <code>"nonzero"</code>
      * (default).
      *
-     * @param svgp     the string builder
-     * @param fillRule the fill rule
-     * @return the string builder.
+     * @param svgp the string builder
      */
-    StringBuilder toSvgPath(final StringBuilder svgp, final String fillRule) {
+    void toSvgPath(final StringBuilder svgp) {
 
         final Vec2[] vs = this.coords;
 
@@ -3419,7 +3377,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         svgp.append("\" class=\"");
         svgp.append(this.getClass().getSimpleName().toLowerCase());
         svgp.append("\" fill-rule=\"");
-        svgp.append(fillRule);
+        svgp.append(ISvgWritable.DEFAULT_WINDING_RULE);
         svgp.append("\" d=\"");
 
         for (final int[][] face : this.faces) {
@@ -3442,7 +3400,6 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         }
 
         svgp.append("\" />\n");
-        return svgp;
     }
 
     @Override

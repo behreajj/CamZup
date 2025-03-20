@@ -257,10 +257,9 @@ public class Quadtree {
      * @param q            the quadtree
      * @param includeEmpty include empty cells
      * @param target       output array list
-     * @return the centers
      * @see Bounds2#center(Bounds2, Vec2)
      */
-    static ArrayList<Vec2> centersMean(
+    static void centersMean(
         final Quadtree q, final boolean includeEmpty, final ArrayList<Vec2> target) {
 
         boolean isLeaf = true;
@@ -290,7 +289,6 @@ public class Quadtree {
             }
         }
 
-        return target;
     }
 
     /**
@@ -305,12 +303,11 @@ public class Quadtree {
      * @param rCenter  the range center
      * @param startIdx the start index
      * @param found    the output list
-     * @return evaluation
      * @see Bounds2#containsInclusive(Bounds2, Vec2)
      * @see Bounds2#intersect(Bounds2, Bounds2)
      * @see Vec2#distChebyshev(Vec2, Vec2)
      */
-    static boolean query(
+    static void query(
         final Quadtree q,
         final Bounds2 range,
         final Vec2 rCenter,
@@ -335,9 +332,7 @@ public class Quadtree {
                 }
             }
 
-            return true;
         }
-        return false;
     }
 
     /**
@@ -352,11 +347,10 @@ public class Quadtree {
      * @param rsq      the circle radius, squared
      * @param startIdx the start index
      * @param found    the output list
-     * @return evaluation
      * @see Bounds2#intersect(Bounds2, Vec2, float)
      * @see Vec2#distSq(Vec2, Vec2)
      */
-    static boolean query(
+    static void query(
         final Quadtree q,
         final Vec2 center,
         final float rsq,
@@ -382,9 +376,7 @@ public class Quadtree {
                 }
             }
 
-            return true;
         }
-        return false;
     }
 
     /**

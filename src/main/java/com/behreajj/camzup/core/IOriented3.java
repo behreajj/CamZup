@@ -20,6 +20,7 @@ public interface IOriented3 {
      * @param axis    the axis
      * @return this object
      */
+    @SuppressWarnings("UnusedReturnValue")
     IOriented3 rotateBy(final float radians, final Vec3 axis);
 
     /**
@@ -28,6 +29,7 @@ public interface IOriented3 {
      * @param rotNew the new rotation
      * @return this object
      */
+    @SuppressWarnings("UnusedReturnValue")
     IOriented3 rotateTo(final Quaternion rotNew);
 
     /**
@@ -37,6 +39,7 @@ public interface IOriented3 {
      * @param step   the step
      * @return this object
      */
+    @SuppressWarnings("UnusedReturnValue")
     IOriented3 rotateTo(final Quaternion rotNew, final float step);
 
     /**

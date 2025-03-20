@@ -1641,6 +1641,7 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
      *
      * @param clr the color
      */
+    @SuppressWarnings("SameParameterValue")
     void ambientLight(final int clr) {
 
         this.ambientLight(clr, this.lookTarget.x, this.lookTarget.y,

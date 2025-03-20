@@ -685,9 +685,8 @@ public class Knot3 implements Comparable<Knot3> {
      * @param radius    the radius
      * @param handleMag the length of the handles
      * @param target    the output knot
-     * @return the knot
      */
-    static Knot3 fromPolar(
+    static void fromPolar(
         final float cosa,
         final float sina,
         final float radius,
@@ -706,7 +705,6 @@ public class Knot3 implements Comparable<Knot3> {
         target.foreHandle.set(coord.x - hmsina, coord.y + hmcosa, zCenter);
         target.rearHandle.set(coord.x + hmsina, coord.y - hmcosa, zCenter);
 
-        return target;
     }
 
     /**
@@ -715,6 +713,7 @@ public class Knot3 implements Comparable<Knot3> {
      * @param source the source knot
      * @return this knot
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Knot3 adoptForeHandle(final Knot3 source) {
 
         this.foreHandle.set(
@@ -745,6 +744,7 @@ public class Knot3 implements Comparable<Knot3> {
      * @param source the source knot
      * @return this knot
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Knot3 adoptRearHandle(final Knot3 source) {
 
         this.rearHandle.set(
@@ -1555,19 +1555,14 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * An internal helper function to format a vector as a Python tuple, then append
-     * it to a {@link
-     * StringBuilder}. Used for testing purposes to compare results with Blender
-     * 2.9x.
+     * An internal helper function to format a vector as a Python tuple, then
+     * append it to a {@link StringBuilder}. Used for testing purposes to
+     * compare results with Blender 4.x.
      *
-     * @param pyCd   the string builder
-     * @param weight soft body weight
-     * @param radius bevel radius
-     * @param tilt   tilt
-     * @return the string builder
+     * @param pyCd the string builder
+     * @param tilt tilt
      */
-    StringBuilder toBlenderCode(
-        final StringBuilder pyCd, final float weight, final float radius, final float tilt) {
+    void toBlenderCode(final StringBuilder pyCd, final float tilt) {
 
         pyCd.append("{\"co\": ");
         this.coord.toBlenderCode(pyCd);
@@ -1576,13 +1571,12 @@ public class Knot3 implements Comparable<Knot3> {
         pyCd.append(", \"handle_left\": ");
         this.rearHandle.toBlenderCode(pyCd);
         pyCd.append(", \"weight\": ");
-        Utils.toFixed(pyCd, weight, 6);
+        Utils.toFixed(pyCd, 1.0f, 6);
         pyCd.append(", \"radius\": ");
-        Utils.toFixed(pyCd, radius, 6);
+        Utils.toFixed(pyCd, 1.0f, 6);
         pyCd.append(", \"tilt\": ");
         Utils.toFixed(pyCd, tilt, 6);
         pyCd.append('}');
-        return pyCd;
     }
 
     /**

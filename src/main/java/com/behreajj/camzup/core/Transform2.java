@@ -104,7 +104,7 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      */
     public Transform2(final Transform2 source) {
 
-        this.set(source);
+        this.set(source.location, source.rotation, source.scale);
     }
 
     /**
@@ -728,6 +728,7 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * @param f the forward axis
      * @return this transform
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Transform2 getAxes(final Vec2 r, final Vec2 f) {
 
         r.set(this.right);
@@ -776,6 +777,7 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * @param target the output vector
      * @return the right axis
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Vec2 getRight(final Vec2 target) {
 
         return target.set(this.right);
@@ -1401,11 +1403,10 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * 2.9x.
      *
      * @param pyCd the string builder
-     * @return the string builder
      * @see Utils#modRadians(float)
      * @see Utils#toFixed(StringBuilder, float, int)
      */
-    StringBuilder toBlenderCode(final StringBuilder pyCd) {
+    void toBlenderCode(final StringBuilder pyCd) {
 
         /*
          * Quaternion from angle: (cos(a * 0.5), 0.0, 0.0, sin(a * 0.5)) . Scale z
@@ -1427,7 +1428,6 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
         pyCd.append("), \"scale\": ");
         this.scale.toBlenderCode(pyCd, depth);
         pyCd.append("}");
-        return pyCd;
     }
 
     /**
@@ -1457,11 +1457,10 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * <br>
      * The angle is converted from radians to degrees.
      *
-     * @return the string builder
      * @see Utils#modRadians(float)
      * @see Utils#toFixed(StringBuilder, float, int)
      */
-    StringBuilder toSvgString(final StringBuilder svgp) {
+    void toSvgString(final StringBuilder svgp) {
 
         svgp.append("transform=\"translate(");
         Utils.toFixed(svgp, this.location.x, ISvgWritable.FIXED_PRINT);
@@ -1476,7 +1475,6 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
         svgp.append(' ');
         Utils.toFixed(svgp, this.scale.y, ISvgWritable.FIXED_PRINT);
         svgp.append(")\"");
-        return svgp;
     }
 
     /**

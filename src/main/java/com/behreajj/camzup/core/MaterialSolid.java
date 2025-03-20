@@ -172,42 +172,41 @@ public class MaterialSolid extends Material {
     }
 
     /**
-     * Default material to use in Blender code conversion when an entity does not
-     * have one.
+     * Default material to use in Blender code conversion when an entity does
+     * not have one.
      *
      * @param gamma gamma adjustment
-     * @return the string builder
      * @see Rgb#fromHex(int, Rgb)
      */
-    static StringBuilder defaultBlenderMaterial(final StringBuilder pyCd, final float gamma) {
+    static void defaultBlenderMaterial(
+        final StringBuilder pyCd,
+        final float gamma) {
 
         final Rgb c = Rgb.fromHex(Material.DEFAULT_FILL, new Rgb());
         pyCd.append("{\"name\": \"");
         pyCd.append("CamZupDefault");
         pyCd.append("\", \"fill\": ");
-        c.toBlenderCode(pyCd, gamma, true);
+        c.toBlenderCode(pyCd, gamma);
         pyCd.append(", \"metallic\": 0.0");
         pyCd.append(", \"roughness\": 1.0");
         pyCd.append('}');
-        return pyCd;
     }
 
     /**
-     * Default material to use when an entity does not have one. Stroke weight is
-     * impacted by
-     * transforms, so the stroke weight is divided by the scale. This opens a group
-     * node, which should
-     * be closed elsewhere.
+     * Default material to use when an entity does not have one. Stroke weight
+     * is impacted by transforms, so the stroke weight is divided by the scale.
+     * This opens a group node, which should be closed elsewhere.
      *
      * @param svgp  the string builder
      * @param scale the transform scale
-     * @return the string builder
      * @see Utils#div(float, float)
      * @see Utils#abs(float)
      * @see Rgb#toHexWeb(StringBuilder, int)
      * @see Utils#toFixed(StringBuilder, float, int)
      */
-    static StringBuilder defaultSvgMaterial(final StringBuilder svgp, final float scale) {
+    static void defaultSvgMaterial(
+        final StringBuilder svgp,
+        final float scale) {
 
         svgp.append("<g id=\"");
         svgp.append("defaultmaterial");
@@ -236,7 +235,6 @@ public class MaterialSolid extends Material {
             svgp.append("stroke=\"none\"");
         }
         svgp.append(">\n");
-        return svgp;
     }
 
     /**
@@ -454,17 +452,15 @@ public class MaterialSolid extends Material {
     }
 
     /**
-     * An internal helper function to format a material in Python, then append it to
-     * a {@link
-     * StringBuilder}.
+     * An internal helper function to format a material in Python, then append
+     * it to a {@link StringBuilder}.
      *
      * @param pyCd      the string builder
      * @param gamma     the gamma adjustment
      * @param metallic  the metallic factor
      * @param roughness the roughness
-     * @return the string builder
      */
-    StringBuilder toBlenderCode(
+    void toBlenderCode(
         final StringBuilder pyCd,
         final float gamma,
         final float metallic,
@@ -474,14 +470,13 @@ public class MaterialSolid extends Material {
         pyCd.append("id");
         pyCd.append(this.name);
         pyCd.append("\", \"fill\": ");
-        this.fill.toBlenderCode(pyCd, gamma, true);
+        this.fill.toBlenderCode(pyCd, gamma);
         pyCd.append(", \"metallic\": ");
         Utils.toFixed(pyCd, metallic, 6);
         pyCd.append(", \"roughness\": ");
         Utils.toFixed(pyCd, roughness, 6);
         pyCd.append('}');
 
-        return pyCd;
     }
 
     /**
@@ -490,11 +485,10 @@ public class MaterialSolid extends Material {
      *
      * @param svgp  the string builder
      * @param scale the transform scale.
-     * @return the string builder
      */
-    StringBuilder toSvgString(final StringBuilder svgp, final float scale) {
+    void toSvgString(final StringBuilder svgp, final float scale) {
 
-        return this.toSvgString(
+        this.toSvgString(
             svgp, scale,
             ISvgWritable.DEFAULT_STR_JOIN,
             ISvgWritable.DEFAULT_STR_CAP);
@@ -511,13 +505,12 @@ public class MaterialSolid extends Material {
      * @param scale      the transform scale.
      * @param strokeJoin the stroke join.
      * @param strokeCap  the stroke cap.
-     * @return the string builder
      * @see Utils#div(float, float)
      * @see Utils#abs(float)
      * @see Utils#clamp01(float)
      * @see Rgb#toHexWeb(StringBuilder, Rgb)
      */
-    StringBuilder toSvgString(
+    void toSvgString(
         final StringBuilder svgp,
         final float scale,
         final String strokeJoin,
@@ -566,6 +559,5 @@ public class MaterialSolid extends Material {
         } else {
             svgp.append("fill=\"none\"");
         }
-        return svgp;
     }
 }

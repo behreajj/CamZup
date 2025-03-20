@@ -1157,6 +1157,7 @@ public class Rgb implements IColor {
      * @param target the output color
      * @return the divided color
      */
+    @SuppressWarnings("UnusedReturnValue")
     public static Rgb unpremul(final Rgb c, final Rgb target) {
 
         if (c.alpha <= 0.0f) {
@@ -1419,15 +1420,12 @@ public class Rgb implements IColor {
      * element; if not
      * then a three tuple is appended.
      *
-     * @param pyCd      the string builder
-     * @param gamma     the exponent
-     * @param inclAlpha include the alpha channel
-     * @return the string
+     * @param pyCd  the string builder
+     * @param gamma the exponent
      * @see Utils#clamp01(float)
      * @see Utils#toFixed(StringBuilder, float, int)
      */
-    StringBuilder toBlenderCode(
-        final StringBuilder pyCd, final float gamma, final boolean inclAlpha) {
+    void toBlenderCode(final StringBuilder pyCd, final float gamma) {
 
         pyCd.append('(');
         Utils.toFixed(pyCd, (float) Math.pow(Utils.clamp01(this.r), gamma), 6);
@@ -1438,14 +1436,11 @@ public class Rgb implements IColor {
         pyCd.append(' ');
         Utils.toFixed(pyCd, (float) Math.pow(Utils.clamp01(this.b), gamma), 6);
 
-        if (inclAlpha) {
-            pyCd.append(',');
-            pyCd.append(' ');
-            Utils.toFixed(pyCd, Utils.clamp01(this.alpha), 6);
-        }
+        pyCd.append(',');
+        pyCd.append(' ');
+        Utils.toFixed(pyCd, Utils.clamp01(this.alpha), 6);
 
         pyCd.append(')');
-        return pyCd;
     }
 
     /**

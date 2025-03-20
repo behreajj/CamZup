@@ -758,6 +758,7 @@ public class Quaternion implements Comparable<Quaternion> {
         Vec3.normalize(dir, forward);
         final boolean isRight = handedness == Handedness.RIGHT;
         if (isRight) {
+            // noinspection SuspiciousNameCombination
             right.set(forward.y, -forward.x, 0.0f);
         } else {
             right.set(-forward.z, 0.0f, forward.x);
@@ -2137,9 +2138,8 @@ public class Quaternion implements Comparable<Quaternion> {
      * The real component, w, is the first element.
      *
      * @param pyCd the string builder
-     * @return the string builder
      */
-    StringBuilder toBlenderCode(final StringBuilder pyCd) {
+    void toBlenderCode(final StringBuilder pyCd) {
 
         pyCd.append('(');
         Utils.toFixed(pyCd, this.real, 6);
@@ -2153,7 +2153,6 @@ public class Quaternion implements Comparable<Quaternion> {
         pyCd.append(' ');
         Utils.toFixed(pyCd, this.imag.z, 6);
         pyCd.append(')');
-        return pyCd;
     }
 
     /**

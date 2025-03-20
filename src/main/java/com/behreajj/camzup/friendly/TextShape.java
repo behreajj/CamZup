@@ -7,7 +7,6 @@ import processing.core.PFont;
 import java.awt.*;
 import java.awt.font.FontRenderContext;
 import java.awt.font.GlyphVector;
-import java.awt.geom.AffineTransform;
 import java.awt.geom.PathIterator;
 import java.util.ArrayList;
 
@@ -56,7 +55,8 @@ public abstract class TextShape {
 
         final Font font = (Font) pfont.getNative();
         if (font != null) {
-            @SuppressWarnings("deprecation") final FontRenderContext frc = Toolkit.getDefaultToolkit()
+            @SuppressWarnings("deprecation")
+            final FontRenderContext frc = Toolkit.getDefaultToolkit()
                 .getFontMetrics(font).getFontRenderContext();
             return TextShape.processGlyphCe(frc, pfont, scale, detail, separate,
                 characters);
@@ -103,7 +103,8 @@ public abstract class TextShape {
 
         final Font font = (Font) pfont.getNative();
         if (font != null) {
-            @SuppressWarnings("deprecation") final FontRenderContext frc = Toolkit.getDefaultToolkit()
+            @SuppressWarnings("deprecation")
+            final FontRenderContext frc = Toolkit.getDefaultToolkit()
                 .getFontMetrics(font).getFontRenderContext();
             return TextShape.processGlyphCe(frc, pfont, scale, detail, indices);
         }
@@ -238,7 +239,7 @@ public abstract class TextShape {
                             final CurveEntity2 entity = new CurveEntity2();
                             entities.add(entity);
 
-                            TextShape.processGlyphCurve(font, frc, null, valDispScl,
+                            TextShape.processGlyphCurve(font, frc, valDispScl,
                                 detail, character, entity.curves);
 
                             tr.set(xCursor, yCursor);
@@ -271,7 +272,7 @@ public abstract class TextShape {
                 final GlyphVector gv = font.createGlyphVector(frc, characters);
                 final String namePrefix = name + ".";
                 final float fontSize = font.getSize2D();
-                TextShape.processGlyphVector(gv, null, valDispScl, detail,
+                TextShape.processGlyphVector(gv, valDispScl, detail,
                     namePrefix, fontSize, entity.curves);
                 entities.add(entity);
 
@@ -303,7 +304,7 @@ public abstract class TextShape {
             final GlyphVector gv = font.createGlyphVector(frc, indices);
             final String namePrefix = "Curve2.";
             final float fontSize = font.getSize2D();
-            TextShape.processGlyphVector(gv, null, valDispScl, detail, namePrefix,
+            TextShape.processGlyphVector(gv, valDispScl, detail, namePrefix,
                 fontSize, entity.curves);
             entities.add(entity);
         }
@@ -320,15 +321,13 @@ public abstract class TextShape {
      *
      * @param font      the AWT font
      * @param frc       the font render context
-     * @param transform the AWT affine transform
      * @param scale     the glyph scale
      * @param detail    the detail
      * @param character the character
      * @param curves    the list of curves
-     * @return the list of curves
      */
-    protected static ArrayList<Curve2> processGlyphCurve(final Font font,
-        final FontRenderContext frc, final AffineTransform transform,
+    protected static void processGlyphCurve(final Font font,
+        final FontRenderContext frc,
         final float scale, final float detail, final char character,
         final ArrayList<Curve2> curves) {
 
@@ -336,7 +335,7 @@ public abstract class TextShape {
         final GlyphVector gv = font.createGlyphVector(frc, characters);
         final String namePrefix = new String(characters) + ".";
         final float fontSize = font.getSize2D();
-        return TextShape.processGlyphVector(gv, transform, scale, detail,
+        TextShape.processGlyphVector(gv, scale, detail,
             namePrefix, fontSize, curves);
     }
 
@@ -345,20 +344,18 @@ public abstract class TextShape {
      * curve.
      *
      * @param gv         the glyph vector
-     * @param transform  the AWT affine transform
      * @param scale      the glyph scale
      * @param detail     the detail
      * @param namePrefix the curve name prefix
      * @param fontSize   the font size
      * @param curves     the list of curves
-     * @return the list of curves
      * @see GlyphVector#getOutline()
      * @see PathIterator#currentSegment(float[])
      * @see Shape#getPathIterator(java.awt.geom.AffineTransform)
      * @see Shape#getPathIterator(java.awt.geom.AffineTransform, double)
      */
-    protected static ArrayList<Curve2> processGlyphVector(
-        final GlyphVector gv, final AffineTransform transform, final float scale,
+    protected static void processGlyphVector(
+        final GlyphVector gv, final float scale,
         final float detail, final String namePrefix, final float fontSize,
         final ArrayList<Curve2> curves) {
 
@@ -371,7 +368,7 @@ public abstract class TextShape {
          */
         final Shape shp = gv.getOutline();
         final PathIterator itr = detail < Utils.EPSILON ? shp.getPathIterator(
-            transform) : shp.getPathIterator(transform, detail);
+            null) : shp.getPathIterator(null, detail);
         final double dispScl = scale == 0.0f ? 1.0d : scale;
         final double invScalar = fontSize == 0.0f ? dispScl : dispScl / fontSize;
 
@@ -521,7 +518,6 @@ public abstract class TextShape {
             itr.next();
         }
 
-        return curves;
     }
 
 }

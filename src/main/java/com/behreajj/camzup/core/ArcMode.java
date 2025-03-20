@@ -17,9 +17,8 @@ public enum ArcMode {
     OPEN(),
 
     /**
-     * In addition to the arc, draws a straight line from the start angle to the
-     * center of the arc, to
-     * the stop angle.
+     * In addition to the arc, draws a straight line from the start angle to
+     * the center of the arc, to the stop angle.
      */
     PIE();
 

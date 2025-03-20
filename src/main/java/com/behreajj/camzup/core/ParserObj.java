@@ -86,7 +86,7 @@ public abstract class ParserObj {
          * error is caught. Alternatively, research try () with resources.
          */
         try {
-            try {
+            try (in) {
                 for (String ln = in.readLine(); ln != null; ln = in.readLine()) {
                     tokens = spacePattern.split(ln, 0);
 
@@ -205,11 +205,11 @@ public abstract class ParserObj {
                     }
                 }
             } catch (final Exception e) {
+                // noinspection CallToPrintStackTrace
                 e.printStackTrace();
-            } finally {
-                in.close();
             }
         } catch (final Exception e) {
+            // noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
 
@@ -338,6 +338,7 @@ public abstract class ParserObj {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             result = ParserObj.load(br, poolData);
         } catch (final Exception e) {
+            // noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
         return result;

@@ -279,10 +279,9 @@ public class Octree {
      * @param o            the octree
      * @param includeEmpty include empty cells
      * @param target       output array list
-     * @return the centers
      * @see Bounds3#center(Bounds3, Vec3)
      */
-    static ArrayList<Vec3> centersMean(
+    static void centersMean(
         final Octree o, final boolean includeEmpty, final ArrayList<Vec3> target) {
 
         /*
@@ -321,7 +320,6 @@ public class Octree {
             }
         }
 
-        return target;
     }
 
     /**
@@ -335,12 +333,11 @@ public class Octree {
      * @param rCenter  the range center
      * @param startIdx the start index
      * @param found    the output list
-     * @return evaluation
      * @see Bounds3#containsInclusive(Bounds3, Vec3)
      * @see Bounds3#intersect(Bounds3, Bounds3)
      * @see Vec3#distChebyshev(Vec3, Vec3)
      */
-    static boolean query(
+    static void query(
         final Octree o,
         final Bounds3 range,
         final Vec3 rCenter,
@@ -365,9 +362,7 @@ public class Octree {
                 }
             }
 
-            return true;
         }
-        return false;
     }
 
     /**
@@ -382,11 +377,10 @@ public class Octree {
      * @param rsq      the sphere radius, squared
      * @param startIdx the start index
      * @param found    the output list
-     * @return evaluation
      * @see Bounds3#intersect(Bounds3, Vec3, float)
      * @see Vec3#distSq(Vec3, Vec3)
      */
-    static boolean query(
+    static void query(
         final Octree o,
         final Vec3 center,
         final float rsq,
@@ -412,9 +406,7 @@ public class Octree {
                 }
             }
 
-            return true;
         }
-        return false;
     }
 
     /**

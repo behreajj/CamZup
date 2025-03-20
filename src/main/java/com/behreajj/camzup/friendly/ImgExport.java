@@ -30,7 +30,7 @@ public abstract class ImgExport {
     public static BufferedImage toAwtImage(final Img img) {
 
         return ImgExport.toAwtImage(img, new Rgb.ToneMapClamp(),
-                ImgExport.DEFAULT_USE_PREMUL);
+            ImgExport.DEFAULT_USE_PREMUL);
     }
 
     /**
@@ -42,16 +42,16 @@ public abstract class ImgExport {
      * @return the AWT image
      */
     public static BufferedImage toAwtImage(
-            final Img img,
-            final Rgb.AbstrToneMap mapFunc,
-            final boolean usePremul) {
+        final Img img,
+        final Rgb.AbstrToneMap mapFunc,
+        final boolean usePremul) {
 
         final int w = img.getWidth();
         final int h = img.getHeight();
         final int[] px = Img.toArgb32(img, mapFunc, usePremul);
 
         final BufferedImage imgAwt = new BufferedImage(
-                w, h, BufferedImage.TYPE_INT_ARGB);
+            w, h, BufferedImage.TYPE_INT_ARGB);
         imgAwt.getRaster().setDataElements(0, 0, w, h, px);
 
         return imgAwt;
@@ -67,7 +67,7 @@ public abstract class ImgExport {
     public static boolean saveAs(final String path, final Img img) {
 
         return ImgExport.saveAs(path, img, new Rgb.ToneMapClamp(),
-                ImgExport.DEFAULT_USE_PREMUL);
+            ImgExport.DEFAULT_USE_PREMUL);
     }
 
     /**
@@ -80,47 +80,47 @@ public abstract class ImgExport {
      * @return the success condition
      */
     public static boolean saveAs(
-            final String path,
-            final Img img,
-            final Rgb.AbstrToneMap mapFunc,
-            final boolean usePremul) {
+        final String path,
+        final Img img,
+        final Rgb.AbstrToneMap mapFunc,
+        final boolean usePremul) {
 
         boolean success = false;
         try {
             final String lcFileExt = path.substring(
-                    path.lastIndexOf('.') + 1).toLowerCase();
+                path.lastIndexOf('.') + 1).toLowerCase();
 
             final boolean isBmp = lcFileExt.equals("bmp");
             final boolean isGif = lcFileExt.equals("gif");
             final boolean isPpm = lcFileExt.equals("ppm")
-                    || lcFileExt.equals("pnm");
+                || lcFileExt.equals("pnm");
             final boolean isPng = lcFileExt.equals("png");
             final boolean isJpg = lcFileExt.equals("jpg")
-                    || lcFileExt.equals("jpeg");
+                || lcFileExt.equals("jpeg");
             final boolean isTif = lcFileExt.equals("tif")
-                    || lcFileExt.equals("tiff");
+                || lcFileExt.equals("tiff");
 
             final boolean isSupported = isPpm
-                    || isGif
-                    || isPng
-                    || isJpg
-                    || isTif;
+                || isGif
+                || isPng
+                || isJpg
+                || isTif;
 
             if (!isSupported) {
                 throw new UnsupportedOperationException(
-                        "Unsupported file extension.");
+                    "Unsupported file extension.");
             }
 
             final File file = new File(path);
             if (isPpm) {
-                final byte[] arr = Img.toPpmBytes(
-                        img, mapFunc, Img.PpmFormat.BINARY, 256);
+                final byte[] arr = Img.toPpmBytes(img, mapFunc,
+                    Img.PpmFormat.BINARY, Img.DEFAULT_PPM_LEVELS, usePremul);
                 try (final FileOutputStream fos = new FileOutputStream(file)) {
                     fos.write(arr);
                 }
             } else {
                 final BufferedImage imgNtv = ImgExport.toAwtImage(
-                        img, mapFunc, usePremul);
+                    img, mapFunc, usePremul);
                 ImageIO.write(imgNtv, lcFileExt, file);
             }
 
@@ -144,7 +144,7 @@ public abstract class ImgExport {
      */
     public static byte[] toBytes(final String fileExt, final Img img) {
         return ImgExport.toBytes(fileExt, img, new Rgb.ToneMapClamp(),
-                ImgExport.DEFAULT_USE_PREMUL);
+            ImgExport.DEFAULT_USE_PREMUL);
     }
 
     /**
@@ -159,10 +159,10 @@ public abstract class ImgExport {
      * @return the encoded bytes
      */
     public static byte[] toBytes(
-            final String fileExt,
-            final Img img,
-            final Rgb.AbstrToneMap mapFunc,
-            final boolean usePremul) {
+        final String fileExt,
+        final Img img,
+        final Rgb.AbstrToneMap mapFunc,
+        final boolean usePremul) {
 
         final BufferedImage imgNtv = ImgExport.toAwtImage(img, mapFunc, usePremul);
         final String lcFileExt = fileExt.toLowerCase();

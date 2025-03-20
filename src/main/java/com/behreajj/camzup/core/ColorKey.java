@@ -4,8 +4,7 @@ import java.util.Comparator;
 
 /**
  * Stores a color at a given step (or percent) in the range [0.0, 1.0] .
- * Equality and hash are based
- * solely on the step, not on the color it holds.
+ * Equality and hash are based solely on the step, not on the color it holds.
  */
 public class ColorKey implements Comparable<ColorKey> {
 
@@ -48,24 +47,27 @@ public class ColorKey implements Comparable<ColorKey> {
     }
 
     /**
-     * Creates a key by step and color channel. The color's alpha is assumed to be
-     * 1.0 . This is for
-     * package-level use only, so that the step can be set without clamp protection.
+     * Creates a key by step and color channel. The color's alpha is assumed to
+     * be 1.0 . This is for package-level use only, so that the step can be set
+     * without clamp protection.
      *
      * @param step the step
      * @param l    the light component
      * @param a    the green-magenta component
      * @param b    the blue-yellow component
      */
-    ColorKey(final float step, final float l, final float a, final float b) {
+    ColorKey(
+        final float step,
+        final float l,
+        final float a,
+        final float b) {
 
         this.set(step, l, a, b);
     }
 
     /**
-     * Creates a key by step and color channel. This is for package-level use only,
-     * so that the step
-     * can be set without clamp protection.
+     * Creates a key by step and color channel. This is for package-level use
+     * only, so that the step can be set without clamp protection.
      *
      * @param step  the step
      * @param l     the light component
@@ -73,16 +75,20 @@ public class ColorKey implements Comparable<ColorKey> {
      * @param b     the blue-yellow component
      * @param alpha the transparency channel
      */
-    ColorKey(final float step, final float l, final float a, final float b, final float alpha) {
+    ColorKey(
+        final float step,
+        final float l,
+        final float a,
+        final float b,
+        final float alpha) {
 
         this.set(step, l, a, b, alpha);
     }
 
     /**
-     * Returns -1 when this key is less than the comparisand; 1 when it is greater
-     * than; 0 when the
-     * two are 'equal'. The implementation of this method allows collections of keys
-     * to be sorted.
+     * Returns -1 when this key is less than the comparisand; 1 when it is
+     * greater than; 0 when the two are 'equal'. The implementation of this
+     * method allows collections of keys to be sorted.
      *
      * @param key the comparisand
      * @return the numeric code
@@ -184,9 +190,9 @@ public class ColorKey implements Comparable<ColorKey> {
     }
 
     /**
-     * Sets this key by step and color channel. The color's alpha is assumed to be
-     * 1.0 . This is for
-     * package-level use only, so that the step can be set without clamp protection.
+     * Sets this key by step and color channel. The color's alpha is assumed to
+     * be 1.0 . This is for package-level use only, so that the step can be set
+     * without clamp protection.
      *
      * @param step the step
      * @param l    the light component
@@ -194,7 +200,12 @@ public class ColorKey implements Comparable<ColorKey> {
      * @param b    the blue-yellow component
      * @return this key
      */
-    ColorKey set(final float step, final float l, final float a, final float b) {
+    @SuppressWarnings("UnusedReturnValue")
+    ColorKey set(
+        final float step,
+        final float l,
+        final float a,
+        final float b) {
 
         this.step = step;
         this.clr.set(l, a, b);
@@ -203,9 +214,8 @@ public class ColorKey implements Comparable<ColorKey> {
     }
 
     /**
-     * Sets this key by step and color channel. This is for package-level use only,
-     * so that the step
-     * can be set without clamp protection.
+     * Sets this key by step and color channel. This is for package-level use
+     * only, so that the step can be set without clamp protection.
      *
      * @param step  the step
      * @param l     the light component
@@ -214,7 +224,13 @@ public class ColorKey implements Comparable<ColorKey> {
      * @param alpha the transparency channel
      * @return this key
      */
-    ColorKey set(final float step, final float l, final float a, final float b, final float alpha) {
+    @SuppressWarnings("UnusedReturnValue")
+    ColorKey set(
+        final float step,
+        final float l,
+        final float a,
+        final float b,
+        final float alpha) {
 
         this.step = step;
         this.clr.set(l, a, b, alpha);
@@ -224,8 +240,7 @@ public class ColorKey implements Comparable<ColorKey> {
 
     /**
      * Returns a String of Python code targeted toward the Blender 4.x API. This
-     * code is brittle and
-     * is used for internal testing purposes.
+     * code is brittle and is used for internal testing purposes.
      *
      * @param pyCd  the string builder
      * @param gamma the gamma adjustment
@@ -238,15 +253,14 @@ public class ColorKey implements Comparable<ColorKey> {
         Utils.toFixed(pyCd, Utils.clamp01(this.step), 3);
         pyCd.append(", \"color\": ");
         final Rgb srgb = Rgb.srLab2TosRgb(this.clr, new Rgb(), new Rgb(), new Vec4());
-        srgb.toBlenderCode(pyCd, gamma, true);
+        srgb.toBlenderCode(pyCd, gamma);
         pyCd.append('}');
         return pyCd;
     }
 
     /**
-     * Internal helper function to assist with methods that need to print many color
-     * keys. Appends to
-     * an existing {@link StringBuilder}.
+     * Internal helper function to assist with methods that need to print many
+     * color keys. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -265,13 +279,11 @@ public class ColorKey implements Comparable<ColorKey> {
 
     /**
      * Returns a String representation of this color stop for an SVG gradient.
-     * Includes the offset,
-     * color and opacity.
+     * Includes the offset, color and opacity.
      *
      * @param svgp the string builder
-     * @return the string builder
      */
-    StringBuilder toSvgString(final StringBuilder svgp) {
+    void toSvgString(final StringBuilder svgp) {
 
         svgp.append("<stop offset=\"");
         Utils.toFixed(svgp, this.step, ISvgWritable.FIXED_PRINT);
@@ -281,7 +293,6 @@ public class ColorKey implements Comparable<ColorKey> {
         final Rgb srgb = Rgb.srLab2TosRgb(this.clr, new Rgb(), new Rgb(), new Vec4());
         Rgb.toHexWeb(svgp, srgb);
         svgp.append("\" />");
-        return svgp;
     }
 
     /**

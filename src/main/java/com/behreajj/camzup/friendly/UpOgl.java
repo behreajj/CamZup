@@ -360,17 +360,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      */
     @Override
     public void blendMode(int mode) {
-        if(mode == PConstants.BLEND
+        if (mode == PConstants.BLEND
             || mode == PConstants.REPLACE
             || mode == IUpOgl.TEXT_BLEND) {
             this.blendMode = mode;
             this.blendModeImpl();
         } else {
-            System.err.println(
-                """
-                    Blend modes are not supported by this renderer.
-                    Blending should be conducted in perceptual color space,
-                    not in gamma-encoded standard RGB.""");
+            System.err.println("Blend modes not supported by this renderer.");
         }
     }
 
@@ -4414,7 +4410,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             case PConstants.MODEL: /* 4 */
             default:
-                this.textCharModelImpl(ch, x, y, 0.0f);
+                this.textCharModelImpl(ch, x, y);
         }
     }
 
@@ -4425,12 +4421,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @param ch the character
      * @param x  the x coordinate
      * @param y  the y coordinate
-     * @param z  the z coordinate
      * @see PFont#getGlyph(char)
      * @see PFont#getSize()
      */
     protected void textCharModelImpl(final char ch, final float x,
-        final float y, final float z) {
+        final float y) {
 
         /*
          * FontTexture.TextureInfo is a static inner class, and so cannot be
@@ -4480,10 +4475,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
             this.beginShape(PConstants.POLYGON);
             this.normalPerShape(0.0f, 0.0f, 1.0f);
             this.texture(glyph.image);
-            this.vertexImpl(x0, y0, z, 0.0f, 0.0f);
-            this.vertexImpl(x1, y0, z, 1.0f, 0.0f);
-            this.vertexImpl(x1, y1, z, 1.0f, 1.0f);
-            this.vertexImpl(x0, y1, z, 0.0f, 1.0f);
+            this.vertexImpl(x0, y0, 0.0f, 0.0f, 0.0f);
+            this.vertexImpl(x1, y0, 0.0f, 1.0f, 0.0f);
+            this.vertexImpl(x1, y1, 0.0f, 1.0f, 1.0f);
+            this.vertexImpl(x0, y1, 0.0f, 0.0f, 1.0f);
             this.endShape(PConstants.CLOSE);
 
             /* Restore prior style settings. */

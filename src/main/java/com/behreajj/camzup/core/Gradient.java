@@ -633,6 +633,7 @@ public class Gradient implements Iterable<ColorKey> {
      * @see TreeSet#size()
      * @see TreeSet#add(Object)
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Gradient appendAll(final Collection<Lab> colors) {
 
         final int len = colors.size();
@@ -657,6 +658,7 @@ public class Gradient implements Iterable<ColorKey> {
      * @see TreeSet#size()
      * @see TreeSet#add(Object)
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Gradient appendAll(final float... scalars) {
 
         final int len = scalars.length;
@@ -682,6 +684,7 @@ public class Gradient implements Iterable<ColorKey> {
      * @see TreeSet#size()
      * @see TreeSet#add(Object)
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Gradient appendAll(final Lab... colors) {
 
         final int len = colors.length;
@@ -869,6 +872,7 @@ public class Gradient implements Iterable<ColorKey> {
      * @see TreeSet#add(Object)
      * @see TreeSet#remove(Object)
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Gradient insertAll(final ColorKey... insertion) {
 
         for (final ColorKey key : insertion) {
@@ -1274,7 +1278,7 @@ public class Gradient implements Iterable<ColorKey> {
             Utils.toFixed(pyCd, i * toPercent, 6);
             pyCd.append(", \"color\": ");
             Rgb.srLab2TosRgb(labs[i], srgb, lrgb, xyz);
-            srgb.toBlenderCode(pyCd, gamma, true);
+            srgb.toBlenderCode(pyCd, gamma);
             pyCd.append('}');
 
             if (i < last) {

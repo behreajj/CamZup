@@ -855,6 +855,7 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @param u the up axis
      * @return this transform
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Transform3 getAxes(final Vec3 r, final Vec3 f, final Vec3 u) {
 
         r.set(this.right);
@@ -1203,6 +1204,7 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @see Quaternion#mul(Quaternion, Quaternion, Quaternion)
      * @see Transform3#updateAxes()
      */
+    @SuppressWarnings("UnusedReturnValue")
     public Transform3 rotateBy(final Quaternion q) {
 
         if (Quaternion.any(q)) {
@@ -1697,9 +1699,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * 2.9x.
      *
      * @param pyCd the string builder
-     * @return the string builder
      */
-    StringBuilder toBlenderCode(final StringBuilder pyCd) {
+    void toBlenderCode(final StringBuilder pyCd) {
 
         final String rotationMode = "\"QUATERNION\"";
         pyCd.append("{\"location\": ");
@@ -1711,7 +1712,6 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
         pyCd.append(", \"scale\": ");
         this.scale.toBlenderCode(pyCd);
         pyCd.append('}');
-        return pyCd;
     }
 
     /**

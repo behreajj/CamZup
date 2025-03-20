@@ -30,7 +30,7 @@ public abstract class ParserGpl {
 
         try {
 
-            try {
+            try (in) {
 
                 final Rgb srgb = new Rgb();
                 final Rgb lrgb = new Rgb();
@@ -94,12 +94,12 @@ public abstract class ParserGpl {
                 return clrs.values().toArray(new Lab[0]);
 
             } catch (final Exception e) {
+                // noinspection CallToPrintStackTrace
                 e.printStackTrace();
-            } finally {
-                in.close();
             }
 
         } catch (final Exception e) {
+            // noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
 
@@ -118,6 +118,7 @@ public abstract class ParserGpl {
         try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             result = ParserGpl.load(br);
         } catch (final Exception e) {
+            // noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
         return result;
