@@ -1703,9 +1703,6 @@ public abstract class Convert {
                         } else if (paramsLen > 4) {
                             System.err.println("Rounded rectangles aren't supported.");
                         } else {
-                            // TODO: Add support now that you no longer have a
-                            // custom SVG import?
-
                             System.err.println("Rectangles are not supported.");
                         }
                     }
@@ -1716,10 +1713,6 @@ public abstract class Convert {
                         break;
 
                     case PConstants.ARC: /* 32 */
-                        // TODO: Add support now that you no longer have a
-                        // custom SVG import? See ArcMode for sector type
-                        // meshes. Maybe use a Mesh2 that is converted.
-
                         System.err.println("Arcs are not supported.");
                         break;
 

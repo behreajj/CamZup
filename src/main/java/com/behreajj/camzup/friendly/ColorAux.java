@@ -16,8 +16,8 @@ public abstract class ColorAux {
 
     /**
      * Converts from hue, saturation, brightness and alpha to a color with red,
-     * green, blue and alpha
-     * channels. All arguments are expected to be in the range [0.0, 1.0] .
+     * green, blue and alpha channels. All arguments are expected to be in the
+     * range [0.0, 1.0] .
      *
      * @param hue the hue
      * @param sat the saturation
@@ -26,7 +26,10 @@ public abstract class ColorAux {
      * @see Utils#clamp01(float)
      * @see Utils#mod1(float)
      */
-    public static float[] hsbToRgb(final float hue, final float sat, final float val) {
+    public static float[] hsbToRgb(
+        final float hue,
+        final float sat,
+        final float val) {
 
         final float h = Utils.mod1(hue) * 6.0f;
         final float s = Utils.clamp01(sat);
@@ -60,11 +63,9 @@ public abstract class ColorAux {
     }
 
     /**
-     * Mixes two integers holding 32-bit standard RGB colors in 0xAARRGGBB order
-     * according to a step.
-     * They are mixed according to a color mode flag, {@link PConstants#HSB} or
-     * {@link
-     * PConstants#RGB}.
+     * Mixes two integers holding 32-bit standard RGB colors in 0xAARRGGBB
+     * order according to a step. They are mixed according to a color mode
+     * flag, {@link PConstants#HSB} or {@link PConstants#RGB}.
      *
      * @param o         the origin
      * @param d         the destination
@@ -74,7 +75,11 @@ public abstract class ColorAux {
      * @see ColorAux#lerpHsb(int, int, float)
      * @see ColorAux#lerpRgb(int, int, float)
      */
-    public static int lerpColor(final int o, final int d, final float t, final int colorMode) {
+    public static int lerpColor(
+        final int o,
+        final int d,
+        final float t,
+        final int colorMode) {
 
         switch (colorMode) {
             case PConstants.HSB: /* 3 */
@@ -87,11 +92,10 @@ public abstract class ColorAux {
     }
 
     /**
-     * Mixes two integers holding 32-bit standard RGB colors in 0xAARRGGBB order
-     * according to a step.
-     * Converts them to Hue Saturation Brightness, then performs the mix. If the
-     * saturation of either
-     * color is near zero, then defaults to standard RGB mix.
+     * Mixes two integers holding 32-bit standard RGB colors in 0xAARRGGBB
+     * order according to a step. Converts them to Hue Saturation Brightness,
+     * then performs the mix. If the saturation of either color is near zero,
+     * then defaults to standard RGB mix.
      *
      * @param o the origin
      * @param d the destination
@@ -152,7 +156,10 @@ public abstract class ColorAux {
         }
 
         /* Convert from HSB to RGB. */
-        final float[] rgb = ColorAux.hsbToRgb(ch, u * os + t * ds, u * oHsb[2] + t * dHsb[2]);
+        final float[] rgb = ColorAux.hsbToRgb(
+            ch,
+            u * os + t * ds,
+            u * oHsb[2] + t * dHsb[2]);
 
         /* Pack into 32-bit integer. */
         return (int) (ca * 0xff + 0.5f) << 0x18
@@ -162,8 +169,8 @@ public abstract class ColorAux {
     }
 
     /**
-     * Mixes two integers holding 32-bit standard RGB colors in 0xAARRGGBB order
-     * according to a step.
+     * Mixes two integers holding 32-bit standard RGB colors in 0xAARRGGBB
+     * order according to a step.
      *
      * @param o the origin
      * @param d the destination
@@ -195,8 +202,8 @@ public abstract class ColorAux {
     }
 
     /**
-     * Converts RGBA channels to a vector which holds hue, saturation, brightness
-     * and alpha.
+     * Converts RGBA channels to a vector which holds hue, saturation,
+     * brightness and alpha.
      *
      * @param r the red channel
      * @param g the green channel
@@ -204,7 +211,10 @@ public abstract class ColorAux {
      * @return the HSB values
      * @see Utils#approx(float, float, float)
      */
-    public static float[] rgbToHsb(final float r, final float g, final float b) {
+    public static float[] rgbToHsb(
+        final float r,
+        final float g,
+        final float b) {
 
         /*
          * Unnecessary to worry about red hues for gray colors in this case, as

@@ -299,8 +299,8 @@ public class Ray2 {
     public static Vec2[] intersect(final Ray2 ray, final Vec2 orig, final Vec2 dest) {
 
         final TreeSet<Vec2> uniques = new TreeSet<>();
-        Ray2.factorEdge(
-            ray.origin.x, ray.origin.y, ray.dir.x, ray.dir.y, orig.x, orig.y, dest.x, dest.y, uniques);
+        Ray2.factorEdge(ray.origin.x, ray.origin.y, ray.dir.x, ray.dir.y,
+            orig.x, orig.y, dest.x, dest.y, uniques);
         return uniques.toArray(new Vec2[0]);
     }
 
@@ -391,11 +391,8 @@ public class Ray2 {
         final int[][][] fs = m.faces;
 
         for (final int[][] f : fs) {
-
             final int fLen = f.length;
-
             for (int j = 0; j < fLen; ++j) {
-
                 final int k = (j + 1) % fLen;
                 final Vec2 curr = vs[f[j][0]];
                 final Vec2 next = vs[f[k][0]];
@@ -497,9 +494,8 @@ public class Ray2 {
     }
 
     /**
-     * Internal helper function to assist with methods that need to print many rays.
-     * Appends to an
-     * existing {@link StringBuilder}.
+     * Internal helper function to assist with methods that need to print many
+     * rays. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -527,8 +523,8 @@ public class Ray2 {
     }
 
     /**
-     * An abstract class that may serve as an umbrella for any custom comparators of
-     * Ray2 s.
+     * An abstract class that may serve as an umbrella for any custom
+     * comparators of Ray2 s.
      */
     public abstract static class AbstrComparator implements Comparator<Ray2> {
 

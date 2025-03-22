@@ -100,7 +100,8 @@ public abstract class ImgExport {
             final boolean isTif = lcFileExt.equals("tif")
                 || lcFileExt.equals("tiff");
 
-            final boolean isSupported = isPpm
+            final boolean isSupported = isBmp
+                || isPpm
                 || isGif
                 || isPng
                 || isJpg

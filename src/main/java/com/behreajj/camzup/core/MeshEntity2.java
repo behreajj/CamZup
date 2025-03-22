@@ -8,8 +8,7 @@ import java.util.List;
 /**
  * An entity which contains a transform that is applied to a list of meshes.
  */
-public class MeshEntity2 extends Entity2
-    implements Iterable<Mesh2>, IVolume2, ISvgWritable, IBlenderWritable {
+public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, ISvgWritable, IBlenderWritable {
 
     /**
      * The list of meshes held by the entity.

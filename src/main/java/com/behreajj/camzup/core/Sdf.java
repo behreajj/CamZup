@@ -18,11 +18,10 @@ public abstract class Sdf {
     }
 
     /**
-     * A wrapper function around the default signed distance for arc. Follows the
-     * Processing
-     * convention of specifying the start and stop angle as inputs. This calls
-     * cosine twice and sine
-     * twice, and so will slow performance.
+     * A wrapper function around the default signed distance for arc. Follows
+     * the Processing convention of specifying the start and stop angle as
+     * inputs. This calls cosine twice and sine twice, and so will slow
+     * performance.
      *
      * @param point      the point
      * @param startAngle the start angle
@@ -105,7 +104,10 @@ public abstract class Sdf {
         final float qy = Utils.abs(point.y) - bounds.y;
         final float qz = Utils.abs(point.z) - bounds.z;
 
-        final float outside = Utils.hypot(Math.max(0.0f, qx), Math.max(0.0f, qy), Math.max(0.0f, qz));
+        final float outside = Utils.hypot(
+            Math.max(0.0f, qx),
+            Math.max(0.0f, qy),
+            Math.max(0.0f, qz));
         final float inside = Math.min(Utils.max(qx, qy, qz), 0.0f);
         return outside + inside;
     }
@@ -228,9 +230,8 @@ public abstract class Sdf {
     }
 
     /**
-     * Draws a line from the origin to the destination, where the distance field is
-     * characterized by a
-     * third point's distance from the line.
+     * Draws a line from the origin to the destination, where the distance
+     * field is characterized by a third point's distance from the line.
      *
      * @param point the point
      * @param orig  the origin
@@ -265,9 +266,8 @@ public abstract class Sdf {
     }
 
     /**
-     * Draws a line from the origin to the destination, where the distance field is
-     * characterized by a
-     * third point's distance from the line.
+     * Draws a line from the origin to the destination, where the distance
+     * field is characterized by a third point's distance from the line.
      *
      * @param point    the point
      * @param orig     the origin
@@ -277,7 +277,10 @@ public abstract class Sdf {
      * @see Sdf#line(Vec2, Vec2, Vec2)
      */
     public static float line(
-        final Vec2 point, final Vec2 orig, final Vec2 dest, final float rounding) {
+        final Vec2 point,
+        final Vec2 orig,
+        final Vec2 dest,
+        final float rounding) {
 
         return Sdf.line(point, orig, dest) - rounding;
     }

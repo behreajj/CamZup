@@ -646,9 +646,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
 
         int curveIndex = 0;
         final int curveLast = this.curves.size() - 1;
-        final float zoff = 0.0f;
         for (Curve2 curve : this.curves) {
-            // final float zoff = 0.0001f * curveIndex;
             curve.toBlenderCode(pyCd, uRes);
             if (curveIndex < curveLast) {
                 pyCd.append(',').append(' ');

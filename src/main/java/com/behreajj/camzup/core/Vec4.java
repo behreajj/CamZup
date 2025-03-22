@@ -6,17 +6,13 @@ import java.util.Random;
 
 /**
  * A mutable, extensible class influenced by GLSL. Instance methods are limited,
- * while most static
- * methods require an explicit output variable to be provided.<br>
- * <br>
- * May also be used to store alternative color representations.
+ * while most static methods require an explicit output variable to be provided.
  */
 public class Vec4 implements Comparable<Vec4> {
 
     /**
-     * Component on the w axis. Commonly used to store 1.0 for points and 0.0 for
-     * vectors when
-     * multiplying with a 4 x 4 matrix.
+     * Component on the w axis. Commonly used to store 1.0 for points and 0.0
+     * for vectors when multiplying with a 4 x 4 matrix.
      */
     public float w = 0.0f;
 
@@ -88,9 +84,8 @@ public class Vec4 implements Comparable<Vec4> {
     /**
      * Promotes a Vec3 to a Vec4 with an extra component.<br>
      * <br>
-     * Useful for multiplying a 4 x 4 matrix with either a 3D vector or a 3D point.
-     * (For points, w is
-     * 1.0; for vectors, w is 0.0 .)
+     * Useful for multiplying a 4 x 4 matrix with either a 3D vector or a 3D
+     * point. (For points, w is 1.0; for vectors, w is 0.0 .)
      *
      * @param v3 the vector
      * @param w  the w component
@@ -160,7 +155,10 @@ public class Vec4 implements Comparable<Vec4> {
     public static Vec4 and(final Vec4 a, final Vec4 b, final Vec4 target) {
 
         return target.set(
-            Utils.and(a.x, b.x), Utils.and(a.y, b.y), Utils.and(a.z, b.z), Utils.and(a.w, b.w));
+            Utils.and(a.x, b.x),
+            Utils.and(a.y, b.y),
+            Utils.and(a.z, b.z),
+            Utils.and(a.w, b.w));
     }
 
     /**
@@ -246,10 +244,9 @@ public class Vec4 implements Comparable<Vec4> {
 
     /**
      * Returns a point on a Bézier curve described by two anchor points and two
-     * control points
-     * according to a step in [0.0, 1.0] . When the step is less than zero, returns
-     * the first anchor
-     * point. When the step is greater than one, returns the second anchor point.
+     * control points according to a step in [0.0, 1.0] . When the step is less
+     * than zero, returns the first anchor point. When the step is greater than
+     * one, returns the second anchor point.
      *
      * @param ap0    the first anchor point
      * @param cp0    the first control point
@@ -290,13 +287,11 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Returns a tangent on a Bézier curve described by two anchor points and two
-     * control points
-     * according to a step in [0.0, 1.0] . When the step is less than zero, returns
-     * the first anchor
-     * point subtracted from the first control point. When the step is greater than
-     * one, returns the
-     * second anchor point subtracted from the second control point.
+     * Returns a tangent on a Bézier curve described by two anchor points and
+     * two control points according to a step in [0.0, 1.0] . When the step is
+     * less than zero, returns the first anchor point subtracted from the first
+     * control point. When the step is greater than one, returns the second
+     * anchor point subtracted from the second control point.
      *
      * @param ap0    the first anchor point
      * @param cp0    the first control point
@@ -329,12 +324,12 @@ public class Vec4 implements Comparable<Vec4> {
         final float ut6 = u * (t3 + t3);
 
         /* @formatter:off */
-    return target.set(
-        (cp0.x - ap0.x) * usq3 + (cp1.x - cp0.x) * ut6 + (ap1.x - cp1.x) * tsq3,
-        (cp0.y - ap0.y) * usq3 + (cp1.y - cp0.y) * ut6 + (ap1.y - cp1.y) * tsq3,
-        (cp0.z - ap0.z) * usq3 + (cp1.z - cp0.z) * ut6 + (ap1.z - cp1.z) * tsq3,
-        (cp0.w - ap0.w) * usq3 + (cp1.w - cp0.w) * ut6 + (ap1.w - cp1.w) * tsq3);
-    /* @formatter:on */
+        return target.set(
+            (cp0.x - ap0.x) * usq3 + (cp1.x - cp0.x) * ut6 + (ap1.x - cp1.x) * tsq3,
+            (cp0.y - ap0.y) * usq3 + (cp1.y - cp0.y) * ut6 + (ap1.y - cp1.y) * tsq3,
+            (cp0.z - ap0.z) * usq3 + (cp1.z - cp0.z) * ut6 + (ap1.z - cp1.z) * tsq3,
+            (cp0.w - ap0.w) * usq3 + (cp1.w - cp0.w) * ut6 + (ap1.w - cp1.w) * tsq3);
+        /* @formatter:on */
     }
 
     /**
@@ -359,15 +354,20 @@ public class Vec4 implements Comparable<Vec4> {
         final Vec4 target) {
 
         Vec4.bezierTangent(ap0, cp0, cp1, ap1, step, target);
-        final float mInv = Utils.invSqrt(
-            target.x * target.x + target.y * target.y + target.z * target.z + target.w * target.w);
-        return target.set(target.x * mInv, target.y * mInv, target.z * mInv, target.w * mInv);
+        final float mInv = Utils.invSqrt(target.x * target.x
+            + target.y * target.y
+            + target.z * target.z
+            + target.w * target.w);
+        return target.set(
+            target.x * mInv,
+            target.y * mInv,
+            target.z * mInv,
+            target.w * mInv);
     }
 
     /**
-     * Appends to an array of bytes, ordered from least to most significant digit
-     * (little endian).
-     * Writes 16 bytes.
+     * Appends to an array of bytes, ordered from least to most significant
+     * digit (little endian). Writes 16 bytes.
      *
      * @param v   the vector
      * @param arr the array
@@ -386,9 +386,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Appends to an array of bytes, ordered from most to least significant digit
-     * (big endian). Writes
-     * 16 bytes.
+     * Appends to an array of bytes, ordered from most to least significant
+     * digit (big endian). Writes 16 bytes.
      *
      * @param v   the vector
      * @param arr the array
@@ -416,21 +415,11 @@ public class Vec4 implements Comparable<Vec4> {
      */
     public static Vec4 ceil(final Vec4 v, final Vec4 target) {
 
-        return target.set(Utils.ceil(v.x), Utils.ceil(v.y), Utils.ceil(v.z), Utils.ceil(v.w));
-    }
-
-    /**
-     * Clamps the vector to a range in [0.0, 1.0].
-     *
-     * @param v      the input vector
-     * @param target the output vector
-     * @return the clamped vector
-     * @see Utils#clamp01(float)
-     */
-    public static Vec4 clamp01(final Vec4 v, final Vec4 target) {
-
         return target.set(
-            Utils.clamp01(v.x), Utils.clamp01(v.y), Utils.clamp01(v.z), Utils.clamp01(v.w));
+            Utils.ceil(v.x),
+            Utils.ceil(v.y),
+            Utils.ceil(v.z),
+            Utils.ceil(v.w));
     }
 
     /**
@@ -463,7 +452,10 @@ public class Vec4 implements Comparable<Vec4> {
     public static Vec4 diff(final Vec4 a, final Vec4 b, final Vec4 target) {
 
         return target.set(
-            Utils.diff(a.x, b.x), Utils.diff(a.y, b.y), Utils.diff(a.z, b.z), Utils.diff(a.w, b.w));
+            Utils.diff(a.x, b.x),
+            Utils.diff(a.y, b.y),
+            Utils.diff(a.z, b.z),
+            Utils.diff(a.w, b.w));
     }
 
     /**
@@ -532,11 +524,10 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Finds the Minkowski distance between two vectors. This is a generalization of
-     * other distance
-     * formulae. When the exponent value, c, is 1.0, the Minkowski distance equals
-     * the Manhattan
-     * distance; when it is 2.0, Minkowski equals the Euclidean distance.
+     * Finds the Minkowski distance between two vectors. This is a
+     * generalization of other distance formulae. When the exponent value, c,
+     * is 1.0, the Minkowski distance equals the Manhattan distance; when it is
+     * 2.0, Minkowski equals the Euclidean distance.
      *
      * @param a left operand
      * @param b right operand
@@ -549,14 +540,14 @@ public class Vec4 implements Comparable<Vec4> {
 
         if (c != 0.0f) {
             /* @formatter:off */
-      return (float)
-          Math.pow(
-              Math.pow(Math.abs((double) (b.x - a.x)), c)
-                  + Math.pow(Math.abs((double) (b.y - a.y)), c)
-                  + Math.pow(Math.abs((double) (b.z - a.z)), c)
-                  + Math.pow(Math.abs((double) (b.w - a.w)), c),
-              1.0d / (double) c);
-      /* @formatter:on */
+            return (float)
+                Math.pow(
+                    Math.pow(Math.abs((double) (b.x - a.x)), c)
+                        + Math.pow(Math.abs((double) (b.y - a.y)), c)
+                        + Math.pow(Math.abs((double) (b.z - a.z)), c)
+                        + Math.pow(Math.abs((double) (b.w - a.w)), c),
+                    1.0d / (double) c);
+            /* @formatter:on */
         }
 
         return 0.0f;
@@ -564,8 +555,8 @@ public class Vec4 implements Comparable<Vec4> {
 
     /**
      * Finds the Euclidean distance squared between two vectors. Equivalent to
-     * subtracting one vector
-     * from the other, then finding the dot product of the difference with itself.
+     * subtracting one vector from the other, then finding the dot product of
+     * the difference with itself.
      *
      * @param a left operand
      * @param b right operand
@@ -591,7 +582,11 @@ public class Vec4 implements Comparable<Vec4> {
      */
     public static Vec4 div(final float a, final Vec4 b, final Vec4 target) {
 
-        return target.set(Utils.div(a, b.x), Utils.div(a, b.y), Utils.div(a, b.z), Utils.div(a, b.w));
+        return target.set(
+            Utils.div(a, b.x),
+            Utils.div(a, b.y),
+            Utils.div(a, b.z),
+            Utils.div(a, b.w));
     }
 
     /**
@@ -623,13 +618,16 @@ public class Vec4 implements Comparable<Vec4> {
     public static Vec4 div(final Vec4 a, final Vec4 b, final Vec4 target) {
 
         return target.set(
-            Utils.div(a.x, b.x), Utils.div(a.y, b.y), Utils.div(a.z, b.z), Utils.div(a.w, b.w));
+            Utils.div(a.x, b.x),
+            Utils.div(a.y, b.y),
+            Utils.div(a.z, b.z),
+            Utils.div(a.w, b.w));
     }
 
     /**
      * Finds the dot product of two vectors by summing the products of their
-     * corresponding components.
-     * The dot product of a vector with itself is equal to its magnitude squared.
+     * corresponding components. The dot product of a vector with itself is
+     * equal to its magnitude squared.
      *
      * @param a left operand
      * @param b right operand

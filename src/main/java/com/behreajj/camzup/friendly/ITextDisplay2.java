@@ -22,7 +22,8 @@ public interface ITextDisplay2 extends ITextDisplay {
     }
 
     /**
-     * Displays an array of characters at a 2D location. Ignores the z coordinate.
+     * Displays an array of characters at a 2D location. Ignores the z
+     * coordinate.
      *
      * @param chars the character array
      * @param start the start index, inclusive
@@ -43,7 +44,8 @@ public interface ITextDisplay2 extends ITextDisplay {
     }
 
     /**
-     * Displays a real number as text at a 2D location. Ignores the z coordinate.
+     * Displays a real number as text at a 2D location. Ignores the z
+     * coordinate.
      *
      * @param real the real number
      * @param x    the x coordinate

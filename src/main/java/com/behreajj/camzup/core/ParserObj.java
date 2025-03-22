@@ -10,9 +10,8 @@ import java.util.regex.Pattern;
 
 /**
  * A Wavefront .obj file parser class. Only deals with the portion of the file
- * specification that
- * records meshes, not curve surfaces or poly-lines. References to materials are
- * ignored.
+ * specification that records meshes, not curve surfaces or poly-lines.
+ * References to materials are ignored.
  */
 public abstract class ParserObj {
 
@@ -23,23 +22,19 @@ public abstract class ParserObj {
     }
 
     /**
-     * Creates a mesh entity from a BufferedReader that references a WaveFront .obj
-     * file with groups.
+     * Creates a mesh entity from a BufferedReader that references a WaveFront
+     * .obj file with groups.
      * <br>
      * <br>
      * Material data from a .mtl file is not parsed by this function. Each new
-     * material usage should
-     * be preceded by a new group. (In Blender's obj exporter, check "Objects as
-     * Material Groups"
-     * true.)<br>
+     * material usage should be preceded by a new group. (In Blender's obj
+     * exporter, check "Objects as Material Groups" true.)<br>
      * <br>
-     * Because vertex groups are not supported by the Mesh3 class, an option to pool
-     * data is provided.
-     * If data is pooled between meshes, then all will reference the same
-     * coordinate, texture
-     * coordinate and normal array. If not, each mesh will receive a copy of the
-     * data parsed from the
-     * .obj file; the mesh will then be cleaned to remove unused data.
+     * Because vertex groups are not supported by the Mesh3 class, an option to
+     * pool data is provided. If data is pooled between meshes, then all will
+     * reference the same coordinate, texture coordinate and normal array. If
+     * not, each mesh will receive a copy of the data parsed from the .obj
+     * file; the mesh will then be cleaned to remove unused data.
      *
      * @param in       buffered reader
      * @param poolData whether to share data

@@ -66,16 +66,18 @@ public abstract class ParserGpl {
                         if (len > 2) {
 
                             /*
-                             * In a GPL, tokens 0, 1 and 2 are the RGB channels; token
-                             * n - 1 is the optional name; token n - 1 is the optional
-                             * index (sometimes).
+                             * In a GPL, tokens 0, 1 and 2 are the RGB channels;
+                             * token n - 1 is the optional name; token n - 1 is
+                             * the optional index (sometimes).
                              */
-                            final float alpha = aseExt ? Float.parseFloat(tokens[3]) * Utils.ONE_255 : 1.0f;
+                            final float alpha = aseExt
+                                ? Float.parseFloat(tokens[3]) * Utils.ONE_255
+                                : 1.0f;
 
                             /*
-                             * It's possible that a GPL file could contain numbers
-                             * outside the range [0, 255]. Because colors are
-                             * unclamped, this doesn't matter.
+                             * It's possible that a GPL file could contain
+                             * numbers outside the range [0, 255]. Because
+                             * colors are unclamped, this doesn't matter.
                              */
                             srgb.set(
                                 Float.parseFloat(tokens[0]) * Utils.ONE_255,

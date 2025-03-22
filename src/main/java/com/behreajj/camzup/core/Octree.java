@@ -271,10 +271,9 @@ public class Octree {
     }
 
     /**
-     * Finds the average center in each leaf node of this octree and appends it to
-     * an array. If the
-     * node is empty, and includeEmpty is true, then the center of the cell bounds
-     * is used instead.
+     * Finds the average center in each leaf node of this octree and appends it
+     * to an array. If the node is empty, and includeEmpty is true, then the
+     * center of the cell bounds is used instead.
      *
      * @param o            the octree
      * @param includeEmpty include empty cells
@@ -323,11 +322,10 @@ public class Octree {
     }
 
     /**
-     * Queries the octree with a box range. If points in the octree are in range,
-     * they are added to a
-     * {@link java.util.TreeMap}. Each entry in the map uses the Chebyshev distance
-     * as the key.
-     * Expects the range center to be calculated in advance.
+     * Queries the octree with a box range. If points in the octree are in
+     * range, they are added to a {@link java.util.TreeMap}. Each entry in the
+     * map uses the Chebyshev distance as the key. Expects the range center to
+     * be calculated in advance.
      *
      * @param range    the range
      * @param rCenter  the range center
@@ -366,11 +364,9 @@ public class Octree {
     }
 
     /**
-     * Queries the octree with a spherical range. If points in the octree are in
-     * range, they are added
-     * to a {@link java.util.TreeMap}. Each entry in the map uses the squared
-     * Euclidean distance as
-     * the key.
+     * Queries the octree with a spherical range. If points in the octree are
+     * in range, they are added to a {@link java.util.TreeMap}. Each entry in
+     * the map uses the squared Euclidean distance as the key.
      *
      * @param o        the octree
      * @param center   the sphere center
@@ -410,8 +406,8 @@ public class Octree {
     }
 
     /**
-     * Counts the number of leaves held by this octree. Returns 1 if this node is
-     * itself a leaf.
+     * Counts the number of leaves held by this octree. Returns 1 if this node
+     * is itself a leaf.
      *
      * @return the sum
      */

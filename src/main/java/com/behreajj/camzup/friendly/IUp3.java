@@ -577,8 +577,10 @@ public interface IUp3 extends IUp {
 
         final double ed = this.getEyeDist();
         if (ed < Utils.EPSILON_D) {
-            this.moveTo((float) (ud * ox + (double) step * dx), (float) (ud * oy + (double) step
-                * dy), (float) (ud * oz + (double) step * dz));
+            this.moveTo(
+                (float) (ud * ox + (double) step * dx),
+                (float) (ud * oy + (double) step * dy),
+                (float) (ud * oz + (double) step * dz));
             return;
         }
 
@@ -586,8 +588,10 @@ public interface IUp3 extends IUp {
         final double odDot = ox * dx + oy * dy + oz * dz;
         if (odDot < -(1.0d - Utils.EPSILON_D) || odDot > 1.0d
             - Utils.EPSILON_D) {
-            this.moveTo((float) (ud * ox + (double) step * dx), (float) (ud * oy + (double) step
-                * dy), (float) (ud * oz + (double) step * dz));
+            this.moveTo(
+                (float) (ud * ox + (double) step * dx),
+                (float) (ud * oy + (double) step * dy),
+                (float) (ud * oz + (double) step * dz));
             return;
         }
 
@@ -604,8 +608,10 @@ public interface IUp3 extends IUp {
 
         final double cmsq = cx * cx + cy * cy + cz * cz;
         if (cmsq < Utils.EPSILON_D) {
-            this.moveTo((float) (ud * ox + (double) step * dx), (float) (ud * oy + (double) step
-                * dy), (float) (ud * oz + (double) step * dz));
+            this.moveTo(
+                (float) (ud * ox + (double) step * dx),
+                (float) (ud * oy + (double) step * dy),
+                (float) (ud * oz + (double) step * dz));
             return;
         }
 

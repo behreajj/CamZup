@@ -79,7 +79,8 @@ public class ZImage extends PImage {
 
     /**
      * Convert an image in the {@link PConstants#ALPHA} format to an image in
-     * the {@link PConstants#ARGB} format.
+     * the {@link PConstants#ARGB} format. Returns images of othe formats
+     * unchanged.
      *
      * @param image the image
      * @return the conversion
@@ -303,9 +304,9 @@ public class ZImage extends PImage {
         final int textAlign) {
 
         /*
-         * Validate inputs: colors with no alpha not allowed; negative leading and
-         * kerning not allowed; try to guard against empty Strings. Remove alpha
-         * from tint; source image alpha will be used.
+         * Validate inputs: colors with no alpha not allowed; negative leading
+         * and kerning not allowed; try to guard against empty Strings. Remove
+         * alpha from tint; source image alpha will be used.
          */
         final String vTxt = text.trim();
         if (vTxt.isEmpty()) {

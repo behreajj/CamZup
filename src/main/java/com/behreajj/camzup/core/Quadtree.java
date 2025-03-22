@@ -249,10 +249,9 @@ public class Quadtree {
     }
 
     /**
-     * Finds the average center in each leaf node of this quadtree and appends it to
-     * an array. If the
-     * node is empty, and includeEmpty is true, then the center of the cell bounds
-     * is used instead.
+     * Finds the average center in each leaf node of this quadtree and appends
+     * it to an array. If the node is empty, and includeEmpty is true, then the
+     * center of the cell bounds is used instead.
      *
      * @param q            the quadtree
      * @param includeEmpty include empty cells
@@ -260,7 +259,9 @@ public class Quadtree {
      * @see Bounds2#center(Bounds2, Vec2)
      */
     static void centersMean(
-        final Quadtree q, final boolean includeEmpty, final ArrayList<Vec2> target) {
+        final Quadtree q,
+        final boolean includeEmpty,
+        final ArrayList<Vec2> target) {
 
         boolean isLeaf = true;
         for (int i = 0; i < Quadtree.CHILD_COUNT; ++i) {
@@ -292,11 +293,10 @@ public class Quadtree {
     }
 
     /**
-     * Queries the quadtree with a rectangular range. If points in the quadtree are
-     * in range, they are
-     * added to a {@link java.util.TreeMap}. Each entry in the map uses the
-     * Chebyshev distance as the
-     * key. Expects the range center to be calculated in advance.
+     * Queries the quadtree with a rectangular range. If points in the quadtree
+     * are in range, they are added to a {@link java.util.TreeMap}. Each entry
+     * in the map uses the Chebyshev distance as the key. Expects the range
+     * center to be calculated in advance.
      *
      * @param q        the quadtree
      * @param range    the bounds
@@ -336,11 +336,9 @@ public class Quadtree {
     }
 
     /**
-     * Queries the quadtree with a circular range. If points in the quadtree are in
-     * range, they are
-     * added to a {@link java.util.TreeMap}. Each entry in the map uses the squared
-     * Euclidean distance
-     * as the key.
+     * Queries the quadtree with a circular range. If points in the quadtree
+     * are in range, they are added to a {@link java.util.TreeMap}. Each entry
+     * in the map uses the squared Euclidean distance as the key.
      *
      * @param q        the quadtree
      * @param center   the circle center
@@ -380,8 +378,8 @@ public class Quadtree {
     }
 
     /**
-     * Counts the number of leaves held by this quadtree. Returns 1 if this node is
-     * itself a leaf.
+     * Counts the number of leaves held by this quadtree. Returns 1 if this
+     * node is itself a leaf.
      *
      * @return the sum
      */
@@ -427,9 +425,9 @@ public class Quadtree {
     }
 
     /**
-     * Sets empty child nodes in the quadtree to null. Returns true if this quadtree
-     * node should be
-     * culled; i.e., all its children are null, and it contains no points.
+     * Sets empty child nodes in the quadtree to null. Returns true if this
+     * quadtree node should be culled; i.e., all its children are null, and it
+     * contains no points.
      *
      * @return the evaluation
      */
@@ -473,8 +471,7 @@ public class Quadtree {
 
     /**
      * Sets the capacity of the node. If the node's point size exceeds the new
-     * capacity, the node is
-     * split.
+     * capacity, the node is split.
      *
      * @param capacity the new capacity
      * @see Quadtree#split(int)
@@ -490,9 +487,8 @@ public class Quadtree {
     }
 
     /**
-     * Gets the leaf nodes of a quadtree as a flat array. The nodes are passed by
-     * reference, not by
-     * value.
+     * Gets the leaf nodes of a quadtree as a flat array. The nodes are passed
+     * by reference, not by value.
      *
      * @return the quadtree array
      * @see Quadtree#getLeaves(ArrayList)
@@ -535,10 +531,8 @@ public class Quadtree {
 
     /**
      * Gets an array of points contained in this quadtree and its children. The
-     * points are transferred
-     * to the array by value, not reference, so changing them in the array will not
-     * change them within
-     * the tree.
+     * points are transferred to the array by value, not reference, so
+     * changing them in the array will not change them within the tree.
      *
      * @return the points array
      * @see Quadtree#getPoints(ArrayList)
@@ -557,10 +551,9 @@ public class Quadtree {
     }
 
     /**
-     * Inserts a point into the quadtree by reference. Returns <code>true</code> if
-     * the point was
-     * successfully inserted into the quadtree directly or indirectly through one of
-     * its children;
+     * Inserts a point into the quadtree by reference. Returns
+     * <code>true</code> if the point was successfully inserted into the
+     * quadtree directly or indirectly through one of its children;
      * returns <code>false</code> if the insertion was unsuccessful.
      *
      * @param point the point
@@ -597,9 +590,9 @@ public class Quadtree {
     }
 
     /**
-     * Inserts points into the quadtree. Returns <code>true</code> if all insertions
-     * were successful;
-     * <code>false</code> if at least one was unsuccessful.
+     * Inserts points into the quadtree. Returns <code>true</code> if all
+     * insertions were successful; <code>false</code> if at least one was
+     * unsuccessful.
      *
      * @param pts the points
      * @return the insertion success
@@ -614,8 +607,8 @@ public class Quadtree {
     }
 
     /**
-     * Evaluates whether this quadtree node has any children. Returns true if no;
-     * otherwise false.
+     * Evaluates whether this quadtree node has any children. Returns true if
+     * no; otherwise false.
      *
      * @return the evaluation
      */
@@ -850,9 +843,9 @@ public class Quadtree {
     }
 
     /**
-     * Gets the leaf nodes in this node and its children. The leaf nodes will still
-     * be stored by
-     * reference in the output array list, so this should be used internally.
+     * Gets the leaf nodes in this node and its children. The leaf nodes will
+     * still be stored by reference in the output array list, so this should be
+     * used internally.
      *
      * @param target the output array list
      * @return the leaf nodes
@@ -874,9 +867,9 @@ public class Quadtree {
     }
 
     /**
-     * Gets the points in this quadtree node and its children. The points will still
-     * be stored by
-     * reference in the output array list, so this should be used internally.
+     * Gets the points in this quadtree node and its children. The points will
+     * still be stored by reference in the output array list, so this should be
+     * used internally.
      *
      * @param target the output array list
      * @return the points
@@ -898,9 +891,8 @@ public class Quadtree {
     }
 
     /**
-     * Splits the quadtree node into eight child nodes. The child capacity is the
-     * same as the
-     * parent's.
+     * Splits the quadtree node into eight child nodes. The child capacity is
+     * the same as the parent's.
      *
      * @return this quadtree
      */

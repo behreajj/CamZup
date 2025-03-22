@@ -62,11 +62,12 @@ public class Ray3 {
         final float dmsq = Vec3.magSq(dir);
         if (time > 0.0f && dmsq > 0.0f) {
             if (Utils.approx(dmsq, 1.0f)) {
-                return target.set(
-                    origin.x + dir.x * time, origin.y + dir.y * time, origin.z + dir.z * time);
+                return target.set(origin.x + dir.x * time,
+                    origin.y + dir.y * time, origin.z + dir.z * time);
             }
             final float tm = time * Utils.invSqrtUnchecked(dmsq);
-            return target.set(origin.x + dir.x * tm, origin.y + dir.y * tm, origin.z + dir.z * tm);
+            return target.set(origin.x + dir.x * tm, origin.y + dir.y * tm,
+                origin.z + dir.z * tm);
         }
         return target.set(origin);
     }
@@ -176,9 +177,8 @@ public class Ray3 {
     }
 
     /**
-     * Internal helper function to assist with methods that need to print many rays.
-     * Appends to an
-     * existing {@link StringBuilder}.
+     * Internal helper function to assist with methods that need to print many
+     * rays. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places

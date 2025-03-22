@@ -1155,8 +1155,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
      * @param me        the mesh entity
      * @param materials the materials
      */
-    public void shape(final MeshEntity2 me,
-        final MaterialPImage[] materials) {
+    public void shape(final MeshEntity2 me, final MaterialPImage[] materials) {
 
         final Transform2 tr = me.transform;
         final Vec2 v = new Vec2();

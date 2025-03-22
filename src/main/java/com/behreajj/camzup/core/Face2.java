@@ -7,8 +7,8 @@ import java.util.TreeSet;
 
 /**
  * Organizes components of a 2D mesh into a list of vertices that form a face.
- * This is not used by a
- * mesh internally; it is created upon retrieval from a mesh.
+ * This is not used by a mesh internally; it is created upon retrieval from a
+ * mesh.
  */
 public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
 

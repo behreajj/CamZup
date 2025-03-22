@@ -588,10 +588,10 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
      * @return the string
      */
     public String toBlenderCode(
-        final int uRes, final String fillMode, final float extrude, final float bevelDepth) {
-
-        final float tiltStart = 0.0f;
-        final float tiltEnd = 0.0f;
+        final int uRes,
+        final String fillMode,
+        final float extrude,
+        final float bevelDepth) {
 
         final StringBuilder pyCd = new StringBuilder(2048);
         pyCd.append("from bpy import data as D, context as C\n\n");

@@ -5,11 +5,9 @@ import java.util.function.Function;
 
 /**
  * A mutable, extensible color class that represents colors in the polar form of
- * a perceptual color
- * space. Lightness falls in the range [0.0, 100.0] . Hue is within the range
- * [0.0, 1.0] . Chroma's
- * minimum bound is 0.0, but it has no upper bound. Alpha is expected to be in
- * [0.0, 1.0] .
+ * a perceptual color space. Lightness falls in the range [0.0, 100.0] . Hue is
+ * within the range [0.0, 1.0). Chroma's minimum bound is 0.0, but it has no
+ * upper bound. Alpha is expected to be in [0.0, 1.0] .
  */
 public class Lch implements IColor {
 
@@ -29,7 +27,7 @@ public class Lch implements IColor {
     public static final float H_FROM_BYTE = Utils.ONE_255;
 
     /**
-     * A scalar to convert hue from [0.0, 1.0] to a number in [0, 255].
+     * A scalar to convert hue from [0.0, 1.0) to a number in [0, 256).
      */
     public static final float H_TO_BYTE = 255.0f;
 
@@ -39,8 +37,8 @@ public class Lch implements IColor {
     public static final float RNG_C_MIN = 5.0f;
 
     /**
-     * The smallest non-zero chroma in SR LCH for a color converted from standard
-     * RGB.
+     * The smallest non-zero chroma in SR LCH for a color converted from
+     * standard RGB.
      */
     public static final float SR_CHROMA_EPSILON = 0.0010125733f;
 
@@ -60,16 +58,14 @@ public class Lch implements IColor {
     public static final float SR_CHROMA_MEAN = 56.141006f;
 
     /**
-     * Arbitrary hue in SR LCH assigned to colors with no saturation that are closer
-     * to light.
-     * Defaults to a yellow.
+     * Arbitrary hue in SR LCH assigned to colors with no saturation that are
+     * closer to light. Defaults to a yellow.
      */
     public static final float SR_HUE_LIGHT = 0.3092284f;
 
     /**
-     * Arbitrary hue in SR LCH assigned to colors with no saturation that are closer
-     * to shadow.
-     * Defaults to a violet.
+     * Arbitrary hue in SR LCH assigned to colors with no saturation that are
+     * closer to shadow. Defaults to a violet.
      */
     public static final float SR_HUE_SHADE = 0.8092284f;
 
@@ -101,9 +97,8 @@ public class Lch implements IColor {
 
     /**
      * Creates a color from bytes In Java, bytes are signed, within the range
-     * [{@value
-     * Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] . The alpha channel defaults to 1.0
-     * .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] . The alpha channel
+     * defaults to 1.0.
      *
      * @param l the light component
      * @param c the chroma
@@ -116,8 +111,7 @@ public class Lch implements IColor {
 
     /**
      * Creates a color from bytes. In Java, bytes are signed, within the range
-     * [{@value
-     * Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .
      *
      * @param l     the light component
      * @param c     the chroma
@@ -130,8 +124,8 @@ public class Lch implements IColor {
     }
 
     /**
-     * Creates a color from lightness, chroma and hue. The alpha channel defaults to
-     * 1.0 .
+     * Creates a color from lightness, chroma and hue. The alpha channel
+     * defaults to 1.0.
      *
      * @param l the light component
      * @param c the chroma
@@ -169,7 +163,8 @@ public class Lch implements IColor {
     }
 
     /**
-     * Tests to see if a color's alpha, lightness and chroma are greater than zero.
+     * Tests to see if a color's alpha, lightness and chroma are greater than
+     * zero.
      *
      * @param o the color
      * @return the evaluation
@@ -180,9 +175,8 @@ public class Lch implements IColor {
     }
 
     /**
-     * Tests to see if the alpha channel of the color is greater than zero, i.e. if
-     * it has some
-     * opacity.
+     * Tests to see if the alpha channel of the color is greater than zero,
+     * i.e. if it has some opacity.
      *
      * @param o the color
      * @return the evaluation
@@ -225,9 +219,8 @@ public class Lch implements IColor {
     }
 
     /**
-     * Checks if two colors have equivalent alpha channels when converted to bytes
-     * in [0, 255]. Uses
-     * saturation arithmetic.
+     * Checks if two colors have equivalent alpha channels when converted to
+     * bytes in [0, 255]. Uses saturation arithmetic.
      *
      * @param o the left comparisand
      * @param d the right comparisand
@@ -236,13 +229,13 @@ public class Lch implements IColor {
      */
     public static boolean eqAlphaSatArith(final Lch o, final Lch d) {
 
-        return (int) (Utils.clamp01(o.alpha) * 0xff + 0.5f) == (int) (Utils.clamp01(d.alpha) * 0xff + 0.5f);
+        return (int) (Utils.clamp01(o.alpha) * 0xff + 0.5f)
+            == (int) (Utils.clamp01(d.alpha) * 0xff + 0.5f);
     }
 
     /**
-     * Checks if two colors have equivalent l, c and h when converted to bytes in
-     * [0, 255]. Uses
-     * saturation arithmetic.
+     * Checks if two colors have equivalent l, c and h when converted to bytes
+     * in [0, 255]. Uses saturation arithmetic.
      *
      * @param o the left comparisand
      * @param d the right comparisand
@@ -253,20 +246,17 @@ public class Lch implements IColor {
      */
     public static boolean eqLchSatArith(final Lch o, final Lch d) {
 
-        /* @formatter:off */
-    return (int) (Utils.clamp(o.l, 0.0f, 100.0f) * Lab.L_TO_BYTE + 0.5f)
-            == (int) (Utils.clamp(d.l, 0.0f, 100.0f) * Lab.L_TO_BYTE + 0.5f)
-        && (int) (Utils.clamp(o.c * Lch.C_TO_BYTE, 0.0f, 254.5f) + 0.5f)
-            == (int) (Utils.clamp(d.c * Lch.C_TO_BYTE, 0.0f, 254.5f) + 0.5f)
-        && (int) (Utils.mod1(o.h) * Lch.H_TO_BYTE + 0.5f)
-            == (int) (Utils.mod1(d.h) * Lch.H_TO_BYTE + 0.5f);
-    /* @formatter:on */
+        return (int) (Utils.clamp(o.l, 0.0f, 100.0f) * Lab.L_TO_BYTE + 0.5f)
+                == (int) (Utils.clamp(d.l, 0.0f, 100.0f) * Lab.L_TO_BYTE + 0.5f)
+            && (int) (Utils.clamp(o.c * Lch.C_TO_BYTE, 0.0f, 254.5f) + 0.5f)
+                == (int) (Utils.clamp(d.c * Lch.C_TO_BYTE, 0.0f, 254.5f) + 0.5f)
+            && (int) (Utils.mod1(o.h) * Lch.H_TO_BYTE + 0.5f)
+                == (int) (Utils.mod1(d.h) * Lch.H_TO_BYTE + 0.5f);
     }
 
     /**
-     * Checks if two colors have equivalent components when converted to bytes in
-     * [0, 255]. Uses
-     * saturation arithmetic.
+     * Checks if two colors have equivalent components when converted to bytes
+     * in [0, 255]. Uses saturation arithmetic.
      *
      * @param o the left comparisand
      * @param d the right comparisand
@@ -294,12 +284,15 @@ public class Lch implements IColor {
         final int c = hex >> 0x08 & 0xff;
         final int h = hex & 0xff;
         return target.set(
-            l * Lab.L_FROM_BYTE, c * Lch.C_FROM_BYTE, h * Lch.H_FROM_BYTE, t * Utils.ONE_255);
+            l * Lab.L_FROM_BYTE,
+            c * Lch.C_FROM_BYTE,
+            h * Lch.H_FROM_BYTE,
+            t * Utils.ONE_255);
     }
 
     /**
-     * Converts an array of integers that represent colors in hexadecimal into an
-     * array of colors
+     * Converts an array of integers that represent colors in hexadecimal into
+     * an array of colors
      *
      * @param hexes the colors
      * @return the array
@@ -329,7 +322,11 @@ public class Lch implements IColor {
      * @see Utils#mod1(float)
      */
     public static Lch fromLab(
-        final float l, final float a, final float b, final float alpha, final Lch target) {
+        final float l,
+        final float a,
+        final float b,
+        final float alpha,
+        final Lch target) {
 
         final double chrSq = (double) a * (double) a + (double) b * (double) b;
         if (chrSq < Utils.EPSILON_D) {
@@ -444,8 +441,7 @@ public class Lch implements IColor {
 
     /**
      * Tests to see if the alpha channel of this color is less than or equal to
-     * zero, i.e., if it is
-     * completely transparent.
+     * zero, i.e., if it is completely transparent.
      *
      * @param o the color
      * @return the evaluation
@@ -605,8 +601,8 @@ public class Lch implements IColor {
 
     /**
      * Sets a color with bytes. In Java, bytes are signed, within the range
-     * [{@value Byte#MIN_VALUE},
-     * {@value Byte#MAX_VALUE}] . The alpha channel defaults to 1.0 .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] . The alpha channel
+     * defaults to 1.0 .
      *
      * @param l the light component
      * @param c the chroma
@@ -620,8 +616,7 @@ public class Lch implements IColor {
 
     /**
      * Creates a color from bytes. In Java, bytes are signed, within the range
-     * [{@value
-     * Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .
      *
      * @param l     the light component
      * @param c     the chroma
@@ -631,18 +626,16 @@ public class Lch implements IColor {
      */
     public Lch set(final byte l, final byte c, final byte h, final byte alpha) {
 
-        /* @formatter:off */
-    return this.set(
-        (l & 0xff) * Lab.L_FROM_BYTE,
-        (c & 0xff) * Lch.C_FROM_BYTE,
-        (h & 0xff) * Lch.H_FROM_BYTE,
-        (alpha & 0xff) * Utils.ONE_255);
-    /* @formatter:on */
+        return this.set(
+            (l & 0xff) * Lab.L_FROM_BYTE,
+            (c & 0xff) * Lch.C_FROM_BYTE,
+            (h & 0xff) * Lch.H_FROM_BYTE,
+            (alpha & 0xff) * Utils.ONE_255);
     }
 
     /**
-     * Sets the l, c, h and alpha color channels of this color. The alpha channel
-     * defaults to 1.0 .
+     * Sets the l, c, h and alpha color channels of this color. The alpha
+     * channel defaults to 1.0 .
      *
      * @param l the light component
      * @param c the chroma
@@ -686,8 +679,7 @@ public class Lch implements IColor {
 
     /**
      * Converts a color to an integer where hexadecimal represents the color
-     * components as 0xTTLLCCHH,
-     * T being alpha. Defaults to modular arithmetic.
+     * components as 0xTTLLCCHH, T being alpha. Defaults to modular arithmetic.
      *
      * @return the color in hexadecimal
      */
@@ -698,10 +690,9 @@ public class Lch implements IColor {
 
     /**
      * Converts a color to an integer where hexadecimal represents the color
-     * components as 0xTTLLCCHH,
-     * T being alpha. Uses saturation arithmetic. Scales lightness from [0.0, 100.0]
-     * to [0, 255].
-     * Scales hue and alpha from [0.0, 1.0] to [0, 255].
+     * components as 0xTTLLCCHH, T being alpha. Uses saturation arithmetic.
+     * Scales lightness from [0.0, 100.0] to [0, 255]. Scales hue and alpha
+     * from [0.0, 1.0] to [0, 255].
      *
      * @return the color in hexadecimal
      * @see Utils#clamp(float, float, float)
@@ -721,12 +712,10 @@ public class Lch implements IColor {
 
     /**
      * Converts a color to an integer where hexadecimal represents the color
-     * components as 0xTTLLCCHH,
-     * T being alpha. Uses modular arithmetic. Scales lightness from [0.0, 100.0] to
-     * [0, 255]. Scales
-     * hue and alpha from [0.0, 1.0] to [0, 255]. Rounds chroma to an int; assumes
-     * it is less than
-     * 255.
+     * components as 0xTTLLCCHH, T being alpha. Uses modular arithmetic.
+     * Scales lightness from [0.0, 100.0] to [0, 255]. Scales hue and alpha
+     * from [0.0, 1.0] to [0, 255]. Rounds chroma to an int; assumes it is less
+     * than 255.
      *
      * @return the color in hexadecimal
      */
@@ -765,8 +754,7 @@ public class Lch implements IColor {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * color. Appends to an
-     * existing {@link StringBuilder}.
+     * color. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -823,9 +811,8 @@ public class Lch implements IColor {
     }
 
     /**
-     * Finds the analogous harmonies for the key color, plus and minus 30 degrees
-     * from the key hue.
-     * Returns an array containing 2 colors.
+     * Finds the analogous harmonies for the key color, plus and minus 30
+     * degrees from the key hue. Returns an array containing 2 colors.
      */
     public static class HarmonyAnalogous extends AbstrHarmony {
 
@@ -845,33 +832,19 @@ public class Lch implements IColor {
         public Lch[] apply(final Lch o) {
 
             final float lAna = (o.l * 2.0f + 50.0f) / 3.0f;
-
-            /*
-             * Since the intent is to provide hue harmonies, this doesn't seem like
-             * a great solution. For many cases, all colors in the array would be
-             * the same.
-             */
             final float h30 = o.h + 0.083333333f;
             final float h330 = o.h - 0.083333333f;
 
-            /*
-             * if(o.c < Utils.EPSILON) { final float t = lAna * 0.01f; h30 = h330
-             * = ( 1.0f - t ) * Lch.SR_HUE_SHADE + t * ( Lch.SR_HUE_LIGHT + 1.0f );
-             * }
-             */
-
-            /* @formatter:off */
-      return new Lch[] {
-        new Lch(lAna, o.c, Utils.mod1(h30), o.alpha), new Lch(lAna, o.c, Utils.mod1(h330), o.alpha)
-      };
-      /* @formatter:on */
+            return new Lch[] {
+                new Lch(lAna, o.c, Utils.mod1(h30), o.alpha),
+                new Lch(lAna, o.c, Utils.mod1(h330), o.alpha)
+            };
         }
     }
 
     /**
-     * Finds the complementary harmony for the key color, 180 degrees from the key
-     * hue. Returns an
-     * array containing 1 color.
+     * Finds the complementary harmony for the key color, 180 degrees from the
+     * key hue. Returns an array containing 1 color.
      */
     public static class HarmonyComplement extends AbstrHarmony {
 
@@ -899,9 +872,8 @@ public class Lch implements IColor {
     }
 
     /**
-     * Finds the split-analogous harmonies for the key color, plus and minus 150
-     * degrees from the key
-     * hue. Returns an array containing 2 colors.
+     * Finds the split-analogous harmonies for the key color, plus and minus
+     * 150 degrees from the key hue. Returns an array containing 2 colors.
      */
     public static class HarmonySplit extends AbstrHarmony {
 
@@ -925,18 +897,16 @@ public class Lch implements IColor {
             final float h150 = o.h + 0.41666667f;
             final float h210 = o.h - 0.41666667f;
 
-            /* @formatter:off */
-      return new Lch[] {
-        new Lch(lSpl, o.c, Utils.mod1(h150), o.alpha), new Lch(lSpl, o.c, Utils.mod1(h210), o.alpha)
-      };
-      /* @formatter:on */
+            return new Lch[] {
+                new Lch(lSpl, o.c, Utils.mod1(h150), o.alpha),
+                new Lch(lSpl, o.c, Utils.mod1(h210), o.alpha)
+            };
         }
     }
 
     /**
-     * Finds the square harmonies for the key color, at 90, 180 and 270 degrees away
-     * from the key hue.
-     * Returns an array containing 3 colors.
+     * Finds the square harmonies for the key color, at 90, 180 and 270 degrees
+     * away from the key hue. Returns an array containing 3 colors.
      */
     public static class HarmonySquare extends AbstrHarmony {
 
@@ -961,20 +931,17 @@ public class Lch implements IColor {
             final float h180 = o.h + 0.5f;
             final float h270 = o.h - 0.25f;
 
-            /* @formatter:off */
-      return new Lch[] {
-        new Lch(50.0f, o.c, Utils.mod1(h90), o.alpha),
-        new Lch(lCmp, o.c, Utils.mod1(h180), o.alpha),
-        new Lch(50.0f, o.c, Utils.mod1(h270), o.alpha)
-      };
-      /* @formatter:on */
+            return new Lch[] {
+                new Lch(50.0f, o.c, Utils.mod1(h90), o.alpha),
+                new Lch(lCmp, o.c, Utils.mod1(h180), o.alpha),
+                new Lch(50.0f, o.c, Utils.mod1(h270), o.alpha)
+            };
         }
     }
 
     /**
-     * Finds the tetradic harmonies for the key color, at 120, 180 and 300 degrees
-     * from the key hue.
-     * Returns an array containing 3 colors.
+     * Finds the tetradic harmonies for the key color, at 120, 180 and 300
+     * degrees from the key hue. Returns an array containing 3 colors.
      */
     public static class HarmonyTetradic extends AbstrHarmony {
 
@@ -1001,20 +968,17 @@ public class Lch implements IColor {
             final float h180 = o.h + 0.5f;
             final float h300 = o.h - Utils.ONE_SIX;
 
-            /* @formatter:off */
-      return new Lch[] {
-        new Lch(lTri, o.c, Utils.mod1(h120), o.alpha),
-        new Lch(lCmp, o.c, Utils.mod1(h180), o.alpha),
-        new Lch(lTet, o.c, Utils.mod1(h300), o.alpha)
-      };
-      /* @formatter:on */
+            return new Lch[] {
+                new Lch(lTri, o.c, Utils.mod1(h120), o.alpha),
+                new Lch(lCmp, o.c, Utils.mod1(h180), o.alpha),
+                new Lch(lTet, o.c, Utils.mod1(h300), o.alpha)
+            };
         }
     }
 
     /**
-     * Finds the triadic harmonies for the key color, plus and minus 120 degrees
-     * from the key hue.
-     * Returns an array containing 2 colors.
+     * Finds the triadic harmonies for the key color, plus and minus 120
+     * degrees from the key hue. Returns an array containing 2 colors.
      */
     public static class HarmonyTriadic extends AbstrHarmony {
 
@@ -1038,11 +1002,10 @@ public class Lch implements IColor {
             final float h120 = o.h + Utils.ONE_THIRD;
             final float h240 = o.h - Utils.ONE_THIRD;
 
-            /* @formatter:off */
-      return new Lch[] {
-        new Lch(lTri, o.c, Utils.mod1(h120), o.alpha), new Lch(lTri, o.c, Utils.mod1(h240), o.alpha)
-      };
-      /* @formatter:on */
+            return new Lch[] {
+                new Lch(lTri, o.c, Utils.mod1(h120), o.alpha),
+                new Lch(lTri, o.c, Utils.mod1(h240), o.alpha)
+            };
         }
     }
 }

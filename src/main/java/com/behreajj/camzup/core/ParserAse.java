@@ -44,8 +44,7 @@ public abstract class ParserAse {
             if (isGroupOpen || isEntry || isGroupClose) {
 
                 final int blockLenParse = Utils.intml(arr, i + 2);
-                if (blockLenParse > 0)
-                    blockLen = blockLenParse;
+                if (blockLenParse > 0) { blockLen = blockLenParse; }
                 final short lenChars16 = Utils.shortml(arr, i + 6);
 
                 if (isEntry) {

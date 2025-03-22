@@ -5,20 +5,18 @@ import java.util.function.Function;
 
 /**
  * A mutable, extensible color class that represents colors in a perceptual
- * color space, such as CIE
- * LAB, SR LAB 2 or OK LAB. The <em>a</em> and <em>b</em> axes are signed,
- * unbounded values.
- * Negative <em>a</em> indicates a green hue; positive, magenta. Negative
- * <em>b</em> indicates a
- * blue hue; positive, yellow. Lightness falls in the range [0.0, 100.0] . For a
- * and b, the
- * practical range is roughly [-111.0, 111.0] . Alpha is expected to be in [0.0,
- * 1.0] .
+ * color space, such as CIE LAB, SR LAB 2 or OK LAB. The <em>a</em> and
+ * <em>b</em> axes are signed, unbounded values. Negative <em>a</em> indicates
+ * a green hue; positive, magenta. Negative <em>b</em> indicates a blue hue;
+ * positive, yellow. Lightness falls in the range [0.0, 100.0]. For <em>a</em>
+ * and <em>b</em>, the practical range is roughly [-111.0, 111.0]. Alpha is
+ * expected to be in [0.0, 1.0] .
  */
 public class Lab implements IColor {
 
     /**
-     * A scalar used when converting a number in [0, 65535] to a and b components.
+     * A scalar used when converting a number in [0, 65535] to a and b
+     * components.
      */
     public static final float AB_FROM_SHORT = 0.0038910506f;
 
@@ -39,29 +37,25 @@ public class Lab implements IColor {
 
     /**
      * A scalar to convert a number in [0, 255] to lightness in [0.0, 100.0].
-     * Equivalent to 100.0 /
-     * 255.0.
+     * Equivalent to 100.0 / 255.0.
      */
     public static final float L_FROM_BYTE = 0.39215687f;
 
     /**
      * A scalar to convert a number in [0, 255] to lightness in [0.0, 100.0].
-     * Equivalent to 100.0 /
-     * 65535.0.
+     * Equivalent to 100.0 / 65535.0.
      */
     public static final float L_FROM_SHORT = 0.0015259022f;
 
     /**
      * A scalar to convert lightness in [0.0, 100.0] to a number in [0, 255].
-     * Equivalent to 255.0 /
-     * 100.0.
+     * Equivalent to 255.0 / 100.0.
      */
     public static final float L_TO_BYTE = 2.55f;
 
     /**
      * A scalar to convert lightness in [0.0, 100.0] to a number in [0, 65535].
-     * Equivalent to 65535.0
-     * / 100.0.
+     * Equivalent to 65535.0 / 100.0.
      */
     public static final float L_TO_SHORT = 655.35f;
 
@@ -76,28 +70,26 @@ public class Lab implements IColor {
     public static final float RNG_L_MIN = 5.0f;
 
     /**
-     * The maximum value on the green-magenta axis in SR LAB 2 for a color converted
-     * from standard
-     * RGB.
+     * The maximum value on the green-magenta axis in SR LAB 2 for a color
+     * converted from standard RGB.
      */
     public static final float SR_A_MAX = 104.49946f;
 
     /**
-     * The minimum value on the green-magenta axis in SR LAB 2 for a color converted
-     * from standard
-     * RGB.
+     * The minimum value on the green-magenta axis in SR LAB 2 for a color
+     * converted from standard RGB.
      */
     public static final float SR_A_MIN = -82.955986f;
 
     /**
-     * The maximum value on the blue-yellow axis in SR LAB 2 for a color converted
-     * from standard RGB.
+     * The maximum value on the blue-yellow axis in SR LAB 2 for a color
+     * converted from standard RGB.
      */
     public static final float SR_B_MAX = 95.18662f;
 
     /**
-     * The minimum value on the blue-yellow axis in SR LAB 2 for a color converted
-     * from standard RGB.
+     * The minimum value on the blue-yellow axis in SR LAB 2 for a color
+     * converted from standard RGB.
      */
     public static final float SR_B_MIN = -110.8078f;
 
@@ -131,9 +123,8 @@ public class Lab implements IColor {
 
     /**
      * Creates a color from bytes. In Java, bytes are signed, within the range
-     * [{@value
-     * Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] . The alpha channel defaults to 1.0
-     * .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] . The alpha channel
+     * defaults to 1.0.
      *
      * @param l the light component
      * @param a the green-magenta component
@@ -146,8 +137,7 @@ public class Lab implements IColor {
 
     /**
      * Creates a color from bytes. In Java, bytes are signed, within the range
-     * [{@value
-     * Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .
      *
      * @param l     the light component
      * @param a     the green-magenta component
@@ -160,8 +150,8 @@ public class Lab implements IColor {
     }
 
     /**
-     * Creates a color from l, a, and b components. The alpha channel defaults to
-     * 1.0 .
+     * Creates a color from l, a, and b components. The alpha channel defaults
+     * to 1.0.
      *
      * @param l the light component
      * @param a the green-magenta component
@@ -198,10 +188,9 @@ public class Lab implements IColor {
     }
 
     /**
-     * Creates a color from shorts. In Java, shorts are signed, within the range
-     * [{@value
-     * Short#MIN_VALUE}, {@value Short#MAX_VALUE}] . The alpha channel defaults to
-     * 1.0 .
+     * Creates a color from shorts. In Java, shorts are signed, within the
+     * range [{@value Short#MIN_VALUE}, {@value Short#MAX_VALUE}] . The alpha
+     * channel defaults to 1.0.
      *
      * @param l the light component
      * @param a the green-magenta component
@@ -213,9 +202,8 @@ public class Lab implements IColor {
     }
 
     /**
-     * Creates a color from shorts. In Java, shorts are signed, within the range
-     * [{@value
-     * Short#MIN_VALUE}, {@value Short#MAX_VALUE}] .
+     * Creates a color from shorts. In Java, shorts are signed, within the
+     * range [{@value Short#MIN_VALUE}, {@value Short#MAX_VALUE}].
      *
      * @param l     the light component
      * @param a     the green-magenta component
@@ -296,9 +284,8 @@ public class Lab implements IColor {
     }
 
     /**
-     * Tests to see if a color's alpha and lightness are greater than zero. Tests to
-     * see if a and b
-     * components are not zero.
+     * Tests to see if a color's alpha and lightness are greater than zero.
+     * Tests to see if a and b components are not zero.
      *
      * @param o the color
      * @return the evaluation
@@ -309,9 +296,8 @@ public class Lab implements IColor {
     }
 
     /**
-     * Tests to see if the alpha channel of the color is greater than zero, i.e. if
-     * it has some
-     * opacity.
+     * Tests to see if the alpha channel of the color is greater than zero,
+     * i.e. if it has some opacity.
      *
      * @param o the color
      * @return the evaluation
@@ -393,9 +379,9 @@ public class Lab implements IColor {
     }
 
     /**
-     * Finds the distance between two colors. Uses the Euclidean distance of A and B
-     * and the Manhattan
-     * distance for L and alpha. Alpha is scaled by 100.0.
+     * Finds the distance between two colors. Uses the Euclidean distance of
+     * <em>a</em> and <em>b</em> and the Manhattan distance for <em>l</em> and
+     * alpha. Alpha is scaled by 100.0.
      *
      * @param o the left operand
      * @param d the right operand
@@ -407,11 +393,10 @@ public class Lab implements IColor {
     }
 
     /**
-     * Finds the distance between two colors. Uses the Euclidean distance of A and B
-     * and the Manhattan
-     * distance for L and alpha. Alpha is scaled by 100.0. Since the alpha range is
-     * less than that of
-     * the other channels, a scalar is provided to increase its weight.
+     * Finds the distance between two colors. Uses the Euclidean distance of
+     * <em>a</em> and <em>b</em> and the Manhattan distance for <em>l</em> and
+     * alpha. Alpha is scaled by 100.0. Since the alpha range is less than that
+     * of the other channels, a scalar is provided to increase its weight.
      *
      * @param o           the left operand
      * @param d           the right operand
@@ -448,9 +433,9 @@ public class Lab implements IColor {
     }
 
     /**
-     * Finds the Euclidean distance between two colors. Since the alpha range is
-     * less than that of the
-     * other channels, a scalar is provided to increase its weight.
+     * Finds the Euclidean distance between two colors. Since the alpha range
+     * is less than that of the other channels, a scalar is provided to increase
+     * its weight.
      *
      * @param o           the left operand
      * @param d           the right operand
@@ -468,9 +453,8 @@ public class Lab implements IColor {
     }
 
     /**
-     * Checks if two colors have equivalent alpha channels when converted to bytes
-     * in [0, 255]. Uses
-     * saturation arithmetic.
+     * Checks if two colors have equivalent alpha channels when converted to
+     * bytes in [0, 255]. Uses saturation arithmetic.
      *
      * @param o the left comparisand
      * @param d the right comparisand
@@ -479,13 +463,13 @@ public class Lab implements IColor {
      */
     public static boolean eqAlphaSatArith(final Lab o, final Lab d) {
 
-        return (int) (Utils.clamp01(o.alpha) * 0xff + 0.5f) == (int) (Utils.clamp01(d.alpha) * 0xff + 0.5f);
+        return (int) (Utils.clamp01(o.alpha) * 0xff + 0.5f)
+            == (int) (Utils.clamp01(d.alpha) * 0xff + 0.5f);
     }
 
     /**
-     * Checks if two colors have equivalent l, a and b when converted to bytes in
-     * [0, 255]. Uses
-     * saturation arithmetic.
+     * Checks if two colors have equivalent l, a and b when converted to bytes
+     * in [0, 255]. Uses saturation arithmetic.
      *
      * @param o the left comparisand
      * @param d the right comparisand
@@ -496,20 +480,17 @@ public class Lab implements IColor {
      */
     public static boolean eqLabSatArith(final Lab o, final Lab d) {
 
-        /* @formatter:off */
-    return (int) (Utils.clamp(o.l, 0.0f, 100.0f) * Lab.L_TO_BYTE + 0.5f)
+        return (int) (Utils.clamp(o.l, 0.0f, 100.0f) * Lab.L_TO_BYTE + 0.5f)
             == (int) (Utils.clamp(d.l, 0.0f, 100.0f) * Lab.L_TO_BYTE + 0.5f)
-        && 128 + Utils.floor(Utils.clamp(o.a, -127.5f, 127.5f))
+            && 128 + Utils.floor(Utils.clamp(o.a, -127.5f, 127.5f))
             == 128 + Utils.floor(Utils.clamp(d.a, -127.5f, 127.5f))
-        && 128 + Utils.floor(Utils.clamp(o.b, -127.5f, 127.5f))
+            && 128 + Utils.floor(Utils.clamp(o.b, -127.5f, 127.5f))
             == 128 + Utils.floor(Utils.clamp(d.b, -127.5f, 127.5f));
-    /* @formatter:on */
     }
 
     /**
-     * Checks if two colors have equivalent components when converted to bytes in
-     * [0, 255]. Uses
-     * saturation arithmetic.
+     * Checks if two colors have equivalent components when converted to bytes
+     * in [0, 255]. Uses saturation arithmetic.
      *
      * @param o the left comparisand
      * @param d the right comparisand
@@ -537,8 +518,8 @@ public class Lab implements IColor {
         }
 
         /*
-         * Copy each inner array to the result array, then move the cursor by the
-         * length of each array.
+         * Copy each inner array to the result array, then move the cursor by
+         * the length of each array.
          */
         int j = 0;
         final Lab[] result = new Lab[totalLen];
@@ -594,15 +575,16 @@ public class Lab implements IColor {
         final int a8 = hex >> 0x08 & 0xff;
         final int b8 = hex & 0xff;
 
-        /* @formatter:off */
-    return target.set(l8 * Lab.L_FROM_BYTE, a8 - 128.0f, b8 - 128.0f, t8 * Utils.ONE_255);
-    /* @formatter:on */
+        return target.set(
+            l8 * Lab.L_FROM_BYTE,
+            a8 - 128.0f,
+            b8 - 128.0f,
+            t8 * Utils.ONE_255);
     }
 
     /**
-     * Converts an array of 32-bit integers that represent colors in hexadecimal
-     * into an array of
-     * colors.
+     * Converts an array of 32-bit integers that represent colors in
+     * hexadecimal into an array of colors.
      *
      * @param hexes the colors
      * @return the array
@@ -643,9 +625,8 @@ public class Lab implements IColor {
     }
 
     /**
-     * Converts an array of 64-bit integers that represent colors in hexadecimal
-     * into an array of
-     * colors.
+     * Converts an array of 64-bit integers that represent colors in
+     * hexadecimal into an array of colors.
      *
      * @param hexes the colors
      * @return the array
@@ -675,7 +656,11 @@ public class Lab implements IColor {
      * @see Math#sin(double)
      */
     public static Lab fromLch(
-        final float l, final float c, final float h, final float alpha, final Lab target) {
+        final float l,
+        final float c,
+        final float h,
+        final float alpha,
+        final Lab target) {
 
         final double cd = Math.max(c, 0.0d);
         final double hd = h * Utils.TAU_D;
@@ -710,7 +695,11 @@ public class Lab implements IColor {
      * @see Math#pow(double, double)
      */
     public static Lab fromSrXyz(
-        final float x, final float y, final float z, final float w, final Lab target) {
+        final float x,
+        final float y,
+        final float z,
+        final float w,
+        final Lab target) {
 
         double xd = x;
         double yd = y;
@@ -719,17 +708,15 @@ public class Lab implements IColor {
         final double comparisand = 216.0d / 24389.0d;
         final double scalar = 24389.0d / 2700.0d;
 
-        /* @formatter:off */
-    xd = xd <= comparisand ? xd * scalar : Math.pow(xd, Utils.ONE_THIRD_D) * 1.16d - 0.16d;
-    yd = yd <= comparisand ? yd * scalar : Math.pow(yd, Utils.ONE_THIRD_D) * 1.16d - 0.16d;
-    zd = zd <= comparisand ? zd * scalar : Math.pow(zd, Utils.ONE_THIRD_D) * 1.16d - 0.16d;
+        xd = xd <= comparisand ? xd * scalar : Math.pow(xd, Utils.ONE_THIRD_D) * 1.16d - 0.16d;
+        yd = yd <= comparisand ? yd * scalar : Math.pow(yd, Utils.ONE_THIRD_D) * 1.16d - 0.16d;
+        zd = zd <= comparisand ? zd * scalar : Math.pow(zd, Utils.ONE_THIRD_D) * 1.16d - 0.16d;
 
-    return target.set(
-        (float) (37.095d * xd + 62.9054d * yd - 0.0008d * zd),
-        (float) (663.4684d * xd - 750.5078d * yd + 87.0328d * zd),
-        (float) (63.9569d * xd + 108.4576d * yd - 172.4152d * zd),
-        w);
-    /* @formatter:on */
+        return target.set(
+            (float) (37.095d * xd + 62.9054d * yd - 0.0008d * zd),
+            (float) (663.4684d * xd - 750.5078d * yd + 87.0328d * zd),
+            (float) (63.9569d * xd + 108.4576d * yd - 172.4152d * zd),
+            w);
     }
 
     /**
@@ -771,9 +758,9 @@ public class Lab implements IColor {
     }
 
     /**
-     * Generates a 3D array of colors. The result is in layer-row-major order, but
-     * the parameters are
-     * supplied in reverse: columns first, then rows, then layers.
+     * Generates a 3D array of colors. The result is in layer-row-major order,
+     * but the parameters are supplied in reverse: columns first, then rows,
+     * then layers.
      *
      * @param cols   number of columns
      * @param rows   number of rows
@@ -836,9 +823,8 @@ public class Lab implements IColor {
     }
 
     /**
-     * Finds the hue distance between two colors. When either color is gray, returns
-     * 0.0. Otherwise,
-     * returns a value in the range [0.0, 0.5].
+     * Finds the hue distance between two colors. When either color is gray,
+     * returns 0.0. Otherwise, returns a value in the range [0.0, 0.5].
      *
      * @param o the first color
      * @param d the second color
@@ -874,22 +860,23 @@ public class Lab implements IColor {
      * @param target the output color
      * @return the mix
      */
-    public static Lab mix(final Lab orig, final Lab dest, final float step, final Lab target) {
+    public static Lab mix(
+        final Lab orig,
+        final Lab dest,
+        final float step,
+        final Lab target) {
 
-        /* @formatter:off */
-    final float u = 1.0f - step;
-    return target.set(
-        u * orig.l + step * dest.l,
-        u * orig.a + step * dest.a,
-        u * orig.b + step * dest.b,
-        u * orig.alpha + step * dest.alpha);
-    /* @formatter:on */
+        final float u = 1.0f - step;
+        return target.set(
+            u * orig.l + step * dest.l,
+            u * orig.a + step * dest.a,
+            u * orig.b + step * dest.b,
+            u * orig.alpha + step * dest.alpha);
     }
 
     /**
      * Tests to see if the alpha channel of this color is less than or equal to
-     * zero, i.e., if it is
-     * completely transparent.
+     * zero, i.e., if it is completely transparent.
      *
      * @param o the color
      * @return the evaluation
@@ -900,11 +887,10 @@ public class Lab implements IColor {
 
     /**
      * Creates a random color. The light bounds are [{@value Lab#RNG_L_MIN},
-     * {@value Lab#RNG_L_MAX}] .
-     * The a axis bounds are [{@value Lab#SR_A_MIN}, {@value Lab#SR_A_MAX}] . The b
-     * axis bounds are
-     * [{@value Lab#SR_B_MIN}, {@value Lab#SR_B_MAX}] . The alpha channel defaults
-     * to 1.0 .
+     * {@value Lab#RNG_L_MAX}]. The <em>a</em> axis bounds are
+     * [{@value Lab#SR_A_MIN}, {@value Lab#SR_A_MAX}] . The <em>b</em> axis
+     * bounds are [{@value Lab#SR_B_MIN}, {@value Lab#SR_B_MAX}].
+     * The alpha channel defaults to 1.0 .
      *
      * @param rng    the random number generator
      * @param target the output color
@@ -916,13 +902,11 @@ public class Lab implements IColor {
         final float ra = rng.nextFloat();
         final float rb = rng.nextFloat();
 
-        /* @formatter:off */
-    return target.set(
-        (1.0f - rl) * Lab.RNG_L_MIN + rl * Lab.RNG_L_MAX,
-        (1.0f - ra) * Lab.SR_A_MIN + ra * Lab.SR_A_MAX,
-        (1.0f - rb) * Lab.SR_B_MIN + rb * Lab.SR_B_MAX,
-        1.0f);
-    /* @formatter:on */
+        return target.set(
+            (1.0f - rl) * Lab.RNG_L_MIN + rl * Lab.RNG_L_MAX,
+            (1.0f - ra) * Lab.SR_A_MIN + ra * Lab.SR_A_MAX,
+            (1.0f - rb) * Lab.SR_B_MIN + rb * Lab.SR_B_MAX,
+            1.0f);
     }
 
     /**
@@ -935,7 +919,10 @@ public class Lab implements IColor {
      * @return the random color
      */
     public static Lab random(
-        final Random rng, final Lab lowerBound, final Lab upperBound, final Lab target) {
+        final Random rng,
+        final Lab lowerBound,
+        final Lab upperBound,
+        final Lab target) {
 
         final float rl = rng.nextFloat();
         final float ra = rng.nextFloat();
@@ -943,19 +930,18 @@ public class Lab implements IColor {
         final float rt = rng.nextFloat();
 
         /* @formatter:off */
-    return target.set(
-        (1.0f - rl) * lowerBound.l + rl * upperBound.l,
-        (1.0f - ra) * lowerBound.a + ra * upperBound.a,
-        (1.0f - rb) * lowerBound.b + rb * upperBound.b,
-        (1.0f - rt) * lowerBound.alpha + rt * upperBound.alpha);
-    /* @formatter:on */
+        return target.set(
+            (1.0f - rl) * lowerBound.l + rl * upperBound.l,
+            (1.0f - ra) * lowerBound.a + ra * upperBound.a,
+            (1.0f - rb) * lowerBound.b + rb * upperBound.b,
+            (1.0f - rt) * lowerBound.alpha + rt * upperBound.alpha);
+        /* @formatter:on */
     }
 
     /**
-     * Normalizes the color's a and b components, then multiplies by a scalar, in
-     * effect setting the
-     * color's chroma. If the source chroma is near zero, then returns the gray
-     * color.
+     * Normalizes the color's a and b components, then multiplies by a scalar,
+     * in effect setting the color's chroma. If the source chroma is near zero,
+     * then returns the gray color.
      *
      * @param o      the source color
      * @param scalar the scalar
@@ -977,8 +963,8 @@ public class Lab implements IColor {
     }
 
     /**
-     * Rotates a color's a and b components. Accepts a normalized hue, or angle, in
-     * [0.0, 1.0].
+     * Rotates a color's a and b components. Accepts a normalized hue, or angle,
+     * in [0.0, 1.0].
      *
      * @param o      the color
      * @param amount the hue rotation
@@ -995,7 +981,10 @@ public class Lab implements IColor {
         final double cosad = Math.cos(hRad);
         final double sinad = Math.sin(hRad);
         return target.set(
-            o.l, (float) (cosad * ad - sinad * bd), (float) (cosad * bd + sinad * ad), o.alpha);
+            o.l,
+            (float) (cosad * ad - sinad * bd),
+            (float) (cosad * bd + sinad * ad),
+            o.alpha);
     }
 
     /**
@@ -1091,7 +1080,11 @@ public class Lab implements IColor {
      * @author Jan Behrens
      */
     public static Vec4 toSrXyz(
-        final float l, final float a, final float b, final float t, final Vec4 target) {
+        final float l,
+        final float a,
+        final float b,
+        final float t,
+        final Vec4 target) {
 
         final double ld = l * 0.01d;
 
@@ -1151,8 +1144,8 @@ public class Lab implements IColor {
     }
 
     /**
-     * Converts a scalar to the lightness and alpha channel. For use by the gradient
-     * class.
+     * Converts a scalar to the lightness and alpha channel. For use by the
+     * gradient class.
      *
      * @param scalar the scalar
      * @param target the output color
@@ -1165,15 +1158,14 @@ public class Lab implements IColor {
     }
 
     /**
-     * Generates a 3D array of vectors. The result is in layer-row-major order, but
-     * the parameters are
-     * supplied in reverse: columns first, then rows, then layers.<br>
+     * Generates a 3D array of vectors. The result is in layer-row-major order,
+     * but the parameters are supplied in reverse: columns first, then rows,
+     * then layers.
      * <br>
-     * This is separated to make overriding the public grid functions easier. This
-     * is protected
-     * because it is too easy for integers to be quietly promoted to floats if the
-     * signature
-     * parameters are confused.
+     * <br>
+     * This is separated to make overriding the public grid functions easier.
+     * This is protected because it is too easy for integers to be quietly
+     * promoted to floats if the signature parameters are confused.
      *
      * @param cols   number of columns
      * @param rows   number of rows
@@ -1292,8 +1284,8 @@ public class Lab implements IColor {
 
     /**
      * Sets a color with bytes. In Java, bytes are signed, within the range
-     * [{@value Byte#MIN_VALUE},
-     * {@value Byte#MAX_VALUE}] . The alpha channel defaults to 1.0 .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] . The alpha channel
+     * defaults to 1.0.
      *
      * @param l the light component
      * @param a the green-magenta component
@@ -1307,8 +1299,7 @@ public class Lab implements IColor {
 
     /**
      * Sets a color with bytes. In Java, bytes are signed, within the range
-     * [{@value Byte#MIN_VALUE},
-     * {@value Byte#MAX_VALUE}] .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}].
      *
      * @param l     the light component
      * @param a     the green-magenta component
@@ -1318,18 +1309,16 @@ public class Lab implements IColor {
      */
     public Lab set(final byte l, final byte a, final byte b, final byte alpha) {
 
-        /* @formatter:off */
-    return this.set(
-        (l & 0xff) * Lab.L_FROM_BYTE,
-        (a & 0xff) - 0x80,
-        (b & 0xff) - 0x80,
-        (alpha & 0xff) * Utils.ONE_255);
-    /* @formatter:on */
+        return this.set(
+            (l & 0xff) * Lab.L_FROM_BYTE,
+            (a & 0xff) - 0x80,
+            (b & 0xff) - 0x80,
+            (alpha & 0xff) * Utils.ONE_255);
     }
 
     /**
-     * Sets the l, a and b color channels of this color. The alpha channel defaults
-     * to 1.0 .
+     * Sets the l, a and b color channels of this color. The alpha channel
+     * defaults to 1.0 .
      *
      * @param l the light component
      * @param a the green-magenta component
@@ -1373,9 +1362,8 @@ public class Lab implements IColor {
 
     /**
      * Sets a color with shorts. In Java, shorts are signed, within the range
-     * [{@value
-     * Short#MIN_VALUE}, {@value Short#MAX_VALUE}] . The alpha channel defaults to
-     * 1.0 .
+     * [{@value Short#MIN_VALUE}, {@value Short#MAX_VALUE}]. The alpha channel
+     * defaults to 1.0.
      *
      * @param l the light component
      * @param a the green-magenta component
@@ -1389,8 +1377,7 @@ public class Lab implements IColor {
 
     /**
      * Sets a color with shorts. In Java, bytes are signed, within the range
-     * [{@value
-     * Short#MIN_VALUE}, {@value Short#MAX_VALUE}] .
+     * [{@value Short#MIN_VALUE}, {@value Short#MAX_VALUE}].
      *
      * @param l     the light component
      * @param a     the green-magenta component
@@ -1400,19 +1387,17 @@ public class Lab implements IColor {
      */
     public Lab set(final short l, final short a, final short b, final short alpha) {
 
-        /* @formatter:off */
-    return this.set(
-        (l & 0xffff) * Lab.L_FROM_SHORT,
-        ((a & 0xffff) - 0x8000) * Lab.AB_FROM_SHORT,
-        ((b & 0xffff) - 0x8000) * Lab.AB_FROM_SHORT,
-        (alpha & 0xffff) / 65535.0f);
-    /* @formatter:on */
+        return this.set(
+            (l & 0xffff) * Lab.L_FROM_SHORT,
+            ((a & 0xffff) - 0x8000) * Lab.AB_FROM_SHORT,
+            ((b & 0xffff) - 0x8000) * Lab.AB_FROM_SHORT,
+            (alpha & 0xffff) / 65535.0f);
     }
 
     /**
-     * Converts a color to a 32-bit integer where hexadecimal represents the color
-     * components as
-     * 0xTTLLAABB, T being alpha. Defaults to modular arithmetic.
+     * Converts a color to a 32-bit integer where hexadecimal represents the
+     * color components as 0xTTLLAABB, T being alpha. Defaults to modular
+     * arithmetic.
      *
      * @return the color in hexadecimal
      */
@@ -1422,13 +1407,11 @@ public class Lab implements IColor {
     }
 
     /**
-     * Converts a color to a 32-bit integer where hexadecimal represents the color
-     * components as
-     * 0xTTLLAABB, T being alpha. Uses saturation arithmetic, i.e., clamps the a and
-     * b components to
+     * Converts a color to a 32-bit integer where hexadecimal represents the
+     * color components as 0xTTLLAABB, T being alpha. Uses saturation
+     * arithmetic, i.e., clamps the <em>a</em> and <em>b</em> components to
      * [-127.5, 127.5], floors, then and adds 128. Scales lightness from [0.0,
-     * 100.0] to [0, 255].
-     * Scales alpha from [0.0, 1.0] to [0, 255].
+     * 100.0] to [0, 255]. Scales alpha from [0.0, 1.0] to [0, 255].
      *
      * @return the color in hexadecimal
      * @see Utils#clamp(float, float, float)
@@ -1447,12 +1430,10 @@ public class Lab implements IColor {
     }
 
     /**
-     * Converts a color to a 32-bit integer where hexadecimal represents the color
-     * components as
-     * 0xTTLLAABB, T being alpha. Uses modular arithmetic. Scales lightness from
-     * [0.0, 100.0] to [0,
-     * 255]. Scales alpha from [0.0, 1.0] to [0, 255]. Assumes a and b are in
-     * [-127.5, 127.5]; adds
+     * Converts a color to a 32-bit integer where hexadecimal represents the
+     * color components as 0xTTLLAABB, T being alpha. Uses modular arithmetic.
+     * Scales lightness from [0.0, 100.0] to [0, 255]. Scales alpha from
+     * [0.0, 1.0] to [0, 255]. Assumes a and b are in [-127.5, 127.5]; adds
      * 128 to each.
      *
      * @return the color in hexadecimal
@@ -1470,9 +1451,9 @@ public class Lab implements IColor {
     }
 
     /**
-     * Converts a color to a 64-bit integer where hexadecimal represents the color
-     * components as
-     * 0xTTTTLLLLAAAABBBB, T being alpha. Defaults to modular arithmetic.
+     * Converts a color to a 64-bit integer where hexadecimal represents the
+     * color components as 0xTTTTLLLLAAAABBBB, T being alpha. Defaults to
+     * modular arithmetic.
      *
      * @return the color in hexadecimal
      */
@@ -1481,9 +1462,9 @@ public class Lab implements IColor {
     }
 
     /**
-     * Converts a color to a 64-bit integer where hexadecimal represents the color
-     * components as
-     * 0xTTTTLLLLAAAABBBB, T being alpha. Uses saturation arithmetic.
+     * Converts a color to a 64-bit integer where hexadecimal represents the
+     * color components as 0xTTTTLLLLAAAABBBB, T being alpha. Uses saturation
+     * arithmetic.
      *
      * @return the color in hexadecimal
      * @see Utils#clamp(float, float, float)
@@ -1501,9 +1482,9 @@ public class Lab implements IColor {
     }
 
     /**
-     * Converts a color to a 64-bit integer where hexadecimal represents the color
-     * components as
-     * 0xTTTTLLLLAAAABBBB, T being alpha. Uses modular arithmetic.
+     * Converts a color to a 64-bit integer where hexadecimal represents the
+     * color components as 0xTTTTLLLLAAAABBBB, T being alpha. Uses modular
+     * arithmetic.
      *
      * @return the color in hexadecimal
      * @see Utils#clamp(float, float, float)
@@ -1544,8 +1525,7 @@ public class Lab implements IColor {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * color. Appends to an
-     * existing {@link StringBuilder}.
+     * color. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -1591,9 +1571,9 @@ public class Lab implements IColor {
         }
 
         /**
-         * A clamped interpolation between the origin and destination. Defers to an
-         * unclamped
-         * interpolation, which is to be defined by subclasses of this class.
+         * A clamped interpolation between the origin and destination. Defers
+         * to an unclamped interpolation, which is to be defined by subclasses
+         * of this class.
          *
          * @param orig   the origin color
          * @param dest   the destination color
@@ -1602,7 +1582,11 @@ public class Lab implements IColor {
          * @return the eased color
          */
         @Override
-        public Lab apply(final Lab orig, final Lab dest, final Float step, final Lab target) {
+        public Lab apply(
+            final Lab orig,
+            final Lab dest,
+            final Float step,
+            final Lab target) {
 
             final float tf = step;
             if (Float.isNaN(tf)) {
@@ -1626,8 +1610,8 @@ public class Lab implements IColor {
          * @param target the output color
          * @return the eased color
          */
-        public abstract Lab applyUnclamped(
-            final Lab orig, final Lab dest, final Float step, final Lab target);
+        public abstract Lab applyUnclamped(final Lab orig, final Lab dest,
+            final Float step, final Lab target);
 
         /**
          * Returns the simple name of this class.
@@ -1663,9 +1647,8 @@ public class Lab implements IColor {
     }
 
     /**
-     * Finds the analogous harmonies for the key color, plus and minus 30 degrees
-     * from the key hue.
-     * Returns an array containing 2 colors.
+     * Finds the analogous harmonies for the key color, plus and minus 30
+     * degrees from the key hue. Returns an array containing 2 colors.
      */
     public static class HarmonyAnalogous extends AbstrHarmony {
 
@@ -1695,19 +1678,16 @@ public class Lab implements IColor {
             final double halfca = 0.5d * ad;
             final double halfcb = 0.5d * bd;
 
-            /* @formatter:off */
-      return new Lab[] {
-        new Lab(lAna, (float) (rt32ca - halfcb), (float) (rt32cb + halfca), t),
-        new Lab(lAna, (float) (rt32ca + halfcb), (float) (rt32cb - halfca), t)
-      };
-      /* @formatter:on */
+            return new Lab[] {
+                new Lab(lAna, (float) (rt32ca - halfcb), (float) (rt32cb + halfca), t),
+                new Lab(lAna, (float) (rt32ca + halfcb), (float) (rt32cb - halfca), t)
+            };
         }
     }
 
     /**
-     * Finds the complementary harmony for the key color, 180 degrees from the key
-     * hue. Returns an
-     * array containing 1 color.
+     * Finds the complementary harmony for the key color, 180 degrees from the
+     * key hue. Returns an array containing 1 color.
      */
     public static class HarmonyComplement extends AbstrHarmony {
 
@@ -1726,16 +1706,15 @@ public class Lab implements IColor {
         @Override
         public Lab[] apply(final Lab o) {
 
-            /* @formatter:off */
-      return new Lab[] {new Lab((float) (100.0d - o.l), -o.a, -o.b, o.alpha)};
-      /* @formatter:on */
+            return new Lab[] {
+                new Lab((float) (100.0d - o.l), -o.a, -o.b, o.alpha)
+            };
         }
     }
 
     /**
-     * Finds the split-analogous harmonies for the key color, plus and minus 150
-     * degrees from the key
-     * hue. Returns an array containing 2 colors.
+     * Finds the split-analogous harmonies for the key color, plus and minus
+     * 150 degrees from the key hue. Returns an array containing 2 colors.
      */
     public static class HarmonySplit extends AbstrHarmony {
 
@@ -1765,19 +1744,16 @@ public class Lab implements IColor {
             final double halfca = 0.5d * ad;
             final double halfcb = 0.5d * bd;
 
-            /* @formatter:off */
-      return new Lab[] {
-        new Lab(lSpl, (float) (rt32ca - halfcb), (float) (rt32cb + halfca), t),
-        new Lab(lSpl, (float) (rt32ca + halfcb), (float) (rt32cb - halfca), t)
-      };
-      /* @formatter:on */
+            return new Lab[] {
+                new Lab(lSpl, (float) (rt32ca - halfcb), (float) (rt32cb + halfca), t),
+                new Lab(lSpl, (float) (rt32ca + halfcb), (float) (rt32cb - halfca), t)
+            };
         }
     }
 
     /**
-     * Finds the square harmonies for the key color, at 90, 180 and 270 degrees away
-     * from the key hue.
-     * Returns an array containing 3 colors.
+     * Finds the square harmonies for the key color, at 90, 180 and 270 degrees
+     * away from the key hue. Returns an array containing 3 colors.
      */
     public static class HarmonySquare extends AbstrHarmony {
 
@@ -1796,20 +1772,17 @@ public class Lab implements IColor {
         @Override
         public Lab[] apply(final Lab o) {
 
-            /* @formatter:off */
-      return new Lab[] {
-        new Lab(50.0f, -o.b, o.a, o.alpha),
-        new Lab((float) (100.0d - o.l), -o.a, -o.b, o.alpha),
-        new Lab(50.0f, o.b, -o.a, o.alpha)
-      };
-      /* @formatter:on */
+            return new Lab[] {
+                new Lab(50.0f, -o.b, o.a, o.alpha),
+                new Lab((float) (100.0d - o.l), -o.a, -o.b, o.alpha),
+                new Lab(50.0f, o.b, -o.a, o.alpha)
+            };
         }
     }
 
     /**
-     * Finds the tetradic harmonies for the key color, at 120, 180 and 300 degrees
-     * from the key hue.
-     * Returns an array containing 3 colors.
+     * Finds the tetradic harmonies for the key color, at 120, 180 and 300
+     * degrees from the key hue. Returns an array containing 3 colors.
      */
     public static class HarmonyTetradic extends AbstrHarmony {
 
@@ -1839,25 +1812,25 @@ public class Lab implements IColor {
             final double halfca = 0.5d * ad;
             final double halfcb = 0.5d * bd;
 
-            /* @formatter:off */
-      return new Lab[] {
-        new Lab(
-            (float) ((200.0d - ld) / 3.0d),
-            (float) (-halfca - rt32cb),
-            (float) (-halfcb + rt32ca),
-            t),
-        new Lab((float) (100.0d - ld), -o.a, -o.b, t),
-        new Lab(
-            (float) ((100.0d + ld) / 3.0d), (float) (halfca + rt32cb), (float) (halfcb - rt32ca), t)
-      };
-      /* @formatter:on */
+            return new Lab[] {
+                new Lab(
+                (float) ((200.0d - ld) / 3.0d),
+                (float) (-halfca - rt32cb),
+                (float) (-halfcb + rt32ca),
+                t),
+            new Lab((float) (100.0d - ld), -o.a, -o.b, t),
+                new Lab(
+                (float) ((100.0d + ld) / 3.0d),
+                (float) (halfca + rt32cb),
+                (float) (halfcb - rt32ca),
+                t)
+            };
         }
     }
 
     /**
-     * Finds the triadic harmonies for the key color, plus and minus 120 degrees
-     * from the key hue.
-     * Returns an array containing 2 colors.
+     * Finds the triadic harmonies for the key color, plus and minus 120
+     * degrees from the key hue. Returns an array containing 2 colors.
      */
     public static class HarmonyTriadic extends AbstrHarmony {
 
@@ -1887,12 +1860,10 @@ public class Lab implements IColor {
             final double halfca = -0.5d * ad;
             final double halfcb = -0.5d * bd;
 
-            /* @formatter:off */
-      return new Lab[] {
-        new Lab(lTri, (float) (halfca - rt32cb), (float) (halfcb + rt32ca), t),
-        new Lab(lTri, (float) (halfca + rt32cb), (float) (halfcb - rt32ca), t)
-      };
-      /* @formatter:on */
+            return new Lab[] {
+                new Lab(lTri, (float) (halfca - rt32cb), (float) (halfcb + rt32ca), t),
+                new Lab(lTri, (float) (halfca + rt32cb), (float) (halfcb - rt32ca), t)
+            };
         }
     }
 
@@ -1917,18 +1888,20 @@ public class Lab implements IColor {
          * @return the eased color
          */
         @Override
-        public Lab applyUnclamped(final Lab orig, final Lab dest, final Float step, final Lab target) {
+        public Lab applyUnclamped(
+            final Lab orig,
+            final Lab dest,
+            final Float step,
+            final Lab target) {
 
             final float t = step;
             final float u = 1.0f - t;
 
-            /* @formatter:off */
-      return target.set(
-          u * orig.l + t * dest.l,
-          u * orig.a + t * dest.a,
-          u * orig.b + t * dest.b,
-          u * orig.alpha + t * dest.alpha);
-      /* @formatter:on */
+            return target.set(
+                u * orig.l + t * dest.l,
+                u * orig.a + t * dest.a,
+                u * orig.b + t * dest.b,
+                u * orig.alpha + t * dest.alpha);
         }
     }
 
@@ -1958,15 +1931,16 @@ public class Lab implements IColor {
         private final Lch oLch = new Lch();
 
         /**
-         * The default constructor. Creates a mixer with nearest hue interpolation.
+         * The default constructor. Creates a mixer with nearest hue
+         * interpolation.
          */
         public MixLch() {
             this(new IColor.HueNear());
         }
 
         /**
-         * Creates a color SR LCH mixing function with the given easing functions for
-         * hue.
+         * Creates a color SR LCH mixing function with the given easing
+         * functions for hue.
          *
          * @param hueFunc the hue easing function
          */
@@ -1987,7 +1961,11 @@ public class Lab implements IColor {
          * @see Lch#fromLab(Lab, Lch)
          */
         @Override
-        public Lab applyUnclamped(final Lab orig, final Lab dest, final Float step, final Lab target) {
+        public Lab applyUnclamped(
+            final Lab orig,
+            final Lab dest,
+            final Float step,
+            final Lab target) {
 
             Lch.fromLab(orig, this.oLch);
             Lch.fromLab(dest, this.dLch);
@@ -1999,8 +1977,8 @@ public class Lab implements IColor {
     }
 
     /**
-     * Eases between two colors in linear standard RGB. Assumes that the LAB used is
-     * SR LAB 2.
+     * Eases between two colors in linear standard RGB. Assumes that the LAB
+     * used is SR LAB 2.
      */
     public static class MixLrgb extends AbstrEasing {
 
@@ -2060,7 +2038,11 @@ public class Lab implements IColor {
          * @return the eased color
          */
         @Override
-        public Lab applyUnclamped(final Lab orig, final Lab dest, final Float step, final Lab target) {
+        public Lab applyUnclamped(
+            final Lab orig,
+            final Lab dest,
+            final Float step,
+            final Lab target) {
 
             Lab.toSrXyz(orig, this.oXyz);
             Lab.toSrXyz(dest, this.dXyz);
@@ -2083,8 +2065,8 @@ public class Lab implements IColor {
     }
 
     /**
-     * Eases between two colors in standard RGB. Assumes that the LAB used is SR LAB
-     * 2.
+     * Eases between two colors in standard RGB. Assumes that the LAB used is
+     * SR LAB 2.
      */
     public static class MixSrgb extends MixLrgb {
 
@@ -2119,7 +2101,11 @@ public class Lab implements IColor {
          * @return the eased color
          */
         @Override
-        public Lab applyUnclamped(final Lab orig, final Lab dest, final Float step, final Lab target) {
+        public Lab applyUnclamped(
+            final Lab orig,
+            final Lab dest,
+            final Float step,
+            final Lab target) {
 
             Rgb.srLab2TosRgb(orig, this.oStandard, this.oLinear, this.oXyz);
             Rgb.srLab2TosRgb(dest, this.dStandard, this.dLinear, this.dXyz);

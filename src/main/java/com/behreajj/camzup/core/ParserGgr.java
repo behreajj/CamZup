@@ -99,14 +99,16 @@ public abstract class ParserGgr {
 
                 for (String ln = in.readLine(); ln != null; ln = in.readLine()) {
                     final String lnlc = ln.trim().toLowerCase();
-                    if (lnlc.indexOf('#') == 0 || lnlc.equals("gimp gradient")) {
+                    if (lnlc.indexOf('#') == 0
+                        || lnlc.equals("gimp gradient")) {
                         /* Skip. */
                     } else {
 
                         /*
                          * The last two tokens are integer values that represent
-                         * enumeration constants. They are promoted to floats here to
-                         * avoid having to create a separate integer array.
+                         * enumeration constants. They are promoted to floats
+                         * here to avoid having to create a separate integer
+                         * array.
                          */
                         tokens = spacePattern.split(lnlc, 0);
                         if (tokens.length > 12) {
@@ -157,10 +159,10 @@ public abstract class ParserGgr {
                 final Rgb evalClr = new Rgb();
 
                 /*
-                 * Deal with boundary cases: when step is less than or equal to left
-                 * edge of first key or when step is greater than or equal to right
-                 * edge of the last key. This will likely amount to step <= 0.0 or
-                 * step >= 1.0 .
+                 * Deal with boundary cases: when step is less than or equal to
+                 * left edge of first key or when step is greater than or equal
+                 * to right edge of the last key. This will likely amount to
+                 * step <= 0.0 or step >= 1.0 .
                  */
                 if (step <= keyArr[0][0]) {
 
@@ -239,10 +241,11 @@ public abstract class ParserGgr {
                     Rgb.sRgbToSrLab2(rtClr, rtLab, rtXyz, rtLinear);
 
                     /*
-                     * Mix color based on color space. Default to RGB. HSB clockwise
-                     * and counter-clockwise use SR LCH as a substitute. Full
-                     * extension for ramps that go from red to red is not supported.
-                     * For better control, add epsilon to the left or right hue.
+                     * Mix color based on color space. Default to RGB. HSB
+                     * clockwise and counter-clockwise use SR LCH as a
+                     * substitute. Full extension for ramps that go from red
+                     * to red is not supported. For better control, add epsilon
+                     * to the left or right hue.
                      */
                     final int clrSpc = (int) seg[12];
                     switch (clrSpc) {
@@ -262,8 +265,8 @@ public abstract class ParserGgr {
                 }
 
                 /*
-                 * Lab color is assigned to key by value, not reference, so it can
-                 * be reused across many keys.
+                 * Lab color is assigned to key by value, not reference, so it
+                 * can be reused across many keys.
                  */
                 trgKeys.add(new ColorKey(step, mixedLab));
             }

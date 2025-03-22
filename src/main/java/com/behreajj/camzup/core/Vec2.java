@@ -485,20 +485,6 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Clamps the vector to a range in [0.0, 1.0]. Useful for working with texture
-     * coordinates.
-     *
-     * @param v      the input vector
-     * @param target the output vector
-     * @return the clamped vector
-     * @see Utils#clamp01(float)
-     */
-    public static Vec2 clamp01(final Vec2 v, final Vec2 target) {
-
-        return target.set(Utils.clamp01(v.x), Utils.clamp01(v.y));
-    }
-
-    /**
      * Concatenates two one-dimensional Vec2 arrays.
      *
      * @param a the first array

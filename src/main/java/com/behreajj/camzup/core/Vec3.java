@@ -560,19 +560,6 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Clamps the vector to a range in [0, 1].
-     *
-     * @param v      the input vector
-     * @param target the output vector
-     * @return the clamped vector
-     * @see Utils#clamp01(float)
-     */
-    public static Vec3 clamp01(final Vec3 v, final Vec3 target) {
-
-        return target.set(Utils.clamp01(v.x), Utils.clamp01(v.y), Utils.clamp01(v.z));
-    }
-
-    /**
      * Concatenates two one-dimensional Vec3 arrays.
      *
      * @param a the first array

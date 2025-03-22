@@ -75,7 +75,7 @@ public abstract class Utils {
     public static final double ONE_THIRD_D = 0.3333333333333333d;
 
     /**
-     * One divided by tau. Useful for converting an index in a for-loop to an angle.
+     * One divided by tau.
      */
     public static final float ONE_TAU = 0.15915494f;
 
@@ -85,7 +85,7 @@ public abstract class Utils {
     public static final double ONE_TAU_2_D = 0.07957747154594767d;
 
     /**
-     * One divided by tau. Useful for converting an index in a for-loop to an angle.
+     * One divided by tau.
      */
     public static final double ONE_TAU_D = 0.15915494309189535d;
 
@@ -100,8 +100,8 @@ public abstract class Utils {
     public static final float PI = 3.1415927f;
 
     /**
-     * An angle in radians is multiplied by this constant to convert it to degrees.
-     * 180.0 / pi .
+     * An angle in radians is multiplied by this constant to convert it to
+     * degrees. 180.0 / pi .
      */
     public static final float RAD_TO_DEG = 57.29578f;
 
@@ -136,9 +136,8 @@ public abstract class Utils {
     public static final double TAU_D = 6.283185307179586d;
 
     /**
-     * pi divided by three. 60 degrees. Useful for describing the field of view in a
-     * perspective
-     * camera.
+     * pi divided by three. 60 degrees. Useful for describing the field of view
+     * in a perspective camera.
      */
     public static final float THIRD_PI = 1.0471976f;
 
@@ -158,8 +157,8 @@ public abstract class Utils {
     public static int MUL_BASE = Utils.HASH_BASE * Utils.HASH_MUL;
 
     /**
-     * Two-thirds, 2.0 / 3.0 . Useful for setting handles on the knot of a Bézier
-     * curve.
+     * Two-thirds, 2.0 / 3.0 . Useful for setting handles on the knot of a
+     * Bézier curve.
      */
     public static float TWO_THIRDS = 0.6666667f;
 
@@ -170,11 +169,9 @@ public abstract class Utils {
     }
 
     /**
-     * Finds the absolute value of a single precision real number. An alias for
-     * {@link
-     * Math#abs(float)}. Relies on bit-masking to remove the sign bit. Equivalent to
-     * <code>
-     * Utils.max(-a, a)</code>.
+     * Finds the absolute value of a single precision real number. An alias
+     * for {@link Math#abs(float)}. Relies on bit-masking to remove the sign
+     * bit. Equivalent to <code>Utils.max(-a, a)</code>.
      *
      * @param v the input value
      * @return the absolute value
@@ -187,23 +184,22 @@ public abstract class Utils {
     }
 
     /**
-     * A bounds checked approximation of the arc-cosine for single precision real
-     * numbers. Returns a
-     * value in the range [0.0, pi] : pi when the input is less than or equal to
-     * -1.0; pi / 2.0 when
-     * the input is 0.0; 0.0 when the input is greater than or equal to 1.0.<br>
+     * A bounds checked approximation of the arc-cosine for single precision
+     * real numbers. Returns a value in the range [0.0, pi] : pi when the input
+     * is less than or equal to -1.0; pi / 2.0 when the input is 0.0; 0.0 when
+     * the input is greater than or equal to 1.0.
      * <br>
-     * {@link Math#acos(double) } defers to {@link StrictMath#acos(double) }, which
-     * is implemented
-     * natively. This is not a "fast" alternative.<br>
+     * <br>
+     * {@link Math#acos(double) } defers to {@link StrictMath#acos(double) },
+     * which is implemented natively. This is not a "fast" alternative.
+     * <br>
      * <br>
      * Based on the algorithm in
      * <a href="https://developer.download.nvidia.com/cg/acos.html">Nvidia
-     * Cg 3.1 Toolkit Documentation</a>. This cites M. Abramowitz and I.A. Stegun,
-     * Eds., <em>Handbook
-     * of Mathematical Functions</em>, possibly p. 83, which cites
-     * <em>Approximations for Digital
-     * Computers</em> by C. Hastings, Jr.
+     * Cg 3.1 Toolkit Documentation</a>. This cites M. Abramowitz and I.A.
+     * Stegun, Eds., <em>Handbook of Mathematical Functions</em>, possibly p.
+     * 83, which cites <em>Approximations for Digital Computers</em> by C.
+     * Hastings, Jr.
      *
      * @param y the input value
      * @return the angle in radians
@@ -228,9 +224,8 @@ public abstract class Utils {
     }
 
     /**
-     * Evaluates two floats like booleans using the AND logic gate. Non-zero inputs
-     * evaluate to true,
-     * or 1. Zero evaluates to false, or 0.
+     * Evaluates two floats like booleans using the AND logic gate. Non-zero
+     * inputs evaluate to true, or 1. Zero evaluates to false, or 0.
      *
      * @param a the left operand
      * @param b the right operand
@@ -238,14 +233,14 @@ public abstract class Utils {
      */
     public static int and(final float a, final float b) {
 
-        return (a != 0.0f && !Float.isNaN(a) ? 1 : 0) & (b != 0.0f && !Float.isNaN(a) ? 1 : 0);
+        return (a != 0.0f && !Float.isNaN(a) ? 1 : 0)
+            & (b != 0.0f && !Float.isNaN(a) ? 1 : 0);
     }
 
     /**
-     * A quick approximation test. Tests to see if the absolute of the difference
-     * between two values
-     * is less than or equal to {@link Utils#EPSILON}, {@value Utils#EPSILON}. Does
-     * not handle edge
+     * A quick approximation test. Tests to see if the absolute of the
+     * difference between two values is less than or equal to
+     * {@link Utils#EPSILON}, {@value Utils#EPSILON}. Does not handle edge
      * cases.
      *
      * @param a the left comparisand
@@ -259,9 +254,9 @@ public abstract class Utils {
     }
 
     /**
-     * A quick approximation test. Tests to see if the absolute of the difference
-     * between two values
-     * is less than or equal to a tolerance. Does not handle edge cases.
+     * A quick approximation test. Tests to see if the absolute of the
+     * difference between two values is less than or equal to a tolerance. Does
+     * not handle edge cases.
      *
      * @param a the left comparisand
      * @param b the right comparisand
@@ -276,23 +271,20 @@ public abstract class Utils {
 
     /**
      * A bounds checked approximation of the arc-sine for single precision real
-     * numbers. Returns a
-     * value in the range [-pi / 2.0, pi / 2.0]: -pi / 2.0 when the input is less
-     * than or equal to
-     * -1.0; 0.0 when the input is 0.0; pi / 2.0 when the input is greater than or
-     * equal to 1.0.<br>
+     * numbers. Returns a value in the range [-pi / 2.0, pi / 2.0]: -pi / 2.0
+     * when the input is less than or equal to -1.0; 0.0 when the input is 0.0;
+     * pi / 2.0 when the input is greater than or equal to 1.0.
      * <br>
-     * {@link Math#asin(double) } defers to {@link StrictMath#asin(double) }, which
-     * is implemented
-     * natively. This is not a "fast" alternative.<br>
+     * <br>
+     * {@link Math#asin(double) } defers to {@link StrictMath#asin(double) },
+     * which is implemented natively. This is not a "fast" alternative.<br>
      * <br>
      * Based on the algorithm in
      * <a href="https://developer.download.nvidia.com/cg/asin.html">Nvidia
-     * Cg 3.1 Toolkit Documentation</a> . This cites M. Abramowitz and I.A. Stegun,
-     * Eds., <em>Handbook
-     * of Mathematical Functions</em>, possibly p. 83, which cites
-     * <em>Approximations for Digital
-     * Computers</em> by C. Hastings, Jr.
+     * Cg 3.1 Toolkit Documentation</a> . This cites M. Abramowitz and I.A.
+     * Stegun, Eds., <em>Handbook of Mathematical Functions</em>, possibly p.
+     * 83, which cites <em>Approximations for Digital Computers</em> by C.
+     * Hastings, Jr.
      *
      * @param y the input value
      * @return the angle in radians
@@ -318,13 +310,13 @@ public abstract class Utils {
     }
 
     /**
-     * Finds a single precision approximation of a signed angle given a vertical and
-     * horizontal
-     * component. The vertical component precedes the horizontal. The return value
-     * falls in the range
-     * [-pi, pi] .<br>
+     * Finds a single precision approximation of a signed angle given a
+     * vertical and horizontal component. The vertical component precedes the
+     * horizontal. The return value falls in the range [-pi, pi].
      * <br>
-     * This is not a "fast" alternative to {@link Math#atan2(double, double) }.<br>
+     * <br>
+     * This is not a "fast" alternative to {@link Math#atan2(double, double)}.
+     * <br>
      * <br>
      * Based on the algorithm in
      * <a href="https://developer.download.nvidia.com/cg/atan2.html">Nvidia
@@ -361,9 +353,8 @@ public abstract class Utils {
     }
 
     /**
-     * Appends to an array of bytes, ordered from least to most significant digit
-     * (little endian).
-     * Writes 4 bytes.
+     * Appends to an array of bytes, ordered from least to most significant
+     * digit (little endian). Writes 4 bytes.
      *
      * @param f4 the float
      * @param a  the array
@@ -378,8 +369,7 @@ public abstract class Utils {
 
     /**
      * Appends to an array of bytes, ordered from least to most significant digit
-     * (little endian).
-     * Writes 4 bytes.
+     * (little endian). Writes 4 bytes.
      *
      * @param i4 the integer
      * @param a  the array
@@ -397,9 +387,8 @@ public abstract class Utils {
     }
 
     /**
-     * Appends to an array of bytes, ordered from least to most significant digit
-     * (little endian).
-     * Writes 8 bytes.
+     * Appends to an array of bytes, ordered from least to most significant
+     * digit (little endian). Writes 8 bytes.
      *
      * @param i8 the long
      * @param a  the array
@@ -408,23 +397,22 @@ public abstract class Utils {
      */
     public static byte[] byteslm(final long i8, final byte[] a, final int j) {
 
-        a[j] = (byte) (i8 & 0xff);
-        a[j + 1] = (byte) (i8 >> 0x08 & 0xff);
-        a[j + 2] = (byte) (i8 >> 0x10 & 0xff);
-        a[j + 3] = (byte) (i8 >> 0x18 & 0xff);
+        a[j] = (byte) (i8 & 0xffL);
+        a[j + 1] = (byte) (i8 >> 0x08L & 0xffL);
+        a[j + 2] = (byte) (i8 >> 0x10L & 0xffL);
+        a[j + 3] = (byte) (i8 >> 0x18L & 0xffL);
 
-        a[j + 4] = (byte) (i8 >> 0x20 & 0xff);
-        a[j + 5] = (byte) (i8 >> 0x28 & 0xff);
-        a[j + 6] = (byte) (i8 >> 0x30 & 0xff);
-        a[j + 7] = (byte) (i8 >> 0x38 & 0xff);
+        a[j + 4] = (byte) (i8 >> 0x20L & 0xffL);
+        a[j + 5] = (byte) (i8 >> 0x28L & 0xffL);
+        a[j + 6] = (byte) (i8 >> 0x30L & 0xffL);
+        a[j + 7] = (byte) (i8 >> 0x38L & 0xffL);
 
         return a;
     }
 
     /**
-     * Appends to an array of bytes, ordered from least to most significant digit
-     * (little endian).
-     * Writes 2 bytes.
+     * Appends to an array of bytes, ordered from least to most significant
+     * digit (little endian). Writes 2 bytes.
      *
      * @param i2 the short
      * @param a  the array
@@ -439,9 +427,8 @@ public abstract class Utils {
     }
 
     /**
-     * Appends to an array of bytes, ordered from most to least significant digit
-     * (big endian). Writes
-     * 4 bytes.
+     * Appends to an array of bytes, ordered from most to least significant
+     * digit (big endian). Writes 4 bytes.
      *
      * @param f4 the float
      * @param a  the array
@@ -454,9 +441,8 @@ public abstract class Utils {
     }
 
     /**
-     * Appends to an array of bytes, ordered from most to least significant digit
-     * (big endian). Writes
-     * 4 bytes.
+     * Appends to an array of bytes, ordered from most to least significant
+     * digit (big endian). Writes 4 bytes.
      *
      * @param i4 the integer
      * @param a  the array
@@ -474,34 +460,32 @@ public abstract class Utils {
     }
 
     /**
-     * Appends to an array of bytes, ordered from most to least significant digit
-     * (big endian). Writes
-     * 8 bytes.
+     * Appends to an array of bytes, ordered from most to least significant
+     * digit (big endian). Writes 8 bytes.
      *
-     * @param i4 the long
+     * @param i8 the long
      * @param a  the array
      * @param j  the index
      * @return the byte array
      */
-    public static byte[] bytesml(final long i4, final byte[] a, final int j) {
+    public static byte[] bytesml(final long i8, final byte[] a, final int j) {
 
-        a[j] = (byte) (i4 >> 0x38 & 0xff);
-        a[j + 1] = (byte) (i4 >> 0x30 & 0xff);
-        a[j + 2] = (byte) (i4 >> 0x28 & 0xff);
-        a[j + 3] = (byte) (i4 >> 0x20 & 0xff);
+        a[j] = (byte) (i8 >> 0x38L & 0xffL);
+        a[j + 1] = (byte) (i8 >> 0x30L & 0xffL);
+        a[j + 2] = (byte) (i8 >> 0x28L & 0xffL);
+        a[j + 3] = (byte) (i8 >> 0x20L & 0xffL);
 
-        a[j + 4] = (byte) (i4 >> 0x18 & 0xff);
-        a[j + 5] = (byte) (i4 >> 0x10 & 0xff);
-        a[j + 6] = (byte) (i4 >> 0x08 & 0xff);
-        a[j + 7] = (byte) (i4 & 0xff);
+        a[j + 4] = (byte) (i8 >> 0x18L & 0xffL);
+        a[j + 5] = (byte) (i8 >> 0x10L & 0xffL);
+        a[j + 6] = (byte) (i8 >> 0x08L & 0xffL);
+        a[j + 7] = (byte) (i8 & 0xffL);
 
         return a;
     }
 
     /**
-     * Appends to an array of bytes, ordered from most to least significant digit
-     * (big endian). Writes
-     * 2 bytes.
+     * Appends to an array of bytes, ordered from most to least significant
+     * digit (big endian). Writes 2 bytes.
      *
      * @param i2 the short
      * @param a  the array
@@ -525,7 +509,7 @@ public abstract class Utils {
      */
     public static int ceil(final float v) {
 
-        return v > 0.0f ? (int) v + 1 : v < 0.0f ? (int) v : 0;
+        return v > 0.0f ? (int) v + 1 : v < -0.0f ? (int) v : 0;
     }
 
     /**
@@ -580,10 +564,11 @@ public abstract class Utils {
 
     /**
      * Returns the first floating-point argument with the sign of the second
-     * floating-point argument.
-     * An alias of {@link Math#copySign(float, float)} .<br>
+     * floating-point argument. An alias of
+     * {@link Math#copySign(float, float)}.<br>
      * <br>
-     * When the sign is zero, the return value will depend on the sign of the zero.
+     * When the sign is zero, the return value will depend on the sign of the
+     * zero.
      *
      * @param magnitude the magnitude
      * @param sign      the sign
@@ -599,10 +584,9 @@ public abstract class Utils {
     }
 
     /**
-     * Returns the first floating-point argument with the sign of the second integer
-     * argument. When
-     * the sign is zero, the return value will be positive, as integer zeroes are
-     * unsigned.
+     * Returns the first floating-point argument with the sign of the second
+     * integer argument. When the sign is zero, the return value will be
+     * positive, as integer zeroes are unsigned.
      *
      * @param magnitude the magnitude
      * @param sign      the sign
@@ -617,8 +601,8 @@ public abstract class Utils {
     }
 
     /**
-     * Finds the single-precision cosine of an angle in radians. Returns a value in
-     * the range [-1.0, 1.0] .<br>
+     * Finds the single-precision cosine of an angle in radians. Returns a
+     * value in the range [-1.0, 1.0] .<br>
      * <br>
      * Wraps {@link Math#cos(double)}.
      *
@@ -632,8 +616,8 @@ public abstract class Utils {
 
     /**
      * Finds the approximate cotangent of the angle in radians. Equivalent to
-     * dividing the cosine of
-     * the angle by the sine, or to 1.0 / tan ( <em>a</em> ) .
+     * dividing the cosine of the angle by the sine, or to
+     * 1.0 / tan ( <em>a</em> ) .
      *
      * @param radians the angle in radians
      * @return the cotangent
@@ -689,7 +673,8 @@ public abstract class Utils {
          * https://stackoverflow.com/a/28037434 (for signed)
          */
 
-        return Utils.PI - Utils.abs(Utils.abs(Utils.modRadians(b) - Utils.modRadians(a)) - Utils.PI);
+        return Utils.PI - Utils.abs(Utils.abs(Utils.modRadians(b)
+            - Utils.modRadians(a)) - Utils.PI);
     }
 
     /**
@@ -707,7 +692,7 @@ public abstract class Utils {
 
     /**
      * Divides the left operand by the right, but returns zero when the
-     * denominator is zero, avoiding the {@link java.lang.ArithmeticException} .
+     * denominator is zero, avoiding the {@link java.lang.ArithmeticException}.
      *
      * @param a the numerator
      * @param b the denominator
@@ -771,7 +756,7 @@ public abstract class Utils {
      */
     public static int floor(final float v) {
 
-        return v > 0.0f ? (int) v : v < 0.0f ? (int) v - 1 : 0;
+        return v > 0.0f ? (int) v : v < -0.0f ? (int) v - 1 : 0;
     }
 
     /**
@@ -859,35 +844,35 @@ public abstract class Utils {
     }
 
     /**
-     * Parses four bytes in an array to a 32-bit integer, ordered from least to
+     * Parses 4 bytes in an array to a 32-bit integer, ordered from least to
      * most significant digit (little endian).
      *
      * @param arr the array
-     * @param i   the index
+     * @param j   the index
      * @return the float
      */
-    public static int intlm(final byte[] arr, final int i) {
+    public static int intlm(final byte[] arr, final int j) {
 
-        return arr[i] & 0xff
-            | (arr[i + 1] & 0xff) << 0x08
-            | (arr[i + 2] & 0xff) << 0x10
-            | (arr[i + 3] & 0xff) << 0x18;
+        return arr[j] & 0xff
+            | (arr[j + 1] & 0xff) << 0x08
+            | (arr[j + 2] & 0xff) << 0x10
+            | (arr[j + 3] & 0xff) << 0x18;
     }
 
     /**
-     * Parses four bytes in an array to a 32-bit integer, ordered from most to
+     * Parses 4 bytes in an array to a 32-bit integer, ordered from most to
      * least significant digit (big endian).
      *
      * @param arr the array
-     * @param i   the index
+     * @param j   the index
      * @return the float
      */
-    public static int intml(final byte[] arr, final int i) {
+    public static int intml(final byte[] arr, final int j) {
 
-        return (arr[i] & 0xff) << 0x18
-            | (arr[i + 1] & 0xff) << 0x10
-            | (arr[i + 2] & 0xff) << 0x08
-            | arr[i + 3] & 0xff;
+        return (arr[j] & 0xff) << 0x18
+            | (arr[j + 1] & 0xff) << 0x10
+            | (arr[j + 2] & 0xff) << 0x08
+            | arr[j + 3] & 0xff;
     }
 
     /**
@@ -1012,7 +997,10 @@ public abstract class Utils {
      * @param step the step
      * @return the interpolated value
      */
-    public static float lerpUnclamped(final float orig, final float dest, final float step) {
+    public static float lerpUnclamped(
+        final float orig,
+        final float dest,
+        final float step) {
 
         return (1.0f - step) * orig + step * dest;
     }
@@ -1028,7 +1016,10 @@ public abstract class Utils {
      * @return the interpolated value
      * @see Utils#round(float)
      */
-    public static int lerpUnclamped(final int orig, final int dest, final float step) {
+    public static int lerpUnclamped(
+        final int orig,
+        final int dest,
+        final float step) {
 
         return Utils.round((1.0f - step) * orig + step * dest);
     }
@@ -1259,12 +1250,10 @@ public abstract class Utils {
 
     /**
      * Applies floor modulo to the operands. Uses the formula mod ( <em>a</em>,
-     * <em>b</em> ) :=
-     * <em>a</em> - <em>b</em> * floor ( <em>a</em> / <em>b</em> ). When <em>b</em>
-     * is zero, returns
-     * <em>a</em>. If <em>b</em> is one, use {@link Utils#mod1(float)} or <em>a</em>
-     * -
-     * floor(<em>a</em>) instead.
+     * <em>b</em> ) := <em>a</em> - <em>b</em> * floor ( <em>a</em> /
+     * <em>b</em> ). When <em>b</em> is zero, returns <em>a</em>. If <em>b</em>
+     * is one, use {@link Utils#mod1(float)} or <em>a</em> - floor(<em>a</em>)
+     * instead.
      *
      * @param a the left operand
      * @param b the right operand
@@ -1277,7 +1266,7 @@ public abstract class Utils {
             final float quot = a / b;
             return a - b * (quot > 0.0f
                 ? (int) quot
-                : quot < 0.0f ? (int) quot - 1.0f
+                : quot < -0.0f ? (int) quot - 1.0f
                 : 0.0f);
         }
         return a;
@@ -1334,7 +1323,7 @@ public abstract class Utils {
      */
     public static float mod1(final float v) {
 
-        return v > 0.0f ? v - (int) v : v < 0.0f ? v - ((int) v - 1.0f) : 0.0f;
+        return v > 0.0f ? v - (int) v : v < -0.0f ? v - ((int) v - 1.0f) : 0.0f;
     }
 
     /**
@@ -1351,7 +1340,7 @@ public abstract class Utils {
         final float dNorm = degrees * Utils.ONE_360;
         return degrees - 360.0f * (dNorm > 0.0f
             ? (int) dNorm
-            : dNorm < 0.0f
+            : dNorm < -0.0f
             ? (int) dNorm - 1.0f
             : 0.0f);
     }
@@ -1371,14 +1360,14 @@ public abstract class Utils {
         final float rNorm = radians * Utils.ONE_TAU;
         return radians - Utils.TAU * (rNorm > 0.0f
             ? (int) rNorm
-            : rNorm < 0.0f
+            : rNorm < -0.0f
             ? (int) rNorm - 1.0f
             : 0.0f);
     }
 
     /**
-     * Applies floor modulo to the operands. Does not check if the right operand is
-     * zero.
+     * Applies floor modulo to the operands. Does not check if the right
+     * operand is zero.
      *
      * @param a the left operand
      * @param b the right operand
@@ -1388,7 +1377,7 @@ public abstract class Utils {
 
         // return a - b * Utils.floor(a / b);
         final float q = a / b;
-        return a - b * (q > 0.0f ? (int) q : q < 0.0f ? (int) q - 1.0f : 0.0f);
+        return a - b * (q > 0.0f ? (int) q : q < -0.0f ? (int) q - 1.0f : 0.0f);
     }
 
     /**
@@ -1416,9 +1405,8 @@ public abstract class Utils {
     }
 
     /**
-     * Finds the logical opposite of a float holding a boolean value. Returns 0 for
-     * non-zero inputs.
-     * Returns 1 for inputs equal to zero.
+     * Finds the logical opposite of a float holding a boolean value. Returns
+     * 0 for non-zero inputs. Returns 1 for inputs equal to zero.
      *
      * @param v the input value
      * @return the opposite
@@ -1429,9 +1417,9 @@ public abstract class Utils {
     }
 
     /**
-     * Evaluates two floats like booleans, using the inclusive or (OR) logic gate.
-     * Non-zero inputs
-     * evaluate to true, or 1. Zero evaluates to false, or 0.
+     * Evaluates two floats like booleans, using the inclusive or (OR) logic
+     * gate. Non-zero inputs evaluate to true, or 1. Zero evaluates to false,
+     * or 0.
      *
      * @param a the left operand
      * @param b the right operand
@@ -1439,7 +1427,8 @@ public abstract class Utils {
      */
     public static int or(final float a, final float b) {
 
-        return (a != 0.0f && !Float.isNaN(a) ? 1 : 0) | (b != 0.0f && !Float.isNaN(a) ? 1 : 0);
+        return (a != 0.0f && !Float.isNaN(a) ? 1 : 0)
+            | (b != 0.0f && !Float.isNaN(a) ? 1 : 0);
     }
 
     /**
@@ -1454,10 +1443,9 @@ public abstract class Utils {
     }
 
     /**
-     * Oscillates between [0.0, 1.0] based on an input step and a pause factor. When
-     * the pause is
-     * greater than 1.0, the value will be clamped to the bound before returning to
-     * the other pole.
+     * Oscillates between [0.0, 1.0] based on an input step and a pause factor.
+     * When the pause is greater than 1.0, the value will be clamped to the
+     * bound before returning to the other pole.
      *
      * @param step  the step
      * @param pause the pause factor
@@ -1482,11 +1470,9 @@ public abstract class Utils {
     }
 
     /**
-     * Oscillates between a lower and upper bound based on an input step and a pause
-     * factor. When the
-     * pause is greater than 1.0, the value will be clamped to the bound before
-     * returning to the other
-     * pole.
+     * Oscillates between a lower and upper bound based on an input step and
+     * a pause factor. When the pause is greater than 1.0, the value will be
+     * clamped to the bound before returning to the other pole.
      *
      * @param lb    the lower bound
      * @param ub    the upper bound
@@ -1527,11 +1513,9 @@ public abstract class Utils {
     }
 
     /**
-     * Oscillates between a lower and upper bound based on an input step and a pause
-     * factor. When the
-     * pause is greater than 1.0, the value will be clamped to the bound before
-     * returning to the other
-     * pole.
+     * Oscillates between a lower and upper bound based on an input step and a
+     * pause factor. When the pause is greater than 1.0, the value will be
+     * clamped to the bound before returning to the other pole.
      *
      * @param lb    the lower bound
      * @param ub    the upper bound
@@ -1545,9 +1529,8 @@ public abstract class Utils {
     }
 
     /**
-     * Finds the single-precision of a number raised to the power of another. Wraps
-     * {@link
-     * Math#pow(double, double)} .
+     * Finds the single-precision of a number raised to the power of another.
+     * Wraps {@link Math#pow(double, double)} .
      *
      * @param a left operand
      * @param b right operand
@@ -1573,11 +1556,9 @@ public abstract class Utils {
     }
 
     /**
-     * Reduces the signal, or granularity, of a signed value. The quantization is
-     * centered about zero.
-     * Applied to a vector, this yields a crenelated effect. If the levels are zero,
-     * returns the value
-     * unaltered.
+     * Reduces the signal, or granularity, of a signed value. The quantization
+     * is centered about zero. Applied to a vector, this yields a crenelated
+     * effect. If the levels are zero, returns the value unaltered.
      *
      * @param v      the value
      * @param levels the levels
@@ -1593,11 +1574,10 @@ public abstract class Utils {
     }
 
     /**
-     * Reduces the signal, or granularity, of an unsigned value. The quantization
-     * treats zero as a
-     * left edge. Applied to a color, this yields a posterization effect. If the
-     * levels are 1 or -1,
-     * returns the value unaltered.
+     * Reduces the signal, or granularity, of an unsigned value. The
+     * quantization treats zero as a left edge. Applied to a color, this yields
+     * a posterization effect. If the levels are 1 or -1, returns the value
+     * unaltered.
      *
      * @param v      the value
      * @param levels the levels
@@ -1614,8 +1594,7 @@ public abstract class Utils {
 
     /**
      * Rounds a value to an integer based on whether its fractional portion is
-     * greater than or equal
-     * to plus or minus 0.5 .
+     * greater than or equal to plus or minus 0.5 .
      *
      * @param v the input value
      * @return the rounded value
@@ -1626,39 +1605,10 @@ public abstract class Utils {
     }
 
     /**
-     * Rounds a value to a number of places right of the decimal point. Promotes the
-     * float to a
-     * double, rounds it, then demotes back to a float.
-     *
-     * @param v      the value
-     * @param places the number of places
-     * @return the rounded value
-     */
-    public static float round(final float v, final int places) {
-
-        if (places < 1) {
-            return Utils.round(v);
-        }
-        if (places > 7) {
-            return v;
-        }
-
-        int n = 10;
-        for (int i = 1; i < places; ++i) {
-            n *= 10;
-        }
-
-        final float nf = n;
-        return Utils.round(v * nf) / nf;
-    }
-
-    /**
      * A helper method to facilitate the approximate sine and cosine of an angle
-     * with single precision
-     * real numbers. The radians supplied to this function should be normalized
-     * through division by
-     * tau. Subtract <code>0.25</code> from the input value to return the sine
-     * instead of the cosine.
+     * with single precision real numbers. The radians supplied to this function
+     * should be normalized through division by tau. Subtract <code>0.25</code>
+     * from the input value to return the sine instead of the cosine.
      * <br>
      * <br>
      * This is based on the algorithm described in <a
@@ -1714,9 +1664,8 @@ public abstract class Utils {
     }
 
     /**
-     * Parses two bytes in an array to a 16-bit integer (short), ordered from least
-     * to most
-     * significant digit (little endian).
+     * Parses two bytes in an array to a 16-bit integer (short), ordered from
+     * least to most significant digit (little endian).
      *
      * @param arr the array
      * @param i   the index
@@ -1728,9 +1677,8 @@ public abstract class Utils {
     }
 
     /**
-     * Parses two bytes in an array to a 16-bit integer (short), ordered from most
-     * to least
-     * significant digit (big endian).
+     * Parses two bytes in an array to a 16-bit integer (short), ordered from
+     * most to least significant digit (big endian).
      *
      * @param arr the array
      * @param i   the index
@@ -1743,8 +1691,8 @@ public abstract class Utils {
 
     /**
      * An alternative to the {@link Math#signum(float)} function. Returns the
-     * integer 0 for both -0.0
-     * (signed negative zero) and 0.0 (signed positive zero).
+     * integer 0 for both -0.0 (signed negative zero) and 0.0
+     * (signed positive zero).
      *
      * @param v the value
      * @return the sign
@@ -1777,7 +1725,10 @@ public abstract class Utils {
      * @param step the step
      * @return the eased value
      */
-    public static float smoothStep(final float orig, final float dest, final float step) {
+    public static float smoothStep(
+        final float orig,
+        final float dest,
+        final float step) {
 
         /* smoothStepInverse: 0.5 - sin(arcsin(1 - 2 * x) / 3) */
 
@@ -1817,23 +1768,6 @@ public abstract class Utils {
     public static float sqrtUnchecked(final float v) {
 
         return v * Utils.invSqrtUnchecked(v);
-    }
-
-    /**
-     * Swaps the endianness of an integer. For example, a color in the AARRGGBB
-     * format, <code> 0xffaabbcc</code>, will yield the BBGGRRAA color,
-     * <code>0xccbbaaff</code>.<br>
-     * <br>
-     * An alias for {@link Integer#reverseBytes(int)}.
-     *
-     * @param v the value
-     * @return the swap
-     */
-    public static int swapEndian(final int v) {
-
-        // TODO: Swap endian for shorts and longs?
-
-        return v << 24 | (v & '\uff00') << 8 | v >>> 8 & '\uff00' | v >>> 24;
     }
 
     /**
@@ -2226,7 +2160,10 @@ public abstract class Utils {
      * @param places the number of places
      * @return the string builder
      */
-    static StringBuilder toPadded(final StringBuilder sb, final int v, final int places) {
+    static StringBuilder toPadded(
+        final StringBuilder sb,
+        final int v,
+        final int places) {
 
         /*
          * Double precision is needed to preserve accuracy. The max integer
@@ -2269,7 +2206,10 @@ public abstract class Utils {
      * @return the string builder
      * @see Utils#toFixed(StringBuilder, float, int)
      */
-    static StringBuilder toString(final StringBuilder sb, final float[] arr, final int places) {
+    static StringBuilder toString(
+        final StringBuilder sb,
+        final float[] arr,
+        final int places) {
 
         final int len = arr.length;
         final int last = len - 1;
@@ -2294,7 +2234,10 @@ public abstract class Utils {
      * @return the string builder
      * @see Utils#toPadded(StringBuilder, int, int)
      */
-    static StringBuilder toString(final StringBuilder sb, final int[] arr, final int padding) {
+    static StringBuilder toString(
+        final StringBuilder sb,
+        final int[] arr,
+        final int padding) {
 
         final int len = arr.length;
         final int last = len - 1;

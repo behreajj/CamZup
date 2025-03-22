@@ -13,8 +13,7 @@ public interface IUp {
 
     /**
      * Maximum color mode scale. To mitigate precision issues resulting from
-     * float-int 32 color
-     * conversion.
+     * float-int 32 color conversion.
      */
     float COLOR_MODE_MAX = 1000.0f;
 
@@ -47,8 +46,7 @@ public interface IUp {
 
     /**
      * Default far-clip when orthographic or perspective functions are called
-     * without the near and far
-     * arguments.
+     * without the near and far arguments.
      */
     float DEFAULT_FAR_CLIP = 1500.0f;
 
@@ -73,34 +71,32 @@ public interface IUp {
     float DEFAULT_HALF_WIDTH = 64.0f;
 
     /**
-     * Color for the lines connected the forehandle, coordinate and rear handle of a
-     * curve knot.
-     * Currently diagnostic only, and so not adjustable.
+     * Color for the lines connected the forehandle, coordinate and rear handle
+     * of a curve knot. Currently diagnostic only, and so not adjustable.
      */
     int DEFAULT_HANDLE_COLOR = 0xffeb605d;
 
     /**
-     * Color for the curve knot coordinate. Currently diagnostic only, and so not
-     * adjustable.
+     * Color for the curve knot coordinate. Currently diagnostic only, and so
+     * not adjustable.
      */
     int DEFAULT_HANDLE_COORD_COLOR = 0xfffabb74;
 
     /**
-     * Color for the curve knot forehandle. Currently diagnostic only, and so not
-     * adjustable.
+     * Color for the curve knot forehandle. Currently diagnostic only, and so
+     * not adjustable.
      */
     int DEFAULT_HANDLE_FORE_COLOR = 0xff239e95;
 
     /**
-     * Color for the curve knot rearhandle. Currently diagnostic only, and so not
-     * adjustable.
+     * Color for the curve knot rearhandle. Currently diagnostic only, and so
+     * not adjustable.
      */
     int DEFAULT_HANDLE_REAR_COLOR = 0xffbb1641;
 
     /**
      * Default color of the x axis when displayed by a camera's origin function.
-     * (1.0, 0.1568, 0.1568)
-     * in RGB.
+     * (1.0, 0.1568, 0.1568) in RGB.
      */
     int DEFAULT_I_COLOR = 0xffff2828;
 
@@ -117,15 +113,13 @@ public interface IUp {
 
     /**
      * Default color of the y axis when displayed by a camera's origin function,
-     * (0.0, 0.7019, 0.20)
-     * in RGB.
+     * (0.0, 0.7019, 0.20) in RGB.
      */
     int DEFAULT_J_COLOR = 0xff00b333;
 
     /**
-     * Default color of the z axis when displayed by a camera's origin function, in
-     * (0.0784, 0.4588,
-     * 0.7019) in RGB.
+     * Default color of the z axis when displayed by a camera's origin function,
+     * in (0.0784, 0.4588, 0.7019) in RGB.
      */
     int DEFAULT_K_COLOR = 0xff1475b3;
 
@@ -146,15 +140,12 @@ public interface IUp {
 
     /**
      * Default near-clip when orthographic or perspective functions are called
-     * without the near and
-     * far arguments.
+     * without the near and far arguments.
      */
     float DEFAULT_NEAR_CLIP = 0.015f;
 
     /**
-     * Default transform order when converting a transform to a matrix. TRS is short
-     * for
-     * Translation-Rotation-Scale.
+     * Default transform order when converting a transform to a matrix.
      */
     TransformOrder DEFAULT_ORDER = TransformOrder.TRS;
 

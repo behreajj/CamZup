@@ -5,8 +5,7 @@ import java.util.Random;
 
 /**
  * A two-dimensional complex number. The <code>imag</code> component is a
- * coefficient of <em>i</em>,
- * or the square-root of negative one.
+ * coefficient of <em>i</em>, or the square-root of negative one.
  */
 public class Complex implements Comparable<Complex> {
 
@@ -144,8 +143,8 @@ public class Complex implements Comparable<Complex> {
     }
 
     /**
-     * Evaluates whether two complex numbers approximate each other according to a
-     * tolerance.
+     * Evaluates whether two complex numbers approximate each other according
+     * to a tolerance.
      *
      * @param a         the left comparisand
      * @param b         the right comparisand
@@ -155,15 +154,14 @@ public class Complex implements Comparable<Complex> {
      */
     public static boolean approx(final Complex a, final Complex b, final float tolerance) {
 
-        /* @formatter:off */
     return a == b
-        || Utils.approx(a.imag, b.imag, tolerance) && Utils.approx(a.real, b.real, tolerance);
-    /* @formatter:on */
+        || Utils.approx(a.imag, b.imag, tolerance)
+        && Utils.approx(a.real, b.real, tolerance);
     }
 
     /**
-     * Finds the conjugate of the complex number, where the imaginary component is
-     * negated.
+     * Finds the conjugate of the complex number, where the imaginary component
+     * is negated.
      *
      * @param z      the input complex number
      * @param target the output complex number
@@ -190,7 +188,8 @@ public class Complex implements Comparable<Complex> {
         final double zr = z.real;
         final double zi = z.imag;
         return target.set(
-            (float) (Math.cos(zr) * Math.cosh(zi)), (float) (-Math.sin(zr) * Math.sinh(zi)));
+            (float) (Math.cos(zr) * Math.cosh(zi)),
+            (float) (-Math.sin(zr) * Math.sinh(zi)));
     }
 
     /**
@@ -215,8 +214,7 @@ public class Complex implements Comparable<Complex> {
 
     /**
      * Divides one complex number by another. Equivalent to multiplying the
-     * numerator and the inverse
-     * of the denominator.
+     * numerator and the inverse of the denominator.
      *
      * @param a       the numerator
      * @param b       the denominator
@@ -308,8 +306,8 @@ public class Complex implements Comparable<Complex> {
         }
 
         /*
-         * Copy each inner array to the result array, then move the cursor by the
-         * length of each array.
+         * Copy each inner array to the result array, then move the cursor by
+         * the length of each array.
          */
         int j = 0;
         final Complex[] result = new Complex[totalLen];
@@ -323,8 +321,8 @@ public class Complex implements Comparable<Complex> {
     }
 
     /**
-     * Generates a 2D array of complex numbers. Defaults to the coordinate range of
-     * [-0.5, 0.5] .
+     * Generates a 2D array of complex numbers. Defaults to the coordinate
+     * range of [-0.5, 0.5] .
      *
      * @param res the resolution
      * @return the array
@@ -336,11 +334,9 @@ public class Complex implements Comparable<Complex> {
     }
 
     /**
-     * Generates a 2D array of complex numbers. The result is in row-major order,
-     * but the parameters
-     * are supplied in reverse: columns first, then rows. Defaults to the coordinate
-     * range of [-0.5,
-     * 0.5] .
+     * Generates a 2D array of complex numbers. The result is in row-major
+     * order, but the parameters are supplied in reverse: columns first, then
+     * rows. Defaults to the coordinate range of [-0.5, 0.5] .
      *
      * @param cols number of columns
      * @param rows number of rows
@@ -353,9 +349,9 @@ public class Complex implements Comparable<Complex> {
     }
 
     /**
-     * Generates a 2D array of complex numbers. The result is in row-major order,
-     * but the parameters
-     * are supplied in reverse: columns first, then rows.
+     * Generates a 2D array of complex numbers. The result is in row-major
+     * order, but the parameters are supplied in reverse: columns first, then
+     * rows.
      *
      * @param cols       number of columns
      * @param rows       number of rows
@@ -440,12 +436,11 @@ public class Complex implements Comparable<Complex> {
     }
 
     /**
-     * Performs a Mobius transformation on the variable <em>z</em>. Uses the formula
-     * ( <em>a</em>
-     * <em>z</em> + <em>b</em> ) / ( <em>c</em> <em>z</em> + <em>d</em> ) <br>
-     * where constants <em>a</em>, <em>b</em>, <em>c</em>, and <em>d</em> satisfy
-     * <em>a</em>
-     * <em>d</em> - <em>b</em> <em>c</em> ≠ 0.0 .
+     * Performs a Mobius transformation on the variable <em>z</em>. Uses the
+     * formula ( <em>a</em> <em>z</em> + <em>b</em> ) / ( <em>c</em> <em>z</em>
+     * + <em>d</em> ) where constants <em>a</em>, <em>b</em>, <em>c</em>,
+     * and <em>d</em> satisfy <em>a</em> <em>d</em> - <em>b</em> <em>c</em>
+     * ≠ 0.0 .
      *
      * @param a      the constant a
      * @param b      the constant b
@@ -483,11 +478,14 @@ public class Complex implements Comparable<Complex> {
         final float czdrInv = czdr * mSqInv;
         final float czdiInv = -czdi * mSqInv;
 
-        return target.set(azbr * czdrInv - azbi * czdiInv, azbr * czdiInv + azbi * czdrInv);
+        return target.set(
+            azbr * czdrInv - azbi * czdiInv,
+            azbr * czdiInv + azbi * czdrInv);
     }
 
     /**
-     * Multiplies two complex numbers. Complex multiplication is not commutative.
+     * Multiplies two complex numbers. Complex multiplication is not
+     * commutative.
      *
      * @param a      the left operand
      * @param b      the right operand
@@ -537,7 +535,8 @@ public class Complex implements Comparable<Complex> {
     }
 
     /**
-     * Finds the signed phase of a complex number. Similar to a 2D vector's heading.
+     * Finds the signed phase of a complex number. Similar to a 2D vector's
+     * heading.
      *
      * @param z the complex number
      * @return the phase
@@ -579,9 +578,11 @@ public class Complex implements Comparable<Complex> {
     }
 
     /**
-     * Raises a complex number to the power of another. Uses the formula<br>
+     * Raises a complex number to the power of another. Uses the formula
      * <br>
-     * pow ( <em>a</em>, <em>b</em> ) := exp ( <em>b</em> log ( <em>a</em> ) )<br>
+     * <br>
+     * pow ( <em>a</em>, <em>b</em> ) := exp ( <em>b</em> log ( <em>a</em> ) )
+     * <br>
      * <br>
      * Discloses the product and log.
      *
@@ -794,15 +795,14 @@ public class Complex implements Comparable<Complex> {
     }
 
     /**
-     * Internal function for generating 2D array of complex numbers. The result is
-     * in row-major order,
-     * but the parameters are supplied in reverse: columns first, then rows.<br>
+     * Internal function for generating 2D array of complex numbers. The result
+     * is in row-major order, but the parameters are supplied in reverse:
+     * columns first, then rows.
      * <br>
-     * This is separated to make overriding the public grid functions easier. This
-     * is protected
-     * because it is too easy for integers to be quietly promoted to floats if the
-     * signature
-     * parameters are confused.
+     * <br>
+     * This is separated to make overriding the public grid functions easier.
+     * This is protected because it is too easy for integers to be quietly
+     * promoted to floats if the signature parameters are confused.
      *
      * @param cols number of columns
      * @param rows number of rows
@@ -842,18 +842,18 @@ public class Complex implements Comparable<Complex> {
             final float iStep = i * iToStep + iOff;
             final float jStep = j * jToStep + jOff;
 
-            result[i][j] = new Complex((1.0f - jStep) * lbr + jStep * ubr, (1.0f - iStep) * lbi + iStep * ubi);
+            result[i][j] = new Complex(
+                (1.0f - jStep) * lbr + jStep * ubr,
+                (1.0f - iStep) * lbi + iStep * ubi);
         }
 
         return result;
     }
 
     /**
-     * Returns -1 when this complex number is less than the comparisand; 1 when it
-     * is greater than; 0
-     * when the two are 'equal'. The implementation of this method allows
-     * collections of complex
-     * number to be sorted.
+     * Returns -1 when this complex number is less than the comparisand; 1 when
+     * it is greater than; 0 when the two are 'equal'. The implementation of
+     * this method allows collections of complex number to be sorted.
      *
      * @param z the comparisand
      * @return the numeric code
@@ -861,13 +861,11 @@ public class Complex implements Comparable<Complex> {
     @Override
     public int compareTo(final Complex z) {
 
-        /* @formatter:off */
-    return this.imag < z.imag ? -1
+        return this.imag < z.imag ? -1
             : this.imag > z.imag ? 1
             : this.real < z.real ? -1
             : this.real > z.real ? 1
             : 0;
-    /* @formatter:on */
     }
 
     @Override
@@ -933,10 +931,8 @@ public class Complex implements Comparable<Complex> {
 
     /**
      * Puts the complex number's components into an existing array at the index
-     * provided. The real
-     * component is assigned to element <code>i</code>; the imaginary component, to
-     * element <code>
-     * i + 1</code>.
+     * provided. The real component is assigned to element <code>i</code>; the
+     * imaginary component, to element <code>i + 1</code>.
      *
      * @param arr the array
      * @param i   the index
@@ -972,8 +968,7 @@ public class Complex implements Comparable<Complex> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * complex numbers.
-     * Appends to an existing {@link StringBuilder}.
+     * complex numbers. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -991,8 +986,8 @@ public class Complex implements Comparable<Complex> {
 
     /**
      * Tests equivalence between this and another complex number. For rough
-     * equivalence of floating
-     * point components, use the static approximates function instead.
+     * equivalence of floating point components, use the static approximates
+     * function instead.
      *
      * @param z the complex number
      * @return the evaluation

@@ -115,7 +115,8 @@ public interface ITextDisplay {
     }
 
     /**
-     * Displays a number as text at a location. Registers up to four decimal places.
+     * Displays a number as text at a location. Registers up to four decimal
+     * places.
      *
      * @param real the real number
      * @param v    the location

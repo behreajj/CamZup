@@ -4,12 +4,10 @@ import java.util.Objects;
 
 /**
  * Organizes the components of a 2D mesh into a group of coordinate and texture
- * coordinate such that
- * they can be edited together. This is not used by a mesh internally; it is
- * created upon retrieval
- * from a mesh. All of its components should be treated as references to data
- * within the mesh, not
- * as independent values.
+ * coordinate such that they can be edited together. This is not used by a mesh
+ * internally; it is created upon retrieval from a mesh. All of its components
+ * should be treated as references to data within the mesh, not as independent
+ * values.
  */
 public class Vert2 implements Comparable<Vert2> {
 
@@ -25,8 +23,7 @@ public class Vert2 implements Comparable<Vert2> {
 
     /**
      * The default constructor. When used, the vertex's coordinate, normal and
-     * texCoord will remain
-     * null.
+     * texCoord will remain null.
      */
     public Vert2() {
     }
@@ -44,8 +41,7 @@ public class Vert2 implements Comparable<Vert2> {
 
     /**
      * Tests to see if two vertices share the same coordinate according to the
-     * default tolerance,
-     * {@link Utils#EPSILON}.
+     * default tolerance, {@link Utils#EPSILON}.
      *
      * @param a the left comparisand
      * @param b the right comparisand
@@ -66,7 +62,10 @@ public class Vert2 implements Comparable<Vert2> {
      * @return the evaluation
      * @see Vec2#approx(Vec2, Vec2, float)
      */
-    public static boolean approxCoord(final Vert2 a, final Vert2 b, final float tolerance) {
+    public static boolean approxCoord(
+        final Vert2 a,
+        final Vert2 b,
+        final float tolerance) {
 
         return a == b || Vec2.approx(a.coord, b.coord, tolerance);
     }
@@ -89,7 +88,8 @@ public class Vert2 implements Comparable<Vert2> {
     public boolean equals(Object o) {
         if (!(o instanceof Vert2 vert2))
             return false;
-        return Objects.equals(coord, vert2.coord) && Objects.equals(texCoord, vert2.texCoord);
+        return Objects.equals(coord, vert2.coord)
+            && Objects.equals(texCoord, vert2.texCoord);
     }
 
     @Override
@@ -134,8 +134,7 @@ public class Vert2 implements Comparable<Vert2> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * vertices. Appends to an
-     * existing {@link StringBuilder}.
+     * vertices. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places

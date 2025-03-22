@@ -199,11 +199,6 @@ public class Img {
      */
     public Img() {
 
-        // TODO: Is a mask function still necessary? If so, then offer
-        // to pull from either the alpha channel or the lightness. Where
-        // a mask and shift would be outside the for loop, e.g.,
-        // mask = useLight ? L_MASK : T_MASK .
-
         // TODO: Filter layers to alpha based on response func?
         // Use preset enums instead of a function.s
 
@@ -344,7 +339,7 @@ public class Img {
             return target;
         }
 
-        final HashMap<Long, Lab> uniques = new HashMap<>();
+        final HashMap<Long, Lab> uniques = new HashMap<>(512, 0.75f);
 
         double minSat = Double.MAX_VALUE;
         double maxSat = -Double.MAX_VALUE;
@@ -409,7 +404,7 @@ public class Img {
         }
 
         final Lab defLab = Lab.clearBlack(new Lab());
-        final HashMap<Long, Long> convert = new HashMap<>();
+        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
         convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
 
         for (int j = 0; j < len; ++j) {
@@ -540,7 +535,7 @@ public class Img {
         }
 
         final Lab lab = new Lab();
-        final HashMap<Long, Lch> uniques = new HashMap<>();
+        final HashMap<Long, Lch> uniques = new HashMap<>(512, 0.75f);
 
         float minChroma = Float.MAX_VALUE;
         float maxChroma = -Float.MAX_VALUE;
@@ -583,7 +578,7 @@ public class Img {
         }
 
         final Lch defLch = Lch.clearBlack(new Lch());
-        final HashMap<Long, Long> convert = new HashMap<>();
+        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
         convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
 
         for (int j = 0; j < len; ++j) {
@@ -638,7 +633,7 @@ public class Img {
 
         final float pivotLight = 50.0f;
         final Lab lab = new Lab();
-        final HashMap<Long, Long> convert = new HashMap<>();
+        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
         convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
 
         for (int i = 0; i < len; ++i) {
@@ -698,7 +693,7 @@ public class Img {
         }
 
         final Lab lab = new Lab();
-        final HashMap<Long, Long> convert = new HashMap<>();
+        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
         /* Do not put in clear pixel right away, as with other functions. */
 
         for (int i = 0; i < len; ++i) {
@@ -764,7 +759,7 @@ public class Img {
 
         final Lab lab = new Lab();
         final Lch lch = new Lch();
-        final HashMap<Long, Long> convert = new HashMap<>();
+        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
         /* Do not put in clear pixel right away, as with other functions. */
 
         for (int i = 0; i < len; ++i) {
@@ -1052,7 +1047,7 @@ public class Img {
             default:
         }
 
-        final HashMap<Long, Lab> dict = new HashMap<>();
+        final HashMap<Long, Lab> dict = new HashMap<>(512, 0.75f);
         final Lab clearLab = Lab.clearBlack(new Lab());
         dict.put(Img.CLEAR_PIXEL, clearLab);
 
@@ -1134,7 +1129,7 @@ public class Img {
                 case MULTIPLY: { tuv = t * v; } break;
                 case OVER: { tuv = t; } break;
                 case UNDER: { tuv = v; } break;
-                case BLEND:  default:
+                case BLEND: default:
             }
 
             long hexComp = Img.CLEAR_PIXEL;
@@ -1150,32 +1145,44 @@ public class Img {
                 final double aUnder = labUnder.a;
                 final double bUnder = labUnder.b;
 
-                double lComp = u * lUnder + t * lOver;
-                double aComp = u * aUnder + t * aOver;
-                double bComp = u * bUnder + t * bOver;
+                final double uLUnder = u * lUnder;
+                final double uAUnder = u * aUnder;
+                final double uBUnder = u * bUnder;
+
+                double lComp = uLUnder + t * lOver;
+                double aComp = uAUnder + t * aOver;
+                double bComp = uBUnder + t * bOver;
 
                 switch (bmLight) {
                     case ADD: {
-                        final double sum = vgt0 ? lUnder + lOver : lOver;
-                        lComp = u * lUnder + t * sum;
+                        if (vgt0) {
+                            lComp = uLUnder + t * (lUnder + lOver);
+                        }
                     }
                     break;
 
                     case AVERAGE: {
-                        final double avg = vgt0 ? (lUnder + lOver) * 0.5d : lOver;
-                        lComp = u * lUnder + t * avg;
+                        if(vgt0) {
+                            lComp = uLUnder + t * ((lUnder + lOver) * 0.5d);
+                        }
                     }
                     break;
 
                     case DIVIDE: {
-                        final double quo = vgt0 ? lOver != 0.0d ? lUnder / lOver * 100.0d : 100.0d : lOver;
-                        lComp = u * lUnder + t * quo;
+                        if (vgt0) {
+                            final double quo = lOver != 0.0d
+                                ? lUnder / lOver * 100.0d
+                                : 100.0d;
+                            lComp = uLUnder + t * quo;
+                        }
                     }
                     break;
 
                     case MULTIPLY: {
-                        final double prod = vgt0 ? lUnder * lOver * 0.01d : lOver;
-                        lComp = u * lUnder + t * prod;
+                        if (vgt0) {
+                            final double prod = lUnder * lOver * 0.01d;
+                            lComp = uLUnder + t * prod;
+                        }
                     }
                     break;
 
@@ -1185,14 +1192,23 @@ public class Img {
                     break;
 
                     case SCREEN: {
-                        final double scr = vgt0 ? lUnder + lOver - lUnder * lOver * 0.01d : lOver;
-                        lComp = u * lUnder + t * scr;
+                        if (vgt0) {
+                            final double scr = lUnder + lOver - lUnder * lOver * 0.01d;
+                            lComp = uLUnder + t * scr;
+                        }
                     }
                     break;
 
                     case SUBTRACT: {
-                        final double dff = vgt0 ? lUnder - lOver : lOver;
-                        lComp = u * lUnder + t * dff;
+                        /*
+                         * Unlike AB subtract, there's not a great case when
+                         * the under alpha is zero. 100 - lOver is too bright.
+                         * 50 - lOver might be better if lOver were divided by
+                         * half, but both feel arbitrary.
+                         */
+                        if (vgt0) {
+                            lComp = uLUnder + t * (lUnder - lOver);
+                        }
                     }
                     break;
 
@@ -1207,18 +1223,18 @@ public class Img {
 
                 switch (bmAb) {
                     case ADD: {
-                        final double aSum = vgt0 ? aUnder + aOver : aOver;
-                        final double bSum = vgt0 ? bUnder + bOver : bOver;
-                        aComp = u * aUnder + t * aSum;
-                        bComp = u * bUnder + t * bSum;
+                        if (vgt0) {
+                            aComp = uAUnder + t * (aUnder + aOver);
+                            bComp = uBUnder + t * (bUnder + bOver);
+                        }
                     }
                     break;
 
                     case AVERAGE: {
-                        final double aAvg = vgt0 ? (aUnder + aOver) * 0.5d : aOver;
-                        final double bAvg = vgt0 ? (bUnder + bOver) * 0.5d : bOver;
-                        aComp = u * aUnder + t * aAvg;
-                        bComp = u * bUnder + t * bAvg;
+                        if (vgt0) {
+                            aComp = uAUnder + t * ((aUnder + aOver) * 0.5d);
+                            bComp = uBUnder + t * ((bUnder + bOver) * 0.5d);
+                        }
                     }
                     break;
 
@@ -1226,14 +1242,14 @@ public class Img {
                         if (vgt0 && tgt0) {
                             final double csqUnder = aUnder * aUnder + bUnder * bUnder;
                             if (csqUnder > Utils.EPSILON_D) {
-                                final double s = Math.sqrt(aOver * aOver + bOver * bOver) / Math.sqrt(csqUnder);
-                                final double aAdopt = s * aUnder;
-                                final double bAdopt = s * bUnder;
-                                aComp = u * aUnder + t * aAdopt;
-                                bComp = u * bUnder + t * bAdopt;
+                                final double s = t * Math.sqrt(
+                                    aOver * aOver + bOver * bOver)
+                                    / Math.sqrt(csqUnder);
+                                aComp = uAUnder + s * aUnder;
+                                bComp = uBUnder + s * bUnder;
                             } else {
-                                aComp = u * aUnder;
-                                bComp = u * bUnder;
+                                aComp = uAUnder;
+                                bComp = uBUnder;
                             } /* End chroma under is greater than zero. */
                         } /* End under alpha is greater than zero. */
                     }
@@ -1243,14 +1259,14 @@ public class Img {
                         if (vgt0 && tgt0) {
                             final double csqOver = aOver * aOver + bOver * bOver;
                             if (csqOver > Utils.EPSILON_D) {
-                                final double s = Math.sqrt(aUnder * aUnder + bUnder * bUnder) / Math.sqrt(csqOver);
-                                final double aAdopt = s * aOver;
-                                final double bAdopt = s * bOver;
-                                aComp = u * aUnder + t * aAdopt;
-                                bComp = u * bUnder + t * bAdopt;
+                                final double s = t * Math.sqrt(
+                                    aUnder * aUnder + bUnder * bUnder)
+                                    / Math.sqrt(csqOver);
+                                aComp = uAUnder + s * aOver;
+                                bComp = uBUnder + s * bOver;
                             } else {
-                                aComp = u * aUnder;
-                                bComp = u * bUnder;
+                                aComp = uAUnder;
+                                bComp = uBUnder;
                             } /* End chroma over is greater than zero. */
                         } /* End under alpha is greater than zero. */
                     }
@@ -1263,10 +1279,18 @@ public class Img {
                     break;
 
                     case SUBTRACT: {
-                        final double aDff = vgt0 ? aUnder - aOver : -aOver;
-                        final double bDff = vgt0 ? bUnder - bOver : -bOver;
-                        aComp = u * aUnder + t * aDff;
-                        bComp = u * bUnder + t * bDff;
+                        /*
+                         * Since A and B are signed, it's easier to handle the
+                         * exception case when the under alpha is zero: A and
+                         * B over are inverted.
+                         */
+                        if (vgt0) {
+                            aComp = uAUnder + t * (aUnder - aOver);
+                            bComp = uBUnder + t * (bUnder - bOver);
+                        } else {
+                            aComp = uAUnder - t * aOver;
+                            bComp = uBUnder - t * bOver;
+                        }
                     }
                     break;
 
@@ -1755,7 +1779,7 @@ public class Img {
         final Lab lab = new Lab();
 
         final long[] tlab64s = new long[len];
-        final HashMap<Integer, Long> convert = new HashMap<>();
+        final HashMap<Integer, Long> convert = new HashMap<>(512, 0.75f);
         convert.put(0, Img.CLEAR_PIXEL);
 
         for (int i = 0; i < len; ++i) {
@@ -1786,6 +1810,58 @@ public class Img {
     }
 
     /**
+     * Gets a region from the source image based on the dimensions of the
+     * target image.
+     *
+     * @param source the input image
+     * @param target the output image
+     * @return the region
+     */
+    public static Img getRegion(Img source, Img target) {
+
+        return Img.getRegion(
+            source,
+            0, 0, target.width - 1, target.height - 1,
+            target);
+    }
+
+    /**
+     * Gets a region defined by a top left and bottom right corner. Coordinates
+     * are expected to be uvs, scaled by source image width and height.
+     *
+     * @param source the input image
+     * @param bounds the bounds
+     * @param target the output image
+     * @return the region
+     */
+    public static Img getRegion(Img source, Bounds2 bounds, Img target) {
+        return Img.getRegion(source, bounds.min, bounds.max, target);
+    }
+
+    /**
+     * Gets a region defined by a top left and bottom right corner. Coordinates
+     * are expected to be uvs, scaled by source image width and height.
+     *
+     * @param source the input image
+     * @param mn the minimum corner
+     * @param mx the maximum corner
+     * @param target the output image
+     * @return the region
+     */
+    public static Img getRegion(Img source, Vec2 mn, Vec2 mx, Img target) {
+
+        final int wSrc = source.width;
+        final int hSrc = source.height;
+        return getRegion(
+            source,
+            Utils.round(mn.x * (wSrc - 1.0f)),
+            Utils.round(mn.y * (hSrc - 1.0f)),
+            Utils.round(mx.x * (wSrc - 1.0f)),
+            Utils.round(mx.y * (hSrc - 1.0f)),
+            target);
+    }
+
+    /**
      * Gets a region defined by a top left and bottom right corner. May return
      * a clear image if coordinates are invalid.
      *
@@ -1802,8 +1878,6 @@ public class Img {
         final int xtl, final int ytl,
         final int xbr, final int ybr,
         final Img target) {
-
-        // TODO: overload to except Vec2 uvs as arguments? Bounds2?
 
         final int wSrc = source.width;
         final int hSrc = source.height;
@@ -1829,8 +1903,13 @@ public class Img {
         }
 
         final int trgLen = wTrg * hTrg;
-        final long[] trgPixels = new long[trgLen];
+        if(wTrg != target.width || hTrg != target.height) {
+            target.width = wTrg;
+            target.height = hTrg;
+            target.pixels = new long[trgLen];
+        }
 
+        final long[] trgPixels = target.pixels;
         for (int i = 0; i < trgLen; ++i) {
             final int xTrg = i % wTrg;
             final int yTrg = i / wTrg;
@@ -1839,10 +1918,6 @@ public class Img {
             final int j = xSrc + ySrc * wSrc;
             trgPixels[i] = srcPixels[j];
         }
-
-        target.width = wTrg;
-        target.height = hTrg;
-        target.pixels = trgPixels;
 
         return target;
     }
@@ -2058,12 +2133,12 @@ public class Img {
             target.pixels = new long[source.pixels.length];
         }
 
-        final HashMap<Long, Long> convert = new HashMap<>();
+        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
         convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
 
         final Lab lab = new Lab();
         final int len = source.pixels.length;
-        final HashMap<Long, Lch> uniques = new HashMap<>();
+        final HashMap<Long, Lch> uniques = new HashMap<>(512, 0.75f);
 
         float minChannel = Float.MAX_VALUE;
         float maxChannel = -Float.MAX_VALUE;
@@ -2414,7 +2489,7 @@ public class Img {
 
         final float u = 1.0f - fac;
         final Lab lab = new Lab();
-        final HashMap<Long, Long> convert = new HashMap<>();
+        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
         convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
 
         for (int i = 0; i < len; ++i) {
@@ -2957,7 +3032,7 @@ public class Img {
             return target;
         }
 
-        final HashMap<Long, Lab> uniques = new HashMap<>();
+        final HashMap<Long, Lab> uniques = new HashMap<>(512, 0.75f);
 
         float minLight = Float.MAX_VALUE;
         float maxLight = -Float.MAX_VALUE;
@@ -3000,7 +3075,7 @@ public class Img {
         final float lumMintDenom = minLight * tDenom;
 
         final Lab defLab = Lab.clearBlack(new Lab());
-        final HashMap<Long, Long> convert = new HashMap<>();
+        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
         convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
 
         for (int j = 0; j < len; ++j) {
@@ -3138,7 +3213,7 @@ public class Img {
 
         final long mask = inclAlpha ? 0 : Img.T_MASK;
         final long[] srcPixels = source.pixels;
-        final HashMap<Long, Integer> uniqueOpaques = new HashMap<>();
+        final HashMap<Long, Integer> uniqueOpaques = new HashMap<>(512, 0.75f);
 
         /* Account for alpha at index 0, so less than threshold. */
         int tally = 0;
@@ -3259,7 +3334,7 @@ public class Img {
         final Lab lab = new Lab();
         final Vec3 query = new Vec3();
         final TreeMap<Float, Vec3> found = new TreeMap<>();
-        final HashMap<Long, Long> convert = new HashMap<>();
+        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
         convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
 
         for (int j = 0; j < len; ++j) {
@@ -3394,7 +3469,7 @@ public class Img {
 
         final long toPixel = toColor.toHexLongSat();
         final Lab lab = new Lab();
-        final HashMap<Long, Long> convert = new HashMap<>();
+        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
         for (int i = 0; i < len; ++i) {
             final long srcPixel = source.pixels[i];
             final Long srcPixelObj = srcPixel;
@@ -3897,6 +3972,7 @@ public class Img {
         final Img write) {
 
         // TODO: TEST
+        // TODO: Vec2 and Bounds2 version?
 
         final int wImgWr = write.width;
         final int hImgWr = write.height;
@@ -4115,7 +4191,7 @@ public class Img {
         final Lab lab = new Lab();
         final float t = Float.isNaN(fac) ? 1.0f : Utils.clamp01(fac);
         final float u = 1.0f - t;
-        final HashMap<Long, Long> convert = new HashMap<>();
+        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
 
         for (int i = 0; i < srcLen; ++i) {
             final long srcPixel = source.pixels[i];
@@ -4188,7 +4264,7 @@ public class Img {
 
         final int len = source.pixels.length;
         final int[] argb32s = new int[len];
-        final HashMap<Long, Integer> convert = new HashMap<>();
+        final HashMap<Long, Integer> convert = new HashMap<>(512, 0.75f);
         convert.put(Img.CLEAR_PIXEL, 0);
 
         final Rgb mapped = new Rgb();
@@ -4442,7 +4518,7 @@ public class Img {
         sb.append(chMax);
         sb.append('\n');
 
-        final HashMap<Long, Rgb> convert = new HashMap<>();
+        final HashMap<Long, Rgb> convert = new HashMap<>(512, 0.75f);
         convert.put(Img.CLEAR_PIXEL, Rgb.clearBlack(new Rgb()));
 
         final Rgb srgb = new Rgb();

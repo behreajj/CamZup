@@ -4,12 +4,10 @@ import java.util.Objects;
 
 /**
  * Organizes the components of a 3D mesh into a group of coordinate, normal and
- * texture coordinate
- * such that they can be edited together. This is not used by a mesh internally;
- * it is created upon
- * retrieval from a mesh. All of its components should be treated as references
- * to data within the
- * mesh, not as independent values.
+ * texture coordinate such that they can be edited together. This is not used
+ * by a mesh internally; it is created upon retrieval from a mesh. All of its
+ * components should be treated as references to data within the mesh, not as
+ * independent values.
  */
 public class Vert3 implements Comparable<Vert3> {
 
@@ -19,8 +17,8 @@ public class Vert3 implements Comparable<Vert3> {
     public Vec3 coord;
 
     /**
-     * The direction in which light will bounce from the surface of the mesh at the
-     * vertex.
+     * The direction in which light will bounce from the surface of the mesh at
+     * the vertex.
      */
     public Vec3 normal;
 
@@ -31,8 +29,7 @@ public class Vert3 implements Comparable<Vert3> {
 
     /**
      * The default constructor. When used, the vertex's coordinate, normal and
-     * texCoord will remain
-     * null.
+     * texCoord will remain null.
      */
     public Vert3() {
     }
@@ -73,14 +70,17 @@ public class Vert3 implements Comparable<Vert3> {
      * @return the evaluation
      * @see Vec3#approx(Vec3, Vec3, float)
      */
-    public static boolean approxCoord(final Vert3 a, final Vert3 b, final float tolerance) {
+    public static boolean approxCoord(
+        final Vert3 a,
+        final Vert3 b,
+        final float tolerance) {
 
         return a == b || Vec3.approx(a.coord, b.coord, tolerance);
     }
 
     /**
-     * Returns the orientation of the vertex as a quaternion based on the vertex's
-     * normal.
+     * Returns the orientation of the vertex as a quaternion based on the
+     * vertex's normal.
      *
      * @param vert       the vertex
      * @param handedness the handedness
@@ -89,15 +89,16 @@ public class Vert3 implements Comparable<Vert3> {
      * @see Quaternion#fromDir(Vec3, Handedness, Quaternion)
      */
     public static Quaternion orientation(
-        final Vert3 vert, final Handedness handedness, final Quaternion target) {
+        final Vert3 vert,
+        final Handedness handedness,
+        final Quaternion target) {
 
         return Quaternion.fromDir(vert.normal, handedness, target);
     }
 
     /**
-     * Returns the orientation of the vertex as a transform based on the vertex's
-     * normal and
-     * coordinate.
+     * Returns the orientation of the vertex as a transform based on the
+     * vertex's normal and coordinate.
      *
      * @param vert       the vertex
      * @param handedness the handedness
@@ -107,7 +108,9 @@ public class Vert3 implements Comparable<Vert3> {
      * @see Transform3#moveTo(Vec3)
      */
     public static Transform3 orientation(
-        final Vert3 vert, final Handedness handedness, final Transform3 target) {
+        final Vert3 vert,
+        final Handedness handedness,
+        final Transform3 target) {
 
         Transform3.fromDir(vert.normal, handedness, target);
         target.moveTo(vert.coord);
@@ -115,8 +118,8 @@ public class Vert3 implements Comparable<Vert3> {
     }
 
     /**
-     * Returns the orientation of the vertex as a ray based on the vertex's normal
-     * and coordinate.
+     * Returns the orientation of the vertex as a ray based on the vertex's
+     * normal and coordinate.
      *
      * @param vert   the vertex
      * @param target the output ray
@@ -196,8 +199,7 @@ public class Vert3 implements Comparable<Vert3> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * vertices. Appends to an
-     * existing {@link StringBuilder}.
+     * vertices. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places

@@ -7,8 +7,8 @@ import java.util.TreeSet;
 
 /**
  * Organizes components of a 3D mesh into a list of vertices that form a face.
- * This is not used by a
- * mesh internally; it is created upon retrieval from a mesh.
+ * This is not used by a mesh internally; it is created upon retrieval from a
+ * mesh.
  */
 public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
 
@@ -43,8 +43,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Finds the center of a face by averaging all the coordinates in its list of
-     * vertices.
+     * Finds the center of a face by averaging all the coordinates in its list
+     * of vertices.
      *
      * @param face   the face
      * @param target the output vector
@@ -87,8 +87,7 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
 
     /**
      * Finds the normal of a face by averaging all the normals in its list of
-     * vertices, then
-     * normalizing the average.
+     * vertices, then normalizing the average.
      *
      * @param face   the face
      * @param target the output vector
@@ -201,8 +200,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Finds the shared coordinates, if any, between two faces. Returns an array of
-     * the coordinates.
+     * Finds the shared coordinates, if any, between two faces. Returns an
+     * array of the coordinates.
      *
      * @param a the left comparisand
      * @param b the right comparisand
@@ -237,13 +236,13 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     @Override
     public int compareTo(final Face3 face) {
 
-        return Face3.centerMean(this, new Vec3()).compareTo(Face3.centerMean(face, new Vec3()));
+        return Face3.centerMean(this, new Vec3()).compareTo(
+            Face3.centerMean(face, new Vec3()));
     }
 
     /**
      * Returns an edge iterator for this face, which allows its vertices to be
-     * accessed in an enhanced
-     * for-loop.
+     * accessed in an enhanced for-loop.
      *
      * @return the iterator
      */
@@ -270,8 +269,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Gets an edge from this face. Wraps the index by the number of vertices in the
-     * face.
+     * Gets an edge from this face. Wraps the index by the number of vertices
+     * in the face.
      *
      * @param i      index
      * @param target output edge
@@ -313,9 +312,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Returns an iterator for this face, which allows its elements to be accessed
-     * in an enhanced
-     * for-loop.
+     * Returns an iterator for this face, which allows its elements to be
+     * accessed in an enhanced for-loop.
      *
      * @return the iterator
      */
@@ -345,9 +343,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Rotates all coordinates in the mesh by the sine and cosine of an angle around
-     * an arbitrary
-     * axis.
+     * Rotates all coordinates in the mesh by the sine and cosine of an angle
+     * around an arbitrary axis.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
