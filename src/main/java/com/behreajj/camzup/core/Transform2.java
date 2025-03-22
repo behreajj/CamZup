@@ -38,9 +38,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     protected final Vec2 location = new Vec2();
 
     /**
-     * The previous location. Subtract from the current location to find the delta,
-     * or change, in
-     * location.
+     * The previous location. Subtract from the current location to find the
+     * delta, or change, in location.
      */
     protected final Vec2 locPrev = new Vec2();
 
@@ -55,8 +54,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     protected final Vec2 scale = Vec2.one(new Vec2());
 
     /**
-     * The previous scale. Subtract from the current scale to find the delta, or
-     * change, in scale.
+     * The previous scale. Subtract from the current scale to find the delta,
+     * or change, in scale.
      */
     protected final Vec2 scalePrev = Vec2.one(new Vec2());
 
@@ -66,9 +65,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     protected float rotation = 0.0f;
 
     /**
-     * The previous rotation. Subtract from the current rotation to find the delta,
-     * or change, in
-     * rotation.
+     * The previous rotation. Subtract from the current rotation to find the
+     * delta, or change, in rotation.
      */
     protected float rotPrev = 0.0f;
 
@@ -159,9 +157,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * A helper function to set the transform's from either separate vectors or from
-     * the columns of a
-     * matrix. The transform's translation is set to zero; its scale, to one.
+     * A helper function to set the transform's from either separate vectors or
+     * from the columns of a matrix. The transform's translation is set to
+     * zero; its scale, to one.
      *
      * @param xRight   m00 : right x
      * @param yForward m11 : forward y
@@ -199,23 +197,25 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Creates a transform from axes. The transform's translation is set to zero;
-     * its scale, to one.
+     * Creates a transform from axes. The transform's translation is set to
+     * zero; its scale, to one.
      *
      * @param right   the right axis
      * @param forward the forward axis
      * @param target  the output transform
      * @return the transform
      */
-    public static Transform2 fromAxes(final Vec2 right, final Vec2 forward, final Transform2 target) {
+    public static Transform2 fromAxes(
+        final Vec2 right,
+        final Vec2 forward,
+        final Transform2 target) {
 
         return Transform2.fromAxes(right.x, forward.y, right.y, forward.x, target);
     }
 
     /**
      * Creates a transform from a ray. The transform's translation is set to the
-     * ray's origin; its
-     * scale, to one.
+     * ray's origin; its scale, to one.
      *
      * @param ray        the direction
      * @param handedness the handedness
@@ -225,7 +225,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * @see Transform2#moveTo(Vec2)
      */
     public static Transform2 fromDir(
-        final Ray2 ray, final Handedness handedness, final Transform2 target) {
+        final Ray2 ray,
+        final Handedness handedness,
+        final Transform2 target) {
 
         Transform2.fromDir(ray.dir, handedness, target);
         target.moveTo(ray.origin);
@@ -233,9 +235,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Creates a transform from a direction. The transform's translation is set to
-     * zero; its scale, to
-     * one.
+     * Creates a transform from a direction. The transform's translation is set
+     * to zero; its scale, to one.
      *
      * @param dir        the direction
      * @param handedness the handedness
@@ -251,7 +252,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * @see Vec2#zero(Vec2)
      */
     public static Transform2 fromDir(
-        final Vec2 dir, final Handedness handedness, final Transform2 target) {
+        final Vec2 dir,
+        final Handedness handedness,
+        final Transform2 target) {
 
         target.locPrev.set(target.location);
         target.rotPrev = target.rotation;
@@ -433,11 +436,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Multiplies a curve segment by a transform. A convenience for drawing curves
-     * in a renderer. The
-     * segment is represented by the first control point, second control point and
-     * destination anchor
-     * point.
+     * Multiplies a curve segment by a transform. A convenience for drawing
+     * curves in a renderer. The segment is represented by the first control
+     * point, second control point and destination anchor point.
      *
      * @param t     the transform
      * @param fhSrc the source fore handle
@@ -536,8 +537,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
 
     /**
      * Creates a random transform. Uses
-     * {@link Vec2#randomCartesian(java.util.Random, float, float,
-     * Vec2)} for location and scale.
+     * {@link Vec2#randomCartesian(java.util.Random, float, float, Vec2)}
+     * for location and scale.
      *
      * @param rng    the random number generator
      * @param lbLoc  the location lower bound
@@ -636,8 +637,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Finds the signed difference between the current and previous rotation of a
-     * transform.
+     * Finds the signed difference between the current and previous rotation of
+     * a transform.
      *
      * @param t the transform
      * @return the rotation delta
@@ -649,7 +650,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Finds the difference between the current and previous scale of a transform.
+     * Finds the difference between the current and previous scale of a
+     * transform.
      *
      * @param t      the transform
      * @param target the output vector
@@ -692,8 +694,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Flips the transform's scale on the horizontal axis, i.e., negates the scale's
-     * x component.
+     * Flips the transform's scale on the horizontal axis, i.e., negates the
+     * scale's x component.
      *
      * @return this transform
      */
@@ -707,8 +709,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Flips the transform's scale on the vertical axis, i.e., negates the scale's y
-     * component.
+     * Flips the transform's scale on the vertical axis, i.e., negates the
+     * scale's y component.
      *
      * @return this transform
      */
@@ -831,11 +833,10 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Orients the transform to look at a target point. If the distance between the
-     * target and the
-     * transform's location is zero, resets the transform. Uses unclamped linear
-     * interpolation given a
-     * step in the range [0.0, 1.0] . The result is then normalized.
+     * Orients the transform to look at a target point. If the distance between
+     * the target and the transform's location is zero, resets the transform.
+     * Uses unclamped linear interpolation given a step in the range [0.0, 1.0].
+     * The result is then normalized.
      *
      * @param point      the target point
      * @param step       the step
@@ -850,7 +851,10 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * @see Vec2#right(Vec2)
      * @see Vec2#sub(Vec2, Vec2, Vec2)
      */
-    public Transform2 lookAt(final Vec2 point, final float step, final Handedness handedness) {
+    public Transform2 lookAt(
+        final Vec2 point,
+        final float step,
+        final Handedness handedness) {
 
         /* The right axis is used as a temporary container. */
         Vec2.sub(point, this.location, this.right);
@@ -867,7 +871,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
         Vec2.normalize(this.right, this.right);
         final float u = 1.0f - step;
         this.forward.set(
-            u * this.forward.x + step * this.right.x, u * this.forward.y + step * this.right.y);
+            u * this.forward.x + step * this.right.x,
+            u * this.forward.y + step * this.right.y);
         Vec2.normalize(this.forward, this.forward);
 
         /*
@@ -916,8 +921,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
 
     /**
      * Moves the transform by a direction rotated according to the transform's
-     * rotation. Uses the
-     * formula:<br>
+     * rotation. Uses the formula:
+     * <br>
      * <br>
      * move ( dir ) := location + rotation * direction
      *
@@ -951,8 +956,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Eases the transform to a location by a step. The static easing function is
-     * used.
+     * Eases the transform to a location by a step. The static easing function
+     * is used.
      *
      * @param locNew the new location
      * @param step   the step in [0.0, 1.0]
@@ -969,9 +974,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Eases the transform to a location by a step. The kind of easing is specified
-     * by a Vec2 easing
-     * function.
+     * Eases the transform to a location by a step. The kind of easing is
+     * specified by a Vec2 easing function.
      *
      * @param locNew     the new location
      * @param step       the step in [0.0, 1.0]
@@ -979,7 +983,10 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * @return this transform
      * @see Vec2.AbstrEasing#apply(Vec2, Vec2, Float, Vec2)
      */
-    public Transform2 moveTo(final Vec2 locNew, final float step, final Vec2.AbstrEasing easingFunc) {
+    public Transform2 moveTo(
+        final Vec2 locNew,
+        final float step,
+        final Vec2.AbstrEasing easingFunc) {
 
         this.locPrev.set(this.location);
         easingFunc.apply(this.locPrev, locNew, step, this.location);
@@ -988,9 +995,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Reverts this transform to its previous state, i.e., swaps current location,
-     * rotation and scale
-     * with the previous.
+     * Reverts this transform to its previous state, i.e., swaps current
+     * location, rotation and scale with the previous.
      *
      * @return this transform
      */
@@ -1075,9 +1081,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Rotates the transform to a new orientation by a step in [0.0, 1.0] using the
-     * specified easing
-     * function. Updates the transform's axes.
+     * Rotates the transform to a new orientation by a step in [0.0, 1.0] using
+     * the specified easing function. Updates the transform's axes.
      *
      * @param radians    the angle
      * @param step       the step
@@ -1086,7 +1091,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * @see Transform2#updateAxes()
      */
     public Transform2 rotateTo(
-        final float radians, final float step, final Utils.PeriodicEasing easingFunc) {
+        final float radians,
+        final float step,
+        final Utils.PeriodicEasing easingFunc) {
 
         this.rotPrev = this.rotation;
         this.rotation = easingFunc.apply(this.rotPrev, radians, step);
@@ -1096,9 +1103,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Rotates this transform around the z axis by an angle in radians, then updates
-     * the transform's
-     * axes.
+     * Rotates this transform around the z axis by an angle in radians, then
+     * updates the transform's axes.
      *
      * @param radians the angle
      * @return this transform
@@ -1152,8 +1158,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Scales the transform to a uniform size. Copies the sign of the transform's
-     * current scale.
+     * Scales the transform to a uniform size. Copies the sign of the
+     * transform's current scale.
      *
      * @param scalar the size
      * @return this transform
@@ -1164,7 +1170,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
 
         if (scalar != 0.0f) {
             this.scalePrev.set(this.scale);
-            this.scale.set(Utils.copySign(scalar, this.scale.x), Utils.copySign(scalar, this.scale.y));
+            this.scale.set(
+                Utils.copySign(scalar, this.scale.x),
+                Utils.copySign(scalar, this.scale.y));
         }
 
         return this;
@@ -1191,9 +1199,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Eases the transform to a scale by a step. The static easing function is used.
-     * Copies the sign
-     * of the transform's current scale.
+     * Eases the transform to a scale by a step. The static easing function is
+     * used. Copies the sign of the transform's current scale.
      *
      * @param scaleNew the new scale
      * @param step     the step in [0.0, 1.0]
@@ -1215,9 +1222,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Eases the transform to a scale by a step. The kind of easing is specified by
-     * a Vec2 easing
-     * function. Copies the sign of the transform's current scale.
+     * Eases the transform to a scale by a step. The kind of easing is
+     * specified by a Vec2 easing function. Copies the sign of the transform's
+     * current scale.
      *
      * @param scaleNew   the new scale
      * @param step       the step in [0.0, 1.0]
@@ -1228,7 +1235,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * @see Vec2.AbstrEasing#apply(Vec2, Vec2, Float, Vec2)
      */
     public Transform2 scaleTo(
-        final Vec2 scaleNew, final float step, final Vec2.AbstrEasing easingFunc) {
+        final Vec2 scaleNew,
+        final float step,
+        final Vec2.AbstrEasing easingFunc) {
 
         if (Vec2.all(scaleNew)) {
             this.scalePrev.set(this.scale);
@@ -1313,9 +1322,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * A helper function to set the transform's from either separate vectors or from
-     * the columns of a
-     * matrix. The transform's location and scale remain unchanged.
+     * A helper function to set the transform's from either separate vectors or
+     * from the columns of a matrix. The transform's location and scale remain
+     * unchanged.
      *
      * @param xRight   m00 : right x
      * @param yForward m11 : forward y
@@ -1326,7 +1335,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * @see Vec2#normalize(Vec2, Vec2)
      */
     public Transform2 setAxes(
-        final float xRight, final float yForward, final float yRight, final float xForward) {
+        final float xRight, final float yForward,
+        final float yRight, final float xForward) {
 
         this.right.set(xRight, yRight);
         this.forward.set(xForward, yForward);
@@ -1341,9 +1351,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Sets a transform's rotation to the given axes. The transform's location and
-     * scale remain
-     * unchanged.
+     * Sets a transform's rotation to the given axes. The transform's location
+     * and scale remain unchanged.
      *
      * @param right   the right axis
      * @param forward the forward axis
@@ -1356,8 +1365,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
 
     /**
      * Returns a string representation of this transform according to its string
-     * format. For display
-     * purposes, the angle is converted from radians to degrees.
+     * format. For display purposes, the angle is converted from radians to
+     * degrees.
      *
      * @return the string
      */
@@ -1379,9 +1388,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Wraps the transform's location around a periodic range as defined by an upper
-     * and lower bound:
-     * lower bounds inclusive; upper bounds exclusive.
+     * Wraps the transform's location around a periodic range as defined by an
+     * upper and lower bound: lower bounds inclusive; upper bounds exclusive.
      *
      * @param lb the lower bound
      * @param ub the upper bound
@@ -1397,10 +1405,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * An internal helper function to format a vector as a Python tuple, then append
-     * it to a {@link
-     * StringBuilder}. Used for testing purposes to compare results with Blender
-     * 2.9x.
+     * An internal helper function to format a vector as a Python tuple, then
+     * append it to a {@link StringBuilder}. Used for testing purposes to
+     * compare results with Blender 4.x.
      *
      * @param pyCd the string builder
      * @see Utils#modRadians(float)
@@ -1432,8 +1439,7 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * transforms. Appends to
-     * an existing {@link StringBuilder}.
+     * transforms. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -1452,8 +1458,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Appends a string representation of this transform in SVG syntax to a string
-     * builder.<br>
+     * Appends a string representation of this transform in SVG syntax to a
+     * string builder.
+     * <br>
      * <br>
      * The angle is converted from radians to degrees.
      *
@@ -1561,7 +1568,10 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
          */
         @Override
         public Transform2 apply(
-            final Transform2 orig, final Transform2 dest, final Float step, final Transform2 target) {
+            final Transform2 orig,
+            final Transform2 dest,
+            final Float step,
+            final Transform2 target) {
 
             final float tf = step;
             if (Float.isNaN(tf)) {
@@ -1584,7 +1594,10 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
          * @param target the output transform
          */
         @Override
-        public Transform2 apply(final Transform2[] arr, final Float step, final Transform2 target) {
+        public Transform2 apply(
+            final Transform2[] arr,
+            final Float step,
+            final Transform2 target) {
 
             final int len = arr.length;
             final float tf = step;
@@ -1601,9 +1614,10 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
         }
 
         /**
-         * Eases between an origin and destination transform by a step in [0.0, 1.0].
+         * Eases between an origin and destination transform by a step in
+         * [0.0, 1.0].
          *
-         * @param origin the origin
+         * @param orig the origin
          * @param dest   the destination
          * @param step   the step
          * @param target the output transform
@@ -1611,17 +1625,20 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
          * @see Transform2#updateAxes()
          */
         public Transform2 applyUnclamped(
-            final Transform2 origin, final Transform2 dest, final float step, final Transform2 target) {
+            final Transform2 orig,
+            final Transform2 dest,
+            final float step,
+            final Transform2 target) {
 
             target.locPrev.set(target.location);
-            this.loc.applyUnclamped(origin.location, dest.location, step, target.location);
+            this.loc.applyUnclamped(orig.location, dest.location, step, target.location);
 
             target.rotPrev = target.rotation;
-            target.rotation = this.rot.apply(origin.rotation, dest.rotation, step);
+            target.rotation = this.rot.apply(orig.rotation, dest.rotation, step);
             target.updateAxes();
 
             target.scalePrev.set(target.scale);
-            this.scale.applyUnclamped(origin.scale, dest.scale, step, target.scale);
+            this.scale.applyUnclamped(orig.scale, dest.scale, step, target.scale);
 
             return target;
         }

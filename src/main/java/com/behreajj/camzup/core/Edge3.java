@@ -4,8 +4,8 @@ import java.util.Objects;
 
 /**
  * Organizes components of a 3D mesh into an edge with an origin and
- * destination. This is not used
- * by a mesh internally; it is created upon retrieval from a mesh.
+ * destination. This is not used by a mesh internally; it is created upon
+ * retrieval from a mesh.
  */
 public class Edge3 implements Comparable<Edge3> {
 
@@ -30,8 +30,7 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Constructs an edge from the origin and destination coordinate, texture
-     * coordinate and normal
-     * data. Creates two vertex objects.
+     * coordinate and normal data. Creates two vertex objects.
      *
      * @param coOrigin origin coordinate
      * @param txOrig   origin texture coordinate
@@ -64,9 +63,8 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Evaluates whether two edges are complements or neighbors, i.e., whether one
-     * edge's origin is
-     * the other's destination.
+     * Evaluates whether two edges are complements or neighbors, i.e., whether
+     * one edge's origin is the other's destination.
      *
      * @param a the left comparisand
      * @param b the right comparisand
@@ -75,13 +73,13 @@ public class Edge3 implements Comparable<Edge3> {
      */
     public static boolean areNeighbors(final Edge3 a, final Edge3 b) {
 
-        return Vert3.approxCoord(a.dest, b.origin) && Vert3.approxCoord(a.origin, b.dest);
+        return Vert3.approxCoord(a.dest, b.origin)
+            && Vert3.approxCoord(a.origin, b.dest);
     }
 
     /**
-     * Finds the azimuth of an edge. Subtracts the destination coordinate from that
-     * of the origin,
-     * then supplies the difference to atan2 .
+     * Finds the azimuth of an edge. Subtracts the destination coordinate from
+     * that of the origin, then supplies the difference to atan2 .
      *
      * @param edge the edge
      * @return the heading
@@ -136,11 +134,9 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Finds a point on the edge given a step in the range [0.0, 1.0] . Uses linear
-     * interpolation from
-     * the origin coordinate to that of the destination. To find an edge's midpoint,
-     * use the step 0.5
-     * .
+     * Finds a point on the edge given a step in the range [0.0, 1.0] . Uses
+     * linear interpolation from the origin coordinate to that of the
+     * destination. To find an edge's midpoint, use the step 0.5 .
      *
      * @param edge   the edge
      * @param step   the step
@@ -167,9 +163,8 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Finds the inclination of an edge. Subtracts the destination coordinate from
-     * that of the origin,
-     * then supplies the difference to arc sine .
+     * Finds the inclination of an edge. Subtracts the destination coordinate
+     * from that of the origin, then supplies the difference to arc sine.
      *
      * @param edge the edge
      * @return the heading
@@ -189,8 +184,8 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Finds the Euclidean distance from the edge's origin coordinate to that of its
-     * destination.
+     * Finds the Euclidean distance from the edge's origin coordinate to that
+     * of its destination.
      *
      * @param edge the edge
      * @return the magnitude
@@ -202,9 +197,8 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Finds the squared Euclidean distance from the edge's origin coordinate to
-     * that of its
-     * destination.
+     * Finds the squared Euclidean distance from the edge's origin coordinate
+     * to that of its destination.
      *
      * @param edge the edge
      * @return the magnitude
@@ -216,10 +210,9 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Projects a vector, representing a point, onto an edge. The scalar projection
-     * is clamped to the
-     * range [0.0, 1.0] , meaning the projection will not exceed the edge's origin
-     * and destination.
+     * Projects a vector, representing a point, onto an edge. The scalar
+     * projection is clamped to the range [0.0, 1.0], meaning the projection
+     * will not exceed the edge's origin and destination.
      *
      * @param edge   the edge
      * @param v      the input vector
@@ -260,13 +253,13 @@ public class Edge3 implements Comparable<Edge3> {
      * Tests to see if two edges share a vertex coordinate:
      *
      * <ul>
-     * <li>Returns -1 when <em>a</em>'s origin is <em>b</em>'s destination.
-     * <li>Returns -2 when <em>a</em>'s destination is <em>b</em>'s destination
-     * <li>Returns 1 when <em>a</em>'s destination is <em>b</em>'s origin.
-     * <li>Returns 2 when <em>a</em>'s origin is <em>b</em>'s origin.
-     * <li>Returns 0 when none of the above conditions are met.
+     * <li>Returns -1 when <em>a</em>'s origin is <em>b</em>'s destination.</li>
+     * <li>Returns -2 when <em>a</em>'s destination is <em>b</em>'s destination.</li>
+     * <li>Returns 1 when <em>a</em>'s destination is <em>b</em>'s origin.</li>
+     * <li>Returns 2 when <em>a</em>'s origin is <em>b</em>'s origin.</li>
+     * <li>Returns 0 when none of the above conditions are met.</li>
      * </ul>
-     * <p>
+     *
      * If the left and right comparisand are the same, returns 2.
      *
      * @param a the left comparisand
@@ -333,9 +326,8 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Rotates the coordinates of this edge by the cosine and sine of an angle and
-     * an axis. The
-     * texture coordinates are unaffected.
+     * Rotates the coordinates of this edge by the cosine and sine of an angle
+     * and an axis. The texture coordinates are unaffected.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -353,8 +345,7 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by an angle and axis. The texture
-     * coordinates are
-     * unaffected.
+     * coordinates are unaffected.
      *
      * @param radians angle
      * @param axis    axis
@@ -369,8 +360,8 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Rotates the coordinates of this edge by a quaternion. The texture coordinates
-     * are unaffected.
+     * Rotates the coordinates of this edge by a quaternion. The texture
+     * coordinates are unaffected.
      *
      * @param q the quaternion
      * @return this edge
@@ -391,9 +382,9 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Rotates the coordinates of this edge by the sine and cosine of an angle and
-     * an axis. The edge's
-     * center (midpoint) acts as a pivot. The texture coordinates are unaffected.
+     * Rotates the coordinates of this edge by the sine and cosine of an angle
+     * and an axis. The edge's center (midpoint) acts as a pivot. The texture
+     * coordinates are unaffected.
      *
      * @param cosa   cosine of the angle
      * @param sina   sine of the angle
@@ -404,13 +395,19 @@ public class Edge3 implements Comparable<Edge3> {
      * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
      * @see Vec3#add(Vec3, Vec3, Vec3)
      */
-    public Edge3 rotateLocal(final float cosa, final float sina, final Vec3 axis, final Vec3 center) {
+    public Edge3 rotateLocal(
+        final float cosa,
+        final float sina,
+        final Vec3 axis,
+        final Vec3 center) {
 
         final Vec3 coOrig = this.origin.coord;
         final Vec3 coDest = this.dest.coord;
 
         center.set(
-            (coOrig.x + coDest.x) * 0.5f, (coOrig.y + coDest.y) * 0.5f, (coOrig.z + coDest.z) * 0.5f);
+            (coOrig.x + coDest.x) * 0.5f,
+            (coOrig.y + coDest.y) * 0.5f,
+            (coOrig.z + coDest.z) * 0.5f);
 
         Vec3.sub(coOrig, center, coOrig);
         Vec3.rotate(coOrig, cosa, sina, axis, coOrig);
@@ -427,9 +424,9 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Rotates the coordinates of this edge by an angle and axis. The edge's center
-     * (midpoint) acts as
-     * a pivot. The texture coordinates are unaffected.
+     * Rotates the coordinates of this edge by an angle and axis. The edge's
+     * center (midpoint) acts as a pivot. The texture coordinates are
+     * unaffected.
      *
      * @param radians angle
      * @param axis    axis
@@ -446,8 +443,7 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by a quaternion. The edge's center
-     * (midpoint) acts as a
-     * pivot. The texture coordinates are unaffected.
+     * (midpoint) acts as a pivot. The texture coordinates are unaffected.
      *
      * @param q      the quaternion
      * @param center the edge center
@@ -464,7 +460,9 @@ public class Edge3 implements Comparable<Edge3> {
             final Vec3 coDest = this.dest.coord;
 
             center.set(
-                (coOrig.x + coDest.x) * 0.5f, (coOrig.y + coDest.y) * 0.5f, (coOrig.z + coDest.z) * 0.5f);
+                (coOrig.x + coDest.x) * 0.5f,
+                (coOrig.y + coDest.y) * 0.5f,
+                (coOrig.z + coDest.z) * 0.5f);
 
             Vec3.sub(coOrig, center, coOrig);
             Quaternion.mulVector(q, coOrig, coOrig);
@@ -480,8 +478,7 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by an angle in radians around the x
-     * axis. The texture
-     * coordinates are unaffected.
+     * axis. The texture coordinates are unaffected.
      *
      * @param radians angle
      * @return this edge
@@ -496,8 +493,7 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by the sine and cosine of an angle
-     * around the x axis. The
-     * texture coordinates are unaffected.
+     * around the x axis. The texture coordinates are unaffected.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -514,9 +510,8 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by the sine and cosine of an angle
-     * around the x axis. The
-     * edge's center (midpoint) acts as a pivot. The texture coordinates are
-     * unaffected.
+     * around the x axis. The edge's center (midpoint) acts as a pivot. The
+     * texture coordinates are unaffected.
      *
      * @param cosa   cosine of the angle
      * @param sina   sine of the angle
@@ -532,7 +527,9 @@ public class Edge3 implements Comparable<Edge3> {
         final Vec3 coDest = this.dest.coord;
 
         center.set(
-            (coOrig.x + coDest.x) * 0.5f, (coOrig.y + coDest.y) * 0.5f, (coOrig.z + coDest.z) * 0.5f);
+            (coOrig.x + coDest.x) * 0.5f,
+            (coOrig.y + coDest.y) * 0.5f,
+            (coOrig.z + coDest.z) * 0.5f);
 
         Vec3.sub(coOrig, center, coOrig);
         Vec3.rotateX(coOrig, cosa, sina, coOrig);
@@ -547,8 +544,8 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by an angle in radians around the x
-     * axis. The edge's
-     * center (midpoint) acts as a pivot. The texture coordinates are unaffected.
+     * axis. The edge's center (midpoint) acts as a pivot. The texture
+     * coordinates are unaffected.
      *
      * @param radians the angle
      * @param center  the center
@@ -564,8 +561,7 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by an angle in radians around the y
-     * axis. The texture
-     * coordinates are unaffected.
+     * axis. The texture coordinates are unaffected.
      *
      * @param radians angle
      * @return this edge
@@ -580,8 +576,7 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by the sine and cosine of an angle
-     * around the y axis. The
-     * texture coordinates are unaffected.
+     * around the y axis. The texture coordinates are unaffected.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -598,9 +593,8 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by the sine and cosine of an angle
-     * around the y axis. The
-     * edge's center (midpoint) acts as a pivot. The texture coordinates are
-     * unaffected.
+     * around the y axis. The edge's center (midpoint) acts as a pivot. The
+     * texture coordinates are unaffected.
      *
      * @param cosa   cosine of the angle
      * @param sina   sine of the angle
@@ -616,7 +610,9 @@ public class Edge3 implements Comparable<Edge3> {
         final Vec3 coDest = this.dest.coord;
 
         center.set(
-            (coOrig.x + coDest.x) * 0.5f, (coOrig.y + coDest.y) * 0.5f, (coOrig.z + coDest.z) * 0.5f);
+            (coOrig.x + coDest.x) * 0.5f,
+            (coOrig.y + coDest.y) * 0.5f,
+            (coOrig.z + coDest.z) * 0.5f);
 
         Vec3.sub(coOrig, center, coOrig);
         Vec3.rotateY(coOrig, cosa, sina, coOrig);
@@ -631,8 +627,8 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by an angle in radians around the y
-     * axis. The edge's
-     * center (midpoint) acts as a pivot. The texture coordinates are unaffected.
+     * axis. The edge's center (midpoint) acts as a pivot. The texture
+     * coordinates are unaffected.
      *
      * @param radians the angle
      * @param center  the center
@@ -648,8 +644,7 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by an angle in radians around the z
-     * axis. The texture
-     * coordinates are unaffected.
+     * axis. The texture coordinates are unaffected.
      *
      * @param radians angle
      * @return this edge
@@ -664,8 +659,7 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by the sine and cosine of an angle
-     * around the z axis. The
-     * texture coordinates are unaffected.
+     * around the z axis. The texture coordinates are unaffected.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -682,9 +676,8 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by the sine and cosine of an angle
-     * around the z axis. The
-     * edge's center (midpoint) acts as a pivot. The texture coordinates are
-     * unaffected.
+     * around the z axis. The edge's center (midpoint) acts as a pivot. The
+     * texture coordinates are unaffected.
      *
      * @param cosa   cosine of the angle
      * @param sina   sine of the angle
@@ -700,7 +693,9 @@ public class Edge3 implements Comparable<Edge3> {
         final Vec3 coDest = this.dest.coord;
 
         center.set(
-            (coOrig.x + coDest.x) * 0.5f, (coOrig.y + coDest.y) * 0.5f, (coOrig.z + coDest.z) * 0.5f);
+            (coOrig.x + coDest.x) * 0.5f,
+            (coOrig.y + coDest.y) * 0.5f,
+            (coOrig.z + coDest.z) * 0.5f);
 
         Vec3.sub(coOrig, center, coOrig);
         Vec3.rotateZ(coOrig, cosa, sina, coOrig);
@@ -715,8 +710,8 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Rotates the coordinates of this edge by an angle in radians around the z
-     * axis. The edge's
-     * center (midpoint) acts as a pivot. The texture coordinates are unaffected.
+     * axis. The edge's center (midpoint) acts as a pivot. The texture
+     * coordinates are unaffected.
      *
      * @param radians the angle
      * @param center  the center
@@ -731,7 +726,8 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Scales the coordinates of this edge. The texture coordinates are unaffected.
+     * Scales the coordinates of this edge. The texture coordinates are
+     * unaffected.
      *
      * @param scalar uniform scalar
      * @return this edge
@@ -742,7 +738,8 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Scales the coordinates of this edge. The texture coordinates are unaffected.
+     * Scales the coordinates of this edge. The texture coordinates are
+     * unaffected.
      *
      * @param scalar non uniform scalar
      * @return this edge
@@ -753,9 +750,9 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Scales the coordinates of this edge. The texture coordinates are unaffected.
-     * Uses global
-     * coordinates, i.e., doesn't consider the face's position.
+     * Scales the coordinates of this edge. The texture coordinates are
+     * unaffected. Uses global coordinates, i.e., doesn't consider the edge's
+     * position.
      *
      * @param scalar the scalar
      * @return this edge
@@ -772,9 +769,9 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Scales the coordinates of this edge. The texture coordinates are unaffected.
-     * Uses global
-     * coordinates, i.e., doesn't consider the face's position.
+     * Scales the coordinates of this edge. The texture coordinates are
+     * unaffected. Uses global coordinates, i.e., doesn't consider the edge's
+     * position.
      *
      * @param scalar the nonuniform scalar
      * @return this edge
@@ -793,8 +790,7 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Scales the coordinates of this edge. Subtracts the edge's mean center
-     * (midpoint) from each
-     * vertex, scales, then adds the mean center.
+     * (midpoint) from each vertex, scales, then adds the mean center.
      *
      * @param scalar the uniform scalar
      * @param center the edge center
@@ -810,7 +806,9 @@ public class Edge3 implements Comparable<Edge3> {
             final Vec3 coDest = this.dest.coord;
 
             center.set(
-                (coOrig.x + coDest.x) * 0.5f, (coOrig.y + coDest.y) * 0.5f, (coOrig.z + coDest.z) * 0.5f);
+                (coOrig.x + coDest.x) * 0.5f,
+                (coOrig.y + coDest.y) * 0.5f,
+                (coOrig.z + coDest.z) * 0.5f);
 
             Vec3.sub(coOrig, center, coOrig);
             Vec3.mul(coOrig, scalar, coOrig);
@@ -826,8 +824,7 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Scales the coordinates of this edge. Subtracts the edge's mean center
-     * (midpoint) from each
-     * vertex, scales, then adds the mean center.
+     * (midpoint) from each vertex, scales, then adds the mean center.
      *
      * @param scalar the nonuniform scalar
      * @param center the edge's center
@@ -845,7 +842,9 @@ public class Edge3 implements Comparable<Edge3> {
             final Vec3 coDest = this.dest.coord;
 
             center.set(
-                (coOrig.x + coDest.x) * 0.5f, (coOrig.y + coDest.y) * 0.5f, (coOrig.z + coDest.z) * 0.5f);
+                (coOrig.x + coDest.x) * 0.5f,
+                (coOrig.y + coDest.y) * 0.5f,
+                (coOrig.z + coDest.z) * 0.5f);
 
             Vec3.sub(coOrig, center, coOrig);
             Vec3.hadamard(coOrig, scalar, coOrig);
@@ -860,8 +859,8 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Sets the origin and destination coordinate, texture coordinate and normal
-     * data by reference.
+     * Sets the origin and destination coordinate, texture coordinate and
+     * normal data by reference.
      *
      * @param coOrigin origin coordinate
      * @param txOrig   origin texture coordinate
@@ -950,8 +949,8 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Translates the coordinates of this edge. The texture coordinates and normals
-     * are unaffected.
+     * Translates the coordinates of this edge. The texture coordinates and
+     * normals are unaffected.
      *
      * @param v translation
      * @return this edge
@@ -967,8 +966,7 @@ public class Edge3 implements Comparable<Edge3> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * edges. Appends to an
-     * existing {@link StringBuilder}.
+     * edges. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -985,9 +983,8 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     /**
-     * Tests this edge for equivalence with another. To be true, the edges' origins
-     * must be equal and
-     * their destinations must be equal.
+     * Tests this edge for equivalence with another. To be true, the edges'
+     * origins must be equal and their destinations must be equal.
      *
      * @param edge3 the comparisand
      * @return the evaluation

@@ -435,9 +435,8 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Converts a color from linear RGB to the XYZ coordinates for SR LAB 2. The
-     * values returned are
-     * in the range [0.0, 1.0]. See <a href=
+     * Converts a color from linear RGB to the XYZ coordinates for SR LAB 2.
+     * The values returned are in the range [0.0, 1.0]. See <a href=
      * "https://www.magnetkern.de/srlab2.html">https://www.magnetkern.de/srlab2.html</a>.
      *
      * @param r      the red component
@@ -919,7 +918,7 @@ public class Rgb implements IColor {
 
     /**
      * Returns a representation of the color as a hexadecimal code, preceded by
-     * a '0x', in the format AARRGGBB.
+     * a '0x', in the format <code>0xAARRGGBB</code>.
      *
      * @param c the color
      * @return the string
@@ -932,7 +931,7 @@ public class Rgb implements IColor {
 
     /**
      * Returns a representation of the color as a hexadecimal code, preceded by
-     * a '0x', in the format AARRGGBB. Appends to an existing
+     * a '0x', in the format <code>0xAARRGGBB</code>. Appends to an existing
      * {@link StringBuilder}.
      *
      * @param sb the string builder
@@ -952,7 +951,7 @@ public class Rgb implements IColor {
 
     /**
      * Returns a representation of the color as a hexadecimal code, preceded by
-     * a '0x', in the format AARRGGBB. Appends to an existing
+     * a '0x', in the format <code>0xAARRGGBB</code>. Appends to an existing
      * {@link StringBuilder}.
      *
      * @param sb the string builder
@@ -980,7 +979,7 @@ public class Rgb implements IColor {
 
     /**
      * Returns a representation of the color as a hexadecimal code, preceded by
-     * a '0x', in the format AARRGGBB. Appends to an existing
+     * a '0x', in the format <code>0xAARRGGBB</code>. Appends to an existing
      * {@link StringBuilder}.
      *
      * @param sb the string builder

@@ -595,10 +595,10 @@ public interface IYup2 extends IUp {
     /**
      * Draws a line between two coordinates.
      *
-     * @param origin the origin coordinate
+     * @param orig the origin coordinate
      * @param dest   the destination coordinate
      */
-    void line(final Vec2 origin, final Vec2 dest);
+    void line(final Vec2 orig, final Vec2 dest);
 
     /**
      * Finds the mouse's location in world coordinates relative to the
@@ -1172,8 +1172,7 @@ public interface IYup2 extends IUp {
      * @param mats the materials
      * @return the string
      */
-    default String toSvgString(final MeshEntity2 me,
-        final MaterialSolid[] mats) {
+    default String toSvgString(final MeshEntity2 me, final MaterialSolid[] mats) {
 
         return IYup2.toSvgString(this, new MeshEntity2[]{me}, mats);
     }

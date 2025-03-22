@@ -36,9 +36,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     protected final Vec3 location = new Vec3();
 
     /**
-     * The previous location. Subtract from the current location to find the delta,
-     * or change, in
-     * location.
+     * The previous location. Subtract from the current location to find the
+     * delta, or change, in location.
      */
     protected final Vec3 locPrev = new Vec3();
 
@@ -53,9 +52,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     protected final Quaternion rotation = new Quaternion();
 
     /**
-     * The previous rotation. Subtract from the current rotation to find the delta,
-     * or change, in
-     * rotation.
+     * The previous rotation. Subtract from the current rotation to find the
+     * delta, or change, in rotation.
      */
     protected final Quaternion rotPrev = new Quaternion();
 
@@ -65,8 +63,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     protected final Vec3 scale = Vec3.one(new Vec3());
 
     /**
-     * The previous scale. Subtract from the current scale to find the delta, or
-     * change, in scale.
+     * The previous scale. Subtract from the current scale to find the delta,
+     * or change, in scale.
      */
     protected final Vec3 scalePrev = Vec3.one(new Vec3());
 
@@ -96,18 +94,15 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @param zScale the scale z
      */
     public Transform3(
-        final float xLoc,
-        final float yLoc,
-        final float zLoc,
+        final float xLoc, final float yLoc, final float zLoc,
         final float real,
-        final float xImag,
-        final float yImag,
-        final float zImag,
-        final float xScale,
-        final float yScale,
-        final float zScale) {
+        final float xImag, final float yImag, final float zImag,
+        final float xScale, final float yScale, final float zScale) {
 
-        this.set(xLoc, yLoc, zLoc, real, xImag, yImag, zImag, xScale, yScale, zScale);
+        this.set(
+            xLoc, yLoc, zLoc,
+            real, xImag, yImag, zImag,
+            xScale, yScale, zScale);
     }
 
     /**
@@ -182,9 +177,9 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * A helper function to set the transform's from either separate vectors or from
-     * the columns of a
-     * matrix. The transform's translation is set to zero; its scale, to one.
+     * A helper function to set the transform's from either separate vectors or
+     * from the columns of a matrix. The transform's translation is set to zero;
+     * its scale, to one.
      *
      * @param xRight   m00 : right x
      * @param yForward m11 : forward y
@@ -220,8 +215,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
         target.rotPrev.set(target.rotation);
         target.scalePrev.set(target.scale);
 
-        Quaternion.fromAxes(
-            xRight, yForward, zUp, zForward, yUp, xUp, zRight, yRight, xForward, target.rotation);
+        Quaternion.fromAxes(xRight, yForward, zUp, zForward, yUp, xUp, zRight,
+            yRight, xForward, target.rotation);
 
         /* Update needed because the loose floats may not be normalized. */
         target.updateAxes();
@@ -233,8 +228,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Creates a transform from axes. The transform's translation is set to zero;
-     * its scale, to one.
+     * Creates a transform from axes. The transform's translation is set to
+     * zero; its scale, to one.
      *
      * @param right   the right axis
      * @param forward the forward axis
@@ -242,25 +237,27 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @param target  the output transform
      * @return the transform
      * @see Transform3#fromAxes(float, float, float, float, float, float, float,
-     * float, float,
-     * Transform3)
+     * float, float, Transform3)
      */
     public static Transform3 fromAxes(
-        final Vec3 right, final Vec3 forward, final Vec3 up, final Transform3 target) {
+        final Vec3 right,
+        final Vec3 forward,
+        final Vec3 up,
+        final Transform3 target) {
 
         return Transform3.fromAxes(
-            right.x, forward.y, up.z, forward.z, up.y, up.x, right.z, right.y, forward.x, target);
+            right.x, forward.y, up.z, forward.z, up.y, up.x, right.z, right.y,
+            forward.x, target);
     }
 
     /**
      * Creates a transform from a ray. The transform's translation is set to the
-     * ray's origin; its
-     * scale, to one.<br>
+     * ray's origin; its scale, to one.
+     * <br>
      * <br>
      * Discontinuities arise when using a look at matrix when a transform's look
-     * direction is parallel
-     * with the world up axis. To animate a transform use the instance method {@link
-     * Transform3#lookAt(Vec3, float, Handedness)} .
+     * direction is parallel with the world up axis. To animate a transform use
+     * the instance method {@link Transform3#lookAt(Vec3, float, Handedness)} .
      *
      * @param ray        the direction
      * @param handedness the handedness
@@ -270,7 +267,9 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @see Transform3#moveTo(Vec3)
      */
     public static Transform3 fromDir(
-        final Ray3 ray, final Handedness handedness, final Transform3 target) {
+        final Ray3 ray,
+        final Handedness handedness,
+        final Transform3 target) {
 
         Transform3.fromDir(ray.dir, handedness, target);
         target.moveTo(ray.origin);
@@ -278,14 +277,13 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Creates a transform from a direction. The transform's translation is set to
-     * zero; its scale, to
-     * one.<br>
+     * Creates a transform from a direction. The transform's translation is set
+     * to zero; its scale, to one.
+     * <br>
      * <br>
      * Discontinuities arise when using a look at matrix when a transform's look
-     * direction is parallel
-     * with the world up axis. To animate a transform use the instance method {@link
-     * Transform3#lookAt(Vec3, float, Handedness)} .
+     * direction is parallel with the world up axis. To animate a transform use
+     * the instance method {@link Transform3#lookAt(Vec3, float, Handedness)} .
      *
      * @param dir        the direction
      * @param handedness handedness
@@ -296,13 +294,16 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @see Vec3#zero(Vec3)
      */
     public static Transform3 fromDir(
-        final Vec3 dir, final Handedness handedness, final Transform3 target) {
+        final Vec3 dir,
+        final Handedness handedness,
+        final Transform3 target) {
 
         target.scalePrev.set(target.scale);
         Vec3.one(target.scale);
 
         target.rotPrev.set(target.rotation);
-        Quaternion.fromDir(dir, handedness, target.rotation, target.right, target.forward, target.up);
+        Quaternion.fromDir(dir, handedness, target.rotation, target.right,
+            target.forward, target.up);
 
         target.locPrev.set(target.location);
         Vec3.zero(target.location);
@@ -311,11 +312,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Creates a transform from spherical coordinates. The transform's right axis
-     * corresponds to the
-     * point on the sphere. The transform's scale is set to the radius. A radius of
-     * zero will return
-     * the identity transform instead.
+     * Creates a transform from spherical coordinates. The transform's right
+     * axis corresponds to the point on the sphere. The transform's scale is
+     * set to the radius. A radius of zero will return the identity transform
+     * instead.
      *
      * @param azimuth     the angle theta in radians
      * @param inclination the angle phi in radians
@@ -328,7 +328,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @see Vec3#zero(Vec3)
      */
     public static Transform3 fromSpherical(
-        final float azimuth, final float inclination, final float radius, final Transform3 target) {
+        final float azimuth,
+        final float inclination,
+        final float radius,
+        final Transform3 target) {
 
         if (radius == 0.0f) {
             return Transform3.identity(target);
@@ -347,11 +350,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Creates a transform from spherical coordinates. The transform's right axis
-     * corresponds to the
-     * point on the sphere. The transform's scale is set to the radius. A radius of
-     * zero will return
-     * the identity transform instead.
+     * Creates a transform from spherical coordinates. The transform's right
+     * axis corresponds to the point on the sphere. The transform's scale is
+     * set to the radius. A radius of zero will return the identity transform
+     * instead.
      *
      * @param azimuth     the angle theta in radians
      * @param inclination the angle phi in radians
@@ -387,10 +389,9 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Creates a transform from spherical coordinates. The transform's right axis
-     * corresponds to the
-     * point on the sphere. The transform's scale is set to 1.0 and its location to
-     * the origin.
+     * Creates a transform from spherical coordinates. The transform's right
+     * axis corresponds to the point on the sphere. The transform's scale is
+     * set to 1.0 and its location to the origin.
      *
      * @param azimuth     the angle theta in radians
      * @param inclination the angle phi in radians
@@ -402,7 +403,9 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @see Vec3#zero(Vec3)
      */
     public static Transform3 fromSpherical(
-        final float azimuth, final float inclination, final Transform3 target) {
+        final float azimuth,
+        final float inclination,
+        final Transform3 target) {
 
         target.rotPrev.set(target.rotation);
         Quaternion.fromSpherical(azimuth, inclination, target.rotation);
@@ -599,11 +602,9 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Multiplies a curve segment by a transform. A convenience for drawing curves
-     * in a renderer. The
-     * segment is represented by the first control point, second control point and
-     * destination anchor
-     * point.
+     * Multiplies a curve segment by a transform. A convenience for drawing
+     * curves in a renderer. The segment is represented by the first control
+     * point, second control point and destination anchor point.
      *
      * @param t     the transform
      * @param fhSrc the source fore handle
@@ -992,12 +993,12 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Orients the transform to look at a target point.<br>
+     * Orients the transform to look at a target point.
      * <br>
-     * The transform eases toward the look at rotation because discontinuities arise
-     * with using a look
-     * at matrix when a transform's look direction is parallel with the world up
-     * axis.
+     * <br>
+     * The transform eases toward the look at rotation because discontinuities
+     * arise with using a look at matrix when a transform's look direction is
+     * parallel with the world up axis.
      *
      * @param point      the target point
      * @param step       the step
@@ -1006,19 +1007,22 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @see Vec3#sub(Vec3, Vec3, Vec3)
      * @see Transform3#lookIn(Vec3, float, Handedness)
      */
-    public Transform3 lookAt(final Vec3 point, final float step, final Handedness handedness) {
+    public Transform3 lookAt(
+        final Vec3 point,
+        final float step,
+        final Handedness handedness) {
 
         Vec3.sub(point, this.location, this.forward);
         return this.lookIn(this.forward, step, handedness);
     }
 
     /**
-     * Orients the transform to look toward a direction.<br>
+     * Orients the transform to look toward a direction.
      * <br>
-     * The transform eases toward the look at rotation because discontinuities arise
-     * with using a look
-     * at matrix when a transform's look direction is parallel with the world up
-     * axis.
+     * <br>
+     * The transform eases toward the look at rotation because discontinuities
+     * arise with using a look at matrix when a transform's look direction is
+     * parallel with the world up axis.
      *
      * @param dir        the direction
      * @param step       the step
@@ -1028,7 +1032,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @see Quaternion#mix(Quaternion, Quaternion, float, Quaternion)
      * @see Transform3#updateAxes()
      */
-    public Transform3 lookIn(final Vec3 dir, final float step, final Handedness handedness) {
+    public Transform3 lookIn(
+        final Vec3 dir,
+        final float step,
+        final Handedness handedness) {
 
         /* Quaternion#fromDir will normalize direction. */
         this.rotPrev.set(this.rotation);
@@ -1104,8 +1111,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Eases the transform to a location by a step. The static easing function is
-     * used.
+     * Eases the transform to a location by a step. The static easing function
+     * is used.
      *
      * @param locNew the new location
      * @param step   the step in [0.0, 1.0]
@@ -1122,9 +1129,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Eases the transform to a location by a step. The kind of easing is specified
-     * by a Vec3 easing
-     * function.
+     * Eases the transform to a location by a step. The kind of easing is
+     * specified by a Vec3 easing function.
      *
      * @param locNew     the new location
      * @param step       the step in [0.0, 1.0]
@@ -1132,7 +1138,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @return this transform
      * @see Vec3.AbstrEasing#apply(Vec3, Vec3, Float, Vec3)
      */
-    public Transform3 moveTo(final Vec3 locNew, final float step, final Vec3.AbstrEasing easingFunc) {
+    public Transform3 moveTo(
+        final Vec3 locNew,
+        final float step,
+        final Vec3.AbstrEasing easingFunc) {
 
         this.locPrev.set(this.location);
         easingFunc.apply(this.locPrev, locNew, step, this.location);
@@ -1141,9 +1150,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Reverts this transform to its previous state, i.e., swaps current location,
-     * rotation and scale
-     * with the previous.
+     * Reverts this transform to its previous state, i.e., swaps current
+     * location, rotation and scale with the previous.
      *
      * @return this transform
      */
@@ -1174,8 +1182,7 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
 
     /**
      * Rotates the transform by creating a quaternion from an axis angle, then
-     * multiplying with the
-     * previous rotation. Updates the transform's axes.
+     * multiplying with the previous rotation. Updates the transform's axes.
      *
      * @param angle the angle
      * @param axis  the axis
@@ -1196,7 +1203,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Rotates this transform by a quaternion. Does so by quaternion multiplication.
+     * Rotates this transform by a quaternion. Does so by quaternion
+     * multiplication.
      *
      * @param q the quaternion
      * @return this transform
@@ -1260,9 +1268,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Eases the transform toward a new orientation by a step in [0.0, 1.0] using
-     * the specified easing
-     * function. Updates the transform's axes.
+     * Eases the transform toward a new orientation by a step in [0.0, 1.0]
+     * using the specified easing function. Updates the transform's axes.
      *
      * @param rotNew     the new orientation
      * @param step       the step
@@ -1273,7 +1280,9 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @see Transform3#updateAxes()
      */
     public Transform3 rotateTo(
-        final Quaternion rotNew, final float step, final Quaternion.AbstrEasing easingFunc) {
+        final Quaternion rotNew,
+        final float step,
+        final Quaternion.AbstrEasing easingFunc) {
 
         if (Quaternion.any(rotNew)) {
             this.rotPrev.set(this.rotation);
@@ -1285,13 +1294,12 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Rotates this transform around the x axis by an angle in radians. Updates the
-     * transform's axes.
+     * Rotates this transform around the x axis by an angle in radians. Updates
+     * the transform's axes.
      * <br>
      * <br>
-     * Beware that using sequences of orthonormal rotations will result in gimbal
-     * lock. Updates the
-     * transform's axes.
+     * Beware that using sequences of orthonormal rotations will result in
+     * gimbal lock. Updates the transform's axes.
      *
      * @param radians the angle
      * @return this transform
@@ -1309,12 +1317,12 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Rotates this transform around the y axis by an angle in radians. Updates the
-     * transform's axes.
+     * Rotates this transform around the y axis by an angle in radians. Updates
+     * the transform's axes.
      * <br>
      * <br>
-     * Beware that using sequences of orthonormal rotations will result in gimbal
-     * lock.
+     * Beware that using sequences of orthonormal rotations will result in
+     * gimbal lock.
      *
      * @param radians the angle
      * @return this transform
@@ -1332,12 +1340,12 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Rotates this transform around the z axis by an angle in radians. Updates the
-     * transform's axes.
+     * Rotates this transform around the z axis by an angle in radians. Updates
+     * the transform's axes.
      * <br>
      * <br>
-     * Beware that using sequences of orthonormal rotations will result in gimbal
-     * lock.
+     * Beware that using sequences of orthonormal rotations will result in
+     * gimbal lock.
      *
      * @param radians the angle
      * @return this transform
@@ -1392,8 +1400,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Scales the transform to a uniform size. Copies the sign of the transform's
-     * current scale.
+     * Scales the transform to a uniform size. Copies the sign of the
+     * transform's current scale.
      *
      * @param scalar the size
      * @return this transform
@@ -1471,7 +1479,9 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @see Vec3.AbstrEasing#apply(Vec3, Vec3, Float, Vec3)
      */
     public Transform3 scaleTo(
-        final Vec3 scaleNew, final float step, final Vec3.AbstrEasing easingFunc) {
+        final Vec3 scaleNew,
+        final float step,
+        final Vec3.AbstrEasing easingFunc) {
 
         if (Vec3.all(scaleNew)) {
             this.scalePrev.set(this.scale);
@@ -1499,16 +1509,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @see Transform3#updateAxes()
      */
     public Transform3 set(
-        final float xLoc,
-        final float yLoc,
-        final float zLoc,
+        final float xLoc, final float yLoc, final float zLoc,
         final float real,
-        final float xImag,
-        final float yImag,
-        final float zImag,
-        final float xScale,
-        final float yScale,
-        final float zScale) {
+        final float xImag, final float yImag, final float zImag,
+        final float xScale, final float yScale, final float zScale) {
 
         this.locPrev.set(this.location);
         this.location.set(xLoc, yLoc, zLoc);
@@ -1543,7 +1547,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
 
         final double halfRadians = source.rotation % Utils.TAU_D * 0.5d;
         this.rotPrev.set(this.rotation);
-        this.rotation.set((float) Math.cos(halfRadians), 0.0f, 0.0f, (float) Math.sin(halfRadians));
+        this.rotation.set(
+            (float) Math.cos(halfRadians),
+            0.0f, 0.0f,
+            (float) Math.sin(halfRadians));
         this.updateAxes();
 
         this.scalePrev.set(this.scale);
@@ -1574,7 +1581,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @see Transform3#updateAxes()
      * @see Vec3#any(Vec3)
      */
-    public Transform3 set(final Vec3 locNew, final Quaternion rotNew, final Vec3 scaleNew) {
+    public Transform3 set(
+        final Vec3 locNew,
+        final Quaternion rotNew,
+        final Vec3 scaleNew) {
 
         this.locPrev.set(this.location);
         this.location.set(locNew);
@@ -1595,9 +1605,9 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * A helper function to set the transform's from either separate vectors or from
-     * the columns of a
-     * matrix. The transform's location and scale remain unchanged.
+     * A helper function to set the transform's from either separate vectors or
+     * from the columns of a matrix. The transform's location and scale remain
+     * unchanged.
      *
      * @param xRight   m00 : right x
      * @param yForward m11 : forward y
@@ -1626,8 +1636,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
         final float xForward) {
 
         this.rotPrev.set(this.rotation);
-        Quaternion.fromAxes(
-            xRight, yForward, zUp, zForward, yUp, xUp, zRight, yRight, xForward, this.rotation);
+        Quaternion.fromAxes(xRight, yForward, zUp, zForward, yUp, xUp, zRight,
+            yRight, xForward, this.rotation);
 
         /* Update needed because the loose floats may not be normalized. */
         this.updateAxes();
@@ -1636,19 +1646,21 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Sets a transform's rotation to the provided axes. The transform's location
-     * and scale remain
-     * unchanged.
+     * Sets a transform's rotation to the provided axes. The transform's
+     * location and scale remain unchanged.
      *
      * @param right   the right axis
      * @param forward the forward axis
      * @param up      the up axis
      * @return the transform
      */
-    public Transform3 setAxes(final Vec3 right, final Vec3 forward, final Vec3 up) {
+    public Transform3 setAxes(
+        final Vec3 right,
+        final Vec3 forward,
+        final Vec3 up) {
 
-        return this.setAxes(
-            right.x, forward.y, up.z, forward.z, up.y, up.x, right.z, right.y, forward.x);
+        return this.setAxes(right.x, forward.y, up.z, forward.z, up.y, up.x,
+            right.z, right.y, forward.x);
     }
 
     /**
@@ -1675,9 +1687,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Wraps the transform's location around a periodic range as defined by an upper
-     * and lower bound:
-     * lower bounds inclusive; upper bounds exclusive.
+     * Wraps the transform's location around a periodic range as defined by an
+     * upper and lower bound: lower bounds inclusive; upper bounds exclusive.
      *
      * @param lb the lower bound
      * @param ub the upper bound
@@ -1693,10 +1704,9 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * An internal helper function to format a vector as a Python tuple, then append
-     * it to a {@link
-     * StringBuilder}. Used for testing purposes to compare results with Blender
-     * 2.9x.
+     * An internal helper function to format a vector as a Python tuple, then
+     * append it to a {@link StringBuilder}. Used for testing purposes to
+     * compare results with Blender 4.x.
      *
      * @param pyCd the string builder
      */
@@ -1807,7 +1817,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
         }
 
         /**
-         * Eases between an origin and destination transform by a step in [0.0, 1.0] .
+         * Eases between an origin and destination transform by a step in
+         * [0.0, 1.0] .
          *
          * @param orig   the origin
          * @param dest   the destination
@@ -1817,7 +1828,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
          */
         @Override
         public Transform3 apply(
-            final Transform3 orig, final Transform3 dest, final Float step, final Transform3 target) {
+            final Transform3 orig,
+            final Transform3 dest,
+            final Float step,
+            final Transform3 target) {
 
             final float tf = step;
             if (Float.isNaN(tf)) {
@@ -1840,7 +1854,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
          * @param target the output transform
          */
         @Override
-        public Transform3 apply(final Transform3[] arr, final Float step, final Transform3 target) {
+        public Transform3 apply(
+            final Transform3[] arr,
+            final Float step,
+            final Transform3 target) {
 
             final int len = arr.length;
             final float tf = step;
@@ -1857,9 +1874,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
         }
 
         /**
-         * Eases between an origin and destination transform by a step in [0.0, 1.0] .
+         * Eases between an origin and destination transform by a step in
+         * [0.0, 1.0] .
          *
-         * @param origin the origin
+         * @param orig the origin
          * @param dest   the destination
          * @param step   the step
          * @param target the output transform
@@ -1867,17 +1885,20 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
          * @see Transform3#updateAxes()
          */
         public Transform3 applyUnclamped(
-            final Transform3 origin, final Transform3 dest, final float step, final Transform3 target) {
+            final Transform3 orig,
+            final Transform3 dest,
+            final float step,
+            final Transform3 target) {
 
             target.locPrev.set(target.location);
-            this.loc.applyUnclamped(origin.location, dest.location, step, target.location);
+            this.loc.applyUnclamped(orig.location, dest.location, step, target.location);
 
             target.rotPrev.set(target.rotation);
-            this.rot.applyUnclamped(origin.rotation, dest.rotation, step, target.rotation);
+            this.rot.applyUnclamped(orig.rotation, dest.rotation, step, target.rotation);
             target.updateAxes();
 
             target.scalePrev.set(target.scale);
-            this.scale.applyUnclamped(origin.scale, dest.scale, step, target.scale);
+            this.scale.applyUnclamped(orig.scale, dest.scale, step, target.scale);
 
             return target;
         }

@@ -769,13 +769,13 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
     /**
      * Draws a line between two coordinates.
      *
-     * @param origin the origin coordinate
+     * @param orig the origin coordinate
      * @param dest   the destination coordinate
      */
     @Override
-    public void line(final Vec3 origin, final Vec3 dest) {
+    public void line(final Vec3 orig, final Vec3 dest) {
 
-        this.lineImpl(origin.x, origin.y, origin.z, dest.x, dest.y, dest.z);
+        this.lineImpl(orig.x, orig.y, orig.z, dest.x, dest.y, dest.z);
     }
 
     /**

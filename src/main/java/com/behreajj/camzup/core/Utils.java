@@ -520,9 +520,10 @@ public abstract class Utils {
      * @param ub the lower bound
      * @return the clamped value
      */
+    @SuppressWarnings("ManualMinMaxCalculation")
     public static float clamp(final float v, final float lb, final float ub) {
 
-        return Math.min(Math.max(v, lb), ub);
+        return v < lb ? lb : v > ub ? ub : v;
     }
 
     /**
@@ -533,9 +534,10 @@ public abstract class Utils {
      * @param ub the upper bound
      * @return the clamped value
      */
+    @SuppressWarnings("ManualMinMaxCalculation")
     public static int clamp(final int v, final int lb, final int ub) {
 
-        return Math.min(Math.max(v, lb), ub);
+        return v < lb ? lb : v > ub ? ub : v;
     }
 
     /**
@@ -546,9 +548,10 @@ public abstract class Utils {
      * @param ub the upper bound
      * @return the clamped value
      */
+    @SuppressWarnings("ManualMinMaxCalculation")
     public static long clamp(final long v, final long lb, final long ub) {
 
-        return Math.min(Math.max(v, lb), ub);
+        return v < lb ? lb : v > ub ? ub : v;
     }
 
     /**
@@ -557,9 +560,10 @@ public abstract class Utils {
      * @param v the input value
      * @return the clamped value
      */
+    @SuppressWarnings("ManualMinMaxCalculation")
     public static float clamp01(final float v) {
 
-        return Math.min(Math.max(v, 0.0f), 1.0f);
+        return v < 0.0f ? 0.0f : v > 1.0f ? 1.0f : v;
     }
 
     /**

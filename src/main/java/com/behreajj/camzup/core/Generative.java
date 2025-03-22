@@ -2,8 +2,7 @@ package com.behreajj.camzup.core;
 
 /**
  * Facilitates noise and voronoi patterns via hashing functions. Hashing
- * functions are based on Bob
- * Jenkins lookup3 script, <a href=
+ * functions are based on Bob Jenkins lookup3 script, <a href=
  * "http://burtleburtle.net/bob/c/lookup3.c">http://burtleburtle.net/bob/c/lookup3.c</a>.
  *
  * @author Bob Jenkins
@@ -107,7 +106,6 @@ public abstract class Generative {
         final int bhash = (Utils.MUL_BASE ^ Float.floatToIntBits(v.x)) * Utils.HASH_MUL
             ^ Float.floatToIntBits(v.y + st);
 
-        /* @formatter:off */
     return target.set(
         (Float.intBitsToFloat(Generative.hash(ahash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f)
                 * 2.0f
@@ -115,7 +113,6 @@ public abstract class Generative {
         (Float.intBitsToFloat(Generative.hash(bhash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f)
                 * 2.0f
             - 1.0f);
-    /* @formatter:on */
     }
 
     /**
@@ -160,7 +157,6 @@ public abstract class Generative {
 
         final int chash = (mulvx * Utils.HASH_MUL ^ vybit) * Utils.HASH_MUL ^ Float.floatToIntBits(v.z + st);
 
-        /* @formatter:off */
     return target.set(
         (Float.intBitsToFloat(Generative.hash(ahash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f)
                 * 2.0f
@@ -171,7 +167,6 @@ public abstract class Generative {
         (Float.intBitsToFloat(Generative.hash(chash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f)
                 * 2.0f
             - 1.0f);
-    /* @formatter:on */
     }
 
     /**
@@ -226,7 +221,6 @@ public abstract class Generative {
         final int dhash = ((mulvx * Utils.HASH_MUL ^ vybit) * Utils.HASH_MUL ^ vzbit) * Utils.HASH_MUL
             ^ Float.floatToIntBits(v.w + st);
 
-        /* @formatter:off */
     return target.set(
         (Float.intBitsToFloat(Generative.hash(ahash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f)
                 * 2.0f
@@ -240,6 +234,5 @@ public abstract class Generative {
         (Float.intBitsToFloat(Generative.hash(dhash, seed, 0) & 0x007fffff | 0x3f800000) - 1.0f)
                 * 2.0f
             - 1.0f);
-    /* @formatter:on */
     }
 }

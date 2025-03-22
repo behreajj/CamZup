@@ -22,6 +22,15 @@ public abstract class ImgExport {
     public static final boolean DEFAULT_USE_PREMUL = false;
 
     /**
+     * Discourage overriding with a private constructor.
+     */
+    private ImgExport() {
+        // TODO: Change class name to ImgIo
+        // TODO: Support loading files to Img?
+        // TODO: Convert from native java.awt.Image to Img?
+    }
+
+    /**
      * Converts an image to a {@link java.awt.image.BufferedImage}.
      *
      * @param img the image

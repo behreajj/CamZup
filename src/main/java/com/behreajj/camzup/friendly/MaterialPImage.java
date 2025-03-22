@@ -68,8 +68,11 @@ public class MaterialPImage extends MaterialUv {
      * @param texture   the texture
      * @param tint      the fill or tint
      */
-    public MaterialPImage(final String name, final Transform2 transform,
-        final PImage texture, final Rgb tint) {
+    public MaterialPImage(
+        final String name,
+        final Transform2 transform,
+        final PImage texture,
+        final Rgb tint) {
 
         super(name, transform, tint);
         this.setTexture(texture);

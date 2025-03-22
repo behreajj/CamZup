@@ -14,8 +14,8 @@ public abstract class Entity {
     public String name;
 
     /**
-     * The default constructor. Assigns the entity's name with the hash identity
-     * string.
+     * The default constructor. Assigns the entity's name with the hash
+     * identity string.
      */
     protected Entity() {
         this.name = Integer.toHexString(System.identityHashCode(this));
@@ -65,11 +65,6 @@ public abstract class Entity {
         return Objects.hashCode(name);
     }
 
-    /**
-     * Represents an entity as a class simple name followed by the entity's name.
-     *
-     * @return the string
-     */
     @Override
     public String toString() {
 

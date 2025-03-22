@@ -1292,8 +1292,8 @@ public abstract class Convert {
 
     /**
      * Converts from a 2D PShape to a {@link Curve3}. Potentially a recursive
-     * function if the PShape is of the family {@link PConstants#GROUP}
-     * ({@value PConstants#GROUP}).<br>
+     * function if the PShape is of the family {@link PConstants#GROUP}.
+     * <br>
      * <br>
      * Conversion of {@link PShape#PRIMITIVE}s does not respond to
      * {@link PApplet#ellipseMode(int)} or {@link PApplet#rectMode(int)}.

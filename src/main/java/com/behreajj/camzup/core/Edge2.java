@@ -4,8 +4,8 @@ import java.util.Objects;
 
 /**
  * Organizes components of a 2D mesh into an edge with an origin and
- * destination. This is not used
- * by a mesh internally; it is created upon retrieval from a mesh.
+ * destination. This is not used by a mesh internally; it is created upon
+ * retrieval from a mesh.
  */
 public class Edge2 implements Comparable<Edge2> {
 
@@ -30,15 +30,18 @@ public class Edge2 implements Comparable<Edge2> {
 
     /**
      * Constructs an edge from the origin and destination coordinate and texture
-     * coordinate data.
-     * Creates two vertex objects.
+     * coordinate data. Creates two vertex objects.
      *
      * @param coOrig origin coordinate
      * @param txOrig origin texture coordinate
      * @param coDest destination coordinate
      * @param txDest destination texture coordinate
      */
-    public Edge2(final Vec2 coOrig, final Vec2 txOrig, final Vec2 coDest, final Vec2 txDest) {
+    public Edge2(
+        final Vec2 coOrig,
+        final Vec2 txOrig,
+        final Vec2 coDest,
+        final Vec2 txDest) {
 
         this.origin = new Vert2(coOrig, txOrig);
         this.dest = new Vert2(coDest, txDest);
@@ -56,9 +59,8 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     /**
-     * Evaluates whether two edges are complements or neighbors, i.e., whether one
-     * edge's origin is
-     * the other's destination.
+     * Evaluates whether two edges are complements or neighbors, i.e., whether
+     * one edge's origin is the other's destination.
      *
      * @param a the left comparisand
      * @param b the right comparisand
@@ -108,11 +110,9 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     /**
-     * Finds a point on the edge given a step in the range [0.0, 1.0] . Uses linear
-     * interpolation from
-     * the origin coordinate to that of the destination. To find an edge's midpoint,
-     * use the step 0.5
-     * .
+     * Finds a point on the edge given a step in the range [0.0, 1.0] . Uses
+     * linear interpolation from the origin coordinate to that of the
+     * destination. To find an edge's midpoint, use the step 0.5 .
      *
      * @param edge   the edge
      * @param step   the step
@@ -136,9 +136,8 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     /**
-     * Finds the heading of an edge. Subtracts the destination coordinate from that
-     * of the origin,
-     * then supplies the difference to atan2 .
+     * Finds the heading of an edge. Subtracts the destination coordinate from
+     * that of the origin, then supplies the difference to atan2 .
      *
      * @param edge the edge
      * @return the heading
@@ -152,8 +151,8 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     /**
-     * Finds the Euclidean distance from the edge's origin coordinate to that of its
-     * destination.
+     * Finds the Euclidean distance from the edge's origin coordinate to that
+     * of its destination.
      *
      * @param edge the edge
      * @return the magnitude
@@ -165,9 +164,8 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     /**
-     * Finds the squared Euclidean distance from the edge's origin coordinate to
-     * that of its
-     * destination.
+     * Finds the squared Euclidean distance from the edge's origin coordinate
+     * to that of its destination.
      *
      * @param edge the edge
      * @return the magnitude
@@ -179,10 +177,9 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     /**
-     * Projects a vector, representing a point, onto an edge. The scalar projection
-     * is clamped to the
-     * range [0.0, 1.0] , meaning the projection will not exceed the edge's origin
-     * and destination.
+     * Projects a vector, representing a point, onto an edge. The scalar
+     * projection is clamped to the range [0.0, 1.0], meaning the projection
+     * will not exceed the edge's origin and destination.
      *
      * @param edge   the edge
      * @param v      the input vector
@@ -218,19 +215,18 @@ public class Edge2 implements Comparable<Edge2> {
      * Tests to see if two edges share a vertex coordinate:
      *
      * <ul>
-     * <li>Returns -1 when <em>a</em>'s origin is <em>b</em>'s destination.
-     * <li>Returns -2 when <em>a</em>'s destination is <em>b</em>'s destination
-     * <li>Returns 1 when <em>a</em>'s destination is <em>b</em>'s origin.
-     * <li>Returns 2 when <em>a</em>'s origin is <em>b</em>'s origin.
-     * <li>Returns 0 when none of the above conditions are met.
+     * <li>Returns -1 when <em>a</em>'s origin is <em>b</em>'s destination.</li>
+     * <li>Returns -2 when <em>a</em>'s destination is <em>b</em>'s destination.</li>
+     * <li>Returns 1 when <em>a</em>'s destination is <em>b</em>'s origin.</li>
+     * <li>Returns 2 when <em>a</em>'s origin is <em>b</em>'s origin.</li>
+     * <li>Returns 0 when none of the above conditions are met.</li>
      * </ul>
-     * <p>
-     * Assuming a mesh is properly wound, a value of 1 implies that two edges belong
-     * to the same face;
-     * of 2, different neighboring faces. A positive value implies counter-clockwise
-     * winding (CCW), or
-     * right-handedness; a negative value, clockwise winding (CW), or
-     * left-handedness.<br>
+     *
+     * Assuming a mesh is properly wound, a value of 1 implies that two edges
+     * belong to the same face; of 2, different neighboring faces. A positive
+     * value implies counter-clockwise winding (CCW), or right-handedness; a
+     * negative value, clockwise winding (CW), or left-handedness.
+     * <br>
      * <br>
      * If the left and right comparisand are the same, returns 2.
      *
@@ -288,8 +284,7 @@ public class Edge2 implements Comparable<Edge2> {
 
     /**
      * Rotates the coordinates of this edge by an angle in radians around the z
-     * axis. The texture
-     * coordinates are unaffected.
+     * axis. The texture coordinates are unaffected.
      *
      * @param radians angle
      * @return this edge
@@ -301,9 +296,8 @@ public class Edge2 implements Comparable<Edge2> {
 
     /**
      * Rotates the coordinates of this edge by an angle in radians around the z
-     * axis. Uses global
-     * coordinates, i.e. doesn't consider the edge's position. The texture
-     * coordinates are unaffected.
+     * axis. Uses global coordinates, i.e. doesn't consider the edge's position.
+     * The texture coordinates are unaffected.
      *
      * @param radians the angle
      * @return this edge
@@ -319,10 +313,8 @@ public class Edge2 implements Comparable<Edge2> {
 
     /**
      * Rotates the coordinates of this edge by the sine and cosine of an angle
-     * around the z axis. Uses
-     * global coordinates, i.e. doesn't consider the edge's position. The texture
-     * coordinates are
-     * unaffected.
+     * around the z axis. Uses global coordinates, i.e. doesn't consider the
+     * edge's position. The texture coordinates are unaffected.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -339,9 +331,8 @@ public class Edge2 implements Comparable<Edge2> {
 
     /**
      * Rotates the coordinates of this edge by the sine and cosine of an angle
-     * around the z axis. The
-     * edge's center (midpoint) acts as a pivot. The texture coordinates are
-     * unaffected.
+     * around the z axis. The edge's center (midpoint) acts as a pivot. The
+     * texture coordinates are unaffected.
      *
      * @param cosa   cosine of the angle
      * @param sina   sine of the angle
@@ -356,7 +347,9 @@ public class Edge2 implements Comparable<Edge2> {
         final Vec2 coOrig = this.origin.coord;
         final Vec2 coDest = this.dest.coord;
 
-        center.set((coOrig.x + coDest.x) * 0.5f, (coOrig.y + coDest.y) * 0.5f);
+        center.set(
+            (coOrig.x + coDest.x) * 0.5f,
+            (coOrig.y + coDest.y) * 0.5f);
 
         Vec2.sub(coOrig, center, coOrig);
         Vec2.rotateZ(coOrig, cosa, sina, coOrig);
@@ -371,8 +364,8 @@ public class Edge2 implements Comparable<Edge2> {
 
     /**
      * Rotates the coordinates of this edge by an angle in radians around the z
-     * axis. The edge's
-     * center (midpoint) acts as a pivot. The texture coordinates are unaffected.
+     * axis. The edge's center (midpoint) acts as a pivot. The texture
+     * coordinates are unaffected.
      *
      * @param radians the angle
      * @param center  the center
@@ -388,7 +381,8 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     /**
-     * Scales the coordinates of this edge. The texture coordinates are unaffected.
+     * Scales the coordinates of this edge. The texture coordinates are
+     * unaffected.
      *
      * @param scale uniform scalar
      * @return this edge
@@ -399,7 +393,8 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     /**
-     * Scales the coordinates of this edge. The texture coordinates are unaffected.
+     * Scales the coordinates of this edge. The texture coordinates are
+     * unaffected.
      *
      * @param scalar non uniform scalar
      * @return this edge
@@ -410,9 +405,9 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     /**
-     * Scales the coordinates of this edge. The texture coordinates are unaffected.
-     * Uses global
-     * coordinates, i.e., doesn't consider the face's position.
+     * Scales the coordinates of this edge. The texture coordinates are
+     * unaffected. Uses global coordinates, i.e., doesn't consider the edge's
+     * position.
      *
      * @param scalar the scalar
      * @return this edge
@@ -429,9 +424,9 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     /**
-     * Scales the coordinates of this edge. The texture coordinates are unaffected.
-     * Uses global
-     * coordinates, i.e., doesn't consider the face's position.
+     * Scales the coordinates of this edge. The texture coordinates are
+     * unaffected. Uses global coordinates, i.e., doesn't consider the edge's
+     * position.
      *
      * @param scalar the nonuniform scalar
      * @return this edge
@@ -450,8 +445,7 @@ public class Edge2 implements Comparable<Edge2> {
 
     /**
      * Scales the coordinates of this edge. Subtracts the edge's mean center
-     * (midpoint) from each
-     * vertex, scales, then adds the mean center.
+     * (midpoint) from each vertex, scales, then adds the mean center.
      *
      * @param scalar the uniform scalar
      * @param center the edge center
@@ -466,7 +460,9 @@ public class Edge2 implements Comparable<Edge2> {
             final Vec2 coOrig = this.origin.coord;
             final Vec2 coDest = this.dest.coord;
 
-            center.set((coOrig.x + coDest.x) * 0.5f, (coOrig.y + coDest.y) * 0.5f);
+            center.set(
+                (coOrig.x + coDest.x) * 0.5f,
+                (coOrig.y + coDest.y) * 0.5f);
 
             Vec2.sub(coOrig, center, coOrig);
             Vec2.mul(coOrig, scalar, coOrig);
@@ -481,9 +477,8 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     /**
-     * Scales the coordinates of this edge. Subtracts the edge's center (midpoint)
-     * from each vertex,
-     * scales, then adds the center.
+     * Scales the coordinates of this edge. Subtracts the edge's center
+     * (midpoint) from each vertex, scales, then adds the center.
      *
      * @param scalar the nonuniform scalar
      * @param center the edge center
@@ -500,7 +495,9 @@ public class Edge2 implements Comparable<Edge2> {
             final Vec2 coOrig = this.origin.coord;
             final Vec2 coDest = this.dest.coord;
 
-            center.set((coOrig.x + coDest.x) * 0.5f, (coOrig.y + coDest.y) * 0.5f);
+            center.set(
+                (coOrig.x + coDest.x) * 0.5f,
+                (coOrig.y + coDest.y) * 0.5f);
 
             Vec2.sub(coOrig, center, coOrig);
             Vec2.hadamard(coOrig, scalar, coOrig);
@@ -524,7 +521,11 @@ public class Edge2 implements Comparable<Edge2> {
      * @param txDest destination texture coordinate
      * @return this edge
      */
-    public Edge2 set(final Vec2 coOrig, final Vec2 txOrig, final Vec2 coDest, final Vec2 txDest) {
+    public Edge2 set(
+        final Vec2 coOrig,
+        final Vec2 txOrig,
+        final Vec2 coDest,
+        final Vec2 txDest) {
 
         this.origin.set(coOrig, txOrig);
         this.dest.set(coDest, txDest);
@@ -615,8 +616,7 @@ public class Edge2 implements Comparable<Edge2> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * edges. Appends to an
-     * existing {@link StringBuilder}.
+     * edges. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -633,9 +633,8 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     /**
-     * Tests this edge for equivalence with another. To be true the edges' origins
-     * must be equal and
-     * their destinations must be equal.
+     * Tests this edge for equivalence with another. To be true the edges'
+     * origins must be equal and their destinations must be equal.
      *
      * @param edge2 the edge
      * @return the evaluation

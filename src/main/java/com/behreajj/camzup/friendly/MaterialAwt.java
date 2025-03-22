@@ -13,7 +13,7 @@ import java.awt.image.BufferedImage;
 public class MaterialAwt extends Material {
 
     /**
-     * The texture sample coordinates.s
+     * The texture sample coordinates.
      */
     public final Sample sample = new Sample();
 
@@ -64,7 +64,8 @@ public class MaterialAwt extends Material {
 
         super(name);
 
-        final BufferedImage img = new BufferedImage(128, 128, BufferedImage.TYPE_INT_ARGB);
+        final BufferedImage img = new BufferedImage(128, 128,
+            BufferedImage.TYPE_INT_ARGB);
         final int[] px = new int[128 * 128];
         final int len = px.length;
         for (int i = 0; i < len; ++i) {
@@ -142,8 +143,7 @@ public class MaterialAwt extends Material {
 
     /**
      * Sets the material's texture. If the supplied texture is null, then a new
-     * texture is created and
-     * filled with a color.
+     * texture is created and filled with a color.
      *
      * @param texture the texture
      * @return this material
@@ -153,7 +153,8 @@ public class MaterialAwt extends Material {
         if (texture != null) {
             this.texture = texture;
         } else {
-            final BufferedImage img = new BufferedImage(128, 128, BufferedImage.TYPE_INT_ARGB);
+            final BufferedImage img = new BufferedImage(128, 128,
+                BufferedImage.TYPE_INT_ARGB);
             final int[] px = new int[128 * 128];
             final int len = px.length;
             for (int i = 0; i < len; ++i) {
@@ -305,7 +306,11 @@ public class MaterialAwt extends Material {
          * @param xbr the bottom right corner x
          * @param ybr the bottom right corner y
          */
-        public Sample(final int xtl, final int ytl, final int xbr, final int ybr) {
+        public Sample(
+            final int xtl,
+            final int ytl,
+            final int xbr,
+            final int ybr) {
 
             this.set(xtl, ytl, xbr, ybr);
         }
@@ -356,7 +361,11 @@ public class MaterialAwt extends Material {
          * @param ybr the bottom right corner y
          * @return the sample
          */
-        public Sample set(final int xtl, final int ytl, final int xbr, final int ybr) {
+        public Sample set(
+            final int xtl,
+            final int ytl,
+            final int xbr,
+            final int ybr) {
 
             this.xTopLeft = xtl;
             this.yTopLeft = ytl;
@@ -388,9 +397,8 @@ public class MaterialAwt extends Material {
         }
 
         /**
-         * Internal helper function to assist with methods that need to print many
-         * samples. Appends to
-         * an existing {@link StringBuilder}.
+         * Internal helper function to assist with methods that need to print
+         * many samples. Appends to an existing {@link StringBuilder}.
          *
          * @param sb      the string builder
          * @param padding the padding

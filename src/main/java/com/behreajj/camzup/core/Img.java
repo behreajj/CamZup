@@ -6,10 +6,9 @@ import java.util.Map.Entry;
 
 /**
  * An image class for images in the LAB color format. The bytes per pixel is 64,
- * a long. The bytes
- * per channel is 16, a short. The channel format is 0xTTTTLLLLAAAABBBB. The
- * alpha channel is
- * abbreviated to 'T', since 'A' is already taken.
+ * a long. The bytes per channel is 16, a short. The channel format is
+ * 0xTTTTLLLLAAAABBBB. The alpha channel is abbreviated to 'T', since 'A' is
+ * already taken.
  */
 public class Img {
 
@@ -365,12 +364,20 @@ public class Img {
                     final double mcpl = Math.sqrt(csq + l * l);
                     final double sat = mcpl != 0.0d ? Math.sqrt(csq) / mcpl : 0.0d;
 
-                    if (sat > maxSat) { maxSat = sat; }
-                    if (sat < minSat) { minSat = sat; }
+                    if (sat > maxSat) {
+                        maxSat = sat;
+                    }
+                    if (sat < minSat) {
+                        minSat = sat;
+                    }
                     sumSat += sat;
 
-                    if (l > maxLight) { maxLight = l; }
-                    if (l < minLight) { minLight = l; }
+                    if (l > maxLight) {
+                        maxLight = l;
+                    }
+                    if (l < minLight) {
+                        minLight = l;
+                    }
                     sumLight += l;
 
                     ++sumTally;
@@ -549,8 +556,12 @@ public class Img {
                 Lab.fromHex(srcPixel, lab);
                 final Lch lch = Lch.fromLab(lab, new Lch());
                 if (lab.alpha > 0.0f) {
-                    if (lch.c > maxChroma) { maxChroma = lch.c; }
-                    if (lch.c < minChroma) { minChroma = lch.c; }
+                    if (lch.c > maxChroma) {
+                        maxChroma = lch.c;
+                    }
+                    if (lch.c < minChroma) {
+                        minChroma = lch.c;
+                    }
                     sumChroma += lch.c;
                     ++sumTally;
                 }
@@ -1124,12 +1135,28 @@ public class Img {
             double tuv = t + u * v;
 
             switch (bmAlpha) {
-                case MAX: { tuv = Math.max(t, v); } break;
-                case MIN: { tuv = Math.min(t, v); } break;
-                case MULTIPLY: { tuv = t * v; } break;
-                case OVER: { tuv = t; } break;
-                case UNDER: { tuv = v; } break;
-                case BLEND: default:
+                case MAX: {
+                    tuv = Math.max(t, v);
+                }
+                break;
+                case MIN: {
+                    tuv = Math.min(t, v);
+                }
+                break;
+                case MULTIPLY: {
+                    tuv = t * v;
+                }
+                break;
+                case OVER: {
+                    tuv = t;
+                }
+                break;
+                case UNDER: {
+                    tuv = v;
+                }
+                break;
+                case BLEND:
+                default:
             }
 
             long hexComp = Img.CLEAR_PIXEL;
@@ -1162,7 +1189,7 @@ public class Img {
                     break;
 
                     case AVERAGE: {
-                        if(vgt0) {
+                        if (vgt0) {
                             lComp = uLUnder + t * ((lUnder + lOver) * 0.5d);
                         }
                     }
@@ -1187,7 +1214,7 @@ public class Img {
                     break;
 
                     case OVER: {
-                         lComp = lOver;
+                        lComp = lOver;
                     }
                     break;
 
@@ -1337,8 +1364,6 @@ public class Img {
         final int step,
         final Img target) {
 
-        // TODO: TEST
-
         final int wSrc = source.width;
         final int hSrc = source.height;
         final long[] srcPixels = source.pixels;
@@ -1351,13 +1376,16 @@ public class Img {
         }
 
         final long[] trgPixels = target.pixels;
+        if (step < 1) {
+            System.arraycopy(srcPixels, 0, trgPixels, 0, srcLen);
+            return target;
+        }
 
         final Lab labCenter = new Lab();
         final Lab labNgbr = new Lab();
         final Lab labAvg = new Lab();
 
-        final int stepVal = Math.max(step, 1);
-        final int wKrn = 1 + stepVal * 2;
+        final int wKrn = 1 + step * 2;
         final int krnLen = wKrn * wKrn;
         final float toAvg = 1.0f / krnLen;
 
@@ -1365,8 +1393,8 @@ public class Img {
             final long tlab64Src = srcPixels[i];
             Lab.fromHex(tlab64Src, labCenter);
 
-            final int xSrc = i % wSrc - stepVal;
-            final int ySrc = i / wSrc - stepVal;
+            final int xSrc = i % wSrc - step;
+            final int ySrc = i / wSrc - step;
 
             float lSum = 0.0f;
             float aSum = 0.0f;
@@ -1384,8 +1412,8 @@ public class Img {
                     tSum += labNgbr.alpha;
                 } else {
                     /*
-                     * When the kernel is out of bounds, sample the central color but
-                     * do not tally alpha.
+                     * When the kernel is out of bounds, sample the central
+                     * color but do not tally alpha.
                      */
                     lSum += labCenter.l;
                     aSum += labCenter.a;
@@ -1843,8 +1871,8 @@ public class Img {
      * are expected to be uvs, scaled by source image width and height.
      *
      * @param source the input image
-     * @param mn the minimum corner
-     * @param mx the maximum corner
+     * @param mn     the minimum corner
+     * @param mx     the maximum corner
      * @param target the output image
      * @return the region
      */
@@ -1903,7 +1931,7 @@ public class Img {
         }
 
         final int trgLen = wTrg * hTrg;
-        if(wTrg != target.width || hTrg != target.height) {
+        if (wTrg != target.width || hTrg != target.height) {
             target.width = wTrg;
             target.height = hTrg;
             target.pixels = new long[trgLen];
@@ -4074,7 +4102,8 @@ public class Img {
 
             default: {
                 final float tana = (float) Math.tan(angle);
-                final int wTrg = (int) (0.5f + (float) wSrc + Utils.abs(tana) * (float) hSrc);
+                final int wTrg = (int) (0.5f + (float) wSrc
+                    + Utils.abs(tana) * (float) hSrc);
                 final float yCenter = (float) hSrc * 0.5f;
                 final float xDiff = ((float) wSrc - (float) wTrg) * 0.5f;
 
@@ -4139,7 +4168,8 @@ public class Img {
 
             default: {
                 final float tana = (float) Math.tan(angle);
-                final int hTrg = (int) (0.5f + (float) hSrc + Utils.abs(tana) * (float) wSrc);
+                final int hTrg = (int) (0.5f + (float) hSrc
+                    + Utils.abs(tana) * (float) wSrc);
                 final float xCenter = (float) wSrc * 0.5f;
                 final float yDiff = ((float) hSrc - (float) hTrg) * 0.5f;
 
@@ -4488,10 +4518,10 @@ public class Img {
     /**
      * Writes an image to ppm formatted bytes.
      *
-     * @param source  the source image
-     * @param mapFunc the tone mapping function
-     * @param format  the data format
-     * @param levels  the quantization levels
+     * @param source    the source image
+     * @param mapFunc   the tone mapping function
+     * @param format    the data format
+     * @param levels    the quantization levels
      * @param usePremul multiply color by alpha
      * @return the bytes
      */
@@ -4540,7 +4570,7 @@ public class Img {
                 Lab.fromHex(tlab64, lab);
                 Rgb.srLab2TosRgb(lab, srgb, lrgb, xyz);
                 mapped = mapFunc.apply(srgb, new Rgb());
-                if(usePremul) {
+                if (usePremul) {
                     Rgb.premul(mapped, mapped);
                 }
                 convert.put(tlab64Obj, mapped);
@@ -4969,10 +4999,18 @@ public class Img {
                 long ai = (long) (0.5f + a2);
                 long bi = (long) (0.5f + b2);
 
-                if (ti > 0xffffL) { ti = 0xffffL; }
-                if (li > 0xffffL) { li = 0xffffL; }
-                if (ai > 0xffffL) { ai = 0xffffL; }
-                if (bi > 0xffffL) { bi = 0xffffL; }
+                if (ti > 0xffffL) {
+                    ti = 0xffffL;
+                }
+                if (li > 0xffffL) {
+                    li = 0xffffL;
+                }
+                if (ai > 0xffffL) {
+                    ai = 0xffffL;
+                }
+                if (bi > 0xffffL) {
+                    bi = 0xffffL;
+                }
 
                 return ti << Img.T_SHIFT
                     | li << Img.L_SHIFT

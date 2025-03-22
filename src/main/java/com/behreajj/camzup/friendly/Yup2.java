@@ -657,13 +657,13 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
     /**
      * Draws a line between two coordinates.
      *
-     * @param origin the origin coordinate
+     * @param orig the origin coordinate
      * @param dest   the destination coordinate
      */
     @Override
-    public void line(final Vec2 origin, final Vec2 dest) {
+    public void line(final Vec2 orig, final Vec2 dest) {
 
-        this.lineImpl(origin.x, origin.y, 0.0f, dest.x, dest.y, 0.0f);
+        this.lineImpl(orig.x, orig.y, 0.0f, dest.x, dest.y, 0.0f);
     }
 
     /**

@@ -16,15 +16,18 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * The path string for this renderer.
      */
     public static final String PATH_STR = "com.behreajj.camzup.friendly.UpOgl";
+
     /**
      * A curve to hold the arc data.
      */
     protected final Curve2 arc = new Curve2();
+
     /**
      * Whether to pre-multiply colors by alpha when using integer
      * colors.
      */
     public boolean usePreMultiply = true;
+
     /**
      * The arc-mode.
      */
@@ -91,9 +94,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      */
     public void applyMatrix(final Mat3 source) {
 
-        this.applyMatrixImpl(source.m00, source.m01, 0.0f, source.m02, source.m10,
-            source.m11, 0.0f, source.m12, 0.0f, 0.0f, 1.0f, 0.0f, source.m20,
-            source.m21, 0.0f, source.m22);
+        this.applyMatrixImpl(
+            source.m00, source.m01, 0.0f, source.m02,
+            source.m10, source.m11, 0.0f, source.m12,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            source.m20, source.m21, 0.0f, source.m22);
     }
 
     /**
@@ -103,10 +108,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      */
     public void applyMatrix(final Mat4 source) {
 
-        this.applyMatrixImpl(source.m00, source.m01, source.m02, source.m03,
-            source.m10, source.m11, source.m12, source.m13, source.m20, source.m21,
-            source.m22, source.m23, source.m30, source.m31, source.m32,
-            source.m33);
+        this.applyMatrixImpl(
+            source.m00, source.m01, source.m02, source.m03,
+            source.m10, source.m11, source.m12, source.m13,
+            source.m20, source.m21, source.m22, source.m23,
+            source.m30, source.m31, source.m32, source.m33);
     }
 
     /**
@@ -116,8 +122,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      */
     public void applyProjection(final Mat4 m) {
 
-        super.applyProjection(m.m00, m.m01, m.m02, m.m03, m.m10, m.m11, m.m12,
-            m.m13, m.m20, m.m21, m.m22, m.m23, m.m30, m.m31, m.m32, m.m33);
+        super.applyProjection(
+            m.m00, m.m01, m.m02, m.m03,
+            m.m10, m.m11, m.m12, m.m13,
+            m.m20, m.m21, m.m22, m.m23,
+            m.m30, m.m31, m.m32, m.m33);
     }
 
     /**
@@ -424,7 +433,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         this.calcG = y * this.invColorModeY;
         this.calcR = x * this.invColorModeX;
 
-        this.calcA = this.calcA < 0.0f ? 0.0f : Math.min(this.calcA, 1.0f);
+        this.calcA = Utils.clamp01(this.calcA);
 
         switch (this.colorMode) {
 
@@ -443,9 +452,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
 
             default:
 
-                this.calcB = this.calcB < 0.0f ? 0.0f : Math.min(this.calcB, 1.0f);
-                this.calcG = this.calcG < 0.0f ? 0.0f : Math.min(this.calcG, 1.0f);
-                this.calcR = this.calcR < 0.0f ? 0.0f : Math.min(this.calcR, 1.0f);
+                this.calcB = Utils.clamp01(this.calcB);
+                this.calcG = Utils.clamp01(this.calcG);
+                this.calcR = Utils.clamp01(this.calcR);
 
         }
 
@@ -463,7 +472,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         this.calcRi = (int) (this.calcR * 0xff + 0.5f);
 
         this.calcAlpha = this.calcAi != 0xff;
-        this.calcColor = this.calcAi << 0x18 | this.calcRi << 0x10 | this.calcGi << 0x08 | this.calcBi;
+        this.calcColor = this.calcAi << 0x18
+            | this.calcRi << 0x10
+            | this.calcGi << 0x08
+            | this.calcBi;
     }
 
     /**
@@ -494,7 +506,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         this.calcRi = (int) (this.calcR * 0xff + 0.5f);
         this.calcAlpha = this.calcAi != 0xff;
 
-        this.calcColor = this.calcAi << 0x18 | this.calcRi << 0x10 | this.calcGi << 0x08 | this.calcBi;
+        this.calcColor = this.calcAi << 0x18
+            | this.calcRi << 0x10
+            | this.calcGi << 0x08
+            | this.calcBi;
     }
 
     /**
@@ -507,10 +522,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     public void colorCalc(final Rgb c) {
 
         /* Clamp values to the range [0.0, 1.0] . */
-        this.calcA = c.alpha < 0.0f ? 0.0f : Math.min(c.alpha, 1.0f);
-        this.calcB = c.b < 0.0f ? 0.0f : Math.min(c.b, 1.0f);
-        this.calcG = c.g < 0.0f ? 0.0f : Math.min(c.g, 1.0f);
-        this.calcR = c.r < 0.0f ? 0.0f : Math.min(c.r, 1.0f);
+        this.calcA = Utils.clamp01(c.alpha);
+        this.calcB = Utils.clamp01(c.b);
+        this.calcG = Utils.clamp01(c.g);
+        this.calcR = Utils.clamp01(c.r);
 
         /* Convert from [0.0, 1.0] to [0, 255] . */
         this.calcAi = (int) (this.calcA * 0xff + 0.5f);
@@ -519,7 +534,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         this.calcRi = (int) (this.calcR * 0xff + 0.5f);
 
         this.calcAlpha = this.calcAi != 0xff;
-        this.calcColor = this.calcAi << 0x18 | this.calcRi << 0x10 | this.calcGi << 0x08 | this.calcBi;
+        this.calcColor = this.calcAi << 0x18
+            | this.calcRi << 0x10
+            | this.calcGi << 0x08
+            | this.calcBi;
     }
 
     /**
@@ -543,11 +561,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          * See https://discourse.processing.org/t/colormode-and-rgba-values/31379
          */
 
-        super.colorMode(mode, max1 < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN
-                : Math.min(max1, IUp.COLOR_MODE_MAX),
-            max2 < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN : Math.min(max2, IUp.COLOR_MODE_MAX),
-            max3 < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN : Math.min(max3, IUp.COLOR_MODE_MAX),
-            aMax < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN : Math.min(aMax, IUp.COLOR_MODE_MAX));
+        super.colorMode(mode,
+            Utils.clamp(max1, IUp.COLOR_MODE_MIN, IUp.COLOR_MODE_MAX),
+            Utils.clamp(max2, IUp.COLOR_MODE_MIN, IUp.COLOR_MODE_MAX),
+            Utils.clamp(max3, IUp.COLOR_MODE_MIN, IUp.COLOR_MODE_MAX),
+            Utils.clamp(aMax, IUp.COLOR_MODE_MIN, IUp.COLOR_MODE_MAX));
 
         this.invColorModeX = 1.0f / this.colorModeX;
         this.invColorModeY = 1.0f / this.colorModeY;
@@ -860,13 +878,21 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         this.beginShape(PConstants.POLYGON);
         this.normalPerShape(0.0f, 0.0f, 1.0f);
         this.vertexImpl(right, yc, 0.0f, this.textureU, this.textureV);
-        this.bezierVertexImpl(right, yc + extcph, 0.0f, xc + extcpw, top, 0.0f,
+        this.bezierVertexImpl(
+            right, yc + extcph, 0.0f,
+            xc + extcpw, top, 0.0f,
             xc, top, 0.0f);
-        this.bezierVertexImpl(xc - extcpw, top, 0.0f, left, yc + extcph, 0.0f,
+        this.bezierVertexImpl(
+            xc - extcpw, top, 0.0f,
+            left, yc + extcph, 0.0f,
             left, yc, 0.0f);
-        this.bezierVertexImpl(left, yc - extcph, 0.0f, xc - extcpw, bottom, 0.0f,
+        this.bezierVertexImpl(
+            left, yc - extcph, 0.0f,
+            xc - extcpw, bottom, 0.0f,
             xc, bottom, 0.0f);
-        this.bezierVertexImpl(xc + extcpw, bottom, 0.0f, right, yc - extcph, 0.0f,
+        this.bezierVertexImpl(
+            xc + extcpw, bottom, 0.0f,
+            right, yc - extcph, 0.0f,
             right, yc, 0.0f);
         this.endShape(PConstants.CLOSE);
     }
@@ -951,8 +977,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @param far    the far clip plane
      */
     @Override
-    public void frustum(final float left, final float right,
-        final float bottom, final float top, final float near, final float far) {
+    public void frustum(
+        final float left, final float right,
+        final float bottom, final float top,
+        final float near, final float far) {
 
         this.cameraNear = near;
         this.cameraFar = far;
@@ -1056,9 +1084,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      */
     public void setMatrix(final Mat3 source) {
 
-        this.setMatrix(source.m00, source.m01, 0.0f, source.m02, source.m10,
-            source.m11, 0.0f, source.m12, 0.0f, 0.0f, 1.0f, 0.0f, source.m20,
-            source.m21, 0.0f, source.m22);
+        this.setMatrix(
+            source.m00, source.m01, 0.0f, source.m02,
+            source.m10, source.m11, 0.0f, source.m12,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            source.m20, source.m21, 0.0f, source.m22);
     }
 
     /**
@@ -1068,9 +1098,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      */
     public void setMatrix(final Mat4 source) {
 
-        this.setMatrix(source.m00, source.m01, source.m02, source.m03, source.m10,
-            source.m11, source.m12, source.m13, source.m20, source.m21, source.m22,
-            source.m23, source.m30, source.m31, source.m32, source.m33);
+        this.setMatrix(
+            source.m00, source.m01, source.m02, source.m03,
+            source.m10, source.m11, source.m12, source.m13,
+            source.m20, source.m21, source.m22, source.m23,
+            source.m30, source.m31, source.m32, source.m33);
     }
 
     /**
@@ -1081,9 +1113,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     @Override
     public void setMatrix(final PMatrix2D source) {
 
-        this.setMatrix(source.m00, source.m01, 0.0f, source.m02, source.m10,
-            source.m11, 0.0f, source.m12, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-            1.0f);
+        this.setMatrix(
+            source.m00, source.m01, 0.0f, source.m02,
+            source.m10, source.m11, 0.0f, source.m12,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
     }
 
     /**
@@ -1094,9 +1128,11 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     @Override
     public void setMatrix(final PMatrix3D source) {
 
-        this.setMatrix(source.m00, source.m01, source.m02, source.m03, source.m10,
-            source.m11, source.m12, source.m13, source.m20, source.m21, source.m22,
-            source.m23, source.m30, source.m31, source.m32, source.m33);
+        this.setMatrix(
+            source.m00, source.m01, source.m02, source.m03,
+            source.m10, source.m11, source.m12, source.m13,
+            source.m20, source.m21, source.m22, source.m23,
+            source.m30, source.m31, source.m32, source.m33);
     }
 
     /**
@@ -1127,7 +1163,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     @Override
     public PMatrix2D getMatrix(final PMatrix2D target) {
 
-        target.set(this.modelview.m00, this.modelview.m01, this.modelview.m03,
+        target.set(
+            this.modelview.m00, this.modelview.m01, this.modelview.m03,
             this.modelview.m10, this.modelview.m11, this.modelview.m13);
         return target;
     }
@@ -4209,17 +4246,25 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         this.normalPerShape(0.0f, 0.0f, 1.0f);
 
         this.vertexImpl(a1 - c2, b0, 0.0f, this.textureU, this.textureV);
-        this.bezierVertexImpl(a1 - c2 + c2 * Curve.KAPPA, b0, 0.0f, a1, b0 + c2
-            - c2 * Curve.KAPPA, 0.0f, a1, b0 + c2, 0.0f);
+        this.bezierVertexImpl(
+            a1 - c2 + c2 * Curve.KAPPA, b0, 0.0f,
+            a1, b0 + c2 - c2 * Curve.KAPPA, 0.0f,
+            a1, b0 + c2, 0.0f);
         this.vertexImpl(a1, b1 - c1, 0.0f, this.textureU, this.textureV);
-        this.bezierVertexImpl(a1, b1 - c1 + c1 * Curve.KAPPA, 0.0f, a1 - c1 + c1
-            * Curve.KAPPA, b1, 0.0f, a1 - c1, b1, 0.0f);
+        this.bezierVertexImpl(
+            a1, b1 - c1 + c1 * Curve.KAPPA, 0.0f,
+            a1 - c1 + c1 * Curve.KAPPA, b1, 0.0f,
+            a1 - c1, b1, 0.0f);
         this.vertexImpl(a0 + c0, b1, 0.0f, this.textureU, this.textureV);
-        this.bezierVertexImpl(a0 + c0 - c0 * Curve.KAPPA, b1, 0.0f, a0, b1 - c0
-            + c0 * Curve.KAPPA, 0.0f, a0, b1 - c0, 0.0f);
+        this.bezierVertexImpl(
+            a0 + c0 - c0 * Curve.KAPPA, b1, 0.0f,
+            a0, b1 - c0 + c0 * Curve.KAPPA, 0.0f,
+            a0, b1 - c0, 0.0f);
         this.vertexImpl(a0, b0 + c3, 0.0f, this.textureU, this.textureV);
-        this.bezierVertexImpl(a0, b0 + c3 - c3 * Curve.KAPPA, 0.0f, a0 + c3 - c3
-            * Curve.KAPPA, b0, 0.0f, a0 + c3, b0, 0.0f);
+        this.bezierVertexImpl(
+            a0, b0 + c3 - c3 * Curve.KAPPA, 0.0f,
+            a0 + c3 - c3 * Curve.KAPPA, b0, 0.0f,
+            a0 + c3, b0, 0.0f);
         this.endShape(PConstants.CLOSE);
     }
 

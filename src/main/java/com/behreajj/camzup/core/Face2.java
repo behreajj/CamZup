@@ -170,9 +170,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * Returns whether a face is wound in the counter-clockwise direction, i.e., if
-     * its winding number
-     * is greater than zero.
+     * Returns whether a face is wound in the counter-clockwise direction,
+     * i.e., if its winding number is greater than zero.
      *
      * @param face the face
      * @return the evaluation
@@ -184,9 +183,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * Returns whether a face is wound in the clockwise direction, i.e., if its
-     * winding number is less
-     * than zero.
+     * Returns whether a face is wound in the clockwise direction, i.e., if
+     * its winding number is less than zero.
      *
      * @param face the face
      * @return the evaluation
@@ -198,8 +196,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * Calculates the perimeter of a face by summing the Euclidean distance between
-     * vertices.
+     * Calculates the perimeter of a face by summing the Euclidean distance
+     * between vertices.
      *
      * @param face the face
      * @return the perimeter
@@ -220,8 +218,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * Finds the shared coordinates, if any, between two faces. Returns an array of
-     * the coordinates.
+     * Finds the shared coordinates, if any, between two faces. Returns an
+     * array of the coordinates.
      *
      * @param a the left comparisand
      * @param b the right comparisand
@@ -247,9 +245,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * Calculates the winding number of the face by summing the cross products of
-     * any two pair of
-     * edges.
+     * Calculates the winding number of the face by summing the cross products
+     * of any two pair of edges.
      *
      * @param face the face
      * @return the winding number
@@ -289,8 +286,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
 
     /**
      * Returns an edge iterator for this face, which allows its vertices to be
-     * accessed in an enhanced
-     * for-loop.
+     * accessed in an enhanced for-loop.
      *
      * @return the iterator
      */
@@ -316,8 +312,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * Gets an edge from this face. Wraps the index by the number of vertices in the
-     * face.
+     * Gets an edge from this face. Wraps the index by the number of vertices
+     * in the face.
      *
      * @param i      index
      * @param target output edge
@@ -359,9 +355,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * Returns an iterator for this face, which allows its elements to be accessed
-     * in an enhanced
-     * for-loop.
+     * Returns an iterator for this face, which allows its elements to be
+     * accessed in an enhanced for-loop.
      *
      * @return the iterator
      */
@@ -406,8 +401,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * Rotates all coordinates in the face by the sine and cosine of an angle around
-     * the z axis.
+     * Rotates all coordinates in the face by the sine and cosine of an angle
+     * around the z axis.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -425,9 +420,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * Rotates all coordinates in the face by the sine and cosine of an angle around
-     * the z axis. The
-     * face's mean center is used as the pivot point.
+     * Rotates all coordinates in the face by the sine and cosine of an angle
+     * around the z axis. The face's mean center is used as the pivot point.
      *
      * @param cosa   cosine of the angle
      * @param sina   sine of the angle
@@ -453,9 +447,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * Rotates all coordinates in the face by an angle around the z axis. The face's
-     * mean center is
-     * used as the pivot point.
+     * Rotates all coordinates in the face by an angle around the z axis. The
+     * face's mean center is used as the pivot point.
      *
      * @param radians the angle in radians
      * @param center  the center
@@ -493,8 +486,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
 
     /**
      * Scales all coordinates in the face by a scalar; uses global coordinates,
-     * i.e., doesn't consider
-     * the face's position.
+     * i.e., doesn't consider the face's position.
      *
      * @param scale the scalar
      * @return this face
@@ -514,8 +506,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
 
     /**
      * Scales all coordinates in the face by a scalar; uses global coordinates,
-     * i.e., doesn't consider
-     * the face's position.
+     * i.e., doesn't consider the face's position.
      *
      * @param scale the nonuniform scalar
      * @return this face
@@ -535,9 +526,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * Scales all coordinates in the face by a scalar; subtracts the face's center
-     * from each vertex,
-     * scales, then adds the center.
+     * Scales all coordinates in the face by a scalar; subtracts the face's
+     * center from each vertex, scales, then adds the center.
      *
      * @param scale  the scalar
      * @param center the center
@@ -564,9 +554,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * Scales all coordinates in the face by a scalar; subtracts the face's center
-     * from each vertex,
-     * scales, then adds the center.
+     * Scales all coordinates in the face by a scalar; subtracts the face's
+     * center from each vertex, scales, then adds the center.
      *
      * @param scale  the nonuniform scalar
      * @param center the center
@@ -595,9 +584,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
 
     /**
      * Sets this face's vertices to refer to those in an array of edges. Assumes
-     * that each edge's
-     * origin matches the preceding edge's destination, and so only the origins need
-     * to be registered.
+     * that each edge's origin matches the preceding edge's destination, and so
+     * only the origins need to be registered.
      *
      * @param edges the edges
      * @return this face
@@ -692,9 +680,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * Translates all coordinates in the face by a vector; uses global coordinates,
-     * i.e., doesn't
-     * consider the face's orientation.
+     * Translates all coordinates in the face by a vector; uses global
+     * coordinates, i.e., doesn't consider the face's orientation.
      *
      * @param v the vector
      * @return this face
@@ -712,8 +699,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
 
     /**
      * Returns a vertex iterator for this face, which allows its vertices to be
-     * accessed in an
-     * enhanced for-loop.
+     * accessed in an enhanced for-loop.
      *
      * @return the iterator
      */
@@ -723,8 +709,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * faces. Appends to an
-     * existing {@link StringBuilder}.
+     * faces. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -745,8 +730,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * An iterator, which allows a face's edges to be accessed in an enhanced for
-     * loop.
+     * An iterator, which allows a face's edges to be accessed in an enhanced
+     * for-loop.
      */
     public static final class Edge2Iterator implements Iterator<Edge2> {
 
@@ -805,8 +790,8 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     }
 
     /**
-     * An iterator, which allows a face's vertices to be accessed in an enhanced for
-     * loop.
+     * An iterator, which allows a face's vertices to be accessed in an
+     * enhanced for-loop.
      */
     public static final class Vert2Iterator implements Iterator<Vert2> {
 

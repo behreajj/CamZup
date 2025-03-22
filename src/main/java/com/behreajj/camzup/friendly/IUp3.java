@@ -37,9 +37,9 @@ public interface IUp3 extends IUp {
      */
     static Vec3 mouse1sClamp(final PApplet parent, final Vec3 target) {
 
-        return target.set(2.0f * Utils.clamp01(parent.mouseX / (parent.width
-                - 1.0f)) - 1.0f, 1.0f - 2.0f * Utils.clamp01(parent.mouseY
-                / (parent.height - 1.0f)),
+        return target.set(
+            2.0f * Utils.clamp01(parent.mouseX / (parent.width - 1.0f)) - 1.0f,
+            1.0f - 2.0f * Utils.clamp01(parent.mouseY / (parent.height - 1.0f)),
             0.0f);
     }
 
@@ -57,9 +57,10 @@ public interface IUp3 extends IUp {
         // TODO: TEST
 
         final float x = 2.0f * (parent.mouseX / (parent.width - 1.0f)) - 1.0f;
-        final float y = 1.0f - 2.0f * (parent.mouseY / (parent.height
-            - 1.0f));
-        return target.set(Utils.wrap(x, -1.0f, 1.0f), Utils.wrap(y, -1.0f, 1.0f),
+        final float y = 1.0f - 2.0f * (parent.mouseY / (parent.height - 1.0f));
+        return target.set(
+            Utils.wrap(x, -1.0f, 1.0f),
+            Utils.wrap(y, -1.0f, 1.0f),
             0.0f);
     }
 
@@ -73,8 +74,10 @@ public interface IUp3 extends IUp {
      */
     static Vec3 mouse1uClamp(final PApplet parent, final Vec3 target) {
 
-        return target.set(Utils.clamp01(parent.mouseX / (parent.width - 1.0f)),
-            1.0f - Utils.clamp01(parent.mouseY / (parent.height - 1.0f)), 0.0f);
+        return target.set(
+            Utils.clamp01(parent.mouseX / (parent.width - 1.0f)),
+            1.0f - Utils.clamp01(parent.mouseY / (parent.height - 1.0f)),
+            0.0f);
     }
 
     /**
@@ -87,8 +90,10 @@ public interface IUp3 extends IUp {
      */
     static Vec3 mouse1uWrap(final PApplet parent, final Vec3 target) {
 
-        return target.set(Utils.mod1(parent.mouseX / (parent.width - 1.0f)),
-            1.0f - Utils.mod1(parent.mouseY / (parent.height - 1.0f)), 0.0f);
+        return target.set(
+            Utils.mod1(parent.mouseX / (parent.width - 1.0f)),
+            1.0f - Utils.mod1(parent.mouseY / (parent.height - 1.0f)),
+            0.0f);
     }
 
     /**
@@ -402,10 +407,10 @@ public interface IUp3 extends IUp {
     /**
      * Draws a line between two coordinates.
      *
-     * @param origin the origin coordinate
+     * @param orig the origin coordinate
      * @param dest   the destination coordinate
      */
-    void line(final Vec3 origin, final Vec3 dest);
+    void line(final Vec3 orig, final Vec3 dest);
 
     /**
      * Gets a mouse within unit coordinates.

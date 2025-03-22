@@ -314,7 +314,9 @@ public class ZImage extends PImage {
         }
         final int vLead = leading < 0 ? 1 : leading + 1;
         final int vKern = Math.max(kerning, 0);
-        final int vClr = (fillClr >> 0x18 & 0xff) != 0 ? 0x00ffffff & fillClr : 0x00ffffff;
+        final int vClr = (fillClr >> 0x18 & 0xff) != 0
+            ? 0x00ffffff & fillClr
+            : 0x00ffffff;
 
         /* Carriage returns, or line breaks, have 3 variants: \r, \n, or \r\n . */
         final Pattern patternLnBr = Pattern.compile("[\n|\r]+");
@@ -346,7 +348,9 @@ public class ZImage extends PImage {
          * zero, and need to be replaced with a blank line.
          */
         final Glyph emptyLine = font.getGlyph('E');
-        final int defaultHeight = emptyLine != null ? emptyLine.height : fontSize;
+        final int defaultHeight = emptyLine != null
+            ? emptyLine.height
+            : fontSize;
 
         /*
          * The last line's descenders are chopped off if padding isn't added to

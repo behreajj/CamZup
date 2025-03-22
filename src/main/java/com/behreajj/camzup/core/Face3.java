@@ -63,7 +63,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Finds a point on the face's perimeter given a step in the range [0.0, 1.0] .
+     * Finds a point on the face's perimeter given a step in the range
+     * [0.0, 1.0].
      *
      * @param face   the face
      * @param step   the step
@@ -82,7 +83,10 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
 
         final float t = tScaled - i;
         final float u = 1.0f - t;
-        return target.set(u * a.x + t * b.x, u * a.y + t * b.y, u * a.z + t * b.z);
+        return target.set(
+            u * a.x + t * b.x,
+            u * a.y + t * b.y,
+            u * a.z + t * b.z);
     }
 
     /**
@@ -124,8 +128,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
         final Face3 face, final Handedness handedness, final Quaternion target) {
 
         /*
-         * Use quaternion imaginary as a temporary holder for the average of the
-         * face's normals.
+         * Use quaternion imaginary as a temporary holder for the average of
+         * the face's normals.
          */
         final Vec3 imag = target.imag;
         Face3.normal(face, imag);
@@ -155,7 +159,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
         Vec3.one(target.scale);
 
         Face3.normal(face, target.forward);
-        Quaternion.fromDir(target.forward, handedness, rot, target.right, target.forward, target.up);
+        Quaternion.fromDir(target.forward, handedness, rot, target.right,
+            target.forward, target.up);
         Face3.centerMean(face, target.location);
 
         return target;
@@ -178,8 +183,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Calculates the perimeter of a face by summing the Euclidean distance between
-     * vertices.
+     * Calculates the perimeter of a face by summing the Euclidean distance
+     * between vertices.
      *
      * @param face the face
      * @return the perimeter
@@ -402,9 +407,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Rotates all coordinates in the mesh by the sine and cosine of an angle around
-     * an arbitrary
-     * axis. The face's mean center acts as a pivot point.
+     * Rotates all coordinates in the mesh by the sine and cosine of an angle
+     * around an arbitrary axis. The face's mean center acts as a pivot point.
      *
      * @param cosa   cosine of the angle
      * @param sina   sine of the angle
@@ -416,7 +420,11 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
      * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
      * @see Vec3#add(Vec3, Vec3, Vec3)
      */
-    public Face3 rotateLocal(final float cosa, final float sina, final Vec3 axis, final Vec3 center) {
+    public Face3 rotateLocal(
+        final float cosa,
+        final float sina,
+        final Vec3 axis,
+        final Vec3 center) {
 
         Face3.centerMean(this, center);
 
@@ -433,9 +441,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Rotates all coordinates in the mesh by an angle around an arbitrary axis. The
-     * face's mean
-     * center acts as a pivot point.
+     * Rotates all coordinates in the mesh by an angle around an arbitrary axis.
+     * The face's mean center acts as a pivot point.
      *
      * @param radians the angle
      * @param axis    the axis
@@ -451,9 +458,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Rotates all coordinates in the face by a quaternion. The face's mean center
-     * acts as a pivot
-     * point.
+     * Rotates all coordinates in the face by a quaternion. The face's mean
+     * center acts as a pivot point.
      *
      * @param q      the quaternion
      * @param center the center
@@ -496,8 +502,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Rotates all coordinates in the face by the sine and cosine of an angle around
-     * the x axis.
+     * Rotates all coordinates in the face by the sine and cosine of an angle
+     * around the x axis.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -517,9 +523,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Rotates all coordinates in the face by the sine and cosine of an angle around
-     * the x axis. The
-     * face's mean center acts as a pivot point.
+     * Rotates all coordinates in the face by the sine and cosine of an angle
+     * around the x axis. The face's mean center acts as a pivot point.
      *
      * @param cosa   cosine of the angle
      * @param sina   sine of the angle
@@ -530,7 +535,10 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
      * @see Vec3#rotateX(Vec3, float, float, Vec3)
      * @see Vec3#sub(Vec3, Vec3, Vec3)
      */
-    public Face3 rotateXLocal(final float cosa, final float sina, final Vec3 center) {
+    public Face3 rotateXLocal(
+        final float cosa,
+        final float sina,
+        final Vec3 center) {
 
         Face3.centerMean(this, center);
 
@@ -547,9 +555,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Rotates all coordinates in the mesh by an angle around the x axis. The face's
-     * mean center acts
-     * as a pivot point.
+     * Rotates all coordinates in the mesh by an angle around the x axis. The
+     * face's mean center acts as a pivot point.
      *
      * @param radians the angle
      * @param center  the center
@@ -578,8 +585,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Rotates all coordinates in the face by the sine and cosine of an angle around
-     * the y axis.
+     * Rotates all coordinates in the face by the sine and cosine of an angle
+     * around the y axis.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -599,9 +606,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Rotates all coordinates in the face by the sine and cosine of an angle around
-     * the y axis. The
-     * face's mean center acts as a pivot point.
+     * Rotates all coordinates in the face by the sine and cosine of an angle
+     * around the y axis. The face's mean center acts as a pivot point.
      *
      * @param cosa   cosine of the angle
      * @param sina   sine of the angle
@@ -612,7 +618,10 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
      * @see Vec3#rotateY(Vec3, float, float, Vec3)
      * @see Vec3#sub(Vec3, Vec3, Vec3)
      */
-    public Face3 rotateYLocal(final float cosa, final float sina, final Vec3 center) {
+    public Face3 rotateYLocal(
+        final float cosa,
+        final float sina,
+        final Vec3 center) {
 
         Face3.centerMean(this, center);
 
@@ -629,9 +638,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Rotates all coordinates in the mesh by an angle around the y axis. The face's
-     * mean center acts
-     * as a pivot point.
+     * Rotates all coordinates in the mesh by an angle around the y axis. The
+     * face's mean center acts as a pivot point.
      *
      * @param radians the angle
      * @param center  the center
@@ -660,8 +668,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Rotates all coordinates in the face by the sine and cosine of an angle around
-     * the z axis.
+     * Rotates all coordinates in the face by the sine and cosine of an angle
+     * around the z axis.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -681,9 +689,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Rotates all coordinates in the face by the sine and cosine of an angle around
-     * the z axis. The
-     * face's mean center acts as a pivot point.
+     * Rotates all coordinates in the face by the sine and cosine of an angle
+     * around the z axis. The face's mean center acts as a pivot point.
      *
      * @param cosa   cosine of the angle
      * @param sina   sine of the angle
@@ -694,7 +701,10 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
      * @see Vec3#rotateZ(Vec3, float, float, Vec3)
      * @see Vec3#sub(Vec3, Vec3, Vec3)
      */
-    public Face3 rotateZLocal(final float cosa, final float sina, final Vec3 center) {
+    public Face3 rotateZLocal(
+        final float cosa,
+        final float sina,
+        final Vec3 center) {
 
         Face3.centerMean(this, center);
 
@@ -711,9 +721,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Rotates all coordinates in the mesh by an angle around the z axis. The face's
-     * mean center acts
-     * as a pivot point.
+     * Rotates all coordinates in the mesh by an angle around the z axis. The
+     * face's mean center acts as a pivot point.
      *
      * @param radians the angle
      * @param center  the center
@@ -751,8 +760,7 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
 
     /**
      * Scales all coordinates in the face by a scalar; uses global coordinates,
-     * i.e., doesn't consider
-     * the face's position.
+     * i.e., doesn't consider the face's position.
      *
      * @param scale the scalar
      * @return this face
@@ -772,8 +780,7 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
 
     /**
      * Scales all coordinates in the face by a vector; uses global coordinates,
-     * i.e., doesn't consider
-     * the face's position.
+     * i.e., doesn't consider the face's position.
      *
      * @param scale the nonuniform scalar
      * @return this face
@@ -801,9 +808,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Scales all coordinates in the face by a scalar; subtracts the face's center
-     * from each vertex,
-     * scales, then adds the center.
+     * Scales all coordinates in the face by a scalar; subtracts the face's
+     * center from each vertex, scales, then adds the center.
      *
      * @param scale  the scalar
      * @param center the center
@@ -830,9 +836,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Scales all coordinates in the face by a vector; subtracts the face's center
-     * from each vertex,
-     * scales, then adds the center.
+     * Scales all coordinates in the face by a vector; subtracts the face's
+     * center from each vertex, scales, then adds the center.
      *
      * @param scale  the nonuniform scalar
      * @param center the center
@@ -869,9 +874,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
 
     /**
      * Sets this face's vertices to refer to those in an array of edges. Assumes
-     * that each edge's
-     * origin matches the preceding edge's destination, and so only the origins need
-     * to be registered.
+     * that each edge's origin matches the preceding edge's destination, and so
+     * only the origins need to be registered.
      *
      * @param edges the edges
      * @return this face
@@ -921,9 +925,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Transforms all coordinates in the face by a matrix. Calculates the matrix
-     * inverse in order to
-     * transform normals.
+     * Transforms all coordinates in the face by a matrix. Calculates the
+     * matrix inverse in order to transform normals.
      *
      * @param m the matrix
      * @param h the matrix inverse
@@ -975,9 +978,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * Translates all coordinates in a face by a vector; uses global coordinates,
-     * i.e., doesn't
-     * consider the face's orientation.
+     * Translates all coordinates in a face by a vector; uses global
+     * coordinates, i.e., doesn't consider the face's orientation.
      *
      * @param v the vector
      * @return this face
@@ -995,11 +997,9 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
 
     /**
      * Translates the face in local space. This is done by (1) finding the
-     * orientation of the face;
-     * (2) multiplying the input vector by the orientation; (3) subtracting the
-     * face's center point
-     * from the face's vertices; (4) adding the local vector; (5) then adding the
-     * center point.
+     * orientation of the face; (2) multiplying the input vector by the
+     * orientation; (3) subtracting the face's center point from the face's
+     * vertices; (4) adding the local vector; (5) then adding the center point.
      *
      * @param v          the vector
      * @param handedness the handedness
@@ -1028,8 +1028,7 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
 
     /**
      * Returns a vertex iterator for this face, which allows its vertices to be
-     * accessed in an
-     * enhanced for-loop.
+     * accessed in an enhanced for-loop.
      *
      * @return the iterator
      */
@@ -1039,8 +1038,7 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * faces. Appends to an
-     * existing {@link StringBuilder}.
+     * faces. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -1061,8 +1059,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * An iterator, which allows a face's edges to be accessed in an enhanced for
-     * loop.
+     * An iterator, which allows a face's edges to be accessed in an enhanced
+     * for-loop.
      */
     public static final class Edge3Iterator implements Iterator<Edge3> {
 
@@ -1121,8 +1119,8 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     }
 
     /**
-     * An iterator, which allows a face's vertices to be accessed in an enhanced for
-     * loop.
+     * An iterator, which allows a face's vertices to be accessed in an
+     * enhanced for-loop.
      */
     public static final class Vert3Iterator implements Iterator<Vert3> {
 

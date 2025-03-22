@@ -2002,13 +2002,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     /**
      * Draws a line between two coordinates.
      *
-     * @param origin the origin coordinate
+     * @param orig the origin coordinate
      * @param dest   the destination coordinate
      */
     @Override
-    public void line(final Vec2 origin, final Vec2 dest) {
+    public void line(final Vec2 orig, final Vec2 dest) {
 
-        this.line(origin.x, origin.y, dest.x, dest.y);
+        this.line(orig.x, orig.y, dest.x, dest.y);
     }
 
     /**

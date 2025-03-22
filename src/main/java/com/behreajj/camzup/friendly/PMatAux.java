@@ -10,7 +10,8 @@ import processing.core.PMatrix3D;
  * The PMatrix class is marked final and hence cannot be extended and
  * augmented. Due to its use in PGraphicsOpenGL it cannot be ignored. This
  * class stores static functions which alter and/or supplement PMatrix
- * functions.<br>
+ * functions.
+ * <br>
  * <br>
  * This class is <em>ad hoc</em>, and primarily focused on assisting
  * functions in OpenGL renderers; therefore, it might not follow all style
@@ -69,10 +70,10 @@ public abstract class PMatAux {
 
         /* @formatter:off */
         target.set(
-                th,          v,       -v,   uh,
-                u, -2.5f - sh, s + 2.0f,   th,
-                th,       0.0f,       uh, 0.0f,
-                0.0f,       1.0f,     0.0f, 0.0f);
+            th,          v,       -v,   uh,
+            u, -2.5f - sh, s + 2.0f,   th,
+            th,       0.0f,       uh, 0.0f,
+            0.0f,       1.0f,     0.0f, 0.0f);
         return target;
         /* @formatter:on */
     }
@@ -116,42 +117,42 @@ public abstract class PMatAux {
 
         /* @formatter:off */
         m.set(
-                m.m00 * n00 + m.m01 * n01 + m.m02 * n02,
-                m.m00 * n10 + m.m01 * n11 + m.m02 * n12,
-                m.m00 * n20 + m.m01 * n21 + m.m02 * n22,
-                m.m03,
+            m.m00 * n00 + m.m01 * n01 + m.m02 * n02,
+            m.m00 * n10 + m.m01 * n11 + m.m02 * n12,
+            m.m00 * n20 + m.m01 * n21 + m.m02 * n22,
+            m.m03,
 
-                m.m10 * n00 + m.m11 * n01 + m.m12 * n02,
-                m.m10 * n10 + m.m11 * n11 + m.m12 * n12,
-                m.m10 * n20 + m.m11 * n21 + m.m12 * n22,
-                m.m13,
+            m.m10 * n00 + m.m11 * n01 + m.m12 * n02,
+            m.m10 * n10 + m.m11 * n11 + m.m12 * n12,
+            m.m10 * n20 + m.m11 * n21 + m.m12 * n22,
+            m.m13,
 
-                m.m20 * n00 + m.m21 * n01 + m.m22 * n02,
-                m.m20 * n10 + m.m21 * n11 + m.m22 * n12,
-                m.m20 * n20 + m.m21 * n21 + m.m22 * n22,
-                m.m23,
+            m.m20 * n00 + m.m21 * n01 + m.m22 * n02,
+            m.m20 * n10 + m.m21 * n11 + m.m22 * n12,
+            m.m20 * n20 + m.m21 * n21 + m.m22 * n22,
+            m.m23,
 
-                m.m30 * n00 + m.m31 * n01 + m.m32 * n02,
-                m.m30 * n10 + m.m31 * n11 + m.m32 * n12,
-                m.m30 * n20 + m.m31 * n21 + m.m32 * n22,
-                m.m33);
+            m.m30 * n00 + m.m31 * n01 + m.m32 * n02,
+            m.m30 * n10 + m.m31 * n11 + m.m32 * n12,
+            m.m30 * n20 + m.m31 * n21 + m.m32 * n22,
+            m.m33);
 
         mInv.set(
-                n00 * mInv.m00 + n01 * mInv.m10 + n02 * mInv.m20,
-                n00 * mInv.m01 + n01 * mInv.m11 + n02 * mInv.m21,
-                n00 * mInv.m02 + n01 * mInv.m12 + n02 * mInv.m22,
-                n00 * mInv.m03 + n01 * mInv.m13 + n02 * mInv.m23,
+            n00 * mInv.m00 + n01 * mInv.m10 + n02 * mInv.m20,
+            n00 * mInv.m01 + n01 * mInv.m11 + n02 * mInv.m21,
+            n00 * mInv.m02 + n01 * mInv.m12 + n02 * mInv.m22,
+            n00 * mInv.m03 + n01 * mInv.m13 + n02 * mInv.m23,
 
-                n10 * mInv.m00 + n11 * mInv.m10 + n12 * mInv.m20,
-                n10 * mInv.m01 + n11 * mInv.m11 + n12 * mInv.m21,
-                n10 * mInv.m02 + n11 * mInv.m12 + n12 * mInv.m22,
-                n10 * mInv.m03 + n11 * mInv.m13 + n12 * mInv.m23,
+            n10 * mInv.m00 + n11 * mInv.m10 + n12 * mInv.m20,
+            n10 * mInv.m01 + n11 * mInv.m11 + n12 * mInv.m21,
+            n10 * mInv.m02 + n11 * mInv.m12 + n12 * mInv.m22,
+            n10 * mInv.m03 + n11 * mInv.m13 + n12 * mInv.m23,
 
-                n20 * mInv.m00 + n21 * mInv.m10 + n22 * mInv.m20,
-                n20 * mInv.m01 + n21 * mInv.m11 + n22 * mInv.m21,
-                n20 * mInv.m02 + n21 * mInv.m12 + n22 * mInv.m22,
-                n20 * mInv.m03 + n21 * mInv.m13 + n22 * mInv.m23,
-                mInv.m30, mInv.m31, mInv.m32, mInv.m33);
+            n20 * mInv.m00 + n21 * mInv.m10 + n22 * mInv.m20,
+            n20 * mInv.m01 + n21 * mInv.m11 + n22 * mInv.m21,
+            n20 * mInv.m02 + n21 * mInv.m12 + n22 * mInv.m22,
+            n20 * mInv.m03 + n21 * mInv.m13 + n22 * mInv.m23,
+            mInv.m30, mInv.m31, mInv.m32, mInv.m33);
         /* @formatter:on */
 
         return m;
@@ -174,8 +175,9 @@ public abstract class PMatAux {
         final PMatrix3D m, final PMatrix3D mInv) {
 
         final float normRad = -radians * Utils.ONE_TAU;
-        return PMatAux.compoundRotate(Utils.scNorm(normRad), Utils.scNorm(normRad
-            - 0.25f), xAxis, yAxis, zAxis, m, mInv);
+        return PMatAux.compoundRotate(
+            Utils.scNorm(normRad), Utils.scNorm(normRad - 0.25f),
+            xAxis, yAxis, zAxis, m, mInv);
     }
 
     /**
@@ -215,16 +217,16 @@ public abstract class PMatAux {
 
         /* @formatter:off */
         mInv.set(
-                mInv.m00, mInv.m01, mInv.m02, mInv.m03,
-                c * mInv.m10 + s * mInv.m20,
-                c * mInv.m11 + s * mInv.m21,
-                c * mInv.m12 + s * mInv.m22,
-                c * mInv.m13 + s * mInv.m23,
-                c * mInv.m20 - s * mInv.m10,
-                c * mInv.m21 - s * mInv.m11,
-                c * mInv.m22 - s * mInv.m12,
-                c * mInv.m23 - s * mInv.m13,
-                mInv.m30, mInv.m31, mInv.m32, mInv.m33);
+            mInv.m00, mInv.m01, mInv.m02, mInv.m03,
+            c * mInv.m10 + s * mInv.m20,
+            c * mInv.m11 + s * mInv.m21,
+            c * mInv.m12 + s * mInv.m22,
+            c * mInv.m13 + s * mInv.m23,
+            c * mInv.m20 - s * mInv.m10,
+            c * mInv.m21 - s * mInv.m11,
+            c * mInv.m22 - s * mInv.m12,
+            c * mInv.m23 - s * mInv.m13,
+            mInv.m30, mInv.m31, mInv.m32, mInv.m33);
 
         return m;
         /* @formatter:on */
@@ -267,16 +269,16 @@ public abstract class PMatAux {
 
         /* @formatter:off */
         mInv.set(
-                c * mInv.m00 - s * mInv.m20,
-                c * mInv.m01 - s * mInv.m21,
-                c * mInv.m02 - s * mInv.m22,
-                c * mInv.m03 - s * mInv.m23,
-                mInv.m10, mInv.m11, mInv.m12, mInv.m13,
-                c * mInv.m20 + s * mInv.m00,
-                c * mInv.m21 + s * mInv.m01,
-                c * mInv.m22 + s * mInv.m02,
-                c * mInv.m23 + s * mInv.m03,
-                mInv.m30, mInv.m31, mInv.m32, mInv.m33);
+            c * mInv.m00 - s * mInv.m20,
+            c * mInv.m01 - s * mInv.m21,
+            c * mInv.m02 - s * mInv.m22,
+            c * mInv.m03 - s * mInv.m23,
+            mInv.m10, mInv.m11, mInv.m12, mInv.m13,
+            c * mInv.m20 + s * mInv.m00,
+            c * mInv.m21 + s * mInv.m01,
+            c * mInv.m22 + s * mInv.m02,
+            c * mInv.m23 + s * mInv.m03,
+            mInv.m30, mInv.m31, mInv.m32, mInv.m33);
 
         return m;
         /* @formatter:on */
@@ -319,16 +321,16 @@ public abstract class PMatAux {
 
         /* @formatter:off */
         mInv.set(
-                c * mInv.m00 + s * mInv.m10,
-                c * mInv.m01 + s * mInv.m11,
-                c * mInv.m02 + s * mInv.m12,
-                c * mInv.m03 + s * mInv.m13,
-                c * mInv.m10 - s * mInv.m00,
-                c * mInv.m11 - s * mInv.m01,
-                c * mInv.m12 - s * mInv.m02,
-                c * mInv.m13 - s * mInv.m03,
-                mInv.m20, mInv.m21, mInv.m22, mInv.m23,
-                mInv.m30, mInv.m31, mInv.m32, mInv.m33);
+            c * mInv.m00 + s * mInv.m10,
+            c * mInv.m01 + s * mInv.m11,
+            c * mInv.m02 + s * mInv.m12,
+            c * mInv.m03 + s * mInv.m13,
+            c * mInv.m10 - s * mInv.m00,
+            c * mInv.m11 - s * mInv.m01,
+            c * mInv.m12 - s * mInv.m02,
+            c * mInv.m13 - s * mInv.m03,
+            mInv.m20, mInv.m21, mInv.m22, mInv.m23,
+            mInv.m30, mInv.m31, mInv.m32, mInv.m33);
 
         return m;
         /* @formatter:on */
@@ -365,10 +367,10 @@ public abstract class PMatAux {
 
         /* @formatter:off */
         target.set(
-                n2 * w,   0.0f, ( right + left ) * w,          0.0f,
-                0.0f, n2 * h, ( top + bottom ) * h,          0.0f,
-                0.0f,   0.0f,  ( far + near ) * -d, n2 * far * -d,
-                0.0f,   0.0f,                -1.0f,           0.0f);
+            n2 * w,   0.0f, ( right + left ) * w,          0.0f,
+            0.0f, n2 * h, ( top + bottom ) * h,          0.0f,
+            0.0f,   0.0f,  ( far + near ) * -d, n2 * far * -d,
+            0.0f,   0.0f,                -1.0f,           0.0f);
         return target;
         /* @formatter:on */
     }
@@ -404,22 +406,22 @@ public abstract class PMatAux {
         if ( det != 0.0f ) {
             final float detInv = 1.0f / det;
             target.set(
-                    ( m.m11 * b11 - m.m12 * b10 + m.m13 * b09 ) * detInv,
-                    ( m.m02 * b10 - m.m01 * b11 - m.m03 * b09 ) * detInv,
-                    ( m.m31 * b05 - m.m32 * b04 + m.m33 * b03 ) * detInv,
-                    ( m.m22 * b04 - m.m21 * b05 - m.m23 * b03 ) * detInv,
-                    ( m.m12 * b08 - m.m10 * b11 - m.m13 * b07 ) * detInv,
-                    ( m.m00 * b11 - m.m02 * b08 + m.m03 * b07 ) * detInv,
-                    ( m.m32 * b02 - m.m30 * b05 - m.m33 * b01 ) * detInv,
-                    ( m.m20 * b05 - m.m22 * b02 + m.m23 * b01 ) * detInv,
-                    ( m.m10 * b10 - m.m11 * b08 + m.m13 * b06 ) * detInv,
-                    ( m.m01 * b08 - m.m00 * b10 - m.m03 * b06 ) * detInv,
-                    ( m.m30 * b04 - m.m31 * b02 + m.m33 * b00 ) * detInv,
-                    ( m.m21 * b02 - m.m20 * b04 - m.m23 * b00 ) * detInv,
-                    ( m.m11 * b07 - m.m10 * b09 - m.m12 * b06 ) * detInv,
-                    ( m.m00 * b09 - m.m01 * b07 + m.m02 * b06 ) * detInv,
-                    ( m.m31 * b01 - m.m30 * b03 - m.m32 * b00 ) * detInv,
-                    ( m.m20 * b03 - m.m21 * b01 + m.m22 * b00 ) * detInv);
+                ( m.m11 * b11 - m.m12 * b10 + m.m13 * b09 ) * detInv,
+                ( m.m02 * b10 - m.m01 * b11 - m.m03 * b09 ) * detInv,
+                ( m.m31 * b05 - m.m32 * b04 + m.m33 * b03 ) * detInv,
+                ( m.m22 * b04 - m.m21 * b05 - m.m23 * b03 ) * detInv,
+                ( m.m12 * b08 - m.m10 * b11 - m.m13 * b07 ) * detInv,
+                ( m.m00 * b11 - m.m02 * b08 + m.m03 * b07 ) * detInv,
+                ( m.m32 * b02 - m.m30 * b05 - m.m33 * b01 ) * detInv,
+                ( m.m20 * b05 - m.m22 * b02 + m.m23 * b01 ) * detInv,
+                ( m.m10 * b10 - m.m11 * b08 + m.m13 * b06 ) * detInv,
+                ( m.m01 * b08 - m.m00 * b10 - m.m03 * b06 ) * detInv,
+                ( m.m30 * b04 - m.m31 * b02 + m.m33 * b00 ) * detInv,
+                ( m.m21 * b02 - m.m20 * b04 - m.m23 * b00 ) * detInv,
+                ( m.m11 * b07 - m.m10 * b09 - m.m12 * b06 ) * detInv,
+                ( m.m00 * b09 - m.m01 * b07 + m.m02 * b06 ) * detInv,
+                ( m.m31 * b01 - m.m30 * b03 - m.m32 * b00 ) * detInv,
+                ( m.m20 * b03 - m.m21 * b01 + m.m22 * b00 ) * detInv);
             return target;
         }
         /* @formatter:on */
@@ -487,19 +489,19 @@ public abstract class PMatAux {
 
         /* @formatter:off */
         target.set(
-                am00 * target.m00 + am01 * target.m10 + am02 * target.m20,
-                am00 * target.m01 + am01 * target.m11 + am02 * target.m21,
-                am00 * target.m02 + am01 * target.m12 + am02 * target.m22,
-                am00 * target.m03 + am01 * target.m13 + am02 * target.m23,
-                am10 * target.m00 + am11 * target.m10 + am12 * target.m20,
-                am10 * target.m01 + am11 * target.m11 + am12 * target.m21,
-                am10 * target.m02 + am11 * target.m12 + am12 * target.m22,
-                am10 * target.m03 + am11 * target.m13 + am12 * target.m23,
-                am20 * target.m00 + am21 * target.m10 + am22 * target.m20,
-                am20 * target.m01 + am21 * target.m11 + am22 * target.m21,
-                am20 * target.m02 + am21 * target.m12 + am22 * target.m22,
-                am20 * target.m03 + am21 * target.m13 + am22 * target.m23,
-                target.m30, target.m31, target.m32, target.m33);
+            am00 * target.m00 + am01 * target.m10 + am02 * target.m20,
+            am00 * target.m01 + am01 * target.m11 + am02 * target.m21,
+            am00 * target.m02 + am01 * target.m12 + am02 * target.m22,
+            am00 * target.m03 + am01 * target.m13 + am02 * target.m23,
+            am10 * target.m00 + am11 * target.m10 + am12 * target.m20,
+            am10 * target.m01 + am11 * target.m11 + am12 * target.m21,
+            am10 * target.m02 + am11 * target.m12 + am12 * target.m22,
+            am10 * target.m03 + am11 * target.m13 + am12 * target.m23,
+            am20 * target.m00 + am21 * target.m10 + am22 * target.m20,
+            am20 * target.m01 + am21 * target.m11 + am22 * target.m21,
+            am20 * target.m02 + am21 * target.m12 + am22 * target.m22,
+            am20 * target.m03 + am21 * target.m13 + am22 * target.m23,
+            target.m30, target.m31, target.m32, target.m33);
         return target;
         /* @formatter:on */
     }
@@ -524,10 +526,10 @@ public abstract class PMatAux {
 
         /* @formatter:off */
         target.set(
-                x * target.m00, x * target.m01, x * target.m02, x * target.m03,
-                y * target.m10, y * target.m11, y * target.m12, y * target.m13,
-                z * target.m20, z * target.m21, z * target.m22, z * target.m23,
-                target.m30, target.m31, target.m32, target.m33);
+            x * target.m00, x * target.m01, x * target.m02, x * target.m03,
+            y * target.m10, y * target.m11, y * target.m12, y * target.m13,
+            z * target.m20, z * target.m21, z * target.m22, z * target.m23,
+            target.m30, target.m31, target.m32, target.m33);
         return target;
         /* @formatter:on */
     }
@@ -579,20 +581,20 @@ public abstract class PMatAux {
 
         /* @formatter:off */
         target.set(
-                target.m00 - tx * target.m30,
-                target.m01 - tx * target.m31,
-                target.m02 - tx * target.m32,
-                target.m03 - tx * target.m33,
-                target.m10 - ty * target.m30,
-                target.m11 - ty * target.m31,
-                target.m12 - ty * target.m32,
-                target.m13 - ty * target.m33,
-                target.m20 - tz * target.m30,
-                target.m21 - tz * target.m31,
-                target.m22 - tz * target.m32,
-                target.m23 - tz * target.m33,
-                target.m30, target.m31,
-                target.m32, target.m33);
+            target.m00 - tx * target.m30,
+            target.m01 - tx * target.m31,
+            target.m02 - tx * target.m32,
+            target.m03 - tx * target.m33,
+            target.m10 - ty * target.m30,
+            target.m11 - ty * target.m31,
+            target.m12 - ty * target.m32,
+            target.m13 - ty * target.m33,
+            target.m20 - tz * target.m30,
+            target.m21 - tz * target.m31,
+            target.m22 - tz * target.m32,
+            target.m23 - tz * target.m33,
+            target.m30, target.m31,
+            target.m32, target.m33);
         return target;
         /* @formatter:on */
     }
@@ -670,10 +672,10 @@ public abstract class PMatAux {
         final float w = m.m30 * px + m.m31 * py + m.m32 * pz + m.m33;
         if (w != 0.0f) {
             final float wInv = 1.0f / w;
-            return target.set((m.m00 * px + m.m01 * py + m.m02 * pz + m.m03)
-                    * wInv, (m.m10 * px + m.m11 * py + m.m12 * pz + m.m13) * wInv,
+            return target.set(
+                (m.m00 * px + m.m01 * py + m.m02 * pz + m.m03) * wInv,
+                (m.m10 * px + m.m11 * py + m.m12 * pz + m.m13) * wInv,
                 (m.m20 * px + m.m21 * py + m.m22 * pz + m.m23) * wInv);
-
         }
         return target.reset();
     }
@@ -710,9 +712,10 @@ public abstract class PMatAux {
         final float w = m.m30 * vx + m.m31 * vy + m.m32 * vz + m.m33;
         if (w != 0.0f) {
             final float wInv = 1.0f / w;
-            return target.set((m.m00 * vx + m.m01 * vy + m.m02 * vz) * wInv,
-                (m.m10 * vx + m.m11 * vy + m.m12 * vz) * wInv, (m.m20 * vx
-                    + m.m21 * vy + m.m22 * vz) * wInv);
+            return target.set(
+                (m.m00 * vx + m.m01 * vy + m.m02 * vz) * wInv,
+                (m.m10 * vx + m.m11 * vy + m.m12 * vz) * wInv,
+                (m.m20 * vx + m.m21 * vy + m.m22 * vz) * wInv);
         }
         return target.reset();
     }
@@ -759,10 +762,10 @@ public abstract class PMatAux {
 
         /* @formatter:off */
         target.set(
-                w + w,  0.0f,        0.0f, w * ( left + right ),
-                0.0f, h + h,        0.0f, h * ( top + bottom ),
-                0.0f,  0.0f, - ( d + d ),  -d * ( far + near ),
-                0.0f,  0.0f,        0.0f,                 1.0f);
+            w + w,  0.0f,        0.0f, w * ( left + right ),
+            0.0f, h + h,        0.0f, h * ( top + bottom ),
+            0.0f,  0.0f, - ( d + d ),  -d * ( far + near ),
+            0.0f,  0.0f,        0.0f,                 1.0f);
         return target;
         /* @formatter:on */
     }
@@ -785,9 +788,10 @@ public abstract class PMatAux {
 
         final float cotfov = Utils.cot(fov * 0.5f);
         final float d = Utils.div(1.0f, far - near);
-        target.set(Utils.div(cotfov, aspect), 0.0f, 0.0f, 0.0f, 0.0f, cotfov,
-            0.0f, 0.0f, 0.0f, 0.0f, (far + near) * -d, (near + near) * far
-                * -d,
+        target.set(
+            Utils.div(cotfov, aspect), 0.0f, 0.0f, 0.0f,
+            0.0f, cotfov, 0.0f, 0.0f,
+            0.0f, 0.0f, (far + near) * -d, (near + near) * far * -d,
             0.0f, 0.0f, -1.0f, 0.0f);
 
         return target;
@@ -838,25 +842,25 @@ public abstract class PMatAux {
 
         /* @formatter:off */
         target.set(
-                target.m00 * bm00 + target.m01 * bm10 + target.m02 * bm20,
-                target.m00 * bm01 + target.m01 * bm11 + target.m02 * bm21,
-                target.m00 * bm02 + target.m01 * bm12 + target.m02 * bm22,
-                target.m03,
+            target.m00 * bm00 + target.m01 * bm10 + target.m02 * bm20,
+            target.m00 * bm01 + target.m01 * bm11 + target.m02 * bm21,
+            target.m00 * bm02 + target.m01 * bm12 + target.m02 * bm22,
+            target.m03,
 
-                target.m10 * bm00 + target.m11 * bm10 + target.m12 * bm20,
-                target.m10 * bm01 + target.m11 * bm11 + target.m12 * bm21,
-                target.m10 * bm02 + target.m11 * bm12 + target.m12 * bm22,
-                target.m13,
+            target.m10 * bm00 + target.m11 * bm10 + target.m12 * bm20,
+            target.m10 * bm01 + target.m11 * bm11 + target.m12 * bm21,
+            target.m10 * bm02 + target.m11 * bm12 + target.m12 * bm22,
+            target.m13,
 
-                target.m20 * bm00 + target.m21 * bm10 + target.m22 * bm20,
-                target.m20 * bm01 + target.m21 * bm11 + target.m22 * bm21,
-                target.m20 * bm02 + target.m21 * bm12 + target.m22 * bm22,
-                target.m23,
+            target.m20 * bm00 + target.m21 * bm10 + target.m22 * bm20,
+            target.m20 * bm01 + target.m21 * bm11 + target.m22 * bm21,
+            target.m20 * bm02 + target.m21 * bm12 + target.m22 * bm22,
+            target.m23,
 
-                target.m30 * bm00 + target.m31 * bm10 + target.m32 * bm20,
-                target.m30 * bm01 + target.m31 * bm11 + target.m32 * bm21,
-                target.m30 * bm02 + target.m31 * bm12 + target.m32 * bm22,
-                target.m33);
+            target.m30 * bm00 + target.m31 * bm10 + target.m32 * bm20,
+            target.m30 * bm01 + target.m31 * bm11 + target.m32 * bm21,
+            target.m30 * bm02 + target.m31 * bm12 + target.m32 * bm22,
+            target.m33);
         return target;
         /* @formatter:on */
     }
@@ -897,7 +901,6 @@ public abstract class PMatAux {
             ' ' +
             ']' +
             '\n';
-
     }
 
     /**

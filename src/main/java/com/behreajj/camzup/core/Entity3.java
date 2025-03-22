@@ -4,8 +4,8 @@ import java.util.Objects;
 
 /**
  * An entity in three-dimensional space that can be moved around with a
- * transform, but contains no
- * other data. Useful when a 'target' entity is needed.
+ * transform, but contains no other data. Useful when a 'target' entity is
+ * needed.
  */
 public class Entity3 extends Entity implements Comparable<Entity3>, IOriented3, ISpatial3 {
 
@@ -33,9 +33,8 @@ public class Entity3 extends Entity implements Comparable<Entity3>, IOriented3, 
     }
 
     /**
-     * Constructs a named entity with a transform. The transform is assigned by
-     * reference, and so it
-     * can be changed outside the entity.
+     * Constructs a named entity with a transform. The transform is assigned
+     * by reference, and so it can be changed outside the entity.
      *
      * @param name      the name
      * @param transform the transform
@@ -48,8 +47,7 @@ public class Entity3 extends Entity implements Comparable<Entity3>, IOriented3, 
 
     /**
      * Constructs an entity with a transform. The transform is assigned by
-     * reference, and so it can be
-     * changed outside the entity.
+     * reference, and so it can be changed outside the entity.
      *
      * @param transform the transform
      */

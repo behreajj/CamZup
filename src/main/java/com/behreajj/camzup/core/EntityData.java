@@ -11,8 +11,8 @@ public abstract class EntityData {
     public String name;
 
     /**
-     * The default constructor. The data's name is derived from its identity hash
-     * code.
+     * The default constructor. The data's name is derived from its identity
+     * hash code.
      */
     protected EntityData() {
         this.name = Integer.toHexString(System.identityHashCode(this));

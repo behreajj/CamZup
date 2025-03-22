@@ -177,8 +177,10 @@ public class CamEntity3 extends Entity3 {
      * @param top    the top edge of the window
      * @return this entity
      */
-    public CamEntity3 ortho(final PGraphicsOpenGL rndr, final float left,
-        final float right, final float bottom, final float top) {
+    public CamEntity3 ortho(
+        final PGraphicsOpenGL rndr,
+        final float left, final float right,
+        final float bottom, final float top) {
 
         rndr.cameraNear = IUp.DEFAULT_NEAR_CLIP;
         rndr.cameraFar = IUp.DEFAULT_FAR_CLIP;
@@ -202,9 +204,11 @@ public class CamEntity3 extends Entity3 {
      * @param far    the far clip plane
      * @return this entity
      */
-    public CamEntity3 ortho(final PGraphicsOpenGL rndr, final float left,
-        final float right, final float bottom, final float top, final float near,
-        final float far) {
+    public CamEntity3 ortho(
+        final PGraphicsOpenGL rndr,
+        final float left, final float right,
+        final float bottom, final float top,
+        final float near, final float far) {
 
         rndr.cameraNear = near;
         rndr.cameraFar = far;
