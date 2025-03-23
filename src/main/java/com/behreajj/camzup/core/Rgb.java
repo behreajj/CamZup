@@ -1116,7 +1116,7 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Returns a string representation of an array of Colors.
+     * Returns a string representation of an array of colors.
      *
      * @param arr the array
      * @return the string
@@ -1158,8 +1158,7 @@ public class Rgb implements IColor {
 
     /**
      * Divides the red, green and blue color channels of a color by the alpha
-     * channel; reverses {@link
-     * Rgb#premul(Rgb, Rgb)}.
+     * channel; reverses {@link Rgb#premul(Rgb, Rgb)}.
      *
      * @param c      the input color
      * @param target the output color
@@ -1353,8 +1352,8 @@ public class Rgb implements IColor {
 
     /**
      * Converts a color to an integer where hexadecimal represents the color
-     * channels as 0xAARRGGBB. Uses saturation arithmetic. Two colors with
-     * unequal values beyond [0.0, 1.0] may yield equal integers.
+     * channels as <code>0xAARRGGBB</code>. Uses saturation arithmetic. Two
+     * colors with unequal values beyond [0.0, 1.0] may yield equal integers.
      *
      * @return the color in hexadecimal
      * @see Utils#clamp01(float)
@@ -1372,8 +1371,8 @@ public class Rgb implements IColor {
 
     /**
      * Converts a color to an integer where hexadecimal represents the color
-     * channels as 0xAARRGGBB. Uses modular arithmetic, so out-of-gamut colors
-     * may cause overflow and unexpected hexadecimal colors.
+     * channels as <code>0xAARRGGBB</code>. Uses modular arithmetic, so
+     * out-of-gamut colors may cause overflow and unexpected hexadecimal colors.
      *
      * @return the color in hexadecimal
      */
@@ -1476,10 +1475,9 @@ public class Rgb implements IColor {
 
     /**
      * Appends a representation of the color compatible with .gpl (GIMP palette)
-     * file formats to a
-     * {@link StringBuilder}. Each channel, including alpha, is represented an
-     * unsigned byte in [0,
-     * 255] separated by a space. Saturation arithmetic is used.
+     * file formats to a {@link StringBuilder}. Each channel, including alpha,
+     * is represented an unsigned byte in [0, 255] separated by a space.
+     * Saturation arithmetic is used.
      *
      * @param gpl the string builder
      * @return the string builder
@@ -1497,8 +1495,7 @@ public class Rgb implements IColor {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * color. Appends to an
-     * existing {@link StringBuilder}.
+     * color. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -1533,7 +1530,8 @@ public class Rgb implements IColor {
     }
 
     /**
-     * An abstract class to facilitate the creation of RGB tone mapping functions.
+     * An abstract class to facilitate the creation of RGB tone mapping
+     * functions.
      */
     public abstract static class AbstrToneMap implements BiFunction<Rgb, Rgb, Rgb> {
 

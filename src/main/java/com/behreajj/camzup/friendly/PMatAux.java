@@ -68,14 +68,13 @@ public abstract class PMatAux {
         final float uh = u * 0.5f;
         final float v = sh + 1.5f;
 
-        /* @formatter:off */
         target.set(
             th,          v,       -v,   uh,
             u, -2.5f - sh, s + 2.0f,   th,
             th,       0.0f,       uh, 0.0f,
             0.0f,       1.0f,     0.0f, 0.0f);
+
         return target;
-        /* @formatter:on */
     }
 
     /**
@@ -115,7 +114,6 @@ public abstract class PMatAux {
         final float n12 = tay * zAxis - sax;
         final float n21 = taz * yAxis + sax;
 
-        /* @formatter:off */
         m.set(
             m.m00 * n00 + m.m01 * n01 + m.m02 * n02,
             m.m00 * n10 + m.m01 * n11 + m.m02 * n12,
@@ -153,7 +151,6 @@ public abstract class PMatAux {
             n20 * mInv.m02 + n21 * mInv.m12 + n22 * mInv.m22,
             n20 * mInv.m03 + n21 * mInv.m13 + n22 * mInv.m23,
             mInv.m30, mInv.m31, mInv.m32, mInv.m33);
-        /* @formatter:on */
 
         return m;
     }
@@ -215,7 +212,6 @@ public abstract class PMatAux {
         m.m31 = t1 * c + m.m32 * s;
         m.m32 = m.m32 * c - t1 * s;
 
-        /* @formatter:off */
         mInv.set(
             mInv.m00, mInv.m01, mInv.m02, mInv.m03,
             c * mInv.m10 + s * mInv.m20,
@@ -229,7 +225,6 @@ public abstract class PMatAux {
             mInv.m30, mInv.m31, mInv.m32, mInv.m33);
 
         return m;
-        /* @formatter:on */
     }
 
     /**
@@ -267,7 +262,6 @@ public abstract class PMatAux {
         m.m30 = t0 * c - m.m32 * s;
         m.m32 = t0 * s + m.m32 * c;
 
-        /* @formatter:off */
         mInv.set(
             c * mInv.m00 - s * mInv.m20,
             c * mInv.m01 - s * mInv.m21,
@@ -281,7 +275,6 @@ public abstract class PMatAux {
             mInv.m30, mInv.m31, mInv.m32, mInv.m33);
 
         return m;
-        /* @formatter:on */
     }
 
     /**
@@ -319,7 +312,6 @@ public abstract class PMatAux {
         m.m30 = t0 * c + m.m31 * s;
         m.m31 = m.m31 * c - t0 * s;
 
-        /* @formatter:off */
         mInv.set(
             c * mInv.m00 + s * mInv.m10,
             c * mInv.m01 + s * mInv.m11,
@@ -333,7 +325,6 @@ public abstract class PMatAux {
             mInv.m30, mInv.m31, mInv.m32, mInv.m33);
 
         return m;
-        /* @formatter:on */
     }
 
     /**
@@ -365,14 +356,13 @@ public abstract class PMatAux {
         h = h != 0.0f ? 1.0f / h : 1.0f;
         d = d != 0.0f ? 1.0f / d : 1.0f;
 
-        /* @formatter:off */
         target.set(
             n2 * w,   0.0f, ( right + left ) * w,          0.0f,
             0.0f, n2 * h, ( top + bottom ) * h,          0.0f,
             0.0f,   0.0f,  ( far + near ) * -d, n2 * far * -d,
             0.0f,   0.0f,                -1.0f,           0.0f);
+
         return target;
-        /* @formatter:on */
     }
 
     /**
@@ -399,7 +389,6 @@ public abstract class PMatAux {
         final float b10 = m.m21 * m.m33 - m.m23 * m.m31;
         final float b11 = m.m22 * m.m33 - m.m23 * m.m32;
 
-        /* @formatter:off */
         final float det = b00 * b11 - b01 * b10 +
                 b02 * b09 + b03 * b08 -
                 b04 * b07 + b05 * b06;
@@ -424,7 +413,6 @@ public abstract class PMatAux {
                 ( m.m20 * b03 - m.m21 * b01 + m.m22 * b00 ) * detInv);
             return target;
         }
-        /* @formatter:on */
 
         /* When the determinant is zero, Processing uses input matrix. */
         target.set(m);
@@ -487,7 +475,6 @@ public abstract class PMatAux {
         final float am21 = yz2 + wx2;
         final float am22 = 1.0f - xsq2 - ysq2;
 
-        /* @formatter:off */
         target.set(
             am00 * target.m00 + am01 * target.m10 + am02 * target.m20,
             am00 * target.m01 + am01 * target.m11 + am02 * target.m21,
@@ -502,8 +489,8 @@ public abstract class PMatAux {
             am20 * target.m02 + am21 * target.m12 + am22 * target.m22,
             am20 * target.m03 + am21 * target.m13 + am22 * target.m23,
             target.m30, target.m31, target.m32, target.m33);
+
         return target;
-        /* @formatter:on */
     }
 
     /**
@@ -524,14 +511,13 @@ public abstract class PMatAux {
         final float y = yScale != 0.0f ? 1.0f / yScale : 1.0f;
         final float z = zScale != 0.0f ? 1.0f / zScale : 1.0f;
 
-        /* @formatter:off */
         target.set(
             x * target.m00, x * target.m01, x * target.m02, x * target.m03,
             y * target.m10, y * target.m11, y * target.m12, y * target.m13,
             z * target.m20, z * target.m21, z * target.m22, z * target.m23,
             target.m30, target.m31, target.m32, target.m33);
+
         return target;
-        /* @formatter:on */
     }
 
     /**
@@ -579,7 +565,6 @@ public abstract class PMatAux {
     public static PMatrix3D invTranslate(final float tx, final float ty,
         final float tz, final PMatrix3D target) {
 
-        /* @formatter:off */
         target.set(
             target.m00 - tx * target.m30,
             target.m01 - tx * target.m31,
@@ -595,8 +580,8 @@ public abstract class PMatAux {
             target.m23 - tz * target.m33,
             target.m30, target.m31,
             target.m32, target.m33);
+
         return target;
-        /* @formatter:on */
     }
 
     /**
@@ -629,7 +614,6 @@ public abstract class PMatAux {
     public static PMatrix3D mul(final PMatrix3D a, final PMatrix3D b,
         final PMatrix3D target) {
 
-        /* @formatter:off */
         target.set(
             a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30,
             a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21 + a.m03 * b.m31,
@@ -652,7 +636,6 @@ public abstract class PMatAux {
             a.m30 * b.m03 + a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33);
 
         return target;
-        /* @formatter:on */
     }
 
     /**
@@ -760,14 +743,13 @@ public abstract class PMatAux {
         h = h != 0.0f ? 1.0f / h : 1.0f;
         d = d != 0.0f ? 1.0f / d : 1.0f;
 
-        /* @formatter:off */
         target.set(
             w + w,  0.0f,        0.0f, w * ( left + right ),
             0.0f, h + h,        0.0f, h * ( top + bottom ),
             0.0f,  0.0f, - ( d + d ),  -d * ( far + near ),
             0.0f,  0.0f,        0.0f,                 1.0f);
+
         return target;
-        /* @formatter:on */
     }
 
     /**
@@ -840,7 +822,6 @@ public abstract class PMatAux {
         final float bm21 = yz2 + wx2;
         final float bm22 = 1.0f - xsq2 - ysq2;
 
-        /* @formatter:off */
         target.set(
             target.m00 * bm00 + target.m01 * bm10 + target.m02 * bm20,
             target.m00 * bm01 + target.m01 * bm11 + target.m02 * bm21,
@@ -861,8 +842,8 @@ public abstract class PMatAux {
             target.m30 * bm01 + target.m31 * bm11 + target.m32 * bm21,
             target.m30 * bm02 + target.m31 * bm12 + target.m32 * bm22,
             target.m33);
+
         return target;
-        /* @formatter:on */
     }
 
     /**
