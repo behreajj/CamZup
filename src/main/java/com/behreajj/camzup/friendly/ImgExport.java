@@ -27,43 +27,6 @@ public abstract class ImgExport {
     private ImgExport() {
         // TODO: Change class name to ImgIo
         // TODO: Support loading files to Img?
-        // TODO: Convert from native java.awt.Image to Img?
-    }
-
-    /**
-     * Converts an image to a {@link java.awt.image.BufferedImage}.
-     *
-     * @param img the image
-     * @return the AWT image
-     */
-    public static BufferedImage toAwtImage(final Img img) {
-
-        return ImgExport.toAwtImage(img, new Rgb.ToneMapClamp(),
-            ImgExport.DEFAULT_USE_PREMUL);
-    }
-
-    /**
-     * Converts an image to a {@link java.awt.image.BufferedImage}.
-     *
-     * @param img       the image
-     * @param mapFunc   the mapping function
-     * @param usePremul multiply color by alpha
-     * @return the AWT image
-     */
-    public static BufferedImage toAwtImage(
-        final Img img,
-        final Rgb.AbstrToneMap mapFunc,
-        final boolean usePremul) {
-
-        final int w = img.getWidth();
-        final int h = img.getHeight();
-        final int[] px = Img.toArgb32(img, mapFunc, usePremul);
-
-        final BufferedImage imgAwt = new BufferedImage(
-            w, h, BufferedImage.TYPE_INT_ARGB);
-        imgAwt.getRaster().setDataElements(0, 0, w, h, px);
-
-        return imgAwt;
     }
 
     /**
@@ -144,6 +107,42 @@ public abstract class ImgExport {
     }
 
     /**
+     * Converts an image to a {@link java.awt.image.BufferedImage}.
+     *
+     * @param img the image
+     * @return the AWT image
+     */
+    public static BufferedImage toAwtImage(final Img img) {
+
+        return ImgExport.toAwtImage(img, new Rgb.ToneMapClamp(),
+            ImgExport.DEFAULT_USE_PREMUL);
+    }
+
+    /**
+     * Converts an image to a {@link java.awt.image.BufferedImage}.
+     *
+     * @param img       the image
+     * @param mapFunc   the mapping function
+     * @param usePremul multiply color by alpha
+     * @return the AWT image
+     */
+    public static BufferedImage toAwtImage(
+        final Img img,
+        final Rgb.AbstrToneMap mapFunc,
+        final boolean usePremul) {
+
+        final int w = img.getWidth();
+        final int h = img.getHeight();
+        final int[] px = Img.toArgb32(img, mapFunc, usePremul);
+
+        final BufferedImage imgAwt = new BufferedImage(
+            w, h, BufferedImage.TYPE_INT_ARGB);
+        imgAwt.getRaster().setDataElements(0, 0, w, h, px);
+
+        return imgAwt;
+    }
+
+    /**
      * Encodes an image to a file format per its extension, e.g., "png" or
      * "jpg", then returns the encoded image as a byte. Defaults to a binary
      * ppm image if there is an error.
@@ -159,8 +158,7 @@ public abstract class ImgExport {
 
     /**
      * Encodes an image to a file format per its extension, e.g., "png" or
-     * "jpg", then returns the encoded image as a byte. Defaults to a binary
-     * ppm image if there is an error.
+     * "jpg", then returns the encoded image as a byte.
      *
      * @param fileExt   the file extension
      * @param img       the image
@@ -174,9 +172,10 @@ public abstract class ImgExport {
         final Rgb.AbstrToneMap mapFunc,
         final boolean usePremul) {
 
-        final BufferedImage imgNtv = ImgExport.toAwtImage(img, mapFunc, usePremul);
+        final BufferedImage imgNtv = ImgExport.toAwtImage(
+            img, mapFunc, usePremul);
         final String lcFileExt = fileExt.toLowerCase();
-        final ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        final ByteArrayOutputStream bos = new ByteArrayOutputStream(512);
 
         try {
             ImageIO.write(imgNtv, lcFileExt, bos);
@@ -186,6 +185,6 @@ public abstract class ImgExport {
             e.printStackTrace();
         }
 
-        return Img.toPpmBytes(img);
+        return new byte[0];
     }
 }

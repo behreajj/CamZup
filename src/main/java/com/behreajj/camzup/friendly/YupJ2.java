@@ -402,11 +402,9 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     public float bezierPoint(final float ap0, final float cp0, final float cp1,
         final float ap1, final float t) {
 
-        /* @formatter:off */
         final float u = 1.0f - t;
-        return ( ap0 * u + cp0 * ( t + t + t ) ) * u * u +
-            ( ap1 * t + cp1 * ( u + u + u ) ) * t * t;
-        /* @formatter:on */
+        return (ap0 * u + cp0 * (t + t + t)) * u * u +
+            (ap1 * t + cp1 * (u + u + u)) * t * t;
     }
 
     /**
@@ -621,15 +619,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
         /*
          * See https://discourse.processing.org/t/colormode-and-rgba-values/31379
          */
-        super.colorMode(mode, max1 < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN
-                : Math.min(max1, IUp.COLOR_MODE_MAX),
-            max2 < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN : Math.min(max2, IUp.COLOR_MODE_MAX),
-            max3 < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN : Math.min(max3, IUp.COLOR_MODE_MAX),
-            aMax < IUp.COLOR_MODE_MIN ? IUp.COLOR_MODE_MIN : Math.min(aMax, IUp.COLOR_MODE_MAX));
+        super.colorMode(mode,
+            Utils.clamp(max1, IUp.COLOR_MODE_MIN, IUp.COLOR_MODE_MAX),
+            Utils.clamp(max2, IUp.COLOR_MODE_MIN, IUp.COLOR_MODE_MAX),
+            Utils.clamp(max3, IUp.COLOR_MODE_MIN, IUp.COLOR_MODE_MAX),
+            Utils.clamp(aMax, IUp.COLOR_MODE_MIN, IUp.COLOR_MODE_MAX));
 
         /*
-         * Cache the inverse of the color maximums so that color channels can be
-         * scaled to the range [0.0, 1.0] later .
+         * Cache the inverse of the color maximums so that color channels can
+         * be scaled to the range [0.0, 1.0] later.
          */
         this.invColorModeX = 1.0f / this.colorModeX;
         this.invColorModeY = 1.0f / this.colorModeY;
@@ -662,12 +660,17 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          * https://github.com/processing/processing4/issues/169 ,
          * https://github.com/processing/processing4/issues/624 .
          */
-        this.g2.drawImage(YupJ2.convertPImageToNative(src), dx, dy, dx + (dw < 0
-                ? -dw
-                : dw), dy + (dh < 0 ? -dh : dh), sx, sy, sx
-                + (sw < 0 ? -sw
-                : sw),
-            sy + (sh < 0 ? -sh : sh), null, null);
+
+        // TODO: Should bottom right corners be as is, or subtract -1?
+        this.g2.drawImage(
+            YupJ2.convertPImageToNative(src),
+            dx, dy,
+            dx + Math.abs(dw),
+            dy + Math.abs(dh),
+            sx, sy,
+            sx + Math.abs(sw),
+            sy + Math.abs(sh),
+            null, null);
     }
 
     /**
@@ -679,8 +682,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     public PShape createShape() {
 
         /*
-         * This needs to be overridden because a bug in PShape drawImpl allows a
-         * geometry family shape to accept bezierVertex, quadraticVertex, etc.
+         * This needs to be overridden because a bug in PShape drawImpl allows
+         * a geometry family shape to accept bezierVertex, quadraticVertex, etc.
          * commands that it cannot properly represent. See
          * https://github.com/processing/processing/issues/4879 .
          */
@@ -728,11 +731,11 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     /**
      * Draws a curve segment.
      *
-     * @param a the coordinate
+     * @param v the coordinate
      */
     @Override
-    public void curveVertex(final Vec2 a) {
-        super.curveVertex(a.x, a.y);
+    public void curveVertex(final Vec2 v) {
+        super.curveVertex(v.x, v.y);
     }
 
     /**
@@ -2003,7 +2006,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * Draws a line between two coordinates.
      *
      * @param orig the origin coordinate
-     * @param dest   the destination coordinate
+     * @param dest the destination coordinate
      */
     @Override
     public void line(final Vec2 orig, final Vec2 dest) {

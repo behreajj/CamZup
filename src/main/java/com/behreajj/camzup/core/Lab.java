@@ -1678,7 +1678,7 @@ public class Lab implements IColor {
             final double halfca = 0.5d * ad;
             final double halfcb = 0.5d * bd;
 
-            return new Lab[] {
+            return new Lab[]{
                 new Lab(lAna, (float) (rt32ca - halfcb), (float) (rt32cb + halfca), t),
                 new Lab(lAna, (float) (rt32ca + halfcb), (float) (rt32cb - halfca), t)
             };
@@ -1706,7 +1706,7 @@ public class Lab implements IColor {
         @Override
         public Lab[] apply(final Lab o) {
 
-            return new Lab[] {
+            return new Lab[]{
                 new Lab((float) (100.0d - o.l), -o.a, -o.b, o.alpha)
             };
         }
@@ -1744,7 +1744,7 @@ public class Lab implements IColor {
             final double halfca = 0.5d * ad;
             final double halfcb = 0.5d * bd;
 
-            return new Lab[] {
+            return new Lab[]{
                 new Lab(lSpl, (float) (rt32ca - halfcb), (float) (rt32cb + halfca), t),
                 new Lab(lSpl, (float) (rt32ca + halfcb), (float) (rt32cb - halfca), t)
             };
@@ -1772,7 +1772,7 @@ public class Lab implements IColor {
         @Override
         public Lab[] apply(final Lab o) {
 
-            return new Lab[] {
+            return new Lab[]{
                 new Lab(50.0f, -o.b, o.a, o.alpha),
                 new Lab((float) (100.0d - o.l), -o.a, -o.b, o.alpha),
                 new Lab(50.0f, o.b, -o.a, o.alpha)
@@ -1812,18 +1812,18 @@ public class Lab implements IColor {
             final double halfca = 0.5d * ad;
             final double halfcb = 0.5d * bd;
 
-            return new Lab[] {
+            return new Lab[]{
                 new Lab(
-                (float) ((200.0d - ld) / 3.0d),
-                (float) (-halfca - rt32cb),
-                (float) (-halfcb + rt32ca),
-                t),
-            new Lab((float) (100.0d - ld), -o.a, -o.b, t),
+                    (float) ((200.0d - ld) / 3.0d),
+                    (float) (-halfca - rt32cb),
+                    (float) (-halfcb + rt32ca),
+                    t),
+                new Lab((float) (100.0d - ld), -o.a, -o.b, t),
                 new Lab(
-                (float) ((100.0d + ld) / 3.0d),
-                (float) (halfca + rt32cb),
-                (float) (halfcb - rt32ca),
-                t)
+                    (float) ((100.0d + ld) / 3.0d),
+                    (float) (halfca + rt32cb),
+                    (float) (halfcb - rt32ca),
+                    t)
             };
         }
     }
@@ -1860,7 +1860,7 @@ public class Lab implements IColor {
             final double halfca = -0.5d * ad;
             final double halfcb = -0.5d * bd;
 
-            return new Lab[] {
+            return new Lab[]{
                 new Lab(lTri, (float) (halfca - rt32cb), (float) (halfcb + rt32ca), t),
                 new Lab(lTri, (float) (halfca + rt32cb), (float) (halfcb - rt32ca), t)
             };

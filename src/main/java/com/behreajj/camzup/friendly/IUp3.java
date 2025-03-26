@@ -408,7 +408,7 @@ public interface IUp3 extends IUp {
      * Draws a line between two coordinates.
      *
      * @param orig the origin coordinate
-     * @param dest   the destination coordinate
+     * @param dest the destination coordinate
      */
     void line(final Vec3 orig, final Vec3 dest);
 

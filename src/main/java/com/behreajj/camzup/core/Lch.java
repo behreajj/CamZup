@@ -247,11 +247,11 @@ public class Lch implements IColor {
     public static boolean eqLchSatArith(final Lch o, final Lch d) {
 
         return (int) (Utils.clamp(o.l, 0.0f, 100.0f) * Lab.L_TO_BYTE + 0.5f)
-                == (int) (Utils.clamp(d.l, 0.0f, 100.0f) * Lab.L_TO_BYTE + 0.5f)
+            == (int) (Utils.clamp(d.l, 0.0f, 100.0f) * Lab.L_TO_BYTE + 0.5f)
             && (int) (Utils.clamp(o.c * Lch.C_TO_BYTE, 0.0f, 254.5f) + 0.5f)
-                == (int) (Utils.clamp(d.c * Lch.C_TO_BYTE, 0.0f, 254.5f) + 0.5f)
+            == (int) (Utils.clamp(d.c * Lch.C_TO_BYTE, 0.0f, 254.5f) + 0.5f)
             && (int) (Utils.mod1(o.h) * Lch.H_TO_BYTE + 0.5f)
-                == (int) (Utils.mod1(d.h) * Lch.H_TO_BYTE + 0.5f);
+            == (int) (Utils.mod1(d.h) * Lch.H_TO_BYTE + 0.5f);
     }
 
     /**
@@ -835,7 +835,7 @@ public class Lch implements IColor {
             final float h30 = o.h + 0.083333333f;
             final float h330 = o.h - 0.083333333f;
 
-            return new Lch[] {
+            return new Lch[]{
                 new Lch(lAna, o.c, Utils.mod1(h30), o.alpha),
                 new Lch(lAna, o.c, Utils.mod1(h330), o.alpha)
             };
@@ -897,7 +897,7 @@ public class Lch implements IColor {
             final float h150 = o.h + 0.41666667f;
             final float h210 = o.h - 0.41666667f;
 
-            return new Lch[] {
+            return new Lch[]{
                 new Lch(lSpl, o.c, Utils.mod1(h150), o.alpha),
                 new Lch(lSpl, o.c, Utils.mod1(h210), o.alpha)
             };
@@ -931,7 +931,7 @@ public class Lch implements IColor {
             final float h180 = o.h + 0.5f;
             final float h270 = o.h - 0.25f;
 
-            return new Lch[] {
+            return new Lch[]{
                 new Lch(50.0f, o.c, Utils.mod1(h90), o.alpha),
                 new Lch(lCmp, o.c, Utils.mod1(h180), o.alpha),
                 new Lch(50.0f, o.c, Utils.mod1(h270), o.alpha)
@@ -968,7 +968,7 @@ public class Lch implements IColor {
             final float h180 = o.h + 0.5f;
             final float h300 = o.h - Utils.ONE_SIX;
 
-            return new Lch[] {
+            return new Lch[]{
                 new Lch(lTri, o.c, Utils.mod1(h120), o.alpha),
                 new Lch(lCmp, o.c, Utils.mod1(h180), o.alpha),
                 new Lch(lTet, o.c, Utils.mod1(h300), o.alpha)
@@ -1002,7 +1002,7 @@ public class Lch implements IColor {
             final float h120 = o.h + Utils.ONE_THIRD;
             final float h240 = o.h - Utils.ONE_THIRD;
 
-            return new Lch[] {
+            return new Lch[]{
                 new Lch(lTri, o.c, Utils.mod1(h120), o.alpha),
                 new Lch(lTri, o.c, Utils.mod1(h240), o.alpha)
             };

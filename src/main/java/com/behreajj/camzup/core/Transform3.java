@@ -1877,7 +1877,7 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
          * Eases between an origin and destination transform by a step in
          * [0.0, 1.0] .
          *
-         * @param orig the origin
+         * @param orig   the origin
          * @param dest   the destination
          * @param step   the step
          * @param target the output transform

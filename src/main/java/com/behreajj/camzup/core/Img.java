@@ -3,6 +3,7 @@ package com.behreajj.camzup.core;
 import java.math.BigInteger;
 import java.util.*;
 import java.util.Map.Entry;
+import java.util.function.BiFunction;
 
 /**
  * An image class for images in the LAB color format. The bytes per pixel is 64,
@@ -92,9 +93,15 @@ public class Img {
     public static final int DEFAULT_HEIGHT = 128;
 
     /**
+     * Default capacity for each octree node when extracting a palette from an
+     * image.
+     */
+    public static final int DEFAULT_OCTREE_CAPACITY = 512;
+
+    /**
      * Default radius when querying an octree in palette mapping.
      */
-    public static final float DEFAULT_OCTREE_QUERY_RADIUS = 175.0f;
+    public static final float DEFAULT_OCTREE_QUERY_RADIUS = 9999.0f;
 
     /**
      * Default maximum number for a palette extracted from an image.s
@@ -197,6 +204,8 @@ public class Img {
      * {@link Img#DEFAULT_HEIGHT}.
      */
     public Img() {
+
+        // TODO: Create example for mirror function.
 
         // TODO: Filter layers to alpha based on response func?
         // Use preset enums instead of a function.s
@@ -1601,6 +1610,143 @@ public class Img {
         }
 
         return target;
+    }
+
+    /**
+     * Dithers an image to one-bit color.
+     *
+     * @param source the input image
+     * @param factor the dither factor
+     * @param target the output image
+     * @return the dithered image
+     */
+    public static Img dither(
+        final Img source,
+        final float factor,
+        final Img target) {
+        return Img.dither(source, factor, Lab.black(new Lab()),
+            Lab.white(new Lab()), 50.0f, target);
+    }
+
+    /**
+     * Dithers an image to one-bit color.
+     *
+     * @param source the input image
+     * @param factor the dither factor
+     * @param dark   the dark color
+     * @param light  the light color
+     * @param target the output image
+     * @return the dithered image
+     */
+    public static Img dither(
+        final Img source,
+        final float factor,
+        final Lab dark,
+        final Lab light,
+        final Img target) {
+        return Img.dither(source, factor, dark, light, 50.0f, target);
+    }
+
+    /**
+     * Dithers an image to one-bit color, where the source color's lightness
+     * relative to a pivot determines whether the dark or light color is chosen.
+     *
+     * @param source the input image
+     * @param factor the dither factor
+     * @param dark   the dark color
+     * @param light  the light color
+     * @param pivot  the lightness pivot
+     * @param target the output image
+     * @return the dithered image
+     */
+    public static Img dither(
+        final Img source,
+        final float factor,
+        final Lab dark,
+        final Lab light,
+        final float pivot,
+        final Img target) {
+
+        final Lab dVerif = dark.l < light.l ? dark : light;
+        final Lab lVerif = dark.l < light.l ? light : dark;
+        final float pivVerif = Float.isNaN(pivot)
+            ? 50.0f
+            : Utils.clamp(pivot, Utils.EPSILON, 100.0f - Utils.EPSILON);
+
+        final BiFunction<Lab, Lab, Lab> func = (src, trg) -> {
+            trg.set(src.l < pivVerif ? dVerif : lVerif);
+            return trg;
+        };
+
+        return Img.dither(source, factor, func, target);
+    }
+
+
+    /**
+     * Dithers an image according to the nearest match in a palette. Uses an
+     * octree to match source color to palette.
+     *
+     * @param source  the input image
+     * @param factor  the dither factor
+     * @param palette the palette
+     * @param target  the output image
+     * @return the dithered image
+     */
+    public static Img dither(
+        final Img source,
+        final float factor,
+        final Lab[] palette,
+        final Img target) {
+        return Img.dither(source, factor, palette, Octree.DEFAULT_CAPACITY,
+            Img.DEFAULT_OCTREE_QUERY_RADIUS, target);
+    }
+
+    /**
+     * Dithers an image according to the nearest match in a palette. Uses an
+     * octree to match source color to palette.
+     *
+     * @param source   the input image
+     * @param factor   the dither factor
+     * @param palette  the palette
+     * @param capacity the octree node capacity
+     * @param radius   the octree query radius
+     * @param target   the output image
+     * @return the dithered image
+     */
+    public static Img dither(
+        final Img source,
+        final float factor,
+        final Lab[] palette,
+        final int capacity,
+        final float radius,
+        final Img target) {
+
+        final float rVrf = Math.max(Utils.EPSILON, Utils.abs(radius));
+        final Octree oct = new Octree(Bounds3.lab(new Bounds3()), capacity);
+        oct.subdivide(1, capacity);
+
+        for (final Lab swatch : palette) {
+            if (Lab.any(swatch)) {
+                final Vec3 point = new Vec3(swatch.a, swatch.b, swatch.l);
+                oct.insert(point);
+            }
+        }
+        oct.cull();
+
+        final BiFunction<Lab, Lab, Lab> func = (src, trg) -> {
+            final Vec3 query = new Vec3(src.a, src.b, src.l);
+            final TreeMap<Float, Vec3> found = new TreeMap<>();
+            Octree.query(oct, query, rVrf * rVrf, 0, found);
+            if (found.isEmpty()) {
+                Lab.clearBlack(trg);
+            } else {
+                final Vec3 near = found.values().iterator().next();
+                trg.set(near.z, near.x, near.y, src.alpha);
+            }
+            return trg;
+        };
+
+        return Img.dither(source, factor, func, target);
     }
 
     /**
@@ -3198,13 +3344,14 @@ public class Img {
         return Img.paletteExtract(
             source,
             threshold,
-            Octree.DEFAULT_CAPACITY,
+            Img.DEFAULT_OCTREE_CAPACITY,
             false);
     }
 
     /**
      * Extracts a palette from an image. If there are more colors than the
-     * threshold, engages an octree to reduce the number of colors.
+     * threshold, engages an octree to reduce the number of colors. The higher
+     * the octree node capacity, the fewer colors will be in the palette.
      *
      * @param source    the input image
      * @param threshold the threshold
@@ -3221,8 +3368,9 @@ public class Img {
 
     /**
      * Extracts a palette from an image. If there are more colors than the
-     * threshold, engages an octree to reduce the number of colors. Alpha is
-     * no longer supported once the octree is engaged.
+     * threshold, engages an octree to reduce the number of colors. The higher
+     * the octree node capacity, the fewer colors will be in the palette. Alpha
+     * is no longer supported once the octree is engaged.
      * <br>
      * <br>
      * Clear black is always the first entry in the palette.
@@ -3292,124 +3440,6 @@ public class Img {
 
         arr[0] = Lab.clearBlack(new Lab());
         return arr;
-    }
-
-    /**
-     * Applies a palette to an image. Uses an Octree to find the nearest match in
-     * Euclidean space. Retains the original color's transparency.
-     *
-     * @param source  the source pixels
-     * @param palette the color palette
-     * @param target  the target pixels
-     * @return the mapped image
-     */
-    public static Img paletteMap(
-        final Img source,
-        final Lab[] palette,
-        final Img target) {
-
-        return Img.paletteMap(
-            source,
-            palette,
-            Octree.DEFAULT_CAPACITY,
-            Img.DEFAULT_OCTREE_QUERY_RADIUS,
-            target);
-    }
-
-    /**
-     * Applies a palette to an image. Uses an Octree to find the nearest match
-     * in Euclidean space. Retains the original color's transparency.
-     *
-     * @param source   the source pixels
-     * @param palette  the color palette
-     * @param capacity the octree capacity
-     * @param radius   the query radius
-     * @param target   the target pixels
-     * @return the mapped image
-     */
-    public static Img paletteMap(
-        final Img source,
-        final Lab[] palette,
-        final int capacity,
-        final float radius,
-        final Img target) {
-
-        // TODO: This needs a dither function in order to be useful...
-
-        final int len = source.pixels.length;
-        if (!Img.similar(source, target)) {
-            target.width = source.width;
-            target.height = source.height;
-            target.pixels = new long[len];
-        }
-
-        final Octree oct = new Octree(Bounds3.lab(new Bounds3()), capacity);
-        oct.subdivide(1, capacity);
-
-        final HashMap<Vec3, Long> lookup = new HashMap<>(256, 0.75f);
-        for (final Lab swatch : palette) {
-            if (Lab.any(swatch)) {
-                final Vec3 point = new Vec3(swatch.a, swatch.b, swatch.l);
-                oct.insert(point);
-                lookup.put(point, swatch.toHexLongSat());
-            }
-        }
-
-        oct.cull();
-
-        final float rVrf = Math.max(Utils.EPSILON, Utils.abs(radius));
-        final float rsq = rVrf * rVrf;
-        final Lab lab = new Lab();
-        final Vec3 query = new Vec3();
-        final TreeMap<Float, Vec3> found = new TreeMap<>();
-        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
-        convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
-
-        for (int j = 0; j < len; ++j) {
-            final long tlab64Src = source.pixels[j];
-            final long alphaSrc = tlab64Src & Img.T_MASK;
-            final Long tlab64SrcObj = tlab64Src;
-            long tlab64Trg = Img.CLEAR_PIXEL;
-            if (convert.containsKey(tlab64SrcObj)) {
-                tlab64Trg = convert.get(tlab64SrcObj);
-            } else {
-                Lab.fromHex(tlab64Src, lab);
-                query.set(lab.a, lab.b, lab.l);
-                found.clear();
-                Octree.query(oct, query, rsq, 0, found);
-                if (!found.isEmpty()) {
-                    final Vec3 near = found.values().iterator().next();
-                    if (near != null && lookup.containsKey(near)) {
-                        tlab64Trg = lookup.get(near);
-                    }
-                }
-                convert.put(tlab64SrcObj, tlab64Trg);
-            }
-            target.pixels[j] = alphaSrc | tlab64Trg & Img.LAB_MASK;
-        }
-
-        return target;
-    }
-
-    /**
-     * Applies a palette to an image. Uses an Octree to find the nearest match in
-     * Euclidean space.
-     * Retains the original color's transparency.
-     *
-     * @param source   the source pixels
-     * @param palette  the color palette
-     * @param capacity the octree capacity
-     * @param target   the target pixels
-     * @return the mapped image
-     */
-    public static Img paletteMap(
-        final Img source,
-        final Lab[] palette,
-        final int capacity,
-        final Img target) {
-
-        return Img.paletteMap(source, palette, capacity,
-            Img.DEFAULT_OCTREE_QUERY_RADIUS, target);
     }
 
     /**
@@ -4367,8 +4397,7 @@ public class Img {
 
     /**
      * Creates a mesh from the non-transparent pixels of an image. Intended for
-     * smaller images with
-     * relatively few colors.
+     * smaller images with relatively few colors.
      *
      * @param source the source pixels
      * @param poly   the polygon type
@@ -4401,11 +4430,10 @@ public class Img {
     }
 
     /**
-     * Creates an array of meshes from the non-transparent pixels of an image. Each
-     * unique color is
-     * assigned a mesh. Intended for smaller images with relatively few colors. Each
-     * mesh's {@link
-     * Mesh#materialIndex} corresponds to its index in the array.
+     * Creates an array of meshes from the non-transparent pixels of an image.
+     * Each unique color is assigned a mesh. Intended for smaller images with
+     * relatively few colors. Each mesh's {@link Mesh#materialIndex}
+     * corresponds to its index in the array.
      *
      * @param source the source image
      * @param poly   the polygon type
@@ -4432,8 +4460,12 @@ public class Img {
 
         final int wSrc = source.width;
         final int hSrc = source.height;
-        final float right = wSrc > hSrc ? 0.5f : 0.5f * ((float) wSrc / (float) hSrc);
-        final float top = wSrc <= hSrc ? 0.5f : 0.5f * ((float) hSrc / (float) wSrc);
+        final float right = wSrc > hSrc
+            ? 0.5f
+            : 0.5f * ((float) wSrc / (float) hSrc);
+        final float top = wSrc <= hSrc
+            ? 0.5f
+            : 0.5f * ((float) hSrc / (float) wSrc);
         final float tou = 1.0f / (float) wSrc;
         final float tov = 1.0f / (float) hSrc;
 
@@ -4809,6 +4841,126 @@ public class Img {
 
             target.pixels[i] = source.pixels[xMod + wSrc * yMod];
         }
+
+        return target;
+    }
+
+    /**
+     * Dithers an image according to a closest function. The closest function
+     * is expected to accept a source and target color; the target will be
+     * modified by the function, then returned.
+     *
+     * @param source      the input image
+     * @param fac         the dither factor
+     * @param closestFunc the closest function
+     * @param target      the output image
+     * @return the dithered image.
+     */
+    protected static Img dither(
+        final Img source,
+        final float fac,
+        final BiFunction<Lab, Lab, Lab> closestFunc,
+        final Img target) {
+
+        final int w = source.width;
+        final int h = source.height;
+        final long[] srcPixels = source.pixels;
+        final int len = srcPixels.length;
+
+        if (!Img.similar(source, target)) {
+            target.width = w;
+            target.height = h;
+            target.pixels = new long[len];
+        }
+
+        final float facVerif = Float.isNaN(fac)
+            ? 1.0f
+            : Utils.clamp01(fac);
+        final float fs_1_16 = 0.0625f * facVerif;
+        final float fs_3_16 = 0.1875f * facVerif;
+        final float fs_5_16 = 0.3125f * facVerif;
+        final float fs_7_16 = 0.4375f * facVerif;
+
+        final Lab labSrc = new Lab();
+        final Lab labTrg = new Lab();
+        final Lab labNgbr0 = new Lab();
+        final Lab labNgbr1 = new Lab();
+        final Lab labNgbr2 = new Lab();
+        final Lab labNgbr3 = new Lab();
+
+        final long[] trgPixels = target.pixels;
+        System.arraycopy(srcPixels, 0, trgPixels, 0, len);
+
+        for (int i = 0; i < len; ++i) {
+            Lab.fromHex(trgPixels[i], labSrc);
+            closestFunc.apply(labSrc, labTrg);
+            trgPixels[i] = labTrg.toHexLongSat();
+
+            final float tErr = labSrc.alpha - labTrg.alpha;
+            final float lErr = labSrc.l - labTrg.l;
+            final float aErr = labSrc.a - labTrg.a;
+            final float bErr = labSrc.b - labTrg.b;
+
+            final int x = i % w;
+            final int y = i / w;
+
+            final boolean xp1InBounds = x + 1 < w;
+            final boolean yp1InBounds = y + 1 < h;
+
+            /* Find right neighbor. */
+            if (xp1InBounds) {
+                final int idxNgbr0 = y * w + x + 1;
+                Lab.fromHex(trgPixels[idxNgbr0], labNgbr0);
+
+                labNgbr0.alpha += tErr * fs_7_16;
+                labNgbr0.l += lErr * fs_7_16;
+                labNgbr0.a += aErr * fs_7_16;
+                labNgbr0.b += bErr * fs_7_16;
+
+                trgPixels[idxNgbr0] = labNgbr0.toHexLongSat();
+            } /* End x + 1 is in bounds. */
+
+            if (yp1InBounds) {
+                final int yp1w = (y + 1) * w;
+
+                /* Find bottom left neighbor. */
+                if (x > 0) {
+                    final int idxNgbr1 = yp1w + (x - 1);
+                    Lab.fromHex(trgPixels[idxNgbr1], labNgbr1);
+
+                    labNgbr1.alpha += tErr * fs_3_16;
+                    labNgbr1.l += lErr * fs_3_16;
+                    labNgbr1.a += aErr * fs_3_16;
+                    labNgbr1.b += bErr * fs_3_16;
+
+                    trgPixels[idxNgbr1] = labNgbr1.toHexLongSat();
+                } /* End x - 1 is in bounds. */
+
+                /* Find the bottom neighbor. */
+                final int idxNgbr2 = yp1w + x;
+                Lab.fromHex(trgPixels[idxNgbr2], labNgbr2);
+
+                labNgbr2.alpha += tErr * fs_5_16;
+                labNgbr2.l += lErr * fs_5_16;
+                labNgbr2.a += aErr * fs_5_16;
+                labNgbr2.b += bErr * fs_5_16;
+
+                trgPixels[idxNgbr2] = labNgbr2.toHexLongSat();
+
+                /* Find the bottom right neighbor. */
+                if (xp1InBounds) {
+                    final int idxNgbr3 = yp1w + x + 1;
+                    Lab.fromHex(trgPixels[idxNgbr3], labNgbr3);
+
+                    labNgbr3.alpha += tErr * fs_1_16;
+                    labNgbr3.l += lErr * fs_1_16;
+                    labNgbr3.a += aErr * fs_1_16;
+                    labNgbr3.b += bErr * fs_1_16;
+
+                    trgPixels[idxNgbr3] = labNgbr3.toHexLongSat();
+                } /* End x + 1 is in bounds. */
+            } /* End y + 1 is in bounds. */
+        } /* End pixels loop. */
 
         return target;
     }

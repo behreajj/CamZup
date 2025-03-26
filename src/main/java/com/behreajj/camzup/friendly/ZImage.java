@@ -224,8 +224,13 @@ public class ZImage extends PImage {
         final String text,
         final int fillClr) {
 
-        return ZImage.fromText(font, text, fillClr, ZImage.DEFAULT_LEADING,
-            ZImage.DEFAULT_KERNING, ZImage.DEFAULT_ALIGN);
+        return ZImage.fromText(
+            font,
+            text,
+            fillClr,
+            ZImage.DEFAULT_LEADING,
+            ZImage.DEFAULT_KERNING,
+            ZImage.DEFAULT_ALIGN);
     }
 
     /**

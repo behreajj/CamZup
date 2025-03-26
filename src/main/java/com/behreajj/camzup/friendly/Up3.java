@@ -54,7 +54,7 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
     protected final Vec3 k = Vec3.up(new Vec3());
 
     /**
-     * A vector to store the unnormalized look direction when creating a camera
+     * A vector to store the look direction when creating a camera
      * look-at matrix.
      */
     protected final Vec3 lookDir = Vec3.forward(new Vec3());
@@ -137,7 +137,7 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
     }
 
     /**
-     * Draws a single Bezier curve.
+     * Draws a single Bézier curve.
      *
      * @param ap0 the first anchor point
      * @param cp0 the first control point
@@ -148,12 +148,15 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
     public void bezier(final Vec3 ap0, final Vec3 cp0, final Vec3 cp1,
         final Vec3 ap1) {
 
-        this.bezier(ap0.x, ap0.y, ap0.z, cp0.x, cp0.y, cp0.z, cp1.x, cp1.y, cp1.z,
+        this.bezier(
+            ap0.x, ap0.y, ap0.z,
+            cp0.x, cp0.y, cp0.z,
+            cp1.x, cp1.y, cp1.z,
             ap1.x, ap1.y, ap1.z);
     }
 
     /**
-     * Draws a Bezier vertex with three vectors: the following control point,
+     * Draws a Bézier vertex with three vectors: the following control point,
      * the rear control point of the ensuing point, and the ensuing anchor
      * point.
      *
@@ -164,8 +167,10 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
     @Override
     public void bezierVertex(final Vec3 cp0, final Vec3 cp1, final Vec3 ap1) {
 
-        this.bezierVertexImpl(cp0.x, cp0.y, cp0.z, cp1.x, cp1.y, cp1.z, ap1.x,
-            ap1.y, ap1.z);
+        this.bezierVertexImpl(
+            cp0.x, cp0.y, cp0.z,
+            cp1.x, cp1.y, cp1.z,
+            ap1.x, ap1.y, ap1.z);
     }
 
     /**
@@ -545,8 +550,12 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
      * @param yColor the color of the y ring
      * @param zColor the color of the z ring
      */
-    public void gimbal(final float radius, final float sw, final int xColor,
-        final int yColor, final int zColor) {
+    public void gimbal(
+        final float radius,
+        final float sw,
+        final int xColor,
+        final int yColor,
+        final int zColor) {
 
         final float r = Math.max(radius, Utils.EPSILON);
         final float rk = r * Curve.KAPPA;
@@ -770,7 +779,7 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
      * Draws a line between two coordinates.
      *
      * @param orig the origin coordinate
-     * @param dest   the destination coordinate
+     * @param dest the destination coordinate
      */
     @Override
     public void line(final Vec3 orig, final Vec3 dest) {
@@ -845,8 +854,10 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
             final float yLocal = (m.m10 * x + m.m11 * y + m.m12 * z) * wInv;
             final float zLocal = (m.m20 * x + m.m21 * y + m.m22 * z) * wInv;
 
-            this.moveTo(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
-                + zLocal);
+            this.moveTo(
+                this.cameraX + xLocal,
+                this.cameraY + yLocal,
+                this.cameraZ + zLocal);
         }
     }
 
@@ -866,7 +877,7 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
 
         if (this.shape != 0) {
             if (this.normalMode == PGraphics.NORMAL_MODE_AUTO) {
-                /* One normal per begin/end shape. */
+                /* One normal per begin or end shape. */
                 this.normalMode = PGraphics.NORMAL_MODE_SHAPE;
             } else if (this.normalMode == PGraphics.NORMAL_MODE_SHAPE) {
                 /* A separate normal for each vertex. */
@@ -1831,9 +1842,12 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
      * @param angle         spotlight cone angle
      * @param concentration cone center bias
      */
-    void spotLight(final int clr, final float xLoc, final float yLoc,
-        final float zLoc, final float xDir, final float yDir, final float zDir,
-        final float angle, final float concentration) {
+    void spotLight(
+        final int clr,
+        final float xLoc, final float yLoc, final float zLoc,
+        final float xDir, final float yDir, final float zDir,
+        final float angle,
+        final float concentration) {
 
         this.enableLighting();
         if (this.lightCount >= IUpOgl.MAX_LIGHTS) {
@@ -1871,8 +1885,10 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
     void spotLight(final int clr, final Vec3 loc, final Vec3 dir,
         final float angle, final float concentration) {
 
-        this.spotLight(clr, loc.x, loc.y, loc.z, dir.x, dir.y, dir.z, angle,
-            concentration);
+        this.spotLight(clr,
+            loc.x, loc.y, loc.z,
+            dir.x, dir.y, dir.z,
+            angle, concentration);
     }
 
     /**
@@ -1890,7 +1906,9 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
     void spotLight(final Rgb c, final Vec3 loc, final Vec3 dir,
         final float angle, final float concentration) {
 
-        this.spotLight(c.toHexIntWrap(), loc.x, loc.y, loc.z, dir.x, dir.y, dir.z,
+        this.spotLight(c.toHexIntWrap(),
+            loc.x, loc.y, loc.z,
+            dir.x, dir.y, dir.z,
             angle, concentration);
     }
 
@@ -1914,16 +1932,15 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
         final float m22 = this.k.z;
 
         /* Set inverse by column. */
-        /* @formatter:off */
         this.cameraInv.set(
-            m00,  m10,  m20, this.cameraX,
-            m01,  m11,  m21, this.cameraY,
-            m02,  m12,  m22, this.cameraZ,
-            0.0f, 0.0f, 0.0f,         1.0f);
+            m00, m10, m20, this.cameraX,
+            m01, m11, m21, this.cameraY,
+            m02, m12, m22, this.cameraZ,
+            0.0f, 0.0f, 0.0f, 1.0f);
 
         /*
-         * Set matrix to axes by row. Translate by a negative location after the
-         * rotation.
+         * Set matrix to axes by row. Translate by a negative location after
+         * the rotation.
          */
         this.camera.set(
             m00, m01, m02,
@@ -1933,7 +1950,6 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
             m20, m21, m22,
             -this.cameraX * m20 - this.cameraY * m21 - this.cameraZ * m22,
             0.0f, 0.0f, 0.0f, 1.0f);
-        /* @formatter:on */
 
         /* Set model view to camera. */
         this.modelview.set(this.camera);

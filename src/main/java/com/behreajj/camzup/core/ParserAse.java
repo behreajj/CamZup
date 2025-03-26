@@ -44,12 +44,15 @@ public abstract class ParserAse {
             if (isGroupOpen || isEntry || isGroupClose) {
 
                 final int blockLenParse = Utils.intml(arr, i + 2);
-                if (blockLenParse > 0) { blockLen = blockLenParse; }
+                if (blockLenParse > 0) {
+                    blockLen = blockLenParse;
+                }
                 final short lenChars16 = Utils.shortml(arr, i + 6);
 
                 if (isEntry) {
                     final int iOffset = lenChars16 * 2 + i;
-                    final String colorFormat = new String(arr, iOffset + 8, 4, StandardCharsets.UTF_8).toLowerCase();
+                    final String colorFormat = new String(arr, iOffset + 8, 4,
+                        StandardCharsets.UTF_8).toLowerCase();
 
                     switch (colorFormat) {
                         case "rgb " -> {
@@ -101,9 +104,9 @@ public abstract class ParserAse {
                             final double b01Linear = 0.0556384d * x - 0.20400746d * y + 1.0571296d * z;
 
                             lrgb.set(
-                                (float)r01Linear,
-                                (float)g01Linear,
-                                (float)b01Linear,
+                                (float) r01Linear,
+                                (float) g01Linear,
+                                (float) b01Linear,
                                 1.0f);
                             Rgb.lRgbToSrXyz(lrgb, xyz);
                             colors.add(Lab.fromSrXyz(xyz, new Lab()));

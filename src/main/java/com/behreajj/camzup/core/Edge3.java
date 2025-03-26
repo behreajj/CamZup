@@ -259,7 +259,7 @@ public class Edge3 implements Comparable<Edge3> {
      * <li>Returns 2 when <em>a</em>'s origin is <em>b</em>'s origin.</li>
      * <li>Returns 0 when none of the above conditions are met.</li>
      * </ul>
-     *
+     * <p>
      * If the left and right comparisand are the same, returns 2.
      *
      * @param a the left comparisand

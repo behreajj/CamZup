@@ -416,9 +416,9 @@ public interface IYup2 extends IUp {
     /**
      * Draws a curve segment.
      *
-     * @param a the coordinate
+     * @param v the coordinate
      */
-    void curveVertex(final Vec2 a);
+    void curveVertex(final Vec2 v);
 
     /**
      * Draws an ellipse. The meaning of the two parameters depends on the
@@ -596,7 +596,7 @@ public interface IYup2 extends IUp {
      * Draws a line between two coordinates.
      *
      * @param orig the origin coordinate
-     * @param dest   the destination coordinate
+     * @param dest the destination coordinate
      */
     void line(final Vec2 orig, final Vec2 dest);
 

@@ -221,7 +221,7 @@ public class Edge2 implements Comparable<Edge2> {
      * <li>Returns 2 when <em>a</em>'s origin is <em>b</em>'s origin.</li>
      * <li>Returns 0 when none of the above conditions are met.</li>
      * </ul>
-     *
+     * <p>
      * Assuming a mesh is properly wound, a value of 1 implies that two edges
      * belong to the same face; of 2, different neighboring faces. A positive
      * value implies counter-clockwise winding (CCW), or right-handedness; a

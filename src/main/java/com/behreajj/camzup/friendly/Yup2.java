@@ -267,12 +267,12 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
     /**
      * Draws a curve segment.
      *
-     * @param a the coordinate
+     * @param v the coordinate
      */
     @Override
-    public void curveVertex(final Vec2 a) {
+    public void curveVertex(final Vec2 v) {
 
-        this.curveVertexImpl(a.x, a.y, 0.0f);
+        this.curveVertexImpl(v.x, v.y, 0.0f);
     }
 
     /**
@@ -658,7 +658,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
      * Draws a line between two coordinates.
      *
      * @param orig the origin coordinate
-     * @param dest   the destination coordinate
+     * @param dest the destination coordinate
      */
     @Override
     public void line(final Vec2 orig, final Vec2 dest) {

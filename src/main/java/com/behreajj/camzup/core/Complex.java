@@ -154,9 +154,9 @@ public class Complex implements Comparable<Complex> {
      */
     public static boolean approx(final Complex a, final Complex b, final float tolerance) {
 
-    return a == b
-        || Utils.approx(a.imag, b.imag, tolerance)
-        && Utils.approx(a.real, b.real, tolerance);
+        return a == b
+            || Utils.approx(a.imag, b.imag, tolerance)
+            && Utils.approx(a.real, b.real, tolerance);
     }
 
     /**

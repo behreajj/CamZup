@@ -69,10 +69,10 @@ public abstract class PMatAux {
         final float v = sh + 1.5f;
 
         target.set(
-            th,          v,       -v,   uh,
-            u, -2.5f - sh, s + 2.0f,   th,
-            th,       0.0f,       uh, 0.0f,
-            0.0f,       1.0f,     0.0f, 0.0f);
+            th, v, -v, uh,
+            u, -2.5f - sh, s + 2.0f, th,
+            th, 0.0f, uh, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f);
 
         return target;
     }
@@ -357,10 +357,10 @@ public abstract class PMatAux {
         d = d != 0.0f ? 1.0f / d : 1.0f;
 
         target.set(
-            n2 * w,   0.0f, ( right + left ) * w,          0.0f,
-            0.0f, n2 * h, ( top + bottom ) * h,          0.0f,
-            0.0f,   0.0f,  ( far + near ) * -d, n2 * far * -d,
-            0.0f,   0.0f,                -1.0f,           0.0f);
+            n2 * w, 0.0f, (right + left) * w, 0.0f,
+            0.0f, n2 * h, (top + bottom) * h, 0.0f,
+            0.0f, 0.0f, (far + near) * -d, n2 * far * -d,
+            0.0f, 0.0f, -1.0f, 0.0f);
 
         return target;
     }
@@ -390,27 +390,27 @@ public abstract class PMatAux {
         final float b11 = m.m22 * m.m33 - m.m23 * m.m32;
 
         final float det = b00 * b11 - b01 * b10 +
-                b02 * b09 + b03 * b08 -
-                b04 * b07 + b05 * b06;
-        if ( det != 0.0f ) {
+            b02 * b09 + b03 * b08 -
+            b04 * b07 + b05 * b06;
+        if (det != 0.0f) {
             final float detInv = 1.0f / det;
             target.set(
-                ( m.m11 * b11 - m.m12 * b10 + m.m13 * b09 ) * detInv,
-                ( m.m02 * b10 - m.m01 * b11 - m.m03 * b09 ) * detInv,
-                ( m.m31 * b05 - m.m32 * b04 + m.m33 * b03 ) * detInv,
-                ( m.m22 * b04 - m.m21 * b05 - m.m23 * b03 ) * detInv,
-                ( m.m12 * b08 - m.m10 * b11 - m.m13 * b07 ) * detInv,
-                ( m.m00 * b11 - m.m02 * b08 + m.m03 * b07 ) * detInv,
-                ( m.m32 * b02 - m.m30 * b05 - m.m33 * b01 ) * detInv,
-                ( m.m20 * b05 - m.m22 * b02 + m.m23 * b01 ) * detInv,
-                ( m.m10 * b10 - m.m11 * b08 + m.m13 * b06 ) * detInv,
-                ( m.m01 * b08 - m.m00 * b10 - m.m03 * b06 ) * detInv,
-                ( m.m30 * b04 - m.m31 * b02 + m.m33 * b00 ) * detInv,
-                ( m.m21 * b02 - m.m20 * b04 - m.m23 * b00 ) * detInv,
-                ( m.m11 * b07 - m.m10 * b09 - m.m12 * b06 ) * detInv,
-                ( m.m00 * b09 - m.m01 * b07 + m.m02 * b06 ) * detInv,
-                ( m.m31 * b01 - m.m30 * b03 - m.m32 * b00 ) * detInv,
-                ( m.m20 * b03 - m.m21 * b01 + m.m22 * b00 ) * detInv);
+                (m.m11 * b11 - m.m12 * b10 + m.m13 * b09) * detInv,
+                (m.m02 * b10 - m.m01 * b11 - m.m03 * b09) * detInv,
+                (m.m31 * b05 - m.m32 * b04 + m.m33 * b03) * detInv,
+                (m.m22 * b04 - m.m21 * b05 - m.m23 * b03) * detInv,
+                (m.m12 * b08 - m.m10 * b11 - m.m13 * b07) * detInv,
+                (m.m00 * b11 - m.m02 * b08 + m.m03 * b07) * detInv,
+                (m.m32 * b02 - m.m30 * b05 - m.m33 * b01) * detInv,
+                (m.m20 * b05 - m.m22 * b02 + m.m23 * b01) * detInv,
+                (m.m10 * b10 - m.m11 * b08 + m.m13 * b06) * detInv,
+                (m.m01 * b08 - m.m00 * b10 - m.m03 * b06) * detInv,
+                (m.m30 * b04 - m.m31 * b02 + m.m33 * b00) * detInv,
+                (m.m21 * b02 - m.m20 * b04 - m.m23 * b00) * detInv,
+                (m.m11 * b07 - m.m10 * b09 - m.m12 * b06) * detInv,
+                (m.m00 * b09 - m.m01 * b07 + m.m02 * b06) * detInv,
+                (m.m31 * b01 - m.m30 * b03 - m.m32 * b00) * detInv,
+                (m.m20 * b03 - m.m21 * b01 + m.m22 * b00) * detInv);
             return target;
         }
 
@@ -744,10 +744,10 @@ public abstract class PMatAux {
         d = d != 0.0f ? 1.0f / d : 1.0f;
 
         target.set(
-            w + w,  0.0f,        0.0f, w * ( left + right ),
-            0.0f, h + h,        0.0f, h * ( top + bottom ),
-            0.0f,  0.0f, - ( d + d ),  -d * ( far + near ),
-            0.0f,  0.0f,        0.0f,                 1.0f);
+            w + w, 0.0f, 0.0f, w * (left + right),
+            0.0f, h + h, 0.0f, h * (top + bottom),
+            0.0f, 0.0f, -(d + d), -d * (far + near),
+            0.0f, 0.0f, 0.0f, 1.0f);
 
         return target;
     }

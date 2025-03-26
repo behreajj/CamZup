@@ -55,8 +55,7 @@ public abstract class TextShape {
 
         final Font font = (Font) pfont.getNative();
         if (font != null) {
-            @SuppressWarnings("deprecation")
-            final FontRenderContext frc = Toolkit.getDefaultToolkit()
+            @SuppressWarnings("deprecation") final FontRenderContext frc = Toolkit.getDefaultToolkit()
                 .getFontMetrics(font).getFontRenderContext();
             return TextShape.processGlyphCe(frc, pfont, scale, detail, separate,
                 characters);
@@ -103,8 +102,7 @@ public abstract class TextShape {
 
         final Font font = (Font) pfont.getNative();
         if (font != null) {
-            @SuppressWarnings("deprecation")
-            final FontRenderContext frc = Toolkit.getDefaultToolkit()
+            @SuppressWarnings("deprecation") final FontRenderContext frc = Toolkit.getDefaultToolkit()
                 .getFontMetrics(font).getFontRenderContext();
             return TextShape.processGlyphCe(frc, pfont, scale, detail, indices);
         }
