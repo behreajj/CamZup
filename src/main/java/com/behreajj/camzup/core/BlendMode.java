@@ -108,9 +108,19 @@ public interface BlendMode {
         BLEND,
 
         /**
+         * Divides inverse of under lightness by over.
+         */
+        BURN,
+
+        /**
          * Divides under lightness by over.
          */
         DIVIDE,
+
+        /**
+         * Divides under lightness by inverse of the over.
+         */
+        DODGE,
 
         /**
          * Multiplies over and under lightness.
@@ -123,8 +133,8 @@ public interface BlendMode {
         OVER,
 
         /**
-         * Multiplies the inverse of over and of under lightness, then inverts the
-         * product.
+         * Multiplies the inverse of over and of under lightness, then inverts
+         * the product.
          */
         SCREEN,
 

@@ -118,9 +118,8 @@ public class Bounds2 implements Comparable<Bounds2> {
 
     /**
      * Evaluates whether a point is within the bounding area, lower bounds
-     * inclusive, upper bounds
-     * exclusive. For cases where multiple bounds must cover an area without overlap
-     * or gaps.
+     * inclusive, upper bounds exclusive. For cases where multiple bounds must
+     * cover an area without overlap or gaps.
      *
      * @param b the bounds
      * @param v the vector
@@ -128,18 +127,20 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     public static boolean contains(final Bounds2 b, final Vec2 v) {
 
-        return v.x >= b.min.x && v.x < b.max.x && v.y >= b.min.y && v.y < b.max.y;
+        return v.x >= b.min.x
+            && v.x < b.max.x
+            && v.y >= b.min.y
+            && v.y < b.max.y;
     }
 
     /**
-     * Evaluates whether a point is within the bounding area, lower bounds inclusive
-     * upper bounds
-     * exclusive. For cases where multiple bounds must cover an area without overlap
-     * or gaps.<br>
+     * Evaluates whether a point is within the bounding area, lower bounds
+     * inclusive upper bounds exclusive. For cases where multiple bounds must
+     * cover an area without overlap or gaps.
      * <br>
-     * A boolean vector is returned; useful for cases where a point may be contained
-     * in one dimension
-     * but not in another.
+     * <br>
+     * A boolean vector is returned; useful for cases where a point may be
+     * contained in one dimension but not in another.
      *
      * @param b      the bounds
      * @param v      the vector
@@ -148,13 +149,15 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     public static Vec2 contains(final Bounds2 b, final Vec2 v, final Vec2 target) {
 
-        return target.set(v.x >= b.min.x && v.x < b.max.x, v.y >= b.min.y && v.y < b.max.y);
+        return target.set(
+            v.x >= b.min.x && v.x < b.max.x,
+            v.y >= b.min.y && v.y < b.max.y);
     }
 
     /**
-     * Evaluates whether a point is within the bounding area, excluding the bound's
-     * edges (i.e., the
-     * evaluation is made with greater than and less than).
+     * Evaluates whether a point is within the bounding area, excluding the
+     * bound's edges (i.e., the evaluation is made with greater than and less
+     * than).
      *
      * @param b the bounds
      * @param v the point
@@ -162,17 +165,20 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     public static boolean containsExclusive(final Bounds2 b, final Vec2 v) {
 
-        return v.x > b.min.x && v.x < b.max.x && v.y > b.min.y && v.y < b.max.y;
+        return v.x > b.min.x
+            && v.x < b.max.x
+            && v.y > b.min.y
+            && v.y < b.max.y;
     }
 
     /**
-     * Evaluates whether a point is within the bounding area, excluding the bound's
-     * edges (i.e., the
-     * evaluation is made with greater than and less than).<br>
+     * Evaluates whether a point is within the bounding area, excluding the
+     * bound's edges (i.e., the evaluation is made with greater than and less
+     * than).
      * <br>
-     * A boolean vector is returned; useful for cases where a point may be contained
-     * in one dimension
-     * but not in another.
+     * <br>
+     * A boolean vector is returned; useful for cases where a point may be
+     * contained in one dimension but not in another.
      *
      * @param b      the bounds
      * @param v      the point
@@ -181,13 +187,15 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     public static Vec2 containsExclusive(final Bounds2 b, final Vec2 v, final Vec2 target) {
 
-        return target.set(v.x > b.min.x && v.x < b.max.x, v.y > b.min.y && v.y < b.max.y);
+        return target.set(
+            v.x > b.min.x && v.x < b.max.x,
+            v.y > b.min.y && v.y < b.max.y);
     }
 
     /**
-     * Evaluates whether a point is within the bounding area, including the bound's
-     * edges (i.e., the
-     * evaluation is made with greater than or equal to and less than or equal to).
+     * Evaluates whether a point is within the bounding area, including the
+     * bound's edges (i.e., the evaluation is made with greater than or equal
+     * to and less than or equal to).
      *
      * @param b the bounds
      * @param v the point
@@ -195,18 +203,20 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     public static boolean containsInclusive(final Bounds2 b, final Vec2 v) {
 
-        return v.x >= b.min.x && v.x <= b.max.x && v.y >= b.min.y && v.y <= b.max.y;
+        return v.x >= b.min.x
+            && v.x <= b.max.x
+            && v.y >= b.min.y
+            && v.y <= b.max.y;
     }
 
     /**
-     * Evaluates whether a point is within the bounding area, including the bound's
-     * edges (i.e., the
-     * evaluation is made with greater than or equal to and less than or equal
-     * to).<br>
+     * Evaluates whether a point is within the bounding area, including the
+     * bound's edges (i.e., the evaluation is made with greater than or equal
+     * to and less than or equal to).
      * <br>
-     * A boolean vector is returned; useful for cases where a point may be contained
-     * in one dimension
-     * but not in another.
+     * <br>
+     * A boolean vector is returned; useful for cases where a point may be
+     * contained in one dimension but not in another.
      *
      * @param b      the bounds
      * @param v      the point
@@ -215,7 +225,9 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     public static Vec2 containsInclusive(final Bounds2 b, final Vec2 v, final Vec2 target) {
 
-        return target.set(v.x >= b.min.x && v.x <= b.max.x, v.y >= b.min.y && v.y <= b.max.y);
+        return target.set(
+            v.x >= b.min.x && v.x <= b.max.x,
+            v.y >= b.min.y && v.y <= b.max.y);
     }
 
     /**
@@ -246,9 +258,8 @@ public class Bounds2 implements Comparable<Bounds2> {
     }
 
     /**
-     * Finds the extent of the bounds, the absolute difference between its minimum
-     * and maximum
-     * corners.
+     * Finds the extent of the bounds, the absolute difference between its
+     * minimum and maximum corners.
      *
      * @param b      the bounds
      * @param target the output vector
@@ -292,10 +303,9 @@ public class Bounds2 implements Comparable<Bounds2> {
     }
 
     /**
-     * Finds the intersection between two bounds, i.e. the overlapping area between
-     * the two. To avoid
-     * unexpected results from zero and negative bounds, use
-     * {@link Bounds2#verified} on inputs.
+     * Finds the intersection between two bounds, i.e. the overlapping area
+     * between the two. To avoid unexpected results from zero and negative
+     * bounds, use {@link Bounds2#verified} on inputs.
      *
      * @param a      left operand
      * @param b      right operand
@@ -359,9 +369,8 @@ public class Bounds2 implements Comparable<Bounds2> {
     }
 
     /**
-     * Finds the union between two bounds, i.e. a bounds that will contain both of
-     * them. To avoid
-     * unexpected results from zero and negative bounds, use
+     * Finds the union between two bounds, i.e. a bounds that will contain both
+     * of them. To avoid unexpected results from zero and negative bounds, use
      * {@link Bounds2#verified} on inputs.
      *
      * @param a      left operand
@@ -379,9 +388,9 @@ public class Bounds2 implements Comparable<Bounds2> {
     }
 
     /**
-     * Evaluates whether two bounding areas intersect. To avoid unexpected results
-     * from zero and
-     * negative bounds, use {@link Bounds2#verified} on inputs.
+     * Evaluates whether two bounding areas intersect. To avoid unexpected
+     * results from zero and negative bounds, use {@link Bounds2#verified} on
+     * inputs.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -389,14 +398,16 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     public static boolean intersect(final Bounds2 a, final Bounds2 b) {
 
-        return a.max.x > b.min.x || a.min.x < b.max.x || a.max.y > b.min.y || a.min.y < b.max.y;
+        return a.max.x > b.min.x
+            || a.min.x < b.max.x
+            || a.max.y > b.min.y
+            || a.min.y < b.max.y;
     }
 
     /**
-     * Evaluates whether two bounding areas intersect. A boolean vector holds the
-     * evaluation. To avoid
-     * unexpected results from zero and negative bounds, use
-     * {@link Bounds2#verified} on inputs.
+     * Evaluates whether two bounding areas intersect. A boolean vector holds
+     * the evaluation. To avoid unexpected results from zero and negative
+     * bounds, use {@link Bounds2#verified} on inputs.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -406,13 +417,14 @@ public class Bounds2 implements Comparable<Bounds2> {
     public static Vec2 intersect(final Bounds2 a, final Bounds2 b, final Vec2 target) {
 
         return target.set(
-            a.max.x > b.min.x || a.min.x < b.max.x, a.max.y > b.min.y || a.min.y < b.max.y);
+            a.max.x > b.min.x || a.min.x < b.max.x,
+            a.max.y > b.min.y || a.min.y < b.max.y);
     }
 
     /**
      * Evaluates whether a bounding area intersects a circle. To avoid unexpected
-     * results from zero
-     * and negative bounds, use {@link Bounds2#verified} on left operand.
+     * results from zero and negative bounds, use {@link Bounds2#verified} on
+     * left operand.
      *
      * @param a      the bounds
      * @param center the circle center
@@ -421,8 +433,16 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     public static boolean intersect(final Bounds2 a, final Vec2 center, final float radius) {
 
-        final float yd = center.y < a.min.y ? center.y - a.min.y : center.y > a.max.y ? center.y - a.max.y : 0.0f;
-        final float xd = center.x < a.min.x ? center.x - a.min.x : center.x > a.max.x ? center.x - a.max.x : 0.0f;
+        final float yd = center.y < a.min.y
+            ? center.y - a.min.y
+            : center.y > a.max.y
+            ? center.y - a.max.y
+            : 0.0f;
+        final float xd = center.x < a.min.x
+            ? center.x - a.min.x
+            : center.x > a.max.x
+            ? center.x - a.max.x
+            : 0.0f;
 
         return xd * xd + yd * yd < radius * radius;
     }
@@ -480,10 +500,9 @@ public class Bounds2 implements Comparable<Bounds2> {
     }
 
     /**
-     * Splits a bounding area into four quadrants according to two factors in [0.0,
-     * 1.0] . The factor
-     * on the x-axis governs the vertical split; on the y-axis, the horizontal
-     * split.
+     * Splits a bounding area into four quadrants according to two factors in
+     * [0.0, 1.0]. The factor on the x-axis governs the vertical split; on the
+     * y-axis, the horizontal split.
      *
      * @param b    bounds
      * @param xFac vertical factor
@@ -521,11 +540,10 @@ public class Bounds2 implements Comparable<Bounds2> {
     }
 
     /**
-     * Splits a bounding area into four quadrants according to a point. If the point
-     * is inside the
-     * bounding area, assigns the result to target bounds and returns
-     * <code>true</code>. If the point
-     * is outside the bounding area, returns <code>false</code>.
+     * Splits a bounding area into four quadrants according to a point. If the
+     * point is inside the bounding area, assigns the result to target bounds
+     * and returns <code>true</code>. If the point is outside the bounding
+     * area, returns <code>false</code>.
      *
      * @param b  the bounds
      * @param v  the point
@@ -559,8 +577,8 @@ public class Bounds2 implements Comparable<Bounds2> {
     }
 
     /**
-     * Returns a boundary encompassing a signed unit square in the range [-1.0, 1.0]
-     * .
+     * Returns a boundary encompassing a signed unit square in the range
+     * [-1.0, 1.0].
      *
      * @param target the output bounds
      * @return the unit square
@@ -571,8 +589,8 @@ public class Bounds2 implements Comparable<Bounds2> {
     }
 
     /**
-     * Returns a boundary encompassing an unsigned unit square in the range [0.0,
-     * 1.0] .
+     * Returns a boundary encompassing an unsigned unit square in the range
+     * [0.0, 1.0].
      *
      * @param target the output bounds
      * @return the unit square
@@ -583,9 +601,8 @@ public class Bounds2 implements Comparable<Bounds2> {
     }
 
     /**
-     * Returns a bounds where all components of the minimum are less than those of
-     * the maximum, and
-     * that the edges of the bounds do not equal each other.
+     * Returns a bounds where all components of the minimum are less than those
+     * of the maximum, and that the edges of the bounds do not equal each other.
      *
      * @param source the source bounds
      * @param target the output bounds
@@ -631,16 +648,23 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     static boolean intersectSq(final Bounds2 a, final Vec2 center, final float rsq) {
 
-        final float yd = center.y < a.min.y ? center.y - a.min.y : center.y > a.max.y ? center.y - a.max.y : 0.0f;
-        final float xd = center.x < a.min.x ? center.x - a.min.x : center.x > a.max.x ? center.x - a.max.x : 0.0f;
+        final float yd = center.y < a.min.y
+            ? center.y - a.min.y
+            : center.y > a.max.y
+            ? center.y - a.max.y
+            : 0.0f;
+        final float xd = center.x < a.min.x
+            ? center.x - a.min.x
+            : center.x > a.max.x
+            ? center.x - a.max.x
+            : 0.0f;
 
         return xd * xd + yd * yd < rsq;
     }
 
     /**
      * Compares two bounds according to their center points. Evaluates the y
-     * coordinate before the x
-     * coordinate.
+     * coordinate before the x coordinate.
      *
      * @return the evaluation
      */
@@ -788,7 +812,9 @@ public class Bounds2 implements Comparable<Bounds2> {
      * @param yMax the maximum y
      * @return this bounds
      */
-    public Bounds2 set(final float xMin, final float yMin, final float xMax, final float yMax) {
+    public Bounds2 set(
+        final float xMin, final float yMin,
+        final float xMax, final float yMax) {
 
         this.min.set(xMin, yMin);
         this.max.set(xMax, yMax);
@@ -883,8 +909,7 @@ public class Bounds2 implements Comparable<Bounds2> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * bounds. Appends to an
-     * existing {@link StringBuilder}.
+     * bounds. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places

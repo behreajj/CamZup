@@ -4,10 +4,9 @@ import java.util.*;
 
 /**
  * Organizes data needed to draw a two-dimensional shape using vertices and
- * faces. Given that a mesh
- * is primarily a collection of references, it is initialized with null arrays
- * (coordinates, texture
- * coordinates and indices). These are not final, and so can be reassigned.
+ * faces. Given that a mesh is primarily a collection of references, it is
+ * initialized with null arrays (coordinates, texture coordinates and indices).
+ * These are not final, and so can be reassigned.
  */
 public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
@@ -27,9 +26,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     public Vec2[] coords;
 
     /**
-     * The texture (UV) coordinates that describe how an image is mapped onto the
-     * mesh. Typically, in
-     * the range [0.0, 1.0] .
+     * The texture (UV) coordinates that describe how an image is mapped onto
+     * the mesh. Typically, in the range [0.0, 1.0].
      */
     public Vec2[] texCoords;
 
@@ -40,15 +38,17 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Creates a mesh from arrays of faces, coordinates and texture coordinates. The
-     * mesh's arrays are
-     * set by reference, not by value.
+     * Creates a mesh from arrays of faces, coordinates and texture coordinates.
+     * The mesh's arrays are set by reference, not by value.
      *
      * @param faces     the faces array
      * @param coords    the coordinates array
      * @param texCoords the texture coordinates array
      */
-    public Mesh2(final int[][][] faces, final Vec2[] coords, final Vec2[] texCoords) {
+    public Mesh2(
+        final int[][][] faces,
+        final Vec2[] coords,
+        final Vec2[] texCoords) {
 
         this.set(faces, coords, texCoords);
     }
@@ -73,8 +73,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Creates a named mesh from arrays of faces, coordinates and texture
-     * coordinates. The mesh's
-     * arrays are set by reference, not by value.
+     * coordinates. The mesh's arrays are set by reference, not by value.
      *
      * @param name      the mesh name
      * @param faces     the faces array
@@ -82,7 +81,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @param texCoords the texture coordinates array
      */
     public Mesh2(
-        final String name, final int[][][] faces, final Vec2[] coords, final Vec2[] texCoords) {
+        final String name,
+        final int[][][] faces,
+        final Vec2[] coords,
+        final Vec2[] texCoords) {
 
         super(name);
         this.set(faces, coords, texCoords);
@@ -117,10 +119,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Creates an arc from a start and stop angle. The granularity of the
-     * approximation is dictated by
-     * the number of sectors in a complete circle. The thickness of the arc is
-     * described by the
-     * oculus.
+     * approximation is dictated by the number of sectors in a complete circle.
+     * The thickness of the arc is described by the oculus.
      *
      * @param startAngle the start angle
      * @param stopAngle  the stop angle
@@ -301,7 +301,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @return the arc
      */
     public static Mesh2 arc(
-        final float startAngle, final float stopAngle, final float oculus, final Mesh2 target) {
+        final float startAngle,
+        final float stopAngle,
+        final float oculus,
+        final Mesh2 target) {
 
         return Mesh2.arc(
             startAngle,
@@ -323,7 +326,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @return the arc
      */
     public static Mesh2 arc(
-        final float startAngle, final float stopAngle, final int sectors, final Mesh2 target) {
+        final float startAngle,
+        final float stopAngle,
+        final int sectors,
+        final Mesh2 target) {
 
         return Mesh2.arc(
             startAngle,
@@ -343,7 +349,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @param target     the output mesh
      * @return the arc
      */
-    public static Mesh2 arc(final float startAngle, final float stopAngle, final Mesh2 target) {
+    public static Mesh2 arc(
+        final float startAngle,
+        final float stopAngle,
+        final Mesh2 target) {
 
         return Mesh2.arc(
             startAngle,
@@ -419,8 +428,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Evaluates whether the mesh contains a point. Uses vertex winding (as opposed
-     * to casting a ray).
+     * Evaluates whether the mesh contains a point. Uses vertex winding (as
+     * opposed to casting a ray).
      *
      * @param mesh  the mesh
      * @param point the point
@@ -447,28 +456,26 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
                 final Vec2 next = vs[vert1[0]];
 
                 /*
-                 * Evaluate the sign of the cross product of the differences between
-                 * next, current, point.
+                 * Evaluate the sign of the cross product of the differences
+                 * between next, current, point.
                  */
 
-                /* @formatter:off */
-        if (curr.y <= point.y && next.y > point.y) {
+                if (curr.y <= point.y && next.y > point.y) {
 
-          final float eval =
-              (next.x - curr.x) * (point.y - curr.y) - (point.x - curr.x) * (next.y - curr.y);
-          if (eval > 0.0f) {
-            ++wn;
-          }
+                    final float eval =
+                        (next.x - curr.x) * (point.y - curr.y) - (point.x - curr.x) * (next.y - curr.y);
+                    if (eval > 0.0f) {
+                        ++wn;
+                    }
 
-        } else if (next.y <= point.y) {
+                } else if (next.y <= point.y) {
 
-          final float eval =
-              (next.x - curr.x) * (point.y - curr.y) - (point.x - curr.x) * (next.y - curr.y);
-          if (eval < 0.0f) {
-            --wn;
-          }
-        }
-        /* @formatter:on */
+                    final float eval =
+                        (next.x - curr.x) * (point.y - curr.y) - (point.x - curr.x) * (next.y - curr.y);
+                    if (eval < 0.0f) {
+                        --wn;
+                    }
+                }
             }
 
             if (wn > 0) {
@@ -480,11 +487,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Creates an array of meshes, each with one face from the source mesh. Leaves
-     * the source mesh
-     * unaltered. New meshes are created through visitation of each face in the
-     * source, so they
-     * contain data that would've been redundant in the original.
+     * Creates an array of meshes, each with one face from the source mesh.
+     * Leaves the source mesh unaltered. New meshes are created through
+     * visitation of each face in the source, so they contain data that
+     * would've been redundant in the original.
      *
      * @param source the source mesh
      * @return the meshes array
@@ -527,10 +533,9 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Creates a mesh from a series of points. Does not check for vertex winding, so
-     * the order of each
-     * point should match its intended vertex order. There should be at least 3
-     * points in the array.
+     * Creates a mesh from a series of points. Does not check for vertex
+     * winding, so the order of each point should match its intended vertex
+     * order. There should be at least 3 points in the array.
      *
      * @param points the points
      * @param target the output mesh
@@ -555,14 +560,11 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Generates a grid of hexagons arranged in rings around a central cell. The
-     * number of cells
-     * follows the formula n = 1 + (rings - 1) * 3 * rings, meaning 1 ring : 1 cell,
-     * 2 rings: 7 cells,
-     * 3 rings: 19 cells, 4 rings: 37 cells and so on. See <a href=
-     * "https://www.redblobgames.com/grids/hexagons/implementation.html">Red Blob
-     * Games'
-     * Implementation of Hex Grids</a> .
+     * Generates a grid of hexagons arranged in rings around a central cell.
+     * The number of cells follows the formula n = 1 + (rings - 1) * 3 * rings,
+     * meaning 1 ring : 1 cell, 2 rings: 7 cells, 3 rings: 19 cells, 4 rings:
+     * 37 cells and so on. See <a href="https://www.redblobgames.com/grids/hexagons/implementation.html">
+     * Red Blob Games' Implementation of Hex Grids</a>.
      *
      * @param rings      the number of rings
      * @param cellRadius the cell radius
@@ -571,7 +573,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @return the hexagon grid
      */
     public static Mesh2 gridHex(
-        final int rings, final float cellRadius, final float margin, final Mesh2 target) {
+        final int rings,
+        final float cellRadius,
+        final float margin,
+        final Mesh2 target) {
 
         target.name = "Grid.Hexagon";
 
@@ -620,36 +625,40 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
                 final float top = y + halfRad;
                 final float bottom = y - halfRad;
 
-                /* @formatter:off */
-        vs[vIdx].set(x, y + padRad);
-        vs[vIdx + 1].set(left, top);
-        vs[vIdx + 2].set(left, bottom);
-        vs[vIdx + 3].set(x, y - padRad);
-        vs[vIdx + 4].set(right, bottom);
-        vs[vIdx + 5].set(right, top);
+                vs[vIdx].set(x, y + padRad);
+                vs[vIdx + 1].set(left, top);
+                vs[vIdx + 2].set(left, bottom);
+                vs[vIdx + 3].set(x, y - padRad);
+                vs[vIdx + 4].set(right, bottom);
+                vs[vIdx + 5].set(right, top);
 
-        final int[][] f = fs[fIdx];
-        final int[] vert0 = f[0];
-        vert0[0] = vIdx;
-        final int[] vert1 = f[1];
-        vert1[0] = vIdx + 1;
-        vert1[1] = 1;
-        final int[] vert2 = f[2];
-        vert2[0] = vIdx + 2;
-        vert2[1] = 2;
-        final int[] vert3 = f[3];
-        vert3[0] = vIdx + 3;
-        vert3[1] = 3;
-        final int[] vert4 = f[4];
-        vert4[0] = vIdx + 4;
-        vert4[1] = 4;
-        final int[] vert5 = f[5];
-        vert5[0] = vIdx + 5;
-        vert5[1] = 5;
+                final int[][] f = fs[fIdx];
 
-        ++fIdx;
-        vIdx += 6;
-        /* @formatter:on */
+                final int[] vert0 = f[0];
+                vert0[0] = vIdx;
+
+                final int[] vert1 = f[1];
+                vert1[0] = vIdx + 1;
+                vert1[1] = 1;
+
+                final int[] vert2 = f[2];
+                vert2[0] = vIdx + 2;
+                vert2[1] = 2;
+
+                final int[] vert3 = f[3];
+                vert3[0] = vIdx + 3;
+                vert3[1] = 3;
+
+                final int[] vert4 = f[4];
+                vert4[0] = vIdx + 4;
+                vert4[1] = 4;
+
+                final int[] vert5 = f[5];
+                vert5[0] = vIdx + 5;
+                vert5[1] = 5;
+
+                ++fIdx;
+                vIdx += 6;
             }
         }
 
@@ -657,24 +666,25 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Generates a grid of hexagons arranged in rings around a central cell. The
-     * number of cells
-     * follows the formula n = 1 + (rings - 1) * 3 * rings.
+     * Generates a grid of hexagons arranged in rings around a central cell.
+     * The number of cells follows the formula n = 1 + (rings - 1) * 3 * rings.
      *
      * @param rings      the number of rings
      * @param cellRadius the cell radius
      * @param target     the output mesh
      * @return the hexagon grid
      */
-    public static Mesh2 gridHex(final int rings, final float cellRadius, final Mesh2 target) {
+    public static Mesh2 gridHex(
+        final int rings,
+        final float cellRadius,
+        final Mesh2 target) {
 
         return Mesh2.gridHex(rings, cellRadius, 0.0f, target);
     }
 
     /**
-     * Generates a grid of hexagons arranged in rings around a central cell. The
-     * number of cells
-     * follows the formula n = 1 + (rings - 1) * 3 * rings.
+     * Generates a grid of hexagons arranged in rings around a central cell.
+     * The number of cells follows the formula n = 1 + (rings - 1) * 3 * rings.
      *
      * @param rings  the number of rings
      * @param target the output mesh
@@ -686,9 +696,9 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Groups separate meshes with the same material index into a mesh. Returns a
-     * new array of meshes.
-     * Do not use if source meshes need to be transformed independently.
+     * Groups separate meshes with the same material index into a mesh. Returns
+     * a new array of meshes. Do not use if source meshes need to be transformed
+     * independently.
      *
      * @param meshes the array of meshes
      * @return the consolidated meshes
@@ -781,7 +791,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @param target the output mesh
      * @return the merger
      */
-    public static Mesh2 groupData(final Mesh2 a, final Mesh2 b, final Mesh2 target) {
+    public static Mesh2 groupData(
+        final Mesh2 a,
+        final Mesh2 b,
+        final Mesh2 target) {
 
         return Mesh2.groupData(new Mesh2[]{a, b}, target);
     }
@@ -793,7 +806,9 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @param target the output mesh
      * @return the merger
      */
-    public static Mesh2 groupData(final Mesh2[] arr, final Mesh2 target) {
+    public static Mesh2 groupData(
+        final Mesh2[] arr,
+        final Mesh2 target) {
 
         /* Sum lengths. */
         int vsTotal = 0;
@@ -863,26 +878,26 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Creates a subdivided plane. Useful for meshes which later will be augmented
-     * by noise or height
-     * maps to simulate terrain.
+     * Creates a subdivided plane. Useful for meshes which later will be
+     * augmented by noise or height maps to simulate terrain.
      *
      * @param cols   number of columns
      * @param rows   number of rows
      * @param target the output mesh
      * @return the plane
      */
-    public static Mesh2 plane(final int cols, final int rows, final Mesh2 target) {
+    public static Mesh2 plane(
+        final int cols,
+        final int rows,
+        final Mesh2 target) {
 
         return Mesh2.plane(cols, rows, Mesh2.DEFAULT_POLY_TYPE, target);
     }
 
     /**
-     * Creates a plane subdivided into either triangles or quadrilaterals, depending
-     * on the polygon
-     * type. Useful for meshes which later will be augmented by noise or height maps
-     * to simulate
-     * terrain.
+     * Creates a plane subdivided into either triangles or quadrilaterals,
+     * depending on the polygon type. Useful for meshes which later will be
+     * augmented by noise or height maps to simulate terrain.
      *
      * @param cols   number of columns
      * @param rows   number of rows
@@ -891,7 +906,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @return the plane
      */
     public static Mesh2 plane(
-        final int cols, final int rows, final PolyType poly, final Mesh2 target) {
+        final int cols,
+        final int rows,
+        final PolyType poly,
+        final Mesh2 target) {
 
         target.name = "Plane";
 
@@ -1005,9 +1023,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Creates a subdivided plane. Useful for meshes which later will be augmented
-     * by noise or height
-     * maps to simulate terrain.
+     * Creates a subdivided plane. Useful for meshes which later will be
+     * augmented by noise or height maps to simulate terrain.
      *
      * @param count  subdivisions
      * @param target the output mesh
@@ -1038,37 +1055,42 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @param target  the output mesh
      * @return the polygon
      */
-    public static Mesh2 polygon(final int sectors, final PolyType poly, final Mesh2 target) {
+    public static Mesh2 polygon(
+        final int sectors,
+        final PolyType poly,
+        final Mesh2 target) {
 
         /*
          * Polar coordinates need to be more precise, given that they are scaled
          * up and can impact SVG rendering.
          */
 
-        /* @formatter:off */
-    final int seg = Math.max(sectors, 3);
-    switch (seg) {
-      case 3:
-        target.name = "Triangle";
-        break;
-      case 4:
-        target.name = "Quadrilateral";
-        break;
-      case 5:
-        target.name = "Pentagon";
-        break;
-      case 6:
-        target.name = "Hexagon";
-        break;
-      case 8:
-        target.name = "Octagon";
-        break;
-      default:
-        target.name = "Polygon";
-    }
-    /* @formatter:on */
+        final int seg = Math.max(sectors, 3);
+        switch (seg) {
+            case 3:
+                target.name = "Triangle";
+                break;
+            case 4:
+                target.name = "Quadrilateral";
+                break;
+            case 5:
+                target.name = "Pentagon";
+                break;
+            case 6:
+                target.name = "Hexagon";
+                break;
+            case 8:
+                target.name = "Octagon";
+                break;
+            default:
+                target.name = "Polygon";
+        }
 
-        final int newLen = poly == PolyType.NGON ? seg : poly == PolyType.QUAD ? seg + seg + 1 : seg + 1;
+        final int newLen = poly == PolyType.NGON
+            ? seg
+            : poly == PolyType.QUAD
+            ? seg + seg + 1
+            : seg + 1;
         final float toTheta = 1.0f / seg;
 
         final Vec2[] vs = target.coords = Vec2.resize(target.coords, newLen);
@@ -1178,18 +1200,16 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Returns a collection of mesh vertices organized by their proximity to a
-     * point. The proximity is
-     * expressed as a factor where the nearest vertex is on the nearBound; the
-     * farthest is on the
-     * farBound. Any function which mutates a vertex's properties by such a factor
-     * can be applied to
-     * the collection.<br>
+     * point. The proximity is expressed as a factor where the nearest vertex
+     * is on the nearBound; the farthest is on the farBound. Any function which
+     * mutates a vertex's properties by such a factor can be applied to the
+     * collection.
+     * <br>
      * <br>
      * The Euclidean distance from a point is unsigned, so two points may have
-     * approximately the same
-     * distance from the point yet be in different quadrants of the Cartesian
-     * coordinate system, i.e.
-     * not organized by proximity to each other.
+     * approximately the same distance from the point yet be in different
+     * quadrants of the Cartesian coordinate system, i.e., not organized by
+     * proximity to each other.
      *
      * @param m         the mesh
      * @param p         the point
@@ -1200,7 +1220,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @see Vec2#distSq(Vec2, Vec2)
      */
     public static Map<Float, Vert2> proximity(
-        final Mesh2 m, final Vec2 p, final float nearBound, final float farBound) {
+        final Mesh2 m,
+        final Vec2 p,
+        final float nearBound,
+        final float farBound) {
 
         final Vert2[] verts = m.getVertices();
         final int vertLen = verts.length;
@@ -1220,8 +1243,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
         /*
          * The span of the origin range and destination range are already known,
-         * so calculate portions of the map(distance, minDist, maxDist, nearBound,
-         * farBound) function outside the for loop.
+         * so calculate portions of the map(distance, minDist, maxDist,
+         * nearBound, farBound) function outside the for loop.
          */
         final float spanOrig = maxDist - minDist;
         final float scalar = spanOrig != 0.0f ? (farBound - nearBound) / spanOrig : 0.0f;
@@ -1246,7 +1269,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Creates a square. Useful when representing an image plane with a mesh entity.
+     * Creates a square. Useful when representing an image plane with a mesh
+     * entity.
      *
      * @param target the output mesh
      * @param poly   the polygon type
@@ -1285,15 +1309,12 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Traces the perimeter of each face of the source mesh. Returns a target mesh
-     * where all faces
-     * have the number of vertices specified by the count; each face will be
-     * inscribed within the
-     * source face, where the target vertices lie on an edge of the source. The
-     * perimeter is treated
-     * as a percent in the range [0.0, 1.0] , so, for example, a square face's
-     * corners will occur at
-     * 0.0, 0.25, 0.5 and 0.75 .
+     * Traces the perimeter of each face of the source mesh. Returns a target
+     * mesh where all faces have the number of vertices specified by the count;
+     * each face will be inscribed within the source face, where the target
+     * vertices lie on an edge of the source. The perimeter is treated as a
+     * percent in the range [0.0, 1.0], so, for example, a square face's
+     * corners will occur at 0.0, 0.25, 0.5 and 0.75.
      *
      * @param source the source mesh
      * @param count  the number of vertices
@@ -1304,7 +1325,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @see Vec2#resize(Vec2[], int)
      */
     public static Mesh2 tracePerimeter(
-        final Mesh2 source, final int count, final float offset, final Mesh2 target) {
+        final Mesh2 source,
+        final int count,
+        final float offset,
+        final Mesh2 target) {
 
         target.name = "Trace";
 
@@ -1358,12 +1382,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Restructures the mesh so that each face index refers to unique data,
-     * indifferent to
-     * redundancies. As a consequence, coordinate and texture coordinate arrays are
-     * of equal length
-     * and face indices are easier to read and understand. Useful for making a mesh
-     * similar to those
-     * in Unity or p5. Similar to 'ripping' vertices or 'tearing' edges in Blender.
+     * indifferent to redundancies. As a consequence, coordinate and texture
+     * coordinate arrays are of equal length and face indices are easier to
+     * read and understand. Useful for making a mesh similar to those in Unity
+     * or p5. Similar to 'ripping' vertices or 'tearing' edges in Blender.
      *
      * @param source the source mesh
      * @param target the target mesh
@@ -1383,8 +1405,12 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         /* Allocate new arrays. */
         final int[][][] fsTrg = new int[fsSrcLen][][];
         final boolean same = source == target;
-        final Vec2[] vsTrg = same ? new Vec2[uniformLen] : Vec2.resize(target.coords, uniformLen);
-        final Vec2[] vtsTrg = same ? new Vec2[uniformLen] : Vec2.resize(target.texCoords, uniformLen);
+        final Vec2[] vsTrg = same
+            ? new Vec2[uniformLen]
+            : Vec2.resize(target.coords, uniformLen);
+        final Vec2[] vtsTrg = same
+            ? new Vec2[uniformLen]
+            : Vec2.resize(target.texCoords, uniformLen);
 
         /* Account for scenario where source and target are same. */
         if (same) {
@@ -1425,8 +1451,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * An internal helper function to accumulate the minimum and maximum points in a
-     * mesh.
+     * An internal helper function to accumulate the minimum and maximum points
+     * in a mesh.
      *
      * @param mesh the mesh
      * @param lb   the lower bound
@@ -1456,14 +1482,11 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * An internal helper function to accumulate the minimum and maximum points in a
-     * mesh. This may be
-     * called either by a single mesh, or by a mesh entity seeking the minimum and
-     * maximum for a
-     * collection of meshes. The transform parameter accepts the entity's transform,
-     * while the
-     * coordinate stores a mesh coordinate that has been multiplied by the
-     * transform.
+     * An internal helper function to accumulate the minimum and maximum points
+     * in a mesh. This may be called either by a single mesh, or by a mesh
+     * entity seeking the minimum and maximum for a collection of meshes. The
+     * transform parameter accepts the entity's transform, while the coordinate
+     * stores a mesh coordinate that has been multiplied by the transform.
      *
      * @param mesh the mesh
      * @param lb   the lower bound
@@ -1472,7 +1495,11 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @param co   the coordinate
      */
     static void accumMinMax(
-        final Mesh2 mesh, final Vec2 lb, final Vec2 ub, final Transform2 tr, final Vec2 co) {
+        final Mesh2 mesh,
+        final Vec2 lb,
+        final Vec2 ub,
+        final Transform2 tr,
+        final Vec2 co) {
 
         final Vec2[] coords = mesh.coords;
         for (Vec2 coord : coords) {
@@ -1497,11 +1524,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Calculates texture coordinates (UVs) for this mesh. Finds the object-space
-     * dimensions of each
-     * coordinate, then uses the frame as a reference for new UVs, such that the
-     * shape acts as a mask
-     * for the texture (or, the texture fills the shape without repeating).
+     * Calculates texture coordinates (UVs) for this mesh. Finds the
+     * object-space dimensions of each coordinate, then uses the frame as a
+     * reference for new UVs, such that the shape acts as a mask for the
+     * texture (or, the texture fills the shape without repeating).
      *
      * @return this mesh
      * @see Mesh2#accumMinMax(Mesh2, Vec2, Vec2)
@@ -1600,8 +1626,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
             final int[][] verts = this.faces[i];
             for (final int[] vert : verts) {
                 /*
-                 * Find index of vector in new array by using indexed value from old
-                 * array as a reference.
+                 * Find index of vector in new array by using indexed value
+                 * from old array as a reference.
                  */
                 vert[0] = Arrays.binarySearch(newCoords, this.coords[vert[0]], Mesh.SORT_2);
                 vert[1] = Arrays.binarySearch(newTexCoords, this.texCoords[vert[1]], Mesh.SORT_2);
@@ -1620,8 +1646,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Collapses an edge to a point. Unlike
-     * {@link Mesh2#deleteVerts(int, int, int)}, inserts a
-     * midpoint between edge origin and destination.
+     * {@link Mesh2#deleteVerts(int, int, int)}, inserts a midpoint between
+     * edge origin and destination.
      *
      * @param faceIndex the face index
      * @param edgeIndex the edge index
@@ -1634,12 +1660,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Collapses an edge to a point. Unlike
-     * {@link Mesh2#deleteVerts(int, int, int)}, inserts a newly
-     * created vertex between edge origin and destination according to a factor in
-     * [0.0, 1.0]; a
-     * factor of 0.5 will collapse an edge to its midpoint; of 0.0, to its origin;
-     * of 1.0, to its
-     * destination.
+     * {@link Mesh2#deleteVerts(int, int, int)}, inserts a newly created vertex
+     * between edge origin and destination according to a factor in [0.0, 1.0];
+     * a factor of 0.5 will collapse an edge to its midpoint; of 0.0, to its
+     * origin; of 1.0, to its destination.
      *
      * @param faceIndex the face index
      * @param edgeIndex the edge index
@@ -1650,7 +1674,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @see Vec2#append(Vec2[], Vec2)
      * @see Mesh#splice(int[][], int, int, int[][])
      */
-    public Mesh2 collapseEdge(final int faceIndex, final int edgeIndex, final float fac) {
+    public Mesh2 collapseEdge(
+        final int faceIndex,
+        final int edgeIndex,
+        final float fac) {
 
         /* Find face. */
         final int facesLen = this.faces.length;
@@ -1674,12 +1701,16 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         /* Mix coordinates. */
         final Vec2 vOrig = this.coords[orig[0]];
         final Vec2 vDest = this.coords[dest[0]];
-        final Vec2 vMidPoint = new Vec2(u * vOrig.x + t * vDest.x, u * vOrig.y + t * vDest.y);
+        final Vec2 vMidPoint = new Vec2(
+            u * vOrig.x + t * vDest.x,
+            u * vOrig.y + t * vDest.y);
 
         /* Mix texture coordinates. */
         final Vec2 vtOrig = this.texCoords[orig[1]];
         final Vec2 vtDest = this.texCoords[dest[1]];
-        final Vec2 vtMidPoint = new Vec2(u * vtOrig.x + t * vtDest.x, u * vtOrig.y + t * vtDest.y);
+        final Vec2 vtMidPoint = new Vec2(
+            u * vtOrig.x + t * vtDest.x,
+            u * vtOrig.y + t * vtDest.y);
 
         /* Append new data. */
         this.coords = Vec2.append(this.coords, vMidPoint);
@@ -1690,9 +1721,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Removes a given number of face indices from this mesh beginning at an index.
-     * Does not remove
-     * any data associated with the indices.
+     * Removes a given number of face indices from this mesh beginning at an
+     * index. Does not remove any data associated with the indices.
      *
      * @param faceIndex the index
      * @return this mesh
@@ -1705,9 +1735,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Removes a given number of face indices from this mesh beginning at an index.
-     * Does not remove
-     * any data associated with the indices.
+     * Removes a given number of face indices from this mesh beginning at an
+     * index. Does not remove any data associated with the indices.
      *
      * @param faceIndex the index
      * @param count     the removal count
@@ -1722,8 +1751,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Removes a given number of vertex indices from this mesh beginning at an
-     * index. Does not remove
-     * any data associated with the indices.
+     * index. Does not remove any data associated with the indices.
      *
      * @param faceIndex the face index
      * @param vertIndex the vertex index
@@ -1731,7 +1759,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @return this mesh
      * @see Mesh#remove(int[][], int, int)
      */
-    public Mesh2 deleteVerts(final int faceIndex, final int vertIndex, final int count) {
+    public Mesh2 deleteVerts(
+        final int faceIndex,
+        final int vertIndex,
+        final int count) {
 
         final int j = Utils.mod(faceIndex, this.faces.length);
         final int[][] f = this.faces[j];
@@ -1803,8 +1834,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         final Vec2 vDest = this.coords[idxV3];
 
         /*
-         * The perpendicular is not normalized so that the created face is square,
-         * no matter the number of sides on the polygon.
+         * The perpendicular is not normalized so that the created face is
+         * quare, no matter the number of sides on the polygon.
          */
         final Vec2 vPerp = new Vec2();
         Vec2.sub(vOrig, vDest, vPerp);
@@ -1829,9 +1860,11 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         Vec2.add(vtOrig, vtPerp, vtNewOrig);
         Vec2.add(vtDest, vtPerp, vtNewDest);
 
-        final int[][][] faceNew = {
-            {{vsOldLen, vtsOldLen}, {idxV2, idxVt2}, {idxV3, idxVt3}, {idxV0, idxVt0}}
-        };
+        final int[][][] faceNew = {{
+            {vsOldLen, vtsOldLen},
+            {idxV2, idxVt2},
+            {idxV3, idxVt3},
+            {idxV0, idxVt0}}};
         this.coords = Vec2.concat(this.coords, new Vec2[]{vNewOrig, vNewDest});
         this.texCoords = Vec2.concat(this.texCoords, new Vec2[]{vtNewOrig, vtNewDest});
         this.faces = Mesh.splice(this.faces, i + 1, 0, faceNew);
@@ -1858,9 +1891,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Negates the x component of all texture coordinates (u) in the mesh. Does so
-     * by subtracting the
-     * value from 1.0.
+     * Negates the x component of all texture coordinates (u) in the mesh. Does
+     * so by subtracting the value from 1.0.
      *
      * @return this mesh
      */
@@ -1874,9 +1906,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Negates the y component of all texture coordinates (v) in the mesh. Does so
-     * by subtracting the
-     * value from 1.0.
+     * Negates the y component of all texture coordinates (v) in the mesh. Does
+     * so by subtracting the value from 1.0.
      *
      * @return this mesh
      */
@@ -1890,10 +1921,9 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Negates the x component of all coordinates in the mesh, then reverses the
-     * mesh's faces. Use
-     * this instead of {@link Mesh2#scale(Vec2)} with the argument
-     * <code>new Vec2(-1.0f, 1.0f)</code>.
+     * Negates the x component of all coordinates in the mesh, then reverses
+     * the mesh's faces. Use this instead of {@link Mesh2#scale(Vec2)} with the
+     * argument <code>new Vec2(-1.0f, 1.0f)</code>.
      *
      * @return this mesh
      * @see Mesh2#reverseFaces()
@@ -1909,10 +1939,9 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Negates the y component of all coordinates in the mesh, then reverses the
-     * mesh's faces. Use
-     * this instead of {@link Mesh2#scale(Vec2)} with the argument
-     * <code>new Vec2(1.0f, -1.0f)</code>.
+     * Negates the y component of all coordinates in the mesh, then reverses
+     * the mesh's faces. Use this instead of {@link Mesh2#scale(Vec2)} with the
+     * argument <code>new Vec2(1.0f, -1.0f)</code>.
      *
      * @return this mesh
      * @see Mesh2#reverseFaces()
@@ -1935,7 +1964,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @param target  the output edge
      * @return the edge
      */
-    public Edge2 getEdge(final int faceIdx, final int edgeIdx, final Edge2 target) {
+    public Edge2 getEdge(
+        final int faceIdx,
+        final int edgeIdx,
+        final Edge2 target) {
 
         final int[][] face = this.faces[Utils.mod(faceIdx, this.faces.length)];
         final int faceLen = face.length;
@@ -1961,8 +1993,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Gets an array of edges from the mesh. Edges are treated as directed, so
-     * (origin, destination)
-     * and (destination, edge) are considered to be different.
+     * (origin, destination) and (destination, edge) are considered to be
+     * different.
      *
      * @return the edges array
      */
@@ -1998,9 +2030,9 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Gets an array of edges from the mesh. Edges are treated as undirected, so
-     * (origin, destination)
-     * and (destination, edge) are considered to be the same.
+     * Gets an array of edges from the mesh. Edges are treated as undirected,
+     * so (origin, destination) and (destination, edge) are considered to be
+     * the same.
      *
      * @return the edges array
      */
@@ -2093,11 +2125,16 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @param target    the output vertex
      * @return the vertex
      */
-    public Vert2 getVertex(final int faceIndex, final int vertIndex, final Vert2 target) {
+    public Vert2 getVertex(
+        final int faceIndex,
+        final int vertIndex,
+        final Vert2 target) {
 
         final int[][] face = this.faces[Utils.mod(faceIndex, this.faces.length)];
         final int[] vertidcs = face[Utils.mod(vertIndex, face.length)];
-        return target.set(this.coords[vertidcs[0]], this.texCoords[vertidcs[1]]);
+        return target.set(
+            this.coords[vertidcs[0]],
+            this.texCoords[vertidcs[1]]);
     }
 
     /**
@@ -2128,9 +2165,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Insets a face by calculating its center then easing from the face's vertices
-     * toward the center
-     * by 0.5.
+     * Insets a face by calculating its center then easing from the face's
+     * vertices toward the center by 0.5.
      *
      * @param faceIndex the face index
      * @return the new face indices
@@ -2141,12 +2177,11 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Insets a face by calculating its center then easing from the face's vertices
-     * toward the center
-     * by the factor. The factor is expected to be in the range [0.0, 1.0] . When it
-     * is less than 0.0,
-     * the face remains unchanged. When it is greater than 1.0, the face is
-     * subdivided by center.
+     * Insets a face by calculating its center then easing from the face's
+     * vertices toward the center by the factor. The factor is expected to be
+     * in the range [0.0, 1.0]. When it is less than 0.0, the face remains
+     * unchanged. When it is greater than 1.0, the face is subdivided by
+     * center.
      *
      * @param faceIndex the face index
      * @param fac       the inset amount
@@ -2205,28 +2240,34 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
             final Vec2 vCurr = this.coords[vCornerIdx];
             final Vec2 vtCurr = this.texCoords[vtCornerIdx];
 
-            /* @formatter:off */
-      vsNew[j] = new Vec2(u * vCurr.x + fac * vCenter.x, u * vCurr.y + fac * vCenter.y);
+            vsNew[j] = new Vec2(
+                u * vCurr.x + fac * vCenter.x,
+                u * vCurr.y + fac * vCenter.y);
 
-      vtsNew[j] = new Vec2(u * vtCurr.x + fac * vtCenter.x, u * vtCurr.y + fac * vtCenter.y);
+            vtsNew[j] = new Vec2(
+                u * vtCurr.x + fac * vtCenter.x,
+                u * vtCurr.y + fac * vtCenter.y);
 
-      final int vSubdivIdx = vsOldLen + j;
-      final int vtSubdivIdx = vtsOldLen + j;
+            final int vSubdivIdx = vsOldLen + j;
+            final int vtSubdivIdx = vtsOldLen + j;
 
-      final int[][] fNew = fsNew[j];
-      final int[] n0 = fNew[0];
-      n0[0] = vCornerIdx;
-      n0[1] = vtCornerIdx;
-      final int[] n1 = fNew[1];
-      n1[0] = vertNext[0];
-      n1[1] = vertNext[1];
-      final int[] n2 = fNew[2];
-      n2[0] = vsOldLen + k;
-      n2[1] = vtsOldLen + k;
-      final int[] n3 = fNew[3];
-      n3[0] = vSubdivIdx;
-      n3[1] = vtSubdivIdx;
-      /* @formatter:on */
+            final int[][] fNew = fsNew[j];
+
+            final int[] n0 = fNew[0];
+            n0[0] = vCornerIdx;
+            n0[1] = vtCornerIdx;
+
+            final int[] n1 = fNew[1];
+            n1[0] = vertNext[0];
+            n1[1] = vertNext[1];
+
+            final int[] n2 = fNew[2];
+            n2[0] = vsOldLen + k;
+            n2[1] = vtsOldLen + k;
+
+            final int[] n3 = fNew[3];
+            n3[0] = vSubdivIdx;
+            n3[1] = vtSubdivIdx;
 
             final int[] centerVert = centerFace[j];
             centerVert[0] = vSubdivIdx;
@@ -2250,8 +2291,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Insets all faces in the mesh for a given number of iterations by a factor of
-     * 0.5 .
+     * Insets all faces in the mesh for a given number of iterations by a
+     * factor of 0.5.
      *
      * @param itr the iterations
      * @return this mesh
@@ -2262,9 +2303,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Insets all faces in the mesh for a given number of iterations by a factor in
-     * the range [0.0,
-     * 1.0] .
+     * Insets all faces in the mesh for a given number of iterations by a
+     * factor in the range [0.0, 1.0].
      *
      * @param itr the iterations
      * @param fac the inset factor
@@ -2285,9 +2325,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Returns an iterator for this mesh, which allows its faces to be accessed in
-     * an enhanced
-     * for-loop.
+     * Returns an iterator for this mesh, which allows its faces to be accessed
+     * in an enhanced for-loop.
      *
      * @return the iterator
      */
@@ -2306,11 +2345,9 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Centers the mesh about the origin, (0.0, 0.0), and rescales it to the range
-     * [-0.5, 0.5] . Emits
-     * a transform which records the mesh's center point and original dimension. The
-     * transform's
-     * rotation is reset.
+     * Centers the mesh about the origin, (0.0, 0.0), and rescales it to the
+     * range [-0.5, 0.5]. Emits a transform which records the mesh's center
+     * point and original dimension. The transform's rotation is reset.
      *
      * @param tr the output transform
      * @return this mesh
@@ -2347,7 +2384,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Rotates all coordinates in the mesh by an angle around the z axis.
+     * Rotates all coordinates in the mesh by an angle around the z-axis.
      *
      * @param radians the angle in radians
      * @return this mesh
@@ -2410,7 +2447,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @param texCoords the texture coordinates array
      * @return this mesh
      */
-    public Mesh2 set(final int[][][] faces, final Vec2[] coords, final Vec2[] texCoords) {
+    public Mesh2 set(
+        final int[][][] faces,
+        final Vec2[] coords,
+        final Vec2[] texCoords) {
 
         this.faces = faces;
         this.coords = coords;
@@ -2420,9 +2460,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Sets this mesh to a copy of the source. Allocates new arrays for coordinates,
-     * texture
-     * coordinates and faces.
+     * Sets this mesh to a copy of the source. Allocates new arrays for
+     * coordinates, texture coordinates and faces.
      *
      * @param source the source mesh
      * @return this mesh
@@ -2475,9 +2514,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Subdivides an edge by a cut at its midpoint. Does not distinguish between
-     * interior edges, which
-     * have a complement elsewhere, and border edges; for that reason this works
-     * best with NGONs.
+     * interior edges, which have a complement elsewhere, and border edges; for
+     * that reason this works best with NGONs.
      *
      * @param faceIndex the face index
      * @param edgeIndex the edge index
@@ -2489,20 +2527,22 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Subdivides an edge by the number of cuts given. For example, one cut will
-     * divide an edge in
-     * half; two cuts, into thirds.<br>
+     * Subdivides an edge by the number of cuts given. For example, one cut
+     * will divide an edge in half; two cuts, into thirds.
+     * <br>
      * <br>
      * Does not distinguish between interior edges, which have a complement
-     * elsewhere, and border
-     * edges; for that reason this works best with NGONs.
+     * elsewhere, and border edges; for that reason this works best with NGONs.
      *
      * @param faceIndex the face index
      * @param edgeIndex the edge index
      * @param cuts      number of cuts
      * @return this mesh
      */
-    public Mesh2 subdivEdge(final int faceIndex, final int edgeIndex, final int cuts) {
+    public Mesh2 subdivEdge(
+        final int faceIndex,
+        final int edgeIndex,
+        final int cuts) {
 
         if (cuts < 1) {
             return this;
@@ -2527,8 +2567,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         final Vec2 vtDest = this.texCoords[vert1Idx[1]];
 
         /*
-         * Cache old length of coordinates and texture coordinates so new ones can
-         * be appended to the end.
+         * Cache old length of coordinates and texture coordinates so new ones
+         * can be appended to the end.
          */
         final int vsOldLen = this.coords.length;
         final int vtsOldLen = this.texCoords.length;
@@ -2539,16 +2579,21 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         final int[][] fsNew = new int[cuts][2];
 
         /*
-         * Subdivide the edge. The edge origin and destination are to be excluded
-         * from the new set, so the conversion to the step accounts for this.
+         * Subdivide the edge. The edge origin and destination are to be
+         * excluded from the new set, so the conversion to the step accounts
+         * for this.
          */
         final float toStep = 1.0f / (cuts + 1.0f);
         for (int k = 0; k < cuts; ++k) {
             final float step = toStep + k * toStep;
             final float u = 1.0f - step;
 
-            vsNew[k] = new Vec2(u * vOrig.x + step * vDest.x, u * vOrig.y + step * vDest.y);
-            vtsNew[k] = new Vec2(u * vtOrig.x + step * vtDest.x, u * vtOrig.y + step * vtDest.y);
+            vsNew[k] = new Vec2(
+                u * vOrig.x + step * vDest.x,
+                u * vOrig.y + step * vDest.y);
+            vtsNew[k] = new Vec2(
+                u * vtOrig.x + step * vtDest.x,
+                u * vtOrig.y + step * vtDest.y);
 
             final int[] fNew = fsNew[k];
             fNew[0] = vsOldLen + k;
@@ -2579,11 +2624,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Subdivides a convex face by calculating its center, cutting each of its edges
-     * once to create a
-     * midpoint, then connecting the midpoints to the center. This generates a
-     * quadrilateral for the
-     * number of edges in the face.
+     * Subdivides a convex face by calculating its center, cutting each of its
+     * edges once to create a midpoint, then connecting the midpoints to the
+     * center. This generates a quadrilateral for the number of edges in the
+     * face.
      *
      * @param faceIdx the face index
      * @return this mesh
@@ -2597,8 +2641,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         final int faceLen = face.length;
 
         /*
-         * Cache old length of coordinates and texture coordinates so new ones can
-         * be appended to the end.
+         * Cache old length of coordinates and texture coordinates so new ones
+         * can be appended to the end.
          */
         final int vsOldLen = this.coords.length;
         final int vtsOldLen = this.texCoords.length;
@@ -2628,29 +2672,35 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
             Vec2.add(vCenter, vCurr, vCenter);
             Vec2.add(vtCenter, vtCurr, vtCenter);
 
-            /* @formatter:off */
-      final int vNextIdx = vertNext[0];
-      final Vec2 vNext = this.coords[vNextIdx];
-      vsNew[j] = new Vec2((vCurr.x + vNext.x) * 0.5f, (vCurr.y + vNext.y) * 0.5f);
+            final int vNextIdx = vertNext[0];
+            final Vec2 vNext = this.coords[vNextIdx];
+            vsNew[j] = new Vec2(
+                (vCurr.x + vNext.x) * 0.5f,
+                (vCurr.y + vNext.y) * 0.5f);
 
-      final int vtNextIdx = vertNext[1];
-      final Vec2 vtNext = this.texCoords[vtNextIdx];
-      vtsNew[j] = new Vec2((vtCurr.x + vtNext.x) * 0.5f, (vtCurr.y + vtNext.y) * 0.5f);
+            final int vtNextIdx = vertNext[1];
+            final Vec2 vtNext = this.texCoords[vtNextIdx];
+            vtsNew[j] = new Vec2(
+                (vtCurr.x + vtNext.x) * 0.5f,
+                (vtCurr.y + vtNext.y) * 0.5f);
 
-      final int[][] fNew = fsNew[j];
-      final int[] n0 = fNew[0];
-      n0[0] = vCenterIdx;
-      n0[1] = vtCenterIdx;
-      final int[] n1 = fNew[1];
-      n1[0] = vsOldLen + j;
-      n1[1] = vtsOldLen + j;
-      final int[] n2 = fNew[2];
-      n2[0] = vNextIdx;
-      n2[1] = vtNextIdx;
-      final int[] n3 = fNew[3];
-      n3[0] = vsOldLen + k;
-      n3[1] = vtsOldLen + k;
-      /* @formatter:on */
+            final int[][] fNew = fsNew[j];
+
+            final int[] n0 = fNew[0];
+            n0[0] = vCenterIdx;
+            n0[1] = vtCenterIdx;
+
+            final int[] n1 = fNew[1];
+            n1[0] = vsOldLen + j;
+            n1[1] = vtsOldLen + j;
+
+            final int[] n2 = fNew[2];
+            n2[0] = vNextIdx;
+            n2[1] = vtNextIdx;
+
+            final int[] n3 = fNew[3];
+            n3[0] = vsOldLen + k;
+            n3[1] = vtsOldLen + k;
         }
 
         /* Average. */
@@ -2669,8 +2719,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Subdivides a convex face by calculating its center, then connecting its
-     * vertices to the center.
-     * This generates a triangle for the number of edges in the face.
+     * vertices to the center. This generates a triangle for the number of
+     * edges in the face.
      *
      * @param faceIdx the face index
      * @return the new face indices
@@ -2702,18 +2752,19 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
             Vec2.add(vCenter, this.coords[vCurrIdx], vCenter);
             Vec2.add(vtCenter, this.texCoords[vtCurrIdx], vtCenter);
 
-            /* @formatter:off */
-      final int[][] fNew = fsNew[j];
-      final int[] n0 = fNew[0];
-      n0[0] = vCenterIdx;
-      n0[1] = vtCenterIdx;
-      final int[] n1 = fNew[1];
-      n1[0] = vCurrIdx;
-      n1[1] = vtCurrIdx;
-      final int[] n2 = fNew[2];
-      n2[0] = vertNext[0];
-      n2[1] = vertNext[1];
-      /* @formatter:on */
+            final int[][] fNew = fsNew[j];
+
+            final int[] n0 = fNew[0];
+            n0[0] = vCenterIdx;
+            n0[1] = vtCenterIdx;
+
+            final int[] n1 = fNew[1];
+            n1[0] = vCurrIdx;
+            n1[1] = vtCurrIdx;
+
+            final int[] n2 = fNew[2];
+            n2[0] = vertNext[0];
+            n2[1] = vertNext[1];
         }
 
         /* Average. */
@@ -2732,11 +2783,9 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Subdivides a convex face by cutting each of its edges once to create a
-     * midpoint, then
-     * connecting each midpoint. This generates peripheral triangles and a new
-     * central face with the
-     * same number of edges as the original. This is best suited to meshes made of
-     * triangles.
+     * midpoint, then connecting each midpoint. This generates peripheral
+     * triangles and a new central face with the same number of edges as the
+     * original. This is best suited to meshes made of triangles.
      *
      * @param faceIdx the face index
      * @return the new face indices
@@ -2764,30 +2813,35 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
             final int k = (j + 1) % faceLen;
             final int[] vertNext = face[k];
 
-            /* @formatter:off */
-      final int vNextIdx = vertNext[0];
-      final Vec2 vNext = this.coords[vNextIdx];
-      vsNew[j] = new Vec2((vCurr.x + vNext.x) * 0.5f, (vCurr.y + vNext.y) * 0.5f);
+            final int vNextIdx = vertNext[0];
+            final Vec2 vNext = this.coords[vNextIdx];
+            vsNew[j] = new Vec2(
+                (vCurr.x + vNext.x) * 0.5f,
+                (vCurr.y + vNext.y) * 0.5f);
 
-      final int vtNextIdx = vertNext[1];
-      final Vec2 vtNext = this.texCoords[vtNextIdx];
-      vtsNew[j] = new Vec2((vtCurr.x + vtNext.x) * 0.5f, (vtCurr.y + vtNext.y) * 0.5f);
+            final int vtNextIdx = vertNext[1];
+            final Vec2 vtNext = this.texCoords[vtNextIdx];
+            vtsNew[j] = new Vec2(
+                (vtCurr.x + vtNext.x) * 0.5f,
+                (vtCurr.y + vtNext.y) * 0.5f);
 
-      final int vSubdivIdx = vsOldLen + j;
-      final int vtSubdivIdx = vtsOldLen + j;
+            final int vSubdivIdx = vsOldLen + j;
+            final int vtSubdivIdx = vtsOldLen + j;
 
-      /* Update peripheral face. */
-      final int[][] fNew = fsNew[j];
-      final int[] n0 = fNew[0];
-      n0[0] = vSubdivIdx;
-      n0[1] = vtSubdivIdx;
-      final int[] n1 = fNew[1];
-      n1[0] = vNextIdx;
-      n1[1] = vtNextIdx;
-      final int[] n2 = fNew[2];
-      n2[0] = vsOldLen + k;
-      n2[1] = vtsOldLen + k;
-      /* @formatter:on */
+            /* Update peripheral face. */
+            final int[][] fNew = fsNew[j];
+
+            final int[] n0 = fNew[0];
+            n0[0] = vSubdivIdx;
+            n0[1] = vtSubdivIdx;
+
+            final int[] n1 = fNew[1];
+            n1[0] = vNextIdx;
+            n1[1] = vtNextIdx;
+
+            final int[] n2 = fNew[2];
+            n2[0] = vsOldLen + k;
+            n2[1] = vtsOldLen + k;
 
             /* Update vertex of central face. */
             final int[] centerVert = centerFace[j];
@@ -2823,8 +2877,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Subdivides all faces in the mesh by a number of iterations. Uses the center
-     * method.
+     * Subdivides all faces in the mesh by a number of iterations. Uses the
+     * center method.
      *
      * @param itr iterations
      * @return this mesh
@@ -2898,11 +2952,10 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Renders the mesh as a string following the Wavefront OBJ file format. The
-     * index offsets specify
-     * where the mesh's data begin; OBJ file indices begin at 1, not 0. The mesh is
-     * considered a
-     * group, 'g', not an object, 'o'.
+     * Renders the mesh as a string following the Wavefront OBJ file format.
+     * The index offsets specify where the mesh's data begin; OBJ file indices
+     * begin at 1, not 0. The mesh is considered a group, 'g', not an object,
+     * 'o'.
      *
      * @param vIdx   coordinate index offset
      * @param vtIdx  texture coordinate index offset
@@ -2911,17 +2964,19 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * @return the string
      */
     public String toObjString(
-        final int vIdx, final int vtIdx, final int vnIdx, final boolean flipvs) {
+        final int vIdx,
+        final int vtIdx,
+        final int vnIdx,
+        final boolean flipvs) {
 
         return this.toObjString(new StringBuilder(1024), vIdx, vtIdx, vnIdx, flipvs).toString();
     }
 
     /**
-     * Centers the mesh about the origin, (0.0, 0.0), by calculating its dimensions
-     * then subtracting
-     * the center point. Emits a transform which records the mesh's center point.
-     * The transform's
-     * rotation and scale are reset.
+     * Centers the mesh about the origin, (0.0, 0.0), by calculating its
+     * dimensions then subtracting the center point. Emits a transform which
+     * records the mesh's center point. The transform's rotation and scale are
+     * reset.
      *
      * @param tr the output transform
      * @return this mesh
@@ -2952,8 +3007,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Writes the mesh to a byte array in the stl format. The mesh should be
-     * triangulated prior to
-     * calling this method.
+     * triangulated prior to calling this method.
      *
      * @return the byte array
      */
@@ -2970,10 +3024,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Writes the mesh to an existing byte array at an offset in the stl format.
-     * Does not write the
-     * initial 80 byte header, so the default offset would be 80. The mesh should be
-     * triangulated
-     * prior to calling this method.
+     * Does not write the initial 80 byte header, so the default offset would
+     * be 80. The mesh should be triangulated prior to calling this method.
      *
      * @param arr    the byte array
      * @param offset the offset
@@ -3024,9 +3076,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Returns a string representation of the mesh. Includes an option to truncate
-     * the listing in case
-     * of large meshes.
+     * Returns a string representation of the mesh.
      *
      * @param places the number of places
      * @return the string
@@ -3054,8 +3104,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Renders this mesh as an SVG string. A default material renders the mesh's
-     * fill and stroke. The
-     * background of the SVG is transparent.
+     * fill and stroke. The background of the SVG is transparent.
      *
      * @return the SVG string
      */
@@ -3089,11 +3138,12 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Transforms all coordinates in the mesh <em>permanently</em> by a
-     * transform.<br>
+     * transform.
      * <br>
-     * Not to be confused with the <em>temporary</em> transformations applied by a
-     * mesh entity's
-     * transform to the meshes contained within the entity.<br>
+     * <br>
+     * Not to be confused with the <em>temporary</em> transformations applied
+     * by a mesh entity's transform to the meshes contained within the entity.
+     * <br>
      * <br>
      * Useful when consolidating multiple mesh entities into one mesh entity.
      *
@@ -3131,9 +3181,9 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * An internal helper function to format a mesh as a Python tuple, then append
-     * it to a {@link
-     * StringBuilder}. Appends a z component to promote the vector to 3D.
+     * An internal helper function to format a mesh as a Python tuple, then
+     * append it to a {@link StringBuilder}. Appends a z component to promote
+     * the vector to 3D.
      *
      * @param pyCd the string builder
      */
@@ -3211,8 +3261,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Internal helper method that appends a representation of this mesh in the
-     * Wavefront OBJ file
-     * format to a {@link StringBuilder}.
+     * Wavefront OBJ file format to a {@link StringBuilder}.
      *
      * @param objs   the string builder
      * @param vIdx   coordinate index offset
@@ -3233,8 +3282,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         final int facesLen = this.faces.length;
 
         /*
-         * Append comment listing the number of coordinates, texture coordinates
-         * and faces.
+         * Append comment listing the number of coordinates, texture
+         * coordinates and faces.
          */
         objs.append("\n# v: ");
         objs.append(vsLen);
@@ -3298,8 +3347,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * meshes. Appends to an
-     * existing {@link StringBuilder}.
+     * meshes. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -3360,11 +3408,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Internal helper function to append a mesh path to a {@link StringBuilder};
-     * the id is written to
-     * the path's id. The fill rule may be either <code>"evenodd"</code> or
-     * <code>"nonzero"</code>
-     * (default).
+     * Internal helper function to append a mesh path to a
+     * {@link StringBuilder}; the id is written to the path's id.
      *
      * @param svgp the string builder
      */
@@ -3404,12 +3449,15 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), Arrays.hashCode(coords), Arrays.hashCode(texCoords));
+        return Objects.hash(
+            super.hashCode(),
+            Arrays.hashCode(coords),
+            Arrays.hashCode(texCoords));
     }
 
     /**
-     * An abstract class that may serve as an umbrella for any custom comparators of
-     * Mesh2 s.
+     * An abstract class that may serve as an umbrella for any custom
+     * comparators of {@link Mesh2}s.
      */
     public abstract static class AbstrComparator implements Comparator<Mesh2> {
 
@@ -3431,8 +3479,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * An iterator, which allows a mesh's faces to be accessed in an enhanced for
-     * loop.
+     * An iterator, which allows a mesh's faces to be accessed in an enhanced
+     * for loop.
      */
     public static final class Face2Iterator implements Iterator<Face2> {
 

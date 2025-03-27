@@ -3,18 +3,16 @@ package com.behreajj.camzup.core;
 import java.util.*;
 
 /**
- * A mutable, extensible class that contains a list of keys which hold colors at
- * steps in the range
- * [0.0, 1.0] . Allows smooth color transitions to be evaluated by a factor.
+ * A mutable, extensible class that contains a list of keys which hold colors
+ * at steps in the range [0.0, 1.0]. Allows smooth color transitions to be
+ * evaluated by a factor.
  */
 public class Gradient implements Iterable<ColorKey> {
 
     /**
-     * The set of keys. Quantized sorting closures shouldn't be used as a comparator
-     * supplied to this
-     * TreeSet's constructor, as that leads to bugs when an unknown number of keys
-     * are supplied to the
-     * gradient.
+     * The set of keys. Quantized sorting closures shouldn't be used as a
+     * comparator supplied to this TreeSet's constructor, as that leads to bugs
+     * when an unknown number of keys are supplied to the gradient.
      */
     public final TreeSet<ColorKey> keys = new TreeSet<>();
 
@@ -24,8 +22,8 @@ public class Gradient implements Iterable<ColorKey> {
     protected final ColorKey query = new ColorKey();
 
     /**
-     * Creates a gradient with two default color keys, clear black at 0.0 and opaque
-     * white at 1.0.
+     * Creates a gradient with two default color keys, clear black at 0.0 and
+     * opaque white at 1.0.
      */
     public Gradient() {
 
@@ -34,9 +32,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Creates a gradient from a collection of color integers; the resultant keys
-     * are evenly
-     * distributed over the range [0.0, 1.0].
+     * Creates a gradient from a collection of color integers; the resultant
+     * keys are evenly distributed over the range [0.0, 1.0].
      *
      * @param colors the colors
      */
@@ -56,8 +53,7 @@ public class Gradient implements Iterable<ColorKey> {
 
     /**
      * Creates a gradient from a list of scalars; the resultant keys are evenly
-     * distributed over the
-     * range [0.0, 1.0].
+     * distributed over the range [0.0, 1.0].
      *
      * @param scalars the scalars
      */
@@ -66,9 +62,9 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Creates a gradient from a scalar. The scalar is placed between clear black at
-     * key 0.0 and
-     * opaque white at key 1.0. The boundary keys adopt the color's alpha.
+     * Creates a gradient from a scalar. The scalar is placed between clear
+     * black at key 0.0 and opaque white at key 1.0. The boundary keys adopt
+     * the color's alpha.
      *
      * @param scalar the scalar
      */
@@ -91,16 +87,18 @@ public class Gradient implements Iterable<ColorKey> {
 
     /**
      * Creates a gradient from a color. The color is placed according to its
-     * perceived luminance
-     * between black at key 0.0 and white at key 1.0. The boundary keys adopt the
-     * color's alpha.
+     * lightness between black at key 0.0 and white at key 1.0. The boundary
+     * keys adopt the color's alpha.
      *
      * @param c the color
      * @see Utils#lerp(float, float, float)
      */
     public Gradient(final Lab c) {
 
-        final float step = Utils.lerp(Utils.ONE_THIRD, Utils.TWO_THIRDS, c.l * 0.01f);
+        final float step = Utils.lerp(
+            Utils.ONE_THIRD,
+            Utils.TWO_THIRDS,
+            c.l * 0.01f);
 
         final Lab black = Lab.clearBlack(new Lab());
         final Lab white = Lab.white(new Lab());
@@ -115,8 +113,7 @@ public class Gradient implements Iterable<ColorKey> {
 
     /**
      * Creates a gradient from a list of colors; the resultant keys are evenly
-     * distributed over the
-     * range [0.0, 1.0].
+     * distributed over the range [0.0, 1.0].
      *
      * @param colors the colors
      */
@@ -125,9 +122,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Finds a color given a step in the range [0.0, 1.0] . When the step falls
-     * between color keys,
-     * the resultant color is created by an easing function.
+     * Finds a color given a step in the range [0.0, 1.0]. When the step falls
+     * between color keys, the resultant color is created by an easing function.
      *
      * @param grd    the gradient
      * @param step   the step
@@ -140,7 +136,10 @@ public class Gradient implements Iterable<ColorKey> {
      * @see TreeSet#last()
      * @see Utils#div(float, float)
      */
-    public static Lab eval(final Gradient grd, final float step, final Lab target) {
+    public static Lab eval(
+        final Gradient grd,
+        final float step,
+        final Lab target) {
 
         grd.query.step = step;
 
@@ -154,13 +153,16 @@ public class Gradient implements Iterable<ColorKey> {
             return target.set(grd.keys.last().clr);
         }
 
-        return Lab.mix(next.clr, prev.clr, Utils.div(step - next.step, prev.step - next.step), target);
+        return Lab.mix(
+            next.clr, prev.clr,
+            Utils.div(step - next.step, prev.step - next.step),
+            target);
     }
 
     /**
-     * Finds a color given a step in the range [0.0, 1.0] . When the step falls
-     * between color keys,
-     * the resultant color is generated by an easing function.
+     * Finds a color given a step in the range [0.0, 1.0]. When the step falls
+     * between color keys, the resultant color is generated by an easing
+     * function.
      *
      * @param grd    the gradient
      * @param step   the step
@@ -174,11 +176,14 @@ public class Gradient implements Iterable<ColorKey> {
      * @see Utils#div(float, float)
      */
     public static Lab eval(
-        final Gradient grd, final float step, final Lab.AbstrEasing easing, final Lab target) {
+        final Gradient grd,
+        final float step,
+        final Lab.AbstrEasing easing,
+        final Lab target) {
 
         /*
-         * This is different from above evaluation methods in order to facilitate,
-         * e.g., mixing colors for normal maps.
+         * This is different from above evaluation methods in order to
+         * facilitate, e.g., mixing colors for normal maps.
          */
 
         grd.query.step = Utils.clamp01(step);
@@ -195,7 +200,9 @@ public class Gradient implements Iterable<ColorKey> {
 
         /* This needs to be Utils.div to avoid returning 0x0 as a color. */
         return easing.applyUnclamped(
-            next.clr, prev.clr, Utils.div(step - next.step, prev.step - next.step), target);
+            next.clr, prev.clr,
+            Utils.div(step - next.step, prev.step - next.step),
+            target);
     }
 
     /**
@@ -212,8 +219,7 @@ public class Gradient implements Iterable<ColorKey> {
 
     /**
      * Evaluates an array of colors given a supplied count. The origin and
-     * destination specify the
-     * step at the beginning and end of the sample.
+     * destination specify the step at the beginning and end of the sample.
      *
      * @param grd    the gradient
      * @param count  the count
@@ -224,7 +230,10 @@ public class Gradient implements Iterable<ColorKey> {
      * @see Gradient#eval(Gradient, float, Lab)
      */
     public static Lab[] evalRange(
-        final Gradient grd, final int count, final float origin, final float dest) {
+        final Gradient grd,
+        final int count,
+        final float origin,
+        final float dest) {
 
         final int vCount = Math.max(count, 2);
         final float vOrigin = Utils.clamp01(origin);
@@ -233,15 +242,15 @@ public class Gradient implements Iterable<ColorKey> {
         final float toPercent = 1.0f / (vCount - 1.0f);
         for (int i = 0; i < vCount; ++i) {
             final float prc = i * toPercent;
-            result[i] = Gradient.eval(grd, (1.0f - prc) * vOrigin + prc * vDest, new Lab());
+            result[i] = Gradient.eval(grd, (1.0f - prc) * vOrigin + prc * vDest,
+                new Lab());
         }
         return result;
     }
 
     /**
      * Evaluates an array of colors given a supplied count. The origin and
-     * destination specify the
-     * step at the beginning and end of the sample.
+     * destination specify the step at the beginning and end of the sample.
      *
      * @param grd    the gradient
      * @param count  the count
@@ -266,17 +275,16 @@ public class Gradient implements Iterable<ColorKey> {
         final float toPercent = 1.0f / (vCount - 1.0f);
         for (int i = 0; i < vCount; ++i) {
             final float prc = i * toPercent;
-            result[i] = Gradient.eval(grd, (1.0f - prc) * vOrigin + prc * vDest, easing, new Lab());
+            result[i] = Gradient.eval(grd,
+                (1.0f - prc) * vOrigin + prc * vDest, easing, new Lab());
         }
         return result;
     }
 
     /**
      * Sets the step of each color key in a gradient to the transparency of the
-     * key's color. Similar
-     * to {@link Gradient#sort(Comparator)} in the order of color keys; however,
-     * sort leaves key steps
-     * unchanged.
+     * key's color. Similar to {@link Gradient#sort(Comparator)} in the order
+     * of color keys; however, sort leaves key steps unchanged.
      *
      * @param source the input gradient
      * @param target the output gradient
@@ -309,15 +317,13 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Sets the step of each color key in a gradient to the luminance of the key's
-     * color. Similar to
-     * {@link Gradient#sort(Comparator)} in the order of color keys; however, sort
-     * leaves key steps
-     * unchanged.<br>
+     * Sets the step of each color key in a gradient to the luminance of the
+     * key's color. Similar to {@link Gradient#sort(Comparator)} in the order
+     * of color keys; however, sort leaves key steps unchanged.
      * <br>
-     * Useful when the gradient is applied to an image as a palette swap or a false
-     * color with the
-     * image's perceived luminance serving as an evaluation factor.
+     * <br>
+     * Useful when the gradient is applied to an image as a palette swap or a
+     * false color with the image's lightness serving as an evaluation factor.
      *
      * @param source the input gradient
      * @param target the output gradient
@@ -350,8 +356,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Returns a cyanotype palette, such as those used in creating blueprints, with
-     * 8 color keys.
+     * Returns a cyanotype palette, such as those used in creating blueprints,
+     * with 8 color keys.
      *
      * @param target the output gradient
      * @return the gradient
@@ -375,7 +381,7 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Returns a monochrome palette with 4 colors that simulates an LCD * .
+     * Returns a monochrome palette with 4 colors that simulates an LCD screen.
      *
      * @param target the output gradient
      * @return the gradient
@@ -428,9 +434,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Returns seven primary and secondary colors: red, yellow, green, cyan, blue,
-     * magenta and red.
-     * Red is repeated so that the gradient is periodic.
+     * Returns seven primary and secondary colors: red, yellow, green, cyan,
+     * blue, magenta and red. Red is repeated so that the gradient is periodic.
      *
      * @param target the output gradient
      * @return the gradient
@@ -452,9 +457,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Returns colors in the red yellow blue color wheel. Red is repeated so that
-     * the gradient is
-     * periodic.
+     * Returns colors in the red yellow blue color wheel. Red is repeated so
+     * that the gradient is periodic.
      *
      * @param target the output gradient
      * @return the gradient
@@ -506,10 +510,9 @@ public class Gradient implements Iterable<ColorKey> {
 
     /**
      * Returns a heavily stylized approximation of color temperature, where the
-     * middle key (0.5) is
-     * white at 6500 Kelvin. The lower bound (0.0), black, is at 800 Kelvin; the
-     * upper bound (1.0) is
-     * a blue tinted white at 12000 Kelvin.
+     * middle key (0.5) is white at 6500 Kelvin. The lower bound (0.0), black,
+     * is at 800 Kelvin; the upper bound (1.0) is a blue tinted white at 12000
+     * Kelvin.
      *
      * @param target the output gradient
      * @return the gradient
@@ -564,18 +567,19 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Internal helper function to reverse the <em>steps</em> in an array of color
-     * keys. Does
-     * <em>not</em> reverse the ordering of the elements, as it is assumed that the
-     * keys will be
-     * returned to an ordered set.
+     * Internal helper function to reverse the <em>steps</em> in an array of
+     * color keys. Does <em>not</em> reverse the ordering of the elements, as
+     * it is assumed that the keys will be returned to an ordered set.
      *
      * @param arr   the array
      * @param start the start index
      * @param end   the end index
      * @return the array
      */
-    protected static ColorKey[] reverse(final ColorKey[] arr, final int start, final int end) {
+    protected static ColorKey[] reverse(
+        final ColorKey[] arr,
+        final int start,
+        final int end) {
 
         /*
          * This belongs to the gradient class, and not the color key class,
@@ -624,8 +628,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Appends a collection of colors to this gradient. Shifts existing keys to the
-     * left.
+     * Appends a collection of colors to this gradient. Shifts existing keys to
+     * the left.
      *
      * @param colors the colors
      * @return this gradient
@@ -650,7 +654,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Appends a list of scalars to this gradient. Shifts existing keys to the left.
+     * Appends a list of scalars to this gradient. Shifts existing keys to the
+     * left.
      *
      * @param scalars the scalars
      * @return the gradient
@@ -676,7 +681,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Appends a list of colors to this gradient. Shifts existing keys to the left.
+     * Appends a list of colors to this gradient. Shifts existing keys to the
+     * left.
      *
      * @param colors the colors
      * @return this gradient
@@ -711,11 +717,9 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Cycles the steps of a color gradient. The number of places can be positive or
-     * negative,
-     * indicating which direction to shift: positive numbers shift to the right;
-     * negative, to the
-     * left.
+     * Cycles the steps of a color gradient. The number of places can be
+     * positive or negative, indicating which direction to shift: positive
+     * numbers shift to the right; negative, to the left.
      *
      * @param places the number of places
      * @return this gradient
@@ -744,7 +748,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Distributes this gradient's color keys evenly through the range [0.0, 1.0] .
+     * Distributes this gradient's color keys evenly through the range
+     * [0.0, 1.0].
      *
      * @return this gradient
      * @see List#addAll(java.util.Collection)
@@ -784,8 +789,8 @@ public class Gradient implements Iterable<ColorKey> {
 
     /**
      * Returns the least key in this gradient greater than or equal to the given
-     * step. If there is no
-     * key, returns the last key instead of null.
+     * step. If there is no key, returns the last key instead of
+     * <code>null</code>.
      *
      * @param step the step
      * @return the key
@@ -801,8 +806,8 @@ public class Gradient implements Iterable<ColorKey> {
 
     /**
      * Returns the greatest key in this gradient less than or equal to the given
-     * step. If there is no
-     * key, returns the first key instead of null.
+     * step. If there is no key, returns the first key instead of
+     * <code>null</code>.
      *
      * @param step the step
      * @return the key
@@ -845,9 +850,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Inserts a color key to this gradient. If a color key exists at the insertion
-     * key's step, the
-     * old key is removed.
+     * Inserts a color key to this gradient. If a color key exists at the
+     * insertion key's step, the old key is removed.
      *
      * @param key the key
      * @return this gradient
@@ -863,9 +867,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Inserts color keys to this gradient. If a color key exists at the insertion's
-     * step, the old key
-     * is removed.
+     * Inserts color keys to this gradient. If a color key exists at the
+     * insertion's step, the old key is removed.
      *
      * @param insertion the keys
      * @return this gradient
@@ -885,8 +888,7 @@ public class Gradient implements Iterable<ColorKey> {
 
     /**
      * Returns an iterator for this gradient, which allows its components to be
-     * accessed in an
-     * enhanced for-loop.
+     * accessed in an enhanced for-loop.
      *
      * @return the iterator
      * @see TreeSet#iterator()
@@ -939,8 +941,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Prepends a collection of colors to this gradient. Compresses existing keys to
-     * the right.
+     * Prepends a collection of colors to this gradient. Compresses existing
+     * keys to the right.
      *
      * @param colors the colors
      * @return this gradient
@@ -1022,8 +1024,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Removes a key if the gradient has more than 2 keys. Returns true if
-     * successful.
+     * Removes a key if the gradient has more than 2 keys. Returns
+     * <code>true</code> if successful.
      *
      * @param key the key
      * @return the success
@@ -1038,8 +1040,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Removes the first key if the gradient has more than 2 keys. Returns true if
-     * successful.
+     * Removes the first key if the gradient has more than 2 keys. Returns
+     * <code>true</code> if successful.
      *
      * @param target the output color key
      * @return the evaluation
@@ -1056,8 +1058,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Removes the last key if the gradient has more than 2 keys. Returns true if
-     * successful.
+     * Removes the last key if the gradient has more than 2 keys. Returns
+     * <code>true</code> if successful.
      *
      * @param target the output color key
      * @return the evaluation
@@ -1074,9 +1076,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Resets this gradient to an initial state, with two color keys: clear black at
-     * 0.0 and opaque
-     * white at 1.0 .
+     * Resets this gradient to an initial state, with two color keys: clear
+     * black at 0.0 and opaque white at 1.0.
      *
      * @return this gradient
      * @see TreeSet#clear()
@@ -1135,9 +1136,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Sorts the gradient according to a property of the colors in each key. Does so
-     * with a temporary
-     * List.
+     * Sorts the gradient according to a property of the colors in each key.
+     * Does so with a temporary List.
      *
      * @return the gradient
      */
@@ -1146,9 +1146,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Sorts the gradient according to a property of the colors in each key. Does so
-     * with a temporary
-     * List.
+     * Sorts the gradient according to a property of the colors in each key.
+     * Does so with a temporary List.
      *
      * @param sorter the sorting function
      * @return the gradient
@@ -1156,8 +1155,8 @@ public class Gradient implements Iterable<ColorKey> {
     public Gradient sort(final Comparator<Lab> sorter) {
 
         /*
-         * Separate color keys into an array of steps and of colors. The key steps
-         * should remain unaffected by the sort.
+         * Separate color keys into an array of steps and of colors. The key
+         * steps should remain unaffected by the sort.
          */
         final int len = this.keys.size();
         final float[] steps = new float[len];
@@ -1186,11 +1185,9 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Returns an array containing the colors in the gradient's color keys. Unlike
-     * {@link
-     * Gradient#evalRange(Gradient, int)}, doesn't return equally distributed colors
-     * derived from an
-     * easing function.
+     * Returns an array containing the colors in the gradient's color keys.
+     * Unlike {@link Gradient#evalRange(Gradient, int)}, doesn't return equally
+     * distributed colors derived from an easing function.
      *
      * @return the array
      */
@@ -1205,21 +1202,21 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 2.8x API. This
-     * code is brittle and
-     * is used for internal testing purposes.
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes.
      *
      * @return the string
      */
     public String toBlenderCode() {
 
-        return this.toBlenderCode(Integer.toHexString(System.identityHashCode(this)), this.keys.size());
+        return this.toBlenderCode(
+            Integer.toHexString(System.identityHashCode(this)),
+            this.keys.size());
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 2.8x API. This
-     * code is brittle and
-     * is used for internal testing purposes.
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes.
      *
      * @param name the material's name
      * @return the string
@@ -1230,9 +1227,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 2.8x API. This
-     * code is brittle and
-     * is used for internal testing purposes.
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes.
      *
      * @param name    the material's name
      * @param samples number of gradient samples
@@ -1244,16 +1240,18 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 2.8x API. This
-     * code is brittle and
-     * is used for internal testing purposes.
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes.
      *
      * @param name    the material's name
      * @param samples number of gradient samples
      * @param gamma   the gamma adjustment
      * @return the string
      */
-    public String toBlenderCode(final String name, final int samples, final float gamma) {
+    public String toBlenderCode(
+        final String name,
+        final int samples,
+        final float gamma) {
 
         /*
          * Blender gradients may contain a max of 32 color keys. While they may
@@ -1310,21 +1308,20 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Returns a String representation of the gradient compatible with .ggr (GIMP
-     * gradient) file
-     * formats.
+     * Returns a String representation of the gradient compatible with .ggr
+     * (GIMP gradient) file formats.
      *
      * @return the string
      */
     public String toGgrString() {
 
-        return this.toGgrString(Integer.toHexString(System.identityHashCode(this)));
+        return this.toGgrString(
+            Integer.toHexString(System.identityHashCode(this)));
     }
 
     /**
-     * Returns a String representation of the gradient compatible with .ggr (GIMP
-     * gradient) file
-     * formats.
+     * Returns a String representation of the gradient compatible with .ggr
+     * (GIMP gradient) file formats.
      *
      * @param name the name
      * @return the string
@@ -1335,13 +1332,13 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Returns a String representation of the gradient compatible with .ggr (GIMP
-     * gradient) file
-     * formats. <br>
+     * Returns a String representation of the gradient compatible with .ggr
+     * (GIMP gradient) file formats.
      * <br>
-     * Blend types include: (0) linear; (1) curved; (2) sine; (3) sphere increasing;
-     * (4) sphere
-     * decreasing.<br>
+     * <br>
+     * Blend types include: (0) linear; (1) curved; (2) sine; (3) sphere
+     * increasing; (4) sphere decreasing.
+     * <br>
      * <br>
      * Color types include: (0) RGB, (1) HSV CCW, (2) HSV CW.
      *
@@ -1350,14 +1347,17 @@ public class Gradient implements Iterable<ColorKey> {
      * @param colorType the color type
      * @return the string
      */
-    public String toGgrString(final String name, final int blendType, final int colorType) {
+    public String toGgrString(
+        final String name,
+        final int blendType,
+        final int colorType) {
 
         /*
          * The entire span of [0.0, 1.0] must be covered by the keys of a GIMP
          * gradient. Each key has a left edge (column 1), center point (column 2)
          * and right edge (column 3). A color is located on the left edge; its
-         * red, green, blue and alpha channels are columns 4, 5, 6 and 7. Another
-         * is located on the right edge; columns 8, 9, 10 and 11.
+         * red, green, blue and alpha channels are columns 4, 5, 6 and 7.
+         * Another is located on the right edge; columns 8, 9, 10 and 11.
          */
 
         final ColorKey first = this.keys.first();
@@ -1416,9 +1416,9 @@ public class Gradient implements Iterable<ColorKey> {
 
         /*
          * Fence posting problem due to differences in gradient implementation.
-         * Length of GIMP gradient is one less than this because each GIMP key is
-         * a segment. This implementation's key lies on the left edge of the GIMP
-         * key segment.
+         * Length of GIMP gradient is one less than this because each GIMP key
+         * is a segment. This implementation's key lies on the left edge of the
+         * GIMP key segment.
          */
         while (itr.hasNext()) {
             curr = itr.next();
@@ -1441,8 +1441,8 @@ public class Gradient implements Iterable<ColorKey> {
             sb.append(colorType);
 
             /*
-             * Inkscape GGR import is sensitive to trailing empty spaces, so this
-             * if-check must be retained.
+             * Inkscape GGR import is sensitive to trailing empty spaces, so
+             * this if-check must be retained.
              */
             if (itr.hasNext()) {
                 sb.append('\n');
@@ -1494,8 +1494,7 @@ public class Gradient implements Iterable<ColorKey> {
 
     /**
      * Returns a String representation of the gradient compatible with the SVG
-     * format. Assumes a
-     * horizontal linear gradient from left to right.
+     * format. Assumes a horizontal linear gradient from left to right.
      *
      * @param id the gradient id
      * @return the string
@@ -1507,8 +1506,7 @@ public class Gradient implements Iterable<ColorKey> {
 
     /**
      * Returns a String representation of the gradient compatible with the SVG
-     * format. Assumes a
-     * horizontal linear gradient from left to right.
+     * format. Assumes a horizontal linear gradient from left to right.
      *
      * @param id the gradient id
      * @param w  the width
@@ -1522,12 +1520,11 @@ public class Gradient implements Iterable<ColorKey> {
 
     /**
      * Returns a String representation of the gradient compatible with the SVG
-     * format. Assumes a
-     * linear gradient with an origin and destination point.<br>
+     * format. Assumes a linear gradient with an origin and destination point.
+     * <br>
      * <br>
      * Because SVG gradients require a <code>defs</code> tag, this class is not
-     * compatible with {@link
-     * ISvgWritable}. This method is a convenience only.
+     * compatible with {@link ISvgWritable}. This method is a convenience only.
      *
      * @param id the gradient id
      * @param w  the width
@@ -1612,8 +1609,8 @@ public class Gradient implements Iterable<ColorKey> {
             final float xr = (1.0f - fac1) * swLeft + fac1 * (float) vw;
 
             /*
-             * It's possible for the same color to appear more than once, but ids
-             * should be unique, so don't use hex code.
+             * It's possible for the same color to appear more than once, but
+             * ids should be unique, so don't use hex code.
              */
             sbSwatch.append("<path id=\"");
             sbSwatch.append("swatch.");
@@ -1640,7 +1637,8 @@ public class Gradient implements Iterable<ColorKey> {
             sbSwatch.append(hBtmStr);
 
             sbSwatch.append(" Z\" fill-opacity=\"");
-            Utils.toFixed(sbSwatch, Utils.clamp01(srgb.alpha), ISvgWritable.FIXED_PRINT);
+            Utils.toFixed(sbSwatch, Utils.clamp01(srgb.alpha),
+                ISvgWritable.FIXED_PRINT);
 
             sbSwatch.append("\" fill=\"");
             sbSwatch.append(hex);
@@ -1664,13 +1662,13 @@ public class Gradient implements Iterable<ColorKey> {
         svgp.append(" />\n");
         svgp.append(sbSwatch);
         svgp.append("</svg>");
+
         return svgp.toString();
     }
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * gradients. Appends to
-     * an existing {@link StringBuilder}.
+     * gradients. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -1691,9 +1689,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Helper function that compresses existing keys to the left when a new color is
-     * added to the
-     * gradient without a key.
+     * Helper function that compresses existing keys to the left when a new
+     * color is added to the gradient without a key.
      *
      * @param added number of new items
      * @return this gradient
@@ -1711,9 +1708,8 @@ public class Gradient implements Iterable<ColorKey> {
     }
 
     /**
-     * Helper function that compresses existing keys to the right when a new color
-     * is added to the
-     * gradient without a key.
+     * Helper function that compresses existing keys to the right when a new
+     * color is added to the gradient without a key.
      *
      * @param added number of new items
      * @return this gradient

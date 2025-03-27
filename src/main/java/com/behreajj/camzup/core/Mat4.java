@@ -4,12 +4,9 @@ import java.util.Objects;
 
 /**
  * A mutable, extensible class influenced by GLSL, OSL and PMatrix3D. Although
- * this is a 4 x 4
- * matrix, it is assumed to be a 3D affine transform matrix, where the last row
- * is (0.0, 0.0, 0.0,
- * 1.0) . Instance methods are limited, while most static methods require an
- * explicit output
- * variable to be provided.
+ * this is a 4 x 4 matrix, it is assumed to be a 3D affine transform matrix,
+ * where the last row is (0.0, 0.0, 0.0, 1.0) . Instance methods are limited,
+ * while most static methods require an explicit output variable to be provided.
  */
 public class Mat4 {
 
@@ -264,24 +261,22 @@ public class Mat4 {
      */
     public Mat4(final Mat4 source) {
 
-        /* @formatter:off */
-    this.m00 = source.m00;
-    this.m01 = source.m01;
-    this.m02 = source.m02;
-    this.m03 = source.m03;
-    this.m10 = source.m10;
-    this.m11 = source.m11;
-    this.m12 = source.m12;
-    this.m13 = source.m13;
-    this.m20 = source.m20;
-    this.m21 = source.m21;
-    this.m22 = source.m22;
-    this.m23 = source.m23;
-    this.m30 = source.m30;
-    this.m31 = source.m31;
-    this.m32 = source.m32;
-    this.m33 = source.m33;
-    /* @formatter:on */
+        this.m00 = source.m00;
+        this.m01 = source.m01;
+        this.m02 = source.m02;
+        this.m03 = source.m03;
+        this.m10 = source.m10;
+        this.m11 = source.m11;
+        this.m12 = source.m12;
+        this.m13 = source.m13;
+        this.m20 = source.m20;
+        this.m21 = source.m21;
+        this.m22 = source.m22;
+        this.m23 = source.m23;
+        this.m30 = source.m30;
+        this.m31 = source.m31;
+        this.m32 = source.m32;
+        this.m33 = source.m33;
     }
 
     /**
@@ -2751,26 +2746,24 @@ public class Mat4 {
         final float m21,
         final float m22) {
 
-        /* @formatter:off */
-    this.m00 = m00;
-    this.m01 = m01;
-    this.m02 = m02;
-    this.m03 = 0.0f;
-    this.m10 = m10;
-    this.m11 = m11;
-    this.m12 = m12;
-    this.m13 = 0.0f;
-    this.m20 = m20;
-    this.m21 = m21;
-    this.m22 = m22;
-    this.m23 = 0.0f;
-    this.m30 = 0.0f;
-    this.m31 = 0.0f;
-    this.m32 = 0.0f;
-    this.m33 = 1.0f;
+        this.m00 = m00;
+        this.m01 = m01;
+        this.m02 = m02;
+        this.m03 = 0.0f;
+        this.m10 = m10;
+        this.m11 = m11;
+        this.m12 = m12;
+        this.m13 = 0.0f;
+        this.m20 = m20;
+        this.m21 = m21;
+        this.m22 = m22;
+        this.m23 = 0.0f;
+        this.m30 = 0.0f;
+        this.m31 = 0.0f;
+        this.m32 = 0.0f;
+        this.m33 = 1.0f;
 
-    return this;
-    /* @formatter:on */
+        return this;
     }
 
     /**
@@ -2805,26 +2798,24 @@ public class Mat4 {
         final float m22,
         final float m23) {
 
-        /* @formatter:off */
-    this.m00 = m00;
-    this.m01 = m01;
-    this.m02 = m02;
-    this.m03 = m03;
-    this.m10 = m10;
-    this.m11 = m11;
-    this.m12 = m12;
-    this.m13 = m13;
-    this.m20 = m20;
-    this.m21 = m21;
-    this.m22 = m22;
-    this.m23 = m23;
-    this.m30 = 0.0f;
-    this.m31 = 0.0f;
-    this.m32 = 0.0f;
-    this.m33 = 1.0f;
+        this.m00 = m00;
+        this.m01 = m01;
+        this.m02 = m02;
+        this.m03 = m03;
+        this.m10 = m10;
+        this.m11 = m11;
+        this.m12 = m12;
+        this.m13 = m13;
+        this.m20 = m20;
+        this.m21 = m21;
+        this.m22 = m22;
+        this.m23 = m23;
+        this.m30 = 0.0f;
+        this.m31 = 0.0f;
+        this.m32 = 0.0f;
+        this.m33 = 1.0f;
 
-    return this;
-    /* @formatter:on */
+        return this;
     }
 
     /**
@@ -2866,26 +2857,24 @@ public class Mat4 {
         final float m32,
         final float m33) {
 
-        /* @formatter:off */
-    this.m00 = m00;
-    this.m01 = m01;
-    this.m02 = m02;
-    this.m03 = m03;
-    this.m10 = m10;
-    this.m11 = m11;
-    this.m12 = m12;
-    this.m13 = m13;
-    this.m20 = m20;
-    this.m21 = m21;
-    this.m22 = m22;
-    this.m23 = m23;
-    this.m30 = m30;
-    this.m31 = m31;
-    this.m32 = m32;
-    this.m33 = m33;
+        this.m00 = m00;
+        this.m01 = m01;
+        this.m02 = m02;
+        this.m03 = m03;
+        this.m10 = m10;
+        this.m11 = m11;
+        this.m12 = m12;
+        this.m13 = m13;
+        this.m20 = m20;
+        this.m21 = m21;
+        this.m22 = m22;
+        this.m23 = m23;
+        this.m30 = m30;
+        this.m31 = m31;
+        this.m32 = m32;
+        this.m33 = m33;
 
-    return this;
-    /* @formatter:on */
+        return this;
     }
 
     /**
@@ -2916,10 +2905,9 @@ public class Mat4 {
     }
 
     /**
-     * Sets a column of this matrix with an index and vector. If the column is an
-     * axis vector, the w
-     * component is set to 0.0; if it is a translation, the w component is set to
-     * 1.0.
+     * Sets a column of this matrix with an index and vector. If the column is
+     * an axis vector, the w component is set to 0.0; if it is a translation,
+     * the w component is set to 1.0.
      *
      * @param j      the column index
      * @param source the column
@@ -3053,14 +3041,12 @@ public class Mat4 {
      */
     public float[] toArray1() {
 
-        /* @formatter:off */
-    return new float[] {
-      this.m00, this.m01, this.m02, this.m03,
-      this.m10, this.m11, this.m12, this.m13,
-      this.m20, this.m21, this.m22, this.m23,
-      this.m30, this.m31, this.m32, this.m33
-    };
-    /* @formatter:on */
+        return new float[]{
+            this.m00, this.m01, this.m02, this.m03,
+            this.m10, this.m11, this.m12, this.m13,
+            this.m20, this.m21, this.m22, this.m23,
+            this.m30, this.m31, this.m32, this.m33
+        };
     }
 
     /**
@@ -3070,14 +3056,12 @@ public class Mat4 {
      */
     public float[][] toArray2() {
 
-        /* @formatter:off */
-    return new float[][] {
-      {this.m00, this.m01, this.m02, this.m03},
-      {this.m10, this.m11, this.m12, this.m13},
-      {this.m20, this.m21, this.m22, this.m23},
-      {this.m30, this.m31, this.m32, this.m33}
-    };
-    /* @formatter:on */
+        return new float[][]{
+            {this.m00, this.m01, this.m02, this.m03},
+            {this.m10, this.m11, this.m12, this.m13},
+            {this.m20, this.m21, this.m22, this.m23},
+            {this.m30, this.m31, this.m32, this.m33}
+        };
     }
 
     /**

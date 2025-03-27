@@ -91,9 +91,8 @@ public class Bounds3 implements Comparable<Bounds3> {
 
     /**
      * Evaluates whether a point is within the bounding volume, lower bounds
-     * inclusive, upper bounds
-     * exclusive. For cases where multiple bounds must cover a volume without
-     * overlap or gaps.
+     * inclusive, upper bounds exclusive. For cases where multiple bounds must
+     * cover a volume without overlap or gaps.
      *
      * @param b the bounds
      * @param v the vector
@@ -111,13 +110,12 @@ public class Bounds3 implements Comparable<Bounds3> {
 
     /**
      * Evaluates whether a point is within the bounding volume, lower bounds
-     * inclusive upper bounds
-     * exclusive. For cases where multiple bounds must cover a volume without
-     * overlap or gaps.<br>
+     * inclusive upper bounds exclusive. For cases where multiple bounds must
+     * cover a volume without overlap or gaps.
      * <br>
-     * A boolean vector is returned; useful for cases where a point may be contained
-     * in one dimension
-     * but not in another.
+     * <br>
+     * A boolean vector is returned; useful for cases where a point may be
+     * contained in one dimension but not in another.
      *
      * @param b      the bounds
      * @param v      the vector
@@ -134,8 +132,8 @@ public class Bounds3 implements Comparable<Bounds3> {
 
     /**
      * Evaluates whether a point is within the bounding volume, excluding the
-     * bound's edges (i.e., the
-     * evaluation is made with greater than and less than).
+     * bound's edges (i.e., the evaluation is made with greater than and less
+     * than).
      *
      * @param b the bounds
      * @param v the point
@@ -153,12 +151,12 @@ public class Bounds3 implements Comparable<Bounds3> {
 
     /**
      * Evaluates whether a point is within the bounding volume, excluding the
-     * bound's edges (i.e., the
-     * evaluation is made with greater than and less than).<br>
+     * bound's edges (i.e., the evaluation is made with greater than and less
+     * than).
      * <br>
-     * A boolean vector is returned; useful for cases where a point may be contained
-     * in one dimension
-     * but not in another.
+     * <br>
+     * A boolean vector is returned; useful for cases where a point may be
+     * contained in one dimension but not in another.
      *
      * @param b      the bounds
      * @param v      the point
@@ -175,8 +173,8 @@ public class Bounds3 implements Comparable<Bounds3> {
 
     /**
      * Evaluates whether a point is within the bounding volume, including the
-     * bound's edges (i.e., the
-     * evaluation is made with greater than or equal to and less than or equal to).
+     * bound's edges (i.e., the evaluation is made with greater than or equal
+     * to and less than or equal to).
      *
      * @param b the bounds
      * @param v the point
@@ -194,13 +192,12 @@ public class Bounds3 implements Comparable<Bounds3> {
 
     /**
      * Evaluates whether a point is within the bounding volume, including the
-     * bound's edges (i.e., the
-     * evaluation is made with greater than or equal to and less than or equal
-     * to).<br>
+     * bound's edges (i.e., the evaluation is made with greater than or equal
+     * to and less than or equal to).
      * <br>
-     * A boolean vector is returned; useful for cases where a point may be contained
-     * in one dimension
-     * but not in another.
+     * <br>
+     * A boolean vector is returned; useful for cases where a point may be
+     * contained in one dimension but not in another.
      *
      * @param b      the bounds
      * @param v      the point
@@ -243,9 +240,8 @@ public class Bounds3 implements Comparable<Bounds3> {
     }
 
     /**
-     * Finds the extent of the bounds, the absolute difference between its minimum
-     * and maximum
-     * corners.
+     * Finds the extent of the bounds, the absolute difference between its
+     * minimum and maximum corners.
      *
      * @param b      the bounds
      * @param target the output vector
@@ -298,10 +294,9 @@ public class Bounds3 implements Comparable<Bounds3> {
     }
 
     /**
-     * Finds the intersection between two bounds, i.e. the overlapping area between
-     * the two. To avoid
-     * unexpected results from zero and negative bounds, use
-     * {@link Bounds3#verified} on inputs.
+     * Finds the intersection between two bounds, i.e. the overlapping area
+     * between the two. To avoid unexpected results from zero and negative
+     * bounds, use {@link Bounds3#verified} on inputs.
      *
      * @param a      left operand
      * @param b      right operand
@@ -374,9 +369,8 @@ public class Bounds3 implements Comparable<Bounds3> {
     }
 
     /**
-     * Finds the union between two bounds, i.e. a bounds that will contain both of
-     * them. To avoid
-     * unexpected results from zero and negative bounds, use
+     * Finds the union between two bounds, i.e. a bounds that will contain both
+     * of them. To avoid unexpected results from zero and negative bounds, use
      * {@link Bounds3#verified} on inputs.
      *
      * @param a      left operand
@@ -394,9 +388,9 @@ public class Bounds3 implements Comparable<Bounds3> {
     }
 
     /**
-     * Evaluates whether two bounding volumes intersect. To avoid unexpected results
-     * from zero and
-     * negative bounds, use {@link Bounds3#verified} on inputs.
+     * Evaluates whether two bounding volumes intersect. To avoid unexpected
+     * results from zero and negative bounds, use {@link Bounds3#verified} on
+     * inputs.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -413,10 +407,9 @@ public class Bounds3 implements Comparable<Bounds3> {
     }
 
     /**
-     * Evaluates whether two bounding volumes intersect. A boolean vector holds the
-     * evaluation. To
-     * avoid unexpected results from zero and negative bounds, use
-     * {@link Bounds3#verified} on inputs.
+     * Evaluates whether two bounding volumes intersect. A boolean vector holds
+     * the evaluation. To avoid unexpected results from zero and negative
+     * bounds, use {@link Bounds3#verified} on inputs.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -432,9 +425,9 @@ public class Bounds3 implements Comparable<Bounds3> {
     }
 
     /**
-     * Evaluates whether a bounding volume intersects a sphere. To avoid unexpected
-     * results from zero
-     * and negative bounds, use {@link Bounds3#verified} on left operand.
+     * Evaluates whether a bounding volume intersects a sphere. To avoid
+     * unexpected results from zero and negative bounds, use
+     * {@link Bounds3#verified} on left operand.
      *
      * @param a      the bounds
      * @param center the sphere center
@@ -484,10 +477,8 @@ public class Bounds3 implements Comparable<Bounds3> {
 
     /**
      * Returns a boundary encompassing the LAB color space, with a minimum at
-     * ({@value Lab#SR_A_MIN},
-     * {@value Lab#SR_B_MIN}, 0.0) and a maximum at ({@value Lab#SR_A_MAX},
-     * {@value Lab#SR_B_MAX},
-     * 100.0).
+     * ({@value Lab#SR_A_MIN}, {@value Lab#SR_B_MIN}, 0.0) and a maximum at
+     * ({@value Lab#SR_A_MAX}, {@value Lab#SR_B_MAX}, 100.0).
      *
      * @param target the output bounds
      * @return the LAB bounds
@@ -528,11 +519,10 @@ public class Bounds3 implements Comparable<Bounds3> {
     }
 
     /**
-     * Splits a bounding volume into eight octants according to three factors in the
-     * range [0.0, 1.0]
-     * . The factor on the x axis governs the vertical split; on the y-axis, the
-     * horizontal split; on
-     * the z axis, the depth split.
+     * Splits a bounding volume into eight octants according to three factors
+     * in the range [0.0, 1.0]. The factor on the x axis governs the vertical
+     * split; on the y-axis, the horizontal split; on the z axis, the depth
+     * split.
      *
      * @param b    the bounds
      * @param xFac vertical factor
@@ -573,24 +563,21 @@ public class Bounds3 implements Comparable<Bounds3> {
         final float y = (1.0f - ty) * bMin.y + ty * bMax.y;
         final float z = (1.0f - tz) * bMin.z + tz * bMax.z;
 
-        /* @formatter:off */
-    bsw.set(bMin.x, bMin.y, bMin.z, x, y, z);
-    bse.set(x, bMin.y, bMin.z, bMax.x, y, z);
-    bnw.set(bMin.x, y, bMin.z, x, bMax.y, z);
-    bne.set(x, y, bMin.z, bMax.x, bMax.y, z);
-    fsw.set(bMin.x, bMin.y, z, x, y, bMax.z);
-    fse.set(x, bMin.y, z, bMax.x, y, bMax.z);
-    fnw.set(bMin.x, y, z, x, bMax.y, bMax.z);
-    fne.set(x, y, z, bMax.x, bMax.y, bMax.z);
-    /* @formatter:on */
+        bsw.set(bMin.x, bMin.y, bMin.z, x, y, z);
+        bse.set(x, bMin.y, bMin.z, bMax.x, y, z);
+        bnw.set(bMin.x, y, bMin.z, x, bMax.y, z);
+        bne.set(x, y, bMin.z, bMax.x, bMax.y, z);
+        fsw.set(bMin.x, bMin.y, z, x, y, bMax.z);
+        fse.set(x, bMin.y, z, bMax.x, y, bMax.z);
+        fnw.set(bMin.x, y, z, x, bMax.y, bMax.z);
+        fne.set(x, y, z, bMax.x, bMax.y, bMax.z);
     }
 
     /**
      * Splits a bounding volume into eight octants according to a point. If the
-     * point is inside the
-     * bounding volume, assigns the result to target bounds and returns
-     * <code>true</code>. If the
-     * point is outside the bounding volume, returns <code>false</code>.
+     * point is inside the bounding volume, assigns the result to target bounds
+     * and returns <code>true</code>. If the point is outside the bounding
+     * volume, returns <code>false</code>.
      *
      * @param b   the bounds
      * @param v   the point
@@ -640,7 +627,8 @@ public class Bounds3 implements Comparable<Bounds3> {
     }
 
     /**
-     * Returns a boundary encompassing a signed unit cube in the range [-1.0, 1.0] .
+     * Returns a boundary encompassing a signed unit cube in the range
+     * [-1.0, 1.0].
      *
      * @param target the output bounds
      * @return the unit cube
@@ -651,8 +639,8 @@ public class Bounds3 implements Comparable<Bounds3> {
     }
 
     /**
-     * Returns a boundary encompassing an unsigned unit cube in the range [0.0, 1.0]
-     * .
+     * Returns a boundary encompassing an unsigned unit cube in the range
+     * [0.0, 1.0].
      *
      * @param target the output bounds
      * @return the unit cube
@@ -663,9 +651,8 @@ public class Bounds3 implements Comparable<Bounds3> {
     }
 
     /**
-     * Returns a bounds where all components of the minimum are less than those of
-     * the maximum, and
-     * that the edges of the bounds do not equal each other.
+     * Returns a bounds where all components of the minimum are less than those
+     * of the maximum, and that the edges of the bounds do not equal each other.
      *
      * @param source the source bounds
      * @param target the output bounds
@@ -755,17 +742,28 @@ public class Bounds3 implements Comparable<Bounds3> {
      */
     static boolean intersectSq(final Bounds3 a, final Vec3 center, final float rsq) {
 
-        final float zd = center.z < a.min.z ? center.z - a.min.z : center.z > a.max.z ? center.z - a.max.z : 0.0f;
-        final float yd = center.y < a.min.y ? center.y - a.min.y : center.y > a.max.y ? center.y - a.max.y : 0.0f;
-        final float xd = center.x < a.min.x ? center.x - a.min.x : center.x > a.max.x ? center.x - a.max.x : 0.0f;
+        final float zd = center.z < a.min.z
+            ? center.z - a.min.z
+            : center.z > a.max.z
+            ? center.z - a.max.z
+            : 0.0f;
+        final float yd = center.y < a.min.y
+            ? center.y - a.min.y
+            : center.y > a.max.y
+            ? center.y - a.max.y
+            : 0.0f;
+        final float xd = center.x < a.min.x
+            ? center.x - a.min.x
+            : center.x > a.max.x
+            ? center.x - a.max.x
+            : 0.0f;
 
         return xd * xd + yd * yd + zd * zd < rsq;
     }
 
     /**
-     * Compares two bounds according to their center points. Evaluates the y
-     * coordinate before the x
-     * coordinate.
+     * Compares two bounds according to their center points. Evaluates the z
+     * coordinate, then the y coordinate, then the x coordinate.
      *
      * @return the evaluation
      */
@@ -1039,8 +1037,7 @@ public class Bounds3 implements Comparable<Bounds3> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * bounds. Appends to an
-     * existing {@link StringBuilder}.
+     * bounds. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places

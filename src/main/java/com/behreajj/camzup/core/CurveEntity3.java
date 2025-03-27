@@ -60,7 +60,10 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
      * @param transform the transform
      * @param curves    the list of curves
      */
-    public CurveEntity3(final String name, final Transform3 transform, final Curve3... curves) {
+    public CurveEntity3(
+        final String name,
+        final Transform3 transform,
+        final Curve3... curves) {
 
         super(name, transform);
         this.appendAll(curves);
@@ -79,8 +82,8 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     }
 
     /**
-     * Evaluates a step in the range [0.0, 1.0] for a curve in the entity, returning
-     * a knot.
+     * Evaluates a step in the range [0.0, 1.0] for a curve in the entity,
+     * returning a knot.
      *
      * @param ce         the curve entity
      * @param curveIndex the curve index
@@ -109,10 +112,9 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     }
 
     /**
-     * Evaluates a step in the range [0.0, 1.0] for a curve in the entity, returning
-     * a coordinate on
-     * the curve and a tangent. The tangent will be normalized, to be of unit
-     * length.
+     * Evaluates a step in the range [0.0, 1.0] for a curve in the entity,
+     * returning a coordinate on the curve and a tangent. The tangent will be
+     * normalized, to be of unit length.
      *
      * @param ce         the curve entity
      * @param curveIndex the curve index
@@ -130,15 +132,16 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
         final Ray3 rayLocal) {
 
         CurveEntity3.eval(
-            ce, curveIndex, step, rayWorld.origin, rayWorld.dir, rayLocal.origin, rayLocal.dir);
+            ce, curveIndex, step,
+            rayWorld.origin, rayWorld.dir,
+            rayLocal.origin, rayLocal.dir);
         return rayWorld;
     }
 
     /**
-     * Evaluates a step in the range [0.0, 1.0] for a curve in the entity, returning
-     * a coordinate on
-     * the curve and a tangent. The tangent will be normalized, to be of unit
-     * length.
+     * Evaluates a step in the range [0.0, 1.0] for a curve in the entity,
+     * returning a coordinate on the curve and a tangent. The tangent will be
+     * normalized, to be of unit length.
      *
      * @param ce         the curve entity
      * @param curveIndex the curve index
@@ -171,9 +174,8 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     }
 
     /**
-     * Appends a curve to this curve entity. The curve must not be <code>null</code>
-     * and must have a
-     * length greater than zero.
+     * Appends a curve to this curve entity. The curve must not be
+     * <code>null</code>.
      *
      * @param curve the curve
      * @return this curve entity
@@ -190,13 +192,13 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     /**
      * Appends a collection of curves to this curve entity.
      *
-     * @param app the curves
+     * @param curves the curves
      * @return this curve entity
      */
-    public CurveEntity3 appendAll(final Collection<Curve3> app) {
+    public CurveEntity3 appendAll(final Collection<Curve3> curves) {
 
-        for (Curve3 knot3s : app) {
-            this.append(knot3s);
+        for (Curve3 curve : curves) {
+            this.append(curve);
         }
 
         return this;
@@ -205,23 +207,22 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     /**
      * Appends a list of curves to this curve entity.
      *
-     * @param app the curves
+     * @param curves the curves
      * @return this curve entity
      */
     @SuppressWarnings("UnusedReturnValue")
-    public CurveEntity3 appendAll(final Curve3... app) {
+    public CurveEntity3 appendAll(final Curve3... curves) {
 
-        for (Curve3 knot3s : app) {
-            this.append(knot3s);
+        for (Curve3 curve : curves) {
+            this.append(curve);
         }
 
         return this;
     }
 
     /**
-     * Transforms all curves in this curve entity by its transform, then resets the
-     * entity's transform
-     * to the identity.
+     * Transforms all curves in this curve entity by its transform, then resets
+     * the entity's transform to the identity.
      *
      * @return this curve entity
      * @see Curve3#transform(Transform3)
@@ -304,8 +305,8 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     }
 
     /**
-     * Returns an iterator, which allows an enhanced for-loop to access the curves
-     * in the entity.
+     * Returns an iterator, which allows an enhanced for-loop to access the
+     * curves in the entity.
      *
      * @return the iterator
      * @see List#iterator()
@@ -326,9 +327,8 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
 
     /**
      * Centers and rescales all curves in the entity about a shared origin by
-     * calculating their
-     * dimensions, subtracting the center point, and scaling by the maximum
-     * dimension.
+     * calculating their dimensions, subtracting the center point, and scaling
+     * by the maximum dimension.
      *
      * @return this curve entity.
      * @see Curve3#accumMinMax(Curve3, Vec3, Vec3)
@@ -336,8 +336,14 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     public CurveEntity3 reframe() {
 
         /* Find lower and upper bound for all curves. */
-        final Vec3 lb = new Vec3(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
-        final Vec3 ub = new Vec3(-Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE);
+        final Vec3 lb = new Vec3(
+            Float.MAX_VALUE,
+            Float.MAX_VALUE,
+            Float.MAX_VALUE);
+        final Vec3 ub = new Vec3(
+            -Float.MAX_VALUE,
+            -Float.MAX_VALUE,
+            -Float.MAX_VALUE);
 
         Iterator<Curve3> crvItr = this.curves.iterator();
         while (crvItr.hasNext()) {
@@ -360,9 +366,8 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     }
 
     /**
-     * Relocates a knot within the curve to a point in global space. The point is
-     * inverse multiplied
-     * by the transform to put it in local space.
+     * Relocates a knot within the curve to a point in global space. The point
+     * is inverse multiplied by the transform to put it in local space.
      *
      * @param curveIndex the curve index
      * @param knotIndex  the knot index
@@ -373,7 +378,10 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
      * @see Curve3#relocateKnot(int, Vec3)
      */
     public CurveEntity3 relocateKnot(
-        final int curveIndex, final int knotIndex, final Vec3 global, final Vec3 local) {
+        final int curveIndex,
+        final int knotIndex,
+        final Vec3 global,
+        final Vec3 local) {
 
         Transform3.invMulPoint(this.transform, global, local);
         this.get(curveIndex).relocateKnot(knotIndex, local);
@@ -382,9 +390,8 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     }
 
     /**
-     * Removes a curve from this curve entity. Returns <code>true</code> if this
-     * request was filled,
-     * <code>false</code> if not.
+     * Removes a curve from this curve entity. Returns <code>true</code> if
+     * this request was filled, <code>false</code> if not.
      *
      * @param curve the curve to remove
      * @return the evaluation
@@ -406,8 +413,7 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
 
     /**
      * Resets the curve entity to an initial state. Sets the transform to an
-     * identity and clears the
-     * list of curves.
+     * identity and clears the list of curves.
      *
      * @return this entity
      */
@@ -492,9 +498,9 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     }
 
     /**
-     * Sets the coordinate of a knot for a given curve at an index. Multiplies the
-     * input coordinate in
-     * global space by the transform's inverse.<br>
+     * Sets the coordinate of a knot for a given curve at an index. Multiplies
+     * the input coordinate in global space by the transform's inverse.
+     * <br>
      * <br>
      * To facilitate editing the curve with a graphical user interface (GUI).
      *
@@ -506,7 +512,10 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
      * @see Transform3#invMulPoint(Transform3, Vec3, Vec3)
      */
     public CurveEntity3 setKnotCoord(
-        final int curveIndex, final int knotIndex, final Vec3 global, final Vec3 local) {
+        final int curveIndex,
+        final int knotIndex,
+        final Vec3 global,
+        final Vec3 local) {
 
         Transform3.invMulPoint(this.transform, global, local);
         this.get(curveIndex).get(knotIndex).coord.set(local);
@@ -515,9 +524,9 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     }
 
     /**
-     * Sets the fore handle of a knot for a given curve at an index. Multiplies the
-     * input coordinate
-     * in global space by the transform's inverse.<br>
+     * Sets the fore handle of a knot for a given curve at an index. Multiplies
+     * the input coordinate in global space by the transform's inverse.
+     * <br>
      * <br>
      * To facilitate editing the curve with a graphical user interface (GUI).
      *
@@ -529,7 +538,10 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
      * @see Transform3#invMulPoint(Transform3, Vec3, Vec3)
      */
     public CurveEntity3 setKnotForeHandle(
-        final int curveIndex, final int knotIndex, final Vec3 global, final Vec3 local) {
+        final int curveIndex,
+        final int knotIndex,
+        final Vec3 global,
+        final Vec3 local) {
 
         Transform3.invMulPoint(this.transform, global, local);
         this.get(curveIndex).get(knotIndex).foreHandle.set(local);
@@ -538,9 +550,9 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     }
 
     /**
-     * Sets the rear handle of a knot for a given curve at an index. Multiplies the
-     * input coordinate
-     * in global space by the transform's inverse.<br>
+     * Sets the rear handle of a knot for a given curve at an index. Multiplies
+     * the input coordinate in global space by the transform's inverse.
+     * <br>
      * <br>
      * To facilitate editing the curve with a graphical user interface (GUI).
      *
@@ -552,7 +564,10 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
      * @see Transform3#invMulPoint(Transform3, Vec3, Vec3)
      */
     public CurveEntity3 setKnotRearHandle(
-        final int curveIndex, final int knotIndex, final Vec3 global, final Vec3 local) {
+        final int curveIndex,
+        final int knotIndex,
+        final Vec3 global,
+        final Vec3 local) {
 
         Transform3.invMulPoint(this.transform, global, local);
         this.get(curveIndex).get(knotIndex).rearHandle.set(local);
@@ -561,11 +576,10 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 2.8x API. This
-     * code is brittle and
-     * is used for internal testing purposes, i.e., to compare how curve geometry
-     * looks in Blender
-     * (the control) versus in the library (the test).
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes, i.e., to
+     * compare how curve geometry looks in Blender (the control) versus in the
+     * library (the test).
      *
      * @return the string
      */
@@ -575,11 +589,10 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 2.8x API. This
-     * code is brittle and
-     * is used for internal testing purposes, i.e., to compare how curve geometry
-     * looks in Blender
-     * (the control) versus in the library (the test).
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes, i.e., to
+     * compare how curve geometry looks in Blender (the control) versus in the
+     * library (the test).
      *
      * @param uRes       the resolution u
      * @param fillMode   the fill mode: "FULL", "BACK", "FRONT", "HALF"
@@ -661,9 +674,8 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     }
 
     /**
-     * Centers all curves in the entity about a shared origin by calculating their
-     * dimensions then
-     * subtracting the center point.
+     * Centers all curves in the entity about a shared origin by calculating
+     * their dimensions then subtracting the center point.
      *
      * @return this curve entity.
      */

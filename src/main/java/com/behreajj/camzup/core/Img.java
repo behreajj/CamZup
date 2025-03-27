@@ -1204,10 +1204,30 @@ public class Img {
                     }
                     break;
 
+                    case BURN: {
+                        if (vgt0) {
+                            final double quo = lOver != 0.0d
+                                ? (100.0 - lUnder) / lOver * 100.0d
+                                : 0.0d;
+                            lComp = uLUnder + t * quo;
+                        }
+                    }
+                    break;
+
                     case DIVIDE: {
                         if (vgt0) {
                             final double quo = lOver != 0.0d
                                 ? lUnder / lOver * 100.0d
+                                : 100.0d;
+                            lComp = uLUnder + t * quo;
+                        }
+                    }
+                    break;
+
+                    case DODGE: {
+                        if (vgt0) {
+                            final double quo = lOver != 100.0d
+                                ? lUnder / (100.0d - lOver) * 100.0d
                                 : 100.0d;
                             lComp = uLUnder + t * quo;
                         }

@@ -2,16 +2,16 @@ package com.behreajj.camzup.core;
 
 /**
  * Tracks the chirality, or handedness, of a 3D renderer. Describes the
- * orientation of the
- * renderer's coordinate axes wherein a human hand's thumb points out (the
- * x-axis), index finger
- * points forward (the y-axis) and middle finger points up (the z axis).<br>
+ * orientation of the renderer's coordinate axes wherein a human hand's thumb
+ * points out (the x-axis), index finger points forward (the y-axis) and middle
+ * finger points up (the z-axis).
  * <br>
- * Associates left with -1; right, with 1.<br>
+ * <br>
+ * Associates left with -1; right, with 1.
+ * <br>
  * <br>
  * In right-handed renderers, a positive angle rotates counter-clockwise; in
- * left-handed renderers,
- * clockwise.
+ * left-handed renderers, clockwise.
  */
 public enum Handedness {
 

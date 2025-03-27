@@ -4,9 +4,8 @@ import java.util.Objects;
 
 /**
  * Organizes the vectors that shape a cubic Bézier curve into a coordinate (or
- * anchor point), fore
- * handle (the following control point) and rear handle (the preceding control
- * point).
+ * anchor point), fore handle (the following control point) and rear handle
+ * (the preceding control point).
  */
 public class Knot2 implements Comparable<Knot2> {
 
@@ -16,16 +15,14 @@ public class Knot2 implements Comparable<Knot2> {
     public final Vec2 coord = new Vec2();
 
     /**
-     * The handle that warps the curve segment heading away from the knot along the
-     * direction of the
-     * curve.
+     * The handle that warps the curve segment heading away from the knot along
+     * the direction of the curve.
      */
     public final Vec2 foreHandle = new Vec2();
 
     /**
-     * The handle that warps the curve segment heading towards the knot along the
-     * direction of the
-     * curve.
+     * The handle that warps the curve segment heading towards the knot along
+     * the direction of the curve.
      */
     public final Vec2 rearHandle = new Vec2();
 
@@ -48,15 +45,16 @@ public class Knot2 implements Comparable<Knot2> {
 
     /**
      * Creates a knot from a coordinates and fore handle. The rear handle is a
-     * mirror of the fore
-     * handle.
+     * mirror of the fore handle.
      *
      * @param xCoord the x coordinate
      * @param yCoord the y coordinate
      * @param xFore  the fore handle x
      * @param yFore  the fore handle y
      */
-    public Knot2(final float xCoord, final float yCoord, final float xFore, final float yFore) {
+    public Knot2(
+        final float xCoord, final float yCoord,
+        final float xFore, final float yFore) {
 
         this.set(xCoord, yCoord, xFore, yFore);
     }
@@ -72,12 +70,9 @@ public class Knot2 implements Comparable<Knot2> {
      * @param yRear  the rear handle y
      */
     public Knot2(
-        final float xCoord,
-        final float yCoord,
-        final float xFore,
-        final float yFore,
-        final float xRear,
-        final float yRear) {
+        final float xCoord, final float yCoord,
+        final float xFore, final float yFore,
+        final float xRear, final float yRear) {
 
         this.set(xCoord, yCoord, xFore, yFore, xRear, yRear);
     }
@@ -101,9 +96,8 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Creates a knot from a coordinate and fore handle. The rear handle is a mirror
-     * of the fore
-     * handle.
+     * Creates a knot from a coordinate and fore handle. The rear handle is a
+     * mirror of the fore handle.
      *
      * @param coord      the coordinate
      * @param foreHandle the fore handle
@@ -187,9 +181,8 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Returns the magnitude of the knot's fore handle, i.e., the Euclidean distance
-     * between the fore
-     * handle and the coordinate.
+     * Returns the magnitude of the knot's fore handle, i.e., the Euclidean
+     * distance between the fore handle and the coordinate.
      *
      * @param knot the knot
      * @return the magnitude
@@ -215,12 +208,11 @@ public class Knot2 implements Comparable<Knot2> {
 
     /**
      * Sets two knots from a segment of a Catmull-Rom curve. Assumes that the
-     * previous knot's
-     * coordinate is set to a prior anchor point.<br>
+     * previous knot's coordinate is set to a prior anchor point.
      * <br>
-     * The previous knot's fore handle, the next knot's rear handle and the next
-     * knot's coordinate are
-     * set by this function.
+     * <br>
+     * The previous knot's fore handle, the next knot's rear handle and the
+     * next knot's coordinate are set by this function.
      *
      * @param xPrevAnchor the previous anchor x
      * @param yPrevAnchor the previous anchor y
@@ -236,14 +228,10 @@ public class Knot2 implements Comparable<Knot2> {
      * @return the next knot
      */
     public static Knot2 fromSegCatmull(
-        final float xPrevAnchor,
-        final float yPrevAnchor,
-        final float xCurrAnchor,
-        final float yCurrAnchor,
-        final float xNextAnchor,
-        final float yNextAnchor,
-        final float xAdvAnchor,
-        final float yAdvAnchor,
+        final float xPrevAnchor, final float yPrevAnchor,
+        final float xCurrAnchor, final float yCurrAnchor,
+        final float xNextAnchor, final float yNextAnchor,
+        final float xAdvAnchor, final float yAdvAnchor,
         final float tightness,
         final Knot2 prev,
         final Knot2 next) {
@@ -266,13 +254,12 @@ public class Knot2 implements Comparable<Knot2> {
 
     /**
      * Sets two knots from a segment of a Catmull-Rom curve. The default curve
-     * tightness is 0.0.<br>
+     * tightness is 0.0.
      * <br>
-     * Assumes that the previous knot's coordinate is set to a prior anchor point.
-     * The previous knot's
-     * fore handle, the next knot's rear handle and the next knot's coordinate are
-     * set by this
-     * function.
+     * <br>
+     * Assumes that the previous knot's coordinate is set to a prior anchor
+     * point. The previous knot's fore handle, the next knot's rear handle and
+     * the next knot's coordinate are set by this function.
      *
      * @param prevAnchor the previous anchor
      * @param currAnchor the current anchor
@@ -293,27 +280,21 @@ public class Knot2 implements Comparable<Knot2> {
         final Knot2 next) {
 
         return Knot2.fromSegCatmull(
-            prevAnchor.x,
-            prevAnchor.y,
-            currAnchor.x,
-            currAnchor.y,
-            nextAnchor.x,
-            nextAnchor.y,
-            advAnchor.x,
-            advAnchor.y,
+            prevAnchor.x, prevAnchor.y,
+            currAnchor.x, currAnchor.y,
+            nextAnchor.x, nextAnchor.y,
+            advAnchor.x, advAnchor.y,
             tightness,
-            prev,
-            next);
+            prev, next);
     }
 
     /**
-     * Sets two knots from a segment of a cubic curve.<br>
+     * Sets two knots from a segment of a cubic curve.
      * <br>
-     * Assumes that the previous knot's coordinate is set to the first anchor point.
-     * The previous
-     * knot's fore handle, the next knot's rear handle and the next knot's
-     * coordinate are set by this
-     * function.
+     * <br>
+     * Assumes that the previous knot's coordinate is set to the first anchor
+     * point. The previous knot's fore handle, the next knot's rear handle and
+     * the next knot's coordinate are set by this function.
      *
      * @param xPrevControl the previous control point x
      * @param yPrevControl the previous control point y
@@ -323,17 +304,13 @@ public class Knot2 implements Comparable<Knot2> {
      * @param yNextAnchor  the next anchor y
      * @param prev         the previous knot
      * @param next         the next knot
-     * @return next knot
+     * @return the next knot
      */
     public static Knot2 fromSegCubic(
-        final float xPrevControl,
-        final float yPrevControl,
-        final float xNextControl,
-        final float yNextControl,
-        final float xNextAnchor,
-        final float yNextAnchor,
-        final Knot2 prev,
-        final Knot2 next) {
+        final float xPrevControl, final float yPrevControl,
+        final float xNextControl, final float yNextControl,
+        final float xNextAnchor, final float yNextAnchor,
+        final Knot2 prev, final Knot2 next) {
 
         prev.foreHandle.set(xPrevControl, yPrevControl);
         next.rearHandle.set(xNextControl, yNextControl);
@@ -343,13 +320,12 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Sets two knots from a segment of a cubic curve. Assumes that the previous
-     * knot's coordinate is
-     * set to the first anchor point.<br>
+     * Sets two knots from a segment of a cubic curve. Assumes that the
+     * previous knot's coordinate is set to the first anchor point.
      * <br>
-     * The previous knot's fore handle, the next knot's rear handle and the next
-     * knot's coordinate are
-     * set by this function.
+     * <br>
+     * The previous knot's fore handle, the next knot's rear handle and the
+     * next knot's coordinate are set by this function.
      *
      * @param prevControl the previous control point
      * @param nextControl the next control point
@@ -368,25 +344,20 @@ public class Knot2 implements Comparable<Knot2> {
         final Knot2 next) {
 
         return Knot2.fromSegCubic(
-            prevControl.x,
-            prevControl.y,
-            nextControl.x,
-            nextControl.y,
-            nextAnchor.x,
-            nextAnchor.y,
-            prev,
-            next);
+            prevControl.x, prevControl.y,
+            nextControl.x, nextControl.y,
+            nextAnchor.x, nextAnchor.y,
+            prev, next);
     }
 
     /**
      * Sets two knots from a segment of a cubic curve which reflect an existing
-     * segment.<br>
+     * segment.
      * <br>
-     * Assumes that the previous knot's coordinate is set to the first anchor point.
-     * The previous
-     * knot's fore handle, the next knot's rear handle and the next knot's
-     * coordinate are set by this
-     * function.
+     * <br>
+     * Assumes that the previous knot's coordinate is set to the first anchor
+     * point. The previous knot's fore handle, the next knot's rear handle and
+     * the next knot's coordinate are set by this function.
      *
      * @param xNextControl the next control point x
      * @param yNextControl the next control point y
@@ -397,12 +368,9 @@ public class Knot2 implements Comparable<Knot2> {
      * @return next knot
      */
     public static Knot2 fromSegCubicRefl(
-        final float xNextControl,
-        final float yNextControl,
-        final float xNextAnchor,
-        final float yNextAnchor,
-        final Knot2 prev,
-        final Knot2 next) {
+        final float xNextControl, final float yNextControl,
+        final float xNextAnchor, final float yNextAnchor,
+        final Knot2 prev, final Knot2 next) {
 
         prev.mirrorHandlesBackward();
         next.rearHandle.set(xNextControl, yNextControl);
@@ -413,13 +381,12 @@ public class Knot2 implements Comparable<Knot2> {
 
     /**
      * Sets two knots from a segment of a cubic curve which reflect an existing
-     * segment.<br>
+     * segment.
      * <br>
-     * Assumes that the previous knot's coordinate is set to the first anchor point.
-     * The previous
-     * knot's fore handle, the next knot's rear handle and the next knot's
-     * coordinate are set by this
-     * function.
+     * <br>
+     * Assumes that the previous knot's coordinate is set to the first anchor
+     * point. The previous knot's fore handle, the next knot's rear handle and
+     * the next knot's coordinate are set by this function.
      *
      * @param nextControl the next control point
      * @param nextAnchor  the next anchor
@@ -428,20 +395,24 @@ public class Knot2 implements Comparable<Knot2> {
      * @return next knot
      */
     public static Knot2 fromSegCubicRefl(
-        final Vec2 nextControl, final Vec2 nextAnchor, final Knot2 prev, final Knot2 next) {
+        final Vec2 nextControl,
+        final Vec2 nextAnchor,
+        final Knot2 prev,
+        final Knot2 next) {
 
         return Knot2.fromSegCubicRefl(
-            nextControl.x, nextControl.y, nextAnchor.x, nextAnchor.y, prev, next);
+            nextControl.x, nextControl.y,
+            nextAnchor.x, nextAnchor.y,
+            prev, next);
     }
 
     /**
-     * Sets a knot from a line segment. Assumes that the previous knot's coordinate
-     * is set to the
-     * first anchor point.<br>
+     * Sets a knot from a line segment. Assumes that the previous knot's
+     * coordinate is set to the first anchor point.
      * <br>
-     * The previous knot's fore handle, the next knot's rear handle and the next
-     * knot's coordinate are
-     * set by this function.
+     * <br>
+     * The previous knot's fore handle, the next knot's rear handle and the
+     * next knot's coordinate are set by this function.
      *
      * @param xNextAnchor the next anchor x
      * @param yNextAnchor the next anchor y
@@ -450,7 +421,8 @@ public class Knot2 implements Comparable<Knot2> {
      * @return the next knot
      */
     public static Knot2 fromSegLinear(
-        final float xNextAnchor, final float yNextAnchor, final Knot2 prev, final Knot2 next) {
+        final float xNextAnchor, final float yNextAnchor,
+        final Knot2 prev, final Knot2 next) {
 
         final Vec2 prevCoord = prev.coord;
         final Vec2 nextCoord = next.coord;
@@ -469,13 +441,12 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Sets a knot from a line segment. Assumes that the previous knot's coordinate
-     * is set to the
-     * first anchor point.<br>
+     * Sets a knot from a line segment. Assumes that the previous knot's
+     * coordinate is set to the first anchor point.
      * <br>
-     * The previous knot's fore handle, the next knot's rear handle and the next
-     * knot's coordinate are
-     * set by this function.
+     * <br>
+     * The previous knot's fore handle, the next knot's rear handle and the
+     * next knot's coordinate are set by this function.
      *
      * @param nextAnchor the next anchor
      * @param prev       the previous knot
@@ -490,12 +461,11 @@ public class Knot2 implements Comparable<Knot2> {
 
     /**
      * Sets two knots from a segment of the quadratic curve. Assumes that the
-     * previous knot's
-     * coordinate is set to the first anchor point.<br>
+     * previous knot's coordinate is set to the first anchor point.
      * <br>
-     * The previous knot's fore handle, the next knot's rear handle and the next
-     * knot's coordinate are
-     * set by this function.
+     * <br>
+     * The previous knot's fore handle, the next knot's rear handle and the
+     * next knot's coordinate are set by this function.
      *
      * @param xControl    the control point x
      * @param yControl    the control point y
@@ -506,12 +476,9 @@ public class Knot2 implements Comparable<Knot2> {
      * @return the next knot
      */
     public static Knot2 fromSegQuadratic(
-        final float xControl,
-        final float yControl,
-        final float xNextAnchor,
-        final float yNextAnchor,
-        final Knot2 prev,
-        final Knot2 next) {
+        final float xControl, final float yControl,
+        final float xNextAnchor, final float yNextAnchor,
+        final Knot2 prev, final Knot2 next) {
 
         final Vec2 prevCo = prev.coord;
 
@@ -523,10 +490,12 @@ public class Knot2 implements Comparable<Knot2> {
         final float midpt23y = yControl * Utils.TWO_THIRDS;
 
         prev.foreHandle.set(
-            midpt23x + Utils.ONE_THIRD * prevCo.x, midpt23y + Utils.ONE_THIRD * prevCo.y);
+            midpt23x + Utils.ONE_THIRD * prevCo.x,
+            midpt23y + Utils.ONE_THIRD * prevCo.y);
 
         next.rearHandle.set(
-            midpt23x + Utils.ONE_THIRD * xNextAnchor, midpt23y + Utils.ONE_THIRD * yNextAnchor);
+            midpt23x + Utils.ONE_THIRD * xNextAnchor,
+            midpt23y + Utils.ONE_THIRD * yNextAnchor);
 
         next.coord.set(xNextAnchor, yNextAnchor);
 
@@ -535,10 +504,11 @@ public class Knot2 implements Comparable<Knot2> {
 
     /**
      * Sets two knots from a segment of a quadratic curve. Assumes that the
-     * previous knot's coordinate is set to the first anchor point.<br>
+     * previous knot's coordinate is set to the first anchor point.
      * <br>
-     * The previous knot's fore handle, the next knot's rear handle and the next
-     * knot's coordinate are set by this function.
+     * <br>
+     * The previous knot's fore handle, the next knot's rear handle and the
+     * next knot's coordinate are set by this function.
      *
      * @param control    the control point
      * @param nextAnchor the next anchor point
@@ -572,9 +542,8 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Returns the magnitude of the knot's rear handle, i.e., the Euclidean distance
-     * between the rear
-     * handle and the coordinate.
+     * Returns the magnitude of the knot's rear handle, i.e., the Euclidean
+     * distance between the rear handle and the coordinate.
      *
      * @param knot the knot
      * @return the magnitude
@@ -599,9 +568,8 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Smoothes the handles of a knot with reference to a previous and next knot. A
-     * helper function to
-     * {@link Curve2#smoothHandles(Curve2)} .
+     * Smoothes the handles of a knot with reference to a previous and next
+     * knot. A helper function to {@link Curve2#smoothHandles(Curve2)} .
      *
      * @param prev  the previous knot
      * @param curr  the current knot
@@ -610,7 +578,10 @@ public class Knot2 implements Comparable<Knot2> {
      * @return the current knot
      */
     public static Knot2 smoothHandles(
-        final Knot2 prev, final Knot2 curr, final Knot2 next, final Vec2 carry) {
+        final Knot2 prev,
+        final Knot2 curr,
+        final Knot2 next,
+        final Vec2 carry) {
 
         final Vec2 coCurr = curr.coord;
         final Vec2 coPrev = prev.coord;
@@ -646,15 +617,17 @@ public class Knot2 implements Comparable<Knot2> {
 
     /**
      * Smoothes the fore handle of the first knot in an open curve. A helper
-     * function to {@link
-     * Curve2#smoothHandles(Curve2)} .
+     * function to {@link Curve2#smoothHandles(Curve2)}.
      *
      * @param curr  the current knot
      * @param next  the next knot
      * @param carry a temporary vector
      * @return the current knot
      */
-    public static Knot2 smoothHandlesFirst(final Knot2 curr, final Knot2 next, final Vec2 carry) {
+    public static Knot2 smoothHandlesFirst(
+        final Knot2 curr,
+        final Knot2 next,
+        final Vec2 carry) {
 
         final Vec2 coCurr = curr.coord;
         final Vec2 coNext = next.coord;
@@ -685,16 +658,18 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Smoothes the rear handle of the last knot in an open curve. A helper function
-     * to {@link
-     * Curve2#smoothHandles(Curve2)} .
+     * Smoothes the rear handle of the last knot in an open curve. A helper
+     * function to {@link Curve2#smoothHandles(Curve2)}.
      *
      * @param prev  the previous knot
      * @param curr  the current knot
      * @param carry a temporary vector
      * @return the current knot
      */
-    public static Knot2 smoothHandlesLast(final Knot2 prev, final Knot2 curr, final Vec2 carry) {
+    public static Knot2 smoothHandlesLast(
+        final Knot2 prev,
+        final Knot2 curr,
+        final Vec2 carry) {
 
         final Vec2 coCurr = curr.coord;
         final Vec2 coPrev = prev.coord;
@@ -894,7 +869,8 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Mirrors this knot's handles. Defaults to mirroring in the forward direction.
+     * Mirrors this knot's handles. Defaults to mirroring in the forward
+     * direction.
      *
      * @return this knot
      * @see Knot2#mirrorHandlesForward()
@@ -904,9 +880,8 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Sets the fore handle to mirror the rear handle: the fore will have the same
-     * magnitude and
-     * negated direction of the rear.
+     * Sets the fore handle to mirror the rear handle: the fore will have the
+     * same magnitude and negated direction of the rear.
      *
      * @return this knot
      */
@@ -920,9 +895,8 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Sets the rear handle to mirror the fore handle: the rear will have the same
-     * magnitude and
-     * negated direction of the fore.
+     * Sets the rear handle to mirror the fore handle: the rear will have the
+     * same magnitude and negated direction of the fore.
      *
      * @return this knot
      */
@@ -937,8 +911,7 @@ public class Knot2 implements Comparable<Knot2> {
 
     /**
      * Relocates the knot to a new location while maintaining the relationship
-     * between the central
-     * coordinate and its two handles.
+     * between the central coordinate and its two handles.
      *
      * @param v the location
      * @return this knot
@@ -1018,7 +991,8 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Rotates this knot's fore and rear handles by the cosine and sine of an angle.
+     * Rotates this knot's fore and rear handles by the cosine and sine of an
+     * angle.
      *
      * @param cosa the cosine
      * @param sina the sine
@@ -1082,10 +1056,9 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Rotates this knot around the z axis. Accepts calculated sine and cosine of an
-     * angle, so that
-     * collections of knots can be efficiently rotated without repeatedly calling
-     * cos and sin.
+     * Rotates this knot around the z axis. Accepts calculated sine and cosine
+     * of an angle, so that collections of knots can be efficiently rotated
+     * without repeatedly calling cos and sin.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -1246,8 +1219,8 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Sets the knot's coordinate and fore handle. The rear handle is a mirror of
-     * the fore handle.
+     * Sets the knot's coordinate and fore handle. The rear handle is a mirror
+     * of the fore handle.
      *
      * @param xCoord the x coordinate
      * @param yCoord the y coordinate
@@ -1255,7 +1228,9 @@ public class Knot2 implements Comparable<Knot2> {
      * @param yFore  the fore handle y
      * @return the knot
      */
-    public Knot2 set(final float xCoord, final float yCoord, final float xFore, final float yFore) {
+    public Knot2 set(
+        final float xCoord, final float yCoord,
+        final float xFore, final float yFore) {
 
         this.coord.set(xCoord, yCoord);
         this.foreHandle.set(xFore, yFore);
@@ -1276,12 +1251,9 @@ public class Knot2 implements Comparable<Knot2> {
      * @return this knot
      */
     public Knot2 set(
-        final float xCoord,
-        final float yCoord,
-        final float xFore,
-        final float yFore,
-        final float xRear,
-        final float yRear) {
+        final float xCoord, final float yCoord,
+        final float xFore, final float yFore,
+        final float xRear, final float yRear) {
 
         this.coord.set(xCoord, yCoord);
         this.foreHandle.set(xFore, yFore);
@@ -1313,8 +1285,8 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Sets the knot's coordinates and fore handle. The rear handle is a mirror of
-     * the fore handle.
+     * Sets the knot's coordinates and fore handle. The rear handle is a mirror
+     * of the fore handle.
      *
      * @param coord      the coordinate
      * @param foreHandle the fore handle
@@ -1428,7 +1400,8 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
-     * Scales this knot by a non-uniform scalar. Does not check scale for validity.
+     * Scales this knot by a non-uniform scalar. Does not check scale for
+     * validity.
      *
      * @param scale the non-uniform scalar
      * @return this knot
@@ -1464,8 +1437,7 @@ public class Knot2 implements Comparable<Knot2> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * knots. Appends to an
-     * existing {@link StringBuilder}.
+     * knots. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -1508,9 +1480,9 @@ public class Knot2 implements Comparable<Knot2> {
         }
 
         /**
-         * A clamped interpolation between the origin and destination. Defers to an
-         * unclamped
-         * interpolation, which is to be defined by subclasses of this class.
+         * A clamped interpolation between the origin and destination. Defers
+         * to an unclamped interpolation, which is to be defined by subclasses
+         * of this class.
          *
          * @param orig   the origin knot
          * @param dest   the destination knot
@@ -1519,7 +1491,11 @@ public class Knot2 implements Comparable<Knot2> {
          * @return the eased knot
          */
         @Override
-        public Knot2 apply(final Knot2 orig, final Knot2 dest, final Float step, final Knot2 target) {
+        public Knot2 apply(
+            final Knot2 orig,
+            final Knot2 dest,
+            final Float step,
+            final Knot2 target) {
 
             final float tf = step;
             if (Float.isNaN(tf)) {
@@ -1544,7 +1520,10 @@ public class Knot2 implements Comparable<Knot2> {
          * @return the eased knot
          */
         public abstract Knot2 applyUnclamped(
-            final Knot2 origin, final Knot2 dest, final float step, final Knot2 target);
+            final Knot2 origin,
+            final Knot2 dest,
+            final float step,
+            final Knot2 target);
 
         /**
          * Returns the simple name of this class.
@@ -1569,7 +1548,8 @@ public class Knot2 implements Comparable<Knot2> {
         }
 
         /**
-         * Eases between two knots by a step using the formula (1.0 - t) * a + t * b .
+         * Eases between two knots by a step using the formula
+         * (1.0 - t) * a + t * b .
          *
          * @param origin the origin knot
          * @param dest   the destination knot
@@ -1579,7 +1559,10 @@ public class Knot2 implements Comparable<Knot2> {
          */
         @Override
         public Knot2 applyUnclamped(
-            final Knot2 origin, final Knot2 dest, final float step, final Knot2 target) {
+            final Knot2 origin,
+            final Knot2 dest,
+            final float step,
+            final Knot2 target) {
 
             final float u = 1.0f - step;
 
@@ -1591,9 +1574,15 @@ public class Knot2 implements Comparable<Knot2> {
             final Vec2 deFh = dest.foreHandle;
             final Vec2 deRh = dest.rearHandle;
 
-            target.coord.set(u * orCo.x + step * deCo.x, u * orCo.y + step * deCo.y);
-            target.foreHandle.set(u * orFh.x + step * deFh.x, u * orFh.y + step * deFh.y);
-            target.rearHandle.set(u * orRh.x + step * deRh.x, u * orRh.y + step * deRh.y);
+            target.coord.set(
+                u * orCo.x + step * deCo.x,
+                u * orCo.y + step * deCo.y);
+            target.foreHandle.set(
+                u * orFh.x + step * deFh.x,
+                u * orFh.y + step * deFh.y);
+            target.rearHandle.set(
+                u * orRh.x + step * deRh.x,
+                u * orRh.y + step * deRh.y);
 
             return target;
         }

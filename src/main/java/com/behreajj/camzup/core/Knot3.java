@@ -2,9 +2,8 @@ package com.behreajj.camzup.core;
 
 /**
  * Organizes the vectors that shape a cubic Bézier curve into a coordinate (or
- * anchor point), fore
- * handle (the following control point) and rear handle (the preceding control
- * point).
+ * anchor point), fore handle (the following control point) and rear handle
+ * (the preceding control point).
  */
 public class Knot3 implements Comparable<Knot3> {
 
@@ -14,16 +13,14 @@ public class Knot3 implements Comparable<Knot3> {
     public final Vec3 coord = new Vec3();
 
     /**
-     * The handle that warps the curve segment heading away from the knot along the
-     * direction of the
-     * curve.
+     * The handle that warps the curve segment heading away from the knot along
+     * the direction of the curve.
      */
     public final Vec3 foreHandle = new Vec3();
 
     /**
-     * The handle that warps the curve segment heading towards the knot along the
-     * direction of the
-     * curve.
+     * The handle that warps the curve segment heading towards the knot along
+     * the direction of the curve.
      */
     public final Vec3 rearHandle = new Vec3();
 
@@ -46,9 +43,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Creates a knot from a coordinate and fore handle. The rear handle is a mirror
-     * of the fore
-     * handle.
+     * Creates a knot from a coordinate and fore handle. The rear handle is a
+     * mirror of the fore handle.
      *
      * @param xCoord the x coordinate
      * @param yCoord the y coordinate
@@ -58,12 +54,8 @@ public class Knot3 implements Comparable<Knot3> {
      * @param zFore  the fore handle z
      */
     public Knot3(
-        final float xCoord,
-        final float yCoord,
-        final float zCoord,
-        final float xFore,
-        final float yFore,
-        final float zFore) {
+        final float xCoord, final float yCoord, final float zCoord,
+        final float xFore, final float yFore, final float zFore) {
 
         this.set(xCoord, yCoord, zCoord, xFore, yFore, zFore);
     }
@@ -82,17 +74,14 @@ public class Knot3 implements Comparable<Knot3> {
      * @param zRear  the rear handle z
      */
     public Knot3(
-        final float xCoord,
-        final float yCoord,
-        final float zCoord,
-        final float xFore,
-        final float yFore,
-        final float zFore,
-        final float xRear,
-        final float yRear,
-        final float zRear) {
+        final float xCoord, final float yCoord, final float zCoord,
+        final float xFore, final float yFore, final float zFore,
+        final float xRear, final float yRear, final float zRear) {
 
-        this.set(xCoord, yCoord, zCoord, xFore, yFore, zFore, xRear, yRear, zRear);
+        this.set(
+            xCoord, yCoord, zCoord,
+            xFore, yFore, zFore,
+            xRear, yRear, zRear);
     }
 
     /**
@@ -139,9 +128,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Creates a knot from a coordinate and fore handle. The rear handle is a mirror
-     * of the fore
-     * handle.
+     * Creates a knot from a coordinate and fore handle. The rear handle is a
+     * mirror of the fore handle.
      *
      * @param coord      the coordinate
      * @param foreHandle the fore handle
@@ -225,9 +213,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Returns the magnitude of the knot's fore handle, i.e., the Euclidean distance
-     * between the fore
-     * handle and the coordinate.
+     * Returns the magnitude of the knot's fore handle, i.e., the Euclidean
+     * distance between the fore handle and the coordinate.
      *
      * @param knot the knot
      * @return the magnitude
@@ -253,13 +240,12 @@ public class Knot3 implements Comparable<Knot3> {
 
     /**
      * Sets two knots from a segment of a Catmull-Rom curve. The default curve
-     * tightness is 0.0.<br>
+     * tightness is 0.0.
      * <br>
-     * Assumes that the previous knot's coordinate is set to a prior anchor point.
-     * The previous knot's
-     * fore handle, the next knot's rear handle and the next knot's coordinate are
-     * set by this
-     * function.
+     * <br>
+     * Assumes that the previous knot's coordinate is set to a prior anchor
+     * point. The previous knot's fore handle, the next knot's rear handle and
+     * the next knot's coordinate are set by this function.
      *
      * @param xPrevAnchor the previous anchor x
      * @param yPrevAnchor the previous anchor y
@@ -315,13 +301,12 @@ public class Knot3 implements Comparable<Knot3> {
 
     /**
      * Sets two knots from a segment of a Catmull-Rom curve. The default curve
-     * tightness is 0.0.<br>
+     * tightness is 0.0.
      * <br>
-     * Assumes that the previous knot's coordinate is set to a prior anchor point.
-     * The previous knot's
-     * fore handle, the next knot's rear handle and the next knot's coordinate are
-     * set by this
-     * function.
+     * <br>
+     * Assumes that the previous knot's coordinate is set to a prior anchor
+     * point. The previous knot's fore handle, the next knot's rear handle and
+     * the next knot's coordinate are set by this function.
      *
      * @param prevAnchor the previous anchor
      * @param currAnchor the current anchor
@@ -342,31 +327,21 @@ public class Knot3 implements Comparable<Knot3> {
         final Knot3 next) {
 
         return Knot3.fromSegCatmull(
-            prevAnchor.x,
-            prevAnchor.y,
-            prevAnchor.z,
-            currAnchor.x,
-            currAnchor.y,
-            currAnchor.z,
-            nextAnchor.x,
-            nextAnchor.y,
-            nextAnchor.z,
-            advAnchor.x,
-            advAnchor.y,
-            advAnchor.z,
+            prevAnchor.x, prevAnchor.y, prevAnchor.z,
+            currAnchor.x, currAnchor.y, currAnchor.z,
+            nextAnchor.x, nextAnchor.y, nextAnchor.z,
+            advAnchor.x, advAnchor.y, advAnchor.z,
             tightness,
-            prev,
-            next);
+            prev, next);
     }
 
     /**
-     * Sets a knot from a line segment. Assumes that the previous knot's coordinate
-     * is set to the
-     * first anchor point.<br>
+     * Sets a knot from a line segment. Assumes that the previous knot's
+     * coordinate is set to the first anchor point.
      * <br>
-     * The previous knot's fore handle, the next knot's rear handle and the next
-     * knot's coordinate are
-     * set by this function.
+     * <br>
+     * The previous knot's fore handle, the next knot's rear handle and the
+     * next knot's coordinate are set by this function.
      *
      * @param xNextAnchor the next anchor x
      * @param yNextAnchor the next anchor y
@@ -401,13 +376,12 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Sets a knot from a line segment. Assumes that the previous knot's coordinate
-     * is set to the
-     * first anchor point.<br>
+     * Sets a knot from a line segment. Assumes that the previous knot's
+     * coordinate is set to the first anchor point.
      * <br>
-     * The previous knot's fore handle, the next knot's rear handle and the next
-     * knot's coordinate are
-     * set by this function.
+     * <br>
+     * The previous knot's fore handle, the next knot's rear handle and the
+     * next knot's coordinate are set by this function.
      *
      * @param nextAnchor the next anchor
      * @param prev       the previous knot
@@ -421,13 +395,12 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Sets two knots from a segment of a quadratic curve. Assumes that the previous
-     * knot's coordinate
-     * is set to the first anchor point.<br>
+     * Sets two knots from a segment of a quadratic curve. Assumes that the
+     * previous knot's coordinate is set to the first anchor point.
      * <br>
-     * The previous knot's fore handle, the next knot's rear handle and the next
-     * knot's coordinate are
-     * set by this function.
+     * <br>
+     * The previous knot's fore handle, the next knot's rear handle and the
+     * next knot's coordinate are set by this function.
      *
      * @param xControl    the control point x
      * @param yControl    the control point y
@@ -437,7 +410,7 @@ public class Knot3 implements Comparable<Knot3> {
      * @param zNextAnchor the next anchor z
      * @param prev        the previous knot
      * @param next        the next knot
-     * @return next knot
+     * @return the next knot
      */
     public static Knot3 fromSegQuadratic(
         final float xControl,
@@ -508,9 +481,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Returns the magnitude of the knot's rear handle, i.e., the Euclidean distance
-     * between the rear
-     * handle and the coordinate.
+     * Returns the magnitude of the knot's rear handle, i.e., the Euclidean
+     * distance between the rear handle and the coordinate.
      *
      * @param knot the knot
      * @return the magnitude
@@ -536,8 +508,7 @@ public class Knot3 implements Comparable<Knot3> {
 
     /**
      * Smoothes the handles of a knot with reference to a previous and next knot. A
-     * helper function to
-     * {@link Curve3#smoothHandles(Curve3)} .
+     * helper function to {@link Curve3#smoothHandles(Curve3)} .
      *
      * @param prev  the previous knot
      * @param curr  the current knot
@@ -588,8 +559,7 @@ public class Knot3 implements Comparable<Knot3> {
 
     /**
      * Smoothes the fore handle of the first knot in an open curve. A helper
-     * function to {@link
-     * Curve3#smoothHandles(Curve3)} .
+     * function to {@link Curve3#smoothHandles(Curve3)} .
      *
      * @param curr  the current knot
      * @param next  the next knot
@@ -632,9 +602,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Smoothes the rear handle of the last knot in an open curve. A helper function
-     * to {@link
-     * Curve3#smoothHandles(Curve3)} .
+     * Smoothes the rear handle of the last knot in an open curve. A helper
+     * function to {@link Curve3#smoothHandles(Curve3)} .
      *
      * @param prev  the previous knot
      * @param curr  the current knot
@@ -767,7 +736,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Aligns this knot's fore handle to its rear handle while preserving magnitude.
+     * Aligns this knot's fore handle to its rear handle while preserving
+     * magnitude.
      *
      * @return this knot
      * @see Utils#hypot(float, float, float)
@@ -800,7 +770,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Aligns this knot's rear handle to its fore handle while preserving magnitude.
+     * Aligns this knot's rear handle to its fore handle while preserving
+     * magnitude.
      *
      * @return this knot
      * @see Utils#hypot(float, float, float)
@@ -845,7 +816,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Mirrors this knot's handles. Defaults to mirroring in the forward direction.
+     * Mirrors this knot's handles. Defaults to mirroring in the forward
+     * direction.
      *
      * @return this knot
      * @see Knot3#mirrorHandlesForward()
@@ -855,9 +827,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Sets the fore handle to mirror the rear handle: the fore will have the same
-     * magnitude and
-     * negated direction of the rear.
+     * Sets the fore handle to mirror the rear handle: the fore will have the
+     * same magnitude and negated direction of the rear.
      *
      * @return this knot
      */
@@ -872,9 +843,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Sets the rear handle to mirror the fore handle: the rear will have the same
-     * magnitude and
-     * negated direction of the fore.
+     * Sets the rear handle to mirror the fore handle: the rear will have the
+     * same magnitude and negated direction of the fore.
      *
      * @return this knot
      */
@@ -890,8 +860,7 @@ public class Knot3 implements Comparable<Knot3> {
 
     /**
      * Relocates the knot to a new location while maintaining the relationship
-     * between the central
-     * coordinate and its two handles.
+     * between the central coordinate and its two handles.
      *
      * @param v the location
      * @return this knot
@@ -926,11 +895,10 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Rotates this knot around an axis by an angle in radians. The axis is assumed
-     * to be of unit
-     * length. Accepts pre-calculated sine and cosine of an angle, so that
-     * collections of knots can be
-     * efficiently rotated without repeatedly calling cos and sin.
+     * Rotates this knot around an axis by an angle in radians. The axis is
+     * assumed to be of unit length. Accepts pre-calculated sine and cosine of
+     * an angle, so that collections of knots can be efficiently rotated without
+     * repeatedly calling cos and sin.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -979,8 +947,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Rotates this knot's fore handle by a quaternion with its coordinate serving
-     * as a pivot.
+     * Rotates this knot's fore handle by a quaternion with its coordinate
+     * serving as a pivot.
      *
      * @param q the quaternion
      * @return this knot
@@ -998,8 +966,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Rotates this knot's handles by a quaternion with its coordinate serving as a
-     * pivot.
+     * Rotates this knot's handles by a quaternion with its coordinate
+     * serving as a pivot.
      *
      * @param q the quaternion
      * @return this knot
@@ -1015,8 +983,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Rotates this knot's rear handle by a quaternion with its coordinate serving
-     * as a pivot.
+     * Rotates this knot's rear handle by a quaternion with its coordinate
+     * serving as a pivot.
      *
      * @param q the quaternion
      * @return this knot
@@ -1048,10 +1016,9 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Rotates this knot around the x axis. Accepts calculated sine and cosine of an
-     * angle, so that
-     * collections of knots can be efficiently rotated without repeatedly calling
-     * cos and sin.
+     * Rotates this knot around the x axis. Accepts calculated sine and cosine
+     * of an angle, so that collections of knots can be efficiently rotated
+     * without repeatedly calling cos and sin.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -1082,10 +1049,9 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Rotates this knot around the y axis. Accepts calculated sine and cosine of an
-     * angle, so that
-     * collections of knots can be efficiently rotated without repeatedly calling
-     * cos and sin.
+     * Rotates this knot around the y axis. Accepts calculated sine and cosine
+     * of an angle, so that collections of knots can be efficiently rotated
+     * without repeatedly calling cos and sin.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -1116,10 +1082,9 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Rotates this knot around the z axis. Accepts calculated sine and cosine of an
-     * angle, so that
-     * collections of knots can be efficiently rotated without repeatedly calling
-     * cos and sin.
+     * Rotates this knot around the z axis. Accepts calculated sine and cosine
+     * of an angle, so that collections of knots can be efficiently rotated
+     * without repeatedly calling cos and sin.
      *
      * @param cosa cosine of the angle
      * @param sina sine of the angle
@@ -1305,12 +1270,8 @@ public class Knot3 implements Comparable<Knot3> {
      * @return this knot
      */
     public Knot3 set(
-        final float xCoord,
-        final float yCoord,
-        final float zCoord,
-        final float xFore,
-        final float yFore,
-        final float zFore) {
+        final float xCoord, final float yCoord, final float zCoord,
+        final float xFore, final float yFore, final float zFore) {
 
         this.coord.set(xCoord, yCoord, zCoord);
         this.foreHandle.set(xFore, yFore, zFore);
@@ -1335,15 +1296,9 @@ public class Knot3 implements Comparable<Knot3> {
      * @return this knot
      */
     public Knot3 set(
-        final float xCoord,
-        final float yCoord,
-        final float zCoord,
-        final float xFore,
-        final float yFore,
-        final float zFore,
-        final float xRear,
-        final float yRear,
-        final float zRear) {
+        final float xCoord, final float yCoord, final float zCoord,
+        final float xFore, final float yFore, final float zFore,
+        final float xRear, final float yRear, final float zRear) {
 
         this.coord.set(xCoord, yCoord, zCoord);
         this.foreHandle.set(xFore, yFore, zFore);
@@ -1539,7 +1494,8 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Scales this knot by a non-uniform scalar. Does not check scale for validity.
+     * Scales this knot by a non-uniform scalar. Does not check scale for
+     * validity.
      *
      * @param scale the non-uniform scalar
      * @return this knot
@@ -1581,8 +1537,7 @@ public class Knot3 implements Comparable<Knot3> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * knots. Appends to an
-     * existing {@link StringBuilder}.
+     * knots. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -1625,9 +1580,9 @@ public class Knot3 implements Comparable<Knot3> {
         }
 
         /**
-         * A clamped interpolation between the origin and destination. Defers to an
-         * unclamped
-         * interpolation, which is to be defined by subclasses of this class.
+         * A clamped interpolation between the origin and destination. Defers
+         * to an unclamped interpolation, which is to be defined by subclasses
+         * of this class.
          *
          * @param orig   the origin knot
          * @param dest   the destination knot
@@ -1636,7 +1591,11 @@ public class Knot3 implements Comparable<Knot3> {
          * @return the eased knot
          */
         @Override
-        public Knot3 apply(final Knot3 orig, final Knot3 dest, final Float step, final Knot3 target) {
+        public Knot3 apply(
+            final Knot3 orig,
+            final Knot3 dest,
+            final Float step,
+            final Knot3 target) {
 
             final float tf = step;
             if (Float.isNaN(tf)) {
@@ -1661,7 +1620,10 @@ public class Knot3 implements Comparable<Knot3> {
          * @return the eased knot
          */
         public abstract Knot3 applyUnclamped(
-            final Knot3 origin, final Knot3 dest, final float step, final Knot3 target);
+            final Knot3 origin,
+            final Knot3 dest,
+            final float step,
+            final Knot3 target);
 
         /**
          * Returns the simple name of this class.
@@ -1686,9 +1648,8 @@ public class Knot3 implements Comparable<Knot3> {
         }
 
         /**
-         * Eases between two knots by a step using the formula (1.0 - t) * a + t * b .
-         * Promotes the step
-         * from a float to a double.
+         * Eases between two knots by a step using the formula
+         * (1.0 - t) * a + t * b .
          *
          * @param origin the origin knot
          * @param dest   the destination knot
@@ -1698,7 +1659,10 @@ public class Knot3 implements Comparable<Knot3> {
          */
         @Override
         public Knot3 applyUnclamped(
-            final Knot3 origin, final Knot3 dest, final float step, final Knot3 target) {
+            final Knot3 origin,
+            final Knot3 dest,
+            final float step,
+            final Knot3 target) {
 
             final float u = 1.0f - step;
 
@@ -1711,11 +1675,17 @@ public class Knot3 implements Comparable<Knot3> {
             final Vec3 deRh = dest.rearHandle;
 
             target.coord.set(
-                u * orCo.x + step * deCo.x, u * orCo.y + step * deCo.y, u * orCo.z + step * deCo.z);
+                u * orCo.x + step * deCo.x,
+                u * orCo.y + step * deCo.y,
+                u * orCo.z + step * deCo.z);
             target.foreHandle.set(
-                u * orFh.x + step * deFh.x, u * orFh.y + step * deFh.y, u * orFh.z + step * deFh.z);
+                u * orFh.x + step * deFh.x,
+                u * orFh.y + step * deFh.y,
+                u * orFh.z + step * deFh.z);
             target.rearHandle.set(
-                u * orRh.x + step * deRh.x, u * orRh.y + step * deRh.y, u * orRh.z + step * deRh.z);
+                u * orRh.x + step * deRh.x,
+                u * orRh.y + step * deRh.y,
+                u * orRh.z + step * deRh.z);
 
             return target;
         }

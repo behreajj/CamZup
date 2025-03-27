@@ -9,8 +9,7 @@ public abstract class Curve extends EntityData implements ICurve {
 
     /**
      * Magnitude for orthogonal handles when four curve knots are used to
-     * approximate an ellipse or
-     * circle (90 degrees per knot). Derived from
+     * approximate an ellipse or circle (90 degrees per knot). Derived from
      * <code>(Math.sqrt(2.0) - 1.0) * 4.0 / 3.0</code>.
      */
     public static final float KAPPA = 0.552285f;
@@ -22,8 +21,7 @@ public abstract class Curve extends EntityData implements ICurve {
 
     /**
      * Magnitude for orthogonal handles when four curve knots are used to
-     * approximate an ellipse or
-     * circle (90 degrees per knot). Derived from
+     * approximate an ellipse or circle (90 degrees per knot). Derived from
      * <code>(Math.sqrt(2.0) - 1.0) * 4.0 / 3.0</code>.
      */
     public static final double KAPPA_D = 0.5522847498307936d;

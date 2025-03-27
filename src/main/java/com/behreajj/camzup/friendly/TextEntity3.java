@@ -89,8 +89,8 @@ public class TextEntity3 extends ImageEntity3 {
         final int alignVert, final float scale) {
 
         /*
-         * Image must be pre-multiplied due to OpenGL blending. Image is colored
-         * white so that it can be tinted by material.
+         * Image must be pre-multiplied due to OpenGL blending. Image is
+         * colored white so that it can be tinted by material.
          */
         super(text, ZImage.fromText(font, text, 0xffffffff, leading, kerning,
             alignHoriz), tint, scale, alignHoriz, alignVert);

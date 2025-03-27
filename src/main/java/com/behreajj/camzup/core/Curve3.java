@@ -3,12 +3,9 @@ package com.behreajj.camzup.core;
 import java.util.*;
 
 /**
- * Implements a
- * <a href= "https://en.wikipedia.org/wiki/B%C3%A9zier_curve">composite</a>
- * piecewise
- * cubic Bézier curve. Provides a function to retrieve a point and tangent on a
- * curve from a step in
- * the range [0.0, 1.0] .
+ * Implements a <a href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve">composite</a>
+ * piecewise cubic Bézier curve. Provides a function to retrieve a point and
+ * tangent on a curve from a step in the range [0.0, 1.0].
  */
 public class Curve3 extends Curve implements Iterable<Knot3> {
 
@@ -129,9 +126,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Creates an arc from a start and stop angle. The arc can be open, traversed by
-     * a chord, or
-     * pie-shaped.
+     * Creates an arc from a start and stop angle. The arc can be open,
+     * traversed by a chord, or pie-shaped.
      *
      * @param startAngle the start angle
      * @param stopAngle  the stop angle
@@ -214,11 +210,9 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Calculates an Axis-Aligned Bounding Box (AABB) encompassing the curve. Does
-     * so by taking the
-     * minimum and maximum of each knot's coordinate, fore handle and rear handle;
-     * <em>not</em> by
-     * finding the curve extrema.
+     * Calculates an Axis-Aligned Bounding Box (AABB) encompassing the curve.
+     * Does so by taking the minimum and maximum of each knot's coordinate,
+     * fore handle and rear handle; <em>not</em> by finding the curve extrema.
      *
      * @param curve  the curve
      * @param target the output dimensions
@@ -311,8 +305,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
         final float u = 1.0f - t;
         Curve3.bezierKnot(a, b, t, target);
 
-        // QUERY Should this logic be moved to bezierKnot? Can this use magSq then
-        // find sqrt after the lerp?
+        // QUERY Should this logic be moved to bezierKnot? Can this use magSq
+        // then find sqrt after the lerp?
         final float aFhMag = Knot3.foreMag(a);
         final float bFhMag = Knot3.foreMag(b);
         final float tFhMag = u * aFhMag + t * bFhMag;
@@ -327,9 +321,9 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Evaluates a step in the range [0.0, 1.0] , returning a ray. The ray's origin
-     * will be a
-     * coordinate on the curve while its direction will be a normalized tangent.
+     * Evaluates a step in the range [0.0, 1.0] , returning a ray. The ray's
+     * origin will be a coordinate on the curve while its direction will be a
+     * normalized tangent.
      *
      * @param curve the curve
      * @param step  the step
@@ -345,8 +339,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
 
     /**
      * Evaluates a step in the range [0.0, 1.0] , returning a coordinate on the
-     * curve and a tangent.
-     * The tangent will be normalized, to be of unit length.
+     * curve and a tangent. The tangent will be normalized, to be of unit
+     * length.
      *
      * @param curve   the curve
      * @param step    the step
@@ -444,8 +438,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Evaluates the first knot in the curve. The tangent will be normalized, to be
-     * of unit length.
+     * Evaluates the first knot in the curve. The tangent will be normalized,
+     * to be of unit length.
      *
      * @param curve   the curve
      * @param coord   the output coordinate
@@ -500,8 +494,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Evaluates the first knot in the curve. The tangent will be normalized, to be
-     * of unit length.
+     * Evaluates the first knot in the curve. The tangent will be normalized,
+     * to be of unit length.
      *
      * @param curve the curve
      * @param ray   the output ray
@@ -515,8 +509,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Evaluates the last knot in the curve. The tangent will be normalized, to be
-     * of unit length.
+     * Evaluates the last knot in the curve. The tangent will be normalized, to
+     * be of unit length.
      *
      * @param curve   the curve
      * @param coord   the output coordinate
@@ -535,8 +529,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
 
     /**
      * Converts a set of points on a Catmull-Rom spline to a Bézier curve. The
-     * default tightness is
-     * 0.0. There must be at least 4 points in the array.
+     * default tightness is 0.0. There must be at least 4 points in the array.
      *
      * @param closedLoop the closed loop flag
      * @param tightness  the curve tightness
@@ -548,7 +541,10 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
      * @see Knot3#mirrorHandlesBackward()
      */
     public static Curve3 fromCatmull(
-        final boolean closedLoop, final Vec3[] points, final float tightness, final Curve3 target) {
+        final boolean closedLoop,
+        final Vec3[] points,
+        final float tightness,
+        final Curve3 target) {
 
         final int ptsLen = points.length;
         if (ptsLen < 2) {
@@ -610,8 +606,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Creates a curve from a series of points. Smoothes the fore- and rear-handles
-     * of each knot.
+     * Creates a curve from a series of points. Smoothes the fore- and
+     * rear-handles of each knot.
      *
      * @param closedLoop whether the curve is a closed loop
      * @param points     the array of points
@@ -642,9 +638,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Creates a curve from a series of points, where every other point represents a
-     * control point in
-     * a quadratic curve.
+     * Creates a curve from a series of points, where every other point
+     * represents a control point in a quadratic curve.
      *
      * @param closedLoop whether the curve is a closed loop
      * @param points     the array of points
@@ -708,9 +703,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Creates a random curve. Generates random points, creates a curve from those
-     * points, then
-     * smoothes the knots' handles.
+     * Creates a random curve. Generates random points, creates a curve from
+     * those points, then smoothes the knots' handles.
      *
      * @param rng        the random number generator
      * @param count      the number of knots to generate
@@ -739,9 +733,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Creates a random curve. Generates random points, creates a curve from those
-     * points, then
-     * smoothes the knots' handles.
+     * Creates a random curve. Generates random points, creates a curve from
+     * those points, then smoothes the knots' handles.
      *
      * @param rng        the random number generator
      * @param count      the number of knots to generate
@@ -951,11 +944,9 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * An internal helper function to accumulate the minimum and maximum points in a
-     * curve. This may
-     * be called either by a single curve, or by a curve entity seeking the minimum
-     * and maximum for a
-     * collection of curves.
+     * An internal helper function to accumulate the minimum and maximum points
+     * in a curve. This may be called either by a single curve, or by a curve
+     * entity seeking the minimum and maximum for a collection of curves.
      *
      * @param curve the curve
      * @param lb    the lower bound
@@ -1028,9 +1019,9 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * A helper function. Returns a knot given two knots and a step. Assumes the
-     * step has already been
-     * checked, and that the knots are in sequence along the curve.
+     * A helper function. Returns a knot given two knots and a step. Assumes
+     * the step has already been checked, and that the knots are in sequence
+     * along the curve.
      *
      * @param a      the origin knot
      * @param b      the destination knot
@@ -1063,9 +1054,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Creates a curve which approximates a circle. This is package level to provide
-     * extra
-     * functionality for translating a circle's origin when parsing an SVG file.
+     * Creates a curve which approximates a circle. This is package level to
+     * provide extra functionality for translating a circle's origin.
      *
      * @param offsetAngle the angular offset
      * @param radius      the radius
@@ -1091,7 +1081,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
         target.resize(vKnCt);
         final float invKnCt = 1.0f / vKnCt;
         final float hndlTan = 0.25f * invKnCt;
-        final float hndlMag = Utils.tan(hndlTan * Utils.TAU) * radius * Utils.FOUR_THIRDS;
+        final float hndlMag = Utils.tan(hndlTan * Utils.TAU)
+            * radius * Utils.FOUR_THIRDS;
 
         float incr = 0.0f;
         final Iterator<Knot3> itr = target.knots.iterator();
@@ -1115,8 +1106,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
 
     /**
      * A utility function for setting the handles of knots on straight curve
-     * segments. Finds unclamped
-     * linear interpolation from origin to destination by a step of 1.0 / 3.0 .
+     * segments. Finds unclamped linear interpolation from origin to
+     * destination by a step of 1.0 / 3.0.
      *
      * @param a      the origin
      * @param b      the destination
@@ -1308,9 +1299,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Gets a knot from the curve by an index. When the curve is a closed loop, the
-     * index wraps
-     * around.
+     * Gets a knot from the curve by an index. When the curve is a closed loop,
+     * the index wraps around.
      *
      * @param i the index
      * @return the knot
@@ -1345,9 +1335,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Inserts a knot at a given index. When the curve is a closed loop, the index
-     * wraps around; this
-     * means negative indices are accepted.
+     * Inserts a knot at a given index. When the curve is a closed loop, the
+     * index wraps around; this means negative indices are accepted.
      *
      * @param i    the index
      * @param knot the knot
@@ -1364,9 +1353,9 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Inserts a collection of knots at a given index. When the curve is a closed
-     * loop, the index
-     * wraps around; this means negative indices are accepted.
+     * Inserts a collection of knots at a given index. When the curve is a
+     * closed loop, the index wraps around; this means negative indices are
+     * accepted.
      *
      * @param i  the index
      * @param kn the knots
@@ -1383,9 +1372,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Inserts a list of knots at a given index. When the curve is a closed loop,
-     * the index wraps
-     * around; this means negative indices are accepted.
+     * Inserts a list of knots at a given index. When the curve is a closed
+     * loop, the index wraps around; this means negative indices are accepted.
      *
      * @param i  the index
      * @param kn the knots
@@ -1406,8 +1394,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Returns an iterator, which allows an enhanced for-loop to access the knots in
-     * a curve.
+     * Returns an iterator, which allows an enhanced for-loop to access the
+     * knots in a curve.
      *
      * @return the iterator
      * @see List#iterator()
@@ -1419,8 +1407,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Returns an iterator, which allows access to the knots in a curve in reverse
-     * order.
+     * Returns an iterator, which allows access to the knots in a curve in
+     * reverse order.
      *
      * @return the iterator
      */
@@ -1504,11 +1492,9 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Centers the curve about the origin, (0.0, 0.0), and rescales it to the range
-     * [-0.5, 0.5] .
-     * Emits a transform which records the curve's center point and original
-     * dimension. The
-     * transform's rotation is reset.
+     * Centers the curve about the origin, (0.0, 0.0), and rescales it to the
+     * range [-0.5, 0.5]. Emits a transform which records the curve's center
+     * point and original dimension. The transform's rotation is reset.
      *
      * @param tr the output transform
      * @return this mesh
@@ -1520,8 +1506,14 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
 
         final Vec3 dim = tr.scale;
         final Vec3 lb = tr.location;
-        final Vec3 ub = new Vec3(-Float.MAX_VALUE, -Float.MAX_VALUE, -Float.MAX_VALUE);
-        lb.set(Float.MAX_VALUE, Float.MAX_VALUE, Float.MAX_VALUE);
+        final Vec3 ub = new Vec3(
+            -Float.MAX_VALUE,
+            -Float.MAX_VALUE,
+            -Float.MAX_VALUE);
+        lb.set(
+            Float.MAX_VALUE,
+            Float.MAX_VALUE,
+            Float.MAX_VALUE);
         Curve3.accumMinMax(this, lb, ub);
         Vec3.sub(ub, lb, dim);
 
@@ -1552,9 +1544,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Relocates a knot at a given index to a coordinate. Maintains relationship
-     * between knot
-     * coordinate and handles.
+     * Relocates a knot at a given index to a coordinate. Maintains
+     * relationship between knot coordinate and handles.
      *
      * @param i the index
      * @param v the coordinate
@@ -1569,12 +1560,13 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Removes a knot from the curve at a given index if the curve has more than 2
-     * knots. Returns true
-     * if the removal was successful. The target knot is set to the value of the
-     * removed knot. If the
-     * curve is a closed loop, wraps the index; otherwise checks that the index is
-     * in-bounds.
+     * Removes a knot from the curve at a given index if the curve has more
+     * than 2 knots. Returns true if the removal was successful. The target
+     * knot is set to the value of the removed knot.
+     * <br>
+     * <br>
+     * If the curve is a closed loop, wraps the index; otherwise checks that
+     * the index is in-bounds.
      *
      * @param i      the index
      * @param target the output knot
@@ -1598,9 +1590,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
 
     /**
      * Removes the first knot from the curve if the curve has more than 2 knots.
-     * Returns true if the
-     * removal was successful. The target knot is set to the value of the removed
-     * knot.
+     * Returns true if the removal was successful. The target knot is set to
+     * the value of the removed knot.
      *
      * @param target the output knot
      * @return the evaluation
@@ -1616,9 +1607,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
 
     /**
      * Removes the last knot from the curve if the curve has more than 2 knots.
-     * Returns true if the
-     * removal was successful. The target knot is set to the value of the removed
-     * knot.
+     * Returns true if the removal was successful. The target knot is set to
+     * the value of the removed knot.
      *
      * @param target the output knot
      * @return the evaluation
@@ -1652,9 +1642,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Reverses the curve. This is done by reversing the list of knots and swapping
-     * the fore- and
-     * rear-handle of each knot.
+     * Reverses the curve. This is done by reversing the list of knots and
+     * swapping the fore- and rear-handle of each knot.
      *
      * @return this curve
      * @see Collections#reverse(List)
@@ -1847,10 +1836,9 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
 
     /**
      * Centers the curve about the origin, (0.0, 0.0, 0.0), by calculating its
-     * dimensions then
-     * subtracting the center point. Emits a transform which records the curve's
-     * center point. The
-     * transform's rotation and scale are reset.
+     * dimensions then subtracting the center point. Emits a transform which
+     * records the curve's center point. The transform's rotation and scale are
+     * reset.
      *
      * @param tr the output transform
      * @return this mesh
@@ -1918,11 +1906,12 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
 
     /**
      * Transforms all coordinates in the curve <em>permanently</em> by a
-     * transform.<br>
+     * transform.
      * <br>
-     * Not to be confused with the <em>temporary</em> transformations applied by a
-     * curve entity's
-     * transform to the meshes contained within the entity.<br>
+     * <br>
+     * Not to be confused with the <em>temporary</em> transformations applied
+     * by a curve entity's transform to the meshes contained within the entity.
+     * <br>
      * <br>
      * Useful when consolidating multiple curve entities into one curve entity.
      *
@@ -1956,12 +1945,13 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * For internal (package-level) use. Resizes a curve to the specified length.
-     * The length may be no
-     * less than 2. When the new length is greater than the old, new {@link Knot3}s
-     * are added.<br>
+     * For internal (package-level) use. Resizes a curve to the specified
+     * length. The length may be no less than 2. When the new length is greater
+     * than the old, new {@link Knot3}s are added.
      * <br>
-     * This does not check if remaining elements in the list are <code>null</code>.
+     * <br>
+     * This does not check if remaining elements in the list are
+     * <code>null</code>.
      *
      * @param len the length
      * @return this curve
@@ -1988,10 +1978,9 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * An internal helper function to format a vector as a Python tuple, then append
-     * it to a {@link
-     * StringBuilder}. Used for testing purposes to compare results with Blender
-     * 2.9x.
+     * An internal helper function to format a vector as a Python tuple, then
+     * append it to a {@link StringBuilder}. Used for testing purposes to
+     * compare results with Blender 4.x.
      *
      * @param pyCd the string builder
      * @param uRes the resolution u
@@ -2026,8 +2015,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * curves. Appends to an
-     * existing {@link StringBuilder}.
+     * curves. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -2056,9 +2044,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     /**
-     * Clears the list of knots and sets the closedLoop flag to false. Unlike the
-     * public reset, this
-     * does not add two default knots to the list.
+     * Clears the list of knots and sets the closedLoop flag to false. Unlike
+     * the public reset, this does not add two default knots to the list.
      *
      * @see List#clear()
      */
@@ -2118,7 +2105,10 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
          */
         @Override
         public Curve3 apply(
-            final Curve3 orig, final Curve3 dest, final Float step, final Curve3 target) {
+            final Curve3 orig,
+            final Curve3 dest,
+            final Float step,
+            final Curve3 target) {
 
             final float tf = step;
             if (Float.isNaN(tf)) {
@@ -2134,14 +2124,17 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
         }
 
         /**
-         * Eases between curves in an array by a step in the range [0.0, 1.0] .
+         * Eases between curves in an array by a step in the range [0.0, 1.0].
          *
          * @param arr    the curve array
          * @param step   the step
          * @param target the output curve
          */
         @Override
-        public Curve3 apply(final Curve3[] arr, final Float step, final Curve3 target) {
+        public Curve3 apply(
+            final Curve3[] arr,
+            final Float step,
+            final Curve3 target) {
 
             final int len = arr.length;
             final float t = step;
@@ -2158,26 +2151,28 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
         }
 
         /**
-         * Eases between an origin and destination transform by a step in [0.0, 1.0] .
-         * Curves must have
-         * the same number of knots and must match * whether they are closed loops or
-         * open.
+         * Eases between an origin and destination transform by a step in
+         * [0.0, 1.0]. Curves must have the same number of knots and must match
+         * whether they are closed loops or open.
          *
-         * @param origin the origin
+         * @param orig   the origin
          * @param dest   the destination
          * @param step   the step
          * @param target the output curve
          * @return the easing curve
          */
         public Curve3 applyUnclamped(
-            final Curve3 origin, final Curve3 dest, final float step, final Curve3 target) {
+            final Curve3 orig,
+            final Curve3 dest,
+            final float step,
+            final Curve3 target) {
 
-            final ArrayList<Knot3> orKn = origin.knots;
+            final ArrayList<Knot3> orKn = orig.knots;
             final ArrayList<Knot3> dsKn = dest.knots;
 
-            if (orKn.size() == dsKn.size() && origin.closedLoop == dest.closedLoop) {
+            if (orKn.size() == dsKn.size() && orig.closedLoop == dest.closedLoop) {
 
-                target.closedLoop = origin.closedLoop;
+                target.closedLoop = orig.closedLoop;
                 target.resize(orKn.size());
 
                 final Iterator<Knot3> orItr = orKn.iterator();

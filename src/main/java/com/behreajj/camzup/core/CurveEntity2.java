@@ -95,15 +95,17 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
         target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
 
         for (Curve2 knot2s : entity) {
-            Curve2.accumMinMax(knot2s, target.min, target.max, entity.transform, fh, rh, co);
+            Curve2.accumMinMax(knot2s,
+                target.min, target.max, entity.transform,
+                fh, rh, co);
         }
 
         return target;
     }
 
     /**
-     * Evaluates a step in the range [0.0, 1.0] for a curve in the entity, returning
-     * a knot.
+     * Evaluates a step in the range [0.0, 1.0] for a curve in the entity,
+     * returning a knot.
      *
      * @param ce         the curve entity
      * @param curveIndex the curve index
@@ -132,10 +134,9 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * Evaluates a step in the range [0.0, 1.0] for a curve in the entity, returning
-     * a coordinate on
-     * the curve and a tangent. The tangent will be normalized, to be of unit
-     * length.
+     * Evaluates a step in the range [0.0, 1.0] for a curve in the entity,
+     * returning a coordinate on the curve and a tangent. The tangent will be
+     * normalized, to be of unit length.
      *
      * @param ce         the curve entity
      * @param curveIndex the curve index
@@ -153,15 +154,16 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
         final Ray2 rayLocal) {
 
         CurveEntity2.eval(
-            ce, curveIndex, step, rayWorld.origin, rayWorld.dir, rayLocal.origin, rayLocal.dir);
+            ce, curveIndex, step,
+            rayWorld.origin, rayWorld.dir,
+            rayLocal.origin, rayLocal.dir);
         return rayWorld;
     }
 
     /**
-     * Evaluates a step in the range [0.0, 1.0] for a curve in the entity, returning
-     * a coordinate on
-     * the curve and a tangent. The tangent will be normalized, to be of unit
-     * length.
+     * Evaluates a step in the range [0.0, 1.0] for a curve in the entity,
+     * returning a coordinate on the curve and a tangent. The tangent will be
+     * normalized, to be of unit length.
      *
      * @param ce         the curve entity
      * @param curveIndex the curve index
@@ -191,9 +193,8 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * Appends a curve to this curve entity. The curve must not be <code>null</code>
-     * and must have a
-     * length greater than zero.
+     * Appends a curve to this curve entity. The curve must not be
+     * <code>null</code>.
      *
      * @param curve the curve
      * @return this curve entity
@@ -209,13 +210,13 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     /**
      * Appends a collection of curves to this curve entity.
      *
-     * @param app the curves
+     * @param curves the curves
      * @return this curve entity
      */
-    public CurveEntity2 appendAll(final Collection<Curve2> app) {
+    public CurveEntity2 appendAll(final Collection<Curve2> curves) {
 
-        for (Curve2 knot2s : app) {
-            this.append(knot2s);
+        for (Curve2 curve : curves) {
+            this.append(curve);
         }
 
         return this;
@@ -224,23 +225,22 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     /**
      * Appends a list of curves to this curve entity.
      *
-     * @param app the curves
+     * @param curves the curves
      * @return this curve entity
      */
     @SuppressWarnings("UnusedReturnValue")
-    public CurveEntity2 appendAll(final Curve2... app) {
+    public CurveEntity2 appendAll(final Curve2... curves) {
 
-        for (Curve2 knot2s : app) {
-            this.append(knot2s);
+        for (Curve2 curve : curves) {
+            this.append(curve);
         }
 
         return this;
     }
 
     /**
-     * Transforms all curves in this curve entity by its transform, then resets the
-     * entity's transform
-     * to the identity.
+     * Transforms all curves in this curve entity by its transform, then resets
+     * the entity's transform to the identity.
      *
      * @return this curve entity
      * @see Curve2#transform(Transform2)
@@ -350,7 +350,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * /** Returns an iterator, which allows an enhanced for-loop to access the
+     * Returns an iterator, which allows an enhanced for-loop to access the
      * curves in the entity.
      *
      * @return the iterator
@@ -372,9 +372,8 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
 
     /**
      * Centers and rescales all curves in the entity about a shared origin by
-     * calculating their
-     * dimensions, subtracting the center point, and scaling by the maximum
-     * dimension.
+     * calculating their dimensions, subtracting the center point, and scaling
+     * by the maximum dimension.
      *
      * @return this curve entity.
      * @see Curve2#accumMinMax(Curve2, Vec2, Vec2)
@@ -405,9 +404,8 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * Relocates a knot within the curve to a point in global space. The point is
-     * inverse multiplied
-     * by the transform to put it in local space.
+     * Relocates a knot within the curve to a point in global space. The point
+     * is inverse multiplied by the transform to put it in local space.
      *
      * @param curveIndex the curve index
      * @param knotIndex  the knot index
@@ -418,7 +416,10 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
      * @see Curve2#relocateKnot(int, Vec2)
      */
     public CurveEntity2 relocateKnot(
-        final int curveIndex, final int knotIndex, final Vec2 global, final Vec2 local) {
+        final int curveIndex,
+        final int knotIndex,
+        final Vec2 global,
+        final Vec2 local) {
 
         Transform2.invMulPoint(this.transform, global, local);
         this.get(curveIndex).relocateKnot(knotIndex, local);
@@ -427,9 +428,8 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * Removes a curve from this curve entity. Returns <code>true</code> if this
-     * request was filled,
-     * <code>false</code> if not.
+     * Removes a curve from this curve entity. Returns <code>true</code> if
+     * this request was filled, <code>false</code> if not.
      *
      * @param curve the curve to remove
      * @return the evaluation
@@ -451,8 +451,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
 
     /**
      * Resets the curve entity to an initial state. Sets the transform to an
-     * identity and clears the
-     * list of curves.
+     * identity and clears the list of curves.
      *
      * @return this entity
      */
@@ -537,9 +536,9 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * Sets the coordinate of a knot for a given curve at an index. Multiplies the
-     * input coordinate in
-     * global space by the transform's inverse.<br>
+     * Sets the coordinate of a knot for a given curve at an index. Multiplies
+     * the input coordinate in global space by the transform's inverse.
+     * <br>
      * <br>
      * To facilitate editing the curve with a graphical user interface (GUI).
      *
@@ -551,7 +550,10 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
      * @see Transform2#invMulPoint(Transform2, Vec2, Vec2)
      */
     public CurveEntity2 setKnotCoord(
-        final int curveIndex, final int knotIndex, final Vec2 global, final Vec2 local) {
+        final int curveIndex,
+        final int knotIndex,
+        final Vec2 global,
+        final Vec2 local) {
 
         Transform2.invMulPoint(this.transform, global, local);
         this.get(curveIndex).get(knotIndex).coord.set(local);
@@ -560,9 +562,9 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * Sets the fore handle of a knot for a given curve at an index. Multiplies the
-     * input coordinate
-     * in global space by the transform's inverse.<br>
+     * Sets the fore handle of a knot for a given curve at an index. Multiplies
+     * the input coordinate in global space by the transform's inverse.
+     * <br>
      * <br>
      * To facilitate editing the curve with a graphical user interface (GUI).
      *
@@ -574,7 +576,10 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
      * @see Transform2#invMulPoint(Transform2, Vec2, Vec2)
      */
     public CurveEntity2 setKnotForeHandle(
-        final int curveIndex, final int knotIndex, final Vec2 global, final Vec2 local) {
+        final int curveIndex,
+        final int knotIndex,
+        final Vec2 global,
+        final Vec2 local) {
 
         Transform2.invMulPoint(this.transform, global, local);
         this.get(curveIndex).get(knotIndex).foreHandle.set(local);
@@ -583,9 +588,9 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * Sets the rear handle of a knot for a given curve at an index. Multiplies the
-     * input coordinate
-     * in global space by the transform's inverse.<br>
+     * Sets the rear handle of a knot for a given curve at an index. Multiplies
+     * the input coordinate in global space by the transform's inverse.
+     * <br>
      * <br>
      * To facilitate editing the curve with a graphical user interface (GUI).
      *
@@ -597,7 +602,10 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
      * @see Transform2#invMulPoint(Transform2, Vec2, Vec2)
      */
     public CurveEntity2 setKnotRearHandle(
-        final int curveIndex, final int knotIndex, final Vec2 global, final Vec2 local) {
+        final int curveIndex,
+        final int knotIndex,
+        final Vec2 global,
+        final Vec2 local) {
 
         Transform2.invMulPoint(this.transform, global, local);
         this.get(curveIndex).get(knotIndex).rearHandle.set(local);
@@ -606,11 +614,10 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 2.8x API. This
-     * code is brittle and
-     * is used for internal testing purposes, i.e., to compare how curve geometry
-     * looks in Blender
-     * (the control) versus in the library (the test).
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes, i.e., to
+     * compare how curve geometry looks in Blender (the control) versus in the
+     * library (the test).
      *
      * @return the string
      */
@@ -620,11 +627,10 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 2.8x API. This
-     * code is brittle and
-     * is used for internal testing purposes, i.e., to compare how curve geometry
-     * looks in Blender
-     * (the control) versus in the library (the test).
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes, i.e., to
+     * compare how curve geometry looks in Blender (the control) versus in the
+     * library (the test).
      *
      * @param uRes       the resolution u
      * @param fillMode   the fill mode: "BACK", "BOTH", "FRONT", "NONE"
@@ -633,7 +639,10 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
      * @return the string
      */
     public String toBlenderCode(
-        final int uRes, final String fillMode, final float extrude, final float bevelDepth) {
+        final int uRes,
+        final String fillMode,
+        final float extrude,
+        final float bevelDepth) {
 
         final StringBuilder pyCd = new StringBuilder(2048);
         pyCd.append("from bpy import data as D, context as C\n\n");
@@ -700,9 +709,8 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * Centers all curves in the entity about a shared origin by calculating their
-     * dimensions then
-     * subtracting the center point.
+     * Centers all curves in the entity about a shared origin by calculating
+     * their dimensions then subtracting the center point.
      *
      * @return this curve entity.
      */
@@ -758,12 +766,12 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * Creates a string representing a group node in the SVG format.<br>
+     * Creates a string representing a group node in the SVG format.
      * <br>
-     * Stroke weight is impacted by scaling in transforms, so zoom is a parameter.
-     * If nonuniform
-     * zooming is used, zoom can be an average of width and height or the maximum
-     * dimension.
+     * <br>
+     * Stroke weight is impacted by scaling in transforms, so zoom is a
+     * parameter. If nonuniform zooming is used, zoom can be an average of
+     * width and height or the maximum dimension.
      *
      * @param zoom scaling from external transforms
      * @return the string
@@ -783,24 +791,25 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
      * @return the string
      */
     public String toSvgElm(
-        final float zoom, final boolean useSubPaths, final MaterialSolid material) {
+        final float zoom,
+        final boolean useSubPaths,
+        final MaterialSolid material) {
 
         return this.toSvgElm(zoom, useSubPaths, new MaterialSolid[]{material});
     }
 
     /**
-     * Creates a string representing a group node in the SVG format. This SVG is
-     * designed for
-     * compatibility with Processing, not for efficiency.<br>
+     * Creates a string representing a group node in the SVG format. This SVG
+     * is designed for compatibility with Processing, not for efficiency.
      * <br>
-     * Stroke weight is impacted by scaling in transforms, so zoom is a parameter.
-     * If nonuniform
-     * zooming is used, zoom can be an average of width and height or the maximum
-     * dimension.<br>
      * <br>
-     * If sub paths is true, then a curve entity will contain one path element with
-     * multiple move to
-     * commands.
+     * Stroke weight is impacted by scaling in transforms, so zoom is a
+     * parameter. If nonuniform zooming is used, zoom can be an average of
+     * width and height or the maximum dimension.
+     * <br>
+     * <br>
+     * If sub paths is true, then a curve entity will contain one path element
+     * with multiple move to commands.
      *
      * @param zoom        scaling from external transforms
      * @param useSubPaths whether to use sub paths
@@ -808,7 +817,9 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
      * @return the string
      */
     public String toSvgElm(
-        final float zoom, final boolean useSubPaths, final MaterialSolid[] materials) {
+        final float zoom,
+        final boolean useSubPaths,
+        final MaterialSolid[] materials) {
 
         // TODO: Allow user to specify SVG cap and join rounding?
 
@@ -859,8 +870,8 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
             for (final Curve2 curve : this.curves) {
                 /*
                  * It'd be more efficient to create a definitions block that
-                 * contains the data for each material, which is then used by a mesh
-                 * element with xlink. However, such tags are ignored when
+                 * contains the data for each material, which is then used by a
+                 * curve element with xlink. However, such tags are ignored when
                  * Processing imports an SVG with loadShape.
                  */
                 if (multipleMats) {
@@ -902,10 +913,9 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * Renders this curve entity as an SVG string. A default material renders the
-     * mesh's fill and
-     * stroke. The background of the SVG is transparent. Sets the camera scale to
-     * 1.0.
+     * Renders this curve entity as an SVG string. A default material renders
+     * the curve's fill and stroke. The background of the SVG is transparent.
+     * Sets the camera scale to 1.0.
      *
      * @return the SVG string
      */
@@ -923,10 +933,8 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
-     * Internal helper function. Writes the curve entity as a single SVG path with
-     * sub-paths. The fill
-     * rule may be either <code>"evenodd"</code> or <code>"nonzero"</code>
-     * (default).
+     * Internal helper function. Writes the curve entity as a single SVG path
+     * with sub-paths.
      *
      * @param svgp the string builder
      */

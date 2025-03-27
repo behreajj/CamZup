@@ -4,6 +4,7 @@ package com.behreajj.camzup.core;
  * Maintains consistent behavior between objects with volume.
  */
 public interface IVolume {
+
     /**
      * Scales the object by a scalar.
      *

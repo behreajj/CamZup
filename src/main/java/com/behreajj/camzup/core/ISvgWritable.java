@@ -12,14 +12,14 @@ public interface ISvgWritable {
     float DEFAULT_HEIGHT = 512.0f;
 
     /**
-     * Default origin x of a 'camera' transform in an SVG, expressed as a ratio in
-     * [0.0, 1.0].
+     * Default origin x of a 'camera' transform in an SVG, expressed as a ratio
+     * in [0.0, 1.0].
      */
     float DEFAULT_ORIGIN_X = 0.5f;
 
     /**
-     * Default origin y of a 'camera' transform in an SVG, expressed as a ratio in
-     * [0.0, 1.0].
+     * Default origin y of a 'camera' transform in an SVG, expressed as a ratio
+     * in [0.0, 1.0].
      */
     float DEFAULT_ORIGIN_Y = 0.5f;
 
@@ -39,9 +39,8 @@ public interface ISvgWritable {
     float DEFAULT_WIDTH = 512.0f;
 
     /**
-     * The default fill rule, or winding rule, from the enumeration "evenodd" and
-     * "nonzero". "nonzero"
-     * is the SVG specification default.
+     * The default fill rule, or winding rule, from the enumeration "evenodd"
+     * and "nonzero". "nonzero" is the SVG specification default.
      */
     String DEFAULT_WINDING_RULE = "evenodd";
 
@@ -60,12 +59,12 @@ public interface ISvgWritable {
     }
 
     /**
-     * Renders this object as a string containing an SVG element.<br>
+     * Renders this object as a string containing an SVG element.
      * <br>
-     * Stroke weight is impacted by scaling in transforms, so zoom is a parameter.
-     * If nonuniform
-     * zooming is used, zoom can be an average of width and height or the maximum
-     * dimension.
+     * <br>
+     * Stroke weight is impacted by scaling in transforms, so zoom is a
+     * parameter. If nonuniform zooming is used, zoom can be an average of
+     * width and height or the maximum dimension.
      *
      * @param zoom scaling from external transforms
      * @return the SVG string
@@ -73,21 +72,18 @@ public interface ISvgWritable {
     String toSvgElm(final float zoom);
 
     /**
-     * Renders this object as an SVG string. A default material renders the mesh's
-     * fill and stroke.
-     * The background of the SVG is transparent.
+     * Renders this object as an SVG string. A default material renders the
+     * mesh's fill and stroke. The background of the SVG is transparent.
      *
      * @return the SVG string
      */
     String toSvgString();
 
     /**
-     * Renders this object as an SVG string. A default material renders the mesh's
-     * fill and stroke.
-     * The background of the SVG is transparent. The width and height inform the
-     * view box dimensions.
-     * The origin is expected to be in unit coordinates, [0.0, 1.0] ; it is
-     * multiplied by the view box
+     * Renders this object as an SVG string. A default material renders the
+     * mesh's fill and stroke. The background of the SVG is transparent. The
+     * width and height inform the view box dimensions. The origin is expected
+     * to be in unit coordinates, [0.0, 1.0] ; it is multiplied by the view box
      * dimensions.
      *
      * @param xOrig      the origin x
@@ -159,11 +155,10 @@ public interface ISvgWritable {
     }
 
     /**
-     * Renders this object as an SVG string. A default material renders the mesh's
-     * fill and stroke.
-     * The background of the SVG is transparent. The width and height supplied form
-     * both the view box
-     * dimensions, the translation and the scale of the shape.
+     * Renders this object as an SVG string. A default material renders the
+     * mesh's fill and stroke. The background of the SVG is transparent. The
+     * width and height supplied form both the view box dimensions, the
+     * translation and the scale of the shape.
      *
      * @param origin the origin
      * @param scale  the scale

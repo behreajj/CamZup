@@ -3,16 +3,13 @@ package com.behreajj.camzup.core;
 import java.util.*;
 
 /**
- * Implements a
- * <a href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve">composite</a>
- * piecewise
- * cubic Bézier curve. Provides a function to retrieve a point and tangent on a
- * curve from a step in
- * the range [0.0, 1.0] .<br>
+ * Implements a <a href="https://en.wikipedia.org/wiki/B%C3%A9zier_curve">composite</a>
+ * piecewise cubic Bézier curve. Provides a function to retrieve a point and
+ * tangent on a curve from a step in the range [0.0, 1.0].
+ * <br>
  * <br>
  * The primitives available from this class are partially informed by the
- * scalable vector graphics
- * (SVG) specification.
+ * scalable vector graphics (SVG) specification.
  */
 public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
 
@@ -150,9 +147,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Creates an arc from a start and stop angle. The arc can be open, traversed by
-     * a chord, or
-     * pie-shaped.
+     * Creates an arc from a start and stop angle. The arc can be open,
+     * traversed by a chord, or pie-shaped.
      *
      * @param startAngle the start angle
      * @param stopAngle  the stop angle
@@ -300,11 +296,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Calculates an Axis-Aligned Bounding Box (AABB) encompassing the curve. Does
-     * so by taking the
-     * minimum and maximum of each knot's coordinate, fore handle and rear handle;
-     * <em>not</em> by
-     * finding the curve extrema.
+     * Calculates an Axis-Aligned Bounding Box (AABB) encompassing the curve.
+     * Does so by taking the minimum and maximum of each knot's coordinate,
+     * fore handle and rear handle; <em>not</em> by finding the curve extrema.
      *
      * @param curve  the curve
      * @param target the output dimensions
@@ -366,10 +360,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Creates a curve which approximates an ellipse; currently there is support
-     * only for 4 knot
-     * ellipses. The aspect ratio is that between the ellipse's major and minor
-     * axes.
+     * Creates a curve which approximates an ellipse; currently there is
+     * support only for 4 knot ellipses. The aspect ratio is that between the
+     * ellipse's major and minor axes.
      *
      * @param aspect the aspect
      * @param target the output curve
@@ -381,9 +374,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Evaluates a step in the range [0.0, 1.0] , returning a knot on the curve. The
-     * knot's fore
-     * handle and rear handle are mirrored.
+     * Evaluates a step in the range [0.0, 1.0] , returning a knot on the curve.
+     * The knot's fore handle and rear handle are mirrored.
      *
      * @param curve  the curve
      * @param step   the step
@@ -439,9 +431,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Evaluates a step in the range [0.0, 1.0] , returning a ray. The ray's origin
-     * will be a
-     * coordinate on the curve while its direction will be a normalized tangent.
+     * Evaluates a step in the range [0.0, 1.0] , returning a ray. The ray's
+     * origin will be a coordinate on the curve while its direction will be a
+     * normalized tangent.
      *
      * @param curve the curve
      * @param step  the step
@@ -456,9 +448,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Evaluates a step in the range [0.0, 1.0] , returning a coordinate on the
-     * curve and a tangent.
-     * The tangent will be normalized, to be of unit length.
+     * Evaluates a step in the range [0.0, 1.0], returning a coordinate on the
+     * curve and a tangent. The tangent will be normalized, to be of unit
+     * length.
      *
      * @param curve   the curve
      * @param step    the step
@@ -546,8 +538,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Evaluates the first knot in the curve. The tangent will be normalized, to be
-     * of unit length.
+     * Evaluates the first knot in the curve. The tangent will be normalized,
+     * to be of unit length.
      *
      * @param curve the curve
      * @param ray   the output ray
@@ -561,8 +553,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Evaluates the first knot in the curve. The tangent will be normalized, to be
-     * of unit length.
+     * Evaluates the first knot in the curve. The tangent will be normalized,
+     * to be of unit length.
      *
      * @param curve   the curve
      * @param coord   the output coordinate
@@ -620,8 +612,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Evaluates the first knot in the curve. The tangent will be normalized, to be
-     * of unit length.
+     * Evaluates the first knot in the curve. The tangent will be normalized,
+     * to be of unit length.
      *
      * @param curve the curve
      * @param ray   the output ray
@@ -635,8 +627,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Evaluates the last knot in the curve. The tangent will be normalized, to be
-     * of unit length.
+     * Evaluates the last knot in the curve. The tangent will be normalized,
+     * to be of unit length.
      *
      * @param curve   the curve
      * @param coord   the output coordinate
@@ -654,8 +646,7 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
 
     /**
      * Converts a set of points on a Catmull-Rom spline to a Bézier curve. The
-     * default tightness is
-     * 0.0. There must be at least 4 points in the array.
+     * default tightness is 0.0. There must be at least 4 points in the array.
      *
      * @param closedLoop the closed loop flag
      * @param tightness  the curve tightness
@@ -667,7 +658,10 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @see Knot2#mirrorHandlesBackward()
      */
     public static Curve2 fromCatmull(
-        final boolean closedLoop, final Vec2[] points, final float tightness, final Curve2 target) {
+        final boolean closedLoop,
+        final Vec2[] points,
+        final float tightness,
+        final Curve2 target) {
 
         final int ptsLen = points.length;
         if (ptsLen < 2) {
@@ -729,8 +723,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Creates a curve from a series of points. Smoothes the fore- and rear-handles
-     * of each knot.
+     * Creates a curve from a series of points. Smoothes the fore- and
+     * rear-handles of each knot.
      *
      * @param closedLoop whether the curve is a closed loop
      * @param points     the array of points
@@ -761,9 +755,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Creates a curve from a series of points, where every other point represents a
-     * control point in
-     * a quadratic curve.
+     * Creates a curve from a series of points, where every other point
+     * represents a control point in a quadratic curve.
      *
      * @param closedLoop whether the curve is a closed loop
      * @param points     the array of points
@@ -810,13 +803,12 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Creates a curve that approximates Bernoulli's lemniscate, which resembles an
-     * infinity loop
-     * (with equally proportioned lobes).<br>
+     * Creates a curve that approximates Bernoulli's lemniscate, which
+     * resembles an infinity loop (with equally proportioned lobes).
      * <br>
-     * The curve is set as a closed loop; however, it intersects itself, and so may
-     * lead to rendering
-     * issues when used with a fill.
+     * <br>
+     * The curve is set as a closed loop; however, it intersects itself, and so
+     * may lead to rendering issues when used with a fill.
      *
      * @param target the output curve
      * @return the lemniscate
@@ -852,9 +844,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Creates a random curve. Generates random points, creates a curve from those
-     * points, then
-     * smoothes the knots' handles.
+     * Creates a random curve. Generates random points, creates a curve from
+     * those points, then smoothes the knots' handles.
      *
      * @param rng        the random number generator
      * @param count      the number of knots to generate
@@ -884,9 +875,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Creates a random curve. Generates random points, creates a curve from those
-     * points, then
-     * smoothes the knots' handles.
+     * Creates a random curve. Generates random points, creates a curve from
+     * those points, then smoothes the knots' handles.
      *
      * @param rng        the random number generator
      * @param count      the number of knots to generate
@@ -927,8 +917,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Sets a target curve to a rectangle. The first parameter specifies the corner
-     * rounding factor.
+     * Sets a target curve to a rectangle. The first parameter specifies the
+     * corner rounding factor.
      *
      * @param rounding corner rounding
      * @param target   the output curve
@@ -940,9 +930,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Sets a target curve to a rectangle. The first coordinate specifies the top
-     * left corner; the
-     * second coordinate specifies the bottom right corner.
+     * Sets a target curve to a rectangle. The first coordinate specifies the
+     * top left corner; the second coordinate specifies the bottom right corner.
      *
      * @param tl     the top left corner
      * @param br     the bottom right corner
@@ -955,11 +944,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Sets a target curve to a rectangle. The first coordinate specifies the top
-     * left corner; the
-     * second coordinate specifies the bottom right corner. The third parameter
-     * specifies the corner
-     * rounding factor.
+     * Sets a target curve to a rectangle. The first coordinate specifies the
+     * top left corner; the second coordinate specifies the bottom right
+     * corner. The third parameter specifies the corner rounding factor.
      *
      * @param tl     the top left corner
      * @param br     the bottom right corner
@@ -973,12 +960,10 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Sets a target curve to a rectangle. The first coordinate specifies the top
-     * left corner; the
-     * second coordinate, specifies the bottom right corner. The next four
-     * parameters specify the
-     * rounding factor for the top left, top right, bottom right and bottom left
-     * corners.
+     * Sets a target curve to a rectangle. The first coordinate specifies the
+     * top left corner; the second coordinate, specifies the bottom right
+     * corner. The next four parameters specify the rounding factor for the top
+     * left, top right, bottom right and bottom left corners.
      *
      * @param tl       the top left corner
      * @param br       the bottom right corner
@@ -1184,8 +1169,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * An internal helper function to accumulate the minimum and maximum points in a
-     * curve.
+     * An internal helper function to accumulate the minimum and maximum points
+     * in a curve.
      *
      * @param curve the curve
      * @param lb    the lower bound
@@ -1240,11 +1225,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * An internal helper function to accumulate the minimum and maximum points in a
-     * curve. This may
-     * be called either by a single curve, or by a curve entity seeking the minimum
-     * and maximum for a
-     * collection of curves.
+     * An internal helper function to accumulate the minimum and maximum points
+     * in a curve. This may be called either by a single curve, or by a curve
+     * entity seeking the minimum and maximum for a collection of curves.
      *
      * @param curve the curve
      * @param lb    the lower bound
@@ -1350,9 +1333,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Creates a curve which approximates a circle. This is package level to provide
-     * extra
-     * functionality for translating a circle's origin.
+     * Creates a curve which approximates a circle. This is package level to
+     * provide extra functionality for translating a circle's origin.
      *
      * @param sectors     the sectors
      * @param offsetAngle the angular offset
@@ -1402,10 +1384,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
 
     /**
      * Creates a curve which approximates an ellipse. The aspect is the ratio
-     * between the width and
-     * height of the ellipse. This is package level to provide extra functionality
-     * for translating an
-     * ellipse's origin.
+     * between the width and height of the ellipse. This is package level to
+     * provide extra functionality for translating an ellipse's origin.
      *
      * @param radius  the radius
      * @param aspect  the aspect ratio
@@ -1467,8 +1447,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
 
     /**
      * A utility function for setting the handles of knots on straight curve
-     * segments. Finds unclamped
-     * linear interpolation from origin to destination by a step of 1.0 / 3.0 .
+     * segments. Finds unclamped linear interpolation from origin to
+     * destination by a step of 1.0 / 3.0 .
      *
      * @param a      the origin
      * @param b      the destination
@@ -1544,11 +1524,10 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Creates a rounded rectangle. The first four parameters specify the lower and
-     * upper bound of the
-     * rectangle. The next four parameters specify the rounding factor for the top
-     * left, top right,
-     * bottom right and bottom left corners.
+     * Creates a rounded rectangle. The first four parameters specify the lower
+     * and upper bound of the rectangle. The next four parameters specify the
+     * rounding factor for the top left, top right, bottom right and bottom
+     * left corners.
      *
      * @param lbx    lower bound x
      * @param lby    lower bound y
@@ -1609,8 +1588,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
 
         /*
          * Validate corner insetting. It would make more sense for these to be
-         * factors in [0.0, 1.0] that are then divided by 2. However, there needs
-         * to be parity with Processing and SVG approach.
+         * factors in [0.0, 1.0] that are then divided by 2. However, there
+         * needs to be parity with Processing and SVG approach.
          */
         final float se = 0.5f * Math.min(w, h);
         final float vtl = Math.min(se, Utils.abs(tl));
@@ -1821,9 +1800,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Gets a knot from the curve by an index. When the curve is a closed loop, the
-     * index wraps
-     * around; this means negative indices are accepted.
+     * Gets a knot from the curve by an index. When the curve is a closed loop,
+     * the index wraps around; this means negative indices are accepted.
      *
      * @param i the index
      * @return the knot
@@ -1858,9 +1836,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Inserts a knot at a given index. When the curve is a closed loop, the index
-     * wraps around; this
-     * means negative indices are accepted.
+     * Inserts a knot at a given index. When the curve is a closed loop, the
+     * index wraps around; this means negative indices are accepted.
      *
      * @param i    the index
      * @param knot the knot
@@ -1877,9 +1854,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Inserts a collection of knots at a given index. When the curve is a closed
-     * loop, the index
-     * wraps around; this means negative indices are accepted.
+     * Inserts a collection of knots at a given index. When the curve is a
+     * closed loop, the index wraps around; this means negative indices are
+     * accepted.
      *
      * @param i  the index
      * @param kn the knots
@@ -1896,9 +1873,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Inserts a list of knots at a given index. When the curve is a closed loop,
-     * the index wraps
-     * around; this means negative indices are accepted.
+     * Inserts a list of knots at a given index. When the curve is a closed
+     * loop, the index wraps around; this means negative indices are accepted.
      *
      * @param i  the index
      * @param kn the knots
@@ -1919,8 +1895,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Returns an iterator, which allows an enhanced for-loop to access the knots in
-     * a curve.
+     * Returns an iterator, which allows an enhanced for-loop to access the
+     * knots in a curve.
      *
      * @return the iterator
      * @see List#iterator()
@@ -1932,8 +1908,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Returns an iterator, which allows access to the knots in a curve in reverse
-     * order.
+     * Returns an iterator, which allows access to the knots in a curve in
+     * reverse order.
      *
      * @return the iterator
      */
@@ -2017,11 +1993,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Centers the curve about the origin, (0.0, 0.0), and rescales it to the range
-     * [-0.5, 0.5] .
-     * Emits a transform which records the curve's center point and original
-     * dimension. The
-     * transform's rotation is reset.
+     * Centers the curve about the origin, (0.0, 0.0), and rescales it to the
+     * range [-0.5, 0.5]. Emits a transform which records the curve's center
+     * point and original dimension. The transform's rotation is reset.
      *
      * @param tr the output transform
      * @return this mesh
@@ -2062,9 +2036,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Relocates a knot at a given index to a coordinate. Maintains relationship
-     * between knot
-     * coordinate and handles.
+     * Relocates a knot at a given index to a coordinate. Maintains
+     * relationship between knot coordinate and handles.
      *
      * @param i the index
      * @param v the coordinate
@@ -2078,12 +2051,13 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Removes a knot from the curve at a given index if the curve has more than 2
-     * knots. Returns true
-     * if the removal was successful. The target knot is set to the value of the
-     * removed knot. If the
-     * curve is a closed loop, wraps the index; otherwise checks that the index is
-     * in-bounds.
+     * Removes a knot from the curve at a given index if the curve has more
+     * than 2 knots. Returns true if the removal was successful. The target
+     * knot is set to the value of the removed knot.
+     * <br>
+     * <br>
+     * If the curve is a closed loop, wraps the index; otherwise checks that
+     * the index is in-bounds.
      *
      * @param i      the index
      * @param target the output knot
@@ -2108,9 +2082,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
 
     /**
      * Removes the first knot from the curve if the curve has more than 2 knots.
-     * Returns true if the
-     * removal was successful. The target knot is set to the value of the removed
-     * knot.
+     * Returns true if the removal was successful. The target knot is set to
+     * the value of the removed knot.
      *
      * @param target the output knot
      * @return the evaluation
@@ -2126,9 +2099,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
 
     /**
      * Removes the last knot from the curve if the curve has more than 2 knots.
-     * Returns true if the
-     * removal was successful. The target knot is set to the value of the removed
-     * knot.
+     * Returns true if the removal was successful. The target knot is set to
+     * the value of the removed knot.
      *
      * @param target the output knot
      * @return the evaluation
@@ -2162,9 +2134,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Reverses the curve. This is done by reversing the list of knots and swapping
-     * the fore- and
-     * rear-handle of each knot.
+     * Reverses the curve. This is done by reversing the list of knots and
+     * swapping the fore- and rear-handle of each knot.
      *
      * @return this curve
      * @see Collections#reverse(List)
@@ -2258,11 +2229,10 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Centers the curve about the origin, (0.0, 0.0), by calculating its dimensions
-     * then subtracting
-     * the center point. Emits a transform which records the curve's center point.
-     * The transform's
-     * rotation and scale are reset.
+     * Centers the curve about the origin, (0.0, 0.0), by calculating its
+     * dimensions then subtracting the center point. Emits a transform which
+     * records the curve's center point. The transform's rotation and scale are
+     * reset.
      *
      * @param tr the output transform
      * @return this mesh
@@ -2325,9 +2295,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Renders this curve as an SVG string. A default material renders the mesh's
-     * fill and stroke. The
-     * background of the SVG is transparent.
+     * Renders this curve as an SVG string. A default material renders the
+     * curve's fill and stroke. The background of the SVG is transparent.
      *
      * @return the SVG string
      */
@@ -2361,11 +2330,12 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
 
     /**
      * Transforms all coordinates in the curve <em>permanently</em> by a
-     * transform.<br>
+     * transform.
      * <br>
-     * Not to be confused with the <em>temporary</em> transformations applied by a
-     * curve entity's
-     * transform to the meshes contained within the entity.<br>
+     * <br>
+     * Not to be confused with the <em>temporary</em> transformations applied
+     * by a curve entity's transform to the meshes contained within the entity.
+     * <br>
      * <br>
      * Useful when consolidating multiple curve entities into one curve entity.
      *
@@ -2399,12 +2369,13 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * For internal (package-level) use. Resizes a curve to the specified length.
-     * The length may be no
-     * less than 2. When the new length is greater than the old, new {@link Knot2}s
-     * are added.<br>
+     * For internal (package-level) use. Resizes a curve to the specified
+     * length. The length may be no less than 2. When the new length is greater
+     * than the old, new {@link Knot2}s are added.
      * <br>
-     * This does not check if remaining elements in the list are <code>null</code>.
+     * <br>
+     * This does not check if remaining elements in the list are
+     * <code>null</code>.
      *
      * @param len the length
      * @return this curve
@@ -2431,10 +2402,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * An internal helper function to format a vector as a Python tuple, then append
-     * it to a {@link
-     * StringBuilder}. Used for testing purposes to compare results with Blender
-     * 2.9x.
+     * An internal helper function to format a vector as a Python tuple, then
+     * append it to a {@link StringBuilder}. Used for testing purposes to
+     * compare results with Blender 4.x.
      *
      * @param pyCd the string builder
      * @param uRes the resolution u
@@ -2461,8 +2431,7 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * curves. Appends to an
-     * existing {@link StringBuilder}.
+     * curves. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -2491,11 +2460,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Internal helper function to append a curve path to a {@link StringBuilder};
-     * the id is written
-     * to the path's id. The fill rule may be either <code>"evenodd"</code> or
-     * <code>"nonzero"</code>
-     * (default).
+     * Internal helper function to append a curve path to a
+     * {@link StringBuilder}; the id is written to the path's id. The fill rule
+     * may be either <code>"evenodd"</code> or <code>"nonzero"</code> (default).
      *
      * @param svgp     the string builder
      * @param fillRule the fill rule
@@ -2519,9 +2486,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Internal helper function to draw a sub-path within a path's data command. Its
-     * separation allows
-     * for curves to be rendered as multiple sub-paths rather than one big path.
+     * Internal helper function to draw a sub-path within a path's data
+     * command. Its separation allows for curves to be rendered as multiple
+     * sub-paths rather than one big path.
      *
      * @param svgp the string builder
      */
@@ -2573,9 +2540,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
-     * Clears the list of knots and sets the closedLoop flag to false. Unlike the
-     * public reset, this
-     * does not add two default knots to the list.
+     * Clears the list of knots and sets the closedLoop flag to false. Unlike
+     * the public reset, this does not add two default knots to the list.
      *
      * @see List#clear()
      */
@@ -2629,7 +2595,10 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
          */
         @Override
         public Curve2 apply(
-            final Curve2 orig, final Curve2 dest, final Float step, final Curve2 target) {
+            final Curve2 orig,
+            final Curve2 dest,
+            final Float step,
+            final Curve2 target) {
 
             final float tf = step;
             if (Float.isNaN(tf)) {
@@ -2645,14 +2614,17 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         }
 
         /**
-         * Eases between curves in an array by a step in the range [0.0, 1.0] .
+         * Eases between curves in an array by a step in the range [0.0, 1.0].
          *
          * @param arr    the curve array
          * @param step   the step
          * @param target the output curve
          */
         @Override
-        public Curve2 apply(final Curve2[] arr, final Float step, final Curve2 target) {
+        public Curve2 apply(
+            final Curve2[] arr,
+            final Float step,
+            final Curve2 target) {
 
             final int len = arr.length;
             final float tf = step;
@@ -2669,26 +2641,28 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         }
 
         /**
-         * Eases between an origin and destination transform by a step in [0.0, 1.0] .
-         * Curves must have
-         * the same number of knots and must match * whether they are closed loops or
-         * open.
+         * Eases between an origin and destination transform by a step in
+         * [0.0, 1.0]. Curves must have the same number of knots and must match
+         * whether they are closed loops or open.
          *
-         * @param origin the origin
+         * @param orig   the origin
          * @param dest   the destination
          * @param step   the step
          * @param target the output curve
          * @return the easing curve
          */
         public Curve2 applyUnclamped(
-            final Curve2 origin, final Curve2 dest, final float step, final Curve2 target) {
+            final Curve2 orig,
+            final Curve2 dest,
+            final float step,
+            final Curve2 target) {
 
-            final ArrayList<Knot2> orKn = origin.knots;
+            final ArrayList<Knot2> orKn = orig.knots;
             final ArrayList<Knot2> dsKn = dest.knots;
 
-            if (orKn.size() == dsKn.size() && origin.closedLoop == dest.closedLoop) {
+            if (orKn.size() == dsKn.size() && orig.closedLoop == dest.closedLoop) {
 
-                target.closedLoop = origin.closedLoop;
+                target.closedLoop = orig.closedLoop;
                 target.resize(orKn.size());
 
                 final Iterator<Knot2> orItr = orKn.iterator();
