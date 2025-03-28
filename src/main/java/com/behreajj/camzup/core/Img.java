@@ -207,6 +207,8 @@ public class Img {
 
         // TODO: Create example for mirror function.
 
+        // TODO: Create fromPpmBytes method?
+
         // TODO: Filter layers to alpha based on response func?
         // Use preset enums instead of a function.s
 
@@ -871,6 +873,180 @@ public class Img {
     }
 
     /**
+     * Maps the colors of a source image to an alpha mask.
+     *
+     * @param source         the input image
+     * @param channel        the color channel
+     * @param response       the response curve
+     * @param useNormalize   normalize channel range
+     * @param useSourceColor use the image source color
+     * @param fillColor      map fill color
+     * @param target         the output image
+     * @return the mapped image
+     */
+    public static Img alphaMap(
+        final Img source,
+        final Img.MapChannel channel,
+        final Img.Response response,
+        final boolean useNormalize,
+        final boolean useSourceColor,
+        final Lab fillColor,
+        final Img target) {
+
+        final int len = source.pixels.length;
+        if (!Img.similar(source, target)) {
+            target.width = source.width;
+            target.height = source.height;
+            target.pixels = new long[source.pixels.length];
+        }
+
+        final Lab lab = new Lab();
+        final HashMap<Long, Lch> uniques = new HashMap<>(512, 0.75f);
+
+        float minChannel = Float.MAX_VALUE;
+        float maxChannel = -Float.MAX_VALUE;
+        int sumTally = 0;
+
+        for (int i = 0; i < len; ++i) {
+            final long srcPixel = source.pixels[i];
+            final Long srcPixelObj = srcPixel;
+            if (!uniques.containsKey(srcPixelObj)) {
+                Lab.fromHex(srcPixel, lab);
+                final Lch lch = Lch.fromLab(lab, new Lch());
+                if (lch.alpha > 0.0f) {
+                    switch (channel) {
+                        case C: {
+                            if (lch.c > maxChannel) {
+                                maxChannel = lch.c;
+                            }
+                            if (lch.c < minChannel) {
+                                minChannel = lch.c;
+                            }
+                        }
+                        break;
+
+                        case L: {
+                            if (lch.l > maxChannel) {
+                                maxChannel = lch.l;
+                            }
+                            if (lch.l < minChannel) {
+                                minChannel = lch.l;
+                            }
+                        }
+                        break;
+
+                        default: {
+                        }
+                    }
+                    ++sumTally;
+                }
+                uniques.put(srcPixelObj, lch);
+            }
+        }
+
+        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
+        convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
+
+        final boolean notHue = channel != MapChannel.H;
+        final boolean useNormVerif = notHue
+            && useNormalize
+            && sumTally != 0
+            && maxChannel > minChannel;
+        final float dff = Utils.diff(maxChannel, minChannel);
+        final float denom = Utils.div(1.0f, dff);
+        final Lch defLch = Lch.clearBlack(new Lch());
+        final long fillMask = fillColor.toHexLongSat() & LAB_MASK;
+
+        for (int j = 0; j < len; ++j) {
+            final long srcPixel = source.pixels[j];
+            final Long srcPixelObj = srcPixel;
+            long trgPixel;
+            if (convert.containsKey(srcPixelObj)) {
+                trgPixel = convert.get(srcPixelObj);
+            } else {
+                final Lch lch = uniques.getOrDefault(srcPixelObj, defLch);
+
+                float fac = 0.0f;
+                switch (channel) {
+                    case C: {
+                        fac = useNormVerif
+                            ? (lch.c - minChannel) * denom
+                            : lch.c / Lch.SR_CHROMA_MAX;
+                    }
+                    break;
+
+                    case L: {
+                        if (lch.l > maxChannel) {
+                            maxChannel = lch.l;
+                        }
+                        if (lch.l < minChannel) {
+                            minChannel = lch.l;
+                        }
+                    }
+                    break;
+
+                    case H:
+                    default: {
+                    }
+                }
+
+                switch (response) {
+                    case EXTREMA: {
+                        fac = Utils.abs(1.0f - 2.0f * fac);
+                        fac = Utils.clamp01(fac);
+                    }
+                    break;
+
+                    case INVERSE: {
+                        fac = Utils.clamp01(fac);
+                        fac = 1.0f - fac;
+                    }
+                    break;
+
+                    case LOWER: {
+                        fac = 1.0f - 2.0f * fac;
+                        fac = Utils.clamp01(fac);
+                    }
+                    break;
+
+                    case MIDDLE: {
+                        fac = Utils.abs(2.0f * fac - 1.0f);
+                        fac = Utils.clamp01(fac);
+                        fac = 1.0f - fac;
+                    }
+                    break;
+
+                    case UPPER: {
+                        fac = 2.0f * fac - 1.0f;
+                        fac = Utils.clamp01(fac);
+                    }
+                    break;
+
+                    case FULL:
+                    default: {
+                        fac = Utils.clamp01(fac);
+                    }
+                }
+
+                if (notHue) {
+                    fac = fac * fac * (3.0f - 2.0f * fac);
+                }
+
+                final long t16 = (long) (fac * 0xffff + 0.5f);
+                final long tMask = t16 << T_SHIFT;
+                final long labMask = useSourceColor
+                    ? (srcPixel & Img.LAB_MASK)
+                    : fillMask;
+                trgPixel = tMask | labMask;
+            }
+
+            target.pixels[j] = trgPixel;
+        }
+
+        return target;
+    }
+
+    /**
      * Blends an under and over image.
      *
      * @param imgUnder the under image
@@ -1170,6 +1346,10 @@ public class Img {
 
             long hexComp = Img.CLEAR_PIXEL;
             if (tuv > 0.0d) {
+                // TODO: If you swap over and under in the example sketch for
+                // this method, vgt0 might not be a sufficient test for using
+                // modes like add, subtract, etc. Maybe it needs to be both
+                // vgt0 and tgt0?
                 final boolean vgt0 = v > 0.0d;
                 final boolean tgt0 = t > 0.0d;
 
@@ -2327,9 +2507,6 @@ public class Img {
             target.pixels = new long[source.pixels.length];
         }
 
-        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
-        convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
-
         final Lab lab = new Lab();
         final int len = source.pixels.length;
         final HashMap<Long, Lch> uniques = new HashMap<>(512, 0.75f);
@@ -2356,14 +2533,18 @@ public class Img {
                         }
                         break;
 
-                        case L:
-                        default: {
+                        case L: {
                             if (lch.l > maxChannel) {
                                 maxChannel = lch.l;
                             }
                             if (lch.l < minChannel) {
                                 minChannel = lch.l;
                             }
+                        }
+                        break;
+
+                        case H:
+                        default: {
                         }
                     }
                     ++sumTally;
@@ -2372,7 +2553,12 @@ public class Img {
             }
         }
 
-        final boolean useNormVerif = useNormalize
+        final HashMap<Long, Long> convert = new HashMap<>(512, 0.75f);
+        convert.put(Img.CLEAR_PIXEL, Img.CLEAR_PIXEL);
+
+        final boolean notHue = channel != MapChannel.H;
+        final boolean useNormVerif = notHue
+            && useNormalize
             && sumTally != 0
             && maxChannel > minChannel;
         final float dff = Utils.diff(maxChannel, minChannel);
@@ -2387,20 +2573,28 @@ public class Img {
             } else {
                 final Lch lch = uniques.getOrDefault(srcPixelObj, defLch);
 
-                float fac;
+                float fac = 0.0f;
                 switch (channel) {
                     case C: {
+                        fac = useNormVerif
+                            ? (lch.c - minChannel) * denom
+                            : lch.c / Lch.SR_CHROMA_MAX;
                     }
-                    fac = useNormVerif
-                        ? (lch.c - minChannel) * denom
-                        : lch.c / Lch.SR_CHROMA_MAX;
                     break;
 
-                    case L:
-                    default: {
+                    case H: {
+                        fac = lch.h;
+                    }
+                    break;
+
+                    case L: {
                         fac = useNormVerif
                             ? (lch.l - minChannel) * denom
                             : lch.l * 0.01f;
+                    }
+                    break;
+
+                    default: {
                     }
                 }
 
@@ -4912,6 +5106,10 @@ public class Img {
         System.arraycopy(srcPixels, 0, trgPixels, 0, len);
 
         for (int i = 0; i < len; ++i) {
+            /*
+             * This should extract from target pixels, as the error propagates
+             * through the image.
+             */
             Lab.fromHex(trgPixels[i], labSrc);
             closestFunc.apply(labSrc, labTrg);
             trgPixels[i] = labTrg.toHexLongSat();
@@ -5731,6 +5929,11 @@ public class Img {
         C,
 
         /**
+         * The hue channel.
+         */
+        H,
+
+        /**
          * The lightness channel.
          */
         L
@@ -5771,5 +5974,40 @@ public class Img {
          * Writes a plain text file.
          */
         PLAIN_TEXT
+    }
+
+    /**
+     * Response curve for the alpha map function.
+     */
+    public enum Response {
+        /**
+         * Range lower and upper thirds.
+         */
+        EXTREMA,
+
+        /**
+         * Full response.
+         */
+        FULL,
+
+        /**
+         * Full response, inverted.
+         */
+        INVERSE,
+
+        /**
+         * Range lower third.
+         */
+        LOWER,
+
+        /**
+         * Range middle third.
+         */
+        MIDDLE,
+
+        /**
+         * Range upper third.
+         */
+        UPPER,
     }
 }

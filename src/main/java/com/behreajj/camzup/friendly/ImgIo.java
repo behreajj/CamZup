@@ -8,13 +8,12 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.IOException;
 
 /**
  * Facilitates the conversion of {@link com.behreajj.camzup.core.Img}s to
  * {@link java.awt.image.BufferedImage}s and their subsequent export.
  */
-public abstract class ImgExport {
+public abstract class ImgIo {
 
     /**
      * Default setting for whether to premultiply color by alpha.
@@ -24,9 +23,47 @@ public abstract class ImgExport {
     /**
      * Discourage overriding with a private constructor.
      */
-    private ImgExport() {
-        // TODO: Change class name to ImgIo
-        // TODO: Support loading files to Img?
+    private ImgIo() {
+    }
+
+    /**
+     * Loads an image from a path.
+     *
+     * @param path The file path
+     * @return the image
+     */
+    public static Img load(final String path) {
+        return ImgIo.load(path, ImgIo.DEFAULT_USE_PREMUL);
+    }
+
+    /**
+     * Loads an image from a path.
+     *
+     * @param path        The file path
+     * @param useUnpremul divide color channels by alpha
+     * @return the image
+     */
+    public static Img load(
+        final String path,
+        final boolean useUnpremul) {
+
+        final Img img = new Img();
+
+        try {
+            final BufferedImage imgNtv = ImageIO.read(new File(path));
+            final int w = imgNtv.getWidth();
+            final int h = imgNtv.getHeight();
+            final int len = w * h;
+            final int[] argb32s = new int[len];
+            imgNtv.getRaster().getPixels(0, 0, w, h, argb32s);
+            //imgNtv.getRaster().getDataElements(0, 0, w, h, argb32s);
+            Img.fromArgb32(w, h, argb32s, useUnpremul, img);
+        } catch (Exception e) {
+            // noinspection CallToPrintStackTrace
+            e.printStackTrace();
+        }
+
+        return img;
     }
 
     /**
@@ -38,8 +75,8 @@ public abstract class ImgExport {
      */
     public static boolean saveAs(final String path, final Img img) {
 
-        return ImgExport.saveAs(path, img, new Rgb.ToneMapClamp(),
-            ImgExport.DEFAULT_USE_PREMUL);
+        return ImgIo.saveAs(path, img, new Rgb.ToneMapClamp(),
+            ImgIo.DEFAULT_USE_PREMUL);
     }
 
     /**
@@ -92,7 +129,7 @@ public abstract class ImgExport {
                     fos.write(arr);
                 }
             } else {
-                final BufferedImage imgNtv = ImgExport.toAwtImage(
+                final BufferedImage imgNtv = ImgIo.toAwtImage(
                     img, mapFunc, usePremul);
                 ImageIO.write(imgNtv, lcFileExt, file);
             }
@@ -114,8 +151,8 @@ public abstract class ImgExport {
      */
     public static BufferedImage toAwtImage(final Img img) {
 
-        return ImgExport.toAwtImage(img, new Rgb.ToneMapClamp(),
-            ImgExport.DEFAULT_USE_PREMUL);
+        return ImgIo.toAwtImage(img, new Rgb.ToneMapClamp(),
+            ImgIo.DEFAULT_USE_PREMUL);
     }
 
     /**
@@ -133,11 +170,12 @@ public abstract class ImgExport {
 
         final int w = img.getWidth();
         final int h = img.getHeight();
-        final int[] px = Img.toArgb32(img, mapFunc, usePremul);
+        final int[] argb32s = Img.toArgb32(img, mapFunc, usePremul);
 
         final BufferedImage imgAwt = new BufferedImage(
             w, h, BufferedImage.TYPE_INT_ARGB);
-        imgAwt.getRaster().setDataElements(0, 0, w, h, px);
+        imgAwt.getRaster().setPixels(0, 0, w, h, argb32s);
+        // imgAwt.getRaster().setDataElements(0, 0, w, h, argb32s);
 
         return imgAwt;
     }
@@ -152,8 +190,8 @@ public abstract class ImgExport {
      * @return the encoded bytes
      */
     public static byte[] toBytes(final String fileExt, final Img img) {
-        return ImgExport.toBytes(fileExt, img, new Rgb.ToneMapClamp(),
-            ImgExport.DEFAULT_USE_PREMUL);
+        return ImgIo.toBytes(fileExt, img, new Rgb.ToneMapClamp(),
+            ImgIo.DEFAULT_USE_PREMUL);
     }
 
     /**
@@ -172,7 +210,7 @@ public abstract class ImgExport {
         final Rgb.AbstrToneMap mapFunc,
         final boolean usePremul) {
 
-        final BufferedImage imgNtv = ImgExport.toAwtImage(
+        final BufferedImage imgNtv = ImgIo.toAwtImage(
             img, mapFunc, usePremul);
         final String lcFileExt = fileExt.toLowerCase();
         final ByteArrayOutputStream bos = new ByteArrayOutputStream(512);
@@ -180,7 +218,7 @@ public abstract class ImgExport {
         try {
             ImageIO.write(imgNtv, lcFileExt, bos);
             return bos.toByteArray();
-        } catch (IOException e) {
+        } catch (Exception e) {
             // noinspection CallToPrintStackTrace
             e.printStackTrace();
         }

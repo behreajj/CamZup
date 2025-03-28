@@ -35,7 +35,7 @@ void setup() {
   long end = System.currentTimeMillis();
   println("Elapsed Time: " + (end - start));
 
-  Convert.toPImage(target, mapper, pimgTrg);
+  Convert.toPImage(target, mapper, false, pimgTrg);
 }
 
 void draw() {
