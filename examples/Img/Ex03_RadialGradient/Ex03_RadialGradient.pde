@@ -21,7 +21,7 @@ void setup() {
 void draw() {
   graphics.mouse1s(origin);
   Img.gradientRadial(gradient, origin, 0.5, img);
-  Convert.toPImage(img, mapper, pimg);
+  Convert.toPImage(img, mapper, false, pimg);
 
   graphics.background();
   graphics.image(pimg);

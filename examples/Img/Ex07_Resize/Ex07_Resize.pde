@@ -28,7 +28,7 @@ void draw() {
   Vec2 mu = graphics.mouse1u(new Vec2());
   Vec2 scale = Vec2.mix(scaleMin, scaleMax, mu.x, new Vec2());
   Img.scaleBilinear(imgRgb, scale, resized);
-  Convert.toPImage(resized, mapper, pimgResized);
+  Convert.toPImage(resized, mapper, false, pimgResized);
 
   graphics.background();
   graphics.image(pimgResized);

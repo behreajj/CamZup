@@ -26,7 +26,7 @@ void draw() {
   Img.gradientLinear(gradient,
     origin, dest,
     mix, img);
-  Convert.toPImage(img, mapper, pimg);
+  Convert.toPImage(img, mapper, false, pimg);
 
   graphics.background();
   graphics.image(pimg);

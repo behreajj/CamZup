@@ -30,7 +30,7 @@ void setup() {
 void draw() {
   Vec2 ms = graphics.mouse1s(new Vec2());
   Img.adjustContrast(source, ms.x, ms.y, target);
-  Convert.toPImage(target, mapper, pimgTrg);
+  Convert.toPImage(target, mapper, false, pimgTrg);
   
   graphics.background();
   if (mousePressed) {

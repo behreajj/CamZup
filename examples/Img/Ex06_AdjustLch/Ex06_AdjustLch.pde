@@ -35,7 +35,7 @@ void draw() {
       // new Lch(0.0, ms.y * Lch.SR_CHROMA_MEAN, ms.x * 0.5),
       new Lch(ms.y * 100.0, 0.0, ms.x * 0.5),
      grayPolicy, target);
-  Convert.toPImage(target, mapper, pimgTrg);
+  Convert.toPImage(target, mapper, false, pimgTrg);
   
   graphics.background();
   if (mousePressed) {

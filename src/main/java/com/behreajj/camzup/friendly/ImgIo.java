@@ -55,8 +55,7 @@ public abstract class ImgIo {
             final int h = imgNtv.getHeight();
             final int len = w * h;
             final int[] argb32s = new int[len];
-            imgNtv.getRaster().getPixels(0, 0, w, h, argb32s);
-            //imgNtv.getRaster().getDataElements(0, 0, w, h, argb32s);
+            imgNtv.getRaster().getDataElements(0, 0, w, h, argb32s);
             Img.fromArgb32(w, h, argb32s, useUnpremul, img);
         } catch (Exception e) {
             // noinspection CallToPrintStackTrace
@@ -174,8 +173,7 @@ public abstract class ImgIo {
 
         final BufferedImage imgAwt = new BufferedImage(
             w, h, BufferedImage.TYPE_INT_ARGB);
-        imgAwt.getRaster().setPixels(0, 0, w, h, argb32s);
-        // imgAwt.getRaster().setDataElements(0, 0, w, h, argb32s);
+        imgAwt.getRaster().setDataElements(0, 0, w, h, argb32s);
 
         return imgAwt;
     }

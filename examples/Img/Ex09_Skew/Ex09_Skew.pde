@@ -27,7 +27,7 @@ void draw() {
   Img.skewXBilinear(imgRgb, angle, skewed);
   //Img.skewYBilinear(imgRgb, angle, skewed);
   
-  Convert.toPImage(skewed, mapper, pimgSkewed);
+  Convert.toPImage(skewed, mapper, false, pimgSkewed);
 
   graphics.background();
   graphics.image(pimgSkewed);

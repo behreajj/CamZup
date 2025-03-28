@@ -24,7 +24,7 @@ void setup() {
 void draw() {
   float angle = frameCount * Utils.TAU / 60.0;
   Img.rotateBilinear(imgRgb, angle, rotated);
-  Convert.toPImage(rotated, mapper, pimgRotated);
+  Convert.toPImage(rotated, mapper, false, pimgRotated);
 
   graphics.background();
   graphics.image(pimgRotated);

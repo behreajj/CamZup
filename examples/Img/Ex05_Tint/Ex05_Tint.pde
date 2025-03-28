@@ -34,7 +34,7 @@ void draw() {
   Vec2 mu = graphics.mouse1u(new Vec2());
   fac = mu.x;
   Img.tint(source, tint, fac, preserveLight, target);
-  Convert.toPImage(target, mapper, pimgTrg);
+  Convert.toPImage(target, mapper, false, pimgTrg);
   
   graphics.background();
   if (mousePressed) {

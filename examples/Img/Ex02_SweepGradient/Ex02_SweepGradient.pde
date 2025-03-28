@@ -22,7 +22,7 @@ void draw() {
   float angle = frameCount * 0.02;
   graphics.mouse1s(origin);
   Img.gradientSweep(gradient, origin, angle, img);
-  Convert.toPImage(img, mapper, pimg);
+  Convert.toPImage(img, mapper, false, pimg);
 
   graphics.background();
   graphics.image(pimg);
