@@ -16,7 +16,11 @@ public interface ITextDisplay2 extends ITextDisplay {
      * @param y the y coordinate
      * @param z the z coordinate
      */
-    default void text(final char c, final float x, final float y, final float z) {
+    default void text(
+        final char c,
+        final float x,
+        final float y,
+        final float z) {
 
         this.text(c, x, y);
     }
@@ -47,15 +51,19 @@ public interface ITextDisplay2 extends ITextDisplay {
      * Displays a real number as text at a 2D location. Ignores the z
      * coordinate.
      *
-     * @param real the real number
-     * @param x    the x coordinate
-     * @param y    the y coordinate
-     * @param z    the z coordinate
+     * @param r the real number
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param z the z coordinate
      * @see Utils#toFixed(float, int)
      */
-    default void text(final float real, final float x, final float y, final float z) {
+    default void text(
+        final float r,
+        final float x,
+        final float y,
+        final float z) {
 
-        this.text(Utils.toFixed(real, Utils.FIXED_PRINT), x, y);
+        this.text(Utils.toFixed(r, Utils.FIXED_PRINT), x, y);
     }
 
     /**
@@ -66,7 +74,11 @@ public interface ITextDisplay2 extends ITextDisplay {
      * @param y the y coordinate
      * @param z the z coordinate
      */
-    default void text(final int i, final float x, final float y, final float z) {
+    default void text(
+        final int i,
+        final float x,
+        final float y,
+        final float z) {
 
         this.text(i, x, y);
     }
@@ -74,13 +86,17 @@ public interface ITextDisplay2 extends ITextDisplay {
     /**
      * Displays a string of text at a 2D location. Ignores the z coordinate.
      *
-     * @param str the string
-     * @param x   the x coordinate
-     * @param y   the y coordinate
-     * @param z   the z coordinate
+     * @param s the string
+     * @param x the x coordinate
+     * @param y the y coordinate
+     * @param z the z coordinate
      */
-    default void text(final String str, final float x, final float y, final float z) {
+    default void text(
+        final String s,
+        final float x,
+        final float y,
+        final float z) {
 
-        this.text(str, x, y);
+        this.text(s, x, y);
     }
 }

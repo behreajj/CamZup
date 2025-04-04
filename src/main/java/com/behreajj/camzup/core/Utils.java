@@ -1822,17 +1822,16 @@ public abstract class Utils {
      * decimal place. Edge cases:
      *
      * <ul>
-     * <li>When the number of places is less than one, returns the String of the
-     * truncated value.
-     * <li>When the value is not a number ( {@link Float#NaN} ), returns "0.0".
-     * <li>When the value is greater than {@link Float#MAX_VALUE}, returns the max
-     * value; when less
-     * than {@link Float#MIN_VALUE}, the minimum value. This truncates positive and
-     * negative
-     * infinities to these bounds.
-     * <li>When the integral contains so many digits that accurate representation is
-     * unlikely, such
-     * as with scientific notation, defers to {@link Float#toString(float)} .
+     * <li>When the number of places is less than one, returns the String of
+     * the truncated value.</li>
+     * <li>When the value is not a number ({@link Float#NaN}), returns
+     * "0.0".</li>
+     * <li>When the value is greater than {@link Float#MAX_VALUE}, returns the
+     * max value; when less than {@link Float#MIN_VALUE}, the minimum value.
+     * This truncates positive and negative infinities to these bounds.</li>
+     * <li>When the integral contains so many digits that accurate
+     * representation is unlikely, such as with scientific notation, defers to
+     * {@link Float#toString(float)}.</li>
      * </ul>
      * <p>
      * Intended to serve as an alternative to

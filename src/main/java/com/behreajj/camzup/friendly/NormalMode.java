@@ -1,10 +1,9 @@
 package com.behreajj.camzup.friendly;
 
 /**
- * Duplicates and clarifies the normal mode options available to
- * OpenGL renderers (P2D and P3D). The integer value of each
- * is intended to match with integer constants.The enum's ordinal should not
- * be used.
+ * Duplicates and clarifies the normal mode options available to OpenGL
+ * renderers (P2D and P3D). The integer value of each is intended to match with
+ * integer constants.The enum's ordinal should not be used.
  */
 public enum NormalMode {
 

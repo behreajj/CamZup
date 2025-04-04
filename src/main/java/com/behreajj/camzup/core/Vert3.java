@@ -48,8 +48,7 @@ public class Vert3 implements Comparable<Vert3> {
 
     /**
      * Tests to see if two vertices share the same coordinate according to the
-     * default tolerance,
-     * {@link Utils#EPSILON}.
+     * default tolerance, {@link Utils#EPSILON}.
      *
      * @param a the left comparisand
      * @param b the right comparisand

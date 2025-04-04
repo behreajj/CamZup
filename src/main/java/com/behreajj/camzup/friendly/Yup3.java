@@ -93,9 +93,13 @@ public class Yup3 extends Up3 {
     @Override
     public void camEast() {
 
-        final float x = this.eyeDist < 128 ? -Yup3.DEFAULT_LOC_X : -this.eyeDist;
-        this.camera(x, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, Yup3.DEFAULT_REF_X,
-            Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
+        final float x = this.eyeDist < 128
+            ? -Yup3.DEFAULT_LOC_X
+            : -this.eyeDist;
+        this.camera(
+            x, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            Yup3.DEFAULT_REF_X, Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
     }
 
     /**
@@ -110,8 +114,9 @@ public class Yup3 extends Up3 {
          * not have been initialized.
          */
 
-        this.camera(this.cameraX, this.cameraY, this.cameraZ, this.lookTarget.x,
-            this.lookTarget.y, this.lookTarget.z);
+        this.camera(
+            this.cameraX, this.cameraY, this.cameraZ,
+            this.lookTarget.x, this.lookTarget.y, this.lookTarget.z);
     }
 
     /**
@@ -126,7 +131,8 @@ public class Yup3 extends Up3 {
      * @param zCenter target location z
      */
     @Override
-    public void camera(final float xEye, final float yEye, final float zEye,
+    public void camera(
+        final float xEye, final float yEye, final float zEye,
         final float xCenter, final float yCenter, final float zCenter) {
 
         /*
@@ -134,8 +140,10 @@ public class Yup3 extends Up3 {
          * not have been initialized.
          */
 
-        this.camera(xEye, yEye, zEye, xCenter, yCenter, zCenter, this.refUp.x,
-            this.refUp.y, this.refUp.z);
+        this.camera(
+            xEye, yEye, zEye,
+            xCenter, yCenter, zCenter,
+            this.refUp.x, this.refUp.y, this.refUp.z);
     }
 
     /**
@@ -153,7 +161,8 @@ public class Yup3 extends Up3 {
      * @param zUp     world up axis z
      */
     @Override
-    public void camera(final float xEye, final float yEye, final float zEye,
+    public void camera(
+        final float xEye, final float yEye, final float zEye,
         final float xCenter, final float yCenter, final float zCenter,
         final float xUp, final float yUp, final float zUp) {
 
@@ -163,8 +172,10 @@ public class Yup3 extends Up3 {
         this.cameraY = yEye;
         this.cameraZ = zEye;
 
-        this.lookDir.set(xEye - this.lookTarget.x, yEye - this.lookTarget.y, zEye
-            - this.lookTarget.z);
+        this.lookDir.set(
+            xEye - this.lookTarget.x,
+            yEye - this.lookTarget.y,
+            zEye - this.lookTarget.z);
         this.eyeDist = Vec3.mag(this.lookDir);
         Vec3.normalize(this.lookDir, this.k);
 
@@ -205,8 +216,10 @@ public class Yup3 extends Up3 {
     public void camera(final Vec3 eye, final Vec3 center, final Vec3 up) {
 
         /* Do not move to Up3. Here, this keeps inheritance overrides clear. */
-        this.camera(eye.x, eye.y, eye.z, center.x, center.y, center.z, up.x, up.y,
-            up.z);
+        this.camera(
+            eye.x, eye.y, eye.z,
+            center.x, center.y, center.z,
+            up.x, up.y, up.z);
     }
 
     /**
@@ -217,10 +230,13 @@ public class Yup3 extends Up3 {
 
         final float wHalf = this.width * 0.5f;
         final float hHalf = this.height * 0.5f;
-        final float z = this.height < 128 ? Yup3.DEFAULT_LOC_Y
-            : this.height
-            * IUp.DEFAULT_CAM_DIST_FAC;
-        this.camera(wHalf, hHalf, z, wHalf, hHalf, 0.0f, 0.0f, -1.0f, 0.0f);
+        final float z = this.height < 128
+            ? Yup3.DEFAULT_LOC_Y
+            : this.height * IUp.DEFAULT_CAM_DIST_FAC;
+        this.camera(
+            wHalf, hHalf, z,
+            wHalf, hHalf, 0.0f,
+            0.0f, -1.0f, 0.0f);
     }
 
     /**
@@ -230,9 +246,13 @@ public class Yup3 extends Up3 {
     @Override
     public void camNorth() {
 
-        final float z = this.eyeDist < 128 ? Yup3.DEFAULT_LOC_Z : -this.eyeDist;
-        this.camera(0.0f, 0.0f, z, 0.0f, 0.0f, 0.0f, Yup3.DEFAULT_REF_X,
-            Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
+        final float z = this.eyeDist < 128
+            ? Yup3.DEFAULT_LOC_Z
+            : -this.eyeDist;
+        this.camera(
+            0.0f, 0.0f, z,
+            0.0f, 0.0f, 0.0f,
+            Yup3.DEFAULT_REF_X, Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
     }
 
     /**
@@ -242,9 +262,13 @@ public class Yup3 extends Up3 {
     @Override
     public void camSouth() {
 
-        final float z = this.eyeDist < 128 ? -Yup3.DEFAULT_LOC_Z : this.eyeDist;
-        this.camera(0.0f, 0.0f, z, 0.0f, 0.0f, 0.0f, Yup3.DEFAULT_REF_X,
-            Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
+        final float z = this.eyeDist < 128
+            ? -Yup3.DEFAULT_LOC_Z
+            : this.eyeDist;
+        this.camera(
+            0.0f, 0.0f, z,
+            0.0f, 0.0f, 0.0f,
+            Yup3.DEFAULT_REF_X, Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
     }
 
     /**
@@ -254,9 +278,13 @@ public class Yup3 extends Up3 {
     @Override
     public void camWest() {
 
-        final float x = this.eyeDist < 128 ? Yup3.DEFAULT_LOC_X : this.eyeDist;
-        this.camera(x, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, Yup3.DEFAULT_REF_X,
-            Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
+        final float x = this.eyeDist < 128
+            ? Yup3.DEFAULT_LOC_X
+            : this.eyeDist;
+        this.camera(
+            x, 0.0f, 0.0f,
+            0.0f, 0.0f, 0.0f,
+            Yup3.DEFAULT_REF_X, Yup3.DEFAULT_REF_Y, Yup3.DEFAULT_REF_Z);
     }
 
     /**
@@ -273,15 +301,20 @@ public class Yup3 extends Up3 {
         this.cameraY = this.defCameraY = Yup3.DEFAULT_LOC_Y;
         this.cameraZ = this.defCameraZ = Yup3.DEFAULT_LOC_Z;
 
-        this.refUp.set(Yup3.DEFAULT_REF_X, Yup3.DEFAULT_REF_Y,
+        this.refUp.set(
+            Yup3.DEFAULT_REF_X,
+            Yup3.DEFAULT_REF_Y,
             Yup3.DEFAULT_REF_Z);
 
-        this.lookTarget.set(Up3.DEFAULT_TARGET_X, Up3.DEFAULT_TARGET_Y,
+        this.lookTarget.set(
+            Up3.DEFAULT_TARGET_X,
+            Up3.DEFAULT_TARGET_Y,
             Up3.DEFAULT_TARGET_Z);
 
-        this.lookDir.set(Yup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
-            Yup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y, Yup3.DEFAULT_LOC_Z
-                - Up3.DEFAULT_TARGET_Z);
+        this.lookDir.set(
+            Yup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
+            Yup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
+            Yup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
 
         this.eyeDist = Vec3.mag(this.lookDir);
 
@@ -300,15 +333,20 @@ public class Yup3 extends Up3 {
         this.cameraY = this.defCameraY = Yup3.DEFAULT_LOC_Y;
         this.cameraZ = this.defCameraZ = Yup3.DEFAULT_LOC_Z;
 
-        this.refUp.set(Yup3.DEFAULT_REF_X, Yup3.DEFAULT_REF_Y,
+        this.refUp.set(
+            Yup3.DEFAULT_REF_X,
+            Yup3.DEFAULT_REF_Y,
             Yup3.DEFAULT_REF_Z);
 
-        this.lookTarget.set(Up3.DEFAULT_TARGET_X, Up3.DEFAULT_TARGET_Y,
+        this.lookTarget.set(
+            Up3.DEFAULT_TARGET_X,
+            Up3.DEFAULT_TARGET_Y,
             Up3.DEFAULT_TARGET_Z);
 
-        this.lookDir.set(Yup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
-            Yup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y, Yup3.DEFAULT_LOC_Z
-                - Up3.DEFAULT_TARGET_Z);
+        this.lookDir.set(
+            Yup3.DEFAULT_LOC_X - Up3.DEFAULT_TARGET_X,
+            Yup3.DEFAULT_LOC_Y - Up3.DEFAULT_TARGET_Y,
+            Yup3.DEFAULT_LOC_Z - Up3.DEFAULT_TARGET_Z);
 
         this.eyeDist = Vec3.mag(this.lookDir);
 
@@ -348,14 +386,19 @@ public class Yup3 extends Up3 {
         this.lightFalloff(1.0f, 0.0f, 0.0f);
         this.lightSpecular(0.0f, 0.0f, 0.0f);
 
-        this.ambientLight(this.colorModeX * IUpOgl.DEFAULT_AMB_R, this.colorModeY
-            * IUpOgl.DEFAULT_AMB_G, this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
+        this.ambientLight(
+            this.colorModeX * IUpOgl.DEFAULT_AMB_R,
+            this.colorModeY * IUpOgl.DEFAULT_AMB_G,
+            this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
 
-        this.directionalLight(this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
-            this.colorModeY * IUpOgl.DEFAULT_LIGHT_G, this.colorModeZ
-                * IUpOgl.DEFAULT_LIGHT_B,
+        this.directionalLight(
+            this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
+            this.colorModeY * IUpOgl.DEFAULT_LIGHT_G,
+            this.colorModeZ * IUpOgl.DEFAULT_LIGHT_B,
 
-            Yup3.DEFAULT_LIGHT_X, Yup3.DEFAULT_LIGHT_Y, Yup3.DEFAULT_LIGHT_Z);
+            Yup3.DEFAULT_LIGHT_X,
+            Yup3.DEFAULT_LIGHT_Y,
+            Yup3.DEFAULT_LIGHT_Z);
 
         this.colorMode = colorModeSaved;
     }

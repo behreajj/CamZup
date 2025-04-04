@@ -692,8 +692,10 @@ public interface IUp3 extends IUp {
      * @param zDir  the z direction
      * @param dLen  the display length
      */
-    default void ray(final float xOrig, final float yOrig, final float zOrig,
-        final float xDir, final float yDir, final float zDir, final float dLen) {
+    default void ray(
+        final float xOrig, final float yOrig, final float zOrig,
+        final float xDir, final float yDir, final float zDir,
+        final float dLen) {
 
         this.ray(xOrig, yOrig, zOrig, xDir, yDir, zDir, dLen, 1.0f, 4.0f, 2.0f);
     }
@@ -713,9 +715,11 @@ public interface IUp3 extends IUp {
      * @param oWeight the origin stroke weight
      * @param dWeight the direction stroke weight
      */
-    default void ray(final float xOrig, final float yOrig, final float zOrig,
-        final float xDir, final float yDir, final float zDir, final float dLen,
-        final float lnwgt, final float oWeight, final float dWeight) {
+    default void ray(
+        final float xOrig, final float yOrig, final float zOrig,
+        final float xDir, final float yDir, final float zDir,
+        final float dLen, final float lnwgt,
+        final float oWeight, final float dWeight) {
 
         final float mSq = xDir * xDir + yDir * yDir + zDir * zDir;
 

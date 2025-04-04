@@ -699,10 +699,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Divides the left operand by the right, component-wise. This is mathematically
-     * incorrect, but
-     * serves as a shortcut for transforming a vector by the inverse of a scalar
-     * matrix.
+     * Divides the left operand by the right, component-wise. Serves as a
+     * shortcut for transforming a vector by the inverse of a scalar matrix.
      *
      * @param a      numerator
      * @param b      denominator
@@ -1347,26 +1345,26 @@ public class Vec2 implements Comparable<Vec2> {
     /**
      * Maps an input vector from an original range to a target range.
      *
-     * @param v        the input vector
-     * @param lbOrigin lower bound of original range
-     * @param ubOrigin upper bound of original range
-     * @param lbDest   lower bound of destination range
-     * @param ubDest   upper bound of destination range
-     * @param target   the output vector
+     * @param v      the input vector
+     * @param lbOrig lower bound of original range
+     * @param ubOrig upper bound of original range
+     * @param lbDest lower bound of destination range
+     * @param ubDest upper bound of destination range
+     * @param target the output vector
      * @return the mapped value
      * @see Utils#map(float, float, float, float, float)
      */
     public static Vec2 map(
         final Vec2 v,
-        final Vec2 lbOrigin,
-        final Vec2 ubOrigin,
+        final Vec2 lbOrig,
+        final Vec2 ubOrig,
         final Vec2 lbDest,
         final Vec2 ubDest,
         final Vec2 target) {
 
         return target.set(
-            Utils.map(v.x, lbOrigin.x, ubOrigin.x, lbDest.x, ubDest.x),
-            Utils.map(v.y, lbOrigin.y, ubOrigin.y, lbDest.y, ubDest.y));
+            Utils.map(v.x, lbOrig.x, ubOrig.x, lbDest.x, ubDest.x),
+            Utils.map(v.y, lbOrig.y, ubOrig.y, lbDest.y, ubDest.y));
     }
 
     /**

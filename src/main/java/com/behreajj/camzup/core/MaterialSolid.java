@@ -2,8 +2,7 @@ package com.behreajj.camzup.core;
 
 /**
  * A material which holds data to display materials with solid colors only (no
- * textures, or
- * patterns). Contains data for a fill and/or stroke.
+ * textures, or patterns). Contains data for a fill and/or stroke.
  */
 public class MaterialSolid extends Material {
 
@@ -66,17 +65,18 @@ public class MaterialSolid extends Material {
     }
 
     /**
-     * Creates a material from a fill, stroke color and stroke weight. Whether * to
-     * use a fill is
-     * inferred from the fill's alpha; whether to use stroke is inferred from the
-     * stroke weight and
-     * stroke color's alpha.
+     * Creates a material from a fill, stroke color and stroke weight. Whether
+     * to use a fill is inferred from the fill's alpha; whether to use stroke
+     * is inferred from the stroke weight and stroke color's alpha.
      *
      * @param fill         the fill color
      * @param stroke       the stroke color
      * @param strokeWeight the stroke weight
      */
-    public MaterialSolid(final Rgb fill, final Rgb stroke, final float strokeWeight) {
+    public MaterialSolid(
+        final Rgb fill,
+        final Rgb stroke,
+        final float strokeWeight) {
 
         this(fill, stroke, strokeWeight,
             fill.alpha > 0.0f,
@@ -123,11 +123,9 @@ public class MaterialSolid extends Material {
     }
 
     /**
-     * Creates a named material from a fill, stroke color and stroke weight. Whether
-     * to use a fill is
-     * inferred from the fill's alpha; whether * to use stroke is inferred from the
-     * stroke weight and
-     * stroke color's alpha.
+     * Creates a named material from a fill, stroke color and stroke weight.
+     * Whether to use a fill is inferred from the fill's alpha; whether to use
+     * stroke is inferred from the stroke weight and stroke color's alpha.
      *
      * @param name         the name
      * @param fill         the fill color
@@ -373,8 +371,7 @@ public class MaterialSolid extends Material {
 
     /**
      * Swaps this material's stroke and fill. This includes both the color and
-     * whether to use fill and
-     * stroke.
+     * whether to use fill and stroke.
      *
      * @return this material
      */
@@ -496,10 +493,8 @@ public class MaterialSolid extends Material {
 
     /**
      * Appends a representation of this material to a {@link StringBuilder} for
-     * writing an SVG. The
-     * stroke join may be either "bevel," "miter" or "round". The stroke cap may be
-     * either "butt,"
-     * "round" or "square".
+     * writing an SVG. The stroke join may be either "bevel," "miter" or
+     * "round". The stroke cap may be either "butt," "round" or "square".
      *
      * @param svgp       the string builder
      * @param scale      the transform scale.
@@ -510,6 +505,7 @@ public class MaterialSolid extends Material {
      * @see Utils#clamp01(float)
      * @see Rgb#toHexWeb(StringBuilder, Rgb)
      */
+    @SuppressWarnings("SameParameterValue")
     void toSvgString(
         final StringBuilder svgp,
         final float scale,

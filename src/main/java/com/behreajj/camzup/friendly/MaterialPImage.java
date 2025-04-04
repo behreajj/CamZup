@@ -144,8 +144,8 @@ public class MaterialPImage extends MaterialUv {
     }
 
     /**
-     * Sets the texture's parent applet. Useful when working with PImages
-     * created with a constructor that will be saved to file.
+     * Sets the texture's parent {@link PApplet}. Useful when working with
+     * {@link PImage}s created with a constructor that will be saved to file.
      *
      * @param parent the parent applet
      * @return this material

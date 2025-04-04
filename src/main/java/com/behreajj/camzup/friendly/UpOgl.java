@@ -4469,8 +4469,8 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     }
 
     /**
-     * Displays a PShape. Use of this function is discouraged by this renderer.
-     * See mesh and curve entities instead.
+     * Displays a {@link PShape}. Use of this function is discouraged by this
+     * renderer. See {@link Mesh}es and {@link Curve}s instead.
      *
      * @param psh the PShape
      * @param x   the x coordinate
@@ -4701,7 +4701,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     /**
      * Updates the texture coordinates of the renderer. If the texture mode is
      * IMAGE, divides the UV coordinates by the image's dimensions. If the
-     * texture wrap is CLAMP, clamps the coordinates to [0.0, 1.0] ; if the
+     * texture wrap is CLAMP, clamps the coordinates to [0.0, 1.0]. If the
      * wrap is REPEAT, floor wraps them instead.
      *
      * @param u the s or u coordinate
@@ -4716,7 +4716,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     /**
      * Updates the texture coordinates of the renderer. If the texture mode is
      * IMAGE, divides the UV coordinates by the image's dimensions. If the
-     * texture wrap is CLAMP, clamps the coordinates to [0.0, 1.0] ; if the
+     * texture wrap is CLAMP, clamps the coordinates to [0.0, 1.0]. If the
      * wrap is REPEAT, wraps them instead.
      *
      * @param u                  the s or u coordinate

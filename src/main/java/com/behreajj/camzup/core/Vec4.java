@@ -82,7 +82,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Promotes a Vec3 to a Vec4 with an extra component.<br>
+     * Promotes a Vec3 to a Vec4 with an extra component.
+     * <br>
      * <br>
      * Useful for multiplying a 4 x 4 matrix with either a 3D vector or a 3D
      * point. (For points, w is 1.0; for vectors, w is 0.0 .)
@@ -116,7 +117,11 @@ public class Vec4 implements Comparable<Vec4> {
      */
     public static Vec4 abs(final Vec4 v, final Vec4 target) {
 
-        return target.set(Utils.abs(v.x), Utils.abs(v.y), Utils.abs(v.z), Utils.abs(v.w));
+        return target.set(
+            Utils.abs(v.x),
+            Utils.abs(v.y),
+            Utils.abs(v.z),
+            Utils.abs(v.w));
     }
 
     /**
@@ -232,7 +237,7 @@ public class Vec4 implements Comparable<Vec4> {
 
     /**
      * Returns to a vector with a negative value on the y-axis, (0.0, -1.0, 0.0,
-     * 0.0) .
+     * 0.0).
      *
      * @param target the output vector
      * @return the back vector
@@ -323,13 +328,11 @@ public class Vec4 implements Comparable<Vec4> {
         final float tsq3 = step * t3;
         final float ut6 = u * (t3 + t3);
 
-        /* @formatter:off */
         return target.set(
             (cp0.x - ap0.x) * usq3 + (cp1.x - cp0.x) * ut6 + (ap1.x - cp1.x) * tsq3,
             (cp0.y - ap0.y) * usq3 + (cp1.y - cp0.y) * ut6 + (ap1.y - cp1.y) * tsq3,
             (cp0.z - ap0.z) * usq3 + (cp1.z - cp0.z) * ut6 + (ap1.z - cp1.z) * tsq3,
             (cp0.w - ap0.w) * usq3 + (cp1.w - cp0.w) * ut6 + (ap1.w - cp1.w) * tsq3);
-        /* @formatter:on */
     }
 
     /**
@@ -493,8 +496,7 @@ public class Vec4 implements Comparable<Vec4> {
 
     /**
      * Finds the Euclidean distance between two vectors. Where possible, use
-     * distance squared to avoid
-     * the computational cost of the square-root.
+     * distance squared to avoid the computational cost of the square-root.
      *
      * @param a left operand
      * @param b right operand
@@ -539,7 +541,6 @@ public class Vec4 implements Comparable<Vec4> {
     public static float distMinkowski(final Vec4 a, final Vec4 b, final float c) {
 
         if (c != 0.0f) {
-            /* @formatter:off */
             return (float)
                 Math.pow(
                     Math.pow(Math.abs((double) (b.x - a.x)), c)
@@ -547,7 +548,6 @@ public class Vec4 implements Comparable<Vec4> {
                         + Math.pow(Math.abs((double) (b.z - a.z)), c)
                         + Math.pow(Math.abs((double) (b.w - a.w)), c),
                     1.0d / (double) c);
-            /* @formatter:on */
         }
 
         return 0.0f;
@@ -639,8 +639,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Returns to a vector with a negative value on the z axis, (0.0, 0.0, -1.0,
-     * 0.0) .
+     * Returns to a vector with a negative value on the z axis,
+     * (0.0, 0.0, -1.0, 0.0).
      *
      * @param target the output vector
      * @return the down vector
@@ -663,9 +663,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Filters a vector by setting each component to the input component if it is in
-     * bounds and 0.0 if
-     * it is out of bounds.
+     * Filters a vector by setting each component to the input component if it
+     * is in bounds and 0.0 if it is out of bounds.
      *
      * @param v      the vector
      * @param lb     the lower bound
@@ -783,7 +782,11 @@ public class Vec4 implements Comparable<Vec4> {
      */
     public static Vec4 floor(final Vec4 v, final Vec4 target) {
 
-        return target.set(Utils.floor(v.x), Utils.floor(v.y), Utils.floor(v.z), Utils.floor(v.w));
+        return target.set(
+            Utils.floor(v.x),
+            Utils.floor(v.y),
+            Utils.floor(v.z),
+            Utils.floor(v.w));
     }
 
     /**
@@ -798,12 +801,15 @@ public class Vec4 implements Comparable<Vec4> {
     public static Vec4 fmod(final float a, final Vec4 b, final Vec4 target) {
 
         return target.set(
-            Utils.fmod(a, b.x), Utils.fmod(a, b.y), Utils.fmod(a, b.z), Utils.fmod(a, b.w));
+            Utils.fmod(a, b.x),
+            Utils.fmod(a, b.y),
+            Utils.fmod(a, b.z),
+            Utils.fmod(a, b.w));
     }
 
     /**
-     * Applies the % operator (truncation-based modulo) to each component of the
-     * left operand.
+     * Applies the % operator (truncation-based modulo) to each component of
+     * the left operand.
      *
      * @param a      left operand
      * @param b      right operand
@@ -819,8 +825,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Applies the % operator (truncation-based modulo) to each component of the
-     * left operand.
+     * Applies the % operator (truncation-based modulo) to each component of
+     * the left operand.
      *
      * @param a      left operand
      * @param b      right operand
@@ -831,12 +837,15 @@ public class Vec4 implements Comparable<Vec4> {
     public static Vec4 fmod(final Vec4 a, final Vec4 b, final Vec4 target) {
 
         return target.set(
-            Utils.fmod(a.x, b.x), Utils.fmod(a.y, b.y), Utils.fmod(a.z, b.z), Utils.fmod(a.w, b.w));
+            Utils.fmod(a.x, b.x),
+            Utils.fmod(a.y, b.y),
+            Utils.fmod(a.z, b.z),
+            Utils.fmod(a.w, b.w));
     }
 
     /**
-     * Returns to a vector with a positive value on the y-axis, (0.0, 1.0, 0.0, 0.0)
-     * .
+     * Returns to a vector with a positive value on the y-axis,
+     * (0.0, 1.0, 0.0, 0.0).
      *
      * @param target the output vector
      * @return the forward vector
@@ -856,12 +865,16 @@ public class Vec4 implements Comparable<Vec4> {
      */
     public static Vec4 fract(final Vec4 v, final Vec4 target) {
 
-        return target.set(Utils.fract(v.x), Utils.fract(v.y), Utils.fract(v.z), Utils.fract(v.w));
+        return target.set(
+            Utils.fract(v.x),
+            Utils.fract(v.y),
+            Utils.fract(v.z),
+            Utils.fract(v.w));
     }
 
     /**
-     * Generates a 4D array of vectors. Defaults to the coordinate range of [-0.5,
-     * 0.5] .
+     * Generates a 4D array of vectors. Defaults to the coordinate range of
+     * [-0.5, 0.5] .
      *
      * @param res the resolution
      * @return the array
@@ -873,8 +886,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Generates a 4D array of vectors. Defaults to the coordinate range of [-0.5,
-     * 0.5] .
+     * Generates a 4D array of vectors. Defaults to the coordinate range of
+     * [-0.5, 0.5] .
      *
      * @param cols   number of columns
      * @param rows   number of rows
@@ -888,7 +901,9 @@ public class Vec4 implements Comparable<Vec4> {
         final int cols, final int rows, final int layers, final int strata) {
 
         return Vec4.grid(
-            cols, rows, layers, strata, -0.5f, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f, 0.5f);
+            cols, rows, layers, strata,
+            -0.5f, -0.5f, -0.5f, -0.5f,
+            0.5f, 0.5f, 0.5f, 0.5f);
     }
 
     /**
@@ -913,18 +928,9 @@ public class Vec4 implements Comparable<Vec4> {
         final float upperBound) {
 
         return Vec4.grid(
-            cols,
-            rows,
-            layers,
-            strata,
-            lowerBound,
-            lowerBound,
-            lowerBound,
-            lowerBound,
-            upperBound,
-            upperBound,
-            upperBound,
-            upperBound);
+            cols, rows, layers, strata,
+            lowerBound, lowerBound, lowerBound, lowerBound,
+            upperBound, upperBound, upperBound, upperBound);
     }
 
     /**
@@ -949,24 +955,14 @@ public class Vec4 implements Comparable<Vec4> {
         final Vec4 upperBound) {
 
         return Vec4.grid(
-            cols,
-            rows,
-            layers,
-            strata,
-            lowerBound.x,
-            lowerBound.y,
-            lowerBound.z,
-            lowerBound.w,
-            upperBound.x,
-            upperBound.y,
-            upperBound.z,
-            upperBound.w);
+            cols, rows, layers, strata,
+            lowerBound.x, lowerBound.y, lowerBound.z, lowerBound.w,
+            upperBound.x, upperBound.y, upperBound.z, upperBound.w);
     }
 
     /**
-     * Evaluates whether all components of the left comparisand are greater than
-     * those of the right
-     * comparisand.
+     * Evaluates whether all components of the left comparisand are greater
+     * than those of the right comparisand.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -978,7 +974,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Evaluates whether the left comparisand is greater than the right comparisand.
+     * Evaluates whether the left comparisand is greater than the right
+     * comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -991,9 +988,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Evaluates whether all components of the left comparisand are greater than or
-     * equal to those of
-     * the right comparisand.
+     * Evaluates whether all components of the left comparisand are greater
+     * than or equal to those of the right comparisand.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -1005,8 +1001,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Evaluates whether the left comparisand is greater than or equal to the right
-     * comparisand.
+     * Evaluates whether the left comparisand is greater than or equal to the
+     * right comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -1032,9 +1028,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Tests to see if the vector is on the unit hyper-sphere, i.e., has a magnitude
-     * of approximately
-     * 1.0.
+     * Tests to see if the vector is on the unit hyper-sphere, i.e., has a
+     * magnitude of approximately 1.0.
      *
      * @param v the input vector
      * @return the evaluation
@@ -1047,7 +1042,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Returns a vector with a negative value on the x-axis, (-1.0, 0.0, 0.0, 0.0).
+     * Returns a vector with a negative value on the x-axis, (-1.0, 0.0, 0.0,
+     * 0.0).
      *
      * @param target the output vector
      * @return the left vector
@@ -1079,9 +1075,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Evaluates whether all components of the left comparisand are less than those
-     * of the right
-     * comparisand.
+     * Evaluates whether all components of the left comparisand are less than
+     * those of the right comparisand.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -1093,7 +1088,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Evaluates whether the left comparisand is less than the right comparisand.
+     * Evaluates whether the left comparisand is less than the right
+     * comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -1106,9 +1102,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Evaluates whether all components of the left comparisand are less than or
-     * equal to those of the
-     * right comparisand.
+     * Evaluates whether all components of the left comparisand are less than
+     * or equal to those of the right comparisand.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -1120,8 +1115,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Evaluates whether the left comparisand is less than or equal to the right
-     * comparisand.
+     * Evaluates whether the left comparisand is less than or equal to the
+     * right comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -1134,11 +1129,9 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Finds the length, or magnitude, of a vector, |<em>a</em>| . Uses the formula
-     * √ <em>a</em> ·
-     * <em>a</em> . Where possible, use magSq or dot to avoid the computational cost
-     * of the
-     * square-root.
+     * Finds the length, or magnitude, of a vector, |<em>a</em>| . Uses the
+     * formula √ <em>a</em> · <em>a</em> . Where possible, use magSq or dot to
+     * avoid the computational cost of the square-root.
      *
      * @param v the input vector
      * @return the magnitude
@@ -1151,10 +1144,9 @@ public class Vec4 implements Comparable<Vec4> {
 
     /**
      * Finds the length-, or magnitude-, squared of a vector,
-     * |<em>a</em>|<sup>2</sup>. Returns the
-     * same result as <em>a</em> · <em>a</em> . Useful when calculating the lengths
-     * of many vectors, *
-     * to avoid the computational cost of the square-root.
+     * |<em>a</em>|<sup>2</sup>. Returns the same result as
+     * <em>a</em> · <em>a</em> . Useful when calculating the lengths of many
+     * vectors, to avoid the computational cost of the square-root.
      *
      * @param v the input vector
      * @return the magnitude squared
@@ -1169,32 +1161,33 @@ public class Vec4 implements Comparable<Vec4> {
     /**
      * Maps an input vector from an original range to a target range.
      *
-     * @param v        the input vector
-     * @param lbOrigin lower bound of original range
-     * @param ubOrigin upper bound of original range
-     * @param lbDest   lower bound of destination range
-     * @param ubDest   upper bound of destination range
-     * @param target   the output vector
+     * @param v      the input vector
+     * @param lbOrig lower bound of original range
+     * @param ubOrig upper bound of original range
+     * @param lbDest lower bound of destination range
+     * @param ubDest upper bound of destination range
+     * @param target the output vector
      * @return the mapped value
      * @see Utils#map(float, float, float, float, float)
      */
     public static Vec4 map(
         final Vec4 v,
-        final Vec4 lbOrigin,
-        final Vec4 ubOrigin,
+        final Vec4 lbOrig,
+        final Vec4 ubOrig,
         final Vec4 lbDest,
         final Vec4 ubDest,
         final Vec4 target) {
 
         return target.set(
-            Utils.map(v.x, lbOrigin.x, ubOrigin.x, lbDest.x, ubDest.x),
-            Utils.map(v.y, lbOrigin.y, ubOrigin.y, lbDest.y, ubDest.y),
-            Utils.map(v.z, lbOrigin.z, ubOrigin.z, lbDest.z, ubDest.z),
-            Utils.map(v.w, lbOrigin.w, ubOrigin.w, lbDest.w, ubDest.w));
+            Utils.map(v.x, lbOrig.x, ubOrig.x, lbDest.x, ubDest.x),
+            Utils.map(v.y, lbOrig.y, ubOrig.y, lbDest.y, ubDest.y),
+            Utils.map(v.z, lbOrig.z, ubOrig.z, lbDest.z, ubDest.z),
+            Utils.map(v.w, lbOrig.w, ubOrig.w, lbDest.w, ubDest.w));
     }
 
     /**
-     * Sets the target vector to the maximum of the input vector and a lower bound.
+     * Sets the target vector to the maximum of the input vector and a lower
+     * bound.
      *
      * @param a          the input value
      * @param lowerBound the lower bound
@@ -1211,8 +1204,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Sets the target vector to the maximum components of the input vector and a
-     * lower bound.
+     * Sets the target vector to the maximum components of the input vector
+     * and a lower bound.
      *
      * @param a          the input vector
      * @param lowerBound the lower bound
@@ -1229,8 +1222,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Sets the target vector to the minimum components of the input vector and an
-     * upper bound.
+     * Sets the target vector to the minimum components of the input vector
+     * and an upper bound.
      *
      * @param a          the input value
      * @param upperBound the upper bound
@@ -1247,8 +1240,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Sets the target vector to the minimum components of the input vector and an
-     * upper bound.
+     * Sets the target vector to the minimum components of the input vector
+     * and an upper bound.
      *
      * @param a          the input vector
      * @param upperBound the upper bound
@@ -1341,8 +1334,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * A specialized form of modulo which subtracts the floor of the vector from the
-     * vector.
+     * A specialized form of modulo which subtracts the floor of the vector
+     * from the vector.
      *
      * @param v      the input vector
      * @param target the output vector
@@ -1416,9 +1409,8 @@ public class Vec4 implements Comparable<Vec4> {
 
     /**
      * Divides a vector by its magnitude, such that the new magnitude is 1.0.
-     * <em>â</em> = <em>a</em>
-     * / |<em>a</em>|. The result is a unit vector, as it lies on the unit
-     * hyper-sphere.
+     * <em>â</em> = <em>a</em> / |<em>a</em>|. The result is a unit vector, as
+     * it lies on the unit hyper-sphere.
      *
      * @param v      the input vector
      * @param target the output vector
@@ -1470,15 +1462,18 @@ public class Vec4 implements Comparable<Vec4> {
     public static Vec4 or(final Vec4 a, final Vec4 b, final Vec4 target) {
 
         return target.set(
-            Utils.or(a.x, b.x), Utils.or(a.y, b.y), Utils.or(a.z, b.z), Utils.or(a.w, b.w));
+            Utils.or(a.x, b.x),
+            Utils.or(a.y, b.y),
+            Utils.or(a.z, b.z),
+            Utils.or(a.w, b.w));
     }
 
     /**
-     * Oscillates between an origin and destination vector based on an input step
-     * and a pause factor.
-     * When the pause is greater than 1.0, the value will be clamped to the pole.
+     * Oscillates between an origin and destination vector based on an input
+     * step and a pause factor. When the pause is greater than 1.0, the value
+     * will be clamped to the pole.
      *
-     * @param origin the original vector
+     * @param orig   the original vector
      * @param dest   the destination vector
      * @param step   the step
      * @param pause  the pause factor
@@ -1486,25 +1481,30 @@ public class Vec4 implements Comparable<Vec4> {
      * @return the oscillation
      */
     public static Vec4 pingPong(
-        final Vec4 origin, final Vec4 dest, final float step, final float pause, final Vec4 target) {
+        final Vec4 orig,
+        final Vec4 dest,
+        final float step,
+        final float pause,
+        final Vec4 target) {
 
         final float t = 0.5f + 0.5f * pause * Utils.scNorm(step - 0.5f);
         if (t <= 0.0f) {
-            return target.set(origin);
+            return target.set(orig);
         }
         if (t >= 1.0f) {
             return target.set(dest);
         }
         final float u = 1.0f - t;
         return target.set(
-            u * origin.x + t * dest.x,
-            u * origin.y + t * dest.y,
-            u * origin.z + t * dest.z,
-            u * origin.w + t * dest.w);
+            u * orig.x + t * dest.x,
+            u * orig.y + t * dest.y,
+            u * orig.z + t * dest.z,
+            u * orig.w + t * dest.w);
     }
 
     /**
-     * Oscillates between an origin and destination vector based on an input step.
+     * Oscillates between an origin and destination vector based on an input
+     * step.
      *
      * @param origin the original vector
      * @param dest   the destination vector
@@ -1513,7 +1513,10 @@ public class Vec4 implements Comparable<Vec4> {
      * @return the oscillation
      */
     public static Vec4 pingPong(
-        final Vec4 origin, final Vec4 dest, final float step, final Vec4 target) {
+        final Vec4 origin,
+        final Vec4 dest,
+        final float step,
+        final Vec4 target) {
 
         return Vec4.pingPong(origin, dest, step, 1.0f, target);
     }
@@ -1533,10 +1536,11 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined as<br>
+     * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined as
      * <br>
-     * project ( <em>a</em>, <em>b</em> ) := <em>a</em> · <em>b</em> / <em>b</em> ·
-     * <em>b</em>
+     * <br>
+     * project ( <em>a</em>, <em>b</em> ) := <em>a</em> · <em>b</em> /
+     * <em>b</em> · <em>b</em>
      *
      * @param a left operand
      * @param b right operand
@@ -1552,11 +1556,11 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Projects one vector onto another. Defined as<br>
+     * Projects one vector onto another. Defined as
      * <br>
-     * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> · <em>b</em> /
-     * <em>b</em> ·
-     * <em>b</em> )
+     * <br>
+     * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> ·
+     * <em>b</em> / <em>b</em> · <em>b</em> )
      *
      * @param a      left operand
      * @param b      right operand
@@ -1571,9 +1575,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Reduces the signal, or granularity, of a vector's components. A level of zero
-     * will copy the
-     * input vector to the target.
+     * Reduces the signal, or granularity, of a vector's components. A level of
+     * zero will copy the input vector to the target.
      *
      * @param v      the input vector
      * @param levels the levels
@@ -1581,7 +1584,10 @@ public class Vec4 implements Comparable<Vec4> {
      * @return the quantized vector
      * @see Utils#quantizeSigned(float, float, float)
      */
-    public static Vec4 quantize(final Vec4 v, final int levels, final Vec4 target) {
+    public static Vec4 quantize(
+        final Vec4 v,
+        final int levels,
+        final Vec4 target) {
 
         if (levels == 0) {
             return target.set(v);
@@ -1609,8 +1615,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Creates a random point in the Cartesian coordinate system given a lower and
-     * an upper bound.
+     * Creates a random point in the Cartesian coordinate system given a lower
+     * and an upper bound.
      *
      * @param rng        the random number generator
      * @param lowerBound the lower bound
@@ -1619,7 +1625,10 @@ public class Vec4 implements Comparable<Vec4> {
      * @return the random vector
      */
     public static Vec4 randomCartesian(
-        final Random rng, final float lowerBound, final float upperBound, final Vec4 target) {
+        final Random rng,
+        final float lowerBound,
+        final float upperBound,
+        final Vec4 target) {
 
         final float rx = rng.nextFloat();
         final float ry = rng.nextFloat();
@@ -1633,8 +1642,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Generates a random vector in a rectilinear coordinate system given a lower
-     * and an upper bound.
+     * Generates a random vector in a rectilinear coordinate system given a
+     * lower and an upper bound.
      *
      * @param rng        the random number generator
      * @param lowerBound the lower bound
@@ -1643,7 +1652,10 @@ public class Vec4 implements Comparable<Vec4> {
      * @return the random vector
      */
     public static Vec4 randomCartesian(
-        final Random rng, final Vec4 lowerBound, final Vec4 upperBound, final Vec4 target) {
+        final Random rng,
+        final Vec4 lowerBound,
+        final Vec4 upperBound,
+        final Vec4 target) {
 
         final float rx = rng.nextFloat();
         final float ry = rng.nextFloat();
@@ -1657,9 +1669,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Generates a random coordinate on a sphere. Uses the same formula as that for
-     * a random
-     * quaternion.
+     * Generates a random coordinate on a sphere. Uses the same formula as that
+     * for a random quaternion.
      *
      * @param rng    the random number generator
      * @param rhoMin the minimum radius
@@ -1668,7 +1679,10 @@ public class Vec4 implements Comparable<Vec4> {
      * @return the vector
      */
     public static Vec4 randomSpherical(
-        final Random rng, final float rhoMin, final float rhoMax, final Vec4 target) {
+        final Random rng,
+        final float rhoMin,
+        final float rhoMax,
+        final Vec4 target) {
 
         final double rr = rng.nextDouble();
         final double rho = (1.0d - rr) * rhoMin + rr * rhoMax;
@@ -1685,9 +1699,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Normalizes a vector, then multiplies it by a scalar, in effect setting its
-     * magnitude to that
-     * scalar.
+     * Normalizes a vector, then multiplies it by a scalar, in effect setting
+     * its magnitude to that scalar.
      *
      * @param v      the vector
      * @param scalar the scalar
@@ -1706,9 +1719,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Normalizes a vector, then multiplies it by a scalar, in effect setting its
-     * magnitude to that
-     * scalar.
+     * Normalizes a vector, then multiplies it by a scalar, in effect setting
+     * its magnitude to that scalar.
      *
      * @param v          the vector
      * @param scalar     the scalar
@@ -1719,7 +1731,10 @@ public class Vec4 implements Comparable<Vec4> {
      * @see Vec4#mul(Vec4, float, Vec4)
      */
     public static Vec4 rescale(
-        final Vec4 v, final float scalar, final Vec4 target, final Vec4 normalized) {
+        final Vec4 v,
+        final float scalar,
+        final Vec4 target,
+        final Vec4 normalized) {
 
         if (scalar != 0.0f) {
             Vec4.normalize(v, normalized);
@@ -1730,8 +1745,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Returns to a vector with a positive value on the x-axis, (1.0, 0.0, 0.0, 0.0)
-     * .
+     * Returns to a vector with a positive value on the x-axis,
+     * (1.0, 0.0, 0.0, 0.0).
      *
      * @param target the output vector
      * @return the right vector
@@ -1751,7 +1766,11 @@ public class Vec4 implements Comparable<Vec4> {
      */
     public static Vec4 round(final Vec4 v, final Vec4 target) {
 
-        return target.set(Utils.round(v.x), Utils.round(v.y), Utils.round(v.z), Utils.round(v.w));
+        return target.set(
+            Utils.round(v.x),
+            Utils.round(v.y),
+            Utils.round(v.z),
+            Utils.round(v.w));
     }
 
     /**
@@ -1763,13 +1782,11 @@ public class Vec4 implements Comparable<Vec4> {
      */
     public static Vec4 sign(final Vec4 v, final Vec4 target) {
 
-        /* @formatter:off */
-    return target.set(
-        v.x < -0.0f ? -1.0f : v.x > 0.0f ? 1.0f : 0.0f,
-        v.y < -0.0f ? -1.0f : v.y > 0.0f ? 1.0f : 0.0f,
-        v.z < -0.0f ? -1.0f : v.z > 0.0f ? 1.0f : 0.0f,
-        v.w < -0.0f ? -1.0f : v.w > 0.0f ? 1.0f : 0.0f);
-    /* @formatter:on */
+        return target.set(
+            v.x < -0.0f ? -1.0f : v.x > 0.0f ? 1.0f : 0.0f,
+            v.y < -0.0f ? -1.0f : v.y > 0.0f ? 1.0f : 0.0f,
+            v.z < -0.0f ? -1.0f : v.z > 0.0f ? 1.0f : 0.0f,
+            v.w < -0.0f ? -1.0f : v.w > 0.0f ? 1.0f : 0.0f);
     }
 
     /**
@@ -1853,8 +1870,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Returns to a vector with a positive value on the z axis, (0.0, 0.0, 1.0, 0.0)
-     * .
+     * Returns to a vector with a positive value on the z axis,
+     * (0.0, 0.0, 1.0, 0.0).
      *
      * @param target the output vector
      * @return the up vector
@@ -1885,7 +1902,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Evaluates two vectors like booleans, using the exclusive or (XOR) logic gate.
+     * Evaluates two vectors like booleans, using the exclusive or (XOR) logic
+     * gate.
      *
      * @param a      left operand
      * @param b      right operand
@@ -1911,15 +1929,14 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Generates a 4D array of vectors. The order of the arrays is the reverse of
-     * the order in which
-     * parameters are supplied: strata, layers, columns then rows.<br>
+     * Generates a 4D array of vectors. The order of the arrays is the reverse
+     * of the order in which parameters are supplied: strata, layers, columns
+     * then rows.
      * <br>
-     * This is separated to make overriding the public grid functions easier. This
-     * is protected
-     * because it is too easy for integers to be quietly promoted to floats if the
-     * signature
-     * parameters are confused.
+     * <br>
+     * This is separated to make overriding the public grid functions easier.
+     * This is protected because it is too easy for integers to be quietly
+     * promoted to floats if the signature parameters are confused.
      *
      * @param cols   number of columns
      * @param rows   number of rows
@@ -1999,9 +2016,8 @@ public class Vec4 implements Comparable<Vec4> {
 
     /**
      * Returns -1 when this vector is less than the comparisand; 1 when it is
-     * greater than; 0 when the
-     * two are 'equal'. The implementation of this method allows collections of
-     * vectors to be sorted.
+     * greater than; 0 when the two are 'equal'. The implementation of this
+     * method allows collections of vectors to be sorted.
      *
      * @param v the comparisand
      * @return the numeric code
@@ -2009,8 +2025,7 @@ public class Vec4 implements Comparable<Vec4> {
     @Override
     public int compareTo(final Vec4 v) {
 
-        /* @formatter:off */
-    return this.w < v.w ? -1
+        return this.w < v.w ? -1
             : this.w > v.w ? 1
             : this.z < v.z ? -1
             : this.z > v.z ? 1
@@ -2019,7 +2034,6 @@ public class Vec4 implements Comparable<Vec4> {
             : this.x < v.x ? -1
             : this.x > v.x ? 1
             : 0;
-    /* @formatter:on */
     }
 
     @Override
@@ -2039,7 +2053,7 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Resets this vector to an initial state, ( 0.0, 0.0, 0.0, 0.0 ) .
+     * Resets this vector to an initial state, ( 0.0, 0.0, 0.0, 0.0 ).
      *
      * @return this vector
      */
@@ -2048,8 +2062,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Sets the components of this vector from booleans, where false is 0.0 and true
-     * is 1.0 .
+     * Sets the components of this vector from booleans, where false is 0.0 and
+     * true is 1.0 .
      *
      * @param x the x component
      * @param y the y component
@@ -2106,11 +2120,11 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Promotes a Vec3 to a Vec4 with an extra component.<br>
+     * Promotes a Vec3 to a Vec4 with an extra component.
      * <br>
-     * Useful for multiplying a 4 x 4 matrix with either a 3D vector or a 3D point.
-     * (For points, w is
-     * 1.0; for vectors, w is 0.0 .)
+     * <br>
+     * Useful for multiplying a 4 x 4 matrix with either a 3D vector or a 3D
+     * point. (For points, w is 1.0; for vectors, w is 0.0 .)
      *
      * @param v the source vector
      * @param w the w component
@@ -2141,13 +2155,11 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * Puts the vector's components into an existing array at the index provided.
-     * The vector's x
-     * component is assigned to element <code>i</code>; its y component, to element
-     * <code>i + 1</code>
-     * ; its z component, to element <code>i + 2</code>; its w component, to element
-     * <code>i + 3
-     * </code>.
+     * Puts the vector's components into an existing array at the index
+     * provided. The vector's x component is assigned to element
+     * <code>i</code>; its y component, to element <code>i + 1</code>; its z
+     * component, to element <code>i + 2</code>; its w component, to element
+     * <code>i + 3</code>.
      *
      * @param arr the array
      * @param i   the index
@@ -2187,8 +2199,7 @@ public class Vec4 implements Comparable<Vec4> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * vectors. Appends to an
-     * existing {@link StringBuilder}.
+     * vectors. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -2222,8 +2233,8 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     /**
-     * An abstract class that may serve as an umbrella for any custom comparators of
-     * Vec4 s.
+     * An abstract class that may serve as an umbrella for any custom
+     * comparators of Vec4 s.
      */
     public abstract static class AbstrComparator implements Comparator<Vec4> {
 
@@ -2256,9 +2267,9 @@ public class Vec4 implements Comparable<Vec4> {
         }
 
         /**
-         * A clamped interpolation between the origin and destination. Defers to an
-         * unclamped
-         * interpolation, which is to be defined by subclasses of this class.
+         * A clamped interpolation between the origin and destination. Defers
+         * to an unclamped interpolation, which is to be defined by subclasses
+         * of this class.
          *
          * @param orig   the origin vector
          * @param dest   the destination vector
@@ -2317,9 +2328,8 @@ public class Vec4 implements Comparable<Vec4> {
         }
 
         /**
-         * Eases between two vectors by a step using the formula ( 1.0 - <em>t</em> )
-         * <em>a</em> +
-         * <em>t</em> <em>b</em>.
+         * Eases between two vectors by a step using the formula
+         * ( 1.0 - <em>t</em> ) <em>a</em> + <em>t</em> <em>b</em>.
          *
          * @param origin the origin vector
          * @param dest   the destination vector
@@ -2333,8 +2343,10 @@ public class Vec4 implements Comparable<Vec4> {
 
             final float uf = 1.0f - step;
             return target.set(
-                uf * origin.x + step * dest.x, uf * origin.y + step * dest.y,
-                uf * origin.z + step * dest.z, uf * origin.w + step * dest.w);
+                uf * origin.x + step * dest.x,
+                uf * origin.y + step * dest.y,
+                uf * origin.z + step * dest.z,
+                uf * origin.w + step * dest.w);
         }
     }
 }

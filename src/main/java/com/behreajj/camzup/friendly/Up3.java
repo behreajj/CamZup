@@ -99,9 +99,10 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
     public void beginHud() {
 
         /*
-         * Loose camera variables (cameraX, cameraY, cameraZ, refUp, etc.) should
-         * not be changed, as that would impact default arguments for camera();
-         * method. This is intended to be a temporary element within draw!
+         * Loose camera variables (cameraX, cameraY, cameraZ, refUp, etc.)
+         * should not be changed, as that would impact default arguments for
+         * camera(); method. This is intended to be a temporary element
+         * within draw!
          */
 
         // QUERY Should there be a boolean flag to signal HUD has begun so that a
@@ -120,20 +121,38 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
         this.disableDepthMask();
         this.noLights();
 
-        this.camera.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, z, 0.0f, 0.0f, 0.0f, 1.0f);
-        this.cameraInv.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, -z, 0.0f, 0.0f, 0.0f, 1.0f);
+        this.camera.set(
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, z,
+            0.0f, 0.0f, 0.0f, 1.0f);
+        this.cameraInv.set(
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, -z,
+            0.0f, 0.0f, 0.0f, 1.0f);
 
-        this.modelview.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
-            0.0f, 1.0f, z, 0.0f, 0.0f, 0.0f, 1.0f);
-        this.modelviewInv.set(1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
-            0.0f, 0.0f, 1.0f, -z, 0.0f, 0.0f, 0.0f, 1.0f);
+        this.modelview.set(
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, z,
+            0.0f, 0.0f, 0.0f, 1.0f);
+        this.modelviewInv.set(
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, -z,
+            0.0f, 0.0f, 0.0f, 1.0f);
 
-        this.projection.set(am00, 0.0f, 0.0f, 0.0f, 0.0f, am11, 0.0f, 0.0f, 0.0f,
-            0.0f, am22, am23, 0.0f, 0.0f, 0.0f, 1.0f);
-        this.projmodelview.set(am00, 0.0f, 0.0f, 0.0f, 0.0f, am11, 0.0f, 0.0f,
-            0.0f, 0.0f, am22, am22 * z + am23, 0.0f, 0.0f, 0.0f, 1.0f);
+        this.projection.set(
+            am00, 0.0f, 0.0f, 0.0f,
+            0.0f, am11, 0.0f, 0.0f,
+            0.0f, 0.0f, am22, am23,
+            0.0f, 0.0f, 0.0f, 1.0f);
+        this.projmodelview.set(
+            am00, 0.0f, 0.0f, 0.0f,
+            0.0f, am11, 0.0f, 0.0f,
+            0.0f, 0.0f, am22, am22 * z + am23,
+            0.0f, 0.0f, 0.0f, 1.0f);
     }
 
     /**
@@ -278,10 +297,13 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
      * @param c the third vector
      * @param d the fourth vector
      */
-    public void curve(final Vec3 a, final Vec3 b, final Vec3 c,
-        final Vec3 d) {
+    public void curve(final Vec3 a, final Vec3 b, final Vec3 c, final Vec3 d) {
 
-        super.curve(a.x, a.y, a.z, b.x, b.y, b.z, c.x, c.y, c.z, d.x, d.y, d.z);
+        super.curve(
+            a.x, a.y, a.z,
+            b.x, b.y, b.z,
+            c.x, c.y, c.z,
+            d.x, d.y, d.z);
     }
 
     /**
@@ -330,10 +352,16 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
             final float yLocal = this.cameraInv.m12 * zwInv;
             final float zLocal = this.cameraInv.m22 * zwInv;
 
-            this.camera(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
-                    + zLocal, this.lookTarget.x + xLocal, this.lookTarget.y + yLocal,
-                this.lookTarget.z + zLocal, this.refUp.x, this.refUp.y,
-                this.refUp.z);
+            this.camera(
+                this.cameraX + xLocal,
+                this.cameraY + yLocal,
+                this.cameraZ + zLocal,
+
+                this.lookTarget.x + xLocal,
+                this.lookTarget.y + yLocal,
+                this.lookTarget.z + zLocal,
+
+                this.refUp.x, this.refUp.y, this.refUp.z);
         }
     }
 
@@ -537,7 +565,9 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
      */
     public void gimbal(final float radius, final float sw) {
 
-        this.gimbal(radius, sw, IUp.DEFAULT_I_COLOR, IUp.DEFAULT_J_COLOR,
+        this.gimbal(radius, sw,
+            IUp.DEFAULT_I_COLOR,
+            IUp.DEFAULT_J_COLOR,
             IUp.DEFAULT_K_COLOR);
     }
 
@@ -622,7 +652,9 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
     public void gimbal(final Transform3 tr, final float radius,
         final float sw) {
 
-        this.gimbal(tr, radius, sw, IUp.DEFAULT_I_COLOR, IUp.DEFAULT_J_COLOR,
+        this.gimbal(tr, radius, sw,
+            IUp.DEFAULT_I_COLOR,
+            IUp.DEFAULT_J_COLOR,
             IUp.DEFAULT_K_COLOR);
     }
 
@@ -1073,7 +1105,7 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
     }
 
     /**
-     * Draws a quadratic Bézier curve segment to the next anchor point; the
+     * Draws a quadratic Bézier curve segment to the next anchor point. The
      * control point shapes the curve segment.
      *
      * @param cp  the control point
@@ -1185,14 +1217,17 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
      * @param m33 row 3, column 3
      */
     @Override
-    public void setMatrix(final float m00, final float m01, final float m02,
-        final float m03, final float m10, final float m11, final float m12,
-        final float m13, final float m20, final float m21, final float m22,
-        final float m23, final float m30, final float m31, final float m32,
-        final float m33) {
+    public void setMatrix(
+        final float m00, final float m01, final float m02, final float m03,
+        final float m10, final float m11, final float m12, final float m13,
+        final float m20, final float m21, final float m22, final float m23,
+        final float m30, final float m31, final float m32, final float m33) {
 
-        super.setMatrix(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22,
-            m23, m30, m31, m32, m33);
+        super.setMatrix(
+            m00, m01, m02, m03,
+            m10, m11, m12, m13,
+            m20, m21, m22, m23,
+            m30, m31, m32, m33);
         Vec3.right(this.i);
         Vec3.forward(this.j);
         Vec3.up(this.k);
@@ -1380,10 +1415,16 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
             final float yLocal = (ci.m10 * x + ci.m11 * y + ci.m12 * z) * wInv;
             final float zLocal = (ci.m20 * x + ci.m21 * y + ci.m22 * z) * wInv;
 
-            this.camera(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
-                    + zLocal, this.lookTarget.x + xLocal, this.lookTarget.y + yLocal,
-                this.lookTarget.z + zLocal, this.refUp.x, this.refUp.y,
-                this.refUp.z);
+            this.camera(
+                this.cameraX + xLocal,
+                this.cameraY + yLocal,
+                this.cameraZ + zLocal,
+
+                this.lookTarget.x + xLocal,
+                this.lookTarget.y + yLocal,
+                this.lookTarget.z + zLocal,
+
+                this.refUp.x, this.refUp.y, this.refUp.z);
         }
     }
 
@@ -1603,10 +1644,16 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
             final float yLocal = this.cameraInv.m10 * xwInv;
             final float zLocal = this.cameraInv.m20 * xwInv;
 
-            this.camera(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
-                    + zLocal, this.lookTarget.x + xLocal, this.lookTarget.y + yLocal,
-                this.lookTarget.z + zLocal, this.refUp.x, this.refUp.y,
-                this.refUp.z);
+            this.camera(
+                this.cameraX + xLocal,
+                this.cameraY + yLocal,
+                this.cameraZ + zLocal,
+
+                this.lookTarget.x + xLocal,
+                this.lookTarget.y + yLocal,
+                this.lookTarget.z + zLocal,
+
+                this.refUp.x, this.refUp.y, this.refUp.z);
         }
     }
 
@@ -1641,7 +1688,9 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
      */
     void ambientLight() {
 
-        // Cf. IUpOgl.DEFAULT_AMB_R, IUpOgl.DEFAULT_AMB_G, IUpOgl.DEFAULT_AMB_B
+        /*
+         * Cf. IUpOgl.DEFAULT_AMB_R, IUpOgl.DEFAULT_AMB_G, IUpOgl.DEFAULT_AMB_B
+         */
         this.ambientLight(0xff202633);
     }
 
@@ -1846,8 +1895,7 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
         final int clr,
         final float xLoc, final float yLoc, final float zLoc,
         final float xDir, final float yDir, final float zDir,
-        final float angle,
-        final float concentration) {
+        final float angle, final float concentration) {
 
         this.enableLighting();
         if (this.lightCount >= IUpOgl.MAX_LIGHTS) {

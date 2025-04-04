@@ -258,10 +258,11 @@ public class ZImage extends PImage {
 
     /**
      * Blits glyph images from a {@link PFont} onto a single image. The leading
-     * and kerning are measured in pixels; negative values are not allowed<br>
+     * and kerning are measured in pixels; negative values are not allowed.
+     * <br>
      * <br>
      * Images created with this method do not have a reference to a parent
-     * PApplet.
+     * {@link PApplet}.
      *
      * @param font    the Processing font
      * @param text    the string of text
@@ -602,7 +603,8 @@ public class ZImage extends PImage {
      * The horizontal text alignment may be either center
      * {@link PConstants#CENTER} ( {@value PConstants#CENTER} ), right
      * {@link PConstants#RIGHT} ( {@value PConstants#RIGHT} ) or left
-     * {@link PConstants#LEFT} ( {@value PConstants#LEFT} ).<br>
+     * {@link PConstants#LEFT} ( {@value PConstants#LEFT} ).
+     * <br>
      * <br>
      * Images created with this method do not have a reference to a parent
      * PApplet.

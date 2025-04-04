@@ -6,11 +6,9 @@ import java.util.Random;
 
 /**
  * A mutable, extensible class influenced by GLSL, OSL and Processing PVector.
- * This is intended for
- * storing points and directions in three-dimensional graphics programs.
- * Instance methods are
- * limited, while most static methods require an explicit output variable to be
- * provided.
+ * This is intended for storing points and directions in three-dimensional
+ * graphics programs. Instance methods are limited, while most static methods
+ * require an explicit output variable to be provided.
  */
 public class Vec3 implements Comparable<Vec3> {
 
@@ -134,8 +132,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Adds and then normalizes two vectors. Discloses the intermediate sum as an
-     * output.
+     * Adds and then normalizes two vectors. Discloses the intermediate sum as
+     * an output.
      *
      * @param a      left operand
      * @param b      right operand
@@ -152,9 +150,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Tests to see if all the vector's components are non-zero. Useful for finding
-     * valid dimensions
-     * (width, depth and height) stored in vectors.
+     * Tests to see if all the vector's components are non-zero. Useful for
+     * finding valid dimensions (width, depth and height) stored in vectors.
      *
      * @param v the input vector
      * @return the evaluation
@@ -179,7 +176,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Finds the angle between two vectors. Returns zero when either vector is zero.
+     * Finds the angle between two vectors. Returns zero when either vector is
+     * zero.
      *
      * @param a the first vector
      * @param b the second vector
@@ -308,9 +306,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Tests to see if two vectors are parallel. Does so by evaluating whether the
-     * cross product of
-     * the two approximate zero.
+     * Tests to see if two vectors are parallel. Does so by evaluating whether
+     * the cross product of the two approximate zero.
      *
      * @param a the left comparisand
      * @param b the right comparisand
@@ -323,9 +320,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Tests to see if two vectors are parallel. Does so by evaluating whether the
-     * cross product of
-     * the two approximates zero.
+     * Tests to see if two vectors are parallel. Does so by evaluating whether
+     * the cross product of the two approximates zero.
      *
      * @param a         the left comparisand
      * @param b         the right comparisand
@@ -379,7 +375,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Returns to a vector with a negative value on the y-axis, (0.0, -1.0, 0.0) .
+     * Returns to a vector with a negative value on the y-axis,
+     * (0.0, -1.0, 0.0).
      *
      * @param target the output vector
      * @return the back vector
@@ -391,10 +388,9 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * Returns a point on a Bézier curve described by two anchor points and two
-     * control points
-     * according to a step in [0.0, 1.0] . When the step is less than zero, returns
-     * the first anchor
-     * point. When the step is greater than one, returns the second anchor point.
+     * control points according to a step in [0.0, 1.0]. When the step is less
+     * than zero, returns the first anchor point. When the step is greater than
+     * one, returns the second anchor point.
      *
      * @param ap0    the first anchor point
      * @param cp0    the first control point
@@ -434,13 +430,11 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Returns a tangent on a Bézier curve described by two anchor points and two
-     * control points
-     * according to a step in [0.0, 1.0] . When the step is less than zero, returns
-     * the first anchor
-     * point subtracted from the first control point. When the step is greater than
-     * one, returns the
-     * second anchor point subtracted from the second control point.
+     * Returns a tangent on a Bézier curve described by two anchor points and
+     * two control points according to a step in [0.0, 1.0] . When the step is
+     * less than zero, returns the first anchor point subtracted from the first
+     * control point. When the step is greater than one, returns the second
+     * anchor point subtracted from the second control point.
      *
      * @param ap0    the first anchor point
      * @param cp0    the first control point
@@ -472,16 +466,14 @@ public class Vec3 implements Comparable<Vec3> {
         final float tsq3 = step * t3;
         final float ut6 = u * (t3 + t3);
 
-        /* @formatter:off */
-    return target.set(
-        (cp0.x - ap0.x) * usq3 + (cp1.x - cp0.x) * ut6 + (ap1.x - cp1.x) * tsq3,
-        (cp0.y - ap0.y) * usq3 + (cp1.y - cp0.y) * ut6 + (ap1.y - cp1.y) * tsq3,
-        (cp0.z - ap0.z) * usq3 + (cp1.z - cp0.z) * ut6 + (ap1.z - cp1.z) * tsq3);
-    /* @formatter:on */
+        return target.set(
+            (cp0.x - ap0.x) * usq3 + (cp1.x - cp0.x) * ut6 + (ap1.x - cp1.x) * tsq3,
+            (cp0.y - ap0.y) * usq3 + (cp1.y - cp0.y) * ut6 + (ap1.y - cp1.y) * tsq3,
+            (cp0.z - ap0.z) * usq3 + (cp1.z - cp0.z) * ut6 + (ap1.z - cp1.z) * tsq3);
     }
 
     /**
-     * Returns a normalized tangent on a Bezier curve.
+     * Returns a normalized tangent on a Bézier curve.
      *
      * @param ap0    the first anchor point
      * @param cp0    the first control point
@@ -507,9 +499,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Appends to an array of bytes, ordered from least to most significant digit
-     * (little endian).
-     * Writes 12 bytes.
+     * Appends to an array of bytes, ordered from least to most significant
+     * digit (little endian). Writes 12 bytes.
      *
      * @param v   the vector
      * @param arr the array
@@ -527,9 +518,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Appends to an array of bytes, ordered from most to least significant digit
-     * (big endian). Writes
-     * 12 bytes.
+     * Appends to an array of bytes, ordered from most to least significant
+     * digit (big endian). Writes 12 bytes.
      *
      * @param v   the vector
      * @param arr the array
@@ -615,14 +605,11 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * The cross product returns a vector perpendicular to both <em>a</em> and
-     * <em>b</em>, and
-     * therefore normal to the plane on which <em>a</em> and <em>b</em> rest. The
-     * cross product is
-     * anti-commutative, meaning <em>a</em> x <em>b</em> = - ( <em>b</em> x
-     * <em>a</em> ) . A unit
-     * vector does not necessarily result from the cross of two unit vectors. The 3D
-     * equivalent to
-     * {@link Vec2#perpendicular(Vec2, Vec2)}.
+     * <em>b</em>, and therefore normal to the plane on which <em>a</em> and
+     * <em>b</em> rest. The cross product is anti-commutative, meaning
+     * <em>a</em> x <em>b</em> = - ( <em>b</em> x <em>a</em> ) . A unit vector
+     * does not necessarily result from the cross of two unit vectors. The 3D
+     * equivalent to {@link Vec2#perpendicular(Vec2, Vec2)}.
      *
      * @param a      left operand
      * @param b      right operand
@@ -635,22 +622,21 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * A specialized form of the cross product which normalizes the result. This is
-     * to facilitate the
-     * creation of lookAt matrices. Crossed orthonormal vectors are as follows:
+     * A specialized form of the cross product which normalizes the result.
+     * This is to facilitate the creation of lookAt matrices. Crossed
+     * orthonormal vectors are as follows:
      *
      * <ul>
      * <li>right x forward = up, <br>
-     * ( 1.0, 0.0, 0.0 ) x ( 0.0, 1.0, 0.0 ) = ( 0.0, 0.0, 1.0 )
+     * ( 1.0, 0.0, 0.0 ) x ( 0.0, 1.0, 0.0 ) = ( 0.0, 0.0, 1.0 )</li>
      * <li>forward x up = right, <br>
-     * ( 0.0, 1.0, 0.0 ) x ( 0.0, 0.0, 1.0 ) = ( 1.0, 0.0, 0.0 )
+     * ( 0.0, 1.0, 0.0 ) x ( 0.0, 0.0, 1.0 ) = ( 1.0, 0.0, 0.0 )</li>
      * <li>up x right = forward, <br>
-     * ( 0.0, 0.0, 1.0 ) x ( 1.0, 0.0, 0.0 ) = ( 0.0, 1.0, 0.0 )
+     * ( 0.0, 0.0, 1.0 ) x ( 1.0, 0.0, 0.0 ) = ( 0.0, 1.0, 0.0 )</li>
      * </ul>
      * <p>
-     * The cross product is anti-commutative, meaning <em>a</em> x <em>b</em> = - (
-     * <em>b</em> x
-     * <em>a</em> ) .
+     * The cross product is anti-commutative, meaning <em>a</em> x <em>b</em> =
+     * - ( <em>b</em> x <em>a</em> ) .
      *
      * @param a      left operand
      * @param b      right operand
@@ -669,8 +655,7 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * A specialized form of the cross product which normalizes the result. The
-     * cross product is
-     * disclosed as an output.
+     * cross product is disclosed as an output.
      *
      * @param a       left operand
      * @param b       right operand
@@ -714,8 +699,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Finds the Chebyshev distance between two vectors. Forms a cube pattern when
-     * plotted.
+     * Finds the Chebyshev distance between two vectors. Forms a cube pattern
+     * when plotted.
      *
      * @param a left operand
      * @param b right operand
@@ -729,8 +714,7 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * Finds the Euclidean distance between two vectors. Where possible, use
-     * distance squared to avoid
-     * the computational cost of the square-root.
+     * distance squared to avoid the computational cost of the square-root.
      *
      * @param a left operand
      * @param b right operand
@@ -743,8 +727,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Finds the Manhattan distance between two vectors. Forms an octahedron pattern
-     * when plotted.
+     * Finds the Manhattan distance between two vectors. Forms an octahedron
+     * pattern when plotted.
      *
      * @param a left operand
      * @param b right operand
@@ -757,11 +741,10 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Finds the Minkowski distance between two vectors. This is a generalization of
-     * other distance
-     * formulae. When the exponent value, c, is 1.0, the Minkowski distance equals
-     * the Manhattan
-     * distance; when it is 2.0, Minkowski equals the Euclidean distance.
+     * Finds the Minkowski distance between two vectors. This is a
+     * generalization of other distance formulae. When the exponent value, c,
+     * is 1.0, the Minkowski distance equals the Manhattan distance; when it is
+     * 2.0, Minkowski equals the Euclidean distance.
      *
      * @param a left operand
      * @param b right operand
@@ -773,14 +756,12 @@ public class Vec3 implements Comparable<Vec3> {
     public static float distMinkowski(final Vec3 a, final Vec3 b, final float c) {
 
         if (c != 0.0f) {
-            /* @formatter:off */
-      return (float)
-          Math.pow(
-              Math.pow(Math.abs((double) (b.x - a.x)), c)
-                  + Math.pow(Math.abs((double) (b.y - a.y)), c)
-                  + Math.pow(Math.abs((double) (b.z - a.z)), c),
-              1.0d / (double) c);
-      /* @formatter:on */
+            return (float)
+                Math.pow(
+                    Math.pow(Math.abs((double) (b.x - a.x)), c)
+                        + Math.pow(Math.abs((double) (b.y - a.y)), c)
+                        + Math.pow(Math.abs((double) (b.z - a.z)), c),
+                    1.0d / (double) c);
         }
 
         return 0.0f;
@@ -788,8 +769,8 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * Finds the Euclidean distance squared between two vectors. Equivalent to
-     * subtracting one vector
-     * from the other, then finding the dot product of the difference with itself.
+     * subtracting one vector from the other, then finding the dot product of
+     * the difference with itself.
      *
      * @param a left operand
      * @param b right operand
@@ -814,7 +795,10 @@ public class Vec3 implements Comparable<Vec3> {
      */
     public static Vec3 div(final float a, final Vec3 b, final Vec3 target) {
 
-        return target.set(Utils.div(a, b.x), Utils.div(a, b.y), Utils.div(a, b.z));
+        return target.set(
+            Utils.div(a, b.x),
+            Utils.div(a, b.y),
+            Utils.div(a, b.z));
     }
 
     /**
@@ -835,10 +819,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Divides the left operand by the right, component-wise. This is mathematically
-     * incorrect, but
-     * serves as a shortcut for transforming a vector by the inverse of a scalar
-     * matrix.
+     * Divides the left operand by the right, component-wise. Serves as a
+     * shortcut for transforming a vector by the inverse of a scalar matrix.
      *
      * @param a      numerator
      * @param b      denominator
@@ -848,13 +830,16 @@ public class Vec3 implements Comparable<Vec3> {
      */
     public static Vec3 div(final Vec3 a, final Vec3 b, final Vec3 target) {
 
-        return target.set(Utils.div(a.x, b.x), Utils.div(a.y, b.y), Utils.div(a.z, b.z));
+        return target.set(
+            Utils.div(a.x, b.x),
+            Utils.div(a.y, b.y),
+            Utils.div(a.z, b.z));
     }
 
     /**
      * Finds the dot product of two vectors by summing the products of their
-     * corresponding components.
-     * The dot product of a vector with itself is equal to its magnitude squared.
+     * corresponding components. The dot product of a vector with itself is
+     * equal to its magnitude squared.
      *
      * @param a left operand
      * @param b right operand
@@ -866,7 +851,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Returns to a vector with a negative value on the z axis, (0.0, 0.0, -1.0) .
+     * Returns to a vector with a negative value on the z axis,
+     * (0.0, 0.0, -1.0).
      *
      * @param target the output vector
      * @return the down vector
@@ -889,9 +875,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Filters a vector by setting each component to the input component if it is in
-     * bounds and 0.0 if
-     * it is out of bounds.
+     * Filters a vector by setting each component to the input component if it
+     * is in bounds and 0.0 if it is out of bounds.
      *
      * @param v      the vector
      * @param lb     the lower bound
@@ -923,8 +908,8 @@ public class Vec3 implements Comparable<Vec3> {
         }
 
         /*
-         * Copy each inner array to the result array, then move the cursor by the
-         * length of each array.
+         * Copy each inner array to the result array, then move the cursor by
+         * the length of each array.
          */
         int j = 0;
         final Vec3[] result = new Vec3[totalLen];
@@ -937,7 +922,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Flattens a three-dimensional array of vectors to a one dimensional array.
+     * Flattens a three-dimensional array of vectors to a one dimensional
+     * array.
      *
      * @param arr the 3D array
      * @return the 1D array
@@ -989,12 +975,15 @@ public class Vec3 implements Comparable<Vec3> {
      */
     public static Vec3 fmod(final float a, final Vec3 b, final Vec3 target) {
 
-        return target.set(Utils.fmod(a, b.x), Utils.fmod(a, b.y), Utils.fmod(a, b.z));
+        return target.set(
+            Utils.fmod(a, b.x),
+            Utils.fmod(a, b.y),
+            Utils.fmod(a, b.z));
     }
 
     /**
-     * Applies the % operator (truncation-based modulo) to each component of the
-     * left operand.
+     * Applies the % operator (truncation-based modulo) to each component of
+     * the left operand.
      *
      * @param a      left operand
      * @param b      right operand
@@ -1010,8 +999,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Applies the % operator (truncation-based modulo) to each component of the
-     * left operand.
+     * Applies the % operator (truncation-based modulo) to each component of
+     * the left operand.
      *
      * @param a      left operand
      * @param b      right operand
@@ -1021,11 +1010,15 @@ public class Vec3 implements Comparable<Vec3> {
      */
     public static Vec3 fmod(final Vec3 a, final Vec3 b, final Vec3 target) {
 
-        return target.set(Utils.fmod(a.x, b.x), Utils.fmod(a.y, b.y), Utils.fmod(a.z, b.z));
+        return target.set(
+            Utils.fmod(a.x, b.x),
+            Utils.fmod(a.y, b.y),
+            Utils.fmod(a.z, b.z));
     }
 
     /**
-     * Returns to a vector with a positive value on the y-axis, (0.0, 1.0, 0.0) .
+     * Returns to a vector with a positive value on the y-axis,
+     * (0.0, 1.0, 0.0).
      *
      * @param target the output vector
      * @return the forward vector
@@ -1045,7 +1038,10 @@ public class Vec3 implements Comparable<Vec3> {
      */
     public static Vec3 fract(final Vec3 v, final Vec3 target) {
 
-        return target.set(Utils.fract(v.x), Utils.fract(v.y), Utils.fract(v.z));
+        return target.set(
+            Utils.fract(v.x),
+            Utils.fract(v.y),
+            Utils.fract(v.z));
     }
 
     /**
@@ -1067,18 +1063,18 @@ public class Vec3 implements Comparable<Vec3> {
         final float radius,
         final Vec3 target) {
 
-        /* @formatter:off */
-    final float rhoCosIncl = radius * cosIncl;
-    return target.set(rhoCosIncl * cosAzim, rhoCosIncl * sinAzim, radius * sinIncl);
-    /* @formatter:on */
+        final float rhoCosIncl = radius * cosIncl;
+        return target.set(
+            rhoCosIncl * cosAzim,
+            rhoCosIncl * sinAzim,
+            radius * sinIncl);
     }
 
     /**
-     * Creates a vector from spherical coordinates: (1) theta, the azimuth, yaw or
-     * longitude; (2) phi,
-     * the inclination, pitch or latitude; (3) rho, the radius or magnitude. The
-     * poles will be upright
-     * in a z-up coordinate system; sideways in a y-up coordinate system.
+     * Creates a vector from spherical coordinates: (1) theta, the azimuth,
+     * yaw or longitude; (2) phi, the inclination, pitch or latitude; (3) rho,
+     * the radius or magnitude. The poles will be upright in a z-up coordinate
+     * system; sideways in a y-up coordinate system.
      *
      * @param azimuth     the angle theta in radians
      * @param inclination the angle phi in radians
@@ -1087,7 +1083,10 @@ public class Vec3 implements Comparable<Vec3> {
      * @return the vector
      */
     public static Vec3 fromSpherical(
-        final float azimuth, final float inclination, final float radius, final Vec3 target) {
+        final float azimuth,
+        final float inclination,
+        final float radius,
+        final Vec3 target) {
 
         final float inclNorm = inclination * Utils.ONE_TAU;
         final float azNorm = azimuth * Utils.ONE_TAU;
@@ -1102,9 +1101,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Creates a vector with a magnitude of 1.0 from an azimuth and inclination,
-     * such that the vector
-     * is on the unit sphere.
+     * Creates a vector with a magnitude of 1.0 from an azimuth and
+     * inclination, such that the vector is on the unit sphere.
      *
      * @param azimuth     the azimuth in radians
      * @param inclination the inclination in radians
@@ -1113,14 +1111,16 @@ public class Vec3 implements Comparable<Vec3> {
      * @see Vec3#fromSpherical(float, float, float, Vec3)
      */
     public static Vec3 fromSpherical(
-        final float azimuth, final float inclination, final Vec3 target) {
+        final float azimuth,
+        final float inclination,
+        final Vec3 target) {
 
         return Vec3.fromSpherical(azimuth, inclination, 1.0f, target);
     }
 
     /**
-     * Generates a 3D array of vectors. Defaults to the coordinate range of [-0.5,
-     * 0.5] .
+     * Generates a 3D array of vectors. Defaults to the coordinate range of
+     * [-0.5, 0.5].
      *
      * @param res the resolution
      * @return the array
@@ -1132,11 +1132,9 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Generates a 3D array of vectors. The result is in layer-row-major order, but
-     * the parameters are
-     * supplied in reverse: columns first, then rows, then layers. Defaults to the
-     * coordinate range of
-     * [-0.5, 0.5] .
+     * Generates a 3D array of vectors. The result is in layer-row-major order,
+     * but the parameters are supplied in reverse: columns first, then rows,
+     * then layers. Defaults to the coordinate range of [-0.5, 0.5].
      *
      * @param cols   number of columns
      * @param rows   number of rows
@@ -1146,13 +1144,16 @@ public class Vec3 implements Comparable<Vec3> {
      */
     public static Vec3[][][] grid(final int cols, final int rows, final int layers) {
 
-        return Vec3.grid(cols, rows, layers, -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f);
+        return Vec3.grid(
+            cols, rows, layers,
+            -0.5f, -0.5f, -0.5f,
+            0.5f, 0.5f, 0.5f);
     }
 
     /**
-     * Generates a 3D array of vectors. The result is in layer-row-major order, but
-     * the parameters are
-     * supplied in reverse: columns first, then rows, then layers.
+     * Generates a 3D array of vectors. The result is in layer-row-major order,
+     * but the parameters are supplied in reverse: columns first, then rows,
+     * then layers.
      *
      * @param cols       number of columns
      * @param rows       number of rows
@@ -1170,13 +1171,15 @@ public class Vec3 implements Comparable<Vec3> {
         final float upperBound) {
 
         return Vec3.grid(
-            cols, rows, layers, lowerBound, lowerBound, lowerBound, upperBound, upperBound, upperBound);
+            cols, rows, layers,
+            lowerBound, lowerBound, lowerBound,
+            upperBound, upperBound, upperBound);
     }
 
     /**
-     * Generates a 3D array of vectors. The result is in layer-row-major order, but
-     * the parameters are
-     * supplied in reverse: columns first, then rows, then layers.
+     * Generates a 3D array of vectors. The result is in layer-row-major order,
+     * but the parameters are supplied in reverse: columns first, then rows,
+     * then layers.
      *
      * @param cols       number of columns
      * @param rows       number of rows
@@ -1194,21 +1197,14 @@ public class Vec3 implements Comparable<Vec3> {
         final Vec3 upperBound) {
 
         return Vec3.grid(
-            cols,
-            rows,
-            layers,
-            lowerBound.x,
-            lowerBound.y,
-            lowerBound.z,
-            upperBound.x,
-            upperBound.y,
-            upperBound.z);
+            cols, rows, layers,
+            lowerBound.x, lowerBound.y, lowerBound.z,
+            upperBound.x, upperBound.y, upperBound.z);
     }
 
     /**
      * Generates a 1D array of vectors placed on the surface of a sphere,
-     * distributed according to the
-     * golden ratio {@link Utils#PHI}.
+     * distributed according to the golden ratio {@link Utils#PHI}.
      *
      * @param count  number of vectors
      * @param radius radius of sphere
@@ -1227,8 +1223,8 @@ public class Vec3 implements Comparable<Vec3> {
         for (int i = 0; i < vcount; ++i) {
 
             /*
-             * A few calculations can be saved by using normalized angle instead of
-             * an angle in [0.0, TAU] .
+             * A few calculations can be saved by using normalized angle
+             * instead of an angle in [0.0, TAU] .
              */
             final float azNorm = Utils.PHI * (float) i;
             final float inclNorm = Utils.ONE_TAU * Utils.asin(1.0f - (float) i * toStep);
@@ -1245,9 +1241,9 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Generates a 3D array of vectors arranged on a UV Sphere. The array is ordered
-     * by layers,
-     * latitudes, then longitudes; the parameters are supplied in reverse order.
+     * Generates a 3D array of vectors arranged on a UV Sphere. The array is
+     * ordered by layers, latitudes, then longitudes; the parameters are
+     * supplied in reverse order.
      *
      * @param longitudes the longitudes, azimuths
      * @param latitudes  the latitudes, inclinations
@@ -1260,9 +1256,9 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Generates a 3D array of vectors arranged on a UV Sphere. The array is ordered
-     * by layers,
-     * latitudes, then longitudes; the parameters are supplied in reverse order.
+     * Generates a 3D array of vectors arranged on a UV Sphere. The array is
+     * ordered by layers, latitudes, then longitudes; the parameters are
+     * supplied in reverse order.
      *
      * @param longitudes   the longitudes, azimuths
      * @param latitudes    the latitudes, inclinations
@@ -1273,13 +1269,15 @@ public class Vec3 implements Comparable<Vec3> {
     public static Vec3[][][] gridSpherical(
         final int longitudes, final int latitudes, final boolean includePoles) {
 
-        return Vec3.gridSpherical(longitudes, latitudes, 1, 0.5f, 0.5f, includePoles);
+        return Vec3.gridSpherical(
+            longitudes, latitudes, 1,
+            0.5f, 0.5f, includePoles);
     }
 
     /**
-     * Generates a 3D array of vectors arranged on a UV Sphere. The array is ordered
-     * by layers,
-     * latitudes, then longitudes; the parameters are supplied in reverse order.
+     * Generates a 3D array of vectors arranged on a UV Sphere. The array is
+     * ordered by layers, latitudes, then longitudes; the parameters are
+     * supplied in reverse order.
      *
      * @param longitudes the longitudes, azimuths
      * @param latitudes  the latitudes, inclinations
@@ -1296,13 +1294,15 @@ public class Vec3 implements Comparable<Vec3> {
         final float radiusMin,
         final float radiusMax) {
 
-        return Vec3.gridSpherical(longitudes, latitudes, layers, radiusMin, radiusMax, true);
+        return Vec3.gridSpherical(
+            longitudes, latitudes, layers,
+            radiusMin, radiusMax, true);
     }
 
     /**
-     * Generates a 3D array of vectors arranged on a UV Sphere. The array is ordered
-     * by layers,
-     * latitudes, then longitudes; the parameters are supplied in reverse order.
+     * Generates a 3D array of vectors arranged on a UV Sphere. The array is
+     * ordered by layers, latitudes, then longitudes; the parameters are
+     * supplied in reverse order.
      *
      * @param longitudes   the longitudes, azimuths
      * @param latitudes    the latitudes, inclinations
@@ -1326,7 +1326,9 @@ public class Vec3 implements Comparable<Vec3> {
 
         final boolean oneLayer = vLayers == 1;
         final float vrMax = Utils.max(Utils.EPSILON, radiusMin, radiusMax);
-        final float vrMin = oneLayer ? vrMax : Math.max(Utils.EPSILON, Math.min(radiusMin, radiusMax));
+        final float vrMin = oneLayer
+            ? vrMax
+            : Math.max(Utils.EPSILON, Math.min(radiusMin, radiusMax));
 
         final int latLen = includePoles ? vLats + 2 : vLats;
         final int latOff = includePoles ? 1 : 0;
@@ -1355,7 +1357,10 @@ public class Vec3 implements Comparable<Vec3> {
             final float cosAzim = Utils.scNorm(azim);
             final float sinAzim = Utils.scNorm(azim - 0.25f);
 
-            result[h][latOff + i][j] = new Vec3(rhoCosIncl * cosAzim, rhoCosIncl * sinAzim, -rhoSinIncl);
+            result[h][latOff + i][j] = new Vec3(
+                rhoCosIncl * cosAzim,
+                rhoCosIncl * sinAzim,
+                -rhoSinIncl);
         }
 
         /* Add single element arrays to beginning and end of layers. */
@@ -1373,9 +1378,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Evaluates whether all components of the left comparisand are greater than
-     * those of the right
-     * comparisand.
+     * Evaluates whether all components of the left comparisand are greater
+     * than those of the right comparisand.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -1387,7 +1391,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Evaluates whether the left comparisand is greater than the right comparisand.
+     * Evaluates whether the left comparisand is greater than the right
+     * comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -1400,9 +1405,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Evaluates whether all components of the left comparisand are greater than or
-     * equal to those of
-     * the right comparisand.
+     * Evaluates whether all components of the left comparisand are greater
+     * than or equal to those of the right comparisand.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -1414,8 +1418,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Evaluates whether the left comparisand is greater than or equal to the right
-     * comparisand.
+     * Evaluates whether the left comparisand is greater than or equal to the
+     * right comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -1452,9 +1456,9 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Finds the vector's inclination in the range [-pi / 2.0, pi / 2.0] . It is
-     * necessary to
-     * calculate the vector's magnitude in order to find its inclination.
+     * Finds the vector's inclination in the range [-pi / 2.0, pi / 2.0] .
+     * It is necessary to calculate the vector's magnitude in order to find its
+     * inclination.
      *
      * @param v the input vector
      * @return the inclination
@@ -1465,7 +1469,7 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Finds the vector's inclination in the range [pi, 0.0] .
+     * Finds the vector's inclination in the range [pi, 0.0].
      *
      * @param v the input vector
      * @return the inclination
@@ -1476,9 +1480,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Inserts an array of vectors in the midst of another. The insertion point is
-     * before, or to the
-     * left of, the existing element at a given index.
+     * Inserts an array of vectors in the midst of another. The insertion point
+     * is before, or to the left of, the existing element at a given index.
      *
      * @param arr    the array
      * @param index  the insertion index
@@ -1502,8 +1505,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Tests to see if the vector is on the unit sphere, i.e., has a magnitude of
-     * approximately 1.0.
+     * Tests to see if the vector is on the unit sphere, i.e., has a magnitude
+     * of approximately 1.0.
      *
      * @param v the input vector
      * @return the evaluation
@@ -1548,9 +1551,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Evaluates whether all components of the left comparisand are less than those
-     * of the right
-     * comparisand.
+     * Evaluates whether all components of the left comparisand are less than
+     * those of the right comparisand.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -1562,7 +1564,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Evaluates whether the left comparisand is less than the right comparisand.
+     * Evaluates whether the left comparisand is less than the right
+     * comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -1575,9 +1578,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Evaluates whether all components of the left comparisand are less than or
-     * equal to those of the
-     * right comparisand.
+     * Evaluates whether all components of the left comparisand are less than
+     * or equal to those of the right comparisand.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -1589,8 +1591,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Evaluates whether the left comparisand is less than or equal to the right
-     * comparisand.
+     * Evaluates whether the left comparisand is less than or equal to the
+     * right comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -1603,11 +1605,10 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Finds the length, or magnitude, of a vector, |<em>a</em>| . Also referred to
-     * as the radius when
-     * using spherical coordinates. Uses the formula √ <em>a</em> . <em>a</em> .
-     * Where possible, use
-     * magSq or dot to avoid the computational cost of the square-root.
+     * Finds the length, or magnitude, of a vector, |<em>a</em>| . Also
+     * referred to as the radius when using spherical coordinates. Uses the
+     * formula √ <em>a</em> . <em>a</em> . Where possible, use magSq or dot to
+     * avoid the computational cost of the square-root.
      *
      * @param v the input vector
      * @return the magnitude
@@ -1620,10 +1621,9 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * Finds the length-, or magnitude-, squared of a vector,
-     * |<em>a</em>|<sup>2</sup>. Returns the
-     * same result as <em>a</em> . <em>a</em> . Useful when calculating the lengths
-     * of many vectors, *
-     * to avoid the computational cost of the square-root.
+     * |<em>a</em>|<sup>2</sup>. Returns the same result as <em>a</em> .
+     * <em>a</em> . Useful when calculating the lengths of many vectors, to
+     * avoid the computational cost of the square-root.
      *
      * @param v the input vector
      * @return the magnitude squared
@@ -1636,31 +1636,32 @@ public class Vec3 implements Comparable<Vec3> {
     /**
      * Maps an input vector from an original range to a target range.
      *
-     * @param v        the input vector
-     * @param lbOrigin lower bound of original range
-     * @param ubOrigin upper bound of original range
-     * @param lbDest   lower bound of destination range
-     * @param ubDest   upper bound of destination range
-     * @param target   the output vector
+     * @param v      the input vector
+     * @param lbOrig lower bound of original range
+     * @param ubOrig upper bound of original range
+     * @param lbDest lower bound of destination range
+     * @param ubDest upper bound of destination range
+     * @param target the output vector
      * @return the mapped value
      * @see Utils#map(float, float, float, float, float)
      */
     public static Vec3 map(
         final Vec3 v,
-        final Vec3 lbOrigin,
-        final Vec3 ubOrigin,
+        final Vec3 lbOrig,
+        final Vec3 ubOrig,
         final Vec3 lbDest,
         final Vec3 ubDest,
         final Vec3 target) {
 
         return target.set(
-            Utils.map(v.x, lbOrigin.x, ubOrigin.x, lbDest.x, ubDest.x),
-            Utils.map(v.y, lbOrigin.y, ubOrigin.y, lbDest.y, ubDest.y),
-            Utils.map(v.z, lbOrigin.z, ubOrigin.z, lbDest.z, ubDest.z));
+            Utils.map(v.x, lbOrig.x, ubOrig.x, lbDest.x, ubDest.x),
+            Utils.map(v.y, lbOrig.y, ubOrig.y, lbDest.y, ubDest.y),
+            Utils.map(v.z, lbOrig.z, ubOrig.z, lbDest.z, ubDest.z));
     }
 
     /**
-     * Sets the output vector to the maximum of the input vector and a lower bound.
+     * Sets the output vector to the maximum of the input vector and a lower
+     * bound.
      *
      * @param a          the input value
      * @param lowerBound the lower bound
@@ -1670,12 +1671,14 @@ public class Vec3 implements Comparable<Vec3> {
     public static Vec3 max(final Vec3 a, final float lowerBound, final Vec3 target) {
 
         return target.set(
-            Math.max(a.x, lowerBound), Math.max(a.y, lowerBound), Math.max(a.z, lowerBound));
+            Math.max(a.x, lowerBound),
+            Math.max(a.y, lowerBound),
+            Math.max(a.z, lowerBound));
     }
 
     /**
-     * Sets the output vector to the maximum components of the input vector and a
-     * lower bound.
+     * Sets the output vector to the maximum components of the input vector and
+     * a lower bound.
      *
      * @param a          the input vector
      * @param lowerBound the lower bound
@@ -1685,12 +1688,14 @@ public class Vec3 implements Comparable<Vec3> {
     public static Vec3 max(final Vec3 a, final Vec3 lowerBound, final Vec3 target) {
 
         return target.set(
-            Math.max(a.x, lowerBound.x), Math.max(a.y, lowerBound.y), Math.max(a.z, lowerBound.z));
+            Math.max(a.x, lowerBound.x),
+            Math.max(a.y, lowerBound.y),
+            Math.max(a.z, lowerBound.z));
     }
 
     /**
-     * Sets the output vector to the minimum components of the input vector and an
-     * upper bound.
+     * Sets the output vector to the minimum components of the input vector and
+     * an upper bound.
      *
      * @param a          the input value
      * @param upperBound the upper bound
@@ -1700,12 +1705,14 @@ public class Vec3 implements Comparable<Vec3> {
     public static Vec3 min(final Vec3 a, final float upperBound, final Vec3 target) {
 
         return target.set(
-            Math.min(a.x, upperBound), Math.min(a.y, upperBound), Math.min(a.z, upperBound));
+            Math.min(a.x, upperBound),
+            Math.min(a.y, upperBound),
+            Math.min(a.z, upperBound));
     }
 
     /**
-     * Sets the output vector to the minimum components of the input vector and an
-     * upper bound.
+     * Sets the output vector to the minimum components of the input vector and
+     * an upper bound.
      *
      * @param a          the input vector
      * @param upperBound the upper bound
@@ -1715,11 +1722,13 @@ public class Vec3 implements Comparable<Vec3> {
     public static Vec3 min(final Vec3 a, final Vec3 upperBound, final Vec3 target) {
 
         return target.set(
-            Math.min(a.x, upperBound.x), Math.min(a.y, upperBound.y), Math.min(a.z, upperBound.z));
+            Math.min(a.x, upperBound.x),
+            Math.min(a.y, upperBound.y),
+            Math.min(a.z, upperBound.z));
     }
 
     /**
-     * Mixes two vectors together by a step in [0.0, 1.0] .
+     * Mixes two vectors together by a step in [0.0, 1.0].
      *
      * @param orig   the original vector
      * @param dest   the destination vector
@@ -1727,7 +1736,11 @@ public class Vec3 implements Comparable<Vec3> {
      * @param target the output vector
      * @return the mix
      */
-    public static Vec3 mix(final Vec3 orig, final Vec3 dest, final float step, final Vec3 target) {
+    public static Vec3 mix(
+        final Vec3 orig,
+        final Vec3 dest,
+        final float step,
+        final Vec3 target) {
 
         if (step <= 0.0f) {
             return target.set(orig);
@@ -1738,7 +1751,9 @@ public class Vec3 implements Comparable<Vec3> {
 
         final float u = 1.0f - step;
         return target.set(
-            u * orig.x + step * dest.x, u * orig.y + step * dest.y, u * orig.z + step * dest.z);
+            u * orig.x + step * dest.x,
+            u * orig.y + step * dest.y,
+            u * orig.z + step * dest.z);
     }
 
     /**
@@ -1752,7 +1767,10 @@ public class Vec3 implements Comparable<Vec3> {
      */
     public static Vec3 mod(final float a, final Vec3 b, final Vec3 target) {
 
-        return target.set(Utils.mod(a, b.x), Utils.mod(a, b.y), Utils.mod(a, b.z));
+        return target.set(
+            Utils.mod(a, b.x),
+            Utils.mod(a, b.y),
+            Utils.mod(a, b.z));
     }
 
     /**
@@ -1768,7 +1786,9 @@ public class Vec3 implements Comparable<Vec3> {
 
         if (b != 0.0f) {
             return target.set(
-                Utils.modUnchecked(a.x, b), Utils.modUnchecked(a.y, b), Utils.modUnchecked(a.z, b));
+                Utils.modUnchecked(a.x, b),
+                Utils.modUnchecked(a.y, b),
+                Utils.modUnchecked(a.z, b));
         }
         return target.set(a);
     }
@@ -1784,12 +1804,15 @@ public class Vec3 implements Comparable<Vec3> {
      */
     public static Vec3 mod(final Vec3 a, final Vec3 b, final Vec3 target) {
 
-        return target.set(Utils.mod(a.x, b.x), Utils.mod(a.y, b.y), Utils.mod(a.z, b.z));
+        return target.set(
+            Utils.mod(a.x, b.x),
+            Utils.mod(a.y, b.y),
+            Utils.mod(a.z, b.z));
     }
 
     /**
-     * A specialized form of modulo which subtracts the floor of the vector from the
-     * vector.
+     * A specialized form of modulo which subtracts the floor of the vector
+     * from the vector.
      *
      * @param v      the input vector
      * @param target the output vector
@@ -1798,7 +1821,10 @@ public class Vec3 implements Comparable<Vec3> {
      */
     public static Vec3 mod1(final Vec3 v, final Vec3 target) {
 
-        return target.set(Utils.mod1(v.x), Utils.mod1(v.y), Utils.mod1(v.z));
+        return target.set(
+            Utils.mod1(v.x),
+            Utils.mod1(v.y),
+            Utils.mod1(v.z));
     }
 
     /**
@@ -1852,8 +1878,7 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * Tests to see if all the vector's components are zero. Useful when
-     * safeguarding against invalid
-     * directions.
+     * safeguarding against invalid directions.
      *
      * @param v the input vector
      * @return the evaluation
@@ -1865,8 +1890,8 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * Divides a vector by its magnitude, such that the new magnitude is 1.0.
-     * <em>â</em> = <em>a</em>
-     * / |<em>a</em>|. The result is a unit vector, as it lies on the unit sphere.
+     * <em>â</em> = <em>a</em> / |<em>a</em>|. The result is a unit vector, as
+     * it lies on the unit sphere.
      *
      * @param v      the input vector
      * @param target the output vector
@@ -1889,7 +1914,9 @@ public class Vec3 implements Comparable<Vec3> {
     public static Vec3 not(final Vec3 v, final Vec3 target) {
 
         return target.set(
-            v.x != 0.0f ? 0.0f : 1.0f, v.y != 0.0f ? 0.0f : 1.0f, v.z != 0.0f ? 0.0f : 1.0f);
+            v.x != 0.0f ? 0.0f : 1.0f,
+            v.y != 0.0f ? 0.0f : 1.0f,
+            v.z != 0.0f ? 0.0f : 1.0f);
     }
 
     /**
@@ -1914,15 +1941,18 @@ public class Vec3 implements Comparable<Vec3> {
      */
     public static Vec3 or(final Vec3 a, final Vec3 b, final Vec3 target) {
 
-        return target.set(Utils.or(a.x, b.x), Utils.or(a.y, b.y), Utils.or(a.z, b.z));
+        return target.set(
+            Utils.or(a.x, b.x),
+            Utils.or(a.y, b.y),
+            Utils.or(a.z, b.z));
     }
 
     /**
-     * Oscillates between an origin and destination vector based on an input step
-     * and a pause factor.
-     * When the pause is greater than 1.0, the value will be clamped to the pole.
+     * Oscillates between an origin and destination vector based on an input
+     * step and a pause factor. When the pause is greater than 1.0, the value
+     * will be clamped to the pole.
      *
-     * @param origin the original vector
+     * @param orig   the original vector
      * @param dest   the destination vector
      * @param step   the step
      * @param pause  the pause factor
@@ -1930,33 +1960,43 @@ public class Vec3 implements Comparable<Vec3> {
      * @return the oscillation
      */
     public static Vec3 pingPong(
-        final Vec3 origin, final Vec3 dest, final float step, final float pause, final Vec3 target) {
+        final Vec3 orig,
+        final Vec3 dest,
+        final float step,
+        final float pause,
+        final Vec3 target) {
 
         final float t = 0.5f + 0.5f * pause * Utils.scNorm(step - 0.5f);
         if (t <= 0.0f) {
-            return target.set(origin);
+            return target.set(orig);
         }
         if (t >= 1.0f) {
             return target.set(dest);
         }
         final float u = 1.0f - t;
         return target.set(
-            u * origin.x + t * dest.x, u * origin.y + t * dest.y, u * origin.z + t * dest.z);
+            u * orig.x + t * dest.x,
+            u * orig.y + t * dest.y,
+            u * orig.z + t * dest.z);
     }
 
     /**
-     * Oscillates between an origin and destination vector based on an input step.
+     * Oscillates between an origin and destination vector based on an input
+     * step.
      *
-     * @param origin the original vector
+     * @param orig   the original vector
      * @param dest   the destination vector
      * @param step   the step
      * @param target the output vector
      * @return the oscillation
      */
     public static Vec3 pingPong(
-        final Vec3 origin, final Vec3 dest, final float step, final Vec3 target) {
+        final Vec3 orig,
+        final Vec3 dest,
+        final float step,
+        final Vec3 target) {
 
-        return Vec3.pingPong(origin, dest, step, 1.0f, target);
+        return Vec3.pingPong(orig, dest, step, 1.0f, target);
     }
 
     /**
@@ -1987,10 +2027,12 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined as<br>
+     * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined as
+     * <br>
      * <br>
      * project ( <em>a</em>, <em>b</em> ) := <em>a</em> . <em>b</em> / <em>b</em> .
-     * <em>b</em><br>
+     * <em>b</em>
+     * <br>
      * <br>
      * If the square magnitude of <em>b</em> is zero, then returns zero.
      *
@@ -2008,13 +2050,16 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Projects one vector onto another. Defined as<br>
+     * Projects one vector onto another. Defined as
+     * <br>
      * <br>
      * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> . <em>b</em> /
      * <em>b</em> .
-     * <em>b</em> )<br>
+     * <em>b</em> )
      * <br>
-     * Returns a zero vector if the right operand, <em>b</em>, has zero magnitude.
+     * <br>
+     * Returns a zero vector if the right operand, <em>b</em>, has zero
+     * magnitude.
      *
      * @param a      left operand
      * @param b      right operand
@@ -2029,9 +2074,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Reduces the signal, or granularity, of a vector's components. A level of zero
-     * will copy the
-     * input vector to the target.
+     * Reduces the signal, or granularity, of a vector's components. A level of
+     * zero will copy the input vector to the target.
      *
      * @param v      the input vector
      * @param levels the levels
@@ -2053,9 +2097,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Creates a vector with a magnitude of 1.0 at a random azimuth and inclination,
-     * such that it lies
-     * on the unit sphere.
+     * Creates a vector with a magnitude of 1.0 at a random azimuth and
+     * inclination, such that it lies on the unit sphere.
      *
      * @param rng    the random number generator
      * @param target the output vector
@@ -2067,8 +2110,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Creates a random point in the Cartesian coordinate system given a lower and
-     * an upper bound.
+     * Creates a random point in the Cartesian coordinate system given a lower
+     * and an upper bound.
      *
      * @param rng        the random number generator
      * @param lowerBound the lower bound
@@ -2077,7 +2120,10 @@ public class Vec3 implements Comparable<Vec3> {
      * @return the random vector
      */
     public static Vec3 randomCartesian(
-        final Random rng, final float lowerBound, final float upperBound, final Vec3 target) {
+        final Random rng,
+        final float lowerBound,
+        final float upperBound,
+        final Vec3 target) {
 
         final float rx = rng.nextFloat();
         final float ry = rng.nextFloat();
@@ -2089,8 +2135,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Creates a random point in the Cartesian coordinate system given a lower and
-     * an upper bound.
+     * Creates a random point in the Cartesian coordinate system given a lower
+     * and an upper bound.
      *
      * @param rng        the random number generator
      * @param lowerBound the lower bound
@@ -2099,7 +2145,10 @@ public class Vec3 implements Comparable<Vec3> {
      * @return the random vector
      */
     public static Vec3 randomCartesian(
-        final Random rng, final Vec3 lowerBound, final Vec3 upperBound, final Vec3 target) {
+        final Random rng,
+        final Vec3 lowerBound,
+        final Vec3 upperBound,
+        final Vec3 target) {
 
         final float rx = rng.nextFloat();
         final float ry = rng.nextFloat();
@@ -2111,9 +2160,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Creates a random vector that lies on a sphere. Uses 3 random numbers with
-     * normal distribution,
-     * then rescales to the sphere radius.
+     * Creates a random vector that lies on a sphere. Uses 3 random numbers
+     * with normal distribution, then rescales to the sphere radius.
      *
      * @param rng    the random number generator
      * @param radius the sphere radius
@@ -2121,7 +2169,10 @@ public class Vec3 implements Comparable<Vec3> {
      * @return the random vector
      * @see Random#nextGaussian()
      */
-    public static Vec3 randomSpherical(final Random rng, final float radius, final Vec3 target) {
+    public static Vec3 randomSpherical(
+        final Random rng,
+        final float radius,
+        final Vec3 target) {
 
         final double x = rng.nextGaussian();
         final double y = rng.nextGaussian();
@@ -2148,10 +2199,10 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Reflects an incident vector off a normal vector. Uses the formula <br>
+     * Reflects an incident vector off a normal vector. Uses the formula
      * <br>
-     * <em>i</em> - 2.0 (<em>n</em> . <em>i</em>) <em>n</em><br>
      * <br>
+     * <em>i</em> - 2.0 (<em>n</em> . <em>i</em>) <em>n</em>
      *
      * @param incident the incident vector
      * @param normal   the normal vector
@@ -2172,7 +2223,10 @@ public class Vec3 implements Comparable<Vec3> {
         final float ny = normal.y * mInv;
         final float nz = normal.z * mInv;
         final float scalar = 2.0f * (nx * incident.x + ny * incident.y + nz * incident.z);
-        return target.set(incident.x - scalar * nx, incident.y - scalar * ny, incident.z - scalar * nz);
+        return target.set(
+            incident.x - scalar * nx,
+            incident.y - scalar * ny,
+            incident.z - scalar * nz);
     }
 
     /**
@@ -2187,7 +2241,10 @@ public class Vec3 implements Comparable<Vec3> {
      * @see Utils#sqrtUnchecked(float)
      */
     public static Vec3 refract(
-        final Vec3 incident, final Vec3 normal, final float eta, final Vec3 target) {
+        final Vec3 incident,
+        final Vec3 normal,
+        final float eta,
+        final Vec3 target) {
 
         final float nDotI = Vec3.dot(normal, incident);
         final float k = 1.0f - eta * eta * (1.0f - nDotI * nDotI);
@@ -2202,13 +2259,14 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Finds the rejection of <em>b</em> from <em>a</em>. Defined as<br>
+     * Finds the rejection of <em>b</em> from <em>a</em>. Defined as
      * <br>
-     * reject ( <em>a</em> , <em>b</em> ) := a - proj ( <em>a</em>, <em>b</em> )<br>
+     * <br>
+     * reject ( <em>a</em> , <em>b</em> ) := a - proj ( <em>a</em>, <em>b</em> )
+     * <br>
      * <br>
      * the subtraction of the projection of <em>a</em> onto <em>b</em> from
-     * <em>a</em>. Emits the
-     * projection as an output.
+     * <em>a</em>. Emits the projection as an output.
      *
      * @param a          left operand
      * @param b          right operand
@@ -2224,9 +2282,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Normalizes a vector, then multiplies it by a scalar, in effect setting its
-     * magnitude to that
-     * scalar.
+     * Normalizes a vector, then multiplies it by a scalar, in effect setting
+     * its magnitude to that scalar.
      *
      * @param v      the vector
      * @param scalar the scalar
@@ -2245,9 +2302,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Normalizes a vector, then multiplies it by a scalar, in effect setting its
-     * magnitude to that
-     * scalar.
+     * Normalizes a vector, then multiplies it by a scalar, in effect setting
+     * its magnitude to that scalar.
      *
      * @param v          the vector
      * @param scalar     the scalar
@@ -2258,7 +2314,10 @@ public class Vec3 implements Comparable<Vec3> {
      * @see Vec3#mul(Vec3, float, Vec3)
      */
     public static Vec3 rescale(
-        final Vec3 v, final float scalar, final Vec3 target, final Vec3 normalized) {
+        final Vec3 v,
+        final float scalar,
+        final Vec3 target,
+        final Vec3 normalized) {
 
         if (scalar != 0.0f) {
             Vec3.normalize(v, normalized);
@@ -2270,12 +2329,13 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * Resizes an array of vectors to a requested length. If the new length is
-     * greater than the
-     * current length, the new elements are filled with new vectors.<br>
+     * greater than the current length, the new elements are filled with new
+     * vectors.
      * <br>
-     * This does <em>not</em> use
-     * {@link System#arraycopy(Object, int, Object, int, int)} because this
-     * function iterates through the entire array checking for null entries.
+     * <br>
+     * This does <em>not</em> use {@link System#arraycopy(Object, int, Object, int, int)}
+     * because this function iterates through the entire array checking for
+     * null entries.
      *
      * @param arr the array
      * @param sz  the new size
@@ -2308,7 +2368,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Returns to a vector with a positive value on the x-axis, (1.0, 0.0, 0.0) .
+     * Returns to a vector with a positive value on the x-axis,
+     * (1.0, 0.0, 0.0).
      *
      * @param target the output vector
      * @return the right vector
@@ -2319,11 +2380,10 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Rotates a vector around an axis by an angle in radians. The axis is assumed
-     * to be of unit
-     * length. Accepts calculated sine and cosine of an angle, so that collections
-     * of vectors can be
-     * efficiently rotated without repeatedly calling cos and sin.
+     * Rotates a vector around an axis by an angle in radians. The axis is
+     * assumed to be of unit length. Accepts calculated sine and cosine of an
+     * angle, so that collections of vectors can be efficiently rotated without
+     * repeatedly calling cos and sin.
      *
      * @param v      the vector to rotate
      * @param cosa   cosine of the angle
@@ -2333,7 +2393,10 @@ public class Vec3 implements Comparable<Vec3> {
      * @return the rotated vector
      */
     public static Vec3 rotate(
-        final Vec3 v, final float cosa, final float sina, final Vec3 axis, final Vec3 target) {
+        final Vec3 v,
+        final float cosa, final float sina,
+        final Vec3 axis,
+        final Vec3 target) {
 
         final float complcos = 1.0f - cosa;
         final float complxy = complcos * axis.x * axis.y;
@@ -2344,20 +2407,17 @@ public class Vec3 implements Comparable<Vec3> {
         final float siny = sina * axis.y;
         final float sinz = sina * axis.z;
 
-        /* @formatter:off */
-    return target.set(
-        (complcos * axis.x * axis.x + cosa) * v.x + (complxy - sinz) * v.y + (complxz + siny) * v.z,
-        (complxy + sinz) * v.x + (complcos * axis.y * axis.y + cosa) * v.y + (complyz - sinx) * v.z,
-        (complxz - siny) * v.x
-            + (complyz + sinx) * v.y
-            + (complcos * axis.z * axis.z + cosa) * v.z);
-    /* @formatter:on */
+        return target.set(
+            (complcos * axis.x * axis.x + cosa) * v.x + (complxy - sinz) * v.y + (complxz + siny) * v.z,
+            (complxy + sinz) * v.x + (complcos * axis.y * axis.y + cosa) * v.y + (complyz - sinx) * v.z,
+            (complxz - siny) * v.x
+                + (complyz + sinx) * v.y
+                + (complcos * axis.z * axis.z + cosa) * v.z);
     }
 
     /**
-     * Rotates a vector around an axis by an angle in radians. The axis is assumed
-     * to be of unit
-     * length.
+     * Rotates a vector around an axis by an angle in radians. The axis is
+     * assumed to be of unit length.
      *
      * @param v       the vector to rotate
      * @param radians the angle in radians
@@ -2376,10 +2436,9 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Rotates a vector around the x-axis. Accepts calculated sine and cosine of an
-     * angle, so that
-     * collections of vectors can be efficiently rotated without repeatedly calling
-     * cos and sin.
+     * Rotates a vector around the x-axis. Accepts calculated sine and cosine
+     * of an angle, so that collections of vectors can be efficiently rotated
+     * without repeatedly calling cos and sin.
      *
      * @param v      the input vector
      * @param cosa   cosine of the angle
@@ -2394,10 +2453,9 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * Rotates a vector around the x-axis by an angle in radians. Do not use
-     * sequences of orthonormal
-     * rotations by Euler angles; this will result in gimbal lock. Instead, rotate
-     * by an angle around
-     * an axis or create a quaternion.
+     * sequences of orthonormal rotations by Euler angles; this will result in
+     * gimbal lock. Instead, rotate by an angle around an axis or create a
+     * quaternion.
      *
      * @param v       the input vector
      * @param radians the angle in radians
@@ -2415,10 +2473,9 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Rotates a vector around the y-axis. Accepts pre-calculated sine and cosine of
-     * an angle, so that
-     * collections of vectors can be efficiently rotated without repeatedly calling
-     * cos and sin.
+     * Rotates a vector around the y-axis. Accepts pre-calculated sine and
+     * cosine of an angle, so that collections of vectors can be efficiently
+     * rotated without repeatedly calling cos and sin.
      *
      * @param v      the input vector
      * @param cosa   cosine of the angle
@@ -2433,10 +2490,9 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * Rotates a vector around the y-axis by an angle in radians. Do not use
-     * sequences of orthonormal
-     * rotations by Euler angles; this will result in gimbal lock. Instead, rotate
-     * by an angle around
-     * an axis or create a quaternion.
+     * sequences of orthonormal rotations by Euler angles; this will result in
+     * gimbal lock. Instead, rotate by an angle around an axis or create a
+     * quaternion.
      *
      * @param v       the input vector
      * @param radians the angle in radians
@@ -2454,10 +2510,9 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Rotates a vector around the z axis. Accepts pre-calculated sine and cosine of
-     * an angle, so that
-     * collections of vectors can be efficiently rotated without repeatedly calling
-     * cos and sin.
+     * Rotates a vector around the z axis. Accepts pre-calculated sine and
+     * cosine of an angle, so that collections of vectors can be efficiently
+     * rotated without repeatedly calling cos and sin.
      *
      * @param v      the input vector
      * @param cosa   cosine of the angle
@@ -2472,10 +2527,9 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * Rotates a vector around the z axis by an angle in radians. Do not use
-     * sequences of orthonormal
-     * rotations by Euler angles; this will result in gimbal lock. Instead, rotate
-     * by an angle around
-     * an axis or create a quaternion.
+     * sequences of orthonormal rotations by Euler angles; this will result in
+     * gimbal lock. Instead, rotate by an angle around an axis or create a
+     * quaternion.
      *
      * @param v       the input vector
      * @param radians the angle in radians
@@ -2534,7 +2588,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Subtracts the right from the left vector and then normalizes the difference.
+     * Subtracts the right from the left vector and then normalizes the
+     * difference.
      *
      * @param a      left operand
      * @param b      right operand
@@ -2552,7 +2607,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Subtracts the right from the left vector and then normalizes the difference.
+     * Subtracts the right from the left vector and then normalizes the
+     * difference.
      *
      * @param a      left operand
      * @param b      right operand
@@ -2634,7 +2690,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Returns to a vector with a positive value on the z-axis, (0.0, 0.0, 1.0) .
+     * Returns to a vector with a positive value on the z-axis,
+     * (0.0, 0.0, 1.0).
      *
      * @param target the output vector
      * @return the up vector
@@ -2658,11 +2715,14 @@ public class Vec3 implements Comparable<Vec3> {
     public static Vec3 wrap(final Vec3 v, final Vec3 lb, final Vec3 ub, final Vec3 target) {
 
         return target.set(
-            Utils.wrap(v.x, lb.x, ub.x), Utils.wrap(v.y, lb.y, ub.y), Utils.wrap(v.z, lb.z, ub.z));
+            Utils.wrap(v.x, lb.x, ub.x),
+            Utils.wrap(v.y, lb.y, ub.y),
+            Utils.wrap(v.z, lb.z, ub.z));
     }
 
     /**
-     * Evaluates two vectors like booleans, using the exclusive or (XOR) logic gate.
+     * Evaluates two vectors like booleans, using the exclusive or (XOR) logic
+     * gate.
      *
      * @param a      left operand
      * @param b      right operand
@@ -2672,7 +2732,10 @@ public class Vec3 implements Comparable<Vec3> {
      */
     public static Vec3 xor(final Vec3 a, final Vec3 b, final Vec3 target) {
 
-        return target.set(Utils.xor(a.x, b.x), Utils.xor(a.y, b.y), Utils.xor(a.z, b.z));
+        return target.set(
+            Utils.xor(a.x, b.x),
+            Utils.xor(a.y, b.y),
+            Utils.xor(a.z, b.z));
     }
 
     /**
@@ -2687,15 +2750,14 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Generates a 3D array of vectors. The result is in layer-row-major order, but
-     * the parameters are
-     * supplied in reverse: columns first, then rows, then layers.<br>
+     * Generates a 3D array of vectors. The result is in layer-row-major order,
+     * but the parameters are supplied in reverse: columns first, then rows,
+     * then layers.
      * <br>
-     * This is separated to make overriding the public grid functions easier. This
-     * is protected
-     * because it is too easy for integers to be quietly promoted to floats if the
-     * signature
-     * parameters are confused.
+     * <br>
+     * This is separated to make overriding the public grid functions easier.
+     * This is protected because it is too easy for integers to be quietly
+     * promoted to floats if the signature parameters are confused.
      *
      * @param cols   number of columns
      * @param rows   number of rows
@@ -2709,15 +2771,9 @@ public class Vec3 implements Comparable<Vec3> {
      * @return the array
      */
     protected static Vec3[][][] grid(
-        final int cols,
-        final int rows,
-        final int layers,
-        final float lbx,
-        final float lby,
-        final float lbz,
-        final float ubx,
-        final float uby,
-        final float ubz) {
+        final int cols, final int rows, final int layers,
+        final float lbx, final float lby, final float lbz,
+        final float ubx, final float uby, final float ubz) {
 
         final int lVrf = Math.max(layers, 1);
         final int rVrf = Math.max(rows, 1);
@@ -2760,9 +2816,8 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * Returns -1 when this vector is less than the comparisand; 1 when it is
-     * greater than; 0 when the
-     * two are 'equal'. The implementation of this method allows collections of
-     * vectors to be sorted.
+     * greater than; 0 when the two are 'equal'. The implementation of this
+     * method allows collections of vectors to be sorted.
      *
      * @param v the comparisand
      * @return the numeric code
@@ -2770,15 +2825,13 @@ public class Vec3 implements Comparable<Vec3> {
     @Override
     public int compareTo(final Vec3 v) {
 
-        /* @formatter:off */
-    return this.z < v.z ? -1
+        return this.z < v.z ? -1
             : this.z > v.z ? 1
             : this.y < v.y ? -1
             : this.y > v.y ? 1
             : this.x < v.x ? -1
             : this.x > v.x ? 1
             : 0;
-    /* @formatter:on */
     }
 
     @Override
@@ -2807,8 +2860,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Sets the components of this vector from booleans, where false is 0.0 and true
-     * is 1.0 .
+     * Sets the components of this vector from booleans, where false is 0.0 and
+     * true is 1.0 .
      *
      * @param x the x component
      * @param y the y component
@@ -2881,11 +2934,10 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Puts the vector's components into an existing array at the index provided.
-     * The vector's x
-     * component is assigned to element <code>i</code>; its y component, to element
-     * <code>i + 1</code>
-     * ; its z component, to element <code>i + 2</code>.
+     * Puts the vector's components into an existing array at the index
+     * provided. The vector's x component is assigned to element
+     * <code>i</code>; its y component, to element <code>i + 1</code>; its z
+     * component, to element <code>i + 2</code>.
      *
      * @param arr the array
      * @param i   the index
@@ -2922,10 +2974,9 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * An internal helper function to format a vector as a Python tuple, then append
-     * it to a {@link
-     * StringBuilder}. Used for testing purposes to compare results with Blender
-     * 2.9x.
+     * An internal helper function to format a vector as a Python tuple, then
+     * append it to a {@link StringBuilder}. Used for testing purposes to
+     * compare results with Blender 4.x.
      *
      * @param pyCd string builder
      */
@@ -2943,9 +2994,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Internal helper method that appends a representation of this vector in the
-     * Wavefront OBJ file
-     * format to a {@link StringBuilder}.
+     * Internal helper method that appends a representation of this vector in
+     * the Wavefront OBJ file format to a {@link StringBuilder}.
      *
      * @param objs the string builder
      */
@@ -2960,8 +3010,7 @@ public class Vec3 implements Comparable<Vec3> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * vectors. Appends to an
-     * existing {@link StringBuilder}.
+     * vectors. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -2980,9 +3029,9 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * Tests equivalence between this and another vector. For rough equivalence of
-     * floating point
-     * components, use the static approximate function instead.
+     * Tests equivalence between this and another vector. For rough equivalence
+     * of floating point components, use the static approximate function
+     * instead.
      *
      * @param v the vector
      * @return the evaluation
@@ -2994,8 +3043,8 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     /**
-     * An abstract class that may serve as an umbrella for any custom comparators of
-     * Vec3 s.
+     * An abstract class that may serve as an umbrella for any custom
+     * comparators of Vec3 s.
      */
     public abstract static class AbstrComparator implements Comparator<Vec3> {
 
@@ -3028,9 +3077,9 @@ public class Vec3 implements Comparable<Vec3> {
         }
 
         /**
-         * A clamped interpolation between the origin and destination. Defers to an
-         * unclamped
-         * interpolation, which is to be defined by subclasses of this class.
+         * A clamped interpolation between the origin and destination. Defers
+         * to an unclamped interpolation, which is to be defined by subclasses
+         * of this class.
          *
          * @param orig   the origin vector
          * @param dest   the destination vector
@@ -3039,7 +3088,11 @@ public class Vec3 implements Comparable<Vec3> {
          * @return the eased vector
          */
         @Override
-        public Vec3 apply(final Vec3 orig, final Vec3 dest, final Float step, final Vec3 target) {
+        public Vec3 apply(
+            final Vec3 orig,
+            final Vec3 dest,
+            final Float step,
+            final Vec3 target) {
 
             final float tf = step;
             if (Float.isNaN(tf)) {
@@ -3057,14 +3110,17 @@ public class Vec3 implements Comparable<Vec3> {
         /**
          * The interpolation to be defined by subclasses.
          *
-         * @param origin the origin vector
+         * @param orig   the origin vector
          * @param dest   the destination vector
          * @param step   a factor in [0.0, 1.0]
          * @param target the output vector
          * @return the eased vector
          */
         public abstract Vec3 applyUnclamped(
-            final Vec3 origin, final Vec3 dest, final float step, final Vec3 target);
+            final Vec3 orig,
+            final Vec3 dest,
+            final float step,
+            final Vec3 target);
 
         /**
          * Returns the simple name of this class.
@@ -3089,11 +3145,10 @@ public class Vec3 implements Comparable<Vec3> {
         }
 
         /**
-         * Eases between two vectors by a step using the formula ( 1.0 - <em>t</em> )
-         * <em>a</em> +
-         * <em>t</em> <em>b</em>.
+         * Eases between two vectors by a step using the formula
+         * ( 1.0 - <em>t</em> ) <em>a</em> + <em>t</em> <em>b</em>.
          *
-         * @param origin the origin vector
+         * @param orig   the origin vector
          * @param dest   the destination vector
          * @param step   the step
          * @param target the output vector
@@ -3101,20 +3156,22 @@ public class Vec3 implements Comparable<Vec3> {
          */
         @Override
         public Vec3 applyUnclamped(
-            final Vec3 origin, final Vec3 dest, final float step, final Vec3 target) {
+            final Vec3 orig,
+            final Vec3 dest,
+            final float step,
+            final Vec3 target) {
 
             final float uf = 1.0f - step;
             return target.set(
-                uf * origin.x + step * dest.x,
-                uf * origin.y + step * dest.y,
-                uf * origin.z + step * dest.z);
+                uf * orig.x + step * dest.x,
+                uf * orig.y + step * dest.y,
+                uf * orig.z + step * dest.z);
         }
     }
 
     /**
      * Eases between two vectors with the smooth step formula:
-     * <em>t</em><sup>2</sup> ( 3.0 - 2.0
-     * <em>t</em> ) .
+     * <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> ) .
      */
     public static class SmoothStep extends AbstrEasing {
 
@@ -3127,7 +3184,7 @@ public class Vec3 implements Comparable<Vec3> {
         /**
          * Applies the function.
          *
-         * @param origin the origin vector
+         * @param orig   the origin vector
          * @param dest   the destination vector
          * @param step   the step in a range 0 to 1
          * @param target the output vector
@@ -3135,12 +3192,17 @@ public class Vec3 implements Comparable<Vec3> {
          */
         @Override
         public Vec3 applyUnclamped(
-            final Vec3 origin, final Vec3 dest, final float step, final Vec3 target) {
+            final Vec3 orig,
+            final Vec3 dest,
+            final float step,
+            final Vec3 target) {
 
             final float tf = step * step * (3.0f - (step + step));
             final float uf = 1.0f - tf;
             return target.set(
-                uf * origin.x + tf * dest.x, uf * origin.y + tf * dest.y, uf * origin.z + tf * dest.z);
+                uf * orig.x + tf * dest.x,
+                uf * orig.y + tf * dest.y,
+                uf * orig.z + tf * dest.z);
         }
     }
 
@@ -3161,8 +3223,8 @@ public class Vec3 implements Comparable<Vec3> {
         }
 
         /**
-         * Constructs a sorting function with a locus against which points are compared
-         * in sorting.
+         * Constructs a sorting function with a locus against which points are
+         * compared in sorting.
          *
          * @param locus the locus
          */

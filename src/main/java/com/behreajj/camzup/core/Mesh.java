@@ -34,9 +34,9 @@ public abstract class Mesh extends EntityData {
      * contain vertex data. It is a three-dimensional array organized by
      *
      * <ol>
-     * <li>the number of faces;
-     * <li>the number of vertices per face;
-     * <li>the information per vertex;
+     * <li>the number of faces;</li>
+     * <li>the number of vertices per face;</li>
+     * <li>the information per vertex;</li>
      * </ol>
      * <p>
      * The innermost array, information per face, may vary with each mesh; 3D
@@ -89,10 +89,12 @@ public abstract class Mesh extends EntityData {
     /**
      * Counts the occurrence of faces with a given number of vertices. Useful
      * for determining whether a face is composed entirely of triangles,
-     * quadrilaterals, or is non-uniform.<br>
+     * quadrilaterals, or is non-uniform.
+     * <br>
      * <br>
      * Returns a {@link Map}, where the vertex count is the key and the tally
-     * are the value.<br>
+     * are the value.
+     * <br>
      * <br>
      * The audit places 3 and 4 into the map, even if the mesh contains neither
      * triangles nor quadrilaterals, because they are common entries to query.
@@ -122,7 +124,8 @@ public abstract class Mesh extends EntityData {
     /**
      * Evaluates whether two edges are permutations of each other. This is
      * based on whether they refer to the same coordinates, but do so in a
-     * different sequence.<br>
+     * different sequence.
+     * <br>
      * <br>
      * Because edge indices are assumed to be positive integers, a sum and
      * product algorithm is used.
@@ -183,7 +186,8 @@ public abstract class Mesh extends EntityData {
     /**
      * Evaluates whether two faces are permutations of each other. This is
      * based on whether they refer to the same coordinates, but do so in a
-     * different sequence.<br>
+     * different sequence.
+     * <br>
      * <br>
      * Because face indices are assumed to be positive integers, a sum and
      * product algorithm is used.
@@ -399,8 +403,8 @@ public abstract class Mesh extends EntityData {
     public static boolean uniformVertsPerFace(final Mesh m, final int c) {
 
         // QUERY: Could this be sped up by searching start-to-end and
-        // end-to-start simultaneously? Would have to compensate for odd number of
-        // faces.
+        // end-to-start simultaneously? Would have to compensate for odd number
+        // of faces.
 
         final int[][][] fs = m.faces;
         for (int[][] f : fs) {

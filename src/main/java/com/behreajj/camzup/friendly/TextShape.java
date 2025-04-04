@@ -20,11 +20,13 @@ public abstract class TextShape {
      * line height.
      */
     public static final char LINE_HEIGHT_SAMPLE_A = 'l';
+
     /**
      * One of two characters sampled from a font to establish an appropriate
      * line height.
      */
     public static final char LINE_HEIGHT_SAMPLE_B = 'd';
+
     /**
      * Character used to establish the space of a width for a given font.
      */
@@ -244,10 +246,9 @@ public abstract class TextShape {
                             entity.moveTo(tr);
 
                             /*
-                             * getGlyph would not be able to handle cases like emojis,
-                             * where a char cannot hold the address, e.g., 0x1F310, in
-                             * memory. See Getting a PShape from an emoji...?
-                             * https://discourse.processing.org/t/getting-a-pshape-from-an-emoji/44479/
+                             * getGlyph would not be able to handle cases like
+                             * emojis, where a char cannot hold the address,
+                             * e.g., 0x1F310, in memory.
                              */
                             final PFont.Glyph glyph = pfont.getGlyph(character);
                             if (glyph != null) {
@@ -311,7 +312,8 @@ public abstract class TextShape {
 
     /**
      * Converts a character to an list of curve entities. A helper function for
-     * other variants of getGlyph.<br>
+     * other variants of getGlyph.
+     * <br>
      * <br>
      * When multiple characters are provided, the kerning between characters is
      * better; when one character is supplied, glyphs with multiple curves (i,

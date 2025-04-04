@@ -13,8 +13,7 @@ public class Voronoi extends Generative {
 
     /**
      * Generates 2D Voronoi noise. Returns the minimum Euclidean distance; the
-     * Voronoi point is stored
-     * in an output vector.
+     * Voronoi point is stored in an output vector.
      *
      * @param coord  the coordinate
      * @param seed   the seed
@@ -22,7 +21,11 @@ public class Voronoi extends Generative {
      * @param target the output vector
      * @return the distance
      */
-    public static float eval(final Vec2 coord, final int seed, final float scale, final Vec2 target) {
+    public static float eval(
+        final Vec2 coord,
+        final int seed,
+        final float scale,
+        final Vec2 target) {
 
         /*
          * As many functions as is reasonable are inlined for performance purposes
@@ -113,8 +116,7 @@ public class Voronoi extends Generative {
 
     /**
      * Generates 3D voronoi noise. Returns the minimum Euclidean distance; the
-     * voronoi point is stored
-     * in an output vector.
+     * voronoi point is stored in an output vector.
      *
      * @param coord  the coordinate
      * @param seed   the seed
@@ -122,7 +124,11 @@ public class Voronoi extends Generative {
      * @param target the output vector
      * @return the distance
      */
-    public static float eval(final Vec3 coord, final int seed, final float scale, final Vec3 target) {
+    public static float eval(
+        final Vec3 coord,
+        final int seed,
+        final float scale,
+        final Vec3 target) {
 
         if (scale == 0.0f) {
             target.reset();
@@ -222,8 +228,7 @@ public class Voronoi extends Generative {
 
     /**
      * Generates 4D voronoi noise. Returns the minimum Euclidean distance; the
-     * voronoi point is stored
-     * in an output vector.
+     * voronoi point is stored in an output vector.
      *
      * @param coord  the coordinate
      * @param seed   the seed
@@ -231,7 +236,11 @@ public class Voronoi extends Generative {
      * @param target the output vector
      * @return the distance
      */
-    public static float eval(final Vec4 coord, final int seed, final float scale, final Vec4 target) {
+    public static float eval(
+        final Vec4 coord,
+        final int seed,
+        final float scale,
+        final Vec4 target) {
 
         if (scale == 0.0f) {
             target.reset();

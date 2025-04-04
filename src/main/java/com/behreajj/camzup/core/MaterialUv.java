@@ -4,10 +4,8 @@ import java.util.Objects;
 
 /**
  * An abstract material which holds data to display textured materials. Holds a
- * transform that may
- * be applied to UV coordinates. This class expects to be extended by a
- * subclass that holds a given
- * image implementation.
+ * transform that may be applied to UV coordinates. This class expects to be
+ * extended by a subclass that holds a given image implementation.
  */
 public abstract class MaterialUv extends Material implements IOriented2, ISpatial2, IVolume2 {
 

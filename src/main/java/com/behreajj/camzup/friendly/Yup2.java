@@ -171,19 +171,17 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
         final float m10 = s * this.cameraZoomX;
         final float m11 = c * this.cameraZoomY;
 
-        /* @formatter:off */
         this.modelview.set(
-            m00,  m01, 0.0f, -this.cameraX * m00 - this.cameraY * m01,
-            m10,  m11, 0.0f, -this.cameraX * m10 - this.cameraY * m11,
-            0.0f, 0.0f, 1.0f,                            -this.cameraZ,
-            0.0f, 0.0f, 0.0f,                                     1.0f);
+            m00, m01, 0.0f, -this.cameraX * m00 - this.cameraY * m01,
+            m10, m11, 0.0f, -this.cameraX * m10 - this.cameraY * m11,
+            0.0f, 0.0f, 1.0f, -this.cameraZ,
+            0.0f, 0.0f, 0.0f, 1.0f);
 
         this.modelviewInv.set(
             c / this.cameraZoomX, s / this.cameraZoomX, 0.0f, this.cameraX,
             -s / this.cameraZoomY, c / this.cameraZoomY, 0.0f, this.cameraY,
-            0.0f,                 0.0f, 1.0f, this.cameraZ,
-            0.0f,                 0.0f, 0.0f,         1.0f);
-        /* @formatter:on */
+            0.0f, 0.0f, 1.0f, this.cameraZ,
+            0.0f, 0.0f, 0.0f, 1.0f);
 
         this.camera.set(this.modelview);
         this.cameraInv.set(this.modelviewInv);
@@ -205,7 +203,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
      * @param zUp     world up axis z
      */
     @Override
-    public void camera(final float xEye, final float yEye, final float zEye,
+    public void camera(
+        final float xEye, final float yEye, final float zEye,
         final float xCenter, final float yCenter, final float zCenter,
         final float xUp, final float yUp, final float zUp) {
 
@@ -329,8 +328,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
         this.cameraRot = IYup2.DEFAULT_ROT;
 
         /*
-         * Ensure depth-related features are turned off. These summarize the hint
-         * system.
+         * Ensure depth-related features are turned off. These summarize the
+         * hint system.
          */
         this.flush();
         this.pgl.disable(PGL.DEPTH_TEST);
@@ -339,7 +338,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
     }
 
     /**
-     * Draws an ellipse; the meaning of the two parameters depends on the
+     * Draws an ellipse. The meaning of the two parameters depends on the
      * renderer's ellipseMode.
      *
      * @param a the first parameter
@@ -400,9 +399,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
      */
     public Mat3 getMatrix(final Mat3 target) {
 
-        return target.set(this.modelview.m00, this.modelview.m01,
-            this.modelview.m03, this.modelview.m10, this.modelview.m11,
-            this.modelview.m13, 0.0f, 0.0f, 1.0f);
+        return target.set(
+            this.modelview.m00, this.modelview.m01, this.modelview.m03,
+            this.modelview.m10, this.modelview.m11, this.modelview.m13,
+            0.0f, 0.0f, 1.0f);
     }
 
     /**
@@ -571,9 +571,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
      * @param u2  the image bottom-right corner u
      * @param v2  the image bottom-right corner v
      */
-    public void image(final PImage img, final float x1, final float y1,
-        final float x2, final float y2, final float u1, final float v1,
-        final float u2, final float v2) {
+    public void image(
+        final PImage img,
+        final float x1, final float y1, final float x2, final float y2,
+        final float u1, final float v1, final float u2, final float v2) {
 
         /* This needs to imply the z coordinate then refer to the parent. */
         this.image(img, x1, y1, x2, y2, 0.0f, u1, v1, u2, v2);
@@ -643,12 +644,15 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
         this.lightFalloff(1.0f, 0.0f, 0.0f);
         this.lightSpecular(0.0f, 0.0f, 0.0f);
 
-        this.ambientLight(this.colorModeX * IUpOgl.DEFAULT_AMB_R, this.colorModeY
-            * IUpOgl.DEFAULT_AMB_G, this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
+        this.ambientLight(
+            this.colorModeX * IUpOgl.DEFAULT_AMB_R,
+            this.colorModeY * IUpOgl.DEFAULT_AMB_G,
+            this.colorModeZ * IUpOgl.DEFAULT_AMB_B);
 
-        this.directionalLight(this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
-            this.colorModeY * IUpOgl.DEFAULT_LIGHT_G, this.colorModeZ
-                * IUpOgl.DEFAULT_LIGHT_B,
+        this.directionalLight(
+            this.colorModeX * IUpOgl.DEFAULT_LIGHT_R,
+            this.colorModeY * IUpOgl.DEFAULT_LIGHT_G,
+            this.colorModeZ * IUpOgl.DEFAULT_LIGHT_B,
             0.0f, 0.0f, -1.0f);
 
         this.colorMode = colorModeSaved;
@@ -667,7 +671,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
     }
 
     /**
-     * Finds the model view position of a point.<br>
+     * Finds the model view position of a point.
+     * <br>
      * <br>
      * More efficient than calling {@link PApplet#modelX(float, float, float)}
      * and {@link PApplet#modelY(float, float, float)} separately. However, it
@@ -684,7 +689,6 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
          * camera matrix.
          */
 
-        /* @formatter:off */
         final float aw = this.modelview.m30 * source.x +
             this.modelview.m31 * source.y +
             this.modelview.m33;
@@ -706,7 +710,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
             this.cameraInv.m32 * az +
             this.cameraInv.m33 * aw;
 
-        if ( bw == 0.0f ) { return target.reset(); }
+        if (bw == 0.0f) {
+            return target.reset();
+        }
 
         final float bx = this.cameraInv.m00 * ax +
             this.cameraInv.m01 * ay +
@@ -717,7 +723,6 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
             this.cameraInv.m11 * ay +
             this.cameraInv.m12 * az +
             this.cameraInv.m13 * aw;
-        /* @formatter:on */
 
         /* Convert from homogeneous coordinate to point by dividing by w. */
         if (bw != 1.0f) {
@@ -911,7 +916,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
     }
 
     /**
-     * Draws a rounded rectangle; the meaning of the first two parameters
+     * Draws a rounded rectangle. The meaning of the first two parameters
      * depends on the renderer's rectMode.
      *
      * @param a the first parameter
@@ -988,7 +993,8 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
     }
 
     /**
-     * Finds the screen position of a point in the world.<br>
+     * Finds the screen position of a point in the world.
+     * <br>
      * <br>
      * More efficient than calling {@link PApplet#screenX(float, float, float)}
      * , {@link PApplet#screenY(float, float, float)} , and
@@ -1031,14 +1037,17 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
      * @param m33 row 3, column 3
      */
     @Override
-    public void setMatrix(final float m00, final float m01, final float m02,
-        final float m03, final float m10, final float m11, final float m12,
-        final float m13, final float m20, final float m21, final float m22,
-        final float m23, final float m30, final float m31, final float m32,
-        final float m33) {
+    public void setMatrix(
+        final float m00, final float m01, final float m02, final float m03,
+        final float m10, final float m11, final float m12, final float m13,
+        final float m20, final float m21, final float m22, final float m23,
+        final float m30, final float m31, final float m32, final float m33) {
 
-        super.setMatrix(m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22,
-            m23, m30, m31, m32, m33);
+        super.setMatrix(
+            m00, m01, m02, m03,
+            m10, m11, m12, m13,
+            m20, m21, m22, m23,
+            m30, m31, m32, m33);
         this.cameraRot = 0.0f;
         this.cameraZoomX = 1.0f;
         this.cameraZoomY = 1.0f;
@@ -1307,7 +1316,6 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
 
         /* Multiply by model-view matrix; multiply product by projection. */
 
-        /* @formatter:off */
         final float aw = this.modelview.m30 * xSource +
             this.modelview.m31 * ySource +
             this.modelview.m33;
@@ -1329,7 +1337,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
             this.projection.m32 * az +
             this.projection.m33 * aw;
 
-        if ( bw == 0.0f ) { target.reset();return ; }
+        if (bw == 0.0f) {
+            target.reset();
+            return;
+        }
 
         final float bx = this.projection.m00 * ax +
             this.projection.m01 * ay +
@@ -1340,7 +1351,6 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
             this.projection.m11 * ay +
             this.projection.m12 * az +
             this.projection.m13 * aw;
-        /* @formatter:on */
 
         /* Convert homogeneous coordinate to point. */
         if (bw != 1.0f) {

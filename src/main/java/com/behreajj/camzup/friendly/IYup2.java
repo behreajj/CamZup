@@ -844,8 +844,10 @@ public interface IYup2 extends IUp {
      * @param oWeight the origin stroke weight
      * @param dWeight the direction stroke weight
      */
-    default void ray(final float xOrig, final float yOrig, final float xDir,
-        final float yDir, final float dLen, final float lnwgt,
+    default void ray(
+        final float xOrig, final float yOrig,
+        final float xDir, final float yDir,
+        final float dLen, final float lnwgt,
         final float oWeight, final float dWeight) {
 
         this.pushStyle();
@@ -938,8 +940,10 @@ public interface IYup2 extends IUp {
      */
     default void rollTo(final float radians) {
 
-        this.camera(this.getLocX(), this.getLocY(), radians, this.getZoomX(), this
-            .getZoomY());
+        this.camera(
+            this.getLocX(), this.getLocY(),
+            radians,
+            this.getZoomX(), this.getZoomY());
     }
 
     /**
@@ -978,7 +982,8 @@ public interface IYup2 extends IUp {
     }
 
     /**
-     * Finds the screen position of a point in the world. <br>
+     * Finds the screen position of a point in the world.
+     * <br>
      * <br>
      * More efficient than calling {@link PApplet#screenX(float, float, float)}
      * and {@link PApplet#screenY(float, float, float)} separately. However, it

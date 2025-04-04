@@ -101,8 +101,8 @@ public interface ITextDisplay {
     }
 
     /**
-     * Displays a real number as text at a location. Registers up to four decimal
-     * places.
+     * Displays a real number as text at a location. Registers up to four
+     * decimal places.
      *
      * @param real the real number
      * @param x    the x coordinate
@@ -115,8 +115,8 @@ public interface ITextDisplay {
     }
 
     /**
-     * Displays a number as text at a location. Registers up to four decimal
-     * places.
+     * Displays a real number as text at a location. Registers up to four
+     * decimal places.
      *
      * @param real the real number
      * @param v    the location
@@ -128,7 +128,7 @@ public interface ITextDisplay {
     }
 
     /**
-     * Displays a real number at a 2D location. Fixes the number display to four
+     * Displays a real number at a location. Fixes the number display to four
      * decimal places.
      *
      * @param integer the integer
@@ -184,9 +184,8 @@ public interface ITextDisplay {
     }
 
     /**
-     * Displays a string at a location. This version of text is not supported, so
-     * only x1 and y1 are
-     * used.
+     * Displays a string at a location. This version of text is not supported,
+     * so only x1 and y1 are used.
      *
      * @param str the string
      * @param x1  the x coordinate
@@ -195,7 +194,9 @@ public interface ITextDisplay {
      * @param y2  the second y coordinate
      */
     default void text(
-        final String str, final float x1, final float y1, final float x2, final float y2) {
+        final String str,
+        final float x1, final float y1,
+        final float x2, final float y2) {
 
         PApplet.showMissingWarning("text");
         this.text(str, x1, y1);

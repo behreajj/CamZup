@@ -67,7 +67,9 @@ public interface ITextDisplay3 extends ITextDisplay {
      */
     @Override
     default void text(
-        final char[] chars, final int start, final int stop, final float x, final float y) {
+        final char[] chars,
+        final int start, final int stop,
+        final float x, final float y) {
 
         this.text(chars, start, stop, x, y, 0.0f);
     }
@@ -144,8 +146,7 @@ public interface ITextDisplay3 extends ITextDisplay {
 
     /**
      * Displays an integer as text at a location. Registers up to
-     * {@value Utils#FIXED_PRINT} decimal
-     * places.
+     * {@value Utils#FIXED_PRINT} decimal places.
      *
      * @param i the integer
      * @param x the x coordinate

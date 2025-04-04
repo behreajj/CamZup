@@ -75,15 +75,9 @@ public class Mat3 {
      * @param m22 row 2, column 2
      */
     public Mat3(
-        final boolean m00,
-        final boolean m01,
-        final boolean m02,
-        final boolean m10,
-        final boolean m11,
-        final boolean m12,
-        final boolean m20,
-        final boolean m21,
-        final boolean m22) {
+        final boolean m00, final boolean m01, final boolean m02,
+        final boolean m10, final boolean m11, final boolean m12,
+        final boolean m20, final boolean m21, final boolean m22) {
 
         this.set(m00, m01, m02, m10, m11, m12, m20, m21, m22);
     }
@@ -96,7 +90,9 @@ public class Mat3 {
      * @param m10 row 1, column 0
      * @param m11 row 1, column 1
      */
-    public Mat3(final float m00, final float m01, final float m10, final float m11) {
+    public Mat3(
+        final float m00, final float m01,
+        final float m10, final float m11) {
 
         this.set(m00, m01, m10, m11);
     }
@@ -112,12 +108,8 @@ public class Mat3 {
      * @param m12 row 1, column 2
      */
     public Mat3(
-        final float m00,
-        final float m01,
-        final float m02,
-        final float m10,
-        final float m11,
-        final float m12) {
+        final float m00, final float m01, final float m02,
+        final float m10, final float m11, final float m12) {
 
         this.set(m00, m01, m02, m10, m11, m12);
     }
@@ -136,15 +128,9 @@ public class Mat3 {
      * @param m22 row 2, column 2
      */
     public Mat3(
-        final float m00,
-        final float m01,
-        final float m02,
-        final float m10,
-        final float m11,
-        final float m12,
-        final float m20,
-        final float m21,
-        final float m22) {
+        final float m00, final float m01, final float m02,
+        final float m10, final float m11, final float m12,
+        final float m20, final float m21, final float m22) {
 
         this.m00 = m00;
         this.m01 = m01;
@@ -185,19 +171,18 @@ public class Mat3 {
      */
     public static Mat3 add(final Mat3 a, final Mat3 b, final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = a.m00 + b.m00;
-    target.m01 = a.m01 + b.m01;
-    target.m02 = a.m02 + b.m02;
-    target.m10 = a.m10 + b.m10;
-    target.m11 = a.m11 + b.m11;
-    target.m12 = a.m12 + b.m12;
-    target.m20 = a.m20 + b.m20;
-    target.m21 = a.m21 + b.m21;
-    target.m22 = a.m22 + b.m22;
+        target.m00 = a.m00 + b.m00;
+        target.m01 = a.m01 + b.m01;
+        target.m02 = a.m02 + b.m02;
+        target.m10 = a.m10 + b.m10;
+        target.m11 = a.m11 + b.m11;
+        target.m12 = a.m12 + b.m12;
+        target.m20 = a.m20 + b.m20;
+        target.m21 = a.m21 + b.m21;
+        target.m22 = a.m22 + b.m22;
 
-    return target;
-    /* @formatter:on */
+        return target;
+
     }
 
     /**
@@ -263,10 +248,9 @@ public class Mat3 {
     }
 
     /**
-     * Decomposes a matrix into its constituent transforms: translation, rotation
-     * and scale. Rotation
-     * is returned from the function, while translation and scale are loaded into
-     * out parameters.
+     * Decomposes a matrix into its constituent transforms: translation,
+     * rotation and scale. Rotation is returned from the function, while
+     * translation and scale are loaded into out parameters.
      *
      * @param m     the matrix
      * @param trans the output translation
@@ -284,12 +268,13 @@ public class Mat3 {
     }
 
     /**
-     * Finds the determinant of the matrix. Equivalent to the scalar triple product
-     * of the matrix's
-     * rows or columns.<br>
+     * Finds the determinant of the matrix. Equivalent to the scalar triple
+     * product of the matrix's rows or columns.
+     * <br>
      * <br>
      * det ( <em>m</em> ) := <em>m<sub>i</sub></em> . ( <em>m<sub>j</sub></em> x
-     * <em>m<sub>k</sub></em> )<br>
+     * <em>m<sub>k</sub></em> )
+     * <br>
      * <br>
      * See <a href=
      * "https://en.wikipedia.org/wiki/Triple_product">https://en.wikipedia.org/wiki/Triple_product</a>
@@ -300,43 +285,42 @@ public class Mat3 {
      */
     public static float determinant(final Mat3 m) {
 
-        /* @formatter:off */
-    return m.m00 * (m.m11 * m.m22 - m.m12 * m.m21)
-        + m.m01 * (m.m12 * m.m20 - m.m10 * m.m22)
-        + m.m02 * (m.m10 * m.m21 - m.m11 * m.m20);
-    /* @formatter:on */
+        return m.m00 * (m.m11 * m.m22 - m.m12 * m.m21)
+            + m.m01 * (m.m12 * m.m20 - m.m10 * m.m22)
+            + m.m02 * (m.m10 * m.m21 - m.m11 * m.m20);
     }
 
     /**
-     * Creates a matrix from two axes. The third row and column are assumed to be
-     * (0.0, 0.0, 1.0) .
+     * Creates a matrix from two axes. The third row and column are assumed to
+     * be (0.0, 0.0, 1.0).
      *
      * @param right   the right axis
      * @param forward the forward axis
      * @param target  the output matrix
      * @return the matrix
      */
-    public static Mat3 fromAxes(final Vec2 right, final Vec2 forward, final Mat3 target) {
+    public static Mat3 fromAxes(
+        final Vec2 right,
+        final Vec2 forward,
+        final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = right.x;
-    target.m01 = forward.x;
-    target.m02 = 0.0f;
-    target.m10 = right.y;
-    target.m11 = forward.y;
-    target.m12 = 0.0f;
-    target.m20 = 0.0f;
-    target.m21 = 0.0f;
-    target.m22 = 1.0f;
+        target.m00 = right.x;
+        target.m01 = forward.x;
+        target.m02 = 0.0f;
+        target.m10 = right.y;
+        target.m11 = forward.y;
+        target.m12 = 0.0f;
+        target.m20 = 0.0f;
+        target.m21 = 0.0f;
+        target.m22 = 1.0f;
 
-    return target;
-    /* @formatter:on */
+        return target;
+
     }
 
     /**
-     * Creates a matrix from two axes and a translation. The third row, z or w, is
-     * assumed to be (0.0,
-     * 0.0, 1.0) .
+     * Creates a matrix from two axes and a translation. The third row, z or w,
+     * is assumed to be (0.0, 0.0, 1.0).
      *
      * @param right       the right axis
      * @param forward     the forward axis
@@ -345,48 +329,50 @@ public class Mat3 {
      * @return the matrix
      */
     public static Mat3 fromAxes(
-        final Vec2 right, final Vec2 forward, final Vec2 translation, final Mat3 target) {
+        final Vec2 right,
+        final Vec2 forward,
+        final Vec2 translation,
+        final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = right.x;
-    target.m01 = forward.x;
-    target.m02 = translation.x;
-    target.m10 = right.y;
-    target.m11 = forward.y;
-    target.m12 = translation.y;
-    target.m20 = 0.0f;
-    target.m21 = 0.0f;
-    target.m22 = 1.0f;
+        target.m00 = right.x;
+        target.m01 = forward.x;
+        target.m02 = translation.x;
+        target.m10 = right.y;
+        target.m11 = forward.y;
+        target.m12 = translation.y;
+        target.m20 = 0.0f;
+        target.m21 = 0.0f;
+        target.m22 = 1.0f;
 
-    return target;
-    /* @formatter:on */
+        return target;
+
     }
 
     /**
-     * Creates a matrix from two axes. The third column, translation, is assumed to
-     * be (0.0, 0.0, 1.0)
-     * .
+     * Creates a matrix from two axes. The third column, translation, is
+     * assumed to be (0.0, 0.0, 1.0).
      *
      * @param right   the right axis
      * @param forward the forward axis
      * @param target  the output matrix
      * @return the matrix
      */
-    public static Mat3 fromAxes(final Vec3 right, final Vec3 forward, final Mat3 target) {
+    public static Mat3 fromAxes(
+        final Vec3 right,
+        final Vec3 forward,
+        final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = right.x;
-    target.m01 = forward.x;
-    target.m02 = 0.0f;
-    target.m10 = right.y;
-    target.m11 = forward.y;
-    target.m12 = 0.0f;
-    target.m20 = right.z;
-    target.m21 = forward.z;
-    target.m22 = 1.0f;
+        target.m00 = right.x;
+        target.m01 = forward.x;
+        target.m02 = 0.0f;
+        target.m10 = right.y;
+        target.m11 = forward.y;
+        target.m12 = 0.0f;
+        target.m20 = right.z;
+        target.m21 = forward.z;
+        target.m22 = 1.0f;
 
-    return target;
-    /* @formatter:on */
+        return target;
     }
 
     /**
@@ -399,27 +385,27 @@ public class Mat3 {
      * @return the matrix
      */
     public static Mat3 fromAxes(
-        final Vec3 right, final Vec3 forward, final Vec3 translation, final Mat3 target) {
+        final Vec3 right,
+        final Vec3 forward,
+        final Vec3 translation,
+        final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = right.x;
-    target.m01 = forward.x;
-    target.m02 = translation.x;
-    target.m10 = right.y;
-    target.m11 = forward.y;
-    target.m12 = translation.y;
-    target.m20 = right.z;
-    target.m21 = forward.z;
-    target.m22 = translation.z;
+        target.m00 = right.x;
+        target.m01 = forward.x;
+        target.m02 = translation.x;
+        target.m10 = right.y;
+        target.m11 = forward.y;
+        target.m12 = translation.y;
+        target.m20 = right.z;
+        target.m21 = forward.z;
+        target.m22 = translation.z;
 
-    return target;
-    /* @formatter:on */
+        return target;
     }
 
     /**
-     * Creates a reflection matrix from an axis representing a plane. The axis will
-     * be normalized by
-     * the function.
+     * Creates a reflection matrix from an axis representing a plane. The axis
+     * will be normalized by the function.
      *
      * @param axis   the axis
      * @param target the output matrix
@@ -447,21 +433,22 @@ public class Mat3 {
      * @param target the output matrix
      * @return the matrix
      */
-    public static Mat3 fromRotZ(final float cosa, final float sina, final Mat3 target) {
+    public static Mat3 fromRotZ(
+        final float cosa,
+        final float sina,
+        final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = cosa;
-    target.m01 = -sina;
-    target.m02 = 0.0f;
-    target.m10 = sina;
-    target.m11 = cosa;
-    target.m12 = 0.0f;
-    target.m20 = 0.0f;
-    target.m21 = 0.0f;
-    target.m22 = 1.0f;
+        target.m00 = cosa;
+        target.m01 = -sina;
+        target.m02 = 0.0f;
+        target.m10 = sina;
+        target.m11 = cosa;
+        target.m12 = 0.0f;
+        target.m20 = 0.0f;
+        target.m21 = 0.0f;
+        target.m22 = 1.0f;
 
-    return target;
-    /* @formatter:on */
+        return target;
     }
 
     /**
@@ -504,11 +491,10 @@ public class Mat3 {
     }
 
     /**
-     * Creates skew, or shear, matrix from an angle and axes. Vectors <em>a</em> and
-     * <em>b</em> are
-     * expected to be orthonormal, i.e. perpendicular and of unit length. Returns
-     * the identity if the
-     * angle is divisible by pi.
+     * Creates skew, or shear, matrix from an angle and axes. Vectors
+     * <em>a</em> and <em>b</em> are expected to be orthonormal, i.e.,
+     * perpendicular and of unit length. Returns the identity if the angle is
+     * divisible by pi.
      *
      * @param radians the angle in radians
      * @param a       the skew axis
@@ -522,7 +508,11 @@ public class Mat3 {
      * @see Utils#mod(float, float)
      * @see Utils#tan(float)
      */
-    public static Mat3 fromSkew(final float radians, final Vec2 a, final Vec2 b, final Mat3 target) {
+    public static Mat3 fromSkew(
+        final float radians,
+        final Vec2 a,
+        final Vec2 b,
+        final Mat3 target) {
 
         if (Utils.approx(Utils.mod(radians, Utils.PI), 0.0f)) {
             return Mat3.identity(target);
@@ -546,7 +536,8 @@ public class Mat3 {
         final float amInv = Utils.invSqrtUnchecked(amSq);
         final float bmInv = Utils.invSqrtUnchecked(bmSq);
 
-        return Mat3.fromSkew(t, ax * amInv, ay * amInv, bx * bmInv, by * bmInv, target);
+        return Mat3.fromSkew(t, ax * amInv, ay * amInv, bx * bmInv,
+            by * bmInv, target);
     }
 
     /**
@@ -563,7 +554,8 @@ public class Mat3 {
     }
 
     /**
-     * Evaluates whether the left comparisand is greater than the right comparisand.
+     * Evaluates whether the left comparisand is greater than the right
+     * comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -572,23 +564,21 @@ public class Mat3 {
      */
     public static Mat3 gt(final Mat3 a, final Mat3 b, final Mat3 target) {
 
-        /* @formatter:off */
-    return target.set(
-        a.m00 > b.m00,
-        a.m01 > b.m01,
-        a.m02 > b.m02,
-        a.m10 > b.m10,
-        a.m11 > b.m11,
-        a.m12 > b.m12,
-        a.m20 > b.m20,
-        a.m21 > b.m21,
-        a.m22 > b.m22);
-    /* @formatter:on */
+        return target.set(
+            a.m00 > b.m00,
+            a.m01 > b.m01,
+            a.m02 > b.m02,
+            a.m10 > b.m10,
+            a.m11 > b.m11,
+            a.m12 > b.m12,
+            a.m20 > b.m20,
+            a.m21 > b.m21,
+            a.m22 > b.m22);
     }
 
     /**
-     * Evaluates whether the left comparisand is greater than or equal to the right
-     * comparisand.
+     * Evaluates whether the left comparisand is greater than or equal to the
+     * right comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -597,18 +587,16 @@ public class Mat3 {
      */
     public static Mat3 gtEq(final Mat3 a, final Mat3 b, final Mat3 target) {
 
-        /* @formatter:off */
-    return target.set(
-        a.m00 >= b.m00,
-        a.m01 >= b.m01,
-        a.m02 >= b.m02,
-        a.m10 >= b.m10,
-        a.m11 >= b.m11,
-        a.m12 >= b.m12,
-        a.m20 >= b.m20,
-        a.m21 >= b.m21,
-        a.m22 >= b.m22);
-    /* @formatter:on */
+        return target.set(
+            a.m00 >= b.m00,
+            a.m01 >= b.m01,
+            a.m02 >= b.m02,
+            a.m10 >= b.m10,
+            a.m11 >= b.m11,
+            a.m12 >= b.m12,
+            a.m20 >= b.m20,
+            a.m21 >= b.m21,
+            a.m22 >= b.m22);
     }
 
     /**
@@ -625,24 +613,22 @@ public class Mat3 {
      */
     public static Mat3 identity(final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = 1.0f;
-    target.m01 = 0.0f;
-    target.m02 = 0.0f;
-    target.m10 = 0.0f;
-    target.m11 = 1.0f;
-    target.m12 = 0.0f;
-    target.m20 = 0.0f;
-    target.m21 = 0.0f;
-    target.m22 = 1.0f;
+        target.m00 = 1.0f;
+        target.m01 = 0.0f;
+        target.m02 = 0.0f;
+        target.m10 = 0.0f;
+        target.m11 = 1.0f;
+        target.m12 = 0.0f;
+        target.m20 = 0.0f;
+        target.m21 = 0.0f;
+        target.m22 = 1.0f;
 
-    return target;
-    /* @formatter:on */
+        return target;
     }
 
     /**
-     * Inverts the input matrix. Returns the identity if the matrix's determinant is
-     * zero.
+     * Inverts the input matrix. Returns the identity if the matrix's
+     * determinant is zero.
      *
      * @param m      the matrix
      * @param target the output matrix
@@ -685,21 +671,20 @@ public class Mat3 {
      */
     public static boolean isIdentity(final Mat3 m) {
 
-        /* @formatter:off */
-    return m.m22 == 1.0f
-        && m.m11 == 1.0f
-        && m.m00 == 1.0f
-        && m.m01 == 0.0f
-        && m.m02 == 0.0f
-        && m.m10 == 0.0f
-        && m.m12 == 0.0f
-        && m.m20 == 0.0f
-        && m.m21 == 0.0f;
-    /* @formatter:on */
+        return m.m22 == 1.0f
+            && m.m11 == 1.0f
+            && m.m00 == 1.0f
+            && m.m01 == 0.0f
+            && m.m02 == 0.0f
+            && m.m10 == 0.0f
+            && m.m12 == 0.0f
+            && m.m20 == 0.0f
+            && m.m21 == 0.0f;
     }
 
     /**
-     * Evaluates whether the left comparisand is less than the right comparisand.
+     * Evaluates whether the left comparisand is less than the right
+     * comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -708,23 +693,21 @@ public class Mat3 {
      */
     public static Mat3 lt(final Mat3 a, final Mat3 b, final Mat3 target) {
 
-        /* @formatter:off */
-    return target.set(
-        a.m00 < b.m00,
-        a.m01 < b.m01,
-        a.m02 < b.m02,
-        a.m10 < b.m10,
-        a.m11 < b.m11,
-        a.m12 < b.m12,
-        a.m20 < b.m20,
-        a.m21 < b.m21,
-        a.m22 < b.m22);
-    /* @formatter:on */
+        return target.set(
+            a.m00 < b.m00,
+            a.m01 < b.m01,
+            a.m02 < b.m02,
+            a.m10 < b.m10,
+            a.m11 < b.m11,
+            a.m12 < b.m12,
+            a.m20 < b.m20,
+            a.m21 < b.m21,
+            a.m22 < b.m22);
     }
 
     /**
-     * Evaluates whether the left comparisand is less than or equal to the right
-     * comparisand.
+     * Evaluates whether the left comparisand is less than or equal to the
+     * right comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -733,24 +716,21 @@ public class Mat3 {
      */
     public static Mat3 ltEq(final Mat3 a, final Mat3 b, final Mat3 target) {
 
-        /* @formatter:off */
-    return target.set(
-        a.m00 <= b.m00,
-        a.m01 <= b.m01,
-        a.m02 <= b.m02,
-        a.m10 <= b.m10,
-        a.m11 <= b.m11,
-        a.m12 <= b.m12,
-        a.m20 <= b.m20,
-        a.m21 <= b.m21,
-        a.m22 <= b.m22);
-    /* @formatter:on */
+        return target.set(
+            a.m00 <= b.m00,
+            a.m01 <= b.m01,
+            a.m02 <= b.m02,
+            a.m10 <= b.m10,
+            a.m11 <= b.m11,
+            a.m12 <= b.m12,
+            a.m20 <= b.m20,
+            a.m21 <= b.m21,
+            a.m22 <= b.m22);
     }
 
     /**
-     * Multiplies each component in a matrix by a scalar. Not to be confused with
-     * scaling affine
-     * transform matrix.
+     * Multiplies each component in a matrix by a scalar. Not to be confused
+     * with scaling affine transform matrix.
      *
      * @param s      the left operand
      * @param m      the right operand
@@ -759,25 +739,24 @@ public class Mat3 {
      */
     public static Mat3 mul(final float s, final Mat3 m, final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = s * m.m00;
-    target.m01 = s * m.m01;
-    target.m02 = s * m.m02;
-    target.m10 = s * m.m10;
-    target.m11 = s * m.m11;
-    target.m12 = s * m.m12;
-    target.m20 = s * m.m20;
-    target.m21 = s * m.m21;
-    target.m22 = s * m.m22;
+        target.m00 = s * m.m00;
+        target.m01 = s * m.m01;
+        target.m02 = s * m.m02;
 
-    return target;
-    /* @formatter:on */
+        target.m10 = s * m.m10;
+        target.m11 = s * m.m11;
+        target.m12 = s * m.m12;
+
+        target.m20 = s * m.m20;
+        target.m21 = s * m.m21;
+        target.m22 = s * m.m22;
+
+        return target;
     }
 
     /**
-     * Multiplies each component in a matrix by a scalar. Not to be confused with
-     * scaling affine
-     * transform matrix.
+     * Multiplies each component in a matrix by a scalar. Not to be confused
+     * with scaling affine transform matrix.
      *
      * @param m      the left operand
      * @param s      the right operand
@@ -786,19 +765,19 @@ public class Mat3 {
      */
     public static Mat3 mul(final Mat3 m, final float s, final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = m.m00 * s;
-    target.m01 = m.m01 * s;
-    target.m02 = m.m02 * s;
-    target.m10 = m.m10 * s;
-    target.m11 = m.m11 * s;
-    target.m12 = m.m12 * s;
-    target.m20 = m.m20 * s;
-    target.m21 = m.m21 * s;
-    target.m22 = m.m22 * s;
+        target.m00 = m.m00 * s;
+        target.m01 = m.m01 * s;
+        target.m02 = m.m02 * s;
 
-    return target;
-    /* @formatter:on */
+        target.m10 = m.m10 * s;
+        target.m11 = m.m11 * s;
+        target.m12 = m.m12 * s;
+
+        target.m20 = m.m20 * s;
+        target.m21 = m.m21 * s;
+        target.m22 = m.m22 * s;
+
+        return target;
     }
 
     /**
@@ -828,8 +807,7 @@ public class Mat3 {
 
     /**
      * Multiplies three matrices. Useful for composing an affine transform from
-     * translation, rotation
-     * and scale matrices.
+     * translation, rotation and scale matrices.
      *
      * @param a      the first matrix
      * @param b      the second matrix
@@ -854,9 +832,11 @@ public class Mat3 {
         target.m00 = n00 * c.m00 + n01 * c.m10 + n02 * c.m20;
         target.m01 = n00 * c.m01 + n01 * c.m11 + n02 * c.m21;
         target.m02 = n00 * c.m02 + n01 * c.m12 + n02 * c.m22;
+
         target.m10 = n10 * c.m00 + n11 * c.m10 + n12 * c.m20;
         target.m11 = n10 * c.m01 + n11 * c.m11 + n12 * c.m21;
         target.m12 = n10 * c.m02 + n11 * c.m12 + n12 * c.m22;
+
         target.m20 = n20 * c.m00 + n21 * c.m10 + n22 * c.m20;
         target.m21 = n20 * c.m01 + n21 * c.m11 + n22 * c.m21;
         target.m22 = n20 * c.m02 + n21 * c.m12 + n22 * c.m22;
@@ -874,19 +854,19 @@ public class Mat3 {
      */
     public static Mat3 mul(final Mat3 m, final Vec3 v, final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = m.m00 * v.x;
-    target.m01 = m.m01 * v.y;
-    target.m02 = m.m02 * v.z;
-    target.m10 = m.m10 * v.x;
-    target.m11 = m.m11 * v.y;
-    target.m12 = m.m12 * v.z;
-    target.m20 = m.m20 * v.x;
-    target.m21 = m.m21 * v.y;
-    target.m22 = m.m22 * v.z;
+        target.m00 = m.m00 * v.x;
+        target.m01 = m.m01 * v.y;
+        target.m02 = m.m02 * v.z;
 
-    return target;
-    /* @formatter:on */
+        target.m10 = m.m10 * v.x;
+        target.m11 = m.m11 * v.y;
+        target.m12 = m.m12 * v.z;
+
+        target.m20 = m.m20 * v.x;
+        target.m21 = m.m21 * v.y;
+        target.m22 = m.m22 * v.z;
+
+        return target;
     }
 
     /**
@@ -899,12 +879,10 @@ public class Mat3 {
      */
     public static Vec3 mul(final Mat3 m, final Vec3 v, final Vec3 target) {
 
-        /* @formatter:off */
-    return target.set(
-        m.m00 * v.x + m.m01 * v.y + m.m02 * v.z,
-        m.m10 * v.x + m.m11 * v.y + m.m12 * v.z,
-        m.m20 * v.x + m.m21 * v.y + m.m22 * v.z);
-    /* @formatter:on */
+        return target.set(
+            m.m00 * v.x + m.m01 * v.y + m.m02 * v.z,
+            m.m10 * v.x + m.m11 * v.y + m.m12 * v.z,
+            m.m20 * v.x + m.m21 * v.y + m.m22 * v.z);
     }
 
     /**
@@ -917,25 +895,26 @@ public class Mat3 {
      */
     public static Mat3 mul(final Vec3 v, final Mat3 m, final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = v.x * m.m00;
-    target.m01 = v.y * m.m10;
-    target.m02 = v.z * m.m20;
-    target.m10 = v.x * m.m01;
-    target.m11 = v.y * m.m11;
-    target.m12 = v.z * m.m21;
-    target.m20 = v.x * m.m02;
-    target.m21 = v.y * m.m12;
-    target.m22 = v.z * m.m22;
+        target.m00 = v.x * m.m00;
+        target.m01 = v.y * m.m10;
+        target.m02 = v.z * m.m20;
 
-    return target;
-    /* @formatter:on */
+        target.m10 = v.x * m.m01;
+        target.m11 = v.y * m.m11;
+        target.m12 = v.z * m.m21;
+
+        target.m20 = v.x * m.m02;
+        target.m21 = v.y * m.m12;
+        target.m22 = v.z * m.m22;
+
+        return target;
     }
 
     /**
      * Following <a href=
      * "https://en.wikibooks.org/wiki/GLSL_Programming/Vector_and_Matrix_Operations#Operators">GLSL
-     * convention</a>, multiplies a vector and the transpose of a matrix.<br>
+     * convention</a>, multiplies a vector and the transpose of a matrix.
+     * <br>
      * <br>
      * v<sup>T</sup> M = ( M<sup>T</sup> v )<sup>T</sup>
      *
@@ -946,18 +925,15 @@ public class Mat3 {
      */
     public static Vec3 mul(final Vec3 v, final Mat3 m, final Vec3 target) {
 
-        /* @formatter:off */
-    return target.set(
-        v.x * m.m00 + v.y * m.m10 + v.z * m.m20,
-        v.x * m.m01 + v.y * m.m11 + v.z * m.m21,
-        v.x * m.m02 + v.y * m.m12 + v.z * m.m22);
-    /* @formatter:on */
+        return target.set(
+            v.x * m.m00 + v.y * m.m10 + v.z * m.m20,
+            v.x * m.m01 + v.y * m.m11 + v.z * m.m21,
+            v.x * m.m02 + v.y * m.m12 + v.z * m.m22);
     }
 
     /**
-     * Multiplies a matrix and a point. The z component of the point is assumed to
-     * be 1.0, so the
-     * point is impacted by the matrix's translation.
+     * Multiplies a matrix and a point. The z component of the point is assumed
+     * to be 1.0, so the point is impacted by the matrix's translation.
      *
      * @param m      the matrix
      * @param p      the point
@@ -970,15 +946,16 @@ public class Mat3 {
         if (w != 0.0f) {
             final float wInv = 1.0f / w;
             return target.set(
-                (m.m00 * p.x + m.m01 * p.y + m.m02) * wInv, (m.m10 * p.x + m.m11 * p.y + m.m12) * wInv);
+                (m.m00 * p.x + m.m01 * p.y + m.m02) * wInv,
+                (m.m10 * p.x + m.m11 * p.y + m.m12) * wInv);
         }
         return target.reset();
     }
 
     /**
-     * Multiplies a matrix and a vector. The z component of the vector is assumed to
-     * be 0.0 , so the
-     * vector is not impacted by the matrix's translation.
+     * Multiplies a matrix and a vector. The z component of the vector is
+     * assumed to be 0.0 , so the vector is not impacted by the matrix's
+     * translation.
      *
      * @param m      the matrix
      * @param v      the vector
@@ -990,7 +967,9 @@ public class Mat3 {
         final float w = m.m20 * v.x + m.m21 * v.y + m.m22;
         if (w != 0.0f) {
             final float wInv = 1.0f / w;
-            return target.set((m.m00 * v.x + m.m01 * v.y) * wInv, (m.m10 * v.x + m.m11 * v.y) * wInv);
+            return target.set(
+                (m.m00 * v.x + m.m01 * v.y) * wInv,
+                (m.m10 * v.x + m.m11 * v.y) * wInv);
         }
         return target.reset();
     }
@@ -1091,19 +1070,17 @@ public class Mat3 {
      */
     public static Mat3 rotateElmsCcw(final Mat3 m, final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = m.m02;
-    target.m01 = m.m12;
-    target.m02 = m.m22;
-    target.m10 = m.m01;
-    target.m11 = m.m11;
-    target.m12 = m.m21;
-    target.m20 = m.m00;
-    target.m21 = m.m10;
-    target.m22 = m.m20;
+        target.m00 = m.m02;
+        target.m01 = m.m12;
+        target.m02 = m.m22;
+        target.m10 = m.m01;
+        target.m11 = m.m11;
+        target.m12 = m.m21;
+        target.m20 = m.m00;
+        target.m21 = m.m10;
+        target.m22 = m.m20;
 
-    return target;
-    /* @formatter:on */
+        return target;
     }
 
     /**
@@ -1115,19 +1092,17 @@ public class Mat3 {
      */
     public static Mat3 rotateElmsCw(final Mat3 m, final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = m.m20;
-    target.m01 = m.m10;
-    target.m02 = m.m00;
-    target.m10 = m.m21;
-    target.m11 = m.m11;
-    target.m12 = m.m01;
-    target.m20 = m.m22;
-    target.m21 = m.m12;
-    target.m22 = m.m02;
+        target.m00 = m.m20;
+        target.m01 = m.m10;
+        target.m02 = m.m00;
+        target.m10 = m.m21;
+        target.m11 = m.m11;
+        target.m12 = m.m01;
+        target.m20 = m.m22;
+        target.m21 = m.m12;
+        target.m22 = m.m02;
 
-    return target;
-    /* @formatter:on */
+        return target;
     }
 
     /**
@@ -1140,19 +1115,17 @@ public class Mat3 {
      */
     public static Mat3 sub(final Mat3 a, final Mat3 b, final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = a.m00 - b.m00;
-    target.m01 = a.m01 - b.m01;
-    target.m02 = a.m02 - b.m02;
-    target.m10 = a.m10 - b.m10;
-    target.m11 = a.m11 - b.m11;
-    target.m12 = a.m12 - b.m12;
-    target.m20 = a.m20 - b.m20;
-    target.m21 = a.m21 - b.m21;
-    target.m22 = a.m22 - b.m22;
+        target.m00 = a.m00 - b.m00;
+        target.m01 = a.m01 - b.m01;
+        target.m02 = a.m02 - b.m02;
+        target.m10 = a.m10 - b.m10;
+        target.m11 = a.m11 - b.m11;
+        target.m12 = a.m12 - b.m12;
+        target.m20 = a.m20 - b.m20;
+        target.m21 = a.m21 - b.m21;
+        target.m22 = a.m22 - b.m22;
 
-    return target;
-    /* @formatter:on */
+        return target;
     }
 
     /**
@@ -1164,19 +1137,17 @@ public class Mat3 {
      */
     public static Mat3 transpose(final Mat3 m, final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = m.m00;
-    target.m01 = m.m10;
-    target.m02 = m.m20;
-    target.m10 = m.m01;
-    target.m11 = m.m11;
-    target.m12 = m.m21;
-    target.m20 = m.m02;
-    target.m21 = m.m12;
-    target.m22 = m.m22;
+        target.m00 = m.m00;
+        target.m01 = m.m10;
+        target.m02 = m.m20;
+        target.m10 = m.m01;
+        target.m11 = m.m11;
+        target.m12 = m.m21;
+        target.m20 = m.m02;
+        target.m21 = m.m12;
+        target.m22 = m.m22;
 
-    return target;
-    /* @formatter:on */
+        return target;
     }
 
     /**
@@ -1212,34 +1183,37 @@ public class Mat3 {
      * @param target the output matrix
      * @return the reflection
      */
-    static Mat3 fromReflection(final float ax, final float ay, final Mat3 target) {
+    static Mat3 fromReflection(
+        final float ax,
+        final float ay,
+        final Mat3 target) {
 
         final float x = -(ax + ax);
         final float y = -(ay + ay);
         final float axay = x * ay;
 
-        /* @formatter:off */
-    target.m00 = x * ax + 1.0f;
-    target.m01 = axay;
-    target.m02 = 0.0f;
-    target.m10 = axay;
-    target.m11 = y * ay + 1.0f;
-    target.m12 = 0.0f;
-    target.m20 = 0.0f;
-    target.m21 = 0.0f;
-    target.m22 = 1.0f;
-    /* @formatter:on */
+        target.m00 = x * ax + 1.0f;
+        target.m01 = axay;
+        target.m02 = 0.0f;
+
+        target.m10 = axay;
+        target.m11 = y * ay + 1.0f;
+        target.m12 = 0.0f;
+
+        target.m20 = 0.0f;
+        target.m21 = 0.0f;
+        target.m22 = 1.0f;
 
         return target;
     }
 
     /**
      * Creates a scale matrix from a nonuniform scalar. The bottom right corner,
-     * m22, is set to 1.0 .
-     * Returns the identity if the scalar is zero.<br>
+     * m22, is set to 1.0  Returns the identity if the scalar is zero.
      * <br>
-     * A package level function that uses loose floats to facilitate parsing of SVG
-     * transforms.
+     * <br>
+     * A package level function that uses loose floats to facilitate parsing of
+     * SVG transforms.
      *
      * @param sx     the x scalar
      * @param sy     the y scalar
@@ -1247,31 +1221,34 @@ public class Mat3 {
      * @return the matrix
      * @see Mat3#identity(Mat3)
      */
-    static Mat3 fromScale(final float sx, final float sy, final Mat3 target) {
+    static Mat3 fromScale(
+        final float sx,
+        final float sy,
+        final Mat3 target) {
 
         if (sx != 0.0f && sy != 0.0f) {
-            /* @formatter:off */
-      target.m00 = sx;
-      target.m01 = 0.0f;
-      target.m02 = 0.0f;
-      target.m10 = 0.0f;
-      target.m11 = sy;
-      target.m12 = 0.0f;
-      target.m20 = 0.0f;
-      target.m21 = 0.0f;
-      target.m22 = 1.0f;
+            target.m00 = sx;
+            target.m01 = 0.0f;
+            target.m02 = 0.0f;
 
-      return target;
-      /* @formatter:on */
+            target.m10 = 0.0f;
+            target.m11 = sy;
+            target.m12 = 0.0f;
+
+            target.m20 = 0.0f;
+            target.m21 = 0.0f;
+            target.m22 = 1.0f;
+
+            return target;
+        } else {
+            return Mat3.identity(target);
         }
-        return Mat3.identity(target);
     }
 
     /**
-     * Creates skew, or shear, matrix from the tangent of an angle and axes. Axes
-     * <em>a</em> and
-     * <em>b</em> are expected to be orthonormal, i.e. perpendicular and of unit
-     * length.
+     * Creates skew, or shear, matrix from the tangent of an angle and axes.
+     * Axes <em>a</em> and <em>b</em> are expected to be orthonormal, i.e.,
+     * perpendicular and of unit length.
      *
      * @param t      the tangent of the angle
      * @param ax     the skew axis x
@@ -1309,11 +1286,11 @@ public class Mat3 {
 
     /**
      * Creates a horizontal skew matrix from an angle in radians. Returns the
-     * identity if the angle is
-     * divisible by pi.<br>
+     * identity if the angle is divisible by pi.
      * <br>
-     * A package level function that uses loose floats to facilitate parsing of SVG
-     * transforms.
+     * <br>
+     * A package level function that uses loose floats to facilitate parsing of
+     * SVG transforms.
      *
      * @param radians the angle
      * @param target  the output matrix
@@ -1332,9 +1309,11 @@ public class Mat3 {
         target.m00 = 1.0f;
         target.m01 = Utils.tan(radians);
         target.m02 = 0.0f;
+
         target.m10 = 0.0f;
         target.m11 = 1.0f;
         target.m12 = 0.0f;
+
         target.m20 = 0.0f;
         target.m21 = 0.0f;
         target.m22 = 1.0f;
@@ -1343,12 +1322,12 @@ public class Mat3 {
     }
 
     /**
-     * Creates a vertical skew matrix from an angle in radians. Returns the identity
-     * if the angle is
-     * divisible by pi.<br>
+     * Creates a vertical skew matrix from an angle in radians. Returns the
+     * identity if the angle is divisible by pi.
      * <br>
-     * A package level function that uses loose floats to facilitate parsing of SVG
-     * transforms.
+     * <br>
+     * A package level function that uses loose floats to facilitate parsing of
+     * SVG transforms.
      *
      * @param radians the angle
      * @param target  the output matrix
@@ -1367,9 +1346,11 @@ public class Mat3 {
         target.m00 = 1.0f;
         target.m01 = 0.0f;
         target.m02 = 0.0f;
+
         target.m10 = Utils.tan(radians);
         target.m11 = 1.0f;
         target.m12 = 0.0f;
+
         target.m20 = 0.0f;
         target.m21 = 0.0f;
         target.m22 = 1.0f;
@@ -1378,31 +1359,36 @@ public class Mat3 {
     }
 
     /**
-     * Creates a translation matrix from a vector.<br>
+     * Creates a translation matrix from a vector.
      * <br>
-     * A package level function that uses loose floats to facilitate parsing of SVG
-     * transforms.
+     * <br>
+     * A package level function that uses loose floats to facilitate parsing of
+     * SVG transforms.
      *
      * @param tx     the translation x
      * @param ty     the translation y
      * @param target the output matrix
      * @return the matrix
      */
-    static Mat3 fromTranslation(final float tx, final float ty, final Mat3 target) {
+    static Mat3 fromTranslation(
+        final float tx,
+        final float ty,
+        final Mat3 target) {
 
-        /* @formatter:off */
-    target.m00 = 1.0f;
-    target.m01 = 0.0f;
-    target.m02 = tx;
-    target.m10 = 0.0f;
-    target.m11 = 1.0f;
-    target.m12 = ty;
-    target.m20 = 0.0f;
-    target.m21 = 0.0f;
-    target.m22 = 1.0f;
+        target.m00 = 1.0f;
+        target.m01 = 0.0f;
+        target.m02 = tx;
 
-    return target;
-    /* @formatter:on */
+        target.m10 = 0.0f;
+        target.m11 = 1.0f;
+        target.m12 = ty;
+
+        target.m20 = 0.0f;
+        target.m21 = 0.0f;
+        target.m22 = 1.0f;
+
+        return target;
+
     }
 
     /**
@@ -1453,56 +1439,56 @@ public class Mat3 {
 
     /**
      * Simulates bracket subscript access in a one-dimensional, row-major matrix
-     * array. Works with
-     * positive integers in [0, 8] or negative integers in [-9, -1] .
+     * array. Works with positive integers in [0, 8] or negative integers in
+     * [-9, -1].
      *
      * @param index the index
      * @return the component at that index
      */
     public float getElm(final int index) {
 
-        /* @formatter:off */
-    switch (index) {
-      case 0:
-      case -9:
-        return this.m00;
-      case 1:
-      case -8:
-        return this.m01;
-      case 2:
-      case -7:
-        return this.m02;
 
-      case 3:
-      case -6:
-        return this.m10;
-      case 4:
-      case -5:
-        return this.m11;
-      case 5:
-      case -4:
-        return this.m12;
+        switch (index) {
+            case 0:
+            case -9:
+                return this.m00;
+            case 1:
+            case -8:
+                return this.m01;
+            case 2:
+            case -7:
+                return this.m02;
 
-      case 6:
-      case -3:
-        return this.m20;
-      case 7:
-      case -2:
-        return this.m21;
-      case 8:
-      case -1:
-        return this.m22;
+            case 3:
+            case -6:
+                return this.m10;
+            case 4:
+            case -5:
+                return this.m11;
+            case 5:
+            case -4:
+                return this.m12;
 
-      default:
-        return 0.0f;
-    }
-    /* @formatter:on */
+            case 6:
+            case -3:
+                return this.m20;
+            case 7:
+            case -2:
+                return this.m21;
+            case 8:
+            case -1:
+                return this.m22;
+
+            default:
+                return 0.0f;
+        }
+
     }
 
     /**
-     * Simulates bracket subscript access in a two-dimensional, row-major matrix
-     * array. Works with
-     * positive integers in [0, 2][0, 2] or negative integers in [-3, -1][-3, -1] .
+     * Simulates bracket subscript access in a two-dimensional, row-major
+     * matrix array. Works with positive integers in [0, 2][0, 2] or negative
+     * integers in [-3, -1][-3, -1].
      *
      * @param i the row index
      * @param j the column index
@@ -1510,60 +1496,59 @@ public class Mat3 {
      */
     public float getElm(final int i, final int j) {
 
-        /* @formatter:off */
-    switch (i) {
-      case 0:
-      case -3:
-        switch (j) {
-          case 0:
-          case -3:
-            return this.m00;
-          case 1:
-          case -2:
-            return this.m01;
-          case 2:
-          case -1:
-            return this.m02;
-          default:
-            return 0.0f;
+        switch (i) {
+            case 0:
+            case -3:
+                switch (j) {
+                    case 0:
+                    case -3:
+                        return this.m00;
+                    case 1:
+                    case -2:
+                        return this.m01;
+                    case 2:
+                    case -1:
+                        return this.m02;
+                    default:
+                        return 0.0f;
+                }
+
+            case 1:
+            case -2:
+                switch (j) {
+                    case 0:
+                    case -3:
+                        return this.m10;
+                    case 1:
+                    case -2:
+                        return this.m11;
+                    case 2:
+                    case -1:
+                        return this.m12;
+                    default:
+                        return 0.0f;
+                }
+
+            case 2:
+            case -1:
+                switch (j) {
+                    case 0:
+                    case -3:
+                        return this.m20;
+                    case 1:
+                    case -2:
+                        return this.m21;
+                    case 2:
+                    case -1:
+                        return this.m22;
+                    default:
+                        return 0.0f;
+                }
+
+            default:
+                return 0.0f;
         }
 
-      case 1:
-      case -2:
-        switch (j) {
-          case 0:
-          case -3:
-            return this.m10;
-          case 1:
-          case -2:
-            return this.m11;
-          case 2:
-          case -1:
-            return this.m12;
-          default:
-            return 0.0f;
-        }
-
-      case 2:
-      case -1:
-        switch (j) {
-          case 0:
-          case -3:
-            return this.m20;
-          case 1:
-          case -2:
-            return this.m21;
-          case 2:
-          case -1:
-            return this.m22;
-          default:
-            return 0.0f;
-        }
-
-      default:
-        return 0.0f;
-    }
-    /* @formatter:on */
     }
 
     @Override
@@ -1584,19 +1569,19 @@ public class Mat3 {
      */
     public Mat3 reset() {
 
-        /* @formatter:off */
-    this.m00 = 1.0f;
-    this.m01 = 0.0f;
-    this.m02 = 0.0f;
-    this.m10 = 0.0f;
-    this.m11 = 1.0f;
-    this.m12 = 0.0f;
-    this.m20 = 0.0f;
-    this.m21 = 0.0f;
-    this.m22 = 1.0f;
+        this.m00 = 1.0f;
+        this.m01 = 0.0f;
+        this.m02 = 0.0f;
 
-    return this;
-    /* @formatter:on */
+        this.m10 = 0.0f;
+        this.m11 = 1.0f;
+        this.m12 = 0.0f;
+
+        this.m20 = 0.0f;
+        this.m21 = 0.0f;
+        this.m22 = 1.0f;
+
+        return this;
     }
 
     /**
@@ -1614,15 +1599,9 @@ public class Mat3 {
      * @return this matrix
      */
     public Mat3 set(
-        final boolean m00,
-        final boolean m01,
-        final boolean m02,
-        final boolean m10,
-        final boolean m11,
-        final boolean m12,
-        final boolean m20,
-        final boolean m21,
-        final boolean m22) {
+        final boolean m00, final boolean m01, final boolean m02,
+        final boolean m10, final boolean m11, final boolean m12,
+        final boolean m20, final boolean m21, final boolean m22) {
 
         this.m00 = m00 ? 1.0f : 0.0f;
         this.m01 = m01 ? 1.0f : 0.0f;
@@ -1640,8 +1619,8 @@ public class Mat3 {
     }
 
     /**
-     * Sets the upper left 2 by 2 corner of this matrix. The remaining values are
-     * set to the identity.
+     * Sets the upper left 2 by 2 corner of this matrix. The remaining values
+     * are set to the identity.
      *
      * @param m00 row 0, column 0
      * @param m01 row 0, column 1
@@ -1649,26 +1628,28 @@ public class Mat3 {
      * @param m11 row 1, column 1
      * @return this matrix
      */
-    public Mat3 set(final float m00, final float m01, final float m10, final float m11) {
+    public Mat3 set(
+        final float m00, final float m01,
+        final float m10, final float m11) {
 
-        /* @formatter:off */
-    this.m00 = m00;
-    this.m01 = m01;
-    this.m02 = 0.0f;
-    this.m10 = m10;
-    this.m11 = m11;
-    this.m12 = 0.0f;
-    this.m20 = 0.0f;
-    this.m21 = 0.0f;
-    this.m22 = 1.0f;
+        this.m00 = m00;
+        this.m01 = m01;
+        this.m02 = 0.0f;
 
-    return this;
-    /* @formatter:on */
+        this.m10 = m10;
+        this.m11 = m11;
+        this.m12 = 0.0f;
+
+        this.m20 = 0.0f;
+        this.m21 = 0.0f;
+        this.m22 = 1.0f;
+
+        return this;
     }
 
     /**
      * Sets the upper two rows of this matrix. The last row is set to (0.0, 0.0,
-     * 1.0) .
+     * 1.0).
      *
      * @param m00 row 0, column 0
      * @param m01 row 0, column 1
@@ -1679,26 +1660,22 @@ public class Mat3 {
      * @return this matrix
      */
     public Mat3 set(
-        final float m00,
-        final float m01,
-        final float m02,
-        final float m10,
-        final float m11,
-        final float m12) {
+        final float m00, final float m01, final float m02,
+        final float m10, final float m11, final float m12) {
 
-        /* @formatter:off */
-    this.m00 = m00;
-    this.m01 = m01;
-    this.m02 = m02;
-    this.m10 = m10;
-    this.m11 = m11;
-    this.m12 = m12;
-    this.m20 = 0.0f;
-    this.m21 = 0.0f;
-    this.m22 = 1.0f;
+        this.m00 = m00;
+        this.m01 = m01;
+        this.m02 = m02;
 
-    return this;
-    /* @formatter:on */
+        this.m10 = m10;
+        this.m11 = m11;
+        this.m12 = m12;
+
+        this.m20 = 0.0f;
+        this.m21 = 0.0f;
+        this.m22 = 1.0f;
+
+        return this;
     }
 
     /**
@@ -1716,36 +1693,30 @@ public class Mat3 {
      * @return this matrix
      */
     public Mat3 set(
-        float m00,
-        float m01,
-        float m02,
-        float m10,
-        float m11,
-        float m12,
-        float m20,
-        float m21,
-        float m22) {
+        float m00, float m01, float m02,
+        float m10, float m11, float m12,
+        float m20, float m21, float m22) {
 
-        /* @formatter:off */
-    this.m00 = m00;
-    this.m01 = m01;
-    this.m02 = m02;
-    this.m10 = m10;
-    this.m11 = m11;
-    this.m12 = m12;
-    this.m20 = m20;
-    this.m21 = m21;
-    this.m22 = m22;
+        this.m00 = m00;
+        this.m01 = m01;
+        this.m02 = m02;
 
-    return this;
-    /* @formatter:on */
+        this.m10 = m10;
+        this.m11 = m11;
+        this.m12 = m12;
+
+        this.m20 = m20;
+        this.m21 = m21;
+        this.m22 = m22;
+
+        return this;
+
     }
 
     /**
-     * Sets a column of this matrix with an index and vector. If the column is an
-     * axis vector, the w
-     * or z component is set to 0.0; if it is a translation, the w or z component is
-     * set to 1.0.
+     * Sets a column of this matrix with an index and vector. If the column is
+     * an axis vector, the w or z component is set to 0.0; if it is a
+     * translation, the w or z component is set to 1.0.
      *
      * @param j      the column index
      * @param source the column
@@ -1838,15 +1809,17 @@ public class Mat3 {
     }
 
     /**
-     * Returns a 1D float array containing this matrix's components in row major
-     * order.
+     * Returns a 1D float array containing this matrix's components in row
+     * major order.
      *
      * @return the array
      */
     public float[] toArray1() {
 
         return new float[]{
-            this.m00, this.m01, this.m02, this.m10, this.m11, this.m12, this.m20, this.m21, this.m22
+            this.m00, this.m01, this.m02,
+            this.m10, this.m11, this.m12,
+            this.m20, this.m21, this.m22
         };
     }
 
@@ -1858,7 +1831,9 @@ public class Mat3 {
     public float[][] toArray2() {
 
         return new float[][]{
-            {this.m00, this.m01, this.m02}, {this.m10, this.m11, this.m12}, {this.m20, this.m21, this.m22}
+            {this.m00, this.m01, this.m02},
+            {this.m10, this.m11, this.m12},
+            {this.m20, this.m21, this.m22}
         };
     }
 
@@ -1884,9 +1859,8 @@ public class Mat3 {
     }
 
     /**
-     * Returns a string representation of this matrix, where columns are separated
-     * by tabs and rows
-     * are separated by new lines.
+     * Returns a string representation of this matrix, where columns are
+     * separated by tabs and rows are separated by new lines.
      *
      * @return the string
      */
@@ -1896,8 +1870,8 @@ public class Mat3 {
     }
 
     /**
-     * Returns a string representation of this matrix intended for display in the
-     * console.
+     * Returns a string representation of this matrix intended for display in
+     * the console.
      *
      * @param p number of decimal places
      * @param s the entry separator
@@ -1908,38 +1882,23 @@ public class Mat3 {
     public String toStringCol(final int p, final char s, final char t, final char n) {
 
         return '\n'
-            + Utils.toFixed(this.m00, p)
-            + s
-            + t
-            + Utils.toFixed(this.m01, p)
-            + s
-            + t
-            + Utils.toFixed(this.m02, p)
-            + s
-            + n
-            + Utils.toFixed(this.m10, p)
-            + s
-            + t
-            + Utils.toFixed(this.m11, p)
-            + s
-            + t
-            + Utils.toFixed(this.m12, p)
-            + s
-            + n
-            + Utils.toFixed(this.m20, p)
-            + s
-            + t
-            + Utils.toFixed(this.m21, p)
-            + s
-            + t
+            + Utils.toFixed(this.m00, p) + s + t
+            + Utils.toFixed(this.m01, p) + s + t
+            + Utils.toFixed(this.m02, p) + s + n
+
+            + Utils.toFixed(this.m10, p) + s + t
+            + Utils.toFixed(this.m11, p) + s + t
+            + Utils.toFixed(this.m12, p) + s + n
+
+            + Utils.toFixed(this.m20, p) + s + t
+            + Utils.toFixed(this.m21, p) + s + t
             + Utils.toFixed(this.m22, p)
             + '\n';
     }
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * matrices. Appends to an
-     * existing {@link StringBuilder}.
+     * matrices. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
