@@ -6,9 +6,8 @@ import java.util.Random;
 
 /**
  * A convenience for working in the Processing IDE: extends
- * {@link java.util.Random} so an
- * additional import does not need to be added. Its name is truncated to avoid
- * collisions.
+ * {@link java.util.Random} so an additional import does not need to be added.
+ * Its name is truncated to avoid collisions.
  */
 public class Rng extends Random {
 
@@ -41,12 +40,10 @@ public class Rng extends Random {
 
     /**
      * Returns a pseudo-random, uniformly distributed integer value between 0
-     * (inclusive) and the
-     * specified value (exclusive), drawn from this random number generator's
-     * sequence. Overrides
-     * parent random's functionality to clamp the bound to a positive non-zero lower
-     * bound rather than
-     * throwing an exception.
+     * (inclusive) and the specified value (exclusive), drawn from this random
+     * number generator's sequence. Overrides parent's functionality to clamp
+     * the bound to a positive non-zero lower bound rather than throwing an
+     * exception.
      *
      * @param bound the upper bound
      * @return the pseudo-random integer
@@ -71,8 +68,7 @@ public class Rng extends Random {
 
     /**
      * Finds an array of random numbers that sum to 1.0 . Due to floating point
-     * precision, the sum of
-     * the numbers may be approximate.
+     * precision, the sum of the numbers may be approximate.
      *
      * @param count the number of elements
      * @return the array
@@ -83,15 +79,13 @@ public class Rng extends Random {
     }
 
     /**
-     * Finds an array of random numbers that sum to a value. Due to floating point
-     * precision, the sum
-     * of the numbers may be approximate.<br>
+     * Finds an array of random numbers that sum to a value. Due to floating
+     * point precision, the sum of the numbers may be approximate.
      * <br>
-     * The function first calculates a series of segment end points on a number line
-     * from 0.0 to 1.0 .
-     * The result array contains the difference between an end point and its
-     * preceding neighbor
-     * multiplied by the sum.
+     * <br>
+     * The function first calculates a series of segment end points on a number
+     * line from 0.0 to 1.0. The result array contains the difference between
+     * an end point and its preceding neighbor multiplied by the sum.
      *
      * @param count the number of elements
      * @param sum   the sum
@@ -125,12 +119,10 @@ public class Rng extends Random {
 
     /**
      * Sets the seed for this random number generator and calls next float. For
-     * sequences of similar
-     * seeds (e.g., 100, 101, 102), the initial random value fetched will be
-     * similar. See "<a
-     * href="https://stackoverflow.com/a/27761175">First random number after setSeed
-     * in Java always
-     * similar</a>".
+     * sequences of similar seeds (e.g., 100, 101, 102), the initial random
+     * value fetched will be similar. See
+     * "<a href="https://stackoverflow.com/a/27761175">First random number
+     * after setSeed in Java always similar</a>".
      *
      * @param seed the seed
      */
@@ -190,9 +182,8 @@ public class Rng extends Random {
     }
 
     /**
-     * Returns an integer within the lower and upper bound: lower bound inclusive,
-     * upper bound
-     * exclusive.
+     * Returns an integer within the lower and upper bound: lower bound
+     * inclusive, upper bound exclusive.
      *
      * @param lower the lower bound
      * @param upper the upper bound

@@ -1018,8 +1018,8 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
         final float sw, final int xColor, final int yColor, final int zColor) {
 
         // QUERY: Simplify this to follow the pattern established by
-        // gimbal, where matrix is pushed onto stack? There might've been a reason
-        // not to do it that way in the first place.
+        // gimbal, where matrix is pushed onto stack? There might've been a
+        // reason not to do it that way in the first place.
 
         final Vec3 origin = new Vec3();
         final Vec3 right = new Vec3();
@@ -1043,14 +1043,19 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
         this.strokeWeight(sw);
 
         this.stroke(zColor);
-        this.lineImpl(origin.x, origin.y, origin.z, up.x, up.y, up.z);
+        this.lineImpl(
+            origin.x, origin.y, origin.z,
+            up.x, up.y, up.z);
 
         this.stroke(yColor);
-        this.lineImpl(origin.x, origin.y, origin.z, forward.x, forward.y,
-            forward.z);
+        this.lineImpl(
+            origin.x, origin.y, origin.z,
+            forward.x, forward.y, forward.z);
 
         this.stroke(xColor);
-        this.lineImpl(origin.x, origin.y, origin.z, right.x, right.y, right.z);
+        this.lineImpl(
+            origin.x, origin.y, origin.z,
+            right.x, right.y, right.z);
 
         this.popStyle();
         this.enableDepthTest();
@@ -1076,10 +1081,16 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
             final float yLocal = this.cameraInv.m11 * ywInv;
             final float zLocal = this.cameraInv.m21 * ywInv;
 
-            this.camera(this.cameraX + xLocal, this.cameraY + yLocal, this.cameraZ
-                    + zLocal, this.lookTarget.x + xLocal, this.lookTarget.y + yLocal,
-                this.lookTarget.z + zLocal, this.refUp.x, this.refUp.y,
-                this.refUp.z);
+            this.camera(
+                this.cameraX + xLocal,
+                this.cameraY + yLocal,
+                this.cameraZ + zLocal,
+
+                this.lookTarget.x + xLocal,
+                this.lookTarget.y + yLocal,
+                this.lookTarget.z + zLocal,
+
+                this.refUp.x, this.refUp.y, this.refUp.z);
         }
     }
 

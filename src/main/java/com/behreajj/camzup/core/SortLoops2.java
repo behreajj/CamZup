@@ -4,8 +4,7 @@ import java.util.Comparator;
 
 /**
  * Compares two face indices (an array of vertex indices) by averaging the
- * vectors referenced by
- * them, then comparing the averages.
+ * vectors referenced by them, then comparing the averages.
  */
 final class SortLoops2 implements Comparator<int[][]> {
 

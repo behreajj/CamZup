@@ -128,25 +128,23 @@ public class CamEntity2 extends Entity2 {
         final float m10 = s * xZoom;
         final float m11 = c * yZoom;
 
-        /* @formatter:off */
         rndr.modelview.set(
-            m00,  m01, 0.0f, -rndr.cameraX * m00 - rndr.cameraY * m01,
-            m10,  m11, 0.0f, -rndr.cameraX * m10 - rndr.cameraY * m11,
-            0.0f, 0.0f, 1.0f,                            -rndr.cameraZ,
-            0.0f, 0.0f, 0.0f,                                     1.0f);
+            m00, m01, 0.0f, -rndr.cameraX * m00 - rndr.cameraY * m01,
+            m10, m11, 0.0f, -rndr.cameraX * m10 - rndr.cameraY * m11,
+            0.0f, 0.0f, 1.0f, -rndr.cameraZ,
+            0.0f, 0.0f, 0.0f, 1.0f);
 
         rndr.modelviewInv.set(
             c / xZoom, s / xZoom, 0.0f, rndr.cameraX,
             -s / yZoom, c / yZoom, 0.0f, rndr.cameraY,
-            0.0f,      0.0f, 1.0f, rndr.cameraZ,
-            0.0f,      0.0f, 0.0f, 1.0f);
+            0.0f, 0.0f, 1.0f, rndr.cameraZ,
+            0.0f, 0.0f, 0.0f, 1.0f);
 
         rndr.projection.set(
-            2.0f / w,     0.0f,     0.0f,  0.0f,
-            0.0f, 2.0f / h,     0.0f,  0.0f,
-            0.0f,     0.0f, -0.0005f, -1.0f,
-            0.0f,     0.0f,     0.0f,  1.0f);
-        /* @formatter:on */
+            2.0f / w, 0.0f, 0.0f, 0.0f,
+            0.0f, 2.0f / h, 0.0f, 0.0f,
+            0.0f, 0.0f, -0.0005f, -1.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
 
         /* Set model view to camera. */
         rndr.camera.set(rndr.modelview);

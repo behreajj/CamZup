@@ -4,10 +4,9 @@ import java.util.function.BiFunction;
 
 /**
  * A mutable, extensible color class that stores red, green, blue and alpha in
- * the range [0.0, 1.0].
- * Assumes color channels are in the standard RGB (sRGB) color space. Converts
- * to and from integers
- * where color channels are in the format 0xAARRGGBB.
+ * the range [0.0, 1.0]. Assumes color channels are in the standard RGB (sRGB)
+ * color space. Converts to and from integers where color channels are in the
+ * format 0xAARRGGBB.
  */
 public class Rgb implements IColor {
 
@@ -39,9 +38,8 @@ public class Rgb implements IColor {
 
     /**
      * Creates a color from bytes. In Java, bytes are signed, within the range
-     * [{@value
-     * Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .The alpha channel defaults to 1.0
-     * .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .The alpha channel
+     * defaults to 1.0.
      *
      * @param red   the red channel
      * @param green the green channel
@@ -54,8 +52,7 @@ public class Rgb implements IColor {
 
     /**
      * Creates a color from bytes. In Java, bytes are signed, within the range
-     * [{@value
-     * Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}].
      *
      * @param red   the red channel
      * @param green the green channel
@@ -82,10 +79,8 @@ public class Rgb implements IColor {
 
     /**
      * Creates a color out of red, green, blue and alpha channels. The expected
-     * range for each channel
-     * is [0.0, 1.0], however these bounds are not checked to facilitate color
-     * mixing in other color
-     * spaces.
+     * range for each channel is [0.0, 1.0], however these bounds are not
+     * checked to facilitate color mixing in other color spaces.
      *
      * @param red   the red channel
      * @param green the green channel
@@ -121,9 +116,8 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Tests to see if the alpha channel of the color is greater than zero, i.e. if
-     * it has some
-     * opacity.
+     * Tests to see if the alpha channel of the color is greater than zero,
+     * i.e., if it has some opacity.
      *
      * @param c the color
      * @return the evaluation
@@ -133,7 +127,7 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Returns the color black, ( 0.0, 0.0, 0.0, 1.0 ) .
+     * Returns the color black, ( 0.0, 0.0, 0.0, 1.0 ).
      *
      * @param target the output color
      * @return black
@@ -144,7 +138,7 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Returns the color blue, ( 0.0, 0.0, 1.0, 1.0 ) .
+     * Returns the color blue, ( 0.0, 0.0, 1.0, 1.0 ).
      *
      * @param target the output color
      * @return blue
@@ -155,7 +149,7 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Clamps all color channels to the range [0.0, 1.0] .
+     * Clamps all color channels to the range [0.0, 1.0].
      *
      * @param c      the color
      * @param target the output color
@@ -164,14 +158,15 @@ public class Rgb implements IColor {
      */
     public static Rgb clamp01(final Rgb c, final Rgb target) {
 
-        /* @formatter:off */
-    return target.set(
-        Utils.clamp01(c.r), Utils.clamp01(c.g), Utils.clamp01(c.b), Utils.clamp01(c.alpha));
-    /* @formatter:on */
+        return target.set(
+            Utils.clamp01(c.r),
+            Utils.clamp01(c.g),
+            Utils.clamp01(c.b),
+            Utils.clamp01(c.alpha));
     }
 
     /**
-     * Returns the color clear black, ( 0.0, 0.0, 0.0, 0.0 ) .
+     * Returns the color clear black, ( 0.0, 0.0, 0.0, 0.0 ).
      *
      * @param target the output color
      * @return clear black
@@ -182,7 +177,7 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Returns the color clear white, ( 1.0, 1.0, 1.0, 0.0 ) .
+     * Returns the color clear white, ( 1.0, 1.0, 1.0, 0.0 ).
      *
      * @param target the output color
      * @return clear white
@@ -193,7 +188,7 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Returns the color cyan, ( 0.0, 1.0, 1.0, 1.0 ) .
+     * Returns the color cyan, ( 0.0, 1.0, 1.0, 1.0 ).
      *
      * @param target the output color
      * @return cyan
@@ -204,9 +199,8 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Checks if two colors have equivalent alpha channels when converted to bytes
-     * in [0, 255]. Uses
-     * saturation arithmetic.
+     * Checks if two colors have equivalent alpha channels when converted to
+     * bytes in [0, 255]. Uses saturation arithmetic.
      *
      * @param o the left comparisand
      * @param d the right comparisand
@@ -215,13 +209,13 @@ public class Rgb implements IColor {
      */
     public static boolean eqAlphaSatArith(final Rgb o, final Rgb d) {
 
-        return (int) (Utils.clamp01(o.alpha) * 0xff + 0.5f) == (int) (Utils.clamp01(d.alpha) * 0xff + 0.5f);
+        return (int) (Utils.clamp01(o.alpha) * 0xff + 0.5f)
+            == (int) (Utils.clamp01(d.alpha) * 0xff + 0.5f);
     }
 
     /**
      * Checks if two colors have equivalent red, green and blue channels when
-     * converted to bytes in
-     * [0, 255]. Uses saturation arithmetic.
+     * converted to bytes in [0, 255]. Uses saturation arithmetic.
      *
      * @param o the left comparisand
      * @param d the right comparisand
@@ -230,17 +224,14 @@ public class Rgb implements IColor {
      */
     public static boolean eqRgbSatArith(final Rgb o, final Rgb d) {
 
-        /* @formatter:off */
-    return (int) (Utils.clamp01(o.b) * 0xff + 0.5f) == (int) (Utils.clamp01(d.b) * 0xff + 0.5f)
-        && (int) (Utils.clamp01(o.g) * 0xff + 0.5f) == (int) (Utils.clamp01(d.g) * 0xff + 0.5f)
-        && (int) (Utils.clamp01(o.r) * 0xff + 0.5f) == (int) (Utils.clamp01(d.r) * 0xff + 0.5f);
-    /* @formatter:on */
+        return (int) (Utils.clamp01(o.b) * 0xff + 0.5f) == (int) (Utils.clamp01(d.b) * 0xff + 0.5f)
+            && (int) (Utils.clamp01(o.g) * 0xff + 0.5f) == (int) (Utils.clamp01(d.g) * 0xff + 0.5f)
+            && (int) (Utils.clamp01(o.r) * 0xff + 0.5f) == (int) (Utils.clamp01(d.r) * 0xff + 0.5f);
     }
 
     /**
-     * Checks if two colors have equivalent red, green, blue and alpha channels when
-     * converted to
-     * bytes in [0, 255]. Uses saturation arithmetic.
+     * Checks if two colors have equivalent red, green, blue and alpha channels
+     * when converted to bytes in [0, 255]. Uses saturation arithmetic.
      *
      * @param o the left comparisand
      * @param d the right comparisand
@@ -254,9 +245,8 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Converts a hexadecimal representation of a color stored as 0xAARRGGBB into a
-     * color. Does so by
-     * dividing each color channel by 255.
+     * Converts a hexadecimal representation of a color stored as 0xAARRGGBB
+     * into a color. Does so by dividing each color channel by 255.
      *
      * @param hex    the color in hexadecimal
      * @param target the output color
@@ -264,13 +254,11 @@ public class Rgb implements IColor {
      */
     public static Rgb fromHex(final int hex, final Rgb target) {
 
-        /* @formatter:off */
         return target.set(
             (hex >> 0x10 & 0xff) * Utils.ONE_255,
             (hex >> 0x08 & 0xff) * Utils.ONE_255,
             (hex & 0xff) * Utils.ONE_255,
             (hex >> 0x18 & 0xff) * Utils.ONE_255);
-        /* @formatter:on */
     }
 
     /**
@@ -278,15 +266,14 @@ public class Rgb implements IColor {
      * include:
      *
      * <ul>
-     * <li>"abc" - RGB, one digit per channel.
-     * <li>"aabbcc" - RRGGBB, two digits per channel.
-     * <li>"abcd" - 5 bits per red, 6 bits per green, 5 bits per blue.
-     * <li>"aabbccdd" - AARRGGBB, two digits per channel.
+     * <li>"abc" - RGB, one digit per channel.</li>
+     * <li>"aabbcc" - RRGGBB, two digits per channel.</li>
+     * <li>"abcd" - 5 bits per red, 6 bits per green, 5 bits per blue.</li>
+     * <li>"aabbccdd" - AARRGGBB, two digits per channel.</li>
      * </ul>
      * <p>
-     * The output color will be reset if no suitable format is recognized. Checks
-     * for and removes "#"
-     * and "0x" prefixes.
+     * The output color will be reset if no suitable format is recognized.
+     * Checks for and removes "#" and "0x" prefixes.
      *
      * @param c      the input String
      * @param target the output color
@@ -358,7 +345,7 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Returns the color lime green, ( 0.0, 1.0, 0.0, 1.0 ) .
+     * Returns the color lime green, ( 0.0, 1.0, 0.0, 1.0 ).
      *
      * @param target the output color
      * @return green
@@ -369,7 +356,8 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Evaluates whether the color is within the standard RGB gamut of [0.0, 1.0] .
+     * Evaluates whether the color is within the standard RGB gamut of
+     * [0.0, 1.0].
      *
      * @param c color
      * @return the evaluation
@@ -389,7 +377,6 @@ public class Rgb implements IColor {
      */
     public static boolean isInGamut(final Rgb c, final float tol) {
 
-        /* @formatter:off */
         final float oneptol = 1.0f + tol;
         return c.r >= -tol
             && c.r <= oneptol
@@ -397,7 +384,6 @@ public class Rgb implements IColor {
             && c.g <= oneptol
             && c.b >= -tol
             && c.b <= oneptol;
-        /* @formatter:on */
     }
 
     /**
@@ -415,7 +401,6 @@ public class Rgb implements IColor {
 
         /* pow(x, y) := exp(y * ln(x)) does not lead to better performance. */
 
-        /* @formatter:off */
         return target.set(
             source.r <= 0.0031308f
                 ? source.r * 12.92f
@@ -428,16 +413,16 @@ public class Rgb implements IColor {
                 : (float) (Math.pow(source.b, 0.4166666666666667d) * 1.055d - 0.055d),
             inclAlpha
                 ? source.alpha <= 0.0031308f
-                    ? source.alpha * 12.92f
-                    : (float) (Math.pow(source.alpha, 0.4166666666666667d) * 1.055d - 0.055d)
+                ? source.alpha * 12.92f
+                : (float) (Math.pow(source.alpha, 0.4166666666666667d) * 1.055d - 0.055d)
                 : source.alpha);
-        /* @formatter:on */
     }
 
     /**
      * Converts a color from linear RGB to the XYZ coordinates for SR LAB 2.
-     * The values returned are in the range [0.0, 1.0]. See <a href=
-     * "https://www.magnetkern.de/srlab2.html">https://www.magnetkern.de/srlab2.html</a>.
+     * The values returned are in the range [0.0, 1.0]. See
+     * <a href="https://www.magnetkern.de/srlab2.html">
+     * https://www.magnetkern.de/srlab2.html</a>.
      *
      * @param r      the red component
      * @param g      the green component
@@ -455,9 +440,9 @@ public class Rgb implements IColor {
         final Vec4 target) {
 
         return target.set(
-            (float) (0.32053d * (double) r + 0.63692d * (double) g + 0.04256d * (double) b),
-            (float) (0.161987d * (double) r + 0.756636d * (double) g + 0.081376d * (double) b),
-            (float) (0.017228d * (double) r + 0.10866d * (double) g + 0.874112d * (double) b),
+            (float) (0.32053d * r + 0.63692d * g + 0.04256d * b),
+            (float) (0.161987d * r + 0.756636d * g + 0.081376d * b),
+            (float) (0.017228d * r + 0.10866d * g + 0.874112d * b),
             a);
     }
 
@@ -545,7 +530,6 @@ public class Rgb implements IColor {
          * pow(x, 2.4) := x * x * pow(x, 0.4) needs more testing...
          */
 
-        /* @formatter:off */
         return target.set(
             source.r <= 0.04045f
                 ? source.r * 0.07739938f
@@ -558,10 +542,9 @@ public class Rgb implements IColor {
                 : (float) Math.pow((source.b + 0.055d) * 0.9478672985781991d, 2.4d),
             alpha
                 ? source.alpha <= 0.04045f
-                    ? source.alpha * 0.07739938f
-                    : (float) Math.pow((source.alpha + 0.055d) * 0.9478672985781991d, 2.4d)
+                ? source.alpha * 0.07739938f
+                : (float) Math.pow((source.alpha + 0.055d) * 0.9478672985781991d, 2.4d)
                 : source.alpha);
-        /* @formatter:on */
     }
 
     /**
@@ -654,8 +637,8 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Converts a color from SR XYZ to linear RGB. Expects input values to be in the
-     * range [0.0, 1.0].
+     * Converts a color from SR XYZ to linear RGB. Expects input values to be
+     * in the range [0.0, 1.0].
      *
      * @param x      the x coordinate
      * @param y      the y coordinate
@@ -672,13 +655,11 @@ public class Rgb implements IColor {
         final float a,
         final Rgb target) {
 
-        /* @formatter:off */
         return target.set(
-            (float) (5.435679d * (double) x - 4.599131d * (double) y + 0.163593d * (double) z),
-            (float) (-1.16809d * (double) x + 2.327977d * (double) y - 0.159798d * (double) z),
-            (float) (0.03784d * (double) x - 0.198564d * (double) y + 1.160644d * (double) z),
+            (float) (5.435679d * x - 4.599131d * y + 0.163593d * z),
+            (float) (-1.16809d * x + 2.327977d * y - 0.159798d * z),
+            (float) (0.03784d * x - 0.198564d * y + 1.160644d * z),
             a);
-        /* @formatter:on */
     }
 
     /**
@@ -756,8 +737,8 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Returns a byte array representing the colors in the Adobe Swatch Exchange
-     * (ase) palette format.
+     * Returns a byte array representing the colors in the Adobe Swatch
+     * Exchange (ase) palette format.
      *
      * @param arr the color array
      * @return the byte array
@@ -990,14 +971,12 @@ public class Rgb implements IColor {
      */
     public static StringBuilder toHexString(final StringBuilder sb, final Rgb c) {
 
-        /* @formatter:off */
         return Rgb.toHexString(
             sb,
             (int) (Utils.clamp01(c.alpha) * 0xff + 0.5f),
             (int) (Utils.clamp01(c.r) * 0xff + 0.5f),
             (int) (Utils.clamp01(c.g) * 0xff + 0.5f),
             (int) (Utils.clamp01(c.b) * 0xff + 0.5f));
-        /* @formatter:on */
     }
 
     /**
@@ -1031,7 +1010,8 @@ public class Rgb implements IColor {
     /**
      * Creates a web-friendly representation of the color as a hexadecimal code,
      * preceded by a hashtag, '#', with no alpha. Appends to an existing
-     * {@link StringBuilder}.<br>
+     * {@link StringBuilder}.
+     * <br>
      * <br>
      * Assumes the number will be formatted as <code>0xAARRGGBB</code>, where
      * alpha is the first channel, followed by red, green and blue.
@@ -1084,13 +1064,11 @@ public class Rgb implements IColor {
      */
     public static StringBuilder toHexWeb(final StringBuilder sb, final Rgb c) {
 
-        /* @formatter:off */
         return Rgb.toHexWeb(
             sb,
             (int) (Utils.clamp01(c.r) * 0xff + 0.5f),
             (int) (Utils.clamp01(c.g) * 0xff + 0.5f),
             (int) (Utils.clamp01(c.b) * 0xff + 0.5f));
-        /* @formatter:on */
     }
 
     /**
@@ -1280,13 +1258,11 @@ public class Rgb implements IColor {
         final byte blue,
         final byte alpha) {
 
-        /* @formatter:off */
         return this.set(
             Utils.ONE_255 * (red & 0xff),
             Utils.ONE_255 * (green & 0xff),
             Utils.ONE_255 * (blue & 0xff),
             Utils.ONE_255 * (alpha & 0xff));
-        /* @formatter:on */
     }
 
     /**
@@ -1361,12 +1337,10 @@ public class Rgb implements IColor {
     @Override
     public int toHexIntSat() {
 
-        /* @formatter:off */
         return (int) (Utils.clamp01(this.alpha) * 0xff + 0.5f) << 0x18
             | (int) (Utils.clamp01(this.r) * 0xff + 0.5f) << 0x10
             | (int) (Utils.clamp01(this.g) * 0xff + 0.5f) << 0x08
             | (int) (Utils.clamp01(this.b) * 0xff + 0.5f);
-        /* @formatter:on */
     }
 
     /**
@@ -1379,12 +1353,10 @@ public class Rgb implements IColor {
     @Override
     public int toHexIntWrap() {
 
-        /* @formatter:off */
         return (int) (this.alpha * 0xff + 0.5f) << 0x18
             | (int) (this.r * 0xff + 0.5f) << 0x10
             | (int) (this.g * 0xff + 0.5f) << 0x08
             | (int) (this.b * 0xff + 0.5f);
-        /* @formatter:on */
     }
 
     /**
@@ -1395,7 +1367,8 @@ public class Rgb implements IColor {
     @Override
     public String toString() {
 
-        return this.toString(new StringBuilder(96), Utils.FIXED_PRINT).toString();
+        return this.toString(new StringBuilder(96),
+            Utils.FIXED_PRINT).toString();
     }
 
     /**
@@ -1412,11 +1385,13 @@ public class Rgb implements IColor {
     /**
      * An internal helper function to format a color as a Python tuple, then
      * append it to a {@link StringBuilder}. Used for testing purposes to
-     * compare results with Blender 4.x.<br>
+     * compare results with Blender 4.x.
      * <br>
-     * This is formatted as a tuple where red, green and blue channels have been
-     * raised to the power of gamma (usually 2.2, Blender's default sRGB color
-     * management setting).<br>
+     * <br>
+     * This is formatted as a tuple where red, green and blue channels have
+     * been raised to the power of gamma (usually 2.2, Blender's default sRGB
+     * color management setting).
+     * <br>
      * <br>
      * If alpha is included, then a four tuple is appended, where alpha is the
      * last element; if not then a three tuple is appended.
@@ -1553,9 +1528,9 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Tone maps RGB channels using the ACES method. See <a
-     * href=
-     * "https://64.github.io/tonemapping/">https://64.github.io/tonemapping/</a> .
+     * Tone maps RGB channels using the ACES method. See
+     * <a href="https://64.github.io/tonemapping/">
+     * https://64.github.io/tonemapping/</a> .
      */
     public static class ToneMapAces extends AbstrToneMap {
 
@@ -1637,21 +1612,21 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Tone maps RGB channels using the Hable method. See <a
-     * href=
-     * "https://64.github.io/tonemapping/">https://64.github.io/tonemapping/</a> .
+     * Tone maps RGB channels using the Hable method. See
+     * <a href="https://64.github.io/tonemapping/">
+     * https://64.github.io/tonemapping/</a> .
      */
     public static class ToneMapHable extends AbstrToneMap {
 
         /**
          * Exposure bias.
          */
-        public static float exposureBias = 2.0f;
+        public static final float exposureBias = 2.0f;
 
         /**
          * White scale.
          */
-        public static float whiteScale = 1.0f
+        public static final float whiteScale = 1.0f
             / ((11.2f * (0.15f * 11.2f + 0.10f * 0.50f) + 0.20f * 0.02f)
             / (11.2f * (0.15f * 11.2f + 0.50f) + 0.20f * 0.30f)
             - 0.02f / 0.30f);

@@ -3,13 +3,11 @@ package com.behreajj.camzup.core;
 import java.util.*;
 
 /**
- * Partitions space to improve collision and intersection tests. A quadtree node
- * holds a list of
- * points up to a given capacity. When that capacity is exceeded, the node is
- * split into four
- * children nodes (quadrants) and its list of points is emptied into them. The
- * quadrants are indexed
- * in an array as follows
+ * Partitions space to improve collision and intersection tests. A quadtree
+ * node holds a list of points up to a given capacity. When that capacity is
+ * exceeded, the node is split into four children nodes (quadrants) and its
+ * list of points is emptied into them. The quadrants are indexed in an array
+ * as follows
  *
  * <pre>
  * |----|----|

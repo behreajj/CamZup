@@ -346,19 +346,17 @@ public class CamEntity3 extends Entity3 {
         final float m31 = rndr.cameraY = loc.y;
         final float m32 = rndr.cameraZ = loc.z;
 
-        /* @formatter:off */
         rndr.cameraInv.set(
-            m00,  m10,  m20,  m30,
-            m01,  m11,  m21,  m31,
-            m02,  m12,  m22,  m32,
+            m00, m10, m20, m30,
+            m01, m11, m21, m31,
+            m02, m12, m22, m32,
             0.0f, 0.0f, 0.0f, 1.0f);
 
         rndr.camera.set(
-            m00,  m01,  m02, -m30 * m00 - m31 * m01 - m32 * m02,
-            m10,  m11,  m12, -m30 * m10 - m31 * m11 - m32 * m12,
-            m20,  m21,  m22, -m30 * m20 - m31 * m21 - m32 * m22,
+            m00, m01, m02, -m30 * m00 - m31 * m01 - m32 * m02,
+            m10, m11, m12, -m30 * m10 - m31 * m11 - m32 * m12,
+            m20, m21, m22, -m30 * m20 - m31 * m21 - m32 * m22,
             0.0f, 0.0f, 0.0f, 1.0f);
-        /* @formatter:on */
 
         /* Set model view to camera. */
         rndr.modelview.set(rndr.camera);

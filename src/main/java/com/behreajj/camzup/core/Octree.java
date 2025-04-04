@@ -4,12 +4,10 @@ import java.util.*;
 
 /**
  * Partitions space to improve collision and intersection tests. An octree node
- * holds a list of
- * points up to a given capacity. When that capacity is exceeded, the node is
- * split into eight
- * children nodes (octants) and its list of points is emptied into them. The
- * octants are indexed in
- * an array as follows:
+ * holds a list of points up to a given capacity. When that capacity is
+ * exceeded, the node is split into eight children nodes (octants) and its list
+ * of points is emptied into them. The octants are indexed in an array as
+ * follows:
  *
  * <pre>
  *           **|-----|-----|
@@ -169,8 +167,8 @@ public class Octree {
         /*
          * This no longer implements Comparable<Octree> (based on its bounds
          * center) because then it would also have to implement equals and
-         * hashCode to fulfill the interface contract, and it's not clear how two
-         * should be equated.
+         * hashCode to fulfill the interface contract, and it's not clear how
+         * two should be equated.
          */
 
         this(Bounds3.unitCubeSigned(new Bounds3()));
@@ -204,9 +202,9 @@ public class Octree {
     }
 
     /**
-     * Finds the average centers for each leaf node of this octree. If the node is
-     * empty, and
-     * includeEmpty is true, then the center of the cell bounds is used instead.
+     * Finds the average centers for each leaf node of this octree. If the node
+     * is empty, and includeEmpty is true, then the center of the cell bounds
+     * is used instead.
      *
      * @param o            the octree
      * @param includeEmpty include empty cells
@@ -247,7 +245,8 @@ public class Octree {
     }
 
     /**
-     * Queries the octree with a spherical range, returning points inside the range.
+     * Queries the octree with a spherical range, returning points inside the
+     * range.
      *
      * @param o      the octree
      * @param center the sphere center
@@ -453,9 +452,9 @@ public class Octree {
     }
 
     /**
-     * Sets empty child nodes in the octree to null. Returns true if this octree
-     * node should be
-     * culled; i.e., all its children are null, and it contains no points.
+     * Sets empty child nodes in the octree to null. Returns true if this
+     * octree node should be culled; i.e., all its children are null, and it
+     * contains no points.
      *
      * @return the evaluation
      */
@@ -499,8 +498,7 @@ public class Octree {
 
     /**
      * Sets the capacity of the node. If the node's point size exceeds the new
-     * capacity, the node is
-     * split.
+     * capacity, the node is split.
      *
      * @param capacity the new capacity
      * @see Octree#split()
@@ -516,9 +514,8 @@ public class Octree {
     }
 
     /**
-     * Gets the leaf nodes of an octree as a flat array. The nodes are passed by
-     * reference, not by
-     * value.
+     * Gets the leaf nodes of an octree as a flat array. The nodes are passed
+     * by reference, not by value.
      *
      * @return the octree array
      * @see Octree#getLeaves(ArrayList)
@@ -560,11 +557,9 @@ public class Octree {
     }
 
     /**
-     * Gets an array of points contained in this octree and its children. The points
-     * are transferred
-     * to the array by value, not reference, so changing them in the array will not
-     * change them within
-     * the tree.
+     * Gets an array of points contained in this octree and its children. The
+     * points are transferred to the array by value, not reference, so changing
+     * them in the array will not change them within the tree.
      *
      * @return the points array
      * @see Octree#getPoints(ArrayList)
@@ -583,11 +578,10 @@ public class Octree {
     }
 
     /**
-     * Inserts a point into the octree by reference. Returns <code>true</code> if
-     * the point was
-     * successfully inserted into the octree directly or indirectly through one of
-     * its children;
-     * returns <code>false</code> if the insertion was unsuccessful.
+     * Inserts a point into the octree by reference. Returns <code>true</code>
+     * if the point was successfully inserted into the octree directly or
+     * indirectly through one of its children; returns <code>false</code> if
+     * the insertion was unsuccessful.
      *
      * @param point the point
      * @return the insertion success
@@ -623,9 +617,9 @@ public class Octree {
     }
 
     /**
-     * Inserts points into the octree. Returns <code>true</code> if all insertions
-     * were successful;
-     * <code>false</code> if at least one was unsuccessful.
+     * Inserts points into the octree. Returns <code>true</code> if all
+     * insertions were successful; <code>false</code> if at least one was
+     * unsuccessful.
      *
      * @param pts the points
      * @return the insertion success
@@ -656,9 +650,8 @@ public class Octree {
     }
 
     /**
-     * If this octree node has children, converts it to a leaf node containing the
-     * centers of its
-     * children. Increases node capacity if necessary.
+     * If this octree node has children, converts it to a leaf node containing
+     * the centers of its children. Increases node capacity if necessary.
      *
      * @return this octree
      */
@@ -699,8 +692,7 @@ public class Octree {
 
     /**
      * Resets this tree to an initial state, where its has no children and no
-     * points. Leaves the
-     * tree's bounds unchanged.
+     * points. Leaves the tree's bounds unchanged.
      *
      * @return this octree
      */
@@ -714,8 +706,7 @@ public class Octree {
 
     /**
      * Resets this tree to an initial state, where its has no children and no
-     * points. Sets the bounds
-     * to the one supplied.
+     * points. Sets the bounds to the one supplied.
      *
      * @param b bounds
      * @return this octree
@@ -748,11 +739,10 @@ public class Octree {
     }
 
     /**
-     * Subdivides this octree. For cases where a minimum number of children nodes is
-     * desired,
-     * independent of point insertion. The result will be
-     * {@value Octree#CHILD_COUNT} raised to the
-     * power of iterations, e.g., 8, 64, 512.
+     * Subdivides this octree. For cases where a minimum number of children
+     * nodes is desired, independent of point insertion. The result will be
+     * {@value Octree#CHILD_COUNT} raised to the power of iterations, e.g., 8,
+     * 64, 512.
      *
      * @param iterations    iteration count
      * @param childCapacity child capacity
@@ -803,8 +793,8 @@ public class Octree {
     }
 
     /**
-     * Finds the total capacity of a node, including the cumulative capacities of
-     * its children.
+     * Finds the total capacity of a node, including the cumulative capacities
+     * of its children.
      *
      * @return the sum
      */
@@ -828,9 +818,9 @@ public class Octree {
     }
 
     /**
-     * Gets the leaf nodes in this node and its children. The leaf nodes will still
-     * be stored by
-     * reference in the output array list, so this should be used internally.
+     * Gets the leaf nodes in this node and its children. The leaf nodes will
+     * still be stored by reference in the output array list, so this should be
+     * used internally.
      *
      * @param target the output array list
      * @return the leaf nodes
@@ -852,9 +842,9 @@ public class Octree {
     }
 
     /**
-     * Gets the points in this octree node and its children. The points will still
-     * be stored by
-     * reference in the output array list, so this should be used internally.
+     * Gets the points in this octree node and its children. The points will
+     * still be stored by reference in the output array list, so this should be
+     * used internally.
      *
      * @param target the output array list
      * @return the points
@@ -876,8 +866,8 @@ public class Octree {
     }
 
     /**
-     * Splits this octree node into eight child nodes. The child capacity is the
-     * same as the parent's.
+     * Splits this octree node into eight child nodes. The child capacity is
+     * the same as the parent's.
      *
      * @return this octree
      */
@@ -891,8 +881,7 @@ public class Octree {
      * @param childCapacity child capacity
      * @return this octree
      * @see Bounds3#split(Bounds3, float, float, float, Bounds3, Bounds3, Bounds3,
-     * Bounds3, Bounds3,
-     * Bounds3, Bounds3, Bounds3)
+     * Bounds3, Bounds3, Bounds3, Bounds3, Bounds3)
      */
     protected Octree split(final int childCapacity) {
 

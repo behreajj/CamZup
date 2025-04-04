@@ -47,7 +47,7 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     protected final Vec3 right = Vec3.right(new Vec3());
 
     /**
-     * The transform's rotation. Defaults to the identity, (1.0, 0.0, 0.0, 0.0) .
+     * The transform's rotation. Defaults to the identity, (1.0, 0.0, 0.0, 0.0).
      */
     protected final Quaternion rotation = new Quaternion();
 
@@ -193,8 +193,7 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @param target   the output transform
      * @return the transform
      * @see Quaternion#fromAxes(float, float, float, float, float, float, float,
-     * float, float,
-     * Quaternion)
+     * float, float, Quaternion)
      * @see Transform3#updateAxes()
      * @see Vec3#one(Vec3)
      * @see Vec3#zero(Vec3)
@@ -806,7 +805,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Finds the difference between the current and previous scale of a transform.
+     * Finds the difference between the current and previous scale of a
+     * transform.
      *
      * @param t      the transform
      * @param target the output vector
@@ -1075,8 +1075,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Moves the transform by a direction multiplied by the transform's rotation.
-     * Uses the formula:
+     * Moves the transform by a direction multiplied by the transform's
+     * rotation. Uses the formula:
      * <br>
      * <br>
      * move ( dir ) := location + rotation * direction
@@ -1442,9 +1442,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Eases the transform to a scale by a step. The static easing function is used.
-     * Copies the sign
-     * of the transform's current scale.
+     * Eases the transform to a scale by a step. The static easing function is
+     * used. Copies the sign of the transform's current scale.
      *
      * @param scaleNew the new scale
      * @param step     the step in [0.0, 1.0]
@@ -1466,9 +1465,9 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Eases the transform to a scale by a step. The kind of easing is specified by
-     * a Vec3 easing
-     * function. Copies the sign of the transform's current scale.
+     * Eases the transform to a scale by a step. The kind of easing is
+     * specified by a Vec3 easing function. Copies the sign of the transform's
+     * current scale.
      *
      * @param scaleNew   the new scale
      * @param step       the step in [0.0, 1.0]
@@ -1493,7 +1492,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Sets this transform from loose real numbers. Updates the transform's axes.
+     * Sets this transform from loose real numbers. Updates the transform's
+     * axes.
      *
      * @param xLoc   the x location
      * @param yLoc   the y location
@@ -1664,8 +1664,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Returns a string representation of this transform according to its string
-     * format.
+     * Returns a string representation of this transform according to its
+     * string format.
      *
      * @return the string
      */
@@ -1675,8 +1675,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Returns a string representation of this transform according to its string
-     * format.
+     * Returns a string representation of this transform according to its
+     * string format.
      *
      * @param places the number of places
      * @return the string
@@ -1726,8 +1726,7 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * transforms. Appends to
-     * an existing {@link StringBuilder}.
+     * transforms. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -1771,8 +1770,7 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     /**
      * An easing function to facilitate animation between multiple transforms.
      */
-    public static class Easing
-        implements Utils.EasingFuncArr<Transform3>, Utils.EasingFuncObj<Transform3> {
+    public static class Easing implements Utils.EasingFuncArr<Transform3>, Utils.EasingFuncObj<Transform3> {
 
         /**
          * The location easing function.

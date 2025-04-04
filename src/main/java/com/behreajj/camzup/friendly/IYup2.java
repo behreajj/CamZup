@@ -775,8 +775,9 @@ public interface IYup2 extends IUp {
         }
 
         final float u = 1.0f - step;
-        this.moveTo(u * this.getLocX() + step * locNew.x, u * this.getLocY()
-            + step * locNew.y);
+        this.moveTo(
+            u * this.getLocX() + step * locNew.x,
+            u * this.getLocY() + step * locNew.y);
     }
 
     /**
@@ -893,8 +894,10 @@ public interface IYup2 extends IUp {
     default void ray(final Ray2 ray, final float dLen, final float lnwgt,
         final float oWeight, final float dWeight) {
 
-        this.ray(ray.origin.x, ray.origin.y, ray.dir.x, ray.dir.y, dLen, lnwgt,
-            oWeight, dWeight);
+        this.ray(
+            ray.origin.x, ray.origin.y,
+            ray.dir.x, ray.dir.y,
+            dLen, lnwgt, oWeight, dWeight);
     }
 
     /**
@@ -1332,8 +1335,9 @@ public interface IYup2 extends IUp {
         }
 
         final float u = 1.0f - step;
-        this.zoomTo(u * this.getZoomX() + step * scaleNew.x, u * this.getZoomY()
-            + step * scaleNew.y);
+        this.zoomTo(
+            u * this.getZoomX() + step * scaleNew.x,
+            u * this.getZoomY() + step * scaleNew.y);
     }
 
 }

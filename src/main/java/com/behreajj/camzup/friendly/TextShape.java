@@ -210,14 +210,17 @@ public abstract class TextShape {
                 final float leading = 1.0f;
                 final PFont.Glyph spaceGlyph = pfont.getGlyph(
                     TextShape.SPACE_WIDTH_SAMPLE);
-                final float spaceWidth = spaceGlyph != null ? spaceGlyph.width : 1;
+                final float spaceWidth = spaceGlyph != null
+                    ? spaceGlyph.width
+                    : 1;
 
                 final PFont.Glyph aSample = pfont.getGlyph(
                     TextShape.LINE_HEIGHT_SAMPLE_A);
                 final PFont.Glyph bSample = pfont.getGlyph(
                     TextShape.LINE_HEIGHT_SAMPLE_B);
-                final float lineHeight = Math.max(aSample != null ? aSample.height
-                    : 1, bSample != null ? bSample.height : 1);
+                final float lineHeight = Math.max(
+                    aSample != null ? aSample.height : 1,
+                    bSample != null ? bSample.height : 1);
                 boolean newLineFlag = false;
 
                 /*
@@ -298,7 +301,9 @@ public abstract class TextShape {
         final ArrayList<CurveEntity2> entities = new ArrayList<>();
         final Font font = (Font) pfont.getNative();
         if (font != null) {
-            final float valDispScl = displayScale != 0.0f ? displayScale : 1.0f;
+            final float valDispScl = displayScale != 0.0f
+                ? displayScale
+                : 1.0f;
             final CurveEntity2 entity = new CurveEntity2("CurveEntity2");
             final GlyphVector gv = font.createGlyphVector(frc, indices);
             final String namePrefix = "Curve2.";
@@ -367,10 +372,13 @@ public abstract class TextShape {
          * different fore- and rear-handles; the pen lifts and stops drawing.
          */
         final Shape shp = gv.getOutline();
-        final PathIterator itr = detail < Utils.EPSILON ? shp.getPathIterator(
-            null) : shp.getPathIterator(null, detail);
+        final PathIterator itr = detail < Utils.EPSILON
+            ? shp.getPathIterator(null)
+            : shp.getPathIterator(null, detail);
         final double dispScl = scale == 0.0f ? 1.0d : scale;
-        final double invScalar = fontSize == 0.0f ? dispScl : dispScl / fontSize;
+        final double invScalar = fontSize == 0.0f
+            ? dispScl
+            : dispScl / fontSize;
 
         /*
          * A double precision array is filled by the iterator when

@@ -6,8 +6,8 @@ import processing.core.PImage;
 
 /**
  * A convenience to create image planes. Creates a mesh entity with a
- * rectangular mesh scaled to the
- * dimensions of an input image and a textured material.
+ * rectangular mesh scaled to the dimensions of an input image and a textured
+ * material.
  */
 public class ImageEntity3 extends MeshEntity3 {
 
@@ -52,9 +52,8 @@ public class ImageEntity3 extends MeshEntity3 {
     }
 
     /**
-     * Creates a named image entity from a texture. The mesh's scale matches the
-     * aspect ratio; the
-     * entity's scale matches the image's longer edge.
+     * Creates a named image entity from a texture. The mesh's scale matches
+     * the aspect ratio; the entity's scale matches the image's longer edge.
      *
      * @param name       the entity name
      * @param texture    the image texture

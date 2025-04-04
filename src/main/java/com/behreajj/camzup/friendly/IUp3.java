@@ -583,9 +583,9 @@ public interface IUp3 extends IUp {
         final double ed = this.getEyeDist();
         if (ed < Utils.EPSILON_D) {
             this.moveTo(
-                (float) (ud * ox + (double) step * dx),
-                (float) (ud * oy + (double) step * dy),
-                (float) (ud * oz + (double) step * dz));
+                (float) (ud * ox + step * dx),
+                (float) (ud * oy + step * dy),
+                (float) (ud * oz + step * dz));
             return;
         }
 
@@ -594,9 +594,9 @@ public interface IUp3 extends IUp {
         if (odDot < -(1.0d - Utils.EPSILON_D) || odDot > 1.0d
             - Utils.EPSILON_D) {
             this.moveTo(
-                (float) (ud * ox + (double) step * dx),
-                (float) (ud * oy + (double) step * dy),
-                (float) (ud * oz + (double) step * dz));
+                (float) (ud * ox + step * dx),
+                (float) (ud * oy + step * dy),
+                (float) (ud * oz + step * dz));
             return;
         }
 
@@ -605,7 +605,7 @@ public interface IUp3 extends IUp {
         final double omSinInv = omSin != 0.0d ? 1.0d / omSin : 1.0d;
 
         final double oFac = Math.sin(ud * omega) * omSinInv;
-        final double dFac = Math.sin((double) step * omega) * omSinInv;
+        final double dFac = Math.sin(step * omega) * omSinInv;
 
         final double cx = oFac * ox + dFac * dx;
         final double cy = oFac * oy + dFac * dy;
@@ -614,14 +614,16 @@ public interface IUp3 extends IUp {
         final double cmsq = cx * cx + cy * cy + cz * cz;
         if (cmsq < Utils.EPSILON_D) {
             this.moveTo(
-                (float) (ud * ox + (double) step * dx),
-                (float) (ud * oy + (double) step * dy),
-                (float) (ud * oz + (double) step * dz));
+                (float) (ud * ox + step * dx),
+                (float) (ud * oy + step * dy),
+                (float) (ud * oz + step * dz));
             return;
         }
 
         final double scalar = ed / Math.sqrt(cmsq);
-        this.moveTo((float) (cx * scalar), (float) (cy * scalar),
+        this.moveTo(
+            (float) (cx * scalar),
+            (float) (cy * scalar),
             (float) (cz * scalar));
     }
 

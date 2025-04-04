@@ -829,7 +829,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
 
     @Override
     public int hashCode() {
-        return Objects.hash(forward, location, locPrev, right, rotation, rotPrev, scale, scalePrev);
+        return Objects.hash(forward, location, locPrev, right, rotation,
+            rotPrev, scale, scalePrev);
     }
 
     /**
@@ -1037,7 +1038,7 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Rotates the transform to a new orientation by a step in [0.0, 1.0] .
+     * Rotates the transform to a new orientation by a step in [0.0, 1.0].
      *
      * @param radians the angle
      * @param step    the step
@@ -1364,9 +1365,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Returns a string representation of this transform according to its string
-     * format. For display purposes, the angle is converted from radians to
-     * degrees.
+     * Returns a string representation of this transform according to its
+     * string format. For display purposes, the angle is converted from radians
+     * to degrees.
      *
      * @return the string
      */
@@ -1376,8 +1377,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     }
 
     /**
-     * Returns a string representation of this transform according to its string
-     * format.
+     * Returns a string representation of this transform according to its
+     * string format.
      *
      * @param places the number of places
      * @return the string
@@ -1416,9 +1417,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     void toBlenderCode(final StringBuilder pyCd) {
 
         /*
-         * Quaternion from angle: (cos(a * 0.5), 0.0, 0.0, sin(a * 0.5)) . Scale z
-         * is an average of scale x and y to keep the mesh proportional in Blender
-         * when it is extruded.
+         * Quaternion from angle: (cos(a * 0.5), 0.0, 0.0, sin(a * 0.5)) .
+         * Scale z is an average of scale x and y to keep the mesh proportional
+         * in Blender when it is extruded.
          */
         final String rotationMode = "\"QUATERNION\"";
         final double halfRad = this.rotation % Utils.TAU_D * 0.5d;
@@ -1512,8 +1513,7 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
     /**
      * An easing function to facilitate animating multiple transforms.
      */
-    public static class Easing
-        implements Utils.EasingFuncArr<Transform2>, Utils.EasingFuncObj<Transform2> {
+    public static class Easing implements Utils.EasingFuncArr<Transform2>, Utils.EasingFuncObj<Transform2> {
 
         /**
          * The location easing function.
@@ -1558,7 +1558,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
         }
 
         /**
-         * Eases between an origin and destination transform by a step in [0.0, 1.0] .
+         * Eases between an origin and destination transform by a step in
+         * [0.0, 1.0].
          *
          * @param orig   the origin
          * @param dest   the destination
@@ -1587,7 +1588,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
         }
 
         /**
-         * Eases between transforms in an array by a step in the range [0.0, 1.0].
+         * Eases between transforms in an array by a step in the range
+         * [0.0, 1.0].
          *
          * @param arr    the transform array
          * @param step   the step

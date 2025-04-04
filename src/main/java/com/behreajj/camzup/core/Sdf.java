@@ -1,11 +1,11 @@
 package com.behreajj.camzup.core;
 
 /**
- * Facilitates implicit shapes created with signed distance fields. Adapted from
- * the GLSL of Inigo
- * Quilez: <a href= "https://iquilezles.org/articles/distfunctions2d/">2D
- * Distance Functions</a>, <a
- * href= "https://iquilezles.org/articles/distfunctions">Distance Functions</a>.
+ * Facilitates implicit shapes created with signed distance fields. Adapted
+ * from the GLSL of Inigo Quilez:
+ * <a href= "https://iquilezles.org/articles/distfunctions2d/">2D Distance
+ * Functions</a>, <a href= "https://iquilezles.org/articles/distfunctions">
+ * Distance Functions</a>.
  *
  * @author Inigo Quilez
  */
@@ -45,20 +45,15 @@ public abstract class Sdf {
         final float arcLen = 0.5f * Utils.mod1(b - a);
         final float arcOff = a + arcLen;
 
-        return Sdf.arc(
-            point,
-            Utils.scNorm(arcOff),
-            Utils.scNorm(arcOff - 0.25f),
-            Utils.scNorm(arcLen),
-            Utils.scNorm(arcLen - 0.25f),
-            bounds,
-            weight);
+        return Sdf.arc(point, Utils.scNorm(arcOff),
+            Utils.scNorm(arcOff - 0.25f), Utils.scNorm(arcLen),
+            Utils.scNorm(arcLen - 0.25f), bounds, weight);
     }
 
     /**
-     * Draws a two-dimensional box whose dimensions are described by the bounds. See
-     * <a href=
-     * "https://www.ronja-tutorials.com/post/034-2d-sdf-basics/">https://www.ronja-tutorials.com/post/034-2d-sdf-basics/</a>.
+     * Draws a two-dimensional box whose dimensions are described by the bounds.
+     * See <a href="https://www.ronja-tutorials.com/post/034-2d-sdf-basics/">
+     * https://www.ronja-tutorials.com/post/034-2d-sdf-basics/</a>.
      *
      * @param point  the point
      * @param bounds the bounds
@@ -70,7 +65,9 @@ public abstract class Sdf {
         final float qx = Utils.abs(point.x) - bounds.x;
         final float qy = Utils.abs(point.y) - bounds.y;
 
-        final float outside = Utils.hypot(Math.max(0.0f, qx), Math.max(0.0f, qy));
+        final float outside = Utils.hypot(
+            Math.max(0.0f, qx),
+            Math.max(0.0f, qy));
         final float inside = Math.min(Math.max(qx, qy), 0.0f);
         return outside + inside;
     }
@@ -85,13 +82,17 @@ public abstract class Sdf {
      * @return the signed distance
      * @see Sdf#box(Vec2, Vec2)
      */
-    public static float box(final Vec2 point, final Vec2 bounds, final float rounding) {
+    public static float box(
+        final Vec2 point,
+        final Vec2 bounds,
+        final float rounding) {
 
         return Sdf.box(point, bounds) - rounding;
     }
 
     /**
-     * Draws a three-dimensional box whose dimensions are described by the bounds.
+     * Draws a three-dimensional box whose dimensions are described by the
+     * bounds.
      *
      * @param point  the point
      * @param bounds the bounds
@@ -114,8 +115,7 @@ public abstract class Sdf {
 
     /**
      * Draws a three-dimensional box with rounded corners whose dimensions are
-     * described by the
-     * bounds.
+     * described by the bounds.
      *
      * @param point    the point
      * @param bounds   the bounds
@@ -123,7 +123,10 @@ public abstract class Sdf {
      * @return the signed distance
      * @see Sdf#box(Vec3, Vec3)
      */
-    public static float box(final Vec3 point, final Vec3 bounds, final float rounding) {
+    public static float box(
+        final Vec3 point,
+        final Vec3 bounds,
+        final float rounding) {
 
         return Sdf.box(point, bounds) - rounding;
     }
@@ -181,11 +184,13 @@ public abstract class Sdf {
 
         final float px0 = Utils.abs(point.x);
         final float py0 = Utils.abs(point.y);
-        final float dotkp2 = 2.0f * Math.min(0.0f, -Utils.SQRT_3_2 * px0 + Utils.ONE_SQRT_3 * py0);
+        final float dotkp2 = 2.0f * Math.min(0.0f, -Utils.SQRT_3_2 * px0
+            + Utils.ONE_SQRT_3 * py0);
         final float px1 = px0 + dotkp2 * Utils.SQRT_3_2;
         final float limit = 0.5f * bounds;
         final float py2 = py0 - dotkp2 * Utils.ONE_SQRT_3 - bounds;
-        return Utils.copySign(Utils.hypot(px1 - Utils.clamp(px1, -limit, limit), py2), py2);
+        return Utils.copySign(Utils.hypot(px1
+            - Utils.clamp(px1, -limit, limit), py2), py2);
     }
 
     /**
@@ -197,7 +202,10 @@ public abstract class Sdf {
      * @return the signed distance
      * @see Sdf#hexagon(Vec2, float)
      */
-    public static float hexagon(final Vec2 point, final float bounds, final float rounding) {
+    public static float hexagon(
+        final Vec2 point,
+        final float bounds,
+        final float rounding) {
 
         return Sdf.hexagon(point, bounds) - rounding;
     }
@@ -215,7 +223,8 @@ public abstract class Sdf {
     }
 
     /**
-     * Finds the rounded intersection between two shapes as represented by factors.
+     * Finds the rounded intersection between two shapes as represented by
+     * factors.
      *
      * @param a      the left factor
      * @param b      the right factor
@@ -223,10 +232,13 @@ public abstract class Sdf {
      * @return the intersection
      * @see Utils#hypot(float, float)
      */
-    public static float intersectRound(final float a, final float b, final float radius) {
+    public static float intersectRound(
+        final float a,
+        final float b,
+        final float radius) {
 
-        return Utils.hypot(Math.max(0.0f, a + radius), Math.max(0.0f, b + radius))
-            + Math.min(Math.max(a, b), -radius);
+        return Utils.hypot(Math.max(0.0f, a + radius),
+            Math.max(0.0f, b + radius)) + Math.min(Math.max(a, b), -radius);
     }
 
     /**
@@ -240,7 +252,10 @@ public abstract class Sdf {
      * @see Utils#hypot(float, float)
      * @see Utils#clamp01(float)
      */
-    public static float line(final Vec2 point, final Vec2 orig, final Vec2 dest) {
+    public static float line(
+        final Vec2 point,
+        final Vec2 orig,
+        final Vec2 dest) {
 
         /* Denominator: b - a */
         final float bax = dest.x - orig.x;
@@ -286,9 +301,8 @@ public abstract class Sdf {
     }
 
     /**
-     * Draws a line from the origin to the destination, where the distance field is
-     * characterized by a
-     * third point's distance from the line.
+     * Draws a line from the origin to the destination, where the distance
+     * field is characterized by a third point's distance from the line.
      *
      * @param point the point
      * @param orig  the origin
@@ -297,7 +311,10 @@ public abstract class Sdf {
      * @see Utils#clamp01(float)
      * @see Utils#hypot(float, float, float)
      */
-    public static float line(final Vec3 point, final Vec3 orig, final Vec3 dest) {
+    public static float line(
+        final Vec3 point,
+        final Vec3 orig,
+        final Vec3 dest) {
 
         /* Denominator: b - a */
         final float bax = dest.x - orig.x;
@@ -325,9 +342,8 @@ public abstract class Sdf {
     }
 
     /**
-     * Draws a line from the origin to the destination, where the distance field is
-     * characterized by a
-     * third point's distance from the line.
+     * Draws a line from the origin to the destination, where the distance
+     * field is characterized by a third point's distance from the line.
      *
      * @param point    the point
      * @param orig     the origin
@@ -337,15 +353,17 @@ public abstract class Sdf {
      * @see Sdf#line(Vec3, Vec3, Vec3)
      */
     public static float line(
-        final Vec3 point, final Vec3 orig, final Vec3 dest, final float rounding) {
+        final Vec3 point,
+        final Vec3 orig,
+        final Vec3 dest,
+        final float rounding) {
 
         return Sdf.line(point, orig, dest) - rounding;
     }
 
     /**
-     * Draws a regular polygon given a count of vertices. The number of vertices
-     * should be greater
-     * than three.
+     * Draws a regular polygon given a count of vertices. The number of
+     * vertices should be greater than three.
      *
      * @param point    the point
      * @param vertices number of vertices
@@ -354,19 +372,23 @@ public abstract class Sdf {
      * @return the signed distance
      */
     public static float polygon(
-        final Vec2 point, final int vertices, final float angle, final float bounds) {
+        final Vec2 point,
+        final int vertices,
+        final float angle,
+        final float bounds) {
 
         final float a = angle + Utils.atan2(point.y, -point.x);
         final float b = Utils.TAU / Math.max(3, vertices);
-        return Utils.div(
-            (float) Math.cos(b * Utils.floor(0.5f + a / b) - a) * Utils.hypot(point.x, point.y),
-            bounds);
+        return Utils.div((float) Math.cos(b * Utils.floor(0.5f + a / b) - a)
+            * Utils.hypot(point.x, point.y), bounds);
     }
 
     /**
-     * Draws a polygon from a series of vertices. The number of vertices is assumed
-     * to be greater than
-     * three. With reference to <a href="https://www.shadertoy.com/view/wdBXRW">
+     * Draws a polygon from a series of vertices. The number of vertices is
+     * assumed to be greater than three.
+     * <br>
+     * <br>
+     * With reference to <a href="https://www.shadertoy.com/view/wdBXRW">
      * https://www.shadertoy.com/view/wdBXRW</a>.
      *
      * @param point    the point
@@ -404,7 +426,9 @@ public abstract class Sdf {
             final float wy = point.y - curr.y;
 
             final float denom = ex * ex + ey * ey;
-            final float dotp = denom == 0.0f ? 0.0f : Utils.clamp01((wx * ex + wy * ey) / denom);
+            final float dotp = denom == 0.0f
+                ? 0.0f
+                : Utils.clamp01((wx * ex + wy * ey) / denom);
             final float bx = wx - ex * dotp;
             final float by = wy - ey * dotp;
 
@@ -425,8 +449,8 @@ public abstract class Sdf {
     }
 
     /**
-     * Draws a rounded polygon from an array of vertices, assumed to be greater than
-     * two.
+     * Draws a rounded polygon from an array of vertices, assumed to be greater
+     * than two.
      *
      * @param point    the point
      * @param vertices the vertices
@@ -434,7 +458,10 @@ public abstract class Sdf {
      * @return the signed distance
      * @see Sdf#polygon(Vec2, Vec2[])
      */
-    public static float polygon(final Vec2 point, final Vec2[] vertices, final float rounding) {
+    public static float polygon(
+        final Vec2 point,
+        final Vec2[] vertices,
+        final float rounding) {
 
         return Sdf.polygon(point, vertices) - rounding;
     }
@@ -473,7 +500,10 @@ public abstract class Sdf {
      * @return the subtraction
      * @see Sdf#intersectRound(float, float, float)
      */
-    public static float subtractRound(final float a, final float b, final float radius) {
+    public static float subtractRound(
+        final float a,
+        final float b,
+        final float radius) {
 
         return Sdf.intersectRound(a, -b, radius);
     }
@@ -488,7 +518,10 @@ public abstract class Sdf {
      * @see Utils#sqrtUnchecked(float)
      * @see Vec2#mag(Vec2)
      */
-    public static float torus(final Vec2 point, final float radius, final float thickness) {
+    public static float torus(
+        final Vec2 point,
+        final float radius,
+        final float thickness) {
 
         final float n = Vec2.mag(point) - radius;
         return Utils.sqrtUnchecked(n * n) - thickness;
@@ -503,9 +536,13 @@ public abstract class Sdf {
      * @return the signed distance
      * @see Utils#hypot(float, float)
      */
-    public static float torus(final Vec3 point, final float radius, final float thickness) {
+    public static float torus(
+        final Vec3 point,
+        final float radius,
+        final float thickness) {
 
-        return Utils.hypot(Utils.hypot(point.x, point.y) - radius, point.z) - thickness;
+        return Utils.hypot(Utils.hypot(point.x, point.y) - radius, point.z)
+            - thickness;
     }
 
     /**
@@ -529,18 +566,21 @@ public abstract class Sdf {
      * @return the union
      * @see Utils#hypot(float, float)
      */
-    public static float unionRound(final float a, final float b, final float radius) {
+    public static float unionRound(
+        final float a,
+        final float b,
+        final float radius) {
 
-        return Math.max(Math.min(a, b), radius)
-            - Utils.hypot(Math.min(0.0f, a - radius), Math.min(0.0f, b - radius));
+        return Math.max(Math.min(a, b), radius) - Utils.hypot(
+            Math.min(0.0f, a - radius),
+            Math.min(0.0f, b - radius));
     }
 
     /**
-     * Draws an open arc with rounded stroke caps. The angular offset of the arc's
-     * aperture is to be
-     * calculated outside the function. The same goes for <em>twice</em> the
-     * arc-length of the arc's
-     * aperture. Based on the GLSL: <a href="https://www.shadertoy.com/view/wl23RK">
+     * Draws an open arc with rounded stroke caps. The angular offset of the
+     * arc's aperture is to be calculated outside the function. The same goes
+     * for <em>twice</em> the arc-length of the arc's aperture. Based on the
+     * GLSL: <a href="https://www.shadertoy.com/view/wl23RK">
      * https://www.shadertoy.com/view/wl23RK</a>.
      *
      * @param point    the point
@@ -563,20 +603,16 @@ public abstract class Sdf {
         final float weight) {
 
         /*
-         * Multiplying by a 2x2 matrix is equivalent to creating a rotation around
-         * the z axis and applying to the point.
+         * Multiplying by a 2x2 matrix is equivalent to creating a rotation
+         * around the z axis and applying to the point.
          */
         final float px0 = Utils.abs(sinOff * point.x - cosOff * point.y);
         final float py0 = cosOff * point.x + sinOff * point.y;
         final float dotp = px0 * px0 + py0 * py0;
 
-        return Utils.sqrt(
-            dotp
-                + bounds * bounds
-                - (bounds + bounds)
-                * (cosAptr2 * px0 > sinAptr2 * py0
-                ? px0 * sinAptr2 + py0 * cosAptr2
-                : Utils.sqrtUnchecked(dotp)))
-            - weight;
+        return Utils.sqrt(dotp + bounds * bounds - (bounds + bounds)
+            * (cosAptr2 * px0 > sinAptr2 * py0
+            ? px0 * sinAptr2 + py0 * cosAptr2
+            : Utils.sqrtUnchecked(dotp))) - weight;
     }
 }

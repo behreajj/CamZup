@@ -206,8 +206,8 @@ public class Ray3 {
     }
 
     /**
-     * An abstract class that may serve as an umbrella for any custom comparators of
-     * Ray2 s.
+     * An abstract class that may serve as an umbrella for any custom
+     * comparators of rays.
      */
     public abstract static class AbstrComparator implements Comparator<Ray3> {
 

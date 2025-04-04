@@ -99,8 +99,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
     @Override
     public void bezierVertex(final Vec2 cp0, final Vec2 cp1, final Vec2 ap1) {
 
-        this.bezierVertexImpl(cp0.x, cp0.y, 0.0f, cp1.x, cp1.y, 0.0f, ap1.x,
-            ap1.y, 0.0f);
+        this.bezierVertexImpl(
+            cp0.x, cp0.y, 0.0f,
+            cp1.x, cp1.y, 0.0f,
+            ap1.x, ap1.y, 0.0f);
     }
 
     /**
@@ -129,8 +131,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
     @Override
     public void camera() {
 
-        this.camera(this.cameraX, this.cameraY, this.cameraRot, this.cameraZoomX,
-            this.cameraZoomY);
+        this.camera(
+            this.cameraX, this.cameraY,
+            this.cameraRot,
+            this.cameraZoomX, this.cameraZoomY);
     }
 
     /**
@@ -210,8 +214,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
 
         PApplet.showMissingWarning("camera");
 
-        this.camera(xEye, yEye, Utils.atan2(yUp, xUp), this.cameraZoomX,
-            this.cameraZoomY);
+        this.camera(
+            xEye, yEye,
+            Utils.atan2(yUp, xUp),
+            this.cameraZoomX, this.cameraZoomY);
     }
 
     /**
@@ -257,8 +263,7 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
      * @param d the fourth point
      */
     @Override
-    public void curve(final Vec2 a, final Vec2 b, final Vec2 c,
-        final Vec2 d) {
+    public void curve(final Vec2 a, final Vec2 b, final Vec2 c, final Vec2 d) {
 
         this.curve(a.x, a.y, b.x, b.y, c.x, c.y, d.x, d.y);
     }
@@ -477,8 +482,10 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
      */
     public void handles(final CurveEntity2 ce, final float sw) {
 
-        this.handles(ce, sw, IUp.DEFAULT_HANDLE_COLOR,
-            IUp.DEFAULT_HANDLE_REAR_COLOR, IUp.DEFAULT_HANDLE_FORE_COLOR,
+        this.handles(ce, sw,
+            IUp.DEFAULT_HANDLE_COLOR,
+            IUp.DEFAULT_HANDLE_REAR_COLOR,
+            IUp.DEFAULT_HANDLE_FORE_COLOR,
             IUp.DEFAULT_HANDLE_COORD_COLOR);
     }
 
@@ -1009,8 +1016,9 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
     public Vec2 screen(final Vec2 source, final Vec2 target) {
 
         this.screen1s(source.x, source.y, target);
-        return target.set(this.width * (1.0f + target.x) * 0.5f, this.height
-            * (1.0f - (1.0f + target.y) * 0.5f));
+        return target.set(
+            this.width * (1.0f + target.x) * 0.5f,
+            this.height * (1.0f - (1.0f + target.y) * 0.5f));
     }
 
     /**

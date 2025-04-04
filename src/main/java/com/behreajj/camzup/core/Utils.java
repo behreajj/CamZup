@@ -6,6 +6,12 @@ package com.behreajj.camzup.core;
 public abstract class Utils {
 
     /**
+     * An angle in degrees is multiplied by this constant to convert it to
+     * radians. pi / 180.0.
+     */
+    public static final float DEG_TO_RAD = 0.017453292f;
+
+    /**
      * The smallest positive non-zero value. Useful for testing approximation
      * between two floats.
      */
@@ -32,6 +38,22 @@ public abstract class Utils {
      * Pi divided by two.
      */
     public static final float HALF_PI = 1.5707964f;
+
+    /**
+     * Base value used by hash code functions.
+     */
+    public static final int HASH_BASE = -2128831035;
+
+    /**
+     * Multiplier used by hash code functions.
+     */
+    public static final int HASH_MUL = 16777619;
+    
+    /**
+     * The hash base multiplied by the hash scalar.
+     */
+    @SuppressWarnings("NumericOverflow")
+    public static final int MUL_BASE = Utils.HASH_BASE * Utils.HASH_MUL;
 
     /**
      * One-255th, 1.0 / 255.0 . Useful when converting a color with channels in the
@@ -142,25 +164,10 @@ public abstract class Utils {
     public static final float THIRD_PI = 1.0471976f;
 
     /**
-     * Base value used by hash code functions.
-     */
-    public static int HASH_BASE = -2128831035;
-
-    /**
-     * Multiplier used by hash code functions.
-     */
-    public static int HASH_MUL = 16777619;
-
-    /**
-     * The hash base multiplied by the hash scalar.
-     */
-    public static int MUL_BASE = Utils.HASH_BASE * Utils.HASH_MUL;
-
-    /**
      * Two-thirds, 2.0 / 3.0 . Useful for setting handles on the knot of a
      * Bézier curve.
      */
-    public static float TWO_THIRDS = 0.6666667f;
+    public static final float TWO_THIRDS = 0.6666667f;
 
     /**
      * Discourage overriding with a private constructor.
@@ -277,7 +284,8 @@ public abstract class Utils {
      * <br>
      * <br>
      * {@link Math#asin(double) } defers to {@link StrictMath#asin(double) },
-     * which is implemented natively. This is not a "fast" alternative.<br>
+     * which is implemented natively. This is not a "fast" alternative.
+     * <br>
      * <br>
      * Based on the algorithm in
      * <a href="https://developer.download.nvidia.com/cg/asin.html">Nvidia
@@ -368,8 +376,8 @@ public abstract class Utils {
     }
 
     /**
-     * Appends to an array of bytes, ordered from least to most significant digit
-     * (little endian). Writes 4 bytes.
+     * Appends to an array of bytes, ordered from least to most significant
+     * digit (little endian). Writes 4 bytes.
      *
      * @param i4 the integer
      * @param a  the array
@@ -569,7 +577,8 @@ public abstract class Utils {
     /**
      * Returns the first floating-point argument with the sign of the second
      * floating-point argument. An alias of
-     * {@link Math#copySign(float, float)}.<br>
+     * {@link Math#copySign(float, float)}.
+     * <br>
      * <br>
      * When the sign is zero, the return value will depend on the sign of the
      * zero.
@@ -606,7 +615,8 @@ public abstract class Utils {
 
     /**
      * Finds the single-precision cosine of an angle in radians. Returns a
-     * value in the range [-1.0, 1.0] .<br>
+     * value in the range [-1.0, 1.0] .
+     * <br>
      * <br>
      * Wraps {@link Math#cos(double)}.
      *
@@ -709,7 +719,7 @@ public abstract class Utils {
 
     /**
      * Returns the value if it is greater than the lower bound, inclusive, and
-     * less than the upper bound, exclusive. Otherwise, returns 0.0 .
+     * less than the upper bound, exclusive. Otherwise, returns 0.0.
      *
      * @param v  the input value
      * @param lb the lower bound
@@ -801,7 +811,8 @@ public abstract class Utils {
     /**
      * Finds the signed fractional portion of the input value by subtracting
      * the value's truncation from the value, i.e., fract ( <em>a</em> ) :=
-     * <em>a</em> - trunc ( <em>a</em> ) .<br>
+     * <em>a</em> - trunc ( <em>a</em> ) .
+     * <br>
      * <br>
      * Use this instead of fmod ( <em>a</em>, 1.0 ) or <em>a</em> % 1.0 .
      *
@@ -928,10 +939,12 @@ public abstract class Utils {
      * based on the 'evil bit hack' from <em>Quake III</em>, as described by
      * Chris Lomont in "<a href="http://www.lomont.org/papers/2003/InvSqrt.pdf">
      * Fast Inverse Square Root</a>." For accuracy, the result is refined three
-     * times with the Newton-Raphson method.<br>
+     * times with the Newton-Raphson method.
+     * <br>
      * <br>
      * Useful when normalizing vectors or quaternions. Prefer this over
-     * {@link Utils#sqrt(float)}, which depends on this function.<br>
+     * {@link Utils#sqrt(float)}, which depends on this function.
+     * <br>
      * <br>
      * Contrary to the name, this should not be assumed to be faster than
      * {@link Math#sqrt(double)}.
@@ -994,7 +1007,7 @@ public abstract class Utils {
 
     /**
      * Linear interpolation from the origin to the destination value by a step.
-     * Does not check to see if the step is beyond the range [0.0, 1.0] .
+     * Does not check to see if the step is beyond the range [0.0, 1.0].
      *
      * @param orig the origin value
      * @param dest the destination value
@@ -1011,7 +1024,7 @@ public abstract class Utils {
 
     /**
      * Linear interpolation from the origin to the destination value by a step.
-     * Does not check to see if the step is beyond the range [0.0, 1.0] .
+     * Does not check to see if the step is beyond the range [0.0, 1.0].
      * Rounds the result to an integer.
      *
      * @param orig the origin value
@@ -1351,7 +1364,7 @@ public abstract class Utils {
 
     /**
      * A specialized version of modulo which shifts an angle in radians to the
-     * range [0.0, tau] .
+     * range [0.0, tau].
      *
      * @param radians the angle in radians
      * @return the wrapped radians
@@ -1423,7 +1436,7 @@ public abstract class Utils {
     /**
      * Evaluates two floats like booleans, using the inclusive or (OR) logic
      * gate. Non-zero inputs evaluate to true, or 1. Zero evaluates to false,
-     * or 0.
+     * or zero.
      *
      * @param a the left operand
      * @param b the right operand
@@ -1598,7 +1611,7 @@ public abstract class Utils {
 
     /**
      * Rounds a value to an integer based on whether its fractional portion is
-     * greater than or equal to plus or minus 0.5 .
+     * greater than or equal to plus or minus 0.5.
      *
      * @param v the input value
      * @return the rounded value
@@ -1617,8 +1630,7 @@ public abstract class Utils {
      * <br>
      * This is based on the algorithm described in <a
      * href="https://developer.download.nvidia.com/cg/sin.html">Nvidia Cg 3.1
-     * Toolkit
-     * Documentation</a> .
+     * Toolkit Documentation</a> .
      *
      * @param normRad the normalized radians
      * @return the approximate value
@@ -1695,8 +1707,8 @@ public abstract class Utils {
 
     /**
      * An alternative to the {@link Math#signum(float)} function. Returns the
-     * integer 0 for both -0.0 (signed negative zero) and 0.0
-     * (signed positive zero).
+     * integer 0 for both -0.0 (signed negative zero) and 0.0 (signed positive
+     * zero).
      *
      * @param v the value
      * @return the sign
@@ -1709,7 +1721,8 @@ public abstract class Utils {
 
     /**
      * Finds the single precision sine of an angle in radians. Returns a value
-     * in the range [-1.0, 1.0] .<br>
+     * in the range [-1.0, 1.0] .
+     * <br>
      * <br>
      * Wraps {@link Math#sin(double)}.
      *
@@ -1836,8 +1849,8 @@ public abstract class Utils {
      * <p>
      * Intended to serve as an alternative to
      * {@link String#format(String, Object...)}, which is very
-     * slow, and DecimalFormat, which extrapolates values beyond the last decimal
-     * place.
+     * slow, and DecimalFormat, which extrapolates values beyond the last
+     * decimal place.
      *
      * @param v      the real number
      * @param places the number of decimal places
@@ -2153,10 +2166,9 @@ public abstract class Utils {
     }
 
     /**
-     * An internal helper function to the {@link Utils#toPadded(int, int)} method
-     * and other String
-     * representation functions. Appends to a {@link StringBuilder} passed in by
-     * reference.
+     * An internal helper function to the {@link Utils#toPadded(int, int)}
+     * method and other String representation functions. Appends to a
+     * {@link StringBuilder} passed in by reference.
      *
      * @param sb     the string builder
      * @param v      the integer
@@ -2256,7 +2268,8 @@ public abstract class Utils {
     }
 
     /**
-     * A functional interface for an easing function which interpolates an array.
+     * A functional interface for an easing function which interpolates an
+     * array.
      *
      * @param <T> the parameter type
      */
@@ -2366,9 +2379,7 @@ public abstract class Utils {
     public static class LerpCCW extends PeriodicEasing {
 
         /**
-         * Constructs the lerp CCW functional object with a default range,
-         * {@link Utils#TAU} ({@value
-         * Utils#TAU}).
+         * Constructs the lerp CCW functional object with a default range.
          */
         public LerpCCW() {
         }
@@ -2410,9 +2421,7 @@ public abstract class Utils {
     public static class LerpCW extends PeriodicEasing {
 
         /**
-         * Constructs the lerp CW functional object with a default range,
-         * {@link Utils#TAU} ({@value
-         * Utils#TAU}).
+         * Constructs the lerp CW functional object with a default range.
          */
         public LerpCW() {
         }
@@ -2454,9 +2463,7 @@ public abstract class Utils {
     public static class LerpNear extends PeriodicEasing {
 
         /**
-         * Constructs the lerp near functional object with a default range,
-         * {@link Utils#TAU} ({@value
-         * Utils#TAU}).
+         * Constructs the lerp near functional object with a default range.
          */
         public LerpNear() {
         }
@@ -2545,7 +2552,8 @@ public abstract class Utils {
         protected float range = 1.0f;
 
         /**
-         * Constructs the easing functional object with a default range, TAU.
+         * Constructs the easing functional object with a
+         * {@link PeriodicEasing#DEFAULT_RANGE}.
          */
         protected PeriodicEasing() {
 
@@ -2621,7 +2629,8 @@ public abstract class Utils {
 
         /**
          * Applies the easing function without checking whether the step is out
-         * of bounds, [0.0, 1.0] .<br>
+         * of bounds, [0.0, 1.0].
+         * <br>
          * <br>
          * This function needs to be protected because the public apply above
          * verifies the data upon which applyUnclamped operates.

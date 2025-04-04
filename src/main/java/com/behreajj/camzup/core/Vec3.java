@@ -331,11 +331,9 @@ public class Vec3 implements Comparable<Vec3> {
      */
     public static boolean areParallel(final Vec3 a, final Vec3 b, final float tolerance) {
 
-        /* @formatter:off */
-    return Utils.abs(a.y * b.z - a.z * b.y) <= tolerance
-        && Utils.abs(a.z * b.x - a.x * b.z) <= tolerance
-        && Utils.abs(a.x * b.y - a.y * b.x) <= tolerance;
-    /* @formatter:on */
+        return Utils.abs(a.y * b.z - a.z * b.y) <= tolerance
+            && Utils.abs(a.z * b.x - a.x * b.z) <= tolerance
+            && Utils.abs(a.x * b.y - a.y * b.x) <= tolerance;
     }
 
     /**

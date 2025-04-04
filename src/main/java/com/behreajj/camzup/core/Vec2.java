@@ -6,11 +6,9 @@ import java.util.Random;
 
 /**
  * A mutable, extensible class influenced by the GLSL, OSL and Processing
- * PVector. This is intended
- * for storing points and directions in two-dimensional graphics programs.
- * Instance methods are
- * limited, while most static methods require an explicit output variable to be
- * provided.
+ * PVector. This is intended for storing points and directions in
+ * two-dimensional graphics programs. Instance methods are limited, while most
+ * static methods require an explicit output variable to be provided.
  */
 public class Vec2 implements Comparable<Vec2> {
 
@@ -104,8 +102,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Adds and then normalizes two vectors. Discloses the intermediate sum as an
-     * output.
+     * Adds and then normalizes two vectors. Discloses the intermediate sum as
+     * an output.
      *
      * @param a      left operand
      * @param b      right operand
@@ -122,9 +120,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Tests to see if all the vector's components are non-zero. Useful for finding
-     * valid dimensions
-     * (width and depth) stored in vectors.
+     * Tests to see if all the vector's components are non-zero. Useful for
+     * finding valid dimensions (width and depth) stored in vectors.
      *
      * @param v the input vector
      * @return the evaluation
@@ -149,7 +146,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Finds the angle between two vectors. Returns zero when either vector is zero.
+     * Finds the angle between two vectors. Returns zero when either vector is
+     * zero.
      *
      * @param a the first vector
      * @param b the second vector
@@ -168,7 +166,9 @@ public class Vec2 implements Comparable<Vec2> {
             final double by = b.y;
 
             return (float) Math.acos(
-                (ax * bx + ay * by) / (Math.sqrt(ax * ax + ay * ay) * Math.sqrt(bx * bx + by * by)));
+                (ax * bx + ay * by)
+                    / (Math.sqrt(ax * ax + ay * ay)
+                    * Math.sqrt(bx * bx + by * by)));
         }
         return 0.0f;
     }
@@ -284,9 +284,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Tests to see if two vectors are parallel. Does so by evaluating whether the
-     * cross product of
-     * the two approximates zero.
+     * Tests to see if two vectors are parallel. Does so by evaluating whether
+     * the cross product of the two approximates zero.
      *
      * @param a         the left comparisand
      * @param b         the right comparisand
@@ -312,10 +311,9 @@ public class Vec2 implements Comparable<Vec2> {
 
     /**
      * Returns a point on a Bézier curve described by two anchor points and two
-     * control points
-     * according to a step in [0.0, 1.0] . When the step is less than zero, returns
-     * the first anchor
-     * point. When the step is greater than one, returns the second anchor point.
+     * control points according to a step in [0.0, 1.0]. When the step is less
+     * than zero, returns the first anchor point. When the step is greater than
+     * one, returns the second anchor point.
      *
      * @param ap0    the first anchor point
      * @param cp0    the first control point
@@ -361,13 +359,11 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Returns a tangent on a Bézier curve described by two anchor points and two
-     * control points
-     * according to a step in [0.0, 1.0] . When the step is less than zero, returns
-     * the first anchor
-     * point subtracted from the first control point. When the step is greater than
-     * one, returns the
-     * second anchor point subtracted from the second control point.
+     * Returns a tangent on a Bézier curve described by two anchor points and
+     * two control points according to a step in [0.0, 1.0]. When the step is
+     * less than zero, returns the first anchor point subtracted from the first
+     * control point. When the step is greater than one, returns the second
+     * anchor point subtracted from the second control point.
      *
      * @param ap0    the first anchor point
      * @param cp0    the first control point
@@ -400,11 +396,9 @@ public class Vec2 implements Comparable<Vec2> {
         final float tsq3 = step * t3;
         final float ut6 = u * (t3 + t3);
 
-        /* @formatter:off */
-    return target.set(
-        (cp0.x - ap0.x) * usq3 + (cp1.x - cp0.x) * ut6 + (ap1.x - cp1.x) * tsq3,
-        (cp0.y - ap0.y) * usq3 + (cp1.y - cp0.y) * ut6 + (ap1.y - cp1.y) * tsq3);
-    /* @formatter:on */
+        return target.set(
+            (cp0.x - ap0.x) * usq3 + (cp1.x - cp0.x) * ut6 + (ap1.x - cp1.x) * tsq3,
+            (cp0.y - ap0.y) * usq3 + (cp1.y - cp0.y) * ut6 + (ap1.y - cp1.y) * tsq3);
     }
 
     /**
@@ -435,8 +429,7 @@ public class Vec2 implements Comparable<Vec2> {
 
     /**
      * Appends to an array of bytes, ordered from least to most significant digit
-     * (little endian).
-     * Writes 8 bytes.
+     * (little endian). Writes 8 bytes.
      *
      * @param v   the vector
      * @param arr the array
@@ -454,8 +447,7 @@ public class Vec2 implements Comparable<Vec2> {
 
     /**
      * Appends to an array of bytes, ordered from most to least significant digit
-     * (big endian). Writes
-     * 8 bytes.
+     * (big endian). Writes 8 bytes.
      *
      * @param v   the vector
      * @param arr the array
@@ -532,15 +524,16 @@ public class Vec2 implements Comparable<Vec2> {
      */
     public static Vec2 copySign(final Vec2 magnitude, final Vec2 sign, final Vec2 target) {
 
-        return target.set(Utils.copySign(magnitude.x, sign.x), Utils.copySign(magnitude.y, sign.y));
+        return target.set(
+            Utils.copySign(magnitude.x, sign.x),
+            Utils.copySign(magnitude.y, sign.y));
     }
 
     /**
-     * Returns the z component of the cross product between two vectors. The x and y
-     * components of the
-     * cross between 2D vectors are zero. For that reason, the normalized cross
-     * product is equal to
-     * the sign of the cross product.
+     * Returns the z component of the cross product between two vectors. The x
+     * and y components of the cross between 2D vectors are zero. For that
+     * reason, the normalized cross product is equal to the sign of the cross
+     * product.
      *
      * @param a left operand
      * @param b right operand
@@ -562,7 +555,9 @@ public class Vec2 implements Comparable<Vec2> {
      */
     public static Vec2 diff(final Vec2 a, final Vec2 b, final Vec2 target) {
 
-        return target.set(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y));
+        return target.set(
+            Utils.diff(a.x, b.x),
+            Utils.diff(a.y, b.y));
     }
 
     /**
@@ -579,8 +574,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Finds the Chebyshev distance between two vectors. Forms a square pattern when
-     * plotted.
+     * Finds the Chebyshev distance between two vectors. Forms a square pattern
+     * when plotted.
      *
      * @param a left operand
      * @param b right operand
@@ -594,8 +589,7 @@ public class Vec2 implements Comparable<Vec2> {
 
     /**
      * Finds the Euclidean distance between two vectors. Where possible, use
-     * distance squared to avoid
-     * the computational cost of the square-root.
+     * distance squared to avoid the computational cost of the square-root.
      *
      * @param a left operand
      * @param b right operand
@@ -609,8 +603,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Finds the Manhattan distance between two vectors. Forms a diamond pattern
-     * when plotted.
+     * Finds the Manhattan distance between two vectors. Forms a diamond
+     * pattern when plotted.
      *
      * @param a left operand
      * @param b right operand
@@ -623,11 +617,10 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Finds the Minkowski distance between two vectors. This is a generalization of
-     * other distance
-     * formulae. When the exponent value, c, is 1.0, the Minkowski distance equals
-     * the Manhattan
-     * distance; when it is 2.0, Minkowski equals the Euclidean distance.
+     * Finds the Minkowski distance between two vectors. This is a
+     * generalization of other distance formulae. When the exponent value, c,
+     * is 1.0, the Minkowski distance equals the Manhattan distance; when it is
+     * 2.0, Minkowski equals the Euclidean distance.
      *
      * @param a left operand
      * @param b right operand
@@ -639,13 +632,11 @@ public class Vec2 implements Comparable<Vec2> {
     public static float distMinkowski(final Vec2 a, final Vec2 b, final float c) {
 
         if (c != 0.0f) {
-            /* @formatter:off */
-      return (float)
-          Math.pow(
-              Math.pow(Math.abs((double) (b.x - a.x)), c)
-                  + Math.pow(Math.abs((double) (b.y - a.y)), c),
-              1.0d / c);
-      /* @formatter:on */
+            return (float)
+                Math.pow(
+                    Math.pow(Math.abs((double) (b.x - a.x)), c)
+                        + Math.pow(Math.abs((double) (b.y - a.y)), c),
+                    1.0d / c);
         }
 
         return 0.0f;
@@ -653,8 +644,8 @@ public class Vec2 implements Comparable<Vec2> {
 
     /**
      * Finds the Euclidean distance squared between two vectors. Equivalent to
-     * subtracting one vector
-     * from the other, then finding the dot product of the difference with itself.
+     * subtracting one vector from the other, then finding the dot product of
+     * the difference with itself.
      *
      * @param a left operand
      * @param b right operand
@@ -715,8 +706,8 @@ public class Vec2 implements Comparable<Vec2> {
 
     /**
      * Finds the dot product of two vectors by summing the products of their
-     * corresponding components.
-     * The dot product of a vector with itself is equal to its magnitude squared.
+     * corresponding components. The dot product of a vector with itself is
+     * equal to its magnitude squared.
      *
      * @param a left operand
      * @param b right operand
@@ -740,9 +731,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Filters a vector by setting each component to the input component if it is in
-     * bounds and 0.0 if
-     * it is out of bounds.
+     * Filters a vector by setting each component to the input component if it
+     * is in bounds and 0.0 if it is out of bounds.
      *
      * @param v      the vector
      * @param lb     the lower bound
@@ -753,7 +743,9 @@ public class Vec2 implements Comparable<Vec2> {
      */
     public static Vec2 filter(final Vec2 v, final Vec2 lb, final Vec2 ub, final Vec2 target) {
 
-        return target.set(Utils.filter(v.x, lb.x, ub.x), Utils.filter(v.y, lb.y, ub.y));
+        return target.set(
+            Utils.filter(v.x, lb.x, ub.x),
+            Utils.filter(v.y, lb.y, ub.y));
     }
 
     /**
@@ -772,8 +764,8 @@ public class Vec2 implements Comparable<Vec2> {
         }
 
         /*
-         * Copy each inner array to the result array, then move the cursor by the
-         * length of each array.
+         * Copy each inner array to the result array, then move the cursor by
+         * the length of each array.
          */
         int j = 0;
         final Vec2[] result = new Vec2[totalLen];
@@ -814,8 +806,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Applies the % operator (truncation-based modulo) to each component of the
-     * left operand.
+     * Applies the % operator (truncation-based modulo) to each component of
+     * the left operand.
      *
      * @param a      left operand
      * @param b      right operand
@@ -831,8 +823,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Applies the % operator (truncation-based modulo) to each component of the
-     * left operand.
+     * Applies the % operator (truncation-based modulo) to each component of
+     * the left operand.
      *
      * @param a      left operand
      * @param b      right operand
@@ -846,7 +838,7 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Returns to a vector with a positive value on the y-axis, (0.0, 1.0) .
+     * Returns to a vector with a positive value on the y-axis, (0.0, 1.0).
      *
      * @param target the output vector
      * @return the forward vector
@@ -870,9 +862,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Creates a vector from polar coordinates: (1) theta, an angle in radians, the
-     * vector's heading;
-     * (2) rho, a radius, the vector's magnitude.
+     * Creates a vector from polar coordinates: (1) theta, an angle in radians,
+     * the vector's heading; (2) rho, a radius, the vector's magnitude.
      *
      * @param heading the angle in radians
      * @param radius  the radius
@@ -886,9 +877,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Creates a vector with a magnitude of 1.0 from an angle, such that the vector
-     * is on the unit
-     * circle.
+     * Creates a vector with a magnitude of 1.0 from an angle, such that the
+     * vector is on the unit circle.
      *
      * @param heading the angle in radians
      * @param target  the output vector
@@ -901,8 +891,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Generates a 2D array of vectors. Defaults to the coordinate range of [-0.5,
-     * 0.5] .
+     * Generates a 2D array of vectors. Defaults to the coordinate range of
+     * [-0.5, 0.5].
      *
      * @param res the resolution
      * @return the array
@@ -914,11 +904,9 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Generates a 2D array of vectors. The result is in row-major order, but the
-     * parameters are
-     * supplied in reverse: columns first, then rows. Defaults to the coordinate
-     * range of [-0.5, 0.5]
-     * .
+     * Generates a 2D array of vectors. The result is in row-major order, but
+     * the parameters are supplied in reverse: columns first, then rows.
+     * Defaults to the coordinate range of [-0.5, 0.5].
      *
      * @param cols number of columns
      * @param rows number of rows
@@ -931,9 +919,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Generates a 2D array of vectors. The result is in row-major order, but the
-     * parameters are
-     * supplied in reverse: columns first, then rows.
+     * Generates a 2D array of vectors. The result is in row-major order, but
+     * the parameters are supplied in reverse: columns first, then rows.
      *
      * @param cols       number of columns
      * @param rows       number of rows
@@ -942,16 +929,16 @@ public class Vec2 implements Comparable<Vec2> {
      * @return the array
      * @see Vec2#grid(int, int, float, float, float, float)
      */
-    public static Vec2[][] grid(
-        final int cols, final int rows, final float lowerBound, final float upperBound) {
+    public static Vec2[][] grid(final int cols, final int rows,
+        final float lowerBound, final float upperBound) {
 
-        return Vec2.grid(cols, rows, lowerBound, lowerBound, upperBound, upperBound);
+        return Vec2.grid(cols, rows, lowerBound, lowerBound, upperBound,
+            upperBound);
     }
 
     /**
-     * Generates a 2D array of vectors. The result is in row-major order, but the
-     * parameters are
-     * supplied in reverse: columns first, then rows.
+     * Generates a 2D array of vectors. The result is in row-major order, but
+     * the parameters are supplied in reverse: columns first, then rows.
      *
      * @param cols       number of columns
      * @param rows       number of rows
@@ -960,16 +947,16 @@ public class Vec2 implements Comparable<Vec2> {
      * @return the array
      * @see Vec2#grid(int, int, float, float, float, float)
      */
-    public static Vec2[][] grid(
-        final int cols, final int rows, final Vec2 lowerBound, final Vec2 upperBound) {
+    public static Vec2[][] grid(final int cols, final int rows,
+        final Vec2 lowerBound, final Vec2 upperBound) {
 
-        return Vec2.grid(cols, rows, lowerBound.x, lowerBound.y, upperBound.x, upperBound.y);
+        return Vec2.grid(cols, rows, lowerBound.x, lowerBound.y, upperBound.x,
+            upperBound.y);
     }
 
     /**
-     * Generates a 2D array of vectors. The array is ordered by rings, then sectors;
-     * the parameters
-     * are supplied in reverse order.
+     * Generates a 2D array of vectors. The array is ordered by rings, then
+     * sectors; the parameters are supplied in reverse order.
      *
      * @param sectors the sectors, headings
      * @param radius  the radius
@@ -982,9 +969,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Generates a 2D array of vectors. The array is ordered by rings, then sectors;
-     * the parameters
-     * are supplied in reverse order.
+     * Generates a 2D array of vectors. The array is ordered by rings, then
+     * sectors; the parameters are supplied in reverse order.
      *
      * @param sectors   the sectors, headings
      * @param rings     the rings, radii
@@ -993,16 +979,15 @@ public class Vec2 implements Comparable<Vec2> {
      * @return the array
      * @see Vec2#gridPolar(int, int, float, float, float, boolean)
      */
-    public static Vec2[][] gridPolar(
-        final int sectors, final int rings, final float radiusMin, final float radiusMax) {
+    public static Vec2[][] gridPolar(final int sectors, final int rings,
+        final float radiusMin, final float radiusMax) {
 
         return Vec2.gridPolar(sectors, rings, radiusMin, radiusMax, 0.0f, true);
     }
 
     /**
-     * Generates a 2D array of vectors. The array is ordered by rings, then sectors;
-     * the parameters
-     * are supplied in reverse order.
+     * Generates a 2D array of vectors. The array is ordered by rings, then
+     * sectors; the parameters are supplied in reverse order.
      *
      * @param sectors   the sectors, headings
      * @param rings     the rings, radii
@@ -1023,9 +1008,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Generates a 2D array of vectors. The array is ordered by rings, then sectors;
-     * the parameters
-     * are supplied in reverse order.
+     * Generates a 2D array of vectors. The array is ordered by rings, then
+     * sectors; the parameters are supplied in reverse order.
      *
      * @param sectors       the sectors, headings
      * @param rings         the rings, radii
@@ -1050,7 +1034,9 @@ public class Vec2 implements Comparable<Vec2> {
 
         final boolean oneRing = vRing == 1;
         final float vrMax = Utils.max(Utils.EPSILON, radiusMin, radiusMax);
-        final float vrMin = oneRing ? vrMax : Math.max(Utils.EPSILON, Math.min(radiusMin, radiusMax));
+        final float vrMin = oneRing
+            ? vrMax
+            : Math.max(Utils.EPSILON, Math.min(radiusMin, radiusMax));
 
         final int ringLen = includeCenter ? rings + 1 : rings;
         final Vec2[][] result = new Vec2[ringLen][vSect];
@@ -1072,7 +1058,8 @@ public class Vec2 implements Comparable<Vec2> {
             final float radius = (1.0f - iStep) * vrMin + iStep * vrMax;
             final float theta = offset + j * toTheta;
 
-            result[includeCenter ? 1 + i : i][j] = new Vec2(radius * Utils.scNorm(theta),
+            result[includeCenter ? 1 + i : i][j] = new Vec2(
+                radius * Utils.scNorm(theta),
                 radius * Utils.scNorm(theta - 0.25f));
         }
 
@@ -1080,9 +1067,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Evaluates whether all components of the left comparisand are greater than
-     * those of the right
-     * comparisand.
+     * Evaluates whether all components of the left comparisand are greater
+     * than those of the right comparisand.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -1094,7 +1080,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Evaluates whether the left comparisand is greater than the right comparisand.
+     * Evaluates whether the left comparisand is greater than the right
+     * comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -1107,9 +1094,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Evaluates whether all components of the left comparisand are greater than or
-     * equal to those of
-     * the right comparisand.
+     * Evaluates whether all components of the left comparisand are greater
+     * than or equal to those of the right comparisand.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -1121,8 +1107,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Evaluates whether the left comparisand is greater than or equal to the right
-     * comparisand.
+     * Evaluates whether the left comparisand is greater than or equal to the
+     * right comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -1160,7 +1146,7 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Finds the vector's heading in the range [-pi, pi] .
+     * Finds the vector's heading in the range [-pi, pi].
      *
      * @param v the input vector
      * @return the angle in radians
@@ -1172,7 +1158,7 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Finds the vector's heading in the range [0.0, tau] .
+     * Finds the vector's heading in the range [0.0, tau].
      *
      * @param v the input vector
      * @return the angle in radians
@@ -1185,9 +1171,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Inserts an array of vectors in the midst of another. The insertion point is
-     * before, or to the
-     * left of, the existing element at a given index.
+     * Inserts an array of vectors in the midst of another. The insertion point
+     * is before, or to the left of, the existing element at a given index.
      *
      * @param arr    the array
      * @param index  the insertion index
@@ -1211,8 +1196,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Tests to see if the vector is on the unit circle, i.e., has a magnitude of
-     * approximately 1.0 .
+     * Tests to see if the vector is on the unit circle, i.e., has a magnitude
+     * of approximately 1.0 .
      *
      * @param v the input vector
      * @return the evaluation
@@ -1257,9 +1242,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Evaluates whether all components of the left comparisand are less than those
-     * of the right
-     * comparisand.
+     * Evaluates whether all components of the left comparisand are less than
+     * those of the right comparisand.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -1271,7 +1255,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Evaluates whether the left comparisand is less than the right comparisand.
+     * Evaluates whether the left comparisand is less than the right
+     * comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -1284,9 +1269,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Evaluates whether all components of the left comparisand are less than or
-     * equal to those of the
-     * right comparisand.
+     * Evaluates whether all components of the left comparisand are less than
+     * or equal to those of the right comparisand.
      *
      * @param a left comparisand
      * @param b right comparisand
@@ -1298,8 +1282,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Evaluates whether the left comparisand is less than or equal to the right
-     * comparisand.
+     * Evaluates whether the left comparisand is less than or equal to the
+     * right comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -1312,11 +1296,10 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Finds the length, or magnitude, of a vector, |<em>a</em>| . Also referred to
-     * as the radius when
-     * using polar coordinates. Uses the formula √ <em>a</em> . <em>a</em> . Where
-     * possible, use magSq
-     * or dot to avoid the computational cost of the square-root.
+     * Finds the length, or magnitude, of a vector, |<em>a</em>| . Also
+     * referred to as the radius when using polar coordinates. Uses the formula
+     * √ <em>a</em> . <em>a</em> . Where possible, use magSq or dot to avoid
+     * the computational cost of the square-root.
      *
      * @param v the input vector
      * @return the magnitude
@@ -1329,10 +1312,9 @@ public class Vec2 implements Comparable<Vec2> {
 
     /**
      * Finds the length-, or magnitude-, squared of a vector,
-     * |<em>a</em>|<sup>2</sup>. Returns the
-     * same result as <em>a</em> . <em>a</em> . Useful when calculating the lengths
-     * of many vectors,
-     * to avoid the computational cost of the square-root.
+     * |<em>a</em>|<sup>2</sup>. Returns the same result as
+     * <em>a</em> . <em>a</em> . Useful when calculating the lengths of many
+     * vectors, to avoid the computational cost of the square-root.
      *
      * @param v the input vector
      * @return the magnitude squared
@@ -1368,7 +1350,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Sets the target vector to the maximum of the input vector and a lower bound.
+     * Sets the target vector to the maximum of the input vector and a lower
+     * bound.
      *
      * @param a          the input value
      * @param lowerBound the lower bound
@@ -1377,12 +1360,14 @@ public class Vec2 implements Comparable<Vec2> {
      */
     public static Vec2 max(final Vec2 a, final float lowerBound, final Vec2 target) {
 
-        return target.set(Math.max(a.x, lowerBound), Math.max(a.y, lowerBound));
+        return target.set(
+            Math.max(a.x, lowerBound),
+            Math.max(a.y, lowerBound));
     }
 
     /**
-     * Sets the target vector to the maximum components of the input vector and a
-     * lower bound.
+     * Sets the target vector to the maximum components of the input vector and
+     * a lower bound.
      *
      * @param a          the input vector
      * @param lowerBound the lower bound
@@ -1391,12 +1376,14 @@ public class Vec2 implements Comparable<Vec2> {
      */
     public static Vec2 max(final Vec2 a, final Vec2 lowerBound, final Vec2 target) {
 
-        return target.set(Math.max(a.x, lowerBound.x), Math.max(a.y, lowerBound.y));
+        return target.set(
+            Math.max(a.x, lowerBound.x),
+            Math.max(a.y, lowerBound.y));
     }
 
     /**
-     * Sets the target vector to the minimum components of the input vector and an
-     * upper bound.
+     * Sets the target vector to the minimum components of the input vector and
+     * an upper bound.
      *
      * @param a          the input value
      * @param upperBound the upper bound
@@ -1405,12 +1392,14 @@ public class Vec2 implements Comparable<Vec2> {
      */
     public static Vec2 min(final Vec2 a, final float upperBound, final Vec2 target) {
 
-        return target.set(Math.min(a.x, upperBound), Math.min(a.y, upperBound));
+        return target.set(
+            Math.min(a.x, upperBound),
+            Math.min(a.y, upperBound));
     }
 
     /**
-     * Sets the target vector to the minimum components of the input vector and an
-     * upper bound.
+     * Sets the target vector to the minimum components of the input vector and
+     * an upper bound.
      *
      * @param a          the input vector
      * @param upperBound the upper bound
@@ -1419,7 +1408,9 @@ public class Vec2 implements Comparable<Vec2> {
      */
     public static Vec2 min(final Vec2 a, final Vec2 upperBound, final Vec2 target) {
 
-        return target.set(Math.min(a.x, upperBound.x), Math.min(a.y, upperBound.y));
+        return target.set(
+            Math.min(a.x, upperBound.x),
+            Math.min(a.y, upperBound.y));
     }
 
     /**
@@ -1431,7 +1422,11 @@ public class Vec2 implements Comparable<Vec2> {
      * @param target the output vector
      * @return the mix
      */
-    public static Vec2 mix(final Vec2 orig, final Vec2 dest, final float step, final Vec2 target) {
+    public static Vec2 mix(
+        final Vec2 orig,
+        final Vec2 dest,
+        final float step,
+        final Vec2 target) {
 
         if (step <= 0.0f) {
             return target.set(orig);
@@ -1441,7 +1436,9 @@ public class Vec2 implements Comparable<Vec2> {
         }
 
         final float u = 1.0f - step;
-        return target.set(u * orig.x + step * dest.x, u * orig.y + step * dest.y);
+        return target.set(
+            u * orig.x + step * dest.x,
+            u * orig.y + step * dest.y);
     }
 
     /**
@@ -1470,7 +1467,9 @@ public class Vec2 implements Comparable<Vec2> {
     public static Vec2 mod(final Vec2 a, final float b, final Vec2 target) {
 
         if (b != 0.0f) {
-            return target.set(Utils.modUnchecked(a.x, b), Utils.modUnchecked(a.y, b));
+            return target.set(
+                Utils.modUnchecked(a.x, b),
+                Utils.modUnchecked(a.y, b));
         }
         return target.set(a);
     }
@@ -1490,9 +1489,9 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * A specialized form of modulo which subtracts the floor of the vector from the
-     * vector. Useful
-     * for managing texture coordinates in the range [0.0, 1.0] .
+     * A specialized form of modulo which subtracts the floor of the vector
+     * from the vector. Useful for managing texture coordinates in the range
+     * [0.0, 1.0].
      *
      * @param v      the input vector
      * @param target the output vector
@@ -1555,8 +1554,7 @@ public class Vec2 implements Comparable<Vec2> {
 
     /**
      * Tests to see if all the vector's components are zero. Useful when
-     * safeguarding against invalid
-     * directions.
+     * safeguarding against invalid directions.
      *
      * @param v the input vector
      * @return the evaluation
@@ -1568,9 +1566,8 @@ public class Vec2 implements Comparable<Vec2> {
 
     /**
      * Divides a vector by its magnitude, such that the new magnitude is 1.0 .
-     * <em>â</em> = <em>a</em>
-     * / |<em>a</em>| . The result is a unit vector, as it lies on the circumference
-     * of a unit circle.
+     * <em>â</em> = <em>a</em> / |<em>a</em>| . The result is a unit vector,
+     * as it lies on the circumference of a unit circle.
      *
      * @param v      the input vector
      * @param target the output vector
@@ -1622,7 +1619,7 @@ public class Vec2 implements Comparable<Vec2> {
 
     /**
      * Finds the perpendicular of a vector. Defaults to counter-clockwise
-     * rotation, such that the perpendicular of ( 1.0, 0.0 ) is ( 0.0, 1.0 ) .
+     * rotation, such that the perpendicular of ( 1.0, 0.0 ) is ( 0.0, 1.0 ).
      *
      * @param v      the input vector
      * @param target the output vector
@@ -1635,18 +1632,14 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Finds the perpendicular of a vector in the counter-clockwise direction, such
-     * that
+     * Finds the perpendicular of a vector in the counter-clockwise direction,
+     * such that
      *
      * <ul>
-     * <li>perp ( right ) = forward, <br>
-     * perp ( 1.0, 0.0 ) = ( 0.0, 1.0 )
-     * <li>perp ( forward ) = left, <br>
-     * perp ( 0.0, 1.0 ) = ( -1.0, 0.0 )
-     * <li>perp ( left ) = back, <br>
-     * perp ( -1.0, 0.0 ) = ( 0.0, -1.0 )
-     * <li>perp ( back ) = right, <br>
-     * perp ( 0.0, -1.0 ) = ( 1.0, 0.0 )
+     * <li>perp ( right ) = forward, perp ( 1.0, 0.0 ) = ( 0.0, 1.0 )</li>
+     * <li>perp ( forward ) = left, perp ( 0.0, 1.0 ) = ( -1.0, 0.0 )</li>
+     * <li>perp ( left ) = back, perp ( -1.0, 0.0 ) = ( 0.0, -1.0 )</li>
+     * <li>perp ( back ) = right, perp ( 0.0, -1.0 ) = ( 1.0, 0.0 )</li>
      * </ul>
      * <p>
      * In terms of the components, perp ( x, y ) = ( -y, x ) .
@@ -1662,17 +1655,14 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Finds the perpendicular of a vector in the clockwise direction, such that
+     * Finds the perpendicular of a vector in the clockwise direction, such
+     * that
      *
      * <ul>
-     * <li>perp ( right ) = back, <br>
-     * perp( 1.0, 0.0 ) = ( 0.0, -1.0 )
-     * <li>perp ( back ) = left, <br>
-     * perp( 0.0, -1.0 ) = ( -1.0, 0.0 )
-     * <li>perp ( left ) = forward, <br>
-     * perp( -1.0, 0.0 ) = ( 0.0, 1.0 )
-     * <li>perp ( forward ) = right, <br>
-     * perp( 0.0, 1.0 ) = ( 1.0, 0.0 )
+     * <li>perp ( right ) = back, perp( 1.0, 0.0 ) = ( 0.0, -1.0 )</li>
+     * <li>perp ( back ) = left, perp( 0.0, -1.0 ) = ( -1.0, 0.0 )</li>
+     * <li>perp ( left ) = forward, perp( -1.0, 0.0 ) = ( 0.0, 1.0 )</li>
+     * <li>perp ( forward ) = right, perp( 0.0, 1.0 ) = ( 1.0, 0.0 )</li>
      * </ul>
      * <p>
      * In terms of the components, perp ( x, y ) = ( y, -x ) .
@@ -1688,11 +1678,11 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Oscillates between an origin and destination vector based on an input step
-     * and a pause factor.
-     * When the pause is greater than 1.0, the value will be clamped to the pole.
+     * Oscillates between an origin and destination vector based on an input
+     * step and a pause factor. When the pause is greater than 1.0, the value
+     * will be clamped to the pole.
      *
-     * @param origin the original vector
+     * @param orig   the original vector
      * @param dest   the destination vector
      * @param step   the step
      * @param pause  the pause factor
@@ -1700,32 +1690,42 @@ public class Vec2 implements Comparable<Vec2> {
      * @return the oscillation
      */
     public static Vec2 pingPong(
-        final Vec2 origin, final Vec2 dest, final float step, final float pause, final Vec2 target) {
+        final Vec2 orig,
+        final Vec2 dest,
+        final float step,
+        final float pause,
+        final Vec2 target) {
 
         final float t = 0.5f + 0.5f * pause * Utils.scNorm(step - 0.5f);
         if (t <= 0.0f) {
-            return target.set(origin);
+            return target.set(orig);
         }
         if (t >= 1.0f) {
             return target.set(dest);
         }
         final float u = 1.0f - t;
-        return target.set(u * origin.x + t * dest.x, u * origin.y + t * dest.y);
+        return target.set(
+            u * orig.x + t * dest.x,
+            u * orig.y + t * dest.y);
     }
 
     /**
-     * Oscillates between an origin and destination vector based on an input step.
+     * Oscillates between an origin and destination vector based on an input
+     * step.
      *
-     * @param origin the original vector
+     * @param orig   the original vector
      * @param dest   the destination vector
      * @param step   the step
      * @param target the output vector
      * @return the oscillation
      */
     public static Vec2 pingPong(
-        final Vec2 origin, final Vec2 dest, final float step, final Vec2 target) {
+        final Vec2 orig,
+        final Vec2 dest,
+        final float step,
+        final Vec2 target) {
 
-        return Vec2.pingPong(origin, dest, step, 1.0f, target);
+        return Vec2.pingPong(orig, dest, step, 1.0f, target);
     }
 
     /**
@@ -1756,10 +1756,12 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined as<br>
+     * Returns the scalar projection of <em>a</em> onto <em>b</em>. Defined as
+     * <br>
      * <br>
      * project ( <em>a</em>, <em>b</em> ) := <em>a</em> . <em>b</em> / <em>b</em> .
-     * <em>b</em><br>
+     * <em>b</em>
+     * <br>
      * <br>
      * If the square magnitude of <em>b</em> is zero, then returns zero.
      *
@@ -1796,9 +1798,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Reduces the signal, or granularity, of a vector's components. A level of zero
-     * will copy the
-     * input vector to the target.
+     * Reduces the signal, or granularity, of a vector's components. A level of
+     * zero will copy the input vector to the target.
      *
      * @param v      the input vector
      * @param levels the levels
@@ -1814,13 +1815,13 @@ public class Vec2 implements Comparable<Vec2> {
         final float levf = levels < 0 ? -levels : levels;
         final float delta = 1.0f / levf;
         return target.set(
-            Utils.quantizeSigned(v.x, levf, delta), Utils.quantizeSigned(v.y, levf, delta));
+            Utils.quantizeSigned(v.x, levf, delta),
+            Utils.quantizeSigned(v.y, levf, delta));
     }
 
     /**
-     * Generates a vector with a random heading and a magnitude of 1.0, such that it
-     * lies on the unit
-     * circle.
+     * Generates a vector with a random heading and a magnitude of 1.0, such
+     * that it lies on the unit circle.
      *
      * @param rng    the random number generator
      * @param target the output vector
@@ -1833,8 +1834,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Creates a random point in the Cartesian coordinate system given a lower and
-     * an upper bound.
+     * Creates a random point in the Cartesian coordinate system given a lower
+     * and an upper bound.
      *
      * @param rng        the random number generator
      * @param lowerBound the lower bound
@@ -1843,7 +1844,10 @@ public class Vec2 implements Comparable<Vec2> {
      * @return the random vector
      */
     public static Vec2 randomCartesian(
-        final Random rng, final float lowerBound, final float upperBound, final Vec2 target) {
+        final Random rng,
+        final float lowerBound,
+        final float upperBound,
+        final Vec2 target) {
 
         final float rx = rng.nextFloat();
         final float ry = rng.nextFloat();
@@ -1853,8 +1857,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Creates a random point in the Cartesian coordinate system given a lower and
-     * an upper bound.
+     * Creates a random point in the Cartesian coordinate system given a lower
+     * and an upper bound.
      *
      * @param rng        the random number generator
      * @param lowerBound the lower bound
@@ -1863,7 +1867,10 @@ public class Vec2 implements Comparable<Vec2> {
      * @return the random vector
      */
     public static Vec2 randomCartesian(
-        final Random rng, final Vec2 lowerBound, final Vec2 upperBound, final Vec2 target) {
+        final Random rng,
+        final Vec2 lowerBound,
+        final Vec2 upperBound,
+        final Vec2 target) {
 
         final float rx = rng.nextFloat();
         final float ry = rng.nextFloat();
@@ -1873,9 +1880,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Creates a random vector that lies on a circle. Uses 2 random numbers with
-     * normal distribution,
-     * then rescales to the sphere radius.
+     * Creates a random vector that lies on a circle. Uses 2 random numbers
+     * with normal distribution, then rescales to the sphere radius.
      *
      * @param rng    the random number generator
      * @param radius the radius
@@ -1896,9 +1902,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Creates a vector with a magnitude of 1.0 at a random heading, such that it
-     * lies on the unit
-     * circle.
+     * Creates a vector with a magnitude of 1.0 at a random heading, such that
+     * it lies on the unit circle.
      *
      * @param rng    the random number generator
      * @param target the output vector
@@ -1911,10 +1916,10 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Reflects an incident vector off a normal vector. Uses the formula <br>
+     * Reflects an incident vector off a normal vector. Uses the formula
      * <br>
-     * <em>i</em> - 2.0 (<em>n</em> . <em>i</em>) <em>n</em><br>
      * <br>
+     * <em>i</em> - 2.0 (<em>n</em> . <em>i</em>) <em>n</em>
      *
      * @param incident the incident vector
      * @param normal   the normal vector
@@ -1923,7 +1928,10 @@ public class Vec2 implements Comparable<Vec2> {
      * @see Vec2#magSq(Vec2)
      * @see Utils#invSqrtUnchecked(float)
      */
-    public static Vec2 reflect(final Vec2 incident, final Vec2 normal, final Vec2 target) {
+    public static Vec2 reflect(
+        final Vec2 incident,
+        final Vec2 normal,
+        final Vec2 target) {
 
         final float nMSq = Vec2.magSq(normal);
         if (nMSq < Utils.EPSILON) {
@@ -1949,7 +1957,10 @@ public class Vec2 implements Comparable<Vec2> {
      * @see Utils#sqrtUnchecked(float)
      */
     public static Vec2 refract(
-        final Vec2 incident, final Vec2 normal, final float eta, final Vec2 target) {
+        final Vec2 incident,
+        final Vec2 normal,
+        final float eta,
+        final Vec2 target) {
 
         final float nDotI = Vec2.dot(normal, incident);
         final float k = 1.0f - eta * eta * (1.0f - nDotI * nDotI);
@@ -1963,9 +1974,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Normalizes a vector, then multiplies it by a scalar, in effect setting its
-     * magnitude to that
-     * scalar.
+     * Normalizes a vector, then multiplies it by a scalar, in effect setting
+     * its magnitude to that scalar.
      *
      * @param v      the vector
      * @param scalar the scalar
@@ -1984,9 +1994,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Normalizes a vector, then multiplies it by a scalar, in effect setting its
-     * magnitude to that
-     * scalar.
+     * Normalizes a vector, then multiplies it by a scalar, in effect setting
+     * its magnitude to that scalar.
      *
      * @param v          the vector
      * @param scalar     the scalar
@@ -1997,7 +2006,10 @@ public class Vec2 implements Comparable<Vec2> {
      * @see Vec2#mul(Vec2, float, Vec2)
      */
     public static Vec2 rescale(
-        final Vec2 v, final float scalar, final Vec2 target, final Vec2 normalized) {
+        final Vec2 v,
+        final float scalar,
+        final Vec2 target,
+        final Vec2 normalized) {
 
         if (scalar != 0.0f) {
             Vec2.normalize(v, normalized);
@@ -2009,8 +2021,9 @@ public class Vec2 implements Comparable<Vec2> {
 
     /**
      * Resizes an array of vectors to a requested length. If the new length is
-     * greater than the
-     * current length, the new elements are filled with new vectors.<br>
+     * greater than the current length, the new elements are filled with new
+     * vectors.
+     * <br>
      * <br>
      * This does <em>not</em> use
      * {@link System#arraycopy(Object, int, Object, int, int)} because this
@@ -2047,7 +2060,7 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Returns to a vector with a positive value on the x-axis, (1.0, 0.0) .
+     * Returns to a vector with a positive value on the x-axis, (1.0, 0.0).
      *
      * @param target the output vector
      * @return the right vector
@@ -2058,9 +2071,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Rotates a vector around the x-axis by an angle in radians. For 2D vectors,
-     * this scales the y
-     * component by cosine of the angle.
+     * Rotates a vector around the x-axis by an angle in radians. For 2D
+     * vectors, this scales the y component by cosine of the angle.
      *
      * @param v       the input vector
      * @param radians the angle in radians
@@ -2073,9 +2085,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Rotates a vector around the y-axis by an angle in radians. For 2D vectors,
-     * this scales the x
-     * component by cosine of the angle.
+     * Rotates a vector around the y-axis by an angle in radians. For 2D
+     * vectors, this scales the x component by cosine of the angle.
      *
      * @param v       the input vector
      * @param radians the angle in radians
@@ -2088,10 +2099,9 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Rotates a vector around the z axis. Accepts pre-calculated sine and cosine of
-     * an angle, so that
-     * collections of vectors can be efficiently rotated without repeatedly calling
-     * cos and sin.
+     * Rotates a vector around the z axis. Accepts pre-calculated sine and
+     * cosine of an angle, so that collections of vectors can be efficiently
+     * rotated without repeatedly calling cos and sin.
      *
      * @param v      the input vector
      * @param cosa   cosine of the angle
@@ -2162,7 +2172,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Subtracts the right from the left vector and then normalizes the difference.
+     * Subtracts the right from the left vector and then normalizes the
+     * difference.
      *
      * @param a      left operand
      * @param b      right operand
@@ -2179,7 +2190,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Subtracts the right from the left vector and then normalizes the difference.
+     * Subtracts the right from the left vector and then normalizes the
+     * difference.
      *
      * @param a      left operand
      * @param b      right operand
@@ -2204,7 +2216,10 @@ public class Vec2 implements Comparable<Vec2> {
      * @param places the print precision
      * @return the string builder
      */
-    public static StringBuilder toString(final StringBuilder sb, final Vec2[] arr, final int places) {
+    public static StringBuilder toString(
+        final StringBuilder sb,
+        final Vec2[] arr,
+        final int places) {
 
         /* Caches array element to a variable in case of null check. */
 
@@ -2262,8 +2277,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Returns a vector representing the center of the texture coordinate system,
-     * (0.5, 0.5) .
+     * Returns a vector representing the center of the texture coordinate
+     * system, (0.5, 0.5).
      *
      * @param target the output vector
      * @return the texture coordinate center
@@ -2284,13 +2299,20 @@ public class Vec2 implements Comparable<Vec2> {
      * @return the wrapped vector
      * @see Utils#wrap(float, float, float)
      */
-    public static Vec2 wrap(final Vec2 v, final Vec2 lb, final Vec2 ub, final Vec2 target) {
+    public static Vec2 wrap(
+        final Vec2 v,
+        final Vec2 lb,
+        final Vec2 ub,
+        final Vec2 target) {
 
-        return target.set(Utils.wrap(v.x, lb.x, ub.x), Utils.wrap(v.y, lb.y, ub.y));
+        return target.set(
+            Utils.wrap(v.x, lb.x, ub.x),
+            Utils.wrap(v.y, lb.y, ub.y));
     }
 
     /**
-     * Evaluates two vectors like booleans, using the exclusive or (XOR) logic gate.
+     * Evaluates two vectors like booleans, using the exclusive or (XOR) logic
+     * gate.
      *
      * @param a      left operand
      * @param b      right operand
@@ -2317,7 +2339,8 @@ public class Vec2 implements Comparable<Vec2> {
     /**
      * Internal function for generating 2D array of vectors. The result is in
      * row-major order, but the parameters are supplied in reverse: columns
-     * first, then rows.<br>
+     * first, then rows.
+     * <br>
      * <br>
      * This is separated to make overriding the public grid functions easier.
      *
@@ -2369,9 +2392,8 @@ public class Vec2 implements Comparable<Vec2> {
 
     /**
      * Returns -1 when this vector is less than the comparisand; 1 when it is
-     * greater than; 0 when the
-     * two are 'equal'. The implementation of this method allows collections of
-     * vectors to be sorted.
+     * greater than; 0 when the two are 'equal'. The implementation of this
+     * method allows collections of vectors to be sorted.
      *
      * @param v the comparisand
      * @return the numeric code
@@ -2379,13 +2401,11 @@ public class Vec2 implements Comparable<Vec2> {
     @Override
     public int compareTo(final Vec2 v) {
 
-        /* @formatter:off */
         return this.y < v.y ? -1
-                : this.y > v.y ? 1
-                : this.x < v.x ? -1
-                : this.x > v.x ? 1
-                : 0;
-        /* @formatter:on */
+            : this.y > v.y ? 1
+            : this.x < v.x ? -1
+            : this.x > v.x ? 1
+            : 0;
     }
 
     @Override
@@ -2405,7 +2425,7 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Resets this vector to an initial state, ( 0.0, 0.0 ) .
+     * Resets this vector to an initial state, ( 0.0, 0.0 ).
      *
      * @return this vector
      */
@@ -2414,8 +2434,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Sets the components of this vector from booleans, where false is 0.0 and true
-     * is 1.0 .
+     * Sets the components of this vector from booleans, where false is 0.0 and
+     * true is 1.0.
      *
      * @param x the x component
      * @param y the y component
@@ -2462,10 +2482,9 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Puts the vector's components into an existing array at the index provided.
-     * The vector's x
-     * component is assigned to element <code>i</code>; its y component, to element
-     * <code>i + 1</code>
+     * Puts the vector's components into an existing array at the index
+     * provided. The vector's x component is assigned to element
+     * <code>i</code>; its y component, to element <code>i + 1</code>
      * .
      *
      * @param arr the array
@@ -2502,12 +2521,13 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * An internal helper function to format a vector as a Python tuple, then append
-     * it to a {@link
-     * StringBuilder}. Used for testing purposes to compare results with Blender
-     * 2.9x.<br>
+     * An internal helper function to format a vector as a Python tuple, then
+     * append it to a {@link StringBuilder}. Used for testing purposes to
+     * compare results with Blender 4.x.
      * <br>
-     * If this is a UV coordinate, provides the option to flip the v coordinate.
+     * <br>
+     * If this is a UV coordinate, provides the option to flip the v
+     * coordinate.
      *
      * @param pyCd  string builder
      * @param flipv whether to subtract y from 1.0
@@ -2524,11 +2544,10 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * An internal helper function to format a vector as a Python tuple, then append
-     * it to a {@link
-     * StringBuilder}. Used for testing purposes to compare results with Blender
-     * 2.9x. Appends a z
-     * component to promote the vector to 3D.
+     * An internal helper function to format a vector as a Python tuple, then
+     * append it to a {@link StringBuilder}. Used for testing purposes to
+     * compare results with Blender 4.x. Appends a z component to promote the
+     * vector to 3D.
      *
      * @param pyCd string builder
      * @param z    the z component
@@ -2547,9 +2566,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Internal helper method that appends a representation of this vector in the
-     * Wavefront OBJ file
-     * format to a {@link StringBuilder}.
+     * Internal helper method that appends a representation of this vector in
+     * the Wavefront OBJ file format to a {@link StringBuilder}.
      *
      * @param objs  the string builder
      * @param flipv whether to subtract y from 1.0
@@ -2563,8 +2581,7 @@ public class Vec2 implements Comparable<Vec2> {
 
     /**
      * Internal helper function to assist with methods that need to print many
-     * vectors. Appends to an
-     * existing {@link StringBuilder}.
+     * vectors. Appends to an existing {@link StringBuilder}.
      *
      * @param sb     the string builder
      * @param places the number of places
@@ -2581,13 +2598,13 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * An internal helper function to append a representation of this vector as a
-     * comma separated
-     * value to a {@link StringBuilder}. For use by SVG formatting functions.<br>
+     * An internal helper function to append a representation of this vector as
+     * a comma separated value to a {@link StringBuilder}. For use by SVG
+     * formatting functions.
+     * <br>
      * <br>
      * This uses a print precision of six decimal places to avoid glitches when
-     * small shapes are
-     * scaled up.
+     * small shapes are scaled up.
      *
      * @param svgp  string builder
      * @param delim the delimiter
@@ -2601,9 +2618,9 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Tests equivalence between this and another vector. For rough equivalence of
-     * floating point
-     * components, use the static approximation function instead.
+     * Tests equivalence between this and another vector. For rough equivalence
+     * of floating point components, use the static approximation function
+     * instead.
      *
      * @param v the vector
      * @return the evaluation
@@ -2615,8 +2632,8 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * An abstract class that may serve as an umbrella for any custom comparators of
-     * Vec2 s.
+     * An abstract class that may serve as an umbrella for any custom
+     * comparators of Vec2 s.
      */
     public abstract static class AbstrComparator implements Comparator<Vec2> {
 
@@ -2649,9 +2666,9 @@ public class Vec2 implements Comparable<Vec2> {
         }
 
         /**
-         * A clamped interpolation between the origin and destination. Defers to an
-         * unclamped
-         * interpolation, which is to be defined by subclasses of this class.
+         * A clamped interpolation between the origin and destination. Defers
+         * to an unclamped interpolation, which is to be defined by subclasses
+         * of this class.
          *
          * @param orig   the origin vector
          * @param dest   the destination vector
@@ -2660,7 +2677,11 @@ public class Vec2 implements Comparable<Vec2> {
          * @return the eased vector
          */
         @Override
-        public Vec2 apply(final Vec2 orig, final Vec2 dest, final Float step, final Vec2 target) {
+        public Vec2 apply(
+            final Vec2 orig,
+            final Vec2 dest,
+            final Float step,
+            final Vec2 target) {
 
             final float tf = step;
             if (Float.isNaN(tf)) {
@@ -2678,14 +2699,17 @@ public class Vec2 implements Comparable<Vec2> {
         /**
          * The interpolation to be defined by subclasses.
          *
-         * @param origin the origin vector
+         * @param orig   the origin vector
          * @param dest   the destination vector
          * @param step   a factor in [0.0, 1.0]
          * @param target the output vector
          * @return the eased vector
          */
         public abstract Vec2 applyUnclamped(
-            final Vec2 origin, final Vec2 dest, final float step, final Vec2 target);
+            final Vec2 orig,
+            final Vec2 dest,
+            final float step,
+            final Vec2 target);
 
         /**
          * Returns the simple name of this class.
@@ -2710,11 +2734,10 @@ public class Vec2 implements Comparable<Vec2> {
         }
 
         /**
-         * Eases between two vectors by a step using the formula ( 1.0 - <em>t</em> )
-         * <em>a</em> +
-         * <em>t</em> <em>b</em>.
+         * Eases between two vectors by a step using the formula
+         * ( 1.0 - <em>t</em> ) <em>a</em> + <em>t</em> <em>b</em>.
          *
-         * @param origin the origin vector
+         * @param orig   the origin vector
          * @param dest   the destination vector
          * @param step   the step
          * @param target the output vector
@@ -2722,17 +2745,21 @@ public class Vec2 implements Comparable<Vec2> {
          */
         @Override
         public Vec2 applyUnclamped(
-            final Vec2 origin, final Vec2 dest, final float step, final Vec2 target) {
+            final Vec2 orig,
+            final Vec2 dest,
+            final float step,
+            final Vec2 target) {
 
             final float uf = 1.0f - step;
-            return target.set(uf * origin.x + step * dest.x, uf * origin.y + step * dest.y);
+            return target.set(
+                uf * orig.x + step * dest.x,
+                uf * orig.y + step * dest.y);
         }
     }
 
     /**
      * Eases between two vectors with the smooth step formula:
-     * <em>t</em><sup>2</sup> ( 3.0 - 2.0
-     * <em>t</em> ) .
+     * <em>t</em><sup>2</sup> ( 3.0 - 2.0 <em>t</em> ) .
      */
     public static class SmoothStep extends AbstrEasing {
 
@@ -2745,7 +2772,7 @@ public class Vec2 implements Comparable<Vec2> {
         /**
          * Applies the function.
          *
-         * @param origin the origin vector
+         * @param orig   the origin vector
          * @param dest   the destination vector
          * @param step   the step in a range 0 to 1
          * @param target the output vector
@@ -2753,11 +2780,16 @@ public class Vec2 implements Comparable<Vec2> {
          */
         @Override
         public Vec2 applyUnclamped(
-            final Vec2 origin, final Vec2 dest, final float step, final Vec2 target) {
+            final Vec2 orig,
+            final Vec2 dest,
+            final float step,
+            final Vec2 target) {
 
             final float tf = step * step * (3.0f - (step + step));
             final float uf = 1.0f - tf;
-            return target.set(uf * origin.x + tf * dest.x, uf * origin.y + tf * dest.y);
+            return target.set(
+                uf * orig.x + tf * dest.x,
+                uf * orig.y + tf * dest.y);
         }
     }
 
@@ -2778,8 +2810,8 @@ public class Vec2 implements Comparable<Vec2> {
         }
 
         /**
-         * Constructs a sorting function with a locus against which points are compared
-         * in sorting.
+         * Constructs a sorting function with a locus against which points are
+         * compared in sorting.
          *
          * @param locus the locus
          */

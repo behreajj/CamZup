@@ -1613,11 +1613,13 @@ public abstract class Convert {
     /**
      * Converts from a PShape to a {@link Mesh3}. Potentially a recursive
      * function if the PShape is of the family {@link PConstants#GROUP}
-     * ({@value PConstants#GROUP}).<br>
+     * ({@value PConstants#GROUP}).
+     * <br>
      * <br>
      * Conversion of {@link PShape#PRIMITIVE}s does not respond to
      * {@link PApplet#ellipseMode(int)}, {@link PApplet#rectMode(int)} or to UV
-     * sphere settings.<br>
+     * sphere settings.
+     * <br>
      * <br>
      * For shapes in the {@link PShape#GEOMETRY} family, faces are assumed to
      * be triangles.

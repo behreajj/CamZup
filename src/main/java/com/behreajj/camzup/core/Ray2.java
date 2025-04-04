@@ -396,7 +396,8 @@ public class Ray2 {
                 final int k = (j + 1) % fLen;
                 final Vec2 curr = vs[f[j][0]];
                 final Vec2 next = vs[f[k][0]];
-                Ray2.factorEdge(rx, ry, dx, dy, curr.x, curr.y, next.x, next.y, uniques);
+                Ray2.factorEdge(rx, ry, dx, dy,
+                    curr.x, curr.y, next.x, next.y, uniques);
             }
         }
 
@@ -524,7 +525,7 @@ public class Ray2 {
 
     /**
      * An abstract class that may serve as an umbrella for any custom
-     * comparators of Ray2 s.
+     * comparators of rays.
      */
     public abstract static class AbstrComparator implements Comparator<Ray2> {
 

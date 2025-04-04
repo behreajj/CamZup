@@ -267,8 +267,8 @@ public class MaterialAwt extends Material {
     }
 
     /**
-     * Organizes the corners used to sample an image, expressed as integer pixel
-     * coordinates.
+     * Organizes the corners used to sample an image, expressed as integer
+     * pixel coordinates.
      */
     public static class Sample {
 
