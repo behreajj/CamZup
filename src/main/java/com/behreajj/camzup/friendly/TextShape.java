@@ -39,8 +39,8 @@ public abstract class TextShape {
     }
 
     /**
-     * Converts a list of characters to a an array of curve entities. When the
-     * level of detail is 0, uses Bezier curves. When the detail is non-zero,
+     * Converts a list of characters to an array of curve entities. When the
+     * level of detail is 0, uses Bézier curves. When the detail is non-zero,
      * approximates the glyph with a series of straight line segments. The
      * PFont should have been created with createFont, not loadFont.
      *
@@ -66,8 +66,8 @@ public abstract class TextShape {
     }
 
     /**
-     * Converts a string to a an array of curve entities. When the level of
-     * detail is 0, uses Bezier curves. When the detail is non-zero,
+     * Converts a string to an array of curve entities. When the level of
+     * detail is 0, uses Bézier curves. When the detail is non-zero,
      * approximates the glyph with a series of straight line segments. The
      * PFont should have been created with createFont, not loadFont.
      *
@@ -87,8 +87,8 @@ public abstract class TextShape {
     }
 
     /**
-     * Converts a list of glyph indices to a an array of curve entities. When
-     * the level of detail is 0, uses Bezier curves. When the detail is
+     * Converts a list of glyph indices to an array of curve entities. When
+     * the level of detail is 0, uses Bézier curves. When the detail is
      * non-zero, approximates the glyph with a series of straight line
      * segments. The PFont should have been created with createFont, not
      * loadFont.
@@ -112,8 +112,8 @@ public abstract class TextShape {
     }
 
     /**
-     * Converts a list of characters to a an array of curve entities. When the
-     * level of detail is 0, uses Bezier curves. When the detail is non-zero,
+     * Converts a list of characters to an array of curve entities. When the
+     * level of detail is 0, uses Bézier curves. When the detail is non-zero,
      * approximates the glyph with a series of straight line segments. The
      * PFont should have been created with createFont, not loadFont.
      *
@@ -134,8 +134,8 @@ public abstract class TextShape {
     }
 
     /**
-     * Converts a string to a an array of curve entities. When the level of
-     * detail is 0, uses Bezier curves. When the detail is non-zero,
+     * Converts a string to an array of curve entities. When the level of
+     * detail is 0, uses Bézier curves. When the detail is non-zero,
      * approximates the glyph with a series of straight line segments. The
      * PFont should have been created with createFont, not loadFont.
      *
@@ -156,8 +156,8 @@ public abstract class TextShape {
     }
 
     /**
-     * Converts a list of glyph indices to a an array of curve entities. When
-     * the level of detail is 0, uses Bezier curves. When the detail is
+     * Converts a list of glyph indices to an array of curve entities. When
+     * the level of detail is 0, uses Bézier curves. When the detail is
      * non-zero, approximates the glyph with a series of straight line
      * segments. The PFont should have been created with createFont, not
      * loadFont.
@@ -316,7 +316,7 @@ public abstract class TextShape {
     }
 
     /**
-     * Converts a character to an list of curve entities. A helper function for
+     * Converts a character to a list of curve entities. A helper function for
      * other variants of getGlyph.
      * <br>
      * <br>
@@ -401,9 +401,9 @@ public abstract class TextShape {
                 case PathIterator.SEG_MOVETO: { /* 0 */
                     /*
                      * Create a new curve, move to a point. The first knot of a
-                     * shape copies the last; in the SEG_CLOSE case, its fore-
-                     * handle will be copied to the last knot, then it will be
-                     * removed.
+                     * shape copies the last; in the SEG_CLOSE case, its
+                     * forehandle will be copied to the last knot, then it will
+                     * be removed.
                      */
 
                     final String name = namePrefix + curveCount;

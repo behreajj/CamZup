@@ -85,16 +85,16 @@ public class Vert2 implements Comparable<Vert2> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Vert2 vert2))
+    public boolean equals(final Object o) {
+        if (!(o instanceof final Vert2 vert2))
             return false;
-        return Objects.equals(coord, vert2.coord)
-            && Objects.equals(texCoord, vert2.texCoord);
+        return Objects.equals(this.coord, vert2.coord)
+            && Objects.equals(this.texCoord, vert2.texCoord);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(coord, texCoord);
+        return Objects.hash(this.coord, this.texCoord);
     }
 
     /**

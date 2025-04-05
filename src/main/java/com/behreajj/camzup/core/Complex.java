@@ -301,7 +301,7 @@ public class Complex implements Comparable<Complex> {
 
         /* Sum the lengths of inner arrays. */
         int totalLen = 0;
-        for (Complex[] complexes : arr) {
+        for (final Complex[] complexes : arr) {
             totalLen += complexes.length;
         }
 
@@ -432,7 +432,9 @@ public class Complex implements Comparable<Complex> {
 
         final double zr = z.real;
         final double zi = z.imag;
-        return target.set((float) Math.log(Math.sqrt(zr * zr + zi * zi)), (float) Math.atan2(zi, zr));
+        return target.set(
+            (float) Math.log(Math.sqrt(zr * zr + zi * zi)),
+            (float) Math.atan2(zi, zr));
     }
 
     /**
@@ -494,7 +496,9 @@ public class Complex implements Comparable<Complex> {
      */
     public static Complex mul(final Complex a, final Complex b, final Complex target) {
 
-        return target.set(a.real * b.real - a.imag * b.imag, a.real * b.imag + a.imag * b.real);
+        return target.set(
+            a.real * b.real - a.imag * b.imag,
+            a.real * b.imag + a.imag * b.real);
     }
 
     /**
@@ -574,7 +578,9 @@ public class Complex implements Comparable<Complex> {
         final double rd = Math.exp(br * logReal - bi * logImag);
         final double phid = br * logImag + bi * logReal;
 
-        return target.set((float) (rd * Math.cos(phid)), (float) (rd * Math.sin(phid)));
+        return target.set(
+            (float) (rd * Math.cos(phid)),
+            (float) (rd * Math.sin(phid)));
     }
 
     /**
@@ -627,10 +633,12 @@ public class Complex implements Comparable<Complex> {
         final double ar = a.real;
         final double ai = a.imag;
 
-        final double rd = Math.exp((double) b * Math.log(Math.sqrt(ar * ar + ai * ai)));
-        final double phid = (double) b * Math.atan2(ai, ar);
+        final double rd = Math.exp(b * Math.log(Math.sqrt(ar * ar + ai * ai)));
+        final double phid = b * Math.atan2(ai, ar);
 
-        return target.set((float) (rd * Math.cos(phid)), (float) (rd * Math.sin(phid)));
+        return target.set(
+            (float) (rd * Math.cos(phid)),
+            (float) (rd * Math.sin(phid)));
     }
 
     /**
@@ -651,8 +659,8 @@ public class Complex implements Comparable<Complex> {
         final double br = b.real;
         final double bi = b.imag;
 
-        final double logReal = Math.log(Math.sqrt((double) a * (double) a));
-        final double logImag = (double) a < 0.0d ? Math.PI : 0.0d;
+        final double logReal = Math.log(Math.sqrt(a * a));
+        final double logImag = a < 0.0d ? Math.PI : 0.0d;
 
         final double rd = Math.exp(br * logReal - bi * logImag);
         final double phid = br * logImag + bi * logReal;
@@ -705,7 +713,7 @@ public class Complex implements Comparable<Complex> {
      */
     public static Complex rect(final float r, final float phi, final Complex target) {
 
-        return target.set((float) ((double) r * Math.cos(phi)), (float) ((double) r * Math.sin(phi)));
+        return target.set((float) (r * Math.cos(phi)), (float) (r * Math.sin(phi)));
     }
 
     /**
@@ -869,7 +877,7 @@ public class Complex implements Comparable<Complex> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -881,7 +889,7 @@ public class Complex implements Comparable<Complex> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(imag, real);
+        return Objects.hash(this.imag, this.real);
     }
 
     /**

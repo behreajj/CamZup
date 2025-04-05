@@ -416,7 +416,7 @@ public abstract class Sdf {
         Vec2 curr;
         Vec2 prev = vertices[len - 1];
 
-        for (Vec2 vertex : vertices) {
+        for (final Vec2 vertex : vertices) {
             curr = vertex;
 
             final float ex = prev.x - curr.x;

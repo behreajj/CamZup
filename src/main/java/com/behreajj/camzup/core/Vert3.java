@@ -145,17 +145,17 @@ public class Vert3 implements Comparable<Vert3> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Vert3 vert3))
+    public boolean equals(final Object o) {
+        if (!(o instanceof final Vert3 vert3))
             return false;
-        return Objects.equals(coord, vert3.coord)
-            && Objects.equals(normal, vert3.normal)
-            && Objects.equals(texCoord, vert3.texCoord);
+        return Objects.equals(this.coord, vert3.coord)
+            && Objects.equals(this.normal, vert3.normal)
+            && Objects.equals(this.texCoord, vert3.texCoord);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(coord, normal, texCoord);
+        return Objects.hash(this.coord, this.normal, this.texCoord);
     }
 
     /**

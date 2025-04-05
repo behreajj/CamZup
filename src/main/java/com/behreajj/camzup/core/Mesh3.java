@@ -283,9 +283,9 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
             vts[vtCurrent].set(cost * 0.5f + 0.5f, sint * 0.5f + 0.5f);
 
             /*
-             * Mix rim and tip by factor of 0.5. Since the tip is 0.0 for x and y,
-             * and since the 0.5 multiplication is nullified by the normalization
-             * anyway, this is simplified.
+             * Mix rim and tip by factor of 0.5. Since the tip is 0.0 for x
+             * and y, and since the 0.5 multiplication is nullified by the
+             * normalization anyway, this is simplified.
              */
             final Vec3 norm = vns[vCurrent];
             norm.set(rim.x, rim.y, rim.z + halfDepth);
@@ -333,8 +333,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
     }
 
     /**
-     * Creates a cone on the z axis, where its pointed end is on +z and its base
-     * is on -z at a radius. The number of sectors defaults to
+     * Creates a cone on the z axis, where its pointed end is on +z and its
+     * base is on -z at a radius. The number of sectors defaults to
      * {@value Mesh#DEFAULT_CIRCLE_SECTORS}.
      *
      * @param depth  cone height
@@ -790,103 +790,21 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         target.normals[10].set(-0.5257311f, -0.2628655f, 0.80901694f);
         target.normals[11].set(0.5257311f, -0.2628655f, 0.80901694f);
 
-        target.faces =
-            new int[][][]{
-                {{0, 36, 0}, {2, 37, 0}, {6, 30, 0}, {4, 24, 0}, {1, 29, 0}},
-                {{0, 35, 1}, {1, 29, 1}, {5, 23, 1}, {7, 28, 1}, {3, 34, 1}},
-                {{0, 33, 2}, {3, 32, 2}, {9, 21, 2}, {8, 20, 2}, {2, 31, 2}},
-                {{1, 29, 3}, {4, 24, 3}, {10, 17, 3}, {11, 16, 3}, {5, 23, 3}},
-                {{3, 27, 5}, {7, 22, 5}, {13, 15, 5}, {15, 14, 5}, {9, 21, 5}},
-                {{2, 26, 4}, {8, 20, 4}, {14, 13, 4}, {12, 12, 4}, {6, 19, 4}},
-                {{4, 24, 6}, {6, 25, 6}, {12, 18, 6}, {16, 11, 6}, {10, 17, 6}},
-                {{5, 23, 7}, {11, 16, 7}, {17, 10, 7}, {13, 15, 7}, {7, 22, 7}},
-                {{8, 20, 8}, {9, 21, 8}, {15, 14, 8}, {18, 8, 8}, {14, 13, 8}},
-                {{17, 5, 9}, {11, 16, 9}, {10, 17, 9}, {16, 6, 9}, {19, 4, 9}},
-                {{16, 0, 10}, {12, 7, 10}, {14, 13, 10}, {18, 8, 10}, {19, 1, 10}},
-                {{18, 8, 11}, {15, 14, 11}, {13, 9, 11}, {17, 3, 11}, {19, 2, 11}}
-            };
+        target.faces = new int[][][]{
+            {{0, 36, 0}, {2, 37, 0}, {6, 30, 0}, {4, 24, 0}, {1, 29, 0}},
+            {{0, 35, 1}, {1, 29, 1}, {5, 23, 1}, {7, 28, 1}, {3, 34, 1}},
+            {{0, 33, 2}, {3, 32, 2}, {9, 21, 2}, {8, 20, 2}, {2, 31, 2}},
+            {{1, 29, 3}, {4, 24, 3}, {10, 17, 3}, {11, 16, 3}, {5, 23, 3}},
+            {{3, 27, 5}, {7, 22, 5}, {13, 15, 5}, {15, 14, 5}, {9, 21, 5}},
+            {{2, 26, 4}, {8, 20, 4}, {14, 13, 4}, {12, 12, 4}, {6, 19, 4}},
+            {{4, 24, 6}, {6, 25, 6}, {12, 18, 6}, {16, 11, 6}, {10, 17, 6}},
+            {{5, 23, 7}, {11, 16, 7}, {17, 10, 7}, {13, 15, 7}, {7, 22, 7}},
+            {{8, 20, 8}, {9, 21, 8}, {15, 14, 8}, {18, 8, 8}, {14, 13, 8}},
+            {{17, 5, 9}, {11, 16, 9}, {10, 17, 9}, {16, 6, 9}, {19, 4, 9}},
+            {{16, 0, 10}, {12, 7, 10}, {14, 13, 10}, {18, 8, 10}, {19, 1, 10}},
+            {{18, 8, 11}, {15, 14, 11}, {13, 9, 11}, {17, 3, 11}, {19, 2, 11}}
+        };
 
-        return target;
-    }
-
-    /**
-     * Converts a curve to a mesh. If the fore handle and rear handle of a
-     * curve segment are colinear according to a tolerance, then only two
-     * vertices are added; otherwise evaluates the Bézier curve, producing one
-     * line segment per the requested resolution.
-     *
-     * @param source      the source curve
-     * @param resolution  the line segment count
-     * @param colinearTol the colinear tolerance
-     * @param target      the output mesh
-     * @return the mesh
-     * @see Mesh3#calcUvs()
-     * @see Mesh3#shadeSmooth()
-     */
-    public static Mesh3 fromCurve3(
-        final Curve3 source,
-        final int resolution,
-        final float colinearTol,
-        final Mesh3 target) {
-
-        final ArrayList<Vec3> points = new ArrayList<>(64);
-        Mesh3.fromCurve3(source, resolution, colinearTol, points, new Vec3(), new Vec3());
-        final int pointsLen = points.size();
-        target.coords = points.toArray(new Vec3[pointsLen]);
-        final int[][][] fs = target.faces = new int[1][pointsLen][3];
-        final int[][] f = fs[0];
-        for (int i = 0; i < pointsLen; ++i) {
-            f[i][0] = i;
-        }
-
-        target.calcUvs();
-        target.shadeSmooth();
-        target.materialIndex = source.materialIndex;
-        return target;
-    }
-
-    /**
-     * Converts an array of curves to a mesh. If the fore handle and rear
-     * handle of a curve segment are colinear according to a tolerance, then
-     * only two vertices are added; otherwise evaluates the Bézier curve,
-     * producing one line segment per the requested resolution.
-     *
-     * @param arr         the source curves
-     * @param resolution  the line segment count
-     * @param colinearTol the colinear tolerance
-     * @param target      the output mesh
-     * @return the mesh
-     * @see Mesh3#calcUvs()
-     * @see Mesh3#shadeSmooth()
-     */
-    public static Mesh3 fromCurve3(
-        final Curve3[] arr,
-        final int resolution,
-        final float colinearTol,
-        final Mesh3 target) {
-
-        final int curvesLen = arr.length;
-        final ArrayList<Vec3> points = new ArrayList<>(64);
-        final Vec3 dir0 = new Vec3();
-        final Vec3 dir1 = new Vec3();
-        final int[][][] fs = target.faces = new int[curvesLen][][];
-        int prevIdx = 0;
-        int pointsLen = 0;
-        for (int i = 0; i < curvesLen; ++i) {
-            Mesh3.fromCurve3(arr[i], resolution, colinearTol, points, dir0, dir1);
-
-            pointsLen = points.size();
-            final int fLen = pointsLen - prevIdx;
-            final int[][] f = fs[i] = new int[fLen][3];
-            for (int j = 0; j < fLen; ++j) {
-                f[j][0] = prevIdx + j;
-            }
-            prevIdx = pointsLen;
-        }
-
-        target.coords = points.toArray(new Vec3[pointsLen]);
-        target.calcUvs();
-        target.shadeSmooth();
         return target;
     }
 
@@ -971,7 +889,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
 
         /* Convert dictionary values to an array; clean meshes of excess data. */
         final Mesh3[] result = dict.values().toArray(new Mesh3[0]);
-        for (Mesh3 face3s : result) {
+        for (final Mesh3 face3s : result) {
             face3s.clean();
         }
         return result;
@@ -1093,7 +1011,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
     }
 
     /**
-     * Creates an icosahedron, a Platonic solid with 20 faces and 12 coordinates.
+     * Creates an icosahedron, a Platonic solid with 20 faces and 12
+     * coordinates.
      *
      * @param target the output mesh
      * @return the icosahedron
@@ -1172,29 +1091,28 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         target.normals[18].set(-0.57734716f, -0.18759352f, 0.7946564f);
         target.normals[19].set(0.5773471f, -0.18759349f, 0.7946564f);
 
-        target.faces =
-            new int[][][]{
-                {{0, 2, 7}, {4, 4, 7}, {5, 0, 7}},
-                {{0, 6, 10}, {2, 8, 10}, {4, 4, 10}},
-                {{0, 10, 8}, {1, 12, 8}, {2, 8, 8}},
-                {{0, 14, 9}, {3, 16, 9}, {1, 12, 9}},
-                {{0, 18, 11}, {5, 20, 11}, {3, 16, 11}},
-                {{10, 1, 12}, {5, 0, 12}, {4, 4, 12}},
-                {{8, 5, 13}, {10, 1, 13}, {4, 4, 13}},
-                {{8, 5, 14}, {4, 4, 14}, {2, 8, 14}},
-                {{6, 9, 15}, {8, 5, 15}, {2, 8, 15}},
-                {{6, 9, 16}, {2, 8, 16}, {1, 12, 16}},
-                {{7, 13, 17}, {6, 9, 17}, {1, 12, 17}},
-                {{7, 13, 1}, {1, 12, 1}, {3, 16, 1}},
-                {{9, 17, 2}, {7, 13, 2}, {3, 16, 2}},
-                {{9, 17, 3}, {3, 16, 3}, {5, 20, 3}},
-                {{10, 21, 4}, {9, 17, 4}, {5, 20, 4}},
-                {{11, 19, 5}, {9, 17, 5}, {10, 21, 5}},
-                {{11, 3, 6}, {10, 1, 6}, {8, 5, 6}},
-                {{11, 7, 18}, {8, 5, 18}, {6, 9, 18}},
-                {{11, 11, 0}, {6, 9, 0}, {7, 13, 0}},
-                {{11, 15, 19}, {7, 13, 19}, {9, 17, 19}}
-            };
+        target.faces = new int[][][]{
+            {{0, 2, 7}, {4, 4, 7}, {5, 0, 7}},
+            {{0, 6, 10}, {2, 8, 10}, {4, 4, 10}},
+            {{0, 10, 8}, {1, 12, 8}, {2, 8, 8}},
+            {{0, 14, 9}, {3, 16, 9}, {1, 12, 9}},
+            {{0, 18, 11}, {5, 20, 11}, {3, 16, 11}},
+            {{10, 1, 12}, {5, 0, 12}, {4, 4, 12}},
+            {{8, 5, 13}, {10, 1, 13}, {4, 4, 13}},
+            {{8, 5, 14}, {4, 4, 14}, {2, 8, 14}},
+            {{6, 9, 15}, {8, 5, 15}, {2, 8, 15}},
+            {{6, 9, 16}, {2, 8, 16}, {1, 12, 16}},
+            {{7, 13, 17}, {6, 9, 17}, {1, 12, 17}},
+            {{7, 13, 1}, {1, 12, 1}, {3, 16, 1}},
+            {{9, 17, 2}, {7, 13, 2}, {3, 16, 2}},
+            {{9, 17, 3}, {3, 16, 3}, {5, 20, 3}},
+            {{10, 21, 4}, {9, 17, 4}, {5, 20, 4}},
+            {{11, 19, 5}, {9, 17, 5}, {10, 21, 5}},
+            {{11, 3, 6}, {10, 1, 6}, {8, 5, 6}},
+            {{11, 7, 18}, {8, 5, 18}, {6, 9, 18}},
+            {{11, 11, 0}, {6, 9, 0}, {7, 13, 0}},
+            {{11, 15, 19}, {7, 13, 19}, {9, 17, 19}}
+        };
 
         return target;
     }
@@ -1283,17 +1201,16 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         target.normals[6].set(-0.57735026f, 0.57735026f, 0.57735026f);
         target.normals[7].set(0.57735026f, 0.57735026f, 0.57735026f);
 
-        target.faces =
-            new int[][][]{
-                {{0, 9, 0}, {1, 5, 0}, {2, 4, 0}},
-                {{0, 10, 1}, {3, 6, 1}, {1, 5, 1}},
-                {{0, 11, 2}, {4, 7, 2}, {3, 6, 2}},
-                {{0, 12, 3}, {2, 8, 3}, {4, 7, 3}},
-                {{2, 4, 4}, {1, 5, 4}, {5, 0, 4}},
-                {{1, 5, 5}, {3, 6, 5}, {5, 1, 5}},
-                {{4, 7, 6}, {2, 8, 6}, {5, 3, 6}},
-                {{3, 6, 7}, {4, 7, 7}, {5, 2, 7}}
-            };
+        target.faces = new int[][][]{
+            {{0, 9, 0}, {1, 5, 0}, {2, 4, 0}},
+            {{0, 10, 1}, {3, 6, 1}, {1, 5, 1}},
+            {{0, 11, 2}, {4, 7, 2}, {3, 6, 2}},
+            {{0, 12, 3}, {2, 8, 3}, {4, 7, 3}},
+            {{2, 4, 4}, {1, 5, 4}, {5, 0, 4}},
+            {{1, 5, 5}, {3, 6, 5}, {5, 1, 5}},
+            {{4, 7, 6}, {2, 8, 6}, {5, 3, 6}},
+            {{3, 6, 7}, {4, 7, 7}, {5, 2, 7}}
+        };
 
         return target;
     }
@@ -1418,8 +1335,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
 
         /*
          * The span of the origin range and destination range are already known,
-         * so calculate portions of the map(distance, minDist, maxDist, nearBound,
-         * farBound) function outside the for loop.
+         * so calculate portions of the map(distance, minDist, maxDist,
+         * nearBound, farBound) function outside the for loop.
          */
         final float spanOrig = maxDist - minDist;
         final float scalar = spanOrig != 0.0f ? (farBound - nearBound) / spanOrig : 0.0f;
@@ -1486,13 +1403,18 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         switch (poly) {
             case NGON:
             case QUAD: {
-                target.faces = new int[][][]{{{0, 0, 0}, {1, 1, 0}, {2, 2, 0}, {3, 3, 0}}};
+                target.faces = new int[][][]{{
+                    {0, 0, 0},
+                    {1, 1, 0},
+                    {2, 2, 0},
+                    {3, 3, 0}}};
             }
             break;
 
             case TRI:
             default: {
-                target.faces = new int[][][]{{{0, 0, 0}, {1, 1, 0}, {2, 2, 0}},
+                target.faces = new int[][][]{
+                    {{0, 0, 0}, {1, 1, 0}, {2, 2, 0}},
                     {{0, 0, 0}, {2, 2, 0}, {3, 3, 0}}};
             }
         }
@@ -1534,13 +1456,12 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         target.normals[2].set(0.0f, -0.9428091f, 0.33333333f);
         target.normals[3].set(0.8164966f, 0.47140453f, 0.33333333f);
 
-        target.faces =
-            new int[][][]{
-                {{0, 0, 0}, {2, 2, 0}, {1, 1, 0}},
-                {{0, 2, 1}, {1, 1, 1}, {3, 0, 1}},
-                {{0, 1, 3}, {3, 0, 3}, {2, 2, 3}},
-                {{1, 2, 2}, {2, 1, 2}, {3, 0, 2}}
-            };
+        target.faces = new int[][][]{
+            {{0, 0, 0}, {2, 2, 0}, {1, 1, 0}},
+            {{0, 2, 1}, {1, 1, 1}, {3, 0, 1}},
+            {{0, 1, 3}, {3, 0, 3}, {2, 2, 3}},
+            {{1, 2, 2}, {2, 1, 2}, {3, 0, 2}}
+        };
 
         return target;
     }
@@ -1887,7 +1808,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
      * indifferent to redundancies. As a consequence, coordinate, texture
      * coordinate and normal arrays are of equal length and face indices are
      * easier to read and understand. Useful for making a mesh similar to those
-     * in Unity . Similar to 'ripping' vertices or 'tearing' edges in Blender.
+     * in Unity. Similar to 'ripping' vertices or 'tearing' edges in Blender.
      *
      * @param source the source mesh
      * @param target the target mesh
@@ -1899,7 +1820,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         int uniformLen = 0;
         final int[][][] fsSrc = source.faces;
         final int fsSrcLen = fsSrc.length;
-        for (int[][] ints : fsSrc) {
+        for (final int[][] ints : fsSrc) {
             uniformLen += ints.length;
         }
 
@@ -2020,7 +1941,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         final int latsLonsp1 = lats * lonsp1;
 
         /*
-         * Reallocate arrays. The 2 coordinates come from the poles. The 2 *
+         * Reallocate arrays. The 2 coordinates come from the poles. The 2
          * longitudes texture coordinates come from the triangle fan at the poles.
          */
         final int vLen = latsLons + 2;
@@ -2349,7 +2270,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
 
         final Vec3[] coords = mesh.coords;
 
-        for (Vec3 coord : coords) {
+        for (final Vec3 coord : coords) {
             Transform3.mulPoint(tr, coord, co);
             final float x = co.x;
             final float y = co.y;
@@ -2375,71 +2296,6 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
                 ub.z = z;
             }
         }
-    }
-
-    /**
-     * Internal helper function to convert curves to meshes. Evaluates a Bézier
-     * curve to line segments based on a resolution after testing whether the
-     * rear and fore handles of the curve are colinear.
-     *
-     * @param source      the source curve
-     * @param resolution  the resolution
-     * @param colinearTol the colinear tolerance
-     * @param points      the point list
-     * @param dir0        the first direction
-     * @param dir1        the second direction
-     * @see Utils#clamp01(float)
-     * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float, Vec3)
-     * @see Vec3#dot(Vec3, Vec3)
-     * @see Vec3#subNorm(Vec3, Vec3, Vec3)
-     */
-    static void fromCurve3(
-        final Curve3 source,
-        final int resolution,
-        final float colinearTol,
-        final ArrayList<Vec3> points,
-        final Vec3 dir0,
-        final Vec3 dir1) {
-
-        if (!source.closedLoop) {
-            return;
-        }
-
-        final Iterator<Knot3> itr = source.iterator();
-        Knot3 prevKnot = source.getLast();
-
-        if (resolution < 1) {
-            for (Knot3 currKnot; itr.hasNext(); prevKnot = currKnot) {
-                currKnot = itr.next();
-                points.add(new Vec3(prevKnot.coord));
-            }
-        } else {
-            final float vtol = Utils.clamp01(1.0f - colinearTol);
-            final int resp1 = resolution + 1;
-            final float toPercent = 1.0f / resp1;
-
-            for (Knot3 currKnot; itr.hasNext(); prevKnot = currKnot) {
-                currKnot = itr.next();
-                final Vec3 coPrev = prevKnot.coord;
-                final Vec3 fhPrev = prevKnot.foreHandle;
-                final Vec3 rhNext = currKnot.rearHandle;
-                final Vec3 coNext = currKnot.coord;
-
-                /* Add previous knot coordinate no matter the colinear status. */
-                points.add(new Vec3(coPrev));
-
-                Vec3.subNorm(fhPrev, coPrev, dir0);
-                Vec3.subNorm(rhNext, coNext, dir1);
-                final float dotp = Vec3.dot(dir0, dir1);
-                if (dotp > -vtol && dotp < vtol) {
-                    for (int i = 1; i < resp1; ++i) {
-                        points.add(Vec3.bezierPoint(coPrev, fhPrev, rhNext,
-                            coNext, i * toPercent, new Vec3()));
-                    }
-                }
-            }
-        }
-
     }
 
     /**
@@ -2477,21 +2333,20 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
                 switch (poly) {
                     case TRI:
 
-                        target.faces =
-                            new int[][][]{
-                                {{6, 7, 0}, {7, 6, 0}, {5, 8, 0}},
-                                {{6, 7, 0}, {5, 8, 0}, {4, 9, 0}},
-                                {{7, 6, 1}, {3, 13, 1}, {1, 12, 1}},
-                                {{7, 6, 1}, {1, 12, 1}, {5, 8, 1}},
-                                {{2, 10, 2}, {6, 7, 2}, {4, 9, 2}},
-                                {{2, 10, 2}, {4, 9, 2}, {0, 11, 2}},
-                                {{4, 9, 3}, {5, 8, 3}, {1, 0, 3}},
-                                {{4, 9, 3}, {1, 0, 3}, {0, 1, 3}},
-                                {{0, 4, 4}, {1, 5, 4}, {3, 3, 4}},
-                                {{0, 4, 4}, {3, 3, 4}, {2, 2, 4}},
-                                {{2, 2, 5}, {3, 3, 5}, {7, 6, 5}},
-                                {{2, 2, 5}, {7, 6, 5}, {6, 7, 5}}
-                            };
+                        target.faces = new int[][][]{
+                            {{6, 7, 0}, {7, 6, 0}, {5, 8, 0}},
+                            {{6, 7, 0}, {5, 8, 0}, {4, 9, 0}},
+                            {{7, 6, 1}, {3, 13, 1}, {1, 12, 1}},
+                            {{7, 6, 1}, {1, 12, 1}, {5, 8, 1}},
+                            {{2, 10, 2}, {6, 7, 2}, {4, 9, 2}},
+                            {{2, 10, 2}, {4, 9, 2}, {0, 11, 2}},
+                            {{4, 9, 3}, {5, 8, 3}, {1, 0, 3}},
+                            {{4, 9, 3}, {1, 0, 3}, {0, 1, 3}},
+                            {{0, 4, 4}, {1, 5, 4}, {3, 3, 4}},
+                            {{0, 4, 4}, {3, 3, 4}, {2, 2, 4}},
+                            {{2, 2, 5}, {3, 3, 5}, {7, 6, 5}},
+                            {{2, 2, 5}, {7, 6, 5}, {6, 7, 5}}
+                        };
 
                         break;
 
@@ -2499,15 +2354,14 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
                     case QUAD:
                     default:
 
-                        target.faces =
-                            new int[][][]{
-                                {{6, 7, 0}, {7, 6, 0}, {5, 8, 0}, {4, 9, 0}},
-                                {{7, 6, 1}, {3, 13, 1}, {1, 12, 1}, {5, 8, 1}},
-                                {{2, 10, 2}, {6, 7, 2}, {4, 9, 2}, {0, 11, 2}},
-                                {{4, 9, 3}, {5, 8, 3}, {1, 0, 3}, {0, 1, 3}},
-                                {{0, 4, 4}, {1, 5, 4}, {3, 3, 4}, {2, 2, 4}},
-                                {{2, 2, 5}, {3, 3, 5}, {7, 6, 5}, {6, 7, 5}}
-                            };
+                        target.faces = new int[][][]{
+                            {{6, 7, 0}, {7, 6, 0}, {5, 8, 0}, {4, 9, 0}},
+                            {{7, 6, 1}, {3, 13, 1}, {1, 12, 1}, {5, 8, 1}},
+                            {{2, 10, 2}, {6, 7, 2}, {4, 9, 2}, {0, 11, 2}},
+                            {{4, 9, 3}, {5, 8, 3}, {1, 0, 3}, {0, 1, 3}},
+                            {{0, 4, 4}, {1, 5, 4}, {3, 3, 4}, {2, 2, 4}},
+                            {{2, 2, 5}, {3, 3, 5}, {7, 6, 5}, {6, 7, 5}}
+                        };
 
                 }
 
@@ -2532,35 +2386,33 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
 
                 switch (poly) {
                     case TRI:
-                        target.faces =
-                            new int[][][]{
-                                {{0, 4, 0}, {1, 3, 0}, {3, 7, 0}},
-                                {{0, 4, 0}, {3, 7, 0}, {2, 8, 0}},
-                                {{4, 1, 5}, {1, 3, 5}, {0, 4, 5}},
-                                {{2, 13, 3}, {4, 9, 3}, {0, 12, 3}},
-                                {{7, 6, 4}, {3, 7, 4}, {1, 3, 4}},
-                                {{2, 11, 2}, {3, 7, 2}, {7, 6, 2}},
-                                {{4, 1, 5}, {5, 0, 5}, {1, 3, 5}},
-                                {{7, 6, 4}, {1, 3, 4}, {5, 2, 4}},
-                                {{2, 13, 3}, {6, 10, 3}, {4, 9, 3}},
-                                {{2, 11, 2}, {7, 6, 2}, {6, 10, 2}},
-                                {{6, 10, 1}, {5, 5, 1}, {4, 9, 1}},
-                                {{6, 10, 1}, {7, 6, 1}, {5, 5, 1}}
-                            };
+                        target.faces = new int[][][]{
+                            {{0, 4, 0}, {1, 3, 0}, {3, 7, 0}},
+                            {{0, 4, 0}, {3, 7, 0}, {2, 8, 0}},
+                            {{4, 1, 5}, {1, 3, 5}, {0, 4, 5}},
+                            {{2, 13, 3}, {4, 9, 3}, {0, 12, 3}},
+                            {{7, 6, 4}, {3, 7, 4}, {1, 3, 4}},
+                            {{2, 11, 2}, {3, 7, 2}, {7, 6, 2}},
+                            {{4, 1, 5}, {5, 0, 5}, {1, 3, 5}},
+                            {{7, 6, 4}, {1, 3, 4}, {5, 2, 4}},
+                            {{2, 13, 3}, {6, 10, 3}, {4, 9, 3}},
+                            {{2, 11, 2}, {7, 6, 2}, {6, 10, 2}},
+                            {{6, 10, 1}, {5, 5, 1}, {4, 9, 1}},
+                            {{6, 10, 1}, {7, 6, 1}, {5, 5, 1}}
+                        };
                         break;
 
                     case NGON:
                     case QUAD:
                     default:
-                        target.faces =
-                            new int[][][]{
-                                {{2, 13, 0}, {3, 10, 0}, {1, 9, 0}, {0, 12, 0}},
-                                {{1, 1, 1}, {5, 0, 1}, {4, 3, 1}, {0, 4, 1}},
-                                {{0, 4, 2}, {4, 3, 2}, {6, 7, 2}, {2, 8, 2}},
-                                {{3, 10, 3}, {7, 6, 3}, {5, 5, 3}, {1, 9, 3}},
-                                {{2, 11, 4}, {6, 7, 4}, {7, 6, 4}, {3, 10, 4}},
-                                {{7, 6, 5}, {6, 7, 5}, {4, 3, 5}, {5, 2, 5}}
-                            };
+                        target.faces = new int[][][]{
+                            {{2, 13, 0}, {3, 10, 0}, {1, 9, 0}, {0, 12, 0}},
+                            {{1, 1, 1}, {5, 0, 1}, {4, 3, 1}, {0, 4, 1}},
+                            {{0, 4, 2}, {4, 3, 2}, {6, 7, 2}, {2, 8, 2}},
+                            {{3, 10, 3}, {7, 6, 3}, {5, 5, 3}, {1, 9, 3}},
+                            {{2, 11, 4}, {6, 7, 4}, {7, 6, 4}, {3, 10, 4}},
+                            {{7, 6, 5}, {6, 7, 5}, {4, 3, 5}, {5, 2, 5}}
+                        };
                 }
 
                 break;
@@ -2575,35 +2427,33 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
 
                 switch (poly) {
                     case TRI:
-                        target.faces =
-                            new int[][][]{
-                                {{6, 2, 0}, {7, 3, 0}, {5, 0, 0}},
-                                {{6, 2, 0}, {5, 0, 0}, {4, 1, 0}},
-                                {{7, 1, 1}, {3, 2, 1}, {1, 3, 1}},
-                                {{7, 1, 1}, {1, 3, 1}, {5, 0, 1}},
-                                {{2, 1, 2}, {6, 2, 2}, {4, 3, 2}},
-                                {{2, 1, 2}, {4, 3, 2}, {0, 0, 2}},
-                                {{4, 2, 3}, {5, 3, 3}, {1, 0, 3}},
-                                {{4, 2, 3}, {1, 0, 3}, {0, 1, 3}},
-                                {{0, 2, 4}, {1, 3, 4}, {3, 0, 4}},
-                                {{0, 2, 4}, {3, 0, 4}, {2, 1, 4}},
-                                {{2, 2, 5}, {3, 3, 5}, {7, 0, 5}},
-                                {{2, 2, 5}, {7, 0, 5}, {6, 1, 5}}
-                            };
+                        target.faces = new int[][][]{
+                            {{6, 2, 0}, {7, 3, 0}, {5, 0, 0}},
+                            {{6, 2, 0}, {5, 0, 0}, {4, 1, 0}},
+                            {{7, 1, 1}, {3, 2, 1}, {1, 3, 1}},
+                            {{7, 1, 1}, {1, 3, 1}, {5, 0, 1}},
+                            {{2, 1, 2}, {6, 2, 2}, {4, 3, 2}},
+                            {{2, 1, 2}, {4, 3, 2}, {0, 0, 2}},
+                            {{4, 2, 3}, {5, 3, 3}, {1, 0, 3}},
+                            {{4, 2, 3}, {1, 0, 3}, {0, 1, 3}},
+                            {{0, 2, 4}, {1, 3, 4}, {3, 0, 4}},
+                            {{0, 2, 4}, {3, 0, 4}, {2, 1, 4}},
+                            {{2, 2, 5}, {3, 3, 5}, {7, 0, 5}},
+                            {{2, 2, 5}, {7, 0, 5}, {6, 1, 5}}
+                        };
                         break;
 
                     case NGON:
                     case QUAD:
                     default:
-                        target.faces =
-                            new int[][][]{
-                                {{6, 2, 0}, {7, 3, 0}, {5, 0, 0}, {4, 1, 0}},
-                                {{7, 1, 1}, {3, 2, 1}, {1, 3, 1}, {5, 0, 1}},
-                                {{2, 1, 2}, {6, 2, 2}, {4, 3, 2}, {0, 0, 2}},
-                                {{4, 2, 3}, {5, 3, 3}, {1, 0, 3}, {0, 1, 3}},
-                                {{0, 2, 4}, {1, 3, 4}, {3, 0, 4}, {2, 1, 4}},
-                                {{2, 2, 5}, {3, 3, 5}, {7, 0, 5}, {6, 1, 5}}
-                            };
+                        target.faces = new int[][][]{
+                            {{6, 2, 0}, {7, 3, 0}, {5, 0, 0}, {4, 1, 0}},
+                            {{7, 1, 1}, {3, 2, 1}, {1, 3, 1}, {5, 0, 1}},
+                            {{2, 1, 2}, {6, 2, 2}, {4, 3, 2}, {0, 0, 2}},
+                            {{4, 2, 3}, {5, 3, 3}, {1, 0, 3}, {0, 1, 3}},
+                            {{0, 2, 4}, {1, 3, 4}, {3, 0, 4}, {2, 1, 4}},
+                            {{2, 2, 5}, {3, 3, 5}, {7, 0, 5}, {6, 1, 5}}
+                        };
                 }
         }
 
@@ -2670,8 +2520,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         float z1 = 0.0f;
 
         /*
-         * Forward and up are parallel if the cross product is zero. z1 is already
-         * known to be zero, so no check is necessary.
+         * Forward and up are parallel if the cross product is zero. z1 is
+         * already known to be zero, so no check is necessary.
          */
         if (Utils.approx(x1, 0.0f, Utils.EPSILON) && Utils.approx(y1, 0.0f, Utils.EPSILON)) {
 
@@ -2903,7 +2753,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
 
         int uniformLen = 0;
         final int fsLen = this.faces.length;
-        for (int[][] face : this.faces) {
+        for (final int[][] face : this.faces) {
             uniformLen += face.length;
         }
         this.texCoords = Vec2.resize(this.texCoords, uniformLen);
@@ -3485,7 +3335,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
      */
     public Mesh3 flipU() {
 
-        for (Vec2 texCoord : this.texCoords) {
+        for (final Vec2 texCoord : this.texCoords) {
             texCoord.x = 1.0f - texCoord.x;
         }
 
@@ -3500,7 +3350,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
      */
     public Mesh3 flipV() {
 
-        for (Vec2 texCoord : this.texCoords) {
+        for (final Vec2 texCoord : this.texCoords) {
             texCoord.y = 1.0f - texCoord.y;
         }
 
@@ -3517,7 +3367,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
      */
     public Mesh3 flipX() {
 
-        for (Vec3 coord : this.coords) {
+        for (final Vec3 coord : this.coords) {
             coord.x = -coord.x;
         }
         this.reverseFaces();
@@ -3526,8 +3376,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
     }
 
     /**
-     * Negates the y component of all coordinates in the mesh, then reverses the
-     * mesh's faces. Use this instead of {@link Mesh3#scale(Vec3)} with the
+     * Negates the y component of all coordinates in the mesh, then reverses
+     * the mesh's faces. Use this instead of {@link Mesh3#scale(Vec3)} with the
      * argument <code>new Vec2(1.0f, -1.0f, 1.0f)</code>.
      *
      * @return this mesh
@@ -3535,7 +3385,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
      */
     public Mesh3 flipY() {
 
-        for (Vec3 coord : this.coords) {
+        for (final Vec3 coord : this.coords) {
             coord.y = -coord.y;
         }
         this.reverseFaces();
@@ -3544,8 +3394,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
     }
 
     /**
-     * Negates the z component of all coordinates in the mesh, then reverses the
-     * mesh's faces. Use this instead of {@link Mesh3#scale(Vec3)} with the
+     * Negates the z component of all coordinates in the mesh, then reverses
+     * the mesh's faces. Use this instead of {@link Mesh3#scale(Vec3)} with the
      * argument <code>new Vec3(1.0f, 1.0f, -1.0f)</code>.
      *
      * @return this mesh
@@ -3553,7 +3403,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
      */
     public Mesh3 flipZ() {
 
-        for (Vec3 coord : this.coords) {
+        for (final Vec3 coord : this.coords) {
             coord.z = -coord.z;
         }
         this.reverseFaces();
@@ -4043,6 +3893,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
      *
      * @return the iterator
      */
+    @SuppressWarnings("NullableProblems")
     @Override
     public Iterator<Face3> iterator() {
         return new Face3Iterator(this);
@@ -4975,7 +4826,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
     }
 
     /**
-     * Renders the mesh as a string following the Wavefront OBJ file format.
+     * Renders the mesh as a string following the Wavefront obj file format.
      *
      * @return the string
      */
@@ -4985,8 +4836,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
     }
 
     /**
-     * Renders the mesh as a string following the Wavefront OBJ file format.
-     * The index offsets specify where the mesh's data begin; OBJ file indices
+     * Renders the mesh as a string following the Wavefront obj file format.
+     * The index offsets specify where the mesh's data begin; obj file indices
      * begin at 1, not 0. The mesh is considered a group, 'g', not an object,
      * 'o'.
      *
@@ -5059,7 +4910,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
 
         int sum = 0;
         final int facesLen = this.faces.length;
-        for (int[][] face : this.faces) {
+        for (final int[][] face : this.faces) {
             sum += face.length;
         }
 
@@ -5306,7 +5157,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
 
     /**
      * Internal helper method that appends a representation of this mesh in the
-     * Wavefront OBJ file format to a {@link StringBuilder}.
+     * Wavefront obj file format to a {@link StringBuilder}.
      *
      * @param objs          the string builder
      * @param vIdx          coordinate index offset
@@ -5473,9 +5324,9 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
     public int hashCode() {
         return Objects.hash(
             super.hashCode(),
-            Arrays.hashCode(coords),
-            Arrays.hashCode(normals),
-            Arrays.hashCode(texCoords));
+            Arrays.hashCode(this.coords),
+            Arrays.hashCode(this.normals),
+            Arrays.hashCode(this.texCoords));
     }
 
     /**
@@ -5509,8 +5360,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         final int facesLen = this.faces.length;
         final boolean reassign = count >= facesLen;
 
-        Vec3[] vns;
-        int idxOffset;
+        final Vec3[] vns;
+        final int idxOffset;
         if (reassign) {
             vns = this.normals = Vec3.resize(this.normals, count);
             idxOffset = 0;

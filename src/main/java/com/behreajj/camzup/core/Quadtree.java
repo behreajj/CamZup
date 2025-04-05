@@ -144,16 +144,16 @@ public class Quadtree {
         /*
          * This no longer implements Comparable<Quadtree> (based on its bounds
          * center) because then it would also have to implement equals and
-         * hashCode to fulfill the interface contract, and it's not clear how two
-         * should be equated.
+         * hashCode to fulfill the interface contract, and it's not clear how
+         * two should be equated.
          */
 
         this(Bounds2.unitSquareSigned(new Bounds2()));
     }
 
     /**
-     * Constructs a quadtree with a boundary and capacity. Protected so that the
-     * level can be set.
+     * Constructs a quadtree with a boundary and capacity. Protected so that
+     * the level can be set.
      *
      * @param bounds   the bounds
      * @param capacity the capacity
@@ -179,9 +179,9 @@ public class Quadtree {
     }
 
     /**
-     * Finds the average center in each leaf node of this quadtree. If the node is
-     * empty, and
-     * includeEmpty is true, then the center of the cell bounds is used instead.
+     * Finds the average center in each leaf node of this quadtree. If the node
+     * is empty, and includeEmpty is true, then the center of the cell bounds
+     * is used instead.
      *
      * @param q            the quadtree
      * @param includeEmpty include empty cells
@@ -195,8 +195,8 @@ public class Quadtree {
     }
 
     /**
-     * Queries the quadtree with a rectangular range, returning points inside the
-     * range.
+     * Queries the quadtree with a rectangular range, returning points inside
+     * the range.
      *
      * @param q     the quadtree
      * @param range the range
@@ -230,7 +230,10 @@ public class Quadtree {
      * @param radius the circle radius
      * @return the points
      */
-    public static Vec2[] query(final Quadtree q, final Vec2 center, final float radius) {
+    public static Vec2[] query(
+        final Quadtree q,
+        final Vec2 center,
+        final float radius) {
 
         final TreeMap<Float, Vec2> found = new TreeMap<>();
         Quadtree.query(q, center, radius * radius, 0, found);
@@ -429,6 +432,7 @@ public class Quadtree {
      *
      * @return the evaluation
      */
+    @SuppressWarnings("AssignmentToNull")
     public boolean cull() {
 
         int cullThis = 0;
@@ -598,7 +602,7 @@ public class Quadtree {
     public boolean insertAll(final Vec2[] pts) {
 
         boolean flag = true;
-        for (Vec2 pt : pts) {
+        for (final Vec2 pt : pts) {
             flag &= this.insert(pt);
         }
         return flag;
@@ -621,12 +625,13 @@ public class Quadtree {
     }
 
     /**
-     * If this quadtree node has children, converts it to a leaf node containing the
-     * centers of its
-     * children. Increases node capacity if necessary.
+     * If this quadtree node has children, converts it to a leaf node
+     * containing the centers of its children. Increases node capacity if
+     * necessary.
      *
      * @return this quadtree
      */
+    @SuppressWarnings("AssignmentToNull")
     public Quadtree merge() {
 
         if (this.isLeaf()) {
@@ -643,7 +648,7 @@ public class Quadtree {
                 final int ptsLen = pts.size();
                 if (ptsLen > 0) {
                     final Vec2 center = new Vec2();
-                    for (Vec2 pt : pts) {
+                    for (final Vec2 pt : pts) {
                         Vec2.add(center, pt, center);
                     }
                     Vec2.mul(center, 1.0f / ptsLen, center);
@@ -664,8 +669,7 @@ public class Quadtree {
 
     /**
      * Resets this tree to an initial state, where its has no children and no
-     * points. Leaves the
-     * tree's bounds unchanged.
+     * points. Leaves the tree's bounds unchanged.
      *
      * @return this quadtree
      */
@@ -679,8 +683,7 @@ public class Quadtree {
 
     /**
      * Resets this tree to an initial state, where its has no children and no
-     * points. Sets the bounds
-     * to the one supplied.
+     * points. Sets the bounds to the one supplied.
      *
      * @param b bounds
      * @return this quadtree
@@ -713,11 +716,10 @@ public class Quadtree {
     }
 
     /**
-     * Subdivides this quadtree. For cases where a minimum number of children nodes
-     * is desired,
-     * independent of point insertion. The result will be
-     * {@value Quadtree#CHILD_COUNT} raised to the
-     * power of iterations, e.g., 4, 16, 64, 256.
+     * Subdivides this quadtree. For cases where a minimum number of children
+     * nodes is desired, independent of point insertion. The result will be
+     * {@value Quadtree#CHILD_COUNT} raised to the power of iterations, e.g.,
+     * 4, 16, 64, 256.
      *
      * @param iterations    iteration count
      * @param childCapacity child capacity
@@ -768,8 +770,8 @@ public class Quadtree {
     }
 
     /**
-     * Finds the total capacity of a node, including the cumulative capacities of
-     * its children.
+     * Finds the total capacity of a node, including the cumulative capacities
+     * of its children.
      *
      * @return the sum
      */

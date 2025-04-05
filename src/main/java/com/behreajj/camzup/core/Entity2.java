@@ -108,7 +108,7 @@ public class Entity2 extends Entity implements Comparable<Entity2>, IOriented2, 
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), transform);
+        return Objects.hash(super.hashCode(), this.transform);
     }
 
     /**

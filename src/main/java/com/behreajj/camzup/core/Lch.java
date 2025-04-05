@@ -4,9 +4,9 @@ import java.util.Random;
 import java.util.function.Function;
 
 /**
- * A mutable, extensible color class that represents colors in the polar form of
- * a perceptual color space. Lightness falls in the range [0.0, 100.0] . Hue is
- * within the range [0.0, 1.0). Chroma's minimum bound is 0.0, but it has no
+ * A mutable, extensible color class that represents colors in the polar form
+ * of a perceptual color space. Lightness falls in the range [0.0, 100.0]. Hue
+ * is within the range [0.0, 1.0). Chroma's minimum bound is 0.0, but it has no
  * upper bound. Alpha is expected to be in [0.0, 1.0] .
  */
 public class Lch implements IColor {
@@ -97,7 +97,7 @@ public class Lch implements IColor {
 
     /**
      * Creates a color from bytes In Java, bytes are signed, within the range
-     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] . The alpha channel
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}]. The alpha channel
      * defaults to 1.0.
      *
      * @param l the light component
@@ -111,7 +111,7 @@ public class Lch implements IColor {
 
     /**
      * Creates a color from bytes. In Java, bytes are signed, within the range
-     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}].
      *
      * @param l     the light component
      * @param c     the chroma
@@ -176,7 +176,7 @@ public class Lch implements IColor {
 
     /**
      * Tests to see if the alpha channel of the color is greater than zero,
-     * i.e. if it has some opacity.
+     * i.e., if it has some opacity.
      *
      * @param o the color
      * @return the evaluation
@@ -328,7 +328,7 @@ public class Lch implements IColor {
         final float alpha,
         final Lch target) {
 
-        final double chrSq = (double) a * (double) a + (double) b * (double) b;
+        final double chrSq = a * a + b * b;
         if (chrSq < Utils.EPSILON_D) {
             final float t = l * 0.01f;
             final float hGray = Utils.mod1((1.0f - t) * Lch.SR_HUE_SHADE + t * (Lch.SR_HUE_LIGHT + 1.0f));
@@ -423,9 +423,9 @@ public class Lch implements IColor {
                 db = dChroma * Math.sin(dhRadians);
             }
 
-            final double ud = 1.0d - (double) step;
-            final double ca = ud * oa + (double) step * da;
-            final double cb = ud * ob + (double) step * db;
+            final double ud = 1.0d - step;
+            final double ca = ud * oa + step * da;
+            final double cb = ud * ob + step * db;
 
             final double cc = Math.sqrt(ca * ca + cb * cb);
 
@@ -436,7 +436,11 @@ public class Lch implements IColor {
             return target.set(cl, (float) cc, (float) ch, calpha);
         }
 
-        return target.set(cl, u * orig.c + step * dest.c, easing.apply(orig.h, dest.h, step), calpha);
+        return target.set(
+            cl,
+            u * orig.c + step * dest.c,
+            easing.apply(orig.h, dest.h, step),
+            calpha);
     }
 
     /**
@@ -549,18 +553,6 @@ public class Lch implements IColor {
     }
 
     /**
-     * Tests this color for equivalence to another based on its hexadecimal
-     * representation.
-     *
-     * @param other the color integer
-     * @return the equivalence
-     */
-    public boolean equals(final int other) {
-
-        return this.toHexInt() == other;
-    }
-
-    /**
      * Tests this color for equivalence with another object.
      *
      * @param obj the object
@@ -594,6 +586,7 @@ public class Lch implements IColor {
      *
      * @return this color
      */
+    @Override
     public Lch reset() {
 
         return this.set(100.0f, 0.0f, Lch.SR_HUE_LIGHT, 1.0f);

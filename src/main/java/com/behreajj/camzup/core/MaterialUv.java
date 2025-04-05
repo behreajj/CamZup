@@ -64,12 +64,12 @@ public abstract class MaterialUv extends Material implements IOriented2, ISpatia
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof MaterialUv that))
+    public boolean equals(final Object o) {
+        if (!(o instanceof final MaterialUv that))
             return false;
         if (!super.equals(o))
             return false;
-        return Objects.equals(tint, that.tint) && Objects.equals(transform, that.transform);
+        return Objects.equals(this.tint, that.tint) && Objects.equals(this.transform, that.transform);
     }
 
     /**

@@ -54,15 +54,15 @@ public abstract class Entity {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Entity entity))
+    public boolean equals(final Object o) {
+        if (!(o instanceof final Entity entity))
             return false;
-        return Objects.equals(name, entity.name);
+        return Objects.equals(this.name, entity.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hashCode(name);
+        return Objects.hashCode(this.name);
     }
 
     @Override

@@ -271,15 +271,15 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Edge2 edge2))
+    public boolean equals(final Object o) {
+        if (!(o instanceof final Edge2 edge2))
             return false;
-        return Objects.equals(dest, edge2.dest) && Objects.equals(origin, edge2.origin);
+        return Objects.equals(this.dest, edge2.dest) && Objects.equals(this.origin, edge2.origin);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dest, origin);
+        return Objects.hash(this.dest, this.origin);
     }
 
     /**

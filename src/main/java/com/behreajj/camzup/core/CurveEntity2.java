@@ -94,7 +94,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
 
         target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
 
-        for (Curve2 knot2s : entity) {
+        for (final Curve2 knot2s : entity) {
             Curve2.accumMinMax(knot2s,
                 target.min, target.max, entity.transform,
                 fh, rh, co);
@@ -215,7 +215,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
      */
     public CurveEntity2 appendAll(final Collection<Curve2> curves) {
 
-        for (Curve2 curve : curves) {
+        for (final Curve2 curve : curves) {
             this.append(curve);
         }
 
@@ -231,7 +231,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     @SuppressWarnings("UnusedReturnValue")
     public CurveEntity2 appendAll(final Curve2... curves) {
 
-        for (Curve2 curve : curves) {
+        for (final Curve2 curve : curves) {
             this.append(curve);
         }
 
@@ -248,7 +248,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
      */
     public CurveEntity2 consumeTransform() {
 
-        for (Curve2 curve : this.curves) {
+        for (final Curve2 curve : this.curves) {
             curve.transform(this.transform);
         }
         Transform2.identity(this.transform);
@@ -356,6 +356,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
      * @return the iterator
      * @see List#iterator()
      */
+    @SuppressWarnings("NullableProblems")
     @Override
     public Iterator<Curve2> iterator() {
         return this.curves.iterator();
@@ -655,7 +656,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
 
         int curveIndex = 0;
         final int curveLast = this.curves.size() - 1;
-        for (Curve2 curve : this.curves) {
+        for (final Curve2 curve : this.curves) {
             curve.toBlenderCode(pyCd, uRes);
             if (curveIndex < curveLast) {
                 pyCd.append(',').append(' ');
@@ -951,7 +952,7 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
             svgp.append(' ');
             this.transform.toSvgString(svgp);
             svgp.append(" d=\"");
-            for (Curve2 curve : this.curves) {
+            for (final Curve2 curve : this.curves) {
                 curve.toSvgSubPath(svgp);
                 svgp.append(' ');
             }

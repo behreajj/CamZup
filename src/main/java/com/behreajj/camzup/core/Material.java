@@ -20,7 +20,7 @@ public abstract class Material extends EntityData {
      * The default fill color used when none is specified, (0.6039, 0.8471,
      * 0.8863) in RGB. Expressed as a 32-bit integer formatted as 0xAARRGGBB.
      */
-    public static int DEFAULT_FILL = 0xff9ad8e2;
+    public static final int DEFAULT_FILL = 0xff9ad8e2;
 
     /**
      * The default constructor.

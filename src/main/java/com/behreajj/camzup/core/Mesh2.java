@@ -216,7 +216,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
             }
         }
 
-        int len;
+        final int len;
 
         switch (poly) {
             case NGON: {
@@ -765,7 +765,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
         /* Convert dictionary values to an array; clean meshes of excess data. */
         final Mesh2[] result = dict.values().toArray(new Mesh2[0]);
-        for (Mesh2 face2s : result) {
+        for (final Mesh2 face2s : result) {
             face2s.clean();
         }
         return result;
@@ -933,7 +933,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         }
 
         /* Set faces. */
-        int[][][] fs;
+        final int[][][] fs;
         final int fLen = rVal * cVal;
 
         switch (poly) {
@@ -1398,7 +1398,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         int uniformLen = 0;
         final int[][][] fsSrc = source.faces;
         final int fsSrcLen = fsSrc.length;
-        for (int[][] ints : fsSrc) {
+        for (final int[][] ints : fsSrc) {
             uniformLen += ints.length;
         }
 
@@ -1502,7 +1502,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
         final Vec2 co) {
 
         final Vec2[] coords = mesh.coords;
-        for (Vec2 coord : coords) {
+        for (final Vec2 coord : coords) {
             Transform2.mulPoint(tr, coord, co);
             final float x = co.x;
             final float y = co.y;
@@ -1898,7 +1898,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      */
     public Mesh2 flipU() {
 
-        for (Vec2 texCoord : this.texCoords) {
+        for (final Vec2 texCoord : this.texCoords) {
             texCoord.x = 1.0f - texCoord.x;
         }
 
@@ -1913,7 +1913,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      */
     public Mesh2 flipV() {
 
-        for (Vec2 texCoord : this.texCoords) {
+        for (final Vec2 texCoord : this.texCoords) {
             texCoord.y = 1.0f - texCoord.y;
         }
 
@@ -1930,7 +1930,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      */
     public Mesh2 flipX() {
 
-        for (Vec2 coord : this.coords) {
+        for (final Vec2 coord : this.coords) {
             coord.x = -coord.x;
         }
         this.reverseFaces();
@@ -1948,7 +1948,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      */
     public Mesh2 flipY() {
 
-        for (Vec2 coord : this.coords) {
+        for (final Vec2 coord : this.coords) {
             coord.y = -coord.y;
         }
         this.reverseFaces();
@@ -2330,6 +2330,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      *
      * @return the iterator
      */
+    @SuppressWarnings("NullableProblems")
     @Override
     public Iterator<Face2> iterator() {
         return new Face2Iterator(this);
@@ -2943,7 +2944,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Renders the mesh as a string following the Wavefront OBJ file format.
+     * Renders the mesh as a string following the Wavefront obj file format.
      *
      * @return the string
      */
@@ -2952,8 +2953,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
-     * Renders the mesh as a string following the Wavefront OBJ file format.
-     * The index offsets specify where the mesh's data begin; OBJ file indices
+     * Renders the mesh as a string following the Wavefront obj file format.
+     * The index offsets specify where the mesh's data begin; obj file indices
      * begin at 1, not 0. The mesh is considered a group, 'g', not an object,
      * 'o'.
      *
@@ -3015,7 +3016,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
         int sum = 0;
         final int facesLen = this.faces.length;
-        for (int[][] face : this.faces) {
+        for (final int[][] face : this.faces) {
             sum += face.length;
         }
 
@@ -3261,7 +3262,7 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
 
     /**
      * Internal helper method that appends a representation of this mesh in the
-     * Wavefront OBJ file format to a {@link StringBuilder}.
+     * Wavefront obj file format to a {@link StringBuilder}.
      *
      * @param objs   the string builder
      * @param vIdx   coordinate index offset
@@ -3451,8 +3452,8 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     public int hashCode() {
         return Objects.hash(
             super.hashCode(),
-            Arrays.hashCode(coords),
-            Arrays.hashCode(texCoords));
+            Arrays.hashCode(this.coords),
+            Arrays.hashCode(this.texCoords));
     }
 
     /**

@@ -69,17 +69,17 @@ public class Entity3 extends Entity implements Comparable<Entity3>, IOriented3, 
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Entity3 entity3))
+    public boolean equals(final Object o) {
+        if (!(o instanceof final Entity3 entity3))
             return false;
         if (!super.equals(o))
             return false;
-        return Objects.equals(transform, entity3.transform);
+        return Objects.equals(this.transform, entity3.transform);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), transform);
+        return Objects.hash(super.hashCode(), this.transform);
     }
 
     /**

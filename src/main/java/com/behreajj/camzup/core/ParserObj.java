@@ -45,11 +45,11 @@ public abstract class ParserObj {
         final MeshEntity3 result = new MeshEntity3();
 
         /*
-         * If no initial capacity is supplied, then the hash map maximum capacity,
-         * 1073741824, is used. 0.75f is the default load factor. Initial capacity
-         * must be a power of two. An array list's default capacity is 10. A
-         * default UV sphere has 514 vs and 1024 fs; a cube sphere, 386 vs and 768
-         * fs; an icosphere, 642 vs and 1280 fs.
+         * If no initial capacity is supplied, then the hash map maximum
+         * capacity, 1073741824, is used. 0.75f is the default load factor.
+         * Initial capacity must be a power of two. An array list's default
+         * capacity is 10. A default UV sphere has 514 vs and 1024 fs; a cube
+         * sphere, 386 vs and 768 fs; an icosphere, 642 vs and 1280 fs.
          */
         final int groupCapacity = 512;
         final int dataCapacity = 512;
@@ -87,7 +87,10 @@ public abstract class ParserObj {
 
                     if (tokens.length > 0) {
 
-                        /* Switch case by hash code of String, not String itself. */
+                        /*
+                         * Switch case by hash code of String,
+                         * not String itself.
+                         */
                         final int cmd = tokens[0].toLowerCase().hashCode();
                         switch (cmd) {
                             case -1063936832: /* "mtllib" */
@@ -330,7 +333,7 @@ public abstract class ParserObj {
     public static MeshEntity3 load(final String fileName, final boolean poolData) {
 
         MeshEntity3 result = new MeshEntity3();
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        try (final BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             result = ParserObj.load(br, poolData);
         } catch (final Exception e) {
             // noinspection CallToPrintStackTrace

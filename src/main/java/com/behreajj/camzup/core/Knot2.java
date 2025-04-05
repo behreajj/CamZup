@@ -130,9 +130,13 @@ public class Knot2 implements Comparable<Knot2> {
      * @see Vec2#bezierPoint(Vec2, Vec2, Vec2, Vec2, float, Vec2)
      */
     public static Vec2 bezierPoint(
-        final Knot2 a, final Knot2 b, final float step, final Vec2 target) {
+        final Knot2 a,
+        final Knot2 b,
+        final float step,
+        final Vec2 target) {
 
-        return Vec2.bezierPoint(a.coord, a.foreHandle, b.rearHandle, b.coord, step, target);
+        return Vec2.bezierPoint(a.coord, a.foreHandle, b.rearHandle, b.coord,
+            step, target);
     }
 
     /**
@@ -146,9 +150,13 @@ public class Knot2 implements Comparable<Knot2> {
      * @see Vec2#bezierTangent(Vec2, Vec2, Vec2, Vec2, float, Vec2)
      */
     public static Vec2 bezierTangent(
-        final Knot2 a, final Knot2 b, final float step, final Vec2 target) {
+        final Knot2 a,
+        final Knot2 b,
+        final float step,
+        final Vec2 target) {
 
-        return Vec2.bezierTangent(a.coord, a.foreHandle, b.rearHandle, b.coord, step, target);
+        return Vec2.bezierTangent(a.coord, a.foreHandle, b.rearHandle, b.coord,
+            step, target);
     }
 
     /**
@@ -162,9 +170,13 @@ public class Knot2 implements Comparable<Knot2> {
      * @see Vec2#bezierTanUnit(Vec2, Vec2, Vec2, Vec2, float, Vec2)
      */
     public static Vec2 bezierTanUnit(
-        final Knot2 a, final Knot2 b, final float step, final Vec2 target) {
+        final Knot2 a,
+        final Knot2 b,
+        final float step,
+        final Vec2 target) {
 
-        return Vec2.bezierTanUnit(a.coord, a.foreHandle, b.rearHandle, b.coord, step, target);
+        return Vec2.bezierTanUnit(a.coord, a.foreHandle, b.rearHandle, b.coord,
+            step, target);
     }
 
     /**
@@ -454,7 +466,10 @@ public class Knot2 implements Comparable<Knot2> {
      * @return the next knot
      * @see Knot2#fromSegLinear(float, float, Knot2, Knot2)
      */
-    public static Knot2 fromSegLinear(final Vec2 nextAnchor, final Knot2 prev, final Knot2 next) {
+    public static Knot2 fromSegLinear(
+        final Vec2 nextAnchor,
+        final Knot2 prev,
+        final Knot2 next) {
 
         return Knot2.fromSegLinear(nextAnchor.x, nextAnchor.y, prev, next);
     }
@@ -855,17 +870,17 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Knot2 knot2))
+    public boolean equals(final Object o) {
+        if (!(o instanceof final Knot2 knot2))
             return false;
-        return Objects.equals(coord, knot2.coord)
-            && Objects.equals(foreHandle, knot2.foreHandle)
-            && Objects.equals(rearHandle, knot2.rearHandle);
+        return Objects.equals(this.coord, knot2.coord)
+            && Objects.equals(this.foreHandle, knot2.foreHandle)
+            && Objects.equals(this.rearHandle, knot2.rearHandle);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(coord, foreHandle, rearHandle);
+        return Objects.hash(this.coord, this.foreHandle, this.rearHandle);
     }
 
     /**

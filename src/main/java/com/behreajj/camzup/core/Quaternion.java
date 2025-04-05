@@ -2057,7 +2057,7 @@ public class Quaternion implements Comparable<Quaternion> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
 
         if (this == o) {
             return true;
@@ -2070,7 +2070,7 @@ public class Quaternion implements Comparable<Quaternion> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(imag, real);
+        return Objects.hash(this.imag, this.real);
     }
 
     /**

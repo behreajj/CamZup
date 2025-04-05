@@ -296,7 +296,7 @@ public class Gradient implements Iterable<ColorKey> {
 
             final TreeSet<ColorKey> srcKeys = target.keys;
             final ArrayList<ColorKey> trgKeys = new ArrayList<>(srcKeys.size());
-            for (ColorKey srcKey : srcKeys) {
+            for (final ColorKey srcKey : srcKeys) {
                 final Lab srcClr = srcKey.clr;
                 trgKeys.add(new ColorKey(srcClr.alpha, srcClr));
             }
@@ -307,7 +307,7 @@ public class Gradient implements Iterable<ColorKey> {
 
             final TreeSet<ColorKey> trgKeys = target.keys;
             trgKeys.clear();
-            for (ColorKey key : source.keys) {
+            for (final ColorKey key : source.keys) {
                 final Lab srcClr = key.clr;
                 trgKeys.add(new ColorKey(srcClr.alpha, srcClr));
             }
@@ -335,7 +335,7 @@ public class Gradient implements Iterable<ColorKey> {
 
             final TreeSet<ColorKey> srcKeys = target.keys;
             final ArrayList<ColorKey> trgKeys = new ArrayList<>(srcKeys.size());
-            for (ColorKey srcKey : srcKeys) {
+            for (final ColorKey srcKey : srcKeys) {
                 final Lab srcClr = srcKey.clr;
                 trgKeys.add(new ColorKey(srcClr.l * 0.01f, srcClr));
             }
@@ -346,7 +346,7 @@ public class Gradient implements Iterable<ColorKey> {
 
             final TreeSet<ColorKey> trgKeys = target.keys;
             trgKeys.clear();
-            for (ColorKey key : source.keys) {
+            for (final ColorKey key : source.keys) {
                 final Lab srcClr = key.clr;
                 trgKeys.add(new ColorKey(srcClr.l * 0.01f, srcClr));
             }
@@ -893,6 +893,7 @@ public class Gradient implements Iterable<ColorKey> {
      * @return the iterator
      * @see TreeSet#iterator()
      */
+    @SuppressWarnings("NullableProblems")
     @Override
     public Iterator<ColorKey> iterator() {
         return this.keys.iterator();
@@ -1128,7 +1129,7 @@ public class Gradient implements Iterable<ColorKey> {
     public Gradient set(final Gradient source) {
 
         this.keys.clear();
-        for (ColorKey key : source.keys) {
+        for (final ColorKey key : source.keys) {
             this.keys.add(new ColorKey(key));
         }
 

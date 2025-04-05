@@ -39,6 +39,13 @@ public interface IColor extends Comparable<IColor> {
     int hashCode();
 
     /**
+     * Resets a color to an initial state, opaque white.
+     *
+     * @return the color
+     */
+    IColor reset();
+
+    /**
      * Converts a color to an integer where hexadecimal represents the color
      * components.
      *

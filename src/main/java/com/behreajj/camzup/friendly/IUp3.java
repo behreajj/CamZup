@@ -134,7 +134,7 @@ public interface IUp3 extends IUp {
 
         final Octree[] leaves = o.getLeaves();
         final Bounds3 b = new Bounds3();
-        for (Octree leaf : leaves) {
+        for (final Octree leaf : leaves) {
             this.bounds(leaf.getBounds(b));
         }
     }
@@ -733,9 +733,9 @@ public interface IUp3 extends IUp {
 
             this.strokeWeight(lnwgt);
 
-            float dx;
-            float dy;
-            float dz;
+            final float dx;
+            final float dy;
+            final float dz;
 
             if (Utils.approx(mSq, 1.0f, 0.0001f)) {
 

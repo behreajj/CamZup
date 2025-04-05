@@ -303,15 +303,15 @@ public class Edge3 implements Comparable<Edge3> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Edge3 edge3))
+    public boolean equals(final Object o) {
+        if (!(o instanceof final Edge3 edge3))
             return false;
-        return Objects.equals(dest, edge3.dest) && Objects.equals(origin, edge3.origin);
+        return Objects.equals(this.dest, edge3.dest) && Objects.equals(this.origin, edge3.origin);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(dest, origin);
+        return Objects.hash(this.dest, this.origin);
     }
 
     /**

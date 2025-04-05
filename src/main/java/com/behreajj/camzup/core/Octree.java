@@ -253,7 +253,10 @@ public class Octree {
      * @param radius the sphere radius
      * @return the points
      */
-    public static Vec3[] query(final Octree o, final Vec3 center, final float radius) {
+    public static Vec3[] query(
+        final Octree o,
+        final Vec3 center,
+        final float radius) {
 
         final TreeMap<Float, Vec3> found = new TreeMap<>();
         Octree.query(o, center, radius * radius, 0, found);
@@ -458,6 +461,7 @@ public class Octree {
      *
      * @return the evaluation
      */
+    @SuppressWarnings("AssignmentToNull")
     public boolean cull() {
 
         int cullThis = 0;
@@ -627,7 +631,7 @@ public class Octree {
     public boolean insertAll(final Vec3[] pts) {
 
         boolean flag = true;
-        for (Vec3 pt : pts) {
+        for (final Vec3 pt : pts) {
             flag &= this.insert(pt);
         }
         return flag;
@@ -655,6 +659,7 @@ public class Octree {
      *
      * @return this octree
      */
+    @SuppressWarnings("AssignmentToNull")
     public Octree merge() {
 
         if (this.isLeaf()) {
@@ -671,7 +676,7 @@ public class Octree {
                 final int ptsLen = pts.size();
                 if (ptsLen > 0) {
                     final Vec3 center = new Vec3();
-                    for (Vec3 pt : pts) {
+                    for (final Vec3 pt : pts) {
                         Vec3.add(center, pt, center);
                     }
                     Vec3.mul(center, 1.0f / ptsLen, center);

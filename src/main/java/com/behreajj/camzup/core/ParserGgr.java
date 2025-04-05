@@ -8,8 +8,7 @@ import java.util.regex.Pattern;
 
 /**
  * A <a href="http://gimp.org/">GIMP</a> (GNU Image Manipulation Program)
- * gradient file (.ggr)
- * parser class.
+ * gradient file (.ggr) parser class.
  */
 public abstract class ParserGgr {
 
@@ -99,6 +98,7 @@ public abstract class ParserGgr {
 
                 for (String ln = in.readLine(); ln != null; ln = in.readLine()) {
                     final String lnlc = ln.trim().toLowerCase();
+                    //noinspection StatementWithEmptyBody
                     if (lnlc.indexOf('#') == 0
                         || lnlc.equals("gimp gradient")) {
                         /* Skip. */
@@ -206,7 +206,9 @@ public abstract class ParserGgr {
                         case ParserGgr.BLEND_CURVED: {
                             /* 1 */
                             final double logMid = mid != 0.0f ? Math.log(mid) : 0.0d;
-                            final double exponent = logMid != 0.0d ? ParserGgr.LOG_HALF_D / logMid : 0.0d;
+                            final double exponent = logMid != 0.0d
+                                ? ParserGgr.LOG_HALF_D / logMid
+                                : 0.0d;
                             fac = (float) Math.pow(pos, exponent);
                         }
                         break;
@@ -289,7 +291,7 @@ public abstract class ParserGgr {
     public static Gradient load(final String fileName, final int samples) {
 
         Gradient result = new Gradient();
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        try (final BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             result = ParserGgr.load(br, samples);
         } catch (final Exception e) {
             // noinspection CallToPrintStackTrace

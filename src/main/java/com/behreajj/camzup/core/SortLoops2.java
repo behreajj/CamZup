@@ -45,13 +45,13 @@ final class SortLoops2 implements Comparator<int[][]> {
     public int compare(final int[][] a, final int[][] b) {
 
         this.aAvg.reset();
-        for (int[] ints : a) {
+        for (final int[] ints : a) {
             Vec2.add(this.aAvg, this.coords[ints[0]], this.aAvg);
         }
         Vec2.div(this.aAvg, a.length, this.aAvg);
 
         this.bAvg.reset();
-        for (int[] ints : b) {
+        for (final int[] ints : b) {
             Vec2.add(this.bAvg, this.coords[ints[0]], this.bAvg);
         }
         Vec2.div(this.bAvg, b.length, this.bAvg);

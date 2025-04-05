@@ -104,7 +104,7 @@ public class Img {
     public static final float DEFAULT_OCTREE_QUERY_RADIUS = 9999.0f;
 
     /**
-     * Default maximum number for a palette extracted from an image.s
+     * Default maximum number for a palette extracted from an image.
      */
     public static final int DEFAULT_PALETTE_THRESHOLD = 256;
 
@@ -205,12 +205,7 @@ public class Img {
      */
     public Img() {
 
-        // TODO: Create example for mirror function.
-
         // TODO: Create fromPpmBytes method?
-
-        // TODO: Filter layers to alpha based on response func?
-        // Use preset enums instead of a function.s
 
         this(Img.DEFAULT_WIDTH, Img.DEFAULT_HEIGHT, Img.CLEAR_PIXEL);
     }
@@ -275,8 +270,8 @@ public class Img {
     }
 
     /**
-     * Constructs a new image with no verification. The pixels array is assigned
-     * by reference, not copied by value.
+     * Constructs a new image with no verification. The pixels array is
+     * assigned by reference, not copied by value.
      *
      * @param width  the width
      * @param height the height
@@ -311,8 +306,7 @@ public class Img {
 
     /**
      * Adjusts an image's lightness and saturation contrast by a factor. The
-     * adjustment factor is
-     * expected to be in [-1.0, 1.0]. See <a
+     * adjustment factor is expected to be in [-1.0, 1.0]. See <a
      * href="https://en.wikipedia.org/wiki/Colorfulness#Saturation">
      * https://en.wikipedia.org/wiki/Colorfulness#Saturation</a>.
      *
@@ -402,8 +396,8 @@ public class Img {
             return target;
         }
 
-        double pivotSat;
-        double pivotLight;
+        final double pivotSat;
+        final double pivotLight;
         switch (policy) {
             case RANGE:
                 pivotSat = (minSat + maxSat) * 0.5d;
@@ -427,7 +421,7 @@ public class Img {
 
         for (int j = 0; j < len; ++j) {
             final Long srcPixelObj = source.pixels[j];
-            long trgPixel;
+            final long trgPixel;
 
             if (convert.containsKey(srcPixelObj)) {
                 trgPixel = convert.get(srcPixelObj);
@@ -605,7 +599,7 @@ public class Img {
 
         for (int j = 0; j < len; ++j) {
             final Long srcPixelObj = source.pixels[j];
-            long trgPixel;
+            final long trgPixel;
 
             if (convert.containsKey(srcPixelObj)) {
                 trgPixel = convert.get(srcPixelObj);
@@ -661,7 +655,7 @@ public class Img {
         for (int i = 0; i < len; ++i) {
             final long srcPixel = source.pixels[i];
             final Long srcPixelObj = srcPixel;
-            long trgPixel;
+            final long trgPixel;
 
             if (convert.containsKey(srcPixelObj)) {
                 trgPixel = convert.get(srcPixelObj);
@@ -721,7 +715,7 @@ public class Img {
         for (int i = 0; i < len; ++i) {
             final long srcPixel = source.pixels[i];
             final Long srcPixelObj = srcPixel;
-            long trgPixel;
+            final long trgPixel;
 
             if (convert.containsKey(srcPixelObj)) {
                 trgPixel = convert.get(srcPixelObj);
@@ -787,7 +781,7 @@ public class Img {
         for (int i = 0; i < len; ++i) {
             final long srcPixel = source.pixels[i];
             final Long srcPixelObj = srcPixel;
-            long trgPixel;
+            final long trgPixel;
 
             if (convert.containsKey(srcPixelObj)) {
                 trgPixel = convert.get(srcPixelObj);
@@ -798,8 +792,8 @@ public class Img {
                 } else {
                     Lch.fromLab(lab, lch);
 
-                    float cTrg;
-                    float hTrg;
+                    final float cTrg;
+                    final float hTrg;
                     final boolean isGray = lch.c < Utils.EPSILON;
                     if (isGray) {
                         switch (policy) {
@@ -960,7 +954,7 @@ public class Img {
         for (int j = 0; j < len; ++j) {
             final long srcPixel = source.pixels[j];
             final Long srcPixelObj = srcPixel;
-            long trgPixel;
+            final long trgPixel;
             if (convert.containsKey(srcPixelObj)) {
                 trgPixel = convert.get(srcPixelObj);
             } else {
@@ -1806,7 +1800,9 @@ public class Img {
 
         for (int i = 0; i < len; ++i) {
             final long srcPixel = source.pixels[i];
-            target.pixels[i] = (srcPixel & Img.T_MASK) != 0L ? srcPixel : Img.CLEAR_PIXEL;
+            target.pixels[i] = (srcPixel & Img.T_MASK) != 0L
+                ? srcPixel
+                : Img.CLEAR_PIXEL;
         }
 
         return target;
@@ -1966,10 +1962,10 @@ public class Img {
         final int wSrc = source.width;
         final int hSrc = source.height;
 
-        int wTrg;
-        int hTrg;
+        final int wTrg;
+        final int hTrg;
         if (uniform) {
-            int u = Utils.nextPowerOf2(Math.max(wSrc, hSrc));
+            final int u = Utils.nextPowerOf2(Math.max(wSrc, hSrc));
             wTrg = u;
             hTrg = u;
         } else {
@@ -2042,8 +2038,7 @@ public class Img {
 
     /**
      * Flips the pixels source image vertically, on the y axis, and stores the
-     * result in the target
-     * image.
+     * result in the target image.
      *
      * @param source the input image
      * @param target the output image
@@ -2071,8 +2066,7 @@ public class Img {
 
     /**
      * Flips the pixels source image vertically, on the y axis, and stores the
-     * result in the target
-     * image.
+     * result in the target image.
      *
      * @param source the input image
      * @param target the output image
@@ -2111,7 +2105,7 @@ public class Img {
         final BigInteger fnvPrime = BigInteger.valueOf(1099511628211L);
         BigInteger hash = new BigInteger("14695981039346656037");
         final long[] srcPixels = source.pixels;
-        for (long srcPixel : srcPixels) {
+        for (final long srcPixel : srcPixels) {
             hash = hash.xor(BigInteger.valueOf(srcPixel)).multiply(fnvPrime);
         }
 
@@ -2159,7 +2153,7 @@ public class Img {
         for (int i = 0; i < len; ++i) {
             final int argb32 = argb32s[i];
             final Integer argb32Obj = argb32;
-            long tlab64;
+            final long tlab64;
 
             if (convert.containsKey(argb32Obj)) {
                 tlab64 = convert.get(argb32Obj);
@@ -2191,7 +2185,7 @@ public class Img {
      * @param target the output image
      * @return the region
      */
-    public static Img getRegion(Img source, Img target) {
+    public static Img getRegion(final Img source, final Img target) {
 
         return Img.getRegion(
             source,
@@ -2208,7 +2202,7 @@ public class Img {
      * @param target the output image
      * @return the region
      */
-    public static Img getRegion(Img source, Bounds2 bounds, Img target) {
+    public static Img getRegion(final Img source, final Bounds2 bounds, final Img target) {
         return Img.getRegion(source, bounds.min, bounds.max, target);
     }
 
@@ -2222,7 +2216,7 @@ public class Img {
      * @param target the output image
      * @return the region
      */
-    public static Img getRegion(Img source, Vec2 mn, Vec2 mx, Img target) {
+    public static Img getRegion(final Img source, final Vec2 mn, final Vec2 mx, final Img target) {
 
         final int wSrc = source.width;
         final int hSrc = source.height;
@@ -2258,8 +2252,8 @@ public class Img {
 
         int xtlVrf = Utils.clamp(xtl, 0, wSrc - 1);
         int ytlVrf = Utils.clamp(ytl, 0, hSrc - 1);
-        int xbrVrf = Utils.clamp(xbr, 0, wSrc - 1);
-        int ybrVrf = Utils.clamp(ybr, 0, hSrc - 1);
+        final int xbrVrf = Utils.clamp(xbr, 0, wSrc - 1);
+        final int ybrVrf = Utils.clamp(ybr, 0, hSrc - 1);
 
         /* Swap pixels if in wrong order. */
         xtlVrf = Math.min(xtlVrf, xbrVrf);
@@ -2567,7 +2561,7 @@ public class Img {
 
         for (int j = 0; j < len; ++j) {
             final Long srcPixelObj = source.pixels[j];
-            long trgPixel;
+            final long trgPixel;
             if (convert.containsKey(srcPixelObj)) {
                 trgPixel = convert.get(srcPixelObj);
             } else {
@@ -2631,9 +2625,8 @@ public class Img {
     }
 
     /**
-     * Generates a radial gradient from an origin point. The origin should be in the
-     * range [-1.0,
-     * 1.0].
+     * Generates a radial gradient from an origin point. The origin should be
+     * in the range [-1.0, 1.0].
      *
      * @param grd    the gradient
      * @param xOrig  the origin x coordinate
@@ -2714,9 +2707,8 @@ public class Img {
     }
 
     /**
-     * Generates a radial gradient from an origin point. The origin should be in the
-     * range [-1.0,
-     * 1.0].
+     * Generates a radial gradient from an origin point. The origin should be
+     * in the range [-1.0, 1.0].
      *
      * @param grd    the gradient
      * @param orig   the origin
@@ -2735,8 +2727,8 @@ public class Img {
     }
 
     /**
-     * Generates a conic gradient, where the factor rotates on the z axis around an
-     * origin point.
+     * Generates a conic gradient, where the factor rotates on the z axis
+     * around an origin point.
      *
      * @param grd     the gradient
      * @param xOrig   the origin x coordinate
@@ -2758,10 +2750,9 @@ public class Img {
     }
 
     /**
-     * Generates a conic gradient, where the factor rotates on the z axis around an
-     * origin point. Best
-     * used with square images; for other aspect ratios, the origin should be
-     * adjusted accordingly.
+     * Generates a conic gradient, where the factor rotates on the z axis
+     * around an origin point. Best used with square images; for other aspect
+     * ratios, the origin should be adjusted accordingly.
      *
      * @param grd     the gradient
      * @param xOrig   the origin x coordinate
@@ -2826,8 +2817,8 @@ public class Img {
     }
 
     /**
-     * Generates a conic gradient, where the factor rotates on the z axis around an
-     * origin point.
+     * Generates a conic gradient, where the factor rotates on the z axis
+     * around an origin point.
      *
      * @param grd    the gradient
      * @param orig   the origin
@@ -2883,7 +2874,7 @@ public class Img {
         for (int i = 0; i < len; ++i) {
             final long srcPixel = source.pixels[i];
             final Long srcPixelObj = srcPixel;
-            long trgPixel;
+            final long trgPixel;
 
             if (convert.containsKey(srcPixelObj)) {
                 trgPixel = convert.get(srcPixelObj);
@@ -2997,8 +2988,8 @@ public class Img {
 
     /**
      * Tests whether an image contains all clear pixels. Pixels must have
-     * zero alpha to be considered clear.
-     * However, they may have other non-zero channels.
+     * zero alpha to be considered clear. However, they may have other
+     * non-zero channels.
      *
      * @param source the source image
      * @return the evaluation
@@ -3116,8 +3107,8 @@ public class Img {
                 final float pxOpp = pxProj + pxProj - cx;
 
                 /*
-                 * Default to omitting pixels that are out-of-bounds, rather than
-                 * wrapping with floor modulo or clamping.
+                 * Default to omitting pixels that are out-of-bounds, rather
+                 * than wrapping with floor modulo or clamping.
                  */
                 if (pyOpp >= 0.0f && pyOpp <= hfn1 && pxOpp >= 0.0f && pxOpp <= wfn1) {
                     target.pixels[k] = Img.sampleBilinear(source, pxOpp, pyOpp);
@@ -3468,7 +3459,7 @@ public class Img {
 
         for (int j = 0; j < len; ++j) {
             final Long srcPixelObj = source.pixels[j];
-            long trgPixel;
+            final long trgPixel;
 
             if (convert.containsKey(srcPixelObj)) {
                 trgPixel = convert.get(srcPixelObj);
@@ -3544,8 +3535,7 @@ public class Img {
 
     /**
      * Extracts a palette from an image. If there are more colors than the
-     * threshold, engages an
-     * octree to reduce the number of colors.
+     * threshold, engages an octree to reduce the number of colors.
      *
      * @param source    the input image
      * @param threshold the threshold
@@ -3705,9 +3695,11 @@ public class Img {
 
     /**
      * Replaces source pixel colors that are similar to the fromColor with
-     * the toColor.<br>
+     * the toColor.
      * <br>
-     * The tolerance is the radius beneath which colors are considered similar.<br>
+     * <br>
+     * The tolerance is the radius beneath which colors are considered similar.
+     * <br>
      * <br>
      * The alpha scalar adjusts how much alpha contributes to color difference.
      * Set it to zero for none, or to 100 for parity with lightness.
@@ -3745,7 +3737,7 @@ public class Img {
         for (int i = 0; i < len; ++i) {
             final long srcPixel = source.pixels[i];
             final Long srcPixelObj = srcPixel;
-            long trgPixel;
+            final long trgPixel;
             if (convert.containsKey(srcPixelObj)) {
                 trgPixel = convert.get(srcPixelObj);
             } else {
@@ -4125,7 +4117,8 @@ public class Img {
     }
 
     /**
-     * Separates a source image into 3 images which emphasize the LAB components.
+     * Separates a source image into 3 images according to their red, green
+     * and blue color channels.
      *
      * @param source         the source image
      * @param usePreMultiply multiply color by alpha
@@ -4251,8 +4244,8 @@ public class Img {
 
         int xtlWrVrf = Utils.clamp(xtlWrt, 0, wImgWr - 1);
         int ytlWrVrf = Utils.clamp(ytlWrt, 0, hImgWr - 1);
-        int xbrWrVrf = Utils.clamp(xbrWrt, 0, wImgWr - 1);
-        int ybrWrVrf = Utils.clamp(ybrWrt, 0, hImgWr - 1);
+        final int xbrWrVrf = Utils.clamp(xbrWrt, 0, wImgWr - 1);
+        final int ybrWrVrf = Utils.clamp(ybrWrt, 0, hImgWr - 1);
 
         /* Swap coordinates in reversed order. */
         xtlWrVrf = Math.min(xtlWrVrf, xbrWrVrf);
@@ -4266,8 +4259,8 @@ public class Img {
 
         int xtlRdVrf = Utils.clamp(xtlRd, 0, wImgRd);
         int ytlRdVrf = Utils.clamp(ytlRd, 0, hImgRd);
-        int xbrRdVrf = Utils.clamp(xbrRd, 0, wImgRd);
-        int ybrRdVrf = Utils.clamp(ybrRd, 0, hImgRd);
+        final int xbrRdVrf = Utils.clamp(xbrRd, 0, wImgRd);
+        final int ybrRdVrf = Utils.clamp(ybrRd, 0, hImgRd);
 
         /* Swap coordinates in reversed order. */
         xtlRdVrf = Math.min(xtlRdVrf, xbrRdVrf);
@@ -4434,9 +4427,8 @@ public class Img {
     }
 
     /**
-     * Tints an image with a color according to a factor. If the preserveLight flag
-     * is true, the
-     * source image's original lightness is retained.
+     * Tints an image with a color according to a factor. If the preserveLight
+     * flag is true, the source image's original lightness is retained.
      *
      * @param source        the source pixels
      * @param tint          the tint color
@@ -4470,7 +4462,7 @@ public class Img {
         for (int i = 0; i < srcLen; ++i) {
             final long srcPixel = source.pixels[i];
             final Long srcPixelObj = srcPixel;
-            long trgPixel;
+            final long trgPixel;
 
             if (convert.containsKey(srcPixelObj)) {
                 trgPixel = convert.get(srcPixelObj);
@@ -4550,7 +4542,7 @@ public class Img {
         for (int i = 0; i < len; ++i) {
             final long tlab64 = source.pixels[i];
             final Long tlab64Obj = tlab64;
-            int argb32;
+            final int argb32;
 
             if (convert.containsKey(tlab64Obj)) {
                 argb32 = convert.get(tlab64Obj);
@@ -4572,9 +4564,8 @@ public class Img {
     }
 
     /**
-     * Creates an array of materials from the non-transparent pixels of an image.
-     * Intended for smaller
-     * images with relatively few colors.
+     * Creates an array of materials from the non-transparent pixels of an
+     * image. Intended for smaller images with relatively few colors.
      *
      * @param source the source image
      * @return the materials
@@ -4583,7 +4574,7 @@ public class Img {
 
         final TreeSet<Long> uniqueColors = new TreeSet<>();
         final long[] srcPixels = source.pixels;
-        for (long srcPixel : srcPixels) {
+        for (final long srcPixel : srcPixels) {
             uniqueColors.add(srcPixel);
         }
 
@@ -4802,13 +4793,13 @@ public class Img {
         final Vec4 xyz = new Vec4();
         final Lab lab = new Lab();
 
-        int lenWrite = len * 3;
-        byte[] rgbWrites = new byte[lenWrite];
+        final int lenWrite = len * 3;
+        final byte[] rgbWrites = new byte[lenWrite];
 
         for (int i = 0, j = 0; i < len; ++i, j += 3) {
             final long tlab64 = srcPixels[i];
             final Long tlab64Obj = tlab64;
-            Rgb mapped;
+            final Rgb mapped;
 
             if (convert.containsKey(tlab64Obj)) {
                 mapped = convert.get(tlab64Obj);
@@ -4839,7 +4830,8 @@ public class Img {
 
         switch (format) {
             case PLAIN_TEXT: {
-                for (int i = 0, y = 0; y < h; ++y) {
+                int i = 0;
+                for (int y = 0; y < h; ++y) {
                     for (int x = 0; x < w; ++x, i += 3) {
                         final int r8 = Utils.ubyte(rgbWrites[i]);
                         final int g8 = Utils.ubyte(rgbWrites[i + 1]);
@@ -5440,8 +5432,11 @@ public class Img {
 
         final int idcsLen = indices.size();
         final int vsLen = idcsLen * 4;
-        final Vec2[] vs = target.coords = Vec2.resize(target.coords, vsLen);
-        final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords, vsLen);
+
+        target.coords = Vec2.resize(target.coords, vsLen);
+        target.texCoords = Vec2.resize(target.texCoords, vsLen);
+        final Vec2[] vs = target.coords;
+        final Vec2[] vts = target.texCoords;
 
         for (int i = 0, j00 = 0; i < idcsLen; ++i, j00 += 4) {
             final int j10 = j00 + 1;
@@ -5473,10 +5468,11 @@ public class Img {
             vs[j01].set(x0, y1);
         }
 
-        int[][][] fs;
+        final int[][][] fs;
         switch (poly) {
             case TRI: {
-                fs = target.faces = new int[idcsLen + idcsLen][3][2];
+                target.faces = new int[idcsLen + idcsLen][3][2];
+                fs = target.faces;
                 for (int i = idcsLen - 1, j00 = vsLen - 1; i > -1; --i, j00 -= 4) {
                     final int j10 = j00 - 1;
                     final int j11 = j00 - 2;
@@ -5514,7 +5510,8 @@ public class Img {
             case NGON:
             case QUAD:
             default: {
-                fs = target.faces = new int[idcsLen][4][2];
+                target.faces = new int[idcsLen][4][2];
+                fs = target.faces;
                 for (int i = idcsLen - 1, j00 = vsLen - 1; i > -1; --i, j00 -= 4) {
                     final int j10 = j00 - 1;
                     final int j11 = j00 - 2;
@@ -5557,16 +5554,16 @@ public class Img {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Img img))
+    public boolean equals(final Object o) {
+        if (!(o instanceof final Img img))
             return false;
-        return height == img.height && width == img.width
-            && Objects.deepEquals(pixels, img.pixels);
+        return this.height == img.height && this.width == img.width
+            && Objects.deepEquals(this.pixels, img.pixels);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(height, width, Arrays.hashCode(pixels));
+        return Objects.hash(this.height, this.width, Arrays.hashCode(this.pixels));
     }
 
     /**
@@ -5980,6 +5977,7 @@ public class Img {
      * Response curve for the alpha map function.
      */
     public enum Response {
+
         /**
          * Range lower and upper thirds.
          */

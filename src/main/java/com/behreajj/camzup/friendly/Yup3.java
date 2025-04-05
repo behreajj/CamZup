@@ -297,9 +297,13 @@ public class Yup3 extends Up3 {
     @Override
     public void defaultCamera() {
 
-        this.cameraX = this.defCameraX = Yup3.DEFAULT_LOC_X;
-        this.cameraY = this.defCameraY = Yup3.DEFAULT_LOC_Y;
-        this.cameraZ = this.defCameraZ = Yup3.DEFAULT_LOC_Z;
+        this.defCameraX = Yup3.DEFAULT_LOC_X;
+        this.defCameraY = Yup3.DEFAULT_LOC_Y;
+        this.defCameraZ = Yup3.DEFAULT_LOC_Z;
+
+        this.cameraX = this.defCameraX;
+        this.cameraY = this.defCameraY;
+        this.cameraZ = this.defCameraZ;
 
         this.refUp.set(
             Yup3.DEFAULT_REF_X,
@@ -329,9 +333,13 @@ public class Yup3 extends Up3 {
 
         super.defaultSettings();
 
-        this.cameraX = this.defCameraX = Yup3.DEFAULT_LOC_X;
-        this.cameraY = this.defCameraY = Yup3.DEFAULT_LOC_Y;
-        this.cameraZ = this.defCameraZ = Yup3.DEFAULT_LOC_Z;
+        this.defCameraX = Yup3.DEFAULT_LOC_X;
+        this.defCameraY = Yup3.DEFAULT_LOC_Y;
+        this.defCameraZ = Yup3.DEFAULT_LOC_Z;
+
+        this.cameraX = this.defCameraX;
+        this.cameraY = this.defCameraY;
+        this.cameraZ = this.defCameraZ;
 
         this.refUp.set(
             Yup3.DEFAULT_REF_X,

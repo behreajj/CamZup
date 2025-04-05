@@ -44,13 +44,13 @@ final class SortLoops3 implements Comparator<int[][]> {
     public int compare(final int[][] a, final int[][] b) {
 
         this.aAvg.reset();
-        for (int[] value : a) {
+        for (final int[] value : a) {
             Vec3.add(this.aAvg, this.coords[value[0]], this.aAvg);
         }
         Vec3.div(this.aAvg, a.length, this.aAvg);
 
         this.bAvg.reset();
-        for (int[] ints : b) {
+        for (final int[] ints : b) {
             Vec3.add(this.bAvg, this.coords[ints[0]], this.bAvg);
         }
         Vec3.div(this.bAvg, b.length, this.bAvg);

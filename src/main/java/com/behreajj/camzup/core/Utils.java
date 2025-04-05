@@ -29,8 +29,8 @@ public abstract class Utils {
     public static final int FIXED_PRINT = 4;
 
     /**
-     * Four-thirds, 4.0 / 3.0 . Useful when creating a circular shape with a series
-     * of Bézier curves.
+     * Four-thirds, 4.0 / 3.0 . Useful when creating a circular shape with a
+     * series of Bézier curves.
      */
     public static final float FOUR_THIRDS = 1.3333333f;
 
@@ -48,7 +48,7 @@ public abstract class Utils {
      * Multiplier used by hash code functions.
      */
     public static final int HASH_MUL = 16777619;
-    
+
     /**
      * The hash base multiplied by the hash scalar.
      */
@@ -56,16 +56,14 @@ public abstract class Utils {
     public static final int MUL_BASE = Utils.HASH_BASE * Utils.HASH_MUL;
 
     /**
-     * One-255th, 1.0 / 255.0 . Useful when converting a color with channels in the
-     * range [0, 255] to
-     * a color in the range [0.0, 1.0] .
+     * One-255th, 1.0 / 255.0 . Useful when converting a color with channels in
+     * the range [0, 255] to a color in the range [0.0, 1.0].
      */
     public static final float ONE_255 = 0.003921569f;
 
     /**
-     * One divided by 360 degrees, 1.0 / 360. Useful for converting an index in a
-     * for-loop to an angle
-     * in degrees.
+     * One divided by 360 degrees, 1.0 / 360. Useful for converting an index in
+     * a for-loop to an angle in degrees.
      */
     public static final float ONE_360 = 0.0027777778f;
 
@@ -85,14 +83,14 @@ public abstract class Utils {
     public static final float ONE_SQRT_3 = 0.57735026f;
 
     /**
-     * One-third, 1.0 / 3.0 . Useful for setting handles on the knot of a Bézier
-     * curve.
+     * One-third, 1.0 / 3.0 . Useful for setting handles on the knot of a
+     * Bézier curve.
      */
     public static final float ONE_THIRD = 0.33333334f;
 
     /**
-     * One-third, 1.0 / 3.0 . Useful for setting handles on the knot of a Bézier
-     * curve.
+     * One-third, 1.0 / 3.0 . Useful for setting handles on the knot of a
+     * Bézier curve.
      */
     public static final double ONE_THIRD_D = 0.3333333333333333d;
 
@@ -158,8 +156,8 @@ public abstract class Utils {
     public static final double TAU_D = 6.283185307179586d;
 
     /**
-     * pi divided by three. 60 degrees. Useful for describing the field of view
-     * in a perspective camera.
+     * pi divided by three. 60 degrees. Useful for describing the field of
+     * view in a perspective camera.
      */
     public static final float THIRD_PI = 1.0471976f;
 
@@ -173,6 +171,7 @@ public abstract class Utils {
      * Discourage overriding with a private constructor.
      */
     private Utils() {
+        // TODO: Restore golden angle constants from old version of IUtils?
     }
 
     /**
@@ -2067,7 +2066,7 @@ public abstract class Utils {
 
         /* Append integral to StringBuilder. */
         final int oldLen = sb.length();
-        int len;
+        final int len;
         if (sign < -0.0f) {
             sb.append('-').append(trunc);
             len = sb.length() - oldLen - 1;
@@ -2514,7 +2513,7 @@ public abstract class Utils {
         /**
          * The default range of the period, τ .
          */
-        public static float DEFAULT_RANGE = Utils.TAU;
+        public static final float DEFAULT_RANGE = Utils.TAU;
 
         /**
          * The stop angle, modulated by the range.

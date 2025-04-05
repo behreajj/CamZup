@@ -89,7 +89,7 @@ public class Ray3 {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -101,7 +101,7 @@ public class Ray3 {
 
     @Override
     public int hashCode() {
-        return Objects.hash(dir, origin);
+        return Objects.hash(this.dir, this.origin);
     }
 
     /**

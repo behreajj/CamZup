@@ -383,7 +383,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
      * @param mode the mode
      */
     @Override
-    public void blendMode(int mode) {
+    public void blendMode(final int mode) {
         // TODO: Follow convention, use a switch case.
         if (mode == PConstants.BLEND
             || mode == PConstants.REPLACE
@@ -675,6 +675,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         this.shapeMode = PConstants.CENTER;
 
         /* Text. */
+        //noinspection AssignmentToNull
         this.textFont = null;
         this.textSize = IUp.DEFAULT_TEXT_SIZE;
         this.textLeading = IUp.DEFAULT_TEXT_LEADING;
@@ -699,10 +700,15 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         this.shininess(0.0f);
 
         /* Camera. */
-        this.cameraAspect = this.defCameraAspect = IUp.DEFAULT_ASPECT;
-        this.cameraFOV = this.defCameraFOV = IUp.DEFAULT_FOV;
-        this.cameraNear = this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
-        this.cameraFar = this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+        this.defCameraAspect = IUp.DEFAULT_ASPECT;
+        this.defCameraFOV = IUp.DEFAULT_FOV;
+        this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
+        this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+
+        this.cameraAspect = this.defCameraAspect;
+        this.cameraFOV = this.defCameraFOV;
+        this.cameraNear = this.defCameraNear;
+        this.cameraFar = this.defCameraFar;
 
         /* Normals. */
         this.autoNormal = false;
@@ -830,12 +836,12 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
          * here.
          */
 
-        float extapw;
-        float extaph;
-        float extcpw;
-        float extcph;
-        float xc;
-        float yc;
+        final float extapw;
+        final float extaph;
+        final float extcpw;
+        final float extcph;
+        final float xc;
+        final float yc;
 
         switch (this.ellipseMode) {
             case PConstants.CORNER: /* 0 */
@@ -2183,7 +2189,9 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         this.height = height;
         this.updatePixelSize();
 
+        //noinspection AssignmentToNull
         this.texture = null;
+        //noinspection AssignmentToNull
         this.ptexture = null;
 
         this.defCameraFOV = IUp.DEFAULT_FOV;
@@ -3597,7 +3605,7 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         for (final int[][] f : fs) {
             this.beginShape(PConstants.POLYGON);
             this.normalPerShape(0.0f, 0.0f, 1.0f);
-            for (int[] verts : f) {
+            for (final int[] verts : f) {
                 Transform2.mulPoint(tr, vs[verts[0]], v);
                 this.vertexImpl(v.x, v.y, 0.0f, this.textureU, this.textureV);
             }
@@ -4176,10 +4184,10 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
     (final float x0, final float y0,
         final float x1, final float y1) {
 
-        float a0;
-        float b0;
-        float a1;
-        float b1;
+        final float a0;
+        final float b0;
+        final float a1;
+        final float b1;
 
         switch (this.rectMode) {
 
@@ -4255,13 +4263,13 @@ public abstract class UpOgl extends PGraphicsOpenGL implements IUpOgl {
         final float y1, final float topLeft, final float topRight,
         final float bottomRight, final float bottomLeft) {
 
-        float a0;
-        float b0;
-        float a1;
-        float b1;
+        final float a0;
+        final float b0;
+        final float a1;
+        final float b1;
 
-        float w;
-        float h;
+        final float w;
+        final float h;
 
         float c0 = topLeft;
         float c1 = topRight;

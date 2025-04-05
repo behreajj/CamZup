@@ -90,7 +90,7 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
 
         target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
 
-        for (Mesh3 face3s : me) {
+        for (final Mesh3 face3s : me) {
             Mesh3.accumMinMax(face3s, target.min, target.max, me.transform, co);
         }
 
@@ -98,9 +98,8 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
     }
 
     /**
-     * Appends a mesh to this mesh entity. The mesh must not be <code>null</code>
-     * and must have a
-     * length greater than zero.
+     * Appends a mesh to this mesh entity. The mesh must not be
+     * <code>null</code> and must have a length greater than zero.
      *
      * @param mesh the mesh
      * @return this mesh entity
@@ -119,7 +118,7 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
      */
     public MeshEntity3 appendAll(final Collection<Mesh3> app) {
 
-        for (Mesh3 face3s : app) {
+        for (final Mesh3 face3s : app) {
             this.append(face3s);
         }
         return this;
@@ -134,16 +133,15 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
     @SuppressWarnings("UnusedReturnValue")
     public MeshEntity3 appendAll(final Mesh3... app) {
 
-        for (Mesh3 face3s : app) {
+        for (final Mesh3 face3s : app) {
             this.append(face3s);
         }
         return this;
     }
 
     /**
-     * Transforms all meshes in this mesh entity by its transform, then resets the
-     * entity's transform
-     * to the identity.
+     * Transforms all meshes in this mesh entity by its transform, then resets
+     * the entity's transform to the identity.
      *
      * @return this mesh entity
      * @see Mesh3#transform(Transform3)
@@ -151,7 +149,7 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
      */
     public MeshEntity3 consumeTransform() {
 
-        for (Mesh3 mesh : this.meshes) {
+        for (final Mesh3 mesh : this.meshes) {
             mesh.transform(this.transform);
         }
         Transform3.identity(this.transform);
@@ -214,12 +212,13 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
     }
 
     /**
-     * Returns an iterator, which allows an enhanced for-loop to access the meshes
-     * in the mesh entity.
+     * Returns an iterator, which allows an enhanced for-loop to access the
+     * meshes in the mesh entity.
      *
      * @return the iterator
      * @see List#iterator()
      */
+    @SuppressWarnings("NullableProblems")
     @Override
     public Iterator<Mesh3> iterator() {
         return this.meshes.iterator();
@@ -236,9 +235,8 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
 
     /**
      * Centers and rescales all meshes in the entity about a shared origin by
-     * calculating their
-     * dimensions, subtracting the center point, and scaling by the maximum
-     * dimension.
+     * calculating their dimensions, subtracting the center point, and scaling
+     * by the maximum dimension.
      *
      * @return this mesh entity.
      */
@@ -270,8 +268,7 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
 
     /**
      * Removes a mesh from this mesh entity. Returns <code>true</code> if this
-     * request was filled,
-     * <code>false</code> if not.
+     * request was filled, <code>false</code> if not.
      *
      * @param mesh the mesh to remove.
      * @return the evaluation
@@ -292,9 +289,8 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
     }
 
     /**
-     * Resets the mesh entity to an initial state. Sets the transform to an identity
-     * and clears the
-     * list of meshes.
+     * Resets the mesh entity to an initial state. Sets the transform to an
+     * identity and clears the list of meshes.
      *
      * @return this entity
      */
@@ -322,10 +318,11 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
     }
 
     /**
-     * Scales the entity by a non-uniform scalar.<br>
+     * Scales the entity by a non-uniform scalar.
      * <br>
-     * Beware that non-uniform scaling may lead to improper shading of a mesh when
-     * lit.
+     * <br>
+     * Beware that non-uniform scaling may lead to improper shading of a mesh
+     * when lit.
      *
      * @param scalar the scalar
      * @return the entity
@@ -353,10 +350,11 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
     }
 
     /**
-     * Scales the entity to a non-uniform size.<br>
+     * Scales the entity to a non-uniform size.
      * <br>
-     * Beware that non-uniform scaling may lead to improper shading of a mesh when
-     * lit.
+     * <br>
+     * Beware that non-uniform scaling may lead to improper shading of a mesh
+     * when lit.
      *
      * @param scaleNew the size
      * @return this entity
@@ -370,10 +368,11 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
     }
 
     /**
-     * Eases the entity to a scale by a step over time.<br>
+     * Eases the entity to a scale by a step over time.
      * <br>
-     * Beware that non-uniform scaling may lead to improper shading of a mesh when
-     * lit.
+     * <br>
+     * Beware that non-uniform scaling may lead to improper shading of a mesh
+     * when lit.
      *
      * @param scalar the scalar
      * @param step   the step
@@ -388,9 +387,9 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
     }
 
     /**
-     * Sets a coordinate in a mesh. Multiplies the input coordinate in global space
-     * by the transform's
-     * inverse.<br>
+     * Sets a coordinate in a mesh. Multiplies the input coordinate in global
+     * space by the transform's inverse.
+     * <br>
      * <br>
      * To facilitate editing the mesh with a graphical user interface (GUI).
      *
@@ -401,7 +400,10 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
      * @return this entity
      */
     public MeshEntity3 setCoord(
-        final int meshIndex, final int coordIndex, final Vec3 global, final Vec3 local) {
+        final int meshIndex,
+        final int coordIndex,
+        final Vec3 global,
+        final Vec3 local) {
 
         Transform3.invMulPoint(this.transform, global, local);
         final Vec3[] coords = this.get(meshIndex).coords;
@@ -412,9 +414,8 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 4.x API. This
-     * code is brittle and
-     * is used for internal testing purposes.
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes.
      *
      * @return the string
      */
@@ -424,11 +425,10 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 4.x API. This
-     * code is brittle and
-     * is used for internal testing purposes, i.e., to compare how mesh geometry
-     * looks in Blender (the
-     * control) versus in the library (the test).
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes, i.e.,
+     * to compare how mesh geometry looks in Blender (the control) versus in
+     * the library (the test).
      *
      * @param useAutoSmooth auto smooth normals
      * @param materials     the materials
@@ -505,9 +505,8 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 4.x API. This
-     * code is brittle and
-     * is used for internal testing purposes.
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes.
      *
      * @param ms the materials
      * @return the string
@@ -518,7 +517,8 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
     }
 
     /**
-     * Renders the mesh entity as a string following the Wavefront OBJ file format.
+     * Renders the mesh entity as a string following the Wavefront OBJ file
+     * format.
      *
      * @return the string
      */
@@ -568,9 +568,8 @@ public class MeshEntity3 extends Entity3 implements Iterable<Mesh3>, IVolume3, I
     }
 
     /**
-     * Centers all meshes in the entity about a shared origin by calculating their
-     * dimensions then
-     * subtracting the center point.
+     * Centers all meshes in the entity about a shared origin by calculating
+     * their dimensions then subtracting the center point.
      *
      * @return this mesh entity.
      */

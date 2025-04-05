@@ -99,7 +99,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
 
         target.reset();
         final Vert2[] verts = face.vertices;
-        for (Vert2 vert : verts) {
+        for (final Vert2 vert : verts) {
             Vec2.add(target, vert.coord, target);
         }
         return Vec2.div(target, verts.length, target);
@@ -209,7 +209,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
         final Vert2[] verts = face.vertices;
         final int len = verts.length;
         Vec2 prev = verts[len - 1].coord;
-        for (Vert2 vert : verts) {
+        for (final Vert2 vert : verts) {
             final Vec2 curr = vert.coord;
             sum += Vec2.distEuclidean(prev, curr);
             prev = curr;
@@ -229,13 +229,13 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
 
         final TreeSet<Vec2> aList = new TreeSet<>(Mesh.SORT_2);
         final Vert2[] aVerts = a.vertices;
-        for (Vert2 aVert : aVerts) {
+        for (final Vert2 aVert : aVerts) {
             aList.add(aVert.coord);
         }
 
         final TreeSet<Vec2> bList = new TreeSet<>(Mesh.SORT_2);
         final Vert2[] bVerts = b.vertices;
-        for (Vert2 bVert : bVerts) {
+        for (final Vert2 bVert : bVerts) {
             bList.add(bVert.coord);
         }
 
@@ -360,6 +360,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
      *
      * @return the iterator
      */
+    @SuppressWarnings("NullableProblems")
     @Override
     public Iterator<Edge2> iterator() {
         return this.edgeIterator();
@@ -411,7 +412,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
      */
     public Face2 rotateZGlobal(final float cosa, final float sina) {
 
-        for (Vert2 vertex : this.vertices) {
+        for (final Vert2 vertex : this.vertices) {
             final Vec2 c = vertex.coord;
             Vec2.rotateZ(c, cosa, sina, c);
         }
@@ -436,7 +437,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
 
         Face2.centerMean(this, center);
 
-        for (Vert2 vertex : this.vertices) {
+        for (final Vert2 vertex : this.vertices) {
             final Vec2 c = vertex.coord;
             Vec2.sub(c, center, c);
             Vec2.rotateZ(c, cosa, sina, c);
@@ -495,7 +496,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     public Face2 scaleGlobal(final float scale) {
 
         if (scale != 0.0f) {
-            for (Vert2 vertex : this.vertices) {
+            for (final Vert2 vertex : this.vertices) {
                 final Vec2 c = vertex.coord;
                 Vec2.mul(c, scale, c);
             }
@@ -516,7 +517,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
     public Face2 scaleGlobal(final Vec2 scale) {
 
         if (Vec2.all(scale)) {
-            for (Vert2 vertex : this.vertices) {
+            for (final Vert2 vertex : this.vertices) {
                 final Vec2 c = vertex.coord;
                 Vec2.hadamard(c, scale, c);
             }
@@ -542,7 +543,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
         Face2.centerMean(this, center);
 
         if (scale != 0.0f) {
-            for (Vert2 vertex : this.vertices) {
+            for (final Vert2 vertex : this.vertices) {
                 final Vec2 c = vertex.coord;
                 Vec2.sub(c, center, c);
                 Vec2.mul(c, scale, c);
@@ -571,7 +572,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
         Face2.centerMean(this, center);
 
         if (Vec2.all(scale)) {
-            for (Vert2 vertex : this.vertices) {
+            for (final Vert2 vertex : this.vertices) {
                 final Vec2 c = vertex.coord;
                 Vec2.sub(c, center, c);
                 Vec2.hadamard(c, scale, c);
@@ -643,7 +644,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
      */
     public Face2 transform(final Mat3 m) {
 
-        for (Vert2 vertex : this.vertices) {
+        for (final Vert2 vertex : this.vertices) {
             final Vec2 c = vertex.coord;
             Mat3.mulPoint(m, c, c);
         }
@@ -660,7 +661,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
      */
     public Face2 transform(final Transform2 tr) {
 
-        for (Vert2 vertex : this.vertices) {
+        for (final Vert2 vertex : this.vertices) {
             final Vec2 c = vertex.coord;
             Transform2.mulPoint(tr, c, c);
         }
@@ -689,7 +690,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
      */
     public Face2 translateGlobal(final Vec2 v) {
 
-        for (Vert2 vertex : this.vertices) {
+        for (final Vert2 vertex : this.vertices) {
             final Vec2 c = vertex.coord;
             Vec2.add(c, v, c);
         }

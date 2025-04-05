@@ -342,9 +342,13 @@ public class CamEntity3 extends Entity3 {
         final float m21 = -forward.y;
         final float m22 = -forward.z;
 
-        final float m30 = rndr.cameraX = loc.x;
-        final float m31 = rndr.cameraY = loc.y;
-        final float m32 = rndr.cameraZ = loc.z;
+        rndr.cameraX = loc.x;
+        rndr.cameraY = loc.y;
+        rndr.cameraZ = loc.z;
+
+        final float m30 = rndr.cameraX;
+        final float m31 = rndr.cameraY;
+        final float m32 = rndr.cameraZ;
 
         rndr.cameraInv.set(
             m00, m10, m20, m30,

@@ -30,8 +30,8 @@ public abstract class Mesh extends EntityData {
 
     /**
      * The faces array does not include face data itself, but rather indices to
-     * other arrays which
-     * contain vertex data. It is a three-dimensional array organized by
+     * other arrays which contain vertex data. It is a three-dimensional array
+     * organized by
      *
      * <ol>
      * <li>the number of faces;</li>
@@ -40,8 +40,7 @@ public abstract class Mesh extends EntityData {
      * </ol>
      * <p>
      * The innermost array, information per face, may vary with each mesh; 3D
-     * meshes, for example,
-     * include normals while 2D meshes don't.
+     * meshes, for example, include normals while 2D meshes don't.
      */
     public int[][][] faces;
 
@@ -110,7 +109,7 @@ public abstract class Mesh extends EntityData {
         audit.put(3, 0);
         audit.put(4, 0);
         final int[][][] faces = m.faces;
-        for (int[][] face : faces) {
+        for (final int[][] face : faces) {
             final Integer faceLen = face.length;
             if (audit.containsKey(faceLen)) {
                 audit.put(faceLen, audit.get(faceLen) + 1);
@@ -407,7 +406,7 @@ public abstract class Mesh extends EntityData {
         // of faces.
 
         final int[][][] fs = m.faces;
-        for (int[][] f : fs) {
+        for (final int[][] f : fs) {
             if (f.length != c) {
                 return false;
             }
@@ -594,7 +593,7 @@ public abstract class Mesh extends EntityData {
 
     @Override
     public int hashCode() {
-        return Objects.hash(Arrays.deepHashCode(faces), materialIndex);
+        return Objects.hash(Arrays.deepHashCode(this.faces), this.materialIndex);
     }
 
     /**
@@ -640,7 +639,7 @@ public abstract class Mesh extends EntityData {
      */
     public Mesh reverseFaces() {
 
-        for (int[][] face : this.faces) {
+        for (final int[][] face : this.faces) {
             Mesh.reverse(face);
         }
 
@@ -705,7 +704,8 @@ public abstract class Mesh extends EntityData {
         for (int n = 0; n < trgFace0Len; ++n) {
             final int[] srcVert = srcFace[(j + n) % srcFaceLen];
             final int srcLen = srcVert.length;
-            final int[] trgVert0 = trgFace0[n] = new int[srcLen];
+            trgFace0[n] = new int[srcLen];
+            final int[] trgVert0 = trgFace0[n];
             System.arraycopy(srcVert, 0, trgVert0, 0, srcLen);
         }
 
@@ -715,7 +715,8 @@ public abstract class Mesh extends EntityData {
         for (int n = 0; n < trgFace1Len; ++n) {
             final int[] srcVert = srcFace[(k + n) % srcFaceLen];
             final int srcLen = srcVert.length;
-            final int[] trgVert1 = trgFace1[n] = new int[srcLen];
+            trgFace1[n] = new int[srcLen];
+            final int[] trgVert1 = trgFace1[n];
             System.arraycopy(srcVert, 0, trgVert1, 0, srcLen);
         }
 

@@ -56,7 +56,7 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
 
         target.reset();
         final Vert3[] verts = face.vertices;
-        for (Vert3 vert : verts) {
+        for (final Vert3 vert : verts) {
             Vec3.add(target, vert.coord, target);
         }
         return Vec3.div(target, verts.length, target);
@@ -107,7 +107,7 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
 
         target.reset();
         final Vert3[] verts = face.vertices;
-        for (Vert3 vert : verts) {
+        for (final Vert3 vert : verts) {
             Vec3.add(target, vert.normal, target);
         }
         return Vec3.normalize(target, target);
@@ -196,7 +196,7 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
         final Vert3[] verts = face.vertices;
         final int len = verts.length;
         Vec3 prev = verts[len - 1].coord;
-        for (Vert3 vert : verts) {
+        for (final Vert3 vert : verts) {
             final Vec3 curr = vert.coord;
             sum += Vec3.distEuclidean(prev, curr);
             prev = curr;
@@ -216,13 +216,13 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
 
         final TreeSet<Vec3> aList = new TreeSet<>(Mesh.SORT_3);
         final Vert3[] aVerts = a.vertices;
-        for (Vert3 aVert : aVerts) {
+        for (final Vert3 aVert : aVerts) {
             aList.add(aVert.coord);
         }
 
         final TreeSet<Vec3> bList = new TreeSet<>(Mesh.SORT_3);
         final Vert3[] bVerts = b.vertices;
-        for (Vert3 bVert : bVerts) {
+        for (final Vert3 bVert : bVerts) {
             bList.add(bVert.coord);
         }
 
@@ -322,6 +322,7 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
      *
      * @return the iterator
      */
+    @SuppressWarnings("NullableProblems")
     @Override
     public Iterator<Edge3> iterator() {
         return this.edgeIterator();
@@ -769,7 +770,7 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
     public Face3 scaleGlobal(final float scale) {
 
         if (scale != 0.0f) {
-            for (Vert3 vertex : this.vertices) {
+            for (final Vert3 vertex : this.vertices) {
                 final Vec3 c = vertex.coord;
                 Vec3.mul(c, scale, c);
             }
@@ -824,7 +825,7 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
         Face3.centerMean(this, center);
 
         if (scale != 0.0f) {
-            for (Vert3 vertex : this.vertices) {
+            for (final Vert3 vertex : this.vertices) {
                 final Vec3 c = vertex.coord;
                 Vec3.sub(c, center, c);
                 Vec3.mul(c, scale, c);
@@ -987,7 +988,7 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
      */
     public Face3 translateGlobal(final Vec3 v) {
 
-        for (Vert3 vertex : this.vertices) {
+        for (final Vert3 vertex : this.vertices) {
             final Vec3 c = vertex.coord;
             Vec3.add(c, v, c);
         }
@@ -1016,7 +1017,7 @@ public class Face3 implements Iterable<Edge3>, Comparable<Face3> {
         final Transform3 tr = Face3.orientation(this, handedness, new Transform3());
         final Vec3 vLocal = Transform3.mulDir(tr, v, new Vec3());
 
-        for (Vert3 vertex : this.vertices) {
+        for (final Vert3 vertex : this.vertices) {
             final Vec3 c = vertex.coord;
             Vec3.sub(c, tr.location, c);
             Vec3.add(c, vLocal, c);

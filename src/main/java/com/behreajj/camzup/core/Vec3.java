@@ -756,10 +756,10 @@ public class Vec3 implements Comparable<Vec3> {
         if (c != 0.0f) {
             return (float)
                 Math.pow(
-                    Math.pow(Math.abs((double) (b.x - a.x)), c)
-                        + Math.pow(Math.abs((double) (b.y - a.y)), c)
-                        + Math.pow(Math.abs((double) (b.z - a.z)), c),
-                    1.0d / (double) c);
+                    Math.pow(Math.abs((b.x - a.x)), c)
+                        + Math.pow(Math.abs((b.y - a.y)), c)
+                        + Math.pow(Math.abs((b.z - a.z)), c),
+                    1.0d / c);
         }
 
         return 0.0f;
@@ -901,7 +901,7 @@ public class Vec3 implements Comparable<Vec3> {
     public static Vec3[] flat(final Vec3[][] arr) {
 
         int totalLen = 0;
-        for (Vec3[] vec3s : arr) {
+        for (final Vec3[] vec3s : arr) {
             totalLen += vec3s.length;
         }
 
@@ -931,7 +931,7 @@ public class Vec3 implements Comparable<Vec3> {
 
         int totalLen = 0;
         for (final Vec3[][] arrInner : arr) {
-            for (Vec3[] vec3s : arrInner) {
+            for (final Vec3[] vec3s : arrInner) {
                 totalLen += vec3s.length;
             }
         }
@@ -2833,7 +2833,7 @@ public class Vec3 implements Comparable<Vec3> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -2845,7 +2845,7 @@ public class Vec3 implements Comparable<Vec3> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y, z);
+        return Objects.hash(this.x, this.y, this.z);
     }
 
     /**

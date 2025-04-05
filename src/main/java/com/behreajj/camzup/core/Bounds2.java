@@ -749,7 +749,7 @@ public class Bounds2 implements Comparable<Bounds2> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(max, min);
+        return Objects.hash(this.max, this.min);
     }
 
     /**

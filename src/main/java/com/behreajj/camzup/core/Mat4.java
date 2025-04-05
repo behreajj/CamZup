@@ -267,25 +267,10 @@ public class Mat4 {
     public static Mat4 add(final Mat4 a, final Mat4 b, final Mat4 target) {
 
         return target.set(
-            a.m00 + b.m00,
-            a.m01 + b.m01,
-            a.m02 + b.m02,
-            a.m03 + b.m03,
-
-            a.m10 + b.m10,
-            a.m11 + b.m11,
-            a.m12 + b.m12,
-            a.m13 + b.m13,
-
-            a.m20 + b.m20,
-            a.m21 + b.m21,
-            a.m22 + b.m22,
-            a.m23 + b.m23,
-
-            a.m30 + b.m30,
-            a.m31 + b.m31,
-            a.m32 + b.m32,
-            a.m33 + b.m33);
+            a.m00 + b.m00, a.m01 + b.m01, a.m02 + b.m02, a.m03 + b.m03,
+            a.m10 + b.m10, a.m11 + b.m11, a.m12 + b.m12, a.m13 + b.m13,
+            a.m20 + b.m20, a.m21 + b.m21, a.m22 + b.m22, a.m23 + b.m23,
+            a.m30 + b.m30, a.m31 + b.m31, a.m32 + b.m32, a.m33 + b.m33);
     }
 
     /**
@@ -296,22 +281,10 @@ public class Mat4 {
      */
     public static boolean all(final Mat4 m) {
 
-        return m.m00 != 0.0f
-            && m.m01 != 0.0f
-            && m.m02 != 0.0f
-            && m.m03 != 0.0f
-            && m.m10 != 0.0f
-            && m.m11 != 0.0f
-            && m.m12 != 0.0f
-            && m.m13 != 0.0f
-            && m.m20 != 0.0f
-            && m.m21 != 0.0f
-            && m.m22 != 0.0f
-            && m.m23 != 0.0f
-            && m.m30 != 0.0f
-            && m.m31 != 0.0f
-            && m.m32 != 0.0f
-            && m.m33 != 0.0f;
+        return m.m00 != 0.0f && m.m01 != 0.0f && m.m02 != 0.0f && m.m03 != 0.0f
+            && m.m10 != 0.0f && m.m11 != 0.0f && m.m12 != 0.0f && m.m13 != 0.0f
+            && m.m20 != 0.0f && m.m21 != 0.0f && m.m22 != 0.0f && m.m23 != 0.0f
+            && m.m30 != 0.0f && m.m31 != 0.0f && m.m32 != 0.0f && m.m33 != 0.0f;
     }
 
     /**
@@ -344,22 +317,10 @@ public class Mat4 {
      */
     public static boolean any(final Mat4 m) {
 
-        return m.m00 != 0.0f
-            || m.m01 != 0.0f
-            || m.m02 != 0.0f
-            || m.m03 != 0.0f
-            || m.m10 != 0.0f
-            || m.m11 != 0.0f
-            || m.m12 != 0.0f
-            || m.m13 != 0.0f
-            || m.m20 != 0.0f
-            || m.m21 != 0.0f
-            || m.m22 != 0.0f
-            || m.m23 != 0.0f
-            || m.m30 != 0.0f
-            || m.m31 != 0.0f
-            || m.m32 != 0.0f
-            || m.m33 != 0.0f;
+        return m.m00 != 0.0f || m.m01 != 0.0f || m.m02 != 0.0f || m.m03 != 0.0f
+            || m.m10 != 0.0f || m.m11 != 0.0f || m.m12 != 0.0f || m.m13 != 0.0f
+            || m.m20 != 0.0f || m.m21 != 0.0f || m.m22 != 0.0f || m.m23 != 0.0f
+            || m.m30 != 0.0f || m.m31 != 0.0f || m.m32 != 0.0f || m.m33 != 0.0f;
     }
 
     /**
@@ -382,7 +343,6 @@ public class Mat4 {
             3.0f, -6.0f, 3.0f, 0.0f,
             -3.0f, 3.0f, 0.0f, 0.0f,
             1.0f, 0.0f, 0.0f, 0.0f);
-
     }
 
     /**
@@ -474,8 +434,7 @@ public class Mat4 {
      * @param scale the output scale
      * @see Mat4#determinant(Mat4)
      * @see Quaternion#fromAxes(float, float, float, float, float, float, float,
-     * float, float,
-     * Quaternion)
+     * float, float, Quaternion)
      * @see Utils#div(float, float)
      * @see Utils#hypot(float, float, float)
      */
@@ -589,7 +548,6 @@ public class Mat4 {
             right.y, forward.y, 0.0f, translation.y,
             0.0f, 0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f);
-
     }
 
     /**
@@ -613,7 +571,6 @@ public class Mat4 {
             right.y, forward.y, up.y, 0.0f,
             right.z, forward.z, up.z, 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f);
-
     }
 
     /**
@@ -837,7 +794,10 @@ public class Mat4 {
      * @param target the output matrix
      * @return the matrix
      */
-    public static Mat4 fromRotY(final float cosa, final float sina, final Mat4 target) {
+    public static Mat4 fromRotY(
+        final float cosa,
+        final float sina,
+        final Mat4 target) {
 
         // RESEARCH: Is this inconsistent when compared with 4D rotation about
         // the YW axis? Should sin(a) and -sin(a) be transposed?
@@ -870,7 +830,10 @@ public class Mat4 {
      * @param target the output matrix
      * @return the matrix
      */
-    public static Mat4 fromRotZ(final float cosa, final float sina, final Mat4 target) {
+    public static Mat4 fromRotZ(
+        final float cosa,
+        final float sina,
+        final Mat4 target) {
 
         return target.set(
             cosa, -sina, 0.0f, 0.0f,
@@ -889,7 +852,10 @@ public class Mat4 {
     public static Mat4 fromRotZ(final float radians, final Mat4 target) {
 
         final float norm = radians * Utils.ONE_TAU;
-        return Mat4.fromRotZ(Utils.scNorm(norm), Utils.scNorm(norm - 0.25f), target);
+        return Mat4.fromRotZ(
+            Utils.scNorm(norm),
+            Utils.scNorm(norm - 0.25f),
+            target);
     }
 
     /**
@@ -1139,22 +1105,10 @@ public class Mat4 {
     public static Mat4 gt(final Mat4 a, final Mat4 b, final Mat4 target) {
 
         return target.set(
-            a.m00 > b.m00,
-            a.m01 > b.m01,
-            a.m02 > b.m02,
-            a.m03 > b.m03,
-            a.m10 > b.m10,
-            a.m11 > b.m11,
-            a.m12 > b.m12,
-            a.m13 > b.m13,
-            a.m20 > b.m20,
-            a.m21 > b.m21,
-            a.m22 > b.m22,
-            a.m23 > b.m23,
-            a.m30 > b.m30,
-            a.m31 > b.m31,
-            a.m32 > b.m32,
-            a.m33 > b.m33);
+            a.m00 > b.m00, a.m01 > b.m01, a.m02 > b.m02, a.m03 > b.m03,
+            a.m10 > b.m10, a.m11 > b.m11, a.m12 > b.m12, a.m13 > b.m13,
+            a.m20 > b.m20, a.m21 > b.m21, a.m22 > b.m22, a.m23 > b.m23,
+            a.m30 > b.m30, a.m31 > b.m31, a.m32 > b.m32, a.m33 > b.m33);
     }
 
     /**
@@ -1169,22 +1123,10 @@ public class Mat4 {
     public static Mat4 gtEq(final Mat4 a, final Mat4 b, final Mat4 target) {
 
         return target.set(
-            a.m00 >= b.m00,
-            a.m01 >= b.m01,
-            a.m02 >= b.m02,
-            a.m03 >= b.m03,
-            a.m10 >= b.m10,
-            a.m11 >= b.m11,
-            a.m12 >= b.m12,
-            a.m13 >= b.m13,
-            a.m20 >= b.m20,
-            a.m21 >= b.m21,
-            a.m22 >= b.m22,
-            a.m23 >= b.m23,
-            a.m30 >= b.m30,
-            a.m31 >= b.m31,
-            a.m32 >= b.m32,
-            a.m33 >= b.m33);
+            a.m00 >= b.m00, a.m01 >= b.m01, a.m02 >= b.m02, a.m03 >= b.m03,
+            a.m10 >= b.m10, a.m11 >= b.m11, a.m12 >= b.m12, a.m13 >= b.m13,
+            a.m20 >= b.m20, a.m21 >= b.m21, a.m22 >= b.m22, a.m23 >= b.m23,
+            a.m30 >= b.m30, a.m31 >= b.m31, a.m32 >= b.m32, a.m33 >= b.m33);
     }
 
     /**
@@ -1271,28 +1213,15 @@ public class Mat4 {
      */
     public static boolean isIdentity(final Mat4 m) {
 
-
-        return m.m33 == 1.0f
-            && m.m22 == 1.0f
-            && m.m11 == 1.0f
-            && m.m00 == 1.0f
-            && m.m01 == 0.0f
-            && m.m02 == 0.0f
-            && m.m03 == 0.0f
-            && m.m10 == 0.0f
-            && m.m12 == 0.0f
-            && m.m13 == 0.0f
-            && m.m20 == 0.0f
-            && m.m21 == 0.0f
-            && m.m23 == 0.0f
-            && m.m30 == 0.0f
-            && m.m31 == 0.0f
-            && m.m32 == 0.0f;
-
+        return m.m33 == 1.0f && m.m22 == 1.0f && m.m11 == 1.0f && m.m00 == 1.0f
+            && m.m01 == 0.0f && m.m02 == 0.0f && m.m03 == 0.0f && m.m10 == 0.0f
+            && m.m12 == 0.0f && m.m13 == 0.0f && m.m20 == 0.0f && m.m21 == 0.0f
+            && m.m23 == 0.0f && m.m30 == 0.0f && m.m31 == 0.0f && m.m32 == 0.0f;
     }
 
     /**
-     * Evaluates whether the left comparisand is less than the right comparisand.
+     * Evaluates whether the left comparisand is less than the right
+     * comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -1302,27 +1231,15 @@ public class Mat4 {
     public static Mat4 lt(final Mat4 a, final Mat4 b, final Mat4 target) {
 
         return target.set(
-            a.m00 < b.m00,
-            a.m01 < b.m01,
-            a.m02 < b.m02,
-            a.m03 < b.m03,
-            a.m10 < b.m10,
-            a.m11 < b.m11,
-            a.m12 < b.m12,
-            a.m13 < b.m13,
-            a.m20 < b.m20,
-            a.m21 < b.m21,
-            a.m22 < b.m22,
-            a.m23 < b.m23,
-            a.m30 < b.m30,
-            a.m31 < b.m31,
-            a.m32 < b.m32,
-            a.m33 < b.m33);
+            a.m00 < b.m00, a.m01 < b.m01, a.m02 < b.m02, a.m03 < b.m03,
+            a.m10 < b.m10, a.m11 < b.m11, a.m12 < b.m12, a.m13 < b.m13,
+            a.m20 < b.m20, a.m21 < b.m21, a.m22 < b.m22, a.m23 < b.m23,
+            a.m30 < b.m30, a.m31 < b.m31, a.m32 < b.m32, a.m33 < b.m33);
     }
 
     /**
-     * Evaluates whether the left comparisand is less than or equal to the right
-     * comparisand.
+     * Evaluates whether the left comparisand is less than or equal to the
+     * right comparisand.
      *
      * @param a      left comparisand
      * @param b      right comparisand
@@ -1332,28 +1249,15 @@ public class Mat4 {
     public static Mat4 ltEq(final Mat4 a, final Mat4 b, final Mat4 target) {
 
         return target.set(
-            a.m00 <= b.m00,
-            a.m01 <= b.m01,
-            a.m02 <= b.m02,
-            a.m03 <= b.m03,
-            a.m10 <= b.m10,
-            a.m11 <= b.m11,
-            a.m12 <= b.m12,
-            a.m13 <= b.m13,
-            a.m20 <= b.m20,
-            a.m21 <= b.m21,
-            a.m22 <= b.m22,
-            a.m23 <= b.m23,
-            a.m30 <= b.m30,
-            a.m31 <= b.m31,
-            a.m32 <= b.m32,
-            a.m33 <= b.m33);
+            a.m00 <= b.m00, a.m01 <= b.m01, a.m02 <= b.m02, a.m03 <= b.m03,
+            a.m10 <= b.m10, a.m11 <= b.m11, a.m12 <= b.m12, a.m13 <= b.m13,
+            a.m20 <= b.m20, a.m21 <= b.m21, a.m22 <= b.m22, a.m23 <= b.m23,
+            a.m30 <= b.m30, a.m31 <= b.m31, a.m32 <= b.m32, a.m33 <= b.m33);
     }
 
     /**
-     * Multiplies each component in a matrix by a scalar. Not to be confused with
-     * scaling affine
-     * transform matrix.
+     * Multiplies each component in a matrix by a scalar. Not to be confused
+     * with scaling affine transform matrix.
      *
      * @param s      the left operand
      * @param m      the right operand
@@ -1362,17 +1266,16 @@ public class Mat4 {
      */
     public static Mat4 mul(final float s, final Mat4 m, final Mat4 target) {
 
-
         return target.set(
-            s * m.m00, s * m.m01, s * m.m02, s * m.m03, s * m.m10, s * m.m11, s * m.m12, s * m.m13,
-            s * m.m20, s * m.m21, s * m.m22, s * m.m23, s * m.m30, s * m.m31, s * m.m32, s * m.m33);
-
+            s * m.m00, s * m.m01, s * m.m02, s * m.m03,
+            s * m.m10, s * m.m11, s * m.m12, s * m.m13,
+            s * m.m20, s * m.m21, s * m.m22, s * m.m23,
+            s * m.m30, s * m.m31, s * m.m32, s * m.m33);
     }
 
     /**
-     * Multiplies each component in a matrix by a scalar. Not to be confused with
-     * scaling affine
-     * transform matrix.
+     * Multiplies each component in a matrix by a scalar. Not to be confused
+     * with scaling affine transform matrix.
      *
      * @param m      the left operand
      * @param s      the right operand
@@ -1381,11 +1284,11 @@ public class Mat4 {
      */
     public static Mat4 mul(final Mat4 m, final float s, final Mat4 target) {
 
-
         return target.set(
-            m.m00 * s, m.m01 * s, m.m02 * s, m.m03 * s, m.m10 * s, m.m11 * s, m.m12 * s, m.m13 * s,
-            m.m20 * s, m.m21 * s, m.m22 * s, m.m23 * s, m.m30 * s, m.m31 * s, m.m32 * s, m.m33 * s);
-
+            m.m00 * s, m.m01 * s, m.m02 * s, m.m03 * s,
+            m.m10 * s, m.m11 * s, m.m12 * s, m.m13 * s,
+            m.m20 * s, m.m21 * s, m.m22 * s, m.m23 * s,
+            m.m30 * s, m.m31 * s, m.m32 * s, m.m33 * s);
     }
 
     /**
@@ -1397,7 +1300,6 @@ public class Mat4 {
      * @return the product
      */
     public static Mat4 mul(final Mat4 a, final Mat4 b, final Mat4 target) {
-
 
         return target.set(
             a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30,
@@ -1416,13 +1318,11 @@ public class Mat4 {
             a.m30 * b.m01 + a.m31 * b.m11 + a.m32 * b.m21 + a.m33 * b.m31,
             a.m30 * b.m02 + a.m31 * b.m12 + a.m32 * b.m22 + a.m33 * b.m32,
             a.m30 * b.m03 + a.m31 * b.m13 + a.m32 * b.m23 + a.m33 * b.m33);
-
     }
 
     /**
      * Multiplies three matrices. Useful for composing an affine transform from
-     * translation, rotation
-     * and scale matrices.
+     * translation, rotation and scale matrices.
      *
      * @param a      the first matrix
      * @param b      the second matrix
@@ -1430,8 +1330,11 @@ public class Mat4 {
      * @param target the output matrix
      * @return the product
      */
-    public static Mat4 mul(final Mat4 a, final Mat4 b, final Mat4 c, final Mat4 target) {
-
+    public static Mat4 mul(
+        final Mat4 a,
+        final Mat4 b,
+        final Mat4 c,
+        final Mat4 target) {
 
         final float n00 = a.m00 * b.m00 + a.m01 * b.m10 + a.m02 * b.m20 + a.m03 * b.m30;
         final float n01 = a.m00 * b.m01 + a.m01 * b.m11 + a.m02 * b.m21 + a.m03 * b.m31;
@@ -1470,26 +1373,28 @@ public class Mat4 {
             n30 * c.m01 + n31 * c.m11 + n32 * c.m21 + n33 * c.m31,
             n30 * c.m02 + n31 * c.m12 + n32 * c.m22 + n33 * c.m32,
             n30 * c.m03 + n31 * c.m13 + n32 * c.m23 + n33 * c.m33);
-
     }
 
     /**
      * Multiplies a matrix and a quaternion. Stores the quaternion's matrix
-     * representation in an
-     * output variable.
+     * representation in an output variable.
      *
      * @param m      the matrix
      * @param q      the quaternion
      * @param target the output matrix
-     * @param bm     the matrix conversion
+     * @param qm     the matrix conversion
      * @return the product
      * @see Mat4#fromRotation(Quaternion, Mat4)
      * @see Mat4#mul(Mat4, Mat4, Mat4)
      */
-    public static Mat4 mul(final Mat4 m, final Quaternion q, final Mat4 target, final Mat4 bm) {
+    public static Mat4 mul(
+        final Mat4 m,
+        final Quaternion q,
+        final Mat4 target,
+        final Mat4 qm) {
 
-        Mat4.fromRotation(q, bm);
-        return Mat4.mul(m, bm, target);
+        Mat4.fromRotation(q, qm);
+        return Mat4.mul(m, qm, target);
     }
 
     /**
@@ -1502,13 +1407,11 @@ public class Mat4 {
      */
     public static Vec4 mul(final Mat4 m, final Rgb c, final Vec4 target) {
 
-
         return target.set(
             m.m00 * c.r + m.m01 * c.g + m.m02 * c.b + m.m03 * c.alpha,
             m.m10 * c.r + m.m11 * c.g + m.m12 * c.b + m.m13 * c.alpha,
             m.m20 * c.r + m.m21 * c.g + m.m22 * c.b + m.m23 * c.alpha,
             m.m30 * c.r + m.m31 * c.g + m.m32 * c.b + m.m33 * c.alpha);
-
     }
 
     /**
@@ -1521,25 +1424,11 @@ public class Mat4 {
      */
     public static Mat4 mul(final Mat4 m, final Vec4 v, final Mat4 target) {
 
-
         return target.set(
-            m.m00 * v.x,
-            m.m01 * v.y,
-            m.m02 * v.z,
-            m.m03 * v.w,
-            m.m10 * v.x,
-            m.m11 * v.y,
-            m.m12 * v.z,
-            m.m13 * v.w,
-            m.m20 * v.x,
-            m.m21 * v.y,
-            m.m22 * v.z,
-            m.m23 * v.w,
-            m.m30 * v.x,
-            m.m31 * v.y,
-            m.m32 * v.z,
-            m.m33 * v.w);
-
+            m.m00 * v.x, m.m01 * v.y, m.m02 * v.z, m.m03 * v.w,
+            m.m10 * v.x, m.m11 * v.y, m.m12 * v.z, m.m13 * v.w,
+            m.m20 * v.x, m.m21 * v.y, m.m22 * v.z, m.m23 * v.w,
+            m.m30 * v.x, m.m31 * v.y, m.m32 * v.z, m.m33 * v.w);
     }
 
     /**
@@ -1552,13 +1441,11 @@ public class Mat4 {
      */
     public static Rgb mul(final Mat4 m, final Vec4 v, final Rgb target) {
 
-
         return target.set(
             m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
             m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13 * v.w,
             m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23 * v.w,
             m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33 * v.w);
-
     }
 
     /**
@@ -1571,38 +1458,40 @@ public class Mat4 {
      */
     public static Vec4 mul(final Mat4 m, final Vec4 v, final Vec4 target) {
 
-
         return target.set(
             m.m00 * v.x + m.m01 * v.y + m.m02 * v.z + m.m03 * v.w,
             m.m10 * v.x + m.m11 * v.y + m.m12 * v.z + m.m13 * v.w,
             m.m20 * v.x + m.m21 * v.y + m.m22 * v.z + m.m23 * v.w,
             m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33 * v.w);
-
     }
 
     /**
      * Multiplies a quaternion and a matrix. Stores the quaternion's matrix
-     * representation in an
-     * output variable.
+     * representation in an output variable.
      *
      * @param q      the quaternion
      * @param m      the matrix
      * @param target the output matrix
-     * @param am     the matrix conversion
+     * @param qm     the quaternion-matrix conversion
      * @return the product
      * @see Mat4#fromRotation(Quaternion, Mat4)
      * @see Mat4#mul(Mat4, Mat4, Mat4)
      */
-    public static Mat4 mul(final Quaternion q, final Mat4 m, final Mat4 target, final Mat4 am) {
+    public static Mat4 mul(
+        final Quaternion q,
+        final Mat4 m,
+        final Mat4 target,
+        final Mat4 qm) {
 
-        Mat4.fromRotation(q, am);
-        return Mat4.mul(am, m, target);
+        Mat4.fromRotation(q, qm);
+        return Mat4.mul(qm, m, target);
     }
 
     /**
      * Following <a href=
      * "https://en.wikibooks.org/wiki/GLSL_Programming/Vector_and_Matrix_Operations#Operators">GLSL
-     * convention</a>, multiplies a color and the transpose of a matrix.<br>
+     * convention</a>, multiplies a color and the transpose of a matrix.
+     * <br>
      * <br>
      * v<sup>T</sup> M = ( M<sup>T</sup> c )<sup>T</sup>
      *
@@ -1613,13 +1502,11 @@ public class Mat4 {
      */
     public static Vec4 mul(final Rgb c, final Mat4 m, final Vec4 target) {
 
-
         return target.set(
             c.r * m.m00 + c.g * m.m10 + c.b * m.m20 + c.alpha * m.m30,
             c.r * m.m01 + c.g * m.m11 + c.b * m.m21 + c.alpha * m.m31,
             c.r * m.m02 + c.g * m.m12 + c.b * m.m22 + c.alpha * m.m32,
             c.r * m.m03 + c.g * m.m13 + c.b * m.m23 + c.alpha * m.m33);
-
     }
 
     /**
@@ -1632,31 +1519,18 @@ public class Mat4 {
      */
     public static Mat4 mul(final Vec4 v, final Mat4 m, final Mat4 target) {
 
-
         return target.set(
-            v.x * m.m00,
-            v.y * m.m10,
-            v.z * m.m20,
-            v.w * m.m30,
-            v.x * m.m01,
-            v.y * m.m11,
-            v.z * m.m21,
-            v.w * m.m31,
-            v.x * m.m02,
-            v.y * m.m12,
-            v.z * m.m22,
-            v.w * m.m32,
-            v.x * m.m03,
-            v.y * m.m13,
-            v.z * m.m23,
-            v.w * m.m33);
-
+            v.x * m.m00, v.y * m.m10, v.z * m.m20, v.w * m.m30,
+            v.x * m.m01, v.y * m.m11, v.z * m.m21, v.w * m.m31,
+            v.x * m.m02, v.y * m.m12, v.z * m.m22, v.w * m.m32,
+            v.x * m.m03, v.y * m.m13, v.z * m.m23, v.w * m.m33);
     }
 
     /**
      * Following <a href=
      * "https://en.wikibooks.org/wiki/GLSL_Programming/Vector_and_Matrix_Operations#Operators">GLSL
-     * convention</a>, multiplies a vector and the transpose of a matrix.<br>
+     * convention</a>, multiplies a vector and the transpose of a matrix.
+     * <br>
      * <br>
      * c<sup>T</sup> M = ( M<sup>T</sup> v )<sup>T</sup>
      *
@@ -1667,19 +1541,18 @@ public class Mat4 {
      */
     public static Rgb mul(final Vec4 v, final Mat4 m, final Rgb target) {
 
-
         return target.set(
             v.x * m.m00 + v.y * m.m10 + v.z * m.m20 + v.w * m.m30,
             v.x * m.m01 + v.y * m.m11 + v.z * m.m21 + v.w * m.m31,
             v.x * m.m02 + v.y * m.m12 + v.z * m.m22 + v.w * m.m32,
             v.x * m.m03 + v.y * m.m13 + v.z * m.m23 + v.w * m.m33);
-
     }
 
     /**
      * Following <a href=
      * "https://en.wikibooks.org/wiki/GLSL_Programming/Vector_and_Matrix_Operations#Operators">GLSL
-     * convention</a>, multiplies a vector and the transpose of a matrix.<br>
+     * convention</a>, multiplies a vector and the transpose of a matrix.
+     * <br>
      * <br>
      * v<sup>T</sup> M = ( M<sup>T</sup> v )<sup>T</sup>
      *
@@ -1690,13 +1563,11 @@ public class Mat4 {
      */
     public static Vec4 mul(final Vec4 v, final Mat4 m, final Vec4 target) {
 
-
         return target.set(
             v.x * m.m00 + v.y * m.m10 + v.z * m.m20 + v.w * m.m30,
             v.x * m.m01 + v.y * m.m11 + v.z * m.m21 + v.w * m.m31,
             v.x * m.m02 + v.y * m.m12 + v.z * m.m22 + v.w * m.m32,
             v.x * m.m03 + v.y * m.m13 + v.z * m.m23 + v.w * m.m33);
-
     }
 
     /**
@@ -1718,8 +1589,7 @@ public class Mat4 {
 
     /**
      * Multiplies a matrix and a normal. Assumes the inverse of the matrix has
-     * already been
-     * calculated.
+     * already been calculated.
      *
      * @param n      the normal
      * @param h      the inverse
@@ -1741,11 +1611,9 @@ public class Mat4 {
     }
 
     /**
-     * Multiplies a matrix and a point. The z component of the point is assumed to
-     * be 0.0 . The w
-     * component of the point is assumed to be 1.0 , so the point is impacted by the
-     * matrix's
-     * translation.
+     * Multiplies a matrix and a point. The z component of the point is assumed
+     * to be 0.0. The w component of the point is assumed to be 1.0, so the
+     * point is impacted by the matrix's translation.
      *
      * @param m      the matrix
      * @param p      the point
@@ -1757,20 +1625,17 @@ public class Mat4 {
         final float w = m.m30 * p.x + m.m31 * p.y + m.m33;
         if (w != 0.0f) {
             final float wInv = 1.0f / w;
-
             return target.set(
                 (m.m00 * p.x + m.m01 * p.y + m.m03) * wInv,
                 (m.m10 * p.x + m.m11 * p.y + m.m13) * wInv,
                 (m.m20 * p.x + m.m21 * p.y + m.m23) * wInv);
-
         }
         return target.reset();
     }
 
     /**
-     * Multiplies a matrix and a point. The w component of the point is assumed to
-     * be 1.0 , so the
-     * point is impacted by the matrix's translation.
+     * Multiplies a matrix and a point. The w component of the point is assumed
+     * to be 1.0, so the point is impacted by the matrix's translation.
      *
      * @param m      the matrix
      * @param p      the point
@@ -1782,20 +1647,18 @@ public class Mat4 {
         final float w = m.m30 * p.x + m.m31 * p.y + m.m32 * p.z + m.m33;
         if (w != 0.0f) {
             final float wInv = 1.0f / w;
-
             return target.set(
                 (m.m00 * p.x + m.m01 * p.y + m.m02 * p.z + m.m03) * wInv,
                 (m.m10 * p.x + m.m11 * p.y + m.m12 * p.z + m.m13) * wInv,
                 (m.m20 * p.x + m.m21 * p.y + m.m22 * p.z + m.m23) * wInv);
-
         }
         return target.reset();
     }
 
     /**
-     * Multiplies a matrix and a vector. The z and w components of the vector are
-     * assumed to be 0.0 ,
-     * so the vector is not impacted by the matrix's translation.
+     * Multiplies a matrix and a vector. The z and w components of the vector
+     * are assumed to be 0.0, so the vector is not impacted by the matrix's
+     * translation.
      *
      * @param m      the matrix
      * @param v      the vector
@@ -1807,20 +1670,18 @@ public class Mat4 {
         final float w = m.m30 * v.x + m.m31 * v.y + m.m33;
         if (w != 0.0f) {
             final float wInv = 1.0f / w;
-
             return target.set(
                 (m.m00 * v.x + m.m01 * v.y) * wInv,
                 (m.m10 * v.x + m.m11 * v.y) * wInv,
                 (m.m20 * v.x + m.m21 * v.y) * wInv);
-
         }
         return target.reset();
     }
 
     /**
-     * Multiplies a matrix and a vector. The w component of the vector is assumed to
-     * be 0.0 , so the
-     * vector is not impacted by the matrix's translation.
+     * Multiplies a matrix and a vector. The w component of the vector is
+     * assumed to be 0.0, so the vector is not impacted by the matrix's
+     * translation.
      *
      * @param m      the matrix
      * @param v      the vector
@@ -1832,12 +1693,10 @@ public class Mat4 {
         final float w = m.m30 * v.x + m.m31 * v.y + m.m32 * v.z + m.m33;
         if (w != 0.0f) {
             final float wInv = 1.0f / w;
-
             return target.set(
                 (m.m00 * v.x + m.m01 * v.y + m.m02 * v.z) * wInv,
                 (m.m10 * v.x + m.m11 * v.y + m.m12 * v.z) * wInv,
                 (m.m20 * v.x + m.m21 * v.y + m.m22 * v.z) * wInv);
-
         }
         return target.reset();
     }
@@ -1851,11 +1710,11 @@ public class Mat4 {
      */
     public static Mat4 negate(final Mat4 m, final Mat4 target) {
 
-
         return target.set(
-            -m.m00, -m.m01, -m.m02, -m.m03, -m.m10, -m.m11, -m.m12, -m.m13, -m.m20, -m.m21, -m.m22,
-            -m.m23, -m.m30, -m.m31, -m.m32, -m.m33);
-
+            -m.m00, -m.m01, -m.m02, -m.m03,
+            -m.m10, -m.m11, -m.m12, -m.m13,
+            -m.m20, -m.m21, -m.m22, -m.m23,
+            -m.m30, -m.m31, -m.m32, -m.m33);
     }
 
     /**
@@ -1866,22 +1725,10 @@ public class Mat4 {
      */
     public static boolean none(final Mat4 m) {
 
-        return m.m00 == 0.0f
-            && m.m01 == 0.0f
-            && m.m02 == 0.0f
-            && m.m03 == 0.0f
-            && m.m10 == 0.0f
-            && m.m11 == 0.0f
-            && m.m12 == 0.0f
-            && m.m13 == 0.0f
-            && m.m20 == 0.0f
-            && m.m21 == 0.0f
-            && m.m22 == 0.0f
-            && m.m23 == 0.0f
-            && m.m30 == 0.0f
-            && m.m31 == 0.0f
-            && m.m32 == 0.0f
-            && m.m33 == 0.0f;
+        return m.m00 == 0.0f && m.m01 == 0.0f && m.m02 == 0.0f && m.m03 == 0.0f
+            && m.m10 == 0.0f && m.m11 == 0.0f && m.m12 == 0.0f && m.m13 == 0.0f
+            && m.m20 == 0.0f && m.m21 == 0.0f && m.m22 == 0.0f && m.m23 == 0.0f
+            && m.m30 == 0.0f && m.m31 == 0.0f && m.m32 == 0.0f && m.m33 == 0.0f;
     }
 
     /**
@@ -1893,7 +1740,6 @@ public class Mat4 {
      */
     public static Mat4 not(final Mat4 m, final Mat4 target) {
 
-
         return target.set(
             m.m00 != 0.0f ? 0.0f : 1.0f, m.m01 != 0.0f ? 0.0f : 1.0f,
             m.m02 != 0.0f ? 0.0f : 1.0f, m.m03 != 0.0f ? 0.0f : 1.0f,
@@ -1903,7 +1749,6 @@ public class Mat4 {
             m.m22 != 0.0f ? 0.0f : 1.0f, m.m23 != 0.0f ? 0.0f : 1.0f,
             m.m30 != 0.0f ? 0.0f : 1.0f, m.m31 != 0.0f ? 0.0f : 1.0f,
             m.m32 != 0.0f ? 0.0f : 1.0f, m.m33 != 0.0f ? 0.0f : 1.0f);
-
     }
 
     /**
@@ -1917,7 +1762,6 @@ public class Mat4 {
      */
     public static Mat4 or(final Mat4 a, final Mat4 b, final Mat4 target) {
 
-
         return target.set(
             Utils.or(a.m00, b.m00), Utils.or(a.m01, b.m01),
             Utils.or(a.m02, b.m02), Utils.or(a.m03, b.m03),
@@ -1927,13 +1771,11 @@ public class Mat4 {
             Utils.or(a.m22, b.m22), Utils.or(a.m23, b.m23),
             Utils.or(a.m30, b.m30), Utils.or(a.m31, b.m31),
             Utils.or(a.m32, b.m32), Utils.or(a.m33, b.m33));
-
     }
 
     /**
-     * Creates an orthographic projection matrix, where objects maintain their size
-     * regardless of
-     * distance from the camera.
+     * Creates an orthographic projection matrix, where objects maintain their
+     * size regardless of distance from the camera.
      *
      * @param left   the left edge of the window
      * @param right  the right edge of the window
@@ -1962,28 +1804,15 @@ public class Mat4 {
         d = d != 0.0f ? 1.0f / d : 1.0f;
 
         return target.set(
-            w + w,
-            0.0f,
-            0.0f,
-            w * (left + right),
-            0.0f,
-            h + h,
-            0.0f,
-            h * (top + bottom),
-            0.0f,
-            0.0f,
-            -(d + d),
-            -d * (far + near),
-            0.0f,
-            0.0f,
-            0.0f,
-            1.0f);
+            w + w, 0.0f, 0.0f, w * (left + right),
+            0.0f, h + h, 0.0f, h * (top + bottom),
+            0.0f, 0.0f, -(d + d), -d * (far + near),
+            0.0f, 0.0f, 0.0f, 1.0f);
     }
 
     /**
-     * Creates a perspective projection matrix, where objects nearer to the camera
-     * appear larger than
-     * objects distant from the camera.
+     * Creates a perspective projection matrix, where objects nearer to the
+     * camera appear larger than objects distant from the camera.
      *
      * @param fov    the field of view
      * @param aspect the aspect ratio, width over height
@@ -1995,27 +1824,19 @@ public class Mat4 {
      * @see Utils#div(float, float)
      */
     public static Mat4 perspective(
-        final float fov, final float aspect, final float near, final float far, final Mat4 target) {
+        final float fov,
+        final float aspect,
+        final float near,
+        final float far,
+        final Mat4 target) {
 
         final float cotfov = Utils.cot(fov * 0.5f);
         final float d = Utils.div(1.0f, far - near);
         return target.set(
-            Utils.div(cotfov, aspect),
-            0.0f,
-            0.0f,
-            0.0f,
-            0.0f,
-            cotfov,
-            0.0f,
-            0.0f,
-            0.0f,
-            0.0f,
-            (far + near) * -d,
-            (near + near) * far * -d,
-            0.0f,
-            0.0f,
-            -1.0f,
-            0.0f);
+            Utils.div(cotfov, aspect), 0.0f, 0.0f, 0.0f,
+            0.0f, cotfov, 0.0f, 0.0f,
+            0.0f, 0.0f, (far + near) * -d, (near + near) * far * -d,
+            0.0f, 0.0f, -1.0f, 0.0f);
     }
 
     /**
@@ -2027,11 +1848,11 @@ public class Mat4 {
      */
     public static Mat4 rotateElmsCcw(final Mat4 m, final Mat4 target) {
 
-
         return target.set(
-            m.m03, m.m13, m.m23, m.m33, m.m02, m.m12, m.m22, m.m32, m.m01, m.m11, m.m21, m.m31, m.m00,
-            m.m10, m.m20, m.m30);
-
+            m.m03, m.m13, m.m23, m.m33,
+            m.m02, m.m12, m.m22, m.m32,
+            m.m01, m.m11, m.m21, m.m31,
+            m.m00, m.m10, m.m20, m.m30);
     }
 
     /**
@@ -2043,11 +1864,11 @@ public class Mat4 {
      */
     public static Mat4 rotateElmsCw(final Mat4 m, final Mat4 target) {
 
-
         return target.set(
-            m.m30, m.m20, m.m10, m.m00, m.m31, m.m21, m.m11, m.m01, m.m32, m.m22, m.m12, m.m02, m.m33,
-            m.m23, m.m13, m.m03);
-
+            m.m30, m.m20, m.m10, m.m00,
+            m.m31, m.m21, m.m11, m.m01,
+            m.m32, m.m22, m.m12, m.m02,
+            m.m33, m.m23, m.m13, m.m03);
     }
 
     /**
@@ -2060,25 +1881,11 @@ public class Mat4 {
      */
     public static Mat4 sub(final Mat4 a, final Mat4 b, final Mat4 target) {
 
-
         return target.set(
-            a.m00 - b.m00,
-            a.m01 - b.m01,
-            a.m02 - b.m02,
-            a.m03 - b.m03,
-            a.m10 - b.m10,
-            a.m11 - b.m11,
-            a.m12 - b.m12,
-            a.m13 - b.m13,
-            a.m20 - b.m20,
-            a.m21 - b.m21,
-            a.m22 - b.m22,
-            a.m23 - b.m23,
-            a.m30 - b.m30,
-            a.m31 - b.m31,
-            a.m32 - b.m32,
-            a.m33 - b.m33);
-
+            a.m00 - b.m00, a.m01 - b.m01, a.m02 - b.m02, a.m03 - b.m03,
+            a.m10 - b.m10, a.m11 - b.m11, a.m12 - b.m12, a.m13 - b.m13,
+            a.m20 - b.m20, a.m21 - b.m21, a.m22 - b.m22, a.m23 - b.m23,
+            a.m30 - b.m30, a.m31 - b.m31, a.m32 - b.m32, a.m33 - b.m33);
     }
 
     /**
@@ -2090,11 +1897,11 @@ public class Mat4 {
      */
     public static Mat4 transpose(final Mat4 m, final Mat4 target) {
 
-
         return target.set(
-            m.m00, m.m10, m.m20, m.m30, m.m01, m.m11, m.m21, m.m31, m.m02, m.m12, m.m22, m.m32, m.m03,
-            m.m13, m.m23, m.m33);
-
+            m.m00, m.m10, m.m20, m.m30,
+            m.m01, m.m11, m.m21, m.m31,
+            m.m02, m.m12, m.m22, m.m32,
+            m.m03, m.m13, m.m23, m.m33);
     }
 
     /**
@@ -2109,7 +1916,6 @@ public class Mat4 {
      */
     public static Mat4 xor(final Mat4 a, final Mat4 b, final Mat4 target) {
 
-
         return target.set(
             Utils.xor(a.m00, b.m00), Utils.xor(a.m01, b.m01),
             Utils.xor(a.m02, b.m02), Utils.xor(a.m03, b.m03),
@@ -2119,13 +1925,11 @@ public class Mat4 {
             Utils.xor(a.m22, b.m22), Utils.xor(a.m23, b.m23),
             Utils.xor(a.m30, b.m30), Utils.xor(a.m31, b.m31),
             Utils.xor(a.m32, b.m32), Utils.xor(a.m33, b.m33));
-
     }
 
     /**
-     * Creates a reflection matrix from an axis representing a plane. The axis will
-     * be normalized by
-     * the function.
+     * Creates a reflection matrix from an axis representing a plane. The axis
+     * will be normalized by the function.
      *
      * @param ax     the axis x
      * @param ay     the axis y
@@ -2133,7 +1937,11 @@ public class Mat4 {
      * @param target the output matrix
      * @return the reflection
      */
-    static Mat4 fromReflection(final float ax, final float ay, final float az, final Mat4 target) {
+    static Mat4 fromReflection(
+        final float ax,
+        final float ay,
+        final float az,
+        final Mat4 target) {
 
         final float x = -(ax + ax);
         final float y = -(ay + ay);
@@ -2143,31 +1951,16 @@ public class Mat4 {
         final float axaz = x * az;
         final float ayaz = y * az;
 
-
         return target.set(
-            x * ax + 1.0f,
-            axay,
-            axaz,
-            0.0f,
-            axay,
-            y * ay + 1.0f,
-            ayaz,
-            0.0f,
-            axaz,
-            ayaz,
-            z * az + 1.0f,
-            0.0f,
-            0.0f,
-            0.0f,
-            0.0f,
-            1.0f);
-
+            x * ax + 1.0f, axay, axaz, 0.0f,
+            axay, y * ay + 1.0f, ayaz, 0.0f,
+            axaz, ayaz, z * az + 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
     }
 
     /**
-     * Creates a rotation matrix from an angle in radians around an axis. The axis
-     * will not be checked
-     * for validity.
+     * Creates a rotation matrix from an angle in radians around an axis. The
+     * axis will not be checked for validity.
      *
      * @param cosa   cosine of the angle
      * @param sina   sine of the angle
@@ -2178,11 +1971,8 @@ public class Mat4 {
      * @return the matrix
      */
     static Mat4 fromRotation(
-        final float cosa,
-        final float sina,
-        final float ax,
-        final float ay,
-        final float az,
+        final float cosa, final float sina,
+        final float ax, final float ay, final float az,
         final Mat4 target) {
 
         final float d = 1.0f - cosa;
@@ -2194,32 +1984,17 @@ public class Mat4 {
         final float axaz = x * az;
         final float ayaz = y * az;
 
-
         return target.set(
-            cosa + x * ax,
-            axay - sina * az,
-            axaz + sina * ay,
-            0.0f,
-            axay + sina * az,
-            cosa + y * ay,
-            ayaz - sina * ax,
-            0.0f,
-            axaz - sina * ay,
-            ayaz + sina * ax,
-            cosa + z * az,
-            0.0f,
-            0.0f,
-            0.0f,
-            0.0f,
-            1.0f);
-
+            cosa + x * ax, axay - sina * az, axaz + sina * ay, 0.0f,
+            axay + sina * az, cosa + y * ay, ayaz - sina * ax, 0.0f,
+            axaz - sina * ay, ayaz + sina * ax, cosa + z * az, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
     }
 
     /**
-     * Creates skew, or shear, matrix from the tangent of an angle and axes. Axes
-     * <em>a</em> and
-     * <em>b</em> are expected to be orthonormal, i.e. perpendicular and of unit
-     * length.
+     * Creates skew, or shear, matrix from the tangent of an angle and axes.
+     * Axes <em>a</em> and <em>b</em> are expected to be orthonormal, i.e.,
+     * perpendicular and of unit length.
      *
      * @param t      the tangent of the angle
      * @param ax     the skew axis x
@@ -2233,37 +2008,19 @@ public class Mat4 {
      */
     static Mat4 fromSkew(
         final float t,
-        final float ax,
-        final float ay,
-        final float az,
-        final float bx,
-        final float by,
-        final float bz,
+        final float ax, final float ay, final float az,
+        final float bx, final float by, final float bz,
         final Mat4 target) {
 
         final float tax = ax * t;
         final float tay = ay * t;
         final float taz = az * t;
 
-
         return target.set(
-            tax * bx + 1.0f,
-            tax * by,
-            tax * bz,
-            0.0f,
-            tay * bx,
-            tay * by + 1.0f,
-            tay * bz,
-            0.0f,
-            taz * bx,
-            taz * by,
-            taz * bz + 1.0f,
-            0.0f,
-            0.0f,
-            0.0f,
-            0.0f,
-            1.0f);
-
+            tax * bx + 1.0f, tax * by, tax * bz, 0.0f,
+            tay * bx, tay * by + 1.0f, tay * bz, 0.0f,
+            taz * bx, taz * by, taz * bz + 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
     }
 
     /**
@@ -2317,9 +2074,9 @@ public class Mat4 {
     }
 
     /**
-     * Simulates bracket subscript access in a one-dimensional, row-major matrix
-     * array. Works with
-     * positive integers in [0, 15] or negative integers in [-16, -1] .
+     * Simulates bracket subscript access in a one-dimensional, row-major
+     * matrix array. Works with positive integers in [0, 15] or negative
+     * integers in [-16, -1] .
      *
      * @param index the index
      * @return the component at that index
@@ -2327,11 +2084,10 @@ public class Mat4 {
     public float getElm(final int index) {
 
         /*
-         * At the moment, there is a get function to facilitate an iterator, but
-         * no set function, because setCol is the encouraged way to set matrix
-         * elms.
+         * At the moment, there is a get function to facilitate an iterator,
+         * but no set function, because setCol is the encouraged way to set
+         * matrix elms.
          */
-
 
         switch (index) {
             case 0:
@@ -2393,16 +2149,15 @@ public class Mat4 {
     }
 
     /**
-     * Simulates bracket subscript access in a two-dimensional, row-major matrix
-     * array. Works with
-     * positive integers in [0, 3][0, 3] or negative integers in [-4, -1][-4, -1] .
+     * Simulates bracket subscript access in a two-dimensional, row-major
+     * matrix array. Works with positive integers in [0, 3][0, 3] or negative
+     * integers in [-4, -1][-4, -1] .
      *
      * @param i the row index
      * @param j the column index
      * @return the component at that index
      */
     public float getElm(final int i, final int j) {
-
 
         switch (i) {
             case 0:
@@ -2490,7 +2245,10 @@ public class Mat4 {
     @Override
     public int hashCode() {
         return Objects.hash(
-            m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23, m30, m31, m32, m33);
+            this.m00, this.m01, this.m02, this.m03,
+            this.m10, this.m11, this.m12, this.m13,
+            this.m20, this.m21, this.m22, this.m23,
+            this.m30, this.m31, this.m32, this.m33);
     }
 
     /**
@@ -2508,8 +2266,10 @@ public class Mat4 {
     public Mat4 reset() {
 
         return this.set(
-            1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
-            1.0f);
+            1.0f, 0.0f, 0.0f, 0.0f,
+            0.0f, 1.0f, 0.0f, 0.0f,
+            0.0f, 0.0f, 1.0f, 0.0f,
+            0.0f, 0.0f, 0.0f, 1.0f);
     }
 
     /**
@@ -2534,22 +2294,10 @@ public class Mat4 {
      * @return this matrix
      */
     public Mat4 set(
-        final boolean m00,
-        final boolean m01,
-        final boolean m02,
-        final boolean m03,
-        final boolean m10,
-        final boolean m11,
-        final boolean m12,
-        final boolean m13,
-        final boolean m20,
-        final boolean m21,
-        final boolean m22,
-        final boolean m23,
-        final boolean m30,
-        final boolean m31,
-        final boolean m32,
-        final boolean m33) {
+        final boolean m00, final boolean m01, final boolean m02, final boolean m03,
+        final boolean m10, final boolean m11, final boolean m12, final boolean m13,
+        final boolean m20, final boolean m21, final boolean m22, final boolean m23,
+        final boolean m30, final boolean m31, final boolean m32, final boolean m33) {
 
         this.m00 = m00 ? 1.0f : 0.0f;
         this.m01 = m01 ? 1.0f : 0.0f;
@@ -2575,8 +2323,8 @@ public class Mat4 {
     }
 
     /**
-     * Sets the upper left 2 by 2 corner of this matrix. The remaining values are
-     * set to the identity.
+     * Sets the upper left 2 by 2 corner of this matrix. The remaining values
+     * are set to the identity.
      *
      * @param m00 row 0, column 0
      * @param m01 row 0, column 1

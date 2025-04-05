@@ -634,8 +634,8 @@ public class Vec2 implements Comparable<Vec2> {
         if (c != 0.0f) {
             return (float)
                 Math.pow(
-                    Math.pow(Math.abs((double) (b.x - a.x)), c)
-                        + Math.pow(Math.abs((double) (b.y - a.y)), c),
+                    Math.pow(Math.abs((b.x - a.x)), c)
+                        + Math.pow(Math.abs((b.y - a.y)), c),
                     1.0d / c);
         }
 
@@ -759,7 +759,7 @@ public class Vec2 implements Comparable<Vec2> {
 
         /* Sum the lengths of inner arrays. */
         int totalLen = 0;
-        for (Vec2[] vec2s : arr) {
+        for (final Vec2[] vec2s : arr) {
             totalLen += vec2s.length;
         }
 
@@ -2409,7 +2409,7 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -2421,7 +2421,7 @@ public class Vec2 implements Comparable<Vec2> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(x, y);
+        return Objects.hash(this.x, this.y);
     }
 
     /**

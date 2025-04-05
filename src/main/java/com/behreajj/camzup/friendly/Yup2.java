@@ -285,9 +285,13 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
     @Override
     public void defaultCamera() {
 
-        this.cameraX = this.defCameraX = IUp.DEFAULT_LOC_X;
-        this.cameraY = this.defCameraY = IUp.DEFAULT_LOC_Y;
-        this.cameraZ = this.defCameraZ = IUp.DEFAULT_LOC_Z;
+        this.defCameraX = IUp.DEFAULT_LOC_X;
+        this.defCameraY = IUp.DEFAULT_LOC_Y;
+        this.defCameraZ = IUp.DEFAULT_LOC_Z;
+
+        this.cameraX = this.defCameraX;
+        this.cameraY = this.defCameraY;
+        this.cameraZ = this.defCameraZ;
 
         this.cameraZoomX = IYup2.DEFAULT_ZOOM_X;
         this.cameraZoomY = IYup2.DEFAULT_ZOOM_Y;
@@ -302,10 +306,15 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
     @Override
     public void defaultPerspective() {
 
-        this.cameraAspect = this.defCameraAspect = IUp.DEFAULT_ASPECT;
-        this.cameraFOV = this.defCameraFOV = IUp.DEFAULT_FOV;
-        this.cameraNear = this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
-        this.cameraFar = this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+        this.defCameraAspect = IUp.DEFAULT_ASPECT;
+        this.defCameraFOV = IUp.DEFAULT_FOV;
+        this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
+        this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+
+        this.cameraAspect = this.defCameraAspect;
+        this.cameraFOV = this.defCameraFOV;
+        this.cameraNear = this.defCameraNear;
+        this.cameraFar = this.defCameraFar;
 
         this.ortho();
     }
@@ -324,9 +333,13 @@ public class Yup2 extends UpOgl implements ITextDisplay2, IYup2 {
         super.defaultSettings();
         this.noLights();
 
-        this.cameraX = this.defCameraX = IUp.DEFAULT_LOC_X;
-        this.cameraY = this.defCameraY = IUp.DEFAULT_LOC_Y;
-        this.cameraZ = this.defCameraZ = IUp.DEFAULT_LOC_Z;
+        this.defCameraX = IUp.DEFAULT_LOC_X;
+        this.defCameraY = IUp.DEFAULT_LOC_Y;
+        this.defCameraZ = IUp.DEFAULT_LOC_Z;
+
+        this.cameraX = this.defCameraX;
+        this.cameraY = this.defCameraY;
+        this.cameraZ = this.defCameraZ;
 
         this.cameraZoomX = IYup2.DEFAULT_ZOOM_X;
         this.cameraZoomY = IYup2.DEFAULT_ZOOM_Y;

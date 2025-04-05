@@ -197,7 +197,7 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
      */
     public CurveEntity3 appendAll(final Collection<Curve3> curves) {
 
-        for (Curve3 curve : curves) {
+        for (final Curve3 curve : curves) {
             this.append(curve);
         }
 
@@ -213,7 +213,7 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
     @SuppressWarnings("UnusedReturnValue")
     public CurveEntity3 appendAll(final Curve3... curves) {
 
-        for (Curve3 curve : curves) {
+        for (final Curve3 curve : curves) {
             this.append(curve);
         }
 
@@ -230,7 +230,7 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
      */
     public CurveEntity3 consumeTransform() {
 
-        for (Curve3 curve : this.curves) {
+        for (final Curve3 curve : this.curves) {
             curve.transform(this.transform);
         }
         Transform3.identity(this.transform);
@@ -311,6 +311,7 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
      * @return the iterator
      * @see List#iterator()
      */
+    @SuppressWarnings("NullableProblems")
     @Override
     public Iterator<Curve3> iterator() {
         return this.curves.iterator();
@@ -617,7 +618,7 @@ public class CurveEntity3 extends Entity3 implements Iterable<Curve3>, IVolume3 
 
         int curveIndex = 0;
         final int curveLast = this.curves.size() - 1;
-        for (Curve3 curve : this.curves) {
+        for (final Curve3 curve : this.curves) {
             curve.toBlenderCode(pyCd, uRes);
             if (curveIndex < curveLast) {
                 pyCd.append(',').append(' ');

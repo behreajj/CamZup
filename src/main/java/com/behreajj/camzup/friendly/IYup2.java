@@ -277,7 +277,7 @@ public interface IYup2 extends IUp {
         final float zoom = Math.max(renderer.getZoomX(), renderer.getZoomY());
         final boolean useSubPaths = mats == null || mats.length == 1;
 
-        for (CurveEntity2 ce : ces) {
+        for (final CurveEntity2 ce : ces) {
             svgp.append(ce.toSvgElm(zoom, useSubPaths, mats));
             svgp.append('\n');
         }
@@ -307,7 +307,7 @@ public interface IYup2 extends IUp {
         svgp.append('\n');
 
         final float zoom = Math.max(renderer.getZoomX(), renderer.getZoomY());
-        for (MeshEntity2 me : mes) {
+        for (final MeshEntity2 me : mes) {
             svgp.append(me.toSvgElm(zoom, mats));
             svgp.append('\n');
         }
@@ -366,7 +366,7 @@ public interface IYup2 extends IUp {
 
         final Quadtree[] leaves = q.getLeaves();
         final Bounds2 b = new Bounds2();
-        for (Quadtree leaf : leaves) {
+        for (final Quadtree leaf : leaves) {
             this.bounds(leaf.getBounds(b));
         }
     }

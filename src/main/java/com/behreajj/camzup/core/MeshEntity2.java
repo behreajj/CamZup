@@ -90,7 +90,7 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
 
         target.set(Float.MAX_VALUE, -Float.MAX_VALUE);
 
-        for (Mesh2 face2s : me) {
+        for (final Mesh2 face2s : me) {
             Mesh2.accumMinMax(face2s, target.min, target.max, me.transform, co);
         }
 
@@ -115,9 +115,9 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     }
 
     /**
-     * Evaluates whether the mesh entity contains a point. Multiplies the global
-     * point by the
-     * transform's inverse to produce the point in local space.
+     * Evaluates whether the mesh entity contains a point. Multiplies the
+     * global point by the transform's inverse to produce the point in local
+     * space.
      *
      * @param me          the mesh entity
      * @param pointGlobal the point in global space
@@ -126,16 +126,17 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
      * @see MeshEntity2#contains(MeshEntity2, Vec2)
      */
     public static boolean contains(
-        final MeshEntity2 me, final Vec2 pointGlobal, final Vec2 pointLocal) {
+        final MeshEntity2 me,
+        final Vec2 pointGlobal,
+        final Vec2 pointLocal) {
 
         Transform2.invMulPoint(me.transform, pointGlobal, pointLocal);
         return MeshEntity2.contains(me, pointLocal);
     }
 
     /**
-     * Appends a mesh to this mesh entity. The mesh must not be <code>null</code>
-     * and must have a
-     * length greater than zero.
+     * Appends a mesh to this mesh entity. The mesh must not be
+     * <code>null</code> and must have a length greater than zero.
      *
      * @param mesh the mesh
      * @return this mesh entity
@@ -154,7 +155,7 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
      */
     public MeshEntity2 appendAll(final Collection<Mesh2> app) {
 
-        for (Mesh2 face2s : app) {
+        for (final Mesh2 face2s : app) {
             this.append(face2s);
         }
         return this;
@@ -169,16 +170,15 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     @SuppressWarnings("UnusedReturnValue")
     public MeshEntity2 appendAll(final Mesh2... app) {
 
-        for (Mesh2 face2s : app) {
+        for (final Mesh2 face2s : app) {
             this.append(face2s);
         }
         return this;
     }
 
     /**
-     * Transforms all meshes in this mesh entity by its transform, then resets the
-     * entity's transform
-     * to the identity.
+     * Transforms all meshes in this mesh entity by its transform, then resets
+     * the entity's transform to the identity.
      *
      * @return this mesh entity
      * @see Mesh2#transform(Transform2)
@@ -186,7 +186,7 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
      */
     public MeshEntity2 consumeTransform() {
 
-        for (Mesh2 mesh : this.meshes) {
+        for (final Mesh2 mesh : this.meshes) {
             mesh.transform(this.transform);
         }
         Transform2.identity(this.transform);
@@ -276,12 +276,13 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     }
 
     /**
-     * Returns an iterator, which allows an enhanced for-loop to access the meshes
-     * in the mesh entity.
+     * Returns an iterator, which allows an enhanced for-loop to access the
+     * meshes in the mesh entity.
      *
      * @return the iterator
      * @see List#iterator()
      */
+    @SuppressWarnings("NullableProblems")
     @Override
     public Iterator<Mesh2> iterator() {
         return this.meshes.iterator();
@@ -298,9 +299,8 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
 
     /**
      * Centers and rescales all meshes in the entity about a shared origin by
-     * calculating their
-     * dimensions, subtracting the center point, and scaling by the maximum
-     * dimension.
+     * calculating their dimensions, subtracting the center point, and scaling
+     * by the maximum dimension.
      *
      * @return this mesh entity.
      */
@@ -331,8 +331,7 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
 
     /**
      * Removes a mesh from this mesh entity. Returns <code>true</code> if this
-     * request was filled,
-     * <code>false</code> if not.
+     * request was filled, <code>false</code> if not.
      *
      * @param mesh the mesh to remove.
      * @return the evaluation
@@ -353,9 +352,8 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     }
 
     /**
-     * Resets the mesh entity to an initial state. Sets the transform to an identity
-     * and clears the
-     * list of meshes.
+     * Resets the mesh entity to an initial state. Sets the transform to an
+     * identity and clears the list of meshes.
      *
      * @return this entity
      */
@@ -440,9 +438,9 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     }
 
     /**
-     * Sets a coordinate in a mesh. Multiplies the input coordinate in global space
-     * by the transform's
-     * inverse.<br>
+     * Sets a coordinate in a mesh. Multiplies the input coordinate in global
+     * space by the transform's inverse.
+     * <br>
      * <br>
      * To facilitate editing the mesh with a graphical user interface (GUI).
      *
@@ -453,7 +451,10 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
      * @return this entity
      */
     public MeshEntity2 setCoord(
-        final int meshIndex, final int coordIndex, final Vec2 global, final Vec2 local) {
+        final int meshIndex,
+        final int coordIndex,
+        final Vec2 global,
+        final Vec2 local) {
 
         Transform2.invMulPoint(this.transform, global, local);
         final Vec2[] coords = this.get(meshIndex).coords;
@@ -464,9 +465,8 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 2.8x API. This
-     * code is brittle and
-     * is used for internal testing purposes.
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes.
      *
      * @return the string
      */
@@ -476,11 +476,10 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 3.x API. This
-     * code is brittle and
-     * is used for internal testing purposes, i.e., to compare how mesh geometry
-     * looks in Blender (the
-     * control) versus in the library (the test).
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes, i.e.,
+     * to compare how mesh geometry looks in Blender (the control) versus in
+     * the library (the test).
      *
      * @param decimate      decimate the shape
      * @param extrude       extrude the shape
@@ -584,9 +583,8 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 3.x API. This
-     * code is brittle and
-     * is used for internal testing purposes.
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes.
      *
      * @param decimate decimate the shape
      * @param extrude  extrude the shape
@@ -600,9 +598,8 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 2.8x API. This
-     * code is brittle and
-     * is used for internal testing purposes.
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes.
      *
      * @param ms the materials
      * @return the string
@@ -613,7 +610,8 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     }
 
     /**
-     * Renders the mesh entity as a string following the Wavefront OBJ file format.
+     * Renders the mesh entity as a string following the Wavefront OBJ file
+     * format.
      *
      * @return the string
      */
@@ -663,9 +661,8 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     }
 
     /**
-     * Centers all meshes in the entity about a shared origin by calculating their
-     * dimensions then
-     * subtracting the center point.
+     * Centers all meshes in the entity about a shared origin by calculating
+     * their dimensions then subtracting the center point.
      *
      * @return this mesh entity.
      */
@@ -745,22 +742,19 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     }
 
     /**
-     * Creates a string representing a group node in the SVG format. This SVG is
-     * designed for
-     * compatibility with Processing, not for efficiency.<br>
+     * Creates a string representing a group node in the SVG format. This SVG
+     * is designed for compatibility with Processing, not for efficiency.
      * <br>
-     * Stroke weight is impacted by scaling in transforms, so zoom is a parameter.
-     * If nonuniform
-     * zooming is used, zoom can be an average of width and height or the maximum
-     * dimension.
+     * <br>
+     * Stroke weight is impacted by scaling in transforms, so zoom is a
+     * parameter. If nonuniform zooming is used, zoom can be an average of
+     * width and height or the maximum dimension.
      *
      * @param zoom      scaling from external transforms
      * @param materials the materials to use
      * @return the string
      */
     public String toSvgElm(final float zoom, final MaterialSolid[] materials) {
-
-        // TODO: Allow user to specify SVG cap and join rounding?
 
         final StringBuilder svgp = new StringBuilder(1024);
         if (this.length() < 1) {
@@ -804,10 +798,10 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
 
         for (final Mesh2 mesh : this.meshes) {
             /*
-             * It'd be more efficient to create a definitions block that contains
-             * the data for each material, which is then used by a mesh element
-             * with xlink. However, such tags are ignored when Processing imports
-             * an SVG with loadShape.
+             * It'd be more efficient to create a definitions block that
+             * contains the data for each material, which is then used by a
+             * mesh element with xlink. However, such tags are ignored when
+             * Processing imports an SVG with loadShape.
              */
             if (multipleMats) {
                 final int vMatIdx = Utils.mod(mesh.materialIndex, matLen);
@@ -834,10 +828,9 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     }
 
     /**
-     * Renders this mesh entity as an SVG string. A default material renders the
-     * mesh's fill and
-     * stroke. The background of the SVG is transparent. Sets the camera scale to
-     * 1.0.
+     * Renders this mesh entity as an SVG string. A default material renders
+     * the mesh's fill and stroke. The background of the SVG is transparent.
+     * Sets the camera scale to 1.0.
      *
      * @return the SVG string
      */

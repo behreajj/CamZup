@@ -276,10 +276,10 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
         final ArrayList<Knot3> knots = curve.knots;
         final int knotLength = knots.size();
 
-        float tScaled;
-        int i;
-        Knot3 a;
-        Knot3 b;
+        final float tScaled;
+        final int i;
+        final Knot3 a;
+        final Knot3 b;
         if (curve.closedLoop) {
             tScaled = Utils.mod1(step) * knotLength;
             i = (int) tScaled;
@@ -356,10 +356,10 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
         final ArrayList<Knot3> knots = curve.knots;
         final int knotLength = knots.size();
 
-        float tScaled;
-        int i;
-        Knot3 a;
-        Knot3 b;
+        final float tScaled;
+        final int i;
+        final Knot3 a;
+        final Knot3 b;
         if (curve.closedLoop) {
             tScaled = Utils.mod1(step) * knotLength;
             i = (int) tScaled;
@@ -573,8 +573,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
 
         int idx = 0;
         Knot3 prev = first;
-        Knot3 curr;
-        for (curr = null; itr.hasNext(); ++idx) {
+        Knot3 curr = null;
+        while (itr.hasNext()) {
             int idx1 = idx + 1;
             int idx2 = idx + 2;
             int idx3 = idx + 3;
@@ -588,9 +588,10 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
             }
 
             curr = itr.next();
-            Knot3.fromSegCatmull(
-                points[idx], points[idx1], points[idx2], points[idx3], tightness, prev, curr);
+            Knot3.fromSegCatmull(points[idx], points[idx1], points[idx2],
+                points[idx3], tightness, prev, curr);
             prev = curr;
+            ++idx;
         }
 
         if (closedLoop) {
@@ -780,8 +781,8 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
         final ArrayList<Knot3> sourceKnots = source.knots;
         final int len = sourceKnots.size();
 
-        Knot3 a;
-        Knot3 b;
+        final Knot3 a;
+        final Knot3 b;
 
         if (source.closedLoop) {
             a = sourceKnots.get(Utils.mod(i, len));
@@ -1189,7 +1190,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     @SuppressWarnings("UnusedReturnValue")
     public Curve3 appendAll(final Collection<Knot3> kn) {
 
-        for (Knot3 knot3 : kn) {
+        for (final Knot3 knot3 : kn) {
             this.append(knot3);
         }
 
@@ -1205,7 +1206,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     @SuppressWarnings("UnusedReturnValue")
     public Curve3 appendAll(final Knot3... kn) {
 
-        for (Knot3 knot3 : kn) {
+        for (final Knot3 knot3 : kn) {
             this.append(knot3);
         }
 
@@ -1225,17 +1226,17 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     }
 
     @Override
-    public boolean equals(Object o) {
-        if (!(o instanceof Curve3 knot3s))
+    public boolean equals(final Object o) {
+        if (!(o instanceof final Curve3 knot3s))
             return false;
         if (!super.equals(o))
             return false;
-        return Objects.equals(knots, knot3s.knots);
+        return Objects.equals(this.knots, knot3s.knots);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(super.hashCode(), knots);
+        return Objects.hash(super.hashCode(), this.knots);
     }
 
     /**
@@ -1385,7 +1386,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
 
         final int vidx = this.closedLoop ? Utils.mod(i, this.knots.size() + 1) : i;
         int k = vidx - 1;
-        for (Knot3 knot3 : kn) {
+        for (final Knot3 knot3 : kn) {
             ++k;
             this.knots.add(k, knot3);
         }
@@ -1400,6 +1401,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
      * @return the iterator
      * @see List#iterator()
      */
+    @SuppressWarnings("NullableProblems")
     @Override
     public Iterator<Knot3> iterator() {
 
@@ -1483,7 +1485,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     public Curve3 prependAll(final Knot3... kn) {
 
         int j = -1;
-        for (Knot3 knot3 : kn) {
+        for (final Knot3 knot3 : kn) {
             ++j;
             this.knots.add(j, knot3);
         }
@@ -1652,7 +1654,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     public Curve3 reverse() {
 
         Collections.reverse(this.knots);
-        for (Knot3 knot : this.knots) {
+        for (final Knot3 knot : this.knots) {
             knot.reverse();
         }
 
@@ -1672,7 +1674,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
         final float cosa = (float) Math.cos(radians);
         final float sina = (float) Math.sin(radians);
 
-        for (Knot3 knot : this.knots) {
+        for (final Knot3 knot : this.knots) {
             knot.rotate(cosa, sina, axis);
         }
 
@@ -1690,7 +1692,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     public Curve3 rotate(final Quaternion q) {
 
         if (Quaternion.any(q)) {
-            for (Knot3 knot : this.knots) {
+            for (final Knot3 knot : this.knots) {
                 knot.rotateUnchecked(q);
             }
         }
@@ -1710,7 +1712,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
         final float cosa = (float) Math.cos(radians);
         final float sina = (float) Math.sin(radians);
 
-        for (Knot3 knot : this.knots) {
+        for (final Knot3 knot : this.knots) {
             knot.rotateX(cosa, sina);
         }
 
@@ -1729,7 +1731,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
         final float cosa = (float) Math.cos(radians);
         final float sina = (float) Math.sin(radians);
 
-        for (Knot3 knot : this.knots) {
+        for (final Knot3 knot : this.knots) {
             knot.rotateY(cosa, sina);
         }
 
@@ -1748,7 +1750,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
         final float cosa = (float) Math.cos(radians);
         final float sina = (float) Math.sin(radians);
 
-        for (Knot3 knot : this.knots) {
+        for (final Knot3 knot : this.knots) {
             knot.rotateZ(cosa, sina);
         }
 
@@ -1765,7 +1767,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     public Curve3 scale(final float scale) {
 
         if (scale != 0.0f) {
-            for (Knot3 knot : this.knots) {
+            for (final Knot3 knot : this.knots) {
                 knot.scaleUnchecked(scale);
             }
         }
@@ -1784,7 +1786,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
     public Curve3 scale(final Vec3 scale) {
 
         if (Vec3.all(scale)) {
-            for (Knot3 knot : this.knots) {
+            for (final Knot3 knot : this.knots) {
                 knot.scaleUnchecked(scale);
             }
         }
@@ -1897,7 +1899,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
      */
     public Curve3 transform(final Mat4 m) {
 
-        for (Knot3 knot : this.knots) {
+        for (final Knot3 knot : this.knots) {
             knot.transform(m);
         }
 
@@ -1921,7 +1923,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
      */
     public Curve3 transform(final Transform3 tr) {
 
-        for (Knot3 knot : this.knots) {
+        for (final Knot3 knot : this.knots) {
             knot.transform(tr);
         }
 
@@ -1937,7 +1939,7 @@ public class Curve3 extends Curve implements Iterable<Knot3> {
      */
     public Curve3 translate(final Vec3 v) {
 
-        for (Knot3 knot : this.knots) {
+        for (final Knot3 knot : this.knots) {
             knot.translate(v);
         }
 

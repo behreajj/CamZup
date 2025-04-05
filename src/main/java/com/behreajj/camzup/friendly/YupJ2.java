@@ -480,7 +480,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * @param mode the mode
      */
     @Override
-    public void blendMode(int mode) {
+    public void blendMode(final int mode) {
         // TODO: Follow convention, use a switch case.
         if (mode == PConstants.BLEND || mode == PConstants.REPLACE) {
             this.blendMode = mode;
@@ -824,6 +824,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
         this.shape = 0;
 
         /* Text. */
+        //noinspection AssignmentToNull
         this.textFont = null;
         this.textSize = IUp.DEFAULT_TEXT_SIZE;
         this.textLeading = IUp.DEFAULT_TEXT_LEADING;
@@ -861,12 +862,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     public void ellipse(final float x, final float y, final float w,
         final float h) {
 
-        double extapw;
-        double extaph;
-        double extcpw;
-        double extcph;
-        double xc;
-        double yc;
+        final double extapw;
+        final double extaph;
+        final double extcpw;
+        final double extcph;
+        final double xc;
+        final double yc;
 
         switch (this.ellipseMode) {
 
@@ -1698,8 +1699,8 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
         final int w1 = img.width + 1;
         final int h1 = img.height + 1;
-        int wDisp;
-        int hDisp;
+        final int wDisp;
+        final int hDisp;
 
         final int u0 = Math.floorMod(uTl, w1);
         final int v0 = Math.floorMod(vTl, h1);
@@ -2360,7 +2361,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     public void printMatrix(final int p) {
 
         final AffineTransform tr = this.g2.getTransform();
-        String sb = "\n" + '[' + ' '
+        final String sb = "\n" + '[' + ' '
             + Utils.toFixed((float) tr.getScaleX(), p) + ',' + ' '
             + Utils.toFixed((float) tr.getShearX(), p) + ',' + ' '
             + Utils.toFixed((float) tr.getTranslateX(), p) + ',' + ' '
@@ -4458,10 +4459,10 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
          * It is simpler to draw straight lines than to defer to the
          * rounded-corner rectImpl.
          */
-        double x0;
-        double y0;
-        double x1;
-        double y1;
+        final double x0;
+        final double y0;
+        final double x1;
+        final double y1;
 
         switch (this.rectMode) {
 
@@ -4535,12 +4536,12 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
         final float a, final float b, final float c, final float d,
         final float rTl, final float rTr, final float rBr, final float rBl) {
 
-        double x0;
-        double y0;
-        double x1;
-        double y1;
-        double w;
-        double h;
+        final double x0;
+        final double y0;
+        final double x1;
+        final double y1;
+        final double w;
+        final double h;
 
         switch (this.rectMode) {
 
@@ -4665,7 +4666,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
         this.gp.reset();
         this.gp.setWindingRule(windingRule);
 
-        for (Curve2 knot2s : entity) {
+        for (final Curve2 knot2s : entity) {
             this.appendToGeneralPath(knot2s, tr, rh, fh, co);
         }
     }
@@ -4688,7 +4689,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
         this.gp.reset();
         this.gp.setWindingRule(windingRule);
 
-        for (Mesh2 face2s : entity) {
+        for (final Mesh2 face2s : entity) {
             this.appendToGeneralPath(face2s, tr, v);
         }
     }
@@ -4834,7 +4835,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     protected void textLineAlignImpl(final char[] buffer, final int start,
         final int stop, final float x, final float y) {
 
-        float xa;
+        final float xa;
         switch (this.textAlign) {
             case PConstants.CENTER: { /* 3 */
                 xa = x - this.textWidthImpl(buffer, start, stop) * 0.5f;

@@ -829,8 +829,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
 
     @Override
     public int hashCode() {
-        return Objects.hash(forward, location, locPrev, right, rotation,
-            rotPrev, scale, scalePrev);
+        return Objects.hash(this.forward, this.location, this.locPrev, this.right, this.rotation,
+            this.rotPrev, this.scale, this.scalePrev);
     }
 
     /**

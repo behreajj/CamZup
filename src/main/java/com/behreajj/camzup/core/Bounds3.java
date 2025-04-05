@@ -864,7 +864,7 @@ public class Bounds3 implements Comparable<Bounds3> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(max, min);
+        return Objects.hash(this.max, this.min);
     }
 
     /**

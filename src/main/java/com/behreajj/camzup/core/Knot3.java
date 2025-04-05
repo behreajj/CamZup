@@ -162,9 +162,13 @@ public class Knot3 implements Comparable<Knot3> {
      * @see Vec3#bezierPoint(Vec3, Vec3, Vec3, Vec3, float, Vec3)
      */
     public static Vec3 bezierPoint(
-        final Knot3 a, final Knot3 b, final float step, final Vec3 target) {
+        final Knot3 a,
+        final Knot3 b,
+        final float step,
+        final Vec3 target) {
 
-        return Vec3.bezierPoint(a.coord, a.foreHandle, b.rearHandle, b.coord, step, target);
+        return Vec3.bezierPoint(a.coord, a.foreHandle, b.rearHandle, b.coord,
+            step, target);
     }
 
     /**
@@ -178,9 +182,13 @@ public class Knot3 implements Comparable<Knot3> {
      * @see Vec3#bezierTangent(Vec3, Vec3, Vec3, Vec3, float, Vec3)
      */
     public static Vec3 bezierTangent(
-        final Knot3 a, final Knot3 b, final float step, final Vec3 target) {
+        final Knot3 a,
+        final Knot3 b,
+        final float step,
+        final Vec3 target) {
 
-        return Vec3.bezierTangent(a.coord, a.foreHandle, b.rearHandle, b.coord, step, target);
+        return Vec3.bezierTangent(a.coord, a.foreHandle, b.rearHandle, b.coord,
+            step, target);
     }
 
     /**
@@ -194,9 +202,13 @@ public class Knot3 implements Comparable<Knot3> {
      * @see Vec3#bezierTanUnit(Vec3, Vec3, Vec3, Vec3, float, Vec3)
      */
     public static Vec3 bezierTanUnit(
-        final Knot3 a, final Knot3 b, final float step, final Vec3 target) {
+        final Knot3 a,
+        final Knot3 b,
+        final float step,
+        final Vec3 target) {
 
-        return Vec3.bezierTanUnit(a.coord, a.foreHandle, b.rearHandle, b.coord, step, target);
+        return Vec3.bezierTanUnit(a.coord, a.foreHandle, b.rearHandle, b.coord,
+            step, target);
     }
 
     /**
@@ -282,7 +294,9 @@ public class Knot3 implements Comparable<Knot3> {
         final Knot3 next) {
 
         if (Utils.approx(tightness, 1.0f)) {
-            return Knot3.fromSegLinear(xNextAnchor, yNextAnchor, zNextAnchor, prev, next);
+            return Knot3.fromSegLinear(
+                xNextAnchor, yNextAnchor, zNextAnchor,
+                prev, next);
         }
 
         final float fac = (tightness - 1.0f) * -Utils.ONE_SIX;
@@ -389,9 +403,14 @@ public class Knot3 implements Comparable<Knot3> {
      * @return the next knot
      * @see Knot3#fromSegLinear(float, float, float, Knot3, Knot3)
      */
-    public static Knot3 fromSegLinear(final Vec3 nextAnchor, final Knot3 prev, final Knot3 next) {
+    public static Knot3 fromSegLinear(
+        final Vec3 nextAnchor,
+        final Knot3 prev,
+        final Knot3 next) {
 
-        return Knot3.fromSegLinear(nextAnchor.x, nextAnchor.y, nextAnchor.z, prev, next);
+        return Knot3.fromSegLinear(
+            nextAnchor.x, nextAnchor.y, nextAnchor.z,
+            prev, next);
     }
 
     /**
@@ -444,27 +463,31 @@ public class Knot3 implements Comparable<Knot3> {
     }
 
     /**
-     * Sets two knots from a segment of a quadratic curve. Assumes that the previous
-     * knot's coordinate
-     * is set to the first anchor point.<br>
+     * Sets two knots from a segment of a quadratic curve. Assumes that the
+     * previous knot's coordinate is set to the first anchor point.
      * <br>
-     * The previous knot's fore handle, the next knot's rear handle and the next
-     * knot's coordinate are
-     * set by this function.
+     * <br>
+     * The previous knot's fore handle, the next knot's rear handle and the
+     * next knot's coordinate are set by this function.
      *
      * @param control    the control point
      * @param nextAnchor the next anchor point
      * @param prev       the previous knot
      * @param next       the next knot
      * @return the next knot
-     * @see Knot3#fromSegQuadratic(float, float, float, float, float, float, Knot3,
-     * Knot3)
+     * @see Knot3#fromSegQuadratic(float, float, float, float, float, float,
+     * Knot3, Knot3)
      */
     public static Knot3 fromSegQuadratic(
-        final Vec3 control, final Vec3 nextAnchor, final Knot3 prev, final Knot3 next) {
+        final Vec3 control,
+        final Vec3 nextAnchor,
+        final Knot3 prev,
+        final Knot3 next) {
 
         return Knot3.fromSegQuadratic(
-            control.x, control.y, control.z, nextAnchor.x, nextAnchor.y, nextAnchor.z, prev, next);
+            control.x, control.y, control.z,
+            nextAnchor.x, nextAnchor.y, nextAnchor.z,
+            prev, next);
     }
 
     /**

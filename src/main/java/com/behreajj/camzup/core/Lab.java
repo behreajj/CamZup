@@ -123,7 +123,7 @@ public class Lab implements IColor {
 
     /**
      * Creates a color from bytes. In Java, bytes are signed, within the range
-     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] . The alpha channel
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}]. The alpha channel
      * defaults to 1.0.
      *
      * @param l the light component
@@ -137,7 +137,7 @@ public class Lab implements IColor {
 
     /**
      * Creates a color from bytes. In Java, bytes are signed, within the range
-     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] .
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}].
      *
      * @param l     the light component
      * @param a     the green-magenta component
@@ -189,7 +189,7 @@ public class Lab implements IColor {
 
     /**
      * Creates a color from shorts. In Java, shorts are signed, within the
-     * range [{@value Short#MIN_VALUE}, {@value Short#MAX_VALUE}] . The alpha
+     * range [{@value Short#MIN_VALUE}, {@value Short#MAX_VALUE}]. The alpha
      * channel defaults to 1.0.
      *
      * @param l the light component
@@ -434,8 +434,8 @@ public class Lab implements IColor {
 
     /**
      * Finds the Euclidean distance between two colors. Since the alpha range
-     * is less than that of the other channels, a scalar is provided to increase
-     * its weight.
+     * is less than that of the other channels, a scalar is provided to
+     * increase its weight.
      *
      * @param o           the left operand
      * @param d           the right operand
@@ -513,7 +513,7 @@ public class Lab implements IColor {
     public static Lab[] flat(final Lab[][] arr) {
 
         int totalLen = 0;
-        for (Lab[] labs : arr) {
+        for (final Lab[] labs : arr) {
             totalLen += labs.length;
         }
 
@@ -542,7 +542,7 @@ public class Lab implements IColor {
 
         int totalLen = 0;
         for (final Lab[][] arrInner : arr) {
-            for (Lab[] labs : arrInner) {
+            for (final Lab[] labs : arrInner) {
                 totalLen += labs.length;
             }
         }
@@ -615,13 +615,11 @@ public class Lab implements IColor {
         final long a16 = hex >> 0x10L & 0xffffL;
         final long b16 = hex & 0xffffL;
 
-        /* @formatter:off */
-    return target.set(
-        l16 * Lab.L_FROM_SHORT,
-        (a16 - 0x8000L) * Lab.AB_FROM_SHORT,
-        (b16 - 0x8000L) * Lab.AB_FROM_SHORT,
-        t16 / 65535.0f);
-    /* @formatter:on */
+        return target.set(
+            l16 * Lab.L_FROM_SHORT,
+            (a16 - 0x8000L) * Lab.AB_FROM_SHORT,
+            (b16 - 0x8000L) * Lab.AB_FROM_SHORT,
+            t16 / 65535.0f);
     }
 
     /**
@@ -664,7 +662,11 @@ public class Lab implements IColor {
 
         final double cd = Math.max(c, 0.0d);
         final double hd = h * Utils.TAU_D;
-        return target.set(l, (float) (cd * Math.cos(hd)), (float) (cd * Math.sin(hd)), alpha);
+        return target.set(
+            l,
+            (float) (cd * Math.cos(hd)),
+            (float) (cd * Math.sin(hd)),
+            alpha);
     }
 
     /**
@@ -929,13 +931,11 @@ public class Lab implements IColor {
         final float rb = rng.nextFloat();
         final float rt = rng.nextFloat();
 
-        /* @formatter:off */
         return target.set(
             (1.0f - rl) * lowerBound.l + rl * upperBound.l,
             (1.0f - ra) * lowerBound.a + ra * upperBound.a,
             (1.0f - rb) * lowerBound.b + rb * upperBound.b,
             (1.0f - rt) * lowerBound.alpha + rt * upperBound.alpha);
-        /* @formatter:on */
     }
 
     /**
@@ -1088,9 +1088,9 @@ public class Lab implements IColor {
 
         final double ld = l * 0.01d;
 
-        double x = ld + 0.000904127d * (double) a + 0.000456344d * (double) b;
-        double y = ld - 0.000533159d * (double) a - 0.000269178d * (double) b;
-        double z = ld - 0.0058d * (double) b;
+        double x = ld + 0.000904127d * a + 0.000456344d * b;
+        double y = ld - 0.000533159d * a - 0.000269178d * b;
+        double z = ld - 0.0058d * b;
 
         /* 2700.0 / 24389.0 = 0.11070564598795 */
         /* 1.0 / 1.16 = 0.86206896551724 */
@@ -1233,18 +1233,6 @@ public class Lab implements IColor {
     }
 
     /**
-     * Tests this color for equivalence to another based on its hexadecimal
-     * representation.
-     *
-     * @param other the color integer
-     * @return the equivalence
-     */
-    public boolean equals(final int other) {
-
-        return this.toHexInt() == other;
-    }
-
-    /**
      * Tests this color for equivalence with another object.
      *
      * @param obj the object
@@ -1278,6 +1266,7 @@ public class Lab implements IColor {
      *
      * @return this color
      */
+    @Override
     public Lab reset() {
         return this.set(100.0f, 0.0f, 0.0f, 1.0f);
     }

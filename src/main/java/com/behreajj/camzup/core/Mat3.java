@@ -182,7 +182,6 @@ public class Mat3 {
         target.m22 = a.m22 + b.m22;
 
         return target;
-
     }
 
     /**
@@ -193,15 +192,9 @@ public class Mat3 {
      */
     public static boolean all(final Mat3 m) {
 
-        return m.m00 != 0.0f
-            && m.m01 != 0.0f
-            && m.m02 != 0.0f
-            && m.m10 != 0.0f
-            && m.m11 != 0.0f
-            && m.m12 != 0.0f
-            && m.m20 != 0.0f
-            && m.m21 != 0.0f
-            && m.m22 != 0.0f;
+        return m.m00 != 0.0f && m.m01 != 0.0f && m.m02 != 0.0f
+            && m.m10 != 0.0f && m.m11 != 0.0f && m.m12 != 0.0f
+            && m.m20 != 0.0f && m.m21 != 0.0f && m.m22 != 0.0f;
     }
 
     /**
@@ -215,15 +208,15 @@ public class Mat3 {
      */
     public static Mat3 and(final Mat3 a, final Mat3 b, final Mat3 target) {
 
-        target.m00 = (float) Utils.and(a.m00, b.m00);
-        target.m01 = (float) Utils.and(a.m01, b.m01);
-        target.m02 = (float) Utils.and(a.m02, b.m02);
-        target.m10 = (float) Utils.and(a.m10, b.m10);
-        target.m11 = (float) Utils.and(a.m11, b.m11);
-        target.m12 = (float) Utils.and(a.m12, b.m12);
-        target.m20 = (float) Utils.and(a.m20, b.m20);
-        target.m21 = (float) Utils.and(a.m21, b.m21);
-        target.m22 = (float) Utils.and(a.m22, b.m22);
+        target.m00 = Utils.and(a.m00, b.m00);
+        target.m01 = Utils.and(a.m01, b.m01);
+        target.m02 = Utils.and(a.m02, b.m02);
+        target.m10 = Utils.and(a.m10, b.m10);
+        target.m11 = Utils.and(a.m11, b.m11);
+        target.m12 = Utils.and(a.m12, b.m12);
+        target.m20 = Utils.and(a.m20, b.m20);
+        target.m21 = Utils.and(a.m21, b.m21);
+        target.m22 = Utils.and(a.m22, b.m22);
 
         return target;
     }
@@ -236,15 +229,9 @@ public class Mat3 {
      */
     public static boolean any(final Mat3 m) {
 
-        return m.m00 != 0.0f
-            || m.m01 != 0.0f
-            || m.m02 != 0.0f
-            || m.m10 != 0.0f
-            || m.m11 != 0.0f
-            || m.m12 != 0.0f
-            || m.m20 != 0.0f
-            || m.m21 != 0.0f
-            || m.m22 != 0.0f;
+        return m.m00 != 0.0f || m.m01 != 0.0f || m.m02 != 0.0f
+            || m.m10 != 0.0f || m.m11 != 0.0f || m.m12 != 0.0f
+            || m.m20 != 0.0f || m.m21 != 0.0f || m.m22 != 0.0f;
     }
 
     /**
@@ -1004,15 +991,9 @@ public class Mat3 {
      */
     public static boolean none(final Mat3 m) {
 
-        return m.m00 == 0.0f
-            && m.m01 == 0.0f
-            && m.m02 == 0.0f
-            && m.m10 == 0.0f
-            && m.m11 == 0.0f
-            && m.m12 == 0.0f
-            && m.m20 == 0.0f
-            && m.m21 == 0.0f
-            && m.m22 == 0.0f;
+        return m.m00 == 0.0f && m.m01 == 0.0f && m.m02 == 0.0f
+            && m.m10 == 0.0f && m.m11 == 0.0f && m.m12 == 0.0f
+            && m.m20 == 0.0f && m.m21 == 0.0f && m.m22 == 0.0f;
     }
 
     /**
@@ -1048,15 +1029,15 @@ public class Mat3 {
      */
     public static Mat3 or(final Mat3 a, final Mat3 b, final Mat3 target) {
 
-        target.m00 = (float) Utils.or(a.m00, b.m00);
-        target.m01 = (float) Utils.or(a.m01, b.m01);
-        target.m02 = (float) Utils.or(a.m02, b.m02);
-        target.m10 = (float) Utils.or(a.m10, b.m10);
-        target.m11 = (float) Utils.or(a.m11, b.m11);
-        target.m12 = (float) Utils.or(a.m12, b.m12);
-        target.m20 = (float) Utils.or(a.m20, b.m20);
-        target.m21 = (float) Utils.or(a.m21, b.m21);
-        target.m22 = (float) Utils.or(a.m22, b.m22);
+        target.m00 = Utils.or(a.m00, b.m00);
+        target.m01 = Utils.or(a.m01, b.m01);
+        target.m02 = Utils.or(a.m02, b.m02);
+        target.m10 = Utils.or(a.m10, b.m10);
+        target.m11 = Utils.or(a.m11, b.m11);
+        target.m12 = Utils.or(a.m12, b.m12);
+        target.m20 = Utils.or(a.m20, b.m20);
+        target.m21 = Utils.or(a.m21, b.m21);
+        target.m22 = Utils.or(a.m22, b.m22);
 
         return target;
     }
@@ -1162,15 +1143,15 @@ public class Mat3 {
      */
     public static Mat3 xor(final Mat3 a, final Mat3 b, final Mat3 target) {
 
-        target.m00 = (float) Utils.xor(a.m00, b.m00);
-        target.m01 = (float) Utils.xor(a.m01, b.m01);
-        target.m02 = (float) Utils.xor(a.m02, b.m02);
-        target.m10 = (float) Utils.xor(a.m10, b.m10);
-        target.m11 = (float) Utils.xor(a.m11, b.m11);
-        target.m12 = (float) Utils.xor(a.m12, b.m12);
-        target.m20 = (float) Utils.xor(a.m20, b.m20);
-        target.m21 = (float) Utils.xor(a.m21, b.m21);
-        target.m22 = (float) Utils.xor(a.m22, b.m22);
+        target.m00 = Utils.xor(a.m00, b.m00);
+        target.m01 = Utils.xor(a.m01, b.m01);
+        target.m02 = Utils.xor(a.m02, b.m02);
+        target.m10 = Utils.xor(a.m10, b.m10);
+        target.m11 = Utils.xor(a.m11, b.m11);
+        target.m12 = Utils.xor(a.m12, b.m12);
+        target.m20 = Utils.xor(a.m20, b.m20);
+        target.m21 = Utils.xor(a.m21, b.m21);
+        target.m22 = Utils.xor(a.m22, b.m22);
 
         return target;
     }
@@ -1553,7 +1534,7 @@ public class Mat3 {
 
     @Override
     public int hashCode() {
-        return Objects.hash(m00, m01, m02, m10, m11, m12, m20, m21, m22);
+        return Objects.hash(this.m00, this.m01, this.m02, this.m10, this.m11, this.m12, this.m20, this.m21, this.m22);
     }
 
     /**
@@ -1693,9 +1674,9 @@ public class Mat3 {
      * @return this matrix
      */
     public Mat3 set(
-        float m00, float m01, float m02,
-        float m10, float m11, float m12,
-        float m20, float m21, float m22) {
+        final float m00, final float m01, final float m02,
+        final float m10, final float m11, final float m12,
+        final float m20, final float m21, final float m22) {
 
         this.m00 = m00;
         this.m01 = m01;
@@ -1939,14 +1920,8 @@ public class Mat3 {
     protected boolean equals(final Mat3 n) {
 
         /* With {@link Float.floatToIntBits(float)}, -0.0f != 0.0f. */
-        return this.m00 == n.m00
-            && this.m01 == n.m01
-            && this.m02 == n.m02
-            && this.m10 == n.m10
-            && this.m11 == n.m11
-            && this.m12 == n.m12
-            && this.m20 == n.m20
-            && this.m21 == n.m21
-            && this.m22 == n.m22;
+        return this.m00 == n.m00 && this.m01 == n.m01 && this.m02 == n.m02
+            && this.m10 == n.m10 && this.m11 == n.m11 && this.m12 == n.m12
+            && this.m20 == n.m20 && this.m21 == n.m21 && this.m22 == n.m22;
     }
 }

@@ -543,11 +543,11 @@ public class Vec4 implements Comparable<Vec4> {
         if (c != 0.0f) {
             return (float)
                 Math.pow(
-                    Math.pow(Math.abs((double) (b.x - a.x)), c)
-                        + Math.pow(Math.abs((double) (b.y - a.y)), c)
-                        + Math.pow(Math.abs((double) (b.z - a.z)), c)
-                        + Math.pow(Math.abs((double) (b.w - a.w)), c),
-                    1.0d / (double) c);
+                    Math.pow(Math.abs((b.x - a.x)), c)
+                        + Math.pow(Math.abs((b.y - a.y)), c)
+                        + Math.pow(Math.abs((b.z - a.z)), c)
+                        + Math.pow(Math.abs((b.w - a.w)), c),
+                    1.0d / c);
         }
 
         return 0.0f;
@@ -692,7 +692,7 @@ public class Vec4 implements Comparable<Vec4> {
     public static Vec4[] flat(final Vec4[][] arr) {
 
         int totalLen = 0;
-        for (Vec4[] vec4s : arr) {
+        for (final Vec4[] vec4s : arr) {
             totalLen += vec4s.length;
         }
 
@@ -721,7 +721,7 @@ public class Vec4 implements Comparable<Vec4> {
 
         int totalLen = 0;
         for (final Vec4[][] arrInner : arr) {
-            for (Vec4[] vec4s : arrInner) {
+            for (final Vec4[] vec4s : arrInner) {
                 totalLen += vec4s.length;
             }
         }
@@ -751,7 +751,7 @@ public class Vec4 implements Comparable<Vec4> {
         int totalLen = 0;
         for (final Vec4[][][] arrInner1 : arr) {
             for (final Vec4[][] arrInner2 : arrInner1) {
-                for (Vec4[] vec4s : arrInner2) {
+                for (final Vec4[] vec4s : arrInner2) {
                     totalLen += vec4s.length;
                 }
             }
@@ -2037,7 +2037,7 @@ public class Vec4 implements Comparable<Vec4> {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -2049,7 +2049,7 @@ public class Vec4 implements Comparable<Vec4> {
 
     @Override
     public int hashCode() {
-        return Objects.hash(w, x, y, z);
+        return Objects.hash(this.w, this.x, this.y, this.z);
     }
 
     /**

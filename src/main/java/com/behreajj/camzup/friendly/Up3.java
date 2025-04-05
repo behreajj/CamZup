@@ -327,10 +327,15 @@ public abstract class Up3 extends UpOgl implements IUp3, ITextDisplay2 {
     @Override
     public void defaultPerspective() {
 
-        this.cameraAspect = this.defCameraAspect = IUp.DEFAULT_ASPECT;
-        this.cameraFOV = this.defCameraFOV = IUp.DEFAULT_FOV;
-        this.cameraNear = this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
-        this.cameraFar = this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+        this.defCameraAspect = IUp.DEFAULT_ASPECT;
+        this.defCameraFOV = IUp.DEFAULT_FOV;
+        this.defCameraNear = IUp.DEFAULT_NEAR_CLIP;
+        this.defCameraFar = IUp.DEFAULT_FAR_CLIP;
+
+        this.cameraAspect = this.defCameraAspect;
+        this.cameraFOV = this.defCameraFOV;
+        this.cameraNear = this.defCameraNear;
+        this.cameraFar = this.defCameraFar;
 
         this.ortho();
     }

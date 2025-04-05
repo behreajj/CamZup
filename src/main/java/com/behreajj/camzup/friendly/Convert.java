@@ -570,7 +570,7 @@ public abstract class Convert {
         parent.setName(source.name);
         parent.set3D(rndr.is3D());
 
-        for (Curve2 knot2s : source.curves) {
+        for (final Curve2 knot2s : source.curves) {
             // TODO: To make this preserve contours like the mesh version, you'd
             // have to revise here because contours must be written within
             // shapes and there would be redundancy with the Curve2 toPShape
@@ -673,7 +673,7 @@ public abstract class Convert {
                     child.setName("face." + Utils.toPadded(i, 3));
                     child.set3D(is3d);
                     child.beginShape(PConstants.POLYGON);
-                    for (int[] vert : verts) {
+                    for (final int[] vert : verts) {
                         final Vec2 v = vs[vert[0]];
                         child.vertex(v.x, v.y);
                     }
@@ -706,7 +706,7 @@ public abstract class Convert {
         parent.setName(source.name);
         parent.set3D(rndr.is3D());
 
-        for (Mesh2 face2s : source.meshes) {
+        for (final Mesh2 face2s : source.meshes) {
             final PShape child = Convert.toPShape(rndr, face2s);
             parent.addChild(child);
         }
@@ -858,7 +858,7 @@ public abstract class Convert {
         parent.setName(source.name);
         parent.set3D(rndr.is3D());
 
-        for (Curve2 knot2s : source.curves) {
+        for (final Curve2 knot2s : source.curves) {
             final PShapeOpenGL child = Convert.toPShape(rndr, knot2s);
             parent.addChild(child);
         }
@@ -893,7 +893,7 @@ public abstract class Convert {
         final PShapeOpenGL parent = new PShapeOpenGL(rndr, PConstants.GROUP);
         parent.set3D(rndr.is3D());
 
-        for (Curve3 knot3s : source.curves) {
+        for (final Curve3 knot3s : source.curves) {
             final PShapeOpenGL child = Convert.toPShape(rndr, knot3s);
             parent.addChild(child);
         }
@@ -989,7 +989,7 @@ public abstract class Convert {
         shape.setName(source.name);
         shape.set3D(rndr.is3D());
 
-        for (Mesh2 face2s : source.meshes) {
+        for (final Mesh2 face2s : source.meshes) {
 
             /*
              * Keep this as a separate variable to avoid confusion between the
@@ -1030,7 +1030,7 @@ public abstract class Convert {
         final PShapeOpenGL shape = new PShapeOpenGL(rndr, PConstants.GROUP);
         shape.set3D(rndr.is3D());
 
-        for (Mesh3 face3s : source.meshes) {
+        for (final Mesh3 face3s : source.meshes) {
 
             /*
              * Keep this as a separate variable to avoid confusion between the
@@ -1319,7 +1319,7 @@ public abstract class Convert {
             case PConstants.GROUP: { /* 0 */
 
                 final PShape[] children = source.getChildren();
-                for (PShape child : children) {
+                for (final PShape child : children) {
                     Convert.toCurve2(child, curves);
                 }
             }
@@ -1638,7 +1638,7 @@ public abstract class Convert {
             case PConstants.GROUP: { /* 0 */
 
                 final PShape[] children = source.getChildren();
-                for (PShape child : children) {
+                for (final PShape child : children) {
                     Convert.toMesh3(child, meshes);
                 }
             }

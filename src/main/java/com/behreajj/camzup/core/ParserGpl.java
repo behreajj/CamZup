@@ -7,8 +7,7 @@ import java.util.regex.Pattern;
 
 /**
  * A <a href="http://gimp.org/">GIMP</a> (GNU Image Manipulation Program) color
- * palette (.gpl)
- * parser class.
+ * palette (.gpl) parser class.
  */
 public abstract class ParserGpl {
 
@@ -19,9 +18,7 @@ public abstract class ParserGpl {
     }
 
     /**
-     * Parses a .gpl file containing a GIMP palette. Supports the <a href=
-     * "https://github.com/aseprite/aseprite/blob/main/docs/gpl-palette-extension.md">Aseprite
-     * extension</a> which includes an alpha channel.
+     * Parses a .gpl file containing a GIMP palette.
      *
      * @param in the buffered reader
      * @return the palette
@@ -46,6 +43,7 @@ public abstract class ParserGpl {
                     final String lnlc = ln.trim().toLowerCase();
 
                     /* Implicitly support JASC-PAL, which is similar to GPL. */
+                    //noinspection StatementWithEmptyBody
                     if (lnlc.indexOf('#') == 0
                         || lnlc.equals("gimp palette")
                         || lnlc.contains("name:")
@@ -117,7 +115,7 @@ public abstract class ParserGpl {
     public static Lab[] load(final String fileName) {
 
         Lab[] result = {};
-        try (BufferedReader br = new BufferedReader(new FileReader(fileName))) {
+        try (final BufferedReader br = new BufferedReader(new FileReader(fileName))) {
             result = ParserGpl.load(br);
         } catch (final Exception e) {
             // noinspection CallToPrintStackTrace

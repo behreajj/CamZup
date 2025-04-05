@@ -346,7 +346,8 @@ public class ZImage extends PImage {
         for (int i = 0; i < lineCount; ++i) {
             final String[] words = patternSpace.split(linesSplit[i], 0);
             final int charCount = words.length;
-            final char[][] charLine = characters[i] = new char[charCount][];
+            characters[i] = new char[charCount][];
+            final char[][] charLine = characters[i];
             for (int j = 0; j < charCount; ++j) {
                 charLine[j] = words[j].toCharArray();
             }

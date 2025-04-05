@@ -57,7 +57,7 @@ public abstract class ImgIo {
             final int[] argb32s = new int[len];
             imgNtv.getRaster().getDataElements(0, 0, w, h, argb32s);
             Img.fromArgb32(w, h, argb32s, useUnpremul, img);
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // noinspection CallToPrintStackTrace
             e.printStackTrace();
         }
@@ -216,7 +216,7 @@ public abstract class ImgIo {
         try {
             ImageIO.write(imgNtv, lcFileExt, bos);
             return bos.toByteArray();
-        } catch (Exception e) {
+        } catch (final Exception e) {
             // noinspection CallToPrintStackTrace
             e.printStackTrace();
         }

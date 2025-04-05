@@ -780,7 +780,7 @@ public class Rgb implements IColor {
         target[35] = 0;
 
         int cursor = 36;
-        for (Rgb rgb : arr) {
+        for (final Rgb rgb : arr) {
             Rgb.toAseBytes(rgb, target, cursor);
             cursor += 40;
         }
@@ -1085,7 +1085,7 @@ public class Rgb implements IColor {
         final StringBuilder sb = new StringBuilder(1024);
         sb.append("JASC-PAL\n0100\n");
         sb.append(len);
-        for (Rgb rgb : arr) {
+        for (final Rgb rgb : arr) {
             sb.append('\n');
             rgb.toGplString(sb);
         }
@@ -1178,18 +1178,6 @@ public class Rgb implements IColor {
     }
 
     /**
-     * Tests this color for equivalence to another based on its hexadecimal
-     * representation.
-     *
-     * @param other the color integer
-     * @return the equivalence
-     */
-    public boolean equals(final int other) {
-
-        return this.toHexInt() == other;
-    }
-
-    /**
      * Tests this color for equivalence with another object.
      *
      * @param obj the object
@@ -1223,6 +1211,7 @@ public class Rgb implements IColor {
      *
      * @return this color
      */
+    @Override
     public Rgb reset() {
         return this.set(1.0f, 1.0f, 1.0f, 1.0f);
     }

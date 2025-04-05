@@ -221,7 +221,7 @@ public class Ray2 {
         }
 
         final Vec2[] arr = uniques.toArray(new Vec2[0]);
-        for (Vec2 vec2 : arr) {
+        for (final Vec2 vec2 : arr) {
             Transform2.mulPoint(t, vec2, vec2);
         }
 
@@ -342,7 +342,7 @@ public class Ray2 {
          * of multiple return statements in if blocks, which makes it easier to
          * automatically inline.
          */
-        float fac = -1.0f;
+        final float fac = -1.0f;
 
         /* Find dot product between vector and perpendicular. */
         final double dot = v1x * v2x + v1y * (double) xRayDir;
@@ -405,7 +405,7 @@ public class Ray2 {
     }
 
     @Override
-    public boolean equals(Object o) {
+    public boolean equals(final Object o) {
         if (this == o) {
             return true;
         }
@@ -417,7 +417,7 @@ public class Ray2 {
 
     @Override
     public int hashCode() {
-        return Objects.hash(dir, origin);
+        return Objects.hash(this.dir, this.origin);
     }
 
     /**
