@@ -772,15 +772,23 @@ public class Lab implements IColor {
      */
     public static Lab[][][] grid(final int cols, final int rows, final int layers) {
 
-        final float absa = Math.max(Utils.abs(Lab.SR_A_MIN), Utils.abs(Lab.SR_A_MAX));
-        final float absb = Math.max(Utils.abs(Lab.SR_B_MIN), Utils.abs(Lab.SR_B_MAX));
-        return Lab.grid(cols, rows, layers, 0.0f, -absa, -absb, 100.0f, absa, absb, 1.0f);
+        final float absa = Utils.max(
+            Utils.abs(Lab.SR_A_MIN),
+            Utils.abs(Lab.SR_A_MAX));
+        final float absb = Utils.max(
+            Utils.abs(Lab.SR_B_MIN),
+            Utils.abs(Lab.SR_B_MAX));
+        return Lab.grid(
+            cols, rows, layers,
+            0.0f, -absa, -absb,
+            100.0f, absa, absb,
+            1.0f);
     }
 
     /**
-     * Generates a 3D array of colors. The result is in layer-row-major order, but
-     * the parameters are
-     * supplied in reverse: columns first, then rows, then layers.
+     * Generates a 3D array of colors. The result is in layer-row-major order,
+     * but the parameters are supplied in reverse: columns first, then rows,
+     * then layers.
      *
      * @param cols       number of columns
      * @param rows       number of rows
@@ -798,15 +806,9 @@ public class Lab implements IColor {
         final Lab upperBound) {
 
         return Lab.grid(
-            cols,
-            rows,
-            layers,
-            lowerBound.l,
-            lowerBound.a,
-            lowerBound.b,
-            upperBound.l,
-            upperBound.a,
-            upperBound.b,
+            cols, rows, layers,
+            lowerBound.l, lowerBound.a, lowerBound.b,
+            upperBound.l, upperBound.a, upperBound.b,
             1.0f);
     }
 
@@ -820,7 +822,9 @@ public class Lab implements IColor {
     public static float hue(final Lab o) {
 
         final double hueSigned = Math.atan2(o.b, o.a);
-        final double hueUnsigned = hueSigned < 0.0d ? hueSigned + Utils.TAU_D : hueSigned;
+        final double hueUnsigned = hueSigned < 0.0d
+            ? hueSigned + Utils.TAU_D
+            : hueSigned;
         return (float) (hueUnsigned * Utils.ONE_TAU_D);
     }
 
@@ -890,7 +894,7 @@ public class Lab implements IColor {
     /**
      * Creates a random color. The light bounds are [{@value Lab#RNG_L_MIN},
      * {@value Lab#RNG_L_MAX}]. The <em>a</em> axis bounds are
-     * [{@value Lab#SR_A_MIN}, {@value Lab#SR_A_MAX}] . The <em>b</em> axis
+     * [{@value Lab#SR_A_MIN}, {@value Lab#SR_A_MAX}]. The <em>b</em> axis
      * bounds are [{@value Lab#SR_B_MIN}, {@value Lab#SR_B_MAX}].
      * The alpha channel defaults to 1.0 .
      *
@@ -1180,15 +1184,9 @@ public class Lab implements IColor {
      * @return the array
      */
     protected static Lab[][][] grid(
-        final int cols,
-        final int rows,
-        final int layers,
-        final float lbl,
-        final float lba,
-        final float lbb,
-        final float ubl,
-        final float uba,
-        final float ubb,
+        final int cols, final int rows, final int layers,
+        final float lbl, final float lba, final float lbb,
+        final float ubl, final float uba, final float ubb,
         final float alpha) {
 
         final float tVrf = Math.max(Utils.ONE_255, alpha);
@@ -1273,7 +1271,7 @@ public class Lab implements IColor {
 
     /**
      * Sets a color with bytes. In Java, bytes are signed, within the range
-     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}] . The alpha channel
+     * [{@value Byte#MIN_VALUE}, {@value Byte#MAX_VALUE}]. The alpha channel
      * defaults to 1.0.
      *
      * @param l the light component
@@ -1307,7 +1305,7 @@ public class Lab implements IColor {
 
     /**
      * Sets the l, a and b color channels of this color. The alpha channel
-     * defaults to 1.0 .
+     * defaults to 1.0.
      *
      * @param l the light component
      * @param a the green-magenta component
@@ -1463,9 +1461,12 @@ public class Lab implements IColor {
     public long toHexLongSat() {
 
         final long t16 = (long) (Utils.clamp01(this.alpha) * 0xffff + 0.5f);
-        final long l16 = (long) (Utils.clamp(this.l, 0.0f, 100.0f) * Lab.L_TO_SHORT + 0.5f);
-        final long a16 = 0x8000L + Utils.floor(Utils.clamp(this.a * Lab.AB_TO_SHORT, -32767.5f, 32767.5f));
-        final long b16 = 0x8000L + Utils.floor(Utils.clamp(this.b * Lab.AB_TO_SHORT, -32767.5f, 32767.5f));
+        final long l16 = (long) (Utils.clamp(
+            this.l, 0.0f, 100.0f) * Lab.L_TO_SHORT + 0.5f);
+        final long a16 = 0x8000L + Utils.floor(Utils.clamp(
+            this.a * Lab.AB_TO_SHORT, -32767.5f, 32767.5f));
+        final long b16 = 0x8000L + Utils.floor(Utils.clamp(
+            this.b * Lab.AB_TO_SHORT, -32767.5f, 32767.5f));
 
         return t16 << 0x30L | l16 << 0x20L | a16 << 0x10L | b16;
     }
@@ -1599,8 +1600,11 @@ public class Lab implements IColor {
          * @param target the output color
          * @return the eased color
          */
-        public abstract Lab applyUnclamped(final Lab orig, final Lab dest,
-            final Float step, final Lab target);
+        public abstract Lab applyUnclamped(
+            final Lab orig,
+            final Lab dest,
+            final Float step,
+            final Lab target);
 
         /**
          * Returns the simple name of this class.

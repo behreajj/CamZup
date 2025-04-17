@@ -199,23 +199,20 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @see Vec3#zero(Vec3)
      */
     public static Transform3 fromAxes(
-        final float xRight,
-        final float yForward,
-        final float zUp,
-        final float zForward,
-        final float yUp,
-        final float xUp,
-        final float zRight,
-        final float yRight,
-        final float xForward,
+        final float xRight, final float yForward, final float zUp,
+        final float zForward, final float yUp, final float xUp,
+        final float zRight, final float yRight, final float xForward,
         final Transform3 target) {
 
         target.locPrev.set(target.location);
         target.rotPrev.set(target.rotation);
         target.scalePrev.set(target.scale);
 
-        Quaternion.fromAxes(xRight, yForward, zUp, zForward, yUp, xUp, zRight,
-            yRight, xForward, target.rotation);
+        Quaternion.fromAxes(
+            xRight, yForward, zUp,
+            zForward, yUp, xUp,
+            zRight, yRight, xForward,
+            target.rotation);
 
         /* Update needed because the loose floats may not be normalized. */
         target.updateAxes();
@@ -245,8 +242,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
         final Transform3 target) {
 
         return Transform3.fromAxes(
-            right.x, forward.y, up.z, forward.z, up.y, up.x, right.z, right.y,
-            forward.x, target);
+            right.x, forward.y, up.z,
+            forward.z, up.y, up.x,
+            right.z, right.y, forward.x,
+            target);
     }
 
     /**
@@ -564,7 +563,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      */
     public static float maxDimension(final Transform3 t) {
 
-        return Utils.max(Utils.abs(t.scale.x), Utils.abs(t.scale.y), Utils.abs(t.scale.z));
+        return Utils.max(
+            Utils.abs(t.scale.x),
+            Utils.abs(t.scale.y),
+            Utils.abs(t.scale.z));
     }
 
     /**
@@ -577,7 +579,10 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      */
     public static float minDimension(final Transform3 t) {
 
-        return Utils.min(Utils.abs(t.scale.x), Utils.abs(t.scale.y), Utils.abs(t.scale.z));
+        return Utils.min(
+            Utils.abs(t.scale.x),
+            Utils.abs(t.scale.y),
+            Utils.abs(t.scale.z));
     }
 
     /**
@@ -867,8 +872,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
     }
 
     /**
-     * Gets the transform's rotation as an axis and angle. The angle is returned
-     * from the function.
+     * Gets the transform's rotation as an axis and angle. The angle is
+     * returned from the function.
      *
      * @param axis the output axis
      * @return the angle in radians
@@ -1039,7 +1044,8 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
 
         /* Quaternion#fromDir will normalize direction. */
         this.rotPrev.set(this.rotation);
-        Quaternion.fromDir(dir, handedness, this.rotation, this.right, this.forward, this.up);
+        Quaternion.fromDir(dir, handedness, this.rotation,
+            this.right, this.forward, this.up);
         Quaternion.mix(this.rotPrev, this.rotation, step, this.rotation);
         this.updateAxes();
 
@@ -1625,15 +1631,9 @@ public class Transform3 implements Comparable<Transform3>, ISpatial3, IOriented3
      * @see Transform3#updateAxes()
      */
     public Transform3 setAxes(
-        final float xRight,
-        final float yForward,
-        final float zUp,
-        final float zForward,
-        final float yUp,
-        final float xUp,
-        final float zRight,
-        final float yRight,
-        final float xForward) {
+        final float xRight, final float yForward, final float zUp,
+        final float zForward, final float yUp, final float xUp,
+        final float zRight, final float yRight, final float xForward) {
 
         this.rotPrev.set(this.rotation);
         Quaternion.fromAxes(xRight, yForward, zUp, zForward, yUp, xUp, zRight,

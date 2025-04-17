@@ -22,8 +22,8 @@ public class Vert2 implements Comparable<Vert2> {
     public Vec2 texCoord;
 
     /**
-     * The default constructor. When used, the vertex's coordinate, normal and
-     * texCoord will remain null.
+     * The default constructor. When used, the vertex's coordinate and
+     * texture coordinate will remain null.
      */
     public Vert2() {
     }

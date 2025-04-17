@@ -4427,6 +4427,42 @@ public class Img {
     }
 
     /**
+     * Sets the alpha of an image's pixels to be either opaque or transparent
+     * based on a threshold.
+     *
+     * @param source the input image
+     * @param a01    the alpha threshold
+     * @param target the output image
+     * @return the opaque image
+     */
+    public static Img thresholdAlpha(
+        final Img source,
+        final float a01,
+        final Img target) {
+
+        if (a01 <= 0.0f) {
+            return Img.opaque(source, target);
+        }
+
+        final int len = source.pixels.length;
+        if (!Img.similar(source, target)) {
+            target.width = source.width;
+            target.height = source.height;
+            target.pixels = new long[len];
+        }
+
+        for (int i = 0; i < len; ++i) {
+            final long c = source.pixels[i];
+            final float t01Src = (c >> Img.T_SHIFT & 0xffffL) / 65535.0f;
+            target.pixels[i] = t01Src >= a01
+                ? (c | Img.T_MASK)
+                : Img.CLEAR_PIXEL;
+        }
+
+        return target;
+    }
+
+    /**
      * Tints an image with a color according to a factor. If the preserveLight
      * flag is true, the source image's original lightness is retained.
      *

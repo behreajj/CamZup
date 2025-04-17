@@ -584,7 +584,7 @@ public class Vec2 implements Comparable<Vec2> {
      */
     public static float distChebyshev(final Vec2 a, final Vec2 b) {
 
-        return Math.max(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y));
+        return Utils.max(Utils.diff(a.x, b.x), Utils.diff(a.y, b.y));
     }
 
     /**
@@ -1036,7 +1036,7 @@ public class Vec2 implements Comparable<Vec2> {
         final float vrMax = Utils.max(Utils.EPSILON, radiusMin, radiusMax);
         final float vrMin = oneRing
             ? vrMax
-            : Math.max(Utils.EPSILON, Math.min(radiusMin, radiusMax));
+            : Utils.max(Utils.EPSILON, Utils.min(radiusMin, radiusMax));
 
         final int ringLen = includeCenter ? rings + 1 : rings;
         final Vec2[][] result = new Vec2[ringLen][vSect];
@@ -1361,8 +1361,8 @@ public class Vec2 implements Comparable<Vec2> {
     public static Vec2 max(final Vec2 a, final float lowerBound, final Vec2 target) {
 
         return target.set(
-            Math.max(a.x, lowerBound),
-            Math.max(a.y, lowerBound));
+            Utils.max(a.x, lowerBound),
+            Utils.max(a.y, lowerBound));
     }
 
     /**
@@ -1377,8 +1377,8 @@ public class Vec2 implements Comparable<Vec2> {
     public static Vec2 max(final Vec2 a, final Vec2 lowerBound, final Vec2 target) {
 
         return target.set(
-            Math.max(a.x, lowerBound.x),
-            Math.max(a.y, lowerBound.y));
+            Utils.max(a.x, lowerBound.x),
+            Utils.max(a.y, lowerBound.y));
     }
 
     /**
@@ -1393,8 +1393,8 @@ public class Vec2 implements Comparable<Vec2> {
     public static Vec2 min(final Vec2 a, final float upperBound, final Vec2 target) {
 
         return target.set(
-            Math.min(a.x, upperBound),
-            Math.min(a.y, upperBound));
+            Utils.min(a.x, upperBound),
+            Utils.min(a.y, upperBound));
     }
 
     /**
@@ -1409,8 +1409,8 @@ public class Vec2 implements Comparable<Vec2> {
     public static Vec2 min(final Vec2 a, final Vec2 upperBound, final Vec2 target) {
 
         return target.set(
-            Math.min(a.x, upperBound.x),
-            Math.min(a.y, upperBound.y));
+            Utils.min(a.x, upperBound.x),
+            Utils.min(a.y, upperBound.y));
     }
 
     /**
@@ -1703,6 +1703,7 @@ public class Vec2 implements Comparable<Vec2> {
         if (t >= 1.0f) {
             return target.set(dest);
         }
+
         final float u = 1.0f - t;
         return target.set(
             u * orig.x + t * dest.x,
@@ -1779,11 +1780,11 @@ public class Vec2 implements Comparable<Vec2> {
     }
 
     /**
-     * Projects one vector onto another. Defined as<br>
+     * Projects one vector onto another. Defined as
      * <br>
-     * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> . <em>b</em> /
-     * <em>b</em> .
-     * <em>b</em> )
+     * <br>
+     * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> .
+     * <em>b</em> / <em>b</em> . <em>b</em> )
      *
      * @param a      left operand
      * @param b      right operand

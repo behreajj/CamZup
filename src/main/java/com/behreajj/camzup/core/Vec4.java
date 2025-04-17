@@ -489,9 +489,7 @@ public class Vec4 implements Comparable<Vec4> {
         final float zd = Utils.diff(a.z, b.z);
         final float wd = Utils.diff(a.w, b.w);
 
-        final float c0 = Math.max(xd, yd);
-        final float c1 = Math.max(c0, zd);
-        return Math.max(c1, wd);
+        return Utils.max(xd, yd, zd, wd);
     }
 
     /**
@@ -601,7 +599,11 @@ public class Vec4 implements Comparable<Vec4> {
 
         if (b != 0.0f) {
             final float denom = 1.0f / b;
-            return target.set(a.x * denom, a.y * denom, a.z * denom, a.w * denom);
+            return target.set(
+                a.x * denom,
+                a.y * denom,
+                a.z * denom,
+                a.w * denom);
         }
         return target.reset();
     }
@@ -1197,10 +1199,10 @@ public class Vec4 implements Comparable<Vec4> {
     public static Vec4 max(final Vec4 a, final float lowerBound, final Vec4 target) {
 
         return target.set(
-            Math.max(a.x, lowerBound),
-            Math.max(a.y, lowerBound),
-            Math.max(a.z, lowerBound),
-            Math.max(a.w, lowerBound));
+            Utils.max(a.x, lowerBound),
+            Utils.max(a.y, lowerBound),
+            Utils.max(a.z, lowerBound),
+            Utils.max(a.w, lowerBound));
     }
 
     /**
@@ -1215,10 +1217,10 @@ public class Vec4 implements Comparable<Vec4> {
     public static Vec4 max(final Vec4 a, final Vec4 lowerBound, final Vec4 target) {
 
         return target.set(
-            Math.max(a.x, lowerBound.x),
-            Math.max(a.y, lowerBound.y),
-            Math.max(a.z, lowerBound.z),
-            Math.max(a.w, lowerBound.w));
+            Utils.max(a.x, lowerBound.x),
+            Utils.max(a.y, lowerBound.y),
+            Utils.max(a.z, lowerBound.z),
+            Utils.max(a.w, lowerBound.w));
     }
 
     /**
@@ -1233,10 +1235,10 @@ public class Vec4 implements Comparable<Vec4> {
     public static Vec4 min(final Vec4 a, final float upperBound, final Vec4 target) {
 
         return target.set(
-            Math.min(a.x, upperBound),
-            Math.min(a.y, upperBound),
-            Math.min(a.z, upperBound),
-            Math.min(a.w, upperBound));
+            Utils.min(a.x, upperBound),
+            Utils.min(a.y, upperBound),
+            Utils.min(a.z, upperBound),
+            Utils.min(a.w, upperBound));
     }
 
     /**
@@ -1251,10 +1253,10 @@ public class Vec4 implements Comparable<Vec4> {
     public static Vec4 min(final Vec4 a, final Vec4 upperBound, final Vec4 target) {
 
         return target.set(
-            Math.min(a.x, upperBound.x),
-            Math.min(a.y, upperBound.y),
-            Math.min(a.z, upperBound.z),
-            Math.min(a.w, upperBound.w));
+            Utils.min(a.x, upperBound.x),
+            Utils.min(a.y, upperBound.y),
+            Utils.min(a.z, upperBound.z),
+            Utils.min(a.w, upperBound.w));
     }
 
     /**
@@ -1266,7 +1268,11 @@ public class Vec4 implements Comparable<Vec4> {
      * @param target the output vector
      * @return the mix
      */
-    public static Vec4 mix(final Vec4 orig, final Vec4 dest, final float step, final Vec4 target) {
+    public static Vec4 mix(
+        final Vec4 orig,
+        final Vec4 dest,
+        final float step,
+        final Vec4 target) {
 
         if (step <= 0.0f) {
             return target.set(orig);
@@ -1294,7 +1300,11 @@ public class Vec4 implements Comparable<Vec4> {
      */
     public static Vec4 mod(final float a, final Vec4 b, final Vec4 target) {
 
-        return target.set(Utils.mod(a, b.x), Utils.mod(a, b.y), Utils.mod(a, b.z), Utils.mod(a, b.w));
+        return target.set(
+            Utils.mod(a, b.x),
+            Utils.mod(a, b.y),
+            Utils.mod(a, b.z),
+            Utils.mod(a, b.w));
     }
 
     /**
@@ -1330,7 +1340,10 @@ public class Vec4 implements Comparable<Vec4> {
     public static Vec4 mod(final Vec4 a, final Vec4 b, final Vec4 target) {
 
         return target.set(
-            Utils.mod(a.x, b.x), Utils.mod(a.y, b.y), Utils.mod(a.z, b.z), Utils.mod(a.w, b.w));
+            Utils.mod(a.x, b.x),
+            Utils.mod(a.y, b.y),
+            Utils.mod(a.z, b.z),
+            Utils.mod(a.w, b.w));
     }
 
     /**
@@ -1344,7 +1357,11 @@ public class Vec4 implements Comparable<Vec4> {
      */
     public static Vec4 mod1(final Vec4 v, final Vec4 target) {
 
-        return target.set(Utils.mod1(v.x), Utils.mod1(v.y), Utils.mod1(v.z), Utils.mod1(v.w));
+        return target.set(
+            Utils.mod1(v.x),
+            Utils.mod1(v.y),
+            Utils.mod1(v.z),
+            Utils.mod1(v.w));
     }
 
     /**
@@ -1494,6 +1511,7 @@ public class Vec4 implements Comparable<Vec4> {
         if (t >= 1.0f) {
             return target.set(dest);
         }
+
         final float u = 1.0f - t;
         return target.set(
             u * orig.x + t * dest.x,

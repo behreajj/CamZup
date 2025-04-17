@@ -55,12 +55,8 @@ public class Bounds3 implements Comparable<Bounds3> {
      * @param zMax the maximum z
      */
     public Bounds3(
-        final float xMin,
-        final float yMin,
-        final float zMin,
-        final float xMax,
-        final float yMax,
-        final float zMax) {
+        final float xMin, final float yMin, final float zMin,
+        final float xMax, final float yMax, final float zMax) {
 
         this.set(xMin, yMin, zMin, xMax, yMax, zMax);
     }
@@ -100,12 +96,9 @@ public class Bounds3 implements Comparable<Bounds3> {
      */
     public static boolean contains(final Bounds3 b, final Vec3 v) {
 
-        return v.x >= b.min.x
-            && v.x < b.max.x
-            && v.y >= b.min.y
-            && v.y < b.max.y
-            && v.z >= b.min.z
-            && v.z < b.max.z;
+        return v.x >= b.min.x && v.x < b.max.x
+            && v.y >= b.min.y && v.y < b.max.y
+            && v.z >= b.min.z && v.z < b.max.z;
     }
 
     /**
@@ -141,12 +134,9 @@ public class Bounds3 implements Comparable<Bounds3> {
      */
     public static boolean containsExclusive(final Bounds3 b, final Vec3 v) {
 
-        return v.x > b.min.x
-            && v.x < b.max.x
-            && v.y > b.min.y
-            && v.y < b.max.y
-            && v.z > b.min.z
-            && v.z < b.max.z;
+        return v.x > b.min.x && v.x < b.max.x
+            && v.y > b.min.y && v.y < b.max.y
+            && v.z > b.min.z && v.z < b.max.z;
     }
 
     /**
@@ -182,12 +172,9 @@ public class Bounds3 implements Comparable<Bounds3> {
      */
     public static boolean containsInclusive(final Bounds3 b, final Vec3 v) {
 
-        return v.x >= b.min.x
-            && v.x <= b.max.x
-            && v.y >= b.min.y
-            && v.y <= b.max.y
-            && v.z >= b.min.z
-            && v.z <= b.max.z;
+        return v.x >= b.min.x && v.x <= b.max.x
+            && v.y >= b.min.y && v.y <= b.max.y
+            && v.z >= b.min.z && v.z <= b.max.z;
     }
 
     /**
@@ -263,14 +250,17 @@ public class Bounds3 implements Comparable<Bounds3> {
      * @return the bounds
      */
     public static Bounds3 fromCenterExtent(
-        final Vec3 center, final Vec3 extent, final Bounds3 target) {
+        final Vec3 center,
+        final Vec3 extent,
+        final Bounds3 target) {
 
         final float hw = extent.x * 0.5f;
         final float hh = extent.y * 0.5f;
         final float hd = extent.z * 0.5f;
 
         return target.set(
-            center.x - hw, center.y - hh, center.z - hd, center.x + hw, center.y + hh, center.z + hd);
+            center.x - hw, center.y - hh, center.z - hd,
+            center.x + hw, center.y + hh, center.z + hd);
     }
 
     /**
@@ -282,15 +272,13 @@ public class Bounds3 implements Comparable<Bounds3> {
      * @return the bounds
      */
     public static Bounds3 fromCenterHalfExtent(
-        final Vec3 center, final Vec3 he, final Bounds3 target) {
+        final Vec3 center,
+        final Vec3 he,
+        final Bounds3 target) {
 
         return target.set(
-            center.x - he.x,
-            center.y - he.y,
-            center.z - he.z,
-            center.x + he.x,
-            center.y + he.y,
-            center.z + he.z);
+            center.x - he.x, center.y - he.y, center.z - he.z,
+            center.x + he.x, center.y + he.y, center.z + he.z);
     }
 
     /**
@@ -305,7 +293,10 @@ public class Bounds3 implements Comparable<Bounds3> {
      * @see Vec3#max(Vec3, Vec3, Vec3)
      * @see Vec3#min(Vec3, Vec3, Vec3)
      */
-    public static Bounds3 fromIntersection(final Bounds3 a, final Bounds3 b, final Bounds3 target) {
+    public static Bounds3 fromIntersection(
+        final Bounds3 a,
+        final Bounds3 b,
+        final Bounds3 target) {
 
         Vec3.max(a.min, b.min, target.min);
         Vec3.min(a.max, b.max, target.max);
@@ -369,9 +360,9 @@ public class Bounds3 implements Comparable<Bounds3> {
     }
 
     /**
-     * Finds the union between two bounds, i.e. a bounds that will contain both
-     * of them. To avoid unexpected results from zero and negative bounds, use
-     * {@link Bounds3#verified} on inputs.
+     * Finds the union between two bounds, i.e., a bounds that will contain
+     * both of them. To avoid unexpected results from zero and negative bounds,
+     * use {@link Bounds3#verified} on inputs.
      *
      * @param a      left operand
      * @param b      right operand
@@ -380,7 +371,10 @@ public class Bounds3 implements Comparable<Bounds3> {
      * @see Vec3#max(Vec3, Vec3, Vec3)
      * @see Vec3#min(Vec3, Vec3, Vec3)
      */
-    public static Bounds3 fromUnion(final Bounds3 a, final Bounds3 b, final Bounds3 target) {
+    public static Bounds3 fromUnion(
+        final Bounds3 a,
+        final Bounds3 b,
+        final Bounds3 target) {
 
         Vec3.min(a.min, b.min, target.min);
         Vec3.max(a.max, b.max, target.max);
@@ -398,12 +392,9 @@ public class Bounds3 implements Comparable<Bounds3> {
      */
     public static boolean intersect(final Bounds3 a, final Bounds3 b) {
 
-        return a.max.x > b.min.x
-            || a.min.x < b.max.x
-            || a.max.y > b.min.y
-            || a.min.y < b.max.y
-            || a.max.z > b.min.z
-            || a.min.z < b.max.z;
+        return a.max.x > b.min.x || a.min.x < b.max.x
+            || a.max.y > b.min.y || a.min.y < b.max.y
+            || a.max.z > b.min.z || a.min.z < b.max.z;
     }
 
     /**
@@ -434,7 +425,10 @@ public class Bounds3 implements Comparable<Bounds3> {
      * @param radius the sphere radius
      * @return the evaluation
      */
-    public static boolean intersect(final Bounds3 a, final Vec3 center, final float radius) {
+    public static boolean intersect(
+        final Bounds3 a,
+        final Vec3 center,
+        final float radius) {
 
         return Bounds3.intersectSq(a, center, radius * radius);
     }
@@ -472,7 +466,9 @@ public class Bounds3 implements Comparable<Bounds3> {
      */
     public static boolean isZero(final Bounds3 b) {
 
-        return b.max.z - b.min.z == 0.0f || b.max.y - b.min.y == 0.0f || b.max.x - b.min.x == 0.0f;
+        return b.max.z - b.min.z == 0.0f
+            || b.max.y - b.min.y == 0.0f
+            || b.max.x - b.min.x == 0.0f;
     }
 
     /**
@@ -485,7 +481,9 @@ public class Bounds3 implements Comparable<Bounds3> {
      */
     public static Bounds3 lab(final Bounds3 target) {
 
-        return target.set(Lab.SR_A_MIN, Lab.SR_B_MIN, 0.0f, Lab.SR_A_MAX, Lab.SR_B_MAX, 100.0f);
+        return target.set(
+            Lab.SR_A_MIN, Lab.SR_B_MIN, 0.0f,
+            Lab.SR_A_MAX, Lab.SR_B_MAX, 100.0f);
     }
 
     /**
@@ -500,9 +498,8 @@ public class Bounds3 implements Comparable<Bounds3> {
      * @param fse front southeast
      * @param fnw front northwest
      * @param fne front northeast
-     * @see Bounds3#split(Bounds3, float, float, float, Bounds3, Bounds3, Bounds3,
-     * Bounds3, Bounds3,
-     * Bounds3, Bounds3, Bounds3)
+     * @see Bounds3#split(Bounds3, float, float, float, Bounds3, Bounds3,
+     * Bounds3, Bounds3, Bounds3, Bounds3, Bounds3, Bounds3)
      */
     public static void split(
         final Bounds3 b,
@@ -515,7 +512,9 @@ public class Bounds3 implements Comparable<Bounds3> {
         final Bounds3 fnw,
         final Bounds3 fne) {
 
-        Bounds3.split(b, 0.5f, 0.5f, 0.5f, bsw, bse, bnw, bne, fsw, fse, fnw, fne);
+        Bounds3.split(b, 0.5f, 0.5f, 0.5f,
+            bsw, bse, bnw, bne,
+            fsw, fse, fnw, fne);
     }
 
     /**
@@ -591,9 +590,8 @@ public class Bounds3 implements Comparable<Bounds3> {
      * @param fne front northeast
      * @return point is in bounds
      * @see Utils#div(float, float)
-     * @see Bounds3#split(Bounds3, float, float, float, Bounds3, Bounds3, Bounds3,
-     * Bounds3, Bounds3,
-     * Bounds3, Bounds3, Bounds3)
+     * @see Bounds3#split(Bounds3, float, float, float, Bounds3, Bounds3,
+     * Bounds3, Bounds3, Bounds3, Bounds3, Bounds3, Bounds3)
      */
     public static boolean split(
         final Bounds3 b,
@@ -610,16 +608,14 @@ public class Bounds3 implements Comparable<Bounds3> {
         final Vec3 bMin = b.min;
         final Vec3 bMax = b.max;
 
-        if (v.x > bMin.x
-            && v.x < bMax.x
-            && v.y > bMin.y
-            && v.y < bMax.y
-            && v.z > bMin.z
-            && v.z < bMax.z) {
+        if (v.x > bMin.x && v.x < bMax.x
+            && v.y > bMin.y && v.y < bMax.y
+            && v.z > bMin.z && v.z < bMax.z) {
             final float xFac = Utils.div(v.x - bMin.x, bMax.x - bMin.x);
             final float yFac = Utils.div(v.y - bMin.y, bMax.y - bMin.y);
             final float zFac = Utils.div(v.z - bMin.z, bMax.z - bMin.z);
-            Bounds3.split(b, xFac, yFac, zFac, bsw, bse, bnw, bne, fsw, fse, fnw, fne);
+            Bounds3.split(b, xFac, yFac, zFac, bsw, bse, bnw, bne, fsw, fse,
+                fnw, fne);
             return true;
         }
 
@@ -740,7 +736,10 @@ public class Bounds3 implements Comparable<Bounds3> {
      * @param rsq    the sphere radius squared
      * @return the evaluation
      */
-    static boolean intersectSq(final Bounds3 a, final Vec3 center, final float rsq) {
+    static boolean intersectSq(
+        final Bounds3 a,
+        final Vec3 center,
+        final float rsq) {
 
         final float zd = center.z < a.min.z
             ? center.z - a.min.z
@@ -931,12 +930,8 @@ public class Bounds3 implements Comparable<Bounds3> {
      * @return this bounds
      */
     public Bounds3 set(
-        final float xMin,
-        final float yMin,
-        final float zMin,
-        final float xMax,
-        final float yMax,
-        final float zMax) {
+        final float xMin, final float yMin, final float zMin,
+        final float xMax, final float yMax, final float zMax) {
 
         this.min.set(xMin, yMin, zMin);
         this.max.set(xMax, yMax, zMax);

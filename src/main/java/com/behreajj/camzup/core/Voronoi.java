@@ -12,7 +12,7 @@ public class Voronoi extends Generative {
     }
 
     /**
-     * Generates 2D Voronoi noise. Returns the minimum Euclidean distance; the
+     * Generates 2D Voronoi noise. Returns the minimum Euclidean distance. The
      * Voronoi point is stored in an output vector.
      *
      * @param coord  the coordinate
@@ -28,8 +28,9 @@ public class Voronoi extends Generative {
         final Vec2 target) {
 
         /*
-         * As many functions as is reasonable are inlined for performance purposes
-         * (both to avoid function call overhead and to avoid creating vectors).
+         * As many functions as is reasonable are inlined for performance
+         * purposes (both to avoid function call overhead and to avoid creating
+         * vectors).
          */
 
         if (scale == 0.0f) {
@@ -41,8 +42,12 @@ public class Voronoi extends Generative {
         final float xScaled = coord.x * scaleInv;
         final float yScaled = coord.y * scaleInv;
 
-        final float xCell = xScaled > 0.0f ? (int) xScaled : xScaled < 0.0f ? (int) xScaled - 1.0f : 0.0f;
-        final float yCell = yScaled > 0.0f ? (int) yScaled : yScaled < 0.0f ? (int) yScaled - 1.0f : 0.0f;
+        final float xCell = xScaled > 0.0f
+            ? (int) xScaled : xScaled < 0.0f
+            ? (int) xScaled - 1.0f : 0.0f;
+        final float yCell = yScaled > 0.0f
+            ? (int) yScaled : yScaled < 0.0f
+            ? (int) yScaled - 1.0f : 0.0f;
 
         final float xLocal = xScaled - xCell;
         final float yLocal = yScaled - yCell;
@@ -64,42 +69,31 @@ public class Voronoi extends Generative {
             final float xSum = xCell + jn1;
             final float ySum = yCell + in1;
 
-            final float st = Utils.sqrtUnchecked(xSum * xSum + ySum * ySum) * Generative.STEP_2;
+            final float st = Generative.STEP_2 * Utils.sqrtUnchecked(
+                xSum * xSum + ySum * ySum);
 
             /* Create a random vector [0.0, 1.0] . Add cell offset. */
-            final float xHsh = jn1
-                + Float.intBitsToFloat(
-                Generative.hash(
-                    (Utils.MUL_BASE ^ Float.floatToIntBits(xSum + st)) * Utils.HASH_MUL
-                        ^ Float.floatToIntBits(ySum),
-                    seed,
-                    0)
-                    & 0x007fffff
-                    | 0x3f800000)
-                - 1.0f;
+            final float xHsh = jn1 + Float.intBitsToFloat(Generative.hash(
+                (Utils.MUL_BASE ^ Float.floatToIntBits(xSum + st))
+                    * Utils.HASH_MUL ^ Float.floatToIntBits(ySum), seed, 0)
+                & 0x007fffff | 0x3f800000) - 1.0f;
 
-            final float yHsh = in1
-                + Float.intBitsToFloat(
-                Generative.hash(
-                    (Utils.MUL_BASE ^ Float.floatToIntBits(xSum)) * Utils.HASH_MUL
-                        ^ Float.floatToIntBits(ySum + st),
-                    seed,
-                    0)
-                    & 0x007fffff
-                    | 0x3f800000)
-                - 1.0f;
+            final float yHsh = in1 + Float.intBitsToFloat(Generative.hash(
+                (Utils.MUL_BASE ^ Float.floatToIntBits(xSum))
+                    * Utils.HASH_MUL ^ Float.floatToIntBits(ySum + st), seed, 0)
+                & 0x007fffff | 0x3f800000) - 1.0f;
 
             /*
              * Find the Euclidean distance between the local coordinate and the
              * random point.
              */
-            final float xDist = xLocal - xHsh;
-            final float yDist = yLocal - yHsh;
-            final float distSq = xDist * xDist + yDist * yDist;
+            final float xd = xLocal - xHsh;
+            final float yd = yLocal - yHsh;
+            final float dSq = xd * xd + yd * yd;
 
             /* Reassign minimums. */
-            if (distSq < minDistSq) {
-                minDistSq = distSq;
+            if (dSq < minDistSq) {
+                minDistSq = dSq;
                 target.x = xHsh;
                 target.y = yHsh;
             }
@@ -115,7 +109,7 @@ public class Voronoi extends Generative {
     }
 
     /**
-     * Generates 3D voronoi noise. Returns the minimum Euclidean distance; the
+     * Generates 3D voronoi noise. Returns the minimum Euclidean distance. The
      * voronoi point is stored in an output vector.
      *
      * @param coord  the coordinate
@@ -140,9 +134,15 @@ public class Voronoi extends Generative {
         final float yScaled = coord.y * scaleInv;
         final float zScaled = coord.z * scaleInv;
 
-        final float xCell = xScaled > 0.0f ? (int) xScaled : xScaled < 0.0f ? (int) xScaled - 1.0f : 0.0f;
-        final float yCell = yScaled > 0.0f ? (int) yScaled : yScaled < 0.0f ? (int) yScaled - 1.0f : 0.0f;
-        final float zCell = zScaled > 0.0f ? (int) zScaled : zScaled < 0.0f ? (int) zScaled - 1.0f : 0.0f;
+        final float xCell = xScaled > 0.0f
+            ? (int) xScaled : xScaled < 0.0f
+            ? (int) xScaled - 1.0f : 0.0f;
+        final float yCell = yScaled > 0.0f
+            ? (int) yScaled : yScaled < 0.0f
+            ? (int) yScaled - 1.0f : 0.0f;
+        final float zCell = zScaled > 0.0f
+            ? (int) zScaled : zScaled < 0.0f
+            ? (int) zScaled - 1.0f : 0.0f;
 
         final float xLocal = xScaled - xCell;
         final float yLocal = yScaled - yCell;
@@ -165,50 +165,34 @@ public class Voronoi extends Generative {
             final float ySum = yCell + in1;
             final float xSum = xCell + jn1;
 
-            final float st = Generative.STEP_3 * Utils.sqrtUnchecked(xSum * xSum + ySum * ySum + zSum * zSum);
+            final float st = Generative.STEP_3 * Utils.sqrtUnchecked(
+                xSum * xSum + ySum * ySum + zSum * zSum);
 
             final int zBit = Float.floatToIntBits(zSum);
             final int yBit = Float.floatToIntBits(ySum);
-            final int xBitBase = (Utils.MUL_BASE ^ Float.floatToIntBits(xSum)) * Utils.HASH_MUL;
+            final int xBitBase = (Utils.MUL_BASE ^ Float.floatToIntBits(xSum))
+                * Utils.HASH_MUL;
 
-            final float xHsh = jn1
-                + Float.intBitsToFloat(
-                Generative.hash(
-                    ((Utils.MUL_BASE ^ Float.floatToIntBits(xSum + st)) * Utils.HASH_MUL
-                        ^ yBit)
-                        * Utils.HASH_MUL
-                        ^ zBit,
-                    seed,
-                    0)
-                    & 0x007fffff
-                    | 0x3f800000)
-                - 1.0f;
-            final float yHsh = in1
-                + Float.intBitsToFloat(
-                Generative.hash(
-                    (xBitBase ^ Float.floatToIntBits(ySum + st)) * Utils.HASH_MUL ^ zBit,
-                    seed,
-                    0)
-                    & 0x007fffff
-                    | 0x3f800000)
-                - 1.0f;
-            final float zHsh = hn1
-                + Float.intBitsToFloat(
-                Generative.hash(
-                    (xBitBase ^ yBit) * Utils.HASH_MUL ^ Float.floatToIntBits(zSum + st),
-                    seed,
-                    0)
-                    & 0x007fffff
-                    | 0x3f800000)
-                - 1.0f;
+            final float xHsh = jn1 + Float.intBitsToFloat(Generative.hash(
+                ((Utils.MUL_BASE ^ Float.floatToIntBits(xSum + st))
+                    * Utils.HASH_MUL ^ yBit) * Utils.HASH_MUL ^ zBit, seed, 0)
+                & 0x007fffff | 0x3f800000) - 1.0f;
+            final float yHsh = in1 + Float.intBitsToFloat(Generative.hash(
+                (xBitBase ^ Float.floatToIntBits(ySum + st))
+                    * Utils.HASH_MUL ^ zBit, seed, 0)
+                & 0x007fffff | 0x3f800000) - 1.0f;
+            final float zHsh = hn1 + Float.intBitsToFloat(Generative.hash(
+                (xBitBase ^ yBit) * Utils.HASH_MUL
+                    ^ Float.floatToIntBits(zSum + st), seed, 0)
+                & 0x007fffff | 0x3f800000) - 1.0f;
 
-            final float xDist = xLocal - xHsh;
-            final float yDist = yLocal - yHsh;
-            final float zDist = zLocal - zHsh;
-            final float distSq = xDist * xDist + yDist * yDist + zDist * zDist;
+            final float xd = xLocal - xHsh;
+            final float yd = yLocal - yHsh;
+            final float zd = zLocal - zHsh;
+            final float dSq = xd * xd + yd * yd + zd * zd;
 
-            if (distSq < minDistSq) {
-                minDistSq = distSq;
+            if (dSq < minDistSq) {
+                minDistSq = dSq;
                 target.x = xHsh;
                 target.y = yHsh;
                 target.z = zHsh;
@@ -227,7 +211,7 @@ public class Voronoi extends Generative {
     }
 
     /**
-     * Generates 4D voronoi noise. Returns the minimum Euclidean distance; the
+     * Generates 4D voronoi noise. Returns the minimum Euclidean distance. The
      * voronoi point is stored in an output vector.
      *
      * @param coord  the coordinate
@@ -253,10 +237,18 @@ public class Voronoi extends Generative {
         final float zScaled = coord.z * scaleInv;
         final float wScaled = coord.w * scaleInv;
 
-        final float xCell = xScaled > 0.0f ? (int) xScaled : xScaled < 0.0f ? (int) xScaled - 1.0f : 0.0f;
-        final float yCell = yScaled > 0.0f ? (int) yScaled : yScaled < 0.0f ? (int) yScaled - 1.0f : 0.0f;
-        final float zCell = zScaled > 0.0f ? (int) zScaled : zScaled < 0.0f ? (int) zScaled - 1.0f : 0.0f;
-        final float wCell = wScaled > 0.0f ? (int) wScaled : wScaled < 0.0f ? (int) wScaled - 1.0f : 0.0f;
+        final float xCell = xScaled > 0.0f
+            ? (int) xScaled : xScaled < 0.0f
+            ? (int) xScaled - 1.0f : 0.0f;
+        final float yCell = yScaled > 0.0f
+            ? (int) yScaled : yScaled < 0.0f
+            ? (int) yScaled - 1.0f : 0.0f;
+        final float zCell = zScaled > 0.0f
+            ? (int) zScaled : zScaled < 0.0f
+            ? (int) zScaled - 1.0f : 0.0f;
+        final float wCell = wScaled > 0.0f
+            ? (int) wScaled : wScaled < 0.0f
+            ? (int) wScaled - 1.0f : 0.0f;
 
         final float xLocal = xScaled - xCell;
         final float yLocal = yScaled - yCell;
@@ -284,75 +276,48 @@ public class Voronoi extends Generative {
             final float ySum = yCell + in1;
             final float xSum = xCell + jn1;
 
-            final float st = Generative.STEP_4
-                * Utils.sqrtUnchecked(xSum * xSum + ySum * ySum + zSum * zSum + wSum * wSum);
+            final float st = Generative.STEP_4 * Utils.sqrtUnchecked(
+                xSum * xSum + ySum * ySum + zSum * zSum + wSum * wSum);
 
             final int wBit = Float.floatToIntBits(wSum);
             final int zBit = Float.floatToIntBits(zSum);
             final int yBit = Float.floatToIntBits(ySum);
 
             final int xBitBase = Utils.MUL_BASE ^ Float.floatToIntBits(xSum);
-            final int yBitBase = (xBitBase * Utils.HASH_MUL ^ yBit) * Utils.HASH_MUL;
+            final int yBitBase = (xBitBase * Utils.HASH_MUL ^ yBit)
+                * Utils.HASH_MUL;
 
-            final float xHsh = jn1
-                + Float.intBitsToFloat(
-                Generative.hash(
-                    (((Utils.MUL_BASE ^ Float.floatToIntBits(xSum + st)) * Utils.HASH_MUL
-                        ^ yBit)
-                        * Utils.HASH_MUL
-                        ^ zBit)
-                        * Utils.HASH_MUL
-                        ^ wBit,
-                    seed,
-                    0)
-                    & 0x007fffff
-                    | 0x3f800000)
-                - 1.0f;
-            final float yHsh = in1
-                + Float.intBitsToFloat(
-                Generative.hash(
-                    ((xBitBase * Utils.HASH_MUL ^ Float.floatToIntBits(ySum + st))
-                        * Utils.HASH_MUL
-                        ^ zBit)
-                        * Utils.HASH_MUL
-                        ^ wBit,
-                    seed,
-                    0)
-                    & 0x007fffff
-                    | 0x3f800000)
-                - 1.0f;
-            final float zHsh = hn1
-                + Float.intBitsToFloat(
-                Generative.hash(
-                    (yBitBase ^ Float.floatToIntBits(zSum + st)) * Utils.HASH_MUL ^ wBit,
-                    seed,
-                    0)
-                    & 0x007fffff
-                    | 0x3f800000)
-                - 1.0f;
-            final float wHsh = gn1
-                + Float.intBitsToFloat(
-                Generative.hash(
-                    (yBitBase ^ zBit) * Utils.HASH_MUL ^ Float.floatToIntBits(wSum + st),
-                    seed,
-                    0)
-                    & 0x007fffff
-                    | 0x3f800000)
-                - 1.0f;
+            final float xHsh = jn1 + Float.intBitsToFloat(Generative.hash(
+                (((Utils.MUL_BASE ^ Float.floatToIntBits(xSum + st))
+                    * Utils.HASH_MUL ^ yBit) * Utils.HASH_MUL ^ zBit)
+                    * Utils.HASH_MUL ^ wBit, seed, 0)
+                & 0x007fffff | 0x3f800000) - 1.0f;
+            final float yHsh = in1 + Float.intBitsToFloat(Generative.hash(
+                ((xBitBase * Utils.HASH_MUL ^ Float.floatToIntBits(ySum + st))
+                    * Utils.HASH_MUL ^ zBit) * Utils.HASH_MUL ^ wBit, seed, 0)
+                & 0x007fffff | 0x3f800000) - 1.0f;
+            final float zHsh = hn1 + Float.intBitsToFloat(Generative.hash(
+                (yBitBase ^ Float.floatToIntBits(zSum + st))
+                    * Utils.HASH_MUL ^ wBit, seed, 0)
+                & 0x007fffff | 0x3f800000) - 1.0f;
+            final float wHsh = gn1 + Float.intBitsToFloat(Generative.hash(
+                (yBitBase ^ zBit) * Utils.HASH_MUL
+                    ^ Float.floatToIntBits(wSum + st), seed, 0)
+                & 0x007fffff | 0x3f800000) - 1.0f;
 
             /*
              * Find the Euclidean distance between the local coordinate and the
              * random point.
              */
-            final float xDist = xLocal - xHsh;
-            final float yDist = yLocal - yHsh;
-            final float zDist = zLocal - zHsh;
-            final float wDist = wLocal - wHsh;
-            final float dist = xDist * xDist + yDist * yDist + zDist * zDist + wDist * wDist;
+            final float xd = xLocal - xHsh;
+            final float yd = yLocal - yHsh;
+            final float zd = zLocal - zHsh;
+            final float wd = wLocal - wHsh;
+            final float dSq = xd * xd + yd * yd + zd * zd + wd * wd;
 
             /* Reassign minimums. */
-            if (dist < minDist) {
-                minDist = dist;
+            if (dSq < minDist) {
+                minDist = dSq;
                 target.x = xHsh;
                 target.y = yHsh;
                 target.z = zHsh;

@@ -110,7 +110,7 @@ public abstract class ParserObj {
                                     break;
                                 }
 
-                                /* tokens length includes "f", and so is 1 longer. */
+                                /* Tokens length includes "f", so is 1 longer. */
                                 final int count = tokens.length;
                                 final int[][] indices = new int[count - 1][3];
 
@@ -119,7 +119,7 @@ public abstract class ParserObj {
                                     final int tokenLen = faceTokens.length;
                                     final int[] vert = indices[j - 1];
 
-                                    /* Indices in .obj file start at 1, not 0. */
+                                    /* Indices start at 1, not 0. */
                                     if (tokenLen > 0) {
                                         final String vIdx = faceTokens[0];
                                         if (vIdx == null || vIdx.isEmpty()) {
@@ -131,7 +131,7 @@ public abstract class ParserObj {
                                         vsMissing = true;
                                     }
 
-                                    /* Attempt to read texture coordinate index. */
+                                    /* Read texture coordinate index. */
                                     if (tokenLen > 1) {
                                         final String vtIdx = faceTokens[1];
                                         if (vtIdx == null || vtIdx.isEmpty()) {
@@ -143,7 +143,7 @@ public abstract class ParserObj {
                                         vtsMissing = true;
                                     }
 
-                                    /* Attempt to read normal index. */
+                                    /* Read normal index. */
                                     if (tokenLen > 2) {
                                         final String vnIdx = faceTokens[2];
                                         if (vnIdx == null || vnIdx.isEmpty()) {

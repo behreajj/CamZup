@@ -262,6 +262,7 @@ public class Edge2 implements Comparable<Edge2> {
      *
      * @return the evaluation
      */
+    @SuppressWarnings("NullableProblems")
     @Override
     public int compareTo(final Edge2 edge) {
 
@@ -512,7 +513,7 @@ public class Edge2 implements Comparable<Edge2> {
     }
 
     /**
-     * Sets the origin and destination coordinate, texture coordinate and normal
+     * Sets the origin and destination coordinate and texture coordinate
      * data by reference.
      *
      * @param coOrig origin coordinate

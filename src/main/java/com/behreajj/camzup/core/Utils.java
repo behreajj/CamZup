@@ -35,6 +35,12 @@ public abstract class Utils {
     public static final float FOUR_THIRDS = 1.3333333f;
 
     /**
+     * An approximation of tau / phi<sup>2</sup>. Useful for replicating
+     * phyllotaxis. In degrees, 137.50777.
+     */
+    public static final float GOLDEN_ANGLE = 2.3999631f;
+
+    /**
      * Pi divided by two.
      */
     public static final float HALF_PI = 1.5707964f;
@@ -171,7 +177,6 @@ public abstract class Utils {
      * Discourage overriding with a private constructor.
      */
     private Utils() {
-        // TODO: Restore golden angle constants from old version of IUtils?
     }
 
     /**

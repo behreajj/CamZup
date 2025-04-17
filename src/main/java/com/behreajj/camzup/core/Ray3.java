@@ -1,10 +1,12 @@
 package com.behreajj.camzup.core;
 
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Objects;
+import java.util.TreeSet;
 
 /**
- * A direction that extends from an originating point.
+ * A direction that extends from an origin point.
  */
 public class Ray3 {
 
@@ -51,25 +53,28 @@ public class Ray3 {
      * @param time   the time step
      * @param target the output vector
      * @return the point
-     * @see Utils#approx(float, float)
-     * @see Utils#invSqrtUnchecked(float)
-     * @see Vec3#magSq(Vec3)
      */
-    public static Vec3 eval(final Ray3 ray, final float time, final Vec3 target) {
+    public static Vec3 eval(
+        final Ray3 ray,
+        final float time,
+        final Vec3 target) {
 
-        final Vec3 origin = ray.origin;
-        final Vec3 dir = ray.dir;
-        final float dmsq = Vec3.magSq(dir);
-        if (time > 0.0f && dmsq > 0.0f) {
-            if (Utils.approx(dmsq, 1.0f)) {
-                return target.set(origin.x + dir.x * time,
-                    origin.y + dir.y * time, origin.z + dir.z * time);
-            }
-            final float tm = time * Utils.invSqrtUnchecked(dmsq);
-            return target.set(origin.x + dir.x * tm, origin.y + dir.y * tm,
-                origin.z + dir.z * tm);
-        }
-        return target.set(origin);
+        if (time <= 0.0f) { return target.set(ray.origin); }
+
+        final Vec3 rDir = ray.dir;
+        final double dx = rDir.x;
+        final double dy = rDir.y;
+        final double dz = rDir.z;
+
+        final double dmsq = dx * dx + dy * dy + dz * dz;
+        if (dmsq <= Utils.EPSILON_D) { return target.set(ray.origin); }
+
+        final double tm = time / Math.sqrt(dmsq);
+        final Vec3 rOrig = ray.origin;
+        return target.set(
+            (float) (rOrig.x + tm * dx),
+            (float) (rOrig.y + tm * dy),
+            (float) (rOrig.z + tm * dz));
     }
 
     /**
@@ -81,11 +86,90 @@ public class Ray3 {
      * @return the ray
      * @see Vec3#subNorm(Vec3, Vec3, Vec3)
      */
-    public static Ray3 fromPoints(final Vec3 orig, final Vec3 dest, final Ray3 target) {
+    public static Ray3 fromPoints(
+        final Vec3 orig,
+        final Vec3 dest,
+        final Ray3 target) {
 
         target.origin.set(orig);
         Vec3.subNorm(dest, orig, target.dir);
         return target;
+    }
+
+    /**
+     * Finds points of intersection, if any, between a ray and a sphere.
+     *
+     * @param ray    the ray
+     * @param center the circle center
+     * @param radius the circle radius
+     * @return the points
+     */
+    public static Vec3[] intersect(
+        final Ray3 ray,
+        final Vec3 center,
+        final float radius) {
+
+        // TEST
+
+        final Vec3 rOrig = ray.origin;
+        final Vec3 rDir = ray.dir;
+
+        final double rx = rOrig.x;
+        final double ry = rOrig.y;
+        final double rz = rOrig.z;
+
+        final double dx = rDir.x;
+        final double dy = rDir.y;
+        final double dz = rDir.z;
+
+        final double cx = center.x;
+        final double cy = center.y;
+        final double cz = center.z;
+
+        final double ux = cx - rx;
+        final double uy = cy - ry;
+        final double uz = cz - rz;
+
+        /* Project u onto d. */
+        final double dotuv = ux * dx + uy * dy + uz * dz;
+        final double vmsq = dx * dx + dy * dy + dz * dz;
+        final double uvScalarProj = vmsq > 0.0d ? dotuv / vmsq : 0.0d;
+
+        final double u1x = dx * uvScalarProj;
+        final double u1y = dy * uvScalarProj;
+        final double u1z = dz * uvScalarProj;
+
+        final double u2x = ux - u1x;
+        final double u2y = uy - u1y;
+        final double u2z = uz - u1z;
+
+        final double u2msq = u2x * u2x + u2y * u2y + u2z * u2z;
+        final double rSq = radius * radius;
+        final TreeSet<Vec3> uniques = new TreeSet<>();
+
+        if (u2msq <= rSq) {
+            final double opu1x = rx + u1x;
+            final double opu1y = ry + u1y;
+            final double opu1z = rz + u1z;
+
+            final double m = Math.sqrt(rSq - u2msq);
+            final double mvx = m * dx;
+            final double mvy = m * dy;
+            final double mvz = m * dz;
+
+            uniques.add(new Vec3(
+                (float) (opu1x + mvx),
+                (float) (opu1y + mvy),
+                (float) (opu1z + mvz)));
+            uniques.add(new Vec3(
+                (float) (opu1x - mvx),
+                (float) (opu1y - mvy),
+                (float) (opu1z - mvz)));
+        }
+
+        final Vec3[] arr = uniques.toArray(new Vec3[0]);
+        Arrays.sort(arr, new Vec3.SortDistSq(ray.origin));
+        return arr;
     }
 
     @Override
@@ -202,7 +286,8 @@ public class Ray3 {
      */
     protected boolean equals(final Ray3 ray) {
 
-        return this.origin.equals(ray.origin) && this.dir.equals(ray.dir);
+        return this.origin.equals(ray.origin)
+            && this.dir.equals(ray.dir);
     }
 
     /**

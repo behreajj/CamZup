@@ -156,10 +156,14 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         final int fsSrcLen = fsSrc.length;
         final int vsSrcLen = vsSrc.length;
 
-        final Vec3[] vns = target.normals = Vec3.resize(target.normals, vsSrcLen);
-        final Vec3[] vsTrg = neq
-            ? target.coords = Vec3.resize(target.coords, vsSrcLen)
-            : vsSrc;
+        target.normals = Vec3.resize(target.normals, vsSrcLen);
+        if (neq) {
+            target.coords = Vec3.resize(target.coords, vsSrcLen);
+        }
+
+        final Vec3[] vns = target.normals;
+        final Vec3[] vsTrg = target.coords;
+
         for (int i = 0; i < vsSrcLen; ++i) {
             final Vec3 vn = vns[i];
             Vec3.normalize(vsSrc[i], vn);
@@ -169,11 +173,13 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         if (neq) {
 
             // TEST
-            final int[][][] fsTrg = target.faces = new int[fsSrcLen][][];
+            target.faces = new int[fsSrcLen][][];
+            final int[][][] fsTrg = target.faces;
             for (int i = 0; i < fsSrcLen; ++i) {
                 final int[][] fSrc = fsSrc[i];
                 final int fSrcLen = fSrc.length;
-                final int[][] fTrg = fsTrg[i] = new int[fSrcLen][3];
+                fsTrg[i] = new int[fSrcLen][3];
+                final int[][] fTrg = fsTrg[i];
                 for (int j = 0; j < fSrcLen; ++j) {
                     final int[] vertTrg = fTrg[j];
                     final int[] vertSrc = fSrc[j];
@@ -492,7 +498,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         final Vec3[] vsSrc = target.coords;
         final int vsSrcLen = vsSrc.length;
 
-        final Vec3[] vns = target.normals = Vec3.resize(target.normals, vsSrcLen);
+        target.normals = Vec3.resize(target.normals, vsSrcLen);
+        final Vec3[] vns = target.normals;
         for (int i = 0; i < vsSrcLen; ++i) {
 
             final Vec3 vSrc = vsSrc[i];
@@ -870,7 +877,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
             for (int j = 0; j < fsLen; ++j) {
                 final int[][] fSrc = fsSrc[j];
                 final int fLen = fSrc.length;
-                final int[][] fTrg = fsTrg[j] = new int[fLen][3];
+                fsTrg[j] = new int[fLen][3];
+                final int[][] fTrg = fsTrg[j];
                 for (int k = 0; k < fLen; ++k) {
                     final int[] vertSrc = fSrc[k];
                     final int[] vertTrg = fTrg[k];
@@ -987,7 +995,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
             for (int j = 0; j < fsLen; ++j) {
                 final int[][] fSrc = fsSrc[j];
                 final int fLen = fSrc.length;
-                final int[][] fTrg = fsTrg[fsCursor + j] = new int[fLen][3];
+                fsTrg[fsCursor + j] = new int[fLen][3];
+                final int[][] fTrg = fsTrg[fsCursor + j];
                 for (int k = 0; k < fLen; ++k) {
                     final int[] vertSrc = fSrc[k];
                     final int[] vertTrg = fTrg[k];
@@ -1246,8 +1255,11 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         final int vsLen = vsSource.length;
         final int vtsLen = vtsSource.length;
 
-        final Vec2[] vsTarget = target.coords = Vec2.resize(target.coords, vsLen);
-        final Vec2[] vtsTarget = target.texCoords = Vec2.resize(target.texCoords, vtsLen);
+        target.coords = Vec2.resize(target.coords, vsLen);
+        target.texCoords = Vec2.resize(target.texCoords, vtsLen);
+
+        final Vec2[] vsTarget = target.coords;
+        final Vec2[] vtsTarget = target.texCoords;
 
         /* Copy texture coordinates. */
         for (int i = 0; i < vtsLen; ++i) {
@@ -1271,12 +1283,14 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         /* Copy faces. */
         final int[][][] fsSource = source.faces;
         final int facesLen = fsSource.length;
-        final int[][][] fsTarget = target.faces = new int[facesLen][][];
+        target.faces = new int[facesLen][][];
+        final int[][][] fsTarget = target.faces;
 
         for (int i = 0; i < facesLen; ++i) {
             final int[][] vertSource = fsSource[i];
             final int vertsLen = vertSource.length;
-            final int[][] vertTarget = fsTarget[i] = new int[vertsLen][2];
+            fsTarget[i] = new int[vertsLen][2];
+            final int[][] vertTarget = fsTarget[i];
 
             for (int j = 0; j < vertsLen; ++j) {
                 vertTarget[j][0] = vertSource[j][0];
@@ -1482,8 +1496,11 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         final int vtsSrcLen = vtsSrc.length;
         final int fsSrcLen = fsSrc.length;
 
-        final Vec2[] vsTrg = target.coords = Vec2.resize(target.coords, vtsSrcLen);
-        final Vec2[] vtsTrg = target.texCoords = Vec2.resize(target.texCoords, vtsSrcLen);
+        target.coords = Vec2.resize(target.coords, vtsSrcLen);
+        target.texCoords = Vec2.resize(target.texCoords, vtsSrcLen);
+
+        final Vec2[] vsTrg = target.coords;
+        final Vec2[] vtsTrg = target.texCoords;
 
         /* Copy texture coordinates to target coordinates. */
         for (int i = 0; i < vtsSrcLen; ++i) {
@@ -1492,11 +1509,13 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
             vtsTrg[i].set(vtSrc);
         }
 
-        final int[][][] fsTrg = target.faces = new int[fsSrcLen][][];
+        target.faces = new int[fsSrcLen][][];
+        final int[][][] fsTrg = target.faces;
         for (int i = 0; i < fsSrcLen; ++i) {
             final int[][] fSrc = fsSrc[i];
             final int fSrcLen = fSrc.length;
-            final int[][] fTrg = fsTrg[i] = new int[fSrcLen][2];
+            fsTrg[i] = new int[fSrcLen][2];
+            final int[][] fTrg = fsTrg[i];
             for (int j = 0; j < fSrcLen; ++j) {
                 final int[] vertSrc = fSrc[j];
                 final int[] vertTrg = fTrg[j];
@@ -1756,47 +1775,53 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         final int fsSrcLen = fsSrc.length;
         final int trgLen = fsSrcLen * vcount;
 
-        final Vec3[] vsTrg = target.coords = Vec3.resize(target.coords, trgLen);
-        final Vec2[] vtsTrg = target.texCoords = Vec2.resize(target.texCoords, trgLen);
-        final int[][][] fsTrg = target.faces = new int[fsSrcLen][vcount][3];
+        target.coords = Vec3.resize(target.coords, trgLen);
+        target.texCoords = Vec2.resize(target.texCoords, trgLen);
+        target.faces = new int[fsSrcLen][vcount][3];
 
-        for (int k = 0, i = 0; i < fsSrcLen; ++i) {
+        final Vec3[] vsTrg = target.coords;
+        final Vec2[] vtsTrg = target.texCoords;
+        final int[][][] fsTrg = target.faces;
+
+        for (int k = 0; k < trgLen; ++k) {
+            final int i = k / vcount;
+
             final int[][] fSrc = fsSrc[i];
             final int fSrcLen = fSrc.length;
             final float fSrcLenf = fSrc.length;
             final int[][] fTrg = fsTrg[i];
 
-            for (int j = 0; j < vcount; ++j, ++k) {
-                final float step = offset + j * toStep;
-                final float tScaled = fSrcLenf * Utils.mod1(step);
-                final int tTrunc = (int) tScaled;
+            final int j = k % vcount;
 
-                final int[] a = fSrc[tTrunc];
-                final int[] b = fSrc[(tTrunc + 1) % fSrcLen];
+            final float step = offset + j * toStep;
+            final float tScaled = fSrcLenf * Utils.mod1(step);
+            final int tTrunc = (int) tScaled;
 
-                final float t = tScaled - tTrunc;
-                final float u = 1.0f - t;
+            final int[] a = fSrc[tTrunc];
+            final int[] b = fSrc[(tTrunc + 1) % fSrcLen];
 
-                final Vec3 vaSrc = vsSrc[a[0]];
-                final Vec3 vbSrc = vsSrc[b[0]];
+            final float t = tScaled - tTrunc;
+            final float u = 1.0f - t;
 
-                final Vec2 vtaSrc = vtsSrc[a[1]];
-                final Vec2 vtbSrc = vtsSrc[b[1]];
+            final Vec3 vaSrc = vsSrc[a[0]];
+            final Vec3 vbSrc = vsSrc[b[0]];
 
-                vsTrg[k].set(
-                    u * vaSrc.x + t * vbSrc.x,
-                    u * vaSrc.y + t * vbSrc.y,
-                    u * vaSrc.z + t * vbSrc.z);
+            final Vec2 vtaSrc = vtsSrc[a[1]];
+            final Vec2 vtbSrc = vtsSrc[b[1]];
 
-                vtsTrg[k].set(
-                    u * vtaSrc.x + t * vtbSrc.x,
-                    u * vtaSrc.y + t * vtbSrc.y);
+            vsTrg[k].set(
+                u * vaSrc.x + t * vbSrc.x,
+                u * vaSrc.y + t * vbSrc.y,
+                u * vaSrc.z + t * vbSrc.z);
 
-                final int[] vertTrg = fTrg[j];
-                vertTrg[0] = k;
-                vertTrg[1] = k;
-                vertTrg[2] = k;
-            }
+            vtsTrg[k].set(
+                u * vtaSrc.x + t * vtbSrc.x,
+                u * vtaSrc.y + t * vtbSrc.y);
+
+            final int[] vertTrg = fTrg[j];
+            vertTrg[0] = k;
+            vertTrg[1] = k;
+            vertTrg[2] = k;
         }
 
         target.shadeFlat(0, fsSrcLen);
@@ -1852,11 +1877,13 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         final Vec3[] vnsSrc = source.normals;
 
         /* Reassign. */
-        for (int k = 0, i = 0; i < fsSrcLen; ++i) {
+        int k = 0;
+        for (int i = 0; i < fsSrcLen; ++i) {
             final int[][] fSrc = fsSrc[i];
             final int fLen = fSrc.length;
-            final int[][] fTrg = fsTrg[i] = new int[fLen][3];
-            for (int j = 0; j < fLen; ++j, ++k) {
+            fsTrg[i] = new int[fLen][3];
+            final int[][] fTrg = fsTrg[i];
+            for (int j = 0; j < fLen; ++j) {
                 final int[] vertSrc = fSrc[j];
                 final int[] vertTrg = fTrg[j];
 
@@ -1868,6 +1895,7 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
                 vertTrg[0] = k;
                 vertTrg[1] = k;
                 vertTrg[2] = k;
+                ++k;
             }
         }
 
@@ -1946,9 +1974,14 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
          */
         final int vLen = latsLons + 2;
         final int vtLen = latsLonsp1 + lons + lons;
-        final Vec3[] vs = target.coords = Vec3.resize(target.coords, vLen);
-        final Vec2[] vts = target.texCoords = Vec2.resize(target.texCoords, vtLen);
-        final Vec3[] vns = target.normals = Vec3.resize(target.normals, vLen);
+
+        target.coords = Vec3.resize(target.coords, vLen);
+        target.texCoords = Vec2.resize(target.texCoords, vtLen);
+        target.normals = Vec3.resize(target.normals, vLen);
+
+        final Vec3[] vs = target.coords;
+        final Vec2[] vts = target.texCoords;
+        final Vec3[] vns = target.normals;
 
         /*
          * The length of the faces array comes from the north and south cap being
@@ -1963,7 +1996,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
          * North and South cap face inner arrays will have a length of 3; the
          * mid-latitudes will have a length of 4.
          */
-        final int[][][] fs = target.faces = isQuad ? new int[fsLen][4][3] : new int[fsLen][3][3];
+        target.faces = isQuad ? new int[fsLen][4][3] : new int[fsLen][3][3];
+        final int[][][] fs = target.faces;
 
         /*
          * Due to the two poles, linear interpolation between latitudes is not i /
@@ -2004,12 +2038,13 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
             final int h = 1 + n;
             final int m = lons + j;
 
-            final int[][] triSouth = isQuad
-                ? fs[j] = new int[3][3]
-                : fs[j];
-            final int[][] triNorth = isQuad
-                ? fs[fsIdxOff + j] = new int[3][3]
-                : fs[fsIdxOff + j];
+            if (isQuad) {
+                fs[j] = new int[3][3];
+                fs[fsIdxOff + j] = new int[3][3];
+            }
+
+            final int[][] triSouth = fs[j];
+            final int[][] triNorth = fs[fsIdxOff + j];
 
             /* Polar vertex. */
             final int[] north0 = triNorth[2];
@@ -2758,16 +2793,18 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         }
         this.texCoords = Vec2.resize(this.texCoords, uniformLen);
 
-        for (int k = 0, i = 0; i < fsLen; ++i) {
+        int k = 0;
+        for (int i = 0; i < fsLen; ++i) {
             final int[][] f = this.faces[i];
             final int fLen = f.length;
             final float toTheta = Utils.div(1.0f, fLen);
-            for (int j = 0; j < fLen; ++j, ++k) {
+            for (int j = 0; j < fLen; ++j) {
                 f[j][1] = k;
                 final float theta = j * toTheta;
                 final float cosTheta = Utils.scNorm(theta);
                 final float sinTheta = Utils.scNorm(theta - 0.25f);
                 this.texCoords[k].set(cosTheta * 0.5f + 0.5f, 0.5f - sinTheta * 0.5f);
+                ++k;
             }
         }
         return this;
@@ -3193,7 +3230,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
             new Vec2(0.0f, 1.0f)
         };
         final int[][][] fsNew = new int[faceLen + 1][4][3];
-        final int[][] extrudedFace = fsNew[faceLen] = new int[faceLen][3];
+        fsNew[faceLen] = new int[faceLen][3];
+        final int[][] extrudedFace = fsNew[faceLen];
 
         for (int j = 0; j < faceLen; ++j) {
 
@@ -3206,7 +3244,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
 
             /* Retrieve coordinate. Create extruded vertex. */
             final Vec3 vBase = this.coords[vCurrIdx];
-            final Vec3 vExtruded = vsExtruded[j] = new Vec3();
+            vsExtruded[j] = new Vec3();
+            final Vec3 vExtruded = vsExtruded[j];
 
             /*
              * Taper and extrude the vertex coordinate (remove center, scale
@@ -3748,7 +3787,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         final int vnsOldLen = this.normals.length;
 
         final int[][][] fsNew = new int[faceLen + 1][4][3];
-        final int[][] centerFace = fsNew[faceLen] = new int[faceLen][3];
+        fsNew[faceLen] = new int[faceLen][3];
+        final int[][] centerFace = fsNew[faceLen];
 
         /* Find center. */
         final Vec3 vCenter = new Vec3();
@@ -3799,10 +3839,11 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
                 u * vtCurr.x + fac * vtCenter.x,
                 u * vtCurr.y + fac * vtCenter.y);
 
-            final Vec3 vnNew = vnsNew[j] = new Vec3(
+            vnsNew[j] = new Vec3(
                 u * vnCurr.x + fac * vnCenter.x,
                 u * vnCurr.y + fac * vnCenter.y,
                 u * vnCurr.z + fac * vnCenter.z);
+            final Vec3 vnNew = vnsNew[j];
             Vec3.normalize(vnNew, vnNew);
 
             final int vSubdivIdx = vsOldLen + j;
@@ -3878,7 +3919,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
 
         for (int i = 0; i < itr; ++i) {
             final int facesLen = this.faces.length;
-            for (int j = 0, k = 0; j < facesLen; ++j) {
+            int k = 0;
+            for (int j = 0; j < facesLen; ++j) {
                 final int vertLen = this.faces[k].length;
                 this.insetFace(k, fac);
                 k += vertLen + 1;
@@ -4431,10 +4473,11 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
             vtsNew[k] = new Vec2(
                 u * vtOrig.x + step * vtDest.x,
                 u * vtOrig.y + step * vtDest.y);
-            final Vec3 vn = vnsNew[k] = new Vec3(
+            vnsNew[k] = new Vec3(
                 u * vnOrig.x + step * vnDest.x,
                 u * vnOrig.y + step * vnDest.y,
                 u * vnOrig.z + step * vnDest.z);
+            final Vec3 vn = vnsNew[k];
             Vec3.normalize(vn, vn);
 
             final int[] fNew = fsNew[k];
@@ -4499,9 +4542,13 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         final int[][][] fsNew = new int[faceLen][4][3];
 
         /* Center is last element of new array. */
-        final Vec3 vCenter = vsNew[faceLen] = new Vec3();
-        final Vec2 vtCenter = vtsNew[faceLen] = new Vec2();
-        final Vec3 vnCenter = vnsNew[faceLen] = new Vec3();
+        vsNew[faceLen] = new Vec3();
+        vtsNew[faceLen] = new Vec2();
+        vnsNew[faceLen] = new Vec3();
+
+        final Vec3 vCenter = vsNew[faceLen];
+        final Vec2 vtCenter = vtsNew[faceLen];
+        final Vec3 vnCenter = vnsNew[faceLen];
 
         final int vCenterIdx = vsOldLen + faceLen;
         final int vtCenterIdx = vtsOldLen + faceLen;
@@ -4671,7 +4718,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         final Vec2[] vtsNew = new Vec2[faceLen];
         final Vec3[] vnsNew = new Vec3[faceLen];
         final int[][][] fsNew = new int[faceLen + 1][3][3];
-        final int[][] centerFace = fsNew[faceLen] = new int[faceLen][3];
+        fsNew[faceLen] = new int[faceLen][3];
+        final int[][] centerFace = fsNew[faceLen];
 
         for (int j = 0; j < faceLen; ++j) {
             final int[] vertCurr = face[j];
@@ -5363,7 +5411,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
         final Vec3[] vns;
         final int idxOffset;
         if (reassign) {
-            vns = this.normals = Vec3.resize(this.normals, count);
+            this.normals = Vec3.resize(this.normals, count);
+            vns = this.normals;
             idxOffset = 0;
         } else {
             vns = new Vec3[count];
@@ -5390,7 +5439,8 @@ public class Mesh3 extends Mesh implements Iterable<Face3> {
                 vn = vns[i];
                 vn.reset();
             } else {
-                vn = vns[i] = new Vec3();
+                vns[i] = new Vec3();
+                vn = vns[i];
             }
 
             for (int j = 0; j < faceLen; ++j) {

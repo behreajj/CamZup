@@ -1214,7 +1214,7 @@ public class Vec3 implements Comparable<Vec3> {
         // TODO: Redo on account of spherical coordinate system?
 
         final int vcount = Math.max(count, 3);
-        final float vrad = Math.max(Utils.EPSILON, radius);
+        final float vrad = Utils.max(Utils.EPSILON, radius);
 
         final Vec3[] result = new Vec3[vcount];
         final float toStep = 2.0f / vcount;
@@ -1326,7 +1326,7 @@ public class Vec3 implements Comparable<Vec3> {
         final float vrMax = Utils.max(Utils.EPSILON, radiusMin, radiusMax);
         final float vrMin = oneLayer
             ? vrMax
-            : Math.max(Utils.EPSILON, Math.min(radiusMin, radiusMax));
+            : Utils.max(Utils.min(radiusMin, radiusMax), Utils.EPSILON);
 
         final int latLen = includePoles ? vLats + 2 : vLats;
         final int latOff = includePoles ? 1 : 0;
@@ -1669,9 +1669,9 @@ public class Vec3 implements Comparable<Vec3> {
     public static Vec3 max(final Vec3 a, final float lowerBound, final Vec3 target) {
 
         return target.set(
-            Math.max(a.x, lowerBound),
-            Math.max(a.y, lowerBound),
-            Math.max(a.z, lowerBound));
+            Utils.max(a.x, lowerBound),
+            Utils.max(a.y, lowerBound),
+            Utils.max(a.z, lowerBound));
     }
 
     /**
@@ -1686,9 +1686,9 @@ public class Vec3 implements Comparable<Vec3> {
     public static Vec3 max(final Vec3 a, final Vec3 lowerBound, final Vec3 target) {
 
         return target.set(
-            Math.max(a.x, lowerBound.x),
-            Math.max(a.y, lowerBound.y),
-            Math.max(a.z, lowerBound.z));
+            Utils.max(a.x, lowerBound.x),
+            Utils.max(a.y, lowerBound.y),
+            Utils.max(a.z, lowerBound.z));
     }
 
     /**
@@ -1703,9 +1703,9 @@ public class Vec3 implements Comparable<Vec3> {
     public static Vec3 min(final Vec3 a, final float upperBound, final Vec3 target) {
 
         return target.set(
-            Math.min(a.x, upperBound),
-            Math.min(a.y, upperBound),
-            Math.min(a.z, upperBound));
+            Utils.min(a.x, upperBound),
+            Utils.min(a.y, upperBound),
+            Utils.min(a.z, upperBound));
     }
 
     /**
@@ -1720,9 +1720,9 @@ public class Vec3 implements Comparable<Vec3> {
     public static Vec3 min(final Vec3 a, final Vec3 upperBound, final Vec3 target) {
 
         return target.set(
-            Math.min(a.x, upperBound.x),
-            Math.min(a.y, upperBound.y),
-            Math.min(a.z, upperBound.z));
+            Utils.min(a.x, upperBound.x),
+            Utils.min(a.y, upperBound.y),
+            Utils.min(a.z, upperBound.z));
     }
 
     /**
@@ -1971,6 +1971,7 @@ public class Vec3 implements Comparable<Vec3> {
         if (t >= 1.0f) {
             return target.set(dest);
         }
+
         final float u = 1.0f - t;
         return target.set(
             u * orig.x + t * dest.x,
@@ -2051,9 +2052,8 @@ public class Vec3 implements Comparable<Vec3> {
      * Projects one vector onto another. Defined as
      * <br>
      * <br>
-     * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> . <em>b</em> /
-     * <em>b</em> .
-     * <em>b</em> )
+     * project ( <em>a</em>, <em>b</em> ) := <em>b</em> ( <em>a</em> .
+     * <em>b</em> / <em>b</em> . <em>b</em> )
      * <br>
      * <br>
      * Returns a zero vector if the right operand, <em>b</em>, has zero
@@ -2178,7 +2178,10 @@ public class Vec3 implements Comparable<Vec3> {
         final double sqMag = x * x + y * y + z * z;
         if (sqMag != 0.0d) {
             final double invMag = radius / Math.sqrt(sqMag);
-            return target.set((float) (x * invMag), (float) (y * invMag), (float) (z * invMag));
+            return target.set(
+                (float) (x * invMag),
+                (float) (y * invMag),
+                (float) (z * invMag));
         }
         return target.reset();
     }
@@ -2209,7 +2212,10 @@ public class Vec3 implements Comparable<Vec3> {
      * @see Vec3#magSq(Vec3)
      * @see Utils#invSqrtUnchecked(float)
      */
-    public static Vec3 reflect(final Vec3 incident, final Vec3 normal, final Vec3 target) {
+    public static Vec3 reflect(
+        final Vec3 incident,
+        final Vec3 normal,
+        final Vec3 target) {
 
         final float nMSq = Vec3.magSq(normal);
         if (nMSq < Utils.EPSILON) {
@@ -2220,7 +2226,8 @@ public class Vec3 implements Comparable<Vec3> {
         final float nx = normal.x * mInv;
         final float ny = normal.y * mInv;
         final float nz = normal.z * mInv;
-        final float scalar = 2.0f * (nx * incident.x + ny * incident.y + nz * incident.z);
+        final float scalar = 2.0f * (nx * incident.x + ny * incident.y
+            + nz * incident.z);
         return target.set(
             incident.x - scalar * nx,
             incident.y - scalar * ny,
@@ -2408,9 +2415,7 @@ public class Vec3 implements Comparable<Vec3> {
         return target.set(
             (complcos * axis.x * axis.x + cosa) * v.x + (complxy - sinz) * v.y + (complxz + siny) * v.z,
             (complxy + sinz) * v.x + (complcos * axis.y * axis.y + cosa) * v.y + (complyz - sinx) * v.z,
-            (complxz - siny) * v.x
-                + (complyz + sinx) * v.y
-                + (complcos * axis.z * axis.z + cosa) * v.z);
+            (complxz - siny) * v.x + (complyz + sinx) * v.y + (complcos * axis.z * axis.z + cosa) * v.z);
     }
 
     /**
@@ -2424,7 +2429,11 @@ public class Vec3 implements Comparable<Vec3> {
      * @return the rotated vector
      * @see Vec3#rotate(Vec3, float, float, Vec3, Vec3)
      */
-    public static Vec3 rotate(final Vec3 v, final float radians, final Vec3 axis, final Vec3 target) {
+    public static Vec3 rotate(
+        final Vec3 v,
+        final float radians,
+        final Vec3 axis,
+        final Vec3 target) {
 
         final float n = radians * Utils.ONE_TAU;
         final float c = Utils.scNorm(n);

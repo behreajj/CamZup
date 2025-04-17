@@ -777,7 +777,7 @@ public class Quadtree {
      */
     public int totalCapacity() {
 
-        // TODO: TEST
+        // TEST
         int sum = 0;
         boolean isLeaf = true;
         for (int i = 0; i < Quadtree.CHILD_COUNT; ++i) {
@@ -922,8 +922,7 @@ public class Quadtree {
 
         Bounds2.split(
             this.bounds,
-            0.5f,
-            0.5f,
+            0.5f, 0.5f,
             this.children[Quadtree.SOUTH_WEST].bounds,
             this.children[Quadtree.SOUTH_EAST].bounds,
             this.children[Quadtree.NORTH_WEST].bounds,

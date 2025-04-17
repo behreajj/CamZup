@@ -15,12 +15,12 @@ public class ColorKey implements Comparable<ColorKey> {
     public final Lab clr = Lab.clearBlack(new Lab());
 
     /**
-     * The key's step, expected to be in the range [0.0, 1.0] .
+     * The key's step, expected to be in the range [0.0, 1.0].
      */
     public float step = 0.0f;
 
     /**
-     * The default constructor. Creates a clear black color at 0.0 .
+     * The default constructor. Creates a clear black color at 0.0.
      */
     public ColorKey() {
     }
@@ -119,7 +119,8 @@ public class ColorKey implements Comparable<ColorKey> {
     }
 
     /**
-     * Returns a hash code for this key based on its step, not based on its color.
+     * Returns a hash code for this key based on its step, not based on its
+     * color.
      *
      * @return the hash code
      * @see Float#floatToIntBits(float)
@@ -191,7 +192,7 @@ public class ColorKey implements Comparable<ColorKey> {
 
     /**
      * Sets this key by step and color channel. The color's alpha is assumed to
-     * be 1.0 . This is for package-level use only, so that the step can be set
+     * be 1.0. This is for package-level use only, so that the step can be set
      * without clamp protection.
      *
      * @param step the step
@@ -239,8 +240,8 @@ public class ColorKey implements Comparable<ColorKey> {
     }
 
     /**
-     * Returns a String of Python code targeted toward the Blender 4.x API. This
-     * code is brittle and is used for internal testing purposes.
+     * Returns a String of Python code targeted toward the Blender 4.x API.
+     * This code is brittle and is used for internal testing purposes.
      *
      * @param pyCd  the string builder
      * @param gamma the gamma adjustment

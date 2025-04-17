@@ -20,13 +20,16 @@ public enum ArcMode {
      * In addition to the arc, draws a straight line from the start angle to
      * the center of the arc, to the stop angle.
      */
-    PIE();
+    PIE(),
+
+    /**
+     * Draws an inner and outer arc, connected by straight line segments.
+     */
+    SECTOR();
 
     /**
      * The default constructor.
      */
     ArcMode() {
-
-        // TODO: Add a sector mode, so as to make mesh and curve arcs consistent?
     }
 }

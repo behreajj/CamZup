@@ -6,7 +6,7 @@ import java.util.Objects;
 import java.util.TreeSet;
 
 /**
- * A direction that extends from an originating point.
+ * A direction that extends from an origin point.
  */
 public class Ray2 {
 
@@ -53,23 +53,26 @@ public class Ray2 {
      * @param time   the time step
      * @param target the output vector
      * @return the point
-     * @see Utils#approx(float, float)
-     * @see Utils#invSqrtUnchecked(float)
-     * @see Vec2#magSq(Vec2)
      */
-    public static Vec2 eval(final Ray2 ray, final float time, final Vec2 target) {
+    public static Vec2 eval(
+        final Ray2 ray,
+        final float time,
+        final Vec2 target) {
 
-        final Vec2 origin = ray.origin;
-        final Vec2 dir = ray.dir;
-        final float dmsq = Vec2.magSq(dir);
-        if (time > 0.0f && dmsq > 0.0f) {
-            if (Utils.approx(dmsq, 1.0f)) {
-                return target.set(origin.x + dir.x * time, origin.y + dir.y * time);
-            }
-            final float tm = time * Utils.invSqrtUnchecked(dmsq);
-            return target.set(origin.x + dir.x * tm, origin.y + dir.y * tm);
-        }
-        return target.set(origin);
+        if (time <= 0.0f) { return target.set(ray.origin); }
+
+        final Vec2 rDir = ray.dir;
+        final double dx = rDir.x;
+        final double dy = rDir.y;
+
+        final double dmsq = dx * dx + dy * dy;
+        if (dmsq <= Utils.EPSILON_D) { return target.set(ray.origin); }
+
+        final double tm = time / Math.sqrt(dmsq);
+        final Vec2 rOrig = ray.origin;
+        return target.set(
+            (float) (rOrig.x + tm * dx),
+            (float) (rOrig.y + tm * dy));
     }
 
     /**
@@ -81,7 +84,10 @@ public class Ray2 {
      * @return the ray
      * @see Vec2#subNorm(Vec2, Vec2, Vec2)
      */
-    public static Ray2 fromPoints(final Vec2 orig, final Vec2 dest, final Ray2 target) {
+    public static Ray2 fromPoints(
+        final Vec2 orig,
+        final Vec2 dest,
+        final Ray2 target) {
 
         target.origin.set(orig);
         Vec2.subNorm(dest, orig, target.dir);
@@ -141,7 +147,9 @@ public class Ray2 {
             if (t10 > 0.0d) {
                 final double t20 = (dx * yDist0 - dyrx + dy * x0) / dot0;
                 if (t20 >= 0.0d && t20 <= 1.0d) {
-                    uniques.add(new Vec2((float) ((1.0d - t20) * x0 + t20 * x1), min.y));
+                    uniques.add(new Vec2(
+                        (float) ((1.0d - t20) * x0 + t20 * x1),
+                        min.y));
                 }
             }
         }
@@ -151,7 +159,9 @@ public class Ray2 {
             if (t11 > 0.0d) {
                 final double t21 = (dxry - dx * y0 - dy * xDist1) / dot1;
                 if (t21 >= 0.0d && t21 <= 1.0d) {
-                    uniques.add(new Vec2(max.x, (float) ((1.0d - t21) * y0 + t21 * y1)));
+                    uniques.add(new Vec2(
+                        max.x,
+                        (float) ((1.0d - t21) * y0 + t21 * y1)));
                 }
             }
         }
@@ -161,7 +171,9 @@ public class Ray2 {
             if (t12 > 0.0d) {
                 final double t22 = (dx * yDist1 - dyrx + dy * x1) / dot2;
                 if (t22 >= 0.0d && t22 <= 1.0d) {
-                    uniques.add(new Vec2((float) ((1.0d - t22) * x1 + t22 * x0), max.y));
+                    uniques.add(new Vec2(
+                        (float) ((1.0d - t22) * x1 + t22 * x0),
+                        max.y));
                 }
             }
         }
@@ -171,7 +183,9 @@ public class Ray2 {
             if (t13 > 0.0d) {
                 final double t23 = (dxry - dx * y1 - dy * xDist0) / dot3;
                 if (t23 >= 0.0d && t23 <= 1.0d) {
-                    uniques.add(new Vec2(min.x, (float) ((1.0d - t23) * y1 + t23 * y0)));
+                    uniques.add(new Vec2(
+                        min.x,
+                        (float) ((1.0d - t23) * y1 + t23 * y0)));
                 }
             }
         }
@@ -202,8 +216,7 @@ public class Ray2 {
 
     /**
      * Finds points of intersection, if any, between a ray and a mesh entity.
-     * Transforms the ray to
-     * local space.
+     * Transforms the ray to local space.
      *
      * @param r  the ray
      * @param me the mesh entity
@@ -231,24 +244,24 @@ public class Ray2 {
     }
 
     /**
-     * Finds points of intersection, if any, between a ray and a mesh entity.
-     * Transforms the ray to
-     * local space.
+     * Finds points of intersection, if any, between a ray and a circle.
      *
      * @param ray    the ray
      * @param center the circle center
      * @param radius the circle radius
      * @return the points
      */
-    public static Vec2[] intersect(final Ray2 ray, final Vec2 center, final float radius) {
-
-        final TreeSet<Vec2> uniques = new TreeSet<>();
+    public static Vec2[] intersect(
+        final Ray2 ray,
+        final Vec2 center,
+        final float radius) {
 
         final Vec2 rOrig = ray.origin;
         final Vec2 rDir = ray.dir;
 
         final double rx = rOrig.x;
         final double ry = rOrig.y;
+
         final double dx = rDir.x;
         final double dy = rDir.y;
 
@@ -262,13 +275,16 @@ public class Ray2 {
         final double dotuv = ux * dx + uy * dy;
         final double vmsq = dx * dx + dy * dy;
         final double uvScalarProj = vmsq > 0.0d ? dotuv / vmsq : 0.0d;
+
         final double u1x = dx * uvScalarProj;
         final double u1y = dy * uvScalarProj;
 
         final double u2x = ux - u1x;
         final double u2y = uy - u1y;
+
         final double u2msq = u2x * u2x + u2y * u2y;
-        final double rSq = (double) radius * (double) radius;
+        final double rSq = radius * radius;
+        final TreeSet<Vec2> uniques = new TreeSet<>();
 
         if (u2msq <= rSq) {
             final double opu1x = rx + u1x;
@@ -284,7 +300,6 @@ public class Ray2 {
 
         final Vec2[] arr = uniques.toArray(new Vec2[0]);
         Arrays.sort(arr, new Vec2.SortDistSq(ray.origin));
-
         return arr;
     }
 
@@ -296,7 +311,10 @@ public class Ray2 {
      * @param dest the destination
      * @return the points
      */
-    public static Vec2[] intersect(final Ray2 ray, final Vec2 orig, final Vec2 dest) {
+    public static Vec2[] intersect(
+        final Ray2 ray,
+        final Vec2 orig,
+        final Vec2 dest) {
 
         final TreeSet<Vec2> uniques = new TreeSet<>();
         Ray2.factorEdge(ray.origin.x, ray.origin.y, ray.dir.x, ray.dir.y,
@@ -305,9 +323,8 @@ public class Ray2 {
     }
 
     /**
-     * Finds an intersection between a ray and a line segment as a factor in [0.0,
-     * 1.0] . Returns -1.0
-     * if there is no intersection.
+     * Finds an intersection between a ray and a line segment as a factor in
+     * [0.0, 1.0]. Returns -1.0 if there is no intersection.
      *
      * @param xRayOrig the ray origin x
      * @param yRayOrig the ray origin y
@@ -320,32 +337,21 @@ public class Ray2 {
      * @param uniques  the unique vectors
      */
     static void factorEdge(
-        final float xRayOrig,
-        final float yRayOrig,
-        final float xRayDir,
-        final float yRayDir,
-        final float xSegOrig,
-        final float ySegOrig,
-        final float xSegDest,
-        final float ySegDest,
+        final float xRayOrig, final float yRayOrig,
+        final float xRayDir, final float yRayDir,
+        final float xSegOrig, final float ySegOrig,
+        final float xSegDest, final float ySegDest,
         final TreeSet<Vec2> uniques) {
 
         /* Subtract destination from origin to get vector. */
-        final double v1x = (double) xSegDest - (double) xSegOrig;
-        final double v1y = (double) ySegDest - (double) ySegOrig;
+        final double v1x = xSegDest - xSegOrig;
+        final double v1y = ySegDest - ySegOrig;
 
         /* Find CCW perpendicular of ray direction. */
         final double v2x = -yRayDir;
 
-        /*
-         * This allows for one return statement at the end of the function instead
-         * of multiple return statements in if blocks, which makes it easier to
-         * automatically inline.
-         */
-        final float fac = -1.0f;
-
         /* Find dot product between vector and perpendicular. */
-        final double dot = v1x * v2x + v1y * (double) xRayDir;
+        final double dot = v1x * v2x + v1y * xRayDir;
         if (dot != 0.0d) {
 
             /* Find vector from ray origin to segment origin. */
@@ -357,11 +363,11 @@ public class Ray2 {
             if (t1 > 0.0d) {
 
                 /* Find dot product of v0 and v2, normalize. */
-                final double t2 = (v0x * v2x + v0y * (double) xRayDir) / dot;
+                final double t2 = (v0x * v2x + v0y * xRayDir) / dot;
                 if (t2 >= 0.0d && t2 <= 1.0d) {
                     final double u2 = 1.0d - t2;
-                    final double x = u2 * (double) xSegOrig + t2 * (double) xSegDest;
-                    final double y = u2 * (double) ySegOrig + t2 * (double) ySegDest;
+                    final double x = u2 * xSegOrig + t2 * xSegDest;
+                    final double y = u2 * ySegOrig + t2 * ySegDest;
                     uniques.add(new Vec2((float) x, (float) y));
                 }
             }
@@ -377,7 +383,10 @@ public class Ray2 {
      * @param uniques the points
      * @return the points
      */
-    static TreeSet<Vec2> intersect(final Ray2 local, final Mesh2 m, final TreeSet<Vec2> uniques) {
+    static TreeSet<Vec2> intersect(
+        final Ray2 local,
+        final Mesh2 m,
+        final TreeSet<Vec2> uniques) {
 
         final Vec2 rOrig = local.origin;
         final float rx = rOrig.x;
@@ -396,8 +405,11 @@ public class Ray2 {
                 final int k = (j + 1) % fLen;
                 final Vec2 curr = vs[f[j][0]];
                 final Vec2 next = vs[f[k][0]];
-                Ray2.factorEdge(rx, ry, dx, dy,
-                    curr.x, curr.y, next.x, next.y, uniques);
+                Ray2.factorEdge(
+                    rx, ry, dx, dy,
+                    curr.x, curr.y,
+                    next.x, next.y,
+                    uniques);
             }
         }
 
@@ -520,7 +532,8 @@ public class Ray2 {
      */
     protected boolean equals(final Ray2 ray) {
 
-        return this.origin.equals(ray.origin) && this.dir.equals(ray.dir);
+        return this.origin.equals(ray.origin)
+            && this.dir.equals(ray.dir);
     }
 
     /**

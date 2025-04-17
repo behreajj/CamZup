@@ -822,8 +822,6 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
         final boolean useSubPaths,
         final MaterialSolid[] materials) {
 
-        // TODO: Allow user to specify SVG cap and join rounding?
-
         final StringBuilder svgp = new StringBuilder(1024);
         if (this.length() < 1) {
             return svgp.toString();

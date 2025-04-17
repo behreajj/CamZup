@@ -86,11 +86,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * @param yScale  the scale y
      */
     public Transform2(
-        final float xLoc,
-        final float yLoc,
+        final float xLoc, final float yLoc,
         final float radians,
-        final float xScale,
-        final float yScale) {
+        final float xScale, final float yScale) {
 
         this.set(xLoc, yLoc, radians, xScale, yScale);
     }
@@ -173,10 +171,8 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * @see Vec2#zero(Vec2)
      */
     public static Transform2 fromAxes(
-        final float xRight,
-        final float yForward,
-        final float yRight,
-        final float xForward,
+        final float xRight, final float yForward,
+        final float yRight, final float xForward,
         final Transform2 target) {
 
         target.locPrev.set(target.location);
@@ -210,7 +206,10 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
         final Vec2 forward,
         final Transform2 target) {
 
-        return Transform2.fromAxes(right.x, forward.y, right.y, forward.x, target);
+        return Transform2.fromAxes(
+            right.x, forward.y,
+            right.y, forward.x,
+            target);
     }
 
     /**
@@ -1261,11 +1260,9 @@ public class Transform2 implements Comparable<Transform2>, ISpatial2, IOriented2
      * @see Transform2#updateAxes()
      */
     public Transform2 set(
-        final float xLoc,
-        final float yLoc,
+        final float xLoc, final float yLoc,
         final float radians,
-        final float xScale,
-        final float yScale) {
+        final float xScale, final float yScale) {
 
         this.locPrev.set(this.location);
         this.location.set(xLoc, yLoc);

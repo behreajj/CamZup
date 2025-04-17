@@ -2364,15 +2364,15 @@ public class Quaternion implements Comparable<Quaternion> {
             final float step,
             final Quaternion target) {
 
-            final double v = 1.0d - (double) step;
+            final double v = 1.0d - step;
 
             final Vec3 a = orig.imag;
             final Vec3 b = dest.imag;
 
-            final double cw = (double) step * orig.real + v * dest.real;
-            final double cx = (double) step * a.x + v * b.x;
-            final double cy = (double) step * a.y + v * b.y;
-            final double cz = (double) step * a.z + v * b.z;
+            final double cw = step * orig.real + v * dest.real;
+            final double cx = step * a.x + v * b.x;
+            final double cy = step * a.y + v * b.y;
+            final double cz = step * a.z + v * b.z;
 
             /* Normalize. */
             final double mSq = cw * cw + cx * cx + cy * cy + cz * cz;

@@ -141,7 +141,10 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @param target     the output curve
      * @return the arc
      */
-    public static Curve2 arc(final float startAngle, final float stopAngle, final Curve2 target) {
+    public static Curve2 arc(
+        final float startAngle,
+        final float stopAngle,
+        final Curve2 target) {
 
         return Curve2.arc(startAngle, stopAngle, 0.5f, target);
     }
@@ -164,17 +167,20 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         final ArcMode arcMode,
         final Curve2 target) {
 
+        // TODO: Refactor to create separate, protected arc methods, then call
+        // them from this method based on arc mode.
+
         /*
          * Optimized where possible because Yup2 renderer uses this to display
          * arcs. Outlier case where arc is used as a progress bar. The tolerance
-         * is less than half a degree, 1.0 / 720.0, which is the minimum step used
-         * by the Processing sine cosine look-up table (LUT).
+         * is less than half a degree, 1.0 / 720.0, which is the minimum step
+         * used by the Processing sine cosine look-up table (LUT).
          */
         if (Utils.approx(stopAngle - startAngle, Utils.TAU, 0.00139f)) {
             return Curve2.circle(Curve.KNOTS_PER_CIRCLE, startAngle, radius, 0.0f, 0.0f, target);
         }
 
-        /* Divide by TAU then wrap around the range, [0.0, 1.0] . */
+        /* Divide by TAU then wrap around the range, [0.0, 1.0]. */
         final float a1 = Utils.mod1(startAngle * Utils.ONE_TAU);
         final float b1 = Utils.mod1(stopAngle * Utils.ONE_TAU);
 
@@ -183,7 +189,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
 
         /* Edge case: angles are equal. */
         if (arcLen1 <= 0.00139f) {
-            return Curve2.line(new Vec2(), Vec2.fromPolar(startAngle, radius, new Vec2()), target);
+            return Curve2.line(new Vec2(), Vec2.fromPolar(startAngle, radius,
+                new Vec2()), target);
         }
 
         final float destAngle1 = a1 + arcLen1;
@@ -223,8 +230,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
             final Knot2 knot = knots.get(i);
             final float t = i * toStep;
             final float angle1 = (1.0f - t) * a1 + t * destAngle1;
-            Knot2.fromPolar(
-                Utils.scNorm(angle1), Utils.scNorm(angle1 - 0.25f), radius, handleMag, 0.0f, 0.0f, knot);
+            Knot2.fromPolar(Utils.scNorm(angle1), Utils.scNorm(angle1 - 0.25f),
+                radius, handleMag, 0.0f, 0.0f, knot);
         }
 
         /* Depending on arc mode, calculate chord or legs. */
@@ -262,17 +269,21 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
 
                 /* Flatten center handles. */
                 center.rearHandle.set(
-                    cox23 + Utils.ONE_THIRD * coLast.x, coy23 + Utils.ONE_THIRD * coLast.y);
+                    cox23 + Utils.ONE_THIRD * coLast.x,
+                    coy23 + Utils.ONE_THIRD * coLast.y);
                 center.foreHandle.set(
-                    cox23 + Utils.ONE_THIRD * coFirst.x, coy23 + Utils.ONE_THIRD * coFirst.y);
+                    cox23 + Utils.ONE_THIRD * coFirst.x,
+                    coy23 + Utils.ONE_THIRD * coFirst.y);
 
                 /* Flatten handle from first to center. */
                 first.rearHandle.set(
-                    Utils.TWO_THIRDS * coFirst.x + cox13, Utils.TWO_THIRDS * coFirst.y + coy13);
+                    Utils.TWO_THIRDS * coFirst.x + cox13,
+                    Utils.TWO_THIRDS * coFirst.y + coy13);
 
                 /* Flatten handle from last to center. */
                 last.foreHandle.set(
-                    Utils.TWO_THIRDS * coLast.x + cox13, Utils.TWO_THIRDS * coLast.y + coy13);
+                    Utils.TWO_THIRDS * coLast.x + cox13,
+                    Utils.TWO_THIRDS * coLast.y + coy13);
             }
         }
 
@@ -290,7 +301,10 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @return the arc
      */
     public static Curve2 arc(
-        final float startAngle, final float stopAngle, final float radius, final Curve2 target) {
+        final float startAngle,
+        final float stopAngle,
+        final float radius,
+        final Curve2 target) {
 
         return Curve2.arc(startAngle, stopAngle, radius, ArcMode.OPEN, target);
     }
@@ -354,7 +368,10 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @return the circle
      */
     public static Curve2 circle(
-        final int sectors, final float offsetAngle, final float radius, final Curve2 target) {
+        final int sectors,
+        final float offsetAngle,
+        final float radius,
+        final Curve2 target) {
 
         return Curve2.circle(sectors, offsetAngle, radius, 0.0f, 0.0f, target);
     }
@@ -382,7 +399,10 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @param target the output knot
      * @return the knot
      */
-    public static Knot2 eval(final Curve2 curve, final float step, final Knot2 target) {
+    public static Knot2 eval(
+        final Curve2 curve,
+        final float step,
+        final Knot2 target) {
 
         final ArrayList<Knot2> knots = curve.knots;
         final int knotLength = knots.size();
@@ -461,7 +481,10 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @see Knot2#bezierTanUnit(Knot2, Knot2, float, Vec2)
      */
     public static Vec2 eval(
-        final Curve2 curve, final float step, final Vec2 coord, final Vec2 tangent) {
+        final Curve2 curve,
+        final float step,
+        final Vec2 coord,
+        final Vec2 tangent) {
 
         final ArrayList<Knot2> knots = curve.knots;
         final int knotLength = knots.size();
@@ -506,7 +529,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @see Curve2#evalFirst(Curve2, Vec2, Vec2)
      */
     public static Transform2 evalFirst(
-        final Curve2 curve, final Handedness handedness, final Transform2 target) {
+        final Curve2 curve,
+        final Handedness handedness,
+        final Transform2 target) {
 
         target.locPrev.set(target.location);
         target.rotPrev = target.rotation;
@@ -562,7 +587,10 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @return the coordinate
      * @see Vec2#subNorm(Vec2, Vec2, Vec2)
      */
-    public static Vec2 evalFirst(final Curve2 curve, final Vec2 coord, final Vec2 tangent) {
+    public static Vec2 evalFirst(
+        final Curve2 curve,
+        final Vec2 coord,
+        final Vec2 tangent) {
 
         final Knot2 kFirst = curve.knots.get(0);
         coord.set(kFirst.coord);
@@ -580,7 +608,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @see Curve2#evalLast(Curve2, Vec2, Vec2)
      */
     public static Transform2 evalLast(
-        final Curve2 curve, final Handedness handedness, final Transform2 target) {
+        final Curve2 curve,
+        final Handedness handedness,
+        final Transform2 target) {
 
         target.locPrev.set(target.location);
         target.rotPrev = target.rotation;
@@ -618,7 +648,7 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @param curve the curve
      * @param ray   the output ray
      * @return the coordinate
-     * @see Curve2#evalFirst(Curve2, Vec2, Vec2)
+     * @see Curve2#evalLast(Curve2, Vec2, Vec2)
      */
     public static Ray2 evalLast(final Curve2 curve, final Ray2 ray) {
 
@@ -636,7 +666,10 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @return the coordinate
      * @see Vec2#subNorm(Vec2, Vec2, Vec2)
      */
-    public static Vec2 evalLast(final Curve2 curve, final Vec2 coord, final Vec2 tangent) {
+    public static Vec2 evalLast(
+        final Curve2 curve,
+        final Vec2 coord,
+        final Vec2 tangent) {
 
         final Knot2 kLast = curve.knots.get(curve.knots.size() - 1);
         coord.set(kLast.coord);
@@ -668,15 +701,12 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
             return target;
         }
         if (ptsLen < 3) {
-            return Curve2.fromCatmull(
-                false, new Vec2[]{points[0], points[0], points[1], points[1]}, tightness, target);
+            return Curve2.fromCatmull(false, new Vec2[]{points[0], points[0],
+                points[1], points[1]}, tightness, target);
         }
         if (ptsLen < 4) {
-            return Curve2.fromCatmull(
-                false,
-                new Vec2[]{points[0], points[0], points[1], points[2], points[2]},
-                tightness,
-                target);
+            return Curve2.fromCatmull(false, new Vec2[]{points[0], points[0],
+                points[1], points[2], points[2]}, tightness, target);
         }
 
         target.closedLoop = closedLoop;
@@ -705,16 +735,16 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
             }
 
             curr = itr.next();
-            Knot2.fromSegCatmull(
-                points[idx], points[idx1], points[idx2], points[idx3], tightness, prev, curr);
+            Knot2.fromSegCatmull(points[idx], points[idx1], points[idx2],
+                points[idx3], tightness, prev, curr);
             prev = curr;
             ++idx;
         }
 
         if (curr != null) {
             if (closedLoop) {
-                Knot2.fromSegCatmull(
-                    points[ptsLast], points[0], points[1], points[2], tightness, curr, first);
+                Knot2.fromSegCatmull(points[ptsLast], points[0], points[1],
+                    points[2], tightness, curr, first);
             } else {
                 first.coord.set(points[1]);
                 first.mirrorHandlesForward();
@@ -737,7 +767,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @see Curve2#smoothHandles(Curve2)
      */
     public static Curve2 fromPoints(
-        final boolean closedLoop, final Vec2[] points, final Curve2 target) {
+        final boolean closedLoop,
+        final Vec2[] points,
+        final Curve2 target) {
 
         final int ptsLen = points.length;
         if (ptsLen < 2) {
@@ -754,7 +786,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         target.closedLoop = closedLoop;
         target.name = "Points";
 
-        return ptsLen < 3 ? Curve2.straightHandles(target) : Curve2.smoothHandles(target);
+        return ptsLen < 3
+            ? Curve2.straightHandles(target)
+            : Curve2.smoothHandles(target);
     }
 
     /**
@@ -767,7 +801,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @return the curve
      */
     public static Curve2 fromQuadratic(
-        final boolean closedLoop, final Vec2[] points, final Curve2 target) {
+        final boolean closedLoop,
+        final Vec2[] points,
+        final Curve2 target) {
 
         final int ptsLen = points.length;
         if (ptsLen < 3) {
@@ -836,14 +872,17 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     /**
      * Creates a curve that forms a line with an origin and destination.
      *
-     * @param origin the origin
+     * @param orig   the origin
      * @param dest   the destination
      * @param target the output curve
      * @return the line
      */
-    public static Curve2 line(final Vec2 origin, final Vec2 dest, final Curve2 target) {
+    public static Curve2 line(
+        final Vec2 orig,
+        final Vec2 dest,
+        final Curve2 target) {
 
-        return Curve2.line(origin.x, origin.y, dest.x, dest.y, target);
+        return Curve2.line(orig.x, orig.y, dest.x, dest.y, target);
     }
 
     /**
@@ -868,13 +907,13 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         final boolean closedLoop,
         final Curve2 target) {
 
-        final int valCount = Math.max(count, 3);
-        final Vec2[] points = new Vec2[valCount];
-        for (int i = 0; i < valCount; ++i) {
-            points[i] = Vec2.randomCartesian(rng, lowerBound, upperBound, new Vec2());
+        final int vrfCount = Math.max(count, 3);
+        final Vec2[] pts = new Vec2[vrfCount];
+        for (int i = 0; i < vrfCount; ++i) {
+            pts[i] = Vec2.randomCartesian(rng, lowerBound, upperBound, new Vec2());
         }
 
-        return Curve2.fromPoints(closedLoop, points, target);
+        return Curve2.fromPoints(closedLoop, pts, target);
     }
 
     /**
@@ -899,13 +938,13 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         final boolean closedLoop,
         final Curve2 target) {
 
-        final int valCount = Math.max(count, 3);
-        final Vec2[] points = new Vec2[valCount];
-        for (int i = 0; i < valCount; ++i) {
-            points[i] = Vec2.randomCartesian(rng, lowerBound, upperBound, new Vec2());
+        final int vrfCount = Math.max(count, 3);
+        final Vec2[] pts = new Vec2[vrfCount];
+        for (int i = 0; i < vrfCount; ++i) {
+            pts[i] = Vec2.randomCartesian(rng, lowerBound, upperBound, new Vec2());
         }
 
-        return Curve2.fromPoints(closedLoop, points, target);
+        return Curve2.fromPoints(closedLoop, pts, target);
     }
 
     /**
@@ -986,7 +1025,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         final float blCorner,
         final Curve2 target) {
 
-        return Curve2.rect(tl.x, tl.y, br.x, br.y, tlCorner, trCorner, brCorner, blCorner, target);
+        return Curve2.rect(tl.x, tl.y, br.x, br.y, tlCorner, trCorner,
+            brCorner, blCorner, target);
     }
 
     /**
@@ -997,7 +1037,10 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * @param target the output curve
      * @return the segment
      */
-    public static Curve2 sampleSegment(final int i, final Curve2 source, final Curve2 target) {
+    public static Curve2 sampleSegment(
+        final int i,
+        final Curve2 source,
+        final Curve2 target) {
 
         target.closedLoop = false;
         target.resize(2);
@@ -1255,6 +1298,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
             Transform2.mulPoint(tr, kn.rearHandle, rh);
             Transform2.mulPoint(tr, kn.coord, co);
 
+            // QUERY: Was one of these accumMinMax methods inlined
+            // automatically when reformatting?
+
             if (fh.x < lb.x) {
                 lb.x = fh.x;
             }
@@ -1370,14 +1416,9 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         final Iterator<Knot2> itr = target.knots.iterator();
         for (; itr.hasNext(); ++incr) {
             final float angNorm = offNorm + incr * invKnCt;
-            Knot2.fromPolar(
-                Utils.scNorm(angNorm),
-                Utils.scNorm(angNorm - 0.25f),
-                radius,
-                hndlMag,
-                xCenter,
-                yCenter,
-                itr.next());
+            Knot2.fromPolar(Utils.scNorm(angNorm),
+                Utils.scNorm(angNorm - 0.25f), radius, hndlMag, xCenter,
+                yCenter, itr.next());
         }
 
         target.name = "Circle";
@@ -1523,7 +1564,8 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         final float corner,
         final Curve2 target) {
 
-        return Curve2.rect(lbx, lby, ubx, uby, corner, corner, corner, corner, target);
+        return Curve2.rect(lbx, lby, ubx, uby, corner, corner, corner, corner,
+            target);
     }
 
     /**

@@ -278,6 +278,7 @@ public class Face2 implements Iterable<Edge2>, Comparable<Face2> {
      * @return the comparison
      * @see Face2#centerMean(Face2, Vec2)
      */
+    @SuppressWarnings("NullableProblems")
     @Override
     public int compareTo(final Face2 face) {
 

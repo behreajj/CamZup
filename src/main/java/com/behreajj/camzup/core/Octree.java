@@ -805,7 +805,7 @@ public class Octree {
      */
     public int totalCapacity() {
 
-        // TODO: TEST
+        // TEST
         int sum = 0;
         boolean isLeaf = true;
         for (int i = 0; i < Octree.CHILD_COUNT; ++i) {
@@ -903,9 +903,7 @@ public class Octree {
 
         Bounds3.split(
             this.bounds,
-            0.5f,
-            0.5f,
-            0.5f,
+            0.5f, 0.5f, 0.5f,
             this.children[Octree.BACK_SOUTH_WEST].bounds,
             this.children[Octree.BACK_SOUTH_EAST].bounds,
             this.children[Octree.BACK_NORTH_WEST].bounds,

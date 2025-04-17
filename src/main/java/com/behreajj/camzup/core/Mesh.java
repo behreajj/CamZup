@@ -136,7 +136,10 @@ public abstract class Mesh extends EntityData {
      * @return the evaluation
      */
     public static boolean edgesPermute(
-        final int[][] a, final int aIdx, final int[][] b, final int bIdx) {
+        final int[][] a,
+        final int aIdx,
+        final int[][] b,
+        final int bIdx) {
 
         final int aLen = a.length;
         final int aIdx0 = Utils.mod(aIdx, aLen);

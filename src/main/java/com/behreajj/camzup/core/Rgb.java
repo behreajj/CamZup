@@ -59,7 +59,11 @@ public class Rgb implements IColor {
      * @param blue  the blue channel
      * @param alpha the alpha channel
      */
-    public Rgb(final byte red, final byte green, final byte blue, final byte alpha) {
+    public Rgb(
+        final byte red,
+        final byte green,
+        final byte blue,
+        final byte alpha) {
 
         this.set(red, green, blue, alpha);
     }
@@ -87,7 +91,11 @@ public class Rgb implements IColor {
      * @param blue  the blue channel
      * @param alpha the alpha channel
      */
-    public Rgb(final float red, final float green, final float blue, final float alpha) {
+    public Rgb(
+        final float red,
+        final float green,
+        final float blue,
+        final float alpha) {
 
         this.set(red, green, blue, alpha);
     }
@@ -378,12 +386,9 @@ public class Rgb implements IColor {
     public static boolean isInGamut(final Rgb c, final float tol) {
 
         final float oneptol = 1.0f + tol;
-        return c.r >= -tol
-            && c.r <= oneptol
-            && c.g >= -tol
-            && c.g <= oneptol
-            && c.b >= -tol
-            && c.b <= oneptol;
+        return c.r >= -tol && c.r <= oneptol
+            && c.g >= -tol && c.g <= oneptol
+            && c.b >= -tol && c.b <= oneptol;
     }
 
     /**
@@ -1616,9 +1621,9 @@ public class Rgb implements IColor {
          * White scale.
          */
         public static final float whiteScale = 1.0f
-            / ((11.2f * (0.15f * 11.2f + 0.10f * 0.50f) + 0.20f * 0.02f)
-            / (11.2f * (0.15f * 11.2f + 0.50f) + 0.20f * 0.30f)
-            - 0.02f / 0.30f);
+            / ((11.2f * (0.15f * 11.2f + 0.1f * 0.5f) + 0.2f * 0.02f)
+            / (11.2f * (0.15f * 11.2f + 0.5f) + 0.2f * 0.3f)
+            - 0.02f / 0.3f);
 
         /**
          * Stores conversion from gamma to linear.
@@ -1648,17 +1653,17 @@ public class Rgb implements IColor {
             final float eb = this.lrgb.b * ToneMapHable.exposureBias;
 
             final float xr = ToneMapHable.whiteScale
-                * ((er * (0.15f * er + 0.10f * 0.50f) + 0.20f * 0.02f)
-                / (er * (0.15f * er + 0.50f) + 0.20f * 0.30f)
-                - 0.02f / 0.30f);
+                * ((er * (0.15f * er + 0.1f * 0.5f) + 0.2f * 0.02f)
+                / (er * (0.15f * er + 0.5f) + 0.2f * 0.3f)
+                - 0.02f / 0.3f);
             final float xg = ToneMapHable.whiteScale
-                * ((eg * (0.15f * eg + 0.10f * 0.50f) + 0.20f * 0.02f)
-                / (eg * (0.15f * eg + 0.50f) + 0.20f * 0.30f)
-                - 0.02f / 0.30f);
+                * ((eg * (0.15f * eg + 0.1f * 0.5f) + 0.2f * 0.02f)
+                / (eg * (0.15f * eg + 0.5f) + 0.2f * 0.3f)
+                - 0.02f / 0.3f);
             final float xb = ToneMapHable.whiteScale
-                * ((eb * (0.15f * eb + 0.10f * 0.50f) + 0.20f * 0.02f)
-                / (eb * (0.15f * eb + 0.50f) + 0.20f * 0.30f)
-                - 0.02f / 0.30f);
+                * ((eb * (0.15f * eb + 0.1f * 0.5f) + 0.2f * 0.02f)
+                / (eb * (0.15f * eb + 0.5f) + 0.2f * 0.3f)
+                - 0.02f / 0.3f);
             target.set(xr, xg, xb, this.lrgb.alpha);
 
             Rgb.lRgbTosRgb(target, false, target);

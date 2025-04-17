@@ -29,7 +29,7 @@ public class Vert3 implements Comparable<Vert3> {
 
     /**
      * The default constructor. When used, the vertex's coordinate, normal and
-     * texCoord will remain null.
+     * texture coordinate will remain null.
      */
     public Vert3() {
     }

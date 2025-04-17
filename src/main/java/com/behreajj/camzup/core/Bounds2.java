@@ -3,8 +3,8 @@ package com.behreajj.camzup.core;
 import java.util.Objects;
 
 /**
- * An axis aligned bounding box (AABB) for a 2D area, represented with a minimum
- * and maximum coordinate.
+ * An axis aligned bounding box (AABB) for a 2D area, represented with a
+ * minimum and maximum coordinate.
  */
 public class Bounds2 implements Comparable<Bounds2> {
 
@@ -52,7 +52,9 @@ public class Bounds2 implements Comparable<Bounds2> {
      * @param xMax the maximum x
      * @param yMax the maximum y
      */
-    public Bounds2(final float xMin, final float yMin, final float xMax, final float yMax) {
+    public Bounds2(
+        final float xMin, final float yMin,
+        final float xMax, final float yMax) {
 
         this.set(xMin, yMin, xMax, yMax);
     }
@@ -127,10 +129,8 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     public static boolean contains(final Bounds2 b, final Vec2 v) {
 
-        return v.x >= b.min.x
-            && v.x < b.max.x
-            && v.y >= b.min.y
-            && v.y < b.max.y;
+        return v.x >= b.min.x && v.x < b.max.x
+            && v.y >= b.min.y && v.y < b.max.y;
     }
 
     /**
@@ -165,10 +165,8 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     public static boolean containsExclusive(final Bounds2 b, final Vec2 v) {
 
-        return v.x > b.min.x
-            && v.x < b.max.x
-            && v.y > b.min.y
-            && v.y < b.max.y;
+        return v.x > b.min.x && v.x < b.max.x
+            && v.y > b.min.y && v.y < b.max.y;
     }
 
     /**
@@ -203,10 +201,8 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     public static boolean containsInclusive(final Bounds2 b, final Vec2 v) {
 
-        return v.x >= b.min.x
-            && v.x <= b.max.x
-            && v.y >= b.min.y
-            && v.y <= b.max.y;
+        return v.x >= b.min.x && v.x <= b.max.x
+            && v.y >= b.min.y && v.y <= b.max.y;
     }
 
     /**
@@ -281,11 +277,15 @@ public class Bounds2 implements Comparable<Bounds2> {
      * @return the bounds
      */
     public static Bounds2 fromCenterExtent(
-        final Vec2 center, final Vec2 extent, final Bounds2 target) {
+        final Vec2 center,
+        final Vec2 extent,
+        final Bounds2 target) {
 
         final float hw = extent.x * 0.5f;
         final float hh = extent.y * 0.5f;
-        return target.set(center.x - hw, center.y - hh, center.x + hw, center.y + hh);
+        return target.set(
+            center.x - hw, center.y - hh,
+            center.x + hw, center.y + hh);
     }
 
     /**
@@ -297,9 +297,13 @@ public class Bounds2 implements Comparable<Bounds2> {
      * @return the bounds
      */
     public static Bounds2 fromCenterHalfExtent(
-        final Vec2 center, final Vec2 he, final Bounds2 target) {
+        final Vec2 center,
+        final Vec2 he,
+        final Bounds2 target) {
 
-        return target.set(center.x - he.x, center.y - he.y, center.x + he.x, center.y + he.y);
+        return target.set(
+            center.x - he.x, center.y - he.y,
+            center.x + he.x, center.y + he.y);
     }
 
     /**
@@ -314,7 +318,10 @@ public class Bounds2 implements Comparable<Bounds2> {
      * @see Vec2#max(Vec2, Vec2, Vec2)
      * @see Vec2#min(Vec2, Vec2, Vec2)
      */
-    public static Bounds2 fromIntersection(final Bounds2 a, final Bounds2 b, final Bounds2 target) {
+    public static Bounds2 fromIntersection(
+        final Bounds2 a,
+        final Bounds2 b,
+        final Bounds2 target) {
 
         Vec2.max(a.min, b.min, target.min);
         Vec2.min(a.max, b.max, target.max);
@@ -369,9 +376,9 @@ public class Bounds2 implements Comparable<Bounds2> {
     }
 
     /**
-     * Finds the union between two bounds, i.e. a bounds that will contain both
-     * of them. To avoid unexpected results from zero and negative bounds, use
-     * {@link Bounds2#verified} on inputs.
+     * Finds the union between two bounds, i.e., a bounds that will contain
+     * both of them. To avoid unexpected results from zero and negative bounds,
+     * use {@link Bounds2#verified} on inputs.
      *
      * @param a      left operand
      * @param b      right operand
@@ -380,7 +387,10 @@ public class Bounds2 implements Comparable<Bounds2> {
      * @see Vec2#max(Vec2, Vec2, Vec2)
      * @see Vec2#min(Vec2, Vec2, Vec2)
      */
-    public static Bounds2 fromUnion(final Bounds2 a, final Bounds2 b, final Bounds2 target) {
+    public static Bounds2 fromUnion(
+        final Bounds2 a,
+        final Bounds2 b,
+        final Bounds2 target) {
 
         Vec2.min(a.min, b.min, target.min);
         Vec2.max(a.max, b.max, target.max);
@@ -398,10 +408,8 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     public static boolean intersect(final Bounds2 a, final Bounds2 b) {
 
-        return a.max.x > b.min.x
-            || a.min.x < b.max.x
-            || a.max.y > b.min.y
-            || a.min.y < b.max.y;
+        return a.max.x > b.min.x || a.min.x < b.max.x
+            || a.max.y > b.min.y || a.min.y < b.max.y;
     }
 
     /**
@@ -422,29 +430,21 @@ public class Bounds2 implements Comparable<Bounds2> {
     }
 
     /**
-     * Evaluates whether a bounding area intersects a circle. To avoid unexpected
-     * results from zero and negative bounds, use {@link Bounds2#verified} on
-     * left operand.
+     * Evaluates whether a bounding area intersects a circle. To avoid
+     * unexpected results from zero and negative bounds, use
+     * {@link Bounds2#verified} on left operand.
      *
      * @param a      the bounds
      * @param center the circle center
      * @param radius the circle radius
      * @return the evaluation
      */
-    public static boolean intersect(final Bounds2 a, final Vec2 center, final float radius) {
+    public static boolean intersect(
+        final Bounds2 a,
+        final Vec2 center,
+        final float radius) {
 
-        final float yd = center.y < a.min.y
-            ? center.y - a.min.y
-            : center.y > a.max.y
-            ? center.y - a.max.y
-            : 0.0f;
-        final float xd = center.x < a.min.x
-            ? center.x - a.min.x
-            : center.x > a.max.x
-            ? center.x - a.max.x
-            : 0.0f;
-
-        return xd * xd + yd * yd < radius * radius;
+        return Bounds2.intersectSq(a, center, radius * radius);
     }
 
     /**
@@ -480,7 +480,8 @@ public class Bounds2 implements Comparable<Bounds2> {
      */
     public static boolean isZero(final Bounds2 b) {
 
-        return b.max.y - b.min.y == 0.0f || b.max.x - b.min.x == 0.0f;
+        return b.max.y - b.min.y == 0.0f
+            || b.max.x - b.min.x == 0.0f;
     }
 
     /**
@@ -491,10 +492,15 @@ public class Bounds2 implements Comparable<Bounds2> {
      * @param se southeast target bounds
      * @param nw northwest target bounds
      * @param ne northeast target bounds
-     * @see Bounds2#split(Bounds2, float, float, Bounds2, Bounds2, Bounds2, Bounds2)
+     * @see Bounds2#split(Bounds2, float, float, Bounds2, Bounds2, Bounds2,
+     * Bounds2)
      */
     public static void split(
-        final Bounds2 b, final Bounds2 sw, final Bounds2 se, final Bounds2 nw, final Bounds2 ne) {
+        final Bounds2 b,
+        final Bounds2 sw,
+        final Bounds2 se,
+        final Bounds2 nw,
+        final Bounds2 ne) {
 
         Bounds2.split(b, 0.5f, 0.5f, sw, se, nw, ne);
     }
@@ -553,7 +559,8 @@ public class Bounds2 implements Comparable<Bounds2> {
      * @param ne north-east target bounds
      * @return point is in bounds
      * @see Utils#div(float, float)
-     * @see Bounds2#split(Bounds2, float, float, Bounds2, Bounds2, Bounds2, Bounds2)
+     * @see Bounds2#split(Bounds2, float, float, Bounds2, Bounds2, Bounds2,
+     * Bounds2)
      */
     public static boolean split(
         final Bounds2 b,

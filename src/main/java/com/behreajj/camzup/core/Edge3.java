@@ -294,6 +294,7 @@ public class Edge3 implements Comparable<Edge3> {
      *
      * @return the evaluation
      */
+    @SuppressWarnings("NullableProblems")
     @Override
     public int compareTo(final Edge3 edge) {
 

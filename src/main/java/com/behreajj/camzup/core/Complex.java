@@ -207,7 +207,9 @@ public class Complex implements Comparable<Complex> {
             final float bInvAbsSq = 1.0f / bAbsSq;
             final float cReal = b.real * bInvAbsSq;
             final float cImag = -b.imag * bInvAbsSq;
-            return target.set(a.real * cReal - a.imag * cImag, a.real * cImag + a.imag * cReal);
+            return target.set(
+                a.real * cReal - a.imag * cImag,
+                a.real * cImag + a.imag * cReal);
         }
         return target.reset();
     }
@@ -286,7 +288,9 @@ public class Complex implements Comparable<Complex> {
 
         final double rd = Math.exp(z.real);
         final double phid = z.imag;
-        return target.set((float) (rd * Math.cos(phid)), (float) (rd * Math.sin(phid)));
+        return target.set(
+            (float) (rd * Math.cos(phid)),
+            (float) (rd * Math.sin(phid)));
     }
 
     /**
@@ -322,7 +326,7 @@ public class Complex implements Comparable<Complex> {
 
     /**
      * Generates a 2D array of complex numbers. Defaults to the coordinate
-     * range of [-0.5, 0.5] .
+     * range of [-0.5, 0.5].
      *
      * @param res the resolution
      * @return the array
@@ -336,7 +340,7 @@ public class Complex implements Comparable<Complex> {
     /**
      * Generates a 2D array of complex numbers. The result is in row-major
      * order, but the parameters are supplied in reverse: columns first, then
-     * rows. Defaults to the coordinate range of [-0.5, 0.5] .
+     * rows. Defaults to the coordinate range of [-0.5, 0.5].
      *
      * @param cols number of columns
      * @param rows number of rows
@@ -361,9 +365,15 @@ public class Complex implements Comparable<Complex> {
      * @see Complex#grid(int, int, float, float, float, float)
      */
     public static Complex[][] grid(
-        final int cols, final int rows, final float lowerBound, final float upperBound) {
+        final int cols,
+        final int rows,
+        final float lowerBound,
+        final float upperBound) {
 
-        return Complex.grid(cols, rows, lowerBound, lowerBound, upperBound, upperBound);
+        return Complex.grid(
+            cols, rows,
+            lowerBound, lowerBound,
+            upperBound, upperBound);
     }
 
     /**
@@ -665,7 +675,9 @@ public class Complex implements Comparable<Complex> {
         final double rd = Math.exp(br * logReal - bi * logImag);
         final double phid = br * logImag + bi * logReal;
 
-        return target.set((float) (rd * Math.cos(phid)), (float) (rd * Math.sin(phid)));
+        return target.set(
+            (float) (rd * Math.cos(phid)),
+            (float) (rd * Math.sin(phid)));
     }
 
     /**
@@ -713,7 +725,9 @@ public class Complex implements Comparable<Complex> {
      */
     public static Complex rect(final float r, final float phi, final Complex target) {
 
-        return target.set((float) (r * Math.cos(phi)), (float) (r * Math.sin(phi)));
+        return target.set(
+            (float) (r * Math.cos(phi)),
+            (float) (r * Math.sin(phi)));
     }
 
     /**
@@ -733,7 +747,8 @@ public class Complex implements Comparable<Complex> {
         final double zi = z.imag;
 
         return target.set(
-            (float) (Math.sin(zr) * Math.cosh(zi)), (float) (Math.cos(zr) * Math.sinh(zi)));
+            (float) (Math.sin(zr) * Math.cosh(zi)),
+            (float) (Math.cos(zr) * Math.sinh(zi)));
     }
 
     /**
@@ -749,7 +764,9 @@ public class Complex implements Comparable<Complex> {
 
         return a > 0.0f
             ? target.set(Utils.sqrtUnchecked(a), 0.0f)
-            : a < -0.0f ? target.set(0.0f, Utils.sqrtUnchecked(-a)) : target.reset();
+            : a < -0.0f
+            ? target.set(0.0f, Utils.sqrtUnchecked(-a))
+            : target.reset();
     }
 
     /**
