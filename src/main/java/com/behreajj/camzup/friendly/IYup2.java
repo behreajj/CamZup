@@ -5,8 +5,7 @@ import processing.core.PApplet;
 import processing.core.PImage;
 
 /**
- * Maintains consistent behavior across 2D renderers that extend different
- * branches of PGraphics, such as PGraphics2D and PGraphicsJava2D.
+ * Maintains consistent behavior across 2D renderers in the CamZup library.
  */
 public interface IYup2 extends IUp {
 

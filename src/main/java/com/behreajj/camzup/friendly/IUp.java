@@ -310,6 +310,15 @@ public interface IUp {
     int lerpColor(final int origin, final int dest, final float step);
 
     /**
+     * Gets the renderer's long edge, i.e., minimum of width and height.
+     *
+     * @return the short edge
+     */
+    default float longEdge() {
+        return Math.max(this.getWidth(), this.getHeight());
+    }
+
+    /**
      * Draws the world origin.
      */
     void origin();
@@ -323,6 +332,15 @@ public interface IUp {
      * Push a style onto the end of the stack.
      */
     void pushStyle();
+
+    /**
+     * Gets the renderer's short edge, i.e., minimum of width and height.
+     *
+     * @return the short edge
+     */
+    default float shortEdge() {
+        return Math.min(this.getWidth(), this.getHeight());
+    }
 
     /**
      * Uses the renderer's default stroke color.

@@ -177,6 +177,8 @@ public abstract class Utils {
      * Discourage overriding with a private constructor.
      */
     private Utils() {
+        // TODO: Methods for bitwise interleave? interleaving arrays?
+        // https://stackoverflow.com/a/3203791/12637735
     }
 
     /**

@@ -5,8 +5,7 @@ import processing.core.PApplet;
 import processing.core.PConstants;
 
 /**
- * Maintains consistent behavior across 3D renderers that extend different
- * branches of PGraphics.
+ * Maintains consistent behavior across 3D renderers in the CamZup library.
  */
 public interface IUp3 extends IUp {
 
