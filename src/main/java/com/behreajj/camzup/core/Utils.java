@@ -177,8 +177,10 @@ public abstract class Utils {
      * Discourage overriding with a private constructor.
      */
     private Utils() {
-        // TODO: Methods for bitwise interleave? interleaving arrays?
+        // TODO: Methods for bitwise interleave and bitwise reverse?
         // https://stackoverflow.com/a/3203791/12637735
+        // Application in calculating a Bayer ordered matrix:
+        // https://en.wikipedia.org/wiki/Ordered_dithering
     }
 
     /**
@@ -863,6 +865,7 @@ public abstract class Utils {
 
         return Utils.sqrtUnchecked(a * a + b * b + c * c);
     }
+
 
     /**
      * Parses 4 bytes in an array to a 32-bit integer, ordered from least to

@@ -105,7 +105,7 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     /**
      * The miter limit supplied to the basic stroke.
      */
-    public float miterLimit = 1.0f;
+    public float miterLimit = 10.0f;
 
     /**
      * Representation of a stroke cap in the native AWT library.

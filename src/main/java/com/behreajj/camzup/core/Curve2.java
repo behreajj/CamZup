@@ -196,18 +196,18 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
         final float destAngle1 = a1 + arcLen1;
 
         /*
-         * Find the number of knots needed to accurately represent the arc. It's
-         * assumed that 4 curves adequately represent a full circle; at least one
-         * knot is needed, hence the +1. Ceiling to an integer is inlined.
+         * Find the number of knots needed to accurately represent the arc.
+         * Assume that 4 curves adequately represent a full circle. When the
+         * arc lenght is near 90, 180, 270 or 360 degrees, then an extra knot
+         * is not needed.
          */
-        final float xf = 1.0f + 4.0f * arcLen1;
-        final int xi = (int) xf;
-        final int knotCount = xf > xi ? xi + 1 : xi;
+        final int knAdd = arcLen1 % 0.25f > Utils.EPSILON ? 1 : 0;
+        final int knotCount = Math.max(2, Utils.ceil(knAdd + 4.0f * arcLen1));
         final float toStep = 1.0f / (knotCount - 1.0f);
 
         /*
-         * Find the magnitude of the curve handles (or control points for each
-         * knot). Multiply toStep by arcLen1 to find the arc-length that each curve
+         * Find the magnitude of the handles (or control points) for each knot.
+         * Multiply toStep by arcLen1 to find the arc-length that each curve
          * has to cover, then divide by four. This is then supplied to tangent.
          */
         final float hndtn = 0.25f * toStep * arcLen1;

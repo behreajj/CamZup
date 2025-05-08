@@ -2291,6 +2291,46 @@ public class Img {
     }
 
     /**
+     * Fills each image in a sequence with a color evaluated from the gradient.
+     *
+     * @param grd    the gradient
+     * @param seq    the image sequence
+     * @return the image sequence
+     */
+    public static Img[] gradientFrames(final Gradient grd, final Img[] seq) {
+        return Img.gradientFrames(grd, new Lab.MixLab(), seq);
+    }
+
+    /**
+     * Fills each image in a sequence with a color evaluated from the gradient.
+     *
+     * @param grd    the gradient
+     * @param easing the easing function
+     * @param seq    the image sequence
+     * @return the image sequence
+     */
+    public static Img[] gradientFrames(
+        final Gradient grd,
+        final Lab.AbstrEasing easing,
+        final Img[] seq) {
+
+        // TODO: TEST
+
+        final int len = seq.length;
+        final float toFac = len > 1 ? 1.0f / (len - 1.0f) : 0.0f;
+        final float off = len > 1 ? 0.0f : 0.5f;
+        final Lab trgLab = new Lab();
+
+        for(int i = 0; i < len; ++i) {
+            final float fac = i * toFac + off;
+            Gradient.eval(grd, fac, easing, trgLab);
+            Img.fill(trgLab, seq[i]);
+        }
+
+        return seq;
+    }
+
+    /**
      * Generates a linear gradient from an origin point to a destination point.
      * The origin and destination should be in the range [-1.0, 1.0].
      * The scalar projection is clamped to [0.0, 1.0].

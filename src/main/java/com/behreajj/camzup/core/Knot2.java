@@ -743,7 +743,6 @@ public class Knot2 implements Comparable<Knot2> {
 
         target.foreHandle.set(coord.x - hmsina, coord.y + hmcosa);
         target.rearHandle.set(coord.x + hmsina, coord.y - hmcosa);
-
     }
 
     /**

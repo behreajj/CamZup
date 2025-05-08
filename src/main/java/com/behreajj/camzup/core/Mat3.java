@@ -59,6 +59,8 @@ public class Mat3 {
      * The default constructor. Creates an identity matrix.
      */
     public Mat3() {
+        // TODO: Look up Kronecker product
+        // https://en.wikipedia.org/wiki/Kronecker_product
     }
 
     /**
