@@ -103,11 +103,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
     public float cameraZoomY = IYup2.DEFAULT_ZOOM_Y;
 
     /**
-     * The miter limit supplied to the basic stroke.
-     */
-    public float miterLimit = 10.0f;
-
-    /**
      * Representation of a stroke cap in the native AWT library.
      *
      * @see BasicStroke
@@ -140,6 +135,14 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
      * @see BasicStroke
      */
     protected int joinNative = BasicStroke.JOIN_ROUND;
+
+    /**
+     * The miter limit supplied to the basic stroke. The limit must be at least
+     * one. The AWT default is 10.0.
+     *
+     * @see BasicStroke
+     */
+    protected float miterLimit = 10.0f;
 
     /**
      * The default constructor.
@@ -1202,6 +1205,13 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
             0.0f, 0.0f, 1.0f, 0.0f,
             0.0f, 0.0f, 0.0f, 1.0f);
         return target;
+    }
+
+    /**
+     * Gets the renderer's miter limit.
+     */
+    public final float getMiterLimit() {
+        return this.miterLimit;
     }
 
     /**
@@ -2836,6 +2846,15 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
         this.pixelHeight = this.height * this.pixelDensity;
 
         this.reapplySettings = true;
+    }
+
+    /**
+     * Sets the renderer's miter limit.
+     *
+     * @param miterLimit the miter limit
+     */
+    public void setMiterLimit(final float miterLimit) {
+        this.miterLimit = Math.max(2.0f + Utils.EPSILON, miterLimit);
     }
 
     /**
