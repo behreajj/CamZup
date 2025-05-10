@@ -1756,7 +1756,21 @@ public abstract class Utils {
         final float dest,
         final float step) {
 
-        /* smoothStepInverse: 0.5 - sin(arcsin(1 - 2 * x) / 3) */
+        /*
+         * smoothStepInverse: 0.5 - sin(arcsin(1 - 2 * x) / 3)
+         *
+         * Approximations:
+         * https://www.desmos.com/calculator/zfilktih8o
+         *
+         * Cubic:
+         * 1.3472x^{3} - 2.0208x^{2} + 1.59425x + 0.0396757
+         *
+         * Quartic:
+         * (-4.0368318457351 * 10^{-8})x^{4}+1.3472x^{3}-2.0208x^{2}+1.59425x+0.0396757
+         *
+         * Quintic:
+         * 8.73264x^{5}-21.8316x^{4}+20.6117x^{3}-9.08597x^{2}+2.54322x+0.014996
+         * */
 
         if (step <= 0.0f) {
             return orig;

@@ -59,14 +59,18 @@ public class Ray2 {
         final float time,
         final Vec2 target) {
 
-        if (time <= 0.0f) { return target.set(ray.origin); }
+        if (time <= 0.0f) {
+            return target.set(ray.origin);
+        }
 
         final Vec2 rDir = ray.dir;
         final double dx = rDir.x;
         final double dy = rDir.y;
 
         final double dmsq = dx * dx + dy * dy;
-        if (dmsq <= Utils.EPSILON_D) { return target.set(ray.origin); }
+        if (dmsq <= Utils.EPSILON_D) {
+            return target.set(ray.origin);
+        }
 
         final double tm = time / Math.sqrt(dmsq);
         final Vec2 rOrig = ray.origin;

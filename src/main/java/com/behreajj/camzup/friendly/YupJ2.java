@@ -1209,9 +1209,20 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
 
     /**
      * Gets the renderer's miter limit.
+     *
+     * @return the miter limit
      */
     public final float getMiterLimit() {
         return this.miterLimit;
+    }
+
+    /**
+     * Sets the renderer's miter limit.
+     *
+     * @param miterLimit the miter limit
+     */
+    public void setMiterLimit(final float miterLimit) {
+        this.miterLimit = Math.max(2.0f + Utils.EPSILON, miterLimit);
     }
 
     /**
@@ -2846,15 +2857,6 @@ public class YupJ2 extends PGraphicsJava2D implements IYup2, ITextDisplay2 {
         this.pixelHeight = this.height * this.pixelDensity;
 
         this.reapplySettings = true;
-    }
-
-    /**
-     * Sets the renderer's miter limit.
-     *
-     * @param miterLimit the miter limit
-     */
-    public void setMiterLimit(final float miterLimit) {
-        this.miterLimit = Math.max(2.0f + Utils.EPSILON, miterLimit);
     }
 
     /**

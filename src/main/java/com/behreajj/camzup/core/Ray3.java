@@ -59,7 +59,9 @@ public class Ray3 {
         final float time,
         final Vec3 target) {
 
-        if (time <= 0.0f) { return target.set(ray.origin); }
+        if (time <= 0.0f) {
+            return target.set(ray.origin);
+        }
 
         final Vec3 rDir = ray.dir;
         final double dx = rDir.x;
@@ -67,7 +69,9 @@ public class Ray3 {
         final double dz = rDir.z;
 
         final double dmsq = dx * dx + dy * dy + dz * dz;
-        if (dmsq <= Utils.EPSILON_D) { return target.set(ray.origin); }
+        if (dmsq <= Utils.EPSILON_D) {
+            return target.set(ray.origin);
+        }
 
         final double tm = time / Math.sqrt(dmsq);
         final Vec3 rOrig = ray.origin;

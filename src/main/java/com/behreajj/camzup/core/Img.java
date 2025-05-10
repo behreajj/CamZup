@@ -2293,8 +2293,8 @@ public class Img {
     /**
      * Fills each image in a sequence with a color evaluated from the gradient.
      *
-     * @param grd    the gradient
-     * @param seq    the image sequence
+     * @param grd the gradient
+     * @param seq the image sequence
      * @return the image sequence
      */
     public static Img[] gradientFrames(final Gradient grd, final Img[] seq) {
@@ -2321,7 +2321,7 @@ public class Img {
         final float off = len > 1 ? 0.0f : 0.5f;
         final Lab trgLab = new Lab();
 
-        for(int i = 0; i < len; ++i) {
+        for (int i = 0; i < len; ++i) {
             final float fac = i * toFac + off;
             Gradient.eval(grd, fac, easing, trgLab);
             Img.fill(trgLab, seq[i]);
