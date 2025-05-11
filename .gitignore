@@ -1,6 +1,7 @@
 .gradle
 release/
 build/tmp/
+build/docs/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/

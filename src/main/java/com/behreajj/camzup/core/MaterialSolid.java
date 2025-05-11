@@ -1,5 +1,7 @@
 package com.behreajj.camzup.core;
 
+import java.util.Objects;
+
 /**
  * A material which holds data to display materials with solid colors only (no
  * textures, or patterns). Contains data for a fill and/or stroke.
@@ -35,11 +37,14 @@ public class MaterialSolid extends Material {
      * The default constructor.
      */
     public MaterialSolid() {
+        // TODO: Another way to do this would be to have the fields, but
+        // not pass them to stroke join or cap them in the OpenGL renderer.
+
         /*
-         * Stroke cap and join are not implemented because it would require
-         * storing PConstants value for each constant, AWT's constant, and SVGs.
-         * And there are renderer issues with AWT and OpenGL, so consistency is
-         * hard to guarantee.
+         * Stroke cap, join and miter limit are not implemented because it
+         * would require storing PConstants value for each constant, AWT's
+         * constant, and SVGs. And there are renderer issues with AWT and
+         * OpenGL, so consistency is hard to guarantee.
          */
     }
 
@@ -264,61 +269,22 @@ public class MaterialSolid extends Material {
         svgp.append(">\n");
     }
 
-    /**
-     * Tests this material for equivalence with another object.
-     *
-     * @param obj the object
-     * @return the evaluation
-     */
     @Override
-    public boolean equals(final Object obj) {
-
-        if (this == obj) {
-            return true;
-        }
-        if (!super.equals(obj) || this.getClass() != obj.getClass()) {
-            return false;
-        }
-
-        final MaterialSolid other = (MaterialSolid) obj;
-
-        if (this.fill == null) {
-            if (other.fill != null) {
-                return false;
-            }
-        } else if (!this.fill.equals(other.fill)) {
-            return false;
-        }
-
-        if (this.stroke == null) {
-            if (other.stroke != null) {
-                return false;
-            }
-        } else if (!this.stroke.equals(other.stroke)) {
-            return false;
-        }
-
-        return this.strokeWeight == other.strokeWeight
-            && this.useFill == other.useFill
-            && this.useStroke == other.useStroke;
+    public boolean equals(final Object o) {
+        if (o == null || this.getClass() != o.getClass()) return false;
+        if (!super.equals(o)) return false;
+        final MaterialSolid that = (MaterialSolid) o;
+        return Float.compare(this.strokeWeight, that.strokeWeight) == 0
+            && this.useFill == that.useFill
+            && this.useStroke == that.useStroke
+            && Objects.equals(this.fill, that.fill)
+            && Objects.equals(this.stroke, that.stroke);
     }
 
-    /**
-     * Returns a hash code representation of this material.
-     *
-     * @return the hash code
-     */
     @Override
     public int hashCode() {
-
-        // TODO: Replace this with IntelliJ generated hash code.
-        final int prime = 31;
-        int result = super.hashCode();
-        result = prime * result + (this.useFill ? 1231 : 1237);
-        result = prime * result + (this.fill == null ? 0 : this.fill.hashCode());
-        result = prime * result + (this.useStroke ? 1231 : 1237);
-        result = prime * result + (this.stroke == null ? 0 : this.stroke.hashCode());
-        return prime * result + Float.floatToIntBits(this.strokeWeight);
+        return Objects.hash(this.fill, this.stroke, this.strokeWeight,
+            this.useFill, this.useStroke);
     }
 
     /**

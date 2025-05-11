@@ -820,6 +820,8 @@ public class Lab implements IColor {
      */
     public static float hue(final Lab o) {
 
+        // TODO: Return a hue shadow or light if chroma is zero?
+
         final double hueSigned = Math.atan2(o.b, o.a);
         final double hueUnsigned = hueSigned < 0.0d
             ? hueSigned + Utils.TAU_D
@@ -1904,16 +1906,7 @@ public class Lab implements IColor {
             final Float step,
             final Lab target) {
 
-            final float t = step;
-            final float u = 1.0f - t;
-
-            // TODO: This should be consistent with Lab.mix
-
-            return target.set(
-                u * orig.l + t * dest.l,
-                u * orig.a + t * dest.a,
-                u * orig.b + t * dest.b,
-                u * orig.alpha + t * dest.alpha);
+            return Lab.mix(orig, dest, step, target);
         }
     }
 

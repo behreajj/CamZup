@@ -24,6 +24,8 @@ public class Ray3 {
      * The default constructor.
      */
     public Ray3() {
+
+        // TODO: Implement any intersects plane, mesh methods you can find?
     }
 
     /**

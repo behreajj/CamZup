@@ -391,6 +391,9 @@ public class Lch implements IColor {
         final IColor.HueEasing easing,
         final Lch target) {
 
+        // TODO: Should this account for cases where the lightness of either
+        // the origin or destination is at an extreme, similar to Lab mix?
+
         final float u = 1.0f - step;
         final float cl = u * orig.l + step * dest.l;
         final float calpha = u * orig.alpha + step * dest.alpha;
