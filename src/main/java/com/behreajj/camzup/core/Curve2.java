@@ -2217,6 +2217,24 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
     }
 
     /**
+     * Rounds all knots in the curve to an integer.
+     * It is recommended to consume any transforms before
+     * callling this method.
+     *
+     * @return this curve
+     *
+     * @see Knot2#round()
+     */
+    public Curve2 round() {
+
+        for (final Knot2 knot : this.knots) {
+            knot.round();
+        }
+
+        return this;
+    }
+
+    /**
      * Scales all knots in the curve by a scalar.
      *
      * @param scale the scale

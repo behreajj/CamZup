@@ -331,14 +331,18 @@ public class Lch implements IColor {
         final double chrSq = a * a + b * b;
         if (chrSq < Utils.EPSILON_D) {
             final float t = l * 0.01f;
-            final float hGray = Utils.mod1((1.0f - t) * Lch.SR_HUE_SHADE + t * (Lch.SR_HUE_LIGHT + 1.0f));
+            final float hGray = Utils.mod1((1.0f - t) * Lch.SR_HUE_SHADE
+                + t * (Lch.SR_HUE_LIGHT + 1.0f));
             return target.set(l, 0.0f, hGray, alpha);
         }
 
         final double hueSigned = Math.atan2(b, a);
-        final double hueUnsigned = hueSigned < 0.0d ? hueSigned + Utils.TAU_D : hueSigned;
+        final double hueUnsigned = hueSigned < 0.0d
+            ? hueSigned + Utils.TAU_D
+            : hueSigned;
 
-        return target.set(l, (float) Math.sqrt(chrSq), (float) (hueUnsigned * Utils.ONE_TAU_D), alpha);
+        return target.set(l, (float) Math.sqrt(chrSq),
+            (float) (hueUnsigned * Utils.ONE_TAU_D), alpha);
     }
 
     /**
@@ -365,11 +369,9 @@ public class Lch implements IColor {
     public static Lch gray(final Lch o, final Lch target) {
 
         final float t = o.l * 0.01f;
-        return target.set(
-            o.l,
-            0.0f,
-            Utils.mod1((1.0f - t) * Lch.SR_HUE_SHADE + t * (Lch.SR_HUE_LIGHT + 1.0f)),
-            o.alpha);
+        final float ch = Utils.mod1((1.0f - t) * Lch.SR_HUE_SHADE
+            + t * (Lch.SR_HUE_LIGHT + 1.0f));
+        return target.set(o.l, 0.0f, ch, o.alpha);
     }
 
     /**
@@ -397,11 +399,9 @@ public class Lch implements IColor {
         final boolean dIsGray = dest.c < Utils.EPSILON;
         if (oIsGray && dIsGray) {
             final float t = cl * 0.01f;
-            return target.set(
-                cl,
-                0.0f,
-                Utils.mod1((1.0f - t) * Lch.SR_HUE_SHADE + t * (Lch.SR_HUE_LIGHT + 1.0f)),
-                calpha);
+            final float ch = Utils.mod1((1.0f - t) * Lch.SR_HUE_SHADE
+                + t * (Lch.SR_HUE_LIGHT + 1.0f));
+            return target.set(cl, 0.0f, ch, calpha);
         }
 
         if (oIsGray || dIsGray) {

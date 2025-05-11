@@ -2445,6 +2445,24 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
     }
 
     /**
+     * Roundes all coordinates in this mesh to an integer.
+     * It is recommended to consume any transforms before
+     * callling this method.
+     *
+     * @return this mesh
+     *
+     * @see Vec2#round(Vec2, Vec2)
+     */
+    public Mesh2 round() {
+
+        for (final Vec2 c : this.coords) {
+            Vec2.round(c, c);
+        }
+
+        return this;
+    }
+
+    /**
      * Scales all coordinates in the mesh by a uniform scalar.
      *
      * @param scale the scalar

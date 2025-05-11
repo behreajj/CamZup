@@ -466,6 +466,24 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
     }
 
     /**
+     * Rounds all curves in the entity to an integer.
+     * It is recommended to consume any transforms before
+     * callling this method.
+     *
+     * @return this entity
+     *
+     * @see Curve2#round()
+     */
+    public CurveEntity2 round() {
+
+        for (final Curve2 curve : this.curves) {
+            curve.round();
+        }
+
+        return this;
+    }
+
+    /**
      * Scales the entity by a scalar.
      *
      * @param scalar the scalar

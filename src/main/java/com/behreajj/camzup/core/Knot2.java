@@ -1070,6 +1070,24 @@ public class Knot2 implements Comparable<Knot2> {
     }
 
     /**
+     * Rounds each component of the knot to the nearest whole number.
+     * It is recommended to consume any transforms before calling
+     * this method.
+     *
+     * @return this knot
+     *
+     * @see Vec2#round(Vec2, Vec2)
+     */
+    public Knot2 round() {
+
+        Vec2.round(this.coord, this.coord);
+        Vec2.round(this.foreHandle, this.foreHandle);
+        Vec2.round(this.rearHandle, this.rearHandle);
+
+        return this;
+    }
+
+    /**
      * Rotates this knot around the z axis. Accepts calculated sine and cosine
      * of an angle, so that collections of knots can be efficiently rotated
      * without repeatedly calling cos and sin.

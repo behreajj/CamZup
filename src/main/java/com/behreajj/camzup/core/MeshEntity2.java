@@ -367,6 +367,24 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
     }
 
     /**
+     * Rounds all meshes in the entity to an integer.
+     * It is recommended to consume any transforms before
+     * callling this method.
+     *
+     * @return this entity
+     *
+     * @see Mesh2#round()
+     */
+    public MeshEntity2 round() {
+
+        for (final Mesh2 mesh : this.meshes) {
+            mesh.round();
+        }
+
+        return this;
+    }
+
+    /**
      * Scales the entity by a scalar.
      *
      * @param scalar the scalar
