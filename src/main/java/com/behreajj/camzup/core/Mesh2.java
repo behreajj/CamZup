@@ -2450,7 +2450,6 @@ public class Mesh2 extends Mesh implements Iterable<Face2>, ISvgWritable {
      * callling this method.
      *
      * @return this mesh
-     *
      * @see Vec2#round(Vec2, Vec2)
      */
     public Mesh2 round() {

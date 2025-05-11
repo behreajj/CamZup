@@ -2222,7 +2222,6 @@ public class Curve2 extends Curve implements Iterable<Knot2>, ISvgWritable {
      * callling this method.
      *
      * @return this curve
-     *
      * @see Knot2#round()
      */
     public Curve2 round() {

@@ -471,7 +471,6 @@ public class CurveEntity2 extends Entity2 implements Iterable<Curve2>, IVolume2,
      * callling this method.
      *
      * @return this entity
-     *
      * @see Curve2#round()
      */
     public CurveEntity2 round() {

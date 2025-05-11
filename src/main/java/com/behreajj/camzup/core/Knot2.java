@@ -1075,7 +1075,6 @@ public class Knot2 implements Comparable<Knot2> {
      * this method.
      *
      * @return this knot
-     *
      * @see Vec2#round(Vec2, Vec2)
      */
     public Knot2 round() {

@@ -372,7 +372,6 @@ public class MeshEntity2 extends Entity2 implements Iterable<Mesh2>, IVolume2, I
      * callling this method.
      *
      * @return this entity
-     *
      * @see Mesh2#round()
      */
     public MeshEntity2 round() {

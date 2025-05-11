@@ -415,8 +415,8 @@ public class Lab implements IColor {
         final double ca = d.a - o.a;
         final double cb = d.b - o.b;
         return (float) (Math.abs(alphaScalar * (d.alpha - o.alpha))
-                + Math.abs(d.l - o.l)
-                + Math.sqrt(ca * ca + cb * cb));
+            + Math.abs(d.l - o.l)
+            + Math.sqrt(ca * ca + cb * cb));
     }
 
     /**
@@ -480,11 +480,11 @@ public class Lab implements IColor {
     public static boolean eqLabSatArith(final Lab o, final Lab d) {
 
         return (int) (Utils.clamp(o.l, 0.0f, 100.0f) * Lab.L_TO_BYTE
-                + 0.5f) == (int) (Utils.clamp(d.l, 0.0f, 100.0f) * Lab.L_TO_BYTE + 0.5f)
-                && 128 + Utils.floor(Utils.clamp(o.a, -127.5f, 127.5f)) == 128
-                        + Utils.floor(Utils.clamp(d.a, -127.5f, 127.5f))
-                && 128 + Utils.floor(Utils.clamp(o.b, -127.5f, 127.5f)) == 128
-                        + Utils.floor(Utils.clamp(d.b, -127.5f, 127.5f));
+            + 0.5f) == (int) (Utils.clamp(d.l, 0.0f, 100.0f) * Lab.L_TO_BYTE + 0.5f)
+            && 128 + Utils.floor(Utils.clamp(o.a, -127.5f, 127.5f)) == 128
+            + Utils.floor(Utils.clamp(d.a, -127.5f, 127.5f))
+            && 128 + Utils.floor(Utils.clamp(o.b, -127.5f, 127.5f)) == 128
+            + Utils.floor(Utils.clamp(d.b, -127.5f, 127.5f));
     }
 
     /**
@@ -575,10 +575,10 @@ public class Lab implements IColor {
         final int b8 = hex & 0xff;
 
         return target.set(
-                l8 * Lab.L_FROM_BYTE,
-                a8 - 128.0f,
-                b8 - 128.0f,
-                t8 * Utils.ONE_255);
+            l8 * Lab.L_FROM_BYTE,
+            a8 - 128.0f,
+            b8 - 128.0f,
+            t8 * Utils.ONE_255);
     }
 
     /**
@@ -615,10 +615,10 @@ public class Lab implements IColor {
         final long b16 = hex & 0xffffL;
 
         return target.set(
-                l16 * Lab.L_FROM_SHORT,
-                (a16 - 0x8000L) * Lab.AB_FROM_SHORT,
-                (b16 - 0x8000L) * Lab.AB_FROM_SHORT,
-                t16 / 65535.0f);
+            l16 * Lab.L_FROM_SHORT,
+            (a16 - 0x8000L) * Lab.AB_FROM_SHORT,
+            (b16 - 0x8000L) * Lab.AB_FROM_SHORT,
+            t16 / 65535.0f);
     }
 
     /**
@@ -653,19 +653,19 @@ public class Lab implements IColor {
      * @see Math#sin(double)
      */
     public static Lab fromLch(
-            final float l,
-            final float c,
-            final float h,
-            final float alpha,
-            final Lab target) {
+        final float l,
+        final float c,
+        final float h,
+        final float alpha,
+        final Lab target) {
 
         final double cd = Math.max(c, 0.0d);
         final double hd = h * Utils.TAU_D;
         return target.set(
-                l,
-                (float) (cd * Math.cos(hd)),
-                (float) (cd * Math.sin(hd)),
-                alpha);
+            l,
+            (float) (cd * Math.cos(hd)),
+            (float) (cd * Math.sin(hd)),
+            alpha);
     }
 
     /**
@@ -696,11 +696,11 @@ public class Lab implements IColor {
      * @see Math#pow(double, double)
      */
     public static Lab fromSrXyz(
-            final float x,
-            final float y,
-            final float z,
-            final float w,
-            final Lab target) {
+        final float x,
+        final float y,
+        final float z,
+        final float w,
+        final Lab target) {
 
         double xd = x;
         double yd = y;
@@ -714,10 +714,10 @@ public class Lab implements IColor {
         zd = zd <= comparisand ? zd * scalar : Math.pow(zd, Utils.ONE_THIRD_D) * 1.16d - 0.16d;
 
         return target.set(
-                (float) (37.095d * xd + 62.9054d * yd - 0.0008d * zd),
-                (float) (663.4684d * xd - 750.5078d * yd + 87.0328d * zd),
-                (float) (63.9569d * xd + 108.4576d * yd - 172.4152d * zd),
-                w);
+            (float) (37.095d * xd + 62.9054d * yd - 0.0008d * zd),
+            (float) (663.4684d * xd - 750.5078d * yd + 87.0328d * zd),
+            (float) (63.9569d * xd + 108.4576d * yd - 172.4152d * zd),
+            w);
     }
 
     /**
@@ -772,16 +772,16 @@ public class Lab implements IColor {
     public static Lab[][][] grid(final int cols, final int rows, final int layers) {
 
         final float absa = Utils.max(
-                Utils.abs(Lab.SR_A_MIN),
-                Utils.abs(Lab.SR_A_MAX));
+            Utils.abs(Lab.SR_A_MIN),
+            Utils.abs(Lab.SR_A_MAX));
         final float absb = Utils.max(
-                Utils.abs(Lab.SR_B_MIN),
-                Utils.abs(Lab.SR_B_MAX));
+            Utils.abs(Lab.SR_B_MIN),
+            Utils.abs(Lab.SR_B_MAX));
         return Lab.grid(
-                cols, rows, layers,
-                0.0f, -absa, -absb,
-                100.0f, absa, absb,
-                1.0f);
+            cols, rows, layers,
+            0.0f, -absa, -absb,
+            100.0f, absa, absb,
+            1.0f);
     }
 
     /**
@@ -798,17 +798,17 @@ public class Lab implements IColor {
      * @see Lab#grid(int, int, int, float, float, float, float, float, float, float)
      */
     public static Lab[][][] grid(
-            final int cols,
-            final int rows,
-            final int layers,
-            final Lab lowerBound,
-            final Lab upperBound) {
+        final int cols,
+        final int rows,
+        final int layers,
+        final Lab lowerBound,
+        final Lab upperBound) {
 
         return Lab.grid(
-                cols, rows, layers,
-                lowerBound.l, lowerBound.a, lowerBound.b,
-                upperBound.l, upperBound.a, upperBound.b,
-                1.0f);
+            cols, rows, layers,
+            lowerBound.l, lowerBound.a, lowerBound.b,
+            upperBound.l, upperBound.a, upperBound.b,
+            1.0f);
     }
 
     /**
@@ -822,8 +822,8 @@ public class Lab implements IColor {
 
         final double hueSigned = Math.atan2(o.b, o.a);
         final double hueUnsigned = hueSigned < 0.0d
-                ? hueSigned + Utils.TAU_D
-                : hueSigned;
+            ? hueSigned + Utils.TAU_D
+            : hueSigned;
         return (float) (hueUnsigned * Utils.ONE_TAU_D);
     }
 
@@ -866,10 +866,10 @@ public class Lab implements IColor {
      * @return the mix
      */
     public static Lab mix(
-            final Lab orig,
-            final Lab dest,
-            final float step,
-            final Lab target) {
+        final Lab orig,
+        final Lab dest,
+        final float step,
+        final Lab target) {
 
         // TODO: Test this with a Hable tone map to see if the results
         // are any better.
@@ -891,10 +891,10 @@ public class Lab implements IColor {
             return target.set(lMix, orig.a, orig.b, alphaMix);
         }
         return target.set(
-                lMix,
-                u * orig.a + step * dest.a,
-                u * orig.b + step * dest.b,
-                alphaMix);
+            lMix,
+            u * orig.a + step * dest.a,
+            u * orig.b + step * dest.b,
+            alphaMix);
     }
 
     /**
@@ -926,10 +926,10 @@ public class Lab implements IColor {
         final float rb = rng.nextFloat();
 
         return target.set(
-                (1.0f - rl) * Lab.RNG_L_MIN + rl * Lab.RNG_L_MAX,
-                (1.0f - ra) * Lab.SR_A_MIN + ra * Lab.SR_A_MAX,
-                (1.0f - rb) * Lab.SR_B_MIN + rb * Lab.SR_B_MAX,
-                1.0f);
+            (1.0f - rl) * Lab.RNG_L_MIN + rl * Lab.RNG_L_MAX,
+            (1.0f - ra) * Lab.SR_A_MIN + ra * Lab.SR_A_MAX,
+            (1.0f - rb) * Lab.SR_B_MIN + rb * Lab.SR_B_MAX,
+            1.0f);
     }
 
     /**
@@ -942,10 +942,10 @@ public class Lab implements IColor {
      * @return the random color
      */
     public static Lab random(
-            final Random rng,
-            final Lab lowerBound,
-            final Lab upperBound,
-            final Lab target) {
+        final Random rng,
+        final Lab lowerBound,
+        final Lab upperBound,
+        final Lab target) {
 
         final float rl = rng.nextFloat();
         final float ra = rng.nextFloat();
@@ -953,10 +953,10 @@ public class Lab implements IColor {
         final float rt = rng.nextFloat();
 
         return target.set(
-                (1.0f - rl) * lowerBound.l + rl * upperBound.l,
-                (1.0f - ra) * lowerBound.a + ra * upperBound.a,
-                (1.0f - rb) * lowerBound.b + rb * upperBound.b,
-                (1.0f - rt) * lowerBound.alpha + rt * upperBound.alpha);
+            (1.0f - rl) * lowerBound.l + rl * upperBound.l,
+            (1.0f - ra) * lowerBound.a + ra * upperBound.a,
+            (1.0f - rb) * lowerBound.b + rb * upperBound.b,
+            (1.0f - rt) * lowerBound.alpha + rt * upperBound.alpha);
     }
 
     /**
@@ -1002,10 +1002,10 @@ public class Lab implements IColor {
         final double cosad = Math.cos(hRad);
         final double sinad = Math.sin(hRad);
         return target.set(
-                o.l,
-                (float) (cosad * ad - sinad * bd),
-                (float) (cosad * bd + sinad * ad),
-                o.alpha);
+            o.l,
+            (float) (cosad * ad - sinad * bd),
+            (float) (cosad * bd + sinad * ad),
+            o.alpha);
     }
 
     /**
@@ -1101,11 +1101,11 @@ public class Lab implements IColor {
      * @author Jan Behrens
      */
     public static Vec4 toSrXyz(
-            final float l,
-            final float a,
-            final float b,
-            final float t,
-            final Vec4 target) {
+        final float l,
+        final float a,
+        final float b,
+        final float t,
+        final Vec4 target) {
 
         final double ld = l * 0.01d;
 
@@ -1201,10 +1201,10 @@ public class Lab implements IColor {
      * @return the array
      */
     protected static Lab[][][] grid(
-            final int cols, final int rows, final int layers,
-            final float lbl, final float lba, final float lbb,
-            final float ubl, final float uba, final float ubb,
-            final float alpha) {
+        final int cols, final int rows, final int layers,
+        final float lbl, final float lba, final float lbb,
+        final float ubl, final float uba, final float ubb,
+        final float alpha) {
 
         final float tVrf = Math.max(Utils.ONE_255, alpha);
         final int lVrf = Math.max(layers, 1);
@@ -1238,10 +1238,10 @@ public class Lab implements IColor {
             final float jStep = j * jToStep + jOff;
 
             result[h][i][j] = new Lab(
-                    (1.0f - hStep) * lbl + hStep * ubl,
-                    (1.0f - jStep) * lba + jStep * uba,
-                    (1.0f - iStep) * lbb + iStep * ubb,
-                    tVrf);
+                (1.0f - hStep) * lbl + hStep * ubl,
+                (1.0f - jStep) * lba + jStep * uba,
+                (1.0f - iStep) * lbb + iStep * ubb,
+                tVrf);
         }
 
         return result;
@@ -1314,10 +1314,10 @@ public class Lab implements IColor {
     public Lab set(final byte l, final byte a, final byte b, final byte alpha) {
 
         return this.set(
-                (l & 0xff) * Lab.L_FROM_BYTE,
-                (a & 0xff) - 0x80,
-                (b & 0xff) - 0x80,
-                (alpha & 0xff) * Utils.ONE_255);
+            (l & 0xff) * Lab.L_FROM_BYTE,
+            (a & 0xff) - 0x80,
+            (b & 0xff) - 0x80,
+            (alpha & 0xff) * Utils.ONE_255);
     }
 
     /**
@@ -1392,10 +1392,10 @@ public class Lab implements IColor {
     public Lab set(final short l, final short a, final short b, final short alpha) {
 
         return this.set(
-                (l & 0xffff) * Lab.L_FROM_SHORT,
-                ((a & 0xffff) - 0x8000) * Lab.AB_FROM_SHORT,
-                ((b & 0xffff) - 0x8000) * Lab.AB_FROM_SHORT,
-                (alpha & 0xffff) / 65535.0f);
+            (l & 0xffff) * Lab.L_FROM_SHORT,
+            ((a & 0xffff) - 0x8000) * Lab.AB_FROM_SHORT,
+            ((b & 0xffff) - 0x8000) * Lab.AB_FROM_SHORT,
+            (alpha & 0xffff) / 65535.0f);
     }
 
     /**
@@ -1479,11 +1479,11 @@ public class Lab implements IColor {
 
         final long t16 = (long) (Utils.clamp01(this.alpha) * 0xffff + 0.5f);
         final long l16 = (long) (Utils.clamp(
-                this.l, 0.0f, 100.0f) * Lab.L_TO_SHORT + 0.5f);
+            this.l, 0.0f, 100.0f) * Lab.L_TO_SHORT + 0.5f);
         final long a16 = 0x8000L + Utils.floor(Utils.clamp(
-                this.a * Lab.AB_TO_SHORT, -32767.5f, 32767.5f));
+            this.a * Lab.AB_TO_SHORT, -32767.5f, 32767.5f));
         final long b16 = 0x8000L + Utils.floor(Utils.clamp(
-                this.b * Lab.AB_TO_SHORT, -32767.5f, 32767.5f));
+            this.b * Lab.AB_TO_SHORT, -32767.5f, 32767.5f));
 
         return t16 << 0x30L | l16 << 0x20L | a16 << 0x10L | b16;
     }
@@ -1590,10 +1590,10 @@ public class Lab implements IColor {
          */
         @Override
         public Lab apply(
-                final Lab orig,
-                final Lab dest,
-                final Float step,
-                final Lab target) {
+            final Lab orig,
+            final Lab dest,
+            final Float step,
+            final Lab target) {
 
             final float tf = step;
             if (Float.isNaN(tf)) {
@@ -1618,10 +1618,10 @@ public class Lab implements IColor {
          * @return the eased color
          */
         public abstract Lab applyUnclamped(
-                final Lab orig,
-                final Lab dest,
-                final Float step,
-                final Lab target);
+            final Lab orig,
+            final Lab dest,
+            final Float step,
+            final Lab target);
 
         /**
          * Returns the simple name of this class.
@@ -1688,9 +1688,9 @@ public class Lab implements IColor {
             final double halfca = 0.5d * ad;
             final double halfcb = 0.5d * bd;
 
-            return new Lab[] {
-                    new Lab(lAna, (float) (rt32ca - halfcb), (float) (rt32cb + halfca), t),
-                    new Lab(lAna, (float) (rt32ca + halfcb), (float) (rt32cb - halfca), t)
+            return new Lab[]{
+                new Lab(lAna, (float) (rt32ca - halfcb), (float) (rt32cb + halfca), t),
+                new Lab(lAna, (float) (rt32ca + halfcb), (float) (rt32cb - halfca), t)
             };
         }
     }
@@ -1716,8 +1716,8 @@ public class Lab implements IColor {
         @Override
         public Lab[] apply(final Lab o) {
 
-            return new Lab[] {
-                    new Lab((float) (100.0d - o.l), -o.a, -o.b, o.alpha)
+            return new Lab[]{
+                new Lab((float) (100.0d - o.l), -o.a, -o.b, o.alpha)
             };
         }
     }
@@ -1754,9 +1754,9 @@ public class Lab implements IColor {
             final double halfca = 0.5d * ad;
             final double halfcb = 0.5d * bd;
 
-            return new Lab[] {
-                    new Lab(lSpl, (float) (rt32ca - halfcb), (float) (rt32cb + halfca), t),
-                    new Lab(lSpl, (float) (rt32ca + halfcb), (float) (rt32cb - halfca), t)
+            return new Lab[]{
+                new Lab(lSpl, (float) (rt32ca - halfcb), (float) (rt32cb + halfca), t),
+                new Lab(lSpl, (float) (rt32ca + halfcb), (float) (rt32cb - halfca), t)
             };
         }
     }
@@ -1782,10 +1782,10 @@ public class Lab implements IColor {
         @Override
         public Lab[] apply(final Lab o) {
 
-            return new Lab[] {
-                    new Lab(50.0f, -o.b, o.a, o.alpha),
-                    new Lab((float) (100.0d - o.l), -o.a, -o.b, o.alpha),
-                    new Lab(50.0f, o.b, -o.a, o.alpha)
+            return new Lab[]{
+                new Lab(50.0f, -o.b, o.a, o.alpha),
+                new Lab((float) (100.0d - o.l), -o.a, -o.b, o.alpha),
+                new Lab(50.0f, o.b, -o.a, o.alpha)
             };
         }
     }
@@ -1822,18 +1822,18 @@ public class Lab implements IColor {
             final double halfca = 0.5d * ad;
             final double halfcb = 0.5d * bd;
 
-            return new Lab[] {
-                    new Lab(
-                            (float) ((200.0d - ld) / 3.0d),
-                            (float) (-halfca - rt32cb),
-                            (float) (-halfcb + rt32ca),
-                            t),
-                    new Lab((float) (100.0d - ld), -o.a, -o.b, t),
-                    new Lab(
-                            (float) ((100.0d + ld) / 3.0d),
-                            (float) (halfca + rt32cb),
-                            (float) (halfcb - rt32ca),
-                            t)
+            return new Lab[]{
+                new Lab(
+                    (float) ((200.0d - ld) / 3.0d),
+                    (float) (-halfca - rt32cb),
+                    (float) (-halfcb + rt32ca),
+                    t),
+                new Lab((float) (100.0d - ld), -o.a, -o.b, t),
+                new Lab(
+                    (float) ((100.0d + ld) / 3.0d),
+                    (float) (halfca + rt32cb),
+                    (float) (halfcb - rt32ca),
+                    t)
             };
         }
     }
@@ -1870,9 +1870,9 @@ public class Lab implements IColor {
             final double halfca = -0.5d * ad;
             final double halfcb = -0.5d * bd;
 
-            return new Lab[] {
-                    new Lab(lTri, (float) (halfca - rt32cb), (float) (halfcb + rt32ca), t),
-                    new Lab(lTri, (float) (halfca + rt32cb), (float) (halfcb - rt32ca), t)
+            return new Lab[]{
+                new Lab(lTri, (float) (halfca - rt32cb), (float) (halfcb + rt32ca), t),
+                new Lab(lTri, (float) (halfca + rt32cb), (float) (halfcb - rt32ca), t)
             };
         }
     }
@@ -1899,10 +1899,10 @@ public class Lab implements IColor {
          */
         @Override
         public Lab applyUnclamped(
-                final Lab orig,
-                final Lab dest,
-                final Float step,
-                final Lab target) {
+            final Lab orig,
+            final Lab dest,
+            final Float step,
+            final Lab target) {
 
             final float t = step;
             final float u = 1.0f - t;
@@ -1910,10 +1910,10 @@ public class Lab implements IColor {
             // TODO: This should be consistent with Lab.mix
 
             return target.set(
-                    u * orig.l + t * dest.l,
-                    u * orig.a + t * dest.a,
-                    u * orig.b + t * dest.b,
-                    u * orig.alpha + t * dest.alpha);
+                u * orig.l + t * dest.l,
+                u * orig.a + t * dest.a,
+                u * orig.b + t * dest.b,
+                u * orig.alpha + t * dest.alpha);
         }
     }
 
@@ -1974,10 +1974,10 @@ public class Lab implements IColor {
          */
         @Override
         public Lab applyUnclamped(
-                final Lab orig,
-                final Lab dest,
-                final Float step,
-                final Lab target) {
+            final Lab orig,
+            final Lab dest,
+            final Float step,
+            final Lab target) {
 
             Lch.fromLab(orig, this.oLch);
             Lch.fromLab(dest, this.dLch);
@@ -2051,10 +2051,10 @@ public class Lab implements IColor {
          */
         @Override
         public Lab applyUnclamped(
-                final Lab orig,
-                final Lab dest,
-                final Float step,
-                final Lab target) {
+            final Lab orig,
+            final Lab dest,
+            final Float step,
+            final Lab target) {
 
             Lab.toSrXyz(orig, this.oXyz);
             Lab.toSrXyz(dest, this.dXyz);
@@ -2064,10 +2064,10 @@ public class Lab implements IColor {
             final float t = step;
             final float u = 1.0f - t;
             this.cLinear.set(
-                    u * this.oLinear.r + t * this.dLinear.r,
-                    u * this.oLinear.g + t * this.dLinear.g,
-                    u * this.oLinear.b + t * this.dLinear.b,
-                    u * this.oLinear.alpha + t * this.dLinear.alpha);
+                u * this.oLinear.r + t * this.dLinear.r,
+                u * this.oLinear.g + t * this.dLinear.g,
+                u * this.oLinear.b + t * this.dLinear.b,
+                u * this.oLinear.alpha + t * this.dLinear.alpha);
 
             Rgb.lRgbToSrXyz(this.cLinear, this.cXyz);
             Lab.fromSrXyz(this.cXyz, target);
@@ -2114,10 +2114,10 @@ public class Lab implements IColor {
          */
         @Override
         public Lab applyUnclamped(
-                final Lab orig,
-                final Lab dest,
-                final Float step,
-                final Lab target) {
+            final Lab orig,
+            final Lab dest,
+            final Float step,
+            final Lab target) {
 
             Rgb.srLab2TosRgb(orig, this.oStandard, this.oLinear, this.oXyz);
             Rgb.srLab2TosRgb(dest, this.dStandard, this.dLinear, this.dXyz);
@@ -2125,10 +2125,10 @@ public class Lab implements IColor {
             final float t = step;
             final float u = 1.0f - t;
             this.cStandard.set(
-                    u * this.oStandard.r + t * this.dStandard.r,
-                    u * this.oStandard.g + t * this.dStandard.g,
-                    u * this.oStandard.b + t * this.dStandard.b,
-                    u * this.oStandard.alpha + t * this.dStandard.alpha);
+                u * this.oStandard.r + t * this.dStandard.r,
+                u * this.oStandard.g + t * this.dStandard.g,
+                u * this.oStandard.b + t * this.dStandard.b,
+                u * this.oStandard.alpha + t * this.dStandard.alpha);
 
             Rgb.sRgbToSrLab2(this.cStandard, target, this.cXyz, this.cLinear);
 
